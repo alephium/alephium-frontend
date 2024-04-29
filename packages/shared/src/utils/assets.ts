@@ -20,19 +20,19 @@ import { TokenInfo } from '@alephium/token-list'
 import { orderBy } from 'lodash'
 
 import { calculateAmountWorth } from '@/numbers'
-import { Asset, FungibleToken, ListedFungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
+import { Asset, FungibleToken, ListedFungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity, UnknownAsset } from '@/types'
 
-export const tokenIsFungible = (asset: Partial<TokenInfo | NFT>): asset is TokenInfo => 'decimals' in asset
+export const tokenIsFungible = (asset: Partial<Asset | NFT>): asset is Asset => 'decimals' in asset
 
-export const tokenIsKnownFungible = (asset: Partial<TokenInfo | NFT>): asset is Asset =>
+export const tokenIsKnownFungible = (asset: Partial<Asset | NFT>): asset is Asset =>
   tokenIsFungible(asset) && 'symbol' in asset
 
-export const tokenIsNonFungible = (asset: Partial<TokenInfo | NFT>): asset is NFT => 'collectionId' in asset
+export const tokenIsNonFungible = (asset: Partial<Asset | NFT>): asset is NFT => 'collectionId' in asset
 
-export const tokenIsListed = (asset: Partial<TokenInfo | NFT>): asset is ListedFungibleToken => 'logoURI' in asset
+export const tokenIsListed = (asset: Partial<Asset | NFT>): asset is ListedFungibleToken => 'logoURI' in asset
 
 // Todo: rename "unknown" to "uncategorized"?
-export const tokenIsUnknown = (asset: Partial<TokenInfo | NFT>) =>
+export const tokenIsUnknown = (asset: Partial<Asset | NFT>): asset is UnknownAsset =>
   !tokenIsKnownFungible(asset) && !tokenIsNonFungible(asset)
 
 export const sortAssets = (assets: Asset[]) =>
