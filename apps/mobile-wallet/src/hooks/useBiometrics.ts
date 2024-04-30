@@ -16,22 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isEnrolledAsync } from 'expo-local-authentication'
-import { useEffect, useState } from 'react'
+import { hasHardwareAsync, isEnrolledAsync } from 'expo-local-authentication'
+
+import { useAsyncData } from '~/hooks/useAsyncData'
 
 const useBiometrics = () => {
-  const [deviceHasBiometricsData, setDeviceHasBiometricsData] = useState<boolean>()
+  const { data: deviceSupportsBiometrics } = useAsyncData(hasHardwareAsync)
+  const { data: deviceHasEnrolledBiometrics } = useAsyncData(isEnrolledAsync)
 
-  useEffect(() => {
-    const checkBiometricsAvailability = async () => {
-      const available = await isEnrolledAsync()
-      setDeviceHasBiometricsData(available)
-    }
-
-    checkBiometricsAvailability()
-  }, [])
-
-  return deviceHasBiometricsData
+  return { deviceSupportsBiometrics, deviceHasEnrolledBiometrics }
 }
 
 export default useBiometrics

@@ -37,7 +37,7 @@ import SecretPhraseWordList, { SelectedWord } from '~/components/SecretPhraseWor
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
-import { persistWalletMetadata } from '~/persistent-storage/wallet'
+import { dangerouslyExportWalletMnemonic, persistWalletMetadata } from '~/persistent-storage/wallet'
 import { PossibleWordBox, SecretPhraseBox, Word } from '~/screens/new-wallet/ImportWalletSeedScreen'
 import { mnemonicBackedUp } from '~/store/wallet/walletSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -50,17 +50,27 @@ interface VerifyMnemonicScreenProps
 const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProps) => {
   const dispatch = useAppDispatch()
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
-  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
-  const mnemonicWords = useRef(walletMnemonic.split(' '))
+  const mnemonicWords = useRef<string[]>([])
   const theme = useTheme()
   const allowedWords = useRef(bip39Words.split(' '))
-  const randomizedOptions = useRef(getRandomizedOptions(mnemonicWords.current, allowedWords.current))
+  const randomizedOptions = useRef<string[][]>([])
   const insets = useSafeAreaInsets()
   const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
 
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
   const [possibleMatches, setPossibleMatches] = useState<string[]>([])
   const [showSuccess, setShowSuccess] = useState(false)
+
+  useEffect(() => {
+    try {
+      dangerouslyExportWalletMnemonic().then((mnemonic) => {
+        mnemonicWords.current = mnemonic.split(' ')
+        randomizedOptions.current = getRandomizedOptions(mnemonicWords.current, allowedWords.current)
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  }, [])
 
   const confirmBackup = useCallback(async () => {
     if (!isMnemonicBackedUp) {

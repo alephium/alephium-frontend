@@ -20,15 +20,22 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
+import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { generateAndStoreWallet } from '~/persistent-storage/wallet'
+import { syncLatestTransactions } from '~/store/addressesSlice'
+import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { newWalletNameEntered } from '~/store/walletGenerationSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { resetNavigation } from '~/utils/navigation'
 
 const instructions: Instruction[] = [
   { text: "Alright, let's get to it.", type: 'secondary' },
@@ -38,16 +45,32 @@ const instructions: Instruction[] = [
 interface NewWalletNameScreenProps extends StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>, ScreenProps {}
 
 const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps) => {
+  const method = useAppSelector((s) => s.walletGeneration.method)
+  const { deviceHasEnrolledBiometrics } = useBiometrics()
   const dispatch = useAppDispatch()
 
   const [name, setName] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleButtonPress = async () => {
     if (!name) return
 
-    dispatch(newWalletNameEntered(name))
+    if (method === 'import') {
+      dispatch(newWalletNameEntered(name))
+      navigation.navigate('SelectImportMethodScreen')
+    } else if (method === 'create') {
+      setLoading(true)
 
-    navigation.navigate('PinCodeCreationScreen')
+      const wallet = await generateAndStoreWallet(name)
+      dispatch(newWalletGenerated(wallet))
+      dispatch(syncLatestTransactions(wallet.firstAddress.hash))
+
+      sendAnalytics('Created new wallet')
+
+      setLoading(false)
+
+      resetNavigation(navigation, deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
+    }
   }
 
   return (
@@ -74,6 +97,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           maxLength={24}
         />
       </ContentContainer>
+      <SpinnerModal isActive={loading} text="Creating wallet..." />
     </ScrollScreen>
   )
 }

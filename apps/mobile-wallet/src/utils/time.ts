@@ -16,12 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { decrypt } from '../lib/password-crypto'
+// Copied from Uniswap
 
-describe('password-crypto', () => {
-  it('should raise an error if payload version is not 1', () => {
-    const password = 'passw0rd'
-    const payloadRaw = '{"version":2}'
-    expect(() => decrypt(password, payloadRaw)).toThrow('Invalid version: got 2, expected: 1')
-  })
-})
+export function debounceCallback<T extends (...args: void[]) => void>(
+  func: T,
+  wait: number
+): { triggerDebounce: () => void; cancelDebounce: () => void } {
+  let timeout: NodeJS.Timeout
+
+  const cancelDebounce = (): void => {
+    clearTimeout(timeout)
+  }
+
+  return {
+    triggerDebounce: (): void => {
+      clearTimeout(timeout)
+      timeout = setTimeout(func, wait)
+    },
+    cancelDebounce
+  }
+}

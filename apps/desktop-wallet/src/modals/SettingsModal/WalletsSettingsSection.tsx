@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keyring } from '@alephium/keyring'
 import { Pencil, Trash } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
@@ -35,7 +34,7 @@ import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
 import WalletRemovalModal from '@/modals/WalletRemovalModal'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
-import { activeWalletDeleted, walletDeleted, walletLocked } from '@/storage/wallets/walletActions'
+import { activeWalletDeleted, walletDeleted } from '@/storage/wallets/walletActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { ActiveWallet, StoredEncryptedWallet } from '@/types/wallet'
 
@@ -45,7 +44,7 @@ const WalletsSettingsSection = () => {
   const activeWallet = useAppSelector((s) => s.activeWallet)
   const wallets = useAppSelector((s) => s.global.wallets)
   const posthog = usePostHog()
-  const { isWalletUnlocked } = useWalletLock()
+  const { isWalletUnlocked, lockWallet } = useWalletLock()
 
   const [walletToRemove, setWalletToRemove] = useState<StoredEncryptedWallet | ActiveWallet>()
   const [isDisplayingSecretModal, setIsDisplayingSecretModal] = useState(false)
@@ -61,12 +60,7 @@ const WalletsSettingsSection = () => {
     posthog.capture('Deleted wallet')
   }
 
-  const lockWallet = () => {
-    keyring.clearCachedSecrets()
-    dispatch(walletLocked())
-
-    posthog.capture('Locked wallet', { origin: 'settings' })
-  }
+  const handleLockCurrentWalletClick = () => lockWallet('settings')
 
   return (
     <>
@@ -106,7 +100,7 @@ const WalletsSettingsSection = () => {
             </CurrentWalletBox>
           </InfoBox>
           <ActionButtons>
-            <Button role="secondary" onClick={lockWallet}>
+            <Button role="secondary" onClick={handleLockCurrentWalletClick}>
               {t('Lock current wallet')}
             </Button>
 

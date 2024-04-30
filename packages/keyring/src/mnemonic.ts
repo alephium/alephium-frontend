@@ -30,8 +30,7 @@ export type DecryptMnemonicResult = {
   version: EncryptedMnemonicVersion
 }
 
-// Deprecated
-type EncryptedMnemonicStoredAsString = {
+export type DeprecatedEncryptedMnemonicStoredAsString = {
   version: 1
   mnemonic: string
 }
@@ -67,7 +66,7 @@ export const encryptMnemonic = async (mnemonic: Uint8Array, password: string) =>
 export const decryptMnemonic = async (encryptedMnemonic: string, password: string): Promise<DecryptMnemonicResult> => {
   const { version, mnemonic } = (await encryptor.decrypt(password, encryptedMnemonic)) as
     | EncryptedMnemonicStoredAsUint8Array
-    | EncryptedMnemonicStoredAsString
+    | DeprecatedEncryptedMnemonicStoredAsString
 
   if (version === 1) {
     console.warn(
@@ -102,7 +101,7 @@ export const mnemonicStringToUint8Array = (mnemonicStr: string): Uint8Array => {
 }
 
 // When JSON.stringify an Uint8Array it becomes a JS object that we need to cast back to an Uint8Array
-const mnemonicJsonStringifiedObjectToUint8Array = (mnemonic: unknown): Uint8Array => {
+export const mnemonicJsonStringifiedObjectToUint8Array = (mnemonic: unknown): Uint8Array => {
   if (!(mnemonic instanceof Object))
     throw new Error('Keyring: Could not convert stringified Uint8Array mnemonic back to Uint8Array')
 

@@ -19,19 +19,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import { useState } from 'react'
+import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import animationSrc from '~/animations/lottie/fingerprint.json'
+import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import ActionButtonsStack from '~/components/buttons/ActionButtonsStack'
 import Button from '~/components/buttons/Button'
+import BottomModal from '~/components/layout/BottomModal'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { enableBiometrics } from '~/persistent-storage/wallet'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { biometricsToggled } from '~/store/settingsSlice'
 import { resetNavigation } from '~/utils/navigation'
@@ -43,35 +44,24 @@ const instructions: Instruction[] = [
   { text: 'Use fingerprint or face recognition instead of the pin to unlock the wallet', type: 'secondary' }
 ]
 
-const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBiometricsScreenProps) => {
+const AddBiometricsScreen = ({ navigation, ...props }: AddBiometricsScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method)
   const dispatch = useAppDispatch()
-  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const addressIds = useAppSelector(selectAddressIds)
-
-  const [loading, setLoading] = useState(false)
+  const [isBiometricsWarningModalOpen, setIsBiometricsWarningModalOpen] = useState(false)
 
   const skipAddressDiscovery = method === 'create' || addressIds.length > 1
 
-  const activateBiometrics = async () => {
-    setLoading(true)
+  const activateBiometrics = () => {
+    dispatch(biometricsToggled())
 
-    try {
-      await enableBiometrics(walletMnemonic)
-      dispatch(biometricsToggled(true))
+    sendAnalytics('Activated biometrics from wallet creation flow')
 
-      sendAnalytics('Activated biometrics from wallet creation flow')
-
-      resetNavigation(
-        navigation,
-        skipAddressDiscovery ? 'NewWalletSuccessScreen' : 'ImportWalletAddressDiscoveryScreen'
-      )
-    } finally {
-      setLoading(false)
-    }
+    resetNavigation(navigation, skipAddressDiscovery ? 'NewWalletSuccessScreen' : 'ImportWalletAddressDiscoveryScreen')
   }
 
   const handleLaterPress = () => {
+    setIsBiometricsWarningModalOpen(false)
     sendAnalytics('Skipped biometrics activation from wallet creation flow')
 
     resetNavigation(
@@ -81,19 +71,27 @@ const AddBiometricsScreen = ({ navigation, route: { params }, ...props }: AddBio
   }
 
   return (
-    <ScrollScreen fill headerOptions={{ type: 'stack' }} {...props}>
-      <AnimationContainer>
-        <WhiteCircle>
-          <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
-        </WhiteCircle>
-      </AnimationContainer>
-      <CenteredInstructions instructions={instructions} stretch />
-      <ActionButtonsStack>
-        <Button title="Activate" type="primary" variant="highlight" onPress={activateBiometrics} />
-        <Button title="Later" type="secondary" onPress={handleLaterPress} />
-      </ActionButtonsStack>
-      <SpinnerModal isActive={loading} text="Enabling biometrics..." />
-    </ScrollScreen>
+    <>
+      <ScrollScreen fill headerOptions={{ type: 'stack' }} {...props}>
+        <AnimationContainer>
+          <WhiteCircle>
+            <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
+          </WhiteCircle>
+        </AnimationContainer>
+        <CenteredInstructions instructions={instructions} stretch />
+        <ActionButtonsStack>
+          <Button title="Activate" type="primary" variant="highlight" onPress={activateBiometrics} />
+          <Button title="Later" type="secondary" onPress={() => setIsBiometricsWarningModalOpen(true)} />
+        </ActionButtonsStack>
+      </ScrollScreen>
+      <Portal>
+        <BottomModal
+          isOpen={isBiometricsWarningModalOpen}
+          onClose={() => setIsBiometricsWarningModalOpen(false)}
+          Content={(props) => <BiometricsWarningModal onConfirm={handleLaterPress} confirmText="Skip" {...props} />}
+        />
+      </Portal>
+    </>
   )
 }
 

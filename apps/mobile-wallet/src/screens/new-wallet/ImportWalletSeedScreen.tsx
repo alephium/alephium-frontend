@@ -52,8 +52,7 @@ const devMnemonicToRestore = ''
 const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreenProps) => {
   const dispatch = useAppDispatch()
   const name = useAppSelector((s) => s.walletGeneration.walletName)
-  const pin = useAppSelector((s) => s.credentials.pin)
-  const deviceHasBiometricsData = useBiometrics()
+  const { deviceHasEnrolledBiometrics } = useBiometrics()
   const theme = useTheme()
   const allowedWords = useRef(bip39Words.split(' '))
 
@@ -89,46 +88,41 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
   const handleEnterPress = () => possibleMatches.length > 0 && selectWord(possibleMatches[0])
 
-  const importWallet = useCallback(
-    async (pin?: string) => {
-      // This should never happen, but if it does, let the user restart the process of creating a wallet
-      if (!name || !pin) {
-        Alert.alert('Could not proceed', `Missing ${!name ? 'wallet name' : 'pin'}`, [
-          {
-            text: 'Restart',
-            onPress: () => navigation.navigate('LandingScreen')
-          }
-        ])
-        return
-      }
+  const importWallet = useCallback(async () => {
+    // This should never happen, but if it does, let the user restart the process of creating a wallet
+    if (!name) {
+      Alert.alert('Could not proceed', 'Missing wallet name', [
+        {
+          text: 'Restart',
+          onPress: () => navigation.navigate('LandingScreen')
+        }
+      ])
+      return
+    }
 
-      setLoading(true)
+    setLoading(true)
 
-      const mnemonicToImport = devMnemonicToRestore || selectedWords.map(({ word }) => word).join(' ')
+    const mnemonicToImport = devMnemonicToRestore || selectedWords.map(({ word }) => word).join(' ')
 
-      const wallet = await generateAndStoreWallet(name, pin, mnemonicToImport)
+    const wallet = await generateAndStoreWallet(name, mnemonicToImport)
 
-      dispatch(newWalletGenerated(wallet))
-      dispatch(syncLatestTransactions(wallet.firstAddress.hash))
+    dispatch(newWalletGenerated(wallet))
+    dispatch(syncLatestTransactions(wallet.firstAddress.hash))
 
-      sendAnalytics('Imported wallet', { note: 'Entered mnemonic manually' })
+    sendAnalytics('Imported wallet', { note: 'Entered mnemonic manually' })
 
-      resetNavigation(
-        navigation,
-        deviceHasBiometricsData ? 'AddBiometricsScreen' : 'ImportWalletAddressDiscoveryScreen'
-      )
+    resetNavigation(
+      navigation,
+      deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'ImportWalletAddressDiscoveryScreen'
+    )
 
-      setLoading(false)
-    },
-    [name, selectedWords, dispatch, navigation, deviceHasBiometricsData]
-  )
+    setLoading(false)
+  }, [name, selectedWords, dispatch, navigation, deviceHasEnrolledBiometrics])
 
   const handleWordInputChange = (inputText: string) => {
     const parsedInput = inputText.split(' ')[0]
     setTypedInput(parsedInput)
   }
-
-  const handleWalletImport = () => importWallet(pin)
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
   const isImportButtonEnabled = selectedWords.length >= 12 || !!devMnemonicToRestore
@@ -139,7 +133,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
         fill
         headerOptions={{
           type: 'stack',
-          headerRight: () => <ContinueButton onPress={handleWalletImport} disabled={!isImportButtonEnabled} />
+          headerRight: () => <ContinueButton onPress={importWallet} disabled={!isImportButtonEnabled} />
         }}
         keyboardShouldPersistTaps="always"
         screenTitle="Secret phrase"

@@ -21,24 +21,17 @@ import * as SplashScreen from 'expo-splash-screen'
 import { useCallback, useState } from 'react'
 
 import { sendAnalytics } from '~/analytics'
-import AuthenticationModal from '~/components/AuthenticationModal'
+import DeprecatedAuthenticationModal from '~/components/DeprecatedAuthenticationModal'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { Spinner } from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import useBiometrics from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { storeBiometricsSettings } from '~/persistent-storage/settings'
-import {
-  deriveWalletStoredAddresses,
-  didBiometricsSettingsChange,
-  disableBiometrics,
-  enableBiometrics,
-  getWalletMetadata
-} from '~/persistent-storage/wallet'
+import { getStoredWallet, migrateDeprecatedMnemonic } from '~/persistent-storage/wallet'
 import { biometricsToggled } from '~/store/settingsSlice'
 import { walletUnlocked } from '~/store/wallet/walletSlice'
-import { WalletState } from '~/types/wallet'
-import { showToast } from '~/utils/layout'
-import { resetNavigation, restoreNavigation } from '~/utils/navigation'
+import { showExceptionToast } from '~/utils/layout'
+import { resetNavigation } from '~/utils/navigation'
 
 interface LoginWithPinScreenProps extends StackScreenProps<RootStackParamList, 'LoginWithPinScreen'>, ScreenProps {}
 
@@ -46,48 +39,51 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
   const dispatch = useAppDispatch()
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
-  const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
+  const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
+  const { deviceSupportsBiometrics, deviceHasEnrolledBiometrics } = useBiometrics()
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
 
   const handleSuccessfulLogin = useCallback(
-    async (pin?: string, wallet?: WalletState) => {
-      if (!pin || !wallet) return
+    async (deprecatedMnemonic?: string) => {
+      if (!deprecatedMnemonic) return
 
       setIsPinModalVisible(false)
 
-      if (await didBiometricsSettingsChange()) {
-        try {
-          await enableBiometrics(wallet.mnemonic, 'Detected biometrics change, please re-activate')
-          await storeBiometricsSettings(true)
-          dispatch(biometricsToggled(true))
-        } catch (e: unknown) {
-          await disableBiometrics()
-          await storeBiometricsSettings(false)
-          dispatch(biometricsToggled(false))
+      try {
+        await migrateDeprecatedMnemonic(deprecatedMnemonic)
 
-          showToast({
-            text1: 'Biometrics deactivated',
-            text2: 'You can reactivate them in the settings'
-          })
+        if (deviceSupportsBiometrics && deviceHasEnrolledBiometrics && !biometricsRequiredForAppAccess) {
+          dispatch(biometricsToggled())
         }
+
+        const needsAddressRegeneration = addressesStatus === 'uninitialized' && !isLoadingLatestTxs
+        const { addressesToInitialize, contacts, ...wallet } = await getStoredWallet(needsAddressRegeneration)
+
+        dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts }))
+
+        resetNavigation(navigation)
+
+        sendAnalytics('Unlocked wallet')
+      } catch (e) {
+        console.error(e)
+        showExceptionToast(e, 'Could not migrate mnemonic and unlock wallet')
       }
-
-      const addressesToInitialize =
-        addressesStatus === 'uninitialized' && !isLoadingLatestTxs ? await deriveWalletStoredAddresses(wallet) : []
-      const metadata = await getWalletMetadata()
-
-      dispatch(walletUnlocked({ wallet, addressesToInitialize, pin, contacts: metadata?.contacts ?? [] }))
-      lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
-
-      sendAnalytics('Unlocked wallet')
     },
-    [addressesStatus, dispatch, isLoadingLatestTxs, lastNavigationState, navigation]
+    [
+      addressesStatus,
+      biometricsRequiredForAppAccess,
+      deviceHasEnrolledBiometrics,
+      deviceSupportsBiometrics,
+      dispatch,
+      isLoadingLatestTxs,
+      navigation
+    ]
   )
 
   return (
     <Screen contrastedBg {...props}>
-      <AuthenticationModal
+      <DeprecatedAuthenticationModal
         visible={isPinModalVisible}
         forcePinUsage
         onConfirm={handleSuccessfulLogin}

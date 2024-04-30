@@ -26,17 +26,3 @@ export const pbkdf2 = async (password: string, salt: Buffer): Promise<Buffer> =>
 
   return Buffer.from(data, 'hex')
 }
-
-// Directly from bip39 package
-const salt = (password: string) => 'mnemonic' + (password || '')
-
-// Directly from bip39 package
-const normalize = (str: string) => (str || '').normalize('NFKD')
-
-// Derived from bip39 package
-export const mnemonicToSeed = async (mnemonic: string, passphrase?: string): Promise<Buffer> => {
-  const mnemonicBuffer = Buffer.from(normalize(mnemonic), 'utf8')
-  const salted = Buffer.from(salt(normalize(passphrase ?? '')), 'utf8')
-  const data = await Aes.pbkdf2(mnemonicBuffer.toString('utf8'), salted.toString('base64'), 2048, 512)
-  return Buffer.from(data, 'hex')
-}
