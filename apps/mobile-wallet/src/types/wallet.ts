@@ -64,8 +64,3 @@ export type WalletImportData = {
   addresses: AddressMetadata[]
   contacts: ContactFormData[]
 }
-
-// TODO: DELETE?
-export interface CredentialsState {
-  pin?: string
-}

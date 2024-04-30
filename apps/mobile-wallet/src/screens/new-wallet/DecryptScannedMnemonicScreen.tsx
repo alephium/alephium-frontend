@@ -48,7 +48,6 @@ interface DecryptScannedMnemonicScreenProps
 const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScreenProps) => {
   const qrCodeImportedEncryptedMnemonic = useAppSelector((s) => s.walletGeneration.qrCodeImportedEncryptedMnemonic)
   const name = useAppSelector((s) => s.walletGeneration.walletName)
-  const pin = useAppSelector((s) => s.credentials.pin)
   const dispatch = useAppDispatch()
   const { deviceHasEnrolledBiometrics } = useBiometrics()
   const inputRef = useRef<TextInput>(null)
@@ -66,10 +65,10 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
 
   const decryptAndImportWallet = async () => {
     // This should never happen, but if it does, let the user restart the process of creating a wallet
-    if (!qrCodeImportedEncryptedMnemonic || !name || !pin) {
+    if (!qrCodeImportedEncryptedMnemonic || !name) {
       Alert.alert(
         'Could not proceed',
-        `Missing ${!qrCodeImportedEncryptedMnemonic ? 'encrypted mnemonic' : !name ? 'wallet name' : 'pin'}`,
+        `Missing ${!qrCodeImportedEncryptedMnemonic ? 'encrypted mnemonic' : 'wallet name'}`,
         [
           {
             text: 'Restart',
