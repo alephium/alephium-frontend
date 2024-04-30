@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/keyring'
 import { AddressHash, client } from '@alephium/shared'
-import { transactionSign } from '@alephium/web3'
 
 import { Address } from '@/types/addresses'
 import { CsvExportQueryParams } from '@/types/transactions'
@@ -35,7 +35,7 @@ export const buildSweepTransactions = async (fromAddress: Address, toAddressHash
 }
 
 export const signAndSendTransaction = async (fromAddress: Address, txId: string, unsignedTx: string) => {
-  const signature = transactionSign(txId, fromAddress.privateKey)
+  const signature = keyring.signTransaction(txId, fromAddress.hash)
   const data = await client.node.transactions.postTransactionsSubmit({ unsignedTx, signature })
 
   return { ...data, signature }

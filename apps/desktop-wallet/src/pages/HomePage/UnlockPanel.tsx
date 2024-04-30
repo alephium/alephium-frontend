@@ -29,10 +29,10 @@ import WalletPassphrase from '@/components/Inputs/WalletPassphrase'
 import { Section } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
-import { useGlobalContext } from '@/contexts/global'
 import { useWalletConnectContext } from '@/contexts/walletconnect'
 import { useAppSelector } from '@/hooks/redux'
-import { StoredWallet } from '@/types/wallet'
+import useWalletLock from '@/hooks/useWalletLock'
+import { StoredEncryptedWallet } from '@/types/wallet'
 
 interface UnlockPanelProps {
   onNewWalletLinkClick: () => void
@@ -41,13 +41,13 @@ interface UnlockPanelProps {
 const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   const { t } = useTranslation()
   const wallets = useAppSelector((state) => state.global.wallets)
-  const { unlockWallet } = useGlobalContext()
+  const { unlockWallet } = useWalletLock()
   const { dAppUrlToConnectTo, sessionRequestEvent } = useWalletConnectContext()
   const navigate = useNavigate()
 
   const walletOptions = wallets.map(({ id, name }) => ({ label: name, value: id }))
 
-  const [selectedWallet, setSelectedWallet] = useState<StoredWallet['id']>(
+  const [selectedWallet, setSelectedWallet] = useState<StoredEncryptedWallet['id']>(
     maxBy(wallets, 'lastUsed')?.id || wallets[0]?.id
   )
   const selectedWalletOption = walletOptions.find((option) => option.value === selectedWallet)

@@ -19,13 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createAction } from '@reduxjs/toolkit'
 
 import { Message } from '@/types/snackbar'
-import { GeneratedWallet, StoredWallet, UnlockedWallet } from '@/types/wallet'
+import { GeneratedWallet, StoredEncryptedWallet, UnlockedWallet } from '@/types/wallet'
 
 export const walletCreationFailed = createAction<Message>('wallets/walletCreationFailed')
 
 export const walletNameStorageFailed = createAction<Message>('wallets/walletNameStorageFailed')
 
-export const walletDeleted = createAction<StoredWallet['id']>('wallets/walletDeleted')
+export const walletDeleted = createAction<StoredEncryptedWallet['id']>('wallets/walletDeleted')
 
 export const walletSaved = createAction<GeneratedWallet>('wallets/walletSaved')
 
@@ -37,4 +37,4 @@ export const walletSwitched = createAction<UnlockedWallet>('wallets/walletSwitch
 
 export const activeWalletDeleted = createAction('wallets/activeWalletDeleted')
 
-export const newWalletNameStored = createAction<StoredWallet['name']>('wallets/newWalletNameStored')
+export const newWalletNameStored = createAction<StoredEncryptedWallet['name']>('wallets/newWalletNameStored')

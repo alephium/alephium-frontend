@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { decryptMnemonic } from '@alephium/keyring'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -25,7 +26,7 @@ import Input from '@/components/Inputs/Input'
 import { Section } from '@/components/PageComponents/PageContainers'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
-import WalletStorage from '@/storage/wallets/walletPersistentStorage'
+import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 
 interface PasswordConfirmationProps {
   onCorrectPasswordEntered: (password: string) => void
@@ -55,12 +56,12 @@ const PasswordConfirmation: FC<PasswordConfirmationProps> = ({
 
   if (!storedWalletId) return null
 
-  const validatePassword = () => {
+  const validatePassword = async () => {
     try {
-      if (WalletStorage.load(storedWalletId, password)) {
-        onCorrectPasswordEntered(password)
-      }
+      await decryptMnemonic(walletStorage.load(storedWalletId).encrypted, password)
+      onCorrectPasswordEntered(password)
     } catch (e) {
+      console.error(e)
       dispatch(passwordValidationFailed())
     } finally {
       setPassword('')

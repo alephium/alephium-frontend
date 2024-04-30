@@ -16,22 +16,28 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { deriveNewAddressData, Wallet, walletImport } from '@alephium/shared-crypto'
+import { validateAddress } from '@alephium/web3'
 
-interface WorkerPayload {
-  data: {
-    mnemonic: Wallet['mnemonic']
-    indexesToDerive: number[]
-    passphrase?: string
+import { AddressHash } from '@/types'
+
+export const isAddressValid = (address: AddressHash) => {
+  try {
+    validateAddress(address)
+    return true
+  } catch {
+    return false
   }
 }
 
-self.onmessage = ({ data: { mnemonic, passphrase, indexesToDerive } }: WorkerPayload) => {
-  const { masterKey } = walletImport(mnemonic, passphrase)
+export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
+  let nextAvailableAddressIndex = startIndex
 
-  derive(masterKey, indexesToDerive)
+  do {
+    nextAvailableAddressIndex++
+  } while (skipIndexes.includes(nextAvailableAddressIndex))
+
+  return nextAvailableAddressIndex
 }
 
-const derive = (masterKey: Wallet['masterKey'], indexesToDerive: number[]) => {
-  self.postMessage(indexesToDerive.map((index) => deriveNewAddressData(masterKey, undefined, index)))
-}
+export const isAddressIndexValid = (addressIndex: number) =>
+  addressIndex >= 0 && Number.isInteger(addressIndex) && !addressIndex.toString().includes('e')

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletGenerate } from '@alephium/shared-crypto'
+import { dangerouslyConvertUint8ArrayMnemonicToString, keyring } from '@alephium/keyring'
 import { colord } from 'colord'
 import { Edit3 } from 'lucide-react'
 import { useEffect } from 'react'
@@ -36,33 +36,47 @@ import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
 
 const WalletWordsPage = () => {
-  const { mnemonic, setPlainWallet, setMnemonic } = useWalletContext()
   const { onButtonBack, onButtonNext } = useStepsContext()
+  const { mnemonic, setMnemonic, resetCachedMnemonic } = useWalletContext()
   const { t } = useTranslation()
 
   useEffect(() => {
-    const wallet = walletGenerate()
-    setPlainWallet(wallet)
-    setMnemonic(wallet.mnemonic)
-  }, [setMnemonic, setPlainWallet])
+    if (!mnemonic) {
+      try {
+        setMnemonic(keyring.generateRandomMnemonic())
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }, [mnemonic, setMnemonic])
 
-  const renderFormatedMnemonic = (mnemonic: string) =>
-    mnemonic.split(' ').map((w, i) => (
-      <MnemonicWordContainer key={i}>
-        <MnemonicNumber>{i + 1}</MnemonicNumber>
-        <MnemonicWord>{w}</MnemonicWord>
-      </MnemonicWordContainer>
-    ))
+  if (!mnemonic) return null
+
+  const renderMnemonicWords = () =>
+    dangerouslyConvertUint8ArrayMnemonicToString(mnemonic)
+      .split(' ')
+      .map((w, i) => (
+        <MnemonicWordContainer key={i}>
+          <MnemonicNumber>{i + 1}</MnemonicNumber>
+          <MnemonicWord>{w}</MnemonicWord>
+        </MnemonicWordContainer>
+      ))
+
+  const handleBackPress = () => {
+    keyring.clearCachedSecrets()
+    resetCachedMnemonic()
+    onButtonBack()
+  }
 
   return (
     <FloatingPanel enforceMinHeight>
-      <PanelTitle color="primary" onBackButtonClick={onButtonBack}>
+      <PanelTitle color="primary" onBackButtonClick={handleBackPress}>
         {t('Your Wallet')}
       </PanelTitle>
       <PanelContentContainer>
         <WordsContent inList>
           <Label>{t('Secret recovery phrase')}</Label>
-          <PhraseBox>{renderFormatedMnemonic(mnemonic)}</PhraseBox>
+          <PhraseBox>{renderMnemonicWords()}</PhraseBox>
           <InfoBox
             text={t("Carefully note down the words! They are your wallet's secret recovery phrase.")}
             Icon={Edit3}

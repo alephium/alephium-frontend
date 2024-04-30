@@ -16,8 +16,7 @@
     "clean:node-modules": "rm -rf node_modules"
   },
   "dependencies": {
-    "@alephium/shared": "workspace:*",
-    "@alephium/web3": "0.29.1",
+    "@alephium/web3": "0.38.0",
     "base-x": "^4.0.0",
     "bcfg": "~0.1.6",
     "bip32": "^2.0.6",

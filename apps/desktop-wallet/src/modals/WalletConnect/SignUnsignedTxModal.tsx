@@ -16,8 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { keyring } from '@alephium/keyring'
 import { client, getHumanReadableError, WALLETCONNECT_ERRORS, WalletConnectError } from '@alephium/shared'
-import { SignUnsignedTxResult, transactionSign } from '@alephium/web3'
+import { SignUnsignedTxResult } from '@alephium/web3'
 import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -95,7 +96,7 @@ const SignUnsignedTxModal = ({
     if (!decodedUnsignedTx) return
 
     try {
-      const signature = transactionSign(decodedUnsignedTx.txId, txData.fromAddress.privateKey)
+      const signature = keyring.signTransaction(decodedUnsignedTx.txId, txData.fromAddress.hash)
       const signResult: SignUnsignedTxResult = { signature, ...decodedUnsignedTx }
       await onSignSuccess(signResult)
 

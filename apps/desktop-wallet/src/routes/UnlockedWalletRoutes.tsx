@@ -31,7 +31,7 @@ const WalletRoutes = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { t } = useTranslation()
-  const isAuthenticated = useAppSelector((state) => !!state.activeWallet.mnemonic)
+  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
 
   const headerTitles: { [key: string]: string } = {
     '/wallet/overview': t('Overview'),
@@ -40,12 +40,12 @@ const WalletRoutes = () => {
   }
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!activeWalletId) {
       navigate('/')
     } else {
-      loadContacts()
+      loadContacts(activeWalletId)
     }
-  }, [isAuthenticated, navigate])
+  }, [activeWalletId, navigate])
 
   return (
     <UnlockedWalletLayout title={headerTitles[location.pathname]}>
