@@ -22,7 +22,6 @@ import { xorWith } from 'lodash'
 
 import {
   syncAddressesData,
-  syncAddressesTransactions,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
 } from '@/storage/addresses/addressesActions'
@@ -46,7 +45,6 @@ const pendingTransactionsSlice = createSlice({
     builder
       .addCase(transactionSent, pendingTransactionsAdapter.addOne)
       .addCase(receiveTestnetTokens.fulfilled, pendingTransactionsAdapter.addOne)
-      .addCase(syncAddressesTransactions.fulfilled, removeTransactions)
       .addCase(syncAddressTransactionsNextPage.fulfilled, removeTransactions)
       .addCase(syncAllAddressesTransactionsNextPage.fulfilled, removeTransactions)
       .addCase(storedPendingTransactionsLoaded, pendingTransactionsAdapter.addMany)

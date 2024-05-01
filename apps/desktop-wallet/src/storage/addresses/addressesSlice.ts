@@ -27,7 +27,6 @@ import {
 } from '@alephium/shared'
 import { groupOfAddress } from '@alephium/web3'
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
-import { uniq } from 'lodash'
 
 import {
   addressesRestoredFromMetadata,
@@ -38,7 +37,6 @@ import {
   syncAddressesAlphHistoricBalances,
   syncAddressesBalances,
   syncAddressesData,
-  syncAddressesTransactions,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage,
   transactionsLoadingStarted
@@ -129,31 +127,6 @@ const addressesSlice = createSlice({
         state.loadingTransactions = false
         state.loadingTokensBalances = false
       })
-      .addCase(syncAddressesTransactions.fulfilled, (state, action) => {
-        const addressData = action.payload
-        const updatedAddresses = addressData.map(({ hash, transactions, mempoolTransactions }) => {
-          const address = state.entities[hash] as Address
-          const lastUsed =
-            mempoolTransactions.length > 0
-              ? mempoolTransactions[0].lastSeen
-              : transactions.length > 0
-                ? transactions[0].timestamp
-                : address.lastUsed
-
-          return {
-            id: hash,
-            changes: {
-              transactions: uniq([...address.transactions, ...transactions.map((tx) => tx.hash)]),
-              transactionsPageLoaded: address.transactionsPageLoaded === 0 ? 1 : address.transactionsPageLoaded,
-              lastUsed
-            }
-          }
-        })
-
-        addressesAdapter.updateMany(state, updatedAddresses)
-
-        state.loadingTransactions = false
-      })
       .addCase(syncAddressesBalances.fulfilled, (state, action) => {
         const addressData = action.payload
         const updatedAddresses = addressData.map(({ hash, balance, lockedBalance }) => ({
@@ -177,9 +150,6 @@ const addressesSlice = createSlice({
       })
       .addCase(syncAddressesBalances.rejected, (state) => {
         state.loadingBalances = false
-      })
-      .addCase(syncAddressesTransactions.rejected, (state) => {
-        state.loadingTransactions = false
       })
       .addCase(syncAddressTransactionsNextPage.fulfilled, (state, action) => {
         const addressTransactionsData = action.payload

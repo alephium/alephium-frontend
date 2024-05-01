@@ -21,7 +21,6 @@ import { createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
 import {
   newAddressesSaved,
-  syncAddressesTransactions,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
 } from '@/storage/addresses/addressesActions'
@@ -45,7 +44,6 @@ const confirmedTransactionsSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(syncAddressesTransactions.fulfilled, addTransactions)
       .addCase(syncAddressTransactionsNextPage.fulfilled, addTransactions)
       .addCase(syncAllAddressesTransactionsNextPage.fulfilled, (state, action) => {
         const { transactions, pageLoaded } = action.payload

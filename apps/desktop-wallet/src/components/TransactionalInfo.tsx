@@ -39,7 +39,7 @@ import { useTransactionUI } from '@/hooks/useTransactionUI'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
 import { AddressTransaction } from '@/types/transactions'
-import { useTransactionInfo, isPendingTx } from '@/utils/transactions'
+import { isPendingTx, useTransactionInfo } from '@/utils/transactions'
 
 interface TransactionalInfoProps {
   transaction: AddressTransaction

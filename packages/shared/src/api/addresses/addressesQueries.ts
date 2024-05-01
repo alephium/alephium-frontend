@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { queryOptions } from '@tanstack/react-query'
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
 
-import { client, PAGINATION_PAGE_LIMIT } from '@/api'
+import { client, hashQueryKeyArray, PAGINATION_PAGE_LIMIT } from '@/api'
 
 export const addressesQueries = {
   balances: {
@@ -48,6 +48,19 @@ export const addressesQueries = {
       queryOptions({
         queryKey: ['getAddressAlphBalances', addressHash],
         queryFn: async () => await client.explorer.addresses.getAddressesAddressBalance(addressHash)
+      })
+  },
+  transactions: {
+    getAddressesTransactions: (addressesHashes: string[] = []) =>
+      infiniteQueryOptions({
+        queryKey: ['getAddressesTransactions', hashQueryKeyArray(addressesHashes)],
+        queryFn: async ({ pageParam }) =>
+          await client.explorer.addresses.postAddressesTransactions(
+            { page: pageParam, limit: PAGINATION_PAGE_LIMIT },
+            addressesHashes
+          ),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, allPages, lastPageParam) => (lastPageParam += 1)
       })
   }
 }

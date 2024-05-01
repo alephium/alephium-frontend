@@ -35,7 +35,6 @@ import { posthog } from 'posthog-js'
 
 import {
   fetchAddressesBalances,
-  fetchAddressesTransactions,
   fetchAddressesTransactionsNextPage,
   fetchAddressTransactionsNextPage
 } from '@/api/addresses'
@@ -75,7 +74,6 @@ export const syncAddressesData = createAsyncThunk<
 
   try {
     await dispatch(syncAddressesBalances(addresses))
-    return await dispatch(syncAddressesTransactions(addresses)).unwrap()
   } catch (e) {
     posthog.capture('Error', { message: 'Synching address data' })
     return rejectWithValue({
@@ -88,11 +86,6 @@ export const syncAddressesData = createAsyncThunk<
 export const syncAddressesBalances = createAsyncThunk(
   'addresses/syncAddressesBalances',
   async (addresses: AddressHash[]) => await fetchAddressesBalances(addresses)
-)
-
-export const syncAddressesTransactions = createAsyncThunk(
-  'addresses/syncAddressesTransactions',
-  async (addresses: AddressHash[]) => await fetchAddressesTransactions(addresses)
 )
 
 export const syncAddressTransactionsNextPage = createAsyncThunk(

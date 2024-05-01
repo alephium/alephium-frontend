@@ -68,7 +68,10 @@ export const assetsQueries = {
     getTokenGenericInfo: (tokenId: string) =>
       queryOptions({
         queryKey: ['getTokenGenericInfo', tokenId],
-        queryFn: async () => tokenId === ALPH.id ? { token: ALPH.id, stdInterfaceId: 'fungible'} : await tokenGenericInfoBatcher.fetch(tokenId),
+        queryFn: async () =>
+          tokenId === ALPH.id
+            ? { token: ALPH.id, stdInterfaceId: 'fungible' }
+            : await tokenGenericInfoBatcher.fetch(tokenId),
         staleTime: ONE_DAY_MS
       })
   },

@@ -16,11 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { TokenInfo } from '@alephium/token-list'
 import { orderBy } from 'lodash'
 
 import { calculateAmountWorth } from '@/numbers'
-import { Asset, FungibleToken, ListedFungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity, UnknownAsset } from '@/types'
+import {
+  Asset,
+  FungibleToken,
+  ListedFungibleToken,
+  NFT,
+  TokenDisplayBalances,
+  TokenPriceEntity,
+  UnknownAsset
+} from '@/types'
 
 export const tokenIsFungible = (asset: Partial<Asset | NFT>): asset is Asset => 'decimals' in asset
 

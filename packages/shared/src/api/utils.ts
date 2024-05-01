@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { queryOptions, useQueries, UseQueryResult } from '@tanstack/react-query'
+import { createHash } from 'crypto'
 
 export const combineQueriesResult = <R>(result: UseQueryResult<R, Error>[]) => ({
   data: result.map((r) => r.data).filter((data): data is R => data !== undefined),
@@ -31,3 +32,13 @@ export const useCombinedQueries = (queries: ReturnType<typeof queryOptions>[]) =
     queries,
     combine: combineQueriesResult
   })
+
+// This is used to avoid querying the same data multiple times if the order of the query keys is different
+// (but the content is the same)
+export const hashQueryKeyArray = (arr: string[]) => {
+  const sortedArr = [...arr].sort()
+  const arrString = JSON.stringify(sortedArr)
+  const hash = createHash('sha256')
+  hash.update(arrString)
+  return hash.digest('hex')
+}
