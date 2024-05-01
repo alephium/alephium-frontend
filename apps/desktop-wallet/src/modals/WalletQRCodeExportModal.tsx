@@ -95,19 +95,8 @@ const WalletQRCodeExportModal = ({ onClose }: { onClose: () => void }) => {
     }
   }
 
-  const handleClose = () => {
-    setFrames([])
-    onClose()
-  }
-
   return (
-    <CenteredModal
-      title={t('Export wallet')}
-      onClose={handleClose}
-      focusMode
-      narrow={frames.length === 0}
-      skipFocusOnMount
-    >
+    <CenteredModal title={t('Export wallet')} onClose={onClose} focusMode narrow={frames.length === 0} skipFocusOnMount>
       {frames.length === 0 ? (
         <div>
           <PasswordConfirmation
