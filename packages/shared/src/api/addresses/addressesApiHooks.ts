@@ -15,41 +15,49 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQueries } from '@tanstack/react-query'
+import _ from 'lodash'
 
-import { addressesQueries } from '@/api'
+import { addressesQueries, combineQueriesResult } from '@/api'
+import { AddressConfirmedTransaction, AddressMempoolTransaction } from '@/types'
 import { uniq } from '@/utils'
-import { AddressesConfirmedTransaction } from '@/types'
 
 export const useAddressesConfirmedTransactions = (addressHashes: string[]) => {
   const { data: confirmedTxsPages, fetchNextPage } = useInfiniteQuery(
     addressesQueries.transactions.getAddressesTransactions(addressHashes)
   )
 
-  const txs: AddressesConfirmedTransaction[] | undefined = confirmedTxsPages?.pages
+  const txs: AddressConfirmedTransaction[] | undefined = _(confirmedTxsPages?.pages)
     .flatMap((txs) => txs)
+    .uniqBy((tx) => tx.hash)
     .map((tx) => ({
       ...tx,
       internalAddressHashes: {
-        inputAddresses: tx.inputs
-          ? uniq(
-              tx.inputs.flatMap((input) =>
-                input.address && addressHashes.includes(input.address) ? input.address : []
-              )
-            )
-          : undefined,
-        outputAddresses: tx.outputs
-          ? uniq(
-              tx.outputs?.flatMap((output) =>
-                output.address && addressHashes.includes(output.address) ? output.address : []
-              )
-            )
-          : undefined
+        inputAddresses: uniq(
+          tx.inputs?.flatMap((input) =>
+            input.address && addressHashes.includes(input.address) ? input.address : []
+          ) || []
+        ),
+        outputAddresses: uniq(
+          tx.outputs?.flatMap((output) =>
+            output.address && addressHashes.includes(output.address) ? output.address : []
+          ) || []
+        )
       }
     }))
+    .value()
 
   return {
     fetchNextPage,
     txs
   }
+}
+
+export const useAddressesPendingTransactions = (addressHashes: string[]): AddressMempoolTransaction[][] => {
+  const { data: pendingTxs } = useQueries({
+    queries: addressHashes.map((h) => addressesQueries.transactions.getAddressPendingTransactions(h)),
+    combine: combineQueriesResult
+  })
+
+  return pendingTxs.map((addressTxs, i) => addressTxs.map((tx) => ({ ...tx, internalAddressHash: addressHashes[i] })))
 }

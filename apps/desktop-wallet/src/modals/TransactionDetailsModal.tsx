@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addApostrophes, AddressHash, NFT } from '@alephium/shared'
+import { addApostrophes, AddressConfirmedTransaction, AddressHash, NFT } from '@alephium/shared'
 import { partition } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -40,7 +40,6 @@ import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import SideModal from '@/modals/SideModal'
 import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
-import { AddressConfirmedTransaction } from '@/types/transactions'
 import { formatDateForDisplay, openInWebBrowser } from '@/utils/misc'
 import { useTransactionInfo } from '@/utils/transactions'
 
@@ -77,6 +76,8 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
   const [nfts, unknownTokens] = partition(tokensWithoutSymbol, (token) => !!allNFTs.find((nft) => nft.id === token.id))
   const nftsData = nfts.flatMap((nft) => allNFTs.find((n) => nft.id === n.id) || [])
 
+  const currentAddressHash = transaction.internalAddressHashes.inputAddresses[0]
+
   return (
     <SideModal onClose={onClose} title={t('Transaction details')}>
       <Summary>
@@ -112,7 +113,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               </FromIn>
               {(direction === 'in' || direction === 'out') && (
                 <IOList
-                  currentAddress={transaction.address.hash}
+                  currentAddress={currentAddressHash}
                   isOut={direction === 'out'}
                   outputs={transaction.outputs}
                   inputs={transaction.inputs}
@@ -122,11 +123,11 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               )}
               {direction === 'swap' && (
                 <>
-                  <AddressBadge addressHash={transaction.address.hash} truncate withBorders isShort />
+                  <AddressBadge addressHash={currentAddressHash} truncate withBorders isShort />
                   <FromIn>{t('and')}</FromIn>
                   <SwapPartnerAddress>
                     <IOList
-                      currentAddress={transaction.address.hash}
+                      currentAddress={currentAddressHash}
                       isOut={false}
                       outputs={transaction.outputs}
                       inputs={transaction.inputs}
@@ -154,12 +155,12 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               </DataList.Row>
               <DataList.Row label={t('From')}>
                 {direction === 'out' ? (
-                  <ActionLinkStyled onClick={() => handleShowAddress(transaction.address.hash)}>
-                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
+                  <ActionLinkStyled onClick={() => handleShowAddress(currentAddressHash)}>
+                    <AddressBadge addressHash={currentAddressHash} truncate withBorders />
                   </ActionLinkStyled>
                 ) : (
                   <IOList
-                    currentAddress={transaction.address.hash}
+                    currentAddress={currentAddressHash}
                     isOut={false}
                     outputs={transaction.outputs}
                     inputs={transaction.inputs}
@@ -170,15 +171,12 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               </DataList.Row>
               <DataList.Row label={t('To')}>
                 {direction !== 'out' ? (
-                  <ActionLinkStyled
-                    onClick={() => handleShowAddress(transaction.address.hash)}
-                    key={transaction.address.hash}
-                  >
-                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
+                  <ActionLinkStyled onClick={() => handleShowAddress(currentAddressHash)} key={currentAddressHash}>
+                    <AddressBadge addressHash={currentAddressHash} truncate withBorders />
                   </ActionLinkStyled>
                 ) : (
                   <IOList
-                    currentAddress={transaction.address.hash}
+                    currentAddress={currentAddressHash}
                     isOut={direction === 'out'}
                     outputs={transaction.outputs}
                     inputs={transaction.inputs}

@@ -41,7 +41,7 @@ import { WalletConnectContextProvider } from '@/contexts/walletconnect'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import UpdateWalletModal from '@/modals/UpdateWalletModal'
 import Router from '@/routes'
-import { syncAddressesAlphHistoricBalances, syncAddressesData } from '@/storage/addresses/addressesActions'
+import { syncAddressesData } from '@/storage/addresses/addressesActions'
 import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import { devModeShortcutDetected, localStorageDataMigrationFailed } from '@/storage/global/globalActions'
 import {
@@ -49,9 +49,7 @@ import {
   systemLanguageMatchFailed,
   systemLanguageMatchSucceeded
 } from '@/storage/settings/settingsActions'
-import { pendingTransactionsStorage } from '@/storage/transactions/pendingTransactionsPersistentStorage'
 import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
-import { restorePendingTransactions } from '@/storage/transactions/transactionsStorageUtils'
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
 import { AlephiumWindow } from '@/types/window'
@@ -160,17 +158,7 @@ const App = () => {
     if (networkStatus === 'online') {
       if (addressesStatus === 'uninitialized') {
         if (!isSyncingAddressData && addressHashes.length > 0 && activeWalletId) {
-          const storedPendingTxs = pendingTransactionsStorage.load(activeWalletId)
-
           dispatch(syncAddressesData())
-            .unwrap()
-            .then((results) => {
-              const mempoolTxHashes = results.flatMap((result) => result.mempoolTransactions.map((tx) => tx.hash))
-
-              restorePendingTransactions(activeWalletId, mempoolTxHashes, storedPendingTxs)
-            })
-
-          dispatch(syncAddressesAlphHistoricBalances())
         }
       }
     }

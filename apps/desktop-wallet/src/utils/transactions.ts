@@ -18,17 +18,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import {
   AddressHash,
+  AddressTransaction,
   AssetAmount,
   calcTxAmountsDeltaForAddress,
-  convertToNegative,
   getDirection,
   isConsolidationTx,
   isInternalTx,
+  isMempoolTx,
   isSwap,
   TransactionDirection,
-  TransactionInfoType,
-  AddressesTransaction,
-  AddressesPendingTransaction
+  TransactionInfoType
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { DUST_AMOUNT, explorer, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
@@ -39,23 +38,10 @@ import { SelectOption } from '@/components/Inputs/Select'
 import i18n from '@/i18n'
 import { store } from '@/storage/store'
 import { TranslationKey } from '@/types/i18next'
-import {
-  AddressPendingTransaction,
-  AddressTransaction,
-  Direction,
-  TransactionInfo,
-  TransactionTimePeriod
-} from '@/types/transactions'
+import { Direction, TransactionInfo, TransactionTimePeriod } from '@/types/transactions'
 
 export const isAmountWithinRange = (amount: bigint, maxAmount: bigint): boolean =>
   amount >= MIN_UTXO_SET_AMOUNT && amount <= maxAmount
-
-// TODO: Clean old fn is not used
-export const isPendingTx = (tx: AddressTransaction): tx is AddressPendingTransaction =>
-  (tx as AddressPendingTransaction).status === 'pending'
-
-export const isPendingTxAlt = (tx: AddressesTransaction): tx is AddressesPendingTransaction =>
-  (tx as AddressesPendingTransaction).status === 'pending'
 
 export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
   const alphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount ?? BigInt(0)
@@ -137,8 +123,8 @@ export const directionOptions: {
 
 export const useTransactionInfo = (tx: AddressTransaction, showInternalInflows?: boolean): TransactionInfo => {
   const state = store.getState()
+  const fungibleTokens = useAddressesFlattenKnownFungibleTokens()
   const internalAddresses = state.addresses.ids as AddressHash[]
-  const fungibleTokens = useAddressesFlattenKnownFungibleTokens()
 
   let amount: bigint | undefined = BigInt(0)
   let direction: TransactionDirection
@@ -146,103 +132,45 @@ export const useTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
   let lockTime: Date | undefined
   let tokens: Required<AssetAmount>[] = []
 
-  if (isPendingTx(tx)) {
-    direction = internalAddresses.includes(tx.toAddress) ? (tx.address.hash === tx.fromAddress ? 'out' : 'in') : 'out'
-    infoType = 'pending'
-    amount = tx.amount ? convertToNegative(BigInt(tx.amount)) : undefined
-    tokens = tx.tokens ? tx.tokens.map((token) => ({ ...token, amount: convertToNegative(BigInt(token.amount)) })) : []
-    lockTime = tx.lockTime !== undefined ? new Date(tx.lockTime) : undefined
+  if (isMempoolTx(tx)) {
+    const pendingTxAmountsDelta = calcTxAmountsDeltaForAddress(tx, tx.internalAddressHash)
+    amount = pendingTxAmountsDelta.alph
+    tokens = pendingTxAmountsDelta.tokens
   } else {
-    const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(tx, tx.address.hash)
-
-    amount = alphAmount
-    tokens = tokenAmounts.map((token) => ({ ...token, amount: token.amount }))
-
-    if (isConsolidationTx(tx)) {
-      direction = 'out'
-      infoType = 'move'
-    } else if (isSwap(amount, tokens)) {
-      direction = 'swap'
-      infoType = 'swap'
-    } else {
-      direction = getDirection(tx, tx.address.hash)
-      const isInternalTransfer = isInternalTx(tx, internalAddresses)
-      infoType =
-        (isInternalTransfer && showInternalInflows && direction === 'out') ||
-        (isInternalTransfer && !showInternalInflows)
-          ? 'move'
-          : direction
-    }
-
-    lockTime = (tx.outputs ?? []).reduce(
-      (a, b) =>
-        a > new Date((b as explorer.AssetOutput).lockTime ?? 0)
-          ? a
-          : new Date((b as explorer.AssetOutput).lockTime ?? 0),
-      new Date(0)
+    const txAmountsDelta = calcTxAmountsDeltaForAddress(
+      tx,
+      tx.internalAddressHashes.inputAddresses?.[0] || tx.internalAddressHashes.outputAddresses?.[0] || ''
     )
-    lockTime = lockTime.toISOString() === new Date(0).toISOString() ? undefined : lockTime
+    amount = txAmountsDelta.alph
+    tokens = txAmountsDelta.tokens
   }
 
-  const tokenAssets = [...tokens.map((token) => ({ ...token, ...fungibleTokens.find((t) => t.id === token.id) }))]
-  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
+  tokens = tokens.map((token) => ({ ...token, amount: token.amount }))
 
-  return {
-    assets,
-    direction,
-    infoType,
-    lockTime
-  }
-}
-
-
-export const useTransactionInfoAlt = (tx: AddressesTransaction, showInternalInflows?: boolean): TransactionInfo => {
-  const fungibleTokens = useAddressesFlattenKnownFungibleTokens()
-
-  let amount: bigint | undefined = BigInt(0)
-  let direction: TransactionDirection
-  let infoType: TransactionInfoType
-  let lockTime: Date | undefined
-  let tokens: Required<AssetAmount>[] = []
-
-  if (isPendingTxAlt(tx)) {
-    direction = tx .includes(tx.toAddress) ? (tx.address.hash === tx.fromAddress ? 'out' : 'in') : 'out'
-
-    infoType = 'pending'
-    amount = tx.amount ? convertToNegative(BigInt(tx.amount)) : undefined
-    tokens = tx.tokens ? tx.tokens.map((token) => ({ ...token, amount: convertToNegative(BigInt(token.amount)) })) : []
-    lockTime = tx.lockTime !== undefined ? new Date(tx.lockTime) : undefined
+  if (isConsolidationTx(tx)) {
+    direction = 'out'
+    infoType = 'move'
+  } else if (isSwap(amount, tokens)) {
+    direction = 'swap'
+    infoType = 'swap'
+  } else if (isMempoolTx(tx)) {
+    direction = getDirection(tx, tx.internalAddressHash)
+    infoType = direction
   } else {
-    const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(tx, tx.address.hash)
-
-    amount = alphAmount
-    tokens = tokenAmounts.map((token) => ({ ...token, amount: token.amount }))
-
-    if (isConsolidationTx(tx)) {
-      direction = 'out'
-      infoType = 'move'
-    } else if (isSwap(amount, tokens)) {
-      direction = 'swap'
-      infoType = 'swap'
-    } else {
-      direction = getDirection(tx, tx.address.hash)
-      const isInternalTransfer = isInternalTx(tx, internalAddresses)
-      infoType =
-        (isInternalTransfer && showInternalInflows && direction === 'out') ||
-        (isInternalTransfer && !showInternalInflows)
-          ? 'move'
-          : direction
-    }
-
-    lockTime = (tx.outputs ?? []).reduce(
-      (a, b) =>
-        a > new Date((b as explorer.AssetOutput).lockTime ?? 0)
-          ? a
-          : new Date((b as explorer.AssetOutput).lockTime ?? 0),
-      new Date(0)
-    )
-    lockTime = lockTime.toISOString() === new Date(0).toISOString() ? undefined : lockTime
+    const isInternalTransfer = isInternalTx(tx, internalAddresses)
+    direction = getDirection(tx, tx.internalAddressHashes.inputAddresses[0])
+    infoType =
+      (isInternalTransfer && showInternalInflows && direction === 'out') || (isInternalTransfer && !showInternalInflows)
+        ? 'move'
+        : direction
   }
+
+  lockTime = (tx.outputs ?? []).reduce(
+    (a, b) =>
+      a > new Date((b as explorer.AssetOutput).lockTime ?? 0) ? a : new Date((b as explorer.AssetOutput).lockTime ?? 0),
+    new Date(0)
+  )
+  lockTime = lockTime.toISOString() === new Date(0).toISOString() ? undefined : lockTime
 
   const tokenAssets = [...tokens.map((token) => ({ ...token, ...fungibleTokens.find((t) => t.id === token.id) }))]
   const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets

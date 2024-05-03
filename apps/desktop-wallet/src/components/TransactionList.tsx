@@ -16,7 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressesConfirmedTransaction, AddressHash, Asset, useAddressesConfirmedTransactions } from '@alephium/shared'
+import {
+  AddressConfirmedTransaction,
+  AddressHash,
+  Asset,
+  useAddressesConfirmedTransactions,
+  useAddressesPendingTransactions
+} from '@alephium/shared'
 import { ChevronRight } from 'lucide-react'
 import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -37,8 +43,7 @@ import {
   selectHaveAllPagesLoaded,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { makeSelectAddressesPendingTransactions } from '@/storage/transactions/transactionsSelectors'
-import { AddressConfirmedTransaction, Direction } from '@/types/transactions'
+import { Direction } from '@/types/transactions'
 import { useTransactionInfo } from '@/utils/transactions'
 
 interface TransactionListProps {
@@ -76,13 +81,12 @@ const TransactionList = ({
   const allAddressesHashes = useAppSelector((s) => selectAllAddresses(s).map((a) => a.hash))
   const usedAddressHashes = addressHashes ?? allAddressesHashes
 
-  const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
-  const pendingTxs = useAppSelector((s) => selectAddressesPendingTransactions(s, usedAddressHashes))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const finishedLoadingData = useAppSelector((s) => !s.addresses.loadingTransactions)
   const allAddressTxPagesLoaded = useAppSelector(selectHaveAllPagesLoaded)
 
   const { txs: confirmedTxs = [], fetchNextPage } = useAddressesConfirmedTransactions(usedAddressHashes)
+  const pendingTxs = useAddressesPendingTransactions(usedAddressHashes).flat()
 
   const [selectedTransaction, setSelectedTransaction] = useState<AddressConfirmedTransaction>()
 
@@ -163,7 +167,7 @@ const TransactionList = ({
           <TableRow key={tx.hash} blinking role="row" tabIndex={0}>
             <TransactionalInfo
               transaction={tx}
-              addressHash={tx.addressHashes}
+              addressHash={tx.internalAddressHash}
               showInternalInflows={hideFromColumn}
               compact={compact}
             />
@@ -171,7 +175,7 @@ const TransactionList = ({
         ))}
         {displayedConfirmedTxs.map((tx) => (
           <TableRow
-            key={`${tx.hash}-${tx.addressHashes}`}
+            key={tx.hash}
             role="row"
             tabIndex={0}
             onClick={() => setSelectedTransaction(tx)}
@@ -179,7 +183,7 @@ const TransactionList = ({
           >
             <TransactionalInfo
               transaction={tx}
-              addressHash={tx.addressHashes}
+              addressHash={tx.internalAddressHashes.inputAddresses[0]}
               showInternalInflows={hideFromColumn}
               compact={compact}
             />
@@ -224,7 +228,7 @@ const applyFilters = ({
   directions,
   assetIds
 }: Pick<TransactionListProps, 'directions' | 'assetIds' | 'hideFromColumn'> & {
-  txs: AddressesConfirmedTransaction[]
+  txs: AddressConfirmedTransaction[]
 }) => {
   const isDirectionsFilterEnabled = directions && directions.length > 0
   const isAssetsFilterEnabled = assetIds && assetIds.length > 0

@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { explorer, Optional } from '@alephium/web3'
-import { AddressInfo, AddressTokenBalance, PendingTransaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { AddressInfo, AddressTokenBalance, MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 export type Contact = {
   id: string
@@ -56,12 +56,11 @@ export type BalanceHistory = {
 }
 
 // TODO: Clean unused types in Desktop Wallet
-export type TransactionInternalAddressHashes = { inputAddresses?: AddressHash[]; outputAddresses?: AddressHash[] }
-
-export type AddressesConfirmedTransaction = explorer.Transaction & {
+export type TransactionInternalAddressHashes = { inputAddresses: AddressHash[]; outputAddresses: AddressHash[] }
+export type AddressMempoolTransaction = MempoolTransaction & {
+  internalAddressHash: AddressHash
+}
+export type AddressConfirmedTransaction = explorer.Transaction & {
   internalAddressHashes: TransactionInternalAddressHashes
 }
-export type AddressesPendingTransaction = PendingTransaction & {
-  internalAddressHashes: TransactionInternalAddressHashes
-}
-export type AddressesTransaction = AddressesConfirmedTransaction | AddressesPendingTransaction
+export type AddressTransaction = AddressConfirmedTransaction | AddressMempoolTransaction

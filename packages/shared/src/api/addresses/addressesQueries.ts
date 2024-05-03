@@ -61,6 +61,11 @@ export const addressesQueries = {
           ),
         initialPageParam: 1,
         getNextPageParam: (lastPage, allPages, lastPageParam) => (lastPageParam += 1)
+      }),
+    getAddressPendingTransactions: (addressHash: string) =>
+      queryOptions({
+        queryKey: ['getAddressPendingTransactions', addressHash],
+        queryFn: async () => await client.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash)
       })
   }
 }
