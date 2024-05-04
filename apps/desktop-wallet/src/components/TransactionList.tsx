@@ -24,7 +24,7 @@ import {
   useAddressesPendingTransactions
 } from '@alephium/shared'
 import { ChevronRight } from 'lucide-react'
-import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -37,12 +37,7 @@ import TransactionalInfo from '@/components/TransactionalInfo'
 import { useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
-import {
-  makeSelectAddresses,
-  selectAllAddresses,
-  selectHaveAllPagesLoaded,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
+import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { Direction } from '@/types/transactions'
 import { useTransactionInfo } from '@/utils/transactions'
 
@@ -76,66 +71,30 @@ const TransactionList = ({
   const { t } = useTranslation()
   const navigate = useNavigate()
 
-  const selectAddresses = useMemo(makeSelectAddresses, [])
-  const addresses = useAppSelector((s) => selectAddresses(s, addressHashes))
-  const allAddressesHashes = useAppSelector((s) => selectAllAddresses(s).map((a) => a.hash))
-  const usedAddressHashes = addressHashes ?? allAddressesHashes
+  const allAddressesHashes = useAppSelector((s) => selectAllAddresses(s))
+  const usedAddressHashes = addressHashes ?? allAddressesHashes.map((a) => a.hash)
 
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const finishedLoadingData = useAppSelector((s) => !s.addresses.loadingTransactions)
-  const allAddressTxPagesLoaded = useAppSelector(selectHaveAllPagesLoaded)
-
-  const { txs: confirmedTxs = [], fetchNextPage } = useAddressesConfirmedTransactions(usedAddressHashes)
+  const {
+    txs: confirmedTxs = [],
+    fetchNextPage,
+    hasNextPage,
+    isLoading
+  } = useAddressesConfirmedTransactions(usedAddressHashes)
   const pendingTxs = useAddressesPendingTransactions(usedAddressHashes).flat()
 
   const [selectedTransaction, setSelectedTransaction] = useState<AddressConfirmedTransaction>()
 
   const [attemptToFindNewFilteredTxs, setAttemptToFindNewFilteredTxs] = useState(0)
 
-  const singleAddress = addresses.length === 1
   const filteredConfirmedTxs = applyFilters({ txs: confirmedTxs, directions, assetIds, hideFromColumn })
   const displayedConfirmedTxs = limit ? filteredConfirmedTxs.slice(0, limit - pendingTxs.length) : filteredConfirmedTxs
-  const totalNumberOfTransactions = addresses.map((address) => address.txNumber).reduce((a, b) => a + b, 0)
   const userAttemptedToLoadMoreTxs =
     attemptToFindNewFilteredTxs > 0 && attemptToFindNewFilteredTxs <= maxAttemptsToFindNewTxs
-  const allTxsLoaded = singleAddress ? addresses[0].allTransactionPagesLoaded : allAddressTxPagesLoaded
-
-  const nbOfDisplayedTxs = useRef(filteredConfirmedTxs.length)
-  const areNewTransactionsDisplayed = nbOfDisplayedTxs.current < filteredConfirmedTxs.length
-  const shouldContinueFetchingTxs = finishedLoadingData && nbOfDisplayedTxs.current === filteredConfirmedTxs.length
 
   const handleShowMoreClick = () => {
     setAttemptToFindNewFilteredTxs(1)
     fetchNextPage()
   }
-
-  useEffect(() => {
-    if (!stateUninitialized) {
-      nbOfDisplayedTxs.current = filteredConfirmedTxs.length
-    }
-  }, [filteredConfirmedTxs.length, stateUninitialized])
-
-  useEffect(() => {
-    if (!allTxsLoaded && userAttemptedToLoadMoreTxs) {
-      if (areNewTransactionsDisplayed) {
-        nbOfDisplayedTxs.current = filteredConfirmedTxs.length
-        setAttemptToFindNewFilteredTxs(0)
-      } else if (shouldContinueFetchingTxs) {
-        setAttemptToFindNewFilteredTxs(attemptToFindNewFilteredTxs + 1)
-        fetchNextPage()
-      }
-    } else {
-      setAttemptToFindNewFilteredTxs(0)
-    }
-  }, [
-    allTxsLoaded,
-    attemptToFindNewFilteredTxs,
-    filteredConfirmedTxs.length,
-    userAttemptedToLoadMoreTxs,
-    shouldContinueFetchingTxs,
-    areNewTransactionsDisplayed,
-    fetchNextPage
-  ])
 
   return (
     <>
@@ -150,7 +109,7 @@ const TransactionList = ({
             )}
           </TableHeader>
         )}
-        {stateUninitialized && (
+        {isLoading && (
           <>
             <TableRow>
               <SkeletonLoader height="37.5px" />
@@ -183,16 +142,16 @@ const TransactionList = ({
           >
             <TransactionalInfo
               transaction={tx}
-              addressHash={tx.internalAddressHashes.inputAddresses[0]}
+              addressHash={tx.internalAddressHashes.inputAddresses[0] || tx.internalAddressHashes.outputAddresses[0]}
               showInternalInflows={hideFromColumn}
               compact={compact}
             />
           </TableRow>
         ))}
-        {limit === undefined && confirmedTxs.length !== totalNumberOfTransactions && (
+        {limit === undefined && (
           <TableRow role="row">
             <TableCell align="center" role="gridcell">
-              {allTxsLoaded ? (
+              {!hasNextPage ? (
                 <span>{t('All transactions loaded!')}</span>
               ) : userAttemptedToLoadMoreTxs ? (
                 <Spinner size="15px" />
@@ -202,7 +161,7 @@ const TransactionList = ({
             </TableCell>
           </TableRow>
         )}
-        {!stateUninitialized && !pendingTxs.length && !displayedConfirmedTxs.length && (
+        {!isLoading && !pendingTxs.length && !displayedConfirmedTxs.length && (
           <TableRow role="row" tabIndex={0}>
             <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
           </TableRow>

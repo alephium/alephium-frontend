@@ -147,15 +147,15 @@ export const useTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
 
   tokens = tokens.map((token) => ({ ...token, amount: token.amount }))
 
-  if (isConsolidationTx(tx)) {
+  if (isMempoolTx(tx)) {
+    direction = getDirection(tx, tx.internalAddressHash)
+    infoType = direction
+  } else if (isConsolidationTx(tx)) {
     direction = 'out'
     infoType = 'move'
   } else if (isSwap(amount, tokens)) {
     direction = 'swap'
     infoType = 'swap'
-  } else if (isMempoolTx(tx)) {
-    direction = getDirection(tx, tx.internalAddressHash)
-    infoType = direction
   } else {
     const isInternalTransfer = isInternalTx(tx, internalAddresses)
     direction = getDirection(tx, tx.internalAddressHashes.inputAddresses[0])

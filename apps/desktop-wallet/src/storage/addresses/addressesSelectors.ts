@@ -196,12 +196,6 @@ export const selectIsStateUninitialized = createSelector(
   (status) => status === 'uninitialized'
 )
 
-export const selectHaveAllPagesLoaded = createSelector(
-  [selectAllAddresses, (state: RootState) => state.confirmedTransactions.allLoaded],
-  (addresses, allTransactionsLoaded) =>
-    addresses.every((address) => address.allTransactionPagesLoaded) || allTransactionsLoaded
-)
-
 export const selectHaveHistoricBalancesLoaded = createSelector(selectAllAddresses, (addresses) =>
   addresses.every((address) => address.alphBalanceHistoryInitialized)
 )

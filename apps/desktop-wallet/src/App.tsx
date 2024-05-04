@@ -23,11 +23,11 @@ import {
   syncTokenCurrentPrices,
   syncTokenPriceHistories
 } from '@alephium/shared'
-import { useInitializeClient, useInterval } from '@alephium/shared-react'
+import { useInitializeClient } from '@alephium/shared-react'
 import { useQuery } from '@tanstack/react-query'
 import { AnimatePresence } from 'framer-motion'
 import { usePostHog } from 'posthog-js/react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 import AnnouncementBanner from '@/components/AnnouncementBanner'
@@ -49,7 +49,6 @@ import {
   systemLanguageMatchFailed,
   systemLanguageMatchSucceeded
 } from '@/storage/settings/settingsActions'
-import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
 import { AlephiumWindow } from '@/types/window'
@@ -60,8 +59,6 @@ const App = () => {
   const { newVersion, newVersionDownloadTriggered } = useGlobalContext()
   const dispatch = useAppDispatch()
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
-  const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
   const networkProxy = useAppSelector((s) => s.network.settings.proxy)
   const networkStatus = useAppSelector((s) => s.network.status)
   const networkName = useAppSelector((s) => s.network.name)
@@ -176,12 +173,6 @@ const App = () => {
       )
     }
   }, [])
-
-  const refreshAddressesData = useCallback(() => {
-    dispatch(syncAddressesData(addressesWithPendingTxs))
-  }, [dispatch, addressesWithPendingTxs])
-
-  useInterval(refreshAddressesData, 5000, addressesWithPendingTxs.length === 0 || isSyncingAddressData)
 
   useEffect(() => {
     if (newVersion) setUpdateWalletModalVisible(true)

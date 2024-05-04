@@ -76,7 +76,8 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
   const [nfts, unknownTokens] = partition(tokensWithoutSymbol, (token) => !!allNFTs.find((nft) => nft.id === token.id))
   const nftsData = nfts.flatMap((nft) => allNFTs.find((n) => nft.id === n.id) || [])
 
-  const currentAddressHash = transaction.internalAddressHashes.inputAddresses[0]
+  const currentAddressHash =
+    transaction.internalAddressHashes.inputAddresses[0] || transaction.internalAddressHashes.outputAddresses[0]
 
   return (
     <SideModal onClose={onClose} title={t('Transaction details')}>
