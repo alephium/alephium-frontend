@@ -114,7 +114,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           {isPending ? <SkeletonLoader height="18.5px" /> : <Amount value={BigInt(address.balance)} />}
         </AmountCell>
         <FiatAmountCell>
-          {isPending || !areTokenPricesInitialized ? (
+          {isPending ? (
             <SkeletonLoader height="18.5px" />
           ) : (
             <Amount value={addressBalanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />

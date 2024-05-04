@@ -16,14 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  assetsQueries,
-  localStorageNetworkSettingsMigrated,
-  syncTokenCurrentPrices,
-  syncTokenPriceHistories
-} from '@alephium/shared'
+import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
 import { useInitializeClient } from '@alephium/shared-react'
-import { useQuery } from '@tanstack/react-query'
 import { AnimatePresence } from 'framer-motion'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
@@ -56,7 +50,6 @@ const App = () => {
   const { newVersion, newVersionDownloadTriggered } = useGlobalContext()
   const dispatch = useAppDispatch()
   const networkProxy = useAppSelector((s) => s.network.settings.proxy)
-  const networkStatus = useAppSelector((s) => s.network.status)
   const networkName = useAppSelector((s) => s.network.name)
   const theme = useAppSelector((s) => s.global.theme)
   const loading = useAppSelector((s) => s.global.loading)
@@ -64,9 +57,6 @@ const App = () => {
   const wallets = useAppSelector((s) => s.global.wallets)
   const showDevIndication = useDevModeShortcut()
   const posthog = usePostHog()
-
-  const { data: tokenList } = useQuery(assetsQueries.tokenList.getTokenList(networkName))
-  const tokenListSymbols = tokenList?.tokens.map((token) => token.symbol)
 
   const [splashScreenVisible, setSplashScreenVisible] = useState(true)
   const [isUpdateWalletModalVisible, setUpdateWalletModalVisible] = useState(!!newVersion)
@@ -142,19 +132,6 @@ const App = () => {
   useEffect(() => {
     if (networkProxy) electron?.app.setProxySettings(networkProxy)
   }, [electron?.app, networkProxy])
-
-  // Sync current and historical prices for each verified fungible
-  // token found in each address
-  useEffect(() => {
-    if (networkStatus === 'online' && tokenListSymbols) {
-      dispatch(
-        syncTokenCurrentPrices({ verifiedFungibleTokenSymbols: tokenListSymbols, currency: settings.fiatCurrency })
-      )
-      dispatch(
-        syncTokenPriceHistories({ verifiedFungibleTokenSymbols: tokenListSymbols, currency: settings.fiatCurrency })
-      )
-    }
-  }, [])
 
   useEffect(() => {
     if (newVersion) setUpdateWalletModalVisible(true)
