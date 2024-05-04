@@ -48,7 +48,7 @@ export const useAssetsMetadataForCurrentNetwork = (assetIds: string[]) => {
 
 export const useAddressesAssets = (
   addressHashes: string[] = []
-): { addressHash: Address['hash']; assets: (Asset | NFT)[] }[] => {
+): { addressesAssets: { addressHash: Address['hash']; assets: (Asset | NFT)[] }[]; isPending: boolean } => {
   const currency = useAppSelector((state) => state.settings.fiatCurrency)
 
   const { data: addressesTokens, pending: tokensBalancesPending } = useQueries({
@@ -83,53 +83,65 @@ export const useAddressesAssets = (
     combine: combineQueriesResult
   })
 
-  if (!addressesTokens || [tokensBalancesPending, alphBalancePending, tokensPricesPending].some((p) => p === true))
-    return []
+  const isPending = [tokensBalancesPending, alphBalancePending, tokensPricesPending].some((p) => p === true)
 
-  return addressHashes.map((addressHash, i) => {
-    const addressAssets = [...addressesTokens[i]]
+  return {
+    addressesAssets: isPending
+      ? []
+      : addressHashes.map((addressHash, i) => {
+          const addressAssets = [...addressesTokens[i]]
 
-    if (addressesAlphBalances[i]) {
-      addressAssets.push({
-        ...ALPH,
-        tokenId: ALPH.id,
-        balance: addressesAlphBalances[i].balance,
-        lockedBalance: addressesAlphBalances[i].lockedBalance
-      })
-    }
+          if (addressesAlphBalances[i]) {
+            addressAssets.push({
+              ...ALPH,
+              tokenId: ALPH.id,
+              balance: addressesAlphBalances[i].balance,
+              lockedBalance: addressesAlphBalances[i].lockedBalance
+            })
+          }
 
-    const tokens = addressAssets.map((t) => {
-      const tokenMetadata = addressesAssetsMetadata.flattenKnown.find((a) => a.id === t.tokenId)
+          const tokens = addressAssets.map((t) => {
+            const tokenMetadata = addressesAssetsMetadata.flattenKnown.find((a) => a.id === t.tokenId)
 
-      const tokenPrice =
-        tokenMetadata && tokenIsListed(tokenMetadata)
-          ? tokensPrices.find((p) => p?.symbol === tokenMetadata.symbol)
-          : undefined
+            const tokenPrice =
+              tokenMetadata && tokenIsListed(tokenMetadata)
+                ? tokensPrices.find((p) => p?.symbol === tokenMetadata.symbol)
+                : undefined
 
-      const worth = tokenPrice ? calculateAmountWorth(BigInt(t.balance), tokenPrice.price) : undefined
-      const decimals = tokenMetadata && 'decimals' in tokenMetadata ? tokenMetadata.decimals : 0
+            const worth = tokenPrice ? calculateAmountWorth(BigInt(t.balance), tokenPrice.price) : undefined
+            const decimals = tokenMetadata && 'decimals' in tokenMetadata ? tokenMetadata.decimals : 0
 
-      return {
-        ...tokenMetadata,
-        id: t.tokenId,
-        balance: BigInt(t.balance),
-        lockedBalance: BigInt(t.lockedBalance),
-        worth,
-        decimals
-      }
-    })
+            return {
+              ...tokenMetadata,
+              id: t.tokenId,
+              balance: BigInt(t.balance),
+              lockedBalance: BigInt(t.lockedBalance),
+              worth,
+              decimals
+            }
+          })
 
-    return {
-      addressHash,
-      assets: sortAssets(tokens)
-    }
-  })
+          return {
+            addressHash,
+            isPending,
+            assets: sortAssets(tokens)
+          }
+        }),
+    isPending
+  }
+}
+
+interface GroupedTokens {
+  listed: Asset[]
+  nft: NFT[]
+  fungible: Asset[]
+  unknown: UnknownAsset[]
 }
 
 export const useAddressesGroupedAssets = (addressHashes: string[]) => {
-  const addressesAssets = useAddressesAssets(addressHashes)
+  const { addressesAssets, isPending } = useAddressesAssets(addressHashes)
 
-  const groupedTokens = groupBy(
+  const groupedAssets = groupBy(
     addressesAssets?.flatMap((a) => a.assets),
     (t) => {
       if (tokenIsListed(t)) {
@@ -142,54 +154,81 @@ export const useAddressesGroupedAssets = (addressHashes: string[]) => {
         return 'unknown'
       }
     }
-  )
+  ) as unknown as GroupedTokens
 
-  return addressesAssets?.map((a) => ({
-    addressHash: a.addressHash,
-    ...groupedTokens
-  }))
+  return {
+    data: addressesAssets?.map((a) => ({
+      addressHash: a.addressHash,
+      assets: groupedAssets
+    })),
+    isPending
+  }
 }
 
-export const useAddressesFlattenAssets = (addressHashes: string[] = []) =>
-  useAddressesAssets(addressHashes)?.flatMap((a) => a.assets)
+export const useAddressesFlattenAssets = (addressHashes: string[] = []) => {
+  const { addressesAssets, isPending } = useAddressesAssets(addressHashes)
 
-export const useAddressesFlattenKnownFungibleTokens = (addressHashes: string[] = []) =>
-  deduplicateAssets(
-    useAddressesAssets(addressHashes)
-      .flatMap((a) => a.assets)
-      .filter((t) => tokenIsKnownFungible(t))
-  )
+  return { data: addressesAssets.flatMap((a) => a.assets), isPending }
+}
 
-export const useAddressesFlattenListedTokens = (addressHashes: string[] = []) =>
-  deduplicateAssets(
-    useAddressesAssets(addressHashes)
-      .flatMap((a) => a.assets)
-      .filter((t) => tokenIsListed(t))
-  ) as Asset[]
+export const useAddressesFlattenKnownFungibleTokens = (addressHashes: string[] = []) => {
+  const { addressesAssets, isPending } = useAddressesAssets(addressHashes)
+  return {
+    data: deduplicateAssets(addressesAssets.flatMap((a) => a.assets).filter((t) => tokenIsKnownFungible(t))) as Asset[],
+    isPending
+  }
+}
 
-export const useAddressesFlattenUnknownTokens = (addressHashes: string[] = []) =>
-  deduplicateAssets(
-    useAddressesAssets(addressHashes)?.reduce(
-      (acc, a) => acc.concat(a.assets.filter(tokenIsUnknown).map((t) => ({ ...t, decimals: 0 }))),
-      [] as UnknownAsset[]
-    )
-  )
+export const useAddressesFlattenListedTokens = (addressHashes: string[] = []) => {
+  const { addressesAssets, isPending } = useAddressesAssets(addressHashes)
+  return {
+    data: deduplicateAssets(addressesAssets.flatMap((a) => a.assets).filter((t) => tokenIsListed(t))) as Asset[],
+    isPending
+  }
+}
 
-export const useAddressesFlattenNfts = (addressHashes: string[] = []) =>
-  deduplicateAssets(
-    useAddressesAssets(addressHashes)
-      .flatMap((a) => a.assets)
-      .filter((t) => tokenIsNonFungible(t))
-  ) as NFT[]
+export const useAddressesFlattenUnknownTokens = (addressHashes: string[] = []) => {
+  const { addressesAssets, isPending } = useAddressesAssets(addressHashes)
+  return {
+    data: deduplicateAssets(
+      addressesAssets?.reduce(
+        (acc, a) => acc.concat(a.assets.filter(tokenIsUnknown).map((t) => ({ ...t, decimals: 0 }))),
+        [] as UnknownAsset[]
+      )
+    ) as UnknownAsset[],
+    isPending
+  }
+}
 
-export const useAddressesWorth = (addressHashes: string[]) =>
-  useAddressesAssets(addressHashes)?.map((a) => ({
-    addressHash: a.addressHash,
-    worth: aggregateAssetsWorth(a.assets)
-  }))
+export const useAddressesFlattenNfts = (addressHashes: string[] = []) => {
+  const { addressesAssets, isPending } = useAddressesAssets(addressHashes)
 
-export const useAddressesTotalWorth = (addressHashes: string[] = []) =>
-  useAddressesAssets(addressHashes)?.reduce((acc, address) => acc + aggregateAssetsWorth(address.assets), 0)
+  return {
+    data: addressesAssets.flatMap((a) => a.assets).filter((t) => tokenIsNonFungible(t)) as NFT[],
+    isPending
+  }
+}
+
+export const useAddressesWorth = (addressHashes: string[]) => {
+  const { addressesAssets, isPending } = useAddressesAssets(addressHashes)
+
+  return {
+    data: addressesAssets.map((a) => ({
+      addressHash: a.addressHash,
+      worth: aggregateAssetsWorth(a.assets)
+    })),
+    isPending
+  }
+}
+
+export const useAddressesTotalWorth = (addressHashes: string[] = []) => {
+  const { addressesAssets, isPending } = useAddressesAssets(addressHashes)
+
+  return {
+    data: addressesAssets.reduce((acc, address) => acc + aggregateAssetsWorth(address.assets), 0),
+    isPending
+  }
+}
 
 const aggregateAssetsWorth = (assets: (Asset | NFT)[]) =>
   assets.reduce((acc, a) => (tokenIsFungible(a) ? acc + (a.worth || 0) : acc), 0)

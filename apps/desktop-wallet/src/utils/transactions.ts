@@ -123,7 +123,7 @@ export const directionOptions: {
 
 export const useTransactionInfo = (tx: AddressTransaction, showInternalInflows?: boolean): TransactionInfo => {
   const state = store.getState()
-  const fungibleTokens = useAddressesFlattenKnownFungibleTokens()
+  const { data: fungibleTokens } = useAddressesFlattenKnownFungibleTokens()
   const internalAddresses = state.addresses.ids as AddressHash[]
 
   let amount: bigint | undefined = BigInt(0)

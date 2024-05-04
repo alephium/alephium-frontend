@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/shared'
+import { Asset, NFT, tokenIsFungible } from '@alephium/shared'
 import styled from 'styled-components'
 
 import Amount from '@/components/Amount'
@@ -26,35 +26,49 @@ import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent
 import Truncate from '@/components/Truncate'
 
 interface SelectOptionAssetProps {
-  asset: Asset
+  asset: Asset | NFT
   isSelected?: boolean
   hideAmount?: boolean
   className?: string
 }
 
-const SelectOptionAsset = ({ asset, hideAmount, ...props }: SelectOptionAssetProps) => (
-  <SelectOptionItemContent
-    MainContent={
-      <AssetName>
-        <AssetLogo assetId={asset.id} assetImageUrl={asset.logoURI} size={20} assetName={asset.name} />
-        <Truncate>
-          {asset.name ? `${asset.name} ${asset.symbol ? `(${asset.symbol})` : ''}` : <HashEllipsed hash={asset.id} />}
-        </Truncate>
-      </AssetName>
-    }
-    SecondaryContent={
-      !hideAmount && (
-        <AmountStyled
-          value={asset.balance}
-          suffix={asset.symbol}
-          decimals={asset.decimals}
-          isUnknownToken={!asset.symbol}
-        />
-      )
-    }
-    {...props}
-  />
-)
+const SelectOptionAsset = ({ asset, hideAmount, ...props }: SelectOptionAssetProps) => {
+  const isFungibleToken = tokenIsFungible(asset)
+
+  return (
+    <SelectOptionItemContent
+      MainContent={
+        <AssetName>
+          <AssetLogo
+            assetId={asset.id}
+            assetImageUrl={isFungibleToken ? asset.logoURI : asset.image}
+            size={20}
+            assetName={asset.name}
+          />
+          <Truncate>
+            {asset.name ? (
+              `${asset.name} ${isFungibleToken && asset.symbol ? `(${asset.symbol})` : ''}`
+            ) : (
+              <HashEllipsed hash={asset.id} />
+            )}
+          </Truncate>
+        </AssetName>
+      }
+      SecondaryContent={
+        !hideAmount &&
+        isFungibleToken && (
+          <AmountStyled
+            value={asset.balance}
+            suffix={asset.symbol}
+            decimals={asset.decimals}
+            isUnknownToken={!asset.symbol}
+          />
+        )
+      }
+      {...props}
+    />
+  )
+}
 
 export default SelectOptionAsset
 

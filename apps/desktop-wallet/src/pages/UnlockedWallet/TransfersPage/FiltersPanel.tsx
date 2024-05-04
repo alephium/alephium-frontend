@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/shared'
+import { Asset, NFT, tokenIsFungible } from '@alephium/shared'
 import { colord } from 'colord'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -29,7 +29,7 @@ import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import SelectOptionAsset from '@/components/Inputs/SelectOptionAsset'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import { selectAllAddresses, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
+import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { appHeaderHeightPx } from '@/style/globalStyles'
 import { Address } from '@/types/addresses'
 import { directionOptions } from '@/utils/transactions'
@@ -39,8 +39,8 @@ interface FiltersPanelProps {
   setSelectedAddresses: (addresses: Address[]) => void
   selectedDirections: typeof directionOptions
   setSelectedDirections: (directions: typeof directionOptions) => void
-  selectedAssets?: Asset[]
-  setSelectedAssets: (assets: Asset[]) => void
+  selectedAssets?: (Asset | NFT)[]
+  setSelectedAssets: (assets: (Asset | NFT)[]) => void
   className?: string
 }
 
@@ -55,9 +55,7 @@ const FiltersPanel = ({
 }: FiltersPanelProps) => {
   const { t } = useTranslation()
   const addresses = useAppSelector(selectAllAddresses)
-  const assets = useAddressesFlattenAssets(selectedAddresses.map((address) => address.hash))
-
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
+  const { data: assets, isPending } = useAddressesFlattenAssets(selectedAddresses.map((address) => address.hash))
 
   const renderAddressesSelectedValue = () =>
     selectedAddresses.length === 0
@@ -82,7 +80,7 @@ const FiltersPanel = ({
         ? ''
         : selectedAssets.length === assets.length
           ? t('All selected')
-          : selectedAssets.map((asset) => asset.symbol ?? asset.id).join(', ')
+          : selectedAssets.map((asset) => (tokenIsFungible(asset) ? asset.symbol : asset.id)).join(', ')
 
   const resetFilters = () => {
     setSelectedAddresses(addresses)
@@ -91,10 +89,10 @@ const FiltersPanel = ({
   }
 
   useEffect(() => {
-    if (!stateUninitialized && !selectedAssets) {
+    if (!isPending && !selectedAssets) {
       setSelectedAssets(assets)
     }
-  }, [assets, selectedAssets, setSelectedAssets, stateUninitialized])
+  }, [assets, isPending, selectedAssets, setSelectedAssets])
 
   return (
     <UnlockedWalletPanel className={className}>
@@ -122,7 +120,7 @@ const FiltersPanel = ({
             selectedOptionsSetter={setSelectedAssets}
             renderSelectedValue={renderAssetsSelectedValue}
             getOptionId={(asset) => asset.id}
-            getOptionText={(asset) => asset.name ?? asset.symbol ?? asset.id}
+            getOptionText={(asset) => asset.name ?? (asset as Asset).symbol ?? asset.id}
             renderOption={(asset, isSelected) => <SelectOptionAsset asset={asset} hideAmount isSelected={isSelected} />}
           />
         </Tile>

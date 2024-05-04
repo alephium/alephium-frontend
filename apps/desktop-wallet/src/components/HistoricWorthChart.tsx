@@ -24,11 +24,7 @@ import Chart from 'react-apexcharts'
 import styled, { useTheme } from 'styled-components'
 
 import { useAppSelector } from '@/hooks/redux'
-import {
-  makeSelectAddresses,
-  selectHaveHistoricBalancesLoaded,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
+import { makeSelectAddresses, selectHaveHistoricBalancesLoaded } from '@/storage/addresses/addressesSelectors'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/types/chart'
 
 interface HistoricWorthChartProps {
@@ -61,7 +57,6 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   const selectAddresses = useMemo(makeSelectAddresses, [])
   const addresses = useAppSelector((s) => selectAddresses(s, addressHash ?? (s.addresses.ids as AddressHash[])))
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const alphPriceHistory = useAppSelector(selectAlphPriceHistory)
 
   const theme = useTheme()
@@ -125,7 +120,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   const yAxisWorthData = chartData.map(({ worth }) => worth)
 
   const worthHasGoneUp = firstItem.worth < latestWorth
-  const chartColor = stateUninitialized ? theme.font.tertiary : worthHasGoneUp ? theme.global.valid : theme.global.alert
+  const chartColor = worthHasGoneUp ? theme.global.valid : theme.global.alert
 
   const chartOptions = getChartOptions(chartColor, xAxisDatesData, {
     mouseMove(e, chart, options) {

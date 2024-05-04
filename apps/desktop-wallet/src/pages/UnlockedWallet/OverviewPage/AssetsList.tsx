@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, Asset, CURRENCIES, NFT } from '@alephium/shared'
+import { AddressHash, Asset, CURRENCIES, NFT, tokenIsUnknown, UnknownAsset } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -42,7 +42,7 @@ import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
-import { selectAllAddresses, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
+import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
 interface AssetsListProps {
@@ -73,7 +73,7 @@ const AssetsList = ({
   const allAddresses = useAppSelector(selectAllAddresses)
   const usedAddressHashes = addressHashes && addressHashes.length > 0 ? addressHashes : allAddresses.map((a) => a.hash)
 
-  const unknownTokens = useAddressesFlattenUnknownTokens(usedAddressHashes)
+  const { data: unknownTokens } = useAddressesFlattenUnknownTokens(usedAddressHashes)
 
   const [tabs, setTabs] = useState([
     { value: 'tokens', label: tokensTabTitle ?? '💰 ' + t('Tokens') },
@@ -126,8 +126,7 @@ const AssetsList = ({
 }
 
 const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsListProps) => {
-  const knownFungibleTokens = useAddressesFlattenKnownFungibleTokens(addressHashes)
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
+  const { data: knownFungibleTokens, isPending } = useAddressesFlattenKnownFungibleTokens(addressHashes)
 
   return (
     <>
@@ -135,7 +134,7 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
         {knownFungibleTokens.map((asset) => (
           <TokenListRow asset={asset} isExpanded={isExpanded} key={asset.id} />
         ))}
-        {stateUninitialized && (
+        {isPending && (
           <TableRow>
             <SkeletonLoader height="37.5px" />
           </TableRow>
@@ -148,7 +147,7 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
 }
 
 const UnknownTokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsListProps) => {
-  const unknownTokens = useAddressesFlattenUnknownTokens(addressHashes)
+  const { data: unknownTokens } = useAddressesFlattenUnknownTokens(addressHashes)
 
   return (
     <>
@@ -164,14 +163,14 @@ const UnknownTokensList = ({ className, addressHashes, isExpanded, onExpand }: A
 }
 
 interface TokenListRowProps {
-  asset: Asset
+  asset: Asset | UnknownAsset
   isExpanded: AssetsListProps['isExpanded']
 }
 
 const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
+  const isTokenUnknown = tokenIsUnknown(asset)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
   return (
@@ -183,7 +182,7 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
             {asset.name ?? (
               <HashEllipsed hash={asset.id} tooltipText={t('Copy token hash')} disableCopy={!isExpanded} />
             )}
-            {asset.verified === false && (
+            {!isTokenUnknown && asset.verified === false && (
               <InfoIcon data-tooltip-id="default" data-tooltip-content={t('No metadata')}>
                 i
               </InfoIcon>
@@ -192,35 +191,29 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
           {asset.symbol && <TokenSymbol>{asset.symbol}</TokenSymbol>}
         </NameColumn>
         <TableCellAmount>
-          {stateUninitialized ? (
-            <SkeletonLoader height="20px" width="30%" />
-          ) : (
-            <>
-              <TokenAmount
-                value={asset.balance}
+          <TokenAmount
+            value={asset.balance}
+            suffix={asset.symbol}
+            decimals={asset.decimals}
+            isUnknownToken={!asset.symbol}
+          />
+          {asset.lockedBalance > 0 && (
+            <AmountSubtitle>
+              {`${t('Available')}: `}
+              <Amount
+                value={asset.balance - asset.lockedBalance}
                 suffix={asset.symbol}
+                color={theme.font.tertiary}
                 decimals={asset.decimals}
                 isUnknownToken={!asset.symbol}
               />
-              {asset.lockedBalance > 0 && (
-                <AmountSubtitle>
-                  {`${t('Available')}: `}
-                  <Amount
-                    value={asset.balance - asset.lockedBalance}
-                    suffix={asset.symbol}
-                    color={theme.font.tertiary}
-                    decimals={asset.decimals}
-                    isUnknownToken={!asset.symbol}
-                  />
-                </AmountSubtitle>
-              )}
-              {!asset.symbol && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
-              {asset.worth !== undefined && (
-                <Price>
-                  <Amount value={asset.worth} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
-                </Price>
-              )}
-            </>
+            </AmountSubtitle>
+          )}
+          {!asset.symbol && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
+          {!isTokenUnknown && asset.worth !== undefined && (
+            <Price>
+              <Amount value={asset.worth} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
+            </Price>
           )}
         </TableCellAmount>
       </TokenRow>
@@ -230,14 +223,13 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
 
 const NFTsList = ({ className, addressHashes, isExpanded, onExpand, nftColumns }: AssetsListProps) => {
   const { t } = useTranslation()
-  const nfts = useAddressesFlattenNfts(addressHashes)
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
+  const { data: nfts, isPending } = useAddressesFlattenNfts(addressHashes)
   const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {stateUninitialized ? (
+        {isPending ? (
           <NFTList>
             <SkeletonLoader height="205px" />
             <SkeletonLoader height="205px" />

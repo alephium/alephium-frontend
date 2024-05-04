@@ -191,11 +191,6 @@ export const makeSelectContactByAddress = () =>
     contacts.find((contact) => contact.address === addressHash)
   )
 
-export const selectIsStateUninitialized = createSelector(
-  (state: RootState) => state.addresses.status,
-  (status) => status === 'uninitialized'
-)
-
 export const selectHaveHistoricBalancesLoaded = createSelector(selectAllAddresses, (addresses) =>
   addresses.every((address) => address.alphBalanceHistoryInitialized)
 )

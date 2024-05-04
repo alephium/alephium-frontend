@@ -35,8 +35,7 @@ import {
   makeSelectAddresses,
   makeSelectAddressesHaveHistoricBalances,
   selectAddressIds,
-  selectHaveHistoricBalancesLoaded,
-  selectIsStateUninitialized
+  selectHaveHistoricBalancesLoaded
 } from '@/storage/addresses/addressesSelectors'
 import { ChartLength, chartLengths, DataPoint } from '@/types/chart'
 import { getAvailableBalance } from '@/utils/addresses'
@@ -56,7 +55,6 @@ const chartAnimationVariants = {
 
 const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addressHash, children, showChart }) => {
   const { t } = useTranslation()
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const allAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const addressHashes = addressHash ?? allAddressHashes
   const selectAddresses = useMemo(makeSelectAddresses, [])
@@ -84,7 +82,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const totalLockedBalance = addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0))
   const totalAlphAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice) : undefined
 
-  const totalAmountWorth = useAddressesTotalWorth(allAddressHashes)
+  const { data: totalAmountWorth } = useAddressesTotalWorth(allAddressHashes)
 
   const balanceInFiat = hoveredDataPointWorth ?? totalAmountWorth
 
@@ -111,9 +109,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
               {hoveredDataPointWorth !== undefined && (
                 <Opacity>
                   <FiatDeltaPercentage>
-                    {stateUninitialized ||
-                    !haveHistoricBalancesLoaded ||
-                    (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
+                    {!haveHistoricBalancesLoaded || (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
                       <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
                     ) : hasHistoricBalances && worthInBeginningOfChart && hoveredDataPointWorth !== undefined ? (
                       <DeltaPercentage initialValue={worthInBeginningOfChart} latestValue={hoveredDataPointWorth} />
@@ -124,7 +120,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
               <ChartLengthBadges>
                 {chartLengths.map((length) =>
-                  stateUninitialized || !haveHistoricBalancesLoaded ? (
+                  !haveHistoricBalancesLoaded ? (
                     <SkeletonLoader
                       key={length}
                       height="25px"

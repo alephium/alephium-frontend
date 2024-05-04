@@ -23,7 +23,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesFlattenAssets, useAddressesWorth } from '@/api/apiHooks'
+import { useAddressesGroupedAssets, useAddressesWorth } from '@/api/apiHooks'
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Amount from '@/components/Amount'
@@ -32,7 +32,7 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
-import { selectAddressByHash, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface AddressGridRowProps {
@@ -44,18 +44,21 @@ const maxDisplayedAssets = 7 // Allow 2 rows by default
 
 const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const { t } = useTranslation()
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-  const assets = useAddressesFlattenAssets([addressHash])
+  const { data: addressesGroupedAssetsData, isPending: addressAssetsPending } = useAddressesGroupedAssets([addressHash])
+  const addressGroupedAssets = addressesGroupedAssetsData[0].assets
+
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const areTokenPricesInitialized = useAppSelector((s) => s.tokenPrices.status === 'initialized')
-  const balanceInFiat = useAddressesWorth([addressHash])[0].worth
+  const { data: balanceInFiat, isPending: addressWorthPending } = useAddressesWorth([addressHash])
+  const addressBalanceInFiat = balanceInFiat[0].worth
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
-  const assetsWithBalance = assets.filter((asset) => asset.balance > 0)
+  const assetsWithBalance = addressGroupedAssets.fungible.filter((asset) => asset.balance > 0)
   const [displayedAssets, ...hiddenAssetsChunks] = chunk(assetsWithBalance, maxDisplayedAssets)
   const hiddenAssets = hiddenAssetsChunks.flat()
+
+  const isPending = addressAssetsPending || addressWorthPending
 
   if (!address) return null
 
@@ -94,7 +97,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           </Column>
         </AddressNameCell>
         <Cell>
-          {stateUninitialized ? (
+          {isPending ? (
             <SkeletonLoader height="33.5px" />
           ) : (
             <AssetLogos>
@@ -108,13 +111,13 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           )}
         </Cell>
         <AmountCell>
-          {stateUninitialized ? <SkeletonLoader height="18.5px" /> : <Amount value={BigInt(address.balance)} />}
+          {isPending ? <SkeletonLoader height="18.5px" /> : <Amount value={BigInt(address.balance)} />}
         </AmountCell>
         <FiatAmountCell>
-          {stateUninitialized || !areTokenPricesInitialized ? (
+          {isPending || !areTokenPricesInitialized ? (
             <SkeletonLoader height="18.5px" />
           ) : (
-            <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
+            <Amount value={addressBalanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
           )}
         </FiatAmountCell>
       </GridRow>

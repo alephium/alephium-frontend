@@ -55,7 +55,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
   const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
   const internalAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const allNFTs = useAddressesFlattenNfts(internalAddressHashes)
+  const { data: allNFTs } = useAddressesFlattenNfts(internalAddressHashes)
 
   const { assets, direction, lockTime, infoType } = useTransactionInfo(transaction)
   const { label, Icon, iconColor } = useTransactionUI({
