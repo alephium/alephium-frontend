@@ -34,7 +34,6 @@ import {
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { useQueries } from '@tanstack/react-query'
-import { groupBy } from 'lodash'
 
 import { useAppSelector } from '@/hooks/redux'
 import { Address } from '@/types/addresses'
@@ -131,30 +130,10 @@ export const useAddressesAssets = (
   }
 }
 
-interface GroupedTokens {
-  listed: Asset[]
-  nft: NFT[]
-  fungible: Asset[]
-  unknown: UnknownAsset[]
-}
-
 export const useAddressesGroupedAssets = (addressHashes: string[]) => {
   const { addressesAssets, isPending } = useAddressesAssets(addressHashes)
 
-  const groupedAssets = groupBy(
-    addressesAssets?.flatMap((a) => a.assets),
-    (t) => {
-      if (tokenIsListed(t)) {
-        return 'listed'
-      } else if (tokenIsNonFungible(t)) {
-        return 'nft'
-      } else if (tokenIsKnownFungible(t)) {
-        return 'fungible'
-      } else {
-        return 'unknown'
-      }
-    }
-  ) as unknown as GroupedTokens
+  const groupedAssets = groupByAssetType(addressesAssets?.flatMap((a) => a.assets))
 
   return {
     data: addressesAssets?.map((a) => ({
@@ -264,4 +243,42 @@ const deduplicateAssets = (assets: (Asset | NFT)[]) => {
   }, {})
 
   return Object.values(uniqueAssetsMap)
+}
+
+// TODO: Move to shared (typed custom groupBy function)
+type GroupFunction<T, K extends string | number> = (item: T) => K
+
+const groupBy = <T, K extends string | number>(items: T[], groupFn: GroupFunction<T, K>): Record<K, T[]> => {
+  const groups: Record<K, T[]> = {} as Record<K, T[]>
+
+  items.forEach((item) => {
+    const key = groupFn(item)
+    if (!(key in groups)) {
+      groups[key] = []
+    }
+    groups[key].push(item)
+  })
+
+  return groups
+}
+
+const groupByAssetType = (assets: (Asset | NFT)[]) => {
+  const groupedAssets = groupBy(assets, (a) => {
+    if (tokenIsListed(a)) {
+      return 'listed'
+    } else if (tokenIsNonFungible(a)) {
+      return 'nft'
+    } else if (tokenIsKnownFungible(a)) {
+      return 'fungible'
+    } else {
+      return 'unknown'
+    }
+  })
+
+  return {
+    listed: (groupedAssets.listed || []) as Asset[],
+    fungible: (groupedAssets.fungible || []) as Asset[],
+    nft: (groupedAssets.nft || []) as NFT[],
+    unknown: (groupedAssets.unknown || []) as UnknownAsset[]
+  }
 }

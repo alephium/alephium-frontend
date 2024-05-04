@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, CURRENCIES } from '@alephium/shared'
+import { addressesQueries, AddressHash, CURRENCIES } from '@alephium/shared'
+import { useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 import { useState } from 'react'
@@ -45,6 +46,11 @@ const maxDisplayedAssets = 7 // Allow 2 rows by default
 const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  console.log(address)
+  const { data: addressAlphBalance, isPending: isAddressAlphBalancePending } = useQuery(
+    addressesQueries.balances.getAddressAlphBalances(addressHash)
+  )
+
   const { data: addressesGroupedAssetsData, isPending: addressAssetsPending } = useAddressesGroupedAssets([addressHash])
   const addressGroupedAssets = addressesGroupedAssetsData[0].assets
 
@@ -111,7 +117,11 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           )}
         </Cell>
         <AmountCell>
-          {isPending ? <SkeletonLoader height="18.5px" /> : <Amount value={BigInt(address.balance)} />}
+          {isAddressAlphBalancePending ? (
+            <SkeletonLoader height="18.5px" />
+          ) : (
+            addressAlphBalance && <Amount value={BigInt(addressAlphBalance.balance)} />
+          )}
         </AmountCell>
         <FiatAmountCell>
           {isPending ? (
