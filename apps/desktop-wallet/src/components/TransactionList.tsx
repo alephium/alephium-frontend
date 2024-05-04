@@ -54,8 +54,6 @@ interface TransactionListProps {
   headerExtraContent?: ReactNode
 }
 
-const maxAttemptsToFindNewTxs = 10
-
 const TransactionList = ({
   className,
   addressHashes,
@@ -80,21 +78,13 @@ const TransactionList = ({
     hasNextPage,
     isLoading
   } = useAddressesConfirmedTransactions(usedAddressHashes)
-  const pendingTxs = useAddressesPendingTransactions(usedAddressHashes).flat()
+  const pendingTxsPerAddress = useAddressesPendingTransactions(usedAddressHashes)
+  const pendingTxs = pendingTxsPerAddress.flat()
 
   const [selectedTransaction, setSelectedTransaction] = useState<AddressConfirmedTransaction>()
 
-  const [attemptToFindNewFilteredTxs, setAttemptToFindNewFilteredTxs] = useState(0)
-
   const filteredConfirmedTxs = applyFilters({ txs: confirmedTxs, directions, assetIds, hideFromColumn })
   const displayedConfirmedTxs = limit ? filteredConfirmedTxs.slice(0, limit - pendingTxs.length) : filteredConfirmedTxs
-  const userAttemptedToLoadMoreTxs =
-    attemptToFindNewFilteredTxs > 0 && attemptToFindNewFilteredTxs <= maxAttemptsToFindNewTxs
-
-  const handleShowMoreClick = () => {
-    setAttemptToFindNewFilteredTxs(1)
-    fetchNextPage()
-  }
 
   return (
     <>
@@ -153,10 +143,10 @@ const TransactionList = ({
             <TableCell align="center" role="gridcell">
               {!hasNextPage ? (
                 <span>{t('All transactions loaded!')}</span>
-              ) : userAttemptedToLoadMoreTxs ? (
+              ) : isLoading ? (
                 <Spinner size="15px" />
               ) : (
-                <ActionLink onClick={handleShowMoreClick}>{t('Show more')}</ActionLink>
+                <ActionLink onClick={fetchNextPage}>{t('Show more')}</ActionLink>
               )}
             </TableCell>
           </TableRow>

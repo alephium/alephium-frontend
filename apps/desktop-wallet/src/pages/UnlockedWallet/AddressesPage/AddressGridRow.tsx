@@ -46,7 +46,7 @@ const maxDisplayedAssets = 7 // Allow 2 rows by default
 const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-  console.log(address)
+
   const { data: addressAlphBalance, isPending: isAddressAlphBalancePending } = useQuery(
     addressesQueries.balances.getAddressAlphBalances(addressHash)
   )

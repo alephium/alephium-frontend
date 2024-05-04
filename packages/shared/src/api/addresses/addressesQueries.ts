@@ -51,14 +51,16 @@ export const addressesQueries = {
       })
   },
   transactions: {
+    getAddressTotalTransactions: (addressHash: string) =>
+      queryOptions({
+        queryKey: ['getAddressTotalTransactions', addressHash],
+        queryFn: async () => await client.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
+      }),
     getAddressesTransactions: (addressesHashes: string[] = []) =>
       infiniteQueryOptions({
         queryKey: ['getAddressesTransactions', hashQueryKeyArray(addressesHashes)],
         queryFn: async ({ pageParam }) =>
-          await client.explorer.addresses.postAddressesTransactions(
-            { page: pageParam, limit: PAGINATION_PAGE_LIMIT },
-            addressesHashes
-          ),
+          await client.explorer.addresses.postAddressesTransactions({ page: pageParam, limit: 20 }, addressesHashes),
         initialPageParam: 1,
         getNextPageParam: (lastPage, allPages, lastPageParam) => (lastPageParam += 1)
       }),

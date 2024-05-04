@@ -23,12 +23,18 @@ import { AddressConfirmedTransaction, AddressMempoolTransaction } from '@/types'
 import { uniq } from '@/utils'
 
 export const useAddressesConfirmedTransactions = (addressHashes: string[]) => {
+  const { data: totalTransactionsPerAddress } = useQueries({
+    queries: addressHashes.map((h) => addressesQueries.transactions.getAddressTotalTransactions(h)),
+    combine: combineQueriesResult
+  })
+
   const {
     data: confirmedTxsPages,
     fetchNextPage,
-    hasNextPage,
     isLoading
   } = useInfiniteQuery(addressesQueries.transactions.getAddressesTransactions(addressHashes))
+
+  const totalTransactions = totalTransactionsPerAddress.reduce((acc, total) => acc + total, 0)
 
   const txs: AddressConfirmedTransaction[] | undefined = _(confirmedTxsPages?.pages)
     .flatMap((txs) => txs)
@@ -50,9 +56,12 @@ export const useAddressesConfirmedTransactions = (addressHashes: string[]) => {
     }))
     .value()
 
+  const hasNextPage =
+    confirmedTxsPages && confirmedTxsPages.pages.reduce((acc, page) => acc + page.length, 0) < totalTransactions
+
   return {
-    fetchNextPage,
     hasNextPage,
+    fetchNextPage,
     isLoading,
     txs
   }
