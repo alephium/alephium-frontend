@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-  AddressHash,
   assetsQueries,
   localStorageNetworkSettingsMigrated,
   syncTokenCurrentPrices,
@@ -41,8 +40,6 @@ import { WalletConnectContextProvider } from '@/contexts/walletconnect'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import UpdateWalletModal from '@/modals/UpdateWalletModal'
 import Router from '@/routes'
-import { syncAddressesData } from '@/storage/addresses/addressesActions'
-import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import { devModeShortcutDetected, localStorageDataMigrationFailed } from '@/storage/global/globalActions'
 import {
   localStorageGeneralSettingsMigrated,
@@ -58,7 +55,6 @@ import { languageOptions } from '@/utils/settings'
 const App = () => {
   const { newVersion, newVersionDownloadTriggered } = useGlobalContext()
   const dispatch = useAppDispatch()
-  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const networkProxy = useAppSelector((s) => s.network.settings.proxy)
   const networkStatus = useAppSelector((s) => s.network.status)
   const networkName = useAppSelector((s) => s.network.name)
@@ -66,12 +62,8 @@ const App = () => {
   const loading = useAppSelector((s) => s.global.loading)
   const settings = useAppSelector((s) => s.settings)
   const wallets = useAppSelector((s) => s.global.wallets)
-  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const showDevIndication = useDevModeShortcut()
   const posthog = usePostHog()
-
-  const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
 
   const { data: tokenList } = useQuery(assetsQueries.tokenList.getTokenList(networkName))
   const tokenListSymbols = tokenList?.tokens.map((token) => token.symbol)
@@ -150,16 +142,6 @@ const App = () => {
   useEffect(() => {
     if (networkProxy) electron?.app.setProxySettings(networkProxy)
   }, [electron?.app, networkProxy])
-
-  useEffect(() => {
-    if (networkStatus === 'online') {
-      if (addressesStatus === 'uninitialized') {
-        if (!isSyncingAddressData && addressHashes.length > 0 && activeWalletId) {
-          dispatch(syncAddressesData())
-        }
-      }
-    }
-  }, [addressHashes.length, addressesStatus, dispatch, isSyncingAddressData, networkStatus, activeWalletId])
 
   // Sync current and historical prices for each verified fungible
   // token found in each address

@@ -21,7 +21,6 @@ import {
   balanceHistoryAdapter,
   customNetworkSettingsSaved,
   extractNewTransactions,
-  getTransactionsOfAddress,
   networkPresetSwitched,
   syncingAddressDataStarted
 } from '@alephium/shared'
@@ -35,10 +34,7 @@ import {
   defaultAddressChanged,
   newAddressesSaved,
   syncAddressesAlphHistoricBalances,
-  syncAddressesBalances,
-  syncAddressesData,
   syncAddressTransactionsNextPage,
-  syncAllAddressesTransactionsNextPage,
   transactionsLoadingStarted
 } from '@/storage/addresses/addressesActions'
 import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
@@ -120,37 +116,6 @@ const addressesSlice = createSlice({
       .addCase(addressRestorationStarted, (state) => {
         state.isRestoringAddressesFromMetadata = true
       })
-      .addCase(syncAddressesData.fulfilled, (state, action) => {
-        state.status = 'initialized'
-        state.syncingAddressData = false
-        state.loadingBalances = false
-        state.loadingTransactions = false
-        state.loadingTokensBalances = false
-      })
-      .addCase(syncAddressesBalances.fulfilled, (state, action) => {
-        const addressData = action.payload
-        const updatedAddresses = addressData.map(({ hash, balance, lockedBalance }) => ({
-          id: hash,
-          changes: {
-            balance,
-            lockedBalance
-          }
-        }))
-
-        addressesAdapter.updateMany(state, updatedAddresses)
-
-        state.loadingBalances = false
-        state.balancesStatus = 'initialized'
-      })
-      .addCase(syncAddressesData.rejected, (state) => {
-        state.syncingAddressData = false
-        state.loadingBalances = false
-        state.loadingTransactions = false
-        state.loadingTokensBalances = false
-      })
-      .addCase(syncAddressesBalances.rejected, (state) => {
-        state.loadingBalances = false
-      })
       .addCase(syncAddressTransactionsNextPage.fulfilled, (state, action) => {
         const addressTransactionsData = action.payload
 
@@ -168,27 +133,6 @@ const addressesSlice = createSlice({
             allTransactionPagesLoaded: transactions.length === 0
           }
         })
-
-        state.loadingTransactions = false
-      })
-      .addCase(syncAllAddressesTransactionsNextPage.fulfilled, (state, { payload: { transactions } }) => {
-        const addresses = getAddresses(state)
-
-        const updatedAddresses = addresses.map((address) => {
-          const transactionsOfAddress = getTransactionsOfAddress(transactions, address.hash)
-          const newTxHashes = extractNewTransactions(transactionsOfAddress, address.transactions).map(
-            ({ hash }) => hash
-          )
-
-          return {
-            id: address.hash,
-            changes: {
-              transactions: address.transactions.concat(newTxHashes)
-            }
-          }
-        })
-
-        addressesAdapter.updateMany(state, updatedAddresses)
 
         state.loadingTransactions = false
       })

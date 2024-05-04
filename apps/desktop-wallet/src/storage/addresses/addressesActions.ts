@@ -16,33 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  ADDRESSES_QUERY_LIMIT,
-  AddressHash,
-  AddressSettings,
-  BalanceHistory,
-  CHART_DATE_FORMAT,
-  client,
-  Contact,
-  getHumanReadableError,
-  syncingAddressDataStarted
-} from '@alephium/shared'
+import { AddressHash, AddressSettings, BalanceHistory, CHART_DATE_FORMAT, client, Contact } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
-import { chunk } from 'lodash'
 import { posthog } from 'posthog-js'
 
-import {
-  fetchAddressesBalances,
-  fetchAddressesTransactionsNextPage,
-  fetchAddressTransactionsNextPage
-} from '@/api/addresses'
-import i18n from '@/i18n'
-import { selectAddressByHash, selectAllAddresses } from '@/storage/addresses/addressesSelectors'
+import { fetchAddressTransactionsNextPage } from '@/api/addresses'
+import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { RootState } from '@/storage/store'
-import { Address, AddressBase, AddressTransactionsSyncResult, LoadingEnabled } from '@/types/addresses'
-import { Message, SnackbarMessage } from '@/types/snackbar'
+import { Address, AddressBase, LoadingEnabled } from '@/types/addresses'
+import { Message } from '@/types/snackbar'
 
 export const transactionsLoadingStarted = createAction('addresses/transactionsLoadingStarted')
 
@@ -62,32 +46,6 @@ export const addressSettingsSaved = createAction<{ addressHash: AddressHash; set
   'addresses/addressSettingsSaved'
 )
 
-export const syncAddressesData = createAsyncThunk<
-  AddressTransactionsSyncResult[],
-  AddressHash[] | undefined,
-  { rejectValue: SnackbarMessage }
->('addresses/syncAddressesData', async (payload, { getState, dispatch, rejectWithValue }) => {
-  dispatch(syncingAddressDataStarted())
-
-  const state = getState() as RootState
-  const addresses = payload ?? (state.addresses.ids as AddressHash[])
-
-  try {
-    await dispatch(syncAddressesBalances(addresses))
-  } catch (e) {
-    posthog.capture('Error', { message: 'Synching address data' })
-    return rejectWithValue({
-      text: getHumanReadableError(e, i18n.t("Encountered error while synching your addresses' data.")),
-      type: 'alert'
-    })
-  }
-})
-
-export const syncAddressesBalances = createAsyncThunk(
-  'addresses/syncAddressesBalances',
-  async (addresses: AddressHash[]) => await fetchAddressesBalances(addresses)
-)
-
 export const syncAddressTransactionsNextPage = createAsyncThunk(
   'addresses/syncAddressTransactionsNextPage',
   async (payload: AddressHash, { getState, dispatch }) => {
@@ -99,48 +57,6 @@ export const syncAddressTransactionsNextPage = createAsyncThunk(
     if (!address) return
 
     return await fetchAddressTransactionsNextPage(address)
-  }
-)
-
-export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
-  'addresses/syncAllAddressesTransactionsNextPage',
-  async (
-    payload: { minTxs: number } | undefined,
-    { getState, dispatch }
-  ): Promise<{ pageLoaded: number; transactions: explorer.Transaction[] }> => {
-    dispatch(transactionsLoadingStarted())
-
-    const state = getState() as RootState
-    const addresses = selectAllAddresses(state)
-    const minimumNewTransactionsNeeded = payload?.minTxs ?? 1
-
-    let nextPageToLoad = state.confirmedTransactions.pageLoaded + 1
-    let enoughNewTransactionsFound = false
-    let newTransactions: explorer.Transaction[] = []
-
-    while (!enoughNewTransactionsFound) {
-      const results = await Promise.all(
-        chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
-          fetchAddressesTransactionsNextPage(addressesChunk, nextPageToLoad)
-        )
-      )
-
-      const nextPageTransactions = results.flat()
-
-      if (nextPageTransactions.length === 0) break
-
-      newTransactions = newTransactions.concat(
-        nextPageTransactions.filter(
-          (newTx) =>
-            !addresses.some((address) => address.transactions.some((existingTxHash) => existingTxHash === newTx.hash))
-        )
-      )
-
-      enoughNewTransactionsFound = newTransactions.length >= minimumNewTransactionsNeeded
-      nextPageToLoad += 1
-    }
-
-    return { pageLoaded: nextPageToLoad - 1, transactions: newTransactions }
   }
 )
 
