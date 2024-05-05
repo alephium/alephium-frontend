@@ -41,7 +41,7 @@ import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import SideModal from '@/modals/SideModal'
 import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import { formatDateForDisplay, openInWebBrowser } from '@/utils/misc'
-import { useTransactionInfo } from '@/utils/transactions'
+import { useTransactionsInfo } from '@/utils/transactions'
 
 interface TransactionDetailsModalProps {
   transaction: AddressConfirmedTransaction
@@ -57,7 +57,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
   const internalAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const { data: allNFTs } = useAddressesFlattenNfts(internalAddressHashes)
 
-  const { assets, direction, lockTime, infoType } = useTransactionInfo(transaction)
+  const { assets, direction, lockTime, infoType } = useTransactionsInfo(transaction)
   const { label, Icon, iconColor } = useTransactionUI({
     infoType,
     isFailedScriptTx: !transaction.scriptExecutionOk

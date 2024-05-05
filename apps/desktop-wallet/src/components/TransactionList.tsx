@@ -39,7 +39,7 @@ import ModalPortal from '@/modals/ModalPortal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { Direction } from '@/types/transactions'
-import { useTransactionInfo } from '@/utils/transactions'
+import { useTransactionsInfo } from '@/utils/transactions'
 
 interface TransactionListProps {
   addressHashes?: AddressHash[]
@@ -83,7 +83,7 @@ const TransactionList = ({
 
   const [selectedTransaction, setSelectedTransaction] = useState<AddressConfirmedTransaction>()
 
-  const filteredConfirmedTxs = applyFilters({ txs: confirmedTxs, directions, assetIds, hideFromColumn })
+  const filteredConfirmedTxs = useFilters({ txs: confirmedTxs, directions, assetIds, hideFromColumn })
   const displayedConfirmedTxs = limit ? filteredConfirmedTxs.slice(0, limit - pendingTxs.length) : filteredConfirmedTxs
 
   return (
@@ -171,7 +171,7 @@ const TransactionList = ({
 
 export default TransactionList
 
-const applyFilters = ({
+const useFilters = ({
   txs,
   hideFromColumn,
   directions,
@@ -182,9 +182,11 @@ const applyFilters = ({
   const isDirectionsFilterEnabled = directions && directions.length > 0
   const isAssetsFilterEnabled = assetIds && assetIds.length > 0
 
+  const txsInfo = useTransactionsInfo(txs, hideFromColumn)
+
   return isDirectionsFilterEnabled || isAssetsFilterEnabled
-    ? txs.filter((tx) => {
-        const { assets, infoType } = useTransactionInfo(tx, hideFromColumn)
+    ? txs.filter((tx, i) => {
+        const { assets, infoType } = txsInfo[i]
         const dir = infoType === 'pending' ? 'out' : infoType
 
         const passedDirectionsFilter = !isDirectionsFilterEnabled || directions.includes(dir)

@@ -37,7 +37,7 @@ import { useAppSelector } from '@/hooks/redux'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
-import { useTransactionInfo } from '@/utils/transactions'
+import { useTransactionsInfo } from '@/utils/transactions'
 
 interface TransactionalInfoProps {
   transaction: AddressTransaction
@@ -58,7 +58,7 @@ const TransactionalInfo = ({
   const { addressHash: addressHashParam = '' } = useParams<{ addressHash: AddressHash }>()
   const addressHash = addressHashProp ?? addressHashParam
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
-  const { assets, direction, lockTime, infoType } = useTransactionInfo(tx, showInternalInflows)
+  const { assets, direction, lockTime, infoType } = useTransactionsInfo(tx, showInternalInflows)
   const isPending = isMempoolTx(tx)
   const isFailedScriptTx = !isPending && !tx.scriptExecutionOk
   const { label, Icon, iconColor, iconBgColor } = useTransactionUI({ infoType, isFailedScriptTx })
