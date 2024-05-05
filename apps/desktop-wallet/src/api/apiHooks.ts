@@ -50,7 +50,7 @@ export const useAddressesAssets = (
 ): { addressesAssets: { addressHash: Address['hash']; assets: (Asset | NFT)[] }[]; isPending: boolean } => {
   const currency = useAppSelector((state) => state.settings.fiatCurrency)
 
-  const { data: addressesTokens, pending: tokensBalancesPending } = useQueries({
+  const { data: addressesTokensBalancesWithoutAlph, pending: tokensBalancesPending } = useQueries({
     queries: addressHashes.map((h) => addressesQueries.balances.getAddressTokensBalances(h)),
     combine: combineQueriesResult
   })
@@ -60,13 +60,28 @@ export const useAddressesAssets = (
     combine: combineQueriesResult
   })
 
-  const addressesAssetsMetadata = useAssetsMetadataForCurrentNetwork(
-    addressesTokens?.flatMap((a, i) => {
-      const tokenIds = a.map((t) => t.tokenId)
+  // Add ALPH balances to the tokens balances
+  const addressesTokensBalances: typeof addressesTokensBalancesWithoutAlph = []
 
-      if (addressesAlphBalances[i]) {
-        tokenIds.push(ALPH.id)
-      }
+  for (let i = 0; i < addressHashes.length; i++) {
+    if (
+      addressesAlphBalances[i] &&
+      (addressesAlphBalances[i].balance !== '0' || addressesAlphBalances[i].lockedBalance !== '0')
+    ) {
+      addressesTokensBalances[i] = [
+        ...(addressesTokensBalancesWithoutAlph[i] || []),
+        {
+          tokenId: ALPH.id,
+          balance: addressesAlphBalances[i].balance,
+          lockedBalance: addressesAlphBalances[i].lockedBalance
+        }
+      ]
+    }
+  }
+
+  const addressesAssetsMetadata = useAssetsMetadataForCurrentNetwork(
+    addressesTokensBalances?.flatMap((a, i) => {
+      const tokenIds = a.map((t) => t.tokenId)
 
       return tokenIds || []
     })
@@ -88,7 +103,7 @@ export const useAddressesAssets = (
     addressesAssets: isPending
       ? []
       : addressHashes.map((addressHash, i) => {
-          if (!addressesTokens[i]) {
+          if (!addressesTokensBalances[i]) {
             return {
               addressHash,
               isPending,
@@ -96,18 +111,7 @@ export const useAddressesAssets = (
             }
           }
 
-          const addressAssets = [...addressesTokens[i]]
-
-          if (addressesAlphBalances[i]) {
-            addressAssets.push({
-              ...ALPH,
-              tokenId: ALPH.id,
-              balance: addressesAlphBalances[i].balance,
-              lockedBalance: addressesAlphBalances[i].lockedBalance
-            })
-          }
-
-          const tokens = addressAssets.map((t) => {
+          const tokens = addressesTokensBalances[i].map((t) => {
             const tokenMetadata = addressesAssetsMetadata.flattenKnown.find((a) => a.id === t.tokenId)
 
             const tokenPrice =
@@ -164,7 +168,7 @@ export const useAddressAssets = (addressHash: string) => {
 export const useAddressesFlattenAssets = (addressHashes: string[] = []) => {
   const { addressesAssets, isPending } = useAddressesAssets(addressHashes)
 
-  return { data: addressesAssets.flatMap((a) => a.assets), isPending }
+  return { data: deduplicateAssets(addressesAssets.flatMap((a) => a.assets)), isPending }
 }
 
 export const useAddressesFlattenKnownFungibleTokens = (addressHashes: string[] = []) => {
