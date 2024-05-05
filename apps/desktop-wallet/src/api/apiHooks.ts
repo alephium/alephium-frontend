@@ -88,6 +88,14 @@ export const useAddressesAssets = (
     addressesAssets: isPending
       ? []
       : addressHashes.map((addressHash, i) => {
+          if (!addressesTokens[i]) {
+            return {
+              addressHash,
+              isPending,
+              assets: []
+            }
+          }
+
           const addressAssets = [...addressesTokens[i]]
 
           if (addressesAlphBalances[i]) {
@@ -140,6 +148,15 @@ export const useAddressesGroupedAssets = (addressHashes: string[]) => {
       addressHash: a.addressHash,
       assets: groupedAssets
     })),
+    isPending
+  }
+}
+
+export const useAddressAssets = (addressHash: string) => {
+  const { addressesAssets, isPending } = useAddressesAssets([addressHash])
+
+  return {
+    data: addressesAssets[0]?.assets || [],
     isPending
   }
 }

@@ -16,10 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { tokenIsFungible, tokenIsUnknown } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesFlattenAssets } from '@/api/apiHooks'
+import { useAddressAssets } from '@/api/apiHooks'
 import AddressBadge from '@/components/AddressBadge'
 import AssetBadge from '@/components/AssetBadge'
 import Badge from '@/components/Badge'
@@ -34,10 +35,11 @@ interface SelectOptionAddressProps {
 
 const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAddressProps) => {
   const { t } = useTranslation()
-  const addressTokens = useAddressesFlattenAssets([address.hash])
+  const { data: addressTokens } = useAddressAssets(address.hash)
 
-  const knownAssetsWithBalance = addressTokens.filter((a) => a.balance > 0 && 'name' in a)
-  const unknownAssetsNb = addressTokens.filter((a) => a.balance > 0 && !('name' in a)).length
+  // Using 2 filters allow us to use typeguards properly (no casting required)
+  const knownAssetsWithBalance = addressTokens.filter(tokenIsFungible).filter((t) => t.balance > 0)
+  const unknownAssetsNb = addressTokens.filter(tokenIsUnknown).filter((t) => t.balance > 0).length
 
   return (
     <SelectOptionItemContent
