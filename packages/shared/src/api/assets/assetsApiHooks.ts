@@ -26,10 +26,12 @@ import { Asset, NetworkName } from '@/types'
 
 export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: NetworkName) => {
   const { data: tokenListResult } = useQuery(assetsQueries.tokenList.getTokenList(networkName))
+
   const tokensInTokenList = tokenListResult?.tokens.filter((token) => assetIds.includes(token.id)) || []
+  const nonListedAssetIds = assetIds.filter((id) => !tokensInTokenList.map((t) => t.id).includes(id))
 
   const genericInfoOfNonListedAssets = useQueries({
-    queries: assetIds.map((id) => assetsQueries.generic.getTokenGenericInfo(id)),
+    queries: nonListedAssetIds.map((id) => assetsQueries.generic.getTokenGenericInfo(id)),
     combine: combineQueriesResult
   }).data
 

@@ -100,6 +100,8 @@ export const assetsQueries = {
         queryKey: ['getFungibleTokenMetadata', tokenId],
         queryFn: () =>
           fungibleTokensMetadataBatcher.fetch(tokenId).then((r) => {
+            if (!r) return
+
             const parsedDecimals = parseInt(r.decimals)
 
             return {
@@ -117,11 +119,18 @@ export const assetsQueries = {
         queryFn: async () => {
           const nftsMetadata = await nftsMetadataBatcher.fetch(tokenId)
 
-          const nftsData = await exponentialBackoffFetchRetry(nftsMetadata.tokenUri).then(
-            (res) => res.json() as unknown as NFTTokenUriMetaData
-          )
-
-          return { ...nftsMetadata, ...nftsData }
+          try {
+            const nftsData =
+              nftsMetadata && nftsMetadata.tokenUri
+                ? await exponentialBackoffFetchRetry(nftsMetadata.tokenUri).then(
+                    (res) => res.json() as unknown as NFTTokenUriMetaData
+                  )
+                : {}
+            return { ...nftsMetadata, ...nftsData }
+          } catch (e) {
+            console.error('Error fetching NFT data: ', e)
+            return nftsMetadata
+          }
         },
         staleTime: ONE_HOUR_MS
       }),
