@@ -17,8 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
+import PQueue from 'p-queue'
 
 import { client, hashQueryKeyArray, PAGINATION_PAGE_LIMIT } from '@/api'
+
+const queue = new PQueue({ concurrency: 1 })
 
 export const addressesQueries = {
   balances: {
@@ -31,10 +34,14 @@ export const addressesQueries = {
           let page = 1
 
           while (page === 1 || addressTokensPageResults.length === PAGINATION_PAGE_LIMIT) {
-            addressTokensPageResults = await client.explorer.addresses.getAddressesAddressTokensBalance(addressHash, {
-              limit: PAGINATION_PAGE_LIMIT,
-              page
-            })
+            addressTokensPageResults = await queue.add(
+              () =>
+                client.explorer.addresses.getAddressesAddressTokensBalance(addressHash, {
+                  limit: PAGINATION_PAGE_LIMIT,
+                  page
+                }),
+              { throwOnTimeout: true }
+            )
 
             addressTotalTokenBalances.push(...addressTokensPageResults)
 
@@ -47,27 +54,31 @@ export const addressesQueries = {
     getAddressAlphBalances: (addressHash: string) =>
       queryOptions({
         queryKey: ['getAddressAlphBalances', addressHash],
-        queryFn: async () => await client.explorer.addresses.getAddressesAddressBalance(addressHash)
+        queryFn: async () => await queue.add(() => client.explorer.addresses.getAddressesAddressBalance(addressHash))
       })
   },
   transactions: {
     getAddressTotalTransactions: (addressHash: string) =>
       queryOptions({
         queryKey: ['getAddressTotalTransactions', addressHash],
-        queryFn: async () => await client.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
+        queryFn: async () =>
+          await queue.add(() => client.explorer.addresses.getAddressesAddressTotalTransactions(addressHash))
       }),
     getAddressesTransactions: (addressesHashes: string[] = []) =>
       infiniteQueryOptions({
         queryKey: ['getAddressesTransactions', hashQueryKeyArray(addressesHashes)],
         queryFn: async ({ pageParam }) =>
-          await client.explorer.addresses.postAddressesTransactions({ page: pageParam, limit: 20 }, addressesHashes),
+          await queue.add(() =>
+            client.explorer.addresses.postAddressesTransactions({ page: pageParam, limit: 20 }, addressesHashes)
+          ),
         initialPageParam: 1,
         getNextPageParam: (lastPage, allPages, lastPageParam) => (lastPageParam += 1)
       }),
     getAddressPendingTransactions: (addressHash: string) =>
       queryOptions({
         queryKey: ['getAddressPendingTransactions', addressHash],
-        queryFn: async () => await client.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash)
+        queryFn: async () =>
+          await queue.add(() => client.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash))
       })
   }
 }

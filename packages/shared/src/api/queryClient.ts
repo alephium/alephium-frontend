@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, queryOptions, useQuery } from '@tanstack/react-query'
+import PQueue from 'p-queue'
 
 import { MAX_API_RETRIES } from '@/api'
 import { ONE_MINUTE_MS } from '@/constants'
@@ -33,7 +34,18 @@ export const queryClient = new QueryClient({
           return false
         } else return true
       },
-      staleTime: ONE_MINUTE_MS // default ms before cache data is considered stale
+      staleTime: 5 * ONE_MINUTE_MS // default ms before cache data is considered stale
     }
   }
 })
+
+// Rate limitation tools
+const queue = new PQueue({ concurrency: 4 }) // Nb. of concurrent requests we accept
+
+export const useRateLimitedQuery = (
+  qo: Required<Pick<ReturnType<typeof queryOptions>, 'queryFn'>> & ReturnType<typeof queryOptions>
+) =>
+  useQuery({
+    ...qo,
+    queryFn: async () => await queue.add(() => (qo.queryFn as () => unknown)())
+  })
