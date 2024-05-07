@@ -25,15 +25,17 @@ import { combineQueriesResult } from '@/api/utils'
 import { Asset, NetworkName } from '@/types'
 
 export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: NetworkName) => {
-  const { data: tokenListResult } = useQuery(assetsQueries.tokenList.getTokenList(networkName))
+  const { data: tokenListResult, isPending: isTokenListPending } = useQuery(
+    assetsQueries.tokenList.getTokenList(networkName)
+  )
 
   const tokensInTokenList = tokenListResult?.tokens.filter((token) => assetIds.includes(token.id)) || []
   const nonListedAssetIds = assetIds.filter((id) => !tokensInTokenList.map((t) => t.id).includes(id))
 
-  const genericInfoOfNonListedAssets = useQueries({
+  const { data: genericInfoOfNonListedAssets, isPending: isGenericInfoPending } = useQueries({
     queries: nonListedAssetIds.map((id) => assetsQueries.generic.getTokenGenericInfo(id)),
     combine: combineQueriesResult
-  }).data
+  })
 
   const groupedTokenIdsOfNonListedAssets = genericInfoOfNonListedAssets.reduce(
     (acc, item) => {
@@ -47,35 +49,41 @@ export const useGetAssetsMetadata = (assetIds: Asset['id'][], networkName: Netwo
     {} as Record<TokenStdInterfaceId, string[] | undefined>
   )
 
-  const fungibleTokensMetadata = useQueries({
+  const { data: fungibleTokensMetadata, isPending: isFungibleTokensMetadataPending } = useQueries({
     queries:
       groupedTokenIdsOfNonListedAssets[explorer.TokenStdInterfaceId.Fungible]?.map((id) =>
         assetsQueries.fungibleTokens.getFungibleTokenMetadata(id)
       ) || [],
     combine: combineQueriesResult
-  }).data
+  })
 
-  const nftTokensMetadata = useQueries({
+  const { data: nftTokensMetadata, isPending: isNftTokensMetadataPending } = useQueries({
     queries:
       groupedTokenIdsOfNonListedAssets[explorer.TokenStdInterfaceId.NonFungible]?.map((id) =>
         assetsQueries.nfts.getNftMetadata(id)
       ) || [],
     combine: combineQueriesResult
-  }).data
+  })
 
   const unknownTokensIds =
     genericInfoOfNonListedAssets
       ?.filter((i) => groupedTokenIdsOfNonListedAssets?.[explorer.TokenStdInterfaceId.NonStandard]?.includes(i.token))
       .map((u) => ({ id: u.token })) || []
 
+  const isPending =
+    isTokenListPending || isGenericInfoPending || isFungibleTokensMetadataPending || isNftTokensMetadataPending
+
   return {
-    groupedKnown: {
-      listed: tokensInTokenList,
-      fungible: fungibleTokensMetadata,
-      nft: nftTokensMetadata
+    data: {
+      groupedKnown: {
+        listed: tokensInTokenList,
+        fungible: fungibleTokensMetadata,
+        nft: nftTokensMetadata
+      },
+      flattenKnown: [...tokensInTokenList, ...fungibleTokensMetadata, ...nftTokensMetadata],
+      unknown: unknownTokensIds
     },
-    flattenKnown: [...tokensInTokenList, ...fungibleTokensMetadata, ...nftTokensMetadata],
-    unknown: unknownTokensIds
+    isPending
   }
 }
 

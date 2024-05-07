@@ -24,6 +24,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
 import AddressRow from '@/components/AddressRow'
 import Box from '@/components/Box'
 import Button from '@/components/Button'
@@ -39,7 +40,7 @@ import CenteredModal from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
 import SendModalCallContact from '@/modals/SendModals/CallContract'
 import SendModalDeployContract from '@/modals/SendModals/DeployContract'
-import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { copiedToClipboard, copyToClipboardFailed, receiveTestnetTokens } from '@/storage/global/globalActions'
 import { devToolsToggled } from '@/storage/settings/settingsActions'
 import { Address } from '@/types/addresses'
@@ -47,7 +48,7 @@ import { Address } from '@/types/addresses'
 const DevToolsSettingsSection = () => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const addresses = useAppSelector(selectAllAddresses)
+  const { data: addresses } = useAddressesWithSomeBalance()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const currentNetwork = useAppSelector((s) => s.network)
   const faucetCallPending = useAppSelector((s) => s.global.faucetCallPending)

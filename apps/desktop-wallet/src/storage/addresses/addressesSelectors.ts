@@ -23,7 +23,6 @@ import { createSelector } from '@reduxjs/toolkit'
 
 import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
 import { RootState } from '@/storage/store'
-import { filterAddressesWithoutAssets } from '@/utils/addresses'
 
 export const {
   selectById: selectAddressByHash,
@@ -202,8 +201,6 @@ export const makeSelectAddressesHaveHistoricBalances = () =>
       addresses.every((address) => address.alphBalanceHistoryInitialized) &&
       addresses.some((address) => address.alphBalanceHistory.ids.length > 0)
   )
-
-export const selectAddressesWithSomeBalance = createSelector(selectAllAddresses, filterAddressesWithoutAssets)
 
 export const selectAddressesInGroup = createSelector(
   [selectAllAddresses, (_, group?: AddressGroup) => group],

@@ -64,6 +64,7 @@ import { usePostHog } from 'posthog-js/react'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
@@ -72,7 +73,6 @@ import SendModalDeployContract from '@/modals/SendModals/DeployContract'
 import SignMessageModal from '@/modals/WalletConnect/SignMessageModal'
 import SignUnsignedTxModal from '@/modals/WalletConnect/SignUnsignedTxModal'
 import WalletConnectSessionProposalModal from '@/modals/WalletConnect/WalletConnectSessionProposalModal'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { walletConnectPairingFailed, walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
 import { Address } from '@/types/addresses'
 import {
@@ -119,7 +119,8 @@ const electron = _window.electron
 
 export const WalletConnectContextProvider: FC = ({ children }) => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAllAddresses)
+  const { data: addresses, isPending: addressesArePending } = useAddressesWithSomeBalance()
+
   const currentNetwork = useAppSelector((s) => s.network)
   const { isWalletUnlocked } = useWalletLock()
   const dispatch = useAppDispatch()
@@ -504,7 +505,13 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   }, [addresses.length, onSessionRequest, sessionRequestEvent, walletLockedBeforeProcessingWCRequest])
 
   useEffect(() => {
-    if (!walletConnectClient || walletConnectClientStatus !== 'initialized') return
+    if (
+      !walletConnectClient ||
+      walletConnectClientStatus !== 'initialized' ||
+      addresses.length === 0 ||
+      addressesArePending
+    )
+      return
 
     console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
 
@@ -560,7 +567,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     onSessionRequest,
     onSessionUpdate,
     walletConnectClient,
-    walletConnectClientStatus
+    walletConnectClientStatus,
+    addressesArePending
   ])
 
   const unpairFromDapp = useCallback(

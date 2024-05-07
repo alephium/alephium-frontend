@@ -26,7 +26,8 @@ import { fadeIn } from '@/animations'
 import {
   useAddressesFlattenKnownFungibleTokens,
   useAddressesFlattenNfts,
-  useAddressesFlattenUnknownTokens
+  useAddressesFlattenUnknownTokens,
+  useAddressesWithSomeBalance
 } from '@/api/apiHooks'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -42,7 +43,6 @@ import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
 interface AssetsListProps {
@@ -70,7 +70,7 @@ const AssetsList = ({
 }: AssetsListProps) => {
   const { t } = useTranslation()
 
-  const allAddresses = useAppSelector(selectAllAddresses)
+  const { data: allAddresses } = useAddressesWithSomeBalance()
   const usedAddressHashes = addressHashes && addressHashes.length > 0 ? addressHashes : allAddresses.map((a) => a.hash)
 
   const { data: unknownTokens } = useAddressesFlattenUnknownTokens(usedAddressHashes)

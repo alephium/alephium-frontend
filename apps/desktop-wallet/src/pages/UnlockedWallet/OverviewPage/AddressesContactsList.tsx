@@ -25,7 +25,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { useAddressesWorth } from '@/api/apiHooks'
+import { useAddressesWithSomeBalance, useAddressesWorth } from '@/api/apiHooks'
 import ActionLink from '@/components/ActionLink'
 import AddressRow from '@/components/AddressRow'
 import Amount from '@/components/Amount'
@@ -35,7 +35,6 @@ import TableCellAmount from '@/components/TableCellAmount'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
 
 interface AddressesContactsListProps {
@@ -74,7 +73,7 @@ const AddressesContactsList = ({ className, maxHeightInPx }: AddressesContactsLi
 }
 
 const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: AddressListProps) => {
-  const addresses = useAppSelector(selectAllAddresses)
+  const { data: addresses } = useAddressesWithSomeBalance()
 
   const [selectedAddress, setSelectedAddress] = useState<Address>()
 
@@ -110,7 +109,7 @@ const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
   const { data: addressesWorth } = useAddressesWorth([addressHash])
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
-  const balanceInFiat = addressesWorth[0]?.worth
+  const balanceInFiat = addressesWorth?.[0]?.worth
 
   return <AmountStyled value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} tabIndex={0} />
 }

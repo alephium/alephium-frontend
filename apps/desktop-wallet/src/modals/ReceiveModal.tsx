@@ -20,11 +20,12 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import QRCode from '@/components/QRCode'
 import { useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
-import { selectAddressByHash, selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
 interface ReceiveModalProps {
   onClose: () => void
@@ -35,7 +36,7 @@ const QRCodeSize = 250
 
 const ReceiveModal = ({ onClose, addressHash }: ReceiveModalProps) => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAllAddresses)
+  const { data: addresses } = useAddressesWithSomeBalance()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash ?? ''))
 

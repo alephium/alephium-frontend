@@ -34,7 +34,7 @@ interface AssetBadgeProps {
 }
 
 const AssetBadge = ({ assetId, amount, simple, hideNftName, className }: AssetBadgeProps) => {
-  const tokenInfo = useAssetsMetadataForCurrentNetwork([assetId]).flattenKnown[0]
+  const tokenInfo = useAssetsMetadataForCurrentNetwork([assetId]).data.flattenKnown[0]
 
   const fungibleToken = tokenInfo && tokenIsFungible(tokenInfo) ? tokenInfo : undefined
   const nftInfo = tokenInfo && tokenIsNonFungible(tokenInfo) ? tokenInfo : undefined

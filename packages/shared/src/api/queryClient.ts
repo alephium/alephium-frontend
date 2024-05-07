@@ -38,14 +38,3 @@ export const queryClient = new QueryClient({
     }
   }
 })
-
-// Rate limitation tools
-const queue = new PQueue({ concurrency: 4 }) // Nb. of concurrent requests we accept
-
-export const useRateLimitedQuery = (
-  qo: Required<Pick<ReturnType<typeof queryOptions>, 'queryFn'>> & ReturnType<typeof queryOptions>
-) =>
-  useQuery({
-    ...qo,
-    queryFn: async () => await queue.add(() => (qo.queryFn as () => unknown)())
-  })

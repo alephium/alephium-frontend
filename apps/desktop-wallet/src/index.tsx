@@ -46,16 +46,16 @@ ReactDOM.render(
     <Provider store={store}>
       <Router>
         <Suspense fallback="loading">
-          <AnalyticsProvider>
-            <StyleSheetManager shouldForwardProp={shouldForwardProp}>
-              <GlobalContextProvider>
-                <QueryClientProvider client={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <AnalyticsProvider>
+              <StyleSheetManager shouldForwardProp={shouldForwardProp}>
+                <GlobalContextProvider>
                   <App />
-                </QueryClientProvider>
-                <Tooltips />
-              </GlobalContextProvider>
-            </StyleSheetManager>
-          </AnalyticsProvider>
+                  <Tooltips />
+                </GlobalContextProvider>
+              </StyleSheetManager>
+            </AnalyticsProvider>
+          </QueryClientProvider>
         </Suspense>
       </Router>
     </Provider>

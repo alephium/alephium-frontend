@@ -21,18 +21,16 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesFlattenKnownFungibleTokens } from '@/api/apiHooks'
+import { useAddressesFlattenKnownFungibleTokens, useAddressesWithSomeBalance } from '@/api/apiHooks'
 import Box from '@/components/Box'
 import Button from '@/components/Button'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
-import { useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import NewAddressModal from '@/modals/NewAddressModal'
 import AddressGridRow from '@/pages/UnlockedWallet/AddressesPage/AddressGridRow'
 import AdvancedOperationsSideModal from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsSideModal'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { filterAddresses } from '@/utils/addresses'
 
 interface AddressesTabContentProps {
@@ -40,8 +38,8 @@ interface AddressesTabContentProps {
 }
 
 const AddressesTabContent = ({ tabsRowHeight }: AddressesTabContentProps) => {
-  const addresses = useAppSelector(selectAllAddresses)
-  const fungibleTokens = useAddressesFlattenKnownFungibleTokens(addresses.map((address) => address.hash))
+  const { data: addresses } = useAddressesWithSomeBalance()
+  const { data: fungibleTokens } = useAddressesFlattenKnownFungibleTokens(addresses.map((address) => address.hash))
   const { t } = useTranslation()
 
   const [isGenerateNewAddressModalOpen, setIsGenerateNewAddressModalOpen] = useState(false)

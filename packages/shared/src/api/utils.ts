@@ -23,7 +23,7 @@ import { createHash } from 'crypto'
 
 export const combineQueriesResult = <R>(result: UseQueryResult<R, Error>[]) => ({
   data: result.map((r) => r.data).filter((data): data is R => data !== undefined),
-  pending: result.some((r) => r.isPending)
+  isPending: result.some((r) => r.isPending)
 })
 
 // TODO: MAKE TYPING WORK.
@@ -35,7 +35,7 @@ export const useCombinedQueries = (queries: ReturnType<typeof queryOptions>[]) =
 
 // This is used to avoid querying the same data multiple times if the order of the query keys is different
 // (but the content is the same)
-export const hashQueryKeyArray = (arr: string[]) => {
+export const hashArray = (arr: string[]) => {
   const sortedArr = [...arr].sort()
   const arrString = JSON.stringify(sortedArr)
   const hash = createHash('sha256')

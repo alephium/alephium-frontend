@@ -29,15 +29,14 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
 import ActionLink from '@/components/ActionLink'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Spinner from '@/components/Spinner'
 import Table, { TableCell, TableCellPlaceholder, TableHeader, TableRow } from '@/components/Table'
 import TransactionalInfo from '@/components/TransactionalInfo'
-import { useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { Direction } from '@/types/transactions'
 import { useTransactionsInfo } from '@/utils/transactions'
 
@@ -69,8 +68,8 @@ const TransactionList = ({
   const { t } = useTranslation()
   const navigate = useNavigate()
 
-  const allAddressesHashes = useAppSelector((s) => selectAllAddresses(s))
-  const usedAddressHashes = addressHashes ?? allAddressesHashes.map((a) => a.hash)
+  const { data: addresses } = useAddressesWithSomeBalance()
+  const usedAddressHashes = addressHashes ?? addresses.map((a) => a.hash)
 
   const {
     txs: confirmedTxs = [],

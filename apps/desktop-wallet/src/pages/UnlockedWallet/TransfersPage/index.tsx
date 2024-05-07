@@ -24,6 +24,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
 import ShortcutButtons from '@/components/Buttons/ShortcutButtons'
 import TransactionList from '@/components/TransactionList'
 import { useScrollContext } from '@/contexts/scroll'
@@ -34,7 +35,7 @@ import SendModalTransfer from '@/modals/SendModals/Transfer'
 import FiltersPanel from '@/pages/UnlockedWallet/TransfersPage/FiltersPanel'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
-import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { transfersPageInfoMessageClosed } from '@/storage/global/globalActions'
 import { walletSidebarWidthPx } from '@/style/globalStyles'
 import { links } from '@/utils/links'
@@ -48,7 +49,7 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const infoMessageClosed = useAppSelector((s) => s.global.transfersPageInfoMessageClosed)
-  const addresses = useAppSelector(selectAllAddresses)
+  const { data: addresses } = useAddressesWithSomeBalance()
   const { scrollDirection } = useScrollContext()
   const defaultAddress = useAppSelector(selectDefaultAddress)
 

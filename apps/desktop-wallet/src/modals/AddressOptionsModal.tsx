@@ -22,6 +22,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
 import AddressMetadataForm from '@/components/AddressMetadataForm'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
@@ -31,7 +32,7 @@ import { useAppSelector } from '@/hooks/redux'
 import AddressSweepModal from '@/modals/AddressSweepModal'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
-import { selectAddressByHash, selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { saveAddressSettings } from '@/storage/addresses/addressesStorageUtils'
 import { getAvailableBalance, getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
@@ -47,7 +48,7 @@ const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps)
   const posthog = usePostHog()
   const isPassphraseUsed = useAppSelector((state) => state.activeWallet.isPassphraseUsed)
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const addresses = useAppSelector(selectAllAddresses)
+  const { data: addresses } = useAddressesWithSomeBalance()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
   const [addressLabel, setAddressLabel] = useState({

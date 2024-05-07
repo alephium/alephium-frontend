@@ -22,14 +22,12 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesFlattenAssets } from '@/api/apiHooks'
+import { useAddressesFlattenAssets, useAddressesWithSomeBalance } from '@/api/apiHooks'
 import Button from '@/components/Button'
 import MultiSelect from '@/components/Inputs/MultiSelect'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import SelectOptionAsset from '@/components/Inputs/SelectOptionAsset'
-import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { appHeaderHeightPx } from '@/style/globalStyles'
 import { Address } from '@/types/addresses'
 import { directionOptions } from '@/utils/transactions'
@@ -54,7 +52,7 @@ const FiltersPanel = ({
   className
 }: FiltersPanelProps) => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAllAddresses)
+  const { data: addresses } = useAddressesWithSomeBalance()
   const { data: assets, isPending } = useAddressesFlattenAssets(selectedAddresses.map((address) => address.hash))
 
   const renderAddressesSelectedValue = () =>

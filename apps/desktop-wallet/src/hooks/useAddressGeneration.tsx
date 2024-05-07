@@ -21,14 +21,14 @@ import { AddressMetadata } from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
 import { discoverAndCacheActiveAddresses } from '@/api/addresses'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
+import { useAppDispatch } from '@/hooks/redux'
 import {
   addressDiscoveryFinished,
   addressDiscoveryStarted,
   addressesRestoredFromMetadata,
   addressRestorationStarted
 } from '@/storage/addresses/addressesActions'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { AddressBase } from '@/types/addresses'
@@ -54,7 +54,7 @@ interface GenerateOneAddressPerGroupProps {
 
 const useAddressGeneration = () => {
   const dispatch = useAppDispatch()
-  const addresses = useAppSelector(selectAllAddresses)
+  const { data: addresses } = useAddressesWithSomeBalance()
 
   const currentAddressIndexes = addresses.map(({ index }) => index)
 

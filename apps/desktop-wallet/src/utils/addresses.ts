@@ -17,10 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressSettings, AssetAmount, FungibleToken } from '@alephium/shared'
+import { AddressSettings, AssetAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
-import { Dictionary } from '@reduxjs/toolkit'
+import { Asset, explorer } from '@alephium/web3'
 
 import { Address } from '@/types/addresses'
 import { AddressTransaction, PendingTransaction } from '@/types/transactions'
@@ -59,7 +58,7 @@ export const getInitialAddressSettings = (): AddressSettings => ({
   color: getRandomLabelColor()
 })
 
-export const filterAddresses = (addresses: Address[], text: string, fungibleTokens: Dictionary<FungibleToken>) =>
+export const filterAddresses = (addresses: Address[], text: string, fungibleTokens: Asset[]) =>
   text.length < 2
     ? addresses
     : addresses.filter((address) => {
