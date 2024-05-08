@@ -19,35 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import { AddressSettings, AssetAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { Asset, explorer } from '@alephium/web3'
+import { explorer } from '@alephium/web3'
+import { useMemo } from 'react'
 
+import { useAddressesFlattenKnownFungibleTokens } from '@/api/apiHooks'
 import { Address } from '@/types/addresses'
-import { AddressTransaction, PendingTransaction } from '@/types/transactions'
+import { PendingTransaction } from '@/types/transactions'
 import { getRandomLabelColor } from '@/utils/colors'
-
-export const selectAddressTransactions = (
-  addresses: Address[],
-  transactions: (explorer.Transaction | PendingTransaction)[]
-) => {
-  const addressesTxs = addresses.flatMap((address) => address.transactions.map((txHash) => ({ txHash, address })))
-  const processedTxHashes: explorer.Transaction['hash'][] = []
-
-  return transactions.reduce((txs, tx) => {
-    const addressTxs = addressesTxs.filter(({ txHash }) => txHash === tx.hash)
-
-    addressTxs.forEach((addressTx) => {
-      if (
-        (!isPendingTransaction(tx) || [tx.fromAddress, tx.toAddress].includes(addressTx.address.hash)) &&
-        !processedTxHashes.includes(tx.hash)
-      ) {
-        processedTxHashes.push(tx.hash)
-        txs.push({ ...tx, address: addressTx.address })
-      }
-    })
-
-    return txs
-  }, [] as AddressTransaction[])
-}
 
 export const getAvailableBalance = (address: Address): bigint => BigInt(address.balance) - BigInt(address.lockedBalance)
 
@@ -58,15 +36,19 @@ export const getInitialAddressSettings = (): AddressSettings => ({
   color: getRandomLabelColor()
 })
 
-export const filterAddresses = (addresses: Address[], text: string, fungibleTokens: Asset[]) =>
-  text.length < 2
+export const useFilteredAddresses = (addresses: Address[], text: string) => {
+  const addressHashes = useMemo(() => addresses.map((address) => address.hash), [addresses])
+  const { data: addressesAssets } = useAddressesFlattenKnownFungibleTokens(addressHashes)
+
+  return text.length < 2
     ? addresses
-    : addresses.filter((address) => {
-        const addressTokenIds = address.tokens.filter((token) => token.balance !== '0').map((token) => token.tokenId)
-        const addressTokenNames = addressTokenIds
-          .map((tokenId) => {
-            const tokenInfo = fungibleTokens[tokenId]
-            return tokenInfo ? `${tokenInfo.name} ${tokenInfo.symbol}` : undefined
+    : addresses.filter((address, i) => {
+        const addressTokenNames = addressesAssets
+          .map((asset) => {
+            const tokenName = asset.name
+            const tokenSymbol = asset.symbol
+
+            return tokenName && tokenSymbol ? `${tokenName} ${tokenSymbol}` : undefined
           })
           .filter((searchableText) => searchableText !== undefined)
           .join(' ')
@@ -79,6 +61,7 @@ export const filterAddresses = (addresses: Address[], text: string, fungibleToke
           addressAssetNames.includes(text)
         )
       })
+}
 
 export const getAddressAssetsAvailableBalance = (address: Address) => [
   {
@@ -106,11 +89,6 @@ export const assetAmountsWithinAvailableBalance = (address: Address, assetAmount
 
 const isPendingTransaction = (tx: explorer.Transaction | PendingTransaction): tx is PendingTransaction =>
   (tx as PendingTransaction).status === 'pending'
-
-export const addressHasAssets = (address: Address): boolean =>
-  address.balance !== '0' || address.tokens.some((token) => token.balance !== '0')
-
-export const filterAddressesWithoutAssets = (addresses: Address[]): Address[] => addresses.filter(addressHasAssets)
 
 export const deriveAddressesInGroup = (
   group: number,

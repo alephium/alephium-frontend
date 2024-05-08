@@ -52,15 +52,15 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   )
 
   const { data: addressesGroupedAssetsData, isPending: addressAssetsPending } = useAddressesGroupedAssets([addressHash])
-  const addressGroupedAssets = addressesGroupedAssetsData[0].assets
+  const addressGroupedAssets = addressesGroupedAssetsData?.[0].assets
 
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const { data: balanceInFiat, isPending: addressWorthPending } = useAddressesWorth([addressHash])
-  const addressBalanceInFiat = balanceInFiat[0].worth
+  const addressBalanceInFiat = balanceInFiat?.[0].worth
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
-  const assetsWithBalance = addressGroupedAssets.fungible.filter((asset) => asset.balance > 0)
+  const assetsWithBalance = addressGroupedAssets?.fungible.filter((asset) => asset.balance > 0)
   const [displayedAssets, ...hiddenAssetsChunks] = chunk(assetsWithBalance, maxDisplayedAssets)
   const hiddenAssets = hiddenAssetsChunks.flat()
 

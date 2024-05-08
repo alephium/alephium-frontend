@@ -17,45 +17,43 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Wrench } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesFlattenKnownFungibleTokens, useAddressesWithSomeBalance } from '@/api/apiHooks'
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
 import Box from '@/components/Box'
 import Button from '@/components/Button'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
+import { useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import NewAddressModal from '@/modals/NewAddressModal'
 import AddressGridRow from '@/pages/UnlockedWallet/AddressesPage/AddressGridRow'
 import AdvancedOperationsSideModal from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsSideModal'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
-import { filterAddresses } from '@/utils/addresses'
+import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
+import { useFilteredAddresses } from '@/utils/addresses'
 
 interface AddressesTabContentProps {
   tabsRowHeight: number
 }
 
 const AddressesTabContent = ({ tabsRowHeight }: AddressesTabContentProps) => {
-  const { data: addresses } = useAddressesWithSomeBalance()
-  const { data: fungibleTokens } = useAddressesFlattenKnownFungibleTokens(addresses.map((address) => address.hash))
   const { t } = useTranslation()
+  const allAddresses = useAppSelector(selectAllAddresses)
+  const { data: addressesWithSomeBalance } = useAddressesWithSomeBalance()
 
   const [isGenerateNewAddressModalOpen, setIsGenerateNewAddressModalOpen] = useState(false)
-  const [visibleAddresses, setVisibleAddresses] = useState(addresses)
   const [searchInput, setSearchInput] = useState('')
   const [hideEmptyAddresses, setHideEmptyAddresses] = useState(false)
   const [isAdvancedOperationsModalOpen, setIsAdvancedOperationsModalOpen] = useState(false)
 
-  useEffect(() => {
-    const filteredByText = filterAddresses(addresses, searchInput.toLowerCase(), fungibleTokens)
-    const filteredByToggle = hideEmptyAddresses
-      ? filteredByText.filter((address) => address.balance !== '0')
-      : filteredByText
+  let filteredAddresses = useFilteredAddresses(allAddresses, searchInput.toLowerCase())
 
-    setVisibleAddresses(filteredByToggle)
-  }, [addresses, fungibleTokens, hideEmptyAddresses, searchInput])
+  filteredAddresses = hideEmptyAddresses
+    ? filteredAddresses.filter((address) => addressesWithSomeBalance.find((a) => address.hash === a.hash))
+    : filteredAddresses
 
   return (
     <TabContent
@@ -83,7 +81,7 @@ const AddressesTabContent = ({ tabsRowHeight }: AddressesTabContentProps) => {
     >
       <TableGrid>
         <TableGridContent>
-          {visibleAddresses.map((address) => (
+          {filteredAddresses.map((address) => (
             <AddressGridRow addressHash={address.hash} key={address.hash} />
           ))}
         </TableGridContent>

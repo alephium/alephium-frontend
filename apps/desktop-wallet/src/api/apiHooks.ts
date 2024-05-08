@@ -172,6 +172,15 @@ export const useAddressAssets = (addressHash: string) => {
   }
 }
 
+export const useAddressesWithAssetsHashes = (addressHashes: string[]) => {
+  const { data: addressAssets, isPending } = useAddressesAssets(addressHashes)
+
+  return {
+    data: addressHashes.filter((hash) => addressAssets?.find((a) => hash === a.addressHash && a.assets.length > 0)),
+    isPending
+  }
+}
+
 export const useAddressesFlattenAssets = (addressHashes: string[] = []) => {
   const { data: addressesAssets, isPending } = useAddressesAssets(addressHashes)
 
