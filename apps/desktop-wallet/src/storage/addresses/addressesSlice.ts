@@ -18,9 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import {
   AddressHash,
-  balanceHistoryAdapter,
   customNetworkSettingsSaved,
-  extractNewTransactions,
   networkPresetSwitched,
   syncingAddressDataStarted
 } from '@alephium/shared'
@@ -33,13 +31,9 @@ import {
   addressSettingsSaved,
   defaultAddressChanged,
   newAddressesSaved,
-  syncAddressesAlphHistoricBalances,
-  syncAddressTransactionsNextPage,
   transactionsLoadingStarted
 } from '@/storage/addresses/addressesActions'
 import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
-import { receiveTestnetTokens } from '@/storage/global/globalActions'
-import { transactionSent } from '@/storage/transactions/transactionsActions'
 import {
   activeWalletDeleted,
   walletLocked,
@@ -116,26 +110,6 @@ const addressesSlice = createSlice({
       .addCase(addressRestorationStarted, (state) => {
         state.isRestoringAddressesFromMetadata = true
       })
-      .addCase(syncAddressTransactionsNextPage.fulfilled, (state, action) => {
-        const addressTransactionsData = action.payload
-
-        if (!addressTransactionsData) return
-
-        const { hash, transactions, page } = addressTransactionsData
-        const address = state.entities[hash] as Address
-        const newTxHashes = extractNewTransactions(transactions, address.transactions).map(({ hash }) => hash)
-
-        addressesAdapter.updateOne(state, {
-          id: hash,
-          changes: {
-            transactions: address.transactions.concat(newTxHashes),
-            transactionsPageLoaded: newTxHashes.length > 0 ? page : address.transactionsPageLoaded,
-            allTransactionPagesLoaded: transactions.length === 0
-          }
-        })
-
-        state.loadingTransactions = false
-      })
       .addCase(walletSaved, (state, action) => addInitialAddress(state, action.payload.initialAddress))
       .addCase(walletUnlocked, addPassphraseInitialAddress)
       .addCase(walletSwitched, (_, action) => addPassphraseInitialAddress({ ...initialState }, action))
@@ -143,25 +117,6 @@ const addressesSlice = createSlice({
       .addCase(activeWalletDeleted, () => initialState)
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
-      .addCase(syncAddressesAlphHistoricBalances.fulfilled, (state, { payload: data }) => {
-        data.forEach(({ address, balances }) => {
-          const addressState = state.entities[address]
-
-          if (addressState) {
-            balanceHistoryAdapter.upsertMany(addressState.alphBalanceHistory, balances)
-            addressState.alphBalanceHistoryInitialized = true
-          }
-        })
-      })
-
-    builder.addMatcher(isAnyOf(transactionSent, receiveTestnetTokens.fulfilled), (state, action) => {
-      const pendingTransaction = action.payload
-      const fromAddress = state.entities[pendingTransaction.fromAddress] as Address
-      const toAddress = state.entities[pendingTransaction.toAddress] as Address
-
-      if (fromAddress) fromAddress.transactions.push(pendingTransaction.hash)
-      if (toAddress && toAddress !== fromAddress) toAddress.transactions.push(pendingTransaction.hash)
-    })
   }
 })
 
@@ -180,12 +135,7 @@ const getDefaultAddressState = (address: AddressBase): Address => ({
   balance: '0',
   lockedBalance: '0',
   txNumber: 0,
-  transactions: [],
-  transactionsPageLoaded: 0,
-  allTransactionPagesLoaded: false,
-  lastUsed: 0,
-  alphBalanceHistory: balanceHistoryAdapter.getInitialState(),
-  alphBalanceHistoryInitialized: false
+  lastUsed: 0
 })
 
 const updateOldDefaultAddress = (state: AddressesState) => {

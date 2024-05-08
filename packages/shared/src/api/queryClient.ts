@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { QueryClient, queryOptions, useQuery } from '@tanstack/react-query'
-import PQueue from 'p-queue'
+import { QueryClient } from '@tanstack/react-query'
 
 import { MAX_API_RETRIES } from '@/api'
 import { ONE_MINUTE_MS } from '@/constants'

@@ -22,8 +22,6 @@ import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
 import { posthog } from 'posthog-js'
 
-import { fetchAddressTransactionsNextPage } from '@/api/addresses'
-import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { RootState } from '@/storage/store'
 import { Address, AddressBase, LoadingEnabled } from '@/types/addresses'
 import { Message } from '@/types/snackbar'
@@ -44,20 +42,6 @@ export const addressDiscoveryFinished = createAction<LoadingEnabled>('addresses/
 
 export const addressSettingsSaved = createAction<{ addressHash: AddressHash; settings: AddressSettings }>(
   'addresses/addressSettingsSaved'
-)
-
-export const syncAddressTransactionsNextPage = createAsyncThunk(
-  'addresses/syncAddressTransactionsNextPage',
-  async (payload: AddressHash, { getState, dispatch }) => {
-    dispatch(transactionsLoadingStarted())
-
-    const state = getState() as RootState
-    const address = selectAddressByHash(state, payload)
-
-    if (!address) return
-
-    return await fetchAddressTransactionsNextPage(address)
-  }
 )
 
 export const syncAddressesAlphHistoricBalances = createAsyncThunk(
