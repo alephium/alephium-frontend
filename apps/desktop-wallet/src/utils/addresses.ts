@@ -17,14 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressSettings, AssetAmount } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
+import { AddressHash, AddressSettings, AssetAmount, tokenIsFungible } from '@alephium/shared'
 import { useMemo } from 'react'
 
-import { useAddressesFlattenKnownFungibleTokens } from '@/api/apiHooks'
+import { useAddressAssets, useAddressesFlattenKnownFungibleTokens } from '@/api/apiHooks'
 import { Address } from '@/types/addresses'
-import { PendingTransaction } from '@/types/transactions'
 import { getRandomLabelColor } from '@/utils/colors'
 
 export const getAvailableBalance = (address: Address): bigint => BigInt(address.balance) - BigInt(address.lockedBalance)
@@ -63,32 +60,33 @@ export const useFilteredAddresses = (addresses: Address[], text: string) => {
       })
 }
 
-export const getAddressAssetsAvailableBalance = (address: Address) => [
-  {
-    id: ALPH.id,
-    availableBalance: getAvailableBalance(address)
-  },
-  ...address.tokens.map((token) => ({
-    id: token.tokenId,
-    availableBalance: BigInt(token.balance) - BigInt(token.lockedBalance)
-  }))
-]
+export const useAddressAssetsAvailableBalance = (addressHash: AddressHash) => {
+  const { data: addressAssets, isPending } = useAddressAssets(addressHash)
 
-export const assetAmountsWithinAvailableBalance = (address: Address, assetAmounts: AssetAmount[]) => {
-  const assetsAvailableBalance = getAddressAssetsAvailableBalance(address)
-
-  return assetAmounts.every((asset) => {
-    if (!asset?.amount) return true
-
-    const assetAvailableBalance = assetsAvailableBalance.find(({ id }) => id === asset.id)?.availableBalance
-
-    if (!assetAvailableBalance) return false
-    return asset.amount <= assetAvailableBalance
-  })
+  return {
+    data: addressAssets?.filter(tokenIsFungible).map((token) => ({
+      id: token.id,
+      availableBalance: BigInt(token.balance) - BigInt(token.lockedBalance)
+    })),
+    isPending
+  }
 }
 
-const isPendingTransaction = (tx: explorer.Transaction | PendingTransaction): tx is PendingTransaction =>
-  (tx as PendingTransaction).status === 'pending'
+export const useAssetAmountsWithinAvailableBalance = (addressHash: AddressHash, assetAmounts?: AssetAmount[]) => {
+  const { data: assetsAvailableBalance, isPending } = useAddressAssetsAvailableBalance(addressHash)
+
+  return {
+    data: assetAmounts?.every((asset) => {
+      if (!asset?.amount) return true
+
+      const assetAvailableBalance = assetsAvailableBalance?.find(({ id }) => id === asset.id)?.availableBalance
+
+      if (!assetAvailableBalance) return false
+      return asset.amount <= assetAvailableBalance
+    }),
+    isPending
+  }
+}
 
 export const deriveAddressesInGroup = (
   group: number,

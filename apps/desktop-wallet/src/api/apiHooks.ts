@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import {
   addressesQueries,
+  AddressHash,
   Asset,
   calculateAmountWorth,
   combineQueriesResult,
@@ -38,7 +39,6 @@ import { useMemo } from 'react'
 
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
-import { Address } from '@/types/addresses'
 
 // TODO: Extract these hooks to shared
 
@@ -49,7 +49,7 @@ export const useAssetsMetadataForCurrentNetwork = (assetIds: string[]) => {
 
 export const useAddressesAssets = (
   addressHashes: string[] = []
-): { data?: { addressHash: Address['hash']; assets: (Asset | NFT)[] }[]; isPending: boolean } => {
+): { data?: { addressHash: AddressHash; assets: (Asset | NFT)[] }[]; isPending: boolean } => {
   const currency = useAppSelector((state) => state.settings.fiatCurrency)
 
   const { data: addressesTokensBalancesWithoutAlph, isPending: areTokensBalancesPending } = useQueries({
@@ -149,7 +149,7 @@ export const useAddressesAssets = (
   }
 }
 
-export const useAddressesGroupedAssets = (addressHashes: string[]) => {
+export const useAddressesGroupedAssets = (addressHashes: AddressHash[]) => {
   const { data: addressesAssets, isPending } = useAddressesAssets(addressHashes)
 
   const groupedAssets = groupByAssetType(addressesAssets?.flatMap((a) => a.assets))
@@ -163,7 +163,7 @@ export const useAddressesGroupedAssets = (addressHashes: string[]) => {
   }
 }
 
-export const useAddressAssets = (addressHash: string) => {
+export const useAddressAssets = (addressHash: AddressHash) => {
   const { data: addressesAssets, isPending } = useAddressesAssets([addressHash])
 
   return {
@@ -172,7 +172,7 @@ export const useAddressAssets = (addressHash: string) => {
   }
 }
 
-export const useAddressesWithAssetsHashes = (addressHashes: string[]) => {
+export const useAddressesWithAssetsHashes = (addressHashes: AddressHash[]) => {
   const { data: addressAssets, isPending } = useAddressesAssets(addressHashes)
 
   return {
@@ -181,13 +181,13 @@ export const useAddressesWithAssetsHashes = (addressHashes: string[]) => {
   }
 }
 
-export const useAddressesFlattenAssets = (addressHashes: string[] = []) => {
+export const useAddressesFlattenAssets = (addressHashes: AddressHash[] = []) => {
   const { data: addressesAssets, isPending } = useAddressesAssets(addressHashes)
 
   return { data: deduplicateAssets(addressesAssets?.flatMap((a) => a.assets)), isPending }
 }
 
-export const useAddressesFlattenKnownFungibleTokens = (addressHashes: string[] = []) => {
+export const useAddressesFlattenKnownFungibleTokens = (addressHashes: AddressHash[] = []) => {
   const { data: addressesAssets, isPending } = useAddressesAssets(addressHashes)
   return {
     data: deduplicateAssets(
@@ -197,7 +197,7 @@ export const useAddressesFlattenKnownFungibleTokens = (addressHashes: string[] =
   }
 }
 
-export const useAddressesFlattenListedTokens = (addressHashes: string[] = []) => {
+export const useAddressesFlattenListedTokens = (addressHashes: AddressHash[] = []) => {
   const { data: addressesAssets, isPending } = useAddressesAssets(addressHashes)
   return {
     data: deduplicateAssets(addressesAssets?.flatMap((a) => a.assets).filter((t) => tokenIsListed(t))) as Asset[],
@@ -205,7 +205,7 @@ export const useAddressesFlattenListedTokens = (addressHashes: string[] = []) =>
   }
 }
 
-export const useAddressesFlattenUnknownTokens = (addressHashes: string[] = []) => {
+export const useAddressesFlattenUnknownTokens = (addressHashes: AddressHash[] = []) => {
   const { data: addressesAssets, isPending } = useAddressesAssets(addressHashes)
   return {
     data: deduplicateAssets(
@@ -218,7 +218,7 @@ export const useAddressesFlattenUnknownTokens = (addressHashes: string[] = []) =
   }
 }
 
-export const useAddressesFlattenNfts = (addressHashes: string[] = []) => {
+export const useAddressesFlattenNfts = (addressHashes: AddressHash[] = []) => {
   const { data: addressesAssets, isPending } = useAddressesAssets(addressHashes)
 
   return {
@@ -227,7 +227,7 @@ export const useAddressesFlattenNfts = (addressHashes: string[] = []) => {
   }
 }
 
-export const useAddressesWorth = (addressHashes: string[]) => {
+export const useAddressesWorth = (addressHashes: AddressHash[]) => {
   const { data: addressesAssets, isPending } = useAddressesAssets(addressHashes)
 
   return {

@@ -24,11 +24,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import {
-  useAddressesFlattenFungibleTokens,
-  useAddressesFlattenKnownFungibleTokens,
-  useAddressesFungibleTokens
-} from '@/api/apiHooks'
+import { useAddressAssets } from '@/api/apiHooks'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -66,7 +62,7 @@ const AssetAmountsInput = ({
 }: AssetAmountsInputProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const assets = useAddressesFlattenKnownFungibleTokens([address.hash])
+  const { data: assets = [] } = useAddressAssets(address.hash)
 
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const selectedValueRef = useRef<HTMLDivElement>(null)
@@ -76,7 +72,7 @@ const AssetAmountsInput = ({
   const [errors, setErrors] = useState<string[]>([])
 
   const selectedAssetId = assetAmounts[selectedAssetRowIndex]?.id
-  const selectedAsset = assets.find((asset) => asset.id === selectedAssetId)
+  const selectedAsset = assets?.find((asset) => asset.id === selectedAssetId)
   const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
   const selectedAssetIds = assetAmounts.map(({ id }) => id)
   const remainingAvailableAssets = assets.filter(
@@ -85,7 +81,7 @@ const AssetAmountsInput = ({
   const disabled = remainingAvailableAssets.length === 0
   const availableAssetOptions: SelectOption<Asset['id']>[] = remainingAvailableAssets.map((asset) => ({
     value: asset.id,
-    label: asset.name
+    label: asset.name || asset.id
   }))
   const canAddMultipleAssets = allowMultiple && assetAmounts.length < assets.length
 
