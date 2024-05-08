@@ -61,7 +61,7 @@ import {
 import { calcExpiry, getSdkError, mapToObj, objToMap } from '@walletconnect/utils'
 import { partition } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useAddressesWithSomeBalance } from '@/api/apiHooks'
@@ -119,6 +119,7 @@ const electron = _window.electron
 
 export const WalletConnectContextProvider: FC = ({ children }) => {
   const { t } = useTranslation()
+  const hasSubscribedToEvents = useRef(false)
   const { data: addresses, isPending: addressesArePending } = useAddressesWithSomeBalance()
 
   const currentNetwork = useAppSelector((s) => s.network)
@@ -508,6 +509,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     if (
       !walletConnectClient ||
       walletConnectClientStatus !== 'initialized' ||
+      hasSubscribedToEvents.current ||
       addresses.length === 0 ||
       addressesArePending
     )
@@ -524,6 +526,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     walletConnectClient.on('session_expire', onSessionExpire)
     walletConnectClient.on('session_extend', onSessionExtend)
     walletConnectClient.on('proposal_expire', onProposalExpire)
+
+    hasSubscribedToEvents.current = true
 
     const connectAndReset = async (uri: string) => {
       await pairWithDapp(uri)
@@ -568,7 +572,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     onSessionUpdate,
     walletConnectClient,
     walletConnectClientStatus,
-    addressesArePending
+    addressesArePending,
+    addresses.length
   ])
 
   const unpairFromDapp = useCallback(

@@ -52,7 +52,7 @@ export const useAddressesAssets = (
 ): { data?: { addressHash: Address['hash']; assets: (Asset | NFT)[] }[]; isPending: boolean } => {
   const currency = useAppSelector((state) => state.settings.fiatCurrency)
 
-  const { data: addressesTokensBalancesWithoutAlph, isPending: isTokensBalancesPending } = useQueries({
+  const { data: addressesTokensBalancesWithoutAlph, isPending: areTokensBalancesPending } = useQueries({
     queries: addressHashes.map((h) => addressesQueries.balances.getAddressTokensBalances(h)),
     combine: combineQueriesResult
   })
@@ -63,23 +63,24 @@ export const useAddressesAssets = (
   })
 
   // Add ALPH balances to the tokens balances
-  const addressesTokensBalances: typeof addressesTokensBalancesWithoutAlph = useMemo(() => [], [])
+  const addressesTokensBalances: typeof addressesTokensBalancesWithoutAlph = useMemo(
+    () =>
+      addressHashes.map((h, i) =>
+        addressesAlphBalances[i] &&
+        (addressesAlphBalances[i].balance !== '0' || addressesAlphBalances[i].lockedBalance !== '0')
+          ? [
+              ...(addressesTokensBalancesWithoutAlph[i] || []),
+              {
+                tokenId: ALPH.id,
+                balance: addressesAlphBalances[i].balance,
+                lockedBalance: addressesAlphBalances[i].lockedBalance
+              }
+            ]
+          : []
+      ),
 
-  for (let i = 0; i < addressHashes.length; i++) {
-    if (
-      addressesAlphBalances[i] &&
-      (addressesAlphBalances[i].balance !== '0' || addressesAlphBalances[i].lockedBalance !== '0')
-    ) {
-      addressesTokensBalances[i] = [
-        ...(addressesTokensBalancesWithoutAlph[i] || []),
-        {
-          tokenId: ALPH.id,
-          balance: addressesAlphBalances[i].balance,
-          lockedBalance: addressesAlphBalances[i].lockedBalance
-        }
-      ]
-    }
-  }
+    [addressHashes, addressesAlphBalances, addressesTokensBalancesWithoutAlph]
+  )
 
   const { data: addressesAssetsMetadata, isPending: isAddressesAssetsMetadataPending } =
     useAssetsMetadataForCurrentNetwork(
@@ -101,7 +102,7 @@ export const useAddressesAssets = (
   })
 
   const isPending =
-    isTokensBalancesPending || isAlphBalancePending || areTokensPricesPending || isAddressesAssetsMetadataPending
+    areTokensBalancesPending || isAlphBalancePending || areTokensPricesPending || isAddressesAssetsMetadataPending
 
   const addressesAssets = useMemo(
     () =>
@@ -139,7 +140,7 @@ export const useAddressesAssets = (
           assets: sortAssets(tokens)
         }
       }),
-    [addressHashes, addressesAssetsMetadata.flattenKnown, addressesTokensBalances, tokensPrices]
+    [addressHashes, addressesAssetsMetadata, addressesTokensBalances, tokensPrices]
   )
 
   return {
