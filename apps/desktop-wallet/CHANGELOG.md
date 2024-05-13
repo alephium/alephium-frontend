@@ -1,5 +1,11 @@
 # alephium-desktop-wallet
 
+## 2.3.0
+
+### Minor Changes
+
+- 3d662cd: Improve secrets management to match Metamask's implementation
+
 ## 2.2.5
 
 ### Patch Changes

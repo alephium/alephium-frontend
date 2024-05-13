@@ -64,9 +64,14 @@ export const encryptMnemonic = async (mnemonic: Uint8Array, password: string) =>
 }
 
 export const decryptMnemonic = async (encryptedMnemonic: string, password: string): Promise<DecryptMnemonicResult> => {
-  const { version, mnemonic } = (await encryptor.decrypt(password, encryptedMnemonic)) as
+  const { version: _v, mnemonic } = (await encryptor.decrypt(password, encryptedMnemonic)) as
     | EncryptedMnemonicStoredAsUint8Array
     | DeprecatedEncryptedMnemonicStoredAsString
+
+  // When we started versioning the mnemonic with 1 we didn't create a migration script (see
+  // https://github.com/alephium/js-sdk/commit/514bd8b920958dbfac68257bd3ce1c53f6bdde27). This resulted in unversioned
+  // mnemonic data. To fix this, we assume that undefined versioning is the same as version 1.
+  const version = _v ?? 1
 
   if (version === 1) {
     console.warn(
