@@ -107,7 +107,7 @@ describe(migrateDeprecatedMnemonic, () => {
     await expect(() => migrateDeprecatedMnemonic(testWalletMnemonic)).rejects.toThrow()
   })
 
-  it('should migrate mneminic and delete old entries', async () => {
+  it('should migrate mnemonic and delete old entries', async () => {
     await addDeprecatedTestWalletInStorage()
     await migrateDeprecatedMnemonic(testWalletMnemonic)
 
