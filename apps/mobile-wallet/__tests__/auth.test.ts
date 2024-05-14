@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { authenticateAsync, hasHardwareAsync, isEnrolledAsync } from 'expo-local-authentication'
 
-import { BiometricAuthenticationStatus, tryLocalAuthenticate } from '~/hooks/useBiometricPrompt'
+import { BiometricAuthenticationStatus, tryLocalAuthenticate } from '~/hooks/useBiometrics'
 
 // Copied from Uniswap
 

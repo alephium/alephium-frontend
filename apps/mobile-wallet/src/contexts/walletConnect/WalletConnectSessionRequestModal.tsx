@@ -16,18 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keyring } from '@alephium/keyring'
 import { getHumanReadableError, WALLETCONNECT_ERRORS, WalletConnectError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import {
   binToHex,
   contractIdFromAddress,
   hashMessage,
+  sign,
   SignDeployContractTxResult,
   SignExecuteScriptTxResult,
   SignMessageResult,
   SignTransferTxResult,
-  SignUnsignedTxResult
+  SignUnsignedTxResult,
+  transactionSign
 } from '@alephium/web3'
 import { SessionTypes } from '@walletconnect/types'
 import { Image } from 'react-native'
@@ -46,6 +47,7 @@ import { ModalContent, ModalContentProps } from '~/components/layout/ModalConten
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Row from '~/components/Row'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { transactionSent } from '~/store/transactions/transactionsActions'
 import { SessionRequestData } from '~/types/walletConnect'
@@ -204,9 +206,13 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
     try {
       if (requestData.type === 'sign-message') {
         const messageHash = hashMessage(requestData.wcData.message, requestData.wcData.messageHasher)
-        signResult = { signature: keyring.signMessageHash(messageHash, signAddress.hash) }
+        signResult = { signature: sign(messageHash, await getAddressAsymetricKey(signAddress.hash, 'private')) }
       } else {
-        const signature = keyring.signTransaction(requestData.unsignedTxData.unsignedTx.txId, signAddress.hash)
+        const signature = transactionSign(
+          requestData.unsignedTxData.unsignedTx.txId,
+          await getAddressAsymetricKey(signAddress.hash, 'private')
+        )
+
         signResult = {
           ...requestData.unsignedTxData,
           signature,

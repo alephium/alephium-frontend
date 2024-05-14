@@ -28,6 +28,7 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit'
 
+import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import { addressesImported } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
 import { newWalletGenerated, newWalletImportedWithMetadata, walletDeleted } from '~/store/wallet/walletActions'
@@ -79,6 +80,8 @@ export const discoverAddresses = createAsyncThunk(
     dispatch(algoDataInitialized())
 
     try {
+      await initializeKeyringWithStoredWallet()
+
       while (group < 4) {
         const groupData = groupsData[group]
         let newAddressGroup: number | undefined = undefined
@@ -141,6 +144,8 @@ export const discoverAddresses = createAsyncThunk(
       }
     } catch (e) {
       console.error(e)
+    } finally {
+      keyring.clearAll()
     }
 
     if (state.addressDiscovery.status !== 'stopped') {

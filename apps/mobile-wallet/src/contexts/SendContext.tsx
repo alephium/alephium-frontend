@@ -26,7 +26,7 @@ import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransacti
 import ConsolidationModal from '~/components/ConsolidationModal'
 import BottomModal from '~/components/layout/BottomModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { useBiometricPrompt } from '~/hooks/useBiometricPrompt'
+import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { transactionSent } from '~/store/transactions/transactionsActions'
 import { showExceptionToast } from '~/utils/layout'
@@ -72,8 +72,7 @@ const initialValues: SendContextValue = {
 const SendContext = createContext(initialValues)
 
 export const SendContextProvider = ({ children }: { children: ReactNode }) => {
-  const biometricsRequiredForTransactions = useAppSelector((s) => s.settings.requireAuth)
-  const { triggerBiometricsPrompt } = useBiometricPrompt()
+  const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const dispatch = useAppDispatch()
 
   const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(initialValues.toAddress)
@@ -180,15 +179,12 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
   const authenticateAndSend = useCallback(
     async (onSendSuccess: () => void) => {
-      if (biometricsRequiredForTransactions) {
-        triggerBiometricsPrompt({
-          successCallback: () => sendTransaction(onSendSuccess)
-        })
-      } else {
-        sendTransaction(onSendSuccess)
-      }
+      await triggerBiometricsAuthGuard({
+        settingsToCheck: 'transactions',
+        successCallback: () => sendTransaction(onSendSuccess)
+      })
     },
-    [biometricsRequiredForTransactions, sendTransaction, triggerBiometricsPrompt]
+    [sendTransaction, triggerBiometricsAuthGuard]
   )
 
   return (

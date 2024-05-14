@@ -31,8 +31,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import CenteredInstructions from '~/components/text/CenteredInstructions'
 import { useHeaderContext } from '~/contexts/HeaderContext'
-import { useAppSelector } from '~/hooks/redux'
-import { useBiometricPrompt } from '~/hooks/useBiometricPrompt'
+import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
 
@@ -42,9 +41,7 @@ interface BackupIntroScreenProps
 
 const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => {
   const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
-  const { triggerBiometricsPrompt } = useBiometricPrompt()
-  const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
-  const biometricsRequiredForTransactions = useAppSelector((s) => s.settings.requireAuth)
+  const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
 
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
 
@@ -57,13 +54,10 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
   )
 
   const onShowSecretRecoveryPhraseButtonPress = () => {
-    if (biometricsRequiredForAppAccess || biometricsRequiredForTransactions) {
-      triggerBiometricsPrompt({
-        successCallback: () => setIsMnemonicModalVisible(true)
-      })
-    } else {
-      setIsMnemonicModalVisible(true)
-    }
+    triggerBiometricsAuthGuard({
+      settingsToCheck: 'appAccessOrTransactions',
+      successCallback: () => setIsMnemonicModalVisible(true)
+    })
   }
 
   return (

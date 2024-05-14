@@ -26,6 +26,7 @@ import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import AddressFormBaseScreen, { AddressFormData } from '~/screens/Addresses/Address/AddressFormBaseScreen'
 import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
 import { getRandomLabelColor } from '~/utils/colors'
@@ -50,10 +51,12 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
     setLoading(true)
 
     try {
+      await initializeKeyringWithStoredWallet()
       const newAddress = {
         ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes.current }),
         settings: { label, color, isDefault }
       }
+      keyring.clearAll()
 
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))

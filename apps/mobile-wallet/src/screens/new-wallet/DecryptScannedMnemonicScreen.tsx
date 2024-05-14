@@ -30,7 +30,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import useBiometrics from '~/hooks/useBiometrics'
+import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { importContacts } from '~/persistent-storage/contacts'
 import { generateAndStoreWallet } from '~/persistent-storage/wallet'
@@ -38,6 +38,7 @@ import { importAddresses } from '~/store/addresses/addressesStorageUtils'
 import { newWalletImportedWithMetadata } from '~/store/wallet/walletActions'
 import { WalletImportData } from '~/types/wallet'
 import { pbkdf2 } from '~/utils/crypto'
+import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
 
 interface DecryptScannedMnemonicScreenProps
@@ -47,7 +48,6 @@ interface DecryptScannedMnemonicScreenProps
 const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScreenProps) => {
   const qrCodeImportedEncryptedMnemonic = useAppSelector((s) => s.walletGeneration.qrCodeImportedEncryptedMnemonic)
   const name = useAppSelector((s) => s.walletGeneration.walletName)
-  const pin = useAppSelector((s) => s.credentials.pin)
   const dispatch = useAppDispatch()
   const { deviceHasEnrolledBiometrics } = useBiometrics()
   const inputRef = useRef<TextInput>(null)
@@ -65,10 +65,10 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
 
   const decryptAndImportWallet = async () => {
     // This should never happen, but if it does, let the user restart the process of creating a wallet
-    if (!qrCodeImportedEncryptedMnemonic || !name || !pin) {
+    if (!qrCodeImportedEncryptedMnemonic || !name) {
       Alert.alert(
         'Could not proceed',
-        `Missing ${!qrCodeImportedEncryptedMnemonic ? 'encrypted mnemonic' : !name ? 'wallet name' : 'pin'}`,
+        `Missing ${!qrCodeImportedEncryptedMnemonic ? 'encrypted mnemonic' : 'wallet name'}`,
         [
           {
             text: 'Restart',
@@ -84,23 +84,28 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
 
       const decryptedData = await decryptAsync(password, qrCodeImportedEncryptedMnemonic, pbkdf2)
       const { mnemonic, addresses, contacts } = JSON.parse(decryptedData) as WalletImportData
-      const wallet = await generateAndStoreWallet(name, mnemonic)
 
       try {
-        await importAddresses(wallet.id, addresses)
-      } catch (e) {
-        console.error(e)
+        const wallet = await generateAndStoreWallet(name, mnemonic)
 
-        sendAnalytics('Error', { message: 'Could not import addresses from QR code scan' })
+        dispatch(newWalletImportedWithMetadata(wallet))
+
+        sendAnalytics('Imported wallet', { note: 'Scanned desktop wallet QR code' })
+
+        try {
+          await importAddresses(wallet.id, addresses)
+        } catch (e) {
+          const message = 'Could not import addresses from QR code scan'
+          showExceptionToast(e, message)
+          sendAnalytics('Error', { message })
+        }
+
+        resetNavigation(navigation, deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
+      } catch (e) {
+        showExceptionToast(e, 'Could not import wallet from QR code scan')
       }
 
-      dispatch(newWalletImportedWithMetadata(wallet))
-
-      sendAnalytics('Imported wallet', { note: 'Scanned desktop wallet QR code' })
-
       if (contacts.length > 0) await importContacts(contacts)
-
-      resetNavigation(navigation, deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
     } catch (e) {
       setError('Could not decrypt wallet with the given password.')
     } finally {

@@ -25,11 +25,11 @@ import DeprecatedAuthenticationModal from '~/components/DeprecatedAuthentication
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { Spinner } from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import useBiometrics from '~/hooks/useBiometrics'
+import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getStoredWallet, migrateDeprecatedMnemonic } from '~/persistent-storage/wallet'
 import { biometricsToggled } from '~/store/settingsSlice'
-import { walletUnlocked } from '~/store/wallet/walletSlice'
+import { walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
 
@@ -37,8 +37,6 @@ interface LoginWithPinScreenProps extends StackScreenProps<RootStackParamList, '
 
 const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) => {
   const dispatch = useAppDispatch()
-  const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
   const { deviceSupportsBiometrics, deviceHasEnrolledBiometrics } = useBiometrics()
 
@@ -57,28 +55,17 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
           dispatch(biometricsToggled())
         }
 
-        const needsAddressRegeneration = addressesStatus === 'uninitialized' && !isLoadingLatestTxs
-        const { addressesToInitialize, contacts, ...wallet } = await getStoredWallet(needsAddressRegeneration)
+        const wallet = await getStoredWallet()
 
-        dispatch(walletUnlocked({ wallet, addressesToInitialize, contacts }))
-
+        dispatch(walletUnlocked(wallet))
         resetNavigation(navigation)
-
         sendAnalytics('Unlocked wallet')
       } catch (e) {
         console.error(e)
         showExceptionToast(e, 'Could not migrate mnemonic and unlock wallet')
       }
     },
-    [
-      addressesStatus,
-      biometricsRequiredForAppAccess,
-      deviceHasEnrolledBiometrics,
-      deviceSupportsBiometrics,
-      dispatch,
-      isLoadingLatestTxs,
-      navigation
-    ]
+    [biometricsRequiredForAppAccess, deviceHasEnrolledBiometrics, deviceSupportsBiometrics, dispatch, navigation]
   )
 
   return (

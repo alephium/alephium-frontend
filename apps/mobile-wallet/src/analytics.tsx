@@ -23,6 +23,7 @@ import { PosthogCaptureOptions } from 'posthog-react-native/lib/posthog-core/src
 import { useCallback, useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useBiometrics } from '~/hooks/useBiometrics'
 import { analyticsIdGenerated } from '~/store/settingsSlice'
 
 const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
@@ -62,6 +63,7 @@ export const Analytics = ({ children }: { children: JSX.Element }) => {
   const theme = useAppSelector((s) => s.settings.theme)
   const currency = useAppSelector((s) => s.settings.currency)
   const networkName = useAppSelector((s) => s.network.name)
+  const { deviceSupportsBiometrics, deviceHasEnrolledBiometrics } = useBiometrics()
   const dispatch = useAppDispatch()
 
   const shouldOptOut = !settingsLoadedFromStorage || __DEV__
@@ -96,10 +98,22 @@ export const Analytics = ({ children }: { children: JSX.Element }) => {
         currency,
         networkName,
         analytics,
-        usesBiometrics
+        usesBiometrics,
+        deviceSupportsBiometrics,
+        deviceHasEnrolledBiometrics
       }
     })
-  }, [analytics, canCaptureUserProperties, currency, networkName, requireAuth, theme, usesBiometrics])
+  }, [
+    analytics,
+    canCaptureUserProperties,
+    currency,
+    deviceHasEnrolledBiometrics,
+    deviceSupportsBiometrics,
+    networkName,
+    requireAuth,
+    theme,
+    usesBiometrics
+  ])
 
   useEffect(() => {
     if (canCaptureUserProperties) captureUserProperties()

@@ -27,7 +27,7 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { persistWalletMetadata } from '~/persistent-storage/wallet'
+import { updateStoredWalletMetadata } from '~/persistent-storage/wallet'
 import { walletNameChanged } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 
@@ -46,7 +46,7 @@ const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalle
     setLoading(true)
 
     try {
-      await persistWalletMetadata({ name })
+      await updateStoredWalletMetadata({ name })
       dispatch(walletNameChanged(name))
 
       sendAnalytics('Wallet: Editted wallet name')

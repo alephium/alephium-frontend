@@ -17,8 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring } from '@alephium/keyring'
-import { AddressMetadata } from '@alephium/shared'
+import { AddressMetadata, getHumanReadableError } from '@alephium/shared'
 
+import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import { newAddressGenerated, syncLatestTransactions } from '~/store/addressesSlice'
 import { store } from '~/store/store'
 import { WalletMetadata } from '~/types/wallet'
@@ -27,15 +28,23 @@ import { persistAddressesSettings } from '~/utils/addresses'
 export const importAddresses = async (walletId: WalletMetadata['id'], addressesMetadata: AddressMetadata[]) => {
   const addressHashes = []
 
-  for (const { index, label, color, isDefault } of addressesMetadata) {
-    const newAddressData = keyring.generateAndCacheAddress({ addressIndex: index })
-    const newAddress = { ...newAddressData, settings: { label, color, isDefault } }
+  await initializeKeyringWithStoredWallet()
 
-    await persistAddressesSettings([newAddress], walletId)
-    store.dispatch(newAddressGenerated(newAddress))
+  try {
+    for (const { index, label, color, isDefault } of addressesMetadata) {
+      const newAddressData = keyring.generateAndCacheAddress({ addressIndex: index })
+      const newAddress = { ...newAddressData, settings: { label, color, isDefault } }
 
-    addressHashes.push(newAddress.hash)
+      await persistAddressesSettings([newAddress], walletId)
+      store.dispatch(newAddressGenerated(newAddress))
+
+      addressHashes.push(newAddress.hash)
+    }
+
+    store.dispatch(syncLatestTransactions(addressHashes))
+  } catch (e) {
+    throw new Error(getHumanReadableError(e, ''))
+  } finally {
+    keyring.clearAll()
   }
-
-  store.dispatch(syncLatestTransactions(addressHashes))
 }

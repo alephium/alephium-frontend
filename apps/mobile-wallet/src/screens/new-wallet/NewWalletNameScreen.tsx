@@ -28,13 +28,14 @@ import ScrollScreen from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import useBiometrics from '~/hooks/useBiometrics'
+import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { generateAndStoreWallet } from '~/persistent-storage/wallet'
 import { syncLatestTransactions } from '~/store/addressesSlice'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { newWalletNameEntered } from '~/store/walletGenerationSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
 
 const instructions: Instruction[] = [
@@ -61,15 +62,19 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
     } else if (method === 'create') {
       setLoading(true)
 
-      const wallet = await generateAndStoreWallet(name)
-      dispatch(newWalletGenerated(wallet))
-      dispatch(syncLatestTransactions(wallet.firstAddress.hash))
+      try {
+        const wallet = await generateAndStoreWallet(name)
 
-      sendAnalytics('Created new wallet')
+        dispatch(newWalletGenerated(wallet))
+        dispatch(syncLatestTransactions(wallet.firstAddress.hash))
 
-      setLoading(false)
-
-      resetNavigation(navigation, deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
+        sendAnalytics('Created new wallet')
+        resetNavigation(navigation, deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
+      } catch (e) {
+        showExceptionToast(e, 'Could not generate new wallet')
+      } finally {
+        setLoading(false)
+      }
     }
   }
 
