@@ -178,8 +178,8 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   )
 
   const authenticateAndSend = useCallback(
-    (onSendSuccess: () => void) => {
-      triggerBiometricsAuthGuard({
+    async (onSendSuccess: () => void) => {
+      await triggerBiometricsAuthGuard({
         settingsToCheck: 'transactions',
         successCallback: () => sendTransaction(onSendSuccess)
       })
