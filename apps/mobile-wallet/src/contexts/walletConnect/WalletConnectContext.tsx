@@ -86,6 +86,7 @@ import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useBiometricPrompt } from '~/hooks/useBiometricPrompt'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
@@ -137,6 +138,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const appState = useRef(AppState.currentState)
   const dispatch = useAppDispatch()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
+  const biometricsRequiredForTransactions = useAppSelector((s) => s.settings.requireAuth)
+  const { triggerBiometricsPrompt } = useBiometricPrompt()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
@@ -893,31 +896,41 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   ) => {
     if (!sessionRequestEvent) return
 
-    setLoading('Approving...')
+    const sendTxCallback = async () => {
+      setLoading('Approving...')
 
-    try {
-      const signResult = await sendTransaction()
+      try {
+        const signResult = await sendTransaction()
 
-      if (!signResult) {
-        console.log('⏳ DID NOT GET A SIGNATURE RESULT, INFORMING DAPP THAT SESSION REQUEST FAILED...')
-        await respondToWalletConnectWithError(sessionRequestEvent, {
-          message: 'Sending transaction failed',
-          code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-        })
-        console.log('✅ INFORMING: DONE!')
-      } else {
-        console.log('⏳ INFORMING DAPP THAT SESSION REQUEST SUCCEEDED...')
-        await respondToWalletConnectWithSuccess(sessionRequestEvent, signResult)
-        console.log('✅ INFORMING: DONE!')
+        if (!signResult) {
+          console.log('⏳ DID NOT GET A SIGNATURE RESULT, INFORMING DAPP THAT SESSION REQUEST FAILED...')
+          await respondToWalletConnectWithError(sessionRequestEvent, {
+            message: 'Sending transaction failed',
+            code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+          })
+          console.log('✅ INFORMING: DONE!')
+        } else {
+          console.log('⏳ INFORMING DAPP THAT SESSION REQUEST SUCCEEDED...')
+          await respondToWalletConnectWithSuccess(sessionRequestEvent, signResult)
+          console.log('✅ INFORMING: DONE!')
+        }
+      } catch (e) {
+        console.error('❌ INFORMING: FAILED.')
+      } finally {
+        console.log('👉 RESETTING SESSION REQUEST EVENT.')
+        setSessionRequestEvent(undefined)
+        setSessionRequestData(undefined)
+        setLoading('')
+        showToast({ text1: 'DApp request approved', text2: 'You can go back to your browser.' })
       }
-    } catch (e) {
-      console.error('❌ INFORMING: FAILED.')
-    } finally {
-      console.log('👉 RESETTING SESSION REQUEST EVENT.')
-      setSessionRequestEvent(undefined)
-      setSessionRequestData(undefined)
-      setLoading('')
-      showToast({ text1: 'DApp request approved', text2: 'You can go back to your browser.' })
+    }
+
+    if (biometricsRequiredForTransactions) {
+      triggerBiometricsPrompt({
+        successCallback: () => sendTxCallback()
+      })
+    } else {
+      sendTxCallback()
     }
   }
 
