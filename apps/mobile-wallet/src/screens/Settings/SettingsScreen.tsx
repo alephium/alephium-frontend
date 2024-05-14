@@ -38,7 +38,7 @@ import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { useBiometricPrompt, useBiometrics } from '~/hooks/useBiometrics'
+import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
@@ -72,7 +72,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const walletName = useAppSelector((s) => s.wallet.name)
   const theme = useTheme()
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
-  const { triggerBiometricsPrompt } = useBiometricPrompt()
+  const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
@@ -104,23 +104,17 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   }
 
   const toggleBiometricsAppAccess = async () => {
-    if (isBiometricsEnabled) {
-      triggerBiometricsPrompt({
-        successCallback: () => dispatch(biometricsToggled())
-      })
-    } else {
-      dispatch(biometricsToggled())
-    }
+    triggerBiometricsAuthGuard({
+      settingsToCheck: 'appAccess',
+      successCallback: () => dispatch(biometricsToggled())
+    })
   }
 
   const toggleBiometricsTransactions = () => {
-    if (biometricsRequiredForTransactions) {
-      triggerBiometricsPrompt({
-        successCallback: () => dispatch(passwordRequirementToggled())
-      })
-    } else {
-      dispatch(passwordRequirementToggled())
-    }
+    triggerBiometricsAuthGuard({
+      settingsToCheck: 'transactions',
+      successCallback: () => dispatch(passwordRequirementToggled())
+    })
   }
 
   const handleDisableBiometricsPress = () => {
@@ -296,13 +290,10 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                   onPress={() => {
                     props.onClose && props.onClose()
 
-                    if (biometricsRequiredForAppAccess || biometricsRequiredForTransactions) {
-                      triggerBiometricsPrompt({
-                        successCallback: () => setIsMnemonicModalVisible(true)
-                      })
-                    } else {
-                      setIsMnemonicModalVisible(true)
-                    }
+                    triggerBiometricsAuthGuard({
+                      settingsToCheck: 'appAccessOrTransactions',
+                      successCallback: () => setIsMnemonicModalVisible(true)
+                    })
                   }}
                 />
               </ScreenSection>

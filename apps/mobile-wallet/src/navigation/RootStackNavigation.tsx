@@ -31,7 +31,7 @@ import { useTheme } from 'styled-components/native'
 import { Analytics } from '~/analytics'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { useBiometricPrompt } from '~/hooks/useBiometrics'
+import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import BackupMnemonicNavigation from '~/navigation/BackupMnemonicNavigation'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import ReceiveNavigation from '~/navigation/ReceiveNavigation'
@@ -148,7 +148,7 @@ const AppUnlockHandler = () => {
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const { triggerBiometricsPrompt } = useBiometricPrompt()
+  const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
 
   const [isAppStateChangeCallbackRegistered, setIsAppStateChangeCallbackRegistered] = useState(false)
   const [needsWalletUnlock, setNeedsWalletUnlock] = useState(false)
@@ -174,14 +174,11 @@ const AppUnlockHandler = () => {
         try {
           const wallet = await getStoredWallet()
 
-          if (biometricsRequiredForAppAccess) {
-            await triggerBiometricsPrompt({
-              successCallback: () => initializeWallet(wallet),
-              failureCallback: unlockApp
-            })
-          } else {
-            initializeWallet(wallet)
-          }
+          await triggerBiometricsAuthGuard({
+            settingsToCheck: 'appAccess',
+            successCallback: () => initializeWallet(wallet),
+            failureCallback: unlockApp
+          })
         } catch {
           if (lastNavigationState) {
             // When we are at the wallet creation flow we want to reset to the last screen
@@ -211,14 +208,7 @@ const AppUnlockHandler = () => {
         showExceptionToast(e, 'Could not unlock app')
       }
     }
-  }, [
-    biometricsRequiredForAppAccess,
-    initializeWallet,
-    isWalletUnlocked,
-    lastNavigationState,
-    navigation,
-    triggerBiometricsPrompt
-  ])
+  }, [initializeWallet, isWalletUnlocked, lastNavigationState, navigation, triggerBiometricsAuthGuard])
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {

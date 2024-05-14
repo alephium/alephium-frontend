@@ -23,6 +23,7 @@ import {
   LocalAuthenticationResult
 } from 'expo-local-authentication'
 
+import { useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 
 export const useBiometrics = () => {
@@ -155,6 +156,36 @@ export async function tryLocalAuthenticate(): Promise<BiometricAuthenticationSta
 
     return BiometricAuthenticationStatus.Rejected
   }
+}
+
+export const useBiometricsAuthGuard = () => {
+  const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
+  const biometricsRequiredForTransactions = useAppSelector((s) => s.settings.requireAuth)
+  const { triggerBiometricsPrompt } = useBiometricPrompt()
+
+  const triggerBiometricsAuthGuard = async ({
+    successCallback,
+    failureCallback,
+    settingsToCheck
+  }: {
+    settingsToCheck: 'appAccess' | 'transactions' | 'appAccessOrTransactions'
+    successCallback: () => void
+    failureCallback?: () => void
+  }) => {
+    const isBiometricsAuthRequired = {
+      appAccess: biometricsRequiredForAppAccess,
+      transactions: biometricsRequiredForTransactions,
+      appAccessOrTransactions: biometricsRequiredForAppAccess || biometricsRequiredForTransactions
+    }[settingsToCheck]
+
+    if (isBiometricsAuthRequired) {
+      await triggerBiometricsPrompt({ successCallback, failureCallback })
+    } else {
+      successCallback()
+    }
+  }
+
+  return { triggerBiometricsAuthGuard }
 }
 
 const isInLockout = (result: LocalAuthenticationResult): boolean =>
