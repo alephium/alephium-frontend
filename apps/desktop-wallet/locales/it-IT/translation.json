@@ -490,5 +490,7 @@
   "Attributes": "Attributi",
   "Collection": "Collezione",
   "ID": "ID",
-  "Copy ID": "Copia ID"
+  "Copy ID": "Copia ID",
+  "To delete this wallet use it without a passphrase": "Per eliminare questo portafoglio usalo senza passphrase",
+  "To export this wallet use it without a passphrase": "Per esportare questo portafoglio usalo senza passphrase"
 }
