@@ -50,6 +50,7 @@ import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
 import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
 import NewContactScreen from '~/screens/Addresses/Contact/NewContactScreen'
 import CustomNetworkScreen from '~/screens/CustomNetworkScreen'
+import FundingPasswordScreen from '~/screens/FundingPasswordScreen'
 import LandingScreen, { CoolAlephiumCanvas } from '~/screens/LandingScreen'
 import LoginWithPinScreen from '~/screens/LoginWithPinScreen'
 import AddBiometricsScreen from '~/screens/new-wallet/AddBiometricsScreen'
@@ -125,6 +126,7 @@ const RootStackNavigation = () => {
                 <RootStack.Screen name="EditWalletNameScreen" component={EditWalletNameScreen} />
                 <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
                 <RootStack.Screen name="PublicKeysScreen" component={PublicKeysScreen} />
+                <RootStack.Screen name="FundingPasswordScreen" component={FundingPasswordScreen} />
                 <RootStack.Screen
                   name="ImportWalletAddressDiscoveryScreen"
                   component={ImportWalletAddressDiscoveryScreen}

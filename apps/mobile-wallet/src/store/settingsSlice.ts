@@ -60,6 +60,9 @@ const settingsSlice = createSlice({
     },
     biometricsToggled: (state) => {
       state.usesBiometrics = !state.usesBiometrics
+    },
+    fundingPasswordUseToggled: (state, { payload }: PayloadAction<GeneralSettings['usesFundingPassword']>) => {
+      state.usesFundingPassword = payload
     }
   },
   extraReducers(builder) {
@@ -79,7 +82,8 @@ export const {
   analyticsIdGenerated,
   analyticsToggled,
   walletConnectToggled,
-  biometricsToggled
+  biometricsToggled,
+  fundingPasswordUseToggled
 } = settingsSlice.actions
 
 export const settingsListenerMiddleware = createListenerMiddleware()

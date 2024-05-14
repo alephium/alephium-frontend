@@ -20,6 +20,7 @@ import { localStorageNetworkSettingsLoaded, NetworkSettings } from '@alephium/sh
 import { useEffect } from 'react'
 
 import { useAppDispatch } from '~/hooks/redux'
+import { hasStoredFundingPassword } from '~/persistent-storage/fundingPassword'
 import { loadSettings } from '~/persistent-storage/settings'
 import { storedGeneralSettingsLoaded } from '~/store/settingsSlice'
 import { GeneralSettings } from '~/types/settings'
@@ -31,6 +32,7 @@ const useLoadStoredSettings = () => {
   useEffect(() => {
     const loadStoredSettingsIntoState = async () => {
       const generalSettings = (await loadSettings('general')) as GeneralSettings
+      generalSettings.usesFundingPassword = await hasStoredFundingPassword()
       dispatch(storedGeneralSettingsLoaded(generalSettings))
 
       await migrateNetworkSettings()

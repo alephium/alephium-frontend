@@ -68,6 +68,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
+  const usesFundingPassword = useAppSelector((s) => s.settings.usesFundingPassword)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletName = useAppSelector((s) => s.wallet.name)
   const theme = useTheme()
@@ -164,6 +165,10 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
     }
   }
 
+  const handleFundingPasswordPress = () => {
+    navigation.navigate('FundingPasswordScreen')
+  }
+
   return (
     <>
       <ScrollScreenStyled verticalGap screenTitle="Settings" headerOptions={{ type: 'stack' }} {...props}>
@@ -205,12 +210,15 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                   disabled={!deviceHasEnrolledBiometrics}
                 />
               </Row>
-              <Row title="Transactions" subtitle="Require biometrics to transact" isLast>
+              <Row title="Transactions" subtitle="Require biometrics to transact">
                 <Toggle
                   value={biometricsRequiredForTransactions}
                   onValueChange={handleBiometricsTransactionsChange}
                   disabled={!deviceHasEnrolledBiometrics}
                 />
+              </Row>
+              <Row title="Funding password" subtitle="Enhance your security" isLast>
+                <Toggle value={usesFundingPassword} onValueChange={handleFundingPasswordPress} />
               </Row>
             </BoxSurface>
           </ScreenSection>
