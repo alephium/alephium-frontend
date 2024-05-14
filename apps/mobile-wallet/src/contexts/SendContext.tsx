@@ -26,7 +26,7 @@ import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransacti
 import ConsolidationModal from '~/components/ConsolidationModal'
 import BottomModal from '~/components/layout/BottomModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { useBiometricPrompt } from '~/hooks/useBiometricPrompt'
+import { useBiometricPrompt } from '~/hooks/useBiometrics'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { transactionSent } from '~/store/transactions/transactionsActions'
 import { showExceptionToast } from '~/utils/layout'

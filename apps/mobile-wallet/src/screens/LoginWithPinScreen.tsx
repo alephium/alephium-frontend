@@ -25,7 +25,7 @@ import DeprecatedAuthenticationModal from '~/components/DeprecatedAuthentication
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { Spinner } from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import useBiometrics from '~/hooks/useBiometrics'
+import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getStoredWallet, migrateDeprecatedMnemonic } from '~/persistent-storage/wallet'
 import { biometricsToggled } from '~/store/settingsSlice'

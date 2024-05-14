@@ -32,7 +32,7 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import CenteredInstructions from '~/components/text/CenteredInstructions'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useAppSelector } from '~/hooks/redux'
-import { useBiometricPrompt } from '~/hooks/useBiometricPrompt'
+import { useBiometricPrompt } from '~/hooks/useBiometrics'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
 
