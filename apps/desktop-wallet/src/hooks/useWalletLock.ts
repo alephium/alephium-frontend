@@ -45,7 +45,7 @@ const useWalletLock = () => {
   const posthog = usePostHog()
 
   const lockWallet = (lockedFrom?: string) => {
-    keyring.clearAll()
+    keyring.clear()
     dispatch(walletLocked())
 
     if (lockedFrom) posthog.capture('Locked wallet', { origin: lockedFrom })

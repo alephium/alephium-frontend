@@ -69,7 +69,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
 
       sendAnalytics('Error', { message: 'Could not save new address' })
     } finally {
-      keyring.clearAll()
+      keyring.clear()
     }
 
     setLoading(false)

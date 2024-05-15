@@ -45,6 +45,6 @@ export const importAddresses = async (walletId: WalletMetadata['id'], addressesM
   } catch (e) {
     throw new Error(getHumanReadableError(e, ''))
   } finally {
-    keyring.clearAll()
+    keyring.clear()
   }
 }

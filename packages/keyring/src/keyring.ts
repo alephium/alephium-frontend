@@ -60,7 +60,7 @@ export class Keyring {
 
   // PUBLIC METHODS
 
-  public clearCachedSecrets = () => {
+  public clear = () => {
     this.addresses.forEach((address) => {
       if (address.privateKey) {
         resetArray(address.privateKey)
@@ -70,10 +70,6 @@ export class Keyring {
 
     this.hdWallet = null
     this.root = null
-  }
-
-  public clearAll = () => {
-    this.clearCachedSecrets()
     this.addresses = []
   }
 
@@ -94,14 +90,14 @@ export class Keyring {
 
     const mnemonic = mnemonicStringToUint8Array(mnemonicStr)
 
-    this.clearAll()
+    this.clear()
     this._initFromMnemonic(mnemonic, '')
 
     return mnemonic
   }
 
   public initFromDecryptedMnemonic = async (decryptedMnemonic: Uint8Array, passphrase: string) => {
-    this.clearAll()
+    this.clear()
     this._initFromMnemonic(decryptedMnemonic, passphrase)
 
     passphrase = ''
@@ -111,7 +107,7 @@ export class Keyring {
   public initFromEncryptedMnemonic = async (encryptedMnemonic: string, password: string, passphrase: string) => {
     const { version, decryptedMnemonic } = await decryptMnemonic(encryptedMnemonic, password)
 
-    this.clearAll()
+    this.clear()
     this._initFromMnemonic(decryptedMnemonic, passphrase)
 
     encryptedMnemonic = ''

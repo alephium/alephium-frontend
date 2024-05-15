@@ -63,7 +63,7 @@ const WalletWordsPage = () => {
       ))
 
   const handleBackPress = () => {
-    keyring.clearAll()
+    keyring.clear()
     resetCachedMnemonic()
     onButtonBack()
   }
