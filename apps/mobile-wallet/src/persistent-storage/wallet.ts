@@ -58,25 +58,30 @@ export const generateAndStoreWallet = async (
 ): Promise<GeneratedWallet> => {
   const isMnemonicBackedUp = !!mnemonicToImport
 
-  const mnemonicUint8Array = mnemonicToImport
-    ? keyring.importMnemonicString(mnemonicToImport)
-    : keyring.generateRandomMnemonic()
-  await storeWalletMnemonic(mnemonicUint8Array)
+  try {
+    const mnemonicUint8Array = mnemonicToImport
+      ? keyring.importMnemonicString(mnemonicToImport)
+      : keyring.generateRandomMnemonic()
 
-  const firstAddressHash = await generateAndStoreAddressKeypairForIndex(0)
-  const walletMetadata = generateWalletMetadata(name, firstAddressHash, isMnemonicBackedUp)
-  await storeWalletMetadata(walletMetadata)
+    await storeWalletMnemonic(mnemonicUint8Array)
 
-  keyring.clearAll()
+    const firstAddressHash = await generateAndStoreAddressKeypairForIndex(0)
+    const walletMetadata = generateWalletMetadata(name, firstAddressHash, isMnemonicBackedUp)
+    await storeWalletMetadata(walletMetadata)
 
-  return {
-    id: walletMetadata.id,
-    name,
-    isMnemonicBackedUp,
-    firstAddress: {
-      index: 0,
-      hash: firstAddressHash
+    return {
+      id: walletMetadata.id,
+      name,
+      isMnemonicBackedUp,
+      firstAddress: {
+        index: 0,
+        hash: firstAddressHash
+      }
     }
+  } catch (e) {
+    throw new Error(getHumanReadableError(e, ''))
+  } finally {
+    keyring.clearAll()
   }
 }
 
@@ -339,9 +344,9 @@ const deleteAddressPrivateKey = async (addressHash: AddressHash) =>
   deleteSecurelyWithReportableError(ADDRESS_PRIV_KEY_PREFIX + addressHash, 'Could not delete address private key')
 
 const generateAndStoreAddressKeypairForIndex = async (addressIndex: number): Promise<AddressHash> => {
-  if (!keyring.isInitialized()) await initializeKeyringWithStoredWallet()
-
   try {
+    if (!keyring.isInitialized()) await initializeKeyringWithStoredWallet()
+
     const { hash, publicKey } = keyring.generateAndCacheAddress({ addressIndex })
     let privateKey = keyring.exportPrivateKeyOfAddress(hash)
 
