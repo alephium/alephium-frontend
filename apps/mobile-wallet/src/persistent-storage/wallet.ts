@@ -251,6 +251,9 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
   }
 }
 
+export const storedWalletExists = async (): Promise<boolean> =>
+  !!(await SecureStore.getItemAsync(MNEMONIC_V2, defaultSecureStoreConfig))
+
 export const dangerouslyExportWalletMnemonic = async (): Promise<string> => {
   const decryptedMnemonic = await SecureStore.getItemAsync(MNEMONIC_V2, defaultSecureStoreConfig)
 

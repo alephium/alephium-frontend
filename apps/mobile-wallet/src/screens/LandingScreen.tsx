@@ -60,10 +60,6 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const { width, height } = Dimensions.get('window')
   const [dimensions, setDimensions] = useState({ width, height })
   const [showNewWalletButtons, setShowNewWalletButtons] = useState(false)
-  const [isAltLogoShown, setIsAltLogoShown] = useState(false)
-
-  const gradientRadius = useSharedValue(0)
-  const gradientColorsAnimationProgress = useSharedValue(0)
 
   useEffect(() => {
     const unsubscribeBlurListener = navigation.addListener('blur', () => {
@@ -79,36 +75,6 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
       unsubscribeFocusListener()
     }
   }, [navigation, theme.name])
-
-  useEffect(() => {
-    gradientRadius.value = withDelay(200, withSpring(dimensions.width * 2, { mass: 3, stiffness: 60, damping: 40 }))
-  }, [dimensions.width, gradientRadius])
-
-  const logoAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotateY: withSpring(isAltLogoShown ? '180deg' : '0deg') }],
-    opacity: withSpring(isAltLogoShown ? 0 : 1)
-  }))
-
-  const altLogoAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ rotateY: withSpring(isAltLogoShown ? '0deg' : '180deg') }],
-    opacity: withSpring(isAltLogoShown ? 1 : 0)
-  }))
-
-  useEffect(() => {
-    gradientColorsAnimationProgress.value = withSpring(isAltLogoShown ? 1 : 0, { mass: 1, stiffness: 90, damping: 10 })
-  }, [gradientColorsAnimationProgress, isAltLogoShown])
-
-  const animatedColors = useDerivedValue(() =>
-    gradientColors.map((_, index) =>
-      convertToRGBA(
-        interpolateColor(
-          gradientColorsAnimationProgress.value,
-          [0, 1],
-          [gradientColors[index], gradientAltColors[index]]
-        )
-      )
-    )
-  )
 
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))
@@ -132,49 +98,34 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   return (
     <ThemeProvider theme={themes.dark}>
       <Screen contrastedBg {...props} onLayout={handleScreenLayoutChange}>
-        <CanvasStyled onLayout={() => SplashScreen.hideAsync()}>
-          <Rect x={0} y={0} width={dimensions.width} height={dimensions.height}>
-            <RadialGradient
-              c={vec(dimensions.width / 2, dimensions.height)}
-              r={gradientRadius}
-              colors={animatedColors}
-              positions={[0.1, 0.3, 0.45, 0.6, 0.8, 1]}
-            />
-          </Rect>
-        </CanvasStyled>
-        <LogoContainer onTouchEnd={() => setIsAltLogoShown(!isAltLogoShown)}>
-          <LogoArea entering={FadeIn.delay(200).duration(500)} style={[logoAnimatedStyle]}>
-            <AlephiumLogo color="white" style={{ width: '20%' }} />
-          </LogoArea>
-          <AltLogoArea style={altLogoAnimatedStyle}>
-            <AltLogo source={altLogoSrc} style={{ resizeMode: 'center', objectFit: 'contain' }} />
-          </AltLogoArea>
-        </LogoContainer>
-
         {showNewWalletButtons && (
-          <BottomArea
-            style={{ marginBottom: insets.bottom + (Platform.OS === 'android' ? 20 : 0) }}
-            entering={FadeIn.delay(500).duration(500)}
-          >
-            <TitleContainer>
-              <TitleFirstLine>Welcome to</TitleFirstLine>
-              <TitleSecondLine>Alephium 👋</TitleSecondLine>
-            </TitleContainer>
-            <ButtonsContainer>
-              <Button
-                title="New wallet"
-                type="primary"
-                onPress={() => handleButtonPress('create')}
-                variant="highlight"
-                iconProps={{ name: 'flower-outline' }}
-              />
-              <Button
-                title="Import wallet"
-                onPress={() => handleButtonPress('import')}
-                iconProps={{ name: 'download-outline' }}
-              />
-            </ButtonsContainer>
-          </BottomArea>
+          <>
+            <CoolAlephiumCanvas {...dimensions} />
+
+            <BottomArea
+              style={{ marginBottom: insets.bottom + (Platform.OS === 'android' ? 20 : 0) }}
+              entering={FadeIn.delay(500).duration(500)}
+            >
+              <TitleContainer>
+                <TitleFirstLine>Welcome to</TitleFirstLine>
+                <TitleSecondLine>Alephium 👋</TitleSecondLine>
+              </TitleContainer>
+              <ButtonsContainer>
+                <Button
+                  title="New wallet"
+                  type="primary"
+                  onPress={() => handleButtonPress('create')}
+                  variant="highlight"
+                  iconProps={{ name: 'flower-outline' }}
+                />
+                <Button
+                  title="Import wallet"
+                  onPress={() => handleButtonPress('import')}
+                  iconProps={{ name: 'download-outline' }}
+                />
+              </ButtonsContainer>
+            </BottomArea>
+          </>
         )}
       </Screen>
     </ThemeProvider>
@@ -182,6 +133,77 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 }
 
 export default LandingScreen
+
+interface CoolAlephiumCanvasProps {
+  width: number
+  height: number
+  onPress?: () => void
+}
+
+export const CoolAlephiumCanvas = ({ width, height, onPress }: CoolAlephiumCanvasProps) => {
+  const [isAltLogoShown, setIsAltLogoShown] = useState(false)
+
+  const gradientRadius = useSharedValue(0)
+  const gradientColorsAnimationProgress = useSharedValue(0)
+
+  const animatedColors = useDerivedValue(() =>
+    gradientColors.map((_, index) =>
+      convertToRGBA(
+        interpolateColor(
+          gradientColorsAnimationProgress.value,
+          [0, 1],
+          [gradientColors[index], gradientAltColors[index]]
+        )
+      )
+    )
+  )
+
+  const logoAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotateY: withSpring(isAltLogoShown ? '180deg' : '0deg') }],
+    opacity: withSpring(isAltLogoShown ? 0 : 1)
+  }))
+
+  const altLogoAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotateY: withSpring(isAltLogoShown ? '0deg' : '180deg') }],
+    opacity: withSpring(isAltLogoShown ? 1 : 0)
+  }))
+
+  useEffect(() => {
+    gradientRadius.value = withDelay(200, withSpring(width * 2, { mass: 3, stiffness: 60, damping: 40 }))
+  }, [width, gradientRadius])
+
+  useEffect(() => {
+    gradientColorsAnimationProgress.value = withSpring(isAltLogoShown ? 1 : 0, { mass: 1, stiffness: 90, damping: 10 })
+  }, [gradientColorsAnimationProgress, isAltLogoShown])
+
+  const handleScreenPress = () => {
+    setIsAltLogoShown(!isAltLogoShown)
+    onPress && onPress()
+  }
+
+  return (
+    <>
+      <CanvasStyled onLayout={() => SplashScreen.hideAsync()}>
+        <Rect x={0} y={0} width={width} height={height}>
+          <RadialGradient
+            c={vec(width / 2, height)}
+            r={gradientRadius}
+            colors={animatedColors}
+            positions={[0.1, 0.3, 0.45, 0.6, 0.8, 1]}
+          />
+        </Rect>
+      </CanvasStyled>
+      <LogoContainer onTouchEnd={handleScreenPress}>
+        <LogoArea entering={FadeIn.delay(200).duration(500)} style={[logoAnimatedStyle]}>
+          <AlephiumLogo color="white" style={{ width: '20%' }} />
+        </LogoArea>
+        <AltLogoArea style={altLogoAnimatedStyle}>
+          <AltLogo source={altLogoSrc} style={{ resizeMode: 'center', objectFit: 'contain' }} />
+        </AltLogoArea>
+      </LogoContainer>
+    </>
+  )
+}
 
 const LogoContainer = styled(Animated.View)`
   position: relative;

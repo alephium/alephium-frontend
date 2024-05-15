@@ -47,6 +47,7 @@ interface DecryptScannedMnemonicScreenProps
 
 const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScreenProps) => {
   const qrCodeImportedEncryptedMnemonic = useAppSelector((s) => s.walletGeneration.qrCodeImportedEncryptedMnemonic)
+  const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
   const name = useAppSelector((s) => s.walletGeneration.walletName)
   const dispatch = useAppDispatch()
   const { deviceHasEnrolledBiometrics } = useBiometrics()
@@ -100,7 +101,12 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
           sendAnalytics('Error', { message })
         }
 
-        resetNavigation(navigation, deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
+        resetNavigation(
+          navigation,
+          deviceHasEnrolledBiometrics && !biometricsRequiredForAppAccess
+            ? 'AddBiometricsScreen'
+            : 'NewWalletSuccessScreen'
+        )
       } catch (e) {
         showExceptionToast(e, 'Could not import wallet from QR code scan')
       }
