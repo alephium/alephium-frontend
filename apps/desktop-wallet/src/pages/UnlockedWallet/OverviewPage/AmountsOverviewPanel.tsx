@@ -32,7 +32,6 @@ import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import { makeSelectAddresses, selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import { ChartLength, DataPoint } from '@/types/chart'
-import { getAvailableBalance } from '@/utils/addresses'
 
 interface AmountsOverviewPanelProps {
   addressHash?: string
@@ -67,17 +66,13 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
     date: undefined,
     worth: undefined
   }
-  const singleAddress = !!addressHash
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
-  const totalAvailableBalance = addresses.reduce((acc, address) => acc + getAvailableBalance(address), BigInt(0))
-  const totalLockedBalance = addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0))
   const totalAlphAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice) : undefined
 
   const { data: totalAmountWorth } = useAddressesTotalWorth(allAddressHashes)
 
   const balanceInFiat = hoveredDataPointWorth ?? totalAmountWorth
 
-  const isOnline = network.status === 'online'
   const isHoveringChart = !!hoveredDataPointWorth
   const showBalancesSkeletonLoader = false // TODO: Manage loading
 
@@ -138,33 +133,6 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
                   */}
               </ChartLengthBadges>
             </BalancesColumn>
-            {!singleAddress && (
-              <>
-                <Divider />
-                <AvailableLockedBalancesColumn fadeOut={isHoveringChart}>
-                  <AvailableBalanceRow>
-                    <BalanceLabel tabIndex={0} role="representation">
-                      {t('Available')}
-                    </BalanceLabel>
-                    {showBalancesSkeletonLoader ? (
-                      <SkeletonLoader height="30px" />
-                    ) : (
-                      <AlphAmount tabIndex={0} value={isOnline ? totalAvailableBalance : undefined} />
-                    )}
-                  </AvailableBalanceRow>
-                  <LockedBalanceRow>
-                    <BalanceLabel tabIndex={0} role="representation">
-                      {t('Locked')}
-                    </BalanceLabel>
-                    {showBalancesSkeletonLoader ? (
-                      <SkeletonLoader height="30px" />
-                    ) : (
-                      <AlphAmount tabIndex={0} value={isOnline ? totalLockedBalance : undefined} />
-                    )}
-                  </LockedBalanceRow>
-                </AvailableLockedBalancesColumn>
-              </>
-            )}
           </BalancesRow>
         </Balances>
         {children && <RightColumnContent fadeOut={isHoveringChart}>{children}</RightColumnContent>}
@@ -234,44 +202,9 @@ const BalancesColumn = styled(Opacity)`
   min-width: 200px;
 `
 
-const AvailableLockedBalancesColumn = styled(BalancesColumn)`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`
-
-const Divider = styled.div`
-  width: 1px;
-  background-color: ${({ theme }) => theme.border.secondary};
-  margin: 17px 55px;
-`
-
-const AvailableBalanceRow = styled.div`
-  margin-bottom: 20px;
-`
-const LockedBalanceRow = styled.div``
-
 const FiatTotalAmount = styled(Amount)`
   font-size: 34px;
   font-weight: var(--fontWeight-bold);
-`
-
-const FiatDeltaPercentage = styled.div`
-  font-size: 18px;
-  margin-top: 5px;
-`
-
-const AlphAmount = styled(Amount)`
-  color: ${({ theme }) => theme.font.primary};
-  font-size: 21px;
-  font-weight: var(--fontWeight-semiBold);
-`
-
-const BalanceLabel = styled.label`
-  color: ${({ theme }) => theme.font.tertiary};
-  font-size: 12px;
-  display: block;
-  margin-bottom: 3px;
 `
 
 const Today = styled.div`
