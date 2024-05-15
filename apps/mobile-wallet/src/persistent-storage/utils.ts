@@ -45,7 +45,7 @@ export const storeSecurelyWithReportableError = async (key: string, value: strin
 
 export const deleteSecurelyWithReportableError = async (key: string, error: string) => {
   try {
-    await SecureStore.deleteItemAsync(key)
+    await SecureStore.deleteItemAsync(key, defaultSecureStoreConfig)
   } catch (e) {
     sendAnalytics('Error', { message: error })
     throw new Error(error)
