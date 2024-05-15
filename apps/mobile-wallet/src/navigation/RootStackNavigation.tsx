@@ -23,7 +23,7 @@ import { NavigationState } from '@react-navigation/routers'
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
 import * as SplashScreen from 'expo-splash-screen'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { AppState, AppStateStatus } from 'react-native'
+import { AppState, AppStateStatus, Dimensions, LayoutChangeEvent, Modal } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
@@ -38,7 +38,12 @@ import ReceiveNavigation from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
-import { getDeprecatedStoredWallet, getStoredWallet, migrateDeprecatedMnemonic } from '~/persistent-storage/wallet'
+import {
+  getDeprecatedStoredWallet,
+  getStoredWallet,
+  migrateDeprecatedMnemonic,
+  storedWalletExists
+} from '~/persistent-storage/wallet'
 import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
 import EditAddressScreen from '~/screens/Addresses/Address/EditAddressScreen'
 import NewAddressScreen from '~/screens/Addresses/Address/NewAddressScreen'
@@ -46,7 +51,7 @@ import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
 import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
 import NewContactScreen from '~/screens/Addresses/Contact/NewContactScreen'
 import CustomNetworkScreen from '~/screens/CustomNetworkScreen'
-import LandingScreen from '~/screens/LandingScreen'
+import LandingScreen, { CoolAlephiumCanvas } from '~/screens/LandingScreen'
 import LoginWithPinScreen from '~/screens/LoginWithPinScreen'
 import AddBiometricsScreen from '~/screens/new-wallet/AddBiometricsScreen'
 import DecryptScannedMnemonicScreen from '~/screens/new-wallet/DecryptScannedMnemonicScreen'
@@ -61,9 +66,8 @@ import EditWalletNameScreen from '~/screens/Settings/EditWalletName'
 import SettingsScreen from '~/screens/Settings/SettingsScreen'
 import { routeChanged } from '~/store/appSlice'
 import { walletUnlocked } from '~/store/wallet/walletActions'
-import { WalletMetadata } from '~/types/wallet'
 import { showExceptionToast, showToast } from '~/utils/layout'
-import { isNavStateRestorable, resetNavigation, restoreNavigation, rootStackNavigationRef } from '~/utils/navigation'
+import { isNavStateRestorable, resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
 
 const RootStack = createStackNavigator<RootStackParamList>()
 
@@ -94,7 +98,6 @@ const RootStackNavigation = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Host>
         <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>
-          <AppUnlockHandler />
           <Analytics>
             <WalletConnectContextProvider>
               <RootStack.Navigator initialRouteName="LandingScreen" screenOptions={{ headerShown: false }}>
@@ -130,6 +133,7 @@ const RootStackNavigation = () => {
               </RootStack.Navigator>
             </WalletConnectContextProvider>
           </Analytics>
+          <AppUnlockHandler />
         </NavigationContainer>
       </Host>
     </GestureHandlerRootView>
@@ -153,17 +157,24 @@ const AppUnlockHandler = () => {
 
   const [isAppStateChangeCallbackRegistered, setIsAppStateChangeCallbackRegistered] = useState(false)
   const [needsWalletUnlock, setNeedsWalletUnlock] = useState(false)
+  const [isAuthModalVisible, setIsAuthModalVisible] = useState(false)
 
-  const initializeWallet = useCallback(
-    (wallet: WalletMetadata) => {
-      dispatch(walletUnlocked(wallet))
+  const { width, height } = Dimensions.get('window')
+  const [dimensions, setDimensions] = useState({ width, height })
 
-      // TODO: Remove when resetting navigation to LandingScreen is removed
-      lastNavigationState ? restoreNavigation(navigation, lastNavigationState) : resetNavigation(navigation)
-      SplashScreen.hideAsync()
-    },
-    [dispatch, lastNavigationState, navigation]
-  )
+  const handleScreenLayoutChange = (e: LayoutChangeEvent) => {
+    const { width, height } = e.nativeEvent.layout
+
+    setDimensions({ width, height })
+  }
+
+  const initializeAppWithStoredWallet = useCallback(async () => {
+    dispatch(walletUnlocked(await getStoredWallet()))
+
+    if (!lastNavigationState) resetNavigation(navigation)
+
+    setIsAuthModalVisible(false)
+  }, [dispatch, lastNavigationState, navigation])
 
   const unlockApp = useCallback(async () => {
     if (isWalletUnlocked) return
@@ -172,26 +183,20 @@ const AppUnlockHandler = () => {
       const deprecatedWallet = await getDeprecatedStoredWallet({ authenticationPrompt: 'Unlock your wallet' })
 
       if (!deprecatedWallet) {
-        try {
-          const wallet = await getStoredWallet()
-
+        if (await storedWalletExists()) {
           await triggerBiometricsAuthGuard({
             settingsToCheck: 'appAccess',
-            successCallback: () => initializeWallet(wallet)
+            onPromptDisplayed: () => setIsAuthModalVisible(true),
+            successCallback: initializeAppWithStoredWallet
           })
-        } catch {
-          if (lastNavigationState) {
-            // When we are at the wallet creation flow we want to reset to the last screen
-            restoreNavigation(navigation, lastNavigationState)
-            SplashScreen.hideAsync()
-          } else {
-            navigation.navigate('LandingScreen')
-          }
         }
+
+        SplashScreen.hideAsync()
       } else {
         if (await loadBiometricsSettings()) {
           await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
-          initializeWallet(await getStoredWallet())
+
+          initializeAppWithStoredWallet()
         } else {
           navigation.navigate('LoginWithPinScreen')
         }
@@ -208,15 +213,15 @@ const AppUnlockHandler = () => {
         showExceptionToast(e, 'Could not unlock app')
       }
     }
-  }, [initializeWallet, isWalletUnlocked, lastNavigationState, navigation, triggerBiometricsAuthGuard])
+  }, [initializeAppWithStoredWallet, isWalletUnlocked, navigation, triggerBiometricsAuthGuard])
 
   useEffect(() => {
     if (!settingsLoadedFromStorage) return
 
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'background' && isWalletUnlocked && !isCameraOpen) {
-        // TODO: Show auth modal without first resetting navigation
-        if (biometricsRequiredForAppAccess) resetNavigation(navigation, 'LandingScreen')
+        if (biometricsRequiredForAppAccess) setIsAuthModalVisible(true)
+
         dispatch(appBecameInactive())
         keyring.clearCachedSecrets()
         // The following is needed when the switch between background/active happens so fast that the component didn't
@@ -252,5 +257,9 @@ const AppUnlockHandler = () => {
     settingsLoadedFromStorage
   ])
 
-  return null
+  return (
+    <Modal transparent animationType="none" onLayout={handleScreenLayoutChange} visible={isAuthModalVisible}>
+      <CoolAlephiumCanvas {...dimensions} onPress={unlockApp} />
+    </Modal>
+  )
 }

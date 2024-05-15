@@ -53,6 +53,7 @@ const devMnemonicToRestore = ''
 const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreenProps) => {
   const dispatch = useAppDispatch()
   const name = useAppSelector((s) => s.walletGeneration.walletName)
+  const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
   const { deviceHasEnrolledBiometrics } = useBiometrics()
   const theme = useTheme()
   const allowedWords = useRef(bip39Words)
@@ -115,7 +116,9 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
 
       resetNavigation(
         navigation,
-        deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'ImportWalletAddressDiscoveryScreen'
+        deviceHasEnrolledBiometrics && !biometricsRequiredForAppAccess
+          ? 'AddBiometricsScreen'
+          : 'ImportWalletAddressDiscoveryScreen'
       )
     } catch (e) {
       showExceptionToast(e, 'Could not import wallet')

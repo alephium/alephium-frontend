@@ -166,11 +166,13 @@ export const useBiometricsAuthGuard = () => {
   const triggerBiometricsAuthGuard = async ({
     successCallback,
     failureCallback,
+    onPromptDisplayed,
     settingsToCheck
   }: {
     settingsToCheck: 'appAccess' | 'transactions' | 'appAccessOrTransactions'
     successCallback: () => void
     failureCallback?: () => void
+    onPromptDisplayed?: () => void
   }) => {
     const isBiometricsAuthRequired = {
       appAccess: biometricsRequiredForAppAccess,
@@ -179,6 +181,7 @@ export const useBiometricsAuthGuard = () => {
     }[settingsToCheck]
 
     if (isBiometricsAuthRequired) {
+      onPromptDisplayed && onPromptDisplayed()
       await triggerBiometricsPrompt({ successCallback, failureCallback })
     } else {
       successCallback()
