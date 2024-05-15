@@ -145,7 +145,7 @@ export const discoverAddresses = createAsyncThunk(
     } catch (e) {
       console.error(e)
     } finally {
-      keyring.clearAll()
+      keyring.clear()
     }
 
     if (state.addressDiscovery.status !== 'stopped') {

@@ -112,7 +112,7 @@ const WalletConnectSessionProposalModal = ({
 
       sendAnalytics('Error', { message: 'WC: Could not save new address' })
     } finally {
-      keyring.clearAll()
+      keyring.clear()
     }
 
     setLoading('')

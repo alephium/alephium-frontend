@@ -81,7 +81,7 @@ export const generateAndStoreWallet = async (
   } catch (e) {
     throw new Error(getHumanReadableError(e, ''))
   } finally {
-    keyring.clearAll()
+    keyring.clear()
   }
 }
 
@@ -252,7 +252,7 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
   } catch (e) {
     throw new Error(getHumanReadableError(e, ''))
   } finally {
-    keyring.clearAll()
+    keyring.clear()
   }
 }
 
@@ -359,7 +359,7 @@ const generateAndStoreAddressKeypairForIndex = async (addressIndex: number): Pro
   } catch (e) {
     throw new Error(getHumanReadableError(e, ''))
   } finally {
-    keyring.clearAll()
+    keyring.clear()
   }
 }
 
