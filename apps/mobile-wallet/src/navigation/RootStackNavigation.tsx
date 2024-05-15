@@ -176,8 +176,7 @@ const AppUnlockHandler = () => {
 
           await triggerBiometricsAuthGuard({
             settingsToCheck: 'appAccess',
-            successCallback: () => initializeWallet(wallet),
-            failureCallback: unlockApp
+            successCallback: () => initializeWallet(wallet)
           })
         } catch {
           if (lastNavigationState) {
