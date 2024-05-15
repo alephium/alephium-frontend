@@ -147,6 +147,7 @@ const AppUnlockHandler = () => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
+  const settingsLoadedFromStorage = useAppSelector((s) => s.settings.loadedFromStorage)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
 
@@ -210,6 +211,8 @@ const AppUnlockHandler = () => {
   }, [initializeWallet, isWalletUnlocked, lastNavigationState, navigation, triggerBiometricsAuthGuard])
 
   useEffect(() => {
+    if (!settingsLoadedFromStorage) return
+
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (nextAppState === 'background' && isWalletUnlocked && !isCameraOpen) {
         // TODO: Show auth modal without first resetting navigation
@@ -245,7 +248,8 @@ const AppUnlockHandler = () => {
     needsWalletUnlock,
     unlockApp,
     isWalletUnlocked,
-    biometricsRequiredForAppAccess
+    biometricsRequiredForAppAccess,
+    settingsLoadedFromStorage
   ])
 
   return null
