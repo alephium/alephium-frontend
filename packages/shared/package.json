@@ -27,6 +27,7 @@
     "dayjs": "^1.10.7",
     "fetch-retry": "^5.0.6",
     "lodash": "^4.17.21",
+    "p-queue": "^8.0.1",
     "posthog-js": "^1.52.0"
   },
   "devDependencies": {
