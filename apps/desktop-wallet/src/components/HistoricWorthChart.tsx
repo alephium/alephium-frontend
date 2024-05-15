@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, CHART_DATE_FORMAT, selectAlphPriceHistory, toHumanReadableAmount } from '@alephium/shared'
+import { AddressHash, selectAlphPriceHistory } from '@alephium/shared'
 import { colord } from 'colord'
 import dayjs, { Dayjs } from 'dayjs'
 import { memo, useEffect, useMemo, useState } from 'react'
@@ -24,8 +24,8 @@ import Chart from 'react-apexcharts'
 import styled, { useTheme } from 'styled-components'
 
 import { useAppSelector } from '@/hooks/redux'
-import { makeSelectAddresses, selectHaveHistoricBalancesLoaded } from '@/storage/addresses/addressesSelectors'
-import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/types/chart'
+import { makeSelectAddresses } from '@/storage/addresses/addressesSelectors'
+import { ChartLength, DataPoint } from '@/types/chart'
 
 interface HistoricWorthChartProps {
   length: ChartLength
@@ -56,7 +56,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
 }: HistoricWorthChartProps) {
   const selectAddresses = useMemo(makeSelectAddresses, [])
   const addresses = useAppSelector((s) => selectAddresses(s, addressHash ?? (s.addresses.ids as AddressHash[])))
-  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
+  const haveHistoricBalancesLoaded = false // TODO: Refactor history computation by parsing all TXs
   const alphPriceHistory = useAppSelector(selectAlphPriceHistory)
 
   const theme = useTheme()
@@ -77,6 +77,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
       return
     }
 
+    /*
     const computeChartDataPoints = (): DataPoint[] => {
       const addressesLatestAmount: LatestAmountPerAddress = {}
 
@@ -105,10 +106,11 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
 
       return dataPoints
     }
+    */
 
     const trimInitialZeroDataPoints = (data: DataPoint[]) => data.slice(data.findIndex((point) => point.worth !== 0))
 
-    let dataPoints = computeChartDataPoints()
+    let dataPoints: DataPoint[] = [] //computeChartDataPoints(). TODO: Refactor using whole TXs list
     dataPoints = trimInitialZeroDataPoints(dataPoints)
 
     setChartData(getFilteredChartData(dataPoints, startingDate))

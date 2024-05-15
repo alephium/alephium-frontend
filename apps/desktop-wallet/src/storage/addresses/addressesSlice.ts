@@ -16,22 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressHash,
-  customNetworkSettingsSaved,
-  networkPresetSwitched,
-  syncingAddressDataStarted
-} from '@alephium/shared'
+import { AddressHash, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
 import { groupOfAddress } from '@alephium/web3'
-import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import {
   addressesRestoredFromMetadata,
   addressRestorationStarted,
   addressSettingsSaved,
   defaultAddressChanged,
-  newAddressesSaved,
-  transactionsLoadingStarted
+  newAddressesSaved
 } from '@/storage/addresses/addressesActions'
 import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
 import {
@@ -46,13 +40,8 @@ import { UnlockedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
-  loadingBalances: false,
-  loadingTransactions: false,
-  loadingTokensBalances: false,
-  syncingAddressData: false,
   isRestoringAddressesFromMetadata: false,
-  status: 'uninitialized',
-  balancesStatus: 'uninitialized'
+  status: 'uninitialized'
 })
 
 const addressesSlice = createSlice({
@@ -61,15 +50,6 @@ const addressesSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(syncingAddressDataStarted, (state) => {
-        state.syncingAddressData = true
-        state.loadingBalances = true
-        state.loadingTransactions = true
-        state.loadingTokensBalances = true
-      })
-      .addCase(transactionsLoadingStarted, (state) => {
-        state.loadingTransactions = true
-      })
       .addCase(addressSettingsSaved, (state, action) => {
         const { addressHash, settings } = action.payload
 

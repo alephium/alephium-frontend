@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NonSensitiveAddressData } from '@alephium/keyring'
 import { client } from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+
 import {
   deriveAddressesInGroup,
   getGapFromLastActiveAddress,

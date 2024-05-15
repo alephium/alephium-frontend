@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressBalancesSyncResult, AddressHash, AddressSettings, AddressTokensSyncResult } from '@alephium/shared'
+import { AddressHash, AddressSettings } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
@@ -43,16 +43,9 @@ export type Address = AddressBase &
 
 export type LoadingEnabled = boolean | undefined
 
-export type AddressDataSyncResult = AddressBalancesSyncResult & AddressTokensSyncResult & AddressTransactionsSyncResult
-
 export interface AddressesState extends EntityState<Address> {
-  loadingBalances: boolean
-  loadingTransactions: boolean
-  loadingTokensBalances: boolean
-  syncingAddressData: boolean
   isRestoringAddressesFromMetadata: boolean
   status: 'uninitialized' | 'initialized'
-  balancesStatus: 'uninitialized' | 'initialized'
 }
 
 export type AddressTransactionsSyncResult = {

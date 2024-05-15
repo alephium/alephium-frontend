@@ -26,18 +26,12 @@ import styled from 'styled-components'
 import { useAddressesTotalWorth } from '@/api/apiHooks'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
-import DeltaPercentage from '@/components/DeltaPercentage'
 import HistoricWorthChart, { historicWorthChartHeight } from '@/components/HistoricWorthChart'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import {
-  makeSelectAddresses,
-  makeSelectAddressesHaveHistoricBalances,
-  selectAddressIds,
-  selectHaveHistoricBalancesLoaded
-} from '@/storage/addresses/addressesSelectors'
-import { ChartLength, chartLengths, DataPoint } from '@/types/chart'
+import { makeSelectAddresses, selectAddressIds } from '@/storage/addresses/addressesSelectors'
+import { ChartLength, DataPoint } from '@/types/chart'
 import { getAvailableBalance } from '@/utils/addresses'
 
 interface AmountsOverviewPanelProps {
@@ -62,11 +56,8 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const network = useAppSelector((s) => s.network)
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
 
-  const selectAddressesHaveHistoricBalances = useMemo(makeSelectAddressesHaveHistoricBalances, [])
-  const hasHistoricBalances = useAppSelector((s) => selectAddressesHaveHistoricBalances(s, addressHashes))
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const alphPrice = useAppSelector(selectAlphPrice)
-  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
   const [chartLength, setChartLength] = useState<ChartLength>('1m')
@@ -108,18 +99,21 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
               )}
               {hoveredDataPointWorth !== undefined && (
                 <Opacity>
-                  <FiatDeltaPercentage>
-                    {!haveHistoricBalancesLoaded || (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
-                      <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
-                    ) : hasHistoricBalances && worthInBeginningOfChart && hoveredDataPointWorth !== undefined ? (
-                      <DeltaPercentage initialValue={worthInBeginningOfChart} latestValue={hoveredDataPointWorth} />
-                    ) : null}
-                  </FiatDeltaPercentage>
+                  {/*
+                    <FiatDeltaPercentage>
+                      {!haveHistoricBalancesLoaded || (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
+                        <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
+                      ) : hasHistoricBalances && worthInBeginningOfChart && hoveredDataPointWorth !== undefined ? (
+                        <DeltaPercentage initialValue={worthInBeginningOfChart} latestValue={hoveredDataPointWorth} />
+                      ) : null}
+                    </FiatDeltaPercentage>
+                    */}
                 </Opacity>
               )}
 
               <ChartLengthBadges>
-                {chartLengths.map((length) =>
+                {/*
+                chartLengths.map((length) =>
                   !haveHistoricBalancesLoaded ? (
                     <SkeletonLoader
                       key={length}
@@ -140,7 +134,8 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
                       </ButtonStyled>
                     )
                   )
-                )}
+                )
+                  */}
               </ChartLengthBadges>
             </BalancesColumn>
             {!singleAddress && (
@@ -177,9 +172,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
       <ChartOuterContainer
         variants={chartAnimationVariants}
-        animate={
-          showChart && hasHistoricBalances && !discreetMode && totalAlphAmountWorth !== undefined ? 'shown' : 'hidden'
-        }
+        animate={showChart && !discreetMode && totalAlphAmountWorth !== undefined ? 'shown' : 'hidden'}
       >
         <ChartInnerContainer animate={{ opacity: discreetMode ? 0 : 1 }} transition={{ duration: 0.5 }}>
           <HistoricWorthChart
