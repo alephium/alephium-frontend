@@ -101,7 +101,6 @@ const WalletConnectSessionProposalModal = ({
         ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes.current }),
         settings: { label: '', color: getRandomLabelColor(), isDefault: false }
       }
-      keyring.clearAll()
 
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))
@@ -112,6 +111,8 @@ const WalletConnectSessionProposalModal = ({
       console.error('WC: Could not save new address', e)
 
       sendAnalytics('Error', { message: 'WC: Could not save new address' })
+    } finally {
+      keyring.clearAll()
     }
 
     setLoading('')

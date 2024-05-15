@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keyring } from '@alephium/keyring'
 import { appBecameInactive } from '@alephium/shared'
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
@@ -223,7 +222,6 @@ const AppUnlockHandler = () => {
         if (biometricsRequiredForAppAccess) setIsAuthModalVisible(true)
 
         dispatch(appBecameInactive())
-        keyring.clearCachedSecrets()
         // The following is needed when the switch between background/active happens so fast that the component didn't
         // have enough time to re-render after clearning the mnemonic.
         setNeedsWalletUnlock(true)

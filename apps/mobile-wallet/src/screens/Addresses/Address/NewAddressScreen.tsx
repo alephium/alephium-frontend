@@ -56,7 +56,6 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
         ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes.current }),
         settings: { label, color, isDefault }
       }
-      keyring.clearAll()
 
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))
@@ -69,6 +68,8 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       console.error(e)
 
       sendAnalytics('Error', { message: 'Could not save new address' })
+    } finally {
+      keyring.clearAll()
     }
 
     setLoading(false)
