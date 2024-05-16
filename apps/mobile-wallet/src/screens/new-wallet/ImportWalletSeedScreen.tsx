@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { sleep } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
@@ -107,6 +108,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
     const mnemonicToImport = devMnemonicToRestore || selectedWords.map(({ word }) => word).join(' ')
 
     try {
+      sleep(0)
       const wallet = await generateAndStoreWallet(name, mnemonicToImport)
 
       dispatch(newWalletGenerated(wallet))
