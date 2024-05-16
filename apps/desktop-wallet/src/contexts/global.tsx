@@ -16,15 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ONE_MINUTE_MS } from '@alephium/shared'
 import { merge } from 'lodash'
 import { createContext, useContext, useEffect, useState } from 'react'
 import { PartialDeep } from 'type-fest'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import useIdleForTooLong from '@/hooks/useIdleForTooLong'
+import useAutoLock from '@/hooks/useAutoLock'
 import useLatestGitHubRelease from '@/hooks/useLatestGitHubRelease'
-import useWalletLock from '@/hooks/useWalletLock'
 import { osThemeChangeDetected } from '@/storage/global/globalActions'
 import { AlephiumWindow } from '@/types/window'
 
@@ -55,15 +53,14 @@ export const GlobalContextProvider: FC<{ overrideContextValue?: PartialDeep<Glob
 }) => {
   const dispatch = useAppDispatch()
   const settings = useAppSelector((s) => s.settings)
-  const { lockWallet } = useWalletLock()
+
+  useAutoLock()
 
   const { newVersion, requiresManualDownload } = useLatestGitHubRelease()
   const [newVersionDownloadTriggered, setNewVersionDownloadTriggered] = useState(false)
 
   const triggerNewVersionDownload = () => setNewVersionDownloadTriggered(true)
   const resetNewVersionDownloadTrigger = () => setNewVersionDownloadTriggered(false)
-
-  useIdleForTooLong(() => lockWallet('Auto lock'), (settings.walletLockTimeInMinutes || 0) * ONE_MINUTE_MS)
 
   useEffect(() => {
     const shouldListenToOSThemeChanges = settings.theme === 'system'
