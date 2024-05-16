@@ -168,7 +168,11 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       const message = 'Could not initialize WalletConnect client'
       const reason = getHumanReadableError(e, '')
 
-      if (!reason.includes('No internet connection') && !reason.includes('WebSocket connection failed')) {
+      if (
+        !reason.includes('No internet connection') &&
+        !reason.includes('WebSocket connection failed') &&
+        !reason.includes('Socket stalled')
+      ) {
         console.error(message, e)
         posthog.capture('Error', { message, reason })
       }
