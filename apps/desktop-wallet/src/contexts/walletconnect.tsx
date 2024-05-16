@@ -390,10 +390,13 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
             throw new Error(`Method not supported: ${request.method}`)
         }
       } catch (e) {
-        console.error('Error while parsing WalletConnect session request', e)
-        posthog.capture('Error', { message: 'Could not parse WalletConnect session request' })
+        const message = 'Could not parse WalletConnect session request'
+        const reason = getHumanReadableError(e, '')
+
+        console.error(message, reason)
+        posthog.capture('Error', { message, reason })
         respondToWalletConnectWithError(event, {
-          message: getHumanReadableError(e, 'Error while parsing WalletConnect session request'),
+          message: getHumanReadableError(e, message),
           code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
         })
       }
