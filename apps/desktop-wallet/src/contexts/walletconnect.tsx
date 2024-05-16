@@ -165,10 +165,13 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       setActiveSessions(getActiveWalletConnectSessions(client))
     } catch (e) {
       setWalletConnectClientStatus('uninitialized')
-      console.error('Could not initialize WalletConnect client', e)
-      posthog.capture('Error', {
-        message: `Could not initialize WalletConnect client: ${getHumanReadableError(e, '')}`
-      })
+      const message = 'Could not initialize WalletConnect client'
+      const reason = getHumanReadableError(e, '')
+
+      if (!reason.includes('No internet connection') && !reason.includes('WebSocket connection failed')) {
+        console.error(message, e)
+        posthog.capture('Error', { message, reason })
+      }
     }
   }, [posthog])
 
