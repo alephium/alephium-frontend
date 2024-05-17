@@ -37,6 +37,7 @@ import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import useFundingPassword from '~/features/funding-password/useFundingPassword'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -74,6 +75,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const theme = useTheme()
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
+  const { triggerFundingPasswordAuthGuard, fundingPasswordModal } = useFundingPassword()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
@@ -300,7 +302,10 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
                     triggerBiometricsAuthGuard({
                       settingsToCheck: 'appAccessOrTransactions',
-                      successCallback: () => setIsMnemonicModalVisible(true)
+                      successCallback: () =>
+                        triggerFundingPasswordAuthGuard({
+                          successCallback: () => setIsMnemonicModalVisible(true)
+                        })
                     })
                   }}
                 />
@@ -350,6 +355,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           Content={(props) => <BiometricsWarningModal onConfirm={handleDisableBiometricsPress} {...props} />}
         />
       </Portal>
+      {fundingPasswordModal}
     </>
   )
 }

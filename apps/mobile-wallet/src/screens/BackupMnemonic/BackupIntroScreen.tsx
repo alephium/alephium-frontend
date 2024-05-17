@@ -31,6 +31,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import CenteredInstructions from '~/components/text/CenteredInstructions'
 import { useHeaderContext } from '~/contexts/HeaderContext'
+import useFundingPassword from '~/features/funding-password/useFundingPassword'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
@@ -42,6 +43,7 @@ interface BackupIntroScreenProps
 const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => {
   const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
+  const { triggerFundingPasswordAuthGuard, fundingPasswordModal } = useFundingPassword()
 
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
 
@@ -56,7 +58,10 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
   const onShowSecretRecoveryPhraseButtonPress = () => {
     triggerBiometricsAuthGuard({
       settingsToCheck: 'appAccessOrTransactions',
-      successCallback: () => setIsMnemonicModalVisible(true)
+      successCallback: () =>
+        triggerFundingPasswordAuthGuard({
+          successCallback: () => setIsMnemonicModalVisible(true)
+        })
     })
   }
 
@@ -108,6 +113,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
           )}
         />
       </Portal>
+      {fundingPasswordModal}
     </>
   )
 }

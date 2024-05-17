@@ -21,6 +21,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
@@ -30,6 +31,7 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useAppDispatch } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
+import usePassword from '~/hooks/usePassword'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { deleteFundingPassword, getFundingPassword, storeFundingPassword } from '~/persistent-storage/fundingPassword'
 import { fundingPasswordUseToggled } from '~/store/settingsSlice'
@@ -47,15 +49,20 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
   const dispatch = useAppDispatch()
 
   const [password, setPassword] = useState('')
-  const [confirmedPassword, setConfirmedPassword] = useState('')
-  const [error, setError] = useState<string>()
+  const {
+    password: confirmedPassword,
+    handlePasswordChange: handleConfirmedPasswordChange,
+    isPasswordCorrect: isCurrentPasswordConfirmed,
+    error
+  } = usePassword(password, !currentFundingPassword ? "Passwords don't match" : undefined)
 
   const [newPassword, setNewPassword] = useState('')
-  const [confirmedNewPassword, setConfirmedNewPassword] = useState('')
-  const [newPasswordError, setNewPasswordError] = useState<string>()
-
-  const isCurrentPasswordConfirmed = !!password && !!confirmedPassword && confirmedPassword === password
-  const isNewPasswordConfirmed = !!newPassword && !!confirmedNewPassword && newPassword === confirmedNewPassword
+  const {
+    password: confirmedNewPassword,
+    handlePasswordChange: handleConfirmedNewPasswordChange,
+    isPasswordCorrect: isNewPasswordConfirmed,
+    error: newPasswordError
+  } = usePassword(newPassword, "New passwords don't match")
 
   useFocusEffect(
     useCallback(() => {
@@ -69,22 +76,6 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
     if (currentFundingPassword) setPassword(currentFundingPassword)
   }, [currentFundingPassword])
 
-  const handleConfirmedPasswordChangeText = (text: string) => {
-    setConfirmedPassword(text)
-
-    if ((error === undefined && text.length === password.length) || error !== undefined) {
-      setError(text !== password ? "Passwords don't match" : '')
-    }
-  }
-
-  const handleConfirmedNewPasswordChangeText = (text: string) => {
-    setConfirmedNewPassword(text)
-
-    if ((newPasswordError === undefined && text.length === newPassword.length) || newPasswordError !== undefined) {
-      setNewPasswordError(text !== newPassword ? "New passwords don't match" : '')
-    }
-  }
-
   const handleSavePress = async () => {
     await storeFundingPassword(newPassword || password)
     dispatch(fundingPasswordUseToggled(true))
@@ -93,8 +84,10 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
       text2: newPassword ? 'Funding password was updated.' : 'Funding password was set up.',
       type: 'success'
     })
-
     cameFromBackupScreen ? resetNavigation(navigation) : navigation.goBack()
+    sendAnalytics(newPassword ? 'Updated funding password' : 'Created funding password', {
+      origin: props.route.params.origin
+    })
   }
 
   const handleDeletePress = async () => {
@@ -107,11 +100,15 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
         type: 'info'
       })
       navigation.goBack()
+      sendAnalytics('Deleted funding password', { origin: props.route.params.origin })
     })
   }
 
   const handleSkipPress = async () => {
-    showAlert("I'll do it later", () => resetNavigation(navigation))
+    showAlert("I'll do it later", () => {
+      resetNavigation(navigation)
+      sendAnalytics('Skipped funding password')
+    })
   }
 
   const showAlert = (text: string, onPress: () => void) => {
@@ -145,7 +142,7 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
             <Input
               label="Confirm funding password"
               value={confirmedPassword}
-              onChangeText={handleConfirmedPasswordChangeText}
+              onChangeText={handleConfirmedPasswordChange}
               secureTextEntry
               autoCapitalize="none"
               error={error}
@@ -174,7 +171,7 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
             <Input
               label="Current funding password"
               value={confirmedPassword}
-              onChangeText={handleConfirmedPasswordChangeText}
+              onChangeText={handleConfirmedPasswordChange}
               secureTextEntry
               autoCapitalize="none"
               error={error}
@@ -197,7 +194,7 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
                 <Input
                   label="Confirm new funding password"
                   value={confirmedNewPassword}
-                  onChangeText={handleConfirmedNewPasswordChangeText}
+                  onChangeText={handleConfirmedNewPasswordChange}
                   secureTextEntry
                   autoCapitalize="none"
                   error={newPasswordError}
