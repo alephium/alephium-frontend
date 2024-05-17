@@ -43,7 +43,7 @@ import InlineErrorMessage from '@/components/InlineErrorMessage'
 import { AddressLink, SimpleLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import Section from '@/components/Section'
-import SectionTitle from '@/components/SectionTitle'
+import SectionTitle, { SecondaryTitle } from '@/components/SectionTitle'
 import HighlightedCell from '@/components/Table/HighlightedCell'
 import Table from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
@@ -258,30 +258,48 @@ const TransactionInfoPage = () => {
                     </AssetLogos>
                   </TableRow>
                 )}
-                {confirmedTxInfo && (
-                  <TableRow>
-                    <span>{t('Inputs')}</span>
-                    <div>
-                      {confirmedTxInfo.inputs && confirmedTxInfo.inputs.length > 0 ? (
-                        <TransactionIOList inputs={confirmedTxInfo.inputs} flex IOItemWrapper={IOItemContainer} />
-                      ) : (
-                        t('Block rewards')
-                      )}
-                    </div>
-                  </TableRow>
-                )}
-                {confirmedTxInfo && (
-                  <TableRow>
-                    <span>{t('Outputs')}</span>
-                    <div>
-                      {confirmedTxInfo.outputs ? (
-                        <TransactionIOList outputs={confirmedTxInfo.outputs} flex IOItemWrapper={IOItemContainer} />
-                      ) : (
-                        '-'
-                      )}
-                    </div>
-                  </TableRow>
-                )}
+                <TableRow highlight>
+                  <span>{t('Total Amounts')}</span>
+                  <DetltaAmountsContainer>
+                    {addressesInvolved.map((addressHash) => (
+                      <IOItemContainer>
+                        <DeltaAmountsBox key={addressHash}>
+                          <DeltaAmountsTitle>
+                            <AddressLink address={addressHash} maxWidth="300px" />
+                          </DeltaAmountsTitle>
+                          <AmountList>
+                            {alphDeltaAmounts[addressHash] && (
+                              <Badge
+                                type={BigInt(alphDeltaAmounts[addressHash]) > 0 ? 'plus' : 'minus'}
+                                amount={alphDeltaAmounts[addressHash]}
+                                assetId={ALPH.id}
+                                displayAmountSign
+                                floatRight
+                              />
+                            )}
+                            {getSortedTokenAmounts(addressHash).map((v) => (
+                              <Badge
+                                key={v.tokenId}
+                                type={BigInt(v.amount) > 0 ? 'plus' : 'minus'}
+                                amount={BigInt(v.amount)}
+                                assetId={v.tokenId}
+                                displayAmountSign
+                                floatRight
+                              />
+                            ))}
+                          </AmountList>
+                        </DeltaAmountsBox>
+                      </IOItemContainer>
+                    ))}
+                  </DetltaAmountsContainer>
+                </TableRow>
+              </TableBody>
+            )}
+          </Table>
+
+          <FeesTable bodyOnly>
+            {transactionData && (
+              <TableBody>
                 <TableRow>
                   <span>{t('Gas Amount')}</span>
                   <span>{transactionData.gasAmount || '-'} GAS</span>
@@ -291,52 +309,53 @@ const TransactionInfoPage = () => {
 
                   <Amount assetId={ALPH.id} value={BigInt(transactionData.gasPrice)} fullPrecision />
                 </TableRow>
-                <TableRow>
+                <TableRow highlight>
                   <span>{t('Transaction Fee')}</span>
-                  <Amount
-                    assetId={ALPH.id}
-                    value={BigInt(transactionData.gasPrice) * BigInt(transactionData.gasAmount)}
-                    fullPrecision
+                  <Badge
+                    type="neutralHighlight"
+                    content={
+                      <Amount
+                        assetId={ALPH.id}
+                        value={BigInt(transactionData.gasPrice) * BigInt(transactionData.gasAmount)}
+                        fullPrecision
+                      />
+                    }
+                    minWidth={40}
                   />
                 </TableRow>
               </TableBody>
             )}
-          </Table>
-          <TotalAmountsTable bodyOnly isLoading={txInfoLoading}>
+          </FeesTable>
+
+          <SecondaryTitle>{t('Inputs & outputs')}</SecondaryTitle>
+          <IOTable bodyOnly isLoading={txInfoLoading}>
             <TableBody>
-              <TableRow>
-                <b>{t('Total Amounts')}</b>
-                <DetltaAmountsContainer>
-                  {addressesInvolved.map((addressHash) => (
-                    <DeltaAmountsBox key={addressHash}>
-                      <DeltaAmountsTitle>
-                        <AddressLink address={addressHash} maxWidth="180px" />
-                      </DeltaAmountsTitle>
-                      <AmountList>
-                        {alphDeltaAmounts[addressHash] && (
-                          <Amount
-                            value={BigInt(alphDeltaAmounts[addressHash])}
-                            displaySign={true}
-                            highlight
-                            assetId={ALPH.id}
-                          />
-                        )}
-                        {getSortedTokenAmounts(addressHash).map((v) => (
-                          <Amount
-                            key={v.tokenId}
-                            value={BigInt(v.amount)}
-                            assetId={v.tokenId}
-                            displaySign={true}
-                            highlight
-                          />
-                        ))}
-                      </AmountList>
-                    </DeltaAmountsBox>
-                  ))}
-                </DetltaAmountsContainer>
-              </TableRow>
+              {confirmedTxInfo && (
+                <TableRow>
+                  <span>{t('Inputs')}</span>
+                  <div>
+                    {confirmedTxInfo.inputs && confirmedTxInfo.inputs.length > 0 ? (
+                      <TransactionIOList inputs={confirmedTxInfo.inputs} flex IOItemWrapper={IOItemContainer} />
+                    ) : (
+                      t('Block rewards')
+                    )}
+                  </div>
+                </TableRow>
+              )}
+              {confirmedTxInfo && (
+                <TableRow>
+                  <span>{t('Outputs')}</span>
+                  <div>
+                    {confirmedTxInfo.outputs ? (
+                      <TransactionIOList outputs={confirmedTxInfo.outputs} flex IOItemWrapper={IOItemContainer} />
+                    ) : (
+                      '-'
+                    )}
+                  </div>
+                </TableRow>
+              )}
             </TableBody>
-          </TotalAmountsTable>
+          </IOTable>
         </>
       ) : (
         <InlineErrorMessage message={txInfoError.current} code={txInfoErrorStatus} />
@@ -365,6 +384,10 @@ const IOItemContainer = styled.div`
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   }
+
+  &:hover {
+    background-color: ${({ theme }) => theme.bg.hover};
+  }
 `
 
 const AssetLogos = styled.div`
@@ -372,50 +395,37 @@ const AssetLogos = styled.div`
   gap: 10px;
 `
 
-const TotalAmountsTable = styled(Table)`
-  margin-top: 20px;
+const FeesTable = styled(Table)`
+  margin-top: 30px;
 `
+
+const IOTable = styled(Table)``
 
 const DetltaAmountsContainer = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
+  flex-direction: column;
 `
 
 const DeltaAmountsBox = styled.div`
   flex: 1;
   display: flex;
-  max-width: 200px;
-  flex-direction: column;
-  background-color: ${({ theme }) => theme.bg.secondary};
-  border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.border.secondary};
+  padding: 4px 0;
 `
 
 const AmountList = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  justify-content: center;
+  gap: 8px;
 
   ${Amount} {
-    padding: 10px;
-    width: 100%;
     text-align: right;
-  }
-
-  ${Amount}:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   }
 `
 
 const DeltaAmountsTitle = styled.div`
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-  background-color: ${({ theme }) => theme.bg.primary};
-  padding: 5px;
+  flex: 1;
 `
 
 export default TransactionInfoPage
