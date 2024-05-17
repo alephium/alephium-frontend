@@ -199,7 +199,7 @@ describe(deleteWallet, () => {
     await addTestWalletInStorage()
     await deleteWallet()
 
-    expect(mockedDeleteItemAsync).toHaveBeenCalledTimes(5)
+    expect(mockedDeleteItemAsync).toHaveBeenCalledTimes(6)
     expect(mockedDeleteItemAsync).toHaveBeenCalledWith('wallet-mnemonic-v2', defaultSecureStoreConfig)
     expect(mockedDeleteItemAsync).toHaveBeenCalledWith(
       'address-pub-key-1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH',
