@@ -16,7 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
+import {
+  Asset,
+  fromHumanReadableAmount,
+  getNumberOfDecimals,
+  toHumanReadableAmount,
+  tokenIsFungible
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { MoreVertical, Plus } from 'lucide-react'
@@ -170,7 +176,7 @@ const AssetAmountsInput = ({
   }
 
   useEffect(() => {
-    const addressTokenIds = address.tokens.map((token) => token.tokenId)
+    const addressTokenIds = assets.map((token) => token.id)
     const filteredAssetAmounts = assetAmounts.filter(
       (asset) => addressTokenIds.includes(asset.id) || asset.id === ALPH.id
     )
@@ -203,7 +209,7 @@ const AssetAmountsInput = ({
     >
       <AssetAmounts ref={selectedValueRef}>
         {assetAmounts.map(({ id, amountInput = '' }, index) => {
-          const asset = assets.find((asset) => asset.id === id)
+          const asset = assets.filter(tokenIsFungible).find((asset) => asset.id === id)
           if (!asset) return
 
           const availableAmount = asset.balance - asset.lockedBalance

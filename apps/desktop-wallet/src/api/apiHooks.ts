@@ -163,6 +163,18 @@ export const useAddressesGroupedAssets = (addressHashes: AddressHash[]) => {
   }
 }
 
+export const useAllAddressesAssets = () => {
+  const allAddresses = useAppSelector(selectAllAddresses)
+  const { data: addressesAssets, isPending } = useAddressesAssets(allAddresses.map((a) => a.hash))
+
+  const groupedAssets = groupByAssetType(addressesAssets?.flatMap((a) => a.assets))
+
+  return {
+    data: groupedAssets,
+    isPending
+  }
+}
+
 export const useAddressAssets = (addressHash: AddressHash) => {
   const { data: addressesAssets, isPending } = useAddressesAssets([addressHash])
 
