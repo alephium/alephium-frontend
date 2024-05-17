@@ -66,6 +66,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
       dangerouslyExportWalletMnemonic().then((mnemonic) => {
         mnemonicWords.current = mnemonic.split(' ')
         randomizedOptions.current = getRandomizedOptions(mnemonicWords.current, allowedWords.current)
+        setPossibleMatches(randomizedOptions.current[0])
       })
     } catch (e) {
       console.error(e)
@@ -84,7 +85,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   useEffect(() => {
     if (selectedWords.length < mnemonicWords.current.length) {
       setPossibleMatches(randomizedOptions.current[selectedWords.length])
-    } else {
+    } else if (selectedWords.length > 0) {
       confirmBackup()
       setShowSuccess(true)
       setTimeout(() => {
