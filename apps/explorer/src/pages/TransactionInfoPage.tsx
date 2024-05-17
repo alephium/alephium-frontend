@@ -264,9 +264,6 @@ const TransactionInfoPage = () => {
                     {addressesInvolved.map((addressHash) => (
                       <IOItemContainer>
                         <DeltaAmountsBox key={addressHash}>
-                          <DeltaAmountsTitle>
-                            <AddressLink address={addressHash} maxWidth="300px" />
-                          </DeltaAmountsTitle>
                           <AmountList>
                             {alphDeltaAmounts[addressHash] && (
                               <Badge
@@ -288,6 +285,9 @@ const TransactionInfoPage = () => {
                               />
                             ))}
                           </AmountList>
+                          <DeltaAmountsTitle>
+                            <AddressLink address={addressHash} maxWidth="300px" />
+                          </DeltaAmountsTitle>
                         </DeltaAmountsBox>
                       </IOItemContainer>
                     ))}
@@ -407,25 +407,19 @@ const DetltaAmountsContainer = styled.div`
 `
 
 const DeltaAmountsBox = styled.div`
-  flex: 1;
   display: flex;
   padding: 4px 0;
+  gap: 20px;
 `
 
 const AmountList = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 8px;
-
-  ${Amount} {
-    text-align: right;
-  }
 `
 
-const DeltaAmountsTitle = styled.div`
-  flex: 1;
-`
+const DeltaAmountsTitle = styled.div``
 
 export default TransactionInfoPage
