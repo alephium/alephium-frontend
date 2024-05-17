@@ -52,7 +52,9 @@ type RootStackParamList = {
   EditWalletNameScreen: undefined
   CustomNetworkScreen: undefined
   PublicKeysScreen: undefined
-  FundingPasswordScreen: undefined
+  FundingPasswordScreen: {
+    origin: 'backup' | 'settings'
+  }
 }
 
 export default RootStackParamList

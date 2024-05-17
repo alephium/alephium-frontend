@@ -30,16 +30,18 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useAppDispatch } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
-import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { deleteFundingPassword, getFundingPassword, storeFundingPassword } from '~/persistent-storage/fundingPassword'
 import { fundingPasswordUseToggled } from '~/store/settingsSlice'
 import { showToast } from '~/utils/layout'
+import { resetNavigation } from '~/utils/navigation'
 
 interface FundingPasswordScreenProps
-  extends StackScreenProps<BackupMnemonicNavigationParamList, 'FundingPasswordScreen'>,
+  extends StackScreenProps<RootStackParamList, 'FundingPasswordScreen'>,
     ScrollScreenProps {}
 
 const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenProps) => {
+  const cameFromBackupScreen = props.route.params.origin === 'backup'
   const { setHeaderOptions } = useHeaderContext()
   const { data: currentFundingPassword } = useAsyncData(getFundingPassword)
   const dispatch = useAppDispatch()
@@ -91,25 +93,31 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
       text2: newPassword ? 'Funding password was updated.' : 'Funding password was set up.',
       type: 'success'
     })
-    navigation.goBack()
+
+    cameFromBackupScreen ? resetNavigation(navigation) : navigation.goBack()
   }
 
   const handleDeletePress = async () => {
+    showAlert('Delete funding password', async () => {
+      await deleteFundingPassword()
+      dispatch(fundingPasswordUseToggled(false))
+      showToast({
+        text1: 'Deleted',
+        text2: 'Funding password was deleted.',
+        type: 'info'
+      })
+      navigation.goBack()
+    })
+  }
+
+  const handleSkipPress = async () => {
+    showAlert("I'll do it later", () => resetNavigation(navigation))
+  }
+
+  const showAlert = (text: string, onPress: () => void) => {
     Alert.alert('Are you sure?', 'To enhance your security it is recommended to use a funding password.', [
       { text: 'Cancel' },
-      {
-        text: 'Delete funding password',
-        onPress: async () => {
-          await deleteFundingPassword()
-          dispatch(fundingPasswordUseToggled(false))
-          showToast({
-            text1: 'Deleted',
-            text2: 'Funding password was deleted.',
-            type: 'info'
-          })
-          navigation.goBack()
-        }
-      }
+      { text, onPress }
     ])
   }
 
@@ -119,7 +127,7 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
       fill
       screenTitle="Funding password"
       screenIntro="It acts as an additional authentication layer before funds leave your wallet."
-      headerOptions={{ type: 'stack' }}
+      headerOptions={{ type: cameFromBackupScreen ? 'default' : 'stack' }}
       {...props}
     >
       {!currentFundingPassword ? (
@@ -147,7 +155,16 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
             />
           </ScreenSection>
           <ScreenSection>
-            <Button variant="highlight" title="Save" onPress={handleSavePress} disabled={!isCurrentPasswordConfirmed} />
+            <ButtonsRow>
+              {cameFromBackupScreen && <Button title="Skip" onPress={handleSkipPress} flex />}
+              <Button
+                variant="highlight"
+                title="Save"
+                onPress={handleSavePress}
+                disabled={!isCurrentPasswordConfirmed}
+                flex
+              />
+            </ButtonsRow>
           </ScreenSection>
         </>
       ) : (

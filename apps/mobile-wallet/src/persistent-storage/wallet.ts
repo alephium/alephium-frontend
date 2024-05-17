@@ -28,6 +28,7 @@ import { nanoid } from 'nanoid'
 
 import { sendAnalytics } from '~/analytics'
 import { defaultBiometricsConfig, defaultSecureStoreConfig } from '~/persistent-storage/config'
+import { deleteFundingPassword } from '~/persistent-storage/fundingPassword'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
   deleteSecurelyWithReportableError,
@@ -159,6 +160,7 @@ export const getDeprecatedStoredWallet = async (
 
 export const deleteWallet = async () => {
   await deleteSecurelyWithReportableError(MNEMONIC_V2, 'Could not delete wallet from secure storage')
+  await deleteFundingPassword()
 
   const wallet = await getStoredWallet()
 

@@ -21,6 +21,7 @@ import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@
 
 import { defaultGeneralSettings, persistSettings } from '~/persistent-storage/settings'
 import { RootState } from '~/store/store'
+import { walletDeleted } from '~/store/wallet/walletActions'
 import { GeneralSettings } from '~/types/settings'
 
 const sliceName = 'settings'
@@ -70,6 +71,9 @@ const settingsSlice = createSlice({
       .addCase(appReset, () => initialState)
       .addCase(fiatCurrencyChanged, (state, { payload: currency }) => {
         state.currency = currency
+      })
+      .addCase(walletDeleted, (state) => {
+        state.usesFundingPassword = false
       })
   }
 })

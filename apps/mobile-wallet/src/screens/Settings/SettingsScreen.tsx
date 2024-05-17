@@ -166,7 +166,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   }
 
   const handleFundingPasswordPress = () => {
-    navigation.navigate('FundingPasswordScreen')
+    navigation.navigate('FundingPasswordScreen', { origin: 'settings' })
   }
 
   return (
