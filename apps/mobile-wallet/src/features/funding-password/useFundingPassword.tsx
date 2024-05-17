@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useCallback, useState } from 'react'
 
-import FundingPasswordModal, { FundingPasswordModalProps } from '~/components/FundingPasswordModal'
+import FundingPasswordModal, { FundingPasswordModalProps } from '~/features/funding-password/FundingPasswordModal'
 import { useAppSelector } from '~/hooks/redux'
 
 const useFundingPassword = () => {

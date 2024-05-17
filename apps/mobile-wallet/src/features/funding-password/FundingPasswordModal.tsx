@@ -25,10 +25,10 @@ import Input from '~/components/inputs/Input'
 import BottomModal, { BottomModalProps } from '~/components/layout/BottomModal'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { getFundingPassword } from '~/features/funding-password/fundingPasswordStorage'
 import { useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import usePassword from '~/hooks/usePassword'
-import { getFundingPassword } from '~/persistent-storage/fundingPassword'
 
 export interface FundingPasswordModalProps extends Pick<BottomModalProps, 'isOpen' | 'onClose'> {
   successCallback: () => void

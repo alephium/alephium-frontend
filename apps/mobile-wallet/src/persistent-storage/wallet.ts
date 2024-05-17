@@ -27,8 +27,8 @@ import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 
 import { sendAnalytics } from '~/analytics'
+import { deleteFundingPassword } from '~/features/funding-password/fundingPasswordStorage'
 import { defaultBiometricsConfig, defaultSecureStoreConfig } from '~/persistent-storage/config'
-import { deleteFundingPassword } from '~/persistent-storage/fundingPassword'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
   deleteSecurelyWithReportableError,

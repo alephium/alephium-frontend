@@ -29,11 +29,15 @@ import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
+import {
+  deleteFundingPassword,
+  getFundingPassword,
+  storeFundingPassword
+} from '~/features/funding-password/fundingPasswordStorage'
 import { useAppDispatch } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import usePassword from '~/hooks/usePassword'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { deleteFundingPassword, getFundingPassword, storeFundingPassword } from '~/persistent-storage/fundingPassword'
 import { fundingPasswordUseToggled } from '~/store/settingsSlice'
 import { showToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'

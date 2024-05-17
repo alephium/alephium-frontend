@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { localStorageNetworkSettingsLoaded, NetworkSettings } from '@alephium/shared'
 import { useEffect } from 'react'
 
+import { hasStoredFundingPassword } from '~/features/funding-password/fundingPasswordStorage'
 import { useAppDispatch } from '~/hooks/redux'
-import { hasStoredFundingPassword } from '~/persistent-storage/fundingPassword'
 import { loadSettings } from '~/persistent-storage/settings'
 import { storedGeneralSettingsLoaded } from '~/store/settingsSlice'
 import { GeneralSettings } from '~/types/settings'
