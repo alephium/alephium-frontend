@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import { usePostHog } from 'posthog-js/react'
+import { useCallback } from 'react'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
@@ -44,12 +45,15 @@ const useWalletLock = () => {
   const dispatch = useAppDispatch()
   const posthog = usePostHog()
 
-  const lockWallet = (lockedFrom?: string) => {
-    keyring.clearAll()
-    dispatch(walletLocked())
+  const lockWallet = useCallback(
+    (lockedFrom?: string) => {
+      keyring.clearAll()
+      dispatch(walletLocked())
 
-    if (lockedFrom) posthog.capture('Locked wallet', { origin: lockedFrom })
-  }
+      if (lockedFrom) posthog.capture('Locked wallet', { origin: lockedFrom })
+    },
+    [dispatch, posthog]
+  )
 
   const unlockWallet = async (props: UnlockWalletProps | null) => {
     if (!props) return
