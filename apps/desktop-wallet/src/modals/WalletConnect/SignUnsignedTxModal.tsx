@@ -77,7 +77,6 @@ const SignUnsignedTxModal = ({
       } catch (e) {
         const message = 'Could not decode unsigned tx'
         const errorMessage = getHumanReadableError(e, t(message))
-        posthog.capture('Error', { message })
         dispatch(unsignedTransactionDecodingFailed(errorMessage))
 
         onSignFail({
@@ -90,7 +89,7 @@ const SignUnsignedTxModal = ({
     }
 
     decodeUnsignedTx()
-  }, [dispatch, onClose, onSignFail, posthog, t, txData.unsignedTx])
+  }, [dispatch, onSignFail, t, txData.unsignedTx])
 
   const handleSign = async () => {
     if (!decodedUnsignedTx) return

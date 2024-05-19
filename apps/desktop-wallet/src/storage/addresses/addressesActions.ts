@@ -31,7 +31,6 @@ import { explorer } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
 import { chunk } from 'lodash'
-import { posthog } from 'posthog-js'
 
 import {
   fetchAddressesBalances,
@@ -79,7 +78,6 @@ export const syncAddressesData = createAsyncThunk<
     await dispatch(syncAddressesTokensBalances(addresses))
     return await dispatch(syncAddressesTransactions(addresses)).unwrap()
   } catch (e) {
-    posthog.capture('Error', { message: 'Synching address data' })
     return rejectWithValue({
       text: getHumanReadableError(e, i18n.t("Encountered error while synching your addresses' data.")),
       type: 'alert'
@@ -199,7 +197,6 @@ export const syncAddressesAlphHistoricBalances = createAsyncThunk(
         }
       } catch (e) {
         console.error('Could not parse amount history data', e)
-        posthog.capture('Error', { message: 'Could not parse amount history data' })
       }
 
       addressesBalances.push({

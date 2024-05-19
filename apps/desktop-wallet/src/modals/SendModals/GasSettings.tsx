@@ -22,7 +22,6 @@ import {
   MINIMAL_GAS_AMOUNT,
   MINIMAL_GAS_PRICE
 } from '@alephium/shared'
-import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -47,7 +46,6 @@ const GasSettings = ({
   onGasPriceChange
 }: GasSettingsProps) => {
   const { t } = useTranslation()
-  const posthog = usePostHog()
 
   const [expectedFee, setExpectedFee] = useState<bigint>()
 
@@ -60,9 +58,8 @@ const GasSettings = ({
       setExpectedFee(BigInt(gasAmount) * fromHumanReadableAmount(gasPrice))
     } catch (e) {
       console.error(e)
-      posthog.capture('Error', { message: 'Could not set expected fee' })
     }
-  }, [gasAmount, gasPrice, posthog])
+  }, [gasAmount, gasPrice])
 
   return (
     <>
