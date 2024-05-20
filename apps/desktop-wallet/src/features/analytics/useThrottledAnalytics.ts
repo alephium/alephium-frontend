@@ -16,36 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
+import { AnalyticsProps, getHumanReadableError, throttleEvent } from '@alephium/shared'
 import { CaptureOptions } from 'posthog-js'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback } from 'react'
-
-const eventThrottleStatus: Record<string, boolean> = {}
 
 const useThrottledAnalytics = () => {
   const posthog = usePostHog()
 
   const sendAnalytics = useCallback(
-    (
-      event: string,
-      props?: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        [key: string]: any
-      },
-      options?: CaptureOptions
-    ) => {
-      const eventKey = `${event}:${props ? Object.keys(props).map((key) => `${key}:${props[key]}`) : ''}`
-
-      if (!eventThrottleStatus[eventKey]) {
-        posthog.capture(event, props, options)
-        eventThrottleStatus[eventKey] = true
-
-        setTimeout(() => {
-          eventThrottleStatus[eventKey] = false
-        }, 5000)
-      }
-    },
+    (event: string, props?: AnalyticsProps, options?: CaptureOptions) =>
+      throttleEvent(() => posthog.capture(event, props, options), event, props),
     [posthog]
   )
 

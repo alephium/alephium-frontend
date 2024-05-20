@@ -16,16 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/types'
-export * from '@/api'
-export * from '@/utils'
-export * from '@/errors'
-export * from '@/numbers'
-export * from '@/constants'
-export * from '@/transactions'
-export * from '@/store'
-export * from '@/network'
-export * from '@/currencies'
-export * from '@/assets'
-export * from '@/utils'
-export * from '@/analytics'
+const eventThrottleStatus: Record<string, boolean> = {}
+
+const ANALYTICS_THROTTLING_TIMEOUT = 5000
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnalyticsProps = { [key: string]: any }
+
+export const throttleEvent = (callback: () => void, event: string, props?: AnalyticsProps) => {
+  const eventKey = `${event}:${props ? Object.keys(props).map((key) => `${key}:${props[key]}`) : ''}`
+
+  if (!eventThrottleStatus[eventKey]) {
+    callback()
+    eventThrottleStatus[eventKey] = true
+
+    setTimeout(() => {
+      eventThrottleStatus[eventKey] = false
+    }, ANALYTICS_THROTTLING_TIMEOUT)
+  }
+}

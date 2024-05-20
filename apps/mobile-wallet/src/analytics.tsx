@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
+import { AnalyticsProps, getHumanReadableError, throttleEvent } from '@alephium/shared'
 import { nanoid } from 'nanoid'
 import PostHog from 'posthog-react-native'
 import { PosthogCaptureOptions } from 'posthog-react-native/lib/posthog-core/src'
@@ -29,8 +29,6 @@ import { analyticsIdGenerated } from '~/store/settingsSlice'
 const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
 const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'
 
-const eventThrottleStatus: Record<string, boolean> = {}
-
 export const posthogAsync: Promise<PostHog> = PostHog.initAsync(PUBLIC_POSTHOG_KEY, {
   host: PUBLIC_POSTHOG_HOST,
   disableGeoip: true,
@@ -40,26 +38,8 @@ export const posthogAsync: Promise<PostHog> = PostHog.initAsync(PUBLIC_POSTHOG_K
 
 // Is there a better way to get the types of the arguments of the capture function of the abstract PostHogCore class
 // from posthog-react-native/lib/posthog-core/src?
-export const sendAnalytics = (
-  event: string,
-  props?: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any
-  },
-  options?: PosthogCaptureOptions
-) =>
-  posthogAsync.then((client) => {
-    const eventKey = `${event}:${props ? Object.keys(props).map((key) => `${key}:${props[key]}`) : ''}`
-
-    if (!eventThrottleStatus[eventKey]) {
-      client.capture(event, props, options)
-      eventThrottleStatus[eventKey] = true
-
-      setTimeout(() => {
-        eventThrottleStatus[eventKey] = false
-      }, 5000)
-    }
-  })
+export const sendAnalytics = (event: string, props?: AnalyticsProps, options?: PosthogCaptureOptions) =>
+  posthogAsync.then((client) => throttleEvent(() => client.capture(event, props, options), event, props))
 
 export const sendErrorAnalytics = (error: unknown, message: string, skipException?: boolean) => {
   console.error(message, error)
