@@ -21,7 +21,6 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Album, ArrowLeftRight, Layers, RefreshCw } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme } from 'styled-components'
@@ -33,6 +32,7 @@ import NavItem from '@/components/NavItem'
 import SideBar from '@/components/PageComponents/SideBar'
 import Scrollbar from '@/components/Scrollbar'
 import Spinner from '@/components/Spinner'
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { ReactComponent as AlephiumLogoSVG } from '@/images/alephium_logo_monochrome.svg'
 import ModalPortal from '@/modals/ModalPortal'
@@ -57,7 +57,7 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
   const networkStatus = useAppSelector((s) => s.network.status)
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
   const isLoadingData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const posthog = usePostHog()
+  const { sendAnalytics } = useThrottledAnalytics()
   const previousWalletName = useRef<string>()
 
   const [fullWalletNameVisible, setFullWalletNameVisible] = useState(true)
@@ -97,7 +97,7 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
   const refreshAddressesData = () => {
     dispatch(syncAddressesData())
 
-    posthog.capture('Refreshed data')
+    sendAnalytics('Refreshed data')
   }
 
   return (

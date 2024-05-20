@@ -18,13 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import dayjs from 'dayjs'
-import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import FooterButton from '@/components/Buttons/FooterButton'
 import Select from '@/components/Inputs/Select'
 import Paragraph from '@/components/Paragraph'
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { CenteredModalProps } from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
@@ -40,7 +40,7 @@ interface CSVExportModalProps extends CenteredModalProps {
 const CSVExportModal = ({ addressHash, ...props }: CSVExportModalProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const posthog = usePostHog()
+  const { sendAnalytics } = useThrottledAnalytics()
 
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
@@ -52,7 +52,7 @@ const CSVExportModal = ({ addressHash, ...props }: CSVExportModalProps) => {
     props.onClose()
     getCSVFile()
 
-    posthog.capture('Exported CSV', { time_period: selectedTimePeriod })
+    sendAnalytics('Exported CSV', { time_period: selectedTimePeriod })
   }
 
   const getCSVFile = async () => {

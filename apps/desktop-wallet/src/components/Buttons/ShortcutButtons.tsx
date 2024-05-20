@@ -18,12 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { ArrowDown, ArrowUp, Lock, Settings } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import AddressOptionsModal from '@/modals/AddressOptionsModal'
@@ -58,7 +58,7 @@ const ShortcutButtons = ({
 }: ShortcutButtonsProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const posthog = usePostHog()
+  const { sendAnalytics } = useThrottledAnalytics()
   const { lockWallet } = useWalletLock()
 
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash ?? ''))
@@ -73,25 +73,25 @@ const ShortcutButtons = ({
   const handleReceiveClick = () => {
     setIsReceiveModalOpen(true)
 
-    posthog.capture('Receive button clicked', { origin: analyticsOrigin })
+    sendAnalytics('Receive button clicked', { origin: analyticsOrigin })
   }
 
   const handleSendClick = () => {
     setIsSendModalOpen(true)
 
-    posthog.capture('Send button clicked', { origin: analyticsOrigin })
+    sendAnalytics('Send button clicked', { origin: analyticsOrigin })
   }
 
   const handleWalletSettingsClick = () => {
     setIsSettingsModalOpen(true)
 
-    posthog.capture('Wallet settings button clicked', { origin: analyticsOrigin })
+    sendAnalytics('Wallet settings button clicked', { origin: analyticsOrigin })
   }
 
   const handleAddressSettingsClick = () => {
     setIsAddressOptionsModalOpen(true)
 
-    posthog.capture('Address settings button clicked', { origin: analyticsOrigin })
+    sendAnalytics('Address settings button clicked', { origin: analyticsOrigin })
   }
 
   return (

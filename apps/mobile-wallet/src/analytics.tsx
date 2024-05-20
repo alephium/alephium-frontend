@@ -29,6 +29,8 @@ import { analyticsIdGenerated } from '~/store/settingsSlice'
 const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
 const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'
 
+const eventThrottleStatus: Record<string, boolean> = {}
+
 export const posthogAsync: Promise<PostHog> = PostHog.initAsync(PUBLIC_POSTHOG_KEY, {
   host: PUBLIC_POSTHOG_HOST,
   disableGeoip: true,
@@ -40,17 +42,30 @@ export const posthogAsync: Promise<PostHog> = PostHog.initAsync(PUBLIC_POSTHOG_K
 // from posthog-react-native/lib/posthog-core/src?
 export const sendAnalytics = (
   event: string,
-  properties?: {
+  props?: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any
   },
   options?: PosthogCaptureOptions
-) => posthogAsync.then((client) => client.capture(event, properties, options))
+) =>
+  posthogAsync.then((client) => {
+    const eventKey = `${event}:${props ? Object.keys(props).map((key) => `${key}:${props[key]}`) : ''}`
 
-export const sendErrorAnalytics = (error: unknown, message: string) => {
+    if (!eventThrottleStatus[eventKey]) {
+      client.capture(event, props, options)
+      eventThrottleStatus[eventKey] = true
+
+      setTimeout(() => {
+        eventThrottleStatus[eventKey] = false
+      }, 5000)
+    }
+  })
+
+export const sendErrorAnalytics = (error: unknown, message: string, skipException?: boolean) => {
   console.error(message, error)
   sendAnalytics('Error', {
-    message: `${message}: ${getHumanReadableError(error, '')}`
+    message,
+    reason: skipException ? undefined : getHumanReadableError(error, '')
   })
 }
 

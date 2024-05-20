@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { networkPresetSwitched } from '@alephium/shared'
 import { AlertTriangle, PlusSquare } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -28,6 +27,7 @@ import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
@@ -53,7 +53,7 @@ const WalletConnectSessionProposalModal = ({
   proposalEvent
 }: WalletConnectSessionProposalModalProps) => {
   const { t } = useTranslation()
-  const posthog = usePostHog()
+  const { sendAnalytics } = useThrottledAnalytics()
   const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const dispatch = useAppDispatch()
@@ -89,7 +89,7 @@ const WalletConnectSessionProposalModal = ({
       const address = generateAddress(group)
       saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])
 
-      posthog.capture('New address created through WalletConnect modal')
+      sendAnalytics('New address created through WalletConnect modal')
     } catch (e) {
       console.error(e)
     }
@@ -99,7 +99,7 @@ const WalletConnectSessionProposalModal = ({
     await rejectProposal()
     onClose()
 
-    posthog.capture('Rejected WalletConnect connection by closing modal')
+    sendAnalytics('Rejected WalletConnect connection by closing modal')
   }
 
   return (

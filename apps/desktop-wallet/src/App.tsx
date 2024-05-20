@@ -41,6 +41,7 @@ import SplashScreen from '@/components/SplashScreen'
 import UpdateWalletBanner from '@/components/UpdateWalletBanner'
 import { useGlobalContext } from '@/contexts/global'
 import { WalletConnectContextProvider } from '@/contexts/walletconnect'
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import UpdateWalletModal from '@/modals/UpdateWalletModal'
 import Router from '@/routes'
@@ -84,6 +85,7 @@ const App = () => {
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const showDevIndication = useDevModeShortcut()
   const posthog = usePostHog()
+  const { sendErrorAnalytics } = useThrottledAnalytics()
 
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
@@ -115,11 +117,10 @@ const App = () => {
       dispatch(localStorageGeneralSettingsMigrated(generalSettings))
       dispatch(localStorageNetworkSettingsMigrated(networkSettings))
     } catch (e) {
-      console.error(e)
-      posthog.capture('Error', { message: 'Local storage data migration failed' })
+      sendErrorAnalytics(e, 'Local storage data migration failed')
       dispatch(localStorageDataMigrationFailed())
     }
-  }, [dispatch, posthog])
+  }, [dispatch, sendErrorAnalytics])
 
   useEffect(() => {
     if (posthog.__loaded)

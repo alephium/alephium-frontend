@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { getHumanReadableError } from '@alephium/shared'
 import { node } from '@alephium/web3'
 import { Info } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -29,6 +28,7 @@ import Amount from '@/components/Amount'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
@@ -53,7 +53,7 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
   const dispatch = useAppDispatch()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const addresses = useAppSelector(selectAllAddresses)
-  const posthog = usePostHog()
+  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
 
   const fromAddress = sweepAddress || defaultAddress
   const toAddressOptions = sweepAddress ? addresses.filter(({ hash }) => hash !== fromAddress?.hash) : addresses
@@ -84,7 +84,7 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
     }
 
     buildTransactions()
-  }, [dispatch, posthog, sweepAddresses.from, sweepAddresses.to, t])
+  }, [dispatch, sweepAddresses.from, sweepAddresses.to, t])
 
   const onSweepClick = async () => {
     if (!sweepAddresses.from || !sweepAddresses.to) return
@@ -108,14 +108,14 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
       onClose()
       onSuccessfulSweep && onSuccessfulSweep()
 
-      posthog.capture('Swept address assets')
+      sendAnalytics('Swept address assets')
     } catch (e) {
       dispatch(
         transactionSendFailed(
           getHumanReadableError(e, t('Error while sweeping address {{ from }}', { from: sweepAddresses.from }))
         )
       )
-      posthog.capture('Error', { message: 'Sweeping address' })
+      sendErrorAnalytics(e, 'Sweeping address', true)
     }
     setIsLoading(false)
   }

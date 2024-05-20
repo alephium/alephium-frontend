@@ -18,12 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { getHumanReadableError } from '@alephium/shared'
 import { isEmpty } from 'lodash'
-import { usePostHog } from 'posthog-js/react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { CenteredModalProps, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { newWalletNameStored, walletNameStorageFailed } from '@/storage/wallets/walletActions'
@@ -43,7 +43,7 @@ const EditWalletNameModal = (props: CenteredModalProps) => {
     defaultValues: { name: activeWallet.name },
     mode: 'onChange'
   })
-  const posthog = usePostHog()
+  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
 
   const errors = formState.errors
   const isFormValid = isEmpty(errors)
@@ -56,10 +56,10 @@ const EditWalletNameModal = (props: CenteredModalProps) => {
       dispatch(newWalletNameStored(data.name))
       props.onClose()
 
-      posthog.capture('Changed wallet name', { wallet_name_length: data.name.length })
+      sendAnalytics('Changed wallet name', { wallet_name_length: data.name.length })
     } catch (e) {
       dispatch(walletNameStorageFailed(getHumanReadableError(e, t('Could not save new wallet name.'))))
-      posthog.capture('Error', { message: 'Could not save new wallet name' })
+      sendErrorAnalytics(e, 'Could not save new wallet name', true)
     }
   }
 

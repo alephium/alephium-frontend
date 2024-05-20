@@ -22,13 +22,14 @@ import {
   MINIMAL_GAS_AMOUNT,
   MINIMAL_GAS_PRICE
 } from '@alephium/shared'
-import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+
 const useGasSettings = (initialGasAmount?: string, initialGasPrice?: string) => {
   const { t } = useTranslation()
-  const posthog = usePostHog()
+  const { sendErrorAnalytics } = useThrottledAnalytics()
 
   const [gasAmount, setGasAmount] = useState(initialGasAmount)
   const [gasPrice, setGasPrice] = useState(initialGasPrice)
@@ -66,8 +67,7 @@ const useGasSettings = (initialGasAmount?: string, initialGasPrice?: string) => 
           : ''
       )
     } catch (e) {
-      console.error(e)
-      posthog.capture('Error', { message: 'Setting gas price' })
+      sendErrorAnalytics(e, 'Setting gas price')
       return
     }
   }

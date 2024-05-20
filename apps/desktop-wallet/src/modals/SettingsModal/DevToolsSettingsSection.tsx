@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { keyring } from '@alephium/keyring'
 import { getHumanReadableError } from '@alephium/shared'
 import { AlertOctagon, AlertTriangle, Download, FileCode, TerminalSquare } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -34,6 +33,7 @@ import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import Table from '@/components/Table'
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
@@ -52,7 +52,7 @@ const DevToolsSettingsSection = () => {
   const currentNetwork = useAppSelector((s) => s.network)
   const faucetCallPending = useAppSelector((s) => s.global.faucetCallPending)
   const devTools = useAppSelector((state) => state.settings.devTools)
-  const posthog = usePostHog()
+  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
 
   const [isDeployContractSendModalOpen, setIsDeployContractSendModalOpen] = useState(false)
   const [isCallScriptSendModalOpen, setIsCallScriptSendModalOpen] = useState(false)
@@ -62,7 +62,7 @@ const DevToolsSettingsSection = () => {
   const toggleDevTools = () => {
     dispatch(devToolsToggled())
 
-    posthog.capture('Enabled dev tools')
+    sendAnalytics('Enabled dev tools')
   }
 
   const confirmAddressPrivateKeyCopyWithPassword = (address: Address) => {
@@ -77,10 +77,10 @@ const DevToolsSettingsSection = () => {
       await navigator.clipboard.writeText(keyring.exportPrivateKeyOfAddress(selectedAddress.hash))
       dispatch(copiedToClipboard(t('Private key copied.')))
 
-      posthog.capture('Copied address private key')
+      sendAnalytics('Copied address private key')
     } catch (e) {
       dispatch(copyToClipboardFailed(getHumanReadableError(e, t('Could not copy private key.'))))
-      posthog.capture('Error', { message: 'Could not copy private key' })
+      sendErrorAnalytics(e, 'Could not copy private key', true)
     } finally {
       closePasswordModal()
     }
@@ -91,10 +91,10 @@ const DevToolsSettingsSection = () => {
       await navigator.clipboard.writeText(address.publicKey)
       dispatch(copiedToClipboard(t('Public key copied.')))
 
-      posthog.capture('Copied address public key')
+      sendAnalytics('Copied address public key')
     } catch (e) {
       dispatch(copyToClipboardFailed(getHumanReadableError(e, t('Could not copy public key.'))))
-      posthog.capture('Error', { message: 'Could not copy public key' })
+      sendErrorAnalytics(e, 'Could not copy public key', true)
     }
   }
 
@@ -105,7 +105,7 @@ const DevToolsSettingsSection = () => {
 
   const handleFaucetCall = () => {
     defaultAddress && dispatch(receiveTestnetTokens(defaultAddress?.hash))
-    posthog.capture('Requested testnet tokens')
+    sendAnalytics('Requested testnet tokens')
   }
 
   return (

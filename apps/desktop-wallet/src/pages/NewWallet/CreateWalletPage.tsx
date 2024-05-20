@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { encryptMnemonic } from '@alephium/keyring'
 import { getHumanReadableError } from '@alephium/shared'
 import { AlertCircle } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -38,6 +37,7 @@ import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import { selectDevModeStatus } from '@/storage/global/globalSlice'
@@ -50,7 +50,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
   const { onButtonBack, onButtonNext } = useStepsContext()
   const devMode = useAppSelector(selectDevModeStatus)
   const dispatch = useAppDispatch()
-  const posthog = usePostHog()
+  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
   const { discoverAndSaveUsedAddresses } = useAddressGeneration()
   const { mnemonic, resetCachedMnemonic } = useWalletContext()
 
@@ -96,23 +96,21 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
 
       if (isRestoring) {
         discoverAndSaveUsedAddresses({ skipIndexes: [0], enableLoading: false })
-        posthog.capture('New wallet imported', { wallet_name_length: walletName.length })
+        sendAnalytics('New wallet imported', { wallet_name_length: walletName.length })
       } else {
-        posthog.capture('New wallet created', { wallet_name_length: walletName.length })
+        sendAnalytics('New wallet created', { wallet_name_length: walletName.length })
       }
 
       onButtonNext()
     } catch (e) {
-      console.error(e)
-
       if (isRestoring) {
         dispatch(walletCreationFailed(getHumanReadableError(e, t('Error while importing wallet'))))
-        posthog.capture('Error', { message: 'Could not import wallet' })
+        sendErrorAnalytics(e, 'Could not import wallet', true)
       } else {
         dispatch(
           walletCreationFailed(getHumanReadableError(e, t('Something went wrong when creating encrypted wallet.')))
         )
-        posthog.capture('Error', { message: 'Could not create wallet' })
+        sendErrorAnalytics(e, 'Could not create wallet', true)
       }
     } finally {
       setPassword('')

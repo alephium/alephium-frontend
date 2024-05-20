@@ -17,11 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Codesandbox, HardHat, Lightbulb, Search } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import AddressSweepModal from '@/modals/AddressSweepModal'
@@ -39,29 +39,29 @@ const AdvancedOperationsSideModal = (props: AdvancedOperationsSideModal) => {
   const theme = useTheme()
   const { generateAndSaveOneAddressPerGroup, discoverAndSaveUsedAddresses } = useAddressGeneration()
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
-  const posthog = usePostHog()
+  const { sendAnalytics } = useThrottledAnalytics()
 
   const [isAddressesGenerationModalOpen, setIsAddressesGenerationModalOpen] = useState(false)
   const [isConsolidationModalOpen, setIsConsolidationModalOpen] = useState(false)
 
   const handleOneAddressPerGroupClick = () => {
     isPassphraseUsed ? generateAndSaveOneAddressPerGroup() : setIsAddressesGenerationModalOpen(true)
-    posthog.capture('Advanced operation to generate one address per group clicked')
+    sendAnalytics('Advanced operation to generate one address per group clicked')
   }
 
   const handleDiscoverAddressesClick = () => {
     discoverAndSaveUsedAddresses()
-    posthog.capture('Advanced operation to discover addresses clicked')
+    sendAnalytics('Advanced operation to discover addresses clicked')
   }
 
   const handleConsolidationClick = () => {
     setIsConsolidationModalOpen(true)
-    posthog.capture('Advanced operation to consolidate UTXOs clicked')
+    sendAnalytics('Advanced operation to consolidate UTXOs clicked')
   }
 
   const handleTellUsIdeasClick = () => {
     openInWebBrowser(links.discord)
-    posthog.capture('Advanced operation to share ideas clicked')
+    sendAnalytics('Advanced operation to share ideas clicked')
   }
 
   return (

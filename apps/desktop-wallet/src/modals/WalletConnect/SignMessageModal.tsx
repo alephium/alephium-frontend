@@ -19,11 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { keyring } from '@alephium/keyring'
 import { getHumanReadableError, WALLETCONNECT_ERRORS, WalletConnectError } from '@alephium/shared'
 import { hashMessage, SignMessageResult } from '@alephium/web3'
-import { usePostHog } from 'posthog-js/react'
 import { useTranslation } from 'react-i18next'
 
 import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalContent, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { messageSignFailed, messageSignSucceeded } from '@/storage/transactions/transactionsActions'
@@ -45,7 +45,7 @@ const SignUnsignedTxModal = ({
   onSignReject
 }: SignUnsignedTxModalProps) => {
   const { t } = useTranslation()
-  const posthog = usePostHog()
+  const { sendErrorAnalytics } = useThrottledAnalytics()
   const dispatch = useAppDispatch()
 
   const handleSign = async () => {
@@ -60,7 +60,7 @@ const SignUnsignedTxModal = ({
     } catch (e) {
       const message = 'Could not sign message'
       const errorMessage = getHumanReadableError(e, t(message))
-      posthog.capture('Error', { message })
+      sendErrorAnalytics(e, message, true)
       dispatch(messageSignFailed(errorMessage))
 
       onSignFail({

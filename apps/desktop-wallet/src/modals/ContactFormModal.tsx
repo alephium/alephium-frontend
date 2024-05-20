@@ -25,13 +25,13 @@ import {
 } from '@alephium/shared'
 import { isEmpty } from 'lodash'
 import { UserMinus } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import ConfirmModal from '@/modals/ConfirmModal'
@@ -58,7 +58,7 @@ const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
     defaultValues: contact ?? { name: '', address: '', id: undefined },
     mode: 'onChange'
   })
-  const posthog = usePostHog()
+  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
 
   const [isDeleteContactModalOpen, setIsDeleteContactModalOpen] = useState(false)
 
@@ -73,12 +73,12 @@ const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
       dispatch(contactStoredInPersistentStorage({ ...contactData, id }))
       onClose()
 
-      posthog.capture(contactData.id ? 'Edited contact' : 'Saved new contact', {
+      sendAnalytics(contactData.id ? 'Edited contact' : 'Saved new contact', {
         contact_name_length: contactData.name.length
       })
     } catch (e) {
       dispatch(contactStorageFailed(getHumanReadableError(e, t('Could not save contact.'))))
-      posthog.capture('Error', { message: 'Could not save contact' })
+      sendErrorAnalytics(e, 'Could not save contact')
     }
   }
 
@@ -88,10 +88,10 @@ const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
     try {
       contactsStorage.deleteContact(activeWalletId, contact)
       dispatch(contactDeletedFromPersistentStorage(contact.id))
-      posthog.capture('Deleted contact')
+      sendAnalytics('Deleted contact')
     } catch (e) {
       dispatch(contactDeletionFailed(getHumanReadableError(e, t('Could not delete contact.'))))
-      posthog.capture('Error', { message: 'Could not delete contact' })
+      sendErrorAnalytics(e, 'Could not delete contact')
     } finally {
       onClose()
     }
