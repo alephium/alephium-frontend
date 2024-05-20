@@ -32,12 +32,12 @@ import Select from '@/components/Inputs/Select'
 import Toggle from '@/components/Inputs/Toggle'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import { useWalletConnectContext } from '@/contexts/walletconnect'
+import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
 import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import CenteredModal from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
-import AnalyticsStorage from '@/storage/analytics/analyticsPersistentStorage'
 import { walletConnectCacheCleared, walletConnectCacheClearFailed } from '@/storage/global/globalActions'
 import {
   analyticsToggled,

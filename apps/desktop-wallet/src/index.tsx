@@ -29,8 +29,8 @@ import { StyleSheetManager } from 'styled-components'
 
 import App from '@/App'
 import Tooltips from '@/components/Tooltips'
-import AnalyticsProvider from '@/contexts/analytics'
 import { GlobalContextProvider } from '@/contexts/global'
+import AnalyticsProvider from '@/features/analytics/analyticsContext'
 import * as serviceWorker from '@/serviceWorker'
 import { store } from '@/storage/store'
 
