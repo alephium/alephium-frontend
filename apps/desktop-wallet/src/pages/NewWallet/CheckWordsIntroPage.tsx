@@ -30,16 +30,28 @@ import {
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { ReactComponent as LockBodySVG } from '@/images/lock_body.svg'
 import { ReactComponent as LockHandleSVG } from '@/images/lock_handle.svg'
 
 const CheckWordsIntroPage = () => {
   const { t } = useTranslation()
   const { onButtonBack, onButtonNext } = useStepsContext()
+  const { sendAnalytics } = useThrottledAnalytics()
+
+  const handleNextPress = () => {
+    sendAnalytics('Creating wallet: Ready to verify words: Clicked next')
+    onButtonNext()
+  }
+
+  const handleBackPress = () => {
+    sendAnalytics('Creating wallet: Ready to verify words: Clicked back')
+    onButtonBack()
+  }
 
   return (
     <FloatingPanel enforceMinHeight>
-      <PanelTitle color="primary" onBackButtonClick={onButtonBack}>
+      <PanelTitle color="primary" onBackButtonClick={handleBackPress}>
         {t('Security Check')}
       </PanelTitle>
       <PanelContentContainer>
@@ -65,7 +77,7 @@ const CheckWordsIntroPage = () => {
         </Section>
       </PanelContentContainer>
       <FooterActionsContainer>
-        <Button onClick={onButtonNext}>{t('Ready!')}</Button>
+        <Button onClick={handleNextPress}>{t('Ready!')}</Button>
       </FooterActionsContainer>
     </FloatingPanel>
   )

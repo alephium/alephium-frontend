@@ -90,6 +90,8 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
   }
 
   const handleNextButtonClick = async () => {
+    sendAnalytics('Creating wallet: Creating password: Clicked next')
+
     try {
       saveNewWallet({ walletName, encrypted: await encryptMnemonic(mnemonic, password) })
       resetCachedMnemonic()
@@ -116,6 +118,11 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
       setPassword('')
       setPasswordCheck('')
     }
+  }
+
+  const handleBackPress = () => {
+    sendAnalytics('Creating wallet: Creating password: Clicked back')
+    onButtonBack()
   }
 
   const isNextButtonActive =
@@ -163,7 +170,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
         </Section>
       </PanelContentContainer>
       <FooterActionsContainer>
-        <Button role="secondary" onClick={onButtonBack}>
+        <Button role="secondary" onClick={handleBackPress}>
           {t('Back')}
         </Button>
         <Button disabled={!isNextButtonActive} onClick={handleNextButtonClick}>

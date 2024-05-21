@@ -48,7 +48,7 @@ const WalletWelcomePage = () => {
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const { width, height } = useWindowSize()
   const { generateAndSaveOneAddressPerGroup } = useAddressGeneration()
-  const { sendAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
 
   const [shouldGenerateOneAddressPerGroup, setShouldGenerateOneAddressPerGroup] = useState(false)
   const [confettiRunning, setConfettiRunning] = useState(true)
@@ -74,7 +74,7 @@ const WalletWelcomePage = () => {
 
         sendAnalytics('Generated one address per group on wallet creation')
       } catch (e) {
-        console.error(e)
+        sendErrorAnalytics(e, 'Failed to generate one address per group')
       }
     }
 

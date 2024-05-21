@@ -33,12 +33,14 @@ import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
+import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
 import { bip39Words } from '@/utils/bip39'
 
 const ImportWordsPage = () => {
   const { t } = useTranslation()
   const { onButtonBack, onButtonNext } = useStepsContext()
   const { setMnemonic } = useWalletContext()
+  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
 
   const [phrase, setPhrase] = useState<{ value: string }[]>([])
   const allowedWords = useRef(bip39Words.split(' '))
@@ -67,12 +69,14 @@ const ImportWordsPage = () => {
   const handleNextButtonPress = () => {
     if (!isPhraseLongEnough) return
 
+    sendAnalytics('Importing wallet: Entering words: Clicked next')
+
     try {
       setMnemonic(keyring.importMnemonicString(phrase.map((word) => word.value).join(' ')))
 
       onButtonNext()
     } catch (e) {
-      console.error(e)
+      sendErrorAnalytics(e, 'Could not import mnemonic string', true)
     } finally {
       setPhrase([])
     }
