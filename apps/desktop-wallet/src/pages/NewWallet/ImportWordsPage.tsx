@@ -43,7 +43,7 @@ const ImportWordsPage = () => {
   const { sendAnalytics } = useAnalytics()
 
   const [phrase, setPhrase] = useState<{ value: string }[]>([])
-  const allowedWords = useRef(bip39Words.split(' '))
+  const allowedWords = useRef(bip39Words)
   const defaultPlaceholder = t('Type your recovery phrase')
   const [customPlaceholder, setCustomPlaceholder] = useState(defaultPlaceholder)
   const tagifyRef = useRef<Tagify<TagData> | undefined>()

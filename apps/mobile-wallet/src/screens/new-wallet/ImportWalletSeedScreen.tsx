@@ -55,7 +55,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const name = useAppSelector((s) => s.walletGeneration.walletName)
   const { deviceHasEnrolledBiometrics } = useBiometrics()
   const theme = useTheme()
-  const allowedWords = useRef(bip39Words.split(' '))
+  const allowedWords = useRef(bip39Words)
 
   const [typedInput, setTypedInput] = useState('')
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])

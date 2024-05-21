@@ -52,7 +52,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const mnemonicWords = useRef<string[]>([])
   const theme = useTheme()
-  const allowedWords = useRef(bip39Words.split(' '))
+  const allowedWords = useRef(bip39Words)
   const randomizedOptions = useRef<string[][]>([])
   const insets = useSafeAreaInsets()
   const { setHeaderOptions, screenScrollHandler } = useHeaderContext()

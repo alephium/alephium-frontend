@@ -17,9 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import * as encryptor from '@alephium/encryptor'
-import { resetArray } from '@alephium/shared'
+import { bip39Words, resetArray } from '@alephium/shared'
 import * as metamaskBip39 from '@metamask/scure-bip39'
-import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 
 export type MnemonicLength = 12 | 24
 
@@ -48,11 +47,11 @@ export class EncryptedMnemonicStoredAsUint8Array {
 // ie: displaying the mnemonic for backup, etc
 export const dangerouslyConvertUint8ArrayMnemonicToString = (mnemonic: Uint8Array) =>
   Array.from(new Uint16Array(new Uint8Array(mnemonic).buffer))
-    .map((i) => wordlist[i])
+    .map((i) => bip39Words[i])
     .join(' ')
 
 export const encryptMnemonic = async (mnemonic: Uint8Array, password: string) => {
-  if (!metamaskBip39.validateMnemonic(mnemonic, wordlist))
+  if (!metamaskBip39.validateMnemonic(mnemonic, bip39Words))
     throw new Error('Keyring: Cannot encrypt mnemonic, invalid mnemonic provided')
 
   const result = await encryptor.encrypt(password, new EncryptedMnemonicStoredAsUint8Array(mnemonic))
@@ -100,7 +99,7 @@ export const decryptMnemonic = async (encryptedMnemonic: string, password: strin
 }
 
 export const mnemonicStringToUint8Array = (mnemonicStr: string): Uint8Array => {
-  const indices = mnemonicStr.split(' ').map((word) => wordlist.indexOf(word))
+  const indices = mnemonicStr.split(' ').map((word) => bip39Words.indexOf(word))
 
   return new Uint8Array(new Uint16Array(indices).buffer)
 }

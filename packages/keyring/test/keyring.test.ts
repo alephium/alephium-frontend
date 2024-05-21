@@ -20,8 +20,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
  * @jest-environment jsdom
  */
 
+import { bip39Words } from '@alephium/shared'
 import { hashMessage } from '@alephium/web3'
-import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 import { bytesToHex } from 'ethereum-cryptography/utils'
 
 import {
@@ -87,7 +87,7 @@ describe('keyring', function () {
     const indexes = Array.from(new Uint16Array(new Uint8Array(mnemonic).buffer))
 
     indexes.forEach((index) => {
-      expect(index).toBeGreaterThanOrEqual(0), expect(index).toBeLessThan(wordlist.length)
+      expect(index).toBeGreaterThanOrEqual(0), expect(index).toBeLessThan(bip39Words.length)
     })
   })
 
@@ -139,7 +139,7 @@ describe('keyring', function () {
     const indexes = Array.from(new Uint16Array(new Uint8Array(mnemonic).buffer))
 
     indexes.forEach((index) => {
-      expect(index).toBeGreaterThanOrEqual(0), expect(index).toBeLessThan(wordlist.length)
+      expect(index).toBeGreaterThanOrEqual(0), expect(index).toBeLessThan(bip39Words.length)
     })
   })
 
