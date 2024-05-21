@@ -20,7 +20,7 @@ import { exponentialBackoffFetchRetry } from '@alephium/shared'
 import { compareVersions } from 'compare-versions'
 import { useState } from 'react'
 
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import useThrottledGitHubApi from '@/hooks/useThrottledGitHubApi'
 import { AlephiumWindow } from '@/types/window'
 import { currentVersion, isRcVersion } from '@/utils/app-data'
@@ -31,7 +31,7 @@ const electron = _window.electron
 const semverRegex = isRcVersion ? /^(\d+\.\d+\.\d+)(?:-rc(\.\d+)?)?$/ : /^(\d+\.\d+\.\d+)?$/
 
 const useLatestGitHubRelease = () => {
-  const { sendErrorAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
 
   const [newVersion, setNewVersion] = useState('')
   const [requiresManualDownload, setRequiresManualDownload] = useState(false)
@@ -46,9 +46,8 @@ const useLatestGitHubRelease = () => {
         setNewVersion(version)
         setRequiresManualDownload(true)
       }
-    } catch (e) {
-      sendErrorAnalytics(e, 'Checking for latest release version for manual download')
-      console.error(e)
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Checking for latest release version for manual download' })
     }
   }
 

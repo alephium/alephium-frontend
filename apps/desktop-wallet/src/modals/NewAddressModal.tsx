@@ -26,7 +26,7 @@ import InfoBox from '@/components/InfoBox'
 import Select from '@/components/Inputs/Select'
 import { Section } from '@/components/PageComponents/PageContainers'
 import ToggleSection from '@/components/ToggleSection'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
@@ -46,7 +46,7 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
   const isPassphraseUsed = useAppSelector((state) => state.activeWallet.isPassphraseUsed)
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const { generateAddress, generateAndSaveOneAddressPerGroup } = useAddressGeneration()
-  const { sendAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
 
   const [addressLabel, setAddressLabel] = useState({ title: '', color: isPassphraseUsed ? '' : getRandomLabelColor() })
   const [isDefaultAddress, setIsDefaultAddress] = useState(false)
@@ -81,14 +81,14 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
       try {
         saveNewAddresses([{ ...newAddressData, ...settings }])
 
-        sendAnalytics('New address created', { label_length: settings.label.length })
+        sendAnalytics({ event: 'New address created', props: { label_length: settings.label.length } })
       } catch (e) {
         console.error(e)
       }
     } else {
       generateAndSaveOneAddressPerGroup({ labelPrefix: addressLabel.title, labelColor: addressLabel.color })
 
-      sendAnalytics('One address per group generated', { label_length: addressLabel.title.length })
+      sendAnalytics({ event: 'One address per group generated', props: { label_length: addressLabel.title.length } })
     }
     onClose()
   }

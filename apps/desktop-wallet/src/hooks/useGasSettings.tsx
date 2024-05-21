@@ -25,11 +25,11 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 
 const useGasSettings = (initialGasAmount?: string, initialGasPrice?: string) => {
   const { t } = useTranslation()
-  const { sendErrorAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
 
   const [gasAmount, setGasAmount] = useState(initialGasAmount)
   const [gasPrice, setGasPrice] = useState(initialGasPrice)
@@ -66,8 +66,8 @@ const useGasSettings = (initialGasAmount?: string, initialGasPrice?: string) => 
             })
           : ''
       )
-    } catch (e) {
-      sendErrorAnalytics(e, 'Setting gas price')
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Setting gas price' })
       return
     }
   }

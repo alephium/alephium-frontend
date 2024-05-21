@@ -21,7 +21,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import AddressSweepModal from '@/modals/AddressSweepModal'
@@ -39,29 +39,29 @@ const AdvancedOperationsSideModal = (props: AdvancedOperationsSideModal) => {
   const theme = useTheme()
   const { generateAndSaveOneAddressPerGroup, discoverAndSaveUsedAddresses } = useAddressGeneration()
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
-  const { sendAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
 
   const [isAddressesGenerationModalOpen, setIsAddressesGenerationModalOpen] = useState(false)
   const [isConsolidationModalOpen, setIsConsolidationModalOpen] = useState(false)
 
   const handleOneAddressPerGroupClick = () => {
     isPassphraseUsed ? generateAndSaveOneAddressPerGroup() : setIsAddressesGenerationModalOpen(true)
-    sendAnalytics('Advanced operation to generate one address per group clicked')
+    sendAnalytics({ event: 'Advanced operation to generate one address per group clicked' })
   }
 
   const handleDiscoverAddressesClick = () => {
     discoverAndSaveUsedAddresses()
-    sendAnalytics('Advanced operation to discover addresses clicked')
+    sendAnalytics({ event: 'Advanced operation to discover addresses clicked' })
   }
 
   const handleConsolidationClick = () => {
     setIsConsolidationModalOpen(true)
-    sendAnalytics('Advanced operation to consolidate UTXOs clicked')
+    sendAnalytics({ event: 'Advanced operation to consolidate UTXOs clicked' })
   }
 
   const handleTellUsIdeasClick = () => {
     openInWebBrowser(links.discord)
-    sendAnalytics('Advanced operation to share ideas clicked')
+    sendAnalytics({ event: 'Advanced operation to share ideas clicked' })
   }
 
   return (

@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { CenteredModalProps, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { newWalletNameStored, walletNameStorageFailed } from '@/storage/wallets/walletActions'
@@ -43,7 +43,7 @@ const EditWalletNameModal = (props: CenteredModalProps) => {
     defaultValues: { name: activeWallet.name },
     mode: 'onChange'
   })
-  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
 
   const errors = formState.errors
   const isFormValid = isEmpty(errors)
@@ -56,10 +56,10 @@ const EditWalletNameModal = (props: CenteredModalProps) => {
       dispatch(newWalletNameStored(data.name))
       props.onClose()
 
-      sendAnalytics('Changed wallet name', { wallet_name_length: data.name.length })
-    } catch (e) {
-      dispatch(walletNameStorageFailed(getHumanReadableError(e, t('Could not save new wallet name.'))))
-      sendErrorAnalytics(e, 'Could not save new wallet name', true)
+      sendAnalytics({ event: 'Changed wallet name', props: { wallet_name_length: data.name.length } })
+    } catch (error) {
+      dispatch(walletNameStorageFailed(getHumanReadableError(error, t('Could not save new wallet name.'))))
+      sendAnalytics({ type: 'error', error, message: 'Could not save new wallet name', isSensitive: true })
     }
   }
 

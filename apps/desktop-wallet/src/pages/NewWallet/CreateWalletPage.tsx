@@ -37,7 +37,7 @@ import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import { selectDevModeStatus } from '@/storage/global/globalSlice'
@@ -50,7 +50,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
   const { onButtonBack, onButtonNext } = useStepsContext()
   const devMode = useAppSelector(selectDevModeStatus)
   const dispatch = useAppDispatch()
-  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
   const { discoverAndSaveUsedAddresses } = useAddressGeneration()
   const { mnemonic, resetCachedMnemonic } = useWalletContext()
 
@@ -90,7 +90,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
   }
 
   const handleNextButtonClick = async () => {
-    sendAnalytics('Creating wallet: Creating password: Clicked next')
+    sendAnalytics({ event: 'Creating wallet: Creating password: Clicked next' })
 
     try {
       saveNewWallet({ walletName, encrypted: await encryptMnemonic(mnemonic, password) })
@@ -98,21 +98,21 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
 
       if (isRestoring) {
         discoverAndSaveUsedAddresses({ skipIndexes: [0], enableLoading: false })
-        sendAnalytics('New wallet imported', { wallet_name_length: walletName.length })
+        sendAnalytics({ event: 'New wallet imported', props: { wallet_name_length: walletName.length } })
       } else {
-        sendAnalytics('New wallet created', { wallet_name_length: walletName.length })
+        sendAnalytics({ event: 'New wallet created', props: { wallet_name_length: walletName.length } })
       }
 
       onButtonNext()
-    } catch (e) {
+    } catch (error) {
       if (isRestoring) {
-        dispatch(walletCreationFailed(getHumanReadableError(e, t('Error while importing wallet'))))
-        sendErrorAnalytics(e, 'Could not import wallet', true)
+        dispatch(walletCreationFailed(getHumanReadableError(error, t('Error while importing wallet'))))
+        sendAnalytics({ type: 'error', error, message: 'Could not import wallet', isSensitive: true })
       } else {
         dispatch(
-          walletCreationFailed(getHumanReadableError(e, t('Something went wrong when creating encrypted wallet.')))
+          walletCreationFailed(getHumanReadableError(error, t('Something went wrong when creating encrypted wallet.')))
         )
-        sendErrorAnalytics(e, 'Could not create wallet', true)
+        sendAnalytics({ type: 'error', error, message: 'Could not create wallet', isSensitive: true })
       }
     } finally {
       setPassword('')
@@ -121,7 +121,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
   }
 
   const handleBackPress = () => {
-    sendAnalytics('Creating wallet: Creating password: Clicked back')
+    sendAnalytics({ event: 'Creating wallet: Creating password: Clicked back' })
     onButtonBack()
   }
 

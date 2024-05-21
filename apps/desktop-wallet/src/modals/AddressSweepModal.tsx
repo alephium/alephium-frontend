@@ -28,7 +28,7 @@ import Amount from '@/components/Amount'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
@@ -53,7 +53,7 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
   const dispatch = useAppDispatch()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const addresses = useAppSelector(selectAllAddresses)
-  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
 
   const fromAddress = sweepAddress || defaultAddress
   const toAddressOptions = sweepAddress ? addresses.filter(({ hash }) => hash !== fromAddress?.hash) : addresses
@@ -108,14 +108,14 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
       onClose()
       onSuccessfulSweep && onSuccessfulSweep()
 
-      sendAnalytics('Swept address assets')
-    } catch (e) {
+      sendAnalytics({ event: 'Swept address assets' })
+    } catch (error) {
       dispatch(
         transactionSendFailed(
-          getHumanReadableError(e, t('Error while sweeping address {{ from }}', { from: sweepAddresses.from }))
+          getHumanReadableError(error, t('Error while sweeping address {{ from }}', { from: sweepAddresses.from }))
         )
       )
-      sendErrorAnalytics(e, 'Sweeping address', true)
+      sendAnalytics({ type: 'error', error, message: 'Sweeping address', isSensitive: true })
     }
     setIsLoading(false)
   }

@@ -21,7 +21,7 @@ import { motion } from 'framer-motion'
 import { Moon, Sun } from 'lucide-react'
 import styled from 'styled-components'
 
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppSelector } from '@/hooks/redux'
 import { toggleTheme } from '@/storage/settings/settingsStorageUtils'
 import { onEnterOrSpace } from '@/utils/misc'
@@ -37,14 +37,14 @@ const darkColor = '#422c08'
 
 const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
   const theme = useAppSelector((state) => state.global.theme)
-  const { sendAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
 
   const isDark = theme === 'dark'
 
   const handleThemeToggle = () => {
     toggleTheme(isDark ? 'light' : 'dark')
 
-    sendAnalytics('Toggled theme', { theme })
+    sendAnalytics({ event: 'Toggled theme', props: { theme } })
   }
 
   return (

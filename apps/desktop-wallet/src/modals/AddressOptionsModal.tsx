@@ -26,7 +26,7 @@ import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppSelector } from '@/hooks/redux'
 import AddressSweepModal from '@/modals/AddressSweepModal'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
@@ -44,7 +44,7 @@ interface AddressOptionsModalProps {
 const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const { sendAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
   const isPassphraseUsed = useAppSelector((state) => state.activeWallet.isPassphraseUsed)
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const addresses = useAppSelector(selectAllAddresses)
@@ -75,8 +75,8 @@ const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps)
 
       onClose()
 
-      sendAnalytics('Changed address settings', { label_length: settings.label.length })
-      isDefaultAddressToggleEnabled && sendAnalytics('Changed default address')
+      sendAnalytics({ event: 'Changed address settings', props: { label_length: settings.label.length } })
+      isDefaultAddressToggleEnabled && sendAnalytics({ event: 'Changed default address' })
     } catch (e) {
       console.error(e)
     }

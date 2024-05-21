@@ -34,23 +34,23 @@ import {
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 
 const WalletWordsPage = () => {
   const { onButtonBack, onButtonNext } = useStepsContext()
   const { mnemonic, setMnemonic, resetCachedMnemonic } = useWalletContext()
   const { t } = useTranslation()
-  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
 
   useEffect(() => {
     if (!mnemonic) {
       try {
         setMnemonic(keyring.generateRandomMnemonic())
-      } catch (e) {
-        sendErrorAnalytics(e, 'Could not generate new mnemonic', true)
+      } catch (error) {
+        sendAnalytics({ type: 'error', error, message: 'Could not generate new mnemonic', isSensitive: true })
       }
     }
-  }, [mnemonic, sendErrorAnalytics, setMnemonic])
+  }, [mnemonic, sendAnalytics, setMnemonic])
 
   if (!mnemonic) return null
 
@@ -65,14 +65,14 @@ const WalletWordsPage = () => {
       ))
 
   const handleBackPress = () => {
-    sendAnalytics('Creating wallet: Writing down mnemonic: Clicked back')
+    sendAnalytics({ event: 'Creating wallet: Writing down mnemonic: Clicked back' })
     keyring.clearAll()
     resetCachedMnemonic()
     onButtonBack()
   }
 
   const handleNextPress = () => {
-    sendAnalytics('Creating wallet: Writing down mnemonic: Clicked next')
+    sendAnalytics({ event: 'Creating wallet: Writing down mnemonic: Clicked next' })
     onButtonNext()
   }
 

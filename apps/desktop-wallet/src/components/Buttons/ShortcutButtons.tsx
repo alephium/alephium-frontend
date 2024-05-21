@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import AddressOptionsModal from '@/modals/AddressOptionsModal'
@@ -58,7 +58,7 @@ const ShortcutButtons = ({
 }: ShortcutButtonsProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const { sendAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
   const { lockWallet } = useWalletLock()
 
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash ?? ''))
@@ -73,25 +73,25 @@ const ShortcutButtons = ({
   const handleReceiveClick = () => {
     setIsReceiveModalOpen(true)
 
-    sendAnalytics('Receive button clicked', { origin: analyticsOrigin })
+    sendAnalytics({ event: 'Receive button clicked', props: { origin: analyticsOrigin } })
   }
 
   const handleSendClick = () => {
     setIsSendModalOpen(true)
 
-    sendAnalytics('Send button clicked', { origin: analyticsOrigin })
+    sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
   }
 
   const handleWalletSettingsClick = () => {
     setIsSettingsModalOpen(true)
 
-    sendAnalytics('Wallet settings button clicked', { origin: analyticsOrigin })
+    sendAnalytics({ event: 'Wallet settings button clicked', props: { origin: analyticsOrigin } })
   }
 
   const handleAddressSettingsClick = () => {
     setIsAddressOptionsModalOpen(true)
 
-    sendAnalytics('Address settings button clicked', { origin: analyticsOrigin })
+    sendAnalytics({ event: 'Address settings button clicked', props: { origin: analyticsOrigin } })
   }
 
   return (

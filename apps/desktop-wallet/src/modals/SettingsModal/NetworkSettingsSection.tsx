@@ -38,7 +38,7 @@ import Input from '@/components/Inputs/Input'
 import Select from '@/components/Inputs/Select'
 import { Section } from '@/components/PageComponents/PageContainers'
 import ToggleSection from '@/components/ToggleSection'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import i18next from '@/i18n'
 import { AlephiumWindow } from '@/types/window'
@@ -63,7 +63,7 @@ const NetworkSettingsSection = () => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const network = useAppSelector((state) => state.network)
-  const { sendAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
   const theme = useTheme()
 
   const _window = window as unknown as AlephiumWindow
@@ -120,7 +120,7 @@ const NetworkSettingsSection = () => {
           dispatch(networkPresetSwitched(networkName))
           setTempNetworkSettings(newNetworkSettings)
 
-          sendAnalytics('Changed network', { network_name: networkName })
+          sendAnalytics({ event: 'Changed network', props: { network_name: networkName } })
           return
         }
 
@@ -134,7 +134,7 @@ const NetworkSettingsSection = () => {
           dispatch(customNetworkSettingsSaved(settings))
           setTempNetworkSettings(settings)
 
-          sendAnalytics('Saved custom network settings')
+          sendAnalytics({ event: 'Saved custom network settings' })
         }
       }
     },
@@ -155,7 +155,7 @@ const NetworkSettingsSection = () => {
     // Proxy settings (no need to be awaited)
     electron?.app.setProxySettings(tempNetworkSettings.proxy)
 
-    sendAnalytics('Saved custom network settings')
+    sendAnalytics({ event: 'Saved custom network settings' })
   }, [
     dispatch,
     electron?.app,

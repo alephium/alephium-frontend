@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next'
 
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import ConfirmModal from '@/modals/ConfirmModal'
@@ -58,7 +58,7 @@ const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
     defaultValues: contact ?? { name: '', address: '', id: undefined },
     mode: 'onChange'
   })
-  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
 
   const [isDeleteContactModalOpen, setIsDeleteContactModalOpen] = useState(false)
 
@@ -73,12 +73,15 @@ const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
       dispatch(contactStoredInPersistentStorage({ ...contactData, id }))
       onClose()
 
-      sendAnalytics(contactData.id ? 'Edited contact' : 'Saved new contact', {
-        contact_name_length: contactData.name.length
+      sendAnalytics({
+        event: contactData.id ? 'Edited contact' : 'Saved new contact',
+        props: {
+          contact_name_length: contactData.name.length
+        }
       })
-    } catch (e) {
-      dispatch(contactStorageFailed(getHumanReadableError(e, t('Could not save contact.'))))
-      sendErrorAnalytics(e, 'Could not save contact')
+    } catch (error) {
+      dispatch(contactStorageFailed(getHumanReadableError(error, t('Could not save contact.'))))
+      sendAnalytics({ type: 'error', error, message: 'Could not save contact' })
     }
   }
 
@@ -88,10 +91,10 @@ const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
     try {
       contactsStorage.deleteContact(activeWalletId, contact)
       dispatch(contactDeletedFromPersistentStorage(contact.id))
-      sendAnalytics('Deleted contact')
-    } catch (e) {
-      dispatch(contactDeletionFailed(getHumanReadableError(e, t('Could not delete contact.'))))
-      sendErrorAnalytics(e, 'Could not delete contact')
+      sendAnalytics({ event: 'Deleted contact' })
+    } catch (error) {
+      dispatch(contactDeletionFailed(getHumanReadableError(error, t('Could not delete contact.'))))
+      sendAnalytics({ type: 'error', error, message: 'Could not delete contact' })
     } finally {
       onClose()
     }

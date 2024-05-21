@@ -33,7 +33,7 @@ import Toggle from '@/components/Inputs/Toggle'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import { useWalletConnectContext } from '@/contexts/walletconnect'
 import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import CenteredModal from '@/modals/CenteredModal'
@@ -63,7 +63,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
   const { walletLockTimeInMinutes, discreetMode, passwordRequirement, language, theme, analytics, fiatCurrency } =
     useAppSelector((s) => s.settings)
   const posthog = usePostHog()
-  const { sendAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
   const { reset } = useWalletConnectContext()
 
   const [isPasswordModelOpen, setIsPasswordModalOpen] = useState(false)
@@ -74,7 +74,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
     } else {
       dispatch(passwordRequirementToggled())
 
-      sendAnalytics('Enabled password requirement')
+      sendAnalytics({ event: 'Enabled password requirement' })
     }
   }, [dispatch, passwordRequirement, sendAnalytics])
 
@@ -82,19 +82,19 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
     dispatch(passwordRequirementToggled())
     setIsPasswordModalOpen(false)
 
-    sendAnalytics('Disabled password requirement')
+    sendAnalytics({ event: 'Disabled password requirement' })
   }, [dispatch, sendAnalytics])
 
   const handleLanguageChange = (language: Language) => {
     dispatch(languageChanged(language))
 
-    sendAnalytics('Changed language', { language })
+    sendAnalytics({ event: 'Changed language', props: { language } })
   }
 
   const handleFiatCurrencyChange = (currency: Currency) => {
     dispatch(fiatCurrencyChanged(currency))
 
-    sendAnalytics('Changed fiat currency', { currency })
+    sendAnalytics({ event: 'Changed fiat currency', props: { currency } })
   }
 
   const handleDiscreetModeToggle = () => dispatch(discreetModeToggled())
@@ -104,13 +104,13 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
 
     dispatch(walletLockTimeChanged(time))
 
-    sendAnalytics('Changed wallet lock time', { time })
+    sendAnalytics({ event: 'Changed wallet lock time', props: { time } })
   }
 
   const handleThemeSelect = (theme: ThemeSettings) => {
     switchTheme(theme)
 
-    sendAnalytics('Changed theme', { theme })
+    sendAnalytics({ event: 'Changed theme', props: { theme } })
   }
 
   const handleAnalyticsToggle = (toggle: boolean) => {

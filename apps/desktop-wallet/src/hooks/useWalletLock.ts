@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import { useCallback } from 'react'
 
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
@@ -43,14 +43,14 @@ const useWalletLock = () => {
   const isWalletUnlocked = useAppSelector((s) => !!s.activeWallet.id)
   const { restoreAddressesFromMetadata } = useAddressGeneration()
   const dispatch = useAppDispatch()
-  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
 
   const lockWallet = useCallback(
     (lockedFrom?: string) => {
       keyring.clearAll()
       dispatch(walletLocked())
 
-      if (lockedFrom) sendAnalytics('Locked wallet', { origin: lockedFrom })
+      if (lockedFrom) sendAnalytics({ event: 'Locked wallet', props: { origin: lockedFrom } })
     },
     [dispatch, sendAnalytics]
   )
@@ -76,8 +76,8 @@ const useWalletLock = () => {
 
     try {
       await migrateUserData(encryptedWallet.id, password, version)
-    } catch (e) {
-      sendErrorAnalytics(e, 'User data migration failed', true)
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'User data migration failed', isSensitive: true })
       dispatch(userDataMigrationFailed())
     }
 
@@ -104,10 +104,13 @@ const useWalletLock = () => {
 
       walletStorage.update(walletId, { lastUsed: Date.now() })
 
-      sendAnalytics(event === 'unlock' ? 'Wallet unlocked' : 'Wallet switched', {
-        wallet_name_length: encryptedWallet.name.length,
-        number_of_addresses: (addressMetadataStorage.load(encryptedWallet.id) as []).length,
-        number_of_contacts: (contactsStorage.load(encryptedWallet.id) as []).length
+      sendAnalytics({
+        event: event === 'unlock' ? 'Wallet unlocked' : 'Wallet switched',
+        props: {
+          wallet_name_length: encryptedWallet.name.length,
+          number_of_addresses: (addressMetadataStorage.load(encryptedWallet.id) as []).length,
+          number_of_contacts: (contactsStorage.load(encryptedWallet.id) as []).length
+        }
       })
     }
 

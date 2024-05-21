@@ -25,41 +25,55 @@ import { bip39Words as bip39WordsString } from '@/utils/bip39'
 
 const bip39Words = bip39WordsString.split(' ')
 
-const useThrottledAnalytics = () => {
+type EventAnalyticsParams = {
+  event: string
+  type?: 'event'
+  props?: AnalyticsProps
+  options?: CaptureOptions
+}
+
+type ErrorAnalyticsParams = {
+  type: 'error'
+  error: unknown
+  message: string
+  isSensitive?: boolean
+}
+
+type AnalyticsParams = EventAnalyticsParams | ErrorAnalyticsParams
+
+const useAnalytics = (): { sendAnalytics: (params: AnalyticsParams) => void } => {
   const posthog = usePostHog()
 
   const sendAnalytics = useCallback(
-    (event: string, props?: AnalyticsProps, options?: CaptureOptions) =>
-      throttleEvent(() => posthog.capture(event, props, options), event, props),
+    (params: AnalyticsParams) => {
+      if (params.type === 'error') {
+        const { error, message, isSensitive } = params
+        console.error(message, error)
+
+        sendAnalytics({
+          event: 'Error',
+          props: {
+            message,
+            reason: isSensitive ? cleanExceptionMessage(error) : getHumanReadableError(error, '')
+          }
+        })
+      } else {
+        const { event, props, options } = params
+
+        throttleEvent(() => posthog.capture(event, props, options), event, props)
+      }
+    },
     [posthog]
   )
 
-  const sendErrorAnalytics = useCallback(
-    (error: unknown, message: string, isSensitive?: boolean) => {
-      console.error(message, error)
-
-      sendAnalytics('Error', {
-        message,
-        reason: isSensitive ? cleanExceptionMessage(error) : getHumanReadableError(error, '')
-      })
-    },
-    [sendAnalytics]
-  )
-
-  return {
-    sendAnalytics,
-    sendErrorAnalytics
-  }
+  return { sendAnalytics }
 }
 
 const cleanExceptionMessage = (error: unknown) => {
-  let exceptionMessage = getHumanReadableError(error, '')
+  const exceptionMessage = getHumanReadableError(error, '')
+  const bip39Regex = new RegExp(`\\b(${bip39Words.join('|')})\\b`, 'gi')
 
-  bip39Words.forEach((word) => {
-    exceptionMessage = exceptionMessage.replaceAll(word, '[...]')
-  })
-
-  return exceptionMessage
+  return exceptionMessage.replace(bip39Regex, '[...]')
 }
 
-export default useThrottledAnalytics
+export default useAnalytics

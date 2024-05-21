@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next'
 import FooterButton from '@/components/Buttons/FooterButton'
 import Select from '@/components/Inputs/Select'
 import Paragraph from '@/components/Paragraph'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { CenteredModalProps } from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
@@ -40,7 +40,7 @@ interface CSVExportModalProps extends CenteredModalProps {
 const CSVExportModal = ({ addressHash, ...props }: CSVExportModalProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const { sendAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
 
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
@@ -52,7 +52,7 @@ const CSVExportModal = ({ addressHash, ...props }: CSVExportModalProps) => {
     props.onClose()
     getCSVFile()
 
-    sendAnalytics('Exported CSV', { time_period: selectedTimePeriod })
+    sendAnalytics({ event: 'Exported CSV', props: { time_period: selectedTimePeriod } })
   }
 
   const getCSVFile = async () => {

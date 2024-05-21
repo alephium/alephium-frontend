@@ -27,7 +27,7 @@ import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
@@ -53,7 +53,7 @@ const WalletConnectSessionProposalModal = ({
   proposalEvent
 }: WalletConnectSessionProposalModalProps) => {
   const { t } = useTranslation()
-  const { sendAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
   const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const dispatch = useAppDispatch()
@@ -89,7 +89,7 @@ const WalletConnectSessionProposalModal = ({
       const address = generateAddress(group)
       saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])
 
-      sendAnalytics('New address created through WalletConnect modal')
+      sendAnalytics({ event: 'New address created through WalletConnect modal' })
     } catch (e) {
       console.error(e)
     }
@@ -99,7 +99,7 @@ const WalletConnectSessionProposalModal = ({
     await rejectProposal()
     onClose()
 
-    sendAnalytics('Rejected WalletConnect connection by closing modal')
+    sendAnalytics({ event: 'Rejected WalletConnect connection by closing modal' })
   }
 
   return (

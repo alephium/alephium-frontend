@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 
 import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalContent, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { messageSignFailed, messageSignSucceeded } from '@/storage/transactions/transactionsActions'
@@ -45,7 +45,7 @@ const SignUnsignedTxModal = ({
   onSignReject
 }: SignUnsignedTxModalProps) => {
   const { t } = useTranslation()
-  const { sendErrorAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
   const dispatch = useAppDispatch()
 
   const handleSign = async () => {
@@ -57,14 +57,15 @@ const SignUnsignedTxModal = ({
 
       dispatch(messageSignSucceeded)
       onClose()
-    } catch (e) {
+    } catch (error) {
       const message = 'Could not sign message'
-      const errorMessage = getHumanReadableError(e, t(message))
-      sendErrorAnalytics(e, message, true)
+      const errorMessage = getHumanReadableError(error, t(message))
+
+      sendAnalytics({ type: 'error', error, message, isSensitive: true })
       dispatch(messageSignFailed(errorMessage))
 
       onSignFail({
-        message: getHumanReadableError(e, message),
+        message: getHumanReadableError(error, message),
         code: WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED
       })
     }

@@ -31,7 +31,7 @@ import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
 import Toggle from '@/components/Inputs/Toggle'
 import { FooterActionsContainer, Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
@@ -48,7 +48,7 @@ const WalletWelcomePage = () => {
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const { width, height } = useWindowSize()
   const { generateAndSaveOneAddressPerGroup } = useAddressGeneration()
-  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
 
   const [shouldGenerateOneAddressPerGroup, setShouldGenerateOneAddressPerGroup] = useState(false)
   const [confettiRunning, setConfettiRunning] = useState(true)
@@ -72,9 +72,9 @@ const WalletWelcomePage = () => {
           label: `Address ${defaultAddress.group}`
         })
 
-        sendAnalytics('Generated one address per group on wallet creation')
-      } catch (e) {
-        sendErrorAnalytics(e, 'Failed to generate one address per group')
+        sendAnalytics({ event: 'Generated one address per group on wallet creation' })
+      } catch (error) {
+        sendAnalytics({ type: 'error', error, message: 'Failed to generate one address per group' })
       }
     }
 

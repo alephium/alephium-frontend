@@ -33,7 +33,7 @@ import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import Table from '@/components/Table'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
@@ -52,7 +52,7 @@ const DevToolsSettingsSection = () => {
   const currentNetwork = useAppSelector((s) => s.network)
   const faucetCallPending = useAppSelector((s) => s.global.faucetCallPending)
   const devTools = useAppSelector((state) => state.settings.devTools)
-  const { sendAnalytics, sendErrorAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
 
   const [isDeployContractSendModalOpen, setIsDeployContractSendModalOpen] = useState(false)
   const [isCallScriptSendModalOpen, setIsCallScriptSendModalOpen] = useState(false)
@@ -62,7 +62,7 @@ const DevToolsSettingsSection = () => {
   const toggleDevTools = () => {
     dispatch(devToolsToggled())
 
-    sendAnalytics('Enabled dev tools')
+    sendAnalytics({ event: 'Enabled dev tools' })
   }
 
   const confirmAddressPrivateKeyCopyWithPassword = (address: Address) => {
@@ -77,10 +77,10 @@ const DevToolsSettingsSection = () => {
       await navigator.clipboard.writeText(keyring.exportPrivateKeyOfAddress(selectedAddress.hash))
       dispatch(copiedToClipboard(t('Private key copied.')))
 
-      sendAnalytics('Copied address private key')
-    } catch (e) {
-      dispatch(copyToClipboardFailed(getHumanReadableError(e, t('Could not copy private key.'))))
-      sendErrorAnalytics(e, 'Could not copy private key', true)
+      sendAnalytics({ event: 'Copied address private key' })
+    } catch (error) {
+      dispatch(copyToClipboardFailed(getHumanReadableError(error, t('Could not copy private key.'))))
+      sendAnalytics({ type: 'error', error, message: 'Could not copy private key', isSensitive: true })
     } finally {
       closePasswordModal()
     }
@@ -91,10 +91,10 @@ const DevToolsSettingsSection = () => {
       await navigator.clipboard.writeText(address.publicKey)
       dispatch(copiedToClipboard(t('Public key copied.')))
 
-      sendAnalytics('Copied address public key')
-    } catch (e) {
-      dispatch(copyToClipboardFailed(getHumanReadableError(e, t('Could not copy public key.'))))
-      sendErrorAnalytics(e, 'Could not copy public key', true)
+      sendAnalytics({ event: 'Copied address public key' })
+    } catch (error) {
+      dispatch(copyToClipboardFailed(getHumanReadableError(error, t('Could not copy public key.'))))
+      sendAnalytics({ type: 'error', error, message: 'Could not copy public key', isSensitive: true })
     }
   }
 
@@ -105,7 +105,7 @@ const DevToolsSettingsSection = () => {
 
   const handleFaucetCall = () => {
     defaultAddress && dispatch(receiveTestnetTokens(defaultAddress?.hash))
-    sendAnalytics('Requested testnet tokens')
+    sendAnalytics({ event: 'Requested testnet tokens' })
   }
 
   return (

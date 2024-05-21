@@ -25,7 +25,7 @@ import Button from '@/components/Button'
 import CheckMark from '@/components/CheckMark'
 import InfoBox from '@/components/InfoBox'
 import { BoxContainer, Section } from '@/components/PageComponents/PageContainers'
-import useThrottledAnalytics from '@/features/analytics/useThrottledAnalytics'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
@@ -43,7 +43,7 @@ const WalletsSettingsSection = () => {
   const dispatch = useAppDispatch()
   const activeWallet = useAppSelector((s) => s.activeWallet)
   const wallets = useAppSelector((s) => s.global.wallets)
-  const { sendAnalytics } = useThrottledAnalytics()
+  const { sendAnalytics } = useAnalytics()
   const { isWalletUnlocked, lockWallet } = useWalletLock()
 
   const [walletToRemove, setWalletToRemove] = useState<StoredEncryptedWallet | ActiveWallet>()
@@ -57,7 +57,7 @@ const WalletsSettingsSection = () => {
     dispatch(walletId === activeWallet.id ? activeWalletDeleted() : walletDeleted(walletId))
     setWalletToRemove(undefined)
 
-    sendAnalytics('Deleted wallet')
+    sendAnalytics({ event: 'Deleted wallet' })
   }
 
   const handleLockCurrentWalletClick = () => lockWallet('settings')
