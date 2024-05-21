@@ -18,14 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { bip39Words as bip39WordsString } from '@/utils/bip39'
 
-const bip39Words = bip39WordsString.split(' ')
+const bip39Words = bip39WordsString.replaceAll(' ', '|')
 
 export const getHumanReadableError = (error: unknown, defaultErrorMsg: string) =>
   typeof error?.toString === 'function' ? error.toString().replace('Error: [API Error] - ', '') : defaultErrorMsg
 
 export const cleanExceptionMessage = (error: unknown) => {
   let exceptionMessage = getHumanReadableError(error, '')
-  const bip39Regex = new RegExp(`\\b(${bip39Words.join('|')})\\b`, 'gi')
+  const bip39Regex = new RegExp(`\\b(${bip39Words})\\b`, 'gi')
   exceptionMessage = exceptionMessage.replace(bip39Regex, '[...]')
   return exceptionMessage
 }
