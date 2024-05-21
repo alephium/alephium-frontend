@@ -23,9 +23,5 @@ const bip39WordsString = bip39Words.join('|')
 export const getHumanReadableError = (error: unknown, defaultErrorMsg: string) =>
   typeof error?.toString === 'function' ? error.toString().replace('Error: [API Error] - ', '') : defaultErrorMsg
 
-export const cleanExceptionMessage = (error: unknown) => {
-  let exceptionMessage = getHumanReadableError(error, '')
-  const bip39Regex = new RegExp(`\\b(${bip39WordsString})\\b`, 'gi')
-  exceptionMessage = exceptionMessage.replace(bip39Regex, '[...]')
-  return exceptionMessage
-}
+export const cleanExceptionMessage = (error: unknown) =>
+  getHumanReadableError(error, '').replace(new RegExp(`\\b(${bip39WordsString})\\b`, 'g'), '[...]')
