@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring } from '@alephium/keyring'
+import { bip39Words } from '@alephium/shared'
 import Tagify, { BaseTagData, ChangeEventData, TagData } from '@yaireo/tagify'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -34,7 +35,6 @@ import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { bip39Words } from '@/utils/bip39'
 
 const ImportWordsPage = () => {
   const { t } = useTranslation()

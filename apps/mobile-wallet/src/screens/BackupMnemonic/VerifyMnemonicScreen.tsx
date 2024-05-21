@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { bip39Words } from '@alephium/shared'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { shuffle } from 'lodash'
@@ -41,7 +42,6 @@ import { dangerouslyExportWalletMnemonic, updateStoredWalletMetadata } from '~/p
 import { PossibleWordBox, SecretPhraseBox, Word } from '~/screens/new-wallet/ImportWalletSeedScreen'
 import { mnemonicBackedUp } from '~/store/wallet/walletSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
-import { bip39Words } from '~/utils/bip39'
 
 interface VerifyMnemonicScreenProps
   extends StackScreenProps<BackupMnemonicNavigationParamList, 'VerifyMnemonicScreen'>,
