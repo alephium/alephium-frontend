@@ -29,7 +29,12 @@ import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
-import { deleteFundPassword, getFundPassword, storeFundPassword } from '~/features/fund-password/fundPasswordStorage'
+import {
+  deleteFundPassword,
+  getFundPassword,
+  setNeedsFundPasswordReminder,
+  storeFundPassword
+} from '~/features/fund-password/fundPasswordStorage'
 import { useAppDispatch } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import usePassword from '~/hooks/usePassword'
@@ -126,7 +131,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
       verticalGap
       fill
       screenTitle="Fund password"
-      screenIntro="It acts as an additional authentication layer before funds leave your wallet."
+      screenIntro="It acts as an additional authentication layer for critical operations involving the safety of your funds such as revealing your secret recovery phrase or sending funds."
       headerOptions={{ type: cameFromBackupScreen ? 'default' : 'stack' }}
       {...props}
     >

@@ -37,7 +37,10 @@ import { ModalContent } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
+import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
+import { needsFundPasswordReminder } from '~/features/fund-password/fundPasswordStorage'
 import { useAppSelector } from '~/hooks/redux'
+import { useAsyncData } from '~/hooks/useAsyncData'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -61,7 +64,9 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
+  const { data: userNeedsFundPasswordReminder } = useAsyncData(needsFundPasswordReminder)
 
+  const [isFundPasswordReminderModalOpen, setIsFundPasswordReminderModalOpen] = useState(false)
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isNewWallet, setIsNewWallet] = useState(false)
@@ -70,6 +75,12 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     height: withDelay(800, withSpring(65, defaultSpringConfiguration)),
     opacity: withDelay(800, withSpring(1, defaultSpringConfiguration))
   }))
+
+  useEffect(() => {
+    if (isMnemonicBackedUp && userNeedsFundPasswordReminder) {
+      setIsFundPasswordReminderModalOpen(true)
+    }
+  }, [isMnemonicBackedUp, userNeedsFundPasswordReminder])
 
   useEffect(() => {
     try {
@@ -220,6 +231,10 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           )}
         />
       </Portal>
+      <FundPasswordReminderModal
+        isOpen={isFundPasswordReminderModalOpen}
+        onClose={() => setIsFundPasswordReminderModalOpen(false)}
+      />
     </DashboardScreenStyled>
   )
 }

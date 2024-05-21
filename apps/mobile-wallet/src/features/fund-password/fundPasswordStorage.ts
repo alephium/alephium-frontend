@@ -16,18 +16,33 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import * as SecureStore from 'expo-secure-store'
-
-import { defaultSecureStoreConfig } from '~/persistent-storage/config'
-import { deleteSecurelyWithReportableError, storeSecurelyWithReportableError } from '~/persistent-storage/utils'
+import {
+  deleteSecurelyWithReportableError,
+  deleteWithReportableError,
+  getSecurelyWithReportableError,
+  getWithReportableError,
+  storeSecurelyWithReportableError,
+  storeWithReportableError
+} from '~/persistent-storage/utils'
 
 const FUND_PASSWORD_KEY = 'fund-password'
+const FUND_PASSWORD_REMINDER_KEY = 'fund-password-reminder-needed'
 
 export const storeFundPassword = (password: string) =>
   storeSecurelyWithReportableError(FUND_PASSWORD_KEY, password, true, '')
 
-export const getFundPassword = () => SecureStore.getItemAsync(FUND_PASSWORD_KEY, defaultSecureStoreConfig)
+export const getFundPassword = () => getSecurelyWithReportableError(FUND_PASSWORD_KEY, true, '')
 
 export const hasStoredFundPassword = async () => !!(await getFundPassword())
 
-export const deleteFundPassword = () => deleteSecurelyWithReportableError(FUND_PASSWORD_KEY, true, '')
+export const deleteFundPassword = async () => {
+  await deleteSecurelyWithReportableError(FUND_PASSWORD_KEY, true, '')
+  await deleteFundPasswordReminder()
+}
+
+export const needsFundPasswordReminder = async (): Promise<boolean> =>
+  (await getWithReportableError(FUND_PASSWORD_REMINDER_KEY)) === 'true'
+
+export const setNeedsFundPasswordReminder = () => storeWithReportableError(FUND_PASSWORD_REMINDER_KEY, 'true')
+
+export const deleteFundPasswordReminder = () => deleteWithReportableError(FUND_PASSWORD_REMINDER_KEY)

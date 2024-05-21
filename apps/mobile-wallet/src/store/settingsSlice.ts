@@ -20,6 +20,7 @@ import { appReset, fiatCurrencyChanged } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import { defaultGeneralSettings, persistSettings } from '~/persistent-storage/settings'
+import { analyticsIdGenerated } from '~/store/settings/settingsActions'
 import { RootState } from '~/store/store'
 import { walletDeleted } from '~/store/wallet/walletActions'
 import { GeneralSettings } from '~/types/settings'
@@ -50,9 +51,6 @@ const settingsSlice = createSlice({
     passwordRequirementToggled: (state) => {
       state.requireAuth = !state.requireAuth
     },
-    analyticsIdGenerated: (state, action: PayloadAction<GeneralSettings['analyticsId']>) => {
-      state.analyticsId = action.payload
-    },
     analyticsToggled: (state) => {
       state.analytics = !state.analytics
     },
@@ -75,6 +73,9 @@ const settingsSlice = createSlice({
       .addCase(walletDeleted, (state) => {
         state.usesFundPassword = false
       })
+      .addCase(analyticsIdGenerated, (state, { payload: analyticsId }) => {
+        state.analyticsId = analyticsId
+      })
   }
 })
 
@@ -83,7 +84,6 @@ export const {
   themeChanged,
   discreetModeToggled,
   passwordRequirementToggled,
-  analyticsIdGenerated,
   analyticsToggled,
   walletConnectToggled,
   biometricsToggled,

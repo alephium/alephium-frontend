@@ -195,8 +195,6 @@ const AppUnlockHandler = () => {
             successCallback: initializeAppWithStoredWallet
           })
         }
-
-        SplashScreen.hideAsync()
       } else {
         if (await loadBiometricsSettings()) {
           await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
@@ -206,6 +204,8 @@ const AppUnlockHandler = () => {
           navigation.navigate('LoginWithPinScreen')
         }
       }
+
+      SplashScreen.hideAsync()
 
       // TODO: Revisit error handling with proper error codes
     } catch (e: unknown) {
