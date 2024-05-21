@@ -27,7 +27,7 @@ import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 
 import { sendAnalytics } from '~/analytics'
-import { deleteFundingPassword } from '~/features/funding-password/fundingPasswordStorage'
+import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { defaultBiometricsConfig, defaultSecureStoreConfig } from '~/persistent-storage/config'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
@@ -160,7 +160,7 @@ export const getDeprecatedStoredWallet = async (
 
 export const deleteWallet = async () => {
   await deleteSecurelyWithReportableError(MNEMONIC_V2, 'Could not delete wallet from secure storage')
-  await deleteFundingPassword()
+  await deleteFundPassword()
 
   const wallet = await getStoredWallet()
 

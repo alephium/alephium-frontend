@@ -25,58 +25,58 @@ import Input from '~/components/inputs/Input'
 import BottomModal, { BottomModalProps } from '~/components/layout/BottomModal'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import { getFundingPassword } from '~/features/funding-password/fundingPasswordStorage'
+import { getFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import usePassword from '~/hooks/usePassword'
 
-export interface FundingPasswordModalProps extends Pick<BottomModalProps, 'isOpen' | 'onClose'> {
+export interface FundPasswordModalProps extends Pick<BottomModalProps, 'isOpen' | 'onClose'> {
   successCallback: () => void
 }
 
-const FundingPasswordModal = ({ successCallback, ...props }: FundingPasswordModalProps) => {
-  const usesFundingPassword = useAppSelector((s) => s.settings.usesFundingPassword)
+const FundPasswordModal = ({ successCallback, ...props }: FundPasswordModalProps) => {
+  const usesFundPassword = useAppSelector((s) => s.settings.usesFundPassword)
 
-  if (!usesFundingPassword) return null
+  if (!usesFundPassword) return null
 
   return (
     <Portal>
       <BottomModal
         {...props}
         maximisedContent={Platform.OS === 'ios'}
-        Content={(props) => <FundingPasswordModalContent successCallback={successCallback} {...props} />}
+        Content={(props) => <FundPasswordModalContent successCallback={successCallback} {...props} />}
       />
     </Portal>
   )
 }
 
-export default FundingPasswordModal
+export default FundPasswordModal
 
-const FundingPasswordModalContent = ({
+const FundPasswordModalContent = ({
   successCallback,
   ...props
-}: ModalContentProps & Pick<FundingPasswordModalProps, 'successCallback'>) => {
-  const { data: fundingPassword } = useAsyncData(getFundingPassword)
+}: ModalContentProps & Pick<FundPasswordModalProps, 'successCallback'>) => {
+  const { data: fundPassword } = useAsyncData(getFundPassword)
   const { password, handlePasswordChange, isPasswordCorrect, error } = usePassword(
-    fundingPassword ?? '',
-    'Provided funding password is wrong'
+    fundPassword ?? '',
+    'Provided fund password is wrong'
   )
 
-  if (!fundingPassword) return null
+  if (!fundPassword) return null
 
   return (
     <ModalContent verticalGap {...props}>
       <ScreenSection>
-        <BottomModalScreenTitle>Funding password</BottomModalScreenTitle>
+        <BottomModalScreenTitle>Fund password</BottomModalScreenTitle>
       </ScreenSection>
       <ScreenSection>
         <AppText color="secondary" size={18}>
-          Please, enter your funding password.
+          Please, enter your fund password.
         </AppText>
       </ScreenSection>
       <ScreenSection>
         <Input
-          label="Funding password"
+          label="Fund password"
           value={password}
           onChangeText={handlePasswordChange}
           secureTextEntry

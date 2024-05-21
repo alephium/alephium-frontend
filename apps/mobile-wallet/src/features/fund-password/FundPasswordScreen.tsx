@@ -29,27 +29,23 @@ import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
-import {
-  deleteFundingPassword,
-  getFundingPassword,
-  storeFundingPassword
-} from '~/features/funding-password/fundingPasswordStorage'
+import { deleteFundPassword, getFundPassword, storeFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { useAppDispatch } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import usePassword from '~/hooks/usePassword'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { fundingPasswordUseToggled } from '~/store/settingsSlice'
+import { fundPasswordUseToggled } from '~/store/settingsSlice'
 import { showToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
 
-interface FundingPasswordScreenProps
-  extends StackScreenProps<RootStackParamList, 'FundingPasswordScreen'>,
+interface FundPasswordScreenProps
+  extends StackScreenProps<RootStackParamList, 'FundPasswordScreen'>,
     ScrollScreenProps {}
 
-const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenProps) => {
+const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) => {
   const cameFromBackupScreen = props.route.params.origin === 'backup'
   const { setHeaderOptions } = useHeaderContext()
-  const { data: currentFundingPassword } = useAsyncData(getFundingPassword)
+  const { data: currentFundPassword } = useAsyncData(getFundPassword)
   const dispatch = useAppDispatch()
 
   const [password, setPassword] = useState('')
@@ -58,7 +54,7 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
     handlePasswordChange: handleConfirmedPasswordChange,
     isPasswordCorrect: isCurrentPasswordConfirmed,
     error
-  } = usePassword(password, !currentFundingPassword ? "Passwords don't match" : undefined)
+  } = usePassword(password, !currentFundPassword ? "Passwords don't match" : undefined)
 
   const [newPassword, setNewPassword] = useState('')
   const {
@@ -77,46 +73,46 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
   )
 
   useEffect(() => {
-    if (currentFundingPassword) setPassword(currentFundingPassword)
-  }, [currentFundingPassword])
+    if (currentFundPassword) setPassword(currentFundPassword)
+  }, [currentFundPassword])
 
   const handleSavePress = async () => {
-    await storeFundingPassword(newPassword || password)
-    dispatch(fundingPasswordUseToggled(true))
+    await storeFundPassword(newPassword || password)
+    dispatch(fundPasswordUseToggled(true))
     showToast({
       text1: 'Saved!',
-      text2: newPassword ? 'Funding password was updated.' : 'Funding password was set up.',
+      text2: newPassword ? 'Fund password was updated.' : 'Fund password was set up.',
       type: 'success'
     })
     cameFromBackupScreen ? resetNavigation(navigation) : navigation.goBack()
-    sendAnalytics(newPassword ? 'Updated funding password' : 'Created funding password', {
+    sendAnalytics(newPassword ? 'Updated fund password' : 'Created fund password', {
       origin: props.route.params.origin
     })
   }
 
   const handleDeletePress = async () => {
-    showAlert('Delete funding password', async () => {
-      await deleteFundingPassword()
-      dispatch(fundingPasswordUseToggled(false))
+    showAlert('Delete fund password', async () => {
+      await deleteFundPassword()
+      dispatch(fundPasswordUseToggled(false))
       showToast({
         text1: 'Deleted',
-        text2: 'Funding password was deleted.',
+        text2: 'Fund password was deleted.',
         type: 'info'
       })
       navigation.goBack()
-      sendAnalytics('Deleted funding password', { origin: props.route.params.origin })
+      sendAnalytics('Deleted fund password', { origin: props.route.params.origin })
     })
   }
 
   const handleSkipPress = async () => {
     showAlert("I'll do it later", () => {
       resetNavigation(navigation)
-      sendAnalytics('Skipped funding password')
+      sendAnalytics('Skipped fund password')
     })
   }
 
   const showAlert = (text: string, onPress: () => void) => {
-    Alert.alert('Are you sure?', 'To enhance your security it is recommended to use a funding password.', [
+    Alert.alert('Are you sure?', 'To enhance your security it is recommended to use a fund password.', [
       { text: 'Cancel' },
       { text, onPress }
     ])
@@ -126,16 +122,16 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
     <ScrollScreen
       verticalGap
       fill
-      screenTitle="Funding password"
+      screenTitle="Fund password"
       screenIntro="It acts as an additional authentication layer before funds leave your wallet."
       headerOptions={{ type: cameFromBackupScreen ? 'default' : 'stack' }}
       {...props}
     >
-      {!currentFundingPassword ? (
+      {!currentFundPassword ? (
         <>
           <ScreenSection fill verticalGap>
             <Input
-              label="Funding password"
+              label="Fund password"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
@@ -144,7 +140,7 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
               blurOnSubmit={false}
             />
             <Input
-              label="Confirm funding password"
+              label="Confirm fund password"
               value={confirmedPassword}
               onChangeText={handleConfirmedPasswordChange}
               secureTextEntry
@@ -171,9 +167,9 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
       ) : (
         <>
           <ScreenSection verticalGap>
-            <AppText>Confirm current funding password to make changes.</AppText>
+            <AppText>Confirm current fund password to make changes.</AppText>
             <Input
-              label="Current funding password"
+              label="Current fund password"
               value={confirmedPassword}
               onChangeText={handleConfirmedPasswordChange}
               secureTextEntry
@@ -183,11 +179,11 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
               blurOnSubmit={false}
             />
           </ScreenSection>
-          {currentFundingPassword && isCurrentPasswordConfirmed && (
+          {currentFundPassword && isCurrentPasswordConfirmed && (
             <>
               <ScreenSection fill verticalGap>
                 <Input
-                  label="New funding password"
+                  label="New fund password"
                   value={newPassword}
                   onChangeText={setNewPassword}
                   secureTextEntry
@@ -196,7 +192,7 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
                   blurOnSubmit={false}
                 />
                 <Input
-                  label="Confirm new funding password"
+                  label="Confirm new fund password"
                   value={confirmedNewPassword}
                   onChangeText={handleConfirmedNewPasswordChange}
                   secureTextEntry
@@ -233,4 +229,4 @@ const FundingPasswordScreen = ({ navigation, ...props }: FundingPasswordScreenPr
   )
 }
 
-export default FundingPasswordScreen
+export default FundPasswordScreen

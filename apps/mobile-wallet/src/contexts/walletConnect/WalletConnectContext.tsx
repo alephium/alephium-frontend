@@ -85,7 +85,7 @@ import BottomModal from '~/components/layout/BottomModal'
 import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
-import useFundingPassword from '~/features/funding-password/useFundingPassword'
+import useFundPassword from '~/features/fund-password/useFundPassword'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
@@ -140,7 +140,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const dispatch = useAppDispatch()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundingPasswordAuthGuard, fundingPasswordModal } = useFundingPassword()
+  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPassword()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
@@ -899,7 +899,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     triggerBiometricsAuthGuard({
       settingsToCheck: 'transactions',
       successCallback: () =>
-        triggerFundingPasswordAuthGuard({
+        triggerFundPasswordAuthGuard({
           successCallback: async () => {
             setLoading('Approving...')
 
@@ -1102,7 +1102,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           />
         )}
       </Portal>
-      {fundingPasswordModal}
+      {fundPasswordModal}
       <SpinnerModal isActive={!!loading} text={loading} />
     </WalletConnectContext.Provider>
   )

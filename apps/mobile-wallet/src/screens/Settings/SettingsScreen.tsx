@@ -37,7 +37,7 @@ import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
-import useFundingPassword from '~/features/funding-password/useFundingPassword'
+import useFundPassword from '~/features/fund-password/useFundPassword'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -69,13 +69,13 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
-  const usesFundingPassword = useAppSelector((s) => s.settings.usesFundingPassword)
+  const usesFundPassword = useAppSelector((s) => s.settings.usesFundPassword)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletName = useAppSelector((s) => s.wallet.name)
   const theme = useTheme()
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundingPasswordAuthGuard, fundingPasswordModal } = useFundingPassword()
+  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPassword()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
@@ -167,8 +167,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
     }
   }
 
-  const handleFundingPasswordPress = () => {
-    navigation.navigate('FundingPasswordScreen', { origin: 'settings' })
+  const handleFundPasswordPress = () => {
+    navigation.navigate('FundPasswordScreen', { origin: 'settings' })
   }
 
   return (
@@ -219,8 +219,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                   disabled={!deviceHasEnrolledBiometrics}
                 />
               </Row>
-              <Row title="Funding password" subtitle="Enhance your security" isLast>
-                <Toggle value={usesFundingPassword} onValueChange={handleFundingPasswordPress} />
+              <Row title="Fund password" subtitle="Enhance your security" isLast>
+                <Toggle value={usesFundPassword} onValueChange={handleFundPasswordPress} />
               </Row>
             </BoxSurface>
           </ScreenSection>
@@ -303,7 +303,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                     triggerBiometricsAuthGuard({
                       settingsToCheck: 'appAccessOrTransactions',
                       successCallback: () =>
-                        triggerFundingPasswordAuthGuard({
+                        triggerFundPasswordAuthGuard({
                           successCallback: () => setIsMnemonicModalVisible(true)
                         })
                     })
@@ -355,7 +355,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           Content={(props) => <BiometricsWarningModal onConfirm={handleDisableBiometricsPress} {...props} />}
         />
       </Portal>
-      {fundingPasswordModal}
+      {fundPasswordModal}
     </>
   )
 }

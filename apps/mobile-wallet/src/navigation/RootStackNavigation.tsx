@@ -29,7 +29,7 @@ import { useTheme } from 'styled-components/native'
 
 import { Analytics } from '~/analytics'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
-import FundingPasswordScreen from '~/features/funding-password/FundingPasswordScreen'
+import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import BackupMnemonicNavigation from '~/navigation/BackupMnemonicNavigation'
@@ -126,7 +126,7 @@ const RootStackNavigation = () => {
                 <RootStack.Screen name="EditWalletNameScreen" component={EditWalletNameScreen} />
                 <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
                 <RootStack.Screen name="PublicKeysScreen" component={PublicKeysScreen} />
-                <RootStack.Screen name="FundingPasswordScreen" component={FundingPasswordScreen} />
+                <RootStack.Screen name="FundPasswordScreen" component={FundPasswordScreen} />
                 <RootStack.Screen
                   name="ImportWalletAddressDiscoveryScreen"
                   component={ImportWalletAddressDiscoveryScreen}

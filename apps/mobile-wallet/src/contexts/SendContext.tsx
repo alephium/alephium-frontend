@@ -25,7 +25,7 @@ import { sendAnalytics } from '~/analytics'
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import BottomModal from '~/components/layout/BottomModal'
-import useFundingPassword from '~/features/funding-password/useFundingPassword'
+import useFundPassword from '~/features/fund-password/useFundPassword'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { selectAddressByHash } from '~/store/addressesSlice'
@@ -74,7 +74,7 @@ const SendContext = createContext(initialValues)
 
 export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundingPasswordAuthGuard, fundingPasswordModal } = useFundingPassword()
+  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPassword()
   const dispatch = useAppDispatch()
 
   const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(initialValues.toAddress)
@@ -180,12 +180,12 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       await triggerBiometricsAuthGuard({
         settingsToCheck: 'transactions',
         successCallback: () =>
-          triggerFundingPasswordAuthGuard({
+          triggerFundPasswordAuthGuard({
             successCallback: () => sendTransaction(onSendSuccess)
           })
       })
     },
-    [sendTransaction, triggerBiometricsAuthGuard, triggerFundingPasswordAuthGuard]
+    [sendTransaction, triggerBiometricsAuthGuard, triggerFundPasswordAuthGuard]
   )
 
   return (
@@ -219,7 +219,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
           onClose={() => setIsConsolidateModalVisible(false)}
         />
       </Portal>
-      {fundingPasswordModal}
+      {fundPasswordModal}
     </SendContext.Provider>
   )
 }

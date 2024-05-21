@@ -18,39 +18,39 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useCallback, useState } from 'react'
 
-import FundingPasswordModal, { FundingPasswordModalProps } from '~/features/funding-password/FundingPasswordModal'
+import FundPasswordModal, { FundPasswordModalProps } from '~/features/fund-password/FundPasswordModal'
 import { useAppSelector } from '~/hooks/redux'
 
-const useFundingPassword = () => {
-  const usesFundingPassword = useAppSelector((s) => s.settings.usesFundingPassword)
+const useFundPassword = () => {
+  const usesFundPassword = useAppSelector((s) => s.settings.usesFundPassword)
 
   const [onCorrectPasswordCallback, setOnCorrectPasswordCallback] = useState<() => void>(() => () => null)
-  const [isFundingPasswordModalOpen, setIsFundingPasswordModalOpen] = useState(false)
+  const [isFundPasswordModalOpen, setIsFundPasswordModalOpen] = useState(false)
 
-  const triggerFundingPasswordAuthGuard = useCallback(
-    ({ successCallback }: Pick<FundingPasswordModalProps, 'successCallback'>) => {
-      if (usesFundingPassword) {
+  const triggerFundPasswordAuthGuard = useCallback(
+    ({ successCallback }: Pick<FundPasswordModalProps, 'successCallback'>) => {
+      if (usesFundPassword) {
         setOnCorrectPasswordCallback(() => () => successCallback())
-        setIsFundingPasswordModalOpen(true)
+        setIsFundPasswordModalOpen(true)
       } else {
         successCallback()
       }
     },
-    [usesFundingPassword]
+    [usesFundPassword]
   )
 
-  const fundingPasswordModal = (
-    <FundingPasswordModal
-      isOpen={isFundingPasswordModalOpen}
-      onClose={() => setIsFundingPasswordModalOpen(false)}
+  const fundPasswordModal = (
+    <FundPasswordModal
+      isOpen={isFundPasswordModalOpen}
+      onClose={() => setIsFundPasswordModalOpen(false)}
       successCallback={onCorrectPasswordCallback}
     />
   )
 
   return {
-    triggerFundingPasswordAuthGuard,
-    fundingPasswordModal
+    triggerFundPasswordAuthGuard,
+    fundPasswordModal
   }
 }
 
-export default useFundingPassword
+export default useFundPassword

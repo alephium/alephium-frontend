@@ -21,14 +21,14 @@ import * as SecureStore from 'expo-secure-store'
 import { defaultSecureStoreConfig } from '~/persistent-storage/config'
 import { deleteSecurelyWithReportableError, storeSecurelyWithReportableError } from '~/persistent-storage/utils'
 
-const FUNDING_PASSWORD_KEY = 'funding-password'
+const FUND_PASSWORD_KEY = 'fund-password'
 
-export const storeFundingPassword = (password: string) =>
-  storeSecurelyWithReportableError(FUNDING_PASSWORD_KEY, password, 'Could not store funding password')
+export const storeFundPassword = (password: string) =>
+  storeSecurelyWithReportableError(FUND_PASSWORD_KEY, password, 'Could not store fund password')
 
-export const getFundingPassword = () => SecureStore.getItemAsync(FUNDING_PASSWORD_KEY, defaultSecureStoreConfig)
+export const getFundPassword = () => SecureStore.getItemAsync(FUND_PASSWORD_KEY, defaultSecureStoreConfig)
 
-export const hasStoredFundingPassword = async () => !!(await getFundingPassword())
+export const hasStoredFundPassword = async () => !!(await getFundPassword())
 
-export const deleteFundingPassword = () =>
-  deleteSecurelyWithReportableError(FUNDING_PASSWORD_KEY, 'Could not delete funding password')
+export const deleteFundPassword = () =>
+  deleteSecurelyWithReportableError(FUND_PASSWORD_KEY, 'Could not delete fund password')

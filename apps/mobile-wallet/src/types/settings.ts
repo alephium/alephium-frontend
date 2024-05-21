@@ -31,7 +31,7 @@ export interface GeneralSettings {
   analyticsId?: string
   walletConnect: boolean
   usesBiometrics: boolean
-  usesFundingPassword: boolean
+  usesFundPassword: boolean
 }
 
 export interface Settings {
