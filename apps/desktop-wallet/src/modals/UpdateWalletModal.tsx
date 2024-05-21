@@ -24,8 +24,10 @@ import styled from 'styled-components'
 import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
 import { useGlobalContext } from '@/contexts/global'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { AlephiumWindow } from '@/types/window'
+import { currentVersion } from '@/utils/app-data'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -42,6 +44,7 @@ const UpdateWalletModal = ({ onClose }: UpdateWalletModalProps) => {
   const { t } = useTranslation()
   const { resetNewVersionDownloadTrigger, newVersion, newVersionDownloadTriggered, requiresManualDownload } =
     useGlobalContext()
+  const { sendAnalytics } = useAnalytics()
 
   const [status, setStatus] = useState<UpdateStatus>('download-available')
   const [percent, setPercent] = useState('0')
@@ -63,6 +66,7 @@ const UpdateWalletModal = ({ onClose }: UpdateWalletModalProps) => {
     const removeonErrorListener = electron?.updater.onError((error) => {
       setStatus('download-failed')
       setError(error.toString())
+      sendAnalytics({ type: 'error', error, message: 'Auto-update download failed' })
     })
 
     return () => {
@@ -70,9 +74,7 @@ const UpdateWalletModal = ({ onClose }: UpdateWalletModalProps) => {
       removeUpdateDownloadedListener && removeUpdateDownloadedListener()
       removeonErrorListener && removeonErrorListener
     }
-  }, [])
-
-  const restartApplication = () => electron?.updater.quitAndInstallUpdate()
+  }, [sendAnalytics])
 
   useEffect(() => {
     if (newVersionDownloadTriggered) startDownload()
@@ -81,6 +83,28 @@ const UpdateWalletModal = ({ onClose }: UpdateWalletModalProps) => {
   const closeModal = () => {
     resetNewVersionDownloadTrigger()
     onClose()
+    sendAnalytics({ event: 'Auto-update modal: Closed' })
+  }
+
+  const handleUpdateClick = () => {
+    startDownload()
+    sendAnalytics({
+      event: 'Auto-update modal: Clicked "Update"',
+      props: { fromVersion: currentVersion, toVersion: newVersion }
+    })
+  }
+
+  const handleManualDownloadClick = () => {
+    openInWebBrowser(links.latestRelease)
+    sendAnalytics({
+      event: 'Auto-update modal: Clicked "Download"',
+      props: { fromVersion: currentVersion, toVersion: newVersion }
+    })
+  }
+
+  const handleRestartClick = () => {
+    sendAnalytics({ event: 'Auto-update modal: Clicked "Restart"' })
+    electron?.updater.quitAndInstallUpdate()
   }
 
   const downloadMessage = {
@@ -107,13 +131,13 @@ const UpdateWalletModal = ({ onClose }: UpdateWalletModalProps) => {
       </Section>
       <ModalFooterButtons>
         {status === 'download-available' && requiresManualDownload && (
-          <ModalFooterButton onClick={() => openInWebBrowser(links.latestRelease)}>{t('Download')}</ModalFooterButton>
+          <ModalFooterButton onClick={handleManualDownloadClick}>{t('Download')}</ModalFooterButton>
         )}
         {status === 'download-available' && !requiresManualDownload && (
-          <ModalFooterButton onClick={startDownload}>{t('Update')}</ModalFooterButton>
+          <ModalFooterButton onClick={handleUpdateClick}>{t('Update')}</ModalFooterButton>
         )}
         {status === 'download-finished' && !error && (
-          <ModalFooterButton onClick={restartApplication}>{t('Restart')}</ModalFooterButton>
+          <ModalFooterButton onClick={handleRestartClick}>{t('Restart')}</ModalFooterButton>
         )}
         {error && <ModalFooterButton onClick={closeModal}>{t('Close')}</ModalFooterButton>}
       </ModalFooterButtons>

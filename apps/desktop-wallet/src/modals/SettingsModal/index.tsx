@@ -35,6 +35,7 @@ import DevToolsSettingsSection from '@/modals/SettingsModal/DevToolsSettingsSect
 import GeneralSettingsSection from '@/modals/SettingsModal/GeneralSettingsSection'
 import NetworkSettingsSection from '@/modals/SettingsModal/NetworkSettingsSection'
 import WalletsSettingsSection from '@/modals/SettingsModal/WalletsSettingsSection'
+import { currentVersion } from '@/utils/app-data'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -117,7 +118,7 @@ const SettingsModal = ({ onClose, initialTabValue }: SettingsModalProps) => {
                   <SocialMedia key={media} $src={img} onClick={() => openInWebBrowser(links[media])} />
                 ))}
               </SocialMedias>
-              <Version>v{import.meta.env.VITE_VERSION}</Version>
+              <Version>v{currentVersion}</Version>
             </SidebarFooter>
           </TabTitlesColumnContent>
         </TabTitlesColumn>

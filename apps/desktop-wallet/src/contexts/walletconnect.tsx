@@ -87,6 +87,7 @@ import {
 } from '@/types/transactions'
 import { SessionProposalEvent, SessionRequestEvent } from '@/types/walletConnect'
 import { AlephiumWindow } from '@/types/window'
+import { isRcVersion } from '@/utils/app-data'
 import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '@/utils/walletConnect'
 
 const MaxRequestNumToKeep = 10
@@ -155,7 +156,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
           url: 'https://github.com/alephium/alephium-frontend',
           icons: ['https://alephium.org/favicon-32x32.png']
         },
-        logger: import.meta.env.VITE_VERSION.includes('-rc.') ? 'debug' : undefined
+        logger: isRcVersion ? 'debug' : undefined
       })
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
       cleanHistory(client, false)

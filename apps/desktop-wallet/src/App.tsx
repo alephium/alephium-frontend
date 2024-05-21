@@ -66,6 +66,7 @@ import { restorePendingTransactions } from '@/storage/transactions/transactionsS
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
 import { AlephiumWindow } from '@/types/window'
+import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 import { languageOptions } from '@/utils/settings'
 
@@ -125,7 +126,7 @@ const App = () => {
   useEffect(() => {
     if (posthog.__loaded)
       posthog.people.set({
-        desktop_wallet_version: import.meta.env.VITE_VERSION,
+        desktop_wallet_version: currentVersion,
         wallets: wallets.length,
         theme: settings.theme,
         devTools: settings.devTools,

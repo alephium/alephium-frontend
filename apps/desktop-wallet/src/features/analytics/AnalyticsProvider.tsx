@@ -22,6 +22,7 @@ import { PostHogProvider } from 'posthog-js/react'
 import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
 import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
 import { GeneralSettings } from '@/types/settings'
+import { currentVersion } from '@/utils/app-data'
 
 const PUBLIC_POSTHOG_KEY = 'phc_FLKGQDmMQSdSb3qjaTwHWwm9plmz7couyVJFG9GOMr7'
 const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'
@@ -43,7 +44,7 @@ const options: Partial<PostHogConfig> = {
     props['$pathname'] = ''
     props['$device_type'] = ''
     props['$browser'] = ''
-    props['desktop_wallet_version'] = import.meta.env.VITE_VERSION
+    props['desktop_wallet_version'] = currentVersion
 
     return props
   },
