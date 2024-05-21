@@ -21,6 +21,10 @@ import { CaptureOptions } from 'posthog-js'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback } from 'react'
 
+import { bip39Words as bip39WordsString } from '@/utils/bip39'
+
+const bip39Words = bip39WordsString.split(' ')
+
 const useThrottledAnalytics = () => {
   const posthog = usePostHog()
 
@@ -31,12 +35,12 @@ const useThrottledAnalytics = () => {
   )
 
   const sendErrorAnalytics = useCallback(
-    (error: unknown, message: string, skipException?: boolean) => {
+    (error: unknown, message: string, isSensitive?: boolean) => {
       console.error(message, error)
 
       sendAnalytics('Error', {
         message,
-        reason: skipException ? undefined : getHumanReadableError(error, '')
+        reason: isSensitive ? cleanExceptionMessage(error) : getHumanReadableError(error, '')
       })
     },
     [sendAnalytics]
@@ -46,6 +50,16 @@ const useThrottledAnalytics = () => {
     sendAnalytics,
     sendErrorAnalytics
   }
+}
+
+const cleanExceptionMessage = (error: unknown) => {
+  let exceptionMessage = getHumanReadableError(error, '')
+
+  bip39Words.forEach((word) => {
+    exceptionMessage = exceptionMessage.replaceAll(word, '[...]')
+  })
+
+  return exceptionMessage
 }
 
 export default useThrottledAnalytics
