@@ -169,7 +169,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       } catch (error) {
         showExceptionToast(error, 'Could not send transaction')
 
-        sendAnalytics({ type: 'error', error, message: 'Could not send transaction' })
+        sendAnalytics({ type: 'error', message: 'Could not send transaction' })
       }
     },
     [address, assetAmounts, consolidationRequired, dispatch, toAddress, unsignedTxData.unsignedTxs]

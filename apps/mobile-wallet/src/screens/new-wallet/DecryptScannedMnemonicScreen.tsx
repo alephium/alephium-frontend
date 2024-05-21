@@ -99,7 +99,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
           const message = 'Could not import addresses from QR code scan'
 
           showExceptionToast(error, message)
-          sendAnalytics({ type: 'error', error, message, isSensitive: true })
+          sendAnalytics({ type: 'error', message, isSensitive: true })
         }
 
         resetNavigation(

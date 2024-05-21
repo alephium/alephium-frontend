@@ -64,7 +64,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
         const message = 'Could not migrate mnemonic and unlock wallet'
 
         showExceptionToast(error, message)
-        sendAnalytics({ type: 'error', error, message, isSensitive: true })
+        sendAnalytics({ type: 'error', message })
       }
     },
     [biometricsRequiredForAppAccess, deviceHasEnrolledBiometrics, deviceSupportsBiometrics, dispatch, navigation]

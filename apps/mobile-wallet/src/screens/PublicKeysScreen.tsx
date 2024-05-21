@@ -47,7 +47,7 @@ const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
       const message = 'Could not copy public key'
 
       showExceptionToast(error, message)
-      sendAnalytics({ type: 'error', error, message, isSensitive: true })
+      sendAnalytics({ type: 'error', message })
     }
   }
 

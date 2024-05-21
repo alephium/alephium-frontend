@@ -72,7 +72,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       const message = 'Could not save new address'
 
       showExceptionToast(error, message)
-      sendAnalytics({ type: 'error', error, message })
+      sendAnalytics({ type: 'error', message })
     } finally {
       keyring.clear()
     }

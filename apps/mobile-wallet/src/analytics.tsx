@@ -45,8 +45,8 @@ type EventAnalyticsParams = {
 
 type ErrorAnalyticsParams = {
   type: 'error'
-  error: unknown
   message: string
+  error?: unknown
   isSensitive?: boolean
 }
 
@@ -63,7 +63,7 @@ export const sendAnalytics = (params: AnalyticsParams) => {
       event: 'Error',
       props: {
         message,
-        reason: isSensitive ? cleanExceptionMessage(error) : getHumanReadableError(error, '')
+        reason: error ? (isSensitive ? cleanExceptionMessage(error) : getHumanReadableError(error, '')) : undefined
       }
     })
   } else {

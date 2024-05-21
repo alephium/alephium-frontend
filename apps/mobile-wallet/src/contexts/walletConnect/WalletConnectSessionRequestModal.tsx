@@ -181,7 +181,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
     } catch (error) {
       const message = 'Could not send transaction'
       showExceptionToast(error, message)
-      sendAnalytics({ type: 'error', error, message })
+      sendAnalytics({ type: 'error', message })
       onSendTxOrSignFail({
         message: getHumanReadableError(error, message),
         code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
@@ -226,7 +226,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
     } catch (error) {
       const message = requestData.type === 'sign-message' ? 'Could not sign message' : 'Count not sign unsigned tx'
       showExceptionToast(error, message)
-      sendAnalytics({ type: 'error', error, message })
+      sendAnalytics({ type: 'error', message })
       onSendTxOrSignFail({
         message: getHumanReadableError(error, message),
         code:

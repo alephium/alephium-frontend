@@ -53,7 +53,7 @@ export const storeSecurelyWithReportableError = async (key: string, value: strin
   try {
     await SecureStore.setItemAsync(key, value, defaultSecureStoreConfig)
   } catch (error) {
-    sendAnalytics({ type: 'error', error, message: errorMessage, isSensitive: true })
+    sendAnalytics({ type: 'error', message: errorMessage, isSensitive: true })
     throw error
   } finally {
     value = ''
@@ -64,7 +64,7 @@ export const deleteSecurelyWithReportableError = async (key: string, errorMessag
   try {
     await SecureStore.deleteItemAsync(key, defaultSecureStoreConfig)
   } catch (error) {
-    sendAnalytics({ type: 'error', error, message: errorMessage })
+    sendAnalytics({ type: 'error', message: errorMessage })
     throw error
   }
 }

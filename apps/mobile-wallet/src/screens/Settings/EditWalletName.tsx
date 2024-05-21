@@ -54,7 +54,7 @@ const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalle
       const message = 'Could not edit wallet name'
 
       showExceptionToast(error, message)
-      sendAnalytics({ type: 'error', error, message })
+      sendAnalytics({ type: 'error', message })
     }
 
     setLoading(false)

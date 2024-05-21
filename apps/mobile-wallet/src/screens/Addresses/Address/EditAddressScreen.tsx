@@ -59,7 +59,7 @@ const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddr
       const message = 'Could not edit address settings'
 
       showExceptionToast(error, message)
-      sendAnalytics({ type: 'error', error, message })
+      sendAnalytics({ type: 'error', message })
     }
 
     setLoading(false)
