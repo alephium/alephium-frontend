@@ -27,11 +27,12 @@ export const throttleEvent = (callback: () => void, event: string, props?: Analy
   const eventKey = `${event}:${props ? Object.keys(props).map((key) => `${key}:${props[key]}`) : ''}`
 
   if (!eventThrottleStatus[eventKey]) {
-    callback()
     eventThrottleStatus[eventKey] = true
 
     setTimeout(() => {
       eventThrottleStatus[eventKey] = false
     }, ANALYTICS_THROTTLING_TIMEOUT)
+
+    callback()
   }
 }
