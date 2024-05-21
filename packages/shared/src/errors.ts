@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { bip39Words } from '@/utils/bip39'
+import { bip39Words } from '@/bip39'
 
 const bip39WordsString = bip39Words.join('|')
 
