@@ -23,8 +23,6 @@ import { useCallback } from 'react'
 
 import { bip39Words as bip39WordsString } from '@/utils/bip39'
 
-const bip39Words = bip39WordsString.split(' ')
-
 type EventAnalyticsParams = {
   event: string
   type?: 'event'
@@ -69,9 +67,11 @@ const useAnalytics = (): { sendAnalytics: (params: AnalyticsParams) => void } =>
   return { sendAnalytics }
 }
 
+const bip39Words = bip39WordsString.replaceAll(' ', '|')
+
 const cleanExceptionMessage = (error: unknown) => {
   const exceptionMessage = getHumanReadableError(error, '')
-  const bip39Regex = new RegExp(`\\b(${bip39Words.join('|')})\\b`, 'gi')
+  const bip39Regex = new RegExp(`\\b(${bip39Words})\\b`, 'gi')
 
   return exceptionMessage.replace(bip39Regex, '[...]')
 }
