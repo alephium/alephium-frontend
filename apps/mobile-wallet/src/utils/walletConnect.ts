@@ -20,7 +20,7 @@ import { NetworkPreset, NetworkSettings, networkSettingsPresets } from '@alephiu
 import { parseChain, PROVIDER_NAMESPACE } from '@alephium/walletconnect-provider'
 import SignClient from '@walletconnect/sign-client'
 
-import { sendErrorAnalytics } from '~/analytics'
+import { sendAnalytics } from '~/analytics'
 import { SessionProposalEvent } from '~/types/walletConnect'
 
 // TODO: Move to shared
@@ -56,8 +56,8 @@ export const getActiveWalletConnectSessions = (walletConnectClient?: SignClient)
     return walletConnectClient.session.values.filter((session) =>
       activePairings.some((pairing) => pairing.topic === session.pairingTopic)
     )
-  } catch (e) {
-    sendErrorAnalytics(e, 'Could not get active WalletConnect sessions')
+  } catch (error) {
+    sendAnalytics({ type: 'error', error, message: 'Could not get active WalletConnect sessions' })
   }
 
   return []

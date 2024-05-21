@@ -85,8 +85,11 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
       type: 'success'
     })
     cameFromBackupScreen ? resetNavigation(navigation) : navigation.goBack()
-    sendAnalytics(newPassword ? 'Updated fund password' : 'Created fund password', {
-      origin: props.route.params.origin
+    sendAnalytics({
+      event: newPassword ? 'Updated fund password' : 'Created fund password',
+      props: {
+        origin: props.route.params.origin
+      }
     })
   }
 
@@ -100,14 +103,14 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
         type: 'info'
       })
       navigation.goBack()
-      sendAnalytics('Deleted fund password', { origin: props.route.params.origin })
+      sendAnalytics({ event: 'Deleted fund password', props: { origin: props.route.params.origin } })
     })
   }
 
   const handleSkipPress = async () => {
     showAlert("I'll do it later", () => {
       resetNavigation(navigation)
-      sendAnalytics('Skipped fund password')
+      sendAnalytics({ event: 'Skipped fund password' })
     })
   }
 

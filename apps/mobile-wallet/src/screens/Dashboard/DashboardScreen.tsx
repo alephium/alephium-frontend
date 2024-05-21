@@ -72,16 +72,16 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   }))
 
   useEffect(() => {
-    const initializeNewWalletFlag = async () => {
-      const isNew = await getIsNewWallet()
-
-      if (isNew !== undefined) {
-        setIsNewWallet(isNew)
-        storeIsNewWallet(false)
-      }
+    try {
+      getIsNewWallet().then((isNew) => {
+        if (isNew !== undefined) {
+          setIsNewWallet(isNew)
+          storeIsNewWallet(false)
+        }
+      })
+    } catch (e) {
+      console.error(e)
     }
-
-    initializeNewWalletFlag()
   }, [])
 
   const handleReceivePress = () => {

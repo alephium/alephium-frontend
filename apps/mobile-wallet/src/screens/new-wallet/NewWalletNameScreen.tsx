@@ -71,15 +71,18 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
         dispatch(newWalletGenerated(wallet))
         dispatch(syncLatestTransactions(wallet.firstAddress.hash))
 
-        sendAnalytics('Created new wallet')
+        sendAnalytics({ event: 'Created new wallet' })
         resetNavigation(
           navigation,
           deviceHasEnrolledBiometrics && !biometricsRequiredForAppAccess
             ? 'AddBiometricsScreen'
             : 'NewWalletSuccessScreen'
         )
-      } catch (e) {
-        showExceptionToast(e, 'Could not generate new wallet')
+      } catch (error) {
+        const message = 'Could not generate new wallet'
+
+        showExceptionToast(error, message)
+        sendAnalytics({ type: 'error', error, message, isSensitive: true })
       } finally {
         setLoading(false)
       }

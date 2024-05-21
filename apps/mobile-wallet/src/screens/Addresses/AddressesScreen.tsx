@@ -131,7 +131,7 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
                 setSelectedAddressHash(addressHash)
                 setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === addressHash))
                 props.onClose && props.onClose()
-                sendAnalytics('Used address quick navigation')
+                sendAnalytics({ event: 'Used address quick navigation' })
               }}
               {...props}
             />

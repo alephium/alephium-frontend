@@ -112,7 +112,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
       dispatch(newWalletGenerated(wallet))
       dispatch(syncLatestTransactions(wallet.firstAddress.hash))
 
-      sendAnalytics('Imported wallet', { note: 'Entered mnemonic manually' })
+      sendAnalytics({ event: 'Imported wallet', props: { note: 'Entered mnemonic manually' } })
 
       resetNavigation(
         navigation,

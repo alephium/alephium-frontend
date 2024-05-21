@@ -30,6 +30,7 @@ import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import AddressFormBaseScreen, { AddressFormData } from '~/screens/Addresses/Address/AddressFormBaseScreen'
 import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
 import { getRandomLabelColor } from '~/utils/colors'
+import { showExceptionToast } from '~/utils/layout'
 
 interface NewAddressScreenProps extends StackScreenProps<RootStackParamList, 'NewAddressScreen'>, ScrollScreenProps {}
 
@@ -61,13 +62,17 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       dispatch(newAddressGenerated(newAddress))
       await dispatch(syncLatestTransactions(newAddress.hash))
 
-      sendAnalytics('Address: Generated new address', {
-        note: group === undefined ? 'In random group' : 'In specific group'
+      sendAnalytics({
+        event: 'Address: Generated new address',
+        props: {
+          note: group === undefined ? 'In random group' : 'In specific group'
+        }
       })
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      const message = 'Could not save new address'
 
-      sendAnalytics('Error', { message: 'Could not save new address' })
+      showExceptionToast(error, message)
+      sendAnalytics({ type: 'error', error, message })
     } finally {
       keyring.clear()
     }

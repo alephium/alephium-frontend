@@ -78,7 +78,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
       await updateStoredWalletMetadata({ isMnemonicBackedUp: true })
       dispatch(mnemonicBackedUp())
 
-      sendAnalytics('Backed-up mnemonic')
+      sendAnalytics({ event: 'Backed-up mnemonic' })
     }
   }, [isMnemonicBackedUp, dispatch])
 

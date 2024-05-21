@@ -21,7 +21,7 @@ import {
   keyring,
   mnemonicJsonStringifiedObjectToUint8Array
 } from '@alephium/keyring'
-import { AddressHash, getHumanReadableError, resetArray } from '@alephium/shared'
+import { AddressHash, resetArray } from '@alephium/shared'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
@@ -32,6 +32,8 @@ import { defaultBiometricsConfig, defaultSecureStoreConfig } from '~/persistent-
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
   deleteSecurelyWithReportableError,
+  deleteWithReportableError,
+  getWithReportableError,
   storeSecurelyWithReportableError,
   storeWithReportableError
 } from '~/persistent-storage/utils'
@@ -79,8 +81,6 @@ export const generateAndStoreWallet = async (
         hash: firstAddressHash
       }
     }
-  } catch (e) {
-    throw new Error(getHumanReadableError(e, ''))
   } finally {
     keyring.clear()
   }
@@ -91,10 +91,9 @@ export const getWalletMetadata = async (): Promise<WalletMetadata | null> => {
     const rawWalletMetadata = await AsyncStorage.getItem(WALLET_METADATA_STORAGE_KEY)
 
     return rawWalletMetadata ? JSON.parse(rawWalletMetadata) : null
-  } catch (e) {
-    const message = 'Could not get wallet metadata from storage'
-    sendAnalytics('Error', { message })
-    throw new Error(message)
+  } catch (error) {
+    sendAnalytics({ type: 'error', error, message: 'Could not get wallet metadata from storage' })
+    throw error
   }
 }
 
@@ -169,13 +168,7 @@ export const deleteWallet = async () => {
     await deleteAddressPrivateKey(address.hash)
   }
 
-  try {
-    await AsyncStorage.removeItem(WALLET_METADATA_STORAGE_KEY)
-  } catch (e) {
-    const message = 'Could not delete wallet metadata from storage'
-    sendAnalytics('Error', { message })
-    throw new Error(message)
-  }
+  await deleteWithReportableError(WALLET_METADATA_STORAGE_KEY)
 }
 
 export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadataWithHash[]) => {
@@ -196,29 +189,10 @@ export const persistAddressesMetadata = async (walletId: string, addressesMetada
   await storeWalletMetadata(walletMetadata)
 }
 
-export const getIsNewWallet = async (): Promise<boolean | undefined> => {
-  try {
-    return (await AsyncStorage.getItem(IS_NEW_WALLET)) === 'true'
-  } catch (e) {
-    sendAnalytics('Error', {
-      message: 'Could not get "is-new-wallet" flag from storage',
-      exception: getHumanReadableError(e, '')
-    })
-    console.error(e)
-  }
-}
+export const getIsNewWallet = async (): Promise<boolean | undefined> =>
+  (await getWithReportableError(IS_NEW_WALLET)) === 'true'
 
-export const storeIsNewWallet = async (isNew: boolean) => {
-  try {
-    await AsyncStorage.setItem(IS_NEW_WALLET, isNew.toString())
-  } catch (e) {
-    sendAnalytics('Error', {
-      message: 'Could not set "is-new-wallet" flag to storage',
-      exception: getHumanReadableError(e, '')
-    })
-    console.error(e)
-  }
-}
+export const storeIsNewWallet = async (isNew: boolean) => storeWithReportableError(IS_NEW_WALLET, isNew.toString())
 
 export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
   // Step 1: Store mnemonic as Uint8Array in secure store without authentication required (as per Uniswap)
@@ -251,8 +225,6 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
     }
 
     await updateStoredWalletMetadata({ addresses: updatedAddressesMetadata })
-  } catch (e) {
-    throw new Error(getHumanReadableError(e, ''))
   } finally {
     keyring.clear()
   }
@@ -306,18 +278,10 @@ const generateWalletMetadata = (name: string, firstAddressHash: string, isMnemon
 })
 
 export const storeWalletMetadata = async (metadata: WalletMetadata) =>
-  storeWithReportableError(
-    WALLET_METADATA_STORAGE_KEY,
-    JSON.stringify(metadata),
-    'Could not store wallet metadata to storage'
-  )
+  storeWithReportableError(WALLET_METADATA_STORAGE_KEY, JSON.stringify(metadata))
 
 export const storeWalletMetadataDeprecated = async (metadata: DeprecatedWalletMetadata) =>
-  storeWithReportableError(
-    WALLET_METADATA_STORAGE_KEY,
-    JSON.stringify(metadata),
-    'Could not store wallet metadata to storage'
-  )
+  storeWithReportableError(WALLET_METADATA_STORAGE_KEY, JSON.stringify(metadata))
 
 const storeWalletMnemonic = async (mnemonic: Uint8Array) =>
   storeSecurelyWithReportableError(MNEMONIC_V2, JSON.stringify(mnemonic), 'Could not store wallet mnemonic')
@@ -358,8 +322,6 @@ const generateAndStoreAddressKeypairForIndex = async (addressIndex: number): Pro
     privateKey = ''
 
     return hash
-  } catch (e) {
-    throw new Error(getHumanReadableError(e, ''))
   } finally {
     keyring.clear()
   }

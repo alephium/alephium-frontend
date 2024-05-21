@@ -54,7 +54,7 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
 
     navigation.navigate('DecryptScannedMnemonicScreen')
 
-    sendAnalytics('Scanned QR code from desktop wallet')
+    sendAnalytics({ event: 'Scanned QR code from desktop wallet' })
   }
 
   return (

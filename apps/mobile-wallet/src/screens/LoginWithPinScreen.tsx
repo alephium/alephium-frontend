@@ -59,10 +59,12 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
 
         dispatch(walletUnlocked(wallet))
         resetNavigation(navigation)
-        sendAnalytics('Unlocked wallet')
-      } catch (e) {
-        console.error(e)
-        showExceptionToast(e, 'Could not migrate mnemonic and unlock wallet')
+        sendAnalytics({ event: 'Unlocked wallet' })
+      } catch (error) {
+        const message = 'Could not migrate mnemonic and unlock wallet'
+
+        showExceptionToast(error, message)
+        sendAnalytics({ type: 'error', error, message, isSensitive: true })
       }
     },
     [biometricsRequiredForAppAccess, deviceHasEnrolledBiometrics, deviceSupportsBiometrics, dispatch, navigation]

@@ -49,11 +49,12 @@ const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalle
       await updateStoredWalletMetadata({ name })
       dispatch(walletNameChanged(name))
 
-      sendAnalytics('Wallet: Editted wallet name')
-    } catch (e) {
-      showExceptionToast(e, 'Could not edit wallet name')
+      sendAnalytics({ event: 'Wallet: Editted wallet name' })
+    } catch (error) {
+      const message = 'Could not edit wallet name'
 
-      sendAnalytics('Error', { message: 'Could not edit wallet name' })
+      showExceptionToast(error, message)
+      sendAnalytics({ type: 'error', error, message })
     }
 
     setLoading(false)

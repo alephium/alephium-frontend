@@ -91,14 +91,15 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
 
         dispatch(newWalletImportedWithMetadata(wallet))
 
-        sendAnalytics('Imported wallet', { note: 'Scanned desktop wallet QR code' })
+        sendAnalytics({ event: 'Imported wallet', props: { note: 'Scanned desktop wallet QR code' } })
 
         try {
           await importAddresses(wallet.id, addresses)
-        } catch (e) {
+        } catch (error) {
           const message = 'Could not import addresses from QR code scan'
-          showExceptionToast(e, message)
-          sendAnalytics('Error', { message })
+
+          showExceptionToast(error, message)
+          sendAnalytics({ type: 'error', error, message, isSensitive: true })
         }
 
         resetNavigation(

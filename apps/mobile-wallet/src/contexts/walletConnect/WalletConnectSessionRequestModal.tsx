@@ -113,7 +113,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
             })
           )
 
-          sendAnalytics('WC: Approved transfer')
+          sendAnalytics({ event: 'WC: Approved transfer' })
 
           return {
             fromGroup: requestData.unsignedTxData.fromGroup,
@@ -142,7 +142,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
             })
           )
 
-          sendAnalytics('WC: Approved contract call')
+          sendAnalytics({ event: 'WC: Approved contract call' })
 
           return {
             groupIndex: requestData.unsignedTxData.fromGroup,
@@ -164,7 +164,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
             })
           )
 
-          sendAnalytics('WC: Approved contract deployment')
+          sendAnalytics({ event: 'WC: Approved contract deployment' })
 
           return {
             groupIndex: requestData.unsignedTxData.fromGroup,
@@ -178,13 +178,12 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
           } as SignDeployContractTxResult
         }
       }
-    } catch (e) {
+    } catch (error) {
       const message = 'Could not send transaction'
-      console.error(message, e)
-      showExceptionToast(e, message)
-      sendAnalytics('Error', { message })
+      showExceptionToast(error, message)
+      sendAnalytics({ type: 'error', error, message })
       onSendTxOrSignFail({
-        message: getHumanReadableError(e, message),
+        message: getHumanReadableError(error, message),
         code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
       })
     }
@@ -224,13 +223,12 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
       }
 
       await onSignSuccess(signResult)
-    } catch (e) {
+    } catch (error) {
       const message = requestData.type === 'sign-message' ? 'Could not sign message' : 'Count not sign unsigned tx'
-      console.error(message, e)
-      showExceptionToast(e, message)
-      sendAnalytics('Error', { message })
+      showExceptionToast(error, message)
+      sendAnalytics({ type: 'error', error, message })
       onSendTxOrSignFail({
-        message: getHumanReadableError(e, message),
+        message: getHumanReadableError(error, message),
         code:
           requestData.type === 'sign-message'
             ? WALLETCONNECT_ERRORS.MESSAGE_SIGN_FAILED

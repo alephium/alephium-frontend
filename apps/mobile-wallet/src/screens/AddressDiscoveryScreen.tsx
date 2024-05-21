@@ -79,13 +79,11 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
       await persistAddressSettings(newAddresses)
       dispatch(addressesImported(newAddresses))
 
-      sendAnalytics('Imported discovered addresses')
+      sendAnalytics({ event: 'Imported discovered addresses' })
 
       await dispatch(syncLatestTransactions(newAddressHashes))
-    } catch (e) {
-      console.error(e)
-
-      sendAnalytics('Error', { message: 'Could not import addresses from address discovery' })
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Could not import addresses from address discovery' })
     }
 
     continueToNextScreen()
@@ -113,19 +111,19 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   }, [discoveredAddresses])
 
   const handleStartScanPress = () => {
-    sendAnalytics('Started address discovery from settings')
+    sendAnalytics({ event: 'Started address discovery from settings' })
 
     startScan()
   }
 
   const handleStopScanPress = () => {
-    sendAnalytics('Stopped address discovery')
+    sendAnalytics({ event: 'Stopped address discovery' })
 
     stopScan()
   }
 
   const handleContinueScanPress = () => {
-    sendAnalytics('Continued address discovery')
+    sendAnalytics({ event: 'Continued address discovery' })
 
     startScan()
   }

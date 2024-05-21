@@ -43,7 +43,7 @@ const instructions: Instruction[] = [
 
 const ImportWalletAddressDiscoveryScreen = ({ navigation, ...props }: ImportWalletAddressDiscoveryScreenProps) => {
   const handleLaterPress = () => {
-    sendAnalytics('Skipped address discovery')
+    sendAnalytics({ event: 'Skipped address discovery' })
 
     navigation.navigate('NewWalletSuccessScreen')
   }

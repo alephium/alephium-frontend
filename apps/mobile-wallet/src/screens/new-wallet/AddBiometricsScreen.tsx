@@ -55,14 +55,14 @@ const AddBiometricsScreen = ({ navigation, ...props }: AddBiometricsScreenProps)
   const activateBiometrics = () => {
     dispatch(biometricsToggled())
 
-    sendAnalytics('Activated biometrics from wallet creation flow')
+    sendAnalytics({ event: 'Activated biometrics from wallet creation flow' })
 
     resetNavigation(navigation, skipAddressDiscovery ? 'NewWalletSuccessScreen' : 'ImportWalletAddressDiscoveryScreen')
   }
 
   const handleLaterPress = () => {
     setIsBiometricsWarningModalOpen(false)
-    sendAnalytics('Skipped biometrics activation from wallet creation flow')
+    sendAnalytics({ event: 'Skipped biometrics activation from wallet creation flow' })
 
     resetNavigation(
       navigation,

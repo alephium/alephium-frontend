@@ -31,6 +31,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressFormBaseScreen from '~/screens/Addresses/Address/AddressFormBaseScreen'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
+import { showExceptionToast } from '~/utils/layout'
 
 interface EditAddressScreenProps extends StackScreenProps<RootStackParamList, 'EditAddressScreen'>, ScrollScreenProps {}
 
@@ -53,11 +54,12 @@ const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddr
       await persistAddressSettings({ ...address, settings })
       dispatch(addressSettingsSaved({ ...address, settings }))
 
-      sendAnalytics('Address: Edited address settings')
-    } catch (e) {
-      console.error(e)
+      sendAnalytics({ event: 'Address: Edited address settings' })
+    } catch (error) {
+      const message = 'Could not edit address settings'
 
-      sendAnalytics('Error', { message: 'Could not edit address settings' })
+      showExceptionToast(error, message)
+      sendAnalytics({ type: 'error', error, message })
     }
 
     setLoading(false)
