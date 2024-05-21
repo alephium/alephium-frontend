@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
+import { AnalyticsProps, getHumanReadableError, throttleEvent } from '@alephium/shared'
 import { nanoid } from 'nanoid'
 import PostHog from 'posthog-react-native'
 import { PosthogCaptureOptions } from 'posthog-react-native/lib/posthog-core/src'
@@ -38,19 +38,14 @@ export const posthogAsync: Promise<PostHog> = PostHog.initAsync(PUBLIC_POSTHOG_K
 
 // Is there a better way to get the types of the arguments of the capture function of the abstract PostHogCore class
 // from posthog-react-native/lib/posthog-core/src?
-export const sendAnalytics = (
-  event: string,
-  properties?: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any
-  },
-  options?: PosthogCaptureOptions
-) => posthogAsync.then((client) => client.capture(event, properties, options))
+export const sendAnalytics = (event: string, props?: AnalyticsProps, options?: PosthogCaptureOptions) =>
+  posthogAsync.then((client) => throttleEvent(() => client.capture(event, props, options), event, props))
 
-export const sendErrorAnalytics = (error: unknown, message: string) => {
+export const sendErrorAnalytics = (error: unknown, message: string, skipException?: boolean) => {
   console.error(message, error)
   sendAnalytics('Error', {
-    message: `${message}: ${getHumanReadableError(error, '')}`
+    message,
+    reason: skipException ? undefined : getHumanReadableError(error, '')
   })
 }
 

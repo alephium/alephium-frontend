@@ -29,6 +29,7 @@ import styled from 'styled-components'
 import { fadeIn } from '@/animations'
 import { buildSweepTransactions } from '@/api/transactions'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
 import ConsolidateUTXOsModal from '@/modals/ConsolidateUTXOsModal'
@@ -89,6 +90,7 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
   const dispatch = useAppDispatch()
   const settings = useAppSelector((s) => s.settings)
   const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
 
   const [addressesData, setAddressesData] = useState<PT>(txData ?? initialTxData)
   const [transactionData, setTransactionData] = useState<T | undefined>(txData)
@@ -207,11 +209,11 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
 
       dispatch(transactionsSendSucceeded({ nbOfTransactionsSent: isSweeping ? sweepUnsignedTxs.length : 1 }))
       setStep('tx-sent')
-    } catch (e) {
-      dispatch(transactionSendFailed(getHumanReadableError(e, t('Error while sending the transaction'))))
-      posthog.capture('Error', { message: 'Could not send tx' })
+    } catch (error) {
+      dispatch(transactionSendFailed(getHumanReadableError(error, t('Error while sending the transaction'))))
+      sendAnalytics({ type: 'error', error, message: 'Could not send tx', isSensitive: true })
 
-      onSendFail && onSendFail(getHumanReadableError(e, 'Error while sending the transaction'))
+      onSendFail && onSendFail(getHumanReadableError(error, 'Error while sending the transaction'))
     } finally {
       setIsLoading(false)
     }

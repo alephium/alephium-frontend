@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Pencil, Trash } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -26,6 +25,7 @@ import Button from '@/components/Button'
 import CheckMark from '@/components/CheckMark'
 import InfoBox from '@/components/InfoBox'
 import { BoxContainer, Section } from '@/components/PageComponents/PageContainers'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
@@ -43,7 +43,7 @@ const WalletsSettingsSection = () => {
   const dispatch = useAppDispatch()
   const activeWallet = useAppSelector((s) => s.activeWallet)
   const wallets = useAppSelector((s) => s.global.wallets)
-  const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
   const { isWalletUnlocked, lockWallet } = useWalletLock()
 
   const [walletToRemove, setWalletToRemove] = useState<StoredEncryptedWallet | ActiveWallet>()
@@ -57,7 +57,7 @@ const WalletsSettingsSection = () => {
     dispatch(walletId === activeWallet.id ? activeWalletDeleted() : walletDeleted(walletId))
     setWalletToRemove(undefined)
 
-    posthog.capture('Deleted wallet')
+    sendAnalytics({ event: 'Deleted wallet' })
   }
 
   const handleLockCurrentWalletClick = () => lockWallet('settings')

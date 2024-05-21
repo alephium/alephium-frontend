@@ -19,12 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { keyring } from '@alephium/keyring'
 import { client, getHumanReadableError, WALLETCONNECT_ERRORS, WalletConnectError } from '@alephium/shared'
 import { SignUnsignedTxResult } from '@alephium/web3'
-import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalContent, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import {
@@ -50,7 +50,7 @@ const SignUnsignedTxModal = ({
   onSignReject
 }: SignUnsignedTxModalProps) => {
   const { t } = useTranslation()
-  const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
   const dispatch = useAppDispatch()
   const [isLoading, setIsLoading] = useState(false)
   const [decodedUnsignedTx, setDecodedUnsignedTx] = useState<Omit<SignUnsignedTxResult, 'signature'> | undefined>(
@@ -101,14 +101,15 @@ const SignUnsignedTxModal = ({
 
       dispatch(unsignedTransactionSignSucceeded)
       onClose()
-    } catch (e) {
+    } catch (error) {
       const message = 'Could not sign unsigned tx'
-      const errorMessage = getHumanReadableError(e, t(message))
-      posthog.capture('Error', { message })
+      const errorMessage = getHumanReadableError(error, t(message))
+
+      sendAnalytics({ type: 'error', error, message, isSensitive: true })
       dispatch(unsignedTransactionSignFailed(errorMessage))
 
       onSignFail({
-        message: getHumanReadableError(e, message),
+        message: getHumanReadableError(error, message),
         code: WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
       })
     }

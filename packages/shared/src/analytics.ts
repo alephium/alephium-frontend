@@ -16,12 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { bip39Words } from '@/bip39'
+const eventThrottleStatus: Record<string, boolean> = {}
 
-const bip39WordsString = bip39Words.join('|')
+const ANALYTICS_THROTTLING_TIMEOUT = 5000
 
-export const getHumanReadableError = (error: unknown, defaultErrorMsg: string) =>
-  typeof error?.toString === 'function' ? error.toString().replace('Error: [API Error] - ', '') : defaultErrorMsg
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnalyticsProps = { [key: string]: any }
 
-export const cleanExceptionMessage = (error: unknown) =>
-  getHumanReadableError(error, '').replace(new RegExp(`\\b(${bip39WordsString})\\b`, 'g'), '[...]')
+export const throttleEvent = (callback: () => void, event: string, props?: AnalyticsProps) => {
+  const eventKey = `${event}:${props ? Object.keys(props).map((key) => `${key}:${props[key]}`) : ''}`
+
+  if (!eventThrottleStatus[eventKey]) {
+    eventThrottleStatus[eventKey] = true
+
+    setTimeout(() => {
+      eventThrottleStatus[eventKey] = false
+    }, ANALYTICS_THROTTLING_TIMEOUT)
+
+    callback()
+  }
+}

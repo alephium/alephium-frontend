@@ -16,10 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, findNextAvailableAddressIndex, isAddressIndexValid, resetArray } from '@alephium/shared'
+import {
+  AddressHash,
+  bip39Words,
+  findNextAvailableAddressIndex,
+  isAddressIndexValid,
+  resetArray
+} from '@alephium/shared'
 import { bs58, groupOfAddress, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
 import * as metamaskBip39 from '@metamask/scure-bip39'
-import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 import blake from 'blakejs'
 import { HDKey } from 'ethereum-cryptography/hdkey'
 import { bytesToHex } from 'ethereum-cryptography/utils'
@@ -79,7 +84,7 @@ export class Keyring {
 
   public generateRandomMnemonic = (mnemonicLength: MnemonicLength = 24): Uint8Array => {
     const strength = mnemonicLength === 24 ? 256 : 128
-    const mnemonic = metamaskBip39.generateMnemonic(wordlist, strength)
+    const mnemonic = metamaskBip39.generateMnemonic(bip39Words, strength)
 
     this._initFromMnemonic(mnemonic, '')
 
@@ -89,7 +94,7 @@ export class Keyring {
   public importMnemonicString = (mnemonicStr: string): Uint8Array => {
     if (!mnemonicStr) throw new Error('Keyring: Cannot import mnemonic, mnemonic not provided')
 
-    if (!metamaskBip39.validateMnemonic(mnemonicStr, wordlist))
+    if (!metamaskBip39.validateMnemonic(mnemonicStr, bip39Words))
       throw new Error('Keyring: Cannot import mnemonic, invalid mnemonic provided')
 
     const mnemonic = mnemonicStringToUint8Array(mnemonicStr)
@@ -216,7 +221,7 @@ export class Keyring {
     if (this.root) throw new Error('Keyring: Secret recovery phrase already provided')
     if (!mnemonic) throw new Error('Keyring: Secret recovery phrase not provided')
 
-    const seed = metamaskBip39.mnemonicToSeedSync(mnemonic, wordlist, passphrase)
+    const seed = metamaskBip39.mnemonicToSeedSync(mnemonic, bip39Words, passphrase)
     this.hdWallet = HDKey.fromMasterSeed(seed)
     this.root = this.hdWallet.derive(this.hdPath)
 

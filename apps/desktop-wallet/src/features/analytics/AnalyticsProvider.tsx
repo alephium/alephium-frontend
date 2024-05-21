@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { PostHogConfig } from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
 
-import AnalyticsStorage from '@/storage/analytics/analyticsPersistentStorage'
+import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
 import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
 import { GeneralSettings } from '@/types/settings'
 

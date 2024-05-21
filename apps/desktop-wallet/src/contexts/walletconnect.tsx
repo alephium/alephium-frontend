@@ -60,10 +60,10 @@ import {
 } from '@walletconnect/types'
 import { calcExpiry, getSdkError, mapToObj, objToMap } from '@walletconnect/utils'
 import { partition } from 'lodash'
-import { usePostHog } from 'posthog-js/react'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
@@ -123,7 +123,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const currentNetwork = useAppSelector((s) => s.network)
   const { isWalletUnlocked } = useWalletLock()
   const dispatch = useAppDispatch()
-  const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
 
   const [isSessionProposalModalOpen, setIsSessionProposalModalOpen] = useState(false)
   const [isDeployContractSendModalOpen, setIsDeployContractSendModalOpen] = useState(false)
@@ -163,21 +163,19 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       setWalletConnectClient(client)
       setWalletConnectClientStatus('initialized')
       setActiveSessions(getActiveWalletConnectSessions(client))
-    } catch (e) {
+    } catch (error) {
       setWalletConnectClientStatus('uninitialized')
-      const message = 'Could not initialize WalletConnect client'
-      const reason = getHumanReadableError(e, '')
+      const reason = getHumanReadableError(error, '')
 
       if (
         !reason.includes('No internet connection') &&
         !reason.includes('WebSocket connection failed') &&
         !reason.includes('Socket stalled')
       ) {
-        console.error(message, e)
-        posthog.capture('Error', { message, reason })
+        sendAnalytics({ type: 'error', error, message: 'Could not initialize WalletConnect client' })
       }
     }
-  }, [posthog])
+  }, [sendAnalytics])
 
   const cleanStorage = useCallback(
     async (event: SessionRequestEvent) => {
@@ -393,19 +391,17 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
             respondToWalletConnectWithError(event, getSdkError('WC_METHOD_UNSUPPORTED'))
             throw new Error(`Method not supported: ${request.method}`)
         }
-      } catch (e) {
+      } catch (error) {
         const message = 'Could not parse WalletConnect session request'
-        const reason = getHumanReadableError(e, '')
 
-        console.error(message, reason)
-        posthog.capture('Error', { message, reason })
+        sendAnalytics({ type: 'error', error, message })
         respondToWalletConnectWithError(event, {
-          message: getHumanReadableError(e, message),
+          message: getHumanReadableError(error, message),
           code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
         })
       }
     },
-    [addresses, respondToWalletConnectWithError, posthog, walletConnectClient, cleanStorage]
+    [addresses, cleanStorage, respondToWalletConnectWithError, sendAnalytics, walletConnectClient]
   )
 
   const pairWithDapp = useCallback(
@@ -584,12 +580,12 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
 
         setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
 
-        posthog?.capture('WC: Disconnected from dApp')
+        sendAnalytics({ event: 'WC: Disconnected from dApp' })
       } catch (e) {
         console.error('❌ COULD NOT DISCONNECT FROM DAPP')
       }
     },
-    [posthog, walletConnectClient]
+    [sendAnalytics, walletConnectClient]
   )
 
   const approveProposal = async (signerAddress: Address) => {
@@ -682,7 +678,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       setSessionProposalEvent(undefined)
       setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
 
-      posthog.capture('Approved WalletConnect connection')
+      sendAnalytics({ event: 'Approved WalletConnect connection' })
 
       electron?.app.hide()
     } catch (e) {
@@ -702,7 +698,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
 
       setSessionProposalEvent(undefined)
 
-      posthog.capture('Rejected WalletConnect connection by clicking "Reject"')
+      sendAnalytics({ event: 'Rejected WalletConnect connection by clicking "Reject"' })
 
       electron?.app.hide()
     } catch (e) {
