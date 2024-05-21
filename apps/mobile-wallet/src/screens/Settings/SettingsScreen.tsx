@@ -199,10 +199,12 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <ScreenSection>
             <ScreenSectionTitle>Security</ScreenSectionTitle>
             {!deviceHasEnrolledBiometrics && (
-              <AppText color="secondary" style={{ marginBottom: 20, paddingHorizontal: 10 }}>
-                Your device supports biometrics but none is enrolled. Enable them by adding a fingeprint or Face ID in
-                your device's settings.
-              </AppText>
+              <BiometricsRecommendationBox type="accent">
+                <AppText color="accent">
+                  Your device supports biometrics but none is enrolled. Enable them by adding a fingeprint or Face ID in
+                  your device's settings.
+                </AppText>
+              </BiometricsRecommendationBox>
             )}
             <BoxSurface>
               <Row title="App access" subtitle="Require biometrics to open app">
@@ -364,4 +366,9 @@ export default SettingsScreen
 
 const ScrollScreenStyled = styled(ScrollScreen)`
   gap: ${VERTICAL_GAP}px;
+`
+
+const BiometricsRecommendationBox = styled(BoxSurface)`
+  padding: 20px;
+  margin-bottom: ${VERTICAL_GAP}px;
 `
