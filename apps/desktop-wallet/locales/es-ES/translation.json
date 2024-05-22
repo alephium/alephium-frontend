@@ -127,7 +127,7 @@
   "Enable developer tools": "Enable developer tools",
   "Encountered error while calling the faucet.": "Encountered error while calling the faucet.",
   "Encountered error while exporting your transactions.": "Encountered error while exporting your transactions.",
-  "Encountered error while synching your addresses' data.": "Encountered error while synching your addresses' data.",
+  "Encountered error while syncing your addresses' data.": "Encountered error while syncing your addresses' data.",
   "Enter": "Introduzca",
   "Enter password": "Introduzca la contraseña",
   "Enter password for \"{{ switchToWalletName }}\"": "Introduza a palavra-passe para \"{{ switchToWalletName }}\"",

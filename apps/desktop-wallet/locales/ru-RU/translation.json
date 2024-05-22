@@ -127,7 +127,7 @@
   "Enable developer tools": "Включить инструменты разработчика",
   "Encountered error while calling the faucet.": "Обнаружена ошибка при вызове крана.",
   "Encountered error while exporting your transactions.": "Возникла ошибка при экспорте ваших транзакций.",
-  "Encountered error while synching your addresses' data.": "Возникла ошибка при синхронизации данных ваших адресов.",
+  "Encountered error while syncing your addresses' data.": "Возникла ошибка при синхронизации данных ваших адресов.",
   "Enter": "Ввести",
   "Enter password": "Введите пароль",
   "Enter password for \"{{ switchToWalletName }}\"": "Введите пароль для \"{{ switchToWalletName }}\"",
