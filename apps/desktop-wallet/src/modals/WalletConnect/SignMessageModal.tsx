@@ -61,7 +61,7 @@ const SignUnsignedTxModal = ({
       const message = 'Could not sign message'
       const errorMessage = getHumanReadableError(error, t(message))
 
-      sendAnalytics({ type: 'error', error, message, isSensitive: true })
+      sendAnalytics({ type: 'error', message })
       dispatch(messageSignFailed(errorMessage))
 
       onSignFail({

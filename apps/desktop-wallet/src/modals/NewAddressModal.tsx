@@ -82,8 +82,8 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
         saveNewAddresses([{ ...newAddressData, ...settings }])
 
         sendAnalytics({ event: 'New address created', props: { label_length: settings.label.length } })
-      } catch (e) {
-        console.error(e)
+      } catch {
+        sendAnalytics({ type: 'error', message: 'Error while saving newly generated address' })
       }
     } else {
       generateAndSaveOneAddressPerGroup({ labelPrefix: addressLabel.title, labelColor: addressLabel.color })

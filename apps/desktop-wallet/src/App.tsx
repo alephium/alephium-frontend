@@ -117,8 +117,8 @@ const App = () => {
 
       dispatch(localStorageGeneralSettingsMigrated(generalSettings))
       dispatch(localStorageNetworkSettingsMigrated(networkSettings))
-    } catch (error) {
-      sendAnalytics({ type: 'error', error, message: 'Local storage data migration failed' })
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Local storage data migration failed' })
       dispatch(localStorageDataMigrationFailed())
     }
   }, [dispatch, sendAnalytics])
@@ -181,15 +181,23 @@ const App = () => {
         if (!isSyncingAddressData && addressHashes.length > 0 && activeWalletId) {
           const storedPendingTxs = pendingTransactionsStorage.load(activeWalletId)
 
-          dispatch(syncAddressesData())
-            .unwrap()
-            .then((results) => {
-              const mempoolTxHashes = results.flatMap((result) => result.mempoolTransactions.map((tx) => tx.hash))
+          try {
+            dispatch(syncAddressesData())
+              .unwrap()
+              .then((results) => {
+                const mempoolTxHashes = results.flatMap((result) => result.mempoolTransactions.map((tx) => tx.hash))
 
-              restorePendingTransactions(activeWalletId, mempoolTxHashes, storedPendingTxs)
-            })
+                restorePendingTransactions(activeWalletId, mempoolTxHashes, storedPendingTxs)
+              })
+          } catch {
+            sendAnalytics({ type: 'error', message: 'Could not sync address data automatically' })
+          }
 
-          dispatch(syncAddressesAlphHistoricBalances())
+          try {
+            dispatch(syncAddressesAlphHistoricBalances())
+          } catch {
+            sendAnalytics({ type: 'error', message: 'Could not sync alph historic balances automatically' })
+          }
         }
       } else if (addressesStatus === 'initialized') {
         if (
@@ -210,7 +218,8 @@ const App = () => {
     isSyncingAddressData,
     networkStatus,
     newUnknownTokens,
-    activeWalletId
+    activeWalletId,
+    sendAnalytics
   ])
 
   // Fetch verified tokens from GitHub token-list and sync current and historical prices for each verified fungible
@@ -264,8 +273,12 @@ const App = () => {
   )
 
   const refreshAddressesData = useCallback(() => {
-    dispatch(syncAddressesData(addressesWithPendingTxs))
-  }, [dispatch, addressesWithPendingTxs])
+    try {
+      dispatch(syncAddressesData(addressesWithPendingTxs))
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Could not sync address data when refreshing automatically' })
+    }
+  }, [dispatch, addressesWithPendingTxs, sendAnalytics])
 
   useInterval(refreshAddressesData, 5000, addressesWithPendingTxs.length === 0 || isSyncingAddressData)
 

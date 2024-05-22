@@ -59,7 +59,7 @@ const EditWalletNameModal = (props: CenteredModalProps) => {
       sendAnalytics({ event: 'Changed wallet name', props: { wallet_name_length: data.name.length } })
     } catch (error) {
       dispatch(walletNameStorageFailed(getHumanReadableError(error, t('Could not save new wallet name.'))))
-      sendAnalytics({ type: 'error', error, message: 'Could not save new wallet name', isSensitive: true })
+      sendAnalytics({ type: 'error', message: 'Could not save new wallet name' })
     }
   }
 

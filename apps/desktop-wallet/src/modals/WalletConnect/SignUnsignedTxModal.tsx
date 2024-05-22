@@ -77,8 +77,9 @@ const SignUnsignedTxModal = ({
       } catch (e) {
         const message = 'Could not decode unsigned tx'
         const errorMessage = getHumanReadableError(e, t(message))
-        dispatch(unsignedTransactionDecodingFailed(errorMessage))
 
+        sendAnalytics({ type: 'error', message })
+        dispatch(unsignedTransactionDecodingFailed(errorMessage))
         onSignFail({
           message: getHumanReadableError(e, message),
           code: WALLETCONNECT_ERRORS.TRANSACTION_DECODE_FAILED
@@ -89,7 +90,7 @@ const SignUnsignedTxModal = ({
     }
 
     decodeUnsignedTx()
-  }, [dispatch, onSignFail, t, txData.unsignedTx])
+  }, [dispatch, onSignFail, sendAnalytics, t, txData.unsignedTx])
 
   const handleSign = async () => {
     if (!decodedUnsignedTx) return
@@ -105,7 +106,7 @@ const SignUnsignedTxModal = ({
       const message = 'Could not sign unsigned tx'
       const errorMessage = getHumanReadableError(error, t(message))
 
-      sendAnalytics({ type: 'error', error, message, isSensitive: true })
+      sendAnalytics({ type: 'error', message })
       dispatch(unsignedTransactionSignFailed(errorMessage))
 
       onSignFail({

@@ -90,8 +90,8 @@ const WalletConnectSessionProposalModal = ({
       saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])
 
       sendAnalytics({ event: 'New address created through WalletConnect modal' })
-    } catch (e) {
-      console.error(e)
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Error while saving newly generated address from WalletConnect modal' })
     }
   }
 

@@ -95,9 +95,13 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
   const activeWalletNameInitials = getInitials(activeWalletName)
 
   const refreshAddressesData = () => {
-    dispatch(syncAddressesData())
+    try {
+      dispatch(syncAddressesData())
 
-    sendAnalytics({ event: 'Refreshed data' })
+      sendAnalytics({ event: 'Refreshed data' })
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Could not sync address data when refreshing manually' })
+    }
   }
 
   return (
