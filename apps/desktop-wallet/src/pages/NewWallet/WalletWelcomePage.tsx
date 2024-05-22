@@ -73,8 +73,8 @@ const WalletWelcomePage = () => {
         })
 
         sendAnalytics({ event: 'Generated one address per group on wallet creation' })
-      } catch (error) {
-        sendAnalytics({ type: 'error', error, message: 'Failed to generate one address per group' })
+      } catch {
+        sendAnalytics({ type: 'error', message: 'Failed to generate one address per group' })
       }
     }
 

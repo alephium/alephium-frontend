@@ -26,6 +26,7 @@ import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
 import ToggleSection from '@/components/ToggleSection'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import useGasSettings from '@/hooks/useGasSettings'
 import useStateObject from '@/hooks/useStateObject'
 import AssetAmountsInput from '@/modals/SendModals/AssetAmountsInput'
@@ -52,6 +53,7 @@ const CallContractBuildTxModalContent = ({ data, onSubmit, onCancel }: CallContr
     handleGasAmountChange,
     handleGasPriceChange
   } = useGasSettings(data?.gasAmount?.toString(), data?.gasPrice)
+  const { sendAnalytics } = useAnalytics()
 
   const [txPrep, , setTxPrepProp] = useStateObject<TxPreparation>({
     fromAddress: data.fromAddress ?? '',
@@ -66,10 +68,10 @@ const CallContractBuildTxModalContent = ({ data, onSubmit, onCancel }: CallContr
   useEffect(() => {
     try {
       setIsAmountValid(!alphAmount || isAmountWithinRange(fromHumanReadableAmount(alphAmount), availableBalance))
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Could not determine if amount is valid' })
     }
-  }, [alphAmount, availableBalance])
+  }, [alphAmount, availableBalance, sendAnalytics])
 
   if (fromAddress === undefined) {
     onCancel()

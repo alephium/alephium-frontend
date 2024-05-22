@@ -75,16 +75,20 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
       setIsLoading(true)
       try {
         const { unsignedTxs, fees } = await buildSweepTransactions(sweepAddresses.from, sweepAddresses.to.hash)
+
         setBuiltUnsignedTxs(unsignedTxs)
         setFee(fees)
       } catch (e) {
-        dispatch(transactionBuildFailed(getHumanReadableError(e, t('Error while building transaction'))))
+        const message = 'Error while building transaction'
+
+        dispatch(transactionBuildFailed(getHumanReadableError(e, t(message))))
+        sendAnalytics({ type: 'error', message })
       }
       setIsLoading(false)
     }
 
     buildTransactions()
-  }, [dispatch, sweepAddresses.from, sweepAddresses.to, t])
+  }, [dispatch, sendAnalytics, sweepAddresses.from, sweepAddresses.to, t])
 
   const onSweepClick = async () => {
     if (!sweepAddresses.from || !sweepAddresses.to) return

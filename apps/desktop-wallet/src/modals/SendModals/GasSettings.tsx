@@ -26,6 +26,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Input from '@/components/Inputs/Input'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import AlphAmountInfoBox from '@/modals/SendModals/AlphAmountInfoBox'
 
 export interface GasSettingsProps {
@@ -46,6 +47,7 @@ const GasSettings = ({
   onGasPriceChange
 }: GasSettingsProps) => {
   const { t } = useTranslation()
+  const { sendAnalytics } = useAnalytics()
 
   const [expectedFee, setExpectedFee] = useState<bigint>()
 
@@ -56,10 +58,10 @@ const GasSettings = ({
 
     try {
       setExpectedFee(BigInt(gasAmount) * fromHumanReadableAmount(gasPrice))
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Could not set expected fee' })
     }
-  }, [gasAmount, gasPrice])
+  }, [gasAmount, gasPrice, sendAnalytics])
 
   return (
     <>

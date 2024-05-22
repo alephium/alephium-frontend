@@ -159,13 +159,16 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
         if (error.includes('consolidating') || error.includes('consolidate')) {
           setIsConsolidateUTXOsModalVisible(true)
           setConsolidationRequired(true)
+          sendAnalytics({ event: 'Could not build tx, consolidation required' })
         } else {
-          const errorMessage = getHumanReadableError(e, t('Error while building transaction'))
+          const message = 'Error while building transaction'
+          const errorMessage = getHumanReadableError(e, t(message))
 
           if (error.includes('NotEnoughApprovedBalance')) {
             dispatch(transactionBuildFailed('Your address does not have enough balance for this transaction'))
           } else {
             dispatch(transactionBuildFailed(errorMessage))
+            sendAnalytics({ type: 'error', message })
           }
 
           if (isRequestToApproveContractCall && onTransactionBuildFail) {
@@ -182,6 +185,7 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
       isConsolidateUTXOsModalVisible,
       isRequestToApproveContractCall,
       onTransactionBuildFail,
+      sendAnalytics,
       t,
       txContext
     ]

@@ -76,7 +76,7 @@ const useWalletLock = () => {
 
     try {
       await migrateUserData(encryptedWallet.id, password, version)
-    } catch (error) {
+    } catch {
       sendAnalytics({ type: 'error', message: 'User data migration failed' })
       dispatch(userDataMigrationFailed())
     }

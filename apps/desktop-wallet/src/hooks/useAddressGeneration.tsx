@@ -21,6 +21,7 @@ import { AddressMetadata } from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
 import { discoverAndCacheActiveAddresses } from '@/api/addresses'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
   addressDiscoveryFinished,
@@ -55,6 +56,7 @@ interface GenerateOneAddressPerGroupProps {
 const useAddressGeneration = () => {
   const dispatch = useAppDispatch()
   const addresses = useAppSelector(selectAllAddresses)
+  const { sendAnalytics } = useAnalytics()
 
   const currentAddressIndexes = addresses.map(({ index }) => index)
 
@@ -77,9 +79,13 @@ const useAddressGeneration = () => {
         color: labelColor ?? randomLabelColor
       }))
 
-      saveNewAddresses(addresses)
-    } catch (e) {
-      console.error(e)
+      try {
+        saveNewAddresses(addresses)
+      } catch {
+        sendAnalytics({ type: 'error', message: 'Error while saving new address' })
+      }
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Could not generate one address per group' })
     }
   }
 
@@ -104,8 +110,8 @@ const useAddressGeneration = () => {
       }))
 
       dispatch(addressesRestoredFromMetadata(addresses))
-    } catch (e) {
-      console.error(e)
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Could not generate addresses from metadata' })
     }
   }
 
@@ -123,10 +129,14 @@ const useAddressGeneration = () => {
         color: getRandomLabelColor()
       }))
 
-      saveNewAddresses(newAddresses)
+      try {
+        saveNewAddresses(newAddresses)
+      } catch {
+        sendAnalytics({ type: 'error', message: 'Error while saving newly discovered address' })
+      }
       dispatch(addressDiscoveryFinished(enableLoading))
-    } catch (e) {
-      console.error(e)
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Could not discover addresses' })
     }
   }
 
