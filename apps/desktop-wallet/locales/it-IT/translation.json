@@ -124,7 +124,7 @@
   "Enable developer tools": "Abilita gli strumenti per sviluppatori",
   "Encountered error while calling the faucet.": "Si è verificato un errore durante la chiamata al rubinetto.",
   "Encountered error while exporting your transactions.": "Si è verificato un errore durante l'esportazione delle tue transazioni.",
-  "Encountered error while synching your addresses' data.": "Si è verificato un errore durante la sincronizzazione dei dati dei tuoi indirizzi.",
+  "Encountered error while syncing your addresses' data.": "Si è verificato un errore durante la sincronizzazione dei dati dei tuoi indirizzi.",
   "Enter": "Inserisci",
   "Enter password": "Inserire la password",
   "Enter password for \"{{ switchToWalletName }}\"": "Inserisci la password per \"{{ switchToWalletName }}\"",

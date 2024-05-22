@@ -79,7 +79,7 @@ export const syncAddressesData = createAsyncThunk<
     return await dispatch(syncAddressesTransactions(addresses)).unwrap()
   } catch (e) {
     return rejectWithValue({
-      text: getHumanReadableError(e, i18n.t("Encountered error while synching your addresses' data.")),
+      text: getHumanReadableError(e, i18n.t("Encountered error while syncing your addresses' data.")),
       type: 'alert'
     })
   }
