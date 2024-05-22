@@ -115,7 +115,7 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
           getHumanReadableError(error, t('Error while sweeping address {{ from }}', { from: sweepAddresses.from }))
         )
       )
-      sendAnalytics({ type: 'error', error, message: 'Sweeping address', isSensitive: true })
+      sendAnalytics({ type: 'error', message: 'Sweeping address' })
     }
     setIsLoading(false)
   }

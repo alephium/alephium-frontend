@@ -80,7 +80,7 @@ const DevToolsSettingsSection = () => {
       sendAnalytics({ event: 'Copied address private key' })
     } catch (error) {
       dispatch(copyToClipboardFailed(getHumanReadableError(error, t('Could not copy private key.'))))
-      sendAnalytics({ type: 'error', error, message: 'Could not copy private key', isSensitive: true })
+      sendAnalytics({ type: 'error', message: 'Could not copy private key' })
     } finally {
       closePasswordModal()
     }
@@ -94,7 +94,7 @@ const DevToolsSettingsSection = () => {
       sendAnalytics({ event: 'Copied address public key' })
     } catch (error) {
       dispatch(copyToClipboardFailed(getHumanReadableError(error, t('Could not copy public key.'))))
-      sendAnalytics({ type: 'error', error, message: 'Could not copy public key', isSensitive: true })
+      sendAnalytics({ type: 'error', message: 'Could not copy public key' })
     }
   }
 

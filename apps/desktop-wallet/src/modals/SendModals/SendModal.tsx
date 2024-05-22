@@ -211,7 +211,7 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
       setStep('tx-sent')
     } catch (error) {
       dispatch(transactionSendFailed(getHumanReadableError(error, t('Error while sending the transaction'))))
-      sendAnalytics({ type: 'error', error, message: 'Could not send tx', isSensitive: true })
+      sendAnalytics({ type: 'error', message: 'Could not send tx' })
 
       onSendFail && onSendFail(getHumanReadableError(error, 'Error while sending the transaction'))
     } finally {

@@ -30,8 +30,8 @@ type EventAnalyticsParams = {
 
 type ErrorAnalyticsParams = {
   type: 'error'
-  error: unknown
   message: string
+  error?: unknown
   isSensitive?: boolean
 }
 
@@ -50,7 +50,7 @@ const useAnalytics = (): { sendAnalytics: (params: AnalyticsParams) => void } =>
           event: 'Error',
           props: {
             message,
-            reason: isSensitive ? cleanExceptionMessage(error) : getHumanReadableError(error, '')
+            reason: error ? (isSensitive ? cleanExceptionMessage(error) : getHumanReadableError(error, '')) : undefined
           }
         })
       } else {

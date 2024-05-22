@@ -107,12 +107,12 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
     } catch (error) {
       if (isRestoring) {
         dispatch(walletCreationFailed(getHumanReadableError(error, t('Error while importing wallet'))))
-        sendAnalytics({ type: 'error', error, message: 'Could not import wallet', isSensitive: true })
+        sendAnalytics({ type: 'error', message: 'Could not import wallet' })
       } else {
         dispatch(
           walletCreationFailed(getHumanReadableError(error, t('Something went wrong when creating encrypted wallet.')))
         )
-        sendAnalytics({ type: 'error', error, message: 'Could not create wallet', isSensitive: true })
+        sendAnalytics({ type: 'error', message: 'Could not create wallet' })
       }
     } finally {
       setPassword('')
