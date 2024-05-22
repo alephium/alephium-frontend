@@ -264,7 +264,7 @@ const TransactionInfoPage = () => {
                     {addressesInvolved.map((addressHash) => (
                       <DeltaAmountsBox key={addressHash}>
                         <DeltaAmountsTitle>
-                          <AddressLink address={addressHash} maxWidth="180px" />
+                          <AddressLink address={addressHash} maxWidth="200px" />
                         </DeltaAmountsTitle>
                         <AmountList>
                           {alphDeltaAmounts[addressHash] && (
@@ -423,6 +423,9 @@ const AmountList = styled.div`
   gap: 8px;
 `
 
-const DeltaAmountsTitle = styled.div``
+const DeltaAmountsTitle = styled.div`
+  flex: 1;
+  overflow: hidden;
+`
 
 export default TransactionInfoPage
