@@ -262,34 +262,32 @@ const TransactionInfoPage = () => {
                   <span>{t('Total Amounts')}</span>
                   <DetltaAmountsContainer>
                     {addressesInvolved.map((addressHash) => (
-                      <IOItemContainer>
-                        <DeltaAmountsBox key={addressHash}>
-                          <AmountList>
-                            {alphDeltaAmounts[addressHash] && (
-                              <Badge
-                                type={BigInt(alphDeltaAmounts[addressHash]) > 0 ? 'plus' : 'minus'}
-                                amount={alphDeltaAmounts[addressHash]}
-                                assetId={ALPH.id}
-                                displayAmountSign
-                                floatRight
-                              />
-                            )}
-                            {getSortedTokenAmounts(addressHash).map((v) => (
-                              <Badge
-                                key={v.tokenId}
-                                type={BigInt(v.amount) > 0 ? 'plus' : 'minus'}
-                                amount={BigInt(v.amount)}
-                                assetId={v.tokenId}
-                                displayAmountSign
-                                floatRight
-                              />
-                            ))}
-                          </AmountList>
-                          <DeltaAmountsTitle>
-                            <AddressLink address={addressHash} maxWidth="300px" />
-                          </DeltaAmountsTitle>
-                        </DeltaAmountsBox>
-                      </IOItemContainer>
+                      <DeltaAmountsBox key={addressHash}>
+                        <DeltaAmountsTitle>
+                          <AddressLink address={addressHash} maxWidth="180px" />
+                        </DeltaAmountsTitle>
+                        <AmountList>
+                          {alphDeltaAmounts[addressHash] && (
+                            <Badge
+                              type={BigInt(alphDeltaAmounts[addressHash]) > 0 ? 'plus' : 'minus'}
+                              amount={alphDeltaAmounts[addressHash]}
+                              assetId={ALPH.id}
+                              displayAmountSign
+                              floatRight
+                            />
+                          )}
+                          {getSortedTokenAmounts(addressHash).map((v) => (
+                            <Badge
+                              key={v.tokenId}
+                              type={BigInt(v.amount) > 0 ? 'plus' : 'minus'}
+                              amount={BigInt(v.amount)}
+                              assetId={v.tokenId}
+                              displayAmountSign
+                              floatRight
+                            />
+                          ))}
+                        </AmountList>
+                      </DeltaAmountsBox>
                     ))}
                   </DetltaAmountsContainer>
                 </TableRow>
@@ -402,21 +400,26 @@ const FeesTable = styled(Table)`
 const IOTable = styled(Table)``
 
 const DetltaAmountsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 `
 
 const DeltaAmountsBox = styled.div`
   display: flex;
   padding: 4px 0;
   gap: 20px;
+  background-color: ${({ theme }) => theme.bg.secondary};
+  border-radius: 6px;
+  border: 1px solid ${({ theme }) => theme.border.secondary};
+  padding: 8px;
 `
 
 const AmountList = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: flex-end;
   gap: 8px;
 `
 
