@@ -120,8 +120,11 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
           ? 'AddBiometricsScreen'
           : 'ImportWalletAddressDiscoveryScreen'
       )
-    } catch (e) {
-      showExceptionToast(e, 'Could not import wallet')
+    } catch (error) {
+      const message = 'Could not import wallet'
+
+      showExceptionToast(error, message)
+      sendAnalytics({ type: 'error', message })
     } finally {
       setLoading(false)
     }

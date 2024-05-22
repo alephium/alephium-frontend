@@ -109,7 +109,10 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
             : 'NewWalletSuccessScreen'
         )
       } catch (e) {
-        showExceptionToast(e, 'Could not import wallet from QR code scan')
+        const message = 'Could not import wallet from QR code scan'
+
+        showExceptionToast(error, message)
+        sendAnalytics({ type: 'error', message })
       }
 
       if (contacts.length > 0) await importContacts(contacts)

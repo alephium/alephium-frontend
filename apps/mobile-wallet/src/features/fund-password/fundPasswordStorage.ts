@@ -24,11 +24,10 @@ import { deleteSecurelyWithReportableError, storeSecurelyWithReportableError } f
 const FUND_PASSWORD_KEY = 'fund-password'
 
 export const storeFundPassword = (password: string) =>
-  storeSecurelyWithReportableError(FUND_PASSWORD_KEY, password, 'Could not store fund password')
+  storeSecurelyWithReportableError(FUND_PASSWORD_KEY, password, true, '')
 
 export const getFundPassword = () => SecureStore.getItemAsync(FUND_PASSWORD_KEY, defaultSecureStoreConfig)
 
 export const hasStoredFundPassword = async () => !!(await getFundPassword())
 
-export const deleteFundPassword = () =>
-  deleteSecurelyWithReportableError(FUND_PASSWORD_KEY, 'Could not delete fund password')
+export const deleteFundPassword = () => deleteSecurelyWithReportableError(FUND_PASSWORD_KEY, true, '')

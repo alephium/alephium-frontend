@@ -830,16 +830,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
     console.log('✅ VERIFIED USER PROVIDED DATA!')
 
-    const publicKey = await getAddressAsymetricKey(signerAddress.hash, 'public')
-
-    const namespaces: SessionTypes.Namespaces = {
-      alephium: {
-        methods: requiredNamespace.methods,
-        events: requiredNamespace.events,
-        accounts: [`${formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)}:${publicKey}/default`]
-      }
-    }
-
     try {
       setLoading('Approving...')
       console.log('⏳ APPROVING PROPOSAL...')
@@ -848,6 +838,16 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       if (existingSession) {
         await walletConnectClient.disconnect({ topic: existingSession.topic, reason: getSdkError('USER_DISCONNECTED') })
+      }
+
+      const publicKey = await getAddressAsymetricKey(signerAddress.hash, 'public')
+
+      const namespaces: SessionTypes.Namespaces = {
+        alephium: {
+          methods: requiredNamespace.methods,
+          events: requiredNamespace.events,
+          accounts: [`${formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)}:${publicKey}/default`]
+        }
       }
 
       const { topic, acknowledged } = await walletConnectClient.approve({ id, relayProtocol, namespaces })

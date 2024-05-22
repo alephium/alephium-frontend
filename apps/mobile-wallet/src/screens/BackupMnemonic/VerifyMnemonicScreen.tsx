@@ -42,6 +42,7 @@ import { dangerouslyExportWalletMnemonic, updateStoredWalletMetadata } from '~/p
 import { PossibleWordBox, SecretPhraseBox, Word } from '~/screens/new-wallet/ImportWalletSeedScreen'
 import { mnemonicBackedUp } from '~/store/wallet/walletSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { showExceptionToast } from '~/utils/layout'
 
 interface VerifyMnemonicScreenProps
   extends StackScreenProps<BackupMnemonicNavigationParamList, 'VerifyMnemonicScreen'>,
@@ -75,10 +76,17 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
 
   const confirmBackup = useCallback(async () => {
     if (!isMnemonicBackedUp) {
-      await updateStoredWalletMetadata({ isMnemonicBackedUp: true })
-      dispatch(mnemonicBackedUp())
+      try {
+        await updateStoredWalletMetadata({ isMnemonicBackedUp: true })
+        dispatch(mnemonicBackedUp())
 
-      sendAnalytics({ event: 'Backed-up mnemonic' })
+        sendAnalytics({ event: 'Backed-up mnemonic' })
+      } catch (error) {
+        const message = 'Could not confirm backup'
+
+        showExceptionToast(error, message)
+        sendAnalytics({ type: 'error', error, message })
+      }
     }
   }, [isMnemonicBackedUp, dispatch])
 

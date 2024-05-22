@@ -170,11 +170,15 @@ const AppUnlockHandler = () => {
   }
 
   const initializeAppWithStoredWallet = useCallback(async () => {
-    dispatch(walletUnlocked(await getStoredWallet()))
+    try {
+      dispatch(walletUnlocked(await getStoredWallet()))
 
-    if (!lastNavigationState) resetNavigation(navigation)
+      if (!lastNavigationState) resetNavigation(navigation)
 
-    setIsAuthModalVisible(false)
+      setIsAuthModalVisible(false)
+    } catch (e) {
+      console.error(e)
+    }
   }, [dispatch, lastNavigationState, navigation])
 
   const unlockApp = useCallback(async () => {

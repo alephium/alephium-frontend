@@ -49,22 +49,53 @@ export const deleteWithReportableError = async (key: string) => {
   }
 }
 
-export const storeSecurelyWithReportableError = async (key: string, value: string, errorMessage: string) => {
+export const getSecurelyWithReportableError = async (
+  key: string,
+  showDefaultErrorMessage: boolean,
+  errorMessage: string
+) => {
+  try {
+    return await SecureStore.getItemAsync(key, defaultSecureStoreConfig)
+  } catch (error) {
+    sendAnalytics({
+      type: 'error',
+      message: showDefaultErrorMessage ? `Could not get ${key} from secure storage` : errorMessage
+    })
+    throw error
+  }
+}
+
+export const storeSecurelyWithReportableError = async (
+  key: string,
+  value: string,
+  showDefaultErrorMessage: boolean,
+  errorMessage: string
+) => {
   try {
     await SecureStore.setItemAsync(key, value, defaultSecureStoreConfig)
   } catch (error) {
-    sendAnalytics({ type: 'error', message: errorMessage, isSensitive: true })
+    sendAnalytics({
+      type: 'error',
+      message: showDefaultErrorMessage ? `Could not store ${key} in secure storage` : errorMessage
+    })
     throw error
   } finally {
     value = ''
   }
 }
 
-export const deleteSecurelyWithReportableError = async (key: string, errorMessage: string) => {
+export const deleteSecurelyWithReportableError = async (
+  key: string,
+  showDefaultErrorMessage: boolean,
+  errorMessage: string
+) => {
   try {
     await SecureStore.deleteItemAsync(key, defaultSecureStoreConfig)
   } catch (error) {
-    sendAnalytics({ type: 'error', message: errorMessage })
+    sendAnalytics({
+      type: 'error',
+      message: showDefaultErrorMessage ? `Could not delete ${key} from secure storage` : errorMessage
+    })
     throw error
   }
 }

@@ -17,10 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { defaultNetworkSettings, NetworkNames } from '@alephium/shared'
-import * as SecureStore from 'expo-secure-store'
 import { Appearance } from 'react-native'
 
-import { defaultSecureStoreConfig } from '~/persistent-storage/config'
+import { getSecurelyWithReportableError, storeSecurelyWithReportableError } from '~/persistent-storage/utils'
 import { GeneralSettings, SettingsKey, SettingsPartial } from '~/types/settings'
 
 const STORAGE_KEY = 'wallet-settings'
@@ -48,7 +47,8 @@ const constructSettingsStorageKey = (key: SettingsKey) => `${STORAGE_KEY}-${key}
 
 export const loadSettings = async (key: SettingsKey): Promise<SettingsPartial> => {
   try {
-    const rawSettings = await SecureStore.getItemAsync(constructSettingsStorageKey(key), defaultSecureStoreConfig)
+    const settingsKey = constructSettingsStorageKey(key)
+    const rawSettings = await getSecurelyWithReportableError(settingsKey, true, '')
     if (!rawSettings) return defaultSettings[key]
 
     const loadedSettings = JSON.parse(rawSettings) as SettingsPartial
@@ -65,7 +65,8 @@ export const loadSettings = async (key: SettingsKey): Promise<SettingsPartial> =
 
 export const persistSettings = async (key: SettingsKey, settings: SettingsPartial) => {
   try {
-    await SecureStore.setItemAsync(constructSettingsStorageKey(key), JSON.stringify(settings), defaultSecureStoreConfig)
+    const settingsKey = constructSettingsStorageKey(key)
+    await storeSecurelyWithReportableError(settingsKey, JSON.stringify(settings), true, '')
   } catch (e) {
     console.error(e)
   }
