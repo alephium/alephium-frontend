@@ -34,7 +34,7 @@ import CenteredInstructions, { Instruction } from '~/components/text/CenteredIns
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds } from '~/store/addressesSlice'
-import { biometricsToggled } from '~/store/settingsSlice'
+import { allBiometricsEnabled } from '~/store/settings/settingsActions'
 import { resetNavigation } from '~/utils/navigation'
 
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}
@@ -53,7 +53,7 @@ const AddBiometricsScreen = ({ navigation, ...props }: AddBiometricsScreenProps)
   const skipAddressDiscovery = method === 'create' || addressIds.length > 1
 
   const activateBiometrics = () => {
-    dispatch(biometricsToggled())
+    dispatch(allBiometricsEnabled())
 
     sendAnalytics({ event: 'Activated biometrics from wallet creation flow' })
 

@@ -28,7 +28,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getStoredWallet, migrateDeprecatedMnemonic } from '~/persistent-storage/wallet'
-import { biometricsToggled } from '~/store/settingsSlice'
+import { allBiometricsEnabled } from '~/store/settings/settingsActions'
 import { walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
@@ -52,7 +52,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
         await migrateDeprecatedMnemonic(deprecatedMnemonic)
 
         if (deviceSupportsBiometrics && deviceHasEnrolledBiometrics && !biometricsRequiredForAppAccess) {
-          dispatch(biometricsToggled())
+          dispatch(allBiometricsEnabled())
         }
 
         const wallet = await getStoredWallet()

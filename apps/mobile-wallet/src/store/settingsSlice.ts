@@ -20,7 +20,7 @@ import { appReset, fiatCurrencyChanged } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import { defaultGeneralSettings, persistSettings } from '~/persistent-storage/settings'
-import { analyticsIdGenerated } from '~/store/settings/settingsActions'
+import { allBiometricsEnabled, analyticsIdGenerated } from '~/store/settings/settingsActions'
 import { RootState } from '~/store/store'
 import { walletDeleted } from '~/store/wallet/walletActions'
 import { GeneralSettings } from '~/types/settings'
@@ -76,6 +76,10 @@ const settingsSlice = createSlice({
       .addCase(analyticsIdGenerated, (state, { payload: analyticsId }) => {
         state.analyticsId = analyticsId
       })
+      .addCase(allBiometricsEnabled, (state) => {
+        state.requireAuth = true
+        state.usesBiometrics = true
+      })
   }
 })
 
@@ -103,6 +107,7 @@ settingsListenerMiddleware.startListening({
     analyticsToggled,
     walletConnectToggled,
     biometricsToggled,
+    allBiometricsEnabled,
     appReset
   ),
   effect: async (_, { getState }) => {
