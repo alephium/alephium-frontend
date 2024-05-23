@@ -131,9 +131,7 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {knownFungibleTokens.map((asset) => (
-          <TokenListRow asset={asset} isExpanded={isExpanded} key={asset.id} />
-        ))}
+        {knownFungibleTokens?.map((asset) => <TokenListRow asset={asset} isExpanded={isExpanded} key={asset.id} />)}
         {isPending && (
           <TableRow>
             <SkeletonLoader height="37.5px" />
