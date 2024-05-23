@@ -35,6 +35,7 @@ export const useCombinedQueries = (queries: ReturnType<typeof queryOptions>[]) =
 
 // This is used to avoid querying the same data multiple times if the order of the query keys is different
 // (but the content is the same)
+// TODO: Don't use crypto package for hashing
 export const hashArray = (arr: string[]) => {
   const sortedArr = [...arr].sort()
   const arrString = JSON.stringify(sortedArr)

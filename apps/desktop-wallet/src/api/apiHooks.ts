@@ -53,12 +53,12 @@ export const useAddressesAssets = (
   const currency = useAppSelector((state) => state.settings.fiatCurrency)
 
   const { data: addressesTokensBalancesWithoutAlph, isPending: areTokensBalancesPending } = useQueries({
-    queries: addressHashes.map((h) => addressesQueries.balances.getAddressTokensBalances(h)),
+    queries: addressHashes.map(addressesQueries.balances.getAddressTokensBalances),
     combine: combineQueriesResult
   })
 
   const { data: addressesAlphBalances, isPending: isAlphBalancePending } = useQueries({
-    queries: addressHashes.map((h) => addressesQueries.balances.getAddressAlphBalances(h)),
+    queries: addressHashes.map(addressesQueries.balances.getAddressAlphBalances),
     combine: combineQueriesResult
   })
 
@@ -202,9 +202,7 @@ export const useAddressesFlattenAssets = (addressHashes: AddressHash[] = []) => 
 export const useAddressesFlattenKnownFungibleTokens = (addressHashes: AddressHash[] = []) => {
   const { data: addressesAssets, isPending } = useAddressesAssets(addressHashes)
   return {
-    data: deduplicateAssets(
-      addressesAssets?.flatMap((a) => a.assets).filter((t) => tokenIsKnownFungible(t))
-    ) as Asset[],
+    data: deduplicateAssets(addressesAssets?.flatMap((a) => a.assets).filter(tokenIsKnownFungible)) as Asset[],
     isPending
   }
 }
@@ -234,7 +232,7 @@ export const useAddressesFlattenNfts = (addressHashes: AddressHash[] = []) => {
   const { data: addressesAssets, isPending } = useAddressesAssets(addressHashes)
 
   return {
-    data: addressesAssets?.flatMap((a) => a.assets).filter((t) => tokenIsNonFungible(t)) as NFT[],
+    data: addressesAssets?.flatMap((a) => a.assets).filter(tokenIsNonFungible) as NFT[],
     isPending
   }
 }
