@@ -169,7 +169,7 @@ export const syncAddressesAlphHistoricBalances = createAsyncThunk(
   > => {
     const now = dayjs()
     const thisMoment = now.valueOf()
-    const oneYearAgo = now.subtract(12, 'month').valueOf()
+    const oneYearAgo = now.subtract(365, 'days').valueOf()
 
     const addressesBalances = []
     const state = getState() as RootState
