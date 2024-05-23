@@ -20,8 +20,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
  * @jest-environment jsdom
  */
 
+import { bip39Words } from '@alephium/shared'
 import { hashMessage } from '@alephium/web3'
-import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 import { bytesToHex } from 'ethereum-cryptography/utils'
 
 import {
@@ -87,7 +87,7 @@ describe('keyring', function () {
     const indexes = Array.from(new Uint16Array(new Uint8Array(mnemonic).buffer))
 
     indexes.forEach((index) => {
-      expect(index).toBeGreaterThanOrEqual(0), expect(index).toBeLessThan(wordlist.length)
+      expect(index).toBeGreaterThanOrEqual(0), expect(index).toBeLessThan(bip39Words.length)
     })
   })
 
@@ -139,7 +139,7 @@ describe('keyring', function () {
     const indexes = Array.from(new Uint16Array(new Uint8Array(mnemonic).buffer))
 
     indexes.forEach((index) => {
-      expect(index).toBeGreaterThanOrEqual(0), expect(index).toBeLessThan(wordlist.length)
+      expect(index).toBeGreaterThanOrEqual(0), expect(index).toBeLessThan(bip39Words.length)
     })
   })
 
@@ -242,12 +242,14 @@ describe('keyring', function () {
     expect(keyring['addresses']).toHaveLength(2)
     expect(keyring['addresses'][0].index).toBe(0)
     expect(keyring['addresses'][0].hash).toBe('1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')
-    expect(bytesToHex(keyring['addresses'][0].privateKey)).toBe(
+    expect(keyring['addresses'][0].privateKey).not.toBeNull()
+    expect(keyring['addresses'][0].privateKey && bytesToHex(keyring['addresses'][0].privateKey)).toBe(
       'a642942e67258589cd2b1822c631506632db5a12aabcf413604e785300d762a5'
     )
     expect(keyring['addresses'][1].index).toBe(4)
     expect(keyring['addresses'][1].hash).toBe('1Bf9jthiwQo74V94LHT37dwEEiV22KkpKySf4TmRDzZqf')
-    expect(bytesToHex(keyring['addresses'][1].privateKey)).toBe(
+    expect(keyring['addresses'][1].privateKey).not.toBeNull()
+    expect(keyring['addresses'][1].privateKey && bytesToHex(keyring['addresses'][1].privateKey)).toBe(
       '053b33e3330b4e9b6636d3062e332f47bf700104a4e18cbeb16efd2ae7cbbae1'
     )
   })

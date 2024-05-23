@@ -41,6 +41,7 @@ import SplashScreen from '@/components/SplashScreen'
 import UpdateWalletBanner from '@/components/UpdateWalletBanner'
 import { useGlobalContext } from '@/contexts/global'
 import { WalletConnectContextProvider } from '@/contexts/walletconnect'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import UpdateWalletModal from '@/modals/UpdateWalletModal'
 import Router from '@/routes'
@@ -65,6 +66,7 @@ import { restorePendingTransactions } from '@/storage/transactions/transactionsS
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
 import { AlephiumWindow } from '@/types/window'
+import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 import { languageOptions } from '@/utils/settings'
 
@@ -84,6 +86,7 @@ const App = () => {
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const showDevIndication = useDevModeShortcut()
   const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
 
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
@@ -114,17 +117,16 @@ const App = () => {
 
       dispatch(localStorageGeneralSettingsMigrated(generalSettings))
       dispatch(localStorageNetworkSettingsMigrated(networkSettings))
-    } catch (e) {
-      console.error(e)
-      posthog.capture('Error', { message: 'Local storage data migration failed' })
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Local storage data migration failed' })
       dispatch(localStorageDataMigrationFailed())
     }
-  }, [dispatch, posthog])
+  }, [dispatch, sendAnalytics])
 
   useEffect(() => {
     if (posthog.__loaded)
       posthog.people.set({
-        desktop_wallet_version: import.meta.env.VITE_VERSION,
+        desktop_wallet_version: currentVersion,
         wallets: wallets.length,
         theme: settings.theme,
         devTools: settings.devTools,
@@ -179,15 +181,23 @@ const App = () => {
         if (!isSyncingAddressData && addressHashes.length > 0 && activeWalletId) {
           const storedPendingTxs = pendingTransactionsStorage.load(activeWalletId)
 
-          dispatch(syncAddressesData())
-            .unwrap()
-            .then((results) => {
-              const mempoolTxHashes = results.flatMap((result) => result.mempoolTransactions.map((tx) => tx.hash))
+          try {
+            dispatch(syncAddressesData())
+              .unwrap()
+              .then((results) => {
+                const mempoolTxHashes = results.flatMap((result) => result.mempoolTransactions.map((tx) => tx.hash))
 
-              restorePendingTransactions(activeWalletId, mempoolTxHashes, storedPendingTxs)
-            })
+                restorePendingTransactions(activeWalletId, mempoolTxHashes, storedPendingTxs)
+              })
+          } catch {
+            sendAnalytics({ type: 'error', message: 'Could not sync address data automatically' })
+          }
 
-          dispatch(syncAddressesAlphHistoricBalances())
+          try {
+            dispatch(syncAddressesAlphHistoricBalances())
+          } catch {
+            sendAnalytics({ type: 'error', message: 'Could not sync alph historic balances automatically' })
+          }
         }
       } else if (addressesStatus === 'initialized') {
         if (
@@ -208,7 +218,8 @@ const App = () => {
     isSyncingAddressData,
     networkStatus,
     newUnknownTokens,
-    activeWalletId
+    activeWalletId,
+    sendAnalytics
   ])
 
   // Fetch verified tokens from GitHub token-list and sync current and historical prices for each verified fungible
@@ -262,8 +273,12 @@ const App = () => {
   )
 
   const refreshAddressesData = useCallback(() => {
-    dispatch(syncAddressesData(addressesWithPendingTxs))
-  }, [dispatch, addressesWithPendingTxs])
+    try {
+      dispatch(syncAddressesData(addressesWithPendingTxs))
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Could not sync address data when refreshing automatically' })
+    }
+  }, [dispatch, addressesWithPendingTxs, sendAnalytics])
 
   useInterval(refreshAddressesData, 5000, addressesWithPendingTxs.length === 0 || isSyncingAddressData)
 

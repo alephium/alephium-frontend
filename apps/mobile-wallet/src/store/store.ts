@@ -24,7 +24,6 @@ import contactsSlice from '~/store/addresses/contactsSlice'
 import addressesSlice from '~/store/addressesSlice'
 import appSlice from '~/store/appSlice'
 import confirmedTransactionsSlice from '~/store/confirmedTransactionsSlice'
-import credentialsSlice from '~/store/credentialsSlice'
 import loadersSlice from '~/store/loadersSlice'
 import pendingTransactionsSlice from '~/store/pendingTransactionsSlice'
 import settingsSlice, { settingsListenerMiddleware } from '~/store/settingsSlice'
@@ -36,7 +35,6 @@ export const store = configureStore({
     ...sharedReducer,
     walletGeneration: walletGenerationSlice.reducer,
     settings: settingsSlice.reducer,
-    credentials: credentialsSlice.reducer,
     [walletSlice.name]: walletSlice.reducer,
     addresses: addressesSlice.reducer,
     app: appSlice.reducer,

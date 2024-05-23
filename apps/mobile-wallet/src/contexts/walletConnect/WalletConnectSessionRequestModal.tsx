@@ -47,6 +47,7 @@ import { ModalContent, ModalContentProps } from '~/components/layout/ModalConten
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Row from '~/components/Row'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { transactionSent } from '~/store/transactions/transactionsActions'
 import { SessionRequestData } from '~/types/walletConnect'
@@ -205,9 +206,13 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
     try {
       if (requestData.type === 'sign-message') {
         const messageHash = hashMessage(requestData.wcData.message, requestData.wcData.messageHasher)
-        signResult = { signature: sign(messageHash, signAddress.privateKey) }
+        signResult = { signature: sign(messageHash, await getAddressAsymetricKey(signAddress.hash, 'private')) }
       } else {
-        const signature = transactionSign(requestData.unsignedTxData.unsignedTx.txId, signAddress.privateKey)
+        const signature = transactionSign(
+          requestData.unsignedTxData.unsignedTx.txId,
+          await getAddressAsymetricKey(signAddress.hash, 'private')
+        )
+
         signResult = {
           ...requestData.unsignedTxData,
           signature,

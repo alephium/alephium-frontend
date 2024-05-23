@@ -16,136 +16,68 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressMetadata, getHumanReadableError } from '@alephium/shared'
 import {
-  deriveAddressAndKeys,
-  walletEncryptAsyncUnsafe,
-  walletGenerateAsyncUnsafe,
-  walletImportAsyncUnsafe
-} from '@alephium/shared-crypto'
+  dangerouslyConvertUint8ArrayMnemonicToString,
+  keyring,
+  mnemonicJsonStringifiedObjectToUint8Array
+} from '@alephium/keyring'
+import { AddressHash, getHumanReadableError, resetArray } from '@alephium/shared'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
-import { Platform } from 'react-native'
 
 import { sendAnalytics } from '~/analytics'
 import { defaultBiometricsConfig, defaultSecureStoreConfig } from '~/persistent-storage/config'
-import { loadBiometricsSettings, storeBiometricsSettings } from '~/persistent-storage/settings'
-import { AddressPartial } from '~/types/addresses'
-import { GeneratedWallet, Mnemonic, WalletMetadata, WalletState } from '~/types/wallet'
+import { loadBiometricsSettings } from '~/persistent-storage/settings'
+import {
+  deleteSecurelyWithReportableError,
+  storeSecurelyWithReportableError,
+  storeWithReportableError
+} from '~/persistent-storage/utils'
+import { AddressMetadataWithHash } from '~/types/addresses'
+import {
+  DeprecatedWalletMetadata,
+  DeprecatedWalletState,
+  GeneratedWallet,
+  WalletMetadata,
+  WalletStoredState
+} from '~/types/wallet'
 import { getRandomLabelColor } from '~/utils/colors'
-import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
 
 const PIN_WALLET_STORAGE_KEY = 'wallet-pin'
 const BIOMETRICS_WALLET_STORAGE_KEY = 'wallet-biometrics'
 const WALLET_METADATA_STORAGE_KEY = 'wallet-metadata'
 const IS_NEW_WALLET = 'is-new-wallet'
-const BIOMETRICS_SETTINGS_CHANGED = 'biometrics-settings-changed'
+const MNEMONIC_V2 = 'wallet-mnemonic-v2'
+const ADDRESS_PUB_KEY_PREFIX = 'address-pub-key-'
+const ADDRESS_PRIV_KEY_PREFIX = 'address-priv-key-'
 
 export const generateAndStoreWallet = async (
-  name: WalletState['name'],
-  pin: string,
-  mnemonicToImport?: WalletState['mnemonic']
+  name: WalletStoredState['name'],
+  mnemonicToImport?: string
 ): Promise<GeneratedWallet> => {
   const isMnemonicBackedUp = !!mnemonicToImport
 
-  const generatedWallet = mnemonicToImport
-    ? await walletImportAsyncUnsafe(mnemonicToSeed, mnemonicToImport)
-    : await walletGenerateAsyncUnsafe(mnemonicToSeed)
+  const mnemonicUint8Array = mnemonicToImport
+    ? keyring.importMnemonicString(mnemonicToImport)
+    : keyring.generateRandomMnemonic()
+  await storeWalletMnemonic(mnemonicUint8Array)
 
-  const id = await persistWallet(name, generatedWallet.mnemonic, pin, isMnemonicBackedUp)
+  const firstAddressHash = await generateAndStoreAddressKeypairForIndex(0)
+  const walletMetadata = generateWalletMetadata(name, firstAddressHash, isMnemonicBackedUp)
+  await storeWalletMetadata(walletMetadata)
+
+  keyring.clearAll()
 
   return {
-    id,
+    id: walletMetadata.id,
     name,
-    mnemonic: generatedWallet.mnemonic,
     isMnemonicBackedUp,
     firstAddress: {
       index: 0,
-      hash: generatedWallet.address,
-      publicKey: generatedWallet.publicKey,
-      privateKey: generatedWallet.privateKey
+      hash: firstAddressHash
     }
   }
-}
-
-const persistWallet = async (
-  walletName: string,
-  mnemonic: Mnemonic,
-  pin: string,
-  isMnemonicBackedUp: boolean
-): Promise<string> => {
-  const encryptedWithPinMnemonic = await walletEncryptAsyncUnsafe(pin, mnemonic, pbkdf2)
-
-  console.log('💽 Storing pin-encrypted mnemonic')
-  await SecureStore.setItemAsync(PIN_WALLET_STORAGE_KEY, encryptedWithPinMnemonic, defaultSecureStoreConfig)
-
-  console.log('💽 Storing wallet initial metadata')
-  const walletMetadata = generateWalletMetadata(walletName, isMnemonicBackedUp)
-  await storeWalletMetadata(walletMetadata)
-
-  return walletMetadata.id
-}
-
-const storeWalletMetadata = async (metadata: WalletMetadata) => {
-  try {
-    await AsyncStorage.setItem(WALLET_METADATA_STORAGE_KEY, JSON.stringify(metadata))
-  } catch (e) {
-    sendAnalytics('Error', { message: 'Could not store wallet metadata to storage' })
-    console.error(e)
-  }
-}
-
-export const persistWalletMetadata = async (partialMetadata: Partial<WalletMetadata>) => {
-  const walletMetadata = await getWalletMetadata()
-
-  if (!walletMetadata) throw new Error('Could not persist wallet metadata, no entry found in storage')
-
-  const updatedWalletMetadata = { ...walletMetadata, ...partialMetadata }
-
-  await storeWalletMetadata(updatedWalletMetadata)
-}
-
-const generateWalletMetadata = (name: string, isMnemonicBackedUp = false) => ({
-  id: nanoid(),
-  name,
-  isMnemonicBackedUp,
-  addresses: [
-    {
-      index: 0,
-      isDefault: true,
-      color: getRandomLabelColor()
-    }
-  ],
-  contacts: []
-})
-
-export const enableBiometrics = async (mnemonic: Mnemonic, authenticationPrompt = 'Enable biometrics') => {
-  const options = { ...defaultBiometricsConfig, authenticationPrompt }
-
-  console.log('💽 Storing biometrics wallet')
-
-  await SecureStore.setItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, mnemonic, options)
-
-  if (Platform.OS === 'ios') {
-    // Ensure we can actually get the secured mnemonic and force to show prompt
-    await SecureStore.getItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, options)
-  }
-
-  try {
-    const biometricsChangedFlag = await AsyncStorage.getItem(BIOMETRICS_SETTINGS_CHANGED)
-    if (biometricsChangedFlag) await AsyncStorage.removeItem(BIOMETRICS_SETTINGS_CHANGED)
-  } catch (e) {
-    sendAnalytics('Error', {
-      message: `Could not read and delete ${BIOMETRICS_SETTINGS_CHANGED} flag from storage`,
-      exception: getHumanReadableError(e, '')
-    })
-    console.error(e)
-  }
-}
-
-export const disableBiometrics = async () => {
-  await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
 }
 
 export const getWalletMetadata = async (): Promise<WalletMetadata | null> => {
@@ -154,19 +86,35 @@ export const getWalletMetadata = async (): Promise<WalletMetadata | null> => {
 
     return rawWalletMetadata ? JSON.parse(rawWalletMetadata) : null
   } catch (e) {
-    sendAnalytics('Error', { message: 'Could not get wallet metadata from storage' })
-    console.error(e)
-
-    return null
+    const message = 'Could not get wallet metadata from storage'
+    sendAnalytics('Error', { message })
+    throw new Error(message)
   }
 }
 
-export interface GetStoredWalletProps {
+export const getStoredWallet = async (error?: string): Promise<WalletMetadata> => {
+  const walletMetadata = await getWalletMetadata()
+
+  if (!walletMetadata) throw new Error(error || 'Could not get stored wallet: metadata not found')
+
+  return walletMetadata
+}
+
+export const updateStoredWalletMetadata = async (partialMetadata: Partial<WalletMetadata>) => {
+  const walletMetadata = await getStoredWallet('Could not persist wallet metadata, no entry found in storage')
+  const updatedWalletMetadata = { ...walletMetadata, ...partialMetadata }
+
+  await storeWalletMetadata(updatedWalletMetadata)
+}
+
+export interface GetDeprecatedStoredWalletProps {
   forcePinUsage?: boolean
   authenticationPrompt?: SecureStore.SecureStoreOptions['authenticationPrompt']
 }
 
-export const getStoredWallet = async (props?: GetStoredWalletProps): Promise<WalletState | null> => {
+export const getDeprecatedStoredWallet = async (
+  props?: GetDeprecatedStoredWalletProps
+): Promise<DeprecatedWalletState | null> => {
   const metadata = await getWalletMetadata()
 
   if (!metadata) {
@@ -192,23 +140,6 @@ export const getStoredWallet = async (props?: GetStoredWalletProps): Promise<Wal
 
   if (!mnemonic) {
     mnemonic = await SecureStore.getItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
-
-    // This is the case where biometrics were enabled, but something changed in the security settings of the device (new
-    // fingerprint or face ID was added)
-    if (!props?.forcePinUsage && usesBiometrics) {
-      await disableBiometrics()
-      await storeBiometricsSettings(false)
-
-      try {
-        await AsyncStorage.setItem(BIOMETRICS_SETTINGS_CHANGED, 'true')
-      } catch (e) {
-        sendAnalytics('Error', {
-          message: `Could not set ${BIOMETRICS_SETTINGS_CHANGED} flag to storage`,
-          exception: getHumanReadableError(e, '')
-        })
-        console.error(e)
-      }
-    }
   }
 
   return mnemonic
@@ -217,49 +148,31 @@ export const getStoredWallet = async (props?: GetStoredWalletProps): Promise<Wal
         name,
         mnemonic,
         isMnemonicBackedUp
-      } as WalletState)
+      } as DeprecatedWalletState)
     : null
 }
 
-export const didBiometricsSettingsChange = async (): Promise<boolean> => {
-  try {
-    return (await AsyncStorage.getItem(BIOMETRICS_SETTINGS_CHANGED)) === 'true'
-  } catch (e) {
-    sendAnalytics('Error', {
-      message: `Could not read ${BIOMETRICS_SETTINGS_CHANGED} flag from storage`,
-      exception: getHumanReadableError(e, '')
-    })
-    console.error(e)
-  }
-
-  return false
-}
-
 export const deleteWallet = async () => {
-  console.log('🗑️ Deleting pin-encrypted & biometrics wallet')
+  await deleteSecurelyWithReportableError(MNEMONIC_V2, 'Could not delete wallet from secure storage')
 
-  try {
-    await SecureStore.deleteItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
-    await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
-  } catch (e) {
-    sendAnalytics('Error', { message: 'Could not delete wallet from secure storage' })
-    console.error(e)
+  const wallet = await getStoredWallet()
+
+  for (const address of wallet.addresses) {
+    await deleteAddressPublicKey(address.hash)
+    await deleteAddressPrivateKey(address.hash)
   }
 
   try {
     await AsyncStorage.removeItem(WALLET_METADATA_STORAGE_KEY)
   } catch (e) {
-    sendAnalytics('Error', { message: 'Could not delete wallet metadata from storage' })
-    console.error(e)
+    const message = 'Could not delete wallet metadata from storage'
+    sendAnalytics('Error', { message })
+    throw new Error(message)
   }
-  await storeBiometricsSettings(false)
 }
 
-export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadata[]) => {
-  const walletMetadata = await getWalletMetadata()
-
-  if (!walletMetadata)
-    throw new Error('Could not persist addresses metadata, no wallet metadata entry found in storage')
+export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadataWithHash[]) => {
+  const walletMetadata = await getStoredWallet('Could not persist addresses metadata, wallet metadata not found')
 
   for (const metadata of addressesMetadata) {
     const addressIndex = walletMetadata.addresses.findIndex((data) => data.index === metadata.index)
@@ -274,16 +187,6 @@ export const persistAddressesMetadata = async (walletId: string, addressesMetada
   }
 
   await storeWalletMetadata(walletMetadata)
-}
-
-export const deriveWalletStoredAddresses = async (wallet: WalletState): Promise<AddressPartial[]> => {
-  const { masterKey } = await walletImportAsyncUnsafe(mnemonicToSeed, wallet.mnemonic)
-  const metadata = await getWalletMetadata()
-  const addresses = metadata?.addresses ?? []
-
-  console.log(`👀 Found ${addresses.length} addresses metadata in persistent storage`)
-
-  return addresses.map(({ index, ...settings }) => ({ ...deriveAddressAndKeys(masterKey, index), settings }))
 }
 
 export const getIsNewWallet = async (): Promise<boolean | undefined> => {
@@ -308,4 +211,157 @@ export const storeIsNewWallet = async (isNew: boolean) => {
     })
     console.error(e)
   }
+}
+
+export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
+  // Step 1: Store mnemonic as Uint8Array in secure store without authentication required (as per Uniswap)
+  const mnemonicUint8Array = keyring.importMnemonicString(deprecatedMnemonic)
+
+  try {
+    await storeWalletMnemonic(mnemonicUint8Array)
+
+    // Step 2: Delete old mnemonic records
+    await SecureStore.deleteItemAsync(PIN_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
+    await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultSecureStoreConfig)
+
+    // Step 3: Add hash in address metadata for faster app unlock and store public and private key in secure store
+    const { addresses } = await getStoredWallet('Could not migrate address metadata, wallet metadata not found')
+    const updatedAddressesMetadata: AddressMetadataWithHash[] = []
+
+    for (const address of addresses) {
+      const { hash, publicKey } = keyring.generateAndCacheAddress({ addressIndex: address.index })
+      let privateKey = keyring.exportPrivateKeyOfAddress(hash)
+
+      await storeAddressPublicKey(hash, publicKey)
+      await storeAddressPrivateKey(hash, privateKey)
+
+      privateKey = ''
+
+      updatedAddressesMetadata.push({
+        ...address,
+        hash
+      })
+    }
+
+    await updateStoredWalletMetadata({ addresses: updatedAddressesMetadata })
+  } catch (e) {
+    throw new Error(getHumanReadableError(e, ''))
+  } finally {
+    keyring.clearAll()
+  }
+}
+
+export const dangerouslyExportWalletMnemonic = async (): Promise<string> => {
+  const decryptedMnemonic = await SecureStore.getItemAsync(MNEMONIC_V2, defaultSecureStoreConfig)
+
+  if (!decryptedMnemonic) throw new Error('Could not export mnemonic: could not find stored wallet')
+
+  const parsedDecryptedMnemonic = mnemonicJsonStringifiedObjectToUint8Array(JSON.parse(decryptedMnemonic))
+
+  return dangerouslyConvertUint8ArrayMnemonicToString(parsedDecryptedMnemonic)
+}
+
+export const getAddressAsymetricKey = async (addressHash: AddressHash, keyType: 'public' | 'private') => {
+  const storageKey = (keyType === 'public' ? ADDRESS_PUB_KEY_PREFIX : ADDRESS_PRIV_KEY_PREFIX) + addressHash
+  let key = await SecureStore.getItemAsync(storageKey, defaultSecureStoreConfig)
+
+  if (!key) {
+    const { addresses } = await getStoredWallet(`Could not get address ${keyType} key, wallet metadata not found`)
+    const address = addresses.find((address) => address.hash === addressHash)
+
+    if (!address) throw new Error(`Could not get address ${keyType} key, address metadata not found`)
+
+    await generateAndStoreAddressKeypairForIndex(address.index)
+    key = await SecureStore.getItemAsync(storageKey, defaultSecureStoreConfig)
+
+    if (!key) throw new Error(`Could not generate address ${keyType} key`)
+  }
+
+  return key
+}
+
+const generateWalletMetadata = (name: string, firstAddressHash: string, isMnemonicBackedUp = false) => ({
+  id: nanoid(),
+  name,
+  isMnemonicBackedUp,
+  addresses: [
+    {
+      index: 0,
+      hash: firstAddressHash,
+      isDefault: true,
+      color: getRandomLabelColor()
+    }
+  ],
+  contacts: []
+})
+
+export const storeWalletMetadata = async (metadata: WalletMetadata) =>
+  storeWithReportableError(
+    WALLET_METADATA_STORAGE_KEY,
+    JSON.stringify(metadata),
+    'Could not store wallet metadata to storage'
+  )
+
+export const storeWalletMetadataDeprecated = async (metadata: DeprecatedWalletMetadata) =>
+  storeWithReportableError(
+    WALLET_METADATA_STORAGE_KEY,
+    JSON.stringify(metadata),
+    'Could not store wallet metadata to storage'
+  )
+
+const storeWalletMnemonic = async (mnemonic: Uint8Array) =>
+  storeSecurelyWithReportableError(MNEMONIC_V2, JSON.stringify(mnemonic), 'Could not store wallet mnemonic')
+
+const storeAddressPublicKey = async (addressHash: AddressHash, publicKey: string) =>
+  storeSecurelyWithReportableError(
+    ADDRESS_PUB_KEY_PREFIX + addressHash,
+    publicKey,
+    'Could not store address public key'
+  )
+
+const storeAddressPrivateKey = async (addressHash: AddressHash, privateKey: string) => {
+  storeSecurelyWithReportableError(
+    ADDRESS_PRIV_KEY_PREFIX + addressHash,
+    privateKey,
+    'Could not store address private key'
+  )
+
+  privateKey = ''
+}
+
+const deleteAddressPublicKey = async (addressHash: AddressHash) =>
+  deleteSecurelyWithReportableError(ADDRESS_PUB_KEY_PREFIX + addressHash, 'Could not delete address public key')
+
+const deleteAddressPrivateKey = async (addressHash: AddressHash) =>
+  deleteSecurelyWithReportableError(ADDRESS_PRIV_KEY_PREFIX + addressHash, 'Could not delete address private key')
+
+const generateAndStoreAddressKeypairForIndex = async (addressIndex: number): Promise<AddressHash> => {
+  if (!keyring.isInitialized()) await initializeKeyringWithStoredWallet()
+
+  try {
+    const { hash, publicKey } = keyring.generateAndCacheAddress({ addressIndex })
+    let privateKey = keyring.exportPrivateKeyOfAddress(hash)
+
+    await storeAddressPublicKey(hash, publicKey)
+    await storeAddressPrivateKey(hash, privateKey)
+
+    privateKey = ''
+
+    return hash
+  } catch (e) {
+    throw new Error(getHumanReadableError(e, ''))
+  } finally {
+    keyring.clearAll()
+  }
+}
+
+export const initializeKeyringWithStoredWallet = async () => {
+  let decryptedMnemonic = await SecureStore.getItemAsync(MNEMONIC_V2, defaultSecureStoreConfig)
+  if (!decryptedMnemonic) throw new Error('Could not initialize keyring: could not find stored wallet')
+
+  const parsedDecryptedMnemonic = mnemonicJsonStringifiedObjectToUint8Array(JSON.parse(decryptedMnemonic))
+  keyring.initFromDecryptedMnemonic(parsedDecryptedMnemonic, '')
+
+  decryptedMnemonic = ''
+  resetArray(parsedDecryptedMnemonic)
 }

@@ -184,6 +184,7 @@ const addressesSlice = createSlice({
         state.balancesStatus = 'initialized'
       })
       .addCase(syncAddressesData.rejected, (state) => {
+        state.status = 'initialized'
         state.syncingAddressData = false
         state.loadingBalances = false
         state.loadingTransactions = false

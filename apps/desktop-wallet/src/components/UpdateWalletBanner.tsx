@@ -22,6 +22,8 @@ import styled from 'styled-components'
 import Banner from '@/components/Banner'
 import Button from '@/components/Button'
 import { useGlobalContext } from '@/contexts/global'
+import useAnalytics from '@/features/analytics/useAnalytics'
+import { currentVersion } from '@/utils/app-data'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -32,6 +34,23 @@ interface UpdateWalletBannerProps {
 const UpdateWalletBanner = ({ className }: UpdateWalletBannerProps) => {
   const { t } = useTranslation()
   const { triggerNewVersionDownload, newVersion, requiresManualDownload } = useGlobalContext()
+  const { sendAnalytics } = useAnalytics()
+
+  const handleDownloadClick = () => {
+    openInWebBrowser(links.latestRelease)
+    sendAnalytics({
+      event: 'Update banner: Clicked "Download"',
+      props: { fromVersion: currentVersion, toVersion: newVersion }
+    })
+  }
+
+  const handleUpdateClick = () => {
+    triggerNewVersionDownload()
+    sendAnalytics({
+      event: 'Update banner: Clicked "Update"',
+      props: { fromVersion: currentVersion, toVersion: newVersion }
+    })
+  }
 
   return (
     <Banner className={className} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -45,7 +64,7 @@ const UpdateWalletBanner = ({ className }: UpdateWalletBannerProps) => {
               }
             )}
           </UpdateMessage>
-          <ButtonStyled short onClick={() => openInWebBrowser(links.latestRelease)}>
+          <ButtonStyled short onClick={handleDownloadClick}>
             {t('Download')}
           </ButtonStyled>
         </>
@@ -56,7 +75,7 @@ const UpdateWalletBanner = ({ className }: UpdateWalletBannerProps) => {
               newVersion
             })}
           </UpdateMessage>
-          <ButtonStyled short onClick={triggerNewVersionDownload}>
+          <ButtonStyled short onClick={handleUpdateClick}>
             {t('Update')}
           </ButtonStyled>
         </>

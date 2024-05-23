@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NetworkName, NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
 import { upperFirst } from 'lodash'
 import { ArrowRight } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -27,6 +26,7 @@ import styled, { useTheme } from 'styled-components'
 import Button from '@/components/Button'
 import DotIcon from '@/components/DotIcon'
 import Select from '@/components/Inputs/Select'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import SettingsModal from '@/modals/SettingsModal'
@@ -43,7 +43,7 @@ const NetworkSwitch = () => {
   const dispatch = useAppDispatch()
   const network = useAppSelector((state) => state.network)
   const isDevToolsEnabled = useAppSelector((s) => s.settings.devTools)
-  const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
 
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
 
@@ -69,18 +69,17 @@ const NetworkSwitch = () => {
         }
 
         const newNetworkSettings = networkSettingsPresets[networkName]
-
         const networkId = newNetworkSettings.networkId
 
         if (networkId !== undefined) {
           dispatch(networkPresetSwitched(networkName))
 
-          posthog.capture('Changed network from app header', { network_name: networkName })
+          sendAnalytics({ event: 'Changed network from app header', props: { network_name: networkName } })
           return
         }
       }
     },
-    [dispatch, network.name, posthog]
+    [dispatch, network.name, sendAnalytics]
   )
 
   return (

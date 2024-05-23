@@ -1,0 +1,44 @@
+[
+  {
+    "property": "message",
+    "type": "string",
+    "operator": "not_contains",
+    "value": "No metadata for network ID"
+  },
+  {
+    "property": "message",
+    "type": "string",
+    "operator": "not_contains",
+    "value": "No internet connection"
+  },
+  {
+    "property": "message",
+    "type": "string",
+    "operator": "not_contains",
+    "value": "WebSocket connection failed"
+  },
+  {
+    "property": "message",
+    "type": "string",
+    "operator": "not_contains",
+    "value": "Socket stalled"
+  },
+  {
+    "property": "message",
+    "type": "string",
+    "operator": "is_not",
+    "value": "Could not parse WalletConnect session request"
+  },
+  {
+    "property": "origin",
+    "type": "string",
+    "operator": "is_not",
+    "value": "Auto lock"
+  },
+  {
+    "property": "message",
+    "type": "string",
+    "operator": "is_not",
+    "value": "Synching address data"
+  }
+]

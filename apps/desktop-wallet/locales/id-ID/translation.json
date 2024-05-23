@@ -127,7 +127,7 @@
   "Enable developer tools": "Aktifkan alat pengembang",
   "Encountered error while calling the faucet.": "Menemukan kesalahan saat memanggil faucet.",
   "Encountered error while exporting your transactions.": "Mengalami kesalahan saat mengekspor transaksi Anda.",
-  "Encountered error while synching your addresses' data.": "Mengalami kesalahan saat menyinkronkan data alamat Anda.",
+  "Encountered error while syncing your addresses' data.": "Mengalami kesalahan saat menyinkronkan data alamat Anda.",
   "Enter": "Masuk",
   "Enter password": "Ketikan kata sandi",
   "Enter password for \"{{ switchToWalletName }}\"": "Masukkan kata sandi untuk \"{{ switchToWalletName }}\"",

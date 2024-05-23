@@ -23,10 +23,10 @@ import { Portal } from 'react-native-portalize'
 
 import { sendAnalytics } from '~/analytics'
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
-import AuthenticationModal from '~/components/AuthenticationModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import BottomModal from '~/components/layout/BottomModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { transactionSent } from '~/store/transactions/transactionsActions'
 import { showExceptionToast } from '~/utils/layout'
@@ -72,7 +72,7 @@ const initialValues: SendContextValue = {
 const SendContext = createContext(initialValues)
 
 export const SendContextProvider = ({ children }: { children: ReactNode }) => {
-  const requiresAuth = useAppSelector((s) => s.settings.requireAuth)
+  const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const dispatch = useAppDispatch()
 
   const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(initialValues.toAddress)
@@ -82,7 +82,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
   const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isConsolidateModalVisible, setIsConsolidateModalVisible] = useState(false)
-  const [isAuthenticationModalVisible, setIsAuthenticationModalVisible] = useState(false)
   const [onSendSuccessCallback, setOnSendSuccessCallback] = useState<() => void>(() => () => null)
 
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
@@ -110,8 +109,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       setUnsignedTxData(data)
     } catch (e) {
       showExceptionToast(e, 'Could not build transaction')
-
-      sendAnalytics('Error', { message: 'Could not build consolidation transactions' })
     }
   }, [address])
 
@@ -134,8 +131,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
           await buildConsolidationTransactions()
         } else {
           showExceptionToast(e, 'Could not build transaction')
-
-          sendAnalytics('Error', { message: 'Could not build transaction' })
         }
       }
     },
@@ -180,14 +175,12 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
   const authenticateAndSend = useCallback(
     async (onSendSuccess: () => void) => {
-      if (requiresAuth) {
-        setOnSendSuccessCallback(() => onSendSuccess)
-        setIsAuthenticationModalVisible(true)
-      } else {
-        sendTransaction(onSendSuccess)
-      }
+      await triggerBiometricsAuthGuard({
+        settingsToCheck: 'transactions',
+        successCallback: () => sendTransaction(onSendSuccess)
+      })
     },
-    [requiresAuth, sendTransaction]
+    [sendTransaction, triggerBiometricsAuthGuard]
   )
 
   return (
@@ -221,13 +214,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
           onClose={() => setIsConsolidateModalVisible(false)}
         />
       </Portal>
-      <AuthenticationModal
-        authenticationPrompt="Verify it's you"
-        loadingText="Verifying..."
-        visible={isAuthenticationModalVisible}
-        onConfirm={() => sendTransaction(onSendSuccessCallback)}
-        onClose={() => setIsAuthenticationModalVisible(false)}
-      />
     </SendContext.Provider>
   )
 }

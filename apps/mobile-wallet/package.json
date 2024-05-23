@@ -16,6 +16,7 @@
     "postinstall": "turbo build:deps"
   },
   "dependencies": {
+    "@alephium/keyring": "workspace:*",
     "@alephium/shared": "workspace:*",
     "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",
@@ -99,6 +100,7 @@
     "react-redux": "^8.0.5",
     "styled-components": "^6.1.8",
     "stylis": "^4.0.0",
+    "text-encoding": "^0.7.0",
     "victory-native": "^36.6.10"
   },
   "devDependencies": {
@@ -127,7 +129,10 @@
   "jest": {
     "preset": "jest-expo",
     "transformIgnorePatterns": [
-      "node_modules/(?!(?:.pnpm/)?((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg))"
+      "node_modules/(?!(?:.pnpm/)?((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|nanoid))"
+    ],
+    "setupFiles": [
+      "./jestSetupFile.ts"
     ]
   }
 }

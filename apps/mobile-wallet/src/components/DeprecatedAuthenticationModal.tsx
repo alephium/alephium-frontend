@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { walletOpenAsyncUnsafe } from '@alephium/shared-crypto'
+import { DeprecatedEncryptedMnemonicStoredAsString } from '@alephium/keyring'
+import { decryptAsync } from '@alephium/shared-crypto'
 import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -29,13 +30,13 @@ import ModalWithBackdrop, { ModalWithBackdropProps } from '~/components/ModalWit
 import { Spinner } from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
-import { getStoredWallet, GetStoredWalletProps } from '~/persistent-storage/wallet'
+import { getDeprecatedStoredWallet, GetDeprecatedStoredWalletProps } from '~/persistent-storage/wallet'
 import { ShouldClearPin } from '~/types/misc'
-import { WalletState } from '~/types/wallet'
-import { mnemonicToSeed, pbkdf2 } from '~/utils/crypto'
+import { DeprecatedWalletState } from '~/types/wallet'
+import { pbkdf2 } from '~/utils/crypto'
 
-interface AuthenticationModalProps extends ModalWithBackdropProps, GetStoredWalletProps {
-  onConfirm: (pin?: string, wallet?: WalletState) => void
+interface DeprecatedAuthenticationModalProps extends ModalWithBackdropProps, GetDeprecatedStoredWalletProps {
+  onConfirm: (deprecatedMnemonic?: string) => void
   onClose?: () => void
   loadingText?: string
 }
@@ -49,25 +50,25 @@ const errorInstructionSet: Instruction[] = [
   { text: 'Please try again 💪', type: 'secondary' }
 ]
 
-const AuthenticationModal = ({
+const DeprecatedAuthenticationModal = ({
   onConfirm,
   onClose,
   forcePinUsage = false,
   authenticationPrompt,
   loadingText,
   ...props
-}: AuthenticationModalProps) => {
+}: DeprecatedAuthenticationModalProps) => {
   const insets = useSafeAreaInsets()
 
   const [shownInstructions, setShownInstructions] = useState(firstInstructionSet)
-  const [encryptedWallet, setEncryptedWallet] = useState<WalletState>()
+  const [deprecatedEncryptedWallet, setDeprecatedEncryptedWallet] = useState<DeprecatedWalletState>()
 
   const getWallet = useCallback(async () => {
     try {
-      const storedWallet = await getStoredWallet({ forcePinUsage, authenticationPrompt })
+      const deprecatedStoredWallet = await getDeprecatedStoredWallet({ forcePinUsage, authenticationPrompt })
 
       // This should never happen, but if it does, inform the user instead of being stuck
-      if (!storedWallet) {
+      if (!deprecatedStoredWallet) {
         Alert.alert('Missing wallet', 'Could not find wallet to authenticate. Please, restart the app')
         return
       }
@@ -78,7 +79,7 @@ const AuthenticationModal = ({
         onConfirm()
         onClose && onClose()
       } else {
-        setEncryptedWallet(storedWallet)
+        setDeprecatedEncryptedWallet(deprecatedStoredWallet)
       }
     } catch (e: unknown) {
       const error = e as { message?: string }
@@ -91,12 +92,14 @@ const AuthenticationModal = ({
     }
   }, [authenticationPrompt, forcePinUsage, onConfirm, onClose])
 
-  const decryptMnemonic = async (pin: string): Promise<ShouldClearPin> => {
-    if (!pin || !encryptedWallet) return false
+  const decryptDeprecatedMnemonic = async (pin: string): Promise<ShouldClearPin> => {
+    if (!pin || !deprecatedEncryptedWallet) return false
 
     try {
-      const decryptedWallet = await walletOpenAsyncUnsafe(pin, encryptedWallet.mnemonic, pbkdf2, mnemonicToSeed)
-      onConfirm(pin, { ...encryptedWallet, mnemonic: decryptedWallet.mnemonic })
+      const data = await decryptAsync(pin, deprecatedEncryptedWallet.mnemonic, pbkdf2)
+      const { mnemonic } = JSON.parse(data) as DeprecatedEncryptedMnemonicStoredAsString
+
+      onConfirm(mnemonic)
       onClose && onClose()
 
       return false
@@ -113,7 +116,7 @@ const AuthenticationModal = ({
 
   return (
     <ModalWithBackdrop closeModal={onClose} {...props}>
-      {encryptedWallet ? (
+      {deprecatedEncryptedWallet ? (
         <ModalContent style={{ paddingTop: !onClose ? insets.top + 60 : undefined }}>
           {onClose && (
             <HeaderSection style={{ paddingTop: insets.top }}>
@@ -121,7 +124,7 @@ const AuthenticationModal = ({
             </HeaderSection>
           )}
           <CenteredInstructions instructions={shownInstructions} />
-          <PinCodeInput pinLength={pinLength} onPinEntered={decryptMnemonic} />
+          <PinCodeInput pinLength={pinLength} onPinEntered={decryptDeprecatedMnemonic} />
         </ModalContent>
       ) : (
         <Spinner text={loadingText || 'Loading wallet...'} />
@@ -130,7 +133,7 @@ const AuthenticationModal = ({
   )
 }
 
-export default AuthenticationModal
+export default DeprecatedAuthenticationModal
 
 const ModalContent = styled.View`
   flex: 1;

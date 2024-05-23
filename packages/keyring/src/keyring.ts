@@ -16,10 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, findNextAvailableAddressIndex, isAddressIndexValid, resetArray } from '@alephium/shared'
+import {
+  AddressHash,
+  bip39Words,
+  findNextAvailableAddressIndex,
+  isAddressIndexValid,
+  resetArray
+} from '@alephium/shared'
 import { bs58, groupOfAddress, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
 import * as metamaskBip39 from '@metamask/scure-bip39'
-import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 import blake from 'blakejs'
 import { HDKey } from 'ethereum-cryptography/hdkey'
 import { bytesToHex } from 'ethereum-cryptography/utils'
@@ -36,6 +41,10 @@ type SensitiveAddressData = NonSensitiveAddressData & {
   privateKey: Uint8Array
 }
 
+type NullableSensitiveAddressData = NonSensitiveAddressData & {
+  privateKey: Uint8Array | null
+}
+
 type GenerateAddressProps = {
   group?: number
   addressIndex?: number
@@ -46,7 +55,7 @@ export class Keyring {
   private hdPath = "m/44'/1234'/0'/0"
   private hdWallet: HDKey | null
   private root: HDKey | null
-  private addresses: SensitiveAddressData[]
+  private addresses: NullableSensitiveAddressData[]
 
   constructor() {
     this.addresses = []
@@ -57,15 +66,25 @@ export class Keyring {
   // PUBLIC METHODS
 
   public clearCachedSecrets = () => {
-    this.addresses.map((address) => resetArray(address.privateKey))
-    this.addresses = []
+    this.addresses.forEach((address) => {
+      if (address.privateKey) {
+        resetArray(address.privateKey)
+        address.privateKey = null
+      }
+    })
+
     this.hdWallet = null
     this.root = null
   }
 
+  public clearAll = () => {
+    this.clearCachedSecrets()
+    this.addresses = []
+  }
+
   public generateRandomMnemonic = (mnemonicLength: MnemonicLength = 24): Uint8Array => {
     const strength = mnemonicLength === 24 ? 256 : 128
-    const mnemonic = metamaskBip39.generateMnemonic(wordlist, strength)
+    const mnemonic = metamaskBip39.generateMnemonic(bip39Words, strength)
 
     this._initFromMnemonic(mnemonic, '')
 
@@ -75,21 +94,29 @@ export class Keyring {
   public importMnemonicString = (mnemonicStr: string): Uint8Array => {
     if (!mnemonicStr) throw new Error('Keyring: Cannot import mnemonic, mnemonic not provided')
 
-    if (!metamaskBip39.validateMnemonic(mnemonicStr, wordlist))
+    if (!metamaskBip39.validateMnemonic(mnemonicStr, bip39Words))
       throw new Error('Keyring: Cannot import mnemonic, invalid mnemonic provided')
 
     const mnemonic = mnemonicStringToUint8Array(mnemonicStr)
 
-    this.clearCachedSecrets()
+    this.clearAll()
     this._initFromMnemonic(mnemonic, '')
 
     return mnemonic
   }
 
+  public initFromDecryptedMnemonic = async (decryptedMnemonic: Uint8Array, passphrase: string) => {
+    this.clearAll()
+    this._initFromMnemonic(decryptedMnemonic, passphrase)
+
+    passphrase = ''
+    resetArray(decryptedMnemonic)
+  }
+
   public initFromEncryptedMnemonic = async (encryptedMnemonic: string, password: string, passphrase: string) => {
     const { version, decryptedMnemonic } = await decryptMnemonic(encryptedMnemonic, password)
 
-    this.clearCachedSecrets()
+    this.clearAll()
     this._initFromMnemonic(decryptedMnemonic, passphrase)
 
     encryptedMnemonic = ''
@@ -109,12 +136,21 @@ export class Keyring {
   public signMessageHash = (messageHash: string, addressHash: AddressHash): string =>
     sign(messageHash, this.exportPrivateKeyOfAddress(addressHash))
 
-  public exportPrivateKeyOfAddress = (addressHash: AddressHash): string =>
-    bytesToHex(this._getAddress(addressHash).privateKey)
+  public exportPrivateKeyOfAddress = (addressHash: AddressHash): string => {
+    const address = this._getAddress(addressHash)
+
+    if (!address.privateKey) {
+      address.privateKey = this._deriveAddressAndKeys(address.index).privateKey
+    }
+
+    return bytesToHex(address.privateKey)
+  }
+
+  public isInitialized = () => this.root !== null
 
   // PRIVATE METHODS
 
-  private _getAddress = (addressHash: AddressHash): SensitiveAddressData => {
+  private _getAddress = (addressHash: AddressHash): NullableSensitiveAddressData => {
     const address = this.addresses.find(({ hash }) => hash === addressHash)
 
     if (!address) throw new Error(`Keyring: Could not find address with hash ${addressHash}`)
@@ -125,7 +161,13 @@ export class Keyring {
   private _generateAndCacheAddress = (props: GenerateAddressProps): SensitiveAddressData => {
     const cachedAddress = this.addresses.find(({ index }) => index === props.addressIndex)
 
-    if (cachedAddress) return cachedAddress
+    if (cachedAddress) {
+      if (!cachedAddress.privateKey) {
+        cachedAddress.privateKey = this._deriveAddressAndKeys(cachedAddress.index).privateKey
+      }
+
+      return cachedAddress as SensitiveAddressData
+    }
 
     const address = this._generateAddress(props)
 
@@ -179,7 +221,7 @@ export class Keyring {
     if (this.root) throw new Error('Keyring: Secret recovery phrase already provided')
     if (!mnemonic) throw new Error('Keyring: Secret recovery phrase not provided')
 
-    const seed = metamaskBip39.mnemonicToSeedSync(mnemonic, wordlist, passphrase)
+    const seed = metamaskBip39.mnemonicToSeedSync(mnemonic, bip39Words, passphrase)
     this.hdWallet = HDKey.fromMasterSeed(seed)
     this.root = this.hdWallet.derive(this.hdPath)
 

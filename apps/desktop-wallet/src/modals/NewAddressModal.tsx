@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NonSensitiveAddressData } from '@alephium/keyring'
 import { groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { Info } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -27,6 +26,7 @@ import InfoBox from '@/components/InfoBox'
 import Select from '@/components/Inputs/Select'
 import { Section } from '@/components/PageComponents/PageContainers'
 import ToggleSection from '@/components/ToggleSection'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
@@ -46,7 +46,7 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
   const isPassphraseUsed = useAppSelector((state) => state.activeWallet.isPassphraseUsed)
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const { generateAddress, generateAndSaveOneAddressPerGroup } = useAddressGeneration()
-  const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
 
   const [addressLabel, setAddressLabel] = useState({ title: '', color: isPassphraseUsed ? '' : getRandomLabelColor() })
   const [isDefaultAddress, setIsDefaultAddress] = useState(false)
@@ -81,14 +81,14 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
       try {
         saveNewAddresses([{ ...newAddressData, ...settings }])
 
-        posthog.capture('New address created', { label_length: settings.label.length })
-      } catch (e) {
-        console.error(e)
+        sendAnalytics({ event: 'New address created', props: { label_length: settings.label.length } })
+      } catch {
+        sendAnalytics({ type: 'error', message: 'Error while saving newly generated address' })
       }
     } else {
       generateAndSaveOneAddressPerGroup({ labelPrefix: addressLabel.title, labelColor: addressLabel.color })
 
-      posthog.capture('One address per group generated', { label_length: addressLabel.title.length })
+      sendAnalytics({ event: 'One address per group generated', props: { label_length: addressLabel.title.length } })
     }
     onClose()
   }
