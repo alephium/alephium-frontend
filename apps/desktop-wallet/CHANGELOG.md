@@ -1,5 +1,13 @@
 # alephium-desktop-wallet
 
+## 2.3.1
+
+### Patch Changes
+
+- 4f20ec5: Add Australian Dollar fiat currency option
+- e78012b: Fix wallet creation error created by auto lock
+- 2881dee: Fix UI freeze after wallet export
+
 ## 2.3.0
 
 ### Minor Changes
