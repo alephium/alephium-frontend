@@ -29,12 +29,7 @@ import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
-import {
-  deleteFundPassword,
-  getFundPassword,
-  setNeedsFundPasswordReminder,
-  storeFundPassword
-} from '~/features/fund-password/fundPasswordStorage'
+import { deleteFundPassword, getFundPassword, storeFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { useAppDispatch } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import usePassword from '~/hooks/usePassword'
