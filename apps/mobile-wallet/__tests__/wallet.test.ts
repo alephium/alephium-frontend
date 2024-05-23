@@ -218,7 +218,7 @@ describe(deleteWallet, () => {
       defaultSecureStoreConfig
     )
 
-    expect(AsyncStorage.removeItem).toHaveBeenCalledTimes(1)
+    expect(AsyncStorage.removeItem).toHaveBeenCalledTimes(2)
     expect(AsyncStorage.removeItem).toHaveBeenCalledWith('wallet-metadata')
   })
 })
