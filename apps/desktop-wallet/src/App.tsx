@@ -23,7 +23,6 @@ import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
-import AnnouncementBanner from '@/components/AnnouncementBanner'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
@@ -31,6 +30,7 @@ import SplashScreen from '@/components/SplashScreen'
 import UpdateWalletBanner from '@/components/UpdateWalletBanner'
 import { useGlobalContext } from '@/contexts/global'
 import { WalletConnectContextProvider } from '@/contexts/walletconnect'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import UpdateWalletModal from '@/modals/UpdateWalletModal'
 import Router from '@/routes'
@@ -43,6 +43,7 @@ import {
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
 import { AlephiumWindow } from '@/types/window'
+import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 import { languageOptions } from '@/utils/settings'
 
@@ -57,6 +58,7 @@ const App = () => {
   const wallets = useAppSelector((s) => s.global.wallets)
   const showDevIndication = useDevModeShortcut()
   const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
 
   const [splashScreenVisible, setSplashScreenVisible] = useState(true)
   const [isUpdateWalletModalVisible, setUpdateWalletModalVisible] = useState(!!newVersion)
@@ -74,17 +76,16 @@ const App = () => {
 
       dispatch(localStorageGeneralSettingsMigrated(generalSettings))
       dispatch(localStorageNetworkSettingsMigrated(networkSettings))
-    } catch (e) {
-      console.error(e)
-      posthog.capture('Error', { message: 'Local storage data migration failed' })
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Local storage data migration failed' })
       dispatch(localStorageDataMigrationFailed())
     }
-  }, [dispatch, posthog])
+  }, [dispatch, sendAnalytics])
 
   useEffect(() => {
     if (posthog.__loaded)
       posthog.people.set({
-        desktop_wallet_version: import.meta.env.VITE_VERSION,
+        desktop_wallet_version: currentVersion,
         wallets: wallets.length,
         theme: settings.theme,
         devTools: settings.devTools,
@@ -153,7 +154,7 @@ const App = () => {
             <Router />
           </CenteredSection>
           <BannerSection>{newVersion && <UpdateWalletBanner />}</BannerSection>
-          <AnnouncementBanner />
+          {/* <AnnouncementBanner /> */}
         </AppContainer>
       </WalletConnectContextProvider>
 

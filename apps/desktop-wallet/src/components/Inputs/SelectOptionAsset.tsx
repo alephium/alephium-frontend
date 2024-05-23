@@ -39,12 +39,7 @@ const SelectOptionAsset = ({ asset, hideAmount, ...props }: SelectOptionAssetPro
     <SelectOptionItemContent
       MainContent={
         <AssetName>
-          <AssetLogo
-            assetId={asset.id}
-            assetImageUrl={isFungibleToken ? asset.logoURI : asset.image}
-            size={20}
-            assetName={asset.name}
-          />
+          <AssetLogo assetImageUrl={isFungibleToken ? asset.logoURI : asset.image} size={20} assetName={asset.name} />
           <Truncate>
             {asset.name ? (
               `${asset.name} ${isFungibleToken && asset.symbol ? `(${asset.symbol})` : ''}`

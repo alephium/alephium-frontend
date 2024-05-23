@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { exponentialBackoffFetchRetry } from '@alephium/shared'
 import { compareVersions } from 'compare-versions'
-import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 
+import useAnalytics from '@/features/analytics/useAnalytics'
 import useThrottledGitHubApi from '@/hooks/useThrottledGitHubApi'
 import { AlephiumWindow } from '@/types/window'
 import { currentVersion, isRcVersion } from '@/utils/app-data'
@@ -31,7 +31,7 @@ const electron = _window.electron
 const semverRegex = isRcVersion ? /^(\d+\.\d+\.\d+)(?:-rc(\.\d+)?)?$/ : /^(\d+\.\d+\.\d+)?$/
 
 const useLatestGitHubRelease = () => {
-  const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
 
   const [newVersion, setNewVersion] = useState('')
   const [requiresManualDownload, setRequiresManualDownload] = useState(false)
@@ -46,9 +46,8 @@ const useLatestGitHubRelease = () => {
         setNewVersion(version)
         setRequiresManualDownload(true)
       }
-    } catch (e) {
-      posthog.capture('Error', { message: 'Checking for latest release version for manual download' })
-      console.error(e)
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Checking for latest release version for manual download' })
     }
   }
 

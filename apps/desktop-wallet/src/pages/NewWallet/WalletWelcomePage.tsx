@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Info } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useState } from 'react'
 import Confetti from 'react-confetti'
 import { Trans, useTranslation } from 'react-i18next'
@@ -32,6 +31,7 @@ import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
 import Toggle from '@/components/Inputs/Toggle'
 import { FooterActionsContainer, Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
@@ -48,7 +48,7 @@ const WalletWelcomePage = () => {
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const { width, height } = useWindowSize()
   const { generateAndSaveOneAddressPerGroup } = useAddressGeneration()
-  const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
 
   const [shouldGenerateOneAddressPerGroup, setShouldGenerateOneAddressPerGroup] = useState(false)
   const [confettiRunning, setConfettiRunning] = useState(true)
@@ -72,9 +72,9 @@ const WalletWelcomePage = () => {
           label: `Address ${defaultAddress.group}`
         })
 
-        posthog.capture('Generated one address per group on wallet creation')
-      } catch (e) {
-        console.error(e)
+        sendAnalytics({ event: 'Generated one address per group on wallet creation' })
+      } catch {
+        sendAnalytics({ type: 'error', message: 'Failed to generate one address per group' })
       }
     }
 

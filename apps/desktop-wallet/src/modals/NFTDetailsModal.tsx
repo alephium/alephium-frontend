@@ -55,7 +55,7 @@ const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
           </DataList.Row>
           <DataList.Row label={t('Description')}>{nft.description}</DataList.Row>
           <DataList.Row label={t('ID')}>
-            <HashEllipsed hash={nft.id} />
+            <HashEllipsed hash={nft.id} tooltipText={t('Copy ID')} />
           </DataList.Row>
           <DataList.Row label={t('Image URL')}>
             <ActionLink onClick={() => openInWebBrowser(nft.image)}>

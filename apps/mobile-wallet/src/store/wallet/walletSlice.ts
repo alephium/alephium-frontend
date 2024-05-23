@@ -17,23 +17,24 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { appBecameInactive, appReset } from '@alephium/shared'
-import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import {
   newWalletGenerated,
   newWalletImportedWithMetadata,
   walletDeleted,
-  walletNameChanged
+  walletNameChanged,
+  walletUnlocked
 } from '~/store/wallet/walletActions'
-import { WalletState, WalletUnlockedPayload } from '~/types/wallet'
+import { WalletState } from '~/types/wallet'
 
 const sliceName = 'wallet'
 
 const initialState: WalletState = {
   id: '',
   name: '',
-  mnemonic: '',
-  isMnemonicBackedUp: undefined
+  isMnemonicBackedUp: undefined,
+  isUnlocked: false
 }
 
 const resetState = () => initialState
@@ -44,8 +45,7 @@ const walletSlice = createSlice({
   reducers: {
     mnemonicBackedUp: (state) => {
       state.isMnemonicBackedUp = true
-    },
-    walletUnlocked: (_, action: PayloadAction<WalletUnlockedPayload>) => action.payload.wallet
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(walletNameChanged, (state, { payload: name }) => {
@@ -53,17 +53,17 @@ const walletSlice = createSlice({
     })
     builder.addMatcher(isAnyOf(appBecameInactive, appReset, walletDeleted), resetState)
     builder.addMatcher(
-      isAnyOf(newWalletGenerated, newWalletImportedWithMetadata),
-      (_, { payload: { name, mnemonic, id, isMnemonicBackedUp } }) => ({
+      isAnyOf(walletUnlocked, newWalletGenerated, newWalletImportedWithMetadata),
+      (_, { payload: { name, id, isMnemonicBackedUp } }) => ({
         id,
         name,
-        mnemonic,
+        isUnlocked: true,
         isMnemonicBackedUp
       })
     )
   }
 })
 
-export const { mnemonicBackedUp, walletUnlocked } = walletSlice.actions
+export const { mnemonicBackedUp } = walletSlice.actions
 
 export default walletSlice

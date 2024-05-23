@@ -38,6 +38,7 @@ import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
+import useAnalytics from '@/features/analytics/useAnalytics'
 
 interface WordKey {
   word: string
@@ -48,6 +49,7 @@ const CheckWordsPage = () => {
   const { t } = useTranslation()
   const { onButtonBack, onButtonNext } = useStepsContext()
   const { mnemonic } = useWalletContext()
+  const { sendAnalytics } = useAnalytics()
 
   const [wordList, setWordList] = useState<WordKey[]>([])
   const [selectedElements, setSelectedElements] = useState<{ [wordKey: string]: Element | null }>({})
@@ -195,11 +197,13 @@ const CheckWordsPage = () => {
     ))
 
   const handleNextButtonPress = () => {
+    sendAnalytics({ event: 'Creating wallet: Verifying words: Clicked next' })
     cleanup()
     onButtonNext()
   }
 
   const handleBackButtonPress = () => {
+    sendAnalytics({ event: 'Creating wallet: Verifying words: Clicked back' })
     cleanup()
     onButtonBack()
   }

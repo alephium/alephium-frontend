@@ -25,9 +25,8 @@ import { Alert, Platform } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
-import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
-import AuthenticationModal from '~/components/AuthenticationModal'
+import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import Button from '~/components/buttons/Button'
 import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
@@ -39,9 +38,8 @@ import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import useBiometrics from '~/hooks/useBiometrics'
+import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { disableBiometrics, enableBiometrics } from '~/persistent-storage/wallet'
 import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
 import WalletDeleteModal from '~/screens/Settings/WalletDeleteModal'
@@ -61,43 +59,68 @@ interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScre
 
 const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
-  const deviceHasBiometricsData = useBiometrics()
+  const { deviceSupportsBiometrics, deviceHasEnrolledBiometrics } = useBiometrics()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
-  const requireAuth = useAppSelector((s) => s.settings.requireAuth)
+  const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
+  const biometricsRequiredForTransactions = useAppSelector((s) => s.settings.requireAuth)
   const currentTheme = useAppSelector((s) => s.settings.theme)
   const currentCurrency = useAppSelector((s) => s.settings.currency)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
   const analytics = useAppSelector((s) => s.settings.analytics)
-  const walletMnemonic = useAppSelector((s) => s.wallet.mnemonic)
   const walletName = useAppSelector((s) => s.wallet.name)
   const theme = useTheme()
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
+  const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
-  const [isAuthenticationModalVisible, setIsAuthenticationModalOpen] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
   const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
   const [isWalletDeleteModalOpen, setIsWalletDeleteModalOpen] = useState(false)
   const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
-  const [authenticationPrompt, setAuthenticationPrompt] = useState('')
-  const [loadingText, setLoadingText] = useState('')
-  const [authCallback, setAuthCallback] = useState<() => void>(() => () => null)
+  const [isBiometricsWarningModalOpen, setIsBiometricsWarningModalOpen] = useState(false)
+  const [lastToggledBiometricsSetting, setLastToggledBiometricsSetting] = useState<
+    'appAccess' | 'transactions' | undefined
+  >()
 
-  const toggleBiometrics = async () => {
-    if (isBiometricsEnabled) {
-      await disableBiometrics()
-      dispatch(biometricsToggled(false))
-
-      sendAnalytics('Deactivated biometrics')
+  const handleBiometricsAppAccessChange = (value: boolean) => {
+    if (value || biometricsRequiredForTransactions) {
+      toggleBiometricsAppAccess()
     } else {
-      await enableBiometrics(walletMnemonic)
-      dispatch(biometricsToggled(true))
-
-      sendAnalytics('Manually activated biometrics')
+      setLastToggledBiometricsSetting('appAccess')
+      setIsBiometricsWarningModalOpen(true)
     }
+  }
+
+  const handleBiometricsTransactionsChange = (value: boolean) => {
+    if (value || biometricsRequiredForAppAccess) {
+      toggleBiometricsTransactions()
+    } else {
+      setLastToggledBiometricsSetting('transactions')
+      setIsBiometricsWarningModalOpen(true)
+    }
+  }
+
+  const toggleBiometricsAppAccess = async () => {
+    triggerBiometricsAuthGuard({
+      settingsToCheck: 'appAccess',
+      successCallback: () => dispatch(biometricsToggled())
+    })
+  }
+
+  const toggleBiometricsTransactions = () => {
+    triggerBiometricsAuthGuard({
+      settingsToCheck: 'transactions',
+      successCallback: () => dispatch(passwordRequirementToggled())
+    })
+  }
+
+  const handleDisableBiometricsPress = () => {
+    setIsBiometricsWarningModalOpen(false)
+
+    lastToggledBiometricsSetting === 'appAccess' ? toggleBiometricsAppAccess() : toggleBiometricsTransactions()
   }
 
   const toggleDiscreetMode = () => dispatch(discreetModeToggled())
@@ -110,8 +133,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
       setIsThemeSwitchOverlayVisible(false)
     }, 500)
   }
-
-  const toggleAuthRequirement = () => dispatch(passwordRequirementToggled())
 
   const toggleAnalytics = () => dispatch(analyticsToggled())
 
@@ -143,17 +164,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
     }
   }
 
-  const handleAuthRequimementToggle = () => {
-    if (requireAuth) {
-      setAuthCallback(() => () => toggleAuthRequirement())
-      setAuthenticationPrompt('Disable authentication')
-      setLoadingText('Disabling...')
-      setIsAuthenticationModalOpen(true)
-    } else {
-      toggleAuthRequirement()
-    }
-  }
-
   return (
     <>
       <ScrollScreenStyled verticalGap screenTitle="Settings" headerOptions={{ type: 'stack' }} {...props}>
@@ -178,19 +188,33 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             </Row>
           </BoxSurface>
         </ScreenSection>
-        <ScreenSection>
-          <ScreenSectionTitle>Security</ScreenSectionTitle>
-          <BoxSurface>
-            <Row title="Require authentication" subtitle="For important actions" isLast>
-              <Toggle value={requireAuth} onValueChange={handleAuthRequimementToggle} />
-            </Row>
-            {deviceHasBiometricsData && (
-              <Row title="Biometrics authentication" subtitle="Enhance your security" isLast>
-                <Toggle value={isBiometricsEnabled} onValueChange={toggleBiometrics} />
-              </Row>
+        {deviceSupportsBiometrics && (
+          <ScreenSection>
+            <ScreenSectionTitle>Security</ScreenSectionTitle>
+            {!deviceHasEnrolledBiometrics && (
+              <AppText color="secondary" style={{ marginBottom: 20, paddingHorizontal: 10 }}>
+                Your device supports biometrics but none is enrolled. Enable them by adding a fingeprint or Face ID in
+                your device's settings.
+              </AppText>
             )}
-          </BoxSurface>
-        </ScreenSection>
+            <BoxSurface>
+              <Row title="App access" subtitle="Require biometrics to open app">
+                <Toggle
+                  value={isBiometricsEnabled}
+                  onValueChange={handleBiometricsAppAccessChange}
+                  disabled={!deviceHasEnrolledBiometrics}
+                />
+              </Row>
+              <Row title="Transactions" subtitle="Require biometrics to transact" isLast>
+                <Toggle
+                  value={biometricsRequiredForTransactions}
+                  onValueChange={handleBiometricsTransactionsChange}
+                  disabled={!deviceHasEnrolledBiometrics}
+                />
+              </Row>
+            </BoxSurface>
+          </ScreenSection>
+        )}
 
         <ScreenSection>
           <ScreenSectionTitle>Experimental features</ScreenSectionTitle>
@@ -236,26 +260,47 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         </ScreenSection>
       </ScrollScreenStyled>
 
-      <AuthenticationModal
-        visible={isAuthenticationModalVisible}
-        authenticationPrompt={authenticationPrompt}
-        loadingText={loadingText}
-        onConfirm={() => {
-          setIsAuthenticationModalOpen(false)
-          setAuthenticationPrompt('')
-          setLoadingText('')
-          authCallback()
-          setAuthCallback(() => () => null)
-        }}
-        onClose={() => {
-          setIsAuthenticationModalOpen(false)
-          setAuthenticationPrompt('')
-          setLoadingText('')
-          setAuthCallback(() => () => null)
-        }}
-      />
-
       <ModalWithBackdrop animationType="fade" visible={isThemeSwitchOverlayVisible} color="black" />
+
+      <Portal>
+        <BottomModal
+          isOpen={isSafePlaceWarningModalOpen}
+          onClose={() => setIsSafePlaceWarningModalOpen(false)}
+          Content={(props) => (
+            <ModalContent verticalGap {...props}>
+              <ScreenSection>
+                <BottomModalScreenTitle>Be careful! 🕵️‍♀️</BottomModalScreenTitle>
+              </ScreenSection>
+              <ScreenSection>
+                <AppText color="secondary" size={18}>
+                  Don&apos;t share your secret recovery phrase with anyone!
+                </AppText>
+                <AppText color="secondary" size={18}>
+                  Before displaying it, make sure to be in an{' '}
+                  <AppText bold size={18}>
+                    non-public
+                  </AppText>{' '}
+                  space.
+                </AppText>
+              </ScreenSection>
+              <ScreenSection>
+                <Button
+                  title="I get it"
+                  variant="accent"
+                  onPress={() => {
+                    props.onClose && props.onClose()
+
+                    triggerBiometricsAuthGuard({
+                      settingsToCheck: 'appAccessOrTransactions',
+                      successCallback: () => setIsMnemonicModalVisible(true)
+                    })
+                  }}
+                />
+              </ScreenSection>
+            </ModalContent>
+          )}
+        />
+      </Portal>
 
       <Portal>
         <BottomModal
@@ -283,49 +328,18 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         />
 
         <BottomModal
-          isOpen={isSafePlaceWarningModalOpen}
-          onClose={() => setIsSafePlaceWarningModalOpen(false)}
-          Content={(props) => (
-            <ModalContent verticalGap {...props}>
-              <ScreenSection>
-                <BottomModalScreenTitle>Be careful! 🕵️‍♀️</BottomModalScreenTitle>
-              </ScreenSection>
-              <ScreenSection>
-                <AppText color="secondary" size={18}>
-                  Don&apos;t share your secret recovery phrase with anyone!
-                </AppText>
-                <AppText color="secondary" size={18}>
-                  Before displaying it, make sure to be in an{' '}
-                  <AppText bold size={18}>
-                    non-public
-                  </AppText>{' '}
-                  space.
-                </AppText>
-              </ScreenSection>
-              <ScreenSection>
-                <Button
-                  title="I get it"
-                  variant="accent"
-                  onPress={() => {
-                    props.onClose && props.onClose()
-                    setAuthCallback(() => () => setIsMnemonicModalVisible(true))
-                    setAuthenticationPrompt("Verify it's you")
-                    setLoadingText('Verifying...')
-                    setIsAuthenticationModalOpen(true)
-                  }}
-                />
-              </ScreenSection>
-            </ModalContent>
-          )}
-        />
-
-        <BottomModal
           isOpen={isWalletDeleteModalOpen}
           onClose={() => setIsWalletDeleteModalOpen(false)}
           maximisedContent={Platform.OS === 'ios'}
           Content={(props) => (
             <WalletDeleteModal onDelete={() => resetNavigation(navigation, 'LandingScreen')} {...props} />
           )}
+        />
+
+        <BottomModal
+          isOpen={isBiometricsWarningModalOpen}
+          onClose={() => setIsBiometricsWarningModalOpen(false)}
+          Content={(props) => <BiometricsWarningModal onConfirm={handleDisableBiometricsPress} {...props} />}
         />
       </Portal>
     </>

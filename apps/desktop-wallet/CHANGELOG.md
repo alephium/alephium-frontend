@@ -1,5 +1,25 @@
 # alephium-desktop-wallet
 
+## 2.3.0
+
+### Minor Changes
+
+- 3d662cd: Improve secrets management to match Metamask's implementation
+
+## 2.2.5
+
+### Patch Changes
+
+- d8030ee: Fix word wrapping when signing WalletConnect message
+- b5b297d: Cleaner, more compact transaction lists
+- ef5acbc: Redesign transaction details modal
+- 12e1995: Support display of .mp4 NFTs
+- 8d64f8b: Update tokens labels shown when no metadata exists in token list
+- fbeb9ca: Migrate network settings to node-v210 & backend-v117
+- 548615e: Sort tokens based on fiat worth
+- ef5acbc: Simplify NFT cards
+- ef5acbc: New NFT details modal
+
 ## 2.2.4
 
 ### Patch Changes

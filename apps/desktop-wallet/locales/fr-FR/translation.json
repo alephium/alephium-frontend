@@ -127,7 +127,7 @@
   "Enable developer tools": "Activer les outils pour développeurs",
   "Encountered error while calling the faucet.": "Encountered error while calling the faucet.",
   "Encountered error while exporting your transactions.": "Erreur durant l'export des transactions.",
-  "Encountered error while synching your addresses' data.": "Erreur lors de la synchronisation des données de vos adresses.",
+  "Encountered error while syncing your addresses' data.": "Erreur lors de la synchronisation des données de vos adresses.",
   "Enter": "Entrer",
   "Enter password": "Entrez le mot de passe",
   "Enter password for \"{{ switchToWalletName }}\"": "Entrez un mot de passe pour \"{{ switchToWalletName }}\"",
@@ -489,5 +489,6 @@
   "Image URL": "Image URL",
   "Attributes": "Attributes",
   "Collection": "Collection",
-  "ID": "ID"
+  "ID": "ID",
+  "Copy ID": "Copy ID"
 }

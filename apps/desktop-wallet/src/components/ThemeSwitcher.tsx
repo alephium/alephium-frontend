@@ -19,9 +19,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Moon, Sun } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import styled from 'styled-components'
 
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppSelector } from '@/hooks/redux'
 import { toggleTheme } from '@/storage/settings/settingsStorageUtils'
 import { onEnterOrSpace } from '@/utils/misc'
@@ -37,14 +37,14 @@ const darkColor = '#422c08'
 
 const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
   const theme = useAppSelector((state) => state.global.theme)
-  const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
 
   const isDark = theme === 'dark'
 
   const handleThemeToggle = () => {
     toggleTheme(isDark ? 'light' : 'dark')
 
-    posthog.capture('Toggled theme', { theme })
+    sendAnalytics({ event: 'Toggled theme', props: { theme } })
   }
 
   return (

@@ -20,7 +20,6 @@ import { AddressHash, AddressSettings, BalanceHistory, CHART_DATE_FORMAT, client
 import { explorer } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
-import { posthog } from 'posthog-js'
 
 import { RootState } from '@/storage/store'
 import { Address, AddressBase, LoadingEnabled } from '@/types/addresses'
@@ -57,7 +56,7 @@ export const syncAddressesAlphHistoricBalances = createAsyncThunk(
   > => {
     const now = dayjs()
     const thisMoment = now.valueOf()
-    const oneYearAgo = now.subtract(12, 'month').valueOf()
+    const oneYearAgo = now.subtract(365, 'days').valueOf()
 
     const addressesBalances = []
     const state = getState() as RootState
@@ -85,7 +84,6 @@ export const syncAddressesAlphHistoricBalances = createAsyncThunk(
         }
       } catch (e) {
         console.error('Could not parse amount history data', e)
-        posthog.capture('Error', { message: 'Could not parse amount history data' })
       }
 
       addressesBalances.push({

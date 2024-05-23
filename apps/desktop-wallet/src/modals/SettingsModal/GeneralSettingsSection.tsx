@@ -32,11 +32,12 @@ import Select from '@/components/Inputs/Select'
 import Toggle from '@/components/Inputs/Toggle'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import { useWalletConnectContext } from '@/contexts/walletconnect'
+import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import CenteredModal from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
-import AnalyticsStorage from '@/storage/analytics/analyticsPersistentStorage'
 import { walletConnectCacheCleared, walletConnectCacheClearFailed } from '@/storage/global/globalActions'
 import {
   analyticsToggled,
@@ -62,6 +63,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
   const { walletLockTimeInMinutes, discreetMode, passwordRequirement, language, theme, analytics, fiatCurrency } =
     useAppSelector((s) => s.settings)
   const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
   const { reset } = useWalletConnectContext()
 
   const [isPasswordModelOpen, setIsPasswordModalOpen] = useState(false)
@@ -72,27 +74,27 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
     } else {
       dispatch(passwordRequirementToggled())
 
-      posthog.capture('Enabled password requirement')
+      sendAnalytics({ event: 'Enabled password requirement' })
     }
-  }, [dispatch, passwordRequirement, posthog])
+  }, [dispatch, passwordRequirement, sendAnalytics])
 
   const disablePasswordRequirement = useCallback(() => {
     dispatch(passwordRequirementToggled())
     setIsPasswordModalOpen(false)
 
-    posthog.capture('Disabled password requirement')
-  }, [dispatch, posthog])
+    sendAnalytics({ event: 'Disabled password requirement' })
+  }, [dispatch, sendAnalytics])
 
   const handleLanguageChange = (language: Language) => {
     dispatch(languageChanged(language))
 
-    posthog.capture('Changed language', { language })
+    sendAnalytics({ event: 'Changed language', props: { language } })
   }
 
   const handleFiatCurrencyChange = (currency: Currency) => {
     dispatch(fiatCurrencyChanged(currency))
 
-    posthog.capture('Changed fiat currency', { currency })
+    sendAnalytics({ event: 'Changed fiat currency', props: { currency } })
   }
 
   const handleDiscreetModeToggle = () => dispatch(discreetModeToggled())
@@ -102,13 +104,13 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
 
     dispatch(walletLockTimeChanged(time))
 
-    posthog.capture('Changed wallet lock time', { time })
+    sendAnalytics({ event: 'Changed wallet lock time', props: { time } })
   }
 
   const handleThemeSelect = (theme: ThemeSettings) => {
     switchTheme(theme)
 
-    posthog.capture('Changed theme', { theme })
+    sendAnalytics({ event: 'Changed theme', props: { theme } })
   }
 
   const handleAnalyticsToggle = (toggle: boolean) => {

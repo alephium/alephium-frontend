@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring } from '@alephium/keyring'
+import { bip39Words } from '@alephium/shared'
 import Tagify, { BaseTagData, ChangeEventData, TagData } from '@yaireo/tagify'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -33,15 +34,16 @@ import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
-import { bip39Words } from '@/utils/bip39'
+import useAnalytics from '@/features/analytics/useAnalytics'
 
 const ImportWordsPage = () => {
   const { t } = useTranslation()
   const { onButtonBack, onButtonNext } = useStepsContext()
   const { setMnemonic } = useWalletContext()
+  const { sendAnalytics } = useAnalytics()
 
   const [phrase, setPhrase] = useState<{ value: string }[]>([])
-  const allowedWords = useRef(bip39Words.split(' '))
+  const allowedWords = useRef(bip39Words)
   const defaultPlaceholder = t('Type your recovery phrase')
   const [customPlaceholder, setCustomPlaceholder] = useState(defaultPlaceholder)
   const tagifyRef = useRef<Tagify<TagData> | undefined>()
@@ -67,12 +69,14 @@ const ImportWordsPage = () => {
   const handleNextButtonPress = () => {
     if (!isPhraseLongEnough) return
 
+    sendAnalytics({ event: 'Importing wallet: Entering words: Clicked next' })
+
     try {
       setMnemonic(keyring.importMnemonicString(phrase.map((word) => word.value).join(' ')))
 
       onButtonNext()
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Could not import mnemonic string', isSensitive: true })
     } finally {
       setPhrase([])
     }

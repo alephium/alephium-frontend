@@ -37,7 +37,7 @@ export type UnlockedWallet = {
   initialAddress: NonSensitiveAddressData
 }
 
-// encrypted is a stringified instance of EncryptedMnemonicStoredAsString or EncryptedMnemonicStoredAsUint8Array
+// encrypted is a stringified instance of DeprecatedEncryptedMnemonicStoredAsString or EncryptedMnemonicStoredAsUint8Array
 // containing the mnemonic together with metadata.
 export type StoredEncryptedWallet = Omit<ActiveWallet, 'isPassphraseUsed'> & {
   encrypted: string

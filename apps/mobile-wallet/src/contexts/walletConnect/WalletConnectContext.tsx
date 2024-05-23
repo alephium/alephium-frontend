@@ -86,6 +86,8 @@ import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
+import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
 import {
@@ -130,12 +132,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const addressIds = useAppSelector(selectAddressIds) as AddressHash[]
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
-  const mnemonic = useAppSelector((s) => s.wallet.mnemonic)
+  const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const url = useURL()
   const wcDeepLink = useRef<string>()
   const appState = useRef(AppState.currentState)
   const dispatch = useAppDispatch()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
+  const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
@@ -148,7 +151,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
 
   const activeSessionMetadata = activeSessions.find((s) => s.topic === sessionRequestEvent?.topic)?.peer.metadata
-  const walletIsUnlocked = !!mnemonic
   const isWalletConnectClientReady =
     isWalletConnectEnabled && walletConnectClient && walletConnectClientStatus === 'initialized'
 
@@ -539,7 +541,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         } else {
           if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method)) {
             showExceptionToast(e, 'Could not build transaction')
-            sendAnalytics('Error', { message: 'Could not build transaction' })
             console.error(e)
           }
           respondToWalletConnectWithError(requestEvent, {
@@ -552,7 +553,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       }
     },
     // The `addresses` dependency causes re-rendering when any property of an Address changes, even though we only need
-    // the `hash`, the `publicKey`, and the `privateKey`. Creating a selector that extracts those 3 doesn't help.
+    // the `hash` and the `publicKey`. Creating a selector that extracts those 3 doesn't help.
     // Using addressIds fixes the problem, but now the api/transactions.ts file becomes dependant on the store file.
     // TODO: Separate offline/online address data slices
     [walletConnectClient, respondToWalletConnectWithError, addressIds, handleApiResponse]
@@ -611,7 +612,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
   useEffect(() => {
     const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && isWalletConnectEnabled && walletIsUnlocked) {
+      if (nextAppState === 'background' && isWalletConnectEnabled && isWalletUnlocked) {
         let secondsPassed = 0
 
         // Keep app alive for max 4 hours
@@ -645,7 +646,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [isWalletConnectEnabled, walletIsUnlocked])
+  }, [isWalletConnectEnabled, isWalletUnlocked])
 
   useEffect(() => {
     if (!isWalletConnectClientReady) return
@@ -826,15 +827,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
     console.log('✅ VERIFIED USER PROVIDED DATA!')
 
+    const publicKey = await getAddressAsymetricKey(signerAddress.hash, 'public')
+
     const namespaces: SessionTypes.Namespaces = {
       alephium: {
         methods: requiredNamespace.methods,
         events: requiredNamespace.events,
-        accounts: [
-          `${formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)}:${
-            signerAddress.publicKey
-          }/default`
-        ]
+        accounts: [`${formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)}:${publicKey}/default`]
       }
     }
 
@@ -895,32 +894,37 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   ) => {
     if (!sessionRequestEvent) return
 
-    setLoading('Approving...')
+    triggerBiometricsAuthGuard({
+      settingsToCheck: 'transactions',
+      successCallback: async () => {
+        setLoading('Approving...')
 
-    try {
-      const signResult = await sendTransaction()
+        try {
+          const signResult = await sendTransaction()
 
-      if (!signResult) {
-        console.log('⏳ DID NOT GET A SIGNATURE RESULT, INFORMING DAPP THAT SESSION REQUEST FAILED...')
-        await respondToWalletConnectWithError(sessionRequestEvent, {
-          message: 'Sending transaction failed',
-          code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-        })
-        console.log('✅ INFORMING: DONE!')
-      } else {
-        console.log('⏳ INFORMING DAPP THAT SESSION REQUEST SUCCEEDED...')
-        await respondToWalletConnectWithSuccess(sessionRequestEvent, signResult)
-        console.log('✅ INFORMING: DONE!')
+          if (!signResult) {
+            console.log('⏳ DID NOT GET A SIGNATURE RESULT, INFORMING DAPP THAT SESSION REQUEST FAILED...')
+            await respondToWalletConnectWithError(sessionRequestEvent, {
+              message: 'Sending transaction failed',
+              code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+            })
+            console.log('✅ INFORMING: DONE!')
+          } else {
+            console.log('⏳ INFORMING DAPP THAT SESSION REQUEST SUCCEEDED...')
+            await respondToWalletConnectWithSuccess(sessionRequestEvent, signResult)
+            console.log('✅ INFORMING: DONE!')
+          }
+        } catch (e) {
+          console.error('❌ INFORMING: FAILED.')
+        } finally {
+          console.log('👉 RESETTING SESSION REQUEST EVENT.')
+          setSessionRequestEvent(undefined)
+          setSessionRequestData(undefined)
+          setLoading('')
+          showToast({ text1: 'DApp request approved', text2: 'You can go back to your browser.' })
+        }
       }
-    } catch (e) {
-      console.error('❌ INFORMING: FAILED.')
-    } finally {
-      console.log('👉 RESETTING SESSION REQUEST EVENT.')
-      setSessionRequestEvent(undefined)
-      setSessionRequestData(undefined)
-      setLoading('')
-      showToast({ text1: 'DApp request approved', text2: 'You can go back to your browser.' })
-    }
+    })
   }
 
   const handleSignSuccess = async (result: SignMessageResult | SignUnsignedTxResult) => {
@@ -988,7 +992,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   }, [isSessionRequestModalOpen, sessionRequestEvent])
 
   useEffect(() => {
-    if (!walletIsUnlocked || !url || !url.startsWith('wc:') || wcDeepLink.current === url) return
+    if (!isWalletUnlocked || !url || !url.startsWith('wc:') || wcDeepLink.current === url) return
 
     if (!isWalletConnectEnabled) {
       showToast({
@@ -1002,7 +1006,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       wcDeepLink.current = url
     }
-  }, [walletIsUnlocked, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient])
+  }, [isWalletUnlocked, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient])
 
   const resetWalletConnectClientInitializationAttempts = () => {
     if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES)

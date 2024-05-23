@@ -74,12 +74,21 @@ export const persistAddressesSettings = async (
   metadataId: string,
   oldDefaultAddress?: Address
 ) => {
-  const addressesMetadata = addresses.map((address) => ({ index: address.index, ...address.settings }))
+  const addressesMetadata = addresses.map((address) => ({
+    index: address.index,
+    hash: address.hash,
+    ...address.settings
+  }))
   await persistAddressesMetadata(metadataId, addressesMetadata)
 
   const newDefaultAddress = addresses.find((address) => address.settings.isDefault)
   if (newDefaultAddress && oldDefaultAddress && oldDefaultAddress.hash !== newDefaultAddress.hash) {
-    const updatedOldDefaultAddress = { index: oldDefaultAddress.index, ...oldDefaultAddress.settings, isDefault: false }
+    const updatedOldDefaultAddress = {
+      index: oldDefaultAddress.index,
+      hash: oldDefaultAddress.hash,
+      ...oldDefaultAddress.settings,
+      isDefault: false
+    }
     await persistAddressesMetadata(metadataId, [updatedOldDefaultAddress])
   }
 }

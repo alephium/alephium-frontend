@@ -2,4 +2,4 @@
 "alephium-desktop-wallet": patch
 ---
 
-Simplify NFT cards
+Fix UI freeze after wallet export

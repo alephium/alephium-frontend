@@ -54,7 +54,7 @@ const NFTCardStyled = styled.div`
   background-color: ${({ theme }) => theme.bg.background2};
   border-radius: var(--radius-huge);
   transition: all cubic-bezier(0.2, 0.65, 0.5, 1) 0.1s;
-  height: 100%;
+  height: 200px;
 
   &:hover {
     cursor: pointer;
@@ -68,6 +68,7 @@ const CardContent = styled.div`
   display: flex;
   flex-direction: column;
   padding: 10px 10px 0 10px;
+  overflow: hidden;
 `
 
 const NFTPictureContainer = styled(motion.div)`
@@ -76,7 +77,6 @@ const NFTPictureContainer = styled(motion.div)`
   border-radius: var(--radius-big);
   overflow: hidden;
   background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.06).toHex()};
-  min-height: 140px;
 `
 
 const NFTName = styled(Truncate)`
@@ -84,4 +84,5 @@ const NFTName = styled(Truncate)`
   font-weight: 600;
   margin: 10px 0;
   max-width: 100%;
+  text-overflow: ellipsis;
 `

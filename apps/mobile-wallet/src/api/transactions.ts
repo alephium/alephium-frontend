@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, AssetAmount, client } from '@alephium/shared'
 import { transactionSign } from '@alephium/web3'
 
+import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { store } from '~/store/store'
 import { Address } from '~/types/addresses'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '~/types/transactions'
@@ -27,7 +28,7 @@ import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '
 
 export const buildSweepTransactions = async (fromAddress: Address, toAddressHash: AddressHash) => {
   const { unsignedTxs } = await client.node.transactions.postTransactionsSweepAddressBuild({
-    fromPublicKey: fromAddress.publicKey,
+    fromPublicKey: await getAddressAsymetricKey(fromAddress.hash, 'public'),
     toAddress: toAddressHash
   })
 
@@ -83,7 +84,7 @@ export const buildTransferTransaction = async ({
   if (!address) throw new Error(`Could not find address in store: ${fromAddress}`)
 
   return await client.node.transactions.postTransactionsBuild({
-    fromPublicKey: address.publicKey,
+    fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
     destinations: [
       {
         address: toAddress,
@@ -110,7 +111,7 @@ export const buildCallContractTransaction = async ({
   if (!address) throw new Error(`Could not find address in store: ${fromAddress}`)
 
   return await client.node.contracts.postContractsUnsignedTxExecuteScript({
-    fromPublicKey: address.publicKey,
+    fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
     bytecode,
     attoAlphAmount,
     tokens,
@@ -132,7 +133,7 @@ export const buildDeployContractTransaction = async ({
   if (!address) throw new Error(`Could not find address in store: ${fromAddress}`)
 
   return await client.node.contracts.postContractsUnsignedTxDeployContract({
-    fromPublicKey: address.publicKey,
+    fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
     bytecode: bytecode,
     initialAttoAlphAmount: initialAlphAmount?.amount?.toString(),
     issueTokenAmount: issueTokenAmount?.toString(),
@@ -146,7 +147,7 @@ export const signAndSendTransaction = async (fromAddress: AddressHash, txId: str
 
   if (!address) throw new Error(`Could not find address in store: ${fromAddress}`)
 
-  const signature = transactionSign(txId, address.privateKey)
+  const signature = transactionSign(txId, await getAddressAsymetricKey(address.hash, 'private'))
   const data = await client.node.transactions.postTransactionsSubmit({ unsignedTx, signature })
 
   return { ...data, signature }

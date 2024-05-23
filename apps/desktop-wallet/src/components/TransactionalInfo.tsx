@@ -126,7 +126,7 @@ const TransactionalInfo = ({
           )}
         </CellAddress>
       )}
-      <DirectionAndAddress stackVertically={showInternalInflows}>
+      <DirectionAndAddresses stackVertically={showInternalInflows}>
         <CellDirection>
           <HiddenLabel text={direction === 'swap' ? t('and') : t('to')} />
           {!showInternalInflows ? (
@@ -166,7 +166,7 @@ const TransactionalInfo = ({
               ))}
           </DirectionalAddress>
         </CellAddress>
-      </DirectionAndAddress>
+      </DirectionAndAddresses>
       <TableCellAmount aria-hidden="true">
         {knownAssets.map(({ id, amount, decimals, symbol }) => (
           <AmountContainer key={id}>
@@ -223,12 +223,11 @@ const CellAddress = styled.div<{ alignRight?: boolean; hasMargins?: boolean }>`
   flex-grow: 1;
   align-items: baseline;
   display: flex;
-  width: 100%;
 
   ${({ hasMargins }) =>
     hasMargins &&
     css`
-      margin: 0 21px;
+      margin: 0 var(--spacing-4);
     `}
 
   ${({ alignRight }) =>
@@ -238,15 +237,17 @@ const CellAddress = styled.div<{ alignRight?: boolean; hasMargins?: boolean }>`
     `}
 `
 
-const DirectionAndAddress = styled.div<{ stackVertically?: boolean }>`
+const DirectionAndAddresses = styled.div<{ stackVertically?: boolean }>`
   display: flex;
   align-items: center;
+  min-width: 35%;
 
   ${({ stackVertically }) =>
     stackVertically &&
     css`
       flex-direction: column;
       align-items: flex-start;
+      width: 20%;
       gap: 5px;
     `}
 `

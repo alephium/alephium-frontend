@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH, TokenList } from '@alephium/token-list'
-import { NFTCollectionUriMetaData } from '@alephium/web3'
+import { NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { queryOptions } from '@tanstack/react-query'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
@@ -25,7 +25,7 @@ import { exponentialBackoffFetchRetry } from '@/api'
 import { client } from '@/api/alephiumClient'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { ONE_DAY_MS, ONE_HOUR_MS } from '@/constants'
-import { NetworkName, NFTTokenUriMetaData } from '@/types'
+import { NetworkName } from '@/types'
 
 const tokenGenericInfoBatcher = create({
   fetcher: async (ids: string[]) => client.explorer.tokens.postTokens(ids),

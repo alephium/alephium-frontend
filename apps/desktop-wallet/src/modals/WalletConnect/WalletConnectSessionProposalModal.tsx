@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { networkPresetSwitched } from '@alephium/shared'
 import { AlertTriangle, PlusSquare } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -28,6 +27,7 @@ import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
@@ -53,7 +53,7 @@ const WalletConnectSessionProposalModal = ({
   proposalEvent
 }: WalletConnectSessionProposalModalProps) => {
   const { t } = useTranslation()
-  const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
   const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const dispatch = useAppDispatch()
@@ -89,9 +89,9 @@ const WalletConnectSessionProposalModal = ({
       const address = generateAddress(group)
       saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])
 
-      posthog.capture('New address created through WalletConnect modal')
-    } catch (e) {
-      console.error(e)
+      sendAnalytics({ event: 'New address created through WalletConnect modal' })
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Error while saving newly generated address from WalletConnect modal' })
     }
   }
 
@@ -99,7 +99,7 @@ const WalletConnectSessionProposalModal = ({
     await rejectProposal()
     onClose()
 
-    posthog.capture('Rejected WalletConnect connection by closing modal')
+    sendAnalytics({ event: 'Rejected WalletConnect connection by closing modal' })
   }
 
   return (
@@ -112,7 +112,7 @@ const WalletConnectSessionProposalModal = ({
       Icon={() =>
         metadata?.icons &&
         metadata.icons.length > 0 &&
-        metadata.icons[0] && <AssetLogo assetImageUrl={metadata.icons[0]} assetId={metadata.url} size={50} />
+        metadata.icons[0] && <AssetLogo assetImageUrl={metadata.icons[0]} size={50} />
       }
     >
       {showNetworkWarning ? (

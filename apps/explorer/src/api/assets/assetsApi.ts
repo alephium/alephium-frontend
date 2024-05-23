@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFTTokenUriMetaData, ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS, TOKENS_QUERY_LIMIT } from '@alephium/shared'
+import { NetworkPreset, ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
-import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
+import { addressFromContractId, NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
@@ -30,7 +30,6 @@ import {
   UnverifiedNFTMetadata,
   VerifiedFungibleTokenMetadata
 } from '@/types/assets'
-import { NetworkType } from '@/types/network'
 import { createQueriesCollection } from '@/utils/api'
 
 // Batched calls
@@ -83,7 +82,7 @@ export const assetsQueries = createQueriesCollection({
     })
   },
   metadata: {
-    allVerifiedTokens: (network: NetworkType) => ({
+    allVerifiedTokens: (network: NetworkPreset) => ({
       queryKey: ['verifiedTokens', network],
       queryFn: (): Promise<VerifiedFungibleTokenMetadata[]> => {
         try {

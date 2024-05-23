@@ -20,12 +20,13 @@ import {
   client,
   customNetworkSettingsSaved,
   getNetworkName,
+  NetworkName,
+  NetworkNames,
   networkPresetSwitched,
   NetworkSettings,
   networkSettingsPresets
 } from '@alephium/shared'
 import { AlertOctagon } from 'lucide-react'
-import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -37,9 +38,9 @@ import Input from '@/components/Inputs/Input'
 import Select from '@/components/Inputs/Select'
 import { Section } from '@/components/PageComponents/PageContainers'
 import ToggleSection from '@/components/ToggleSection'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import i18next from '@/i18n'
-import { NetworkName, NetworkNames } from '@/types/network'
 import { AlephiumWindow } from '@/types/window'
 import { useMountEffect } from '@/utils/hooks'
 
@@ -62,7 +63,7 @@ const NetworkSettingsSection = () => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const network = useAppSelector((state) => state.network)
-  const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
   const theme = useTheme()
 
   const _window = window as unknown as AlephiumWindow
@@ -119,7 +120,7 @@ const NetworkSettingsSection = () => {
           dispatch(networkPresetSwitched(networkName))
           setTempNetworkSettings(newNetworkSettings)
 
-          posthog.capture('Changed network', { network_name: networkName })
+          sendAnalytics({ event: 'Changed network', props: { network_name: networkName } })
           return
         }
 
@@ -133,11 +134,11 @@ const NetworkSettingsSection = () => {
           dispatch(customNetworkSettingsSaved(settings))
           setTempNetworkSettings(settings)
 
-          posthog.capture('Saved custom network settings')
+          sendAnalytics({ event: 'Saved custom network settings' })
         }
       }
     },
-    [dispatch, posthog, selectedNetwork]
+    [dispatch, selectedNetwork, sendAnalytics]
   )
 
   const handleAdvancedSettingsSave = useCallback(() => {
@@ -154,14 +155,14 @@ const NetworkSettingsSection = () => {
     // Proxy settings (no need to be awaited)
     electron?.app.setProxySettings(tempNetworkSettings.proxy)
 
-    posthog?.capture('Saved custom network settings')
+    sendAnalytics({ event: 'Saved custom network settings' })
   }, [
     dispatch,
     electron?.app,
     network.name,
     overrideSelectionIfMatchesPreset,
-    posthog,
     selectedNetwork,
+    sendAnalytics,
     tempNetworkSettings
   ])
 

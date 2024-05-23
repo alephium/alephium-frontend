@@ -34,7 +34,7 @@ export const useInitializeClient = () => {
     try {
       client.init(network.settings.nodeHost, network.settings.explorerApiHost)
       const { networkId } = await client.node.infos.getInfosChainParams()
-      // TODO: Check if connection to explorer also works
+      await client.explorer.infos.getInfos()
       dispatch(apiClientInitSucceeded({ networkId, networkName: network.name }))
     } catch (e) {
       dispatch(apiClientInitFailed({ networkName: network.name }))

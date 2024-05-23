@@ -16,15 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export type NetworkStatus = 'offline' | 'connecting' | 'online' | 'uninitialized'
-
-export enum NetworkNames {
-  mainnet = 'mainnet',
-  testnet = 'testnet',
-  devnet = 'devnet',
-  custom = 'custom'
-}
-
-export type NetworkName = keyof typeof NetworkNames
-
-export type NetworkPreset = Exclude<NetworkName, 'custom'>
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+)

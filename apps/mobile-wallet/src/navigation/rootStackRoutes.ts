@@ -20,7 +20,6 @@ type RootStackParamList = {
   LandingScreen: undefined
   NewWalletIntroScreen: undefined
   NewWalletNameScreen: undefined
-  PinCodeCreationScreen: undefined
   AddBiometricsScreen: undefined
   NewWalletSuccessScreen: undefined
   ImportWalletSeedScreen: undefined

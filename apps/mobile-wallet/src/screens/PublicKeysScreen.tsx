@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
 
@@ -26,6 +27,7 @@ import FlatListScreen from '~/components/layout/FlatListScreen'
 import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { showToast, ToastDuration } from '~/utils/layout'
 
@@ -34,8 +36,9 @@ interface PublicKeysScreenProps extends StackScreenProps<RootStackParamList, 'Pu
 const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
 
-  const handleAddressPress = async (publicKey: string) => {
+  const handleAddressPress = async (addressHash: AddressHash) => {
     try {
+      const publicKey = await getAddressAsymetricKey(addressHash, 'public')
       await Clipboard.setStringAsync(publicKey)
 
       showToast({ text1: 'Public key copied!', visibilityTime: ToastDuration.SHORT })
@@ -58,7 +61,7 @@ const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
       keyExtractor={(item) => item.hash}
       data={addresses}
       renderItem={({ item: address }) => (
-        <Row key={address.hash} onPress={() => handleAddressPress(address.publicKey)}>
+        <Row key={address.hash} onPress={() => handleAddressPress(address.hash)}>
           <AddressBadge addressHash={address.hash} canCopy={false} />
         </Row>
       )}

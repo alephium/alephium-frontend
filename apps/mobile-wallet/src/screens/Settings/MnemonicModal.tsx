@@ -17,11 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { usePreventScreenCapture } from 'expo-screen-capture'
+import { useEffect, useState } from 'react'
 
 import Button from '~/components/buttons/Button'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { ScreenSection } from '~/components/layout/Screen'
-import { useAppSelector } from '~/hooks/redux'
+import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/wallet'
 import OrderedTable from '~/screens/Settings/OrderedTable'
 
 interface MnemonicModalProps extends ModalContentProps {
@@ -29,7 +30,15 @@ interface MnemonicModalProps extends ModalContentProps {
 }
 
 const MnemonicModal = ({ onVerifyButtonPress, ...props }: MnemonicModalProps) => {
-  const mnemonic = useAppSelector((s) => s.wallet.mnemonic)
+  const [mnemonic, setMnemonic] = useState<string>()
+
+  useEffect(() => {
+    try {
+      dangerouslyExportWalletMnemonic().then(setMnemonic)
+    } catch (e) {
+      console.error(e)
+    }
+  }, [])
 
   usePreventScreenCapture()
 

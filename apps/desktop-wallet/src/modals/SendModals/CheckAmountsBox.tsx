@@ -64,7 +64,6 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
             {index > 0 && <HorizontalDivider />}
             <AssetAmountRow>
               <AssetLogo
-                assetId={asset.id}
                 assetImageUrl={fungibleToken?.logoURI ?? nftInfo?.image}
                 size={30}
                 assetName={fungibleToken?.name}

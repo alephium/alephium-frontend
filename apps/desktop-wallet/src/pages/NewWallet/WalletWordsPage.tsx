@@ -34,21 +34,23 @@ import {
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
+import useAnalytics from '@/features/analytics/useAnalytics'
 
 const WalletWordsPage = () => {
   const { onButtonBack, onButtonNext } = useStepsContext()
   const { mnemonic, setMnemonic, resetCachedMnemonic } = useWalletContext()
   const { t } = useTranslation()
+  const { sendAnalytics } = useAnalytics()
 
   useEffect(() => {
     if (!mnemonic) {
       try {
         setMnemonic(keyring.generateRandomMnemonic())
-      } catch (e) {
-        console.error(e)
+      } catch (error) {
+        sendAnalytics({ type: 'error', error, message: 'Could not generate new mnemonic', isSensitive: true })
       }
     }
-  }, [mnemonic, setMnemonic])
+  }, [mnemonic, sendAnalytics, setMnemonic])
 
   if (!mnemonic) return null
 
@@ -63,9 +65,15 @@ const WalletWordsPage = () => {
       ))
 
   const handleBackPress = () => {
-    keyring.clearCachedSecrets()
+    sendAnalytics({ event: 'Creating wallet: Writing down mnemonic: Clicked back' })
+    keyring.clearAll()
     resetCachedMnemonic()
     onButtonBack()
+  }
+
+  const handleNextPress = () => {
+    sendAnalytics({ event: 'Creating wallet: Writing down mnemonic: Clicked next' })
+    onButtonNext()
   }
 
   return (
@@ -85,7 +93,7 @@ const WalletWordsPage = () => {
         </WordsContent>
       </PanelContentContainer>
       <FooterActionsContainer>
-        <Button onClick={onButtonNext}>{t("I've copied the words, continue")}</Button>
+        <Button onClick={handleNextPress}>{t("I've copied the words, continue")}</Button>
       </FooterActionsContainer>
     </FloatingPanel>
   )

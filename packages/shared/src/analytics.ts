@@ -16,6 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export const networkTypes = ['testnet', 'mainnet'] as const
+const eventThrottleStatus: Record<string, boolean> = {}
 
-export type NetworkType = (typeof networkTypes)[number]
+const ANALYTICS_THROTTLING_TIMEOUT = 5000
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnalyticsProps = { [key: string]: any }
+
+export const throttleEvent = (callback: () => void, event: string, props?: AnalyticsProps) => {
+  const eventKey = `${event}:${props ? Object.keys(props).map((key) => `${key}:${props[key]}`) : ''}`
+
+  if (!eventThrottleStatus[eventKey]) {
+    eventThrottleStatus[eventKey] = true
+
+    setTimeout(() => {
+      eventThrottleStatus[eventKey] = false
+    }, ANALYTICS_THROTTLING_TIMEOUT)
+
+    callback()
+  }
+}

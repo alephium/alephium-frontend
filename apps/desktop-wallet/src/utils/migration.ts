@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { decrypt } from '@alephium/encryptor'
 import {
   dangerouslyConvertUint8ArrayMnemonicToString,
   decryptMnemonic,
@@ -24,7 +25,6 @@ import {
   encryptMnemonic
 } from '@alephium/keyring'
 import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
-import { decrypt } from '@alephium/shared-crypto'
 import { merge } from 'lodash'
 import { nanoid } from 'nanoid'
 
@@ -367,16 +367,18 @@ export const _20240328_1221_migrateAddressAndContactsToUnencrypted = async (
 
     try {
       if (parsedMetadataJson?.encrypted) {
-        const metadata = JSON.parse(
-          decrypt(dangerouslyConvertUint8ArrayMnemonicToString(result.decryptedMnemonic), parsedMetadataJson.encrypted)
-        ) as AddressMetadata[]
+        const metadata = (await decrypt(
+          dangerouslyConvertUint8ArrayMnemonicToString(result.decryptedMnemonic),
+          parsedMetadataJson.encrypted
+        )) as AddressMetadata[]
         addressMetadataStorage.store(walletId, metadata)
       }
 
       if (parsedContactsJson?.encrypted) {
-        const contacts = JSON.parse(
-          decrypt(dangerouslyConvertUint8ArrayMnemonicToString(result.decryptedMnemonic), parsedContactsJson.encrypted)
-        ) as Contact[]
+        const contacts = (await decrypt(
+          dangerouslyConvertUint8ArrayMnemonicToString(result.decryptedMnemonic),
+          parsedContactsJson.encrypted
+        )) as Contact[]
         contactsStorage.store(walletId, contacts)
       }
 

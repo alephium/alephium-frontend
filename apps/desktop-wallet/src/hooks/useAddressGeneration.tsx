@@ -22,6 +22,7 @@ import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
 import { discoverAndCacheActiveAddresses } from '@/api/addresses'
 import { useAddressesWithSomeBalance } from '@/api/apiHooks'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch } from '@/hooks/redux'
 import {
   addressDiscoveryFinished,
@@ -55,6 +56,7 @@ interface GenerateOneAddressPerGroupProps {
 const useAddressGeneration = () => {
   const dispatch = useAppDispatch()
   const { data: addresses } = useAddressesWithSomeBalance()
+  const { sendAnalytics } = useAnalytics()
 
   const currentAddressIndexes = addresses.map(({ index }) => index)
 
@@ -77,13 +79,19 @@ const useAddressGeneration = () => {
         color: labelColor ?? randomLabelColor
       }))
 
-      saveNewAddresses(addresses)
-    } catch (e) {
-      console.error(e)
+      try {
+        saveNewAddresses(addresses)
+      } catch {
+        sendAnalytics({ type: 'error', message: 'Error while saving new address' })
+      }
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Could not generate one address per group' })
     }
   }
 
-  const restoreAddressesFromMetadata = async (walletId: StoredEncryptedWallet['id']) => {
+  const restoreAddressesFromMetadata = async (walletId: StoredEncryptedWallet['id'], isPassphraseUsed: boolean) => {
+    if (isPassphraseUsed) return
+
     const addressesMetadata: AddressMetadata[] = addressMetadataStorage.load(walletId)
 
     // When no metadata found (ie, upgrading from a version older then v1.2.0) initialize with default address
@@ -102,8 +110,8 @@ const useAddressGeneration = () => {
       }))
 
       dispatch(addressesRestoredFromMetadata(addresses))
-    } catch (e) {
-      console.error(e)
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Could not generate addresses from metadata' })
     }
   }
 
@@ -121,10 +129,14 @@ const useAddressGeneration = () => {
         color: getRandomLabelColor()
       }))
 
-      saveNewAddresses(newAddresses)
+      try {
+        saveNewAddresses(newAddresses)
+      } catch {
+        sendAnalytics({ type: 'error', message: 'Error while saving newly discovered address' })
+      }
       dispatch(addressDiscoveryFinished(enableLoading))
-    } catch (e) {
-      console.error(e)
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Could not discover addresses' })
     }
   }
 

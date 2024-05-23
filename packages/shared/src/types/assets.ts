@@ -17,11 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenInfo } from '@alephium/token-list'
-import {
-  FungibleTokenMetaData as FungibleTokenMetaDataBase,
-  NFTTokenUriMetaData as NFTTokenUriMetaDataBase,
-  Optional
-} from '@alephium/web3'
+import { FungibleTokenMetaData as FungibleTokenMetaDataBase, NFTTokenUriMetaData, Optional } from '@alephium/web3'
 import { AddressBalance, FungibleTokenMetadata, NFTMetadata, Token } from '@alephium/web3/dist/src/api/api-explorer'
 
 export type TokenBalances = AddressBalance & { id: Token['id'] }
@@ -65,13 +61,5 @@ export type AssetAmount = { id: Asset['id']; amount?: bigint }
 // https://github.com/alephium/alephium-web3/blob/master/packages/web3/src/api/types.ts#L296
 export type FungibleTokenBasicMetadata = Omit<FungibleTokenMetadata, 'decimals'> &
   Omit<FungibleTokenMetaDataBase, 'totalSupply'>
-
-// TODO: Delete when this is merged https://github.com/alephium/alephium-web3/pull/313
-export interface NFTTokenUriMetaData extends Omit<NFTTokenUriMetaDataBase, 'attributes'> {
-  attributes?: {
-    trait_type: string
-    value: string | number | boolean
-  }[]
-}
 
 export type NFT = NFTTokenUriMetaData & Omit<NFTMetadata, 'tokenUri'>

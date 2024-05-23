@@ -31,15 +31,26 @@ interface SaveNewWalletProps {
 }
 
 export const saveNewWallet = ({ walletName, encrypted }: SaveNewWalletProps): StoredEncryptedWallet['id'] => {
-  const storedWallet = walletStorage.store(walletName, encrypted)
+  let storedWallet
+
+  try {
+    storedWallet = walletStorage.store(walletName, encrypted)
+  } catch {
+    throw new Error('Could not store new wallet')
+  }
+
   const initialAddressSettings = getInitialAddressSettings()
 
-  store.dispatch(
-    walletSaved({
-      wallet: storedWallet,
-      initialAddress: { ...keyring.generateAndCacheAddress({ addressIndex: 0 }), ...initialAddressSettings }
-    })
-  )
+  try {
+    store.dispatch(
+      walletSaved({
+        wallet: storedWallet,
+        initialAddress: { ...keyring.generateAndCacheAddress({ addressIndex: 0 }), ...initialAddressSettings }
+      })
+    )
+  } catch {
+    throw new Error('Could not generate initial address while saving new wallet')
+  }
 
   addressMetadataStorage.storeOne(storedWallet.id, { index: 0, settings: initialAddressSettings })
 

@@ -17,8 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { usePostHog } from 'posthog-js/react'
+import { useCallback } from 'react'
 
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
@@ -42,14 +43,17 @@ const useWalletLock = () => {
   const isWalletUnlocked = useAppSelector((s) => !!s.activeWallet.id)
   const { restoreAddressesFromMetadata } = useAddressGeneration()
   const dispatch = useAppDispatch()
-  const posthog = usePostHog()
+  const { sendAnalytics } = useAnalytics()
 
-  const lockWallet = (lockedFrom?: string) => {
-    keyring.clearCachedSecrets()
-    dispatch(walletLocked())
+  const lockWallet = useCallback(
+    (lockedFrom?: string) => {
+      keyring.clearAll()
+      dispatch(walletLocked())
 
-    if (lockedFrom) posthog.capture('Locked wallet', { origin: lockedFrom })
-  }
+      if (lockedFrom) sendAnalytics({ event: 'Locked wallet', props: { origin: lockedFrom } })
+    },
+    [dispatch, sendAnalytics]
+  )
 
   const unlockWallet = async (props: UnlockWalletProps | null) => {
     if (!props) return
@@ -59,6 +63,7 @@ const useWalletLock = () => {
     let encryptedWallet: StoredEncryptedWallet | null
     let initialAddress: NonSensitiveAddressData
     let version: EncryptedMnemonicVersion
+    const isPassphraseUsed = !!passphrase
 
     try {
       encryptedWallet = walletStorage.load(walletId)
@@ -71,9 +76,8 @@ const useWalletLock = () => {
 
     try {
       await migrateUserData(encryptedWallet.id, password, version)
-    } catch (e) {
-      console.error(e)
-      posthog.capture('Error', { message: 'User data migration failed ' })
+    } catch {
+      sendAnalytics({ type: 'error', message: 'User data migration failed' })
       dispatch(userDataMigrationFailed())
     }
 
@@ -88,22 +92,25 @@ const useWalletLock = () => {
       wallet: {
         id: encryptedWallet.id,
         name: encryptedWallet.name,
-        isPassphraseUsed: !!passphrase
+        isPassphraseUsed
       },
       initialAddress
     }
 
     dispatch(event === 'unlock' ? walletUnlocked(payload) : walletSwitched(payload))
 
-    if (!passphrase) {
-      restoreAddressesFromMetadata(encryptedWallet.id)
+    if (!isPassphraseUsed) {
+      restoreAddressesFromMetadata(encryptedWallet.id, isPassphraseUsed)
 
       walletStorage.update(walletId, { lastUsed: Date.now() })
 
-      posthog.capture(event === 'unlock' ? 'Wallet unlocked' : 'Wallet switched', {
-        wallet_name_length: encryptedWallet.name.length,
-        number_of_addresses: (addressMetadataStorage.load(encryptedWallet.id) as []).length,
-        number_of_contacts: (contactsStorage.load(encryptedWallet.id) as []).length
+      sendAnalytics({
+        event: event === 'unlock' ? 'Wallet unlocked' : 'Wallet switched',
+        props: {
+          wallet_name_length: encryptedWallet.name.length,
+          number_of_addresses: (addressMetadataStorage.load(encryptedWallet.id) as []).length,
+          number_of_contacts: (contactsStorage.load(encryptedWallet.id) as []).length
+        }
       })
     }
 

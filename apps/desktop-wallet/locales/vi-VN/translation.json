@@ -127,7 +127,7 @@
   "Enable developer tools": "Kích hoạt công cụ dành cho nhà phát triển",
   "Encountered error while calling the faucet.": "Đã xãy ra lỗi khi yêu cầu faucet.",
   "Encountered error while exporting your transactions.": "Đã gặp lỗi khi xuất các giao dịch của bạn.",
-  "Encountered error while synching your addresses' data.": "Đã xảy ra lỗi khi đang đồng bộ dữ liệu địa chỉ ví của bạn.",
+  "Encountered error while syncing your addresses' data.": "Đã xảy ra lỗi khi đang đồng bộ dữ liệu địa chỉ ví của bạn.",
   "Enter": "Đồng ý",
   "Enter password": "Nhập mật khẩu",
   "Enter password for \"{{ switchToWalletName }}\"": "Nhập mật khẩu cho \"{{ switchToWalletName }}\"",
@@ -489,5 +489,6 @@
   "Image URL": "Image URL",
   "Attributes": "Attributes",
   "Collection": "Collection",
-  "ID": "ID"
+  "ID": "ID",
+  "Copy ID": "Copy ID"
 }

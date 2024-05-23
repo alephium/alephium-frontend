@@ -1,6 +1,6 @@
 {
   "name": "@alephium/shared",
-  "version": "0.7.9",
+  "version": "0.7.10",
   "private": true,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -20,6 +20,7 @@
   "dependencies": {
     "@alephium/token-list": "^0.0.12",
     "@alephium/web3": "0.38.0",
+    "@metamask/scure-bip39": "^2.1.1",
     "@reduxjs/toolkit": "^1.9.1",
     "@tanstack/react-query": "^5.31.0",
     "@walletconnect/utils": "2.11.0",

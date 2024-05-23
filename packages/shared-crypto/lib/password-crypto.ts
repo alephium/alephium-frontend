@@ -34,7 +34,7 @@ const authTagLength = 16
 
 type Digest = 'sha256' | 'sha512'
 
-export type Pbkdf2Function = (password: string, salt: Buffer) => Promise<Buffer>
+type Pbkdf2Function = (password: string, salt: Buffer) => Promise<Buffer>
 
 // Export a polyfilled version of createHash
 export { createHash } from 'crypto'
@@ -43,18 +43,6 @@ export const encrypt = (password: string, dataRaw: string, digest: Digest = 'sha
   const data = Buffer.from(dataRaw, 'utf8')
   const salt = randomBytes(saltByteLength)
   const derivedKey = keyFromPassword(password, salt, digest)
-
-  return _encrypt(data, salt, derivedKey)
-}
-
-export const encryptAsync = async (
-  password: string,
-  dataRaw: string,
-  pbkdf2CustomFunc: Pbkdf2Function
-): Promise<string> => {
-  const data = Buffer.from(dataRaw, 'utf8')
-  const salt = randomBytes(saltByteLength)
-  const derivedKey = await keyFromPasswordAsync(password, salt, pbkdf2CustomFunc)
 
   return _encrypt(data, salt, derivedKey)
 }
@@ -72,25 +60,6 @@ const _encrypt = (data: Buffer, salt: Buffer, derivedKey: Buffer): string => {
   }
 
   return JSON.stringify(payload)
-}
-
-export const decrypt = (password: string, payloadRaw: string, digest: Digest = 'sha256'): string => {
-  const payload = JSON.parse(payloadRaw)
-
-  const version = payload.version
-
-  if (version !== 1) {
-    throw new Error(`Invalid version: got ${version}, expected: 1`)
-  }
-
-  const salt = Buffer.from(payload.salt, 'hex')
-  const iv = Buffer.from(payload.iv, 'hex')
-  const encrypted = Buffer.from(payload.encrypted, 'hex')
-  const derivedKey = keyFromPassword(password, salt, digest)
-
-  password = ''
-
-  return _decrypt(iv, encrypted, derivedKey)
 }
 
 export const decryptAsync = async (
