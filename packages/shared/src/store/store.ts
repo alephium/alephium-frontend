@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AnyAction, Dispatch, ThunkDispatch } from '@reduxjs/toolkit'
 
-import { baseApi } from '@/api/baseApi'
 import clientsSlice from '@/store/clients/clientsSlice'
 import networkSlice from '@/store/network/networkSlice'
 import pricesHistorySlice from '@/store/prices/pricesHistorySlice'
@@ -31,11 +30,8 @@ export const sharedReducer = {
   [pricesSlice.name]: pricesSlice.reducer,
   [pricesHistorySlice.name]: pricesHistorySlice.reducer,
   [networkSlice.name]: networkSlice.reducer,
-  [clientsSlice.name]: clientsSlice.reducer,
-  [baseApi.reducerPath]: baseApi.reducer
+  [clientsSlice.name]: clientsSlice.reducer
 }
-
-export const sharedMiddleware = [baseApi.middleware]
 
 // The following 2 types could have been extracted by creating a shared redux store. But since every app defines its own
 // store we end up with 2 Redux stores. This can be avoided by defining the 2 types manually.

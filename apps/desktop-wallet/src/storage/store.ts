@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { sharedMiddleware, sharedReducer } from '@alephium/shared'
+import { sharedReducer } from '@alephium/shared'
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
@@ -39,10 +39,7 @@ export const store = configureStore({
     [snackbarSlice.name]: snackbarSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
-      .concat(settingsListenerMiddleware.middleware)
-      .concat(networkListenerMiddleware.middleware)
-      .concat(...sharedMiddleware)
+    getDefaultMiddleware().concat(settingsListenerMiddleware.middleware).concat(networkListenerMiddleware.middleware)
 })
 
 setupListeners(store.dispatch)
