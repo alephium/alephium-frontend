@@ -26,9 +26,10 @@ jobs:
           echo '${{ secrets.api_key }}' > ~/private_keys/AuthKey_${{ secrets.api_key_id }}.p8
           echo '${{ secrets.mac_certs }}' | base64 -d > applecert.p12
 
-      - name: Extract platform name
-        id: get-os
-        run: echo "os=$(echo ${{ matrix.os }} | cut -d- -f1)" >> $GITHUB_OUTPUT
+      - name: Extract args
+        if: startsWith(matrix.os, 'macos')
+        id: get-args
+        run: echo "args=--universal" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Install Snapcraft
@@ -40,12 +41,13 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags/alephium-desktop-wallet@') }}
         with:
           package_root: 'apps/desktop-wallet'
-          build_script_name: 'ci:build:electron:${{ steps.get-os.outputs.os }}'
+          build_script_name: 'ci:build'
           is_monorepo: true
           release: true
           github_token: ${{ secrets.github_token }}
           mac_certs: ${{ secrets.MAC_CERTS }}
           mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}
+          args: ${{ steps.get-args.outputs.args }}
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}

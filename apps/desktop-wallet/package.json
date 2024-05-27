@@ -1,7 +1,7 @@
 {
   "name": "alephium-desktop-wallet",
   "description": "The official Alephium wallet",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "author": "Alephium dev <dev@alephium.org>",
   "main": "public/electron.js",
   "homepage": "./",
@@ -21,6 +21,7 @@
     "ci:build:electron:ubuntu": "turbo run build:electron:ubuntu",
     "ci:build:electron:windows": "turbo run build:electron:windows",
     "ci:build:electron:macos": "turbo run build:electron:macos",
+    "ci:build": "turbo run build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest watch",
@@ -181,6 +182,7 @@
     },
     "mac": {
       "hardenedRuntime": true,
+      "defaultArch": "universal",
       "entitlements": "../../node_modules/electron-builder-notarize/entitlements.mac.inherit.plist"
     },
     "directories": {
