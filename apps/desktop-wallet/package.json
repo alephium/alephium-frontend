@@ -21,6 +21,7 @@
     "ci:build:electron:ubuntu": "turbo run build:electron:ubuntu",
     "ci:build:electron:windows": "turbo run build:electron:windows",
     "ci:build:electron:macos": "turbo run build:electron:macos",
+    "ci:build": "turbo run build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest watch",
