@@ -181,6 +181,7 @@
     },
     "mac": {
       "hardenedRuntime": true,
+      "defaultArch": "universal",
       "entitlements": "../../node_modules/electron-builder-notarize/entitlements.mac.inherit.plist"
     },
     "directories": {
