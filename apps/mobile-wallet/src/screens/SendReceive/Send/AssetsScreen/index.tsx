@@ -19,11 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useMemo } from 'react'
-import styled from 'styled-components/native'
 
 import { BackButton, ContinueButton } from '~/components/buttons/Button'
-import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import FlashListScreen from '~/components/layout/FlashListScreen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
@@ -35,12 +34,15 @@ import {
   makeSelectAddressesNFTs,
   selectAddressByHash
 } from '~/store/addressesSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'>, ScrollScreenProps {}
+interface ScreenProps
+  extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'>,
+    Omit<ScrollScreenProps, 'contentContainerStyle'> {}
 
 const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, assetAmounts, buildTransaction, setToAddress } = useSendContext()
-  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
+  const { setHeaderOptions, screenScrollY } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
@@ -76,8 +78,15 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 
   if (!address) return null
 
+  const assets = [...knownFungibleTokens, ...nfts]
+
   return (
-    <ScrollScreen
+    <FlashListScreen
+      data={assets}
+      keyExtractor={({ id }) => id}
+      renderItem={({ item: asset, index }) => (
+        <AssetRow key={asset.id} asset={asset} isLast={index === assets.length - 1} />
+      )}
       verticalGap
       usesKeyboard
       contrastedBg
@@ -85,27 +94,11 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       keyboardShouldPersistTaps="always"
       screenTitle="Assets"
       screenIntro="With Alephium, you can send multiple assets in one transaction."
-      onScroll={screenScrollHandler}
+      contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN }}
+      estimatedItemSize={64}
       {...props}
-    >
-      <ScreenSection>
-        <AssetsList>
-          {knownFungibleTokens.map((asset, index) => (
-            <AssetRow
-              key={asset.id}
-              asset={asset}
-              isLast={index === knownFungibleTokens.length - 1 && nfts.length === 0}
-            />
-          ))}
-          {nfts.map((nft, index) => (
-            <AssetRow key={nft.id} asset={nft} isLast={index === nfts.length - 1} />
-          ))}
-        </AssetsList>
-      </ScreenSection>
-    </ScrollScreen>
+    />
   )
 }
 
 export default AssetsScreen
-
-const AssetsList = styled.View``
