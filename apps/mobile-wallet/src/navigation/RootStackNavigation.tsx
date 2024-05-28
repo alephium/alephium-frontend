@@ -39,6 +39,7 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
+  deleteDeprecatedWallet,
   getDeprecatedStoredWallet,
   getStoredWallet,
   migrateDeprecatedMnemonic,
@@ -185,17 +186,20 @@ const AppUnlockHandler = () => {
     if (isWalletUnlocked) return
 
     try {
+      const walletExists = await storedWalletExists()
       const deprecatedWallet = await getDeprecatedStoredWallet({ authenticationPrompt: 'Unlock your wallet' })
 
-      if (!deprecatedWallet) {
-        if (await storedWalletExists()) {
-          await triggerBiometricsAuthGuard({
-            settingsToCheck: 'appAccess',
-            onPromptDisplayed: () => setIsAuthModalVisible(true),
-            successCallback: initializeAppWithStoredWallet
-          })
+      if (walletExists) {
+        await triggerBiometricsAuthGuard({
+          settingsToCheck: 'appAccess',
+          onPromptDisplayed: () => setIsAuthModalVisible(true),
+          successCallback: initializeAppWithStoredWallet
+        })
+
+        if (deprecatedWallet) {
+          await deleteDeprecatedWallet()
         }
-      } else {
+      } else if (deprecatedWallet) {
         if (await loadBiometricsSettings()) {
           await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
           dispatch(mnemonicMigrated())

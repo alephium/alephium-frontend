@@ -194,6 +194,17 @@ export const getIsNewWallet = async (): Promise<boolean | undefined> =>
 
 export const storeIsNewWallet = async (isNew: boolean) => storeWithReportableError(IS_NEW_WALLET, isNew.toString())
 
+export const deleteDeprecatedWallet = async () => {
+  await deleteSecurelyWithReportableError(PIN_WALLET_STORAGE_KEY, true, '')
+
+  try {
+    await SecureStore.deleteItemAsync(BIOMETRICS_WALLET_STORAGE_KEY, defaultBiometricsConfig)
+  } catch (error) {
+    sendAnalytics({ type: 'error', message: `Could not delete ${BIOMETRICS_WALLET_STORAGE_KEY} from secure storage` })
+    throw error
+  }
+}
+
 export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
   // Step 1: Store mnemonic as Uint8Array in secure store without authentication required (as per Uniswap)
   const mnemonicUint8Array = keyring.importMnemonicString(deprecatedMnemonic)
@@ -202,8 +213,7 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
     await storeWalletMnemonic(mnemonicUint8Array)
 
     // Step 2: Delete old mnemonic records
-    await deleteSecurelyWithReportableError(PIN_WALLET_STORAGE_KEY, true, '')
-    await deleteSecurelyWithReportableError(BIOMETRICS_WALLET_STORAGE_KEY, true, '')
+    await deleteDeprecatedWallet()
 
     // Step 3: Add hash in address metadata for faster app unlock and store public and private key in secure store
     const { addresses } = await getStoredWallet('Could not migrate address metadata, wallet metadata not found')
