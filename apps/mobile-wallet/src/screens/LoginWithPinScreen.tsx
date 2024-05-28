@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import * as SplashScreen from 'expo-splash-screen'
 import { useCallback, useState } from 'react'
 
 import { sendAnalytics } from '~/analytics'
@@ -61,7 +60,6 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
         dispatch(walletUnlocked(wallet))
         resetNavigation(navigation)
         sendAnalytics({ event: 'Unlocked wallet' })
-        SplashScreen.hideAsync()
       } catch (error) {
         const message = 'Could not migrate mnemonic and unlock wallet'
 
@@ -74,12 +72,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
 
   return (
     <Screen contrastedBg {...props}>
-      <DeprecatedAuthenticationModal
-        visible={isPinModalVisible}
-        forcePinUsage
-        onConfirm={handleSuccessfulLogin}
-        onLayout={() => SplashScreen.hideAsync()}
-      />
+      <DeprecatedAuthenticationModal visible={isPinModalVisible} forcePinUsage onConfirm={handleSuccessfulLogin} />
       {!isPinModalVisible && <Spinner text="Unlocking..." />}
     </Screen>
   )

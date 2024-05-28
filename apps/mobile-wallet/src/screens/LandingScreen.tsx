@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, RadialGradient, Rect, vec } from '@shopify/react-native-skia'
-import * as SplashScreen from 'expo-splash-screen'
 import { useEffect, useState } from 'react'
 import { Dimensions, Image, LayoutChangeEvent, Platform, StatusBar } from 'react-native'
 import Animated, {
@@ -183,7 +182,7 @@ export const CoolAlephiumCanvas = ({ width, height, onPress }: CoolAlephiumCanva
 
   return (
     <>
-      <CanvasStyled onLayout={() => SplashScreen.hideAsync()}>
+      <CanvasStyled>
         <Rect x={0} y={0} width={width} height={height}>
           <RadialGradient
             c={vec(width / 2, height)}

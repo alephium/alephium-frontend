@@ -20,7 +20,6 @@ import { appBecameInactive } from '@alephium/shared'
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
-import * as SplashScreen from 'expo-splash-screen'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AppState, AppStateStatus, Dimensions, LayoutChangeEvent, Modal } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -71,8 +70,6 @@ import { showExceptionToast, showToast } from '~/utils/layout'
 import { isNavStateRestorable, resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
 
 const RootStack = createStackNavigator<RootStackParamList>()
-
-SplashScreen.preventAutoHideAsync()
 
 const RootStackNavigation = () => {
   const theme = useTheme()
@@ -210,8 +207,6 @@ const AppUnlockHandler = () => {
         }
       }
 
-      SplashScreen.hideAsync()
-
       // TODO: Revisit error handling with proper error codes
     } catch (e: unknown) {
       const error = e as { message?: string }
@@ -223,7 +218,7 @@ const AppUnlockHandler = () => {
         showExceptionToast(e, 'Could not unlock app')
       }
     }
-  }, [initializeAppWithStoredWallet, isWalletUnlocked, navigation, triggerBiometricsAuthGuard])
+  }, [dispatch, initializeAppWithStoredWallet, isWalletUnlocked, navigation, triggerBiometricsAuthGuard])
 
   useEffect(() => {
     if (!settingsLoadedFromStorage) return
