@@ -40,22 +40,22 @@ import { store } from '@/storage/store'
 // const root = createRoot(document.getElementById('root')!)
 
 ReactDOM.render(
-  <StrictMode>
-    <Provider store={store}>
-      <Router>
-        <Suspense fallback="loading">
-          <AnalyticsProvider>
+  <AnalyticsProvider>
+    <StrictMode>
+      <Provider store={store}>
+        <Router>
+          <Suspense fallback="loading">
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>
               <GlobalContextProvider>
                 <App />
                 <Tooltips />
               </GlobalContextProvider>
             </StyleSheetManager>
-          </AnalyticsProvider>
-        </Suspense>
-      </Router>
-    </Provider>
-  </StrictMode>,
+          </Suspense>
+        </Router>
+      </Provider>
+    </StrictMode>
+  </AnalyticsProvider>,
   document.getElementById('root')
 )
 
