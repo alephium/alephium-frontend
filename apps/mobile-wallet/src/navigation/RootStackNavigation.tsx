@@ -65,7 +65,7 @@ import PublicKeysScreen from '~/screens/PublicKeysScreen'
 import EditWalletNameScreen from '~/screens/Settings/EditWalletName'
 import SettingsScreen from '~/screens/Settings/SettingsScreen'
 import { routeChanged } from '~/store/appSlice'
-import { walletUnlocked } from '~/store/wallet/walletActions'
+import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { isNavStateRestorable, resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
 
@@ -198,6 +198,7 @@ const AppUnlockHandler = () => {
       } else {
         if (await loadBiometricsSettings()) {
           await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
+          dispatch(mnemonicMigrated())
 
           initializeAppWithStoredWallet()
         } else {

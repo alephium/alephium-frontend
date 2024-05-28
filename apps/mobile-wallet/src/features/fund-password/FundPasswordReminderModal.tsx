@@ -21,28 +21,25 @@ import { useEffect } from 'react'
 import { Alert } from 'react-native'
 import { Portal } from 'react-native-portalize'
 
-import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import BottomModal, { BottomModalProps } from '~/components/layout/BottomModal'
 import { ModalContent } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import { deleteFundPasswordReminder } from '~/features/fund-password/fundPasswordStorage'
+import { fundPasswordReminded } from '~/features/fund-password/fundPasswordActions'
+import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 type FundPasswordModalProps = Pick<BottomModalProps, 'isOpen' | 'onClose'>
 
 const FundPasswordReminderModal = ({ isOpen, onClose }: FundPasswordModalProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
-    try {
-      deleteFundPasswordReminder()
-    } catch (error) {
-      sendAnalytics({ type: 'error', error, message: 'Could not delete fund password reminder flag' })
-    }
-  }, [])
+    dispatch(fundPasswordReminded())
+  }, [dispatch])
 
   const handleClose = () => {
     Alert.alert('Are you sure?', 'To enhance your security it is recommended to use a fund password.', [

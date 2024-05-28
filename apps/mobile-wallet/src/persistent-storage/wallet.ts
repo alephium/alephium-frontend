@@ -26,7 +26,7 @@ import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 
 import { sendAnalytics } from '~/analytics'
-import { deleteFundPassword, setNeedsFundPasswordReminder } from '~/features/fund-password/fundPasswordStorage'
+import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { defaultBiometricsConfig } from '~/persistent-storage/config'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
@@ -228,9 +228,6 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
   } finally {
     keyring.clear()
   }
-
-  // Step 4: Inform user that pin is replaced by fund password and that they should set it
-  setNeedsFundPasswordReminder()
 }
 
 export const storedWalletExists = async (): Promise<boolean> =>

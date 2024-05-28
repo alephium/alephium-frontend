@@ -29,7 +29,7 @@ import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getStoredWallet, migrateDeprecatedMnemonic } from '~/persistent-storage/wallet'
 import { allBiometricsEnabled } from '~/store/settings/settingsActions'
-import { walletUnlocked } from '~/store/wallet/walletActions'
+import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
 
@@ -50,6 +50,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
 
       try {
         await migrateDeprecatedMnemonic(deprecatedMnemonic)
+        dispatch(mnemonicMigrated())
 
         if (deviceSupportsBiometrics && deviceHasEnrolledBiometrics && !biometricsRequiredForAppAccess) {
           dispatch(allBiometricsEnabled())
@@ -60,6 +61,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
         dispatch(walletUnlocked(wallet))
         resetNavigation(navigation)
         sendAnalytics({ event: 'Unlocked wallet' })
+        SplashScreen.hideAsync()
       } catch (error) {
         const message = 'Could not migrate mnemonic and unlock wallet'
 

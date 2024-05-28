@@ -38,9 +38,7 @@ import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Scree
 import RefreshSpinner from '~/components/RefreshSpinner'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
-import { needsFundPasswordReminder } from '~/features/fund-password/fundPasswordStorage'
 import { useAppSelector } from '~/hooks/redux'
-import { useAsyncData } from '~/hooks/useAsyncData'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -64,7 +62,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
-  const { data: userNeedsFundPasswordReminder } = useAsyncData(needsFundPasswordReminder)
+  const needsFundPasswordReminder = useAppSelector((s) => s.fundPassword.needsReminder)
 
   const [isFundPasswordReminderModalOpen, setIsFundPasswordReminderModalOpen] = useState(false)
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
@@ -77,10 +75,10 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   }))
 
   useEffect(() => {
-    if (isMnemonicBackedUp && userNeedsFundPasswordReminder) {
+    if (isMnemonicBackedUp && needsFundPasswordReminder) {
       setIsFundPasswordReminderModalOpen(true)
     }
-  }, [isMnemonicBackedUp, userNeedsFundPasswordReminder])
+  }, [isMnemonicBackedUp, needsFundPasswordReminder])
 
   useEffect(() => {
     try {

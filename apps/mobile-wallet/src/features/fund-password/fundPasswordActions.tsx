@@ -16,21 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  deleteSecurelyWithReportableError,
-  getSecurelyWithReportableError,
-  storeSecurelyWithReportableError
-} from '~/persistent-storage/utils'
+import { createAction } from '@reduxjs/toolkit'
 
-const FUND_PASSWORD_KEY = 'fund-password'
-
-export const storeFundPassword = (password: string) =>
-  storeSecurelyWithReportableError(FUND_PASSWORD_KEY, password, true, '')
-
-export const getFundPassword = () => getSecurelyWithReportableError(FUND_PASSWORD_KEY, true, '')
-
-export const hasStoredFundPassword = async () => !!(await getFundPassword())
-
-export const deleteFundPassword = async () => {
-  await deleteSecurelyWithReportableError(FUND_PASSWORD_KEY, true, '')
-}
+export const fundPasswordReminded = createAction('fundPassword/reminded')
