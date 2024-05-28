@@ -18,11 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { BackButton, ContinueButton } from '~/components/buttons/Button'
 import FlashListScreen from '~/components/layout/FlashListScreen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import SpinnerModal from '~/components/SpinnerModal'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
@@ -49,6 +50,8 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, address?.hash))
 
+  const [isLoading, setIsLoading] = useState(false)
+
   useScrollToTopOnFocus(screenScrollY)
 
   const isContinueButtonDisabled = assetAmounts.length < 1
@@ -59,12 +62,14 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         headerRight: () => (
           <ContinueButton
-            onPress={() =>
-              buildTransaction({
+            onPress={async () => {
+              setIsLoading(true)
+              await buildTransaction({
                 onBuildSuccess: () => navigation.navigate('VerifyScreen'),
                 onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
               })
-            }
+              setIsLoading(false)
+            }}
             disabled={isContinueButtonDisabled}
           />
         )
@@ -81,23 +86,26 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const assets = [...knownFungibleTokens, ...nfts]
 
   return (
-    <FlashListScreen
-      data={assets}
-      keyExtractor={({ id }) => id}
-      renderItem={({ item: asset, index }) => (
-        <AssetRow key={asset.id} asset={asset} isLast={index === assets.length - 1} />
-      )}
-      verticalGap
-      usesKeyboard
-      contrastedBg
-      contentPaddingTop
-      keyboardShouldPersistTaps="always"
-      screenTitle="Assets"
-      screenIntro="With Alephium, you can send multiple assets in one transaction."
-      contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN }}
-      estimatedItemSize={64}
-      {...props}
-    />
+    <>
+      <FlashListScreen
+        data={assets}
+        keyExtractor={({ id }) => id}
+        renderItem={({ item: asset, index }) => (
+          <AssetRow key={asset.id} asset={asset} isLast={index === assets.length - 1} />
+        )}
+        verticalGap
+        usesKeyboard
+        contrastedBg
+        contentPaddingTop
+        keyboardShouldPersistTaps="always"
+        screenTitle="Assets"
+        screenIntro="With Alephium, you can send multiple assets in one transaction."
+        contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN }}
+        estimatedItemSize={64}
+        {...props}
+      />
+      <SpinnerModal isActive={isLoading} />
+    </>
   )
 }
 
