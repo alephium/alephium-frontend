@@ -29,9 +29,9 @@ import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
-import { deleteFundPassword, getFundPassword, storeFundPassword } from '~/features/fund-password/fundPasswordStorage'
+import { deleteFundPassword, storeFundPassword } from '~/features/fund-password/fundPasswordStorage'
+import useFundPassword from '~/features/fund-password/useFundPassword'
 import { useAppDispatch } from '~/hooks/redux'
-import { useAsyncData } from '~/hooks/useAsyncData'
 import usePassword from '~/hooks/usePassword'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { fundPasswordUseToggled } from '~/store/settingsSlice'
@@ -45,7 +45,7 @@ interface FundPasswordScreenProps
 const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) => {
   const cameFromBackupScreen = props.route.params.origin === 'backup'
   const { setHeaderOptions } = useHeaderContext()
-  const { data: currentFundPassword } = useAsyncData(getFundPassword)
+  const currentFundPassword = useFundPassword()
   const dispatch = useAppDispatch()
 
   const [password, setPassword] = useState('')

@@ -25,9 +25,8 @@ import Input from '~/components/inputs/Input'
 import BottomModal, { BottomModalProps } from '~/components/layout/BottomModal'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import { getFundPassword } from '~/features/fund-password/fundPasswordStorage'
+import useFundPassword from '~/features/fund-password/useFundPassword'
 import { useAppSelector } from '~/hooks/redux'
-import { useAsyncData } from '~/hooks/useAsyncData'
 import usePassword from '~/hooks/usePassword'
 
 export interface FundPasswordModalProps extends Pick<BottomModalProps, 'isOpen' | 'onClose'> {
@@ -56,7 +55,7 @@ const FundPasswordModalContent = ({
   successCallback,
   ...props
 }: ModalContentProps & Pick<FundPasswordModalProps, 'successCallback'>) => {
-  const { data: fundPassword } = useAsyncData(getFundPassword)
+  const fundPassword = useFundPassword()
   const { password, handlePasswordChange, isPasswordCorrect, error } = usePassword(
     fundPassword ?? '',
     'Provided fund password is wrong'

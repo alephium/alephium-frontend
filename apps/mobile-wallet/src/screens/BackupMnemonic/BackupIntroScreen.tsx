@@ -31,7 +31,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import CenteredInstructions from '~/components/text/CenteredInstructions'
 import { useHeaderContext } from '~/contexts/HeaderContext'
-import useFundPassword from '~/features/fund-password/useFundPassword'
+import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
@@ -43,7 +43,7 @@ interface BackupIntroScreenProps
 const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => {
   const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPassword()
+  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
 
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
 

@@ -37,7 +37,7 @@ import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
-import useFundPassword from '~/features/fund-password/useFundPassword'
+import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -75,7 +75,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const theme = useTheme()
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPassword()
+  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
 
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)

@@ -25,7 +25,7 @@ import { sendAnalytics } from '~/analytics'
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import BottomModal from '~/components/layout/BottomModal'
-import useFundPassword from '~/features/fund-password/useFundPassword'
+import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { selectAddressByHash } from '~/store/addressesSlice'
@@ -74,7 +74,7 @@ const SendContext = createContext(initialValues)
 
 export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPassword()
+  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
   const dispatch = useAppDispatch()
 
   const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(initialValues.toAddress)

@@ -85,7 +85,7 @@ import BottomModal from '~/components/layout/BottomModal'
 import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
-import useFundPassword from '~/features/fund-password/useFundPassword'
+import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
@@ -140,7 +140,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const dispatch = useAppDispatch()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPassword()
+  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])

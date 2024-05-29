@@ -16,41 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useCallback, useState } from 'react'
-
-import FundPasswordModal, { FundPasswordModalProps } from '~/features/fund-password/FundPasswordModal'
-import { useAppSelector } from '~/hooks/redux'
+import { getFundPassword } from '~/features/fund-password/fundPasswordStorage'
+import { useAsyncData } from '~/hooks/useAsyncData'
 
 const useFundPassword = () => {
-  const usesFundPassword = useAppSelector((s) => s.settings.usesFundPassword)
+  const { data: fundPassword } = useAsyncData(getFundPassword)
 
-  const [onCorrectPasswordCallback, setOnCorrectPasswordCallback] = useState<() => void>(() => () => null)
-  const [isFundPasswordModalOpen, setIsFundPasswordModalOpen] = useState(false)
-
-  const triggerFundPasswordAuthGuard = useCallback(
-    ({ successCallback }: Pick<FundPasswordModalProps, 'successCallback'>) => {
-      if (usesFundPassword) {
-        setOnCorrectPasswordCallback(() => () => successCallback())
-        setIsFundPasswordModalOpen(true)
-      } else {
-        successCallback()
-      }
-    },
-    [usesFundPassword]
-  )
-
-  const fundPasswordModal = (
-    <FundPasswordModal
-      isOpen={isFundPasswordModalOpen}
-      onClose={() => setIsFundPasswordModalOpen(false)}
-      successCallback={onCorrectPasswordCallback}
-    />
-  )
-
-  return {
-    triggerFundPasswordAuthGuard,
-    fundPasswordModal
-  }
+  return fundPassword
 }
 
 export default useFundPassword
