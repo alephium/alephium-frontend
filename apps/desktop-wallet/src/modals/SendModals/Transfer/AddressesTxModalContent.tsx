@@ -19,12 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
-import { useAppSelector } from '@/hooks/redux'
 import { ModalContent } from '@/modals/CenteredModal'
 import AddressInputs from '@/modals/SendModals/AddressInputs'
-import { selectAddressesWithSomeBalance, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
 import { PartialTxData, TransferTxData } from '@/types/transactions'
 import { isAddressValid, requiredErrorMessage } from '@/utils/form-validation'
 
@@ -36,8 +35,7 @@ interface TransferAddressesTxModalContentProps {
 
 const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferAddressesTxModalContentProps) => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAddressesWithSomeBalance)
-  const isAddressesStateUninitialized = useAppSelector(selectIsStateUninitialized)
+  const { data: addresses } = useAddressesWithSomeBalance()
 
   const [fromAddress, setFromAddress] = useState(data.fromAddress)
   const [toAddress, setToAddress] = useStateWithError(data?.toAddress ?? '')
@@ -51,7 +49,7 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
     return null
   }
 
-  const isSubmitButtonActive = toAddress.value && !toAddress.error && !isAddressesStateUninitialized
+  const isSubmitButtonActive = toAddress.value && !toAddress.error
 
   return (
     <ModalContent>

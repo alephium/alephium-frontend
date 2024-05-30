@@ -25,6 +25,6 @@
     "@alephium/typescript-config": "workspace:*",
     "@types/react": "~18.2.14",
     "tsup": "^8.0.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.5"
   }
 }

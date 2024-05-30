@@ -20,6 +20,7 @@ import { MoreVertical } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
+import { useAddressesWithAssetsHashes } from '@/api/apiHooks'
 import AddressBadge from '@/components/AddressBadge'
 import HashEllipsed from '@/components/HashEllipsed'
 import { inputDefaultStyle, InputLabel, InputProps } from '@/components/Inputs'
@@ -29,7 +30,6 @@ import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
 import { Address } from '@/types/addresses'
-import { addressHasAssets, filterAddressesWithoutAssets } from '@/utils/addresses'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface AddressSelectProps {
@@ -64,10 +64,14 @@ function AddressSelect({
 }: AddressSelectProps) {
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
 
+  const { data: addressesWithAssetsHashes } = useAddressesWithAssetsHashes(options.map((address) => address.hash))
+
+  const addressesWithAssets = options.filter((address) => addressesWithAssetsHashes.includes(address.hash))
+
   const [canBeAnimated, setCanBeAnimated] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
-  const addresses = hideAddressesWithoutAssets ? filterAddressesWithoutAssets(options) : options
-  const defaultAddressHasAssets = defaultAddress && addressHasAssets(defaultAddress)
+  const addresses = hideAddressesWithoutAssets ? addressesWithAssets : options
+  const defaultAddressHasAssets = defaultAddress && addressesWithAssetsHashes.includes(defaultAddress.hash)
 
   let initialAddress = defaultAddress
   if (hideAddressesWithoutAssets) {

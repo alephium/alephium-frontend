@@ -26,12 +26,13 @@ import { useTranslation } from 'react-i18next'
 import QRCode from 'react-qr-code'
 import styled, { useTheme } from 'styled-components'
 
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
 import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import { useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
-import { selectAllAddresses, selectAllContacts } from '@/storage/addresses/addressesSelectors'
+import { selectAllContacts } from '@/storage/addresses/addressesSelectors'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 
 // Inspired by:
@@ -44,7 +45,7 @@ const WalletQRCodeExportModal = ({ onClose }: { onClose: () => void }) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
-  const addresses = useAppSelector(selectAllAddresses)
+  const { data: addresses } = useAddressesWithSomeBalance()
   const contacts = useAppSelector(selectAllContacts)
 
   const [frames, setFrames] = useState<string[]>([])

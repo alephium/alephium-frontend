@@ -23,12 +23,14 @@ import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAllAddressesAssets } from '@/api/apiHooks'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Box from '@/components/Box'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { useAppSelector } from '@/hooks/redux'
+import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 import { getTransactionAssetAmounts } from '@/utils/transactions'
@@ -42,8 +44,11 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
   const { t } = useTranslation()
   const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
   const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
-  const fungibleTokens = useAppSelector((s) => s.fungibleTokens.entities)
-  const nfts = useAppSelector((s) => s.nfts.entities)
+  const allAddresses = useAppSelector(selectAllAddresses)
+  const { data: allAssets } = useAllAddressesAssets()
+
+  const fungibleTokens = allAssets?.fungible
+  const nfts = allAssets?.nft
 
   const alphAsset = { id: ALPH.id, amount: attoAlphAmount }
   const assets = userSpecifiedAlphAmount ? [alphAsset, ...tokens] : [...tokens, alphAsset]

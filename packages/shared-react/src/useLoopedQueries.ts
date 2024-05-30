@@ -16,14 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createEntityAdapter } from '@reduxjs/toolkit'
+import { useEffect, useState } from 'react'
 
-import { FungibleToken, NFT } from '@/types/assets'
+export const useLoopedQueries = <T>(ids: string[], fetch: (id: string) => T) => {
+  const [result, setResult] = useState<T[]>([])
 
-export const fungibleTokensAdapter = createEntityAdapter<FungibleToken>({
-  sortComparer: (a, b) => a.name.localeCompare(b.name)
-})
+  useEffect(() => {
+    const calls = ids.map((id) => fetch(id))
 
-export const nftsAdapter = createEntityAdapter<NFT>({
-  sortComparer: (a, b) => (a.name && b.name ? a.name.localeCompare(b.name) : a.id.localeCompare(b.id))
-})
+    Promise.all(calls).then((res) => {
+      setResult(res)
+    })
+  }, [ids, fetch])
+
+  return { data: result.flat() }
+}

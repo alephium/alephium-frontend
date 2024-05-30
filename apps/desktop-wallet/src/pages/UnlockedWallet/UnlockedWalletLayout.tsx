@@ -37,7 +37,6 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { ReactComponent as AlephiumLogoSVG } from '@/images/alephium_logo_monochrome.svg'
 import ModalPortal from '@/modals/ModalPortal'
 import NotificationsModal from '@/modals/NotificationsModal'
-import { syncAddressesData } from '@/storage/addresses/addressesActions'
 import { getInitials, onEnterOrSpace } from '@/utils/misc'
 
 interface UnlockedWalletLayoutProps {
@@ -95,6 +94,8 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
   const activeWalletNameInitials = getInitials(activeWalletName)
 
   const refreshAddressesData = () => {
+    // TODO: Trigger refetch queries
+    /*
     try {
       dispatch(syncAddressesData())
 
@@ -102,6 +103,7 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
     } catch {
       sendAnalytics({ type: 'error', message: 'Could not sync address data when refreshing manually' })
     }
+    */
   }
 
   return (

@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { keyring } from '@alephium/keyring'
 
-import { syncAddressesData } from '@/storage/addresses/addressesActions'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { store } from '@/storage/store'
 import { walletSaved } from '@/storage/wallets/walletActions'
@@ -54,12 +53,6 @@ export const saveNewWallet = ({ walletName, encrypted }: SaveNewWalletProps): St
   }
 
   addressMetadataStorage.storeOne(storedWallet.id, { index: 0, settings: initialAddressSettings })
-
-  try {
-    store.dispatch(syncAddressesData())
-  } catch {
-    throw new Error('Could not sync address data while saving new wallet')
-  }
 
   return storedWallet.id
 }

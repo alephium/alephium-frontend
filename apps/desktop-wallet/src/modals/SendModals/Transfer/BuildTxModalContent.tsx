@@ -31,7 +31,7 @@ import AssetAmountsInput from '@/modals/SendModals/AssetAmountsInput'
 import GasSettings from '@/modals/SendModals/GasSettings'
 import { AssetAmountInputType } from '@/types/assets'
 import { PartialTxData, TransferTxData } from '@/types/transactions'
-import { assetAmountsWithinAvailableBalance } from '@/utils/addresses'
+import { useAssetAmountsWithinAvailableBalance } from '@/utils/addresses'
 
 export interface TransferBuildTxModalContentProps {
   data: PartialTxData<TransferTxData, 'fromAddress'>
@@ -57,6 +57,8 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
 
   const { fromAddress, toAddress } = data
 
+  const allAssetAmountsAreWithinAvailableBalance = useAssetAmountsWithinAvailableBalance(fromAddress.hash, assetAmounts)
+
   if (!fromAddress || !toAddress) return null
 
   const handleLocktimeChange = (lockTimeInput: string) =>
@@ -69,7 +71,6 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
 
   const lockTimeInPast = lockTime && dayjs(lockTime).toDate() < dayjs().toDate()
   const atLeastOneAssetWithAmountIsSet = assetAmounts.some((asset) => asset?.amount && asset.amount > 0)
-  const allAssetAmountsAreWithinAvailableBalance = assetAmountsWithinAvailableBalance(fromAddress, assetAmounts)
 
   const isSubmitButtonActive =
     !gasPriceError &&

@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TokenInfo } from '@alephium/token-list'
 import { FungibleTokenMetaData as FungibleTokenMetaDataBase, NFTTokenUriMetaData, Optional } from '@alephium/web3'
 import { AddressBalance, FungibleTokenMetadata, NFTMetadata, Token } from '@alephium/web3/dist/src/api/api-explorer'
-import { EntityState } from '@reduxjs/toolkit'
 
 export type TokenBalances = AddressBalance & { id: Token['id'] }
 
@@ -31,10 +30,19 @@ export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalanc
 
 export type FungibleToken = TokenInfo & { verified?: boolean }
 
+// TODO: Use "listed" instead of "verified", don't add useless verified field
+// but instead use type checking functions like isFungible, isNonFungible, isCategorized.
+export type ListedFungibleToken = TokenInfo & { logoURI: string }
+
+// TODO: Use "uncategorized" instead of "unknown"?
+export type UnknownToken = Partial<TokenInfo> & { id: string; decimals: 0 }
+
 export type Asset = TokenDisplayBalances &
   Optional<FungibleToken, 'symbol' | 'name'> & {
     worth?: number
   }
+
+export type UnknownAsset = TokenDisplayBalances & UnknownToken
 
 export type AddressFungibleToken = FungibleToken & TokenDisplayBalances
 
@@ -55,15 +63,3 @@ export type FungibleTokenBasicMetadata = Omit<FungibleTokenMetadata, 'decimals'>
   Omit<FungibleTokenMetaDataBase, 'totalSupply'>
 
 export type NFT = NFTTokenUriMetaData & Omit<NFTMetadata, 'tokenUri'>
-
-export interface FungibleTokensState extends EntityState<FungibleToken> {
-  loadingVerified: boolean
-  loadingUnverified: boolean
-  loadingTokenTypes: boolean
-  status: 'initialized' | 'uninitialized' | 'initialization-failed'
-  checkedUnknownTokenIds: FungibleToken['id'][]
-}
-
-export interface NFTsState extends EntityState<NFT> {
-  loading: boolean
-}

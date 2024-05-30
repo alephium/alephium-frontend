@@ -16,14 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT, selectNFTById } from '@alephium/shared'
+import { assetsQueries, NFT } from '@alephium/shared'
+import { useQuery } from '@tanstack/react-query'
 import { colord } from 'colord'
 import { CameraOff } from 'lucide-react'
 import { useState } from 'react'
 import ReactPlayer from 'react-player'
 import styled, { css } from 'styled-components'
-
-import { useAppSelector } from '@/hooks/redux'
 
 interface NFTThumbnailProps {
   nftId: NFT['id']
@@ -33,7 +32,7 @@ interface NFTThumbnailProps {
 }
 
 const NFTThumbnail = ({ nftId, size = '100', ...props }: NFTThumbnailProps) => {
-  const nft = useAppSelector((s) => selectNFTById(s, nftId))
+  const { data: nft } = useQuery(assetsQueries.nfts.getNftMetadata(nftId))
 
   const [error, setError] = useState(false)
 

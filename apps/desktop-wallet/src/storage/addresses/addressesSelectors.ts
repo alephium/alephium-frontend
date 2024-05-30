@@ -16,30 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressFungibleToken,
-  AddressHash,
-  Asset,
-  calculateAmountWorth,
-  calculateAssetsData,
-  contactsAdapter,
-  NFT,
-  selectAllFungibleTokens,
-  selectAllNFTs,
-  selectAllPrices,
-  selectAllPricesHistories,
-  selectNFTIds,
-  sortAssets,
-  TokenDisplayBalances
-} from '@alephium/shared'
+import { AddressHash, Asset, contactsAdapter } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { AddressGroup } from '@alephium/walletconnect-provider'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
 import { RootState } from '@/storage/store'
-import { Address } from '@/types/addresses'
-import { filterAddressesWithoutAssets } from '@/utils/addresses'
 
 export const {
   selectById: selectAddressByHash,
@@ -58,9 +41,10 @@ export const makeSelectAddresses = () =>
         : allAddresses
   )
 
-export const selectDefaultAddress = createSelector(selectAllAddresses, (addresses) =>
-  addresses.find((address) => address.isDefault)
-)
+export const selectDefaultAddress = createSelector(selectAllAddresses, (addresses) => {
+  console.log(addresses)
+  return addresses.find((address) => address.isDefault)
+})
 
 export const selectTotalBalance = createSelector([selectAllAddresses], (addresses) =>
   addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
@@ -83,151 +67,12 @@ export const makeSelectAddressesAlphAsset = () =>
     }
   })
 
-export const makeSelectAddressesTokens = () =>
-  createSelector(
-    [selectAllFungibleTokens, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses(), selectAllPrices],
-    (fungibleTokens, nfts, alphAsset, addresses, tokenPrices): Asset[] => {
-      const tokenBalances = getAddressesTokenBalances(addresses)
-      const tokens = calculateAssetsData([alphAsset, ...tokenBalances], fungibleTokens, nfts, tokenPrices)
-
-      return sortAssets(tokens)
-    }
-  )
-
-export const makeSelectAddressesKnownFungibleTokens = () =>
-  createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken[] =>
-    tokens.filter((token): token is AddressFungibleToken => !!token.symbol)
-  )
-
-export const makeSelectAddressesVerifiedFungibleTokens = () =>
-  createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken[] =>
-    tokens.filter((token): token is AddressFungibleToken => !!token.verified)
-  )
-
-export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
-  [makeSelectAddressesVerifiedFungibleTokens(), selectAllPricesHistories],
-  (verifiedFungibleTokens, histories) =>
-    verifiedFungibleTokens
-      .map((token) => token.symbol)
-      .reduce(
-        (acc, tokenSymbol) => {
-          const tokenHistory = histories.find(({ symbol }) => symbol === tokenSymbol)
-
-          if (!tokenHistory || tokenHistory.status === 'uninitialized') {
-            acc.uninitialized.push(tokenSymbol)
-          } else if (tokenHistory && tokenHistory.history.length > 0) {
-            acc.withPriceHistory.push(tokenSymbol)
-          }
-
-          return acc
-        },
-        {
-          uninitialized: [] as string[],
-          withPriceHistory: [] as string[]
-        }
-      )
-)
-
-export const makeSelectAddressesTokensWorth = () =>
-  createSelector([makeSelectAddressesKnownFungibleTokens(), selectAllPrices], (verifiedFungibleTokens, tokenPrices) =>
-    tokenPrices.reduce((totalWorth, { symbol, price }) => {
-      const verifiedFungibleToken = verifiedFungibleTokens.find((t) => t.symbol === symbol)
-
-      return verifiedFungibleToken
-        ? totalWorth + calculateAmountWorth(verifiedFungibleToken.balance, price, verifiedFungibleToken.decimals)
-        : totalWorth
-    }, 0)
-  )
-
-export const makeSelectAddressesUnknownTokens = () =>
-  createSelector(
-    [selectAllFungibleTokens, selectNFTIds, makeSelectAddresses()],
-    (fungibleTokens, nftIds, addresses): Asset[] => {
-      const tokensWithoutMetadata = getAddressesTokenBalances(addresses).reduce((acc, token) => {
-        const hasTokenMetadata = !!fungibleTokens.find((t) => t.id === token.id)
-        const hasNFTMetadata = nftIds.includes(token.id)
-
-        if (!hasTokenMetadata && !hasNFTMetadata) {
-          acc.push({
-            id: token.id,
-            balance: BigInt(token.balance.toString()),
-            lockedBalance: BigInt(token.lockedBalance.toString()),
-            decimals: 0
-          })
-        }
-
-        return acc
-      }, [] as Asset[])
-
-      return tokensWithoutMetadata
-    }
-  )
-
-export const makeSelectAddressesCheckedUnknownTokens = () =>
-  createSelector(
-    [makeSelectAddressesUnknownTokens(), (state: RootState) => state.fungibleTokens.checkedUnknownTokenIds],
-    (tokensWithoutMetadata, checkedUnknownTokenIds) =>
-      tokensWithoutMetadata.filter((token) => checkedUnknownTokenIds.includes(token.id))
-  )
-
-export const makeSelectAddressesNFTs = () =>
-  createSelector([selectAllNFTs, makeSelectAddresses()], (nfts, addresses): NFT[] => {
-    const addressesTokenIds = addresses.flatMap(({ tokens }) => tokens.map(({ tokenId }) => tokenId))
-
-    return nfts.filter((nft) => addressesTokenIds.includes(nft.id))
-  })
-
 export const { selectAll: selectAllContacts } = contactsAdapter.getSelectors<RootState>((state) => state.contacts)
 
 export const makeSelectContactByAddress = () =>
   createSelector([selectAllContacts, (_, addressHash) => addressHash], (contacts, addressHash) =>
     contacts.find((contact) => contact.address === addressHash)
   )
-
-export const selectIsStateUninitialized = createSelector(
-  (state: RootState) => state.addresses.status,
-  (status) => status === 'uninitialized'
-)
-
-export const selectHaveAllPagesLoaded = createSelector(
-  [selectAllAddresses, (state: RootState) => state.confirmedTransactions.allLoaded],
-  (addresses, allTransactionsLoaded) =>
-    addresses.every((address) => address.allTransactionPagesLoaded) || allTransactionsLoaded
-)
-
-export const selectHaveHistoricBalancesLoaded = createSelector(selectAllAddresses, (addresses) =>
-  addresses.every((address) => address.alphBalanceHistoryInitialized)
-)
-
-export const makeSelectAddressesHaveHistoricBalances = () =>
-  createSelector(
-    makeSelectAddresses(),
-    (addresses) =>
-      addresses.every((address) => address.alphBalanceHistoryInitialized) &&
-      addresses.some((address) => address.alphBalanceHistory.ids.length > 0)
-  )
-
-export const selectAddressesWithSomeBalance = createSelector(selectAllAddresses, filterAddressesWithoutAssets)
-
-const getAddressesTokenBalances = (addresses: Address[]) =>
-  addresses.reduce((acc, { tokens }) => {
-    tokens.forEach((token) => {
-      const existingToken = acc.find((t) => t.id === token.tokenId)
-
-      if (!existingToken) {
-        acc.push({
-          id: token.tokenId,
-          balance: BigInt(token.balance),
-          lockedBalance: BigInt(token.lockedBalance)
-        })
-      } else {
-        existingToken.balance = existingToken.balance + BigInt(token.balance)
-        existingToken.lockedBalance = existingToken.lockedBalance + BigInt(token.lockedBalance)
-      }
-    })
-
-    return acc
-  }, [] as TokenDisplayBalances[])
 
 export const selectAddressesInGroup = createSelector(
   [selectAllAddresses, (_, group?: AddressGroup) => group],

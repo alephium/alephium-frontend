@@ -19,19 +19,34 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { orderBy } from 'lodash'
 
 import { calculateAmountWorth } from '@/numbers'
-import { Asset, FungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
+import {
+  Asset,
+  FungibleToken,
+  ListedFungibleToken,
+  NFT,
+  TokenDisplayBalances,
+  TokenPriceEntity,
+  UnknownAsset
+} from '@/types'
+
+export const tokenIsFungible = (asset: Partial<Asset | NFT>): asset is Asset => 'decimals' in asset
+
+export const tokenIsKnownFungible = (asset: Partial<Asset | NFT>): asset is Asset =>
+  tokenIsFungible(asset) && 'symbol' in asset
+
+export const tokenIsNonFungible = (asset: Partial<Asset | NFT>): asset is NFT => 'collectionId' in asset
+
+export const tokenIsListed = (asset: Partial<Asset | NFT>): asset is ListedFungibleToken => 'logoURI' in asset
+
+// Todo: rename "unknown" to "uncategorized"?
+export const tokenIsUnknown = (asset: Partial<Asset | NFT>): asset is UnknownAsset =>
+  !tokenIsKnownFungible(asset) && !tokenIsNonFungible(asset)
 
 export const sortAssets = (assets: Asset[]) =>
   orderBy(
     assets,
-    [
-      (a) => (a.verified ? 0 : 1),
-      (a) => a.worth ?? -1,
-      (a) => a.verified === undefined,
-      (a) => a.name?.toLowerCase(),
-      'id'
-    ],
-    ['asc', 'desc', 'asc', 'asc', 'asc']
+    [(a) => (tokenIsListed(a) ? 1 : 0), (a) => a.worth ?? -1, (a) => a.name?.toLowerCase(), 'id'],
+    ['desc', 'desc', 'asc', 'asc']
   )
 
 export const calculateAssetsData = (

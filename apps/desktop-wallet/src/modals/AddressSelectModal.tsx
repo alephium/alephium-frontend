@@ -20,11 +20,11 @@ import { AddressHash } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAddressesWithAssetsHashes } from '@/api/apiHooks'
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
-import { useAppSelector } from '@/hooks/redux'
 import { Address } from '@/types/addresses'
-import { addressHasAssets, filterAddresses, filterAddressesWithoutAssets } from '@/utils/addresses'
+import { useFilteredAddresses } from '@/utils/addresses'
 
 interface AddressSelectModalProps {
   title: string
@@ -46,11 +46,14 @@ const AddressSelectModal = ({
   hideAddressesWithoutAssets
 }: AddressSelectModalProps) => {
   const { t } = useTranslation()
-  const fungibleTokens = useAppSelector((state) => state.fungibleTokens.entities)
+  const { data: addressesWithAssetsHashes } = useAddressesWithAssetsHashes(options.map((address) => address.hash))
+  const [searchInput, setSearchInput] = useState('')
 
-  const addresses = hideAddressesWithoutAssets ? filterAddressesWithoutAssets(options) : options
-  const [filteredAddresses, setFilteredAddresses] = useState(addresses)
-  const selectedAddressHasAssets = selectedAddress && addressHasAssets(selectedAddress)
+  const addressesWithAssets = options.filter((address) => addressesWithAssetsHashes.includes(address.hash))
+  const addresses = hideAddressesWithoutAssets ? addressesWithAssets : options
+  const selectedAddressHasAssets = selectedAddress && addressesWithAssetsHashes.includes(selectedAddress.hash)
+
+  const filteredAddresses = useFilteredAddresses(addresses, searchInput.toLowerCase())
 
   let initialAddress = selectedAddress
   if (hideAddressesWithoutAssets) {
@@ -75,8 +78,7 @@ const AddressSelectModal = ({
     selectedAddress && onAddressSelect(selectedAddress)
   }
 
-  const handleSearch = (searchInput: string) =>
-    setFilteredAddresses(filterAddresses(addresses, searchInput.toLowerCase(), fungibleTokens))
+  const handleSearchInputChange = (searchInput: string) => setSearchInput(searchInput.toLowerCase())
 
   return (
     <SelectOptionsModal
@@ -86,7 +88,7 @@ const AddressSelectModal = ({
       showOnly={filteredAddresses.map((address) => address.hash)}
       setValue={selectAddress}
       onClose={onClose}
-      onSearchInput={handleSearch}
+      onSearchInput={handleSearchInputChange}
       searchPlaceholder={t('Search for name or a hash...')}
       minWidth={620}
       optionRender={(option, isSelected) => {

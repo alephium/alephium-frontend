@@ -21,12 +21,13 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
 import AddressBadge from '@/components/AddressBadge'
 import Button from '@/components/Button'
 import CheckMark from '@/components/CheckMark'
 import Select, { SelectOption } from '@/components/Inputs/Select'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { changeDefaultAddress } from '@/storage/addresses/addressesStorageUtils'
 
 interface AddressOption {
@@ -36,7 +37,7 @@ interface AddressOption {
 
 const DefaultAddressSwitch = () => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAllAddresses)
+  const { data: addresses } = useAddressesWithSomeBalance()
   const defaultAddress = useAppSelector(selectDefaultAddress)
 
   const addressOptions: AddressOption[] = addresses.map((address) => ({
@@ -45,7 +46,7 @@ const DefaultAddressSwitch = () => {
   }))
 
   const handleDefaultAddressChange = useCallback(
-    (addressHash: string) => {
+    (addressHash: AddressHash) => {
       const newDefaultAddress = addresses.find((a) => a.hash === addressHash)
 
       try {
