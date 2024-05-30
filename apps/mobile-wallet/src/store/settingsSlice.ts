@@ -60,8 +60,8 @@ const settingsSlice = createSlice({
     biometricsToggled: (state) => {
       state.usesBiometrics = !state.usesBiometrics
     },
-    fundPasswordUseToggled: (state, { payload }: PayloadAction<GeneralSettings['usesFundPassword']>) => {
-      state.usesFundPassword = payload
+    fundPasswordUseToggled: (state, { payload }: PayloadAction<GeneralSettings['isUsingFundPassword']>) => {
+      state.isUsingFundPassword = payload
     }
   },
   extraReducers(builder) {
@@ -71,7 +71,7 @@ const settingsSlice = createSlice({
         state.currency = currency
       })
       .addCase(walletDeleted, (state) => {
-        state.usesFundPassword = false
+        state.isUsingFundPassword = false
       })
       .addCase(analyticsIdGenerated, (state, { payload: analyticsId }) => {
         state.analyticsId = analyticsId

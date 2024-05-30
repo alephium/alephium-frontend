@@ -69,7 +69,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
-  const usesFundPassword = useAppSelector((s) => s.settings.usesFundPassword)
+  const isUsingFundPassword = useAppSelector((s) => s.settings.isUsingFundPassword)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletName = useAppSelector((s) => s.wallet.name)
   const theme = useTheme()
@@ -222,7 +222,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                 />
               </Row>
               <Row title="Fund password" subtitle="Enhance your security" isLast>
-                <Toggle value={usesFundPassword} onValueChange={handleFundPasswordPress} />
+                <Toggle value={isUsingFundPassword} onValueChange={handleFundPasswordPress} />
               </Row>
             </BoxSurface>
           </ScreenSection>

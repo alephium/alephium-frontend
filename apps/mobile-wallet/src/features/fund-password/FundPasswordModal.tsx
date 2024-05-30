@@ -34,9 +34,9 @@ export interface FundPasswordModalProps extends Pick<BottomModalProps, 'isOpen' 
 }
 
 const FundPasswordModal = ({ successCallback, ...props }: FundPasswordModalProps) => {
-  const usesFundPassword = useAppSelector((s) => s.settings.usesFundPassword)
+  const isUsingFundPassword = useAppSelector((s) => s.settings.isUsingFundPassword)
 
-  if (!usesFundPassword) return null
+  if (!isUsingFundPassword) return null
 
   return (
     <Portal>

@@ -35,7 +35,7 @@ interface VerificationSuccessScreenProps
     ScrollScreenProps {}
 
 const VerificationSuccessScreen = ({ navigation, ...props }: VerificationSuccessScreenProps) => {
-  const usesFundPassword = useAppSelector((s) => s.settings.usesFundPassword)
+  const isUsingFundPassword = useAppSelector((s) => s.settings.isUsingFundPassword)
   const { setHeaderOptions } = useHeaderContext()
 
   useFocusEffect(
@@ -62,7 +62,7 @@ const VerificationSuccessScreen = ({ navigation, ...props }: VerificationSuccess
         />
       </ScreenSection>
       <ScreenSection>
-        {usesFundPassword ? (
+        {isUsingFundPassword ? (
           <Button
             variant="highlight"
             title="Return to my wallet"

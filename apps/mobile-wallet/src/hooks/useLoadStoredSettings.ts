@@ -32,7 +32,7 @@ const useLoadStoredSettings = () => {
   useEffect(() => {
     const loadStoredSettingsIntoState = async () => {
       const generalSettings = (await loadSettings('general')) as GeneralSettings
-      generalSettings.usesFundPassword = await hasStoredFundPassword()
+      generalSettings.isUsingFundPassword = await hasStoredFundPassword()
       dispatch(storedGeneralSettingsLoaded(generalSettings))
 
       await migrateNetworkSettings()

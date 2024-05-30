@@ -22,21 +22,21 @@ import FundPasswordModal, { FundPasswordModalProps } from '~/features/fund-passw
 import { useAppSelector } from '~/hooks/redux'
 
 const useFundPasswordGuard = () => {
-  const usesFundPassword = useAppSelector((s) => s.settings.usesFundPassword)
+  const isUsingFundPassword = useAppSelector((s) => s.settings.isUsingFundPassword)
 
   const [onCorrectPasswordCallback, setOnCorrectPasswordCallback] = useState<() => void>(() => () => null)
   const [isFundPasswordModalOpen, setIsFundPasswordModalOpen] = useState(false)
 
   const triggerFundPasswordAuthGuard = useCallback(
     ({ successCallback }: Pick<FundPasswordModalProps, 'successCallback'>) => {
-      if (usesFundPassword) {
+      if (isUsingFundPassword) {
         setOnCorrectPasswordCallback(() => () => successCallback())
         setIsFundPasswordModalOpen(true)
       } else {
         successCallback()
       }
     },
-    [usesFundPassword]
+    [isUsingFundPassword]
   )
 
   const fundPasswordModal = (
