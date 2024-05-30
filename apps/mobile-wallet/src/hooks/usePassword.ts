@@ -16,9 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 
-const usePassword = (correctPassword: string, errorMessage = 'Password is wrong') => {
+interface UsePasswordProps {
+  correctPassword: string
+  errorMessage?: string
+}
+
+interface UsePasswordReturn {
+  password: string
+  handlePasswordChange: (text: string) => void
+  isPasswordCorrect: boolean
+  setPassword: Dispatch<SetStateAction<string>>
+  error?: string
+}
+
+const usePassword = ({ correctPassword, errorMessage }: UsePasswordProps): UsePasswordReturn => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string>()
 
@@ -28,7 +41,7 @@ const usePassword = (correctPassword: string, errorMessage = 'Password is wrong'
     setPassword(text)
 
     if ((error === undefined && text.length === correctPassword.length) || error !== undefined) {
-      setError(text !== correctPassword ? errorMessage : '')
+      setError(text !== correctPassword ? errorMessage || 'Password is wrong' : '')
     }
   }
 

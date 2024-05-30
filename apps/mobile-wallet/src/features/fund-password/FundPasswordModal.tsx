@@ -56,10 +56,10 @@ const FundPasswordModalContent = ({
   ...props
 }: ModalContentProps & Pick<FundPasswordModalProps, 'successCallback'>) => {
   const fundPassword = useFundPassword()
-  const { password, handlePasswordChange, isPasswordCorrect, error } = usePassword(
-    fundPassword ?? '',
-    'Provided fund password is wrong'
-  )
+  const { password, handlePasswordChange, isPasswordCorrect, error } = usePassword({
+    correctPassword: fundPassword ?? '',
+    errorMessage: 'Provided fund password is wrong'
+  })
 
   if (!fundPassword) return null
 
