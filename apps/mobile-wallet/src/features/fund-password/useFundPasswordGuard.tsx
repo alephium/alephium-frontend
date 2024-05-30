@@ -30,7 +30,7 @@ const useFundPasswordGuard = () => {
   const triggerFundPasswordAuthGuard = useCallback(
     ({ successCallback }: Pick<FundPasswordModalProps, 'successCallback'>) => {
       if (isUsingFundPassword) {
-        setOnCorrectPasswordCallback(() => () => successCallback())
+        setOnCorrectPasswordCallback(() => successCallback)
         setIsFundPasswordModalOpen(true)
       } else {
         successCallback()
