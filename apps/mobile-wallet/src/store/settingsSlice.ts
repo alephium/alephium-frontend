@@ -62,6 +62,9 @@ const settingsSlice = createSlice({
     },
     fundPasswordUseToggled: (state, { payload }: PayloadAction<GeneralSettings['isUsingFundPassword']>) => {
       state.isUsingFundPassword = payload
+    },
+    autoLockSecondsChanged: (state, { payload }: PayloadAction<GeneralSettings['autoLockSeconds']>) => {
+      state.autoLockSeconds = payload
     }
   },
   extraReducers(builder) {
@@ -91,6 +94,7 @@ export const {
   analyticsToggled,
   walletConnectToggled,
   biometricsToggled,
+  autoLockSecondsChanged,
   fundPasswordUseToggled
 } = settingsSlice.actions
 
@@ -107,6 +111,7 @@ settingsListenerMiddleware.startListening({
     analyticsToggled,
     walletConnectToggled,
     biometricsToggled,
+    autoLockSecondsChanged,
     allBiometricsEnabled,
     appReset
   ),

@@ -16,18 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { appBecameInactive } from '@alephium/shared'
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
 import { NavigationState } from '@react-navigation/routers'
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { AppState, AppStateStatus, Dimensions, LayoutChangeEvent, Modal } from 'react-native'
+import { useCallback, useState } from 'react'
+import { Dimensions, LayoutChangeEvent, Modal } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
 
 import { Analytics } from '~/analytics'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
+import useAutoLock from '~/features/auto-lock/useAutoLock'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
@@ -145,17 +145,11 @@ export default RootStackNavigation
 // instance of the above RootStackNavigation component, otherwise useNavigation inside the hook will not work properly
 const AppUnlockHandler = () => {
   const dispatch = useAppDispatch()
-  const appState = useRef(AppState.currentState)
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
-  const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
-  const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
-  const settingsLoadedFromStorage = useAppSelector((s) => s.settings.loadedFromStorage)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
 
-  const [isAppStateChangeCallbackRegistered, setIsAppStateChangeCallbackRegistered] = useState(false)
-  const [needsWalletUnlock, setNeedsWalletUnlock] = useState(false)
   const [isAuthModalVisible, setIsAuthModalVisible] = useState(false)
 
   const { width, height } = Dimensions.get('window')
@@ -166,6 +160,10 @@ const AppUnlockHandler = () => {
 
     setDimensions({ width, height })
   }
+
+  const openAuthModal = useCallback(() => {
+    setIsAuthModalVisible(true)
+  }, [])
 
   const initializeAppWithStoredWallet = useCallback(async () => {
     try {
@@ -189,7 +187,7 @@ const AppUnlockHandler = () => {
       if (walletExists) {
         await triggerBiometricsAuthGuard({
           settingsToCheck: 'appAccess',
-          onPromptDisplayed: () => setIsAuthModalVisible(true),
+          onPromptDisplayed: openAuthModal,
           successCallback: initializeAppWithStoredWallet
         })
 
@@ -218,48 +216,12 @@ const AppUnlockHandler = () => {
         showExceptionToast(e, 'Could not unlock app')
       }
     }
-  }, [dispatch, initializeAppWithStoredWallet, isWalletUnlocked, navigation, triggerBiometricsAuthGuard])
+  }, [dispatch, initializeAppWithStoredWallet, isWalletUnlocked, navigation, openAuthModal, triggerBiometricsAuthGuard])
 
-  useEffect(() => {
-    if (!settingsLoadedFromStorage) return
-
-    const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && isWalletUnlocked && !isCameraOpen) {
-        if (biometricsRequiredForAppAccess) setIsAuthModalVisible(true)
-
-        dispatch(appBecameInactive())
-        // The following is needed when the switch between background/active happens so fast that the component didn't
-        // have enough time to re-render after clearning the mnemonic.
-        setNeedsWalletUnlock(true)
-      } else if (nextAppState === 'active' && !isWalletUnlocked && !isCameraOpen) {
-        setNeedsWalletUnlock(false)
-        unlockApp()
-      }
-
-      appState.current = nextAppState
-    }
-
-    if ((!isAppStateChangeCallbackRegistered || needsWalletUnlock) && appState.current === 'active') {
-      handleAppStateChange('active')
-    }
-
-    const subscription = AppState.addEventListener('change', handleAppStateChange)
-
-    setIsAppStateChangeCallbackRegistered(true)
-
-    return subscription.remove
-  }, [
-    dispatch,
-    isAppStateChangeCallbackRegistered,
-    isCameraOpen,
-    lastNavigationState,
-    navigation,
-    needsWalletUnlock,
+  useAutoLock({
     unlockApp,
-    isWalletUnlocked,
-    biometricsRequiredForAppAccess,
-    settingsLoadedFromStorage
-  ])
+    onAuthRequired: openAuthModal
+  })
 
   return (
     <Modal transparent animationType="none" onLayout={handleScreenLayoutChange} visible={isAuthModalVisible}>

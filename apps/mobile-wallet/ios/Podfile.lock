@@ -1052,6 +1052,8 @@ PODS:
     - React-Core
   - react-native-background-actions (3.0.1):
     - React-Core
+  - react-native-background-timer (2.4.1):
+    - React-Core
   - react-native-compat (2.11.0):
     - glog
     - RCT-Folly (= 2022.05.16.00)
@@ -1341,6 +1343,7 @@ DEPENDENCIES:
   - React-Mapbuffer (from `../../../node_modules/react-native/ReactCommon`)
   - react-native-aes (from `../../../node_modules/react-native-aes-crypto`)
   - react-native-background-actions (from `../../../node_modules/react-native-background-actions`)
+  - react-native-background-timer (from `../../../node_modules/react-native-background-timer`)
   - "react-native-compat (from `../../../node_modules/@walletconnect/react-native-compat`)"
   - react-native-get-random-values (from `../../../node_modules/react-native-get-random-values`)
   - "react-native-netinfo (from `../../../node_modules/@react-native-community/netinfo`)"
@@ -1513,6 +1516,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native-aes-crypto"
   react-native-background-actions:
     :path: "../../../node_modules/react-native-background-actions"
+  react-native-background-timer:
+    :path: "../../../node_modules/react-native-background-timer"
   react-native-compat:
     :path: "../../../node_modules/@walletconnect/react-native-compat"
   react-native-get-random-values:
@@ -1648,6 +1653,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 84ea43c6c6232049135b1550b8c60b2faac19fab
   react-native-aes: c75c46aa744bef7c2415fdf7f5b2dcb75ca4364d
   react-native-background-actions: ecffd3f0864140ef6cf21c29be6819a02b531a52
+  react-native-background-timer: 17ea5e06803401a379ebf1f20505b793ac44d0fe
   react-native-compat: 5a5b7a043bec932a7814dc35f0649712bc10324e
   react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
   react-native-netinfo: 3aa5637c18834966e0c932de8ae1ae56fea20a97

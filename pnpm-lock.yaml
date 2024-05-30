@@ -733,6 +733,9 @@ importers:
       react-native-background-actions:
         specifier: ^3.0.1
         version: 3.0.1(patch_hash=3u44z2aocqips4ucm32wcdde3y)(react-native@0.73.6)
+      react-native-background-timer:
+        specifier: ^2.4.1
+        version: 2.4.1(react-native@0.73.6)
       react-native-gesture-handler:
         specifier: ^2.12.1
         version: 2.14.0(react-native@0.73.6)(react@18.2.0)
@@ -809,6 +812,9 @@ importers:
       '@types/react':
         specifier: ~18.2.14
         version: 18.2.45
+      '@types/react-native-background-timer':
+        specifier: ^2.0.2
+        version: 2.0.2
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.10.0
         version: 6.15.0(@typescript-eslint/parser@6.15.0)(eslint@8.56.0)(typescript@5.3.3)
@@ -7108,6 +7114,10 @@ packages:
     resolution: {integrity: sha512-TJxDm6OfAX2KJWJdMEVTwWke5Sc/E/RlnPGvGfS0W7+6ocy2xhDVQVh/KvC2Uf7kACs+gDytdusDSdWfWkaNzw==}
     dependencies:
       '@types/react': 18.2.45
+
+  /@types/react-native-background-timer@2.0.2:
+    resolution: {integrity: sha512-cMAep0M5yqUHjiiRPvGiviqiJYdI45KSjbI5ufsIFSQGFwHwrHJC/8yawNhy0G3Gix6fufWLsEj6jC5niUNHiQ==}
+    dev: true
 
   /@types/react-page-visibility@6.4.4:
     resolution: {integrity: sha512-qeL/98+LHVp5vQH4RjzyLwJib5ekUmKGURmJEXWwQYasr/vKJsdHUblHVaOUtV2sdrrXo2aBtd/sfMOorxkdoQ==}
@@ -16790,6 +16800,14 @@ packages:
       react-native: 0.73.6(@babel/core@7.23.6)(@babel/preset-env@7.23.8)(react@18.2.0)
     dev: false
     patched: true
+
+  /react-native-background-timer@2.4.1(react-native@0.73.6):
+    resolution: {integrity: sha512-TE4Kiy7jUyv+hugxDxitzu38sW1NqjCk4uE5IgU2WevLv7sZacaBc6PZKOShNRPGirLl1NWkaG3LDEkdb9Um5g==}
+    peerDependencies:
+      react-native: '>=0.47.0'
+    dependencies:
+      react-native: 0.73.6(@babel/core@7.23.6)(@babel/preset-env@7.23.8)(react@18.2.0)
+    dev: false
 
   /react-native-gesture-handler@2.14.0(react-native@0.73.6)(react@18.2.0):
     resolution: {integrity: sha512-cOmdaqbpzjWrOLUpX3hdSjsMby5wq3PIEdMq7okJeg9DmCzanysHSrktw1cXWNc/B5MAgxAn9J7Km0/4UIqKAQ==}
