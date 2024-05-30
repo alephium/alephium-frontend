@@ -103,11 +103,10 @@ const useAutoLock = ({ unlockApp, onAuthRequired }: UseAutoLockProps) => {
   ])
 
   const clearBackgroundTimer = () => {
-    if (!lockTimer) {
-      return
+    if (lockTimer) {
+      BackgroundTimer.clearTimeout(lockTimer)
+      lockTimer = undefined
     }
-    BackgroundTimer.clearTimeout(lockTimer)
-    lockTimer = undefined
   }
 }
 
