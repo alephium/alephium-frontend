@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.9.3
+
+### Patch Changes
+
+- 5c9f747: Improve explorer's transaction info page
+
 ## 1.9.2
 
 ### Patch Changes

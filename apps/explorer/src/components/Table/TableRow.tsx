@@ -21,8 +21,11 @@ import { Children } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { deviceBreakPoints } from '@/styles/globalStyles'
+
 interface RowProps {
   isActive?: boolean
+  highlight?: boolean
   onClick?: React.MouseEventHandler<HTMLTableRowElement>
   linkTo?: string
   className?: string
@@ -56,7 +59,16 @@ export default styled(TableRow)`
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'auto')};
 
   td:first-child {
-    color: ${({ theme }) => theme.font.secondary};
+    display: flex;
+    align-items: center;
+    min-height: 55px;
+    font-weight: 600;
+    color: ${({ theme, highlight }) => (highlight ? theme.font.primary : theme.font.secondary)};
+
+    @media ${deviceBreakPoints.tablet} {
+      display: initial;
+      min-height: auto;
+    }
   }
 
   td:first-child .row-link {

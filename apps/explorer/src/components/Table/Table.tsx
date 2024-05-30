@@ -128,7 +128,7 @@ const StyledTable = styled.table<TableProps>`
     ${({ bodyOnly }) =>
       bodyOnly &&
       css`
-        width: 65%;
+        width: 75%;
       `}
 
     @media ${deviceBreakPoints.tablet} {

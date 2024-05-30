@@ -1,7 +1,7 @@
 {
   "name": "@alephium/explorer",
   "description": "The Alephium explorer frontend",
-  "version": "1.9.2",
+  "version": "1.9.3",
   "private": true,
   "scripts": {
     "start": "turbo start:app",
@@ -92,6 +92,7 @@
     "serve": "^14.1.2",
     "typescript": "^5.2.2",
     "vite": "^4.5.2",
+    "vite-plugin-node-polyfills": "^0.21.0",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0",
     "vitest": "^0.31.0"

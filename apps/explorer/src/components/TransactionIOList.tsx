@@ -34,7 +34,7 @@ const TransactionIOList = ({
   inputs = [],
   outputs = [],
   flex,
-  addressMaxWidth,
+  addressMaxWidth = '300px',
   IOItemWrapper
 }: TransactionIOListProps) => {
   const getAmounts = (io: explorer.Input | explorer.Output) => [
