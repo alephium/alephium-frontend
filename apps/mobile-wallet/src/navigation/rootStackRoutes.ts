@@ -54,6 +54,7 @@ type RootStackParamList = {
   PublicKeysScreen: undefined
   FundPasswordScreen: {
     origin: 'backup' | 'settings'
+    newPassword?: boolean
   }
 }
 
