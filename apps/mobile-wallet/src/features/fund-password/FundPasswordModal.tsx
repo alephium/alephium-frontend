@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useState } from 'react'
 import { Platform } from 'react-native'
 import { Portal } from 'react-native-portalize'
 
@@ -60,8 +61,23 @@ const FundPasswordModalContent = ({
     correctPassword: fundPassword ?? '',
     errorMessage: 'Provided fund password is wrong'
   })
+  const [displayedError, setDisplayedError] = useState<string | undefined>()
 
   if (!fundPassword) return null
+
+  const handleFundPasswordChange = (text: string) => {
+    handlePasswordChange(text)
+    setDisplayedError(undefined)
+  }
+
+  const handleSubmit = () => {
+    if (isPasswordCorrect) {
+      successCallback()
+      props.onClose && props.onClose()
+    } else {
+      setDisplayedError(error)
+    }
+  }
 
   return (
     <ModalContent verticalGap {...props}>
@@ -77,24 +93,16 @@ const FundPasswordModalContent = ({
         <Input
           label="Fund password"
           value={password}
-          onChangeText={handlePasswordChange}
+          onChangeText={handleFundPasswordChange}
           secureTextEntry
           autoCapitalize="none"
           returnKeyType="done"
           blurOnSubmit={false}
-          error={error}
+          error={displayedError}
         />
       </ScreenSection>
       <ScreenSection>
-        <Button
-          title="Submit"
-          variant="highlight"
-          onPress={() => {
-            successCallback()
-            props.onClose && props.onClose()
-          }}
-          disabled={!isPasswordCorrect}
-        />
+        <Button title="Submit" variant="highlight" onPress={handleSubmit} disabled={password.length === 0} />
       </ScreenSection>
     </ModalContent>
   )
