@@ -69,6 +69,7 @@ import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
 import SendModalCallContract from '@/modals/SendModals/CallContract'
 import SendModalDeployContract from '@/modals/SendModals/DeployContract'
+import SendModalTransfer from '@/modals/SendModals/Transfer'
 import SignMessageModal from '@/modals/WalletConnect/SignMessageModal'
 import SignUnsignedTxModal from '@/modals/WalletConnect/SignUnsignedTxModal'
 import WalletConnectSessionProposalModal from '@/modals/WalletConnect/WalletConnectSessionProposalModal'
@@ -131,6 +132,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const [isCallScriptSendModalOpen, setIsCallScriptSendModalOpen] = useState(false)
   const [isSignUnsignedTxModalOpen, setIsSignUnsignedTxModalOpen] = useState(false)
   const [isSignMessageModalOpen, setIsSignMessageModalOpen] = useState(false)
+  const [isTransferModalOpen, setIsTransferModalOpen] = useState(false)
 
   const [walletConnectClient, setWalletConnectClient] = useState(initialContext.walletConnectClient)
   const [activeSessions, setActiveSessions] = useState(initialContext.activeSessions)
@@ -204,6 +206,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       setIsSignUnsignedTxModalOpen(false)
       setIsCallScriptSendModalOpen(false)
       setIsDeployContractSendModalOpen(false)
+      setIsTransferModalOpen(false)
     },
     [walletConnectClient, cleanStorage]
   )
@@ -250,6 +253,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
           setIsSignUnsignedTxModalOpen(true)
         } else if (modalType === TxType.SIGN_MESSAGE) {
           setIsSignMessageModalOpen(true)
+        } else if (modalType === TxType.TRANSFER) {
+          setIsTransferModalOpen(true)
         }
       }
 
@@ -846,6 +851,23 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
                 onTransactionBuildFail={(errorMessage) => {
                   handleTransactionBuildFail(errorMessage)
                   setIsCallScriptSendModalOpen(false)
+                }}
+                onSendSuccess={handleSendSuccess}
+                onSendFail={handleSendFail}
+              />
+            )}
+            {isTransferModalOpen && dappTxData && (
+              <SendModalTransfer
+                initialStep="info-check"
+                initialTxData={dappTxData}
+                txData={dappTxData as TransferTxData}
+                onClose={() => {
+                  handleSessionRequestModalClose()
+                  setIsTransferModalOpen(false)
+                }}
+                onTransactionBuildFail={(errorMessage) => {
+                  handleTransactionBuildFail(errorMessage)
+                  setIsTransferModalOpen(false)
                 }}
                 onSendSuccess={handleSendSuccess}
                 onSendFail={handleSendFail}
