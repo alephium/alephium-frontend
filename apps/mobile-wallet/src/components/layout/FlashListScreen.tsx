@@ -30,6 +30,7 @@ export interface FlashListScreenProps<T>
   extends FlashListProps<T>,
     Omit<ScrollScreenBaseProps, 'contentContainerStyle'> {
   shouldUseGaps?: boolean
+  contentPaddingTop?: boolean | number
 }
 
 const FlashListScreen = <T,>({
@@ -41,6 +42,7 @@ const FlashListScreen = <T,>({
   screenTitle,
   screenIntro,
   shouldUseGaps,
+  contentPaddingTop,
   ...props
 }: FlashListScreenProps<T>) => {
   const insets = useSafeAreaInsets()
@@ -67,6 +69,7 @@ const FlashListScreen = <T,>({
         }
         contentContainerStyle={{
           paddingBottom: insets.bottom,
+          paddingTop: typeof contentPaddingTop === 'boolean' ? 15 : contentPaddingTop,
           ...contentContainerStyle
         }}
         {...props}

@@ -91,7 +91,12 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         data={assets}
         keyExtractor={({ id }) => id}
         renderItem={({ item: asset, index }) => (
-          <AssetRow key={asset.id} asset={asset} isLast={index === assets.length - 1} />
+          <AssetRow
+            key={asset.id}
+            asset={asset}
+            isLast={index === assets.length - 1}
+            style={{ paddingHorizontal: DEFAULT_MARGIN }}
+          />
         )}
         verticalGap
         usesKeyboard
@@ -100,7 +105,6 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         keyboardShouldPersistTaps="always"
         screenTitle="Assets"
         screenIntro="With Alephium, you can send multiple assets in one transaction."
-        contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN }}
         estimatedItemSize={64}
         {...props}
       />
