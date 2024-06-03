@@ -48,15 +48,15 @@ interface FundPasswordScreenProps
 
 const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) => {
   const cameFromBackupScreen = props.route.params.origin === 'backup'
+  const isSettingNewPassword = props.route.params.newPassword
   const theme = useTheme()
   const { setHeaderOptions } = useHeaderContext()
   const currentFundPassword = useFundPassword()
   const dispatch = useAppDispatch()
-  const [isEditingPassword, setIsEditingPassword] = useState(props.route.params.newPassword)
   const { fundPasswordModal, triggerFundPasswordAuthGuard } = useFundPasswordGuard()
 
+  const [isEditingPassword, setIsEditingPassword] = useState<boolean>()
   const [password, setPassword] = useState('')
-
   const [newPassword, setNewPassword] = useState('')
   const {
     password: confirmedNewPassword,
@@ -147,11 +147,11 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
       headerOptions={{ type: cameFromBackupScreen ? 'default' : 'stack' }}
       {...props}
     >
-      {isEditingPassword ? (
+      {isEditingPassword || isSettingNewPassword ? (
         <>
           <ScreenSection fill verticalGap>
             <Input
-              label="New fund password"
+              label={isEditingPassword ? 'New fund password' : 'Fund password'}
               value={newPassword}
               onChangeText={setNewPassword}
               secureTextEntry
@@ -160,7 +160,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
               blurOnSubmit={false}
             />
             <Input
-              label="Confirm new fund password"
+              label={isEditingPassword ? 'Confirm new fund password' : 'Confirm fund password'}
               value={confirmedNewPassword}
               onChangeText={handleConfirmedNewPasswordChange}
               secureTextEntry
