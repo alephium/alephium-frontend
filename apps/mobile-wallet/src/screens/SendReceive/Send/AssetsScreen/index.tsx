@@ -95,7 +95,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
             key={asset.id}
             asset={asset}
             isLast={index === assets.length - 1}
-            style={{ paddingHorizontal: DEFAULT_MARGIN }}
+            style={{ marginHorizontal: DEFAULT_MARGIN }}
           />
         )}
         verticalGap
