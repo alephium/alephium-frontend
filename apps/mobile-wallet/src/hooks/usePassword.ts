@@ -39,10 +39,7 @@ const usePassword = ({ correctPassword, errorMessage }: UsePasswordProps): UsePa
 
   const handlePasswordChange = (text: string) => {
     setPassword(text)
-
-    if ((error === undefined && text.length === correctPassword.length) || error !== undefined) {
-      setError(text !== correctPassword ? errorMessage || 'Password is wrong' : '')
-    }
+    setError(text !== correctPassword ? errorMessage || 'Password is wrong' : '')
   }
 
   return { password, handlePasswordChange, isPasswordCorrect, error, setPassword }

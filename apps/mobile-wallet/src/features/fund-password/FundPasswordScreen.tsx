@@ -16,21 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import Ionicons from '@expo/vector-icons/Ionicons'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
+import { useTheme } from 'styled-components'
 
 import { sendAnalytics } from '~/analytics'
-import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import ButtonsRow from '~/components/buttons/ButtonsRow'
+import ButtonStack from '~/components/buttons/ButtonStack'
 import Input from '~/components/inputs/Input'
+import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Row from '~/components/Row'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { deleteFundPassword, storeFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import useFundPassword from '~/features/fund-password/useFundPassword'
+import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { useAppDispatch } from '~/hooks/redux'
 import usePassword from '~/hooks/usePassword'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -44,26 +48,20 @@ interface FundPasswordScreenProps
 
 const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) => {
   const cameFromBackupScreen = props.route.params.origin === 'backup'
+  const theme = useTheme()
   const { setHeaderOptions } = useHeaderContext()
   const currentFundPassword = useFundPassword()
   const dispatch = useAppDispatch()
+  const [isEditingPassword, setIsEditingPassword] = useState(props.route.params.newPassword)
+  const { fundPasswordModal, triggerFundPasswordAuthGuard } = useFundPasswordGuard()
 
   const [password, setPassword] = useState('')
-  const {
-    password: confirmedPassword,
-    handlePasswordChange: handleConfirmedPasswordChange,
-    isPasswordCorrect: isCurrentPasswordConfirmed,
-    error
-  } = usePassword({
-    correctPassword: password,
-    errorMessage: !currentFundPassword ? "Passwords don't match" : undefined
-  })
 
   const [newPassword, setNewPassword] = useState('')
   const {
     password: confirmedNewPassword,
     handlePasswordChange: handleConfirmedNewPasswordChange,
-    isPasswordCorrect: isNewPasswordConfirmed,
+    isPasswordCorrect: isEditingPasswordConfirmed,
     error: newPasswordError
   } = usePassword({ correctPassword: newPassword, errorMessage: "New passwords don't match" })
 
@@ -96,6 +94,14 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
     })
   }
 
+  const handlePasswordEdit = () => {
+    triggerFundPasswordAuthGuard({
+      successCallback: () => {
+        setIsEditingPassword(true)
+      }
+    })
+  }
+
   const handleDeletePress = async () => {
     showAlert('Delete fund password', async () => {
       await deleteFundPassword()
@@ -124,113 +130,69 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
     ])
   }
 
+  const screenIntro = isEditingPassword
+    ? 'You can set a new password below. This password will be required for critical operations involving the safety of your funds and cannot be recovered.'
+    : 'The Fund Password acts as an additional authentication layer for critical operations involving the safety of your funds such as revealing your secret recovery phrase or sending funds.'
+
   return (
     <ScrollScreen
       verticalGap
       fill
       screenTitle="Fund password"
-      screenIntro="It acts as an additional authentication layer for critical operations involving the safety of your funds such as revealing your secret recovery phrase or sending funds."
+      screenIntro={screenIntro}
       headerOptions={{ type: cameFromBackupScreen ? 'default' : 'stack' }}
       {...props}
     >
-      {!currentFundPassword ? (
+      {isEditingPassword ? (
         <>
           <ScreenSection fill verticalGap>
             <Input
-              label="Fund password"
-              value={password}
-              onChangeText={setPassword}
+              label="New fund password"
+              value={newPassword}
+              onChangeText={setNewPassword}
               secureTextEntry
               autoCapitalize="none"
               returnKeyType="done"
               blurOnSubmit={false}
             />
             <Input
-              label="Confirm fund password"
-              value={confirmedPassword}
-              onChangeText={handleConfirmedPasswordChange}
+              label="Confirm new fund password"
+              value={confirmedNewPassword}
+              onChangeText={handleConfirmedNewPasswordChange}
               secureTextEntry
               autoCapitalize="none"
-              error={error}
+              error={newPasswordError}
               returnKeyType="done"
               blurOnSubmit={false}
-              editable={password.length > 0}
             />
           </ScreenSection>
           <ScreenSection>
-            <ButtonsRow>
+            <ButtonStack>
               {cameFromBackupScreen && <Button title="Skip" onPress={handleSkipPress} flex />}
               <Button
                 variant="highlight"
                 title="Save"
                 onPress={handleSavePress}
-                disabled={!isCurrentPasswordConfirmed}
+                disabled={!isEditingPasswordConfirmed}
                 flex
               />
-            </ButtonsRow>
+            </ButtonStack>
           </ScreenSection>
         </>
       ) : (
-        <>
-          <ScreenSection verticalGap>
-            <AppText>Confirm current fund password to make changes.</AppText>
-            <Input
-              label="Current fund password"
-              value={confirmedPassword}
-              onChangeText={handleConfirmedPasswordChange}
-              secureTextEntry
-              autoCapitalize="none"
-              error={error}
-              returnKeyType="done"
-              blurOnSubmit={false}
-            />
-          </ScreenSection>
-          {currentFundPassword && isCurrentPasswordConfirmed && (
-            <>
-              <ScreenSection fill verticalGap>
-                <Input
-                  label="New fund password"
-                  value={newPassword}
-                  onChangeText={setNewPassword}
-                  secureTextEntry
-                  autoCapitalize="none"
-                  returnKeyType="done"
-                  blurOnSubmit={false}
-                />
-                <Input
-                  label="Confirm new fund password"
-                  value={confirmedNewPassword}
-                  onChangeText={handleConfirmedNewPasswordChange}
-                  secureTextEntry
-                  autoCapitalize="none"
-                  error={newPasswordError}
-                  returnKeyType="done"
-                  blurOnSubmit={false}
-                  editable={password.length > 0}
-                />
-              </ScreenSection>
-              <ScreenSection>
-                <ButtonsRow>
-                  <Button
-                    variant="alert"
-                    title="Delete"
-                    onPress={handleDeletePress}
-                    disabled={!isCurrentPasswordConfirmed}
-                    flex
-                  />
-                  <Button
-                    variant="highlight"
-                    title="Save"
-                    onPress={handleSavePress}
-                    disabled={!isNewPasswordConfirmed}
-                    flex
-                  />
-                </ButtonsRow>
-              </ScreenSection>
-            </>
-          )}
-        </>
+        <ScreenSection>
+          <BoxSurface>
+            <Row title="Edit password" onPress={handlePasswordEdit} titleColor={theme.global.accent}>
+              <Ionicons name="pencil" size={18} color={theme.global.accent} />
+            </Row>
+            <Row title="Disable password" onPress={handleDeletePress} titleColor={theme.global.alert} isLast>
+              <Ionicons name="close" size={18} color={theme.global.alert} />
+            </Row>
+          </BoxSurface>
+        </ScreenSection>
       )}
+
+      {fundPasswordModal}
     </ScrollScreen>
   )
 }

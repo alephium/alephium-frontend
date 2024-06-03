@@ -167,10 +167,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
     }
   }
 
-  const handleFundPasswordPress = () => {
-    navigation.navigate('FundPasswordScreen', { origin: 'settings' })
-  }
-
   return (
     <>
       <ScrollScreenStyled verticalGap screenTitle="Settings" headerOptions={{ type: 'stack' }} {...props}>
@@ -221,8 +217,29 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                   disabled={!deviceHasEnrolledBiometrics}
                 />
               </Row>
-              <Row title="Fund password" subtitle="Enhance your security" isLast>
-                <Toggle value={isUsingFundPassword} onValueChange={handleFundPasswordPress} />
+
+              <Row
+                onPress={() =>
+                  isUsingFundPassword &&
+                  navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: false })
+                }
+                title="Fund password"
+                subtitle="Enhance your security"
+                isLast
+              >
+                {isUsingFundPassword ? (
+                  <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
+                ) : (
+                  <Toggle
+                    value={isUsingFundPassword}
+                    onValueChange={() =>
+                      navigation.navigate('FundPasswordScreen', {
+                        origin: 'settings',
+                        newPassword: !isUsingFundPassword
+                      })
+                    }
+                  />
+                )}
               </Row>
             </BoxSurface>
           </ScreenSection>
