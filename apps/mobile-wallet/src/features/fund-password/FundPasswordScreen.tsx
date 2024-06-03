@@ -63,7 +63,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
     handlePasswordChange: handleConfirmedNewPasswordChange,
     isPasswordCorrect: isEditingPasswordConfirmed,
     error: newPasswordError
-  } = usePassword({ correctPassword: newPassword, errorMessage: "New passwords don't match" })
+  } = usePassword({ correctPassword: newPassword, errorMessage: "New passwords don't match", isValidation: true })
 
   useFocusEffect(
     useCallback(() => {

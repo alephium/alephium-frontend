@@ -21,6 +21,7 @@ import { Dispatch, SetStateAction, useState } from 'react'
 interface UsePasswordProps {
   correctPassword: string
   errorMessage?: string
+  isValidation?: boolean
 }
 
 interface UsePasswordReturn {
@@ -31,7 +32,7 @@ interface UsePasswordReturn {
   error?: string
 }
 
-const usePassword = ({ correctPassword, errorMessage }: UsePasswordProps): UsePasswordReturn => {
+const usePassword = ({ correctPassword, errorMessage, isValidation }: UsePasswordProps): UsePasswordReturn => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string>()
 
@@ -39,7 +40,10 @@ const usePassword = ({ correctPassword, errorMessage }: UsePasswordProps): UsePa
 
   const handlePasswordChange = (text: string) => {
     setPassword(text)
-    setError(text !== correctPassword ? errorMessage || 'Password is wrong' : '')
+
+    if (!isValidation || (error === undefined && text.length === correctPassword.length) || error !== undefined) {
+      setError(text !== correctPassword ? errorMessage || 'Password is wrong' : '')
+    }
   }
 
   return { password, handlePasswordChange, isPasswordCorrect, error, setPassword }
