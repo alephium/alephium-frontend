@@ -72,7 +72,7 @@ const VerificationSuccessScreen = ({ navigation, ...props }: VerificationSuccess
           <Button
             variant="highlight"
             title="Continue"
-            onPress={() => navigation.navigate('FundPasswordScreen', { origin: 'backup' })}
+            onPress={() => navigation.navigate('FundPasswordScreen', { origin: 'backup', newPassword: true })}
           />
         )}
       </ScreenSection>

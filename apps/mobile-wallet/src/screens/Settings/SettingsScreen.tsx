@@ -231,12 +231,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                   <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
                 ) : (
                   <Toggle
-                    value={isUsingFundPassword}
+                    value={false}
                     onValueChange={() =>
-                      navigation.navigate('FundPasswordScreen', {
-                        origin: 'settings',
-                        newPassword: !isUsingFundPassword
-                      })
+                      navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: true })
                     }
                   />
                 )}

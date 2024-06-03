@@ -57,7 +57,7 @@ const FundPasswordReminderModal = ({ isOpen, onClose }: FundPasswordModalProps) 
   const handleSetPasswordPress = () => {
     onClose()
 
-    navigation.navigate('FundPasswordScreen', { origin: 'settings' })
+    navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: true })
   }
 
   return (
