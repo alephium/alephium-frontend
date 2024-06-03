@@ -18,12 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useMemo } from 'react'
-import styled from 'styled-components/native'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { BackButton, ContinueButton } from '~/components/buttons/Button'
-import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import FlashListScreen from '~/components/layout/FlashListScreen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import SpinnerModal from '~/components/SpinnerModal'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
@@ -35,17 +35,22 @@ import {
   makeSelectAddressesNFTs,
   selectAddressByHash
 } from '~/store/addressesSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'>, ScrollScreenProps {}
+interface ScreenProps
+  extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'>,
+    Omit<ScrollScreenProps, 'contentContainerStyle'> {}
 
 const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, assetAmounts, buildTransaction, setToAddress } = useSendContext()
-  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
+  const { setHeaderOptions, screenScrollY } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, address?.hash))
+
+  const [isLoading, setIsLoading] = useState(false)
 
   useScrollToTopOnFocus(screenScrollY)
 
@@ -57,12 +62,14 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         headerRight: () => (
           <ContinueButton
-            onPress={() =>
-              buildTransaction({
+            onPress={async () => {
+              setIsLoading(true)
+              await buildTransaction({
                 onBuildSuccess: () => navigation.navigate('VerifyScreen'),
                 onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
               })
-            }
+              setIsLoading(false)
+            }}
             disabled={isContinueButtonDisabled}
           />
         )
@@ -76,36 +83,34 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 
   if (!address) return null
 
+  const assets = [...knownFungibleTokens, ...nfts]
+
   return (
-    <ScrollScreen
-      verticalGap
-      usesKeyboard
-      contrastedBg
-      contentPaddingTop
-      keyboardShouldPersistTaps="always"
-      screenTitle="Assets"
-      screenIntro="With Alephium, you can send multiple assets in one transaction."
-      onScroll={screenScrollHandler}
-      {...props}
-    >
-      <ScreenSection>
-        <AssetsList>
-          {knownFungibleTokens.map((asset, index) => (
-            <AssetRow
-              key={asset.id}
-              asset={asset}
-              isLast={index === knownFungibleTokens.length - 1 && nfts.length === 0}
-            />
-          ))}
-          {nfts.map((nft, index) => (
-            <AssetRow key={nft.id} asset={nft} isLast={index === nfts.length - 1} />
-          ))}
-        </AssetsList>
-      </ScreenSection>
-    </ScrollScreen>
+    <>
+      <FlashListScreen
+        data={assets}
+        keyExtractor={({ id }) => id}
+        renderItem={({ item: asset, index }) => (
+          <AssetRow
+            key={asset.id}
+            asset={asset}
+            isLast={index === assets.length - 1}
+            style={{ marginHorizontal: DEFAULT_MARGIN }}
+          />
+        )}
+        verticalGap
+        usesKeyboard
+        contrastedBg
+        contentPaddingTop
+        keyboardShouldPersistTaps="always"
+        screenTitle="Assets"
+        screenIntro="With Alephium, you can send multiple assets in one transaction."
+        estimatedItemSize={64}
+        {...props}
+      />
+      <SpinnerModal isActive={isLoading} />
+    </>
   )
 }
 
 export default AssetsScreen
-
-const AssetsList = styled.View``
