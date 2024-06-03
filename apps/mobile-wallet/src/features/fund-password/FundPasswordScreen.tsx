@@ -95,7 +95,6 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
   }
 
   const handlePasswordEdit = () => {
-    console.log('TRIGGER')
     triggerFundPasswordAuthGuard({
       successCallback: () => {
         setIsEditingPassword(true)
