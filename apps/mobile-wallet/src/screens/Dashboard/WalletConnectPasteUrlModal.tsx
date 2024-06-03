@@ -49,7 +49,7 @@ const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
       setIsLoading(false)
 
       props.onClose && props.onClose()
-      sendAnalytics('WC: Connected by manually pasting URL')
+      sendAnalytics({ event: 'WC: Connected by manually pasting URL' })
     } else {
       showToast({
         text1: 'Invalid URL',

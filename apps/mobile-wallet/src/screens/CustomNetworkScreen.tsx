@@ -52,11 +52,12 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
       await persistSettings('network', formData)
       dispatch(customNetworkSettingsSaved(formData))
 
-      sendAnalytics('Saved custom network settings')
-    } catch (e) {
-      showExceptionToast(e, 'Could not save custom network settings')
+      sendAnalytics({ event: 'Saved custom network settings' })
+    } catch (error) {
+      const message = 'Could not save custom network settings'
 
-      sendAnalytics('Error', { message: 'Could not save custom network settings' })
+      showExceptionToast(error, message)
+      sendAnalytics({ type: 'error', error, message })
     }
 
     setLoading(false)

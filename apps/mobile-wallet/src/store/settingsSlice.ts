@@ -20,7 +20,9 @@ import { appReset, fiatCurrencyChanged } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import { defaultGeneralSettings, persistSettings } from '~/persistent-storage/settings'
+import { allBiometricsEnabled, analyticsIdGenerated } from '~/store/settings/settingsActions'
 import { RootState } from '~/store/store'
+import { walletDeleted } from '~/store/wallet/walletActions'
 import { GeneralSettings } from '~/types/settings'
 
 const sliceName = 'settings'
@@ -49,9 +51,6 @@ const settingsSlice = createSlice({
     passwordRequirementToggled: (state) => {
       state.requireAuth = !state.requireAuth
     },
-    analyticsIdGenerated: (state, action: PayloadAction<GeneralSettings['analyticsId']>) => {
-      state.analyticsId = action.payload
-    },
     analyticsToggled: (state) => {
       state.analytics = !state.analytics
     },
@@ -60,6 +59,9 @@ const settingsSlice = createSlice({
     },
     biometricsToggled: (state) => {
       state.usesBiometrics = !state.usesBiometrics
+    },
+    fundPasswordUseToggled: (state, { payload }: PayloadAction<GeneralSettings['isUsingFundPassword']>) => {
+      state.isUsingFundPassword = payload
     }
   },
   extraReducers(builder) {
@@ -67,6 +69,16 @@ const settingsSlice = createSlice({
       .addCase(appReset, () => initialState)
       .addCase(fiatCurrencyChanged, (state, { payload: currency }) => {
         state.currency = currency
+      })
+      .addCase(walletDeleted, (state) => {
+        state.isUsingFundPassword = false
+      })
+      .addCase(analyticsIdGenerated, (state, { payload: analyticsId }) => {
+        state.analyticsId = analyticsId
+      })
+      .addCase(allBiometricsEnabled, (state) => {
+        state.requireAuth = true
+        state.usesBiometrics = true
       })
   }
 })
@@ -76,10 +88,10 @@ export const {
   themeChanged,
   discreetModeToggled,
   passwordRequirementToggled,
-  analyticsIdGenerated,
   analyticsToggled,
   walletConnectToggled,
-  biometricsToggled
+  biometricsToggled,
+  fundPasswordUseToggled
 } = settingsSlice.actions
 
 export const settingsListenerMiddleware = createListenerMiddleware()
@@ -95,6 +107,7 @@ settingsListenerMiddleware.startListening({
     analyticsToggled,
     walletConnectToggled,
     biometricsToggled,
+    allBiometricsEnabled,
     appReset
   ),
   effect: async (_, { getState }) => {

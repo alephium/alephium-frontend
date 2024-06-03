@@ -75,7 +75,7 @@ import { AppState, AppStateStatus } from 'react-native'
 import BackgroundService from 'react-native-background-actions'
 import { Portal } from 'react-native-portalize'
 
-import { sendAnalytics, sendErrorAnalytics } from '~/analytics'
+import { sendAnalytics } from '~/analytics'
 import {
   buildCallContractTransaction,
   buildDeployContractTransaction,
@@ -85,6 +85,7 @@ import BottomModal from '~/components/layout/BottomModal'
 import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
+import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
@@ -139,6 +140,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const dispatch = useAppDispatch()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
+  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
@@ -160,8 +162,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     try {
       console.log('CLEANING STORAGE')
       await cleanBeforeInit()
-    } catch (e) {
-      sendErrorAnalytics(e, 'Could not clean before initializing WalletConnect client')
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Could not clean before initializing WalletConnect client' })
     }
 
     console.log('⏳ INITIALIZING WC CLIENT...')
@@ -183,14 +185,15 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       })
 
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
-    } catch (e) {
-      dispatch(walletConnectClientInitializeFailed(getHumanReadableError(e, '')))
-      sendErrorAnalytics(
-        e,
-        `Could not initialize WalletConnect client on attempt ${
+    } catch (error) {
+      dispatch(walletConnectClientInitializeFailed(getHumanReadableError(error, '')))
+      sendAnalytics({
+        type: 'error',
+        error,
+        message: `Could not initialize WalletConnect client on attempt ${
           walletConnectClientInitializationAttempts + 1
         } (SignClient.init failed)`
-      )
+      })
     }
 
     if (client) {
@@ -759,7 +762,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
         setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
 
-        sendAnalytics('WC: Disconnected from dApp')
+        sendAnalytics({ event: 'WC: Disconnected from dApp' })
       } catch (e) {
         console.error('❌ COULD NOT DISCONNECT FROM DAPP')
       } finally {
@@ -827,16 +830,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
     console.log('✅ VERIFIED USER PROVIDED DATA!')
 
-    const publicKey = await getAddressAsymetricKey(signerAddress.hash, 'public')
-
-    const namespaces: SessionTypes.Namespaces = {
-      alephium: {
-        methods: requiredNamespace.methods,
-        events: requiredNamespace.events,
-        accounts: [`${formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)}:${publicKey}/default`]
-      }
-    }
-
     try {
       setLoading('Approving...')
       console.log('⏳ APPROVING PROPOSAL...')
@@ -845,6 +838,16 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       if (existingSession) {
         await walletConnectClient.disconnect({ topic: existingSession.topic, reason: getSdkError('USER_DISCONNECTED') })
+      }
+
+      const publicKey = await getAddressAsymetricKey(signerAddress.hash, 'public')
+
+      const namespaces: SessionTypes.Namespaces = {
+        alephium: {
+          methods: requiredNamespace.methods,
+          events: requiredNamespace.events,
+          accounts: [`${formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)}:${publicKey}/default`]
+        }
       }
 
       const { topic, acknowledged } = await walletConnectClient.approve({ id, relayProtocol, namespaces })
@@ -858,7 +861,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       setSessionProposalEvent(undefined)
       setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
 
-      sendAnalytics('WC: Approved connection')
+      sendAnalytics({ event: 'WC: Approved connection' })
     } catch (e) {
       console.error('❌ WC: Error while approving and acknowledging', e)
     } finally {
@@ -896,34 +899,37 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
     triggerBiometricsAuthGuard({
       settingsToCheck: 'transactions',
-      successCallback: async () => {
-        setLoading('Approving...')
+      successCallback: () =>
+        triggerFundPasswordAuthGuard({
+          successCallback: async () => {
+            setLoading('Approving...')
 
-        try {
-          const signResult = await sendTransaction()
+            try {
+              const signResult = await sendTransaction()
 
-          if (!signResult) {
-            console.log('⏳ DID NOT GET A SIGNATURE RESULT, INFORMING DAPP THAT SESSION REQUEST FAILED...')
-            await respondToWalletConnectWithError(sessionRequestEvent, {
-              message: 'Sending transaction failed',
-              code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-            })
-            console.log('✅ INFORMING: DONE!')
-          } else {
-            console.log('⏳ INFORMING DAPP THAT SESSION REQUEST SUCCEEDED...')
-            await respondToWalletConnectWithSuccess(sessionRequestEvent, signResult)
-            console.log('✅ INFORMING: DONE!')
+              if (!signResult) {
+                console.log('⏳ DID NOT GET A SIGNATURE RESULT, INFORMING DAPP THAT SESSION REQUEST FAILED...')
+                await respondToWalletConnectWithError(sessionRequestEvent, {
+                  message: 'Sending transaction failed',
+                  code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+                })
+                console.log('✅ INFORMING: DONE!')
+              } else {
+                console.log('⏳ INFORMING DAPP THAT SESSION REQUEST SUCCEEDED...')
+                await respondToWalletConnectWithSuccess(sessionRequestEvent, signResult)
+                console.log('✅ INFORMING: DONE!')
+              }
+            } catch (e) {
+              console.error('❌ INFORMING: FAILED.')
+            } finally {
+              console.log('👉 RESETTING SESSION REQUEST EVENT.')
+              setSessionRequestEvent(undefined)
+              setSessionRequestData(undefined)
+              setLoading('')
+              showToast({ text1: 'DApp request approved', text2: 'You can go back to your browser.' })
+            }
           }
-        } catch (e) {
-          console.error('❌ INFORMING: FAILED.')
-        } finally {
-          console.log('👉 RESETTING SESSION REQUEST EVENT.')
-          setSessionRequestEvent(undefined)
-          setSessionRequestData(undefined)
-          setLoading('')
-          showToast({ text1: 'DApp request approved', text2: 'You can go back to your browser.' })
-        }
-      }
+        })
     })
   }
 
@@ -1048,7 +1054,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('Clear walletconnect storage')
       await clearWCStorage()
     } catch (error) {
-      sendErrorAnalytics(error, 'Error at resetting WalletConnect storage')
+      sendAnalytics({ type: 'error', error, message: 'Error at resetting WalletConnect storage' })
     }
   }, [walletConnectClient])
 
@@ -1097,6 +1103,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           />
         )}
       </Portal>
+      {fundPasswordModal}
       <SpinnerModal isActive={!!loading} text={loading} />
     </WalletConnectContext.Provider>
   )
@@ -1129,8 +1136,8 @@ async function cleanBeforeInit() {
 
   try {
     storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
-  } catch (e) {
-    sendErrorAnalytics(e, 'Error at creating storage object')
+  } catch (error) {
+    sendAnalytics({ type: 'error', error, message: 'Error at creating storage object' })
   }
 
   if (!storage) return
@@ -1141,8 +1148,8 @@ async function cleanBeforeInit() {
 
   try {
     historyRecords = await storage.getItem<JsonRpcRecord[]>(historyStorageKey)
-  } catch (e) {
-    sendErrorAnalytics(e, 'Error at getting history records from storage')
+  } catch (error) {
+    sendAnalytics({ type: 'error', error, message: 'Error at getting history records from storage' })
   }
 
   if (historyRecords !== undefined) {
@@ -1172,29 +1179,29 @@ async function cleanBeforeInit() {
           unresponsiveRequestNum += 1
         }
       }
-    } catch (e) {
-      sendErrorAnalytics(e, 'Error at building remainingRecords array')
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Error at building remainingRecords array' })
     }
 
     try {
       await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords.reverse())
-    } catch (e) {
-      sendErrorAnalytics(e, 'Error at setting history records to storage')
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Error at setting history records to storage' })
     }
   }
 
   try {
     await cleanPendingRequest(storage)
-  } catch (e) {
-    sendErrorAnalytics(e, 'Error at cleanPendingRequest')
+  } catch (error) {
+    sendAnalytics({ type: 'error', error, message: 'Error at cleanPendingRequest' })
   }
 
   let topics: string[] = []
 
   try {
     topics = await getSessionTopics(storage)
-  } catch (e) {
-    sendErrorAnalytics(e, 'Error at getSessionTopics')
+  } catch (error) {
+    sendAnalytics({ type: 'error', error, message: 'Error at getSessionTopics' })
   }
 
   if (topics.length > 0) {
@@ -1204,8 +1211,8 @@ async function cleanBeforeInit() {
 
     try {
       messages = await storage.getItem<Record<string, MessageRecord>>(messageStorageKey)
-    } catch (e) {
-      sendErrorAnalytics(e, 'Error at getting messages from storage')
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Error at getting messages from storage' })
     }
 
     if (messages === undefined) {
@@ -1217,8 +1224,8 @@ async function cleanBeforeInit() {
       topics.forEach((topic) => messagesMap.delete(topic))
       await storage.setItem<Record<string, MessageRecord>>(messageStorageKey, mapToObj(messagesMap))
       console.log(`Clean topics from messages storage: ${topics.join(',')}`)
-    } catch (e) {
-      sendErrorAnalytics(e, 'Error at setting messages to storage')
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Error at setting messages to storage' })
     }
   }
 }
@@ -1235,7 +1242,7 @@ function cleanHistory(client: SignClient, checkResponse: boolean) {
       }
     }
   } catch (error) {
-    sendErrorAnalytics(error, 'Could not clean WalletConnect client history')
+    sendAnalytics({ type: 'error', error, message: 'Could not clean WalletConnect client history' })
   }
 }
 
@@ -1243,7 +1250,7 @@ async function cleanMessages(client: SignClient, topic: string) {
   try {
     await client.core.relayer.messages.del(topic)
   } catch (error) {
-    sendErrorAnalytics(error, `Could not clean WalletConnect client messages, topic: ${topic}`)
+    sendAnalytics({ type: 'error', error, message: 'Could not clean WalletConnect client messages' })
   }
 }
 
@@ -1267,7 +1274,7 @@ async function clearWCStorage() {
       await storage.removeItem(key)
     }
   } catch (error) {
-    sendErrorAnalytics(error, 'Could not clear WalletConnect storage')
+    sendAnalytics({ type: 'error', error, message: 'Could not clear WalletConnect storage' })
   }
 }
 

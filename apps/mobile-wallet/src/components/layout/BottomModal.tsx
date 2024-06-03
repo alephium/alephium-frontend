@@ -52,7 +52,7 @@ const springConfig: WithSpringConfig = {
   restDisplacementThreshold: 0.3
 }
 
-interface BottomModalProps {
+export interface BottomModalProps {
   Content: (props: ModalContentProps) => ReactNode
   isOpen: boolean
   onClose: () => void

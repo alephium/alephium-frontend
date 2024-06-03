@@ -47,6 +47,7 @@ interface DecryptScannedMnemonicScreenProps
 
 const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScreenProps) => {
   const qrCodeImportedEncryptedMnemonic = useAppSelector((s) => s.walletGeneration.qrCodeImportedEncryptedMnemonic)
+  const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
   const name = useAppSelector((s) => s.walletGeneration.walletName)
   const dispatch = useAppDispatch()
   const { deviceHasEnrolledBiometrics } = useBiometrics()
@@ -90,19 +91,28 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
 
         dispatch(newWalletImportedWithMetadata(wallet))
 
-        sendAnalytics('Imported wallet', { note: 'Scanned desktop wallet QR code' })
+        sendAnalytics({ event: 'Imported wallet', props: { note: 'Scanned desktop wallet QR code' } })
 
         try {
           await importAddresses(wallet.id, addresses)
-        } catch (e) {
+        } catch (error) {
           const message = 'Could not import addresses from QR code scan'
-          showExceptionToast(e, message)
-          sendAnalytics('Error', { message })
+
+          showExceptionToast(error, message)
+          sendAnalytics({ type: 'error', message, isSensitive: true })
         }
 
-        resetNavigation(navigation, deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
+        resetNavigation(
+          navigation,
+          deviceHasEnrolledBiometrics && !biometricsRequiredForAppAccess
+            ? 'AddBiometricsScreen'
+            : 'NewWalletSuccessScreen'
+        )
       } catch (e) {
-        showExceptionToast(e, 'Could not import wallet from QR code scan')
+        const message = 'Could not import wallet from QR code scan'
+
+        showExceptionToast(error, message)
+        sendAnalytics({ type: 'error', message })
       }
 
       if (contacts.length > 0) await importContacts(contacts)

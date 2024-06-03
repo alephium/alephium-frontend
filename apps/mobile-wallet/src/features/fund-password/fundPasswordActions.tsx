@@ -16,29 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Currency, NetworkSettings } from '@alephium/shared'
+import { createAction } from '@reduxjs/toolkit'
 
-import { ThemeType } from '~/style/themes'
-
-// TODO: Remove usesBiometrics and requireAuth into a new SecuritySettings?
-
-export interface GeneralSettings {
-  theme: ThemeType
-  discreetMode: boolean
-  requireAuth: boolean
-  currency: Currency
-  analytics: boolean
-  analyticsId?: string
-  walletConnect: boolean
-  usesBiometrics: boolean
-  isUsingFundPassword: boolean
-}
-
-export interface Settings {
-  general: GeneralSettings
-  network: NetworkSettings
-}
-
-export type SettingsKey = keyof Settings
-
-export type SettingsPartial = GeneralSettings | NetworkSettings
+export const fundPasswordReminded = createAction('fundPassword/reminded')

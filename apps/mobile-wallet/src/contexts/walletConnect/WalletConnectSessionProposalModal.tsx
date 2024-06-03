@@ -101,17 +101,16 @@ const WalletConnectSessionProposalModal = ({
         ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes.current }),
         settings: { label: '', color: getRandomLabelColor(), isDefault: false }
       }
-      keyring.clearAll()
 
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))
       await dispatch(syncLatestTransactions(newAddress.hash))
 
-      sendAnalytics('WC: Generated new address')
-    } catch (e) {
-      console.error('WC: Could not save new address', e)
-
-      sendAnalytics('Error', { message: 'WC: Could not save new address' })
+      sendAnalytics({ event: 'WC: Generated new address' })
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'WC: Could not save new address' })
+    } finally {
+      keyring.clear()
     }
 
     setLoading('')
@@ -184,7 +183,7 @@ const WalletConnectSessionProposalModal = ({
                     onPress={() => {
                       setSignerAddress(address)
                       setShowAlternativeSignerAddresses(false)
-                      sendAnalytics('WC: Switched signer address')
+                      sendAnalytics({ event: 'WC: Switched signer address' })
                     }}
                   />
                 ))}

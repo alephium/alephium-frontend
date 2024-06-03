@@ -29,7 +29,7 @@ import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { selectAllAddresses } from '~/store/addressesSlice'
-import { showToast, ToastDuration } from '~/utils/layout'
+import { showExceptionToast, showToast, ToastDuration } from '~/utils/layout'
 
 interface PublicKeysScreenProps extends StackScreenProps<RootStackParamList, 'PublicKeysScreen'> {}
 
@@ -42,10 +42,12 @@ const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
       await Clipboard.setStringAsync(publicKey)
 
       showToast({ text1: 'Public key copied!', visibilityTime: ToastDuration.SHORT })
-      sendAnalytics('Copied public key')
+      sendAnalytics({ event: 'Copied public key' })
     } catch (error) {
-      console.log(error)
-      showToast({ text1: 'Error while copying ', visibilityTime: ToastDuration.SHORT, type: 'error' })
+      const message = 'Could not copy public key'
+
+      showExceptionToast(error, message)
+      sendAnalytics({ type: 'error', message })
     }
   }
 

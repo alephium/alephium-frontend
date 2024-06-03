@@ -42,6 +42,7 @@ import { dangerouslyExportWalletMnemonic, updateStoredWalletMetadata } from '~/p
 import { PossibleWordBox, SecretPhraseBox, Word } from '~/screens/new-wallet/ImportWalletSeedScreen'
 import { mnemonicBackedUp } from '~/store/wallet/walletSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { showExceptionToast } from '~/utils/layout'
 
 interface VerifyMnemonicScreenProps
   extends StackScreenProps<BackupMnemonicNavigationParamList, 'VerifyMnemonicScreen'>,
@@ -66,6 +67,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
       dangerouslyExportWalletMnemonic().then((mnemonic) => {
         mnemonicWords.current = mnemonic.split(' ')
         randomizedOptions.current = getRandomizedOptions(mnemonicWords.current, allowedWords.current)
+        setPossibleMatches(randomizedOptions.current[0])
       })
     } catch (e) {
       console.error(e)
@@ -74,17 +76,24 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
 
   const confirmBackup = useCallback(async () => {
     if (!isMnemonicBackedUp) {
-      await updateStoredWalletMetadata({ isMnemonicBackedUp: true })
-      dispatch(mnemonicBackedUp())
+      try {
+        await updateStoredWalletMetadata({ isMnemonicBackedUp: true })
+        dispatch(mnemonicBackedUp())
 
-      sendAnalytics('Backed-up mnemonic')
+        sendAnalytics({ event: 'Backed-up mnemonic' })
+      } catch (error) {
+        const message = 'Could not confirm backup'
+
+        showExceptionToast(error, message)
+        sendAnalytics({ type: 'error', error, message })
+      }
     }
   }, [isMnemonicBackedUp, dispatch])
 
   useEffect(() => {
     if (selectedWords.length < mnemonicWords.current.length) {
       setPossibleMatches(randomizedOptions.current[selectedWords.length])
-    } else {
+    } else if (selectedWords.length > 0) {
       confirmBackup()
       setShowSuccess(true)
       setTimeout(() => {

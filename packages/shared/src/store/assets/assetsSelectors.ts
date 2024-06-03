@@ -32,7 +32,8 @@ export const selectDoVerifiedFungibleTokensNeedInitialization = createSelector(
   ],
   (status, networkId) =>
     (networkId === networkSettingsPresets.mainnet.networkId ||
-      networkId === networkSettingsPresets.testnet.networkId) &&
+      networkId === networkSettingsPresets.testnet.networkId ||
+      networkId === networkSettingsPresets.devnet.networkId) &&
     status === 'uninitialized'
 )
 

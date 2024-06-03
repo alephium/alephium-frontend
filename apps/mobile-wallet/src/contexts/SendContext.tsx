@@ -25,6 +25,7 @@ import { sendAnalytics } from '~/analytics'
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import BottomModal from '~/components/layout/BottomModal'
+import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { selectAddressByHash } from '~/store/addressesSlice'
@@ -73,6 +74,7 @@ const SendContext = createContext(initialValues)
 
 export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
+  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
   const dispatch = useAppDispatch()
 
   const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(initialValues.toAddress)
@@ -163,11 +165,11 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
         onSendSuccess()
 
-        sendAnalytics('Send: Sent transaction', { tokens: tokens.length })
-      } catch (e) {
-        showExceptionToast(e, 'Could not send transaction')
+        sendAnalytics({ event: 'Send: Sent transaction', props: { tokens: tokens.length } })
+      } catch (error) {
+        showExceptionToast(error, 'Could not send transaction')
 
-        sendAnalytics('Error', { message: 'Could not send transaction' })
+        sendAnalytics({ type: 'error', message: 'Could not send transaction' })
       }
     },
     [address, assetAmounts, consolidationRequired, dispatch, toAddress, unsignedTxData.unsignedTxs]
@@ -177,10 +179,13 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
     async (onSendSuccess: () => void) => {
       await triggerBiometricsAuthGuard({
         settingsToCheck: 'transactions',
-        successCallback: () => sendTransaction(onSendSuccess)
+        successCallback: () =>
+          triggerFundPasswordAuthGuard({
+            successCallback: () => sendTransaction(onSendSuccess)
+          })
       })
     },
-    [sendTransaction, triggerBiometricsAuthGuard]
+    [sendTransaction, triggerBiometricsAuthGuard, triggerFundPasswordAuthGuard]
   )
 
   return (
@@ -214,6 +219,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
           onClose={() => setIsConsolidateModalVisible(false)}
         />
       </Portal>
+      {fundPasswordModal}
     </SendContext.Provider>
   )
 }

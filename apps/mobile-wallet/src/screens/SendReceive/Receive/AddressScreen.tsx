@@ -34,7 +34,7 @@ const AddressScreen = ({ navigation }: ScreenProps) => {
   const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
 
   const handleAddressPress = (addressHash: AddressHash) => {
-    sendAnalytics('Pressed on address to see QR code to receive funds')
+    sendAnalytics({ event: 'Pressed on address to see QR code to receive funds' })
 
     navigation.navigate('QRCodeScreen', { addressHash })
   }

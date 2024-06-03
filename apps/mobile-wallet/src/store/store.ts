@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { sharedReducer } from '@alephium/shared'
 import { configureStore } from '@reduxjs/toolkit'
 
+import fundPasswordSlice from '~/features/fund-password/fundPasswordSlice'
 import addressDiscoverySlice from '~/store/addressDiscoverySlice'
 import contactsSlice from '~/store/addresses/contactsSlice'
 import addressesSlice from '~/store/addressesSlice'
@@ -41,6 +42,7 @@ export const store = configureStore({
     addressDiscovery: addressDiscoverySlice.reducer,
     confirmedTransactions: confirmedTransactionsSlice.reducer,
     pendingTransactions: pendingTransactionsSlice.reducer,
+    [fundPasswordSlice.name]: fundPasswordSlice.reducer,
     [contactsSlice.name]: contactsSlice.reducer,
     [loadersSlice.name]: loadersSlice.reducer
   },

@@ -81,14 +81,14 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     const text = await Clipboard.getStringAsync()
     setValue('toAddressHash', text)
 
-    sendAnalytics('Send: Pasted destination address')
+    sendAnalytics({ event: 'Send: Pasted destination address' })
   }
 
   const handleQRCodeScan = (addressHash: string) => {
     if (isAddressValid(addressHash)) {
       setValue('toAddressHash', addressHash)
 
-      sendAnalytics('Send: Captured destination address by scanning QR code')
+      sendAnalytics({ event: 'Send: Captured destination address by scanning QR code' })
     } else {
       showToast({
         text1: 'Invalid address',
@@ -111,7 +111,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       setToAddress(contact.address)
       flashInputBg()
 
-      sendAnalytics('Send: Selected contact to send funds to')
+      sendAnalytics({ event: 'Send: Selected contact to send funds to' })
     }
   }
 
@@ -120,7 +120,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     setToAddress(addressHash)
     flashInputBg()
 
-    sendAnalytics('Send: Selected own address to send funds to')
+    sendAnalytics({ event: 'Send: Selected own address to send funds to' })
   }
 
   const handleContinuePress = useCallback(

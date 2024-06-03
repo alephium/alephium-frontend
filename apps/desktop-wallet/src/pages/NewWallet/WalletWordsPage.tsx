@@ -66,7 +66,7 @@ const WalletWordsPage = () => {
 
   const handleBackPress = () => {
     sendAnalytics({ event: 'Creating wallet: Writing down mnemonic: Clicked back' })
-    keyring.clearAll()
+    keyring.clear()
     resetCachedMnemonic()
     onButtonBack()
   }

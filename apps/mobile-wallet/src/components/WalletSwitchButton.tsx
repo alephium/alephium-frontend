@@ -64,10 +64,9 @@ const WalletSwitchButton = ({ style }: WalletSwitchButtonProps) => {
       setNbOfTaps(0)
     }
 
-    // TODO: Shouldn't this be 69?
-    if (nbOfTaps === 68) {
+    if (nbOfTaps === 69) {
       setIsDoingMagic(true)
-      sendAnalytics('Activated magic')
+      sendAnalytics({ event: 'Activated magic' })
     }
   }
 

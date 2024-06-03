@@ -59,11 +59,12 @@ const EditContactScreen = ({ navigation, route: { params }, ...props }: EditCont
                   try {
                     await deleteContact(params.contactId)
 
-                    sendAnalytics('Contact: Deleted contact')
-                  } catch (e) {
-                    showExceptionToast(e, 'Could not delete contact')
+                    sendAnalytics({ event: 'Contact: Deleted contact' })
+                  } catch (error) {
+                    const message = 'Could not delete contact'
 
-                    sendAnalytics('Error', { message: 'Could not delete contact' })
+                    showExceptionToast(error, message)
+                    sendAnalytics({ type: 'error', error, message })
                   } finally {
                     setIsDeleting(false)
                   }
@@ -86,11 +87,12 @@ const EditContactScreen = ({ navigation, route: { params }, ...props }: EditCont
     try {
       await persistContact(formData)
 
-      sendAnalytics('Contact: Editted contact')
-    } catch (e) {
-      showExceptionToast(e, 'Could not save contact')
+      sendAnalytics({ event: 'Contact: Editted contact' })
+    } catch (error) {
+      const message = 'Could not save contact'
 
-      sendAnalytics('Error', { message: 'Could not save contact' })
+      showExceptionToast(error, message)
+      sendAnalytics({ type: 'error', error, message })
     }
 
     setLoading(false)

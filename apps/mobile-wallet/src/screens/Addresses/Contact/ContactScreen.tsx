@@ -63,11 +63,11 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
       message: `${contact.name}\n${contact.address}`
     })
 
-    sendAnalytics('Contact: Shared contact')
+    sendAnalytics({ event: 'Contact: Shared contact' })
   }
 
   const handleSendFundsPress = () => {
-    sendAnalytics('Contact: Pressed send funds')
+    sendAnalytics({ event: 'Contact: Pressed send funds' })
 
     navigation.navigate('SendNavigation', {
       screen: 'OriginScreen',
@@ -76,7 +76,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
   }
 
   const handleCopyAddressPress = () => {
-    sendAnalytics('Copied address', { note: 'Contact' })
+    sendAnalytics({ event: 'Copied address', props: { note: 'Contact' } })
 
     copyAddressToClipboard(contact.address)
   }

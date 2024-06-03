@@ -36,6 +36,7 @@ import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { newWalletNameEntered } from '~/store/walletGenerationSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showExceptionToast } from '~/utils/layout'
+import { sleep } from '~/utils/misc'
 import { resetNavigation } from '~/utils/navigation'
 
 const instructions: Instruction[] = [
@@ -47,6 +48,7 @@ interface NewWalletNameScreenProps extends StackScreenProps<RootStackParamList, 
 
 const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method)
+  const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
   const { deviceHasEnrolledBiometrics } = useBiometrics()
   const dispatch = useAppDispatch()
 
@@ -63,15 +65,24 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
       setLoading(true)
 
       try {
+        await sleep(0) // Allow react state to update to display loader before heavy operation
         const wallet = await generateAndStoreWallet(name)
 
         dispatch(newWalletGenerated(wallet))
         dispatch(syncLatestTransactions(wallet.firstAddress.hash))
 
-        sendAnalytics('Created new wallet')
-        resetNavigation(navigation, deviceHasEnrolledBiometrics ? 'AddBiometricsScreen' : 'NewWalletSuccessScreen')
-      } catch (e) {
-        showExceptionToast(e, 'Could not generate new wallet')
+        sendAnalytics({ event: 'Created new wallet' })
+        resetNavigation(
+          navigation,
+          deviceHasEnrolledBiometrics && !biometricsRequiredForAppAccess
+            ? 'AddBiometricsScreen'
+            : 'NewWalletSuccessScreen'
+        )
+      } catch (error) {
+        const message = 'Could not generate new wallet'
+
+        showExceptionToast(error, message)
+        sendAnalytics({ type: 'error', error, message, isSensitive: true })
       } finally {
         setLoading(false)
       }
