@@ -23,14 +23,14 @@ import { NetworkName, NetworkNames, NetworkPreset, NetworkSettings } from '@/typ
 export const networkSettingsPresets: Record<NetworkPreset, NetworkSettings> = {
   [NetworkNames.mainnet]: {
     networkId: 0,
-    nodeHost: 'https://node-v210.mainnet.alephium.org',
-    explorerApiHost: 'https://backend-v117.mainnet.alephium.org',
+    nodeHost: 'https://node.mainnet.alephium.org',
+    explorerApiHost: 'https://backend.mainnet.alephium.org',
     explorerUrl: 'https://explorer.alephium.org'
   },
   [NetworkNames.testnet]: {
     networkId: 1,
-    nodeHost: 'https://node-v210.testnet.alephium.org',
-    explorerApiHost: 'https://backend-v117.testnet.alephium.org',
+    nodeHost: 'https://node.testnet.alephium.org',
+    explorerApiHost: 'https://backend.testnet.alephium.org',
     explorerUrl: 'https://testnet.alephium.org'
   },
   [NetworkNames.devnet]: {
