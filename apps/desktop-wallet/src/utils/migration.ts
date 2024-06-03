@@ -76,6 +76,7 @@ export const migrateNetworkSettings = (): NetworkSettings => {
   _v200_networkSettingsMigration()
   _v213_networkSettingsMigration()
   _v225_networkSettingsMigration()
+  _v233_networkSettingsMigration()
 
   return SettingsStorage.load('network') as NetworkSettings
 }
@@ -190,6 +191,14 @@ export const _v225_networkSettingsMigration = () =>
     'https://node-v20.testnet.alephium.org': networkSettingsPresets.testnet.nodeHost,
     'https://backend-v115.mainnet.alephium.org': networkSettingsPresets.mainnet.explorerApiHost,
     'https://backend-v115.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost
+  })
+
+export const _v233_networkSettingsMigration = () =>
+  migrateReleaseNetworkSettings({
+    'https://node-v210.mainnet.alephium.org': networkSettingsPresets.mainnet.nodeHost,
+    'https://node-v210.testnet.alephium.org': networkSettingsPresets.testnet.nodeHost,
+    'https://backend-v117.mainnet.alephium.org': networkSettingsPresets.mainnet.explorerApiHost,
+    'https://backend-v117.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost
   })
 
 const migrateReleaseNetworkSettings = (migrationsMapping: Record<string, string>) => {
