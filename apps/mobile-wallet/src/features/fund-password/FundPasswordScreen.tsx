@@ -103,16 +103,20 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
   }
 
   const handleDeletePress = async () => {
-    showAlert('Delete fund password', async () => {
-      await deleteFundPassword()
-      dispatch(fundPasswordUseToggled(false))
-      showToast({
-        text1: 'Deleted',
-        text2: 'Fund password was deleted.',
-        type: 'info'
-      })
-      navigation.goBack()
-      sendAnalytics({ event: 'Deleted fund password', props: { origin: props.route.params.origin } })
+    triggerFundPasswordAuthGuard({
+      successCallback: () => {
+        showAlert('Delete fund password', async () => {
+          await deleteFundPassword()
+          dispatch(fundPasswordUseToggled(false))
+          showToast({
+            text1: 'Deleted',
+            text2: 'Fund password was deleted.',
+            type: 'info'
+          })
+          navigation.goBack()
+          sendAnalytics({ event: 'Deleted fund password', props: { origin: props.route.params.origin } })
+        })
+      }
     })
   }
 
