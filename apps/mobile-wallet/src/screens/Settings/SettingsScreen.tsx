@@ -228,7 +228,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                 }
                 title="Fund password"
                 subtitle="Enhance your security"
-                isLast
               >
                 {isUsingFundPassword ? (
                   <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
