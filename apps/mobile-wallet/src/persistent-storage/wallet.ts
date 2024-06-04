@@ -169,6 +169,7 @@ export const deleteWallet = async () => {
   }
 
   await deleteWithReportableError(WALLET_METADATA_STORAGE_KEY)
+  await deleteWithReportableError(IS_NEW_WALLET)
 }
 
 export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadataWithHash[]) => {
