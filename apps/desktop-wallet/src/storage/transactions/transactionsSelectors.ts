@@ -56,7 +56,7 @@ export const makeSelectAddressesHashesWithPendingTransactions = () =>
       .map(({ hash }) => hash)
   )
 
-// TODO: Same as in mobile wallet
+// Same as in mobile wallet
 export const selectTransactionUnknownTokenIds = createSelector(
   [selectAllFungibleTokens, selectNFTIds, selectAllConfirmedTransactions],
   (fungibleTokens, nftIds, allConfirmedTransactions) => {

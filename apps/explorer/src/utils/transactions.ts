@@ -92,7 +92,6 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
   }
 }
 
-// TODO: The following 2 functions could be ported to js-sdk (and properly tested there)
 type AttoAlphAmount = string
 type TokenAmount = string
 type Address = string

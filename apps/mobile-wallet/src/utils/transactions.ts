@@ -39,7 +39,7 @@ import { AddressPendingTransaction, AddressTransaction } from '~/types/transacti
 export const isPendingTx = (tx: AddressTransaction): tx is AddressPendingTransaction =>
   (tx as AddressPendingTransaction).status === 'pending'
 
-// TODO: Same as in desktop wallet, move to SDK?
+// Same as in desktop wallet, move to SDK?
 export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?: boolean): TransactionInfo => {
   const state = store.getState()
   const fungibleTokens = state.fungibleTokens.entities
@@ -117,7 +117,7 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
   }
 }
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
   const alphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount ?? BigInt(0)
   const tokens = assetAmounts
@@ -134,6 +134,6 @@ export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
   }
 }
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const getOptionalTransactionAssetAmounts = (assetAmounts?: AssetAmount[]) =>
   assetAmounts ? getTransactionAssetAmounts(assetAmounts) : { attoAlphAmount: undefined, tokens: undefined }

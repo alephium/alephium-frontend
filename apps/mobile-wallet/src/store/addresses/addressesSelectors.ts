@@ -23,7 +23,7 @@ import { createSelector } from '@reduxjs/toolkit'
 import { makeSelectAddressesKnownFungibleTokens, selectAllAddresses } from '~/store/addressesSlice'
 import { RootState } from '~/store/store'
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const { selectAll: selectAllContacts, selectById: selectContactById } = contactsAdapter.getSelectors<RootState>(
   (state) => state.contacts
 )
@@ -38,7 +38,7 @@ export const selectContactByHash = createSelector(
   (contacts, addressHash) => contacts.find((contact) => contact.address === addressHash)
 )
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const makeSelectAddressesTokensWorth = () =>
   createSelector([makeSelectAddressesKnownFungibleTokens(), selectAllPrices], (verifiedFungibleTokens, tokenPrices) =>
     tokenPrices.reduce((totalWorth, { symbol, price }) => {

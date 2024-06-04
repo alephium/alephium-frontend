@@ -22,7 +22,6 @@ import { SignClient } from '@walletconnect/sign-client/dist/types/client'
 
 import { SessionProposalEvent } from '@/types/walletConnect'
 
-// TODO: Move to shared
 export const isNetworkValid = (networkId: string, currentNetworkId: NetworkSettings['networkId']) =>
   (networkId === 'devnet' && currentNetworkId === 4) ||
   (Object.keys(networkSettingsPresets) as Array<NetworkPreset>).some(

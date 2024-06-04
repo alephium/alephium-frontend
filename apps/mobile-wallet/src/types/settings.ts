@@ -20,8 +20,6 @@ import { Currency, NetworkSettings } from '@alephium/shared'
 
 import { ThemeType } from '~/style/themes'
 
-// TODO: Remove usesBiometrics and requireAuth into a new SecuritySettings?
-
 export interface GeneralSettings {
   theme: ThemeType
   discreetMode: boolean

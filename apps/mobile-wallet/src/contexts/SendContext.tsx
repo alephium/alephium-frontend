@@ -123,7 +123,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
         if (data) setUnsignedTxData(data)
         callbacks.onBuildSuccess()
       } catch (e) {
-        // TODO: When API error codes are available, replace this substring check with a proper error code check
         const error = (e as unknown as string).toString()
 
         if (error.includes('consolidating') || error.includes('consolidate')) {

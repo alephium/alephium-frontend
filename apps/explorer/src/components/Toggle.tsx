@@ -33,7 +33,6 @@ interface ToggleProps {
   className?: string
 }
 
-// TODO: Share component in the shared lib?
 const toggleWidthPx = 40
 
 const Toggle = ({ toggled, onToggle, className, disabled, ToggleIcons, handleColors, label }: ToggleProps) => {

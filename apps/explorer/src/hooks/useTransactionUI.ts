@@ -30,10 +30,6 @@ interface TransactionUIProps {
   isInContract: boolean
 }
 
-// Override badge if it's a failed script execution or is inside a contract.
-// TODO: Better (better way to define infoType by looking at presence of script)
-// Use script field in tx once available https://github.com/alephium/explorer-backend/issues/485
-
 export const getTransactionUI = ({
   infoType,
   isFailedScriptTx,

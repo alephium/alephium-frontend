@@ -132,7 +132,7 @@ const RootStackNavigation = () => {
               </RootStack.Navigator>
             </WalletConnectContextProvider>
           </Analytics>
-          <AppUnlockHandler />
+          <AppUnlockModal />
         </NavigationContainer>
       </Host>
     </GestureHandlerRootView>
@@ -141,9 +141,7 @@ const RootStackNavigation = () => {
 
 export default RootStackNavigation
 
-// TODO: Create a hook. Make sure the hook is inside a component that is a child of the NavigationContainer component
-// instance of the above RootStackNavigation component, otherwise useNavigation inside the hook will not work properly
-const AppUnlockHandler = () => {
+const AppUnlockModal = () => {
   const dispatch = useAppDispatch()
   const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
@@ -204,8 +202,6 @@ const AppUnlockHandler = () => {
           navigation.navigate('LoginWithPinScreen')
         }
       }
-
-      // TODO: Revisit error handling with proper error codes
     } catch (e: unknown) {
       const error = e as { message?: string }
 

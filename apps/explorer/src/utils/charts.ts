@@ -47,7 +47,6 @@ export const formatXAxis =
   }
 
 export const formatSeriesNumber = (type: YAxisType, value: number): string => {
-  // TODO: Special formatting (TX/s, etc)
   if (type === 'formatted') {
     return value.toString()
   }
