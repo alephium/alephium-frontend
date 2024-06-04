@@ -36,7 +36,6 @@ export const getPointerRelativePositionInElement = (e: PointerEvent) => {
   }
 }
 
-// TODO: Share cleanly in shared lib
 export const onEnterOrSpace = (event: KeyboardEvent, callback: () => void) => {
   if (event.key !== 'Enter' && event.key !== ' ') return
 

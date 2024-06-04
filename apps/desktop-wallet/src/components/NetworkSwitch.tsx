@@ -62,12 +62,7 @@ const NetworkSwitch = () => {
 
   const handleNetworkPresetChange = useCallback(
     async (networkName: NetworkName) => {
-      if (networkName !== network.name) {
-        if (networkName === 'custom') {
-          // TODO: open settings modal, or reuse previous custom settings if available.
-          return
-        }
-
+      if (networkName !== network.name && networkName !== 'custom') {
         const newNetworkSettings = networkSettingsPresets[networkName]
         const networkId = newNetworkSettings.networkId
 

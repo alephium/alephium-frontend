@@ -21,8 +21,6 @@ import { createPortal } from 'react-dom'
 
 import Tooltips from '@/components/Tooltips'
 
-// TODO: Share in shared lib?
-
 const ModalPortal: FC = ({ children }) =>
   createPortal(
     <>

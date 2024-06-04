@@ -107,7 +107,7 @@ export const makeSelectContactConfirmedTransactions = () =>
 
 export default confirmedTransactionsSlice
 
-// TODO: Same as in desktop wallet, move to SDK?
+// Same as in desktop wallet, move to SDK?
 const addTransactions = (
   state: ConfirmedTransactionsState,
   action: PayloadAction<AddressTransactionsSyncResult[] | { transactions: explorer.Transaction[] } | undefined>

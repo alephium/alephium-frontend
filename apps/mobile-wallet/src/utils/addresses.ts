@@ -138,8 +138,6 @@ export const selectAddressPendingTransactions = (
   }, [] as AddressPendingTransaction[])
 }
 
-// TODO: Move into store directory
-// TODO: Simplify logic
 export const selectAddressConfirmedTransactions = (
   allAddresses: Address[],
   transactions: explorer.Transaction[],
@@ -186,7 +184,7 @@ export const selectContactPendingTransactions = (
     allAddresses
   )
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const getAddressAssetsAvailableBalance = (address: Address) => [
   {
     id: ALPH.id,

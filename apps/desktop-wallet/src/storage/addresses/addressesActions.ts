@@ -179,7 +179,6 @@ export const syncAddressesAlphHistoricBalances = createAsyncThunk(
     for (const addressHash of addresses) {
       const balances = []
 
-      // TODO: Do not use getAddressesAddressAmountHistoryDeprecated when the new delta endpoints are released
       const alphHistoryData = await client.explorer.addresses.getAddressesAddressAmountHistoryDeprecated(
         addressHash,
         { fromTs: oneYearAgo, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },

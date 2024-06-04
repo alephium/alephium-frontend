@@ -18,18 +18,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export type LatestAmountPerAddress = Record<AddressHash, bigint>
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export type DataPoint = {
   date: string
   worth: number
 }
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const chartLengths = ['1d', '1w', '1m', '1y'] as const
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 type ChartLengthType = typeof chartLengths
 export type ChartLength = ChartLengthType[number]

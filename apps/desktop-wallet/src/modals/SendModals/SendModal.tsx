@@ -153,7 +153,8 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
           setStep('info-check')
         }
       } catch (e) {
-        // TODO: When API error codes are available, replace this substring check with a proper error code check
+        // When API error codes are available, replace this substring check with a proper error code check
+        // https://github.com/alephium/alephium-frontend/issues/610
         const error = (e as unknown as string).toString()
 
         if (error.includes('consolidating') || error.includes('consolidate')) {

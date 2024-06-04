@@ -89,7 +89,7 @@ export const makeSelectContactPendingTransactions = () =>
 
 export default pendingTransactionsSlice
 
-// TODO: Same as in desktop wallet, move to SDK?
+// Same as in desktop wallet, move to SDK?
 const removeTransactions = (
   state: PendingTransactionsState,
   action: PayloadAction<

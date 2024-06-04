@@ -380,7 +380,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
           case 'alph_requestExplorerApi': {
             walletConnectClient.core.expirer.set(event.id, calcExpiry(5))
             const p = request.params as ApiRequestArguments
-            // TODO: Remove following code when using explorer client from web3 library
+
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const call = (client.explorer as any)[`${p.path}`][`${p.method}`] as (...arg0: any[]) => Promise<any>
             const result = await call(...p.params)
@@ -393,7 +393,6 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
             break
           }
           default:
-            // TODO: support all of the other SignerProvider methods
             respondToWalletConnectWithError(event, getSdkError('WC_METHOD_UNSUPPORTED'))
             throw new Error(`Method not supported: ${request.method}`)
         }

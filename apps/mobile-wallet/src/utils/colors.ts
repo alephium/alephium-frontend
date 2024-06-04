@@ -20,7 +20,6 @@ export const labelColorPalette = ['#3DD97E', '#FFC400', '#64C9E1', '#9257FF', '#
 
 export const getRandomLabelColor = () => labelColorPalette[Math.floor(Math.random() * labelColorPalette.length)]
 
-// TODO: Copied from desktop wallet
 export const stringToColour = (str: string) => {
   let hash = 0
   for (let i = 0; i < str.length; i++) {

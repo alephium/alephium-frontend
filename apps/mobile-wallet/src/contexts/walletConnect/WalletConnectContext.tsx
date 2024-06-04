@@ -526,7 +526,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             break
           }
           default:
-            // TODO: Support all of the other SignerProvider methods
             respondToWalletConnectWithError(requestEvent, getSdkError('WC_METHOD_UNSUPPORTED'))
         }
       } catch (e: unknown) {
@@ -551,14 +550,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
           })
         }
-        // TODO: Handle consolidation case
-        // TODO: Handle authentication requirement
       }
     },
     // The `addresses` dependency causes re-rendering when any property of an Address changes, even though we only need
     // the `hash` and the `publicKey`. Creating a selector that extracts those 3 doesn't help.
     // Using addressIds fixes the problem, but now the api/transactions.ts file becomes dependant on the store file.
-    // TODO: Separate offline/online address data slices
     [walletConnectClient, respondToWalletConnectWithError, addressIds, handleApiResponse]
   )
 
