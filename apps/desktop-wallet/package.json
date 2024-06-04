@@ -59,7 +59,7 @@
     "@alephium/token-list": "^0.0.12",
     "@alephium/typescript-config": "workspace:*",
     "@alephium/walletconnect-provider": "0.38.0",
-    "@alephium/web3": "0.38.0",
+    "@alephium/web3": "0.42.0",
     "@electron/notarize": "^1.2.3",
     "@json-rpc-tools/utils": "^1.7.6",
     "@reduxjs/toolkit": "^1.9.1",
