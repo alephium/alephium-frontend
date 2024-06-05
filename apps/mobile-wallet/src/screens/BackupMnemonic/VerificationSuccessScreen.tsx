@@ -35,7 +35,7 @@ interface VerificationSuccessScreenProps
     ScrollScreenProps {}
 
 const VerificationSuccessScreen = ({ navigation, ...props }: VerificationSuccessScreenProps) => {
-  const isUsingFundPassword = useAppSelector((s) => s.settings.isUsingFundPassword)
+  const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
   const { setHeaderOptions } = useHeaderContext()
 
   useFocusEffect(

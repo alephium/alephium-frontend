@@ -19,3 +19,5 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createAction } from '@reduxjs/toolkit'
 
 export const fundPasswordReminded = createAction('fundPassword/reminded')
+
+export const fundPasswordUseToggled = createAction<boolean>('fundPassword/fundPasswordUseToggled')

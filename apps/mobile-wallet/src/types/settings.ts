@@ -29,7 +29,6 @@ export interface GeneralSettings {
   analyticsId?: string
   walletConnect: boolean
   usesBiometrics: boolean
-  isUsingFundPassword: boolean
   autoLockSeconds: number
 }
 
