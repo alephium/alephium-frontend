@@ -64,6 +64,8 @@ const HeaderButtons = ({ style }: HeaderButtonsProps) => {
       navigation.navigate('SendNavigation', { screen: 'OriginScreen', params: { toAddressHash: text } })
       sendAnalytics({ event: 'Send: Captured destination address by scanning QR code from Dashboard' })
     } else if (text.startsWith('wc:')) {
+      sendAnalytics({ event: 'WC: Scanned WC QR code' })
+
       if (isWalletConnectEnabled && walletConnectClientStatus === 'initialized') {
         pairWithDapp(text)
       } else {
