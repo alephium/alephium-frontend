@@ -244,6 +244,9 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
 export const storedWalletExists = async (): Promise<boolean> =>
   !!(await getSecurelyWithReportableError(MNEMONIC_V2, true, '')) && !!(await getWalletMetadata())
 
+export const appWasUninstalled = async (): Promise<boolean> =>
+  !!(await getSecurelyWithReportableError(MNEMONIC_V2, true, '')) && !(await getWalletMetadata())
+
 export const dangerouslyExportWalletMnemonic = async (): Promise<string> => {
   const decryptedMnemonic = await getSecurelyWithReportableError(MNEMONIC_V2, true, '')
 
