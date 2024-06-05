@@ -491,4 +491,6 @@
   "Collection": "Collection",
   "ID": "ID",
   "Copy ID": "Copy ID"
+  "To delete this wallet use it without a passphrase": "Untuk menghapus dompet ini, gunakan tanpa kata sandi",
+  "To export this wallet use it without a passphrase": "Untuk mengekspor dompet ini, gunakan tanpa kata sandi"
 }
