@@ -37,9 +37,9 @@ import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import ReceiveNavigation from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
+import { appInstallationTimestampMissing, rememberAppInstallation, wasAppUninstalled } from '~/persistent-storage/app'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
-  appWasUninstalled,
   deleteDeprecatedWallet,
   getDeprecatedStoredWallet,
   getStoredWallet,
@@ -203,8 +203,12 @@ const AppUnlockModal = () => {
         } else {
           navigation.navigate('LoginWithPinScreen')
         }
-      } else if (await appWasUninstalled()) {
-        await deleteFundPassword()
+      }
+
+      if ((await appInstallationTimestampMissing()) || (!walletExists && !deprecatedWallet)) {
+        if (await wasAppUninstalled()) await deleteFundPassword()
+
+        await rememberAppInstallation()
       }
     } catch (e: unknown) {
       const error = e as { message?: string }
