@@ -882,7 +882,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } finally {
       setLoading('')
       setIsSessionProposalModalOpen(false)
-      showToast({ text1: 'DApp request rejected', text2: 'You can go back to your browser.' })
+      showToast({ text1: 'DApp request rejected', text2: 'You can go back to your browser.', type: 'info' })
     }
   }
 
