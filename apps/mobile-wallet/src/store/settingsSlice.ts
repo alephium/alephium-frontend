@@ -22,7 +22,6 @@ import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@
 import { defaultGeneralSettings, persistSettings } from '~/persistent-storage/settings'
 import { allBiometricsEnabled, analyticsIdGenerated } from '~/store/settings/settingsActions'
 import { RootState } from '~/store/store'
-import { walletDeleted } from '~/store/wallet/walletActions'
 import { GeneralSettings } from '~/types/settings'
 
 const sliceName = 'settings'
@@ -60,9 +59,6 @@ const settingsSlice = createSlice({
     biometricsToggled: (state) => {
       state.usesBiometrics = !state.usesBiometrics
     },
-    fundPasswordUseToggled: (state, { payload }: PayloadAction<GeneralSettings['isUsingFundPassword']>) => {
-      state.isUsingFundPassword = payload
-    },
     autoLockSecondsChanged: (state, { payload }: PayloadAction<GeneralSettings['autoLockSeconds']>) => {
       state.autoLockSeconds = payload
     }
@@ -72,9 +68,6 @@ const settingsSlice = createSlice({
       .addCase(appReset, () => initialState)
       .addCase(fiatCurrencyChanged, (state, { payload: currency }) => {
         state.currency = currency
-      })
-      .addCase(walletDeleted, (state) => {
-        state.isUsingFundPassword = false
       })
       .addCase(analyticsIdGenerated, (state, { payload: analyticsId }) => {
         state.analyticsId = analyticsId
@@ -94,8 +87,7 @@ export const {
   analyticsToggled,
   walletConnectToggled,
   biometricsToggled,
-  autoLockSecondsChanged,
-  fundPasswordUseToggled
+  autoLockSecondsChanged
 } = settingsSlice.actions
 
 export const settingsListenerMiddleware = createListenerMiddleware()

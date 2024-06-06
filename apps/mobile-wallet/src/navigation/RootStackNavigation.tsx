@@ -29,6 +29,7 @@ import { Analytics } from '~/analytics'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import useAutoLock from '~/features/auto-lock/useAutoLock'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
+import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import BackupMnemonicNavigation from '~/navigation/BackupMnemonicNavigation'
@@ -36,6 +37,7 @@ import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import ReceiveNavigation from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
+import { appInstallationTimestampMissing, rememberAppInstallation, wasAppUninstalled } from '~/persistent-storage/app'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
   deleteDeprecatedWallet,
@@ -201,6 +203,12 @@ const AppUnlockModal = () => {
         } else {
           navigation.navigate('LoginWithPinScreen')
         }
+      }
+
+      if ((await appInstallationTimestampMissing()) || (!walletExists && !deprecatedWallet)) {
+        if (await wasAppUninstalled()) await deleteFundPassword()
+
+        await rememberAppInstallation()
       }
     } catch (e: unknown) {
       const error = e as { message?: string }

@@ -19,17 +19,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { appReset } from '@alephium/shared'
 import { createSlice } from '@reduxjs/toolkit'
 
-import { fundPasswordReminded } from '~/features/fund-password/fundPasswordActions'
+import { fundPasswordReminded, fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
 import { mnemonicMigrated, walletDeleted } from '~/store/wallet/walletActions'
 
 const sliceName = 'fundPassword'
 
 interface AppMetadataState {
   needsReminder: boolean
+  isActive: boolean
 }
 
 const initialState: AppMetadataState = {
-  needsReminder: false
+  needsReminder: false,
+  isActive: false
 }
 
 const resetState = () => initialState
@@ -45,6 +47,9 @@ const appSlice = createSlice({
       })
       .addCase(fundPasswordReminded, (state) => {
         state.needsReminder = false
+      })
+      .addCase(fundPasswordUseToggled, (state, { payload }) => {
+        state.isActive = payload
       })
       .addCase(walletDeleted, resetState)
       .addCase(appReset, resetState)
