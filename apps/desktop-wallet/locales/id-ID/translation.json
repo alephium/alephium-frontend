@@ -485,12 +485,12 @@
   "Could not decode unsigned tx": "Tidak dapat memecahkan kode tx yang tidak ditandatangani",
   "Could not sign unsigned tx": "Tidak dapat menandatangani tx yang tidak ditandatangani",
   "Could not sign message": "Tidak dapat menandatangani pesan",
-  "NFT details": "NFT details",
-  "Image URL": "Image URL",
-  "Attributes": "Attributes",
-  "Collection": "Collection",
+  "NFT details": "Rincian NFT",
+  "Image URL": "URL Ganbar",
+  "Attributes": "Atribut",
+  "Collection": "Koleksi",
   "ID": "ID",
-  "Copy ID": "Copy ID"
+  "Copy ID": "salin ID",
   "To delete this wallet use it without a passphrase": "Untuk menghapus dompet ini, gunakan tanpa kata sandi",
   "To export this wallet use it without a passphrase": "Untuk mengekspor dompet ini, gunakan tanpa kata sandi"
 }
