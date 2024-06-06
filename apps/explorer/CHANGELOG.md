@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.9.4
+
+### Patch Changes
+
+- 4dfeba1: Show fungible tokens with broken metadata in the correct tab
+
 ## 1.9.3
 
 ### Patch Changes
