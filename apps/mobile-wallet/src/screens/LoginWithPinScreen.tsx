@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
-import * as SplashScreen from 'expo-splash-screen'
 import { useCallback, useState } from 'react'
 
 import { sendAnalytics } from '~/analytics'
@@ -28,8 +27,8 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getStoredWallet, migrateDeprecatedMnemonic } from '~/persistent-storage/wallet'
-import { biometricsToggled } from '~/store/settingsSlice'
-import { walletUnlocked } from '~/store/wallet/walletActions'
+import { allBiometricsEnabled } from '~/store/settings/settingsActions'
+import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
 
@@ -50,19 +49,22 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
 
       try {
         await migrateDeprecatedMnemonic(deprecatedMnemonic)
+        dispatch(mnemonicMigrated())
 
         if (deviceSupportsBiometrics && deviceHasEnrolledBiometrics && !biometricsRequiredForAppAccess) {
-          dispatch(biometricsToggled())
+          dispatch(allBiometricsEnabled())
         }
 
         const wallet = await getStoredWallet()
 
         dispatch(walletUnlocked(wallet))
         resetNavigation(navigation)
-        sendAnalytics('Unlocked wallet')
-      } catch (e) {
-        console.error(e)
-        showExceptionToast(e, 'Could not migrate mnemonic and unlock wallet')
+        sendAnalytics({ event: 'Unlocked wallet' })
+      } catch (error) {
+        const message = 'Could not migrate mnemonic and unlock wallet'
+
+        showExceptionToast(error, message)
+        sendAnalytics({ type: 'error', message })
       }
     },
     [biometricsRequiredForAppAccess, deviceHasEnrolledBiometrics, deviceSupportsBiometrics, dispatch, navigation]
@@ -70,12 +72,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
 
   return (
     <Screen contrastedBg {...props}>
-      <DeprecatedAuthenticationModal
-        visible={isPinModalVisible}
-        forcePinUsage
-        onConfirm={handleSuccessfulLogin}
-        onLayout={() => SplashScreen.hideAsync()}
-      />
+      <DeprecatedAuthenticationModal visible={isPinModalVisible} forcePinUsage onConfirm={handleSuccessfulLogin} />
       {!isPinModalVisible && <Spinner text="Unlocking..." />}
     </Screen>
   )

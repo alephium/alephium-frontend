@@ -21,13 +21,13 @@ import { Optional } from '@alephium/web3'
 
 import { store } from '~/store/store'
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const requiredErrorMessage = 'This field is required'
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const isAddressValid = (value: string) => isAddressHashValid(value) || 'This address is not valid'
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const isContactAddressValid = ({ address, id }: Optional<Omit<Contact, 'name'>, 'id'>) => {
   const state = store.getState()
   const contacts = Object.values(state.contacts.entities) as Contact[]
@@ -38,7 +38,7 @@ export const isContactAddressValid = ({ address, id }: Optional<Omit<Contact, 'n
     : true
 }
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const isContactNameValid = ({ name, id }: Optional<Omit<Contact, 'address'>, 'id'>) => {
   const state = store.getState()
   const contacts = Object.values(state.contacts.entities) as Contact[]

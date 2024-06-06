@@ -46,7 +46,11 @@ const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreen
   const theme = useTheme()
 
   useEffect(() => {
-    storeIsNewWallet(method === 'create')
+    try {
+      storeIsNewWallet(method === 'create')
+    } catch (e) {
+      console.error(e)
+    }
   }, [method])
 
   return (

@@ -29,6 +29,7 @@ import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectC
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
 import { walletDeleted } from '~/store/wallet/walletActions'
+import { showExceptionToast } from '~/utils/layout'
 
 interface WalletDeleteModalProps extends ModalContentProps {
   onDelete: () => void
@@ -47,15 +48,19 @@ const WalletDeleteModal = ({ onDelete, ...props }: WalletDeleteModalProps) => {
 
     setIsLoading(true)
 
-    await deleteWallet()
+    try {
+      await deleteWallet()
 
-    setIsLoading(false)
+      onDelete()
 
-    onDelete()
-
-    dispatch(walletDeleted())
-    resetWalletConnectStorage()
-    sendAnalytics('Deleted wallet')
+      dispatch(walletDeleted())
+      resetWalletConnectStorage()
+      sendAnalytics({ event: 'Deleted wallet' })
+    } catch (error) {
+      showExceptionToast(error, 'Error while deleting wallet')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (

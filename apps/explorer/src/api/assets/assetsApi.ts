@@ -99,10 +99,11 @@ export const assetsQueries = createQueriesCollection({
       queryKey: ['unverifiedFungibleToken', assetId],
       queryFn: (): Promise<UnverifiedFungibleTokenMetadata> =>
         fungibleTokensMetadata.fetch(assetId).then((r) => {
-          const parsedDecimals = parseInt(r.decimals)
+          const parsedDecimals = r?.decimals ? parseInt(r.decimals) : 0
 
           return {
             ...r,
+            id: assetId,
             type: 'fungible',
             decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0,
             verified: false

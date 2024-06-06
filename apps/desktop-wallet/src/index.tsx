@@ -40,22 +40,22 @@ import { store } from '@/storage/store'
 // const root = createRoot(document.getElementById('root')!)
 
 ReactDOM.render(
-  <StrictMode>
-    <Provider store={store}>
-      <Router>
-        <Suspense fallback="loading">
-          <AnalyticsProvider>
+  <AnalyticsProvider>
+    <StrictMode>
+      <Provider store={store}>
+        <Router>
+          <Suspense fallback="loading">
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>
               <GlobalContextProvider>
                 <App />
                 <Tooltips />
               </GlobalContextProvider>
             </StyleSheetManager>
-          </AnalyticsProvider>
-        </Suspense>
-      </Router>
-    </Provider>
-  </StrictMode>,
+          </Suspense>
+        </Router>
+      </Provider>
+    </StrictMode>
+  </AnalyticsProvider>,
   document.getElementById('root')
 )
 
@@ -65,7 +65,6 @@ ReactDOM.render(
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister()
 
-// TODO: Remove when migrating to transient props
 // See: https://styled-components.com/docs/faqs#shouldforwardprop-is-no-longer-provided-by-default
 // This implements the default behavior from styled-components v5
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

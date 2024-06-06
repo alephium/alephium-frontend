@@ -39,7 +39,7 @@ const rowVariants = {
 const TableRow: FC<RowProps> = ({ children, onClick, linkTo, className }) => (
   <motion.tr variants={rowVariants} transition={{ duration: 0.8 }} onMouseUp={onClick} className={className}>
     {Children.map(children, (c) =>
-      // TODO: Don't use the children API. Refactor tables entierly, using flexbox / grid / a library.
+      // Let's not use the Children API anymore :)
       linkTo ? (
         <td style={{ padding: 0 }}>
           <FullHeightLink className="row-link" to={linkTo}>

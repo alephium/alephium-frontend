@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring } from '@alephium/keyring'
-import { AddressMetadata, getHumanReadableError } from '@alephium/shared'
+import { AddressMetadata } from '@alephium/shared'
 
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import { newAddressGenerated, syncLatestTransactions } from '~/store/addressesSlice'
@@ -28,9 +28,9 @@ import { persistAddressesSettings } from '~/utils/addresses'
 export const importAddresses = async (walletId: WalletMetadata['id'], addressesMetadata: AddressMetadata[]) => {
   const addressHashes = []
 
-  await initializeKeyringWithStoredWallet()
-
   try {
+    await initializeKeyringWithStoredWallet()
+
     for (const { index, label, color, isDefault } of addressesMetadata) {
       const newAddressData = keyring.generateAndCacheAddress({ addressIndex: index })
       const newAddress = { ...newAddressData, settings: { label, color, isDefault } }
@@ -42,9 +42,7 @@ export const importAddresses = async (walletId: WalletMetadata['id'], addressesM
     }
 
     store.dispatch(syncLatestTransactions(addressHashes))
-  } catch (e) {
-    throw new Error(getHumanReadableError(e, ''))
   } finally {
-    keyring.clearAll()
+    keyring.clear()
   }
 }

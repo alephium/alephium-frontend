@@ -68,7 +68,6 @@ if (browserIsOld) {
   })
 }
 
-// TODO: Remove when migrating to transient props
 // See: https://styled-components.com/docs/faqs#shouldforwardprop-is-no-longer-provided-by-default
 // This implements the default behavior from styled-components v5
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

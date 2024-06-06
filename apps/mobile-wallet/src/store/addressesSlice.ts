@@ -148,7 +148,7 @@ export const syncAddressesTokens = createAsyncThunk(
   async (addresses: AddressHash[]) => await fetchAddressesTokens(addresses)
 )
 
-// TODO: Same as in desktop wallet, share state?
+// Same as in desktop wallet, share state?
 export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   'addresses/syncAllAddressesTransactionsNextPage',
   async (
@@ -189,7 +189,7 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   }
 )
 
-// TODO: Same as in desktop wallet, share state?
+// Same as in desktop wallet, share state?
 export const syncAddressesAlphHistoricBalances = createAsyncThunk(
   'addresses/syncAddressesAlphHistoricBalances',
   async (
@@ -219,7 +219,6 @@ export const syncAddressesAlphHistoricBalances = createAsyncThunk(
 
       const fromTs = lastDate ? dayjs(lastDate).valueOf() : oneYearAgo
 
-      // TODO: Do not use getAddressesAddressAmountHistoryDeprecated when the new delta endpoints are released
       const alphHistoryData = await client.explorer.addresses.getAddressesAddressAmountHistoryDeprecated(
         addressHash,
         { fromTs, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
@@ -393,7 +392,7 @@ export const {
   selectIds: selectAddressIds
 } = addressesAdapter.getSelectors<RootState>((state) => state[sliceName])
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const makeSelectAddressesAlphAsset = () =>
   createSelector(makeSelectAddresses(), (addresses): Asset => {
     const alphBalances = addresses.reduce(
@@ -411,7 +410,7 @@ export const makeSelectAddressesAlphAsset = () =>
     }
   })
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const makeSelectAddressesTokens = () =>
   createSelector(
     [selectAllFungibleTokens, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses(), selectAllPrices],
@@ -423,13 +422,13 @@ export const makeSelectAddressesTokens = () =>
     }
   )
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const makeSelectAddressesKnownFungibleTokens = () =>
   createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken[] =>
     tokens.filter((token): token is AddressFungibleToken => !!token.symbol)
   )
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const makeSelectAddressesUnknownTokens = () =>
   createSelector(
     [selectAllFungibleTokens, selectNFTIds, makeSelectAddresses()],
@@ -452,7 +451,7 @@ export const makeSelectAddressesUnknownTokens = () =>
     }
   )
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const makeSelectAddressesCheckedUnknownTokens = () =>
   createSelector(
     [makeSelectAddressesUnknownTokens(), (state: RootState) => state.app.checkedUnknownTokenIds],
@@ -460,7 +459,7 @@ export const makeSelectAddressesCheckedUnknownTokens = () =>
       tokensWithoutMetadata.filter((tokenId) => checkedUnknownTokenIds.includes(tokenId))
   )
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const makeSelectAddressesNFTs = () =>
   createSelector([selectAllNFTs, makeSelectAddresses()], (nfts, addresses): NFT[] => {
     const addressesTokenIds = addresses.flatMap(({ tokens }) => tokens.map(({ tokenId }) => tokenId))
@@ -468,7 +467,7 @@ export const makeSelectAddressesNFTs = () =>
     return nfts.filter((nft) => addressesTokenIds.includes(nft.id))
   })
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 export const makeSelectAddresses = () =>
   createSelector(
     [selectAllAddresses, (_, addressHashes?: AddressHash[] | AddressHash) => addressHashes],
@@ -532,7 +531,7 @@ const clearAddressesNetworkData = (state: AddressesState) => {
   state.status = 'uninitialized'
 }
 
-// TODO: Same as in desktop wallet
+// Same as in desktop wallet
 const getAddressesTokenBalances = (addresses: Address[]) =>
   addresses.reduce((acc, { tokens }) => {
     tokens.forEach((token) => {

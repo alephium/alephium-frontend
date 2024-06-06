@@ -41,7 +41,7 @@ export const fiatCurrencyOptions: SelectOption<Currency>[] = Object.values(CURRE
   value: currency.ticker
 }))
 
-export const locktimeInMinutes = [0, 2, 5, 10, 30]
+export const locktimeInMinutes = [0, 2, 5, 10, 30, 60, 120]
 
 export const getThemeType = () => {
   const storedSettings = SettingsStorage.load('general') as GeneralSettings

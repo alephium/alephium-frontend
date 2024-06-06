@@ -170,7 +170,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   } else return returnedCompleteMetadata
 }
 
-// TODO: get list from backend (enum?)
+// We should get this list from the backend
 // See: https://github.com/alephium/explorer-backend/issues/512
 export const useTokensWithAvailablePrice = () => ['ALPH', 'USDT', 'USDC', 'DAI', 'WBTC', 'WETH', 'AYIN']
 

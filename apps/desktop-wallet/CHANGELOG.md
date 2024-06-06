@@ -1,5 +1,12 @@
 # alephium-desktop-wallet
 
+## 2.3.3
+
+### Patch Changes
+
+- c4b1f82: Fix WalletConnect transfer request
+- e34fd80: Update network endpoints
+
 ## 2.3.1
 
 ### Patch Changes

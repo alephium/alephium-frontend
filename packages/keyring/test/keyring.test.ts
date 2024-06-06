@@ -70,7 +70,7 @@ describe('keyring', function () {
   })
 
   it('should succeed generating new mnemonic if secrets are cleared', () => {
-    keyring.clearCachedSecrets()
+    keyring.clear()
     keyring.generateRandomMnemonic()
 
     expect(keyring['hdWallet']).not.toBeNull(),
@@ -79,7 +79,7 @@ describe('keyring', function () {
   })
 
   it('should generate a Uint8Array mnemonic of indexes of words of bip39 word list', () => {
-    keyring.clearCachedSecrets()
+    keyring.clear()
     const mnemonic = keyring.generateRandomMnemonic(12)
 
     expect(mnemonic).toBeInstanceOf(Uint8Array)
@@ -92,12 +92,12 @@ describe('keyring', function () {
   })
 
   it('should generate the correct mnemonic length', () => {
-    keyring.clearCachedSecrets()
+    keyring.clear()
     let mnemonic = keyring.generateRandomMnemonic(12)
     let indexes = Array.from(new Uint16Array(new Uint8Array(mnemonic).buffer))
     expect(indexes).toHaveLength(12)
 
-    keyring.clearCachedSecrets()
+    keyring.clear()
     mnemonic = keyring.generateRandomMnemonic(24)
     indexes = Array.from(new Uint16Array(new Uint8Array(mnemonic).buffer))
     expect(indexes).toHaveLength(24)
@@ -168,7 +168,7 @@ describe('keyring', function () {
   })
 
   it('should fail to initialize from old-format encrypted mnemonic when an incorrect password is given', () => {
-    keyring.clearCachedSecrets()
+    keyring.clear()
     expect(() => keyring.initFromEncryptedMnemonic(encryptedWalletOld, wrongPassword, '')).rejects.toThrow()
     expect(keyring['hdWallet']).toBeNull(),
       expect(keyring['root']).toBeNull(),
@@ -334,7 +334,7 @@ describe('keyring', function () {
   })
 
   it('should encrypt a Uint8Array mnemonic', async () => {
-    keyring.clearCachedSecrets()
+    keyring.clear()
     const mnemonic = keyring.generateRandomMnemonic()
     const mnemonicStr = dangerouslyConvertUint8ArrayMnemonicToString(mnemonic)
     const encryptedMnemonic = await encryptMnemonic(mnemonic, correctPassword)
@@ -348,7 +348,7 @@ describe('keyring', function () {
   })
 
   it('should fail to encrypt an invalid Uint8Array mnemonic', () => {
-    keyring.clearCachedSecrets()
+    keyring.clear()
     const mnemonic = keyring.generateRandomMnemonic()
     mnemonic[0] = -1
     expect(() => encryptMnemonic(mnemonic, correctPassword)).rejects.toThrow()

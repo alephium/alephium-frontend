@@ -47,7 +47,7 @@ const useWalletLock = () => {
 
   const lockWallet = useCallback(
     (lockedFrom?: string) => {
-      keyring.clearAll()
+      keyring.clear()
       dispatch(walletLocked())
 
       if (lockedFrom) sendAnalytics({ event: 'Locked wallet', props: { origin: lockedFrom } })

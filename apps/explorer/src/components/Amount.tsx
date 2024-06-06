@@ -93,34 +93,47 @@ const Amount = ({
 
   const [integralPart, fractionalPart] = amount.split('.')
 
+  const RawAmountComponent = () => (
+    <>
+      <RawAmount data-tooltip-id="default" data-tooltip-content={convertToPositive(value as bigint).toString()}>
+        {value?.toString()}
+      </RawAmount>
+      <Suffix>?</Suffix>
+    </>
+  )
+
   return (
     <span className={className} tabIndex={tabIndex ?? -1}>
       {assetType === 'fungible' || isFiat ? (
-        <>
-          <NumberContainer
-            data-tooltip-id="default"
-            data-tooltip-content={
-              (!fullPrecision &&
-                value &&
-                getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })) ||
-              undefined
-            }
-          >
-            {displaySign && <span>{isNegative ? '-' : '+'}</span>}
-            {fadeDecimals ? (
-              <>
-                <span>{integralPart}</span>
-                {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
-                {quantitySymbol && <span>{quantitySymbol}</span>}
-              </>
-            ) : fractionalPart ? (
-              `${integralPart}.${fractionalPart}`
-            ) : (
-              integralPart
-            )}
-          </NumberContainer>
-          <Suffix color={overrideSuffixColor ? color : undefined}> {usedSuffix ?? 'ALPH'}</Suffix>
-        </>
+        !usedSuffix && !decimals ? (
+          <RawAmountComponent />
+        ) : (
+          <>
+            <NumberContainer
+              data-tooltip-id="default"
+              data-tooltip-content={
+                (!fullPrecision &&
+                  value &&
+                  getAmount({ value, isFiat, decimals, nbOfDecimalsToShow, fullPrecision: true })) ||
+                undefined
+              }
+            >
+              {displaySign && <span>{isNegative ? '-' : '+'}</span>}
+              {fadeDecimals ? (
+                <>
+                  <span>{integralPart}</span>
+                  {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
+                  {quantitySymbol && <span>{quantitySymbol}</span>}
+                </>
+              ) : fractionalPart ? (
+                `${integralPart}.${fractionalPart}`
+              ) : (
+                integralPart
+              )}
+            </NumberContainer>
+            <Suffix color={overrideSuffixColor ? color : undefined}> {usedSuffix}</Suffix>
+          </>
+        )
       ) : assetType === 'non-fungible' && assetId ? (
         <NFT>
           {displaySign && <span>{isNegative ? '-' : '+'}</span>}
@@ -129,13 +142,8 @@ const Amount = ({
           </NFTName>
           <NFTInlineLogo assetId={assetId} size={15} showTooltip />
         </NFT>
-      ) : isUnknownToken ? (
-        <>
-          <RawAmount data-tooltip-id="default" data-tooltip-content={convertToPositive(value as bigint).toString()}>
-            {value?.toString()}
-          </RawAmount>
-          <Suffix>?</Suffix>
-        </>
+      ) : isUnknownToken || !decimals ? (
+        <RawAmountComponent />
       ) : (
         '-'
       )}

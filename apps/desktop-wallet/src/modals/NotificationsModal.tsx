@@ -65,7 +65,7 @@ const NotificationsBox = styled(motion.div)`
   background-color: ${({ theme }) => theme.bg.background1};
 
   > * {
-    margin: 0; // TODO: refactor components to have no predifined margins. Use flex's gap everywhere.
+    margin: 0;
   }
 `
 

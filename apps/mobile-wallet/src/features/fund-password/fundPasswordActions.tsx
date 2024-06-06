@@ -16,24 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { PointerEvent } from 'react'
+import { createAction } from '@reduxjs/toolkit'
 
-// TODO: Copied from explorer
+export const fundPasswordReminded = createAction('fundPassword/reminded')
 
-export const getPointerAbsolutePositionInElement = (e: PointerEvent) => {
-  const bounds = e.currentTarget.getBoundingClientRect()
-
-  return {
-    x: e.clientX - bounds.x,
-    y: e.clientY - bounds.y
-  }
-}
-
-export const getPointerRelativePositionInElement = (e: PointerEvent) => {
-  const { x: posX, y: posY } = getPointerAbsolutePositionInElement(e)
-
-  return {
-    x: posX / e.currentTarget.clientWidth,
-    y: posY / e.currentTarget.clientHeight
-  }
-}
+export const fundPasswordUseToggled = createAction<boolean>('fundPassword/fundPasswordUseToggled')

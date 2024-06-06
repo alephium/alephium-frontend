@@ -37,6 +37,9 @@ import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
+import { getAutoLockLabel } from '~/features/auto-lock/utils'
+import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -68,12 +71,16 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
+  const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
+  const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletName = useAppSelector((s) => s.wallet.name)
   const theme = useTheme()
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
+  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
 
+  const [isAutoLockSecondsModalOpen, setIsAutoLockSecondsModalOpen] = useState(false)
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
@@ -192,10 +199,12 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <ScreenSection>
             <ScreenSectionTitle>Security</ScreenSectionTitle>
             {!deviceHasEnrolledBiometrics && (
-              <AppText color="secondary" style={{ marginBottom: 20, paddingHorizontal: 10 }}>
-                Your device supports biometrics but none is enrolled. Enable them by adding a fingeprint or Face ID in
-                your device's settings.
-              </AppText>
+              <BiometricsRecommendationBox type="accent">
+                <AppText color="accent">
+                  Your device supports biometrics but none is enrolled. Enable them by adding a fingeprint or Face ID in
+                  your device's settings.
+                </AppText>
+              </BiometricsRecommendationBox>
             )}
             <BoxSurface>
               <Row title="App access" subtitle="Require biometrics to open app">
@@ -205,12 +214,39 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                   disabled={!deviceHasEnrolledBiometrics}
                 />
               </Row>
-              <Row title="Transactions" subtitle="Require biometrics to transact" isLast>
+              <Row title="Transactions" subtitle="Require biometrics to transact">
                 <Toggle
                   value={biometricsRequiredForTransactions}
                   onValueChange={handleBiometricsTransactionsChange}
                   disabled={!deviceHasEnrolledBiometrics}
                 />
+              </Row>
+              <Row
+                onPress={() =>
+                  isUsingFundPassword &&
+                  navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: false })
+                }
+                title="Fund password"
+                subtitle="Enhance your security"
+              >
+                {isUsingFundPassword ? (
+                  <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
+                ) : (
+                  <Toggle
+                    value={false}
+                    onValueChange={() =>
+                      navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: true })
+                    }
+                  />
+                )}
+              </Row>
+              <Row
+                title="Auto-lock"
+                subtitle="Amount of time before app locks"
+                isLast
+                onPress={() => setIsAutoLockSecondsModalOpen(true)}
+              >
+                <AppText bold>{getAutoLockLabel(autoLockSeconds)}</AppText>
               </Row>
             </BoxSurface>
           </ScreenSection>
@@ -292,7 +328,10 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
                     triggerBiometricsAuthGuard({
                       settingsToCheck: 'appAccessOrTransactions',
-                      successCallback: () => setIsMnemonicModalVisible(true)
+                      successCallback: () =>
+                        triggerFundPasswordAuthGuard({
+                          successCallback: () => setIsMnemonicModalVisible(true)
+                        })
                     })
                   }}
                 />
@@ -322,6 +361,12 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         />
 
         <BottomModal
+          isOpen={isAutoLockSecondsModalOpen}
+          onClose={() => setIsAutoLockSecondsModalOpen(false)}
+          Content={(props) => <AutoLockOptionsModal onClose={() => setIsAutoLockSecondsModalOpen(false)} {...props} />}
+        />
+
+        <BottomModal
           isOpen={isMnemonicModalVisible}
           onClose={() => setIsMnemonicModalVisible(false)}
           Content={(props) => <MnemonicModal {...props} />}
@@ -342,6 +387,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           Content={(props) => <BiometricsWarningModal onConfirm={handleDisableBiometricsPress} {...props} />}
         />
       </Portal>
+      {fundPasswordModal}
     </>
   )
 }
@@ -350,4 +396,9 @@ export default SettingsScreen
 
 const ScrollScreenStyled = styled(ScrollScreen)`
   gap: ${VERTICAL_GAP}px;
+`
+
+const BiometricsRecommendationBox = styled(BoxSurface)`
+  padding: 20px;
+  margin-bottom: ${VERTICAL_GAP}px;
 `

@@ -48,7 +48,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   useScrollToTopOnFocus(screenScrollY)
 
   const handleCopyAddressPress = () => {
-    sendAnalytics('Copied address', { note: 'Receive screen' })
+    sendAnalytics({ event: 'Copied address', props: { note: 'Receive screen' } })
 
     copyAddressToClipboard(params.addressHash)
   }

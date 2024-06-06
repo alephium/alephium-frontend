@@ -70,7 +70,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   const buttonsBackground = isDark ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.1)'
 
   const handleSendPress = () => {
-    sendAnalytics('Address card: Selected address to send funds from')
+    sendAnalytics({ event: 'Address card: Selected address to send funds from' })
 
     navigation.navigate('SendNavigation', {
       screen: 'DestinationScreen',
@@ -79,7 +79,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   }
 
   const handleReceivePress = () => {
-    sendAnalytics('Address card: Selected address to receive funds to')
+    sendAnalytics({ event: 'Address card: Selected address to receive funds to' })
 
     navigation.navigate('ReceiveNavigation', {
       screen: 'QRCodeScreen',
@@ -100,13 +100,12 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 
       showToast({ text1: 'This is now the default address', visibilityTime: ToastDuration.SHORT })
 
-      sendAnalytics('Address: Used address card default toggle')
-    } catch (e) {
-      console.error(e)
-
-      sendAnalytics('Error', { message: 'Could not use address card default toggle' })
+      sendAnalytics({ event: 'Address: Used address card default toggle' })
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Could not use address card default toggle' })
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (

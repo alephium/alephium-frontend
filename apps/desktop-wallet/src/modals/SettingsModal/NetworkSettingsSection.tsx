@@ -256,7 +256,6 @@ const StyledInfoBox = styled(InfoBox)`
   margin-top: 0;
 `
 
-// TODO: Refactor Badges to allow for smaller version?
 const ExperimentalBadge = styled(Badge)`
   margin-left: var(--spacing-2);
 `

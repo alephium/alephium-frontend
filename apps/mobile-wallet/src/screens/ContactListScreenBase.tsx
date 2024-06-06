@@ -41,8 +41,6 @@ export interface ContactListScreenBaseProps {
   style?: AnimatedProps<ViewProps>['style']
 }
 
-// TODO: Should be converted to a FlatList
-
 const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: ContactListScreenBaseProps) => {
   const theme = useTheme()
 

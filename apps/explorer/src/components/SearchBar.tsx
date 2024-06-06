@@ -77,7 +77,6 @@ const SearchBar = ({ className }: SearchBarProps) => {
 
     const isHexString = checkHexStringValidity(word)
 
-    //TODO This is a very dummy way do differentiate address and transaction, need improvement
     if (isHexString) {
       // Is probably not an address, as an address usually contains at least one non-hex character.
       if (word.length === 64) {

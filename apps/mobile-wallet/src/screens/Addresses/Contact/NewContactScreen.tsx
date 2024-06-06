@@ -45,11 +45,12 @@ const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
     try {
       await persistContact(formData)
 
-      sendAnalytics('Contact: Created new contact')
-    } catch (e) {
-      showExceptionToast(e, 'Could not save contact')
+      sendAnalytics({ event: 'Contact: Created new contact' })
+    } catch (error) {
+      const message = 'Could not save contact'
 
-      sendAnalytics('Error', { message: 'Could not save contact' })
+      showExceptionToast(error, message)
+      sendAnalytics({ type: 'error', error, message })
     }
 
     setLoading(false)

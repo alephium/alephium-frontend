@@ -1,5 +1,23 @@
 # @alephium/mobile-wallet
 
+## 1.1.0
+
+### Minor Changes
+
+- 16c85da: Deprecate pin in favor of biometrics
+- 16c85da: Adopt Uniswap mobile secrets management
+- 16c85da: Adopt Uniswap mobile authentication flow
+
+### Patch Changes
+
+- 3c95e87: Take into account transaction authentication settings when approving WalletConnect requests
+- 40ea162: Fix laggy performance of sending flow
+- 9a7181b: Add auto-lock settings
+- 4f20ec5: Add Australian Dollar fiat currency option
+- 14b306e: Introduce funding password feature
+- 3c95e87: Properly place WalletConnect request approval modal behind app access authentication screen
+- e34fd80: Update network endpoints
+
 ## 1.0.10
 
 ### Patch Changes

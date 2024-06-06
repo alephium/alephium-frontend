@@ -102,7 +102,6 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
           value={lockTime ? dayjs(lockTime).format('YYYY-MM-DDTHH:mm') : ''}
           onChange={(e) => handleLocktimeChange(e.target.value)}
           type="datetime-local"
-          hint="DD/MM/YYYY hh:mm"
           min={dayjs().format('YYYY-MM-DDTHH:mm')}
           max="2999-01-01T00:00"
           error={lockTimeInPast && t('Lock time must be in the future.')}

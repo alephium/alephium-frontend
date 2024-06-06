@@ -48,10 +48,14 @@ const walletSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(walletNameChanged, (state, { payload: name }) => {
-      state.name = name
-    })
-    builder.addMatcher(isAnyOf(appBecameInactive, appReset, walletDeleted), resetState)
+    builder
+      .addCase(walletNameChanged, (state, { payload: name }) => {
+        state.name = name
+      })
+      .addCase(appBecameInactive, (state) => {
+        state.isUnlocked = false
+      })
+    builder.addMatcher(isAnyOf(appReset, walletDeleted), resetState)
     builder.addMatcher(
       isAnyOf(walletUnlocked, newWalletGenerated, newWalletImportedWithMetadata),
       (_, { payload: { name, id, isMnemonicBackedUp } }) => ({

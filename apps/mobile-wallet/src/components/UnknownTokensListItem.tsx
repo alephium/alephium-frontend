@@ -40,7 +40,6 @@ const UnknownTokensListItem = ({ entry }: UnknownTokensListItemProps) => {
   const theme = useTheme()
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
-  // TODO: Don't use ListItem to display unknown tokens, needs re-design.
   return (
     <ListItem
       title="Unknown tokens"

@@ -199,14 +199,26 @@ describe(deleteWallet, () => {
     await addTestWalletInStorage()
     await deleteWallet()
 
-    expect(mockedDeleteItemAsync).toHaveBeenCalledTimes(5)
-    expect(mockedDeleteItemAsync).toHaveBeenCalledWith('wallet-mnemonic-v2')
-    expect(mockedDeleteItemAsync).toHaveBeenCalledWith('address-pub-key-1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')
-    expect(mockedDeleteItemAsync).toHaveBeenCalledWith('address-pub-key-1Bf9jthiwQo74V94LHT37dwEEiV22KkpKySf4TmRDzZqf')
-    expect(mockedDeleteItemAsync).toHaveBeenCalledWith('address-priv-key-1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')
-    expect(mockedDeleteItemAsync).toHaveBeenCalledWith('address-priv-key-1Bf9jthiwQo74V94LHT37dwEEiV22KkpKySf4TmRDzZqf')
+    expect(mockedDeleteItemAsync).toHaveBeenCalledTimes(6)
+    expect(mockedDeleteItemAsync).toHaveBeenCalledWith('wallet-mnemonic-v2', defaultSecureStoreConfig)
+    expect(mockedDeleteItemAsync).toHaveBeenCalledWith(
+      'address-pub-key-1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH',
+      defaultSecureStoreConfig
+    )
+    expect(mockedDeleteItemAsync).toHaveBeenCalledWith(
+      'address-pub-key-1Bf9jthiwQo74V94LHT37dwEEiV22KkpKySf4TmRDzZqf',
+      defaultSecureStoreConfig
+    )
+    expect(mockedDeleteItemAsync).toHaveBeenCalledWith(
+      'address-priv-key-1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH',
+      defaultSecureStoreConfig
+    )
+    expect(mockedDeleteItemAsync).toHaveBeenCalledWith(
+      'address-priv-key-1Bf9jthiwQo74V94LHT37dwEEiV22KkpKySf4TmRDzZqf',
+      defaultSecureStoreConfig
+    )
 
-    expect(AsyncStorage.removeItem).toHaveBeenCalledTimes(1)
+    expect(AsyncStorage.removeItem).toHaveBeenCalledTimes(2)
     expect(AsyncStorage.removeItem).toHaveBeenCalledWith('wallet-metadata')
   })
 })

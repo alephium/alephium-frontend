@@ -24,6 +24,7 @@ import { loadSettings, persistSettings } from '~/persistent-storage/settings'
 export const migrateNetworkSettings = async () => {
   await _v1_0_6_networkSettingsMigration()
   await _v1_0_10_networkSettingsMigration()
+  await _v1_1_0_networkSettingsMigration()
 }
 
 const _v1_0_6_networkSettingsMigration = async () => {
@@ -39,6 +40,15 @@ const _v1_0_10_networkSettingsMigration = async () => {
     'https://node-v20.testnet.alephium.org': networkSettingsPresets.testnet.nodeHost,
     'https://backend-v115.mainnet.alephium.org': networkSettingsPresets.mainnet.explorerApiHost,
     'https://backend-v115.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost
+  })
+}
+
+const _v1_1_0_networkSettingsMigration = async () => {
+  await migrateReleaseNetworkSettings({
+    'https://node-v210.mainnet.alephium.org': networkSettingsPresets.mainnet.nodeHost,
+    'https://node-v210.testnet.alephium.org': networkSettingsPresets.testnet.nodeHost,
+    'https://backend-v117.mainnet.alephium.org': networkSettingsPresets.mainnet.explorerApiHost,
+    'https://backend-v117.testnet.alephium.org': networkSettingsPresets.testnet.explorerApiHost
   })
 }
 

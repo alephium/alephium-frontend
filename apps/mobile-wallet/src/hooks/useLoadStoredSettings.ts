@@ -19,6 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { localStorageNetworkSettingsLoaded, NetworkSettings } from '@alephium/shared'
 import { useEffect } from 'react'
 
+import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
+import { hasStoredFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { useAppDispatch } from '~/hooks/redux'
 import { loadSettings } from '~/persistent-storage/settings'
 import { storedGeneralSettingsLoaded } from '~/store/settingsSlice'
@@ -36,6 +38,9 @@ const useLoadStoredSettings = () => {
       await migrateNetworkSettings()
       const networkSettings = (await loadSettings('network')) as NetworkSettings
       dispatch(localStorageNetworkSettingsLoaded(networkSettings))
+
+      const isUsingFundPassword = await hasStoredFundPassword()
+      dispatch(fundPasswordUseToggled(isUsingFundPassword))
     }
 
     loadStoredSettingsIntoState()

@@ -34,7 +34,7 @@ import CenteredInstructions, { Instruction } from '~/components/text/CenteredIns
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds } from '~/store/addressesSlice'
-import { biometricsToggled } from '~/store/settingsSlice'
+import { allBiometricsEnabled } from '~/store/settings/settingsActions'
 import { resetNavigation } from '~/utils/navigation'
 
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}
@@ -53,16 +53,16 @@ const AddBiometricsScreen = ({ navigation, ...props }: AddBiometricsScreenProps)
   const skipAddressDiscovery = method === 'create' || addressIds.length > 1
 
   const activateBiometrics = () => {
-    dispatch(biometricsToggled())
+    dispatch(allBiometricsEnabled())
 
-    sendAnalytics('Activated biometrics from wallet creation flow')
+    sendAnalytics({ event: 'Activated biometrics from wallet creation flow' })
 
     resetNavigation(navigation, skipAddressDiscovery ? 'NewWalletSuccessScreen' : 'ImportWalletAddressDiscoveryScreen')
   }
 
   const handleLaterPress = () => {
     setIsBiometricsWarningModalOpen(false)
-    sendAnalytics('Skipped biometrics activation from wallet creation flow')
+    sendAnalytics({ event: 'Skipped biometrics activation from wallet creation flow' })
 
     resetNavigation(
       navigation,

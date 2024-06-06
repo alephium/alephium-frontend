@@ -254,8 +254,6 @@ const TransactionRow: FC<TransactionRowProps> = ({ transaction }) => {
   )
 }
 
-// TODO: make expandlable elements generic (in Table.tsx)
-
 const BlockTableBodyCustomStyles: TDStyle[] = [
   {
     tdPos: 2,

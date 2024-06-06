@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
+import { ActivityIndicator } from 'react-native'
 import { Circle as ProgressBar } from 'react-native-progress'
 import styled, { DefaultTheme, useTheme } from 'styled-components/native'
 
@@ -66,7 +67,7 @@ export const Spinner = ({ text, color = 'tertiary', animated = true, bg, progres
 
   return (
     <SpinnerStyled bg={bg}>
-      {progress !== undefined && (
+      {progress !== undefined ? (
         <ProgressBar
           progress={progress}
           color={theme.font.primary}
@@ -77,6 +78,8 @@ export const Spinner = ({ text, color = 'tertiary', animated = true, bg, progres
           borderWidth={0}
           animated={animated}
         />
+      ) : (
+        <ActivityIndicator size={72} color={theme.font[color]} />
       )}
       {text && (
         <LoadingText semiBold size={16} color={color}>
