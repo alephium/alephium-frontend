@@ -35,6 +35,7 @@ import { BottomModalScreenTitle, ScreenSection, ScreenSectionTitle } from '~/com
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
+import LinkToWeb from '~/components/text/LinkToWeb'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
@@ -293,6 +294,13 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <AppText style={{ textAlign: 'center' }} color="secondary">
             Version {Application.nativeApplicationVersion} build {Application.nativeBuildVersion}
           </AppText>
+        </ScreenSection>
+        <ScreenSection>
+          <LinkToWeb
+            style={{ textAlign: 'center' }}
+            text="Privacy policy"
+            url="https://raw.githubusercontent.com/alephium/alephium-frontend/master/apps/mobile-wallet/PRIVACYPOLICY.txt"
+          />
         </ScreenSection>
       </ScrollScreenStyled>
 
