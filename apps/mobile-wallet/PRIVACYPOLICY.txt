@@ -1,0 +1,7 @@
+PRIVACY POLICY FOR ALEPHIUM WALLET
+
+By Alephium Developer
+
+Our app does not access, collect, uses, or shares personal or sensitive user data.
+
+You can find our contact information at https://alephium.org
