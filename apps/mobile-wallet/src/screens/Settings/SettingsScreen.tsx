@@ -296,11 +296,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           </AppText>
         </ScreenSection>
         <ScreenSection>
-          <LinkToWeb
-            style={{ textAlign: 'center' }}
-            text="Privacy policy"
-            url="https://raw.githubusercontent.com/alephium/alephium-frontend/master/apps/mobile-wallet/PRIVACYPOLICY.txt"
-          />
+          <LinkToWeb style={{ textAlign: 'center' }} text="Privacy policy" url="https://alephium.org/privacy-policy" />
         </ScreenSection>
       </ScrollScreenStyled>
 
