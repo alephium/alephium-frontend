@@ -682,9 +682,6 @@ importers:
       expo-web-browser:
         specifier: ~12.8.2
         version: 12.8.2(expo@50.0.17)
-      fast-text-encoding:
-        specifier: ^1.0.6
-        version: 1.0.6
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
