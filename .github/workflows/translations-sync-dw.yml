@@ -1,0 +1,35 @@
+name: Sync translations in desktop wallet
+
+on:
+  workflow_dispatch:
+  push:
+    paths: ['apps/desktop-wallet/locales/**']
+    branches: [next]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync-translations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync sources and translations
+        uses: crowdin/github-action@v2
+        with:
+          config: 'apps/desktop-wallet/crowdin.yml'
+          upload_sources: true
+          upload_translations: true
+          download_translations: true
+          localization_branch_name: l10n_crowdin_translations
+          create_pull_request: true
+          pull_request_title: 'New Crowdin translations'
+          pull_request_body: 'New translations from https://crowdin.com/project/alephium-desktop-wallet.'
+          pull_request_base_branch_name: 'next'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
