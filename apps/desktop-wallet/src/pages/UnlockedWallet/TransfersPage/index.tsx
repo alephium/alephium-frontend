@@ -74,7 +74,7 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
       isInfoMessageVisible={!infoMessageClosed}
       closeInfoMessage={closeInfoMessage}
       infoMessageLink={links.faq}
-      infoMessage={t('You have questions about transfers ? Click here!')}
+      infoMessage={t('Do you have questions about transfers? Click here!')}
       className={className}
     >
       <FiltersPanel
