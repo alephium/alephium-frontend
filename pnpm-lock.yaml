@@ -88,8 +88,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@alephium/walletconnect-provider':
-        specifier: 0.38.0
-        version: 0.38.0(@react-native-async-storage/async-storage@1.21.0)
+        specifier: 0.45.0
+        version: 0.45.0(@react-native-async-storage/async-storage@1.21.0)
       '@alephium/web3':
         specifier: 0.45.0
         version: 0.45.0
@@ -542,8 +542,8 @@ importers:
         specifier: ^0.0.12
         version: 0.0.12
       '@alephium/walletconnect-provider':
-        specifier: 0.38.0
-        version: 0.38.0(@react-native-async-storage/async-storage@1.21.0)
+        specifier: 0.45.0
+        version: 0.45.0(@react-native-async-storage/async-storage@1.21.0)
       '@alephium/web3':
         specifier: 0.45.0
         version: 0.45.0
@@ -1298,17 +1298,18 @@ packages:
     transitivePeerDependencies:
       - encoding
 
-  /@alephium/walletconnect-provider@0.38.0(@react-native-async-storage/async-storage@1.21.0):
-    resolution: {integrity: sha512-FT3qLnYOY1dukEkBdHemjlH1ZRSBtQ78nGTikV3O5L0Y0VE/r891Qa0Gvq+Ayct0XizU1NObdvdnvqRv/6COnA==}
+  /@alephium/walletconnect-provider@0.45.0(@react-native-async-storage/async-storage@1.21.0):
+    resolution: {integrity: sha512-FEdnt5Bce+7S4/VJHFoiFNitsUVO9BxXWj3PfpWlr1O0ybIX3wYka6ul7WHheCS/Ia0tHYXilUhUStVWshs8yg==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
     dependencies:
-      '@alephium/web3': 0.38.2
-      '@alephium/web3-wallet': 0.38.2
+      '@alephium/web3': 0.45.0
+      '@alephium/web3-wallet': 0.45.0
       '@walletconnect/core': 2.11.0(@react-native-async-storage/async-storage@1.21.0)
       '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@1.21.0)
       '@walletconnect/sign-client': 2.11.0(@react-native-async-storage/async-storage@1.21.0)
       '@walletconnect/types': 2.11.0(@react-native-async-storage/async-storage@1.21.0)
       '@walletconnect/utils': 2.11.0(@react-native-async-storage/async-storage@1.21.0)
+      async-sema: 3.1.1
       eventemitter3: 4.0.7
     transitivePeerDependencies:
       - '@azure/app-configuration'
@@ -1328,38 +1329,17 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /@alephium/web3-wallet@0.38.2:
-    resolution: {integrity: sha512-44pWPFym1848EHFDsGLUSwrJHT0NnmH0eZqCXz3/OWPOb2wimbhKZL+j/ILGyG/43VpsJk9YyQju5aewdiHTwQ==}
+  /@alephium/web3-wallet@0.45.0:
+    resolution: {integrity: sha512-H3May0elOANjMZkI/fggyZqEdzIxqXOHzAUADY3s0KAB4G5Vft+nIsXkLvVSIVtr/y9B0QSFFEv3+onPlLXRIQ==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
     dependencies:
-      '@alephium/web3': 0.38.2
+      '@alephium/web3': 0.45.0
       '@noble/secp256k1': 1.7.1
       '@types/node': 16.18.74
       bip32: 3.1.0
       bip39: 3.0.4
-      buffer: 6.0.3
       elliptic: 6.5.4
       fs-extra: 10.0.1
-    transitivePeerDependencies:
-      - encoding
-
-  /@alephium/web3@0.38.2:
-    resolution: {integrity: sha512-LiImxkbGvb0IyLa7Q+QXAio/P9IWh+qYllks7ybiJR7k5q8qPkJE2nrgR2NxhjCYqlS+Qz1cDGFkvl11ylqYQg==}
-    engines: {node: '>=14.0.0', npm: '>=7.0.0'}
-    dependencies:
-      '@noble/secp256k1': 1.7.1
-      base-x: 4.0.0
-      bignumber.js: 9.1.2
-      binary-parser: 2.2.1
-      blakejs: 1.2.1
-      bn.js: 5.2.1
-      buffer: 6.0.3
-      cross-fetch: 3.1.8
-      crypto-browserify: 3.12.0
-      elliptic: 6.5.4
-      eventemitter3: 4.0.7
-      path-browserify: 1.0.1
-      stream-browserify: 3.0.0
     transitivePeerDependencies:
       - encoding
 
@@ -8849,6 +8829,9 @@ packages:
 
   /async-limiter@1.0.1:
     resolution: {integrity: sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==}
+
+  /async-sema@3.1.1:
+    resolution: {integrity: sha512-tLRNUXati5MFePdAk8dw7Qt7DpxPB60ofAgn8WRhW6a2rcimZnYBP9oxHiv0OHy+Wz7kPMG+t4LGdt31+4EmGg==}
 
   /async@3.2.5:
     resolution: {integrity: sha512-baNZyqaaLhyLVKm/DlvdW051MSgO6b8eVfIezl9E5PqWxFgzLm/wQntEW4zOytVburDEr0JlALEpdOFwvErLsg==}
