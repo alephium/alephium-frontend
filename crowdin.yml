@@ -21,13 +21,13 @@ files: [
       # Source files filter
       # e.g. "/resources/en/*.json"
       #
-      'source': '/locales/en-US/translation.json',
+      'source': '/apps/desktop-wallet/locales/en-US/translation.json',
 
       #
       # Where translations will be placed
       # e.g. "/resources/%two_letters_code%/%original_file_name%"
       #
-      'translation': '/locales/%locale%/%original_file_name%'
+      'translation': '/apps/desktop-wallet/locales/%locale%/%original_file_name%'
       #
       # Files or directories for ignore
       # e.g. ["/**/?.txt", "/**/[0-9].txt", "/**/*\?*.txt"]
@@ -122,5 +122,9 @@ files: [
       # e.g. "identifier,source_phrase,context,uk,ru,fr"
       #
       # "scheme": "",
+    },
+    {
+      'source': '/apps/explorer/locales/en-US/translation.json',
+      'translation': '/apps/explorer/locales/%locale%/%original_file_name%'
     }
   ]
