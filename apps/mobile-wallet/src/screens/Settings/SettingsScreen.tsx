@@ -21,6 +21,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import * as Application from 'expo-application'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { Alert, Platform } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
@@ -80,6 +81,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
+  const { t } = useTranslation()
 
   const [isAutoLockSecondsModalOpen, setIsAutoLockSecondsModalOpen] = useState(false)
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
@@ -153,12 +155,12 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const handleWalletConnectEnablePress = () => {
     if (!isWalletConnectEnabled) {
       Alert.alert(
-        'Enabling experimental feature',
-        'The WalletConnect feature is experimental, use it at your own risk.',
+        t('Enabling experimental feature'),
+        t('The WalletConnect feature is experimental, use it at your own risk.'),
         [
-          { text: 'Cancel' },
+          { text: t('Cancel') },
           {
-            text: 'I understand',
+            text: t('I understand'),
             onPress: () => {
               toggleWalletConnect()
               resetWalletConnectClientInitializationAttempts()
@@ -174,48 +176,49 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      <ScrollScreenStyled verticalGap screenTitle="Settings" headerOptions={{ type: 'stack' }} {...props}>
+      <ScrollScreenStyled verticalGap screenTitle={t('Settings')} headerOptions={{ type: 'stack' }} {...props}>
         <ScreenSection>
-          <ScreenSectionTitle>General</ScreenSectionTitle>
+          <ScreenSectionTitle>{t('General')}</ScreenSectionTitle>
           <BoxSurface>
-            <Row onPress={() => setIsCurrencySelectModalOpen(true)} title="Currency">
+            <Row onPress={() => setIsCurrencySelectModalOpen(true)} title={t('Currency')}>
               <AppText bold>{currentCurrency}</AppText>
             </Row>
-            <Row title="Current network" onPress={() => setIsSwitchNetworkModalOpen(true)}>
+            <Row title={t('Current network')} onPress={() => setIsSwitchNetworkModalOpen(true)}>
               <AppText bold>{capitalize(currentNetworkName)}</AppText>
             </Row>
-            <Row title="Discreet mode" subtitle="Hide all amounts">
+            <Row title={t('Discreet mode')} subtitle={t('Hide all amounts')}>
               <Toggle value={discreetMode} onValueChange={toggleDiscreetMode} />
             </Row>
 
-            <Row title="Use dark theme" subtitle="Try it, it's nice">
+            <Row title={t('Use dark theme')} subtitle={t("Try it, it's nice")}>
               <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
             </Row>
-            <Row title="Analytics" subtitle="Help us improve your experience!" isLast>
+            <Row title={t('Analytics')} subtitle={t('Help us improve your experience!')} isLast>
               <Toggle value={analytics} onValueChange={toggleAnalytics} />
             </Row>
           </BoxSurface>
         </ScreenSection>
         {deviceSupportsBiometrics && (
           <ScreenSection>
-            <ScreenSectionTitle>Security</ScreenSectionTitle>
+            <ScreenSectionTitle>{t('Security')}</ScreenSectionTitle>
             {!deviceHasEnrolledBiometrics && (
               <BiometricsRecommendationBox type="accent">
                 <AppText color="accent">
-                  Your device supports biometrics but none is enrolled. Enable them by adding a fingeprint or Face ID in
-                  your device's settings.
+                  {t(
+                    "Your device supports biometrics but none is enrolled. Enable them by adding a fingeprint or Face ID in your device's settings."
+                  )}
                 </AppText>
               </BiometricsRecommendationBox>
             )}
             <BoxSurface>
-              <Row title="App access" subtitle="Require biometrics to open app">
+              <Row title={t('App access')} subtitle={t('Require biometrics to open app')}>
                 <Toggle
                   value={isBiometricsEnabled}
                   onValueChange={handleBiometricsAppAccessChange}
                   disabled={!deviceHasEnrolledBiometrics}
                 />
               </Row>
-              <Row title="Transactions" subtitle="Require biometrics to transact">
+              <Row title={t('Transactions')} subtitle={t('Require biometrics to transact')}>
                 <Toggle
                   value={biometricsRequiredForTransactions}
                   onValueChange={handleBiometricsTransactionsChange}
@@ -227,8 +230,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                   isUsingFundPassword &&
                   navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: false })
                 }
-                title="Fund password"
-                subtitle="Enhance your security"
+                title={t('Fund password')}
+                subtitle={t('Enhance your security')}
               >
                 {isUsingFundPassword ? (
                   <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
@@ -242,8 +245,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                 )}
               </Row>
               <Row
-                title="Auto-lock"
-                subtitle="Amount of time before app locks"
+                title={t('Auto-lock')}
+                subtitle={t('Amount of time before app locks')}
                 isLast
                 onPress={() => setIsAutoLockSecondsModalOpen(true)}
               >
@@ -254,24 +257,24 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         )}
 
         <ScreenSection>
-          <ScreenSectionTitle>Experimental features</ScreenSectionTitle>
+          <ScreenSectionTitle>{t('Experimental features')}</ScreenSectionTitle>
           <BoxSurface>
-            <Row title="WalletConnect" subtitle="Connect to dApps" isLast>
+            <Row title="WalletConnect" subtitle={t('Connect to dApps')} isLast>
               <Toggle value={isWalletConnectEnabled} onValueChange={handleWalletConnectEnablePress} />
             </Row>
           </BoxSurface>
         </ScreenSection>
 
         <ScreenSection>
-          <ScreenSectionTitle>Wallet</ScreenSectionTitle>
+          <ScreenSectionTitle>{t('Wallet')}</ScreenSectionTitle>
           <BoxSurface>
-            <Row onPress={() => navigation.navigate('EditWalletNameScreen')} title="Wallet name">
+            <Row onPress={() => navigation.navigate('EditWalletNameScreen')} title={t('Wallet name')}>
               <AppText bold>{walletName}</AppText>
             </Row>
-            <Row onPress={() => navigation.navigate('AddressDiscoveryScreen')} title="Scan for active addresses">
+            <Row onPress={() => navigation.navigate('AddressDiscoveryScreen')} title={t('Scan for active addresses')}>
               <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
             </Row>
-            <Row onPress={() => navigation.navigate('PublicKeysScreen')} title="Get public keys" isLast>
+            <Row onPress={() => navigation.navigate('PublicKeysScreen')} title={t('Get public keys')} isLast>
               <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
             </Row>
           </BoxSurface>
@@ -280,23 +283,27 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <BoxSurface>
             <Row
               onPress={() => setIsSafePlaceWarningModalOpen(true)}
-              title="View secret recovery phrase"
+              title={t('View secret recovery phrase')}
               titleColor={theme.global.warning}
             >
               <Ionicons name="key" size={18} color={theme.global.warning} />
             </Row>
-            <Row onPress={handleDeleteButtonPress} title="Delete wallet" titleColor={theme.global.alert} isLast>
+            <Row onPress={handleDeleteButtonPress} title={t('Delete wallet')} titleColor={theme.global.alert} isLast>
               <Ionicons name="trash" size={18} color={theme.global.alert} />
             </Row>
           </BoxSurface>
         </ScreenSection>
         <ScreenSection>
           <AppText style={{ textAlign: 'center' }} color="secondary">
-            Version {Application.nativeApplicationVersion} build {Application.nativeBuildVersion}
+            {t('Version')} {Application.nativeApplicationVersion} build {Application.nativeBuildVersion}
           </AppText>
         </ScreenSection>
         <ScreenSection>
-          <LinkToWeb style={{ textAlign: 'center' }} text="Privacy policy" url="https://alephium.org/privacy-policy" />
+          <LinkToWeb
+            style={{ textAlign: 'center' }}
+            text={t('Privacy policy')}
+            url="https://alephium.org/privacy-policy"
+          />
         </ScreenSection>
       </ScrollScreenStyled>
 
@@ -309,23 +316,27 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           Content={(props) => (
             <ModalContent verticalGap {...props}>
               <ScreenSection>
-                <BottomModalScreenTitle>Be careful! 🕵️‍♀️</BottomModalScreenTitle>
+                <BottomModalScreenTitle>{t('Be careful!')} 🕵️‍♀️</BottomModalScreenTitle>
               </ScreenSection>
               <ScreenSection>
                 <AppText color="secondary" size={18}>
-                  Don&apos;t share your secret recovery phrase with anyone!
+                  {t("Don't share your secret recovery phrase with anyone!")}
                 </AppText>
                 <AppText color="secondary" size={18}>
-                  Before displaying it, make sure to be in an{' '}
-                  <AppText bold size={18}>
-                    non-public
-                  </AppText>{' '}
-                  space.
+                  <Trans
+                    t={t}
+                    i18nKey="viewMnemonicModalWarning"
+                    components={{
+                      1: <AppText bold size={18} />
+                    }}
+                  >
+                    {'Before displaying it, make sure to be in an<1>non-public</1>space.'}
+                  </Trans>
                 </AppText>
               </ScreenSection>
               <ScreenSection>
                 <Button
-                  title="I get it"
+                  title={t('I understand')}
                   variant="accent"
                   onPress={() => {
                     props.onClose && props.onClose()

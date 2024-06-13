@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import { ContinueButton } from '~/components/buttons/Button'
@@ -38,6 +39,7 @@ interface EditWalletNameScreenProps
 const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalletNameScreenProps) => {
   const walletName = useAppSelector((s) => s.wallet.name)
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const [name, setName] = useState(walletName)
   const [loading, setLoading] = useState(false)
@@ -53,7 +55,7 @@ const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalle
     } catch (error) {
       const message = 'Could not edit wallet name'
 
-      showExceptionToast(error, message)
+      showExceptionToast(error, t(message))
       sendAnalytics({ type: 'error', message })
     }
 
@@ -67,19 +69,19 @@ const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalle
       <ScrollScreen
         usesKeyboard
         fill
-        screenTitle="Wallet name"
+        screenTitle={t('Wallet name')}
         headerOptions={{
           type: 'stack',
-          headerRight: () => <ContinueButton title="Save" onPress={handleSavePress} iconProps={undefined} />,
+          headerRight: () => <ContinueButton title={t('Save')} onPress={handleSavePress} iconProps={undefined} />,
           ...headerOptions
         }}
         {...props}
       >
         <ScreenSection verticalGap fill>
-          <Input value={name} onChangeText={setName} label="New name" maxLength={24} autoFocus />
+          <Input value={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
         </ScreenSection>
       </ScrollScreen>
-      <SpinnerModal isActive={loading} text="Saving..." />
+      <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
     </>
   )
 }

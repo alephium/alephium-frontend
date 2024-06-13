@@ -21,6 +21,7 @@ import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
 import { partition } from 'lodash'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
@@ -47,6 +48,7 @@ interface TransactionModalProps extends ModalContentProps {
 const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
   const allNFTs = useAppSelector((s) => s.nfts.entities)
+  const { t } = useTranslation()
 
   const [isNftsModalOpen, setIsNftsModalOpen] = useState(false)
 
@@ -61,18 +63,18 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
   return (
     <ModalContent {...props} verticalGap>
       <ScreenSectionStyled>
-        <BottomModalScreenTitle>Transaction</BottomModalScreenTitle>
+        <BottomModalScreenTitle>{t('Transaction')}</BottomModalScreenTitle>
         <Button
           iconProps={{ name: 'exit-outline' }}
           onPress={() => openBrowserAsync(explorerTxUrl)}
           variant="accent"
           compact
-          title="Explorer"
+          title={t('Explorer')}
         />
       </ScreenSectionStyled>
 
       <BoxSurface type="highlight">
-        <Row title="Amount" noMaxWidth transparent>
+        <Row title={t('Amount')} noMaxWidth transparent>
           {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
             <AmountStyled
               key={id}
@@ -87,23 +89,23 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
             />
           ))}
         </Row>
-        <Row title="Timestamp" transparent>
+        <Row title={t('Timestamp')} transparent>
           <AppTextStyled semiBold>
             {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
           </AppTextStyled>
         </Row>
-        <Row title="Status" transparent>
+        <Row title={t('Status')} transparent>
           <AppText semiBold>
-            {!tx.scriptExecutionOk ? 'Script execution failed' : tx.blockHash ? 'Confirmed' : 'Pending'}
+            {!tx.scriptExecutionOk ? t('Script execution failed') : tx.blockHash ? t('Confirmed') : t('Pending')}
           </AppText>
         </Row>
-        <Row title="From" transparent>
+        <Row title={t('From')} transparent>
           {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
         </Row>
-        <Row title="To" transparent>
+        <Row title={t('To')} transparent>
           {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
         </Row>
-        <Row title="Fee" transparent isLast={unknownTokens.length === 0 && nftsData.length === 0}>
+        <Row title={t('Fee')} transparent isLast={unknownTokens.length === 0 && nftsData.length === 0}>
           <Amount
             value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
             fadeDecimals
@@ -113,7 +115,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
           />
         </Row>
         {unknownTokens.length > 0 && (
-          <Row title="Unknown tokens" transparent isLast={nftsData.length === 0}>
+          <Row title={t('Unknown tokens')} transparent isLast={nftsData.length === 0}>
             {unknownTokens.map(({ id, amount, decimals, symbol }) => (
               <UnknownTokenAmount key={id}>
                 <AmountStyled
@@ -138,13 +140,13 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
           </Row>
         )}
         {nftsData.length === 1 && (
-          <Row title="NFT" noMaxWidth transparent isLast>
+          <Row title={t('NFT')} noMaxWidth transparent isLast>
             <NFTThumbnail nft={nftsData[0]} size={100} />
           </Row>
         )}
         {nftsData.length > 1 && (
-          <Row title="NFTs" noMaxWidth transparent isLast>
-            <Button title="See NFTs" onPress={() => setIsNftsModalOpen(true)} />
+          <Row title={t('NFTs')} noMaxWidth transparent isLast>
+            <Button title={t('See NFTs')} onPress={() => setIsNftsModalOpen(true)} />
             <Portal>
               <BottomModal
                 Content={(props) => <NFTsGrid nfts={nftsData} {...props} />}

@@ -84,7 +84,7 @@ const EditAddressScreen = ({ navigation, route: { params } }: EditAddressScreenP
           </ScreenSection>
         }
       />
-      <SpinnerModal isActive={loading} text={`${t('Saving address')}...`} />
+      <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
     </>
   )
 }

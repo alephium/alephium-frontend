@@ -134,7 +134,7 @@ export const buildDeployContractTransaction = async ({
 export const signAndSendTransaction = async (fromAddress: AddressHash, txId: string, unsignedTx: string) => {
   const address = store.getState().addresses.entities[fromAddress]
 
-  if (!address) throw new Error(i18n.t('Could not find address in store: {{ address }}', { address: fromAddress }))
+  if (!address) throw new Error(`${i18n.t('Could not find address in store')}: ${fromAddress}`)
 
   const signature = transactionSign(txId, await getAddressAsymetricKey(address.hash, 'private'))
   const data = await client.node.transactions.postTransactionsSubmit({ unsignedTx, signature })

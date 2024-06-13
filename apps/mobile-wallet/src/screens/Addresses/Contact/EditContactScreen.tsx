@@ -51,7 +51,7 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
           type="transparent"
           variant="alert"
           onPress={() => {
-            Alert.alert(t('Deleting contact'), t('Are you sure you want to delete this contact?'), [
+            Alert.alert(t('Deleting'), t('Are you sure you want to delete this contact?'), [
               { text: t('Cancel') },
               {
                 text: t('Delete'),
@@ -111,7 +111,7 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
       />
       <SpinnerModal
         isActive={loading || isDeleting}
-        text={loading ? `${t('Saving contact')}...` : isDeleting ? `${t('Deleting contact')}...` : ''}
+        text={loading ? `${t('Saving')}...` : isDeleting ? `${t('Deleting')}...` : ''}
       />
     </>
   )

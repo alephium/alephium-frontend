@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -41,6 +42,7 @@ const WalletConnectPairingsModal = ({
   ...props
 }: WalletConnectPairingsModalProps) => {
   const { unpairFromDapp, walletConnectClient, activeSessions } = useWalletConnectContext()
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (!walletConnectClient) onClose && onClose()
@@ -53,7 +55,7 @@ const WalletConnectPairingsModal = ({
   return (
     <ModalContent verticalGap {...props}>
       <ScreenSection>
-        <BottomModalScreenTitle>Current connections</BottomModalScreenTitle>
+        <BottomModalScreenTitle>{t('Current connections')}</BottomModalScreenTitle>
       </ScreenSection>
 
       {activeSessions.map(({ topic, peer: { metadata } }, index) => (
@@ -73,19 +75,19 @@ const WalletConnectPairingsModal = ({
       ))}
       {activeSessions.length === 0 && (
         <EmptyPlaceholder>
-          <AppText>There are no connections yet. 🔌</AppText>
+          <AppText>{t('There are no connections yet.')} 🔌</AppText>
         </EmptyPlaceholder>
       )}
       <ScreenSection>
         <ButtonStack>
           <Button
-            title="Paste a WalletConnect URL"
+            title={t('Paste a WalletConnect URL')}
             variant="accent"
             onPress={onPasteWcUrlPress}
             iconProps={{ name: 'clipboard-outline' }}
           />
           <Button
-            title="Scan QR code"
+            title={t('Scan QR code')}
             variant="accent"
             onPress={onScanQRCodePress}
             iconProps={{ name: 'qr-code-outline' }}

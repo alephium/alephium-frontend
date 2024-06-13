@@ -20,6 +20,7 @@ import { ALPH } from '@alephium/token-list'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
@@ -42,6 +43,7 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyS
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
   const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
+  const { t } = useTranslation()
 
   useScrollToTopOnFocus(screenScrollY)
 
@@ -56,11 +58,11 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
           <ContinueButton
             onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))}
             iconProps={{ name: 'send-outline' }}
-            title="Send"
+            title={t('Send')}
           />
         )
       })
-    }, [navigation, sendTransaction, setHeaderOptions])
+    }, [navigation, sendTransaction, setHeaderOptions, t])
   )
 
   if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
@@ -69,14 +71,14 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
     <ScrollScreen
       verticalGap
       contentPaddingTop
-      screenTitle="Verify"
-      screenIntro="Please, double check that everything is correct before sending."
+      screenTitle={t('Verify')}
+      screenIntro={t('Please, double check that everything is correct before sending.')}
       onScroll={screenScrollHandler}
       {...props}
     >
       <ScreenSection>
         <BoxSurface>
-          <Row title="Sending" titleColor="secondary">
+          <Row title={t('Sending')} titleColor="secondary">
             <AssetAmounts>
               {assets.map(({ id, amount }) =>
                 amount ? (
@@ -85,10 +87,10 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
               )}
             </AssetAmounts>
           </Row>
-          <Row title="To" titleColor="secondary">
+          <Row title={t('To')} titleColor="secondary">
             <AddressBadge addressHash={toAddress} />
           </Row>
-          <Row title="From" titleColor="secondary" isLast>
+          <Row title={t('From')} titleColor="secondary" isLast>
             <AddressBadge addressHash={fromAddress} />
           </Row>
         </BoxSurface>
@@ -96,7 +98,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
       <ScreenSection>
         <FeeBox>
           <AppText color="secondary" semiBold>
-            Estimated fees
+            {t('Estimated fees')}
           </AppText>
           <Amount value={fees} suffix="ALPH" medium />
         </FeeBox>

@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import animationSrc from '~/animations/lottie/wallet.json'
@@ -47,6 +48,7 @@ const instructions = {
 
 const NewWalletIntroScreen = ({ navigation, ...props }: NewWalletIntroScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method) || 'create'
+  const { t } = useTranslation()
 
   return (
     <ScrollScreen fill headerOptions={{ type: 'stack' }} {...props}>
@@ -56,12 +58,12 @@ const NewWalletIntroScreen = ({ navigation, ...props }: NewWalletIntroScreenProp
       <CenteredInstructions instructions={instructions[method]} />
       <ActionButtonsStackStyled>
         <Button
-          title="Let's go!"
+          title={t("Let's go!")}
           type="primary"
           variant="highlight"
           onPress={() => navigation.navigate('NewWalletNameScreen')}
         />
-        <Button title="Cancel" type="secondary" onPress={() => navigation.goBack()} />
+        <Button title={t('Cancel')} type="secondary" onPress={() => navigation.goBack()} />
       </ActionButtonsStackStyled>
     </ScrollScreen>
   )

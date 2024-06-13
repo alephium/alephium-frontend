@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
 import animationSrc from '~/animations/lottie/success.json'
@@ -27,6 +28,7 @@ import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppSelector } from '~/hooks/redux'
+import i18n from '~/i18n'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { storeIsNewWallet } from '~/persistent-storage/wallet'
@@ -37,13 +39,14 @@ interface NewWalletSuccessScreenProps
     ScreenProps {}
 
 const instructions: Instruction[] = [
-  { text: 'Welcome to Alephium! 🎉', type: 'primary' },
-  { text: 'Enjoy your new wallet!', type: 'secondary' }
+  { text: `${i18n.t('Welcome to Alephium!')} 🎉`, type: 'primary' },
+  { text: i18n.t('Enjoy your new wallet!'), type: 'secondary' }
 ]
 
 const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method)
   const theme = useTheme()
+  const { t } = useTranslation()
 
   useEffect(() => {
     try {
@@ -62,7 +65,7 @@ const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreen
       <CenteredInstructions instructions={instructions} stretch fontSize={19} />
       <ActionsContainer>
         <ScreenSection centered>
-          <HighlightButton title="Let's go!" wide onPress={() => resetNavigation(navigation)} />
+          <HighlightButton title={t("Let's go!")} wide onPress={() => resetNavigation(navigation)} />
         </ScreenSection>
       </ActionsContainer>
     </ScrollScreen>

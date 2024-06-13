@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
@@ -32,6 +33,7 @@ import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import i18n from '~/i18n'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds } from '~/store/addressesSlice'
 import { allBiometricsEnabled } from '~/store/settings/settingsActions'
@@ -40,14 +42,16 @@ import { resetNavigation } from '~/utils/navigation'
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}
 
 const instructions: Instruction[] = [
-  { text: 'Do you want to activate biometric security? 👆', type: 'primary' },
-  { text: 'Use fingerprint or face recognition instead of the pin to unlock the wallet', type: 'secondary' }
+  { text: `${i18n.t('Do you want to activate biometric security?')} 👆`, type: 'primary' },
+  { text: i18n.t('Use fingerprint or face recognition instead of the pin to unlock the wallet'), type: 'secondary' }
 ]
 
 const AddBiometricsScreen = ({ navigation, ...props }: AddBiometricsScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method)
   const dispatch = useAppDispatch()
   const addressIds = useAppSelector(selectAddressIds)
+  const { t } = useTranslation()
+
   const [isBiometricsWarningModalOpen, setIsBiometricsWarningModalOpen] = useState(false)
 
   const skipAddressDiscovery = method === 'create' || addressIds.length > 1
@@ -80,15 +84,17 @@ const AddBiometricsScreen = ({ navigation, ...props }: AddBiometricsScreenProps)
         </AnimationContainer>
         <CenteredInstructions instructions={instructions} stretch />
         <ActionButtonsStack>
-          <Button title="Activate" type="primary" variant="highlight" onPress={activateBiometrics} />
-          <Button title="Later" type="secondary" onPress={() => setIsBiometricsWarningModalOpen(true)} />
+          <Button title={t('Activate')} type="primary" variant="highlight" onPress={activateBiometrics} />
+          <Button title={t('Later')} type="secondary" onPress={() => setIsBiometricsWarningModalOpen(true)} />
         </ActionButtonsStack>
       </ScrollScreen>
       <Portal>
         <BottomModal
           isOpen={isBiometricsWarningModalOpen}
           onClose={() => setIsBiometricsWarningModalOpen(false)}
-          Content={(props) => <BiometricsWarningModal onConfirm={handleLaterPress} confirmText="Skip" {...props} />}
+          Content={(props) => (
+            <BiometricsWarningModal onConfirm={handleLaterPress} confirmText={t('Skip')} {...props} />
+          )}
         />
       </Portal>
     </>

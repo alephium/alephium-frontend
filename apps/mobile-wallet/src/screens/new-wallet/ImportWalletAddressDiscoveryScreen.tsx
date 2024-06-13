@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
@@ -27,6 +28,7 @@ import Button from '~/components/buttons/Button'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
+import i18n from '~/i18n'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface ImportWalletAddressDiscoveryScreenProps
@@ -34,14 +36,18 @@ interface ImportWalletAddressDiscoveryScreenProps
     ScreenProps {}
 
 const instructions: Instruction[] = [
-  { text: "Let's take a minute to scan for your active addresses", type: 'primary' },
+  { text: i18n.t("Let's take a minute to scan for your active addresses"), type: 'primary' },
   {
-    text: 'Scan the blockchain to find addresses that you used in the past. This should take less than a minute.',
+    text: i18n.t(
+      'Scan the blockchain to find addresses that you used in the past. This should take less than a minute.'
+    ),
     type: 'secondary'
   }
 ]
 
 const ImportWalletAddressDiscoveryScreen = ({ navigation, ...props }: ImportWalletAddressDiscoveryScreenProps) => {
+  const { t } = useTranslation()
+
   const handleLaterPress = () => {
     sendAnalytics({ event: 'Skipped address discovery' })
 
@@ -49,19 +55,19 @@ const ImportWalletAddressDiscoveryScreen = ({ navigation, ...props }: ImportWall
   }
 
   return (
-    <ScrollScreen fill headerOptions={{ headerTitle: 'Active addresses', type: 'stack' }} {...props}>
+    <ScrollScreen fill headerOptions={{ headerTitle: t('Active addresses'), type: 'stack' }} {...props}>
       <AnimationContainer>
         <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
       </AnimationContainer>
       <CenteredInstructions instructions={instructions} stretch />
       <ActionButtonsStack>
         <Button
-          title="Scan"
+          title={t('Scan')}
           type="primary"
           variant="highlight"
           onPress={() => navigation.navigate('AddressDiscoveryScreen', { isImporting: true })}
         />
-        <Button title="Later" type="primary" variant="accent" onPress={handleLaterPress} />
+        <Button title={t('Later')} type="primary" variant="accent" onPress={handleLaterPress} />
       </ActionButtonsStack>
     </ScrollScreen>
   )

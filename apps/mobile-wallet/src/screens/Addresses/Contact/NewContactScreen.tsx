@@ -63,7 +63,7 @@ const NewContactScreen = ({ navigation }: NewContactScreenProps) => {
   return (
     <>
       <ContactFormBaseScreen initialValues={initialValues} onSubmit={handleSavePress} screenTitle={t('New contact')} />
-      <SpinnerModal isActive={loading} text={`${t('Saving contact')}...`} />
+      <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
     </>
   )
 }

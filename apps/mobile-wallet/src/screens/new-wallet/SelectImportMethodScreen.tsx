@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { StackScreenProps } from '@react-navigation/stack'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
@@ -45,6 +46,7 @@ export type SelectedWord = {
 const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodScreenProps) => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
@@ -62,8 +64,8 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
       fill
       verticalGap
       headerOptions={{ headerTitle: 'Import', type: 'stack' }}
-      screenTitle="Import method"
-      screenIntro="Choose how you want to import your wallet."
+      screenTitle={t('Import method')}
+      screenIntro={t('Choose how you want to import your wallet.')}
       {...props}
     >
       <ScreenSection fill>
@@ -72,12 +74,12 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
             <Ionicons size={35} name="desktop" color="rgb(86, 201, 254)" />
           </IconBox>
           <Title size={28} medium>
-            Desktop wallet
+            {t('Desktop wallet')}
           </Title>
           <Subtitle size={16} medium color="secondary">
-            Export your wallet directly from the Desktop app! Convenient, quick and secure.
+            {t('Export your wallet directly from the Desktop app! Convenient, quick and secure.')}
           </Subtitle>
-          <Button variant="highlight" title="Scan the QR code" onPress={openQRCodeScannerModal} />
+          <Button variant="highlight" title={t('Scan the QR code')} onPress={openQRCodeScannerModal} />
         </BoxSurfaceStyled>
       </ScreenSection>
       <ScreenSection fill>
@@ -86,14 +88,14 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
             <Ionicons size={35} name="list-outline" color="rgb(255, 147, 21)" />
           </IconBox>
           <Title size={28} medium>
-            Secret recovery phrase
+            {t('Secret recovery phrase')}
           </Title>
           <Subtitle size={16} medium color="secondary">
-            Enter the 24 words of your secret recovery phrase one-by-one.
+            {t('Enter the 24 words of your secret recovery phrase one-by-one.')}
           </Subtitle>
           <Button
             variant="highlight"
-            title="Type your secret phrase"
+            title={t('Type your secret phrase')}
             onPress={() => navigation.navigate('ImportWalletSeedScreen')}
           />
         </BoxSurfaceStyled>
@@ -102,7 +104,7 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
         <QRCodeScannerModal
           onClose={closeQRCodeScannerModal}
           onQRCodeScan={handleQRCodeScan}
-          text="Scan the animated QR code from the desktop wallet."
+          text={t('Scan the animated QR code from the desktop wallet.')}
           qrCodeMode="animated"
         />
       )}
