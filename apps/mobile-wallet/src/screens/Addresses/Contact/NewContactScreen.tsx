@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ContactFormData } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -30,8 +31,9 @@ import { showExceptionToast } from '~/utils/layout'
 
 interface NewContactScreenProps extends StackScreenProps<RootStackParamList, 'NewContactScreen'>, ScrollScreenProps {}
 
-const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
+const NewContactScreen = ({ navigation }: NewContactScreenProps) => {
   const [loading, setLoading] = useState(false)
+  const { t } = useTranslation()
 
   const initialValues = {
     id: undefined,
@@ -49,7 +51,7 @@ const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
     } catch (error) {
       const message = 'Could not save contact'
 
-      showExceptionToast(error, message)
+      showExceptionToast(error, t(message))
       sendAnalytics({ type: 'error', error, message })
     }
 
@@ -60,8 +62,8 @@ const NewContactScreen = ({ navigation, ...props }: NewContactScreenProps) => {
 
   return (
     <>
-      <ContactFormBaseScreen initialValues={initialValues} onSubmit={handleSavePress} screenTitle="New contact" />
-      <SpinnerModal isActive={loading} text="Saving contact..." />
+      <ContactFormBaseScreen initialValues={initialValues} onSubmit={handleSavePress} screenTitle={t('New contact')} />
+      <SpinnerModal isActive={loading} text={`${t('Saving contact')}...`} />
     </>
   )
 }

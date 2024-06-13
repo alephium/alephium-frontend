@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Platform } from 'react-native'
 import { Portal } from 'react-native-portalize'
 
@@ -57,9 +58,10 @@ const FundPasswordModalContent = ({
   ...props
 }: ModalContentProps & Pick<FundPasswordModalProps, 'successCallback'>) => {
   const fundPassword = useFundPassword()
+  const { t } = useTranslation()
   const { password, handlePasswordChange, isPasswordCorrect, error } = usePassword({
     correctPassword: fundPassword ?? '',
-    errorMessage: 'Provided fund password is wrong'
+    errorMessage: t('Provided fund password is wrong')
   })
   const [displayedError, setDisplayedError] = useState<string | undefined>()
 
@@ -82,16 +84,16 @@ const FundPasswordModalContent = ({
   return (
     <ModalContent verticalGap {...props}>
       <ScreenSection>
-        <BottomModalScreenTitle>Fund password</BottomModalScreenTitle>
+        <BottomModalScreenTitle>{t('Fund password')}</BottomModalScreenTitle>
       </ScreenSection>
       <ScreenSection>
         <AppText color="secondary" size={18}>
-          Please, enter your fund password.
+          {t('Please, enter your fund password.')}
         </AppText>
       </ScreenSection>
       <ScreenSection>
         <Input
-          label="Fund password"
+          label={t('Fund password')}
           value={password}
           onChangeText={handleFundPasswordChange}
           secureTextEntry
@@ -102,7 +104,7 @@ const FundPasswordModalContent = ({
         />
       </ScreenSection>
       <ScreenSection>
-        <Button title="Submit" variant="highlight" onPress={handleSubmit} disabled={password.length === 0} />
+        <Button title={t('Submit')} variant="highlight" onPress={handleSubmit} disabled={password.length === 0} />
       </ScreenSection>
     </ModalContent>
   )

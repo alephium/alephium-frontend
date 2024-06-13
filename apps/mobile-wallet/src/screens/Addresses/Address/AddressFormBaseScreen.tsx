@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressSettings } from '@alephium/shared'
 import { ReactNode, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import { Portal } from 'react-native-portalize'
 
@@ -53,12 +54,14 @@ const AddressForm = ({
   onSubmit,
   screenTitle,
   allowGroupSelection,
-  buttonText = 'Generate',
+  buttonText,
   disableIsMainToggle = false,
   HeaderComponent,
   headerOptions,
   ...props
 }: AddressFormProps) => {
+  const { t } = useTranslation()
+
   const [label, setLabel] = useState(initialValues.label)
   const [color, setColor] = useState(initialValues.color)
   const [isDefault, setIsDefault] = useState(initialValues.isDefault)
@@ -82,7 +85,7 @@ const AddressForm = ({
           type: 'stack',
           headerRight: () => (
             <ContinueButton
-              title={buttonText}
+              title={buttonText || t('Generate')}
               onPress={() => onSubmit({ isDefault, label, color, group })}
               iconProps={undefined}
             />
@@ -94,14 +97,16 @@ const AddressForm = ({
       >
         <View>{HeaderComponent}</View>
         <ScreenSection verticalGap fill>
-          <Input value={label} onChangeText={setLabel} label="Label" maxLength={50} />
+          <Input value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} />
           <ColorPicker value={color} onChange={setColor} />
           <BoxSurface>
             <Row
-              title="Default address"
-              subtitle={`Default address for operations${
+              title={t('Default address')}
+              subtitle={`${t('Default address for operations')}${
                 disableIsMainToggle
-                  ? '. To remove this address from being the default address, you must set another one as main first.'
+                  ? `. ${t(
+                      'To remove this address from being the default address, you must set another one as main first.'
+                    )}`
                   : ''
               }`}
               onPress={toggleIsMain}
@@ -114,8 +119,10 @@ const AddressForm = ({
           {allowGroupSelection && (
             <ExpandableRow>
               <BoxSurface>
-                <Row title="Address group" onPress={() => setIsGroupSelectModalOpen(true)}>
-                  <AppText>{group !== undefined ? `Group ${group}` : 'Default'}</AppText>
+                <Row title={t('Address group')} onPress={() => setIsGroupSelectModalOpen(true)}>
+                  <AppText>
+                    {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Default')}
+                  </AppText>
                 </Row>
               </BoxSurface>
             </ExpandableRow>

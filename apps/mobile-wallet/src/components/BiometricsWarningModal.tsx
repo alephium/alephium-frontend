@@ -16,6 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useTranslation } from 'react-i18next'
+
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
@@ -27,23 +29,29 @@ interface BiometricsWarningModalProps extends ModalContentProps {
   confirmText?: string
 }
 
-const BiometricsWarningModal = ({ onConfirm, confirmText = 'Disable', ...props }: BiometricsWarningModalProps) => (
-  <ModalContent verticalGap {...props}>
-    <ScreenSection>
-      <BottomModalScreenTitle>⚠️ Are you sure?</BottomModalScreenTitle>
-    </ScreenSection>
-    <ScreenSection>
-      <AppText color="secondary" size={18}>
-        If you don't turn on biometrics, anyone who gains access to your device can open the app and steal your funds.
-      </AppText>
-    </ScreenSection>
-    <ScreenSection centered>
-      <ButtonsRow>
-        <Button title="Cancel" onPress={props.onClose} flex short />
-        <Button title={confirmText} onPress={onConfirm} variant="alert" flex short />
-      </ButtonsRow>
-    </ScreenSection>
-  </ModalContent>
-)
+const BiometricsWarningModal = ({ onConfirm, confirmText, ...props }: BiometricsWarningModalProps) => {
+  const { t } = useTranslation()
+
+  return (
+    <ModalContent verticalGap {...props}>
+      <ScreenSection>
+        <BottomModalScreenTitle>⚠️ {t('Are you sure?')}</BottomModalScreenTitle>
+      </ScreenSection>
+      <ScreenSection>
+        <AppText color="secondary" size={18}>
+          {t(
+            "If you don't turn on biometrics, anyone who gains access to your device can open the app and steal your funds."
+          )}
+        </AppText>
+      </ScreenSection>
+      <ScreenSection centered>
+        <ButtonsRow>
+          <Button title={t('Cancel')} onPress={props.onClose} flex short />
+          <Button title={confirmText ?? t('Disable')} onPress={onConfirm} variant="alert" flex short />
+        </ButtonsRow>
+      </ScreenSection>
+    </ModalContent>
+  )
+}
 
 export default BiometricsWarningModal

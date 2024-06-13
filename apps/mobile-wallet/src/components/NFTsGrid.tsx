@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, NFT } from '@alephium/shared'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Dimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -41,6 +42,7 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, ...pro
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const theme = useTheme()
+  const { t } = useTranslation()
 
   const data = nftsProp ?? nfts
   const columns = data.length < nftsPerRow ? data.length : nftsPerRow
@@ -58,7 +60,7 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, ...pro
       columnWrapperStyle={columns > 1 ? { justifyContent: 'space-between', gap: 15 } : undefined}
       ListEmptyComponent={
         <NoNFTsMessage>
-          <AppText color={theme.font.tertiary}>No NFTs yet 🖼️</AppText>
+          <AppText color={theme.font.tertiary}>{t('No NFTs yet')} 🖼️</AppText>
         </NoNFTsMessage>
       }
       {...props}

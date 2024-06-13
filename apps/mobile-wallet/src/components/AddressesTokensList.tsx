@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, Asset } from '@alephium/shared'
 import { Skeleton } from 'moti/skeleton'
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, StyleProp, ViewStyle } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated, { CurvedTransition } from 'react-native-reanimated'
@@ -65,6 +66,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
   const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
   const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
   const theme = useTheme()
+  const { t } = useTranslation()
 
   const showTokensSkeleton = isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes
   const showNFTListLoading = showTokensSkeleton || isLoadingNfts
@@ -79,7 +81,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
         value: 'tokens',
         label: (
           <>
-            <AppText semiBold>Tokens</AppText>
+            <AppText semiBold>{t('Tokens')}</AppText>
             <Badge rounded>
               {showTokensSpinner ? <AssetNumberLoader /> : knownFungibleTokens.length + unknownTokens.length}
             </Badge>
@@ -90,13 +92,13 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
         value: 'nfts',
         label: (
           <>
-            <AppText semiBold>NFTs</AppText>
+            <AppText semiBold>{t('NFTs')}</AppText>
             <Badge rounded>{showNFTListLoading ? <AssetNumberLoader /> : nfts.length}</Badge>
           </>
         )
       }
     ],
-    [knownFungibleTokens.length, nfts.length, showNFTListLoading, showTokensSpinner, unknownTokens.length]
+    [knownFungibleTokens.length, nfts.length, showNFTListLoading, showTokensSpinner, t, unknownTokens.length]
   )
 
   const [activeTab, setActiveTab] = useState(tabItems[0])

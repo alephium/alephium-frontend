@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { Asset, CURRENCIES } from '@alephium/shared'
+import { useTranslation } from 'react-i18next'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -34,6 +35,7 @@ interface TokenListItemProps {
 
 const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
+  const { t } = useTranslation()
 
   const balance = BigInt(asset.balance)
 
@@ -46,7 +48,7 @@ const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemPro
         !asset.verified && (
           <UnverifiedBadge>
             <AppText size={10} color="tertiary">
-              No metadata
+              {t('No metadata')}
             </AppText>
           </UnverifiedBadge>
         )

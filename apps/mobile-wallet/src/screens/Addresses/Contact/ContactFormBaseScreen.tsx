@@ -18,11 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ContactFormData } from '@alephium/shared'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import i18n from '~/i18n'
 import { isContactAddressValid, isContactNameValid } from '~/utils/form-validation'
 import { validateIsAddressValid } from '~/utils/forms'
 
@@ -32,14 +34,15 @@ interface ContactFormProps extends ScrollScreenProps {
   buttonText?: string
 }
 
-const requiredErrorMessage = 'This field is required'
+const requiredErrorMessage = i18n.t('This field is required')
 
-const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save', headerOptions, ...props }: ContactFormProps) => {
+const ContactForm = ({ initialValues, onSubmit, buttonText, headerOptions, ...props }: ContactFormProps) => {
   const {
     control,
     handleSubmit,
     formState: { errors }
   } = useForm<ContactFormData>({ defaultValues: initialValues })
+  const { t } = useTranslation()
 
   return (
     <ScrollScreen
@@ -47,7 +50,9 @@ const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save', headerOptio
       fill
       headerOptions={{
         type: 'stack',
-        headerRight: () => <ContinueButton title={buttonText} onPress={handleSubmit(onSubmit)} iconProps={undefined} />,
+        headerRight: () => (
+          <ContinueButton title={buttonText || t('Save')} onPress={handleSubmit(onSubmit)} iconProps={undefined} />
+        ),
         ...headerOptions
       }}
       {...props}
@@ -57,7 +62,7 @@ const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save', headerOptio
           name="name"
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              label="Contact name"
+              label={t('Contact name')}
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -74,7 +79,7 @@ const ContactForm = ({ initialValues, onSubmit, buttonText = 'Save', headerOptio
           name="address"
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              label="Contact address"
+              label={t('Contact address')}
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}

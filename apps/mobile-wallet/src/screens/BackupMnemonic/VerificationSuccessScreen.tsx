@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -37,6 +38,7 @@ interface VerificationSuccessScreenProps
 const VerificationSuccessScreen = ({ navigation, ...props }: VerificationSuccessScreenProps) => {
   const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
   const { setHeaderOptions } = useHeaderContext()
+  const { t } = useTranslation()
 
   useFocusEffect(
     useCallback(() => {
@@ -54,8 +56,8 @@ const VerificationSuccessScreen = ({ navigation, ...props }: VerificationSuccess
       <ScreenSection fill>
         <CenteredInstructions
           instructions={[
-            { text: 'Well done!', type: 'primary' },
-            { text: 'Enjoy your new (backed-up) wallet!', type: 'secondary' }
+            { text: t('Well done!'), type: 'primary' },
+            { text: t('Enjoy your new (backed-up) wallet!'), type: 'secondary' }
           ]}
           stretch
           fontSize={19}
@@ -65,13 +67,13 @@ const VerificationSuccessScreen = ({ navigation, ...props }: VerificationSuccess
         {isUsingFundPassword ? (
           <Button
             variant="highlight"
-            title="Return to my wallet"
+            title={t('Return to my wallet')}
             onPress={() => resetNavigation(navigation.getParent())}
           />
         ) : (
           <Button
             variant="highlight"
-            title="Continue"
+            title={t('Continue')}
             onPress={() => navigation.navigate('FundPasswordScreen', { origin: 'backup', newPassword: true })}
           />
         )}

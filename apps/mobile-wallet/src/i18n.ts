@@ -16,11 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import './shim'
-import '~/i18n'
+import i18next from 'i18next'
+import { initReactI18next } from 'react-i18next'
 
-import { registerRootComponent } from 'expo'
+import en from '../locales/en-US/translation.json'
 
-import App from '~/App'
+i18next.use(initReactI18next).init({
+  resources: {
+    'en-US': { translation: en }
+  },
+  lng: 'en-US',
+  fallbackLng: 'en-US',
+  interpolation: {
+    escapeValue: false
+  }
+})
 
-registerRootComponent(App)
+export default i18next

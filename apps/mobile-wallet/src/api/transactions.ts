@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, AssetAmount, client } from '@alephium/shared'
 import { transactionSign } from '@alephium/web3'
 
+import i18n from '~/i18n'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { store } from '~/store/store'
 import { Address } from '~/types/addresses'
@@ -79,9 +80,6 @@ export const buildTransferTransaction = async ({
   gasPrice
 }: TransferTxData) => {
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
-  const address = store.getState().addresses.entities[fromAddress]
-
-  if (!address) throw new Error(`Could not find address in store: ${fromAddress}`)
 
   return await client.node.transactions.postTransactionsBuild({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
@@ -106,10 +104,6 @@ export const buildCallContractTransaction = async ({
 }: CallContractTxData) => {
   const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(assetAmounts)
 
-  const address = store.getState().addresses.entities[fromAddress]
-
-  if (!address) throw new Error(`Could not find address in store: ${fromAddress}`)
-
   return await client.node.contracts.postContractsUnsignedTxExecuteScript({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
     bytecode,
@@ -127,12 +121,8 @@ export const buildDeployContractTransaction = async ({
   issueTokenAmount,
   gasAmount,
   gasPrice
-}: DeployContractTxData) => {
-  const address = store.getState().addresses.entities[fromAddress]
-
-  if (!address) throw new Error(`Could not find address in store: ${fromAddress}`)
-
-  return await client.node.contracts.postContractsUnsignedTxDeployContract({
+}: DeployContractTxData) =>
+  await client.node.contracts.postContractsUnsignedTxDeployContract({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
     bytecode: bytecode,
     initialAttoAlphAmount: initialAlphAmount?.amount?.toString(),
@@ -140,12 +130,11 @@ export const buildDeployContractTransaction = async ({
     gasAmount: gasAmount,
     gasPrice: gasPrice?.toString()
   })
-}
 
 export const signAndSendTransaction = async (fromAddress: AddressHash, txId: string, unsignedTx: string) => {
   const address = store.getState().addresses.entities[fromAddress]
 
-  if (!address) throw new Error(`Could not find address in store: ${fromAddress}`)
+  if (!address) throw new Error(i18n.t('Could not find address in store: {{ address }}', { address: fromAddress }))
 
   const signature = transactionSign(txId, await getAddressAsymetricKey(address.hash, 'private'))
   const data = await client.node.transactions.postTransactionsSubmit({ unsignedTx, signature })

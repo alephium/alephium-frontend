@@ -20,6 +20,7 @@ import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { Skeleton } from 'moti/skeleton'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { View, ViewProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -48,6 +49,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
   const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList | ReceiveNavigationParamList>>()
+  const { t } = useTranslation()
 
   const handleReceivePress = () => {
     if (addressHashes.length === 1) {
@@ -81,7 +83,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
       {totalBalance === BigInt(0) && !isLoadingAlphBalances && addressesStatus === 'initialized' && (
         <ReceiveFundsButtonContainer>
           <Button
-            title="Receive assets"
+            title={t('Receive assets')}
             onPress={handleReceivePress}
             iconProps={{ name: 'arrow-down-outline' }}
             variant="highlight"

@@ -71,6 +71,7 @@ import { calcExpiry, getSdkError, mapToObj, objToMap } from '@walletconnect/util
 import { useURL } from 'expo-linking'
 import { partition } from 'lodash'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { AppState, AppStateStatus } from 'react-native'
 import BackgroundService from 'react-native-background-actions'
 import { Portal } from 'react-native-portalize'
@@ -141,6 +142,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
+  const { t } = useTranslation()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
@@ -535,18 +537,18 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
         if (error.message?.includes('NotEnoughApprovedBalance')) {
           showToast({
-            text1: 'Could not build transaction',
-            text2: 'Your address does not have enough balance for this transaction.',
+            text1: t('Could not build transaction'),
+            text2: t('Your address does not have enough balance for this transaction.'),
             type: 'error',
             autoHide: false
           })
         } else {
           if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method)) {
-            showExceptionToast(e, 'Could not build transaction')
+            showExceptionToast(e, t('Could not build transaction'))
             console.error(e)
           }
           respondToWalletConnectWithError(requestEvent, {
-            message: getHumanReadableError(e, 'Error while parsing WalletConnect session request'),
+            message: getHumanReadableError(e, t('Error while parsing WalletConnect session request')),
             code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
           })
         }
@@ -555,7 +557,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     // The `addresses` dependency causes re-rendering when any property of an Address changes, even though we only need
     // the `hash` and the `publicKey`. Creating a selector that extracts those 3 doesn't help.
     // Using addressIds fixes the problem, but now the api/transactions.ts file becomes dependant on the store file.
-    [walletConnectClient, respondToWalletConnectWithError, addressIds, handleApiResponse]
+    [walletConnectClient, respondToWalletConnectWithError, addressIds, handleApiResponse, t]
   )
 
   const onSessionProposal = useCallback(async (sessionProposalEvent: SessionProposalEvent) => {
@@ -725,10 +727,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             })
           } else {
             showToast({
-              text1: 'Could not connect',
+              text1: t('Could not connect'),
               text2:
-                'This WalletConnect session is not valid anymore. Try to refresh the dApp and connect again. Session topic: ' +
-                existingPairing.topic,
+                t('This WalletConnect session is not valid anymore.') +
+                ' ' +
+                t('Try to refresh the dApp and connect again.'),
               type: 'error',
               autoHide: false
             })
@@ -742,7 +745,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         console.error('❌ COULD NOT PAIR WITH: ', uri, e)
       }
     },
-    [onSessionProposal, walletConnectClient]
+    [onSessionProposal, t, walletConnectClient]
   )
 
   const unpairFromDapp = useCallback(
@@ -783,8 +786,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     if (requiredChains?.length !== 1) {
       console.error(`❌ Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains?.length}`)
       return showToast({
-        text1: 'Could not approve',
-        text2: `Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains?.length}`,
+        text1: t('Could not approve'),
+        text2: t('Expected exactly 1 required chain in the WalletConnect proposal, got {{ numberOfChains }}', {
+          numberOfChains: requiredChains?.length
+        }),
         type: 'error',
         autoHide: false
       })
@@ -793,8 +798,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     if (!requiredChainInfo) {
       console.error('❌ Could not find chain requirements in WalletConnect proposal')
       return showToast({
-        text1: 'Could not approve',
-        text2: 'Could not find chain requirements in WalletConnect proposal',
+        text1: t('Could not approve'),
+        text2: t('Could not find chain requirements in WalletConnect proposal'),
         type: 'error',
         autoHide: false
       })
@@ -805,8 +810,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         `❌ WalletConnect requested the ${requiredChainInfo.networkId} network, but the current network is ${currentNetworkName}.`
       )
       return showToast({
-        text1: 'Could not approve',
-        text2: `WalletConnect requested the ${requiredChainInfo.networkId} network, but the current network is ${currentNetworkName}.`,
+        text1: t('Could not approve'),
+        text2: t(
+          'WalletConnect requested the {{ requestedNetwork }} network, but the current network is {{ currentNetwork }}.',
+          { requestedNetwork: requiredChainInfo.networkId, currentNetwork: currentNetworkName }
+        ),
         type: 'error',
         autoHide: false
       })
@@ -817,8 +825,14 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         `❌ The group of the selected address (${signerAddress.group}) does not match the group required by WalletConnect (${requiredChainInfo.addressGroup})`
       )
       return showToast({
-        text1: 'Could not approve',
-        text2: `The group of the selected address (${signerAddress.group}) does not match the group required by WalletConnect (${requiredChainInfo.addressGroup})`,
+        text1: t('Could not approve'),
+        text2: t(
+          'The group of the selected address ({{ selectedAddressGroup }}) does not match the group required by WalletConnect ({{ requiredGroup }})',
+          {
+            selectedAddressGroup: signerAddress.group,
+            requiredGroup: requiredChainInfo.addressGroup
+          }
+        ),
         type: 'error',
         autoHide: false
       })
@@ -863,7 +877,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } finally {
       setLoading('')
       setIsSessionProposalModalOpen(false)
-      showToast({ text1: 'DApp request approved', text2: 'You can go back to your browser.' })
+      showToast({ text1: t('dApp request approved'), text2: t('You can go back to your browser.') })
     }
   }
 
@@ -882,7 +896,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } finally {
       setLoading('')
       setIsSessionProposalModalOpen(false)
-      showToast({ text1: 'DApp request rejected', text2: 'You can go back to your browser.', type: 'info' })
+      showToast({ text1: t('dApp request rejected'), text2: t('You can go back to your browser.'), type: 'info' })
     }
   }
 
@@ -922,7 +936,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               setSessionRequestEvent(undefined)
               setSessionRequestData(undefined)
               setLoading('')
-              showToast({ text1: 'DApp request approved', text2: 'You can go back to your browser.' })
+              showToast({ text1: t('dApp request approved'), text2: t('You can go back to your browser.') })
             }
           }
         })
@@ -939,7 +953,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     console.log('👉 RESETTING SESSION REQUEST EVENT.')
     setSessionRequestEvent(undefined)
     setSessionRequestData(undefined)
-    showToast({ text1: 'DApp request approved', text2: 'You can go back to your browser.' })
+    showToast({ text1: t('dApp request approved'), text2: t('You can go back to your browser.') })
   }
 
   const handleRejectPress = async () => {
@@ -955,7 +969,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('👉 RESETTING SESSION REQUEST EVENT.')
       setSessionRequestEvent(undefined)
       setSessionRequestData(undefined)
-      showToast({ text1: 'DApp request rejected', text2: 'You can go back to your browser.' })
+      showToast({ text1: 'DApp request rejected', text2: t('You can go back to your browser.') })
     }
   }
 
@@ -998,17 +1012,16 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
     if (!isWalletConnectEnabled) {
       showToast({
-        text1: 'Experimental feature',
-        text2: 'WalletConnect is an experimental feature. You can enable it in the settings.',
+        text1: t('Experimental feature'),
+        text2: t('WalletConnect is an experimental feature. You can enable it in the settings.'),
         type: 'info'
-        // onPress: () => navigation.navigate('SettingsScreen')
       })
     } else if (walletConnectClient) {
       pairWithDapp(url)
 
       wcDeepLink.current = url
     }
-  }, [isWalletUnlocked, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient])
+  }, [isWalletUnlocked, isWalletConnectEnabled, pairWithDapp, url, walletConnectClient, t])
 
   const resetWalletConnectClientInitializationAttempts = () => {
     if (walletConnectClientInitializationAttempts === MAX_WALLETCONNECT_RETRIES)
