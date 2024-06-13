@@ -49,6 +49,7 @@
   "This WalletConnect session is not valid anymore.": "This WalletConnect session is not valid anymore.",
   "Try to refresh the dApp and connect again.": "Try to refresh the dApp and connect again.",
   "Could not approve": "Could not approve",
+  "The proposal does not include a list of required chains": "The proposal does not include a list of required chains",
   "Expected exactly 1 required chain in the WalletConnect proposal, got {{ numberOfChains }}": "Expected exactly 1 required chain in the WalletConnect proposal, got {{ numberOfChains }}",
   "Could not find chain requirements in WalletConnect proposal": "Could not find chain requirements in WalletConnect proposal",
   "WalletConnect requested the {{ requestedNetwork }} network, but the current network is {{ currentNetwork }}.": "WalletConnect requested the {{ requestedNetwork }} network, but the current network is {{ currentNetwork }}.",

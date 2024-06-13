@@ -783,12 +783,24 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     const { id, relayProtocol, requiredNamespace, requiredChains, requiredChainInfo, metadata } =
       parseSessionProposalEvent(sessionProposalEvent)
 
-    if (requiredChains?.length !== 1) {
-      console.error(`❌ Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains?.length}`)
+    if (!requiredChains) {
+      const message = 'The proposal does not include a list of required chains'
+
+      console.error(`❌ ${message}`)
+      return showToast({
+        text1: t('Could not approve'),
+        text2: t(message),
+        type: 'error',
+        autoHide: false
+      })
+    }
+
+    if (requiredChains.length !== 1) {
+      console.error(`❌ Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains.length}`)
       return showToast({
         text1: t('Could not approve'),
         text2: t('Expected exactly 1 required chain in the WalletConnect proposal, got {{ numberOfChains }}', {
-          numberOfChains: requiredChains?.length
+          numberOfChains: requiredChains.length
         }),
         type: 'error',
         autoHide: false
