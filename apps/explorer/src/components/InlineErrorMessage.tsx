@@ -16,15 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import logo from '@/images/alephium-not-found.svg'
 
 const InlineErrorMessage = ({ message, code }: { message?: string; code?: number }) => {
+  const { t } = useTranslation()
+
   let shownMessage = ''
 
   if (!message) {
-    shownMessage = "Something's wrong"
+    shownMessage = t("Something's wrong")
   } else {
     // Clean the error message by removing details that could be used to trick users
     const regex = /\(([^()]|\([^()]*\))*\)/g

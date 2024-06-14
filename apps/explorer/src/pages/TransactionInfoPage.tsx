@@ -226,11 +226,7 @@ const TransactionInfoPage = () => {
                       >
                         <Badge
                           type="neutral"
-                          content={
-                            <span>
-                              {confirmations} {confirmations === 1 ? 'Confirmation' : 'Confirmations'}
-                            </span>
-                          }
+                          content={<span>{t('confirmationsKey', { count: confirmations })}</span>}
                           inline
                         />
                       </span>
