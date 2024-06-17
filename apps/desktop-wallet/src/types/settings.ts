@@ -48,6 +48,7 @@ export type Language =
   | 'id-ID'
   | 'tr-TR'
   | 'it-IT'
+  | 'el-GR'
 
 export type ThemeType = 'light' | 'dark'
 
