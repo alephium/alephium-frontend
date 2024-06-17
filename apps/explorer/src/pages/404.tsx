@@ -16,20 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Trans, useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 import Waves from '@/components/Wave/Waves'
 
-const PageNotFound = ({ className }: { className?: string }) => (
-  <div className={className}>
-    <Title>404 - Page not found</Title>
-    <LetsGoBack>
-      Let&apos;s go back to the <Link to="/">home page.</Link>
-    </LetsGoBack>
-    <Waves />
-  </div>
-)
+const PageNotFound = ({ className }: { className?: string }) => {
+  const { t } = useTranslation()
+
+  return (
+    <div className={className}>
+      <Title>404 - {t('Page not found')}</Title>
+      <LetsGoBack>
+        <Trans t={t} i18nKey="letsGoBack" components={{ 1: <Link to="/" /> }}>
+          {"Let's go back to the <1>home page</1>."}
+        </Trans>
+      </LetsGoBack>
+      <Waves />
+    </div>
+  )
+}
 
 export default styled(PageNotFound)`
   display: flex;

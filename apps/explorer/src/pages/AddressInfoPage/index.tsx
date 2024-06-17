@@ -121,7 +121,7 @@ const AddressInfoPage = () => {
   }, [addressMempoolTransactions, refetchTxList])
 
   if (!addressHash) {
-    displaySnackbar({ text: 'The address format seems invalid', type: 'alert' })
+    displaySnackbar({ text: t('The address format seems invalid'), type: 'alert' })
     navigate('404')
   }
 
@@ -158,7 +158,7 @@ const AddressInfoPage = () => {
     console.log(e)
 
     displaySnackbar({
-      text: getHumanReadableError(e, 'Impossible to get the group of this address'),
+      text: getHumanReadableError(e, t('Could not get the group of this address')),
       type: 'alert'
     })
   }
@@ -174,7 +174,7 @@ const AddressInfoPage = () => {
   return (
     <Section>
       <SectionTitle
-        title={isContract ? t('Contract') : t('Address')}
+        title={isContract ? t('Contract') : t('Addresses_one')}
         subtitle={<HighlightedHash text={addressHash} textToCopy={addressHash} />}
       />
       <InfoGridAndQR>
@@ -248,11 +248,11 @@ const AddressInfoPage = () => {
                   {t('Hash & Time')}
                   <TimestampExpandButton />
                 </span>,
-                'Type',
-                'Assets',
+                t('Type'),
+                t('Assets'),
                 '',
-                'Addresses',
-                'Amounts',
+                t('Addresses_other'),
+                t('Amounts'),
                 ''
               ]}
               columnWidths={['20%', '25%', '20%', '80px', '25%', '150px', '30px']}

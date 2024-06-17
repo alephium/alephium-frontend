@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import dayjs from 'dayjs'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { useSettings } from '@/contexts/settingsContext'
@@ -39,6 +40,7 @@ interface TimestampProps {
 
 const Timestamp = ({ timeInMs, className, forceFormat, customFormat, formatToggle = false }: TimestampProps) => {
   const { timestampPrecisionMode } = useSettings()
+  const { t } = useTranslation()
 
   const precision = forceFormat ?? (timestampPrecisionMode === 'on' ? 'high' : 'low')
 
@@ -56,7 +58,7 @@ const Timestamp = ({ timeInMs, className, forceFormat, customFormat, formatToggl
               formatToggle ? (
                 <span>
                   <br />
-                  Click to change format
+                  {t('Click to change format')}
                 </span>
               ) : (
                 ''

@@ -21,6 +21,7 @@ import { RiContractLeftRightLine, RiExpandLeftRightLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
 import { useSettings } from '@/contexts/settingsContext'
+import i18n from '@/i18n'
 import { OnOff } from '@/types/generics'
 
 interface TimestampExpandButtonProps {
@@ -30,11 +31,11 @@ interface TimestampExpandButtonProps {
 const config: Record<OnOff, { Icon: (props: IconBaseProps) => JSX.Element; tooltipContent: string }> = {
   on: {
     Icon: RiContractLeftRightLine,
-    tooltipContent: 'Switch to simple time'
+    tooltipContent: i18n.t('Switch to simple time')
   },
   off: {
     Icon: RiExpandLeftRightLine,
-    tooltipContent: 'Switch to precise time'
+    tooltipContent: i18n.t('Switch to precise time')
   }
 }
 

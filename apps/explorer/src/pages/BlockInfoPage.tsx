@@ -76,14 +76,14 @@ const BlockInfoPage = () => {
         console.error(e)
 
         setBlockInfoError({
-          message: getHumanReadableError(e, 'Unknown error')
+          message: getHumanReadableError(e, t('Unknown error'))
         })
       }
       setInfoLoading(false)
     }
 
     fetchBlockInfo()
-  }, [id])
+  }, [id, t])
 
   // Block transactions
   useEffect(() => {
@@ -130,7 +130,7 @@ const BlockInfoPage = () => {
         {blockInfo && (
           <TableBody tdStyles={BlockTableBodyCustomStyles}>
             <TableRow>
-              <span>Hash</span>
+              <span>{t('Hash')}</span>
               <HighlightedCell textToCopy={blockInfo.hash}>{blockInfo.hash}</HighlightedCell>
             </TableRow>
             <TableRow>
@@ -165,7 +165,7 @@ const BlockInfoPage = () => {
               {txList && txList && (
                 <>
                   <TableHeader
-                    headerTitles={['', 'Hash', 'Inputs', '', 'Outputs', 'Total Amount', '']}
+                    headerTitles={['', t('Hash'), t('Inputs'), '', t('Outputs'), t('Total Amount'), '']}
                     columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
                     textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
                   />
@@ -182,8 +182,8 @@ const BlockInfoPage = () => {
       ) : (
         !txLoading && (
           <>
-            <SecondaryTitle>Orphan block</SecondaryTitle>
-            <div>It appears that this block is not part of the main chain.</div>
+            <SecondaryTitle>{t('Orphan block')}</SecondaryTitle>
+            <div>{t('It appears that this block is not part of the main chain.')}</div>
           </>
         )
       )}

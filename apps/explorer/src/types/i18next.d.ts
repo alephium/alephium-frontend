@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2022 The Alephium Authors
+Copyright 2018 - 2024 The Alephium Authors
 This file is part of the alephium project.
 
 The library is free software: you can redistribute it and/or modify
@@ -16,20 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useRef } from 'react'
+import 'i18next'
 
-export function useTraceUpdate(props) {
-  const prev = useRef(props)
-  useEffect(() => {
-    const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
-      if (prev.current[k] !== v) {
-        ps[k] = [prev.current[k], v]
-      }
-      return ps
-    }, {})
-    if (Object.keys(changedProps).length > 0) {
-      console.log('Changed props:', changedProps)
+import en from '../../locales/en-US/translation.json'
+
+type EnglishTranslationKeys = typeof en
+
+export type TranslationKey = keyof EnglishTranslationKeys
+
+declare module 'i18next' {
+  interface CustomTypeOptions {
+    resources: {
+      translation: EnglishTranslationKeys
     }
-    prev.current = props
-  })
+  }
 }

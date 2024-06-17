@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import ExternalLink from '@/components/ExternalLink'
@@ -34,29 +35,33 @@ interface AppFooterProps {
   className?: string
 }
 
-const AppFooter = ({ className }: AppFooterProps) => (
-  <footer className={className}>
-    <LeftGroup>
-      <StyledNetworkSwitch direction="up" />
-      <LanguageSwitch />
-      <ThemeSwitcher />
-    </LeftGroup>
-    <RightGroup>
-      <Version>v{version}</Version>
-      <span>
-        <ExternalLink href="https://github.com/alephium/explorer">Source code ↗</ExternalLink>
-      </span>
-      <ExternalLink href="https://alephium.org">Alephium.org ↗</ExternalLink>
-      <SocialMediaIconList>
-        {socialMediaData.map((d) => (
-          <ExternalLink href={d.link} key={d.name}>
-            <d.Icon data-tooltip-id="default" data-tooltip-content={d.name} className="social-media-icon" />
-          </ExternalLink>
-        ))}
-      </SocialMediaIconList>
-    </RightGroup>
-  </footer>
-)
+const AppFooter = ({ className }: AppFooterProps) => {
+  const { t } = useTranslation()
+
+  return (
+    <footer className={className}>
+      <LeftGroup>
+        <StyledNetworkSwitch direction="up" />
+        <LanguageSwitch />
+        <ThemeSwitcher />
+      </LeftGroup>
+      <RightGroup>
+        <Version>v{version}</Version>
+        <span>
+          <ExternalLink href="https://github.com/alephium/explorer">{t('Source code')} ↗</ExternalLink>
+        </span>
+        <ExternalLink href="https://alephium.org">Alephium.org ↗</ExternalLink>
+        <SocialMediaIconList>
+          {socialMediaData.map((d) => (
+            <ExternalLink href={d.link} key={d.name}>
+              <d.Icon data-tooltip-id="default" data-tooltip-content={d.name} className="social-media-icon" />
+            </ExternalLink>
+          ))}
+        </SocialMediaIconList>
+      </RightGroup>
+    </footer>
+  )
+}
 
 const socialMediaData = [
   {

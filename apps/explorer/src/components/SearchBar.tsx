@@ -91,16 +91,16 @@ const SearchBar = ({ className }: SearchBarProps) => {
         if (isAddressValid(addressHash)) {
           redirect(`/addresses/${addressHash}`)
         } else {
-          displaySnackbar({ text: 'There seems to be an error in the public key format.', type: 'info' })
+          displaySnackbar({ text: t('There seems to be an error in the public key format.'), type: 'info' })
         }
       } else {
-        displaySnackbar({ text: 'There seems to be an error in the hash format.', type: 'info' })
+        displaySnackbar({ text: t('There seems to be an error in the hash format.'), type: 'info' })
       }
     } else {
       if (isAddressValid(word)) {
         redirect(`/addresses/${word}`)
       } else {
-        displaySnackbar({ text: 'There seems to be an error in the address format.', type: 'info' })
+        displaySnackbar({ text: t('There seems to be an error in the address format.'), type: 'info' })
       }
     }
   }

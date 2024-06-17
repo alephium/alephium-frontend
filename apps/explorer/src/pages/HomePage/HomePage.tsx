@@ -99,9 +99,10 @@ const HomePage = () => {
   const currentSupplyPercentage =
     circulatingSupply.value && totalSupply.value && ((circulatingSupply.value / totalSupply.value) * 100).toPrecision(3)
 
+  const isDaily = timeInterval === explorer.IntervalType.Daily
   const fullScreenCardLabels: Record<VectorStatisticsKey, string> = {
-    txVector: `${t('Transactions per')} ${timeInterval === explorer.IntervalType.Daily ? t('day') : t('hour')}`,
-    hashrateVector: `${t('Hashrate per')} ${timeInterval === explorer.IntervalType.Daily ? t('day') : t('hour')}`
+    txVector: isDaily ? t('Transactions per day') : t('Transactions per hour'),
+    hashrateVector: isDaily ? t('Hashrate per day') : t('Hashrate per hour')
   }
 
   return (
@@ -117,10 +118,7 @@ const HomePage = () => {
           <StatisticsHeader>
             <h2>{t('Our numbers')}</h2>
             <TimeIntervalSwitch>
-              <TimeIntervalButton
-                isSelected={timeInterval === explorer.IntervalType.Daily}
-                onClick={() => setTimeInterval(explorer.IntervalType.Daily)}
-              >
+              <TimeIntervalButton isSelected={isDaily} onClick={() => setTimeInterval(explorer.IntervalType.Daily)}>
                 {t('Daily')}
               </TimeIntervalButton>
               <TimeIntervalButton

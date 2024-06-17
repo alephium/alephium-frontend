@@ -23,6 +23,7 @@ import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
 import client from '@/api/client'
+import i18n from '@/i18n'
 import {
   AssetBase,
   AssetType,
@@ -90,7 +91,7 @@ export const assetsQueries = createQueriesCollection({
           )
         } catch (e) {
           console.error(e)
-          return Promise.reject(new Error('Verified token fetch failed'))
+          return Promise.reject(new Error(i18n.t('Verified token fetch failed')))
         }
       },
       staleTime: ONE_DAY_MS
