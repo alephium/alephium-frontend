@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.9.5
+
+### Patch Changes
+
+- 7aeb1da: Show avg. block time in seconds
+
 ## 1.9.4
 
 ### Patch Changes
