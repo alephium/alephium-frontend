@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { BackButton, ContinueButton } from '~/components/buttons/Button'
 import FlashListScreen from '~/components/layout/FlashListScreen'
@@ -49,6 +50,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, address?.hash))
+  const { t } = useTranslation()
 
   const [isLoading, setIsLoading] = useState(false)
 
@@ -103,8 +105,8 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         contrastedBg
         contentPaddingTop
         keyboardShouldPersistTaps="always"
-        screenTitle="Assets"
-        screenIntro="With Alephium, you can send multiple assets in one transaction."
+        screenTitle={t('Assets')}
+        screenIntro={t('With Alephium, you can send multiple assets in one transaction.')}
         estimatedItemSize={64}
         {...props}
       />

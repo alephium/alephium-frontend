@@ -20,6 +20,7 @@ import { decryptAsync } from '@alephium/shared-crypto'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 
@@ -52,6 +53,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
   const dispatch = useAppDispatch()
   const { deviceHasEnrolledBiometrics } = useBiometrics()
   const inputRef = useRef<TextInput>(null)
+  const { t } = useTranslation()
 
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -68,11 +70,11 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
     // This should never happen, but if it does, let the user restart the process of creating a wallet
     if (!qrCodeImportedEncryptedMnemonic || !name) {
       Alert.alert(
-        'Could not proceed',
-        `Missing ${!qrCodeImportedEncryptedMnemonic ? 'encrypted mnemonic' : 'wallet name'}`,
+        t('Could not proceed'),
+        !qrCodeImportedEncryptedMnemonic ? 'Missing encrypted mnemonic' : 'Missing wallet name',
         [
           {
-            text: 'Restart',
+            text: t('Restart'),
             onPress: () => navigation.navigate('LandingScreen')
           }
         ]
@@ -98,7 +100,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
         } catch (error) {
           const message = 'Could not import addresses from QR code scan'
 
-          showExceptionToast(error, message)
+          showExceptionToast(error, t(message))
           sendAnalytics({ type: 'error', message, isSensitive: true })
         }
 
@@ -111,13 +113,13 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
       } catch (e) {
         const message = 'Could not import wallet from QR code scan'
 
-        showExceptionToast(error, message)
+        showExceptionToast(error, t(message))
         sendAnalytics({ type: 'error', message })
       }
 
       if (contacts.length > 0) await importContacts(contacts)
     } catch (e) {
-      setError('Could not decrypt wallet with the given password.')
+      setError(t('Could not decrypt wallet with the given password.'))
     } finally {
       setLoading(false)
     }
@@ -141,15 +143,15 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
       fill
       keyboardShouldPersistTaps="always"
       headerOptions={{
-        headerTitle: 'Password',
+        headerTitle: t('Password'),
         type: 'stack',
         headerRight: () => <ContinueButton onPress={decryptAndImportWallet} disabled={!password || !!error} />
       }}
-      screenIntro="Enter your desktop wallet password to decrypt the secret recovery phrase."
+      screenIntro={t('Enter your desktop wallet password to decrypt the secret recovery phrase.')}
     >
       <ScreenSection fill>
         <Input
-          label="Password"
+          label={t('Password')}
           value={password}
           onChangeText={handleChangeText}
           secureTextEntry
@@ -162,7 +164,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
           onSubmitEditing={decryptAndImportWallet}
         />
       </ScreenSection>
-      {loading && <SpinnerModal isActive={loading} text="Importing wallet..." />}
+      {loading && <SpinnerModal isActive={loading} text={`${t('Importing wallet')}...`} />}
     </ScrollScreen>
   )
 }

@@ -20,6 +20,7 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
 import { useTheme } from 'styled-components'
 
@@ -54,6 +55,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
   const currentFundPassword = useFundPassword()
   const dispatch = useAppDispatch()
   const { fundPasswordModal, triggerFundPasswordAuthGuard } = useFundPasswordGuard()
+  const { t } = useTranslation()
 
   const [isEditingPassword, setIsEditingPassword] = useState<boolean>()
   const [password, setPassword] = useState('')
@@ -63,7 +65,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
     handlePasswordChange: handleConfirmedNewPasswordChange,
     isPasswordCorrect: isEditingPasswordConfirmed,
     error: newPasswordError
-  } = usePassword({ correctPassword: newPassword, errorMessage: "New passwords don't match", isValidation: true })
+  } = usePassword({ correctPassword: newPassword, errorMessage: t("New passwords don't match"), isValidation: true })
 
   useFocusEffect(
     useCallback(() => {
@@ -81,13 +83,13 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
     await storeFundPassword(newPassword || password)
     dispatch(fundPasswordUseToggled(true))
     showToast({
-      text1: 'Saved!',
-      text2: newPassword ? 'Fund password was updated.' : 'Fund password was set up.',
+      text1: t('Saved!'),
+      text2: newPassword ? t('Fund password was updated.') : t('Fund password was set up.'),
       type: 'success'
     })
     cameFromBackupScreen ? resetNavigation(navigation) : navigation.goBack()
     sendAnalytics({
-      event: newPassword ? 'Updated fund password' : 'Created fund password',
+      event: newPassword ? t('Updated fund password') : t('Created fund password'),
       props: {
         origin: props.route.params.origin
       }
@@ -105,12 +107,12 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
   const handleDeletePress = async () => {
     triggerFundPasswordAuthGuard({
       successCallback: () => {
-        showAlert('Delete fund password', async () => {
+        showAlert(t('Delete fund password'), async () => {
           await deleteFundPassword()
           dispatch(fundPasswordUseToggled(false))
           showToast({
-            text1: 'Deleted',
-            text2: 'Fund password was deleted.',
+            text1: t('Deleted'),
+            text2: t('Fund password was deleted.'),
             type: 'info'
           })
           navigation.goBack()
@@ -128,21 +130,25 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
   }
 
   const showAlert = (text: string, onPress: () => void) => {
-    Alert.alert('Are you sure?', 'To enhance your security it is recommended to use a fund password.', [
-      { text: 'Cancel' },
+    Alert.alert(t('Are you sure?'), t('To enhance your security it is recommended to use a fund password.'), [
+      { text: t('Cancel') },
       { text, onPress }
     ])
   }
 
   const screenIntro = isEditingPassword
-    ? 'You can set a new password below. This password will be required for critical operations involving the safety of your funds and cannot be recovered.'
-    : 'The Fund Password acts as an additional authentication layer for critical operations involving the safety of your funds such as revealing your secret recovery phrase or sending funds.'
+    ? t(
+        'You can set a new password below. This password will be required for critical operations involving the safety of your funds and cannot be recovered.'
+      )
+    : t(
+        'The fund password acts as an additional authentication layer for critical operations involving the safety of your funds such as revealing your secret recovery phrase or sending funds.'
+      )
 
   return (
     <ScrollScreen
       verticalGap
       fill
-      screenTitle="Fund password"
+      screenTitle={t('Fund password')}
       screenIntro={screenIntro}
       headerOptions={{ type: cameFromBackupScreen ? 'default' : 'stack' }}
       {...props}
@@ -151,7 +157,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
         <>
           <ScreenSection fill verticalGap>
             <Input
-              label={isEditingPassword ? 'New fund password' : 'Fund password'}
+              label={isEditingPassword ? t('New fund password') : t('Fund password')}
               value={newPassword}
               onChangeText={setNewPassword}
               secureTextEntry
@@ -160,7 +166,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
               blurOnSubmit={false}
             />
             <Input
-              label={isEditingPassword ? 'Confirm new fund password' : 'Confirm fund password'}
+              label={isEditingPassword ? t('Confirm new fund password') : t('Confirm fund password')}
               value={confirmedNewPassword}
               onChangeText={handleConfirmedNewPasswordChange}
               secureTextEntry
@@ -175,7 +181,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
               {cameFromBackupScreen && <Button title="Skip" onPress={handleSkipPress} flex />}
               <Button
                 variant="highlight"
-                title="Save"
+                title={t('Save')}
                 onPress={handleSavePress}
                 disabled={!isEditingPasswordConfirmed}
                 flex
@@ -186,10 +192,10 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
       ) : (
         <ScreenSection>
           <BoxSurface>
-            <Row title="Edit password" onPress={handlePasswordEdit} titleColor={theme.global.accent}>
+            <Row title={t('Edit password')} onPress={handlePasswordEdit} titleColor={theme.global.accent}>
               <Ionicons name="pencil" size={18} color={theme.global.accent} />
             </Row>
-            <Row title="Disable password" onPress={handleDeletePress} titleColor={theme.global.alert} isLast>
+            <Row title={t('Disable password')} onPress={handleDeletePress} titleColor={theme.global.alert} isLast>
               <Ionicons name="close" size={18} color={theme.global.alert} />
             </Row>
           </BoxSurface>

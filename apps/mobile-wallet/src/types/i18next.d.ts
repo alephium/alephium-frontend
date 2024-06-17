@@ -16,22 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { calculateAmountWorth, selectAlphPrice } from '@alephium/shared'
+import 'i18next'
 
-import { useAppSelector } from '~/hooks/redux'
-import { selectTotalBalance } from '~/store/addressesSlice'
-import { DataPoint } from '~/types/charts'
+import en from '../../locales/en-US/translation.json'
 
-const useWorthDelta = (worthInBeginningOfChart?: DataPoint['worth']) => {
-  const totalBalance = useAppSelector(selectTotalBalance)
-  const alphPrice = useAppSelector(selectAlphPrice)
+type EnglishTranslationKeys = typeof en
 
-  const latestValue = calculateAmountWorth(totalBalance, alphPrice ?? 0)
-  const initialValue = worthInBeginningOfChart ?? 0
+export type TranslationKey = keyof EnglishTranslationKeys
 
-  const delta = latestValue - initialValue
-
-  return delta < 0.01 && delta > -0.01 ? 0 : delta
+declare module 'i18next' {
+  interface CustomTypeOptions {
+    resources: {
+      translation: EnglishTranslationKeys
+    }
+  }
 }
-
-export default useWorthDelta

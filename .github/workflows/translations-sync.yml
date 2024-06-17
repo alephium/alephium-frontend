@@ -3,7 +3,7 @@ name: Sync translations
 on:
   workflow_dispatch:
   push:
-    paths: ['apps/desktop-wallet/locales/**', 'apps/explorer/locales/**']
+    paths: ['apps/desktop-wallet/locales/**', 'apps/mobile-wallet/locales/**', 'apps/explorer/locales/**']
     branches: [next]
 
 permissions:

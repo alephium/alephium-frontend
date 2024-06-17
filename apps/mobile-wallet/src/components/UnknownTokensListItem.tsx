@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { openBrowserAsync } from 'expo-web-browser'
 import { ChevronRightIcon } from 'lucide-react-native'
+import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -39,6 +40,7 @@ interface UnknownTokensListItemProps {
 const UnknownTokensListItem = ({ entry }: UnknownTokensListItemProps) => {
   const theme = useTheme()
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
+  const { t } = useTranslation()
 
   return (
     <ListItem
@@ -50,7 +52,7 @@ const UnknownTokensListItem = ({ entry }: UnknownTokensListItemProps) => {
         entry.addressHash ? (
           <ExplorerLink onPress={() => openBrowserAsync(`${explorerBaseUrl}/addresses/${entry.addressHash}`)}>
             <AppText color={theme.global.accent} semiBold>
-              See in explorer
+              {t('See in explorer')}
             </AppText>
             <ChevronRightIcon size={20} color={theme.global.accent} />
           </ExplorerLink>

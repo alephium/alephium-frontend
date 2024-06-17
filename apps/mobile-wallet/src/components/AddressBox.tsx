@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { groupBy } from 'lodash'
 import { useMemo, useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
@@ -54,6 +55,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const theme = useTheme()
+  const { t } = useTranslation()
 
   const [isNftsModalOpen, setIsNftsModalOpen] = useState(false)
 
@@ -76,7 +78,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
         <AddressBadgeStyled onPress={handlePress} addressHash={addressHash} textStyle={{ fontSize: 18 }} />
         <Group>
           <AppText color="tertiary" size={14}>
-            group {address?.group}
+            {t('group {{ groupNumber }}', { groupNumber: address?.group })}
           </AppText>
           {isSelected && <Checkmark />}
         </Group>
@@ -98,8 +100,19 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
             <AssetsRow style={{ marginTop: VERTICAL_GAP }}>
               <NbOfNftsBadge>
                 <AppText>
-                  +<AppText bold>{nfts.length}</AppText> NFTs in <AppText bold>{nbOfNftCollections}</AppText>{' '}
-                  collections
+                  <Trans
+                    t={t}
+                    i18nKey="numberOfNFTsInCollections"
+                    values={{
+                      nftsNumber: nfts.length,
+                      nftsCollectionsNumber: nbOfNftCollections
+                    }}
+                    components={{
+                      1: <AppText bold />
+                    }}
+                  >
+                    {'+<1>{{ nftsNumber }}</1>NFTs in <1>{{ nftsCollectionsNumber }}</1> collections'}
+                  </Trans>
                 </AppText>
               </NbOfNftsBadge>
             </AssetsRow>

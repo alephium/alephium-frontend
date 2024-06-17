@@ -20,6 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import AddressFlatListScreen from '~/components/AddressFlatListScreen'
@@ -32,6 +33,7 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'Address
 
 const AddressScreen = ({ navigation }: ScreenProps) => {
   const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
+  const { t } = useTranslation()
 
   const handleAddressPress = (addressHash: AddressHash) => {
     sendAnalytics({ event: 'Pressed on address to see QR code to receive funds' })
@@ -50,8 +52,8 @@ const AddressScreen = ({ navigation }: ScreenProps) => {
   return (
     <AddressFlatListScreen
       onAddressPress={(addressHash) => handleAddressPress(addressHash)}
-      screenTitle="To address"
-      screenIntro="Select the address which you want to receive funds to."
+      screenTitle={t('To address')}
+      screenIntro={t('Select the address which you want to receive funds to.')}
       contrastedBg
       contentPaddingTop
       onScroll={screenScrollHandler}

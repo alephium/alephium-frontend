@@ -22,6 +22,7 @@ import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import bigInteger from 'big-integer'
 import * as Clipboard from 'expo-clipboard'
 
+import i18n from '~/i18n'
 import { persistAddressesMetadata } from '~/persistent-storage/wallet'
 import { Address, AddressDiscoveryGroupData, AddressPartial } from '~/types/addresses'
 import {
@@ -38,10 +39,10 @@ export const getAddressDisplayName = (address: Address): string =>
 export const copyAddressToClipboard = async (addressHash: AddressHash) => {
   try {
     await Clipboard.setStringAsync(addressHash)
-    showToast({ text1: 'Address copied!', visibilityTime: ToastDuration.SHORT })
+    showToast({ text1: i18n.t('Address copied!'), visibilityTime: ToastDuration.SHORT })
   } catch (error) {
     console.log(error)
-    showToast({ text1: 'Error while copying address', visibilityTime: ToastDuration.SHORT, type: 'error' })
+    showToast({ text1: i18n.t('Error while copying address'), visibilityTime: ToastDuration.SHORT, type: 'error' })
   }
 }
 

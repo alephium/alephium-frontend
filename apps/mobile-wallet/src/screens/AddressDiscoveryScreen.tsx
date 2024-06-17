@@ -20,6 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import Checkbox from 'expo-checkbox'
 import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ActivityIndicator } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
@@ -52,6 +53,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   const { loading, status, progress } = useAppSelector((s) => s.addressDiscovery)
   const networkName = useAppSelector((s) => s.network.name)
   const persistAddressSettings = usePersistAddressSettings()
+  const { t } = useTranslation()
 
   const [addressSelections, setAddressSelections] = useState<Record<AddressHash, boolean>>({})
   const [importLoading, setImportLoading] = useState(false)
@@ -132,13 +134,16 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
     <ScrollScreen
       verticalGap
       fill
-      screenTitle="Active addresses"
-      screenIntro={`Scan the blockchain to find your active addresses on the ${networkName} network. This process might take a while.`}
+      screenTitle={t('Active addresses')}
+      screenIntro={t(
+        'Scan the blockchain to find your active addresses on the {{ networkName }} network. This process might take a while.',
+        { networkName }
+      )}
       headerOptions={{ type: 'stack' }}
       {...props}
     >
       <ScreenSection fill>
-        <ScreenSectionTitle>Current addresses</ScreenSectionTitle>
+        <ScreenSectionTitle>{t('Current addresses')}</ScreenSectionTitle>
         <BoxSurface>
           {addresses.map((address, index) => (
             <Row
@@ -154,12 +159,14 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
         </BoxSurface>
         {(loading || status === 'finished' || discoveredAddresses.length > 0) && !importLoading && (
           <>
-            <ScreenSectionTitle style={{ marginTop: VERTICAL_GAP }}>Newly discovered addresses</ScreenSectionTitle>
+            <ScreenSectionTitle style={{ marginTop: VERTICAL_GAP }}>
+              {t('Newly discovered addresses')}
+            </ScreenSectionTitle>
             {loading && (
               <ScanningIndication>
                 <Row transparent style={{ marginBottom: 10 }} isLast>
                   <ActivityIndicator size="small" color={theme.font.tertiary} style={{ marginRight: 10 }} />
-                  <AppText color="secondary">Scanning...</AppText>
+                  <AppText color="secondary">{t('Scanning')}...</AppText>
                 </Row>
                 <ProgressBar progress={progress} color={theme.global.accent} />
               </ScanningIndication>
@@ -188,7 +195,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
               </BoxSurface>
             )}
             {discoveredAddresses.length === 0 && status === 'finished' && (
-              <AppText>Did not find any new addresses, please continue.</AppText>
+              <AppText>{t('Did not find any new addresses, please continue.')}</AppText>
             )}
           </>
         )}
@@ -197,7 +204,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
         {status === 'idle' && (
           <ButtonStyled
             iconProps={{ name: 'search-outline' }}
-            title="Start scanning"
+            title={t('Start scanning')}
             onPress={handleStartScanPress}
             variant="highlight"
           />
@@ -205,7 +212,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
         {status === 'started' && (
           <ButtonStyled
             iconProps={{ name: 'close-outline' }}
-            title="Stop scanning"
+            title={t('Stop scanning')}
             onPress={handleStopScanPress}
             variant="highlight"
           />
@@ -213,7 +220,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
         {status === 'stopped' && (
           <ContinueButton
             iconProps={{ name: 'search-outline' }}
-            title="Continue scanning"
+            title={t('Continue scanning')}
             onPress={handleContinueScanPress}
             variant="highlight"
           />
@@ -221,7 +228,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
         {discoveredAddresses.length > 0 && (status === 'stopped' || status === 'finished') && (
           <ButtonStyled
             iconProps={{ name: 'download-outline' }}
-            title="Import selected addresses"
+            title={t('Import selected addresses')}
             onPress={importAddresses}
             disabled={selectedAddressesToImport.length === 0}
             variant="highlight"
@@ -230,13 +237,13 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
         {discoveredAddresses.length === 0 && status === 'finished' && !importLoading && (
           <ButtonStyled
             iconProps={{ name: isImporting ? 'arrow-forward-outline' : 'arrow-back-outline' }}
-            title={isImporting ? 'Continue' : 'Go back'}
+            title={isImporting ? t('Continue') : t('Go back')}
             onPress={continueToNextScreen}
             variant={isImporting ? 'highlight' : 'accent'}
           />
         )}
       </ScreenSection>
-      <SpinnerModal isActive={importLoading} text="Importing addresses..." blur={false} />
+      <SpinnerModal isActive={importLoading} text={`${t('Importing addresses')}...`} blur={false} />
     </ScrollScreen>
   )
 }

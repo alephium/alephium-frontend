@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, Platform } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
@@ -41,6 +42,7 @@ const WalletConnectHeaderButton = () => {
   const walletConnectClientError = useAppSelector((s) => s.clients.walletConnect.errorMessage)
   const { activeSessions, resetWalletConnectClientInitializationAttempts } = useWalletConnectContext()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const [isWalletConnectPairingsModalOpen, setIsWalletConnectPairingsModalOpen] = useState(false)
   const [isWalletConnectPasteUrlModalOpen, setIsWalletConnectPasteUrlModalOpen] = useState(false)
@@ -112,7 +114,7 @@ const WalletConnectHeaderButton = () => {
           Content={(props) => (
             <ModalContent verticalGap {...props}>
               <ScreenSection>
-                <BottomModalScreenTitle>Could not connect to WalletConnect</BottomModalScreenTitle>
+                <BottomModalScreenTitle>{t('Could not connect to WalletConnect')}</BottomModalScreenTitle>
               </ScreenSection>
               {walletConnectClientError && (
                 <ScreenSection>
@@ -123,9 +125,9 @@ const WalletConnectHeaderButton = () => {
               )}
               <ScreenSection centered>
                 <ButtonsRow>
-                  <Button title="Close" onPress={props.onClose && props.onClose} flex />
+                  <Button title={t('Close')} onPress={props.onClose && props.onClose} flex />
                   <Button
-                    title="Retry"
+                    title={t('Retry')}
                     variant="accent"
                     onPress={() => {
                       resetWalletConnectClientInitializationAttempts()

@@ -23,6 +23,7 @@ import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
+import i18n from '~/i18n'
 
 interface GroupSelectModalProps extends ModalContentProps {
   selectedGroup?: number
@@ -31,7 +32,7 @@ interface GroupSelectModalProps extends ModalContentProps {
 
 const groupSelectOptions = map(Array(TOTAL_NUMBER_OF_GROUPS + 1), (_, i) => ({
   value: i === 0 ? undefined : i - 1,
-  label: i === 0 ? 'Default' : `Group ${i - 1}`
+  label: i === 0 ? i18n.t('Default') : i18n.t('Group {{ groupNumber }}', { groupNumber: i - 1 })
 }))
 
 const GroupSelectModal = ({ onClose, onSelect, selectedGroup, ...props }: GroupSelectModalProps) => {

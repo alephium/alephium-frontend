@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import DeprecatedAuthenticationModal from '~/components/DeprecatedAuthenticationModal'
@@ -38,6 +39,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
   const dispatch = useAppDispatch()
   const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
   const { deviceSupportsBiometrics, deviceHasEnrolledBiometrics } = useBiometrics()
+  const { t } = useTranslation()
 
   const [isPinModalVisible, setIsPinModalVisible] = useState(true)
 
@@ -63,17 +65,17 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
       } catch (error) {
         const message = 'Could not migrate mnemonic and unlock wallet'
 
-        showExceptionToast(error, message)
+        showExceptionToast(error, t(message))
         sendAnalytics({ type: 'error', message })
       }
     },
-    [biometricsRequiredForAppAccess, deviceHasEnrolledBiometrics, deviceSupportsBiometrics, dispatch, navigation]
+    [biometricsRequiredForAppAccess, deviceHasEnrolledBiometrics, deviceSupportsBiometrics, dispatch, navigation, t]
   )
 
   return (
     <Screen contrastedBg {...props}>
       <DeprecatedAuthenticationModal visible={isPinModalVisible} forcePinUsage onConfirm={handleSuccessfulLogin} />
-      {!isPinModalVisible && <Spinner text="Unlocking..." />}
+      {!isPinModalVisible && <Spinner text={`${t('Unlocking')}...`} />}
     </Screen>
   )
 }

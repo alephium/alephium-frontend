@@ -21,6 +21,7 @@ import { BarCodeScanningResult, Camera, CameraType } from 'expo-camera'
 import { Camera as CameraIcon } from 'lucide-react-native'
 import { areFramesComplete, framesToData, parseFramesReducer, progressOfFrames, State as FrameState } from 'qrloop'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Dimensions } from 'react-native'
 import { Bar as ProgressBar } from 'react-native-progress'
 import styled, { useTheme } from 'styled-components/native'
@@ -42,6 +43,7 @@ let frames: FrameState
 
 const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text }: QRCodeScannerModalProps) => {
   const theme = useTheme()
+  const { t } = useTranslation()
 
   const [hasPermission, setHasPermission] = useState<boolean>()
   const [scanned, setScanned] = useState(false)
@@ -98,7 +100,7 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
       {qrCodeMode === 'animated' && (
         <TextContainer>
           <AppTextCentered size={16} semiBold color="white">
-            Scan progress: {(progress * 100).toFixed(0)}%
+            {t('Scan progress')}: {(progress * 100).toFixed(0)}%
           </AppTextCentered>
           <ProgressBar progress={progress} color="white" />
         </TextContainer>
@@ -126,8 +128,8 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
 
         {hasPermission === false && (
           <ScreenSection fill verticallyCentered>
-            <InfoBox title="Camera permissions required" Icon={CameraIcon}>
-              <AppText>Please, enable access to camera through the settings of your device.</AppText>
+            <InfoBox title={t('Camera permissions required')} Icon={CameraIcon}>
+              <AppText>{t('Please, enable access to camera through the settings of your device.')}</AppText>
             </InfoBox>
           </ScreenSection>
         )}

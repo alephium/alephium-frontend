@@ -21,6 +21,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Alert, KeyboardAvoidingView, ScrollView } from 'react-native'
 import { FadeIn } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
@@ -57,6 +58,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const { deviceHasEnrolledBiometrics } = useBiometrics()
   const theme = useTheme()
   const allowedWords = useRef(bip39Words)
+  const { t } = useTranslation()
 
   const [typedInput, setTypedInput] = useState('')
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
@@ -93,9 +95,9 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const importWallet = async () => {
     // This should never happen, but if it does, let the user restart the process of creating a wallet
     if (!name) {
-      Alert.alert('Could not proceed', 'Missing wallet name', [
+      Alert.alert(t('Could not proceed'), t('Missing wallet name'), [
         {
-          text: 'Restart',
+          text: t('Restart'),
           onPress: () => navigation.navigate('LandingScreen')
         }
       ])
@@ -123,7 +125,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
     } catch (error) {
       const message = 'Could not import wallet'
 
-      showExceptionToast(error, message)
+      showExceptionToast(error, t(message))
       sendAnalytics({ type: 'error', message })
     } finally {
       setLoading(false)
@@ -147,8 +149,8 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
           headerRight: () => <ContinueButton onPress={importWallet} disabled={!isImportButtonEnabled} />
         }}
         keyboardShouldPersistTaps="always"
-        screenTitle="Secret phrase"
-        screenIntro={`Enter the secret phrase for the "${name}" wallet.`}
+        screenTitle={t('Secret phrase')}
+        screenIntro={t('Enter the secret phrase for the "{{ walletName }}" wallet.', { walletName: name })}
         {...props}
       >
         <SecretPhraseContainer>
@@ -162,7 +164,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
             </SecretPhraseBox>
           )}
         </SecretPhraseContainer>
-        {loading && <SpinnerModal isActive={loading} text="Importing wallet..." />}
+        {loading && <SpinnerModal isActive={loading} text={`${t('Importing wallet')}...`} />}
       </ScrollScreenStyled>
 
       <BottomInputContainer
@@ -197,8 +199,8 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
           autoFocus
           blurOnSubmit={false}
           autoCorrect={false}
-          error={typedInput.split(' ').length > 1 ? 'Please, type the words one by one' : ''}
-          label={`Type the ${selectedWords.length === 0 ? 'first' : 'next'} word`}
+          error={typedInput.split(' ').length > 1 ? t('Please, type the words one by one') : ''}
+          label={selectedWords.length === 0 ? t('Type the first word') : t('Type the next word')}
         />
       </BottomInputContainer>
     </KeyboardAvoidingView>

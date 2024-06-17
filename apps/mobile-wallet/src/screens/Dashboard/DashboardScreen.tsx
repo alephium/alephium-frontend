@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { Pressable } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated, { useAnimatedStyle, withDelay, withSpring } from 'react-native-reanimated'
@@ -63,6 +64,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsFundPasswordReminder = useAppSelector((s) => s.fundPassword.needsReminder)
+  const { t } = useTranslation()
 
   const [isFundPasswordReminderModalOpen, setIsFundPasswordReminderModalOpen] = useState(false)
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
@@ -136,7 +138,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       {...props}
     >
       <BalanceAndButtons>
-        <BalanceSummary dateLabel="VALUE TODAY" />
+        <BalanceSummary dateLabel={t('VALUE TODAY')} />
         {totalBalance > BigInt(0) && (
           <ButtonsRowContainer
             style={[
@@ -152,7 +154,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
             <Button
               onPress={handleSendPress}
               iconProps={{ name: 'arrow-up-outline' }}
-              title="Send"
+              title={t('Send')}
               variant="highlightedIcon"
               round
               short
@@ -161,7 +163,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
             <Button
               onPress={handleReceivePress}
               iconProps={{ name: 'arrow-down-outline' }}
-              title="Receive"
+              title={t('Receive')}
               variant="highlightedIcon"
               round
               short
@@ -174,7 +176,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
         <EmptyPlaceholder>
           <AppText semiBold color="secondary">
-            There is so much left to discover! 🌈
+            {t('There is so much left to discover!')} 🌈
           </AppText>
         </EmptyPlaceholder>
       )}
@@ -185,30 +187,44 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           Content={(props) => (
             <ModalContent verticalGap {...props}>
               <ScreenSection>
-                <BottomModalScreenTitle>{isNewWallet ? 'Hello there! 👋' : "Let's verify! 😌"}</BottomModalScreenTitle>
+                <BottomModalScreenTitle>
+                  {isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}
+                </BottomModalScreenTitle>
               </ScreenSection>
               <ScreenSection>
                 {isNewWallet ? (
                   <AppText color="secondary" size={18}>
-                    The first and most important step is to{' '}
-                    <AppText size={18} bold>
-                      write down your secret recovery phrase
-                    </AppText>{' '}
-                    and store it in a safe place.
+                    <Trans
+                      t={t}
+                      i18nKey="backupModalMessage1"
+                      components={{
+                        1: <AppText size={18} bold />
+                      }}
+                    >
+                      {
+                        'The first and most important step is to <1>write down your secret recovery phrase</1> and store it in a safe place.'
+                      }
+                    </Trans>
                   </AppText>
                 ) : (
                   <AppText color="secondary" size={18}>
-                    Have peace of mind by verifying that you{' '}
-                    <AppText size={18} bold>
-                      wrote your secret recovery phrase down
-                    </AppText>{' '}
-                    correctly.
+                    <Trans
+                      t={t}
+                      i18nKey="backupModalMessage2"
+                      components={{
+                        1: <AppText size={18} bold />
+                      }}
+                    >
+                      {
+                        'Have peace of mind by verifying that you <1>wrote your secret recovery phrase down</1> correctly.'
+                      }
+                    </Trans>
                   </AppText>
                 )}
               </ScreenSection>
               <ScreenSection>
                 <Button
-                  title="Let's do that!"
+                  title={t("Let's do that!")}
                   onPress={() => navigation.navigate('BackupMnemonicNavigation')}
                   variant="highlight"
                 />

@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Contact } from '@alephium/shared'
 import { colord } from 'colord'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { TextInput, ViewProps } from 'react-native'
 import Animated, { AnimatedProps } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
@@ -43,6 +44,7 @@ export interface ContactListScreenBaseProps {
 
 const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: ContactListScreenBaseProps) => {
   const theme = useTheme()
+  const { t } = useTranslation()
 
   const contacts = useAppSelector(selectAllContacts)
 
@@ -57,7 +59,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
     <Animated.View {...props}>
       <HeaderScreenSection>
         <SearchInput
-          placeholder="Search"
+          placeholder={t('Search')}
           value={searchTerm}
           onChangeText={setSearchTerm}
           placeholderTextColor={theme.font.tertiary}
@@ -70,8 +72,8 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
         <NoContactContainer>
           <NoContactMessageBox>
             <EmojiContainer size={60}>🤷‍♀️</EmojiContainer>
-            <AppText>No contact yet!</AppText>
-            <Button title="Add contact" onPress={onNewContactPress} variant="highlight" />
+            <AppText>{t('No contact yet!')}</AppText>
+            <Button title={t('Add contact')} onPress={onNewContactPress} variant="highlight" />
           </NoContactMessageBox>
         </NoContactContainer>
       ) : (
@@ -100,7 +102,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
             <NoContactContainer>
               <NoContactMessageBox>
                 <EmojiContainer size={60}>🧐</EmojiContainer>
-                <AppText>No contacts found with these filtering criteria.</AppText>
+                <AppText>{t('No contacts found with these filtering criteria.')}</AppText>
               </NoContactMessageBox>
             </NoContactContainer>
           )}

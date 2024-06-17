@@ -18,10 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { isAddressValid } from '@alephium/shared'
 
+import i18n from '~/i18n'
 import { isNumericStringValid } from '~/utils/numbers'
 
-export const validateIsAddressValid = (value: string) => isAddressValid(value) || 'This address is not valid.'
+export const validateIsAddressValid = (value: string) => isAddressValid(value) || i18n.t('This address is not valid')
 
-export const validateIsNumericStringValid = (value: string) => isNumericStringValid(value) || 'A number is expected.'
+export const validateIsNumericStringValid = (value: string) =>
+  isNumericStringValid(value) || i18n.t('A number is expected')
 
 export const validateOptionalIsNumericStringValid = (value: string) => !value || validateIsNumericStringValid(value)

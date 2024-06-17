@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Dispatch, SetStateAction, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface UsePasswordProps {
   correctPassword: string
@@ -33,6 +34,8 @@ interface UsePasswordReturn {
 }
 
 const usePassword = ({ correctPassword, errorMessage, isValidation }: UsePasswordProps): UsePasswordReturn => {
+  const { t } = useTranslation()
+
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string>()
 
@@ -42,7 +45,7 @@ const usePassword = ({ correctPassword, errorMessage, isValidation }: UsePasswor
     setPassword(text)
 
     if (!isValidation || (error === undefined && text.length === correctPassword.length) || error !== undefined) {
-      setError(text !== correctPassword ? errorMessage || 'Password is wrong' : '')
+      setError(text !== correctPassword ? errorMessage || t('Password is wrong') : '')
     }
   }
 

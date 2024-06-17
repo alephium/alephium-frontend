@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { useMemo, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FlatList } from 'react-native'
 
 import BaseHeader from '~/components/headers/BaseHeader'
@@ -37,6 +38,7 @@ type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 
 
 const TransfersScreen = ({ navigation }: ScreenProps) => {
   const listRef = useRef<FlatList<AddressTransaction>>(null)
+  const { t } = useTranslation()
 
   const selectAddressesConfirmedTransactions = useMemo(makeSelectAddressesConfirmedTransactions, [])
   const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
@@ -49,7 +51,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
 
   return (
     <Screen contrastedBg>
-      <BaseHeader options={{ headerTitle: 'Transfers' }} scrollY={screenScrollY} showBorderBottom />
+      <BaseHeader options={{ headerTitle: t('Transfers') }} scrollY={screenScrollY} showBorderBottom />
       <TransactionsFlatList
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
@@ -57,7 +59,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         ref={listRef}
-        ListHeaderComponent={<ScreenTitle title="Transfers" scrollY={screenScrollY} sideDefaultMargin />}
+        ListHeaderComponent={<ScreenTitle title={t('Transfers')} scrollY={screenScrollY} sideDefaultMargin />}
       />
     </Screen>
   )

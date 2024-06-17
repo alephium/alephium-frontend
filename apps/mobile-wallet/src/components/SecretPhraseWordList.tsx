@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { usePreventScreenCapture } from 'expo-screen-capture'
+import { useTranslation } from 'react-i18next'
 import { Pressable } from 'react-native'
 import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
 import styled, { DefaultTheme } from 'styled-components/native'
@@ -45,6 +46,8 @@ const SecretPhraseWordList = ({
   showEmptyListMessage,
   color = 'accent'
 }: SecretPhraseWordListProps) => {
+  const { t } = useTranslation()
+
   usePreventScreenCapture()
 
   return (
@@ -64,7 +67,7 @@ const SecretPhraseWordList = ({
               </AppText>
             </SelectedWordBox>
           ))
-        : showEmptyListMessage && <AppText color="secondary">Start entering your phrase... 👇</AppText>}
+        : showEmptyListMessage && <AppText color="secondary">{t('Start entering your phrase')}... 👇</AppText>}
     </SecretPhraseWordListStyled>
   )
 }

@@ -20,6 +20,7 @@ import { Asset, fromHumanReadableAmount, getNumberOfDecimals, NFT, toHumanReadab
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
@@ -47,6 +48,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const theme = useTheme()
   const inputRef = useRef<TextInput>(null)
   const { assetAmounts, setAssetAmount } = useSendContext()
+  const { t } = useTranslation()
 
   const assetAmount = assetAmounts.find(({ id }) => id === asset.id)
   const assetIsNft = isNft(asset)
@@ -75,11 +77,13 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
 
     const newError =
       amountValueAsFloat > parseFloat(availableAmount)
-        ? 'Amount exceeds available balance'
+        ? t('Amount exceeds available balance')
         : asset.id === ALPH.id && amountValueAsFloat < parseFloat(minAmountInAlph) && amountValueAsFloat !== 0
-          ? `Amount must be greater than ${minAmountInAlph}`
+          ? t('Amount must be greater than {{ minAmount }}', { minAmount: minAmountInAlph })
           : tooManyDecimals
-            ? `This asset cannot have more than ${asset.decimals} decimals`
+            ? t('This asset cannot have more than {{ numberOfDecimals }} decimals', {
+                numberOfDecimals: asset.decimals
+              })
             : ''
 
     setError(newError)
@@ -170,7 +174,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
         <BottomRow entering={FadeIn} style={bottomRowAnimatedStyle}>
           <AmountInputRow>
             <AppText semiBold size={15}>
-              Amount
+              {t('Amount')}
             </AppText>
             <AmountInputValue>
               <AmountTextInput
@@ -194,7 +198,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
             <ErrorText color="alert" size={11}>
               {error}
             </ErrorText>
-            <UseMaxButton title="Use max" onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
+            <UseMaxButton title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
           </InputBottomPart>
         </BottomRow>
       </Pressable>

@@ -20,6 +20,7 @@ import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from
 import { NavigationState } from '@react-navigation/routers'
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
 import { useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Dimensions, LayoutChangeEvent, Modal } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
@@ -149,6 +150,7 @@ const AppUnlockModal = () => {
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
+  const { t } = useTranslation()
 
   const [isAuthModalVisible, setIsAuthModalVisible] = useState(false)
 
@@ -182,7 +184,7 @@ const AppUnlockModal = () => {
 
     try {
       const walletExists = await storedWalletExists()
-      const deprecatedWallet = await getDeprecatedStoredWallet({ authenticationPrompt: 'Unlock your wallet' })
+      const deprecatedWallet = await getDeprecatedStoredWallet({ authenticationPrompt: t('Unlock your wallet') })
 
       if (walletExists) {
         await triggerBiometricsAuthGuard({
@@ -214,13 +216,21 @@ const AppUnlockModal = () => {
       const error = e as { message?: string }
 
       if (error.message?.includes('User canceled')) {
-        showToast({ text1: 'Authentication required.', text2: 'Exit the app and try again.', type: 'error' })
+        showToast({ text1: t('Authentication required'), text2: t('Exit the app and try again.'), type: 'error' })
       } else {
         console.error(e)
-        showExceptionToast(e, 'Could not unlock app')
+        showExceptionToast(e, t('Could not unlock app'))
       }
     }
-  }, [dispatch, initializeAppWithStoredWallet, isWalletUnlocked, navigation, openAuthModal, triggerBiometricsAuthGuard])
+  }, [
+    dispatch,
+    initializeAppWithStoredWallet,
+    isWalletUnlocked,
+    navigation,
+    openAuthModal,
+    t,
+    triggerBiometricsAuthGuard
+  ])
 
   useAutoLock({
     unlockApp,

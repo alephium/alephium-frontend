@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { memo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -34,6 +35,7 @@ interface ColorPickerProps {
 
 const ColorPicker = ({ value, onChange, style }: ColorPickerProps) => {
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const { t } = useTranslation()
 
   const handleColorPress = (color: string) => {
     onChange(color)
@@ -43,7 +45,7 @@ const ColorPicker = ({ value, onChange, style }: ColorPickerProps) => {
   return (
     <>
       <HighlightRow isInput style={style} onPress={() => setIsModalVisible(!isModalVisible)}>
-        <AppText>Color</AppText>
+        <AppText>{t('Color')}</AppText>
         <Dot color={value} />
       </HighlightRow>
       <ModalWithBackdrop

@@ -19,13 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Contact, isAddressValid as isAddressHashValid } from '@alephium/shared'
 import { Optional } from '@alephium/web3'
 
+import i18n from '~/i18n'
 import { store } from '~/store/store'
 
 // Same as in desktop wallet
 export const requiredErrorMessage = 'This field is required'
 
 // Same as in desktop wallet
-export const isAddressValid = (value: string) => isAddressHashValid(value) || 'This address is not valid'
+export const isAddressValid = (value: string) => isAddressHashValid(value) || i18n.t('This address is not valid')
 
 // Same as in desktop wallet
 export const isContactAddressValid = ({ address, id }: Optional<Omit<Contact, 'name'>, 'id'>) => {
@@ -34,7 +35,7 @@ export const isContactAddressValid = ({ address, id }: Optional<Omit<Contact, 'n
   const existingContact = contacts.find((contact) => contact.address === address)
 
   return existingContact && existingContact.id !== id
-    ? `A contact with this address already exists: ${existingContact.name}`
+    ? `${i18n.t('A contact with this address already exists')}: ${existingContact.name}`
     : true
 }
 
@@ -45,6 +46,6 @@ export const isContactNameValid = ({ name, id }: Optional<Omit<Contact, 'address
   const existingContact = contacts.find((contact) => contact.name.toLowerCase() === name.toLowerCase())
 
   return existingContact && existingContact.id !== id
-    ? `A contact with this name already exists: ${existingContact.address}`
+    ? `${i18n.t('A contact with this name already exists')}: ${existingContact.address}`
     : true
 }

@@ -22,6 +22,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { shuffle } from 'lodash'
 import LottieView from 'lottie-react-native'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
 import Animated, { FadeIn } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -57,6 +58,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
   const randomizedOptions = useRef<string[][]>([])
   const insets = useSafeAreaInsets()
   const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
+  const { t } = useTranslation()
 
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([])
   const [possibleMatches, setPossibleMatches] = useState<string[]>([])
@@ -84,11 +86,11 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
       } catch (error) {
         const message = 'Could not confirm backup'
 
-        showExceptionToast(error, message)
+        showExceptionToast(error, t(message))
         sendAnalytics({ type: 'error', error, message })
       }
     }
-  }, [isMnemonicBackedUp, dispatch])
+  }, [isMnemonicBackedUp, dispatch, t])
 
   useEffect(() => {
     if (selectedWords.length < mnemonicWords.current.length) {
@@ -116,8 +118,8 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
 
     if (word !== mnemonicWords.current[selectedWords.length]) {
       Alert.alert(
-        `This is not the word in position ${selectedWords.length + 1}`,
-        'Please, verify that you wrote your secret phrase down correctly and try again.'
+        t('This is not the word in position {{ positionIndex }}', { positionIndex: selectedWords.length + 1 }),
+        t('Please, verify that you wrote your secret phrase down correctly and try again.')
       )
       return
     }
@@ -132,8 +134,8 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
         verticalGap
         contentPaddingTop
         onScroll={screenScrollHandler}
-        screenTitle="Verify secret phrase"
-        screenIntro="Select the words of your secret recovery phrase in the right order."
+        screenTitle={t('Verify secret phrase')}
+        screenIntro={t('Select the words of your secret recovery phrase in the right order.')}
         {...props}
       >
         <ScreenSection fill>
@@ -159,7 +161,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
           style={{ padding: possibleMatches.length > 0 ? 15 : 0, paddingBottom: insets.bottom + DEFAULT_MARGIN }}
         >
           <AppText size={16} bold color="secondary" style={{ marginBottom: DEFAULT_MARGIN }}>
-            Word {selectedWords.length + 1} is:
+            {t('Word {{ wordIndex }} is:', { wordIndex: selectedWords.length + 1 })}
           </AppText>
 
           <WordsList>

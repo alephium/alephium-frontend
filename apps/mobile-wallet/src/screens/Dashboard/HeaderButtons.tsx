@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { isAddressValid } from '@alephium/shared'
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
 import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -47,14 +48,15 @@ const HeaderButtons = ({ style }: HeaderButtonsProps) => {
   const dispatch = useAppDispatch()
   const { pairWithDapp } = useWalletConnectContext()
   const isFocused = useIsFocused()
+  const { t } = useTranslation()
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
 
   const showOfflineMessage = () =>
     showToast({
-      text1: 'Reconnecting...',
-      text2: 'The app is offline and trying to reconnect. Please, check your network settings.',
+      text1: `${t('Reconnecting')}...`,
+      text2: t('The app is offline and trying to reconnect. Please, check your network settings.'),
       type: 'info',
       onPress: () => navigation.navigate('SettingsScreen')
     })
@@ -70,8 +72,8 @@ const HeaderButtons = ({ style }: HeaderButtonsProps) => {
         pairWithDapp(text)
       } else {
         showToast({
-          text1: 'Experimental feature',
-          text2: 'WalletConnect is an experimental feature. You can enable it in the settings.',
+          text1: t('Experimental feature'),
+          text2: t('WalletConnect is an experimental feature. You can enable it in the settings.'),
           type: 'info',
           onPress: () => navigation.navigate('SettingsScreen')
         })
@@ -103,8 +105,8 @@ const HeaderButtons = ({ style }: HeaderButtonsProps) => {
           onQRCodeScan={handleQRCodeScan}
           text={
             isWalletConnectEnabled
-              ? 'Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.'
-              : 'Scan an Alephium address QR code to send funds to.'
+              ? t('Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.')
+              : t('Scan an Alephium address QR code to send funds to.')
           }
         />
       )}

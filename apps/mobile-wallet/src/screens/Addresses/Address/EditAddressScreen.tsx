@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressSettings } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
@@ -35,11 +36,12 @@ import { showExceptionToast } from '~/utils/layout'
 
 interface EditAddressScreenProps extends StackScreenProps<RootStackParamList, 'EditAddressScreen'>, ScrollScreenProps {}
 
-const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddressScreenProps) => {
+const EditAddressScreen = ({ navigation, route: { params } }: EditAddressScreenProps) => {
   const dispatch = useAppDispatch()
   const addressHash = params.addressHash
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
+  const { t } = useTranslation()
 
   const [loading, setLoading] = useState(false)
 
@@ -58,7 +60,7 @@ const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddr
     } catch (error) {
       const message = 'Could not edit address settings'
 
-      showExceptionToast(error, message)
+      showExceptionToast(error, t(message))
       sendAnalytics({ type: 'error', message })
     }
 
@@ -73,7 +75,7 @@ const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddr
         onSubmit={handleSavePress}
         buttonText="Save"
         disableIsMainToggle={address.settings.isDefault}
-        screenTitle="Address settings"
+        screenTitle={t('Address settings')}
         HeaderComponent={
           <ScreenSection>
             <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
@@ -82,7 +84,7 @@ const EditAddressScreen = ({ navigation, route: { params }, ...props }: EditAddr
           </ScreenSection>
         }
       />
-      <SpinnerModal isActive={loading} text="Saving address..." />
+      <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
     </>
   )
 }

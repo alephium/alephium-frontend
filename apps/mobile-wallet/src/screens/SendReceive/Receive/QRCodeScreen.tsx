@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import QRCode from 'react-qr-code'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -44,6 +45,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const theme = useTheme()
   const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
+  const { t } = useTranslation()
 
   useScrollToTopOnFocus(screenScrollY)
 
@@ -61,11 +63,11 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
           <ContinueButton
             onPress={() => navigation.getParent()?.goBack()}
             iconProps={{ name: 'checkmark' }}
-            title="Done"
+            title={t('Done')}
           />
         )
       })
-    }, [navigation, setHeaderOptions])
+    }, [navigation, setHeaderOptions, t])
   )
 
   return (
@@ -73,8 +75,8 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       verticalGap
       contentPaddingTop
       onScroll={screenScrollHandler}
-      screenTitle="Scan"
-      screenIntro="Scan the QR code to send funds to this address."
+      screenTitle={t('Scan')}
+      screenIntro={t('Scan the QR code to send funds to this address.')}
       {...props}
     >
       <ScreenSection centered>
@@ -83,11 +85,11 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         </QRCodeContainer>
       </ScreenSection>
       <ScreenSection centered>
-        <Button title="Copy address" onPress={handleCopyAddressPress} iconProps={{ name: 'copy-outline' }} />
+        <Button title={t('Copy address')} onPress={handleCopyAddressPress} iconProps={{ name: 'copy-outline' }} />
       </ScreenSection>
       <ScreenSection>
         <BoxSurface>
-          <Row title="Address" isLast={!address?.settings.label}>
+          <Row title={t('Address')} isLast={!address?.settings.label}>
             <AddressBadge addressHash={params.addressHash} />
           </Row>
 

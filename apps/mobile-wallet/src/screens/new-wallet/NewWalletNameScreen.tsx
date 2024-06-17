@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
@@ -29,6 +30,7 @@ import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
+import i18n from '~/i18n'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { generateAndStoreWallet } from '~/persistent-storage/wallet'
 import { syncLatestTransactions } from '~/store/addressesSlice'
@@ -40,8 +42,8 @@ import { sleep } from '~/utils/misc'
 import { resetNavigation } from '~/utils/navigation'
 
 const instructions: Instruction[] = [
-  { text: "Alright, let's get to it.", type: 'secondary' },
-  { text: 'How should we call this wallet?', type: 'primary' }
+  { text: i18n.t("Alright, let's get to it."), type: 'secondary' },
+  { text: i18n.t('How should we call this wallet?'), type: 'primary' }
 ]
 
 interface NewWalletNameScreenProps extends StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>, ScreenProps {}
@@ -51,6 +53,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
   const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
   const { deviceHasEnrolledBiometrics } = useBiometrics()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
@@ -81,7 +84,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
       } catch (error) {
         const message = 'Could not generate new wallet'
 
-        showExceptionToast(error, message)
+        showExceptionToast(error, t(message))
         sendAnalytics({ type: 'error', error, message, isSensitive: true })
       } finally {
         setLoading(false)
@@ -103,7 +106,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
       <ContentContainer>
         <CenteredInstructions instructions={instructions} />
         <StyledInput
-          label="Wallet name"
+          label={t('Wallet name')}
           value={name}
           onChangeText={setName}
           autoFocus
@@ -113,7 +116,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           maxLength={24}
         />
       </ContentContainer>
-      <SpinnerModal isActive={loading} text="Creating wallet..." />
+      <SpinnerModal isActive={loading} text={`${t('Creating wallet')}...`} />
     </ScrollScreen>
   )
 }

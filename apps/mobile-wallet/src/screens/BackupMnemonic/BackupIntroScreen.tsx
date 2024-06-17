@@ -20,6 +20,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
 import { useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
@@ -44,6 +45,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
   const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
+  const { t } = useTranslation()
 
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
 
@@ -75,12 +77,12 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
           <CenteredInstructions
             instructions={[
               {
-                text: 'In the following screens you will see and verify your secret recover phrase.',
+                text: t('In the following screens you will see and verify your secret recover phrase.'),
                 type: 'secondary'
               },
-              { text: 'Write it down and store it in a safe place.', type: 'primary' },
+              { text: t('Write it down and store it in a safe place.'), type: 'primary' },
               {
-                text: 'Why is this important?',
+                text: t('Why is this important?'),
                 type: 'link',
                 url: 'https://docs.alephium.org/frequently-asked-questions#why-is-it-important-to-back-up-your-secret-recovery-phrase'
               }
@@ -89,7 +91,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
         </ScreenSection>
         <FooterButtonContainer>
           <Button
-            title="Show secret recovery phrase"
+            title={t('Show secret recovery phrase')}
             iconProps={{ name: 'key' }}
             type="primary"
             variant="highlight"
