@@ -219,19 +219,18 @@ export const syncAddressesAlphHistoricBalances = createAsyncThunk(
 
       const fromTs = lastDate ? dayjs(lastDate).valueOf() : oneYearAgo
 
-      const alphHistoryData = await client.explorer.addresses.getAddressesAddressAmountHistoryDeprecated(
+      const { amountHistory } = await client.explorer.addresses.getAddressesAddressAmountHistory(
         addressHash,
-        { fromTs, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
-        { format: 'text' }
+        { fromTs, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily }
       )
 
-      try {
-        const { amountHistory } = JSON.parse(alphHistoryData)
+      if (!amountHistory) return []
 
-        for (const [timestamp, balance] of amountHistory) {
+      try {
+        for (const [timestamp, amount] of amountHistory) {
           balances.push({
             date: dayjs(timestamp).format(CHART_DATE_FORMAT),
-            balance: BigInt(balance).toString()
+            balance: amount
           })
         }
       } catch (e) {

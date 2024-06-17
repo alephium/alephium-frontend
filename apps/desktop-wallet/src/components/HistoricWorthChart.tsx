@@ -68,7 +68,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
 
   const [chartData, setChartData] = useState<DataPoint[]>([])
 
-  const startingDate = startingDates[length].format('YYYY-MM-DD')
+  const startingDate = startingDates[length].format(CHART_DATE_FORMAT)
   const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!alphPriceHistory
   const firstItem = chartData.at(0)
 
