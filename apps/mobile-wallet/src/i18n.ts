@@ -22,6 +22,7 @@ import { initReactI18next } from 'react-i18next'
 import en from '../locales/en-US/translation.json'
 
 i18next.use(initReactI18next).init({
+  compatibilityJSON: 'v3',
   resources: {
     'en-US': { translation: en }
   },
