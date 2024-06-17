@@ -16,29 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Currency, NetworkSettings } from '@alephium/shared'
+export type Language = 'en-US' | 'fr-FR'
 
-import { Language } from '~/features/localization/languages'
-import { ThemeType } from '~/style/themes'
-
-export interface GeneralSettings {
-  theme: ThemeType
-  discreetMode: boolean
-  requireAuth: boolean
-  currency: Currency
-  analytics: boolean
-  analyticsId?: string
-  walletConnect: boolean
-  usesBiometrics: boolean
-  autoLockSeconds: number
-  language?: Language
-}
-
-export interface Settings {
-  general: GeneralSettings
-  network: NetworkSettings
-}
-
-export type SettingsKey = keyof Settings
-
-export type SettingsPartial = GeneralSettings | NetworkSettings
+export const languageOptions: { label: string; value: Language }[] = [
+  { label: 'English', value: 'en-US' },
+  { label: 'Français', value: 'fr-FR' }
+]

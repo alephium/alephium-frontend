@@ -16,29 +16,36 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Currency, NetworkSettings } from '@alephium/shared'
-
-import { Language } from '~/features/localization/languages'
-import { ThemeType } from '~/style/themes'
-
-export interface GeneralSettings {
-  theme: ThemeType
-  discreetMode: boolean
-  requireAuth: boolean
-  currency: Currency
-  analytics: boolean
-  analyticsId?: string
-  walletConnect: boolean
-  usesBiometrics: boolean
-  autoLockSeconds: number
-  language?: Language
+type RelativeTimeEntries = {
+  future: string
+  past: string
+  s: string
+  m: string
+  mm: string
+  h: string
+  hh: string
+  d: string
+  dd: string
+  M: string
+  MM: string
+  y: string
+  yy: string
 }
 
-export interface Settings {
-  general: GeneralSettings
-  network: NetworkSettings
+export const shortRelativeTime: Record<string, RelativeTimeEntries> = {
+  en: {
+    future: 'in %s',
+    past: '%s ago',
+    s: 'some sec',
+    m: '1m',
+    mm: '%dm',
+    h: '1h',
+    hh: '%dh',
+    d: '1d',
+    dd: '%dd',
+    M: '1mo',
+    MM: '%dmo',
+    y: '1y',
+    yy: '%dy'
+  }
 }
-
-export type SettingsKey = keyof Settings
-
-export type SettingsPartial = GeneralSettings | NetworkSettings

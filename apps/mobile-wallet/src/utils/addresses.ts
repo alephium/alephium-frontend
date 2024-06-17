@@ -22,7 +22,7 @@ import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import bigInteger from 'big-integer'
 import * as Clipboard from 'expo-clipboard'
 
-import i18n from '~/i18n'
+import i18n from '~/features/localization/i18n'
 import { persistAddressesMetadata } from '~/persistent-storage/wallet'
 import { Address, AddressDiscoveryGroupData, AddressPartial } from '~/types/addresses'
 import {

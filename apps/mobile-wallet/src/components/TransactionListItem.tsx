@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
 import { memo } from 'react'
 import styled from 'styled-components/native'
 
@@ -27,8 +26,6 @@ import ListItem, { ListItemProps } from '~/components/ListItem'
 import { useTransactionUI } from '~/hooks/useTransactionUI'
 import { AddressTransaction } from '~/types/transactions'
 import { getTransactionInfo, isPendingTx } from '~/utils/transactions'
-
-dayjs.extend(relativeTime)
 
 interface TransactionListItemProps extends Partial<ListItemProps> {
   tx: AddressTransaction

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Contact, isAddressValid as isAddressHashValid } from '@alephium/shared'
 import { Optional } from '@alephium/web3'
 
-import i18n from '~/i18n'
+import i18n from '~/features/localization/i18n'
 import { store } from '~/store/store'
 
 // Same as in desktop wallet

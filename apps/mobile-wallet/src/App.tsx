@@ -26,8 +26,6 @@ import {
   TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
-import dayjs from 'dayjs'
-import updateLocale from 'dayjs/plugin/updateLocale'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -37,6 +35,7 @@ import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import ToastAnchor from '~/components/toasts/ToastAnchor'
+import { useLocalization } from '~/features/localization/useLocalization'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
@@ -48,25 +47,6 @@ import {
 import { store } from '~/store/store'
 import { selectTransactionUnknownTokenIds } from '~/store/transactions/transactionSelectors'
 import { themes } from '~/style/themes'
-
-dayjs.extend(updateLocale)
-dayjs.updateLocale('en', {
-  relativeTime: {
-    future: 'in %s',
-    past: '%s ago',
-    s: 'some sec',
-    m: '1m',
-    mm: '%dm',
-    h: '1h',
-    hh: '%dh',
-    d: '1d',
-    dd: '%dd',
-    M: '1mo',
-    MM: '%dmo',
-    y: '1y',
-    yy: '%dy'
-  }
-})
 
 const App = () => {
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
@@ -113,6 +93,7 @@ const Main = ({ children, ...props }: ViewProps) => {
 
   useLoadStoredSettings()
   useInitializeClient()
+  useLocalization()
 
   useEffect(() => {
     if (

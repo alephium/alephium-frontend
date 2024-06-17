@@ -16,41 +16,33 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
-import { map } from 'lodash'
-
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
-import i18n from '~/features/localization/i18n'
+import { Language, languageOptions } from '~/features/localization/languages'
+import { languageChanged } from '~/features/localization/localizationActions'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-interface GroupSelectModalProps extends ModalContentProps {
-  selectedGroup?: number
-  onSelect: (group?: number) => void
-}
+const LanguageSelectModal = ({ onClose, ...props }: ModalContentProps) => {
+  const dispatch = useAppDispatch()
+  const currentLanguage = useAppSelector((s) => s.settings.language)
 
-const groupSelectOptions = map(Array(TOTAL_NUMBER_OF_GROUPS + 1), (_, i) => ({
-  value: i === 0 ? undefined : i - 1,
-  label: i === 0 ? i18n.t('Default') : i18n.t('Group {{ groupNumber }}', { groupNumber: i - 1 })
-}))
-
-const GroupSelectModal = ({ onClose, onSelect, selectedGroup, ...props }: GroupSelectModalProps) => {
-  const onGroupSelect = (group?: number) => {
-    onSelect(group)
+  const handleLanguageChange = (language: Language) => {
+    dispatch(languageChanged(language))
     onClose && onClose()
   }
 
   return (
-    <ModalContent {...props}>
+    <ModalContent verticalGap {...props}>
       <ScreenSection>
         <BoxSurface>
-          {groupSelectOptions.map((groupOption) => (
+          {languageOptions.map((languageOption) => (
             <RadioButtonRow
-              key={groupOption.label}
-              title={groupOption.label}
-              onPress={() => onGroupSelect(groupOption.value)}
-              isActive={selectedGroup === groupOption.value}
+              key={languageOption.label}
+              title={languageOption.label}
+              onPress={() => handleLanguageChange(languageOption.value)}
+              isActive={currentLanguage === languageOption.value}
             />
           ))}
         </BoxSurface>
@@ -59,4 +51,4 @@ const GroupSelectModal = ({ onClose, onSelect, selectedGroup, ...props }: GroupS
   )
 }
 
-export default GroupSelectModal
+export default LanguageSelectModal

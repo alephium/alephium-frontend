@@ -16,29 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Currency, NetworkSettings } from '@alephium/shared'
+import i18next from 'i18next'
+import { initReactI18next } from 'react-i18next'
 
-import { Language } from '~/features/localization/languages'
-import { ThemeType } from '~/style/themes'
+import en from '../../../locales/en-US/translation.json'
+import fr from '../../../locales/fr-FR/translation.json'
 
-export interface GeneralSettings {
-  theme: ThemeType
-  discreetMode: boolean
-  requireAuth: boolean
-  currency: Currency
-  analytics: boolean
-  analyticsId?: string
-  walletConnect: boolean
-  usesBiometrics: boolean
-  autoLockSeconds: number
-  language?: Language
-}
+i18next.use(initReactI18next).init({
+  compatibilityJSON: 'v3',
+  resources: {
+    'en-US': { translation: en },
+    'fr-FR': { translation: fr }
+  },
+  lng: 'en-US',
+  fallbackLng: 'en-US',
+  interpolation: {
+    escapeValue: false
+  }
+})
 
-export interface Settings {
-  general: GeneralSettings
-  network: NetworkSettings
-}
-
-export type SettingsKey = keyof Settings
-
-export type SettingsPartial = GeneralSettings | NetworkSettings
+export default i18next
