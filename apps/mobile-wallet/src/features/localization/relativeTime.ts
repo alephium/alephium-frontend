@@ -48,5 +48,20 @@ export const shortRelativeTime: Record<string, RelativeTimeEntries> = {
     MM: '%dmo',
     y: '1y',
     yy: '%dy'
+  },
+  el: {
+    future: 'σε %s',
+    past: 'πριν %s',
+    s: 'μερικά δ.',
+    m: '1λ',
+    mm: '%dλ',
+    h: '1 ώρα',
+    hh: '%d ώρες',
+    d: '1 μέρα',
+    dd: '%d μέρες',
+    M: '1 μήνα',
+    MM: '%d μήνες',
+    y: '1 χρ.',
+    yy: '%d χρ.'
   }
 }
