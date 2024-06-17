@@ -29,7 +29,6 @@ import { sendAnalytics } from '~/analytics'
 import i18next from '~/features/localization/i18n'
 import { Language, languageOptions } from '~/features/localization/languages'
 import { systemLanguageMatchFailed, systemLanguageMatchSucceeded } from '~/features/localization/localizationActions'
-import { shortRelativeTime } from '~/features/localization/relativeTime'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 dayjs.extend(updateLocale)
@@ -55,14 +54,7 @@ export const useLocalization = () => {
         }
       }
     } else {
-      const languageCode = language.slice(0, 2)
-      const relativeTime = shortRelativeTime[languageCode]
-
-      dayjs.locale(languageCode)
-
-      if (relativeTime) {
-        dayjs.updateLocale(languageCode, { relativeTime })
-      }
+      dayjs.locale(language.slice(0, 2))
 
       try {
         i18next.changeLanguage(language)
