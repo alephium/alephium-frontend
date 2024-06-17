@@ -45,6 +45,7 @@ const TransactionListItem = ({ tx, showInternalInflows = false, ...props }: Tran
       {...props}
       title={label}
       subtitle={dayjs(tx.timestamp).fromNow()}
+      expandedSubtitle
       icon={
         <TransactionIcon color={iconBgColor}>
           <Icon size={16} strokeWidth={3} color={iconColor} />
