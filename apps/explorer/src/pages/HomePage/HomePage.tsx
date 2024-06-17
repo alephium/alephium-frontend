@@ -21,6 +21,7 @@ import { explorer } from '@alephium/web3'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { AnimatePresence } from 'framer-motion'
+import { round } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { usePageVisibility } from 'react-page-visibility'
@@ -98,9 +99,10 @@ const HomePage = () => {
   const currentSupplyPercentage =
     circulatingSupply.value && totalSupply.value && ((circulatingSupply.value / totalSupply.value) * 100).toPrecision(3)
 
+  const isDaily = timeInterval === explorer.IntervalType.Daily
   const fullScreenCardLabels: Record<VectorStatisticsKey, string> = {
-    txVector: `${t('Transactions per')} ${timeInterval === explorer.IntervalType.Daily ? t('day') : t('hour')}`,
-    hashrateVector: `${t('Hashrate per')} ${timeInterval === explorer.IntervalType.Daily ? t('day') : t('hour')}`
+    txVector: isDaily ? t('Transactions per day') : t('Transactions per hour'),
+    hashrateVector: isDaily ? t('Hashrate per day') : t('Hashrate per hour')
   }
 
   return (
@@ -116,10 +118,7 @@ const HomePage = () => {
           <StatisticsHeader>
             <h2>{t('Our numbers')}</h2>
             <TimeIntervalSwitch>
-              <TimeIntervalButton
-                isSelected={timeInterval === explorer.IntervalType.Daily}
-                onClick={() => setTimeInterval(explorer.IntervalType.Daily)}
-              >
+              <TimeIntervalButton isSelected={isDaily} onClick={() => setTimeInterval(explorer.IntervalType.Daily)}>
                 {t('Daily')}
               </TimeIntervalButton>
               <TimeIntervalButton
@@ -185,7 +184,7 @@ const HomePage = () => {
             </Card>
             <Card label={t('Avg. block time')} isLoading={avgBlockTime.isLoading}>
               <StatisticTextual
-                primary={avgBlockTime.value ? dayjs.duration(avgBlockTime.value).format('m[m] s[s]') : '-'}
+                primary={avgBlockTime.value ? `${round(avgBlockTime.value / 1000, 1)}s` : '-'}
                 secondary={t('of all shards')}
               />
             </Card>

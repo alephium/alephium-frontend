@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
@@ -30,13 +31,14 @@ import { showToast } from '~/utils/layout'
 
 const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
   const { pairWithDapp } = useWalletConnectContext()
+  const { t } = useTranslation()
 
   const [inputWcUrl, setInputWcUrl] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
   const handleInputChange = (url: string) => {
-    setError(!url.startsWith('wc:') ? 'This is not a valid WalletConnect URL' : '')
+    setError(!url.startsWith('wc:') ? t('This is not a valid WalletConnect URL') : '')
     setInputWcUrl(url)
   }
 
@@ -53,7 +55,7 @@ const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
     } else {
       showToast({
         text1: 'Invalid URL',
-        text2: 'This is not a valid WalletConnect URL: ' + inputWcUrl,
+        text2: t('This is not a valid WalletConnect URL') + ': ' + inputWcUrl,
         type: 'error'
       })
     }
@@ -63,18 +65,18 @@ const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
     <>
       <ModalContent verticalGap {...props}>
         <ScreenSection>
-          <BottomModalScreenTitle>Connect to dApp</BottomModalScreenTitle>
+          <BottomModalScreenTitle>{t('Connect to dApp')}</BottomModalScreenTitle>
         </ScreenSection>
         <ScreenSection>
           <AppText color="secondary" size={18}>
-            Paste the WalletConnect URL you copied from the dApp:
+            {t('Paste the WalletConnect URL you copied from the dApp')}:
           </AppText>
         </ScreenSection>
         <ScreenSection>
-          <Input label="WalletConnect URL" value={inputWcUrl} onChangeText={handleInputChange} error={error} />
+          <Input label={t('WalletConnect URL')} value={inputWcUrl} onChangeText={handleInputChange} error={error} />
         </ScreenSection>
         <ScreenSection>
-          <Button title="Connect" variant="highlight" onPress={handleConnect} disabled={!inputWcUrl || !!error} />
+          <Button title={t('Connect')} variant="highlight" onPress={handleConnect} disabled={!inputWcUrl || !!error} />
         </ScreenSection>
       </ModalContent>
       <SpinnerModal isActive={isLoading} />

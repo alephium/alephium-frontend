@@ -82,7 +82,9 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
               )}
             </NameColumn>
 
-            {!token.name && token.type && <IncompleteMetadataBadge compact type="neutral" content="Wrong/old format" />}
+            {!token.name && token.type && (
+              <IncompleteMetadataBadge compact type="neutral" content={t('Wrong/old format')} />
+            )}
 
             <TableCellAmount>
               <TokenAmount assetId={token.id} value={token.balance} suffix={token.symbol} decimals={token.decimals} />
@@ -101,7 +103,7 @@ const TokenList = ({ tokens, limit, isLoading, className }: TokenListProps) => {
                   />
                 </TokenAmountSublabel>
               ) : token.decimals === undefined ? (
-                <TokenAmountSublabel>Raw amount</TokenAmountSublabel>
+                <TokenAmountSublabel>{t('Raw amount')}</TokenAmountSublabel>
               ) : undefined}
             </TableCellAmount>
           </AssetRow>

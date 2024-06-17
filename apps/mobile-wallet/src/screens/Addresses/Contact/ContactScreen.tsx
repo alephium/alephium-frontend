@@ -20,6 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
 import { Clipboard, LucideProps, Share2Icon, Upload } from 'lucide-react-native'
 import { useMemo, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { PressableProps, Share } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -44,7 +45,7 @@ type ContactScreenProps = StackScreenProps<SendNavigationParamList, 'ContactScre
   StackScreenProps<RootStackParamList, 'ContactScreen'> &
   ScreenProps
 
-const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenProps) => {
+const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) => {
   const listRef = useRef(null)
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
   const contactAddressHash = contact?.address ?? ''
@@ -52,6 +53,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
   const selectContactPendingTransactions = useMemo(makeSelectContactPendingTransactions, [])
   const confirmedTransactions = useAppSelector((s) => selectContactConfirmedTransactions(s, contactAddressHash))
   const pendingTransactions = useAppSelector((s) => selectContactPendingTransactions(s, contactAddressHash))
+  const { t } = useTranslation()
 
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
@@ -59,7 +61,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
 
   const handleShareContactPress = () => {
     Share.share({
-      title: 'Share contact',
+      title: t('Share contact'),
       message: `${contact.name}\n${contact.address}`
     })
 
@@ -90,7 +92,7 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
         options={{
           headerRight: () => (
             <Button
-              title="Edit"
+              title={t('Edit')}
               onPress={() => navigation.navigate('EditContactScreen', { contactId: params.contactId })}
               type="transparent"
               variant="accent"
@@ -122,9 +124,9 @@ const ContactScreen = ({ navigation, route: { params }, style }: ContactScreenPr
                 {contact.address}
               </ContactAddress>
               <ButtonsRow>
-                <ContactButton Icon={Upload} title="Send funds" onPress={handleSendFundsPress} />
-                <ContactButton Icon={Clipboard} title="Copy address" onPress={handleCopyAddressPress} />
-                <ContactButton Icon={Share2Icon} title="Share" onPress={handleShareContactPress} />
+                <ContactButton Icon={Upload} title={t('Send funds')} onPress={handleSendFundsPress} />
+                <ContactButton Icon={Clipboard} title={t('Copy address')} onPress={handleCopyAddressPress} />
+                <ContactButton Icon={Share2Icon} title={t('Share')} onPress={handleShareContactPress} />
               </ButtonsRow>
             </CenteredSection>
             <TransactionsHeaderRow>

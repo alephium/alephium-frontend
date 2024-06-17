@@ -20,6 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import * as Haptics from 'expo-haptics'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
@@ -47,6 +48,7 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
+  const { t } = useTranslation()
 
   const [isQuickSelectionModalOpen, setIsQuickSelectionModalOpen] = useState(false)
 
@@ -108,7 +110,7 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
                 <Button
                   onPress={() => navigation.navigate('NewAddressScreen')}
                   iconProps={{ name: 'add-outline' }}
-                  title="New address"
+                  title={t('New address')}
                   variant="highlightedIcon"
                   compact
                   style={{ marginLeft: addresses.length <= 2 ? 'auto' : undefined }}

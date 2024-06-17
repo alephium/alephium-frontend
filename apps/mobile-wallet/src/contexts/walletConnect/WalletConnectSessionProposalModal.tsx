@@ -20,6 +20,7 @@ import { keyring } from '@alephium/keyring'
 import { NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
 import { AlertTriangle, PlusSquare } from 'lucide-react-native'
 import { useEffect, useRef, useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -65,6 +66,7 @@ const WalletConnectSessionProposalModal = ({
   const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, group))
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
+  const { t } = useTranslation()
 
   const [loading, setLoading] = useState('')
   const [signerAddress, setSignerAddress] = useState<Address>()
@@ -93,7 +95,7 @@ const WalletConnectSessionProposalModal = ({
   }
 
   const handleAddressGeneratePress = async () => {
-    setLoading('Generating new address...')
+    setLoading(`${t('Generating new address')}...`)
 
     try {
       await initializeKeyringWithStoredWallet()
@@ -122,7 +124,7 @@ const WalletConnectSessionProposalModal = ({
         {metadata?.icons && metadata.icons.length > 0 && metadata.icons[0] && (
           <DAppIcon source={{ uri: metadata.icons[0] }} />
         )}
-        <BottomModalScreenTitle>Connect to dApp</BottomModalScreenTitle>
+        <BottomModalScreenTitle>{t('Connect to dApp')}</BottomModalScreenTitle>
         {metadata?.description && (
           <AppText color="secondary" size={16}>
             {metadata.description}
@@ -137,17 +139,28 @@ const WalletConnectSessionProposalModal = ({
       {showNetworkWarning ? (
         <>
           <ScreenSection>
-            <InfoBox title="Switch network" Icon={AlertTriangle}>
+            <InfoBox title={t('Switch network')} Icon={AlertTriangle}>
               <AppText>
-                You are currently connected to <AppText color="accent">{currentNetworkName}</AppText>, but the dApp
-                requires a connection to <AppText color="accent">{requiredChainInfo?.networkId}</AppText>.
+                <Trans
+                  t={t}
+                  i18nKey="dAppRequiredNetwork"
+                  values={{
+                    currentNetwork: currentNetworkName,
+                    requiredNetwork: requiredChainInfo?.networkId
+                  }}
+                  components={{ 1: <AppText color="accent" /> }}
+                >
+                  {
+                    'You are currently connected to <1>{{ currentNetwork }}</1>, but the dApp requires a connection to <1>{{ requiredNetwork }}</1>.'
+                  }
+                </Trans>
               </AppText>
             </InfoBox>
           </ScreenSection>
           <ScreenSection centered>
             <ButtonsRow>
-              <Button title="Decline" variant="alert" onPress={rejectProposal} flex />
-              <Button title="Switch network" variant="accent" onPress={handleSwitchNetworkPress} flex />
+              <Button title={t('Decline')} variant="alert" onPress={rejectProposal} flex />
+              <Button title={t('Switch network')} variant="accent" onPress={handleSwitchNetworkPress} flex />
             </ButtonsRow>
           </ScreenSection>
         </>
@@ -156,15 +169,21 @@ const WalletConnectSessionProposalModal = ({
           <ScreenSection>
             <InfoBox title="New address needed" Icon={PlusSquare}>
               <AppText>
-                The dApp asks for an address in group
-                <AppText color="accent"> {group}</AppText>. Click below to generate one!
+                <Trans
+                  t={t}
+                  i18nKey="dAppRequiredGroup"
+                  values={{ group }}
+                  components={{ 1: <AppText color="accent" /> }}
+                >
+                  {'The dApp asks for an address in group <1>{{ group }}</1>. Click below to generate one!'}
+                </Trans>
               </AppText>
             </InfoBox>
           </ScreenSection>
           <ScreenSection centered>
             <ButtonsRow>
-              <Button title="Decline" variant="alert" onPress={rejectProposal} flex />
-              <Button title="Generate new address" variant="accent" onPress={handleAddressGeneratePress} flex />
+              <Button title={t('Decline')} variant="alert" onPress={rejectProposal} flex />
+              <Button title={t('Generate new address')} variant="accent" onPress={handleAddressGeneratePress} flex />
             </ButtonsRow>
           </ScreenSection>
         </>
@@ -172,8 +191,12 @@ const WalletConnectSessionProposalModal = ({
         <>
           {showAlternativeSignerAddresses ? (
             <ScreenSection>
-              <SectionTitle semiBold>Addresses{group !== undefined ? ` in group ${group}` : ''}</SectionTitle>
-              <SectionSubtitle color="secondary">Tap to select another one</SectionSubtitle>
+              <SectionTitle semiBold>
+                {group !== undefined
+                  ? t('Addresses in group {{ groupNumber }}', { groupNumber: group })
+                  : t('Addresses')}
+              </SectionTitle>
+              <SectionSubtitle color="secondary">{t('Tap to select another one')}</SectionSubtitle>
               <AddressList>
                 {addressesInGroup.map((address) => (
                   <AddressBox
@@ -189,16 +212,16 @@ const WalletConnectSessionProposalModal = ({
                 ))}
                 <PlaceholderBox>
                   <SectionSubtitle>
-                    If none of the above addresses fit your needs, you can generate a new one.
+                    {t('If none of the above addresses fit your needs, you can generate a new one.')}
                   </SectionSubtitle>
-                  <Button title="Generate new address" variant="accent" onPress={handleAddressGeneratePress} />
+                  <Button title={t('Generate new address')} variant="accent" onPress={handleAddressGeneratePress} />
                 </PlaceholderBox>
               </AddressList>
             </ScreenSection>
           ) : (
             <ScreenSection>
-              <SectionTitle semiBold>Connect with address</SectionTitle>
-              <SectionSubtitle color="secondary">Tap to change the address to connect with.</SectionSubtitle>
+              <SectionTitle semiBold>{t('Connect with address')}</SectionTitle>
+              <SectionSubtitle color="secondary">{t('Tap to change the address to connect with.')}</SectionSubtitle>
               <AddressBox
                 addressHash={signerAddress.hash}
                 onPress={() => setShowAlternativeSignerAddresses(true)}
@@ -209,9 +232,9 @@ const WalletConnectSessionProposalModal = ({
 
           <ScreenSection centered>
             <ButtonsRow>
-              <Button title="Decline" variant="alert" onPress={rejectProposal} flex />
+              <Button title={t('Decline')} variant="alert" onPress={rejectProposal} flex />
               <Button
-                title="Accept"
+                title={t('Accept')}
                 variant="valid"
                 onPress={() => approveProposal(signerAddress)}
                 disabled={!signerAddress}

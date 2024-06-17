@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NetworkNames, NetworkPreset, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import BoxSurface from '~/components/layout/BoxSurface'
@@ -34,8 +35,8 @@ interface SwitchNetworkModalProps extends ModalContentProps {
 
 const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchNetworkModalProps) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
-
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetworkName === NetworkNames.custom)
   const [selectedNetworkName, setSelectedNetworkName] = useState(currentNetworkName)
@@ -57,7 +58,7 @@ const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchN
   return (
     <ModalContent verticalGap {...props}>
       <ScreenSection>
-        <BottomModalScreenTitle>Current network</BottomModalScreenTitle>
+        <BottomModalScreenTitle>{t('Current network')}</BottomModalScreenTitle>
       </ScreenSection>
       <View>
         <BoxSurface>

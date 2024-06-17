@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import AddressFlatListScreen from '~/components/AddressFlatListScreen'
 import { BackButton, ContinueButton } from '~/components/buttons/Button'
@@ -32,10 +33,11 @@ import { selectDefaultAddress } from '~/store/addressesSlice'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'>, ScrollScreenProps {}
 
-const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
+const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
   const { fromAddress, setFromAddress, setToAddress } = useSendContext()
   const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
   const defaultAddress = useAppSelector(selectDefaultAddress)
+  const { t } = useTranslation()
 
   useScrollToTopOnFocus(screenScrollY)
 
@@ -64,8 +66,8 @@ const OriginScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     <AddressFlatListScreen
       onAddressPress={setFromAddress}
       selectedAddress={fromAddress}
-      screenTitle="Origin"
-      screenIntro="Select the address from which to send the transaction."
+      screenTitle={t('Origin')}
+      screenIntro={t('Select the address from which to send the transaction.')}
       contrastedBg
       contentPaddingTop
       onScroll={screenScrollHandler}

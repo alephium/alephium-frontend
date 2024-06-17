@@ -20,6 +20,7 @@ import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { Skeleton } from 'moti/skeleton'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { View, ViewProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -44,22 +45,11 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  // const addressesStatus = useAppSelector((s) => s.addresses.status)
-  // const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
   const theme = useTheme()
-  // const alphPrice = useAppSelector(selectAlphPrice)
-
-  // const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList | ReceiveNavigationParamList>>()
-
-  // const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
-  // const worthDelta = useWorthDelta(worthInBeginningOfChart)
-
-  // const totalAlphAmountWorth = calculateAmountWorth(totalBalance, alphPrice ?? 0)
-
-  // const deltaColor = worthDelta < 0 ? theme.global.alert : worthDelta > 0 ? theme.global.valid : theme.bg.tertiary
+  const { t } = useTranslation()
 
   const handleReceivePress = () => {
     if (addressHashes.length === 1) {
@@ -74,16 +64,6 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
 
   return (
     <BalanceSummaryContainer style={style} {...props}>
-      {/* <LinearGradient
-        colors={[
-          'transparent',
-          addressesStatus === 'uninitialized' && isLoadingLatestTxs
-            ? 'transparent'
-            : colord(deltaColor).alpha(0.05).toHex(),
-          'transparent'
-        ]}
-        locations={[0.3, 0.65, 1]}
-      > */}
       <TextContainer>
         <DateLabelContainer>
           <AppText color="secondary" semiBold>
@@ -100,18 +80,10 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
         )}
       </TextContainer>
 
-      {/* <ChartContainer>
-          <HistoricWorthChart
-            currency={currency}
-            latestWorth={totalAlphAmountWorth}
-            onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
-          />
-        </ChartContainer> */}
-
       {totalBalance === BigInt(0) && !isLoadingAlphBalances && addressesStatus === 'initialized' && (
         <ReceiveFundsButtonContainer>
           <Button
-            title="Receive assets"
+            title={t('Receive assets')}
             onPress={handleReceivePress}
             iconProps={{ name: 'arrow-down-outline' }}
             variant="highlight"
@@ -119,7 +91,6 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
           />
         </ReceiveFundsButtonContainer>
       )}
-      {/* </LinearGradient> */}
     </BalanceSummaryContainer>
   )
 }
@@ -131,11 +102,6 @@ const BalanceSummaryContainer = styled.View``
 const TextContainer = styled.View`
   margin: 10px ${DEFAULT_MARGIN + 10}px 15px ${DEFAULT_MARGIN + 10}px;
 `
-
-// const ChartContainer = styled.View`
-//   margin-right: -1px;
-//   margin-left: -1px;
-// `
 
 const DateLabelContainer = styled.View``
 

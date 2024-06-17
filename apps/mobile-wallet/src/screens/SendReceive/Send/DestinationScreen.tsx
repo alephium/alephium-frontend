@@ -22,6 +22,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { Portal } from 'react-native-portalize'
 import { interpolateColor, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
@@ -67,6 +68,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
@@ -91,8 +93,8 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       sendAnalytics({ event: 'Send: Captured destination address by scanning QR code' })
     } else {
       showToast({
-        text1: 'Invalid address',
-        text2: 'This is not a valid Alephium address: ' + addressHash,
+        text1: t('Invalid address'),
+        text2: `${t('This is not a valid Alephium address')}: ${addressHash}`,
         type: 'error'
       })
     }
@@ -171,8 +173,8 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
         verticalGap
         contrastedBg
         contentPaddingTop
-        screenTitle="Destination"
-        screenIntro="Send to an address, a contact, or one of your other addresses."
+        screenTitle={t('Destination')}
+        screenIntro={t('Send to an address, a contact, or one of your other addresses.')}
         onScroll={screenScrollHandler}
         {...props}
       >
@@ -181,7 +183,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             name="toAddressHash"
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label="Destination address"
+                label={t('Destination address')}
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -201,7 +203,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             <Button
               compact
               iconProps={{ name: 'qr-code-outline' }}
-              title="Scan"
+              title={t('Scan')}
               onPress={openQRCodeScannerModal}
               variant="accent"
               type="secondary"
@@ -209,7 +211,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             <Button
               compact
               iconProps={{ name: 'copy-outline' }}
-              title="Paste"
+              title={t('Paste')}
               onPress={handlePastePress}
               variant="accent"
               type="secondary"
@@ -217,7 +219,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             <Button
               compact
               iconProps={{ name: 'person-outline' }}
-              title="Contacts"
+              title={t('Contacts')}
               onPress={() => setIsContactSelectModalOpen(true)}
               variant="accent"
               type="secondary"
@@ -225,7 +227,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             <Button
               compact
               iconProps={{ name: 'bookmarks-outline' }}
-              title="Addresses"
+              title={t('Addresses')}
               onPress={() => setIsAddressSelectModalOpen(true)}
               variant="accent"
               type="secondary"
@@ -236,7 +238,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           <QRCodeScannerModal
             onClose={closeQRCodeScannerModal}
             onQRCodeScan={handleQRCodeScan}
-            text="Scan an Alephium address QR code"
+            text={t('Scan an Alephium address QR code')}
           />
         )}
       </ScrollScreen>

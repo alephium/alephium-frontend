@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -31,31 +32,36 @@ interface ConsolidationModalProps extends ModalContentProps {
   fees: bigint
 }
 
-const ConsolidationModal = ({ onConsolidate, fees, ...props }: ConsolidationModalProps) => (
-  <ModalContent verticalGap {...props}>
-    <ScreenSection>
-      <BottomModalScreenTitle>Consolidation required</BottomModalScreenTitle>
-    </ScreenSection>
-    <ScreenSection>
-      <View>
-        <AppText>
-          It appers that the address you use to send funds from has too many UTXOs! Would you like to consolidate them?
-          This will cost as small fee.
-        </AppText>
-        <Fee>
-          <AppText>Fee:</AppText>
-          <Amount value={fees} fullPrecision fadeDecimals bold />
-        </Fee>
-      </View>
-    </ScreenSection>
-    <ScreenSection centered>
-      <ButtonsRow>
-        <Button title="Cancel" onPress={props.onClose} flex variant="accent" short />
-        <Button title="Consolidate" onPress={onConsolidate} variant="highlight" flex short />
-      </ButtonsRow>
-    </ScreenSection>
-  </ModalContent>
-)
+const ConsolidationModal = ({ onConsolidate, fees, ...props }: ConsolidationModalProps) => {
+  const { t } = useTranslation()
+
+  return (
+    <ModalContent verticalGap {...props}>
+      <ScreenSection>
+        <BottomModalScreenTitle>{t('Consolidation required')}</BottomModalScreenTitle>
+      </ScreenSection>
+      <ScreenSection>
+        <View>
+          <AppText>
+            {t(
+              'It appers that the address you use to send funds from has too many UTXOs! Would you like to consolidate them? This will cost as small fee.'
+            )}
+          </AppText>
+          <Fee>
+            <AppText>{t('Fee')}:</AppText>
+            <Amount value={fees} fullPrecision fadeDecimals bold />
+          </Fee>
+        </View>
+      </ScreenSection>
+      <ScreenSection centered>
+        <ButtonsRow>
+          <Button title={t('Cancel')} onPress={props.onClose} flex variant="accent" short />
+          <Button title={t('Consolidate')} onPress={onConsolidate} variant="highlight" flex short />
+        </ButtonsRow>
+      </ScreenSection>
+    </ModalContent>
+  )
+}
 
 export default ConsolidationModal
 

@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { keyring } from '@alephium/keyring'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -39,6 +40,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
   const currentAddressIndexes = useRef(addresses.map(({ index }) => index))
   const persistAddressSettings = usePersistAddressSettings()
+  const { t } = useTranslation()
 
   const [loading, setLoading] = useState(false)
 
@@ -71,7 +73,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
     } catch (error) {
       const message = 'Could not save new address'
 
-      showExceptionToast(error, message)
+      showExceptionToast(error, t(message))
       sendAnalytics({ type: 'error', message })
     } finally {
       keyring.clear()
@@ -85,12 +87,12 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   return (
     <>
       <AddressFormBaseScreen
-        screenTitle="New address"
+        screenTitle={t('New address')}
         initialValues={initialValues}
         onSubmit={handleGeneratePress}
         allowGroupSelection
       />
-      <SpinnerModal isActive={loading} text="Generating address..." />
+      <SpinnerModal isActive={loading} text={`${t('Generating new address')}...`} />
     </>
   )
 }

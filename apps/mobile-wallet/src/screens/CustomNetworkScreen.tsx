@@ -20,6 +20,7 @@ import { customNetworkSettingsSaved, NetworkSettings } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import { ContinueButton } from '~/components/buttons/Button'
@@ -42,6 +43,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
     defaultValues: currentNetworkSettings
   })
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const [loading, setLoading] = useState(false)
 
@@ -56,7 +58,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
     } catch (error) {
       const message = 'Could not save custom network settings'
 
-      showExceptionToast(error, message)
+      showExceptionToast(error, t(message))
       sendAnalytics({ type: 'error', error, message })
     }
 
@@ -72,9 +74,9 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
         fill
         headerOptions={{
           type: 'stack',
-          headerTitle: 'Custom network',
+          headerTitle: t('Custom network'),
           headerRight: () => (
-            <ContinueButton title="Save" onPress={handleSubmit(saveCustomNetwork)} iconProps={undefined} />
+            <ContinueButton title={t('Save')} onPress={handleSubmit(saveCustomNetwork)} iconProps={undefined} />
           )
         }}
       >
@@ -83,7 +85,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
             name="nodeHost"
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label="Node host"
+                label={t('Node host')}
                 keyboardType="url"
                 textContentType="URL"
                 value={value}
@@ -97,7 +99,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
             name="explorerApiHost"
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label="Explorer API host"
+                label={t('Explorer API host')}
                 keyboardType="url"
                 textContentType="URL"
                 value={value}
@@ -111,7 +113,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
             name="explorerUrl"
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                label="Explorer URL"
+                label={t('Explorer URL')}
                 keyboardType="url"
                 textContentType="URL"
                 value={value}
@@ -123,7 +125,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
           />
         </ScreenSection>
       </ScrollScreen>
-      <SpinnerModal isActive={loading} text="Saving network settings..." />
+      <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
     </>
   )
 }

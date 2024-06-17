@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
+import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
@@ -35,18 +36,19 @@ interface PublicKeysScreenProps extends StackScreenProps<RootStackParamList, 'Pu
 
 const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
+  const { t } = useTranslation()
 
   const handleAddressPress = async (addressHash: AddressHash) => {
     try {
       const publicKey = await getAddressAsymetricKey(addressHash, 'public')
       await Clipboard.setStringAsync(publicKey)
 
-      showToast({ text1: 'Public key copied!', visibilityTime: ToastDuration.SHORT })
+      showToast({ text1: t('Public key copied!'), visibilityTime: ToastDuration.SHORT })
       sendAnalytics({ event: 'Copied public key' })
     } catch (error) {
       const message = 'Could not copy public key'
 
-      showExceptionToast(error, message)
+      showExceptionToast(error, t(message))
       sendAnalytics({ type: 'error', message })
     }
   }
@@ -54,12 +56,12 @@ const PublicKeysScreen = ({ navigation, ...props }: PublicKeysScreenProps) => {
   return (
     <FlatListScreen
       headerOptions={{
-        headerTitle: 'Public keys',
+        headerTitle: t('Public keys'),
         type: 'stack',
         headerLeft: () => <BackButton onPress={() => navigation.goBack()} />
       }}
-      screenTitle="Public keys"
-      screenIntro="Tap on an address to copy its public key to the clipboard."
+      screenTitle={t('Public keys')}
+      screenIntro={t('Tap on an address to copy its public key to the clipboard.')}
       keyExtractor={(item) => item.hash}
       data={addresses}
       renderItem={({ item: address }) => (

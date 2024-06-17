@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { StatusBar } from 'expo-status-bar'
+import { useTranslation } from 'react-i18next'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components'
 
@@ -37,6 +38,7 @@ const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
 
 const InWalletTabsNavigation = () => {
   const theme = useTheme()
+  const { t } = useTranslation()
 
   return (
     <Host>
@@ -51,7 +53,7 @@ const InWalletTabsNavigation = () => {
           name="DashboardScreen"
           component={DashboardScreen}
           options={{
-            title: 'Overview',
+            title: t('Overview'),
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} size={size} />
             )
@@ -61,7 +63,7 @@ const InWalletTabsNavigation = () => {
           name="TransfersScreen"
           component={TransfersScreen}
           options={{
-            title: 'Transfers',
+            title: t('Transfers'),
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
             )
@@ -71,7 +73,7 @@ const InWalletTabsNavigation = () => {
           name="AddressesTabNavigation"
           component={AddressesTabNavigation}
           options={{
-            title: 'Addresses',
+            title: t('Addresses'),
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
             )

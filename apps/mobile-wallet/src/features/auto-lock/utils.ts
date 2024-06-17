@@ -16,19 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import i18n from '~/i18n'
+
 const autoLockSeconds = [5, 15, 30, 60]
 
 export const autoLockSecondsOptions = [
   {
-    label: 'Fast',
+    label: i18n.t('Fast'),
     value: 0
   },
   ...autoLockSeconds.map((sec) => ({
-    label: `${sec} seconds`,
+    label: i18n.t('{{ seconds }} seconds', { seconds: sec }),
     value: sec
   })),
   {
-    label: 'Never',
+    label: i18n.t('Never'),
     value: -1
   }
 ]

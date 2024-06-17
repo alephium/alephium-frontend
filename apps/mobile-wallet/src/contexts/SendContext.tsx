@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, AssetAmount } from '@alephium/shared'
 import { node } from '@alephium/web3'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Portal } from 'react-native-portalize'
 
 import { sendAnalytics } from '~/analytics'
@@ -76,6 +77,7 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(initialValues.toAddress)
   const [fromAddress, setFromAddress] = useState<SendContextValue['fromAddress']>(initialValues.fromAddress)
@@ -110,9 +112,9 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       const data = await buildSweepTransactions(address, address.hash)
       setUnsignedTxData(data)
     } catch (e) {
-      showExceptionToast(e, 'Could not build transaction')
+      showExceptionToast(e, t('Could not build transaction'))
     }
-  }, [address])
+  }, [address, t])
 
   const buildTransaction = useCallback(
     async (callbacks: BuildTransactionCallbacks) => {
@@ -131,11 +133,11 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
           setOnSendSuccessCallback(() => callbacks.onConsolidationSuccess)
           await buildConsolidationTransactions()
         } else {
-          showExceptionToast(e, 'Could not build transaction')
+          showExceptionToast(e, t('Could not build transaction'))
         }
       }
     },
-    [address, assetAmounts, buildConsolidationTransactions, toAddress]
+    [address, assetAmounts, buildConsolidationTransactions, t, toAddress]
   )
 
   const sendTransaction = useCallback(
@@ -166,12 +168,13 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
 
         sendAnalytics({ event: 'Send: Sent transaction', props: { tokens: tokens.length } })
       } catch (error) {
-        showExceptionToast(error, 'Could not send transaction')
+        const message = t('Could not send transaction')
 
-        sendAnalytics({ type: 'error', message: 'Could not send transaction' })
+        showExceptionToast(error, message)
+        sendAnalytics({ type: 'error', message })
       }
     },
-    [address, assetAmounts, consolidationRequired, dispatch, toAddress, unsignedTxData.unsignedTxs]
+    [address, assetAmounts, consolidationRequired, dispatch, t, toAddress, unsignedTxData.unsignedTxs]
   )
 
   const authenticateAndSend = useCallback(

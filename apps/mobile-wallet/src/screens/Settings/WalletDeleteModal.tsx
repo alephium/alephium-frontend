@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
@@ -39,6 +40,7 @@ const WalletDeleteModal = ({ onDelete, ...props }: WalletDeleteModalProps) => {
   const dispatch = useAppDispatch()
   const walletName = useAppSelector((s) => s.wallet.name)
   const { resetWalletConnectStorage } = useWalletConnectContext()
+  const { t } = useTranslation()
 
   const [inputWalletName, setInputWalletName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -57,7 +59,7 @@ const WalletDeleteModal = ({ onDelete, ...props }: WalletDeleteModalProps) => {
       resetWalletConnectStorage()
       sendAnalytics({ event: 'Deleted wallet' })
     } catch (error) {
-      showExceptionToast(error, 'Error while deleting wallet')
+      showExceptionToast(error, t('Error while deleting wallet'))
     } finally {
       setIsLoading(false)
     }
@@ -67,25 +69,25 @@ const WalletDeleteModal = ({ onDelete, ...props }: WalletDeleteModalProps) => {
     <>
       <ModalContent verticalGap {...props}>
         <ScreenSection>
-          <BottomModalScreenTitle>⚠️ Delete &quot;{walletName}&quot;?</BottomModalScreenTitle>
+          <BottomModalScreenTitle>⚠️ {t('Delete "{walletName}"?')}</BottomModalScreenTitle>
         </ScreenSection>
         <ScreenSection>
           <AppText color="secondary" size={18}>
-            Do you really want to delete this wallet from your device?
+            {t('Do you really want to delete this wallet from your device?')}
           </AppText>
           <AppText color="secondary" size={18}>
-            You can always restore it later using your secret recovery phrase.
+            {t('You can always restore it later using your secret recovery phrase.')}
           </AppText>
           <AppText color="secondary" size={18}>
-            If so, please enter the wallet name below, and hit the delete button.
+            {t('If so, please enter the wallet name below, and hit the delete button.')}
           </AppText>
         </ScreenSection>
         <ScreenSection>
-          <Input label="Wallet name" value={inputWalletName} onChangeText={setInputWalletName} />
+          <Input label={t('Wallet name')} value={inputWalletName} onChangeText={setInputWalletName} />
         </ScreenSection>
         <ScreenSection>
           <Button
-            title="Delete"
+            title={t('Delete')}
             variant="alert"
             onPress={handleDeleteConfirmPress}
             disabled={inputWalletName !== walletName}

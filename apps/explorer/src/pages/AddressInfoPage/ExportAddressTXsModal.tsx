@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { getHumanReadableError } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { RiCheckLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
@@ -29,6 +30,7 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 import Modal, { ModalProps } from '@/components/Modal/Modal'
 import Select, { SelectListItem } from '@/components/Select'
 import { useSnackbar } from '@/hooks/useSnackbar'
+import i18n from '@/i18n'
 import { SIMPLE_DATE_FORMAT } from '@/utils/strings'
 
 type TimePeriodValue =
@@ -48,6 +50,7 @@ interface ExportAddressTXsModalProps extends Omit<ModalProps, 'children'> {
 
 const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddressTXsModalProps) => {
   const { displaySnackbar } = useSnackbar()
+  const { t } = useTranslation()
 
   const [timePeriodValue, setTimePeriodValue] = useState<TimePeriodValue>('24h')
 
@@ -55,7 +58,7 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
     onClose()
 
     displaySnackbar({
-      text: "Your CSV is being compiled in the background (don't close the explorer)...",
+      text: `${t("Your CSV is being compiled in the background (don't close this tab)")}...`,
       type: 'info',
       Icon: <LoadingSpinner size={20} style={{ color: 'inherit' }} />,
       duration: -1
@@ -74,7 +77,7 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
         }
       )
 
-      if (!data) throw 'Something wrong happened while fetching the data.'
+      if (!data) throw t('Something wrong happened while fetching the data.')
 
       const fileDateFrom = dayjs(timePeriods[timePeriodValue].from).format(SIMPLE_DATE_FORMAT)
       const fileDateTo = dayjs(timePeriods[timePeriodValue].to).format(SIMPLE_DATE_FORMAT)
@@ -82,7 +85,7 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
       startCSVFileDownload(data, `${addressHash}__${fileDateFrom}-${fileDateTo}`)
 
       displaySnackbar({
-        text: 'Your CSV has been successfully downloaded.',
+        text: t('Your CSV has been successfully downloaded.'),
         type: 'success',
         Icon: <RiCheckLine size={14} />
       })
@@ -90,24 +93,25 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
       console.error(e)
 
       displaySnackbar({
-        text: getHumanReadableError(e, 'Problem while downloading the CSV file'),
+        text: getHumanReadableError(e, t('Problem while downloading the CSV file')),
         type: 'alert',
         duration: 5000
       })
     }
-  }, [addressHash, displaySnackbar, onClose, timePeriodValue])
+  }, [addressHash, displaySnackbar, onClose, t, timePeriodValue])
 
   return (
     <Modal maxWidth={550} onClose={onClose} {...props}>
-      <h2>Export address transactions</h2>
+      <h2>{t('Export address transactions')}</h2>
       <HighlightedHash text={addressHash} middleEllipsis maxWidth="200px" textToCopy={addressHash} />
       <Explanations>
-        You can download the address transaction history for a selected time period. This can be useful for tax
-        reporting.
+        {t(
+          'You can download the address transaction history for a selected time period. This can be useful for tax reporting.'
+        )}
       </Explanations>
       <Selects>
         <Select
-          title="Time period"
+          title={t('Time period')}
           items={timePeriodsItems}
           selectedItemValue={timePeriodValue}
           onItemClick={(v) => setTimePeriodValue(v)}
@@ -115,7 +119,7 @@ const ExportAddressTXsModal = ({ addressHash, onClose, ...props }: ExportAddress
       </Selects>
       <FooterButton>
         <Button accent big onClick={getCSVFile}>
-          Export
+          {t('Export')}
         </Button>
       </FooterButton>
     </Modal>
@@ -132,40 +136,40 @@ const today = now.format(SIMPLE_DATE_FORMAT)
 const timePeriodsItems: SelectListItem<TimePeriodValue>[] = [
   {
     value: '24h',
-    label: 'Last 24h'
+    label: i18n.t('Last 24h')
   },
   {
     value: '1w',
-    label: 'Last week'
+    label: i18n.t('Last week')
   },
   {
     value: '1m',
-    label: 'Last month'
+    label: i18n.t('Last month')
   },
   {
     value: '6m',
-    label: 'Last 6 months'
+    label: i18n.t('Last 6 months')
   },
   {
     value: '12m',
-    label: 'Last 12 months'
+    label: i18n.t('Last 12 months')
   },
   {
     value: 'currentYear',
-    label: `This year so far (01/01/${now.year()} - ${today})`
+    label: `${i18n.t('This year so far')} (01/01/${now.year()} - ${today})`
   },
   {
     value: 'oneYearAgo',
-    label: `Last year (${lastYear.year()})`
+    label: `${i18n.t('Last year')} (${lastYear.year()})`
   },
   {
     value: 'twoYearsAgo',
-    label: `Two years ago
+    label: `${i18n.t('Two years ago')}
     (${twoYearsAgo.year()})`
   },
   {
     value: 'threeYearsAgo',
-    label: `Three years ago
+    label: `${i18n.t('Three years ago')}
     (${threeYearsAgo.year()})`
   }
 ]

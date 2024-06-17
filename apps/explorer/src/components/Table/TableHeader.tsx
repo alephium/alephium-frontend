@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 interface TableHeaderProps {
@@ -29,26 +28,23 @@ interface TableHeaderProps {
   className?: string
 }
 
-export const TableHeader = ({ headerTitles, columnWidths, textAlign, className }: TableHeaderProps) => {
-  const { t } = useTranslation()
-  return (
-    <thead className={className}>
-      <tr>
-        {headerTitles.map((v, i) => (
-          <th
-            key={i}
-            style={{
-              width: columnWidths ? columnWidths[i] || 'auto' : 'auto',
-              textAlign: textAlign ? textAlign[i] : 'left'
-            }}
-          >
-            {typeof v === 'string' ? t(v) : v}
-          </th>
-        ))}
-      </tr>
-    </thead>
-  )
-}
+export const TableHeader = ({ headerTitles, columnWidths, textAlign, className }: TableHeaderProps) => (
+  <thead className={className}>
+    <tr>
+      {headerTitles.map((v, i) => (
+        <th
+          key={i}
+          style={{
+            width: columnWidths ? columnWidths[i] || 'auto' : 'auto',
+            textAlign: textAlign ? textAlign[i] : 'left'
+          }}
+        >
+          {typeof v === 'string' ? v : v}
+        </th>
+      ))}
+    </tr>
+  </thead>
+)
 
 export default styled(TableHeader)`
   color: ${({ theme }) => theme.font.secondary};

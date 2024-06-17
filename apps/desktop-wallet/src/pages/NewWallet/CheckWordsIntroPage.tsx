@@ -72,7 +72,7 @@ const CheckWordsIntroPage = () => {
           </LockContainer>
           <Paragraph centered>{t('Alright! Time to check if you got your words right!')}</Paragraph>
           <Paragraph secondary centered>
-            {t('Select the words in the right order. Ready?')}
+            {t('Select the words in the right order.')} {t('Ready?')}
           </Paragraph>
         </Section>
       </PanelContentContainer>

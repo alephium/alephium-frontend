@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, RadialGradient, Rect, vec } from '@shopify/react-native-skia'
 import { useEffect, useState } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { Dimensions, Image, LayoutChangeEvent, Platform, StatusBar } from 'react-native'
 import Animated, {
   convertToRGBA,
@@ -55,6 +56,7 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
   const insets = useSafeAreaInsets()
   const theme = useTheme()
+  const { t } = useTranslation()
 
   const { width, height } = Dimensions.get('window')
   const [dimensions, setDimensions] = useState({ width, height })
@@ -90,9 +92,9 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
     try {
       getWalletMetadata().then((metadata) => setShowNewWalletButtons(!metadata))
     } catch (e) {
-      showExceptionToast(e, 'Could not get wallet data')
+      showExceptionToast(e, t('Wallet metadata not found'))
     }
-  }, [])
+  }, [t])
 
   return (
     <ThemeProvider theme={themes.dark}>
@@ -106,19 +108,28 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
               entering={FadeIn.delay(500).duration(500)}
             >
               <TitleContainer>
-                <TitleFirstLine>Welcome to</TitleFirstLine>
-                <TitleSecondLine>Alephium 👋</TitleSecondLine>
+                <Trans
+                  t={t}
+                  i18nKey="welcomeToAlephium"
+                  components={{
+                    0: <TitleFirstLine />,
+                    2: <TitleSecondLine />
+                  }}
+                >
+                  {'<0>Welcome to</0> <2>Alephium</2>'}
+                </Trans>
+                👋
               </TitleContainer>
               <ButtonsContainer>
                 <Button
-                  title="New wallet"
+                  title={t('New wallet')}
                   type="primary"
                   onPress={() => handleButtonPress('create')}
                   variant="highlight"
                   iconProps={{ name: 'flower-outline' }}
                 />
                 <Button
-                  title="Import wallet"
+                  title={t('Import wallet')}
                   onPress={() => handleButtonPress('import')}
                   iconProps={{ name: 'download-outline' }}
                 />

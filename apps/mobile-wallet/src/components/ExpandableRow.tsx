@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ChevronDown } from 'lucide-react-native'
 import { ReactNode, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
@@ -30,8 +31,10 @@ interface ExpandableRowProps {
   style?: StyleProp<ViewStyle>
 }
 
-const ExpandableRow = ({ children, title = 'Advanced options', style }: ExpandableRowProps) => {
+const ExpandableRow = ({ children, title, style }: ExpandableRowProps) => {
   const theme = useTheme()
+  const { t } = useTranslation()
+
   const [isExpanded, setIsExpanded] = useState(false)
 
   const toggleExpanded = () => setIsExpanded(!isExpanded)
@@ -47,7 +50,7 @@ const ExpandableRow = ({ children, title = 'Advanced options', style }: Expandab
   return (
     <View style={style}>
       <Header onPress={toggleExpanded}>
-        <Title>{title}</Title>
+        <Title>{title ?? t('Advanced options')}</Title>
         <Animated.View style={chevronStyle}>
           <ChevronDownStyled size={20} color={theme.font.primary} />
         </Animated.View>

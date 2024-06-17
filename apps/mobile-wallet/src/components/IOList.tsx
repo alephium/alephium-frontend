@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { GENESIS_TIMESTAMP } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import _ from 'lodash'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -35,6 +36,7 @@ interface IOListProps {
 const IOList = ({ isOut, tx }: IOListProps) => {
   const io = (isOut ? tx.outputs : tx.inputs) as Array<explorer.Output | explorer.Input> | undefined
   const addresses = useAppSelector((s) => s.addresses.entities)
+  const { t } = useTranslation()
 
   if (io && io.length > 0) {
     const isAllCurrentAddress = io.every((o) => o.address === tx.address.hash)
@@ -56,9 +58,9 @@ const IOList = ({ isOut, tx }: IOListProps) => {
       </View>
     )
   } else if (tx.timestamp === GENESIS_TIMESTAMP) {
-    return <BoldText>Genesis TX</BoldText>
+    return <BoldText>{t('Genesis TX')}</BoldText>
   } else {
-    return <BoldText>Mining Rewards</BoldText>
+    return <BoldText>{t('Mining Rewards')}</BoldText>
   }
 }
 

@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useEffect } from 'react'
+import { Trans, useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
 import { Portal } from 'react-native-portalize'
 
@@ -36,19 +37,20 @@ type FundPasswordModalProps = Pick<BottomModalProps, 'isOpen' | 'onClose'>
 const FundPasswordReminderModal = ({ isOpen, onClose }: FundPasswordModalProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   useEffect(() => {
     dispatch(fundPasswordReminded())
   }, [dispatch])
 
   const handleClose = () => {
-    Alert.alert('Are you sure?', 'To enhance your security it is recommended to use a fund password.', [
+    Alert.alert(t('Are you sure?'), t('To enhance your security it is recommended to use a fund password.'), [
       {
-        text: 'Later',
+        text: t('Later'),
         onPress: onClose
       },
       {
-        text: 'Set fund password',
+        text: t('Set fund password'),
         onPress: handleSetPasswordPress
       }
     ])
@@ -68,32 +70,21 @@ const FundPasswordReminderModal = ({ isOpen, onClose }: FundPasswordModalProps) 
         Content={(props) => (
           <ModalContent {...props} verticalGap>
             <ScreenSection>
-              <BottomModalScreenTitle>Pin replaced by fund password</BottomModalScreenTitle>
+              <BottomModalScreenTitle>{t('Pin replaced by fund password')}</BottomModalScreenTitle>
             </ScreenSection>
             <ScreenSection>
               <AppText color="secondary" size={18}>
-                The{' '}
-                <AppText size={18} bold>
-                  fund password{' '}
-                </AppText>
-                is an additional authentication layer for critical operations involving the safety of your funds such as{' '}
-                <AppText size={18} bold>
-                  revealing your seed phrase
-                </AppText>{' '}
-                or{' '}
-                <AppText size={18} bold>
-                  sending funds
-                </AppText>
-                .
-              </AppText>
-              <AppText color="secondary" size={18}>
-                You can set it up in the app settings.
+                <Trans t={t} i18nKey="fundPasswordModalDescription" components={{ 1: <AppText size={18} bold /> }}>
+                  {
+                    'The <1>fund password</1> is an additional authentication layer for critical operations involving the safety of your funds such as <1>revealing your seed phrase</1> or <1>sending funds</1>.\nYou can set it up in the app settings.'
+                  }
+                </Trans>
               </AppText>
             </ScreenSection>
             <ScreenSection>
               <ButtonsRow>
-                <Button title="Later" onPress={handleClose} flex />
-                <Button variant="highlight" title="Set password" onPress={handleSetPasswordPress} flex />
+                <Button title={t('Later')} onPress={handleClose} flex />
+                <Button variant="highlight" title={t('Set password')} onPress={handleSetPasswordPress} flex />
               </ButtonsRow>
             </ScreenSection>
           </ModalContent>

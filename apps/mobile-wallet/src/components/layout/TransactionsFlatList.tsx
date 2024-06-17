@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ForwardedRef, forwardRef, useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, FlatList, FlatListProps } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
@@ -62,6 +63,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
 ) {
   const theme = useTheme()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const isLoading = useAppSelector((s) => s.loaders.loadingTransactionsNextPage)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
@@ -113,7 +115,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
             {pendingTransactions.length > 0 && (
               <>
                 <PendingTransactionsSectionTitle>
-                  <ScreenSectionTitleStyled>Pending transactions</ScreenSectionTitleStyled>
+                  <ScreenSectionTitleStyled>{t('Pending transactions')}</ScreenSectionTitleStyled>
                   <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
                 </PendingTransactionsSectionTitle>
                 {pendingTransactions.map((pendingTransaction, index) =>
@@ -123,7 +125,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
                     isLast: index === pendingTransactions.length - 1
                   })
                 )}
-                <ScreenSectionTitleStyled>Confirmed transactions</ScreenSectionTitleStyled>
+                <ScreenSectionTitleStyled>{t('Confirmed transactions')}</ScreenSectionTitleStyled>
               </>
             )}
           </>
@@ -133,7 +135,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
             <InfiniteLoadingIndicator>
               {allConfirmedTransactionsLoaded && confirmedTransactions.length > 0 && (
                 <AppText color="tertiary" semiBold style={{ maxWidth: '75%', textAlign: 'center' }}>
-                  👏 You reached the end of the transactions&apos; history.
+                  👏 {t('You reached the end of the transactions history.')}
                 </AppText>
               )}
               {isLoading && !allConfirmedTransactionsLoaded && (
@@ -143,7 +145,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
             {confirmedTransactions.length === 0 && !isLoading && (
               <EmptyPlaceholder style={{ width: '90%' }}>
                 <AppText color="secondary" semiBold>
-                  No transactions yet 🤷‍♂️
+                  {t('No transactions yet')} 🤷‍♂️
                 </AppText>
               </EmptyPlaceholder>
             )}

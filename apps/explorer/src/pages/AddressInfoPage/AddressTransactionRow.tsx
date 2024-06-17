@@ -119,7 +119,7 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
             <TxLabel style={{ color: badgeColor }}>{label}</TxLabel>
           </TxLabelBadge>
           {!isPending && !tx.scriptExecutionOk && (
-            <FailedTXBubble data-tooltip-id="default" data-tooltip-content="Script execution failed">
+            <FailedTXBubble data-tooltip-id="default" data-tooltip-content={t('Script execution failed')}>
               !
             </FailedTXBubble>
           )}
@@ -179,7 +179,7 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
         <TableDetailsRow openCondition={detailOpen}>
           <AnimatedCell colSpan={7}>
             <Table>
-              <TableHeader headerTitles={['Inputs', '', 'Outputs']} columnWidths={['', '50px', '']} compact />
+              <TableHeader headerTitles={[t('Inputs'), '', t('Outputs')]} columnWidths={['', '50px', '']} compact />
               <TableBody>
                 <TableRow>
                   <IODetailList>
@@ -191,7 +191,7 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
                         flex
                       />
                     ) : (
-                      <BlockRewardInputLabel>Block rewards</BlockRewardInputLabel>
+                      <BlockRewardInputLabel>{t('Block rewards')}</BlockRewardInputLabel>
                     )}
                   </IODetailList>
 

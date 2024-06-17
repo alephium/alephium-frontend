@@ -24,11 +24,14 @@ import {
 } from '@alephium/shared'
 import { nanoid } from 'nanoid'
 
+import i18n from '~/i18n'
 import { getStoredWallet, updateStoredWalletMetadata } from '~/persistent-storage/wallet'
 import { store } from '~/store/store'
 
 export const persistContact = async (contactData: ContactFormData) => {
-  const { contacts } = await getStoredWallet('Could not persist contact, wallet metadata not found')
+  const { contacts } = await getStoredWallet(
+    `${i18n.t('Could not persist contact')}: ${i18n.t('Wallet metadata not found')}`
+  )
 
   let contactId = contactData.id
 
@@ -38,22 +41,22 @@ export const persistContact = async (contactData: ContactFormData) => {
   )
 
   if (contactId === undefined) {
-    if (indexOfContactWithSameAddress >= 0) throw new Error('A contact with this address already exists')
+    if (indexOfContactWithSameAddress >= 0) throw new Error(i18n.t('A contact with this address already exists'))
 
-    if (indexOfContactWithSameName >= 0) throw new Error('A contact with this name already exists')
+    if (indexOfContactWithSameName >= 0) throw new Error(i18n.t('A contact with this name already exists'))
 
     contactId = nanoid()
     contacts.push({ ...contactData, id: contactId })
   } else {
     const indexOfContactWithSameId = contacts.findIndex((c: Contact) => c.id === contactData.id)
 
-    if (indexOfContactWithSameId < 0) throw new Error('Could not find a contact with this ID')
+    if (indexOfContactWithSameId < 0) throw new Error(i18n.t('Could not find a contact with this ID'))
 
     if (indexOfContactWithSameAddress >= 0 && indexOfContactWithSameAddress !== indexOfContactWithSameId)
-      throw new Error('A contact with this address already exists')
+      throw new Error(i18n.t('A contact with this address already exists'))
 
     if (indexOfContactWithSameName >= 0 && indexOfContactWithSameName !== indexOfContactWithSameId)
-      throw new Error('A contact with this name already exists')
+      throw new Error(i18n.t('A contact with this name already exists'))
 
     contacts.splice(indexOfContactWithSameId, 1, contactData as Contact)
   }
@@ -68,11 +71,13 @@ export const persistContact = async (contactData: ContactFormData) => {
 }
 
 export const deleteContact = async (contactId: Contact['id']) => {
-  const { contacts } = await getStoredWallet('Could not delete contact, wallet metadata not found')
+  const { contacts } = await getStoredWallet(
+    `${i18n.t('Could not delete contact')}: ${i18n.t('Wallet metadata not found')}`
+  )
 
   const storedContactIndex = contacts.findIndex((c) => c.id === contactId)
 
-  if (storedContactIndex < 0) throw new Error('Could not find a contact with this ID')
+  if (storedContactIndex < 0) throw new Error(i18n.t('Could not find a contact with this ID'))
 
   contacts.splice(storedContactIndex, 1)
 

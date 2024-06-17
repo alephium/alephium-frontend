@@ -27,6 +27,7 @@ import { nanoid } from 'nanoid'
 
 import { sendAnalytics } from '~/analytics'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
+import i18n from '~/i18n'
 import { defaultBiometricsConfig } from '~/persistent-storage/config'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
@@ -100,13 +101,14 @@ export const getWalletMetadata = async (): Promise<WalletMetadata | null> => {
 export const getStoredWallet = async (error?: string): Promise<WalletMetadata> => {
   const walletMetadata = await getWalletMetadata()
 
-  if (!walletMetadata) throw new Error(error || 'Could not get stored wallet: metadata not found')
+  if (!walletMetadata)
+    throw new Error(error || `${i18n.t('Could not get stored wallet')}: ${i18n.t('Wallet metadata not found')}`)
 
   return walletMetadata
 }
 
 export const updateStoredWalletMetadata = async (partialMetadata: Partial<WalletMetadata>) => {
-  const walletMetadata = await getStoredWallet('Could not persist wallet metadata, no entry found in storage')
+  const walletMetadata = await getStoredWallet(i18n.t('Could not persist wallet metadata: No entry found in storage'))
   const updatedWalletMetadata = { ...walletMetadata, ...partialMetadata }
 
   await storeWalletMetadata(updatedWalletMetadata)
@@ -173,7 +175,9 @@ export const deleteWallet = async () => {
 }
 
 export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadataWithHash[]) => {
-  const walletMetadata = await getStoredWallet('Could not persist addresses metadata, wallet metadata not found')
+  const walletMetadata = await getStoredWallet(
+    `${i18n.t('Could not persist addresses metadata')}: ${i18n.t('Wallet metadata not found')}`
+  )
 
   for (const metadata of addressesMetadata) {
     const addressIndex = walletMetadata.addresses.findIndex((data) => data.index === metadata.index)
@@ -217,7 +221,9 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
     await deleteDeprecatedWallet()
 
     // Step 3: Add hash in address metadata for faster app unlock and store public and private key in secure store
-    const { addresses } = await getStoredWallet('Could not migrate address metadata, wallet metadata not found')
+    const { addresses } = await getStoredWallet(
+      `${i18n.t('Could not migrate address metadata')}: ${i18n.t('Wallet metadata not found')}`
+    )
     const updatedAddressesMetadata: AddressMetadataWithHash[] = []
 
     for (const address of addresses) {
@@ -247,7 +253,8 @@ export const storedWalletExists = async (): Promise<boolean> =>
 export const dangerouslyExportWalletMnemonic = async (): Promise<string> => {
   const decryptedMnemonic = await getSecurelyWithReportableError(MNEMONIC_V2, true, '')
 
-  if (!decryptedMnemonic) throw new Error('Could not export mnemonic: could not find stored wallet')
+  if (!decryptedMnemonic)
+    throw new Error(`${i18n.t('Could not export mnemonic')}: ${i18n.t('Could not find stored wallet')}`)
 
   const parsedDecryptedMnemonic = mnemonicJsonStringifiedObjectToUint8Array(JSON.parse(decryptedMnemonic))
 
@@ -259,15 +266,29 @@ export const getAddressAsymetricKey = async (addressHash: AddressHash, keyType: 
   let key = await getSecurelyWithReportableError(storageKey, false, `Could not get ${keyType} from secure storage`)
 
   if (!key) {
-    const { addresses } = await getStoredWallet(`Could not get address ${keyType} key, wallet metadata not found`)
+    const { addresses } = await getStoredWallet(
+      `${i18n.t(
+        keyType === 'public' ? 'Could not get address public key' : 'Could not get address private key'
+      )}: ${i18n.t('Wallet metadata not found')}`
+    )
     const address = addresses.find((address) => address.hash === addressHash)
 
-    if (!address) throw new Error(`Could not get address ${keyType} key, address metadata not found`)
+    if (!address)
+      throw new Error(
+        `${i18n.t(
+          keyType === 'public' ? 'Could not get address public key' : 'Could not get address private key'
+        )}: ${i18n.t('Address metadata not found')}`
+      )
 
     await generateAndStoreAddressKeypairForIndex(address.index)
     key = await getSecurelyWithReportableError(storageKey, false, `Could not get ${keyType} from secure storage`)
 
-    if (!key) throw new Error(`Could not generate address ${keyType} key`)
+    if (!key)
+      throw new Error(
+        i18n.t(
+          keyType === 'public' ? 'Could not generate address public key' : 'Could not generate address private key'
+        )
+      )
   }
 
   return key
@@ -346,7 +367,8 @@ const generateAndStoreAddressKeypairForIndex = async (addressIndex: number): Pro
 
 export const initializeKeyringWithStoredWallet = async () => {
   let decryptedMnemonic = await getSecurelyWithReportableError(MNEMONIC_V2, true, '')
-  if (!decryptedMnemonic) throw new Error('Could not initialize keyring: could not find stored wallet')
+  if (!decryptedMnemonic)
+    throw new Error(`${i18n.t('Could not initialize keyring')}: ${i18n.t('Could not find stored wallet')}`)
 
   const parsedDecryptedMnemonic = mnemonicJsonStringifiedObjectToUint8Array(JSON.parse(decryptedMnemonic))
   keyring.initFromDecryptedMnemonic(parsedDecryptedMnemonic, '')

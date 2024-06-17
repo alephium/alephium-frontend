@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import { useTranslation } from 'react-i18next'
 
 import ProgressHeader from '~/components/headers/ProgressHeader'
 import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
@@ -62,10 +63,11 @@ const SendNavigation = () => (
 
 const SendProgressHeader = () => {
   const { headerOptions, screenScrollY } = useHeaderContext()
+  const { t } = useTranslation()
 
   return (
     <ProgressHeader
-      options={{ headerTitle: 'Send', ...headerOptions }}
+      options={{ headerTitle: t('Send'), ...headerOptions }}
       titleAlwaysVisible
       workflow="send"
       scrollY={screenScrollY}

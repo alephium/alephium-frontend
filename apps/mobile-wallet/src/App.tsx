@@ -26,7 +26,6 @@ import {
   TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
-import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'
 import updateLocale from 'dayjs/plugin/updateLocale'
 import { StatusBar } from 'expo-status-bar'
@@ -153,19 +152,6 @@ const Main = ({ children, ...props }: ViewProps) => {
     verifiedFungibleTokenSymbols.uninitialized,
     verifiedFungibleTokensNeedInitialization
   ])
-
-  useEffect(() => {
-    if (
-      network.status === 'online' &&
-      !isLoadingVerifiedFungibleTokens &&
-      verifiedFungibleTokenSymbols.uninitialized.length > 1
-    ) {
-      console.log(
-        'TODO: Sync address verified tokens balance histories for',
-        verifiedFungibleTokenSymbols.uninitialized.filter((symbol) => symbol !== ALPH.symbol)
-      )
-    }
-  }, [isLoadingVerifiedFungibleTokens, network.status, verifiedFungibleTokenSymbols.uninitialized])
 
   const refreshTokensLatestPrice = useCallback(() => {
     dispatch(

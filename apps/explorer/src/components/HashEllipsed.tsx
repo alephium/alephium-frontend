@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { HTMLAttributes } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Ellipsed from '@/components/Ellipsed'
@@ -30,22 +31,26 @@ interface HashEllipsedProps extends HTMLAttributes<HTMLDivElement> {
   className?: string
 }
 
-const HashEllipsed = ({ hash, copyTooltipText, disableCopy = false, className, ...props }: HashEllipsedProps) => (
-  <Container className={className}>
-    <HashContainer>
-      <Ellipsed text={hash} {...props} />
-    </HashContainer>
-    {!disableCopy && (
-      <CopyButton
-        textToCopy={hash}
-        data-tooltip-id="default"
-        data-tooltip-content={copyTooltipText || 'Copy hash'}
-        className={className}
-        hasBackground
-      />
-    )}
-  </Container>
-)
+const HashEllipsed = ({ hash, copyTooltipText, disableCopy = false, className, ...props }: HashEllipsedProps) => {
+  const { t } = useTranslation()
+
+  return (
+    <Container className={className}>
+      <HashContainer>
+        <Ellipsed text={hash} {...props} />
+      </HashContainer>
+      {!disableCopy && (
+        <CopyButton
+          textToCopy={hash}
+          data-tooltip-id="default"
+          data-tooltip-content={copyTooltipText || t('Copy hash')}
+          className={className}
+          hasBackground
+        />
+      )}
+    </Container>
+  )
+}
 
 export default HashEllipsed
 

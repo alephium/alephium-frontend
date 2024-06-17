@@ -21,6 +21,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -55,6 +56,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
+  const { t } = useTranslation()
 
   const [loading, setLoading] = useState(false)
 
@@ -174,7 +176,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
           <Amount value={BigInt(address.balance)} color={textColor} size={15} medium suffix="ALPH" />
           <AddressGroup>
             <AppText style={{ color: textColor }} size={13}>
-              Group {address.group}
+              {t('Group {{ groupNumber }}', { groupNumber: address.group })}
             </AppText>
           </AddressGroup>
         </Amounts>
@@ -204,7 +206,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
           </ButtonsRow>
         </BottomRow>
       </CardGradientContainer>
-      <SpinnerModal isActive={loading} text="Updating default address..." />
+      <SpinnerModal isActive={loading} text={`${t('Updating default address')}...`} />
     </View>
   )
 }

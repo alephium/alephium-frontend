@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TransactionInfoType } from '@alephium/shared'
 import { colord } from 'colord'
 import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, Repeat, Repeat2 } from 'lucide-react-native'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components/native'
 
 interface TransactionUIProps {
@@ -28,21 +29,22 @@ interface TransactionUIProps {
 
 export const useTransactionUI = ({ infoType, isFailedScriptTx }: TransactionUIProps) => {
   const theme = useTheme()
+  const { t } = useTranslation()
 
   return isFailedScriptTx
     ? {
-        label: 'dApp',
+        label: t('dApp'),
         Icon: Repeat2,
         iconColor: colord(theme.global.complementary).alpha(0.5).toRgbString(),
         iconBgColor: colord(theme.global.complementary).alpha(0.05).toRgbString()
       }
     : {
         label: {
-          in: 'Received',
-          out: 'Sent',
-          move: 'Moved',
-          pending: 'Pending',
-          swap: 'dApp'
+          in: t('Received'),
+          out: t('Sent'),
+          move: t('Moved'),
+          pending: t('Pending'),
+          swap: t('dApp')
         }[infoType],
         Icon: {
           in: ArrowDown,

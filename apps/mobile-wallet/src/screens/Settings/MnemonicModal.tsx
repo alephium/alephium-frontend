@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { usePreventScreenCapture } from 'expo-screen-capture'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import Button from '~/components/buttons/Button'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
@@ -30,6 +31,8 @@ interface MnemonicModalProps extends ModalContentProps {
 }
 
 const MnemonicModal = ({ onVerifyButtonPress, ...props }: MnemonicModalProps) => {
+  const { t } = useTranslation()
+
   const [mnemonic, setMnemonic] = useState<string>()
 
   useEffect(() => {
@@ -49,7 +52,7 @@ const MnemonicModal = ({ onVerifyButtonPress, ...props }: MnemonicModalProps) =>
       </ScreenSection>
       {onVerifyButtonPress && (
         <ScreenSection>
-          <Button variant="highlight" title="Verify" onPress={onVerifyButtonPress} />
+          <Button variant="highlight" title={t('Verify')} onPress={onVerifyButtonPress} />
         </ScreenSection>
       )}
     </ModalContent>

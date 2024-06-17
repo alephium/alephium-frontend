@@ -33,7 +33,7 @@ export const parseSessionProposalEvent = (proposalEvent: SessionProposalEvent) =
   const { id, requiredNamespaces, relays } = proposalEvent.params
   const { metadata } = proposalEvent.params.proposer
   const requiredNamespace = requiredNamespaces[PROVIDER_NAMESPACE]
-  const requiredChains = requiredNamespace.chains
+  const requiredChains = requiredNamespace ? requiredNamespace.chains : undefined
   const requiredChainInfo = requiredChains ? parseChain(requiredChains[0]) : undefined
 
   return {
