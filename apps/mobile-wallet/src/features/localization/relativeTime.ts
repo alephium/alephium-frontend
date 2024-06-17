@@ -32,6 +32,7 @@ type RelativeTimeEntries = {
   yy: string
 }
 
+// See https://day.js.org/docs/en/customization/customization
 export const shortRelativeTime: Record<string, RelativeTimeEntries> = {
   en: {
     future: 'in %s',
