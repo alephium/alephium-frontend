@@ -20,6 +20,13 @@ If you get an error `SDK location not found.` make sure the `ANDROID_SDK_ROOT` e
 ANDROID_SDK_ROOT=/Users/<USERNAME>/Library/Android/sdk pnpm android
 ```
 
+### Adding a new language
+
+1. Set up new language in [Crowdin project](https://crowdin.com/project/alephium)
+1. Run GitHub action to generate translation JSON file for that language
+1. Import generated JSON file in `src/features/localization/i18n.ts` and update `resources`
+1. Enable language settings in `src/features/localization/languages.ts`
+
 ## EAS build/submit
 
 ### Android

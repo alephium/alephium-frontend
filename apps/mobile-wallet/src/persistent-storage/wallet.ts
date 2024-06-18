@@ -27,7 +27,7 @@ import { nanoid } from 'nanoid'
 
 import { sendAnalytics } from '~/analytics'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
-import i18n from '~/i18n'
+import i18n from '~/features/localization/i18n'
 import { defaultBiometricsConfig } from '~/persistent-storage/config'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {

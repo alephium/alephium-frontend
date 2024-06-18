@@ -19,6 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { appReset, fiatCurrencyChanged } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
+import {
+  languageChanged,
+  systemLanguageMatchFailed,
+  systemLanguageMatchSucceeded
+} from '~/features/localization/localizationActions'
 import { defaultGeneralSettings, persistSettings } from '~/persistent-storage/settings'
 import { allBiometricsEnabled, analyticsIdGenerated } from '~/store/settings/settingsActions'
 import { RootState } from '~/store/store'
@@ -76,6 +81,15 @@ const settingsSlice = createSlice({
         state.requireAuth = true
         state.usesBiometrics = true
       })
+      .addCase(systemLanguageMatchSucceeded, (state, { payload: language }) => {
+        state.language = language
+      })
+      .addCase(systemLanguageMatchFailed, (state) => {
+        state.language = 'en-US'
+      })
+      .addCase(languageChanged, (state, action) => {
+        state.language = action.payload
+      })
   }
 })
 
@@ -105,6 +119,9 @@ settingsListenerMiddleware.startListening({
     biometricsToggled,
     autoLockSecondsChanged,
     allBiometricsEnabled,
+    languageChanged,
+    systemLanguageMatchSucceeded,
+    systemLanguageMatchFailed,
     appReset
   ),
   effect: async (_, { getState }) => {

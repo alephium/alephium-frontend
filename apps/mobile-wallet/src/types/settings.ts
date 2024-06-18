@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Currency, NetworkSettings } from '@alephium/shared'
 
+import { Language } from '~/features/localization/languages'
 import { ThemeType } from '~/style/themes'
 
 export interface GeneralSettings {
@@ -30,6 +31,7 @@ export interface GeneralSettings {
   walletConnect: boolean
   usesBiometrics: boolean
   autoLockSeconds: number
+  language?: Language
 }
 
 export interface Settings {

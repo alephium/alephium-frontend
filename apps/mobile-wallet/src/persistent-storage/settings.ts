@@ -35,6 +35,7 @@ export const defaultGeneralSettings: GeneralSettings = {
   analyticsId: undefined,
   walletConnect: false,
   usesBiometrics: false,
+  language: undefined,
   autoLockSeconds: 0
 }
 

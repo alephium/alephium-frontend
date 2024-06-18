@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, AssetAmount, client } from '@alephium/shared'
 import { transactionSign } from '@alephium/web3'
 
-import i18n from '~/i18n'
+import i18n from '~/features/localization/i18n'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { store } from '~/store/store'
 import { Address } from '~/types/addresses'

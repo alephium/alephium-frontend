@@ -16,26 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import i18next from 'i18next'
-import { initReactI18next } from 'react-i18next'
+export type Language = 'en-US' | 'fr-FR' | 'el-GR'
 
-import el from '../locales/el-GR/translation.json'
-import en from '../locales/en-US/translation.json'
-import fr from '../locales/fr-FR/translation.json'
-import id from '../locales/id-ID/translation.json'
-
-i18next.use(initReactI18next).init({
-  resources: {
-    'en-US': { translation: en },
-    'fr-FR': { translation: fr },
-    'id-ID': { translation: id },
-    'el-GR': { translation: el }
-  },
-  lng: 'en-US',
-  fallbackLng: 'en-US',
-  interpolation: {
-    escapeValue: false
-  }
-})
-
-export default i18next
+export const languageOptions: { label: string; value: Language }[] = [
+  { label: 'English', value: 'en-US' },
+  { label: 'Français', value: 'fr-FR' },
+  { label: 'Ελληνικά', value: 'el-GR' }
+]
