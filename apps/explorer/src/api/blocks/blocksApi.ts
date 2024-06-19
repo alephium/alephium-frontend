@@ -27,6 +27,11 @@ export const blocksQueries = {
         queryKey: ['block', blockHash],
         queryFn: () => client.explorer.blocks.getBlocksBlockHash(blockHash)
       }),
+    uncle: (blockHash: string) =>
+      queryOptions({
+        queryKey: ['uncleBlock', blockHash],
+        queryFn: () => client.node.blockflow.getBlockflowMainChainBlockByGhostUncleGhostUncleHash(blockHash)
+      }),
     transactions: (blockHash: string, page: number = 1) =>
       queryOptions({
         queryKey: ['blockTransactions', blockHash, page],
