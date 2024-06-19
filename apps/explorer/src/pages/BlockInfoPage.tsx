@@ -67,6 +67,11 @@ const BlockInfoPage = () => {
     enabled: !!id
   })
 
+  const { data: uncleBlock } = useQuery({
+    ...blocksQueries.block.uncle(id || ''),
+    enabled: !!blockInfo && blockInfo.mainChain === false
+  })
+
   const { data: txInfo } = useQuery({...transactionsQueries.transaction.one(id || ''), enabled: !!id && !!blockInfoError })
 
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
@@ -84,8 +89,9 @@ const BlockInfoPage = () => {
     <InlineErrorMessage {...blockInfoError} />
   ) : (
     <Section>
-      <SectionTitle title={t('Block')} isLoading={infoLoading || txLoading} />
-
+      <SectionTitle title={t('Block')} 
+        isLoading={infoLoading || txLoading} 
+      />
       <Table bodyOnly isLoading={infoLoading}>
         {blockInfo && (
           <TableBody tdStyles={BlockTableBodyCustomStyles}>
@@ -93,6 +99,10 @@ const BlockInfoPage = () => {
               <span>{t('Hash')}</span>
               <HighlightedCell textToCopy={blockInfo.hash}>{blockInfo.hash}</HighlightedCell>
             </TableRow>
+            {!!uncleBlock && <TableRow>
+              <span>{t('Is Uncle Block')}</span>
+              <Badge type="accent" content={t('True')} />
+            </TableRow>}
             <TableRow>
               <span>{t('Height')}</span>
               <span>{blockInfo.height}</span>
@@ -113,7 +123,7 @@ const BlockInfoPage = () => {
             </TableRow>
             {blockInfo.ghostUncles && blockInfo.ghostUncles.length > 0 &&
               <TableRow>
-                <span>{t('Uncle blocks')}</span>
+                <span>{t('uncleBlock_other')}</span>
                 <UncleBlocks>{blockInfo.ghostUncles?.map((b) => <TightLink text={b.blockHash} to={`/blocks/${b.blockHash}`} maxWidth="300px" />)}</UncleBlocks>
               </TableRow>
             }

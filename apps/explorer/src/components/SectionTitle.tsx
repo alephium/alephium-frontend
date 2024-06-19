@@ -20,9 +20,10 @@ import styled from 'styled-components'
 
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { deviceBreakPoints } from '@/styles/globalStyles'
+import { ReactNode } from 'react'
 
 interface PageTitleProps {
-  title: string
+  title: ReactNode
   surtitle?: string | JSX.Element
   subtitle?: string | JSX.Element
   isLoading?: boolean

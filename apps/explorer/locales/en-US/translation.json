@@ -132,5 +132,8 @@
   "It appears that this block is not part of the main chain.": "It appears that this block is not part of the main chain.",
   "confirmationsKey_one": "{{ count }} Confirmation",
   "confirmationsKey_other": "{{ count }} Confirmations",
-  "Uncle blocks": "Uncle blocks"
+  "uncleBlock_one": "Uncle block",
+  "uncleBlock_other": "Uncle blocks",
+  "Is Uncle Block": "Is Uncle Block",
+  "True": "True"
 }
