@@ -16,23 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { infiniteQueryOptions } from '@tanstack/react-query'
+import { queryOptions } from '@tanstack/react-query'
 
 import client from '@/api/client'
 
 export const blocksQueries = {
   block: {
-    one: (blockHash: string) => ({
-      queryKey: ['block', blockHash],
-      queryFn: () => client.explorer.blocks.getBlocksBlockHash(blockHash)
-    }),
-    transactions: (blockHash: string) =>
-      infiniteQueryOptions({
-        queryKey: ['blockTransactions', blockHash],
-        queryFn: ({ pageParam }) =>
-          client.explorer.blocks.getBlocksBlockHashTransactions(blockHash, { page: pageParam }),
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, allPages, lastPageParam) => (lastPageParam += 1)
+    one: (blockHash: string) =>
+      queryOptions({
+        queryKey: ['block', blockHash],
+        queryFn: () => client.explorer.blocks.getBlocksBlockHash(blockHash)
+      }),
+    transactions: (blockHash: string, page: number = 1) =>
+      queryOptions({
+        queryKey: ['blockTransactions', blockHash, page],
+        queryFn: ({ pageParam }) => client.explorer.blocks.getBlocksBlockHashTransactions(blockHash, { page })
       })
   }
 }
