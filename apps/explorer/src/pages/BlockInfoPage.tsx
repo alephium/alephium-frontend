@@ -67,7 +67,7 @@ const BlockInfoPage = () => {
     enabled: !!id
   })
 
-  const { data: txInfo } = useQuery({...transactionsQueries.transaction.one(id || ''), enabled: !!id && !infoLoading && !blockInfo})
+  const { data: txInfo } = useQuery({...transactionsQueries.transaction.one(id || ''), enabled: !!id && !!blockInfoError })
 
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
   useEffect(() => {
@@ -111,6 +111,12 @@ const BlockInfoPage = () => {
               <span>{t('Timestamp')}</span>
               <Timestamp timeInMs={blockInfo.timestamp} forceFormat="high" />
             </TableRow>
+            {blockInfo.ghostUncles && blockInfo.ghostUncles.length > 0 &&
+              <TableRow>
+                <span>{t('Uncle blocks')}</span>
+                <UncleBlocks>{blockInfo.ghostUncles?.map((b) => <TightLink text={b.blockHash} to={`/blocks/${b.blockHash}`} maxWidth="300px" />)}</UncleBlocks>
+              </TableRow>
+            }
           </TableBody>
         )}
       </Table>
@@ -270,4 +276,10 @@ const IODetailList = styled.div`
   border: 1px solid ${({ theme }) => theme.border.secondary};
   border-radius: 8px;
   padding: 15px;
+`
+
+const UncleBlocks = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 `
