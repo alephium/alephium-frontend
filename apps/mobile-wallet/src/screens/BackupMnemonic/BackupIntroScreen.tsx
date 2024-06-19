@@ -77,7 +77,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
           <CenteredInstructions
             instructions={[
               {
-                text: t('In the following screens you will see and verify your secret recover phrase.'),
+                text: t('In the following screens you will see and verify your secret recovery phrase.'),
                 type: 'secondary'
               },
               { text: t('Write it down and store it in a safe place.'), type: 'primary' },

@@ -232,7 +232,7 @@
   "Secret phrase": "Phrase secrète",
   "Verify secret phrase": "Vérifier la phrase secrète",
   "Enter the secret phrase for the \"{{ walletName }}\" wallet.": "Entrez la phrase secrète pour le portefeuille \"{{ walletName }}\".",
-  "In the following screens you will see and verify your secret recover phrase.": "Dans les écrans suivants, vous verrez et vérifierez votre phrase de récupération secrète.",
+  "In the following screens you will see and verify your secret recovery phrase.": "Dans les écrans suivants, vous verrez et vérifierez votre phrase de récupération secrète.",
   "Write it down and store it in a safe place.": "Notez-la et stockez-la dans un endroit sûr.",
   "Why is this important?": "Pourquoi est-ce important?",
   "Well done!": "Bien joué!",

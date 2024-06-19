@@ -232,7 +232,7 @@
   "Secret phrase": "Μυστική φράση",
   "Verify secret phrase": "Επαλήθευση μυστικής φράσης",
   "Enter the secret phrase for the \"{{ walletName }}\" wallet.": "Εισάγετε τη μυστική φράση για το πορτοφόλι \"{{ walletName }}\".",
-  "In the following screens you will see and verify your secret recover phrase.": "Στις παρακάτω οθόνες θα δείτε και θα επαληθεύσετε τη μυστική φράση ανάκτησης σας.",
+  "In the following screens you will see and verify your secret recovery phrase.": "Στις παρακάτω οθόνες θα δείτε και θα επαληθεύσετε τη μυστική φράση ανάκτησης σας.",
   "Write it down and store it in a safe place.": "Σημειώστε την και αποθηκεύστε τη σε ασφαλές μέρος.",
   "Why is this important?": "Γιατί είναι σημαντικό;",
   "Well done!": "Συγχαρητήρια!",
