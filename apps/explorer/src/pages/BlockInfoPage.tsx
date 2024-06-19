@@ -16,15 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import { useEffect, useState } from 'react'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiArrowRightLine } from 'react-icons/ri'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
+import { blocksQueries } from '@/api/blocks/blocksApi'
 import client from '@/api/client'
 import Badge from '@/components/Badge'
 import InlineErrorMessage from '@/components/InlineErrorMessage'
@@ -39,7 +40,6 @@ import { AnimatedCell, DetailToggle, TableDetailsRow } from '@/components/Table/
 import TableHeader from '@/components/Table/TableHeader'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
-import usePageNumber from '@/hooks/usePageNumber'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import transactionIcon from '@/images/transaction-icon.svg'
 
@@ -52,57 +52,16 @@ const BlockInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const navigate = useNavigate()
 
-  const [blockInfo, setBlockInfo] = useState<explorer.BlockEntryLite>()
-  const [blockInfoError, setBlockInfoError] = useState<{
-    message: string
-  }>()
-  const [txList, setTxList] = useState<explorer.Transaction[]>()
+  const {
+    data: blockInfo,
+    error: blockInfoError,
+    isLoading: infoLoading
+  } = useQuery({ ...blocksQueries.block.one(id || ''), enabled: !!id })
 
-  const [infoLoading, setInfoLoading] = useState(true)
-  const [txLoading, setTxLoading] = useState(true)
-
-  const currentPageNumber = usePageNumber()
-
-  // Block info
-  useEffect(() => {
-    const fetchBlockInfo = async () => {
-      if (!id) return
-
-      setInfoLoading(true)
-      try {
-        const data = await client.explorer.blocks.getBlocksBlockHash(id)
-        if (data) setBlockInfo(data)
-      } catch (e) {
-        console.error(e)
-
-        setBlockInfoError({
-          message: getHumanReadableError(e, t('Unknown error'))
-        })
-      }
-      setInfoLoading(false)
-    }
-
-    fetchBlockInfo()
-  }, [id, t])
-
-  // Block transactions
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      if (!client || !id) return
-      setTxLoading(true)
-      try {
-        const data = await client.explorer.blocks.getBlocksBlockHashTransactions(id, {
-          page: currentPageNumber
-        })
-        if (data) setTxList(data)
-      } catch (e) {
-        console.error(e)
-      }
-      setTxLoading(false)
-    }
-
-    fetchTransactions()
-  }, [id, currentPageNumber])
+  const { data: txList, isLoading: txLoading } = useInfiniteQuery({
+    ...blocksQueries.block.transactions(id || ''),
+    enabled: !!id
+  })
 
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
   useEffect(() => {
