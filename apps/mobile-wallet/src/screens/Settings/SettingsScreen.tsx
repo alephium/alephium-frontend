@@ -212,7 +212,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
               <BiometricsRecommendationBox type="accent">
                 <AppText color="accent">
                   {t(
-                    "Your device supports biometrics but none is enrolled. Enable them by adding a fingeprint or Face ID in your device's settings."
+                    "Your device supports biometrics but none is enrolled. Enable them by adding a fingerprint or Face ID in your device's settings."
                   )}
                 </AppText>
               </BiometricsRecommendationBox>

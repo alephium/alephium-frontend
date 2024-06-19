@@ -44,7 +44,7 @@ const ConsolidationModal = ({ onConsolidate, fees, ...props }: ConsolidationModa
         <View>
           <AppText>
             {t(
-              'It appers that the address you use to send funds from has too many UTXOs! Would you like to consolidate them? This will cost as small fee.'
+              'It appears that the address you use to send funds from has too many UTXOs! Would you like to consolidate them? This will cost as small fee.'
             )}
           </AppText>
           <Fee>
