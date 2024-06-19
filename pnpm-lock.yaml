@@ -366,14 +366,14 @@ importers:
         specifier: 1.0.5
         version: 1.0.5
       '@tanstack/query-sync-storage-persister':
-        specifier: 4.32.0
-        version: 4.32.0
+        specifier: 5.45.0
+        version: 5.45.0
       '@tanstack/react-query':
-        specifier: 4.32.0
-        version: 4.32.0(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.23.6)(react@18.2.0))(react@18.2.0)
+        specifier: 5.45.0
+        version: 5.45.0(react@18.2.0)
       '@tanstack/react-query-persist-client':
-        specifier: ^4.32.0
-        version: 4.36.1(@tanstack/react-query@4.32.0(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.23.6)(react@18.2.0))(react@18.2.0))
+        specifier: ^5.45.0
+        version: 5.45.1(@tanstack/react-query@5.45.0(react@18.2.0))(react@18.2.0)
       '@yornaath/batshit':
         specifier: ^0.9.0
         version: 0.9.0
@@ -409,7 +409,7 @@ importers:
         version: 18.2.0(react@18.2.0)
       react-i18next:
         specifier: ^13.2.1
-        version: 13.5.0(i18next@23.7.16)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.23.6)(react@18.2.0))(react@18.2.0)
+        version: 13.5.0(i18next@23.7.16)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.23.6)(@babel/preset-env@7.23.8(@babel/core@7.23.6))(react@18.2.0))(react@18.2.0)
       react-icons:
         specifier: ^4.10.1
         version: 4.12.0(react@18.2.0)
@@ -3539,37 +3539,25 @@ packages:
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
 
-  '@tanstack/query-core@4.32.0':
-    resolution: {integrity: sha512-ei4IYwL2kmlKSlCw9WgvV7PpXi0MiswVwfQRxawhJA690zWO3dU49igaQ/UMTl+Jy9jj9dK5IKAYvbX7kUvviQ==}
+  '@tanstack/query-core@5.45.0':
+    resolution: {integrity: sha512-RVfIZQmFUTdjhSAAblvueimfngYyfN6HlwaJUPK71PKd7yi43Vs1S/rdimmZedPWX/WGppcq/U1HOj7O7FwYxw==}
 
-  '@tanstack/query-core@4.36.1':
-    resolution: {integrity: sha512-DJSilV5+ytBP1FbFcEJovv4rnnm/CokuVvrBEtW/Va9DvuJ3HksbXUJEpI0aV1KtuL4ZoO9AVE6PyNLzF7tLeA==}
+  '@tanstack/query-persist-client-core@5.45.0':
+    resolution: {integrity: sha512-iAETglkRB6FR1//185TcWGnMxkisJPnCrlvIhLpHzT4eKLmh4n4vq1Cys42YIJzM2il4YWf8P4refzdq4D5Vdw==}
 
-  '@tanstack/query-persist-client-core@4.32.0':
-    resolution: {integrity: sha512-TUIArpiZJqLsYEPmg2LsZD+uJknrAHXWSaoCROFniDS0TqExe4KkjQ2gt+XTBwzxlOEN52R+l98k+oS/u94ogg==}
+  '@tanstack/query-sync-storage-persister@5.45.0':
+    resolution: {integrity: sha512-RSfPzp7Fb9C+gkak+26Gswpru0w8FEuVG9WxpPLEmE+B5Krx+gTNfLlcyxreHILaR2w7jzhKfqDd8S6lmYY8WA==}
 
-  '@tanstack/query-persist-client-core@4.36.1':
-    resolution: {integrity: sha512-eocgCeI7D7TRv1IUUBMfVwOI0wdSmMkBIbkKhqEdTrnUHUQEeOaYac8oeZk2cumAWJdycu6P/wB+WqGynTnzXg==}
-
-  '@tanstack/query-sync-storage-persister@4.32.0':
-    resolution: {integrity: sha512-DJuHgyHmmzjamC1hjs5BB1fScqMXuk/rOYrcmSLOd3U/tceAK0PqZOJzzd2Zt0bwtJQ8hatKqks7MqiLAvAPQw==}
-
-  '@tanstack/react-query-persist-client@4.36.1':
-    resolution: {integrity: sha512-32I5b9aAu4NCiXZ7Te/KEQLfHbYeTNriVPrKYcvEThnZ9tlW01vLcSoxpUIsMYRsembvJUUAkzYBAiZHLOd6pQ==}
+  '@tanstack/react-query-persist-client@5.45.1':
+    resolution: {integrity: sha512-Hk5rh2ov7YdHSP16HWnDbHcEAS19yJIvjQWGNXP6JiwZWbNJgXpKOriEOvHxLC5FPfEXl5MnA8cHTWj31kJv8Q==}
     peerDependencies:
-      '@tanstack/react-query': ^4.36.1
+      '@tanstack/react-query': ^5.45.1
+      react: ^18 || ^19
 
-  '@tanstack/react-query@4.32.0':
-    resolution: {integrity: sha512-B8WUMcByYAH9500ENejDCATOmEZhqjtS9wsfiQ3BNa+s+yAynY8SESI8WWHhSqUmjd0pmCSFRP6BOUGSda3QXA==}
+  '@tanstack/react-query@5.45.0':
+    resolution: {integrity: sha512-y272cKRJp1BvehrWG4ashOBuqBj1Qm2O6fgYJ9LYSHrLdsCXl74GbSVjUQTReUdHuRIl9cEOoyPa6HYag400lw==}
     peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
+      react: ^18.0.0
 
   '@testing-library/dom@9.3.4':
     resolution: {integrity: sha512-FlS4ZWlp97iiNWig0Muq8p+3rVDjRiYE+YKGbAqXOu9nwJFFOdL00kFpz42M+4huzYi86vAK1sOOfyOG45muIQ==}
@@ -14067,28 +14055,6 @@ snapshots:
       - utf-8-validate
     optional: true
 
-  '@react-native/community-cli-plugin@0.73.17(@babel/core@7.23.6)':
-    dependencies:
-      '@react-native-community/cli-server-api': 12.3.6
-      '@react-native-community/cli-tools': 12.3.6
-      '@react-native/dev-middleware': 0.73.8
-      '@react-native/metro-babel-transformer': 0.73.15(@babel/core@7.23.6)
-      chalk: 4.1.2
-      execa: 5.1.1
-      metro: 0.80.6
-      metro-config: 0.80.6
-      metro-core: 0.80.6
-      node-fetch: 2.7.0
-      readline: 1.3.0
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@babel/preset-env'
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    optional: true
-
   '@react-native/community-cli-plugin@0.73.17(@babel/core@7.23.6)(@babel/preset-env@7.23.8(@babel/core@7.23.6))':
     dependencies:
       '@react-native-community/cli-server-api': 12.3.6
@@ -14145,17 +14111,6 @@ snapshots:
       - supports-color
     optional: true
 
-  '@react-native/metro-babel-transformer@0.73.15(@babel/core@7.23.6)':
-    dependencies:
-      '@babel/core': 7.23.6
-      '@react-native/babel-preset': 0.73.21(@babel/core@7.23.6)(@babel/preset-env@7.23.8(@babel/core@7.23.6))
-      hermes-parser: 0.15.0
-      nullthrows: 1.1.1
-    transitivePeerDependencies:
-      - '@babel/preset-env'
-      - supports-color
-    optional: true
-
   '@react-native/metro-babel-transformer@0.73.15(@babel/core@7.23.6)(@babel/preset-env@7.23.8(@babel/core@7.23.6))':
     dependencies:
       '@babel/core': 7.23.6
@@ -14175,13 +14130,6 @@ snapshots:
       invariant: 2.2.4
       nullthrows: 1.1.1
       react-native: 0.73.6(@babel/core@7.23.6)(@babel/preset-env@7.23.8(@babel/core@7.23.6))(react@18.2.0)
-
-  '@react-native/virtualized-lists@0.73.4(react-native@0.73.6(@babel/core@7.23.6)(react@18.2.0))':
-    dependencies:
-      invariant: 2.2.4
-      nullthrows: 1.1.1
-      react-native: 0.73.6(@babel/core@7.23.6)(react@18.2.0)
-    optional: true
 
   '@react-native/virtualized-lists@0.73.4(react-native@0.73.6(react@18.2.0))':
     dependencies:
@@ -14539,35 +14487,27 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@tanstack/query-core@4.32.0': {}
+  '@tanstack/query-core@5.45.0': {}
 
-  '@tanstack/query-core@4.36.1': {}
-
-  '@tanstack/query-persist-client-core@4.32.0':
+  '@tanstack/query-persist-client-core@5.45.0':
     dependencies:
-      '@tanstack/query-core': 4.32.0
+      '@tanstack/query-core': 5.45.0
 
-  '@tanstack/query-persist-client-core@4.36.1':
+  '@tanstack/query-sync-storage-persister@5.45.0':
     dependencies:
-      '@tanstack/query-core': 4.36.1
+      '@tanstack/query-core': 5.45.0
+      '@tanstack/query-persist-client-core': 5.45.0
 
-  '@tanstack/query-sync-storage-persister@4.32.0':
+  '@tanstack/react-query-persist-client@5.45.1(@tanstack/react-query@5.45.0(react@18.2.0))(react@18.2.0)':
     dependencies:
-      '@tanstack/query-persist-client-core': 4.32.0
-
-  '@tanstack/react-query-persist-client@4.36.1(@tanstack/react-query@4.32.0(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.23.6)(react@18.2.0))(react@18.2.0))':
-    dependencies:
-      '@tanstack/query-persist-client-core': 4.36.1
-      '@tanstack/react-query': 4.32.0(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.23.6)(react@18.2.0))(react@18.2.0)
-
-  '@tanstack/react-query@4.32.0(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.23.6)(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@tanstack/query-core': 4.32.0
+      '@tanstack/query-persist-client-core': 5.45.0
+      '@tanstack/react-query': 5.45.0(react@18.2.0)
       react: 18.2.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
-    optionalDependencies:
-      react-dom: 18.2.0(react@18.2.0)
-      react-native: 0.73.6(@babel/core@7.23.6)(react@18.2.0)
+
+  '@tanstack/react-query@5.45.0(react@18.2.0)':
+    dependencies:
+      '@tanstack/query-core': 5.45.0
+      react: 18.2.0
 
   '@testing-library/dom@9.3.4':
     dependencies:
@@ -21193,16 +21133,6 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
       react-native: 0.73.6(@babel/core@7.23.6)(@babel/preset-env@7.23.8(@babel/core@7.23.6))(react@18.2.0)
 
-  react-i18next@13.5.0(i18next@23.7.16)(react-dom@18.2.0(react@18.2.0))(react-native@0.73.6(@babel/core@7.23.6)(react@18.2.0))(react@18.2.0):
-    dependencies:
-      '@babel/runtime': 7.23.6
-      html-parse-stringify: 3.0.1
-      i18next: 23.7.16
-      react: 18.2.0
-    optionalDependencies:
-      react-dom: 18.2.0(react@18.2.0)
-      react-native: 0.73.6(@babel/core@7.23.6)(react@18.2.0)
-
   react-icons@4.12.0(react@18.2.0):
     dependencies:
       react: 18.2.0
@@ -21391,56 +21321,6 @@ snapshots:
       - encoding
       - supports-color
       - utf-8-validate
-
-  react-native@0.73.6(@babel/core@7.23.6)(react@18.2.0):
-    dependencies:
-      '@jest/create-cache-key-function': 29.7.0
-      '@react-native-community/cli': 12.3.6
-      '@react-native-community/cli-platform-android': 12.3.6
-      '@react-native-community/cli-platform-ios': 12.3.6
-      '@react-native/assets-registry': 0.73.1
-      '@react-native/codegen': 0.73.3(@babel/preset-env@7.23.8(@babel/core@7.23.6))
-      '@react-native/community-cli-plugin': 0.73.17(@babel/core@7.23.6)
-      '@react-native/gradle-plugin': 0.73.4
-      '@react-native/js-polyfills': 0.73.1
-      '@react-native/normalize-colors': 0.73.2
-      '@react-native/virtualized-lists': 0.73.4(react-native@0.73.6(@babel/core@7.23.6)(react@18.2.0))
-      abort-controller: 3.0.0
-      anser: 1.4.10
-      ansi-regex: 5.0.1
-      base64-js: 1.5.1
-      chalk: 4.1.2
-      deprecated-react-native-prop-types: 5.0.0
-      event-target-shim: 5.0.1
-      flow-enums-runtime: 0.0.6
-      invariant: 2.2.4
-      jest-environment-node: 29.7.0
-      jsc-android: 250231.0.0
-      memoize-one: 5.2.1
-      metro-runtime: 0.80.6
-      metro-source-map: 0.80.6
-      mkdirp: 0.5.6
-      nullthrows: 1.1.1
-      pretty-format: 26.6.2
-      promise: 8.3.0
-      react: 18.2.0
-      react-devtools-core: 4.28.5
-      react-refresh: 0.14.0
-      react-shallow-renderer: 16.15.0(react@18.2.0)
-      regenerator-runtime: 0.13.11
-      scheduler: 0.24.0-canary-efb381bbf-20230505
-      stacktrace-parser: 0.1.10
-      whatwg-fetch: 3.6.20
-      ws: 8.17.1
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - '@babel/core'
-      - '@babel/preset-env'
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    optional: true
 
   react-native@0.73.6(react@18.2.0):
     dependencies:
