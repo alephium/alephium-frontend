@@ -18,21 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { UseQueryOptions } from '@tanstack/react-query'
-
-type QueryFn = (...args: any[]) => UseQueryOptions
-
-interface Queries {
-  [key: string]: QueryFn
-}
-
-type QueriesCollection<T> = {
-  [P in keyof T]: T[P]
-}
-
-export const createQueriesCollection = <T extends Record<string, Queries>>(collection: T): QueriesCollection<T> =>
-  collection
-
 export const browsePages = async <T, R>(
   callback: (arg: T, options: { limit: number; page: number }) => Promise<R[]>,
   callbackFirstArg: T,

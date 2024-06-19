@@ -16,14 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import client from '@/api/client'
-import { createQueriesCollection } from '@/utils/api'
+import { queryOptions } from '@tanstack/react-query'
 
-export const transactionsQueries = createQueriesCollection({
+import client from '@/api/client'
+
+export const transactionsQueries = {
   transaction: {
-    one: (txHash: string) => ({
-      queryKey: ['transactions', txHash],
-      queryFn: () => client.explorer.transactions.getTransactionsTransactionHash(txHash)
-    })
+    one: (txHash: string) =>
+      queryOptions({
+        queryKey: ['transactions', txHash],
+        queryFn: () => client.explorer.transactions.getTransactionsTransactionHash(txHash)
+      })
   }
-})
+}
