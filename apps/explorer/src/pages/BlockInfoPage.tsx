@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiArrowRightLine } from 'react-icons/ri'
@@ -40,8 +40,10 @@ import { AnimatedCell, DetailToggle, TableDetailsRow } from '@/components/Table/
 import TableHeader from '@/components/Table/TableHeader'
 import TableRow from '@/components/Table/TableRow'
 import Timestamp from '@/components/Timestamp'
+import usePageNumber from '@/hooks/usePageNumber'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import transactionIcon from '@/images/transaction-icon.svg'
+import { transactionsQueries } from '@/api/transactions/transactionsApi'
 
 type ParamTypes = {
   id: string
@@ -52,28 +54,27 @@ const BlockInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const navigate = useNavigate()
 
+  const currentPageNumber = usePageNumber()
+
   const {
     data: blockInfo,
     error: blockInfoError,
     isLoading: infoLoading
   } = useQuery({ ...blocksQueries.block.one(id || ''), enabled: !!id })
 
-  const { data: txList, isLoading: txLoading } = useInfiniteQuery({
-    ...blocksQueries.block.transactions(id || ''),
+  const { data: txList, isLoading: txLoading } = useQuery({
+    ...blocksQueries.block.transactions(id || '', currentPageNumber),
     enabled: !!id
   })
+
+  const { data: txInfo } = useQuery({...transactionsQueries.transaction.one(id || ''), enabled: !!id && !infoLoading && !blockInfo})
 
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
   useEffect(() => {
     if (!client || !blockInfoError || !id) return
 
     const redirectToTransactionIfExists = async () => {
-      try {
-        const data = await client.explorer.transactions.getTransactionsTransactionHash(id)
-        if (data) navigate(`/transactions/${id}`)
-      } catch (error) {
-        console.error(error)
-      }
+      if (txInfo) navigate(`/transactions/${id}`)
     }
 
     redirectToTransactionIfExists()
