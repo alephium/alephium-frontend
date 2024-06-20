@@ -27,6 +27,7 @@ import styled, { css } from 'styled-components'
 
 import { blocksQueries } from '@/api/blocks/blocksApi'
 import client from '@/api/client'
+import { transactionsQueries } from '@/api/transactions/transactionsApi'
 import Badge from '@/components/Badge'
 import InlineErrorMessage from '@/components/InlineErrorMessage'
 import { AddressLink, TightLink } from '@/components/Links'
@@ -43,7 +44,6 @@ import Timestamp from '@/components/Timestamp'
 import usePageNumber from '@/hooks/usePageNumber'
 import useTableDetailsState from '@/hooks/useTableDetailsState'
 import transactionIcon from '@/images/transaction-icon.svg'
-import { transactionsQueries } from '@/api/transactions/transactionsApi'
 
 type ParamTypes = {
   id: string
@@ -72,7 +72,10 @@ const BlockInfoPage = () => {
     enabled: !!blockInfo && blockInfo.mainChain === false
   })
 
-  const { data: txInfo } = useQuery({...transactionsQueries.transaction.one(id || ''), enabled: !!id && !!blockInfoError })
+  const { data: txInfo } = useQuery({
+    ...transactionsQueries.transaction.one(id || ''),
+    enabled: !!id && !!blockInfoError
+  })
 
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
   useEffect(() => {
@@ -89,9 +92,7 @@ const BlockInfoPage = () => {
     <InlineErrorMessage {...blockInfoError} />
   ) : (
     <Section>
-      <SectionTitle title={t('Block')} 
-        isLoading={infoLoading || txLoading} 
-      />
+      <SectionTitle title={t('Block')} isLoading={infoLoading || txLoading} />
       <Table bodyOnly isLoading={infoLoading}>
         {blockInfo && (
           <TableBody tdStyles={BlockTableBodyCustomStyles}>
@@ -99,10 +100,12 @@ const BlockInfoPage = () => {
               <span>{t('Hash')}</span>
               <HighlightedCell textToCopy={blockInfo.hash}>{blockInfo.hash}</HighlightedCell>
             </TableRow>
-            {!!uncleBlock && <TableRow>
-              <span>{t('Is Uncle Block')}</span>
-              <Badge type="accent" content={t('True')} />
-            </TableRow>}
+            {!!uncleBlock && (
+              <TableRow>
+                <span>{t('Is Uncle Block')}</span>
+                <Badge type="accent" content={t('True')} />
+              </TableRow>
+            )}
             <TableRow>
               <span>{t('Height')}</span>
               <span>{blockInfo.height}</span>
@@ -121,12 +124,16 @@ const BlockInfoPage = () => {
               <span>{t('Timestamp')}</span>
               <Timestamp timeInMs={blockInfo.timestamp} forceFormat="high" />
             </TableRow>
-            {blockInfo.ghostUncles && blockInfo.ghostUncles.length > 0 &&
+            {blockInfo.ghostUncles && blockInfo.ghostUncles.length > 0 && (
               <TableRow>
                 <span>{t('uncleBlock_other')}</span>
-                <UncleBlocks>{blockInfo.ghostUncles?.map((b) => <TightLink text={b.blockHash} to={`/blocks/${b.blockHash}`} maxWidth="300px" />)}</UncleBlocks>
+                <UncleBlocks>
+                  {blockInfo.ghostUncles?.map((b) => (
+                    <TightLink text={b.blockHash} to={`/blocks/${b.blockHash}`} maxWidth="300px" />
+                  ))}
+                </UncleBlocks>
               </TableRow>
-            }
+            )}
           </TableBody>
         )}
       </Table>
