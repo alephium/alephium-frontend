@@ -108,17 +108,20 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
               entering={FadeIn.delay(500).duration(500)}
             >
               <TitleContainer>
-                <Trans
-                  t={t}
-                  i18nKey="welcomeToAlephium"
-                  components={{
-                    0: <TitleFirstLine />,
-                    2: <TitleSecondLine />
-                  }}
-                >
-                  {'<0>Welcome to</0> <2>Alephium</2>'}
-                </Trans>
-                👋
+                <AppText style={{ textAlign: 'center' }}>
+                  <Trans
+                    t={t}
+                    i18nKey="welcomeToAlephium"
+                    components={{
+                      0: <TitleFirstLine />,
+                      1: <AppText>{'\n'}</AppText>,
+                      2: <TitleSecondLine />
+                    }}
+                  >
+                    {'<0>Welcome to</0><1 /><2>Alephium</2>'}
+                  </Trans>
+                  <TitleSecondLine> 👋</TitleSecondLine>
+                </AppText>
               </TitleContainer>
               <ButtonsContainer>
                 <Button
@@ -270,6 +273,7 @@ const TitleContainer = styled.View`
   border-radius: ${BORDER_RADIUS_BIG}px;
   background-color: ${({ theme }) => theme.bg.primary};
   margin: 22px 22px 0 22px;
+  text-align: center;
 `
 
 const TitleFirstLine = styled(AppText)`
