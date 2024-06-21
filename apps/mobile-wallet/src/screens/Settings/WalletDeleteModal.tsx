@@ -69,7 +69,7 @@ const WalletDeleteModal = ({ onDelete, ...props }: WalletDeleteModalProps) => {
     <>
       <ModalContent verticalGap {...props}>
         <ScreenSection>
-          <BottomModalScreenTitle>⚠️ {t('Delete "{walletName}"?')}</BottomModalScreenTitle>
+          <BottomModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</BottomModalScreenTitle>
         </ScreenSection>
         <ScreenSection>
           <AppText color="secondary" size={18}>

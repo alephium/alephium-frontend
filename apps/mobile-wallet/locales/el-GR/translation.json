@@ -336,7 +336,7 @@
   "Don't share your secret recovery phrase with anyone!": "Μη μοιράζεστε τη μυστική φράση αποκατάστασης σας με κανέναν!",
   "viewMnemonicModalWarning": "Πριν την εμφανίσετε, βεβαιωθείτε ότι είστε σε <1>μη-δημόσιο</1> χώρο.",
   "Error while deleting wallet": "Σφάλμα κατά τη διαγραφή πορτοφολιού",
-  "Delete \"{walletName}\"?": "Διαγραφή \"{walletName}\";",
+  "Delete \"{{ walletName }}\"?": "Διαγραφή \"{{ walletName }}\";",
   "Do you really want to delete this wallet from your device?": "Θέλετε πραγματικά να διαγράψετε αυτό το πορτοφόλι από τη συσκευή σας;",
   "You can always restore it later using your secret recovery phrase.": "Μπορείτε πάντα να το επαναφέρετε αργότερα χρησιμοποιώντας τη μυστική φράση αποκατάστασης σας.",
   "If so, please enter the wallet name below, and hit the delete button.": "Αν ναι, παρακαλώ εισάγετε το όνομα του πορτοφολιού παρακάτω και πατήστε το κουμπί διαγραφής.",
