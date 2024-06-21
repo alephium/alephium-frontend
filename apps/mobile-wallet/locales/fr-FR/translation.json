@@ -336,7 +336,7 @@
   "Don't share your secret recovery phrase with anyone!": "Ne partagez votre phrase de récupération secrète avec personne!",
   "viewMnemonicModalWarning": "Avant de l'afficher, assurez-vous d'être dans un espace <1>non public</1>.",
   "Error while deleting wallet": "Erreur lors de la suppression du portefeuille",
-  "Delete \"{{ walletName }}\"?": "Supprimer \"{{ walletName }}\"?",
+  "Delete \"{{ walletName }}\"?": "Delete \"{{ walletName }}\"?",
   "Do you really want to delete this wallet from your device?": "Voulez-vous vraiment supprimer ce portefeuille de votre appareil?",
   "You can always restore it later using your secret recovery phrase.": "Vous pouvez toujours le restaurer plus tard en utilisant votre phrase de récupération secrète.",
   "If so, please enter the wallet name below, and hit the delete button.": "Si c'est le cas, veuillez entrer le nom du portefeuille ci-dessous, et appuyez sur le bouton de suppression.",
