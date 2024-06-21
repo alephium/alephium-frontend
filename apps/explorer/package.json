@@ -39,7 +39,7 @@
     "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.12",
-    "@alephium/web3": "0.38.0",
+    "@alephium/web3": "1.0.5",
     "@tanstack/query-sync-storage-persister": "4.32.0",
     "@tanstack/react-query": "4.32.0",
     "@tanstack/react-query-persist-client": "^4.32.0",
@@ -92,7 +92,6 @@
     "serve": "^14.1.2",
     "typescript": "^5.2.2",
     "vite": "^4.5.2",
-    "vite-plugin-node-polyfills": "^0.21.0",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0",
     "vitest": "^0.31.0"
