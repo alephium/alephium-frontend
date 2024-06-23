@@ -60,9 +60,8 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
                 <BottomModalScreenTitle>{nft.name}</BottomModalScreenTitle>
               </ScreenSection>
               <ScreenSection>
-                <NFTImageContainer>
-                  <NFTFullSizeImage source={{ uri: nft.image }} />
-                </NFTImageContainer>
+                <NFTFullSizeImage source={{ uri: nft.image }} resizeMode="contain" />
+
                 {nft.description && (
                   <NFTDescriptionContainer>
                     <AppText color="secondary" size={16}>
@@ -99,13 +98,10 @@ const NFTThumbnailStyled = styled(Image)`
   border-radius: ${BORDER_RADIUS_SMALL}px;
 `
 
-const NFTImageContainer = styled.View`
-  aspect-ratio: 1;
-`
-
 const NFTFullSizeImage = styled(Image)`
   flex: 1;
   border-radius: ${BORDER_RADIUS_SMALL}px;
+  aspect-ratio: 1;
 `
 
 const NFTDescriptionContainer = styled.View`
