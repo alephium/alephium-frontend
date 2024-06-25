@@ -26,7 +26,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
 
-import { Analytics } from '~/analytics'
+import { Analytics, sendAnalytics } from '~/analytics'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import useAutoLock from '~/features/auto-lock/useAutoLock'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
@@ -174,8 +174,10 @@ const AppUnlockModal = () => {
       if (!lastNavigationState) resetNavigation(navigation)
 
       setIsAuthModalVisible(false)
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      const message = 'Could not initialize app with stored wallet'
+      showExceptionToast(error, message)
+      sendAnalytics({ type: 'error', message })
     }
   }, [dispatch, lastNavigationState, navigation])
 
@@ -187,30 +189,60 @@ const AppUnlockModal = () => {
       const deprecatedWallet = await getDeprecatedStoredWallet({ authenticationPrompt: t('Unlock your wallet') })
 
       if (walletExists) {
-        await triggerBiometricsAuthGuard({
-          settingsToCheck: 'appAccess',
-          onPromptDisplayed: openAuthModal,
-          successCallback: initializeAppWithStoredWallet
-        })
+        try {
+          await triggerBiometricsAuthGuard({
+            settingsToCheck: 'appAccess',
+            onPromptDisplayed: openAuthModal,
+            successCallback: initializeAppWithStoredWallet
+          })
+        } catch (error) {
+          const message = 'Could not trigger biometrics authentication'
+          showExceptionToast(error, message)
+          console.error(message)
+        }
 
         if (deprecatedWallet) {
-          await deleteDeprecatedWallet()
+          try {
+            await deleteDeprecatedWallet()
+          } catch (error) {
+            const message = 'Could not delete deprecated wallet'
+            showExceptionToast(error, message)
+            sendAnalytics({ type: 'error', message })
+          }
         }
       } else if (deprecatedWallet) {
         if (await loadBiometricsSettings()) {
-          await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
-          dispatch(mnemonicMigrated())
+          try {
+            await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
 
-          initializeAppWithStoredWallet()
+            dispatch(mnemonicMigrated())
+
+            initializeAppWithStoredWallet()
+          } catch {
+            sendAnalytics({
+              type: 'error',
+              message: `Could not migrate deprecated mnemonic of length ${deprecatedWallet.mnemonic.split(' ').length}`
+            })
+          }
         } else {
           navigation.navigate('LoginWithPinScreen')
         }
       }
 
-      if ((await appInstallationTimestampMissing()) || (!walletExists && !deprecatedWallet)) {
-        if (await wasAppUninstalled()) await deleteFundPassword()
+      try {
+        if ((await appInstallationTimestampMissing()) || (!walletExists && !deprecatedWallet)) {
+          if (await wasAppUninstalled()) {
+            try {
+              await deleteFundPassword()
+            } catch {
+              sendAnalytics({ type: 'error', message: 'Could not delete fund password' })
+            }
+          }
 
-        await rememberAppInstallation()
+          await rememberAppInstallation()
+        }
+      } catch (error) {
+        sendAnalytics({ type: 'error', message: 'Could not remember app install timestamp' })
       }
     } catch (e: unknown) {
       const error = e as { message?: string }

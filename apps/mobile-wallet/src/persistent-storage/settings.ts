@@ -78,9 +78,3 @@ export const loadBiometricsSettings = async () => {
 
   return usesBiometrics
 }
-
-export const storeBiometricsSettings = async (usesBiometrics: GeneralSettings['usesBiometrics']) => {
-  const generalSettings = (await loadSettings('general')) as GeneralSettings
-
-  await persistSettings('general', { ...generalSettings, usesBiometrics })
-}
