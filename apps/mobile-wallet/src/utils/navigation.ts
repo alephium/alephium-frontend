@@ -35,17 +35,11 @@ export const getInitialNavigationState = (initialRouteName: keyof RootStackParam
 // well as the RootStackNavigation itself.
 export const rootStackNavigationRef = createNavigationContainerRef<RootStackParamList>()
 
-const excludedRoutesFromRestoring = ['LandingScreen', 'LoginWithPinScreen']
-
-export const isNavStateRestorable = (state: NavigationState) => {
+export const getNavStateLastRoute = (state: NavigationState) => {
   const routes = state.routes.map((route) => route.name)
   const latestRoute = routes.length > 0 ? routes[routes.length - 1] : undefined
 
-  return latestRoute && !excludedRoutesFromRestoring.includes(latestRoute)
-}
-
-export const restoreNavigation = (navigation: NavigationProp<RootStackParamList>, state: NavigationState) => {
-  navigation.dispatch(CommonActions.reset(isNavStateRestorable(state) ? state : getInitialNavigationState()))
+  return latestRoute
 }
 
 export const resetNavigation = (

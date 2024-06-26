@@ -1,6 +1,9 @@
 {
   "extends": ["//"],
   "pipeline": {
+    "build": {
+      "env": ["VITE_NETWORK_TYPE", "VITE_BACKEND_URL", "VITE_NODE_URL", "BASE_URL"]
+    },
     "start:app": {
       "dependsOn": ["^build"],
       "cache": false,

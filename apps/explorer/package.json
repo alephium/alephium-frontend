@@ -47,7 +47,7 @@
     "apexcharts": "^3.35.0",
     "colord": "^2.9.3",
     "dayjs": "^1.10.7",
-    "framer-motion": "^10.11.6",
+    "framer-motion": "^11.2.12",
     "i18next": "^23.4.6",
     "lodash": "^4.17.21",
     "qrcode.react": "^3.1.0",
