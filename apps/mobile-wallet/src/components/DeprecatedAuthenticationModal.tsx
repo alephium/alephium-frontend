@@ -79,7 +79,7 @@ const DeprecatedAuthenticationModal = ({
         return
       }
 
-      const usesBiometrics = forcePinUsage ? false : await loadBiometricsSettings()
+      const usesBiometrics = forcePinUsage ? false : (await loadBiometricsSettings()).biometricsRequiredForAppAccess
 
       if (usesBiometrics) {
         onConfirm()

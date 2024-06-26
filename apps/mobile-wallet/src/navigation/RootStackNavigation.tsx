@@ -207,7 +207,7 @@ const AppUnlockModal = () => {
           }
         }
       } else if (deprecatedWallet) {
-        if (await loadBiometricsSettings()) {
+        if ((await loadBiometricsSettings()).biometricsRequiredForAppAccess) {
           try {
             await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
 

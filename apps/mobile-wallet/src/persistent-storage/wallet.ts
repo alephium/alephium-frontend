@@ -129,11 +129,11 @@ export const getDeprecatedStoredWallet = async (
   }
 
   const { id, name, isMnemonicBackedUp } = metadata
-  const usesBiometrics = await loadBiometricsSettings()
+  const { biometricsRequiredForAppAccess } = await loadBiometricsSettings()
 
   let mnemonic: string | null = null
 
-  if (!props?.forcePinUsage && usesBiometrics) {
+  if (!props?.forcePinUsage && biometricsRequiredForAppAccess) {
     mnemonic = await SecureStore.getItemAsync(
       BIOMETRICS_WALLET_STORAGE_KEY,
       props?.authenticationPrompt
