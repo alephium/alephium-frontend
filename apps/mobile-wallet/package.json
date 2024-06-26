@@ -22,7 +22,7 @@
     "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.12",
     "@alephium/walletconnect-provider": "1.0.5",
-    "@alephium/web3": "1.0.5",
+    "@alephium/web3": "1.1.0",
     "@expo/vector-icons": "^14.0.0",
     "@json-rpc-tools/utils": "^1.7.6",
     "@react-native-async-storage/async-storage": "1.21.0",
