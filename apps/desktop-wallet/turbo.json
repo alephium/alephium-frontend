@@ -1,6 +1,9 @@
 {
   "extends": ["//"],
-  "tasks": {
+  "pipeline": {
+    "build": {
+      "env": ["DEV", "VITE_USE_LOCAL_ANNOUNCEMENT_FILE", "VITE_VERSION"]
+    },
     "start:electron": {
       "dependsOn": ["^build"],
       "cache": false,
