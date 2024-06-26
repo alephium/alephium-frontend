@@ -22,7 +22,6 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { Dimensions, Pressable } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
-  Extrapolate,
   interpolate,
   runOnJS,
   runOnUI,
@@ -88,24 +87,13 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
   const canMaximize = useSharedValue(false)
   const shouldMaximizeOnOpen = useSharedValue(maximisedContent)
 
-  const modalHeightAnimatedStyle = useAnimatedStyle(() => {
-    const margin = interpolate(
-      -modalHeight.value,
-      [shouldMaximizeOnOpen.value ? 0 : minHeight.value, dimensions.height],
-      [5, 0],
-      Extrapolate.CLAMP
+  const modalHeightAnimatedStyle = useAnimatedStyle(() => ({
+    height: -modalHeight.value,
+    paddingTop: withSpring(
+      position.value === 'maximised' ? insets.top : position.value === 'closing' ? 0 : 10,
+      springConfig
     )
-
-    return {
-      height: -modalHeight.value,
-      paddingTop: withSpring(
-        position.value === 'maximised' ? insets.top : position.value === 'closing' ? 0 : 10,
-        springConfig
-      ),
-      marginRight: margin,
-      marginLeft: margin
-    }
-  })
+  }))
 
   const modalNavigationAnimatedStyle = useAnimatedStyle(() => ({
     height: navHeight.value,
@@ -285,5 +273,5 @@ const Navigation = styled(Animated.View)`
 
 const ContentContainer = styled(Animated.View)`
   flex: 1;
-  padding: 0 ${DEFAULT_MARGIN}px;
+  padding: 0 ${DEFAULT_MARGIN - 1}px;
 `

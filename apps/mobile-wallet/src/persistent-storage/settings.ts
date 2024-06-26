@@ -74,13 +74,10 @@ export const persistSettings = async (key: SettingsKey, settings: SettingsPartia
 }
 
 export const loadBiometricsSettings = async () => {
-  const { usesBiometrics } = (await loadSettings('general')) as GeneralSettings
+  const { usesBiometrics, requireAuth } = (await loadSettings('general')) as GeneralSettings
 
-  return usesBiometrics
-}
-
-export const storeBiometricsSettings = async (usesBiometrics: GeneralSettings['usesBiometrics']) => {
-  const generalSettings = (await loadSettings('general')) as GeneralSettings
-
-  await persistSettings('general', { ...generalSettings, usesBiometrics })
+  return {
+    biometricsRequiredForAppAccess: usesBiometrics,
+    biometricsRequiredForTransactions: requireAuth
+  }
 }
