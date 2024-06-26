@@ -17,9 +17,6 @@ patchedDependencies:
   '@metamask/scure-bip39@2.1.1':
     hash: 4mkpybhyrxbheknii5rno7c5b4
     path: patches/@metamask__scure-bip39@2.1.1.patch
-  framer-motion@10.17.12:
-    hash: yqcyqtz6tj5ltmzil3tv7o434i
-    path: patches/framer-motion@10.17.12.patch
   react-native-aes-crypto@2.1.1:
     hash: sm7rpv6bikakdvmsl6ekayqewu
     path: patches/react-native-aes-crypto@2.1.1.patch
@@ -240,8 +237,8 @@ importers:
         specifier: ^3.3.0
         version: 3.3.0
       framer-motion:
-        specifier: ^10.11.6
-        version: 10.17.12(patch_hash=yqcyqtz6tj5ltmzil3tv7o434i)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^11.2.12
+        version: 11.2.12(@emotion/is-prop-valid@1.2.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       i18next:
         specifier: ^23.4.6
         version: 23.7.16
@@ -387,8 +384,8 @@ importers:
         specifier: ^1.10.7
         version: 1.11.10
       framer-motion:
-        specifier: ^10.11.6
-        version: 10.17.12(patch_hash=yqcyqtz6tj5ltmzil3tv7o434i)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^11.2.12
+        version: 11.2.12(@emotion/is-prop-valid@1.2.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       i18next:
         specifier: ^23.4.6
         version: 23.7.16
@@ -6383,12 +6380,15 @@ packages:
     resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
     engines: {node: '>= 6'}
 
-  framer-motion@10.17.12:
-    resolution: {integrity: sha512-6aaBLN2EgH/GilXwOzEalTfw5Rx9DTQJJjTrxq5bfDbGtPCzXz2GCN6ePGRpTi1ZGugLHxdU273h38ENbcdFKQ==}
+  framer-motion@11.2.12:
+    resolution: {integrity: sha512-lCjkV4nA9rWOy2bhR4RZzkp2xpB++kFmUZ6D44V9VQaxk+JDmbDd5lq+u58DjJIIllE8AZEXp9OG/TyDN4FB/w==}
     peerDependencies:
+      '@emotion/is-prop-valid': '*'
       react: ^18.0.0
       react-dom: ^18.0.0
     peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
       react:
         optional: true
       react-dom:
@@ -18530,11 +18530,11 @@ snapshots:
       combined-stream: 1.0.8
       mime-types: 2.1.35
 
-  framer-motion@10.17.12(patch_hash=yqcyqtz6tj5ltmzil3tv7o434i)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  framer-motion@11.2.12(@emotion/is-prop-valid@1.2.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       tslib: 2.6.2
     optionalDependencies:
-      '@emotion/is-prop-valid': 0.8.8
+      '@emotion/is-prop-valid': 1.2.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
