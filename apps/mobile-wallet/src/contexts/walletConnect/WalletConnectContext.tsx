@@ -22,7 +22,12 @@ import {
   AddressHash,
   AssetAmount,
   client,
+  getActiveWalletConnectSessions,
   getHumanReadableError,
+  isNetworkValid,
+  parseSessionProposalEvent,
+  SessionProposalEvent,
+  SessionRequestEvent,
   WALLETCONNECT_ERRORS,
   walletConnectClientInitialized,
   walletConnectClientInitializeFailed,
@@ -99,10 +104,9 @@ import {
   SignUnsignedTxData,
   TransferTxData
 } from '~/types/transactions'
-import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
+import { SessionRequestData } from '~/types/walletConnect'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { sleep } from '~/utils/misc'
-import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
 
 const MaxRequestNumToKeep = 10
 const ONE_HOURS_IN_SECONDS = 60 * 60

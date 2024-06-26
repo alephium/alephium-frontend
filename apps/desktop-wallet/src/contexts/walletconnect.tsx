@@ -19,7 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   AssetAmount,
   client,
+  getActiveWalletConnectSessions,
   getHumanReadableError,
+  isNetworkValid,
+  parseSessionProposalEvent,
+  SessionProposalEvent,
+  SessionRequestEvent,
   WALLETCONNECT_ERRORS,
   WalletConnectClientStatus,
   WalletConnectError
@@ -86,10 +91,8 @@ import {
   TxDataToModalType,
   TxType
 } from '@/types/transactions'
-import { SessionProposalEvent, SessionRequestEvent } from '@/types/walletConnect'
 import { AlephiumWindow } from '@/types/window'
 import { isRcVersion } from '@/utils/app-data'
-import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '@/utils/walletConnect'
 
 const MaxRequestNumToKeep = 10
 
