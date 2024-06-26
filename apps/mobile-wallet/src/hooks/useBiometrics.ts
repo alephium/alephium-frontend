@@ -22,6 +22,7 @@ import {
   isEnrolledAsync,
   LocalAuthenticationResult
 } from 'expo-local-authentication'
+import { useCallback } from 'react'
 
 import { useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
@@ -163,30 +164,34 @@ export const useBiometricsAuthGuard = () => {
   const biometricsRequiredForTransactions = useAppSelector((s) => s.settings.requireAuth)
   const { triggerBiometricsPrompt } = useBiometricPrompt()
 
-  const triggerBiometricsAuthGuard = async ({
-    successCallback,
-    failureCallback,
-    onPromptDisplayed,
-    settingsToCheck
-  }: {
-    settingsToCheck: 'appAccess' | 'transactions' | 'appAccessOrTransactions'
-    successCallback: () => void
-    failureCallback?: () => void
-    onPromptDisplayed?: () => void
-  }) => {
-    const isBiometricsAuthRequired = {
-      appAccess: biometricsRequiredForAppAccess,
-      transactions: biometricsRequiredForTransactions,
-      appAccessOrTransactions: biometricsRequiredForAppAccess || biometricsRequiredForTransactions
-    }[settingsToCheck]
+  const triggerBiometricsAuthGuard = useCallback(
+    async ({
+      successCallback,
+      failureCallback,
+      onPromptDisplayed,
+      settingsToCheck
+    }: {
+      settingsToCheck: 'appAccess' | 'transactions' | 'appAccessOrTransactions'
+      successCallback: () => void
+      failureCallback?: () => void
+      onPromptDisplayed?: () => void
+    }) => {
+      const isBiometricsAuthRequired = {
+        appAccess: biometricsRequiredForAppAccess,
+        transactions: biometricsRequiredForTransactions,
+        appAccessOrTransactions: biometricsRequiredForAppAccess || biometricsRequiredForTransactions
+      }[settingsToCheck]
 
-    if (isBiometricsAuthRequired) {
-      onPromptDisplayed && onPromptDisplayed()
-      await triggerBiometricsPrompt({ successCallback, failureCallback })
-    } else {
-      successCallback()
-    }
-  }
+      if (isBiometricsAuthRequired) {
+        onPromptDisplayed && onPromptDisplayed()
+        await triggerBiometricsPrompt({ successCallback, failureCallback })
+      } else {
+        successCallback()
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [biometricsRequiredForAppAccess, biometricsRequiredForTransactions]
+  )
 
   return { triggerBiometricsAuthGuard }
 }
