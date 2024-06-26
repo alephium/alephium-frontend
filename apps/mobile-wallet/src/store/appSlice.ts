@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { appReset, FungibleToken, syncUnknownTokensInfo } from '@alephium/shared'
-import { NavigationState } from '@react-navigation/routers'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { walletDeleted } from '~/store/wallet/walletActions'
@@ -25,13 +24,11 @@ import { walletDeleted } from '~/store/wallet/walletActions'
 const sliceName = 'app'
 
 export interface AppMetadataState {
-  lastNavigationState?: NavigationState
   isCameraOpen: boolean
   checkedUnknownTokenIds: FungibleToken['id'][]
 }
 
 const initialState: AppMetadataState = {
-  lastNavigationState: undefined,
   isCameraOpen: false,
   checkedUnknownTokenIds: []
 }
@@ -42,9 +39,6 @@ const appSlice = createSlice({
   name: sliceName,
   initialState,
   reducers: {
-    routeChanged: (state, action: PayloadAction<AppMetadataState['lastNavigationState']>) => {
-      state.lastNavigationState = action.payload
-    },
     cameraToggled: (state, action: PayloadAction<AppMetadataState['isCameraOpen']>) => {
       state.isCameraOpen = action.payload
     }
@@ -61,6 +55,6 @@ const appSlice = createSlice({
   }
 })
 
-export const { routeChanged, cameraToggled } = appSlice.actions
+export const { cameraToggled } = appSlice.actions
 
 export default appSlice

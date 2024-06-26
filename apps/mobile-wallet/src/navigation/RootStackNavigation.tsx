@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
-import { NavigationState } from '@react-navigation/routers'
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -67,20 +66,14 @@ import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScr
 import PublicKeysScreen from '~/screens/PublicKeysScreen'
 import EditWalletNameScreen from '~/screens/Settings/EditWalletName'
 import SettingsScreen from '~/screens/Settings/SettingsScreen'
-import { routeChanged } from '~/store/appSlice'
 import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast, showToast } from '~/utils/layout'
-import { isNavStateRestorable, resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
+import { resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
 
 const RootStack = createStackNavigator<RootStackParamList>()
 
 const RootStackNavigation = () => {
   const theme = useTheme()
-  const dispatch = useAppDispatch()
-
-  const handleStateChange = (state?: NavigationState) => {
-    if (state && isNavStateRestorable(state)) dispatch(routeChanged(state))
-  }
 
   const themeNavigator = {
     ...DefaultTheme,
@@ -98,7 +91,7 @@ const RootStackNavigation = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Host>
-        <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>
+        <NavigationContainer ref={rootStackNavigationRef} theme={themeNavigator}>
           <Analytics>
             <WalletConnectContextProvider>
               <RootStack.Navigator initialRouteName="LandingScreen" screenOptions={{ headerShown: false }}>
@@ -146,7 +139,6 @@ export default RootStackNavigation
 
 const AppUnlockModal = () => {
   const dispatch = useAppDispatch()
-  const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
@@ -171,7 +163,11 @@ const AppUnlockModal = () => {
     try {
       dispatch(walletUnlocked(await getStoredWallet()))
 
-      if (!lastNavigationState) resetNavigation(navigation)
+      const lastRoute = rootStackNavigationRef.current?.getCurrentRoute()?.name
+
+      if (!lastRoute || ['LandingScreen', 'LoginWithPinScreen'].includes(lastRoute)) {
+        resetNavigation(navigation)
+      }
 
       setIsAuthModalVisible(false)
     } catch (error) {
@@ -179,7 +175,7 @@ const AppUnlockModal = () => {
       showExceptionToast(error, message)
       sendAnalytics({ type: 'error', message })
     }
-  }, [dispatch, lastNavigationState, navigation])
+  }, [dispatch, navigation])
 
   const unlockApp = useCallback(async () => {
     if (isWalletUnlocked) return
