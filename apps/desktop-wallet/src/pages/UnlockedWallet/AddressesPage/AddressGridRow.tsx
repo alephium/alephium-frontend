@@ -98,12 +98,17 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
             {stateUninitialized ? (
               <SkeletonLoader height="15.5px" />
             ) : (
-              <LastActivity>
+              <SecondaryText>
                 {address.lastUsed ? `${t('Last activity')} ${dayjs(address.lastUsed).fromNow()}` : t('Never used')}
-              </LastActivity>
+              </SecondaryText>
             )}
           </Column>
         </AddressNameCell>
+        <Cell>
+          <SecondaryText>
+            {t('Group')} {address.group}
+          </SecondaryText>
+        </Cell>
         <Cell>
           {verifiedFungibleTokensNeedInitialization || stateUninitialized ? (
             <SkeletonLoader height="33.5px" />
@@ -154,7 +159,7 @@ const Label = styled.div`
   max-width: 150px;
 `
 
-const LastActivity = styled.div`
+const SecondaryText = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 11px;
 `
@@ -168,7 +173,7 @@ const Cell = styled.div`
 
 const GridRow = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
 
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
