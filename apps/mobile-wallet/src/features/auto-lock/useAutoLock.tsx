@@ -40,15 +40,11 @@ const useAutoLock = ({ unlockApp, onAuthRequired }: UseAutoLockProps) => {
   const dispatch = useAppDispatch()
 
   const [isAppStateChangeCallbackRegistered, setIsAppStateChangeCallbackRegistered] = useState(false)
-  const [needsWalletUnlock, setNeedsWalletUnlock] = useState(false)
 
   const lockApp = useCallback(() => {
     if (biometricsRequiredForAppAccess) onAuthRequired()
 
     dispatch(appBecameInactive())
-    // The following is needed when the switch between background/active happens so fast that the component didn't
-    // have enough time to re-render after clearning the mnemonic.
-    setNeedsWalletUnlock(true)
   }, [biometricsRequiredForAppAccess, dispatch, onAuthRequired])
 
   useEffect(() => {
@@ -71,7 +67,6 @@ const useAutoLock = ({ unlockApp, onAuthRequired }: UseAutoLockProps) => {
           clearBackgroundTimer()
 
           if (!isWalletUnlocked && !isCameraOpen) {
-            setNeedsWalletUnlock(false)
             unlockApp()
           }
         }
@@ -80,7 +75,7 @@ const useAutoLock = ({ unlockApp, onAuthRequired }: UseAutoLockProps) => {
       appState.current = nextAppState
     }
 
-    if ((!isAppStateChangeCallbackRegistered || needsWalletUnlock) && appState.current === 'active') {
+    if (!isAppStateChangeCallbackRegistered && appState.current === 'active') {
       handleAppStateChange('active')
     }
 
@@ -97,7 +92,6 @@ const useAutoLock = ({ unlockApp, onAuthRequired }: UseAutoLockProps) => {
     isCameraOpen,
     isWalletUnlocked,
     lockApp,
-    needsWalletUnlock,
     settingsLoadedFromStorage,
     unlockApp
   ])
