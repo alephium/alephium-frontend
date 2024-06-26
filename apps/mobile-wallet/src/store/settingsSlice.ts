@@ -120,14 +120,12 @@ settingsListenerMiddleware.startListening({
     autoLockSecondsChanged,
     allBiometricsEnabled,
     languageChanged,
-    systemLanguageMatchSucceeded,
-    systemLanguageMatchFailed,
     appReset
   ),
   effect: async (_, { getState }) => {
-    const state = getState() as RootState
+    const state = (getState() as RootState)[sliceName]
 
-    await persistSettings('general', state[sliceName])
+    if (state.loadedFromStorage) await persistSettings('general', state)
   }
 })
 
