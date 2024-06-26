@@ -65,7 +65,7 @@ const CheckAddressesBox = ({ fromAddress, toAddressHash, className }: CheckAddre
                 </AddressLabelHash>
               ) : (
                 <ActionLinkStyled onClick={() => openInWebBrowser(`${explorerUrl}/addresses/${toAddressHash}`)}>
-                  <HashEllipsed hash={toAddressHash} />
+                  <AddressBadge addressHash={toAddressHash} truncate appendHash />
                 </ActionLinkStyled>
               )}
             </AddressLabelHash>
