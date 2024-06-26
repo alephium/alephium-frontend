@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import 'i18next'
 
-import en from '../../locales/en-US/translation.json'
+import en from '../../../locales/en-US/translation.json'
 
 type EnglishTranslationKeys = typeof en
 
