@@ -223,6 +223,8 @@ const AppUnlockModal = () => {
               type: 'error',
               message: `Could not migrate deprecated mnemonic of length ${deprecatedWallet.mnemonic.split(' ').length}`
             })
+
+            navigation.navigate('LoginWithPinScreen')
           }
         } else {
           navigation.navigate('LoginWithPinScreen')
