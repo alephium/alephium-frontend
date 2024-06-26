@@ -608,6 +608,11 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     const { id, relayProtocol, requiredNamespace, requiredChains, requiredChainInfo, metadata } =
       parseSessionProposalEvent(sessionProposalEvent)
 
+    if (!requiredChains) {
+      dispatch(walletConnectProposalApprovalFailed(t('The proposal does not include a list of required chains')))
+      return
+    }
+
     if (requiredChains?.length !== 1) {
       dispatch(
         walletConnectProposalApprovalFailed(
