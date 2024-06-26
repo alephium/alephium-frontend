@@ -191,20 +191,20 @@ const AppUnlockModal = () => {
             onPromptDisplayed: openAuthModal,
             successCallback: initializeAppWithStoredWallet
           })
+
+          if (deprecatedWallet) {
+            try {
+              await deleteDeprecatedWallet()
+            } catch (error) {
+              const message = 'Could not delete deprecated wallet'
+              showExceptionToast(error, message)
+              sendAnalytics({ type: 'error', message })
+            }
+          }
         } catch (error) {
-          const message = 'Could not trigger biometrics authentication'
+          const message = 'Could not authenticate'
           showExceptionToast(error, message)
           console.error(message)
-        }
-
-        if (deprecatedWallet) {
-          try {
-            await deleteDeprecatedWallet()
-          } catch (error) {
-            const message = 'Could not delete deprecated wallet'
-            showExceptionToast(error, message)
-            sendAnalytics({ type: 'error', message })
-          }
         }
       } else if (deprecatedWallet) {
         if ((await loadBiometricsSettings()).biometricsRequiredForAppAccess) {
