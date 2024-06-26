@@ -21,7 +21,6 @@ import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
-import HashEllipsed from '@/components/HashEllipsed'
 import { inputDefaultStyle, InputLabel, InputProps } from '@/components/Inputs'
 import { MoreIcon, SelectContainer } from '@/components/Inputs/Select'
 import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
@@ -136,10 +135,7 @@ function AddressSelect({
           label={label}
         >
           {(!hideAddressesWithoutAssets || options.find((option) => option.hash === address.hash)) && (
-            <>
-              <AddressBadge addressHash={address.hash} appendHash />
-              {!address.label && !simpleMode && <HashEllipsed hash={address.hash} />}
-            </>
+            <AddressBadge addressHash={address.hash} appendHash />
           )}
         </ClickableInput>
       </AddressSelectContainer>
