@@ -2,7 +2,7 @@
   "name": "alephium-frontend",
   "description": "A monorepo containing all things frontend on Alephium",
   "author": "Alephium dev <dev@alephium.org>",
-  "packageManager": "pnpm@8.15.3",
+  "packageManager": "pnpm@9.4.0",
   "private": true,
   "scripts": {
     "watch": "turbo watch",
