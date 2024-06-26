@@ -20,7 +20,7 @@ import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dimensions, LayoutChangeEvent, Modal } from 'react-native'
+import { Dimensions, LayoutChangeEvent, Modal, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
@@ -268,8 +268,10 @@ const AppUnlockModal = () => {
   })
 
   return (
-    <Modal transparent animationType="none" onLayout={handleScreenLayoutChange} visible={isAuthModalVisible}>
-      <CoolAlephiumCanvas {...dimensions} onPress={unlockApp} />
+    <Modal animationType="none" onLayout={handleScreenLayoutChange} visible={isAuthModalVisible}>
+      <View style={{ backgroundColor: 'black', flex: 1 }}>
+        <CoolAlephiumCanvas {...dimensions} onPress={unlockApp} />
+      </View>
     </Modal>
   )
 }

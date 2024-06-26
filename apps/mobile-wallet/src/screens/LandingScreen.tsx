@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, RadialGradient, Rect, vec } from '@shopify/react-native-skia'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { Dimensions, Image, LayoutChangeEvent, Platform, StatusBar } from 'react-native'
+import { AppState, Dimensions, Image, LayoutChangeEvent, Platform, StatusBar } from 'react-native'
 import Animated, {
   convertToRGBA,
   FadeIn,
@@ -154,10 +154,12 @@ interface CoolAlephiumCanvasProps {
 }
 
 export const CoolAlephiumCanvas = ({ width, height, onPress }: CoolAlephiumCanvasProps) => {
+  const [appState, setAppState] = useState(AppState.currentState)
+
   const [isAltLogoShown, setIsAltLogoShown] = useState(false)
 
-  const gradientRadius = useSharedValue(0)
-  const gradientColorsAnimationProgress = useSharedValue(0)
+  const gradientRadius = useSharedValue(200)
+  const gradientColorsAnimationProgress = useSharedValue(1)
 
   const animatedColors = useDerivedValue(() =>
     gradientColors.map((_, index) =>
@@ -194,9 +196,15 @@ export const CoolAlephiumCanvas = ({ width, height, onPress }: CoolAlephiumCanva
     onPress && onPress()
   }
 
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => setAppState(nextAppState))
+
+    return subscription.remove
+  }, [])
+
   return (
     <>
-      <CanvasStyled>
+      <CanvasStyled key={appState}>
         <Rect x={0} y={0} width={width} height={height}>
           <RadialGradient
             c={vec(width / 2, height)}
