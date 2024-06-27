@@ -157,7 +157,6 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
           secureTextEntry
           autoCapitalize="none"
           error={error}
-          returnKeyType="done"
           inputRef={inputRef}
           onBlur={handleBlur}
           blurOnSubmit={false}

@@ -16,7 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { networkPresetSwitched } from '@alephium/shared'
+import {
+  isNetworkValid,
+  networkPresetSwitched,
+  parseSessionProposalEvent,
+  SessionProposalEvent
+} from '@alephium/shared'
 import { AlertTriangle, PlusSquare } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -34,10 +39,8 @@ import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/C
 import { selectAddressesInGroup } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { Address } from '@/types/addresses'
-import { SessionProposalEvent } from '@/types/walletConnect'
 import { getRandomLabelColor } from '@/utils/colors'
 import { cleanUrl } from '@/utils/misc'
-import { isNetworkValid, parseSessionProposalEvent } from '@/utils/walletConnect'
 
 interface WalletConnectSessionProposalModalProps {
   approveProposal: (signerAddress: Address) => Promise<void>

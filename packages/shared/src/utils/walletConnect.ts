@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NetworkPreset, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 import { parseChain, PROVIDER_NAMESPACE } from '@alephium/walletconnect-provider'
-import SignClient from '@walletconnect/sign-client'
+import { SignClient } from '@walletconnect/sign-client/dist/types/client'
 
-import { sendAnalytics } from '~/analytics'
-import { SessionProposalEvent } from '~/types/walletConnect'
+import { networkSettingsPresets } from '@/network'
+import { NetworkPreset, NetworkSettings } from '@/types/network'
+import { SessionProposalEvent } from '@/types/walletConnect'
 
 export const isNetworkValid = (networkId: string, currentNetworkId: NetworkSettings['networkId']) =>
   (networkId === 'devnet' && currentNetworkId === 4) ||
@@ -49,15 +49,9 @@ export const parseSessionProposalEvent = (proposalEvent: SessionProposalEvent) =
 export const getActiveWalletConnectSessions = (walletConnectClient?: SignClient) => {
   if (!walletConnectClient) return []
 
-  try {
-    const activePairings = walletConnectClient.core.pairing.getPairings().filter((pairing) => pairing.active)
+  const activePairings = walletConnectClient.core.pairing.getPairings().filter((pairing) => pairing.active)
 
-    return walletConnectClient.session.values.filter((session) =>
-      activePairings.some((pairing) => pairing.topic === session.pairingTopic)
-    )
-  } catch (error) {
-    sendAnalytics({ type: 'error', error, message: 'Could not get active WalletConnect sessions' })
-  }
-
-  return []
+  return walletConnectClient.session.values.filter((session) =>
+    activePairings.some((pairing) => pairing.topic === session.pairingTopic)
+  )
 }
