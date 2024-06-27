@@ -985,7 +985,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('👉 RESETTING SESSION REQUEST EVENT.')
       setSessionRequestEvent(undefined)
       setSessionRequestData(undefined)
-      showToast({ text1: 'DApp request rejected', text2: t('You can go back to your browser.') })
+      showToast({ text1: t('dApp request rejected'), text2: t('You can go back to your browser.'), type: 'info' })
     }
   }
 
