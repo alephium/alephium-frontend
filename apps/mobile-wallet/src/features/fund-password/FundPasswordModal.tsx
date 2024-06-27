@@ -81,6 +81,8 @@ const FundPasswordModalContent = ({
     }
   }
 
+  const isSubmitEnabled = password.length === 0
+
   return (
     <ModalContent verticalGap {...props}>
       <ScreenSection>
@@ -96,15 +98,15 @@ const FundPasswordModalContent = ({
           label={t('Fund password')}
           value={password}
           onChangeText={handleFundPasswordChange}
+          onSubmitEditing={handleSubmit}
           secureTextEntry
           autoCapitalize="none"
-          returnKeyType="done"
           blurOnSubmit={false}
           error={displayedError}
         />
       </ScreenSection>
       <ScreenSection>
-        <Button title={t('Submit')} variant="highlight" onPress={handleSubmit} disabled={password.length === 0} />
+        <Button title={t('Submit')} variant="highlight" onPress={handleSubmit} disabled={isSubmitEnabled} />
       </ScreenSection>
     </ModalContent>
   )

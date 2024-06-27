@@ -112,7 +112,6 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           autoFocus
           onSubmitEditing={handleButtonPress}
           blurOnSubmit={false}
-          returnKeyType="done"
           maxLength={24}
         />
       </ContentContainer>
