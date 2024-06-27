@@ -81,8 +81,6 @@ const FundPasswordModalContent = ({
     }
   }
 
-  const isSubmitEnabled = password.length === 0
-
   return (
     <ModalContent verticalGap {...props}>
       <ScreenSection>
@@ -106,7 +104,7 @@ const FundPasswordModalContent = ({
         />
       </ScreenSection>
       <ScreenSection>
-        <Button title={t('Submit')} variant="highlight" onPress={handleSubmit} disabled={isSubmitEnabled} />
+        <Button title={t('Submit')} variant="highlight" onPress={handleSubmit} disabled={password.length === 0} />
       </ScreenSection>
     </ModalContent>
   )
