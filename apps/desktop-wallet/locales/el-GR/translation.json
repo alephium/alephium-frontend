@@ -450,5 +450,6 @@
   "ID": "Αναγνωριστικό",
   "Copy ID": "Αντιγραφή αναγνωριστικού ID",
   "To delete this wallet use it without a passphrase": "Για να διαγράψετε αυτό το πορτοφόλι χρησιμοποιήστε το χωρίς φράση πρόσβασης",
-  "To export this wallet use it without a passphrase": "Για να εξάγετε αυτό το πορτοφόλι, χρησιμοποιήστε το χωρίς κωδικό πρόσβασης"
+  "To export this wallet use it without a passphrase": "Για να εξάγετε αυτό το πορτοφόλι, χρησιμοποιήστε το χωρίς κωδικό πρόσβασης",
+  "The proposal does not include a list of required chains": "The proposal does not include a list of required chains"
 }

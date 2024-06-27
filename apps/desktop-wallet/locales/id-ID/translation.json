@@ -450,5 +450,6 @@
   "ID": "Pengenal",
   "Copy ID": "salin ID",
   "To delete this wallet use it without a passphrase": "Untuk menghapus dompet ini, gunakan tanpa kata sandi",
-  "To export this wallet use it without a passphrase": "Untuk mengekspor dompet ini, gunakan tanpa kata sandi"
+  "To export this wallet use it without a passphrase": "Untuk mengekspor dompet ini, gunakan tanpa kata sandi",
+  "The proposal does not include a list of required chains": "The proposal does not include a list of required chains"
 }

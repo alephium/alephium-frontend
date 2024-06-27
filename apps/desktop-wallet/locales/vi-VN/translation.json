@@ -213,7 +213,7 @@
   "New version": "Phiên bản mới",
   "New wallet": "Tạo ví mới",
   "New wallet name": "Tên ví mới",
-  "NFTs": "Những NFT",
+  "NFTs": "NFTs",
   "No options match the search criteria.": "Không có tuỳ chọn nào phù hợp với tìm kiếm.",
   "No transactions to display": "Không có giao dịch nào để hiển thị",
   "Node host": "Node host",
@@ -450,5 +450,6 @@
   "ID": "ID",
   "Copy ID": "Sao chép ID",
   "To delete this wallet use it without a passphrase": "Để xóa ví này, sử dụng nó mà không cần một passphrase",
-  "To export this wallet use it without a passphrase": "Để xuất ví này, sử dụng nó mà không cần một passphrase"
+  "To export this wallet use it without a passphrase": "Để xuất ví này, sử dụng nó mà không cần một passphrase",
+  "The proposal does not include a list of required chains": "The proposal does not include a list of required chains"
 }

@@ -450,5 +450,6 @@
   "ID": "ID",
   "Copy ID": "Copiar ID",
   "To delete this wallet use it without a passphrase": "Para excluir essa carteira, use-a sem uma senha",
-  "To export this wallet use it without a passphrase": "Para exportar esta carteira use-a sem uma frase-senha"
+  "To export this wallet use it without a passphrase": "Para exportar esta carteira use-a sem uma frase-senha",
+  "The proposal does not include a list of required chains": "The proposal does not include a list of required chains"
 }
