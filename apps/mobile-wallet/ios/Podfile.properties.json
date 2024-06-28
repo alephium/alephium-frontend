@@ -3,5 +3,8 @@
   "EX_DEV_CLIENT_NETWORK_INSPECTOR": "true",
   "ios.deploymentTarget": "13.4",
   "newArchEnabled": "false",
-  "ios.flipper": "false"
+  "ios.flipper": "false",
+  "apple.extraPods": "[]",
+  "apple.ccacheEnabled": "false",
+  "apple.privacyManifestAggregationEnabled": "true"
 }
