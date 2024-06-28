@@ -72,7 +72,7 @@
     "lodash": "^4.17.21",
     "lottie-react-native": "^6.7.0",
     "lucide-react-native": "^0.216.0",
-    "moti": "^0.25.3",
+    "moti": "^0.29.0",
     "nanoid": "^4.0.0",
     "posthog-react-native": "^2.7.1",
     "qrloop": "^1.4.1",
