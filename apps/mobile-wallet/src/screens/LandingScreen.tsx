@@ -214,8 +214,8 @@ export const CoolAlephiumCanvas = ({ width, height, onPress }: CoolAlephiumCanva
           />
         </Rect>
       </CanvasStyled>
-      <LogoContainer onTouchEnd={handleScreenPress}>
-        <LogoArea entering={FadeIn.delay(200).duration(500)} style={[logoAnimatedStyle]}>
+      <LogoContainer onTouchEnd={handleScreenPress} entering={FadeIn.delay(200).duration(500)}>
+        <LogoArea style={[logoAnimatedStyle]}>
           <AlephiumLogo color="white" style={{ width: '20%' }} />
         </LogoArea>
         <AltLogoArea style={altLogoAnimatedStyle}>
