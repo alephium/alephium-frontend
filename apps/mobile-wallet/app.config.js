@@ -33,7 +33,6 @@ export default {
     updates: {
       fallbackToCacheTimeout: 0
     },
-    assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'org.alephium.mobilewallet',
