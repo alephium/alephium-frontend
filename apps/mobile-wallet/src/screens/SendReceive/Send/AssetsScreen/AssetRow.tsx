@@ -171,36 +171,43 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
       icon={assetIsNft ? <NFTThumbnail nft={asset} size={38} /> : <AssetLogo assetId={asset.id} size={38} />}
     >
       <Pressable onPress={handleBottomRowPress}>
-        <BottomRow entering={FadeIn} style={bottomRowAnimatedStyle}>
-          <AmountInputRow>
-            <AppText semiBold size={15}>
-              {t('Amount')}
-            </AppText>
-            <AmountInputValue>
-              <AmountTextInput
-                value={amount}
-                onChangeText={handleOnAmountChange}
-                keyboardType="number-pad"
-                inputMode="decimal"
-                multiline={true}
-                numberOfLines={2}
-                textAlignVertical="center"
-                ref={inputRef}
-              />
-            </AmountInputValue>
-            {!assetIsNft && (
-              <AppText semiBold size={23} color="secondary">
-                {asset.symbol}
+        <Animated.View entering={FadeIn}>
+          <BottomRow style={bottomRowAnimatedStyle}>
+            <AmountInputRow>
+              <AppText semiBold size={15}>
+                {t('Amount')}
               </AppText>
-            )}
-          </AmountInputRow>
-          <InputBottomPart>
-            <ErrorText color="alert" size={11}>
-              {error}
-            </ErrorText>
-            <UseMaxButton title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
-          </InputBottomPart>
-        </BottomRow>
+              <AmountInputValue>
+                <AmountTextInput
+                  value={amount}
+                  onChangeText={handleOnAmountChange}
+                  keyboardType="number-pad"
+                  inputMode="decimal"
+                  multiline={true}
+                  numberOfLines={2}
+                  textAlignVertical="center"
+                  ref={inputRef}
+                />
+              </AmountInputValue>
+              {!assetIsNft && (
+                <AppText semiBold size={23} color="secondary">
+                  {asset.symbol}
+                </AppText>
+              )}
+            </AmountInputRow>
+            <InputBottomPart>
+              <ErrorText color="alert" size={11}>
+                {error}
+              </ErrorText>
+              <UseMaxButton
+                title={t('Use max')}
+                onPress={handleUseMaxAmountPress}
+                type="transparent"
+                variant="accent"
+              />
+            </InputBottomPart>
+          </BottomRow>
+        </Animated.View>
       </Pressable>
     </ListItem>
   )
