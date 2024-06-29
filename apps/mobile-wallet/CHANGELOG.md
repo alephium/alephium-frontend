@@ -1,5 +1,16 @@
 # @alephium/mobile-wallet
 
+## 1.1.1
+
+### Patch Changes
+
+- 3770483: Add French
+- 1fcc7f9: Enable multilingual support
+- 637d2be: Add Greek language
+- 3770483: Fix multiple authentication issues
+- 1a5a657: Fix fund password fields submitting when pressing return key
+- fe0f400: Fix aspect ration of NFTs
+
 ## 1.1.0
 
 ### Minor Changes

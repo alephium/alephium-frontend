@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.9.6
+
+### Patch Changes
+
+- d9cad1e: Add Greek language
+
 ## 1.9.5
 
 ### Patch Changes
