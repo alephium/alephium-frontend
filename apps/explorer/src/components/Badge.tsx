@@ -80,9 +80,9 @@ const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
       borderColor = theme.border.primary
       break
     case 'accent':
-        backgroundColor = theme.bg.accent
-        color = theme.global.accent
-        borderColor = theme.global.accent
+      backgroundColor = theme.bg.accent
+      color = theme.global.accent
+      borderColor = theme.global.accent
   }
 
   return { backgroundColor, color, borderColor }

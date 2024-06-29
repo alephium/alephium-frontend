@@ -86,7 +86,7 @@ const BlockInfoPage = () => {
     }
 
     redirectToTransactionIfExists()
-  }, [blockInfo, id, blockInfoError, navigate])
+  }, [blockInfo, id, blockInfoError, navigate, txInfo])
 
   return !infoLoading && !blockInfo && blockInfoError ? (
     <InlineErrorMessage {...blockInfoError} />
