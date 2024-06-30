@@ -17,20 +17,28 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { appReset, FungibleToken, syncUnknownTokensInfo } from '@alephium/shared'
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
-import { walletDeleted } from '~/store/wallet/walletActions'
+import {
+  appLaunchedWithLastUsedWallet,
+  newWalletGenerated,
+  newWalletImportedWithMetadata,
+  walletDeleted,
+  walletUnlocked
+} from '~/store/wallet/walletActions'
 
 const sliceName = 'app'
 
 export interface AppMetadataState {
   isCameraOpen: boolean
   checkedUnknownTokenIds: FungibleToken['id'][]
+  wasJustLaunched: boolean
 }
 
 const initialState: AppMetadataState = {
   isCameraOpen: false,
-  checkedUnknownTokenIds: []
+  checkedUnknownTokenIds: [],
+  wasJustLaunched: false
 }
 
 const resetState = () => initialState
@@ -52,6 +60,12 @@ const appSlice = createSlice({
         state.checkedUnknownTokenIds = [...initiallyUnknownTokenIds, ...state.checkedUnknownTokenIds]
       })
       .addCase(appReset, resetState)
+      .addCase(appLaunchedWithLastUsedWallet, (state) => {
+        state.wasJustLaunched = true
+      })
+    builder.addMatcher(isAnyOf(walletUnlocked, newWalletGenerated, newWalletImportedWithMetadata), (state) => {
+      state.wasJustLaunched = false
+    })
   }
 })
 

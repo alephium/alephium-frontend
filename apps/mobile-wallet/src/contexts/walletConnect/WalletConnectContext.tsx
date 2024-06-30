@@ -617,7 +617,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
   useEffect(() => {
     const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && isWalletConnectEnabled && isWalletUnlocked) {
+      if (nextAppState === 'background' && isWalletConnectEnabled) {
         let secondsPassed = 0
 
         // Keep app alive for max 4 hours
@@ -651,7 +651,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [isWalletConnectEnabled, isWalletUnlocked])
+  }, [isWalletConnectEnabled])
 
   useEffect(() => {
     if (!isWalletConnectClientReady) return

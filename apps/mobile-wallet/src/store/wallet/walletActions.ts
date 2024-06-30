@@ -31,3 +31,5 @@ export const walletDeleted = createAction('wallets/walletDeleted')
 export const walletNameChanged = createAction<WalletState['name']>('wallets/walletNameChanged')
 
 export const mnemonicMigrated = createAction('wallets/mnemonicMigrated')
+
+export const appLaunchedWithLastUsedWallet = createAction<WalletMetadata>('wallets/appLaunchedWithLastUsedWallet')

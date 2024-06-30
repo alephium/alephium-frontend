@@ -39,6 +39,7 @@ import { useLocalization } from '~/features/localization/useLocalization'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
+import { getStoredWallet, storedWalletExists } from '~/persistent-storage/wallet'
 import {
   makeSelectAddressesUnknownTokens,
   selectAllAddressVerifiedFungibleTokenSymbols,
@@ -46,6 +47,7 @@ import {
 } from '~/store/addressesSlice'
 import { store } from '~/store/store'
 import { selectTransactionUnknownTokenIds } from '~/store/transactions/transactionSelectors'
+import { appLaunchedWithLastUsedWallet } from '~/store/wallet/walletActions'
 import { themes } from '~/style/themes'
 
 const App = () => {
@@ -84,6 +86,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
   const settings = useAppSelector((s) => s.settings)
+  const appJustLaunched = useAppSelector((s) => s.app.wasJustLaunched)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
@@ -94,6 +97,12 @@ const Main = ({ children, ...props }: ViewProps) => {
   useLoadStoredSettings()
   useInitializeClient()
   useLocalization()
+
+  useEffect(() => {
+    storedWalletExists().then((walletExists) => {
+      if (walletExists) getStoredWallet().then((wallet) => dispatch(appLaunchedWithLastUsedWallet(wallet)))
+    })
+  }, [dispatch])
 
   useEffect(() => {
     if (
@@ -153,7 +162,8 @@ const Main = ({ children, ...props }: ViewProps) => {
     dispatch(syncLatestTransactions())
   }, [dispatch])
 
-  const dataResyncNeeded = nbOfAddresses > 0 && network.status === 'online' && !isLoadingLatestTxs && isUnlocked
+  const dataResyncNeeded =
+    nbOfAddresses > 0 && network.status === 'online' && !isLoadingLatestTxs && (isUnlocked || appJustLaunched)
 
   useEffect(() => {
     if (addressesStatus === 'uninitialized' && dataResyncNeeded) checkForNewTransactions()
