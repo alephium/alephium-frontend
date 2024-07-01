@@ -17,7 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NFT } from '@alephium/shared'
+import { colord } from 'colord'
 import { Image } from 'expo-image'
+import { CameraOff } from 'lucide-react-native'
 import { useState } from 'react'
 import { Dimensions, TouchableOpacity } from 'react-native'
 import { Portal } from 'react-native-portalize'
@@ -39,18 +41,25 @@ const screenPadding = 20
 
 const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [error, setError] = useState()
 
   const attributeWidth = (Dimensions.get('window').width - (attributeGap + screenPadding * 2 + DEFAULT_MARGIN * 2)) / 2
+  const showPlaceholder = error || nft.image.startsWith('data:image/svg+xml')
 
   return (
     <>
       <TouchableOpacity onPress={() => setIsModalOpen(true)}>
-        <NFTThumbnailStyled
-          style={{ width: size, height: size }}
-          transition={500}
-          source={{ uri: nft.image }}
-          allowDownscaling
-        />
+        {showPlaceholder ? (
+          <NoImagePlaceholder size={size} />
+        ) : (
+          <NFTThumbnailStyled
+            style={{ width: size, height: size }}
+            transition={500}
+            source={{ uri: nft.image }}
+            allowDownscaling
+            onError={setError}
+          />
+        )}
       </TouchableOpacity>
       <Portal>
         <BottomModal
@@ -60,7 +69,11 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
                 <BottomModalScreenTitle>{nft.name}</BottomModalScreenTitle>
               </ScreenSection>
               <ScreenSection>
-                <NFTFullSizeImage source={{ uri: nft.image }} resizeMode="contain" />
+                {showPlaceholder ? (
+                  <NoImagePlaceholder size={Dimensions.get('window').width - DEFAULT_MARGIN * 4} />
+                ) : (
+                  <NFTFullSizeImage source={{ uri: nft.image }} resizeMode="contain" />
+                )}
 
                 {nft.description && (
                   <NFTDescriptionContainer>
@@ -91,6 +104,12 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
     </>
   )
 }
+
+const NoImagePlaceholder = ({ size }: Pick<NFTThumbnailProps, 'size'>) => (
+  <NoImage style={{ width: size, height: size }}>
+    <CameraOff color="gray" />
+  </NoImage>
+)
 
 export default NFTThumbnail
 
@@ -131,4 +150,11 @@ const AttributeType = styled(AppText)`
 
 const AttributeValue = styled(AppText)`
   margin-top: 2px;
+`
+
+const NoImage = styled.View`
+  border-radius: ${BORDER_RADIUS_SMALL}px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => colord(theme.bg.back2).darken(0.07).toHex()};
 `
