@@ -20,12 +20,13 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   extends: [
     'eslint:recommended',
+    'plugin:security/recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier',
     'plugin:prettier/recommended',
     'turbo'
   ],
-  plugins: ['@typescript-eslint', 'prettier', 'unused-imports', 'simple-import-sort', 'header'],
+  plugins: ['@typescript-eslint', 'prettier', 'unused-imports', 'simple-import-sort', 'header', 'security'],
   rules: {
     'arrow-body-style': [2, 'as-needed'],
     '@typescript-eslint/explicit-function-return-type': 'off',
