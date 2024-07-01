@@ -941,6 +941,9 @@ importers:
       eslint-config-turbo:
         specifier: ^1.10.12
         version: 1.11.2(eslint@8.56.0)
+      eslint-plugin-security:
+        specifier: 1.6.0
+        version: 1.6.0
 
   packages/keyring:
     dependencies:
@@ -5871,6 +5874,9 @@ packages:
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
 
+  eslint-plugin-security@1.6.0:
+    resolution: {integrity: sha512-SGvyejbhW/dziRbzOroKX5bj8z/qtBOw7Q95C9CBbJQqBtFB2o4OxSM3MCO2u9noPp7B6DDaFGtXTx8ImPiO/A==}
+
   eslint-plugin-simple-import-sort@10.0.0:
     resolution: {integrity: sha512-AeTvO9UCMSNzIHRkg8S6c3RPy5YEwKWSQPx3DYghLedo2ZQxowPFLGDN1AZ2evfg6r6mjBSZSLxLFsWSu3acsw==}
     peerDependencies:
@@ -9326,6 +9332,9 @@ packages:
 
   safe-regex-test@1.0.0:
     resolution: {integrity: sha512-JBUUzyOgEwXQY1NuPtvcj/qcBDbDmEvWufhlnXZIm75DEHp+afM1r1ujJpJsV/gSM4t59tpDyPi1sd6ZaPFfsA==}
+
+  safe-regex@2.1.1:
+    resolution: {integrity: sha512-rx+x8AMzKb5Q5lQ95Zoi6ZbJqwCLkqi3XuJXp5P3rT8OEc6sZCJG5AE5dU3lsgRr/F4Bs31jSlVN+j5KrsGu9A==}
 
   safe-stable-stringify@2.4.3:
     resolution: {integrity: sha512-e2bDA2WJT0wxseVd4lsDP4+3ONX6HpMXQa1ZhFQ7SU+GjvORCmShbCMltrtIDfkYhVHrOcPtj+KhmDBdPdZD1g==}
@@ -17852,6 +17861,10 @@ snapshots:
       semver: 7.5.4
       string.prototype.matchall: 4.0.10
 
+  eslint-plugin-security@1.6.0:
+    dependencies:
+      safe-regex: 2.1.1
+
   eslint-plugin-simple-import-sort@10.0.0(eslint@8.56.0):
     dependencies:
       eslint: 8.56.0
@@ -22087,6 +22100,10 @@ snapshots:
       call-bind: 1.0.5
       get-intrinsic: 1.2.2
       is-regex: 1.1.4
+
+  safe-regex@2.1.1:
+    dependencies:
+      regexp-tree: 0.1.27
 
   safe-stable-stringify@2.4.3: {}
 
