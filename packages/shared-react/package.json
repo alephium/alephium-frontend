@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsup",
     "typecheck": "tsup",
-    "watch": "tsup --watch",
+    "watch-dev": "tsup --watch",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
     "clean": "rm -rf dist",
     "clean:node-modules": "rm -rf node_modules",
