@@ -57,7 +57,7 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, ...pro
       keyExtractor={(item) => item.id}
       renderItem={({ item: nft }) => <NFTThumbnail key={nft.id} nft={nft} size={size} />}
       numColumns={columns}
-      columnWrapperStyle={columns > 1 ? { justifyContent: 'space-between', gap: 15 } : undefined}
+      columnWrapperStyle={columns > 1 ? { justifyContent: 'flex-start', gap: 15 } : undefined}
       ListEmptyComponent={
         <NoNFTsMessage>
           <AppText color={theme.font.tertiary}>{t('No NFTs yet')} 🖼️</AppText>
