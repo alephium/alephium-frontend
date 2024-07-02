@@ -17,13 +17,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NFT } from '@alephium/shared'
+import { colord } from 'colord'
 import { Image } from 'expo-image'
+import { openBrowserAsync } from 'expo-web-browser'
+import { CameraOff } from 'lucide-react-native'
+import { Skeleton } from 'moti/skeleton'
 import { useState } from 'react'
-import { Dimensions, TouchableOpacity } from 'react-native'
+import { useTranslation } from 'react-i18next'
+import { Dimensions, TouchableOpacity, View } from 'react-native'
 import { Portal } from 'react-native-portalize'
-import styled from 'styled-components/native'
+import { WebView } from 'react-native-webview'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import BottomModal from '~/components/layout/BottomModal'
 import { ModalContent } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
@@ -35,22 +42,45 @@ interface NFTThumbnailProps {
 }
 
 const attributeGap = 12
-const screenPadding = 20
+const windowWidth = Dimensions.get('window').width
+const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
+const attributeWidth = (nftFullSize - attributeGap) / 2
 
 const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const { t } = useTranslation()
+  const theme = useTheme()
 
-  const attributeWidth = (Dimensions.get('window').width - (attributeGap + screenPadding * 2 + DEFAULT_MARGIN * 2)) / 2
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState()
+
+  const isDataUri = nft.image.startsWith('data:image/')
 
   return (
     <>
-      <TouchableOpacity onPress={() => setIsModalOpen(true)}>
-        <NFTThumbnailStyled
-          style={{ width: size, height: size }}
-          transition={500}
-          source={{ uri: nft.image }}
-          allowDownscaling
-        />
+      <TouchableOpacity onPress={() => setIsModalOpen(true)} style={{ position: 'relative' }}>
+        {error ? (
+          <NoImagePlaceholder size={size} />
+        ) : isDataUri ? (
+          <WebViewImage nft={nft} size={size} />
+        ) : (
+          <>
+            <NFTThumbnailStyled
+              style={{ width: size, height: size }}
+              transition={500}
+              source={{ uri: nft.image }}
+              allowDownscaling
+              onError={setError}
+              onLoadStart={() => setIsLoading(true)}
+              onLoadEnd={() => setIsLoading(false)}
+            />
+            {isLoading && (
+              <View style={{ position: 'absolute' }}>
+                <Skeleton show colorMode={theme.name} width={size} height={size} radius={BORDER_RADIUS_SMALL} />
+              </View>
+            )}
+          </>
+        )}
       </TouchableOpacity>
       <Portal>
         <BottomModal
@@ -60,7 +90,13 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
                 <BottomModalScreenTitle>{nft.name}</BottomModalScreenTitle>
               </ScreenSection>
               <ScreenSection>
-                <NFTFullSizeImage source={{ uri: nft.image }} resizeMode="contain" />
+                {error ? (
+                  <NoImagePlaceholder size={nftFullSize} />
+                ) : isDataUri ? (
+                  <WebViewImage nft={nft} size={nftFullSize} />
+                ) : (
+                  <NFTFullSizeImage source={{ uri: nft.image }} contentFit="contain" />
+                )}
 
                 {nft.description && (
                   <NFTDescriptionContainer>
@@ -82,6 +118,12 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
                   </AttributesGrid>
                 )}
               </ScreenSection>
+
+              {!isDataUri && (
+                <ScreenSection>
+                  <Button title={t('View full size')} onPress={() => openBrowserAsync(nft.image)} />
+                </ScreenSection>
+              )}
             </ModalContent>
           )}
           isOpen={isModalOpen}
@@ -91,6 +133,37 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
     </>
   )
 }
+
+const NoImagePlaceholder = ({ size }: Pick<NFTThumbnailProps, 'size'>) => (
+  <NoImage style={{ width: size, height: size }}>
+    <CameraOff color="gray" />
+  </NoImage>
+)
+
+const WebViewImage = ({ nft, size }: NFTThumbnailProps) => (
+  <WebView
+    source={{ html: `<img src="${nft.image}" />` }}
+    style={{ width: size, height: size, borderRadius: BORDER_RADIUS_SMALL, backgroundColor: 'transparent' }}
+    injectedJavaScript={
+      "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=width, initial-scale=1, maximum-scale=1, user-scalable=1'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+    }
+    javaScriptEnabled={false}
+    startInLoadingState={true}
+    javaScriptCanOpenWindowsAutomatically={false}
+    allowFileAccess={false}
+    allowFileAccessFromFileURLs={false}
+    allowUniversalAccessFromFileURLs={false}
+    allowsAirPlayForMediaPlayback={false}
+    allowsBackForwardNavigationGestures={false}
+    allowsFullscreenVideo={false}
+    allowsInlineMediaPlayback={false}
+    allowsLinkPreview={false}
+    allowsProtectedMedia={false}
+    scrollEnabled={false}
+    scalesPageToFit={false}
+    onMessage={() => {}}
+  />
+)
 
 export default NFTThumbnail
 
@@ -131,4 +204,11 @@ const AttributeType = styled(AppText)`
 
 const AttributeValue = styled(AppText)`
   margin-top: 2px;
+`
+
+const NoImage = styled.View`
+  border-radius: ${BORDER_RADIUS_SMALL}px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => colord(theme.bg.back2).darken(0.07).toHex()};
 `
