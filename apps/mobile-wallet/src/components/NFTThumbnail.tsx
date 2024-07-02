@@ -143,7 +143,7 @@ const NoImagePlaceholder = ({ size }: Pick<NFTThumbnailProps, 'size'>) => (
 const WebViewImage = ({ nft, size }: NFTThumbnailProps) => (
   <WebView
     source={{ html: `<img src="${nft.image}" />` }}
-    style={{ width: size, height: size, borderRadius: BORDER_RADIUS_SMALL }}
+    style={{ width: size, height: size, borderRadius: BORDER_RADIUS_SMALL, backgroundColor: 'transparent' }}
     injectedJavaScript={
       "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=width, initial-scale=1, maximum-scale=1, user-scalable=1'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
     }
