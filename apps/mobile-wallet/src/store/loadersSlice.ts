@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createSlice } from '@reduxjs/toolkit'
 
 import {
-  syncAddressesAlphHistoricBalances,
   syncAddressesBalances,
   syncAddressesTokens,
   syncAllAddressesTransactionsNextPage,
@@ -76,15 +75,6 @@ const loadersSlice = createSlice({
       })
       .addCase(syncAllAddressesTransactionsNextPage.rejected, (state) => {
         state.loadingTransactionsNextPage = false
-      })
-      .addCase(syncAddressesAlphHistoricBalances.pending, (state) => {
-        state.loadingAlphHistoricBalances = true
-      })
-      .addCase(syncAddressesAlphHistoricBalances.fulfilled, (state) => {
-        state.loadingAlphHistoricBalances = false
-      })
-      .addCase(syncAddressesAlphHistoricBalances.rejected, (state) => {
-        state.loadingAlphHistoricBalances = false
       })
       .addCase(syncAddressesTokens.pending, (state) => {
         state.loadingTokens = true

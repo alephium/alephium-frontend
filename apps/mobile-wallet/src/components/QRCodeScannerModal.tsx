@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { BarCodeScanner } from 'expo-barcode-scanner'
-import { BarCodeScanningResult, Camera, CameraType } from 'expo-camera'
+import { BarcodeScanningResult, Camera, CameraView } from 'expo-camera'
 import { Camera as CameraIcon } from 'lucide-react-native'
 import { areFramesComplete, framesToData, parseFramesReducer, progressOfFrames, State as FrameState } from 'qrloop'
 import { useEffect, useState } from 'react'
@@ -51,18 +50,14 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
 
   useEffect(() => {
     const getCameraPermissions = async () => {
-      const { status } =
-        qrCodeMode === 'animated'
-          ? await Camera.requestCameraPermissionsAsync()
-          : await BarCodeScanner.requestPermissionsAsync()
-
+      const { status } = await Camera.requestCameraPermissionsAsync()
       setHasPermission(status === 'granted')
     }
 
     getCameraPermissions()
   }, [qrCodeMode])
 
-  const handleBarCodeScanned = ({ data }: BarCodeScanningResult) => {
+  const handleBarCodeScanned = ({ data }: BarcodeScanningResult) => {
     if (qrCodeMode === 'animated') {
       try {
         frames = parseFramesReducer(frames, data)
@@ -111,20 +106,15 @@ const QRCodeScannerModal = ({ onClose, onQRCodeScan, qrCodeMode = 'simple', text
   return (
     <ModalWithBackdrop visible closeModal={onClose} color={theme.bg.primary} showCloseButton>
       <ScreenStyled>
-        {!scanned &&
-          hasPermission &&
-          (qrCodeMode === 'animated' ? (
-            <CameraStyled type={'back' as CameraType} onBarCodeScanned={handleBarCodeScanned}>
-              {CameraContents}
-            </CameraStyled>
-          ) : (
-            <BarCodeScannerStyled
-              barCodeTypes={[BarCodeScanner.Constants.BarCodeType.qr]}
-              onBarCodeScanned={handleBarCodeScanned}
-            >
-              {CameraContents}
-            </BarCodeScannerStyled>
-          ))}
+        {!scanned && hasPermission && (
+          <CameraStyled
+            facing="back"
+            onBarcodeScanned={handleBarCodeScanned}
+            barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+          >
+            {CameraContents}
+          </CameraStyled>
+        )}
 
         {hasPermission === false && (
           <ScreenSection fill verticallyCentered>
@@ -144,13 +134,9 @@ const ScreenStyled = styled(Screen)`
   width: 100%;
 `
 
-const CameraStyled = styled(Camera)`
+const CameraStyled = styled(CameraView)`
   flex: 1;
   align-items: center;
-`
-
-const BarCodeScannerStyled = styled(BarCodeScanner)`
-  flex: 1;
 `
 
 const win = Dimensions.get('window')
