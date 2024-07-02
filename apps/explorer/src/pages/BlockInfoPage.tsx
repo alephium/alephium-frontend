@@ -16,16 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiArrowRightLine } from 'react-icons/ri'
 import { useNavigate, useParams } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
+import { blocksQueries } from '@/api/blocks/blocksApi'
 import client from '@/api/client'
+import { transactionsQueries } from '@/api/transactions/transactionsApi'
 import Badge from '@/components/Badge'
 import InlineErrorMessage from '@/components/InlineErrorMessage'
 import { AddressLink, TightLink } from '@/components/Links'
@@ -52,80 +54,45 @@ const BlockInfoPage = () => {
   const { id } = useParams<ParamTypes>()
   const navigate = useNavigate()
 
-  const [blockInfo, setBlockInfo] = useState<explorer.BlockEntryLite>()
-  const [blockInfoError, setBlockInfoError] = useState<{
-    message: string
-  }>()
-  const [txList, setTxList] = useState<explorer.Transaction[]>()
-
-  const [infoLoading, setInfoLoading] = useState(true)
-  const [txLoading, setTxLoading] = useState(true)
-
   const currentPageNumber = usePageNumber()
 
-  // Block info
-  useEffect(() => {
-    const fetchBlockInfo = async () => {
-      if (!id) return
+  const {
+    data: blockInfo,
+    error: blockInfoError,
+    isLoading: infoLoading
+  } = useQuery({ ...blocksQueries.block.one(id || ''), enabled: !!id })
 
-      setInfoLoading(true)
-      try {
-        const data = await client.explorer.blocks.getBlocksBlockHash(id)
-        if (data) setBlockInfo(data)
-      } catch (e) {
-        console.error(e)
+  const { data: txList, isLoading: txLoading } = useQuery({
+    ...blocksQueries.block.transactions(id || '', currentPageNumber),
+    enabled: !!id
+  })
 
-        setBlockInfoError({
-          message: getHumanReadableError(e, t('Unknown error'))
-        })
-      }
-      setInfoLoading(false)
-    }
+  const { data: uncleBlock } = useQuery({
+    ...blocksQueries.block.uncle(id || ''),
+    enabled: !!blockInfo && blockInfo.mainChain === false
+  })
 
-    fetchBlockInfo()
-  }, [id, t])
-
-  // Block transactions
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      if (!client || !id) return
-      setTxLoading(true)
-      try {
-        const data = await client.explorer.blocks.getBlocksBlockHashTransactions(id, {
-          page: currentPageNumber
-        })
-        if (data) setTxList(data)
-      } catch (e) {
-        console.error(e)
-      }
-      setTxLoading(false)
-    }
-
-    fetchTransactions()
-  }, [id, currentPageNumber])
+  const { data: txInfo } = useQuery({
+    ...transactionsQueries.transaction.one(id || ''),
+    enabled: !!id && !!blockInfoError
+  })
 
   // If user entered an incorrect url (or did an incorrect search, try to see if a transaction exists with this hash)
   useEffect(() => {
     if (!client || !blockInfoError || !id) return
 
     const redirectToTransactionIfExists = async () => {
-      try {
-        const data = await client.explorer.transactions.getTransactionsTransactionHash(id)
-        if (data) navigate(`/transactions/${id}`)
-      } catch (error) {
-        console.error(error)
-      }
+      if (txInfo) navigate(`/transactions/${id}`)
     }
 
     redirectToTransactionIfExists()
-  }, [blockInfo, id, blockInfoError, navigate])
+  }, [blockInfo, id, blockInfoError, navigate, txInfo])
 
   return !infoLoading && !blockInfo && blockInfoError ? (
     <InlineErrorMessage {...blockInfoError} />
   ) : (
     <Section>
       <SectionTitle title={t('Block')} isLoading={infoLoading || txLoading} />
-
       <Table bodyOnly isLoading={infoLoading}>
         {blockInfo && (
           <TableBody tdStyles={BlockTableBodyCustomStyles}>
@@ -133,6 +100,12 @@ const BlockInfoPage = () => {
               <span>{t('Hash')}</span>
               <HighlightedCell textToCopy={blockInfo.hash}>{blockInfo.hash}</HighlightedCell>
             </TableRow>
+            {!!uncleBlock && (
+              <TableRow>
+                <span>{t('Is Uncle Block')}</span>
+                <Badge type="accent" content={t('True')} />
+              </TableRow>
+            )}
             <TableRow>
               <span>{t('Height')}</span>
               <span>{blockInfo.height}</span>
@@ -151,6 +124,16 @@ const BlockInfoPage = () => {
               <span>{t('Timestamp')}</span>
               <Timestamp timeInMs={blockInfo.timestamp} forceFormat="high" />
             </TableRow>
+            {blockInfo.ghostUncles && blockInfo.ghostUncles.length > 0 && (
+              <TableRow>
+                <span>{t('uncleBlock_other')}</span>
+                <UncleBlocks>
+                  {blockInfo.ghostUncles?.map((b) => (
+                    <TightLink text={b.blockHash} to={`/blocks/${b.blockHash}`} maxWidth="300px" />
+                  ))}
+                </UncleBlocks>
+              </TableRow>
+            )}
           </TableBody>
         )}
       </Table>
@@ -310,4 +293,10 @@ const IODetailList = styled.div`
   border: 1px solid ${({ theme }) => theme.border.secondary};
   border-radius: 8px;
   padding: 15px;
+`
+
+const UncleBlocks = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 `

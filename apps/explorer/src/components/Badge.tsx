@@ -22,7 +22,7 @@ import styled, { css, DefaultTheme } from 'styled-components'
 
 import Amount from './Amount'
 
-type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight'
+type BadgeType = 'plus' | 'minus' | 'neutral' | 'neutralHighlight' | 'accent'
 
 interface BadgeProps {
   type: BadgeType
@@ -78,6 +78,11 @@ const getBadgeColor = (badgeType: BadgeType, theme: DefaultTheme) => {
       backgroundColor = theme.bg.tertiary
       color = theme.font.primary
       borderColor = theme.border.primary
+      break
+    case 'accent':
+      backgroundColor = theme.bg.accent
+      color = theme.global.accent
+      borderColor = theme.global.accent
   }
 
   return { backgroundColor, color, borderColor }
