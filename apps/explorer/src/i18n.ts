@@ -24,6 +24,7 @@ import el from '../locales/el-GR/translation.json'
 import en from '../locales/en-US/translation.json'
 import fr from '../locales/fr-FR/translation.json'
 import id from '../locales/id-ID/translation.json'
+import vi from '../locales/vi-VN/translation.json'
 
 i18next.use(initReactI18next).init({
   resources: {
@@ -31,7 +32,8 @@ i18next.use(initReactI18next).init({
     'fr-FR': { translation: fr },
     'id-ID': { translation: id },
     'el-GR': { translation: el },
-    'de-DE': { translation: de }
+    'de-DE': { translation: de },
+    'vi-VN': { translation: vi }
   },
   lng: 'en-US',
   fallbackLng: 'en-US',
