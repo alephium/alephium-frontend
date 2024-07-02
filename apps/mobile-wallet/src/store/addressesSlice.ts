@@ -47,13 +47,19 @@ import {
   createSelector,
   createSlice,
   EntityState,
+  isAnyOf,
   PayloadAction
 } from '@reduxjs/toolkit'
 import { chunk } from 'lodash'
 
 import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsNextPage } from '~/api/addresses'
 import { RootState } from '~/store/store'
-import { newWalletGenerated, walletDeleted, walletUnlocked } from '~/store/wallet/walletActions'
+import {
+  appLaunchedWithLastUsedWallet,
+  newWalletGenerated,
+  walletDeleted,
+  walletUnlocked
+} from '~/store/wallet/walletActions'
 import { Address, AddressPartial } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
 
@@ -217,22 +223,6 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(walletUnlocked, (state, { payload: { addresses } }) => {
-        const addressesToInitialize = addresses.filter((address) => !state.entities[address.hash])
-
-        if (addressesToInitialize.length > 0) {
-          addressesAdapter.addMany(
-            state,
-            addressesToInitialize.map(({ index, hash, ...settings }) =>
-              getInitialAddressState({
-                index,
-                hash,
-                settings
-              })
-            )
-          )
-        }
-      })
       .addCase(newWalletGenerated, (state, action) => {
         const firstWalletAddress = getInitialAddressState({
           ...action.payload.firstAddress,
@@ -310,6 +300,22 @@ const addressesSlice = createSlice({
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
       .addCase(appReset, () => initialState)
       .addCase(walletDeleted, () => initialState)
+    builder.addMatcher(isAnyOf(walletUnlocked, appLaunchedWithLastUsedWallet), (state, { payload: { addresses } }) => {
+      const addressesToInitialize = addresses.filter((address) => !state.entities[address.hash])
+
+      if (addressesToInitialize.length > 0) {
+        addressesAdapter.addMany(
+          state,
+          addressesToInitialize.map(({ index, hash, ...settings }) =>
+            getInitialAddressState({
+              index,
+              hash,
+              settings
+            })
+          )
+        )
+      }
+    })
   }
 })
 

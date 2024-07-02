@@ -20,6 +20,7 @@ import { appBecameInactive, appReset } from '@alephium/shared'
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import {
+  appLaunchedWithLastUsedWallet,
   newWalletGenerated,
   newWalletImportedWithMetadata,
   walletDeleted,
@@ -57,14 +58,17 @@ const walletSlice = createSlice({
       })
     builder.addMatcher(isAnyOf(appReset, walletDeleted), resetState)
     builder.addMatcher(
-      isAnyOf(walletUnlocked, newWalletGenerated, newWalletImportedWithMetadata),
-      (_, { payload: { name, id, isMnemonicBackedUp } }) => ({
+      isAnyOf(walletUnlocked, newWalletGenerated, newWalletImportedWithMetadata, appLaunchedWithLastUsedWallet),
+      (state, { payload: { name, id, isMnemonicBackedUp } }) => ({
+        ...state,
         id,
         name,
-        isUnlocked: true,
         isMnemonicBackedUp
       })
     )
+    builder.addMatcher(isAnyOf(walletUnlocked, newWalletGenerated, newWalletImportedWithMetadata), (state) => {
+      state.isUnlocked = true
+    })
   }
 })
 
