@@ -112,7 +112,7 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
                         <AttributeType color="tertiary" semiBold>
                           {attribute.trait_type}
                         </AttributeType>
-                        <AttributeValue semiBold>{attribute.value}</AttributeValue>
+                        <AttributeValue semiBold>{attribute.value.toString()}</AttributeValue>
                       </Attribute>
                     ))}
                   </AttributesGrid>
