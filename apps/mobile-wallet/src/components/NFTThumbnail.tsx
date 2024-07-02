@@ -83,7 +83,7 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
                 ) : isDataUri ? (
                   <WebViewImage nft={nft} size={fullSize} />
                 ) : (
-                  <NFTFullSizeImage source={{ uri: nft.image }} resizeMode="contain" />
+                  <NFTFullSizeImage source={{ uri: nft.image }} contentFit="contain" />
                 )}
 
                 {nft.description && (
