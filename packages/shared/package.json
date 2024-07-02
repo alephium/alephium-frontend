@@ -30,7 +30,8 @@
     "dayjs": "^1.10.7",
     "fetch-retry": "^5.0.6",
     "lodash": "^4.17.21",
-    "posthog-js": "^1.52.0"
+    "posthog-js": "^1.52.0",
+    "sanitize-html": "^2.13.0"
   },
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
@@ -38,6 +39,7 @@
     "@types/jest": "^29.4.0",
     "@types/node": "^16.10.1",
     "@types/rewire": "^2.5.28",
+    "@types/sanitize-html": "^2.11.0",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "babel-eslint": "^10.1.0",
