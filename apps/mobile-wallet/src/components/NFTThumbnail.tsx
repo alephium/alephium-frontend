@@ -42,8 +42,9 @@ interface NFTThumbnailProps {
 }
 
 const attributeGap = 12
-const screenPadding = 20
-const fullSize = Dimensions.get('window').width - DEFAULT_MARGIN * 4
+const windowWidth = Dimensions.get('window').width
+const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
+const attributeWidth = (nftFullSize - attributeGap) / 2
 
 const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
   const { t } = useTranslation()
@@ -53,7 +54,6 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState()
 
-  const attributeWidth = (Dimensions.get('window').width - (attributeGap + screenPadding * 2 + DEFAULT_MARGIN * 2)) / 2
   const isDataUri = nft.image.startsWith('data:image/')
 
   return (
@@ -91,9 +91,9 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
               </ScreenSection>
               <ScreenSection>
                 {error ? (
-                  <NoImagePlaceholder size={fullSize} />
+                  <NoImagePlaceholder size={nftFullSize} />
                 ) : isDataUri ? (
-                  <WebViewImage nft={nft} size={fullSize} />
+                  <WebViewImage nft={nft} size={nftFullSize} />
                 ) : (
                   <NFTFullSizeImage source={{ uri: nft.image }} contentFit="contain" />
                 )}
