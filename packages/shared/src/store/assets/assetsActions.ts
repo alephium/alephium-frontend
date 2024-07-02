@@ -17,10 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenList } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
+import { explorer, NFTTokenUriMetaData } from '@alephium/web3'
 import { NFTMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { chunk, groupBy } from 'lodash'
+import { chunk, groupBy, isArray } from 'lodash'
 import posthog from 'posthog-js'
 
 import { client } from '@/api/client'
@@ -111,7 +111,6 @@ export const syncFungibleTokensInfo = createAsyncThunk(
 )
 
 export const syncNFTsInfo = createAsyncThunk('assets/syncNFTsInfo', async (tokenIds: Asset['id'][]): Promise<NFT[]> => {
-  let nfts: NFT[] = []
   let nftsMetadata: NFTMetadata[] = []
 
   try {
@@ -128,19 +127,48 @@ export const syncNFTsInfo = createAsyncThunk('assets/syncNFTsInfo', async (token
   }
 
   const promiseResults = await Promise.allSettled(
-    nftsMetadata.map(({ tokenUri, id }) =>
-      exponentialBackoffFetchRetry(tokenUri)
-        .then((res) => res.json())
-        .then((data) => ({ ...data, id }))
-    )
+    nftsMetadata.map(async ({ tokenUri, id, collectionId, nftIndex }) => {
+      let result
+      let data: NFTTokenUriMetaData | undefined
+
+      try {
+        result = await exponentialBackoffFetchRetry(tokenUri)
+        data = (await result.json()) as NFTTokenUriMetaData
+
+        if (!matchesNFTTokenUriMetaDataSchema(data)) {
+          data = undefined
+          return Promise.reject()
+        }
+      } catch (e) {
+        if (tokenUri.startsWith('data:application/json;utf8,')) {
+          data = JSON.parse(tokenUri.split('data:application/json;utf8,')[1])
+        }
+      }
+
+      if (data) {
+        return { ...data, id, collectionId, nftIndex } as NFT
+      } else {
+        return Promise.reject()
+      }
+    })
   )
-  const nftsData = promiseResults.filter(isPromiseFulfilled).flatMap((r) => r.value)
 
-  nfts = nftsMetadata.map(({ id, collectionId }) => ({
-    id,
-    collectionId,
-    ...(nftsData.find((nftData) => nftData.id === id) || {})
-  }))
+  const nftsData = promiseResults
+    .filter(isPromiseFulfilled)
+    .filter((r) => !!r.value)
+    .flatMap((r) => r.value) as NFT[]
 
-  return nfts
+  return nftsData
 })
+
+const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
+  typeof nft.name === 'string' &&
+  typeof nft.image === 'string' &&
+  (typeof nft.description === 'undefined' || typeof nft.description === 'string') &&
+  (typeof nft.attributes === 'undefined' ||
+    (isArray(nft.attributes) &&
+      nft.attributes.every(
+        (attr) =>
+          typeof attr.trait_type === 'string' &&
+          (typeof attr.value === 'string' || typeof attr.value === 'number' || typeof attr.value === 'boolean')
+      )))
