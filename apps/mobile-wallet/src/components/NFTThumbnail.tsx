@@ -19,13 +19,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NFT } from '@alephium/shared'
 import { colord } from 'colord'
 import { Image } from 'expo-image'
+import { openBrowserAsync } from 'expo-web-browser'
 import { CameraOff } from 'lucide-react-native'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Dimensions, TouchableOpacity } from 'react-native'
 import { Portal } from 'react-native-portalize'
+import { WebView } from 'react-native-webview'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import BottomModal from '~/components/layout/BottomModal'
 import { ModalContent } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
@@ -38,19 +42,24 @@ interface NFTThumbnailProps {
 
 const attributeGap = 12
 const screenPadding = 20
+const fullSize = Dimensions.get('window').width - DEFAULT_MARGIN * 4
 
 const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
+  const { t } = useTranslation()
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [error, setError] = useState()
 
   const attributeWidth = (Dimensions.get('window').width - (attributeGap + screenPadding * 2 + DEFAULT_MARGIN * 2)) / 2
-  const showPlaceholder = error || nft.image.startsWith('data:image/svg+xml')
+  const isDataUri = nft.image.startsWith('data:image/')
 
   return (
     <>
       <TouchableOpacity onPress={() => setIsModalOpen(true)}>
-        {showPlaceholder ? (
+        {error ? (
           <NoImagePlaceholder size={size} />
+        ) : isDataUri ? (
+          <WebViewImage nft={nft} size={size} />
         ) : (
           <NFTThumbnailStyled
             style={{ width: size, height: size }}
@@ -69,8 +78,10 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
                 <BottomModalScreenTitle>{nft.name}</BottomModalScreenTitle>
               </ScreenSection>
               <ScreenSection>
-                {showPlaceholder ? (
-                  <NoImagePlaceholder size={Dimensions.get('window').width - DEFAULT_MARGIN * 4} />
+                {error ? (
+                  <NoImagePlaceholder size={fullSize} />
+                ) : isDataUri ? (
+                  <WebViewImage nft={nft} size={fullSize} />
                 ) : (
                   <NFTFullSizeImage source={{ uri: nft.image }} resizeMode="contain" />
                 )}
@@ -95,6 +106,12 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
                   </AttributesGrid>
                 )}
               </ScreenSection>
+
+              {!isDataUri && (
+                <ScreenSection>
+                  <Button title={t('View full size')} onPress={() => openBrowserAsync(nft.image)} />
+                </ScreenSection>
+              )}
             </ModalContent>
           )}
           isOpen={isModalOpen}
@@ -109,6 +126,30 @@ const NoImagePlaceholder = ({ size }: Pick<NFTThumbnailProps, 'size'>) => (
   <NoImage style={{ width: size, height: size }}>
     <CameraOff color="gray" />
   </NoImage>
+)
+
+const WebViewImage = ({ nft, size }: NFTThumbnailProps) => (
+  <WebView
+    source={{ html: `<img src="${nft.image}" />` }}
+    style={{ width: size, height: size }}
+    injectedJavaScript={
+      "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=width, initial-scale=0.5, maximum-scale=0.5, user-scalable=2.0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
+    }
+    javaScriptEnabled={false}
+    startInLoadingState={true}
+    javaScriptCanOpenWindowsAutomatically={false}
+    allowFileAccess={false}
+    allowFileAccessFromFileURLs={false}
+    allowUniversalAccessFromFileURLs={false}
+    allowsAirPlayForMediaPlayback={false}
+    allowsBackForwardNavigationGestures={false}
+    allowsFullscreenVideo={false}
+    allowsInlineMediaPlayback={false}
+    allowsLinkPreview={false}
+    allowsProtectedMedia={false}
+    scrollEnabled={false}
+    onMessage={() => {}}
+  />
 )
 
 export default NFTThumbnail
