@@ -22,6 +22,7 @@ import { NFTMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { chunk, groupBy, isArray } from 'lodash'
 import posthog from 'posthog-js'
+import sanitize from 'sanitize-html'
 
 import { client } from '@/api/client'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
@@ -156,7 +157,7 @@ export const syncNFTsInfo = createAsyncThunk('assets/syncNFTsInfo', async (token
   const nftsData = promiseResults
     .filter(isPromiseFulfilled)
     .filter((r) => !!r.value)
-    .flatMap((r) => r.value) as NFT[]
+    .flatMap((r) => sanitizeNft(r.value)) as NFT[]
 
   return nftsData
 })
@@ -172,3 +173,14 @@ const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
           typeof attr.trait_type === 'string' &&
           (typeof attr.value === 'string' || typeof attr.value === 'number' || typeof attr.value === 'boolean')
       )))
+
+const sanitizeNft = (nft: NFT): NFT => ({
+  ...nft,
+  name: sanitize(nft.name),
+  description: nft.description ? sanitize(nft.description) : nft.description,
+  image: sanitize(nft.image),
+  attributes: nft.attributes?.map(({ trait_type, value }) => ({
+    trait_type: sanitize(trait_type),
+    value: sanitize(value.toString())
+  }))
+})
