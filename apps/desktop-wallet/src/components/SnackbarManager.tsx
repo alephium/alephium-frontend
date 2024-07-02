@@ -50,7 +50,7 @@ const SnackbarManager = () => {
     <ModalPortal>
       {message?.text && (
         <SnackbarManagerContainer>
-          <SnackbarPopup {...fadeInBottom} {...fadeOut} className={message.type}>
+          <SnackbarPopup {...fadeInBottom} {...fadeOut} className={message.type} style={{ textAlign: 'center' }}>
             {message.text}
           </SnackbarPopup>
         </SnackbarManagerContainer>
@@ -61,13 +61,13 @@ const SnackbarManager = () => {
 
 export default SnackbarManager
 
-const getSnackbarStyling = (color: string) => css`
+export const getSnackbarStyling = (color: string) => css`
   background-color: ${colord(color).alpha(0.9).toHex()};
   border: 1px solid ${colord(color).lighten(0.1).toHex()};
   color: rgba(255, 255, 255, 0.8);
 `
 
-const SnackbarManagerContainer = styled.div`
+export const SnackbarManagerContainer = styled.div`
   position: fixed;
   bottom: 0;
   left: ${walletSidebarWidthPx}px;
@@ -81,9 +81,8 @@ const SnackbarManagerContainer = styled.div`
   }
 `
 
-const SnackbarPopup = styled(motion.div)`
+export const SnackbarPopup = styled(motion.div)`
   margin: var(--spacing-3);
-  text-align: center;
   min-width: 200px;
   padding: var(--spacing-4) var(--spacing-3);
   color: ${({ theme }) => theme.font.primary};

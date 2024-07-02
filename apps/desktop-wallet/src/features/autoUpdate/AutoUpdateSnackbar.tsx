@@ -16,46 +16,43 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { BellPlus } from 'lucide-react'
+import { X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import InfoBox from '@/components/InfoBox'
-import { Section } from '@/components/PageComponents/PageContainers'
-import { useGlobalContext } from '@/contexts/global'
+import { fadeInBottom, fadeOut } from '@/animations'
+import Button from '@/components/Button'
+import { SnackbarManagerContainer, SnackbarPopup } from '@/components/SnackbarManager'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
+import useLatestGitHubRelease from '@/features/autoUpdate/useLatestGitHubRelease'
+import ModalPortal from '@/modals/ModalPortal'
 import { AlephiumWindow } from '@/types/window'
 import { currentVersion } from '@/utils/app-data'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
-interface UpdateWalletModalProps {
-  onClose: () => void
-}
-
-type UpdateStatus = 'download-available' | 'downloading' | 'download-finished' | 'download-failed'
-
 const _window = window as unknown as AlephiumWindow
 const electron = _window.electron
 
-const UpdateWalletModal = ({ onClose }: UpdateWalletModalProps) => {
+type UpdateStatus = 'download-available' | 'downloading' | 'download-finished' | 'download-failed'
+
+const AutoUpdateSnackbar = () => {
   const { t } = useTranslation()
-  const { resetNewVersionDownloadTrigger, newVersion, newVersionDownloadTriggered, requiresManualDownload } =
-    useGlobalContext()
+  const { newVersion, requiresManualDownload } = useLatestGitHubRelease()
   const { sendAnalytics } = useAnalytics()
 
+  const [isUpdateSnackbarVisible, setIsUpdateSnackbarVisible] = useState(true)
   const [status, setStatus] = useState<UpdateStatus>('download-available')
   const [percent, setPercent] = useState('0')
   const [error, setError] = useState('')
 
-  const startDownload = async () => {
+  useEffect(() => {
+    if (!newVersion || requiresManualDownload) return
+
     setStatus('downloading')
     electron?.updater.startUpdateDownload()
-  }
 
-  useEffect(() => {
     const removeUpdateDownloadProgressListener = electron?.updater.onUpdateDownloadProgress((info) =>
       setPercent(info.percent.toFixed(2))
     )
@@ -74,28 +71,13 @@ const UpdateWalletModal = ({ onClose }: UpdateWalletModalProps) => {
       removeUpdateDownloadedListener && removeUpdateDownloadedListener()
       removeonErrorListener && removeonErrorListener
     }
-  }, [sendAnalytics])
+  }, [newVersion, requiresManualDownload, sendAnalytics])
 
-  useEffect(() => {
-    if (newVersionDownloadTriggered) startDownload()
-  }, [newVersionDownloadTriggered])
-
-  const closeModal = () => {
-    resetNewVersionDownloadTrigger()
-    onClose()
-    sendAnalytics({ event: 'Auto-update modal: Closed' })
-  }
-
-  const handleUpdateClick = () => {
-    startDownload()
-    sendAnalytics({
-      event: 'Auto-update modal: Clicked "Update"',
-      props: { fromVersion: currentVersion, toVersion: newVersion }
-    })
-  }
+  if (!newVersion) return null
 
   const handleManualDownloadClick = () => {
     openInWebBrowser(links.latestRelease)
+    closeSnackbar()
     sendAnalytics({
       event: 'Auto-update modal: Clicked "Download"',
       props: { fromVersion: currentVersion, toVersion: newVersion }
@@ -107,11 +89,14 @@ const UpdateWalletModal = ({ onClose }: UpdateWalletModalProps) => {
     electron?.updater.quitAndInstallUpdate()
   }
 
+  const closeSnackbar = () => {
+    setIsUpdateSnackbarVisible(false)
+    sendAnalytics({ event: 'Auto-update modal: Closed' })
+  }
+
   const downloadMessage = {
     'download-available': t(
-      requiresManualDownload
-        ? 'Version {{ newVersion }} is available. Please, download it and install it to avoid any issues with the wallet.'
-        : 'Version {{ newVersion }} is available. Click "Update" to avoid any issues with the wallet.',
+      'Version {{ newVersion }} is available. Please, download it and install it to avoid any issues with the wallet.',
       {
         newVersion
       }
@@ -122,31 +107,65 @@ const UpdateWalletModal = ({ onClose }: UpdateWalletModalProps) => {
   }[status]
 
   return (
-    <CenteredModal title={t('New version')} onClose={closeModal} focusMode>
-      <Section>
-        <InfoBox Icon={BellPlus}>
-          <div>{error ? error : downloadMessage}</div>
-          {status === 'downloading' && <ProgressBar value={parseFloat(percent) / 100} />}
-        </InfoBox>
-      </Section>
-      <ModalFooterButtons>
-        {status === 'download-available' && requiresManualDownload && (
-          <ModalFooterButton onClick={handleManualDownloadClick}>{t('Download')}</ModalFooterButton>
-        )}
-        {status === 'download-available' && !requiresManualDownload && (
-          <ModalFooterButton onClick={handleUpdateClick}>{t('Update')}</ModalFooterButton>
-        )}
-        {status === 'download-finished' && !error && (
-          <ModalFooterButton onClick={handleRestartClick}>{t('Restart')}</ModalFooterButton>
-        )}
-        {error && <ModalFooterButton onClick={closeModal}>{t('Close')}</ModalFooterButton>}
-      </ModalFooterButtons>
-    </CenteredModal>
+    <ModalPortal>
+      {isUpdateSnackbarVisible && (
+        <SnackbarManagerContainer>
+          <SnackbarPopupWithButton
+            {...fadeInBottom}
+            {...fadeOut}
+            className={error ? 'alert' : status === 'download-finished' ? 'success' : 'info'}
+          >
+            <Texts>
+              <Title>{t('Update')}</Title>
+              <div>{error ? error : downloadMessage}</div>
+              {status === 'downloading' && <ProgressBar value={parseFloat(percent) / 100} />}
+            </Texts>
+            {error && (
+              <CloseButton
+                aria-label={t('Close')}
+                squared
+                role="secondary"
+                transparent
+                onClick={closeSnackbar}
+                borderless
+              >
+                <X />
+              </CloseButton>
+            )}
+            {status === 'download-available' && requiresManualDownload && (
+              <Button short onClick={handleManualDownloadClick}>
+                {t('Download')}
+              </Button>
+            )}
+            {status === 'download-finished' && !error && <Button onClick={handleRestartClick}>{t('Restart')}</Button>}
+          </SnackbarPopupWithButton>
+        </SnackbarManagerContainer>
+      )}
+    </ModalPortal>
   )
 }
 
-export default UpdateWalletModal
+export default AutoUpdateSnackbar
+
+const Texts = styled.div`
+  flex: 1;
+`
+
+const Title = styled.div`
+  font-weight: var(--fontWeight-bold);
+  margin-bottom: var(--spacing-1);
+`
 
 const ProgressBar = styled.progress`
   width: 100%;
+`
+
+const SnackbarPopupWithButton = styled(SnackbarPopup)`
+  display: flex;
+  gap: var(--spacing-2);
+`
+
+const CloseButton = styled(Button)`
+  color: ${({ theme }) => theme.font.primary};
+  margin-right: var(--spacing-2);
 `

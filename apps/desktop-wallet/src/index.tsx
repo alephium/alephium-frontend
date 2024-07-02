@@ -29,7 +29,6 @@ import { StyleSheetManager } from 'styled-components'
 
 import App from '@/App'
 import Tooltips from '@/components/Tooltips'
-import { GlobalContextProvider } from '@/contexts/global'
 import AnalyticsProvider from '@/features/analytics/AnalyticsProvider'
 import * as serviceWorker from '@/serviceWorker'
 import { store } from '@/storage/store'
@@ -46,10 +45,8 @@ ReactDOM.render(
         <Router>
           <Suspense fallback="loading">
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>
-              <GlobalContextProvider>
-                <App />
-                <Tooltips />
-              </GlobalContextProvider>
+              <App />
+              <Tooltips />
             </StyleSheetManager>
           </Suspense>
         </Router>
