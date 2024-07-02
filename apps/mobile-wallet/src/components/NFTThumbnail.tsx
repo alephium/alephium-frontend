@@ -21,12 +21,13 @@ import { colord } from 'colord'
 import { Image } from 'expo-image'
 import { openBrowserAsync } from 'expo-web-browser'
 import { CameraOff } from 'lucide-react-native'
+import { Skeleton } from 'moti/skeleton'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dimensions, TouchableOpacity } from 'react-native'
+import { Dimensions, TouchableOpacity, View } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import { WebView } from 'react-native-webview'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
@@ -46,8 +47,10 @@ const fullSize = Dimensions.get('window').width - DEFAULT_MARGIN * 4
 
 const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
   const { t } = useTranslation()
+  const theme = useTheme()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState()
 
   const attributeWidth = (Dimensions.get('window').width - (attributeGap + screenPadding * 2 + DEFAULT_MARGIN * 2)) / 2
@@ -55,19 +58,28 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
 
   return (
     <>
-      <TouchableOpacity onPress={() => setIsModalOpen(true)}>
+      <TouchableOpacity onPress={() => setIsModalOpen(true)} style={{ position: 'relative' }}>
         {error ? (
           <NoImagePlaceholder size={size} />
         ) : isDataUri ? (
           <WebViewImage nft={nft} size={size} />
         ) : (
-          <NFTThumbnailStyled
-            style={{ width: size, height: size }}
-            transition={500}
-            source={{ uri: nft.image }}
-            allowDownscaling
-            onError={setError}
-          />
+          <>
+            <NFTThumbnailStyled
+              style={{ width: size, height: size }}
+              transition={500}
+              source={{ uri: nft.image }}
+              allowDownscaling
+              onError={setError}
+              onLoadStart={() => setIsLoading(true)}
+              onLoadEnd={() => setIsLoading(false)}
+            />
+            {isLoading && (
+              <View style={{ position: 'absolute' }}>
+                <Skeleton show colorMode={theme.name} width={size} height={size} radius={BORDER_RADIUS_SMALL} />
+              </View>
+            )}
+          </>
         )}
       </TouchableOpacity>
       <Portal>
@@ -131,7 +143,7 @@ const NoImagePlaceholder = ({ size }: Pick<NFTThumbnailProps, 'size'>) => (
 const WebViewImage = ({ nft, size }: NFTThumbnailProps) => (
   <WebView
     source={{ html: `<img src="${nft.image}" />` }}
-    style={{ width: size, height: size }}
+    style={{ width: size, height: size, borderRadius: BORDER_RADIUS_SMALL }}
     injectedJavaScript={
       "const meta = document.createElement('meta'); meta.setAttribute('content', 'width=width, initial-scale=1, maximum-scale=1, user-scalable=1'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); "
     }
