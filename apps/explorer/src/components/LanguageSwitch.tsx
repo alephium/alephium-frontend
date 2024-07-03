@@ -19,6 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import 'dayjs/locale/fr'
 import 'dayjs/locale/id'
 import 'dayjs/locale/el'
+import 'dayjs/locale/de'
+import 'dayjs/locale/vi'
 
 import dayjs from 'dayjs'
 import i18next from 'i18next'
@@ -32,7 +34,7 @@ interface LanguageSwitchProps {
   className?: string
 }
 
-type Language = 'en-US' | 'fr-FR' | 'id-ID' | 'el-GR'
+type Language = 'en-US' | 'fr-FR' | 'id-ID' | 'el-GR' | 'de-DE' | 'vi-VN'
 
 interface LangItem {
   label: string
@@ -43,7 +45,9 @@ const languageOptions: LangItem[] = [
   { label: 'English', value: 'en-US' },
   { label: 'Français', value: 'fr-FR' },
   { label: 'Bahasa Indonesia', value: 'id-ID' },
-  { label: 'Ελληνικά', value: 'el-GR' }
+  { label: 'Ελληνικά', value: 'el-GR' },
+  { label: 'Deutsch', value: 'de-DE' },
+  { label: 'Tiếng Việt', value: 'vi-VN' }
 ]
 
 const LanguageSwitch: React.FC<LanguageSwitchProps> = ({ className }) => {

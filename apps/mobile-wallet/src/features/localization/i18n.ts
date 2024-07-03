@@ -22,13 +22,15 @@ import { initReactI18next } from 'react-i18next'
 import gr from '../../../locales/el-GR/translation.json'
 import en from '../../../locales/en-US/translation.json'
 import fr from '../../../locales/fr-FR/translation.json'
+import vi from '../../../locales/vi-VN/translation.json'
 
 i18next.use(initReactI18next).init({
   compatibilityJSON: 'v3',
   resources: {
     'en-US': { translation: en },
     'fr-FR': { translation: fr },
-    'el-GR': { translation: gr }
+    'el-GR': { translation: gr },
+    'vi-VN': { translation: vi }
   },
   lng: 'en-US',
   fallbackLng: 'en-US',
