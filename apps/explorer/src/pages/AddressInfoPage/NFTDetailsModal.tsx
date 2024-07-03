@@ -17,9 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NFTCollectionUriMetaData } from '@alephium/web3'
+import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { queries } from '@/api'
 import Card from '@/components/Cards/Card'
 import HighlightedHash from '@/components/HighlightedHash'
 import { SimpleLink } from '@/components/Links'
@@ -38,6 +40,10 @@ interface NFTDetailsModalProps extends Omit<ModalProps, 'children'> {
 
 const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
+  const { data: dataType } = useQuery({
+    ...queries.assets.NFTsData.type(nft?.file?.image || ''),
+    enabled: !!nft?.file?.image
+  })
 
   return (
     <Modal {...props}>
@@ -48,7 +54,17 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
             <HighlightedHash text={nft.id} middleEllipsis maxWidth="200px" textToCopy={nft.id} />
           </Header>
           <NFTImageContainer>
-            {nft.file?.image ? <Image src={nft.file?.image} /> : t('Missing image')}
+            {nft.file?.image ? (
+              dataType === 'image' ? (
+                <Image src={nft.file.image} />
+              ) : dataType === 'video' ? (
+                <video src={nft.file.image} autoPlay loop width="100%" height="100%" />
+              ) : (
+                t('Unsupported media type')
+              )
+            ) : (
+              t('Missing image')
+            )}
           </NFTImageContainer>
 
           <MetadataTablesContainer>
@@ -87,8 +103,8 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
                     <h3>{t('Attributes')}</h3>
                     <Table bodyOnly>
                       <TableBody>
-                        {nft.file.attributes.map((a) => (
-                          <TableRow>
+                        {nft.file.attributes.map((a, i) => (
+                          <TableRow key={i}>
                             <span>{a.trait_type}</span>
                             <span>{a.value.toString()}</span>
                           </TableRow>

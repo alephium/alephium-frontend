@@ -134,5 +134,6 @@
   "confirmationsKey_other": "{{ count }} Confirmations",
   "uncleBlock_one": "Uncle block",
   "uncleBlock_other": "Uncle blocks",
-  "Uncle": "Uncle"
+  "Uncle": "Uncle",
+  "Unsupported media type": "Unsupported media type"
 }
