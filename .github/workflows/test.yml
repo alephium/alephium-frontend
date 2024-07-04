@@ -19,7 +19,7 @@ jobs:
       - name: Run test scripts of all workspaces in parallel
         run: pnpm run test
 
-  build-electron-app-unix:
+  build-desktop-wallet:
     runs-on: ${{ matrix.os }}
 
     strategy:
