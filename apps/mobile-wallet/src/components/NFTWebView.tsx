@@ -28,7 +28,7 @@ interface NFTWebViewProps {
 }
 
 const NFTWebView = ({ imageUri, size }: NFTWebViewProps) => (
-  <View>
+  <View style={{ width: size, height: size }}>
     <WebView
       source={{ html: `<img src="${imageUri}" />` }}
       style={{
