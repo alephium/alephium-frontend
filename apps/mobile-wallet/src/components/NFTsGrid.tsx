@@ -55,7 +55,7 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, ...pro
       data={data}
       verticalGap
       keyExtractor={(item) => item.id}
-      renderItem={({ item: nft }) => <NFTThumbnail key={nft.id} nft={nft} size={size} />}
+      renderItem={({ item: nft }) => <NFTThumbnail key={nft.id} nftId={nft.id} size={size} />}
       numColumns={columns}
       columnWrapperStyle={columns > 1 ? { justifyContent: 'flex-start', gap: 15 } : undefined}
       ListEmptyComponent={

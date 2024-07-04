@@ -141,7 +141,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
         )}
         {nftsData.length === 1 && (
           <Row title={t('NFT')} noMaxWidth transparent isLast>
-            <NFTThumbnail nft={nftsData[0]} size={100} />
+            <NFTThumbnail nftId={nftsData[0].id} size={100} />
           </Row>
         )}
         {nftsData.length > 1 && (
