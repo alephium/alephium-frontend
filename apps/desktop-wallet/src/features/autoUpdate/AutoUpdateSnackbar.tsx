@@ -94,16 +94,18 @@ const AutoUpdateSnackbar = () => {
     sendAnalytics({ event: 'Auto-update modal: Closed' })
   }
 
+  const downloadTitle = {
+    'download-available': t('Version {{ newVersion }} is available', { newVersion }),
+    'download-finished': t('Download finished'),
+    'download-failed': t('Download failed'),
+    downloading: t('Downloading version {{ newVersion }}...', { newVersion })
+  }[status]
+
   const downloadMessage = {
-    'download-available': t(
-      'Version {{ newVersion }} is available. Please, download it and install it to avoid any issues with the wallet.',
-      {
-        newVersion
-      }
-    ),
+    'download-available': t('Please, download it and install it to avoid any issues with the wallet.'),
     'download-finished': t('Restart the application to install the new update.'),
-    'download-failed': t('Download failed, try again later.'),
-    downloading: t('Downloaded {{ percent }}%', { percent })
+    'download-failed': t('Try again later.'),
+    downloading: ''
   }[status]
 
   return (
@@ -116,7 +118,7 @@ const AutoUpdateSnackbar = () => {
             className={error ? 'alert' : status === 'download-finished' ? 'success' : 'info'}
           >
             <Texts>
-              <Title>{t('Update')}</Title>
+              <Title>{downloadTitle}</Title>
               <div>{error ? error : downloadMessage}</div>
               {status === 'downloading' && <ProgressBar value={parseFloat(percent) / 100} />}
             </Texts>
@@ -133,11 +135,15 @@ const AutoUpdateSnackbar = () => {
               </CloseButton>
             )}
             {status === 'download-available' && requiresManualDownload && (
-              <Button short onClick={handleManualDownloadClick}>
+              <Button short borderless onClick={handleManualDownloadClick}>
                 {t('Download')}
               </Button>
             )}
-            {status === 'download-finished' && !error && <Button onClick={handleRestartClick}>{t('Restart')}</Button>}
+            {status === 'download-finished' && !error && (
+              <Button short borderless role="secondary" onClick={handleRestartClick}>
+                {t('Restart')}
+              </Button>
+            )}
           </SnackbarPopupWithButton>
         </SnackbarManagerContainer>
       )}
@@ -163,6 +169,7 @@ const ProgressBar = styled.progress`
 const SnackbarPopupWithButton = styled(SnackbarPopup)`
   display: flex;
   gap: var(--spacing-2);
+  width: 400px;
 `
 
 const CloseButton = styled(Button)`
