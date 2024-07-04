@@ -18,9 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NFT, selectNFTById } from '@alephium/shared'
 import { Image } from 'expo-image'
-import { Skeleton } from 'moti/skeleton'
 import { memo, useState } from 'react'
-import { View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import NFTPlaceholder from '~/components/NFTPlaceholder'
@@ -37,7 +35,6 @@ const NFTImage = ({ nftId, size }: NFTImageProps) => {
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
   const theme = useTheme()
 
-  const [isLoading, setIsLoading] = useState(false)
   const [hasError, setHasError] = useState(false)
 
   if (!nft) return null
@@ -49,26 +46,17 @@ const NFTImage = ({ nftId, size }: NFTImageProps) => {
   ) : isDataUri ? (
     <NFTWebView imageUri={nft.image} size={size} />
   ) : (
-    <>
-      <NFTImageStyled
-        style={{ width: size, height: size }}
-        transition={500}
-        source={{ uri: nft.image }}
-        allowDownscaling
-        contentFit="contain"
-        onLoadStart={() => setIsLoading(true)}
-        onLoadEnd={() => setIsLoading(false)}
-        onError={() => setHasError(true)}
-        placeholder={{
-          blurhash: theme.name === 'dark' ? 'L00000fQfQfQfQfQfQfQfQfQfQfQ' : 'L1PGpx-;fQ-;_3fQfQfQfQfQfQfQ'
-        }}
-      />
-      {isLoading && (
-        <View style={{ position: 'absolute' }}>
-          <Skeleton show colorMode={theme.name} width={size} height={size} radius={BORDER_RADIUS_SMALL} />
-        </View>
-      )}
-    </>
+    <NFTImageStyled
+      style={{ width: size, height: size }}
+      transition={500}
+      source={{ uri: nft.image }}
+      allowDownscaling
+      contentFit="contain"
+      onError={() => setHasError(true)}
+      placeholder={{
+        blurhash: theme.name === 'dark' ? 'L00000fQfQfQfQfQfQfQfQfQfQfQ' : 'L1PGpx-;fQ-;_3fQfQfQfQfQfQfQ'
+      }}
+    />
   )
 }
 
