@@ -168,7 +168,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
           />
         )
       }
-      icon={assetIsNft ? <NFTThumbnail nft={asset} size={38} /> : <AssetLogo assetId={asset.id} size={38} />}
+      icon={assetIsNft ? <NFTThumbnail nftId={asset.id} size={38} /> : <AssetLogo assetId={asset.id} size={38} />}
     >
       <Pressable onPress={handleBottomRowPress}>
         <Animated.View entering={FadeIn}>

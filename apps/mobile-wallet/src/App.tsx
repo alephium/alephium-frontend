@@ -78,7 +78,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const dispatch = useAppDispatch()
   const network = useAppSelector((s) => s.network)
   const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
-  const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
+  const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
   const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const nbOfAddresses = useAppSelector((s) => s.addresses.ids.length)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
@@ -108,18 +108,12 @@ const Main = ({ children, ...props }: ViewProps) => {
     if (
       network.status === 'online' &&
       !verifiedFungibleTokensNeedInitialization &&
-      !isLoadingUnverifiedFungibleTokens &&
+      !isLoadingTokenTypes &&
       newUnknownTokens.length > 0
     ) {
       dispatch(syncUnknownTokensInfo(newUnknownTokens))
     }
-  }, [
-    dispatch,
-    isLoadingUnverifiedFungibleTokens,
-    network.status,
-    newUnknownTokens,
-    verifiedFungibleTokensNeedInitialization
-  ])
+  }, [dispatch, isLoadingTokenTypes, network.status, newUnknownTokens, verifiedFungibleTokensNeedInitialization])
 
   // Fetch verified tokens from GitHub token-list and sync current and historical prices for each verified fungible
   // token found in each address

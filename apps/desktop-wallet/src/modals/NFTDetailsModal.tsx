@@ -68,7 +68,7 @@ const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
           <DataList title={t('Attributes')}>
             {nft.attributes.map((attribute, index) => (
               <DataList.Row key={index} label={attribute.trait_type}>
-                {attribute.value.toString()}
+                {attribute.value}
               </DataList.Row>
             ))}
           </DataList>
