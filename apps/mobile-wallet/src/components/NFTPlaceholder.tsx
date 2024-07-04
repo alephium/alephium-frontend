@@ -28,7 +28,7 @@ interface NFTPlaceholderProps {
 
 const NFTPlaceholder = ({ size }: NFTPlaceholderProps) => (
   <NoImage style={{ width: size, height: size }}>
-    <CameraOff color="gray" />
+    <CameraOff color="gray" size={size * 0.3} />
   </NoImage>
 )
 

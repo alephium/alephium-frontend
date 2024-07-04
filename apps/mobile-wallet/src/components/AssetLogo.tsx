@@ -24,8 +24,8 @@ import { StyleProp, ViewStyle } from 'react-native'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import NFTImage from '~/components/NFTImage'
 import { useAppSelector } from '~/hooks/redux'
-import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
 interface AssetLogoProps {
   assetId: TokenInfo['id']
@@ -37,20 +37,14 @@ const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
   const theme = useTheme()
   const token = useAppSelector((state) => selectFungibleTokenById(state, assetId))
   const nft = useAppSelector((s) => selectNFTById(s, assetId))
-  const isNft = !!nft
 
-  const imageUrl = token?.logoURI || nft?.image
-
-  return (
-    <AssetLogoStyled {...{ assetId, style, size }} logoURI={imageUrl} isNft={isNft}>
-      {imageUrl ? (
+  return nft?.image ? (
+    <NFTImage nftId={assetId} size={size} />
+  ) : (
+    <AssetLogoStyled {...{ assetId, style, size }} hasLogo={!!token?.logoURI}>
+      {token?.logoURI ? (
         <LogoImageContainer>
-          <LogoImage
-            source={{ uri: imageUrl }}
-            transition={500}
-            contentFit={isNft ? 'cover' : 'contain'}
-            contentPosition="center"
-          />
+          <LogoImage source={{ uri: token.logoURI }} transition={500} contentFit="contain" contentPosition="center" />
         </LogoImageContainer>
       ) : token?.name ? (
         <Initials size={size * 0.45}>{token.name.slice(0, 2)}</Initials>
@@ -63,15 +57,15 @@ const AssetLogo = ({ assetId, size, style }: AssetLogoProps) => {
 
 export default AssetLogo
 
-const AssetLogoStyled = styled.View<AssetLogoProps & { logoURI: TokenInfo['logoURI']; isNft: boolean }>`
+const AssetLogoStyled = styled.View<AssetLogoProps & { hasLogo: boolean }>`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
-  border-radius: ${({ size, isNft }) => (isNft ? BORDER_RADIUS_SMALL : size)}px;
+  border-radius: ${({ size }) => size}px;
   background: ${({ theme }) => theme.bg.tertiary};
   overflow: hidden;
 
-  ${({ logoURI }) =>
-    !logoURI &&
+  ${({ hasLogo }) =>
+    !hasLogo &&
     css`
       align-items: center;
       justify-content: center;
