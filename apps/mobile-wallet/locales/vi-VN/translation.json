@@ -10,7 +10,7 @@
   "No transactions yet": "Không có giao dịch nào",
   "group {{ groupNumber }}": "nhóm {{ groupNumber }}",
   "Group {{ groupNumber }}": "Nhóm {{ groupNumber }}",
-  "numberOfNFTsInCollections": "+<1>{{ nftsNumber }}</1>NFT trong bộ sưu tập <1>{{ nftsCollectionsNumber }}</1>",
+  "numberOfNFTsInCollections": "+<1>{{ nftsNumber }}</1> NFT trong bộ sưu tập <1>{{ nftsCollectionsNumber }}</1>",
   "Updating default address": "Đang cập nhật địa chỉ mặc định",
   "Tokens": "Các token",
   "NFT": "NFT",

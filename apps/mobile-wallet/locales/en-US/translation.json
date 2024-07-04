@@ -10,7 +10,7 @@
   "No transactions yet": "No transactions yet",
   "group {{ groupNumber }}": "group {{ groupNumber }}",
   "Group {{ groupNumber }}": "Group {{ groupNumber }}",
-  "numberOfNFTsInCollections": "+<1>{{ nftsNumber }}</1>NFTs in <1>{{ nftsCollectionsNumber }}</1> collections",
+  "numberOfNFTsInCollections": "+<1>{{ nftsNumber }}</1> NFTs in <1>{{ nftsCollectionsNumber }}</1> collections",
   "Updating default address": "Updating default address",
   "Tokens": "Tokens",
   "NFT": "NFT",
