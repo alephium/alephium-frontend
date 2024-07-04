@@ -106,7 +106,6 @@
   "Download": "Tải về",
   "Download failed": "Tải về không thành công",
   "Try again later.": "Vui lòng thử lại.",
-  "Downloading version {{ newVersion }}...": "Downloading version {{ newVersion }}...",
   "Duration in minutes after which an idle wallet will lock automatically.": "Thời gian tự động khoá bảo vệ Ví được kích hoạt nếu không có bất kỳ hoạt động nào.",
   "Easily organize your addresses and your contacts for a more serene transfer experience.": "Dễ dàng sắp xếp các địa chỉ ví và danh bạ của bạn để có trải nghiệm giao dịch thuận tiện hơn.",
   "Edit": "Sửa",
@@ -451,5 +450,6 @@
   "ID": "ID",
   "Copy ID": "Sao chép ID",
   "To delete this wallet use it without a passphrase": "Để xóa ví này, sử dụng nó mà không cần một passphrase",
-  "To export this wallet use it without a passphrase": "Để xuất ví này, sử dụng nó mà không cần một passphrase"
+  "To export this wallet use it without a passphrase": "Để xuất ví này, sử dụng nó mà không cần một passphrase",
+  "The proposal does not include a list of required chains": "Proposal không bao gồm danh sách các chain được yêu cầu"
 }
