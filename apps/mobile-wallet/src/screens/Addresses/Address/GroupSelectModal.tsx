@@ -23,7 +23,7 @@ import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
-import i18n from '~/i18n'
+import i18n from '~/features/localization/i18n'
 
 interface GroupSelectModalProps extends ModalContentProps {
   selectedGroup?: number

@@ -24,7 +24,7 @@ import {
 } from '@alephium/shared'
 import { nanoid } from 'nanoid'
 
-import i18n from '~/i18n'
+import i18n from '~/features/localization/i18n'
 import { getStoredWallet, updateStoredWalletMetadata } from '~/persistent-storage/wallet'
 import { store } from '~/store/store'
 

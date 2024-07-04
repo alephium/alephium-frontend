@@ -41,6 +41,7 @@ const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAdd
 
   const knownAssetsWithBalance = assets.filter((a) => a.balance > 0 && a.name)
   const unknownAssetsNb = assets.filter((a) => a.balance > 0 && !a.name).length
+  const showAssetList = knownAssetsWithBalance.length > 0 || unknownAssetsNb > 0
 
   return (
     <SelectOptionItemContent
@@ -59,12 +60,14 @@ const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAdd
         </Header>
       }
       SecondaryContent={
-        <AssetList>
-          {knownAssetsWithBalance.map((a) => (
-            <AssetBadge key={a.id} assetId={a.id} amount={a.balance} withBackground />
-          ))}
-          {unknownAssetsNb > 0 && <Badge compact>+ {unknownAssetsNb}</Badge>}
-        </AssetList>
+        showAssetList ? (
+          <AssetList>
+            {knownAssetsWithBalance.map((a) => (
+              <AssetBadge key={a.id} assetId={a.id} amount={a.balance} withBackground />
+            ))}
+            {unknownAssetsNb > 0 && <Badge compact>+ {unknownAssetsNb}</Badge>}
+          </AssetList>
+        ) : undefined
       }
     />
   )

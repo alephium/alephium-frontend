@@ -16,16 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { render } from '@testing-library/react'
-import { Provider } from 'react-redux'
-import { PartialDeep } from 'type-fest'
+export type Language = 'en-US' | 'fr-FR' | 'el-GR' | 'vi-VN'
 
-import { GlobalContextProps, GlobalContextProvider } from '@/contexts/global'
-import { store } from '@/storage/store'
-
-export const renderWithGlobalContext = (el: JSX.Element, contextObject?: PartialDeep<GlobalContextProps>) =>
-  render(
-    <Provider store={store}>
-      <GlobalContextProvider overrideContextValue={contextObject}>{el}</GlobalContextProvider>
-    </Provider>
-  )
+export const languageOptions: { label: string; value: Language }[] = [
+  { label: 'English', value: 'en-US' },
+  { label: 'Français', value: 'fr-FR' },
+  { label: 'Ελληνικά', value: 'el-GR' },
+  { label: 'Tiếng Việt', value: 'vi-VN' }
+]

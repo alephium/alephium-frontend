@@ -2,10 +2,10 @@
   "name": "alephium-frontend",
   "description": "A monorepo containing all things frontend on Alephium",
   "author": "Alephium dev <dev@alephium.org>",
-  "packageManager": "pnpm@8.15.3",
+  "packageManager": "pnpm@9.4.0",
   "private": true,
   "scripts": {
-    "watch": "turbo watch",
+    "watch": "turbo watch-dev",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",
     "test": "turbo test",
@@ -29,11 +29,10 @@
     "@changesets/cli": "^2.26.2",
     "@manypkg/cli": "latest",
     "prettier": "^3.0.3",
-    "turbo": "latest"
+    "turbo": "1.13.4"
   },
   "pnpm": {
     "patchedDependencies": {
-      "framer-motion@10.17.12": "patches/framer-motion@10.17.12.patch",
       "react-native-aes-crypto@2.1.1": "patches/react-native-aes-crypto@2.1.1.patch",
       "react-native-background-actions@3.0.1": "patches/react-native-background-actions@3.0.1.patch",
       "@metamask/scure-bip39@2.1.1": "patches/@metamask__scure-bip39@2.1.1.patch"
@@ -43,7 +42,8 @@
       "minimatch@<3.0.5": ">=3.0.5",
       "undici@<=5.28.2": ">=5.28.3",
       "tar@<6.2.1": ">=6.2.1",
-      "braces@<3.0.3": ">=3.0.3"
+      "braces@<3.0.3": ">=3.0.3",
+      "ws@<8.17.1": ">=8.17.1"
     }
   },
   "manypkg": {

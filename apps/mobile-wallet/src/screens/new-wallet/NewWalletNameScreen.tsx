@@ -28,9 +28,9 @@ import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
+import i18n from '~/features/localization/i18n'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
-import i18n from '~/i18n'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { generateAndStoreWallet } from '~/persistent-storage/wallet'
 import { syncLatestTransactions } from '~/store/addressesSlice'
@@ -112,7 +112,6 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           autoFocus
           onSubmitEditing={handleButtonPress}
           blurOnSubmit={false}
-          returnKeyType="done"
           maxLength={24}
         />
       </ContentContainer>

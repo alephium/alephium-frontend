@@ -26,8 +26,6 @@ import {
   TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
-import dayjs from 'dayjs'
-import updateLocale from 'dayjs/plugin/updateLocale'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -37,9 +35,11 @@ import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import ToastAnchor from '~/components/toasts/ToastAnchor'
+import { useLocalization } from '~/features/localization/useLocalization'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
+import { getStoredWallet, storedWalletExists } from '~/persistent-storage/wallet'
 import {
   makeSelectAddressesUnknownTokens,
   selectAllAddressVerifiedFungibleTokenSymbols,
@@ -47,26 +47,8 @@ import {
 } from '~/store/addressesSlice'
 import { store } from '~/store/store'
 import { selectTransactionUnknownTokenIds } from '~/store/transactions/transactionSelectors'
+import { appLaunchedWithLastUsedWallet } from '~/store/wallet/walletActions'
 import { themes } from '~/style/themes'
-
-dayjs.extend(updateLocale)
-dayjs.updateLocale('en', {
-  relativeTime: {
-    future: 'in %s',
-    past: '%s ago',
-    s: 'some sec',
-    m: '1m',
-    mm: '%dm',
-    h: '1h',
-    hh: '%dh',
-    d: '1d',
-    dd: '%dd',
-    M: '1mo',
-    MM: '%dmo',
-    y: '1y',
-    yy: '%dy'
-  }
-})
 
 const App = () => {
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
@@ -96,7 +78,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const dispatch = useAppDispatch()
   const network = useAppSelector((s) => s.network)
   const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
-  const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
+  const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
   const isLoadingLatestTxs = useAppSelector((s) => s.loaders.loadingLatestTransactions)
   const nbOfAddresses = useAppSelector((s) => s.addresses.ids.length)
   const addressesStatus = useAppSelector((s) => s.addresses.status)
@@ -104,6 +86,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
   const settings = useAppSelector((s) => s.settings)
+  const appJustLaunched = useAppSelector((s) => s.app.wasJustLaunched)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
@@ -113,23 +96,24 @@ const Main = ({ children, ...props }: ViewProps) => {
 
   useLoadStoredSettings()
   useInitializeClient()
+  useLocalization()
+
+  useEffect(() => {
+    storedWalletExists().then((walletExists) => {
+      if (walletExists) getStoredWallet().then((wallet) => dispatch(appLaunchedWithLastUsedWallet(wallet)))
+    })
+  }, [dispatch])
 
   useEffect(() => {
     if (
       network.status === 'online' &&
       !verifiedFungibleTokensNeedInitialization &&
-      !isLoadingUnverifiedFungibleTokens &&
+      !isLoadingTokenTypes &&
       newUnknownTokens.length > 0
     ) {
       dispatch(syncUnknownTokensInfo(newUnknownTokens))
     }
-  }, [
-    dispatch,
-    isLoadingUnverifiedFungibleTokens,
-    network.status,
-    newUnknownTokens,
-    verifiedFungibleTokensNeedInitialization
-  ])
+  }, [dispatch, isLoadingTokenTypes, network.status, newUnknownTokens, verifiedFungibleTokensNeedInitialization])
 
   // Fetch verified tokens from GitHub token-list and sync current and historical prices for each verified fungible
   // token found in each address
@@ -172,7 +156,8 @@ const Main = ({ children, ...props }: ViewProps) => {
     dispatch(syncLatestTransactions())
   }, [dispatch])
 
-  const dataResyncNeeded = nbOfAddresses > 0 && network.status === 'online' && !isLoadingLatestTxs && isUnlocked
+  const dataResyncNeeded =
+    nbOfAddresses > 0 && network.status === 'online' && !isLoadingLatestTxs && (isUnlocked || appJustLaunched)
 
   useEffect(() => {
     if (addressesStatus === 'uninitialized' && dataResyncNeeded) checkForNewTransactions()

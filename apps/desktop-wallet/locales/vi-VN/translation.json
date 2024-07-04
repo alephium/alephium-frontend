@@ -63,7 +63,7 @@
   "Connect wallet to dApp": "Kết nối ví đến dApp",
   "Consolidate": "Hợp nhất",
   "Consolidate (merge) your UTXOs into one.": "Hợp nhất (trộn) các UTXOs của bạn.",
-  "Consolidate UTXOs": "Hợp nhất UTXOs",
+  "Consolidate UTXOs": "Hợp nhất các UTXO",
   "Contact deleted": "Danh bạ đã xoá",
   "Contact saved": "Đã lưu danh bạ",
   "Contacts": "Danh bạ",
@@ -104,8 +104,8 @@
   "Discover active addresses": "Tìm các địa chỉ đang hoạt động",
   "Discreet mode": "Ẩn số dư",
   "Download": "Tải về",
-  "Download failed, try again later.": "Tải về không thành công, vui lòng thử lại.",
-  "Downloaded {{ percent }}%": "Đã tải về {{ percent }}%",
+  "Download failed": "Tải về không thành công",
+  "Try again later.": "Vui lòng thử lại.",
   "Duration in minutes after which an idle wallet will lock automatically.": "Thời gian tự động khoá bảo vệ Ví được kích hoạt nếu không có bất kỳ hoạt động nào.",
   "Easily organize your addresses and your contacts for a more serene transfer experience.": "Dễ dàng sắp xếp các địa chỉ ví và danh bạ của bạn để có trải nghiệm giao dịch thuận tiện hơn.",
   "Edit": "Sửa",
@@ -366,8 +366,8 @@
   "Useful for miners or DeFi use.": "Hữu ích cho khai thác (đào) hoặc sử dụng DeFi.",
   "Value today": "Giá trị hôm nay",
   "Version": "Phiên bản",
-  "Version {{ newVersion }} is available. Click \"Update\" to avoid any issues with the wallet.": "Phiên bản {{ newVersion }} vừa mới được phát hành. Vui lòng nhấn \"Cập nhật\" để khắc phục những lỗi đang hiện có.",
-  "Version {{ newVersion }} is available. Please, download it and install it to avoid any issues with the wallet.": "Phiên bản {{ newVersion }} vừa mới được phát hành. Vui lòng tải về và cài đặt để khắc phục các lỗi hiện đang có.",
+  "Version {{ newVersion }} is available": "Phiên bản {{ newVersion }} vừa mới được phát hành",
+  "Please, download it and install it to avoid any issues with the wallet.": "Vui lòng tải về và cài đặt để khắc phục các lỗi hiện đang có.",
   "Wallet": "Ví",
   "Wallet list": "Danh sách ví",
   "Wallet name": "Tên ví",
@@ -450,5 +450,6 @@
   "ID": "ID",
   "Copy ID": "Sao chép ID",
   "To delete this wallet use it without a passphrase": "Để xóa ví này, sử dụng nó mà không cần một passphrase",
-  "To export this wallet use it without a passphrase": "Để xuất ví này, sử dụng nó mà không cần một passphrase"
+  "To export this wallet use it without a passphrase": "Để xuất ví này, sử dụng nó mà không cần một passphrase",
+  "The proposal does not include a list of required chains": "Proposal không bao gồm danh sách các chain được yêu cầu"
 }

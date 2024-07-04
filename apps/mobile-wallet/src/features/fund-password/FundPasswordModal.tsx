@@ -96,9 +96,9 @@ const FundPasswordModalContent = ({
           label={t('Fund password')}
           value={password}
           onChangeText={handleFundPasswordChange}
+          onSubmitEditing={handleSubmit}
           secureTextEntry
           autoCapitalize="none"
-          returnKeyType="done"
           blurOnSubmit={false}
           error={displayedError}
         />

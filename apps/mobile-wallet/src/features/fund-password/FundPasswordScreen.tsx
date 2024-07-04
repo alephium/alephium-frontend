@@ -162,7 +162,6 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
               onChangeText={setNewPassword}
               secureTextEntry
               autoCapitalize="none"
-              returnKeyType="done"
               blurOnSubmit={false}
             />
             <Input
@@ -172,8 +171,8 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
               secureTextEntry
               autoCapitalize="none"
               error={newPasswordError}
-              returnKeyType="done"
               blurOnSubmit={false}
+              onSubmitEditing={isEditingPasswordConfirmed ? handleSavePress : undefined}
             />
           </ScreenSection>
           <ScreenSection>

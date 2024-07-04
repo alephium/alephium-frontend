@@ -24,13 +24,14 @@ import { Alert } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import Button from '~/components/buttons/Button'
 import PinCodeInput from '~/components/inputs/PinCodeInput'
 import { ScreenSection } from '~/components/layout/Screen'
 import ModalWithBackdrop, { ModalWithBackdropProps } from '~/components/ModalWithBackdrop'
 import { Spinner } from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
-import i18n from '~/i18n'
+import i18n from '~/features/localization/i18n'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import { getDeprecatedStoredWallet, GetDeprecatedStoredWalletProps } from '~/persistent-storage/wallet'
 import { ShouldClearPin } from '~/types/misc'
@@ -72,11 +73,13 @@ const DeprecatedAuthenticationModal = ({
 
       // This should never happen, but if it does, inform the user instead of being stuck
       if (!deprecatedStoredWallet) {
-        Alert.alert(t('Missing wallet'), t('Could not find wallet to authenticate. Please, restart the app.'))
+        const message = 'Could not find wallet to authenticate. Please, restart the app.'
+        Alert.alert(t('Missing wallet'), t(message))
+        sendAnalytics({ type: 'error', message })
         return
       }
 
-      const usesBiometrics = forcePinUsage ? false : await loadBiometricsSettings()
+      const usesBiometrics = forcePinUsage ? false : (await loadBiometricsSettings()).biometricsRequiredForAppAccess
 
       if (usesBiometrics) {
         onConfirm()

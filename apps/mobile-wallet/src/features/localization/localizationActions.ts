@@ -16,8 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { SignClientTypes } from '@walletconnect/types'
+import { createAction } from '@reduxjs/toolkit'
 
-export type SessionRequestEvent = SignClientTypes.EventArguments['session_request']
+import { Language } from '~/features/localization/languages'
 
-export type SessionProposalEvent = Pick<SignClientTypes.EventArguments['session_proposal'], 'id' | 'params'>
+export const languageChanged = createAction<Language>('localization/languageChanged')
+
+export const systemLanguageMatchSucceeded = createAction<Language>('localization/systemLanguageMatchSucceeded')
+
+export const systemLanguageMatchFailed = createAction('localization/systemLanguageMatchFailed')

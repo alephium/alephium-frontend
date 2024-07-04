@@ -28,7 +28,7 @@ import Button from '~/components/buttons/Button'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
-import i18n from '~/i18n'
+import i18n from '~/features/localization/i18n'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface ImportWalletAddressDiscoveryScreenProps

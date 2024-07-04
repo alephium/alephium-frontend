@@ -27,7 +27,7 @@ import { nanoid } from 'nanoid'
 
 import { sendAnalytics } from '~/analytics'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
-import i18n from '~/i18n'
+import i18n from '~/features/localization/i18n'
 import { defaultBiometricsConfig } from '~/persistent-storage/config'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
@@ -129,11 +129,11 @@ export const getDeprecatedStoredWallet = async (
   }
 
   const { id, name, isMnemonicBackedUp } = metadata
-  const usesBiometrics = await loadBiometricsSettings()
+  const { biometricsRequiredForAppAccess } = await loadBiometricsSettings()
 
   let mnemonic: string | null = null
 
-  if (!props?.forcePinUsage && usesBiometrics) {
+  if (!props?.forcePinUsage && biometricsRequiredForAppAccess) {
     mnemonic = await SecureStore.getItemAsync(
       BIOMETRICS_WALLET_STORAGE_KEY,
       props?.authenticationPrompt

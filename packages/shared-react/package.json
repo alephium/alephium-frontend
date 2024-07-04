@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsup",
     "typecheck": "tsup",
-    "watch": "tsup --watch",
+    "watch-dev": "tsup --watch",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
     "clean": "rm -rf dist",
     "clean:node-modules": "rm -rf node_modules",
@@ -23,7 +23,7 @@
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
-    "@types/react": "~18.2.14",
+    "@types/react": "~18.2.79",
     "tsup": "^8.0.1",
     "typescript": "^5.2.2"
   }

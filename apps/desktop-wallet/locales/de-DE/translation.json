@@ -104,8 +104,8 @@
   "Discover active addresses": "Aktive Adressen finden",
   "Discreet mode": "Diskreter Modus",
   "Download": "Herunterladen",
-  "Download failed, try again later.": "Herunterladen fehlgeschlagen, versuchen Sie es später erneut.",
-  "Downloaded {{ percent }}%": "{{ percent }} % heruntergeladen",
+  "Download failed": "Herunterladen fehlgeschlagen",
+  "Try again later.": "Versuchen Sie es später erneut.",
   "Duration in minutes after which an idle wallet will lock automatically.": "Dauer in Minuten, nach der eine inaktive Wallet automatisch gesperrt wird.",
   "Easily organize your addresses and your contacts for a more serene transfer experience.": "Organisieren Sie einfach Ihre Adressen und Kontakte für ein angenehmeres Transfererlebnis.",
   "Edit": "Bearbeiten",
@@ -366,8 +366,8 @@
   "Useful for miners or DeFi use.": "Nützlich für Miner oder DeFi.",
   "Value today": "Wert heute",
   "Version": "Version",
-  "Version {{ newVersion }} is available. Click \"Update\" to avoid any issues with the wallet.": "Version {{ newVersion }} ist verfügbar. Bitte laden Sie sie herunter und installieren Sie diese, um Probleme mit der Wallet zu vermeiden.",
-  "Version {{ newVersion }} is available. Please, download it and install it to avoid any issues with the wallet.": "Version {{ newVersion }} ist verfügbar. Bitte laden Sie sie herunter und installieren Sie sie, um Probleme mit der Wallet zu vermeiden.",
+  "Version {{ newVersion }} is available": "Version {{ newVersion }} ist verfügbar",
+  "Please, download it and install it to avoid any issues with the wallet.": "Bitte laden Sie sie herunter und installieren Sie sie, um Probleme mit der Wallet zu vermeiden.",
   "Wallet": "Wallet",
   "Wallet list": "Walletliste",
   "Wallet name": "Walletname",
@@ -450,5 +450,6 @@
   "ID": "ID",
   "Copy ID": "ID kopieren",
   "To delete this wallet use it without a passphrase": "Um diese Wallet zu löschen, verwenden Sie sie ohne Passphrase",
-  "To export this wallet use it without a passphrase": "Um diese Wallet zu exportieren, verwenden Sie sie ohne Passphrase"
+  "To export this wallet use it without a passphrase": "Um diese Wallet zu exportieren, verwenden Sie sie ohne Passphrase",
+  "The proposal does not include a list of required chains": "Der Vorschlag enthält keine Liste der erforderlichen Blockchains"
 }

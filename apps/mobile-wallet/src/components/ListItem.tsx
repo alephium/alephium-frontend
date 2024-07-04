@@ -35,6 +35,7 @@ export interface ListItemProps extends PressableProps {
   rightSideContent?: ReactNode
   height?: number
   children?: ReactNode
+  expandedSubtitle?: boolean
 }
 
 const ListItem = ({
@@ -48,6 +49,7 @@ const ListItem = ({
   rightSideContent,
   height = 60,
   children,
+  expandedSubtitle,
   ...props
 }: ListItemProps) => (
   <Pressable {...props}>
@@ -60,7 +62,7 @@ const ListItem = ({
               {title}
             </Title>
             {typeof subtitle === 'string' ? (
-              <Subtitle color="tertiary" numberOfLines={1} ellipsizeMode="middle">
+              <Subtitle color="tertiary" numberOfLines={expandedSubtitle ? undefined : 1} ellipsizeMode="middle">
                 {subtitle}
               </Subtitle>
             ) : (
@@ -119,4 +121,5 @@ const Icon = styled.View``
 const LeftSideContent = styled.View`
   flex: 1;
   justify-content: center;
+  padding: 7px 0;
 `

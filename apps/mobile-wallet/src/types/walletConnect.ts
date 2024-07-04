@@ -22,7 +22,6 @@ import {
   BuildTransactionResult,
   DecodeUnsignedTxResult
 } from '@alephium/web3/dist/src/api/api-alephium'
-import { SignClientTypes } from '@walletconnect/types'
 
 import {
   CallContractTxData,
@@ -31,10 +30,6 @@ import {
   SignUnsignedTxData,
   TransferTxData
 } from '~/types/transactions'
-
-export type SessionRequestEvent = SignClientTypes.EventArguments['session_request']
-
-export type SessionProposalEvent = Pick<SignClientTypes.EventArguments['session_proposal'], 'id' | 'params'>
 
 export type SessionRequestData =
   | {

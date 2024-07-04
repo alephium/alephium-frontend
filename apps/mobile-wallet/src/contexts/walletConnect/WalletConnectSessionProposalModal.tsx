@@ -17,7 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring } from '@alephium/keyring'
-import { NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
+import {
+  isNetworkValid,
+  NetworkNames,
+  networkPresetSwitched,
+  networkSettingsPresets,
+  parseSessionProposalEvent,
+  SessionProposalEvent
+} from '@alephium/shared'
 import { AlertTriangle, PlusSquare } from 'lucide-react-native'
 import { useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
@@ -40,9 +47,7 @@ import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import { selectAddressesInGroup } from '~/store/addresses/addressesSelectors'
 import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
 import { Address } from '~/types/addresses'
-import { SessionProposalEvent } from '~/types/walletConnect'
 import { getRandomLabelColor } from '~/utils/colors'
-import { isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
 
 interface WalletConnectSessionProposalModalProps extends ModalContentProps {
   approveProposal: (signerAddress: Address) => Promise<void>

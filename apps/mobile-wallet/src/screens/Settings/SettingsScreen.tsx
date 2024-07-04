@@ -42,6 +42,8 @@ import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectC
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import { getAutoLockLabel } from '~/features/auto-lock/utils'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
+import { languageOptions } from '~/features/localization/languages'
+import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -75,6 +77,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
   const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
   const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
+  const language = useAppSelector((s) => s.settings.language)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletName = useAppSelector((s) => s.wallet.name)
   const theme = useTheme()
@@ -86,6 +89,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isAutoLockSecondsModalOpen, setIsAutoLockSecondsModalOpen] = useState(false)
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
+  const [isLanguageSelectModalOpen, setIsLanguageSelectModalOpen] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
   const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
   const [isWalletDeleteModalOpen, setIsWalletDeleteModalOpen] = useState(false)
@@ -180,6 +184,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>{t('General')}</ScreenSectionTitle>
           <BoxSurface>
+            <Row onPress={() => setIsLanguageSelectModalOpen(true)} title="Language">
+              <AppText bold>{languageOptions.find((l) => l.value === language)?.label}</AppText>
+            </Row>
             <Row onPress={() => setIsCurrencySelectModalOpen(true)} title={t('Currency')}>
               <AppText bold>{currentCurrency}</AppText>
             </Row>
@@ -205,7 +212,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
               <BiometricsRecommendationBox type="accent">
                 <AppText color="accent">
                   {t(
-                    "Your device supports biometrics but none is enrolled. Enable them by adding a fingeprint or Face ID in your device's settings."
+                    "Your device supports biometrics but none is enrolled. Enable them by adding a fingerprint or Face ID in your device's settings."
                   )}
                 </AppText>
               </BiometricsRecommendationBox>
@@ -367,6 +374,12 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
               {...props}
             />
           )}
+        />
+
+        <BottomModal
+          isOpen={isLanguageSelectModalOpen}
+          onClose={() => setIsLanguageSelectModalOpen(false)}
+          Content={(props) => <LanguageSelectModal onClose={() => setIsLanguageSelectModalOpen(false)} {...props} />}
         />
 
         <BottomModal

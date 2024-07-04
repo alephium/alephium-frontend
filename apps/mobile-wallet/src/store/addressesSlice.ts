@@ -22,10 +22,8 @@ import {
   AddressHash,
   appReset,
   Asset,
-  BalanceHistory,
   balanceHistoryAdapter,
   calculateAssetsData,
-  CHART_DATE_FORMAT,
   client,
   customNetworkSettingsSaved,
   extractNewTransactions,
@@ -49,14 +47,19 @@ import {
   createSelector,
   createSlice,
   EntityState,
+  isAnyOf,
   PayloadAction
 } from '@reduxjs/toolkit'
-import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 
 import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsNextPage } from '~/api/addresses'
 import { RootState } from '~/store/store'
-import { newWalletGenerated, walletDeleted, walletUnlocked } from '~/store/wallet/walletActions'
+import {
+  appLaunchedWithLastUsedWallet,
+  newWalletGenerated,
+  walletDeleted,
+  walletUnlocked
+} from '~/store/wallet/walletActions'
 import { Address, AddressPartial } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
 
@@ -130,7 +133,6 @@ export const syncLatestTransactions = createAsyncThunk(
       await Promise.all([
         dispatch(syncAddressesBalances(addressesToFetchData)),
         dispatch(syncAddressesTokens(addressesToFetchData))
-        // dispatch(syncAddressesAlphHistoricBalances(addressesToFetchData))
       ])
     }
 
@@ -189,66 +191,6 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   }
 )
 
-// Same as in desktop wallet, share state?
-export const syncAddressesAlphHistoricBalances = createAsyncThunk(
-  'addresses/syncAddressesAlphHistoricBalances',
-  async (
-    payload: AddressHash[] | undefined,
-    { getState }
-  ): Promise<
-    {
-      address: AddressHash
-      balances: BalanceHistory[]
-    }[]
-  > => {
-    const now = dayjs()
-    const thisMoment = now.valueOf()
-    const oneYearAgo = now.subtract(12, 'month').valueOf()
-
-    const addressesBalances = []
-    const state = getState() as RootState
-
-    const addresses = payload ?? (state.addresses.ids as AddressHash[])
-
-    for (const addressHash of addresses) {
-      const balances = []
-      const address = state.addresses.entities[addressHash] as Address
-
-      const lastDate =
-        address.balanceHistory.entities[address.balanceHistory.ids[address.balanceHistory.ids.length - 1]]?.date
-
-      const fromTs = lastDate ? dayjs(lastDate).valueOf() : oneYearAgo
-
-      const alphHistoryData = await client.explorer.addresses.getAddressesAddressAmountHistoryDeprecated(
-        addressHash,
-        { fromTs, toTs: thisMoment, 'interval-type': explorer.IntervalType.Daily },
-        { format: 'text' }
-      )
-
-      try {
-        const { amountHistory } = JSON.parse(alphHistoryData)
-
-        for (const [timestamp, balance] of amountHistory) {
-          balances.push({
-            date: dayjs(timestamp).format(CHART_DATE_FORMAT),
-            balance: BigInt(balance).toString()
-          })
-        }
-      } catch (e) {
-        console.error('Could not parse amount history data', e)
-        // posthog.capture('Error', { message: 'Could not parse amount history data' })
-      }
-
-      addressesBalances.push({
-        address: addressHash,
-        balances
-      })
-    }
-
-    return addressesBalances
-  }
-)
-
 const addressesSlice = createSlice({
   name: sliceName,
   initialState,
@@ -281,22 +223,6 @@ const addressesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(walletUnlocked, (state, { payload: { addresses } }) => {
-        const addressesToInitialize = addresses.filter((address) => !state.entities[address.hash])
-
-        if (addressesToInitialize.length > 0) {
-          addressesAdapter.addMany(
-            state,
-            addressesToInitialize.map(({ index, hash, ...settings }) =>
-              getInitialAddressState({
-                index,
-                hash,
-                settings
-              })
-            )
-          )
-        }
-      })
       .addCase(newWalletGenerated, (state, action) => {
         const firstWalletAddress = getInitialAddressState({
           ...action.payload.firstAddress,
@@ -373,16 +299,23 @@ const addressesSlice = createSlice({
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
       .addCase(appReset, () => initialState)
-      .addCase(syncAddressesAlphHistoricBalances.fulfilled, (state, { payload: data }) => {
-        data.forEach(({ address, balances }) => {
-          const addressState = state.entities[address]
-
-          if (addressState) {
-            balanceHistoryAdapter.upsertMany(addressState.balanceHistory, balances)
-          }
-        })
-      })
       .addCase(walletDeleted, () => initialState)
+    builder.addMatcher(isAnyOf(walletUnlocked, appLaunchedWithLastUsedWallet), (state, { payload: { addresses } }) => {
+      const addressesToInitialize = addresses.filter((address) => !state.entities[address.hash])
+
+      if (addressesToInitialize.length > 0) {
+        addressesAdapter.addMany(
+          state,
+          addressesToInitialize.map(({ index, hash, ...settings }) =>
+            getInitialAddressState({
+              index,
+              hash,
+              settings
+            })
+          )
+        )
+      }
+    })
   }
 })
 

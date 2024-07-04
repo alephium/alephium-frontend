@@ -16,21 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import i18next from 'i18next'
-import { initReactI18next } from 'react-i18next'
+import { colord } from 'colord'
+import { CameraOff } from 'lucide-react-native'
+import styled from 'styled-components/native'
 
-import en from '../locales/en-US/translation.json'
+import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
-i18next.use(initReactI18next).init({
-  compatibilityJSON: 'v3',
-  resources: {
-    'en-US': { translation: en }
-  },
-  lng: 'en-US',
-  fallbackLng: 'en-US',
-  interpolation: {
-    escapeValue: false
-  }
-})
+interface NFTPlaceholderProps {
+  size: number
+}
 
-export default i18next
+const NFTPlaceholder = ({ size }: NFTPlaceholderProps) => (
+  <NoImage style={{ width: size, height: size }}>
+    <CameraOff color="gray" />
+  </NoImage>
+)
+
+export default NFTPlaceholder
+
+const NoImage = styled.View`
+  border-radius: ${BORDER_RADIUS_SMALL}px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => colord(theme.bg.back2).darken(0.07).toHex()};
+`

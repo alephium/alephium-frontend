@@ -20,7 +20,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, RadialGradient, Rect, vec } from '@shopify/react-native-skia'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { Dimensions, Image, LayoutChangeEvent, Platform, StatusBar } from 'react-native'
+import { AppState, Dimensions, Image, LayoutChangeEvent, Platform, StatusBar } from 'react-native'
 import Animated, {
   convertToRGBA,
   FadeIn,
@@ -108,17 +108,20 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
               entering={FadeIn.delay(500).duration(500)}
             >
               <TitleContainer>
-                <Trans
-                  t={t}
-                  i18nKey="welcomeToAlephium"
-                  components={{
-                    0: <TitleFirstLine />,
-                    2: <TitleSecondLine />
-                  }}
-                >
-                  {'<0>Welcome to</0> <2>Alephium</2>'}
-                </Trans>
-                👋
+                <AppText style={{ textAlign: 'center' }}>
+                  <Trans
+                    t={t}
+                    i18nKey="welcomeToAlephium"
+                    components={{
+                      0: <TitleFirstLine />,
+                      1: <AppText>{'\n'}</AppText>,
+                      2: <TitleSecondLine />
+                    }}
+                  >
+                    {'<0>Welcome to</0><1 /><2>Alephium</2>'}
+                  </Trans>
+                  <TitleSecondLine> 👋</TitleSecondLine>
+                </AppText>
               </TitleContainer>
               <ButtonsContainer>
                 <Button
@@ -151,10 +154,12 @@ interface CoolAlephiumCanvasProps {
 }
 
 export const CoolAlephiumCanvas = ({ width, height, onPress }: CoolAlephiumCanvasProps) => {
+  const [appState, setAppState] = useState(AppState.currentState)
+
   const [isAltLogoShown, setIsAltLogoShown] = useState(false)
 
-  const gradientRadius = useSharedValue(0)
-  const gradientColorsAnimationProgress = useSharedValue(0)
+  const gradientRadius = useSharedValue(200)
+  const gradientColorsAnimationProgress = useSharedValue(1)
 
   const animatedColors = useDerivedValue(() =>
     gradientColors.map((_, index) =>
@@ -191,9 +196,15 @@ export const CoolAlephiumCanvas = ({ width, height, onPress }: CoolAlephiumCanva
     onPress && onPress()
   }
 
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => setAppState(nextAppState))
+
+    return subscription.remove
+  }, [])
+
   return (
     <>
-      <CanvasStyled>
+      <CanvasStyled key={appState}>
         <Rect x={0} y={0} width={width} height={height}>
           <RadialGradient
             c={vec(width / 2, height)}
@@ -203,8 +214,8 @@ export const CoolAlephiumCanvas = ({ width, height, onPress }: CoolAlephiumCanva
           />
         </Rect>
       </CanvasStyled>
-      <LogoContainer onTouchEnd={handleScreenPress}>
-        <LogoArea entering={FadeIn.delay(200).duration(500)} style={[logoAnimatedStyle]}>
+      <LogoContainer onTouchEnd={handleScreenPress} entering={FadeIn.delay(200).duration(500)}>
+        <LogoArea style={[logoAnimatedStyle]}>
           <AlephiumLogo color="white" style={{ width: '20%' }} />
         </LogoArea>
         <AltLogoArea style={altLogoAnimatedStyle}>
@@ -270,6 +281,7 @@ const TitleContainer = styled.View`
   border-radius: ${BORDER_RADIUS_BIG}px;
   background-color: ${({ theme }) => theme.bg.primary};
   margin: 22px 22px 0 22px;
+  text-align: center;
 `
 
 const TitleFirstLine = styled(AppText)`

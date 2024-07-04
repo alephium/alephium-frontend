@@ -17,16 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
-import { NavigationState } from '@react-navigation/routers'
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dimensions, LayoutChangeEvent, Modal } from 'react-native'
+import { Dimensions, LayoutChangeEvent, Modal, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
 
-import { Analytics } from '~/analytics'
+import { Analytics, sendAnalytics } from '~/analytics'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import useAutoLock from '~/features/auto-lock/useAutoLock'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
@@ -67,20 +66,14 @@ import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScr
 import PublicKeysScreen from '~/screens/PublicKeysScreen'
 import EditWalletNameScreen from '~/screens/Settings/EditWalletName'
 import SettingsScreen from '~/screens/Settings/SettingsScreen'
-import { routeChanged } from '~/store/appSlice'
 import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast, showToast } from '~/utils/layout'
-import { isNavStateRestorable, resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
+import { resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
 
 const RootStack = createStackNavigator<RootStackParamList>()
 
 const RootStackNavigation = () => {
   const theme = useTheme()
-  const dispatch = useAppDispatch()
-
-  const handleStateChange = (state?: NavigationState) => {
-    if (state && isNavStateRestorable(state)) dispatch(routeChanged(state))
-  }
 
   const themeNavigator = {
     ...DefaultTheme,
@@ -98,7 +91,7 @@ const RootStackNavigation = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Host>
-        <NavigationContainer ref={rootStackNavigationRef} onStateChange={handleStateChange} theme={themeNavigator}>
+        <NavigationContainer ref={rootStackNavigationRef} theme={themeNavigator}>
           <Analytics>
             <WalletConnectContextProvider>
               <RootStack.Navigator initialRouteName="LandingScreen" screenOptions={{ headerShown: false }}>
@@ -146,7 +139,6 @@ export default RootStackNavigation
 
 const AppUnlockModal = () => {
   const dispatch = useAppDispatch()
-  const lastNavigationState = useAppSelector((s) => s.app.lastNavigationState)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
@@ -171,13 +163,19 @@ const AppUnlockModal = () => {
     try {
       dispatch(walletUnlocked(await getStoredWallet()))
 
-      if (!lastNavigationState) resetNavigation(navigation)
+      const lastRoute = rootStackNavigationRef.current?.getCurrentRoute()?.name
+
+      if (!lastRoute || ['LandingScreen', 'LoginWithPinScreen'].includes(lastRoute)) {
+        resetNavigation(navigation)
+      }
 
       setIsAuthModalVisible(false)
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      const message = 'Could not initialize app with stored wallet'
+      showExceptionToast(error, message)
+      sendAnalytics({ type: 'error', message })
     }
-  }, [dispatch, lastNavigationState, navigation])
+  }, [dispatch, navigation])
 
   const unlockApp = useCallback(async () => {
     if (isWalletUnlocked) return
@@ -187,30 +185,62 @@ const AppUnlockModal = () => {
       const deprecatedWallet = await getDeprecatedStoredWallet({ authenticationPrompt: t('Unlock your wallet') })
 
       if (walletExists) {
-        await triggerBiometricsAuthGuard({
-          settingsToCheck: 'appAccess',
-          onPromptDisplayed: openAuthModal,
-          successCallback: initializeAppWithStoredWallet
-        })
+        try {
+          await triggerBiometricsAuthGuard({
+            settingsToCheck: 'appAccess',
+            onPromptDisplayed: openAuthModal,
+            successCallback: initializeAppWithStoredWallet
+          })
 
-        if (deprecatedWallet) {
-          await deleteDeprecatedWallet()
+          if (deprecatedWallet) {
+            try {
+              await deleteDeprecatedWallet()
+            } catch (error) {
+              const message = 'Could not delete deprecated wallet'
+              showExceptionToast(error, message)
+              sendAnalytics({ type: 'error', message })
+            }
+          }
+        } catch (error) {
+          const message = 'Could not authenticate'
+          showExceptionToast(error, message)
+          console.error(message)
         }
       } else if (deprecatedWallet) {
-        if (await loadBiometricsSettings()) {
-          await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
-          dispatch(mnemonicMigrated())
+        if ((await loadBiometricsSettings()).biometricsRequiredForAppAccess) {
+          try {
+            await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
 
-          initializeAppWithStoredWallet()
+            dispatch(mnemonicMigrated())
+
+            initializeAppWithStoredWallet()
+          } catch {
+            sendAnalytics({
+              type: 'error',
+              message: `Could not migrate deprecated mnemonic of length ${deprecatedWallet.mnemonic.split(' ').length}`
+            })
+
+            navigation.navigate('LoginWithPinScreen')
+          }
         } else {
           navigation.navigate('LoginWithPinScreen')
         }
       }
 
-      if ((await appInstallationTimestampMissing()) || (!walletExists && !deprecatedWallet)) {
-        if (await wasAppUninstalled()) await deleteFundPassword()
+      try {
+        if ((await appInstallationTimestampMissing()) || (!walletExists && !deprecatedWallet)) {
+          if (await wasAppUninstalled()) {
+            try {
+              await deleteFundPassword()
+            } catch {
+              sendAnalytics({ type: 'error', message: 'Could not delete fund password' })
+            }
+          }
 
-        await rememberAppInstallation()
+          await rememberAppInstallation()
+        }
+      } catch (error) {
+        sendAnalytics({ type: 'error', message: 'Could not remember app install timestamp' })
       }
     } catch (e: unknown) {
       const error = e as { message?: string }
@@ -238,8 +268,10 @@ const AppUnlockModal = () => {
   })
 
   return (
-    <Modal transparent animationType="none" onLayout={handleScreenLayoutChange} visible={isAuthModalVisible}>
-      <CoolAlephiumCanvas {...dimensions} onPress={unlockApp} />
+    <Modal animationType="none" onLayout={handleScreenLayoutChange} visible={isAuthModalVisible}>
+      <View style={{ backgroundColor: 'black', flex: 1 }}>
+        <CoolAlephiumCanvas {...dimensions} onPress={unlockApp} />
+      </View>
     </Modal>
   )
 }

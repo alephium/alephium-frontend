@@ -22,7 +22,12 @@ import {
   AddressHash,
   AssetAmount,
   client,
+  getActiveWalletConnectSessions,
   getHumanReadableError,
+  isNetworkValid,
+  parseSessionProposalEvent,
+  SessionProposalEvent,
+  SessionRequestEvent,
   WALLETCONNECT_ERRORS,
   walletConnectClientInitialized,
   walletConnectClientInitializeFailed,
@@ -99,10 +104,9 @@ import {
   SignUnsignedTxData,
   TransferTxData
 } from '~/types/transactions'
-import { SessionProposalEvent, SessionRequestData, SessionRequestEvent } from '~/types/walletConnect'
+import { SessionRequestData } from '~/types/walletConnect'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { sleep } from '~/utils/misc'
-import { getActiveWalletConnectSessions, isNetworkValid, parseSessionProposalEvent } from '~/utils/walletConnect'
 
 const MaxRequestNumToKeep = 10
 const ONE_HOURS_IN_SECONDS = 60 * 60
@@ -613,7 +617,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
   useEffect(() => {
     const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && isWalletConnectEnabled && isWalletUnlocked) {
+      if (nextAppState === 'background' && isWalletConnectEnabled) {
         let secondsPassed = 0
 
         // Keep app alive for max 4 hours
@@ -647,7 +651,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     const subscription = AppState.addEventListener('change', handleAppStateChange)
 
     return subscription.remove
-  }, [isWalletConnectEnabled, isWalletUnlocked])
+  }, [isWalletConnectEnabled])
 
   useEffect(() => {
     if (!isWalletConnectClientReady) return
@@ -981,7 +985,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('👉 RESETTING SESSION REQUEST EVENT.')
       setSessionRequestEvent(undefined)
       setSessionRequestData(undefined)
-      showToast({ text1: 'DApp request rejected', text2: t('You can go back to your browser.') })
+      showToast({ text1: t('dApp request rejected'), text2: t('You can go back to your browser.'), type: 'info' })
     }
   }
 

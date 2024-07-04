@@ -24,7 +24,7 @@ import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import i18n from '~/i18n'
+import i18n from '~/features/localization/i18n'
 import { isContactAddressValid, isContactNameValid } from '~/utils/form-validation'
 import { validateIsAddressValid } from '~/utils/forms'
 

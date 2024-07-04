@@ -28,7 +28,6 @@ import {
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
-import { AnimatePresence } from 'framer-motion'
 import { difference, union } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -38,12 +37,11 @@ import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
 import SplashScreen from '@/components/SplashScreen'
-import UpdateWalletBanner from '@/components/UpdateWalletBanner'
-import { useGlobalContext } from '@/contexts/global'
 import { WalletConnectContextProvider } from '@/contexts/walletconnect'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import UpdateWalletModal from '@/modals/UpdateWalletModal'
+import useAutoLock from '@/hooks/useAutoLock'
 import Router from '@/routes'
 import { syncAddressesAlphHistoricBalances, syncAddressesData } from '@/storage/addresses/addressesActions'
 import {
@@ -51,7 +49,11 @@ import {
   selectAddressIds,
   selectAllAddressVerifiedFungibleTokenSymbols
 } from '@/storage/addresses/addressesSelectors'
-import { devModeShortcutDetected, localStorageDataMigrationFailed } from '@/storage/global/globalActions'
+import {
+  devModeShortcutDetected,
+  localStorageDataMigrationFailed,
+  osThemeChangeDetected
+} from '@/storage/global/globalActions'
 import {
   localStorageGeneralSettingsMigrated,
   systemLanguageMatchFailed,
@@ -71,7 +73,6 @@ import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } fro
 import { languageOptions } from '@/utils/settings'
 
 const App = () => {
-  const { newVersion, newVersionDownloadTriggered } = useGlobalContext()
   const dispatch = useAppDispatch()
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
@@ -102,12 +103,33 @@ const App = () => {
   const newUnknownTokens = difference(union(addressUnknownTokenIds, txUnknownTokenIds), checkedUnknownTokenIds)
 
   const [splashScreenVisible, setSplashScreenVisible] = useState(true)
-  const [isUpdateWalletModalVisible, setUpdateWalletModalVisible] = useState(!!newVersion)
 
   const _window = window as unknown as AlephiumWindow
   const electron = _window.electron
 
   useInitializeClient()
+  useAutoLock()
+
+  useEffect(() => {
+    const shouldListenToOSThemeChanges = settings.theme === 'system'
+
+    if (!shouldListenToOSThemeChanges) return
+
+    const removeOSThemeChangeListener = electron?.theme.onShouldUseDarkColors((useDark: boolean) =>
+      dispatch(osThemeChangeDetected(useDark ? 'dark' : 'light'))
+    )
+
+    const removeGetNativeThemeListener = electron?.theme.onGetNativeTheme((nativeTheme) =>
+      dispatch(osThemeChangeDetected(nativeTheme.shouldUseDarkColors ? 'dark' : 'light'))
+    )
+
+    electron?.theme.getNativeTheme()
+
+    return () => {
+      removeGetNativeThemeListener && removeGetNativeThemeListener()
+      removeOSThemeChangeListener && removeOSThemeChangeListener()
+    }
+  }, [dispatch, electron?.theme, settings.theme])
 
   useEffect(() => {
     try {
@@ -282,14 +304,6 @@ const App = () => {
 
   useInterval(refreshAddressesData, 5000, addressesWithPendingTxs.length === 0 || isSyncingAddressData)
 
-  useEffect(() => {
-    if (newVersion) setUpdateWalletModalVisible(true)
-  }, [newVersion])
-
-  useEffect(() => {
-    if (newVersionDownloadTriggered) setUpdateWalletModalVisible(true)
-  }, [newVersionDownloadTriggered])
-
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <GlobalStyle />
@@ -301,16 +315,12 @@ const App = () => {
           <CenteredSection>
             <Router />
           </CenteredSection>
-          <BannerSection>{newVersion && <UpdateWalletBanner />}</BannerSection>
-          {/* <AnnouncementBanner /> */}
         </AppContainer>
       </WalletConnectContextProvider>
 
       <SnackbarManager />
+      <AutoUpdateSnackbar />
       {loading && <AppSpinner />}
-      <AnimatePresence>
-        {isUpdateWalletModalVisible && <UpdateWalletModal onClose={() => setUpdateWalletModalVisible(false)} />}
-      </AnimatePresence>
     </ThemeProvider>
   )
 }
@@ -329,10 +339,6 @@ const AppContainer = styled.div<{ showDevIndication: boolean }>`
     css`
       border: 5px solid ${theme.global.valid};
     `};
-`
-
-const BannerSection = styled.div`
-  flex-shrink: 0;
 `
 
 const useDevModeShortcut = () => {

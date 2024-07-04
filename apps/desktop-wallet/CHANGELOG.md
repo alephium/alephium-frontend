@@ -1,5 +1,21 @@
 # alephium-desktop-wallet
 
+## 2.3.5
+
+### Patch Changes
+
+- d12f884: Auto update on app launch
+
+## 2.3.4
+
+### Patch Changes
+
+- 5375899: Fix duplicate copy address button in Receive modal
+- 070d985: Gracefuly fail to connect to a non-Alephium dApp
+- ad815fd: Add Greek language
+- 584187a: Add group in address table
+- 7147652: Improve address label consistency in send flow
+
 ## 2.3.3
 
 ### Patch Changes
