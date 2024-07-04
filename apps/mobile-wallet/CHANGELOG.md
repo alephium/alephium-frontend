@@ -1,5 +1,15 @@
 # @alephium/mobile-wallet
 
+## 1.1.2
+
+### Patch Changes
+
+- 648d314: Improve dApp connection on cold start by preloading data
+- 6030a02: Add Vietnamese
+- 477488b: Show loader while waiting for NFT image to load
+- d7581c8: Fix display of boolean NFT attributes
+- fc61cb8: Fix display of SVG NFTs
+
 ## 1.1.1
 
 ### Patch Changes

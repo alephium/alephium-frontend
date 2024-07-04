@@ -1,5 +1,12 @@
 # @alephium/explorer
 
+## 1.9.7
+
+### Patch Changes
+
+- a17143e: Add Vietnamese
+- 481db49: Add German
+
 ## 1.9.6
 
 ### Patch Changes
