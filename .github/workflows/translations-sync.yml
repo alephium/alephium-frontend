@@ -23,6 +23,7 @@ jobs:
           config: 'crowdin.yml'
           upload_sources: true
           upload_translations: true
+          auto_approve_imported: true
           download_translations: true
           export_only_approved: true
           localization_branch_name: l10n_crowdin_translations
