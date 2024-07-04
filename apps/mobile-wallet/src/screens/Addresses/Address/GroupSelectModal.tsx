@@ -45,12 +45,13 @@ const GroupSelectModal = ({ onClose, onSelect, selectedGroup, ...props }: GroupS
     <ModalContent {...props}>
       <ScreenSection>
         <BoxSurface>
-          {groupSelectOptions.map((groupOption) => (
+          {groupSelectOptions.map((groupOption, index) => (
             <RadioButtonRow
               key={groupOption.label}
               title={groupOption.label}
               onPress={() => onGroupSelect(groupOption.value)}
               isActive={selectedGroup === groupOption.value}
+              isLast={index === groupSelectOptions.length - 1}
             />
           ))}
         </BoxSurface>
