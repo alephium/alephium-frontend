@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { memo, useState } from 'react'
-import { TouchableOpacity } from 'react-native'
 import { Portal } from 'react-native-portalize'
+import styled from 'styled-components/native'
 
 import BottomModal from '~/components/layout/BottomModal'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
@@ -29,9 +29,9 @@ const NFTThumbnail = (props: NFTImageProps) => {
 
   return (
     <>
-      <TouchableOpacity onPress={() => setIsModalOpen(true)} style={{ position: 'relative' }}>
-        <NFTImage {...props} />
-      </TouchableOpacity>
+      <ThumbnailCard onPress={() => setIsModalOpen(true)} style={{ position: 'relative' }}>
+        <NFTImage {...props} size={100} />
+      </ThumbnailCard>
       <Portal>
         <BottomModal
           Content={(_props) => <NFTModal nftId={props.nftId} {..._props} />}
@@ -44,3 +44,12 @@ const NFTThumbnail = (props: NFTImageProps) => {
 }
 
 export default memo(NFTThumbnail)
+
+const ThumbnailCard = styled.TouchableOpacity`
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.highlight : theme.bg.back2)};
+  border-radius: 9px;
+  width: 116px;
+  height: 116px;
+`
