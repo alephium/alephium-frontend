@@ -73,6 +73,10 @@ const NFTThumbnail = ({ nft, size }: NFTThumbnailProps) => {
               onError={setError}
               onLoadStart={() => setIsLoading(true)}
               onLoadEnd={() => setIsLoading(false)}
+              placeholder={{
+                blurhash: theme.name === 'dark' ? 'L00000fQfQfQfQfQfQfQfQfQfQfQ' : 'L1PGpx-;fQ-;_3fQfQfQfQfQfQfQ'
+              }}
+              contentFit="contain"
             />
             {isLoading && (
               <View style={{ position: 'absolute' }}>
@@ -169,6 +173,7 @@ export default NFTThumbnail
 
 const NFTThumbnailStyled = styled(Image)`
   border-radius: ${BORDER_RADIUS_SMALL}px;
+  aspect-ratio: 1;
 `
 
 const NFTFullSizeImage = styled(Image)`
