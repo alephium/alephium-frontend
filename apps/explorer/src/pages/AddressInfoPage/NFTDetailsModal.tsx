@@ -17,16 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NFTCollectionUriMetaData } from '@alephium/web3'
-import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { queries } from '@/api'
 import Card from '@/components/Cards/Card'
 import HighlightedHash from '@/components/HighlightedHash'
 import { SimpleLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import Modal, { ModalProps } from '@/components/Modal/Modal'
+import NFTThumbnail from '@/components/NFTThumbnail'
 import Table from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
@@ -40,10 +39,6 @@ interface NFTDetailsModalProps extends Omit<ModalProps, 'children'> {
 
 const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
-  const { data: dataType } = useQuery({
-    ...queries.assets.NFTsData.type(nft?.file?.image || ''),
-    enabled: !!nft?.file?.image
-  })
 
   return (
     <Modal {...props}>
@@ -53,19 +48,7 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
             {nft.file?.name && <NFTName>{nft.file.name}</NFTName>}
             <HighlightedHash text={nft.id} middleEllipsis maxWidth="200px" textToCopy={nft.id} />
           </Header>
-          <NFTImageContainer>
-            {nft.file?.image ? (
-              dataType === 'image' ? (
-                <Image src={nft.file.image} />
-              ) : dataType === 'video' ? (
-                <video src={nft.file.image} autoPlay loop width="100%" height="100%" />
-              ) : (
-                t('Unsupported media type')
-              )
-            ) : (
-              t('Missing image')
-            )}
-          </NFTImageContainer>
+          <NFTImageContainer>{nft.file?.image && <NFTThumbnail src={nft.file.image} autoPlay />}</NFTImageContainer>
 
           <MetadataTablesContainer>
             {nft.file ? (
@@ -173,11 +156,6 @@ const NFTImageContainer = styled.div`
   min-height: 300px;
   border-top: 1px solid ${({ theme }) => theme.border.primary};
   border-bottom: 1px solid ${({ theme }) => theme.border.primary};
-`
-
-const Image = styled.img`
-  width: 100%;
-  max-width: 600px;
 `
 
 const NFTDetailsContainer = styled.div`

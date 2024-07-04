@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { groupBy, orderBy } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -25,7 +25,7 @@ import { RiGhostLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
 import { queries } from '@/api'
-import Card3D, { card3DHoverTransition } from '@/components/Cards/Card3D'
+import NFTThumbnail from '@/components/NFTThumbnail'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Toggle from '@/components/Toggle'
 import { useQueriesData } from '@/hooks/useQueriesData'
@@ -145,64 +145,17 @@ interface NFTItemProps {
 }
 
 const NFTItem = ({ nft, onClick }: NFTItemProps) => {
-  const [isHovered, setIsHovered] = useState(false)
   const { t } = useTranslation()
 
-  const y = useMotionValue(0.5)
-  const x = useMotionValue(0.5)
-
-  const springConfig = { damping: 10, stiffness: 100 }
-  const xSpring = useSpring(x, springConfig)
-  const ySpring = useSpring(y, springConfig)
-
-  const imagePosX = useTransform(xSpring, [0, 1], ['5px', '-5px'], {
-    clamp: true
-  })
-  const imagePosY = useTransform(ySpring, [0, 1], ['5px', '-5px'], {
-    clamp: true
-  })
-
-  const handlePointerMove = (pointerX: number, pointerY: number) => {
-    x.set(pointerX, true)
-    y.set(pointerY, true)
-  }
-
   return (
-    <NFTCardStyled
-      onPointerMove={handlePointerMove}
-      onCardHover={setIsHovered}
-      onClick={onClick}
-      frontFace={
-        <FrontFace>
-          <NFTPictureContainer>
-            <PictureContainerShadow animate={{ opacity: isHovered ? 1 : 0 }} />
-            {nft.file?.image ? (
-              <NFTPicture
-                style={{
-                  backgroundImage: `url(${nft.file.image})`,
-                  x: imagePosX,
-                  y: imagePosY,
-                  scale: 1.5
-                }}
-                animate={{
-                  scale: isHovered ? 1 : 1.5
-                }}
-                transition={card3DHoverTransition}
-              />
-            ) : (
-              <NFTPicture style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <MissingMetadataText>{t('Missing image')}</MissingMetadataText>
-              </NFTPicture>
-            )}
-          </NFTPictureContainer>
-          {nft.file?.name ? (
-            <NFTName>{nft.file.name}</NFTName>
-          ) : (
-            <MissingMetadataText>{t('Wrong/old format')}</MissingMetadataText>
-          )}
-        </FrontFace>
-      }
-    />
+    <NFTCardStyled onClick={onClick}>
+      <NFTPictureContainer>{nft.file?.image && <NFTThumbnail src={nft.file?.image} />}</NFTPictureContainer>
+      {nft.file?.name ? (
+        <NFTName>{nft.file.name}</NFTName>
+      ) : (
+        <MissingMetadataText>{t('Wrong/old format')}</MissingMetadataText>
+      )}
+    </NFTCardStyled>
   )
 }
 
@@ -253,34 +206,24 @@ const NFTListStyled = styled.div`
   }
 `
 
-const NFTCardStyled = styled(Card3D)`
+const NFTCardStyled = styled.div`
   background-color: ${({ theme }) => theme.bg.primary};
-`
+  border-radius: 9px;
+  overflow: hidden;
 
-const FrontFace = styled.div`
-  padding: 10px;
+  &:hover {
+    cursor: pointer;
+    background-color: ${({ theme }) => theme.bg.hover};
+    transform: translateY(-3px);
+    box-shadow: ${({ theme }) => theme.shadow.primary};
+    transition: all 0.1s ease-in-out;
+  }
 `
 
 const NFTPictureContainer = styled(motion.div)`
   position: relative;
   overflow: hidden;
-`
-
-const PictureContainerShadow = styled(motion.div)`
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  box-shadow: inset 0 0 30px black;
-  z-index: 2;
-`
-
-const NFTPicture = styled(motion.div)`
-  max-width: 100%;
-  height: 150px;
-  background-repeat: no-repeat;
-  background-color: black;
-  background-size: contain;
-  background-position: center;
+  height: 200px;
 `
 
 const NFTName = styled.div`
