@@ -64,7 +64,9 @@ const NFTThumbnail = ({ src, size, border, borderRadius, autoPlay, showPlayIconI
           t('Unsupported media type')
         )
       ) : isDataTypeLoading ? (
-        <LoadingSpinner size={50} />
+        <SpinnerContainer>
+          <LoadingSpinner />
+        </SpinnerContainer>
       ) : (
         t('Missing image')
       )}
@@ -81,6 +83,14 @@ const Image = styled.img`
   width: 100%;
   height: 100%;
   max-width: 600px;
+`
+
+const SpinnerContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
 `
 
 export default NFTThumbnail
