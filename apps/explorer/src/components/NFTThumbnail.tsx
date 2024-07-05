@@ -30,9 +30,10 @@ interface NFTThumbnailProps {
   border?: boolean
   borderRadius?: number
   autoPlay?: boolean
+  showPlayIconIfVideo?: boolean
 }
 
-const NFTThumbnail = ({ src, size, border, borderRadius, autoPlay }: NFTThumbnailProps) => {
+const NFTThumbnail = ({ src, size, border, borderRadius, autoPlay, showPlayIconIfVideo }: NFTThumbnailProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
 
@@ -57,7 +58,7 @@ const NFTThumbnail = ({ src, size, border, borderRadius, autoPlay }: NFTThumbnai
           autoPlay ? (
             <video src={src} autoPlay={autoPlay} loop width="100%" height="100%" preload="auto" muted playsInline />
           ) : (
-            <VideoThumbnail videoSrc={src} />
+            <VideoThumbnail videoUrl={src} showPlayIcon={showPlayIconIfVideo} />
           )
         ) : (
           t('Unsupported media type')

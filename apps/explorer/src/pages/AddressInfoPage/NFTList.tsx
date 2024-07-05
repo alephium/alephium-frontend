@@ -149,7 +149,9 @@ const NFTItem = ({ nft, onClick }: NFTItemProps) => {
 
   return (
     <NFTCardStyled onClick={onClick}>
-      <NFTPictureContainer>{nft.file?.image && <NFTThumbnail src={nft.file?.image} />}</NFTPictureContainer>
+      <NFTPictureContainer>
+        {nft.file?.image && <NFTThumbnail src={nft.file?.image} showPlayIconIfVideo />}
+      </NFTPictureContainer>
       {nft.file?.name ? (
         <NFTName>{nft.file.name}</NFTName>
       ) : (
@@ -206,6 +208,13 @@ const NFTListStyled = styled.div`
   }
 `
 
+const NFTPictureContainer = styled(motion.div)`
+  position: relative;
+  overflow: hidden;
+  height: 200px;
+  display: flex;
+`
+
 const NFTCardStyled = styled.div`
   background-color: ${({ theme }) => theme.bg.primary};
   border-radius: 9px;
@@ -214,16 +223,13 @@ const NFTCardStyled = styled.div`
   &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.bg.hover};
-    transform: translateY(-3px);
     box-shadow: ${({ theme }) => theme.shadow.primary};
     transition: all 0.1s ease-in-out;
-  }
-`
 
-const NFTPictureContainer = styled(motion.div)`
-  position: relative;
-  overflow: hidden;
-  height: 200px;
+    ${NFTPictureContainer} {
+      filter: brightness(1.1);
+    }
+  }
 `
 
 const NFTName = styled.div`

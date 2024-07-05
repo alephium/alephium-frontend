@@ -16,62 +16,86 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { RiPlayCircleLine } from 'react-icons/ri'
+import styled from 'styled-components'
+
+import LoadingSpinner from '@/components/LoadingSpinner'
+import { getOrCreateThumbnail, loadThumbnailFromDB, saveThumbnailToDB } from '@/utils/thumbnails'
 
 interface VideoThumbnailProps {
-  videoSrc: string
+  videoUrl: string
+  showPlayIcon?: boolean
 }
 
-const VideoThumbnail: React.FC<VideoThumbnailProps> = ({ videoSrc }) => {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [thumbnail, setThumbnail] = useState<string>('')
+const VideoThumbnail = ({ videoUrl, showPlayIcon }: VideoThumbnailProps) => {
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null)
 
   useEffect(() => {
-    const captureThumbnail = () => {
-      const video = videoRef.current
-      if (video) {
-        const canvas = document.createElement('canvas')
-        canvas.width = video.videoWidth
-        canvas.height = video.videoHeight
-        const context = canvas.getContext('2d')
-        if (context) {
-          context.drawImage(video, 0, 0, canvas.width, canvas.height)
-          const dataURL = canvas.toDataURL()
-          setThumbnail(dataURL)
+    const fetchThumbnail = async () => {
+      try {
+        const cachedBlob = await loadThumbnailFromDB(videoUrl)
+        if (cachedBlob) {
+          const cachedUrl = URL.createObjectURL(cachedBlob)
+          setThumbnailUrl(cachedUrl)
+          return
         }
+
+        const response = await fetch(videoUrl)
+        const arrayBuffer = await response.arrayBuffer()
+        const blob = new Blob([arrayBuffer], { type: 'video/mp4' })
+
+        const generatedThumbnailBlob = await getOrCreateThumbnail(videoUrl, blob)
+        const generatedThumbnailUrl = URL.createObjectURL(generatedThumbnailBlob)
+        setThumbnailUrl(generatedThumbnailUrl)
+        await saveThumbnailToDB(videoUrl, generatedThumbnailBlob)
+      } catch (error) {
+        console.error('Error loading thumbnail:', error)
       }
     }
 
-    const video = videoRef.current
-    if (video) {
-      video.setAttribute('crossorigin', 'anonymous')
-
-      const onLoadedMetadata = () => {
-        video.currentTime = 0.5
-      }
-
-      const onSeeked = () => {
-        captureThumbnail()
-      }
-
-      video.addEventListener('loadedmetadata', onLoadedMetadata)
-      video.addEventListener('seeked', onSeeked)
-
-      return () => {
-        video.removeEventListener('loadedmetadata', onLoadedMetadata)
-        video.removeEventListener('seeked', onSeeked)
-      }
-    }
-  }, [videoSrc])
+    fetchThumbnail()
+  }, [videoUrl])
 
   return (
-    <div>
-      {thumbnail ? (
-        <img src={thumbnail} alt="Video Thumbnail" crossOrigin="anonymous" width="100%" height="100%" />
+    <ThumbnailContainer>
+      {thumbnailUrl ? (
+        <ThumbnailWithOverlay>
+          {showPlayIcon && <PlayIcon />}
+          <Thumbnail src={thumbnailUrl} alt="Video Thumbnail" />
+        </ThumbnailWithOverlay>
       ) : (
-        <video ref={videoRef} src={videoSrc} style={{ display: 'none' }} />
+        <LoadingSpinner />
       )}
-    </div>
+    </ThumbnailContainer>
   )
 }
+
 export default VideoThumbnail
+
+const ThumbnailContainer = styled.div`
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const ThumbnailWithOverlay = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const PlayIcon = styled(RiPlayCircleLine)`
+  position: absolute;
+  font-size: 3rem;
+  color: white;
+`
+
+const Thumbnail = styled.img`
+  width: 100%;
+  height: 100%;
+`
