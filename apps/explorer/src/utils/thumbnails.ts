@@ -82,10 +82,17 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
     video.crossOrigin = 'Anonymous'
 
     video.addEventListener('loadeddata', () => {
+      console.log('loadeddata event triggered')
       video.currentTime = 0 // Seek to the beginning
     })
 
     video.addEventListener('seeked', () => {
+      console.log('seeked event triggered')
+      if (video.videoWidth === 0 || video.videoHeight === 0) {
+        reject(new Error('Invalid video dimensions'))
+        return
+      }
+
       const canvas = document.createElement('canvas')
       canvas.width = video.videoWidth
       canvas.height = video.videoHeight
@@ -115,6 +122,16 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
     })
 
     video.load()
+
+    // Ensure the frame is properly loaded
+    const checkVideoReady = () => {
+      if (video.readyState >= 2) {
+        video.currentTime = 0 // Seek to the beginning
+      } else {
+        requestAnimationFrame(checkVideoReady)
+      }
+    }
+    requestAnimationFrame(checkVideoReady)
   })
 
 export const getOrCreateThumbnail = async (videoUrl: string, blob: Blob): Promise<Blob> => {

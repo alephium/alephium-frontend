@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useQuery } from '@tanstack/react-query'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -33,7 +34,7 @@ interface NFTThumbnailProps {
   showPlayIconIfVideo?: boolean
 }
 
-const NFTThumbnail = ({ src, size, border, borderRadius, autoPlay, showPlayIconIfVideo }: NFTThumbnailProps) => {
+const NFTThumbnail = memo(({ src, size, border, borderRadius, autoPlay, showPlayIconIfVideo }: NFTThumbnailProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
 
@@ -52,27 +53,29 @@ const NFTThumbnail = ({ src, size, border, borderRadius, autoPlay, showPlayIconI
       }}
     >
       {!isDataTypeLoading ? (
-        dataType === 'image' ? (
-          <Image src={src} height={size} width={size} />
-        ) : dataType === 'video' ? (
-          autoPlay ? (
-            <video src={src} autoPlay={autoPlay} loop width="100%" height="100%" preload="auto" muted playsInline />
+        src ? (
+          dataType === 'image' ? (
+            <Image src={src} height={size} width={size} />
+          ) : dataType === 'video' ? (
+            autoPlay ? (
+              <video src={src} autoPlay={autoPlay} loop width="100%" height="100%" preload="auto" muted playsInline />
+            ) : (
+              <VideoThumbnail videoUrl={src} showPlayIcon={showPlayIconIfVideo} />
+            )
           ) : (
-            <VideoThumbnail videoUrl={src} showPlayIcon={showPlayIconIfVideo} />
+            t('Unsupported media type')
           )
         ) : (
-          t('Unsupported media type')
+          t('Missing image')
         )
-      ) : isDataTypeLoading ? (
+      ) : (
         <SpinnerContainer>
           <LoadingSpinner />
         </SpinnerContainer>
-      ) : (
-        t('Missing image')
       )}
     </Container>
   )
-}
+})
 
 const Container = styled.div`
   flex: 1;
