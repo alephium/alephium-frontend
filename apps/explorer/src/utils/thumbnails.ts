@@ -100,10 +100,7 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
     video.muted = true // Required for autoplay in some browsers
     video.crossOrigin = 'Anonymous'
 
-    console.log('Video created and URL set:', url)
-
-    const handleLoadedData = () => {
-      console.log('handleLoadedData called')
+    const handleLoadedData = async () => {
       if (video.videoWidth === 0 || video.videoHeight === 0) {
         reject(new Error('Invalid video dimensions'))
         return
@@ -116,15 +113,15 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
       const context = canvas.getContext('2d')
 
       if (context) {
+        await new Promise((resolve) => setTimeout(resolve, 100)) // TODO: Remove ugly hack
         context.drawImage(video, 0, 0, canvas.width, canvas.height)
+
         canvas.toBlob((thumbnailBlob) => {
-          console.log('Canvas to blob completed', thumbnailBlob)
           if (thumbnailBlob) {
             resolve(thumbnailBlob)
           } else {
             reject(new Error('Failed to create thumbnail blob'))
           }
-          // Clean up the video element and URL
           video.remove()
           URL.revokeObjectURL(url)
         })
@@ -134,7 +131,6 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
     }
 
     video.addEventListener('loadeddata', () => {
-      console.log('loadeddata event triggered')
       if (video.readyState >= 2) {
         requestAnimationFrame(handleLoadedData)
       } else {
@@ -144,7 +140,6 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
     })
 
     video.addEventListener('error', (e) => {
-      console.error('Error loading video:', e)
       reject(new Error(`Failed to load video: ${e.message}`))
     })
   })
