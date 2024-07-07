@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { memo, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { RiPlayCircleLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
@@ -28,7 +28,7 @@ interface VideoThumbnailProps {
   showPlayIcon?: boolean
 }
 
-const VideoThumbnail = memo(({ videoUrl, showPlayIcon }: VideoThumbnailProps) => {
+const VideoThumbnail = ({ videoUrl, showPlayIcon }: VideoThumbnailProps) => {
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null)
 
   useEffect(() => {
@@ -41,11 +41,7 @@ const VideoThumbnail = memo(({ videoUrl, showPlayIcon }: VideoThumbnailProps) =>
           return
         }
 
-        const response = await fetch(videoUrl)
-        const arrayBuffer = await response.arrayBuffer()
-        const blob = new Blob([arrayBuffer], { type: 'video/mp4' })
-
-        const generatedThumbnailBlob = await getOrCreateThumbnail(videoUrl, blob)
+        const generatedThumbnailBlob = await getOrCreateThumbnail(videoUrl)
         const generatedThumbnailUrl = URL.createObjectURL(generatedThumbnailBlob)
         setThumbnailUrl(generatedThumbnailUrl)
         await saveThumbnailToDB(videoUrl, generatedThumbnailBlob)
@@ -69,7 +65,7 @@ const VideoThumbnail = memo(({ videoUrl, showPlayIcon }: VideoThumbnailProps) =>
       )}
     </ThumbnailContainer>
   )
-})
+}
 
 export default VideoThumbnail
 

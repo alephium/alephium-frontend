@@ -70,8 +70,27 @@ export const loadThumbnailFromDB = async (videoUrl: string): Promise<Blob | null
   })
 }
 
+const videoBlobCache: Record<string, Promise<Blob> | undefined> = {}
 const thumbnailGenerationPromises: Record<string, Promise<Blob> | undefined> = {}
 const thumbnailBlobCache: Record<string, Blob | undefined> = {}
+
+export const fetchVideoBlob = async (videoUrl: string): Promise<Blob> => {
+  if (!videoBlobCache[videoUrl]) {
+    videoBlobCache[videoUrl] = fetch(videoUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Failed to fetch video: ${response.statusText}`)
+        }
+        return response.blob()
+      })
+      .catch((error) => {
+        delete videoBlobCache[videoUrl]
+        throw error
+      })
+  }
+
+  return videoBlobCache[videoUrl]!
+}
 
 export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
   new Promise((resolve, reject) => {
@@ -81,66 +100,63 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
     video.muted = true // Required for autoplay in some browsers
     video.crossOrigin = 'Anonymous'
 
-    video.addEventListener('loadeddata', () => {
-      console.log('loadeddata event triggered')
-      video.currentTime = 0 // Seek to the beginning
-    })
+    console.log('Video created and URL set:', url)
 
-    video.addEventListener('seeked', () => {
-      console.log('seeked event triggered')
+    const handleLoadedData = () => {
+      console.log('handleLoadedData called')
       if (video.videoWidth === 0 || video.videoHeight === 0) {
         reject(new Error('Invalid video dimensions'))
         return
       }
 
       const canvas = document.createElement('canvas')
-      canvas.width = video.videoWidth
-      canvas.height = video.videoHeight
+      const scale = 0.5 // Reduce resolution by 50%
+      canvas.width = video.videoWidth * scale
+      canvas.height = video.videoHeight * scale
       const context = canvas.getContext('2d')
 
       if (context) {
         context.drawImage(video, 0, 0, canvas.width, canvas.height)
         canvas.toBlob((thumbnailBlob) => {
+          console.log('Canvas to blob completed', thumbnailBlob)
           if (thumbnailBlob) {
             resolve(thumbnailBlob)
           } else {
             reject(new Error('Failed to create thumbnail blob'))
           }
+          // Clean up the video element and URL
+          video.remove()
           URL.revokeObjectURL(url)
         })
       } else {
         reject(new Error('Failed to get canvas context'))
       }
+    }
 
-      // Clean up the video element
-      video.remove()
-      URL.revokeObjectURL(url)
+    video.addEventListener('loadeddata', () => {
+      console.log('loadeddata event triggered')
+      if (video.readyState >= 2) {
+        requestAnimationFrame(handleLoadedData)
+      } else {
+        video.currentTime = 0 // Seek near the beginning
+        video.addEventListener('seeked', handleLoadedData, { once: true })
+      }
     })
 
     video.addEventListener('error', (e) => {
+      console.error('Error loading video:', e)
       reject(new Error(`Failed to load video: ${e.message}`))
     })
-
-    video.load()
-
-    // Ensure the frame is properly loaded
-    const checkVideoReady = () => {
-      if (video.readyState >= 2) {
-        video.currentTime = 0 // Seek to the beginning
-      } else {
-        requestAnimationFrame(checkVideoReady)
-      }
-    }
-    requestAnimationFrame(checkVideoReady)
   })
 
-export const getOrCreateThumbnail = async (videoUrl: string, blob: Blob): Promise<Blob> => {
+export const getOrCreateThumbnail = async (videoUrl: string): Promise<Blob> => {
   if (thumbnailBlobCache[videoUrl]) {
     return Promise.resolve(thumbnailBlobCache[videoUrl]!)
   }
 
   if (!thumbnailGenerationPromises[videoUrl]) {
-    thumbnailGenerationPromises[videoUrl] = createThumbnailFromVideoBlob(blob)
+    thumbnailGenerationPromises[videoUrl] = fetchVideoBlob(videoUrl)
+      .then((blob) => createThumbnailFromVideoBlob(blob))
       .then((thumbnailBlob) => {
         thumbnailBlobCache[videoUrl] = thumbnailBlob
         return thumbnailBlob
