@@ -97,10 +97,10 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
     const video = document.createElement('video')
     const url = URL.createObjectURL(blob)
     video.src = url
-    video.muted = true // Required for autoplay in some browsers
+    video.muted = true
     video.crossOrigin = 'Anonymous'
 
-    const handleLoadedData = async () => {
+    const handleLoadedData = () => {
       if (video.videoWidth === 0 || video.videoHeight === 0) {
         reject(new Error('Invalid video dimensions'))
         return
@@ -112,29 +112,35 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
       canvas.height = video.videoHeight * scale
       const context = canvas.getContext('2d')
 
-      if (context) {
-        await new Promise((resolve) => setTimeout(resolve, 100)) // TODO: Remove ugly hack
-        context.drawImage(video, 0, 0, canvas.width, canvas.height)
+      if (!context) {
+        reject(new Error('Failed to get canvas context'))
+        return
+      }
 
+      const drawFrame = () => {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height)
         canvas.toBlob((thumbnailBlob) => {
           if (thumbnailBlob) {
             resolve(thumbnailBlob)
           } else {
             reject(new Error('Failed to create thumbnail blob'))
           }
+
           video.remove()
           URL.revokeObjectURL(url)
         })
-      } else {
-        reject(new Error('Failed to get canvas context'))
       }
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(drawFrame)
+      })
     }
 
     video.addEventListener('loadeddata', () => {
       if (video.readyState >= 2) {
-        requestAnimationFrame(handleLoadedData)
+        handleLoadedData()
       } else {
-        video.currentTime = 0 // Seek near the beginning
+        video.currentTime = 0
         video.addEventListener('seeked', handleLoadedData, { once: true })
       }
     })
