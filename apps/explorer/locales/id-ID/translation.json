@@ -102,6 +102,6 @@
   "Page not found": "Halaman tidak ditemukan",
   "letsGoBack": "Mari kembali ke <1>beranda</1>.",
   "Unknown error": "Kesalahan yang tidak diketahui",
-  "Orphan block": "Blok Orphan (Yatim piatu)",
+  "Orphan": "Orphan",
   "It appears that this block is not part of the main chain.": "Tampaknya blok ini bukan bagian dari rantai utama."
 }

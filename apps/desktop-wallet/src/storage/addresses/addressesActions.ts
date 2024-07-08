@@ -188,7 +188,7 @@ export const syncAddressesAlphHistoricBalances = createAsyncThunk(
       if (!amountHistory) return []
 
       try {
-        for (const { timestamp, amount } of amountHistory) {
+        for (const [timestamp, amount] of amountHistory) {
           balances.push({
             date: dayjs(timestamp).format(CHART_DATE_FORMAT),
             balance: amount

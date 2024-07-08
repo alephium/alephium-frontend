@@ -34,7 +34,7 @@ import HashEllipsed from './HashEllipsed'
 
 interface SimpleLinkProps extends LinkProps {
   newTab?: boolean
-  chilrend?: ReactNode
+  children?: ReactNode
 }
 
 interface TightLinkProps extends SimpleLinkProps {

@@ -79,7 +79,7 @@ const App = () => {
           } else return true
         },
         staleTime: 10000, // default ms before cache data is considered stale
-        cacheTime: ONE_DAY_MS
+        gcTime: ONE_DAY_MS
       }
     }
   })

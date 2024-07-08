@@ -20,6 +20,7 @@ import { NetworkPreset, ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS, TOKENS_QUERY_LIM
 import { TokenList } from '@alephium/token-list'
 import { addressFromContractId, NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
+import { queryOptions } from '@tanstack/react-query'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
 import client from '@/api/client'
@@ -31,7 +32,6 @@ import {
   UnverifiedNFTMetadata,
   VerifiedFungibleTokenMetadata
 } from '@/types/assets'
-import { createQueriesCollection } from '@/utils/api'
 
 // Batched calls
 const tokensInfo = create({
@@ -72,54 +72,58 @@ const NFTCollectionsMetadata = create({
 })
 
 // Queries
-export const assetsQueries = createQueriesCollection({
+export const assetsQueries = {
   type: {
-    one: (assetId: string) => ({
-      queryKey: ['assetType', assetId],
-      queryFn: (): Promise<AssetBase> =>
-        tokensInfo.fetch(assetId).then((r) => ({ id: assetId, type: r.stdInterfaceId as AssetType })),
-      staleTime: ONE_DAY_MS
-    })
+    one: (assetId: string) =>
+      queryOptions({
+        queryKey: ['assetType', assetId],
+        queryFn: (): Promise<AssetBase> =>
+          tokensInfo.fetch(assetId).then((r) => ({ id: assetId, type: r.stdInterfaceId as AssetType })),
+        staleTime: ONE_DAY_MS
+      })
   },
   metadata: {
-    allVerifiedTokens: (network: NetworkPreset) => ({
-      queryKey: ['verifiedTokens', network],
-      queryFn: (): Promise<VerifiedFungibleTokenMetadata[]> => {
-        try {
-          return fetch(`https://raw.githubusercontent.com/alephium/token-list/master/tokens/${network}.json`).then(
-            (r) => r.json().then((j: TokenList) => j.tokens.map((v) => ({ ...v, type: 'fungible', verified: true })))
-          )
-        } catch (e) {
-          console.error(e)
-          return Promise.reject(new Error(i18n.t('Verified token fetch failed')))
-        }
-      },
-      staleTime: ONE_DAY_MS
-    }),
-    unverifiedFungibleToken: (assetId: string) => ({
-      queryKey: ['unverifiedFungibleToken', assetId],
-      queryFn: (): Promise<UnverifiedFungibleTokenMetadata> =>
-        fungibleTokensMetadata.fetch(assetId).then((r) => {
-          const parsedDecimals = r?.decimals ? parseInt(r.decimals) : 0
-
-          return {
-            ...r,
-            id: assetId,
-            type: 'fungible',
-            decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0,
-            verified: false
+    allVerifiedTokens: (network: NetworkPreset) =>
+      queryOptions({
+        queryKey: ['verifiedTokens', network],
+        queryFn: (): Promise<VerifiedFungibleTokenMetadata[]> => {
+          try {
+            return fetch(`https://raw.githubusercontent.com/alephium/token-list/master/tokens/${network}.json`).then(
+              (r) => r.json().then((j: TokenList) => j.tokens.map((v) => ({ ...v, type: 'fungible', verified: true })))
+            )
+          } catch (e) {
+            console.error(e)
+            return Promise.reject(new Error(i18n.t('Verified token fetch failed')))
           }
-        }),
-      staleTime: ONE_HOUR_MS
-    }),
-    unverifiedNFT: (assetId: string) => ({
-      queryKey: ['unverifiedNFT', assetId],
-      queryFn: (): Promise<UnverifiedNFTMetadata> =>
-        unverifiedNFTsMetadata
-          .fetch(assetId)
-          .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false })),
-      staleTime: ONE_HOUR_MS
-    }),
+        },
+        staleTime: ONE_DAY_MS
+      }),
+    unverifiedFungibleToken: (assetId: string) =>
+      queryOptions({
+        queryKey: ['unverifiedFungibleToken', assetId],
+        queryFn: (): Promise<UnverifiedFungibleTokenMetadata> =>
+          fungibleTokensMetadata.fetch(assetId).then((r) => {
+            const parsedDecimals = r?.decimals ? parseInt(r.decimals) : 0
+
+            return {
+              ...r,
+              id: assetId,
+              type: 'fungible',
+              decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0,
+              verified: false
+            }
+          }),
+        staleTime: ONE_HOUR_MS
+      }),
+    unverifiedNFT: (assetId: string) =>
+      queryOptions({
+        queryKey: ['unverifiedNFT', assetId],
+        queryFn: (): Promise<UnverifiedNFTMetadata> =>
+          unverifiedNFTsMetadata
+            .fetch(assetId)
+            .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false })),
+        staleTime: ONE_HOUR_MS
+      }),
     NFTCollection: (collectionId: string) => ({
       queryKey: ['NFTCollection', collectionId],
       queryFn: (): Promise<NFTCollectionMetadata & { id: string }> =>
@@ -128,12 +132,13 @@ export const assetsQueries = createQueriesCollection({
     })
   },
   NFTsData: {
-    item: (dataUri: string, assetId: string) => ({
-      queryKey: ['nftData', dataUri],
-      queryFn: (): Promise<NFTTokenUriMetaData & { assetId: string }> | undefined =>
-        fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId }))),
-      staleTime: ONE_DAY_MS
-    }),
+    item: (dataUri: string, assetId: string) =>
+      queryOptions({
+        queryKey: ['nftData', dataUri],
+        queryFn: (): Promise<NFTTokenUriMetaData & { assetId: string }> | undefined =>
+          fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId }))),
+        staleTime: ONE_DAY_MS
+      }),
     collection: (collectionUri: string, collectionId: string, collectionAddress: string) => ({
       queryKey: ['nftCollectionData', collectionUri],
       queryFn: ():
@@ -144,11 +149,12 @@ export const assetsQueries = createQueriesCollection({
     })
   },
   market: {
-    tokenPrice: (tokenSymbol: string, currency = 'usd') => ({
-      queryKey: ['tokenPrice', tokenSymbol, currency],
-      queryFn: async (): Promise<number> =>
-        (await client.explorer.market.postMarketPrices({ currency: 'usd' }, [tokenSymbol]))[0],
-      staleTime: ONE_MINUTE_MS
-    })
+    tokenPrice: (tokenSymbol: string, currency = 'usd') =>
+      queryOptions({
+        queryKey: ['tokenPrice', tokenSymbol, currency],
+        queryFn: async (): Promise<number> =>
+          (await client.explorer.market.postMarketPrices({ currency: 'usd' }, [tokenSymbol]))[0],
+        staleTime: ONE_MINUTE_MS
+      })
   }
-})
+}
