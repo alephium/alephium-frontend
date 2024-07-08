@@ -163,7 +163,7 @@ const BlockInfoPage = () => {
       ) : (
         !txLoading && (
           <>
-            <SecondaryTitle>{t('Orphan block')}</SecondaryTitle>
+            <SecondaryTitle>{uncleBlock ? t('uncleBlock_one') : t('Orphan block')}</SecondaryTitle>
             <div>{t('It appears that this block is not part of the main chain.')}</div>
           </>
         )
