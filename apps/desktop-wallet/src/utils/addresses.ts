@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressHash, AddressSettings, AssetAmount, tokenIsFungible } from '@alephium/shared'
+import { AddressHash, AddressSettings, AssetAmount, tokenIsFungible, tokenIsKnownFungible } from '@alephium/shared'
 import { useMemo } from 'react'
 
 import { useAddressAssets, useAddressesFlattenKnownFungibleTokens } from '@/api/apiHooks'
@@ -42,10 +42,14 @@ export const useFilteredAddresses = (addresses: Address[], text: string) => {
     : addresses.filter((address, i) => {
         const addressTokenNames = addressesAssets
           .map((asset) => {
-            const tokenName = asset.name
-            const tokenSymbol = asset.symbol
+            if (tokenIsKnownFungible(asset)) {
+              const tokenName = asset.name
+              const tokenSymbol = asset.symbol
 
-            return tokenName && tokenSymbol ? `${tokenName} ${tokenSymbol}` : undefined
+              return `${tokenName} ${tokenSymbol}`
+            }
+
+            return undefined
           })
           .filter((searchableText) => searchableText !== undefined)
           .join(' ')

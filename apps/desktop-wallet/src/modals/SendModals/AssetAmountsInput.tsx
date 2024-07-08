@@ -21,7 +21,10 @@ import {
   fromHumanReadableAmount,
   getNumberOfDecimals,
   toHumanReadableAmount,
-  tokenIsFungible
+  tokenIsKnownFungible,
+  tokenIsListed,
+  tokenIsNonFungible,
+  tokenIsUnknown
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
@@ -87,7 +90,7 @@ const AssetAmountsInput = ({
   const disabled = remainingAvailableAssets.length === 0
   const availableAssetOptions: SelectOption<Asset['id']>[] = remainingAvailableAssets.map((asset) => ({
     value: asset.id,
-    label: asset.name || asset.id
+    label: 'name' in asset ? asset.name : asset.id
   }))
   const canAddMultipleAssets = allowMultiple && assetAmounts.length < assets.length
 
@@ -209,7 +212,7 @@ const AssetAmountsInput = ({
     >
       <AssetAmounts ref={selectedValueRef}>
         {assetAmounts.map(({ id, amountInput = '' }, index) => {
-          const asset = assets.filter(tokenIsFungible).find((asset) => asset.id === id)
+          const asset = assets.find((asset) => asset.id === id)
           if (!asset) return
 
           const availableAmount = asset.balance - asset.lockedBalance
@@ -226,10 +229,16 @@ const AssetAmountsInput = ({
                   disabled={disabled || !allowMultiple || !canAddMultipleAssets}
                   id={id}
                 >
-                  <AssetLogo assetImageUrl={asset.logoURI} size={20} assetName={asset.name} />
+                  <AssetLogo
+                    assetImageUrl={
+                      tokenIsListed(asset) ? asset.logoURI : tokenIsNonFungible(asset) ? asset.image : undefined
+                    }
+                    size={20}
+                    assetName={tokenIsKnownFungible(asset) || tokenIsNonFungible(asset) ? asset.name : undefined}
+                  />
                   <AssetName>
                     <Truncate>
-                      {asset.name ? (
+                      {tokenIsKnownFungible(asset) ? (
                         `${asset.name} ${asset.symbol ? `(${asset.symbol})` : ''}`
                       ) : (
                         <HashEllipsed hash={asset.id} />
@@ -255,7 +264,7 @@ const AssetAmountsInput = ({
                   min={asset.id === ALPH.id ? minAmountInAlph : 0}
                   max={availableHumanReadableAmount}
                   aria-label={t('Amount')}
-                  label={`${t('Amount')} ${asset.symbol ? `(${asset.symbol})` : ''}`}
+                  label={`${t('Amount')} ${tokenIsKnownFungible(asset) ? `(${asset.symbol})` : ''}`}
                   error={errors[index]}
                 />
 
@@ -265,9 +274,9 @@ const AssetAmountsInput = ({
                       value={availableAmount}
                       nbOfDecimalsToShow={4}
                       color={theme.font.secondary}
-                      suffix={asset.symbol}
+                      suffix={tokenIsKnownFungible(asset) ? asset.symbol : undefined}
                       decimals={asset.decimals}
-                      isUnknownToken={!asset.symbol}
+                      isUnknownToken={tokenIsUnknown(asset)}
                     />
                     <span> {t('Available').toLowerCase()}</span>
                   </AvailableAmount>

@@ -47,9 +47,7 @@ export const useAssetsMetadataForCurrentNetwork = (assetIds: string[]) => {
   return useGetAssetsMetadata(assetIds, networkName)
 }
 
-export const useAddressesAssets = (
-  addressHashes: string[] = []
-): { data: { addressHash: AddressHash; assets: (Asset | NFT)[] }[]; isPending: boolean } => {
+export const useAddressesAssets = (addressHashes: string[] = []) => {
   const currency = useAppSelector((state) => state.settings.fiatCurrency)
 
   const { data: addressesTokensBalancesWithoutAlph, isPending: areTokensBalancesPending } = useQueries({
@@ -232,7 +230,7 @@ export const useAddressesFlattenNfts = (addressHashes: AddressHash[] = []) => {
   const { data: addressesAssets, isPending } = useAddressesAssets(addressHashes)
 
   return {
-    data: addressesAssets?.flatMap((a) => a.assets).filter(tokenIsNonFungible) as NFT[],
+    data: addressesAssets?.flatMap((a) => a.assets).filter(tokenIsNonFungible),
     isPending
   }
 }

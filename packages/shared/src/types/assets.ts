@@ -29,7 +29,8 @@ export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalanc
   lockedBalance: bigint
 }
 
-export type FungibleToken = TokenInfo & { verified?: boolean }
+export type FungibleToken = TokenInfo & { verified?: boolean } // TODO: remove verified field
+export type KnownFungibleToken = TokenInfo
 
 // TODO: Use "listed" instead of "verified", don't add useless verified field
 // but instead use type checking functions like isFungible, isNonFungible, isCategorized.

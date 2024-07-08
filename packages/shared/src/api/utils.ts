@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { queryOptions, useQueries, UseQueryResult } from '@tanstack/react-query'
-import { createHash } from 'crypto'
 
 export const combineQueriesResult = <R>(result: UseQueryResult<R, Error>[]) => ({
   data: result.map((r) => r.data).filter((data): data is R => data !== undefined),
