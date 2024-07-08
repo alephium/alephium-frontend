@@ -136,37 +136,31 @@ const BlockInfoPage = () => {
         )}
       </Table>
 
+      <SecondaryTitle>{t('Transactions')}</SecondaryTitle>
+
       {blockInfo?.mainChain ? (
         !txLoading && !txList ? (
           <InlineErrorMessage message={t('An error occured while fetching transactions')} />
         ) : (
-          <>
-            <SecondaryTitle>{t('Transactions')}</SecondaryTitle>
-            <Table main hasDetails scrollable isLoading={txLoading}>
-              {txList && txList && (
-                <>
-                  <TableHeader
-                    headerTitles={['', t('Hash'), t('Inputs'), '', t('Outputs'), t('Total Amount'), '']}
-                    columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
-                    textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
-                  />
-                  <TableBody tdStyles={TXTableBodyCustomStyles}>
-                    {txList.map((t, i) => (
-                      <TransactionRow transaction={t} key={i} />
-                    ))}
-                  </TableBody>
-                </>
-              )}
-            </Table>
-          </>
+          <Table main hasDetails scrollable isLoading={txLoading}>
+            {txList && (
+              <>
+                <TableHeader
+                  headerTitles={['', t('Hash'), t('Inputs'), '', t('Outputs'), t('Total Amount'), '']}
+                  columnWidths={['35px', '150px', '120px', '50px', '120px', '90px', '30px']}
+                  textAlign={['left', 'left', 'left', 'left', 'left', 'right', 'left']}
+                />
+                <TableBody tdStyles={TXTableBodyCustomStyles}>
+                  {txList.map((t, i) => (
+                    <TransactionRow transaction={t} key={i} />
+                  ))}
+                </TableBody>
+              </>
+            )}
+          </Table>
         )
       ) : (
-        !txLoading && (
-          <>
-            <SecondaryTitle>{uncleBlock ? t('uncleBlock_one') : t('Orphan block')}</SecondaryTitle>
-            <div>{t('It appears that this block is not part of the main chain.')}</div>
-          </>
-        )
+        !txLoading && <InlineErrorMessage message={t('It appears that this block is not part of the main chain.')} />
       )}
 
       {txList && blockInfo?.txNumber !== undefined && blockInfo.txNumber > 0 && (
