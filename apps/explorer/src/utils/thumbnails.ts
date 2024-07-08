@@ -150,6 +150,8 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
     video.addEventListener('error', (e) => {
       reject(new Error(`Failed to load video: ${e.message}`))
     })
+
+    video.play() // Force video play in case autoplay is blocked
   })
 
 export const isValidThumbnail = (blob: Blob): boolean => blob.size > 15000 // Adjust this threshold as needed
