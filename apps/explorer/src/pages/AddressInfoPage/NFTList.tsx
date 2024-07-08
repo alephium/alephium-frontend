@@ -150,7 +150,7 @@ const NFTItem = ({ nft, onClick }: NFTItemProps) => {
   return (
     <NFTCardStyled onClick={onClick}>
       <NFTPictureContainer>
-        {nft.file?.image && <NFTThumbnail src={nft.file?.image} showPlayIconIfVideo />}
+        {nft.file?.image && <NFTThumbnail src={nft.file?.image} showPlayIconIfVideo playOnHover />}
       </NFTPictureContainer>
       {nft.file?.name ? (
         <NFTName>{nft.file.name}</NFTName>

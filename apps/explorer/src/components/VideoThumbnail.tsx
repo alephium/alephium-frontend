@@ -26,10 +26,12 @@ import { getOrCreateThumbnail, isValidThumbnail, loadThumbnailFromDB, saveThumbn
 interface VideoThumbnailProps {
   videoUrl: string
   showPlayIcon?: boolean
+  playOnHover?: boolean
 }
 
-const VideoThumbnail = ({ videoUrl, showPlayIcon }: VideoThumbnailProps) => {
+const VideoThumbnail = ({ videoUrl, showPlayIcon, playOnHover }: VideoThumbnailProps) => {
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null)
+  const [isHovered, setIsHovered] = useState(false)
 
   useEffect(() => {
     const fetchThumbnail = async () => {
@@ -53,12 +55,33 @@ const VideoThumbnail = ({ videoUrl, showPlayIcon }: VideoThumbnailProps) => {
     fetchThumbnail()
   }, [videoUrl])
 
+  const handlePointerEnter = () => {
+    if (playOnHover) {
+      setIsHovered(true)
+    }
+  }
+
+  const handlePointerLeave = () => {
+    if (playOnHover) {
+      setIsHovered(false)
+    }
+  }
+
   return (
-    <ThumbnailContainer>
+    <ThumbnailContainer onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
       {thumbnailUrl ? (
         <ThumbnailWithOverlay>
+          <Thumbnail
+            src={thumbnailUrl}
+            alt="Video Thumbnail"
+            style={{ filter: isHovered ? 'blur(30px)' : undefined }}
+          />
           {showPlayIcon && <PlayIcon />}
-          <Thumbnail src={thumbnailUrl} alt="Video Thumbnail" />
+          {playOnHover && isHovered && (
+            <VideoContainer>
+              <video src={videoUrl} autoPlay loop width="100%" height="100%" preload="auto" muted playsInline />
+            </VideoContainer>
+          )}
         </ThumbnailWithOverlay>
       ) : (
         <LoadingSpinner />
@@ -95,4 +118,13 @@ const Thumbnail = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: blur(0);
+  transition: filter 0.3s ease-in-out;
+`
+
+const VideoContainer = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
 `

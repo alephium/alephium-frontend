@@ -31,51 +31,54 @@ interface NFTThumbnailProps {
   border?: boolean
   borderRadius?: number
   autoPlay?: boolean
+  playOnHover?: boolean
   showPlayIconIfVideo?: boolean
 }
 
-const NFTThumbnail = memo(({ src, size, border, borderRadius, autoPlay, showPlayIconIfVideo }: NFTThumbnailProps) => {
-  const { t } = useTranslation()
-  const theme = useTheme()
+const NFTThumbnail = memo(
+  ({ src, size, border, borderRadius, autoPlay, showPlayIconIfVideo, playOnHover }: NFTThumbnailProps) => {
+    const { t } = useTranslation()
+    const theme = useTheme()
 
-  const { data: dataType, isLoading: isDataTypeLoading } = useQuery({
-    ...queries.assets.NFTsData.type(src || ''),
-    enabled: !!src
-  })
+    const { data: dataType, isLoading: isDataTypeLoading } = useQuery({
+      ...queries.assets.NFTsData.type(src || ''),
+      enabled: !!src
+    })
 
-  return (
-    <Container
-      style={{
-        borderRadius: borderRadius || 0,
-        boxShadow: border ? `0 0 0 1px ${theme.border.primary}` : 'initial',
-        height: size,
-        width: size
-      }}
-    >
-      {!isDataTypeLoading ? (
-        src ? (
-          dataType === 'image' ? (
-            <Image src={src} height={size} width={size} />
-          ) : dataType === 'video' ? (
-            autoPlay ? (
-              <video src={src} autoPlay={autoPlay} loop width="100%" height="100%" preload="auto" muted playsInline />
+    return (
+      <Container
+        style={{
+          borderRadius: borderRadius || 0,
+          boxShadow: border ? `0 0 0 1px ${theme.border.primary}` : 'initial',
+          height: size,
+          width: size
+        }}
+      >
+        {!isDataTypeLoading ? (
+          src ? (
+            dataType === 'image' ? (
+              <Image src={src} height={size} width={size} />
+            ) : dataType === 'video' ? (
+              autoPlay ? (
+                <video src={src} autoPlay={autoPlay} loop width="100%" height="100%" preload="auto" muted playsInline />
+              ) : (
+                <VideoThumbnail videoUrl={src} showPlayIcon={showPlayIconIfVideo} playOnHover={playOnHover} />
+              )
             ) : (
-              <VideoThumbnail videoUrl={src} showPlayIcon={showPlayIconIfVideo} />
+              t('Unsupported media type')
             )
           ) : (
-            t('Unsupported media type')
+            t('Missing image')
           )
         ) : (
-          t('Missing image')
-        )
-      ) : (
-        <SpinnerContainer>
-          <LoadingSpinner />
-        </SpinnerContainer>
-      )}
-    </Container>
-  )
-})
+          <SpinnerContainer>
+            <LoadingSpinner />
+          </SpinnerContainer>
+        )}
+      </Container>
+    )
+  }
+)
 
 const Container = styled.div`
   flex: 1;
