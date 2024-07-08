@@ -128,7 +128,7 @@
   "Page not found": "Page not found",
   "letsGoBack": "Let's go back to the <1>home page</1>.",
   "Unknown error": "Unknown error",
-  "Orphan block": "Orphan block",
+  "Orphan": "Orphan",
   "It appears that this block is not part of the main chain.": "It appears that this block is not part of the main chain.",
   "confirmationsKey_one": "{{ count }} Confirmation",
   "confirmationsKey_other": "{{ count }} Confirmations",

@@ -59,10 +59,10 @@ const BlockInfoPage = () => {
   const {
     data: blockInfo,
     error: blockInfoError,
-    isLoading: infoLoading
+    isPending: isBlockInfoPending
   } = useQuery({ ...blocksQueries.block.one(id || ''), enabled: !!id })
 
-  const { data: txList, isLoading: txLoading } = useQuery({
+  const { data: txList, isPending: isTxListPending } = useQuery({
     ...blocksQueries.block.transactions(id || '', currentPageNumber),
     enabled: !!id
   })
@@ -88,16 +88,20 @@ const BlockInfoPage = () => {
     redirectToTransactionIfExists()
   }, [blockInfo, id, blockInfoError, navigate, txInfo])
 
-  return !infoLoading && !blockInfo && blockInfoError ? (
+  const isMainChainBlock = blockInfo?.mainChain
+  const isUncleBlock = !isBlockInfoPending && !isMainChainBlock && !!uncleBlock
+  const isOrphanBlock = !isBlockInfoPending && !isMainChainBlock && !isUncleBlock
+
+  return !isBlockInfoPending && !blockInfo && blockInfoError ? (
     <InlineErrorMessage {...blockInfoError} />
   ) : (
     <Section>
       <SectionTitle
         title={t('Block')}
-        badge={uncleBlock ? t('Uncle') : undefined}
-        isLoading={infoLoading || txLoading}
+        badge={isUncleBlock ? t('Uncle') : isOrphanBlock ? t('Orphan') : undefined}
+        isLoading={isBlockInfoPending || isTxListPending}
       />
-      <Table bodyOnly isLoading={infoLoading}>
+      <Table bodyOnly isLoading={isBlockInfoPending}>
         {blockInfo && (
           <TableBody tdStyles={BlockTableBodyCustomStyles}>
             <TableRow>
@@ -138,11 +142,11 @@ const BlockInfoPage = () => {
 
       <SecondaryTitle>{t('Transactions')}</SecondaryTitle>
 
-      {blockInfo?.mainChain ? (
-        !txLoading && !txList ? (
+      {isMainChainBlock ? (
+        !isTxListPending && !txList ? (
           <InlineErrorMessage message={t('An error occured while fetching transactions')} />
         ) : (
-          <Table main hasDetails scrollable isLoading={txLoading}>
+          <Table main hasDetails scrollable isLoading={isTxListPending}>
             {txList && (
               <>
                 <TableHeader
@@ -160,7 +164,9 @@ const BlockInfoPage = () => {
           </Table>
         )
       ) : (
-        !txLoading && <InlineErrorMessage message={t('It appears that this block is not part of the main chain.')} />
+        !isTxListPending && (
+          <InlineErrorMessage message={t('It appears that this block is not part of the main chain.')} />
+        )
       )}
 
       {txList && blockInfo?.txNumber !== undefined && blockInfo.txNumber > 0 && (
