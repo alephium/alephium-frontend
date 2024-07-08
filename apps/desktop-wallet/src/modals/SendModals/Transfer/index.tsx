@@ -36,7 +36,7 @@ type TransferTxModalProps = ConfigurableSendModalProps<PartialTxData<TransferTxD
 
 const SendModalTransfer = (props: TransferTxModalProps) => {
   const { t } = useTranslation()
-  const buildTransaction = useBuildTransaction(props.txData?.fromAddress.hash)
+  const buildTransaction = useBuildTransaction(props.txData?.fromAddress.hash || '')
 
   return (
     <SendModal

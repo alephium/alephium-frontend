@@ -22,6 +22,7 @@ import { calculateAmountWorth } from '@/numbers'
 import {
   Asset,
   FungibleToken,
+  KnownFungibleToken,
   ListedFungibleToken,
   NFT,
   TokenDisplayBalances,
@@ -31,8 +32,8 @@ import {
 
 export const tokenIsFungible = (asset: Partial<Asset | NFT>): asset is Asset => 'decimals' in asset
 
-export const tokenIsKnownFungible = (asset: Partial<Asset | NFT>): asset is Asset =>
-  tokenIsFungible(asset) && 'symbol' in asset
+export const tokenIsKnownFungible = (asset: Partial<Asset | NFT>): asset is KnownFungibleToken =>
+  tokenIsFungible(asset) && 'symbol' in asset && 'name' in asset
 
 export const tokenIsNonFungible = (asset: Partial<Asset | NFT>): asset is NFT => 'collectionId' in asset
 
@@ -42,7 +43,7 @@ export const tokenIsListed = (asset: Partial<Asset | NFT>): asset is ListedFungi
 export const tokenIsUnknown = (asset: Partial<Asset | NFT>): asset is UnknownAsset =>
   !tokenIsKnownFungible(asset) && !tokenIsNonFungible(asset)
 
-export const sortAssets = (assets: Asset[]) =>
+export const sortAssets = <T extends Asset>(assets: T[]) =>
   orderBy(
     assets,
     [(a) => (tokenIsListed(a) ? 1 : 0), (a) => a.worth ?? -1, (a) => a.name?.toLowerCase(), 'id'],

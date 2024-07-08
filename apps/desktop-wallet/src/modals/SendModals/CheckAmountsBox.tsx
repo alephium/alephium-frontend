@@ -29,8 +29,6 @@ import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Box from '@/components/Box'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
-import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 import { getTransactionAssetAmounts } from '@/utils/transactions'
@@ -44,7 +42,6 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
   const { t } = useTranslation()
   const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
   const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
-  const allAddresses = useAppSelector(selectAllAddresses)
   const { data: allAssets } = useAllAddressesAssets()
 
   const fungibleTokens = allAssets?.fungible
@@ -56,8 +53,8 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
   return (
     <Box className={className}>
       {assets.map((asset, index) => {
-        const fungibleToken = fungibleTokens[asset.id]
-        const nftInfo = nfts[asset.id]
+        const fungibleToken = fungibleTokens?.find((a) => a.id === asset.id)
+        const nftInfo = nfts?.find((a) => a.id === asset.id)
 
         return (
           <Fragment key={asset.id}>

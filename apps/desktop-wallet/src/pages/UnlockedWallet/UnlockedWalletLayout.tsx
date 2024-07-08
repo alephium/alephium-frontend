@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useInterval } from '@alephium/shared-react'
+import { useIsFetching } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -55,7 +56,7 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
   const dispatch = useAppDispatch()
   const networkStatus = useAppSelector((s) => s.network.status)
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
-  const isLoadingData = useAppSelector((s) => s.addresses.syncingAddressData)
+  const isLoadingData = useIsFetching() > 0
   const { sendAnalytics } = useAnalytics()
   const previousWalletName = useRef<string>()
 

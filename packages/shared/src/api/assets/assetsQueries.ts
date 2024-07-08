@@ -120,16 +120,12 @@ export const assetsQueries = {
           const nftsMetadata = await nftsMetadataBatcher.fetch(tokenId)
 
           try {
-            const nftsData =
-              nftsMetadata && nftsMetadata.tokenUri
-                ? await exponentialBackoffFetchRetry(nftsMetadata.tokenUri).then(
-                    (res) => res.json() as unknown as NFTTokenUriMetaData
-                  )
-                : {}
+            const nftsData = (nftsMetadata && nftsMetadata.tokenUri
+              ? await exponentialBackoffFetchRetry(nftsMetadata.tokenUri).then((res) => res.json())
+              : {}) as unknown as NFTTokenUriMetaData
             return { ...nftsMetadata, ...nftsData }
           } catch (e) {
             console.error('Error fetching NFT data: ', e)
-            return nftsMetadata
           }
         },
         staleTime: ONE_HOUR_MS
