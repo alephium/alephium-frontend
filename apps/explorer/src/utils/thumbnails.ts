@@ -154,7 +154,7 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
     video.play() // Force video play in case autoplay is blocked
   })
 
-export const isValidThumbnail = (blob: Blob): boolean => blob.size > 15000 // Adjust this threshold as needed
+export const isValidThumbnail = (blob: Blob): boolean => blob.size > 17000 // Basic test. Approx size of blank thumbnail.
 
 export const getOrCreateThumbnail = async (videoUrl: string): Promise<Blob> => {
   if (thumbnailBlobCache[videoUrl]) {
