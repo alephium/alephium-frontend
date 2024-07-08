@@ -129,7 +129,7 @@ const BlockInfoPage = () => {
                 <span>{t('uncleBlock_other')}</span>
                 <UncleBlocks>
                   {blockInfo.ghostUncles?.map((b) => (
-                    <TightLink text={b.blockHash} to={`/blocks/${b.blockHash}`} maxWidth="300px" />
+                    <TightLink text={b.blockHash} to={`/blocks/${b.blockHash}`} maxWidth="300px" key={b.blockHash} />
                   ))}
                 </UncleBlocks>
               </TableRow>
