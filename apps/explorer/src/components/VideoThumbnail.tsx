@@ -21,7 +21,7 @@ import { RiPlayCircleLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
 import LoadingSpinner from '@/components/LoadingSpinner'
-import { getOrCreateThumbnail, loadThumbnailFromDB, saveThumbnailToDB } from '@/utils/thumbnails'
+import { getOrCreateThumbnail, isValidThumbnail, loadThumbnailFromDB, saveThumbnailToDB } from '@/utils/thumbnails'
 
 interface VideoThumbnailProps {
   videoUrl: string
@@ -35,7 +35,7 @@ const VideoThumbnail = ({ videoUrl, showPlayIcon }: VideoThumbnailProps) => {
     const fetchThumbnail = async () => {
       try {
         const cachedBlob = await loadThumbnailFromDB(videoUrl)
-        if (cachedBlob) {
+        if (cachedBlob && isValidThumbnail(cachedBlob)) {
           const cachedUrl = URL.createObjectURL(cachedBlob)
           setThumbnailUrl(cachedUrl)
           return

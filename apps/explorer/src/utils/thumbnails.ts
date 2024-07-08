@@ -152,11 +152,12 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
     })
   })
 
+export const isValidThumbnail = (blob: Blob): boolean => blob.size > 15000 // Adjust this threshold as needed
+
 export const getOrCreateThumbnail = async (videoUrl: string): Promise<Blob> => {
   if (thumbnailBlobCache[videoUrl]) {
     const blob = thumbnailBlobCache[videoUrl]!
-    const isBlank = await isBlankImage(blob)
-    if (!isBlank) {
+    if (isValidThumbnail(blob)) {
       return blob
     }
   }
@@ -165,6 +166,9 @@ export const getOrCreateThumbnail = async (videoUrl: string): Promise<Blob> => {
     thumbnailGenerationPromises[videoUrl] = fetchVideoBlob(videoUrl)
       .then((blob) => createThumbnailFromVideoBlob(blob))
       .then((thumbnailBlob) => {
+        if (!isValidThumbnail(thumbnailBlob)) {
+          throw new Error('Generated thumbnail is blank or invalid')
+        }
         thumbnailBlobCache[videoUrl] = thumbnailBlob
         return thumbnailBlob
       })
@@ -177,41 +181,3 @@ export const getOrCreateThumbnail = async (videoUrl: string): Promise<Blob> => {
 
   return thumbnailGenerationPromises[videoUrl]!
 }
-
-export const isBlankImage = (blob: Blob): Promise<boolean> =>
-  new Promise((resolve, reject) => {
-    const img = document.createElement('img')
-    const url = URL.createObjectURL(blob)
-
-    img.src = url
-    img.onload = () => {
-      const canvas = document.createElement('canvas')
-      canvas.width = img.width
-      canvas.height = img.height
-      const context = canvas.getContext('2d')
-
-      if (context) {
-        context.drawImage(img, 0, 0, canvas.width, canvas.height)
-        const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
-        const { data } = imageData
-
-        let isBlank = true
-        for (let i = 0; i < data.length; i += 4) {
-          if (data[i] !== 0 || data[i + 1] !== 0 || data[i + 2] !== 0 || data[i + 3] !== 0) {
-            isBlank = false
-            break
-          }
-        }
-
-        resolve(isBlank)
-      } else {
-        reject(new Error('Failed to get canvas context'))
-      }
-
-      URL.revokeObjectURL(url)
-    }
-
-    img.onerror = () => {
-      reject(new Error('Failed to load image for blank check'))
-    }
-  })
