@@ -92,7 +92,11 @@ const BlockInfoPage = () => {
     <InlineErrorMessage {...blockInfoError} />
   ) : (
     <Section>
-      <SectionTitle title={t('Block')} isLoading={infoLoading || txLoading} />
+      <SectionTitle
+        title={t('Block')}
+        badge={uncleBlock ? t('Uncle') : undefined}
+        isLoading={infoLoading || txLoading}
+      />
       <Table bodyOnly isLoading={infoLoading}>
         {blockInfo && (
           <TableBody tdStyles={BlockTableBodyCustomStyles}>
@@ -100,12 +104,6 @@ const BlockInfoPage = () => {
               <span>{t('Hash')}</span>
               <HighlightedCell textToCopy={blockInfo.hash}>{blockInfo.hash}</HighlightedCell>
             </TableRow>
-            {!!uncleBlock && (
-              <TableRow>
-                <span>{t('Is Uncle Block')}</span>
-                <Badge type="accent" content={t('True')} />
-              </TableRow>
-            )}
             <TableRow>
               <span>{t('Height')}</span>
               <span>{blockInfo.height}</span>

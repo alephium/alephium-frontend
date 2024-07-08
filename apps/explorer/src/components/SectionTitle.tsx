@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
+import Badge from '@/components/Badge'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { deviceBreakPoints } from '@/styles/globalStyles'
 
@@ -27,15 +28,17 @@ interface PageTitleProps {
   surtitle?: string | JSX.Element
   subtitle?: string | JSX.Element
   isLoading?: boolean
+  badge?: string
 }
 
-const SectionTitle = ({ title, surtitle, subtitle, isLoading }: PageTitleProps) => (
+const SectionTitle = ({ title, surtitle, badge, subtitle, isLoading }: PageTitleProps) => (
   <TitleWrapper>
     {surtitle && <Surtitle>{surtitle}</Surtitle>}
-    <Title>
-      {title}
-      {isLoading && <LoadingSpinner style={{ marginLeft: 20 }} size={18} />}
-    </Title>
+    <TitleRow>
+      <Title>{title}</Title>
+      {badge && <Badge type="accent" content={badge} />}
+      {isLoading && <LoadingSpinner size={18} />}
+    </TitleRow>
     {subtitle && <Subtitle>{subtitle}</Subtitle>}
   </TitleWrapper>
 )
@@ -44,13 +47,19 @@ const TitleWrapper = styled.div`
   margin-bottom: 25px;
 `
 
+const TitleRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`
+
 const Title = styled.h1`
   font-family: 'Inter';
   font-weight: bold;
   font-size: 2.1rem;
   color: ${({ theme }) => theme.font.primary};
-  margin: 0 0 5px 0;
   font-weight: 600;
+  display: flex;
 
   @media ${deviceBreakPoints.mobile} {
     font-size: 2rem;

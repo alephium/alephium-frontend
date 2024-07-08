@@ -134,6 +134,5 @@
   "confirmationsKey_other": "{{ count }} Confirmations",
   "uncleBlock_one": "Uncle block",
   "uncleBlock_other": "Uncle blocks",
-  "Is Uncle Block": "Is Uncle Block",
-  "True": "True"
+  "Uncle": "Uncle"
 }
