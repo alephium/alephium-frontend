@@ -49,7 +49,7 @@ export const useAssetsMetadataForCurrentNetwork = (assetIds: string[]) => {
 
 export const useAddressesAssets = (
   addressHashes: string[] = []
-): { data?: { addressHash: AddressHash; assets: (Asset | NFT)[] }[]; isPending: boolean } => {
+): { data: { addressHash: AddressHash; assets: (Asset | NFT)[] }[]; isPending: boolean } => {
   const currency = useAppSelector((state) => state.settings.fiatCurrency)
 
   const { data: addressesTokensBalancesWithoutAlph, isPending: areTokensBalancesPending } = useQueries({
@@ -144,7 +144,7 @@ export const useAddressesAssets = (
   )
 
   return {
-    data: !isPending ? addressesAssets : undefined,
+    data: addressesAssets,
     isPending
   }
 }
@@ -202,7 +202,7 @@ export const useAddressesFlattenAssets = (addressHashes: AddressHash[] = []) => 
 export const useAddressesFlattenKnownFungibleTokens = (addressHashes: AddressHash[] = []) => {
   const { data: addressesAssets, isPending } = useAddressesAssets(addressHashes)
   return {
-    data: deduplicateAssets(addressesAssets?.flatMap((a) => a.assets).filter(tokenIsKnownFungible)) as Asset[],
+    data: deduplicateAssets(addressesAssets?.flatMap((a) => a.assets)).filter(tokenIsKnownFungible),
     isPending
   }
 }
@@ -210,7 +210,7 @@ export const useAddressesFlattenKnownFungibleTokens = (addressHashes: AddressHas
 export const useAddressesFlattenListedTokens = (addressHashes: AddressHash[] = []) => {
   const { data: addressesAssets, isPending } = useAddressesAssets(addressHashes)
   return {
-    data: deduplicateAssets(addressesAssets?.flatMap((a) => a.assets).filter((t) => tokenIsListed(t))) as Asset[],
+    data: deduplicateAssets(addressesAssets?.flatMap((a) => a.assets)).filter(tokenIsListed),
     isPending
   }
 }
@@ -223,7 +223,7 @@ export const useAddressesFlattenUnknownTokens = (addressHashes: AddressHash[] = 
         (acc, a) => acc.concat(a.assets.filter(tokenIsUnknown).map((t) => ({ ...t, decimals: 0 }))),
         [] as UnknownAsset[]
       )
-    ) as UnknownAsset[],
+    ),
     isPending
   }
 }
@@ -279,10 +279,10 @@ export const useAddressesWithSomeBalance = () => {
 const aggregateAssetsWorth = (assets: (Asset | NFT)[]) =>
   assets.reduce((acc, a) => (tokenIsFungible(a) ? acc + (a.worth || 0) : acc), 0)
 
-const deduplicateAssets = (assets?: (Asset | NFT)[]) => {
-  if (!assets) return undefined
+const deduplicateAssets = <T extends Asset | NFT>(assets?: T[]) => {
+  if (!assets) return []
 
-  const uniqueAssetsMap = assets.reduce<{ [key: string]: Asset | NFT }>((acc, token) => {
+  const uniqueAssetsMap = assets.reduce<{ [key: string]: T }>((acc, token) => {
     const { id } = token
     if (acc[id]) {
       if (tokenIsFungible(token)) {
