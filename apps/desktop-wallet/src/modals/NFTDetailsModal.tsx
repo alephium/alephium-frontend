@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT, selectNFTById, useGetNFTCollectionDataQuery, useGetNFTCollectionMetadataQuery } from '@alephium/shared'
-import { skipToken } from '@reduxjs/toolkit/query'
+import { assetsQueries, NFT } from '@alephium/shared'
+import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -26,7 +26,6 @@ import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import Truncate from '@/components/Truncate'
-import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -37,10 +36,10 @@ interface NFTDetailsModalProps {
 
 const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
-  const nft = useAppSelector((s) => selectNFTById(s, nftId))
+  const { data: nft } = useQuery(assetsQueries.nfts.getNftMetadata(nftId))
 
-  const nftCollectionMetadata = useGetNFTCollectionMetadataQuery(nft?.collectionId ?? skipToken)
-  const nftCollectionData = useGetNFTCollectionDataQuery(nftCollectionMetadata.data?.collectionUri ?? skipToken)
+  const { data: nftCollectionMetadata } = useQuery(assetsQueries.nfts.getNftCollectionMetadata(nft?.collectionId))
+  const nftCollectionData = useQuery(assetsQueries.nfts.getNftCollectionData(nftCollectionMetadata?.collectionUri))
 
   if (!nft) return null
 

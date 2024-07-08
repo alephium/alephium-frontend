@@ -18,15 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AnyAction, Dispatch, ThunkDispatch } from '@reduxjs/toolkit'
 
-import { nftsApi } from '@/api'
+import { baseApi } from '@/api/baseApi'
 import fungibleTokensSlice from '@/store/assets/fungibleTokensSlice'
 import nftsSlice from '@/store/assets/nftsSlice'
 import clientsSlice from '@/store/clients/clientsSlice'
 import networkSlice from '@/store/network/networkSlice'
 import pricesHistorySlice from '@/store/prices/pricesHistorySlice'
 import pricesSlice from '@/store/prices/pricesSlice'
-import { ClientsState } from '@/types'
-import { FungibleTokensState, NFTsState } from '@/types/assets'
+import { ClientsState, FungibleTokensState, NFTsState } from '@/types'
 import { NetworkState } from '@/types/network'
 import { PricesHistoryState, PricesState } from '@/types/price'
 
@@ -37,10 +36,10 @@ export const sharedReducer = {
   [nftsSlice.name]: nftsSlice.reducer,
   [networkSlice.name]: networkSlice.reducer,
   [clientsSlice.name]: clientsSlice.reducer,
-  [nftsApi.reducerPath]: nftsApi.reducer
+  [baseApi.reducerPath]: baseApi.reducer
 }
 
-export const sharedMiddleware = [nftsApi.middleware]
+export const sharedMiddleware = [baseApi.middleware]
 
 // The following 2 types could have been extracted by creating a shared redux store. But since every app defines its own
 // store we end up with 2 Redux stores. This can be avoided by defining the 2 types manually.

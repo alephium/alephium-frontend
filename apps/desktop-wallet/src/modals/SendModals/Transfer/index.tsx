@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { client, fromHumanReadableAmount } from '@alephium/shared'
+import { AddressHash, client, fromHumanReadableAmount } from '@alephium/shared'
 import { SignTransferTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
 import { useTranslation } from 'react-i18next'
@@ -29,13 +29,14 @@ import TransferCheckTxModalContent from '@/modals/SendModals/Transfer/CheckTxMod
 import { store } from '@/storage/store'
 import { transactionSent } from '@/storage/transactions/transactionsActions'
 import { PartialTxData, TransferTxData, TxContext } from '@/types/transactions'
-import { getAddressAssetsAvailableBalance } from '@/utils/addresses'
+import { useAddressAssetsAvailableBalance } from '@/utils/addresses'
 import { getTransactionAssetAmounts } from '@/utils/transactions'
 
 type TransferTxModalProps = ConfigurableSendModalProps<PartialTxData<TransferTxData, 'fromAddress'>, TransferTxData>
 
 const SendModalTransfer = (props: TransferTxModalProps) => {
   const { t } = useTranslation()
+  const buildTransaction = useBuildTransaction(props.txData?.fromAddress.hash)
 
   return (
     <SendModal
@@ -53,43 +54,43 @@ const SendModalTransfer = (props: TransferTxModalProps) => {
 
 export default SendModalTransfer
 
-const buildTransaction = async (transactionData: TransferTxData, context: TxContext) => {
-  const { fromAddress, toAddress, assetAmounts, gasAmount, gasPrice, lockTime } = transactionData
-  const assetsWithAvailableBalance = getAddressAssetsAvailableBalance(fromAddress).filter(
-    (asset) => asset.availableBalance > 0
-  )
+const useBuildTransaction = (fromAddressHash: AddressHash) => {
+  const { data: assetsWithAvailableBalance = [] } = useAddressAssetsAvailableBalance(fromAddressHash)
 
-  const shouldSweep =
-    assetsWithAvailableBalance.length === assetAmounts.length &&
-    assetsWithAvailableBalance.every(
-      (asset) => assetAmounts.find((a) => a.id === asset.id)?.amount === asset.availableBalance
-    )
+  return async (transactionData: TransferTxData, context: TxContext) => {
+    const { fromAddress, toAddress, assetAmounts, gasAmount, gasPrice, lockTime } = transactionData
+    const shouldSweep =
+      assetsWithAvailableBalance.length === assetAmounts.length &&
+      assetsWithAvailableBalance.every(
+        (asset) => assetAmounts.find((a) => a.id === asset.id)?.amount === asset.availableBalance
+      )
 
-  context.setIsSweeping(shouldSweep)
+    context.setIsSweeping(shouldSweep)
 
-  if (shouldSweep) {
-    const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress, toAddress)
-    context.setSweepUnsignedTxs(unsignedTxs)
-    context.setFees(fees)
-  } else {
-    const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
+    if (shouldSweep) {
+      const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress, toAddress)
+      context.setSweepUnsignedTxs(unsignedTxs)
+      context.setFees(fees)
+    } else {
+      const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
 
-    const data = await client.node.transactions.postTransactionsBuild({
-      fromPublicKey: fromAddress.publicKey,
-      destinations: [
-        {
-          address: toAddress,
-          attoAlphAmount,
-          tokens,
-          lockTime: lockTime ? lockTime.getTime() : undefined
-        }
-      ],
-      gasAmount: gasAmount ? gasAmount : undefined,
-      gasPrice: gasPrice ? fromHumanReadableAmount(gasPrice).toString() : undefined
-    })
-    context.setUnsignedTransaction(data)
-    context.setUnsignedTxId(data.txId)
-    context.setFees(BigInt(data.gasAmount) * BigInt(data.gasPrice))
+      const data = await client.node.transactions.postTransactionsBuild({
+        fromPublicKey: fromAddress.publicKey,
+        destinations: [
+          {
+            address: toAddress,
+            attoAlphAmount,
+            tokens,
+            lockTime: lockTime ? lockTime.getTime() : undefined
+          }
+        ],
+        gasAmount: gasAmount ? gasAmount : undefined,
+        gasPrice: gasPrice ? fromHumanReadableAmount(gasPrice).toString() : undefined
+      })
+      context.setUnsignedTransaction(data)
+      context.setUnsignedTxId(data.txId)
+      context.setFees(BigInt(data.gasAmount) * BigInt(data.gasPrice))
+    }
   }
 }
 

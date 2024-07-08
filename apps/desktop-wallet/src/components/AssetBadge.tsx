@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, selectFungibleTokenById, selectNFTById } from '@alephium/shared'
+import { Asset, tokenIsFungible, tokenIsNonFungible } from '@alephium/shared'
 import styled, { css } from 'styled-components'
 
+import { useAssetsMetadataForCurrentNetwork } from '@/api/apiHooks'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
-import { useAppSelector } from '@/hooks/redux'
 
 interface AssetBadgeProps {
   assetId: Asset['id']
@@ -34,8 +34,10 @@ interface AssetBadgeProps {
 }
 
 const AssetBadge = ({ assetId, amount, simple, hideNftName, className }: AssetBadgeProps) => {
-  const fungibleToken = useAppSelector((s) => selectFungibleTokenById(s, assetId))
-  const nftInfo = useAppSelector((s) => selectNFTById(s, assetId))
+  const tokenInfo = useAssetsMetadataForCurrentNetwork([assetId]).data.flattenKnown[0]
+
+  const fungibleToken = tokenInfo && tokenIsFungible(tokenInfo) ? tokenInfo : undefined
+  const nftInfo = tokenInfo && tokenIsNonFungible(tokenInfo) ? tokenInfo : undefined
 
   return (
     <div

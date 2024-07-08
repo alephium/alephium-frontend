@@ -19,3 +19,4 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 export * from '@/redux'
 export * from '@/useInitializeClient'
 export * from '@/useInterval'
+export * from '@/useLoopedQueries'

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, formatAmountForDisplay } from '@alephium/shared'
+import { AddressHash, AddressTransaction, formatAmountForDisplay, isMempoolTx } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { colord } from 'colord'
 import { partition } from 'lodash'
@@ -28,7 +28,6 @@ import styled, { css } from 'styled-components'
 import AddressBadge from '@/components/AddressBadge'
 import Amount from '@/components/Amount'
 import AssetBadge from '@/components/AssetBadge'
-import Badge from '@/components/Badge'
 import HiddenLabel from '@/components/HiddenLabel'
 import IOList from '@/components/IOList'
 import Lock from '@/components/Lock'
@@ -38,8 +37,7 @@ import { useAppSelector } from '@/hooks/redux'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
-import { AddressTransaction } from '@/types/transactions'
-import { getTransactionInfo, isPendingTx } from '@/utils/transactions'
+import { useTransactionsInfo } from '@/utils/transactions'
 
 interface TransactionalInfoProps {
   transaction: AddressTransaction
@@ -60,8 +58,8 @@ const TransactionalInfo = ({
   const { addressHash: addressHashParam = '' } = useParams<{ addressHash: AddressHash }>()
   const addressHash = addressHashProp ?? addressHashParam
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
-  const { assets, direction, lockTime, infoType } = getTransactionInfo(tx, showInternalInflows)
-  const isPending = isPendingTx(tx)
+  const { assets, direction, lockTime, infoType } = useTransactionsInfo(tx, showInternalInflows)
+  const isPending = isMempoolTx(tx)
   const isFailedScriptTx = !isPending && !tx.scriptExecutionOk
   const { label, Icon, iconColor, iconBgColor } = useTransactionUI({ infoType, isFailedScriptTx })
 
@@ -69,13 +67,9 @@ const TransactionalInfo = ({
 
   if (!address) return null
 
-  const pendingDestinationAddress = isPending ? (
-    tx.type === 'contract' ? (
-      <Badge>{t('Smart contract')}</Badge>
-    ) : (
-      <AddressBadge truncate addressHash={direction === 'in' ? tx.fromAddress : tx.toAddress} withBorders />
-    )
-  ) : null
+  const pendingDestinationAddress = isPending && (
+    <AddressBadge truncate addressHash={tx.internalAddressHash} withBorders />
+  )
 
   const [knownAssets, unknownAssets] = partition(assets, (asset) => !!asset.symbol)
 
@@ -99,7 +93,7 @@ const TransactionalInfo = ({
           ))}
           {unknownAssets.length > 0 && <HiddenLabel text={` + ${unknownAssets} ${t('Unknown tokens')}`} />}
           <AssetTime>
-            <TimeSince timestamp={tx.timestamp} faded />
+            <TimeSince timestamp={isMempoolTx(tx) ? tx.lastSeen : tx.timestamp} faded />
           </AssetTime>
         </DirectionAndTime>
       </CellTime>
@@ -110,29 +104,29 @@ const TransactionalInfo = ({
           ))}
         </AssetBadges>
       </CellAssetBadges>
+      {!showInternalInflows && (
+        <CellAddress alignRight hasMargins>
+          <HiddenLabel text={direction === 'swap' ? t('between') : t('from')} />
+          {isPending ? (
+            <AddressBadgeStyled addressHash={tx.internalAddressHash} truncate disableA11y withBorders />
+          ) : direction === 'out' || direction === 'swap' ? (
+            <AddressBadgeStyled addressHash={addressHash} truncate disableA11y withBorders />
+          ) : (
+            direction === 'in' && (
+              <IOList
+                currentAddress={addressHash}
+                isOut={false}
+                outputs={tx.outputs}
+                inputs={(tx as explorer.Transaction).inputs}
+                timestamp={(tx as explorer.Transaction).timestamp}
+                truncate
+                disableA11y
+              />
+            )
+          )}
+        </CellAddress>
+      )}
       <DirectionAndAddresses stackVertically={showInternalInflows}>
-        {!showInternalInflows && (
-          <CellAddress alignRight hasMargins>
-            <HiddenLabel text={direction === 'swap' ? t('between') : t('from')} />
-            {isPending ? (
-              <AddressBadgeStyled addressHash={tx.fromAddress} truncate disableA11y withBorders />
-            ) : direction === 'out' || direction === 'swap' ? (
-              <AddressBadgeStyled addressHash={addressHash} truncate disableA11y withBorders />
-            ) : (
-              direction === 'in' && (
-                <IOList
-                  currentAddress={addressHash}
-                  isOut={false}
-                  outputs={tx.outputs}
-                  inputs={(tx as explorer.Transaction).inputs}
-                  timestamp={(tx as explorer.Transaction).timestamp}
-                  truncate
-                  disableA11y
-                />
-              )
-            )}
-          </CellAddress>
-        )}
         <CellDirection>
           <HiddenLabel text={direction === 'swap' ? t('and') : t('to')} />
           {!showInternalInflows ? (

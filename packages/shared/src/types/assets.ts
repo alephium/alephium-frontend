@@ -31,10 +31,19 @@ export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalanc
 
 export type FungibleToken = TokenInfo & { verified?: boolean }
 
+// TODO: Use "listed" instead of "verified", don't add useless verified field
+// but instead use type checking functions like isFungible, isNonFungible, isCategorized.
+export type ListedFungibleToken = TokenInfo & { logoURI: string }
+
+// TODO: Use "uncategorized" instead of "unknown"?
+export type UnknownToken = Partial<TokenInfo> & { id: string; decimals: 0 }
+
 export type Asset = TokenDisplayBalances &
   Optional<FungibleToken, 'symbol' | 'name'> & {
     worth?: number
   }
+
+export type UnknownAsset = TokenDisplayBalances & UnknownToken
 
 export type AddressFungibleToken = FungibleToken & TokenDisplayBalances
 

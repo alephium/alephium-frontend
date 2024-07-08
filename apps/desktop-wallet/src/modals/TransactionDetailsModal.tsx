@@ -16,12 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addApostrophes, AddressHash, NFT } from '@alephium/shared'
+import { addApostrophes, AddressConfirmedTransaction, AddressHash, NFT } from '@alephium/shared'
 import { partition } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import { useAddressesFlattenNfts } from '@/api/apiHooks'
 import ActionLink from '@/components/ActionLink'
 import AddressBadge from '@/components/AddressBadge'
 import Amount from '@/components/Amount'
@@ -39,9 +40,8 @@ import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import SideModal from '@/modals/SideModal'
 import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
-import { AddressConfirmedTransaction } from '@/types/transactions'
 import { formatDateForDisplay, openInWebBrowser } from '@/utils/misc'
-import { getTransactionInfo } from '@/utils/transactions'
+import { useTransactionsInfo } from '@/utils/transactions'
 
 interface TransactionDetailsModalProps {
   transaction: AddressConfirmedTransaction
@@ -54,9 +54,10 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
   const [selectedAddressHash, setSelectedAddressHash] = useState<AddressHash>()
   const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
-  const allNFTs = useAppSelector((s) => s.nfts.entities)
   const internalAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const { assets, direction, lockTime, infoType } = getTransactionInfo(transaction)
+  const { data: allNFTs } = useAddressesFlattenNfts(internalAddressHashes)
+
+  const { assets, direction, lockTime, infoType } = useTransactionsInfo(transaction)
   const { label, Icon, iconColor } = useTransactionUI({
     infoType,
     isFailedScriptTx: !transaction.scriptExecutionOk
@@ -72,8 +73,11 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
       : openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)
 
   const [tokensWithSymbol, tokensWithoutSymbol] = partition(assets, (asset) => !!asset.symbol)
-  const [nfts, unknownTokens] = partition(tokensWithoutSymbol, (token) => !!allNFTs[token.id])
-  const nftsData = nfts.map((nft) => allNFTs[nft.id] as NFT)
+  const [nfts, unknownTokens] = partition(tokensWithoutSymbol, (token) => !!allNFTs.find((nft) => nft.id === token.id))
+  const nftsData = nfts.flatMap((nft) => allNFTs.find((n) => nft.id === n.id) || [])
+
+  const currentAddressHash =
+    transaction.internalAddressHashes.inputAddresses[0] || transaction.internalAddressHashes.outputAddresses[0]
 
   return (
     <SideModal onClose={onClose} title={t('Transaction details')}>
@@ -110,7 +114,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               </FromIn>
               {(direction === 'in' || direction === 'out') && (
                 <IOList
-                  currentAddress={transaction.address.hash}
+                  currentAddress={currentAddressHash}
                   isOut={direction === 'out'}
                   outputs={transaction.outputs}
                   inputs={transaction.inputs}
@@ -120,11 +124,11 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               )}
               {direction === 'swap' && (
                 <>
-                  <AddressBadge addressHash={transaction.address.hash} truncate withBorders isShort />
+                  <AddressBadge addressHash={currentAddressHash} truncate withBorders isShort />
                   <FromIn>{t('and')}</FromIn>
                   <SwapPartnerAddress>
                     <IOList
-                      currentAddress={transaction.address.hash}
+                      currentAddress={currentAddressHash}
                       isOut={false}
                       outputs={transaction.outputs}
                       inputs={transaction.inputs}
@@ -152,12 +156,12 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               </DataList.Row>
               <DataList.Row label={t('From')}>
                 {direction === 'out' ? (
-                  <ActionLinkStyled onClick={() => handleShowAddress(transaction.address.hash)}>
-                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
+                  <ActionLinkStyled onClick={() => handleShowAddress(currentAddressHash)}>
+                    <AddressBadge addressHash={currentAddressHash} truncate withBorders />
                   </ActionLinkStyled>
                 ) : (
                   <IOList
-                    currentAddress={transaction.address.hash}
+                    currentAddress={currentAddressHash}
                     isOut={false}
                     outputs={transaction.outputs}
                     inputs={transaction.inputs}
@@ -168,15 +172,12 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               </DataList.Row>
               <DataList.Row label={t('To')}>
                 {direction !== 'out' ? (
-                  <ActionLinkStyled
-                    onClick={() => handleShowAddress(transaction.address.hash)}
-                    key={transaction.address.hash}
-                  >
-                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
+                  <ActionLinkStyled onClick={() => handleShowAddress(currentAddressHash)} key={currentAddressHash}>
+                    <AddressBadge addressHash={currentAddressHash} truncate withBorders />
                   </ActionLinkStyled>
                 ) : (
                   <IOList
-                    currentAddress={transaction.address.hash}
+                    currentAddress={currentAddressHash}
                     isOut={direction === 'out'}
                     outputs={transaction.outputs}
                     inputs={transaction.inputs}

@@ -23,23 +23,14 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesTotalWorth } from '@/api/apiHooks'
 import Amount from '@/components/Amount'
-import Button from '@/components/Button'
-import DeltaPercentage from '@/components/DeltaPercentage'
 import HistoricWorthChart, { historicWorthChartHeight } from '@/components/HistoricWorthChart'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import {
-  makeSelectAddresses,
-  makeSelectAddressesHaveHistoricBalances,
-  makeSelectAddressesTokensWorth,
-  selectAddressIds,
-  selectHaveHistoricBalancesLoaded,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
-import { ChartLength, chartLengths, DataPoint } from '@/types/chart'
-import { getAvailableBalance } from '@/utils/addresses'
+import { makeSelectAddresses, selectAddressIds } from '@/storage/addresses/addressesSelectors'
+import { ChartLength, DataPoint } from '@/types/chart'
 
 interface AmountsOverviewPanelProps {
   addressHash?: string
@@ -56,44 +47,34 @@ const chartAnimationVariants = {
 
 const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addressHash, children, showChart }) => {
   const { t } = useTranslation()
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const allAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const addressHashes = addressHash ?? allAddressHashes
   const selectAddresses = useMemo(makeSelectAddresses, [])
   const addresses = useAppSelector((s) => selectAddresses(s, addressHashes))
-  const network = useAppSelector((s) => s.network)
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
-  const isLoadingBalances = useAppSelector((s) => s.addresses.loadingBalances)
-  const isBalancesInitialized = useAppSelector((s) => s.addresses.balancesStatus === 'initialized')
 
-  const selectAddressesHaveHistoricBalances = useMemo(makeSelectAddressesHaveHistoricBalances, [])
-  const hasHistoricBalances = useAppSelector((s) => selectAddressesHaveHistoricBalances(s, addressHashes))
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const alphPrice = useAppSelector(selectAlphPrice)
-  const arePricesInitialized = useAppSelector((s) => s.tokenPrices.status === 'initialized')
-  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [chartLength, setChartLength] = useState<ChartLength>('1m')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
 
   const { date: hoveredDataPointDate, worth: hoveredDataPointWorth } = hoveredDataPoint ?? {
     date: undefined,
     worth: undefined
   }
-  const singleAddress = !!addressHash
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
-  const totalAvailableBalance = addresses.reduce((acc, address) => acc + getAvailableBalance(address), BigInt(0))
-  const totalLockedBalance = addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0))
   const totalAlphAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice) : undefined
 
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
-  const totalAmountWorth = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
+  const { data: totalAmountWorth } = useAddressesTotalWorth(allAddressHashes)
+
   const balanceInFiat = hoveredDataPointWorth ?? totalAmountWorth
 
-  const isOnline = network.status === 'online'
   const isHoveringChart = !!hoveredDataPointWorth
-  const showBalancesSkeletonLoader = !isBalancesInitialized || (!isBalancesInitialized && isLoadingBalances)
+  const showBalancesSkeletonLoader = false // TODO: Manage loading
 
   return (
     <UnlockedWalletPanelStyled className={className}>
@@ -106,29 +87,29 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
                   ? dayjs(hoveredDataPointDate).format('DD/MM/YYYY') + ' (ALPH only)'
                   : t('Value today')}
               </Today>
-              {!arePricesInitialized || showBalancesSkeletonLoader ? (
+              {showBalancesSkeletonLoader ? (
                 <SkeletonLoader height="32px" style={{ marginBottom: 7, marginTop: 7 }} />
               ) : (
                 <FiatTotalAmount tabIndex={0} value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
               )}
               {hoveredDataPointWorth !== undefined && (
                 <Opacity>
-                  <FiatDeltaPercentage>
-                    {!arePricesInitialized ||
-                    stateUninitialized ||
-                    !haveHistoricBalancesLoaded ||
-                    (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
-                      <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
-                    ) : hasHistoricBalances && worthInBeginningOfChart && hoveredDataPointWorth !== undefined ? (
-                      <DeltaPercentage initialValue={worthInBeginningOfChart} latestValue={hoveredDataPointWorth} />
-                    ) : null}
-                  </FiatDeltaPercentage>
+                  {/*
+                    <FiatDeltaPercentage>
+                      {!haveHistoricBalancesLoaded || (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
+                        <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
+                      ) : hasHistoricBalances && worthInBeginningOfChart && hoveredDataPointWorth !== undefined ? (
+                        <DeltaPercentage initialValue={worthInBeginningOfChart} latestValue={hoveredDataPointWorth} />
+                      ) : null}
+                    </FiatDeltaPercentage>
+                    */}
                 </Opacity>
               )}
 
               <ChartLengthBadges>
-                {chartLengths.map((length) =>
-                  !arePricesInitialized || stateUninitialized || !haveHistoricBalancesLoaded ? (
+                {/*
+                chartLengths.map((length) =>
+                  !haveHistoricBalancesLoaded ? (
                     <SkeletonLoader
                       key={length}
                       height="25px"
@@ -148,36 +129,10 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
                       </ButtonStyled>
                     )
                   )
-                )}
+                )
+                  */}
               </ChartLengthBadges>
             </BalancesColumn>
-            {!singleAddress && (
-              <>
-                <Divider />
-                <AvailableLockedBalancesColumn fadeOut={isHoveringChart}>
-                  <AvailableBalanceRow>
-                    <BalanceLabel tabIndex={0} role="representation">
-                      {t('Available')}
-                    </BalanceLabel>
-                    {showBalancesSkeletonLoader ? (
-                      <SkeletonLoader height="30px" />
-                    ) : (
-                      <AlphAmount tabIndex={0} value={isOnline ? totalAvailableBalance : undefined} />
-                    )}
-                  </AvailableBalanceRow>
-                  <LockedBalanceRow>
-                    <BalanceLabel tabIndex={0} role="representation">
-                      {t('Locked')}
-                    </BalanceLabel>
-                    {showBalancesSkeletonLoader ? (
-                      <SkeletonLoader height="30px" />
-                    ) : (
-                      <AlphAmount tabIndex={0} value={isOnline ? totalLockedBalance : undefined} />
-                    )}
-                  </LockedBalanceRow>
-                </AvailableLockedBalancesColumn>
-              </>
-            )}
           </BalancesRow>
         </Balances>
         {children && <RightColumnContent fadeOut={isHoveringChart}>{children}</RightColumnContent>}
@@ -185,9 +140,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
       <ChartOuterContainer
         variants={chartAnimationVariants}
-        animate={
-          showChart && hasHistoricBalances && !discreetMode && totalAlphAmountWorth !== undefined ? 'shown' : 'hidden'
-        }
+        animate={showChart && !discreetMode && totalAlphAmountWorth !== undefined ? 'shown' : 'hidden'}
       >
         <ChartInnerContainer animate={{ opacity: discreetMode ? 0 : 1 }} transition={{ duration: 0.5 }}>
           <HistoricWorthChart
@@ -249,44 +202,9 @@ const BalancesColumn = styled(Opacity)`
   min-width: 200px;
 `
 
-const AvailableLockedBalancesColumn = styled(BalancesColumn)`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`
-
-const Divider = styled.div`
-  width: 1px;
-  background-color: ${({ theme }) => theme.border.secondary};
-  margin: 17px 55px;
-`
-
-const AvailableBalanceRow = styled.div`
-  margin-bottom: 20px;
-`
-const LockedBalanceRow = styled.div``
-
 const FiatTotalAmount = styled(Amount)`
   font-size: 34px;
   font-weight: var(--fontWeight-bold);
-`
-
-const FiatDeltaPercentage = styled.div`
-  font-size: 18px;
-  margin-top: 5px;
-`
-
-const AlphAmount = styled(Amount)`
-  color: ${({ theme }) => theme.font.primary};
-  font-size: 21px;
-  font-weight: var(--fontWeight-semiBold);
-`
-
-const BalanceLabel = styled.label`
-  color: ${({ theme }) => theme.font.tertiary};
-  font-size: 12px;
-  display: block;
-  margin-bottom: 3px;
 `
 
 const Today = styled.div`
@@ -301,19 +219,19 @@ const ChartLengthBadges = styled.div`
   gap: 10px;
 `
 
-const ButtonStyled = styled(Button)<{ isActive: boolean }>`
-  color: ${({ theme }) => theme.font.primary};
-  opacity: ${({ isActive }) => (isActive ? 1 : 0.4)};
-  border-color: ${({ theme }) => theme.font.primary};
-  padding: 3px;
-  height: auto;
-  min-width: 32px;
-  border-radius: var(--radius-small);
+// const ButtonStyled = styled(Button)<{ isActive: boolean }>`
+//   color: ${({ theme }) => theme.font.primary};
+//   opacity: ${({ isActive }) => (isActive ? 1 : 0.4)};
+//   border-color: ${({ theme }) => theme.font.primary};
+//   padding: 3px;
+//   height: auto;
+//   min-width: 32px;
+//   border-radius: var(--radius-small);
 
-  &:hover {
-    border-color: ${({ theme }) => theme.font.tertiary};
-  }
-`
+//   &:hover {
+//     border-color: ${({ theme }) => theme.font.tertiary};
+//   }
+// `
 
 const ChartOuterContainer = styled(motion.div)`
   display: flex;

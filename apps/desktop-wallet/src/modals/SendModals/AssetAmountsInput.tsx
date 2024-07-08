@@ -16,14 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
+import {
+  Asset,
+  fromHumanReadableAmount,
+  getNumberOfDecimals,
+  toHumanReadableAmount,
+  tokenIsFungible
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { MoreVertical, Plus } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import { useAddressAssets } from '@/api/apiHooks'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -36,11 +43,9 @@ import Input from '@/components/Inputs/Input'
 import { SelectContainer, SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAsset from '@/components/Inputs/SelectOptionAsset'
 import Truncate from '@/components/Truncate'
-import { useAppSelector } from '@/hooks/redux'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
 import InputsSection from '@/modals/SendModals/InputsSection'
-import { makeSelectAddressesTokens } from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
 import { AssetAmountInputType } from '@/types/assets'
 import { onEnterOrSpace } from '@/utils/misc'
@@ -63,8 +68,8 @@ const AssetAmountsInput = ({
 }: AssetAmountsInputProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
-  const assets = useAppSelector((state) => selectAddressesTokens(state, address.hash))
+  const { data: assets = [] } = useAddressAssets(address.hash)
+
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const selectedValueRef = useRef<HTMLDivElement>(null)
 
@@ -73,7 +78,7 @@ const AssetAmountsInput = ({
   const [errors, setErrors] = useState<string[]>([])
 
   const selectedAssetId = assetAmounts[selectedAssetRowIndex]?.id
-  const selectedAsset = assets.find((asset) => asset.id === selectedAssetId)
+  const selectedAsset = assets?.find((asset) => asset.id === selectedAssetId)
   const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
   const selectedAssetIds = assetAmounts.map(({ id }) => id)
   const remainingAvailableAssets = assets.filter(
@@ -82,7 +87,7 @@ const AssetAmountsInput = ({
   const disabled = remainingAvailableAssets.length === 0
   const availableAssetOptions: SelectOption<Asset['id']>[] = remainingAvailableAssets.map((asset) => ({
     value: asset.id,
-    label: asset.name ?? asset.id
+    label: asset.name || asset.id
   }))
   const canAddMultipleAssets = allowMultiple && assetAmounts.length < assets.length
 
@@ -171,7 +176,7 @@ const AssetAmountsInput = ({
   }
 
   useEffect(() => {
-    const addressTokenIds = address.tokens.map((token) => token.tokenId)
+    const addressTokenIds = assets.map((token) => token.id)
     const filteredAssetAmounts = assetAmounts.filter(
       (asset) => addressTokenIds.includes(asset.id) || asset.id === ALPH.id
     )
@@ -204,7 +209,7 @@ const AssetAmountsInput = ({
     >
       <AssetAmounts ref={selectedValueRef}>
         {assetAmounts.map(({ id, amountInput = '' }, index) => {
-          const asset = assets.find((asset) => asset.id === id)
+          const asset = assets.filter(tokenIsFungible).find((asset) => asset.id === id)
           if (!asset) return
 
           const availableAmount = asset.balance - asset.lockedBalance

@@ -16,16 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useMemo } from 'react'
+import { tokenIsFungible, tokenIsUnknown } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressAssets } from '@/api/apiHooks'
 import AddressBadge from '@/components/AddressBadge'
 import AssetBadge from '@/components/AssetBadge'
 import Badge from '@/components/Badge'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
-import { useAppSelector } from '@/hooks/redux'
-import { makeSelectAddressesTokens } from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
 
 interface SelectOptionAddressProps {
@@ -36,11 +35,11 @@ interface SelectOptionAddressProps {
 
 const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAddressProps) => {
   const { t } = useTranslation()
-  const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
-  const assets = useAppSelector((s) => selectAddressesTokens(s, address.hash))
+  const { data: addressTokens } = useAddressAssets(address.hash)
 
-  const knownAssetsWithBalance = assets.filter((a) => a.balance > 0 && a.name)
-  const unknownAssetsNb = assets.filter((a) => a.balance > 0 && !a.name).length
+  // Using 2 filters allow us to use typeguards properly (no casting required)
+  const knownAssetsWithBalance = addressTokens.filter(tokenIsFungible).filter((t) => t.balance > 0)
+  const unknownAssetsNb = addressTokens.filter(tokenIsUnknown).filter((t) => t.balance > 0).length
   const showAssetList = knownAssetsWithBalance.length > 0 || unknownAssetsNb > 0
 
   return (

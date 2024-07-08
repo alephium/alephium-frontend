@@ -26,10 +26,6 @@ import globalSlice from '@/storage/global/globalSlice'
 import snackbarSlice from '@/storage/global/snackbarSlice'
 import { networkListenerMiddleware } from '@/storage/settings/networkMiddleware'
 import settingsSlice, { settingsListenerMiddleware } from '@/storage/settings/settingsSlice'
-import confirmedTransactionsSlice from '@/storage/transactions/confirmedTransactionsSlice'
-import pendingTransactionsSlice, {
-  pendingTransactionsListenerMiddleware
-} from '@/storage/transactions/pendingTransactionsSlice'
 import activeWalletSlice from '@/storage/wallets/activeWalletSlice'
 
 export const store = configureStore({
@@ -40,15 +36,12 @@ export const store = configureStore({
     [contactsSlice.name]: contactsSlice.reducer,
     [settingsSlice.name]: settingsSlice.reducer,
     [addressesSlice.name]: addressesSlice.reducer,
-    [confirmedTransactionsSlice.name]: confirmedTransactionsSlice.reducer,
-    [pendingTransactionsSlice.name]: pendingTransactionsSlice.reducer,
     [snackbarSlice.name]: snackbarSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(settingsListenerMiddleware.middleware)
       .concat(networkListenerMiddleware.middleware)
-      .concat(pendingTransactionsListenerMiddleware.middleware)
       .concat(...sharedMiddleware)
 })
 
