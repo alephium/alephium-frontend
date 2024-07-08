@@ -17,6 +17,9 @@ patchedDependencies:
   '@metamask/scure-bip39@2.1.1':
     hash: 4mkpybhyrxbheknii5rno7c5b4
     path: patches/@metamask__scure-bip39@2.1.1.patch
+  p-queue@8.0.1:
+    hash: b5gy7qcmow75ofj7fhld5fsmqq
+    path: patches/p-queue@8.0.1.patch
   react-native-aes-crypto@2.1.1:
     hash: sm7rpv6bikakdvmsl6ekayqewu
     path: patches/react-native-aes-crypto@2.1.1.patch
@@ -1079,7 +1082,7 @@ importers:
         version: 4.17.21
       p-queue:
         specifier: ^8.0.1
-        version: 8.0.1
+        version: 8.0.1(patch_hash=b5gy7qcmow75ofj7fhld5fsmqq)
       posthog-js:
         specifier: ^1.52.0
         version: 1.97.1
@@ -20589,7 +20592,7 @@ snapshots:
     dependencies:
       aggregate-error: 3.1.0
 
-  p-queue@8.0.1:
+  p-queue@8.0.1(patch_hash=b5gy7qcmow75ofj7fhld5fsmqq):
     dependencies:
       eventemitter3: 5.0.1
       p-timeout: 6.1.2

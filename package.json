@@ -35,7 +35,8 @@
     "patchedDependencies": {
       "react-native-aes-crypto@2.1.1": "patches/react-native-aes-crypto@2.1.1.patch",
       "react-native-background-actions@3.0.1": "patches/react-native-background-actions@3.0.1.patch",
-      "@metamask/scure-bip39@2.1.1": "patches/@metamask__scure-bip39@2.1.1.patch"
+      "@metamask/scure-bip39@2.1.1": "patches/@metamask__scure-bip39@2.1.1.patch",
+      "p-queue@8.0.1": "patches/p-queue@8.0.1.patch"
     },
     "overrides": {
       "ip@<=2.0.0": ">=2.0.1",
