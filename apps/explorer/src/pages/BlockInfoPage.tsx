@@ -143,7 +143,7 @@ const BlockInfoPage = () => {
           <InlineErrorMessage message={t('An error occured while fetching transactions')} />
         ) : (
           <>
-            <SecondaryTitle>Transactions</SecondaryTitle>
+            <SecondaryTitle>{t('Transactions')}</SecondaryTitle>
             <Table main hasDetails scrollable isLoading={txLoading}>
               {txList && txList && (
                 <>
