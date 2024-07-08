@@ -97,8 +97,9 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
     const video = document.createElement('video')
     const url = URL.createObjectURL(blob)
     video.src = url
-    video.muted = true
+    video.muted = true // Required for autoplay in some browsers
     video.crossOrigin = 'Anonymous'
+    video.playsInline = true // Required for iOS to allow autoplay
 
     const handleLoadedData = () => {
       if (video.videoWidth === 0 || video.videoHeight === 0) {
@@ -118,17 +119,18 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
       }
 
       const drawFrame = () => {
-        context.drawImage(video, 0, 0, canvas.width, canvas.height)
-        canvas.toBlob((thumbnailBlob) => {
-          if (thumbnailBlob) {
-            resolve(thumbnailBlob)
-          } else {
-            reject(new Error('Failed to create thumbnail blob'))
-          }
-
-          video.remove()
-          URL.revokeObjectURL(url)
-        })
+        setTimeout(() => {
+          context.drawImage(video, 0, 0, canvas.width, canvas.height)
+          canvas.toBlob((thumbnailBlob) => {
+            if (thumbnailBlob) {
+              resolve(thumbnailBlob)
+            } else {
+              reject(new Error('Failed to create thumbnail blob'))
+            }
+            video.remove()
+            URL.revokeObjectURL(url)
+          })
+        }, 100) // Adding a small delay to ensure the frame is ready (mobile)
       }
 
       requestAnimationFrame(() => {
@@ -140,7 +142,7 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
       if (video.readyState >= 2) {
         handleLoadedData()
       } else {
-        video.currentTime = 0
+        video.currentTime = 0 // Seek near the beginning
         video.addEventListener('seeked', handleLoadedData, { once: true })
       }
     })
@@ -152,7 +154,11 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
 
 export const getOrCreateThumbnail = async (videoUrl: string): Promise<Blob> => {
   if (thumbnailBlobCache[videoUrl]) {
-    return Promise.resolve(thumbnailBlobCache[videoUrl]!)
+    const blob = thumbnailBlobCache[videoUrl]!
+    const isBlank = await isBlankImage(blob)
+    if (!isBlank) {
+      return blob
+    }
   }
 
   if (!thumbnailGenerationPromises[videoUrl]) {
@@ -162,10 +168,50 @@ export const getOrCreateThumbnail = async (videoUrl: string): Promise<Blob> => {
         thumbnailBlobCache[videoUrl] = thumbnailBlob
         return thumbnailBlob
       })
-      .finally(() => {
+      .catch((error) => {
+        console.error('Error generating thumbnail:', error)
         delete thumbnailGenerationPromises[videoUrl]
+        throw error
       })
   }
 
   return thumbnailGenerationPromises[videoUrl]!
 }
+
+export const isBlankImage = (blob: Blob): Promise<boolean> =>
+  new Promise((resolve, reject) => {
+    const img = document.createElement('img')
+    const url = URL.createObjectURL(blob)
+
+    img.src = url
+    img.onload = () => {
+      const canvas = document.createElement('canvas')
+      canvas.width = img.width
+      canvas.height = img.height
+      const context = canvas.getContext('2d')
+
+      if (context) {
+        context.drawImage(img, 0, 0, canvas.width, canvas.height)
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
+        const { data } = imageData
+
+        let isBlank = true
+        for (let i = 0; i < data.length; i += 4) {
+          if (data[i] !== 0 || data[i + 1] !== 0 || data[i + 2] !== 0 || data[i + 3] !== 0) {
+            isBlank = false
+            break
+          }
+        }
+
+        resolve(isBlank)
+      } else {
+        reject(new Error('Failed to get canvas context'))
+      }
+
+      URL.revokeObjectURL(url)
+    }
+
+    img.onerror = () => {
+      reject(new Error('Failed to load image for blank check'))
+    }
+  })
