@@ -14,7 +14,11 @@
         "unlockScript": "00026e6e0839c322d59b54feb6501b207b8439ada411839268a5842e298acf8608d5",
         "txHashRef": "1bd6040d255021cb4a551644f343344a2f1f0f32093244cbb273f6cdef55567f",
         "address": "16sR3EMn2BdFgENRhz6N2TJ78nfaADdv3prKXUQMaB6m3",
-        "attoAlphAmount": "100000000000000000000"
+        "attoAlphAmount": "100000000000000000000",
+        "fixedOutput": false,
+        "contractInput": false,
+        "fixedOutput": false,
+        "contractInput": false
       }
     ],
     "outputs": [
@@ -24,7 +28,9 @@
         "attoAlphAmount": "409200570768056060",
         "address": "1D3cMU5kaHmm8rnhF5ZErqErnRgp5xopDheubHVUizWA2",
         "spent": "4d8e564e1731ecc09e167211c25da7b91a3fab8096a951a0df3b7ce1549d6cd9",
-        "type": "transfer"
+        "type": "transfer",
+        "fixedOutput": false,
+        "contractInput": false
       },
       {
         "hint": 269352581,
@@ -32,11 +38,15 @@
         "attoAlphAmount": "50000000000000000000",
         "address": "16sR3EMn2BdFgENRhz6N2TJ78nfaADdv3prKXUQMaB6m3",
         "spent": "f823bcb78fbbc6c18dea882fe697cb8be9c5e2cb020e65670041dbe39b80c3d8",
-        "type": "transfer"
+        "type": "transfer",
+        "fixedOutput": false,
+        "contractInput": false
       }
     ],
     "gasAmount": 68060,
-    "gasPrice": "100000000000"
+    "gasPrice": "100000000000",
+    "version": 1,
+    "networkId": 0
   },
   "twoInputsOneOutput": {
     "coinbase": false,
@@ -53,7 +63,9 @@
         "unlockScript": "00026e6e0839c322d59b54feb6501b207b8439ada411839268a5842e298acf8608d5",
         "txHashRef": "1bd6040d255021cb4a551644f343344a2f1f0f32093244cbb273f6cdef55567f",
         "address": "16sR3EMn2BdFgENRhz6N2TJ78nfaADdv3prKXUQMaB6m3",
-        "attoAlphAmount": "100000000000000000000"
+        "attoAlphAmount": "100000000000000000000",
+        "fixedOutput": false,
+        "contractInput": false
       },
       {
         "outputRef": {
@@ -63,7 +75,9 @@
         "unlockScript": "00026e6e0839c322d59b54feb6501b207b8439ada411839268a5842e298acf8608d5",
         "txHashRef": "1bd6040d255021cb4a551644f343344a2f1f0f32093244cbb273f6cdef55567f",
         "address": "16sR3EMn2BdFgENRhz6N2TJ78nfaADdv3prKXUQMaB6m3",
-        "attoAlphAmount": "100000000000000000000"
+        "attoAlphAmount": "100000000000000000000",
+        "fixedOutput": false,
+        "contractInput": false
       }
     ],
     "outputs": [
@@ -73,7 +87,9 @@
         "attoAlphAmount": "150000000000000000000",
         "address": "1D3cMU5kaHmm8rnhF5ZErqErnRgp5xopDheubHVUizWA2",
         "spent": "4d8e564e1731ecc09e167211c25da7b91a3fab8096a951a0df3b7ce1549d6cd9",
-        "type": "transfer"
+        "type": "transfer",
+        "fixedOutput": false,
+        "contractInput": false
       },
       {
         "hint": 269352581,
@@ -81,11 +97,15 @@
         "attoAlphAmount": "50000000000000000000",
         "address": "16sR3EMn2BdFgENRhz6N2TJ78nfaADdv3prKXUQMaB6m3",
         "spent": "f823bcb78fbbc6c18dea882fe697cb8be9c5e2cb020e65670041dbe39b80c3d8",
-        "type": "transfer"
+        "type": "transfer",
+        "fixedOutput": false,
+        "contractInput": false
       }
     ],
     "gasAmount": 68060,
-    "gasPrice": "100000000000"
+    "gasPrice": "100000000000",
+    "version": 1,
+    "networkId": 0
   },
   "twoInputsZeroOutput": {
     "coinbase": false,
@@ -102,7 +122,9 @@
         "unlockScript": "00026e6e0839c322d59b54feb6501b207b8439ada411839268a5842e298acf8608d5",
         "txHashRef": "1bd6040d255021cb4a551644f343344a2f1f0f32093244cbb273f6cdef55567f",
         "address": "16sR3EMn2BdFgENRhz6N2TJ78nfaADdv3prKXUQMaB6m3",
-        "attoAlphAmount": "100000000000000000000"
+        "attoAlphAmount": "100000000000000000000",
+        "fixedOutput": false,
+        "contractInput": false
       },
       {
         "outputRef": {
@@ -112,7 +134,9 @@
         "unlockScript": "00026e6e0839c322d59b54feb6501b207b8439ada411839268a5842e298acf8608d5",
         "txHashRef": "1bd6040d255021cb4a551644f343344a2f1f0f32093244cbb273f6cdef55567f",
         "address": "16sR3EMn2BdFgENRhz6N2TJ78nfaADdv3prKXUQMaB6m3",
-        "attoAlphAmount": "100000000000000000000"
+        "attoAlphAmount": "100000000000000000000",
+        "fixedOutput": false,
+        "contractInput": false
       }
     ],
     "outputs": [
@@ -122,7 +146,9 @@
         "attoAlphAmount": "150000000000000000000",
         "address": "1D3cMU5kaHmm8rnhF5ZErqErnRgp5xopDheubHVUizWA2",
         "spent": "4d8e564e1731ecc09e167211c25da7b91a3fab8096a951a0df3b7ce1549d6cd9",
-        "type": "transfer"
+        "type": "transfer",
+        "fixedOutput": false,
+        "contractInput": false
       },
       {
         "hint": 269352581,
@@ -130,11 +156,15 @@
         "attoAlphAmount": "50000000000000000000",
         "address": "1D3cMU5kaHmm8rnhF5ZErqErnRgp5xopDheubHVUizWA3",
         "spent": "f823bcb78fbbc6c18dea882fe697cb8be9c5e2cb020e65670041dbe39b80c3d8",
-        "type": "transfer"
+        "type": "transfer",
+        "fixedOutput": false,
+        "contractInput": false
       }
     ],
     "gasAmount": 68060,
-    "gasPrice": "100000000000"
+    "gasPrice": "100000000000",
+    "version": 1,
+    "networkId": 0
   },
   "missingInputs": {
     "coinbase": false,
@@ -149,7 +179,9 @@
         "attoAlphAmount": "150000000000000000000",
         "address": "1D3cMU5kaHmm8rnhF5ZErqErnRgp5xopDheubHVUizWA2",
         "spent": "4d8e564e1731ecc09e167211c25da7b91a3fab8096a951a0df3b7ce1549d6cd9",
-        "type": "transfer"
+        "type": "transfer",
+        "fixedOutput": false,
+        "contractInput": false
       },
       {
         "hint": 269352581,
@@ -157,11 +189,15 @@
         "attoAlphAmount": "50000000000000000000",
         "address": "1D3cMU5kaHmm8rnhF5ZErqErnRgp5xopDheubHVUizWA3",
         "spent": "f823bcb78fbbc6c18dea882fe697cb8be9c5e2cb020e65670041dbe39b80c3d8",
-        "type": "transfer"
+        "type": "transfer",
+        "fixedOutput": false,
+        "contractInput": false
       }
     ],
     "gasAmount": 68060,
-    "gasPrice": "100000000000"
+    "gasPrice": "100000000000",
+    "version": 1,
+    "networkId": 0
   },
   "missingOutputs": {
     "coinbase": false,
@@ -178,7 +214,9 @@
         "unlockScript": "00026e6e0839c322d59b54feb6501b207b8439ada411839268a5842e298acf8608d5",
         "txHashRef": "1bd6040d255021cb4a551644f343344a2f1f0f32093244cbb273f6cdef55567f",
         "address": "16sR3EMn2BdFgENRhz6N2TJ78nfaADdv3prKXUQMaB6m3",
-        "attoAlphAmount": "100000000000000000000"
+        "attoAlphAmount": "100000000000000000000",
+        "fixedOutput": false,
+        "contractInput": false
       },
       {
         "outputRef": {
@@ -188,10 +226,14 @@
         "unlockScript": "00026e6e0839c322d59b54feb6501b207b8439ada411839268a5842e298acf8608d5",
         "txHashRef": "1bd6040d255021cb4a551644f343344a2f1f0f32093244cbb273f6cdef55567f",
         "address": "16sR3EMn2BdFgENRhz6N2TJ78nfaADdv3prKXUQMaB6m3",
-        "attoAlphAmount": "100000000000000000000"
+        "attoAlphAmount": "100000000000000000000",
+        "fixedOutput": false,
+        "contractInput": false
       }
     ],
     "gasAmount": 68060,
-    "gasPrice": "100000000000"
+    "gasPrice": "100000000000",
+    "version": 1,
+    "networkId": 0
   }
 }
