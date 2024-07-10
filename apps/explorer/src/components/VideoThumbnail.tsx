@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { RiPlayCircleLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
@@ -30,7 +31,8 @@ interface VideoThumbnailProps {
 }
 
 const VideoThumbnail = ({ videoUrl, showPlayIcon, playOnHover }: VideoThumbnailProps) => {
-  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null)
+  const { t } = useTranslation()
+  const [thumbnailUrl, setThumbnailUrl] = useState<string>()
   const [isHovered, setIsHovered] = useState(false)
 
   useEffect(() => {
@@ -68,12 +70,12 @@ const VideoThumbnail = ({ videoUrl, showPlayIcon, playOnHover }: VideoThumbnailP
   }
 
   return (
-    <ThumbnailContainer onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
+    <FullSizeContainer onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave}>
       {thumbnailUrl ? (
-        <ThumbnailWithOverlay>
+        <FullSizeContainer>
           <Thumbnail
             src={thumbnailUrl}
-            alt="Video Thumbnail"
+            alt={t('Video thumbnail')}
             style={{ filter: isHovered ? 'blur(30px)' : undefined }}
           />
           {showPlayIcon && <PlayIcon />}
@@ -82,27 +84,19 @@ const VideoThumbnail = ({ videoUrl, showPlayIcon, playOnHover }: VideoThumbnailP
               <video src={videoUrl} autoPlay loop width="100%" height="100%" preload="auto" muted playsInline />
             </VideoContainer>
           )}
-        </ThumbnailWithOverlay>
+        </FullSizeContainer>
       ) : (
         <LoadingSpinner />
       )}
-    </ThumbnailContainer>
+    </FullSizeContainer>
   )
 }
 
 export default VideoThumbnail
 
-const ThumbnailContainer = styled.div`
+const FullSizeContainer = styled.div`
   height: 100%;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
-
-const ThumbnailWithOverlay = styled.div`
-  width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -15,6 +15,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+
 const DB_NAME = 'VideoThumbnailsDB'
 const STORE_NAME = 'thumbnails'
 
@@ -71,8 +72,6 @@ export const loadThumbnailFromDB = async (videoUrl: string): Promise<Blob | null
 }
 
 const videoBlobCache: Record<string, Promise<Blob> | undefined> = {}
-const thumbnailGenerationPromises: Record<string, Promise<Blob> | undefined> = {}
-const thumbnailBlobCache: Record<string, Blob | undefined> = {}
 
 export const fetchVideoBlob = async (videoUrl: string): Promise<Blob> => {
   if (!videoBlobCache[videoUrl]) {
@@ -156,12 +155,15 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
 
 export const isValidThumbnail = (blob: Blob): boolean => blob.size > 17000 // Basic test. Approx size of blank thumbnail.
 
+// We cache the thumbnails generation promises to avoid starting to generate new thumbnails when they are already being processed.
+const thumbnailGenerationPromises: Record<string, Promise<Blob> | undefined> = {}
+const thumbnailBlobCache: Record<string, Blob | undefined> = {}
+
 export const getOrCreateThumbnail = async (videoUrl: string): Promise<Blob> => {
-  if (thumbnailBlobCache[videoUrl]) {
-    const blob = thumbnailBlobCache[videoUrl]!
-    if (isValidThumbnail(blob)) {
-      return blob
-    }
+  const blob = thumbnailBlobCache[videoUrl]
+
+  if (blob && isValidThumbnail(blob)) {
+    return blob
   }
 
   if (!thumbnailGenerationPromises[videoUrl]) {

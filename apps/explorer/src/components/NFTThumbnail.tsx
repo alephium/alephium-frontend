@@ -26,7 +26,7 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 import VideoThumbnail from '@/components/VideoThumbnail'
 
 interface NFTThumbnailProps {
-  src: string
+  src?: string
   size?: number
   border?: boolean
   borderRadius?: number

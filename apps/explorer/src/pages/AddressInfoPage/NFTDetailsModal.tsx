@@ -48,7 +48,9 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
             {nft.file?.name && <NFTName>{nft.file.name}</NFTName>}
             <HighlightedHash text={nft.id} middleEllipsis maxWidth="200px" textToCopy={nft.id} />
           </Header>
-          <NFTImageContainer>{nft.file?.image && <NFTThumbnail src={nft.file.image} autoPlay />}</NFTImageContainer>
+          <NFTImageContainer>
+            <NFTThumbnail src={nft.file?.image} autoPlay />
+          </NFTImageContainer>
 
           <MetadataTablesContainer>
             {nft.file ? (
