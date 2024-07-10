@@ -41,6 +41,7 @@
   ],
   "dependencies": {
     "@tanstack/react-query": "5.45.0",
+    "@tanstack/react-query-devtools": "^5.50.1",
     "electron-context-menu": "^3.1.2",
     "electron-is-dev": "^2.0.0",
     "electron-updater": "^5.3.0"
