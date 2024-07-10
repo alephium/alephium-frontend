@@ -56,6 +56,9 @@ importers:
 
   apps/desktop-wallet:
     dependencies:
+      '@tanstack/react-query':
+        specifier: 5.45.0
+        version: 5.45.0(react@18.2.0)
       electron-context-menu:
         specifier: ^3.1.2
         version: 3.6.1
