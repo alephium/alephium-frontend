@@ -26,7 +26,7 @@ import {
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import i18n from '@/i18n'
-import { contactDeletionFailed, contactStorageFailed, syncAddressesData } from '@/storage/addresses/addressesActions'
+import { contactDeletionFailed, contactStorageFailed } from '@/storage/addresses/addressesActions'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import { walletConnectPairingFailed, walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
 import {
@@ -75,11 +75,6 @@ const snackbarSlice = createSlice({
     builder
       .addCase(snackbarDisplayTimeExpired, (state) => {
         if (state.messages.length > 0) state.messages.shift()
-      })
-      .addCase(syncAddressesData.rejected, (state, action) => {
-        const message = action.payload
-
-        if (message) queueMessage(state, message)
       })
       .addCase(apiClientInitSucceeded, (state, action) => {
         state.offlineMessageWasVisibleOnce = false

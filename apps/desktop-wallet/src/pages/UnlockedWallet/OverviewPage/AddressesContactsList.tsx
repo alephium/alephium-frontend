@@ -19,27 +19,22 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
+import { useAddressesWithSomeBalance, useAddressesWorth } from '@/api/apiHooks'
 import ActionLink from '@/components/ActionLink'
 import AddressRow from '@/components/AddressRow'
 import Amount from '@/components/Amount'
 import FocusableContent from '@/components/FocusableContent'
-import SkeletonLoader from '@/components/SkeletonLoader'
 import { ExpandableTable, ExpandRow, TableHeader } from '@/components/Table'
 import TableCellAmount from '@/components/TableCellAmount'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
-import {
-  makeSelectAddressesTokensWorth,
-  selectAllAddresses,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
 
 interface AddressesContactsListProps {
@@ -78,8 +73,7 @@ const AddressesContactsList = ({ className, maxHeightInPx }: AddressesContactsLi
 }
 
 const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: AddressListProps) => {
-  const addresses = useAppSelector(selectAllAddresses)
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
+  const { data: addresses } = useAddressesWithSomeBalance()
 
   const [selectedAddress, setSelectedAddress] = useState<Address>()
 
@@ -94,11 +88,7 @@ const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: Addr
         {addresses.map((address) => (
           <AddressRow address={address} onClick={handleRowClick} key={address.hash}>
             <TableCellAmount>
-              {stateUninitialized ? (
-                <SkeletonLoader height="15.5px" width="50%" />
-              ) : (
-                <AddressWorth addressHash={address.hash} />
-              )}
+              <AddressWorth addressHash={address.hash} />
             </TableCellAmount>
           </AddressRow>
         ))}
@@ -116,9 +106,10 @@ const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: Addr
 }
 
 const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
-  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
+  const { data: addressesWorth } = useAddressesWorth([addressHash])
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
+
+  const balanceInFiat = addressesWorth?.[0]?.worth
 
   return <AmountStyled value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} tabIndex={0} />
 }

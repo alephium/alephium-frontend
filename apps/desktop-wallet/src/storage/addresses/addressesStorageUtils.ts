@@ -22,8 +22,7 @@ import {
   addressSettingsSaved,
   defaultAddressChanged,
   newAddressesSaved,
-  syncAddressesAlphHistoricBalances,
-  syncAddressesData
+  syncAddressesAlphHistoricBalances
 } from '@/storage/addresses/addressesActions'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { store } from '@/storage/store'
@@ -49,7 +48,6 @@ export const saveNewAddresses = (addresses: AddressBase[]) => {
   const addressHashes = addresses.map((address) => address.hash)
 
   store.dispatch(newAddressesSaved(addresses))
-  store.dispatch(syncAddressesData(addressHashes))
   store.dispatch(syncAddressesAlphHistoricBalances(addressHashes))
 }
 

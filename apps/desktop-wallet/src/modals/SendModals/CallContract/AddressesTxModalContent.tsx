@@ -19,12 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
-import { useAppSelector } from '@/hooks/redux'
 import { ModalContent } from '@/modals/CenteredModal'
 import AddressInputs from '@/modals/SendModals/AddressInputs'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { CallContractTxData, PartialTxData } from '@/types/transactions'
 
 interface CallContractAddressesTxModalContentProps {
@@ -39,7 +38,7 @@ const CallContractAddressesTxModalContent = ({
   onCancel
 }: CallContractAddressesTxModalContentProps) => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAllAddresses)
+  const { data: addresses } = useAddressesWithSomeBalance()
 
   const [fromAddress, setFromAddress] = useState(data.fromAddress)
 

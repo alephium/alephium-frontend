@@ -153,6 +153,8 @@ export type TxContext = {
   consolidationRequired: boolean
 }
 
+// TODO: Cleanup unused types below if needed or when ported to shared
+// (I've realised that we're only using the address hash, and not the full address object)
 export type AddressConfirmedTransaction = explorer.Transaction & { address: Address }
 export type AddressPendingTransaction = PendingTransaction & { address: Address }
 export type AddressTransaction = AddressConfirmedTransaction | AddressPendingTransaction

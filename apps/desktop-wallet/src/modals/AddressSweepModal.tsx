@@ -23,6 +23,7 @@ import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
 import { buildSweepTransactions, signAndSendTransaction } from '@/api/transactions'
 import Amount from '@/components/Amount'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
@@ -31,7 +32,7 @@ import AddressSelect from '@/components/Inputs/AddressSelect'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import {
   transactionBuildFailed,
   transactionSendFailed,
@@ -52,7 +53,7 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const addresses = useAppSelector(selectAllAddresses)
+  const { data: addresses } = useAddressesWithSomeBalance()
   const { sendAnalytics } = useAnalytics()
 
   const fromAddress = sweepAddress || defaultAddress

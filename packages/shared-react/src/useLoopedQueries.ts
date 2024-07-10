@@ -16,17 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/types'
-export * from '@/api'
-export * from '@/utils'
-export * from '@/errors'
-export * from '@/numbers'
-export * from '@/constants'
-export * from '@/transactions'
-export * from '@/store'
-export * from '@/network'
-export * from '@/currencies'
-export * from '@/utils/assets'
-export * from '@/utils'
-export * from '@/analytics'
-export * from '@/bip39'
+import { useEffect, useState } from 'react'
+
+export const useLoopedQueries = <T>(ids: string[], fetch: (id: string) => T) => {
+  const [result, setResult] = useState<T[]>([])
+
+  useEffect(() => {
+    const calls = ids.map((id) => fetch(id))
+
+    Promise.all(calls).then((res) => {
+      setResult(res)
+    })
+  }, [ids, fetch])
+
+  return { data: result.flat() }
+}

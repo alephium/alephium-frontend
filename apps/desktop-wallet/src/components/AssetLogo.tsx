@@ -22,7 +22,7 @@ import ReactPlayer from 'react-player'
 import styled from 'styled-components'
 
 interface AssetLogoProps {
-  assetImageUrl: FungibleToken['logoURI'] | NFT['image']
+  assetImageUrl?: FungibleToken['logoURI'] | NFT['image']
   size: number
   assetName?: FungibleToken['name']
   isNft?: boolean

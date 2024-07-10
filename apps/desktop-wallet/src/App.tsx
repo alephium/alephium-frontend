@@ -16,21 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressHash,
-  localStorageNetworkSettingsMigrated,
-  PRICES_REFRESH_INTERVAL,
-  selectDoVerifiedFungibleTokensNeedInitialization,
-  syncTokenCurrentPrices,
-  syncTokenPriceHistories,
-  syncUnknownTokensInfo,
-  syncVerifiedFungibleTokens
-} from '@alephium/shared'
-import { useInitializeClient, useInterval } from '@alephium/shared-react'
-import { ALPH } from '@alephium/token-list'
-import { difference, union } from 'lodash'
+import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
+import { useInitializeClient } from '@alephium/shared-react'
 import { usePostHog } from 'posthog-js/react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 import AppSpinner from '@/components/AppSpinner'
@@ -43,12 +32,6 @@ import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
 import Router from '@/routes'
-import { syncAddressesAlphHistoricBalances, syncAddressesData } from '@/storage/addresses/addressesActions'
-import {
-  makeSelectAddressesUnknownTokens,
-  selectAddressIds,
-  selectAllAddressVerifiedFungibleTokenSymbols
-} from '@/storage/addresses/addressesSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrationFailed,
@@ -59,12 +42,6 @@ import {
   systemLanguageMatchFailed,
   systemLanguageMatchSucceeded
 } from '@/storage/settings/settingsActions'
-import { pendingTransactionsStorage } from '@/storage/transactions/pendingTransactionsPersistentStorage'
-import {
-  makeSelectAddressesHashesWithPendingTransactions,
-  selectTransactionUnknownTokenIds
-} from '@/storage/transactions/transactionsSelectors'
-import { restorePendingTransactions } from '@/storage/transactions/transactionsStorageUtils'
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
 import { AlephiumWindow } from '@/types/window'
@@ -74,33 +51,15 @@ import { languageOptions } from '@/utils/settings'
 
 const App = () => {
   const dispatch = useAppDispatch()
-  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
-  const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
   const networkProxy = useAppSelector((s) => s.network.settings.proxy)
-  const networkStatus = useAppSelector((s) => s.network.status)
   const networkName = useAppSelector((s) => s.network.name)
   const theme = useAppSelector((s) => s.global.theme)
   const loading = useAppSelector((s) => s.global.loading)
   const settings = useAppSelector((s) => s.settings)
   const wallets = useAppSelector((s) => s.global.wallets)
-  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const showDevIndication = useDevModeShortcut()
   const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
-
-  const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
-  const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
-  const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
-  const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
-
-  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
-  const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens).map(({ id }) => id)
-  const txUnknownTokenIds = useAppSelector(selectTransactionUnknownTokenIds)
-  const checkedUnknownTokenIds = useAppSelector((s) => s.fungibleTokens.checkedUnknownTokenIds)
-  const newUnknownTokens = difference(union(addressUnknownTokenIds, txUnknownTokenIds), checkedUnknownTokenIds)
 
   const [splashScreenVisible, setSplashScreenVisible] = useState(true)
 
@@ -196,113 +155,6 @@ const App = () => {
   useEffect(() => {
     if (networkProxy) electron?.app.setProxySettings(networkProxy)
   }, [electron?.app, networkProxy])
-
-  useEffect(() => {
-    if (networkStatus === 'online') {
-      if (addressesStatus === 'uninitialized') {
-        if (!isSyncingAddressData && addressHashes.length > 0 && activeWalletId) {
-          const storedPendingTxs = pendingTransactionsStorage.load(activeWalletId)
-
-          try {
-            dispatch(syncAddressesData())
-              .unwrap()
-              .then((results) => {
-                const mempoolTxHashes = results.flatMap((result) => result.mempoolTransactions.map((tx) => tx.hash))
-
-                restorePendingTransactions(activeWalletId, mempoolTxHashes, storedPendingTxs)
-              })
-          } catch {
-            sendAnalytics({ type: 'error', message: 'Could not sync address data automatically' })
-          }
-
-          try {
-            dispatch(syncAddressesAlphHistoricBalances())
-          } catch {
-            sendAnalytics({ type: 'error', message: 'Could not sync alph historic balances automatically' })
-          }
-        }
-      } else if (addressesStatus === 'initialized') {
-        if (
-          !verifiedFungibleTokensNeedInitialization &&
-          !isLoadingUnverifiedFungibleTokens &&
-          newUnknownTokens.length > 0
-        ) {
-          dispatch(syncUnknownTokensInfo(newUnknownTokens))
-        }
-      }
-    }
-  }, [
-    addressHashes.length,
-    addressesStatus,
-    verifiedFungibleTokensNeedInitialization,
-    dispatch,
-    isLoadingUnverifiedFungibleTokens,
-    isSyncingAddressData,
-    networkStatus,
-    newUnknownTokens,
-    activeWalletId,
-    sendAnalytics
-  ])
-
-  // Fetch verified tokens from GitHub token-list and sync current and historical prices for each verified fungible
-  // token found in each address
-  useEffect(() => {
-    if (networkStatus === 'online' && !isLoadingVerifiedFungibleTokens) {
-      if (verifiedFungibleTokensNeedInitialization) {
-        dispatch(syncVerifiedFungibleTokens())
-      } else if (verifiedFungibleTokenSymbols.uninitialized.length > 0) {
-        const symbols = verifiedFungibleTokenSymbols.uninitialized
-
-        dispatch(syncTokenCurrentPrices({ verifiedFungibleTokenSymbols: symbols, currency: settings.fiatCurrency }))
-        dispatch(syncTokenPriceHistories({ verifiedFungibleTokenSymbols: symbols, currency: settings.fiatCurrency }))
-      }
-    }
-  }, [
-    dispatch,
-    isLoadingVerifiedFungibleTokens,
-    networkStatus,
-    settings.fiatCurrency,
-    verifiedFungibleTokenSymbols.uninitialized,
-    verifiedFungibleTokensNeedInitialization
-  ])
-
-  useEffect(() => {
-    if (
-      networkStatus === 'online' &&
-      !isLoadingVerifiedFungibleTokens &&
-      verifiedFungibleTokenSymbols.uninitialized.length > 1
-    ) {
-      console.log(
-        'TODO: Sync address verified tokens balance histories for',
-        verifiedFungibleTokenSymbols.uninitialized.filter((symbol) => symbol !== ALPH.symbol)
-      )
-    }
-  }, [isLoadingVerifiedFungibleTokens, networkStatus, verifiedFungibleTokenSymbols.uninitialized])
-
-  const refreshTokensLatestPrice = useCallback(() => {
-    dispatch(
-      syncTokenCurrentPrices({
-        verifiedFungibleTokenSymbols: verifiedFungibleTokenSymbols.withPriceHistory,
-        currency: settings.fiatCurrency
-      })
-    )
-  }, [dispatch, settings.fiatCurrency, verifiedFungibleTokenSymbols.withPriceHistory])
-
-  useInterval(
-    refreshTokensLatestPrice,
-    PRICES_REFRESH_INTERVAL,
-    networkStatus !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
-  )
-
-  const refreshAddressesData = useCallback(() => {
-    try {
-      dispatch(syncAddressesData(addressesWithPendingTxs))
-    } catch {
-      sendAnalytics({ type: 'error', message: 'Could not sync address data when refreshing automatically' })
-    }
-  }, [dispatch, addressesWithPendingTxs, sendAnalytics])
-
-  useInterval(refreshAddressesData, 5000, addressesWithPendingTxs.length === 0 || isSyncingAddressData)
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>

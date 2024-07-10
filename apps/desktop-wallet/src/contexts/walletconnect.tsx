@@ -65,9 +65,10 @@ import {
 } from '@walletconnect/types'
 import { calcExpiry, getSdkError, mapToObj, objToMap } from '@walletconnect/utils'
 import { partition } from 'lodash'
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAddressesWithSomeBalance } from '@/api/apiHooks'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
@@ -78,7 +79,6 @@ import SendModalTransfer from '@/modals/SendModals/Transfer'
 import SignMessageModal from '@/modals/WalletConnect/SignMessageModal'
 import SignUnsignedTxModal from '@/modals/WalletConnect/SignUnsignedTxModal'
 import WalletConnectSessionProposalModal from '@/modals/WalletConnect/WalletConnectSessionProposalModal'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { walletConnectPairingFailed, walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
 import { Address } from '@/types/addresses'
 import {
@@ -124,7 +124,9 @@ const electron = _window.electron
 
 export const WalletConnectContextProvider: FC = ({ children }) => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAllAddresses)
+  const hasSubscribedToEvents = useRef(false)
+  const { data: addresses, isPending: addressesArePending } = useAddressesWithSomeBalance()
+
   const currentNetwork = useAppSelector((s) => s.network)
   const { isWalletUnlocked } = useWalletLock()
   const dispatch = useAppDispatch()
@@ -518,7 +520,14 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   }, [addresses.length, onSessionRequest, sessionRequestEvent, walletLockedBeforeProcessingWCRequest])
 
   useEffect(() => {
-    if (!walletConnectClient || walletConnectClientStatus !== 'initialized') return
+    if (
+      !walletConnectClient ||
+      walletConnectClientStatus !== 'initialized' ||
+      hasSubscribedToEvents.current ||
+      addresses.length === 0 ||
+      addressesArePending
+    )
+      return
 
     console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
 
@@ -531,6 +540,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     walletConnectClient.on('session_expire', onSessionExpire)
     walletConnectClient.on('session_extend', onSessionExtend)
     walletConnectClient.on('proposal_expire', onProposalExpire)
+
+    hasSubscribedToEvents.current = true
 
     const connectAndReset = async (uri: string) => {
       await pairWithDapp(uri)
@@ -574,7 +585,9 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     onSessionRequest,
     onSessionUpdate,
     walletConnectClient,
-    walletConnectClientStatus
+    walletConnectClientStatus,
+    addressesArePending,
+    addresses.length
   ])
 
   const unpairFromDapp = useCallback(

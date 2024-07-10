@@ -16,13 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, CURRENCIES, selectDoVerifiedFungibleTokensNeedInitialization } from '@alephium/shared'
+import { addressesQueries, AddressHash, CURRENCIES } from '@alephium/shared'
+import { useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { chunk } from 'lodash'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesGroupedAssets, useAddressesWorth } from '@/api/apiHooks'
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Amount from '@/components/Amount'
@@ -31,12 +33,7 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
-import {
-  makeSelectAddressesTokens,
-  makeSelectAddressesTokensWorth,
-  selectAddressByHash,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface AddressGridRowProps {
@@ -49,20 +46,25 @@ const maxDisplayedAssets = 7 // Allow 2 rows by default
 const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-  const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
-  const assets = useAppSelector((s) => selectAddressesTokens(s, addressHash))
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
+
+  const { data: addressAlphBalance, isPending: isAddressAlphBalancePending } = useQuery(
+    addressesQueries.balances.getAddressAlphBalances(addressHash)
+  )
+
+  const { data: addressesGroupedAssetsData, isPending: addressAssetsPending } = useAddressesGroupedAssets([addressHash])
+  const addressGroupedAssets = addressesGroupedAssetsData?.[0].assets
+
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const areTokenPricesInitialized = useAppSelector((s) => s.tokenPrices.status === 'initialized')
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
-  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
+  const { data: balanceInFiat, isPending: addressWorthPending } = useAddressesWorth([addressHash])
+  const addressBalanceInFiat = balanceInFiat?.[0].worth
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
-  const assetsWithBalance = assets.filter((asset) => asset.balance > 0)
+  const assetsWithBalance = addressGroupedAssets?.fungible.filter((asset) => asset.balance > 0)
   const [displayedAssets, ...hiddenAssetsChunks] = chunk(assetsWithBalance, maxDisplayedAssets)
   const hiddenAssets = hiddenAssetsChunks.flat()
+
+  const isPending = addressAssetsPending || addressWorthPending
 
   if (!address) return null
 
@@ -95,13 +97,9 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
             <Label>
               <AddressBadge addressHash={address.hash} hideColorIndication truncate disableA11y />
             </Label>
-            {stateUninitialized ? (
-              <SkeletonLoader height="15.5px" />
-            ) : (
-              <SecondaryText>
-                {address.lastUsed ? `${t('Last activity')} ${dayjs(address.lastUsed).fromNow()}` : t('Never used')}
-              </SecondaryText>
-            )}
+            <SecondaryText>
+              {address.lastUsed ? `${t('Last activity')} ${dayjs(address.lastUsed).fromNow()}` : t('Never used')}
+            </SecondaryText>
           </Column>
         </AddressNameCell>
         <Cell>
@@ -110,7 +108,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           </SecondaryText>
         </Cell>
         <Cell>
-          {verifiedFungibleTokensNeedInitialization || stateUninitialized ? (
+          {isPending ? (
             <SkeletonLoader height="33.5px" />
           ) : (
             <AssetLogos>
@@ -124,13 +122,17 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           )}
         </Cell>
         <AmountCell>
-          {stateUninitialized ? <SkeletonLoader height="18.5px" /> : <Amount value={BigInt(address.balance)} />}
-        </AmountCell>
-        <FiatAmountCell>
-          {stateUninitialized || !areTokenPricesInitialized ? (
+          {isAddressAlphBalancePending ? (
             <SkeletonLoader height="18.5px" />
           ) : (
-            <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
+            addressAlphBalance && <Amount value={BigInt(addressAlphBalance.balance)} />
+          )}
+        </AmountCell>
+        <FiatAmountCell>
+          {isPending ? (
+            <SkeletonLoader height="18.5px" />
+          ) : (
+            <Amount value={addressBalanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
           )}
         </FiatAmountCell>
       </GridRow>

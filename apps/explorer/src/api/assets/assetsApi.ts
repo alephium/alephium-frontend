@@ -44,7 +44,8 @@ const tokensInfo = create({
 })
 
 const fungibleTokensMetadata = create({
-  fetcher: async (ids: string[]) => client.explorer.tokens.postTokensFungibleMetadata(ids.filter((id) => id !== '')),
+  fetcher: async (ids: string[]) =>
+    await client.explorer.tokens.postTokensFungibleMetadata(ids.filter((id) => id !== '')),
   resolver: keyResolver('id'),
   scheduler: windowedFiniteBatchScheduler({
     windowMs: 10,
