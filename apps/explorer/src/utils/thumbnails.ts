@@ -71,7 +71,7 @@ export const loadThumbnailFromDB = async (videoUrl: string): Promise<Blob | null
   })
 }
 
-const videoBlobCache: Record<string, Promise<Blob> | undefined> = {}
+const videoBlobCache: Record<string, Promise<Blob>> = {}
 
 export const fetchVideoBlob = async (videoUrl: string): Promise<Blob> => {
   if (!videoBlobCache[videoUrl]) {
@@ -88,7 +88,7 @@ export const fetchVideoBlob = async (videoUrl: string): Promise<Blob> => {
       })
   }
 
-  return videoBlobCache[videoUrl]!
+  return videoBlobCache[videoUrl]
 }
 
 export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
@@ -156,8 +156,8 @@ export const createThumbnailFromVideoBlob = (blob: Blob): Promise<Blob> =>
 export const isValidThumbnail = (blob: Blob): boolean => blob.size > 17000 // Basic test. Approx size of blank thumbnail.
 
 // We cache the thumbnails generation promises to avoid starting to generate new thumbnails when they are already being processed.
-const thumbnailGenerationPromises: Record<string, Promise<Blob> | undefined> = {}
-const thumbnailBlobCache: Record<string, Blob | undefined> = {}
+const thumbnailGenerationPromises: Record<string, Promise<Blob>> = {}
+const thumbnailBlobCache: Record<string, Blob> = {}
 
 export const getOrCreateThumbnail = async (videoUrl: string): Promise<Blob> => {
   const blob = thumbnailBlobCache[videoUrl]
@@ -183,5 +183,5 @@ export const getOrCreateThumbnail = async (videoUrl: string): Promise<Blob> => {
       })
   }
 
-  return thumbnailGenerationPromises[videoUrl]!
+  return thumbnailGenerationPromises[videoUrl]
 }
