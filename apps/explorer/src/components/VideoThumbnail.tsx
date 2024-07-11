@@ -64,9 +64,7 @@ const VideoThumbnail = ({ videoUrl, showPlayIcon, playOnHover }: VideoThumbnailP
   }
 
   const handlePointerLeave = () => {
-    if (playOnHover) {
-      setIsHovered(false)
-    }
+    setIsHovered(false)
   }
 
   return (
