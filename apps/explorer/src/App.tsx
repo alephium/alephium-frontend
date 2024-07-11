@@ -72,9 +72,10 @@ const App = () => {
       queries: {
         refetchOnWindowFocus: false,
         retryDelay: (attemptIndex) => Math.pow(2, attemptIndex) * 1000,
-        retry: (failureCount) => {
+        retry: (failureCount, error) => {
           if (failureCount > MAX_API_RETRIES) {
             console.error(`API failed after ${MAX_API_RETRIES} retries, won't retry anymore`)
+            console.error(error)
             return false
           } else return true
         },
