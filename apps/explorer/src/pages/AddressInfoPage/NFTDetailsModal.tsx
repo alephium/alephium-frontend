@@ -25,6 +25,7 @@ import HighlightedHash from '@/components/HighlightedHash'
 import { SimpleLink } from '@/components/Links'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import Modal, { ModalProps } from '@/components/Modal/Modal'
+import NFTThumbnail from '@/components/NFTThumbnail'
 import Table from '@/components/Table/Table'
 import TableBody from '@/components/Table/TableBody'
 import TableRow from '@/components/Table/TableRow'
@@ -48,7 +49,7 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
             <HighlightedHash text={nft.id} middleEllipsis maxWidth="200px" textToCopy={nft.id} />
           </Header>
           <NFTImageContainer>
-            {nft.file?.image ? <Image src={nft.file?.image} /> : t('Missing image')}
+            <NFTThumbnail src={nft.file?.image} autoPlay />
           </NFTImageContainer>
 
           <MetadataTablesContainer>
@@ -87,8 +88,8 @@ const NFTDetailsModal = ({ nft, collection, ...props }: NFTDetailsModalProps) =>
                     <h3>{t('Attributes')}</h3>
                     <Table bodyOnly>
                       <TableBody>
-                        {nft.file.attributes.map((a) => (
-                          <TableRow>
+                        {nft.file.attributes.map((a, i) => (
+                          <TableRow key={i}>
                             <span>{a.trait_type}</span>
                             <span>{a.value.toString()}</span>
                           </TableRow>
@@ -157,11 +158,6 @@ const NFTImageContainer = styled.div`
   min-height: 300px;
   border-top: 1px solid ${({ theme }) => theme.border.primary};
   border-bottom: 1px solid ${({ theme }) => theme.border.primary};
-`
-
-const Image = styled.img`
-  width: 100%;
-  max-width: 600px;
 `
 
 const NFTDetailsContainer = styled.div`

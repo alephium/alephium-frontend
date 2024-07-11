@@ -33,6 +33,15 @@ import {
   VerifiedFungibleTokenMetadata
 } from '@/types/assets'
 
+enum NFTDataTypes {
+  image = 'image',
+  video = 'video',
+  audio = 'audio',
+  other = 'other'
+}
+
+type NFTDataType = keyof typeof NFTDataTypes
+
 // Batched calls
 const tokensInfo = create({
   fetcher: async (ids: string[]) => client.explorer.tokens.postTokens(ids.filter((id) => id !== '')),
@@ -124,14 +133,26 @@ export const assetsQueries = {
             .then((r) => ({ ...r, id: assetId, type: 'non-fungible', verified: false })),
         staleTime: ONE_HOUR_MS
       }),
-    NFTCollection: (collectionId: string) => ({
-      queryKey: ['NFTCollection', collectionId],
-      queryFn: (): Promise<NFTCollectionMetadata & { id: string }> =>
-        NFTCollectionsMetadata.fetch(addressFromContractId(collectionId)).then((r) => ({ ...r, id: collectionId })),
-      staleTime: ONE_HOUR_MS
-    })
+    NFTCollection: (collectionId: string) =>
+      queryOptions({
+        queryKey: ['NFTCollection', collectionId],
+        queryFn: (): Promise<NFTCollectionMetadata & { id: string }> =>
+          NFTCollectionsMetadata.fetch(addressFromContractId(collectionId)).then((r) => ({ ...r, id: collectionId })),
+        staleTime: ONE_HOUR_MS
+      })
   },
   NFTsData: {
+    type: (dataUri: string) =>
+      queryOptions({
+        queryKey: ['nftType', dataUri],
+        queryFn: (): Promise<NFTDataType> =>
+          fetch(dataUri).then((res) => {
+            const contentType = res.headers.get('content-type') || ''
+            const contentTypeCategory = contentType.split('/')[0]
+
+            return contentTypeCategory in NFTDataTypes ? (contentTypeCategory as NFTDataType) : 'other'
+          })
+      }),
     item: (dataUri: string, assetId: string) =>
       queryOptions({
         queryKey: ['nftData', dataUri],
@@ -139,14 +160,15 @@ export const assetsQueries = {
           fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId }))),
         staleTime: ONE_DAY_MS
       }),
-    collection: (collectionUri: string, collectionId: string, collectionAddress: string) => ({
-      queryKey: ['nftCollectionData', collectionUri],
-      queryFn: ():
-        | Promise<NFTCollectionUriMetaData & { collectionId: string; collectionAddress: string }>
-        | undefined =>
-        fetch(collectionUri).then((res) => res.json().then((f) => ({ ...f, collectionId, collectionAddress }))),
-      staleTime: ONE_DAY_MS
-    })
+    collection: (collectionUri: string, collectionId: string, collectionAddress: string) =>
+      queryOptions({
+        queryKey: ['nftCollectionData', collectionUri],
+        queryFn: ():
+          | Promise<NFTCollectionUriMetaData & { collectionId: string; collectionAddress: string }>
+          | undefined =>
+          fetch(collectionUri).then((res) => res.json().then((f) => ({ ...f, collectionId, collectionAddress }))),
+        staleTime: ONE_DAY_MS
+      })
   },
   market: {
     tokenPrice: (tokenSymbol: string, currency = 'usd') =>

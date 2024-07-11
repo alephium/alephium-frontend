@@ -34,7 +34,7 @@ export const useAssetMetadata = (assetId: string) => {
 
   const { data: assetBaseRaw } = useQuery({
     ...queries.assets.type.one(assetId),
-    enabled: !isAlph && !verifiedTokenMetadata
+    enabled: !!assetId && !isAlph && !verifiedTokenMetadata
   })
   const assetType = assetBaseRaw?.type
 
@@ -82,21 +82,23 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   const { data: unverifiedAssets, isLoading: unverifiedAssetsLoading } = useQueriesData(
     unverifiedAssetIds.map((id) => ({
       ...queries.assets.type.one(id),
-      enabled: shouldExecuteQueries
+      enabled: !!id && shouldExecuteQueries
     }))
   )
 
   const { data: unverifiedTokensMetadata, isLoading: unverifiedTokensMetadataLoading } = useQueriesData(
     flatMap(unverifiedAssets, ({ id, type }) =>
       type === 'fungible'
-        ? { ...queries.assets.metadata.unverifiedFungibleToken(id), enabled: shouldExecuteQueries }
+        ? { ...queries.assets.metadata.unverifiedFungibleToken(id), enabled: !!id && shouldExecuteQueries }
         : []
     )
   )
 
   const { data: unverifiedNFTsMetadata, isLoading: unverifiedNFTsMetadataLoading } = useQueriesData(
     flatMap(unverifiedAssets, ({ id, type }) =>
-      type === 'non-fungible' ? { ...queries.assets.metadata.unverifiedNFT(id), enabled: shouldExecuteQueries } : []
+      type === 'non-fungible'
+        ? { ...queries.assets.metadata.unverifiedNFT(id), enabled: !!id && shouldExecuteQueries }
+        : []
     )
   )
 
