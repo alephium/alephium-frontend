@@ -1,5 +1,15 @@
 # @alephium/explorer
 
+## 1.10.0
+
+### Minor Changes
+
+- 0031f71: Better support of video NFTs
+
+### Patch Changes
+
+- 0507f4b: Show uncle blocks
+
 ## 1.9.7
 
 ### Patch Changes
