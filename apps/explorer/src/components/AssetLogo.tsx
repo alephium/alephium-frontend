@@ -44,13 +44,13 @@ const AssetLogo = (props: AssetLogoProps) => {
 
   const theme = useTheme()
   const metadata = useAssetMetadata(assetId)
-  const NFTImage = isNFTMetadataWithFile(metadata) ? metadata.file.image : undefined
+  const nftImageSrc = isNFTMetadataWithFile(metadata) ? metadata.file.image : undefined
 
   const assetType = metadata.type
 
   const { data: dataType } = useQuery({
-    ...queries.assets.NFTsData.type(NFTImage || ''),
-    enabled: assetType === 'non-fungible' && !!NFTImage
+    ...queries.assets.NFTsData.type(nftImageSrc || ''),
+    enabled: assetType === 'non-fungible' && !!nftImageSrc
   })
 
   return (
@@ -66,7 +66,7 @@ const AssetLogo = (props: AssetLogoProps) => {
           <RiCopperCoinLine color={theme.font.secondary} size="72%" />
         )
       ) : assetType === 'non-fungible' ? (
-        <NFTThumbnail src={NFTImage} size={props.size} border borderRadius={3} />
+        <NFTThumbnail src={nftImageSrc} size={props.size} border borderRadius={3} />
       ) : (
         <RiQuestionLine color={theme.font.secondary} size="72%" />
       )}
@@ -76,7 +76,7 @@ const AssetLogo = (props: AssetLogoProps) => {
           data-tooltip-html={renderToStaticMarkup(
             <NFTTooltipContainer>
               {dataType === 'video' ? (
-                <video src={NFTImage} autoPlay loop width="150px" height="150px" />
+                <video src={nftImageSrc} autoPlay loop width="150px" height="150px" />
               ) : (
                 <NFTTooltipImage height={150} width={150} src={metadata.file?.image} />
               )}
