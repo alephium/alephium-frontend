@@ -34,10 +34,10 @@ export class Client {
   }
 
   private getClients() {
-    let explorerUrl: string | null | undefined = (window as any).VITE_BACKEND_URL
-    let nodeUrl: string | null | undefined = (window as any).VITE_NODE_URL
+    let explorerUrl: string | null | undefined = import.meta.env.VITE_BACKEND_URL
+    let nodeUrl: string | null | undefined = import.meta.env.VITE_NODE_URL
 
-    let netType = (window as any).VITE_NETWORK_TYPE
+    let netType = import.meta.env.VITE_NETWORK_TYPE
 
     if (!explorerUrl || !nodeUrl) {
       explorerUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:9090'
