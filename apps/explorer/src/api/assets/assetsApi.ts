@@ -33,13 +33,14 @@ import {
   VerifiedFungibleTokenMetadata
 } from '@/types/assets'
 
-type NFTDataType = 'image' | 'video' | 'audio' | 'other'
-
-const typeMap: { [key: string]: NFTDataType } = {
-  image: 'image',
-  video: 'video',
-  audio: 'audio'
+enum NFTDataTypes {
+  image = 'image',
+  video = 'video',
+  audio = 'audio',
+  other = 'other'
 }
+
+type NFTDataType = keyof typeof NFTDataTypes
 
 // Batched calls
 const tokensInfo = create({
@@ -147,13 +148,9 @@ export const assetsQueries = {
         queryFn: (): Promise<NFTDataType> =>
           fetch(dataUri).then((res) => {
             const contentType = res.headers.get('content-type') || ''
+            const contentTypeCategory = contentType.split('/')[0]
 
-            for (const key of Object.keys(typeMap)) {
-              if (contentType.includes(key)) {
-                return typeMap[key]
-              }
-            }
-            return 'other'
+            return contentTypeCategory in NFTDataTypes ? (contentTypeCategory as NFTDataType) : 'other'
           })
       }),
     item: (dataUri: string, assetId: string) =>
