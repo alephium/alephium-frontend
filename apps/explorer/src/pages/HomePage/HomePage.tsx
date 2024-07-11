@@ -109,7 +109,7 @@ const HomePage = () => {
     <StyledSection>
       {width && width > deviceSizes.mobile && (
         <Search>
-          <h2>{t('Search')}</h2>
+          <SearchHeader>{t('Search')}</SearchHeader>
           <SearchBar />
         </Search>
       )}
@@ -272,6 +272,10 @@ const MainContent = styled.div`
 const Search = styled.div`
   margin: -35px auto 7vh auto;
   width: 60%;
+`
+
+const SearchHeader = styled.h2`
+  margin-left: 20px;
 `
 
 const StatisticsSection = styled.div`
