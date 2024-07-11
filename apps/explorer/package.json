@@ -43,7 +43,7 @@
     "@tanstack/query-sync-storage-persister": "5.45.0",
     "@tanstack/react-query": "5.45.0",
     "@tanstack/react-query-persist-client": "^5.45.0",
-    "@yornaath/batshit": "^0.9.0",
+    "@yornaath/batshit": "^0.10.0",
     "apexcharts": "^3.35.0",
     "colord": "^2.9.3",
     "dayjs": "^1.10.7",
