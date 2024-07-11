@@ -37,12 +37,13 @@ const AutoLockOptionsModal = ({ onClose, ...props }: ModalContentProps) => {
     <ModalContent verticalGap {...props}>
       <ScreenSection>
         <BoxSurface>
-          {autoLockSecondsOptions.map((autoLockOption) => (
+          {autoLockSecondsOptions.map((autoLockOption, index) => (
             <RadioButtonRow
               key={autoLockOption.label}
               title={autoLockOption.label}
               onPress={() => handleAutoLockChange(autoLockOption.value)}
               isActive={autoLockSeconds === autoLockOption.value}
+              isLast={index === autoLockSecondsOptions.length - 1}
             />
           ))}
         </BoxSurface>

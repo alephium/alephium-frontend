@@ -37,12 +37,13 @@ const LanguageSelectModal = ({ onClose, ...props }: ModalContentProps) => {
     <ModalContent verticalGap {...props}>
       <ScreenSection>
         <BoxSurface>
-          {languageOptions.map((languageOption) => (
+          {languageOptions.map((languageOption, index) => (
             <RadioButtonRow
               key={languageOption.label}
               title={languageOption.label}
               onPress={() => handleLanguageChange(languageOption.value)}
               isActive={currentLanguage === languageOption.value}
+              isLast={index === languageOptions.length - 1}
             />
           ))}
         </BoxSurface>

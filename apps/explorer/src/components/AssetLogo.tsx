@@ -17,12 +17,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH } from '@alephium/token-list'
+import { useQuery } from '@tanstack/react-query'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { RiCopperCoinLine, RiQuestionLine } from 'react-icons/ri'
 import styled, { css, useTheme } from 'styled-components'
 
+import { queries } from '@/api'
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
+import NFTThumbnail from '@/components/NFTThumbnail'
 import AlephiumLogoSVG from '@/images/alephium_logo_monochrome.svg'
+import { NFTMetadataWithFile } from '@/types/assets'
 
 interface AssetLogoProps {
   assetId: string
@@ -31,13 +35,23 @@ interface AssetLogoProps {
   className?: string
 }
 
+// TODO: Use type assertion from tanstack work in DW
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isNFTMetadataWithFile = (metadata: any): metadata is NFTMetadataWithFile => 'file' in metadata
+
 const AssetLogo = (props: AssetLogoProps) => {
   const { assetId, showTooltip, className } = props
 
   const theme = useTheme()
   const metadata = useAssetMetadata(assetId)
+  const nftImageSrc = isNFTMetadataWithFile(metadata) ? metadata.file.image : undefined
 
   const assetType = metadata.type
+
+  const { data: dataType } = useQuery({
+    ...queries.assets.NFTsData.type(nftImageSrc || ''),
+    enabled: assetType === 'non-fungible' && !!nftImageSrc
+  })
 
   return (
     <AssetLogoStyled className={className} {...props}>
@@ -52,16 +66,20 @@ const AssetLogo = (props: AssetLogoProps) => {
           <RiCopperCoinLine color={theme.font.secondary} size="72%" />
         )
       ) : assetType === 'non-fungible' ? (
-        <FramedImage src={metadata.file?.image} borderRadius="small" withBorder />
+        <NFTThumbnail src={nftImageSrc} size={props.size} border borderRadius={3} />
       ) : (
         <RiQuestionLine color={theme.font.secondary} size="72%" />
       )}
-      {!showTooltip ? null : assetType === 'non-fungible' ? (
+      {!showTooltip ? null : assetType === 'non-fungible' && dataType && ['video', 'image'].includes(dataType) ? (
         <ImageTooltipHolder
           data-tooltip-id="default"
           data-tooltip-html={renderToStaticMarkup(
             <NFTTooltipContainer>
-              <NFTTooltipImage height={150} width={150} src={metadata.file?.image} />
+              {dataType === 'video' ? (
+                <video src={nftImageSrc} autoPlay loop width="150px" height="150px" />
+              ) : (
+                <NFTTooltipImage height={150} width={150} src={metadata.file?.image} />
+              )}
               <NFTTitle>{metadata.file?.name}</NFTTitle>
             </NFTTooltipContainer>
           )}
@@ -113,8 +131,6 @@ const AssetLogoStyled = styled.div<AssetLogoProps>`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
   flex-shrink: 0;
-  background-color: ${({ theme }) => theme.bg.background2};
-  border-radius: 100%;
 `
 
 const Image = styled.div`

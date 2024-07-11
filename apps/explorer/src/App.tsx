@@ -72,14 +72,18 @@ const App = () => {
       queries: {
         refetchOnWindowFocus: false,
         retryDelay: (attemptIndex) => Math.pow(2, attemptIndex) * 1000,
-        retry: (failureCount) => {
-          if (failureCount > MAX_API_RETRIES) {
-            console.error(`API failed after ${MAX_API_RETRIES} retries, won't retry anymore`)
+        retry: (failureCount, error) => {
+          if (error.message !== '[API Error] - status code: 429') {
             return false
-          } else return true
+          } else if (failureCount > MAX_API_RETRIES) {
+            console.error(`API failed after ${MAX_API_RETRIES} retries, won't retry anymore`, error)
+            return false
+          }
+
+          return true
         },
         staleTime: 10000, // default ms before cache data is considered stale
-        cacheTime: ONE_DAY_MS
+        gcTime: ONE_DAY_MS
       }
     }
   })

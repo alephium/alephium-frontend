@@ -78,7 +78,7 @@
   "of all shards": "of all shards",
   "to": "to",
   "with": "with",
-  "Missing image": "Missing image",
+  "Missing data": "Missing data",
   "Wrong/old format": "Wrong/old format",
   "No metadata": "No metadata",
   "Image URL": "Image URL",
@@ -128,8 +128,13 @@
   "Page not found": "Page not found",
   "letsGoBack": "Let's go back to the <1>home page</1>.",
   "Unknown error": "Unknown error",
-  "Orphan block": "Orphan block",
+  "Orphan": "Orphan",
   "It appears that this block is not part of the main chain.": "It appears that this block is not part of the main chain.",
   "confirmationsKey_one": "{{ count }} Confirmation",
-  "confirmationsKey_other": "{{ count }} Confirmations"
+  "confirmationsKey_other": "{{ count }} Confirmations",
+  "uncleBlock_one": "Uncle block",
+  "uncleBlock_other": "Uncle blocks",
+  "Uncle": "Uncle",
+  "Unsupported media type": "Unsupported media type",
+  "Video thumbnail": "Video thumbnail"
 }

@@ -111,7 +111,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
                       1: <AppText bold />
                     }}
                   >
-                    {'+<1>{{ nftsNumber }}</1>NFTs in <1>{{ nftsCollectionsNumber }}</1> collections'}
+                    {'+<1>{{ nftsNumber }}</1> NFTs in <1>{{ nftsCollectionsNumber }}</1> collections'}
                   </Trans>
                 </AppText>
               </NbOfNftsBadge>

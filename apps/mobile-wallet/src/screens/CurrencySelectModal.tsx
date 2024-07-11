@@ -42,12 +42,13 @@ const CurrencySelectModal = ({ onClose, ...props }: ModalContentProps) => {
     <ModalContent verticalGap {...props}>
       <ScreenSection>
         <BoxSurface>
-          {currencyOptions.map((currencyOption) => (
+          {currencyOptions.map((currencyOption, index) => (
             <RadioButtonRow
               key={currencyOption.label}
               title={currencyOption.label}
               onPress={() => handleCurrencyChange(currencyOption.value)}
               isActive={currentCurrency === currencyOption.value}
+              isLast={index === currencyOptions.length - 1}
             />
           ))}
         </BoxSurface>

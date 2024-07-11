@@ -26,8 +26,8 @@ interface LoadingSpinnerProps {
 }
 
 const LoadingSpinner: FC<LoadingSpinnerProps> = ({ size, style }) => (
-  <SpinnerContainer style={{ height: size, width: size }}>
-    <Spinner style={style} />
+  <SpinnerContainer>
+    <Spinner style={style} size={size} />
   </SpinnerContainer>
 )
 

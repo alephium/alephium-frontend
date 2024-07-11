@@ -78,7 +78,6 @@
   "of all shards": "von allen Shards",
   "to": "bis",
   "with": "mit",
-  "Missing image": "Fehlendes Bild",
   "Wrong/old format": "Falsch/altes Format",
   "No metadata": "Keine Metadaten",
   "Image URL": "Bild URL",
@@ -128,7 +127,7 @@
   "Page not found": "Seite nicht gefunden",
   "letsGoBack": "Zurück zu <1>Startseite </1>.",
   "Unknown error": "Unbekannter Fehler",
-  "Orphan block": "Waisenblock",
+  "Orphan": "Waisen",
   "It appears that this block is not part of the main chain.": "Es scheint, dass dieser Block nicht Teil der Hauptblockchain ist.",
   "confirmationsKey_one": "{{ count }} Bestätigung",
   "confirmationsKey_other": "{{ count }} Bestätigungen"

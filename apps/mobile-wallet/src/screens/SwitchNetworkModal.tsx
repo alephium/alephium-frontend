@@ -55,6 +55,8 @@ const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchN
     }
   }
 
+  const networkNames = Object.values(NetworkNames)
+
   return (
     <ModalContent verticalGap {...props}>
       <ScreenSection>
@@ -62,12 +64,13 @@ const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchN
       </ScreenSection>
       <View>
         <BoxSurface>
-          {Object.values(NetworkNames).map((networkName) => (
+          {networkNames.map((networkName, index) => (
             <RadioButtonRow
               key={networkName}
               title={capitalize(networkName)}
               onPress={() => handleNetworkItemPress(networkName)}
               isActive={networkName === selectedNetworkName}
+              isLast={index === networkNames.length - 1}
             />
           ))}
         </BoxSurface>

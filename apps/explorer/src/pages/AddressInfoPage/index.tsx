@@ -20,7 +20,7 @@ import { addApostrophes, calculateAmountWorth, getHumanReadableError, isAddressV
 import { ALPH } from '@alephium/token-list'
 import { contractIdFromAddress, groupOfAddress } from '@alephium/web3'
 import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import QRCode from 'qrcode.react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -86,7 +86,7 @@ const AddressInfoPage = () => {
   } = useQuery({
     ...queries.address.transactions.confirmed(addressHash, pageNumber, numberOfTxsPerPage),
     enabled: !!addressHash,
-    keepPreviousData: true
+    placeholderData: keepPreviousData
   })
 
   const { data: latestTransaction } = useQuery({

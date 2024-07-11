@@ -78,7 +78,6 @@
   "of all shards": "của tất cả các shard",
   "to": "đến",
   "with": "với",
-  "Missing image": "Hình ảnh bị thiếu",
   "Wrong/old format": "Định dạng sai/cũ",
   "No metadata": "Không có siêu dữ liệu",
   "Image URL": "URL ảnh",
@@ -128,7 +127,6 @@
   "Page not found": "Không tìm thấy trang",
   "letsGoBack": "Hãy đi đến <1>trang chủ</1>.",
   "Unknown error": "Lỗi không xác định",
-  "Orphan block": "Orphan block",
   "It appears that this block is not part of the main chain.": "Có vẻ như block này không thuộc về một phần của chain chính.",
   "confirmationsKey_one": "{{ count }} Xác nhận",
   "confirmationsKey_other": "{{ count }} Xác nhận"
