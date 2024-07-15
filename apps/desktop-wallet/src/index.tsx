@@ -32,11 +32,15 @@ import Tooltips from '@/components/Tooltips'
 import AnalyticsProvider from '@/features/analytics/AnalyticsProvider'
 import * as serviceWorker from '@/serviceWorker'
 import { store } from '@/storage/store'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 // The app still behaves as if React 17 is used. This is because
 // `react-custom-scrollbars` is not working with React 18 yet.
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 // const root = createRoot(document.getElementById('root')!)
+
+const queryClient = new QueryClient()
 
 ReactDOM.render(
   <AnalyticsProvider>
@@ -45,7 +49,10 @@ ReactDOM.render(
         <Router>
           <Suspense fallback="loading">
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>
-              <App />
+              <QueryClientProvider client={queryClient}>
+                <App />
+                <ReactQueryDevtools initialIsOpen={false} />
+              </QueryClientProvider>
               <Tooltips />
             </StyleSheetManager>
           </Suspense>
