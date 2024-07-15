@@ -20,7 +20,10 @@ import '@/index.css' // Importing CSS through CSS file to avoid font flickering
 import '@/i18n'
 import '@yaireo/tagify/dist/tagify.css' // Tagify CSS: important to import after index.css file
 
+import { MAX_API_RETRIES, ONE_MINUTE_MS } from '@alephium/shared'
 import isPropValid from '@emotion/is-prop-valid'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { StrictMode, Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
@@ -32,15 +35,29 @@ import Tooltips from '@/components/Tooltips'
 import AnalyticsProvider from '@/features/analytics/AnalyticsProvider'
 import * as serviceWorker from '@/serviceWorker'
 import { store } from '@/storage/store'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 // The app still behaves as if React 17 is used. This is because
 // `react-custom-scrollbars` is not working with React 18 yet.
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 // const root = createRoot(document.getElementById('root')!)
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: ONE_MINUTE_MS,
+      retry: (failureCount, error) => {
+        if (error.message !== '[API Error] - status code: 429') {
+          return false
+        } else if (failureCount > MAX_API_RETRIES) {
+          console.error(`API failed after ${MAX_API_RETRIES} retries, won't retry anymore`, error)
+          return false
+        }
+
+        return true
+      }
+    }
+  }
+})
 
 ReactDOM.render(
   <AnalyticsProvider>
