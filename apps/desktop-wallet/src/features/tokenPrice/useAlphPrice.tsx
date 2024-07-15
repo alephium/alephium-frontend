@@ -16,10 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-module.exports = {
-  extends: [
-    '@alephium/eslint-config/base',
-    '@alephium/eslint-config/react',
-    'plugin:@tanstack/eslint-plugin-query/recommended'
-  ]
+import { client, ONE_MINUTE_MS } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
+import { useQuery } from '@tanstack/react-query'
+
+import { useAppSelector } from '@/hooks/redux'
+
+const useAlphPrice = () => {
+  const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
+  const { data } = useQuery({
+    queryKey: ['tokenPrice', ALPH.symbol, { currency }],
+    queryFn: async () => (await client.explorer.market.postMarketPrices({ currency }, [ALPH.symbol]))[0],
+    refetchInterval: ONE_MINUTE_MS
+  })
+
+  return data
 }
+
+export default useAlphPrice
