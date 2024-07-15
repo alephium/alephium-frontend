@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -32,14 +32,11 @@ import FocusableContent from '@/components/FocusableContent'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { ExpandableTable, ExpandRow, TableHeader } from '@/components/Table'
 import TableCellAmount from '@/components/TableCellAmount'
+import { useAddressTokensWorth } from '@/features/tokenPrices/hooks'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
-import {
-  makeSelectAddressesTokensWorth,
-  selectAllAddresses,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
+import { selectAllAddresses, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
 
 interface AddressesContactsListProps {
@@ -116,8 +113,7 @@ const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: Addr
 }
 
 const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
-  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
+  const balanceInFiat = useAddressTokensWorth(addressHash)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
   return <AmountStyled value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} tabIndex={0} />

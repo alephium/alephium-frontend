@@ -26,6 +26,7 @@ import Button from '@/components/Button'
 import MultiSelect from '@/components/Inputs/MultiSelect'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import SelectOptionAsset from '@/components/Inputs/SelectOptionAsset'
+import { useSortTokensByWorth } from '@/features/tokenPrices/hooks'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import {
@@ -59,7 +60,8 @@ const FiltersPanel = ({
   const { t } = useTranslation()
   const addresses = useAppSelector(selectAllAddresses)
   const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
-  const assets = useAppSelector(selectAddressesTokens)
+  const addressTokens = useAppSelector(selectAddressesTokens)
+  const assets = useSortTokensByWorth(addressTokens)
 
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)

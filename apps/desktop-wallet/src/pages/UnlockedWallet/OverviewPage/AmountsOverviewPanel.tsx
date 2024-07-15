@@ -28,13 +28,12 @@ import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'
 import HistoricWorthChart, { historicWorthChartHeight } from '@/components/HistoricWorthChart'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import useAlphPrice from '@/features/tokenPrice/useAlphPrice'
+import { useAddressTokensPrices, useAddressTokensWorth, useAlphPrice } from '@/features/tokenPrices/hooks'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import {
   makeSelectAddresses,
   makeSelectAddressesHaveHistoricBalances,
-  makeSelectAddressesTokensWorth,
   selectAddressIds,
   selectHaveHistoricBalancesLoaded,
   selectIsStateUninitialized
@@ -71,7 +70,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const hasHistoricBalances = useAppSelector((s) => selectAddressesHaveHistoricBalances(s, addressHashes))
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const alphPrice = useAlphPrice()
-  const arePricesInitialized = useAppSelector((s) => s.tokenPrices.status === 'initialized')
+  const { isPending: isPendingTokenPrices } = useAddressTokensPrices()
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
@@ -88,8 +87,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const totalLockedBalance = addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0))
   const totalAlphAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice) : undefined
 
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
-  const totalAmountWorth = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
+  const totalAmountWorth = useAddressTokensWorth(addressHashes)
   const balanceInFiat = hoveredDataPointWorth ?? totalAmountWorth
 
   const isOnline = network.status === 'online'
@@ -107,7 +105,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
                   ? dayjs(hoveredDataPointDate).format('DD/MM/YYYY') + ' (ALPH only)'
                   : t('Value today')}
               </Today>
-              {!arePricesInitialized || showBalancesSkeletonLoader ? (
+              {isPendingTokenPrices || showBalancesSkeletonLoader ? (
                 <SkeletonLoader height="32px" style={{ marginBottom: 7, marginTop: 7 }} />
               ) : (
                 <FiatTotalAmount tabIndex={0} value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
@@ -115,7 +113,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
               {hoveredDataPointWorth !== undefined && (
                 <Opacity>
                   <FiatDeltaPercentage>
-                    {!arePricesInitialized ||
+                    {isPendingTokenPrices ||
                     stateUninitialized ||
                     !haveHistoricBalancesLoaded ||
                     (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
@@ -129,7 +127,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
               <ChartLengthBadges>
                 {chartLengths.map((length) =>
-                  !arePricesInitialized || stateUninitialized || !haveHistoricBalancesLoaded ? (
+                  isPendingTokenPrices || stateUninitialized || !haveHistoricBalancesLoaded ? (
                     <SkeletonLoader
                       key={length}
                       height="25px"

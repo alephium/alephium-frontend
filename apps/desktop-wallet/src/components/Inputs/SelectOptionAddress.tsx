@@ -24,6 +24,7 @@ import AddressBadge from '@/components/AddressBadge'
 import AssetBadge from '@/components/AssetBadge'
 import Badge from '@/components/Badge'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
+import { useSortTokensByWorth } from '@/features/tokenPrices/hooks'
 import { useAppSelector } from '@/hooks/redux'
 import { makeSelectAddressesTokens } from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
@@ -39,7 +40,7 @@ const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAdd
   const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
   const assets = useAppSelector((s) => selectAddressesTokens(s, address.hash))
 
-  const knownAssetsWithBalance = assets.filter((a) => a.balance > 0 && a.name)
+  const knownAssetsWithBalance = useSortTokensByWorth(assets.filter((a) => a.balance > 0 && a.name))
   const unknownAssetsNb = assets.filter((a) => a.balance > 0 && !a.name).length
   const showAssetList = knownAssetsWithBalance.length > 0 || unknownAssetsNb > 0
 

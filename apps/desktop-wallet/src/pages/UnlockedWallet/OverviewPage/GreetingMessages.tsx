@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeInOut } from '@/animations'
-import useAlphPrice from '@/features/tokenPrice/useAlphPrice'
+import { useAddressTokensPrices, useAlphPrice } from '@/features/tokenPrices/hooks'
 import { useAppSelector } from '@/hooks/redux'
 import TimeOfDayMessage from '@/pages/UnlockedWallet/OverviewPage/TimeOfDayMessage'
 import { messagesLeftMarginPx } from '@/style/globalStyles'
@@ -38,7 +38,7 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
   const { t } = useTranslation()
   const activeWallet = useAppSelector((s) => s.activeWallet)
   const alphPrice = useAlphPrice()
-  const tokenPricesStatus = useAppSelector((s) => s.tokenPrices.status)
+  const { isPending: isPendingTokenPrices } = useAddressTokensPrices()
 
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
@@ -66,13 +66,13 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
 
   const showNextMessage = useCallback(() => {
     setCurrentComponentIndex((prevIndex) => {
-      if (prevIndex === 0 && (tokenPricesStatus === 'uninitialized' || alphPrice === undefined)) {
+      if (prevIndex === 0 && (isPendingTokenPrices || alphPrice === undefined)) {
         return prevIndex
       }
       return (prevIndex + 1) % componentList.length
     })
     setLastChangeTime(Date.now())
-  }, [componentList.length, tokenPricesStatus, alphPrice])
+  }, [componentList.length, isPendingTokenPrices, alphPrice])
 
   const handleClick = useCallback(() => {
     showNextMessage()

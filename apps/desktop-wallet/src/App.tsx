@@ -19,15 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   AddressHash,
   localStorageNetworkSettingsMigrated,
-  PRICES_REFRESH_INTERVAL,
   selectDoVerifiedFungibleTokensNeedInitialization,
-  syncTokenCurrentPrices,
   syncTokenPriceHistories,
   syncUnknownTokensInfo,
   syncVerifiedFungibleTokens
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
-import { ALPH } from '@alephium/token-list'
 import { difference, union } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -40,7 +37,7 @@ import SplashScreen from '@/components/SplashScreen'
 import { WalletConnectContextProvider } from '@/contexts/walletconnect'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
-import useAlphPrice from '@/features/tokenPrice/useAlphPrice'
+import { useAlphPrice } from '@/features/tokenPrices/hooks'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
 import Router from '@/routes'
@@ -246,7 +243,7 @@ const App = () => {
     sendAnalytics
   ])
 
-  // Fetch verified tokens from GitHub token-list and sync current and historical prices for each verified fungible
+  // Fetch verified tokens from GitHub token-list and sync historical prices for each verified fungible
   // token found in each address
   useEffect(() => {
     if (networkStatus === 'online' && !isLoadingVerifiedFungibleTokens) {
@@ -255,7 +252,6 @@ const App = () => {
       } else if (verifiedFungibleTokenSymbols.uninitialized.length > 0) {
         const symbols = verifiedFungibleTokenSymbols.uninitialized
 
-        dispatch(syncTokenCurrentPrices({ verifiedFungibleTokenSymbols: symbols, currency: settings.fiatCurrency }))
         dispatch(syncTokenPriceHistories({ verifiedFungibleTokenSymbols: symbols, currency: settings.fiatCurrency }))
       }
     }
@@ -267,34 +263,6 @@ const App = () => {
     verifiedFungibleTokenSymbols.uninitialized,
     verifiedFungibleTokensNeedInitialization
   ])
-
-  useEffect(() => {
-    if (
-      networkStatus === 'online' &&
-      !isLoadingVerifiedFungibleTokens &&
-      verifiedFungibleTokenSymbols.uninitialized.length > 1
-    ) {
-      console.log(
-        'TODO: Sync address verified tokens balance histories for',
-        verifiedFungibleTokenSymbols.uninitialized.filter((symbol) => symbol !== ALPH.symbol)
-      )
-    }
-  }, [isLoadingVerifiedFungibleTokens, networkStatus, verifiedFungibleTokenSymbols.uninitialized])
-
-  const refreshTokensLatestPrice = useCallback(() => {
-    dispatch(
-      syncTokenCurrentPrices({
-        verifiedFungibleTokenSymbols: verifiedFungibleTokenSymbols.withPriceHistory,
-        currency: settings.fiatCurrency
-      })
-    )
-  }, [dispatch, settings.fiatCurrency, verifiedFungibleTokenSymbols.withPriceHistory])
-
-  useInterval(
-    refreshTokensLatestPrice,
-    PRICES_REFRESH_INTERVAL,
-    networkStatus !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
-  )
 
   const refreshAddressesData = useCallback(() => {
     try {
