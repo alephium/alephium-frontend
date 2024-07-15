@@ -16,19 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { client, ONE_MINUTE_MS } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { createSelector } from '@reduxjs/toolkit'
+import { useQuery } from '@tanstack/react-query'
 
-import { tokenPricesAdapter, tokenPricesHistoryAdapter } from '@/store/prices/pricesAdapter'
-import { SharedRootState } from '@/store/store'
+import { useAppSelector } from '@/hooks/redux'
 
-export const { selectAll: selectAllPrices, selectById: selectPriceById } =
-  tokenPricesAdapter.getSelectors<SharedRootState>((state) => state.tokenPrices)
+const useAlphPrice = () => {
+  const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
+  const { data } = useQuery({
+    queryKey: ['tokenPrice', ALPH.symbol, { currency }],
+    queryFn: async () => (await client.explorer.market.postMarketPrices({ currency }, [ALPH.symbol]))[0],
+    refetchInterval: ONE_MINUTE_MS
+  })
 
-export const { selectAll: selectAllPricesHistories, selectById: selectPriceHistoryById } =
-  tokenPricesHistoryAdapter.getSelectors<SharedRootState>((state) => state.tokenPricesHistory)
+  return data
+}
 
-export const selectAlphPriceHistory = createSelector(
-  (state: SharedRootState) => state,
-  (state) => selectPriceHistoryById(state, ALPH.symbol)?.history
-)
+export default useAlphPrice
