@@ -40,6 +40,7 @@ import SplashScreen from '@/components/SplashScreen'
 import { WalletConnectContextProvider } from '@/contexts/walletconnect'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
+import useAlphPrice from '@/features/tokenPrice/useAlphPrice'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
 import Router from '@/routes'
@@ -88,6 +89,7 @@ const App = () => {
   const showDevIndication = useDevModeShortcut()
   const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
+  useAlphPrice()
 
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
