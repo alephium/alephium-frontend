@@ -182,18 +182,6 @@ export const selectHaveAllPagesLoaded = createSelector(
     addresses.every((address) => address.allTransactionPagesLoaded) || allTransactionsLoaded
 )
 
-export const selectHaveHistoricBalancesLoaded = createSelector(selectAllAddresses, (addresses) =>
-  addresses.every((address) => address.alphBalanceHistoryInitialized)
-)
-
-export const makeSelectAddressesHaveHistoricBalances = () =>
-  createSelector(
-    makeSelectAddresses(),
-    (addresses) =>
-      addresses.every((address) => address.alphBalanceHistoryInitialized) &&
-      addresses.some((address) => address.alphBalanceHistory.ids.length > 0)
-  )
-
 export const selectAddressesWithSomeBalance = createSelector(selectAllAddresses, filterAddressesWithoutAssets)
 
 const getAddressesTokenBalances = (addresses: Address[]) =>

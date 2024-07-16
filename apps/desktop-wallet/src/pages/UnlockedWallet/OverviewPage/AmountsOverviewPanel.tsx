@@ -26,8 +26,10 @@ import styled from 'styled-components'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'
-import HistoricWorthChart, { historicWorthChartHeight } from '@/components/HistoricWorthChart'
 import SkeletonLoader from '@/components/SkeletonLoader'
+import { ChartLength, chartLengths, DataPoint } from '@/features/historicChart/historicChartTypes'
+import HistoricWorthChart, { historicWorthChartHeight } from '@/features/historicChart/HistoricWorthChart'
+import useHistoricData from '@/features/historicChart/useHistoricData'
 import {
   useAddressesTokensPrices,
   useAddressesTokensWorth,
@@ -37,12 +39,9 @@ import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import {
   makeSelectAddresses,
-  makeSelectAddressesHaveHistoricBalances,
   selectAddressIds,
-  selectHaveHistoricBalancesLoaded,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { ChartLength, chartLengths, DataPoint } from '@/types/chart'
 import { getAvailableBalance } from '@/utils/addresses'
 
 interface AmountsOverviewPanelProps {
@@ -70,12 +69,10 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const isLoadingBalances = useAppSelector((s) => s.addresses.loadingBalances)
   const isBalancesInitialized = useAppSelector((s) => s.addresses.balancesStatus === 'initialized')
 
-  const selectAddressesHaveHistoricBalances = useMemo(makeSelectAddressesHaveHistoricBalances, [])
-  const hasHistoricBalances = useAppSelector((s) => selectAddressesHaveHistoricBalances(s, addressHashes))
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const alphPrice = useAlphPrice()
   const { isPending: isPendingTokenPrices } = useAddressesTokensPrices()
-  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
+  const { isPending: isPendingHistoricData, hasHistoricBalances } = useHistoricData()
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
   const [chartLength, setChartLength] = useState<ChartLength>('1m')
@@ -119,7 +116,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
                   <FiatDeltaPercentage>
                     {isPendingTokenPrices ||
                     stateUninitialized ||
-                    !haveHistoricBalancesLoaded ||
+                    isPendingHistoricData ||
                     (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
                       <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
                     ) : hasHistoricBalances && worthInBeginningOfChart && hoveredDataPointWorth !== undefined ? (
@@ -131,7 +128,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
               <ChartLengthBadges>
                 {chartLengths.map((length) =>
-                  isPendingTokenPrices || stateUninitialized || !haveHistoricBalancesLoaded ? (
+                  isPendingTokenPrices || stateUninitialized || isPendingHistoricData ? (
                     <SkeletonLoader
                       key={length}
                       height="25px"
