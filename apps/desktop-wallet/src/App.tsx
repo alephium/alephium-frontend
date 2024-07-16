@@ -40,7 +40,7 @@ import { useAlphPrice } from '@/features/tokenPrices/tokenPricesHooks'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
 import Router from '@/routes'
-import { syncAddressesAlphHistoricBalances, syncAddressesData } from '@/storage/addresses/addressesActions'
+import { syncAddressesData } from '@/storage/addresses/addressesActions'
 import { makeSelectAddressesUnknownTokens, selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import {
   devModeShortcutDetected,
@@ -206,12 +206,6 @@ const App = () => {
               })
           } catch {
             sendAnalytics({ type: 'error', message: 'Could not sync address data automatically' })
-          }
-
-          try {
-            dispatch(syncAddressesAlphHistoricBalances())
-          } catch {
-            sendAnalytics({ type: 'error', message: 'Could not sync alph historic balances automatically' })
           }
         }
       } else if (addressesStatus === 'initialized') {
