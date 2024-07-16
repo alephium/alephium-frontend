@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isAddressValid } from '@alephium/shared'
+import { isValidAddress } from '@alephium/web3'
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -62,7 +62,7 @@ const HeaderButtons = ({ style }: HeaderButtonsProps) => {
     })
 
   const handleQRCodeScan = async (text: string) => {
-    if (isAddressValid(text)) {
+    if (isValidAddress(text)) {
       navigation.navigate('SendNavigation', { screen: 'OriginScreen', params: { toAddressHash: text } })
       sendAnalytics({ event: 'Send: Captured destination address by scanning QR code from Dashboard' })
     } else if (text.startsWith('wc:')) {

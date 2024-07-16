@@ -16,19 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { validateAddress } from '@alephium/web3'
-
-import { AddressHash } from '@/types'
-
-export const isAddressValid = (address: AddressHash) => {
-  try {
-    validateAddress(address)
-    return true
-  } catch {
-    return false
-  }
-}
-
 export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: number[] = []) => {
   let nextAvailableAddressIndex = startIndex
 
