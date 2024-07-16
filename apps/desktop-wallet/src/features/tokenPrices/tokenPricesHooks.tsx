@@ -39,6 +39,8 @@ import {
   makeSelectAddressesListedFungibleTokenSymbols
 } from '@/storage/addresses/addressesSelectors'
 
+const QUERY_KEY = 'tokenPrices'
+
 export const useAddressesTokensPrices = () => {
   const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
   const addressTokensSymbols = useAppSelector(useMemo(makeSelectAddressesListedFungibleTokenSymbols, [])) // TODO: To be replaced when tokens are fetched with Tanstack
@@ -46,7 +48,7 @@ export const useAddressesTokensPrices = () => {
 
   const { data, isPending } = useQueries({
     queries: chunk(addressTokensSymbolsWithPrice, TOKENS_QUERY_LIMIT).map((symbols) => ({
-      queryKey: ['tokenPrices', 'currentPrice', symbols, { currency }],
+      queryKey: [QUERY_KEY, 'currentPrice', symbols, { currency }],
       queryFn: async () =>
         (await client.explorer.market.postMarketPrices({ currency }, symbols)).map((price, i) => ({
           price,
@@ -73,7 +75,7 @@ export const useAlphHistoricalPrices = () => {
   const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
 
   const { data: alphPriceHistory } = useQuery({
-    queryKey: ['tokensPrice', 'historicalPrice', ALPH.symbol, currency],
+    queryKey: [QUERY_KEY, 'historicalPrice', ALPH.symbol, { currency }],
     queryFn: () =>
       client.explorer.market.getMarketPricesSymbolCharts(ALPH.symbol, { currency }).then((rawHistory) => {
         const today = dayjs().format(CHART_DATE_FORMAT)
