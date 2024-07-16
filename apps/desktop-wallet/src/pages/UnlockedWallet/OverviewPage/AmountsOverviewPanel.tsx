@@ -28,7 +28,11 @@ import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'
 import HistoricWorthChart, { historicWorthChartHeight } from '@/components/HistoricWorthChart'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { useAddressesTokensPrices, useAddressesTokensWorth, useAlphPrice } from '@/features/tokenPrices/hooks'
+import {
+  useAddressesTokensPrices,
+  useAddressesTokensWorth,
+  useAlphPrice
+} from '@/features/tokenPrices/tokenPricesHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import {

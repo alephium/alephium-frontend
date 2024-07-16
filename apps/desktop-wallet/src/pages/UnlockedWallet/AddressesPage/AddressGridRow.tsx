@@ -28,7 +28,11 @@ import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Amount from '@/components/Amount'
 import AssetBadge from '@/components/AssetBadge'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { useAddressesTokensPrices, useAddressesTokensWorth, useSortTokensByWorth } from '@/features/tokenPrices/hooks'
+import {
+  useAddressesTokensPrices,
+  useAddressesTokensWorth,
+  useSortTokensByWorth
+} from '@/features/tokenPrices/tokenPricesHooks'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
