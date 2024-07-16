@@ -20,7 +20,6 @@ import {
   AddressHash,
   localStorageNetworkSettingsMigrated,
   selectDoVerifiedFungibleTokensNeedInitialization,
-  syncTokenPriceHistories,
   syncUnknownTokensInfo,
   syncVerifiedFungibleTokens
 } from '@alephium/shared'
@@ -42,11 +41,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
 import Router from '@/routes'
 import { syncAddressesAlphHistoricBalances, syncAddressesData } from '@/storage/addresses/addressesActions'
-import {
-  makeSelectAddressesUnknownTokens,
-  selectAddressIds,
-  selectAllAddressVerifiedFungibleTokenSymbols
-} from '@/storage/addresses/addressesSelectors'
+import { makeSelectAddressesUnknownTokens, selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrationFailed,
@@ -91,7 +86,6 @@ const App = () => {
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
-  const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens).map(({ id }) => id)
@@ -233,26 +227,14 @@ const App = () => {
     sendAnalytics
   ])
 
-  // Fetch verified tokens from GitHub token-list and sync historical prices for each verified fungible
-  // token found in each address
+  // Fetch verified tokens from GitHub token-list
   useEffect(() => {
     if (networkStatus === 'online' && !isLoadingVerifiedFungibleTokens) {
       if (verifiedFungibleTokensNeedInitialization) {
         dispatch(syncVerifiedFungibleTokens())
-      } else if (verifiedFungibleTokenSymbols.uninitialized.length > 0) {
-        const symbols = verifiedFungibleTokenSymbols.uninitialized
-
-        dispatch(syncTokenPriceHistories({ verifiedFungibleTokenSymbols: symbols, currency: settings.fiatCurrency }))
       }
     }
-  }, [
-    dispatch,
-    isLoadingVerifiedFungibleTokens,
-    networkStatus,
-    settings.fiatCurrency,
-    verifiedFungibleTokenSymbols.uninitialized,
-    verifiedFungibleTokensNeedInitialization
-  ])
+  }, [dispatch, isLoadingVerifiedFungibleTokens, networkStatus, verifiedFungibleTokensNeedInitialization])
 
   const refreshAddressesData = useCallback(() => {
     try {
