@@ -32,7 +32,7 @@ import FocusableContent from '@/components/FocusableContent'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { ExpandableTable, ExpandRow, TableHeader } from '@/components/Table'
 import TableCellAmount from '@/components/TableCellAmount'
-import { useAddressTokensWorth } from '@/features/tokenPrices/hooks'
+import { useAddressesTokensWorth } from '@/features/tokenPrices/hooks'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
@@ -113,7 +113,7 @@ const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: Addr
 }
 
 const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
-  const balanceInFiat = useAddressTokensWorth(addressHash)
+  const balanceInFiat = useAddressesTokensWorth(addressHash)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
   return <AmountStyled value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} tabIndex={0} />

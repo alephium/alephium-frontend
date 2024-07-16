@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeInOut } from '@/animations'
-import { useAddressTokensPrices, useAlphPrice } from '@/features/tokenPrices/hooks'
+import { useAddressesTokensPrices, useAlphPrice } from '@/features/tokenPrices/hooks'
 import { useAppSelector } from '@/hooks/redux'
 import TimeOfDayMessage from '@/pages/UnlockedWallet/OverviewPage/TimeOfDayMessage'
 import { messagesLeftMarginPx } from '@/style/globalStyles'
@@ -38,7 +38,7 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
   const { t } = useTranslation()
   const activeWallet = useAppSelector((s) => s.activeWallet)
   const alphPrice = useAlphPrice()
-  const { isPending: isPendingTokenPrices } = useAddressTokensPrices()
+  const { isPending: isPendingTokenPrices } = useAddressesTokensPrices()
 
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 

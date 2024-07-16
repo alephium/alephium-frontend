@@ -28,7 +28,7 @@ import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Amount from '@/components/Amount'
 import AssetBadge from '@/components/AssetBadge'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { useAddressTokensPrices, useAddressTokensWorth, useSortTokensByWorth } from '@/features/tokenPrices/hooks'
+import { useAddressesTokensPrices, useAddressesTokensWorth, useSortTokensByWorth } from '@/features/tokenPrices/hooks'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
@@ -54,8 +54,8 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const { isPending: isPendingTokenPrices } = useAddressTokensPrices()
-  const balanceInFiat = useAddressTokensWorth(addressHash)
+  const { isPending: isPendingTokenPrices } = useAddressesTokensPrices()
+  const balanceInFiat = useAddressesTokensWorth(addressHash)
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 

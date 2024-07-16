@@ -29,7 +29,7 @@ import {
   makeSelectAddressesListedFungibleTokenSymbols
 } from '@/storage/addresses/addressesSelectors'
 
-export const useAddressTokensPrices = () => {
+export const useAddressesTokensPrices = () => {
   const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
   const addressTokensSymbols = useAppSelector(useMemo(makeSelectAddressesListedFungibleTokenSymbols, [])) // TODO: To be replaced when tokens are fetched with Tanstack
   const addressTokensSymbolsWithPrice = addressTokensSymbols.filter((symbol) => symbol in explorer.TokensWithPrice)
@@ -54,13 +54,13 @@ export const useAddressTokensPrices = () => {
 }
 
 export const useAlphPrice = () => {
-  const { data: tokenPrices } = useAddressTokensPrices()
+  const { data: tokenPrices } = useAddressesTokensPrices()
 
   return tokenPrices.find((token) => token.symbol === ALPH.symbol)?.price
 }
 
 export const useSortTokensByWorth = (tokens: Asset[]) => {
-  const { data: tokenPrices } = useAddressTokensPrices()
+  const { data: tokenPrices } = useAddressesTokensPrices()
 
   const tokensWithWorth = tokens.map((token) => {
     const tokenPrice = tokenPrices.find((t) => t.symbol === token.symbol)
@@ -84,8 +84,8 @@ export const useSortTokensByWorth = (tokens: Asset[]) => {
   )
 }
 
-export const useAddressTokensWorth = (addressHashes?: AddressHash[] | AddressHash) => {
-  const { data: tokenPrices } = useAddressTokensPrices()
+export const useAddressesTokensWorth = (addressHashes?: AddressHash[] | AddressHash) => {
+  const { data: tokenPrices } = useAddressesTokensPrices()
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const tokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHashes))
 

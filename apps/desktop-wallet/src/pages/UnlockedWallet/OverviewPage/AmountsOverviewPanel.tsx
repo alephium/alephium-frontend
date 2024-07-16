@@ -28,7 +28,7 @@ import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'
 import HistoricWorthChart, { historicWorthChartHeight } from '@/components/HistoricWorthChart'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { useAddressTokensPrices, useAddressTokensWorth, useAlphPrice } from '@/features/tokenPrices/hooks'
+import { useAddressesTokensPrices, useAddressesTokensWorth, useAlphPrice } from '@/features/tokenPrices/hooks'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import {
@@ -70,7 +70,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const hasHistoricBalances = useAppSelector((s) => selectAddressesHaveHistoricBalances(s, addressHashes))
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const alphPrice = useAlphPrice()
-  const { isPending: isPendingTokenPrices } = useAddressTokensPrices()
+  const { isPending: isPendingTokenPrices } = useAddressesTokensPrices()
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
@@ -87,7 +87,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const totalLockedBalance = addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0))
   const totalAlphAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice) : undefined
 
-  const totalAmountWorth = useAddressTokensWorth(addressHashes)
+  const totalAmountWorth = useAddressesTokensWorth(addressHashes)
   const balanceInFiat = hoveredDataPointWorth ?? totalAmountWorth
 
   const isOnline = network.status === 'online'
