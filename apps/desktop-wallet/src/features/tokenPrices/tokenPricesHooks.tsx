@@ -16,20 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressHash,
-  Asset,
-  calculateAmountWorth,
-  CHART_DATE_FORMAT,
-  client,
-  ONE_MINUTE_MS,
-  TokenHistoricalPrice,
-  TOKENS_QUERY_LIMIT
-} from '@alephium/shared'
+import { AddressHash, Asset, calculateAmountWorth, client, ONE_MINUTE_MS, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import { useQueries, useQuery } from '@tanstack/react-query'
-import dayjs from 'dayjs'
+import { useQueries, useQueryClient } from '@tanstack/react-query'
 import { chunk, orderBy } from 'lodash'
 import { useMemo } from 'react'
 
@@ -39,21 +29,32 @@ import {
   makeSelectAddressesListedFungibleTokenSymbols
 } from '@/storage/addresses/addressesSelectors'
 
-const QUERY_KEY = 'tokenPrices'
+const TOKEN_PRICES_KEY = 'tokenPrices'
+
+type TokenPrice = {
+  symbol: string
+  price: number
+}
 
 export const useAddressesTokensPrices = () => {
   const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
   const addressTokensSymbols = useAppSelector(useMemo(makeSelectAddressesListedFungibleTokenSymbols, [])) // TODO: To be replaced when tokens are fetched with Tanstack
   const addressTokensSymbolsWithPrice = addressTokensSymbols.filter((symbol) => symbol in explorer.TokensWithPrice)
+  const queryClient = useQueryClient()
 
   const { data, isPending } = useQueries({
     queries: chunk(addressTokensSymbolsWithPrice, TOKENS_QUERY_LIMIT).map((symbols) => ({
-      queryKey: [QUERY_KEY, 'currentPrice', symbols, { currency }],
+      queryKey: [TOKEN_PRICES_KEY, 'currentPrice', symbols, { currency }],
       queryFn: async () =>
-        (await client.explorer.market.postMarketPrices({ currency }, symbols)).map((price, i) => ({
-          price,
-          symbol: symbols[i]
-        })),
+        (await client.explorer.market.postMarketPrices({ currency }, symbols)).map(
+          (price, i) =>
+            ({
+              price,
+              symbol: symbols[i]
+            }) as TokenPrice
+        ),
+      initialData: () =>
+        queryClient.getQueryData([TOKEN_PRICES_KEY, 'currentPrice', [ALPH.symbol], { currency }]) as TokenPrice[],
       refetchInterval: ONE_MINUTE_MS
     })),
     combine: (results) => ({
@@ -69,41 +70,6 @@ export const useAlphPrice = () => {
   const { data: tokenPrices } = useAddressesTokensPrices()
 
   return tokenPrices.find((token) => token.symbol === ALPH.symbol)?.price
-}
-
-export const useAlphHistoricalPrices = () => {
-  const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
-
-  const { data: alphPriceHistory } = useQuery({
-    queryKey: [QUERY_KEY, 'historicalPrice', ALPH.symbol, { currency }],
-    queryFn: () =>
-      client.explorer.market.getMarketPricesSymbolCharts(ALPH.symbol, { currency }).then((rawHistory) => {
-        const today = dayjs().format(CHART_DATE_FORMAT)
-        const history = [] as TokenHistoricalPrice[]
-
-        if (rawHistory.timestamps && rawHistory.prices) {
-          for (let index = 0; index < rawHistory.timestamps.length; index++) {
-            const timestamp = rawHistory.timestamps[index]
-            const price = rawHistory.prices[index]
-
-            const itemDate = dayjs(timestamp).format(CHART_DATE_FORMAT)
-            const prevItemDate =
-              index > 1 ? dayjs(rawHistory.timestamps[index - 1]).format(CHART_DATE_FORMAT) : undefined
-
-            if (itemDate !== prevItemDate && itemDate !== today) {
-              history.push({
-                date: itemDate,
-                value: price
-              })
-            }
-          }
-        }
-
-        return history
-      })
-  })
-
-  return alphPriceHistory
 }
 
 export const useSortTokensByWorth = (tokens: Asset[]) => {

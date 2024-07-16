@@ -17,13 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NonSensitiveAddressData } from '@alephium/keyring'
-import {
-  AddressBalancesSyncResult,
-  AddressHash,
-  AddressSettings,
-  AddressTokensSyncResult,
-  BalanceHistory
-} from '@alephium/shared'
+import { AddressBalancesSyncResult, AddressHash, AddressSettings, AddressTokensSyncResult } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { EntityState } from '@reduxjs/toolkit'
@@ -51,8 +45,6 @@ export type Address = AddressBase &
     allTransactionPagesLoaded: boolean
     tokens: AddressTokenBalance[]
     lastUsed: TimeInMs
-    alphBalanceHistory: EntityState<BalanceHistory>
-    alphBalanceHistoryInitialized: boolean
   }
 
 export type LoadingEnabled = boolean | undefined
