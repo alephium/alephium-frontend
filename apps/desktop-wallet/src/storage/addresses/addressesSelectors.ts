@@ -25,7 +25,6 @@ import {
   NFT,
   selectAllFungibleTokens,
   selectAllNFTs,
-  selectAllPricesHistories,
   selectNFTIds,
   TokenDisplayBalances
 } from '@alephium/shared'
@@ -125,30 +124,6 @@ export const makeSelectAddressesListedFungibleTokenSymbols = () =>
   createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken['symbol'][] =>
     tokens.filter((token): token is AddressFungibleToken => !!token.verified).map(({ symbol }) => symbol)
   )
-
-export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
-  [makeSelectAddressesVerifiedFungibleTokens(), selectAllPricesHistories],
-  (verifiedFungibleTokens, histories) =>
-    verifiedFungibleTokens
-      .map((token) => token.symbol)
-      .reduce(
-        (acc, tokenSymbol) => {
-          const tokenHistory = histories.find(({ symbol }) => symbol === tokenSymbol)
-
-          if (!tokenHistory || tokenHistory.status === 'uninitialized') {
-            acc.uninitialized.push(tokenSymbol)
-          } else if (tokenHistory && tokenHistory.history.length > 0) {
-            acc.withPriceHistory.push(tokenSymbol)
-          }
-
-          return acc
-        },
-        {
-          uninitialized: [] as string[],
-          withPriceHistory: [] as string[]
-        }
-      )
-)
 
 export const makeSelectAddressesUnknownTokens = () =>
   createSelector(

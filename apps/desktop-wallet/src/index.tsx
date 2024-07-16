@@ -46,7 +46,8 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: ONE_MINUTE_MS,
       retry: (failureCount, error) => {
-        if (error.message !== '[API Error] - status code: 429') {
+        // TODO: We should account for 429 errors from other libraries other than web3
+        if (!error.message.includes('Status code: 429')) {
           return false
         } else if (failureCount > MAX_API_RETRIES) {
           console.error(`API failed after ${MAX_API_RETRIES} retries, won't retry anymore`, error)
