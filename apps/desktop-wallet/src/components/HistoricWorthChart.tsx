@@ -16,13 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, CHART_DATE_FORMAT, selectAlphPriceHistory, toHumanReadableAmount } from '@alephium/shared'
+import { AddressHash, CHART_DATE_FORMAT, toHumanReadableAmount } from '@alephium/shared'
 import { colord } from 'colord'
 import dayjs, { Dayjs } from 'dayjs'
 import { memo, useEffect, useMemo, useState } from 'react'
 import Chart from 'react-apexcharts'
 import styled, { useTheme } from 'styled-components'
 
+import { useAlphHistoricalPrices } from '@/features/tokenPrices/tokenPricesHooks'
 import { useAppSelector } from '@/hooks/redux'
 import {
   makeSelectAddresses,
@@ -62,7 +63,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   const addresses = useAppSelector((s) => selectAddresses(s, addressHash ?? (s.addresses.ids as AddressHash[])))
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const alphPriceHistory = useAppSelector(selectAlphPriceHistory)
+  const alphPriceHistory = useAlphHistoricalPrices()
 
   const theme = useTheme()
 

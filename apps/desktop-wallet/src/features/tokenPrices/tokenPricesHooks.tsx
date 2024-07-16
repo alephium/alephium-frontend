@@ -16,10 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, Asset, calculateAmountWorth, client, ONE_MINUTE_MS, TOKENS_QUERY_LIMIT } from '@alephium/shared'
+import {
+  AddressHash,
+  Asset,
+  calculateAmountWorth,
+  CHART_DATE_FORMAT,
+  client,
+  ONE_MINUTE_MS,
+  TokenHistoricalPrice,
+  TOKENS_QUERY_LIMIT
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import { useQueries } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 import { chunk, orderBy } from 'lodash'
 import { useMemo } from 'react'
 
@@ -36,7 +46,7 @@ export const useAddressesTokensPrices = () => {
 
   const { data, isPending } = useQueries({
     queries: chunk(addressTokensSymbolsWithPrice, TOKENS_QUERY_LIMIT).map((symbols) => ({
-      queryKey: ['tokenPrices', symbols, { currency }],
+      queryKey: ['tokenPrices', 'currentPrice', symbols, { currency }],
       queryFn: async () =>
         (await client.explorer.market.postMarketPrices({ currency }, symbols)).map((price, i) => ({
           price,
@@ -57,6 +67,41 @@ export const useAlphPrice = () => {
   const { data: tokenPrices } = useAddressesTokensPrices()
 
   return tokenPrices.find((token) => token.symbol === ALPH.symbol)?.price
+}
+
+export const useAlphHistoricalPrices = () => {
+  const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
+
+  const { data: alphPriceHistory } = useQuery({
+    queryKey: ['tokensPrice', 'historicalPrice', ALPH.symbol, currency],
+    queryFn: () =>
+      client.explorer.market.getMarketPricesSymbolCharts(ALPH.symbol, { currency }).then((rawHistory) => {
+        const today = dayjs().format(CHART_DATE_FORMAT)
+        const history = [] as TokenHistoricalPrice[]
+
+        if (rawHistory.timestamps && rawHistory.prices) {
+          for (let index = 0; index < rawHistory.timestamps.length; index++) {
+            const timestamp = rawHistory.timestamps[index]
+            const price = rawHistory.prices[index]
+
+            const itemDate = dayjs(timestamp).format(CHART_DATE_FORMAT)
+            const prevItemDate =
+              index > 1 ? dayjs(rawHistory.timestamps[index - 1]).format(CHART_DATE_FORMAT) : undefined
+
+            if (itemDate !== prevItemDate && itemDate !== today) {
+              history.push({
+                date: itemDate,
+                value: price
+              })
+            }
+          }
+        }
+
+        return history
+      })
+  })
+
+  return alphPriceHistory
 }
 
 export const useSortTokensByWorth = (tokens: Asset[]) => {
