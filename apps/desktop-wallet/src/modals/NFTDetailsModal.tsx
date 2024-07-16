@@ -16,8 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT, selectNFTById, useGetNFTCollectionDataQuery, useGetNFTCollectionMetadataQuery } from '@alephium/shared'
-import { skipToken } from '@reduxjs/toolkit/query'
+import { client, NFT, selectNFTById } from '@alephium/shared'
+import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
+import { skipToken, useQuery } from '@tanstack/react-query'
+import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -38,9 +40,6 @@ interface NFTDetailsModalProps {
 const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
-
-  const nftCollectionMetadata = useGetNFTCollectionMetadataQuery(nft?.collectionId ?? skipToken)
-  const nftCollectionData = useGetNFTCollectionDataQuery(nftCollectionMetadata.data?.collectionUri ?? skipToken)
 
   if (!nft) return null
 
@@ -73,14 +72,50 @@ const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
             ))}
           </DataList>
         )}
-        {nftCollectionData?.data && (
-          <DataList title={t('Collection')}>
-            <DataList.Row label={t('Name')}>{nftCollectionData.data.name}</DataList.Row>
-            <DataList.Row label={t('Description')}>{nftCollectionData.data.description}</DataList.Row>
-          </DataList>
-        )}
+        <NFTCollectionDetails collectionId={nft.collectionId} />
       </NFTMetadataContainer>
     </SideModal>
+  )
+}
+
+const NFTCollectionDetails = ({ collectionId }: Pick<NFT, 'collectionId'>) => {
+  const { t } = useTranslation()
+
+  const { data: nftCollectionMetadata } = useQuery({
+    queryKey: ['nfts', 'nftCollection', 'nftCollectionMetadata', collectionId],
+    queryFn: !collectionId
+      ? skipToken
+      : async () =>
+          (await client.explorer.tokens.postTokensNftCollectionMetadata([addressFromContractId(collectionId)]))[0],
+    staleTime: Infinity
+  })
+
+  const collectionUri = nftCollectionMetadata?.collectionUri
+  const { data: nftCollectionData } = useQuery({
+    queryKey: ['nfts', 'nftCollection', 'nftCollectionData', collectionId],
+    queryFn: !collectionUri
+      ? skipToken
+      : async () => {
+          const { data } = await axios.get(collectionUri)
+
+          if (matchesNFTCollectionUriMetaDataSchema(data)) {
+            return data as NFTCollectionUriMetaData
+          } else {
+            throw new Error(
+              `Response does not match the NFT collection metadata schema. NFT collection URI: ${collectionUri}`
+            )
+          }
+        },
+    staleTime: Infinity
+  })
+
+  if (!nftCollectionData) return null
+
+  return (
+    <DataList title={t('Collection')}>
+      <DataList.Row label={t('Name')}>{nftCollectionData.name}</DataList.Row>
+      <DataList.Row label={t('Description')}>{nftCollectionData.description}</DataList.Row>
+    </DataList>
   )
 }
 
@@ -96,3 +131,8 @@ const NFTMetadataContainer = styled.div`
   flex-direction: column;
   gap: var(--spacing-3);
 `
+
+const matchesNFTCollectionUriMetaDataSchema = (nftCollection: NFTCollectionUriMetaData) =>
+  typeof nftCollection.name === 'string' &&
+  typeof nftCollection.image === 'string' &&
+  typeof nftCollection.description === 'string'
