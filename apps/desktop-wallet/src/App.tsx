@@ -86,7 +86,7 @@ const App = () => {
   const showDevIndication = useDevModeShortcut()
   const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
-  useAlphPrice()
+  useAlphPrice() // TODO: Group with other prefetch queries in a usePrefetchData hook
 
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
