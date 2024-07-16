@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addApostrophes, calculateAmountWorth, getHumanReadableError, isAddressValid } from '@alephium/shared'
+import { addApostrophes, calculateAmountWorth, getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { contractIdFromAddress, groupOfAddress } from '@alephium/web3'
+import { contractIdFromAddress, groupOfAddress, isValidAddress } from '@alephium/web3'
 import { MempoolTransaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import QRCode from 'qrcode.react'
@@ -72,7 +72,7 @@ const AddressInfoPage = () => {
 
   const lastKnownMempoolTxs = useRef<MempoolTransaction[]>([])
 
-  const addressHash = id && isAddressValid(id) ? id : ''
+  const addressHash = id && isValidAddress(id) ? id : ''
 
   const { data: addressBalance } = useQuery({
     ...queries.address.balance.details(addressHash),

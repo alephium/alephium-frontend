@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, Contact, isAddressValid } from '@alephium/shared'
+import { AddressHash, Contact } from '@alephium/shared'
+import { isValidAddress } from '@alephium/web3'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
@@ -87,7 +88,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   }
 
   const handleQRCodeScan = (addressHash: string) => {
-    if (isAddressValid(addressHash)) {
+    if (isValidAddress(addressHash)) {
       setValue('toAddressHash', addressHash)
 
       sendAnalytics({ event: 'Send: Captured destination address by scanning QR code' })
