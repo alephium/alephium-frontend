@@ -28,12 +28,16 @@ import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Amount from '@/components/Amount'
 import AssetBadge from '@/components/AssetBadge'
 import SkeletonLoader from '@/components/SkeletonLoader'
+import {
+  useAddressesTokensPrices,
+  useAddressesTokensWorth,
+  useSortTokensByWorth
+} from '@/features/tokenPrices/tokenPricesHooks'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
 import {
   makeSelectAddressesTokens,
-  makeSelectAddressesTokensWorth,
   selectAddressByHash,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
@@ -54,13 +58,12 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const areTokenPricesInitialized = useAppSelector((s) => s.tokenPrices.status === 'initialized')
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
-  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
+  const { isPending: isPendingTokenPrices } = useAddressesTokensPrices()
+  const balanceInFiat = useAddressesTokensWorth(addressHash)
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
-  const assetsWithBalance = assets.filter((asset) => asset.balance > 0)
+  const assetsWithBalance = useSortTokensByWorth(assets.filter((asset) => asset.balance > 0))
   const [displayedAssets, ...hiddenAssetsChunks] = chunk(assetsWithBalance, maxDisplayedAssets)
   const hiddenAssets = hiddenAssetsChunks.flat()
 
@@ -127,7 +130,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           {stateUninitialized ? <SkeletonLoader height="18.5px" /> : <Amount value={BigInt(address.balance)} />}
         </AmountCell>
         <FiatAmountCell>
-          {stateUninitialized || !areTokenPricesInitialized ? (
+          {stateUninitialized || isPendingTokenPrices ? (
             <SkeletonLoader height="18.5px" />
           ) : (
             <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />

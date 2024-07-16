@@ -34,6 +34,7 @@ import { ExpandableTable, ExpandRow, TableRow } from '@/components/Table'
 import TableCellAmount from '@/components/TableCellAmount'
 import TableTabBar from '@/components/TableTabBar'
 import Truncate from '@/components/Truncate'
+import { useSortTokensByWorth } from '@/features/tokenPrices/tokenPricesHooks'
 import { useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
@@ -129,11 +130,12 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
   const isLoadingFungibleTokens = useAppSelector(
     (s) => s.fungibleTokens.loadingUnverified || s.fungibleTokens.loadingVerified || s.fungibleTokens.loadingTokenTypes
   )
+  const knownFungibleTokensSortedByWorth = useSortTokensByWorth(knownFungibleTokens)
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {knownFungibleTokens.map((asset) => (
+        {knownFungibleTokensSortedByWorth.map((asset) => (
           <TokenListRow asset={asset} isExpanded={isExpanded} key={asset.id} />
         ))}
         {(isLoadingFungibleTokens || stateUninitialized) && (
@@ -143,7 +145,7 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
         )}
       </motion.div>
 
-      {!isExpanded && knownFungibleTokens.length > 3 && onExpand && <ExpandRow onClick={onExpand} />}
+      {!isExpanded && knownFungibleTokensSortedByWorth.length > 3 && onExpand && <ExpandRow onClick={onExpand} />}
     </>
   )
 }

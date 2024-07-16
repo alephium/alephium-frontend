@@ -20,16 +20,13 @@ import {
   AddressFungibleToken,
   AddressHash,
   Asset,
-  calculateAmountWorth,
-  calculateAssetsData,
   contactsAdapter,
+  FungibleToken,
   NFT,
   selectAllFungibleTokens,
   selectAllNFTs,
-  selectAllPrices,
   selectAllPricesHistories,
   selectNFTIds,
-  sortAssets,
   TokenDisplayBalances
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
@@ -85,14 +82,33 @@ export const makeSelectAddressesAlphAsset = () =>
 
 export const makeSelectAddressesTokens = () =>
   createSelector(
-    [selectAllFungibleTokens, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses(), selectAllPrices],
-    (fungibleTokens, nfts, alphAsset, addresses, tokenPrices): Asset[] => {
-      const tokenBalances = getAddressesTokenBalances(addresses)
-      const tokens = calculateAssetsData([alphAsset, ...tokenBalances], fungibleTokens, nfts, tokenPrices)
-
-      return sortAssets(tokens)
-    }
+    [selectAllFungibleTokens, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses()],
+    (fungibleTokens, nfts, alphAsset, addresses): Asset[] =>
+      calculateAssetsData([alphAsset, ...getAddressesTokenBalances(addresses)], fungibleTokens, nfts)
   )
+
+// TODO: Temp copied from shared to remove "worth" without affecting mobile wallet
+const calculateAssetsData = (tokenBalances: TokenDisplayBalances[], fungibleTokens: FungibleToken[], nfts: NFT[]) =>
+  tokenBalances.reduce((acc, token) => {
+    const fungibleToken = fungibleTokens.find((t) => t.id === token.id)
+    const nftInfo = nfts.find((nft) => nft.id === token.id)
+    const decimals = fungibleToken?.decimals ?? 0
+    const balance = BigInt(token.balance.toString())
+
+    acc.push({
+      id: token.id,
+      balance,
+      lockedBalance: BigInt(token.lockedBalance.toString()),
+      name: fungibleToken?.name ?? nftInfo?.name,
+      symbol: fungibleToken?.symbol,
+      description: fungibleToken?.description ?? nftInfo?.description,
+      logoURI: fungibleToken?.logoURI ?? nftInfo?.image,
+      decimals,
+      verified: fungibleToken?.verified
+    })
+
+    return acc
+  }, [] as Asset[])
 
 export const makeSelectAddressesKnownFungibleTokens = () =>
   createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken[] =>
@@ -102,6 +118,12 @@ export const makeSelectAddressesKnownFungibleTokens = () =>
 export const makeSelectAddressesVerifiedFungibleTokens = () =>
   createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken[] =>
     tokens.filter((token): token is AddressFungibleToken => !!token.verified)
+  )
+
+// TODO: Remove once tokens are fetched by Tanstack
+export const makeSelectAddressesListedFungibleTokenSymbols = () =>
+  createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken['symbol'][] =>
+    tokens.filter((token): token is AddressFungibleToken => !!token.verified).map(({ symbol }) => symbol)
   )
 
 export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
@@ -127,17 +149,6 @@ export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
         }
       )
 )
-
-export const makeSelectAddressesTokensWorth = () =>
-  createSelector([makeSelectAddressesKnownFungibleTokens(), selectAllPrices], (verifiedFungibleTokens, tokenPrices) =>
-    tokenPrices.reduce((totalWorth, { symbol, price }) => {
-      const verifiedFungibleToken = verifiedFungibleTokens.find((t) => t.symbol === symbol)
-
-      return verifiedFungibleToken
-        ? totalWorth + calculateAmountWorth(verifiedFungibleToken.balance, price, verifiedFungibleToken.decimals)
-        : totalWorth
-    }, 0)
-  )
 
 export const makeSelectAddressesUnknownTokens = () =>
   createSelector(
