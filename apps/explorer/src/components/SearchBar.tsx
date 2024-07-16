@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isAddressValid } from '@alephium/shared'
-import { addressFromPublicKey } from '@alephium/web3'
+import { addressFromPublicKey, isValidAddress } from '@alephium/web3'
 import { motion } from 'framer-motion'
 import React, { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -88,7 +87,7 @@ const SearchBar = ({ className }: SearchBarProps) => {
       } else if (word.length === 66) {
         const addressHash = addressFromPublicKey(word)
 
-        if (isAddressValid(addressHash)) {
+        if (isValidAddress(addressHash)) {
           redirect(`/addresses/${addressHash}`)
         } else {
           displaySnackbar({ text: t('There seems to be an error in the public key format.'), type: 'info' })
@@ -97,7 +96,7 @@ const SearchBar = ({ className }: SearchBarProps) => {
         displaySnackbar({ text: t('There seems to be an error in the hash format.'), type: 'info' })
       }
     } else {
-      if (isAddressValid(word)) {
+      if (isValidAddress(word)) {
         redirect(`/addresses/${word}`)
       } else {
         displaySnackbar({ text: t('There seems to be an error in the address format.'), type: 'info' })
@@ -131,7 +130,7 @@ const SearchIcon = styled(RiSearchLine)`
   color: ${({ theme }) => theme.font.primary};
   position: absolute;
   right: 20px;
-  top: 15px;
+  top: 13px;
   z-index: 11;
   height: 21px;
   cursor: pointer;
@@ -142,7 +141,7 @@ const SearchInput = styled.input`
   width: 100%;
   height: 100%;
   border: 1px solid ${({ theme }) => theme.border.primary};
-  border-radius: 6px;
+  border-radius: 50px;
   padding: 0 50px 0 20px;
   color: ${({ theme }) => theme.font.primary};
   background-color: ${({ theme }) => theme.bg.primary};

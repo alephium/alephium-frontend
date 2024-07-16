@@ -25,11 +25,6 @@ import { SharedRootState } from '@/store/store'
 export const { selectAll: selectAllPrices, selectById: selectPriceById } =
   tokenPricesAdapter.getSelectors<SharedRootState>((state) => state.tokenPrices)
 
-export const selectAlphPrice = createSelector(
-  (state: SharedRootState) => state,
-  (state) => selectPriceById(state, ALPH.symbol)?.price
-)
-
 export const { selectAll: selectAllPricesHistories, selectById: selectPriceHistoryById } =
   tokenPricesHistoryAdapter.getSelectors<SharedRootState>((state) => state.tokenPricesHistory)
 

@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Contact, isAddressValid as isAddressHashValid } from '@alephium/shared'
-import { Optional } from '@alephium/web3'
+import { Contact } from '@alephium/shared'
+import { isValidAddress, Optional } from '@alephium/web3'
 
 import i18n from '~/features/localization/i18n'
 import { store } from '~/store/store'
@@ -26,7 +26,7 @@ import { store } from '~/store/store'
 export const requiredErrorMessage = 'This field is required'
 
 // Same as in desktop wallet
-export const isAddressValid = (value: string) => isAddressHashValid(value) || i18n.t('This address is not valid')
+export const isAddressValid = (value: string) => isValidAddress(value) || i18n.t('This address is not valid')
 
 // Same as in desktop wallet
 export const isContactAddressValid = ({ address, id }: Optional<Omit<Contact, 'name'>, 'id'>) => {

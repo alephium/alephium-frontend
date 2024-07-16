@@ -40,6 +40,8 @@
     "not op_mini all"
   ],
   "dependencies": {
+    "@tanstack/react-query": "5.45.0",
+    "@tanstack/react-query-devtools": "^5.50.1",
     "electron-context-menu": "^3.1.2",
     "electron-is-dev": "^2.0.0",
     "electron-updater": "^5.3.0"
@@ -63,6 +65,7 @@
     "@electron/notarize": "^1.2.3",
     "@json-rpc-tools/utils": "^1.7.6",
     "@reduxjs/toolkit": "^1.9.1",
+    "@tanstack/eslint-plugin-query": "^5.50.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^14.0.0",
     "@types/events": "^3.0.0",
@@ -137,7 +140,7 @@
     "stylis": "^4.0.0",
     "ts-json-schema-generator": "^1.5.0",
     "type-fest": "^3.5.1",
-    "typescript": "^5.2.2",
+    "typescript": "^5.5.3",
     "vite": "^4.5.2",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0",

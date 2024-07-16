@@ -25,7 +25,7 @@ import styled, { css, useTheme } from 'styled-components'
 import { queries } from '@/api'
 import { useAssetMetadata } from '@/api/assets/assetsHooks'
 import NFTThumbnail from '@/components/NFTThumbnail'
-import AlephiumLogoSVG from '@/images/alephium_logo_monochrome.svg'
+import { ReactComponent as AlephiumLogo } from '@/images/alephium_logo_monochrome.svg'
 import { NFTMetadataWithFile } from '@/types/assets'
 
 interface AssetLogoProps {
@@ -56,7 +56,7 @@ const AssetLogo = (props: AssetLogoProps) => {
   return (
     <AssetLogoStyled className={className} {...props}>
       {assetId === ALPH.id ? (
-        <FramedImage src={AlephiumLogoSVG} borderRadius="full" isAlph />
+        <FramedImage borderRadius="full" isAlph />
       ) : assetType === 'fungible' ? (
         metadata.verified ? (
           <FramedImage src={metadata.logoURI} borderRadius="full" />
@@ -116,7 +116,7 @@ const FramedImage = ({
       }}
       isAlph={isAlph}
     >
-      <Image style={{ backgroundImage: `url(${src})` }} />
+      {isAlph ? <AlephiumLogo /> : <Image style={{ backgroundImage: `url(${src})` }} />}
     </ImageFrame>
   )
 }
@@ -142,6 +142,7 @@ const Image = styled.div`
 
 const ImageFrame = styled.div<{ isAlph?: boolean }>`
   overflow: hidden;
+  display: flex;
   height: 100%;
   width: 100%;
   background-color: ${({ theme }) => theme.bg.tertiary};
@@ -149,7 +150,7 @@ const ImageFrame = styled.div<{ isAlph?: boolean }>`
   ${({ isAlph }) =>
     isAlph &&
     css`
-      background: linear-gradient(218.53deg, #0075ff 9.58%, #d340f8 86.74%);
+      background: linear-gradient(218.53deg, #0026ff 9.58%, #f840a5 86.74%);
     `};
 `
 

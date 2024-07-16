@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, calculateAmountWorth, CURRENCIES, selectAlphPrice } from '@alephium/shared'
+import { AddressHash, calculateAmountWorth, CURRENCIES } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
 import { useMemo, useState } from 'react'
@@ -28,12 +28,16 @@ import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'
 import HistoricWorthChart, { historicWorthChartHeight } from '@/components/HistoricWorthChart'
 import SkeletonLoader from '@/components/SkeletonLoader'
+import {
+  useAddressesTokensPrices,
+  useAddressesTokensWorth,
+  useAlphPrice
+} from '@/features/tokenPrices/tokenPricesHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import {
   makeSelectAddresses,
   makeSelectAddressesHaveHistoricBalances,
-  makeSelectAddressesTokensWorth,
   selectAddressIds,
   selectHaveHistoricBalancesLoaded,
   selectIsStateUninitialized
@@ -69,8 +73,8 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const selectAddressesHaveHistoricBalances = useMemo(makeSelectAddressesHaveHistoricBalances, [])
   const hasHistoricBalances = useAppSelector((s) => selectAddressesHaveHistoricBalances(s, addressHashes))
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const alphPrice = useAppSelector(selectAlphPrice)
-  const arePricesInitialized = useAppSelector((s) => s.tokenPrices.status === 'initialized')
+  const alphPrice = useAlphPrice()
+  const { isPending: isPendingTokenPrices } = useAddressesTokensPrices()
   const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
@@ -87,8 +91,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const totalLockedBalance = addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0))
   const totalAlphAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice) : undefined
 
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
-  const totalAmountWorth = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
+  const totalAmountWorth = useAddressesTokensWorth(addressHashes)
   const balanceInFiat = hoveredDataPointWorth ?? totalAmountWorth
 
   const isOnline = network.status === 'online'
@@ -106,7 +109,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
                   ? dayjs(hoveredDataPointDate).format('DD/MM/YYYY') + ' (ALPH only)'
                   : t('Value today')}
               </Today>
-              {!arePricesInitialized || showBalancesSkeletonLoader ? (
+              {isPendingTokenPrices || showBalancesSkeletonLoader ? (
                 <SkeletonLoader height="32px" style={{ marginBottom: 7, marginTop: 7 }} />
               ) : (
                 <FiatTotalAmount tabIndex={0} value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
@@ -114,7 +117,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
               {hoveredDataPointWorth !== undefined && (
                 <Opacity>
                   <FiatDeltaPercentage>
-                    {!arePricesInitialized ||
+                    {isPendingTokenPrices ||
                     stateUninitialized ||
                     !haveHistoricBalancesLoaded ||
                     (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
@@ -128,7 +131,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
               <ChartLengthBadges>
                 {chartLengths.map((length) =>
-                  !arePricesInitialized || stateUninitialized || !haveHistoricBalancesLoaded ? (
+                  isPendingTokenPrices || stateUninitialized || !haveHistoricBalancesLoaded ? (
                     <SkeletonLoader
                       key={length}
                       height="25px"
