@@ -90,10 +90,8 @@ export const useAddressesTokensWorth = (addressHashes?: AddressHash[] | AddressH
   const tokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHashes))
 
   return tokenPrices.reduce((totalWorth, { symbol, price }) => {
-    const verifiedFungibleToken = tokens.find((t) => t.symbol === symbol)
+    const token = tokens.find((t) => t.symbol === symbol)
 
-    return verifiedFungibleToken
-      ? totalWorth + calculateAmountWorth(verifiedFungibleToken.balance, price, verifiedFungibleToken.decimals)
-      : totalWorth
+    return token ? totalWorth + calculateAmountWorth(token.balance, price, token.decimals) : totalWorth
   }, 0)
 }
