@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next'
 
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
-import { useAppSelector } from '@/hooks/redux'
+import { useAddressesTokens } from '@/features/fungibleTokens/useFungibleTokenList'
 import { Address } from '@/types/addresses'
 import { addressHasAssets, filterAddresses, filterAddressesWithoutAssets } from '@/utils/addresses'
 
@@ -46,7 +46,8 @@ const AddressSelectModal = ({
   hideAddressesWithoutAssets
 }: AddressSelectModalProps) => {
   const { t } = useTranslation()
-  const fungibleTokens = useAppSelector((state) => state.fungibleTokens.entities)
+  // const fungibleTokens = useAppSelector((state) => state.fungibleTokens.entities)
+  const { fungibleTokens } = useAddressesTokens()
 
   const addresses = hideAddressesWithoutAssets ? filterAddressesWithoutAssets(options) : options
   const [filteredAddresses, setFilteredAddresses] = useState(addresses)

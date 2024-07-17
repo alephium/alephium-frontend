@@ -17,12 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressSettings, AssetAmount, FungibleToken } from '@alephium/shared'
+import { AddressSettings, AssetAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import { Dictionary } from '@reduxjs/toolkit'
 
 import { Address } from '@/types/addresses'
+import { NewFungibleToken } from '@/types/assets'
 import { AddressTransaction, PendingTransaction } from '@/types/transactions'
 import { getRandomLabelColor } from '@/utils/colors'
 
@@ -59,14 +59,14 @@ export const getInitialAddressSettings = (): AddressSettings => ({
   color: getRandomLabelColor()
 })
 
-export const filterAddresses = (addresses: Address[], text: string, fungibleTokens: Dictionary<FungibleToken>) =>
+export const filterAddresses = (addresses: Address[], text: string, fungibleTokens: NewFungibleToken[]) =>
   text.length < 2
     ? addresses
     : addresses.filter((address) => {
         const addressTokenIds = address.tokens.filter((token) => token.balance !== '0').map((token) => token.tokenId)
         const addressTokenNames = addressTokenIds
           .map((tokenId) => {
-            const tokenInfo = fungibleTokens[tokenId]
+            const tokenInfo = fungibleTokens.find((token) => token.id === tokenId)
             return tokenInfo ? `${tokenInfo.name} ${tokenInfo.symbol}` : undefined
           })
           .filter((searchableText) => searchableText !== undefined)

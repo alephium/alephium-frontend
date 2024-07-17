@@ -24,6 +24,7 @@ import { MAX_API_RETRIES, ONE_MINUTE_MS } from '@alephium/shared'
 import isPropValid from '@emotion/is-prop-valid'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { AxiosError } from 'axios'
 import { StrictMode, Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
@@ -35,7 +36,6 @@ import Tooltips from '@/components/Tooltips'
 import AnalyticsProvider from '@/features/analytics/AnalyticsProvider'
 import * as serviceWorker from '@/serviceWorker'
 import { store } from '@/storage/store'
-import { AxiosError } from 'axios'
 
 // The app still behaves as if React 17 is used. This is because
 // `react-custom-scrollbars` is not working with React 18 yet.
