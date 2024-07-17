@@ -24,6 +24,7 @@ import { MAX_API_RETRIES, ONE_MINUTE_MS } from '@alephium/shared'
 import isPropValid from '@emotion/is-prop-valid'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { AxiosError } from 'axios'
 import { StrictMode, Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
@@ -46,8 +47,10 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: ONE_MINUTE_MS,
       retry: (failureCount, error) => {
-        // TODO: We should account for 429 errors from other libraries other than web3
-        if (!error.message.includes('Status code: 429')) {
+        if (
+          (error instanceof AxiosError && error.response?.status !== 429) ||
+          (error instanceof String && !error?.message?.includes('Status code: 429'))
+        ) {
           return false
         } else if (failureCount > MAX_API_RETRIES) {
           console.error(`API failed after ${MAX_API_RETRIES} retries, won't retry anymore`, error)
