@@ -6,7 +6,7 @@ on:
 
 env:
   VITE_BACKEND_URL: https://backend.testnet.alephium.org
-  VITE_NODE_URL: https://wallet.testnet.alephium.org
+  VITE_NODE_URL: https://node.testnet.alephium.org
   VITE_NETWORK_TYPE: testnet
 
 # Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
