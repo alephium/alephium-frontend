@@ -35,6 +35,7 @@ import Tooltips from '@/components/Tooltips'
 import AnalyticsProvider from '@/features/analytics/AnalyticsProvider'
 import * as serviceWorker from '@/serviceWorker'
 import { store } from '@/storage/store'
+import { AxiosError } from 'axios'
 
 // The app still behaves as if React 17 is used. This is because
 // `react-custom-scrollbars` is not working with React 18 yet.
@@ -46,8 +47,10 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: ONE_MINUTE_MS,
       retry: (failureCount, error) => {
-        // TODO: We should account for 429 errors from other libraries other than web3
-        if (!error.message.includes('Status code: 429')) {
+        if (
+          (error instanceof AxiosError && error.response?.status !== 429) ||
+          (error instanceof String && !error?.message?.includes('Status code: 429'))
+        ) {
           return false
         } else if (failureCount > MAX_API_RETRIES) {
           console.error(`API failed after ${MAX_API_RETRIES} retries, won't retry anymore`, error)
