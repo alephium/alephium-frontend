@@ -29,7 +29,7 @@ export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalanc
   lockedBalance: bigint
 }
 
-export type FungibleToken = TokenInfo & { verified?: boolean }
+export type FungibleToken = Optional<TokenInfo, 'logoURI' | 'description'> & { verified?: boolean }
 
 export type Asset = TokenDisplayBalances &
   Optional<FungibleToken, 'symbol' | 'name'> & {

@@ -59,7 +59,7 @@
     "@alephium/shared": "workspace:*",
     "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",
-    "@alephium/token-list": "^0.0.12",
+    "@alephium/token-list": "^0.0.19",
     "@alephium/typescript-config": "workspace:*",
     "@alephium/walletconnect-provider": "1.2.3",
     "@alephium/web3": "1.2.3",
