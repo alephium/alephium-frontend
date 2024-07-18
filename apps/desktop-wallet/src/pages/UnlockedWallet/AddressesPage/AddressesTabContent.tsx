@@ -34,11 +34,7 @@ import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { filterAddresses } from '@/utils/addresses'
 
-interface AddressesTabContentProps {
-  tabsRowHeight: number
-}
-
-const AddressesTabContent = ({ tabsRowHeight }: AddressesTabContentProps) => {
+const AddressesTabContent = () => {
   const addresses = useAppSelector(selectAllAddresses)
   const fungibleTokens = useAppSelector((state) => state.fungibleTokens.entities)
   const { t } = useTranslation()
