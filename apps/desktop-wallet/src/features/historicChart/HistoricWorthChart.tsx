@@ -58,14 +58,14 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   const selectAddresses = useMemo(makeSelectAddresses, [])
   const addresses = useAppSelector((s) => selectAddresses(s, addressHash))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const { alphBalanceHistoryPerAddress, alphPriceHistory, isPending: isPendingHistoricData } = useHistoricData()
+  const { alphBalanceHistoryPerAddress, alphPriceHistory, isLoading: isLoadingHistoricData } = useHistoricData()
 
   const theme = useTheme()
 
   const [chartData, setChartData] = useState<DataPoint[]>([])
 
   const startingDate = startingDates[length].format(CHART_DATE_FORMAT)
-  const isDataAvailable = addresses.length !== 0 && !isPendingHistoricData && !!alphPriceHistory
+  const isDataAvailable = addresses.length !== 0 && !isLoadingHistoricData && !!alphPriceHistory
   const firstItem = chartData.at(0)
 
   useEffect(() => {

@@ -23,16 +23,16 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import {
+  useAddressesTokensPrices,
+  useAddressesTokensWorth,
+  useSortTokensByWorth
+} from '@/api/addressesFungibleTokensPricesDataHooks'
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Amount from '@/components/Amount'
 import AssetBadge from '@/components/AssetBadge'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import {
-  useAddressesTokensPrices,
-  useAddressesTokensWorth,
-  useSortTokensByWorth
-} from '@/features/tokenPrices/tokenPricesHooks'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
@@ -58,7 +58,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const { isPending: isPendingTokenPrices } = useAddressesTokensPrices()
+  const { isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
   const balanceInFiat = useAddressesTokensWorth(addressHash)
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
@@ -127,7 +127,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           )}
         </Cell>
         <FiatAmountCell>
-          {stateUninitialized || isPendingTokenPrices ? (
+          {stateUninitialized || isLoadingTokenPrices ? (
             <SkeletonLoader height="18.5px" />
           ) : (
             <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />

@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, client } from '@alephium/shared'
+import { AddressHash, client, PAGINATION_PAGE_LIMIT } from '@alephium/shared'
+import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions } from '@tanstack/react-query'
 
 interface AddressBalanceQueryProps {
@@ -28,9 +29,32 @@ interface AddressBalanceQueryProps {
 // Adding latestTxHash in queryKey ensures that we'll refetch when new txs arrive.
 // Adding networkId in queryKey ensures that switching the network we get different data.
 // TODO: Should we add explorerBackendUrl instead?
-export const addressBalanceQuery = ({ addressHash, networkId, latestTxHash }: AddressBalanceQueryProps) =>
+export const addressAlphBalanceQuery = ({ addressHash, networkId, latestTxHash }: AddressBalanceQueryProps) =>
   queryOptions({
-    queryKey: ['address', 'balance', { addressHash, latestTxHash, networkId }],
+    queryKey: ['address', 'balance', 'ALPH', { addressHash, latestTxHash, networkId }],
     queryFn: () => client.explorer.addresses.getAddressesAddressBalance(addressHash),
+    staleTime: Infinity
+  })
+
+export const addressTokensBalanceQuery = ({ addressHash, networkId, latestTxHash }: AddressBalanceQueryProps) =>
+  queryOptions({
+    queryKey: ['address', 'balance', 'tokens', { addressHash, latestTxHash, networkId }],
+    queryFn: async () => {
+      const tokenBalances = [] as AddressTokenBalance[]
+      let tokenBalancesInPage = [] as AddressTokenBalance[]
+      let page = 1
+
+      while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
+        tokenBalancesInPage = await client.explorer.addresses.getAddressesAddressTokensBalance(addressHash, {
+          limit: PAGINATION_PAGE_LIMIT,
+          page
+        })
+
+        tokenBalances.push(...tokenBalancesInPage)
+        page += 1
+      }
+
+      return tokenBalances
+    },
     staleTime: Infinity
   })

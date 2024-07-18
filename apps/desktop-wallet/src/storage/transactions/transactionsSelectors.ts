@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, extractTokenIds, selectAllFungibleTokens, selectNFTIds } from '@alephium/shared'
+import { AddressHash, Asset, extractTokenIds, selectAllFungibleTokens, selectNFTIds } from '@alephium/shared'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { makeSelectAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
@@ -90,9 +90,9 @@ export const selectTransactionUnknownTokenIds = createSelector(
 
 // TODO: To be replaced by Tanstack
 export const selectAddressesLatestHash = createSelector(
-  [selectAllAddressHashes, makeSelectAddressesConfirmedTransactions()],
-  (addressHashes, confirmedTxs) =>
-    addressHashes.map((addressHash) => ({
+  [selectAllAddressHashes, makeSelectAddressesConfirmedTransactions(), (_, addressHash?: AddressHash) => addressHash],
+  (addressHashes, confirmedTxs, addressHash) =>
+    (addressHash ? [addressHash] : addressHashes).map((addressHash) => ({
       addressHash,
       latestTxHash: confirmedTxs.find((tx) => tx.address.hash === addressHash)?.hash
     }))
