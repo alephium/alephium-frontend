@@ -119,3 +119,5 @@ export const validateChildrenType = <T extends (props: any) => ReactNode>({
     }
   })
 }
+
+export const isDefined = <T>(item: T | undefined): item is T => !!item

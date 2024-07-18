@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
@@ -45,11 +45,8 @@ const AddressesPage = () => {
   const isInfoMessageClosed = useAppSelector((s) => s.global.addressesPageInfoMessageClosed)
 
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[state?.activeTab === 'contacts' ? 1 : 0])
-  const [tabsRowHeight, setTabsRowHeight] = useState(0)
 
   const closeInfoMessage = () => dispatch(addressesPageInfoMessageClosed())
-
-  useEffect(() => setTabsRowHeight(tabsRowRef.current?.clientHeight ?? 0), [])
 
   return (
     <UnlockedWalletPage
@@ -68,7 +65,7 @@ const AddressesPage = () => {
         <TabPanel>
           {
             {
-              addresses: <AddressesTabContent tabsRowHeight={tabsRowHeight} />,
+              addresses: <AddressesTabContent />,
               contacts: <ContactsTabContent />
             }[currentTab.value]
           }
