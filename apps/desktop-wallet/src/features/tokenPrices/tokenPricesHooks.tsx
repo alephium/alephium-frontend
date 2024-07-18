@@ -28,6 +28,7 @@ import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesListedFungibleTokenSymbols
 } from '@/storage/addresses/addressesSelectors'
+import { isDefined } from '@/utils/misc'
 
 const TOKEN_PRICES_KEY = 'tokenPrices'
 
@@ -58,7 +59,7 @@ export const useAddressesTokensPrices = () => {
       refetchInterval: ONE_MINUTE_MS
     })),
     combine: (results) => ({
-      data: results.flatMap(({ data }) => data).filter((price) => !!price),
+      data: results.flatMap(({ data }) => data).filter(isDefined),
       isPending: results.some(({ isPending }) => isPending)
     })
   })
