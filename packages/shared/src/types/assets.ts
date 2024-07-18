@@ -23,11 +23,13 @@ import { EntityState } from '@reduxjs/toolkit'
 
 export type TokenBalances = AddressBalance & { id: Token['id'] }
 
-// Same as TokenBalances, but amounts are in BigInt, useful for display purposes
-export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalance'> & {
+export type DisplayBalances = {
   balance: bigint
   lockedBalance: bigint
 }
+
+// Same as TokenBalances, but amounts are in BigInt, useful for display purposes
+export type TokenDisplayBalances = Omit<TokenBalances, 'balance' | 'lockedBalance'> & DisplayBalances
 
 export type FungibleToken = Optional<TokenInfo, 'logoURI' | 'description'> & { verified?: boolean }
 
