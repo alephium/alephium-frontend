@@ -18,16 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, Asset, calculateAmountWorth, client, ONE_MINUTE_MS, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
 import { useQueries, useQueryClient } from '@tanstack/react-query'
 import { chunk, orderBy } from 'lodash'
-import { useMemo } from 'react'
 
+import { useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
+import { useAddressesListedFungibleTokensWithPrice } from '@/api/addressesFungibleTokensInfoDataHooks'
 import { useAppSelector } from '@/hooks/redux'
-import {
-  makeSelectAddressesKnownFungibleTokens,
-  makeSelectAddressesListedFungibleTokenSymbols
-} from '@/storage/addresses/addressesSelectors'
 import { isDefined } from '@/utils/misc'
 
 const TOKEN_PRICES_KEY = 'tokenPrices'
@@ -39,12 +35,14 @@ type TokenPrice = {
 
 export const useAddressesTokensPrices = () => {
   const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
-  const addressTokensSymbols = useAppSelector(useMemo(makeSelectAddressesListedFungibleTokenSymbols, [])) // TODO: To be replaced when tokens are fetched with Tanstack
-  const addressTokensSymbolsWithPrice = addressTokensSymbols.filter((symbol) => symbol in explorer.TokensWithPrice)
+  const addressTokensWithPrice = useAddressesListedFungibleTokensWithPrice()
   const queryClient = useQueryClient()
 
-  const { data, isPending } = useQueries({
-    queries: chunk(addressTokensSymbolsWithPrice, TOKENS_QUERY_LIMIT).map((symbols) => ({
+  const { data, isLoading } = useQueries({
+    queries: chunk(
+      addressTokensWithPrice.map(({ symbol }) => symbol),
+      TOKENS_QUERY_LIMIT
+    ).map((symbols) => ({
       queryKey: [TOKEN_PRICES_KEY, 'currentPrice', symbols, { currency }],
       queryFn: async () =>
         (await client.explorer.market.postMarketPrices({ currency }, symbols)).map(
@@ -60,11 +58,14 @@ export const useAddressesTokensPrices = () => {
     })),
     combine: (results) => ({
       data: results.flatMap(({ data }) => data).filter(isDefined),
-      isPending: results.some(({ isPending }) => isPending)
+      isLoading: results.some(({ isLoading }) => isLoading)
     })
   })
 
-  return { data, isPending }
+  return {
+    data,
+    isLoading
+  }
 }
 
 export const useAlphPrice = () => {
@@ -98,14 +99,15 @@ export const useSortTokensByWorth = (tokens: Asset[]) => {
   )
 }
 
-export const useAddressesTokensWorth = (addressHashes?: AddressHash[] | AddressHash) => {
+export const useAddressesTokensWorth = (addressHash?: AddressHash) => {
+  const addressesTokensWithPrice = useAddressesListedFungibleTokensWithPrice(addressHash)
+  const { data: tokensBalances } = useAddressesTokensBalances(addressHash)
   const { data: tokenPrices } = useAddressesTokensPrices()
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const tokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHashes))
 
-  return tokenPrices.reduce((totalWorth, { symbol, price }) => {
-    const token = tokens.find((t) => t.symbol === symbol)
+  return addressesTokensWithPrice.reduce((totalWorth, { id, symbol, decimals }) => {
+    const price = tokenPrices.find((t) => t.symbol === symbol)?.price
+    const tokenBalance = tokensBalances[id]?.balance
 
-    return token ? totalWorth + calculateAmountWorth(token.balance, price, token.decimals) : totalWorth
+    return price && tokenBalance ? totalWorth + calculateAmountWorth(tokenBalance, price, decimals) : totalWorth
   }, 0)
 }
