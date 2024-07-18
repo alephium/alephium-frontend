@@ -23,6 +23,11 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import {
+  useAddressesTokensPrices,
+  useAddressesTokensWorth,
+  useAlphPrice
+} from '@/api/addressesFungibleTokensPricesDataHooks'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'
@@ -31,11 +36,6 @@ import TotalAlphBalance from '@/features/balancesOverview/TotalAlphBalance'
 import { ChartLength, chartLengths, DataPoint } from '@/features/historicChart/historicChartTypes'
 import HistoricWorthChart, { historicWorthChartHeight } from '@/features/historicChart/HistoricWorthChart'
 import useHistoricData from '@/features/historicChart/useHistoricData'
-import {
-  useAddressesTokensPrices,
-  useAddressesTokensWorth,
-  useAlphPrice
-} from '@/features/tokenPrices/tokenPricesHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import {
@@ -70,8 +70,8 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const alphPrice = useAlphPrice()
-  const { isPending: isPendingTokenPrices } = useAddressesTokensPrices()
-  const { isPending: isPendingHistoricData, hasHistoricBalances } = useHistoricData()
+  const { isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
+  const { isLoading: isLoadingHistoricData, hasHistoricBalances } = useHistoricData()
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
   const [chartLength, setChartLength] = useState<ChartLength>('1m')
@@ -85,7 +85,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
   const totalAlphAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice) : undefined
 
-  const totalAmountWorth = useAddressesTokensWorth(addressHashes)
+  const totalAmountWorth = useAddressesTokensWorth(addressHash)
   const balanceInFiat = hoveredDataPointWorth ?? totalAmountWorth
 
   const isHoveringChart = !!hoveredDataPointWorth
@@ -102,7 +102,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
                   ? dayjs(hoveredDataPointDate).format('DD/MM/YYYY') + ' (ALPH only)'
                   : t('Value today')}
               </Today>
-              {isPendingTokenPrices || showBalancesSkeletonLoader ? (
+              {isLoadingTokenPrices || showBalancesSkeletonLoader ? (
                 <SkeletonLoader height="32px" style={{ marginBottom: 7, marginTop: 7 }} />
               ) : (
                 <FiatTotalAmount tabIndex={0} value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
@@ -110,9 +110,9 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
               {hoveredDataPointWorth !== undefined && (
                 <Opacity>
                   <FiatDeltaPercentage>
-                    {isPendingTokenPrices ||
+                    {isLoadingTokenPrices ||
                     stateUninitialized ||
-                    isPendingHistoricData ||
+                    isLoadingHistoricData ||
                     (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
                       <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
                     ) : hasHistoricBalances && worthInBeginningOfChart && hoveredDataPointWorth !== undefined ? (
@@ -124,7 +124,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
               <ChartLengthBadges>
                 {chartLengths.map((length) =>
-                  isPendingTokenPrices || stateUninitialized || isPendingHistoricData ? (
+                  isLoadingTokenPrices || stateUninitialized || isLoadingHistoricData ? (
                     <SkeletonLoader
                       key={length}
                       height="25px"
