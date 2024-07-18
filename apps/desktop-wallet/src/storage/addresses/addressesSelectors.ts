@@ -43,6 +43,8 @@ export const {
   selectIds: selectAddressIds
 } = addressesAdapter.getSelectors<RootState>((state) => state.addresses)
 
+export const selectAllAddressHashes = createSelector(selectAddressIds, (addresses) => addresses as AddressHash[])
+
 export const makeSelectAddresses = () =>
   createSelector(
     [selectAllAddresses, (_, addressHashes?: AddressHash[] | AddressHash) => addressHashes],

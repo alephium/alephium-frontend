@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset, extractTokenIds, selectAllFungibleTokens, selectNFTIds } from '@alephium/shared'
 import { createSelector } from '@reduxjs/toolkit'
 
-import { makeSelectAddresses } from '@/storage/addresses/addressesSelectors'
+import { makeSelectAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import { RootState } from '@/storage/store'
 import { confirmedTransactionsAdapter, pendingTransactionsAdapter } from '@/storage/transactions/transactionsAdapters'
 import { AddressConfirmedTransaction, AddressPendingTransaction } from '@/types/transactions'
@@ -86,4 +86,14 @@ export const selectTransactionUnknownTokenIds = createSelector(
 
     return tokensWithoutMetadata
   }
+)
+
+// TODO: To be replaced by Tanstack
+export const selectAddressesLatestHash = createSelector(
+  [selectAllAddressHashes, makeSelectAddressesConfirmedTransactions()],
+  (addressHashes, confirmedTxs) =>
+    addressHashes.map((addressHash) => ({
+      addressHash,
+      latestTxHash: confirmedTxs.find((tx) => tx.address.hash === addressHash)?.hash
+    }))
 )

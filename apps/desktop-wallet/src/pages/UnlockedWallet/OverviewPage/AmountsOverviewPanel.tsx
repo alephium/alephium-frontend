@@ -27,6 +27,7 @@ import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'
 import SkeletonLoader from '@/components/SkeletonLoader'
+import TotalAlphBalance from '@/features/balancesOverview/TotalAlphBalance'
 import { ChartLength, chartLengths, DataPoint } from '@/features/historicChart/historicChartTypes'
 import HistoricWorthChart, { historicWorthChartHeight } from '@/features/historicChart/HistoricWorthChart'
 import useHistoricData from '@/features/historicChart/useHistoricData'
@@ -42,7 +43,6 @@ import {
   selectAddressIds,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { getAvailableBalance } from '@/utils/addresses'
 
 interface AmountsOverviewPanelProps {
   addressHash?: string
@@ -64,7 +64,6 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const addressHashes = addressHash ?? allAddressHashes
   const selectAddresses = useMemo(makeSelectAddresses, [])
   const addresses = useAppSelector((s) => selectAddresses(s, addressHashes))
-  const network = useAppSelector((s) => s.network)
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const isLoadingBalances = useAppSelector((s) => s.addresses.loadingBalances)
   const isBalancesInitialized = useAppSelector((s) => s.addresses.balancesStatus === 'initialized')
@@ -84,14 +83,11 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   }
   const singleAddress = !!addressHash
   const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
-  const totalAvailableBalance = addresses.reduce((acc, address) => acc + getAvailableBalance(address), BigInt(0))
-  const totalLockedBalance = addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0))
   const totalAlphAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice) : undefined
 
   const totalAmountWorth = useAddressesTokensWorth(addressHashes)
   const balanceInFiat = hoveredDataPointWorth ?? totalAmountWorth
 
-  const isOnline = network.status === 'online'
   const isHoveringChart = !!hoveredDataPointWorth
   const showBalancesSkeletonLoader = !isBalancesInitialized || (!isBalancesInitialized && isLoadingBalances)
 
@@ -155,26 +151,8 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
               <>
                 <Divider />
                 <AvailableLockedBalancesColumn fadeOut={isHoveringChart}>
-                  <AvailableBalanceRow>
-                    <BalanceLabel tabIndex={0} role="representation">
-                      {t('Available')}
-                    </BalanceLabel>
-                    {showBalancesSkeletonLoader ? (
-                      <SkeletonLoader height="30px" />
-                    ) : (
-                      <AlphAmount tabIndex={0} value={isOnline ? totalAvailableBalance : undefined} />
-                    )}
-                  </AvailableBalanceRow>
-                  <LockedBalanceRow>
-                    <BalanceLabel tabIndex={0} role="representation">
-                      {t('Locked')}
-                    </BalanceLabel>
-                    {showBalancesSkeletonLoader ? (
-                      <SkeletonLoader height="30px" />
-                    ) : (
-                      <AlphAmount tabIndex={0} value={isOnline ? totalLockedBalance : undefined} />
-                    )}
-                  </LockedBalanceRow>
+                  <TotalAlphBalance type="available" />
+                  <TotalAlphBalance type="locked" />
                 </AvailableLockedBalancesColumn>
               </>
             )}
@@ -253,6 +231,7 @@ const AvailableLockedBalancesColumn = styled(BalancesColumn)`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 20px;
 `
 
 const Divider = styled.div`
@@ -260,11 +239,6 @@ const Divider = styled.div`
   background-color: ${({ theme }) => theme.border.secondary};
   margin: 17px 55px;
 `
-
-const AvailableBalanceRow = styled.div`
-  margin-bottom: 20px;
-`
-const LockedBalanceRow = styled.div``
 
 const FiatTotalAmount = styled(Amount)`
   font-size: 34px;
@@ -274,19 +248,6 @@ const FiatTotalAmount = styled(Amount)`
 const FiatDeltaPercentage = styled.div`
   font-size: 18px;
   margin-top: 5px;
-`
-
-const AlphAmount = styled(Amount)`
-  color: ${({ theme }) => theme.font.primary};
-  font-size: 21px;
-  font-weight: var(--fontWeight-semiBold);
-`
-
-const BalanceLabel = styled.label`
-  color: ${({ theme }) => theme.font.tertiary};
-  font-size: 12px;
-  display: block;
-  margin-bottom: 3px;
 `
 
 const Today = styled.div`
