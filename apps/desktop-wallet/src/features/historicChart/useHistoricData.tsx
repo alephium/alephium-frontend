@@ -33,6 +33,7 @@ type Amount = string
 const useHistoricData = () => {
   const allAddressHashes = useAppSelector((s) => s.addresses.ids as AddressHash[])
   const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
+  const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data: alphPriceHistory, isPending: isPendingAlphPriceHistory } = useQuery({
     queryKey: [HISTORY_QUERY_KEY, 'price', ALPH.symbol, { currency }],
@@ -69,7 +70,7 @@ const useHistoricData = () => {
     hasHistoricBalances
   } = useQueries({
     queries: allAddressHashes.map((hash) => ({
-      queryKey: [HISTORY_QUERY_KEY, 'addressBalance', DAILY, ALPH.symbol, { hash }],
+      queryKey: [HISTORY_QUERY_KEY, 'addressBalance', DAILY, ALPH.symbol, { hash, networkId }],
       queryFn: async () => {
         const now = dayjs()
         const thisMoment = now.valueOf()
