@@ -25,6 +25,7 @@ import Box from '@/components/Box'
 import Button from '@/components/Button'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
+import { useAddressesTokens } from '@/features/fungibleTokens/useFungibleTokenList'
 import { useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import NewAddressModal from '@/modals/NewAddressModal'
@@ -36,7 +37,7 @@ import { filterAddresses } from '@/utils/addresses'
 
 const AddressesTabContent = () => {
   const addresses = useAppSelector(selectAllAddresses)
-  const fungibleTokens = useAppSelector((state) => state.fungibleTokens.entities)
+  const { fungibleTokens } = useAddressesTokens()
   const { t } = useTranslation()
 
   const [isGenerateNewAddressModalOpen, setIsGenerateNewAddressModalOpen] = useState(false)

@@ -17,5 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AssetAmount } from '@alephium/shared'
+import { TokenInfo } from '@alephium/token-list'
+import { Optional } from '@alephium/web3'
 
 export type AssetAmountInputType = AssetAmount & { amountInput?: string }
+
+export type NewFungibleToken = ListedFungibleToken | UnlistedFungibleToken // TODO: Rename to FungibleToken when the one from shared is not needed anymore
+export interface ListedFungibleToken extends TokenInfo {} // using interface instead of type to avoid seeing TokenInfo in IDE
+export type UnlistedFungibleToken = Optional<ListedFungibleToken, 'logoURI' | 'description'> // TODO: Think about this again, maybe replace with FungibleTokenBasicMetadata?
