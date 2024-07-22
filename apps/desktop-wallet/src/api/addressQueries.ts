@@ -16,14 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, client, PAGINATION_PAGE_LIMIT } from '@alephium/shared'
-import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
+import { client, PAGINATION_PAGE_LIMIT } from '@alephium/shared'
+import { AddressBalance, AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions } from '@tanstack/react-query'
 
-interface AddressBalanceQueryProps {
-  addressHash: AddressHash
+import queryClient from '@/api/queryClient'
+import { AddressLatestTransactionHashQueryData } from '@/api/transactionQueries'
+
+interface AddressBalanceQueryProps extends AddressLatestTransactionHashQueryData {
   networkId: number
-  latestTxHash?: string
 }
 
 const ADDRESS_BALANCE_QUERY_KEYS = ['address', 'balance']
@@ -31,14 +32,29 @@ const ADDRESS_BALANCE_QUERY_KEYS = ['address', 'balance']
 // Adding latestTxHash in queryKey ensures that we'll refetch when new txs arrive.
 // Adding networkId in queryKey ensures that switching the network we get different data.
 // TODO: Should we add explorerBackendUrl instead?
-export const addressAlphBalanceQuery = ({ addressHash, networkId, latestTxHash }: AddressBalanceQueryProps) =>
+export const addressAlphBalanceQuery = ({
+  addressHash,
+  networkId,
+  latestTxHash,
+  previousTxHash
+}: AddressBalanceQueryProps) =>
   queryOptions({
     queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'ALPH', { addressHash, latestTxHash, networkId }],
     queryFn: () => client.explorer.addresses.getAddressesAddressBalance(addressHash),
+    placeholderData: queryClient.getQueryData([
+      ...ADDRESS_BALANCE_QUERY_KEYS,
+      'ALPH',
+      { addressHash, latestTxHash: previousTxHash, networkId }
+    ]) as AddressBalance,
     staleTime: Infinity
   })
 
-export const addressTokensBalanceQuery = ({ addressHash, networkId, latestTxHash }: AddressBalanceQueryProps) =>
+export const addressTokensBalanceQuery = ({
+  addressHash,
+  networkId,
+  latestTxHash,
+  previousTxHash
+}: AddressBalanceQueryProps) =>
   queryOptions({
     queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'tokens', { addressHash, latestTxHash, networkId }],
     queryFn: async () => {
@@ -58,5 +74,10 @@ export const addressTokensBalanceQuery = ({ addressHash, networkId, latestTxHash
 
       return tokenBalances
     },
+    placeholderData: queryClient.getQueryData([
+      ...ADDRESS_BALANCE_QUERY_KEYS,
+      'tokens',
+      { addressHash, latestTxHash: previousTxHash, networkId }
+    ]) as AddressTokenBalance[],
     staleTime: Infinity
   })
