@@ -22,11 +22,11 @@ import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useSortTokensByWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
 import Button from '@/components/Button'
 import MultiSelect from '@/components/Inputs/MultiSelect'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import SelectOptionAsset from '@/components/Inputs/SelectOptionAsset'
-import { useSortTokensByWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import {
