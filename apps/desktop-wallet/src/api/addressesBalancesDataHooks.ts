@@ -31,8 +31,8 @@ export const useAddressesAlphBalances = (addressHash?: AddressHash) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data, isLoading } = useQueries({
-    queries: latestAddressesTxHashes.map(({ addressHash, latestTxHash }) =>
-      addressAlphBalanceQuery({ addressHash, latestTxHash, networkId })
+    queries: latestAddressesTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
+      addressAlphBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
     ),
     combine: (results) => ({
       data: results.reduce(
@@ -63,8 +63,8 @@ export const useAddressesTokensBalances = (addressHash?: AddressHash) => {
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalances(addressHash)
 
   const { data, isLoading } = useQueries({
-    queries: latestAddressesTxHashes.map(({ addressHash, latestTxHash }) =>
-      addressTokensBalanceQuery({ addressHash, latestTxHash, networkId })
+    queries: latestAddressesTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
+      addressTokensBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
     ),
     combine: (results) => ({
       data: results.reduce(
