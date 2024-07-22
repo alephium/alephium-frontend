@@ -19,25 +19,39 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, client, TRANSACTIONS_REFRESH_INTERVAL } from '@alephium/shared'
 import { queryOptions } from '@tanstack/react-query'
 
+import queryClient from '@/api/queryClient'
+
 const ADDRESS_TRANSACTIONS_QUERY_KEYS = ['address', 'transactions']
 
-interface AddressLatestTransactionHashProps {
+interface AddressLatestTransactionHashQueryProps {
   addressHash: AddressHash
   networkId: number
 }
 
-export const addressLatestTransactionHashQuery = ({ addressHash, networkId }: AddressLatestTransactionHashProps) =>
+export interface AddressLatestTransactionHashQueryData {
+  addressHash: AddressHash
+  latestTxHash?: string
+  previousTxHash?: string
+}
+
+export const addressLatestTransactionHashQuery = ({ addressHash, networkId }: AddressLatestTransactionHashQueryProps) =>
   queryOptions({
     queryKey: [...ADDRESS_TRANSACTIONS_QUERY_KEYS, 'latest', { addressHash, networkId }],
-    queryFn: async () => {
+    queryFn: async ({ queryKey }) => {
       const transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHash, {
         page: 1,
         limit: 1
       })
 
+      const latestTxHash = transactions.length > 0 ? transactions[0].hash : undefined
+      const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionHashQueryData | undefined
+      const cachedLatestTxHash = cachedData?.latestTxHash
+      const cachedPreviousTxHash = cachedData?.previousTxHash
+
       return {
         addressHash,
-        latestTxHash: transactions.length > 0 ? transactions[0].hash : undefined // TODO: Review if needed
+        latestTxHash,
+        previousTxHash: cachedLatestTxHash !== latestTxHash ? cachedLatestTxHash : cachedPreviousTxHash
       }
     },
     refetchInterval: TRANSACTIONS_REFRESH_INTERVAL
