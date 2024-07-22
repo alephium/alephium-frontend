@@ -23,13 +23,13 @@ import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import { addressTokensBalanceQuery } from '@/api/addressQueries'
+import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
 import { useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAddressesLatestHash } from '@/storage/transactions/transactionsSelectors'
 
 export const useAddressesListedFungibleTokens = (addressHash?: AddressHash) => {
   const { data: fungibleTokenList } = useFungibleTokenList()
-  const latestAddressesTxHashes = useAppSelector((s) => selectAddressesLatestHash(s, addressHash))
+  const { data: latestAddressesTxHashes } = useAddressesLastTransactionHashes(addressHash)
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data, isLoading } = useQueries({

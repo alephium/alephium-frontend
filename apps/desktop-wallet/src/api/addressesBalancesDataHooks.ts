@@ -21,13 +21,13 @@ import { ALPH } from '@alephium/token-list'
 import { useQueries } from '@tanstack/react-query'
 
 import { addressAlphBalanceQuery, addressTokensBalanceQuery } from '@/api/addressQueries'
+import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAddressesLatestHash } from '@/storage/transactions/transactionsSelectors'
 
 type TokenId = string
 
 export const useAddressesAlphBalances = (addressHash?: AddressHash) => {
-  const latestAddressesTxHashes = useAppSelector((s) => selectAddressesLatestHash(s, addressHash))
+  const { data: latestAddressesTxHashes } = useAddressesLastTransactionHashes(addressHash)
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data, isLoading } = useQueries({
@@ -58,8 +58,8 @@ export const useAddressesAlphBalances = (addressHash?: AddressHash) => {
 }
 
 export const useAddressesTokensBalances = (addressHash?: AddressHash) => {
-  const latestAddressesTxHashes = useAppSelector((s) => selectAddressesLatestHash(s, addressHash))
   const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const { data: latestAddressesTxHashes } = useAddressesLastTransactionHashes(addressHash)
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalances(addressHash)
 
   const { data, isLoading } = useQueries({
