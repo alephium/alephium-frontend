@@ -33,8 +33,8 @@ export const useAddressesListedFungibleTokens = (addressHash?: AddressHash) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data, isLoading } = useQueries({
-    queries: latestAddressesTxHashes.map(({ addressHash, latestTxHash }) =>
-      addressTokensBalanceQuery({ addressHash, latestTxHash, networkId })
+    queries: latestAddressesTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
+      addressTokensBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
     ),
     combine: (results) => ({
       data: results.reduce(
