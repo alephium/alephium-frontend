@@ -26,19 +26,21 @@ interface AddressBalanceQueryProps {
   latestTxHash?: string
 }
 
+const ADDRESS_BALANCE_QUERY_KEYS = ['address', 'balance']
+
 // Adding latestTxHash in queryKey ensures that we'll refetch when new txs arrive.
 // Adding networkId in queryKey ensures that switching the network we get different data.
 // TODO: Should we add explorerBackendUrl instead?
 export const addressAlphBalanceQuery = ({ addressHash, networkId, latestTxHash }: AddressBalanceQueryProps) =>
   queryOptions({
-    queryKey: ['address', 'balance', 'ALPH', { addressHash, latestTxHash, networkId }],
+    queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'ALPH', { addressHash, latestTxHash, networkId }],
     queryFn: () => client.explorer.addresses.getAddressesAddressBalance(addressHash),
     staleTime: Infinity
   })
 
 export const addressTokensBalanceQuery = ({ addressHash, networkId, latestTxHash }: AddressBalanceQueryProps) =>
   queryOptions({
-    queryKey: ['address', 'balance', 'tokens', { addressHash, latestTxHash, networkId }],
+    queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'tokens', { addressHash, latestTxHash, networkId }],
     queryFn: async () => {
       const tokenBalances = [] as AddressTokenBalance[]
       let tokenBalancesInPage = [] as AddressTokenBalance[]
