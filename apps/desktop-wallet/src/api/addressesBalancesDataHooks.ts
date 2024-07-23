@@ -27,11 +27,11 @@ import { useAppSelector } from '@/hooks/redux'
 type TokenId = string
 
 export const useAddressesAlphBalances = (addressHash?: AddressHash) => {
-  const { data: latestAddressesTxHashes } = useAddressesLastTransactionHashes(addressHash)
+  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useAddressesLastTransactionHashes(addressHash)
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data, isLoading } = useQueries({
-    queries: latestAddressesTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
+    queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
       addressAlphBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
     ),
     combine: (results) => ({
@@ -53,17 +53,17 @@ export const useAddressesAlphBalances = (addressHash?: AddressHash) => {
 
   return {
     data,
-    isLoading
+    isLoading: isLoading || isLoadingLatestTxHashes
   }
 }
 
 export const useAddressesTokensBalances = (addressHash?: AddressHash) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { data: latestAddressesTxHashes } = useAddressesLastTransactionHashes(addressHash)
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalances(addressHash)
+  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useAddressesLastTransactionHashes(addressHash)
 
   const { data, isLoading } = useQueries({
-    queries: latestAddressesTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
+    queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
       addressTokensBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
     ),
     combine: (results) => ({
@@ -86,6 +86,6 @@ export const useAddressesTokensBalances = (addressHash?: AddressHash) => {
 
   return {
     data,
-    isLoading: isLoadingAlphBalances || isLoading
+    isLoading: isLoadingAlphBalances || isLoadingLatestTxHashes || isLoading
   }
 }
