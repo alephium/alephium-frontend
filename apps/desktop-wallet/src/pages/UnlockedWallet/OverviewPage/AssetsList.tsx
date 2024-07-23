@@ -16,14 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, Asset, CURRENCIES, NFT } from '@alephium/shared'
+import { AddressHash, CURRENCIES, NFT } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { useSortTokensByWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
+import { useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
+import {
+  useAddressesListedFungibleTokens,
+  useAddressesUnlistedFungibleTokens
+} from '@/api/addressesFungibleTokensInfoDataHooks'
+import { useAddressesTokensWorth, useSortTokensByWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import FocusableContent from '@/components/FocusableContent'
@@ -95,7 +100,7 @@ const AssetsList = ({
         {
           {
             tokens: (
-              <TokensList
+              <TokensBalancesList
                 addressHash={addressHash}
                 isExpanded={isExpanded || !maxHeightInPx}
                 onExpand={handleButtonClick}
@@ -110,7 +115,7 @@ const AssetsList = ({
               />
             ),
             unknownTokens: (
-              <UnknownTokensList
+              <UnknownTokensBalancesList
                 addressHash={addressHash}
                 isExpanded={isExpanded || !maxHeightInPx}
                 onExpand={handleButtonClick}
@@ -123,7 +128,7 @@ const AssetsList = ({
   )
 }
 
-const TokensList = ({ className, addressHash, isExpanded, onExpand }: AssetsListProps) => {
+const TokensBalancesList = ({ className, addressHash, isExpanded, onExpand }: AssetsListProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
@@ -136,7 +141,7 @@ const TokensList = ({ className, addressHash, isExpanded, onExpand }: AssetsList
     <>
       <motion.div {...fadeIn} className={className}>
         {knownFungibleTokensSortedByWorth.map((asset) => (
-          <TokenListRow asset={asset} isExpanded={isExpanded} key={asset.id} />
+          <TokenBalancesRow tokenId={asset.id} addressHash={addressHash} isExpanded={isExpanded} key={asset.id} />
         ))}
         {(isLoadingFungibleTokens || stateUninitialized) && (
           <TableRow>
@@ -150,7 +155,7 @@ const TokensList = ({ className, addressHash, isExpanded, onExpand }: AssetsList
   )
 }
 
-const UnknownTokensList = ({ className, addressHash, isExpanded, onExpand }: AssetsListProps) => {
+const UnknownTokensBalancesList = ({ className, addressHash, isExpanded, onExpand }: AssetsListProps) => {
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
   const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
 
@@ -158,7 +163,7 @@ const UnknownTokensList = ({ className, addressHash, isExpanded, onExpand }: Ass
     <>
       <motion.div {...fadeIn} className={className}>
         {unknownTokens.map((asset) => (
-          <TokenListRow asset={asset} isExpanded={isExpanded} key={asset.id} />
+          <TokenBalancesRow tokenId={asset.id} addressHash={addressHash} isExpanded={isExpanded} key={asset.id} />
         ))}
       </motion.div>
 
@@ -167,61 +172,63 @@ const UnknownTokensList = ({ className, addressHash, isExpanded, onExpand }: Ass
   )
 }
 
-interface TokenListRowProps {
-  asset: Asset
+interface TokenBalancesRowProps {
+  tokenId: string
   isExpanded: AssetsListProps['isExpanded']
+  addressHash?: AddressHash
 }
 
-const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
+const TokenBalancesRow = ({ tokenId, addressHash, isExpanded }: TokenBalancesRowProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
+  const { balances, logoUri, info, worth, isUnlisted, isLoading } = useAddressesToken(tokenId, addressHash)
+
+  if (!balances) return null
+
   return (
-    <TableRow key={asset.id} role="row" tabIndex={isExpanded ? 0 : -1}>
+    <TableRow key={tokenId} role="row" tabIndex={isExpanded ? 0 : -1}>
       <TokenRow>
-        <AssetLogoStyled assetImageUrl={asset.logoURI} size={30} assetName={asset.name} />
+        <AssetLogoStyled assetImageUrl={logoUri} size={30} assetName={info?.name} />
         <NameColumn>
           <TokenName>
-            {asset.name ?? (
-              <HashEllipsed hash={asset.id} tooltipText={t('Copy token hash')} disableCopy={!isExpanded} />
-            )}
-            {asset.verified === false && (
+            {info?.name ?? <HashEllipsed hash={tokenId} tooltipText={t('Copy token hash')} disableCopy={!isExpanded} />}
+            {isUnlisted && (
               <InfoIcon data-tooltip-id="default" data-tooltip-content={t('No metadata')}>
                 i
               </InfoIcon>
             )}
           </TokenName>
-          {asset.symbol && <TokenSymbol>{asset.symbol}</TokenSymbol>}
+          {info?.symbol && <TokenSymbol>{info.symbol}</TokenSymbol>}
         </NameColumn>
         <TableCellAmount>
-          {stateUninitialized ? (
+          {isLoading ? (
             <SkeletonLoader height="20px" width="30%" />
           ) : (
             <>
               <TokenAmount
-                value={asset.balance}
-                suffix={asset.symbol}
-                decimals={asset.decimals}
-                isUnknownToken={!asset.symbol}
+                value={balances.balance}
+                suffix={info?.symbol}
+                decimals={info?.decimals}
+                isUnknownToken={!info?.symbol}
               />
-              {asset.lockedBalance > 0 && (
+              {balances.lockedBalance > 0 && (
                 <AmountSubtitle>
                   {`${t('Available')}: `}
                   <Amount
-                    value={asset.balance - asset.lockedBalance}
-                    suffix={asset.symbol}
+                    value={balances.balance - balances.lockedBalance}
+                    suffix={info?.symbol}
                     color={theme.font.tertiary}
-                    decimals={asset.decimals}
-                    isUnknownToken={!asset.symbol}
+                    decimals={info?.decimals}
+                    isUnknownToken={!info?.symbol}
                   />
                 </AmountSubtitle>
               )}
-              {!asset.symbol && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
-              {asset.worth !== undefined && (
+              {!info?.symbol && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
+              {worth !== undefined && (
                 <Price>
-                  <Amount value={asset.worth} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
+                  <Amount value={worth} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
                 </Price>
               )}
             </>
@@ -230,6 +237,31 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
       </TokenRow>
     </TableRow>
   )
+}
+
+const useAddressesToken = (tokenId: string, addressHash?: AddressHash) => {
+  const { data: addressesTokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalances(addressHash)
+  const { data: addressesTokensWorth, isLoading: isLoadingTokensWorth } = useAddressesTokensWorth(addressHash)
+  const { data: addressesListedFungibleTokens, isLoading: isLoadingListedFungibleTokens } =
+    useAddressesListedFungibleTokens(addressHash)
+  const { data: addressesUnlistedFungibleTokens, isLoading: isLoadingUnlistedFungibleTokens } =
+    useAddressesUnlistedFungibleTokens(addressHash)
+
+  const listedTokenInfo = addressesListedFungibleTokens.find((token) => token.id === tokenId)
+  const unlistedTokenInfo = addressesUnlistedFungibleTokens.find((token) => token.id === tokenId)
+
+  return {
+    info: listedTokenInfo ?? unlistedTokenInfo,
+    logoUri: listedTokenInfo?.logoURI,
+    isUnlisted: !!unlistedTokenInfo,
+    balances: addressesTokensBalances[tokenId],
+    worth: addressesTokensWorth[tokenId],
+    isLoading:
+      isLoadingTokensBalances ||
+      isLoadingTokensWorth ||
+      isLoadingListedFungibleTokens ||
+      isLoadingUnlistedFungibleTokens
+  }
 }
 
 const NFTsList = ({ className, addressHash, isExpanded, onExpand, nftColumns }: AssetsListProps) => {

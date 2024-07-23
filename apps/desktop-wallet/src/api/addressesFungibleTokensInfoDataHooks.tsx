@@ -16,20 +16,24 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, client, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { ALPH, TokenInfo } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
+import { FungibleTokenMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries } from '@tanstack/react-query'
+import { chunk } from 'lodash'
 import { useMemo } from 'react'
 
 import { addressTokensBalanceQuery } from '@/api/addressQueries'
 import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
 import { useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
 import { useAppSelector } from '@/hooks/redux'
+import { isDefined } from '@/utils/misc'
 
 export const useAddressesListedFungibleTokens = (addressHash?: AddressHash) => {
-  const { data: fungibleTokenList } = useFungibleTokenList()
-  const { data: latestAddressesTxHashes } = useAddressesLastTransactionHashes(addressHash)
+  const { data: fungibleTokenList, isLoading: isLoadingFungibleTokenList } = useFungibleTokenList()
+  const { data: latestAddressesTxHashes, isLoading: isLoadingLastTxHashes } =
+    useAddressesLastTransactionHashes(addressHash)
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data, isLoading } = useQueries({
@@ -56,7 +60,7 @@ export const useAddressesListedFungibleTokens = (addressHash?: AddressHash) => {
 
   return {
     data,
-    isLoading
+    isLoading: isLoading || isLoadingFungibleTokenList || isLoadingLastTxHashes
   }
 }
 
@@ -64,4 +68,107 @@ export const useAddressesListedFungibleTokensWithPrice = (addressHash?: AddressH
   const { data: tokens } = useAddressesListedFungibleTokens(addressHash)
 
   return useMemo(() => tokens.filter((token) => token.symbol in explorer.TokensWithPrice), [tokens])
+}
+
+export const useAddressesUnlistedFungibleTokens = (addressHash?: AddressHash) => {
+  const { data: unknownTokenIds, isLoading: isLoadingUnknownTokenIds } = useAddressesUnknownTokenIds(addressHash)
+  const { data: tokensByType } = useTokensTypes(unknownTokenIds)
+
+  const { data, isLoading } = useQueries({
+    queries: chunk(tokensByType.fungible, TOKENS_QUERY_LIMIT).map((ids) => ({
+      queryKey: ['tokens', 'fungible', 'unlisted', ids],
+      queryFn: () => client.explorer.tokens.postTokensFungibleMetadata(ids),
+      staleTime: Infinity
+    })),
+    combine: (results) => ({
+      data: results.flatMap(({ data }) => data && data.map(convertDecimalsToNumber)).filter(isDefined),
+      isLoading: results.some(({ isLoading }) => isLoading)
+    })
+  })
+
+  return {
+    data,
+    isLoading: isLoading || isLoadingUnknownTokenIds
+  }
+}
+
+const convertDecimalsToNumber = (token: FungibleTokenMetadata) => {
+  const parsedDecimals = parseInt(token.decimals)
+
+  return {
+    ...token,
+    decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0
+  }
+}
+
+const useAddressesUnknownTokenIds = (addressHash?: AddressHash) => {
+  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const { data: fungibleTokenList, isLoading: isLoadingFungibleTokenList } = useFungibleTokenList()
+  const { data: latestAddressesTxHashes, isLoading: isLoadingLatestTxHashes } =
+    useAddressesLastTransactionHashes(addressHash)
+
+  const { data, isLoading } = useQueries({
+    queries: isLoadingFungibleTokenList
+      ? []
+      : latestAddressesTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
+          addressTokensBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
+        ),
+    combine: (results) => ({
+      data: results.reduce((acc, { data }) => {
+        data?.map(({ tokenId }) => {
+          const isTokenListed = fungibleTokenList?.some((token) => token.id === tokenId)
+
+          if (!isTokenListed && !acc.some((id) => id === tokenId)) {
+            acc.push(tokenId)
+          }
+        })
+
+        return acc
+      }, [] as string[]),
+      isLoading: results.some(({ isLoading }) => isLoading)
+    })
+  })
+
+  return {
+    data,
+    isLoading: isLoading || isLoadingFungibleTokenList || isLoadingLatestTxHashes
+  }
+}
+
+const useTokensTypes = (tokenIds: string[]) => {
+  const { data, isLoading } = useQueries({
+    queries: chunk(tokenIds, TOKENS_QUERY_LIMIT).map((ids) => ({
+      queryKey: ['tokens', 'type', ids],
+      queryFn: () => client.explorer.tokens.postTokens(ids),
+      staleTime: Infinity
+    })),
+    combine: (results) => ({
+      data: results
+        .flatMap(({ data }) => data)
+        .reduce(
+          (tokenIdsByType, tokenInfo) => {
+            if (
+              tokenInfo?.stdInterfaceId &&
+              Object.values(explorer.TokenStdInterfaceId).includes(
+                tokenInfo.stdInterfaceId as explorer.TokenStdInterfaceId
+              )
+            ) {
+              tokenIdsByType[tokenInfo.stdInterfaceId as explorer.TokenStdInterfaceId].push(tokenInfo.token)
+            }
+            return tokenIdsByType
+          },
+          {
+            [explorer.TokenStdInterfaceId.Fungible]: [],
+            [explorer.TokenStdInterfaceId.NonFungible]: [],
+            [explorer.TokenStdInterfaceId.NonStandard]: []
+          } as Record<explorer.TokenStdInterfaceId, Array<string>>
+        ),
+      isLoading: results.some(({ isLoading }) => isLoading)
+    })
+  })
+
+  return {
+    data,
+    isLoading
+  }
 }
