@@ -25,7 +25,7 @@ import styled from 'styled-components'
 
 import {
   useAddressesTokensPrices,
-  useAddressesTokensWorth,
+  useAddressesTokensTotalWorth,
   useSortTokensByWorth
 } from '@/api/addressesFungibleTokensPricesDataHooks'
 import AddressBadge from '@/components/AddressBadge'
@@ -59,7 +59,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const { isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
-  const { data: balanceInFiat } = useAddressesTokensWorth(addressHash)
+  const { data: balanceInFiat } = useAddressesTokensTotalWorth(addressHash)
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
