@@ -25,7 +25,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { useAddressesTokensWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
+import { useAddressesTokensTotalWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
 import ActionLink from '@/components/ActionLink'
 import AddressRow from '@/components/AddressRow'
 import Amount from '@/components/Amount'
@@ -113,7 +113,7 @@ const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: Addr
 }
 
 const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
-  const { data: balanceInFiat } = useAddressesTokensWorth(addressHash)
+  const { data: balanceInFiat } = useAddressesTokensTotalWorth(addressHash)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
   return <AmountStyled value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} tabIndex={0} />

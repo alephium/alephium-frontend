@@ -102,7 +102,7 @@ export const useSortTokensByWorth = (tokens: Asset[]) => {
   )
 }
 
-export const useAddressesTokensWorth = (addressHash?: AddressHash) => {
+export const useAddressesTokensTotalWorth = (addressHash?: AddressHash) => {
   const addressesTokensWithPrice = useAddressesListedFungibleTokensWithPrice(addressHash)
   const { data: tokensBalances, isLoading: isLoadingTokenBalances } = useAddressesTokensBalances(addressHash)
   const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
