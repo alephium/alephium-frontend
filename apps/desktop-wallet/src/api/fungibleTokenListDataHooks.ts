@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ONE_DAY_MS } from '@alephium/shared'
-import { mainnet, testnet, TokenList } from '@alephium/token-list'
+import { getTokensURL, mainnet, testnet, TokenList } from '@alephium/token-list'
 import { skipToken, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 
@@ -33,11 +33,8 @@ export const useFungibleTokenList = () => {
     queryKey: [TOKEN_LIST_QUERY_KEY, network],
     queryFn: !network
       ? skipToken
-      : () =>
-          axios
-            .get(`https://raw.githubusercontent.com/alephium/token-list/master/tokens/${network}.json`)
-            .then(({ data }) => (data as TokenList)?.tokens),
-    initialData: network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : [],
+      : () => axios.get(getTokensURL(network)).then(({ data }) => (data as TokenList)?.tokens),
+    placeholderData: network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : [],
     staleTime: ONE_DAY_MS
   })
 
