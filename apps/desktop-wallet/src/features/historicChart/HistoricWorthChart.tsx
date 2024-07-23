@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, CHART_DATE_FORMAT, toHumanReadableAmount } from '@alephium/shared'
 import dayjs, { Dayjs } from 'dayjs'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import Chart from 'react-apexcharts'
 import styled, { useTheme } from 'styled-components'
 
@@ -26,7 +26,7 @@ import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/features/histo
 import { getChartOptions, getFilteredChartData } from '@/features/historicChart/historicChartUtils'
 import useHistoricData from '@/features/historicChart/useHistoricData'
 import { useAppSelector } from '@/hooks/redux'
-import { makeSelectAddresses, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
 interface HistoricWorthChartProps {
   length: ChartLength
@@ -55,17 +55,14 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   onDataPointHover,
   onWorthInBeginningOfChartChange
 }: HistoricWorthChartProps) {
-  const selectAddresses = useMemo(makeSelectAddresses, [])
-  const addresses = useAppSelector((s) => selectAddresses(s, addressHash))
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
+  const allAddressesHashes = useAppSelector(selectAllAddressHashes)
   const { alphBalanceHistoryPerAddress, alphPriceHistory, isLoading: isLoadingHistoricData } = useHistoricData()
-
   const theme = useTheme()
 
   const [chartData, setChartData] = useState<DataPoint[]>([])
 
   const startingDate = startingDates[length].format(CHART_DATE_FORMAT)
-  const isDataAvailable = addresses.length !== 0 && !isLoadingHistoricData && !!alphPriceHistory
+  const isDataAvailable = !isLoadingHistoricData && !!alphPriceHistory
   const firstItem = chartData.at(0)
 
   useEffect(() => {
@@ -83,8 +80,9 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
 
       const dataPoints = alphPriceHistory.map(({ date, value }) => {
         let totalAmountPerDate = BigInt(0)
+        const addresses = addressHash ? [addressHash] : allAddressesHashes
 
-        addresses.forEach(({ hash }) => {
+        addresses.forEach((hash) => {
           const addressAlphBalanceHistory = alphBalanceHistoryPerAddress[hash]
           const amountOnDate = addressAlphBalanceHistory?.[date]
 
@@ -114,7 +112,15 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
     dataPoints = trimInitialZeroDataPoints(dataPoints)
 
     setChartData(getFilteredChartData(dataPoints, startingDate))
-  }, [addresses, alphBalanceHistoryPerAddress, alphPriceHistory, isDataAvailable, latestWorth, startingDate])
+  }, [
+    addressHash,
+    allAddressesHashes,
+    alphBalanceHistoryPerAddress,
+    alphPriceHistory,
+    isDataAvailable,
+    latestWorth,
+    startingDate
+  ])
 
   if (!isDataAvailable || chartData.length < 2 || !firstItem || latestWorth === undefined) return null
 
@@ -122,7 +128,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   const yAxisWorthData = chartData.map(({ worth }) => worth)
 
   const worthHasGoneUp = firstItem.worth < latestWorth
-  const chartColor = stateUninitialized ? theme.font.tertiary : worthHasGoneUp ? theme.global.valid : theme.global.alert
+  const chartColor = worthHasGoneUp ? theme.global.valid : theme.global.alert
 
   const chartOptions = getChartOptions(chartColor, xAxisDatesData, {
     mouseMove(e, chart, options) {
