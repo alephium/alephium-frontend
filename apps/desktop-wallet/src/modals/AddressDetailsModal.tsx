@@ -108,7 +108,7 @@ const AddressDetailsModal = ({ addressHash, onClose }: AddressDetailsModalProps)
           </ButtonsGrid>
         </Shortcuts>
         <AssetsList
-          addressHashes={[address.hash]}
+          addressHash={address.hash}
           tokensTabTitle={`💰 ${t('Address tokens')}`}
           unknownTokensTabTitle={`❔ ${t('Address unknown tokens')}`}
           nftsTabTitle={`🖼️ ${t('Address NFTs')}`}
