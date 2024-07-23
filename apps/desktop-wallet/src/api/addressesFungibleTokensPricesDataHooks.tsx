@@ -23,6 +23,8 @@ import { chunk, orderBy } from 'lodash'
 
 import { useAddressesAlphBalances, useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
 import { useAddressesListedFungibleTokensWithPrice } from '@/api/addressesFungibleTokensInfoDataHooks'
+import { addressTokensBalanceQuery } from '@/api/addressQueries'
+import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { isDefined } from '@/utils/misc'
 
@@ -102,6 +104,55 @@ export const useSortTokensByWorth = (tokens: Asset[]) => {
   )
 }
 
+type TokenId = string
+
+export const useAddressesTokensWorth = (addressHash?: AddressHash) => {
+  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const { data: alphWorth, isLoading: isLoadingAlphWorth } = useAddressesAlphWorth(addressHash)
+  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useAddressesLastTransactionHashes(addressHash)
+  const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
+  const addressesTokensWithPrice = useAddressesListedFungibleTokensWithPrice(addressHash)
+
+  const { data, isLoading } = useQueries({
+    queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
+      addressTokensBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
+    ),
+    combine: (results) => ({
+      data: results.reduce(
+        (tokensWorth, { data: balances }) => {
+          const tokensBalance = {} as Record<TokenId, bigint | undefined>
+
+          balances?.forEach(({ tokenId, balance }) => {
+            tokensBalance[tokenId] = BigInt(balance) + (tokensBalance[tokenId] ?? BigInt(0))
+          })
+
+          Object.keys(tokensBalance).forEach((tokenId) => {
+            const tokenInfo = addressesTokensWithPrice.find((token) => token.id === tokenId)
+            const tokenPrice = tokenPrices.find((token) => token.symbol === tokenInfo?.symbol)
+            const tokenBalance = tokensBalance[tokenId]
+
+            if (tokenBalance && tokenPrice && tokenInfo) {
+              tokensWorth[tokenId] =
+                calculateAmountWorth(tokenBalance, tokenPrice.price, tokenInfo.decimals) + (tokensWorth[tokenId] ?? 0)
+            }
+          })
+
+          return tokensWorth
+        },
+        // Include ALPH in the results
+        { [ALPH.id]: alphWorth } as Record<TokenId, number | undefined>
+      ),
+      isLoading: results.some(({ isLoading }) => isLoading)
+    })
+  })
+
+  return {
+    data,
+    isLoading: isLoadingAlphWorth || isLoadingLatestTxHashes || isLoadingTokenPrices || isLoading
+  }
+}
+
+// TODO: Refactor now that useAddressesTokensWorth exists
 export const useAddressesTokensTotalWorth = (addressHash?: AddressHash) => {
   const addressesTokensWithPrice = useAddressesListedFungibleTokensWithPrice(addressHash)
   const { data: tokensBalances, isLoading: isLoadingTokenBalances } = useAddressesTokensBalances(addressHash)
