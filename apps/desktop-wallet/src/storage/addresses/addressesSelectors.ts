@@ -61,10 +61,6 @@ export const selectDefaultAddress = createSelector(
   (addresses) => addresses.find((address) => address.isDefault) || addresses[0]
 )
 
-export const selectTotalBalance = createSelector([selectAllAddresses], (addresses) =>
-  addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
-)
-
 export const makeSelectAddressesAlphAsset = () =>
   createSelector(makeSelectAddresses(), (addresses): Asset => {
     const alphBalances = addresses.reduce(
