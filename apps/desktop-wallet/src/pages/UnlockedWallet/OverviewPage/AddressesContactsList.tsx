@@ -113,7 +113,7 @@ const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: Addr
 }
 
 const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
-  const balanceInFiat = useAddressesTokensWorth(addressHash)
+  const { data: balanceInFiat } = useAddressesTokensWorth(addressHash)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
   return <AmountStyled value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} tabIndex={0} />
