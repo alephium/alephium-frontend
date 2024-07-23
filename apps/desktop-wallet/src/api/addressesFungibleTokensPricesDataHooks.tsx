@@ -69,9 +69,12 @@ export const useAddressesTokensPrices = () => {
 }
 
 export const useAlphPrice = () => {
-  const { data: tokenPrices } = useAddressesTokensPrices()
+  const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
 
-  return tokenPrices.find((token) => token.symbol === ALPH.symbol)?.price
+  return {
+    data: tokenPrices.find((token) => token.symbol === ALPH.symbol)?.price,
+    isLoading: isLoadingTokenPrices
+  }
 }
 
 export const useSortTokensByWorth = (tokens: Asset[]) => {
@@ -118,8 +121,13 @@ export const useAddressesTokensWorth = (addressHash?: AddressHash) => {
 }
 
 export const useAddressesAlphWorth = (addressHash?: AddressHash) => {
-  const { data: totalAlphBalances } = useAddressesAlphBalances(addressHash)
-  const alphPrice = useAlphPrice()
+  const { data: totalAlphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalances(addressHash)
+  const { data: alphPrice, isLoading: isLoadingAlphPrice } = useAlphPrice()
 
-  return alphPrice !== undefined ? calculateAmountWorth(totalAlphBalances.balance, alphPrice) : undefined
+  const totalWorth = alphPrice !== undefined ? calculateAmountWorth(totalAlphBalances.balance, alphPrice) : undefined
+
+  return {
+    data: totalWorth,
+    isLoading: isLoadingAlphBalances || isLoadingAlphPrice
+  }
 }
