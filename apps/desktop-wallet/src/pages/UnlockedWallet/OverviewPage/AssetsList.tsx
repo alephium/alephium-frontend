@@ -48,7 +48,7 @@ import { deviceBreakPoints } from '@/style/globalStyles'
 
 interface AssetsListProps {
   className?: string
-  addressHashes?: AddressHash[]
+  addressHash?: AddressHash
   tokensTabTitle?: string
   unknownTokensTabTitle?: string
   nftsTabTitle?: string
@@ -62,7 +62,7 @@ interface AssetsListProps {
 
 const AssetsList = ({
   className,
-  addressHashes,
+  addressHash,
   tokensTabTitle,
   unknownTokensTabTitle,
   nftsTabTitle,
@@ -71,7 +71,7 @@ const AssetsList = ({
 }: AssetsListProps) => {
   const { t } = useTranslation()
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
-  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHashes))
+  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
 
   const [tabs, setTabs] = useState([
     { value: 'tokens', label: tokensTabTitle ?? '💰 ' + t('Tokens') },
@@ -96,14 +96,14 @@ const AssetsList = ({
           {
             tokens: (
               <TokensList
-                addressHashes={addressHashes}
+                addressHash={addressHash}
                 isExpanded={isExpanded || !maxHeightInPx}
                 onExpand={handleButtonClick}
               />
             ),
             nfts: (
               <NFTsList
-                addressHashes={addressHashes}
+                addressHash={addressHash}
                 isExpanded={isExpanded || !maxHeightInPx}
                 onExpand={handleButtonClick}
                 nftColumns={nftColumns}
@@ -111,7 +111,7 @@ const AssetsList = ({
             ),
             unknownTokens: (
               <UnknownTokensList
-                addressHashes={addressHashes}
+                addressHash={addressHash}
                 isExpanded={isExpanded || !maxHeightInPx}
                 onExpand={handleButtonClick}
               />
@@ -123,9 +123,9 @@ const AssetsList = ({
   )
 }
 
-const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsListProps) => {
+const TokensList = ({ className, addressHash, isExpanded, onExpand }: AssetsListProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHashes))
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const isLoadingFungibleTokens = useAppSelector(
     (s) => s.fungibleTokens.loadingUnverified || s.fungibleTokens.loadingVerified || s.fungibleTokens.loadingTokenTypes
@@ -150,9 +150,9 @@ const TokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsLi
   )
 }
 
-const UnknownTokensList = ({ className, addressHashes, isExpanded, onExpand }: AssetsListProps) => {
+const UnknownTokensList = ({ className, addressHash, isExpanded, onExpand }: AssetsListProps) => {
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
-  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHashes))
+  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
 
   return (
     <>
@@ -232,10 +232,10 @@ const TokenListRow = ({ asset, isExpanded }: TokenListRowProps) => {
   )
 }
 
-const NFTsList = ({ className, addressHashes, isExpanded, onExpand, nftColumns }: AssetsListProps) => {
+const NFTsList = ({ className, addressHash, isExpanded, onExpand, nftColumns }: AssetsListProps) => {
   const { t } = useTranslation()
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
-  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHashes))
+  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const isLoadingNFTs = useAppSelector((s) => s.nfts.loading)
   const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
