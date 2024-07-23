@@ -321,7 +321,6 @@
   "The group of the selected address ({{ addressGroup }}) does not match the group required by WalletConnect ({{ walletConnectGroup }})": "The group of the selected address ({{ addressGroup }}) does not match the group required by WalletConnect ({{ walletConnectGroup }})",
   "The wallet is offline.": "The wallet is offline.",
   "Theme": "Theme",
-  "There are no addresses in the required group: {{ group }}": "There are no addresses in the required group: {{ group }}",
   "There are no addresses with available balance. Please, send some funds to one of your addresses, and try again.": "There are no addresses with available balance. Please, send some funds to one of your addresses, and try again.",
   "There are no available addresses.": "There are no available addresses.",
   "This address is not valid": "This address is not valid",
