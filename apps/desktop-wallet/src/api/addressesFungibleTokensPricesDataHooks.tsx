@@ -20,7 +20,6 @@ import { AddressHash, Asset, calculateAmountWorth, client, ONE_MINUTE_MS, TOKENS
 import { ALPH } from '@alephium/token-list'
 import { useQueries, useQueryClient } from '@tanstack/react-query'
 import { chunk, orderBy } from 'lodash'
-import { useMemo } from 'react'
 
 import { useAddressesAlphBalances, useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
 import { useAddressesListedFungibleTokensWithPrice } from '@/api/addressesFungibleTokensInfoDataHooks'
@@ -105,18 +104,17 @@ export const useAddressesTokensWorth = (addressHash?: AddressHash) => {
   const { data: tokensBalances, isLoading: isLoadingTokenBalances } = useAddressesTokensBalances(addressHash)
   const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
 
-  return useMemo(
-    () => ({
-      data: addressesTokensWithPrice.reduce((totalWorth, { id, symbol, decimals }) => {
-        const price = tokenPrices.find((t) => t.symbol === symbol)?.price
-        const tokenBalance = tokensBalances[id]?.balance
+  const totalWorth = addressesTokensWithPrice.reduce((totalWorth, { id, symbol, decimals }) => {
+    const price = tokenPrices.find((t) => t.symbol === symbol)?.price
+    const tokenBalance = tokensBalances[id]?.balance
 
-        return price && tokenBalance ? totalWorth + calculateAmountWorth(tokenBalance, price, decimals) : totalWorth
-      }, 0),
-      isLoading: isLoadingTokenBalances || isLoadingTokenPrices
-    }),
-    [addressesTokensWithPrice, isLoadingTokenBalances, isLoadingTokenPrices, tokenPrices, tokensBalances]
-  )
+    return price && tokenBalance ? totalWorth + calculateAmountWorth(tokenBalance, price, decimals) : totalWorth
+  }, 0)
+
+  return {
+    data: totalWorth,
+    isLoading: isLoadingTokenBalances || isLoadingTokenPrices
+  }
 }
 
 export const useAddressesAlphWorth = (addressHash?: AddressHash) => {
