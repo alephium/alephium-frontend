@@ -23,11 +23,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import {
-  useAddressesAlphWorth,
-  useAddressesTokensPrices,
-  useAddressesTokensWorth
-} from '@/api/addressesFungibleTokensPricesDataHooks'
+import { useAddressesAlphWorth, useAddressesTokensWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'
@@ -58,9 +54,8 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
   const { data: totalAmountWorth, isLoading: isLoadingTotalAmountWorth } = useAddressesTokensWorth(addressHash)
-  const { isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
-  const { isLoading: isLoadingHistoricData, hasHistoricBalances } = useHistoricData()
-  const totalAlphAmountWorth = useAddressesAlphWorth(addressHash)
+  const { data: totalAlphAmountWorth, isLoading: isLoadingAlphAmountWorth } = useAddressesAlphWorth(addressHash)
+  const { hasHistoricBalances, isLoading: isLoadingHistoricData } = useHistoricData()
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
   const [chartLength, setChartLength] = useState<ChartLength>('1m')
@@ -93,7 +88,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
               {hoveredDataPointWorth !== undefined && (
                 <Opacity>
                   <FiatDeltaPercentage>
-                    {isLoadingTokenPrices ||
+                    {isLoadingAlphAmountWorth ||
                     isLoadingHistoricData ||
                     (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
                       <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
@@ -106,7 +101,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
               <ChartLengthBadges>
                 {chartLengths.map((length) =>
-                  isLoadingTokenPrices || isLoadingHistoricData ? (
+                  isLoadingAlphAmountWorth || isLoadingHistoricData ? (
                     <SkeletonLoader
                       key={length}
                       height="25px"
