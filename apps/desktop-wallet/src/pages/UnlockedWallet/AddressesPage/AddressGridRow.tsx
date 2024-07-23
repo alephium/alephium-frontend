@@ -59,7 +59,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const { isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
-  const balanceInFiat = useAddressesTokensWorth(addressHash)
+  const { data: balanceInFiat } = useAddressesTokensWorth(addressHash)
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
