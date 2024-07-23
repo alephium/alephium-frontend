@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, CURRENCIES, NFT } from '@alephium/shared'
 import { motion } from 'framer-motion'
+import { orderBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
@@ -28,7 +29,7 @@ import {
   useAddressesListedFungibleTokens,
   useAddressesUnlistedFungibleTokens
 } from '@/api/addressesFungibleTokensInfoDataHooks'
-import { useAddressesTokensWorth, useSortTokensByWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
+import { useAddressesTokensWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import FocusableContent from '@/components/FocusableContent'
@@ -45,7 +46,6 @@ import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import {
   makeSelectAddressesCheckedUnknownTokens,
-  makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
@@ -129,30 +129,50 @@ const AssetsList = ({
 }
 
 const TokensBalancesList = ({ className, addressHash, isExpanded, onExpand }: AssetsListProps) => {
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const isLoadingFungibleTokens = useAppSelector(
-    (s) => s.fungibleTokens.loadingUnverified || s.fungibleTokens.loadingVerified || s.fungibleTokens.loadingTokenTypes
-  )
-  const knownFungibleTokensSortedByWorth = useSortTokensByWorth(knownFungibleTokens)
+  const { data: sortedTokenIds, isLoading } = useSortedAddressesFungibleTokensIds(addressHash)
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {knownFungibleTokensSortedByWorth.map((asset) => (
-          <TokenBalancesRow tokenId={asset.id} addressHash={addressHash} isExpanded={isExpanded} key={asset.id} />
+        {sortedTokenIds.map((tokenId) => (
+          <TokenBalancesRow tokenId={tokenId} addressHash={addressHash} isExpanded={isExpanded} key={tokenId} />
         ))}
-        {(isLoadingFungibleTokens || stateUninitialized) && (
+        {isLoading && (
           <TableRow>
             <SkeletonLoader height="37.5px" />
           </TableRow>
         )}
       </motion.div>
 
-      {!isExpanded && knownFungibleTokensSortedByWorth.length > 3 && onExpand && <ExpandRow onClick={onExpand} />}
+      {!isExpanded && sortedTokenIds.length > 3 && onExpand && <ExpandRow onClick={onExpand} />}
     </>
   )
+}
+
+const useSortedAddressesFungibleTokensIds = (addressHash?: AddressHash) => {
+  const { data: addressesTokensWorth, isLoading: isLoadingTokensWirth } = useAddressesTokensWorth(addressHash)
+  const { data: addressesListedFungibleTokens, isLoading: isLoadingListedFungibleTokens } =
+    useAddressesListedFungibleTokens(addressHash)
+  const { data: addressesUnlistedFungibleTokens, isLoading: isLoadingUnlistedFungibleTokens } =
+    useAddressesUnlistedFungibleTokens(addressHash)
+
+  const sortedTokenIds = useMemo(
+    () =>
+      [
+        ...orderBy(
+          addressesListedFungibleTokens,
+          [(t) => addressesTokensWorth[t.id] ?? -1, (t) => t.name.toLowerCase()],
+          ['desc', 'asc']
+        ),
+        ...orderBy(addressesUnlistedFungibleTokens, [(t) => t.name.toLowerCase(), 'id'], ['asc', 'asc'])
+      ].map((token) => token.id),
+    [addressesListedFungibleTokens, addressesTokensWorth, addressesUnlistedFungibleTokens]
+  )
+
+  return {
+    data: sortedTokenIds,
+    isLoading: isLoadingTokensWirth || isLoadingListedFungibleTokens || isLoadingUnlistedFungibleTokens
+  }
 }
 
 const UnknownTokensBalancesList = ({ className, addressHash, isExpanded, onExpand }: AssetsListProps) => {
