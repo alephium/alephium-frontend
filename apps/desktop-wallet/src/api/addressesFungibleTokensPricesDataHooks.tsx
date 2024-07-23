@@ -20,8 +20,9 @@ import { AddressHash, Asset, calculateAmountWorth, client, ONE_MINUTE_MS, TOKENS
 import { ALPH } from '@alephium/token-list'
 import { useQueries, useQueryClient } from '@tanstack/react-query'
 import { chunk, orderBy } from 'lodash'
+import { useMemo } from 'react'
 
-import { useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
+import { useAddressesAlphBalances, useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
 import { useAddressesListedFungibleTokensWithPrice } from '@/api/addressesFungibleTokensInfoDataHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { isDefined } from '@/utils/misc'
@@ -101,13 +102,26 @@ export const useSortTokensByWorth = (tokens: Asset[]) => {
 
 export const useAddressesTokensWorth = (addressHash?: AddressHash) => {
   const addressesTokensWithPrice = useAddressesListedFungibleTokensWithPrice(addressHash)
-  const { data: tokensBalances } = useAddressesTokensBalances(addressHash)
-  const { data: tokenPrices } = useAddressesTokensPrices()
+  const { data: tokensBalances, isLoading: isLoadingTokenBalances } = useAddressesTokensBalances(addressHash)
+  const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
 
-  return addressesTokensWithPrice.reduce((totalWorth, { id, symbol, decimals }) => {
-    const price = tokenPrices.find((t) => t.symbol === symbol)?.price
-    const tokenBalance = tokensBalances[id]?.balance
+  return useMemo(
+    () => ({
+      data: addressesTokensWithPrice.reduce((totalWorth, { id, symbol, decimals }) => {
+        const price = tokenPrices.find((t) => t.symbol === symbol)?.price
+        const tokenBalance = tokensBalances[id]?.balance
 
-    return price && tokenBalance ? totalWorth + calculateAmountWorth(tokenBalance, price, decimals) : totalWorth
-  }, 0)
+        return price && tokenBalance ? totalWorth + calculateAmountWorth(tokenBalance, price, decimals) : totalWorth
+      }, 0),
+      isLoading: isLoadingTokenBalances || isLoadingTokenPrices
+    }),
+    [addressesTokensWithPrice, isLoadingTokenBalances, isLoadingTokenPrices, tokenPrices, tokensBalances]
+  )
+}
+
+export const useAddressesAlphWorth = (addressHash?: AddressHash) => {
+  const { data: totalAlphBalances } = useAddressesAlphBalances(addressHash)
+  const alphPrice = useAlphPrice()
+
+  return alphPrice !== undefined ? calculateAmountWorth(totalAlphBalances.balance, alphPrice) : undefined
 }
