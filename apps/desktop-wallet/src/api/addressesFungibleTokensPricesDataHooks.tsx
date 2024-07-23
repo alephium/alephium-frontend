@@ -52,7 +52,7 @@ export const useAddressesTokensPrices = () => {
               symbol: symbols[i]
             }) as TokenPrice
         ),
-      initialData: () =>
+      placeholderData: () =>
         queryClient.getQueryData([TOKEN_PRICES_KEY, 'currentPrice', [ALPH.symbol], { currency }]) as TokenPrice[],
       refetchInterval: ONE_MINUTE_MS
     })),
