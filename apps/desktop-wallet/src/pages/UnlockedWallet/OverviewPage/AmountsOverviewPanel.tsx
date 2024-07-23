@@ -23,7 +23,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesAlphWorth, useAddressesTokensWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
+import { useAddressesAlphWorth, useAddressesTokensTotalWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'
@@ -53,7 +53,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
-  const { data: totalAmountWorth, isLoading: isLoadingTotalAmountWorth } = useAddressesTokensWorth(addressHash)
+  const { data: totalAmountWorth, isLoading: isLoadingTotalAmountWorth } = useAddressesTokensTotalWorth(addressHash)
   const { data: totalAlphAmountWorth, isLoading: isLoadingAlphAmountWorth } = useAddressesAlphWorth(addressHash)
   const { hasHistoricBalances, isLoading: isLoadingHistoricData } = useHistoricData()
 
