@@ -104,10 +104,23 @@ const useAddressGeneration = () => {
     dispatch(addressRestorationStarted())
 
     try {
-      const addresses = addressesMetadata.map(({ index }) => ({
-        ...keyring.generateAndCacheAddress({ addressIndex: index }),
-        ...(addressesMetadata.find((metadata) => metadata.index === index) as AddressMetadata)
-      }))
+      const addresses = addressesMetadata.map((metadata) => ({
+        ...keyring.generateAndCacheAddress({ addressIndex: metadata.index }),
+        ...metadata
+      })) as AddressBase[]
+
+      // Fix corrupted data if there is no default address in stored address metadata by making first address default
+      if (!addresses.some((address) => address.isDefault)) {
+        addresses[0].isDefault = true
+        addressMetadataStorage.storeOne(walletId, {
+          index: addresses[0].index,
+          settings: {
+            isDefault: true,
+            label: addresses[0].label,
+            color: addresses[0].color
+          }
+        })
+      }
 
       dispatch(addressesRestoredFromMetadata(addresses))
     } catch {
