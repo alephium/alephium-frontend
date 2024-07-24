@@ -24,9 +24,9 @@ import Box from '@/components/Box'
 import ShortcutButtons from '@/components/Buttons/ShortcutButtons'
 import { TableHeader } from '@/components/Table'
 import TransactionList from '@/components/TransactionList'
+import AssetsTabs from '@/features/assetsLists/AssetsTabs'
 import AddressesContactsList from '@/pages/UnlockedWallet/OverviewPage/AddressesContactsList'
 import AmountsOverviewPanel from '@/pages/UnlockedWallet/OverviewPage/AmountsOverviewPanel'
-import AssetsList from '@/pages/UnlockedWallet/OverviewPage/AssetsList'
 import GreetingMessages from '@/pages/UnlockedWallet/OverviewPage/GreetingMessages'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
@@ -59,7 +59,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
       </AmountsOverviewPanel>
       <UnlockedWalletPanel bottom top>
         <AssetAndAddressesRow>
-          <AssetsListStyled maxHeightInPx={maxPanelHeightInPx} />
+          <AssetsTabsStyled maxHeightInPx={maxPanelHeightInPx} />
           <AddressesContactsListStyled maxHeightInPx={maxPanelHeightInPx} />
         </AssetAndAddressesRow>
         <TransactionList title={t('Latest transactions')} limit={5} />
@@ -77,8 +77,9 @@ const AssetAndAddressesRow = styled.div`
   gap: 30px;
 `
 
-const AssetsListStyled = styled(AssetsList)`
+const AssetsTabsStyled = styled(AssetsTabs)`
   flex: 2;
+  margin-bottom: 45px;
 `
 
 const AddressesContactsListStyled = styled(AddressesContactsList)`
