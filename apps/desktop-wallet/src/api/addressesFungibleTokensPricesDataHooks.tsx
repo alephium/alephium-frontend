@@ -21,10 +21,10 @@ import { ALPH } from '@alephium/token-list'
 import { useQueries, useQueryClient } from '@tanstack/react-query'
 import { chunk, orderBy } from 'lodash'
 
-import { useAddressesAlphBalances, useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
 import { useAddressesListedFungibleTokensWithPrice } from '@/api/addressesFungibleTokensInfoDataHooks'
 import { addressTokensBalanceQuery } from '@/api/addressQueries'
 import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
+import { useApiContext } from '@/api/apiContext'
 import { useAppSelector } from '@/hooks/redux'
 import { isDefined } from '@/utils/misc'
 
@@ -155,7 +155,7 @@ export const useAddressesTokensWorth = (addressHash?: AddressHash) => {
 // TODO: Refactor now that useAddressesTokensWorth exists
 export const useAddressesTokensTotalWorth = (addressHash?: AddressHash) => {
   const addressesTokensWithPrice = useAddressesListedFungibleTokensWithPrice(addressHash)
-  const { data: tokensBalances, isLoading: isLoadingTokenBalances } = useAddressesTokensBalances(addressHash)
+  const { tokensBalances, isLoadingTokensBalances } = useApiContext()
   const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
 
   const totalWorth = addressesTokensWithPrice.reduce((totalWorth, { id, symbol, decimals }) => {
@@ -167,15 +167,18 @@ export const useAddressesTokensTotalWorth = (addressHash?: AddressHash) => {
 
   return {
     data: totalWorth,
-    isLoading: isLoadingTokenBalances || isLoadingTokenPrices
+    isLoading: isLoadingTokensBalances || isLoadingTokenPrices
   }
 }
 
 export const useAddressesAlphWorth = (addressHash?: AddressHash) => {
-  const { data: totalAlphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalances(addressHash)
+  const { alphBalances: totalAlphBalances, isLoadingAlphBalances } = useApiContext()
   const { data: alphPrice, isLoading: isLoadingAlphPrice } = useAlphPrice()
 
-  const totalWorth = alphPrice !== undefined ? calculateAmountWorth(totalAlphBalances.balance, alphPrice) : undefined
+  const totalWorth =
+    alphPrice !== undefined && totalAlphBalances
+      ? calculateAmountWorth(totalAlphBalances.balance, alphPrice)
+      : undefined
 
   return {
     data: totalWorth,

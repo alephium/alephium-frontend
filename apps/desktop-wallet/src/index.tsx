@@ -29,6 +29,7 @@ import { Provider } from 'react-redux'
 import { HashRouter as Router } from 'react-router-dom'
 import { StyleSheetManager } from 'styled-components'
 
+import { ApiContextProvider } from '@/api/apiContext'
 import queryClient from '@/api/queryClient'
 import App from '@/App'
 import Tooltips from '@/components/Tooltips'
@@ -49,7 +50,9 @@ ReactDOM.render(
           <Suspense fallback="loading">
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>
               <QueryClientProvider client={queryClient}>
-                <App />
+                <ApiContextProvider>
+                  <App />
+                </ApiContextProvider>
                 <ReactQueryDevtools initialIsOpen={false} />
               </QueryClientProvider>
               <Tooltips />

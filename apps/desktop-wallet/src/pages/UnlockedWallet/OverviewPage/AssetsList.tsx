@@ -24,12 +24,12 @@ import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
 import {
   useAddressesListedFungibleTokens,
   useAddressesUnlistedFungibleTokens
 } from '@/api/addressesFungibleTokensInfoDataHooks'
 import { useAddressesTokensWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
+import { useApiContext } from '@/api/apiContext'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import FocusableContent from '@/components/FocusableContent'
@@ -260,27 +260,20 @@ const TokenBalancesRow = ({ tokenId, addressHash, isExpanded }: TokenBalancesRow
 }
 
 const useAddressesToken = (tokenId: string, addressHash?: AddressHash) => {
-  const { data: addressesTokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalances(addressHash)
+  const { tokensBalances, isLoadingTokensBalances, listedFT, isLoadingListedFT, unlistedFT, isLoadingUnlistedFT } =
+    useApiContext()
   const { data: addressesTokensWorth, isLoading: isLoadingTokensWorth } = useAddressesTokensWorth(addressHash)
-  const { data: addressesListedFungibleTokens, isLoading: isLoadingListedFungibleTokens } =
-    useAddressesListedFungibleTokens(addressHash)
-  const { data: addressesUnlistedFungibleTokens, isLoading: isLoadingUnlistedFungibleTokens } =
-    useAddressesUnlistedFungibleTokens(addressHash)
 
-  const listedTokenInfo = addressesListedFungibleTokens.find((token) => token.id === tokenId)
-  const unlistedTokenInfo = addressesUnlistedFungibleTokens.find((token) => token.id === tokenId)
+  const listedTokenInfo = listedFT.find((token) => token.id === tokenId)
+  const unlistedTokenInfo = unlistedFT.find((token) => token.id === tokenId)
 
   return {
     info: listedTokenInfo ?? unlistedTokenInfo,
     logoUri: listedTokenInfo?.logoURI,
     isUnlisted: !!unlistedTokenInfo,
-    balances: addressesTokensBalances[tokenId],
+    balances: tokensBalances[tokenId],
     worth: addressesTokensWorth[tokenId],
-    isLoading:
-      isLoadingTokensBalances ||
-      isLoadingTokensWorth ||
-      isLoadingListedFungibleTokens ||
-      isLoadingUnlistedFungibleTokens
+    isLoading: isLoadingTokensBalances || isLoadingTokensWorth || isLoadingListedFT || isLoadingUnlistedFT
   }
 }
 

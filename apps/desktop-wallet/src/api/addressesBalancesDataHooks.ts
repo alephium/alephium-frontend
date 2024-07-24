@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, DisplayBalances } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { useQueries } from '@tanstack/react-query'
+import { useEffect } from 'react'
 
 import { addressAlphBalanceQuery, addressTokensBalanceQuery } from '@/api/addressQueries'
 import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
@@ -39,6 +40,8 @@ export const useAddressesAlphBalances = (addressHash?: AddressHash) => {
         (totalBalances, { data }) => {
           totalBalances.balance += data ? BigInt(data.balance) : BigInt(0)
           totalBalances.lockedBalance += data ? BigInt(data.lockedBalance) : BigInt(0)
+
+          console.log('Running useAddressesAlphBalances combine...')
 
           return totalBalances
         },
@@ -62,6 +65,10 @@ export const useAddressesTokensBalances = (addressHash?: AddressHash) => {
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalances(addressHash)
   const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useAddressesLastTransactionHashes(addressHash)
 
+  useEffect(() => {
+    console.log('alphBalances changed:', alphBalances)
+  }, [alphBalances])
+
   const { data, isLoading } = useQueries({
     queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
       addressTokensBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
@@ -75,6 +82,7 @@ export const useAddressesTokensBalances = (addressHash?: AddressHash) => {
               lockedBalance: BigInt(lockedBalance) + (tokensBalances[tokenId]?.lockedBalance ?? BigInt(0))
             }
           })
+          console.log('useAddressesTokensBalances combine is running...')
           return tokensBalances
         },
         // Include ALPH in the results

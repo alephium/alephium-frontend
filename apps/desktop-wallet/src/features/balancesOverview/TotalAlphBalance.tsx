@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesAlphBalances } from '@/api/addressesBalancesDataHooks'
+import { useApiContext } from '@/api/apiContext'
 import Amount from '@/components/Amount'
 import SkeletonLoader from '@/components/SkeletonLoader'
 
@@ -44,21 +44,25 @@ const TotalAlphBalance = ({ className, type }: TotalAlphBalanceProps) => {
 }
 
 const AvailableAlphAmount = () => {
-  const { data } = useAddressesAlphBalances()
+  const { alphBalances } = useApiContext()
 
-  return <AlphBalance balance={data.balance - data.lockedBalance} />
+  if (!alphBalances) return null
+
+  return <AlphBalance balance={alphBalances.balance - alphBalances.lockedBalance} />
 }
 
 const LockedAlphAmount = () => {
-  const { data } = useAddressesAlphBalances()
+  const { alphBalances } = useApiContext()
 
-  return <AlphBalance balance={data.lockedBalance} />
+  if (!alphBalances) return null
+
+  return <AlphBalance balance={alphBalances.lockedBalance} />
 }
 
 const AlphBalance = ({ balance }: { balance: bigint }) => {
-  const { isLoading } = useAddressesAlphBalances()
+  const { isLoadingAlphBalances } = useApiContext()
 
-  return isLoading ? <SkeletonLoader height="30px" /> : <AmountStyled tabIndex={0} value={balance} />
+  return isLoadingAlphBalances ? <SkeletonLoader height="30px" /> : <AmountStyled tabIndex={0} value={balance} />
 }
 
 export default TotalAlphBalance
