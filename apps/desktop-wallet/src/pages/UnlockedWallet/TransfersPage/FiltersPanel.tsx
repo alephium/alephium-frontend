@@ -22,7 +22,7 @@ import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useSortTokensByWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
+import { useSortTokensByWorth } from '@/api/addressesTokensPricesDataHooks'
 import Button from '@/components/Button'
 import MultiSelect from '@/components/Inputs/MultiSelect'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'

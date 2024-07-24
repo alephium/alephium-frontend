@@ -23,7 +23,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesAlphWorth, useAddressesTokensTotalWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
+import { useAddressesAlphWorth, useAddressesTokensTotalWorth } from '@/api/addressesTokensPricesDataHooks'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'
