@@ -20,7 +20,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useSortTokensByWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
+import { useSortTokensByWorth } from '@/api/addressesTokensPricesDataHooks'
 import AddressBadge from '@/components/AddressBadge'
 import AssetBadge from '@/components/AssetBadge'
 import Badge from '@/components/Badge'

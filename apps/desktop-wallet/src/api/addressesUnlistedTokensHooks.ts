@@ -17,12 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, client, TOKENS_QUERY_LIMIT } from '@alephium/shared'
-import { ALPH, TokenInfo } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { FungibleTokenMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries } from '@tanstack/react-query'
 import { chunk } from 'lodash'
-import { useMemo } from 'react'
 
 import { addressTokensBalanceQuery } from '@/api/addressQueries'
 import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
@@ -30,52 +28,26 @@ import { useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { isDefined } from '@/utils/misc'
 
-export const useAddressesListedFungibleTokens = (addressHash?: AddressHash) => {
-  const { data: fungibleTokenList, isLoading: isLoadingFungibleTokenList } = useFungibleTokenList()
-  const { data: latestAddressesTxHashes, isLoading: isLoadingLastTxHashes } =
-    useAddressesLastTransactionHashes(addressHash)
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
-
-  const { data, isLoading } = useQueries({
-    queries: latestAddressesTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
-      addressTokensBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
-    ),
-    combine: (results) => ({
-      data: results.reduce(
-        (acc, { data }) => {
-          data?.map(({ tokenId }) => {
-            const listedFungibleToken = fungibleTokenList?.find((token) => token.id === tokenId)
-            const alreadyAddedToArray = acc.some((token) => token.id === listedFungibleToken?.id)
-
-            if (listedFungibleToken && !alreadyAddedToArray) acc.push(listedFungibleToken)
-          })
-          return acc
-        },
-        // Include ALPH in the results
-        [ALPH] as TokenInfo[]
-      ),
-      isLoading: results.some(({ isLoading }) => isLoading)
-    })
-  })
+export const useAddressesUnlistedNonStandardTokenIds = (addressHash?: AddressHash) => {
+  const {
+    data: { 'non-standard': unlinstedNonStandardTokenIds },
+    isLoading
+  } = useAddressesUnlistedTokenTypes(addressHash)
 
   return {
-    data,
-    isLoading: isLoading || isLoadingFungibleTokenList || isLoadingLastTxHashes
+    data: unlinstedNonStandardTokenIds,
+    isLoading
   }
 }
 
-export const useAddressesListedFungibleTokensWithPrice = (addressHash?: AddressHash) => {
-  const { data: tokens } = useAddressesListedFungibleTokens(addressHash)
-
-  return useMemo(() => tokens.filter((token) => token.symbol in explorer.TokensWithPrice), [tokens])
-}
-
 export const useAddressesUnlistedFungibleTokens = (addressHash?: AddressHash) => {
-  const { data: unknownTokenIds, isLoading: isLoadingUnknownTokenIds } = useAddressesUnknownTokenIds(addressHash)
-  const { data: tokensByType } = useTokensTypes(unknownTokenIds)
+  const {
+    data: { fungible: unlistedFungibleTokenIds },
+    isLoading: isLoadingUnlistedTokenTypes
+  } = useAddressesUnlistedTokenTypes(addressHash)
 
   const { data, isLoading } = useQueries({
-    queries: chunk(tokensByType.fungible, TOKENS_QUERY_LIMIT).map((ids) => ({
+    queries: chunk(unlistedFungibleTokenIds, TOKENS_QUERY_LIMIT).map((ids) => ({
       queryKey: ['tokens', 'fungible', 'unlisted', ids],
       queryFn: () => client.explorer.tokens.postTokensFungibleMetadata(ids),
       staleTime: Infinity
@@ -88,9 +60,11 @@ export const useAddressesUnlistedFungibleTokens = (addressHash?: AddressHash) =>
 
   return {
     data,
-    isLoading: isLoading || isLoadingUnknownTokenIds
+    isLoading: isLoading || isLoadingUnlistedTokenTypes
   }
 }
+
+// Helper functions and hooks
 
 const convertDecimalsToNumber = (token: FungibleTokenMetadata) => {
   const parsedDecimals = parseInt(token.decimals)
@@ -101,13 +75,13 @@ const convertDecimalsToNumber = (token: FungibleTokenMetadata) => {
   }
 }
 
-const useAddressesUnknownTokenIds = (addressHash?: AddressHash) => {
+const useAddressesUnlistedTokenTypes = (addressHash?: AddressHash) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const { data: fungibleTokenList, isLoading: isLoadingFungibleTokenList } = useFungibleTokenList()
   const { data: latestAddressesTxHashes, isLoading: isLoadingLatestTxHashes } =
     useAddressesLastTransactionHashes(addressHash)
 
-  const { data, isLoading } = useQueries({
+  const { data: unknownTypeTokenIds, isLoading: isLoadingUnknownTypeTokenIds } = useQueries({
     queries: isLoadingFungibleTokenList
       ? []
       : latestAddressesTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
@@ -129,11 +103,16 @@ const useAddressesUnknownTokenIds = (addressHash?: AddressHash) => {
     })
   })
 
+  const { data: tokensByType, isLoading: isLoadingTokensTypes } = useTokensTypes(unknownTypeTokenIds)
+
   return {
-    data,
-    isLoading: isLoading || isLoadingFungibleTokenList || isLoadingLatestTxHashes
+    data: tokensByType,
+    isLoading:
+      isLoadingUnknownTypeTokenIds || isLoadingFungibleTokenList || isLoadingLatestTxHashes || isLoadingTokensTypes
   }
 }
+
+const StdInterfaceIds = Object.values(explorer.TokenStdInterfaceId)
 
 const useTokensTypes = (tokenIds: string[]) => {
   const { data, isLoading } = useQueries({
@@ -147,14 +126,16 @@ const useTokensTypes = (tokenIds: string[]) => {
         .flatMap(({ data }) => data)
         .reduce(
           (tokenIdsByType, tokenInfo) => {
-            if (
-              tokenInfo?.stdInterfaceId &&
-              Object.values(explorer.TokenStdInterfaceId).includes(
-                tokenInfo.stdInterfaceId as explorer.TokenStdInterfaceId
-              )
-            ) {
-              tokenIdsByType[tokenInfo.stdInterfaceId as explorer.TokenStdInterfaceId].push(tokenInfo.token)
+            if (!tokenInfo) return tokenIdsByType
+            const stdInterfaceId = tokenInfo.stdInterfaceId as explorer.TokenStdInterfaceId
+
+            if (StdInterfaceIds.includes(stdInterfaceId)) {
+              tokenIdsByType[stdInterfaceId].push(tokenInfo.token)
+            } else {
+              // Except from NonStandard, the interface might be any string or undefined. We merge all that together.
+              tokenIdsByType[explorer.TokenStdInterfaceId.NonStandard].push(tokenInfo.token)
             }
+
             return tokenIdsByType
           },
           {
