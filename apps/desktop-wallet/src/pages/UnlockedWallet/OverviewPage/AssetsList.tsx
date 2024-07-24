@@ -25,11 +25,7 @@ import styled, { css, useTheme } from 'styled-components'
 
 import { fadeIn } from '@/animations'
 import { useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
-import {
-  useAddressesListedFungibleTokens,
-  useAddressesUnlistedFungibleTokens
-} from '@/api/addressesFungibleTokensInfoDataHooks'
-import { useAddressesTokensWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
+import { useAddressesListedFungibleTokens } from '@/api/addressesListedFungibleTokensDataHooks'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import FocusableContent from '@/components/FocusableContent'
@@ -44,12 +40,13 @@ import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
-import {
-  makeSelectAddressesCheckedUnknownTokens,
-  makeSelectAddressesNFTs,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
+import { makeSelectAddressesNFTs, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
+import { useAddressesTokensWorth } from '@/api/addressesTokensPricesDataHooks'
+import {
+  useAddressesUnlistedFungibleTokens,
+  useAddressesUnlistedNonStandardTokenIds
+} from '@/api/addressesUnlistedTokensHooks'
 
 interface AssetsListProps {
   className?: string
@@ -75,8 +72,7 @@ const AssetsList = ({
   nftColumns
 }: AssetsListProps) => {
   const { t } = useTranslation()
-  const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
-  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
+  const { data: addressesNonStandardTokenIds } = useAddressesUnlistedNonStandardTokenIds(addressHash)
 
   const [tabs, setTabs] = useState([
     { value: 'tokens', label: tokensTabTitle ?? '💰 ' + t('Tokens') },
@@ -88,10 +84,10 @@ const AssetsList = ({
   const handleButtonClick = () => setIsExpanded(!isExpanded)
 
   useEffect(() => {
-    if (unknownTokens.length > 0 && tabs.length === 2) {
+    if (addressesNonStandardTokenIds.length > 0 && tabs.length === 2) {
       setTabs([...tabs, { value: 'unknownTokens', label: unknownTokensTabTitle ?? '❔' + t('Unknown tokens') }])
     }
-  }, [t, tabs, unknownTokens.length, unknownTokensTabTitle])
+  }, [t, tabs, addressesNonStandardTokenIds.length, unknownTokensTabTitle])
 
   return (
     <FocusableContent className={className} isFocused={isExpanded} onClose={() => setIsExpanded(false)}>
@@ -176,18 +172,17 @@ const useSortedAddressesFungibleTokensIds = (addressHash?: AddressHash) => {
 }
 
 const UnknownTokensBalancesList = ({ className, addressHash, isExpanded, onExpand }: AssetsListProps) => {
-  const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
-  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
+  const { data: addressesNonStandardTokenIds } = useAddressesUnlistedNonStandardTokenIds(addressHash)
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {unknownTokens.map((asset) => (
-          <TokenBalancesRow tokenId={asset.id} addressHash={addressHash} isExpanded={isExpanded} key={asset.id} />
+        {addressesNonStandardTokenIds.map((tokenId) => (
+          <TokenBalancesRow tokenId={tokenId} addressHash={addressHash} isExpanded={isExpanded} key={tokenId} />
         ))}
       </motion.div>
 
-      {!isExpanded && unknownTokens.length > 3 && onExpand && <ExpandRow onClick={onExpand} />}
+      {!isExpanded && addressesNonStandardTokenIds.length > 3 && onExpand && <ExpandRow onClick={onExpand} />}
     </>
   )
 }

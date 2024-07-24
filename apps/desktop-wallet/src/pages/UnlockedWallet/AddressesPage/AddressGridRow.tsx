@@ -27,7 +27,7 @@ import {
   useAddressesTokensPrices,
   useAddressesTokensTotalWorth,
   useSortTokensByWorth
-} from '@/api/addressesFungibleTokensPricesDataHooks'
+} from '@/api/addressesTokensPricesDataHooks'
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Amount from '@/components/Amount'

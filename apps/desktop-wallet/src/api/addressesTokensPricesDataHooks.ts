@@ -20,9 +20,10 @@ import { AddressHash, Asset, calculateAmountWorth, client, ONE_MINUTE_MS, TOKENS
 import { ALPH } from '@alephium/token-list'
 import { useQueries, useQueryClient } from '@tanstack/react-query'
 import { chunk, orderBy } from 'lodash'
+import { useMemo } from 'react'
 
-import { useAddressesAlphBalances, useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
-import { useAddressesListedFungibleTokensWithPrice } from '@/api/addressesFungibleTokensInfoDataHooks'
+import { useAddressesAlphBalances } from '@/api/addressesBalancesDataHooks'
+import { useAddressesListedFungibleTokensWithPrice } from '@/api/addressesListedFungibleTokensDataHooks'
 import { addressTokensBalanceQuery } from '@/api/addressQueries'
 import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
 import { useAppSelector } from '@/hooks/redux'
@@ -152,22 +153,23 @@ export const useAddressesTokensWorth = (addressHash?: AddressHash) => {
   }
 }
 
-// TODO: Refactor now that useAddressesTokensWorth exists
 export const useAddressesTokensTotalWorth = (addressHash?: AddressHash) => {
-  const addressesTokensWithPrice = useAddressesListedFungibleTokensWithPrice(addressHash)
-  const { data: tokensBalances, isLoading: isLoadingTokenBalances } = useAddressesTokensBalances(addressHash)
-  const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
+  const { data, isLoading } = useAddressesTokensWorth(addressHash)
 
-  const totalWorth = addressesTokensWithPrice.reduce((totalWorth, { id, symbol, decimals }) => {
-    const price = tokenPrices.find((t) => t.symbol === symbol)?.price
-    const tokenBalance = tokensBalances[id]?.balance
-
-    return price && tokenBalance ? totalWorth + calculateAmountWorth(tokenBalance, price, decimals) : totalWorth
-  }, 0)
+  const totalTokensWorth = useMemo(
+    () =>
+      Object.values(data).reduce((acc, tokenWorth) => {
+        if (tokenWorth !== undefined) {
+          acc = tokenWorth + (acc ?? 0)
+        }
+        return acc
+      }, 0),
+    [data]
+  )
 
   return {
-    data: totalWorth,
-    isLoading: isLoadingTokenBalances || isLoadingTokenPrices
+    data: totalTokensWorth,
+    isLoading
   }
 }
 
