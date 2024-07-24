@@ -16,14 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT, selectNFTById } from '@alephium/shared'
+import { NFT } from '@alephium/shared'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
+import { useAddressesNfts } from '@/api/addressesNftsDataHooks'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import Truncate from '@/components/Truncate'
-import { useAppSelector } from '@/hooks/redux'
 
 interface NFTCardProps {
   nftId: NFT['id']
@@ -31,7 +31,9 @@ interface NFTCardProps {
 }
 
 const NFTCard = ({ nftId, onClick }: NFTCardProps) => {
-  const nft = useAppSelector((s) => selectNFTById(s, nftId))
+  const { data: nfts } = useAddressesNfts()
+
+  const nft = nfts.find((nft) => nft.id === nftId)
 
   if (!nft) return null
 
