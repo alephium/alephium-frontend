@@ -18,51 +18,46 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NFT } from '@alephium/shared'
 import { motion } from 'framer-motion'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { fadeIn } from '@/animations'
+import { useAddressesNftsIds } from '@/api/addressesNftsDataHooks'
 import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { ExpandRow, TableRow } from '@/components/Table'
 import { AssetsTabsProps } from '@/features/assetsLists/types'
-import { useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
-import { makeSelectAddressesNFTs, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
 const NFTsGrid = ({ className, addressHash, isExpanded, onExpand, nftColumns }: AssetsTabsProps) => {
   const { t } = useTranslation()
-  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
-  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const isLoadingNFTs = useAppSelector((s) => s.nfts.loading)
-  const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
+  const { data: nftIds, isLoading } = useAddressesNftsIds(addressHash)
+
   const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {isLoadingNFTs || isLoadingTokenTypes || stateUninitialized ? (
-          <Grid>
-            <SkeletonLoader height="205px" />
-            <SkeletonLoader height="205px" />
-            <SkeletonLoader height="205px" />
-            <SkeletonLoader height="205px" />
-          </Grid>
-        ) : (
-          <Grid role="row" tabIndex={isExpanded ? 0 : -1} columns={nftColumns}>
-            {nfts.map((nft) => (
-              <NFTCard key={nft.id} nftId={nft.id} onClick={() => setSelectedNFTId(nft.id)} />
-            ))}
-            {nfts.length === 0 && <PlaceholderText>{t('No NFTs found.')}</PlaceholderText>}
-          </Grid>
-        )}
+        <Grid role="row" tabIndex={isExpanded ? 0 : -1} columns={nftColumns}>
+          {nftIds.map((nftId) => (
+            <NFTCard key={nftId} nftId={nftId} onClick={() => setSelectedNFTId(nftId)} />
+          ))}
+          {nftIds.length === 0 && <PlaceholderText>{t('No NFTs found.')}</PlaceholderText>}
+          {isLoading && (
+            <>
+              <SkeletonLoader height="205px" />
+              <SkeletonLoader height="205px" />
+              <SkeletonLoader height="205px" />
+              <SkeletonLoader height="205px" />
+            </>
+          )}
+        </Grid>
       </motion.div>
 
-      {!isExpanded && nfts.length > 4 && onExpand && <ExpandRow onClick={onExpand} />}
+      {!isExpanded && nftIds.length > 4 && onExpand && <ExpandRow onClick={onExpand} />}
 
       <ModalPortal>
         {selectedNFTId && <NFTDetailsModal nftId={selectedNFTId} onClose={() => setSelectedNFTId(undefined)} />}
