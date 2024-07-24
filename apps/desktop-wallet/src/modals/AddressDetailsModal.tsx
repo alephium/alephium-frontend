@@ -31,12 +31,12 @@ import ShortcutButtons from '@/components/Buttons/ShortcutButtons'
 import HashEllipsed from '@/components/HashEllipsed'
 import QRCode from '@/components/QRCode'
 import TransactionList from '@/components/TransactionList'
+import AssetsTabs from '@/features/assetsLists/AssetsTabs'
 import { useAppSelector } from '@/hooks/redux'
 import CSVExportModal from '@/modals/CSVExportModal'
 import ModalPortal from '@/modals/ModalPortal'
 import SideModal from '@/modals/SideModal'
 import AmountsOverviewPanel from '@/pages/UnlockedWallet/OverviewPage/AmountsOverviewPanel'
-import AssetsList from '@/pages/UnlockedWallet/OverviewPage/AssetsList'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -107,7 +107,7 @@ const AddressDetailsModal = ({ addressHash, onClose }: AddressDetailsModalProps)
             />
           </ButtonsGrid>
         </Shortcuts>
-        <AssetsList
+        <AssetsTabs
           addressHash={address.hash}
           tokensTabTitle={`💰 ${t('Address tokens')}`}
           unknownTokensTabTitle={`❔ ${t('Address unknown tokens')}`}
@@ -179,12 +179,15 @@ const TitleAddressHash = styled(HashEllipsed)`
 const Content = styled.div`
   padding: var(--spacing-4) var(--spacing-4) var(--spacing-4);
   position: relative;
+  gap: 45px;
+  display: flex;
+  flex-direction: column;
 `
 
 const Shortcuts = styled(Box)`
   overflow: hidden;
   background-color: ${({ theme }) => theme.bg.primary};
-  margin: 0 60px 45px;
+  margin: 0 60px;
   border-radius: 100px;
   width: auto;
 `
