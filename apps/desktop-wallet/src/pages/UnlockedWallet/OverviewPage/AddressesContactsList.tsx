@@ -25,7 +25,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { useAddressesTokensTotalWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
+import { useAddressesTokensTotalWorth } from '@/api/addressesTokensPricesDataHooks'
 import ActionLink from '@/components/ActionLink'
 import AddressRow from '@/components/AddressRow'
 import Amount from '@/components/Amount'

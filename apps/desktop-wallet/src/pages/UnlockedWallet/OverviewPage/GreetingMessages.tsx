@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeInOut } from '@/animations'
-import { useAlphPrice } from '@/api/addressesFungibleTokensPricesDataHooks'
+import { useAlphPrice } from '@/api/addressesTokensPricesDataHooks'
 import { useAppSelector } from '@/hooks/redux'
 import TimeOfDayMessage from '@/pages/UnlockedWallet/OverviewPage/TimeOfDayMessage'
 import { messagesLeftMarginPx } from '@/style/globalStyles'
