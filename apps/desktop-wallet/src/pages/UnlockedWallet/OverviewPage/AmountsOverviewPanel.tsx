@@ -16,13 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, calculateAmountWorth, CURRENCIES } from '@alephium/shared'
+import { CURRENCIES } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesAlphWorth, useAddressesTokensWorth } from '@/api/addressesFungibleTokensPricesDataHooks'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'
@@ -31,18 +32,8 @@ import TotalAlphBalance from '@/features/balancesOverview/TotalAlphBalance'
 import { ChartLength, chartLengths, DataPoint } from '@/features/historicChart/historicChartTypes'
 import HistoricWorthChart, { historicWorthChartHeight } from '@/features/historicChart/HistoricWorthChart'
 import useHistoricData from '@/features/historicChart/useHistoricData'
-import {
-  useAddressesTokensPrices,
-  useAddressesTokensWorth,
-  useAlphPrice
-} from '@/features/tokenPrices/tokenPricesHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import {
-  makeSelectAddresses,
-  selectAddressIds,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
 
 interface AmountsOverviewPanelProps {
   addressHash?: string
@@ -59,19 +50,12 @@ const chartAnimationVariants = {
 
 const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addressHash, children, showChart }) => {
   const { t } = useTranslation()
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const allAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const addressHashes = addressHash ?? allAddressHashes
-  const selectAddresses = useMemo(makeSelectAddresses, [])
-  const addresses = useAppSelector((s) => selectAddresses(s, addressHashes))
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
-  const isLoadingBalances = useAppSelector((s) => s.addresses.loadingBalances)
-  const isBalancesInitialized = useAppSelector((s) => s.addresses.balancesStatus === 'initialized')
-
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const alphPrice = useAlphPrice()
-  const { isPending: isPendingTokenPrices } = useAddressesTokensPrices()
-  const { isPending: isPendingHistoricData, hasHistoricBalances } = useHistoricData()
+
+  const { data: totalAmountWorth, isLoading: isLoadingTotalAmountWorth } = useAddressesTokensWorth(addressHash)
+  const { data: totalAlphAmountWorth, isLoading: isLoadingAlphAmountWorth } = useAddressesAlphWorth(addressHash)
+  const { hasHistoricBalances, isLoading: isLoadingHistoricData } = useHistoricData()
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
   const [chartLength, setChartLength] = useState<ChartLength>('1m')
@@ -82,14 +66,8 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
     worth: undefined
   }
   const singleAddress = !!addressHash
-  const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
-  const totalAlphAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice) : undefined
-
-  const totalAmountWorth = useAddressesTokensWorth(addressHashes)
   const balanceInFiat = hoveredDataPointWorth ?? totalAmountWorth
-
   const isHoveringChart = !!hoveredDataPointWorth
-  const showBalancesSkeletonLoader = !isBalancesInitialized || (!isBalancesInitialized && isLoadingBalances)
 
   return (
     <UnlockedWalletPanelStyled className={className}>
@@ -102,7 +80,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
                   ? dayjs(hoveredDataPointDate).format('DD/MM/YYYY') + ' (ALPH only)'
                   : t('Value today')}
               </Today>
-              {isPendingTokenPrices || showBalancesSkeletonLoader ? (
+              {isLoadingTotalAmountWorth ? (
                 <SkeletonLoader height="32px" style={{ marginBottom: 7, marginTop: 7 }} />
               ) : (
                 <FiatTotalAmount tabIndex={0} value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
@@ -110,9 +88,8 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
               {hoveredDataPointWorth !== undefined && (
                 <Opacity>
                   <FiatDeltaPercentage>
-                    {isPendingTokenPrices ||
-                    stateUninitialized ||
-                    isPendingHistoricData ||
+                    {isLoadingAlphAmountWorth ||
+                    isLoadingHistoricData ||
                     (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
                       <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
                     ) : hasHistoricBalances && worthInBeginningOfChart && hoveredDataPointWorth !== undefined ? (
@@ -124,7 +101,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
               <ChartLengthBadges>
                 {chartLengths.map((length) =>
-                  isPendingTokenPrices || stateUninitialized || isPendingHistoricData ? (
+                  isLoadingAlphAmountWorth || isLoadingHistoricData ? (
                     <SkeletonLoader
                       key={length}
                       height="25px"

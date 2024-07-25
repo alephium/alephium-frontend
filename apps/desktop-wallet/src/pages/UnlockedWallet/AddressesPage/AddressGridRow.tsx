@@ -23,16 +23,16 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import {
+  useAddressesTokensPrices,
+  useAddressesTokensWorth,
+  useSortTokensByWorth
+} from '@/api/addressesFungibleTokensPricesDataHooks'
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Amount from '@/components/Amount'
 import AssetBadge from '@/components/AssetBadge'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import {
-  useAddressesTokensPrices,
-  useAddressesTokensWorth,
-  useSortTokensByWorth
-} from '@/features/tokenPrices/tokenPricesHooks'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
@@ -58,8 +58,8 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const { isPending: isPendingTokenPrices } = useAddressesTokensPrices()
-  const balanceInFiat = useAddressesTokensWorth(addressHash)
+  const { isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
+  const { data: balanceInFiat } = useAddressesTokensWorth(addressHash)
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
@@ -126,11 +126,8 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
             </AssetLogos>
           )}
         </Cell>
-        <AmountCell>
-          {stateUninitialized ? <SkeletonLoader height="18.5px" /> : <Amount value={BigInt(address.balance)} />}
-        </AmountCell>
         <FiatAmountCell>
-          {stateUninitialized || isPendingTokenPrices ? (
+          {stateUninitialized || isLoadingTokenPrices ? (
             <SkeletonLoader height="18.5px" />
           ) : (
             <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
@@ -176,7 +173,7 @@ const Cell = styled.div`
 
 const GridRow = styled.div`
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};

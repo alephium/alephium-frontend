@@ -33,8 +33,9 @@ type Amount = string
 const useHistoricData = () => {
   const allAddressHashes = useAppSelector((s) => s.addresses.ids as AddressHash[])
   const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
+  const networkId = useAppSelector((s) => s.network.settings.networkId)
 
-  const { data: alphPriceHistory, isPending: isPendingAlphPriceHistory } = useQuery({
+  const { data: alphPriceHistory, isLoading: isLoadingAlphPriceHistory } = useQuery({
     queryKey: [HISTORY_QUERY_KEY, 'price', ALPH.symbol, { currency }],
     queryFn: () =>
       client.explorer.market.getMarketPricesSymbolCharts(ALPH.symbol, { currency }).then((rawHistory) => {
@@ -65,11 +66,11 @@ const useHistoricData = () => {
 
   const {
     data: alphBalanceHistoryPerAddress,
-    isPending: isPendingHistoricalAlphBalances,
+    isLoading: isLoadingHistoricalAlphBalances,
     hasHistoricBalances
   } = useQueries({
     queries: allAddressHashes.map((hash) => ({
-      queryKey: [HISTORY_QUERY_KEY, 'addressBalance', DAILY, ALPH.symbol, { hash }],
+      queryKey: [HISTORY_QUERY_KEY, 'addressBalance', DAILY, ALPH.symbol, { hash, networkId }],
       queryFn: async () => {
         const now = dayjs()
         const thisMoment = now.valueOf()
@@ -109,17 +110,17 @@ const useHistoricData = () => {
         },
         {} as Record<AddressHash, Record<Timestamp, Amount> | undefined>
       ),
-      isPending: results.some(({ isPending }) => isPending),
+      isLoading: results.some(({ isLoading }) => isLoading),
       hasHistoricBalances: results.some(({ data }) => data?.amountHistory?.length)
     })
   })
 
   return {
     alphBalanceHistoryPerAddress,
-    isPendingHistoricalAlphBalances,
-    isPendingAlphPriceHistory,
+    isLoadingHistoricalAlphBalances,
+    isLoadingAlphPriceHistory,
     alphPriceHistory,
-    isPending: isPendingAlphPriceHistory || isPendingHistoricalAlphBalances,
+    isLoading: isLoadingAlphPriceHistory || isLoadingHistoricalAlphBalances,
     hasHistoricBalances
   }
 }

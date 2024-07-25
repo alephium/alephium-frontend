@@ -16,41 +16,29 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { useQueries } from '@tanstack/react-query'
 
-import { addressBalanceQuery } from '@/api/addressQueries'
+import { addressLatestTransactionHashQuery } from '@/api/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAddressesLatestHash } from '@/storage/transactions/transactionsSelectors'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { isDefined } from '@/utils/misc'
 
-const useTotalAlphBalances = () => {
-  const latestAddressesTxHashes = useAppSelector(selectAddressesLatestHash)
+export const useAddressesLastTransactionHashes = (addressHash?: AddressHash) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const addressHashes = addressHash ? [addressHash] : allAddressHashes
 
   const { data, isLoading } = useQueries({
-    queries: latestAddressesTxHashes.map(({ addressHash, latestTxHash }) =>
-      addressBalanceQuery({ addressHash, latestTxHash, networkId })
-    ),
+    queries: addressHashes.map((addressHash) => addressLatestTransactionHashQuery({ addressHash, networkId })),
     combine: (results) => ({
-      data: results.reduce(
-        (totalBalances, { data }) => {
-          totalBalances.totalBalance += data ? BigInt(data.balance) : BigInt(0)
-          totalBalances.totalLockedBalance += data ? BigInt(data.lockedBalance) : BigInt(0)
-
-          return totalBalances
-        },
-        {
-          totalBalance: BigInt(0),
-          totalLockedBalance: BigInt(0)
-        }
-      ),
+      data: results.flatMap(({ data }) => data).filter(isDefined),
       isLoading: results.some(({ isLoading }) => isLoading)
     })
   })
 
   return {
-    ...data,
+    data,
     isLoading
   }
 }
-
-export default useTotalAlphBalances
