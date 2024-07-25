@@ -320,7 +320,6 @@
   "The group of the selected address ({{ addressGroup }}) does not match the group required by WalletConnect ({{ walletConnectGroup }})": "O grupo do endereço selecionado ({{ addressGroup }}) não corresponde ao grupo exigido pelo WalletConnect ({{ walletConnectGroup }})",
   "The wallet is offline.": "A carteira está offline.",
   "Theme": "Tema",
-  "There are no addresses in the required group: {{ group }}": "Não há nenhum endereço no grupo solicitado: {{ group }}",
   "There are no addresses with available balance. Please, send some funds to one of your addresses, and try again.": "Não há endereços com saldo disponível. Por favor, envie alguns fundos para um dos seus endereços, e tente novamente.",
   "There are no available addresses.": "Não há endereços disponíveis.",
   "This address is not valid": "Este endereço não é válido",
