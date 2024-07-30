@@ -42,7 +42,7 @@ const BuyModal = (props: BuyModalProps) => {
       <BottomModal
         {...props}
         Content={(props) => (
-          <ModalContent {...props} contentContainerStyle={{ flex: 1 }}>
+          <ModalContent {...props} contentContainerStyle={{ flex: 1, paddingTop: 0 }}>
             {!isDisclaimerAccepted && (
               <DisclaimerContent>
                 <ScreenTitle title={t('Disclaimer')} />
@@ -64,6 +64,7 @@ const BuyModal = (props: BuyModalProps) => {
               allowsInlineMediaPlayback
               enableApplePay
               mediaPlaybackRequiresUserAction={false}
+              containerStyle={{ padding: 0 }}
             />
           </ModalContent>
         )}

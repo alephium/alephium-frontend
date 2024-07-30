@@ -40,7 +40,7 @@ import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type ModalPositions = 'minimised' | 'maximised' | 'closing'
 
-const NAV_HEIGHT = 48
+const NAV_HEIGHT = 40
 const DRAG_BUFFER = 40
 
 const springConfig: WithSpringConfig = {
@@ -154,7 +154,7 @@ const BottomModal = ({
   const handleMaximize = useCallback(() => {
     'worklet'
 
-    navHeight.value = withSpring(NAV_HEIGHT + 10, springConfig)
+    navHeight.value = withSpring(NAV_HEIGHT + 6, springConfig)
     modalHeight.value = withSpring(-maxHeight, springConfig)
     position.value = 'maximised'
   }, [maxHeight, modalHeight, navHeight, position])
@@ -226,7 +226,7 @@ const BottomModal = ({
             </HandleContainer>
             <Navigation style={modalNavigationAnimatedStyle}>
               {title && <Title>{title}</Title>}
-              <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round />
+              <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round compact />
             </Navigation>
             <ContentContainer noPadding={noPadding}>
               <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
