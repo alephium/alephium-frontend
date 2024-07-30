@@ -142,14 +142,14 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           >
             <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" round flex short />
             <Button onPress={handleReceivePress} iconProps={{ name: 'download' }} variant="contrast" round flex short />
-            {/*<Button
+            <Button
               onPress={() => setIsBuyModalOpen(true)}
               iconProps={{ name: 'credit-card' }}
               variant="contrast"
               round
               flex
               short
-            />*/}
+            />
           </ButtonsRowContainer>
         )}
       </BalanceAndButtons>
