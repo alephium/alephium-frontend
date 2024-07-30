@@ -54,11 +54,7 @@ const TabBar = ({ items, onTabChange, activeTab, style }: TabBarProps) => {
             <Tab
               isActive={isActive}
               style={{
-                shadowColor: isActive ? 'black' : 'transparent',
-                shadowOffset: { height: 3, width: 0 },
-                shadowOpacity: theme.name === 'dark' ? 0 : 0.08,
-                shadowRadius: 5,
-                elevation: isActive ? 10 : 0
+                backgroundColor: isActive ? theme.button.secondary : 'transparent'
               }}
             >
               {typeof item.label === 'string' ? (
