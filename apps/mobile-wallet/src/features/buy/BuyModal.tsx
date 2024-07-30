@@ -21,21 +21,34 @@ import { useTranslation } from 'react-i18next'
 import { Portal } from 'react-native-portalize'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import BottomModal, { BottomModalProps } from '~/components/layout/BottomModal'
 import { ModalContent } from '~/components/layout/ModalContent'
 import ScreenTitle from '~/components/layout/ScreenTitle'
+import { useAppSelector } from '~/hooks/redux'
+import { selectDefaultAddress } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface BuyModalProps extends Omit<BottomModalProps, 'Content'> {}
 
 const BuyModal = (props: BuyModalProps) => {
   const { t } = useTranslation()
+  const theme = useTheme()
   const insets = useSafeAreaInsets()
+  const defaultAddress = useAppSelector(selectDefaultAddress)
   const [isDisclaimerAccepted, setIsDisclaimerAccepted] = useState(false)
+
+  const banxaURL =
+    'https://alephium.banxa-sandbox.com/' +
+    `?walletAddress=${defaultAddress?.hash}` +
+    `&theme=${theme.name}` +
+    `&backgroundColor=${theme.bg.primary.slice(1)}` +
+    `&textColor=${theme.font.primary.slice(1)}` +
+    `&primaryColor=${theme.global.accent}` +
+    `&secondaryColor=${theme.global.complementary}`
 
   return (
     <Portal>
@@ -60,11 +73,14 @@ const BuyModal = (props: BuyModalProps) => {
               </DisclaimerContent>
             )}
             <WebView
-              source={{ uri: 'https://alephium.banxa-sandbox.com' }}
+              source={{
+                uri: banxaURL
+              }}
               allowsInlineMediaPlayback
               enableApplePay
               mediaPlaybackRequiresUserAction={false}
               containerStyle={{ padding: 0 }}
+              cacheEnabled={false}
             />
           </ModalContent>
         )}

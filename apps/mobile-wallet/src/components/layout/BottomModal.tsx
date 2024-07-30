@@ -225,7 +225,7 @@ const BottomModal = ({
               <Handle style={handleAnimatedStyle} />
             </HandleContainer>
             <Navigation style={modalNavigationAnimatedStyle}>
-              {title && <Title>{title}</Title>}
+              {title && <Title semiBold>{title}</Title>}
               <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round compact />
             </Navigation>
             <ContentContainer noPadding={noPadding}>
