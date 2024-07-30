@@ -50,7 +50,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
   const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList | ReceiveNavigationParamList>>()
-  const [isBanxaModalOpen, setIsBanxaModalOpen] = useState(false)
+  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false)
   const { t } = useTranslation()
 
   const handleReceivePress = () => {
@@ -79,7 +79,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
               <Skeleton show colorMode={theme.name} width={200} height={38} />
             </View>
           ) : (
-            <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={38} />
+            <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={40} />
           )}
         </TextContainer>
 
@@ -88,35 +88,43 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
             <Button
               title={t('Receive assets')}
               onPress={handleReceivePress}
-              iconProps={{ name: 'arrow-down-outline' }}
+              iconProps={{ name: 'download' }}
               variant="highlight"
               short
+              flex
             />
             <Button
               title={t('Buy')}
-              onPress={() => setIsBanxaModalOpen(true)}
-              iconProps={{ name: 'arrow-down-outline' }}
+              onPress={() => setIsBuyModalOpen(true)}
+              iconProps={{ name: 'credit-card' }}
               variant="highlight"
               short
+              flex
             />
           </ReceiveFundsButtonContainer>
         )}
       </BalanceSummaryContainer>
-      <BuyModal isOpen={isBanxaModalOpen} onClose={() => setIsBanxaModalOpen(false)} />
+      <BuyModal isOpen={isBuyModalOpen} onClose={() => setIsBuyModalOpen(false)} />
     </>
   )
 }
 
 export default BalanceSummary
 
-const BalanceSummaryContainer = styled.View``
+const BalanceSummaryContainer = styled.View`
+  margin: 20px 0 10px;
+`
 
 const TextContainer = styled.View`
+  align-items: center;
   margin: 10px ${DEFAULT_MARGIN + 10}px 15px ${DEFAULT_MARGIN + 10}px;
 `
 
 const DateLabelContainer = styled.View``
 
 const ReceiveFundsButtonContainer = styled.View`
+  flex-direction: row;
   padding: 15px;
+  margin: 5px 10px 0;
+  gap: ${DEFAULT_MARGIN}px;
 `

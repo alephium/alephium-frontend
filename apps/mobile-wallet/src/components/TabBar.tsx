@@ -80,6 +80,7 @@ export default TabBar
 
 const TabBarStyled = styled.View`
   flex-direction: row;
+  justify-content: center;
   gap: 20px;
 `
 

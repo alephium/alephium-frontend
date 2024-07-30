@@ -200,8 +200,6 @@ const TabBarStyled = styled(TabBar)`
 
 const ListContainer = styled(Animated.View)`
   border-radius: ${BORDER_RADIUS_BIG}px;
-  margin: 0 ${DEFAULT_MARGIN}px;
-  background-color: ${({ theme }) => theme.bg.primary};
   overflow: hidden;
   position: relative;
 `
