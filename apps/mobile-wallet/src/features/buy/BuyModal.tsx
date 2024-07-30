@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BackHandler, Platform } from 'react-native'
@@ -30,6 +31,7 @@ import BottomModal, { BottomModalProps } from '~/components/layout/BottomModal'
 import { ModalContent } from '~/components/layout/ModalContent'
 import ScreenTitle from '~/components/layout/ScreenTitle'
 import { useAppSelector } from '~/hooks/redux'
+import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { selectDefaultAddress } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
@@ -37,8 +39,9 @@ interface BuyModalProps extends Omit<BottomModalProps, 'Content'> {}
 
 const BuyModal = (props: BuyModalProps) => {
   const { t } = useTranslation()
-  const webViewRef = useRef<WebView>(null)
+  const navigation = useNavigation<NavigationProp<InWalletTabsParamList>>()
   const theme = useTheme()
+  const webViewRef = useRef<WebView>(null)
   const insets = useSafeAreaInsets()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [isDisclaimerAccepted, setIsDisclaimerAccepted] = useState(false)
@@ -72,6 +75,7 @@ const BuyModal = (props: BuyModalProps) => {
   const handleModalCloseWhenFinished = (e: WebViewNavigation) => {
     // Close modal if url equals default return URL confirgured in Banxa dashboard
     if (e.url.includes('alephium.org')) {
+      navigation.navigate('TransfersScreen')
       props.onClose()
     }
   }
