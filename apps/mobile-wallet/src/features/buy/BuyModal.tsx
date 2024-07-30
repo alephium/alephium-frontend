@@ -91,7 +91,7 @@ const BuyModal = (props: BuyModalProps) => {
                 <ScreenTitle title={t('Disclaimer')} />
                 <AppText style={{ flex: 1 }}>
                   {t(
-                    'You are about to use an external service provider, banxa.com, which allows you to buy ALPH right from your wallet. Alephium has no control over Banxa activities. Please reach Banxa for more information.'
+                    'You are about to access 3rd party services provided by Banxa.com through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding.'
                   )}
                 </AppText>
                 <Button
