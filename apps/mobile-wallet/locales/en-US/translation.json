@@ -364,5 +364,8 @@
   "Error while copying address": "Error while copying address",
   "This address is not valid": "This address is not valid",
   "A number is expected": "A number is expected",
-  "View full size": "View full size"
+  "View full size": "View full size",
+  "Disclaimer": "Disclaimer",
+  "You are about to use an external service provider, banxa.com, which allows you to buy ALPH right from your wallet. Alephium has no control over Banxa activities. Please reach Banxa for more information.": "You are about to use an external service provider, banxa.com, which allows you to buy ALPH right from your wallet. Alephium has no control over Banxa activities. Please reach Banxa for more information.",
+  "Buy": "Buy"
 }
