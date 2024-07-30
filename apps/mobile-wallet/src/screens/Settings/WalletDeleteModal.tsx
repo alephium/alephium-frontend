@@ -91,7 +91,7 @@ const WalletDeleteModal = ({ onDelete, ...props }: WalletDeleteModalProps) => {
             variant="alert"
             onPress={handleDeleteConfirmPress}
             disabled={inputWalletName !== walletName}
-            iconProps={{ name: 'trash-outline' }}
+            iconProps={{ name: 'trash' }}
           />
         </ScreenSection>
       </ModalContent>

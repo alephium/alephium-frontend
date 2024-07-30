@@ -65,11 +65,7 @@ const WalletConnectPairingsModal = ({
           isLast={index === activeSessions.length - 1}
           icon={metadata.icons[0] ? <DAppIcon source={{ uri: metadata.icons[0] }} /> : undefined}
           rightSideContent={
-            <Button
-              onPress={() => handleDisconnectPress(topic)}
-              iconProps={{ name: 'remove-circle' }}
-              type="transparent"
-            />
+            <Button onPress={() => handleDisconnectPress(topic)} iconProps={{ name: 'trash' }} type="transparent" />
           }
         />
       ))}
@@ -84,13 +80,13 @@ const WalletConnectPairingsModal = ({
             title={t('Paste a WalletConnect URL')}
             variant="accent"
             onPress={onPasteWcUrlPress}
-            iconProps={{ name: 'clipboard-outline' }}
+            iconProps={{ name: 'copy' }}
           />
           <Button
             title={t('Scan QR code')}
             variant="accent"
             onPress={onScanQRCodePress}
-            iconProps={{ name: 'qr-code-outline' }}
+            iconProps={{ name: 'maximize' }}
           />
         </ButtonStack>
       </ScreenSection>
