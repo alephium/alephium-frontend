@@ -20,6 +20,10 @@ import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { Skeleton } from 'moti/skeleton'
 import { useMemo, useState } from 'react'
+<<<<<<< HEAD
+=======
+import { useTranslation } from 'react-i18next'
+>>>>>>> edea05c8a (Init BuyModal with banxa WebView)
 import { View, ViewProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -49,7 +53,12 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
   const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList | ReceiveNavigationParamList>>()
+<<<<<<< HEAD
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false)
+=======
+  const [isBanxaModalOpen, setIsBanxaModalOpen] = useState(false)
+  const { t } = useTranslation()
+>>>>>>> edea05c8a (Init BuyModal with banxa WebView)
 
   const handleReceivePress = () => {
     if (addressHashes.length === 1) {
@@ -77,13 +86,18 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
               <Skeleton show colorMode={theme.name} width={200} height={38} />
             </View>
           ) : (
+<<<<<<< HEAD
             <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={40} />
+=======
+            <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={38} />
+>>>>>>> edea05c8a (Init BuyModal with banxa WebView)
           )}
         </TextContainer>
 
         {totalBalance === BigInt(0) && !isLoadingAlphBalances && addressesStatus === 'initialized' && (
           <ReceiveFundsButtonContainer>
             <Button
+<<<<<<< HEAD
               onPress={handleReceivePress}
               iconProps={{ name: 'download' }}
               variant="highlight"
@@ -98,11 +112,29 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
               short
               round
               flex
+=======
+              title={t('Receive assets')}
+              onPress={handleReceivePress}
+              iconProps={{ name: 'arrow-down-outline' }}
+              variant="highlight"
+              short
+            />
+            <Button
+              title={t('Buy')}
+              onPress={() => setIsBanxaModalOpen(true)}
+              iconProps={{ name: 'arrow-down-outline' }}
+              variant="highlight"
+              short
+>>>>>>> edea05c8a (Init BuyModal with banxa WebView)
             />
           </ReceiveFundsButtonContainer>
         )}
       </BalanceSummaryContainer>
+<<<<<<< HEAD
       <BuyModal isOpen={isBuyModalOpen} onClose={() => setIsBuyModalOpen(false)} />
+=======
+      <BuyModal isOpen={isBanxaModalOpen} onClose={() => setIsBanxaModalOpen(false)} />
+>>>>>>> edea05c8a (Init BuyModal with banxa WebView)
     </>
   )
 }
