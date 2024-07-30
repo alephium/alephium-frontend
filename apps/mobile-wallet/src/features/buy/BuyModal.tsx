@@ -16,8 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { BackHandler, Platform } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'
@@ -36,10 +37,28 @@ interface BuyModalProps extends Omit<BottomModalProps, 'Content'> {}
 
 const BuyModal = (props: BuyModalProps) => {
   const { t } = useTranslation()
+  const webViewRef = useRef<WebView>(null)
   const theme = useTheme()
   const insets = useSafeAreaInsets()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [isDisclaimerAccepted, setIsDisclaimerAccepted] = useState(false)
+
+  const onAndroidBackPress = () => {
+    if (webViewRef.current) {
+      webViewRef.current.goBack()
+      return true // prevent default behavior (exit app)
+    }
+    return false
+  }
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      BackHandler.addEventListener('hardwareBackPress', onAndroidBackPress)
+      return () => {
+        BackHandler.removeEventListener('hardwareBackPress', onAndroidBackPress)
+      }
+    }
+  }, [])
 
   const banxaURL =
     'https://alephium.banxa-sandbox.com/' +
@@ -73,6 +92,7 @@ const BuyModal = (props: BuyModalProps) => {
               </DisclaimerContent>
             )}
             <WebView
+              ref={webViewRef}
               source={{
                 uri: banxaURL
               }}
@@ -80,6 +100,7 @@ const BuyModal = (props: BuyModalProps) => {
               enableApplePay
               mediaPlaybackRequiresUserAction={false}
               containerStyle={{ padding: 0 }}
+              allowsBackForwardNavigationGestures
               cacheEnabled={false}
             />
           </ModalContent>
