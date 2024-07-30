@@ -33,6 +33,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
+import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ModalContentProps } from '~/components/layout/ModalContent'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
@@ -55,13 +56,23 @@ export interface BottomModalProps {
   Content: (props: ModalContentProps) => ReactNode
   isOpen: boolean
   onClose: () => void
+  title?: string
   maximisedContent?: boolean
   customMinHeight?: number
+  noPadding?: boolean
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
-const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeight }: BottomModalProps) => {
+const BottomModal = ({
+  Content,
+  isOpen,
+  onClose,
+  title,
+  maximisedContent,
+  customMinHeight,
+  noPadding
+}: BottomModalProps) => {
   const insets = useSafeAreaInsets()
 
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
@@ -213,10 +224,11 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
             <HandleContainer>
               <Handle style={handleAnimatedStyle} />
             </HandleContainer>
-            <ContentContainer>
-              <Navigation style={modalNavigationAnimatedStyle}>
-                <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round />
-              </Navigation>
+            <Navigation style={modalNavigationAnimatedStyle}>
+              {title && <Title>{title}</Title>}
+              <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round />
+            </Navigation>
+            <ContentContainer noPadding={noPadding}>
               <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
             </ContentContainer>
           </BottomModalStyled>
@@ -267,11 +279,19 @@ const Handle = styled(Animated.View)`
   margin-top: -15px;
 `
 
-const Navigation = styled(Animated.View)`
-  align-items: flex-end;
+const Title = styled(AppText)`
+  flex: 1;
+  text-align: center;
 `
 
-const ContentContainer = styled(Animated.View)`
-  flex: 1;
+const Navigation = styled(Animated.View)`
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
   padding: 0 ${DEFAULT_MARGIN - 1}px;
+`
+
+const ContentContainer = styled(Animated.View)<Pick<BottomModalProps, 'noPadding'>>`
+  flex: 1;
+  padding: ${({ noPadding }) => (noPadding ? 0 : `0 ${DEFAULT_MARGIN - 1}px`)};
 `

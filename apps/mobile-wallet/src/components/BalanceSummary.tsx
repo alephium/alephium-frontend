@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { Skeleton } from 'moti/skeleton'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View, ViewProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -27,6 +27,7 @@ import styled, { useTheme } from 'styled-components/native'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import BuyModal from '~/features/buy/BuyModal'
 import { useAppSelector } from '~/hooks/redux'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -49,6 +50,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
   const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList | ReceiveNavigationParamList>>()
+  const [isBanxaModalOpen, setIsBanxaModalOpen] = useState(false)
   const { t } = useTranslation()
 
   const handleReceivePress = () => {
@@ -63,35 +65,45 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   }
 
   return (
-    <BalanceSummaryContainer style={style} {...props}>
-      <TextContainer>
-        <DateLabelContainer>
-          <AppText color="secondary" semiBold>
-            {dateLabel}
-          </AppText>
-        </DateLabelContainer>
+    <>
+      <BalanceSummaryContainer style={style} {...props}>
+        <TextContainer>
+          <DateLabelContainer>
+            <AppText color="secondary" semiBold>
+              {dateLabel}
+            </AppText>
+          </DateLabelContainer>
 
-        {addressesBalancesStatus === 'uninitialized' ? (
-          <View style={{ marginTop: 13 }}>
-            <Skeleton show colorMode={theme.name} width={200} height={38} />
-          </View>
-        ) : (
-          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={38} />
+          {addressesBalancesStatus === 'uninitialized' ? (
+            <View style={{ marginTop: 13 }}>
+              <Skeleton show colorMode={theme.name} width={200} height={38} />
+            </View>
+          ) : (
+            <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={38} />
+          )}
+        </TextContainer>
+
+        {totalBalance === BigInt(0) && !isLoadingAlphBalances && addressesStatus === 'initialized' && (
+          <ReceiveFundsButtonContainer>
+            <Button
+              title={t('Receive assets')}
+              onPress={handleReceivePress}
+              iconProps={{ name: 'arrow-down-outline' }}
+              variant="highlight"
+              short
+            />
+            <Button
+              title={t('Buy')}
+              onPress={() => setIsBanxaModalOpen(true)}
+              iconProps={{ name: 'arrow-down-outline' }}
+              variant="highlight"
+              short
+            />
+          </ReceiveFundsButtonContainer>
         )}
-      </TextContainer>
-
-      {totalBalance === BigInt(0) && !isLoadingAlphBalances && addressesStatus === 'initialized' && (
-        <ReceiveFundsButtonContainer>
-          <Button
-            title={t('Receive assets')}
-            onPress={handleReceivePress}
-            iconProps={{ name: 'arrow-down-outline' }}
-            variant="highlight"
-            short
-          />
-        </ReceiveFundsButtonContainer>
-      )}
-    </BalanceSummaryContainer>
+      </BalanceSummaryContainer>
+      <BuyModal isOpen={isBanxaModalOpen} onClose={() => setIsBanxaModalOpen(false)} />
+    </>
   )
 }
 
