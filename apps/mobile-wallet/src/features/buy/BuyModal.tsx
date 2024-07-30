@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next'
 import { BackHandler, Platform } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import WebView from 'react-native-webview'
+import WebView, { WebViewNavigation } from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -69,6 +69,13 @@ const BuyModal = (props: BuyModalProps) => {
     `&primaryColor=${theme.global.accent}` +
     `&secondaryColor=${theme.global.complementary}`
 
+  const handleModalCloseWhenFinished = (e: WebViewNavigation) => {
+    // Close modal if url equals default return URL confirgured in Banxa dashboard
+    if (e.url.includes('alephium.org')) {
+      props.onClose()
+    }
+  }
+
   return (
     <Portal>
       <BottomModal
@@ -101,7 +108,7 @@ const BuyModal = (props: BuyModalProps) => {
               mediaPlaybackRequiresUserAction={false}
               containerStyle={{ padding: 0 }}
               allowsBackForwardNavigationGestures
-              cacheEnabled={false}
+              onNavigationStateChange={handleModalCloseWhenFinished}
             />
           </ModalContent>
         )}

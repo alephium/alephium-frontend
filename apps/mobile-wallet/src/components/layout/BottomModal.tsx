@@ -280,7 +280,9 @@ const Handle = styled(Animated.View)`
 `
 
 const Title = styled(AppText)`
-  flex: 1;
+  position: absolute;
+  right: 0;
+  left: 0;
   text-align: center;
 `
 
