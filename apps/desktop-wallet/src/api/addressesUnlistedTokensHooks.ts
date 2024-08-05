@@ -26,12 +26,12 @@ import { isDefined } from '@/utils/misc'
 
 export const useAddressesUnlistedNonStandardTokenIds = (addressHash?: AddressHash) => {
   const {
-    data: { 'non-standard': unlinstedNonStandardTokenIds },
+    data: { 'non-standard': unlistedNonStandardTokenIds },
     isLoading
   } = useAddressesUnlistedTokenTypes(addressHash)
 
   return {
-    data: unlinstedNonStandardTokenIds,
+    data: unlistedNonStandardTokenIds,
     isLoading
   }
 }
