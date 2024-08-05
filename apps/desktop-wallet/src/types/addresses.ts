@@ -44,7 +44,7 @@ export type DeprecatedAddressMetadata = DeprecatedAddressSettings & {
 export type AddressBase = AddressSettings & NonSensitiveAddressData
 
 export type Address = AddressBase &
-  explorer.AddressInfo & {
+  Omit<explorer.AddressInfo, 'txNumber'> & {
     group: number
     transactions: (explorer.Transaction['hash'] | PendingTransaction['hash'])[]
     transactionsPageLoaded: number
@@ -71,6 +71,5 @@ export interface AddressesState extends EntityState<Address> {
 
 export type AddressTransactionsSyncResult = {
   hash: AddressHash
-  txNumber: explorer.AddressInfo['txNumber']
   transactions: explorer.Transaction[]
 }

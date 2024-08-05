@@ -66,12 +66,10 @@ export const fetchAddressesTransactions = async (
   const results = []
 
   for (const addressHash of addressHashes) {
-    const txNumber = await client.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
     const transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: 1 })
 
     results.push({
       hash: addressHash,
-      txNumber,
       transactions
     })
   }

@@ -290,7 +290,6 @@ const getDefaultAddressState = (address: AddressBase): Address => ({
   group: groupOfAddress(address.hash),
   balance: '0',
   lockedBalance: '0',
-  txNumber: 0,
   transactions: [],
   transactionsPageLoaded: 0,
   allTransactionPagesLoaded: false,
