@@ -42,7 +42,7 @@ import {
 import i18n from '@/i18n'
 import { selectAddressByHash, selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { RootState } from '@/storage/store'
-import { Address, AddressBase, AddressTransactionsSyncResult, LoadingEnabled } from '@/types/addresses'
+import { Address, AddressBase, LoadingEnabled } from '@/types/addresses'
 import { Message, SnackbarMessage } from '@/types/snackbar'
 
 export const transactionsLoadingStarted = createAction('addresses/transactionsLoadingStarted')
@@ -64,7 +64,7 @@ export const addressSettingsSaved = createAction<{ addressHash: AddressHash; set
 )
 
 export const syncAddressesData = createAsyncThunk<
-  AddressTransactionsSyncResult[],
+  undefined,
   AddressHash[] | undefined,
   { rejectValue: SnackbarMessage }
 >('addresses/syncAddressesData', async (payload, { getState, dispatch, rejectWithValue }) => {
@@ -76,7 +76,7 @@ export const syncAddressesData = createAsyncThunk<
   try {
     await dispatch(syncAddressesBalances(addresses))
     await dispatch(syncAddressesTokensBalances(addresses))
-    return await dispatch(syncAddressesTransactions(addresses)).unwrap()
+    await dispatch(syncAddressesTransactions(addresses))
   } catch (e) {
     return rejectWithValue({
       text: getHumanReadableError(e, i18n.t("Encountered error while syncing your addresses' data.")),

@@ -73,5 +73,4 @@ export type AddressTransactionsSyncResult = {
   hash: AddressHash
   txNumber: explorer.AddressInfo['txNumber']
   transactions: explorer.Transaction[]
-  mempoolTransactions: explorer.MempoolTransaction[]
 }

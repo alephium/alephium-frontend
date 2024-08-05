@@ -46,7 +46,6 @@ import {
   csvFileGenerationFinished,
   csvFileGenerationStarted,
   fetchTransactionsCsv,
-  loadingPendingTransactionsFailed,
   messageSignFailed,
   transactionBuildFailed,
   transactionSendFailed,
@@ -146,9 +145,6 @@ const snackbarSlice = createSlice({
       )
       .addCase(storingDataToLocalStorageFailed, (state) =>
         displayMessageImmediately(state, { text: 'Storing data to local storage failed', type: 'alert' })
-      )
-      .addCase(loadingPendingTransactionsFailed, (state) =>
-        displayMessageImmediately(state, { text: 'Loading pending transactions failed', type: 'alert' })
       )
       .addCase(devModeShortcutDetected, (state, action) =>
         displayMessageImmediately(

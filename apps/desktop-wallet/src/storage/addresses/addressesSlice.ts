@@ -145,7 +145,7 @@ const addressesSlice = createSlice({
       })
       .addCase(syncAddressesTransactions.fulfilled, (state, action) => {
         const addressData = action.payload
-        const updatedAddresses = addressData.map(({ hash, transactions, mempoolTransactions }) => {
+        const updatedAddresses = addressData.map(({ hash, transactions }) => {
           const address = state.entities[hash]
 
           // There should not be a case that we try to sync address data without having the address already in our
@@ -156,12 +156,7 @@ const addressesSlice = createSlice({
               changes: {}
             }
 
-          const lastUsed =
-            mempoolTransactions.length > 0
-              ? mempoolTransactions[0].lastSeen
-              : transactions.length > 0
-                ? transactions[0].timestamp
-                : address.lastUsed
+          const lastUsed = transactions.length > 0 ? transactions[0].timestamp : address.lastUsed
 
           return {
             id: hash,
