@@ -43,7 +43,7 @@ import i18n from '@/i18n'
 import { selectAddressByHash, selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { RootState } from '@/storage/store'
 import { Address, AddressBase, LoadingEnabled } from '@/types/addresses'
-import { Message, SnackbarMessage } from '@/types/snackbar'
+import { Message } from '@/types/snackbar'
 
 export const transactionsLoadingStarted = createAction('addresses/transactionsLoadingStarted')
 
@@ -63,27 +63,23 @@ export const addressSettingsSaved = createAction<{ addressHash: AddressHash; set
   'addresses/addressSettingsSaved'
 )
 
-export const syncAddressesData = createAsyncThunk<
-  undefined,
-  AddressHash[] | undefined,
-  { rejectValue: SnackbarMessage }
->('addresses/syncAddressesData', async (payload, { getState, dispatch, rejectWithValue }) => {
-  dispatch(syncingAddressDataStarted())
+export const syncAddressesData = createAsyncThunk(
+  'addresses/syncAddressesData',
+  async (payload: AddressHash[] | undefined, { getState, dispatch }) => {
+    dispatch(syncingAddressDataStarted())
 
-  const state = getState() as RootState
-  const addresses = payload ?? (state.addresses.ids as AddressHash[])
+    const state = getState() as RootState
+    const addresses = payload ?? (state.addresses.ids as AddressHash[])
 
-  try {
-    await dispatch(syncAddressesBalances(addresses))
-    await dispatch(syncAddressesTokensBalances(addresses))
-    await dispatch(syncAddressesTransactions(addresses))
-  } catch (e) {
-    return rejectWithValue({
-      text: getHumanReadableError(e, i18n.t("Encountered error while syncing your addresses' data.")),
-      type: 'alert'
-    })
+    try {
+      await dispatch(syncAddressesBalances(addresses))
+      await dispatch(syncAddressesTokensBalances(addresses))
+      await dispatch(syncAddressesTransactions(addresses))
+    } catch (e) {
+      throw getHumanReadableError(e, i18n.t("Encountered error while syncing your addresses' data."))
+    }
   }
-})
+)
 
 export const syncAddressesBalances = createAsyncThunk(
   'addresses/syncAddressesBalances',

@@ -76,9 +76,9 @@ const snackbarSlice = createSlice({
         if (state.messages.length > 0) state.messages.shift()
       })
       .addCase(syncAddressesData.rejected, (state, action) => {
-        const message = action.payload
+        const message = action.error.message
 
-        if (message) queueMessage(state, message)
+        if (message) queueMessage(state, { type: 'alert', text: message })
       })
       .addCase(apiClientInitSucceeded, (state, action) => {
         state.offlineMessageWasVisibleOnce = false
