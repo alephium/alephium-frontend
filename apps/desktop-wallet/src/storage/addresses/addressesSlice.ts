@@ -146,7 +146,16 @@ const addressesSlice = createSlice({
       .addCase(syncAddressesTransactions.fulfilled, (state, action) => {
         const addressData = action.payload
         const updatedAddresses = addressData.map(({ hash, transactions, mempoolTransactions }) => {
-          const address = state.entities[hash] as Address
+          const address = state.entities[hash]
+
+          // There should not be a case that we try to sync address data without having the address already in our
+          // store. If there is no address found in the store, however, it's safer to return an empty changes object.
+          if (!address)
+            return {
+              id: hash,
+              changes: {}
+            }
+
           const lastUsed =
             mempoolTransactions.length > 0
               ? mempoolTransactions[0].lastSeen
@@ -205,7 +214,10 @@ const addressesSlice = createSlice({
         if (!addressTransactionsData) return
 
         const { hash, transactions, page } = addressTransactionsData
-        const address = state.entities[hash] as Address
+        const address = state.entities[hash]
+
+        if (!address) return
+
         const newTxHashes = extractNewTransactions(transactions, address.transactions).map(({ hash }) => hash)
 
         addressesAdapter.updateOne(state, {
