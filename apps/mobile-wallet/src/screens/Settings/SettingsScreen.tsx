@@ -337,7 +337,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                       1: <AppText bold size={18} />
                     }}
                   >
-                    {'Before displaying it, make sure to be in an<1>non-public</1>space.'}
+                    {'Before displaying it, make sure to be in an <1>non-public</1> space.'}
                   </Trans>
                 </AppText>
               </ScreenSection>

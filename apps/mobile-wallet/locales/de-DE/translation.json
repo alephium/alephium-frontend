@@ -334,7 +334,7 @@
   "Privacy policy": "Datenschutzrichtlinie",
   "Be careful!": "Seien Sie vorsichtig!",
   "Don't share your secret recovery phrase with anyone!": "Teilen Sie Ihre geheime Wiederherstellungsphrase mit niemanden!",
-  "viewMnemonicModalWarning": "Bevor Sie es anzeigen, stellen Sie sicher, dass Sie in einem <1>nicht-öffentlich</1>Raum sind.",
+  "viewMnemonicModalWarning": "Bevor Sie es anzeigen, stellen Sie sicher, dass Sie in einem <1>nicht-öffentlich</1> Raum sind.",
   "Error while deleting wallet": "Fehler beim Löschen der Wallet",
   "Delete \"{{ walletName }}\"?": "\"{{ walletName }} \"löschen?",
   "Do you really want to delete this wallet from your device?": "Möchten Sie diese Wallet wirklich von Ihrem Gerät löschen?",
