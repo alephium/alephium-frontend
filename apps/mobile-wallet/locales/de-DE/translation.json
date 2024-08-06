@@ -265,7 +265,6 @@
   "Paste a WalletConnect URI": "WalletConnect-URI einfügen",
   "This is not a valid WalletConnect URI": "Dies ist keine gültige WalletConnect-URI",
   "Paste the WalletConnect URI you copied from the dApp": "Fügen Sie die von der dApp kopierte WalletConnect URI ein",
-  "WalletConnect URI": "WalletConnect URI",
   "Do you want to activate biometric security?": "Möchten Sie die biometrische Sicherheit aktivieren?",
   "Use fingerprint or face recognition instead of the pin to unlock the wallet": "Fingerabdruck oder Gesichtserkennung anstelle des Pins zum Entsperren der Brieftasche verwenden",
   "Could not proceed": "Konnte nicht fortfahren",
@@ -359,5 +358,6 @@
   "Address copied!": "Adresse kopiert!",
   "Error while copying address": "Fehler beim Kopieren der Adresse",
   "This address is not valid": "Diese Adresse ist nicht gültig",
-  "A number is expected": "Eine Zahl wird erwartet"
+  "A number is expected": "Eine Zahl wird erwartet",
+  "View full size": "Volle Grösse anzeigen"
 }

@@ -78,6 +78,7 @@
   "of all shards": "von allen Shards",
   "to": "bis",
   "with": "mit",
+  "Missing data": "Fehlende Daten",
   "Wrong/old format": "Falsch/altes Format",
   "No metadata": "Keine Metadaten",
   "Image URL": "Bild URL",
@@ -130,5 +131,10 @@
   "Orphan": "Waisen",
   "It appears that this block is not part of the main chain.": "Es scheint, dass dieser Block nicht Teil der Hauptblockchain ist.",
   "confirmationsKey_one": "{{ count }} Bestätigung",
-  "confirmationsKey_other": "{{ count }} Bestätigungen"
+  "confirmationsKey_other": "{{ count }} Bestätigungen",
+  "uncleBlock_one": "Onkel Block",
+  "uncleBlock_other": "Onkel Blöcke",
+  "Uncle": "Onkel",
+  "Unsupported media type": "Nicht unterstützter Medientyp",
+  "Video thumbnail": "Video Vorschaubild"
 }
