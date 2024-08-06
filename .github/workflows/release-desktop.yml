@@ -47,7 +47,7 @@ jobs:
           cd apps/desktop-wallet
           pnpm install
           pnpm ci:build
-          pnpm electron-builder --universal --publish always
+          pnpm electron-builder --mac --universal --publish always
 
       - name: Upload notarization-error.log
         if: always()
@@ -73,7 +73,7 @@ jobs:
           cd apps/desktop-wallet
           pnpm install
           pnpm ci:build
-          pnpm electron-builder --publish always
+          pnpm electron-builder --windows --publish always
 
       # Linux
       - name: Install Snapcraft
@@ -89,4 +89,4 @@ jobs:
           cd apps/desktop-wallet
           pnpm install
           pnpm ci:build
-          pnpm electron-builder --publish always
+          pnpm electron-builder --linux --publish always
