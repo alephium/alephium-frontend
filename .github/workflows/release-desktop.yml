@@ -23,16 +23,13 @@ jobs:
       - name: 🏗 Setup monorepo
         uses: ./.github/actions/setup-monorepo
 
+      # macOS
       - name: Prepare for app notarization
         if: startsWith(matrix.os, 'macos')
         run: |
           mkdir -p ~/private_keys/
           echo '${{ secrets.api_key }}' > ~/private_keys/AuthKey_${{ secrets.api_key_id }}.p8
           echo '${{ secrets.mac_certs }}' | base64 -d > applecert.p12
-
-      - name: Install Snapcraft
-        uses: samuelmeuli/action-snapcraft@v2
-        if: startsWith(matrix.os, 'ubuntu')
 
       - name: Build & release macOS Electron app
         if: startsWith(matrix.os, 'macos')
@@ -46,11 +43,20 @@ jobs:
           APPLEIDPASS: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
         run: |
+          echo "Enter desktop wallet dir, install deps, build app, package it with electron-builder, and release it"
           cd apps/desktop-wallet
           pnpm install
           pnpm ci:build
           pnpm electron-builder --universal --publish always
 
+      - name: Upload notarization-error.log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: notarization-error-log
+          path: ${{ github.workspace }}/apps/desktop-wallet/notarization-error.log
+
+      # Windows
       - name: Build & release Windows Electron app
         if: startsWith(matrix.os, 'windows')
         env:
@@ -63,24 +69,24 @@ jobs:
           WINDOWS_SIGN_CREDENTIAL_ID: ${{ secrets.WINDOWS_SIGN_CREDENTIAL_ID }}
           WINDOWS_SIGN_TOTP_SECRET: ${{ secrets.WINDOWS_SIGN_TOTP_SECRET }}
         run: |
+          echo "Enter desktop wallet dir, install deps, build app, package it with electron-builder, and release it"
           cd apps/desktop-wallet
           pnpm install
           pnpm ci:build
           pnpm electron-builder --publish always
+
+      # Linux
+      - name: Install Snapcraft
+        uses: samuelmeuli/action-snapcraft@v2
+        if: startsWith(matrix.os, 'ubuntu')
 
       - name: Build & release Linux Electron app
         if: startsWith(matrix.os, 'ubuntu')
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
         run: |
+          echo "Enter desktop wallet dir, install deps, build app, package it with electron-builder, and release it"
           cd apps/desktop-wallet
           pnpm install
           pnpm ci:build
           pnpm electron-builder --publish always
-
-      - name: Upload notarization-error.log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: notarization-error-log
-          path: ${{ github.workspace }}/apps/desktop-wallet/notarization-error.log
