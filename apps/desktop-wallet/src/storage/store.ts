@@ -27,9 +27,7 @@ import snackbarSlice from '@/storage/global/snackbarSlice'
 import { networkListenerMiddleware } from '@/storage/settings/networkMiddleware'
 import settingsSlice, { settingsListenerMiddleware } from '@/storage/settings/settingsSlice'
 import confirmedTransactionsSlice from '@/storage/transactions/confirmedTransactionsSlice'
-import pendingTransactionsSlice, {
-  pendingTransactionsListenerMiddleware
-} from '@/storage/transactions/pendingTransactionsSlice'
+import pendingTransactionsSlice from '@/storage/transactions/pendingTransactionsSlice'
 import activeWalletSlice from '@/storage/wallets/activeWalletSlice'
 
 export const store = configureStore({
@@ -48,7 +46,6 @@ export const store = configureStore({
     getDefaultMiddleware()
       .concat(settingsListenerMiddleware.middleware)
       .concat(networkListenerMiddleware.middleware)
-      .concat(pendingTransactionsListenerMiddleware.middleware)
       .concat(...sharedMiddleware)
 })
 

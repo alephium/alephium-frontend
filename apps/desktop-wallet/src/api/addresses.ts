@@ -66,15 +66,11 @@ export const fetchAddressesTransactions = async (
   const results = []
 
   for (const addressHash of addressHashes) {
-    const txNumber = await client.explorer.addresses.getAddressesAddressTotalTransactions(addressHash)
     const transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: 1 })
-    const mempoolTransactions = await client.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash)
 
     results.push({
       hash: addressHash,
-      txNumber,
-      transactions,
-      mempoolTransactions
+      transactions
     })
   }
 
