@@ -4,6 +4,10 @@ on:
   push:
     tags: ['alephium-desktop-wallet@[0-9]+.[0-9]+.[0-9]+*']
 
+env:
+  GH_TOKEN: ${{ secrets.github_token }}
+  ADBLOCK: true
+
 jobs:
   release-desktop-wallet:
     runs-on: ${{ matrix.os }}
@@ -26,40 +30,53 @@ jobs:
           echo '${{ secrets.api_key }}' > ~/private_keys/AuthKey_${{ secrets.api_key_id }}.p8
           echo '${{ secrets.mac_certs }}' | base64 -d > applecert.p12
 
-      - name: Extract args
-        if: startsWith(matrix.os, 'macos')
-        id: get-args
-        run: echo "args=--universal" >> $GITHUB_OUTPUT
-        shell: bash
-
       - name: Install Snapcraft
         uses: samuelmeuli/action-snapcraft@v2
         if: startsWith(matrix.os, 'ubuntu')
 
-      - name: Build & release Electron app
-        uses: nop33/action-electron-builder@v1.8.2
-        if: ${{ startsWith(github.ref, 'refs/tags/alephium-desktop-wallet@') }}
-        with:
-          package_root: 'apps/desktop-wallet'
-          build_script_name: 'ci:build'
-          is_monorepo: true
-          release: true
-          github_token: ${{ secrets.github_token }}
-          mac_certs: ${{ secrets.MAC_CERTS }}
-          mac_certs_password: ${{ secrets.MAC_CERTS_PASSWORD }}
-          args: ${{ steps.get-args.outputs.args }}
+      - name: Build & release macOS Electron app
+        if: startsWith(matrix.os, 'macos')
         env:
+          CSC_LINK: ${{ secrets.MAC_CERTS }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CERTS_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLEID: ${{ secrets.APPLE_ID }}
           APPLEIDPASS: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
+        run: |
+          cd apps/desktop-wallet
+          pnpm install
+          pnpm ci:build
+          pnpm electron-builder --universal --publish always
+
+      - name: Build & release Windows Electron app
+        if: startsWith(matrix.os, 'windows')
+        env:
+          # Replace WINDOWS_ vars with CSC_ ones if you want to use the code signing tool of electron-builder
+          # CSC_LINK: ${{ secrets.WINDOW_CERTS }}
+          # CSC_KEY_PASSWORD: ${{ secrets.WINDOWS_CERTS_PASSWORD }}
+          # Following vars are needed in the apps/desktop-wallet/.signWindows.js file
           WINDOWS_SIGN_USER_NAME: ${{ secrets.WINDOWS_SIGN_USER_NAME }}
           WINDOWS_SIGN_PASSWORD: ${{ secrets.WINDOWS_SIGN_PASSWORD }}
           WINDOWS_SIGN_CREDENTIAL_ID: ${{ secrets.WINDOWS_SIGN_CREDENTIAL_ID }}
           WINDOWS_SIGN_TOTP_SECRET: ${{ secrets.WINDOWS_SIGN_TOTP_SECRET }}
+        run: |
+          cd apps/desktop-wallet
+          pnpm install
+          pnpm ci:build
+          pnpm electron-builder --publish always
+
+      - name: Build & release Linux Electron app
+        if: startsWith(matrix.os, 'ubuntu')
+        env:
+          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
+        run: |
+          cd apps/desktop-wallet
+          pnpm install
+          pnpm ci:build
+          pnpm electron-builder --publish always
 
       - name: Upload notarization-error.log
         if: always()
