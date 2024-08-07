@@ -20,7 +20,6 @@ import {
   AddressHash,
   localStorageNetworkSettingsMigrated,
   selectDoVerifiedFungibleTokensNeedInitialization,
-  syncTokenPriceHistories,
   syncUnknownTokensInfo,
   syncVerifiedFungibleTokens
 } from '@alephium/shared'
@@ -30,6 +29,7 @@ import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
+import { useAlphPrice } from '@/api/addressesTokensPricesDataHooks'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
@@ -37,16 +37,11 @@ import SplashScreen from '@/components/SplashScreen'
 import { WalletConnectContextProvider } from '@/contexts/walletconnect'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
-import { useAlphPrice } from '@/features/tokenPrices/tokenPricesHooks'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
 import Router from '@/routes'
-import { syncAddressesAlphHistoricBalances, syncAddressesData } from '@/storage/addresses/addressesActions'
-import {
-  makeSelectAddressesUnknownTokens,
-  selectAddressIds,
-  selectAllAddressVerifiedFungibleTokenSymbols
-} from '@/storage/addresses/addressesSelectors'
+import { syncAddressesData } from '@/storage/addresses/addressesActions'
+import { makeSelectAddressesUnknownTokens, selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrationFailed,
@@ -91,7 +86,6 @@ const App = () => {
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
-  const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens).map(({ id }) => id)
@@ -203,12 +197,6 @@ const App = () => {
           } catch {
             sendAnalytics({ type: 'error', message: 'Could not sync address data automatically' })
           }
-
-          try {
-            dispatch(syncAddressesAlphHistoricBalances())
-          } catch {
-            sendAnalytics({ type: 'error', message: 'Could not sync alph historic balances automatically' })
-          }
         }
       } else if (addressesStatus === 'initialized') {
         if (
@@ -233,26 +221,14 @@ const App = () => {
     sendAnalytics
   ])
 
-  // Fetch verified tokens from GitHub token-list and sync historical prices for each verified fungible
-  // token found in each address
+  // Fetch verified tokens from GitHub token-list
   useEffect(() => {
     if (networkStatus === 'online' && !isLoadingVerifiedFungibleTokens) {
       if (verifiedFungibleTokensNeedInitialization) {
         dispatch(syncVerifiedFungibleTokens())
-      } else if (verifiedFungibleTokenSymbols.uninitialized.length > 0) {
-        const symbols = verifiedFungibleTokenSymbols.uninitialized
-
-        dispatch(syncTokenPriceHistories({ verifiedFungibleTokenSymbols: symbols, currency: settings.fiatCurrency }))
       }
     }
-  }, [
-    dispatch,
-    isLoadingVerifiedFungibleTokens,
-    networkStatus,
-    settings.fiatCurrency,
-    verifiedFungibleTokenSymbols.uninitialized,
-    verifiedFungibleTokensNeedInitialization
-  ])
+  }, [dispatch, isLoadingVerifiedFungibleTokens, networkStatus, verifiedFungibleTokensNeedInitialization])
 
   const refreshAddressesData = useCallback(() => {
     try {

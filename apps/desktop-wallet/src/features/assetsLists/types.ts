@@ -16,11 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { tokenPricesAdapter, tokenPricesHistoryAdapter } from '@/store/prices/pricesAdapter'
-import { SharedRootState } from '@/store/store'
+import { AddressHash } from '@alephium/shared'
 
-export const { selectAll: selectAllPrices, selectById: selectPriceById } =
-  tokenPricesAdapter.getSelectors<SharedRootState>((state) => state.tokenPrices)
-
-export const { selectAll: selectAllPricesHistories, selectById: selectPriceHistoryById } =
-  tokenPricesHistoryAdapter.getSelectors<SharedRootState>((state) => state.tokenPricesHistory)
+export interface AssetsTabsProps {
+  className?: string
+  addressHash?: AddressHash
+  tokensTabTitle?: string
+  unknownTokensTabTitle?: string
+  nftsTabTitle?: string
+  showTokens?: boolean
+  showNfts?: boolean
+  isExpanded?: boolean
+  onExpand?: () => void
+  maxHeightInPx?: number
+  nftColumns?: number
+}

@@ -16,20 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, CHART_DATE_FORMAT, selectAlphPriceHistory, toHumanReadableAmount } from '@alephium/shared'
-import { colord } from 'colord'
+import { AddressHash, CHART_DATE_FORMAT, toHumanReadableAmount } from '@alephium/shared'
 import dayjs, { Dayjs } from 'dayjs'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import Chart from 'react-apexcharts'
 import styled, { useTheme } from 'styled-components'
 
+import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/features/historicChart/historicChartTypes'
+import { getChartOptions, getFilteredChartData } from '@/features/historicChart/historicChartUtils'
+import useHistoricData from '@/features/historicChart/useHistoricData'
 import { useAppSelector } from '@/hooks/redux'
-import {
-  makeSelectAddresses,
-  selectHaveHistoricBalancesLoaded,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
-import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/types/chart'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
 interface HistoricWorthChartProps {
   length: ChartLength
@@ -58,18 +55,14 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   onDataPointHover,
   onWorthInBeginningOfChartChange
 }: HistoricWorthChartProps) {
-  const selectAddresses = useMemo(makeSelectAddresses, [])
-  const addresses = useAppSelector((s) => selectAddresses(s, addressHash ?? (s.addresses.ids as AddressHash[])))
-  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const alphPriceHistory = useAppSelector(selectAlphPriceHistory)
-
+  const allAddressesHashes = useAppSelector(selectAllAddressHashes)
+  const { alphBalanceHistoryPerAddress, alphPriceHistory, isLoading: isLoadingHistoricData } = useHistoricData()
   const theme = useTheme()
 
   const [chartData, setChartData] = useState<DataPoint[]>([])
 
   const startingDate = startingDates[length].format(CHART_DATE_FORMAT)
-  const isDataAvailable = addresses.length !== 0 && haveHistoricBalancesLoaded && !!alphPriceHistory
+  const isDataAvailable = !isLoadingHistoricData && !!alphPriceHistory
   const firstItem = chartData.at(0)
 
   useEffect(() => {
@@ -87,9 +80,11 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
 
       const dataPoints = alphPriceHistory.map(({ date, value }) => {
         let totalAmountPerDate = BigInt(0)
+        const addresses = addressHash ? [addressHash] : allAddressesHashes
 
-        addresses.forEach(({ hash, alphBalanceHistory }) => {
-          const amountOnDate = alphBalanceHistory.entities[date]?.balance
+        addresses.forEach((hash) => {
+          const addressAlphBalanceHistory = alphBalanceHistoryPerAddress[hash]
+          const amountOnDate = addressAlphBalanceHistory?.[date]
 
           if (amountOnDate !== undefined) {
             const amount = BigInt(amountOnDate)
@@ -117,7 +112,15 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
     dataPoints = trimInitialZeroDataPoints(dataPoints)
 
     setChartData(getFilteredChartData(dataPoints, startingDate))
-  }, [addresses, alphPriceHistory, isDataAvailable, latestWorth, startingDate])
+  }, [
+    addressHash,
+    allAddressesHashes,
+    alphBalanceHistoryPerAddress,
+    alphPriceHistory,
+    isDataAvailable,
+    latestWorth,
+    startingDate
+  ])
 
   if (!isDataAvailable || chartData.length < 2 || !firstItem || latestWorth === undefined) return null
 
@@ -125,7 +128,7 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   const yAxisWorthData = chartData.map(({ worth }) => worth)
 
   const worthHasGoneUp = firstItem.worth < latestWorth
-  const chartColor = stateUninitialized ? theme.font.tertiary : worthHasGoneUp ? theme.global.valid : theme.global.alert
+  const chartColor = worthHasGoneUp ? theme.global.valid : theme.global.alert
 
   const chartOptions = getChartOptions(chartColor, xAxisDatesData, {
     mouseMove(e, chart, options) {
@@ -144,110 +147,6 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
 })
 
 export default HistoricWorthChart
-
-const getFilteredChartData = (chartData: DataPoint[], startingDate: string) => {
-  const startingPoint = chartData.findIndex((point) => point.date === startingDate)
-  return startingPoint > 0 ? chartData.slice(startingPoint) : chartData
-}
-
-const getChartOptions = (
-  chartColor: string,
-  xAxisData: string[],
-  events: ApexChart['events']
-): ApexCharts.ApexOptions => ({
-  chart: {
-    id: 'alephium-chart',
-    toolbar: {
-      show: false
-    },
-    zoom: {
-      enabled: false
-    },
-    sparkline: {
-      enabled: true
-    },
-    events,
-    animations: {
-      enabled: false,
-      easing: 'easeout',
-      speed: 500,
-      dynamicAnimation: {
-        enabled: false
-      }
-    }
-  },
-  xaxis: {
-    type: 'datetime',
-    categories: xAxisData,
-    axisTicks: {
-      show: false
-    },
-    axisBorder: {
-      show: false
-    },
-    tooltip: {
-      enabled: false
-    },
-    labels: {
-      show: false
-    },
-    crosshairs: {
-      show: false
-    }
-  },
-  yaxis: {
-    show: false
-  },
-  grid: {
-    show: false,
-    padding: {
-      left: 0,
-      right: 0
-    }
-  },
-  stroke: {
-    curve: 'smooth',
-    colors: [chartColor],
-    width: 2
-  },
-  tooltip: {
-    custom: () => null,
-    fixed: {
-      enabled: true
-    }
-  },
-  markers: {
-    colors: [chartColor],
-    strokeColors: [chartColor],
-    hover: {
-      size: 4
-    }
-  },
-  dataLabels: {
-    enabled: false
-  },
-  fill: {
-    type: 'gradient',
-    gradient: {
-      shadeIntensity: 1,
-      type: 'vertical',
-      colorStops: [
-        [
-          {
-            offset: 0,
-            color: colord(chartColor).alpha(0.3).toHex(),
-            opacity: 1
-          },
-          {
-            offset: 100,
-            color: colord(chartColor).alpha(0).toHex(),
-            opacity: 1
-          }
-        ]
-      ]
-    }
-  }
-})
 
 const ChartWrapper = styled.div`
   width: 100%;

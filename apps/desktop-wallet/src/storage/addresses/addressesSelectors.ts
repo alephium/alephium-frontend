@@ -25,7 +25,6 @@ import {
   NFT,
   selectAllFungibleTokens,
   selectAllNFTs,
-  selectAllPricesHistories,
   selectNFTIds,
   TokenDisplayBalances
 } from '@alephium/shared'
@@ -44,6 +43,8 @@ export const {
   selectIds: selectAddressIds
 } = addressesAdapter.getSelectors<RootState>((state) => state.addresses)
 
+export const selectAllAddressHashes = createSelector(selectAddressIds, (addresses) => addresses as AddressHash[])
+
 export const makeSelectAddresses = () =>
   createSelector(
     [selectAllAddresses, (_, addressHashes?: AddressHash[] | AddressHash) => addressHashes],
@@ -58,10 +59,6 @@ export const makeSelectAddresses = () =>
 export const selectDefaultAddress = createSelector(
   selectAllAddresses,
   (addresses) => addresses.find((address) => address.isDefault) || addresses[0]
-)
-
-export const selectTotalBalance = createSelector([selectAllAddresses], (addresses) =>
-  addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
 )
 
 export const makeSelectAddressesAlphAsset = () =>
@@ -127,30 +124,6 @@ export const makeSelectAddressesListedFungibleTokenSymbols = () =>
     tokens.filter((token): token is AddressFungibleToken => !!token.verified).map(({ symbol }) => symbol)
   )
 
-export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
-  [makeSelectAddressesVerifiedFungibleTokens(), selectAllPricesHistories],
-  (verifiedFungibleTokens, histories) =>
-    verifiedFungibleTokens
-      .map((token) => token.symbol)
-      .reduce(
-        (acc, tokenSymbol) => {
-          const tokenHistory = histories.find(({ symbol }) => symbol === tokenSymbol)
-
-          if (!tokenHistory || tokenHistory.status === 'uninitialized') {
-            acc.uninitialized.push(tokenSymbol)
-          } else if (tokenHistory && tokenHistory.history.length > 0) {
-            acc.withPriceHistory.push(tokenSymbol)
-          }
-
-          return acc
-        },
-        {
-          uninitialized: [] as string[],
-          withPriceHistory: [] as string[]
-        }
-      )
-)
-
 export const makeSelectAddressesUnknownTokens = () =>
   createSelector(
     [selectAllFungibleTokens, selectNFTIds, makeSelectAddresses()],
@@ -206,18 +179,6 @@ export const selectHaveAllPagesLoaded = createSelector(
   (addresses, allTransactionsLoaded) =>
     addresses.every((address) => address.allTransactionPagesLoaded) || allTransactionsLoaded
 )
-
-export const selectHaveHistoricBalancesLoaded = createSelector(selectAllAddresses, (addresses) =>
-  addresses.every((address) => address.alphBalanceHistoryInitialized)
-)
-
-export const makeSelectAddressesHaveHistoricBalances = () =>
-  createSelector(
-    makeSelectAddresses(),
-    (addresses) =>
-      addresses.every((address) => address.alphBalanceHistoryInitialized) &&
-      addresses.some((address) => address.alphBalanceHistory.ids.length > 0)
-  )
 
 export const selectAddressesWithSomeBalance = createSelector(selectAllAddresses, filterAddressesWithoutAssets)
 

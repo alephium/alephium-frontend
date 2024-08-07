@@ -20,16 +20,12 @@ import {
   ADDRESSES_QUERY_LIMIT,
   AddressHash,
   AddressSettings,
-  BalanceHistory,
-  CHART_DATE_FORMAT,
-  client,
   Contact,
   getHumanReadableError,
   syncingAddressDataStarted
 } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
-import dayjs from 'dayjs'
 import { chunk } from 'lodash'
 
 import {
@@ -149,58 +145,6 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
     }
 
     return { pageLoaded: nextPageToLoad - 1, transactions: newTransactions }
-  }
-)
-
-export const syncAddressesAlphHistoricBalances = createAsyncThunk(
-  'addresses/syncAddressesAlphHistoricBalances',
-  async (
-    payload: AddressHash[] | undefined,
-    { getState }
-  ): Promise<
-    {
-      address: AddressHash
-      balances: BalanceHistory[]
-    }[]
-  > => {
-    const now = dayjs()
-    const thisMoment = now.valueOf()
-    const oneYearAgo = now.subtract(365, 'days').valueOf()
-
-    const addressesBalances = []
-    const state = getState() as RootState
-
-    const addresses = payload ?? (state.addresses.ids as AddressHash[])
-
-    for (const addressHash of addresses) {
-      const balances = []
-
-      const { amountHistory } = await client.explorer.addresses.getAddressesAddressAmountHistory(addressHash, {
-        fromTs: oneYearAgo,
-        toTs: thisMoment,
-        'interval-type': explorer.IntervalType.Daily
-      })
-
-      if (!amountHistory) return []
-
-      try {
-        for (const [timestamp, amount] of amountHistory) {
-          balances.push({
-            date: dayjs(timestamp).format(CHART_DATE_FORMAT),
-            balance: amount
-          })
-        }
-      } catch (e) {
-        console.error('Could not parse amount history data', e)
-      }
-
-      addressesBalances.push({
-        address: addressHash,
-        balances
-      })
-    }
-
-    return addressesBalances
   }
 )
 

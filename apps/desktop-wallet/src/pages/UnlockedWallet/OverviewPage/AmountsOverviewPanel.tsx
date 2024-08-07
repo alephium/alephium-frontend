@@ -16,34 +16,24 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, calculateAmountWorth, CURRENCIES } from '@alephium/shared'
+import { CURRENCIES } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesAlphWorth, useAddressesTokensTotalWorth } from '@/api/addressesTokensPricesDataHooks'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import DeltaPercentage from '@/components/DeltaPercentage'
-import HistoricWorthChart, { historicWorthChartHeight } from '@/components/HistoricWorthChart'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import {
-  useAddressesTokensPrices,
-  useAddressesTokensWorth,
-  useAlphPrice
-} from '@/features/tokenPrices/tokenPricesHooks'
+import TotalAlphBalance from '@/features/balancesOverview/TotalAlphBalance'
+import { ChartLength, chartLengths, DataPoint } from '@/features/historicChart/historicChartTypes'
+import HistoricWorthChart, { historicWorthChartHeight } from '@/features/historicChart/HistoricWorthChart'
+import useHistoricData from '@/features/historicChart/useHistoricData'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import {
-  makeSelectAddresses,
-  makeSelectAddressesHaveHistoricBalances,
-  selectAddressIds,
-  selectHaveHistoricBalancesLoaded,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
-import { ChartLength, chartLengths, DataPoint } from '@/types/chart'
-import { getAvailableBalance } from '@/utils/addresses'
 
 interface AmountsOverviewPanelProps {
   addressHash?: string
@@ -60,22 +50,12 @@ const chartAnimationVariants = {
 
 const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addressHash, children, showChart }) => {
   const { t } = useTranslation()
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const allAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const addressHashes = addressHash ?? allAddressHashes
-  const selectAddresses = useMemo(makeSelectAddresses, [])
-  const addresses = useAppSelector((s) => selectAddresses(s, addressHashes))
-  const network = useAppSelector((s) => s.network)
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
-  const isLoadingBalances = useAppSelector((s) => s.addresses.loadingBalances)
-  const isBalancesInitialized = useAppSelector((s) => s.addresses.balancesStatus === 'initialized')
-
-  const selectAddressesHaveHistoricBalances = useMemo(makeSelectAddressesHaveHistoricBalances, [])
-  const hasHistoricBalances = useAppSelector((s) => selectAddressesHaveHistoricBalances(s, addressHashes))
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const alphPrice = useAlphPrice()
-  const { isPending: isPendingTokenPrices } = useAddressesTokensPrices()
-  const haveHistoricBalancesLoaded = useAppSelector(selectHaveHistoricBalancesLoaded)
+
+  const { data: totalAmountWorth, isLoading: isLoadingTotalAmountWorth } = useAddressesTokensTotalWorth(addressHash)
+  const { data: totalAlphAmountWorth, isLoading: isLoadingAlphAmountWorth } = useAddressesAlphWorth(addressHash)
+  const { hasHistoricBalances, isLoading: isLoadingHistoricData } = useHistoricData()
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
   const [chartLength, setChartLength] = useState<ChartLength>('1m')
@@ -86,17 +66,8 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
     worth: undefined
   }
   const singleAddress = !!addressHash
-  const totalBalance = addresses.reduce((acc, address) => acc + BigInt(address.balance), BigInt(0))
-  const totalAvailableBalance = addresses.reduce((acc, address) => acc + getAvailableBalance(address), BigInt(0))
-  const totalLockedBalance = addresses.reduce((acc, address) => acc + BigInt(address.lockedBalance), BigInt(0))
-  const totalAlphAmountWorth = alphPrice !== undefined ? calculateAmountWorth(totalBalance, alphPrice) : undefined
-
-  const totalAmountWorth = useAddressesTokensWorth(addressHashes)
   const balanceInFiat = hoveredDataPointWorth ?? totalAmountWorth
-
-  const isOnline = network.status === 'online'
   const isHoveringChart = !!hoveredDataPointWorth
-  const showBalancesSkeletonLoader = !isBalancesInitialized || (!isBalancesInitialized && isLoadingBalances)
 
   return (
     <UnlockedWalletPanelStyled className={className}>
@@ -109,7 +80,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
                   ? dayjs(hoveredDataPointDate).format('DD/MM/YYYY') + ' (ALPH only)'
                   : t('Value today')}
               </Today>
-              {isPendingTokenPrices || showBalancesSkeletonLoader ? (
+              {isLoadingTotalAmountWorth ? (
                 <SkeletonLoader height="32px" style={{ marginBottom: 7, marginTop: 7 }} />
               ) : (
                 <FiatTotalAmount tabIndex={0} value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
@@ -117,9 +88,8 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
               {hoveredDataPointWorth !== undefined && (
                 <Opacity>
                   <FiatDeltaPercentage>
-                    {isPendingTokenPrices ||
-                    stateUninitialized ||
-                    !haveHistoricBalancesLoaded ||
+                    {isLoadingAlphAmountWorth ||
+                    isLoadingHistoricData ||
                     (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
                       <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
                     ) : hasHistoricBalances && worthInBeginningOfChart && hoveredDataPointWorth !== undefined ? (
@@ -131,7 +101,7 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
 
               <ChartLengthBadges>
                 {chartLengths.map((length) =>
-                  isPendingTokenPrices || stateUninitialized || !haveHistoricBalancesLoaded ? (
+                  isLoadingAlphAmountWorth || isLoadingHistoricData ? (
                     <SkeletonLoader
                       key={length}
                       height="25px"
@@ -158,26 +128,8 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
               <>
                 <Divider />
                 <AvailableLockedBalancesColumn fadeOut={isHoveringChart}>
-                  <AvailableBalanceRow>
-                    <BalanceLabel tabIndex={0} role="representation">
-                      {t('Available')}
-                    </BalanceLabel>
-                    {showBalancesSkeletonLoader ? (
-                      <SkeletonLoader height="30px" />
-                    ) : (
-                      <AlphAmount tabIndex={0} value={isOnline ? totalAvailableBalance : undefined} />
-                    )}
-                  </AvailableBalanceRow>
-                  <LockedBalanceRow>
-                    <BalanceLabel tabIndex={0} role="representation">
-                      {t('Locked')}
-                    </BalanceLabel>
-                    {showBalancesSkeletonLoader ? (
-                      <SkeletonLoader height="30px" />
-                    ) : (
-                      <AlphAmount tabIndex={0} value={isOnline ? totalLockedBalance : undefined} />
-                    )}
-                  </LockedBalanceRow>
+                  <TotalAlphBalance type="available" />
+                  <TotalAlphBalance type="locked" />
                 </AvailableLockedBalancesColumn>
               </>
             )}
@@ -256,6 +208,7 @@ const AvailableLockedBalancesColumn = styled(BalancesColumn)`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 20px;
 `
 
 const Divider = styled.div`
@@ -263,11 +216,6 @@ const Divider = styled.div`
   background-color: ${({ theme }) => theme.border.secondary};
   margin: 17px 55px;
 `
-
-const AvailableBalanceRow = styled.div`
-  margin-bottom: 20px;
-`
-const LockedBalanceRow = styled.div``
 
 const FiatTotalAmount = styled(Amount)`
   font-size: 34px;
@@ -277,19 +225,6 @@ const FiatTotalAmount = styled(Amount)`
 const FiatDeltaPercentage = styled.div`
   font-size: 18px;
   margin-top: 5px;
-`
-
-const AlphAmount = styled(Amount)`
-  color: ${({ theme }) => theme.font.primary};
-  font-size: 21px;
-  font-weight: var(--fontWeight-semiBold);
-`
-
-const BalanceLabel = styled.label`
-  color: ${({ theme }) => theme.font.tertiary};
-  font-size: 12px;
-  display: block;
-  margin-bottom: 3px;
 `
 
 const Today = styled.div`

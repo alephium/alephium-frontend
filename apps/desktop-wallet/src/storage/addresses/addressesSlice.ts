@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import {
   AddressHash,
-  balanceHistoryAdapter,
   customNetworkSettingsSaved,
   extractNewTransactions,
   getTransactionsOfAddress,
@@ -35,7 +34,6 @@ import {
   addressSettingsSaved,
   defaultAddressChanged,
   newAddressesSaved,
-  syncAddressesAlphHistoricBalances,
   syncAddressesBalances,
   syncAddressesData,
   syncAddressesTokensBalances,
@@ -254,16 +252,6 @@ const addressesSlice = createSlice({
       .addCase(activeWalletDeleted, () => initialState)
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
-      .addCase(syncAddressesAlphHistoricBalances.fulfilled, (state, { payload: data }) => {
-        data.forEach(({ address, balances }) => {
-          const addressState = state.entities[address]
-
-          if (addressState) {
-            balanceHistoryAdapter.upsertMany(addressState.alphBalanceHistory, balances)
-            addressState.alphBalanceHistoryInitialized = true
-          }
-        })
-      })
 
     builder.addMatcher(isAnyOf(transactionSent, receiveTestnetTokens.fulfilled), (state, action) => {
       const pendingTransaction = action.payload
@@ -294,9 +282,7 @@ const getDefaultAddressState = (address: AddressBase): Address => ({
   transactionsPageLoaded: 0,
   allTransactionPagesLoaded: false,
   tokens: [],
-  lastUsed: 0,
-  alphBalanceHistory: balanceHistoryAdapter.getInitialState(),
-  alphBalanceHistoryInitialized: false
+  lastUsed: 0
 })
 
 const updateOldDefaultAddress = (state: AddressesState) => {
