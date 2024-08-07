@@ -127,6 +127,7 @@ const BuyModal = (props: BuyModalProps) => {
               containerStyle={{ padding: 0 }}
               allowsBackForwardNavigationGestures
               onNavigationStateChange={handleModalCloseWhenFinished}
+              nestedScrollEnabled
             />
           </ModalContent>
         )}
