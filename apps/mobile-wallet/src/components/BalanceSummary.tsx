@@ -86,19 +86,19 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
         {totalBalance === BigInt(0) && !isLoadingAlphBalances && addressesStatus === 'initialized' && (
           <ReceiveFundsButtonContainer>
             <Button
-              title={t('Receive assets')}
               onPress={handleReceivePress}
               iconProps={{ name: 'download' }}
               variant="highlight"
               short
+              round
               flex
             />
             <Button
-              title={t('Buy')}
               onPress={() => setIsBuyModalOpen(true)}
               iconProps={{ name: 'credit-card' }}
               variant="highlight"
               short
+              round
               flex
             />
           </ReceiveFundsButtonContainer>
