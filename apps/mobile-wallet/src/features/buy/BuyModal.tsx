@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { BackHandler, Platform } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -30,6 +30,7 @@ import Button from '~/components/buttons/Button'
 import BottomModal, { BottomModalProps } from '~/components/layout/BottomModal'
 import { ModalContent } from '~/components/layout/ModalContent'
 import ScreenTitle from '~/components/layout/ScreenTitle'
+import LinkToWeb from '~/components/text/LinkToWeb'
 import { useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { selectAllDiscoveredAddresses } from '~/store/addressDiscoverySlice'
@@ -104,9 +105,17 @@ const BuyModal = (props: BuyModalProps) => {
               <DisclaimerContent>
                 <ScreenTitle title={t('Disclaimer')} />
                 <AppText style={{ flex: 1 }}>
-                  {t(
-                    'You are about to access 3rd party services provided by Banxa.com through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding.'
-                  )}
+                  <Trans
+                    t={t}
+                    i18nKey="banxaDisclaimer"
+                    components={{
+                      1: <LinkToWeb url="https://www.banxa.com" text="Banxa.com" />
+                    }}
+                  >
+                    {
+                      'You are about to access 3rd party services provided by <1/> through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding.'
+                    }
+                  </Trans>
                 </AppText>
                 <Button
                   title={t("Alright, let's get to it.")}
