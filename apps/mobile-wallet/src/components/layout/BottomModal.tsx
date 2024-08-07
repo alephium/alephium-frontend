@@ -225,8 +225,11 @@ const BottomModal = ({
               <Handle style={handleAnimatedStyle} />
             </HandleContainer>
             <Navigation style={modalNavigationAnimatedStyle}>
+              <NavigationButtonContainer align="left" />
               {title && <Title semiBold>{title}</Title>}
-              <Button onPress={handleClose} iconProps={{ name: 'x' }} round compact />
+              <NavigationButtonContainer align="right">
+                <Button onPress={handleClose} iconProps={{ name: 'x' }} round compact />
+              </NavigationButtonContainer>
             </Navigation>
             <ContentContainer noPadding={noPadding}>
               <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
@@ -280,9 +283,7 @@ const Handle = styled(Animated.View)`
 `
 
 const Title = styled(AppText)`
-  position: absolute;
-  right: 0;
-  left: 0;
+  flex: 1;
   text-align: center;
 `
 
@@ -291,6 +292,12 @@ const Navigation = styled(Animated.View)`
   align-items: center;
   justify-content: flex-end;
   padding: 0 ${DEFAULT_MARGIN - 1}px;
+`
+
+const NavigationButtonContainer = styled.View<{ align: 'right' | 'left' }>`
+  width: 10%;
+  flex-direction: row;
+  justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : 'flex-start')};
 `
 
 const ContentContainer = styled(Animated.View)<Pick<BottomModalProps, 'noPadding'>>`
