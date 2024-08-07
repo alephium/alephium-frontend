@@ -74,8 +74,14 @@ const BaseHeader = ({
 
   const HeaderRight = (headerRight && headerRight({})) || <HeaderSidePlaceholder />
   const HeaderLeft = (headerLeft && headerLeft({})) || <HeaderSidePlaceholder />
-  const HeaderTitle = headerTitle && (typeof headerTitle === 'string' ? headerTitle : headerTitle.arguments['children'])
+  const headerTitleString = headerTitle && typeof headerTitle === 'string' ? headerTitle : undefined
+  const HeaderTitleComponent =
+    headerTitle && typeof headerTitle === 'function' ? headerTitle({ children: '' }) : undefined
   const HeaderTitleRight = headerTitleRight && headerTitleRight()
+
+  console.log('---')
+  console.log(headerTitleString)
+  console.log(HeaderTitleComponent)
 
   const animatedHeaderProps = useAnimatedProps(() =>
     isIos
@@ -128,11 +134,15 @@ const BaseHeader = ({
             {!CustomContent ? (
               <>
                 {HeaderLeft}
-                {headerTitle && (
+                {(headerTitleString || HeaderTitleComponent) && (
                   <CenterContainer style={centerContainerAnimatedStyle}>
-                    <AppText semiBold size={17}>
-                      {HeaderTitle}
-                    </AppText>
+                    {headerTitleString ? (
+                      <AppText semiBold size={17}>
+                        {headerTitleString}
+                      </AppText>
+                    ) : HeaderTitleComponent ? (
+                      HeaderTitleComponent
+                    ) : null}
                     {HeaderTitleRight}
                   </CenterContainer>
                 )}

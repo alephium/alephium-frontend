@@ -84,19 +84,21 @@ const HeaderButtons = ({ style }: HeaderButtonsProps) => {
   return (
     <>
       <View style={style}>
-        {networkStatus === 'offline' && (
-          <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-off' }} variant="alert" round />
-        )}
-        {!isMnemonicBackedUp && (
-          <Button
-            onPress={() => navigation.navigate('BackupMnemonicNavigation')}
-            iconProps={{ name: 'alert-triangle' }}
-            variant="alert"
-            round
-          />
-        )}
-        {isWalletConnectEnabled && <WalletConnectHeaderButton />}
         <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'maximize' }} round />
+        <CenteredButtons>
+          {networkStatus === 'offline' && (
+            <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-off' }} variant="alert" round />
+          )}
+          {!isMnemonicBackedUp && (
+            <Button
+              onPress={() => navigation.navigate('BackupMnemonicNavigation')}
+              iconProps={{ name: 'alert-triangle' }}
+              variant="alert"
+              round
+            />
+          )}
+          {isWalletConnectEnabled && <WalletConnectHeaderButton />}
+        </CenteredButtons>
         <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings' }} round />
       </View>
       {isCameraOpen && isFocused && (
@@ -119,3 +121,9 @@ export default memo(styled(HeaderButtons)`
   align-items: center;
   gap: 15px;
 `)
+
+const CenteredButtons = styled.View`
+  flex: 1;
+  flex-direction: row;
+  justify-content: center;
+`

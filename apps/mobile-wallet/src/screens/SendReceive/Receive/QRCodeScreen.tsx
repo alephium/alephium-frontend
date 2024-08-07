@@ -75,7 +75,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       verticalGap
       contentPaddingTop
       onScroll={screenScrollHandler}
-      screenTitle={t('Scan')}
+      screenTitle={t('Receive assets')}
       screenIntro={t('Scan the QR code to send funds to this address.')}
       {...props}
     >
