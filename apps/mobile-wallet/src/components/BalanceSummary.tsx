@@ -92,19 +92,11 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
               flex
             />
             <Button
-              title={t('Receive assets')}
-              onPress={handleReceivePress}
-              iconProps={{ name: 'download' }}
-              variant="highlight"
-              short
-              flex
-            />
-            <Button
-              title={t('Buy')}
               onPress={() => setIsBuyModalOpen(true)}
               iconProps={{ name: 'credit-card' }}
               variant="highlight"
               short
+              round
               flex
             />
           </ReceiveFundsButtonContainer>
