@@ -32,8 +32,10 @@ import { ModalContent } from '~/components/layout/ModalContent'
 import ScreenTitle from '~/components/layout/ScreenTitle'
 import { useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
+import { selectAllDiscoveredAddresses } from '~/store/addressDiscoverySlice'
 import { selectDefaultAddress } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { showToast } from '~/utils/layout'
 
 interface BuyModalProps extends Omit<BottomModalProps, 'Content'> {}
 
@@ -44,6 +46,7 @@ const BuyModal = (props: BuyModalProps) => {
   const webViewRef = useRef<WebView>(null)
   const insets = useSafeAreaInsets()
   const defaultAddress = useAppSelector(selectDefaultAddress)
+  const allAddresses = useAppSelector(selectAllDiscoveredAddresses)
   const [isDisclaimerAccepted, setIsDisclaimerAccepted] = useState(false)
 
   const onAndroidBackPress = () => {
@@ -63,14 +66,25 @@ const BuyModal = (props: BuyModalProps) => {
     }
   }, [])
 
+  const receivingAddress = defaultAddress?.hash || allAddresses[0]?.hash
+
+  if (!receivingAddress) {
+    showToast({
+      text1: t('Could not find a receiving address'),
+      text2: t('Cannot proceed because no address has been found to receive the funds.'),
+      type: 'error'
+    })
+    return null
+  }
+
   const banxaURL =
     'https://alephium.banxa-sandbox.com/' +
-    `?walletAddress=${defaultAddress?.hash}` +
+    `?walletAddress=${receivingAddress}` +
     `&theme=${theme.name}` +
     `&backgroundColor=${theme.bg.primary.slice(1)}` +
     `&textColor=${theme.font.primary.slice(1)}` +
-    `&primaryColor=${theme.global.accent}` +
-    `&secondaryColor=${theme.global.complementary}`
+    `&primaryColor=${theme.global.accent.slice(1)}` +
+    `&secondaryColor=${theme.global.complementary.slice(1)}`
 
   const handleModalCloseWhenFinished = (e: WebViewNavigation) => {
     // Close modal if url equals default return URL confirgured in Banxa dashboard
