@@ -31,7 +31,6 @@ import { nanoid } from 'nanoid'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import SettingsStorage, { defaultSettings } from '@/storage/settings/settingsPersistentStorage'
-import { pendingTransactionsStorage } from '@/storage/transactions/pendingTransactionsPersistentStorage'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { DeprecatedAddressMetadata } from '@/types/addresses'
 import { GeneralSettings, ThemeSettings } from '@/types/settings'
@@ -344,7 +343,6 @@ export const _20240328_1221_migrateAddressAndContactsToUnencrypted = async (
 ) => {
   const metadataJson = localStorage.getItem(`addresses-metadata-${walletId}`)
   const contactsJson = localStorage.getItem(`contacts-${walletId}`)
-  pendingTransactionsStorage.delete(walletId)
 
   let parsedMetadataJson
   let parsedContactsJson

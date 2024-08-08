@@ -187,7 +187,6 @@ const WalletConnectSessionProposalModal = ({
             defaultAddress={signerAddress}
             onAddressChange={setSignerAddress}
             id="from-address"
-            emptyListPlaceholder={t('There are no addresses in the required group: {{ group }}', { group })}
           />
           <ModalFooterButtons>
             <ModalFooterButton role="secondary" onClick={rejectProposal}>

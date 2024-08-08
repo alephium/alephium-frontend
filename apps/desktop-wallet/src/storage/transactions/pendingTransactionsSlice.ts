@@ -17,19 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { explorer } from '@alephium/web3'
-import { createListenerMiddleware, createSlice, EntityState, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
-import { xorWith } from 'lodash'
+import { createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
 import {
-  syncAddressesData,
   syncAddressesTransactions,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
 } from '@/storage/addresses/addressesActions'
 import { receiveTestnetTokens } from '@/storage/global/globalActions'
-import { RootState } from '@/storage/store'
-import { pendingTransactionsStorage } from '@/storage/transactions/pendingTransactionsPersistentStorage'
-import { storedPendingTransactionsLoaded, transactionSent } from '@/storage/transactions/transactionsActions'
+import { transactionSent } from '@/storage/transactions/transactionsActions'
 import { pendingTransactionsAdapter } from '@/storage/transactions/transactionsAdapters'
 import { activeWalletDeleted, walletLocked, walletSwitched } from '@/storage/wallets/walletActions'
 import { PendingTransaction } from '@/types/transactions'
@@ -49,7 +45,6 @@ const pendingTransactionsSlice = createSlice({
       .addCase(syncAddressesTransactions.fulfilled, removeTransactions)
       .addCase(syncAddressTransactionsNextPage.fulfilled, removeTransactions)
       .addCase(syncAllAddressesTransactionsNextPage.fulfilled, removeTransactions)
-      .addCase(storedPendingTransactionsLoaded, pendingTransactionsAdapter.addMany)
       .addCase(walletLocked, () => initialState)
       .addCase(walletSwitched, () => initialState)
       .addCase(activeWalletDeleted, () => initialState)
@@ -57,31 +52,6 @@ const pendingTransactionsSlice = createSlice({
 })
 
 export default pendingTransactionsSlice
-
-export const pendingTransactionsListenerMiddleware = createListenerMiddleware()
-
-// Keep state and local storage of pending transactions in sync
-pendingTransactionsListenerMiddleware.startListening({
-  matcher: isAnyOf(
-    transactionSent,
-    syncAddressesData.fulfilled,
-    receiveTestnetTokens.fulfilled,
-    syncAddressTransactionsNextPage.fulfilled,
-    syncAllAddressesTransactionsNextPage.fulfilled
-  ),
-  effect: (_, { getState }) => {
-    const state = getState() as RootState
-    const pendingTxsInState = Object.values(state.pendingTransactions.entities) as PendingTransaction[]
-    const { id: walletId } = state.activeWallet
-
-    if (!walletId) return
-
-    const storedPendingTxs = pendingTransactionsStorage.load(walletId)
-    const uniqueTransactions = xorWith(pendingTxsInState, storedPendingTxs, (a, b) => a.hash === b.hash)
-
-    if (uniqueTransactions.length > 0) pendingTransactionsStorage.store(walletId, pendingTxsInState)
-  }
-})
 
 // Reducers helper functions
 

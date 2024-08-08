@@ -104,7 +104,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         usesKeyboard
         contrastedBg
         contentPaddingTop
-        keyboardShouldPersistTaps="always"
+        keyboardShouldPersistTaps="handled"
         screenTitle={t('Assets')}
         screenIntro={t('With Alephium, you can send multiple assets in one transaction.')}
         estimatedItemSize={64}

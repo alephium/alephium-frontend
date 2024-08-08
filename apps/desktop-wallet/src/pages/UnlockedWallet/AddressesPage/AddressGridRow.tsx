@@ -126,9 +126,6 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
             </AssetLogos>
           )}
         </Cell>
-        <AmountCell>
-          {stateUninitialized ? <SkeletonLoader height="18.5px" /> : <Amount value={BigInt(address.balance)} />}
-        </AmountCell>
         <FiatAmountCell>
           {stateUninitialized || isPendingTokenPrices ? (
             <SkeletonLoader height="18.5px" />
@@ -176,7 +173,7 @@ const Cell = styled.div`
 
 const GridRow = styled.div`
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};

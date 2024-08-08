@@ -66,8 +66,11 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
     to: toAddressOptions.length > 0 ? toAddressOptions[0] : fromAddress
   })
   const [fee, setFee] = useState(BigInt(0))
-  const [builtUnsignedTxs, setBuiltUnsignedTxs] = useState<node.SweepAddressTransaction[]>([])
+  const [builtUnsignedTxs, setBuiltUnsignedTxs] = useState<node.SweepAddressTransaction[]>()
   const [isLoading, setIsLoading] = useState(false)
+
+  const isConsolidationRedundant = builtUnsignedTxs && builtUnsignedTxs.length === 0
+  const isConsolidationButtonDisabled = !builtUnsignedTxs || builtUnsignedTxs.length === 0
 
   useEffect(() => {
     const buildTransactions = async () => {
@@ -91,7 +94,7 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
   }, [dispatch, sendAnalytics, sweepAddresses.from, sweepAddresses.to, t])
 
   const onSweepClick = async () => {
-    if (!sweepAddresses.from || !sweepAddresses.to) return
+    if (!sweepAddresses.from || !sweepAddresses.to || !builtUnsignedTxs) return
     setIsLoading(true)
     try {
       for (const { txId, unsignedTx } of builtUnsignedTxs) {
@@ -155,30 +158,38 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
           onAddressChange={(newAddress) => onAddressChange('to', newAddress)}
           id="to-address"
         />
-        <InfoBox Icon={Info} contrast noBorders>
-          <Trans
-            t={t}
-            i18nKey="sweepOperationFromTo"
-            values={{ from: getName(sweepAddresses.from), to: getName(sweepAddresses.to) }}
-            components={{
-              1: <ColoredWord color={sweepAddresses.from.color} />,
-              3: <ColoredWord color={sweepAddresses.to.color} />
-            }}
-          >
-            {'This operation will sweep all funds from <1>{{ from }}</1> and transfer them to <3>{{ to }}</3>.'}
-          </Trans>
-        </InfoBox>
-        <Fee>
-          {t('Fee')}
-          <Amount value={fee} />
-        </Fee>
+        {isConsolidationRedundant ? (
+          <InfoBox Icon={Info} importance="warning">
+            {t('All UTXOs are already consolidated for this address. No consolidation is needed.')}
+          </InfoBox>
+        ) : (
+          <>
+            <InfoBox Icon={Info} contrast noBorders>
+              <Trans
+                t={t}
+                i18nKey="sweepOperationFromTo"
+                values={{ from: getName(sweepAddresses.from), to: getName(sweepAddresses.to) }}
+                components={{
+                  1: <ColoredWord color={sweepAddresses.from.color} />,
+                  3: <ColoredWord color={sweepAddresses.to.color} />
+                }}
+              >
+                {'This operation will sweep all funds from <1>{{ from }}</1> and transfer them to <3>{{ to }}</3>.'}
+              </Trans>
+            </InfoBox>
+            <Fee>
+              {t('Fee')}
+              <Amount value={fee} />
+            </Fee>
+          </>
+        )}
       </Content>
       <HorizontalDivider narrow />
       <ModalFooterButtons>
         <ModalFooterButton role="secondary" onClick={onClose}>
           {t('Cancel')}
         </ModalFooterButton>
-        <ModalFooterButton onClick={onSweepClick} disabled={builtUnsignedTxs.length === 0}>
+        <ModalFooterButton onClick={onSweepClick} disabled={isConsolidationButtonDisabled}>
           {sweepAddress ? t('Sweep') : t('Consolidate')}
         </ModalFooterButton>
       </ModalFooterButtons>

@@ -43,7 +43,6 @@ interface AddressSelectProps {
   simpleMode?: boolean
   noMargin?: boolean
   className?: string
-  emptyListPlaceholder?: string
   shouldDisplayAddressSelectModal?: boolean
 }
 
@@ -58,8 +57,7 @@ function AddressSelect({
   onAddressChange,
   hideAddressesWithoutAssets,
   noMargin,
-  simpleMode = false,
-  emptyListPlaceholder
+  simpleMode = false
 }: AddressSelectProps) {
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
 

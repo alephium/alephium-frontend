@@ -320,7 +320,6 @@
   "The group of the selected address ({{ addressGroup }}) does not match the group required by WalletConnect ({{ walletConnectGroup }})": "Η ομάδα της επιλεγμένης διεύθυνσης ({{ addressGroup }}) δεν ταιριάζει με την ομάδα που απαιτείται από το WalletConnect ({{ walletConnectGroup }})",
   "The wallet is offline.": "Το πορτοφόλι είναι εκτός σύνδεσης.",
   "Theme": "Θέμα",
-  "There are no addresses in the required group: {{ group }}": "Δεν υπάρχουν διευθύνσεις στην απαιτούμενη ομάδα: {{ group }}",
   "There are no addresses with available balance. Please, send some funds to one of your addresses, and try again.": "Δεν υπάρχουν διευθύνσεις με διαθέσιμο υπόλοιπο. Παρακαλώ, στείλτε χρήματα σε μία από τις διευθύνσεις σας και προσπαθήστε ξανά.",
   "There are no available addresses.": "Δεν υπάρχουν διαθέσιμες διευθύνσεις.",
   "This address is not valid": "Αυτή η διεύθυνση δεν είναι έγκυρη",

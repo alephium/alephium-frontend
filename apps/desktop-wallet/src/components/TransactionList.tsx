@@ -94,7 +94,6 @@ const TransactionList = ({
   const singleAddress = addresses.length === 1
   const filteredConfirmedTxs = applyFilters({ txs: confirmedTxs, directions, assetIds, hideFromColumn })
   const displayedConfirmedTxs = limit ? filteredConfirmedTxs.slice(0, limit - pendingTxs.length) : filteredConfirmedTxs
-  const totalNumberOfTransactions = addresses.map((address) => address.txNumber).reduce((a, b) => a + b, 0)
   const userAttemptedToLoadMoreTxs =
     attemptToFindNewFilteredTxs > 0 && attemptToFindNewFilteredTxs <= maxAttemptsToFindNewTxs
   const allTxsLoaded = singleAddress ? addresses[0].allTransactionPagesLoaded : allAddressTxPagesLoaded
@@ -196,7 +195,7 @@ const TransactionList = ({
             />
           </TableRow>
         ))}
-        {limit === undefined && confirmedTxs.length !== totalNumberOfTransactions && (
+        {limit === undefined && (
           <TableRow role="row">
             <TableCell align="center" role="gridcell">
               {allTxsLoaded ? (

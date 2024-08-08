@@ -38,7 +38,7 @@ const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleInputChange = (url: string) => {
-    setError(!url.startsWith('wc:') ? t('This is not a valid WalletConnect URL') : '')
+    setError(!url.startsWith('wc:') ? t('This is not a valid WalletConnect URI') : '')
     setInputWcUrl(url)
   }
 
@@ -51,11 +51,11 @@ const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
       setIsLoading(false)
 
       props.onClose && props.onClose()
-      sendAnalytics({ event: 'WC: Connected by manually pasting URL' })
+      sendAnalytics({ event: 'WC: Connected by manually pasting URI' })
     } else {
       showToast({
-        text1: 'Invalid URL',
-        text2: t('This is not a valid WalletConnect URL') + ': ' + inputWcUrl,
+        text1: 'Invalid URI',
+        text2: t('This is not a valid WalletConnect URI') + ': ' + inputWcUrl,
         type: 'error'
       })
     }
@@ -69,11 +69,11 @@ const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
         </ScreenSection>
         <ScreenSection>
           <AppText color="secondary" size={18}>
-            {t('Paste the WalletConnect URL you copied from the dApp')}:
+            {t('Paste the WalletConnect URI you copied from the dApp')}:
           </AppText>
         </ScreenSection>
         <ScreenSection>
-          <Input label={t('WalletConnect URL')} value={inputWcUrl} onChangeText={handleInputChange} error={error} />
+          <Input label={t('WalletConnect URI')} value={inputWcUrl} onChangeText={handleInputChange} error={error} />
         </ScreenSection>
         <ScreenSection>
           <Button title={t('Connect')} variant="highlight" onPress={handleConnect} disabled={!inputWcUrl || !!error} />

@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useNavigation } from '@react-navigation/native'
-import { ViewProps } from 'react-native'
+import { KeyboardAvoidingView, ViewProps } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -39,10 +39,12 @@ const Screen = ({ children, headerOptions, ...props }: ScreenProps) => {
 
   return (
     <ScreenStyled {...props}>
-      {headerOptions && (
-        <HeaderComponent goBack={navigation.canGoBack() ? navigation.goBack : undefined} options={headerOptions} />
-      )}
-      {children}
+      <KeyboardAvoidingView behavior="height" style={{ flex: 1 }} keyboardVerticalOffset={100}>
+        {headerOptions && (
+          <HeaderComponent goBack={navigation.canGoBack() ? navigation.goBack : undefined} options={headerOptions} />
+        )}
+        {children}
+      </KeyboardAvoidingView>
     </ScreenStyled>
   )
 }
