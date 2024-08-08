@@ -18,7 +18,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useNavigation } from '@react-navigation/native'
 import { ReactNode, RefObject, useRef } from 'react'
-import { KeyboardAvoidingView, ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
+import {
+  KeyboardAvoidingView,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  ScrollViewProps,
+  StyleProp,
+  View,
+  ViewStyle
+} from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
@@ -35,6 +44,7 @@ export interface ScrollScreenBaseProps extends ScreenProps {
   fill?: boolean
   screenTitle?: string
   screenIntro?: string
+  floatingHeader?: boolean
   TitleSideComponent?: ReactNode
 }
 
@@ -49,6 +59,7 @@ export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProp
 const ScrollScreen = ({
   children,
   style,
+  onScroll,
   containerStyle,
   contentContainerStyle,
   contentPaddingTop,
@@ -59,6 +70,7 @@ const ScrollScreen = ({
   usesKeyboard,
   screenTitle,
   screenIntro,
+  floatingHeader,
   TitleSideComponent,
   ...props
 }: ScrollScreenProps) => {
@@ -70,6 +82,11 @@ const ScrollScreen = ({
 
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
+  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    onScroll && onScroll(e)
+    screenScrollHandler(e)
+  }
+
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
   const screen = (
@@ -79,13 +96,14 @@ const ScrollScreen = ({
           goBack={navigation.canGoBack() ? navigation.goBack : undefined}
           options={{ headerTitle: screenTitle, ...headerOptions }}
           scrollY={screenScrollY}
+          style={floatingHeader ? { position: 'absolute', top: 0, left: 0, right: 0 } : undefined}
         />
       )}
       <ScrollView
         ref={viewRef}
         scrollEventThrottle={16}
         alwaysBounceVertical={true}
-        onScroll={screenScrollHandler}
+        onScroll={handleScroll}
         onScrollEndDrag={scrollEndHandler}
         style={{ overflow: SCREEN_OVERFLOW }}
         contentContainerStyle={[
