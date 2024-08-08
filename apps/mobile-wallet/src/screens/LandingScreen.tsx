@@ -89,11 +89,9 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   }
 
   useEffect(() => {
-    try {
-      getWalletMetadata().then((metadata) => setShowNewWalletButtons(!metadata))
-    } catch (e) {
-      showExceptionToast(e, t('Wallet metadata not found'))
-    }
+    getWalletMetadata()
+      .then((metadata) => setShowNewWalletButtons(!metadata))
+      .catch((e) => showExceptionToast(e, t('Wallet metadata not found')))
   }, [t])
 
   return (
