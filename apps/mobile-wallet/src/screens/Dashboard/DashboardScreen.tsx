@@ -131,7 +131,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       {...props}
     >
       <AnimatedCirclesBackground scrollY={screenScrollY} />
-      <WalletCard intensity={85} tint="systemThickMaterialDark" style={{ marginTop: insets.top }}>
+      <WalletCard intensity={80} tint="systemThickMaterialDark" style={{ marginTop: insets.top }}>
         <WalletCardHeader>
           <HeaderButtons />
         </WalletCardHeader>
