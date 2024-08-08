@@ -31,7 +31,7 @@ interface UseAutoLockProps {
 let lockTimer: number | undefined
 
 const useAutoLock = ({ unlockApp, onAuthRequired }: UseAutoLockProps) => {
-  const appState = useRef(AppState.currentState)
+  const appState = useRef<AppStateStatus>('active')
   const settingsLoadedFromStorage = useAppSelector((s) => s.settings.loadedFromStorage)
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
