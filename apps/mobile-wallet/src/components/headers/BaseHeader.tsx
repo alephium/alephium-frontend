@@ -79,10 +79,6 @@ const BaseHeader = ({
     headerTitle && typeof headerTitle === 'function' ? headerTitle({ children: '' }) : undefined
   const HeaderTitleRight = headerTitleRight && headerTitleRight()
 
-  console.log('---')
-  console.log(headerTitleString)
-  console.log(HeaderTitleComponent)
-
   const animatedHeaderProps = useAnimatedProps(() =>
     isIos
       ? {
