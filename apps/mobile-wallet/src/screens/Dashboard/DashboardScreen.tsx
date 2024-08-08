@@ -23,6 +23,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
@@ -38,11 +39,13 @@ import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Scree
 import RefreshSpinner from '~/components/RefreshSpinner'
 import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
+import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
+import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
 import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
@@ -57,6 +60,9 @@ interface ScreenProps
     BottomBarScrollScreenProps {}
 
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
+  const insets = useSafeAreaInsets()
+  const { t } = useTranslation()
+  const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
@@ -65,7 +71,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsFundPasswordReminder = useAppSelector((s) => s.fundPassword.needsReminder)
-  const { t } = useTranslation()
 
   const [isFundPasswordReminderModalOpen, setIsFundPasswordReminderModalOpen] = useState(false)
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
@@ -120,12 +125,15 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       hasBottomBar
       verticalGap
       contrastedBg
+      onScroll={screenScrollHandler}
+      floatingHeader
       headerOptions={{
         headerTitle: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold />
       }}
       {...props}
     >
-      <WalletCard>
+      <AnimatedCirclesBackground scrollY={screenScrollY} />
+      <WalletCard intensity={85} tint="systemThickMaterialDark" style={{ marginTop: insets.top }}>
         <WalletCardHeader>
           <HeaderButtons />
         </WalletCardHeader>
@@ -235,7 +243,7 @@ const DashboardScreenStyled = styled(BottomBarScrollScreen)`
 
 const WalletCard = styled(BlurView)`
   flex: 1;
-  margin: 0 ${DEFAULT_MARGIN}px;
+  margin: 0 ${DEFAULT_MARGIN / 2}px;
   border-radius: 38px;
   overflow: hidden;
 `
