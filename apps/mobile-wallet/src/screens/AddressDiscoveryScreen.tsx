@@ -203,7 +203,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
       <ScreenSection centered>
         {status === 'idle' && (
           <ButtonStyled
-            iconProps={{ name: 'search-outline' }}
+            iconProps={{ name: 'search' }}
             title={t('Start scanning')}
             onPress={handleStartScanPress}
             variant="highlight"
@@ -211,7 +211,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
         )}
         {status === 'started' && (
           <ButtonStyled
-            iconProps={{ name: 'close-outline' }}
+            iconProps={{ name: 'x' }}
             title={t('Stop scanning')}
             onPress={handleStopScanPress}
             variant="highlight"
@@ -219,7 +219,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
         )}
         {status === 'stopped' && (
           <ContinueButton
-            iconProps={{ name: 'search-outline' }}
+            iconProps={{ name: 'search' }}
             title={t('Continue scanning')}
             onPress={handleContinueScanPress}
             variant="highlight"
@@ -227,7 +227,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
         )}
         {discoveredAddresses.length > 0 && (status === 'stopped' || status === 'finished') && (
           <ButtonStyled
-            iconProps={{ name: 'download-outline' }}
+            iconProps={{ name: 'download' }}
             title={t('Import selected addresses')}
             onPress={importAddresses}
             disabled={selectedAddressesToImport.length === 0}
@@ -236,7 +236,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
         )}
         {discoveredAddresses.length === 0 && status === 'finished' && !importLoading && (
           <ButtonStyled
-            iconProps={{ name: isImporting ? 'arrow-forward-outline' : 'arrow-back-outline' }}
+            iconProps={{ name: isImporting ? 'arrow-right' : 'arrow-left' }}
             title={isImporting ? t('Continue') : t('Go back')}
             onPress={continueToNextScreen}
             variant={isImporting ? 'highlight' : 'accent'}

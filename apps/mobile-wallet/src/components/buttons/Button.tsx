@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import Ionicons from '@expo/vector-icons/Ionicons'
+import Ionicons from '@expo/vector-icons/Feather'
 import { colord } from 'colord'
 import { ComponentProps, ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
@@ -213,7 +213,7 @@ const Button = ({
 }
 
 export const CloseButton = (props: ButtonProps) => (
-  <Button onPress={props.onPress} iconProps={{ name: 'close-outline' }} round {...props} />
+  <Button onPress={props.onPress} iconProps={{ name: 'x' }} round {...props} />
 )
 
 export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
@@ -222,7 +222,7 @@ export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
   return (
     <Button
       onPress={props.onPress}
-      iconProps={{ name: 'arrow-forward-outline' }}
+      iconProps={{ name: 'arrow-right' }}
       type="primary"
       style={[
         style,
@@ -245,7 +245,7 @@ export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
 }
 
 export const BackButton = (props: ButtonProps) => (
-  <Button onPress={props.onPress} iconProps={{ name: 'arrow-back-outline' }} round {...props} />
+  <Button onPress={props.onPress} iconProps={{ name: 'arrow-left' }} round {...props} />
 )
 
 export default styled(Button)`

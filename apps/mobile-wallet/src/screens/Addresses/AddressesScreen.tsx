@@ -102,14 +102,14 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
                 {addresses.length > 2 && (
                   <Button
                     onPress={() => setIsQuickSelectionModalOpen(true)}
-                    iconProps={{ name: 'list-outline' }}
+                    iconProps={{ name: 'list' }}
                     round
                     compact
                   />
                 )}
                 <Button
                   onPress={() => navigation.navigate('NewAddressScreen')}
-                  iconProps={{ name: 'add-outline' }}
+                  iconProps={{ name: 'plus' }}
                   title={t('New address')}
                   variant="highlightedIcon"
                   compact

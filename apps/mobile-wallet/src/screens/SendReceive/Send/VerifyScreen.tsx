@@ -57,7 +57,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
         headerRight: () => (
           <ContinueButton
             onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))}
-            iconProps={{ name: 'send-outline' }}
+            iconProps={{ name: 'send' }}
             title={t('Send')}
           />
         )

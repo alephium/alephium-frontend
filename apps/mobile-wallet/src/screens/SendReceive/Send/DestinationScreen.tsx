@@ -203,7 +203,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
           <ButtonsRow>
             <Button
               compact
-              iconProps={{ name: 'qr-code-outline' }}
+              iconProps={{ name: 'maximize' }}
               title={t('Scan')}
               onPress={openQRCodeScannerModal}
               variant="accent"
@@ -211,7 +211,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             />
             <Button
               compact
-              iconProps={{ name: 'copy-outline' }}
+              iconProps={{ name: 'copy' }}
               title={t('Paste')}
               onPress={handlePastePress}
               variant="accent"
@@ -219,7 +219,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             />
             <Button
               compact
-              iconProps={{ name: 'person-outline' }}
+              iconProps={{ name: 'user' }}
               title={t('Contacts')}
               onPress={() => setIsContactSelectModalOpen(true)}
               variant="accent"
@@ -227,7 +227,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             />
             <Button
               compact
-              iconProps={{ name: 'bookmarks-outline' }}
+              iconProps={{ name: 'bookmark' }}
               title={t('Addresses')}
               onPress={() => setIsAddressSelectModalOpen(true)}
               variant="accent"

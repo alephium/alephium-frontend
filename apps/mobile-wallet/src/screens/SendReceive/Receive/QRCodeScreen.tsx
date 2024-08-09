@@ -62,7 +62,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         headerRight: () => (
           <ContinueButton
             onPress={() => navigation.getParent()?.goBack()}
-            iconProps={{ name: 'checkmark' }}
+            iconProps={{ name: 'check' }}
             title={t('Done')}
           />
         )
@@ -85,7 +85,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         </QRCodeContainer>
       </ScreenSection>
       <ScreenSection centered>
-        <Button title={t('Copy address')} onPress={handleCopyAddressPress} iconProps={{ name: 'copy-outline' }} />
+        <Button title={t('Copy address')} onPress={handleCopyAddressPress} iconProps={{ name: 'copy' }} />
       </ScreenSection>
       <ScreenSection>
         <BoxSurface>

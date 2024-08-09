@@ -100,7 +100,7 @@ const AddressBadge = ({
       {showCopyBtn && address?.hash && (
         <CopyAddressButton
           onPress={() => copyAddressToClipboard(address?.hash)}
-          iconProps={{ name: 'copy-outline' }}
+          iconProps={{ name: 'clipboard' }}
           type="transparent"
           color={color}
           round

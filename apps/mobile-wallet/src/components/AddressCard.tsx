@@ -156,7 +156,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
               round
             />
             <Button
-              iconProps={{ name: 'settings-outline' }}
+              iconProps={{ name: 'settings' }}
               color={textColor}
               onPress={onSettingsPress}
               style={{ backgroundColor: buttonsBackground }}
@@ -190,7 +190,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
             <Button
               title="Send"
               onPress={handleSendPress}
-              iconProps={{ name: 'arrow-up-outline' }}
+              iconProps={{ name: 'send' }}
               flex
               type="transparent"
               color={textColor}
@@ -198,7 +198,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
             <Button
               title="Receive"
               onPress={handleReceivePress}
-              iconProps={{ name: 'arrow-down-outline' }}
+              iconProps={{ name: 'download' }}
               flex
               type="transparent"
               color={textColor}
