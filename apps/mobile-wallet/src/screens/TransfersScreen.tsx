@@ -51,7 +51,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
 
   return (
     <Screen contrastedBg>
-      <BaseHeader options={{ headerTitle: t('Transfers') }} scrollY={screenScrollY} showBorderBottom />
+      <BaseHeader options={{ headerTitle: t('Transfers') }} scrollY={screenScrollY} />
       <TransactionsFlatList
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
