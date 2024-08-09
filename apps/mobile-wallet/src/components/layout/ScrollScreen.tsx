@@ -45,6 +45,7 @@ export interface ScrollScreenBaseProps extends ScreenProps {
   screenTitle?: string
   screenIntro?: string
   floatingHeader?: boolean
+  headerScrollEffectOffset?: number
   TitleSideComponent?: ReactNode
 }
 
@@ -71,6 +72,7 @@ const ScrollScreen = ({
   screenTitle,
   screenIntro,
   floatingHeader,
+  headerScrollEffectOffset,
   TitleSideComponent,
   ...props
 }: ScrollScreenProps) => {
@@ -96,6 +98,7 @@ const ScrollScreen = ({
           goBack={navigation.canGoBack() ? navigation.goBack : undefined}
           options={{ headerTitle: screenTitle, ...headerOptions }}
           scrollY={screenScrollY}
+          scrollEffectOffset={headerScrollEffectOffset}
           style={floatingHeader ? { position: 'absolute', top: 0, left: 0, right: 0 } : undefined}
         />
       )}

@@ -77,7 +77,6 @@ const ProgressHeader = ({ workflow, options, ...props }: ProgressHeaderProps) =>
           />
         )
       }}
-      showBorderBottom
       {...props}
     />
   )

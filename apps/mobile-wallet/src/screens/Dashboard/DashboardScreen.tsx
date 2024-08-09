@@ -127,6 +127,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       contrastedBg
       onScroll={screenScrollHandler}
       floatingHeader
+      headerScrollEffectOffset={70}
       headerOptions={{
         headerTitle: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold />
       }}

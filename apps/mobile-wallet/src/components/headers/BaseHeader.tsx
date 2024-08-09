@@ -17,19 +17,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackHeaderProps } from '@react-navigation/stack'
-import { BlurView } from 'expo-blur'
+import { Canvas, LinearGradient, Rect, vec } from '@shopify/react-native-skia'
 import { ReactNode, RefObject } from 'react'
-import { Platform, Pressable, ViewProps } from 'react-native'
+import { Platform, Pressable, useWindowDimensions, ViewProps } from 'react-native'
 import Animated, {
-  Extrapolate,
+  Extrapolation,
   interpolate,
-  interpolateColor,
   SharedValue,
-  useAnimatedProps,
-  useAnimatedStyle
+  useAnimatedStyle,
+  useDerivedValue
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -41,35 +40,31 @@ export type BaseHeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' 
 export interface BaseHeaderProps extends ViewProps {
   options: BaseHeaderOptions
   headerRef?: RefObject<Animated.View>
-  showBorderBottom?: boolean
   titleAlwaysVisible?: boolean
   goBack?: () => void
   scrollY?: SharedValue<number>
+  scrollEffectOffset?: number
   CustomContent?: ReactNode
 }
 
 export const scrollEndThreshold = 80
-const defaultScrollRange = [0, scrollEndThreshold]
+const gradientHeight = 140
 
 const isIos = Platform.OS === 'ios'
 
-const AnimatedHeader = isIos ? Animated.createAnimatedComponent(BlurView) : Animated.View
-
 const BaseHeader = ({
   options: { headerRight, headerLeft, headerTitle, headerTitleRight },
-  showBorderBottom,
   headerRef,
   titleAlwaysVisible,
   scrollY,
+  scrollEffectOffset = 0,
   CustomContent,
   ...props
 }: BaseHeaderProps) => {
-  const theme = useTheme()
   const insets = useSafeAreaInsets()
+  const { width: screenWidth } = useWindowDimensions()
 
-  const borderColorRange = [showBorderBottom ? theme.border.secondary : 'transparent', theme.border.secondary]
-  const backgroundColorRange = [theme.header.hidden, theme.header.visible]
-
+  const defaultScrollRange = [0 + scrollEffectOffset, scrollEndThreshold + scrollEffectOffset]
   const paddingTop = isIos ? insets.top : insets.top + 7
 
   const HeaderRight = (headerRight && headerRight({})) || <HeaderSidePlaceholder />
@@ -79,35 +74,17 @@ const BaseHeader = ({
     headerTitle && typeof headerTitle === 'function' ? headerTitle({ children: '' }) : undefined
   const HeaderTitleRight = headerTitleRight && headerTitleRight()
 
-  const animatedHeaderProps = useAnimatedProps(() =>
-    isIos
-      ? {
-          intensity: interpolate(scrollY?.value || 0, defaultScrollRange, [0, 80], Extrapolate.CLAMP)
-        }
-      : {}
-  )
-
-  const animatedHeaderStyle = useAnimatedStyle(() =>
-    isIos
-      ? {}
-      : {
-          backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, backgroundColorRange)
-        }
-  )
-
-  const bottomBorderAnimatedStyle = useAnimatedStyle(() =>
-    showBorderBottom
-      ? {
-          opacity: interpolate(scrollY?.value || 0, [0, 20], [0, 1], Extrapolate.CLAMP),
-          backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, borderColorRange)
-        }
-      : {}
-  )
+  const animatedOpacity = useDerivedValue(() => interpolate(scrollY?.value || 0, defaultScrollRange, [0, 1]))
 
   const centerContainerAnimatedStyle = useAnimatedStyle(() =>
     headerTitle && !titleAlwaysVisible
       ? {
-          opacity: interpolate(scrollY?.value || 0, [40, 60], [0, 1], Extrapolate.CLAMP)
+          opacity: interpolate(
+            scrollY?.value || 0,
+            [40 + scrollEffectOffset, 60 + scrollEffectOffset],
+            [0, 1],
+            Extrapolation.CLAMP
+          )
         }
       : {}
   )
@@ -124,9 +101,18 @@ const BaseHeader = ({
 
   return (
     <BaseHeaderStyled ref={headerRef} {...props}>
+      <HeaderGradientCanvas pointerEvents="none">
+        <Rect x={0} y={0} width={screenWidth} height={gradientHeight} opacity={animatedOpacity}>
+          <LinearGradient
+            start={vec(0, gradientHeight / 1.8)}
+            end={vec(0, gradientHeight)}
+            colors={['rgba(0, 0, 0, 1)', 'rgba(0, 0, 0, 0)']}
+          />
+        </Rect>
+      </HeaderGradientCanvas>
       <Pressable onPress={handleCompactHeaderPress}>
         <HeaderContainer>
-          <Header style={[{ paddingTop }, animatedHeaderStyle]} tint={theme.name} animatedProps={animatedHeaderProps}>
+          <Header style={{ paddingTop }}>
             {!CustomContent ? (
               <>
                 {HeaderLeft}
@@ -148,8 +134,6 @@ const BaseHeader = ({
               <CenterContainer>{CustomContent}</CenterContainer>
             )}
           </Header>
-
-          {showBorderBottom && <BottomBorder style={bottomBorderAnimatedStyle} />}
         </HeaderContainer>
       </Pressable>
     </BaseHeaderStyled>
@@ -161,6 +145,14 @@ export default BaseHeader
 const BaseHeaderStyled = styled(Animated.View)`
   width: 100%;
   z-index: 1;
+`
+
+const HeaderGradientCanvas = styled(Canvas)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: ${gradientHeight}px;
 `
 
 const HeaderContainer = styled(Animated.View)`
@@ -176,19 +168,11 @@ const CenterContainer = styled(Animated.View)`
   opacity: 1;
 `
 
-const Header = styled(AnimatedHeader)`
+const Header = styled(Animated.View)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 0 ${DEFAULT_MARGIN - 4}px 12px;
-`
-
-const BottomBorder = styled(Animated.View)`
-  position: absolute;
-  bottom: -1px;
-  right: 0;
-  left: 0;
-  height: 1px;
 `
 
 const HeaderSidePlaceholder = styled.View`
