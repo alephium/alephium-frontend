@@ -44,6 +44,7 @@ export interface ScrollScreenBaseProps extends ScreenProps {
   fill?: boolean
   screenTitle?: string
   screenIntro?: string
+  screenTitleAlwaysVisible?: boolean
   floatingHeader?: boolean
   headerScrollEffectOffset?: number
   TitleSideComponent?: ReactNode
@@ -71,6 +72,7 @@ const ScrollScreen = ({
   usesKeyboard,
   screenTitle,
   screenIntro,
+  screenTitleAlwaysVisible,
   floatingHeader,
   headerScrollEffectOffset,
   TitleSideComponent,
@@ -99,6 +101,7 @@ const ScrollScreen = ({
           options={{ headerTitle: screenTitle, ...headerOptions }}
           scrollY={screenScrollY}
           scrollEffectOffset={headerScrollEffectOffset}
+          titleAlwaysVisible={screenTitleAlwaysVisible}
           style={floatingHeader ? { position: 'absolute', top: 0, left: 0, right: 0 } : undefined}
         />
       )}

@@ -28,7 +28,7 @@ interface FooterMenuProps extends BottomTabBarProps {
   style?: StyleProp<ViewStyle>
 }
 
-const gradientHeight = 140
+const gradientHeight = 130
 
 const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
   const insets = useSafeAreaInsets()

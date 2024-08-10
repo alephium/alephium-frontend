@@ -26,10 +26,12 @@ import { useTheme } from 'styled-components'
 import FooterMenu from '~/components/footers/FooterMenu'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import DashboardScreen from '~/screens/Dashboard/DashboardScreen'
+import NFTsScreen from '~/screens/NFTs/NFTsScreen'
 import TransfersScreen from '~/screens/TransfersScreen'
 
 export type InWalletTabsParamList = {
   DashboardScreen: undefined
+  NFTsScreen: undefined
   AddressesTabNavigation: undefined
   TransfersScreen: undefined
 }
@@ -56,6 +58,16 @@ const InWalletTabsNavigation = () => {
             title: t('Overview'),
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} size={size} />
+            )
+          }}
+        />
+        <InWalletTabs.Screen
+          name="NFTsScreen"
+          component={NFTsScreen}
+          options={{
+            title: t('NFTs'),
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'image' : 'image-outline'} color={color} size={size} />
             )
           }}
         />
