@@ -48,7 +48,7 @@ export interface BaseHeaderProps extends ViewProps {
 }
 
 export const scrollEndThreshold = 80
-const gradientHeight = 140
+const gradientHeight = 110
 
 const isIos = Platform.OS === 'ios'
 
@@ -105,7 +105,7 @@ const BaseHeader = ({
       <HeaderGradientCanvas pointerEvents="none">
         <Rect x={0} y={0} width={screenWidth} height={gradientHeight} opacity={animatedOpacity}>
           <LinearGradient
-            start={vec(0, gradientHeight / 1.8)}
+            start={vec(0, gradientHeight / 1.5)}
             end={vec(0, gradientHeight)}
             colors={
               theme.name === 'dark'
