@@ -61,10 +61,7 @@ const FooterMenuItem = ({ options, isFocused, routeName, target, navigation }: F
 
   return (
     <TouchableWithoutFeedback onPress={onPress} key={label}>
-      <Tab active={isFocused}>
-        {Icon}
-        <TabText isActive={isFocused}>{label}</TabText>
-      </Tab>
+      <Tab active={isFocused}>{Icon}</Tab>
     </TouchableWithoutFeedback>
   )
 }
@@ -76,11 +73,4 @@ const Tab = styled.View<{ active: boolean }>`
   justify-content: center;
   border-radius: ${BORDER_RADIUS * 0.7}px;
   width: 90px;
-`
-
-const TabText = styled.Text<{ isActive?: boolean }>`
-  font-size: 11px;
-  font-weight: 600;
-  color: ${({ theme, isActive }) => (isActive ? theme.font.primary : theme.font.tertiary)};
-  margin: 3px 0;
 `
