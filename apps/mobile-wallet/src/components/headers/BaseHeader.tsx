@@ -28,7 +28,7 @@ import Animated, {
   useDerivedValue
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -62,6 +62,8 @@ const BaseHeader = ({
   ...props
 }: BaseHeaderProps) => {
   const insets = useSafeAreaInsets()
+  const theme = useTheme()
+
   const { width: screenWidth } = useWindowDimensions()
 
   const defaultScrollRange = [0 + scrollEffectOffset, scrollEndThreshold + scrollEffectOffset]
@@ -106,7 +108,11 @@ const BaseHeader = ({
           <LinearGradient
             start={vec(0, gradientHeight / 1.8)}
             end={vec(0, gradientHeight)}
-            colors={['rgba(0, 0, 0, 1)', 'rgba(0, 0, 0, 0)']}
+            colors={
+              theme.name === 'dark'
+                ? ['rgba(0, 0, 0, 1)', 'rgba(0, 0, 0, 0)']
+                : ['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']
+            }
           />
         </Rect>
       </HeaderGradientCanvas>
