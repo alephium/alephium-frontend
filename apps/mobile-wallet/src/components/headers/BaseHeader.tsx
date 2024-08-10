@@ -63,7 +63,6 @@ const BaseHeader = ({
 }: BaseHeaderProps) => {
   const insets = useSafeAreaInsets()
   const theme = useTheme()
-
   const { width: screenWidth } = useWindowDimensions()
 
   const defaultScrollRange = [0 + scrollEffectOffset, scrollEndThreshold + scrollEffectOffset]
