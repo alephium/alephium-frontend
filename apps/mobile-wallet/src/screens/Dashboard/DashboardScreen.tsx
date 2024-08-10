@@ -24,7 +24,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Amount from '~/components/Amount'
@@ -63,6 +63,7 @@ interface ScreenProps
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const insets = useSafeAreaInsets()
   const { t } = useTranslation()
+  const theme = useTheme()
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
@@ -132,7 +133,11 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       {...props}
     >
       <AnimatedCirclesBackground scrollY={screenScrollY} />
-      <WalletCard intensity={80} tint="systemThickMaterialDark" style={{ marginTop: insets.top }}>
+      <WalletCard
+        intensity={80}
+        tint={theme.name === 'dark' ? 'systemThickMaterialDark' : 'systemThickMaterialLight'}
+        style={{ marginTop: insets.top }}
+      >
         <WalletCardHeader>
           <HeaderButtons />
         </WalletCardHeader>
