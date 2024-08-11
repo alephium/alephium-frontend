@@ -412,8 +412,9 @@ export const makeSelectAddresses = () =>
         : allAddresses
   )
 
-export const selectDefaultAddress = createSelector(selectAllAddresses, (addresses) =>
-  addresses.find((address) => address.settings.isDefault)
+export const selectDefaultAddress = createSelector(
+  selectAllAddresses,
+  (addresses) => addresses.find((address) => address.settings.isDefault) || addresses[0]
 )
 
 export const selectTotalBalance = createSelector([selectAllAddresses], (addresses) =>
