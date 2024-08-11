@@ -20,7 +20,7 @@ import { AddressHash, NFT } from '@alephium/shared'
 import { FlashList } from '@shopify/flash-list'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dimensions } from 'react-native'
+import { ActivityIndicator, Dimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -43,6 +43,7 @@ const screenPadding = DEFAULT_MARGIN
 const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3 }: NFTsGridProps) => {
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
+  const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
   const theme = useTheme()
   const { t } = useTranslation()
 
@@ -61,7 +62,14 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3 }: NFTs
       estimatedItemSize={64}
       ListEmptyComponent={
         <NoNFTsMessage>
-          <AppText color={theme.font.tertiary}>{t('No NFTs yet')} 🖼️</AppText>
+          {isLoadingNfts ? (
+            <>
+              <AppText color={theme.font.tertiary}>👀</AppText>
+              <ActivityIndicator />
+            </>
+          ) : (
+            <AppText color={theme.font.tertiary}>t('No NFTs yet') 🖼️</AppText>
+          )}
         </NoNFTsMessage>
       }
     />
