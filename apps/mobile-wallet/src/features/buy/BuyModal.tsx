@@ -33,7 +33,6 @@ import ScreenTitle from '~/components/layout/ScreenTitle'
 import LinkToWeb from '~/components/text/LinkToWeb'
 import { useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
-import { selectAllDiscoveredAddresses } from '~/store/addressDiscoverySlice'
 import { selectDefaultAddress } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
@@ -46,7 +45,6 @@ const BuyModal = (props: BuyModalProps) => {
   const webViewRef = useRef<WebView>(null)
   const insets = useSafeAreaInsets()
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const allAddresses = useAppSelector(selectAllDiscoveredAddresses)
   const [isDisclaimerAccepted, setIsDisclaimerAccepted] = useState(false)
 
   useEffect(() => {
