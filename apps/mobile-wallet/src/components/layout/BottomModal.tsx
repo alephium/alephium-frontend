@@ -34,7 +34,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
+import { CloseButton } from '~/components/buttons/Button'
 import { ModalContentProps } from '~/components/layout/ModalContent'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -228,7 +228,7 @@ const BottomModal = ({
               <NavigationButtonContainer align="left" />
               {title && <Title semiBold>{title}</Title>}
               <NavigationButtonContainer align="right">
-                <Button onPress={handleClose} iconProps={{ name: 'x' }} round compact />
+                <CloseButton onPress={handleClose} compact />
               </NavigationButtonContainer>
             </Navigation>
             <ContentContainer noPadding={noPadding}>
