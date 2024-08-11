@@ -97,11 +97,11 @@ const BuyModal = (props: BuyModalProps) => {
                     t={t}
                     i18nKey="banxaDisclaimer"
                     components={{
-                      1: <LinkToWeb url="https://www.banxa.com" text="Banxa.com" />
+                      1: <LinkToWeb url="https://www.banxa.com" />
                     }}
                   >
                     {
-                      'You are about to access 3rd party services provided by <1/> through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding.'
+                      'You are about to access 3rd party services provided by <1>Banxa.com</1> through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding.'
                     }
                   </Trans>
                 </AppText>
