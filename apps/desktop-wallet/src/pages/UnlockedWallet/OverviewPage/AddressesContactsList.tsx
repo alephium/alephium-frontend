@@ -36,8 +36,7 @@ import TableCellAmount from '@/components/TableCellAmount'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
-import { selectAllAddresses, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
-import { Address } from '@/types/addresses'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
 interface AddressesContactsListProps {
   className?: string
@@ -75,37 +74,32 @@ const AddressesContactsList = ({ className, maxHeightInPx }: AddressesContactsLi
 }
 
 const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: AddressListProps) => {
-  const addresses = useAppSelector(selectAllAddresses)
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
+  const addressHashes = useAppSelector(selectAllAddressHashes)
 
-  const [selectedAddress, setSelectedAddress] = useState<Address>()
+  const [selectedAddress, setSelectedAddress] = useState<AddressHash>()
 
-  const handleRowClick = (address: Address) => {
+  const handleRowClick = (addressHash: AddressHash) => {
     onAddressClick()
-    setSelectedAddress(address)
+    setSelectedAddress(addressHash)
   }
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {addresses.map((address) => (
-          <AddressRow address={address} onClick={handleRowClick} key={address.hash}>
+        {addressHashes.map((addressHash) => (
+          <AddressRow addressHash={addressHash} onClick={handleRowClick} key={addressHash}>
             <TableCellAmount>
-              {stateUninitialized ? (
-                <SkeletonLoader height="15.5px" width="50%" />
-              ) : (
-                <AddressWorth addressHash={address.hash} />
-              )}
+              <AddressWorth addressHash={addressHash} />
             </TableCellAmount>
           </AddressRow>
         ))}
       </motion.div>
 
-      {!isExpanded && addresses.length > 5 && onExpand && <ExpandRow onClick={onExpand} />}
+      {!isExpanded && addressHashes.length > 5 && onExpand && <ExpandRow onClick={onExpand} />}
 
       <ModalPortal>
         {selectedAddress && (
-          <AddressDetailsModal addressHash={selectedAddress.hash} onClose={() => setSelectedAddress(undefined)} />
+          <AddressDetailsModal addressHash={selectedAddress} onClose={() => setSelectedAddress(undefined)} />
         )}
       </ModalPortal>
     </>
@@ -113,10 +107,14 @@ const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: Addr
 }
 
 const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
-  const { data: balanceInFiat } = useAddressesTokensTotalWorth(addressHash)
+  const { data: balanceInFiat, isLoading } = useAddressesTokensTotalWorth(addressHash)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
-  return <AmountStyled value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} tabIndex={0} />
+  return isLoading ? (
+    <SkeletonLoader height="15.5px" width="50%" />
+  ) : (
+    <AmountStyled value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} tabIndex={0} />
+  )
 }
 
 export default styled(AddressesContactsList)`
