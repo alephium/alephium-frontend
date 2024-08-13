@@ -57,7 +57,7 @@ const TabBar = ({
           <TabComponent
             key={item.value}
             onClick={() => onTabChange(item)}
-            onKeyPress={() => onTabChange(item)}
+            onKeyDown={() => onTabChange(item)}
             role="tab"
             tabIndex={0}
             aria-selected={isActive}
