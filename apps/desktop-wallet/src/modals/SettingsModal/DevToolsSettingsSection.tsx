@@ -160,7 +160,7 @@ const DevToolsSettingsSection = () => {
             <Paragraph>{t('Copy the keys of an address.')}</Paragraph>
             <Table>
               {addresses.map((address) => (
-                <AddressRow address={address} disableAddressCopy key={address.hash}>
+                <AddressRow address={address} key={address.hash}>
                   <Buttons>
                     <ButtonStyled role="secondary" short onClick={() => copyPublicKey(address)}>
                       {t('Public key')}
