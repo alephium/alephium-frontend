@@ -185,7 +185,7 @@ const TransactionList = ({
             role="row"
             tabIndex={0}
             onClick={() => setSelectedTransaction(tx)}
-            onKeyPress={() => setSelectedTransaction(tx)}
+            onKeyDown={() => setSelectedTransaction(tx)}
           >
             <TransactionalInfo
               transaction={tx}

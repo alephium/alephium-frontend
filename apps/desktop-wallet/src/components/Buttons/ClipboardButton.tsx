@@ -87,7 +87,7 @@ const ClipboardButton: FC<ClipboardButtonProps> = ({
           <Copy
             className="clipboard"
             onClick={handleInput}
-            onKeyPress={handleInput}
+            onKeyDown={handleInput}
             onMouseDown={handleInput}
             role="button"
             aria-label={disableA11y ? undefined : t('Copy to clipboard')}
