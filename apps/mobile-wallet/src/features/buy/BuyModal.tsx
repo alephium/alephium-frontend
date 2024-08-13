@@ -47,16 +47,16 @@ const BuyModal = (props: BuyModalProps) => {
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [isDisclaimerAccepted, setIsDisclaimerAccepted] = useState(false)
 
-  const onAndroidBackPress = () => {
-    if (webViewRef.current) {
-      webViewRef.current.goBack()
-      return true // prevent default behavior (exit app)
-    }
-    return false
-  }
-
   useEffect(() => {
     if (Platform.OS === 'android') {
+      const onAndroidBackPress = () => {
+        if (webViewRef.current) {
+          webViewRef.current.goBack()
+          return true // prevent default behavior (exit app)
+        }
+        return false
+      }
+
       BackHandler.addEventListener('hardwareBackPress', onAndroidBackPress)
       return () => {
         BackHandler.removeEventListener('hardwareBackPress', onAndroidBackPress)
