@@ -38,18 +38,18 @@ import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
-interface AddressesContactsListProps {
+interface AddressesListProps {
   className?: string
   maxHeightInPx?: number
 }
 
-interface AddressListProps extends AddressesContactsListProps {
+interface AddressListProps extends AddressesListProps {
+  onAddressClick: () => void
   isExpanded?: boolean
   onExpand?: () => void
-  onAddressClick: () => void
 }
 
-const AddressesContactsList = ({ className, maxHeightInPx }: AddressesContactsListProps) => {
+const AddressesList = ({ className, maxHeightInPx }: AddressesListProps) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
@@ -67,13 +67,13 @@ const AddressesContactsList = ({ className, maxHeightInPx }: AddressesContactsLi
             {t('See more')}
           </ActionLink>
         </TableHeader>
-        <AddressesList isExpanded={isExpanded} onExpand={handleButtonClick} onAddressClick={collapse} />
+        <AddressesRows isExpanded={isExpanded} onExpand={handleButtonClick} onAddressClick={collapse} />
       </ExpandableTable>
     </FocusableContent>
   )
 }
 
-const AddressesList = ({ className, isExpanded, onExpand, onAddressClick }: AddressListProps) => {
+const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: AddressListProps) => {
   const addressHashes = useAppSelector(selectAllAddressHashes)
 
   const [selectedAddress, setSelectedAddress] = useState<AddressHash>()
@@ -117,7 +117,7 @@ const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
   )
 }
 
-export default styled(AddressesContactsList)`
+export default styled(AddressesList)`
   margin-bottom: 45px;
 `
 
