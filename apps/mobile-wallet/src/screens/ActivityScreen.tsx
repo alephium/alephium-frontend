@@ -34,9 +34,9 @@ import { makeSelectAddressesConfirmedTransactions } from '~/store/confirmedTrans
 import { makeSelectAddressesPendingTransactions } from '~/store/pendingTransactionsSlice'
 import { AddressTransaction } from '~/types/transactions'
 
-type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'TransfersScreen'>
+type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'ActivityScreen'>
 
-const TransfersScreen = ({ navigation }: ScreenProps) => {
+const ActivityScreen = ({ navigation }: ScreenProps) => {
   const listRef = useRef<FlatList<AddressTransaction>>(null)
   const { t } = useTranslation()
 
@@ -51,7 +51,7 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
 
   return (
     <Screen contrastedBg>
-      <BaseHeader options={{ headerTitle: t('Transfers') }} scrollY={screenScrollY} />
+      <BaseHeader options={{ headerTitle: t('Activity') }} scrollY={screenScrollY} />
       <TransactionsFlatList
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
@@ -59,10 +59,10 @@ const TransfersScreen = ({ navigation }: ScreenProps) => {
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
         ref={listRef}
-        ListHeaderComponent={<ScreenTitle title={t('Transfers')} scrollY={screenScrollY} sideDefaultMargin />}
+        ListHeaderComponent={<ScreenTitle title={t('Activity')} scrollY={screenScrollY} sideDefaultMargin />}
       />
     </Screen>
   )
 }
 
-export default TransfersScreen
+export default ActivityScreen

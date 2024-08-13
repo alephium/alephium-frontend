@@ -56,7 +56,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
         headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
         headerRight: () => (
           <ContinueButton
-            onPress={() => sendTransaction(() => navigation.navigate('TransfersScreen'))}
+            onPress={() => sendTransaction(() => navigation.navigate('ActivityScreen'))}
             iconProps={{ name: 'send' }}
             title={t('Send')}
           />
