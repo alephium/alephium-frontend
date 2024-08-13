@@ -68,7 +68,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
               setIsLoading(true)
               await buildTransaction({
                 onBuildSuccess: () => navigation.navigate('VerifyScreen'),
-                onConsolidationSuccess: () => navigation.navigate('TransfersScreen')
+                onConsolidationSuccess: () => navigation.navigate('ActivityScreen')
               })
               setIsLoading(false)
             }}
