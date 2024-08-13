@@ -25,12 +25,11 @@ import { Address } from '@/types/addresses'
 
 interface AddressRowProps {
   address: Address
-  disableAddressCopy?: boolean
   onClick?: (address: Address) => void
   className?: string
 }
 
-const AddressRow: FC<AddressRowProps> = ({ address, disableAddressCopy, onClick, children, className }) => (
+const AddressRow: FC<AddressRowProps> = ({ address, onClick, children, className }) => (
   <TableRow
     key={address.hash}
     role="row"
