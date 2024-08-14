@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Wrench } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -25,34 +25,21 @@ import Box from '@/components/Box'
 import Button from '@/components/Button'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
-import { useAppSelector } from '@/hooks/redux'
+import useFilteredAddressHashes from '@/features/addressFiltering/useFilteredAddressHashes'
 import ModalPortal from '@/modals/ModalPortal'
 import NewAddressModal from '@/modals/NewAddressModal'
 import AddressGridRow from '@/pages/UnlockedWallet/AddressesPage/AddressGridRow'
 import AdvancedOperationsSideModal from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsSideModal'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
-import { filterAddresses } from '@/utils/addresses'
 
 const AddressesTabContent = () => {
-  const addresses = useAppSelector(selectAllAddresses)
-  const fungibleTokens = useAppSelector((state) => state.fungibleTokens.entities)
   const { t } = useTranslation()
 
   const [isGenerateNewAddressModalOpen, setIsGenerateNewAddressModalOpen] = useState(false)
-  const [visibleAddresses, setVisibleAddresses] = useState(addresses)
+  const [isAdvancedOperationsModalOpen, setIsAdvancedOperationsModalOpen] = useState(false)
   const [searchInput, setSearchInput] = useState('')
   const [hideEmptyAddresses, setHideEmptyAddresses] = useState(false)
-  const [isAdvancedOperationsModalOpen, setIsAdvancedOperationsModalOpen] = useState(false)
-
-  useEffect(() => {
-    const filteredByText = filterAddresses(addresses, searchInput.toLowerCase(), fungibleTokens)
-    const filteredByToggle = hideEmptyAddresses
-      ? filteredByText.filter((address) => address.balance !== '0')
-      : filteredByText
-
-    setVisibleAddresses(filteredByToggle)
-  }, [addresses, fungibleTokens, hideEmptyAddresses, searchInput])
+  const visibleAddresses = useFilteredAddressHashes(searchInput.toLowerCase(), hideEmptyAddresses)
 
   return (
     <TabContent
@@ -80,9 +67,7 @@ const AddressesTabContent = () => {
     >
       <TableGrid>
         <TableGridContent>
-          {visibleAddresses.map((address) => (
-            <AddressGridRow addressHash={address.hash} key={address.hash} />
-          ))}
+          {visibleAddresses?.map((addressHash) => <AddressGridRow addressHash={addressHash} key={addressHash} />)}
         </TableGridContent>
       </TableGrid>
 
