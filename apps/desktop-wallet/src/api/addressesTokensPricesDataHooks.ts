@@ -123,7 +123,7 @@ export const useAddressesTokensWorth = (addressHash?: AddressHash) => {
         (tokensWorth, { data: balances }) => {
           const tokensBalance = {} as Record<TokenId, bigint | undefined>
 
-          balances?.forEach(({ tokenId, balance }) => {
+          balances?.tokenBalances.forEach(({ tokenId, balance }) => {
             tokensBalance[tokenId] = BigInt(balance) + (tokensBalance[tokenId] ?? BigInt(0))
           })
 

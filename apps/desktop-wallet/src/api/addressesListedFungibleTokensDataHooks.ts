@@ -40,7 +40,7 @@ export const useAddressesListedFungibleTokens = (addressHash?: AddressHash) => {
     combine: (results) => ({
       data: results.reduce(
         (acc, { data }) => {
-          data?.map(({ tokenId }) => {
+          data?.tokenBalances.map(({ tokenId }) => {
             const listedFungibleToken = fungibleTokenList?.find((token) => token.id === tokenId)
             const alreadyAddedToArray = acc.some((token) => token.id === listedFungibleToken?.id)
 
