@@ -17,10 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressSettings, AssetAmount, FungibleToken } from '@alephium/shared'
+import { AddressSettings, AssetAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import { Dictionary } from '@reduxjs/toolkit'
 
 import { Address } from '@/types/addresses'
 import { AddressTransaction, PendingTransaction } from '@/types/transactions'
@@ -58,28 +57,6 @@ export const getInitialAddressSettings = (): AddressSettings => ({
   isDefault: true,
   color: getRandomLabelColor()
 })
-
-export const filterAddresses = (addresses: Address[], text: string, fungibleTokens: Dictionary<FungibleToken>) =>
-  text.length < 2
-    ? addresses
-    : addresses.filter((address) => {
-        const addressTokenIds = address.tokens.filter((token) => token.balance !== '0').map((token) => token.tokenId)
-        const addressTokenNames = addressTokenIds
-          .map((tokenId) => {
-            const tokenInfo = fungibleTokens[tokenId]
-            return tokenInfo ? `${tokenInfo.name} ${tokenInfo.symbol}` : undefined
-          })
-          .filter((searchableText) => searchableText !== undefined)
-          .join(' ')
-
-        const addressAssetNames = `${address.balance !== '0' ? 'Alephium ALPH ' : ''}${addressTokenNames}`.toLowerCase()
-
-        return (
-          address.label?.toLowerCase().includes(text) ||
-          address.hash.toLowerCase().includes(text) ||
-          addressAssetNames.includes(text)
-        )
-      })
 
 export const getAddressAssetsAvailableBalance = (address: Address) => [
   {

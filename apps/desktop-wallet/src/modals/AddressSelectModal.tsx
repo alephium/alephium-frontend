@@ -22,9 +22,9 @@ import { useTranslation } from 'react-i18next'
 
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
-import { useAppSelector } from '@/hooks/redux'
+import useFilteredAddressHashes from '@/features/addressFiltering/useFilteredAddressHashes'
 import { Address } from '@/types/addresses'
-import { addressHasAssets, filterAddresses, filterAddressesWithoutAssets } from '@/utils/addresses'
+import { addressHasAssets, filterAddressesWithoutAssets } from '@/utils/addresses'
 
 interface AddressSelectModalProps {
   title: string
@@ -46,10 +46,10 @@ const AddressSelectModal = ({
   hideAddressesWithoutAssets
 }: AddressSelectModalProps) => {
   const { t } = useTranslation()
-  const fungibleTokens = useAppSelector((state) => state.fungibleTokens.entities)
 
   const addresses = hideAddressesWithoutAssets ? filterAddressesWithoutAssets(options) : options
-  const [filteredAddresses, setFilteredAddresses] = useState(addresses)
+  const [searchInput, setSearchInput] = useState('')
+  const filteredAddresses = useFilteredAddressHashes(searchInput.toLowerCase(), hideAddressesWithoutAssets)
   const selectedAddressHasAssets = selectedAddress && addressHasAssets(selectedAddress)
 
   let initialAddress = selectedAddress
@@ -75,18 +75,15 @@ const AddressSelectModal = ({
     selectedAddress && onAddressSelect(selectedAddress)
   }
 
-  const handleSearch = (searchInput: string) =>
-    setFilteredAddresses(filterAddresses(addresses, searchInput.toLowerCase(), fungibleTokens))
-
   return (
     <SelectOptionsModal
       title={title}
       options={addressSelectOptions}
       selectedOption={addressSelectOptions.find((a) => a.value === address?.hash)}
-      showOnly={filteredAddresses.map((address) => address.hash)}
+      showOnly={filteredAddresses}
       setValue={selectAddress}
       onClose={onClose}
-      onSearchInput={handleSearch}
+      onSearchInput={setSearchInput}
       searchPlaceholder={t('Search for name or a hash...')}
       minWidth={620}
       optionRender={(option, isSelected) => {
