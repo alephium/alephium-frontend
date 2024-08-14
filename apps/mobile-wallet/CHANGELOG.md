@@ -1,5 +1,13 @@
 # @alephium/mobile-wallet
 
+## 1.1.3
+
+### Patch Changes
+
+- a03242a: Fix keyboard overlap in assets list
+- d7e9844: Allow user to enable device passcode/screen lock code/pattern to unlock app/transact
+- d8955f8: Fix being stuck in empty black screen
+
 ## 1.1.2
 
 ### Patch Changes

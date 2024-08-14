@@ -1,5 +1,11 @@
 # alephium-desktop-wallet
 
+## 2.3.7
+
+### Patch Changes
+
+- 2e044c9: Fix missing default address
+
 ## 2.3.5
 
 ### Patch Changes

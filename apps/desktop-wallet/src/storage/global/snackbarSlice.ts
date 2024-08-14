@@ -46,7 +46,6 @@ import {
   csvFileGenerationFinished,
   csvFileGenerationStarted,
   fetchTransactionsCsv,
-  loadingPendingTransactionsFailed,
   messageSignFailed,
   transactionBuildFailed,
   transactionSendFailed,
@@ -77,9 +76,9 @@ const snackbarSlice = createSlice({
         if (state.messages.length > 0) state.messages.shift()
       })
       .addCase(syncAddressesData.rejected, (state, action) => {
-        const message = action.payload
+        const message = action.error.message
 
-        if (message) queueMessage(state, message)
+        if (message) queueMessage(state, { type: 'alert', text: message })
       })
       .addCase(apiClientInitSucceeded, (state, action) => {
         state.offlineMessageWasVisibleOnce = false
@@ -146,9 +145,6 @@ const snackbarSlice = createSlice({
       )
       .addCase(storingDataToLocalStorageFailed, (state) =>
         displayMessageImmediately(state, { text: 'Storing data to local storage failed', type: 'alert' })
-      )
-      .addCase(loadingPendingTransactionsFailed, (state) =>
-        displayMessageImmediately(state, { text: 'Loading pending transactions failed', type: 'alert' })
       )
       .addCase(devModeShortcutDetected, (state, action) =>
         displayMessageImmediately(

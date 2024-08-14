@@ -57,12 +57,10 @@ import {
   systemLanguageMatchFailed,
   systemLanguageMatchSucceeded
 } from '@/storage/settings/settingsActions'
-import { pendingTransactionsStorage } from '@/storage/transactions/pendingTransactionsPersistentStorage'
 import {
   makeSelectAddressesHashesWithPendingTransactions,
   selectTransactionUnknownTokenIds
 } from '@/storage/transactions/transactionsSelectors'
-import { restorePendingTransactions } from '@/storage/transactions/transactionsStorageUtils'
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
 import { AlephiumWindow } from '@/types/window'
@@ -200,16 +198,8 @@ const App = () => {
     if (networkStatus === 'online') {
       if (addressesStatus === 'uninitialized') {
         if (!isSyncingAddressData && addressHashes.length > 0 && activeWalletId) {
-          const storedPendingTxs = pendingTransactionsStorage.load(activeWalletId)
-
           try {
             dispatch(syncAddressesData())
-              .unwrap()
-              .then((results) => {
-                const mempoolTxHashes = results.flatMap((result) => result.mempoolTransactions.map((tx) => tx.hash))
-
-                restorePendingTransactions(activeWalletId, mempoolTxHashes, storedPendingTxs)
-              })
           } catch {
             sendAnalytics({ type: 'error', message: 'Could not sync address data automatically' })
           }

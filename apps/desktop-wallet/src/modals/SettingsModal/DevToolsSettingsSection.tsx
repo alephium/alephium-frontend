@@ -104,7 +104,7 @@ const DevToolsSettingsSection = () => {
   }
 
   const handleFaucetCall = () => {
-    defaultAddress && dispatch(receiveTestnetTokens(defaultAddress?.hash))
+    defaultAddress && dispatch(receiveTestnetTokens(defaultAddress.hash))
     sendAnalytics({ event: 'Requested testnet tokens' })
   }
 

@@ -300,7 +300,6 @@
   "The group number will be automatically be appended to the addresses’ label.": "Номер группы будет автоматически добавлен к имени адреса.",
   "The group of the selected address ({{ addressGroup }}) does not match the group required by WalletConnect ({{ walletConnectGroup }})": "Группа ({{ addressGroup }}) выбранного адреса не совпадает с группой, требуемой ({{ walletConnectGroup }})",
   "Theme": "Тема",
-  "There are no addresses in the required group: {{ group }}": "В требуемой группе нет адресов: {{ group }}",
   "There are no addresses with available balance. Please, send some funds to one of your addresses, and try again.": "Нет адресов с доступным балансом. Пожалуйста, отправьте немного средств на один из ваших адресов и повторите попытку.",
   "There are no available addresses.": "Нет доступных адресов.",
   "This address is not valid": "Этот адрес не действителен",

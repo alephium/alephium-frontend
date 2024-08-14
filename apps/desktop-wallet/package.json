@@ -1,7 +1,7 @@
 {
   "name": "alephium-desktop-wallet",
   "description": "The official Alephium wallet",
-  "version": "2.3.6",
+  "version": "2.3.7",
   "author": "Alephium dev <dev@alephium.org>",
   "main": "public/electron.js",
   "homepage": "./",
@@ -42,6 +42,7 @@
   "dependencies": {
     "@tanstack/react-query": "5.45.0",
     "@tanstack/react-query-devtools": "^5.50.1",
+    "axios": "^1.7.4",
     "electron-context-menu": "^3.1.2",
     "electron-is-dev": "^2.0.0",
     "electron-updater": "^5.3.0"
@@ -58,10 +59,10 @@
     "@alephium/shared": "workspace:*",
     "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",
-    "@alephium/token-list": "^0.0.12",
+    "@alephium/token-list": "^0.0.19",
     "@alephium/typescript-config": "workspace:*",
-    "@alephium/walletconnect-provider": "1.2.1",
-    "@alephium/web3": "1.2.1",
+    "@alephium/walletconnect-provider": "1.2.3",
+    "@alephium/web3": "1.2.3",
     "@electron/notarize": "^1.2.3",
     "@json-rpc-tools/utils": "^1.7.6",
     "@reduxjs/toolkit": "^1.9.1",
@@ -99,8 +100,7 @@
     "cross-env": "^7.0.3",
     "dayjs": "^1.10.7",
     "electron": "22.3.25",
-    "electron-builder": "^23.0.3",
-    "electron-builder-notarize": "^1.5.0",
+    "electron-builder": "^24.13.3",
     "electron-devtools-installer": "^3.2.0",
     "eslint": "^8.48.0",
     "eslint-config-prettier": "^9.0.0",
@@ -185,14 +185,15 @@
     "mac": {
       "hardenedRuntime": true,
       "defaultArch": "universal",
-      "entitlements": "../../node_modules/electron-builder-notarize/entitlements.mac.inherit.plist"
+      "notarize": {
+        "teamId": "Z3J8P4JW24"
+      }
     },
     "directories": {
       "buildResources": "assets"
     },
     "afterPack": ".afterPack.js",
     "afterAllArtifactBuild": ".afterAllArtifactBuild.js",
-    "afterSign": "electron-builder-notarize",
     "protocols": [
       {
         "name": "alephium",
