@@ -40,7 +40,7 @@ export const useAddressesUnlistedTokenTypes = (addressHash?: AddressHash) => {
         ),
     combine: (results) => ({
       data: results.reduce((acc, { data }) => {
-        data?.map(({ tokenId }) => {
+        data?.tokenBalances.map(({ tokenId }) => {
           const isTokenListed = fungibleTokenList?.some((token) => token.id === tokenId)
 
           if (!isTokenListed && !acc.some((id) => id === tokenId)) {
