@@ -21,6 +21,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import { useAddressAvailableBalance } from '@/api/addressesBalancesDataHooks'
 import AddressMetadataForm from '@/components/AddressMetadataForm'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
@@ -33,7 +34,7 @@ import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/C
 import ModalPortal from '@/modals/ModalPortal'
 import { selectAddressByHash, selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { saveAddressSettings } from '@/storage/addresses/addressesStorageUtils'
-import { getAvailableBalance, getName } from '@/utils/addresses'
+import { getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
 interface AddressOptionsModalProps {
@@ -57,9 +58,10 @@ const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps)
   const [isDefaultAddress, setIsDefaultAddress] = useState(address?.isDefault ?? false)
   const [isAddressSweepModalOpen, setIsAddressSweepModalOpen] = useState(false)
 
+  const availableBalance = useAddressAvailableBalance(addressHash)
+
   if (!address || !defaultAddress) return null
 
-  const availableBalance = getAvailableBalance(address)
   const isDefaultAddressToggleEnabled = defaultAddress.hash !== address.hash
   const isSweepButtonEnabled = addresses.length > 1 && availableBalance > 0
 

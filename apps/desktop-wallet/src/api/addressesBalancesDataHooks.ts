@@ -89,3 +89,9 @@ export const useAddressesTokensBalances = (addressHash?: AddressHash) => {
     isLoading: isLoadingAlphBalances || isLoadingLatestTxHashes || isLoading
   }
 }
+
+export const useAddressAvailableBalance = (addressHash: AddressHash) => {
+  const { data } = useAddressesAlphBalances(addressHash)
+
+  return data.balance - data.lockedBalance
+}
