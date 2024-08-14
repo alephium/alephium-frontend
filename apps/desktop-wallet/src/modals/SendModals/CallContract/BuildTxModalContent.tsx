@@ -21,6 +21,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressAvailableBalance } from '@/api/addressesBalancesDataHooks'
 import FooterButton from '@/components/Buttons/FooterButton'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
@@ -33,7 +34,7 @@ import AssetAmountsInput from '@/modals/SendModals/AssetAmountsInput'
 import GasSettings from '@/modals/SendModals/GasSettings'
 import { AssetAmountInputType } from '@/types/assets'
 import { CallContractTxData, PartialTxData, TxPreparation } from '@/types/transactions'
-import { assetAmountsWithinAvailableBalance, getAvailableBalance } from '@/utils/addresses'
+import { assetAmountsWithinAvailableBalance } from '@/utils/addresses'
 import { isAmountWithinRange } from '@/utils/transactions'
 
 interface CallContractBuildTxModalContentProps {
@@ -63,7 +64,7 @@ const CallContractBuildTxModalContent = ({ data, onSubmit, onCancel }: CallContr
   const [isAmountValid, setIsAmountValid] = useState(false)
 
   const { fromAddress, bytecode, alphAmount } = txPrep
-  const availableBalance = getAvailableBalance(fromAddress)
+  const availableBalance = useAddressAvailableBalance(fromAddress.hash)
 
   useEffect(() => {
     try {

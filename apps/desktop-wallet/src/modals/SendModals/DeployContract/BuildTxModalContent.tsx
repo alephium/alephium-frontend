@@ -21,6 +21,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressAvailableBalance } from '@/api/addressesBalancesDataHooks'
 import FooterButton from '@/components/Buttons/FooterButton'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
@@ -32,7 +33,6 @@ import AssetAmountsInput from '@/modals/SendModals/AssetAmountsInput'
 import GasSettings from '@/modals/SendModals/GasSettings'
 import { AssetAmountInputType } from '@/types/assets'
 import { DeployContractTxData, PartialTxData, TxPreparation } from '@/types/transactions'
-import { getAvailableBalance } from '@/utils/addresses'
 import { isAmountWithinRange } from '@/utils/transactions'
 
 export interface DeployContractBuildTxModalContentProps {
@@ -66,7 +66,7 @@ const DeployContractBuildTxModalContent = ({ data, onSubmit, onCancel }: DeployC
   const alphAsset = assetAmounts[0]
 
   const { fromAddress, bytecode, issueTokenAmount } = txPrep
-  const availableBalance = getAvailableBalance(fromAddress)
+  const availableBalance = useAddressAvailableBalance(fromAddress.hash)
 
   if (fromAddress === undefined) {
     onCancel()
