@@ -116,7 +116,9 @@ const FiltersPanel = ({
             renderSelectedValue={renderAddressesSelectedValue}
             getOptionId={(address) => address.hash}
             getOptionText={(address) => address.label || address.hash}
-            renderOption={(address, isSelected) => <SelectOptionAddress address={address} isSelected={isSelected} />}
+            renderOption={(address, isSelected) => (
+              <SelectOptionAddress addressHash={address.hash} isSelected={isSelected} />
+            )}
             floatingOptions
           />
         </Tile>

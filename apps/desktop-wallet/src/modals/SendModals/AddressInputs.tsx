@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { AlbumIcon, ContactIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -37,21 +37,19 @@ import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
 import InputsSection from '@/modals/SendModals/InputsSection'
 import {
-  selectAllAddresses,
+  selectAllAddressHashes,
   selectAllContacts,
   selectIsStateUninitialized
 } from '@/storage/addresses/addressesSelectors'
-import { Address } from '@/types/addresses'
 import { filterContacts } from '@/utils/contacts'
 
 interface AddressInputsProps {
-  defaultFromAddress: Address
+  defaultFromAddress: AddressHash
   toAddress?: { value: string; error: string }
-  fromAddresses: Address[]
-  onFromAddressChange: (address: Address) => void
+  fromAddresses: AddressHash[]
+  onFromAddressChange: (address: AddressHash) => void
   onToAddressChange?: (address: string) => void
   onContactSelect?: (address: string) => void
-  hideFromAddressesWithoutAssets?: boolean
   className?: string
 }
 
@@ -62,15 +60,14 @@ const AddressInputs = ({
   onFromAddressChange,
   onToAddressChange,
   onContactSelect,
-  hideFromAddressesWithoutAssets,
   className
 }: AddressInputsProps) => {
   const { t } = useTranslation()
-  const updatedInitialAddress = fromAddresses.find((a) => a.hash === defaultFromAddress.hash) ?? defaultFromAddress
+  const updatedInitialAddress = fromAddresses.find((a) => a === defaultFromAddress) ?? fromAddresses[0]
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const contacts = useAppSelector(selectAllContacts)
   const isAddressesStateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const addresses = useAppSelector(selectAllAddresses)
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
   const theme = useTheme()
 
   const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
@@ -99,6 +96,11 @@ const AddressInputs = ({
     moveFocusOnPreviousModal()
   }
 
+  const handleAddressSelect = useCallback(
+    (address: AddressHash) => onToAddressChange && onToAddressChange(address),
+    [onToAddressChange]
+  )
+
   return (
     <InputsContainer>
       <InputsSection
@@ -112,11 +114,10 @@ const AddressInputs = ({
           ) : (
             <AddressSelect
               title={t('Select the address to send funds from.')}
-              options={fromAddresses}
+              addressOptions={fromAddresses}
               defaultAddress={updatedInitialAddress}
               onAddressChange={onFromAddressChange}
               id="from-address"
-              hideAddressesWithoutAssets={hideFromAddressesWithoutAssets}
               simpleMode
               shouldDisplayAddressSelectModal={isAddressSelectModalOpen}
             />
@@ -181,10 +182,10 @@ const AddressInputs = ({
         {isAddressSelectModalOpen && onToAddressChange && (
           <AddressSelectModal
             title={t('Select the address to send assets to.')}
-            options={addresses}
-            onAddressSelect={(address) => onToAddressChange(address.hash)}
+            addressOptions={allAddressHashes}
+            onAddressSelect={handleAddressSelect}
             onClose={handleToOwnAddressModalClose}
-            selectedAddress={fromAddresses.find((a) => a.hash === toAddress?.value)}
+            defaultSelectedAddress={fromAddresses.find((a) => a === toAddress?.value)}
           />
         )}
       </ModalPortal>

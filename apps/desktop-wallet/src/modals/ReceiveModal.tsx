@@ -24,7 +24,7 @@ import AddressSelect from '@/components/Inputs/AddressSelect'
 import QRCode from '@/components/QRCode'
 import { useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
-import { selectAddressByHash, selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectAllAddressHashes, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
 interface ReceiveModalProps {
   onClose: () => void
@@ -35,11 +35,11 @@ const QRCodeSize = 250
 
 const ReceiveModal = ({ onClose, addressHash }: ReceiveModalProps) => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAllAddresses)
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const address = useAppSelector((state) => selectAddressByHash(state, addressHash ?? ''))
 
-  const [selectedAddress, setSelectedAddress] = useState(address ?? defaultAddress)
+  const defaultSelectedAddress = addressHash ?? defaultAddress.hash
+  const [selectedAddress, setSelectedAddress] = useState(defaultSelectedAddress)
 
   return (
     <CenteredModal title={t('Receive')} onClose={onClose}>
@@ -47,17 +47,15 @@ const ReceiveModal = ({ onClose, addressHash }: ReceiveModalProps) => {
         <AddressSelect
           label={t('Address')}
           title={t('Select the address to receive funds to.')}
-          options={addresses}
-          defaultAddress={address ?? defaultAddress}
+          addressOptions={allAddressHashes}
+          defaultAddress={defaultSelectedAddress}
           onAddressChange={setSelectedAddress}
           disabled={!!addressHash}
           id="address"
           noMargin
         />
         <QRCodeSection>
-          {selectedAddress?.hash && (
-            <QRCode value={selectedAddress.hash} size={QRCodeSize} copyButtonLabel={t('Copy address')} />
-          )}
+          {selectedAddress && <QRCode value={selectedAddress} size={QRCodeSize} copyButtonLabel={t('Copy address')} />}
         </QRCodeSection>
       </Content>
     </CenteredModal>
