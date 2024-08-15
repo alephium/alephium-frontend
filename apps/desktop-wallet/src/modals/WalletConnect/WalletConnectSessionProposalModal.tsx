@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
+  AddressHash,
   isNetworkValid,
   networkPresetSwitched,
   parseSessionProposalEvent,
@@ -36,7 +37,11 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { selectAddressesInGroup } from '@/storage/addresses/addressesSelectors'
+import {
+  selectAddressByHash,
+  selectAddressesInGroup,
+  selectDefaultAddress
+} from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { Address } from '@/types/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
@@ -63,8 +68,10 @@ const WalletConnectSessionProposalModal = ({
   const { requiredChainInfo, metadata } = parseSessionProposalEvent(proposalEvent)
   const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, requiredChainInfo?.addressGroup))
   const { generateAddress } = useAddressGeneration()
+  const defaultAddress = useAppSelector(selectDefaultAddress)
 
-  const [signerAddress, setSignerAddress] = useState<Address>()
+  const [signerAddressHash, setSignerAddressHash] = useState<AddressHash | undefined>(addressesInGroup[0])
+  const signerAddress = useAppSelector((s) => selectAddressByHash(s, signerAddressHash ?? ''))
 
   const group = requiredChainInfo?.addressGroup
 
@@ -72,10 +79,8 @@ const WalletConnectSessionProposalModal = ({
     requiredChainInfo?.networkId && !isNetworkValid(requiredChainInfo.networkId, currentNetworkId)
 
   useEffect(() => {
-    setSignerAddress(
-      addressesInGroup.length > 0 ? addressesInGroup.find((a) => a.isDefault) ?? addressesInGroup[0] : undefined
-    )
-  }, [addressesInGroup])
+    setSignerAddressHash(addressesInGroup.find((a) => a === defaultAddress.hash) ?? addressesInGroup[0])
+  }, [addressesInGroup, defaultAddress.hash])
 
   const handleSwitchNetworkPress = () => {
     if (
@@ -121,6 +126,7 @@ const WalletConnectSessionProposalModal = ({
       {showNetworkWarning ? (
         <>
           <Section>
+            {/* TODO: Missing translations */}
             <InfoBox label="Switch network" Icon={AlertTriangle}>
               You are currently connected to <Highlight>{currentNetworkName}</Highlight>, but the dApp requires a
               connection to <Highlight>{requiredChainInfo?.networkId}</Highlight>.
@@ -136,6 +142,7 @@ const WalletConnectSessionProposalModal = ({
       ) : !signerAddress ? (
         <>
           <Section>
+            {/* TODO: Missing translations */}
             <InfoBox label="New address needed" Icon={PlusSquare}>
               The dApp asks for an address in group <Highlight> {requiredChainInfo?.addressGroup}</Highlight>. Click
               below to generate one!
@@ -183,9 +190,9 @@ const WalletConnectSessionProposalModal = ({
           <AddressSelect
             label={t('Connect with address')}
             title={t('Select an address to connect with.')}
-            options={addressesInGroup}
-            defaultAddress={signerAddress}
-            onAddressChange={setSignerAddress}
+            addressOptions={addressesInGroup}
+            defaultAddress={signerAddressHash}
+            onAddressChange={setSignerAddressHash}
             id="from-address"
           />
           <ModalFooterButtons>
