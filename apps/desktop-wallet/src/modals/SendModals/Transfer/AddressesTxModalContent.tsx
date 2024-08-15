@@ -16,15 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
+import { useFilterEmptyAddresses } from '@/features/addressFiltering/addressFilteringHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { ModalContent } from '@/modals/CenteredModal'
 import AddressInputs from '@/modals/SendModals/AddressInputs'
-import { selectAddressesWithSomeBalance, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
 import { PartialTxData, TransferTxData } from '@/types/transactions'
 import { isAddressValid, requiredErrorMessage } from '@/utils/form-validation'
 
@@ -36,15 +37,19 @@ interface TransferAddressesTxModalContentProps {
 
 const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferAddressesTxModalContentProps) => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAddressesWithSomeBalance)
+  const fromAddresses = useFilterEmptyAddresses()
   const isAddressesStateUninitialized = useAppSelector(selectIsStateUninitialized)
 
-  const [fromAddress, setFromAddress] = useState(data.fromAddress)
+  const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
   const [toAddress, setToAddress] = useStateWithError(data?.toAddress ?? '')
+  const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))
 
-  const handleToAddressChange = (value: string) => {
-    setToAddress(value, !value ? requiredErrorMessage : isAddressValid(value) ? '' : t('This address is not valid'))
-  }
+  const handleToAddressChange = useCallback(
+    (value: string) => {
+      setToAddress(value, !value ? requiredErrorMessage : isAddressValid(value) ? '' : t('This address is not valid'))
+    },
+    [setToAddress, t]
+  )
 
   if (fromAddress === undefined) {
     onCancel()
@@ -57,10 +62,9 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
     <ModalContent>
       <InputFieldsColumn>
         <AddressInputs
-          defaultFromAddress={fromAddress}
-          fromAddresses={addresses}
-          onFromAddressChange={setFromAddress}
-          hideFromAddressesWithoutAssets
+          defaultFromAddress={fromAddressHash}
+          fromAddresses={fromAddresses}
+          onFromAddressChange={setFromAddressHash}
           toAddress={toAddress}
           onToAddressChange={handleToAddressChange}
           onContactSelect={handleToAddressChange}
@@ -86,9 +90,9 @@ export default TransferAddressesTxModalContent
 function useStateWithError<T>(initialValue: T) {
   const [value, setValue] = useState({ value: initialValue, error: '' })
 
-  const setValueWithError = (newValue: T, newError: string) => {
+  const setValueWithError = useCallback((newValue: T, newError: string) => {
     setValue({ value: newValue, error: newError })
-  }
+  }, [])
 
   return [value, setValueWithError] as const
 }
