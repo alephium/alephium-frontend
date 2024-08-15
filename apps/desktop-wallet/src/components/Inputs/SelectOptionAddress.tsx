@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -26,19 +27,19 @@ import AssetBadge from '@/components/AssetBadge'
 import Badge from '@/components/Badge'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
 import { useAppSelector } from '@/hooks/redux'
-import { makeSelectAddressesTokens } from '@/storage/addresses/addressesSelectors'
-import { Address } from '@/types/addresses'
+import { makeSelectAddressesTokens, selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 interface SelectOptionAddressProps {
-  address: Address
+  addressHash: AddressHash
   isSelected?: boolean
   className?: string
 }
 
-const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAddressProps) => {
+const SelectOptionAddress = ({ addressHash, isSelected, className }: SelectOptionAddressProps) => {
   const { t } = useTranslation()
   const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
-  const assets = useAppSelector((s) => selectAddressesTokens(s, address.hash))
+  const assets = useAppSelector((s) => selectAddressesTokens(s, addressHash))
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
   const knownAssetsWithBalance = useSortTokensByWorth(assets.filter((a) => a.balance > 0 && a.name))
   const unknownAssetsNb = assets.filter((a) => a.balance > 0 && !a.name).length
@@ -53,10 +54,10 @@ const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAdd
       MainContent={
         <Header>
           <AddressBadgeContainer>
-            <AddressBadgeStyled addressHash={address.hash} disableA11y truncate appendHash />
+            <AddressBadgeStyled addressHash={addressHash} disableA11y truncate appendHash />
           </AddressBadgeContainer>
           <Group>
-            {t('Group')} {address.group}
+            {t('Group')} {address?.group}
           </Group>
         </Header>
       }

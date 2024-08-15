@@ -35,7 +35,6 @@ import { createSelector } from '@reduxjs/toolkit'
 import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
 import { RootState } from '@/storage/store'
 import { Address } from '@/types/addresses'
-import { filterAddressesWithoutAssets } from '@/utils/addresses'
 
 export const {
   selectById: selectAddressByHash,
@@ -180,8 +179,6 @@ export const selectHaveAllPagesLoaded = createSelector(
     addresses.every((address) => address.allTransactionPagesLoaded) || allTransactionsLoaded
 )
 
-export const selectAddressesWithSomeBalance = createSelector(selectAllAddresses, filterAddressesWithoutAssets)
-
 const getAddressesTokenBalances = (addresses: Address[]) =>
   addresses.reduce((acc, { tokens }) => {
     tokens.forEach((token) => {
@@ -204,5 +201,6 @@ const getAddressesTokenBalances = (addresses: Address[]) =>
 
 export const selectAddressesInGroup = createSelector(
   [selectAllAddresses, (_, group?: AddressGroup) => group],
-  (addresses, group) => (group !== undefined ? addresses.filter((address) => address.group === group) : addresses)
+  (addresses, group) =>
+    (group !== undefined ? addresses.filter((address) => address.group === group) : addresses).map(({ hash }) => hash)
 )

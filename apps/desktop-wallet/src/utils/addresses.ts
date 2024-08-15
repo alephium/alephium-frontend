@@ -85,11 +85,6 @@ export const assetAmountsWithinAvailableBalance = (address: Address, assetAmount
 const isPendingTransaction = (tx: explorer.Transaction | PendingTransaction): tx is PendingTransaction =>
   (tx as PendingTransaction).status === 'pending'
 
-export const addressHasAssets = (address: Address): boolean =>
-  address.balance !== '0' || address.tokens.some((token) => token.balance !== '0')
-
-export const filterAddressesWithoutAssets = (addresses: Address[]): Address[] => addresses.filter(addressHasAssets)
-
 export const deriveAddressesInGroup = (
   group: number,
   amount: number,

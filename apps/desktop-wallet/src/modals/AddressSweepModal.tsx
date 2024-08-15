@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
+import { AddressHash, getHumanReadableError } from '@alephium/shared'
 import { node } from '@alephium/web3'
 import { Info } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -28,10 +28,15 @@ import Amount from '@/components/Amount'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
+import { useFilterEmptyAddresses } from '@/features/addressFiltering/addressFilteringHooks'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import {
+  selectAllAddresses,
+  selectAllAddressHashes,
+  selectDefaultAddress
+} from '@/storage/addresses/addressesSelectors'
 import {
   transactionBuildFailed,
   transactionSendFailed,
@@ -53,10 +58,12 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
   const dispatch = useAppDispatch()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const addresses = useAppSelector(selectAllAddresses)
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
   const { sendAnalytics } = useAnalytics()
 
   const fromAddress = sweepAddress || defaultAddress
   const toAddressOptions = sweepAddress ? addresses.filter(({ hash }) => hash !== fromAddress?.hash) : addresses
+  const fromAddressOptions = useFilterEmptyAddresses()
 
   const [sweepAddresses, setSweepAddresses] = useState<{
     from: SweepAddress
@@ -127,9 +134,22 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
     setIsLoading(false)
   }
 
-  const onAddressChange = (type: 'from' | 'to', address: Address) => {
-    setSweepAddresses((prev) => ({ ...prev, [type]: address }))
-  }
+  const onAddressChange = useCallback(
+    (type: 'from' | 'to', addressHash: AddressHash) => {
+      setSweepAddresses((prev) => ({ ...prev, [type]: addresses.find((a) => a.hash === addressHash) }))
+    },
+    [addresses]
+  )
+
+  const onOriginAddressChange = useCallback(
+    (newAddress: AddressHash) => onAddressChange('from', newAddress),
+    [onAddressChange]
+  )
+
+  const onDestinationAddressChange = useCallback(
+    (newAddress: AddressHash) => onAddressChange('to', newAddress),
+    [onAddressChange]
+  )
 
   if (!sweepAddresses.from || !sweepAddresses.to) return null
 
@@ -143,19 +163,20 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
         <AddressSelect
           label={t('From address')}
           title={t('Select the address to sweep the funds from.')}
-          options={addresses}
-          defaultAddress={sweepAddresses.from}
-          onAddressChange={(newAddress) => onAddressChange('from', newAddress)}
+          addressOptions={fromAddressOptions}
+          defaultAddress={sweepAddresses.from.hash}
+          onAddressChange={onOriginAddressChange}
           disabled={sweepAddress !== undefined}
           id="from-address"
-          hideAddressesWithoutAssets
         />
         <AddressSelect
           label={t('To address')}
           title={t('Select the address to sweep the funds to.')}
-          options={toAddressOptions}
-          defaultAddress={sweepAddresses.to}
-          onAddressChange={(newAddress) => onAddressChange('to', newAddress)}
+          addressOptions={
+            sweepAddress ? allAddressHashes.filter((hash) => hash !== fromAddress?.hash) : allAddressHashes
+          }
+          defaultAddress={sweepAddresses.to.hash}
+          onAddressChange={onDestinationAddressChange}
           id="to-address"
         />
         {isConsolidationRedundant ? (
