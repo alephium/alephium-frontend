@@ -452,5 +452,6 @@
   "Copy ID": "ID kopieren",
   "To delete this wallet use it without a passphrase": "Um diese Wallet zu löschen, verwenden Sie sie ohne Passphrase",
   "To export this wallet use it without a passphrase": "Um diese Wallet zu exportieren, verwenden Sie sie ohne Passphrase",
-  "The proposal does not include a list of required chains": "Der Vorschlag enthält keine Liste der erforderlichen Blockchains"
+  "The proposal does not include a list of required chains": "Der Vorschlag enthält keine Liste der erforderlichen Blockchains",
+  "All UTXOs are already consolidated for this address. No consolidation is needed.": "Alle UTXOs sind für diese Adresse bereits konsolidiert. Es ist keine Konsolidierung erforderlich."
 }
