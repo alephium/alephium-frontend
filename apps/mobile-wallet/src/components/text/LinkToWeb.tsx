@@ -22,12 +22,12 @@ import styled from 'styled-components/native'
 import AppText from '~/components/AppText'
 
 interface LinkToWebProps {
-  text: string
   url: string
+  children?: string
   style?: StyleProp<TextStyle>
 }
 
-const LinkToWeb = ({ text, url, style }: LinkToWebProps) => {
+const LinkToWeb = ({ children, url, style }: LinkToWebProps) => {
   const handleLinkPress = () => {
     Linking.openURL(url).catch((err) => {
       console.error('Failed to open web page: ', err)
@@ -37,7 +37,7 @@ const LinkToWeb = ({ text, url, style }: LinkToWebProps) => {
 
   return (
     <AppText onPress={handleLinkPress} style={style}>
-      {text}
+      {children}
     </AppText>
   )
 }

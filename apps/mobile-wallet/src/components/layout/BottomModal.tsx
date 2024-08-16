@@ -33,13 +33,14 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
-import Button from '~/components/buttons/Button'
+import AppText from '~/components/AppText'
+import { CloseButton } from '~/components/buttons/Button'
 import { ModalContentProps } from '~/components/layout/ModalContent'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type ModalPositions = 'minimised' | 'maximised' | 'closing'
 
-const NAV_HEIGHT = 48
+const NAV_HEIGHT = 40
 const DRAG_BUFFER = 40
 
 const springConfig: WithSpringConfig = {
@@ -55,13 +56,23 @@ export interface BottomModalProps {
   Content: (props: ModalContentProps) => ReactNode
   isOpen: boolean
   onClose: () => void
+  title?: string
   maximisedContent?: boolean
   customMinHeight?: number
+  noPadding?: boolean
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
-const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeight }: BottomModalProps) => {
+const BottomModal = ({
+  Content,
+  isOpen,
+  onClose,
+  title,
+  maximisedContent,
+  customMinHeight,
+  noPadding
+}: BottomModalProps) => {
   const insets = useSafeAreaInsets()
 
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
@@ -143,7 +154,7 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
   const handleMaximize = useCallback(() => {
     'worklet'
 
-    navHeight.value = withSpring(NAV_HEIGHT + 10, springConfig)
+    navHeight.value = withSpring(NAV_HEIGHT + 6, springConfig)
     modalHeight.value = withSpring(-maxHeight, springConfig)
     position.value = 'maximised'
   }, [maxHeight, modalHeight, navHeight, position])
@@ -213,10 +224,14 @@ const BottomModal = ({ Content, isOpen, onClose, maximisedContent, customMinHeig
             <HandleContainer>
               <Handle style={handleAnimatedStyle} />
             </HandleContainer>
-            <ContentContainer>
-              <Navigation style={modalNavigationAnimatedStyle}>
-                <Button onPress={handleClose} iconProps={{ name: 'close-outline' }} round />
-              </Navigation>
+            <Navigation style={modalNavigationAnimatedStyle}>
+              <NavigationButtonContainer align="left" />
+              {title && <Title semiBold>{title}</Title>}
+              <NavigationButtonContainer align="right">
+                <CloseButton onPress={handleClose} compact />
+              </NavigationButtonContainer>
+            </Navigation>
+            <ContentContainer noPadding={noPadding}>
               <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
             </ContentContainer>
           </BottomModalStyled>
@@ -267,11 +282,25 @@ const Handle = styled(Animated.View)`
   margin-top: -15px;
 `
 
-const Navigation = styled(Animated.View)`
-  align-items: flex-end;
+const Title = styled(AppText)`
+  flex: 1;
+  text-align: center;
 `
 
-const ContentContainer = styled(Animated.View)`
-  flex: 1;
+const Navigation = styled(Animated.View)`
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
   padding: 0 ${DEFAULT_MARGIN - 1}px;
+`
+
+const NavigationButtonContainer = styled.View<{ align: 'right' | 'left' }>`
+  width: 10%;
+  flex-direction: row;
+  justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : 'flex-start')};
+`
+
+const ContentContainer = styled(Animated.View)<Pick<BottomModalProps, 'noPadding'>>`
+  flex: 1;
+  padding: ${({ noPadding }) => (noPadding ? 0 : `0 ${DEFAULT_MARGIN - 1}px`)};
 `

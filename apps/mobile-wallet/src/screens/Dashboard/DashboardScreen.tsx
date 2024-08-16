@@ -20,13 +20,11 @@ import { AddressHash } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { Pressable } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated, { useAnimatedStyle, withDelay, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
-import ActiveNetworkBadge from '~/components/ActiveNetworkBadge'
 import AddressesTokensList from '~/components/AddressesTokensList'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
@@ -38,6 +36,7 @@ import { ModalContent } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import WalletSwitchButton from '~/components/WalletSwitchButton'
+import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
 import { useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
@@ -58,7 +57,6 @@ interface ScreenProps
 
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const theme = useTheme()
-  const walletName = useAppSelector((s) => s.wallet.name)
   const totalBalance = useAppSelector(selectTotalBalance)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const addressesStatus = useAppSelector((s) => s.addresses.status)
@@ -69,6 +67,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isFundPasswordReminderModalOpen, setIsFundPasswordReminderModalOpen] = useState(false)
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
+  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false)
   const [isNewWallet, setIsNewWallet] = useState(false)
 
   const buttonsRowStyle = useAnimatedStyle(() => ({
@@ -122,19 +121,11 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       refreshControl={<RefreshSpinner />}
       hasBottomBar
       verticalGap
-      screenTitle={walletName}
+      contrastedBg
       headerOptions={{
         headerRight: () => <HeaderButtons />,
-        headerLeft: () => <WalletSwitchButton />,
-        headerTitle: walletName
+        headerLeft: () => <WalletSwitchButton />
       }}
-      TitleSideComponent={
-        <NetworkBadgeContainer>
-          <Pressable onPress={() => setIsSwitchNetworkModalOpen(true)}>
-            <ActiveNetworkBadge />
-          </Pressable>
-        </NetworkBadgeContainer>
-      }
       {...props}
     >
       <BalanceAndButtons>
@@ -151,23 +142,15 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               }
             ]}
           >
+            <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" round flex short />
+            <Button onPress={handleReceivePress} iconProps={{ name: 'download' }} variant="contrast" round flex short />
             <Button
-              onPress={handleSendPress}
-              iconProps={{ name: 'arrow-up-outline' }}
-              title={t('Send')}
-              variant="highlightedIcon"
+              onPress={() => setIsBuyModalOpen(true)}
+              iconProps={{ name: 'credit-card' }}
+              variant="contrast"
               round
-              short
               flex
-            />
-            <Button
-              onPress={handleReceivePress}
-              iconProps={{ name: 'arrow-down-outline' }}
-              title={t('Receive')}
-              variant="highlightedIcon"
-              round
               short
-              flex
             />
           </ButtonsRowContainer>
         )}
@@ -249,6 +232,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         isOpen={isFundPasswordReminderModalOpen}
         onClose={() => setIsFundPasswordReminderModalOpen(false)}
       />
+      <BuyModal isOpen={isBuyModalOpen} onClose={() => setIsBuyModalOpen(false)} />
     </DashboardScreenStyled>
   )
 }
@@ -264,21 +248,10 @@ const BalanceAndButtons = styled.View`
 `
 
 const ButtonsRowContainer = styled(Animated.View)`
-  margin: 10px ${DEFAULT_MARGIN}px 20px ${DEFAULT_MARGIN}px;
+  margin: 0 ${DEFAULT_MARGIN + 20}px;
   flex-direction: row;
   border-radius: 100px;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 0 10px;
-
-  border-color: ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.primary};
-`
-
-const NetworkBadgeContainer = styled.View`
-  flex-grow: 1;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
 `
