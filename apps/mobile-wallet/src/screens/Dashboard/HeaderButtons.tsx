@@ -126,4 +126,5 @@ const CenteredButtons = styled.View`
   flex: 1;
   flex-direction: row;
   justify-content: center;
+  gap: 10px;
 `
