@@ -106,6 +106,7 @@
   "Download": "Descarregar",
   "Download failed": "O descarregamento falhou",
   "Try again later.": "Tente novamente mais tarde.",
+  "Downloading version {{ newVersion }}...": "Baixando a versão {{ newVersion }}...",
   "Duration in minutes after which an idle wallet will lock automatically.": "Duração em minutos depois do qual uma carteira inativa será bloqueada automaticamente.",
   "Easily organize your addresses and your contacts for a more serene transfer experience.": "Organize seus endereços e seus contatos facilmente para uma experiência de transferência mais serena.",
   "Edit": "Editar",
@@ -320,7 +321,6 @@
   "The group of the selected address ({{ addressGroup }}) does not match the group required by WalletConnect ({{ walletConnectGroup }})": "O grupo do endereço selecionado ({{ addressGroup }}) não corresponde ao grupo exigido pelo WalletConnect ({{ walletConnectGroup }})",
   "The wallet is offline.": "A carteira está offline.",
   "Theme": "Tema",
-  "There are no addresses in the required group: {{ group }}": "Não há nenhum endereço no grupo solicitado: {{ group }}",
   "There are no addresses with available balance. Please, send some funds to one of your addresses, and try again.": "Não há endereços com saldo disponível. Por favor, envie alguns fundos para um dos seus endereços, e tente novamente.",
   "There are no available addresses.": "Não há endereços disponíveis.",
   "This address is not valid": "Este endereço não é válido",
@@ -368,6 +368,7 @@
   "Version": "Versão",
   "Version {{ newVersion }} is available": "A versão {{ newVersion }} está disponível",
   "Please, download it and install it to avoid any issues with the wallet.": "Clique em \"Atualizar\" para evitar qualquer problema com a carteira digital.",
+  "Download finished": "Download concluído",
   "Wallet": "Carteira",
   "Wallet list": "Lista de carteiras",
   "Wallet name": "Nome da carteira",
@@ -450,5 +451,6 @@
   "ID": "ID",
   "Copy ID": "Copiar ID",
   "To delete this wallet use it without a passphrase": "Para excluir essa carteira, use-a sem uma senha",
-  "To export this wallet use it without a passphrase": "Para exportar esta carteira use-a sem uma frase-senha"
+  "To export this wallet use it without a passphrase": "Para exportar esta carteira use-a sem uma frase-senha",
+  "The proposal does not include a list of required chains": "A proposta não inclui uma lista de cadeias necessárias"
 }

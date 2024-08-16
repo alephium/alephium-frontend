@@ -1,7 +1,7 @@
 {
   "name": "alephium-desktop-wallet",
   "description": "The official Alephium wallet",
-  "version": "2.3.6",
+  "version": "2.3.7",
   "author": "Alephium dev <dev@alephium.org>",
   "main": "public/electron.js",
   "homepage": "./",
@@ -42,6 +42,7 @@
   "dependencies": {
     "@tanstack/react-query": "5.45.0",
     "@tanstack/react-query-devtools": "^5.50.1",
+    "axios": "^1.7.4",
     "electron-context-menu": "^3.1.2",
     "electron-is-dev": "^2.0.0",
     "electron-updater": "^5.3.0"
@@ -99,7 +100,7 @@
     "cross-env": "^7.0.3",
     "dayjs": "^1.10.7",
     "electron": "22.3.25",
-    "electron-builder": "^23.0.3",
+    "electron-builder": "^24.13.3",
     "electron-devtools-installer": "^3.2.0",
     "eslint": "^8.48.0",
     "eslint-config-prettier": "^9.0.0",

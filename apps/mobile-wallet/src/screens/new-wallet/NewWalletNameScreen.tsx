@@ -43,7 +43,7 @@ import { resetNavigation } from '~/utils/navigation'
 
 const instructions: Instruction[] = [
   { text: i18n.t("Alright, let's get to it."), type: 'secondary' },
-  { text: i18n.t('How should we call this wallet?'), type: 'primary' }
+  { text: i18n.t('How should we name this wallet?'), type: 'primary' }
 ]
 
 interface NewWalletNameScreenProps extends StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>, ScreenProps {}

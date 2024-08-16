@@ -21,7 +21,7 @@ import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
+import { Keyboard, Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -120,6 +120,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
       setAmount('')
       setAssetAmount(asset.id, undefined)
       setError('')
+      Keyboard.dismiss()
     }
   }
 

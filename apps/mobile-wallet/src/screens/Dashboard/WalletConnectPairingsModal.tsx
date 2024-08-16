@@ -77,7 +77,7 @@ const WalletConnectPairingsModal = ({
       <ScreenSection>
         <ButtonStack>
           <Button
-            title={t('Paste a WalletConnect URL')}
+            title={t('Paste a WalletConnect URI')}
             variant="accent"
             onPress={onPasteWcUrlPress}
             iconProps={{ name: 'copy' }}

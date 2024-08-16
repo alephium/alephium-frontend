@@ -90,20 +90,7 @@ async function sign(configuration) {
     console.log('---CONFIG FILE CONTENTS END---\n')
     fs.writeFileSync(destConfig, sourceConfig, { encoding: 'utf-8', flag: 'w' })
 
-    let execCmd = path.join(ARCHIVE_PATH, CODESIGNTOOL_WINDOWS_RUN_CMD)
-    let batScriptContents = fs.readFileSync(execCmd, { encoding: 'utf-8', flag: 'r' })
-
-    console.log('\n---BAT SCRIPT FILE CONTENTS START---')
-    console.log(batScriptContents)
-    console.log('---BAT SCRIPT FILE CONTENTS END---\n')
-
-    console.log('\nTweaking bat script to add -Xmx and " around args...')
-    batScriptContents = batScriptContents.replace(/java -jar/g, 'java -Xmx2048M -jar').replace(/\$@/g, `"\$@"`)
-
-    console.log('\n---BAT SCRIPT FILE CONTENTS AFTER TWEAKING START---')
-    console.log(batScriptContents)
-    console.log('---BAT SCRIPT FILE CONTENTS AFTER TWEAKING END---\n')
-    fs.writeFileSync(execCmd, batScriptContents, { encoding: 'utf-8', flag: 'w' })
+    const execCmd = path.join(ARCHIVE_PATH, CODESIGNTOOL_WINDOWS_RUN_CMD)
     fs.chmodSync(execCmd, '0755')
 
     process.env['CODE_SIGN_TOOL_PATH'] = ARCHIVE_PATH

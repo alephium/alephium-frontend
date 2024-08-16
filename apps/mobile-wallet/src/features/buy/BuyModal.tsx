@@ -86,6 +86,9 @@ const BuyModal = (props: BuyModalProps) => {
   return (
     <Portal>
       <BottomModal
+        title={t('Buy')}
+        maximisedContent
+        noPadding
         {...props}
         Content={(props) => (
           <ModalContent {...props} contentContainerStyle={{ flex: 1, paddingTop: 0 }}>
@@ -128,9 +131,6 @@ const BuyModal = (props: BuyModalProps) => {
             />
           </ModalContent>
         )}
-        title={t('Buy')}
-        maximisedContent
-        noPadding
       />
     </Portal>
   )

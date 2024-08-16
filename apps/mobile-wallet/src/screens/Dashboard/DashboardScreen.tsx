@@ -137,6 +137,15 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     >
       <AnimatedCirclesBackground scrollY={screenScrollY} />
       <WalletCard style={{ marginTop: insets.top }}>
+        {Platform.OS === 'android' ? (
+          <View style={StyleSheet.absoluteFill} />
+        ) : (
+          <BlurView
+            style={StyleSheet.absoluteFill}
+            intensity={80}
+            tint={theme.name === 'dark' ? 'systemThickMaterialDark' : 'systemThickMaterialLight'}
+          />
+        )}
         <WalletCardHeader>
           <HeaderButtons />
         </WalletCardHeader>
@@ -154,15 +163,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               short
             />
           </ButtonsRowContainer>
-        )}
-        {Platform.OS === 'android' ? (
-          <View style={StyleSheet.absoluteFill} />
-        ) : (
-          <BlurView
-            style={StyleSheet.absoluteFill}
-            intensity={80}
-            tint={theme.name === 'dark' ? 'systemThickMaterialDark' : 'systemThickMaterialLight'}
-          />
         )}
       </WalletCard>
       <AddressesTokensList />
