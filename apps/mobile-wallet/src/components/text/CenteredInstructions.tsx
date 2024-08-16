@@ -39,7 +39,9 @@ const CenteredInstructions = ({ instructions, style, fontSize = 17 }: CenteredIn
   <View style={style}>
     {instructions.map(({ text, type, url }, i) =>
       type === 'link' ? (
-        <LinkToWeb key={i} text={text} url={url || ''} style={{ marginVertical: 5 }} />
+        <LinkToWeb key={i} url={url || ''} style={{ marginVertical: 5 }}>
+          {text}
+        </LinkToWeb>
       ) : (
         <Instruction key={i} type={type} style={{ fontSize }}>
           {text}
