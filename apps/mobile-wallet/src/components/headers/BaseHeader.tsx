@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackHeaderProps } from '@react-navigation/stack'
 import { Canvas, LinearGradient, Rect, vec } from '@shopify/react-native-skia'
-import { ReactNode, RefObject } from 'react'
-import { Platform, Pressable, useWindowDimensions, ViewProps } from 'react-native'
+import { ReactNode, RefObject, useState } from 'react'
+import { LayoutChangeEvent, Platform, Pressable, useWindowDimensions, ViewProps } from 'react-native'
 import Animated, {
   Extrapolation,
   interpolate,
@@ -64,6 +64,8 @@ const BaseHeader = ({
   const insets = useSafeAreaInsets()
   const theme = useTheme()
   const { width: screenWidth } = useWindowDimensions()
+  const [headerHeight, setHeaderHeight] = useState(80)
+  const gradientHeight = headerHeight + 30
 
   const defaultScrollRange = [0 + scrollEffectOffset, scrollEndThreshold + scrollEffectOffset]
   const paddingTop = isIos ? insets.top : insets.top + 7
@@ -90,19 +92,14 @@ const BaseHeader = ({
       : {}
   )
 
-  const handleCompactHeaderPress = () => {
-    console.log('TODO: Reimplement scroll to top')
-
-    /*
-    if (activeScreenRef?.current) {
-      scrollScreenTo(0, activeScreenRef, true)
-    }
-    */
+  const handleHeaderLayout = (e: LayoutChangeEvent) => {
+    console.log(e.nativeEvent.layout.height)
+    setHeaderHeight(e.nativeEvent.layout.height)
   }
 
   return (
-    <BaseHeaderStyled ref={headerRef} {...props}>
-      <HeaderGradientCanvas pointerEvents="none">
+    <BaseHeaderStyled ref={headerRef} onLayout={handleHeaderLayout} {...props}>
+      <HeaderGradientCanvas pointerEvents="none" height={gradientHeight}>
         <Rect x={0} y={0} width={screenWidth} height={gradientHeight} opacity={animatedOpacity}>
           <LinearGradient
             start={vec(0, gradientHeight / 1.5)}
@@ -115,7 +112,7 @@ const BaseHeader = ({
           />
         </Rect>
       </HeaderGradientCanvas>
-      <Pressable onPress={handleCompactHeaderPress}>
+      <Pressable>
         <HeaderContainer>
           <Header style={{ paddingTop }}>
             {!CustomContent ? (
@@ -152,12 +149,12 @@ const BaseHeaderStyled = styled(Animated.View)`
   z-index: 1;
 `
 
-const HeaderGradientCanvas = styled(Canvas)`
+const HeaderGradientCanvas = styled(Canvas)<{ height: number }>`
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: ${gradientHeight}px;
+  height: ${({ height }) => height}px;
 `
 
 const HeaderContainer = styled(Animated.View)`
