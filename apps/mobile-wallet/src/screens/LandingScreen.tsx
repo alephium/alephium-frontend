@@ -37,7 +37,7 @@ import styled, { ThemeProvider, useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import altLogoSrc from '~/images/logos/alephiumHackLogo.png'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -57,6 +57,7 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const insets = useSafeAreaInsets()
   const theme = useTheme()
   const { t } = useTranslation()
+  const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
 
   const { width, height } = Dimensions.get('window')
   const [dimensions, setDimensions] = useState({ width, height })
@@ -90,9 +91,15 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 
   useEffect(() => {
     getWalletMetadata()
-      .then((metadata) => setShowNewWalletButtons(!metadata))
+      .then((metadata) => {
+        setShowNewWalletButtons(!metadata)
+
+        if (metadata && isWalletUnlocked) {
+          navigation.navigate('InWalletTabsNavigation')
+        }
+      })
       .catch((e) => showExceptionToast(e, t('Wallet metadata not found')))
-  }, [t])
+  }, [isWalletUnlocked, navigation, t])
 
   return (
     <ThemeProvider theme={themes.dark}>

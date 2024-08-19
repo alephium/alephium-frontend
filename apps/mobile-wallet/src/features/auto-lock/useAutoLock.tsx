@@ -70,6 +70,8 @@ const useAutoLock = ({ unlockApp, onAuthRequired }: UseAutoLockProps) => {
             unlockApp()
           }
         }
+      } else if (nextAppState === 'active' && !isWalletUnlocked) {
+        unlockApp()
       }
 
       appState.current = nextAppState
