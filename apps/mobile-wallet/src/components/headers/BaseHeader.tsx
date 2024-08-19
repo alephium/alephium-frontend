@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackHeaderProps } from '@react-navigation/stack'
 import { Canvas, LinearGradient, Rect, vec } from '@shopify/react-native-skia'
+import { colord } from 'colord'
 import { ReactNode, RefObject, useState } from 'react'
 import { LayoutChangeEvent, Platform, useWindowDimensions, View, ViewProps } from 'react-native'
 import Animated, {
@@ -105,8 +106,8 @@ const BaseHeader = ({
               end={vec(0, gradientHeight)}
               colors={
                 theme.name === 'dark'
-                  ? ['rgba(0, 0, 0, 1)', 'rgba(0, 0, 0, 0)']
-                  : ['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']
+                  ? [theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]
+                  : [theme.bg.highlight, colord(theme.bg.highlight).alpha(0).toHex()]
               }
             />
           </Rect>
