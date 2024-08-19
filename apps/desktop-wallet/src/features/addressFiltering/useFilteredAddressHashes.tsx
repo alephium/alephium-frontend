@@ -86,6 +86,7 @@ const useFilteredAddressHashes = (searchString = '', hideEmpty?: boolean) => {
                 addressAssetNamesWithBalances.includes(searchString))
             )
           })
+
     const filteredByToggle = hideEmpty
       ? filteredByText.filter(
           (addressHash) =>
