@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackHeaderProps } from '@react-navigation/stack'
 import { Canvas, LinearGradient, Rect, vec } from '@shopify/react-native-skia'
 import { ReactNode, RefObject, useState } from 'react'
-import { LayoutChangeEvent, Platform, useWindowDimensions, ViewProps } from 'react-native'
+import { LayoutChangeEvent, Platform, useWindowDimensions, View, ViewProps } from 'react-native'
 import Animated, {
   Extrapolation,
   interpolate,
@@ -97,19 +97,21 @@ const BaseHeader = ({
 
   return (
     <BaseHeaderStyled ref={headerRef} onLayout={handleHeaderLayout} {...props}>
-      <HeaderGradientCanvas height={gradientHeight} pointerEvents="none">
-        <Rect x={0} y={0} width={screenWidth} height={gradientHeight} opacity={animatedOpacity}>
-          <LinearGradient
-            start={vec(0, gradientHeight / 1.5)}
-            end={vec(0, gradientHeight)}
-            colors={
-              theme.name === 'dark'
-                ? ['rgba(0, 0, 0, 1)', 'rgba(0, 0, 0, 0)']
-                : ['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']
-            }
-          />
-        </Rect>
-      </HeaderGradientCanvas>
+      <View pointerEvents="none">
+        <HeaderGradientCanvas height={gradientHeight} pointerEvents="none">
+          <Rect x={0} y={0} width={screenWidth} height={gradientHeight} opacity={animatedOpacity}>
+            <LinearGradient
+              start={vec(0, gradientHeight / 1.5)}
+              end={vec(0, gradientHeight)}
+              colors={
+                theme.name === 'dark'
+                  ? ['rgba(0, 0, 0, 1)', 'rgba(0, 0, 0, 0)']
+                  : ['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']
+              }
+            />
+          </Rect>
+        </HeaderGradientCanvas>
+      </View>
       <HeaderContainer>
         <Header style={{ paddingTop }}>
           {!CustomContent ? (

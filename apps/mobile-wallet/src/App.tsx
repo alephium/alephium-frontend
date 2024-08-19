@@ -26,6 +26,7 @@ import {
   TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
+import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -63,7 +64,11 @@ const App = () => {
   useEffect(
     () =>
       store.subscribe(() => {
-        setTheme(themes[store.getState().settings.theme])
+        const currentTheme = themes[store.getState().settings.theme]
+        setTheme(currentTheme)
+        NavigationBar.setBackgroundColorAsync(
+          currentTheme.name === 'light' ? currentTheme.bg.highlight : currentTheme.bg.back2
+        )
       }),
     []
   )
