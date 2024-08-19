@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackHeaderProps } from '@react-navigation/stack'
 import { Canvas, LinearGradient, Rect, vec } from '@shopify/react-native-skia'
 import { ReactNode, RefObject, useState } from 'react'
-import { LayoutChangeEvent, Platform, Pressable, useWindowDimensions, ViewProps } from 'react-native'
+import { LayoutChangeEvent, Platform, useWindowDimensions, ViewProps } from 'react-native'
 import Animated, {
   Extrapolation,
   interpolate,
@@ -97,7 +97,7 @@ const BaseHeader = ({
 
   return (
     <BaseHeaderStyled ref={headerRef} onLayout={handleHeaderLayout} {...props}>
-      <HeaderGradientCanvas pointerEvents="none" height={gradientHeight}>
+      <HeaderGradientCanvas height={gradientHeight} pointerEvents="none">
         <Rect x={0} y={0} width={screenWidth} height={gradientHeight} opacity={animatedOpacity}>
           <LinearGradient
             start={vec(0, gradientHeight / 1.5)}
@@ -110,32 +110,30 @@ const BaseHeader = ({
           />
         </Rect>
       </HeaderGradientCanvas>
-      <Pressable>
-        <HeaderContainer>
-          <Header style={{ paddingTop }}>
-            {!CustomContent ? (
-              <>
-                {HeaderLeft}
-                {(headerTitleString || HeaderTitleComponent) && (
-                  <CenterContainer style={centerContainerAnimatedStyle}>
-                    {headerTitleString ? (
-                      <AppText semiBold size={17}>
-                        {headerTitleString}
-                      </AppText>
-                    ) : HeaderTitleComponent ? (
-                      HeaderTitleComponent
-                    ) : null}
-                    {HeaderTitleRight}
-                  </CenterContainer>
-                )}
-                {HeaderRight}
-              </>
-            ) : (
-              <CenterContainer>{CustomContent}</CenterContainer>
-            )}
-          </Header>
-        </HeaderContainer>
-      </Pressable>
+      <HeaderContainer>
+        <Header style={{ paddingTop }}>
+          {!CustomContent ? (
+            <>
+              {HeaderLeft}
+              {(headerTitleString || HeaderTitleComponent) && (
+                <CenterContainer style={centerContainerAnimatedStyle}>
+                  {headerTitleString ? (
+                    <AppText semiBold size={17}>
+                      {headerTitleString}
+                    </AppText>
+                  ) : HeaderTitleComponent ? (
+                    HeaderTitleComponent
+                  ) : null}
+                  {HeaderTitleRight}
+                </CenterContainer>
+              )}
+              {HeaderRight}
+            </>
+          ) : (
+            <CenterContainer>{CustomContent}</CenterContainer>
+          )}
+        </Header>
+      </HeaderContainer>
     </BaseHeaderStyled>
   )
 }
