@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, client, PAGINATION_PAGE_LIMIT } from '@alephium/shared'
-import { AddressBalance, AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
+import { client, PAGINATION_PAGE_LIMIT } from '@alephium/shared'
+import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions } from '@tanstack/react-query'
 
 import queryClient from '@/api/queryClient'
@@ -29,11 +29,6 @@ interface AddressBalanceQueryProps extends AddressLatestTransactionHashQueryData
 
 const ADDRESS_BALANCE_QUERY_KEYS = ['address', 'balance']
 
-type AddressAlphBalanceQueryResult = {
-  addressHash: AddressHash
-  balances: AddressBalance
-}
-
 // Adding latestTxHash in queryKey ensures that we'll refetch when new txs arrive.
 // Adding networkId in queryKey ensures that switching the network we get different data.
 // TODO: Should we add explorerBackendUrl instead?
@@ -42,28 +37,28 @@ export const addressAlphBalanceQuery = ({
   networkId,
   latestTxHash,
   previousTxHash
-}: AddressBalanceQueryProps) =>
-  queryOptions({
-    queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'ALPH', { addressHash, latestTxHash, networkId }],
-    queryFn: async () => {
-      const balances = await client.explorer.addresses.getAddressesAddressBalance(addressHash)
+}: AddressBalanceQueryProps) => {
+  const getQueryOptions = (latestTxHash: AddressBalanceQueryProps['latestTxHash']) =>
+    queryOptions({
+      queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'ALPH', { addressHash, latestTxHash, networkId }],
+      queryFn: async () => {
+        const balances = await client.explorer.addresses.getAddressesAddressBalance(addressHash)
 
-      return {
-        addressHash,
-        balances
-      }
-    },
-    placeholderData: queryClient.getQueryData([
-      ...ADDRESS_BALANCE_QUERY_KEYS,
-      'ALPH',
-      { addressHash, latestTxHash: previousTxHash, networkId }
-    ]) as AddressAlphBalanceQueryResult,
-    staleTime: Infinity
+        return {
+          addressHash,
+          balances
+        }
+      },
+      staleTime: Infinity
+    })
+
+  const previousQueryKey = getQueryOptions(previousTxHash).queryKey
+  const latestQueryOptions = getQueryOptions(latestTxHash)
+
+  return queryOptions({
+    ...latestQueryOptions,
+    placeholderData: queryClient.getQueryData(previousQueryKey)
   })
-
-type AddressTokensBalanceQueryResult = {
-  addressHash: AddressHash
-  tokenBalances: AddressTokenBalance[]
 }
 
 export const addressTokensBalanceQuery = ({
@@ -71,33 +66,39 @@ export const addressTokensBalanceQuery = ({
   networkId,
   latestTxHash,
   previousTxHash
-}: AddressBalanceQueryProps) =>
-  queryOptions({
-    queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'tokens', { addressHash, latestTxHash, networkId }],
-    queryFn: async () => {
-      const tokenBalances = [] as AddressTokenBalance[]
-      let tokenBalancesInPage = [] as AddressTokenBalance[]
-      let page = 1
+}: AddressBalanceQueryProps) => {
+  const getQueryOptions = (latestTxHash: AddressBalanceQueryProps['latestTxHash']) =>
+    queryOptions({
+      queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'tokens', { addressHash, latestTxHash, networkId }],
+      queryFn: async () => {
+        const tokenBalances = [] as AddressTokenBalance[]
+        let tokenBalancesInPage = [] as AddressTokenBalance[]
+        let page = 1
 
-      while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
-        tokenBalancesInPage = await client.explorer.addresses.getAddressesAddressTokensBalance(addressHash, {
-          limit: PAGINATION_PAGE_LIMIT,
-          page
-        })
+        while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
+          tokenBalancesInPage = await client.explorer.addresses.getAddressesAddressTokensBalance(addressHash, {
+            limit: PAGINATION_PAGE_LIMIT,
+            page
+          })
 
-        tokenBalances.push(...tokenBalancesInPage)
-        page += 1
-      }
+          tokenBalances.push(...tokenBalancesInPage)
+          page += 1
+        }
 
-      return {
-        addressHash,
-        tokenBalances
-      }
-    },
-    placeholderData: queryClient.getQueryData([
-      ...ADDRESS_BALANCE_QUERY_KEYS,
-      'tokens',
-      { addressHash, latestTxHash: previousTxHash, networkId }
-    ]) as AddressTokensBalanceQueryResult,
-    staleTime: Infinity
+        return {
+          addressHash,
+          tokenBalances
+        }
+      },
+
+      staleTime: Infinity
+    })
+
+  const previousQueryKey = getQueryOptions(previousTxHash).queryKey
+  const latestQueryOptions = getQueryOptions(latestTxHash)
+
+  return queryOptions({
+    ...latestQueryOptions,
+    placeholderData: queryClient.getQueryData(previousQueryKey)
   })
+}
