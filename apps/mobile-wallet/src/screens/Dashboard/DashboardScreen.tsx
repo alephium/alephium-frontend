@@ -18,10 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
+import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { Platform, StyleSheet, View } from 'react-native'
+import { Platform, StyleSheet } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -260,6 +261,10 @@ const WalletCard = styled.View`
 
 const WalletCardHeader = styled.View`
   padding: 20px 20px 0;
+`
+
+const TransparentCardBackground = styled.View`
+  background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.95).toHex()};
 `
 
 const ButtonsRowContainer = styled(Animated.View)`

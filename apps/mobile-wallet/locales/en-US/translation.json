@@ -374,5 +374,6 @@
   "No": "No",
   "You might want to scan for active addresses in the settings.": "You might want to scan for active addresses in the settings.",
   "Could not find a receiving address": "Could not find a receiving address",
-  "Cannot proceed because no address has been found to receive the funds.": "Cannot proceed because no address has been found to receive the funds."
+  "Cannot proceed because no address has been found to receive the funds.": "Cannot proceed because no address has been found to receive the funds.",
+  "Activity": "Activity"
 }
