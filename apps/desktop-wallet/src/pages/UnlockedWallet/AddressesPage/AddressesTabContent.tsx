@@ -68,6 +68,7 @@ const AddressesTabContent = () => {
       <TableGrid>
         <TableGridContent>
           {visibleAddresses?.map((addressHash) => <AddressGridRow addressHash={addressHash} key={addressHash} />)}
+          {visibleAddresses?.length === 0 && <Placeholder>{t('No addresses match the search criteria.')}</Placeholder>}
         </TableGridContent>
       </TableGrid>
 
@@ -123,4 +124,8 @@ const TableGridContent = styled.div`
   background-color: ${({ theme }) => theme.border.secondary};
   display: flex;
   flex-direction: column;
+`
+
+const Placeholder = styled.div`
+  padding: 20px;
 `
