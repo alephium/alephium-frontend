@@ -27,11 +27,11 @@ import FooterMenu from '~/components/footers/FooterMenu'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import ActivityScreen from '~/screens/ActivityScreen'
 import DashboardScreen from '~/screens/Dashboard/DashboardScreen'
-import NFTsScreen from '~/screens/NFTs/NFTsScreen'
+import NFTListScreen from '~/screens/NFTs/NFTListScreen'
 
 export type InWalletTabsParamList = {
   DashboardScreen: undefined
-  NFTsScreen: undefined
+  NFTListScreen: undefined
   AddressesTabNavigation: undefined
   ActivityScreen: undefined
 }
@@ -62,8 +62,8 @@ const InWalletTabsNavigation = () => {
           }}
         />
         <InWalletTabs.Screen
-          name="NFTsScreen"
-          component={NFTsScreen}
+          name="NFTListScreen"
+          component={NFTListScreen}
           options={{
             title: t('NFTs'),
             tabBarIcon: ({ color, size, focused }) => (
