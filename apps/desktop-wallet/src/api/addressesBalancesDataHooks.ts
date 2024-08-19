@@ -37,8 +37,8 @@ export const useAddressesAlphBalances = (addressHash?: AddressHash) => {
     combine: (results) => ({
       data: results.reduce(
         (totalBalances, { data }) => {
-          totalBalances.balance += data ? BigInt(data.balance) : BigInt(0)
-          totalBalances.lockedBalance += data ? BigInt(data.lockedBalance) : BigInt(0)
+          totalBalances.balance += data ? BigInt(data.balances.balance) : BigInt(0)
+          totalBalances.lockedBalance += data ? BigInt(data.balances.lockedBalance) : BigInt(0)
 
           return totalBalances
         },
@@ -69,7 +69,7 @@ export const useAddressesTokensBalances = (addressHash?: AddressHash) => {
     combine: (results) => ({
       data: results.reduce(
         (tokensBalances, { data: balances }) => {
-          balances?.forEach(({ tokenId, balance, lockedBalance }) => {
+          balances?.tokenBalances.forEach(({ tokenId, balance, lockedBalance }) => {
             tokensBalances[tokenId] = {
               balance: BigInt(balance) + (tokensBalances[tokenId]?.balance ?? BigInt(0)),
               lockedBalance: BigInt(lockedBalance) + (tokensBalances[tokenId]?.lockedBalance ?? BigInt(0))
@@ -88,4 +88,10 @@ export const useAddressesTokensBalances = (addressHash?: AddressHash) => {
     data,
     isLoading: isLoadingAlphBalances || isLoadingLatestTxHashes || isLoading
   }
+}
+
+export const useAddressAvailableBalance = (addressHash: AddressHash) => {
+  const { data } = useAddressesAlphBalances(addressHash)
+
+  return data.balance - data.lockedBalance
 }

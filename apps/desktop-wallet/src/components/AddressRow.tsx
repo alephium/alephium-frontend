@@ -16,33 +16,32 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
 import { TableRow } from '@/components/Table'
-import { Address } from '@/types/addresses'
 
 interface AddressRowProps {
-  address: Address
-  disableAddressCopy?: boolean
-  onClick?: (address: Address) => void
+  addressHash: AddressHash
+  onClick?: (addressHash: AddressHash) => void
   className?: string
 }
 
-const AddressRow: FC<AddressRowProps> = ({ address, disableAddressCopy, onClick, children, className }) => (
+const AddressRow: FC<AddressRowProps> = ({ addressHash, onClick, children, className }) => (
   <TableRow
-    key={address.hash}
+    key={addressHash}
     role="row"
     tabIndex={0}
-    onClick={() => onClick && onClick(address)}
-    onKeyPress={() => onClick && onClick(address)}
+    onClick={() => onClick && onClick(addressHash)}
+    onKeyDown={() => onClick && onClick(addressHash)}
     className={className}
   >
     <Row>
-      <AddressColorIndicatorStyled addressHash={address.hash} />
+      <AddressColorIndicatorStyled addressHash={addressHash} />
       <Label>
-        <AddressBadge addressHash={address.hash} hideColorIndication truncate appendHash displayHashUnder />
+        <AddressBadge addressHash={addressHash} hideColorIndication truncate appendHash displayHashUnder />
       </Label>
       {children}
     </Row>
