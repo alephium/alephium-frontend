@@ -26,10 +26,13 @@ import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
 interface ScreenProps
-  extends StackScreenProps<InWalletTabsParamList & ReceiveNavigationParamList & SendNavigationParamList, 'NFTsScreen'>,
+  extends StackScreenProps<
+      InWalletTabsParamList & ReceiveNavigationParamList & SendNavigationParamList,
+      'NFTListScreen'
+    >,
     BottomBarScrollScreenProps {}
 
-const NFTsScreen = ({ navigation, ...props }: ScreenProps) => {
+const NFTListScreen = ({ navigation, ...props }: ScreenProps) => {
   const { t } = useTranslation()
 
   return (
@@ -48,4 +51,4 @@ const NFTsScreen = ({ navigation, ...props }: ScreenProps) => {
   )
 }
 
-export default NFTsScreen
+export default NFTListScreen

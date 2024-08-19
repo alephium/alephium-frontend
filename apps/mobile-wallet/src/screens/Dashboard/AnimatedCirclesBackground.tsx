@@ -48,7 +48,7 @@ const AnimatedCirclesBackground = ({ scrollY }: AnimatedCirclesBackgroundProps) 
   const circle2X = useDerivedValue(() =>
     withSpring(screenWidth / 2 + gyroscope.sensor.value.roll * 20, { mass: 40, damping: 20 })
   )
-  const circle2Y = useDerivedValue(() => withSpring(90 + gyroscope.sensor.value.pitch * 20, { mass: 40, damping: 20 }))
+  const circle2Y = useDerivedValue(() => withSpring(180 + gyroscope.sensor.value.pitch * 20, { mass: 40, damping: 20 }))
 
   const circle3X = useDerivedValue(() =>
     withSpring(screenWidth - 50 + gyroscope.sensor.value.roll * 23, { mass: 30, damping: 20 })
