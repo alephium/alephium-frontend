@@ -23,9 +23,7 @@
   "Fiat price": "Prezzo Fiat",
   "Gas Amount": "Quantità di Gas",
   "Gas Price": "Prezzo del Gas",
-  "Hash": "Hash",
   "Hashrate": "Tasso di Hashrate",
-  "Hashrate per": "Hashrate per",
   "Hash & Time": "Hash e Tempo",
   "Height": "Altezza",
   "Hourly": "Ogni ora",
@@ -50,14 +48,12 @@
   "Pending": "In attesa",
   "Previous": "Precedente",
   "Script execution failed": "L'esecuzione dello script non è riuscita",
-  "Search for an address or a tx...": "Cerca un indirizzo o un TX...",
   "Search": "Ricerca",
   "See more": "Vedi altro",
   "Self transfer": "Autotrasferimento",
   "Status": "Stato",
   "Success": "Successo",
   "Supply": "Fornitura",
-  "Timestamp": "Timestamp",
   "Tokens": "Gettoni",
   "Total Amount": "Importo Totale",
   "Total Amounts": "Importi Totali",
@@ -69,7 +65,6 @@
   "Transactions per hour": "Transazioni all'ora",
   "Hashrate per day": "Hashrate al giorno",
   "Hashrate per hour": "Hashrate all'ora",
-  "Txn": "Txn",
   "Unknown": "Sconosciuto",
   "dApp operation": "Operazione dApp",
   "from": "da",
@@ -138,4 +133,3 @@
   "Unsupported media type": "Tipo di contenuto multimediale non supportato",
   "Video thumbnail": "Miniatura video"
 }
-
