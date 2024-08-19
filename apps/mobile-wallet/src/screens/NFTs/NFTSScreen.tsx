@@ -24,7 +24,6 @@ import NFTsGrid from '~/components/NFTsGrid'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface ScreenProps
   extends StackScreenProps<InWalletTabsParamList & ReceiveNavigationParamList & SendNavigationParamList, 'NFTsScreen'>,
@@ -39,7 +38,6 @@ const NFTsScreen = ({ navigation, ...props }: ScreenProps) => {
       verticalGap
       contrastedBg
       screenTitleAlwaysVisible
-      contentContainerStyle={{ padding: DEFAULT_MARGIN }}
       headerOptions={{
         headerTitle: t('NFTs')
       }}
