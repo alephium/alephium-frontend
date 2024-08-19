@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Canvas, Circle } from '@shopify/react-native-skia'
+import { useWindowDimensions } from 'react-native'
 import Animated, {
   Extrapolation,
   interpolate,
@@ -35,25 +36,30 @@ interface AnimatedCirclesBackgroundProps {
 
 const AnimatedCirclesBackground = ({ scrollY }: AnimatedCirclesBackgroundProps) => {
   const gyroscope = useAnimatedSensor(SensorType.ROTATION)
+  const { width: screenWidth } = useWindowDimensions()
 
   const parallaxAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: interpolate(scrollY?.value || 0, [-200, 200], [-30, 30], Extrapolation.CLAMP) }]
   }))
 
-  const circle1X = useDerivedValue(() => withSpring(110 + gyroscope.sensor.value.roll * 25, { mass: 20, damping: 20 }))
-  const circle1Y = useDerivedValue(() => withSpring(230 + gyroscope.sensor.value.pitch * 25, { mass: 20, damping: 20 }))
+  const circle1X = useDerivedValue(() => withSpring(80 + gyroscope.sensor.value.roll * 25, { mass: 20, damping: 20 }))
+  const circle1Y = useDerivedValue(() => withSpring(140 + gyroscope.sensor.value.pitch * 25, { mass: 20, damping: 20 }))
 
-  const circle2X = useDerivedValue(() => withSpring(80 + gyroscope.sensor.value.roll * 20, { mass: 40, damping: 20 }))
-  const circle2Y = useDerivedValue(() => withSpring(130 + gyroscope.sensor.value.pitch * 20, { mass: 40, damping: 20 }))
+  const circle2X = useDerivedValue(() =>
+    withSpring(screenWidth / 2 + gyroscope.sensor.value.roll * 20, { mass: 40, damping: 20 })
+  )
+  const circle2Y = useDerivedValue(() => withSpring(90 + gyroscope.sensor.value.pitch * 20, { mass: 40, damping: 20 }))
 
-  const circle3X = useDerivedValue(() => withSpring(310 + gyroscope.sensor.value.roll * 23, { mass: 30, damping: 20 }))
-  const circle3Y = useDerivedValue(() => withSpring(120 + gyroscope.sensor.value.pitch * 23, { mass: 30, damping: 20 }))
+  const circle3X = useDerivedValue(() =>
+    withSpring(screenWidth - 50 + gyroscope.sensor.value.roll * 23, { mass: 30, damping: 20 })
+  )
+  const circle3Y = useDerivedValue(() => withSpring(160 + gyroscope.sensor.value.pitch * 23, { mass: 30, damping: 20 }))
 
   return (
     <AnimatedContainer style={parallaxAnimatedStyle}>
       <AnimatedBackgroundCanvas>
         <Circle r={90} color="#FFA621" cx={circle1X} cy={circle1Y} />
-        <Circle r={96} color="#FF2E21" cx={circle2X} cy={circle2Y} />
+        <Circle r={72} color="#FF2E21" cx={circle2X} cy={circle2Y} />
         <Circle r={80} color="#FB21FF" cx={circle3X} cy={circle3Y} />
       </AnimatedBackgroundCanvas>
     </AnimatedContainer>
