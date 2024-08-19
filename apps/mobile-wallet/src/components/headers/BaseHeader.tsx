@@ -48,7 +48,6 @@ export interface BaseHeaderProps extends ViewProps {
 }
 
 export const scrollEndThreshold = 80
-const gradientHeight = 110
 
 const isIos = Platform.OS === 'ios'
 
@@ -65,8 +64,8 @@ const BaseHeader = ({
   const theme = useTheme()
   const { width: screenWidth } = useWindowDimensions()
   const [headerHeight, setHeaderHeight] = useState(80)
-  const gradientHeight = headerHeight + 30
 
+  const gradientHeight = headerHeight + 30
   const defaultScrollRange = [0 + scrollEffectOffset, scrollEndThreshold + scrollEffectOffset]
   const paddingTop = isIos ? insets.top : insets.top + 7
 
@@ -93,7 +92,6 @@ const BaseHeader = ({
   )
 
   const handleHeaderLayout = (e: LayoutChangeEvent) => {
-    console.log(e.nativeEvent.layout.height)
     setHeaderHeight(e.nativeEvent.layout.height)
   }
 
