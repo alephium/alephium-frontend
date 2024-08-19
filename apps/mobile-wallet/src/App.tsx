@@ -30,7 +30,7 @@ import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ViewProps } from 'react-native'
+import { Platform, ViewProps } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
@@ -66,9 +66,11 @@ const App = () => {
       store.subscribe(() => {
         const currentTheme = themes[store.getState().settings.theme]
         setTheme(currentTheme)
-        NavigationBar.setBackgroundColorAsync(
-          currentTheme.name === 'light' ? currentTheme.bg.highlight : currentTheme.bg.back2
-        )
+        if (Platform.OS === 'android') {
+          NavigationBar.setBackgroundColorAsync(
+            currentTheme.name === 'light' ? currentTheme.bg.highlight : currentTheme.bg.back2
+          )
+        }
       }),
     []
   )
