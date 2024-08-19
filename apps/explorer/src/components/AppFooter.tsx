@@ -47,10 +47,9 @@ const AppFooter = ({ className }: AppFooterProps) => {
       </LeftGroup>
       <RightGroup>
         <Version>v{version}</Version>
-        <span>
-          <ExternalLink href="https://github.com/alephium/explorer">{t('Source code')} ↗</ExternalLink>
-        </span>
+        <ExternalLink href="https://github.com/alephium/explorer">{t('Source code')} ↗</ExternalLink>
         <ExternalLink href="https://alephium.org">Alephium.org ↗</ExternalLink>
+        <ExternalLink href="https://alephium.org/privacy-policy/">Privacy Policy ↗</ExternalLink>
         <SocialMediaIconList>
           {socialMediaData.map((d) => (
             <ExternalLink href={d.link} key={d.name}>
