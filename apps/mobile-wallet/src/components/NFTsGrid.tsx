@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, NFT } from '@alephium/shared'
 import { FlashList } from '@shopify/flash-list'
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, Dimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -37,27 +36,31 @@ interface NFTsGridProps extends ModalContentProps {
   nftSize?: number
 }
 
-const gap = 12
-const screenPadding = DEFAULT_MARGIN
+const gap = DEFAULT_MARGIN / 2
+const containerHorizontalPadding = DEFAULT_MARGIN - gap
 
 const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3 }: NFTsGridProps) => {
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
   const theme = useTheme()
-  const { t } = useTranslation()
 
   const data = nftsProp ?? nfts
   const columns = nftsPerRow
   const { width: windowWidth } = Dimensions.get('window')
-  const totalGapSize = (columns - 1) * gap + screenPadding * 2
+  const totalGapSize = columns * gap * 2 + containerHorizontalPadding * 2
   const size = nftSize ?? (windowWidth - totalGapSize) / columns
 
   return (
     <FlashList
       data={data}
       keyExtractor={(item) => item.id}
-      renderItem={({ item: nft }) => <NFTThumbnail key={nft.id} nftId={nft.id} size={size} />}
+      renderItem={({ item: nft }) => (
+        <NFTThumbnailContainer>
+          <NFTThumbnail key={nft.id} nftId={nft.id} size={size} />
+        </NFTThumbnailContainer>
+      )}
+      contentContainerStyle={{ paddingHorizontal: containerHorizontalPadding }}
       numColumns={columns}
       estimatedItemSize={64}
       ListEmptyComponent={
@@ -77,6 +80,12 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3 }: NFTs
 }
 
 export default NFTsGrid
+
+const NFTThumbnailContainer = styled.View`
+  margin: ${gap}px;
+  overflow: hidden;
+  border-radius: 9px;
+`
 
 const NoNFTsMessage = styled.View`
   text-align: center;
