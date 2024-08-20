@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-  AddressFungibleToken,
   AddressHash,
   Asset,
   contactsAdapter,
@@ -106,22 +105,6 @@ const calculateAssetsData = (tokenBalances: TokenDisplayBalances[], fungibleToke
 
     return acc
   }, [] as Asset[])
-
-export const makeSelectAddressesKnownFungibleTokens = () =>
-  createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken[] =>
-    tokens.filter((token): token is AddressFungibleToken => !!token.symbol)
-  )
-
-export const makeSelectAddressesVerifiedFungibleTokens = () =>
-  createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken[] =>
-    tokens.filter((token): token is AddressFungibleToken => !!token.verified)
-  )
-
-// TODO: Remove once tokens are fetched by Tanstack
-export const makeSelectAddressesListedFungibleTokenSymbols = () =>
-  createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken['symbol'][] =>
-    tokens.filter((token): token is AddressFungibleToken => !!token.verified).map(({ symbol }) => symbol)
-  )
 
 export const makeSelectAddressesUnknownTokens = () =>
   createSelector(
