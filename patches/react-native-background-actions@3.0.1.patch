@@ -10,7 +10,7 @@ index b67ef4d1837363489a1749acb852997a6c93c1b5..6aa30a826c2f17a35ccd30b64291d3d2
      <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
      <application>
 -        <service android:name=".RNBackgroundActionsTask"/>
-+        <service android:name=".RNBackgroundActionsTask" android:foregroundServiceType="dataSync" />
++        <service android:name=".RNBackgroundActionsTask" android:foregroundServiceType="dataSync" android:stopWithTask="true" />
      </application>
  </manifest>
 diff --git a/android/src/main/java/com/asterinet/react/bgactions/RNBackgroundActionsTask.java b/android/src/main/java/com/asterinet/react/bgactions/RNBackgroundActionsTask.java

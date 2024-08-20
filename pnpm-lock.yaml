@@ -30,7 +30,7 @@ patchedDependencies:
     hash: sm7rpv6bikakdvmsl6ekayqewu
     path: patches/react-native-aes-crypto@2.1.1.patch
   react-native-background-actions@3.0.1:
-    hash: 3u44z2aocqips4ucm32wcdde3y
+    hash: bczt4hbkdy2a6n4hvzyilx3qg4
     path: patches/react-native-background-actions@3.0.1.patch
 
 importers:
@@ -746,7 +746,7 @@ importers:
         version: 2.1.1(patch_hash=sm7rpv6bikakdvmsl6ekayqewu)
       react-native-background-actions:
         specifier: ^3.0.1
-        version: 3.0.1(patch_hash=3u44z2aocqips4ucm32wcdde3y)(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.23.8(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.2.0))
+        version: 3.0.1(patch_hash=bczt4hbkdy2a6n4hvzyilx3qg4)(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.23.8(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.2.0))
       react-native-background-timer:
         specifier: ^2.4.1
         version: 2.4.1(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.23.8(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.2.0))
@@ -21740,7 +21740,7 @@ snapshots:
 
   react-native-aes-crypto@2.1.1(patch_hash=sm7rpv6bikakdvmsl6ekayqewu): {}
 
-  react-native-background-actions@3.0.1(patch_hash=3u44z2aocqips4ucm32wcdde3y)(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.23.8(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.2.0)):
+  react-native-background-actions@3.0.1(patch_hash=bczt4hbkdy2a6n4hvzyilx3qg4)(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.23.8(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.2.0)):
     dependencies:
       eventemitter3: 4.0.7
       react-native: 0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.23.8(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.2.0)

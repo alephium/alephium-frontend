@@ -16,9 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, RadialGradient, Rect, vec } from '@shopify/react-native-skia'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { AppState, Dimensions, Image, LayoutChangeEvent, Platform, StatusBar } from 'react-native'
 import Animated, {
@@ -37,7 +38,7 @@ import styled, { ThemeProvider, useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import altLogoSrc from '~/images/logos/alephiumHackLogo.png'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -46,6 +47,7 @@ import { methodSelected, WalletGenerationMethod } from '~/store/walletGeneration
 import { BORDER_RADIUS_BIG, BORDER_RADIUS_HUGE } from '~/style/globalStyle'
 import { themes } from '~/style/themes'
 import { showExceptionToast } from '~/utils/layout'
+import { resetNavigation } from '~/utils/navigation'
 
 interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
 
@@ -57,10 +59,24 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const insets = useSafeAreaInsets()
   const theme = useTheme()
   const { t } = useTranslation()
+  const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
 
   const { width, height } = Dimensions.get('window')
   const [dimensions, setDimensions] = useState({ width, height })
   const [showNewWalletButtons, setShowNewWalletButtons] = useState(false)
+
+  // Normally, when the app is unlocked, this screen is not in focus. However, under certain conditions we end up with
+  // an unlocked wallet and no screen in focus at all. This happens when:
+  // 1. the auto-lock is set to anything but "Fast"
+  // 2. the user manually kills the app before the auto-lock timer completes
+  // 3. the WalletConnect feature is activated
+  // Since there is no screen in focus and since the default screen set in the RootStackNavigation is this screen, we
+  // need to navigate back to the dashboard.
+  useFocusEffect(
+    useCallback(() => {
+      if (isWalletUnlocked) resetNavigation(navigation)
+    }, [isWalletUnlocked, navigation])
+  )
 
   useEffect(() => {
     const unsubscribeBlurListener = navigation.addListener('blur', () => {
