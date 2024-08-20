@@ -27,7 +27,7 @@ import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Amount from '@/components/Amount'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import AssetsLogosList from '@/features/assetsLists/AssetLogosList'
+import AssetsBadgesList from '@/features/assetsLists/AssetsBadgesList'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
@@ -84,7 +84,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           </SecondaryText>
         </Cell>
         <Cell>
-          <AssetsLogosList addressHash={addressHash} />
+          <AssetsBadgesListStyled addressHash={addressHash} simple />
         </Cell>
         <FiatAmountCell>
           {stateUninitialized || isLoadingTokenPrices ? (
@@ -160,4 +160,9 @@ const FiatAmountCell = styled(AmountCell)`
 const AddressNameCell = styled(Cell)`
   gap: 20px;
   cursor: pointer;
+`
+
+const AssetsBadgesListStyled = styled(AssetsBadgesList)`
+  padding: 0px 16px;
+  gap: var(--spacing-3);
 `
