@@ -17,17 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useSortTokensByWorth } from '@/api/addressesTokensPricesDataHooks'
 import AddressBadge from '@/components/AddressBadge'
-import AssetBadge from '@/components/AssetBadge'
-import Badge from '@/components/Badge'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
+import AssetsLogosList from '@/features/assetsLists/AssetsBadgesList'
 import { useAppSelector } from '@/hooks/redux'
-import { makeSelectAddressesTokens, selectAddressByHash } from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 interface SelectOptionAddressProps {
   addressHash: AddressHash
@@ -37,13 +34,7 @@ interface SelectOptionAddressProps {
 
 const SelectOptionAddress = ({ addressHash, isSelected, className }: SelectOptionAddressProps) => {
   const { t } = useTranslation()
-  const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
-  const assets = useAppSelector((s) => selectAddressesTokens(s, addressHash))
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-
-  const knownAssetsWithBalance = useSortTokensByWorth(assets.filter((a) => a.balance > 0 && a.name))
-  const unknownAssetsNb = assets.filter((a) => a.balance > 0 && !a.name).length
-  const showAssetList = knownAssetsWithBalance.length > 0 || unknownAssetsNb > 0
 
   return (
     <SelectOptionItemContent
@@ -61,16 +52,7 @@ const SelectOptionAddress = ({ addressHash, isSelected, className }: SelectOptio
           </Group>
         </Header>
       }
-      SecondaryContent={
-        showAssetList ? (
-          <AssetList>
-            {knownAssetsWithBalance.map((a) => (
-              <AssetBadge key={a.id} assetId={a.id} amount={a.balance} withBackground />
-            ))}
-            {unknownAssetsNb > 0 && <Badge compact>+ {unknownAssetsNb}</Badge>}
-          </AssetList>
-        ) : undefined
-      }
+      SecondaryContent={<AssetsLogosList addressHash={addressHash} withBackground showAmount />}
     />
   )
 }
@@ -99,11 +81,4 @@ const AddressBadgeContainer = styled.div`
 const AddressBadgeStyled = styled(AddressBadge)`
   font-size: 17px;
   max-width: 70%;
-`
-
-const AssetList = styled.div`
-  display: flex;
-  gap: var(--spacing-2);
-  flex-wrap: wrap;
-  align-items: center;
 `
