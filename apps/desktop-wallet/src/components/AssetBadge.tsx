@@ -23,14 +23,17 @@ import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import { useAppSelector } from '@/hooks/redux'
 
-interface AssetBadgeProps {
-  assetId: Asset['id']
-  amount?: bigint
+export interface AssetBadgeStyleProps {
   simple?: boolean
   withBorder?: boolean
   withBackground?: boolean
   hideNftName?: boolean
   className?: string
+}
+
+interface AssetBadgeProps extends AssetBadgeStyleProps {
+  assetId: Asset['id']
+  amount?: bigint
 }
 
 const AssetBadge = ({ assetId, amount, simple, hideNftName, className }: AssetBadgeProps) => {
