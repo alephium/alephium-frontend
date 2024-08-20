@@ -20,26 +20,32 @@ import { AddressHash } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
 import { useAddressesNfts } from '@/api/addressesNftsDataHooks'
 import { useAddressesUnlistedNonStandardTokenIds } from '@/api/addressesUnlistedTokensHooks'
-import AssetBadge from '@/components/AssetBadge'
+import AssetBadge, { AssetBadgeStyleProps } from '@/components/AssetBadge'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import useAddressesSortedFungibleTokens from '@/features/assetsLists/useSortedFungibleTokens'
 
-interface AssetsLogosListProps {
+interface AssetsLogosListProps extends AssetBadgeStyleProps {
   addressHash: AddressHash
   maxDisplayedAssets?: number
-  className?: string
+  showAmount?: boolean
 }
 
-const AssetsLogosList = ({ addressHash, maxDisplayedAssets = 8, className }: AssetsLogosListProps) => {
+const AssetsLogosList = ({
+  addressHash,
+  maxDisplayedAssets = 8,
+  className,
+  showAmount,
+  ...badgeProps
+}: AssetsLogosListProps) => {
   const { t } = useTranslation()
+  const { data: tokensBalances } = useAddressesTokensBalances(addressHash)
   const { data: sortedFTs, isLoading: isLoadingSortedFTs } = useAddressesSortedFungibleTokens(addressHash)
   const { data: NFTs, isLoading: isLoadingNFTs } = useAddressesNfts(addressHash)
   const { data: nonStandardTokens, isLoading: isLoadingNonStandardTokens } =
     useAddressesUnlistedNonStandardTokenIds(addressHash)
-
-  const isLoading = isLoadingSortedFTs || isLoadingNFTs || isLoadingNonStandardTokens
 
   const displayedFTs = sortedFTs.slice(0, maxDisplayedAssets)
   const hiddenFTs = sortedFTs.slice(maxDisplayedAssets)
@@ -52,31 +58,39 @@ const AssetsLogosList = ({ addressHash, maxDisplayedAssets = 8, className }: Ass
     nonStandardTokens.length > 0 ? t('unknownTokensKey', { count: nonStandardTokens.length }) : []
   ].join(', ')
 
+  const isLoading = isLoadingSortedFTs || isLoadingNonStandardTokens
+  const showList = displayedFTs.length > 0 || displayedNFTs.length > 0 || !!hiddenAssetsTooltipText
+
   return isLoading ? (
     <SkeletonLoader height="33.5px" />
-  ) : (
+  ) : showList ? (
     <AssetsLogosListStyled className={className}>
       {displayedFTs.map(({ id }) => (
-        <AssetBadge key={id} assetId={id} simple />
+        <AssetBadge
+          key={id}
+          assetId={id}
+          amount={showAmount ? tokensBalances[id]?.balance : undefined}
+          {...badgeProps}
+        />
       ))}
       {displayedNFTs.map(({ id }) => (
-        <AssetBadge key={id} assetId={id} simple hideNftName />
+        <AssetBadge key={id} assetId={id} hideNftName {...badgeProps} />
       ))}
       {hiddenAssetsTooltipText && (
         <span data-tooltip-id="default" data-tooltip-content={hiddenAssetsTooltipText}>
           +{hiddenFTs.length + hiddenNFTs.length + nonStandardTokens.length}
         </span>
       )}
+      {isLoadingNFTs && <SkeletonLoader height="33.5px" />}
     </AssetsLogosListStyled>
-  )
+  ) : null
 }
 
 export default AssetsLogosList
 
 const AssetsLogosListStyled = styled.div`
-  padding: 0px 16px;
   display: flex;
-  gap: 15px;
+  gap: var(--spacing-2);
   flex-wrap: wrap;
   align-items: center;
 `
