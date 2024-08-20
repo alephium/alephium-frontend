@@ -22,6 +22,7 @@ import { explorer } from '@alephium/web3'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
+import { useAddressesAlphBalances } from '@/api/addressesBalancesDataHooks'
 import { addressTokensBalanceQuery } from '@/api/addressQueries'
 import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
 import { useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
@@ -31,6 +32,7 @@ export const useAddressesListedFungibleTokens = (addressHash?: AddressHash) => {
   const { data: fungibleTokenList, isLoading: isLoadingFungibleTokenList } = useFungibleTokenList()
   const { data: latestAddressesTxHashes, isLoading: isLoadingLastTxHashes } =
     useAddressesLastTransactionHashes(addressHash)
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalances(addressHash)
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data, isLoading } = useQueries({
@@ -49,7 +51,7 @@ export const useAddressesListedFungibleTokens = (addressHash?: AddressHash) => {
           return acc
         },
         // Include ALPH in the results
-        [ALPH] as TokenInfo[]
+        (alphBalances.balance > 0 ? [ALPH] : []) as TokenInfo[]
       ),
       isLoading: results.some(({ isLoading }) => isLoading)
     })
@@ -57,7 +59,7 @@ export const useAddressesListedFungibleTokens = (addressHash?: AddressHash) => {
 
   return {
     data,
-    isLoading: isLoading || isLoadingFungibleTokenList || isLoadingLastTxHashes
+    isLoading: isLoading || isLoadingFungibleTokenList || isLoadingLastTxHashes || isLoadingAlphBalances
   }
 }
 
