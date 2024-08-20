@@ -117,7 +117,8 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
             <SkeletonLoader height="33.5px" />
           ) : (
             <AssetLogos>
-              {displayedAssets && displayedAssets.map(({ id }) => <AssetBadge key={id} assetId={id} simple />)}
+              {displayedAssets &&
+                displayedAssets.map(({ id }) => <AssetBadge key={id} assetId={id} simple hideNftName />)}
               {hiddenAssets && hiddenAssets.length > 0 && (
                 <span data-tooltip-id="default" data-tooltip-content={hiddenAssetsTooltipText}>
                   +{hiddenAssets.length}
