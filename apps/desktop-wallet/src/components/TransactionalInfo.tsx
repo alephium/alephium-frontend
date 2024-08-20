@@ -97,7 +97,9 @@ const TransactionalInfo = ({
           {knownAssets.map(({ id, amount, decimals, symbol }) => (
             <HiddenLabel key={id} text={`${formatAmountForDisplay({ amount, amountDecimals: decimals })} ${symbol}`} />
           ))}
-          {unknownAssets.length > 0 && <HiddenLabel text={` + ${unknownAssets} ${t('Unknown tokens')}`} />}
+          {unknownAssets.length > 0 && (
+            <HiddenLabel text={` +${t('unknownTokensKey', { count: unknownAssets.length })}`} />
+          )}
           <AssetTime>
             <TimeSince timestamp={tx.timestamp} faded />
           </AssetTime>
