@@ -17,20 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { appBecameInactive } from '@alephium/shared'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
 import BackgroundTimer from 'react-native-background-timer'
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-interface UseAutoLockProps {
-  unlockApp: () => Promise<void>
-  onAuthRequired: () => void
-}
-
 let lockTimer: number | undefined
 
-const useAutoLock = ({ unlockApp, onAuthRequired }: UseAutoLockProps) => {
+const useAutoLock = (unlockApp: () => Promise<void>) => {
   const appState = useRef<AppStateStatus>('active')
   const settingsLoadedFromStorage = useAppSelector((s) => s.settings.loadedFromStorage)
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
@@ -41,12 +36,6 @@ const useAutoLock = ({ unlockApp, onAuthRequired }: UseAutoLockProps) => {
 
   const [isAppStateChangeCallbackRegistered, setIsAppStateChangeCallbackRegistered] = useState(false)
 
-  const lockApp = useCallback(() => {
-    if (biometricsRequiredForAppAccess) onAuthRequired()
-
-    dispatch(appBecameInactive())
-  }, [biometricsRequiredForAppAccess, dispatch, onAuthRequired])
-
   useEffect(() => {
     if (!settingsLoadedFromStorage) return
 
@@ -54,12 +43,12 @@ const useAutoLock = ({ unlockApp, onAuthRequired }: UseAutoLockProps) => {
       if (autoLockSeconds !== -1) {
         if (nextAppState === 'background' && isWalletUnlocked && !isCameraOpen) {
           if (autoLockSeconds === 0) {
-            lockApp()
+            dispatch(appBecameInactive())
           } else {
             clearBackgroundTimer()
             lockTimer = BackgroundTimer.setTimeout(() => {
               if (lockTimer) {
-                lockApp()
+                dispatch(appBecameInactive())
               }
             }, autoLockSeconds * 1000)
           }
@@ -93,7 +82,6 @@ const useAutoLock = ({ unlockApp, onAuthRequired }: UseAutoLockProps) => {
     isAppStateChangeCallbackRegistered,
     isCameraOpen,
     isWalletUnlocked,
-    lockApp,
     settingsLoadedFromStorage,
     unlockApp
   ])
