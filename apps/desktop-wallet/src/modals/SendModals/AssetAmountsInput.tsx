@@ -16,14 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
+import { fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { MoreVertical, Plus } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import useAddressesDisplayTokens, { getTokenDisplayData } from '@/api/useAddressesDisplayTokens'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -34,13 +35,11 @@ import HashEllipsed from '@/components/HashEllipsed'
 import { inputDefaultStyle, InputProps } from '@/components/Inputs'
 import Input from '@/components/Inputs/Input'
 import { SelectContainer, SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
-import SelectOptionAsset from '@/components/Inputs/SelectOptionAsset'
+import SelectOptionToken from '@/components/Inputs/SelectOptionToken'
 import Truncate from '@/components/Truncate'
-import { useAppSelector } from '@/hooks/redux'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
 import InputsSection from '@/modals/SendModals/InputsSection'
-import { makeSelectAddressesTokens } from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
 import { AssetAmountInputType } from '@/types/assets'
 import { onEnterOrSpace } from '@/utils/misc'
@@ -63,69 +62,75 @@ const AssetAmountsInput = ({
 }: AssetAmountsInputProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
-  const assets = useAppSelector((state) => selectAddressesTokens(state, address.hash))
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const selectedValueRef = useRef<HTMLDivElement>(null)
+  const { data: tokens } = useAddressesDisplayTokens(address.hash)
+
+  const allTokensOptions = tokens.map((token) => ({
+    value: token.id,
+    label: token.type === 'nonStandardToken' ? token.id : token.name
+  }))
 
   const [isAssetSelectModalOpen, setIsAssetSelectModalOpen] = useState(false)
   const [selectedAssetRowIndex, setSelectedAssetRowIndex] = useState(0)
   const [errors, setErrors] = useState<string[]>([])
 
   const selectedAssetId = assetAmounts[selectedAssetRowIndex]?.id
-  const selectedAsset = assets.find((asset) => asset.id === selectedAssetId)
+  const selectedOption = allTokensOptions.find((option) => option.value === selectedAssetId)
   const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
   const selectedAssetIds = assetAmounts.map(({ id }) => id)
-  const remainingAvailableAssets = assets.filter(
-    (asset) => !selectedAssetIds.includes(asset.id) && asset.balance > BigInt(0)
-  )
-  const disabled = remainingAvailableAssets.length === 0
-  const availableAssetOptions: SelectOption<Asset['id']>[] = remainingAvailableAssets.map((asset) => ({
-    value: asset.id,
-    label: asset.name ?? asset.id
-  }))
-  const canAddMultipleAssets = allowMultiple && assetAmounts.length < assets.length
+  const remainingAvailableAssetsOptions = allTokensOptions.filter((option) => !selectedAssetIds.includes(option.value))
+  const disabled = remainingAvailableAssetsOptions.length === 0
+  const canAddMultipleAssets = allowMultiple && assetAmounts.length < tokens.length
 
   const openAssetSelectModal = (assetRowIndex: number) => {
     setSelectedAssetRowIndex(assetRowIndex)
     setIsAssetSelectModalOpen(true)
   }
 
-  const handleAssetSelect = (asset: Asset) => {
+  const handleAssetSelect = (id: string) => {
     const newAssetAmounts = [...assetAmounts]
-    newAssetAmounts.splice(selectedAssetRowIndex, 1, {
-      id: asset.id
-    })
+    newAssetAmounts.splice(selectedAssetRowIndex, 1, { id })
     onAssetAmountsChange(newAssetAmounts)
   }
 
   const handleAssetAmountChange = (assetRowIndex: number, amountInput: string) => {
     const selectedAssetId = assetAmounts[assetRowIndex].id
-    const selectedAsset = assets.find((asset) => asset.id === selectedAssetId)
+    const selectedAsset = tokens.find((asset) => asset.id === selectedAssetId)
 
     if (!selectedAsset) return
 
     const cleanedAmount = amountInput === '00' ? '0' : amountInput
     const amountValueAsFloat = parseFloat(cleanedAmount)
-    const tooManyDecimals = getNumberOfDecimals(cleanedAmount) > (selectedAsset?.decimals ?? 0)
-    const availableAmount = toHumanReadableAmount(
-      selectedAsset.balance - selectedAsset.lockedBalance,
-      selectedAsset.decimals
-    )
+
+    const availableAmount =
+      selectedAsset.type === 'NFT'
+        ? toHumanReadableAmount(BigInt(1))
+        : toHumanReadableAmount(
+            selectedAsset.availableBalance ?? BigInt(0),
+            selectedAsset.type === 'nonStandardToken' ? 0 : selectedAsset.decimals
+          )
 
     const newError =
       amountValueAsFloat > parseFloat(availableAmount)
         ? t('Amount exceeds available balance')
         : selectedAssetId === ALPH.id && amountValueAsFloat < parseFloat(minAmountInAlph) && amountValueAsFloat !== 0
           ? t('Amount must be greater than {{ minAmountInAlph }}', { minAmountInAlph })
-          : tooManyDecimals
+          : (selectedAsset.type === 'listedFT' || selectedAsset.type === 'unlistedFT') &&
+              getNumberOfDecimals(cleanedAmount) > selectedAsset.decimals
             ? t('This asset cannot have more than {{ decimals }} decimals', { decimals: selectedAsset.decimals })
             : ''
+
     const newErrors = [...errors]
     newErrors.splice(assetRowIndex, 1, newError)
     setErrors(newErrors)
 
-    const amount = !cleanedAmount ? undefined : fromHumanReadableAmount(cleanedAmount, selectedAsset.decimals)
+    const amount = !cleanedAmount
+      ? undefined
+      : fromHumanReadableAmount(
+          cleanedAmount,
+          selectedAsset.type === 'listedFT' || selectedAsset.type === 'unlistedFT' ? selectedAsset.decimals : 0
+        )
     const newAssetAmounts = [...assetAmounts]
     newAssetAmounts.splice(assetRowIndex, 1, {
       id: selectedAssetId,
@@ -136,10 +141,10 @@ const AssetAmountsInput = ({
   }
 
   const handleAddAssetClick = () => {
-    if (remainingAvailableAssets.length > 0) {
+    if (remainingAvailableAssetsOptions.length > 0) {
       const newAssetAmounts = [...assetAmounts]
       newAssetAmounts.push({
-        id: remainingAvailableAssets[0].id
+        id: remainingAvailableAssetsOptions[0].value
       })
       onAssetAmountsChange(newAssetAmounts)
     }
@@ -165,9 +170,8 @@ const AssetAmountsInput = ({
 
   const handleAssetSelectModalOpen = (index: number) => !disabled && allowMultiple && openAssetSelectModal(index)
 
-  const selectAsset = (option: SelectOption<Asset['id']>) => {
-    const asset = remainingAvailableAssets.find((asset) => asset.id === option.value)
-    asset && handleAssetSelect(asset)
+  const selectAsset = (option: SelectOption<string>) => {
+    handleAssetSelect(option.value)
   }
 
   useEffect(() => {
@@ -188,6 +192,11 @@ const AssetAmountsInput = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address])
 
+  const renderOption = (option: SelectOption<string>) => {
+    const token = tokens.find((token) => token.id === option.value)
+    return token && <SelectOptionToken {...token} />
+  }
+
   return (
     <InputsSection
       title={t(assetAmounts.length < 2 ? 'Asset' : 'Assets')}
@@ -204,11 +213,11 @@ const AssetAmountsInput = ({
     >
       <AssetAmounts ref={selectedValueRef}>
         {assetAmounts.map(({ id, amountInput = '' }, index) => {
-          const asset = assets.find((asset) => asset.id === id)
-          if (!asset) return
+          const token = tokens.find((token) => token.id === id)
+          if (!token) return
 
-          const availableAmount = asset.balance - asset.lockedBalance
-          const availableHumanReadableAmount = toHumanReadableAmount(availableAmount, asset.decimals)
+          const { image, name, symbol, amount, decimals } = getTokenDisplayData(token)
+          const availableHumanReadableAmount = toHumanReadableAmount(amount ?? BigInt(0), decimals)
 
           return (
             <BoxStyled key={id}>
@@ -221,15 +230,9 @@ const AssetAmountsInput = ({
                   disabled={disabled || !allowMultiple || !canAddMultipleAssets}
                   id={id}
                 >
-                  <AssetLogo assetImageUrl={asset.logoURI} size={20} assetName={asset.name} />
+                  <AssetLogo assetImageUrl={image} size={20} assetName={name} isNft={token.type === 'NFT'} />
                   <AssetName>
-                    <Truncate>
-                      {asset.name ? (
-                        `${asset.name} ${asset.symbol ? `(${asset.symbol})` : ''}`
-                      ) : (
-                        <HashEllipsed hash={asset.id} />
-                      )}
-                    </Truncate>
+                    <Truncate>{name ? `${name} ${symbol ? `(${symbol})` : ''}` : <HashEllipsed hash={id} />}</Truncate>
                   </AssetName>
                   {canAddMultipleAssets && (
                     <SelectVerticalDots>
@@ -247,22 +250,22 @@ const AssetAmountsInput = ({
                   onMouseDown={() => setSelectedAssetRowIndex(index)}
                   onKeyDown={(e) => onEnterOrSpace(e, () => setSelectedAssetRowIndex(index))}
                   type="number"
-                  min={asset.id === ALPH.id ? minAmountInAlph : 0}
+                  min={token.id === ALPH.id ? minAmountInAlph : 0}
                   max={availableHumanReadableAmount}
                   aria-label={t('Amount')}
-                  label={`${t('Amount')} ${asset.symbol ? `(${asset.symbol})` : ''}`}
+                  label={`${t('Amount')} ${symbol ? `(${symbol})` : ''}`}
                   error={errors[index]}
                 />
 
                 <AvailableAmountColumn>
                   <AvailableAmount tabIndex={0}>
                     <Amount
-                      value={availableAmount}
+                      value={amount}
                       nbOfDecimalsToShow={4}
                       color={theme.font.secondary}
-                      suffix={asset.symbol}
-                      decimals={asset.decimals}
-                      isUnknownToken={!asset.symbol}
+                      suffix={symbol}
+                      decimals={decimals}
+                      isNonStandardToken={token.type === 'nonStandardToken'}
                     />
                     <span> {t('Available').toLowerCase()}</span>
                   </AvailableAmount>
@@ -277,18 +280,15 @@ const AssetAmountsInput = ({
         })}
       </AssetAmounts>
       <ModalPortal>
-        {isAssetSelectModalOpen && selectedAsset && remainingAvailableAssets.length > 0 && (
+        {isAssetSelectModalOpen && selectedOption && remainingAvailableAssetsOptions.length > 0 && (
           <SelectOptionsModal
             title={t('Select an asset')}
-            options={availableAssetOptions}
-            selectedOption={availableAssetOptions.find((option) => option.value === selectedAsset.id)}
+            options={remainingAvailableAssetsOptions}
+            selectedOption={selectedOption}
             setValue={selectAsset}
             onClose={handleAssetSelectModalClose}
             parentSelectRef={selectedValueRef}
-            optionRender={(option) => {
-              const asset = remainingAvailableAssets.find((asset) => asset.id === option.value)
-              if (asset) return <SelectOptionAsset asset={asset} />
-            }}
+            optionRender={renderOption}
           />
         )}
       </ModalPortal>

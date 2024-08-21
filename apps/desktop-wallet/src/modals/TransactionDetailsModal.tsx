@@ -219,7 +219,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
                     fullPrecision
                     decimals={decimals}
                     suffix={symbol}
-                    isUnknownToken={!symbol}
+                    isNonStandardToken={!symbol}
                     highlight={!isMoved}
                     showPlusMinus={!isMoved}
                   />
@@ -242,7 +242,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
               <Amounts>
                 {unknownTokens.map(({ id, amount, symbol }) => (
                   <AmountContainer key={id}>
-                    <Amount tabIndex={0} value={amount} isUnknownToken={!symbol} highlight />
+                    <Amount tabIndex={0} value={amount} isNonStandardToken={!symbol} highlight />
                     {!symbol && <TokenHash hash={id} />}
                   </AmountContainer>
                 ))}

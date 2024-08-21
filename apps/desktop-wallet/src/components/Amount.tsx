@@ -34,7 +34,7 @@ interface AmountProps {
   overrideSuffixColor?: boolean
   tabIndex?: number
   suffix?: string
-  isUnknownToken?: boolean
+  isNonStandardToken?: boolean
   highlight?: boolean
   showPlusMinus?: boolean
   className?: string
@@ -53,7 +53,7 @@ const Amount = ({
   overrideSuffixColor,
   tabIndex,
   highlight,
-  isUnknownToken,
+  isNonStandardToken,
   showPlusMinus = false
 }: AmountProps) => {
   const dispatch = useAppDispatch()
@@ -67,7 +67,7 @@ const Amount = ({
   if (value !== undefined) {
     if (isFiat && typeof value === 'number') {
       amount = formatFiatAmountForDisplay(value)
-    } else if (isUnknownToken) {
+    } else if (isNonStandardToken) {
       amount = value.toString()
     } else {
       isNegative = value < 0
@@ -114,7 +114,7 @@ const Amount = ({
         '-'
       )}
 
-      {!isUnknownToken && <Suffix color={overrideSuffixColor ? color : undefined}>{` ${suffix ?? 'ALPH'}`}</Suffix>}
+      {!isNonStandardToken && <Suffix color={overrideSuffixColor ? color : undefined}>{` ${suffix ?? 'ALPH'}`}</Suffix>}
     </AmountStyled>
   )
 }

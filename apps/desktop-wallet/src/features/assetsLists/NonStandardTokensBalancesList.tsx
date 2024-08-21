@@ -24,7 +24,7 @@ import { ExpandRow } from '@/components/Table'
 import TokenBalancesRow from '@/features/assetsLists/TokenBalancesRow'
 import { AssetsTabsProps } from '@/features/assetsLists/types'
 
-const UnknownTokensBalancesList = ({ className, addressHash, isExpanded, onExpand }: AssetsTabsProps) => {
+const NonStandardTokensBalancesList = ({ className, addressHash, isExpanded, onExpand }: AssetsTabsProps) => {
   const { data: addressesNonStandardTokenIds } = useAddressesUnlistedNonStandardTokenIds(addressHash)
 
   return (
@@ -40,4 +40,4 @@ const UnknownTokensBalancesList = ({ className, addressHash, isExpanded, onExpan
   )
 }
 
-export default UnknownTokensBalancesList
+export default NonStandardTokensBalancesList
