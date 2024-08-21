@@ -67,7 +67,7 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
                 value={BigInt(asset.amount)}
                 suffix={fungibleToken?.symbol}
                 decimals={fungibleToken?.decimals}
-                isUnknownToken={!fungibleToken?.symbol}
+                isNonStandardToken={!fungibleToken?.symbol}
                 fullPrecision
               />
               {asset.id === ALPH.id && !!extraAlphForDust && (

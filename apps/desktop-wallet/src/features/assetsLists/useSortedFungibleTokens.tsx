@@ -23,7 +23,9 @@ import { useMemo } from 'react'
 import { useAddressesListedFungibleTokens } from '@/api/addressesListedFungibleTokensDataHooks'
 import { useAddressesTokensWorth } from '@/api/addressesTokensPricesDataHooks'
 import { useAddressesUnlistedFungibleTokens } from '@/api/addressesUnlistedTokensHooks'
+import { ListedFT, UnlistedFT } from '@/types/tokens'
 
+// TODO: Merge with useAddressDisplayTokens?
 const useAddressesSortedFungibleTokens = (addressHash?: AddressHash) => {
   const { data: addressesTokensWorth, isLoading: isLoadingTokensWorth } = useAddressesTokensWorth(addressHash)
   const { data: addressesListedFungibleTokens, isLoading: isLoadingListedFungibleTokens } =
@@ -41,7 +43,7 @@ const useAddressesSortedFungibleTokens = (addressHash?: AddressHash) => {
       ...orderBy(addressesUnlistedFungibleTokens, [(t) => t.name.toLowerCase(), 'id'], ['asc', 'asc'])
     ],
     [addressesListedFungibleTokens, addressesTokensWorth, addressesUnlistedFungibleTokens]
-  )
+  ) as (ListedFT | UnlistedFT)[]
 
   return {
     data: sortedTokens,
