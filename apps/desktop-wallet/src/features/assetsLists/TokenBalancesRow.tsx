@@ -20,10 +20,7 @@ import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import { useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
-import { useAddressesListedFungibleTokens } from '@/api/addressesListedFungibleTokensDataHooks'
-import { useAddressesTokensWorth } from '@/api/addressesTokensPricesDataHooks'
-import { useAddressesUnlistedFungibleTokens } from '@/api/addressesUnlistedTokensHooks'
+import useAddressesDisplayTokens, { getTokenDisplayData } from '@/api/useAddressesDisplayTokens'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import HashEllipsed from '@/components/HashEllipsed'
@@ -44,49 +41,52 @@ const TokenBalancesRow = ({ tokenId, addressHash, isExpanded }: TokenBalancesRow
   const { t } = useTranslation()
   const theme = useTheme()
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const { balances, logoUri, info, worth, isUnlisted, isLoading } = useAddressesToken(tokenId, addressHash)
+  const { data: tokens, isLoadingFTs } = useAddressesDisplayTokens(addressHash)
+  const token = tokens.find((token) => token.id === tokenId)
 
-  if (!balances) return null
+  if (!token) return null
+
+  const { image, name, symbol, balance, availableBalance, decimals, worth } = getTokenDisplayData(token)
 
   return (
     <TableRow key={tokenId} role="row" tabIndex={isExpanded ? 0 : -1}>
       <TokenRow>
-        <AssetLogoStyled assetImageUrl={logoUri} size={30} assetName={info?.name} />
+        <AssetLogoStyled assetImageUrl={image} size={30} assetName={name} />
         <NameColumn>
           <TokenName>
-            {info?.name ?? <HashEllipsed hash={tokenId} tooltipText={t('Copy token hash')} disableCopy={!isExpanded} />}
-            {isUnlisted && (
+            {name ?? <HashEllipsed hash={tokenId} tooltipText={t('Copy token hash')} disableCopy={!isExpanded} />}
+            {token.type === 'unlistedFT' && (
               <InfoIcon data-tooltip-id="default" data-tooltip-content={t('No metadata')}>
                 i
               </InfoIcon>
             )}
           </TokenName>
-          {info?.symbol && <TokenSymbol>{info.symbol}</TokenSymbol>}
+          {symbol && <TokenSymbol>{symbol}</TokenSymbol>}
         </NameColumn>
         <TableCellAmount>
-          {isLoading ? (
+          {isLoadingFTs ? (
             <SkeletonLoader height="20px" width="30%" />
           ) : (
             <>
               <TokenAmount
-                value={balances.balance}
-                suffix={info?.symbol}
-                decimals={info?.decimals}
-                isUnknownToken={!info?.symbol}
+                value={balance}
+                suffix={symbol}
+                decimals={decimals}
+                isNonStandardToken={token.type === 'nonStandardToken'}
               />
-              {balances.lockedBalance > 0 && (
+              {availableBalance !== balance && (
                 <AmountSubtitle>
                   {`${t('Available')}: `}
                   <Amount
-                    value={balances.balance - balances.lockedBalance}
-                    suffix={info?.symbol}
+                    value={availableBalance}
+                    suffix={symbol}
                     color={theme.font.tertiary}
-                    decimals={info?.decimals}
-                    isUnknownToken={!info?.symbol}
+                    decimals={decimals}
+                    isNonStandardToken={token.type === 'nonStandardToken'}
                   />
                 </AmountSubtitle>
               )}
-              {!info?.symbol && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
+              {token.type === 'nonStandardToken' && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
               {worth !== undefined && (
                 <Price>
                   <Amount value={worth} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
@@ -101,31 +101,6 @@ const TokenBalancesRow = ({ tokenId, addressHash, isExpanded }: TokenBalancesRow
 }
 
 export default TokenBalancesRow
-
-const useAddressesToken = (tokenId: string, addressHash?: AddressHash) => {
-  const { data: addressesTokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalances(addressHash)
-  const { data: addressesTokensWorth, isLoading: isLoadingTokensWorth } = useAddressesTokensWorth(addressHash)
-  const { data: addressesListedFungibleTokens, isLoading: isLoadingListedFungibleTokens } =
-    useAddressesListedFungibleTokens(addressHash)
-  const { data: addressesUnlistedFungibleTokens, isLoading: isLoadingUnlistedFungibleTokens } =
-    useAddressesUnlistedFungibleTokens(addressHash)
-
-  const listedTokenInfo = addressesListedFungibleTokens.find((token) => token.id === tokenId)
-  const unlistedTokenInfo = addressesUnlistedFungibleTokens.find((token) => token.id === tokenId)
-
-  return {
-    info: listedTokenInfo ?? unlistedTokenInfo,
-    logoUri: listedTokenInfo?.logoURI,
-    isUnlisted: !!unlistedTokenInfo,
-    balances: addressesTokensBalances[tokenId],
-    worth: addressesTokensWorth[tokenId],
-    isLoading:
-      isLoadingTokensBalances ||
-      isLoadingTokensWorth ||
-      isLoadingListedFungibleTokens ||
-      isLoadingUnlistedFungibleTokens
-  }
-}
 
 const TokenRow = styled.div`
   display: flex;

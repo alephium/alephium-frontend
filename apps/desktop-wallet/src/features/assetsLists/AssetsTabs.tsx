@@ -26,8 +26,8 @@ import { ExpandableTable } from '@/components/Table'
 import TableTabBar from '@/components/TableTabBar'
 import FungibleTokensBalancesList from '@/features/assetsLists/FungibleTokensBalancesList'
 import NFTsGrid from '@/features/assetsLists/NFTsGrid'
+import NonStandardTokensBalancesList from '@/features/assetsLists/NonStandardTokensBalancesList'
 import { AssetsTabsProps } from '@/features/assetsLists/types'
-import UnknownTokensBalancesList from '@/features/assetsLists/UnknownTokensBalancesList'
 
 const AssetsTabs = ({
   className,
@@ -78,7 +78,7 @@ const AssetsTabs = ({
               />
             ),
             unknownTokens: (
-              <UnknownTokensBalancesList
+              <NonStandardTokensBalancesList
                 addressHash={addressHash}
                 isExpanded={isExpanded || !maxHeightInPx}
                 onExpand={handleButtonClick}
