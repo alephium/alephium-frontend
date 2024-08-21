@@ -16,47 +16,49 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/shared'
 import styled from 'styled-components'
 
+import { getTokenDisplayData } from '@/api/useAddressesDisplayTokens'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import HashEllipsed from '@/components/HashEllipsed'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
 import Truncate from '@/components/Truncate'
+import { TokenDisplay } from '@/types/tokens'
 
-interface SelectOptionAssetProps {
-  asset: Asset
+type SelectOptionTokenProps = TokenDisplay & {
   isSelected?: boolean
-  hideAmount?: boolean
   className?: string
 }
 
-const SelectOptionAsset = ({ asset, hideAmount, ...props }: SelectOptionAssetProps) => (
-  <SelectOptionItemContent
-    MainContent={
-      <AssetName>
-        <AssetLogo assetImageUrl={asset.logoURI} size={20} assetName={asset.name} />
-        <Truncate>
-          {asset.name ? `${asset.name} ${asset.symbol ? `(${asset.symbol})` : ''}` : <HashEllipsed hash={asset.id} />}
-        </Truncate>
-      </AssetName>
-    }
-    SecondaryContent={
-      !hideAmount && (
-        <AmountStyled
-          value={asset.balance}
-          suffix={asset.symbol}
-          decimals={asset.decimals}
-          isUnknownToken={!asset.symbol}
-        />
-      )
-    }
-    {...props}
-  />
-)
+const SelectOptionToken = ({ isSelected, className, ...token }: SelectOptionTokenProps) => {
+  const { image, name, symbol, amount, decimals } = getTokenDisplayData(token)
 
-export default SelectOptionAsset
+  return (
+    <SelectOptionItemContent
+      MainContent={
+        <>
+          <AssetName>
+            <AssetLogo assetImageUrl={image} size={20} assetName={name} isNft={token.type === 'NFT'} />
+            <Truncate>{name ? `${name} ${symbol ? `(${symbol})` : ''}` : <HashEllipsed hash={token.id} />}</Truncate>
+          </AssetName>
+          {amount !== undefined && (
+            <AmountStyled
+              value={amount}
+              suffix={symbol}
+              decimals={decimals}
+              isNonStandardToken={token.type === 'nonStandardToken'}
+            />
+          )}
+        </>
+      }
+      isSelected={isSelected}
+      className={className}
+    />
+  )
+}
+
+export default SelectOptionToken
 
 const AssetName = styled.div`
   display: flex;
