@@ -20,14 +20,10 @@ import {
   AddressHash,
   Asset,
   contactsAdapter,
-  FungibleToken,
-  NFT,
   selectAllFungibleTokens,
-  selectAllNFTs,
   selectNFTIds,
   TokenDisplayBalances
 } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
 import { AddressGroup } from '@alephium/walletconnect-provider'
 import { createSelector } from '@reduxjs/toolkit'
 
@@ -59,53 +55,6 @@ export const selectDefaultAddress = createSelector(
   (addresses) => addresses.find((address) => address.isDefault) || addresses[0]
 )
 
-export const makeSelectAddressesAlphAsset = () =>
-  createSelector(makeSelectAddresses(), (addresses): Asset => {
-    const alphBalances = addresses.reduce(
-      (acc, { balance, lockedBalance }) => ({
-        balance: acc.balance + BigInt(balance),
-        lockedBalance: acc.lockedBalance + BigInt(lockedBalance)
-      }),
-      { balance: BigInt(0), lockedBalance: BigInt(0) }
-    )
-
-    return {
-      ...ALPH,
-      ...alphBalances,
-      verified: true
-    }
-  })
-
-export const makeSelectAddressesTokens = () =>
-  createSelector(
-    [selectAllFungibleTokens, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses()],
-    (fungibleTokens, nfts, alphAsset, addresses): Asset[] =>
-      calculateAssetsData([alphAsset, ...getAddressesTokenBalances(addresses)], fungibleTokens, nfts)
-  )
-
-// TODO: Temp copied from shared to remove "worth" without affecting mobile wallet
-const calculateAssetsData = (tokenBalances: TokenDisplayBalances[], fungibleTokens: FungibleToken[], nfts: NFT[]) =>
-  tokenBalances.reduce((acc, token) => {
-    const fungibleToken = fungibleTokens.find((t) => t.id === token.id)
-    const nftInfo = nfts.find((nft) => nft.id === token.id)
-    const decimals = fungibleToken?.decimals ?? 0
-    const balance = BigInt(token.balance.toString())
-
-    acc.push({
-      id: token.id,
-      balance,
-      lockedBalance: BigInt(token.lockedBalance.toString()),
-      name: fungibleToken?.name ?? nftInfo?.name,
-      symbol: fungibleToken?.symbol,
-      description: fungibleToken?.description ?? nftInfo?.description,
-      logoURI: fungibleToken?.logoURI ?? nftInfo?.image,
-      decimals,
-      verified: fungibleToken?.verified
-    })
-
-    return acc
-  }, [] as Asset[])
-
 export const makeSelectAddressesUnknownTokens = () =>
   createSelector(
     [selectAllFungibleTokens, selectNFTIds, makeSelectAddresses()],
@@ -129,20 +78,6 @@ export const makeSelectAddressesUnknownTokens = () =>
       return tokensWithoutMetadata
     }
   )
-
-export const makeSelectAddressesCheckedUnknownTokens = () =>
-  createSelector(
-    [makeSelectAddressesUnknownTokens(), (state: RootState) => state.fungibleTokens.checkedUnknownTokenIds],
-    (tokensWithoutMetadata, checkedUnknownTokenIds) =>
-      tokensWithoutMetadata.filter((token) => checkedUnknownTokenIds.includes(token.id))
-  )
-
-export const makeSelectAddressesNFTs = () =>
-  createSelector([selectAllNFTs, makeSelectAddresses()], (nfts, addresses): NFT[] => {
-    const addressesTokenIds = addresses.flatMap(({ tokens }) => tokens.map(({ tokenId }) => tokenId))
-
-    return nfts.filter((nft) => addressesTokenIds.includes(nft.id))
-  })
 
 export const { selectAll: selectAllContacts } = contactsAdapter.getSelectors<RootState>((state) => state.contacts)
 
