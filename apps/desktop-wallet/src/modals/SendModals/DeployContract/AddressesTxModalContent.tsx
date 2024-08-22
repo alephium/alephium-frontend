@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next'
 import { useAddressesAlphBalances } from '@/api/addressesBalancesDataHooks'
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
-import { useFilterEmptyAddresses } from '@/features/addressFiltering/addressFilteringHooks'
+import { useAddressesWithBalance } from '@/features/addressFiltering/addressFilteringHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { ModalContent } from '@/modals/CenteredModal'
 import AddressInputs from '@/modals/SendModals/AddressInputs'
@@ -41,7 +41,7 @@ const DeployContractAddressesTxModalContent = ({
   onCancel
 }: DeployContractAddressesTxModalContentProps) => {
   const { t } = useTranslation()
-  const fromAddresses = useFilterEmptyAddresses()
+  const fromAddresses = useAddressesWithBalance()
   const { isLoading: isLoadingAlphBalances } = useAddressesAlphBalances()
 
   const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
