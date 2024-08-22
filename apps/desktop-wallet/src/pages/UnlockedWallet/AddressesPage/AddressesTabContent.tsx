@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { intersection } from 'lodash'
 import { Wrench } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -25,7 +26,7 @@ import Box from '@/components/Box'
 import Button from '@/components/Button'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
-import { useFilteredAddressHashes } from '@/features/addressFiltering/addressFilteringHooks'
+import { useAddressesWithBalance, useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
 import ModalPortal from '@/modals/ModalPortal'
 import NewAddressModal from '@/modals/NewAddressModal'
 import AddressGridRow from '@/pages/UnlockedWallet/AddressesPage/AddressGridRow'
@@ -37,9 +38,13 @@ const AddressesTabContent = () => {
 
   const [isGenerateNewAddressModalOpen, setIsGenerateNewAddressModalOpen] = useState(false)
   const [isAdvancedOperationsModalOpen, setIsAdvancedOperationsModalOpen] = useState(false)
+
   const [searchInput, setSearchInput] = useState('')
   const [hideEmptyAddresses, setHideEmptyAddresses] = useState(false)
-  const visibleAddresses = useFilteredAddressHashes(searchInput.toLowerCase(), hideEmptyAddresses)
+  const filteredByText = useFilterAddressesByText(searchInput.toLowerCase())
+  const filteredByToggle = useAddressesWithBalance()
+
+  const visibleAddresses = hideEmptyAddresses ? intersection(filteredByText, filteredByToggle) : filteredByText
 
   return (
     <TabContent
