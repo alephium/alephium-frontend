@@ -28,7 +28,7 @@ import Amount from '@/components/Amount'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
-import { useFilterEmptyAddresses } from '@/features/addressFiltering/addressFilteringHooks'
+import { useAddressesWithBalance } from '@/features/addressFiltering/addressFilteringHooks'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
@@ -63,7 +63,7 @@ const AddressSweepModal = ({ sweepAddress, onClose, onSuccessfulSweep }: Address
 
   const fromAddress = sweepAddress || defaultAddress
   const toAddressOptions = sweepAddress ? addresses.filter(({ hash }) => hash !== fromAddress?.hash) : addresses
-  const fromAddressOptions = useFilterEmptyAddresses()
+  const fromAddressOptions = useAddressesWithBalance()
 
   const [sweepAddresses, setSweepAddresses] = useState<{
     from: SweepAddress
