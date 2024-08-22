@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { useQueries } from '@tanstack/react-query'
-import { intersection } from 'lodash'
 import { useEffect, useState } from 'react'
 
 import { useAddressesUnlistedFungibleTokens } from '@/api/addressesUnlistedTokensHooks'
@@ -28,13 +27,6 @@ import { useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import { isDefined } from '@/utils/misc'
-
-export const useFilteredAddressHashes = (text = '', hideEmpty?: boolean) => {
-  const filteredByText = useFilterAddressesByText(text)
-  const filteredByToggle = useFilterEmptyAddresses()
-
-  return hideEmpty ? intersection(filteredByText, filteredByToggle) : filteredByText
-}
 
 export const useFilterAddressesByText = (text = '') => {
   const allAddresses = useAppSelector(selectAllAddresses)
@@ -108,7 +100,7 @@ export const useFilterAddressesByText = (text = '') => {
   return filteredAddressHashes
 }
 
-export const useFilterEmptyAddresses = () => {
+export const useAddressesWithBalance = () => {
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const { data: latestTxHashes } = useAddressesLastTransactionHashes()
@@ -124,10 +116,10 @@ export const useFilterEmptyAddresses = () => {
 
   useEffect(() => {
     setFilteredAddressHashes(
-      allAddressHashes.filter(
-        (addressHash) =>
-          addressesAlphBalances.find((address) => address.addressHash === addressHash)?.balances.balance !== '0'
-      )
+      addressesAlphBalances.reduce((acc, { addressHash, balances }) => {
+        if (balances.balance !== '0') acc.push(addressHash)
+        return acc
+      }, [] as AddressHash[])
     )
   }, [addressesAlphBalances, allAddressHashes])
 
