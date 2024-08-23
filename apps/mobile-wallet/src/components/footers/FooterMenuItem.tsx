@@ -43,8 +43,6 @@ const FooterMenuItem = ({ options, isFocused, routeName, target, navigation }: F
       size: 24
     })
 
-  const label = (options.tabBarLabel as string) ?? options.title ?? routeName
-
   const onPress = () => {
     const event = navigation.emit({
       type: 'tabPress',
@@ -60,7 +58,7 @@ const FooterMenuItem = ({ options, isFocused, routeName, target, navigation }: F
   }
 
   return (
-    <TouchableWithoutFeedback onPress={onPress} key={label}>
+    <TouchableWithoutFeedback onPress={onPress} key={routeName}>
       <Tab active={isFocused}>{Icon}</Tab>
     </TouchableWithoutFeedback>
   )

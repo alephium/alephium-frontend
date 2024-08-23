@@ -69,7 +69,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
-  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
+  const balanceInFiat = useAppSelector(selectAddessesTokensWorth)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
