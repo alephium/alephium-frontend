@@ -19,12 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAddressesAlphBalances } from '@/api/addressesBalancesDataHooks'
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
+import { useAddressesWithBalance } from '@/features/addressFiltering/addressFilteringHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { ModalContent } from '@/modals/CenteredModal'
 import AddressInputs from '@/modals/SendModals/AddressInputs'
-import { selectAddressesWithSomeBalance, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { DeployContractTxData, PartialTxData } from '@/types/transactions'
 
 interface DeployContractAddressesTxModalContentProps {
@@ -39,10 +41,11 @@ const DeployContractAddressesTxModalContent = ({
   onCancel
 }: DeployContractAddressesTxModalContentProps) => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAddressesWithSomeBalance)
-  const isAddressesStateUninitialized = useAppSelector(selectIsStateUninitialized)
+  const fromAddresses = useAddressesWithBalance()
+  const { isLoading: isLoadingAlphBalances } = useAddressesAlphBalances()
 
-  const [fromAddress, setFromAddress] = useState(data.fromAddress)
+  const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
+  const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))
 
   if (fromAddress === undefined) {
     onCancel()
@@ -53,13 +56,12 @@ const DeployContractAddressesTxModalContent = ({
     <ModalContent>
       <InputFieldsColumn>
         <AddressInputs
-          defaultFromAddress={fromAddress}
-          fromAddresses={addresses}
-          onFromAddressChange={setFromAddress}
-          hideFromAddressesWithoutAssets
+          defaultFromAddress={fromAddressHash}
+          fromAddresses={fromAddresses}
+          onFromAddressChange={setFromAddressHash}
         />
       </InputFieldsColumn>
-      <FooterButton onClick={() => onSubmit({ fromAddress })} disabled={isAddressesStateUninitialized}>
+      <FooterButton onClick={() => onSubmit({ fromAddress })} disabled={isLoadingAlphBalances}>
         {t('Continue')}
       </FooterButton>
     </ModalContent>

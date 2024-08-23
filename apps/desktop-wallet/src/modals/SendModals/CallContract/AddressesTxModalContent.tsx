@@ -24,7 +24,7 @@ import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import { useAppSelector } from '@/hooks/redux'
 import { ModalContent } from '@/modals/CenteredModal'
 import AddressInputs from '@/modals/SendModals/AddressInputs'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import { CallContractTxData, PartialTxData } from '@/types/transactions'
 
 interface CallContractAddressesTxModalContentProps {
@@ -39,9 +39,10 @@ const CallContractAddressesTxModalContent = ({
   onCancel
 }: CallContractAddressesTxModalContentProps) => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAllAddresses)
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
-  const [fromAddress, setFromAddress] = useState(data.fromAddress)
+  const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
+  const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))
 
   if (fromAddress === undefined) {
     onCancel()
@@ -52,9 +53,9 @@ const CallContractAddressesTxModalContent = ({
     <ModalContent>
       <InputFieldsColumn>
         <AddressInputs
-          defaultFromAddress={fromAddress}
-          fromAddresses={addresses}
-          onFromAddressChange={setFromAddress}
+          defaultFromAddress={fromAddressHash}
+          fromAddresses={allAddressHashes}
+          onFromAddressChange={setFromAddressHash}
         />
       </InputFieldsColumn>
       <FooterButton onClick={() => onSubmit({ fromAddress })}>{t('Continue')}</FooterButton>

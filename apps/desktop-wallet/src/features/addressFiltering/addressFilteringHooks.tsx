@@ -28,7 +28,7 @@ import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import { isDefined } from '@/utils/misc'
 
-const useFilteredAddressHashes = (searchString = '', hideEmpty?: boolean) => {
+export const useFilterAddressesByText = (text = '') => {
   const allAddresses = useAppSelector(selectAllAddresses)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
   const networkId = useAppSelector((s) => s.network.settings.networkId)
@@ -53,8 +53,8 @@ const useFilteredAddressHashes = (searchString = '', hideEmpty?: boolean) => {
   })
 
   useEffect(() => {
-    const filteredByText =
-      searchString.length < 2
+    setFilteredAddressHashes(
+      text.length < 2
         ? allAddressHashes
         : allAddressHashes.filter((addressHash) => {
             const address = allAddresses.find((address) => address.hash === addressHash)
@@ -81,32 +81,47 @@ const useFilteredAddressHashes = (searchString = '', hideEmpty?: boolean) => {
 
             return (
               address &&
-              (address.label?.toLowerCase().includes(searchString) ||
-                address.hash.toLowerCase().includes(searchString) ||
-                addressAssetNamesWithBalances.includes(searchString))
+              (address.label?.toLowerCase().includes(text) ||
+                address.hash.toLowerCase().includes(text) ||
+                addressAssetNamesWithBalances.includes(text))
             )
           })
-
-    const filteredByToggle = hideEmpty
-      ? filteredByText.filter(
-          (addressHash) =>
-            addressesAlphBalances.find((address) => address.addressHash === addressHash)?.balances.balance !== '0'
-        )
-      : filteredByText
-
-    setFilteredAddressHashes(filteredByToggle)
+    )
   }, [
     addressesAlphBalances,
     addressesTokensBalances,
     allAddressHashes,
     allAddresses,
     fungibleTokenList,
-    hideEmpty,
-    searchString,
+    text,
     unlistedFungibleTokens
   ])
 
   return filteredAddressHashes
 }
 
-export default useFilteredAddressHashes
+export const useAddressesWithBalance = () => {
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const { data: latestTxHashes } = useAddressesLastTransactionHashes()
+
+  const [filteredAddressHashes, setFilteredAddressHashes] = useState(allAddressHashes)
+
+  const { data: addressesAlphBalances } = useQueries({
+    queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
+      addressAlphBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
+    ),
+    combine: (results) => ({ data: results.map(({ data }) => data).filter(isDefined) })
+  })
+
+  useEffect(() => {
+    setFilteredAddressHashes(
+      addressesAlphBalances.reduce((acc, { addressHash, balances }) => {
+        if (balances.balance !== '0') acc.push(addressHash)
+        return acc
+      }, [] as AddressHash[])
+    )
+  }, [addressesAlphBalances, allAddressHashes])
+
+  return filteredAddressHashes
+}
