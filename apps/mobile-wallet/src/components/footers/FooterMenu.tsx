@@ -57,7 +57,7 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
   }
 
   return (
-    <View style={[style]} onLayout={handleFooterLayout}>
+    <View style={style} onLayout={handleFooterLayout}>
       <FooterGradientCanvas pointerEvents="none" height={gradientHeight}>
         <Rect x={0} y={0} width={screenWidth} height={gradientHeight}>
           <LinearGradient
