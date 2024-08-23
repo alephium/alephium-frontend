@@ -56,8 +56,8 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3 }: NFTs
       data={data}
       keyExtractor={(item) => item.id}
       renderItem={({ item: nft }) => (
-        <NFTThumbnailContainer>
-          <NFTThumbnail key={nft.id} nftId={nft.id} size={size} />
+        <NFTThumbnailContainer key={nft.id}>
+          <NFTThumbnail nftId={nft.id} size={size} />
         </NFTThumbnailContainer>
       )}
       contentContainerStyle={{ paddingHorizontal: containerHorizontalPadding }}
