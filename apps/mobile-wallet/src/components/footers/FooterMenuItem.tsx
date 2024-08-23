@@ -71,4 +71,5 @@ const Tab = styled.View<{ active: boolean }>`
   justify-content: center;
   border-radius: ${BORDER_RADIUS * 0.7}px;
   width: 90px;
+  padding: 4px 8px;
 `
