@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesTotalAlphBalances } from '@/api/addressesBalancesDataHooks'
+import useAddressesAlphBalancesTotal from '@/api/apiDataHooks/useAddressesAlphBalancesTotal'
 import Amount from '@/components/Amount'
 import SkeletonLoader from '@/components/SkeletonLoader'
 
@@ -44,19 +44,19 @@ const TotalAlphBalance = ({ className, type }: TotalAlphBalanceProps) => {
 }
 
 const AvailableAlphAmount = () => {
-  const { data } = useAddressesTotalAlphBalances()
+  const { data } = useAddressesAlphBalancesTotal()
 
-  return <AlphBalance balance={data.balance - data.lockedBalance} />
+  return <AlphBalance balance={data.availableBalance} />
 }
 
 const LockedAlphAmount = () => {
-  const { data } = useAddressesTotalAlphBalances()
+  const { data } = useAddressesAlphBalancesTotal()
 
   return <AlphBalance balance={data.lockedBalance} />
 }
 
 const AlphBalance = ({ balance }: { balance: bigint }) => {
-  const { isLoading } = useAddressesTotalAlphBalances()
+  const { isLoading } = useAddressesAlphBalancesTotal()
 
   return isLoading ? <SkeletonLoader height="30px" /> : <AmountStyled tabIndex={0} value={balance} />
 }

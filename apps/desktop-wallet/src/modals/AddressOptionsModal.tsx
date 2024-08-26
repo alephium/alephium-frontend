@@ -21,7 +21,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import { useAddressAvailableBalance } from '@/api/addressesBalancesDataHooks'
+import useAddressesAlphBalancesTotal from '@/api/apiDataHooks/useAddressesAlphBalancesTotal'
 import AddressMetadataForm from '@/components/AddressMetadataForm'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
@@ -58,7 +58,9 @@ const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps)
   const [isDefaultAddress, setIsDefaultAddress] = useState(address?.isDefault ?? false)
   const [isAddressSweepModalOpen, setIsAddressSweepModalOpen] = useState(false)
 
-  const availableBalance = useAddressAvailableBalance(addressHash)
+  const {
+    data: { availableBalance }
+  } = useAddressesAlphBalancesTotal(addressHash)
 
   if (!address || !defaultAddress) return null
 
