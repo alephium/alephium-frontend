@@ -68,6 +68,7 @@ import { partition } from 'lodash'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
@@ -129,6 +130,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const { isWalletUnlocked } = useWalletLock()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
+  const { data: addressesTokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalances()
 
   const [isSessionProposalModalOpen, setIsSessionProposalModalOpen] = useState(false)
   const [isDeployContractSendModalOpen, setIsDeployContractSendModalOpen] = useState(false)
@@ -282,16 +284,28 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
           case 'alph_signAndSubmitTransferTx': {
             const p = request.params as SignTransferTxParams
             const dest = p.destinations[0]
+            const assetAmounts = [
+              { id: ALPH.id, amount: BigInt(dest.attoAlphAmount) },
+              ...(dest.tokens ? dest.tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
+            ]
+            const tokensBalances = addressesTokensBalances[p.signerAddress]
+            const shouldSweep = isLoadingTokensBalances
+              ? false
+              : tokensBalances
+                ? tokensBalances.every(({ id, balance }) => {
+                    const asset = assetAmounts.find((token) => token.id === id)
+
+                    return balance === asset?.amount
+                  })
+                : false
 
             const txData: TransferTxData = {
               fromAddress: getSignerAddressByHash(p.signerAddress),
               toAddress: p.destinations[0].address,
-              assetAmounts: [
-                { id: ALPH.id, amount: BigInt(dest.attoAlphAmount) },
-                ...(dest.tokens ? dest.tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
-              ],
+              assetAmounts,
               gasAmount: p.gasAmount,
-              gasPrice: p.gasPrice?.toString()
+              gasPrice: p.gasPrice?.toString(),
+              shouldSweep
             }
 
             setTxDataAndOpenModal({ txData, modalType: TxType.TRANSFER })
@@ -409,7 +423,15 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         })
       }
     },
-    [addresses, cleanStorage, respondToWalletConnectWithError, sendAnalytics, walletConnectClient]
+    [
+      addresses,
+      addressesTokensBalances,
+      cleanStorage,
+      isLoadingTokensBalances,
+      respondToWalletConnectWithError,
+      sendAnalytics,
+      walletConnectClient
+    ]
   )
 
   const pairWithDapp = useCallback(
