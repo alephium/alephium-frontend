@@ -46,7 +46,7 @@ const TokenBalancesRow = ({ tokenId, addressHash, isExpanded }: TokenBalancesRow
 
   if (!token) return null
 
-  const { image, name, symbol, balance, availableBalance, decimals, worth } = getTokenDisplayData(token)
+  const { image, name, symbol, totalBalance, availableBalance, decimals, worth } = getTokenDisplayData(token)
 
   return (
     <TableRow key={tokenId} role="row" tabIndex={isExpanded ? 0 : -1}>
@@ -69,12 +69,12 @@ const TokenBalancesRow = ({ tokenId, addressHash, isExpanded }: TokenBalancesRow
           ) : (
             <>
               <TokenAmount
-                value={balance}
+                value={totalBalance}
                 suffix={symbol}
                 decimals={decimals}
                 isNonStandardToken={token.type === 'nonStandardToken'}
               />
-              {availableBalance !== balance && (
+              {availableBalance !== totalBalance && (
                 <AmountSubtitle>
                   {`${t('Available')}: `}
                   <Amount

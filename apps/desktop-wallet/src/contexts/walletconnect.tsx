@@ -68,7 +68,7 @@ import { partition } from 'lodash'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
+import useAddressesTokensBalances from '@/api/apiDataHooks/useAddressesTokensBalances'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
@@ -292,10 +292,10 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
             const shouldSweep = isLoadingTokensBalances
               ? false
               : tokensBalances
-                ? tokensBalances.every(({ id, balance }) => {
+                ? tokensBalances.every(({ id, totalBalance }) => {
                     const asset = assetAmounts.find((token) => token.id === id)
 
-                    return balance === asset?.amount
+                    return totalBalance === asset?.amount
                   })
                 : false
 
