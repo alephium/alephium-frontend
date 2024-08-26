@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressBalancesSyncResult, AddressHash, AddressTokensSyncResult, client } from '@alephium/shared'
+import { AddressHash, AddressTokensSyncResult, client } from '@alephium/shared'
 import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 
@@ -71,21 +71,6 @@ export const fetchAddressesTransactions = async (
     results.push({
       hash: addressHash,
       transactions
-    })
-  }
-
-  return results
-}
-
-export const fetchAddressesBalances = async (addressHashes: AddressHash[]): Promise<AddressBalancesSyncResult[]> => {
-  const results = []
-
-  for (const addressHash of addressHashes) {
-    const balances = await client.explorer.addresses.getAddressesAddressBalance(addressHash)
-
-    results.push({
-      hash: addressHash,
-      ...balances
     })
   }
 

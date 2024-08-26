@@ -17,40 +17,24 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { useQueries } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 
+import { useAddressesAlphBalances, useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
 import { useAddressesUnlistedFungibleTokens } from '@/api/addressesUnlistedTokensHooks'
-import { addressAlphBalanceQuery, addressTokensBalanceQuery } from '@/api/addressQueries'
-import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
 import { useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
-import { isDefined } from '@/utils/misc'
 
 export const useFilterAddressesByText = (text = '') => {
   const allAddresses = useAppSelector(selectAllAddresses)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { data: latestTxHashes } = useAddressesLastTransactionHashes()
   const { data: fungibleTokenList } = useFungibleTokenList()
   const { data: unlistedFungibleTokens } = useAddressesUnlistedFungibleTokens()
+  const { data: addressesAlphBalances } = useAddressesAlphBalances()
 
   const [filteredAddressHashes, setFilteredAddressHashes] = useState<AddressHash[]>()
 
-  const { data: addressesAlphBalances } = useQueries({
-    queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
-      addressAlphBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
-    ),
-    combine: (results) => ({ data: results.map(({ data }) => data).filter(isDefined) })
-  })
-
-  const { data: addressesTokensBalances } = useQueries({
-    queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
-      addressTokensBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
-    ),
-    combine: (results) => ({ data: results.map(({ data }) => data).filter(isDefined) })
-  })
+  const { data: addressesTokensBalances } = useAddressesTokensBalances()
 
   useEffect(() => {
     setFilteredAddressHashes(
@@ -58,10 +42,10 @@ export const useFilterAddressesByText = (text = '') => {
         ? allAddressHashes
         : allAddressHashes.filter((addressHash) => {
             const address = allAddresses.find((address) => address.hash === addressHash)
-            const addressAlphBalances = addressesAlphBalances.find((address) => address.addressHash === addressHash)
-            const addressHasAlphBalances = addressAlphBalances?.balances.balance !== BigInt(0)
-            const addressTokensBalances = addressesTokensBalances.find((address) => address.addressHash === addressHash)
-            const addressTokenNamesWithBalance = addressTokensBalances?.tokenBalances
+            const addressAlphBalances = addressesAlphBalances[addressHash]
+            const addressHasAlphBalances = addressAlphBalances?.balance !== BigInt(0)
+            const addressTokensBalances = addressesTokensBalances[addressHash] ?? []
+            const addressTokenNamesWithBalance = addressTokensBalances
               .filter(({ balance }) => balance !== BigInt(0))
               .map(({ id }) => {
                 const listedFungibleToken = fungibleTokenList?.find((token) => token.id === id)
@@ -102,24 +86,13 @@ export const useFilterAddressesByText = (text = '') => {
 
 export const useAddressesWithBalance = () => {
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { data: latestTxHashes } = useAddressesLastTransactionHashes()
+  const { data: addressesAlphBalances } = useAddressesAlphBalances()
 
   const [filteredAddressHashes, setFilteredAddressHashes] = useState(allAddressHashes)
 
-  const { data: addressesAlphBalances } = useQueries({
-    queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
-      addressAlphBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
-    ),
-    combine: (results) => ({ data: results.map(({ data }) => data).filter(isDefined) })
-  })
-
   useEffect(() => {
     setFilteredAddressHashes(
-      allAddressHashes.filter(
-        (addressHash) =>
-          addressesAlphBalances.find((address) => address.addressHash === addressHash)?.balances.balance !== BigInt(0)
-      )
+      allAddressHashes.filter((addressHash) => addressesAlphBalances[addressHash]?.balance !== BigInt(0))
     )
   }, [addressesAlphBalances, allAddressHashes])
 
