@@ -20,15 +20,15 @@ import { AddressHash } from '@alephium/shared'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
-import { useAddressesTotalTokensBalances } from '@/api/addressesBalancesDataHooks'
-import { useAddressesListedFTs } from '@/api/addressesListedFungibleTokensDataHooks'
+import { useAddressesListedFTs } from '@/api/addressesListedFTsDataHooks'
 import { useAddressesNfts } from '@/api/addressesNftsDataHooks'
 import { useAddressesTokensWorth } from '@/api/addressesTokensPricesDataHooks'
 import { useAddressesUnlistedFTs, useAddressesUnlistedNonStandardTokenIds } from '@/api/addressesUnlistedTokensHooks'
+import useAddressesTokensBalancesTotal from '@/api/apiDataHooks/useAddressesTokensBalancesTotal'
 import { ListedFTDisplay, NFTDisplay, NonStandardTokenDisplay, TokenDisplay, UnlistedFTDisplay } from '@/types/tokens'
 
 const useAddressesDisplayTokens = (addressHash?: AddressHash) => {
-  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTotalTokensBalances(addressHash)
+  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalancesTotal(addressHash)
   const { data: tokensWorth, isLoading: isLoadingTokensWorth } = useAddressesTokensWorth(addressHash)
   const { data: listedFTs, isLoading: isLoadingListedFTs } = useAddressesListedFTs(addressHash)
   const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useAddressesUnlistedFTs(addressHash)
@@ -45,13 +45,13 @@ const useAddressesDisplayTokens = (addressHash?: AddressHash) => {
         ...orderBy(
           listedFTs.map((token) => {
             const balances = tokensBalances[token.id]
-            const availableBalance = balances ? balances.balance - balances.lockedBalance : undefined
 
             return {
               type: 'listedFT',
               worth: tokensWorth[token.id],
-              balance: balances?.balance,
-              availableBalance,
+              totalBalance: balances?.totalBalance ?? BigInt(0),
+              lockedBalance: balances?.lockedBalance ?? BigInt(0),
+              availableBalance: balances?.availableBalance ?? BigInt(0),
               ...token
             } as ListedFTDisplay
           }),
@@ -61,9 +61,14 @@ const useAddressesDisplayTokens = (addressHash?: AddressHash) => {
         ...orderBy(
           unlistedFTs.map((token) => {
             const balances = tokensBalances[token.id]
-            const availableBalance = balances ? balances.balance - balances.lockedBalance : undefined
 
-            return { type: 'unlistedFT', availableBalance, balance: balances?.balance, ...token } as UnlistedFTDisplay
+            return {
+              type: 'unlistedFT',
+              totalBalance: balances?.totalBalance ?? BigInt(0),
+              lockedBalance: balances?.lockedBalance ?? BigInt(0),
+              availableBalance: balances?.availableBalance ?? BigInt(0),
+              ...token
+            } as UnlistedFTDisplay
           }),
           [(t) => t.name.toLowerCase(), 'id'],
           ['asc', 'asc']
@@ -76,13 +81,13 @@ const useAddressesDisplayTokens = (addressHash?: AddressHash) => {
         ...orderBy(
           nonStandardTokens.map((tokenId) => {
             const balances = tokensBalances[tokenId]
-            const availableBalance = balances ? balances.balance - balances.lockedBalance : undefined
 
             return {
               type: 'nonStandardToken',
               id: tokenId,
-              balance: balances?.balance,
-              availableBalance
+              totalBalance: balances?.totalBalance ?? BigInt(0),
+              lockedBalance: balances?.lockedBalance ?? BigInt(0),
+              availableBalance: balances?.availableBalance ?? BigInt(0)
             } as NonStandardTokenDisplay
           }),
           'id',
@@ -102,7 +107,8 @@ export const getTokenDisplayData = (token: TokenDisplay) => ({
   symbol: token.type === 'listedFT' || token.type === 'unlistedFT' ? token.symbol : undefined,
   amount: token.type !== 'NFT' ? token.availableBalance : undefined,
   decimals: token.type === 'listedFT' || token.type === 'unlistedFT' ? token.decimals : undefined,
-  balance: token.type !== 'NFT' ? token.balance : undefined,
+  totalBalance: token.type !== 'NFT' ? token.totalBalance : undefined,
+  lockedBalance: token.type !== 'NFT' ? token.lockedBalance : undefined,
   availableBalance: token.type !== 'NFT' ? token.availableBalance : undefined,
   worth: token.type === 'listedFT' ? token.worth : undefined
 })

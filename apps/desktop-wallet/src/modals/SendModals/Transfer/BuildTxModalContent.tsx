@@ -22,7 +22,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesTotalTokensBalances } from '@/api/addressesBalancesDataHooks'
+import useAddressesTokensBalancesTotal from '@/api/apiDataHooks/useAddressesTokensBalancesTotal'
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
@@ -58,7 +58,7 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
 
   const { fromAddress, toAddress } = data
 
-  const { data: tokensBalances } = useAddressesTotalTokensBalances(fromAddress.hash)
+  const { data: tokensBalances } = useAddressesTokensBalancesTotal(fromAddress.hash)
   const allAssetAmountsAreWithinAvailableBalance = useAreAmountsWithinAvailableBalance(
     fromAddress.hash,
     assetAmounts ?? []
@@ -89,7 +89,7 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
     const balances = tokensBalances[tokenId]
     const asset = assetAmounts.find((asset) => asset.id === tokenId)
 
-    return !balances || !balances.balance ? true : !asset ? false : balances.balance === asset.amount
+    return !balances || !balances.totalBalance ? true : !asset ? false : balances.totalBalance === asset.amount
   })
 
   return (

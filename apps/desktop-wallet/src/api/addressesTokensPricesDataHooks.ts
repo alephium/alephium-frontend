@@ -22,10 +22,10 @@ import { useQueries, useQueryClient } from '@tanstack/react-query'
 import { chunk, orderBy } from 'lodash'
 import { useMemo } from 'react'
 
-import { useAddressesTotalAlphBalances } from '@/api/addressesBalancesDataHooks'
-import { useAddressesListedFTsWithPrice } from '@/api/addressesListedFungibleTokensDataHooks'
+import { useAddressesListedFTsWithPrice } from '@/api/addressesListedFTsDataHooks'
 import { addressTokensBalanceQuery } from '@/api/addressQueries'
 import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
+import useAddressesAlphBalancesTotal from '@/api/apiDataHooks/useAddressesAlphBalancesTotal'
 import { useAppSelector } from '@/hooks/redux'
 import { isDefined } from '@/utils/misc'
 
@@ -123,8 +123,8 @@ export const useAddressesTokensWorth = (addressHash?: AddressHash) => {
         (tokensWorth, { data: balances }) => {
           const tokensBalance = {} as Record<TokenId, bigint | undefined>
 
-          balances?.tokenBalances.forEach(({ id, balance }) => {
-            tokensBalance[id] = BigInt(balance) + (tokensBalance[id] ?? BigInt(0))
+          balances?.tokenBalances.forEach(({ id, totalBalance }) => {
+            tokensBalance[id] = totalBalance + (tokensBalance[id] ?? BigInt(0))
           })
 
           Object.keys(tokensBalance).forEach((id) => {
@@ -174,10 +174,11 @@ export const useAddressesTokensTotalWorth = (addressHash?: AddressHash) => {
 }
 
 export const useAddressesAlphWorth = (addressHash?: AddressHash) => {
-  const { data: totalAlphBalances, isLoading: isLoadingAlphBalances } = useAddressesTotalAlphBalances(addressHash)
+  const { data: totalAlphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalancesTotal(addressHash)
   const { data: alphPrice, isLoading: isLoadingAlphPrice } = useAlphPrice()
 
-  const totalWorth = alphPrice !== undefined ? calculateAmountWorth(totalAlphBalances.balance, alphPrice) : undefined
+  const totalWorth =
+    alphPrice !== undefined ? calculateAmountWorth(totalAlphBalances.totalBalance, alphPrice) : undefined
 
   return {
     data: totalWorth,
