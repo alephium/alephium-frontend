@@ -1,5 +1,11 @@
 # @alephium/mobile-wallet
 
+## 1.1.4
+
+### Patch Changes
+
+- 18ddd26: Fix authentication issues
+
 ## 1.1.3
 
 ### Patch Changes
