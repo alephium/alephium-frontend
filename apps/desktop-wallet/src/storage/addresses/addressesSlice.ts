@@ -34,7 +34,6 @@ import {
   addressSettingsSaved,
   defaultAddressChanged,
   newAddressesSaved,
-  syncAddressesBalances,
   syncAddressesData,
   syncAddressesTokensBalances,
   syncAddressesTransactions,
@@ -57,13 +56,11 @@ import { UnlockedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
-  loadingBalances: false,
   loadingTransactions: false,
   loadingTokensBalances: false,
   syncingAddressData: false,
   isRestoringAddressesFromMetadata: false,
-  status: 'uninitialized',
-  balancesStatus: 'uninitialized'
+  status: 'uninitialized'
 })
 
 const addressesSlice = createSlice({
@@ -74,7 +71,6 @@ const addressesSlice = createSlice({
     builder
       .addCase(syncingAddressDataStarted, (state) => {
         state.syncingAddressData = true
-        state.loadingBalances = true
         state.loadingTransactions = true
         state.loadingTokensBalances = true
       })
@@ -124,7 +120,6 @@ const addressesSlice = createSlice({
       .addCase(syncAddressesData.fulfilled, (state, action) => {
         state.status = 'initialized'
         state.syncingAddressData = false
-        state.loadingBalances = false
         state.loadingTransactions = false
         state.loadingTokensBalances = false
       })
@@ -170,19 +165,11 @@ const addressesSlice = createSlice({
 
         state.loadingTransactions = false
       })
-      .addCase(syncAddressesBalances.fulfilled, (state, action) => {
-        state.loadingBalances = false
-        state.balancesStatus = 'initialized'
-      })
       .addCase(syncAddressesData.rejected, (state) => {
         state.status = 'initialized'
         state.syncingAddressData = false
-        state.loadingBalances = false
         state.loadingTransactions = false
         state.loadingTokensBalances = false
-      })
-      .addCase(syncAddressesBalances.rejected, (state) => {
-        state.loadingBalances = false
       })
       .addCase(syncAddressesTransactions.rejected, (state) => {
         state.loadingTransactions = false
