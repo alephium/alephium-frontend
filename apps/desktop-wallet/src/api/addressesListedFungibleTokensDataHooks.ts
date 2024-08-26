@@ -22,7 +22,7 @@ import { explorer } from '@alephium/web3'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { useAddressesAlphBalances } from '@/api/addressesBalancesDataHooks'
+import { useAddressesTotalAlphBalances } from '@/api/addressesBalancesDataHooks'
 import { addressTokensBalanceQuery } from '@/api/addressQueries'
 import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
 import { useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
@@ -33,7 +33,7 @@ export const useAddressesListedFungibleTokens = (addressHash?: AddressHash) => {
   const { data: fungibleTokenList, isLoading: isLoadingFungibleTokenList } = useFungibleTokenList()
   const { data: latestAddressesTxHashes, isLoading: isLoadingLastTxHashes } =
     useAddressesLastTransactionHashes(addressHash)
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalances(addressHash)
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressesTotalAlphBalances(addressHash)
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data, isLoading } = useQueries({
@@ -43,8 +43,8 @@ export const useAddressesListedFungibleTokens = (addressHash?: AddressHash) => {
     combine: (results) => ({
       data: results.reduce(
         (acc, { data }) => {
-          data?.tokenBalances.map(({ tokenId }) => {
-            const listedFungibleToken = fungibleTokenList?.find((token) => token.id === tokenId)
+          data?.tokenBalances.map(({ id }) => {
+            const listedFungibleToken = fungibleTokenList?.find((token) => token.id === id)
             const alreadyAddedToArray = acc.some((token) => token.id === listedFungibleToken?.id)
 
             if (listedFungibleToken && !alreadyAddedToArray) acc.push(listedFungibleToken)

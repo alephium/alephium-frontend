@@ -17,8 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressSettings, AssetAmount } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
+import { AddressSettings } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 
 import { Address } from '@/types/addresses'
@@ -49,38 +48,12 @@ export const selectAddressTransactions = (
   }, [] as AddressTransaction[])
 }
 
-export const getAvailableBalance = (address: Address): bigint => BigInt(address.balance) - BigInt(address.lockedBalance)
-
 export const getName = (address: Address): string => address.label || `${address.hash.substring(0, 10)}...`
 
 export const getInitialAddressSettings = (): AddressSettings => ({
   isDefault: true,
   color: getRandomLabelColor()
 })
-
-export const getAddressAssetsAvailableBalance = (address: Address) => [
-  {
-    id: ALPH.id,
-    availableBalance: getAvailableBalance(address)
-  },
-  ...address.tokens.map((token) => ({
-    id: token.tokenId,
-    availableBalance: BigInt(token.balance) - BigInt(token.lockedBalance)
-  }))
-]
-
-export const assetAmountsWithinAvailableBalance = (address: Address, assetAmounts: AssetAmount[]) => {
-  const assetsAvailableBalance = getAddressAssetsAvailableBalance(address)
-
-  return assetAmounts.every((asset) => {
-    if (!asset?.amount) return true
-
-    const assetAvailableBalance = assetsAvailableBalance.find(({ id }) => id === asset.id)?.availableBalance
-
-    if (!assetAvailableBalance) return false
-    return asset.amount <= assetAvailableBalance
-  })
-}
 
 const isPendingTransaction = (tx: explorer.Transaction | PendingTransaction): tx is PendingTransaction =>
   (tx as PendingTransaction).status === 'pending'

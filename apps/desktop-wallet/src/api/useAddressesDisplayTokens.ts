@@ -20,7 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
-import { useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
+import { useAddressesTotalTokensBalances } from '@/api/addressesBalancesDataHooks'
 import { useAddressesListedFungibleTokens } from '@/api/addressesListedFungibleTokensDataHooks'
 import { useAddressesNfts } from '@/api/addressesNftsDataHooks'
 import { useAddressesTokensWorth } from '@/api/addressesTokensPricesDataHooks'
@@ -31,7 +31,7 @@ import {
 import { ListedFTDisplay, NFTDisplay, NonStandardTokenDisplay, TokenDisplay, UnlistedFTDisplay } from '@/types/tokens'
 
 const useAddressesDisplayTokens = (addressHash?: AddressHash) => {
-  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalances(addressHash)
+  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTotalTokensBalances(addressHash)
   const { data: tokensWorth, isLoading: isLoadingTokensWorth } = useAddressesTokensWorth(addressHash)
   const { data: listedFTs, isLoading: isLoadingListedFTs } = useAddressesListedFungibleTokens(addressHash)
   const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useAddressesUnlistedFungibleTokens(addressHash)
