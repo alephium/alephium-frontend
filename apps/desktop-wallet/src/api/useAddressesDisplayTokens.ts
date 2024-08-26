@@ -21,7 +21,7 @@ import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
 import { useAddressesListedFTs } from '@/api/addressesListedFTsDataHooks'
-import { useAddressesNfts } from '@/api/addressesNftsDataHooks'
+import { useAddressesNFTs } from '@/api/addressesNftsDataHooks'
 import { useAddressesTokensWorth } from '@/api/addressesTokensPricesDataHooks'
 import { useAddressesUnlistedFTs, useAddressesUnlistedNonStandardTokenIds } from '@/api/addressesUnlistedTokensHooks'
 import useAddressesTokensBalancesTotal from '@/api/apiDataHooks/useAddressesTokensBalancesTotal'
@@ -32,7 +32,7 @@ const useAddressesDisplayTokens = (addressHash?: AddressHash) => {
   const { data: tokensWorth, isLoading: isLoadingTokensWorth } = useAddressesTokensWorth(addressHash)
   const { data: listedFTs, isLoading: isLoadingListedFTs } = useAddressesListedFTs(addressHash)
   const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useAddressesUnlistedFTs(addressHash)
-  const { data: NFTs, isLoading: isLoadingNFTs } = useAddressesNfts(addressHash)
+  const { data: NFTs, isLoading: isLoadingNFTs } = useAddressesNFTs(addressHash)
   const { data: nonStandardTokens, isLoading: isLoadingNonStandardTokens } =
     useAddressesUnlistedNonStandardTokenIds(addressHash)
 

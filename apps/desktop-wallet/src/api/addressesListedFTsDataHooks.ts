@@ -22,9 +22,9 @@ import { explorer } from '@alephium/web3'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { useAddressesTotalAlphBalances } from '@/api/addressesBalancesDataHooks'
 import { addressTokensBalanceQuery } from '@/api/addressQueries'
 import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
+import useAddressesAlphBalancesTotal from '@/api/apiDataHooks/useAddressesAlphBalancesTotal'
 import { useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { ListedFT } from '@/types/tokens'
@@ -33,7 +33,7 @@ export const useAddressesListedFTs = (addressHash?: AddressHash) => {
   const { data: fungibleTokenList, isLoading: isLoadingFungibleTokenList } = useFungibleTokenList()
   const { data: latestAddressesTxHashes, isLoading: isLoadingLastTxHashes } =
     useAddressesLastTransactionHashes(addressHash)
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressesTotalAlphBalances(addressHash)
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalancesTotal(addressHash)
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data, isLoading } = useQueries({
@@ -52,7 +52,7 @@ export const useAddressesListedFTs = (addressHash?: AddressHash) => {
           return acc
         },
         // Include ALPH in the results
-        (alphBalances.balance > 0 ? [ALPH] : []) as ListedFT[]
+        (alphBalances.totalBalance > 0 ? [ALPH] : []) as ListedFT[]
       ),
       isLoading: results.some(({ isLoading }) => isLoading)
     })
