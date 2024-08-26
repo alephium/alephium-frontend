@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.10.2
+
+### Patch Changes
+
+- 90935e0: Add anonymous web analytics for explorer.alephium.org
+
 ## 1.10.0
 
 ### Minor Changes
