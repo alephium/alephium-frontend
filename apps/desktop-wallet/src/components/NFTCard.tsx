@@ -21,7 +21,7 @@ import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
-import { useAddressesNfts } from '@/api/addressesNftsDataHooks'
+import { useAddressesNFTs } from '@/api/addressesNftsDataHooks'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import Truncate from '@/components/Truncate'
 
@@ -31,7 +31,7 @@ interface NFTCardProps {
 }
 
 const NFTCard = ({ nftId, onClick }: NFTCardProps) => {
-  const { data: nfts } = useAddressesNfts()
+  const { data: nfts } = useAddressesNFTs()
 
   const nft = nfts.find((nft) => nft.id === nftId)
 
