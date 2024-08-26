@@ -42,17 +42,10 @@ export const useFilterAddressesByText = (text = '') => {
         ? allAddressHashes
         : allAddressHashes.filter((addressHash) => {
             const address = allAddresses.find((address) => address.hash === addressHash)
-<<<<<<< HEAD
             const addressAlphBalances = addressesAlphBalances[addressHash]
             const addressHasAlphBalances = addressAlphBalances?.balance !== BigInt(0)
             const addressTokensBalances = addressesTokensBalances[addressHash] ?? []
             const addressTokenNamesWithBalance = addressTokensBalances
-=======
-            const addressAlphBalances = addressesAlphBalances.find((address) => address.addressHash === addressHash)
-            const addressHasAlphBalances = addressAlphBalances?.balances.balance !== BigInt(0)
-            const addressTokensBalances = addressesTokensBalances.find((address) => address.addressHash === addressHash)
-            const addressTokenNamesWithBalance = addressTokensBalances?.tokenBalances
->>>>>>> 473abf925 (Calculate available balance from Tanstack)
               .filter(({ balance }) => balance !== BigInt(0))
               .map(({ id }) => {
                 const listedFungibleToken = fungibleTokenList?.find((token) => token.id === id)
