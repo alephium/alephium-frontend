@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { useAddressesNftsIds } from '@/api/addressesNftsDataHooks'
+import { useAddressesNFTsIds } from '@/api/addressesNftsDataHooks'
 import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { ExpandRow, TableRow } from '@/components/Table'
@@ -34,7 +34,7 @@ import { deviceBreakPoints } from '@/style/globalStyles'
 
 const NFTsGrid = ({ className, addressHash, isExpanded, onExpand, nftColumns }: AssetsTabsProps) => {
   const { t } = useTranslation()
-  const { data: nftIds, isLoading } = useAddressesNftsIds(addressHash)
+  const { data: nftIds, isLoading } = useAddressesNFTsIds(addressHash)
 
   const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
 
