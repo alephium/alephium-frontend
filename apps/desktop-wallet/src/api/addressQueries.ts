@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { client, PAGINATION_PAGE_LIMIT } from '@alephium/shared'
+import { client, PAGINATION_PAGE_LIMIT, TokenDisplayBalances } from '@alephium/shared'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions } from '@tanstack/react-query'
 
@@ -46,7 +46,10 @@ export const addressAlphBalanceQuery = ({
 
         return {
           addressHash,
-          balances
+          balances: {
+            balance: BigInt(balances.balance),
+            lockedBalance: BigInt(balances.lockedBalance)
+          }
         }
       },
       staleTime: Infinity
@@ -71,7 +74,7 @@ export const addressTokensBalanceQuery = ({
     queryOptions({
       queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'tokens', { addressHash, latestTxHash, networkId }],
       queryFn: async () => {
-        const tokenBalances = [] as AddressTokenBalance[]
+        const tokenBalances = [] as TokenDisplayBalances[]
         let tokenBalancesInPage = [] as AddressTokenBalance[]
         let page = 1
 
@@ -81,7 +84,13 @@ export const addressTokensBalanceQuery = ({
             page
           })
 
-          tokenBalances.push(...tokenBalancesInPage)
+          tokenBalances.push(
+            ...tokenBalancesInPage.map((tokenBalances) => ({
+              id: tokenBalances.tokenId,
+              balance: BigInt(tokenBalances.balance),
+              lockedBalance: BigInt(tokenBalances.lockedBalance)
+            }))
+          )
           page += 1
         }
 
