@@ -20,34 +20,32 @@ import { AddressHash } from '@alephium/shared'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
-import { useAddressesListedFungibleTokens } from '@/api/addressesListedFungibleTokensDataHooks'
+import { useAddressesListedFTs } from '@/api/addressesListedFungibleTokensDataHooks'
 import { useAddressesTokensWorth } from '@/api/addressesTokensPricesDataHooks'
-import { useAddressesUnlistedFungibleTokens } from '@/api/addressesUnlistedTokensHooks'
+import { useAddressesUnlistedFTs } from '@/api/addressesUnlistedTokensHooks'
 import { ListedFT, UnlistedFT } from '@/types/tokens'
 
 // TODO: Merge with useAddressDisplayTokens?
 const useAddressesSortedFungibleTokens = (addressHash?: AddressHash) => {
   const { data: addressesTokensWorth, isLoading: isLoadingTokensWorth } = useAddressesTokensWorth(addressHash)
-  const { data: addressesListedFungibleTokens, isLoading: isLoadingListedFungibleTokens } =
-    useAddressesListedFungibleTokens(addressHash)
-  const { data: addressesUnlistedFungibleTokens, isLoading: isLoadingUnlistedFungibleTokens } =
-    useAddressesUnlistedFungibleTokens(addressHash)
+  const { data: addressesListedFTs, isLoading: isLoadingListedFTs } = useAddressesListedFTs(addressHash)
+  const { data: addressesUnlistedFTs, isLoading: isLoadingUnlistedFTs } = useAddressesUnlistedFTs(addressHash)
 
   const sortedTokens = useMemo(
     () => [
       ...orderBy(
-        addressesListedFungibleTokens,
+        addressesListedFTs,
         [(t) => addressesTokensWorth[t.id] ?? -1, (t) => t.name.toLowerCase()],
         ['desc', 'asc']
       ),
-      ...orderBy(addressesUnlistedFungibleTokens, [(t) => t.name.toLowerCase(), 'id'], ['asc', 'asc'])
+      ...orderBy(addressesUnlistedFTs, [(t) => t.name.toLowerCase(), 'id'], ['asc', 'asc'])
     ],
-    [addressesListedFungibleTokens, addressesTokensWorth, addressesUnlistedFungibleTokens]
+    [addressesListedFTs, addressesTokensWorth, addressesUnlistedFTs]
   ) as (ListedFT | UnlistedFT)[]
 
   return {
     data: sortedTokens,
-    isLoading: isLoadingTokensWorth || isLoadingListedFungibleTokens || isLoadingUnlistedFungibleTokens
+    isLoading: isLoadingTokensWorth || isLoadingListedFTs || isLoadingUnlistedFTs
   }
 }
 
