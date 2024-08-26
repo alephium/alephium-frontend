@@ -29,7 +29,6 @@ import TransferCheckTxModalContent from '@/modals/SendModals/Transfer/CheckTxMod
 import { store } from '@/storage/store'
 import { transactionSent } from '@/storage/transactions/transactionsActions'
 import { PartialTxData, TransferTxData, TxContext } from '@/types/transactions'
-import { getAddressAssetsAvailableBalance } from '@/utils/addresses'
 import { getTransactionAssetAmounts } from '@/utils/transactions'
 
 type TransferTxModalProps = ConfigurableSendModalProps<PartialTxData<TransferTxData, 'fromAddress'>, TransferTxData>
@@ -54,16 +53,7 @@ const SendModalTransfer = (props: TransferTxModalProps) => {
 export default SendModalTransfer
 
 const buildTransaction = async (transactionData: TransferTxData, context: TxContext) => {
-  const { fromAddress, toAddress, assetAmounts, gasAmount, gasPrice, lockTime } = transactionData
-  const assetsWithAvailableBalance = getAddressAssetsAvailableBalance(fromAddress).filter(
-    (asset) => asset.availableBalance > 0
-  )
-
-  const shouldSweep =
-    assetsWithAvailableBalance.length === assetAmounts.length &&
-    assetsWithAvailableBalance.every(
-      (asset) => assetAmounts.find((a) => a.id === asset.id)?.amount === asset.availableBalance
-    )
+  const { fromAddress, toAddress, assetAmounts, gasAmount, gasPrice, lockTime, shouldSweep } = transactionData
 
   context.setIsSweeping(shouldSweep)
 

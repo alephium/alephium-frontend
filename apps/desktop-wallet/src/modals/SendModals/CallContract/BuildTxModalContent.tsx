@@ -32,9 +32,9 @@ import useGasSettings from '@/hooks/useGasSettings'
 import useStateObject from '@/hooks/useStateObject'
 import AssetAmountsInput from '@/modals/SendModals/AssetAmountsInput'
 import GasSettings from '@/modals/SendModals/GasSettings'
+import useAreAmountsWithinAvailableBalance from '@/modals/SendModals/useAreAmountsWithinAvailableBalance'
 import { AssetAmountInputType } from '@/types/assets'
 import { CallContractTxData, PartialTxData, TxPreparation } from '@/types/transactions'
-import { assetAmountsWithinAvailableBalance } from '@/utils/addresses'
 import { isAmountWithinRange } from '@/utils/transactions'
 
 interface CallContractBuildTxModalContentProps {
@@ -65,6 +65,10 @@ const CallContractBuildTxModalContent = ({ data, onSubmit, onCancel }: CallContr
 
   const { fromAddress, bytecode, alphAmount } = txPrep
   const availableBalance = useAddressAvailableBalance(fromAddress.hash)
+  const allAssetAmountsAreWithinAvailableBalance = useAreAmountsWithinAvailableBalance(
+    fromAddress.hash,
+    assetAmounts ?? []
+  )
 
   useEffect(() => {
     try {
@@ -78,9 +82,6 @@ const CallContractBuildTxModalContent = ({ data, onSubmit, onCancel }: CallContr
     onCancel()
     return null
   }
-
-  const allAssetAmountsAreWithinAvailableBalance =
-    assetAmounts && assetAmountsWithinAvailableBalance(fromAddress, assetAmounts)
 
   const isSubmitButtonActive =
     !gasPriceError && !gasAmountError && !!bytecode && isAmountValid && allAssetAmountsAreWithinAvailableBalance

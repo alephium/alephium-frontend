@@ -101,6 +101,7 @@ export interface TransferTxData {
   fromAddress: Address
   toAddress: string
   assetAmounts: AssetAmount[]
+  shouldSweep: boolean
   gasAmount?: number
   gasPrice?: string
   lockTime?: Date
