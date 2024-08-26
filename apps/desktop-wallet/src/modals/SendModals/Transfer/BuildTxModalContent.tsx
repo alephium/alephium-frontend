@@ -22,6 +22,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useAddressesTotalTokensBalances } from '@/api/addressesBalancesDataHooks'
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
@@ -29,9 +30,9 @@ import ToggleSection from '@/components/ToggleSection'
 import useGasSettings from '@/hooks/useGasSettings'
 import AssetAmountsInput from '@/modals/SendModals/AssetAmountsInput'
 import GasSettings from '@/modals/SendModals/GasSettings'
+import useAreAmountsWithinAvailableBalance from '@/modals/SendModals/useAreAmountsWithinAvailableBalance'
 import { AssetAmountInputType } from '@/types/assets'
 import { PartialTxData, TransferTxData } from '@/types/transactions'
-import { assetAmountsWithinAvailableBalance } from '@/utils/addresses'
 
 export interface TransferBuildTxModalContentProps {
   data: PartialTxData<TransferTxData, 'fromAddress'>
@@ -57,6 +58,12 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
 
   const { fromAddress, toAddress } = data
 
+  const { data: tokensBalances } = useAddressesTotalTokensBalances(fromAddress.hash)
+  const allAssetAmountsAreWithinAvailableBalance = useAreAmountsWithinAvailableBalance(
+    fromAddress.hash,
+    assetAmounts ?? []
+  )
+
   if (!fromAddress || !toAddress) return null
 
   const handleLocktimeChange = (lockTimeInput: string) =>
@@ -69,7 +76,6 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
 
   const lockTimeInPast = lockTime && dayjs(lockTime).toDate() < dayjs().toDate()
   const atLeastOneAssetWithAmountIsSet = assetAmounts.some((asset) => asset?.amount && asset.amount > 0)
-  const allAssetAmountsAreWithinAvailableBalance = assetAmountsWithinAvailableBalance(fromAddress, assetAmounts)
 
   const isSubmitButtonActive =
     !gasPriceError &&
@@ -78,6 +84,13 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
     !lockTimeInPast &&
     atLeastOneAssetWithAmountIsSet &&
     allAssetAmountsAreWithinAvailableBalance
+
+  const shouldSweep = Object.keys(tokensBalances).every((tokenId) => {
+    const balances = tokensBalances[tokenId]
+    const asset = assetAmounts.find((asset) => asset.id === tokenId)
+
+    return !balances || !balances.balance ? true : !asset ? false : balances.balance === asset.amount
+  })
 
   return (
     <>
@@ -127,7 +140,8 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
             assetAmounts,
             gasAmount: gasAmount ? parseInt(gasAmount) : undefined,
             gasPrice,
-            lockTime
+            lockTime,
+            shouldSweep
           })
         }
         disabled={!isSubmitButtonActive}
