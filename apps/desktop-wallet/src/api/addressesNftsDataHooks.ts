@@ -25,7 +25,7 @@ import { chunk, isArray } from 'lodash'
 import { useAddressesUnlistedTokenTypes } from '@/api/utilHooks'
 import { isDefined } from '@/utils/misc'
 
-export const useAddressesNftsIds = (addressHash?: AddressHash) => {
+export const useAddressesNFTsIds = (addressHash?: AddressHash) => {
   const {
     data: { 'non-fungible': nftIds },
     isLoading
@@ -37,8 +37,8 @@ export const useAddressesNftsIds = (addressHash?: AddressHash) => {
   }
 }
 
-export const useAddressesNfts = (addressHash?: AddressHash) => {
-  const { data: nftIds, isLoading: isLoadingNftIds } = useAddressesNftsIds(addressHash)
+export const useAddressesNFTs = (addressHash?: AddressHash) => {
+  const { data: nftIds, isLoading: isLoadingNftIds } = useAddressesNFTsIds(addressHash)
 
   const { data: nftsMetadata, isLoading: isLoadingNftsMetadata } = useQueries({
     queries: chunk(nftIds, TOKENS_QUERY_LIMIT).map((ids) => ({
