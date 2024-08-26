@@ -89,8 +89,14 @@ const AssetAmountsInput = ({
   }
 
   const handleAssetSelect = (id: string) => {
+    const selectedAsset = tokens.find((asset) => asset.id === id)
     const newAssetAmounts = [...assetAmounts]
-    newAssetAmounts.splice(selectedAssetRowIndex, 1, { id })
+
+    newAssetAmounts.splice(selectedAssetRowIndex, 1, {
+      id,
+      amount: selectedAsset?.type === 'NFT' ? BigInt(1) : undefined
+    })
+
     onAssetAmountsChange(newAssetAmounts)
   }
 
@@ -98,18 +104,15 @@ const AssetAmountsInput = ({
     const selectedAssetId = assetAmounts[assetRowIndex].id
     const selectedAsset = tokens.find((asset) => asset.id === selectedAssetId)
 
-    if (!selectedAsset) return
+    if (!selectedAsset || selectedAsset.type === 'NFT') return
 
     const cleanedAmount = amountInput === '00' ? '0' : amountInput
     const amountValueAsFloat = parseFloat(cleanedAmount)
 
-    const availableAmount =
-      selectedAsset.type === 'NFT'
-        ? toHumanReadableAmount(BigInt(1))
-        : toHumanReadableAmount(
-            selectedAsset.availableBalance ?? BigInt(0),
-            selectedAsset.type === 'nonStandardToken' ? 0 : selectedAsset.decimals
-          )
+    const availableAmount = toHumanReadableAmount(
+      selectedAsset.availableBalance ?? BigInt(0),
+      selectedAsset.type === 'nonStandardToken' ? 0 : selectedAsset.decimals
+    )
 
     const newError =
       amountValueAsFloat > parseFloat(availableAmount)
@@ -241,39 +244,45 @@ const AssetAmountsInput = ({
                   )}
                 </SelectInput>
               </AssetSelect>
-              <HorizontalDividerStyled />
-              <AssetAmountRow>
-                <AssetAmountInput
-                  value={amountInput}
-                  onChange={(e) => handleAssetAmountChange(index, e.target.value)}
-                  onClick={() => setSelectedAssetRowIndex(index)}
-                  onMouseDown={() => setSelectedAssetRowIndex(index)}
-                  onKeyDown={(e) => onEnterOrSpace(e, () => setSelectedAssetRowIndex(index))}
-                  type="number"
-                  min={token.id === ALPH.id ? minAmountInAlph : 0}
-                  max={availableHumanReadableAmount}
-                  aria-label={t('Amount')}
-                  label={`${t('Amount')} ${symbol ? `(${symbol})` : ''}`}
-                  error={errors[index]}
-                />
 
-                <AvailableAmountColumn>
-                  <AvailableAmount tabIndex={0}>
-                    <Amount
-                      value={amount}
-                      nbOfDecimalsToShow={4}
-                      color={theme.font.secondary}
-                      suffix={symbol}
-                      decimals={decimals}
-                      isNonStandardToken={token.type === 'nonStandardToken'}
+              {token.type !== 'NFT' && (
+                <>
+                  <HorizontalDividerStyled />
+
+                  <AssetAmountRow>
+                    <AssetAmountInput
+                      value={amountInput}
+                      onChange={(e) => handleAssetAmountChange(index, e.target.value)}
+                      onClick={() => setSelectedAssetRowIndex(index)}
+                      onMouseDown={() => setSelectedAssetRowIndex(index)}
+                      onKeyDown={(e) => onEnterOrSpace(e, () => setSelectedAssetRowIndex(index))}
+                      type="number"
+                      min={token.id === ALPH.id ? minAmountInAlph : 0}
+                      max={availableHumanReadableAmount}
+                      aria-label={t('Amount')}
+                      label={`${t('Amount')} ${symbol ? `(${symbol})` : ''}`}
+                      error={errors[index]}
                     />
-                    <span> {t('Available').toLowerCase()}</span>
-                  </AvailableAmount>
-                  <ActionLink onClick={() => handleAssetAmountChange(index, availableHumanReadableAmount)}>
-                    {t('Use max amount')}
-                  </ActionLink>
-                </AvailableAmountColumn>
-              </AssetAmountRow>
+
+                    <AvailableAmountColumn>
+                      <AvailableAmount tabIndex={0}>
+                        <Amount
+                          value={amount}
+                          nbOfDecimalsToShow={4}
+                          color={theme.font.secondary}
+                          suffix={symbol}
+                          decimals={decimals}
+                          isNonStandardToken={token.type === 'nonStandardToken'}
+                        />
+                        <span> {t('Available').toLowerCase()}</span>
+                      </AvailableAmount>
+                      <ActionLink onClick={() => handleAssetAmountChange(index, availableHumanReadableAmount)}>
+                        {t('Use max amount')}
+                      </ActionLink>
+                    </AvailableAmountColumn>
+                  </AssetAmountRow>
+                </>
+              )}
               {assetAmounts.length > 1 && <DeleteButton onClick={() => handleRemoveAssetClick(index)} />}
             </BoxStyled>
           )
