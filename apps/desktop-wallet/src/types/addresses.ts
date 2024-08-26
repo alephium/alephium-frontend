@@ -51,13 +51,11 @@ export type LoadingEnabled = boolean | undefined
 export type AddressDataSyncResult = AddressBalancesSyncResult & AddressTokensSyncResult & AddressTransactionsSyncResult
 
 export interface AddressesState extends EntityState<Address> {
-  loadingBalances: boolean
   loadingTransactions: boolean
   loadingTokensBalances: boolean
   syncingAddressData: boolean
   isRestoringAddressesFromMetadata: boolean
   status: 'uninitialized' | 'initialized'
-  balancesStatus: 'uninitialized' | 'initialized'
 }
 
 export type AddressTransactionsSyncResult = {
