@@ -59,19 +59,19 @@ export const useFilterAddressesByText = (text = '') => {
         : allAddressHashes.filter((addressHash) => {
             const address = allAddresses.find((address) => address.hash === addressHash)
             const addressAlphBalances = addressesAlphBalances.find((address) => address.addressHash === addressHash)
-            const addressHasAlphBalances = addressAlphBalances?.balances.balance !== '0'
+            const addressHasAlphBalances = addressAlphBalances?.balances.balance !== BigInt(0)
             const addressTokensBalances = addressesTokensBalances.find((address) => address.addressHash === addressHash)
             const addressTokenNamesWithBalance = addressTokensBalances?.tokenBalances
-              .filter(({ balance }) => balance !== '0')
-              .map(({ tokenId }) => {
-                const listedFungibleToken = fungibleTokenList?.find(({ id }) => id === tokenId)
-                const unlistedFungibleToken = unlistedFungibleTokens?.find(({ id }) => id === tokenId)
+              .filter(({ balance }) => balance !== BigInt(0))
+              .map(({ id }) => {
+                const listedFungibleToken = fungibleTokenList?.find((token) => token.id === id)
+                const unlistedFungibleToken = unlistedFungibleTokens?.find((token) => token.id === id)
 
                 return listedFungibleToken
-                  ? `${listedFungibleToken.name} ${listedFungibleToken.symbol} ${tokenId}`
+                  ? `${listedFungibleToken.name} ${listedFungibleToken.symbol} ${id}`
                   : unlistedFungibleToken
-                    ? `${unlistedFungibleToken.name} ${unlistedFungibleToken.symbol} ${tokenId}`
-                    : tokenId
+                    ? `${unlistedFungibleToken.name} ${unlistedFungibleToken.symbol} ${id}`
+                    : id
               })
               .join(' ')
 
@@ -116,10 +116,10 @@ export const useAddressesWithBalance = () => {
 
   useEffect(() => {
     setFilteredAddressHashes(
-      addressesAlphBalances.reduce((acc, { addressHash, balances }) => {
-        if (balances.balance !== '0') acc.push(addressHash)
-        return acc
-      }, [] as AddressHash[])
+      allAddressHashes.filter(
+        (addressHash) =>
+          addressesAlphBalances.find((address) => address.addressHash === addressHash)?.balances.balance !== BigInt(0)
+      )
     )
   }, [addressesAlphBalances, allAddressHashes])
 
