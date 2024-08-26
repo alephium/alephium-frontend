@@ -171,17 +171,6 @@ const addressesSlice = createSlice({
         state.loadingTransactions = false
       })
       .addCase(syncAddressesBalances.fulfilled, (state, action) => {
-        const addressData = action.payload
-        const updatedAddresses = addressData.map(({ hash, balance, lockedBalance }) => ({
-          id: hash,
-          changes: {
-            balance,
-            lockedBalance
-          }
-        }))
-
-        addressesAdapter.updateMany(state, updatedAddresses)
-
         state.loadingBalances = false
         state.balancesStatus = 'initialized'
       })
@@ -276,8 +265,6 @@ const getAddresses = (state: AddressesState, addressHashes?: AddressHash[]) => {
 const getDefaultAddressState = (address: AddressBase): Address => ({
   ...address,
   group: groupOfAddress(address.hash),
-  balance: '0',
-  lockedBalance: '0',
   transactions: [],
   transactionsPageLoaded: 0,
   allTransactionPagesLoaded: false,
