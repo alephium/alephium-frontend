@@ -20,7 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { useEffect, useState } from 'react'
 
 import { useAddressesAlphBalances, useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
-import { useAddressesUnlistedFungibleTokens } from '@/api/addressesUnlistedTokensHooks'
+import { useAddressesUnlistedFTs } from '@/api/addressesUnlistedTokensHooks'
 import { useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
@@ -29,7 +29,7 @@ export const useFilterAddressesByText = (text = '') => {
   const allAddresses = useAppSelector(selectAllAddresses)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
   const { data: fungibleTokenList } = useFungibleTokenList()
-  const { data: unlistedFungibleTokens } = useAddressesUnlistedFungibleTokens()
+  const { data: unlistedFungibleTokens } = useAddressesUnlistedFTs()
   const { data: addressesAlphBalances } = useAddressesAlphBalances()
 
   const [filteredAddressHashes, setFilteredAddressHashes] = useState<AddressHash[]>()
