@@ -63,7 +63,7 @@ const AssetsLogosList = ({
         <AssetBadge
           key={token.id}
           assetId={token.id}
-          amount={showAmount && token.type !== 'NFT' ? token.balance : undefined}
+          amount={showAmount && token.type !== 'NFT' ? token.totalBalance : undefined}
           hideNftName={token.type === 'NFT'}
           {...badgeProps}
         />
