@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { FungibleTokenBasicMetadata, NFT } from '@alephium/shared'
 import { TokenInfo } from '@alephium/token-list'
+import { Token } from '@alephium/web3/dist/src/api/api-explorer'
 
 // For better code readability
 export interface ListedFT extends TokenInfo {}
@@ -29,25 +30,32 @@ export interface NonStandardToken {
 // For stricter typings in our components that handle display of multiple token types
 export type TokenDisplay = ListedFTDisplay | UnlistedFTDisplay | NFTDisplay | NonStandardTokenDisplay
 
-export type ListedFTDisplay = ListedFT & {
-  type: 'listedFT'
-  worth?: number
-  balance?: bigint
-  availableBalance?: bigint
-}
+export type ListedFTDisplay = DisplayBalances &
+  ListedFT & {
+    type: 'listedFT'
+    worth?: number
+  }
 
-export type UnlistedFTDisplay = UnlistedFT & {
-  type: 'unlistedFT'
-  balance?: bigint
-  availableBalance?: bigint
-}
+export type UnlistedFTDisplay = DisplayBalances &
+  UnlistedFT & {
+    type: 'unlistedFT'
+  }
 
 export type NFTDisplay = NFT & {
   type: 'NFT'
 }
 
-export type NonStandardTokenDisplay = NonStandardToken & {
-  type: 'nonStandardToken'
-  balance?: bigint
-  availableBalance?: bigint
+export type NonStandardTokenDisplay = DisplayBalances &
+  NonStandardToken & {
+    type: 'nonStandardToken'
+  }
+
+export type DisplayBalances = {
+  totalBalance: bigint
+  lockedBalance: bigint
+  availableBalance: bigint
+}
+
+export type TokenDisplayBalances = DisplayBalances & {
+  id: Token['id']
 }
