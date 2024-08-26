@@ -23,7 +23,7 @@ import { chunk, orderBy } from 'lodash'
 import { useMemo } from 'react'
 
 import { useAddressesTotalAlphBalances } from '@/api/addressesBalancesDataHooks'
-import { useAddressesListedFungibleTokensWithPrice } from '@/api/addressesListedFungibleTokensDataHooks'
+import { useAddressesListedFTsWithPrice } from '@/api/addressesListedFungibleTokensDataHooks'
 import { addressTokensBalanceQuery } from '@/api/addressQueries'
 import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
 import { useAppSelector } from '@/hooks/redux'
@@ -38,7 +38,7 @@ type TokenPrice = {
 
 export const useAddressesTokensPrices = () => {
   const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
-  const addressTokensWithPrice = useAddressesListedFungibleTokensWithPrice()
+  const addressTokensWithPrice = useAddressesListedFTsWithPrice()
   const queryClient = useQueryClient()
 
   const { data, isLoading } = useQueries({
@@ -112,7 +112,7 @@ export const useAddressesTokensWorth = (addressHash?: AddressHash) => {
   const { data: alphWorth, isLoading: isLoadingAlphWorth } = useAddressesAlphWorth(addressHash)
   const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useAddressesLastTransactionHashes(addressHash)
   const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
-  const addressesTokensWithPrice = useAddressesListedFungibleTokensWithPrice(addressHash)
+  const addressesTokensWithPrice = useAddressesListedFTsWithPrice(addressHash)
 
   const { data, isLoading } = useQueries({
     queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
