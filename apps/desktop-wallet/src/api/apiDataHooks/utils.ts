@@ -16,19 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { UseQueryResult } from '@tanstack/react-query'
 
-import useAddressesTokensBalancesTotal from '@/api/apiDataHooks/useAddressesTokensBalancesTotal'
-import { AssetAmountInputType } from '@/types/assets'
+import { isDefined } from '@/utils/misc'
 
-const useAreAmountsWithinAvailableBalance = (addressHash: AddressHash, amounts: AssetAmountInputType[]): boolean => {
-  const { data: tokensBalances } = useAddressesTokensBalancesTotal(addressHash)
+export const combineIsLoading = <R>(results: UseQueryResult<R, Error>[]) => ({
+  isLoading: results.some(({ isLoading }) => isLoading)
+})
 
-  return amounts.every((asset) => {
-    const balances = tokensBalances[asset.id]
-
-    return !asset.amount ? true : !balances ? false : asset.amount <= balances.availableBalance
-  })
-}
-
-export default useAreAmountsWithinAvailableBalance
+export const simpleCombine = <R>(results: UseQueryResult<R, Error>[]) => ({
+  data: results.map(({ data }) => data).filter(isDefined),
+  isLoading: results.some(({ isLoading }) => isLoading)
+})

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useAddressesTotalAlphBalances } from '@/api/addressesBalancesDataHooks'
+import useAddressesAlphBalances from '@/api/apiDataHooks/useAddressesAlphBalances'
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import { useAddressesWithBalance } from '@/features/addressFiltering/addressFilteringHooks'
@@ -42,7 +42,7 @@ const DeployContractAddressesTxModalContent = ({
 }: DeployContractAddressesTxModalContentProps) => {
   const { t } = useTranslation()
   const fromAddresses = useAddressesWithBalance()
-  const { isLoading: isLoadingAlphBalances } = useAddressesTotalAlphBalances()
+  const { isLoading: isLoadingAlphBalances } = useAddressesAlphBalances()
 
   const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))
