@@ -19,6 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Optional } from '@alephium/web3'
 import { AddressInfo, AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 
+import { StringAlias } from '@/types/utils'
+
 export type Contact = {
   id: string
   name: string
@@ -27,7 +29,7 @@ export type Contact = {
 
 export type ContactFormData = Optional<Contact, 'id'>
 
-export type AddressHash = string
+export type AddressHash = string & StringAlias
 
 export type AddressSettings = {
   isDefault: boolean

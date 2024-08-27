@@ -16,12 +16,5 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/types/addresses'
-export * from '@/types/assets'
-export * from '@/types/transactions'
-export * from '@/types/walletConnect'
-export * from '@/types/price'
-export * from '@/types/network'
-export * from '@/types/currencies'
-export * from '@/types/clients'
-export * from '@/types/utils'
+// Useful when we want to create type aliases for types that are just a string
+export type StringAlias = { _?: never }
