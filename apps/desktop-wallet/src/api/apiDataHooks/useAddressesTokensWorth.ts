@@ -21,8 +21,8 @@ import { useQueries } from '@tanstack/react-query'
 import { chunk } from 'lodash'
 import { useMemo } from 'react'
 
+import useAddressesPricedFTs from '@/api/apiDataHooks/useAddressesPricedFTs'
 import useAddressesTokensBalancesTotal from '@/api/apiDataHooks/useAddressesTokensBalancesTotal'
-import useAddressesTokensWithPrice from '@/api/apiDataHooks/useAddressesTokensWithPrice'
 import { flatMapCombine } from '@/api/apiDataHooks/utils'
 import { tokensPriceQuery } from '@/api/queries/priceQueries'
 import { useAppSelector } from '@/hooks/redux'
@@ -35,7 +35,7 @@ interface AddressesTokensWorth {
 
 const useAddressesTokensWorth = (addressHash?: AddressHash): AddressesTokensWorth => {
   const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
-  const { data: tokensWithPrice, isLoading: isLoadingTokensWithPrice } = useAddressesTokensWithPrice(addressHash)
+  const { data: tokensWithPrice, isLoading: isLoadingTokensWithPrice } = useAddressesPricedFTs(addressHash)
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalancesTotal(addressHash)
 
   const tokensWorth = useMemo(
@@ -67,7 +67,7 @@ export default useAddressesTokensWorth
 
 const useAddressesTokensPrices = () => {
   const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
-  const { data: tokensWithPrice } = useAddressesTokensWithPrice()
+  const { data: tokensWithPrice } = useAddressesPricedFTs()
 
   const { data, isLoading } = useQueries({
     queries: chunk(
