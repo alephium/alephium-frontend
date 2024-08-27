@@ -22,7 +22,7 @@ import { useMemo } from 'react'
 
 import useAddressesListedFTs from '@/api/apiDataHooks/useAddressesListedFTs'
 
-const useAddressesTokensWithPrice = (addressHash?: AddressHash) => {
+const useAddressesPricedFTs = (addressHash?: AddressHash) => {
   const { data: listedFTs, isLoading: isLoadingListedFTs } = useAddressesListedFTs(addressHash)
 
   const listedFTsWithPrice = useMemo(
@@ -36,4 +36,4 @@ const useAddressesTokensWithPrice = (addressHash?: AddressHash) => {
   }
 }
 
-export default useAddressesTokensWithPrice
+export default useAddressesPricedFTs
