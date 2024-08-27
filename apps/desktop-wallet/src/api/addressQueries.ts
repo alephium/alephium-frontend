@@ -21,10 +21,10 @@ import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions } from '@tanstack/react-query'
 
 import queryClient from '@/api/queryClient'
-import { AddressLatestTransactionHashQueryData } from '@/api/transactionQueries'
+import { AddressLatestTransactionHashQueryFnData } from '@/api/transactionQueries'
 import { DisplayBalances, TokenDisplayBalances } from '@/types/tokens'
 
-interface AddressBalanceQueryProps extends AddressLatestTransactionHashQueryData {
+interface AddressBalanceQueryProps extends AddressLatestTransactionHashQueryFnData {
   networkId: number
 }
 

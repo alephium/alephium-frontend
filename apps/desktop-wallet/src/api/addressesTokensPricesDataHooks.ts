@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, Asset, calculateAmountWorth, client, ONE_MINUTE_MS, TOKENS_QUERY_LIMIT } from '@alephium/shared'
+import { AddressHash, calculateAmountWorth, client, ONE_MINUTE_MS, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { useQueries, useQueryClient } from '@tanstack/react-query'
-import { chunk, orderBy } from 'lodash'
+import { chunk } from 'lodash'
 import { useMemo } from 'react'
 
 import { useAddressesListedFTsWithPrice } from '@/api/addressesListedFTsDataHooks'
@@ -78,31 +78,6 @@ export const useAlphPrice = () => {
     data: tokenPrices.find((token) => token.symbol === ALPH.symbol)?.price,
     isLoading: isLoadingTokenPrices
   }
-}
-
-export const useSortTokensByWorth = (tokens: Asset[]) => {
-  const { data: tokenPrices } = useAddressesTokensPrices()
-
-  const tokensWithWorth = tokens.map((token) => {
-    const tokenPrice = tokenPrices.find((t) => t.symbol === token.symbol)
-
-    return {
-      ...token,
-      worth: tokenPrice ? calculateAmountWorth(token.balance, tokenPrice.price, token.decimals) : undefined
-    }
-  })
-
-  return orderBy(
-    tokensWithWorth,
-    [
-      (a) => (a.verified ? 0 : 1),
-      (a) => a.worth ?? -1,
-      (a) => a.verified === undefined,
-      (a) => a.name?.toLowerCase(),
-      'id'
-    ],
-    ['asc', 'desc', 'asc', 'asc', 'asc']
-  )
 }
 
 type TokenId = string
