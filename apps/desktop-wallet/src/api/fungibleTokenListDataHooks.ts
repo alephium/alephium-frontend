@@ -25,7 +25,12 @@ import { useAppSelector } from '@/hooks/redux'
 
 const TOKEN_LIST_QUERY_KEY = 'tokenList'
 
-export const useFungibleTokenList = () => {
+export interface FungibleTokenList {
+  data: TokenList['tokens'] | undefined
+  isLoading: boolean
+}
+
+export const useFungibleTokenList = (): FungibleTokenList => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const network = networkId === 0 ? 'mainnet' : networkId === 1 ? 'testnet' : undefined
 

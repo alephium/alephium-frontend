@@ -20,8 +20,8 @@ import { AddressHash, client, PAGINATION_PAGE_LIMIT } from '@alephium/shared'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions } from '@tanstack/react-query'
 
+import { AddressLatestTransactionHashQueryFnData } from '@/api/queries/transactionQueries'
 import queryClient from '@/api/queryClient'
-import { AddressLatestTransactionHashQueryFnData } from '@/api/transactionQueries'
 import { DisplayBalances, TokenDisplayBalances } from '@/types/tokens'
 
 interface AddressBalanceQueryProps extends AddressLatestTransactionHashQueryFnData {

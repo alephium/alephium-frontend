@@ -19,32 +19,55 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { useMemo } from 'react'
 
-import useAddressesTokensBalances from '@/api/apiDataHooks/useAddressesTokensBalances'
-import { useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
-import { ListedFT } from '@/types/tokens'
+import useAddressesTokensBalances, { AddressesTokensBalances } from '@/api/apiDataHooks/useAddressesTokensBalances'
+import { FungibleTokenList, useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
+import { ListedFT, TokenId } from '@/types/tokens'
 
-const useAddressesListedFTs = (addressHash?: AddressHash) => {
+interface AddressesListedFTs {
+  data: ListedFT[]
+  unknownTypeTokenIds: TokenId[]
+  isLoading: boolean
+}
+
+const useAddressesListedFTs = (addressHash?: AddressHash): AddressesListedFTs => {
   const { data: fungibleTokenList, isLoading: isLoadingFungibleTokenList } = useFungibleTokenList()
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalances(addressHash)
 
-  const listedFTs = useMemo(
-    () =>
-      Object.values(tokensBalances).reduce((acc, addressTokensBalances) => {
-        addressTokensBalances?.map(({ id }) => {
-          const listedFungibleToken = fungibleTokenList?.find((token) => token.id === id)
-          const alreadyAddedToArray = acc.some((token) => token.id === listedFungibleToken?.id)
-
-          if (listedFungibleToken && !alreadyAddedToArray) acc.push(listedFungibleToken)
-        })
-        return acc
-      }, [] as ListedFT[]),
+  const { listedFTs, unknownTypeTokenIds } = useMemo(
+    () => separateTokens(tokensBalances, fungibleTokenList),
     [fungibleTokenList, tokensBalances]
   )
 
   return {
     data: listedFTs,
+    unknownTypeTokenIds,
     isLoading: isLoadingFungibleTokenList || isLoadingTokensBalances
   }
 }
 
 export default useAddressesListedFTs
+
+const separateTokens = (
+  tokensBalances: AddressesTokensBalances['data'],
+  fungibleTokenList: FungibleTokenList['data']
+) =>
+  Object.values(tokensBalances).reduce(
+    (acc, addressTokensBalances) => {
+      addressTokensBalances?.map(({ id }) => {
+        const listedFungibleToken = fungibleTokenList?.find((token) => token.id === id)
+
+        if (listedFungibleToken) {
+          const alreadyAddedToArray = acc.listedFTs.some((token) => token.id === listedFungibleToken?.id)
+
+          if (!alreadyAddedToArray) acc.listedFTs.push(listedFungibleToken)
+        } else {
+          acc.unknownTypeTokenIds.push(id)
+        }
+      })
+      return acc
+    },
+    {
+      listedFTs: [] as ListedFT[],
+      unknownTypeTokenIds: [] as TokenId[]
+    }
+  )

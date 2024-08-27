@@ -27,25 +27,22 @@ interface TokensPriceQueryProps {
   currency: string
 }
 
-const TOKEN_PRICES_KEY = 'tokenPrices'
-
-type TokenPrice = {
+type TokensPriceQueryFnData = {
   symbol: string
   price: number
-}
+}[]
+
+const TOKEN_PRICES_KEY = 'tokenPrices'
 
 export const tokensPriceQuery = ({ symbols, currency }: TokensPriceQueryProps) => {
   const getQueryOptions = (_symbols: TokensPriceQueryProps['symbols']) =>
     queryOptions({
       queryKey: [TOKEN_PRICES_KEY, 'currentPrice', _symbols, { currency }],
-      queryFn: async () =>
-        (await client.explorer.market.postMarketPrices({ currency }, _symbols)).map(
-          (price, i) =>
-            ({
-              price,
-              symbol: _symbols[i]
-            }) as TokenPrice
-        ),
+      queryFn: async (): Promise<TokensPriceQueryFnData> =>
+        (await client.explorer.market.postMarketPrices({ currency }, _symbols)).map((price, i) => ({
+          price,
+          symbol: _symbols[i]
+        })),
       refetchInterval: ONE_MINUTE_MS
     })
 

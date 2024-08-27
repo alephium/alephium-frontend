@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 
-import { tokensPriceQuery } from '@/api/priceQueries'
+import { tokensPriceQuery } from '@/api/queries/priceQueries'
 import { useAppSelector } from '@/hooks/redux'
 
 interface AlphPrice {
