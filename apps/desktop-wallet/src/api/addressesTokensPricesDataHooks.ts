@@ -22,8 +22,8 @@ import { useQueries, useQueryClient } from '@tanstack/react-query'
 import { chunk, orderBy } from 'lodash'
 import { useMemo } from 'react'
 
-import { useAddressesAlphBalances } from '@/api/addressesBalancesDataHooks'
-import { useAddressesListedFungibleTokensWithPrice } from '@/api/addressesListedFungibleTokensDataHooks'
+import { useAddressesTotalAlphBalances } from '@/api/addressesBalancesDataHooks'
+import { useAddressesListedFTsWithPrice } from '@/api/addressesListedFungibleTokensDataHooks'
 import { addressTokensBalanceQuery } from '@/api/addressQueries'
 import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
 import { useAppSelector } from '@/hooks/redux'
@@ -38,7 +38,7 @@ type TokenPrice = {
 
 export const useAddressesTokensPrices = () => {
   const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
-  const addressTokensWithPrice = useAddressesListedFungibleTokensWithPrice()
+  const addressTokensWithPrice = useAddressesListedFTsWithPrice()
   const queryClient = useQueryClient()
 
   const { data, isLoading } = useQueries({
@@ -112,7 +112,7 @@ export const useAddressesTokensWorth = (addressHash?: AddressHash) => {
   const { data: alphWorth, isLoading: isLoadingAlphWorth } = useAddressesAlphWorth(addressHash)
   const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useAddressesLastTransactionHashes(addressHash)
   const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
-  const addressesTokensWithPrice = useAddressesListedFungibleTokensWithPrice(addressHash)
+  const addressesTokensWithPrice = useAddressesListedFTsWithPrice(addressHash)
 
   const { data, isLoading } = useQueries({
     queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
@@ -123,18 +123,18 @@ export const useAddressesTokensWorth = (addressHash?: AddressHash) => {
         (tokensWorth, { data: balances }) => {
           const tokensBalance = {} as Record<TokenId, bigint | undefined>
 
-          balances?.tokenBalances.forEach(({ tokenId, balance }) => {
-            tokensBalance[tokenId] = BigInt(balance) + (tokensBalance[tokenId] ?? BigInt(0))
+          balances?.tokenBalances.forEach(({ id, balance }) => {
+            tokensBalance[id] = BigInt(balance) + (tokensBalance[id] ?? BigInt(0))
           })
 
-          Object.keys(tokensBalance).forEach((tokenId) => {
-            const tokenInfo = addressesTokensWithPrice.find((token) => token.id === tokenId)
+          Object.keys(tokensBalance).forEach((id) => {
+            const tokenInfo = addressesTokensWithPrice.find((token) => token.id === id)
             const tokenPrice = tokenPrices.find((token) => token.symbol === tokenInfo?.symbol)
-            const tokenBalance = tokensBalance[tokenId]
+            const tokenBalance = tokensBalance[id]
 
             if (tokenBalance && tokenPrice && tokenInfo) {
-              tokensWorth[tokenId] =
-                calculateAmountWorth(tokenBalance, tokenPrice.price, tokenInfo.decimals) + (tokensWorth[tokenId] ?? 0)
+              tokensWorth[id] =
+                calculateAmountWorth(tokenBalance, tokenPrice.price, tokenInfo.decimals) + (tokensWorth[id] ?? 0)
             }
           })
 
@@ -174,7 +174,7 @@ export const useAddressesTokensTotalWorth = (addressHash?: AddressHash) => {
 }
 
 export const useAddressesAlphWorth = (addressHash?: AddressHash) => {
-  const { data: totalAlphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalances(addressHash)
+  const { data: totalAlphBalances, isLoading: isLoadingAlphBalances } = useAddressesTotalAlphBalances(addressHash)
   const { data: alphPrice, isLoading: isLoadingAlphPrice } = useAlphPrice()
 
   const totalWorth = alphPrice !== undefined ? calculateAmountWorth(totalAlphBalances.balance, alphPrice) : undefined

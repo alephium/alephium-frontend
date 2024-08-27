@@ -37,28 +37,25 @@ export type DeprecatedAddressMetadata = DeprecatedAddressSettings & {
 
 export type AddressBase = AddressSettings & NonSensitiveAddressData
 
-export type Address = AddressBase &
-  Omit<explorer.AddressInfo, 'txNumber'> & {
-    group: number
-    transactions: (explorer.Transaction['hash'] | PendingTransaction['hash'])[]
-    transactionsPageLoaded: number
-    allTransactionPagesLoaded: boolean
-    tokens: AddressTokenBalance[]
-    lastUsed: TimeInMs
-  }
+export type Address = AddressBase & {
+  group: number
+  transactions: (explorer.Transaction['hash'] | PendingTransaction['hash'])[]
+  transactionsPageLoaded: number
+  allTransactionPagesLoaded: boolean
+  tokens: AddressTokenBalance[]
+  lastUsed: TimeInMs
+}
 
 export type LoadingEnabled = boolean | undefined
 
 export type AddressDataSyncResult = AddressBalancesSyncResult & AddressTokensSyncResult & AddressTransactionsSyncResult
 
 export interface AddressesState extends EntityState<Address> {
-  loadingBalances: boolean
   loadingTransactions: boolean
   loadingTokensBalances: boolean
   syncingAddressData: boolean
   isRestoringAddressesFromMetadata: boolean
   status: 'uninitialized' | 'initialized'
-  balancesStatus: 'uninitialized' | 'initialized'
 }
 
 export type AddressTransactionsSyncResult = {

@@ -37,7 +37,7 @@ export const useAddressesUnlistedNonStandardTokenIds = (addressHash?: AddressHas
   }
 }
 
-export const useAddressesUnlistedFungibleTokens = (addressHash?: AddressHash) => {
+export const useAddressesUnlistedFTs = (addressHash?: AddressHash) => {
   const {
     data: { fungible: unlistedFungibleTokenIds },
     isLoading: isLoadingUnlistedTokenTypes
