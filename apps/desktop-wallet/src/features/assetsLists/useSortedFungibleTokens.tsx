@@ -20,9 +20,9 @@ import { AddressHash } from '@alephium/shared'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
-import { useAddressesListedFTs } from '@/api/addressesListedFTsDataHooks'
-import { useAddressesTokensWorth } from '@/api/addressesTokensPricesDataHooks'
 import { useAddressesUnlistedFTs } from '@/api/addressesUnlistedTokensHooks'
+import useAddressesListedFTs from '@/api/apiDataHooks/useAddressesListedFTs'
+import useAddressesTokensWorth from '@/api/apiDataHooks/useAddressesTokensWorth'
 import { ListedFT, UnlistedFT } from '@/types/tokens'
 
 // TODO: Merge with useAddressDisplayTokens?

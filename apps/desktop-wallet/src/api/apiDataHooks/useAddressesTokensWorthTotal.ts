@@ -16,20 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { UseQueryResult } from '@tanstack/react-query'
+import { AddressHash } from '@alephium/shared'
+import { useMemo } from 'react'
 
-import { isDefined } from '@/utils/misc'
+import useAddressesTokensWorth from '@/api/apiDataHooks/useAddressesTokensWorth'
 
-export const combineIsLoading = <R>(results: UseQueryResult<R, Error>[]) => ({
-  isLoading: results.some(({ isLoading }) => isLoading)
-})
+const useAddressesTokensWorthTotal = (addressHash?: AddressHash) => {
+  const { data: tokensWorth, isLoading } = useAddressesTokensWorth(addressHash)
 
-export const mapCombine = <R>(results: UseQueryResult<R, Error>[]) => ({
-  data: results.map(({ data }) => data).filter(isDefined),
-  ...combineIsLoading(results)
-})
+  const totalTokensWorth = useMemo(
+    () => Object.values(tokensWorth).reduce((acc, tokenWorth) => (tokenWorth ?? 0) + (acc ?? 0), 0),
+    [tokensWorth]
+  )
 
-export const flatMapCombine = <R>(results: UseQueryResult<R | R[], Error>[]) => ({
-  data: results.flatMap(({ data }) => data).filter(isDefined),
-  ...combineIsLoading(results)
-})
+  return {
+    data: totalTokensWorth,
+    isLoading
+  }
+}
+
+export default useAddressesTokensWorthTotal

@@ -61,9 +61,10 @@ const combineAlphAndTokens = (
     (acc, { addressHash, tokenBalances }) => {
       const addressAlphBalances = alphBalances[addressHash]
 
-      acc[addressHash] = addressAlphBalances
-        ? [{ id: ALPH.id, ...addressAlphBalances }, ...tokenBalances]
-        : tokenBalances
+      acc[addressHash] =
+        addressAlphBalances && addressAlphBalances.totalBalance > 0
+          ? [{ id: ALPH.id, ...addressAlphBalances }, ...tokenBalances]
+          : tokenBalances
 
       return acc
     },

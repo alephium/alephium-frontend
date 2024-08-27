@@ -16,20 +16,26 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { UseQueryResult } from '@tanstack/react-query'
+import { ALPH } from '@alephium/token-list'
+import { useQuery } from '@tanstack/react-query'
 
-import { isDefined } from '@/utils/misc'
+import { tokensPriceQuery } from '@/api/priceQueries'
+import { useAppSelector } from '@/hooks/redux'
 
-export const combineIsLoading = <R>(results: UseQueryResult<R, Error>[]) => ({
-  isLoading: results.some(({ isLoading }) => isLoading)
-})
+interface AlphPrice {
+  data: number | undefined
+  isLoading: boolean
+}
 
-export const mapCombine = <R>(results: UseQueryResult<R, Error>[]) => ({
-  data: results.map(({ data }) => data).filter(isDefined),
-  ...combineIsLoading(results)
-})
+const useAlphPrice = (): AlphPrice => {
+  const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
 
-export const flatMapCombine = <R>(results: UseQueryResult<R | R[], Error>[]) => ({
-  data: results.flatMap(({ data }) => data).filter(isDefined),
-  ...combineIsLoading(results)
-})
+  const { data, isLoading } = useQuery(tokensPriceQuery({ symbols: [ALPH.symbol], currency }))
+
+  return {
+    data: data ? data[0].price : undefined,
+    isLoading
+  }
+}
+
+export default useAlphPrice

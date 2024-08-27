@@ -16,20 +16,24 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { UseQueryResult } from '@tanstack/react-query'
+import { AddressHash } from '@alephium/shared'
+import { explorer } from '@alephium/web3'
+import { useMemo } from 'react'
 
-import { isDefined } from '@/utils/misc'
+import useAddressesListedFTs from '@/api/apiDataHooks/useAddressesListedFTs'
 
-export const combineIsLoading = <R>(results: UseQueryResult<R, Error>[]) => ({
-  isLoading: results.some(({ isLoading }) => isLoading)
-})
+const useAddressesTokensWithPrice = (addressHash?: AddressHash) => {
+  const { data: listedFTs, isLoading: isLoadingListedFTs } = useAddressesListedFTs(addressHash)
 
-export const mapCombine = <R>(results: UseQueryResult<R, Error>[]) => ({
-  data: results.map(({ data }) => data).filter(isDefined),
-  ...combineIsLoading(results)
-})
+  const listedFTsWithPrice = useMemo(
+    () => listedFTs.filter((token) => token.symbol in explorer.TokensWithPrice),
+    [listedFTs]
+  )
 
-export const flatMapCombine = <R>(results: UseQueryResult<R | R[], Error>[]) => ({
-  data: results.flatMap(({ data }) => data).filter(isDefined),
-  ...combineIsLoading(results)
-})
+  return {
+    data: listedFTsWithPrice,
+    isLoading: isLoadingListedFTs
+  }
+}
+
+export default useAddressesTokensWithPrice
