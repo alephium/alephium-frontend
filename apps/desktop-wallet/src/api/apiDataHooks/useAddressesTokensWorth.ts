@@ -26,13 +26,12 @@ import useAddressesTokensWithPrice from '@/api/apiDataHooks/useAddressesTokensWi
 import { flatMapCombine } from '@/api/apiDataHooks/utils'
 import { tokensPriceQuery } from '@/api/priceQueries'
 import { useAppSelector } from '@/hooks/redux'
+import { TokenId } from '@/types/tokens'
 
 interface AddressesTokensWorth {
   data: Record<TokenId, number | undefined>
   isLoading: boolean
 }
-
-type TokenId = string
 
 const useAddressesTokensWorth = (addressHash?: AddressHash): AddressesTokensWorth => {
   const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
