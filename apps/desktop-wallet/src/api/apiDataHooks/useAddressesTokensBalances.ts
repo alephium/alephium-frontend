@@ -21,14 +21,14 @@ import { ALPH } from '@alephium/token-list'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { addressTokensBalanceQuery, AddressTokensBalancesQueryFnData } from '@/api/addressQueries'
-import useAddressesLastTransactionHashes from '@/api/apiDataHooks/useAddressesLastTransactionHashes'
 import useAddressesAlphBalances, { AddressesAlphBalances } from '@/api/apiDataHooks/useAddressesAlphBalances'
+import useAddressesLastTransactionHashes from '@/api/apiDataHooks/useAddressesLastTransactionHashes'
 import { mapCombine } from '@/api/apiDataHooks/utils'
+import { addressTokensBalanceQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { TokenDisplayBalances } from '@/types/tokens'
 
-interface AddressesTokensBalances {
+export interface AddressesTokensBalances {
   data: Record<AddressHash, TokenDisplayBalances[] | undefined>
   isLoading: boolean
 }
