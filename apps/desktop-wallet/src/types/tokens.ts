@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FungibleTokenBasicMetadata, NFT } from '@alephium/shared'
+import { FungibleTokenBasicMetadata, NFT, StringAlias } from '@alephium/shared'
 import { TokenInfo } from '@alephium/token-list'
 import { Token } from '@alephium/web3/dist/src/api/api-explorer'
 
@@ -59,3 +59,5 @@ export type DisplayBalances = {
 export type TokenDisplayBalances = DisplayBalances & {
   id: Token['id']
 }
+
+export type TokenId = Token['id'] & StringAlias
