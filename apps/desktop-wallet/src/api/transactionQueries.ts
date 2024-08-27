@@ -28,7 +28,7 @@ interface AddressLatestTransactionHashQueryProps {
   networkId: number
 }
 
-export interface AddressLatestTransactionHashQueryData {
+export interface AddressLatestTransactionHashQueryFnData {
   addressHash: AddressHash
   latestTxHash?: string
   previousTxHash?: string
@@ -37,14 +37,14 @@ export interface AddressLatestTransactionHashQueryData {
 export const addressLatestTransactionHashQuery = ({ addressHash, networkId }: AddressLatestTransactionHashQueryProps) =>
   queryOptions({
     queryKey: [...ADDRESS_TRANSACTIONS_QUERY_KEYS, 'latest', { addressHash, networkId }],
-    queryFn: async ({ queryKey }) => {
+    queryFn: async ({ queryKey }): Promise<AddressLatestTransactionHashQueryFnData> => {
       const transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHash, {
         page: 1,
         limit: 1
       })
 
       const latestTxHash = transactions.length > 0 ? transactions[0].hash : undefined
-      const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionHashQueryData | undefined
+      const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionHashQueryFnData | undefined
       const cachedLatestTxHash = cachedData?.latestTxHash
       const cachedPreviousTxHash = cachedData?.previousTxHash
 
