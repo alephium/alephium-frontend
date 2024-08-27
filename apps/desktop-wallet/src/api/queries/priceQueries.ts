@@ -38,11 +38,11 @@ export const tokensPriceQuery = ({ symbols, currency }: TokensPriceQueryProps) =
   const getQueryOptions = (_symbols: TokensPriceQueryProps['symbols']) =>
     queryOptions({
       queryKey: [TOKEN_PRICES_KEY, 'currentPrice', _symbols, { currency }],
-      queryFn: async (): Promise<TokensPriceQueryFnData> =>
-        (await client.explorer.market.postMarketPrices({ currency }, _symbols)).map((price, i) => ({
-          price,
-          symbol: _symbols[i]
-        })),
+      queryFn: async (): Promise<TokensPriceQueryFnData> => {
+        const prices = await client.explorer.market.postMarketPrices({ currency }, _symbols)
+
+        return prices.map((price, i) => ({ price, symbol: _symbols[i] }))
+      },
       refetchInterval: ONE_MINUTE_MS
     })
 
