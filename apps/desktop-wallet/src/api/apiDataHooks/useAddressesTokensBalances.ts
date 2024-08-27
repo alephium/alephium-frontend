@@ -24,7 +24,7 @@ import { useMemo } from 'react'
 import { addressTokensBalanceQuery, AddressTokensBalancesQueryFnData } from '@/api/addressQueries'
 import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
 import useAddressesAlphBalances, { AddressesAlphBalances } from '@/api/apiDataHooks/useAddressesAlphBalances'
-import { simpleCombine } from '@/api/apiDataHooks/utils'
+import { mapCombine } from '@/api/apiDataHooks/utils'
 import { useAppSelector } from '@/hooks/redux'
 import { TokenDisplayBalances } from '@/types/tokens'
 
@@ -42,7 +42,7 @@ const useAddressesTokensBalances = (addressHash?: AddressHash): AddressesTokensB
     queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
       addressTokensBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
     ),
-    combine: simpleCombine
+    combine: mapCombine
   })
 
   return {

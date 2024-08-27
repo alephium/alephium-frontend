@@ -19,10 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { useQueries } from '@tanstack/react-query'
 
+import { flatMapCombine } from '@/api/apiDataHooks/utils'
 import { addressLatestTransactionHashQuery } from '@/api/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
-import { isDefined } from '@/utils/misc'
 
 export const useAddressesLastTransactionHashes = (addressHash?: AddressHash) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
@@ -31,10 +31,7 @@ export const useAddressesLastTransactionHashes = (addressHash?: AddressHash) => 
 
   const { data, isLoading } = useQueries({
     queries: addressHashes.map((addressHash) => addressLatestTransactionHashQuery({ addressHash, networkId })),
-    combine: (results) => ({
-      data: results.flatMap(({ data }) => data).filter(isDefined),
-      isLoading: results.some(({ isLoading }) => isLoading)
-    })
+    combine: flatMapCombine
   })
 
   return {
