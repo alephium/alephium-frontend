@@ -24,7 +24,7 @@ export const networkSettingsPresets: Record<NetworkPreset, NetworkSettings> = {
   [NetworkNames.mainnet]: {
     networkId: 0,
     nodeHost: 'https://node.mainnet.alephium.org',
-    explorerApiHost: 'https://backend.mainnet.alephium.org',
+    explorerApiHost: 'https://backend-8dce19.alephium.org',
     explorerUrl: 'https://explorer.alephium.org'
   },
   [NetworkNames.testnet]: {
