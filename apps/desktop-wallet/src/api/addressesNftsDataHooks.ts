@@ -22,7 +22,7 @@ import { useQueries } from '@tanstack/react-query'
 import axios from 'axios'
 import { chunk, isArray } from 'lodash'
 
-import { useAddressesUnlistedTokenTypes } from '@/api/utilHooks'
+import useAddressesUnlistedTokenTypes from '@/api/apiDataHooks/useAddressesUnlistedTokenTypes'
 import { isDefined } from '@/utils/misc'
 
 export const useAddressesNFTsIds = (addressHash?: AddressHash) => {

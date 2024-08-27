@@ -21,7 +21,7 @@ import { FungibleTokenMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries } from '@tanstack/react-query'
 import { chunk } from 'lodash'
 
-import { useAddressesUnlistedTokenTypes } from '@/api/utilHooks'
+import useAddressesUnlistedTokenTypes from '@/api/apiDataHooks/useAddressesUnlistedTokenTypes'
 import { UnlistedFT } from '@/types/tokens'
 import { isDefined } from '@/utils/misc'
 
