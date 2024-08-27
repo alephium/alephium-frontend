@@ -22,7 +22,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useAddressesTokensPrices, useAddressesTokensTotalWorth } from '@/api/addressesTokensPricesDataHooks'
+import useAddressesTokensWorthTotal from '@/api/apiDataHooks/useAddressesTokensWorthTotal'
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Amount from '@/components/Amount'
@@ -44,8 +44,7 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const { isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
-  const { data: balanceInFiat } = useAddressesTokensTotalWorth(addressHash)
+  const { data: totalWorth, isLoading: isLoadingTotalWorth } = useAddressesTokensWorthTotal(addressHash)
 
   const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
 
@@ -87,10 +86,10 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           <AssetsBadgesListStyled addressHash={addressHash} simple />
         </Cell>
         <FiatAmountCell>
-          {stateUninitialized || isLoadingTokenPrices ? (
+          {stateUninitialized || isLoadingTotalWorth ? (
             <SkeletonLoader height="18.5px" />
           ) : (
-            <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
+            <Amount value={totalWorth} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
           )}
         </FiatAmountCell>
       </GridRow>

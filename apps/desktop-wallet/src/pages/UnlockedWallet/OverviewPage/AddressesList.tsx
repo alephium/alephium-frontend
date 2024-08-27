@@ -25,7 +25,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { useAddressesTokensTotalWorth } from '@/api/addressesTokensPricesDataHooks'
+import useAddressesTokensWorthTotal from '@/api/apiDataHooks/useAddressesTokensWorthTotal'
 import ActionLink from '@/components/ActionLink'
 import AddressRow from '@/components/AddressRow'
 import Amount from '@/components/Amount'
@@ -107,13 +107,13 @@ const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: Addr
 }
 
 const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
-  const { data: balanceInFiat, isLoading } = useAddressesTokensTotalWorth(addressHash)
+  const { data: totalWorth, isLoading } = useAddressesTokensWorthTotal(addressHash)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
   return isLoading ? (
     <SkeletonLoader height="15.5px" width="50%" />
   ) : (
-    <AmountStyled value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} tabIndex={0} />
+    <AmountStyled value={totalWorth} isFiat suffix={CURRENCIES[fiatCurrency].symbol} tabIndex={0} />
   )
 }
 
