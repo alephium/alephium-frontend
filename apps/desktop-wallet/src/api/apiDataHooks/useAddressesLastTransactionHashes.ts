@@ -24,7 +24,7 @@ import { addressLatestTransactionHashQuery } from '@/api/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
-export const useAddressesLastTransactionHashes = (addressHash?: AddressHash) => {
+const useAddressesLastTransactionHashes = (addressHash?: AddressHash) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
   const addressHashes = addressHash ? [addressHash] : allAddressHashes
@@ -39,3 +39,5 @@ export const useAddressesLastTransactionHashes = (addressHash?: AddressHash) => 
     isLoading
   }
 }
+
+export default useAddressesLastTransactionHashes

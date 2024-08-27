@@ -22,7 +22,7 @@ import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import { addressTokensBalanceQuery, AddressTokensBalancesQueryFnData } from '@/api/addressQueries'
-import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
+import useAddressesLastTransactionHashes from '@/api/apiDataHooks/useAddressesLastTransactionHashes'
 import useAddressesAlphBalancesTotal from '@/api/apiDataHooks/useAddressesAlphBalancesTotal'
 import { combineIsLoading } from '@/api/apiDataHooks/utils'
 import { useAppSelector } from '@/hooks/redux'
