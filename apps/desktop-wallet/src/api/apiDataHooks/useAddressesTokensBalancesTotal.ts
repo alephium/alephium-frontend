@@ -21,7 +21,7 @@ import { ALPH } from '@alephium/token-list'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { addressTokensBalanceQuery, AddressTokensBalancesQueryFnData } from '@/api/addressQueries'
+import { addressTokensBalanceQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import useAddressesLastTransactionHashes from '@/api/apiDataHooks/useAddressesLastTransactionHashes'
 import useAddressesAlphBalancesTotal from '@/api/apiDataHooks/useAddressesAlphBalancesTotal'
 import { combineIsLoading } from '@/api/apiDataHooks/utils'

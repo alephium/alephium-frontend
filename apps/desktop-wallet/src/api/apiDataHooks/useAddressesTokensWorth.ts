@@ -24,7 +24,7 @@ import { useMemo } from 'react'
 import useAddressesTokensBalancesTotal from '@/api/apiDataHooks/useAddressesTokensBalancesTotal'
 import useAddressesTokensWithPrice from '@/api/apiDataHooks/useAddressesTokensWithPrice'
 import { flatMapCombine } from '@/api/apiDataHooks/utils'
-import { tokensPriceQuery } from '@/api/priceQueries'
+import { tokensPriceQuery } from '@/api/queries/priceQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { TokenId } from '@/types/tokens'
 
