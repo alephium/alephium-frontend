@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { ALPH, TokenInfo } from '@alephium/token-list'
+import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
@@ -27,6 +27,7 @@ import { addressTokensBalanceQuery } from '@/api/addressQueries'
 import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
 import { useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
 import { useAppSelector } from '@/hooks/redux'
+import { ListedFT } from '@/types/tokens'
 
 export const useAddressesListedFungibleTokens = (addressHash?: AddressHash) => {
   const { data: fungibleTokenList, isLoading: isLoadingFungibleTokenList } = useFungibleTokenList()
@@ -51,7 +52,7 @@ export const useAddressesListedFungibleTokens = (addressHash?: AddressHash) => {
           return acc
         },
         // Include ALPH in the results
-        (alphBalances.balance > 0 ? [ALPH] : []) as TokenInfo[]
+        (alphBalances.balance > 0 ? [ALPH] : []) as ListedFT[]
       ),
       isLoading: results.some(({ isLoading }) => isLoading)
     })
