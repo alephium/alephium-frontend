@@ -22,7 +22,7 @@ import { useQueries } from '@tanstack/react-query'
 import { chunk } from 'lodash'
 
 import { addressTokensBalanceQuery } from '@/api/addressQueries'
-import { useAddressesLastTransactionHashes } from '@/api/addressTransactionsDataHooks'
+import useAddressesLastTransactionHashes from '@/api/apiDataHooks/useAddressesLastTransactionHashes'
 import { useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
 import { useAppSelector } from '@/hooks/redux'
 
