@@ -20,11 +20,11 @@ import { AddressHash } from '@alephium/shared'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
-import { useAddressesListedFTs } from '@/api/addressesListedFTsDataHooks'
 import { useAddressesNFTs } from '@/api/addressesNftsDataHooks'
-import { useAddressesTokensWorth } from '@/api/addressesTokensPricesDataHooks'
 import { useAddressesUnlistedFTs, useAddressesUnlistedNonStandardTokenIds } from '@/api/addressesUnlistedTokensHooks'
+import useAddressesListedFTs from '@/api/apiDataHooks/useAddressesListedFTs'
 import useAddressesTokensBalancesTotal from '@/api/apiDataHooks/useAddressesTokensBalancesTotal'
+import useAddressesTokensWorth from '@/api/apiDataHooks/useAddressesTokensWorth'
 import { ListedFTDisplay, NFTDisplay, NonStandardTokenDisplay, TokenDisplay, UnlistedFTDisplay } from '@/types/tokens'
 
 const useAddressesDisplayTokens = (addressHash?: AddressHash) => {
