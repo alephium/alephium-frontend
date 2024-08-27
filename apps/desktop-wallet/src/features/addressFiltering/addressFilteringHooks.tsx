@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { useAddressesAlphBalances, useAddressesTokensBalances } from '@/api/addressesBalancesDataHooks'
 import { useAddressesUnlistedFTs } from '@/api/addressesUnlistedTokensHooks'
@@ -88,13 +88,13 @@ export const useAddressesWithBalance = () => {
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
   const { data: addressesAlphBalances } = useAddressesAlphBalances()
 
-  const [filteredAddressHashes, setFilteredAddressHashes] = useState(allAddressHashes)
-
-  useEffect(() => {
-    setFilteredAddressHashes(
-      allAddressHashes.filter((addressHash) => addressesAlphBalances[addressHash]?.balance !== BigInt(0))
-    )
-  }, [addressesAlphBalances, allAddressHashes])
+  const filteredAddressHashes = useMemo(
+    () =>
+      allAddressHashes.filter(
+        (addressHash) => addressesAlphBalances[addressHash] && addressesAlphBalances[addressHash].balance > 0
+      ),
+    [addressesAlphBalances, allAddressHashes]
+  )
 
   return filteredAddressHashes
 }
