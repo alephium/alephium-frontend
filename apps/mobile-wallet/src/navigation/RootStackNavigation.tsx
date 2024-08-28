@@ -169,7 +169,7 @@ const AppUnlockModal = () => {
     } catch (error) {
       const message = 'Could not initialize app with stored wallet'
       showExceptionToast(error, message)
-      sendAnalytics({ type: 'error', message })
+      sendAnalytics({ type: 'error', error, message })
     }
   }, [dispatch, navigation])
 
