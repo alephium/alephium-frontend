@@ -98,7 +98,7 @@ export const getWalletMetadata = async (): Promise<WalletMetadata | null> => {
   }
 }
 
-export const getStoredWallet = async (error?: string): Promise<WalletMetadata> => {
+export const getStoredWalletMetadata = async (error?: string): Promise<WalletMetadata> => {
   const walletMetadata = await getWalletMetadata()
 
   if (!walletMetadata)
@@ -108,7 +108,9 @@ export const getStoredWallet = async (error?: string): Promise<WalletMetadata> =
 }
 
 export const updateStoredWalletMetadata = async (partialMetadata: Partial<WalletMetadata>) => {
-  const walletMetadata = await getStoredWallet(i18n.t('Could not persist wallet metadata: No entry found in storage'))
+  const walletMetadata = await getStoredWalletMetadata(
+    i18n.t('Could not persist wallet metadata: No entry found in storage')
+  )
   const updatedWalletMetadata = { ...walletMetadata, ...partialMetadata }
 
   await storeWalletMetadata(updatedWalletMetadata)
@@ -160,7 +162,7 @@ export const getDeprecatedStoredWallet = async (
 }
 
 export const deleteWallet = async () => {
-  const wallet = await getStoredWallet()
+  const wallet = await getStoredWalletMetadata()
 
   for (const address of wallet.addresses) {
     await deleteAddressPublicKey(address.hash)
@@ -174,7 +176,7 @@ export const deleteWallet = async () => {
 }
 
 export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadataWithHash[]) => {
-  const walletMetadata = await getStoredWallet(
+  const walletMetadata = await getStoredWalletMetadata(
     `${i18n.t('Could not persist addresses metadata')}: ${i18n.t('Wallet metadata not found')}`
   )
 
@@ -220,7 +222,7 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
     await deleteDeprecatedWallet()
 
     // Step 3: Add hash in address metadata for faster app unlock and store public and private key in secure store
-    const { addresses } = await getStoredWallet(
+    const { addresses } = await getStoredWalletMetadata(
       `${i18n.t('Could not migrate address metadata')}: ${i18n.t('Wallet metadata not found')}`
     )
     const updatedAddressesMetadata: AddressMetadataWithHash[] = []
@@ -265,7 +267,7 @@ export const getAddressAsymetricKey = async (addressHash: AddressHash, keyType: 
   let key = await getSecurelyWithReportableError(storageKey, false, `Could not get ${keyType} from secure storage`)
 
   if (!key) {
-    const { addresses } = await getStoredWallet(
+    const { addresses } = await getStoredWalletMetadata(
       `${i18n.t(
         keyType === 'public' ? 'Could not get address public key' : 'Could not get address private key'
       )}: ${i18n.t('Wallet metadata not found')}`

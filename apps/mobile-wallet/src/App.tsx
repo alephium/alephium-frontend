@@ -39,7 +39,7 @@ import { useLocalization } from '~/features/localization/useLocalization'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
-import { getStoredWallet, storedWalletExists } from '~/persistent-storage/wallet'
+import { getStoredWalletMetadata, storedWalletExists } from '~/persistent-storage/wallet'
 import {
   makeSelectAddressesUnknownTokens,
   selectAllAddressVerifiedFungibleTokenSymbols,
@@ -100,7 +100,7 @@ const Main = ({ children, ...props }: ViewProps) => {
 
   useEffect(() => {
     storedWalletExists().then((walletExists) => {
-      if (walletExists) getStoredWallet().then((wallet) => dispatch(appLaunchedWithLastUsedWallet(wallet)))
+      if (walletExists) getStoredWalletMetadata().then((wallet) => dispatch(appLaunchedWithLastUsedWallet(wallet)))
     })
   }, [dispatch])
 

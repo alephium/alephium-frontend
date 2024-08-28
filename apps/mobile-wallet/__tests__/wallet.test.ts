@@ -23,7 +23,7 @@ import * as SecureStore from 'expo-secure-store'
 import { defaultSecureStoreConfig } from '~/persistent-storage/config'
 import {
   deleteWallet,
-  getStoredWallet,
+  getStoredWalletMetadata,
   migrateDeprecatedMnemonic,
   storeWalletMetadata,
   storeWalletMetadataDeprecated
@@ -91,12 +91,12 @@ afterEach(() => {
   mockedSetItemAsync.mockReset()
 })
 
-describe(getStoredWallet, () => {
+describe(getStoredWalletMetadata, () => {
   it('should fail if there are no wallet metadata stored', async () => {
-    expect(getStoredWallet).rejects.toThrow()
+    expect(getStoredWalletMetadata).rejects.toThrow()
 
     await addTestWalletInStorage()
-    const wallet = await getStoredWallet()
+    const wallet = await getStoredWalletMetadata()
 
     expect(wallet.name).toEqual('Test wallet')
   })
@@ -187,7 +187,7 @@ describe(migrateDeprecatedMnemonic, () => {
 
     await addDeprecatedTestWalletInStorage()
     await migrateDeprecatedMnemonic(testWalletMnemonic)
-    const wallet = await getStoredWallet()
+    const wallet = await getStoredWalletMetadata()
 
     expect(wallet.addresses[0].hash).toEqual('1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')
     expect(wallet.addresses[1].hash).toEqual('1Bf9jthiwQo74V94LHT37dwEEiV22KkpKySf4TmRDzZqf')

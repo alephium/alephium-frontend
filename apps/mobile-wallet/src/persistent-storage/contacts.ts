@@ -25,11 +25,11 @@ import {
 import { nanoid } from 'nanoid'
 
 import i18n from '~/features/localization/i18n'
-import { getStoredWallet, updateStoredWalletMetadata } from '~/persistent-storage/wallet'
+import { getStoredWalletMetadata, updateStoredWalletMetadata } from '~/persistent-storage/wallet'
 import { store } from '~/store/store'
 
 export const persistContact = async (contactData: ContactFormData) => {
-  const { contacts } = await getStoredWallet(
+  const { contacts } = await getStoredWalletMetadata(
     `${i18n.t('Could not persist contact')}: ${i18n.t('Wallet metadata not found')}`
   )
 
@@ -71,7 +71,7 @@ export const persistContact = async (contactData: ContactFormData) => {
 }
 
 export const deleteContact = async (contactId: Contact['id']) => {
-  const { contacts } = await getStoredWallet(
+  const { contacts } = await getStoredWalletMetadata(
     `${i18n.t('Could not delete contact')}: ${i18n.t('Wallet metadata not found')}`
   )
 
