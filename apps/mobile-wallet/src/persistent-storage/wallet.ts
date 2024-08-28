@@ -83,7 +83,7 @@ export const validateAndRepareStoredWalletData = async (): Promise<boolean> => {
         showToast({
           text1: i18n.t('App data were reset'),
           text2: i18n.t(
-            'Due to an unexpected error some of your app data were reset. You might want to preform an address discovery in the settings.'
+            'Due to an unexpected error some of your app data were reset. You might want to scan for active addresses in the settings.'
           ),
           type: 'info',
           autoHide: false

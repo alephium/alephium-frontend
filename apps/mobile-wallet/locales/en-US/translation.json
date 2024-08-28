@@ -367,5 +367,5 @@
   "Buy": "Buy",
   "banxaDisclaimer": "You are about to access 3rd party services provided by <1>Banxa.com</1> through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding.",
   "App data were reset": "App data were reset",
-  "Due to an unexpected error some of your app data were reset. You might want to preform an address discovery in the settings.": "Due to an unexpected error some of your app data were reset. You might want to preform an address discovery in the settings."
+  "Due to an unexpected error some of your app data were reset. You might want to scan for active addresses in the settings.": "Due to an unexpected error some of your app data were reset. You might want to scan for active addresses in the settings."
 }
