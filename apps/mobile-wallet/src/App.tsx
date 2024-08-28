@@ -26,6 +26,7 @@ import {
   TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
+import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -54,9 +55,18 @@ import { selectTransactionUnknownTokenIds } from '~/store/transactions/transacti
 import { appLaunchedWithLastUsedWallet } from '~/store/wallet/walletActions'
 import { themes } from '~/style/themes'
 
+SplashScreen.preventAutoHideAsync()
+
 const App = () => {
+  const { data: isStoredWalletDataValid, isLoading: isLoadingStoredWalletDataValidation } = useAsyncData(
+    validateAndRepareStoredWalletData
+  )
+
+  useEffect(() => {
+    if (!isLoadingStoredWalletDataValidation) SplashScreen.hideAsync()
+  }, [isLoadingStoredWalletDataValidation])
+
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
-  const { data: isStoredDataValid } = useAsyncData(validateAndRepareStoredWalletData)
 
   useEffect(
     () =>
@@ -71,7 +81,7 @@ const App = () => {
       <Main>
         <ThemeProvider theme={theme}>
           <StatusBar animated translucent style="light" />
-          {isStoredDataValid && <RootStackNavigation />}
+          {isStoredWalletDataValid && <RootStackNavigation />}
           <ToastAnchor />
         </ThemeProvider>
       </Main>
