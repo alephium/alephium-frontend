@@ -42,9 +42,12 @@ import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
   deleteDeprecatedWallet,
   getDeprecatedStoredWallet,
-  getStoredWallet,
+  getStoredWalletMetadata,
   migrateDeprecatedMnemonic,
-  storedWalletExists
+  recreateWalletMetadata,
+  storedMnemonicAndMetadataExist,
+  storedMnemonicV2Exists,
+  storedWalletMetadataExist
 } from '~/persistent-storage/wallet'
 import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
 import EditAddressScreen from '~/screens/Addresses/Address/EditAddressScreen'
@@ -156,7 +159,7 @@ const AppUnlockModal = () => {
 
   const initializeAppWithStoredWallet = useCallback(async () => {
     try {
-      dispatch(walletUnlocked(await getStoredWallet()))
+      dispatch(walletUnlocked(await getStoredWalletMetadata()))
 
       const lastRoute = rootStackNavigationRef.current?.getCurrentRoute()?.name
 
@@ -171,13 +174,17 @@ const AppUnlockModal = () => {
   }, [dispatch, navigation])
 
   const unlockApp = useCallback(async () => {
+    console.log('UNLOCK APP')
     if (isWalletUnlocked) return
 
     try {
-      const walletExists = await storedWalletExists()
+      const storedWalletExists = await storedMnemonicAndMetadataExist()
+
       const deprecatedWallet = await getDeprecatedStoredWallet({ authenticationPrompt: t('Unlock your wallet') })
 
-      if (walletExists) {
+      const storedWalletIsLackingMetadata = (await storedMnemonicV2Exists()) && !(await storedWalletMetadataExist())
+
+      if (storedWalletExists) {
         try {
           await triggerBiometricsAuthGuard({
             settingsToCheck: 'appAccess',
@@ -218,10 +225,20 @@ const AppUnlockModal = () => {
         } else {
           navigation.navigate('LoginWithPinScreen')
         }
+      } else if (storedWalletIsLackingMetadata) {
+        // In rare cases, a wallet exists but without metadata. Let's try to recreate it.
+        await recreateWalletMetadata()
+        unlockApp()
+      } else {
+        // No stored wallet found, redirect to landing screen
+        await triggerBiometricsAuthGuard({
+          settingsToCheck: 'appAccess',
+          successCallback: () => navigation.navigate('LandingScreen')
+        })
       }
 
       try {
-        if ((await appInstallationTimestampMissing()) || (!walletExists && !deprecatedWallet)) {
+        if ((await appInstallationTimestampMissing()) || (!storedWalletExists && !deprecatedWallet)) {
           if (await wasAppUninstalled()) {
             try {
               await deleteFundPassword()

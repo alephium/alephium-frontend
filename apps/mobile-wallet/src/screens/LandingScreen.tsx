@@ -42,7 +42,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import altLogoSrc from '~/images/logos/alephiumHackLogo.png'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { getWalletMetadata } from '~/persistent-storage/wallet'
+import { storedMnemonicV2Exists } from '~/persistent-storage/wallet'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 import { BORDER_RADIUS_BIG, BORDER_RADIUS_HUGE } from '~/style/globalStyle'
 import { themes } from '~/style/themes'
@@ -105,54 +105,51 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   }
 
   useEffect(() => {
-    getWalletMetadata()
-      .then((metadata) => setShowNewWalletButtons(!metadata))
-      .catch((e) => showExceptionToast(e, t('Wallet metadata not found')))
+    storedMnemonicV2Exists()
+      .then((exists) => !exists && setShowNewWalletButtons(true))
+      .catch((e) => showExceptionToast(e, t('Wallet mnemonic not found')))
   }, [t])
 
   return (
     <ThemeProvider theme={themes.dark}>
       <Screen contrastedBg {...props} onLayout={handleScreenLayoutChange}>
+        <CoolAlephiumCanvas {...dimensions} />
         {showNewWalletButtons && (
-          <>
-            <CoolAlephiumCanvas {...dimensions} />
-
-            <BottomArea
-              style={{ marginBottom: insets.bottom + (Platform.OS === 'android' ? 20 : 0) }}
-              entering={FadeIn.delay(500).duration(500)}
-            >
-              <TitleContainer>
-                <AppText style={{ textAlign: 'center' }}>
-                  <Trans
-                    t={t}
-                    i18nKey="welcomeToAlephium"
-                    components={{
-                      0: <TitleFirstLine />,
-                      1: <AppText>{'\n'}</AppText>,
-                      2: <TitleSecondLine />
-                    }}
-                  >
-                    {'<0>Welcome to</0><1 /><2>Alephium</2>'}
-                  </Trans>
-                  <TitleSecondLine> 👋</TitleSecondLine>
-                </AppText>
-              </TitleContainer>
-              <ButtonsContainer>
-                <Button
-                  title={t('New wallet')}
-                  type="primary"
-                  onPress={() => handleButtonPress('create')}
-                  variant="highlight"
-                  iconProps={{ name: 'sun' }}
-                />
-                <Button
-                  title={t('Import wallet')}
-                  onPress={() => handleButtonPress('import')}
-                  iconProps={{ name: 'download' }}
-                />
-              </ButtonsContainer>
-            </BottomArea>
-          </>
+          <BottomArea
+            style={{ marginBottom: insets.bottom + (Platform.OS === 'android' ? 20 : 0) }}
+            entering={FadeIn.delay(500).duration(500)}
+          >
+            <TitleContainer>
+              <AppText style={{ textAlign: 'center' }}>
+                <Trans
+                  t={t}
+                  i18nKey="welcomeToAlephium"
+                  components={{
+                    0: <TitleFirstLine />,
+                    1: <AppText>{'\n'}</AppText>,
+                    2: <TitleSecondLine />
+                  }}
+                >
+                  {'<0>Welcome to</0><1 /><2>Alephium</2>'}
+                </Trans>
+                <TitleSecondLine> 👋</TitleSecondLine>
+              </AppText>
+            </TitleContainer>
+            <ButtonsContainer>
+              <Button
+                title={t('New wallet')}
+                type="primary"
+                onPress={() => handleButtonPress('create')}
+                variant="highlight"
+                iconProps={{ name: 'sun' }}
+              />
+              <Button
+                title={t('Import wallet')}
+                onPress={() => handleButtonPress('import')}
+                iconProps={{ name: 'download' }}
+              />
+            </ButtonsContainer>
+          </BottomArea>
         )}
       </Screen>
     </ThemeProvider>

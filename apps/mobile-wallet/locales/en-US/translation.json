@@ -217,6 +217,7 @@
   "A contact with this address already exists": "A contact with this address already exists",
   "A contact with this name already exists": "A contact with this name already exists",
   "Wallet metadata not found": "Wallet metadata not found",
+  "Wallet mnemonic not found": "Wallet mnemonic not found",
   "Address metadata not found": "Address metadata not found",
   "This field is required": "This field is required",
   "Label": "Label",

@@ -106,13 +106,14 @@ export const getWalletMetadata = async (): Promise<WalletMetadata | null> => {
     sendAnalytics({ type: 'error', error, message: 'Could not parse wallet metadata' })
   }
 
-  return walletMetadata || (await recreateWalletMetadata())
+  return walletMetadata
 }
 
 let startedRecreatingMetadata = false
 let finishedRecreatingMetadata = false
 
-const recreateWalletMetadata = async (): Promise<WalletMetadata | null> => {
+export const recreateWalletMetadata = async (): Promise<WalletMetadata | null> => {
+  console.log('RECREATE')
   if (!(await storedMnemonicV2Exists())) return null
 
   let recreatedWalletMetadata = null
@@ -158,7 +159,7 @@ const getParsedRawWalletMetadata = async (): Promise<WalletMetadata | null> => {
   return rawWalletMetadata ? JSON.parse(rawWalletMetadata) : null
 }
 
-export const getStoredWallet = async (error?: string): Promise<WalletMetadata> => {
+export const getStoredWalletMetadata = async (error?: string): Promise<WalletMetadata> => {
   const walletMetadata = await getWalletMetadata()
 
   if (!walletMetadata)
@@ -168,7 +169,9 @@ export const getStoredWallet = async (error?: string): Promise<WalletMetadata> =
 }
 
 export const updateStoredWalletMetadata = async (partialMetadata: Partial<WalletMetadata>) => {
-  const walletMetadata = await getStoredWallet(i18n.t('Could not persist wallet metadata: No entry found in storage'))
+  const walletMetadata = await getStoredWalletMetadata(
+    i18n.t('Could not persist wallet metadata: No entry found in storage')
+  )
   const updatedWalletMetadata = { ...walletMetadata, ...partialMetadata }
 
   await storeWalletMetadata(updatedWalletMetadata)
@@ -220,7 +223,7 @@ export const getDeprecatedStoredWallet = async (
 }
 
 export const deleteWallet = async () => {
-  const wallet = await getStoredWallet()
+  const wallet = await getStoredWalletMetadata()
 
   for (const address of wallet.addresses) {
     await deleteAddressPublicKey(address.hash)
@@ -234,7 +237,7 @@ export const deleteWallet = async () => {
 }
 
 export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadataWithHash[]) => {
-  const walletMetadata = await getStoredWallet(
+  const walletMetadata = await getStoredWalletMetadata(
     `${i18n.t('Could not persist addresses metadata')}: ${i18n.t('Wallet metadata not found')}`
   )
 
@@ -280,7 +283,7 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
     await deleteDeprecatedWallet()
 
     // Step 3: Add hash in address metadata for faster app unlock and store public and private key in secure store
-    const { addresses } = await getStoredWallet(
+    const { addresses } = await getStoredWalletMetadata(
       `${i18n.t('Could not migrate address metadata')}: ${i18n.t('Wallet metadata not found')}`
     )
     const updatedAddressesMetadata: AddressMetadataWithHash[] = []
@@ -306,17 +309,17 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
   }
 }
 
-export const storedWalletExists = async (): Promise<boolean> => {
+export const storedMnemonicAndMetadataExist = async (): Promise<boolean> => {
   const mnemonicExists = await storedMnemonicV2Exists()
   const metadataExist = await storedWalletMetadataExist()
 
   return mnemonicExists && metadataExist
 }
 
-const storedMnemonicV2Exists = async (): Promise<boolean> =>
+export const storedMnemonicV2Exists = async (): Promise<boolean> =>
   !!(await getSecurelyWithReportableError(MNEMONIC_V2, true, ''))
 
-const storedWalletMetadataExist = async (): Promise<boolean> => !!(await getWalletMetadata())
+export const storedWalletMetadataExist = async (): Promise<boolean> => !!(await getWalletMetadata())
 
 export const dangerouslyExportWalletMnemonic = async (): Promise<string> => {
   const decryptedMnemonic = await getSecurelyWithReportableError(MNEMONIC_V2, true, '')
@@ -334,7 +337,7 @@ export const getAddressAsymetricKey = async (addressHash: AddressHash, keyType: 
   let key = await getSecurelyWithReportableError(storageKey, false, `Could not get ${keyType} from secure storage`)
 
   if (!key) {
-    const { addresses } = await getStoredWallet(
+    const { addresses } = await getStoredWalletMetadata(
       `${i18n.t(
         keyType === 'public' ? 'Could not get address public key' : 'Could not get address private key'
       )}: ${i18n.t('Wallet metadata not found')}`
