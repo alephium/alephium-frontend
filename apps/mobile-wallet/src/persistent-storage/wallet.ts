@@ -58,33 +58,28 @@ const ADDRESS_PUB_KEY_PREFIX = 'address-pub-key-'
 const ADDRESS_PRIV_KEY_PREFIX = 'address-priv-key-'
 
 export const validateAndRepareStoredWalletData = async (): Promise<boolean> => {
-  let isValid = false
   let walletMetadata = await getWalletMetadata(false)
   let mnemonicV2Exists
-  let deprecatedWalletExists
 
   try {
-    mnemonicV2Exists = !!(await getSecurelyWithReportableError(MNEMONIC_V2, true, ''))
+    mnemonicV2Exists = await storedMnemonicV2Exists()
   } catch {
     mnemonicV2Exists = false
   }
 
-  try {
-    deprecatedWalletExists = !!(await getSecurelyWithReportableError(PIN_WALLET_STORAGE_KEY, true, ''))
-  } catch {
-    deprecatedWalletExists = false
-  }
-
-  if (mnemonicV2Exists && walletMetadata) {
-    isValid = true
-  } else if (mnemonicV2Exists && !walletMetadata) {
-    try {
-      await generateAndStoreWalletMetadata('My wallet', false)
-    } finally {
-      walletMetadata = await getWalletMetadata(false)
+  if (mnemonicV2Exists) {
+    if (walletMetadata) {
+      // If we have both mnemonic and metadata available, then all good
+      return true
+    } else {
+      // If we have mnemonic but missing metadata, we try to recreate them with sane defaults
+      try {
+        await generateAndStoreWalletMetadata('My wallet', false)
+      } finally {
+        walletMetadata = await getWalletMetadata(false)
+      }
 
       if (walletMetadata) {
-        isValid = true
         showToast({
           text1: i18n.t('App data were reset'),
           text2: i18n.t(
@@ -94,8 +89,9 @@ export const validateAndRepareStoredWalletData = async (): Promise<boolean> => {
           autoHide: false
         })
         sendAnalytics({ type: 'error', message: 'Recreated missing wallet metadata for existing wallet' })
+
+        return true
       } else {
-        isValid = false
         showToast({
           text1: i18n.t('Could not unlock app'),
           text2: i18n.t('Wallet metadata not found'),
@@ -103,32 +99,74 @@ export const validateAndRepareStoredWalletData = async (): Promise<boolean> => {
           autoHide: false
         })
         sendAnalytics({ type: 'error', message: 'Could not recreate missing wallet metadata for existing wallet' })
+
+        return false
       }
     }
-  } else if (!mnemonicV2Exists && !deprecatedWalletExists && walletMetadata) {
+  } else {
+    let deprecatedWalletExists
+
     try {
-      await deleteWithReportableError(WALLET_METADATA_STORAGE_KEY)
-    } finally {
-      walletMetadata = await getWalletMetadata(false)
+      deprecatedWalletExists = !!(await getSecurelyWithReportableError(PIN_WALLET_STORAGE_KEY, true, ''))
+    } catch {
+      deprecatedWalletExists = false
+    }
 
+    if (deprecatedWalletExists) {
       if (walletMetadata) {
-        isValid = false
-        showToast({
-          text1: i18n.t('Could not unlock app'),
-          text2: i18n.t('Missing encrypted mnemonic'),
-          type: 'error',
-          autoHide: false
-        })
-        sendAnalytics({ type: 'error', message: 'Could not find mnemonic for existing wallet metadata' })
+        // If we have no mnemonic, but we have a deprecated one with metadata, all good, the pin/bio flow will migrate
+        return true
+      } else {
+        // If we only have a deprecated mnemonic but no metadata we recreate deprecated metadata with sane defaults and
+        // the migration flow will migrate both mnemonic and metadata
+        try {
+          await storeWalletMetadataDeprecated({
+            id: nanoid(),
+            name: 'My wallet',
+            isMnemonicBackedUp: false,
+            addresses: [
+              {
+                index: 0,
+                isDefault: true,
+                color: getRandomLabelColor()
+              }
+            ],
+            contacts: []
+          })
+
+          return true
+        } catch {
+          return false
+        }
+      }
+    } else {
+      if (!walletMetadata) {
+        // If we have no mnemonic, no deprecated mnemonic, and no metadata, all good, fresh install
+        return true
+      } else {
+        // If we have metadata but no mnemonic and no deprecated mnemonic, we should delete the metadata
+        try {
+          await deleteWithReportableError(WALLET_METADATA_STORAGE_KEY)
+        } finally {
+          walletMetadata = await getWalletMetadata(false)
+        }
+
+        if (!walletMetadata) {
+          return true
+        } else {
+          showToast({
+            text1: i18n.t('Could not unlock app'),
+            text2: i18n.t('Missing encrypted mnemonic'),
+            type: 'error',
+            autoHide: false
+          })
+          sendAnalytics({ type: 'error', message: 'Could not find mnemonic for existing wallet metadata' })
+
+          return false
+        }
       }
     }
-  } else if (!mnemonicV2Exists && walletMetadata && deprecatedWalletExists) {
-    isValid = true
-  } else if (!mnemonicV2Exists && !walletMetadata && !deprecatedWalletExists) {
-    isValid = true
   }
-
-  return isValid
 }
 
 export const generateAndStoreWallet = async (
