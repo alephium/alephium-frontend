@@ -22,6 +22,7 @@ import {
   mnemonicJsonStringifiedObjectToUint8Array
 } from '@alephium/keyring'
 import { AddressHash, resetArray } from '@alephium/shared'
+import { sleep } from '@alephium/web3'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 
@@ -105,25 +106,50 @@ export const getWalletMetadata = async (): Promise<WalletMetadata | null> => {
     sendAnalytics({ type: 'error', error, message: 'Could not parse wallet metadata' })
   }
 
-  // Fallback mechanism when metadata is not found
-  if (!walletMetadata && (await storedMnemonicV2Exists())) {
-    await generateAndStoreWalletMetadata('My wallet', false)
+  return walletMetadata || (await recreateWalletMetadata())
+}
+
+let startedRecreatingMetadata = false
+let finishedRecreatingMetadata = false
+
+const recreateWalletMetadata = async (): Promise<WalletMetadata | null> => {
+  if (!(await storedMnemonicV2Exists())) return null
+
+  let recreatedWalletMetadata = null
+
+  if (!startedRecreatingMetadata) {
+    startedRecreatingMetadata = true
 
     try {
-      walletMetadata = await getParsedRawWalletMetadata()
+      await generateAndStoreWalletMetadata('My wallet', false)
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Could not generate and store wallet metadata with defaults' })
+    } finally {
+      finishedRecreatingMetadata = true
+    }
+
+    try {
+      recreatedWalletMetadata = await getParsedRawWalletMetadata()
     } catch (error) {
       sendAnalytics({ type: 'error', error, message: 'Could not parse recreated wallet metadata' })
       throw error
+    } finally {
+      sendAnalytics({
+        type: 'error',
+        message: recreatedWalletMetadata
+          ? 'Re-created missing wallet metadata'
+          : 'Could not re-created missing wallet metadata'
+      })
+    }
+  } else if (startedRecreatingMetadata) {
+    while (!finishedRecreatingMetadata) {
+      await sleep(1000)
     }
 
-    if (walletMetadata) {
-      sendAnalytics({ type: 'error', message: 'Re-created missing wallet metadata' })
-    } else {
-      sendAnalytics({ type: 'error', message: 'Could not re-created missing wallet metadata' })
-    }
+    recreatedWalletMetadata = await getParsedRawWalletMetadata()
   }
 
-  return walletMetadata
+  return recreatedWalletMetadata
 }
 
 const getParsedRawWalletMetadata = async (): Promise<WalletMetadata | null> => {
