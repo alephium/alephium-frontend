@@ -37,9 +37,13 @@ import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { useLocalization } from '~/features/localization/useLocalization'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAsyncData } from '~/hooks/useAsyncData'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
-import { getStoredWalletMetadata, storedWalletExists } from '~/persistent-storage/wallet'
+import {
+  getStoredWalletMetadataWithoutThrowingError,
+  validateAndRepareStoredWalletData
+} from '~/persistent-storage/wallet'
 import {
   makeSelectAddressesUnknownTokens,
   selectAllAddressVerifiedFungibleTokenSymbols,
@@ -52,6 +56,7 @@ import { themes } from '~/style/themes'
 
 const App = () => {
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
+  const { data: isStoredDataValid } = useAsyncData(validateAndRepareStoredWalletData)
 
   useEffect(
     () =>
@@ -66,7 +71,7 @@ const App = () => {
       <Main>
         <ThemeProvider theme={theme}>
           <StatusBar animated translucent style="light" />
-          <RootStackNavigation />
+          {isStoredDataValid && <RootStackNavigation />}
           <ToastAnchor />
         </ThemeProvider>
       </Main>
@@ -87,6 +92,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
   const settings = useAppSelector((s) => s.settings)
   const appJustLaunched = useAppSelector((s) => s.app.wasJustLaunched)
+  const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
@@ -99,10 +105,8 @@ const Main = ({ children, ...props }: ViewProps) => {
   useLocalization()
 
   useEffect(() => {
-    storedWalletExists().then((walletExists) => {
-      if (walletExists) getStoredWalletMetadata().then((wallet) => dispatch(appLaunchedWithLastUsedWallet(wallet)))
-    })
-  }, [dispatch])
+    if (walletMetadata) dispatch(appLaunchedWithLastUsedWallet(walletMetadata))
+  }, [dispatch, walletMetadata])
 
   useEffect(() => {
     if (
