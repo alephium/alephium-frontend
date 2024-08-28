@@ -207,6 +207,7 @@ const AppUnlockModal = () => {
             await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
 
             dispatch(mnemonicMigrated())
+            sendAnalytics({ event: 'Mnemonic migrated' })
 
             initializeAppWithStoredWallet()
           } catch {
