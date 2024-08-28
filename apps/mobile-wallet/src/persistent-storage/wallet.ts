@@ -88,7 +88,7 @@ export const validateAndRepareStoredWalletData = async (): Promise<boolean> => {
           type: 'info',
           autoHide: false
         })
-        sendAnalytics({ type: 'error', message: 'Recreated missing wallet metadata for existing wallet' })
+        sendAnalytics({ event: 'Recreated missing wallet metadata for existing wallet' })
 
         return true
       } else {
@@ -470,7 +470,7 @@ export const storeWalletMetadata = async (metadata: WalletMetadata) =>
 export const storeWalletMetadataDeprecated = async (metadata: DeprecatedWalletMetadata) =>
   storeWithReportableError(WALLET_METADATA_STORAGE_KEY, JSON.stringify(metadata))
 
-const storeWalletMnemonic = async (mnemonic: Uint8Array) =>
+export const storeWalletMnemonic = async (mnemonic: Uint8Array) =>
   storeSecurelyWithReportableError(MNEMONIC_V2, JSON.stringify(mnemonic), true, '')
 
 const storeAddressPublicKey = async (addressHash: AddressHash, publicKey: string) =>
