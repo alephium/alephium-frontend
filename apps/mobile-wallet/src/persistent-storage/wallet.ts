@@ -69,12 +69,10 @@ export const generateAndStoreWallet = async (
 
     await storeWalletMnemonic(mnemonicUint8Array)
 
-    const firstAddressHash = await generateAndStoreAddressKeypairForIndex(0)
-    const walletMetadata = generateWalletMetadata(name, firstAddressHash, isMnemonicBackedUp)
-    await storeWalletMetadata(walletMetadata)
+    const { id, firstAddressHash } = await generateAndStoreWalletMetadata(name, isMnemonicBackedUp)
 
     return {
-      id: walletMetadata.id,
+      id,
       name,
       isMnemonicBackedUp,
       firstAddress: {
@@ -87,15 +85,51 @@ export const generateAndStoreWallet = async (
   }
 }
 
+const generateAndStoreWalletMetadata = async (name: WalletStoredState['name'], isMnemonicBackedUp: boolean) => {
+  const firstAddressHash = await generateAndStoreAddressKeypairForIndex(0)
+  const walletMetadata = generateWalletMetadata(name, firstAddressHash, isMnemonicBackedUp)
+  await storeWalletMetadata(walletMetadata)
+
+  return {
+    id: walletMetadata.id,
+    firstAddressHash
+  }
+}
+
 export const getWalletMetadata = async (): Promise<WalletMetadata | null> => {
-  const rawWalletMetadata = await getWithReportableError(WALLET_METADATA_STORAGE_KEY)
+  let walletMetadata = null
 
   try {
-    return rawWalletMetadata ? JSON.parse(rawWalletMetadata) : null
+    walletMetadata = await getParsedRawWalletMetadata()
   } catch (error) {
     sendAnalytics({ type: 'error', error, message: 'Could not parse wallet metadata' })
-    throw error
   }
+
+  // Fallback mechanism when metadata is not found
+  if (!walletMetadata && (await storedMnemonicV2Exists())) {
+    await generateAndStoreWalletMetadata('My wallet', false)
+
+    try {
+      walletMetadata = await getParsedRawWalletMetadata()
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Could not parse recreated wallet metadata' })
+      throw error
+    }
+
+    if (walletMetadata) {
+      sendAnalytics({ type: 'error', message: 'Re-created missing wallet metadata' })
+    } else {
+      sendAnalytics({ type: 'error', message: 'Could not re-created missing wallet metadata' })
+    }
+  }
+
+  return walletMetadata
+}
+
+const getParsedRawWalletMetadata = async (): Promise<WalletMetadata | null> => {
+  const rawWalletMetadata = await getWithReportableError(WALLET_METADATA_STORAGE_KEY)
+
+  return rawWalletMetadata ? JSON.parse(rawWalletMetadata) : null
 }
 
 export const getStoredWallet = async (error?: string): Promise<WalletMetadata> => {
@@ -247,8 +281,17 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
   }
 }
 
-export const storedWalletExists = async (): Promise<boolean> =>
-  !!(await getSecurelyWithReportableError(MNEMONIC_V2, true, '')) && !!(await getWalletMetadata())
+export const storedWalletExists = async (): Promise<boolean> => {
+  const mnemonicExists = await storedMnemonicV2Exists()
+  const metadataExist = await storedWalletMetadataExist()
+
+  return mnemonicExists && metadataExist
+}
+
+const storedMnemonicV2Exists = async (): Promise<boolean> =>
+  !!(await getSecurelyWithReportableError(MNEMONIC_V2, true, ''))
+
+const storedWalletMetadataExist = async (): Promise<boolean> => !!(await getWalletMetadata())
 
 export const dangerouslyExportWalletMnemonic = async (): Promise<string> => {
   const decryptedMnemonic = await getSecurelyWithReportableError(MNEMONIC_V2, true, '')
