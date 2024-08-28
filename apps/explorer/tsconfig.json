@@ -1,6 +1,6 @@
 {
   "extends": "@alephium/typescript-config/react",
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",

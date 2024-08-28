@@ -140,11 +140,10 @@ export default RootStackNavigation
 const AppUnlockModal = () => {
   const dispatch = useAppDispatch()
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
+  const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { t } = useTranslation()
-
-  const [isAuthModalVisible, setIsAuthModalVisible] = useState(false)
 
   const { width, height } = Dimensions.get('window')
   const [dimensions, setDimensions] = useState({ width, height })
@@ -155,10 +154,6 @@ const AppUnlockModal = () => {
     setDimensions({ width, height })
   }
 
-  const openAuthModal = useCallback(() => {
-    setIsAuthModalVisible(true)
-  }, [])
-
   const initializeAppWithStoredWallet = useCallback(async () => {
     try {
       dispatch(walletUnlocked(await getStoredWallet()))
@@ -168,8 +163,6 @@ const AppUnlockModal = () => {
       if (!lastRoute || ['LandingScreen', 'LoginWithPinScreen'].includes(lastRoute)) {
         resetNavigation(navigation)
       }
-
-      setIsAuthModalVisible(false)
     } catch (error) {
       const message = 'Could not initialize app with stored wallet'
       showExceptionToast(error, message)
@@ -188,7 +181,6 @@ const AppUnlockModal = () => {
         try {
           await triggerBiometricsAuthGuard({
             settingsToCheck: 'appAccess',
-            onPromptDisplayed: openAuthModal,
             successCallback: initializeAppWithStoredWallet
           })
 
@@ -252,23 +244,16 @@ const AppUnlockModal = () => {
         showExceptionToast(e, t('Could not unlock app'))
       }
     }
-  }, [
-    dispatch,
-    initializeAppWithStoredWallet,
-    isWalletUnlocked,
-    navigation,
-    openAuthModal,
-    t,
-    triggerBiometricsAuthGuard
-  ])
+  }, [dispatch, initializeAppWithStoredWallet, isWalletUnlocked, navigation, t, triggerBiometricsAuthGuard])
 
-  useAutoLock({
-    unlockApp,
-    onAuthRequired: openAuthModal
-  })
+  useAutoLock(unlockApp)
 
   return (
-    <Modal animationType="none" onLayout={handleScreenLayoutChange} visible={isAuthModalVisible}>
+    <Modal
+      visible={biometricsRequiredForAppAccess && !isWalletUnlocked}
+      onLayout={handleScreenLayoutChange}
+      animationType="none"
+    >
       <View style={{ backgroundColor: 'black', flex: 1 }}>
         <CoolAlephiumCanvas {...dimensions} onPress={unlockApp} />
       </View>

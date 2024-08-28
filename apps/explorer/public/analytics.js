@@ -16,15 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import Button from '~/components/buttons/Button'
-import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
-
-export type StackHeaderCustomProps = BaseHeaderProps
-
-const StackHeader = ({ goBack, options, ...props }: StackHeaderCustomProps) => {
-  const HeaderLeft = goBack ? <Button onPress={goBack} iconProps={{ name: 'arrow-left' }} round /> : null
-
-  return <BaseHeader options={{ headerLeft: () => HeaderLeft, ...options }} {...props} />
+// Created as a separate script to avoid inline scripts due to CSP
+if (window.location.host === 'explorer.alephium.org') {
+  const s = document.createElement('script')
+  s.setAttribute('type', 'text/javascript')
+  s.setAttribute('async', '')
+  s.setAttribute('src', 'https://gc.zgo.at/count.js')
+  s.setAttribute('data-goatcounter', 'https://alephium-explorer.goatcounter.com/count')
+  document.body.appendChild(s)
 }
-
-export default StackHeader
