@@ -69,6 +69,8 @@ export const sendAnalytics = (params: AnalyticsParams) => {
   } else {
     const { event, props, options } = params
 
+    if (props) props.$ip = ''
+
     posthogAsync.then((client) => throttleEvent(() => client.capture(event, props, options), event, props))
   }
 }
