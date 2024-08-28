@@ -17,8 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Canvas, Circle } from '@shopify/react-native-skia'
+import { useEffect } from 'react'
 import { useWindowDimensions } from 'react-native'
 import Animated, {
+  Easing,
   Extrapolation,
   interpolate,
   SensorType,
@@ -26,42 +28,100 @@ import Animated, {
   useAnimatedSensor,
   useAnimatedStyle,
   useDerivedValue,
-  withSpring
+  useSharedValue,
+  withRepeat,
+  withSpring,
+  withTiming
 } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 interface AnimatedCirclesBackgroundProps {
   scrollY?: SharedValue<number>
+  isLoading?: boolean
 }
 
-const AnimatedCirclesBackground = ({ scrollY }: AnimatedCirclesBackgroundProps) => {
+const AnimatedCanvas = Animated.createAnimatedComponent(Canvas)
+
+const AnimatedCirclesBackground = ({ scrollY, isLoading }: AnimatedCirclesBackgroundProps) => {
   const gyroscope = useAnimatedSensor(SensorType.ROTATION)
-  const { width: screenWidth } = useWindowDimensions()
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions()
+
+  // Canvas size animation
+  const canvasHeight = useSharedValue(500)
+  const canvasWidth = useSharedValue(500)
+
+  useEffect(() => {
+    canvasHeight.value = withSpring(isLoading ? screenHeight : 500)
+    canvasWidth.value = withSpring(isLoading ? screenWidth : 500)
+  }, [isLoading, screenWidth, canvasHeight, canvasWidth, screenHeight])
+
+  const animatedCanvasStyle = useAnimatedStyle(() => ({
+    height: canvasHeight.value,
+    width: canvasWidth.value
+  }))
 
   const parallaxAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: interpolate(scrollY?.value || 0, [-200, 200], [-30, 30], Extrapolation.CLAMP) }]
   }))
 
-  const circle1X = useDerivedValue(() => withSpring(80 + gyroscope.sensor.value.roll * 25, { mass: 20, damping: 20 }))
-  const circle1Y = useDerivedValue(() => withSpring(210 + gyroscope.sensor.value.pitch * 25, { mass: 20, damping: 20 }))
+  // Circle animations
+  const angle = useSharedValue(0)
+
+  useEffect(() => {
+    if (isLoading) {
+      angle.value = withRepeat(
+        withTiming(2 * Math.PI, {
+          duration: 4000,
+          easing: Easing.linear
+        }),
+        -1
+      )
+    }
+  }, [angle, isLoading])
+
+  const circle1X = useDerivedValue(() =>
+    isLoading
+      ? screenWidth / 4 + 50 * Math.cos(angle.value)
+      : withSpring(80 + gyroscope.sensor.value.roll * 25, { mass: 20, damping: 20 })
+  )
+
+  const circle1Y = useDerivedValue(() =>
+    isLoading
+      ? 210 + 50 * Math.sin(angle.value)
+      : withSpring(210 + gyroscope.sensor.value.pitch * 25, { mass: 20, damping: 20 })
+  )
 
   const circle2X = useDerivedValue(() =>
-    withSpring(screenWidth / 2 + gyroscope.sensor.value.roll * 20, { mass: 40, damping: 20 })
+    isLoading
+      ? screenWidth / 2 + 50 * Math.cos(angle.value + (2 * Math.PI) / 3)
+      : withSpring(screenWidth / 2 + gyroscope.sensor.value.roll * 20, { mass: 40, damping: 20 })
   )
-  const circle2Y = useDerivedValue(() => withSpring(150 + gyroscope.sensor.value.pitch * 20, { mass: 40, damping: 20 }))
+
+  const circle2Y = useDerivedValue(() =>
+    isLoading
+      ? 150 + 50 * Math.sin(angle.value + (2 * Math.PI) / 3)
+      : withSpring(150 + gyroscope.sensor.value.pitch * 20, { mass: 40, damping: 20 })
+  )
 
   const circle3X = useDerivedValue(() =>
-    withSpring(screenWidth - 50 + gyroscope.sensor.value.roll * 23, { mass: 30, damping: 20 })
+    isLoading
+      ? (3 * screenWidth) / 4 + 50 * Math.cos(angle.value + (4 * Math.PI) / 3)
+      : withSpring(screenWidth - 50 + gyroscope.sensor.value.roll * 23, { mass: 30, damping: 20 })
   )
-  const circle3Y = useDerivedValue(() => withSpring(190 + gyroscope.sensor.value.pitch * 23, { mass: 30, damping: 20 }))
+
+  const circle3Y = useDerivedValue(() =>
+    isLoading
+      ? 190 + 50 * Math.sin(angle.value + (4 * Math.PI) / 3)
+      : withSpring(190 + gyroscope.sensor.value.pitch * 23, { mass: 30, damping: 20 })
+  )
 
   return (
     <AnimatedContainer style={parallaxAnimatedStyle}>
-      <AnimatedBackgroundCanvas>
+      <AnimatedCanvas style={animatedCanvasStyle}>
         <Circle r={90} color="#FF2E21" cx={circle1X} cy={circle1Y} />
         <Circle r={82} color="#FFA621" cx={circle2X} cy={circle2Y} />
         <Circle r={80} color="#FB21FF" cx={circle3X} cy={circle3Y} />
-      </AnimatedBackgroundCanvas>
+      </AnimatedCanvas>
     </AnimatedContainer>
   )
 }
@@ -73,10 +133,4 @@ const AnimatedContainer = styled(Animated.View)`
   top: 0;
   right: 0;
   left: 0;
-`
-
-const AnimatedBackgroundCanvas = styled(Canvas)`
-  height: 100%;
-  width: 100%;
-  height: 500px;
 `
