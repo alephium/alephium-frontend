@@ -160,9 +160,6 @@ export const getDeprecatedStoredWallet = async (
 }
 
 export const deleteWallet = async () => {
-  await deleteSecurelyWithReportableError(MNEMONIC_V2, true, '')
-  await deleteFundPassword()
-
   const wallet = await getStoredWallet()
 
   for (const address of wallet.addresses) {
@@ -170,6 +167,8 @@ export const deleteWallet = async () => {
     await deleteAddressPrivateKey(address.hash)
   }
 
+  await deleteSecurelyWithReportableError(MNEMONIC_V2, true, '')
+  await deleteFundPassword()
   await deleteWithReportableError(WALLET_METADATA_STORAGE_KEY)
   await deleteWithReportableError(IS_NEW_WALLET)
 }
