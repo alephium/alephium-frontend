@@ -68,7 +68,7 @@ const BuyModal = (props: BuyModalProps) => {
 
   const banxaURL =
     'https://alephium.banxa-sandbox.com/' +
-    `?walletAddress=${defaultAddress}` +
+    `?walletAddress=${defaultAddress.hash}` +
     `&theme=${theme.name}` +
     `&backgroundColor=${theme.bg.primary.slice(1)}` +
     `&textColor=${theme.font.primary.slice(1)}` +
