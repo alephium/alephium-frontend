@@ -58,13 +58,13 @@ import { themes } from '~/style/themes'
 SplashScreen.preventAutoHideAsync()
 
 const App = () => {
-  const { data: isStoredWalletDataValid, isLoading: isLoadingStoredWalletDataValidation } = useAsyncData(
+  const { data: isStoredWalletDataValid, isLoading: isValidatingStoredWalletData } = useAsyncData(
     validateAndRepareStoredWalletData
   )
 
   useEffect(() => {
-    if (!isLoadingStoredWalletDataValidation) SplashScreen.hideAsync()
-  }, [isLoadingStoredWalletDataValidation])
+    if (!isValidatingStoredWalletData) SplashScreen.hideAsync()
+  }, [isValidatingStoredWalletData])
 
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
 
