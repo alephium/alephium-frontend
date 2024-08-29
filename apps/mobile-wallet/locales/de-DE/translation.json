@@ -362,5 +362,8 @@
   "Error while copying address": "Fehler beim Kopieren der Adresse",
   "This address is not valid": "Diese Adresse ist nicht gültig",
   "A number is expected": "Eine Zahl wird erwartet",
-  "View full size": "Volle Grösse anzeigen"
+  "View full size": "Volle Grösse anzeigen",
+  "Disclaimer": "Haftungsausschluss",
+  "Buy": "Kaufen",
+  "banxaDisclaimer": "Sie sind dabei, auf die Dienste von Drittanbietern zuzugreifen, die von <1>Banxa.com</1> über einen In-App-Browser bereitgestellt werden. Alephium hat keine Kontrolle über die Dienstleistungen von Banxa. Es gelten Banxas Geschäftsbedingungen, daher lesen Sie diese bitte bevor Sie fortfahren."
 }
