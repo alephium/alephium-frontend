@@ -154,6 +154,7 @@ export const validateAndRepareStoredWalletData = async (): Promise<boolean> => {
         if (!walletMetadata) {
           return true
         } else {
+          // This should never happen. Could not delete metadata and we don't have any mnemonic, we can't unlock
           showToast({
             text1: i18n.t('Could not unlock app'),
             text2: i18n.t('Missing encrypted mnemonic'),
