@@ -42,7 +42,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import altLogoSrc from '~/images/logos/alephiumHackLogo.png'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { getWalletMetadata } from '~/persistent-storage/wallet'
+import { getWalletMetadata, storedWalletExists } from '~/persistent-storage/wallet'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 import { BORDER_RADIUS_BIG, BORDER_RADIUS_HUGE } from '~/style/globalStyle'
 import { themes } from '~/style/themes'
@@ -74,7 +74,9 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   // need to navigate back to the dashboard.
   useFocusEffect(
     useCallback(() => {
-      if (isWalletUnlocked) resetNavigation(navigation)
+      storedWalletExists()
+        .then((walletExists) => walletExists && isWalletUnlocked && resetNavigation(navigation))
+        .catch((error) => console.error('Could not reset to Dashboard from LandingScreen'))
     }, [isWalletUnlocked, navigation])
   )
 
