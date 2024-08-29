@@ -232,6 +232,7 @@ export const getWalletMetadata = async (throwError = true): Promise<WalletMetada
   return walletMetadata
 }
 
+// TODO: Simplify getStoredWalletMetadata and getWalletMetadata that are very similar
 export const getStoredWalletMetadata = async (error?: string): Promise<WalletMetadata> => {
   const walletMetadata = await getWalletMetadata()
 
