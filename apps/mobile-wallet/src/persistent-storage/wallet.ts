@@ -242,17 +242,7 @@ export const getStoredWalletMetadata = async (error?: string): Promise<WalletMet
   return walletMetadata
 }
 
-export const getStoredWalletMetadataWithoutThrowingError = async (): Promise<WalletMetadata | null> => {
-  let walletMetadata = null
-
-  try {
-    walletMetadata = await getWalletMetadata()
-  } catch {
-    console.error('Metadata not found')
-  }
-
-  return walletMetadata
-}
+export const getStoredWalletMetadataWithoutThrowingError = () => getWalletMetadata(false)
 
 export const updateStoredWalletMetadata = async (partialMetadata: Partial<WalletMetadata>) => {
   const walletMetadata = await getStoredWalletMetadata(
