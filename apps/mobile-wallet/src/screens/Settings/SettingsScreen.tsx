@@ -221,26 +221,30 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
               <Row
                 title={t('App access')}
                 subtitle={t(
-                  deviceHasEnrolledBiometrics
-                    ? 'Require biometrics to open app'
-                    : Platform.OS === 'ios'
-                      ? 'Require device passcode to open app'
-                      : 'Require device screen lock code or pattern to open app'
+                  !deviceHasEnrolledBiometrics && Platform.OS === 'ios'
+                    ? 'Require device passcode to open app'
+                    : 'Require biometrics to open app'
                 )}
               >
-                <Toggle value={isBiometricsEnabled} onValueChange={handleBiometricsAppAccessChange} />
+                <Toggle
+                  value={isBiometricsEnabled}
+                  onValueChange={handleBiometricsAppAccessChange}
+                  disabled={!deviceHasEnrolledBiometrics && Platform.OS === 'android'}
+                />
               </Row>
               <Row
                 title={t('Transactions')}
                 subtitle={t(
-                  deviceHasEnrolledBiometrics
-                    ? 'Require biometrics to transact'
-                    : Platform.OS === 'ios'
-                      ? 'Require device passcode to transact'
-                      : 'Require device screen lock code or pattern to transact'
+                  !deviceHasEnrolledBiometrics && Platform.OS === 'ios'
+                    ? 'Require device passcode to transact'
+                    : 'Require biometrics to transact'
                 )}
               >
-                <Toggle value={biometricsRequiredForTransactions} onValueChange={handleBiometricsTransactionsChange} />
+                <Toggle
+                  value={biometricsRequiredForTransactions}
+                  onValueChange={handleBiometricsTransactionsChange}
+                  disabled={!deviceHasEnrolledBiometrics && Platform.OS === 'android'}
+                />
               </Row>
               <Row
                 onPress={() =>
