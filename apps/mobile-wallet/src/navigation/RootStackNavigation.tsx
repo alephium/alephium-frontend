@@ -31,6 +31,7 @@ import useAutoLock from '~/features/auto-lock/useAutoLock'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAsyncData } from '~/hooks/useAsyncData'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import BackupMnemonicNavigation from '~/navigation/BackupMnemonicNavigation'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
@@ -144,6 +145,8 @@ const AppUnlockModal = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { t } = useTranslation()
+  // Temp patch until new auth flow released
+  const { data: foundStoredWallet } = useAsyncData(storedWalletExists)
 
   const { width, height } = Dimensions.get('window')
   const [dimensions, setDimensions] = useState({ width, height })
@@ -250,7 +253,7 @@ const AppUnlockModal = () => {
 
   return (
     <Modal
-      visible={biometricsRequiredForAppAccess && !isWalletUnlocked}
+      visible={foundStoredWallet && biometricsRequiredForAppAccess && !isWalletUnlocked}
       onLayout={handleScreenLayoutChange}
       animationType="none"
     >
