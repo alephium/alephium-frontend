@@ -9,7 +9,7 @@ env:
   AWS_DEFAULT_REGION: eu-central-1
   AWS_DISTRIBUTION_ID: ${{ secrets.AWS_DISTRIBUTION_ID_MAINNET }}
   AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME_MAINNET }}
-  VITE_BACKEND_URL: https://backend-8dce19.alephium.org
+  VITE_BACKEND_URL: https://backend.mainnet.alephium.org
   VITE_NETWORK_TYPE: mainnet
   VITE_NODE_URL: https://node.mainnet.alephium.org
 
