@@ -46,6 +46,7 @@ const BuyModal = (props: BuyModalProps) => {
   const insets = useSafeAreaInsets()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [isDisclaimerAccepted, setIsDisclaimerAccepted] = useState(false)
+  const [currentUrl, setCurrentUrl] = useState<string>('')
 
   useEffect(() => {
     if (Platform.OS === 'android') {
@@ -64,9 +65,7 @@ const BuyModal = (props: BuyModalProps) => {
     }
   }, [])
 
-  if (!defaultAddress) return null
-
-  const banxaURL =
+  const banxaInitialURL =
     'https://alephium.banxa-sandbox.com/' +
     `?walletAddress=${defaultAddress.hash}` +
     `&theme=${theme.name}` +
@@ -75,11 +74,21 @@ const BuyModal = (props: BuyModalProps) => {
     `&primaryColor=${theme.global.accent.slice(1)}` +
     `&secondaryColor=${theme.global.complementary.slice(1)}`
 
-  const handleModalCloseWhenFinished = (e: WebViewNavigation) => {
+  useEffect(() => {
+    if (!currentUrl) {
+      setCurrentUrl(banxaInitialURL)
+    }
+  }, [defaultAddress, theme, currentUrl, banxaInitialURL])
+
+  if (!defaultAddress) return null
+
+  const handleNavigationChange = (e: WebViewNavigation) => {
     // Close modal if url equals default return URL configured in Banxa dashboard
     if (e.url.includes('alephium.org')) {
       navigation.navigate('ActivityScreen')
       props.onClose()
+    } else {
+      setCurrentUrl(e.url)
     }
   }
 
@@ -119,14 +128,16 @@ const BuyModal = (props: BuyModalProps) => {
             <WebView
               ref={webViewRef}
               source={{
-                uri: banxaURL
+                uri: currentUrl
               }}
+              originWhitelist={['*']}
               allowsInlineMediaPlayback
               enableApplePay
               mediaPlaybackRequiresUserAction={false}
               containerStyle={{ padding: 0 }}
               allowsBackForwardNavigationGestures
-              onNavigationStateChange={handleModalCloseWhenFinished}
+              onNavigationStateChange={handleNavigationChange}
+              setSupportMultipleWindows={false}
               nestedScrollEnabled
             />
           </ModalContent>
