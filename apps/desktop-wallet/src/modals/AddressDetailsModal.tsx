@@ -32,33 +32,45 @@ import HashEllipsed from '@/components/HashEllipsed'
 import QRCode from '@/components/QRCode'
 import TransactionList from '@/components/TransactionList'
 import AssetsTabs from '@/features/assetsLists/AssetsTabs'
-import { useAppSelector } from '@/hooks/redux'
-import CSVExportModal from '@/modals/CSVExportModal'
-import ModalPortal from '@/modals/ModalPortal'
+import { closeModal, openModal } from '@/features/modals/modalActions'
+import ModalNames from '@/features/modals/modalNames'
+import { selectModalState } from '@/features/modals/modalSelectors'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
 import AmountsOverviewPanel from '@/pages/UnlockedWallet/OverviewPage/AmountsOverviewPanel'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { openInWebBrowser } from '@/utils/misc'
 
-interface AddressDetailsModalProps {
+export interface AddressDetailsModalProps {
   addressHash: AddressHash
-  onClose: () => void
 }
 
-const AddressDetailsModal = ({ addressHash, onClose }: AddressDetailsModalProps) => {
+const AddressDetailsModalWrapper = () => {
+  const { props } = useAppSelector((s) => selectModalState(s, ModalNames.AddressDetailsModal))
+
+  return props ? <AddressDetailsModal addressHash={props.addressHash} /> : null
+}
+
+export default AddressDetailsModalWrapper
+
+const AddressDetailsModal = ({ addressHash }: AddressDetailsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
+  const dispatch = useAppDispatch()
 
-  const [isCSVExportModalOpen, setIsCSVExportModalOpen] = useState(false)
   const [showChart, setShowChart] = useState(false)
 
   if (!address) return null
 
+  const handleClose = () => dispatch(closeModal({ name: 'AddressDetailsModal' }))
+
+  const openCSVExportModal = () => dispatch(openModal({ name: 'CSVExportModal', props: { addressHash } }))
+
   return (
     <SideModal
-      onClose={onClose}
+      onClose={handleClose}
       title={t('Address details')}
       width={800}
       onAnimationComplete={() => setShowChart(true)}
@@ -120,22 +132,15 @@ const AddressDetailsModal = ({ addressHash, onClose }: AddressDetailsModalProps)
           compact
           hideFromColumn
           headerExtraContent={
-            <Button short role="secondary" Icon={FileDown} onClick={() => setIsCSVExportModalOpen(true)}>
+            <Button short role="secondary" Icon={FileDown} onClick={openCSVExportModal}>
               {t('Export')}
             </Button>
           }
         />
       </Content>
-      <ModalPortal>
-        {isCSVExportModalOpen && (
-          <CSVExportModal addressHash={addressHash} onClose={() => setIsCSVExportModalOpen(false)} />
-        )}
-      </ModalPortal>
     </SideModal>
   )
 }
-
-export default AddressDetailsModal
 
 const Header = styled.div`
   display: flex;

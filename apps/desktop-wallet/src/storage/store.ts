@@ -20,6 +20,7 @@ import { sharedReducer } from '@alephium/shared'
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
+import modalSlice from '@/features/modals/modalSlice'
 import addressesSlice from '@/storage/addresses/addressesSlice'
 import contactsSlice from '@/storage/addresses/contactsSlice'
 import globalSlice from '@/storage/global/globalSlice'
@@ -40,7 +41,8 @@ export const store = configureStore({
     [addressesSlice.name]: addressesSlice.reducer,
     [confirmedTransactionsSlice.name]: confirmedTransactionsSlice.reducer,
     [pendingTransactionsSlice.name]: pendingTransactionsSlice.reducer,
-    [snackbarSlice.name]: snackbarSlice.reducer
+    [snackbarSlice.name]: snackbarSlice.reducer,
+    [modalSlice.name]: modalSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(settingsListenerMiddleware.middleware).concat(networkListenerMiddleware.middleware)
