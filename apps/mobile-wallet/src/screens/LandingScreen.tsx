@@ -42,11 +42,10 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import altLogoSrc from '~/images/logos/alephiumHackLogo.png'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { getWalletMetadata } from '~/persistent-storage/wallet'
+import { storedWalletExists } from '~/persistent-storage/wallet'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 import { BORDER_RADIUS_BIG, BORDER_RADIUS_HUGE } from '~/style/globalStyle'
 import { themes } from '~/style/themes'
-import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
 
 interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
@@ -63,18 +62,28 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 
   const { width, height } = Dimensions.get('window')
   const [dimensions, setDimensions] = useState({ width, height })
-  const [showNewWalletButtons, setShowNewWalletButtons] = useState(false)
+  const [isScreenContentVisible, setIsScreenContentVisible] = useState(false)
 
-  // Normally, when the app is unlocked, this screen is not in focus. However, under certain conditions we end up with
-  // an unlocked wallet and no screen in focus at all. This happens when:
-  // 1. the auto-lock is set to anything but "Fast"
-  // 2. the user manually kills the app before the auto-lock timer completes
-  // 3. the WalletConnect feature is activated
-  // Since there is no screen in focus and since the default screen set in the RootStackNavigation is this screen, we
-  // need to navigate back to the dashboard.
   useFocusEffect(
     useCallback(() => {
-      if (isWalletUnlocked) resetNavigation(navigation)
+      storedWalletExists()
+        .then((walletExists) => {
+          if (walletExists) {
+            // Normally, when the app is unlocked, this screen is not in focus. However, under certain conditions we end
+            // up with an unlocked wallet and no screen in focus at all. This happens when:
+            // 1. the auto-lock is set to anything but "Fast"
+            // 2. the user manually kills the app before the auto-lock timer completes
+            // 3. the WalletConnect feature is activated
+            // Since there is no screen in focus and since the default screen set in the RootStackNavigation is this
+            // screen, we need to navigate back to the dashboard.
+            if (isWalletUnlocked) resetNavigation(navigation)
+          } else {
+            // Only display this screen's contents when we have no stored wallet. If there is a wallet, the
+            // AppUnlockModal will be displayed
+            setIsScreenContentVisible(true)
+          }
+        })
+        .catch((error) => console.error('Could not determine if stored wallet exists', error))
     }, [isWalletUnlocked, navigation])
   )
 
@@ -104,16 +113,10 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
     setDimensions({ width, height })
   }
 
-  useEffect(() => {
-    getWalletMetadata()
-      .then((metadata) => setShowNewWalletButtons(!metadata))
-      .catch((e) => showExceptionToast(e, t('Wallet metadata not found')))
-  }, [t])
-
   return (
     <ThemeProvider theme={themes.dark}>
       <Screen contrastedBg {...props} onLayout={handleScreenLayoutChange}>
-        {showNewWalletButtons && (
+        {isScreenContentVisible && (
           <>
             <CoolAlephiumCanvas {...dimensions} />
 

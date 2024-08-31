@@ -140,6 +140,7 @@ export default RootStackNavigation
 const AppUnlockModal = () => {
   const dispatch = useAppDispatch()
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
+  const lastUsedWalletId = useAppSelector((s) => s.wallet.id)
   const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
@@ -166,7 +167,7 @@ const AppUnlockModal = () => {
     } catch (error) {
       const message = 'Could not initialize app with stored wallet'
       showExceptionToast(error, message)
-      sendAnalytics({ type: 'error', message })
+      sendAnalytics({ type: 'error', error, message })
     }
   }, [dispatch, navigation])
 
@@ -204,6 +205,7 @@ const AppUnlockModal = () => {
             await migrateDeprecatedMnemonic(deprecatedWallet.mnemonic)
 
             dispatch(mnemonicMigrated())
+            sendAnalytics({ event: 'Mnemonic migrated' })
 
             initializeAppWithStoredWallet()
           } catch {
@@ -250,7 +252,7 @@ const AppUnlockModal = () => {
 
   return (
     <Modal
-      visible={biometricsRequiredForAppAccess && !isWalletUnlocked}
+      visible={!!lastUsedWalletId && biometricsRequiredForAppAccess && !isWalletUnlocked}
       onLayout={handleScreenLayoutChange}
       animationType="none"
     >

@@ -320,11 +320,9 @@
   "Help us improve your experience!": "Helfen Sie uns, Ihr Erlebnis zu verbessern!",
   "Require biometrics to open app": "Biometrie zum Öffnen der App erforderlich",
   "Require device passcode to open app": "Geräte-Zugangscode zum Öffnen der App erforderlich",
-  "Require device screen lock code or pattern to open app": "Gerät Displaysperre Code oder Muster zum Öffnen der App erforderlich",
   "App access": "App-Zugriff",
   "Require biometrics to transact": "Benötigt biometrische Daten für Transaktionen",
   "Require device passcode to transact": "Geräte-Zugangscode für Transaktionen erforderlich",
-  "Require device screen lock code or pattern to transact": "Gerät Displaysperre Code oder Muster für Transaktionen erforderlich",
   "Your device supports biometrics but none is enrolled. Enable them by adding a fingerprint or Face ID in your device's settings.": "Ihr Gerät unterstützt biometrische Daten, aber keine sind hinterlegt. Aktivieren Sie sie, indem Sie einen Fingerabdruck oder eine Gesichts-ID in den Einstellungen Ihres Geräts hinzufügen.",
   "Enhance your security": "Verbessern Sie Ihre Sicherheit",
   "Auto-lock": "Automatisch sperren",
@@ -364,5 +362,8 @@
   "Error while copying address": "Fehler beim Kopieren der Adresse",
   "This address is not valid": "Diese Adresse ist nicht gültig",
   "A number is expected": "Eine Zahl wird erwartet",
-  "View full size": "Volle Grösse anzeigen"
+  "View full size": "Volle Grösse anzeigen",
+  "Disclaimer": "Haftungsausschluss",
+  "Buy": "Kaufen",
+  "banxaDisclaimer": "Sie sind dabei, auf die Dienste von Drittanbietern zuzugreifen, die von <1>Banxa.com</1> über einen In-App-Browser bereitgestellt werden. Alephium hat keine Kontrolle über die Dienstleistungen von Banxa. Es gelten Banxas Geschäftsbedingungen, daher lesen Sie diese bitte bevor Sie fortfahren."
 }
