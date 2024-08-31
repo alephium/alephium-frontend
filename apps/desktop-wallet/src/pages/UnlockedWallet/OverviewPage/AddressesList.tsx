@@ -33,9 +33,8 @@ import FocusableContent from '@/components/FocusableContent'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { ExpandableTable, ExpandRow, TableHeader } from '@/components/Table'
 import TableCellAmount from '@/components/TableCellAmount'
-import { useAppSelector } from '@/hooks/redux'
-import AddressDetailsModal from '@/modals/AddressDetailsModal'
-import ModalPortal from '@/modals/ModalPortal'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
 interface AddressesListProps {
@@ -75,12 +74,11 @@ const AddressesList = ({ className, maxHeightInPx }: AddressesListProps) => {
 
 const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: AddressListProps) => {
   const addressHashes = useAppSelector(selectAllAddressHashes)
-
-  const [selectedAddress, setSelectedAddress] = useState<AddressHash>()
+  const dispatch = useAppDispatch()
 
   const handleRowClick = (addressHash: AddressHash) => {
     onAddressClick()
-    setSelectedAddress(addressHash)
+    dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
   }
 
   return (
@@ -96,12 +94,6 @@ const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: Addr
       </motion.div>
 
       {!isExpanded && addressHashes.length > 5 && onExpand && <ExpandRow onClick={onExpand} />}
-
-      <ModalPortal>
-        {selectedAddress && (
-          <AddressDetailsModal addressHash={selectedAddress} onClose={() => setSelectedAddress(undefined)} />
-        )}
-      </ModalPortal>
     </>
   )
 }
