@@ -32,9 +32,9 @@ import HashEllipsed from '@/components/HashEllipsed'
 import IOList from '@/components/IOList'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import Tooltip from '@/components/Tooltip'
-import { useAppSelector } from '@/hooks/redux'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
-import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import ModalPortal from '@/modals/ModalPortal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import SideModal from '@/modals/SideModal'
@@ -51,7 +51,6 @@ interface TransactionDetailsModalProps {
 const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const [selectedAddressHash, setSelectedAddressHash] = useState<AddressHash>()
   const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
   const allNFTs = useAppSelector((s) => s.nfts.entities)
@@ -61,6 +60,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
     infoType,
     isFailedScriptTx: !transaction.scriptExecutionOk
   })
+  const dispatch = useAppDispatch()
 
   const isMoved = infoType === 'move'
 
@@ -68,7 +68,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
 
   const handleShowAddress = (addressHash: AddressHash) =>
     internalAddressHashes.includes(addressHash)
-      ? setSelectedAddressHash(addressHash)
+      ? dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
       : openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)
 
   const [tokensWithSymbol, tokensWithoutSymbol] = partition(assets, (asset) => !!asset.symbol)
@@ -287,9 +287,6 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
       </Details>
       <Tooltip />
       <ModalPortal>
-        {selectedAddressHash && (
-          <AddressDetailsModal addressHash={selectedAddressHash} onClose={() => setSelectedAddressHash(undefined)} />
-        )}
         {selectedNFTId && <NFTDetailsModal nftId={selectedNFTId} onClose={() => setSelectedNFTId(undefined)} />}
       </ModalPortal>
     </SideModal>

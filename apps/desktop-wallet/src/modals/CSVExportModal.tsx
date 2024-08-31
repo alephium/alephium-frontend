@@ -25,19 +25,29 @@ import FooterButton from '@/components/Buttons/FooterButton'
 import Select from '@/components/Inputs/Select'
 import Paragraph from '@/components/Paragraph'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { closeModal } from '@/features/modals/modalActions'
+import { selectModalState } from '@/features/modals/modalSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import CenteredModal, { CenteredModalProps } from '@/modals/CenteredModal'
+import CenteredModal from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { csvFileGenerationFinished, fetchTransactionsCsv } from '@/storage/transactions/transactionsActions'
 import { TransactionTimePeriod } from '@/types/transactions'
 import { generateCsvFile, getCsvExportTimeRangeQueryParams } from '@/utils/csvExport'
 import { timePeriodsOptions } from '@/utils/transactions'
 
-interface CSVExportModalProps extends CenteredModalProps {
+export interface CSVExportModalProps {
   addressHash: AddressHash
 }
 
-const CSVExportModal = ({ addressHash, ...props }: CSVExportModalProps) => {
+const CSVExportModalWrapper = () => {
+  const { props } = useAppSelector((s) => selectModalState(s, 'CSVExportModal'))
+
+  return props ? <CSVExportModal addressHash={props.addressHash} /> : null
+}
+
+export default CSVExportModalWrapper
+
+const CSVExportModal = ({ addressHash }: CSVExportModalProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
@@ -48,8 +58,10 @@ const CSVExportModal = ({ addressHash, ...props }: CSVExportModalProps) => {
 
   if (!address) return null
 
+  const onClose = () => dispatch(closeModal({ name: 'CSVExportModal' }))
+
   const handleExportClick = () => {
-    props.onClose()
+    onClose()
     getCSVFile()
 
     sendAnalytics({ event: 'Exported CSV', props: { time_period: selectedTimePeriod } })
@@ -67,7 +79,7 @@ const CSVExportModal = ({ addressHash, ...props }: CSVExportModalProps) => {
   }
 
   return (
-    <CenteredModal title={t('Export address transactions')} subtitle={address.label || address.hash} {...props}>
+    <CenteredModal title={t('Export address transactions')} subtitle={address.label || address.hash} onClose={onClose}>
       <Paragraph>
         {t(
           'You can download the address transaction history for a selected time period. This can be useful for tax reporting.'
@@ -84,5 +96,3 @@ const CSVExportModal = ({ addressHash, ...props }: CSVExportModalProps) => {
     </CenteredModal>
   )
 }
-
-export default CSVExportModal

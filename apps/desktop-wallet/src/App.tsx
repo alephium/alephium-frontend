@@ -37,6 +37,7 @@ import SplashScreen from '@/components/SplashScreen'
 import { WalletConnectContextProvider } from '@/contexts/walletconnect'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
+import AppModals from '@/features/modals/AppModals'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
 import Router from '@/routes'
@@ -253,6 +254,8 @@ const App = () => {
           </CenteredSection>
         </AppContainer>
       </WalletConnectContextProvider>
+
+      <AppModals />
 
       <SnackbarManager />
       <AutoUpdateSnackbar />

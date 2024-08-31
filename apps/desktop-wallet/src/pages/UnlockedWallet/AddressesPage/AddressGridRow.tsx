@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, CURRENCIES } from '@alephium/shared'
 import dayjs from 'dayjs'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -28,9 +27,8 @@ import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Amount from '@/components/Amount'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import AssetsBadgesList from '@/features/assetsLists/AssetsBadgesList'
-import { useAppSelector } from '@/hooks/redux'
-import AddressDetailsModal from '@/modals/AddressDetailsModal'
-import ModalPortal from '@/modals/ModalPortal'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { selectAddressByHash, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
 import { onEnterOrSpace } from '@/utils/misc'
 
@@ -45,60 +43,52 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const { data: totalWorth, isLoading: isLoadingTotalWorth } = useAddressesTokensWorthTotal(addressHash)
-
-  const [isAddressDetailsModalOpen, setIsAddressDetailsModalOpen] = useState(false)
+  const dispatch = useAppDispatch()
 
   if (!address) return null
 
-  const openAddressDetailsModal = () => setIsAddressDetailsModalOpen(true)
+  const openAddressDetailsModal = () => dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
 
   return (
-    <>
-      <GridRow
-        key={addressHash}
-        onClick={openAddressDetailsModal}
-        onKeyDown={(e) => onEnterOrSpace(e, openAddressDetailsModal)}
-        className={className}
-        role="row"
-        tabIndex={0}
-      >
-        <AddressNameCell>
-          <AddressColorIndicator addressHash={addressHash} size={16} />
-          <Column>
-            <Label>
-              <AddressBadge addressHash={addressHash} hideColorIndication truncate disableA11y />
-            </Label>
-            {stateUninitialized ? (
-              <SkeletonLoader height="15.5px" />
-            ) : (
-              <SecondaryText>
-                {address.lastUsed ? `${t('Last activity')} ${dayjs(address.lastUsed).fromNow()}` : t('Never used')}
-              </SecondaryText>
-            )}
-          </Column>
-        </AddressNameCell>
-        <Cell>
-          <SecondaryText>
-            {t('Group')} {address.group}
-          </SecondaryText>
-        </Cell>
-        <Cell>
-          <AssetsBadgesListStyled addressHash={addressHash} simple />
-        </Cell>
-        <FiatAmountCell>
-          {stateUninitialized || isLoadingTotalWorth ? (
-            <SkeletonLoader height="18.5px" />
+    <GridRow
+      key={addressHash}
+      onClick={openAddressDetailsModal}
+      onKeyDown={(e) => onEnterOrSpace(e, openAddressDetailsModal)}
+      className={className}
+      role="row"
+      tabIndex={0}
+    >
+      <AddressNameCell>
+        <AddressColorIndicator addressHash={addressHash} size={16} />
+        <Column>
+          <Label>
+            <AddressBadge addressHash={addressHash} hideColorIndication truncate disableA11y />
+          </Label>
+          {stateUninitialized ? (
+            <SkeletonLoader height="15.5px" />
           ) : (
-            <Amount value={totalWorth} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
+            <SecondaryText>
+              {address.lastUsed ? `${t('Last activity')} ${dayjs(address.lastUsed).fromNow()}` : t('Never used')}
+            </SecondaryText>
           )}
-        </FiatAmountCell>
-      </GridRow>
-      <ModalPortal>
-        {isAddressDetailsModalOpen && (
-          <AddressDetailsModal addressHash={addressHash} onClose={() => setIsAddressDetailsModalOpen(false)} />
+        </Column>
+      </AddressNameCell>
+      <Cell>
+        <SecondaryText>
+          {t('Group')} {address.group}
+        </SecondaryText>
+      </Cell>
+      <Cell>
+        <AssetsBadgesListStyled addressHash={addressHash} simple />
+      </Cell>
+      <FiatAmountCell>
+        {stateUninitialized || isLoadingTotalWorth ? (
+          <SkeletonLoader height="18.5px" />
+        ) : (
+          <Amount value={totalWorth} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
         )}
-      </ModalPortal>
-    </>
+      </FiatAmountCell>
+    </GridRow>
   )
 }
 
