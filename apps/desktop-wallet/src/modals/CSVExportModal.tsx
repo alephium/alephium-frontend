@@ -26,7 +26,7 @@ import Select from '@/components/Inputs/Select'
 import Paragraph from '@/components/Paragraph'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
-import { selectModalState } from '@/features/modals/modalSelectors'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
@@ -39,15 +39,7 @@ export interface CSVExportModalProps {
   addressHash: AddressHash
 }
 
-const CSVExportModalWrapper = () => {
-  const { props } = useAppSelector((s) => selectModalState(s, 'CSVExportModal'))
-
-  return props ? <CSVExportModal addressHash={props.addressHash} /> : null
-}
-
-export default CSVExportModalWrapper
-
-const CSVExportModal = ({ addressHash }: CSVExportModalProps) => {
+export const CSVExportModal = ({ id, addressHash }: ModalBaseProp & CSVExportModalProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
@@ -58,7 +50,7 @@ const CSVExportModal = ({ addressHash }: CSVExportModalProps) => {
 
   if (!address) return null
 
-  const onClose = () => dispatch(closeModal({ name: 'CSVExportModal' }))
+  const onClose = () => dispatch(closeModal({ id }))
 
   const handleExportClick = () => {
     onClose()
@@ -96,3 +88,5 @@ const CSVExportModal = ({ addressHash }: CSVExportModalProps) => {
     </CenteredModal>
   )
 }
+
+export default CSVExportModal

@@ -16,9 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-const ModalNames = {
-  AddressDetailsModal: 'AddressDetailsModal',
-  CSVExportModal: 'CSVExportModal'
-} as const
+import { createEntityAdapter } from '@reduxjs/toolkit'
 
-export default ModalNames
+import { ModalInstance } from '@/features/modals/modalTypes'
+
+export const modalAdapter = createEntityAdapter<ModalInstance>()
