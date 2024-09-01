@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { addApostrophes, AddressHash, NFT } from '@alephium/shared'
 import { partition } from 'lodash'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -31,7 +32,8 @@ import HashEllipsed from '@/components/HashEllipsed'
 import IOList from '@/components/IOList'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import Tooltip from '@/components/Tooltip'
-import { openModal } from '@/features/modals/modalActions'
+import { closeModal, openModal } from '@/features/modals/modalActions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
 import SideModal from '@/modals/SideModal'
@@ -40,12 +42,11 @@ import { AddressConfirmedTransaction } from '@/types/transactions'
 import { formatDateForDisplay, openInWebBrowser } from '@/utils/misc'
 import { getTransactionInfo } from '@/utils/transactions'
 
-interface TransactionDetailsModalProps {
+export interface TransactionDetailsModalProps {
   transaction: AddressConfirmedTransaction
-  onClose: () => void
 }
 
-const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsModalProps) => {
+const TransactionDetailsModal = memo(({ id, transaction }: ModalBaseProp & TransactionDetailsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
@@ -68,6 +69,8 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
       : openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)
 
   const openNFTDetailsModal = (nftId: string) => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
+
+  const onClose = () => dispatch(closeModal({ id }))
 
   const [tokensWithSymbol, tokensWithoutSymbol] = partition(assets, (asset) => !!asset.symbol)
   const [nfts, unknownTokens] = partition(tokensWithoutSymbol, (token) => !!allNFTs[token.id])
@@ -286,7 +289,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
       <Tooltip />
     </SideModal>
   )
-}
+})
 
 export default TransactionDetailsModal
 
