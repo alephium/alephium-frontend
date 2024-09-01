@@ -19,40 +19,24 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { createSlice } from '@reduxjs/toolkit'
 
 import { closeModal, openModal } from '@/features/modals/modalActions'
-import ModalNames from '@/features/modals/modalNames'
-import { ModalsState } from '@/features/modals/modalTypes'
+import { modalAdapter } from '@/features/modals/modalAdapters'
 
-const createInitialModalState = (): ModalsState =>
-  Object.values(ModalNames).reduce(
-    (state, key) => ({
-      ...state,
-      [key]: {
-        isOpen: false,
-        props: undefined
-      }
-    }),
-    {} as ModalsState
-  )
-
-const initialModalsState: ModalsState = createInitialModalState()
+const initialState = modalAdapter.getInitialState()
 
 const modalSlice = createSlice({
   name: 'modals',
-  initialState: initialModalsState,
+  initialState,
   reducers: {},
   extraReducers(builder) {
     builder
       .addCase(openModal, (state, action) => {
-        const { name, props } = action.payload
-
-        state[name].isOpen = true
-        state[name].props = props
+        modalAdapter.addOne(state, {
+          id: Date.now(),
+          params: action.payload
+        })
       })
-      .addCase(closeModal, (state, action) => {
-        const { name } = action.payload
-
-        state[name].isOpen = false
-        // state[name].props = undefined // To preserve fade out animation
+      .addCase(closeModal, (state, { payload: { id } }) => {
+        modalAdapter.removeOne(state, id)
       })
   }
 })

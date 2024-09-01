@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { FileDown } from 'lucide-react'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -33,8 +33,7 @@ import QRCode from '@/components/QRCode'
 import TransactionList from '@/components/TransactionList'
 import AssetsTabs from '@/features/assetsLists/AssetsTabs'
 import { closeModal, openModal } from '@/features/modals/modalActions'
-import ModalNames from '@/features/modals/modalNames'
-import { selectModalState } from '@/features/modals/modalSelectors'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
 import AmountsOverviewPanel from '@/pages/UnlockedWallet/OverviewPage/AmountsOverviewPanel'
@@ -45,15 +44,7 @@ export interface AddressDetailsModalProps {
   addressHash: AddressHash
 }
 
-const AddressDetailsModalWrapper = () => {
-  const { props } = useAppSelector((s) => selectModalState(s, ModalNames.AddressDetailsModal))
-
-  return props ? <AddressDetailsModal addressHash={props.addressHash} /> : null
-}
-
-export default AddressDetailsModalWrapper
-
-const AddressDetailsModal = ({ addressHash }: AddressDetailsModalProps) => {
+const AddressDetailsModal = memo(({ id, addressHash }: ModalBaseProp & AddressDetailsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
@@ -64,7 +55,7 @@ const AddressDetailsModal = ({ addressHash }: AddressDetailsModalProps) => {
 
   if (!address) return null
 
-  const handleClose = () => dispatch(closeModal({ name: 'AddressDetailsModal' }))
+  const handleClose = () => dispatch(closeModal({ id }))
 
   const openCSVExportModal = () => dispatch(openModal({ name: 'CSVExportModal', props: { addressHash } }))
 
@@ -140,7 +131,9 @@ const AddressDetailsModal = ({ addressHash }: AddressDetailsModalProps) => {
       </Content>
     </SideModal>
   )
-}
+})
+
+export default AddressDetailsModal
 
 const Header = styled.div`
   display: flex;

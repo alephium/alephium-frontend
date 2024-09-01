@@ -18,7 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAction } from '@reduxjs/toolkit'
 
-import { CloseModalParams, OpenModalParams } from '@/features/modals/modalTypes'
+import { ModalInstance, OpenModalParams } from '@/features/modals/modalTypes'
 
 export const openModal = createAction<OpenModalParams>('modal/openModal')
-export const closeModal = createAction<CloseModalParams>('modal/closeModal')
+
+export const closeModal = createAction<{ id: ModalInstance['id'] }>('modal/closeModal')
