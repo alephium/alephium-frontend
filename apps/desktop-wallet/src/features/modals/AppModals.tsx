@@ -22,6 +22,7 @@ import { selectAllModals } from '@/features/modals/modalSelectors'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import CSVExportModal from '@/modals/CSVExportModal'
+import NFTDetailsModal from '@/modals/NFTDetailsModal'
 
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
@@ -34,6 +35,8 @@ const AppModals = () => {
             return <AddressDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
           case 'CSVExportModal':
             return <CSVExportModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'NFTDetailsModal':
+            return <NFTDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
     </AnimatePresence>

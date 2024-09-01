@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { addApostrophes, AddressHash, NFT } from '@alephium/shared'
 import { partition } from 'lodash'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -35,8 +34,6 @@ import Tooltip from '@/components/Tooltip'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
-import ModalPortal from '@/modals/ModalPortal'
-import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import SideModal from '@/modals/SideModal'
 import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import { AddressConfirmedTransaction } from '@/types/transactions'
@@ -51,7 +48,6 @@ interface TransactionDetailsModalProps {
 const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
   const allNFTs = useAppSelector((s) => s.nfts.entities)
   const internalAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
@@ -70,6 +66,8 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
     internalAddressHashes.includes(addressHash)
       ? dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
       : openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)
+
+  const openNFTDetailsModal = (nftId: string) => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
 
   const [tokensWithSymbol, tokensWithoutSymbol] = partition(assets, (asset) => !!asset.symbol)
   const [nfts, unknownTokens] = partition(tokensWithoutSymbol, (token) => !!allNFTs[token.id])
@@ -232,7 +230,7 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
             <DataList.Row label={t('NFTs')}>
               <NFTThumbnails>
                 {nftsData.map((nft) => (
-                  <NFTThumbnail nftId={nft.id} key={nft.id} onClick={() => setSelectedNFTId(nft.id)} />
+                  <NFTThumbnail nftId={nft.id} key={nft.id} onClick={() => openNFTDetailsModal(nft.id)} />
                 ))}
               </NFTThumbnails>
             </DataList.Row>
@@ -286,9 +284,6 @@ const TransactionDetailsModal = ({ transaction, onClose }: TransactionDetailsMod
         </ExpandableSectionStyled>
       </Details>
       <Tooltip />
-      <ModalPortal>
-        {selectedNFTId && <NFTDetailsModal nftId={selectedNFTId} onClose={() => setSelectedNFTId(undefined)} />}
-      </ModalPortal>
     </SideModal>
   )
 }
