@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, Asset } from '@alephium/shared'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { ChevronRight } from 'lucide-react'
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -113,8 +114,8 @@ const TransactionList = ({
     [addresses, dispatch, singleAddress]
   )
 
-  const openTransactionDetailsModal = (transaction: AddressConfirmedTransaction) =>
-    dispatch(openModal({ name: 'TransactionDetailsModal', props: { transaction } }))
+  const openTransactionDetailsModal = (txHash: Transaction['hash'], addressHash: AddressHash) =>
+    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash, addressHash } }))
 
   useEffect(() => {
     if (!stateUninitialized) {
@@ -184,8 +185,8 @@ const TransactionList = ({
           key={`${tx.hash}-${tx.address.hash}`}
           role="row"
           tabIndex={0}
-          onClick={() => openTransactionDetailsModal(tx)}
-          onKeyDown={() => openTransactionDetailsModal(tx)}
+          onClick={() => openTransactionDetailsModal(tx.hash, tx.address.hash)}
+          onKeyDown={() => openTransactionDetailsModal(tx.hash, tx.address.hash)}
         >
           <TransactionalInfo
             transaction={tx}
@@ -232,7 +233,7 @@ const applyFilters = ({
 
   return isDirectionsFilterEnabled || isAssetsFilterEnabled
     ? txs.filter((tx) => {
-        const { assets, infoType } = getTransactionInfo(tx, hideFromColumn)
+        const { assets, infoType } = getTransactionInfo(tx, tx.address.hash, hideFromColumn)
         const dir = infoType === 'pending' ? 'out' : infoType
 
         const passedDirectionsFilter = !isDirectionsFilterEnabled || directions.includes(dir)
