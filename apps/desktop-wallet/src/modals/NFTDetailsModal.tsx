@@ -20,6 +20,7 @@ import { client, NFT, selectNFTById } from '@alephium/shared'
 import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
 import { skipToken, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -28,20 +29,24 @@ import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import Truncate from '@/components/Truncate'
-import { useAppSelector } from '@/hooks/redux'
+import { closeModal } from '@/features/modals/modalActions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
 import { openInWebBrowser } from '@/utils/misc'
 
-interface NFTDetailsModalProps {
+export interface NFTDetailsModalProps {
   nftId: NFT['id']
-  onClose: () => void
 }
 
-const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
+const NFTDetailsModal = memo(({ id, nftId }: ModalBaseProp & NFTDetailsModalProps) => {
   const { t } = useTranslation()
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
+  const dispatch = useAppDispatch()
 
   if (!nft) return null
+
+  const onClose = () => dispatch(closeModal({ id }))
 
   return (
     <SideModal onClose={onClose} title={t('NFT details')}>
@@ -76,7 +81,7 @@ const NFTDetailsModal = ({ nftId, onClose }: NFTDetailsModalProps) => {
       </NFTMetadataContainer>
     </SideModal>
   )
-}
+})
 
 const NFTCollectionDetails = ({ collectionId }: Pick<NFT, 'collectionId'>) => {
   const { t } = useTranslation()
