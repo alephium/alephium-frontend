@@ -16,19 +16,28 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import LazyModalRenderer from '@/features/modals/LazyModalRenderer'
-import AddressDetailsModalWrapper from '@/modals/AddressDetailsModal'
-import CSVExportModalWrapper from '@/modals/CSVExportModal'
+import { AnimatePresence } from 'framer-motion'
 
-const AppModals = () => (
-  <>
-    <LazyModalRenderer name="AddressDetailsModal">
-      <AddressDetailsModalWrapper />
-    </LazyModalRenderer>
-    <LazyModalRenderer name="CSVExportModal">
-      <CSVExportModalWrapper />
-    </LazyModalRenderer>
-  </>
-)
+import { selectAllModals } from '@/features/modals/modalSelectors'
+import { useAppSelector } from '@/hooks/redux'
+import AddressDetailsModal from '@/modals/AddressDetailsModal'
+import CSVExportModal from '@/modals/CSVExportModal'
+
+const AppModals = () => {
+  const openedModals = useAppSelector(selectAllModals)
+
+  return (
+    <AnimatePresence>
+      {openedModals.map((modal) => {
+        switch (modal.params.name) {
+          case 'AddressDetailsModal':
+            return <AddressDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'CSVExportModal':
+            return <CSVExportModal id={modal.id} key={modal.id} {...modal.params.props} />
+        }
+      })}
+    </AnimatePresence>
+  )
+}
 
 export default AppModals
