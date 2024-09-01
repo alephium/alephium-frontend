@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { addApostrophes, AddressHash, NFT } from '@alephium/shared'
+import { addApostrophes, AddressHash, NFT, TransactionInfoType } from '@alephium/shared'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { partition } from 'lodash'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -38,37 +39,37 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useTransactionUI } from '@/hooks/useTransactionUI'
 import SideModal from '@/modals/SideModal'
 import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
-import { AddressConfirmedTransaction } from '@/types/transactions'
+import { selectConfirmedTransactionByHash } from '@/storage/transactions/transactionsSelectors'
 import { formatDateForDisplay, openInWebBrowser } from '@/utils/misc'
 import { getTransactionInfo } from '@/utils/transactions'
 
 export interface TransactionDetailsModalProps {
-  transaction: AddressConfirmedTransaction
+  txHash: Transaction['hash']
+  addressHash: AddressHash
 }
 
-const TransactionDetailsModal = memo(({ id, transaction }: ModalBaseProp & TransactionDetailsModalProps) => {
+const TransactionDetailsModal = memo(({ id, txHash, addressHash }: ModalBaseProp & TransactionDetailsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
+  const transaction = useAppSelector((s) => selectConfirmedTransactionByHash(s, txHash))
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
   const allNFTs = useAppSelector((s) => s.nfts.entities)
   const internalAddressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const { assets, direction, lockTime, infoType } = getTransactionInfo(transaction)
-  const { label, Icon, iconColor } = useTransactionUI({
-    infoType,
-    isFailedScriptTx: !transaction.scriptExecutionOk
-  })
   const dispatch = useAppDispatch()
 
+  if (!transaction) return null
+
+  const { assets, direction, lockTime, infoType } = getTransactionInfo(transaction, addressHash)
   const isMoved = infoType === 'move'
 
-  const handleShowTxInExplorer = () => openInWebBrowser(`${explorerUrl}/#/transactions/${transaction.hash}`)
+  const handleShowTxInExplorer = () => openInWebBrowser(`${explorerUrl}/#/transactions/${txHash}`)
 
   const handleShowAddress = (addressHash: AddressHash) =>
     internalAddressHashes.includes(addressHash)
       ? dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
       : openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)
 
-  const openNFTDetailsModal = (nftId: string) => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
+  const openNFTDetailsModal = (nftId: NFT['id']) => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
 
   const onClose = () => dispatch(closeModal({ id }))
 
@@ -80,10 +81,7 @@ const TransactionDetailsModal = memo(({ id, transaction }: ModalBaseProp & Trans
     <SideModal onClose={onClose} title={t('Transaction details')}>
       <Summary>
         <SummaryContent>
-          <TransactionType short color={iconColor}>
-            <Icon size={14} color={iconColor} />
-            {label}
-          </TransactionType>
+          <TransactionType infoType={infoType} isFailedScriptTx={transaction.scriptExecutionOk} />
           <AmountWrapper tabIndex={0}>
             {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
               <AmountContainer key={id}>
@@ -111,7 +109,7 @@ const TransactionDetailsModal = memo(({ id, transaction }: ModalBaseProp & Trans
               </FromIn>
               {(direction === 'in' || direction === 'out') && (
                 <IOList
-                  currentAddress={transaction.address.hash}
+                  currentAddress={addressHash}
                   isOut={direction === 'out'}
                   outputs={transaction.outputs}
                   inputs={transaction.inputs}
@@ -121,11 +119,11 @@ const TransactionDetailsModal = memo(({ id, transaction }: ModalBaseProp & Trans
               )}
               {direction === 'swap' && (
                 <>
-                  <AddressBadge addressHash={transaction.address.hash} truncate withBorders isShort />
+                  <AddressBadge addressHash={addressHash} truncate withBorders isShort />
                   <FromIn>{t('and')}</FromIn>
                   <SwapPartnerAddress>
                     <IOList
-                      currentAddress={transaction.address.hash}
+                      currentAddress={addressHash}
                       isOut={false}
                       outputs={transaction.outputs}
                       inputs={transaction.inputs}
@@ -153,12 +151,12 @@ const TransactionDetailsModal = memo(({ id, transaction }: ModalBaseProp & Trans
               </DataList.Row>
               <DataList.Row label={t('From')}>
                 {direction === 'out' ? (
-                  <ActionLinkStyled onClick={() => handleShowAddress(transaction.address.hash)}>
-                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
+                  <ActionLinkStyled onClick={() => handleShowAddress(addressHash)}>
+                    <AddressBadge addressHash={addressHash} truncate withBorders />
                   </ActionLinkStyled>
                 ) : (
                   <IOList
-                    currentAddress={transaction.address.hash}
+                    currentAddress={addressHash}
                     isOut={false}
                     outputs={transaction.outputs}
                     inputs={transaction.inputs}
@@ -169,15 +167,12 @@ const TransactionDetailsModal = memo(({ id, transaction }: ModalBaseProp & Trans
               </DataList.Row>
               <DataList.Row label={t('To')}>
                 {direction !== 'out' ? (
-                  <ActionLinkStyled
-                    onClick={() => handleShowAddress(transaction.address.hash)}
-                    key={transaction.address.hash}
-                  >
-                    <AddressBadge addressHash={transaction.address.hash} truncate withBorders />
+                  <ActionLinkStyled onClick={() => handleShowAddress(addressHash)} key={addressHash}>
+                    <AddressBadge addressHash={addressHash} truncate withBorders />
                   </ActionLinkStyled>
                 ) : (
                   <IOList
-                    currentAddress={transaction.address.hash}
+                    currentAddress={addressHash}
                     isOut={direction === 'out'}
                     outputs={transaction.outputs}
                     inputs={transaction.inputs}
@@ -293,7 +288,23 @@ const TransactionDetailsModal = memo(({ id, transaction }: ModalBaseProp & Trans
 
 export default TransactionDetailsModal
 
-const TransactionType = styled(Badge)`
+interface TransactionTypeProps {
+  infoType: TransactionInfoType
+  isFailedScriptTx: boolean
+}
+
+const TransactionType = (props: TransactionTypeProps) => {
+  const { label, Icon, iconColor } = useTransactionUI(props)
+
+  return (
+    <TransactionTypeStyled short color={iconColor}>
+      <Icon size={14} color={iconColor} />
+      {label}
+    </TransactionTypeStyled>
+  )
+}
+
+const TransactionTypeStyled = styled(Badge)`
   flex-shrink: 0;
   display: flex;
   align-items: center;
