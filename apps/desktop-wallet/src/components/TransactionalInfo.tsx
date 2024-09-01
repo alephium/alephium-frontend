@@ -60,7 +60,7 @@ const TransactionalInfo = ({
   const { addressHash: addressHashParam = '' } = useParams<{ addressHash: AddressHash }>()
   const addressHash = addressHashProp ?? addressHashParam
   const address = useAppSelector((state) => selectAddressByHash(state, addressHash))
-  const { assets, direction, lockTime, infoType } = getTransactionInfo(tx, showInternalInflows)
+  const { assets, direction, lockTime, infoType } = getTransactionInfo(tx, addressHash, showInternalInflows)
   const isPending = isPendingTx(tx)
   const isFailedScriptTx = !isPending && !tx.scriptExecutionOk
   const { label, Icon, iconColor, iconBgColor } = useTransactionUI({ infoType, isFailedScriptTx })

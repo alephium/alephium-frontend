@@ -55,13 +55,13 @@ const AddressDetailsModal = memo(({ id, addressHash }: ModalBaseProp & AddressDe
 
   if (!address) return null
 
-  const handleClose = () => dispatch(closeModal({ id }))
+  const onClose = () => dispatch(closeModal({ id }))
 
   const openCSVExportModal = () => dispatch(openModal({ name: 'CSVExportModal', props: { addressHash } }))
 
   return (
     <SideModal
-      onClose={handleClose}
+      onClose={onClose}
       title={t('Address details')}
       width={800}
       onAnimationComplete={() => setShowChart(true)}

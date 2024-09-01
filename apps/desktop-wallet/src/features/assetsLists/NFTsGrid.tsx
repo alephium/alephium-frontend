@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NFT } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -35,7 +36,7 @@ const NFTsGrid = ({ className, addressHash, isExpanded, onExpand, nftColumns }: 
   const { data: nftIds, isLoading } = useAddressesNFTsIds(addressHash)
   const dispatch = useAppDispatch()
 
-  const openNFTDetailsModal = (nftId: string) => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
+  const openNFTDetailsModal = (nftId: NFT['id']) => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
 
   return (
     <>
