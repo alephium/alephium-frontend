@@ -25,9 +25,8 @@ import { confirmedTransactionsAdapter, pendingTransactionsAdapter } from '@/stor
 import { AddressConfirmedTransaction, AddressPendingTransaction } from '@/types/transactions'
 import { selectAddressTransactions } from '@/utils/addresses'
 
-export const { selectAll: selectAllConfirmedTransactions } = confirmedTransactionsAdapter.getSelectors<RootState>(
-  (state) => state.confirmedTransactions
-)
+export const { selectAll: selectAllConfirmedTransactions, selectById: selectConfirmedTransactionByHash } =
+  confirmedTransactionsAdapter.getSelectors<RootState>((state) => state.confirmedTransactions)
 
 export const makeSelectAddressesConfirmedTransactions = () =>
   createSelector(
