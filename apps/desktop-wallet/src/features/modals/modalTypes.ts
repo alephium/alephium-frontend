@@ -16,14 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import ModalNames from '@/features/modals/modalNames'
 import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal'
 import { CSVExportModalProps } from '@/modals/CSVExportModal'
 
-export interface ModalsState {
-  [ModalNames.AddressDetailsModal]: AppModalState<AddressDetailsModalProps>
-  [ModalNames.CSVExportModal]: AppModalState<CSVExportModalProps>
-}
+const ModalNames = {
+  AddressDetailsModal: 'AddressDetailsModal',
+  CSVExportModal: 'CSVExportModal'
+} as const
+
+export type ModalName = keyof typeof ModalNames
 
 export type OpenModalParams =
   | {
@@ -35,11 +36,11 @@ export type OpenModalParams =
       props: CSVExportModalProps
     }
 
-export type ModalName = keyof ModalsState
+export type ModalInstance = {
+  id: number
+  params: OpenModalParams
+}
 
-export type CloseModalParams = { name: ModalName }
-
-interface AppModalState<T> {
-  isOpen: boolean
-  props?: T
+export interface ModalBaseProp {
+  id: ModalInstance['id']
 }
