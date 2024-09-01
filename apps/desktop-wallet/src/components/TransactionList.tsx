@@ -28,9 +28,8 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import Spinner from '@/components/Spinner'
 import Table, { TableCell, TableCellPlaceholder, TableHeader, TableRow } from '@/components/Table'
 import TransactionalInfo from '@/components/TransactionalInfo'
+import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import ModalPortal from '@/modals/ModalPortal'
-import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
 import {
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
@@ -88,7 +87,6 @@ const TransactionList = ({
   const finishedLoadingData = useAppSelector((s) => !s.addresses.loadingTransactions)
   const allAddressTxPagesLoaded = useAppSelector(selectHaveAllPagesLoaded)
 
-  const [selectedTransaction, setSelectedTransaction] = useState<AddressConfirmedTransaction>()
   const [attemptToFindNewFilteredTxs, setAttemptToFindNewFilteredTxs] = useState(0)
 
   const singleAddress = addresses.length === 1
@@ -114,6 +112,9 @@ const TransactionList = ({
         : dispatch(syncAllAddressesTransactionsNextPage({ minTxs: 10 })),
     [addresses, dispatch, singleAddress]
   )
+
+  const openTransactionDetailsModal = (transaction: AddressConfirmedTransaction) =>
+    dispatch(openModal({ name: 'TransactionDetailsModal', props: { transaction } }))
 
   useEffect(() => {
     if (!stateUninitialized) {
@@ -144,85 +145,75 @@ const TransactionList = ({
   ])
 
   return (
-    <>
-      <Table className={className} minWidth="500px">
-        {!hideHeader && (
-          <TableHeader title={title ?? t('Transactions')}>
-            {headerExtraContent}
-            {limit !== undefined && (
-              <ActionLinkStyled onClick={() => navigate('/wallet/transfers')} Icon={ChevronRight} withBackground>
-                {t('See more')}
-              </ActionLinkStyled>
-            )}
-          </TableHeader>
-        )}
-        {stateUninitialized && (
-          <>
-            <TableRow>
-              <SkeletonLoader height="37.5px" />
-            </TableRow>
-            <TableRow>
-              <SkeletonLoader height="37.5px" />
-            </TableRow>
-            <TableRow>
-              <SkeletonLoader height="37.5px" />
-            </TableRow>
-          </>
-        )}
-        {pendingTxs.map((tx) => (
-          <TableRow key={tx.hash} blinking role="row" tabIndex={0}>
-            <TransactionalInfo
-              transaction={tx}
-              addressHash={tx.address.hash}
-              showInternalInflows={hideFromColumn}
-              compact={compact}
-            />
+    <Table className={className} minWidth="500px">
+      {!hideHeader && (
+        <TableHeader title={title ?? t('Transactions')}>
+          {headerExtraContent}
+          {limit !== undefined && (
+            <ActionLinkStyled onClick={() => navigate('/wallet/transfers')} Icon={ChevronRight} withBackground>
+              {t('See more')}
+            </ActionLinkStyled>
+          )}
+        </TableHeader>
+      )}
+      {stateUninitialized && (
+        <>
+          <TableRow>
+            <SkeletonLoader height="37.5px" />
           </TableRow>
-        ))}
-        {displayedConfirmedTxs.map((tx) => (
-          <TableRow
-            key={`${tx.hash}-${tx.address.hash}`}
-            role="row"
-            tabIndex={0}
-            onClick={() => setSelectedTransaction(tx)}
-            onKeyDown={() => setSelectedTransaction(tx)}
-          >
-            <TransactionalInfo
-              transaction={tx}
-              addressHash={tx.address.hash}
-              showInternalInflows={hideFromColumn}
-              compact={compact}
-            />
+          <TableRow>
+            <SkeletonLoader height="37.5px" />
           </TableRow>
-        ))}
-        {limit === undefined && (
-          <TableRow role="row">
-            <TableCell align="center" role="gridcell">
-              {allTxsLoaded ? (
-                <span>{t('All transactions loaded!')}</span>
-              ) : userAttemptedToLoadMoreTxs ? (
-                <Spinner size="15px" />
-              ) : (
-                <ActionLink onClick={handleShowMoreClick}>{t('Show more')}</ActionLink>
-              )}
-            </TableCell>
+          <TableRow>
+            <SkeletonLoader height="37.5px" />
           </TableRow>
-        )}
-        {!stateUninitialized && !pendingTxs.length && !displayedConfirmedTxs.length && (
-          <TableRow role="row" tabIndex={0}>
-            <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
-          </TableRow>
-        )}
-      </Table>
-      <ModalPortal>
-        {selectedTransaction && (
-          <TransactionDetailsModal
-            transaction={selectedTransaction}
-            onClose={() => setSelectedTransaction(undefined)}
+        </>
+      )}
+      {pendingTxs.map((tx) => (
+        <TableRow key={tx.hash} blinking role="row" tabIndex={0}>
+          <TransactionalInfo
+            transaction={tx}
+            addressHash={tx.address.hash}
+            showInternalInflows={hideFromColumn}
+            compact={compact}
           />
-        )}
-      </ModalPortal>
-    </>
+        </TableRow>
+      ))}
+      {displayedConfirmedTxs.map((tx) => (
+        <TableRow
+          key={`${tx.hash}-${tx.address.hash}`}
+          role="row"
+          tabIndex={0}
+          onClick={() => openTransactionDetailsModal(tx)}
+          onKeyDown={() => openTransactionDetailsModal(tx)}
+        >
+          <TransactionalInfo
+            transaction={tx}
+            addressHash={tx.address.hash}
+            showInternalInflows={hideFromColumn}
+            compact={compact}
+          />
+        </TableRow>
+      ))}
+      {limit === undefined && (
+        <TableRow role="row">
+          <TableCell align="center" role="gridcell">
+            {allTxsLoaded ? (
+              <span>{t('All transactions loaded!')}</span>
+            ) : userAttemptedToLoadMoreTxs ? (
+              <Spinner size="15px" />
+            ) : (
+              <ActionLink onClick={handleShowMoreClick}>{t('Show more')}</ActionLink>
+            )}
+          </TableCell>
+        </TableRow>
+      )}
+      {!stateUninitialized && !pendingTxs.length && !displayedConfirmedTxs.length && (
+        <TableRow role="row" tabIndex={0}>
+          <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
+        </TableRow>
+      )}
+    </Table>
   )
 }
 
