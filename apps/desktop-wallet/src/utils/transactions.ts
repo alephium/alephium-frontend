@@ -30,25 +30,20 @@ import {
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { DUST_AMOUNT, explorer, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import dayjs from 'dayjs'
 
 import { SelectOption } from '@/components/Inputs/Select'
 import i18n from '@/i18n'
 import { store } from '@/storage/store'
 import { TranslationKey } from '@/types/i18next'
-import {
-  AddressPendingTransaction,
-  AddressTransaction,
-  Direction,
-  TransactionInfo,
-  TransactionTimePeriod
-} from '@/types/transactions'
+import { Direction, PendingTransaction, TransactionInfo, TransactionTimePeriod } from '@/types/transactions'
 
 export const isAmountWithinRange = (amount: bigint, maxAmount: bigint): boolean =>
   amount >= MIN_UTXO_SET_AMOUNT && amount <= maxAmount
 
-export const isPendingTx = (tx: AddressTransaction): tx is AddressPendingTransaction =>
-  (tx as AddressPendingTransaction).status === 'pending'
+export const isPendingTx = (tx: Transaction | PendingTransaction): tx is PendingTransaction =>
+  (tx as PendingTransaction).status === 'pending'
 
 export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
   const alphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount ?? BigInt(0)
@@ -128,7 +123,11 @@ export const directionOptions: {
   }
 ]
 
-export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?: boolean): TransactionInfo => {
+export const getTransactionInfo = (
+  tx: Transaction | PendingTransaction,
+  addressHash: AddressHash,
+  showInternalInflows?: boolean
+): TransactionInfo => {
   const state = store.getState()
   const fungibleTokens = state.fungibleTokens.entities
   const internalAddresses = state.addresses.ids as AddressHash[]
@@ -140,13 +139,13 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
   let tokens: Required<AssetAmount>[] = []
 
   if (isPendingTx(tx)) {
-    direction = internalAddresses.includes(tx.toAddress) ? (tx.address.hash === tx.fromAddress ? 'out' : 'in') : 'out'
+    direction = internalAddresses.includes(tx.toAddress) ? (addressHash === tx.fromAddress ? 'out' : 'in') : 'out'
     infoType = 'pending'
     amount = tx.amount ? convertToNegative(BigInt(tx.amount)) : undefined
     tokens = tx.tokens ? tx.tokens.map((token) => ({ ...token, amount: convertToNegative(BigInt(token.amount)) })) : []
     lockTime = tx.lockTime !== undefined ? new Date(tx.lockTime) : undefined
   } else {
-    const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(tx, tx.address.hash)
+    const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
 
     amount = alphAmount
     tokens = tokenAmounts.map((token) => ({ ...token, amount: token.amount }))
@@ -158,7 +157,7 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
       direction = 'swap'
       infoType = 'swap'
     } else {
-      direction = getDirection(tx, tx.address.hash)
+      direction = getDirection(tx, addressHash)
       const isInternalTransfer = isInternalTx(tx, internalAddresses)
       infoType =
         (isInternalTransfer && showInternalInflows && direction === 'out') ||
