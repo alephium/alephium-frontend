@@ -19,11 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal'
 import { CSVExportModalProps } from '@/modals/CSVExportModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
+import { TransactionDetailsModalProps } from '@/modals/TransactionDetailsModal'
 
 const ModalNames = {
   AddressDetailsModal: 'AddressDetailsModal',
   CSVExportModal: 'CSVExportModal',
-  NFTDetailsModal: 'NFTDetailsModal'
+  NFTDetailsModal: 'NFTDetailsModal',
+  TransactionDetailsModal: 'TransactionDetailsModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -40,6 +42,10 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.NFTDetailsModal
       props: NFTDetailsModalProps
+    }
+  | {
+      name: typeof ModalNames.TransactionDetailsModal
+      props: TransactionDetailsModalProps
     }
 
 export type ModalInstance = {
