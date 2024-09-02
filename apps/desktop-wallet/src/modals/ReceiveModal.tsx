@@ -16,41 +16,38 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import QRCode from '@/components/QRCode'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
-import { selectAllAddressHashes, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
-interface ReceiveModalProps {
-  onClose: () => void
-  addressHash?: string
+export interface ReceiveModalProps {
+  addressHash: string
 }
 
 const QRCodeSize = 250
 
-const ReceiveModal = ({ onClose, addressHash }: ReceiveModalProps) => {
+const ReceiveModal = memo(({ id, addressHash }: ModalBaseProp & ReceiveModalProps) => {
   const { t } = useTranslation()
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
-  const defaultAddress = useAppSelector(selectDefaultAddress)
 
-  const defaultSelectedAddress = addressHash ?? defaultAddress.hash
-  const [selectedAddress, setSelectedAddress] = useState(defaultSelectedAddress)
+  const [selectedAddress, setSelectedAddress] = useState(addressHash)
 
   return (
-    <CenteredModal title={t('Receive')} onClose={onClose}>
+    <CenteredModal title={t('Receive')} id={id}>
       <Content>
         <AddressSelect
           label={t('Address')}
           title={t('Select the address to receive funds to.')}
           addressOptions={allAddressHashes}
-          defaultAddress={defaultSelectedAddress}
+          defaultAddress={addressHash}
           onAddressChange={setSelectedAddress}
-          disabled={!!addressHash}
           id="address"
           noMargin
         />
@@ -60,7 +57,7 @@ const ReceiveModal = ({ onClose, addressHash }: ReceiveModalProps) => {
       </Content>
     </CenteredModal>
   )
-}
+})
 
 export default ReceiveModal
 

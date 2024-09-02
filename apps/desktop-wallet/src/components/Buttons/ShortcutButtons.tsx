@@ -28,7 +28,6 @@ import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
-import ReceiveModal from '@/modals/ReceiveModal'
 import SendModalTransfer from '@/modals/SendModals/Transfer'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
@@ -39,23 +38,18 @@ interface ShortcutButtonBaseProps {
 }
 
 interface ShortcutButtonsGroupWalletProps extends ShortcutButtonBaseProps {
-  walletSettings?: boolean
+  settings?: boolean
   lock?: boolean
 }
 
-export const ShortcutButtonsGroupWallet = ({
-  lock,
-  walletSettings,
-  ...buttonProps
-}: ShortcutButtonsGroupWalletProps) => {
+export const ShortcutButtonsGroupWallet = ({ lock, settings, ...buttonProps }: ShortcutButtonsGroupWalletProps) => {
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
 
   return (
     <>
       <ReceiveButton addressHash={defaultAddressHash} {...buttonProps} />
       <SendButton addressHash={defaultAddressHash} {...buttonProps} />
-
-      {walletSettings && <SettingsButton {...buttonProps} />}
+      {settings && <SettingsButton {...buttonProps} />}
       {lock && <LockButton {...buttonProps} />}
     </>
   )
@@ -135,34 +129,26 @@ const ReceiveButton = ({
   const { sendAnalytics } = useAnalytics()
   const theme = useTheme()
   const { t } = useTranslation()
-
-  const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false)
+  const dispatch = useAppDispatch()
 
   const handleReceiveClick = () => {
-    setIsReceiveModalOpen(true)
-
+    dispatch(openModal({ name: 'ReceiveModal', props: { addressHash } }))
     sendAnalytics({ event: 'Receive button clicked', props: { origin: analyticsOrigin } })
   }
 
   return (
-    <>
-      <ShortcutButton
-        transparent={!solidBackground}
-        role="secondary"
-        borderless
-        onClick={handleReceiveClick}
-        Icon={ArrowDown}
-        iconColor={theme.global.valid}
-        iconBackground
-        highlight={highlight}
-      >
-        <ButtonText>{t('Receive')}</ButtonText>
-      </ShortcutButton>
-
-      <ModalPortal>
-        {isReceiveModalOpen && <ReceiveModal addressHash={addressHash} onClose={() => setIsReceiveModalOpen(false)} />}
-      </ModalPortal>
-    </>
+    <ShortcutButton
+      transparent={!solidBackground}
+      role="secondary"
+      borderless
+      onClick={handleReceiveClick}
+      Icon={ArrowDown}
+      iconColor={theme.global.valid}
+      iconBackground
+      highlight={highlight}
+    >
+      <ButtonText>{t('Receive')}</ButtonText>
+    </ShortcutButton>
   )
 }
 
