@@ -21,6 +21,7 @@ import { AnimatePresence } from 'framer-motion'
 import { selectAllModals } from '@/features/modals/modalSelectors'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
+import AddressOptionsModal from '@/modals/AddressOptionsModal'
 import CSVExportModal from '@/modals/CSVExportModal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
@@ -40,6 +41,8 @@ const AppModals = () => {
             return <NFTDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
           case 'TransactionDetailsModal':
             return <TransactionDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'AddressOptionsModal':
+            return <AddressOptionsModal id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
     </AnimatePresence>
