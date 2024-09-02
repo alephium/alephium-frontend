@@ -30,7 +30,6 @@ import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
 import ReceiveModal from '@/modals/ReceiveModal'
 import SendModalTransfer from '@/modals/SendModals/Transfer'
-import SettingsModal from '@/modals/SettingsModal'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
 interface ShortcutButtonBaseProps {
@@ -83,40 +82,28 @@ const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground, highlig
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
-
   const handleWalletSettingsClick = () => {
-    setIsSettingsModalOpen(true)
-
+    dispatch(openModal({ name: 'SettingsModal', props: {} }))
     sendAnalytics({ event: 'Wallet settings button clicked', props: { origin: analyticsOrigin } })
   }
 
   const handleAddressSettingsClick = (addressHash: AddressHash) => {
     dispatch(openModal({ name: 'AddressOptionsModal', props: { addressHash } }))
-
     sendAnalytics({ event: 'Address settings button clicked', props: { origin: analyticsOrigin } })
   }
 
   return (
-    <>
-      <ShortcutButton
-        transparent={!solidBackground}
-        role="secondary"
-        borderless
-        onClick={addressHash ? () => handleAddressSettingsClick(addressHash) : handleWalletSettingsClick}
-        Icon={Settings}
-        iconBackground
-        highlight={highlight}
-      >
-        <ButtonText>{t('Settings')}</ButtonText>
-      </ShortcutButton>
-
-      {!addressHash && (
-        <ModalPortal>
-          {isSettingsModalOpen && <SettingsModal onClose={() => setIsSettingsModalOpen(false)} />}
-        </ModalPortal>
-      )}
-    </>
+    <ShortcutButton
+      transparent={!solidBackground}
+      role="secondary"
+      borderless
+      onClick={addressHash ? () => handleAddressSettingsClick(addressHash) : handleWalletSettingsClick}
+      Icon={Settings}
+      iconBackground
+      highlight={highlight}
+    >
+      <ButtonText>{t('Settings')}</ButtonText>
+    </ShortcutButton>
   )
 }
 
