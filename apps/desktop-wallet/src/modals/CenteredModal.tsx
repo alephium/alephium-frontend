@@ -47,9 +47,9 @@ export interface CenteredModalProps extends ModalContainerProps {
 }
 
 const CenteredModal: FC<CenteredModalProps> = ({
+  id,
   title,
   subtitle,
-  onClose,
   focusMode,
   isLoading,
   header,
@@ -68,7 +68,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
   const elRef = useFocusOnMount<HTMLSpanElement>(skipFocusOnMount)
 
   return (
-    <ModalContainer onClose={onClose} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
+    <ModalContainer id={id} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
       <CenteredBox role="dialog" {...fadeInOutScaleFast} narrow={narrow}>
         <ModalHeader transparent={transparentHeader}>
           <TitleRow>
@@ -88,7 +88,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
               </span>
               {subtitle && <ModalSubtitle>{subtitle}</ModalSubtitle>}
             </PanelTitle>
-            <CloseButton aria-label={t('Close')} squared role="secondary" transparent onClick={onClose} borderless>
+            <CloseButton aria-label={t('Close')} squared role="secondary" transparent onClick={rest.onClose} borderless>
               <X />
             </CloseButton>
           </TitleRow>
