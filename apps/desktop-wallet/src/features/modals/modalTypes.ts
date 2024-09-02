@@ -33,7 +33,8 @@ const ModalNames = {
   SettingsModal: 'SettingsModal',
   ReceiveModal: 'ReceiveModal',
   WalletConnectModal: 'WalletConnectModal',
-  SecretPhraseModal: 'SecretPhraseModal'
+  SecretPhraseModal: 'SecretPhraseModal',
+  WalletQRCodeExportModal: 'WalletQRCodeExportModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -72,6 +73,9 @@ export type OpenModalParams =
     }
   | {
       name: typeof ModalNames.SecretPhraseModal
+    }
+  | {
+      name: typeof ModalNames.WalletQRCodeExportModal
     }
 
 export type ModalInstance = {
