@@ -27,13 +27,10 @@ import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons
 import TransactionList from '@/components/TransactionList'
 import { useScrollContext } from '@/contexts/scroll'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import ModalPortal from '@/modals/ModalPortal'
-import ReceiveModal from '@/modals/ReceiveModal'
-import SendModalTransfer from '@/modals/SendModals/Transfer'
 import FiltersPanel from '@/pages/UnlockedWallet/TransfersPage/FiltersPanel'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
-import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { transfersPageInfoMessageClosed } from '@/storage/global/globalActions'
 import { walletSidebarWidthPx } from '@/style/globalStyles'
 import { TokenDisplay } from '@/types/tokens'
@@ -50,14 +47,11 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
   const infoMessageClosed = useAppSelector((s) => s.global.transfersPageInfoMessageClosed)
   const addresses = useAppSelector(selectAllAddresses)
   const { scrollDirection } = useScrollContext()
-  const defaultAddress = useAppSelector(selectDefaultAddress)
 
   const [direction, setDirection] = useState(scrollDirection?.get())
   const [selectedAddresses, setSelectedAddresses] = useState(addresses)
   const [selectedDirections, setSelectedDirections] = useState(directionOptions)
   const [selectedAssets, setSelectedAssets] = useState<TokenDisplay[]>()
-  const [isSendModalOpen, setIsSendModalOpen] = useState(false)
-  const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false)
 
   const closeInfoMessage = () => dispatch(transfersPageInfoMessageClosed())
 
@@ -103,15 +97,6 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
           </ButtonsGrid>
         </CornerButtons>
       </BottomRow>
-      <ModalPortal>
-        {isSendModalOpen && defaultAddress && (
-          <SendModalTransfer
-            initialTxData={{ fromAddress: defaultAddress }}
-            onClose={() => setIsSendModalOpen(false)}
-          />
-        )}
-        {isReceiveModalOpen && <ReceiveModal onClose={() => setIsReceiveModalOpen(false)} />}
-      </ModalPortal>
     </UnlockedWalletPage>
   )
 }

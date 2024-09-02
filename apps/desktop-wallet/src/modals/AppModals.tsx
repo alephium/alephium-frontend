@@ -24,6 +24,7 @@ import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import AddressOptionsModal from '@/modals/AddressOptionsModal'
 import CSVExportModal from '@/modals/CSVExportModal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
+import ReceiveModal from '@/modals/ReceiveModal'
 import SettingsModal from '@/modals/SettingsModal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
 
@@ -46,6 +47,8 @@ const AppModals = () => {
             return <AddressOptionsModal id={modal.id} key={modal.id} {...modal.params.props} />
           case 'SettingsModal':
             return <SettingsModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'ReceiveModal':
+            return <ReceiveModal id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
     </AnimatePresence>
