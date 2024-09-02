@@ -85,10 +85,10 @@ const App = () => {
 const useShowAppContentAfterValidatingStoredWalletData = () => {
   const [showAppContent, setShowAppContent] = useState(false)
 
-  const onUserConfirm = () => setShowAppContent(true)
+  const onUserConfirm = useCallback(() => setShowAppContent(true), [])
 
-  const { data: isStoredWalletDataValid, isLoading: isValidatingStoredWalletData } = useAsyncData(() =>
-    validateAndRepareStoredWalletData(onUserConfirm)
+  const { data: isStoredWalletDataValid, isLoading: isValidatingStoredWalletData } = useAsyncData(
+    useCallback(() => validateAndRepareStoredWalletData(onUserConfirm), [onUserConfirm])
   )
 
   useEffect(() => {
