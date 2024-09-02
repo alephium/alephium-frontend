@@ -23,6 +23,7 @@ import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import AddressOptionsModal from '@/modals/AddressOptionsModal'
 import CSVExportModal from '@/modals/CSVExportModal'
+import NewAddressModal from '@/modals/NewAddressModal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import NotificationsModal from '@/modals/NotificationsModal'
 import ReceiveModal from '@/modals/ReceiveModal'
@@ -67,6 +68,8 @@ const AppModals = () => {
             return <NotificationsModal id={modal.id} key={modal.id} />
           case 'AdvancedOperationsSideModal':
             return <AdvancedOperationsSideModal id={modal.id} key={modal.id} />
+          case 'NewAddressModal':
+            return <NewAddressModal id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
     </AnimatePresence>
