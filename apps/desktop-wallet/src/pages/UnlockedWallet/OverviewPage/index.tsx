@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Box from '@/components/Box'
-import ShortcutButtons from '@/components/Buttons/ShortcutButtons'
+import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import { TableHeader } from '@/components/Table'
 import TransactionList from '@/components/TransactionList'
 import AssetsTabs from '@/features/assetsLists/AssetsTabs'
@@ -53,7 +53,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
         <Shortcuts>
           <ShortcutsHeader title={t('Shortcuts')} />
           <ButtonsGrid>
-            <ShortcutButtons send receive lock walletSettings analyticsOrigin="overview_page" solidBackground />
+            <ShortcutButtonsGroupWallet lock walletSettings analyticsOrigin="overview_page" solidBackground />
           </ButtonsGrid>
         </Shortcuts>
       </AmountsOverviewPanel>
