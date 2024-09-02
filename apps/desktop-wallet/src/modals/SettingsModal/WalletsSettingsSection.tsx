@@ -31,7 +31,6 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
 import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
-import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
 import WalletRemovalModal from '@/modals/WalletRemovalModal'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { activeWalletDeleted, walletDeleted } from '@/storage/wallets/walletActions'
@@ -47,7 +46,6 @@ const WalletsSettingsSection = () => {
   const { isWalletUnlocked, lockWallet } = useWalletLock()
 
   const [walletToRemove, setWalletToRemove] = useState<StoredEncryptedWallet | ActiveWallet>()
-  const [isQRCodeModalVisible, setIsQRCodeModalVisible] = useState(false)
   const [isEditWalletNameModalOpen, setIsEditWalletNameModalOpen] = useState(false)
 
   const handleRemoveWallet = (walletId: string) => {
@@ -62,6 +60,7 @@ const WalletsSettingsSection = () => {
   const handleLockCurrentWalletClick = () => lockWallet('settings')
 
   const openSecretPhraseModal = () => dispatch(openModal({ name: 'SecretPhraseModal' }))
+  const openWalletQRCodeExportModal = () => dispatch(openModal({ name: 'WalletQRCodeExportModal' }))
 
   return (
     <>
@@ -111,11 +110,7 @@ const WalletsSettingsSection = () => {
                 activeWallet.isPassphraseUsed ? t('To export this wallet use it without a passphrase') : ''
               }
             >
-              <Button
-                role="secondary"
-                onClick={() => setIsQRCodeModalVisible(true)}
-                disabled={activeWallet.isPassphraseUsed}
-              >
+              <Button role="secondary" onClick={openWalletQRCodeExportModal} disabled={activeWallet.isPassphraseUsed}>
                 {t('Export current wallet')}
               </Button>
             </ButtonTooltipWrapper>
@@ -142,7 +137,6 @@ const WalletsSettingsSection = () => {
         </CurrentWalletSection>
       )}
       <ModalPortal>
-        {isQRCodeModalVisible && <WalletQRCodeExportModal onClose={() => setIsQRCodeModalVisible(false)} />}
         {isEditWalletNameModalOpen && <EditWalletNameModal onClose={() => setIsEditWalletNameModalOpen(false)} />}
         {walletToRemove && (
           <WalletRemovalModal
