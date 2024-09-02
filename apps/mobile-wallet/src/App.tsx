@@ -26,6 +26,7 @@ import {
   TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
+import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -37,9 +38,13 @@ import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { useLocalization } from '~/features/localization/useLocalization'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAsyncData } from '~/hooks/useAsyncData'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
-import { getStoredWallet, storedWalletExists } from '~/persistent-storage/wallet'
+import {
+  getStoredWalletMetadataWithoutThrowingError,
+  validateAndRepareStoredWalletData
+} from '~/persistent-storage/wallet'
 import {
   makeSelectAddressesUnknownTokens,
   selectAllAddressVerifiedFungibleTokenSymbols,
@@ -50,7 +55,10 @@ import { selectTransactionUnknownTokenIds } from '~/store/transactions/transacti
 import { appLaunchedWithLastUsedWallet } from '~/store/wallet/walletActions'
 import { themes } from '~/style/themes'
 
+SplashScreen.preventAutoHideAsync()
+
 const App = () => {
+  const showAppContent = useShowAppContentAfterValidatingStoredWalletData()
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
 
   useEffect(
@@ -66,12 +74,32 @@ const App = () => {
       <Main>
         <ThemeProvider theme={theme}>
           <StatusBar animated translucent style="light" />
-          <RootStackNavigation />
+          {showAppContent && <RootStackNavigation />}
           <ToastAnchor />
         </ThemeProvider>
       </Main>
     </Provider>
   )
+}
+
+const useShowAppContentAfterValidatingStoredWalletData = () => {
+  const [showAppContent, setShowAppContent] = useState(false)
+
+  const onUserConfirm = useCallback(() => setShowAppContent(true), [])
+
+  const { data: isStoredWalletDataValid, isLoading: isValidatingStoredWalletData } = useAsyncData(
+    useCallback(() => validateAndRepareStoredWalletData(onUserConfirm), [onUserConfirm])
+  )
+
+  useEffect(() => {
+    if (!isValidatingStoredWalletData) SplashScreen.hideAsync()
+  }, [isValidatingStoredWalletData])
+
+  useEffect(() => {
+    if (isStoredWalletDataValid !== undefined) setShowAppContent(isStoredWalletDataValid)
+  }, [isStoredWalletDataValid])
+
+  return showAppContent
 }
 
 const Main = ({ children, ...props }: ViewProps) => {
@@ -87,6 +115,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
   const settings = useAppSelector((s) => s.settings)
   const appJustLaunched = useAppSelector((s) => s.app.wasJustLaunched)
+  const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
@@ -99,10 +128,8 @@ const Main = ({ children, ...props }: ViewProps) => {
   useLocalization()
 
   useEffect(() => {
-    storedWalletExists().then((walletExists) => {
-      if (walletExists) getStoredWallet().then((wallet) => dispatch(appLaunchedWithLastUsedWallet(wallet)))
-    })
-  }, [dispatch])
+    if (walletMetadata) dispatch(appLaunchedWithLastUsedWallet(walletMetadata))
+  }, [dispatch, walletMetadata])
 
   useEffect(() => {
     if (

@@ -24,10 +24,12 @@ import {
 import { AddressHash, resetArray } from '@alephium/shared'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
+import { Alert } from 'react-native'
 
 import { sendAnalytics } from '~/analytics'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import i18n from '~/features/localization/i18n'
+import { wasAppUninstalled } from '~/persistent-storage/app'
 import { defaultBiometricsConfig } from '~/persistent-storage/config'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
@@ -47,6 +49,7 @@ import {
   WalletStoredState
 } from '~/types/wallet'
 import { getRandomLabelColor } from '~/utils/colors'
+import { showToast } from '~/utils/layout'
 
 const PIN_WALLET_STORAGE_KEY = 'wallet-pin'
 const BIOMETRICS_WALLET_STORAGE_KEY = 'wallet-biometrics'
@@ -55,6 +58,146 @@ const IS_NEW_WALLET = 'is-new-wallet'
 const MNEMONIC_V2 = 'wallet-mnemonic-v2'
 const ADDRESS_PUB_KEY_PREFIX = 'address-pub-key-'
 const ADDRESS_PRIV_KEY_PREFIX = 'address-priv-key-'
+
+export const validateAndRepareStoredWalletData = async (onUserConfirm: () => void): Promise<boolean> => {
+  let walletMetadata = await getWalletMetadata(false)
+  let mnemonicV2Exists
+  let appWasUninstalled
+
+  try {
+    mnemonicV2Exists = await storedMnemonicV2Exists()
+  } catch {
+    mnemonicV2Exists = false
+  }
+
+  try {
+    appWasUninstalled = await wasAppUninstalled()
+  } catch {
+    appWasUninstalled = false
+  }
+
+  if (mnemonicV2Exists) {
+    if (walletMetadata) {
+      // If we have both mnemonic and metadata available, then all good
+      return true
+    } else {
+      // If we have mnemonic but missing metadata, we try to recreate them with sane defaults
+      Alert.alert(
+        i18n.t('Restore data'),
+        i18n.t(
+          appWasUninstalled
+            ? 'We noticed that you deleted the app, would you like to restore your last wallet?'
+            : "Due to an unexpected error some of your app's data are missing. Would you like to regenerate them? Your funds are safe."
+        ),
+        [
+          {
+            text: i18n.t('No'),
+            onPress: onUserConfirm
+          },
+          {
+            text: i18n.t('Yes'),
+            onPress: async () => {
+              try {
+                await generateAndStoreWalletMetadata('My wallet', false)
+              } finally {
+                walletMetadata = await getWalletMetadata(false)
+              }
+
+              if (walletMetadata) {
+                showToast({
+                  text1: i18n.t('App data were reset'),
+                  text2: i18n.t('You might want to scan for active addresses in the settings.'),
+                  type: 'success',
+                  autoHide: false
+                })
+                sendAnalytics({ event: 'Recreated missing wallet metadata for existing wallet' })
+
+                onUserConfirm()
+              } else {
+                showToast({
+                  text1: i18n.t('Could not unlock app'),
+                  text2: i18n.t('Wallet metadata not found'),
+                  type: 'error',
+                  autoHide: false
+                })
+                sendAnalytics({
+                  type: 'error',
+                  message: 'Could not recreate missing wallet metadata for existing wallet'
+                })
+              }
+            }
+          }
+        ]
+      )
+
+      return false
+    }
+  } else {
+    let deprecatedWalletExists
+
+    try {
+      deprecatedWalletExists = !!(await getSecurelyWithReportableError(PIN_WALLET_STORAGE_KEY, true, ''))
+    } catch {
+      deprecatedWalletExists = false
+    }
+
+    if (deprecatedWalletExists) {
+      if (walletMetadata) {
+        // If we have no mnemonic, but we have a deprecated one with metadata, all good, the pin/bio flow will migrate
+        return true
+      } else {
+        // If we only have a deprecated mnemonic but no metadata we recreate deprecated metadata with sane defaults and
+        // the migration flow will migrate both mnemonic and metadata
+        try {
+          await storeWalletMetadataDeprecated({
+            id: nanoid(),
+            name: 'My wallet',
+            isMnemonicBackedUp: false,
+            addresses: [
+              {
+                index: 0,
+                isDefault: true,
+                color: getRandomLabelColor()
+              }
+            ],
+            contacts: []
+          })
+
+          return true
+        } catch {
+          return false
+        }
+      }
+    } else {
+      if (!walletMetadata) {
+        // If we have no mnemonic, no deprecated mnemonic, and no metadata, all good, fresh install
+        return true
+      } else {
+        // If we have metadata but no mnemonic and no deprecated mnemonic, we should delete the metadata
+        try {
+          await deleteWithReportableError(WALLET_METADATA_STORAGE_KEY)
+        } finally {
+          walletMetadata = await getWalletMetadata(false)
+        }
+
+        if (!walletMetadata) {
+          return true
+        } else {
+          // This should never happen. Could not delete metadata and we don't have any mnemonic, we can't unlock
+          showToast({
+            text1: i18n.t('Could not unlock app'),
+            text2: i18n.t('Missing encrypted mnemonic'),
+            type: 'error',
+            autoHide: false
+          })
+          sendAnalytics({ type: 'error', message: 'Could not find mnemonic for existing wallet metadata' })
+
+          return false
+        }
+      }
+    }
+  }
+}
 
 export const generateAndStoreWallet = async (
   name: WalletStoredState['name'],
@@ -69,12 +212,10 @@ export const generateAndStoreWallet = async (
 
     await storeWalletMnemonic(mnemonicUint8Array)
 
-    const firstAddressHash = await generateAndStoreAddressKeypairForIndex(0)
-    const walletMetadata = generateWalletMetadata(name, firstAddressHash, isMnemonicBackedUp)
-    await storeWalletMetadata(walletMetadata)
+    const { id, firstAddressHash } = await generateAndStoreWalletMetadata(name, isMnemonicBackedUp)
 
     return {
-      id: walletMetadata.id,
+      id,
       name,
       isMnemonicBackedUp,
       firstAddress: {
@@ -87,18 +228,41 @@ export const generateAndStoreWallet = async (
   }
 }
 
-export const getWalletMetadata = async (): Promise<WalletMetadata | null> => {
-  const rawWalletMetadata = await getWithReportableError(WALLET_METADATA_STORAGE_KEY)
+const generateAndStoreWalletMetadata = async (name: WalletStoredState['name'], isMnemonicBackedUp: boolean) => {
+  const firstAddressHash = await generateAndStoreAddressKeypairForIndex(0)
+  const walletMetadata = generateWalletMetadata(name, firstAddressHash, isMnemonicBackedUp)
+  await storeWalletMetadata(walletMetadata)
 
-  try {
-    return rawWalletMetadata ? JSON.parse(rawWalletMetadata) : null
-  } catch (error) {
-    sendAnalytics({ type: 'error', error, message: 'Could not parse wallet metadata' })
-    throw error
+  return {
+    id: walletMetadata.id,
+    firstAddressHash
   }
 }
 
-export const getStoredWallet = async (error?: string): Promise<WalletMetadata> => {
+export const getWalletMetadata = async (throwError = true): Promise<WalletMetadata | null> => {
+  let rawWalletMetadata
+  let walletMetadata = null
+
+  try {
+    rawWalletMetadata = await getWithReportableError(WALLET_METADATA_STORAGE_KEY)
+  } catch (error) {
+    if (throwError) throw error
+  }
+
+  if (rawWalletMetadata) {
+    try {
+      walletMetadata = JSON.parse(rawWalletMetadata)
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Could not parse wallet metadata' })
+      if (throwError) throw error
+    }
+  }
+
+  return walletMetadata
+}
+
+// TODO: Simplify getStoredWalletMetadata and getWalletMetadata that are very similar
+export const getStoredWalletMetadata = async (error?: string): Promise<WalletMetadata> => {
   const walletMetadata = await getWalletMetadata()
 
   if (!walletMetadata)
@@ -107,8 +271,12 @@ export const getStoredWallet = async (error?: string): Promise<WalletMetadata> =
   return walletMetadata
 }
 
+export const getStoredWalletMetadataWithoutThrowingError = () => getWalletMetadata(false)
+
 export const updateStoredWalletMetadata = async (partialMetadata: Partial<WalletMetadata>) => {
-  const walletMetadata = await getStoredWallet(i18n.t('Could not persist wallet metadata: No entry found in storage'))
+  const walletMetadata = await getStoredWalletMetadata(
+    i18n.t('Could not persist wallet metadata: No entry found in storage')
+  )
   const updatedWalletMetadata = { ...walletMetadata, ...partialMetadata }
 
   await storeWalletMetadata(updatedWalletMetadata)
@@ -160,22 +328,21 @@ export const getDeprecatedStoredWallet = async (
 }
 
 export const deleteWallet = async () => {
-  await deleteSecurelyWithReportableError(MNEMONIC_V2, true, '')
-  await deleteFundPassword()
-
-  const wallet = await getStoredWallet()
+  const wallet = await getStoredWalletMetadata()
 
   for (const address of wallet.addresses) {
     await deleteAddressPublicKey(address.hash)
     await deleteAddressPrivateKey(address.hash)
   }
 
+  await deleteSecurelyWithReportableError(MNEMONIC_V2, true, '')
+  await deleteFundPassword()
   await deleteWithReportableError(WALLET_METADATA_STORAGE_KEY)
   await deleteWithReportableError(IS_NEW_WALLET)
 }
 
 export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadataWithHash[]) => {
-  const walletMetadata = await getStoredWallet(
+  const walletMetadata = await getStoredWalletMetadata(
     `${i18n.t('Could not persist addresses metadata')}: ${i18n.t('Wallet metadata not found')}`
   )
 
@@ -221,7 +388,7 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
     await deleteDeprecatedWallet()
 
     // Step 3: Add hash in address metadata for faster app unlock and store public and private key in secure store
-    const { addresses } = await getStoredWallet(
+    const { addresses } = await getStoredWalletMetadata(
       `${i18n.t('Could not migrate address metadata')}: ${i18n.t('Wallet metadata not found')}`
     )
     const updatedAddressesMetadata: AddressMetadataWithHash[] = []
@@ -247,8 +414,17 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
   }
 }
 
-export const storedWalletExists = async (): Promise<boolean> =>
-  !!(await getSecurelyWithReportableError(MNEMONIC_V2, true, '')) && !!(await getWalletMetadata())
+export const storedWalletExists = async (): Promise<boolean> => {
+  const mnemonicExists = await storedMnemonicV2Exists()
+  const metadataExist = await storedWalletMetadataExist()
+
+  return mnemonicExists && metadataExist
+}
+
+export const storedMnemonicV2Exists = async (): Promise<boolean> =>
+  !!(await getSecurelyWithReportableError(MNEMONIC_V2, true, ''))
+
+const storedWalletMetadataExist = async (): Promise<boolean> => !!(await getWalletMetadata())
 
 export const dangerouslyExportWalletMnemonic = async (): Promise<string> => {
   const decryptedMnemonic = await getSecurelyWithReportableError(MNEMONIC_V2, true, '')
@@ -266,7 +442,7 @@ export const getAddressAsymetricKey = async (addressHash: AddressHash, keyType: 
   let key = await getSecurelyWithReportableError(storageKey, false, `Could not get ${keyType} from secure storage`)
 
   if (!key) {
-    const { addresses } = await getStoredWallet(
+    const { addresses } = await getStoredWalletMetadata(
       `${i18n.t(
         keyType === 'public' ? 'Could not get address public key' : 'Could not get address private key'
       )}: ${i18n.t('Wallet metadata not found')}`
@@ -315,7 +491,7 @@ export const storeWalletMetadata = async (metadata: WalletMetadata) =>
 export const storeWalletMetadataDeprecated = async (metadata: DeprecatedWalletMetadata) =>
   storeWithReportableError(WALLET_METADATA_STORAGE_KEY, JSON.stringify(metadata))
 
-const storeWalletMnemonic = async (mnemonic: Uint8Array) =>
+export const storeWalletMnemonic = async (mnemonic: Uint8Array) =>
   storeSecurelyWithReportableError(MNEMONIC_V2, JSON.stringify(mnemonic), true, '')
 
 const storeAddressPublicKey = async (addressHash: AddressHash, publicKey: string) =>

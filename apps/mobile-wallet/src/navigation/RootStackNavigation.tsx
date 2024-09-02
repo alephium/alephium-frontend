@@ -42,7 +42,7 @@ import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
   deleteDeprecatedWallet,
   getDeprecatedStoredWallet,
-  getStoredWallet,
+  getStoredWalletMetadata,
   migrateDeprecatedMnemonic,
   storedWalletExists
 } from '~/persistent-storage/wallet'
@@ -157,7 +157,7 @@ const AppUnlockModal = () => {
 
   const initializeAppWithStoredWallet = useCallback(async () => {
     try {
-      dispatch(walletUnlocked(await getStoredWallet()))
+      dispatch(walletUnlocked(await getStoredWalletMetadata()))
 
       const lastRoute = rootStackNavigationRef.current?.getCurrentRoute()?.name
 
