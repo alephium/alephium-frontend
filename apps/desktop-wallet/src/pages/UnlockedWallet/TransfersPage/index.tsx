@@ -23,7 +23,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import ShortcutButtons from '@/components/Buttons/ShortcutButtons'
+import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import TransactionList from '@/components/TransactionList'
 import { useScrollContext } from '@/contexts/scroll'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -99,7 +99,7 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
       >
         <CornerButtons>
           <ButtonsGrid>
-            <ShortcutButtons receive send highlight analyticsOrigin="transfer_page" />
+            <ShortcutButtonsGroupWallet highlight analyticsOrigin="transfer_page" />
           </ButtonsGrid>
         </CornerButtons>
       </BottomRow>

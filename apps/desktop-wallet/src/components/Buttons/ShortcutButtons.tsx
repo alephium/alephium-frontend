@@ -24,63 +24,66 @@ import styled, { useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { useAppSelector } from '@/hooks/redux'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
-import AddressOptionsModal from '@/modals/AddressOptionsModal'
 import ModalPortal from '@/modals/ModalPortal'
 import ReceiveModal from '@/modals/ReceiveModal'
 import SendModalTransfer from '@/modals/SendModals/Transfer'
 import SettingsModal from '@/modals/SettingsModal'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
-interface ShortcutButtonsProps {
+interface ShortcutButtonBaseProps {
   analyticsOrigin: string
-  send?: boolean
-  receive?: boolean
-  lock?: boolean
-  walletSettings?: boolean
-  addressSettings?: boolean
-  addressHash?: AddressHash
   highlight?: boolean
   solidBackground?: boolean
 }
 
-const ShortcutButtons = ({
-  analyticsOrigin,
-  send,
-  receive,
+interface ShortcutButtonsGroupWalletProps extends ShortcutButtonBaseProps {
+  walletSettings?: boolean
+  lock?: boolean
+}
+
+export const ShortcutButtonsGroupWallet = ({
   lock,
   walletSettings,
-  addressSettings,
-  addressHash,
-  highlight,
-  solidBackground
-}: ShortcutButtonsProps) => {
-  const { t } = useTranslation()
-  const theme = useTheme()
+  ...buttonProps
+}: ShortcutButtonsGroupWalletProps) => {
+  const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
+
+  return (
+    <>
+      <ReceiveButton addressHash={defaultAddressHash} {...buttonProps} />
+      <SendButton addressHash={defaultAddressHash} {...buttonProps} />
+
+      {walletSettings && <SettingsButton {...buttonProps} />}
+      {lock && <LockButton {...buttonProps} />}
+    </>
+  )
+}
+
+interface ShortcutButtonsGroupAddressProps extends ShortcutButtonBaseProps {
+  addressHash: AddressHash
+}
+
+export const ShortcutButtonsGroupAddress = ({ addressHash, ...buttonProps }: ShortcutButtonsGroupAddressProps) => (
+  <>
+    <ReceiveButton addressHash={addressHash} {...buttonProps} />
+    <SendButton addressHash={addressHash} {...buttonProps} />
+    <SettingsButton addressHash={addressHash} {...buttonProps} />
+  </>
+)
+
+interface SettingsButtonProps extends ShortcutButtonBaseProps {
+  addressHash?: AddressHash
+}
+
+const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }: SettingsButtonProps) => {
   const { sendAnalytics } = useAnalytics()
-  const { lockWallet } = useWalletLock()
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
-  const address = useAppSelector((s) => selectAddressByHash(s, addressHash ?? ''))
-  const defaultAddress = useAppSelector(selectDefaultAddress)
-  const fromAddress = address ?? defaultAddress
-
-  const [isSendModalOpen, setIsSendModalOpen] = useState(false)
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
-  const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false)
-  const [isAddressOptionsModalOpen, setIsAddressOptionsModalOpen] = useState(false)
-
-  const handleReceiveClick = () => {
-    setIsReceiveModalOpen(true)
-
-    sendAnalytics({ event: 'Receive button clicked', props: { origin: analyticsOrigin } })
-  }
-
-  const handleSendClick = () => {
-    setIsSendModalOpen(true)
-
-    sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
-  }
 
   const handleWalletSettingsClick = () => {
     setIsSettingsModalOpen(true)
@@ -88,97 +91,133 @@ const ShortcutButtons = ({
     sendAnalytics({ event: 'Wallet settings button clicked', props: { origin: analyticsOrigin } })
   }
 
-  const handleAddressSettingsClick = () => {
-    setIsAddressOptionsModalOpen(true)
+  const handleAddressSettingsClick = (addressHash: AddressHash) => {
+    dispatch(openModal({ name: 'AddressOptionsModal', props: { addressHash } }))
 
     sendAnalytics({ event: 'Address settings button clicked', props: { origin: analyticsOrigin } })
   }
 
   return (
     <>
-      {receive && (
-        <ShortcutButton
-          transparent={!solidBackground}
-          role="secondary"
-          borderless
-          onClick={handleReceiveClick}
-          Icon={ArrowDown}
-          iconColor={theme.global.valid}
-          iconBackground
-          highlight={highlight}
-        >
-          <ButtonText>{t('Receive')}</ButtonText>
-        </ShortcutButton>
+      <ShortcutButton
+        transparent={!solidBackground}
+        role="secondary"
+        borderless
+        onClick={addressHash ? () => handleAddressSettingsClick(addressHash) : handleWalletSettingsClick}
+        Icon={Settings}
+        iconBackground
+        highlight={highlight}
+      >
+        <ButtonText>{t('Settings')}</ButtonText>
+      </ShortcutButton>
+
+      {!addressHash && (
+        <ModalPortal>
+          {isSettingsModalOpen && <SettingsModal onClose={() => setIsSettingsModalOpen(false)} />}
+        </ModalPortal>
       )}
-      {send && (
-        <ShortcutButton
-          transparent={!solidBackground}
-          role="secondary"
-          borderless
-          onClick={handleSendClick}
-          Icon={ArrowUp}
-          iconColor={theme.global.highlight}
-          iconBackground
-          highlight={highlight}
-        >
-          <ButtonText>{t('Send')}</ButtonText>
-        </ShortcutButton>
-      )}
-      {walletSettings && (
-        <ShortcutButton
-          transparent={!solidBackground}
-          role="secondary"
-          borderless
-          onClick={handleWalletSettingsClick}
-          Icon={Settings}
-          iconBackground
-          highlight={highlight}
-        >
-          <ButtonText>{t('Settings')}</ButtonText>
-        </ShortcutButton>
-      )}
-      {lock && (
-        <ShortcutButton
-          transparent={!solidBackground}
-          role="secondary"
-          borderless
-          onClick={() => lockWallet(analyticsOrigin)}
-          Icon={Lock}
-          highlight={highlight}
-          iconBackground
-        >
-          <ButtonText>{t('Lock wallet')}</ButtonText>
-        </ShortcutButton>
-      )}
-      {addressSettings && addressHash && (
-        <ShortcutButton
-          transparent={!solidBackground}
-          role="secondary"
-          borderless
-          onClick={handleAddressSettingsClick}
-          Icon={Settings}
-          iconBackground
-        >
-          <ButtonText>{t('Settings')}</ButtonText>
-        </ShortcutButton>
-      )}
+    </>
+  )
+}
+
+const LockButton = ({ analyticsOrigin, solidBackground, highlight }: ShortcutButtonBaseProps) => {
+  const { t } = useTranslation()
+  const { lockWallet } = useWalletLock()
+
+  return (
+    <ShortcutButton
+      transparent={!solidBackground}
+      role="secondary"
+      borderless
+      onClick={() => lockWallet(analyticsOrigin)}
+      Icon={Lock}
+      highlight={highlight}
+      iconBackground
+    >
+      <ButtonText>{t('Lock wallet')}</ButtonText>
+    </ShortcutButton>
+  )
+}
+
+const ReceiveButton = ({
+  addressHash,
+  analyticsOrigin,
+  solidBackground,
+  highlight
+}: ShortcutButtonsGroupAddressProps) => {
+  const { sendAnalytics } = useAnalytics()
+  const theme = useTheme()
+  const { t } = useTranslation()
+
+  const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false)
+
+  const handleReceiveClick = () => {
+    setIsReceiveModalOpen(true)
+
+    sendAnalytics({ event: 'Receive button clicked', props: { origin: analyticsOrigin } })
+  }
+
+  return (
+    <>
+      <ShortcutButton
+        transparent={!solidBackground}
+        role="secondary"
+        borderless
+        onClick={handleReceiveClick}
+        Icon={ArrowDown}
+        iconColor={theme.global.valid}
+        iconBackground
+        highlight={highlight}
+      >
+        <ButtonText>{t('Receive')}</ButtonText>
+      </ShortcutButton>
+
+      <ModalPortal>
+        {isReceiveModalOpen && <ReceiveModal addressHash={addressHash} onClose={() => setIsReceiveModalOpen(false)} />}
+      </ModalPortal>
+    </>
+  )
+}
+
+const SendButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }: ShortcutButtonsGroupAddressProps) => {
+  const { sendAnalytics } = useAnalytics()
+  const theme = useTheme()
+  const { t } = useTranslation()
+  const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
+
+  const [isSendModalOpen, setIsSendModalOpen] = useState(false)
+
+  const handleSendClick = () => {
+    setIsSendModalOpen(true)
+
+    sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
+  }
+
+  return (
+    <>
+      <ShortcutButton
+        transparent={!solidBackground}
+        role="secondary"
+        borderless
+        onClick={handleSendClick}
+        Icon={ArrowUp}
+        iconColor={theme.global.highlight}
+        iconBackground
+        highlight={highlight}
+      >
+        <ButtonText>{t('Send')}</ButtonText>
+      </ShortcutButton>
+
       <ModalPortal>
         {isSendModalOpen && fromAddress && (
           <SendModalTransfer initialTxData={{ fromAddress }} onClose={() => setIsSendModalOpen(false)} />
-        )}
-        {isSettingsModalOpen && <SettingsModal onClose={() => setIsSettingsModalOpen(false)} />}
-        {isReceiveModalOpen && <ReceiveModal addressHash={addressHash} onClose={() => setIsReceiveModalOpen(false)} />}
-        {isAddressOptionsModalOpen && addressHash && (
-          <AddressOptionsModal addressHash={addressHash} onClose={() => setIsAddressOptionsModalOpen(false)} />
         )}
       </ModalPortal>
     </>
   )
 }
 
-export default ShortcutButtons
-
-const ShortcutButton = styled(Button)<Pick<ShortcutButtonsProps, 'highlight'>>`
+const ShortcutButton = styled(Button)<Pick<ShortcutButtonBaseProps, 'highlight'>>`
   border-radius: 0;
   margin: 0;
   width: auto;
