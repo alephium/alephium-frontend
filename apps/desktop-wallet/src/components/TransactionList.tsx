@@ -45,6 +45,7 @@ import {
   makeSelectAddressesPendingTransactions
 } from '@/storage/transactions/transactionsSelectors'
 import { AddressConfirmedTransaction, Direction } from '@/types/transactions'
+import { onEnterOrSpace } from '@/utils/misc'
 import { getTransactionInfo } from '@/utils/transactions'
 
 interface TransactionListProps {
@@ -186,7 +187,7 @@ const TransactionList = ({
           role="row"
           tabIndex={0}
           onClick={() => openTransactionDetailsModal(tx.hash, tx.address.hash)}
-          onKeyDown={() => openTransactionDetailsModal(tx.hash, tx.address.hash)}
+          onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash, tx.address.hash))}
         >
           <TransactionalInfo
             transaction={tx}
