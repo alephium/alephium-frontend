@@ -27,7 +27,7 @@ import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Badge from '@/components/Badge'
 import Box from '@/components/Box'
 import Button from '@/components/Button'
-import ShortcutButtons from '@/components/Buttons/ShortcutButtons'
+import { ShortcutButtonsGroupAddress } from '@/components/Buttons/ShortcutButtons'
 import HashEllipsed from '@/components/HashEllipsed'
 import QRCode from '@/components/QRCode'
 import TransactionList from '@/components/TransactionList'
@@ -100,14 +100,7 @@ const AddressDetailsModal = memo(({ id, addressHash }: ModalBaseProp & AddressDe
       <Content>
         <Shortcuts>
           <ButtonsGrid>
-            <ShortcutButtons
-              receive
-              send
-              addressSettings
-              addressHash={address.hash}
-              analyticsOrigin="address_details"
-              solidBackground
-            />
+            <ShortcutButtonsGroupAddress addressHash={address.hash} analyticsOrigin="address_details" solidBackground />
           </ButtonsGrid>
         </Shortcuts>
         <AssetsTabs

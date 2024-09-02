@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -28,7 +28,9 @@ import Button from '@/components/Button'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { useAppSelector } from '@/hooks/redux'
+import { closeModal } from '@/features/modals/modalActions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import AddressSweepModal from '@/modals/AddressSweepModal'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
@@ -37,12 +39,11 @@ import { saveAddressSettings } from '@/storage/addresses/addressesStorageUtils'
 import { getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
-interface AddressOptionsModalProps {
+export interface AddressOptionsModalProps {
   addressHash: AddressHash
-  onClose: () => void
 }
 
-const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps) => {
+const AddressOptionsModal = memo(({ id, addressHash }: ModalBaseProp & AddressOptionsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const { sendAnalytics } = useAnalytics()
@@ -50,6 +51,7 @@ const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps)
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const addresses = useAppSelector(selectAllAddresses)
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const dispatch = useAppDispatch()
 
   const [addressLabel, setAddressLabel] = useState({
     title: address?.label ?? '',
@@ -66,6 +68,8 @@ const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps)
 
   const isDefaultAddressToggleEnabled = defaultAddress.hash !== address.hash
   const isSweepButtonEnabled = addresses.length > 1 && availableBalance > 0
+
+  const onClose = () => dispatch(closeModal({ id }))
 
   const onSaveClick = () => {
     try {
@@ -95,7 +99,7 @@ const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps)
 
   return (
     <>
-      <CenteredModal title={t('Address options')} subtitle={getName(address)} onClose={onClose}>
+      <CenteredModal title={t('Address options')} subtitle={getName(address)} id={id}>
         {!isPassphraseUsed && (
           <>
             <AddressMetadataForm
@@ -148,7 +152,7 @@ const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps)
       </ModalPortal>
     </>
   )
-}
+})
 
 export default AddressOptionsModal
 
