@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { BinaryIcon, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -27,10 +27,11 @@ import Input from '@/components/Inputs/Input'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Table, { TableRow } from '@/components/Table'
 import { useWalletConnectContext } from '@/contexts/walletconnect'
-import CenteredModal, { CenteredModalProps } from '@/modals/CenteredModal'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
+import CenteredModal from '@/modals/CenteredModal'
 import { cleanUrl } from '@/utils/misc'
 
-const WalletConnectModal = (props: CenteredModalProps) => {
+const WalletConnectModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const { pairWithDapp, unpairFromDapp, activeSessions } = useWalletConnectContext()
@@ -46,7 +47,7 @@ const WalletConnectModal = (props: CenteredModalProps) => {
     <CenteredModal
       title="WalletConnect"
       subtitle={t(activeSessions.length > 0 ? 'Active dApp connections' : 'Connect to a dApp')}
-      {...props}
+      id={id}
     >
       {activeSessions.length > 0 && (
         <Section>
@@ -90,8 +91,7 @@ const WalletConnectModal = (props: CenteredModalProps) => {
       </Section>
     </CenteredModal>
   )
-}
-
+})
 export default WalletConnectModal
 
 const Row = styled.div`
