@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '~/components/buttons/Button'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
 import { ScreenSection } from '~/components/layout/Screen'
 import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/wallet'
 import OrderedTable from '~/screens/Settings/OrderedTable'

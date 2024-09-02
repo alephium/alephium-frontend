@@ -25,8 +25,8 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonStack from '~/components/buttons/ButtonStack'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 
@@ -55,7 +55,7 @@ const WalletConnectPairingsModal = ({
   return (
     <ModalContent verticalGap {...props}>
       <ScreenSection>
-        <BottomModalScreenTitle>{t('Current connections')}</BottomModalScreenTitle>
+        <ModalScreenTitle>{t('Current connections')}</ModalScreenTitle>
       </ScreenSection>
 
       {activeSessions.map(({ topic, peer: { metadata } }, index) => (

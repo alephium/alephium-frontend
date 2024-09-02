@@ -25,10 +25,10 @@ import { Portal } from 'react-native-portalize'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import BottomModal, { BottomModalProps } from '~/components/layout/BottomModal'
-import { ModalContent } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { fundPasswordReminded } from '~/features/fund-password/fundPasswordActions'
+import BottomModal, { BottomModalProps } from '~/features/modals/DeprecatedBottomModal'
+import { ModalContent } from '~/features/modals/ModalContent'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
@@ -70,7 +70,7 @@ const FundPasswordReminderModal = ({ isOpen, onClose }: FundPasswordModalProps) 
         Content={(props) => (
           <ModalContent {...props} verticalGap>
             <ScreenSection>
-              <BottomModalScreenTitle>{t('Pin replaced by fund password')}</BottomModalScreenTitle>
+              <ModalScreenTitle>{t('Pin replaced by fund password')}</ModalScreenTitle>
             </ScreenSection>
             <ScreenSection>
               <AppText color="secondary" size={18}>

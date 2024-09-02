@@ -27,12 +27,12 @@ import { ContinueButton } from '~/components/buttons/Button'
 import ExpandableRow from '~/components/ExpandableRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
-import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
+import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 
 export type AddressFormData = AddressSettings & {

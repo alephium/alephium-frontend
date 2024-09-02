@@ -21,8 +21,8 @@ import { useTranslation } from 'react-i18next'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 
 interface BiometricsWarningModalProps extends ModalContentProps {
   onConfirm: () => void
@@ -35,7 +35,7 @@ const BiometricsWarningModal = ({ onConfirm, confirmText, ...props }: Biometrics
   return (
     <ModalContent verticalGap {...props}>
       <ScreenSection>
-        <BottomModalScreenTitle>⚠️ {t('Are you sure?')}</BottomModalScreenTitle>
+        <ModalScreenTitle>⚠️ {t('Are you sure?')}</ModalScreenTitle>
       </ScreenSection>
       <ScreenSection>
         <AppText color="secondary" size={18}>

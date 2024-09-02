@@ -16,15 +16,29 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
-import ContactListScreenBase, { ContactListScreenBaseProps } from '~/screens/ContactListScreenBase'
+import { createSlice } from '@reduxjs/toolkit'
 
-type SelectContactModalProps = ModalContentProps & ContactListScreenBaseProps
+import { closeModal, openModal } from '~/features/modals/modalActions'
+import { modalAdapter } from '~/features/modals/modalAdapters'
 
-const SelectContactModal = ({ onContactPress, onNewContactPress, ...props }: SelectContactModalProps) => (
-  <ModalContent {...props}>
-    <ContactListScreenBase onContactPress={onContactPress} onNewContactPress={onNewContactPress} />
-  </ModalContent>
-)
+const initialState = modalAdapter.getInitialState()
 
-export default SelectContactModal
+const modalSlice = createSlice({
+  name: 'modals',
+  initialState,
+  reducers: {},
+  extraReducers(builder) {
+    builder
+      .addCase(openModal, (state, action) => {
+        modalAdapter.addOne(state, {
+          id: Date.now(),
+          params: action.payload
+        })
+      })
+      .addCase(closeModal, (state, { payload: { id } }) => {
+        modalAdapter.removeOne(state, id)
+      })
+  }
+})
+
+export default modalSlice

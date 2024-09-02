@@ -32,6 +32,7 @@ import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
+import AppModals from '~/modals/AppModals'
 import BackupMnemonicNavigation from '~/navigation/BackupMnemonicNavigation'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import ReceiveNavigation from '~/navigation/ReceiveNavigation'
@@ -126,6 +127,7 @@ const RootStackNavigation = () => {
                   component={ImportWalletAddressDiscoveryScreen}
                 />
               </RootStack.Navigator>
+              <AppModals />
             </WalletConnectContextProvider>
           </Analytics>
           <AppUnlockModal />

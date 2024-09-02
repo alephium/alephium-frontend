@@ -24,10 +24,10 @@ import { Portal } from 'react-native-portalize'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
-import BottomModal, { BottomModalProps } from '~/components/layout/BottomModal'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import useFundPassword from '~/features/fund-password/useFundPassword'
+import BottomModal, { BottomModalProps } from '~/features/modals/DeprecatedBottomModal'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
 import { useAppSelector } from '~/hooks/redux'
 import usePassword from '~/hooks/usePassword'
 
@@ -84,7 +84,7 @@ const FundPasswordModalContent = ({
   return (
     <ModalContent verticalGap {...props}>
       <ScreenSection>
-        <BottomModalScreenTitle>{t('Fund password')}</BottomModalScreenTitle>
+        <ModalScreenTitle>{t('Fund password')}</ModalScreenTitle>
       </ScreenSection>
       <ScreenSection>
         <AppText color="secondary" size={18}>
