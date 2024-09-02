@@ -25,13 +25,15 @@ import {
 } from '@alephium/shared'
 import { isEmpty } from 'lodash'
 import { UserMinus } from 'lucide-react'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { closeModal } from '@/features/modals/modalActions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import ConfirmModal from '@/modals/ConfirmModal'
@@ -45,12 +47,11 @@ import {
   requiredErrorMessage
 } from '@/utils/form-validation'
 
-interface ContactFormModalProps {
+export interface ContactFormModalProps {
   contact?: Contact
-  onClose: () => void
 }
 
-const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
+const ContactFormModal = memo(({ id, contact }: ModalBaseProp & ContactFormModalProps) => {
   const { t } = useTranslation()
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const dispatch = useAppDispatch()
@@ -66,6 +67,8 @@ const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
 
   const errors = formState.errors
   const isFormValid = isEmpty(errors)
+
+  const onClose = () => dispatch(closeModal({ id }))
 
   const saveContact = (contactData: ContactFormData) => {
     try {
@@ -102,7 +105,7 @@ const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
 
   return (
     <>
-      <CenteredModal title={t(contact ? 'Edit contact' : 'New contact')} onClose={onClose}>
+      <CenteredModal title={t(contact ? 'Edit contact' : 'New contact')} id={id}>
         <InputFieldsColumn>
           <Controller
             name="name"
@@ -174,6 +177,6 @@ const ContactFormModal = ({ contact, onClose }: ContactFormModalProps) => {
       </ModalPortal>
     </>
   )
-}
+})
 
 export default ContactFormModal
