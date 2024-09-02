@@ -20,6 +20,7 @@ import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal'
 import { AddressOptionsModalProps } from '@/modals/AddressOptionsModal'
 import { CSVExportModalProps } from '@/modals/CSVExportModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
+import { ReceiveModalProps } from '@/modals/ReceiveModal'
 import { SettingsModalProps } from '@/modals/SettingsModal'
 import { TransactionDetailsModalProps } from '@/modals/TransactionDetailsModal'
 
@@ -29,7 +30,8 @@ const ModalNames = {
   NFTDetailsModal: 'NFTDetailsModal',
   TransactionDetailsModal: 'TransactionDetailsModal',
   AddressOptionsModal: 'AddressOptionsModal',
-  SettingsModal: 'SettingsModal'
+  SettingsModal: 'SettingsModal',
+  ReceiveModal: 'ReceiveModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -58,6 +60,10 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.SettingsModal
       props: SettingsModalProps
+    }
+  | {
+      name: typeof ModalNames.ReceiveModal
+      props: ReceiveModalProps
     }
 
 export type ModalInstance = {
