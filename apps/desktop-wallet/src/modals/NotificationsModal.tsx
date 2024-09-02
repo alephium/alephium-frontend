@@ -18,22 +18,29 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion } from 'framer-motion'
 import { Lock } from 'lucide-react'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeInOutScaleFast } from '@/animations'
 import Button from '@/components/Button'
 import WalletSwitcher from '@/components/WalletSwitcher'
+import { closeModal } from '@/features/modals/modalActions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { useAppDispatch } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
-import ModalContainer, { ModalContainerProps } from '@/modals/ModalContainer'
+import ModalContainer from '@/modals/ModalContainer'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
 
-const NotificationsModal = ({ onClose, focusMode }: ModalContainerProps) => {
+const NotificationsModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
   const { lockWallet } = useWalletLock()
+  const dispatch = useAppDispatch()
+
+  const onClose = () => dispatch(closeModal({ id }))
 
   return (
-    <ModalContainer onClose={onClose} focusMode={focusMode}>
+    <ModalContainer id={id}>
       <NotificationsBox role="dialog" {...fadeInOutScaleFast}>
         <h2>{t('Current wallet')}</h2>
         <WalletSwitcher onUnlock={onClose} />
@@ -43,7 +50,9 @@ const NotificationsModal = ({ onClose, focusMode }: ModalContainerProps) => {
       </NotificationsBox>
     </ModalContainer>
   )
-}
+})
+
+export default NotificationsModal
 
 const NotificationsBox = styled(motion.div)`
   display: flex;
@@ -68,5 +77,3 @@ const NotificationsBox = styled(motion.div)`
     margin: 0;
   }
 `
-
-export default NotificationsModal
