@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal'
 import { AddressOptionsModalProps } from '@/modals/AddressOptionsModal'
+import { ContactFormModalProps } from '@/modals/ContactFormModal'
 import { CSVExportModalProps } from '@/modals/CSVExportModal'
 import { NewAddressModalProps } from '@/modals/NewAddressModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
@@ -39,7 +40,8 @@ const ModalNames = {
   EditWalletNameModal: 'EditWalletNameModal',
   NotificationsModal: 'NotificationsModal',
   AdvancedOperationsSideModal: 'AdvancedOperationsSideModal',
-  NewAddressModal: 'NewAddressModal'
+  NewAddressModal: 'NewAddressModal',
+  ContactFormModal: 'ContactFormModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -94,6 +96,10 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.NewAddressModal
       props: NewAddressModalProps
+    }
+  | {
+      name: typeof ModalNames.ContactFormModal
+      props: ContactFormModalProps
     }
 
 export type ModalInstance = {
