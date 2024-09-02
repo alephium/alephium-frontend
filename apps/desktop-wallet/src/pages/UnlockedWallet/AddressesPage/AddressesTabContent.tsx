@@ -29,16 +29,12 @@ import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useAddressesWithBalance, useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
-import ModalPortal from '@/modals/ModalPortal'
-import NewAddressModal from '@/modals/NewAddressModal'
 import AddressGridRow from '@/pages/UnlockedWallet/AddressesPage/AddressGridRow'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
 
 const AddressesTabContent = () => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-
-  const [isGenerateNewAddressModalOpen, setIsGenerateNewAddressModalOpen] = useState(false)
 
   const [searchInput, setSearchInput] = useState('')
   const [hideEmptyAddresses, setHideEmptyAddresses] = useState(false)
@@ -48,13 +44,14 @@ const AddressesTabContent = () => {
   const visibleAddresses = hideEmptyAddresses ? intersection(filteredByText, filteredByToggle) : filteredByText
 
   const openAdvancedOperationsSideModal = () => dispatch(openModal({ name: 'AdvancedOperationsSideModal' }))
+  const openNewAddressModal = () => dispatch(openModal({ name: 'NewAddressModal', props: { title: t('New address') } }))
 
   return (
     <TabContent
       searchPlaceholder={t('Search for label, a hash or an asset...')}
       onSearch={setSearchInput}
       buttonText={`+ ${t('New address')}`}
-      onButtonClick={() => setIsGenerateNewAddressModalOpen(true)}
+      onButtonClick={openNewAddressModal}
       HeaderMiddleComponent={
         <HeaderMiddle>
           <HideEmptyAddressesToggle>
@@ -79,16 +76,6 @@ const AddressesTabContent = () => {
           {visibleAddresses?.length === 0 && <Placeholder>{t('No addresses match the search criteria.')}</Placeholder>}
         </TableGridContent>
       </TableGrid>
-
-      <ModalPortal>
-        {isGenerateNewAddressModalOpen && (
-          <NewAddressModal
-            singleAddress
-            title={t('New address')}
-            onClose={() => setIsGenerateNewAddressModalOpen(false)}
-          />
-        )}
-      </ModalPortal>
     </TabContent>
   )
 }
