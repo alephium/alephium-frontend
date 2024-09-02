@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NonSensitiveAddressData } from '@alephium/keyring'
 import { groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { Info } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AddressMetadataForm from '@/components/AddressMetadataForm'
@@ -27,7 +27,9 @@ import Select from '@/components/Inputs/Select'
 import { Section } from '@/components/PageComponents/PageContainers'
 import ToggleSection from '@/components/ToggleSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { useAppSelector } from '@/hooks/redux'
+import { closeModal } from '@/features/modals/modalActions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
@@ -35,18 +37,18 @@ import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
-interface NewAddressModalProps {
+export interface NewAddressModalProps {
   title: string
-  onClose: () => void
   singleAddress?: boolean
 }
 
-const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps) => {
+const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewAddressModalProps) => {
   const { t } = useTranslation()
   const isPassphraseUsed = useAppSelector((state) => state.activeWallet.isPassphraseUsed)
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const { generateAddress, generateAndSaveOneAddressPerGroup } = useAddressGeneration()
   const { sendAnalytics } = useAnalytics()
+  const dispatch = useAppDispatch()
 
   const [addressLabel, setAddressLabel] = useState({ title: '', color: isPassphraseUsed ? '' : getRandomLabelColor() })
   const [isDefaultAddress, setIsDefaultAddress] = useState(false)
@@ -69,6 +71,8 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
     // we don't have a unique place for all address generation function. Which is also fine.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [singleAddress])
+
+  const onClose = () => dispatch(closeModal({ id }))
 
   const onGenerateClick = () => {
     if (singleAddress && newAddressData) {
@@ -118,7 +122,7 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
   }
 
   return (
-    <CenteredModal title={title} onClose={onClose}>
+    <CenteredModal title={title} id={id}>
       {!isPassphraseUsed && (
         <Section align="flex-start">
           <AddressMetadataForm
@@ -164,7 +168,7 @@ const NewAddressModal = ({ title, onClose, singleAddress }: NewAddressModalProps
       </ModalFooterButtons>
     </CenteredModal>
   )
-}
+})
 
 export default NewAddressModal
 
