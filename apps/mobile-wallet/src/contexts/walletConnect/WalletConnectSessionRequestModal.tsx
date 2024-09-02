@@ -44,9 +44,9 @@ import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Row from '~/components/Row'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { selectAddressByHash } from '~/store/addressesSlice'
@@ -253,7 +253,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
           {metadata.icons && metadata.icons.length > 0 && metadata.icons[0] && (
             <DAppIcon source={{ uri: metadata.icons[0] }} />
           )}
-          <BottomModalScreenTitle>
+          <ModalScreenTitle>
             {
               {
                 transfer: t('Transfer request'),
@@ -263,7 +263,7 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
                 'sign-unsigned-tx': t('Sign unsigned transaction')
               }[requestData.type]
             }
-          </BottomModalScreenTitle>
+          </ModalScreenTitle>
           {metadata.url && (
             <AppText color="tertiary" size={13}>
               {t('from {{ url }}', { url: metadata.url })}

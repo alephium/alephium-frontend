@@ -20,6 +20,7 @@ import { sharedReducer } from '@alephium/shared'
 import { configureStore } from '@reduxjs/toolkit'
 
 import fundPasswordSlice from '~/features/fund-password/fundPasswordSlice'
+import modalSlice from '~/features/modals/modalSlice'
 import addressDiscoverySlice from '~/store/addressDiscoverySlice'
 import contactsSlice from '~/store/addresses/contactsSlice'
 import addressesSlice from '~/store/addressesSlice'
@@ -44,7 +45,8 @@ export const store = configureStore({
     pendingTransactions: pendingTransactionsSlice.reducer,
     [fundPasswordSlice.name]: fundPasswordSlice.reducer,
     [contactsSlice.name]: contactsSlice.reducer,
-    [loadersSlice.name]: loadersSlice.reducer
+    [loadersSlice.name]: loadersSlice.reducer,
+    [modalSlice.name]: modalSlice.reducer
   },
   middleware: (getDefaultMiddleware) => {
     const middlewares = getDefaultMiddleware({

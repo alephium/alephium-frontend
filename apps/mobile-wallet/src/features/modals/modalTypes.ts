@@ -16,15 +16,24 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
-import ContactListScreenBase, { ContactListScreenBaseProps } from '~/screens/ContactListScreenBase'
+import { BuyModalProps } from '~/modals/BuyModal'
 
-type SelectContactModalProps = ModalContentProps & ContactListScreenBaseProps
+const ModalNames = {
+  BuyModal: 'BuyModal'
+} as const
 
-const SelectContactModal = ({ onContactPress, onNewContactPress, ...props }: SelectContactModalProps) => (
-  <ModalContent {...props}>
-    <ContactListScreenBase onContactPress={onContactPress} onNewContactPress={onNewContactPress} />
-  </ModalContent>
-)
+export type ModalName = keyof typeof ModalNames
 
-export default SelectContactModal
+export type OpenModalParams = {
+  name: typeof ModalNames.BuyModal
+  props: BuyModalProps
+}
+
+export type ModalInstance = {
+  id: number
+  params: OpenModalParams
+}
+
+export interface ModalBaseProp {
+  id: ModalInstance['id']
+}

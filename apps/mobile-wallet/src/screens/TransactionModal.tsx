@@ -30,13 +30,13 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import IOList from '~/components/IOList'
-import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import NFTsGrid from '~/components/NFTsGrid'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
+import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { useAppSelector } from '~/hooks/redux'
 import { AddressConfirmedTransaction } from '~/types/transactions'
 import { getTransactionInfo } from '~/utils/transactions'
@@ -63,7 +63,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
   return (
     <ModalContent {...props} verticalGap>
       <ScreenSectionStyled>
-        <BottomModalScreenTitle>{t('Transaction')}</BottomModalScreenTitle>
+        <ModalScreenTitle>{t('Transaction')}</ModalScreenTitle>
         <Button
           iconProps={{ name: 'x' }}
           onPress={() => openBrowserAsync(explorerTxUrl)}

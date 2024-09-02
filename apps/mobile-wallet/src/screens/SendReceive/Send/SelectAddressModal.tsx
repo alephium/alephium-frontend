@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import AddressBox from '~/components/AddressBox'
 import { AddressFlatListScreenProps } from '~/components/AddressFlatListScreen'
-import { ModalContentProps, ModalFlatListContent } from '~/components/layout/ModalContent'
+import { ModalContentProps, ModalFlatListContent } from '~/features/modals/ModalContent'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addressesSlice'
 
