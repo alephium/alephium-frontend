@@ -27,17 +27,18 @@ import Button from '@/components/Button'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useAddressesWithBalance, useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import NewAddressModal from '@/modals/NewAddressModal'
 import AddressGridRow from '@/pages/UnlockedWallet/AddressesPage/AddressGridRow'
-import AdvancedOperationsSideModal from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsSideModal'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
 
 const AddressesTabContent = () => {
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
   const [isGenerateNewAddressModalOpen, setIsGenerateNewAddressModalOpen] = useState(false)
-  const [isAdvancedOperationsModalOpen, setIsAdvancedOperationsModalOpen] = useState(false)
 
   const [searchInput, setSearchInput] = useState('')
   const [hideEmptyAddresses, setHideEmptyAddresses] = useState(false)
@@ -45,6 +46,8 @@ const AddressesTabContent = () => {
   const filteredByToggle = useAddressesWithBalance()
 
   const visibleAddresses = hideEmptyAddresses ? intersection(filteredByText, filteredByToggle) : filteredByText
+
+  const openAdvancedOperationsSideModal = () => dispatch(openModal({ name: 'AdvancedOperationsSideModal' }))
 
   return (
     <TabContent
@@ -63,7 +66,7 @@ const AddressesTabContent = () => {
             role="secondary"
             squared
             Icon={Wrench}
-            onClick={() => setIsAdvancedOperationsModalOpen(true)}
+            onClick={openAdvancedOperationsSideModal}
             data-tooltip-id="default"
             data-tooltip-content={t('Advanced operations')}
           />
@@ -78,9 +81,6 @@ const AddressesTabContent = () => {
       </TableGrid>
 
       <ModalPortal>
-        {isAdvancedOperationsModalOpen && (
-          <AdvancedOperationsSideModal onClose={() => setIsAdvancedOperationsModalOpen(false)} />
-        )}
         {isGenerateNewAddressModalOpen && (
           <NewAddressModal
             singleAddress
