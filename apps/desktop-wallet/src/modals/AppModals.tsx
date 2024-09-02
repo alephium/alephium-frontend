@@ -32,6 +32,7 @@ import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
 import WalletConnectModal from '@/modals/WalletConnectModal'
 import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
+import AdvancedOperationsSideModal from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsSideModal'
 
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
@@ -64,6 +65,8 @@ const AppModals = () => {
             return <EditWalletNameModal id={modal.id} key={modal.id} />
           case 'NotificationsModal':
             return <NotificationsModal id={modal.id} key={modal.id} />
+          case 'AdvancedOperationsSideModal':
+            return <AdvancedOperationsSideModal id={modal.id} key={modal.id} />
         }
       })}
     </AnimatePresence>
