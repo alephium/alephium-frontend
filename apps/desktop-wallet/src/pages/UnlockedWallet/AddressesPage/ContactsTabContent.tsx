@@ -30,8 +30,8 @@ import Button from '@/components/Button'
 import Card from '@/components/Card'
 import HashEllipsed from '@/components/HashEllipsed'
 import Truncate from '@/components/Truncate'
-import { useAppSelector } from '@/hooks/redux'
-import ContactFormModal from '@/modals/ContactFormModal'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import SendModalTransfer from '@/modals/SendModals/Transfer'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
@@ -44,11 +44,11 @@ const ContactsTabContent = () => {
   const { t } = useTranslation()
   const contacts = useAppSelector(selectAllContacts)
   const defaultAddress = useAppSelector(selectDefaultAddress)
+  const dispatch = useAppDispatch()
 
   const [filteredContacts, setFilteredContacts] = useState(contacts)
   const [searchInput, setSearchInput] = useState('')
   const [isSendModalOpen, setIsSendModalOpen] = useState(false)
-  const [isContactFormModalOpen, setIsContactFormModalOpen] = useState(false)
   const [selectedContact, setSelectedContact] = useState<Contact>()
 
   const newContactButtonText = `+ ${t('New contact')}`
@@ -67,17 +67,10 @@ const ContactsTabContent = () => {
     setIsSendModalOpen(false)
   }
 
-  const openEditContactModal = (contact: Contact) => {
-    setSelectedContact(contact)
-    setIsContactFormModalOpen(true)
-  }
+  const openEditContactModal = (contact: Contact) =>
+    dispatch(openModal({ name: 'ContactFormModal', props: { contact } }))
 
-  const closeContactFormModal = () => {
-    setSelectedContact(undefined)
-    setIsContactFormModalOpen(false)
-  }
-
-  const openContactFormModal = () => setIsContactFormModalOpen(true)
+  const openNewContactFormModal = () => dispatch(openModal({ name: 'ContactFormModal', props: {} }))
 
   return (
     <motion.div {...fadeIn}>
@@ -85,7 +78,7 @@ const ContactsTabContent = () => {
         searchPlaceholder={t('Search for name or a hash...')}
         onSearch={setSearchInput}
         buttonText={newContactButtonText}
-        onButtonClick={openContactFormModal}
+        onButtonClick={openNewContactFormModal}
       >
         <ContactBox>
           {filteredContacts.map((contact) => (
@@ -112,7 +105,7 @@ const ContactsTabContent = () => {
             <PlaceholderCard layout isPlaceholder>
               <Text>{t('Create contacts to avoid mistakes when sending transactions!')}</Text>
               <motion.div>
-                <Button role="secondary" short onClick={openContactFormModal}>
+                <Button role="secondary" short onClick={openNewContactFormModal}>
                   {newContactButtonText}
                 </Button>
               </motion.div>
@@ -120,7 +113,6 @@ const ContactsTabContent = () => {
           )}
         </ContactBox>
         <ModalPortal>
-          {isContactFormModalOpen && <ContactFormModal contact={selectedContact} onClose={closeContactFormModal} />}
           {isSendModalOpen && defaultAddress && (
             <SendModalTransfer
               initialTxData={{ fromAddress: defaultAddress, toAddress: selectedContact?.address }}
