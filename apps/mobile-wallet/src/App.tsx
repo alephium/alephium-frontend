@@ -58,14 +58,7 @@ import { themes } from '~/style/themes'
 SplashScreen.preventAutoHideAsync()
 
 const App = () => {
-  const { data: isStoredWalletDataValid, isLoading: isValidatingStoredWalletData } = useAsyncData(
-    validateAndRepareStoredWalletData
-  )
-
-  useEffect(() => {
-    if (!isValidatingStoredWalletData) SplashScreen.hideAsync()
-  }, [isValidatingStoredWalletData])
-
+  const showAppContent = useShowAppContentAfterValidatingStoredWalletData()
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
 
   useEffect(
@@ -81,12 +74,32 @@ const App = () => {
       <Main>
         <ThemeProvider theme={theme}>
           <StatusBar animated translucent style="light" />
-          {isStoredWalletDataValid && <RootStackNavigation />}
+          {showAppContent && <RootStackNavigation />}
           <ToastAnchor />
         </ThemeProvider>
       </Main>
     </Provider>
   )
+}
+
+const useShowAppContentAfterValidatingStoredWalletData = () => {
+  const [showAppContent, setShowAppContent] = useState(false)
+
+  const onUserConfirm = () => setShowAppContent(true)
+
+  const { data: isStoredWalletDataValid, isLoading: isValidatingStoredWalletData } = useAsyncData(() =>
+    validateAndRepareStoredWalletData(onUserConfirm)
+  )
+
+  useEffect(() => {
+    if (!isValidatingStoredWalletData) SplashScreen.hideAsync()
+  }, [isValidatingStoredWalletData])
+
+  useEffect(() => {
+    if (isStoredWalletDataValid !== undefined) setShowAppContent(isStoredWalletDataValid)
+  }, [isStoredWalletDataValid])
+
+  return showAppContent
 }
 
 const Main = ({ children, ...props }: ViewProps) => {

@@ -24,10 +24,12 @@ import {
 import { AddressHash, resetArray } from '@alephium/shared'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
+import { Alert } from 'react-native'
 
 import { sendAnalytics } from '~/analytics'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import i18n from '~/features/localization/i18n'
+import { wasAppUninstalled } from '~/persistent-storage/app'
 import { defaultBiometricsConfig } from '~/persistent-storage/config'
 import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
@@ -57,14 +59,21 @@ const MNEMONIC_V2 = 'wallet-mnemonic-v2'
 const ADDRESS_PUB_KEY_PREFIX = 'address-pub-key-'
 const ADDRESS_PRIV_KEY_PREFIX = 'address-priv-key-'
 
-export const validateAndRepareStoredWalletData = async (): Promise<boolean> => {
+export const validateAndRepareStoredWalletData = async (onUserConfirm: () => void): Promise<boolean> => {
   let walletMetadata = await getWalletMetadata(false)
   let mnemonicV2Exists
+  let appWasUninstalled
 
   try {
     mnemonicV2Exists = await storedMnemonicV2Exists()
   } catch {
     mnemonicV2Exists = false
+  }
+
+  try {
+    appWasUninstalled = await wasAppUninstalled()
+  } catch {
+    appWasUninstalled = false
   }
 
   if (mnemonicV2Exists) {
@@ -73,35 +82,55 @@ export const validateAndRepareStoredWalletData = async (): Promise<boolean> => {
       return true
     } else {
       // If we have mnemonic but missing metadata, we try to recreate them with sane defaults
-      try {
-        await generateAndStoreWalletMetadata('My wallet', false)
-      } finally {
-        walletMetadata = await getWalletMetadata(false)
-      }
+      Alert.alert(
+        i18n.t('Restore data'),
+        i18n.t(
+          appWasUninstalled
+            ? 'We noticed that you deleted the app, would you like to restore your last wallet?'
+            : "Due to an unexpected error some of your app's data are missing. Would you like to regenerate them? Your funds are safe."
+        ),
+        [
+          {
+            text: i18n.t('No'),
+            onPress: onUserConfirm
+          },
+          {
+            text: i18n.t('Yes'),
+            onPress: async () => {
+              try {
+                await generateAndStoreWalletMetadata('My wallet', false)
+              } finally {
+                walletMetadata = await getWalletMetadata(false)
+              }
 
-      if (walletMetadata) {
-        showToast({
-          text1: i18n.t('App data were reset'),
-          text2: i18n.t(
-            'Due to an unexpected error some of your app data were reset. You might want to scan for active addresses in the settings.'
-          ),
-          type: 'info',
-          autoHide: false
-        })
-        sendAnalytics({ event: 'Recreated missing wallet metadata for existing wallet' })
+              if (walletMetadata) {
+                showToast({
+                  text1: i18n.t('App data were reset'),
+                  text2: i18n.t('You might want to scan for active addresses in the settings.'),
+                  type: 'success',
+                  autoHide: false
+                })
+                sendAnalytics({ event: 'Recreated missing wallet metadata for existing wallet' })
 
-        return true
-      } else {
-        showToast({
-          text1: i18n.t('Could not unlock app'),
-          text2: i18n.t('Wallet metadata not found'),
-          type: 'error',
-          autoHide: false
-        })
-        sendAnalytics({ type: 'error', message: 'Could not recreate missing wallet metadata for existing wallet' })
+                onUserConfirm()
+              } else {
+                showToast({
+                  text1: i18n.t('Could not unlock app'),
+                  text2: i18n.t('Wallet metadata not found'),
+                  type: 'error',
+                  autoHide: false
+                })
+                sendAnalytics({
+                  type: 'error',
+                  message: 'Could not recreate missing wallet metadata for existing wallet'
+                })
+              }
+            }
+          }
+        ]
+      )
 
-        return false
-      }
+      return false
     }
   } else {
     let deprecatedWalletExists
