@@ -27,6 +27,7 @@ import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import ReceiveModal from '@/modals/ReceiveModal'
 import SecretPhraseModal from '@/modals/SecretPhraseModal'
 import SettingsModal from '@/modals/SettingsModal'
+import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
 import WalletConnectModal from '@/modals/WalletConnectModal'
 import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
@@ -58,6 +59,8 @@ const AppModals = () => {
             return <SecretPhraseModal id={modal.id} key={modal.id} />
           case 'WalletQRCodeExportModal':
             return <WalletQRCodeExportModal id={modal.id} key={modal.id} />
+          case 'EditWalletNameModal':
+            return <EditWalletNameModal id={modal.id} key={modal.id} />
         }
       })}
     </AnimatePresence>
