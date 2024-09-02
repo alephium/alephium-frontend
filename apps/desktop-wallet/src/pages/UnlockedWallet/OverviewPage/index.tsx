@@ -53,7 +53,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
         <Shortcuts>
           <ShortcutsHeader title={t('Shortcuts')} />
           <ButtonsGrid>
-            <ShortcutButtonsGroupWallet lock walletSettings analyticsOrigin="overview_page" solidBackground />
+            <ShortcutButtonsGroupWallet lock settings analyticsOrigin="overview_page" solidBackground />
           </ButtonsGrid>
         </Shortcuts>
       </AmountsOverviewPanel>
