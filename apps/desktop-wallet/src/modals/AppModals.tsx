@@ -29,6 +29,7 @@ import SecretPhraseModal from '@/modals/SecretPhraseModal'
 import SettingsModal from '@/modals/SettingsModal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
 import WalletConnectModal from '@/modals/WalletConnectModal'
+import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
 
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
@@ -55,6 +56,8 @@ const AppModals = () => {
             return <WalletConnectModal id={modal.id} key={modal.id} />
           case 'SecretPhraseModal':
             return <SecretPhraseModal id={modal.id} key={modal.id} />
+          case 'WalletQRCodeExportModal':
+            return <WalletQRCodeExportModal id={modal.id} key={modal.id} />
         }
       })}
     </AnimatePresence>
