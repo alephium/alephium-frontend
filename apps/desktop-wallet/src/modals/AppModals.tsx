@@ -24,6 +24,7 @@ import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import AddressOptionsModal from '@/modals/AddressOptionsModal'
 import CSVExportModal from '@/modals/CSVExportModal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
+import NotificationsModal from '@/modals/NotificationsModal'
 import ReceiveModal from '@/modals/ReceiveModal'
 import SecretPhraseModal from '@/modals/SecretPhraseModal'
 import SettingsModal from '@/modals/SettingsModal'
@@ -61,6 +62,8 @@ const AppModals = () => {
             return <WalletQRCodeExportModal id={modal.id} key={modal.id} />
           case 'EditWalletNameModal':
             return <EditWalletNameModal id={modal.id} key={modal.id} />
+          case 'NotificationsModal':
+            return <NotificationsModal id={modal.id} key={modal.id} />
         }
       })}
     </AnimatePresence>
