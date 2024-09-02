@@ -17,24 +17,23 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Codesandbox, HardHat, Lightbulb, Search } from 'lucide-react'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import AddressSweepModal from '@/modals/AddressSweepModal'
 import ModalPortal from '@/modals/ModalPortal'
 import NewAddressModal from '@/modals/NewAddressModal'
-import SideModal, { SideModalProps } from '@/modals/SideModal'
+import SideModal from '@/modals/SideModal'
 import OperationBox from '@/pages/UnlockedWallet/AddressesPage/OperationBox'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
-type AdvancedOperationsSideModal = Pick<SideModalProps, 'onClose'>
-
-const AdvancedOperationsSideModal = (props: AdvancedOperationsSideModal) => {
+const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const { generateAndSaveOneAddressPerGroup, discoverAndSaveUsedAddresses } = useAddressGeneration()
@@ -65,7 +64,7 @@ const AdvancedOperationsSideModal = (props: AdvancedOperationsSideModal) => {
   }
 
   return (
-    <SideModal {...props} title={t('Advanced operations')}>
+    <SideModal id={id} title={t('Advanced operations')}>
       <AdvancedOperations>
         <OperationBox
           title={t('Discover active addresses')}
@@ -111,7 +110,7 @@ const AdvancedOperationsSideModal = (props: AdvancedOperationsSideModal) => {
       </ModalPortal>
     </SideModal>
   )
-}
+})
 
 export default AdvancedOperationsSideModal
 
