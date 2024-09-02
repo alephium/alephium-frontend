@@ -91,7 +91,7 @@ export const ScreenSection = styled.View<ScreenSectionProps>`
     `}
 `
 
-export const BottomModalScreenTitle = styled(AppText)`
+export const ModalScreenTitle = styled(AppText)`
   font-weight: 600;
   font-size: 28px;
 `

@@ -16,15 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
-import ContactListScreenBase, { ContactListScreenBaseProps } from '~/screens/ContactListScreenBase'
+import { modalAdapter } from '~/features/modals/modalAdapters'
+import { RootState } from '~/store/store'
 
-type SelectContactModalProps = ModalContentProps & ContactListScreenBaseProps
-
-const SelectContactModal = ({ onContactPress, onNewContactPress, ...props }: SelectContactModalProps) => (
-  <ModalContent {...props}>
-    <ContactListScreenBase onContactPress={onContactPress} onNewContactPress={onNewContactPress} />
-  </ModalContent>
-)
-
-export default SelectContactModal
+export const { selectAll: selectAllModals } = modalAdapter.getSelectors<RootState>((state) => state.modals)

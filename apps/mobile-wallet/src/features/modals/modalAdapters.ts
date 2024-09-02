@@ -16,15 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
-import ContactListScreenBase, { ContactListScreenBaseProps } from '~/screens/ContactListScreenBase'
+import { createEntityAdapter } from '@reduxjs/toolkit'
 
-type SelectContactModalProps = ModalContentProps & ContactListScreenBaseProps
+import { ModalInstance } from '~/features/modals/modalTypes'
 
-const SelectContactModal = ({ onContactPress, onNewContactPress, ...props }: SelectContactModalProps) => (
-  <ModalContent {...props}>
-    <ContactListScreenBase onContactPress={onContactPress} onNewContactPress={onNewContactPress} />
-  </ModalContent>
-)
-
-export default SelectContactModal
+export const modalAdapter = createEntityAdapter<ModalInstance>()

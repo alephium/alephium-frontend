@@ -19,15 +19,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { Skeleton } from 'moti/skeleton'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { View, ViewProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import BuyModal from '~/features/buy/BuyModal'
-import { useAppSelector } from '~/hooks/redux'
+import { openModal } from '~/features/modals/modalActions'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
@@ -39,6 +39,8 @@ interface BalanceSummaryProps extends ViewProps {
 }
 
 const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => {
+  const theme = useTheme()
+  const dispatch = useAppDispatch()
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
   const isLoadingAlphBalances = useAppSelector((s) => s.loaders.loadingBalances)
@@ -47,9 +49,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
-  const theme = useTheme()
   const navigation = useNavigation<NavigationProp<RootStackParamList | ReceiveNavigationParamList>>()
-  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false)
 
   const handleReceivePress = () => {
     if (addressHashes.length === 1) {
@@ -63,47 +63,37 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   }
 
   return (
-    <>
-      <BalanceSummaryContainer style={style} {...props}>
-        <TextContainer>
-          <DateLabelContainer>
-            <AppText color="secondary" semiBold>
-              {dateLabel}
-            </AppText>
-          </DateLabelContainer>
+    <BalanceSummaryContainer style={style} {...props}>
+      <TextContainer>
+        <DateLabelContainer>
+          <AppText color="secondary" semiBold>
+            {dateLabel}
+          </AppText>
+        </DateLabelContainer>
 
-          {addressesBalancesStatus === 'uninitialized' ? (
-            <View style={{ marginTop: 13 }}>
-              <Skeleton show colorMode={theme.name} width={200} height={38} />
-            </View>
-          ) : (
-            <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={40} />
-          )}
-        </TextContainer>
-
-        {totalBalance === BigInt(0) && !isLoadingAlphBalances && addressesStatus === 'initialized' && (
-          <ReceiveFundsButtonContainer>
-            <Button
-              onPress={handleReceivePress}
-              iconProps={{ name: 'download' }}
-              variant="highlight"
-              short
-              round
-              flex
-            />
-            <Button
-              onPress={() => setIsBuyModalOpen(true)}
-              iconProps={{ name: 'credit-card' }}
-              variant="highlight"
-              short
-              round
-              flex
-            />
-          </ReceiveFundsButtonContainer>
+        {addressesBalancesStatus === 'uninitialized' ? (
+          <View style={{ marginTop: 13 }}>
+            <Skeleton show colorMode={theme.name} width={200} height={38} />
+          </View>
+        ) : (
+          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={40} />
         )}
-      </BalanceSummaryContainer>
-      <BuyModal isOpen={isBuyModalOpen} onClose={() => setIsBuyModalOpen(false)} />
-    </>
+      </TextContainer>
+
+      {totalBalance === BigInt(0) && !isLoadingAlphBalances && addressesStatus === 'initialized' && (
+        <ReceiveFundsButtonContainer>
+          <Button onPress={handleReceivePress} iconProps={{ name: 'download' }} variant="highlight" short round flex />
+          <Button
+            onPress={() => dispatch(openModal({ name: 'BuyModal' }))}
+            iconProps={{ name: 'credit-card' }}
+            variant="highlight"
+            short
+            round
+            flex
+          />
+        </ReceiveFundsButtonContainer>
+      )}
+    </BalanceSummaryContainer>
   )
 }
 

@@ -87,11 +87,11 @@ import {
   buildDeployContractTransaction,
   buildTransferTransaction
 } from '~/api/transactions'
-import BottomModal from '~/components/layout/BottomModal'
 import SpinnerModal from '~/components/SpinnerModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
+import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'

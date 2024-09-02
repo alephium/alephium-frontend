@@ -35,14 +35,14 @@ import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
-import BottomModal from '~/components/layout/BottomModal'
-import { ModalContent } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
-import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
+import BottomModal from '~/features/modals/DeprecatedBottomModal'
+import { openModal } from '~/features/modals/modalActions'
+import { ModalContent } from '~/features/modals/ModalContent'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import { useAppSelector } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
@@ -66,6 +66,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const insets = useSafeAreaInsets()
   const { t } = useTranslation()
   const theme = useTheme()
+  const dispatch = useAppDispatch()
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
@@ -79,7 +80,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isFundPasswordReminderModalOpen, setIsFundPasswordReminderModalOpen] = useState(false)
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
-  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false)
   const { data: isNewWallet } = useAsyncData(getIsNewWallet)
 
   useEffect(() => {
@@ -121,137 +121,127 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   }
 
   return (
-    <>
-      <DashboardScreenStyled
-        refreshControl={<RefreshSpinner />}
-        hasBottomBar
-        verticalGap
-        contrastedBg
-        onScroll={screenScrollHandler}
-        floatingHeader
-        headerScrollEffectOffset={70}
-        headerOptions={{
-          headerTitle: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold />
-        }}
-        {...props}
-      >
-        <AnimatedCirclesBackground scrollY={screenScrollY} />
-        <WalletCard style={{ marginTop: insets.top }}>
-          {Platform.OS === 'android' ? (
-            <TransparentCardBackground style={StyleSheet.absoluteFill} />
-          ) : (
-            <BlurView
-              style={StyleSheet.absoluteFill}
-              intensity={80}
-              tint={theme.name === 'dark' ? 'systemThickMaterialDark' : 'systemThickMaterialLight'}
+    <DashboardScreenStyled
+      refreshControl={<RefreshSpinner />}
+      hasBottomBar
+      verticalGap
+      contrastedBg
+      onScroll={screenScrollHandler}
+      floatingHeader
+      headerScrollEffectOffset={70}
+      headerOptions={{
+        headerTitle: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold />
+      }}
+      {...props}
+    >
+      <AnimatedCirclesBackground scrollY={screenScrollY} />
+      <WalletCard style={{ marginTop: insets.top }}>
+        {Platform.OS === 'android' ? (
+          <TransparentCardBackground style={StyleSheet.absoluteFill} />
+        ) : (
+          <BlurView
+            style={StyleSheet.absoluteFill}
+            intensity={80}
+            tint={theme.name === 'dark' ? 'systemThickMaterialDark' : 'systemThickMaterialLight'}
+          />
+        )}
+        <WalletCardHeader>
+          <HeaderButtons />
+        </WalletCardHeader>
+        <BalanceSummary dateLabel={t('VALUE TODAY')} />
+        {totalBalance > BigInt(0) && (
+          <ButtonsRowContainer>
+            <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" round flex short />
+            <Button onPress={handleReceivePress} iconProps={{ name: 'download' }} variant="contrast" round flex short />
+            <Button
+              onPress={() => dispatch(openModal({ name: 'BuyModal' }))}
+              iconProps={{ name: 'credit-card' }}
+              variant="contrast"
+              round
+              flex
+              short
+            />
+          </ButtonsRowContainer>
+        )}
+      </WalletCard>
+      <AddressesTokensList />
+      {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
+        <EmptyPlaceholder>
+          <AppText semiBold color="secondary">
+            {t('There is so much left to discover!')} 🌈
+          </AppText>
+        </EmptyPlaceholder>
+      )}
+      <Portal>
+        <BottomModal
+          isOpen={isBackupReminderModalOpen}
+          onClose={() => setIsBackupReminderModalOpen(false)}
+          Content={(props) => (
+            <ModalContent verticalGap {...props}>
+              <ScreenSection>
+                <ModalScreenTitle>
+                  {isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}
+                </ModalScreenTitle>
+              </ScreenSection>
+              <ScreenSection>
+                {isNewWallet ? (
+                  <AppText color="secondary" size={18}>
+                    <Trans
+                      t={t}
+                      i18nKey="backupModalMessage1"
+                      components={{
+                        1: <AppText size={18} bold />
+                      }}
+                    >
+                      {
+                        'The first and most important step is to <1>write down your secret recovery phrase</1> and store it in a safe place.'
+                      }
+                    </Trans>
+                  </AppText>
+                ) : (
+                  <AppText color="secondary" size={18}>
+                    <Trans
+                      t={t}
+                      i18nKey="backupModalMessage2"
+                      components={{
+                        1: <AppText size={18} bold />
+                      }}
+                    >
+                      {
+                        'Have peace of mind by verifying that you <1>wrote your secret recovery phrase down</1> correctly.'
+                      }
+                    </Trans>
+                  </AppText>
+                )}
+              </ScreenSection>
+              <ScreenSection>
+                <Button
+                  title={t("Let's do that!")}
+                  onPress={() => navigation.navigate('BackupMnemonicNavigation')}
+                  variant="highlight"
+                />
+              </ScreenSection>
+            </ModalContent>
+          )}
+        />
+
+        <BottomModal
+          isOpen={isSwitchNetworkModalOpen}
+          onClose={() => setIsSwitchNetworkModalOpen(false)}
+          Content={(props) => (
+            <SwitchNetworkModal
+              onClose={() => setIsSwitchNetworkModalOpen(false)}
+              onCustomNetworkPress={() => navigation.navigate('CustomNetworkScreen')}
+              {...props}
             />
           )}
-          <WalletCardHeader>
-            <HeaderButtons />
-          </WalletCardHeader>
-          <BalanceSummary dateLabel={t('VALUE TODAY')} />
-          {totalBalance > BigInt(0) && (
-            <ButtonsRowContainer>
-              <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" round flex short />
-              <Button
-                onPress={handleReceivePress}
-                iconProps={{ name: 'download' }}
-                variant="contrast"
-                round
-                flex
-                short
-              />
-              <Button
-                onPress={() => setIsBuyModalOpen(true)}
-                iconProps={{ name: 'credit-card' }}
-                variant="contrast"
-                round
-                flex
-                short
-              />
-            </ButtonsRowContainer>
-          )}
-        </WalletCard>
-        <AddressesTokensList />
-        {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
-          <EmptyPlaceholder>
-            <AppText semiBold color="secondary">
-              {t('There is so much left to discover!')} 🌈
-            </AppText>
-          </EmptyPlaceholder>
-        )}
-        <Portal>
-          <BottomModal
-            isOpen={isBackupReminderModalOpen}
-            onClose={() => setIsBackupReminderModalOpen(false)}
-            Content={(props) => (
-              <ModalContent verticalGap {...props}>
-                <ScreenSection>
-                  <BottomModalScreenTitle>
-                    {isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}
-                  </BottomModalScreenTitle>
-                </ScreenSection>
-                <ScreenSection>
-                  {isNewWallet ? (
-                    <AppText color="secondary" size={18}>
-                      <Trans
-                        t={t}
-                        i18nKey="backupModalMessage1"
-                        components={{
-                          1: <AppText size={18} bold />
-                        }}
-                      >
-                        {
-                          'The first and most important step is to <1>write down your secret recovery phrase</1> and store it in a safe place.'
-                        }
-                      </Trans>
-                    </AppText>
-                  ) : (
-                    <AppText color="secondary" size={18}>
-                      <Trans
-                        t={t}
-                        i18nKey="backupModalMessage2"
-                        components={{
-                          1: <AppText size={18} bold />
-                        }}
-                      >
-                        {
-                          'Have peace of mind by verifying that you <1>wrote your secret recovery phrase down</1> correctly.'
-                        }
-                      </Trans>
-                    </AppText>
-                  )}
-                </ScreenSection>
-                <ScreenSection>
-                  <Button
-                    title={t("Let's do that!")}
-                    onPress={() => navigation.navigate('BackupMnemonicNavigation')}
-                    variant="highlight"
-                  />
-                </ScreenSection>
-              </ModalContent>
-            )}
-          />
-
-          <BottomModal
-            isOpen={isSwitchNetworkModalOpen}
-            onClose={() => setIsSwitchNetworkModalOpen(false)}
-            Content={(props) => (
-              <SwitchNetworkModal
-                onClose={() => setIsSwitchNetworkModalOpen(false)}
-                onCustomNetworkPress={() => navigation.navigate('CustomNetworkScreen')}
-                {...props}
-              />
-            )}
-          />
-        </Portal>
-        <FundPasswordReminderModal
-          isOpen={isFundPasswordReminderModalOpen}
-          onClose={() => setIsFundPasswordReminderModalOpen(false)}
         />
-      </DashboardScreenStyled>
-      <BuyModal isOpen={isBuyModalOpen} onClose={() => setIsBuyModalOpen(false)} />
-    </>
+      </Portal>
+      <FundPasswordReminderModal
+        isOpen={isFundPasswordReminderModalOpen}
+        onClose={() => setIsFundPasswordReminderModalOpen(false)}
+      />
+    </DashboardScreenStyled>
   )
 }
 

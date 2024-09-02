@@ -37,8 +37,8 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import InfoBox from '~/components/InfoBox'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -129,7 +129,7 @@ const WalletConnectSessionProposalModal = ({
         {metadata?.icons && metadata.icons.length > 0 && metadata.icons[0] && (
           <DAppIcon source={{ uri: metadata.icons[0] }} />
         )}
-        <BottomModalScreenTitle>{t('Connect to dApp')}</BottomModalScreenTitle>
+        <ModalScreenTitle>{t('Connect to dApp')}</ModalScreenTitle>
         {metadata?.description && (
           <AppText color="secondary" size={16}>
             {metadata.description}

@@ -30,8 +30,8 @@ import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Checkmark from '~/components/Checkmark'
-import BottomModal from '~/components/layout/BottomModal'
 import NFTsGrid from '~/components/NFTsGrid'
+import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { useAppSelector } from '~/hooks/redux'
 import {
   makeSelectAddressesKnownFungibleTokens,

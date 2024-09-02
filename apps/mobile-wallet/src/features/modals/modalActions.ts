@@ -16,15 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
-import ContactListScreenBase, { ContactListScreenBaseProps } from '~/screens/ContactListScreenBase'
+import { createAction } from '@reduxjs/toolkit'
 
-type SelectContactModalProps = ModalContentProps & ContactListScreenBaseProps
+import { ModalInstance, OpenModalParams } from '@/features/modals/modalTypes'
 
-const SelectContactModal = ({ onContactPress, onNewContactPress, ...props }: SelectContactModalProps) => (
-  <ModalContent {...props}>
-    <ContactListScreenBase onContactPress={onContactPress} onNewContactPress={onNewContactPress} />
-  </ModalContent>
-)
+export const openModal = createAction<OpenModalParams>('modal/openModal')
 
-export default SelectContactModal
+export const closeModal = createAction<{ id: ModalInstance['id'] }>('modal/closeModal')

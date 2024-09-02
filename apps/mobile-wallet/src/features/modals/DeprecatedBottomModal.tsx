@@ -35,7 +35,7 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { CloseButton } from '~/components/buttons/Button'
-import { ModalContentProps } from '~/components/layout/ModalContent'
+import { ModalContentProps } from '~/features/modals/ModalContent'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type ModalPositions = 'minimised' | 'maximised' | 'closing'
@@ -220,7 +220,7 @@ const BottomModal = ({
       <Animated.View style={{ flex: 1 }}>
         <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
         <Container>
-          <BottomModalStyled style={modalHeightAnimatedStyle}>
+          <ModalStyled style={modalHeightAnimatedStyle}>
             <HandleContainer>
               <Handle style={handleAnimatedStyle} />
             </HandleContainer>
@@ -234,7 +234,7 @@ const BottomModal = ({
             <ContentContainer noPadding={noPadding}>
               <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
             </ContentContainer>
-          </BottomModalStyled>
+          </ModalStyled>
         </Container>
       </Animated.View>
     </GestureDetector>
@@ -259,7 +259,7 @@ const Backdrop = styled(AnimatedPressable)`
   background-color: rgba(0, 0, 0, 0.8);
 `
 
-const BottomModalStyled = styled(Animated.View)`
+const ModalStyled = styled(Animated.View)`
   justify-content: flex-start;
   background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.back1 : theme.bg.secondary)};
   border-top-left-radius: 20px;

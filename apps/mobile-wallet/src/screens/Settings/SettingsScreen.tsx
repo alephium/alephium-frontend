@@ -29,10 +29,9 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import Button from '~/components/buttons/Button'
-import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalContent } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import { ModalContent } from '~/features/modals/ModalContent'
+import { ModalScreenTitle, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
@@ -44,6 +43,7 @@ import { getAutoLockLabel } from '~/features/auto-lock/utils'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { languageOptions } from '~/features/localization/languages'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
+import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -333,7 +333,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           Content={(props) => (
             <ModalContent verticalGap {...props}>
               <ScreenSection>
-                <BottomModalScreenTitle>{t('Be careful!')} 🕵️‍♀️</BottomModalScreenTitle>
+                <ModalScreenTitle>{t('Be careful!')} 🕵️‍♀️</ModalScreenTitle>
               </ScreenSection>
               <ScreenSection>
                 <AppText color="secondary" size={18}>
