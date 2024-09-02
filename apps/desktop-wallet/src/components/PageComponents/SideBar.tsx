@@ -18,14 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion } from 'framer-motion'
 import { Settings } from 'lucide-react'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Button from '@/components/Button'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
-import ModalPortal from '@/modals/ModalPortal'
-import SettingsModal from '@/modals/SettingsModal'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch } from '@/hooks/redux'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
 
 interface SideBarProps {
@@ -35,8 +34,9 @@ interface SideBarProps {
 
 const SideBar: FC<SideBarProps> = ({ animateEntry, className, children }) => {
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
+  const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: {} }))
 
   return (
     <motion.div
@@ -52,16 +52,13 @@ const SideBar: FC<SideBarProps> = ({ animateEntry, className, children }) => {
           transparent
           squared
           role="secondary"
-          onClick={() => setIsSettingsModalOpen(true)}
+          onClick={openSettingsModal}
           aria-label={t('Settings')}
           Icon={Settings}
           data-tooltip-id="sidenav"
           data-tooltip-content={t('Settings')}
         />
       </BottomButtons>
-      <ModalPortal>
-        {isSettingsModalOpen && <SettingsModal onClose={() => setIsSettingsModalOpen(false)} />}
-      </ModalPortal>
     </motion.div>
   )
 }
