@@ -27,6 +27,7 @@ import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import ReceiveModal from '@/modals/ReceiveModal'
 import SettingsModal from '@/modals/SettingsModal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
+import WalletConnectModal from '@/modals/WalletConnectModal'
 
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
@@ -49,6 +50,8 @@ const AppModals = () => {
             return <SettingsModal id={modal.id} key={modal.id} {...modal.params.props} />
           case 'ReceiveModal':
             return <ReceiveModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'WalletConnectModal':
+            return <WalletConnectModal id={modal.id} key={modal.id} />
         }
       })}
     </AnimatePresence>
