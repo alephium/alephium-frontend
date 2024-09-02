@@ -30,7 +30,6 @@ import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
-import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import WalletRemovalModal from '@/modals/WalletRemovalModal'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { activeWalletDeleted, walletDeleted } from '@/storage/wallets/walletActions'
@@ -46,7 +45,6 @@ const WalletsSettingsSection = () => {
   const { isWalletUnlocked, lockWallet } = useWalletLock()
 
   const [walletToRemove, setWalletToRemove] = useState<StoredEncryptedWallet | ActiveWallet>()
-  const [isEditWalletNameModalOpen, setIsEditWalletNameModalOpen] = useState(false)
 
   const handleRemoveWallet = (walletId: string) => {
     walletStorage.delete(walletId)
@@ -61,6 +59,7 @@ const WalletsSettingsSection = () => {
 
   const openSecretPhraseModal = () => dispatch(openModal({ name: 'SecretPhraseModal' }))
   const openWalletQRCodeExportModal = () => dispatch(openModal({ name: 'WalletQRCodeExportModal' }))
+  const openEditWalletNameModal = () => dispatch(openModal({ name: 'EditWalletNameModal' }))
 
   return (
     <>
@@ -93,7 +92,7 @@ const WalletsSettingsSection = () => {
                 role="secondary"
                 transparent
                 borderless
-                onClick={() => setIsEditWalletNameModalOpen(true)}
+                onClick={openEditWalletNameModal}
               >
                 <Pencil size={15} />
               </Button>
@@ -137,7 +136,6 @@ const WalletsSettingsSection = () => {
         </CurrentWalletSection>
       )}
       <ModalPortal>
-        {isEditWalletNameModalOpen && <EditWalletNameModal onClose={() => setIsEditWalletNameModalOpen(false)} />}
         {walletToRemove && (
           <WalletRemovalModal
             walletName={walletToRemove.name}
