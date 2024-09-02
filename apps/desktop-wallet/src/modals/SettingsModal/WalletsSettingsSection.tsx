@@ -26,10 +26,10 @@ import CheckMark from '@/components/CheckMark'
 import InfoBox from '@/components/InfoBox'
 import { BoxContainer, Section } from '@/components/PageComponents/PageContainers'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
-import SecretPhraseModal from '@/modals/SecretPhraseModal'
 import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
 import WalletRemovalModal from '@/modals/WalletRemovalModal'
@@ -47,7 +47,6 @@ const WalletsSettingsSection = () => {
   const { isWalletUnlocked, lockWallet } = useWalletLock()
 
   const [walletToRemove, setWalletToRemove] = useState<StoredEncryptedWallet | ActiveWallet>()
-  const [isDisplayingSecretModal, setIsDisplayingSecretModal] = useState(false)
   const [isQRCodeModalVisible, setIsQRCodeModalVisible] = useState(false)
   const [isEditWalletNameModalOpen, setIsEditWalletNameModalOpen] = useState(false)
 
@@ -61,6 +60,8 @@ const WalletsSettingsSection = () => {
   }
 
   const handleLockCurrentWalletClick = () => lockWallet('settings')
+
+  const openSecretPhraseModal = () => dispatch(openModal({ name: 'SecretPhraseModal' }))
 
   return (
     <>
@@ -119,7 +120,7 @@ const WalletsSettingsSection = () => {
               </Button>
             </ButtonTooltipWrapper>
 
-            <Button role="secondary" variant="alert" onClick={() => setIsDisplayingSecretModal(true)}>
+            <Button role="secondary" variant="alert" onClick={openSecretPhraseModal}>
               {t('Show your secret recovery phrase')}
             </Button>
 
@@ -141,7 +142,6 @@ const WalletsSettingsSection = () => {
         </CurrentWalletSection>
       )}
       <ModalPortal>
-        {isDisplayingSecretModal && <SecretPhraseModal onClose={() => setIsDisplayingSecretModal(false)} />}
         {isQRCodeModalVisible && <WalletQRCodeExportModal onClose={() => setIsQRCodeModalVisible(false)} />}
         {isEditWalletNameModalOpen && <EditWalletNameModal onClose={() => setIsEditWalletNameModalOpen(false)} />}
         {walletToRemove && (
