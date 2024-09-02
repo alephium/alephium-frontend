@@ -241,6 +241,34 @@ describe(validateAndRepareStoredWalletData, () => {
     expect(result).toBe(true)
   })
 
+  it('should show correct wallet metadata restore message', async () => {
+    mockedGetItemAsync.mockResolvedValueOnce(testWalletMnemonicStored) // mock stored mnemonic
+    mockedGetItemAsync.mockResolvedValueOnce('mocked-timestamp') // mock stored app-installed-on-persistent
+
+    let result = await validateAndRepareStoredWalletData(mockCallback)
+
+    expect(mockedGetItemAsync).toHaveBeenCalledTimes(2)
+    expect(mockedGetItemAsync.mock.calls[0][0]).toBe('wallet-mnemonic-v2')
+    expect(mockedGetItemAsync.mock.calls[1][0]).toBe('app-installed-on-persistent')
+
+    expect(result).toBe(false)
+    expect(spyAlert).toHaveBeenCalled()
+    expect(spyAlert.mock.calls[0][1]).toContain('We noticed that you deleted the app')
+
+    mockedGetItemAsync.mockResolvedValueOnce(testWalletMnemonicStored) // mock stored mnemonic
+    mockedGetItemAsync.mockResolvedValueOnce(null) // mock stored app-installed-on-persistent
+
+    result = await validateAndRepareStoredWalletData(mockCallback)
+
+    expect(mockedGetItemAsync).toHaveBeenCalledTimes(4)
+    expect(mockedGetItemAsync.mock.calls[2][0]).toBe('wallet-mnemonic-v2')
+    expect(mockedGetItemAsync.mock.calls[3][0]).toBe('app-installed-on-persistent')
+
+    expect(result).toBe(false)
+    expect(spyAlert).toHaveBeenCalled()
+    expect(spyAlert.mock.calls[1][1]).toContain("some of your app's data are missing")
+  })
+
   it('should try to recreate metadata if missing, but mnemonic is there', async () => {
     mockedGetItemAsync.mockResolvedValueOnce(testWalletMnemonicStored) // mock stored mnemonic
     mockedGetItemAsync.mockResolvedValueOnce('mocked-timestamp') // mock stored app-installed-on-persistent
