@@ -797,8 +797,8 @@ importers:
         specifier: ~0.19.6
         version: 0.19.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-native-webview:
-        specifier: ^13.10.4
-        version: 13.10.4(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.23.8(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.2.0))(react@18.2.0)
+        specifier: ^13.12.0
+        version: 13.12.0(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.23.8(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.2.0))(react@18.2.0)
       react-qr-code:
         specifier: ^2.0.7
         version: 2.0.12(react-native-svg@15.2.0(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.23.8(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.2.0))(react@18.2.0))(react@18.2.0)
@@ -9405,8 +9405,8 @@ packages:
       react: ^18.0.0
       react-dom: ^18.0.0
 
-  react-native-webview@13.10.4:
-    resolution: {integrity: sha512-kRn70M7vyBS3IDaX2KqyF66ovUkrBS6LiHOgrEmRdZFO0i3hYY0wldEv1fJuKvgQIPMfo7GtGAjozFrk2vQdBw==}
+  react-native-webview@13.12.0:
+    resolution: {integrity: sha512-4Dg2BiUfbfePAWUzIgB7yZjEQR3u9MxgxeR0sj1E/i7AKWhRfl/WHscXIgejrv6sEieVrEzq+iJlNb0O7Zra4Q==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -23456,9 +23456,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  react-native-webview@13.10.4(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.23.8(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.2.0))(react@18.2.0):
+  react-native-webview@13.12.0(react-native@0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.23.8(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.2.0))(react@18.2.0):
     dependencies:
-      escape-string-regexp: 2.0.0
+      escape-string-regexp: 4.0.0
       invariant: 2.2.4
       react: 18.2.0
       react-native: 0.74.2(@babel/core@7.24.7)(@babel/preset-env@7.23.8(@babel/core@7.24.7))(@types/react@18.2.79)(react@18.2.0)

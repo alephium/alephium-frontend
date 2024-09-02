@@ -86,6 +86,7 @@ const BuyModal = (props: BuyModalProps) => {
     // Close modal if url equals default return URL configured in Banxa dashboard
     if (e.url.includes('alephium.org')) {
       navigation.navigate('ActivityScreen')
+      setCurrentUrl(banxaInitialURL)
       props.onClose()
     } else {
       setCurrentUrl(e.url)
