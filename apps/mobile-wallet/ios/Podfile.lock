@@ -1293,7 +1293,7 @@ PODS:
     - React-Core
   - react-native-background-timer (2.4.1):
     - React-Core
-  - react-native-compat (2.13.3):
+  - react-native-compat (2.15.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1364,7 +1364,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-webview (13.12.0):
+  - react-native-webview (13.10.4):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2104,13 +2104,13 @@ SPEC CHECKSUMS:
   react-native-aes: c75c46aa744bef7c2415fdf7f5b2dcb75ca4364d
   react-native-background-actions: ecffd3f0864140ef6cf21c29be6819a02b531a52
   react-native-background-timer: 17ea5e06803401a379ebf1f20505b793ac44d0fe
-  react-native-compat: 0767233bce5123adae8d0338ce121147f195cbd9
+  react-native-compat: 408a4b320fa4426f2c25ab74ed5764be6b3eb5aa
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-pager-view: c1e29e1a6105a02807392ba822ad322447a72f55
   react-native-safe-area-context: dcab599c527c2d7de2d76507a523d20a0b83823d
   react-native-skia: 4857f8a85d0e4fc152c7b8aff4fbcc7573be1cf9
-  react-native-webview: d318ee67196d938d985dd3e3e6cce780b0d084bf
+  react-native-webview: 596fb33d67a3cde5a74bf1f6b4c28d3543477fdd
   React-nativeconfig: 9f223cd321823afdecf59ed00861ab2d69ee0fc1
   React-NativeModulesApple: ff7efaff7098639db5631236cfd91d60abff04c0
   React-perflogger: 32ed45d9cee02cf6639acae34251590dccd30994
