@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createHash } from '@alephium/shared-crypto'
 import dayjs from 'dayjs'
-import { Children, Fragment, isValidElement, KeyboardEvent, ReactNode } from 'react'
+import { Children, Fragment, isValidElement, KeyboardEvent, memo, ReactElement, ReactNode } from 'react'
 
 import { AlephiumWindow } from '@/types/window'
 
@@ -121,3 +121,18 @@ export const validateChildrenType = <T extends (props: any) => ReactNode>({
 }
 
 export const isDefined = <T>(item: T | undefined): item is T => !!item
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const isElementMemoized = <P>(element: ReactElement<P>): boolean => {
+  if (!isValidElement(element)) return false
+  const elementType = element.type as unknown as { $$typeof?: symbol }
+  return (
+    !!elementType.$$typeof && elementType.$$typeof === (memo(() => null) as unknown as { $$typeof: symbol }).$$typeof
+  )
+}
+
+export const getElementName = <P>(element: ReactElement<P>): string => {
+  const elementType = element.type as React.ComponentType<P>
+  return elementType.displayName || elementType.name || 'Component'
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
