@@ -16,7 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { getElementName, isElementMemoized } from '@alephium/shared-react'
 import { AnimatePresence } from 'framer-motion'
+import { Children, isValidElement, ReactNode, useEffect } from 'react'
 
 import { selectAllModals } from '@/features/modals/modalSelectors'
 import { useAppSelector } from '@/hooks/redux'
@@ -39,8 +41,10 @@ import AdvancedOperationsSideModal from '@/pages/UnlockedWallet/AddressesPage/Ad
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
 
+  if (openedModals.length === 0) return null
+
   return (
-    <AnimatePresence>
+    <AnimatePresenceModalWrapper>
       {openedModals.map((modal) => {
         switch (modal.params.name) {
           case 'AddressDetailsModal':
@@ -75,8 +79,20 @@ const AppModals = () => {
             return <ContactFormModal id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
-    </AnimatePresence>
+    </AnimatePresenceModalWrapper>
   )
 }
 
 export default AppModals
+
+const AnimatePresenceModalWrapper = ({ children }: { children: ReactNode }) => {
+  useEffect(() => {
+    Children.forEach(children, (child) => {
+      if (isValidElement(child) && !isElementMemoized(child)) {
+        console.warn(`Warning: ${getElementName(child)} is not memoized! Please wrap it with React.memo().`)
+      }
+    })
+  }, [children])
+
+  return <AnimatePresence>{children}</AnimatePresence>
+}
