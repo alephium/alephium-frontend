@@ -21,8 +21,8 @@ import { useTranslation } from 'react-i18next'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
 
 interface BiometricsWarningModalProps extends ModalContentProps {
   onConfirm: () => void
