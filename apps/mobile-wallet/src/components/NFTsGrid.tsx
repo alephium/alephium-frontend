@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, NFT } from '@alephium/shared'
 import { FlashList } from '@shopify/flash-list'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, Dimensions } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -44,6 +45,7 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3 }: NFTs
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
   const theme = useTheme()
+  const { t } = useTranslation()
 
   const data = nftsProp ?? nfts
   const columns = nftsPerRow
@@ -71,7 +73,7 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3 }: NFTs
               <ActivityIndicator />
             </>
           ) : (
-            <AppText color={theme.font.tertiary}>t('No NFTs yet') 🖼️</AppText>
+            <AppText color={theme.font.tertiary}>{t('No NFTs yet')} 🖼️</AppText>
           )}
         </NoNFTsMessage>
       }
