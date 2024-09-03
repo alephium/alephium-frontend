@@ -35,7 +35,8 @@ const initialState: WalletState = {
   id: '',
   name: '',
   isMnemonicBackedUp: undefined,
-  isUnlocked: false
+  isUnlocked: false,
+  metadataRestored: false
 }
 
 const resetState = () => initialState
@@ -46,6 +47,9 @@ const walletSlice = createSlice({
   reducers: {
     mnemonicBackedUp: (state) => {
       state.isMnemonicBackedUp = true
+    },
+    metadataRestored: (state) => {
+      state.metadataRestored = true
     }
   },
   extraReducers: (builder) => {
@@ -72,6 +76,6 @@ const walletSlice = createSlice({
   }
 })
 
-export const { mnemonicBackedUp } = walletSlice.actions
+export const { mnemonicBackedUp, metadataRestored } = walletSlice.actions
 
 export default walletSlice

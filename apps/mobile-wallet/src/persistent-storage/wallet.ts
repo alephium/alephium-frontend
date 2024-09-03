@@ -59,7 +59,9 @@ const MNEMONIC_V2 = 'wallet-mnemonic-v2'
 const ADDRESS_PUB_KEY_PREFIX = 'address-pub-key-'
 const ADDRESS_PRIV_KEY_PREFIX = 'address-priv-key-'
 
-export const validateAndRepareStoredWalletData = async (onUserConfirm: () => void): Promise<boolean> => {
+export const validateAndRepareStoredWalletData = async (
+  onUserConfirm: () => void
+): Promise<'valid' | 'invalid' | 'awaiting-user-confirmation'> => {
   let walletMetadata = await getWalletMetadata(false)
   let mnemonicV2Exists
   let appWasUninstalled
@@ -79,7 +81,7 @@ export const validateAndRepareStoredWalletData = async (onUserConfirm: () => voi
   if (mnemonicV2Exists) {
     if (walletMetadata) {
       // If we have both mnemonic and metadata available, then all good
-      return true
+      return 'valid'
     } else {
       // If we have mnemonic but missing metadata, we try to recreate them with sane defaults
       Alert.alert(
@@ -106,9 +108,7 @@ export const validateAndRepareStoredWalletData = async (onUserConfirm: () => voi
               if (walletMetadata) {
                 showToast({
                   text1: i18n.t('App data were reset'),
-                  text2: i18n.t('You might want to scan for active addresses in the settings.'),
-                  type: 'success',
-                  autoHide: false
+                  type: 'success'
                 })
                 sendAnalytics({ event: 'Recreated missing wallet metadata for existing wallet' })
 
@@ -130,7 +130,7 @@ export const validateAndRepareStoredWalletData = async (onUserConfirm: () => voi
         ]
       )
 
-      return false
+      return 'awaiting-user-confirmation'
     }
   } else {
     let deprecatedWalletExists
@@ -144,7 +144,7 @@ export const validateAndRepareStoredWalletData = async (onUserConfirm: () => voi
     if (deprecatedWalletExists) {
       if (walletMetadata) {
         // If we have no mnemonic, but we have a deprecated one with metadata, all good, the pin/bio flow will migrate
-        return true
+        return 'valid'
       } else {
         // If we only have a deprecated mnemonic but no metadata we recreate deprecated metadata with sane defaults and
         // the migration flow will migrate both mnemonic and metadata
@@ -163,15 +163,15 @@ export const validateAndRepareStoredWalletData = async (onUserConfirm: () => voi
             contacts: []
           })
 
-          return true
+          return 'valid'
         } catch {
-          return false
+          return 'invalid'
         }
       }
     } else {
       if (!walletMetadata) {
         // If we have no mnemonic, no deprecated mnemonic, and no metadata, all good, fresh install
-        return true
+        return 'valid'
       } else {
         // If we have metadata but no mnemonic and no deprecated mnemonic, we should delete the metadata
         try {
@@ -181,7 +181,7 @@ export const validateAndRepareStoredWalletData = async (onUserConfirm: () => voi
         }
 
         if (!walletMetadata) {
-          return true
+          return 'valid'
         } else {
           // This should never happen. Could not delete metadata and we don't have any mnemonic, we can't unlock
           showToast({
@@ -192,7 +192,7 @@ export const validateAndRepareStoredWalletData = async (onUserConfirm: () => voi
           })
           sendAnalytics({ type: 'error', message: 'Could not find mnemonic for existing wallet metadata' })
 
-          return false
+          return 'invalid'
         }
       }
     }
