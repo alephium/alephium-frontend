@@ -22,7 +22,7 @@ import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { Platform, StyleSheet } from 'react-native'
+import { Platform, StyleSheet, View } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -136,6 +136,15 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     >
       <AnimatedCirclesBackground scrollY={screenScrollY} />
       <WalletCard style={{ marginTop: insets.top }}>
+        {Platform.OS === 'android' ? (
+          <View style={StyleSheet.absoluteFill} />
+        ) : (
+          <BlurView
+            style={StyleSheet.absoluteFill}
+            intensity={80}
+            tint={theme.name === 'dark' ? 'systemThickMaterialDark' : 'systemThickMaterialLight'}
+          />
+        )}
         <WalletCardHeader>
           <HeaderButtons />
         </WalletCardHeader>
@@ -153,15 +162,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               short
             />
           </ButtonsRowContainer>
-        )}
-        {Platform.OS === 'android' ? (
-          <View style={StyleSheet.absoluteFill} />
-        ) : (
-          <BlurView
-            style={StyleSheet.absoluteFill}
-            intensity={80}
-            tint={theme.name === 'dark' ? 'systemThickMaterialDark' : 'systemThickMaterialLight'}
-          />
         )}
       </WalletCard>
       <AddressesTokensList />
