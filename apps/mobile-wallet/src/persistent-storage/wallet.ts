@@ -60,7 +60,7 @@ const ADDRESS_PUB_KEY_PREFIX = 'address-pub-key-'
 const ADDRESS_PRIV_KEY_PREFIX = 'address-priv-key-'
 
 export const validateAndRepareStoredWalletData = async (
-  onUserConfirm: () => void
+  onUserConfirm: (userChoseYes: boolean) => void
 ): Promise<'valid' | 'invalid' | 'awaiting-user-confirmation'> => {
   let walletMetadata = await getWalletMetadata(false)
   let mnemonicV2Exists
@@ -94,7 +94,7 @@ export const validateAndRepareStoredWalletData = async (
         [
           {
             text: i18n.t('No'),
-            onPress: onUserConfirm
+            onPress: () => onUserConfirm(false)
           },
           {
             text: i18n.t('Yes'),
@@ -112,7 +112,7 @@ export const validateAndRepareStoredWalletData = async (
                 })
                 sendAnalytics({ event: 'Recreated missing wallet metadata for existing wallet' })
 
-                onUserConfirm()
+                onUserConfirm(true)
               } else {
                 showToast({
                   text1: i18n.t('Could not unlock app'),

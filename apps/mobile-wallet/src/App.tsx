@@ -90,8 +90,8 @@ const App = () => {
 const useShowAppContentAfterValidatingStoredWalletData = () => {
   const [state, setState] = useState({ showAppContent: false, wasMetadataRestored: false })
 
-  const onUserConfirm = useCallback(() => {
-    setState({ showAppContent: true, wasMetadataRestored: true })
+  const onUserConfirm = useCallback((userChoseYes: boolean) => {
+    setState({ showAppContent: true, wasMetadataRestored: userChoseYes })
     store.dispatch(metadataRestored())
   }, [])
 
