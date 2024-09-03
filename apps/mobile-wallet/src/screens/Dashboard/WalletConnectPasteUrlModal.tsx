@@ -23,10 +23,10 @@ import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
 import { showToast } from '~/utils/layout'
 
 const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
