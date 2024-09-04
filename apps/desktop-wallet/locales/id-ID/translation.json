@@ -100,7 +100,7 @@
   "Encountered error while exporting your transactions.": "Mengalami kesalahan saat mengekspor transaksi Anda.",
   "Enter": "Masuk",
   "Enter password": "Ketikan kata sandi",
-  "Enter password for \"{{ switchToWalletName }}\"": "Masukkan kata sandi untuk \"{{ switchToWalletName }}\"",
+  "Enter password for \"{{ walletName }}\"": "Masukkan kata sandi untuk \"{{ walletName }}\"",
   "Enter your password to copy the private key.": "Masukkan kata sandi Anda untuk menyalin kunci pribadi tersebut.",
   "Enter your password to send the transaction.": "Masukkan kata sandi Anda untuk mengirim transaksi.",
   "Error while building transaction": "Kesalahan saat membuat transaksi",

@@ -116,7 +116,7 @@
   "Encountered error while syncing your addresses' data.": "Erreur lors de la synchronisation des données de vos adresses.",
   "Enter": "Entrer",
   "Enter password": "Entrez le mot de passe",
-  "Enter password for \"{{ switchToWalletName }}\"": "Entrez un mot de passe pour \"{{ switchToWalletName }}\"",
+  "Enter password for \"{{ walletName }}\"": "Entrez un mot de passe pour \"{{ walletName }}\"",
   "Enter your password to copy the private key.": "Entrez votre mot de passe afin de copier la clé privée.",
   "Enter your password to send the transaction.": "Entrez votre mot de passe pour envoyer la transaction.",
   "Error while building transaction": "Erreur lors de la construction de la transaction",
