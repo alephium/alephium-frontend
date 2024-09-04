@@ -116,7 +116,7 @@
   "Encountered error while syncing your addresses' data.": "Παρουσιάστηκε σφάλμα κατά τον συγχρονισμό των δεδομένων των διευθύνσεών σας.",
   "Enter": "Είσοδος",
   "Enter password": "Εισαγωγή συνθηματικού",
-  "Enter password for \"{{ switchToWalletName }}\"": "Εισάγετε κωδικό πρόσβασης για το \"{{ switchToWalletName }}\"",
+  "Enter password for \"{{ walletName }}\"": "Εισάγετε κωδικό πρόσβασης για το \"{{ walletName }}\"",
   "Enter your password to copy the private key.": "Εισάγετε τον κωδικό σας για την αντιγραφή του ιδιωτικού κλειδιού.",
   "Enter your password to send the transaction.": "Εισάγετε τον κωδικό πρόσβασής σας για να στείλετε τη συναλλαγή.",
   "Error while building transaction": "Σφάλμα κατά τη δημιουργία συναλλαγής",

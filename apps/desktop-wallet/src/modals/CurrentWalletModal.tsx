@@ -24,26 +24,27 @@ import styled from 'styled-components'
 
 import { fadeInOutScaleFast } from '@/animations'
 import Button from '@/components/Button'
-import WalletSwitcher from '@/components/WalletSwitcher'
-import { closeModal } from '@/features/modals/modalActions'
+import InfoBox from '@/components/InfoBox'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
-import { useAppDispatch } from '@/hooks/redux'
+import WalletSelect from '@/features/switch-wallet/WalletSelect'
+import { useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import ModalContainer from '@/modals/ModalContainer'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
 
-const NotificationsModal = memo(({ id }: ModalBaseProp) => {
+const CurrentWalletModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
   const { lockWallet } = useWalletLock()
-  const dispatch = useAppDispatch()
-
-  const onClose = () => dispatch(closeModal({ id }))
+  const numberOfWallets = useAppSelector((s) => s.global.wallets.length)
+  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
 
   return (
     <ModalContainer id={id}>
       <NotificationsBox role="dialog" {...fadeInOutScaleFast}>
         <h2>{t('Current wallet')}</h2>
-        <WalletSwitcher onUnlock={onClose} />
+
+        {numberOfWallets === 1 ? <InfoBox text={activeWalletName} /> : <WalletSelect />}
+
         <Button onClick={() => lockWallet('notifications')} wide transparent Icon={Lock}>
           {t('Lock wallet')}
         </Button>
@@ -52,7 +53,7 @@ const NotificationsModal = memo(({ id }: ModalBaseProp) => {
   )
 })
 
-export default NotificationsModal
+export default CurrentWalletModal
 
 const NotificationsBox = styled(motion.div)`
   display: flex;

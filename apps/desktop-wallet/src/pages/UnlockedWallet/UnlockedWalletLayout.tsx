@@ -62,7 +62,7 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
   const [fullWalletNameVisible, setFullWalletNameVisible] = useState(true)
   const [showAlephiumLogo, setShowAlephiumLogo] = useState(false)
 
-  const openNotificationsModal = () => dispatch(openModal({ name: 'NotificationsModal' }))
+  const openCurrentWalletModal = () => dispatch(openModal({ name: 'CurrentWalletModal' }))
 
   useInterval(() => {
     setShowAlephiumLogo(true)
@@ -123,8 +123,8 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
           )}
         </AnimatePresence>
         <CurrentWalletInitials
-          onClick={openNotificationsModal}
-          onKeyDown={(e) => onEnterOrSpace(e, openNotificationsModal)}
+          onClick={openCurrentWalletModal}
+          onKeyDown={(e) => onEnterOrSpace(e, openCurrentWalletModal)}
           initial={{ opacity: 0, x: 100 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: walletNameHideAfterSeconds, type: 'spring', stiffness: 500, damping: 70 }}
