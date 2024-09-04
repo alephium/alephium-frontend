@@ -232,39 +232,39 @@ describe(deleteWallet, () => {
 })
 
 describe(validateAndRepareStoredWalletData, () => {
-  it('should return true if we have a mnemonic and metadata', async () => {
+  it('should be valid if we have a mnemonic and metadata', async () => {
     mockedGetItemAsync.mockResolvedValueOnce(testWalletMnemonicStored)
     await addTestWalletMetadataInStorage()
 
-    const result = await validateAndRepareStoredWalletData(mockCallback)
+    const status = await validateAndRepareStoredWalletData(mockCallback)
 
-    expect(result).toBe(true)
+    expect(status === 'valid').toBe(true)
   })
 
   it('should show correct wallet metadata restore message', async () => {
     mockedGetItemAsync.mockResolvedValueOnce(testWalletMnemonicStored) // mock stored mnemonic
     mockedGetItemAsync.mockResolvedValueOnce('mocked-timestamp') // mock stored app-installed-on-persistent
 
-    let result = await validateAndRepareStoredWalletData(mockCallback)
+    let status = await validateAndRepareStoredWalletData(mockCallback)
 
     expect(mockedGetItemAsync).toHaveBeenCalledTimes(2)
     expect(mockedGetItemAsync.mock.calls[0][0]).toBe('wallet-mnemonic-v2')
     expect(mockedGetItemAsync.mock.calls[1][0]).toBe('app-installed-on-persistent')
 
-    expect(result).toBe(false)
+    expect(status === 'awaiting-user-confirmation').toBe(true)
     expect(spyAlert).toHaveBeenCalled()
     expect(spyAlert.mock.calls[0][1]).toContain('We noticed that you deleted the app')
 
     mockedGetItemAsync.mockResolvedValueOnce(testWalletMnemonicStored) // mock stored mnemonic
     mockedGetItemAsync.mockResolvedValueOnce(null) // mock stored app-installed-on-persistent
 
-    result = await validateAndRepareStoredWalletData(mockCallback)
+    status = await validateAndRepareStoredWalletData(mockCallback)
 
     expect(mockedGetItemAsync).toHaveBeenCalledTimes(4)
     expect(mockedGetItemAsync.mock.calls[2][0]).toBe('wallet-mnemonic-v2')
     expect(mockedGetItemAsync.mock.calls[3][0]).toBe('app-installed-on-persistent')
 
-    expect(result).toBe(false)
+    expect(status === 'awaiting-user-confirmation').toBe(true)
     expect(spyAlert).toHaveBeenCalled()
     expect(spyAlert.mock.calls[1][1]).toContain("some of your app's data are missing")
   })
@@ -273,13 +273,13 @@ describe(validateAndRepareStoredWalletData, () => {
     mockedGetItemAsync.mockResolvedValueOnce(testWalletMnemonicStored) // mock stored mnemonic
     mockedGetItemAsync.mockResolvedValueOnce('mocked-timestamp') // mock stored app-installed-on-persistent
 
-    const result = await validateAndRepareStoredWalletData(mockCallback)
+    const status = await validateAndRepareStoredWalletData(mockCallback)
 
     expect(mockedGetItemAsync).toHaveBeenCalledTimes(2)
     expect(mockedGetItemAsync.mock.calls[0][0]).toBe('wallet-mnemonic-v2')
     expect(mockedGetItemAsync.mock.calls[1][0]).toBe('app-installed-on-persistent')
 
-    expect(result).toBe(false)
+    expect(status === 'awaiting-user-confirmation').toBe(true)
     expect(spyAlert).toHaveBeenCalled()
 
     const alertButtons = spyAlert.mock.calls[0][2]
@@ -320,7 +320,7 @@ describe(validateAndRepareStoredWalletData, () => {
     mockedGetItemAsync.mockResolvedValueOnce('mocked-timestamp') // mock stored app-installed-on-persistent
     mockedGetItemAsync.mockResolvedValueOnce('pinencryptedmnemonic') // mock stored pin encrypted deprecated mnemonic
 
-    const result = await validateAndRepareStoredWalletData(mockCallback)
+    const status = await validateAndRepareStoredWalletData(mockCallback)
 
     expect(mockedGetItemAsync).toHaveBeenCalledTimes(3)
     expect(mockedGetItemAsync.mock.calls[0][0]).toBe('wallet-mnemonic-v2')
@@ -332,7 +332,7 @@ describe(validateAndRepareStoredWalletData, () => {
     expect(recreatedDeprecatedWalletMetadata).toBeTruthy()
     expect(recreatedDeprecatedWalletMetadata?.addresses.length).toBe(1)
     expect(recreatedDeprecatedWalletMetadata?.addresses[0].hash).toBeUndefined() // ensure it's deprecated metadata
-    expect(result).toBe(true)
+    expect(status === 'valid').toBe(true)
   })
 
   it('should delete metadata if no mnemonic and no deprecated mnemonic is found', async () => {
@@ -341,7 +341,7 @@ describe(validateAndRepareStoredWalletData, () => {
     mockedGetItemAsync.mockResolvedValueOnce(null) // mock missing deprecated mnemonic
     await addTestWalletMetadataInStorage()
 
-    const result = await validateAndRepareStoredWalletData(mockCallback)
+    const status = await validateAndRepareStoredWalletData(mockCallback)
 
     expect(mockedGetItemAsync).toHaveBeenCalledTimes(3)
     expect(mockedGetItemAsync.mock.calls[0][0]).toBe('wallet-mnemonic-v2')
@@ -351,21 +351,21 @@ describe(validateAndRepareStoredWalletData, () => {
     const walletMetadata = await getWalletMetadata()
 
     expect(walletMetadata).toBeNull()
-    expect(result).toBe(true)
+    expect(status === 'valid').toBe(true)
   })
 
-  it('should return true if no mnemonics and no metadata are found', async () => {
+  it('should be valid if no mnemonics and no metadata are found', async () => {
     mockedGetItemAsync.mockResolvedValueOnce(null) // mock missing mnemonic
     mockedGetItemAsync.mockResolvedValueOnce(null) // mock stored app-installed-on-persistent
     mockedGetItemAsync.mockResolvedValueOnce(null) // mock missing deprecated mnemonic
 
-    const result = await validateAndRepareStoredWalletData(mockCallback)
+    const status = await validateAndRepareStoredWalletData(mockCallback)
 
     expect(mockedGetItemAsync).toHaveBeenCalledTimes(3)
     expect(mockedGetItemAsync.mock.calls[0][0]).toBe('wallet-mnemonic-v2')
     expect(mockedGetItemAsync.mock.calls[1][0]).toBe('app-installed-on-persistent')
     expect(mockedGetItemAsync.mock.calls[2][0]).toBe('wallet-pin')
 
-    expect(result).toBe(true)
+    expect(status === 'valid').toBe(true)
   })
 })

@@ -46,6 +46,7 @@ export interface WalletStoredState {
 
 export interface WalletState extends WalletStoredState {
   isUnlocked: boolean
+  metadataRestored: boolean
 }
 
 export interface DeprecatedWalletState extends WalletState {

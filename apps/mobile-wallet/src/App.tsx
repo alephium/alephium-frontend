@@ -53,12 +53,13 @@ import {
 import { store } from '~/store/store'
 import { selectTransactionUnknownTokenIds } from '~/store/transactions/transactionSelectors'
 import { appLaunchedWithLastUsedWallet } from '~/store/wallet/walletActions'
+import { metadataRestored } from '~/store/wallet/walletSlice'
 import { themes } from '~/style/themes'
 
 SplashScreen.preventAutoHideAsync()
 
 const App = () => {
-  const showAppContent = useShowAppContentAfterValidatingStoredWalletData()
+  const { showAppContent, wasMetadataRestored } = useShowAppContentAfterValidatingStoredWalletData()
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
 
   useEffect(
@@ -74,7 +75,11 @@ const App = () => {
       <Main>
         <ThemeProvider theme={theme}>
           <StatusBar animated translucent style="light" />
-          {showAppContent && <RootStackNavigation />}
+          {showAppContent && (
+            <RootStackNavigation
+              initialRouteName={wasMetadataRestored ? 'ImportWalletAddressDiscoveryScreen' : undefined}
+            />
+          )}
           <ToastAnchor />
         </ThemeProvider>
       </Main>
@@ -83,11 +88,14 @@ const App = () => {
 }
 
 const useShowAppContentAfterValidatingStoredWalletData = () => {
-  const [showAppContent, setShowAppContent] = useState(false)
+  const [state, setState] = useState({ showAppContent: false, wasMetadataRestored: false })
 
-  const onUserConfirm = useCallback(() => setShowAppContent(true), [])
+  const onUserConfirm = useCallback((userChoseYes: boolean) => {
+    setState({ showAppContent: true, wasMetadataRestored: userChoseYes })
+    store.dispatch(metadataRestored())
+  }, [])
 
-  const { data: isStoredWalletDataValid, isLoading: isValidatingStoredWalletData } = useAsyncData(
+  const { data: validationStatus, isLoading: isValidatingStoredWalletData } = useAsyncData(
     useCallback(() => validateAndRepareStoredWalletData(onUserConfirm), [onUserConfirm])
   )
 
@@ -96,10 +104,10 @@ const useShowAppContentAfterValidatingStoredWalletData = () => {
   }, [isValidatingStoredWalletData])
 
   useEffect(() => {
-    if (isStoredWalletDataValid !== undefined) setShowAppContent(isStoredWalletDataValid)
-  }, [isStoredWalletDataValid])
+    if (validationStatus === 'valid') setState({ showAppContent: true, wasMetadataRestored: false })
+  }, [validationStatus])
 
-  return showAppContent
+  return state
 }
 
 const Main = ({ children, ...props }: ViewProps) => {

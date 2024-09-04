@@ -372,5 +372,6 @@
   "We noticed that you deleted the app, would you like to restore your last wallet?": "We noticed that you deleted the app, would you like to restore your last wallet?",
   "Yes": "Yes",
   "No": "No",
-  "You might want to scan for active addresses in the settings.": "You might want to scan for active addresses in the settings."
+  "Welcome back to Alephium!": "Welcome back to Alephium!",
+  "Enjoy your restored wallet!": "Enjoy your restored wallet!"
 }
