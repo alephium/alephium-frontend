@@ -452,5 +452,6 @@
   "Copy ID": "Copiar ID",
   "To delete this wallet use it without a passphrase": "Para excluir essa carteira, use-a sem uma senha",
   "To export this wallet use it without a passphrase": "Para exportar esta carteira use-a sem uma frase-senha",
-  "The proposal does not include a list of required chains": "A proposta não inclui uma lista de cadeias necessárias"
+  "The proposal does not include a list of required chains": "A proposta não inclui uma lista de cadeias necessárias",
+  "All UTXOs are already consolidated for this address. No consolidation is needed.": "Todas as UTXOs já estão consolidadas para este endereço. Nenhuma consolidação é necessária."
 }
