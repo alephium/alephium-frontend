@@ -16,11 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export type Language = 'en-US' | 'fr-FR' | 'el-GR' | 'vi-VN'
+export type Language = 'en-US' | 'fr-FR' | 'el-GR' | 'vi-VN' | 'pt-PT'
 
 export const languageOptions: { label: string; value: Language }[] = [
   { label: 'English', value: 'en-US' },
   { label: 'Français', value: 'fr-FR' },
   { label: 'Ελληνικά', value: 'el-GR' },
-  { label: 'Tiếng Việt', value: 'vi-VN' }
+  { label: 'Tiếng Việt', value: 'vi-VN' },
+  { label: 'Português', value: 'pt-PT' }
 ]
