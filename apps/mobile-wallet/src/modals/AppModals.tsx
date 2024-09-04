@@ -30,7 +30,7 @@ const AppModals = () => {
       {openedModals.map((modal) => {
         switch (modal.params.name) {
           case 'BuyModal':
-            return <BuyModal id={modal.id} key={modal.id} {...modal.params.props} />
+            return <BuyModal id={modal.id} key={modal.id} />
         }
       })}
     </ModalsContainer>
