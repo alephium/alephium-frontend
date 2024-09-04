@@ -116,7 +116,7 @@
   "Encountered error while syncing your addresses' data.": "Đã xảy ra lỗi khi đang đồng bộ dữ liệu địa chỉ ví của bạn.",
   "Enter": "Đồng ý",
   "Enter password": "Nhập mật khẩu",
-  "Enter password for \"{{ switchToWalletName }}\"": "Nhập mật khẩu cho \"{{ switchToWalletName }}\"",
+  "Enter password for \"{{ walletName }}\"": "Nhập mật khẩu cho \"{{ walletName }}\"",
   "Enter your password to copy the private key.": "Gõ mật khẩu để sao chép khoá cá nhân.",
   "Enter your password to send the transaction.": "Nhập mật khẩu để thực hiện giao dịch.",
   "Error while building transaction": "Đã xãy ra lỗi trong quá trình thực hiện giao dịch",

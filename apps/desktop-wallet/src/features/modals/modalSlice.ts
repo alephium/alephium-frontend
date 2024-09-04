@@ -16,10 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { modalAdapter } from '@/features/modals/modalAdapters'
+import { walletLocked, walletSwitched } from '@/storage/wallets/walletActions'
 
 const initialState = modalAdapter.getInitialState()
 
@@ -38,6 +39,10 @@ const modalSlice = createSlice({
       .addCase(closeModal, (state, { payload: { id } }) => {
         modalAdapter.removeOne(state, id)
       })
+
+    builder.addMatcher(isAnyOf(walletSwitched, walletLocked), (state) => {
+      modalAdapter.removeAll(state)
+    })
   }
 })
 
