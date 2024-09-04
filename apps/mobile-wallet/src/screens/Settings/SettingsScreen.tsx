@@ -205,77 +205,75 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             </Row>
           </BoxSurface>
         </ScreenSection>
-        {deviceSupportsBiometrics && (
-          <ScreenSection>
-            <ScreenSectionTitle>{t('Security')}</ScreenSectionTitle>
-            {!deviceHasEnrolledBiometrics && (
-              <BiometricsRecommendationBox type="accent">
-                <AppText color="accent">
-                  {t(
-                    "Your device supports biometrics but none is enrolled. Enable them by adding a fingerprint or Face ID in your device's settings."
-                  )}
-                </AppText>
-              </BiometricsRecommendationBox>
-            )}
-            <BoxSurface>
-              <Row
-                title={t('App access')}
-                subtitle={t(
-                  !deviceHasEnrolledBiometrics && Platform.OS === 'ios'
-                    ? 'Require device passcode to open app'
-                    : 'Require biometrics to open app'
+        <ScreenSection>
+          <ScreenSectionTitle>{t('Security')}</ScreenSectionTitle>
+          {deviceSupportsBiometrics && !deviceHasEnrolledBiometrics && (
+            <BiometricsRecommendationBox type="accent">
+              <AppText color="accent">
+                {t(
+                  "Your device supports biometrics but none is enrolled. Enable them by adding a fingerprint or Face ID in your device's settings."
                 )}
-              >
+              </AppText>
+            </BiometricsRecommendationBox>
+          )}
+          <BoxSurface>
+            <Row
+              title={t('App access')}
+              subtitle={t(
+                !deviceHasEnrolledBiometrics && Platform.OS === 'ios'
+                  ? 'Require device passcode to open app'
+                  : 'Require biometrics to open app'
+              )}
+            >
+              <Toggle
+                value={isBiometricsEnabled}
+                onValueChange={handleBiometricsAppAccessChange}
+                disabled={!deviceHasEnrolledBiometrics && Platform.OS === 'android'}
+              />
+            </Row>
+            <Row
+              title={t('Transactions')}
+              subtitle={t(
+                !deviceHasEnrolledBiometrics && Platform.OS === 'ios'
+                  ? 'Require device passcode to transact'
+                  : 'Require biometrics to transact'
+              )}
+            >
+              <Toggle
+                value={biometricsRequiredForTransactions}
+                onValueChange={handleBiometricsTransactionsChange}
+                disabled={!deviceHasEnrolledBiometrics && Platform.OS === 'android'}
+              />
+            </Row>
+            <Row
+              onPress={() =>
+                isUsingFundPassword &&
+                navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: false })
+              }
+              title={t('Fund password')}
+              subtitle={t('Enhance your security')}
+            >
+              {isUsingFundPassword ? (
+                <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
+              ) : (
                 <Toggle
-                  value={isBiometricsEnabled}
-                  onValueChange={handleBiometricsAppAccessChange}
-                  disabled={!deviceHasEnrolledBiometrics && Platform.OS === 'android'}
+                  value={false}
+                  onValueChange={() =>
+                    navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: true })
+                  }
                 />
-              </Row>
-              <Row
-                title={t('Transactions')}
-                subtitle={t(
-                  !deviceHasEnrolledBiometrics && Platform.OS === 'ios'
-                    ? 'Require device passcode to transact'
-                    : 'Require biometrics to transact'
-                )}
-              >
-                <Toggle
-                  value={biometricsRequiredForTransactions}
-                  onValueChange={handleBiometricsTransactionsChange}
-                  disabled={!deviceHasEnrolledBiometrics && Platform.OS === 'android'}
-                />
-              </Row>
-              <Row
-                onPress={() =>
-                  isUsingFundPassword &&
-                  navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: false })
-                }
-                title={t('Fund password')}
-                subtitle={t('Enhance your security')}
-              >
-                {isUsingFundPassword ? (
-                  <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
-                ) : (
-                  <Toggle
-                    value={false}
-                    onValueChange={() =>
-                      navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: true })
-                    }
-                  />
-                )}
-              </Row>
-              <Row
-                title={t('Auto-lock')}
-                subtitle={t('Amount of time before app locks')}
-                isLast
-                onPress={() => setIsAutoLockSecondsModalOpen(true)}
-              >
-                <AppText bold>{getAutoLockLabel(autoLockSeconds)}</AppText>
-              </Row>
-            </BoxSurface>
-          </ScreenSection>
-        )}
+              )}
+            </Row>
+            <Row
+              title={t('Auto-lock')}
+              subtitle={t('Amount of time before app locks')}
+              isLast
+              onPress={() => setIsAutoLockSecondsModalOpen(true)}
+            >
+              <AppText bold>{getAutoLockLabel(autoLockSeconds)}</AppText>
+            </Row>
+          </BoxSurface>
+        </ScreenSection>
 
         <ScreenSection>
           <ScreenSectionTitle>{t('Experimental features')}</ScreenSectionTitle>
