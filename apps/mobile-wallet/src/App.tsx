@@ -188,7 +188,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   )
 
   const checkForNewTransactions = useCallback(() => {
-    dispatch(syncLatestTransactions())
+    dispatch(syncLatestTransactions({ addresses: 'all', areAddressesNew: false }))
   }, [dispatch])
 
   const dataResyncNeeded =

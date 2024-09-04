@@ -87,12 +87,25 @@ const initialState: AddressesState = addressesAdapter.getInitialState({
 
 export const syncLatestTransactions = createAsyncThunk(
   'addresses/syncLatestTransactions',
-  async (payload: AddressHash | AddressHash[] | undefined, { getState, dispatch }) => {
+  async (
+    payload: { addresses: AddressHash | AddressHash[] | 'all'; areAddressesNew: boolean },
+    { getState, dispatch }
+  ) => {
     console.log('Checking for new transactions')
 
+    const { addresses: _addresses, areAddressesNew } = payload
     const state = getState() as RootState
+
     const addresses =
-      payload !== undefined ? (Array.isArray(payload) ? payload : [payload]) : (state.addresses.ids as AddressHash[])
+      _addresses === 'all'
+        ? (state.addresses.ids as AddressHash[])
+        : Array.isArray(_addresses)
+          ? _addresses
+          : [_addresses]
+
+    if (areAddressesNew) {
+      await Promise.all([dispatch(syncAddressesBalances(addresses)), dispatch(syncAddressesTokens(addresses))])
+    }
 
     const results = await Promise.all(
       chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
@@ -129,7 +142,7 @@ export const syncLatestTransactions = createAsyncThunk(
     const addressesToFetchData =
       state.addresses.status === 'uninitialized' ? (state.addresses.ids as AddressHash[]) : addressesWithNewTransactions
 
-    if (addressesToFetchData.length > 0) {
+    if (!areAddressesNew && addressesToFetchData.length > 0) {
       await Promise.all([
         dispatch(syncAddressesBalances(addressesToFetchData)),
         dispatch(syncAddressesTokens(addressesToFetchData))
