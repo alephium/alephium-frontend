@@ -21,14 +21,15 @@ import { AnimatePresence } from 'framer-motion'
 import { Children, isValidElement, ReactNode, useEffect } from 'react'
 
 import { selectAllModals } from '@/features/modals/modalSelectors'
+import WalletUnlockModal from '@/features/switch-wallet/WalletUnlockModal'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import AddressOptionsModal from '@/modals/AddressOptionsModal'
 import ContactFormModal from '@/modals/ContactFormModal'
 import CSVExportModal from '@/modals/CSVExportModal'
+import CurrentWalletModal from '@/modals/CurrentWalletModal'
 import NewAddressModal from '@/modals/NewAddressModal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
-import NotificationsModal from '@/modals/NotificationsModal'
 import ReceiveModal from '@/modals/ReceiveModal'
 import SecretPhraseModal from '@/modals/SecretPhraseModal'
 import SettingsModal from '@/modals/SettingsModal'
@@ -69,14 +70,16 @@ const AppModals = () => {
             return <WalletQRCodeExportModal id={modal.id} key={modal.id} />
           case 'EditWalletNameModal':
             return <EditWalletNameModal id={modal.id} key={modal.id} />
-          case 'NotificationsModal':
-            return <NotificationsModal id={modal.id} key={modal.id} />
+          case 'CurrentWalletModal':
+            return <CurrentWalletModal id={modal.id} key={modal.id} />
           case 'AdvancedOperationsSideModal':
             return <AdvancedOperationsSideModal id={modal.id} key={modal.id} />
           case 'NewAddressModal':
             return <NewAddressModal id={modal.id} key={modal.id} {...modal.params.props} />
           case 'ContactFormModal':
             return <ContactFormModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'WalletUnlockModal':
+            return <WalletUnlockModal id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
     </AnimatePresenceModalWrapper>
