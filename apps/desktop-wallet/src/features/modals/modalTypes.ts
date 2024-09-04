@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
 import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal'
 import { AddressOptionsModalProps } from '@/modals/AddressOptionsModal'
 import { ContactFormModalProps } from '@/modals/ContactFormModal'
@@ -38,10 +39,11 @@ const ModalNames = {
   SecretPhraseModal: 'SecretPhraseModal',
   WalletQRCodeExportModal: 'WalletQRCodeExportModal',
   EditWalletNameModal: 'EditWalletNameModal',
-  NotificationsModal: 'NotificationsModal',
+  CurrentWalletModal: 'CurrentWalletModal',
   AdvancedOperationsSideModal: 'AdvancedOperationsSideModal',
   NewAddressModal: 'NewAddressModal',
-  ContactFormModal: 'ContactFormModal'
+  ContactFormModal: 'ContactFormModal',
+  WalletUnlockModal: 'WalletUnlockModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -88,7 +90,7 @@ export type OpenModalParams =
       name: typeof ModalNames.EditWalletNameModal
     }
   | {
-      name: typeof ModalNames.NotificationsModal
+      name: typeof ModalNames.CurrentWalletModal
     }
   | {
       name: typeof ModalNames.AdvancedOperationsSideModal
@@ -100,6 +102,10 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.ContactFormModal
       props: ContactFormModalProps
+    }
+  | {
+      name: typeof ModalNames.WalletUnlockModal
+      props: WalletUnlockModalProps
     }
 
 export type ModalInstance = {

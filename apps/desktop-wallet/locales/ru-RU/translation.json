@@ -113,7 +113,7 @@
   "Encountered error while syncing your addresses' data.": "Возникла ошибка при синхронизации данных ваших адресов.",
   "Enter": "Ввести",
   "Enter password": "Введите пароль",
-  "Enter password for \"{{ switchToWalletName }}\"": "Введите пароль для \"{{ switchToWalletName }}\"",
+  "Enter password for \"{{ walletName }}\"": "Введите пароль для \"{{ walletName }}\"",
   "Enter your password to copy the private key.": "Введите пароль для копирования закрытого ключа.",
   "Enter your password to send the transaction.": "Введите пароль для отправки транзакции.",
   "Error while building transaction": "Ошибка при создании транзакции",
