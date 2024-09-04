@@ -83,7 +83,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
 
       sendAnalytics({ event: 'Imported discovered addresses' })
 
-      await dispatch(syncLatestTransactions({ addresses: newAddressHashes, areAddressesNew: true }))
+      dispatch(syncLatestTransactions({ addresses: newAddressHashes, areAddressesNew: true }))
     } catch (error) {
       sendAnalytics({ type: 'error', error, message: 'Could not import addresses from address discovery' })
     }
