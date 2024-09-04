@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components/native'
 
+import BuyModal from '~/features/buy/BuyModal'
 import { selectAllModals } from '~/features/modals/modalSelectors'
 import { useAppSelector } from '~/hooks/redux'
-import BuyModal from '~/modals/BuyModal'
 
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
