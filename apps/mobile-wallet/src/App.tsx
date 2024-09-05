@@ -37,7 +37,6 @@ import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { useLocalization } from '~/features/localization/useLocalization'
-import SplashScreen from '~/features/splash-screen/SplashScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
@@ -46,6 +45,7 @@ import {
   getStoredWalletMetadataWithoutThrowingError,
   validateAndRepareStoredWalletData
 } from '~/persistent-storage/wallet'
+import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
 import {
   makeSelectAddressesUnknownTokens,
   selectAllAddressVerifiedFungibleTokenSymbols,
@@ -87,7 +87,7 @@ const App = () => {
           ) : (
             // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
             // splash screen to be show after the default one gets hidden, before we can show app content.
-            <SplashScreen />
+            <AnimatedCirclesBackground isLoading={true} />
           )}
           <ToastAnchor />
         </ThemeProvider>

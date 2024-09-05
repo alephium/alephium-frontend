@@ -36,14 +36,14 @@ import Animated, {
 import styled from 'styled-components/native'
 
 interface AnimatedCirclesBackgroundProps {
-  height: number
+  height?: number
   scrollY?: SharedValue<number>
   isLoading?: boolean
 }
 
 const AnimatedCanvas = Animated.createAnimatedComponent(Canvas)
 
-const AnimatedCirclesBackground = ({ height, scrollY, isLoading }: AnimatedCirclesBackgroundProps) => {
+const AnimatedCirclesBackground = ({ height = 400, scrollY, isLoading }: AnimatedCirclesBackgroundProps) => {
   const gyroscope = useAnimatedSensor(SensorType.ROTATION)
   const { width: screenWidth, height: screenHeight } = useWindowDimensions()
 
