@@ -19,9 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { client, fromHumanReadableAmount } from '@alephium/shared'
 import { SignExecuteScriptTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { signAndSendTransaction } from '@/api/transactions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
 import SendModal, { ConfigurableSendModalProps } from '@/modals/SendModals/SendModal'
 import { CallContractTxModalData } from '@/modals/SendModals/sendTypes'
 import { store } from '@/storage/store'
@@ -29,11 +31,13 @@ import { transactionSent } from '@/storage/transactions/transactionsActions'
 import { CallContractTxData, TxContext } from '@/types/transactions'
 import { getOptionalTransactionAssetAmounts } from '@/utils/transactions'
 
-const SendModalCallContract = (props: ConfigurableSendModalProps<CallContractTxModalData>) => {
+export type SendModalCallContractProps = ConfigurableSendModalProps<CallContractTxModalData>
+
+const SendModalCallContract = memo((props: ModalBaseProp & SendModalCallContractProps) => {
   const { t } = useTranslation()
 
   return <SendModal {...props} title={t('Call contract')} type="call-contract" />
-}
+})
 
 export default SendModalCallContract
 

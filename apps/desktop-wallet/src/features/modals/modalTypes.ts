@@ -24,6 +24,9 @@ import { CSVExportModalProps } from '@/modals/CSVExportModal'
 import { NewAddressModalProps } from '@/modals/NewAddressModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
 import { ReceiveModalProps } from '@/modals/ReceiveModal'
+import { SendModalCallContractProps } from '@/modals/SendModals/CallContract'
+import { SendModalDeployContractProps } from '@/modals/SendModals/DeployContract'
+import { SendModalTransferProps } from '@/modals/SendModals/Transfer'
 import { SettingsModalProps } from '@/modals/SettingsModal'
 import { TransactionDetailsModalProps } from '@/modals/TransactionDetailsModal'
 
@@ -43,7 +46,10 @@ const ModalNames = {
   AdvancedOperationsSideModal: 'AdvancedOperationsSideModal',
   NewAddressModal: 'NewAddressModal',
   ContactFormModal: 'ContactFormModal',
-  WalletUnlockModal: 'WalletUnlockModal'
+  WalletUnlockModal: 'WalletUnlockModal',
+  SendModalTransfer: 'SendModalTransfer',
+  SendModalCallContract: 'SendModalCallContract',
+  SendModalDeployContract: 'SendModalDeployContract'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -106,6 +112,18 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.WalletUnlockModal
       props: WalletUnlockModalProps
+    }
+  | {
+      name: typeof ModalNames.SendModalTransfer
+      props: SendModalTransferProps
+    }
+  | {
+      name: typeof ModalNames.SendModalCallContract
+      props: SendModalCallContractProps
+    }
+  | {
+      name: typeof ModalNames.SendModalDeployContract
+      props: SendModalDeployContractProps
     }
 
 export type ModalInstance = {

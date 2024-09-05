@@ -19,9 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { client, fromHumanReadableAmount } from '@alephium/shared'
 import { SignTransferTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { buildSweepTransactions, signAndSendTransaction } from '@/api/transactions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
 import SendModal, { ConfigurableSendModalProps } from '@/modals/SendModals/SendModal'
 import { TransferTxModalData } from '@/modals/SendModals/sendTypes'
 import { store } from '@/storage/store'
@@ -29,11 +31,13 @@ import { transactionSent } from '@/storage/transactions/transactionsActions'
 import { TransferTxData, TxContext } from '@/types/transactions'
 import { getTransactionAssetAmounts } from '@/utils/transactions'
 
-const SendModalTransfer = (props: ConfigurableSendModalProps<TransferTxModalData>) => {
+export type SendModalTransferProps = ConfigurableSendModalProps<TransferTxModalData>
+
+const SendModalTransfer = memo((props: ModalBaseProp & SendModalTransferProps) => {
   const { t } = useTranslation()
 
   return <SendModal {...props} title={t('Send')} type="transfer" />
-}
+})
 
 export default SendModalTransfer
 

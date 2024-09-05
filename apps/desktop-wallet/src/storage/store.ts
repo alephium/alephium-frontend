@@ -45,7 +45,14 @@ export const store = configureStore({
     [modalSlice.name]: modalSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(settingsListenerMiddleware.middleware).concat(networkListenerMiddleware.middleware)
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredPaths: ['modals'],
+        ignoredActions: ['modal/openModal']
+      }
+    })
+      .concat(settingsListenerMiddleware.middleware)
+      .concat(networkListenerMiddleware.middleware)
 })
 
 setupListeners(store.dispatch)
