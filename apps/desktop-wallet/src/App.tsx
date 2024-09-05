@@ -253,10 +253,9 @@ const App = () => {
             <Router />
           </CenteredSection>
         </AppContainer>
+
+        <AppModals />
       </WalletConnectContextProvider>
-
-      <AppModals />
-
       <SnackbarManager />
       <AutoUpdateSnackbar />
       {loading && <AppSpinner />}
