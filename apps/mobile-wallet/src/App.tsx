@@ -26,7 +26,6 @@ import {
   TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
-import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -37,6 +36,7 @@ import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { useLocalization } from '~/features/localization/useLocalization'
+import SplashScreen from '~/features/splash-screen/SplashScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
@@ -56,8 +56,6 @@ import { appLaunchedWithLastUsedWallet } from '~/store/wallet/walletActions'
 import { metadataRestored } from '~/store/wallet/walletSlice'
 import { themes } from '~/style/themes'
 
-SplashScreen.preventAutoHideAsync()
-
 const App = () => {
   const { showAppContent, wasMetadataRestored } = useShowAppContentAfterValidatingStoredWalletData()
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
@@ -75,10 +73,14 @@ const App = () => {
       <Main>
         <ThemeProvider theme={theme}>
           <StatusBar animated translucent style="light" />
-          {showAppContent && (
+          {showAppContent ? (
             <RootStackNavigation
               initialRouteName={wasMetadataRestored ? 'ImportWalletAddressDiscoveryScreen' : undefined}
             />
+          ) : (
+            // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
+            // splash screen to be show after the default one gets hidden, before we can show app content.
+            <SplashScreen />
           )}
           <ToastAnchor />
         </ThemeProvider>
@@ -95,13 +97,9 @@ const useShowAppContentAfterValidatingStoredWalletData = () => {
     store.dispatch(metadataRestored())
   }, [])
 
-  const { data: validationStatus, isLoading: isValidatingStoredWalletData } = useAsyncData(
+  const { data: validationStatus } = useAsyncData(
     useCallback(() => validateAndRepareStoredWalletData(onUserConfirm), [onUserConfirm])
   )
-
-  useEffect(() => {
-    if (!isValidatingStoredWalletData) SplashScreen.hideAsync()
-  }, [isValidatingStoredWalletData])
 
   useEffect(() => {
     if (validationStatus === 'valid') setState({ showAppContent: true, wasMetadataRestored: false })
@@ -188,7 +186,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   )
 
   const checkForNewTransactions = useCallback(() => {
-    dispatch(syncLatestTransactions())
+    dispatch(syncLatestTransactions({ addresses: 'all', areAddressesNew: false }))
   }, [dispatch])
 
   const dataResyncNeeded =

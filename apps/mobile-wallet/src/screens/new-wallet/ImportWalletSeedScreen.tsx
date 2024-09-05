@@ -112,7 +112,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
       const wallet = await generateAndStoreWallet(name, mnemonicToImport)
 
       dispatch(newWalletGenerated(wallet))
-      dispatch(syncLatestTransactions(wallet.firstAddress.hash))
+      dispatch(syncLatestTransactions({ addresses: wallet.firstAddress.hash, areAddressesNew: true }))
 
       sendAnalytics({ event: 'Imported wallet', props: { note: 'Entered mnemonic manually' } })
 
