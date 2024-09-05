@@ -21,7 +21,7 @@ import { node } from '@alephium/web3'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
-import { PostHog, usePostHog } from 'posthog-js/react'
+import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -34,17 +34,42 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
 import ConsolidateUTXOsModal from '@/modals/ConsolidateUTXOsModal'
 import ModalPortal from '@/modals/ModalPortal'
+import {
+  buildCallContractTransaction,
+  getCallContractWalletConnectResult,
+  handleCallContractSend
+} from '@/modals/SendModals/CallContract'
+import CallContractAddressesTxModalContent from '@/modals/SendModals/CallContract/AddressesTxModalContent'
+import CallContractBuildTxModalContent from '@/modals/SendModals/CallContract/BuildTxModalContent'
+import CallContractCheckTxModalContent from '@/modals/SendModals/CallContract/CheckTxModalContent'
+import {
+  buildDeployContractTransaction,
+  getDeployContractWalletConnectResult,
+  handleDeployContractSend
+} from '@/modals/SendModals/DeployContract'
+import DeployContractAddressesTxModalContent from '@/modals/SendModals/DeployContract/AddressesTxModalContent'
+import DeployContractBuildTxModalContent from '@/modals/SendModals/DeployContract/BuildTxModalContent'
+import DeployContractCheckTxModalContent from '@/modals/SendModals/DeployContract/CheckTxModalContent'
+import { AddressesTxModalData, TxData } from '@/modals/SendModals/sendTypes'
 import StepsProgress, { Step } from '@/modals/SendModals/StepsProgress'
+import {
+  buildTransferTransaction,
+  getTransferWalletConnectResult,
+  handleTransferSend
+} from '@/modals/SendModals/Transfer'
+import TransferAddressesTxModalContent from '@/modals/SendModals/Transfer/AddressesTxModalContent'
+import TransferBuildTxModalContent from '@/modals/SendModals/Transfer/BuildTxModalContent'
+import TransferCheckTxModalContent from '@/modals/SendModals/Transfer/CheckTxModalContent'
 import {
   transactionBuildFailed,
   transactionSendFailed,
   transactionsSendSucceeded
 } from '@/storage/transactions/transactionsActions'
 import { Address } from '@/types/addresses'
-import { CheckTxProps, TxContext, UnsignedTx } from '@/types/transactions'
+import { CallContractTxData, DeployContractTxData, TransferTxData, TxContext, UnsignedTx } from '@/types/transactions'
 
-export type ConfigurableSendModalProps<PT extends { fromAddress: Address }, T extends PT> = {
-  txData?: T
+export type ConfigurableSendModalProps<PT extends { fromAddress: Address }> = {
+  txData?: TxData
   initialTxData: PT
   initialStep?: Step
   onClose: () => void
@@ -53,47 +78,30 @@ export type ConfigurableSendModalProps<PT extends { fromAddress: Address }, T ex
   onSendFail?: (errorMessage: string) => Promise<void>
 }
 
-export interface SendModalProps<PT extends { fromAddress: Address }, T extends PT>
-  extends ConfigurableSendModalProps<PT, T> {
+export interface SendModalProps<PT extends { fromAddress: Address }> extends ConfigurableSendModalProps<PT> {
   title: string
-  AddressesTxModalContent: (props: {
-    data: PT
-    onSubmit: (data: PT) => void
-    onCancel: () => void
-  }) => JSX.Element | null
-  BuildTxModalContent: (props: { data: PT; onSubmit: (data: T) => void; onCancel: () => void }) => JSX.Element | null
-  CheckTxModalContent: (props: CheckTxProps<T>) => JSX.Element | null
-  buildTransaction: (data: T, context: TxContext) => Promise<void>
-  handleSend: (data: T, context: TxContext, posthog: PostHog) => Promise<string | undefined>
-  getWalletConnectResult: (context: TxContext, signature: string) => node.SignResult
-  isContract?: boolean
+  type: 'transfer' | 'call-contract' | 'deploy-contract'
 }
 
-function SendModal<PT extends { fromAddress: Address }, T extends PT>({
+function SendModal<PT extends { fromAddress: Address }>({
   title,
   initialTxData,
   onClose,
-  AddressesTxModalContent,
-  BuildTxModalContent,
-  CheckTxModalContent,
-  buildTransaction,
-  handleSend,
-  getWalletConnectResult,
   txData,
   initialStep,
-  isContract,
   onTransactionBuildFail,
   onSendSuccess,
-  onSendFail
-}: SendModalProps<PT, T>) {
+  onSendFail,
+  type
+}: SendModalProps<PT>) {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const settings = useAppSelector((s) => s.settings)
   const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
 
-  const [addressesData, setAddressesData] = useState<PT>(txData ?? initialTxData)
-  const [transactionData, setTransactionData] = useState<T | undefined>(txData)
+  const [addressesData, setAddressesData] = useState<AddressesTxModalData>(txData ?? initialTxData)
+  const [transactionData, setTransactionData] = useState(txData)
   const [isLoading, setIsLoading] = useState(false)
   const [step, setStep] = useState<Step>('addresses')
   const [isConsolidateUTXOsModalVisible, setIsConsolidateUTXOsModalVisible] = useState(false)
@@ -102,6 +110,7 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
   const [sweepUnsignedTxs, setSweepUnsignedTxs] = useState<node.SweepAddressTransaction[]>([])
   const [fees, setFees] = useState<bigint>()
   const [unsignedTxId, setUnsignedTxId] = useState('')
+  const [contractAddress, setContractAddress] = useState('')
   const [unsignedTransaction, setUnsignedTransaction] = useState<UnsignedTx>()
   const [isTransactionBuildTriggered, setIsTransactionBuildTriggered] = useState(false)
 
@@ -135,6 +144,7 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
       setUnsignedTransaction,
       unsignedTxId,
       setUnsignedTxId,
+      setContractAddress,
       isSweeping,
       consolidationRequired
     }),
@@ -142,12 +152,18 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
   )
 
   const buildTransactionExtended = useCallback(
-    async (data: T) => {
+    async (data: TxData) => {
       setTransactionData(data)
       setIsLoading(true)
 
       try {
-        await buildTransaction(data, txContext)
+        if (type === 'transfer') {
+          await buildTransferTransaction(data as TransferTxData, txContext)
+        } else if (type === 'call-contract') {
+          await buildCallContractTransaction(data as CallContractTxData, txContext)
+        } else {
+          await buildDeployContractTransaction(data as DeployContractTxData, txContext)
+        }
 
         if (!isConsolidateUTXOsModalVisible) {
           setStep('info-check')
@@ -181,14 +197,14 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
       setIsLoading(false)
     },
     [
-      buildTransaction,
       dispatch,
       isConsolidateUTXOsModalVisible,
       isRequestToApproveContractCall,
       onTransactionBuildFail,
       sendAnalytics,
       t,
-      txContext
+      txContext,
+      type
     ]
   )
 
@@ -205,10 +221,20 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
     setIsLoading(true)
 
     try {
-      const signature = await handleSend(transactionData, txContext, posthog)
+      const signature =
+        type === 'transfer'
+          ? await handleTransferSend(transactionData as TransferTxData, txContext, posthog)
+          : type === 'call-contract'
+            ? await handleCallContractSend(transactionData as CallContractTxData, txContext, posthog)
+            : await handleDeployContractSend(transactionData as DeployContractTxData, txContext, posthog)
 
       if (signature && onSendSuccess) {
-        const result = getWalletConnectResult(txContext, signature)
+        const result =
+          type === 'transfer'
+            ? getTransferWalletConnectResult(txContext, signature)
+            : type === 'call-contract'
+              ? getCallContractWalletConnectResult(txContext, signature)
+              : getDeployContractWalletConnectResult(txContext, signature, contractAddress)
         await onSendSuccess(result)
       }
 
@@ -224,7 +250,7 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
     }
   }
 
-  const moveToSecondStep = (data: PT) => {
+  const moveToSecondStep = (data: AddressesTxModalData) => {
     setAddressesData(data)
     setStep('build-tx')
   }
@@ -257,29 +283,58 @@ function SendModal<PT extends { fromAddress: Address }, T extends PT>({
       noPadding
       disableBack={isRequestToApproveContractCall && step !== 'password-check'}
     >
-      <StepsProgress currentStep={step} isContract={isContract} />
-      {step === 'addresses' && (
-        <AddressesTxModalContent data={addressesData} onSubmit={moveToSecondStep} onCancel={onClose} />
-      )}
+      <StepsProgress currentStep={step} isContract={type === 'call-contract' || type === 'deploy-contract'} />
+      {step === 'addresses' &&
+        (type === 'transfer' ? (
+          <TransferAddressesTxModalContent data={addressesData} onSubmit={moveToSecondStep} onCancel={onClose} />
+        ) : type === 'call-contract' ? (
+          <CallContractAddressesTxModalContent data={addressesData} onSubmit={moveToSecondStep} onCancel={onClose} />
+        ) : (
+          <DeployContractAddressesTxModalContent data={addressesData} onSubmit={moveToSecondStep} onCancel={onClose} />
+        ))}
       {step === 'build-tx' && (
         <ScrollableModalContent>
-          <BuildTxModalContent
-            data={{
-              ...(transactionData ?? {}),
-              ...addressesData
-            }}
-            onSubmit={buildTransactionExtended}
-            onCancel={onClose}
-          />
+          {type === 'transfer' ? (
+            <TransferBuildTxModalContent
+              data={{ ...(transactionData ?? {}), ...addressesData }}
+              onSubmit={buildTransactionExtended}
+            />
+          ) : type === 'call-contract' ? (
+            <CallContractBuildTxModalContent
+              data={{ ...(transactionData ?? {}), ...addressesData }}
+              onSubmit={buildTransactionExtended}
+              onCancel={onClose}
+            />
+          ) : (
+            <DeployContractBuildTxModalContent
+              data={{ ...(transactionData ?? {}), ...addressesData }}
+              onSubmit={buildTransactionExtended}
+              onCancel={onClose}
+            />
+          )}
         </ScrollableModalContent>
       )}
       {step === 'info-check' && !!transactionData && !!fees && (
         <ScrollableModalContent>
-          <CheckTxModalContent
-            data={transactionData}
-            fees={fees}
-            onSubmit={settings.passwordRequirement ? confirmPassword : handleSendExtended}
-          />
+          {type === 'transfer' ? (
+            <TransferCheckTxModalContent
+              data={transactionData as TransferTxData}
+              fees={fees}
+              onSubmit={settings.passwordRequirement ? confirmPassword : handleSendExtended}
+            />
+          ) : type === 'call-contract' ? (
+            <CallContractCheckTxModalContent
+              data={transactionData as CallContractTxData}
+              fees={fees}
+              onSubmit={settings.passwordRequirement ? confirmPassword : handleSendExtended}
+            />
+          ) : (
+            <DeployContractCheckTxModalContent
+              data={transactionData as DeployContractTxData}
+              fees={fees}
+              onSubmit={settings.passwordRequirement ? confirmPassword : handleSendExtended}
+            />
+          )}
         </ScrollableModalContent>
       )}
       {step === 'password-check' && settings.passwordRequirement && (
