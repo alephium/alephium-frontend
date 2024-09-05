@@ -124,12 +124,13 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <DashboardScreenStyled
-      refreshControl={<RefreshSpinner />}
+      refreshControl={<RefreshSpinner progressViewOffset={70} />}
       hasBottomBar
       verticalGap
       contrastedBg
       onScroll={screenScrollHandler}
       floatingHeader
+      contentPaddingTop={20}
       headerScrollEffectOffset={70}
       headerOptions={{
         headerTitle: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold />
