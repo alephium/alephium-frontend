@@ -51,9 +51,11 @@ const combine = (results: UseQueryResult<TokenTypesQueryFnData>[]) => ({
     (tokenIdsByTypeMerged, { data: tokenIdsByTypeChunk }) => {
       if (!tokenIdsByTypeChunk) return tokenIdsByTypeMerged
 
-      tokenIdsByTypeMerged.fungible = tokenIdsByTypeMerged.fungible.concat(tokenIdsByTypeChunk?.fungible)
-      tokenIdsByTypeMerged['non-fungible'] = tokenIdsByTypeMerged.fungible.concat(tokenIdsByTypeChunk?.['non-fungible'])
-      tokenIdsByTypeMerged['non-standard'] = tokenIdsByTypeMerged.fungible.concat(tokenIdsByTypeChunk?.['non-standard'])
+      const { fungible, ['non-fungible']: nonFungible, ['non-standard']: nonStandard } = tokenIdsByTypeChunk
+
+      tokenIdsByTypeMerged.fungible = tokenIdsByTypeMerged.fungible.concat(fungible)
+      tokenIdsByTypeMerged['non-fungible'] = tokenIdsByTypeMerged['non-fungible'].concat(nonFungible)
+      tokenIdsByTypeMerged['non-standard'] = tokenIdsByTypeMerged['non-standard'].concat(nonStandard)
 
       return tokenIdsByTypeMerged
     },
