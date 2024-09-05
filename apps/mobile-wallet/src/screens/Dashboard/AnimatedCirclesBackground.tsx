@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Canvas, Circle } from '@shopify/react-native-skia'
+import { Canvas, Circle, Group } from '@shopify/react-native-skia'
 import { useEffect } from 'react'
 import { useWindowDimensions } from 'react-native'
 import Animated, {
@@ -36,24 +36,25 @@ import Animated, {
 import styled from 'styled-components/native'
 
 interface AnimatedCirclesBackgroundProps {
+  height: number
   scrollY?: SharedValue<number>
   isLoading?: boolean
 }
 
 const AnimatedCanvas = Animated.createAnimatedComponent(Canvas)
 
-const AnimatedCirclesBackground = ({ scrollY, isLoading }: AnimatedCirclesBackgroundProps) => {
+const AnimatedCirclesBackground = ({ height, scrollY, isLoading }: AnimatedCirclesBackgroundProps) => {
   const gyroscope = useAnimatedSensor(SensorType.ROTATION)
   const { width: screenWidth, height: screenHeight } = useWindowDimensions()
 
   // Canvas size animation
-  const canvasHeight = useSharedValue(500)
-  const canvasWidth = useSharedValue(500)
+  const canvasHeight = useSharedValue(height)
+  const canvasWidth = useSharedValue(height)
 
   useEffect(() => {
-    canvasHeight.value = withSpring(isLoading ? screenHeight : 500)
-    canvasWidth.value = withSpring(isLoading ? screenWidth : 500)
-  }, [isLoading, screenWidth, canvasHeight, canvasWidth, screenHeight])
+    canvasHeight.value = withSpring(isLoading ? screenHeight : height, { mass: 20, damping: 60 })
+    canvasWidth.value = withSpring(isLoading ? screenWidth : height, { mass: 20, damping: 60 })
+  }, [isLoading, screenWidth, canvasHeight, canvasWidth, screenHeight, height])
 
   const animatedCanvasStyle = useAnimatedStyle(() => ({
     height: canvasHeight.value,
@@ -79,48 +80,70 @@ const AnimatedCirclesBackground = ({ scrollY, isLoading }: AnimatedCirclesBackgr
     }
   }, [angle, isLoading])
 
+  const canvasCenterY = useDerivedValue(() => canvasHeight.value / 2)
+  const danceXAmplitude = 20
+  const danceYAmplitude = 40
+
   const circle1X = useDerivedValue(() =>
     isLoading
-      ? screenWidth / 4 + 50 * Math.cos(angle.value)
-      : withSpring(80 + gyroscope.sensor.value.roll * 25, { mass: 20, damping: 20 })
+      ? withSpring(canvasWidth.value / 4 + danceXAmplitude * Math.cos(angle.value) + gyroscope.sensor.value.roll * 25)
+      : withSpring(100 + gyroscope.sensor.value.roll * 25, { mass: 20, damping: 20 })
   )
 
   const circle1Y = useDerivedValue(() =>
     isLoading
-      ? 210 + 50 * Math.sin(angle.value)
-      : withSpring(210 + gyroscope.sensor.value.pitch * 25, { mass: 20, damping: 20 })
+      ? withSpring(canvasCenterY.value + danceYAmplitude * Math.sin(angle.value) + gyroscope.sensor.value.pitch * 25)
+      : withSpring(canvasCenterY.value + gyroscope.sensor.value.pitch * 25, { mass: 20, damping: 40 })
   )
 
   const circle2X = useDerivedValue(() =>
     isLoading
-      ? screenWidth / 2 + 50 * Math.cos(angle.value + (2 * Math.PI) / 3)
+      ? withSpring(
+          canvasWidth.value / 2 +
+            danceXAmplitude * Math.cos(angle.value + (2 * Math.PI) / 3) +
+            gyroscope.sensor.value.roll * 20
+        )
       : withSpring(screenWidth / 2 + gyroscope.sensor.value.roll * 20, { mass: 40, damping: 20 })
   )
 
   const circle2Y = useDerivedValue(() =>
     isLoading
-      ? 150 + 50 * Math.sin(angle.value + (2 * Math.PI) / 3)
-      : withSpring(150 + gyroscope.sensor.value.pitch * 20, { mass: 40, damping: 20 })
+      ? withSpring(
+          canvasCenterY.value +
+            danceYAmplitude * Math.sin(angle.value + (2 * Math.PI) / 3) +
+            gyroscope.sensor.value.pitch * 20
+        )
+      : withSpring(canvasCenterY.value - 60 + gyroscope.sensor.value.pitch * 20, { mass: 20, damping: 20 })
   )
 
   const circle3X = useDerivedValue(() =>
     isLoading
-      ? (3 * screenWidth) / 4 + 50 * Math.cos(angle.value + (4 * Math.PI) / 3)
-      : withSpring(screenWidth - 50 + gyroscope.sensor.value.roll * 23, { mass: 30, damping: 20 })
+      ? withSpring(
+          (3 * canvasWidth.value) / 4 +
+            danceXAmplitude * Math.cos(angle.value + (4 * Math.PI) / 3) +
+            gyroscope.sensor.value.roll * 23
+        )
+      : withSpring(screenWidth - 90 + gyroscope.sensor.value.roll * 23, { mass: 30, damping: 20 })
   )
 
   const circle3Y = useDerivedValue(() =>
     isLoading
-      ? 190 + 50 * Math.sin(angle.value + (4 * Math.PI) / 3)
-      : withSpring(190 + gyroscope.sensor.value.pitch * 23, { mass: 30, damping: 20 })
+      ? withSpring(
+          canvasCenterY.value +
+            danceYAmplitude * Math.sin(angle.value + (4 * Math.PI) / 3) +
+            gyroscope.sensor.value.pitch * 23
+        )
+      : withSpring(canvasCenterY.value - 20 + gyroscope.sensor.value.pitch * 23, { mass: 20, damping: 20 })
   )
 
   return (
     <AnimatedContainer style={parallaxAnimatedStyle}>
       <AnimatedCanvas style={animatedCanvasStyle}>
-        <Circle r={90} color="#FF2E21" cx={circle1X} cy={circle1Y} />
-        <Circle r={82} color="#FFA621" cx={circle2X} cy={circle2Y} />
-        <Circle r={80} color="#FB21FF" cx={circle3X} cy={circle3Y} />
+        <Group>
+          <Circle r={96} color="#FF2E21" cx={circle1X} cy={circle1Y} blendMode="screen" />
+          <Circle r={86} color="#FFA621" cx={circle2X} cy={circle2Y} blendMode="screen" />
+          <Circle r={90} color="#FB21FF" cx={circle3X} cy={circle3Y} blendMode="screen" />
+        </Group>
       </AnimatedCanvas>
     </AnimatedContainer>
   )

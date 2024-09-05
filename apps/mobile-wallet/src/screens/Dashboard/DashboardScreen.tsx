@@ -136,7 +136,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       }}
       {...props}
     >
-      <AnimatedCirclesBackground scrollY={screenScrollY} isLoading={true} />
+      <AnimatedCirclesBackground height={400} scrollY={screenScrollY} isLoading={false} />
       <WalletCard style={{ marginTop: insets.top }}>
         {Platform.OS === 'android' ? (
           <TransparentCardBackground style={StyleSheet.absoluteFill} />
