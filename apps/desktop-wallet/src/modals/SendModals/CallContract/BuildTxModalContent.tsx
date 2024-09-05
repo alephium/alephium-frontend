@@ -32,13 +32,14 @@ import useGasSettings from '@/hooks/useGasSettings'
 import useStateObject from '@/hooks/useStateObject'
 import AssetAmountsInput from '@/modals/SendModals/AssetAmountsInput'
 import GasSettings from '@/modals/SendModals/GasSettings'
+import { CallContractTxModalData } from '@/modals/SendModals/sendTypes'
 import useAreAmountsWithinAvailableBalance from '@/modals/SendModals/useAreAmountsWithinAvailableBalance'
 import { AssetAmountInputType } from '@/types/assets'
-import { CallContractTxData, PartialTxData, TxPreparation } from '@/types/transactions'
+import { CallContractTxData, TxPreparation } from '@/types/transactions'
 import { isAmountWithinRange } from '@/utils/transactions'
 
 interface CallContractBuildTxModalContentProps {
-  data: PartialTxData<CallContractTxData, 'fromAddress'>
+  data: CallContractTxModalData
   onSubmit: (data: CallContractTxData) => void
   onCancel: () => void
 }

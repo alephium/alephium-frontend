@@ -26,12 +26,12 @@ import { useAddressesWithBalance } from '@/features/addressFiltering/addressFilt
 import { useAppSelector } from '@/hooks/redux'
 import { ModalContent } from '@/modals/CenteredModal'
 import AddressInputs from '@/modals/SendModals/AddressInputs'
+import { DeployContractTxModalData } from '@/modals/SendModals/sendTypes'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
-import { DeployContractTxData, PartialTxData } from '@/types/transactions'
 
 interface DeployContractAddressesTxModalContentProps {
-  data: PartialTxData<DeployContractTxData, 'fromAddress'>
-  onSubmit: (data: PartialTxData<DeployContractTxData, 'fromAddress'>) => void
+  data: DeployContractTxModalData
+  onSubmit: (data: DeployContractTxModalData) => void
   onCancel: () => void
 }
 

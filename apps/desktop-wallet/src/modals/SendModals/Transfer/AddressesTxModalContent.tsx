@@ -25,13 +25,13 @@ import { useAddressesWithBalance } from '@/features/addressFiltering/addressFilt
 import { useAppSelector } from '@/hooks/redux'
 import { ModalContent } from '@/modals/CenteredModal'
 import AddressInputs from '@/modals/SendModals/AddressInputs'
+import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/modals/SendModals/sendTypes'
 import { selectAddressByHash, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
-import { PartialTxData, TransferTxData } from '@/types/transactions'
 import { isAddressValid, requiredErrorMessage } from '@/utils/form-validation'
 
 interface TransferAddressesTxModalContentProps {
-  data: PartialTxData<TransferTxData, 'fromAddress'>
-  onSubmit: (data: PartialTxData<TransferTxData, 'fromAddress' | 'toAddress'>) => void
+  data: TransferTxModalData
+  onSubmit: (data: TransferAddressesTxModalOnSubmitData) => void
   onCancel: () => void
 }
 
