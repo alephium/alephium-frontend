@@ -32,6 +32,8 @@ import NewAddressModal from '@/modals/NewAddressModal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import ReceiveModal from '@/modals/ReceiveModal'
 import SecretPhraseModal from '@/modals/SecretPhraseModal'
+import SendModalCallContract from '@/modals/SendModals/CallContract'
+import SendModalTransfer from '@/modals/SendModals/Transfer'
 import SettingsModal from '@/modals/SettingsModal'
 import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
@@ -80,6 +82,10 @@ const AppModals = () => {
             return <ContactFormModal id={modal.id} key={modal.id} {...modal.params.props} />
           case 'WalletUnlockModal':
             return <WalletUnlockModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'SendModalTransfer':
+            return <SendModalTransfer id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'SendModalCallContract':
+            return <SendModalCallContract id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
     </AnimatePresenceModalWrapper>

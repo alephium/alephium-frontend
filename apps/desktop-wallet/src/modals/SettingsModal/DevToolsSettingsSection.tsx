@@ -34,11 +34,10 @@ import Paragraph from '@/components/Paragraph'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import Table from '@/components/Table'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
 import ModalPortal from '@/modals/ModalPortal'
-import SendModalCallContact from '@/modals/SendModals/CallContract'
-import SendModalDeployContract from '@/modals/SendModals/DeployContract'
 import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { copiedToClipboard, copyToClipboardFailed, receiveTestnetTokens } from '@/storage/global/globalActions'
 import { devToolsToggled } from '@/storage/settings/settingsActions'
@@ -54,8 +53,6 @@ const DevToolsSettingsSection = () => {
   const devTools = useAppSelector((state) => state.settings.devTools)
   const { sendAnalytics } = useAnalytics()
 
-  const [isDeployContractSendModalOpen, setIsDeployContractSendModalOpen] = useState(false)
-  const [isCallScriptSendModalOpen, setIsCallScriptSendModalOpen] = useState(false)
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
   const [selectedAddress, setSelectedAddress] = useState<Address>()
 
@@ -108,6 +105,12 @@ const DevToolsSettingsSection = () => {
     sendAnalytics({ event: 'Requested testnet tokens' })
   }
 
+  const openCallContractModal = () =>
+    dispatch(openModal({ name: 'SendModalCallContract', props: { initialTxData: { fromAddress: defaultAddress } } }))
+
+  const openDeployContractModal = () =>
+    dispatch(openModal({ name: 'SendModalDeployContract', props: { initialTxData: { fromAddress: defaultAddress } } }))
+
   return (
     <>
       <Section align="flex-start">
@@ -145,10 +148,10 @@ const DevToolsSettingsSection = () => {
               {t('Smart contracts')}
             </h2>
             <ButtonsRow>
-              <Button Icon={FileCode} onClick={() => setIsDeployContractSendModalOpen(true)} role="secondary">
+              <Button Icon={FileCode} onClick={openDeployContractModal} role="secondary">
                 {t('Deploy contract')}
               </Button>
-              <Button Icon={TerminalSquare} onClick={() => setIsCallScriptSendModalOpen(true)} role="secondary">
+              <Button Icon={TerminalSquare} onClick={openCallContractModal} role="secondary">
                 {t('Call contract')}
               </Button>
             </ButtonsRow>
@@ -180,18 +183,6 @@ const DevToolsSettingsSection = () => {
         </>
       )}
       <ModalPortal>
-        {isDeployContractSendModalOpen && defaultAddress && (
-          <SendModalDeployContract
-            initialTxData={{ fromAddress: defaultAddress }}
-            onClose={() => setIsDeployContractSendModalOpen(false)}
-          />
-        )}
-        {isCallScriptSendModalOpen && defaultAddress && (
-          <SendModalCallContact
-            initialTxData={{ fromAddress: defaultAddress }}
-            onClose={() => setIsCallScriptSendModalOpen(false)}
-          />
-        )}
         {isPasswordModalOpen && (
           <CenteredModal title={t('Enter password')} onClose={closePasswordModal} skipFocusOnMount>
             <PasswordConfirmation

@@ -30,6 +30,8 @@ import { fadeIn } from '@/animations'
 import { buildSweepTransactions } from '@/api/transactions'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { closeModal } from '@/features/modals/modalActions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
 import ConsolidateUTXOsModal from '@/modals/ConsolidateUTXOsModal'
@@ -72,10 +74,10 @@ export type ConfigurableSendModalProps<PT extends { fromAddress: Address }> = {
   txData?: TxData
   initialTxData: PT
   initialStep?: Step
-  onClose: () => void
-  onTransactionBuildFail?: (errorMessage: string) => void
-  onSendSuccess?: (result: node.SignResult) => Promise<void>
-  onSendFail?: (errorMessage: string) => Promise<void>
+  onClose?: (modalId: number) => void
+  onTransactionBuildFail?: (errorMessage: string, modalId: number) => void
+  onSendSuccess?: (result: node.SignResult, modalId: number) => Promise<void>
+  onSendFail?: (errorMessage: string, modalId: number) => Promise<void>
 }
 
 export interface SendModalProps<PT extends { fromAddress: Address }> extends ConfigurableSendModalProps<PT> {
@@ -86,14 +88,15 @@ export interface SendModalProps<PT extends { fromAddress: Address }> extends Con
 function SendModal<PT extends { fromAddress: Address }>({
   title,
   initialTxData,
-  onClose,
+  onClose: _onClose,
   txData,
   initialStep,
   onTransactionBuildFail,
   onSendSuccess,
   onSendFail,
-  type
-}: SendModalProps<PT>) {
+  type,
+  id
+}: ModalBaseProp & SendModalProps<PT>) {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const settings = useAppSelector((s) => s.settings)
@@ -115,6 +118,11 @@ function SendModal<PT extends { fromAddress: Address }>({
   const [isTransactionBuildTriggered, setIsTransactionBuildTriggered] = useState(false)
 
   const isRequestToApproveContractCall = initialStep === 'info-check'
+
+  const onClose = useMemo(
+    () => (_onClose ? () => _onClose(id) : () => dispatch(closeModal({ id }))),
+    [_onClose, dispatch, id]
+  )
 
   useEffect(() => {
     if (!consolidationRequired || !transactionData) return
@@ -189,7 +197,7 @@ function SendModal<PT extends { fromAddress: Address }>({
           }
 
           if (isRequestToApproveContractCall && onTransactionBuildFail) {
-            onTransactionBuildFail(errorMessage)
+            onTransactionBuildFail(errorMessage, id)
           }
         }
       }
@@ -198,6 +206,7 @@ function SendModal<PT extends { fromAddress: Address }>({
     },
     [
       dispatch,
+      id,
       isConsolidateUTXOsModalVisible,
       isRequestToApproveContractCall,
       onTransactionBuildFail,
@@ -235,7 +244,7 @@ function SendModal<PT extends { fromAddress: Address }>({
             : type === 'call-contract'
               ? getCallContractWalletConnectResult(txContext, signature)
               : getDeployContractWalletConnectResult(txContext, signature, contractAddress)
-        await onSendSuccess(result)
+        await onSendSuccess(result, id)
       }
 
       dispatch(transactionsSendSucceeded({ nbOfTransactionsSent: isSweeping ? sweepUnsignedTxs.length : 1 }))
@@ -244,7 +253,7 @@ function SendModal<PT extends { fromAddress: Address }>({
       dispatch(transactionSendFailed(getHumanReadableError(error, t('Error while sending the transaction'))))
       sendAnalytics({ type: 'error', message: 'Could not send tx' })
 
-      onSendFail && onSendFail(getHumanReadableError(error, 'Error while sending the transaction'))
+      onSendFail && onSendFail(getHumanReadableError(error, 'Error while sending the transaction'), id)
     } finally {
       setIsLoading(false)
     }
@@ -274,6 +283,7 @@ function SendModal<PT extends { fromAddress: Address }>({
 
   return (
     <CenteredModal
+      id={id}
       title={title}
       onClose={onClose}
       isLoading={isLoading}
