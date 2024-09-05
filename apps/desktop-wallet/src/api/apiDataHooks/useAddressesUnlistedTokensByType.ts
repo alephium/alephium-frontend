@@ -30,7 +30,7 @@ interface AddressesUnlistedTokenTypes {
   isLoading: boolean
 }
 
-const useAddressesUnlistedTokenTypes = (addressHash?: AddressHash): AddressesUnlistedTokenTypes => {
+const useAddressesUnlistedTokensByType = (addressHash?: AddressHash): AddressesUnlistedTokenTypes => {
   const { unknownTypeTokenIds, isLoading: isLoadingUnknownTypeTokens } = useAddressesListedFTs(addressHash)
 
   const { data: tokensByType, isLoading: isLoadingTokensTypes } = useQueries({
@@ -44,7 +44,7 @@ const useAddressesUnlistedTokenTypes = (addressHash?: AddressHash): AddressesUnl
   }
 }
 
-export default useAddressesUnlistedTokenTypes
+export default useAddressesUnlistedTokensByType
 
 const combine = (results: UseQueryResult<TokenTypesQueryFnData>[]) => ({
   data: results.reduce(
