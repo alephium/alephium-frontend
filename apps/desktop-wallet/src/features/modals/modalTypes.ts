@@ -17,15 +17,31 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal'
+import { AddressOptionsModalProps } from '@/modals/AddressOptionsModal'
+import { ContactFormModalProps } from '@/modals/ContactFormModal'
 import { CSVExportModalProps } from '@/modals/CSVExportModal'
+import { NewAddressModalProps } from '@/modals/NewAddressModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
+import { ReceiveModalProps } from '@/modals/ReceiveModal'
+import { SettingsModalProps } from '@/modals/SettingsModal'
 import { TransactionDetailsModalProps } from '@/modals/TransactionDetailsModal'
 
 const ModalNames = {
   AddressDetailsModal: 'AddressDetailsModal',
   CSVExportModal: 'CSVExportModal',
   NFTDetailsModal: 'NFTDetailsModal',
-  TransactionDetailsModal: 'TransactionDetailsModal'
+  TransactionDetailsModal: 'TransactionDetailsModal',
+  AddressOptionsModal: 'AddressOptionsModal',
+  SettingsModal: 'SettingsModal',
+  ReceiveModal: 'ReceiveModal',
+  WalletConnectModal: 'WalletConnectModal',
+  SecretPhraseModal: 'SecretPhraseModal',
+  WalletQRCodeExportModal: 'WalletQRCodeExportModal',
+  EditWalletNameModal: 'EditWalletNameModal',
+  NotificationsModal: 'NotificationsModal',
+  AdvancedOperationsSideModal: 'AdvancedOperationsSideModal',
+  NewAddressModal: 'NewAddressModal',
+  ContactFormModal: 'ContactFormModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -46,6 +62,44 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.TransactionDetailsModal
       props: TransactionDetailsModalProps
+    }
+  | {
+      name: typeof ModalNames.AddressOptionsModal
+      props: AddressOptionsModalProps
+    }
+  | {
+      name: typeof ModalNames.SettingsModal
+      props: SettingsModalProps
+    }
+  | {
+      name: typeof ModalNames.ReceiveModal
+      props: ReceiveModalProps
+    }
+  | {
+      name: typeof ModalNames.WalletConnectModal
+    }
+  | {
+      name: typeof ModalNames.SecretPhraseModal
+    }
+  | {
+      name: typeof ModalNames.WalletQRCodeExportModal
+    }
+  | {
+      name: typeof ModalNames.EditWalletNameModal
+    }
+  | {
+      name: typeof ModalNames.NotificationsModal
+    }
+  | {
+      name: typeof ModalNames.AdvancedOperationsSideModal
+    }
+  | {
+      name: typeof ModalNames.NewAddressModal
+      props: NewAddressModalProps
+    }
+  | {
+      name: typeof ModalNames.ContactFormModal
+      props: ContactFormModalProps
     }
 
 export type ModalInstance = {

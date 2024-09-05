@@ -29,6 +29,8 @@ import PanelTitle, { TitleContainer } from '@/components/PageComponents/PanelTit
 import Scrollbar from '@/components/Scrollbar'
 import Spinner from '@/components/Spinner'
 import Tooltip from '@/components/Tooltip'
+import { closeModal } from '@/features/modals/modalActions'
+import { useAppDispatch } from '@/hooks/redux'
 import useFocusOnMount from '@/hooks/useFocusOnMount'
 import ModalContainer, { ModalBackdrop, ModalContainerProps } from '@/modals/ModalContainer'
 
@@ -47,9 +49,9 @@ export interface CenteredModalProps extends ModalContainerProps {
 }
 
 const CenteredModal: FC<CenteredModalProps> = ({
+  id,
   title,
   subtitle,
-  onClose,
   focusMode,
   isLoading,
   header,
@@ -66,9 +68,12 @@ const CenteredModal: FC<CenteredModalProps> = ({
 }) => {
   const { t } = useTranslation()
   const elRef = useFocusOnMount<HTMLSpanElement>(skipFocusOnMount)
+  const dispatch = useAppDispatch()
+
+  const onClose = id ? () => dispatch(closeModal({ id })) : undefined
 
   return (
-    <ModalContainer onClose={onClose} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
+    <ModalContainer id={id} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
       <CenteredBox role="dialog" {...fadeInOutScaleFast} narrow={narrow}>
         <ModalHeader transparent={transparentHeader}>
           <TitleRow>
@@ -88,7 +93,14 @@ const CenteredModal: FC<CenteredModalProps> = ({
               </span>
               {subtitle && <ModalSubtitle>{subtitle}</ModalSubtitle>}
             </PanelTitle>
-            <CloseButton aria-label={t('Close')} squared role="secondary" transparent onClick={onClose} borderless>
+            <CloseButton
+              aria-label={t('Close')}
+              squared
+              role="secondary"
+              transparent
+              onClick={rest.onClose ?? onClose}
+              borderless
+            >
               <X />
             </CloseButton>
           </TitleRow>
