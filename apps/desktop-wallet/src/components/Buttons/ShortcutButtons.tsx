@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { ArrowDown, ArrowUp, Lock, Settings } from 'lucide-react'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -27,8 +26,6 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
-import ModalPortal from '@/modals/ModalPortal'
-import SendModalTransfer from '@/modals/SendModals/Transfer'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
 interface ShortcutButtonBaseProps {
@@ -157,36 +154,28 @@ const SendButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }
   const theme = useTheme()
   const { t } = useTranslation()
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const dispatch = useAppDispatch()
 
-  const [isSendModalOpen, setIsSendModalOpen] = useState(false)
+  if (!fromAddress) return null
 
   const handleSendClick = () => {
-    setIsSendModalOpen(true)
-
+    dispatch(openModal({ name: 'SendModalTransfer', props: { initialTxData: { fromAddress } } }))
     sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
   }
 
   return (
-    <>
-      <ShortcutButton
-        transparent={!solidBackground}
-        role="secondary"
-        borderless
-        onClick={handleSendClick}
-        Icon={ArrowUp}
-        iconColor={theme.global.highlight}
-        iconBackground
-        highlight={highlight}
-      >
-        <ButtonText>{t('Send')}</ButtonText>
-      </ShortcutButton>
-
-      <ModalPortal>
-        {isSendModalOpen && fromAddress && (
-          <SendModalTransfer initialTxData={{ fromAddress }} onClose={() => setIsSendModalOpen(false)} />
-        )}
-      </ModalPortal>
-    </>
+    <ShortcutButton
+      transparent={!solidBackground}
+      role="secondary"
+      borderless
+      onClick={handleSendClick}
+      Icon={ArrowUp}
+      iconColor={theme.global.highlight}
+      iconBackground
+      highlight={highlight}
+    >
+      <ButtonText>{t('Send')}</ButtonText>
+    </ShortcutButton>
   )
 }
 
