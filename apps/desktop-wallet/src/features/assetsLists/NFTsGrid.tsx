@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NFT } from '@alephium/shared'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -28,22 +27,23 @@ import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { ExpandRow, TableRow } from '@/components/Table'
 import { AssetsTabsProps } from '@/features/assetsLists/types'
-import ModalPortal from '@/modals/ModalPortal'
-import NFTDetailsModal from '@/modals/NFTDetailsModal'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch } from '@/hooks/redux'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
 const NFTsGrid = ({ className, addressHash, isExpanded, onExpand, nftColumns }: AssetsTabsProps) => {
   const { t } = useTranslation()
   const { data: nftIds, isLoading } = useAddressesNFTsIds(addressHash)
+  const dispatch = useAppDispatch()
 
-  const [selectedNFTId, setSelectedNFTId] = useState<NFT['id']>()
+  const openNFTDetailsModal = (nftId: NFT['id']) => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
         <Grid role="row" tabIndex={isExpanded ? 0 : -1} columns={nftColumns}>
           {nftIds.map((nftId) => (
-            <NFTCard key={nftId} nftId={nftId} onClick={() => setSelectedNFTId(nftId)} />
+            <NFTCard key={nftId} nftId={nftId} onClick={() => openNFTDetailsModal(nftId)} />
           ))}
           {nftIds.length === 0 && <PlaceholderText>{t('No NFTs found.')}</PlaceholderText>}
           {isLoading && (
@@ -58,10 +58,6 @@ const NFTsGrid = ({ className, addressHash, isExpanded, onExpand, nftColumns }: 
       </motion.div>
 
       {!isExpanded && nftIds.length > 4 && onExpand && <ExpandRow onClick={onExpand} />}
-
-      <ModalPortal>
-        {selectedNFTId && <NFTDetailsModal nftId={selectedNFTId} onClose={() => setSelectedNFTId(undefined)} />}
-      </ModalPortal>
     </>
   )
 }

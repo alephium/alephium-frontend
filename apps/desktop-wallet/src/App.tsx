@@ -39,6 +39,7 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
+import AppModals from '@/modals/AppModals'
 import Router from '@/routes'
 import { syncAddressesData } from '@/storage/addresses/addressesActions'
 import { makeSelectAddressesUnknownTokens, selectAddressIds } from '@/storage/addresses/addressesSelectors'
@@ -253,6 +254,8 @@ const App = () => {
           </CenteredSection>
         </AppContainer>
       </WalletConnectContextProvider>
+
+      <AppModals />
 
       <SnackbarManager />
       <AutoUpdateSnackbar />

@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, Asset } from '@alephium/shared'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { ChevronRight } from 'lucide-react'
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -28,9 +29,8 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import Spinner from '@/components/Spinner'
 import Table, { TableCell, TableCellPlaceholder, TableHeader, TableRow } from '@/components/Table'
 import TransactionalInfo from '@/components/TransactionalInfo'
+import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import ModalPortal from '@/modals/ModalPortal'
-import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
 import {
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage
@@ -45,6 +45,7 @@ import {
   makeSelectAddressesPendingTransactions
 } from '@/storage/transactions/transactionsSelectors'
 import { AddressConfirmedTransaction, Direction } from '@/types/transactions'
+import { onEnterOrSpace } from '@/utils/misc'
 import { getTransactionInfo } from '@/utils/transactions'
 
 interface TransactionListProps {
@@ -88,7 +89,6 @@ const TransactionList = ({
   const finishedLoadingData = useAppSelector((s) => !s.addresses.loadingTransactions)
   const allAddressTxPagesLoaded = useAppSelector(selectHaveAllPagesLoaded)
 
-  const [selectedTransaction, setSelectedTransaction] = useState<AddressConfirmedTransaction>()
   const [attemptToFindNewFilteredTxs, setAttemptToFindNewFilteredTxs] = useState(0)
 
   const singleAddress = addresses.length === 1
@@ -114,6 +114,9 @@ const TransactionList = ({
         : dispatch(syncAllAddressesTransactionsNextPage({ minTxs: 10 })),
     [addresses, dispatch, singleAddress]
   )
+
+  const openTransactionDetailsModal = (txHash: Transaction['hash'], addressHash: AddressHash) =>
+    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash, addressHash } }))
 
   useEffect(() => {
     if (!stateUninitialized) {
@@ -144,85 +147,75 @@ const TransactionList = ({
   ])
 
   return (
-    <>
-      <Table className={className} minWidth="500px">
-        {!hideHeader && (
-          <TableHeader title={title ?? t('Transactions')}>
-            {headerExtraContent}
-            {limit !== undefined && (
-              <ActionLinkStyled onClick={() => navigate('/wallet/transfers')} Icon={ChevronRight} withBackground>
-                {t('See more')}
-              </ActionLinkStyled>
-            )}
-          </TableHeader>
-        )}
-        {stateUninitialized && (
-          <>
-            <TableRow>
-              <SkeletonLoader height="37.5px" />
-            </TableRow>
-            <TableRow>
-              <SkeletonLoader height="37.5px" />
-            </TableRow>
-            <TableRow>
-              <SkeletonLoader height="37.5px" />
-            </TableRow>
-          </>
-        )}
-        {pendingTxs.map((tx) => (
-          <TableRow key={tx.hash} blinking role="row" tabIndex={0}>
-            <TransactionalInfo
-              transaction={tx}
-              addressHash={tx.address.hash}
-              showInternalInflows={hideFromColumn}
-              compact={compact}
-            />
+    <Table className={className} minWidth="500px">
+      {!hideHeader && (
+        <TableHeader title={title ?? t('Transactions')}>
+          {headerExtraContent}
+          {limit !== undefined && (
+            <ActionLinkStyled onClick={() => navigate('/wallet/transfers')} Icon={ChevronRight} withBackground>
+              {t('See more')}
+            </ActionLinkStyled>
+          )}
+        </TableHeader>
+      )}
+      {stateUninitialized && (
+        <>
+          <TableRow>
+            <SkeletonLoader height="37.5px" />
           </TableRow>
-        ))}
-        {displayedConfirmedTxs.map((tx) => (
-          <TableRow
-            key={`${tx.hash}-${tx.address.hash}`}
-            role="row"
-            tabIndex={0}
-            onClick={() => setSelectedTransaction(tx)}
-            onKeyDown={() => setSelectedTransaction(tx)}
-          >
-            <TransactionalInfo
-              transaction={tx}
-              addressHash={tx.address.hash}
-              showInternalInflows={hideFromColumn}
-              compact={compact}
-            />
+          <TableRow>
+            <SkeletonLoader height="37.5px" />
           </TableRow>
-        ))}
-        {limit === undefined && (
-          <TableRow role="row">
-            <TableCell align="center" role="gridcell">
-              {allTxsLoaded ? (
-                <span>{t('All transactions loaded!')}</span>
-              ) : userAttemptedToLoadMoreTxs ? (
-                <Spinner size="15px" />
-              ) : (
-                <ActionLink onClick={handleShowMoreClick}>{t('Show more')}</ActionLink>
-              )}
-            </TableCell>
+          <TableRow>
+            <SkeletonLoader height="37.5px" />
           </TableRow>
-        )}
-        {!stateUninitialized && !pendingTxs.length && !displayedConfirmedTxs.length && (
-          <TableRow role="row" tabIndex={0}>
-            <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
-          </TableRow>
-        )}
-      </Table>
-      <ModalPortal>
-        {selectedTransaction && (
-          <TransactionDetailsModal
-            transaction={selectedTransaction}
-            onClose={() => setSelectedTransaction(undefined)}
+        </>
+      )}
+      {pendingTxs.map((tx) => (
+        <TableRow key={tx.hash} blinking role="row" tabIndex={0}>
+          <TransactionalInfo
+            transaction={tx}
+            addressHash={tx.address.hash}
+            showInternalInflows={hideFromColumn}
+            compact={compact}
           />
-        )}
-      </ModalPortal>
-    </>
+        </TableRow>
+      ))}
+      {displayedConfirmedTxs.map((tx) => (
+        <TableRow
+          key={`${tx.hash}-${tx.address.hash}`}
+          role="row"
+          tabIndex={0}
+          onClick={() => openTransactionDetailsModal(tx.hash, tx.address.hash)}
+          onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash, tx.address.hash))}
+        >
+          <TransactionalInfo
+            transaction={tx}
+            addressHash={tx.address.hash}
+            showInternalInflows={hideFromColumn}
+            compact={compact}
+          />
+        </TableRow>
+      ))}
+      {limit === undefined && (
+        <TableRow role="row">
+          <TableCell align="center" role="gridcell">
+            {allTxsLoaded ? (
+              <span>{t('All transactions loaded!')}</span>
+            ) : userAttemptedToLoadMoreTxs ? (
+              <Spinner size="15px" />
+            ) : (
+              <ActionLink onClick={handleShowMoreClick}>{t('Show more')}</ActionLink>
+            )}
+          </TableCell>
+        </TableRow>
+      )}
+      {!stateUninitialized && !pendingTxs.length && !displayedConfirmedTxs.length && (
+        <TableRow role="row" tabIndex={0}>
+          <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
+        </TableRow>
+      )}
+    </Table>
   )
 }
 
@@ -241,7 +234,7 @@ const applyFilters = ({
 
   return isDirectionsFilterEnabled || isAssetsFilterEnabled
     ? txs.filter((tx) => {
-        const { assets, infoType } = getTransactionInfo(tx, hideFromColumn)
+        const { assets, infoType } = getTransactionInfo(tx, tx.address.hash, hideFromColumn)
         const dir = infoType === 'pending' ? 'out' : infoType
 
         const passedDirectionsFilter = !isDirectionsFilterEnabled || directions.includes(dir)

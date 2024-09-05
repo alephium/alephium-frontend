@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { FileDown } from 'lucide-react'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -32,29 +32,32 @@ import HashEllipsed from '@/components/HashEllipsed'
 import QRCode from '@/components/QRCode'
 import TransactionList from '@/components/TransactionList'
 import AssetsTabs from '@/features/assetsLists/AssetsTabs'
-import { useAppSelector } from '@/hooks/redux'
-import CSVExportModal from '@/modals/CSVExportModal'
-import ModalPortal from '@/modals/ModalPortal'
+import { closeModal, openModal } from '@/features/modals/modalActions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
 import AmountsOverviewPanel from '@/pages/UnlockedWallet/OverviewPage/AmountsOverviewPanel'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { openInWebBrowser } from '@/utils/misc'
 
-interface AddressDetailsModalProps {
+export interface AddressDetailsModalProps {
   addressHash: AddressHash
-  onClose: () => void
 }
 
-const AddressDetailsModal = ({ addressHash, onClose }: AddressDetailsModalProps) => {
+const AddressDetailsModal = memo(({ id, addressHash }: ModalBaseProp & AddressDetailsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
+  const dispatch = useAppDispatch()
 
-  const [isCSVExportModalOpen, setIsCSVExportModalOpen] = useState(false)
   const [showChart, setShowChart] = useState(false)
 
   if (!address) return null
+
+  const onClose = () => dispatch(closeModal({ id }))
+
+  const openCSVExportModal = () => dispatch(openModal({ name: 'CSVExportModal', props: { addressHash } }))
 
   return (
     <SideModal
@@ -120,20 +123,15 @@ const AddressDetailsModal = ({ addressHash, onClose }: AddressDetailsModalProps)
           compact
           hideFromColumn
           headerExtraContent={
-            <Button short role="secondary" Icon={FileDown} onClick={() => setIsCSVExportModalOpen(true)}>
+            <Button short role="secondary" Icon={FileDown} onClick={openCSVExportModal}>
               {t('Export')}
             </Button>
           }
         />
       </Content>
-      <ModalPortal>
-        {isCSVExportModalOpen && (
-          <CSVExportModal addressHash={addressHash} onClose={() => setIsCSVExportModalOpen(false)} />
-        )}
-      </ModalPortal>
     </SideModal>
   )
-}
+})
 
 export default AddressDetailsModal
 
