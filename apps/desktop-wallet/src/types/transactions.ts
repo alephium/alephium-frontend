@@ -150,6 +150,7 @@ export type TxContext = {
   setUnsignedTransaction: (tx: UnsignedTx | undefined) => void
   unsignedTxId: string
   setUnsignedTxId: (txId: string) => void
+  setContractAddress: (contractAddress: string) => void
   isSweeping: boolean
   consolidationRequired: boolean
 }

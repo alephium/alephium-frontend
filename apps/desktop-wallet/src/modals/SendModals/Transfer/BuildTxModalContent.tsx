@@ -30,12 +30,13 @@ import ToggleSection from '@/components/ToggleSection'
 import useGasSettings from '@/hooks/useGasSettings'
 import AssetAmountsInput from '@/modals/SendModals/AssetAmountsInput'
 import GasSettings from '@/modals/SendModals/GasSettings'
+import { TransferTxModalData } from '@/modals/SendModals/sendTypes'
 import useAreAmountsWithinAvailableBalance from '@/modals/SendModals/useAreAmountsWithinAvailableBalance'
 import { AssetAmountInputType } from '@/types/assets'
-import { PartialTxData, TransferTxData } from '@/types/transactions'
+import { TransferTxData } from '@/types/transactions'
 
 export interface TransferBuildTxModalContentProps {
-  data: PartialTxData<TransferTxData, 'fromAddress'>
+  data: TransferTxModalData
   onSubmit: (data: TransferTxData) => void
 }
 

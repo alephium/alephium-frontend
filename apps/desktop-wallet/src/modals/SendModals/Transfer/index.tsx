@@ -23,36 +23,21 @@ import { useTranslation } from 'react-i18next'
 
 import { buildSweepTransactions, signAndSendTransaction } from '@/api/transactions'
 import SendModal, { ConfigurableSendModalProps } from '@/modals/SendModals/SendModal'
-import TransferAddressesTxModalContent from '@/modals/SendModals/Transfer/AddressesTxModalContent'
-import TransferBuildTxModalContent from '@/modals/SendModals/Transfer/BuildTxModalContent'
-import TransferCheckTxModalContent from '@/modals/SendModals/Transfer/CheckTxModalContent'
+import { TransferTxModalData } from '@/modals/SendModals/sendTypes'
 import { store } from '@/storage/store'
 import { transactionSent } from '@/storage/transactions/transactionsActions'
-import { PartialTxData, TransferTxData, TxContext } from '@/types/transactions'
+import { TransferTxData, TxContext } from '@/types/transactions'
 import { getTransactionAssetAmounts } from '@/utils/transactions'
 
-type TransferTxModalProps = ConfigurableSendModalProps<PartialTxData<TransferTxData, 'fromAddress'>, TransferTxData>
-
-const SendModalTransfer = (props: TransferTxModalProps) => {
+const SendModalTransfer = (props: ConfigurableSendModalProps<TransferTxModalData>) => {
   const { t } = useTranslation()
 
-  return (
-    <SendModal
-      {...props}
-      title={t('Send')}
-      AddressesTxModalContent={TransferAddressesTxModalContent}
-      BuildTxModalContent={TransferBuildTxModalContent}
-      CheckTxModalContent={TransferCheckTxModalContent}
-      buildTransaction={buildTransaction}
-      handleSend={handleSend}
-      getWalletConnectResult={getWalletConnectResult}
-    />
-  )
+  return <SendModal {...props} title={t('Send')} type="transfer" />
 }
 
 export default SendModalTransfer
 
-const buildTransaction = async (transactionData: TransferTxData, context: TxContext) => {
+export const buildTransferTransaction = async (transactionData: TransferTxData, context: TxContext) => {
   const { fromAddress, toAddress, assetAmounts, gasAmount, gasPrice, lockTime, shouldSweep } = transactionData
 
   context.setIsSweeping(shouldSweep)
@@ -83,7 +68,7 @@ const buildTransaction = async (transactionData: TransferTxData, context: TxCont
   }
 }
 
-const handleSend = async (transactionData: TransferTxData, context: TxContext, posthog: PostHog) => {
+export const handleTransferSend = async (transactionData: TransferTxData, context: TxContext, posthog: PostHog) => {
   const { fromAddress, toAddress, lockTime: lockDateTime, assetAmounts } = transactionData
   const { isSweeping, sweepUnsignedTxs, consolidationRequired, unsignedTxId, unsignedTransaction } = context
 
@@ -138,7 +123,7 @@ const handleSend = async (transactionData: TransferTxData, context: TxContext, p
   }
 }
 
-const getWalletConnectResult = (context: TxContext, signature: string): SignTransferTxResult => {
+export const getTransferWalletConnectResult = (context: TxContext, signature: string): SignTransferTxResult => {
   if (!context.unsignedTransaction) throw Error('No unsignedTransaction available')
 
   return {
