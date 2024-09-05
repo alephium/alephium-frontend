@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, TOKENS_QUERY_LIMIT } from '@alephium/shared'
-import { explorer } from '@alephium/web3'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { chunk } from 'lodash'
 
@@ -59,11 +58,7 @@ const combine = (results: UseQueryResult<TokenTypesQueryFnData>[]) => ({
 
       return tokenIdsByTypeMerged
     },
-    {
-      [explorer.TokenStdInterfaceId.Fungible]: [],
-      [explorer.TokenStdInterfaceId.NonFungible]: [],
-      [explorer.TokenStdInterfaceId.NonStandard]: []
-    } as AddressesUnlistedTokenTypes['data']
+    { fungible: [], ['non-fungible']: [], ['non-standard']: [] } as AddressesUnlistedTokenTypes['data']
   ),
   ...combineIsLoading(results)
 })
