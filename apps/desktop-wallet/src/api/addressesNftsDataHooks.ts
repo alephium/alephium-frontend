@@ -22,14 +22,14 @@ import { useQueries } from '@tanstack/react-query'
 import axios from 'axios'
 import { chunk, isArray } from 'lodash'
 
-import useAddressesUnlistedTokenTypes from '@/api/apiDataHooks/useAddressesUnlistedTokenTypes'
+import useAddressesUnlistedTokensByType from '@/api/apiDataHooks/useAddressesUnlistedTokensByType'
 import { isDefined } from '@/utils/misc'
 
 export const useAddressesNFTsIds = (addressHash?: AddressHash) => {
   const {
     data: { 'non-fungible': nftIds },
     isLoading
-  } = useAddressesUnlistedTokenTypes(addressHash)
+  } = useAddressesUnlistedTokensByType(addressHash)
 
   return {
     data: nftIds,
