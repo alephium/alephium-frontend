@@ -23,7 +23,7 @@ import splashSrc from '~/features/splash-screen/splash.png'
 
 const SplashScreen = () => (
   <SplashScreenStyled>
-    <SplashScreenImage source={splashSrc} style={{ resizeMode: 'center', objectFit: 'contain' }} />
+    <SplashScreenImage source={splashSrc} contentFit="center" style={{ objectFit: 'contain' }} />
   </SplashScreenStyled>
 )
 

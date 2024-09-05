@@ -19,9 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import { Canvas, RadialGradient, Rect, vec } from '@shopify/react-native-skia'
+import { Image } from 'expo-image'
 import { useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { AppState, Dimensions, Image, LayoutChangeEvent, Platform, StatusBar } from 'react-native'
+import { AppState, Dimensions, LayoutChangeEvent, Platform, StatusBar } from 'react-native'
 import Animated, {
   convertToRGBA,
   FadeIn,
@@ -236,7 +237,7 @@ export const CoolAlephiumCanvas = ({ width, height, onPress }: CoolAlephiumCanva
           <AlephiumLogo color="white" style={{ width: '20%' }} />
         </LogoArea>
         <AltLogoArea style={altLogoAnimatedStyle}>
-          <AltLogo source={altLogoSrc} style={{ resizeMode: 'center', objectFit: 'contain' }} />
+          <AltLogo source={altLogoSrc} contentFit="center" style={{ objectFit: 'contain' }} />
         </AltLogoArea>
       </LogoContainer>
     </>
@@ -271,8 +272,8 @@ const AltLogoArea = styled(Animated.View)`
 `
 
 const AltLogo = styled(Image)`
-  width: 40%;
-  height: 40%;
+  width: 31%;
+  height: 31%;
 `
 
 const CanvasStyled = styled(Canvas)`
