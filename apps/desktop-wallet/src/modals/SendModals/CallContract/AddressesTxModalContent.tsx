@@ -24,12 +24,12 @@ import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import { useAppSelector } from '@/hooks/redux'
 import { ModalContent } from '@/modals/CenteredModal'
 import AddressInputs from '@/modals/SendModals/AddressInputs'
+import { CallContractTxModalData } from '@/modals/SendModals/sendTypes'
 import { selectAddressByHash, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
-import { CallContractTxData, PartialTxData } from '@/types/transactions'
 
 interface CallContractAddressesTxModalContentProps {
-  data: PartialTxData<CallContractTxData, 'fromAddress'>
-  onSubmit: (data: PartialTxData<CallContractTxData, 'fromAddress'>) => void
+  data: CallContractTxModalData
+  onSubmit: (data: CallContractTxModalData) => void
   onCancel: () => void
 }
 
