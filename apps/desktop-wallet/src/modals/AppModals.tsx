@@ -32,9 +32,9 @@ import NewAddressModal from '@/modals/NewAddressModal'
 import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import ReceiveModal from '@/modals/ReceiveModal'
 import SecretPhraseModal from '@/modals/SecretPhraseModal'
-import SendModalCallContract from '@/modals/SendModals/CallContract'
-import SendModalDeployContract from '@/modals/SendModals/DeployContract'
-import SendModalTransfer from '@/modals/SendModals/Transfer'
+import CallContractSendModal from '@/features/send/callContract'
+import DeployContractSendModal from '@/features/send/deployContract'
+import TransferSendModal from '@/features/send/Transfer'
 import SettingsModal from '@/modals/SettingsModal'
 import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
@@ -83,12 +83,12 @@ const AppModals = () => {
             return <ContactFormModal id={modal.id} key={modal.id} {...modal.params.props} />
           case 'WalletUnlockModal':
             return <WalletUnlockModal id={modal.id} key={modal.id} {...modal.params.props} />
-          case 'SendModalTransfer':
-            return <SendModalTransfer id={modal.id} key={modal.id} {...modal.params.props} />
-          case 'SendModalCallContract':
-            return <SendModalCallContract id={modal.id} key={modal.id} {...modal.params.props} />
-          case 'SendModalDeployContract':
-            return <SendModalDeployContract id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'TransferSendModal':
+            return <TransferSendModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'CallContractSendModal':
+            return <CallContractSendModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'DeployContractSendModal':
+            return <DeployContractSendModal id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
     </AnimatePresenceModalWrapper>

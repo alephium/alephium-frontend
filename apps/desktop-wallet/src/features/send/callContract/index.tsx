@@ -24,22 +24,21 @@ import { useTranslation } from 'react-i18next'
 
 import { signAndSendTransaction } from '@/api/transactions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
-import SendModal, { ConfigurableSendModalProps } from '@/modals/SendModals/SendModal'
-import { CallContractTxModalData } from '@/modals/SendModals/sendTypes'
+import SendModal, { ConfigurableSendModalProps } from '@/features/send/SendModal'
+import { CallContractTxData, CallContractTxModalData, TxContext } from '@/features/send/sendTypes'
 import { store } from '@/storage/store'
 import { transactionSent } from '@/storage/transactions/transactionsActions'
-import { CallContractTxData, TxContext } from '@/types/transactions'
 import { getOptionalTransactionAssetAmounts } from '@/utils/transactions'
 
-export type SendModalCallContractProps = ConfigurableSendModalProps<CallContractTxModalData>
+export type CallContractSendModalProps = ConfigurableSendModalProps<CallContractTxModalData>
 
-const SendModalCallContract = memo((props: ModalBaseProp & SendModalCallContractProps) => {
+const CallContractSendModal = memo((props: ModalBaseProp & CallContractSendModalProps) => {
   const { t } = useTranslation()
 
   return <SendModal {...props} title={t('Call contract')} type="call-contract" />
 })
 
-export default SendModalCallContract
+export default CallContractSendModal
 
 export const buildCallContractTransaction = async (txData: CallContractTxData, ctx: TxContext) => {
   const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(txData.assetAmounts)

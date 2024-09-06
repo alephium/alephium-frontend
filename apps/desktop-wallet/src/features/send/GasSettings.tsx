@@ -27,7 +27,7 @@ import { useTranslation } from 'react-i18next'
 
 import Input from '@/components/Inputs/Input'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import AlphAmountInfoBox from '@/modals/SendModals/AlphAmountInfoBox'
+import AlphAmountInfoBox from '@/features/send/AlphAmountInfoBox'
 
 export interface GasSettingsProps {
   gasAmount?: string

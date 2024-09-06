@@ -27,13 +27,12 @@ import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
 import ToggleSection from '@/components/ToggleSection'
+import AssetAmountsInput from '@/features/send/AssetAmountsInput'
+import GasSettings from '@/features/send/GasSettings'
+import { TransferTxData, TransferTxModalData } from '@/features/send/sendTypes'
+import useAreAmountsWithinAvailableBalance from '@/features/send/useAreAmountsWithinAvailableBalance'
 import useGasSettings from '@/hooks/useGasSettings'
-import AssetAmountsInput from '@/modals/SendModals/AssetAmountsInput'
-import GasSettings from '@/modals/SendModals/GasSettings'
-import { TransferTxModalData } from '@/modals/SendModals/sendTypes'
-import useAreAmountsWithinAvailableBalance from '@/modals/SendModals/useAreAmountsWithinAvailableBalance'
 import { AssetAmountInputType } from '@/types/assets'
-import { TransferTxData } from '@/types/transactions'
 
 export interface TransferBuildTxModalContentProps {
   data: TransferTxModalData
