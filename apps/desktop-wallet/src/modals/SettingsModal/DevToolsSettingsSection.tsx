@@ -106,10 +106,10 @@ const DevToolsSettingsSection = () => {
   }
 
   const openCallContractModal = () =>
-    dispatch(openModal({ name: 'SendModalCallContract', props: { initialTxData: { fromAddress: defaultAddress } } }))
+    dispatch(openModal({ name: 'CallContractSendModal', props: { initialTxData: { fromAddress: defaultAddress } } }))
 
   const openDeployContractModal = () =>
-    dispatch(openModal({ name: 'SendModalDeployContract', props: { initialTxData: { fromAddress: defaultAddress } } }))
+    dispatch(openModal({ name: 'DeployContractSendModal', props: { initialTxData: { fromAddress: defaultAddress } } }))
 
   return (
     <>

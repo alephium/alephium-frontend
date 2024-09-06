@@ -56,7 +56,7 @@ const ContactsTabContent = () => {
   const openSendModal = (contact: Contact) => {
     dispatch(
       openModal({
-        name: 'SendModalTransfer',
+        name: 'TransferSendModal',
         props: { initialTxData: { fromAddress: defaultAddress, toAddress: contact.address } }
       })
     )
