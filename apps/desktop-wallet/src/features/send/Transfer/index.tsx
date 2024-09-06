@@ -24,22 +24,21 @@ import { useTranslation } from 'react-i18next'
 
 import { buildSweepTransactions, signAndSendTransaction } from '@/api/transactions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
-import SendModal, { ConfigurableSendModalProps } from '@/modals/SendModals/SendModal'
-import { TransferTxModalData } from '@/modals/SendModals/sendTypes'
+import SendModal, { ConfigurableSendModalProps } from '@/features/send/SendModal'
+import { TransferTxData, TransferTxModalData, TxContext } from '@/features/send/sendTypes'
 import { store } from '@/storage/store'
 import { transactionSent } from '@/storage/transactions/transactionsActions'
-import { TransferTxData, TxContext } from '@/types/transactions'
 import { getTransactionAssetAmounts } from '@/utils/transactions'
 
-export type SendModalTransferProps = ConfigurableSendModalProps<TransferTxModalData>
+export type TransferSendModalProps = ConfigurableSendModalProps<TransferTxModalData>
 
-const SendModalTransfer = memo((props: ModalBaseProp & SendModalTransferProps) => {
+const TransferSendModal = memo((props: ModalBaseProp & TransferSendModalProps) => {
   const { t } = useTranslation()
 
   return <SendModal {...props} title={t('Send')} type="transfer" />
 })
 
-export default SendModalTransfer
+export default TransferSendModal
 
 export const buildTransferTransaction = async (transactionData: TransferTxData, context: TxContext) => {
   const { fromAddress, toAddress, assetAmounts, gasAmount, gasPrice, lockTime, shouldSweep } = transactionData

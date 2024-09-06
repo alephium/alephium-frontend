@@ -35,7 +35,7 @@ import { useAppSelector } from '@/hooks/redux'
 import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
-import InputsSection from '@/modals/SendModals/InputsSection'
+import InputsSection from '@/features/send/InputsSection'
 import {
   selectAllAddressHashes,
   selectAllContacts,
