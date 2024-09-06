@@ -71,6 +71,7 @@ import { useTranslation } from 'react-i18next'
 import useAddressesTokensBalances from '@/api/apiDataHooks/useAddressesTokensBalances'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
+import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/features/send/sendTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
@@ -80,16 +81,7 @@ import WalletConnectSessionProposalModal from '@/modals/WalletConnect/WalletConn
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { walletConnectPairingFailed, walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
 import { Address } from '@/types/addresses'
-import {
-  CallContractTxData,
-  DappTxData,
-  DeployContractTxData,
-  SignMessageData,
-  SignUnsignedTxData,
-  TransferTxData,
-  TxDataToModalType,
-  TxType
-} from '@/types/transactions'
+import { DappTxData, SignMessageData, SignUnsignedTxData, TxDataToModalType, TxType } from '@/types/transactions'
 import { AlephiumWindow } from '@/types/window'
 import { isRcVersion } from '@/utils/app-data'
 
@@ -286,7 +278,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         if (modalType === TxType.DEPLOY_CONTRACT) {
           dispatch(
             openModal({
-              name: 'SendModalDeployContract',
+              name: 'DeployContractSendModal',
               props: {
                 initialTxData: txData,
                 txData: txData as DeployContractTxData,
@@ -297,7 +289,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         } else if (modalType === TxType.SCRIPT) {
           dispatch(
             openModal({
-              name: 'SendModalCallContract',
+              name: 'CallContractSendModal',
               props: {
                 initialStep: 'info-check',
                 initialTxData: txData,
@@ -313,7 +305,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         } else if (modalType === TxType.TRANSFER && txData) {
           dispatch(
             openModal({
-              name: 'SendModalTransfer',
+              name: 'TransferSendModal',
               props: {
                 initialStep: 'info-check',
                 initialTxData: txData,

@@ -26,6 +26,7 @@ import {
   isInternalTx,
   isSwap,
   TransactionDirection,
+  TransactionInfoAsset,
   TransactionInfoType
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
@@ -37,7 +38,7 @@ import { SelectOption } from '@/components/Inputs/Select'
 import i18n from '@/i18n'
 import { store } from '@/storage/store'
 import { TranslationKey } from '@/types/i18next'
-import { Direction, PendingTransaction, TransactionInfo, TransactionTimePeriod } from '@/types/transactions'
+import { Direction, PendingTransaction, TransactionTimePeriod } from '@/types/transactions'
 
 export const isAmountWithinRange = (amount: bigint, maxAmount: bigint): boolean =>
   amount >= MIN_UTXO_SET_AMOUNT && amount <= maxAmount
@@ -122,6 +123,13 @@ export const directionOptions: {
     value: 'swap'
   }
 ]
+
+type TransactionInfo = {
+  assets: TransactionInfoAsset[]
+  direction: TransactionDirection
+  infoType: TransactionInfoType
+  lockTime?: Date
+}
 
 export const getTransactionInfo = (
   tx: Transaction | PendingTransaction,

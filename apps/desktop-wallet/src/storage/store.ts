@@ -47,6 +47,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
+        // The modal system might need functions to be passed as props and functions are not serializable
         ignoredPaths: ['modals'],
         ignoredActions: ['modal/openModal']
       }

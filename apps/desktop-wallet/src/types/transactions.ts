@@ -16,15 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressHash,
-  AssetAmount,
-  TransactionDirection,
-  TransactionInfoAsset,
-  TransactionInfoType
-} from '@alephium/shared'
-import { explorer, node, SignMessageParams } from '@alephium/web3'
+import { AddressHash, TransactionInfoType } from '@alephium/shared'
+import { explorer, SignMessageParams } from '@alephium/web3'
 
+import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/features/send/sendTypes'
 import { Address } from '@/types/addresses'
 
 export enum TxType {
@@ -35,14 +30,12 @@ export enum TxType {
   SCRIPT
 }
 
-export type PendingTxType = 'consolidation' | 'transfer' | 'sweep' | 'contract'
-
 export type PendingTransaction = {
   hash: string
   fromAddress: string
   toAddress: string
   timestamp: number
-  type: PendingTxType
+  type: 'consolidation' | 'transfer' | 'sweep' | 'contract'
   amount?: string
   tokens?: explorer.Token[]
   lockTime?: number
@@ -78,35 +71,6 @@ export type TxDataToModalType =
       txData: CallContractTxData
     }
 
-export interface DeployContractTxData {
-  fromAddress: Address
-  bytecode: string
-
-  initialAlphAmount?: AssetAmount
-  issueTokenAmount?: string
-  gasAmount?: number
-  gasPrice?: string
-}
-
-export interface CallContractTxData {
-  fromAddress: Address
-  bytecode: string
-
-  assetAmounts?: AssetAmount[]
-  gasAmount?: number
-  gasPrice?: string
-}
-
-export interface TransferTxData {
-  fromAddress: Address
-  toAddress: string
-  assetAmounts: AssetAmount[]
-  shouldSweep: boolean
-  gasAmount?: number
-  gasPrice?: string
-  lockTime?: Date
-}
-
 export interface SignUnsignedTxData {
   fromAddress: Address
   unsignedTx: string
@@ -116,45 +80,6 @@ export interface SignMessageData extends Pick<SignMessageParams, 'message' | 'me
   fromAddress: Address
 }
 
-export interface TxPreparation {
-  fromAddress: Address
-  bytecode?: string
-  issueTokenAmount?: string
-  alphAmount?: string
-}
-
-export type PartialTxData<T, K extends keyof T> = {
-  [P in keyof Omit<T, K>]?: T[P]
-} & Pick<T, K>
-
-export type CheckTxProps<T> = {
-  data: T
-  fees: bigint
-  onSubmit: () => void
-}
-
-export type UnsignedTx = {
-  fromGroup: number
-  toGroup: number
-  unsignedTx: string
-  gasAmount: number
-  gasPrice: string
-}
-
-export type TxContext = {
-  setIsSweeping: (isSweeping: boolean) => void
-  sweepUnsignedTxs: node.SweepAddressTransaction[]
-  setSweepUnsignedTxs: (txs: node.SweepAddressTransaction[]) => void
-  setFees: (fees: bigint | undefined) => void
-  unsignedTransaction: UnsignedTx | undefined
-  setUnsignedTransaction: (tx: UnsignedTx | undefined) => void
-  unsignedTxId: string
-  setUnsignedTxId: (txId: string) => void
-  setContractAddress: (contractAddress: string) => void
-  isSweeping: boolean
-  consolidationRequired: boolean
-}
-
 export type AddressConfirmedTransaction = explorer.Transaction & { address: Address }
 export type AddressPendingTransaction = PendingTransaction & { address: Address }
 export type AddressTransaction = AddressConfirmedTransaction | AddressPendingTransaction
@@ -162,13 +87,6 @@ export type AddressTransaction = AddressConfirmedTransaction | AddressPendingTra
 export type TransactionTimePeriod = '24h' | '1w' | '1m' | '6m' | '12m' | 'previousYear' | 'thisYear'
 
 export type Direction = Omit<TransactionInfoType, 'pending'>
-
-export type TransactionInfo = {
-  assets: TransactionInfoAsset[]
-  direction: TransactionDirection
-  infoType: TransactionInfoType
-  lockTime?: Date
-}
 
 export type CsvExportTimerangeQueryParams = {
   fromTs: number

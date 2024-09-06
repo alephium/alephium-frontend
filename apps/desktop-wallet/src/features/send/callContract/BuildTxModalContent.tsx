@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ALPH } from '@alephium/token-list'
-import { useState } from 'react'
+import { fromHumanReadableAmount } from '@alephium/shared'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -27,24 +27,23 @@ import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
 import ToggleSection from '@/components/ToggleSection'
+import useAnalytics from '@/features/analytics/useAnalytics'
+import AssetAmountsInput from '@/features/send/AssetAmountsInput'
+import GasSettings from '@/features/send/GasSettings'
+import { CallContractTxData, CallContractTxModalData, TxPreparation } from '@/features/send/sendTypes'
+import useAreAmountsWithinAvailableBalance from '@/features/send/useAreAmountsWithinAvailableBalance'
 import useGasSettings from '@/hooks/useGasSettings'
 import useStateObject from '@/hooks/useStateObject'
-import AssetAmountsInput from '@/modals/SendModals/AssetAmountsInput'
-import GasSettings from '@/modals/SendModals/GasSettings'
-import { DeployContractTxModalData } from '@/modals/SendModals/sendTypes'
 import { AssetAmountInputType } from '@/types/assets'
-import { DeployContractTxData, TxPreparation } from '@/types/transactions'
 import { isAmountWithinRange } from '@/utils/transactions'
 
-export interface DeployContractBuildTxModalContentProps {
-  data: DeployContractTxModalData
-  onSubmit: (data: DeployContractTxData) => void
+interface CallContractBuildTxModalContentProps {
+  data: CallContractTxModalData
+  onSubmit: (data: CallContractTxData) => void
   onCancel: () => void
 }
 
-const defaultAssetAmount = { id: ALPH.id }
-
-const DeployContractBuildTxModalContent = ({ data, onSubmit, onCancel }: DeployContractBuildTxModalContentProps) => {
+const CallContractBuildTxModalContent = ({ data, onSubmit, onCancel }: CallContractBuildTxModalContentProps) => {
   const { t } = useTranslation()
   const {
     gasAmount,
@@ -55,21 +54,31 @@ const DeployContractBuildTxModalContent = ({ data, onSubmit, onCancel }: DeployC
     handleGasAmountChange,
     handleGasPriceChange
   } = useGasSettings(data?.gasAmount?.toString(), data?.gasPrice)
+  const { sendAnalytics } = useAnalytics()
 
   const [txPrep, , setTxPrepProp] = useStateObject<TxPreparation>({
     fromAddress: data.fromAddress ?? '',
-    bytecode: data.bytecode ?? '',
-    issueTokenAmount: data.issueTokenAmount ?? ''
+    bytecode: data.bytecode ?? ''
   })
-  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>([
-    data.initialAlphAmount || defaultAssetAmount
-  ])
-  const alphAsset = assetAmounts[0]
+  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[] | undefined>(data.assetAmounts)
+  const [isAmountValid, setIsAmountValid] = useState(false)
 
-  const { fromAddress, bytecode, issueTokenAmount } = txPrep
+  const { fromAddress, bytecode, alphAmount } = txPrep
   const {
     data: { availableBalance }
   } = useAddressesAlphBalancesTotal(fromAddress.hash)
+  const allAssetAmountsAreWithinAvailableBalance = useAreAmountsWithinAvailableBalance(
+    fromAddress.hash,
+    assetAmounts ?? []
+  )
+
+  useEffect(() => {
+    try {
+      setIsAmountValid(!alphAmount || isAmountWithinRange(fromHumanReadableAmount(alphAmount), availableBalance))
+    } catch (error) {
+      sendAnalytics({ type: 'error', error, message: 'Could not determine if amount is valid' })
+    }
+  }, [alphAmount, availableBalance, sendAnalytics])
 
   if (fromAddress === undefined) {
     onCancel()
@@ -77,34 +86,24 @@ const DeployContractBuildTxModalContent = ({ data, onSubmit, onCancel }: DeployC
   }
 
   const isSubmitButtonActive =
-    !gasPriceError &&
-    !gasAmountError &&
-    !!bytecode &&
-    (!alphAsset.amount || isAmountWithinRange(alphAsset.amount, availableBalance))
+    !gasPriceError && !gasAmountError && !!bytecode && isAmountValid && allAssetAmountsAreWithinAvailableBalance
 
   return (
     <>
       <InputFieldsColumn>
-        <AssetAmountsInput
-          address={fromAddress}
-          assetAmounts={assetAmounts}
-          onAssetAmountsChange={setAssetAmounts}
-          allowMultiple={false}
-          id="asset-amounts"
-        />
+        {assetAmounts && (
+          <AssetAmountsInput
+            address={fromAddress}
+            assetAmounts={assetAmounts}
+            onAssetAmountsChange={setAssetAmounts}
+            id="asset-amounts"
+          />
+        )}
         <Input
           id="code"
           label={t('Bytecode')}
           value={bytecode}
           onChange={(e) => setTxPrepProp('bytecode')(e.target.value)}
-        />
-        <Input
-          id="issue-token-amount"
-          label={t('Tokens to issue (optional)')}
-          value={issueTokenAmount}
-          type="number"
-          onChange={(e) => setTxPrepProp('issueTokenAmount')(e.target.value)}
-          noMargin
         />
       </InputFieldsColumn>
       <HorizontalDividerStyled />
@@ -128,8 +127,7 @@ const DeployContractBuildTxModalContent = ({ data, onSubmit, onCancel }: DeployC
           onSubmit({
             fromAddress,
             bytecode: bytecode ?? '',
-            issueTokenAmount: issueTokenAmount || undefined,
-            initialAlphAmount: alphAsset.amount && alphAsset.amount > 0 ? alphAsset : undefined,
+            assetAmounts,
             gasAmount: gasAmount ? parseInt(gasAmount) : undefined,
             gasPrice
           })
@@ -142,7 +140,7 @@ const DeployContractBuildTxModalContent = ({ data, onSubmit, onCancel }: DeployC
   )
 }
 
-export default DeployContractBuildTxModalContent
+export default CallContractBuildTxModalContent
 
 const HorizontalDividerStyled = styled(HorizontalDivider)`
   margin: 20px 0;

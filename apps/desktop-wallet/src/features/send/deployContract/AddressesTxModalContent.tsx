@@ -25,8 +25,8 @@ import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import { useAddressesWithBalance } from '@/features/addressFiltering/addressFilteringHooks'
 import { useAppSelector } from '@/hooks/redux'
 import { ModalContent } from '@/modals/CenteredModal'
-import AddressInputs from '@/modals/SendModals/AddressInputs'
-import { DeployContractTxModalData } from '@/modals/SendModals/sendTypes'
+import AddressInputs from '@/features/send/AddressInputs'
+import { DeployContractTxModalData } from '@/features/send/sendTypes'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 interface DeployContractAddressesTxModalContentProps {
