@@ -24,21 +24,20 @@ import { useTranslation } from 'react-i18next'
 
 import { signAndSendTransaction } from '@/api/transactions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
-import SendModal, { ConfigurableSendModalProps } from '@/modals/SendModals/SendModal'
-import { DeployContractTxModalData } from '@/modals/SendModals/sendTypes'
+import SendModal, { ConfigurableSendModalProps } from '@/features/send/SendModal'
+import { DeployContractTxData, DeployContractTxModalData, TxContext } from '@/features/send/sendTypes'
 import { store } from '@/storage/store'
 import { transactionSent } from '@/storage/transactions/transactionsActions'
-import { DeployContractTxData, TxContext } from '@/types/transactions'
 
-export type SendModalDeployContractProps = ConfigurableSendModalProps<DeployContractTxModalData>
+export type DeployContractSendModalProps = ConfigurableSendModalProps<DeployContractTxModalData>
 
-const SendModalDeployContract = memo((props: ModalBaseProp & SendModalDeployContractProps) => {
+const DeployContractSendModal = memo((props: ModalBaseProp & DeployContractSendModalProps) => {
   const { t } = useTranslation()
 
   return <SendModal {...props} title={t('Deploy contract')} type="deploy-contract" />
 })
 
-export default SendModalDeployContract
+export default DeployContractSendModal
 
 export const buildDeployContractTransaction = async (data: DeployContractTxData, context: TxContext) => {
   const initialAttoAlphAmount =

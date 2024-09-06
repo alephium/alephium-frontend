@@ -159,7 +159,7 @@ const SendButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }
   if (!fromAddress) return null
 
   const handleSendClick = () => {
-    dispatch(openModal({ name: 'SendModalTransfer', props: { initialTxData: { fromAddress } } }))
+    dispatch(openModal({ name: 'TransferSendModal', props: { initialTxData: { fromAddress } } }))
     sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
   }
 

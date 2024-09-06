@@ -16,6 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { CallContractSendModalProps } from '@/features/send/callContract'
+import { DeployContractSendModalProps } from '@/features/send/deployContract'
+import { TransferSendModalProps } from '@/features/send/Transfer'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
 import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal'
 import { AddressOptionsModalProps } from '@/modals/AddressOptionsModal'
@@ -24,9 +27,6 @@ import { CSVExportModalProps } from '@/modals/CSVExportModal'
 import { NewAddressModalProps } from '@/modals/NewAddressModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
 import { ReceiveModalProps } from '@/modals/ReceiveModal'
-import { SendModalCallContractProps } from '@/modals/SendModals/CallContract'
-import { SendModalDeployContractProps } from '@/modals/SendModals/DeployContract'
-import { SendModalTransferProps } from '@/modals/SendModals/Transfer'
 import { SettingsModalProps } from '@/modals/SettingsModal'
 import { TransactionDetailsModalProps } from '@/modals/TransactionDetailsModal'
 
@@ -47,9 +47,9 @@ const ModalNames = {
   NewAddressModal: 'NewAddressModal',
   ContactFormModal: 'ContactFormModal',
   WalletUnlockModal: 'WalletUnlockModal',
-  SendModalTransfer: 'SendModalTransfer',
-  SendModalCallContract: 'SendModalCallContract',
-  SendModalDeployContract: 'SendModalDeployContract'
+  TransferSendModal: 'TransferSendModal',
+  CallContractSendModal: 'CallContractSendModal',
+  DeployContractSendModal: 'DeployContractSendModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -114,16 +114,16 @@ export type OpenModalParams =
       props: WalletUnlockModalProps
     }
   | {
-      name: typeof ModalNames.SendModalTransfer
-      props: SendModalTransferProps
+      name: typeof ModalNames.TransferSendModal
+      props: TransferSendModalProps
     }
   | {
-      name: typeof ModalNames.SendModalCallContract
-      props: SendModalCallContractProps
+      name: typeof ModalNames.CallContractSendModal
+      props: CallContractSendModalProps
     }
   | {
-      name: typeof ModalNames.SendModalDeployContract
-      props: SendModalDeployContractProps
+      name: typeof ModalNames.DeployContractSendModal
+      props: DeployContractSendModalProps
     }
 
 export type ModalInstance = {

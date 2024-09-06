@@ -20,12 +20,12 @@ import { useTranslation } from 'react-i18next'
 
 import FooterButton from '@/components/Buttons/FooterButton'
 import InfoBox from '@/components/InfoBox'
+import CheckAddressesBox from '@/features/send/CheckAddressesBox'
+import CheckAmountsBox from '@/features/send/CheckAmountsBox'
+import CheckFeeLockTimeBox from '@/features/send/CheckFeeLockTimeBox'
+import CheckModalContent from '@/features/send/CheckModalContent'
+import { CallContractTxData, CheckTxProps } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
-import CheckAddressesBox from '@/modals/SendModals/CheckAddressesBox'
-import CheckAmountsBox from '@/modals/SendModals/CheckAmountsBox'
-import CheckFeeLockTimeBox from '@/modals/SendModals/CheckFeeLockTimeBox'
-import CheckModalContent from '@/modals/SendModals/CheckModalContent'
-import { CallContractTxData, CheckTxProps } from '@/types/transactions'
 
 const CallContractCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProps<CallContractTxData>) => {
   const { t } = useTranslation()
