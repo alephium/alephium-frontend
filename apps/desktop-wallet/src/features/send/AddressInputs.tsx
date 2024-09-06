@@ -31,11 +31,11 @@ import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Truncate from '@/components/Truncate'
+import InputsSection from '@/features/send/InputsSection'
 import { useAppSelector } from '@/hooks/redux'
 import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
-import InputsSection from '@/features/send/InputsSection'
 import {
   selectAllAddressHashes,
   selectAllContacts,
