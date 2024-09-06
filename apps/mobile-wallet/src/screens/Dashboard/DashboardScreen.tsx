@@ -135,7 +135,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       }}
       {...props}
     >
-      <AnimatedCirclesBackground height={400} scrollY={screenScrollY} isLoading={false} />
+      <AnimatedCirclesBackground height={400} scrollY={screenScrollY} />
       <View style={{ marginTop: insets.top }}>
         <BlurredCard>
           <WalletCardHeader>

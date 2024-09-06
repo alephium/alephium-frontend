@@ -38,23 +38,29 @@ import styled from 'styled-components/native'
 interface AnimatedCirclesBackgroundProps {
   height?: number
   scrollY?: SharedValue<number>
-  isLoading?: boolean
+  isAnimated?: boolean
+  isFullScreen?: boolean
 }
 
 const AnimatedCanvas = Animated.createAnimatedComponent(Canvas)
 
-const AnimatedCirclesBackground = ({ height = 400, scrollY, isLoading }: AnimatedCirclesBackgroundProps) => {
+const AnimatedCirclesBackground = ({
+  height = 400,
+  scrollY,
+  isAnimated = false,
+  isFullScreen = false
+}: AnimatedCirclesBackgroundProps) => {
   const gyroscope = useAnimatedSensor(SensorType.ROTATION)
   const { width: screenWidth, height: screenHeight } = useWindowDimensions()
 
   // Canvas size animation
-  const canvasHeight = useSharedValue(height)
-  const canvasWidth = useSharedValue(height)
+  const canvasHeight = useSharedValue(isFullScreen ? screenHeight : height)
+  const canvasWidth = useSharedValue(isFullScreen ? screenWidth : height)
 
   useEffect(() => {
-    canvasHeight.value = withSpring(isLoading ? screenHeight : height, { mass: 20, damping: 60 })
-    canvasWidth.value = withSpring(isLoading ? screenWidth : height, { mass: 20, damping: 60 })
-  }, [isLoading, screenWidth, canvasHeight, canvasWidth, screenHeight, height])
+    canvasHeight.value = withSpring(isFullScreen ? screenHeight : height, { mass: 20, damping: 60 })
+    canvasWidth.value = withSpring(isFullScreen ? screenWidth : height, { mass: 20, damping: 60 })
+  }, [isFullScreen, screenWidth, canvasHeight, canvasWidth, screenHeight, height])
 
   const animatedCanvasStyle = useAnimatedStyle(() => ({
     height: canvasHeight.value,
@@ -69,7 +75,7 @@ const AnimatedCirclesBackground = ({ height = 400, scrollY, isLoading }: Animate
   const angle = useSharedValue(0)
 
   useEffect(() => {
-    if (isLoading) {
+    if (isAnimated) {
       angle.value = withRepeat(
         withTiming(2 * Math.PI, {
           duration: 4000,
@@ -78,59 +84,71 @@ const AnimatedCirclesBackground = ({ height = 400, scrollY, isLoading }: Animate
         -1
       )
     }
-  }, [angle, isLoading])
+  }, [angle, isAnimated])
 
   const canvasCenterY = useDerivedValue(() => canvasHeight.value / 2)
-  const danceXAmplitude = 20
-  const danceYAmplitude = 40
+  const danceXAmplitude = 20 + Math.random() * 5 // Adding randomness to amplitude
+  const danceYAmplitude = 40 + Math.random() * 5 // Adding randomness to amplitude
+
+  const randomOffset1 = Math.random() * 0.5 // Random offset for circle 1
+  const randomOffset2 = Math.random() * 0.5 // Random offset for circle 2
+  const randomOffset3 = Math.random() * 0.5 // Random offset for circle 3
 
   const circle1X = useDerivedValue(() =>
-    isLoading
-      ? withSpring(canvasWidth.value / 4 + danceXAmplitude * Math.cos(angle.value) + gyroscope.sensor.value.roll * 25)
+    isAnimated
+      ? withSpring(
+          canvasWidth.value / 4 +
+            danceXAmplitude * Math.cos(angle.value + randomOffset1) +
+            gyroscope.sensor.value.roll * 25
+        )
       : withSpring(100 + gyroscope.sensor.value.roll * 25, { mass: 20, damping: 20 })
   )
 
   const circle1Y = useDerivedValue(() =>
-    isLoading
-      ? withSpring(canvasCenterY.value + danceYAmplitude * Math.sin(angle.value) + gyroscope.sensor.value.pitch * 25)
+    isAnimated
+      ? withSpring(
+          canvasCenterY.value +
+            danceYAmplitude * Math.sin(angle.value + randomOffset1) +
+            gyroscope.sensor.value.pitch * 25
+        )
       : withSpring(canvasCenterY.value + gyroscope.sensor.value.pitch * 25, { mass: 20, damping: 40 })
   )
 
   const circle2X = useDerivedValue(() =>
-    isLoading
+    isAnimated
       ? withSpring(
           canvasWidth.value / 2 +
-            danceXAmplitude * Math.cos(angle.value + (2 * Math.PI) / 3) +
+            danceXAmplitude * Math.cos(angle.value + (2 * Math.PI) / 3 + randomOffset2) +
             gyroscope.sensor.value.roll * 20
         )
       : withSpring(screenWidth / 2 + gyroscope.sensor.value.roll * 20, { mass: 40, damping: 20 })
   )
 
   const circle2Y = useDerivedValue(() =>
-    isLoading
+    isAnimated
       ? withSpring(
           canvasCenterY.value +
-            danceYAmplitude * Math.sin(angle.value + (2 * Math.PI) / 3) +
+            danceYAmplitude * Math.sin(angle.value + (2 * Math.PI) / 3 + randomOffset2) +
             gyroscope.sensor.value.pitch * 20
         )
       : withSpring(canvasCenterY.value - 60 + gyroscope.sensor.value.pitch * 20, { mass: 20, damping: 20 })
   )
 
   const circle3X = useDerivedValue(() =>
-    isLoading
+    isAnimated
       ? withSpring(
           (3 * canvasWidth.value) / 4 +
-            danceXAmplitude * Math.cos(angle.value + (4 * Math.PI) / 3) +
+            danceXAmplitude * Math.cos(angle.value + (4 * Math.PI) / 3 + randomOffset3) +
             gyroscope.sensor.value.roll * 23
         )
       : withSpring(screenWidth - 90 + gyroscope.sensor.value.roll * 23, { mass: 30, damping: 20 })
   )
 
   const circle3Y = useDerivedValue(() =>
-    isLoading
+    isAnimated
       ? withSpring(
           canvasCenterY.value +
-            danceYAmplitude * Math.sin(angle.value + (4 * Math.PI) / 3) +
+            danceYAmplitude * Math.sin(angle.value + (4 * Math.PI) / 3 + randomOffset3) +
             gyroscope.sensor.value.pitch * 23
         )
       : withSpring(canvasCenterY.value - 20 + gyroscope.sensor.value.pitch * 23, { mass: 20, damping: 20 })
@@ -140,9 +158,9 @@ const AnimatedCirclesBackground = ({ height = 400, scrollY, isLoading }: Animate
     <AnimatedContainer style={parallaxAnimatedStyle}>
       <AnimatedCanvas style={animatedCanvasStyle}>
         <Group>
-          <Circle r={96} color="#FF2E21" cx={circle1X} cy={circle1Y} blendMode="screen" />
-          <Circle r={86} color="#FFA621" cx={circle2X} cy={circle2Y} blendMode="screen" />
-          <Circle r={90} color="#FB21FF" cx={circle3X} cy={circle3Y} blendMode="screen" />
+          <Circle r={96} color="#FF2E21" cx={circle1X} cy={circle1Y} />
+          <Circle r={86} color="#FFA621" cx={circle2X} cy={circle2Y} />
+          <Circle r={90} color="#FB21FF" cx={circle3X} cy={circle3Y} />
         </Group>
       </AnimatedCanvas>
     </AnimatedContainer>
