@@ -22,7 +22,7 @@ import { Platform } from 'react-native'
 
 export const BORDER_RADIUS_HUGE = 28
 export const BORDER_RADIUS_BIG = 16
-export const BORDER_RADIUS = 12
+export const BORDER_RADIUS = 16
 export const BORDER_RADIUS_SMALL = 6
 
 export const INPUTS_HEIGHT = 60

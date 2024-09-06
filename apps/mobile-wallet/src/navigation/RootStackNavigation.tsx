@@ -54,7 +54,8 @@ import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
 import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
 import NewContactScreen from '~/screens/Addresses/Contact/NewContactScreen'
 import CustomNetworkScreen from '~/screens/CustomNetworkScreen'
-import LandingScreen, { CoolAlephiumCanvas } from '~/screens/LandingScreen'
+import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
+import LandingScreen from '~/screens/LandingScreen'
 import LoginWithPinScreen from '~/screens/LoginWithPinScreen'
 import AddBiometricsScreen from '~/screens/new-wallet/AddBiometricsScreen'
 import DecryptScannedMnemonicScreen from '~/screens/new-wallet/DecryptScannedMnemonicScreen'
@@ -266,7 +267,7 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
       animationType="none"
     >
       <View style={{ backgroundColor: 'black', flex: 1 }}>
-        <CoolAlephiumCanvas {...dimensions} onPress={unlockApp} />
+        <AnimatedCirclesBackground isAnimated />
       </View>
     </Modal>
   )

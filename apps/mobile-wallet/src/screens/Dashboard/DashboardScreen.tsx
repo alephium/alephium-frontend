@@ -20,7 +20,6 @@ import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { View } from 'react-native'
 import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -136,7 +135,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       {...props}
     >
       <AnimatedCirclesBackground height={400} scrollY={screenScrollY} />
-      <View style={{ marginTop: insets.top }}>
+      <CardContainer style={{ marginTop: insets.top }}>
         <BlurredCard>
           <WalletCardHeader>
             <HeaderButtons />
@@ -157,7 +156,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
             </ButtonsRowContainer>
           )}
         </BlurredCard>
-      </View>
+      </CardContainer>
       <AddressesTokensList />
       {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
         <EmptyPlaceholder>
@@ -243,6 +242,10 @@ export default DashboardScreen
 
 const DashboardScreenStyled = styled(BottomBarScrollScreen)`
   gap: 15px;
+`
+
+const CardContainer = styled.View`
+  margin: 0 ${DEFAULT_MARGIN / 2}px;
 `
 
 const WalletCardHeader = styled.View`

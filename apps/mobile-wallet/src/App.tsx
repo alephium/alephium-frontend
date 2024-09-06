@@ -87,7 +87,7 @@ const App = () => {
           ) : (
             // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
             // splash screen to be show after the default one gets hidden, before we can show app content.
-            <AnimatedCirclesBackground isLoading={true} />
+            <AnimatedCirclesBackground isAnimated />
           )}
           <ToastAnchor />
         </ThemeProvider>

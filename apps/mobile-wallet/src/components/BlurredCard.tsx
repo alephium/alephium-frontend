@@ -18,19 +18,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
 import { ReactNode } from 'react'
-import { Platform, StyleSheet } from 'react-native'
+import { Platform, StyleProp, StyleSheet, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface BlurredCardProps {
   children: ReactNode
+  style?: StyleProp<ViewStyle>
 }
 
-const BlurredCard = ({ children }: BlurredCardProps) => {
+const BlurredCard = ({ children, style }: BlurredCardProps) => {
   const theme = useTheme()
   return (
-    <BlurredCardContainer>
+    <BlurredCardContainer style={style}>
       {Platform.OS === 'android' ? (
         <TransparentCardBackground style={StyleSheet.absoluteFill} />
       ) : (
@@ -49,7 +48,6 @@ export default BlurredCard
 
 const BlurredCardContainer = styled.View`
   flex: 1;
-  margin: 0 ${DEFAULT_MARGIN / 2}px;
   border-radius: 38px;
   overflow: hidden;
 `
