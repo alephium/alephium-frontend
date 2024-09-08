@@ -172,6 +172,7 @@
   "Created fund password": "Created fund password",
   "Delete fund password": "Delete fund password",
   "Fund password was deleted.": "Fund password was deleted.",
+  "Could not save fund password.": "Could not save fund password.",
   "You can set a new password below. This password will be required for critical operations involving the safety of your funds and cannot be recovered.": "You can set a new password below. This password will be required for critical operations involving the safety of your funds and cannot be recovered.",
   "The fund password acts as an additional authentication layer for critical operations involving the safety of your funds such as revealing your secret recovery phrase or sending funds.": "The fund password acts as an additional authentication layer for critical operations involving the safety of your funds such as revealing your secret recovery phrase or sending funds.",
   "Edit password": "Edit password",

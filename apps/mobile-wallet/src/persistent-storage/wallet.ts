@@ -101,6 +101,8 @@ export const validateAndRepareStoredWalletData = async (
             onPress: async () => {
               try {
                 await generateAndStoreWalletMetadata('My wallet', false)
+              } catch (error) {
+                console.error(error)
               } finally {
                 walletMetadata = await getWalletMetadata(false)
               }
