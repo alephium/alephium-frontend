@@ -25,12 +25,12 @@ import { useAppSelector } from '@/hooks/redux'
 
 const TOKEN_LIST_QUERY_KEY = 'tokenList'
 
-export interface FungibleTokenList {
+export interface FTList {
   data: TokenList['tokens'] | undefined
   isLoading: boolean
 }
 
-export const useFungibleTokenList = (): FungibleTokenList => {
+const useFTList = (): FTList => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const network = networkId === 0 ? 'mainnet' : networkId === 1 ? 'testnet' : undefined
 
@@ -49,3 +49,5 @@ export const useFungibleTokenList = (): FungibleTokenList => {
     isLoading
   }
 }
+
+export default useFTList
