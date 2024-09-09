@@ -62,6 +62,8 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
     }
   }
 
+  const openBuyModal = () => dispatch(openModal({ name: 'BuyModal' }))
+
   return (
     <BalanceSummaryContainer style={style} {...props}>
       <TextContainer>
@@ -83,14 +85,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
       {totalBalance === BigInt(0) && !isLoadingAlphBalances && addressesStatus === 'initialized' && (
         <ReceiveFundsButtonContainer>
           <Button onPress={handleReceivePress} iconProps={{ name: 'download' }} variant="highlight" short round flex />
-          <Button
-            onPress={() => dispatch(openModal({ name: 'BuyModal' }))}
-            iconProps={{ name: 'credit-card' }}
-            variant="highlight"
-            short
-            round
-            flex
-          />
+          <Button onPress={openBuyModal} iconProps={{ name: 'credit-card' }} variant="highlight" short round flex />
         </ReceiveFundsButtonContainer>
       )}
     </BalanceSummaryContainer>

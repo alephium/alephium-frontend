@@ -45,7 +45,7 @@ const BuyModal = memo(({ id }: ModalBaseProp) => {
   const insets = useSafeAreaInsets()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [isDisclaimerAccepted, setIsDisclaimerAccepted] = useState(false)
-  const [currentUrl, setCurrentUrl] = useState<string>('')
+  const [currentUrl, setCurrentUrl] = useState('')
   const dispatch = useAppDispatch()
   const onClose = () => dispatch(closeModal({ id }))
 
@@ -80,8 +80,6 @@ const BuyModal = memo(({ id }: ModalBaseProp) => {
       setCurrentUrl(banxaInitialURL)
     }
   }, [defaultAddress, theme, currentUrl, banxaInitialURL])
-
-  if (!defaultAddress) return null
 
   const handleNavigationChange = (e: WebViewNavigation) => {
     // Close modal if url equals default return URL configured in Banxa dashboard

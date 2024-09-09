@@ -25,6 +25,8 @@ import { useAppSelector } from '~/hooks/redux'
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
 
+  if (openedModals.length === 0) return null
+
   return (
     <ModalsContainer pointerEvents={openedModals.length > 0 ? 'auto' : 'none'}>
       {openedModals.map((modal) => {

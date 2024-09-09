@@ -120,6 +120,8 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     }
   }
 
+  const openBuyModal = () => dispatch(openModal({ name: 'BuyModal' }))
+
   return (
     <DashboardScreenStyled
       refreshControl={<RefreshSpinner />}
@@ -153,14 +155,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           <ButtonsRowContainer>
             <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" round flex short />
             <Button onPress={handleReceivePress} iconProps={{ name: 'download' }} variant="contrast" round flex short />
-            <Button
-              onPress={() => dispatch(openModal({ name: 'BuyModal' }))}
-              iconProps={{ name: 'credit-card' }}
-              variant="contrast"
-              round
-              flex
-              short
-            />
+            <Button onPress={openBuyModal} iconProps={{ name: 'credit-card' }} variant="contrast" round flex short />
           </ButtonsRowContainer>
         )}
       </WalletCard>
