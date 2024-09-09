@@ -42,7 +42,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   const { t } = useTranslation()
   const wallets = useAppSelector((state) => state.global.wallets)
   const { unlockWallet } = useWalletLock()
-  const { pendingDappConnectionUrl, sessionRequestEvent } = useWalletConnectContext()
+  const { pendingDappConnectionUrl, isAwaitingSessionRequestApproval } = useWalletConnectContext()
   const navigate = useNavigate()
 
   const walletOptions = wallets.map(({ id, name }) => ({ label: name, value: id }))
@@ -79,7 +79,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
       <PanelTitle useLayoutId={false} size="big" centerText>
         {pendingDappConnectionUrl
           ? t('Connect to dApp')
-          : sessionRequestEvent
+          : isAwaitingSessionRequestApproval
             ? t('Received dApp request')
             : t('Welcome back.')}
       </PanelTitle>
