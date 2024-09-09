@@ -22,14 +22,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { useAddressesUnlistedFTs } from '@/api/addressesUnlistedTokensHooks'
 import useAddressesAlphBalances from '@/api/apiDataHooks/useAddressesAlphBalances'
 import useAddressesTokensBalances from '@/api/apiDataHooks/useAddressesTokensBalances'
-import { useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
+import useFTList from '@/api/apiDataHooks/useFTList'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
 export const useFilterAddressesByText = (text = '') => {
   const allAddresses = useAppSelector(selectAllAddresses)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
-  const { data: fungibleTokenList } = useFungibleTokenList()
+  const { data: fungibleTokenList } = useFTList()
   const { data: unlistedFungibleTokens } = useAddressesUnlistedFTs()
   const { data: addressesAlphBalances } = useAddressesAlphBalances()
   const { data: addressesTokensBalances } = useAddressesTokensBalances()

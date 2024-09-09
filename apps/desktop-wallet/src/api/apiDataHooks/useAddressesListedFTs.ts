@@ -20,7 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { useMemo } from 'react'
 
 import useAddressesTokensBalances, { AddressesTokensBalances } from '@/api/apiDataHooks/useAddressesTokensBalances'
-import { FungibleTokenList, useFungibleTokenList } from '@/api/fungibleTokenListDataHooks'
+import useFTList, { FTList } from '@/api/apiDataHooks/useFTList'
 import { ListedFT, TokenId } from '@/types/tokens'
 
 interface AddressesListedFTs {
@@ -30,7 +30,7 @@ interface AddressesListedFTs {
 }
 
 const useAddressesListedFTs = (addressHash?: AddressHash): AddressesListedFTs => {
-  const { data: fungibleTokenList, isLoading: isLoadingFungibleTokenList } = useFungibleTokenList()
+  const { data: fungibleTokenList, isLoading: isLoadingFTList } = useFTList()
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalances(addressHash)
 
   const { listedFTs, unknownTypeTokenIds } = useMemo(
@@ -41,16 +41,13 @@ const useAddressesListedFTs = (addressHash?: AddressHash): AddressesListedFTs =>
   return {
     data: listedFTs,
     unknownTypeTokenIds,
-    isLoading: isLoadingFungibleTokenList || isLoadingTokensBalances
+    isLoading: isLoadingFTList || isLoadingTokensBalances
   }
 }
 
 export default useAddressesListedFTs
 
-const separateTokens = (
-  tokensBalances: AddressesTokensBalances['data'],
-  fungibleTokenList: FungibleTokenList['data']
-) =>
+const separateTokens = (tokensBalances: AddressesTokensBalances['data'], fungibleTokenList: FTList['data']) =>
   Object.values(tokensBalances).reduce(
     (acc, addressTokensBalances) => {
       addressTokensBalances?.map(({ id }) => {
