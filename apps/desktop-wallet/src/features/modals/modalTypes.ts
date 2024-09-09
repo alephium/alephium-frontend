@@ -26,6 +26,7 @@ import { SignUnsignedTxModalProps } from '@/features/walletConnect/SignUnsignedT
 import { WalletConnectSessionProposalModalProps } from '@/features/walletConnect/WalletConnectSessionProposalModal'
 import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal'
 import { AddressOptionsModalProps } from '@/modals/AddressOptionsModal'
+import { ConfirmModalProps } from '@/modals/ConfirmModal'
 import { ConsolidateUTXOsModalProps } from '@/modals/ConsolidateUTXOsModal'
 import { ContactFormModalProps } from '@/modals/ContactFormModal'
 import { CSVExportModalProps } from '@/modals/CSVExportModal'
@@ -59,7 +60,8 @@ const ModalNames = {
   SignUnsignedTxModal: 'SignUnsignedTxModal',
   SignMessageModal: 'SignMessageModal',
   ConsolidateUTXOsModal: 'ConsolidateUTXOsModal',
-  ConfirmLockTimeModal: 'ConfirmLockTimeModal'
+  ConfirmLockTimeModal: 'ConfirmLockTimeModal',
+  ConfirmModal: 'ConfirmModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -154,6 +156,10 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.ConfirmLockTimeModal
       props: ConfirmLockTimeModalProps
+    }
+  | {
+      name: typeof ModalNames.ConfirmModal
+      props: ConfirmModalProps
     }
 
 export type ModalInstance = {

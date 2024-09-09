@@ -33,6 +33,7 @@ import WalletConnectSessionProposalModal from '@/features/walletConnect/WalletCo
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import AddressOptionsModal from '@/modals/AddressOptionsModal'
+import ConfirmModal from '@/modals/ConfirmModal'
 import ConsolidateUTXOsModal from '@/modals/ConsolidateUTXOsModal'
 import ContactFormModal from '@/modals/ContactFormModal'
 import CSVExportModal from '@/modals/CSVExportModal'
@@ -111,6 +112,8 @@ const AppModals = () => {
               return <ConsolidateUTXOsModal id={modal.id} key={modal.id} {...modal.params.props} />
             case 'ConfirmLockTimeModal':
               return <ConfirmLockTimeModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'ConfirmModal':
+              return <ConfirmModal id={modal.id} key={modal.id} {...modal.params.props} />
           }
         })}
     </AnimatePresenceModalWrapper>
