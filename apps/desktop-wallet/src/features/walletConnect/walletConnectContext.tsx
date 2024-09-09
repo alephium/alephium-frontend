@@ -41,27 +41,10 @@ import {
   SignUnsignedTxParams,
   SignUnsignedTxResult
 } from '@alephium/web3'
-import {
-  CORE_STORAGE_OPTIONS,
-  CORE_STORAGE_PREFIX,
-  Expirer,
-  HISTORY_CONTEXT,
-  HISTORY_STORAGE_VERSION,
-  MESSAGES_CONTEXT,
-  MESSAGES_STORAGE_VERSION,
-  STORE_STORAGE_VERSION
-} from '@walletconnect/core'
-import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
-import SignClient, { REQUEST_CONTEXT, SESSION_CONTEXT, SIGN_CLIENT_STORAGE_PREFIX } from '@walletconnect/sign-client'
-import {
-  EngineTypes,
-  JsonRpcRecord,
-  MessageRecord,
-  PendingRequestTypes,
-  SessionTypes,
-  SignClientTypes
-} from '@walletconnect/types'
-import { calcExpiry, getSdkError, mapToObj, objToMap } from '@walletconnect/utils'
+import { Expirer } from '@walletconnect/core'
+import SignClient from '@walletconnect/sign-client'
+import { EngineTypes, SessionTypes, SignClientTypes } from '@walletconnect/types'
+import { calcExpiry, getSdkError } from '@walletconnect/utils'
 import { partition } from 'lodash'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -70,56 +53,48 @@ import useAddressesTokensBalances from '@/api/apiDataHooks/useAddressesTokensBal
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/features/send/sendTypes'
-import SignMessageModal from '@/features/walletConnect/SignMessageModal'
-import SignUnsignedTxModal from '@/features/walletConnect/SignUnsignedTxModal'
+import { SignMessageData, SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import {
-  DappTxData,
-  SignMessageData,
-  SignUnsignedTxData,
-  TxDataToModalType,
-  TxType
-} from '@/features/walletConnect/walletConnectTypes'
+  cleanBeforeInit,
+  cleanHistory,
+  cleanMessages,
+  clearWCStorage
+} from '@/features/walletConnect/walletConnectUtils'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import useWalletLock from '@/hooks/useWalletLock'
-import ModalPortal from '@/modals/ModalPortal'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { walletConnectPairingFailed } from '@/storage/dApps/dAppActions'
 import { isRcVersion } from '@/utils/app-data'
 import { electron } from '@/utils/misc'
 
-const MaxRequestNumToKeep = 10
-
 export interface WalletConnectContextProps {
   pairWithDapp: (uri: string) => void
   unpairFromDapp: (pairingTopic: string) => Promise<void>
   activeSessions: SessionTypes.Struct[]
-  reset: () => Promise<void>
-  onSessionRequestModalClose: () => void
-  onTransactionBuildFail: (error: string) => void
-  onSendSuccess: (result: node.SignResult) => void
-  onSendFail: (error: string) => void
-  resetPendingDappConnectionUrl: () => void
   refreshActiveSessions: () => void
+  reset: () => Promise<void>
+  sendUserRejectedResponse: (hideApp?: boolean) => void
+  sendSuccessResponse: (
+    result: node.SignResult | SignUnsignedTxResult | SignMessageResult,
+    hideApp?: boolean
+  ) => Promise<void>
+  sendFailureResponse: (error: WalletConnectError) => void
+  resetPendingDappConnectionUrl: () => void
+  isAwaitingSessionRequestApproval: boolean
   walletConnectClient?: SignClient
-  sessionRequestEvent?: SessionRequestEvent
-  dappTxData?: DappTxData
   pendingDappConnectionUrl?: string
 }
 
 const initialContext: WalletConnectContextProps = {
-  walletConnectClient: undefined,
   pairWithDapp: () => null,
   unpairFromDapp: () => Promise.resolve(),
-  dappTxData: undefined,
   activeSessions: [],
-  pendingDappConnectionUrl: undefined,
+  refreshActiveSessions: () => null,
   reset: () => Promise.resolve(),
-  onSessionRequestModalClose: () => null,
-  onTransactionBuildFail: () => null,
-  onSendSuccess: () => null,
-  onSendFail: () => null,
+  sendUserRejectedResponse: () => null,
+  sendSuccessResponse: () => Promise.resolve(),
+  sendFailureResponse: () => null,
   resetPendingDappConnectionUrl: () => null,
-  refreshActiveSessions: () => null
+  isAwaitingSessionRequestApproval: false
 }
 
 const WalletConnectContext = createContext<WalletConnectContextProps>(initialContext)
@@ -127,17 +102,12 @@ const WalletConnectContext = createContext<WalletConnectContextProps>(initialCon
 export const WalletConnectContextProvider: FC = ({ children }) => {
   const { t } = useTranslation()
   const addresses = useAppSelector(selectAllAddresses)
-  const { isWalletUnlocked } = useWalletLock()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
   const { data: addressesTokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalances()
 
-  const [isSignUnsignedTxModalOpen, setIsSignUnsignedTxModalOpen] = useState(false)
-  const [isSignMessageModalOpen, setIsSignMessageModalOpen] = useState(false)
-
   const [walletConnectClient, setWalletConnectClient] = useState(initialContext.walletConnectClient)
   const [activeSessions, setActiveSessions] = useState(initialContext.activeSessions)
-  const [dappTxData, setDappTxData] = useState(initialContext.dappTxData)
   const [sessionRequestEvent, setSessionRequestEvent] = useState<SessionRequestEvent>()
   const [walletConnectClientStatus, setWalletConnectClientStatus] = useState<WalletConnectClientStatus>('uninitialized')
   const [walletLockedBeforeProcessingWCRequest, setWalletLockedBeforeProcessingWCRequest] = useState(false)
@@ -202,15 +172,12 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
 
       await cleanStorage(event)
       setSessionRequestEvent(undefined)
-      setDappTxData(undefined)
-      setIsSignMessageModalOpen(false)
-      setIsSignUnsignedTxModalOpen(false)
     },
     [cleanStorage, walletConnectClient]
   )
 
   const respondToWalletConnectWithSuccess = useCallback(
-    async (event: SessionRequestEvent, result: node.SignResult) => {
+    async (event: SessionRequestEvent, result: node.SignResult | SignUnsignedTxResult | SignMessageResult) => {
       await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
     },
     [respondToWalletConnect]
@@ -229,10 +196,14 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
   }, [walletConnectClient])
 
-  const onSessionRequestModalClose = useCallback(async () => {
-    if (sessionRequestEvent)
-      await respondToWalletConnectWithError(sessionRequestEvent, getSdkError('USER_REJECTED_EVENTS'))
-  }, [respondToWalletConnectWithError, sessionRequestEvent])
+  const sendUserRejectedResponse = useCallback(
+    async (hideApp?: boolean) => {
+      if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, getSdkError('USER_REJECTED'))
+
+      if (hideApp) electron?.app.hide()
+    },
+    [respondToWalletConnectWithError, sessionRequestEvent]
+  )
 
   const onSessionProposal = useCallback(
     async (proposalEvent: SessionProposalEvent) => {
@@ -246,25 +217,18 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     [dispatch]
   )
 
-  const onSendSuccess = async (result: node.SignResult) => {
+  const sendSuccessResponse = async (
+    result: node.SignResult | SignUnsignedTxResult | SignMessageResult,
+    hideApp?: boolean
+  ) => {
     if (sessionRequestEvent) await respondToWalletConnectWithSuccess(sessionRequestEvent, result)
+
+    if (hideApp) electron?.app.hide()
   }
 
-  const onSendFail = async (errorMessage: string) => {
-    if (sessionRequestEvent)
-      await respondToWalletConnectWithError(sessionRequestEvent, {
-        message: errorMessage,
-        code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-      })
-  }
-
-  const onTransactionBuildFail = useCallback(
-    async (errorMessage: string) => {
-      if (sessionRequestEvent)
-        await respondToWalletConnectWithError(sessionRequestEvent, {
-          message: errorMessage,
-          code: WALLETCONNECT_ERRORS.TRANSACTION_BUILD_FAILED
-        })
+  const sendFailureResponse = useCallback(
+    async (error: WalletConnectError) => {
+      if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, error)
     },
     [respondToWalletConnectWithError, sessionRequestEvent]
   )
@@ -280,51 +244,6 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         if (!address) throw new Error(`Unknown signer address: ${hash}`)
 
         return address
-      }
-
-      const setTxDataAndOpenModal = ({ txData, modalType }: TxDataToModalType) => {
-        setDappTxData(txData)
-
-        if (modalType === TxType.DEPLOY_CONTRACT) {
-          dispatch(
-            openModal({
-              name: 'DeployContractSendModal',
-              props: {
-                initialTxData: txData,
-                txData: txData as DeployContractTxData,
-                triggeredByWalletConnect: true
-              }
-            })
-          )
-        } else if (modalType === TxType.SCRIPT) {
-          dispatch(
-            openModal({
-              name: 'CallContractSendModal',
-              props: {
-                initialStep: 'info-check',
-                initialTxData: txData,
-                txData: txData as CallContractTxData,
-                triggeredByWalletConnect: true
-              }
-            })
-          )
-        } else if (modalType === TxType.SIGN_UNSIGNED_TX) {
-          setIsSignUnsignedTxModalOpen(true)
-        } else if (modalType === TxType.SIGN_MESSAGE) {
-          setIsSignMessageModalOpen(true)
-        } else if (modalType === TxType.TRANSFER && txData) {
-          dispatch(
-            openModal({
-              name: 'TransferSendModal',
-              props: {
-                initialStep: 'info-check',
-                initialTxData: txData,
-                txData: txData as TransferTxData,
-                triggeredByWalletConnect: true
-              }
-            })
-          )
-        }
       }
 
       const {
@@ -372,7 +291,17 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
               shouldSweep
             }
 
-            setTxDataAndOpenModal({ txData, modalType: TxType.TRANSFER })
+            dispatch(
+              openModal({
+                name: 'TransferSendModal',
+                props: {
+                  initialStep: 'info-check',
+                  initialTxData: txData,
+                  txData,
+                  triggeredByWalletConnect: true
+                }
+              })
+            )
             break
           }
           case 'alph_signAndSubmitDeployContractTx': {
@@ -391,7 +320,16 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
               gasPrice: gasPrice?.toString()
             }
 
-            setTxDataAndOpenModal({ txData, modalType: TxType.DEPLOY_CONTRACT })
+            dispatch(
+              openModal({
+                name: 'DeployContractSendModal',
+                props: {
+                  initialTxData: txData,
+                  txData: txData as DeployContractTxData,
+                  triggeredByWalletConnect: true
+                }
+              })
+            )
             break
           }
           case 'alph_signAndSubmitExecuteScriptTx': {
@@ -423,7 +361,17 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
               gasPrice: gasPrice?.toString()
             }
 
-            setTxDataAndOpenModal({ txData, modalType: TxType.SCRIPT })
+            dispatch(
+              openModal({
+                name: 'CallContractSendModal',
+                props: {
+                  initialStep: 'info-check',
+                  initialTxData: txData,
+                  txData,
+                  triggeredByWalletConnect: true
+                }
+              })
+            )
             break
           }
           case 'alph_signMessage': {
@@ -433,8 +381,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
               message,
               messageHasher
             }
-            setTxDataAndOpenModal({ txData, modalType: TxType.SIGN_MESSAGE })
-
+            dispatch(openModal({ name: 'SignMessageModal', props: { txData } }))
             break
           }
           case 'alph_signUnsignedTx': {
@@ -443,7 +390,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
               fromAddress: getSignerAddressByHash(signerAddress),
               unsignedTx
             }
-            setTxDataAndOpenModal({ txData, modalType: TxType.SIGN_UNSIGNED_TX })
+            dispatch(openModal({ name: 'SignUnsignedTxModal', props: { txData } }))
             break
           }
           case 'alph_requestNodeApi': {
@@ -682,25 +629,6 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     [refreshActiveSessions, sendAnalytics, walletConnectClient]
   )
 
-  const handleSignSuccess = async (result: SignUnsignedTxResult | SignMessageResult) => {
-    if (sessionRequestEvent) await respondToWalletConnectWithSuccess(sessionRequestEvent, result)
-
-    electron?.app.hide()
-  }
-
-  const handleSignFail = useCallback(
-    async (error: WalletConnectError) => {
-      if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, error)
-    },
-    [respondToWalletConnectWithError, sessionRequestEvent]
-  )
-
-  const handleSignReject = async () => {
-    if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, getSdkError('USER_REJECTED'))
-
-    electron?.app.hide()
-  }
-
   const reset = useCallback(async () => {
     if (walletConnectClient === undefined) {
       console.log('Clear walletconnect storage')
@@ -745,169 +673,21 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       value={{
         unpairFromDapp,
         walletConnectClient,
-        dappTxData,
         pairWithDapp,
         activeSessions,
         pendingDappConnectionUrl,
         resetPendingDappConnectionUrl,
         reset,
-        sessionRequestEvent,
-        onSessionRequestModalClose,
-        onTransactionBuildFail,
-        onSendSuccess,
-        onSendFail,
+        isAwaitingSessionRequestApproval: !!sessionRequestEvent,
+        sendUserRejectedResponse,
+        sendSuccessResponse,
+        sendFailureResponse,
         refreshActiveSessions
       }}
     >
       {children}
-
-      <ModalPortal>
-        {isWalletUnlocked && (
-          <>
-            {isSignUnsignedTxModalOpen && dappTxData && (
-              <SignUnsignedTxModal
-                txData={dappTxData as SignUnsignedTxData}
-                onClose={() => {
-                  onSessionRequestModalClose()
-                  setIsSignUnsignedTxModalOpen(false)
-                }}
-                onSignSuccess={handleSignSuccess}
-                onSignFail={handleSignFail}
-                onSignReject={handleSignReject}
-              />
-            )}
-            {isSignMessageModalOpen && dappTxData && (
-              <SignMessageModal
-                txData={dappTxData as SignMessageData}
-                onClose={() => {
-                  onSessionRequestModalClose()
-                  setIsSignMessageModalOpen(false)
-                }}
-                onSignSuccess={handleSignSuccess}
-                onSignFail={handleSignFail}
-                onSignReject={handleSignReject}
-              />
-            )}
-          </>
-        )}
-      </ModalPortal>
     </WalletConnectContext.Provider>
   )
-}
-
-function getWCStorageKey(prefix: string, version: string, name: string): string {
-  return prefix + version + '//' + name
-}
-
-function isApiRequest(record: JsonRpcRecord): boolean {
-  const request = record.request
-  if (request.method !== 'wc_sessionRequest') {
-    return false
-  }
-  const alphRequestMethod = request.params?.request?.method
-  return alphRequestMethod === 'alph_requestNodeApi' || alphRequestMethod === 'alph_requestExplorerApi'
-}
-
-async function getSessionTopics(storage: KeyValueStorage): Promise<string[]> {
-  const sessionKey = getWCStorageKey(SIGN_CLIENT_STORAGE_PREFIX, STORE_STORAGE_VERSION, SESSION_CONTEXT)
-  const sessions = await storage.getItem<SessionTypes.Struct[]>(sessionKey)
-  return sessions === undefined ? [] : sessions.map((session) => session.topic)
-}
-
-// clean the `history` and `messages` storage before `SignClient` init
-async function cleanBeforeInit() {
-  console.log('Clean storage before SignClient init')
-  const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
-  const historyStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, HISTORY_STORAGE_VERSION, HISTORY_CONTEXT)
-  // history records are sorted by expiry
-  const historyRecords = await storage.getItem<JsonRpcRecord[]>(historyStorageKey)
-  if (historyRecords !== undefined) {
-    const remainRecords: JsonRpcRecord[] = []
-    let alphSignRequestNum = 0
-    let unresponsiveRequestNum = 0
-    const now = Date.now()
-    for (const record of historyRecords.reverse()) {
-      const msToExpiry = (record.expiry || 0) * 1000 - now
-      if (msToExpiry <= 0) continue
-      const requestMethod = record.request.params?.request?.method as string | undefined
-      if (requestMethod?.startsWith('alph_sign') && alphSignRequestNum < MaxRequestNumToKeep) {
-        remainRecords.push(record)
-        alphSignRequestNum += 1
-      } else if (
-        record.response === undefined &&
-        !isApiRequest(record) &&
-        unresponsiveRequestNum < MaxRequestNumToKeep
-      ) {
-        remainRecords.push(record)
-        unresponsiveRequestNum += 1
-      }
-    }
-    await storage.setItem<JsonRpcRecord[]>(historyStorageKey, remainRecords.reverse())
-  }
-
-  await cleanPendingRequest(storage)
-
-  const topics = await getSessionTopics(storage)
-  if (topics.length > 0) {
-    const messageStorageKey = getWCStorageKey(CORE_STORAGE_PREFIX, MESSAGES_STORAGE_VERSION, MESSAGES_CONTEXT)
-    const messages = await storage.getItem<Record<string, MessageRecord>>(messageStorageKey)
-    if (messages === undefined) {
-      return
-    }
-
-    const messagesMap = objToMap(messages)
-    topics.forEach((topic) => messagesMap.delete(topic))
-    await storage.setItem<Record<string, MessageRecord>>(messageStorageKey, mapToObj(messagesMap))
-    console.log(`Clean topics from messages storage: ${topics.join(',')}`)
-  }
-}
-
-function cleanHistory(client: SignClient, checkResponse: boolean) {
-  try {
-    const records = client.core.history.records
-    for (const [id, record] of records) {
-      if (checkResponse && record.response === undefined) {
-        continue
-      }
-      if (isApiRequest(record)) {
-        client.core.history.delete(record.topic, id)
-      }
-    }
-  } catch (error) {
-    console.error(`Failed to clean history, error: ${error}`)
-  }
-}
-
-async function cleanMessages(client: SignClient, topic: string) {
-  try {
-    await client.core.relayer.messages.del(topic)
-  } catch (error) {
-    console.error(`Failed to clean messages, error: ${error}, topic: ${topic}`)
-  }
-}
-
-async function cleanPendingRequest(storage: KeyValueStorage) {
-  const pendingRequestStorageKey = getWCStorageKey(SIGN_CLIENT_STORAGE_PREFIX, STORE_STORAGE_VERSION, REQUEST_CONTEXT)
-  const pendingRequests = await storage.getItem<PendingRequestTypes.Struct[]>(pendingRequestStorageKey)
-  if (pendingRequests !== undefined) {
-    const remainPendingRequests = pendingRequests.filter((request) => {
-      const method = request.params.request.method
-      return method !== 'alph_requestNodeApi' && method !== 'alph_requestExplorerApi'
-    })
-    await storage.setItem<PendingRequestTypes.Struct[]>(pendingRequestStorageKey, remainPendingRequests)
-  }
-}
-
-async function clearWCStorage() {
-  try {
-    const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
-    const keys = (await storage.getKeys()).filter((key) => key.startsWith('wc@') || key.startsWith('wc_'))
-    for (const key of keys) {
-      await storage.removeItem(key)
-    }
-  } catch (error) {
-    console.error(`Failed to clear walletconnect storage, error: ${error}`)
-  }
 }
 
 export const useWalletConnectContext = () => useContext(WalletConnectContext)
