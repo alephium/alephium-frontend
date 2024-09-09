@@ -43,7 +43,6 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
   const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
   const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
   const fungibleTokens = useAppSelector((s) => s.fungibleTokens.entities)
-  const nfts = useAppSelector((s) => s.nfts.entities)
 
   const alphAsset = { id: ALPH.id, amount: attoAlphAmount }
   const assets = userSpecifiedAlphAmount ? [alphAsset, ...tokens] : [...tokens, alphAsset]
@@ -52,17 +51,12 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
     <Box className={className}>
       {assets.map((asset, index) => {
         const fungibleToken = fungibleTokens[asset.id]
-        const nftInfo = nfts[asset.id]
 
         return (
           <Fragment key={asset.id}>
             {index > 0 && <HorizontalDivider />}
             <AssetAmountRow>
-              <AssetLogo
-                assetImageUrl={fungibleToken?.logoURI ?? nftInfo?.image}
-                size={30}
-                assetName={fungibleToken?.name}
-              />
+              <AssetLogo tokenId={asset.id} size={30} />
               <AssetAmountStyled
                 value={BigInt(asset.amount)}
                 suffix={fungibleToken?.symbol}
