@@ -20,11 +20,9 @@ import {
   AddressHash,
   localStorageNetworkSettingsMigrated,
   selectDoVerifiedFungibleTokensNeedInitialization,
-  syncUnknownTokensInfo,
   syncVerifiedFungibleTokens
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
-import { difference, union } from 'lodash'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
@@ -42,7 +40,7 @@ import useAutoLock from '@/hooks/useAutoLock'
 import AppModals from '@/modals/AppModals'
 import Router from '@/routes'
 import { syncAddressesData } from '@/storage/addresses/addressesActions'
-import { makeSelectAddressesUnknownTokens, selectAddressIds } from '@/storage/addresses/addressesSelectors'
+import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrationFailed,
@@ -53,10 +51,7 @@ import {
   systemLanguageMatchFailed,
   systemLanguageMatchSucceeded
 } from '@/storage/settings/settingsActions'
-import {
-  makeSelectAddressesHashesWithPendingTransactions,
-  selectTransactionUnknownTokenIds
-} from '@/storage/transactions/transactionsSelectors'
+import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
 import { AlephiumWindow } from '@/types/window'
@@ -86,13 +81,6 @@ const App = () => {
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
   const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
   const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
-  const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
-
-  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
-  const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens).map(({ id }) => id)
-  const txUnknownTokenIds = useAppSelector(selectTransactionUnknownTokenIds)
-  const checkedUnknownTokenIds = useAppSelector((s) => s.fungibleTokens.checkedUnknownTokenIds)
-  const newUnknownTokens = difference(union(addressUnknownTokenIds, txUnknownTokenIds), checkedUnknownTokenIds)
 
   const [splashScreenVisible, setSplashScreenVisible] = useState(true)
 
@@ -199,26 +187,15 @@ const App = () => {
             sendAnalytics({ type: 'error', message: 'Could not sync address data automatically' })
           }
         }
-      } else if (addressesStatus === 'initialized') {
-        if (
-          !verifiedFungibleTokensNeedInitialization &&
-          !isLoadingUnverifiedFungibleTokens &&
-          newUnknownTokens.length > 0
-        ) {
-          dispatch(syncUnknownTokensInfo(newUnknownTokens))
-        }
       }
     }
   }, [
+    activeWalletId,
     addressHashes.length,
     addressesStatus,
-    verifiedFungibleTokensNeedInitialization,
     dispatch,
-    isLoadingUnverifiedFungibleTokens,
     isSyncingAddressData,
     networkStatus,
-    newUnknownTokens,
-    activeWalletId,
     sendAnalytics
   ])
 
