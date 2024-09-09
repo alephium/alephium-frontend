@@ -26,7 +26,6 @@ import StackHeader from '~/components/headers/StackHeader'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ScreenProps extends ViewProps {
-  contrastedBg?: boolean
   headerOptions?: BaseHeaderOptions & {
     type?: 'default' | 'stack'
   }
@@ -51,8 +50,7 @@ const Screen = ({ children, headerOptions, ...props }: ScreenProps) => {
 
 const ScreenStyled = styled.View<ScreenProps>`
   flex: 1;
-  background-color: ${({ theme, contrastedBg }) =>
-    contrastedBg ? (theme.name === 'light' ? theme.bg.highlight : theme.bg.back2) : theme.bg.back1};
+  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.highlight : theme.bg.back2)};
 `
 
 export default Screen

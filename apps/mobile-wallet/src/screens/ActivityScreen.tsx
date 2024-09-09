@@ -50,7 +50,7 @@ const ActivityScreen = ({ navigation }: ScreenProps) => {
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   return (
-    <Screen contrastedBg>
+    <Screen>
       <BaseHeader options={{ headerTitle: t('Activity') }} scrollY={screenScrollY} />
       <TransactionsFlatList
         confirmedTransactions={confirmedTransactions}

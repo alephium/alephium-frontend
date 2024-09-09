@@ -17,30 +17,30 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, NFT } from '@alephium/shared'
-import { FlashList } from '@shopify/flash-list'
+import { FlashList, FlashListProps } from '@shopify/flash-list'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ActivityIndicator, Dimensions } from 'react-native'
+import { ActivityIndicator, Dimensions, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import NFTThumbnail from '~/components/NFTThumbnail'
-import { ModalContentProps } from '~/features/modals/ModalContent'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesNFTs } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-interface NFTsGridProps extends ModalContentProps {
+interface NFTsGridProps extends Partial<FlashListProps<unknown>> {
   addressHash?: AddressHash
   nfts?: NFT[]
   nftsPerRow?: number
   nftSize?: number
+  onScroll?: (e: NativeSyntheticEvent<NativeScrollEvent>) => void
 }
 
 const gap = DEFAULT_MARGIN / 2
 const containerHorizontalPadding = DEFAULT_MARGIN - gap
 
-const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3 }: NFTsGridProps) => {
+const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, ...props }: NFTsGridProps) => {
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
@@ -55,6 +55,7 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3 }: NFTs
 
   return (
     <FlashList
+      {...props}
       data={data}
       keyExtractor={(item) => item.id}
       renderItem={({ item: nft }) => (

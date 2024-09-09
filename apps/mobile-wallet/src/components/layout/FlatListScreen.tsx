@@ -38,7 +38,6 @@ const FlatListScreen = <T,>({
   fill,
   contentContainerStyle,
   style,
-  contrastedBg,
   screenTitle,
   screenIntro,
   shouldUseGaps,
@@ -51,7 +50,7 @@ const FlatListScreen = <T,>({
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   return (
-    <Screen contrastedBg={contrastedBg}>
+    <Screen>
       {headerOptions && <BaseHeader options={headerOptions} scrollY={screenScrollY} />}
       <FlatList
         ref={flatListRef}

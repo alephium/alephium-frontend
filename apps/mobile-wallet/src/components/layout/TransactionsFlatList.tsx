@@ -178,9 +178,7 @@ const Footer = styled.View`
   align-items: center;
 `
 
-const InfiniteLoadingIndicator = styled.View`
-  margin-top: 25px;
-`
+const InfiniteLoadingIndicator = styled.View``
 
 const PendingTransactionsSectionTitle = styled.View`
   flex-direction: row;
