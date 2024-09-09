@@ -260,9 +260,9 @@ export default styled(Button)`
 const IconContainer = styled.View`
   align-items: center;
   justify-content: center;
-  width: 20px;
+  width: 22px;
 `
 
 const EmptyPlaceholder = styled.View`
-  width: 20px;
+  width: 22px;
 `
