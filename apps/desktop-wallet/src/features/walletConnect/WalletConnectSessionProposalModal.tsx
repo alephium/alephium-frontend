@@ -36,10 +36,10 @@ import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
-import { useWalletConnectContext } from '@/contexts/walletconnect'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
@@ -50,6 +50,7 @@ import {
 } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
+import { toggleAppLoading } from '@/storage/global/globalActions'
 import { Address } from '@/types/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 import { cleanUrl, electron } from '@/utils/misc'
@@ -59,7 +60,7 @@ export interface WalletConnectSessionProposalModalProps {
 }
 
 const WalletConnectSessionProposalModal = memo(
-  ({ id, proposalEvent }: ModalBaseProp & WalletConnectSessionProposalModalProps) => {
+  ({ id: modalId, proposalEvent }: ModalBaseProp & WalletConnectSessionProposalModalProps) => {
     const { t } = useTranslation()
     const { sendAnalytics } = useAnalytics()
     const { walletConnectClient, resetPendingDappConnectionUrl, activeSessions, refreshActiveSessions } =
@@ -75,8 +76,6 @@ const WalletConnectSessionProposalModal = memo(
 
     const [signerAddressHash, setSignerAddressHash] = useState<AddressHash | undefined>(addressesInGroup[0])
     const signerAddress = useAppSelector((s) => selectAddressByHash(s, signerAddressHash ?? ''))
-
-    const [sessionProposalEvent, setSessionProposalEvent] = useState<SessionProposalEvent>()
 
     const group = requiredChainInfo?.addressGroup
 
@@ -108,24 +107,28 @@ const WalletConnectSessionProposalModal = memo(
       }
     }
 
-    const rejectAndCloseModal = async () => {
-      await rejectProposal()
-      dispatch(closeModal({ id }))
+    const rejectAndCloseModal = async (clickedDecline?: boolean) => {
+      rejectProposal()
+      dispatch(closeModal({ id: modalId }))
 
-      sendAnalytics({ event: 'Rejected WalletConnect connection by closing modal' })
+      sendAnalytics({
+        event: clickedDecline
+          ? 'Rejected WalletConnect connection by clicking Decline'
+          : 'Rejected WalletConnect connection by closing modal'
+      })
     }
 
     const approveProposal = async (signerAddress: Address) => {
       console.log('👍 USER APPROVED PROPOSAL TO CONNECT TO THE DAPP.')
       console.log('⏳ VERIFYING USER PROVIDED DATA...')
 
-      if (!walletConnectClient || !sessionProposalEvent) {
-        console.error('❌ Could not find WalletConnect client or session proposal event')
+      if (!walletConnectClient) {
+        console.error('❌ Could not find WalletConnect client')
         return
       }
 
       const { id, relayProtocol, requiredNamespace, requiredChains, requiredChainInfo, metadata } =
-        parseSessionProposalEvent(sessionProposalEvent)
+        parseSessionProposalEvent(proposalEvent)
 
       if (!requiredChains) {
         dispatch(walletConnectProposalApprovalFailed(t('The proposal does not include a list of required chains')))
@@ -193,6 +196,8 @@ const WalletConnectSessionProposalModal = memo(
       try {
         console.log('⏳ APPROVING PROPOSAL...')
 
+        dispatch(toggleAppLoading(true))
+
         const existingSession = activeSessions.find((session) => session.peer.metadata.url === metadata.url)
 
         if (existingSession) {
@@ -210,7 +215,6 @@ const WalletConnectSessionProposalModal = memo(
         const res = await acknowledged()
         console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', res.acknowledged)
 
-        setSessionProposalEvent(undefined)
         refreshActiveSessions()
 
         sendAnalytics({ event: 'Approved WalletConnect connection' })
@@ -219,20 +223,19 @@ const WalletConnectSessionProposalModal = memo(
       } catch (e) {
         console.error('❌ WC: Error while approving and acknowledging', e)
       } finally {
-        dispatch(closeModal({ id }))
+        dispatch(closeModal({ id: modalId }))
         resetPendingDappConnectionUrl()
+        dispatch(toggleAppLoading(false))
       }
     }
 
     const rejectProposal = async () => {
-      if (!walletConnectClient || sessionProposalEvent === undefined) return
+      if (!walletConnectClient) return
 
       try {
-        console.log('👎 REJECTING SESSION PROPOSAL:', sessionProposalEvent.id)
-        await walletConnectClient.reject({ id: sessionProposalEvent.id, reason: getSdkError('USER_REJECTED') })
+        console.log('👎 REJECTING SESSION PROPOSAL:', proposalEvent.id)
+        walletConnectClient.reject({ id: proposalEvent.id, reason: getSdkError('USER_REJECTED') })
         console.log('✅ REJECTING: DONE!')
-
-        setSessionProposalEvent(undefined)
 
         sendAnalytics({ event: 'Rejected WalletConnect connection by clicking "Reject"' })
 
@@ -240,13 +243,14 @@ const WalletConnectSessionProposalModal = memo(
       } catch (e) {
         console.error('❌ WC: Error while approving and acknowledging', e)
       } finally {
-        dispatch(closeModal({ id }))
+        dispatch(closeModal({ id: modalId }))
         resetPendingDappConnectionUrl()
       }
     }
 
     return (
       <CenteredModal
+        id={modalId}
         title={
           metadata.description
             ? t('Connect to {{ dAppUrl }}', { dAppUrl: cleanUrl(metadata.url) })
@@ -277,7 +281,7 @@ const WalletConnectSessionProposalModal = memo(
               </InfoBox>
             </Section>
             <ModalFooterButtons>
-              <ModalFooterButton role="secondary" onClick={rejectProposal}>
+              <ModalFooterButton role="secondary" onClick={() => rejectAndCloseModal(true)}>
                 {t('Decline')}
               </ModalFooterButton>
               <ModalFooterButton onClick={handleSwitchNetworkPress}>{t('Switch network')}</ModalFooterButton>
@@ -300,7 +304,7 @@ const WalletConnectSessionProposalModal = memo(
               </InfoBox>
             </Section>
             <ModalFooterButtons>
-              <ModalFooterButton role="secondary" onClick={rejectProposal}>
+              <ModalFooterButton role="secondary" onClick={() => rejectAndCloseModal(true)}>
                 {t('Decline')}
               </ModalFooterButton>
               <ModalFooterButton onClick={generateAddressInGroup}>{t('Generate new address')}</ModalFooterButton>
@@ -338,7 +342,7 @@ const WalletConnectSessionProposalModal = memo(
               id="from-address"
             />
             <ModalFooterButtons>
-              <ModalFooterButton role="secondary" onClick={rejectProposal}>
+              <ModalFooterButton role="secondary" onClick={() => rejectAndCloseModal(true)}>
                 {t('Decline')}
               </ModalFooterButton>
               <ModalFooterButton
