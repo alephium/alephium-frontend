@@ -28,11 +28,11 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import CenteredModal, { CenteredModalProps } from '@/modals/CenteredModal'
+import CenteredModal from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { copiedToClipboard, copyToClipboardFailed } from '@/storage/global/globalActions'
 
-export interface CopyPrivateKeyConfirmationModalProps extends CenteredModalProps {
+export interface CopyPrivateKeyConfirmationModalProps {
   addressHash: AddressHash
 }
 
@@ -60,7 +60,7 @@ const CopyPrivateKeyConfirmationModal = memo(
     }
 
     return (
-      <CenteredModal title={t('Enter password')} id={id} skipFocusOnMount {...props}>
+      <CenteredModal title={t('Enter password')} id={id} skipFocusOnMount>
         <PasswordConfirmation
           text={t('Enter your password to copy the private key.')}
           buttonText={t('Copy private key')}

@@ -25,34 +25,22 @@ import Button from '@/components/Button'
 import CheckMark from '@/components/CheckMark'
 import InfoBox from '@/components/InfoBox'
 import { BoxContainer, Section } from '@/components/PageComponents/PageContainers'
-import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
-import ModalPortal from '@/modals/ModalPortal'
-import WalletRemovalModal from '@/modals/WalletRemovalModal'
-import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
-import { activeWalletDeleted, walletDeleted } from '@/storage/wallets/walletActions'
-import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
-import { ActiveWallet, StoredEncryptedWallet } from '@/types/wallet'
+import { StoredEncryptedWallet } from '@/types/wallet'
 
 const WalletsSettingsSection = () => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const activeWallet = useAppSelector((s) => s.activeWallet)
+  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
+  const activeWalletName = useAppSelector((s) => s.activeWallet.name)
+  const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const wallets = useAppSelector((s) => s.global.wallets)
-  const { sendAnalytics } = useAnalytics()
   const { isWalletUnlocked, lockWallet } = useWalletLock()
 
-  const [walletToRemove, setWalletToRemove] = useState<StoredEncryptedWallet | ActiveWallet>()
-
-  const handleRemoveWallet = (walletId: string) => {
-    walletStorage.delete(walletId)
-    addressMetadataStorage.delete(walletId)
-    dispatch(walletId === activeWallet.id ? activeWalletDeleted() : walletDeleted(walletId))
-    setWalletToRemove(undefined)
-
-    sendAnalytics({ event: 'Deleted wallet' })
+  const openWalletRemoveModal = (walletId: string, walletName: string) => {
+    dispatch(openModal({ name: 'WalletRemovalModal', props: { walletId, walletName } }))
   }
 
   const handleLockCurrentWalletClick = () => lockWallet('settings')
@@ -72,19 +60,19 @@ const WalletsSettingsSection = () => {
             <WalletItem
               key={wallet.id}
               wallet={wallet}
-              isCurrent={wallet.id === activeWallet.id}
-              onWalletDelete={setWalletToRemove}
-              isPassphraseUsed={wallet.id === activeWallet.id && activeWallet.isPassphraseUsed}
+              isCurrent={wallet.id === activeWalletId}
+              onWalletDelete={() => openWalletRemoveModal(wallet.id, wallet.name)}
+              isPassphraseUsed={wallet.id === activeWalletId && isPassphraseUsed}
             />
           ))}
         </BoxContainerStyled>
       </Section>
-      {isWalletUnlocked && (
+      {isWalletUnlocked && activeWalletId && activeWalletName && (
         <CurrentWalletSection align="flex-start">
           <h2>{t('Current wallet')}</h2>
           <InfoBox label={t('Wallet name')} short>
             <CurrentWalletBox>
-              <WalletName>{activeWallet.name}</WalletName>
+              <WalletName>{activeWalletName}</WalletName>
               <Button
                 aria-label={t('Delete')}
                 tabIndex={0}
@@ -105,11 +93,9 @@ const WalletsSettingsSection = () => {
 
             <ButtonTooltipWrapper
               data-tooltip-id="default"
-              data-tooltip-content={
-                activeWallet.isPassphraseUsed ? t('To export this wallet use it without a passphrase') : ''
-              }
+              data-tooltip-content={isPassphraseUsed ? t('To export this wallet use it without a passphrase') : ''}
             >
-              <Button role="secondary" onClick={openWalletQRCodeExportModal} disabled={activeWallet.isPassphraseUsed}>
+              <Button role="secondary" onClick={openWalletQRCodeExportModal} disabled={isPassphraseUsed}>
                 {t('Export current wallet')}
               </Button>
             </ButtonTooltipWrapper>
@@ -120,14 +106,12 @@ const WalletsSettingsSection = () => {
 
             <ButtonTooltipWrapper
               data-tooltip-id="default"
-              data-tooltip-content={
-                activeWallet.isPassphraseUsed ? t('To delete this wallet use it without a passphrase') : ''
-              }
+              data-tooltip-content={isPassphraseUsed ? t('To delete this wallet use it without a passphrase') : ''}
             >
               <Button
                 variant="alert"
-                onClick={() => setWalletToRemove(activeWallet as ActiveWallet)}
-                disabled={activeWallet.isPassphraseUsed}
+                onClick={() => openWalletRemoveModal(activeWalletId, activeWalletName)}
+                disabled={isPassphraseUsed}
               >
                 {t('Remove current wallet')}
               </Button>
@@ -135,15 +119,6 @@ const WalletsSettingsSection = () => {
           </ActionButtons>
         </CurrentWalletSection>
       )}
-      <ModalPortal>
-        {walletToRemove && (
-          <WalletRemovalModal
-            walletName={walletToRemove.name}
-            onClose={() => setWalletToRemove(undefined)}
-            onConfirm={() => handleRemoveWallet(walletToRemove.id)}
-          />
-        )}
-      </ModalPortal>
     </>
   )
 }
