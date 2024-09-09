@@ -20,6 +20,8 @@ import { CallContractSendModalProps } from '@/features/send/callContract'
 import { DeployContractSendModalProps } from '@/features/send/deployContract'
 import { TransferSendModalProps } from '@/features/send/Transfer'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
+import { SignMessageModalProps } from '@/features/walletConnect/SignMessageModal'
+import { SignUnsignedTxModalProps } from '@/features/walletConnect/SignUnsignedTxModal'
 import { WalletConnectSessionProposalModalProps } from '@/features/walletConnect/WalletConnectSessionProposalModal'
 import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal'
 import { AddressOptionsModalProps } from '@/modals/AddressOptionsModal'
@@ -51,7 +53,9 @@ const ModalNames = {
   TransferSendModal: 'TransferSendModal',
   CallContractSendModal: 'CallContractSendModal',
   DeployContractSendModal: 'DeployContractSendModal',
-  WalletConnectSessionProposalModal: 'WalletConnectSessionProposalModal'
+  WalletConnectSessionProposalModal: 'WalletConnectSessionProposalModal',
+  SignUnsignedTxModal: 'SignUnsignedTxModal',
+  SignMessageModal: 'SignMessageModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -130,6 +134,14 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.WalletConnectSessionProposalModal
       props: WalletConnectSessionProposalModalProps
+    }
+  | {
+      name: typeof ModalNames.SignUnsignedTxModal
+      props: SignUnsignedTxModalProps
+    }
+  | {
+      name: typeof ModalNames.SignMessageModal
+      props: SignMessageModalProps
     }
 
 export type ModalInstance = {
