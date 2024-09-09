@@ -21,8 +21,6 @@ import {
   client,
   getActiveWalletConnectSessions,
   getHumanReadableError,
-  isNetworkValid,
-  parseSessionProposalEvent,
   SessionProposalEvent,
   SessionRequestEvent,
   WALLETCONNECT_ERRORS,
@@ -31,7 +29,7 @@ import {
 } from '@alephium/shared'
 import { useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
-import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
+import { RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
   node,
@@ -77,29 +75,29 @@ import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
 import SignMessageModal from '@/modals/WalletConnect/SignMessageModal'
 import SignUnsignedTxModal from '@/modals/WalletConnect/SignUnsignedTxModal'
-import WalletConnectSessionProposalModal from '@/modals/WalletConnect/WalletConnectSessionProposalModal'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
-import { walletConnectPairingFailed, walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
-import { Address } from '@/types/addresses'
+import { walletConnectPairingFailed } from '@/storage/dApps/dAppActions'
 import { DappTxData, SignMessageData, SignUnsignedTxData, TxDataToModalType, TxType } from '@/types/transactions'
-import { AlephiumWindow } from '@/types/window'
 import { isRcVersion } from '@/utils/app-data'
+import { electron } from '@/utils/misc'
 
 const MaxRequestNumToKeep = 10
 
 export interface WalletConnectContextProps {
-  walletConnectClient?: SignClient
   pairWithDapp: (uri: string) => void
   unpairFromDapp: (pairingTopic: string) => Promise<void>
-  dappTxData?: DappTxData
   activeSessions: SessionTypes.Struct[]
-  dAppUrlToConnectTo?: string
   reset: () => Promise<void>
-  sessionRequestEvent?: SessionRequestEvent
   onSessionRequestModalClose: () => void
   onTransactionBuildFail: (error: string) => void
   onSendSuccess: (result: node.SignResult) => void
   onSendFail: (error: string) => void
+  resetPendingDappConnectionUrl: () => void
+  refreshActiveSessions: () => void
+  walletConnectClient?: SignClient
+  sessionRequestEvent?: SessionRequestEvent
+  dappTxData?: DappTxData
+  pendingDappConnectionUrl?: string
 }
 
 const initialContext: WalletConnectContextProps = {
@@ -108,29 +106,26 @@ const initialContext: WalletConnectContextProps = {
   unpairFromDapp: () => Promise.resolve(),
   dappTxData: undefined,
   activeSessions: [],
-  dAppUrlToConnectTo: undefined,
+  pendingDappConnectionUrl: undefined,
   reset: () => Promise.resolve(),
   onSessionRequestModalClose: () => null,
   onTransactionBuildFail: () => null,
   onSendSuccess: () => null,
-  onSendFail: () => null
+  onSendFail: () => null,
+  resetPendingDappConnectionUrl: () => null,
+  refreshActiveSessions: () => null
 }
 
 const WalletConnectContext = createContext<WalletConnectContextProps>(initialContext)
 
-const _window = window as unknown as AlephiumWindow
-const electron = _window.electron
-
 export const WalletConnectContextProvider: FC = ({ children }) => {
   const { t } = useTranslation()
   const addresses = useAppSelector(selectAllAddresses)
-  const currentNetwork = useAppSelector((s) => s.network)
   const { isWalletUnlocked } = useWalletLock()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
   const { data: addressesTokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalances()
 
-  const [isSessionProposalModalOpen, setIsSessionProposalModalOpen] = useState(false)
   const [isSignUnsignedTxModalOpen, setIsSignUnsignedTxModalOpen] = useState(false)
   const [isSignMessageModalOpen, setIsSignMessageModalOpen] = useState(false)
 
@@ -138,9 +133,9 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const [activeSessions, setActiveSessions] = useState(initialContext.activeSessions)
   const [dappTxData, setDappTxData] = useState(initialContext.dappTxData)
   const [sessionRequestEvent, setSessionRequestEvent] = useState<SessionRequestEvent>()
-  const [sessionProposalEvent, setSessionProposalEvent] = useState<SessionProposalEvent>()
   const [walletConnectClientStatus, setWalletConnectClientStatus] = useState<WalletConnectClientStatus>('uninitialized')
   const [walletLockedBeforeProcessingWCRequest, setWalletLockedBeforeProcessingWCRequest] = useState(false)
+  const [pendingDappConnectionUrl, setPendingDappConnectionUrl] = useState<string>()
 
   const initializeWalletConnectClient = useCallback(async () => {
     try {
@@ -222,19 +217,28 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     [respondToWalletConnect]
   )
 
+  const resetPendingDappConnectionUrl = () => setPendingDappConnectionUrl(undefined)
+
+  const refreshActiveSessions = useCallback(() => {
+    setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
+  }, [walletConnectClient])
+
   const onSessionRequestModalClose = useCallback(async () => {
     if (sessionRequestEvent)
       await respondToWalletConnectWithError(sessionRequestEvent, getSdkError('USER_REJECTED_EVENTS'))
   }, [respondToWalletConnectWithError, sessionRequestEvent])
 
-  const onSessionProposal = useCallback(async (sessionProposalEvent: SessionProposalEvent) => {
-    console.log('📣 RECEIVED EVENT PROPOSAL TO CONNECT TO A DAPP!')
-    console.log('👉 ARGS:', sessionProposalEvent)
-    console.log('⏳ WAITING FOR PROPOSAL APPROVAL OR REJECTION')
+  const onSessionProposal = useCallback(
+    async (proposalEvent: SessionProposalEvent) => {
+      console.log('📣 RECEIVED EVENT PROPOSAL TO CONNECT TO A DAPP!')
+      console.log('👉 ARGS:', proposalEvent)
+      console.log('⏳ WAITING FOR PROPOSAL APPROVAL OR REJECTION')
 
-    setSessionProposalEvent(sessionProposalEvent)
-    setIsSessionProposalModalOpen(true)
-  }, [])
+      setPendingDappConnectionUrl(proposalEvent.params.proposer.metadata.url)
+      dispatch(openModal({ name: 'WalletConnectSessionProposalModal', props: { proposalEvent } }))
+    },
+    [dispatch]
+  )
 
   const onSendSuccess = async (result: node.SignResult) => {
     if (sessionRequestEvent) await respondToWalletConnectWithSuccess(sessionRequestEvent, result)
@@ -549,10 +553,9 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       console.log('👉 ARGS:', args)
       console.log('🧹 CLEANING UP STATE.')
 
-      setSessionProposalEvent(undefined)
-      setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
+      refreshActiveSessions()
     },
-    [walletConnectClient]
+    [refreshActiveSessions]
   )
 
   const onSessionUpdate = useCallback((args: SignClientTypes.EventArguments['session_update']) => {
@@ -663,140 +666,15 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         await walletConnectClient.disconnect({ topic, reason: getSdkError('USER_DISCONNECTED') })
         console.log('✅ DISCONNECTING: DONE!')
 
-        setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
+        refreshActiveSessions()
 
         sendAnalytics({ event: 'WC: Disconnected from dApp' })
       } catch (e) {
         console.error('❌ COULD NOT DISCONNECT FROM DAPP')
       }
     },
-    [sendAnalytics, walletConnectClient]
+    [refreshActiveSessions, sendAnalytics, walletConnectClient]
   )
-
-  const approveProposal = async (signerAddress: Address) => {
-    console.log('👍 USER APPROVED PROPOSAL TO CONNECT TO THE DAPP.')
-    console.log('⏳ VERIFYING USER PROVIDED DATA...')
-
-    if (!walletConnectClient || !sessionProposalEvent) {
-      console.error('❌ Could not find WalletConnect client or session proposal event')
-      return
-    }
-
-    const { id, relayProtocol, requiredNamespace, requiredChains, requiredChainInfo, metadata } =
-      parseSessionProposalEvent(sessionProposalEvent)
-
-    if (!requiredChains) {
-      dispatch(walletConnectProposalApprovalFailed(t('The proposal does not include a list of required chains')))
-      return
-    }
-
-    if (requiredChains?.length !== 1) {
-      dispatch(
-        walletConnectProposalApprovalFailed(
-          t('Too many chains in the WalletConnect proposal, expected 1, got {{ num }}', {
-            num: requiredChains?.length
-          })
-        )
-      )
-      return
-    }
-
-    if (!requiredChainInfo) {
-      dispatch(walletConnectProposalApprovalFailed(t('Could not find chain requirements in WalletConnect proposal')))
-      return
-    }
-
-    if (!isNetworkValid(requiredChainInfo.networkId, currentNetwork.settings.networkId)) {
-      dispatch(
-        walletConnectProposalApprovalFailed(
-          t(
-            'The current network ({{ currentNetwork }}) does not match the network requested by WalletConnect ({{ walletConnectNetwork }})',
-            {
-              currentNetwork: currentNetwork.name,
-              walletConnectNetwork: requiredChainInfo.networkId
-            }
-          )
-        )
-      )
-      return
-    }
-
-    if (!isCompatibleAddressGroup(signerAddress.group, requiredChainInfo.addressGroup)) {
-      dispatch(
-        walletConnectProposalApprovalFailed(
-          t(
-            'The group of the selected address ({{ addressGroup }}) does not match the group required by WalletConnect ({{ walletConnectGroup }})',
-            {
-              addressGroup: signerAddress.group,
-              walletConnectGroup: requiredChainInfo.addressGroup
-            }
-          )
-        )
-      )
-      return
-    }
-
-    const namespaces: SessionTypes.Namespaces = {
-      alephium: {
-        methods: requiredNamespace.methods,
-        events: requiredNamespace.events,
-        accounts: [
-          `${formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)}:${
-            signerAddress.publicKey
-          }/default`
-        ]
-      }
-    }
-
-    try {
-      console.log('⏳ APPROVING PROPOSAL...')
-
-      const existingSession = activeSessions.find((session) => session.peer.metadata.url === metadata.url)
-
-      if (existingSession) {
-        await walletConnectClient.disconnect({ topic: existingSession.topic, reason: getSdkError('USER_DISCONNECTED') })
-      }
-
-      const { topic, acknowledged } = await walletConnectClient.approve({ id, relayProtocol, namespaces })
-      console.log('👉 APPROVAL TOPIC RECEIVED:', topic)
-      console.log('✅ APPROVING: DONE!')
-
-      console.log('⏳ WAITING FOR DAPP ACKNOWLEDGEMENT...')
-      const res = await acknowledged()
-      console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', res.acknowledged)
-
-      setSessionProposalEvent(undefined)
-      setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
-
-      sendAnalytics({ event: 'Approved WalletConnect connection' })
-
-      electron?.app.hide()
-    } catch (e) {
-      console.error('❌ WC: Error while approving and acknowledging', e)
-    } finally {
-      setIsSessionProposalModalOpen(false)
-    }
-  }
-
-  const rejectProposal = async () => {
-    if (!walletConnectClient || sessionProposalEvent === undefined) return
-
-    try {
-      console.log('👎 REJECTING SESSION PROPOSAL:', sessionProposalEvent.id)
-      await walletConnectClient.reject({ id: sessionProposalEvent.id, reason: getSdkError('USER_REJECTED') })
-      console.log('✅ REJECTING: DONE!')
-
-      setSessionProposalEvent(undefined)
-
-      sendAnalytics({ event: 'Rejected WalletConnect connection by clicking "Reject"' })
-
-      electron?.app.hide()
-    } catch (e) {
-      console.error('❌ WC: Error while approving and acknowledging', e)
-    } finally {
-      setIsSessionProposalModalOpen(false)
-    }
-  }
 
   const handleSignSuccess = async (result: SignUnsignedTxResult | SignMessageResult) => {
     if (sessionRequestEvent) await respondToWalletConnectWithSuccess(sessionRequestEvent, result)
@@ -864,13 +742,15 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         dappTxData,
         pairWithDapp,
         activeSessions,
-        dAppUrlToConnectTo: sessionProposalEvent?.params.proposer.metadata.url,
+        pendingDappConnectionUrl,
+        resetPendingDappConnectionUrl,
         reset,
         sessionRequestEvent,
         onSessionRequestModalClose,
         onTransactionBuildFail,
         onSendSuccess,
-        onSendFail
+        onSendFail,
+        refreshActiveSessions
       }}
     >
       {children}
@@ -878,14 +758,6 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       <ModalPortal>
         {isWalletUnlocked && (
           <>
-            {!!sessionProposalEvent && isSessionProposalModalOpen && (
-              <WalletConnectSessionProposalModal
-                approveProposal={approveProposal}
-                rejectProposal={rejectProposal}
-                proposalEvent={sessionProposalEvent}
-                onClose={() => setIsSessionProposalModalOpen(false)}
-              />
-            )}
             {isSignUnsignedTxModalOpen && dappTxData && (
               <SignUnsignedTxModal
                 txData={dappTxData as SignUnsignedTxData}

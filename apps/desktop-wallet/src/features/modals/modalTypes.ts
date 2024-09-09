@@ -29,6 +29,7 @@ import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
 import { ReceiveModalProps } from '@/modals/ReceiveModal'
 import { SettingsModalProps } from '@/modals/SettingsModal'
 import { TransactionDetailsModalProps } from '@/modals/TransactionDetailsModal'
+import { WalletConnectSessionProposalModalProps } from '@/modals/WalletConnect/WalletConnectSessionProposalModal'
 
 const ModalNames = {
   AddressDetailsModal: 'AddressDetailsModal',
@@ -49,7 +50,8 @@ const ModalNames = {
   WalletUnlockModal: 'WalletUnlockModal',
   TransferSendModal: 'TransferSendModal',
   CallContractSendModal: 'CallContractSendModal',
-  DeployContractSendModal: 'DeployContractSendModal'
+  DeployContractSendModal: 'DeployContractSendModal',
+  WalletConnectSessionProposalModal: 'WalletConnectSessionProposalModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -124,6 +126,10 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.DeployContractSendModal
       props: DeployContractSendModalProps
+    }
+  | {
+      name: typeof ModalNames.WalletConnectSessionProposalModal
+      props: WalletConnectSessionProposalModalProps
     }
 
 export type ModalInstance = {
