@@ -32,14 +32,14 @@ type SelectOptionTokenProps = TokenDisplay & {
 }
 
 const SelectOptionToken = ({ isSelected, className, ...token }: SelectOptionTokenProps) => {
-  const { image, name, symbol, amount, decimals } = getTokenDisplayData(token)
+  const { name, symbol, amount, decimals } = getTokenDisplayData(token)
 
   return (
     <SelectOptionItemContent
       MainContent={
         <>
           <AssetName>
-            <AssetLogo assetImageUrl={image} size={20} assetName={name} isNft={token.type === 'NFT'} />
+            <AssetLogo tokenId={token.id} size={20} />
             <Truncate>{name ? `${name} ${symbol ? `(${symbol})` : ''}` : <HashEllipsed hash={token.id} />}</Truncate>
           </AssetName>
           {amount !== undefined && (
