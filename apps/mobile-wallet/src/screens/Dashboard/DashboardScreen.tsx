@@ -124,7 +124,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       refreshControl={<RefreshSpinner progressViewOffset={70} />}
       hasBottomBar
       verticalGap
-      contrastedBg
       onScroll={screenScrollHandler}
       floatingHeader
       contentPaddingTop={20}

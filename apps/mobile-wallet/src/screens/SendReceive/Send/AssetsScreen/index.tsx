@@ -102,7 +102,6 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         )}
         verticalGap
         usesKeyboard
-        contrastedBg
         contentPaddingTop
         keyboardShouldPersistTaps="handled"
         screenTitle={t('Assets')}

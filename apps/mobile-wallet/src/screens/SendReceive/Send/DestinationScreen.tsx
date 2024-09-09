@@ -172,7 +172,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       <ScrollScreen
         usesKeyboard
         verticalGap
-        contrastedBg
         contentPaddingTop
         screenTitle={t('Destination')}
         screenIntro={t('Send to an address, a contact, or one of your other addresses.')}

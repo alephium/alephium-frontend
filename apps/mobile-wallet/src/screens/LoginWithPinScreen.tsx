@@ -73,7 +73,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
   )
 
   return (
-    <Screen contrastedBg {...props}>
+    <Screen {...props}>
       <DeprecatedAuthenticationModal visible={isPinModalVisible} forcePinUsage onConfirm={handleSuccessfulLogin} />
       {!isPinModalVisible && <Spinner text={`${t('Unlocking')}...`} />}
     </Screen>

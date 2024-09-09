@@ -66,7 +66,6 @@ const ScrollScreen = ({
   contentContainerStyle,
   contentPaddingTop,
   verticalGap,
-  contrastedBg,
   fill,
   headerOptions,
   usesKeyboard,
@@ -94,7 +93,7 @@ const ScrollScreen = ({
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
   const screen = (
-    <ScrollViewContainer style={containerStyle} contrastedBg={contrastedBg}>
+    <ScrollViewContainer style={containerStyle}>
       {headerOptions && (
         <HeaderComponent
           goBack={navigation.canGoBack() ? navigation.goBack : undefined}
@@ -157,8 +156,7 @@ const ScrollScreen = ({
 
 export default ScrollScreen
 
-const ScrollViewContainer = styled.View<{ contrastedBg?: boolean }>`
+const ScrollViewContainer = styled.View`
   flex: 1;
-  background-color: ${({ theme, contrastedBg }) =>
-    contrastedBg ? (theme.name === 'light' ? theme.bg.highlight : theme.bg.back2) : theme.bg.back1};
+  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.highlight : theme.bg.back2)};
 `

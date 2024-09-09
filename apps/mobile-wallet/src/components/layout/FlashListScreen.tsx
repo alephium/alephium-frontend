@@ -38,7 +38,6 @@ const FlashListScreen = <T,>({
   fill,
   contentContainerStyle,
   style,
-  contrastedBg,
   screenTitle,
   screenIntro,
   shouldUseGaps,
@@ -51,7 +50,7 @@ const FlashListScreen = <T,>({
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   return (
-    <Screen contrastedBg={contrastedBg}>
+    <Screen>
       {headerOptions && <BaseHeader options={headerOptions} scrollY={screenScrollY} />}
       <FlashList
         ref={FlashListRef}
