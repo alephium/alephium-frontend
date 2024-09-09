@@ -43,6 +43,8 @@ import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import ReceiveModal from '@/modals/ReceiveModal'
 import SecretPhraseModal from '@/modals/SecretPhraseModal'
 import SettingsModal from '@/modals/SettingsModal'
+import CopyPrivateKeyConfirmationModal from '@/modals/SettingsModal/CopyPrivateKeyConfirmationModal'
+import DisablePasswordRequirementModal from '@/modals/SettingsModal/DisablePasswordRequirementModal'
 import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
 import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
@@ -114,6 +116,10 @@ const AppModals = () => {
               return <ConfirmLockTimeModal id={modal.id} key={modal.id} {...modal.params.props} />
             case 'ConfirmModal':
               return <ConfirmModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'CopyPrivateKeyConfirmationModal':
+              return <CopyPrivateKeyConfirmationModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'DisablePasswordRequirementModal':
+              return <DisablePasswordRequirementModal id={modal.id} key={modal.id} {...modal.params.props} />
           }
         })}
     </AnimatePresenceModalWrapper>
