@@ -16,20 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressHash,
-  Asset,
-  contactsAdapter,
-  selectAllFungibleTokens,
-  selectNFTIds,
-  TokenDisplayBalances
-} from '@alephium/shared'
+import { AddressHash, contactsAdapter } from '@alephium/shared'
 import { AddressGroup } from '@alephium/walletconnect-provider'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
 import { RootState } from '@/storage/store'
-import { Address } from '@/types/addresses'
 
 export const {
   selectById: selectAddressByHash,
@@ -55,30 +47,6 @@ export const selectDefaultAddress = createSelector(
   (addresses) => addresses.find((address) => address.isDefault) || addresses[0]
 )
 
-export const makeSelectAddressesUnknownTokens = () =>
-  createSelector(
-    [selectAllFungibleTokens, selectNFTIds, makeSelectAddresses()],
-    (fungibleTokens, nftIds, addresses): Asset[] => {
-      const tokensWithoutMetadata = getAddressesTokenBalances(addresses).reduce((acc, token) => {
-        const hasTokenMetadata = !!fungibleTokens.find((t) => t.id === token.id)
-        const hasNFTMetadata = nftIds.includes(token.id)
-
-        if (!hasTokenMetadata && !hasNFTMetadata) {
-          acc.push({
-            id: token.id,
-            balance: BigInt(token.balance.toString()),
-            lockedBalance: BigInt(token.lockedBalance.toString()),
-            decimals: 0
-          })
-        }
-
-        return acc
-      }, [] as Asset[])
-
-      return tokensWithoutMetadata
-    }
-  )
-
 export const { selectAll: selectAllContacts } = contactsAdapter.getSelectors<RootState>((state) => state.contacts)
 
 export const makeSelectContactByAddress = () =>
@@ -96,26 +64,6 @@ export const selectHaveAllPagesLoaded = createSelector(
   (addresses, allTransactionsLoaded) =>
     addresses.every((address) => address.allTransactionPagesLoaded) || allTransactionsLoaded
 )
-
-const getAddressesTokenBalances = (addresses: Address[]) =>
-  addresses.reduce((acc, { tokens }) => {
-    tokens.forEach((token) => {
-      const existingToken = acc.find((t) => t.id === token.tokenId)
-
-      if (!existingToken) {
-        acc.push({
-          id: token.tokenId,
-          balance: BigInt(token.balance),
-          lockedBalance: BigInt(token.lockedBalance)
-        })
-      } else {
-        existingToken.balance = existingToken.balance + BigInt(token.balance)
-        existingToken.lockedBalance = existingToken.lockedBalance + BigInt(token.lockedBalance)
-      }
-    })
-
-    return acc
-  }, [] as TokenDisplayBalances[])
 
 export const selectAddressesInGroup = createSelector(
   [selectAllAddresses, (_, group?: AddressGroup) => group],
