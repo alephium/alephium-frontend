@@ -201,7 +201,7 @@ const AssetAmountsInput = ({
           const token = tokens.find((token) => token.id === id)
           if (!token) return
 
-          const { image, name, symbol, amount, decimals } = getTokenDisplayData(token)
+          const { name, symbol, amount, decimals } = getTokenDisplayData(token)
           const availableHumanReadableAmount = toHumanReadableAmount(amount ?? BigInt(0), decimals)
 
           return (
@@ -215,7 +215,7 @@ const AssetAmountsInput = ({
                   disabled={disabled || !allowMultiple || !canAddMultipleAssets}
                   id={id}
                 >
-                  <AssetLogo assetImageUrl={image} size={20} assetName={name} isNft={token.type === 'NFT'} />
+                  <AssetLogo tokenId={id} size={20} />
                   <AssetName>
                     <Truncate>{name ? `${name} ${symbol ? `(${symbol})` : ''}` : <HashEllipsed hash={id} />}</Truncate>
                   </AssetName>
