@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { getHumanReadableError } from '@alephium/shared'
+import { getHumanReadableError, WALLETCONNECT_ERRORS } from '@alephium/shared'
 import { node } from '@alephium/web3'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
@@ -29,7 +29,6 @@ import styled from 'styled-components'
 import { fadeIn } from '@/animations'
 import { buildSweepTransactions } from '@/api/transactions'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
-import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
@@ -63,6 +62,7 @@ import { buildTransferTransaction, getTransferWalletConnectResult, handleTransfe
 import TransferAddressesTxModalContent from '@/features/send/Transfer/AddressesTxModalContent'
 import TransferBuildTxModalContent from '@/features/send/Transfer/BuildTxModalContent'
 import TransferCheckTxModalContent from '@/features/send/Transfer/CheckTxModalContent'
+import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
 import ConsolidateUTXOsModal from '@/modals/ConsolidateUTXOsModal'
@@ -100,7 +100,7 @@ function SendModal<PT extends { fromAddress: Address }>({
   const settings = useAppSelector((s) => s.settings)
   const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
-  const { onSessionRequestModalClose, onTransactionBuildFail, onSendSuccess, onSendFail } = useWalletConnectContext()
+  const { sendUserRejectedResponse, sendSuccessResponse, sendFailureResponse } = useWalletConnectContext()
 
   const [addressesData, setAddressesData] = useState<AddressesTxModalData>(txData ?? initialTxData)
   const [transactionData, setTransactionData] = useState(txData)
@@ -121,8 +121,8 @@ function SendModal<PT extends { fromAddress: Address }>({
   const onClose = useCallback(() => {
     dispatch(closeModal({ id }))
 
-    if (triggeredByWalletConnect) onSessionRequestModalClose()
-  }, [dispatch, id, onSessionRequestModalClose, triggeredByWalletConnect])
+    if (triggeredByWalletConnect) sendUserRejectedResponse()
+  }, [dispatch, id, sendUserRejectedResponse, triggeredByWalletConnect])
 
   useEffect(() => {
     if (!consolidationRequired || !transactionData) return
@@ -197,7 +197,10 @@ function SendModal<PT extends { fromAddress: Address }>({
           }
 
           if (isRequestToApproveContractCall && triggeredByWalletConnect) {
-            onTransactionBuildFail(errorMessage)
+            sendFailureResponse({
+              message: errorMessage,
+              code: WALLETCONNECT_ERRORS.TRANSACTION_BUILD_FAILED
+            })
             dispatch(closeModal({ id }))
           }
         }
@@ -210,7 +213,7 @@ function SendModal<PT extends { fromAddress: Address }>({
       id,
       isConsolidateUTXOsModalVisible,
       isRequestToApproveContractCall,
-      onTransactionBuildFail,
+      sendFailureResponse,
       sendAnalytics,
       t,
       triggeredByWalletConnect,
@@ -247,7 +250,7 @@ function SendModal<PT extends { fromAddress: Address }>({
               ? getCallContractWalletConnectResult(txContext, signature)
               : getDeployContractWalletConnectResult(txContext, signature, contractAddress)
 
-        onSendSuccess(result)
+        sendSuccessResponse(result)
       }
 
       dispatch(transactionsSendSucceeded({ nbOfTransactionsSent: isSweeping ? sweepUnsignedTxs.length : 1 }))
@@ -257,7 +260,10 @@ function SendModal<PT extends { fromAddress: Address }>({
       sendAnalytics({ type: 'error', message: 'Could not send tx' })
 
       if (triggeredByWalletConnect) {
-        onSendFail(getHumanReadableError(error, 'Error while sending the transaction'))
+        sendFailureResponse({
+          message: getHumanReadableError(error, 'Error while sending the transaction'),
+          code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
+        })
         dispatch(closeModal({ id }))
       }
     } finally {

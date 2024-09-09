@@ -17,14 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring } from '@alephium/keyring'
-import { client, getHumanReadableError, WALLETCONNECT_ERRORS, WalletConnectError } from '@alephium/shared'
+import { client, getHumanReadableError, WALLETCONNECT_ERRORS } from '@alephium/shared'
 import { SignUnsignedTxResult } from '@alephium/web3'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { closeModal } from '@/features/modals/modalActions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalContent, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
@@ -34,24 +37,16 @@ import {
   unsignedTransactionSignSucceeded
 } from '@/storage/transactions/transactionsActions'
 
-interface SignUnsignedTxModalProps {
-  onClose: () => void
+export interface SignUnsignedTxModalProps {
   txData: SignUnsignedTxData
-  onSignSuccess: (result: SignUnsignedTxResult) => Promise<void>
-  onSignFail: (error: WalletConnectError) => Promise<void>
-  onSignReject: () => Promise<void>
 }
 
-const SignUnsignedTxModal = ({
-  onClose,
-  txData,
-  onSignSuccess,
-  onSignFail,
-  onSignReject
-}: SignUnsignedTxModalProps) => {
+const SignUnsignedTxModal = memo(({ id, txData }: ModalBaseProp & SignUnsignedTxModalProps) => {
   const { t } = useTranslation()
   const { sendAnalytics } = useAnalytics()
   const dispatch = useAppDispatch()
+  const { sendUserRejectedResponse, sendSuccessResponse, sendFailureResponse } = useWalletConnectContext()
+
   const [isLoading, setIsLoading] = useState(false)
   const [decodedUnsignedTx, setDecodedUnsignedTx] = useState<Omit<SignUnsignedTxResult, 'signature'> | undefined>(
     undefined
@@ -80,7 +75,7 @@ const SignUnsignedTxModal = ({
 
         sendAnalytics({ type: 'error', message })
         dispatch(unsignedTransactionDecodingFailed(errorMessage))
-        onSignFail({
+        sendFailureResponse({
           message: getHumanReadableError(e, message),
           code: WALLETCONNECT_ERRORS.TRANSACTION_DECODE_FAILED
         })
@@ -90,7 +85,7 @@ const SignUnsignedTxModal = ({
     }
 
     decodeUnsignedTx()
-  }, [dispatch, onSignFail, sendAnalytics, t, txData.unsignedTx])
+  }, [dispatch, sendFailureResponse, sendAnalytics, t, txData.unsignedTx])
 
   const handleSign = async () => {
     if (!decodedUnsignedTx) return
@@ -98,33 +93,33 @@ const SignUnsignedTxModal = ({
     try {
       const signature = keyring.signTransaction(decodedUnsignedTx.txId, txData.fromAddress.hash)
       const signResult: SignUnsignedTxResult = { signature, ...decodedUnsignedTx }
-      await onSignSuccess(signResult)
+      await sendSuccessResponse(signResult, true)
 
       dispatch(unsignedTransactionSignSucceeded)
-      onClose()
+      dispatch(closeModal({ id }))
     } catch (error) {
       const message = 'Could not sign unsigned tx'
       const errorMessage = getHumanReadableError(error, t(message))
 
       sendAnalytics({ type: 'error', message })
       dispatch(unsignedTransactionSignFailed(errorMessage))
-
-      onSignFail({
+      sendFailureResponse({
         message: getHumanReadableError(error, message),
         code: WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
       })
     }
   }
 
-  const handleReject = async () => {
-    onSignReject()
-    onClose()
+  const rejectAndClose = (hideApp?: boolean) => {
+    dispatch(closeModal({ id }))
+    sendUserRejectedResponse(hideApp)
   }
 
   return (
     <CenteredModal
+      id={id}
       title={t('Sign Unsigned Transaction')}
-      onClose={onClose}
+      onClose={rejectAndClose}
       isLoading={isLoading}
       dynamicContent
       focusMode
@@ -137,7 +132,7 @@ const SignUnsignedTxModal = ({
             <InfoBox label={t('Unsigned transaction')} text={decodedUnsignedTx.unsignedTx} wordBreak />
           </InputFieldsColumn>
           <ModalFooterButtons>
-            <ModalFooterButton role="secondary" onClick={handleReject}>
+            <ModalFooterButton role="secondary" onClick={() => rejectAndClose(true)}>
               {t('Reject')}
             </ModalFooterButton>
             <ModalFooterButton onClick={handleSign} disabled={isLoading || !decodedUnsignedTx}>
@@ -148,6 +143,6 @@ const SignUnsignedTxModal = ({
       )}
     </CenteredModal>
   )
-}
+})
 
 export default SignUnsignedTxModal
