@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Currency, fiatCurrencyChanged } from '@alephium/shared'
 import { AlertTriangle, Eraser, Info } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -30,14 +30,12 @@ import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
 import Select from '@/components/Inputs/Select'
 import Toggle from '@/components/Inputs/Toggle'
-import PasswordConfirmation from '@/components/PasswordConfirmation'
 import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { openModal } from '@/features/modals/modalActions'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
-import CenteredModal from '@/modals/CenteredModal'
-import ModalPortal from '@/modals/ModalPortal'
 import { walletConnectCacheCleared, walletConnectCacheClearFailed } from '@/storage/global/globalActions'
 import {
   analyticsToggled,
@@ -66,24 +64,15 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
   const { sendAnalytics } = useAnalytics()
   const { reset } = useWalletConnectContext()
 
-  const [isPasswordModelOpen, setIsPasswordModalOpen] = useState(false)
-
   const onPasswordRequirementChange = useCallback(() => {
     if (passwordRequirement) {
-      setIsPasswordModalOpen(true)
+      dispatch(openModal({ name: 'DisablePasswordRequirementModal', props: { focusMode: true } }))
     } else {
       dispatch(passwordRequirementToggled())
 
       sendAnalytics({ event: 'Enabled password requirement' })
     }
   }, [dispatch, passwordRequirement, sendAnalytics])
-
-  const disablePasswordRequirement = useCallback(() => {
-    dispatch(passwordRequirementToggled())
-    setIsPasswordModalOpen(false)
-
-    sendAnalytics({ event: 'Disabled password requirement' })
-  }, [dispatch, sendAnalytics])
 
   const handleLanguageChange = (language: Language) => {
     dispatch(languageChanged(language))
@@ -273,17 +262,6 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
           </ButtonStyled>
         }
       />
-      <ModalPortal>
-        {isPasswordModelOpen && (
-          <CenteredModal title={t('Password')} onClose={() => setIsPasswordModalOpen(false)} focusMode skipFocusOnMount>
-            <PasswordConfirmation
-              text={t('Type your password to change this setting.')}
-              buttonText={t('Enter')}
-              onCorrectPasswordEntered={disablePasswordRequirement}
-            />
-          </CenteredModal>
-        )}
-      </ModalPortal>
     </Box>
   )
 }
