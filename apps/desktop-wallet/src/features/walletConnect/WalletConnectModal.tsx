@@ -21,7 +21,6 @@ import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import AssetLogo from '@/components/AssetLogo'
 import Button from '@/components/Button'
 import Input from '@/components/Inputs/Input'
 import { Section } from '@/components/PageComponents/PageContainers'
@@ -57,7 +56,8 @@ const WalletConnectModal = memo(({ id }: ModalBaseProp) => {
                 <Row>
                   <div style={{ width: 35 }}>
                     {metadata.icons[0] ? (
-                      <AssetLogo assetImageUrl={metadata.icons[0]} size={35} />
+                      // TODO: Render image
+                      metadata.icons[0]
                     ) : (
                       <BinaryIcon size={35} color={theme.font.secondary} />
                     )}

@@ -40,7 +40,7 @@ import useAutoLock from '@/hooks/useAutoLock'
 import AppModals from '@/modals/AppModals'
 import Router from '@/routes'
 import { syncAddressesData } from '@/storage/addresses/addressesActions'
-import { selectAddressIds } from '@/storage/addresses/addressesSelectors'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrationFailed,
@@ -61,7 +61,7 @@ import { languageOptions } from '@/utils/settings'
 
 const App = () => {
   const dispatch = useAppDispatch()
-  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
+  const addressHashes = useAppSelector(selectAllAddressHashes)
   const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
   const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
   const networkProxy = useAppSelector((s) => s.network.settings.proxy)

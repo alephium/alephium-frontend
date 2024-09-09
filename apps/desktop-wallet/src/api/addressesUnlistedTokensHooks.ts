@@ -61,7 +61,7 @@ export const useAddressesUnlistedFTs = (addressHash?: AddressHash) => {
   }
 }
 
-const convertDecimalsToNumber = (token: FungibleTokenMetadata) => {
+export const convertDecimalsToNumber = (token: FungibleTokenMetadata) => {
   const parsedDecimals = parseInt(token.decimals)
 
   return {

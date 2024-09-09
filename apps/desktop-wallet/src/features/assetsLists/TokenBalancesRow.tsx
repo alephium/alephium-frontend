@@ -46,12 +46,12 @@ const TokenBalancesRow = ({ tokenId, addressHash, isExpanded }: TokenBalancesRow
 
   if (!token) return null
 
-  const { image, name, symbol, totalBalance, availableBalance, decimals, worth } = getTokenDisplayData(token)
+  const { name, symbol, totalBalance, availableBalance, decimals, worth } = getTokenDisplayData(token)
 
   return (
     <TableRow key={tokenId} role="row" tabIndex={isExpanded ? 0 : -1}>
       <TokenRow>
-        <AssetLogoStyled assetImageUrl={image} size={30} assetName={name} />
+        <AssetLogoStyled tokenId={tokenId} size={30} />
         <NameColumn>
           <TokenName>
             {name ?? <HashEllipsed hash={tokenId} tooltipText={t('Copy token hash')} disableCopy={!isExpanded} />}
