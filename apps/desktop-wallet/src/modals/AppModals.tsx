@@ -24,6 +24,7 @@ import { selectAllModals } from '@/features/modals/modalSelectors'
 import CallContractSendModal from '@/features/send/callContract'
 import DeployContractSendModal from '@/features/send/deployContract'
 import TransferSendModal from '@/features/send/Transfer'
+import ConfirmLockTimeModal from '@/features/send/Transfer/ConfirmLockTimeModal'
 import WalletUnlockModal from '@/features/switch-wallet/WalletUnlockModal'
 import SignMessageModal from '@/features/walletConnect/SignMessageModal'
 import SignUnsignedTxModal from '@/features/walletConnect/SignUnsignedTxModal'
@@ -108,6 +109,8 @@ const AppModals = () => {
               return <SignMessageModal id={modal.id} key={modal.id} {...modal.params.props} />
             case 'ConsolidateUTXOsModal':
               return <ConsolidateUTXOsModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'ConfirmLockTimeModal':
+              return <ConfirmLockTimeModal id={modal.id} key={modal.id} {...modal.params.props} />
           }
         })}
     </AnimatePresenceModalWrapper>
