@@ -49,6 +49,7 @@ import DisablePasswordRequirementModal from '@/modals/SettingsModal/DisablePassw
 import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
 import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
+import WalletRemovalModal from '@/modals/WalletRemovalModal'
 import AdvancedOperationsSideModal from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsSideModal'
 
 const AppModals = () => {
@@ -63,6 +64,8 @@ const AppModals = () => {
         switch (modal.params.name) {
           case 'SettingsModal':
             return <SettingsModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'WalletRemovalModal':
+            return <WalletRemovalModal id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
 

@@ -38,6 +38,7 @@ import { SettingsModalProps } from '@/modals/SettingsModal'
 import { CopyPrivateKeyConfirmationModalProps } from '@/modals/SettingsModal/CopyPrivateKeyConfirmationModal'
 import { DisablePasswordRequirementModalProps } from '@/modals/SettingsModal/DisablePasswordRequirementModal'
 import { TransactionDetailsModalProps } from '@/modals/TransactionDetailsModal'
+import { WalletRemovalModalProps } from '@/modals/WalletRemovalModal'
 
 const ModalNames = {
   AddressDetailsModal: 'AddressDetailsModal',
@@ -67,7 +68,8 @@ const ModalNames = {
   ConfirmModal: 'ConfirmModal',
   CopyPrivateKeyConfirmationModal: 'CopyPrivateKeyConfirmationModal',
   DisablePasswordRequirementModal: 'DisablePasswordRequirementModal',
-  AddressSweepModal: 'AddressSweepModal'
+  AddressSweepModal: 'AddressSweepModal',
+  WalletRemovalModal: 'WalletRemovalModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -178,6 +180,10 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.AddressSweepModal
       props: AddressSweepModalProps
+    }
+  | {
+      name: typeof ModalNames.WalletRemovalModal
+      props: WalletRemovalModalProps
     }
 
 export type ModalInstance = {
