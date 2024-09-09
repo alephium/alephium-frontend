@@ -33,6 +33,7 @@ import WalletConnectSessionProposalModal from '@/features/walletConnect/WalletCo
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import AddressOptionsModal from '@/modals/AddressOptionsModal'
+import AddressSweepModal from '@/modals/AddressSweepModal'
 import ConfirmModal from '@/modals/ConfirmModal'
 import ConsolidateUTXOsModal from '@/modals/ConsolidateUTXOsModal'
 import ContactFormModal from '@/modals/ContactFormModal'
@@ -120,6 +121,8 @@ const AppModals = () => {
               return <CopyPrivateKeyConfirmationModal id={modal.id} key={modal.id} {...modal.params.props} />
             case 'DisablePasswordRequirementModal':
               return <DisablePasswordRequirementModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'AddressSweepModal':
+              return <AddressSweepModal id={modal.id} key={modal.id} {...modal.params.props} />
           }
         })}
     </AnimatePresenceModalWrapper>

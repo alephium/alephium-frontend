@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Codesandbox, HardHat, Lightbulb, Search } from 'lucide-react'
-import { memo, useState } from 'react'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -26,10 +26,9 @@ import { openModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
-import AddressSweepModal from '@/modals/AddressSweepModal'
-import ModalPortal from '@/modals/ModalPortal'
 import SideModal from '@/modals/SideModal'
 import OperationBox from '@/pages/UnlockedWallet/AddressesPage/OperationBox'
+import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -40,8 +39,7 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
   const { sendAnalytics } = useAnalytics()
   const dispatch = useAppDispatch()
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
-
-  const [isConsolidationModalOpen, setIsConsolidationModalOpen] = useState(false)
+  const defaultAddress = useAppSelector(selectDefaultAddress)
 
   const handleOneAddressPerGroupClick = () => {
     isPassphraseUsed
@@ -56,7 +54,9 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
   }
 
   const handleConsolidationClick = () => {
-    setIsConsolidationModalOpen(true)
+    dispatch(
+      openModal({ name: 'AddressSweepModal', props: { addressHash: defaultAddress.hash, isUtxoConsolidation: true } })
+    )
     sendAnalytics({ event: 'Advanced operation to consolidate UTXOs clicked' })
   }
 
@@ -101,9 +101,6 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
           onButtonClick={handleTellUsIdeasClick}
         />
       </AdvancedOperations>
-      <ModalPortal>
-        {isConsolidationModalOpen && <AddressSweepModal onClose={() => setIsConsolidationModalOpen(false)} />}
-      </ModalPortal>
     </SideModal>
   )
 })
