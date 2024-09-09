@@ -82,7 +82,7 @@ export const useAddressesNFTs = (addressHash?: AddressHash) => {
   }
 }
 
-const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
+export const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
   typeof nft.name === 'string' &&
   typeof nft.image === 'string' &&
   (typeof nft.description === 'undefined' || typeof nft.description === 'string') &&

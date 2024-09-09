@@ -31,7 +31,6 @@ import { memo, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import AssetLogo from '@/components/AssetLogo'
 import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import { Section } from '@/components/PageComponents/PageContainers'
@@ -261,7 +260,9 @@ const WalletConnectSessionProposalModal = memo(
         Icon={() =>
           metadata?.icons &&
           metadata.icons.length > 0 &&
-          metadata.icons[0] && <AssetLogo assetImageUrl={metadata.icons[0]} size={50} />
+          metadata.icons[0] &&
+          // TODO: Render image like <AssetLogo assetImageUrl={metadata.icons[0]} size={50} />
+          metadata.icons[0]
         }
       >
         {showNetworkWarning ? (
