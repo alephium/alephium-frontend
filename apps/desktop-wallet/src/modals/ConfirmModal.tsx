@@ -26,7 +26,7 @@ import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { CenteredModalProps, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 
-export interface ConfirmModalProps extends CenteredModalProps {
+export interface ConfirmModalProps extends Pick<CenteredModalProps, 'narrow'> {
   Icon?: LucideIcon
   onConfirm: () => void
   text: string
