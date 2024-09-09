@@ -27,7 +27,7 @@ import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { CenteredModalProps } from '@/modals/CenteredModal'
 import { passwordRequirementToggled } from '@/storage/settings/settingsActions'
 
-export type DisablePasswordRequirementModalProps = CenteredModalProps
+export type DisablePasswordRequirementModalProps = Pick<CenteredModalProps, 'focusMode'>
 
 const DisablePasswordRequirementModal = memo(
   ({ id, ...props }: ModalBaseProp & DisablePasswordRequirementModalProps) => {
