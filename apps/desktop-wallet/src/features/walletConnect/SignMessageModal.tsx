@@ -24,10 +24,10 @@ import { useTranslation } from 'react-i18next'
 import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { SignMessageData } from '@/features/walletConnect/walletConnectTypes'
 import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalContent, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { messageSignFailed, messageSignSucceeded } from '@/storage/transactions/transactionsActions'
-import { SignMessageData } from '@/types/transactions'
 
 interface SignUnsignedTxModalProps {
   onClose: () => void

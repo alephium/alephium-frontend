@@ -70,14 +70,20 @@ import useAddressesTokensBalances from '@/api/apiDataHooks/useAddressesTokensBal
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/features/send/sendTypes'
+import SignMessageModal from '@/features/walletConnect/SignMessageModal'
+import SignUnsignedTxModal from '@/features/walletConnect/SignUnsignedTxModal'
+import {
+  DappTxData,
+  SignMessageData,
+  SignUnsignedTxData,
+  TxDataToModalType,
+  TxType
+} from '@/features/walletConnect/walletConnectTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import ModalPortal from '@/modals/ModalPortal'
-import SignMessageModal from '@/modals/WalletConnect/SignMessageModal'
-import SignUnsignedTxModal from '@/modals/WalletConnect/SignUnsignedTxModal'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { walletConnectPairingFailed } from '@/storage/dApps/dAppActions'
-import { DappTxData, SignMessageData, SignUnsignedTxData, TxDataToModalType, TxType } from '@/types/transactions'
 import { isRcVersion } from '@/utils/app-data'
 import { electron } from '@/utils/misc'
 
