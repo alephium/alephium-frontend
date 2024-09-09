@@ -35,7 +35,6 @@ import {
   defaultAddressChanged,
   newAddressesSaved,
   syncAddressesData,
-  syncAddressesTokensBalances,
   syncAddressesTransactions,
   syncAddressTransactionsNextPage,
   syncAllAddressesTransactionsNextPage,
@@ -57,7 +56,6 @@ import { getInitialAddressSettings } from '@/utils/addresses'
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
   loadingTransactions: false,
-  loadingTokensBalances: false,
   syncingAddressData: false,
   isRestoringAddressesFromMetadata: false,
   status: 'uninitialized'
@@ -72,7 +70,6 @@ const addressesSlice = createSlice({
       .addCase(syncingAddressDataStarted, (state) => {
         state.syncingAddressData = true
         state.loadingTransactions = true
-        state.loadingTokensBalances = true
       })
       .addCase(transactionsLoadingStarted, (state) => {
         state.loadingTransactions = true
@@ -121,20 +118,6 @@ const addressesSlice = createSlice({
         state.status = 'initialized'
         state.syncingAddressData = false
         state.loadingTransactions = false
-        state.loadingTokensBalances = false
-      })
-      .addCase(syncAddressesTokensBalances.fulfilled, (state, action) => {
-        const addressData = action.payload
-        const updatedAddresses = addressData.map(({ hash, tokenBalances }) => ({
-          id: hash,
-          changes: {
-            tokens: tokenBalances
-          }
-        }))
-
-        addressesAdapter.updateMany(state, updatedAddresses)
-
-        state.loadingTokensBalances = false
       })
       .addCase(syncAddressesTransactions.fulfilled, (state, action) => {
         const addressData = action.payload
@@ -169,13 +152,9 @@ const addressesSlice = createSlice({
         state.status = 'initialized'
         state.syncingAddressData = false
         state.loadingTransactions = false
-        state.loadingTokensBalances = false
       })
       .addCase(syncAddressesTransactions.rejected, (state) => {
         state.loadingTransactions = false
-      })
-      .addCase(syncAddressesTokensBalances.rejected, (state) => {
-        state.loadingTokensBalances = false
       })
       .addCase(syncAddressTransactionsNextPage.fulfilled, (state, action) => {
         const addressTransactionsData = action.payload
@@ -255,7 +234,6 @@ const getDefaultAddressState = (address: AddressBase): Address => ({
   transactions: [],
   transactionsPageLoaded: 0,
   allTransactionPagesLoaded: false,
-  tokens: [],
   lastUsed: 0
 })
 
