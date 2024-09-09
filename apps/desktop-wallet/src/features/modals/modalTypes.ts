@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { CallContractSendModalProps } from '@/features/send/callContract'
 import { DeployContractSendModalProps } from '@/features/send/deployContract'
 import { TransferSendModalProps } from '@/features/send/Transfer'
+import { ConfirmLockTimeModalProps } from '@/features/send/Transfer/ConfirmLockTimeModal'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
 import { SignMessageModalProps } from '@/features/walletConnect/SignMessageModal'
 import { SignUnsignedTxModalProps } from '@/features/walletConnect/SignUnsignedTxModal'
@@ -57,7 +58,8 @@ const ModalNames = {
   WalletConnectSessionProposalModal: 'WalletConnectSessionProposalModal',
   SignUnsignedTxModal: 'SignUnsignedTxModal',
   SignMessageModal: 'SignMessageModal',
-  ConsolidateUTXOsModal: 'ConsolidateUTXOsModal'
+  ConsolidateUTXOsModal: 'ConsolidateUTXOsModal',
+  ConfirmLockTimeModal: 'ConfirmLockTimeModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -148,6 +150,10 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.ConsolidateUTXOsModal
       props: ConsolidateUTXOsModalProps
+    }
+  | {
+      name: typeof ModalNames.ConfirmLockTimeModal
+      props: ConfirmLockTimeModalProps
     }
 
 export type ModalInstance = {
