@@ -32,8 +32,6 @@ import HashEllipsed from '@/components/HashEllipsed'
 import Truncate from '@/components/Truncate'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import ModalPortal from '@/modals/ModalPortal'
-import SendModalTransfer from '@/modals/SendModals/Transfer'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
 import { selectAllContacts, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { stringToColour } from '@/utils/colors'
@@ -48,8 +46,6 @@ const ContactsTabContent = () => {
 
   const [filteredContacts, setFilteredContacts] = useState(contacts)
   const [searchInput, setSearchInput] = useState('')
-  const [isSendModalOpen, setIsSendModalOpen] = useState(false)
-  const [selectedContact, setSelectedContact] = useState<Contact>()
 
   const newContactButtonText = `+ ${t('New contact')}`
 
@@ -58,13 +54,12 @@ const ContactsTabContent = () => {
   }, [contacts, searchInput])
 
   const openSendModal = (contact: Contact) => {
-    setSelectedContact(contact)
-    setIsSendModalOpen(true)
-  }
-
-  const closeSendModal = () => {
-    setSelectedContact(undefined)
-    setIsSendModalOpen(false)
+    dispatch(
+      openModal({
+        name: 'TransferSendModal',
+        props: { initialTxData: { fromAddress: defaultAddress, toAddress: contact.address } }
+      })
+    )
   }
 
   const openEditContactModal = (contact: Contact) =>
@@ -112,14 +107,6 @@ const ContactsTabContent = () => {
             </PlaceholderCard>
           )}
         </ContactBox>
-        <ModalPortal>
-          {isSendModalOpen && defaultAddress && (
-            <SendModalTransfer
-              initialTxData={{ fromAddress: defaultAddress, toAddress: selectedContact?.address }}
-              onClose={closeSendModal}
-            />
-          )}
-        </ModalPortal>
       </TabContent>
     </motion.div>
   )

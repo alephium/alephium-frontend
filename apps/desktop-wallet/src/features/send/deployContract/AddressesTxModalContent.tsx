@@ -19,27 +19,30 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import useAddressesAlphBalances from '@/api/apiDataHooks/useAddressesAlphBalances'
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
+import { useAddressesWithBalance } from '@/features/addressFiltering/addressFilteringHooks'
+import AddressInputs from '@/features/send/AddressInputs'
+import { DeployContractTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { ModalContent } from '@/modals/CenteredModal'
-import AddressInputs from '@/modals/SendModals/AddressInputs'
-import { selectAddressByHash, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
-import { CallContractTxData, PartialTxData } from '@/types/transactions'
+import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
-interface CallContractAddressesTxModalContentProps {
-  data: PartialTxData<CallContractTxData, 'fromAddress'>
-  onSubmit: (data: PartialTxData<CallContractTxData, 'fromAddress'>) => void
+interface DeployContractAddressesTxModalContentProps {
+  data: DeployContractTxModalData
+  onSubmit: (data: DeployContractTxModalData) => void
   onCancel: () => void
 }
 
-const CallContractAddressesTxModalContent = ({
+const DeployContractAddressesTxModalContent = ({
   data,
   onSubmit,
   onCancel
-}: CallContractAddressesTxModalContentProps) => {
+}: DeployContractAddressesTxModalContentProps) => {
   const { t } = useTranslation()
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const fromAddresses = useAddressesWithBalance()
+  const { isLoading: isLoadingAlphBalances } = useAddressesAlphBalances()
 
   const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))
@@ -54,13 +57,15 @@ const CallContractAddressesTxModalContent = ({
       <InputFieldsColumn>
         <AddressInputs
           defaultFromAddress={fromAddressHash}
-          fromAddresses={allAddressHashes}
+          fromAddresses={fromAddresses}
           onFromAddressChange={setFromAddressHash}
         />
       </InputFieldsColumn>
-      <FooterButton onClick={() => onSubmit({ fromAddress })}>{t('Continue')}</FooterButton>
+      <FooterButton onClick={() => onSubmit({ fromAddress })} disabled={isLoadingAlphBalances}>
+        {t('Continue')}
+      </FooterButton>
     </ModalContent>
   )
 }
 
-export default CallContractAddressesTxModalContent
+export default DeployContractAddressesTxModalContent

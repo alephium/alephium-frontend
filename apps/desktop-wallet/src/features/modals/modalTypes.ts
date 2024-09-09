@@ -16,6 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { CallContractSendModalProps } from '@/features/send/callContract'
+import { DeployContractSendModalProps } from '@/features/send/deployContract'
+import { TransferSendModalProps } from '@/features/send/Transfer'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
 import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal'
 import { AddressOptionsModalProps } from '@/modals/AddressOptionsModal'
@@ -43,7 +46,10 @@ const ModalNames = {
   AdvancedOperationsSideModal: 'AdvancedOperationsSideModal',
   NewAddressModal: 'NewAddressModal',
   ContactFormModal: 'ContactFormModal',
-  WalletUnlockModal: 'WalletUnlockModal'
+  WalletUnlockModal: 'WalletUnlockModal',
+  TransferSendModal: 'TransferSendModal',
+  CallContractSendModal: 'CallContractSendModal',
+  DeployContractSendModal: 'DeployContractSendModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -106,6 +112,18 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.WalletUnlockModal
       props: WalletUnlockModalProps
+    }
+  | {
+      name: typeof ModalNames.TransferSendModal
+      props: TransferSendModalProps
+    }
+  | {
+      name: typeof ModalNames.CallContractSendModal
+      props: CallContractSendModalProps
+    }
+  | {
+      name: typeof ModalNames.DeployContractSendModal
+      props: DeployContractSendModalProps
     }
 
 export type ModalInstance = {

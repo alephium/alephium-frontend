@@ -21,6 +21,9 @@ import { AnimatePresence } from 'framer-motion'
 import { Children, isValidElement, ReactNode, useEffect } from 'react'
 
 import { selectAllModals } from '@/features/modals/modalSelectors'
+import CallContractSendModal from '@/features/send/callContract'
+import DeployContractSendModal from '@/features/send/deployContract'
+import TransferSendModal from '@/features/send/Transfer'
 import WalletUnlockModal from '@/features/switch-wallet/WalletUnlockModal'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
@@ -80,6 +83,12 @@ const AppModals = () => {
             return <ContactFormModal id={modal.id} key={modal.id} {...modal.params.props} />
           case 'WalletUnlockModal':
             return <WalletUnlockModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'TransferSendModal':
+            return <TransferSendModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'CallContractSendModal':
+            return <CallContractSendModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'DeployContractSendModal':
+            return <DeployContractSendModal id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
     </AnimatePresenceModalWrapper>

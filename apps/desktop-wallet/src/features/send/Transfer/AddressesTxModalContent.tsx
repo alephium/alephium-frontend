@@ -22,16 +22,16 @@ import { useTranslation } from 'react-i18next'
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import { useAddressesWithBalance } from '@/features/addressFiltering/addressFilteringHooks'
+import AddressInputs from '@/features/send/AddressInputs'
+import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { ModalContent } from '@/modals/CenteredModal'
-import AddressInputs from '@/modals/SendModals/AddressInputs'
 import { selectAddressByHash, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
-import { PartialTxData, TransferTxData } from '@/types/transactions'
 import { isAddressValid, requiredErrorMessage } from '@/utils/form-validation'
 
 interface TransferAddressesTxModalContentProps {
-  data: PartialTxData<TransferTxData, 'fromAddress'>
-  onSubmit: (data: PartialTxData<TransferTxData, 'fromAddress' | 'toAddress'>) => void
+  data: TransferTxModalData
+  onSubmit: (data: TransferAddressesTxModalOnSubmitData) => void
   onCancel: () => void
 }
 

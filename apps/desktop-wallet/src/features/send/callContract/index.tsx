@@ -19,44 +19,28 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { client, fromHumanReadableAmount } from '@alephium/shared'
 import { SignExecuteScriptTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { signAndSendTransaction } from '@/api/transactions'
-import CallContractAddressesTxModalContent from '@/modals/SendModals/CallContract/AddressesTxModalContent'
-import CallContractBuildTxModalContent from '@/modals/SendModals/CallContract/BuildTxModalContent'
-import CallContractCheckTxModalContent from '@/modals/SendModals/CallContract/CheckTxModalContent'
-import SendModal, { ConfigurableSendModalProps } from '@/modals/SendModals/SendModal'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
+import SendModal, { ConfigurableSendModalProps } from '@/features/send/SendModal'
+import { CallContractTxData, CallContractTxModalData, TxContext } from '@/features/send/sendTypes'
 import { store } from '@/storage/store'
 import { transactionSent } from '@/storage/transactions/transactionsActions'
-import { CallContractTxData, PartialTxData, TxContext } from '@/types/transactions'
 import { getOptionalTransactionAssetAmounts } from '@/utils/transactions'
 
-type CallContractModalModalProps = ConfigurableSendModalProps<
-  PartialTxData<CallContractTxData, 'fromAddress'>,
-  CallContractTxData
->
+export type CallContractSendModalProps = ConfigurableSendModalProps<CallContractTxModalData>
 
-const SendModalCallContract = (props: CallContractModalModalProps) => {
+const CallContractSendModal = memo((props: ModalBaseProp & CallContractSendModalProps) => {
   const { t } = useTranslation()
 
-  return (
-    <SendModal
-      {...props}
-      title={t('Call contract')}
-      AddressesTxModalContent={CallContractAddressesTxModalContent}
-      BuildTxModalContent={CallContractBuildTxModalContent}
-      CheckTxModalContent={CallContractCheckTxModalContent}
-      buildTransaction={buildTransaction}
-      handleSend={handleSend}
-      getWalletConnectResult={getWalletConnectResult}
-      isContract
-    />
-  )
-}
+  return <SendModal {...props} title={t('Call contract')} type="call-contract" />
+})
 
-export default SendModalCallContract
+export default CallContractSendModal
 
-const buildTransaction = async (txData: CallContractTxData, ctx: TxContext) => {
+export const buildCallContractTransaction = async (txData: CallContractTxData, ctx: TxContext) => {
   const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(txData.assetAmounts)
 
   const response = await client.node.contracts.postContractsUnsignedTxExecuteScript({
@@ -72,7 +56,11 @@ const buildTransaction = async (txData: CallContractTxData, ctx: TxContext) => {
   ctx.setFees(BigInt(response.gasAmount) * BigInt(response.gasPrice))
 }
 
-const handleSend = async ({ fromAddress, assetAmounts }: CallContractTxData, ctx: TxContext, posthog: PostHog) => {
+export const handleCallContractSend = async (
+  { fromAddress, assetAmounts }: CallContractTxData,
+  ctx: TxContext,
+  posthog: PostHog
+) => {
   if (!ctx.unsignedTransaction) throw Error('No unsignedTransaction available')
 
   const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(assetAmounts)
@@ -96,7 +84,10 @@ const handleSend = async ({ fromAddress, assetAmounts }: CallContractTxData, ctx
   return data.signature
 }
 
-const getWalletConnectResult = (context: TxContext, signature: string): SignExecuteScriptTxResult => {
+export const getCallContractWalletConnectResult = (
+  context: TxContext,
+  signature: string
+): SignExecuteScriptTxResult => {
   if (!context.unsignedTransaction) throw Error('No unsignedTransaction available')
 
   return {
