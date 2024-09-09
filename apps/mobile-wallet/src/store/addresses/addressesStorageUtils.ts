@@ -41,7 +41,7 @@ export const importAddresses = async (walletId: WalletMetadata['id'], addressesM
       addressHashes.push(newAddress.hash)
     }
 
-    store.dispatch(syncLatestTransactions(addressHashes))
+    store.dispatch(syncLatestTransactions({ addresses: addressHashes, areAddressesNew: true }))
   } finally {
     keyring.clear()
   }

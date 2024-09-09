@@ -26,8 +26,7 @@ import animationSrc from '~/animations/lottie/success.json'
 import HighlightButton from '~/components/buttons/HighlightButton'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
-import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
-import i18n from '~/features/localization/i18n'
+import CenteredInstructions from '~/components/text/CenteredInstructions'
 import { useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -38,13 +37,9 @@ interface NewWalletSuccessScreenProps
   extends StackScreenProps<RootStackParamList, 'NewWalletSuccessScreen'>,
     ScreenProps {}
 
-const instructions: Instruction[] = [
-  { text: `${i18n.t('Welcome to Alephium!')} 🎉`, type: 'primary' },
-  { text: i18n.t('Enjoy your new wallet!'), type: 'secondary' }
-]
-
 const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method)
+  const wasWalletMetadataRestored = useAppSelector((s) => s.wallet.metadataRestored)
   const theme = useTheme()
   const { t } = useTranslation()
 
@@ -62,7 +57,20 @@ const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreen
         <StyledAlephiumLogo color={theme.font.primary} />
         <StyledAnimation source={animationSrc} autoPlay />
       </AnimationContainer>
-      <CenteredInstructions instructions={instructions} stretch fontSize={19} />
+      <CenteredInstructions
+        instructions={[
+          {
+            text: `${t(wasWalletMetadataRestored ? 'Welcome back to Alephium!' : 'Welcome to Alephium!')} 🎉`,
+            type: 'primary'
+          },
+          {
+            text: t(wasWalletMetadataRestored ? 'Enjoy your restored wallet!' : 'Enjoy your new wallet!'),
+            type: 'secondary'
+          }
+        ]}
+        stretch
+        fontSize={19}
+      />
       <ActionsContainer>
         <ScreenSection centered>
           <HighlightButton title={t("Let's go!")} wide onPress={() => resetNavigation(navigation)} />

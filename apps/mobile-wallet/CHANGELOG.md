@@ -1,5 +1,15 @@
 # @alephium/mobile-wallet
 
+## 1.1.6
+
+### Patch Changes
+
+- 562fdeb: Regenerate wallet metadata if missing
+- 0018f87: Fix data initialization when importing addresses
+- d898018: Improve address import UX
+- fa9f9bc: Enable Portuguese language
+- ef7920a: Fix display of security settings
+
 ## 1.1.5
 
 ### Patch Changes

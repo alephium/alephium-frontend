@@ -172,6 +172,7 @@
   "Created fund password": "Created fund password",
   "Delete fund password": "Delete fund password",
   "Fund password was deleted.": "Fund password was deleted.",
+  "Could not save fund password.": "Could not save fund password.",
   "You can set a new password below. This password will be required for critical operations involving the safety of your funds and cannot be recovered.": "You can set a new password below. This password will be required for critical operations involving the safety of your funds and cannot be recovered.",
   "The fund password acts as an additional authentication layer for critical operations involving the safety of your funds such as revealing your secret recovery phrase or sending funds.": "The fund password acts as an additional authentication layer for critical operations involving the safety of your funds such as revealing your secret recovery phrase or sending funds.",
   "Edit password": "Edit password",
@@ -365,5 +366,13 @@
   "View full size": "View full size",
   "Disclaimer": "Disclaimer",
   "Buy": "Buy",
-  "banxaDisclaimer": "You are about to access 3rd party services provided by <1>Banxa.com</1> through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding."
+  "banxaDisclaimer": "You are about to access 3rd party services provided by <1>Banxa.com</1> through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding.",
+  "App data were reset": "App data were reset",
+  "Restore data": "Restore data",
+  "Due to an unexpected error some of your app's data are missing. Would you like to regenerate them? Your funds are safe.": "Due to an unexpected error some of your app's data are missing. Would you like to regenerate them? Your funds are safe.",
+  "We noticed that you deleted the app, would you like to restore your last wallet?": "We noticed that you deleted the app, would you like to restore your last wallet?",
+  "Yes": "Yes",
+  "No": "No",
+  "Welcome back to Alephium!": "Welcome back to Alephium!",
+  "Enjoy your restored wallet!": "Enjoy your restored wallet!"
 }

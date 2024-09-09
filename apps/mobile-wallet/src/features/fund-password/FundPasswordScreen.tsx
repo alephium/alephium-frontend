@@ -40,7 +40,7 @@ import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { useAppDispatch } from '~/hooks/redux'
 import usePassword from '~/hooks/usePassword'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { showToast } from '~/utils/layout'
+import { showExceptionToast, showToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
 
 interface FundPasswordScreenProps
@@ -80,20 +80,24 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
   }, [currentFundPassword])
 
   const handleSavePress = async () => {
-    await storeFundPassword(newPassword || password)
-    dispatch(fundPasswordUseToggled(true))
-    showToast({
-      text1: t('Saved!'),
-      text2: newPassword ? t('Fund password was updated.') : t('Fund password was set up.'),
-      type: 'success'
-    })
-    cameFromBackupScreen ? resetNavigation(navigation) : navigation.goBack()
-    sendAnalytics({
-      event: newPassword ? t('Updated fund password') : t('Created fund password'),
-      props: {
-        origin: props.route.params.origin
-      }
-    })
+    try {
+      await storeFundPassword(newPassword || password)
+      dispatch(fundPasswordUseToggled(true))
+      showToast({
+        text1: t('Saved!'),
+        text2: newPassword ? t('Fund password was updated.') : t('Fund password was set up.'),
+        type: 'success'
+      })
+      cameFromBackupScreen ? resetNavigation(navigation) : navigation.goBack()
+      sendAnalytics({
+        event: newPassword ? t('Updated fund password') : t('Created fund password'),
+        props: {
+          origin: props.route.params.origin
+        }
+      })
+    } catch (error) {
+      showExceptionToast(error, t('Could not save fund password.'))
+    }
   }
 
   const handlePasswordEdit = () => {

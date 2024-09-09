@@ -72,7 +72,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
         const wallet = await generateAndStoreWallet(name)
 
         dispatch(newWalletGenerated(wallet))
-        dispatch(syncLatestTransactions(wallet.firstAddress.hash))
+        dispatch(syncLatestTransactions({ addresses: wallet.firstAddress.hash, areAddressesNew: true }))
 
         sendAnalytics({ event: 'Created new wallet' })
         resetNavigation(

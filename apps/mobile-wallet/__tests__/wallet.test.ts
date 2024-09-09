@@ -19,27 +19,34 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { keyring } from '@alephium/keyring'
 import AsyncStorage from '@react-native-async-storage/async-storage/jest/async-storage-mock'
 import * as SecureStore from 'expo-secure-store'
+import { Alert } from 'react-native'
 
 import { defaultSecureStoreConfig } from '~/persistent-storage/config'
 import {
   deleteWallet,
-  getStoredWallet,
+  getStoredWalletMetadata,
+  getWalletMetadata,
   migrateDeprecatedMnemonic,
   storeWalletMetadata,
-  storeWalletMetadataDeprecated
+  storeWalletMetadataDeprecated,
+  validateAndRepareStoredWalletData
 } from '~/persistent-storage/wallet'
 
 jest.mock('expo-secure-store')
 
+const mockCallback = jest.fn(() => true)
+const spyAlert = jest.spyOn(Alert, 'alert')
+
 const mockedDeleteItemAsync = <jest.MockedFunction<typeof SecureStore.deleteItemAsync>>SecureStore.deleteItemAsync
 const mockedSetItemAsync = <jest.MockedFunction<typeof SecureStore.setItemAsync>>SecureStore.setItemAsync
+const mockedGetItemAsync = <jest.MockedFunction<typeof SecureStore.getItemAsync>>SecureStore.getItemAsync
 
-const testWalletMnemonic =
+const testWalletMnemonicString =
   'vault alarm sad mass witness property virus style good flower rice alpha viable evidence run glare pretty scout evil judge enroll refuse another lava'
 const testWalletMnemonicStored =
   '{"0":142,"1":7,"2":46,"3":0,"4":237,"5":5,"6":68,"7":4,"8":229,"9":7,"10":99,"11":5,"12":164,"13":7,"14":190,"15":6,"16":35,"17":3,"18":204,"19":2,"20":201,"21":5,"22":56,"23":0,"24":154,"25":7,"26":110,"27":2,"28":234,"29":5,"30":22,"31":3,"32":81,"33":5,"34":10,"35":6,"36":111,"37":2,"38":197,"39":3,"40":89,"41":2,"42":163,"43":5,"44":76,"45":0,"46":238,"47":3}'
 
-const addDeprecatedTestWalletInStorage = () =>
+const addDeprecatedTestWalletMetadataInStorage = () =>
   storeWalletMetadataDeprecated({
     id: '0',
     name: 'Test wallet',
@@ -61,7 +68,7 @@ const addDeprecatedTestWalletInStorage = () =>
     contacts: []
   })
 
-const addTestWalletInStorage = () =>
+const addTestWalletMetadataInStorage = () =>
   storeWalletMetadata({
     id: '0',
     name: 'Test wallet',
@@ -89,14 +96,15 @@ afterEach(() => {
   AsyncStorage.clear()
   mockedDeleteItemAsync.mockReset()
   mockedSetItemAsync.mockReset()
+  mockedGetItemAsync.mockReset()
 })
 
-describe(getStoredWallet, () => {
+describe(getStoredWalletMetadata, () => {
   it('should fail if there are no wallet metadata stored', async () => {
-    expect(getStoredWallet).rejects.toThrow()
+    expect(getStoredWalletMetadata).rejects.toThrow()
 
-    await addTestWalletInStorage()
-    const wallet = await getStoredWallet()
+    await addTestWalletMetadataInStorage()
+    const wallet = await getStoredWalletMetadata()
 
     expect(wallet.name).toEqual('Test wallet')
   })
@@ -104,12 +112,12 @@ describe(getStoredWallet, () => {
 
 describe(migrateDeprecatedMnemonic, () => {
   it('should throw an error if there is no wallet metadata stored', async () => {
-    await expect(() => migrateDeprecatedMnemonic(testWalletMnemonic)).rejects.toThrow()
+    await expect(() => migrateDeprecatedMnemonic(testWalletMnemonicString)).rejects.toThrow()
   })
 
   it('should migrate mnemonic and delete old entries', async () => {
-    await addDeprecatedTestWalletInStorage()
-    await migrateDeprecatedMnemonic(testWalletMnemonic)
+    await addDeprecatedTestWalletMetadataInStorage()
+    await migrateDeprecatedMnemonic(testWalletMnemonicString)
 
     expect(mockedSetItemAsync).toHaveBeenCalledWith(
       'wallet-mnemonic-v2',
@@ -122,7 +130,7 @@ describe(migrateDeprecatedMnemonic, () => {
   it('should migrate mnemonic even if there is no wallet metadata stored', async () => {
     expect(keyring['root']).toBeNull()
 
-    await expect(() => migrateDeprecatedMnemonic(testWalletMnemonic)).rejects.toThrow()
+    await expect(() => migrateDeprecatedMnemonic(testWalletMnemonicString)).rejects.toThrow()
     expect(mockedSetItemAsync).toHaveBeenCalledWith(
       'wallet-mnemonic-v2',
       testWalletMnemonicStored,
@@ -134,8 +142,8 @@ describe(migrateDeprecatedMnemonic, () => {
   it('should clear secrets after migrating successfully', async () => {
     expect(keyring['root']).toBeNull()
 
-    await addDeprecatedTestWalletInStorage()
-    await migrateDeprecatedMnemonic(testWalletMnemonic)
+    await addDeprecatedTestWalletMetadataInStorage()
+    await migrateDeprecatedMnemonic(testWalletMnemonicString)
 
     expect(keyring['root']).toBeNull()
   })
@@ -143,7 +151,7 @@ describe(migrateDeprecatedMnemonic, () => {
   it('should clear secrets even when there is an error', async () => {
     expect(keyring['root']).toBeNull()
 
-    await expect(() => migrateDeprecatedMnemonic(testWalletMnemonic)).rejects.toThrow()
+    await expect(() => migrateDeprecatedMnemonic(testWalletMnemonicString)).rejects.toThrow()
 
     expect(keyring['root']).toBeNull()
   })
@@ -151,8 +159,8 @@ describe(migrateDeprecatedMnemonic, () => {
   it('should store public and private key in secure store', async () => {
     expect(keyring['root']).toBeNull()
 
-    await addDeprecatedTestWalletInStorage()
-    await migrateDeprecatedMnemonic(testWalletMnemonic)
+    await addDeprecatedTestWalletMetadataInStorage()
+    await migrateDeprecatedMnemonic(testWalletMnemonicString)
 
     expect(mockedSetItemAsync).toHaveBeenCalledTimes(5)
     expect(mockedSetItemAsync).toHaveBeenCalledWith(
@@ -185,9 +193,9 @@ describe(migrateDeprecatedMnemonic, () => {
   it('should add hash in address metadata', async () => {
     expect(keyring['root']).toBeNull()
 
-    await addDeprecatedTestWalletInStorage()
-    await migrateDeprecatedMnemonic(testWalletMnemonic)
-    const wallet = await getStoredWallet()
+    await addDeprecatedTestWalletMetadataInStorage()
+    await migrateDeprecatedMnemonic(testWalletMnemonicString)
+    const wallet = await getStoredWalletMetadata()
 
     expect(wallet.addresses[0].hash).toEqual('1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')
     expect(wallet.addresses[1].hash).toEqual('1Bf9jthiwQo74V94LHT37dwEEiV22KkpKySf4TmRDzZqf')
@@ -196,7 +204,7 @@ describe(migrateDeprecatedMnemonic, () => {
 
 describe(deleteWallet, () => {
   it('should delete all wallet entries', async () => {
-    await addTestWalletInStorage()
+    await addTestWalletMetadataInStorage()
     await deleteWallet()
 
     expect(mockedDeleteItemAsync).toHaveBeenCalledTimes(6)
@@ -220,5 +228,144 @@ describe(deleteWallet, () => {
 
     expect(AsyncStorage.removeItem).toHaveBeenCalledTimes(2)
     expect(AsyncStorage.removeItem).toHaveBeenCalledWith('wallet-metadata')
+  })
+})
+
+describe(validateAndRepareStoredWalletData, () => {
+  it('should be valid if we have a mnemonic and metadata', async () => {
+    mockedGetItemAsync.mockResolvedValueOnce(testWalletMnemonicStored)
+    await addTestWalletMetadataInStorage()
+
+    const status = await validateAndRepareStoredWalletData(mockCallback)
+
+    expect(status === 'valid').toBe(true)
+  })
+
+  it('should show correct wallet metadata restore message', async () => {
+    mockedGetItemAsync.mockResolvedValueOnce(testWalletMnemonicStored) // mock stored mnemonic
+    mockedGetItemAsync.mockResolvedValueOnce('mocked-timestamp') // mock stored app-installed-on-persistent
+
+    let status = await validateAndRepareStoredWalletData(mockCallback)
+
+    expect(mockedGetItemAsync).toHaveBeenCalledTimes(2)
+    expect(mockedGetItemAsync.mock.calls[0][0]).toBe('wallet-mnemonic-v2')
+    expect(mockedGetItemAsync.mock.calls[1][0]).toBe('app-installed-on-persistent')
+
+    expect(status === 'awaiting-user-confirmation').toBe(true)
+    expect(spyAlert).toHaveBeenCalled()
+    expect(spyAlert.mock.calls[0][1]).toContain('We noticed that you deleted the app')
+
+    mockedGetItemAsync.mockResolvedValueOnce(testWalletMnemonicStored) // mock stored mnemonic
+    mockedGetItemAsync.mockResolvedValueOnce(null) // mock stored app-installed-on-persistent
+
+    status = await validateAndRepareStoredWalletData(mockCallback)
+
+    expect(mockedGetItemAsync).toHaveBeenCalledTimes(4)
+    expect(mockedGetItemAsync.mock.calls[2][0]).toBe('wallet-mnemonic-v2')
+    expect(mockedGetItemAsync.mock.calls[3][0]).toBe('app-installed-on-persistent')
+
+    expect(status === 'awaiting-user-confirmation').toBe(true)
+    expect(spyAlert).toHaveBeenCalled()
+    expect(spyAlert.mock.calls[1][1]).toContain("some of your app's data are missing")
+  })
+
+  it('should try to recreate metadata if missing, but mnemonic is there', async () => {
+    mockedGetItemAsync.mockResolvedValueOnce(testWalletMnemonicStored) // mock stored mnemonic
+    mockedGetItemAsync.mockResolvedValueOnce('mocked-timestamp') // mock stored app-installed-on-persistent
+
+    const status = await validateAndRepareStoredWalletData(mockCallback)
+
+    expect(mockedGetItemAsync).toHaveBeenCalledTimes(2)
+    expect(mockedGetItemAsync.mock.calls[0][0]).toBe('wallet-mnemonic-v2')
+    expect(mockedGetItemAsync.mock.calls[1][0]).toBe('app-installed-on-persistent')
+
+    expect(status === 'awaiting-user-confirmation').toBe(true)
+    expect(spyAlert).toHaveBeenCalled()
+
+    const alertButtons = spyAlert.mock.calls[0][2]
+
+    expect(alertButtons).toHaveLength(2)
+
+    if (alertButtons) {
+      const noButton = alertButtons[0]
+      const yesButton = alertButtons[1]
+
+      if (noButton.onPress) {
+        noButton.onPress()
+
+        const recreatedWalletMetadata = await getWalletMetadata(false)
+
+        expect(mockCallback).toHaveBeenCalled()
+        expect(recreatedWalletMetadata).toBeFalsy()
+      }
+
+      if (yesButton.onPress) {
+        mockedGetItemAsync.mockResolvedValueOnce(testWalletMnemonicStored) // mock stored mnemonic
+        await yesButton.onPress()
+
+        expect(mockedGetItemAsync).toHaveBeenCalledTimes(3)
+        expect(mockedGetItemAsync.mock.calls[2][0]).toBe('wallet-mnemonic-v2')
+
+        const recreatedWalletMetadata = await getWalletMetadata(false)
+
+        expect(mockCallback).toHaveBeenCalled()
+        expect(recreatedWalletMetadata).toBeTruthy()
+        expect(recreatedWalletMetadata?.addresses.length).toBe(1)
+      }
+    }
+  })
+
+  it('should try to recreate deprecated metadata if deprecated mnemonic is there but metadata missing', async () => {
+    mockedGetItemAsync.mockResolvedValueOnce(null) // mock missing mnemonic
+    mockedGetItemAsync.mockResolvedValueOnce('mocked-timestamp') // mock stored app-installed-on-persistent
+    mockedGetItemAsync.mockResolvedValueOnce('pinencryptedmnemonic') // mock stored pin encrypted deprecated mnemonic
+
+    const status = await validateAndRepareStoredWalletData(mockCallback)
+
+    expect(mockedGetItemAsync).toHaveBeenCalledTimes(3)
+    expect(mockedGetItemAsync.mock.calls[0][0]).toBe('wallet-mnemonic-v2')
+    expect(mockedGetItemAsync.mock.calls[1][0]).toBe('app-installed-on-persistent')
+    expect(mockedGetItemAsync.mock.calls[2][0]).toBe('wallet-pin')
+
+    const recreatedDeprecatedWalletMetadata = await getWalletMetadata(false)
+
+    expect(recreatedDeprecatedWalletMetadata).toBeTruthy()
+    expect(recreatedDeprecatedWalletMetadata?.addresses.length).toBe(1)
+    expect(recreatedDeprecatedWalletMetadata?.addresses[0].hash).toBeUndefined() // ensure it's deprecated metadata
+    expect(status === 'valid').toBe(true)
+  })
+
+  it('should delete metadata if no mnemonic and no deprecated mnemonic is found', async () => {
+    mockedGetItemAsync.mockResolvedValueOnce(null) // mock missing mnemonic
+    mockedGetItemAsync.mockResolvedValueOnce(null) // mock stored app-installed-on-persistent
+    mockedGetItemAsync.mockResolvedValueOnce(null) // mock missing deprecated mnemonic
+    await addTestWalletMetadataInStorage()
+
+    const status = await validateAndRepareStoredWalletData(mockCallback)
+
+    expect(mockedGetItemAsync).toHaveBeenCalledTimes(3)
+    expect(mockedGetItemAsync.mock.calls[0][0]).toBe('wallet-mnemonic-v2')
+    expect(mockedGetItemAsync.mock.calls[1][0]).toBe('app-installed-on-persistent')
+    expect(mockedGetItemAsync.mock.calls[2][0]).toBe('wallet-pin')
+
+    const walletMetadata = await getWalletMetadata()
+
+    expect(walletMetadata).toBeNull()
+    expect(status === 'valid').toBe(true)
+  })
+
+  it('should be valid if no mnemonics and no metadata are found', async () => {
+    mockedGetItemAsync.mockResolvedValueOnce(null) // mock missing mnemonic
+    mockedGetItemAsync.mockResolvedValueOnce(null) // mock stored app-installed-on-persistent
+    mockedGetItemAsync.mockResolvedValueOnce(null) // mock missing deprecated mnemonic
+
+    const status = await validateAndRepareStoredWalletData(mockCallback)
+
+    expect(mockedGetItemAsync).toHaveBeenCalledTimes(3)
+    expect(mockedGetItemAsync.mock.calls[0][0]).toBe('wallet-mnemonic-v2')
+    expect(mockedGetItemAsync.mock.calls[1][0]).toBe('app-installed-on-persistent')
+    expect(mockedGetItemAsync.mock.calls[2][0]).toBe('wallet-pin')
+
+    expect(status === 'valid').toBe(true)
   })
 })

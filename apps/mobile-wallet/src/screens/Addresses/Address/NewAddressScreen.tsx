@@ -62,7 +62,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
 
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))
-      await dispatch(syncLatestTransactions(newAddress.hash))
+      await dispatch(syncLatestTransactions({ addresses: newAddress.hash, areAddressesNew: true }))
 
       sendAnalytics({
         event: 'Address: Generated new address',

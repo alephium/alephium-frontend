@@ -38,7 +38,9 @@ const RefreshSpinner = (props: Partial<RefreshControlProps>) => {
     setIsSpinnerVisible(true)
 
     if (!isLoadingLatestTxs) {
-      dispatch(syncLatestTransactions()).finally(() => setIsSpinnerVisible(false))
+      dispatch(syncLatestTransactions({ addresses: 'all', areAddressesNew: false })).finally(() =>
+        setIsSpinnerVisible(false)
+      )
     }
   }
 

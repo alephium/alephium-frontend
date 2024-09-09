@@ -36,10 +36,15 @@ import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { useLocalization } from '~/features/localization/useLocalization'
+import SplashScreen from '~/features/splash-screen/SplashScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useAsyncData } from '~/hooks/useAsyncData'
 import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
-import { getStoredWallet, storedWalletExists } from '~/persistent-storage/wallet'
+import {
+  getStoredWalletMetadataWithoutThrowingError,
+  validateAndRepareStoredWalletData
+} from '~/persistent-storage/wallet'
 import {
   makeSelectAddressesUnknownTokens,
   selectAllAddressVerifiedFungibleTokenSymbols,
@@ -48,9 +53,11 @@ import {
 import { store } from '~/store/store'
 import { selectTransactionUnknownTokenIds } from '~/store/transactions/transactionSelectors'
 import { appLaunchedWithLastUsedWallet } from '~/store/wallet/walletActions'
+import { metadataRestored } from '~/store/wallet/walletSlice'
 import { themes } from '~/style/themes'
 
 const App = () => {
+  const { showAppContent, wasMetadataRestored } = useShowAppContentAfterValidatingStoredWalletData()
   const [theme, setTheme] = useState<DefaultTheme>(themes.light)
 
   useEffect(
@@ -66,12 +73,39 @@ const App = () => {
       <Main>
         <ThemeProvider theme={theme}>
           <StatusBar animated translucent style="light" />
-          <RootStackNavigation />
+          {showAppContent ? (
+            <RootStackNavigation
+              initialRouteName={wasMetadataRestored ? 'ImportWalletAddressDiscoveryScreen' : undefined}
+            />
+          ) : (
+            // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
+            // splash screen to be show after the default one gets hidden, before we can show app content.
+            <SplashScreen />
+          )}
           <ToastAnchor />
         </ThemeProvider>
       </Main>
     </Provider>
   )
+}
+
+const useShowAppContentAfterValidatingStoredWalletData = () => {
+  const [state, setState] = useState({ showAppContent: false, wasMetadataRestored: false })
+
+  const onUserConfirm = useCallback((userChoseYes: boolean) => {
+    setState({ showAppContent: true, wasMetadataRestored: userChoseYes })
+    store.dispatch(metadataRestored())
+  }, [])
+
+  const { data: validationStatus } = useAsyncData(
+    useCallback(() => validateAndRepareStoredWalletData(onUserConfirm), [onUserConfirm])
+  )
+
+  useEffect(() => {
+    if (validationStatus === 'valid') setState({ showAppContent: true, wasMetadataRestored: false })
+  }, [validationStatus])
+
+  return state
 }
 
 const Main = ({ children, ...props }: ViewProps) => {
@@ -87,6 +121,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
   const settings = useAppSelector((s) => s.settings)
   const appJustLaunched = useAppSelector((s) => s.app.wasJustLaunched)
+  const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
@@ -99,10 +134,8 @@ const Main = ({ children, ...props }: ViewProps) => {
   useLocalization()
 
   useEffect(() => {
-    storedWalletExists().then((walletExists) => {
-      if (walletExists) getStoredWallet().then((wallet) => dispatch(appLaunchedWithLastUsedWallet(wallet)))
-    })
-  }, [dispatch])
+    if (walletMetadata) dispatch(appLaunchedWithLastUsedWallet(walletMetadata))
+  }, [dispatch, walletMetadata])
 
   useEffect(() => {
     if (
@@ -153,7 +186,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   )
 
   const checkForNewTransactions = useCallback(() => {
-    dispatch(syncLatestTransactions())
+    dispatch(syncLatestTransactions({ addresses: 'all', areAddressesNew: false }))
   }, [dispatch])
 
   const dataResyncNeeded =

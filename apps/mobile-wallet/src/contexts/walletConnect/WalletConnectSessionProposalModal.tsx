@@ -111,7 +111,7 @@ const WalletConnectSessionProposalModal = ({
 
       await persistAddressSettings(newAddress)
       dispatch(newAddressGenerated(newAddress))
-      await dispatch(syncLatestTransactions(newAddress.hash))
+      await dispatch(syncLatestTransactions({ addresses: newAddress.hash, areAddressesNew: true }))
 
       sendAnalytics({ event: 'WC: Generated new address' })
     } catch (error) {

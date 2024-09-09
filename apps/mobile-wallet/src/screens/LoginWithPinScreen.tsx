@@ -27,7 +27,7 @@ import { Spinner } from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { getStoredWallet, migrateDeprecatedMnemonic } from '~/persistent-storage/wallet'
+import { getStoredWalletMetadata, migrateDeprecatedMnemonic } from '~/persistent-storage/wallet'
 import { allBiometricsEnabled } from '~/store/settings/settingsActions'
 import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
@@ -57,7 +57,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
           dispatch(allBiometricsEnabled())
         }
 
-        const wallet = await getStoredWallet()
+        const wallet = await getStoredWalletMetadata()
 
         dispatch(walletUnlocked(wallet))
         resetNavigation(navigation)

@@ -42,7 +42,7 @@ import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
   deleteDeprecatedWallet,
   getDeprecatedStoredWallet,
-  getStoredWallet,
+  getStoredWalletMetadata,
   migrateDeprecatedMnemonic,
   storedWalletExists
 } from '~/persistent-storage/wallet'
@@ -72,7 +72,11 @@ import { resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
 
 const RootStack = createStackNavigator<RootStackParamList>()
 
-const RootStackNavigation = () => {
+interface RootStackNavigationProps {
+  initialRouteName?: keyof RootStackParamList
+}
+
+const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => {
   const theme = useTheme()
 
   const themeNavigator = {
@@ -94,7 +98,10 @@ const RootStackNavigation = () => {
         <NavigationContainer ref={rootStackNavigationRef} theme={themeNavigator}>
           <Analytics>
             <WalletConnectContextProvider>
-              <RootStack.Navigator initialRouteName="LandingScreen" screenOptions={{ headerShown: false }}>
+              <RootStack.Navigator
+                initialRouteName={initialRouteName || 'LandingScreen'}
+                screenOptions={{ headerShown: false }}
+              >
                 <RootStack.Group screenOptions={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}>
                   <RootStack.Screen name="LandingScreen" component={LandingScreen} />
                   <RootStack.Screen name="LoginWithPinScreen" component={LoginWithPinScreen} />
@@ -128,7 +135,7 @@ const RootStackNavigation = () => {
               </RootStack.Navigator>
             </WalletConnectContextProvider>
           </Analytics>
-          <AppUnlockModal />
+          <AppUnlockModal initialRouteName={initialRouteName || 'InWalletTabsNavigation'} />
         </NavigationContainer>
       </Host>
     </GestureHandlerRootView>
@@ -137,7 +144,7 @@ const RootStackNavigation = () => {
 
 export default RootStackNavigation
 
-const AppUnlockModal = () => {
+const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>) => {
   const dispatch = useAppDispatch()
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const lastUsedWalletId = useAppSelector((s) => s.wallet.id)
@@ -157,19 +164,19 @@ const AppUnlockModal = () => {
 
   const initializeAppWithStoredWallet = useCallback(async () => {
     try {
-      dispatch(walletUnlocked(await getStoredWallet()))
+      dispatch(walletUnlocked(await getStoredWalletMetadata()))
 
       const lastRoute = rootStackNavigationRef.current?.getCurrentRoute()?.name
 
       if (!lastRoute || ['LandingScreen', 'LoginWithPinScreen'].includes(lastRoute)) {
-        resetNavigation(navigation)
+        resetNavigation(navigation, initialRouteName)
       }
     } catch (error) {
       const message = 'Could not initialize app with stored wallet'
       showExceptionToast(error, message)
       sendAnalytics({ type: 'error', error, message })
     }
-  }, [dispatch, navigation])
+  }, [dispatch, initialRouteName, navigation])
 
   const unlockApp = useCallback(async () => {
     if (isWalletUnlocked) return

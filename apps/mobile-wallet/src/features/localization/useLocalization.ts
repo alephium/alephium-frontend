@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import 'dayjs/locale/fr'
 import 'dayjs/locale/el'
 import 'dayjs/locale/vi'
+import 'dayjs/locale/pt'
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
