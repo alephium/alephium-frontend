@@ -34,6 +34,8 @@ import { NewAddressModalProps } from '@/modals/NewAddressModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
 import { ReceiveModalProps } from '@/modals/ReceiveModal'
 import { SettingsModalProps } from '@/modals/SettingsModal'
+import { CopyPrivateKeyConfirmationModalProps } from '@/modals/SettingsModal/CopyPrivateKeyConfirmationModal'
+import { DisablePasswordRequirementModalProps } from '@/modals/SettingsModal/DisablePasswordRequirementModal'
 import { TransactionDetailsModalProps } from '@/modals/TransactionDetailsModal'
 
 const ModalNames = {
@@ -61,7 +63,9 @@ const ModalNames = {
   SignMessageModal: 'SignMessageModal',
   ConsolidateUTXOsModal: 'ConsolidateUTXOsModal',
   ConfirmLockTimeModal: 'ConfirmLockTimeModal',
-  ConfirmModal: 'ConfirmModal'
+  ConfirmModal: 'ConfirmModal',
+  CopyPrivateKeyConfirmationModal: 'CopyPrivateKeyConfirmationModal',
+  DisablePasswordRequirementModal: 'DisablePasswordRequirementModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -160,6 +164,14 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.ConfirmModal
       props: ConfirmModalProps
+    }
+  | {
+      name: typeof ModalNames.CopyPrivateKeyConfirmationModal
+      props: CopyPrivateKeyConfirmationModalProps
+    }
+  | {
+      name: typeof ModalNames.DisablePasswordRequirementModal
+      props: DisablePasswordRequirementModalProps
     }
 
 export type ModalInstance = {
