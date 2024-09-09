@@ -20,6 +20,7 @@ import { CallContractSendModalProps } from '@/features/send/callContract'
 import { DeployContractSendModalProps } from '@/features/send/deployContract'
 import { TransferSendModalProps } from '@/features/send/Transfer'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
+import { WalletConnectSessionProposalModalProps } from '@/features/walletConnect/WalletConnectSessionProposalModal'
 import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal'
 import { AddressOptionsModalProps } from '@/modals/AddressOptionsModal'
 import { ContactFormModalProps } from '@/modals/ContactFormModal'
@@ -29,7 +30,6 @@ import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
 import { ReceiveModalProps } from '@/modals/ReceiveModal'
 import { SettingsModalProps } from '@/modals/SettingsModal'
 import { TransactionDetailsModalProps } from '@/modals/TransactionDetailsModal'
-import { WalletConnectSessionProposalModalProps } from '@/modals/WalletConnect/WalletConnectSessionProposalModal'
 
 const ModalNames = {
   AddressDetailsModal: 'AddressDetailsModal',
