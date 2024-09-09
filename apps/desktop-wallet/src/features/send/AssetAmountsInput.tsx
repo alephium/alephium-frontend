@@ -20,7 +20,7 @@ import { fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } f
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { MoreVertical, Plus } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -176,24 +176,6 @@ const AssetAmountsInput = ({
   const selectAsset = (option: SelectOption<string>) => {
     handleAssetSelect(option.value)
   }
-
-  useEffect(() => {
-    const addressTokenIds = address.tokens.map((token) => token.tokenId)
-    const filteredAssetAmounts = assetAmounts.filter(
-      (asset) => addressTokenIds.includes(asset.id) || asset.id === ALPH.id
-    )
-
-    if (filteredAssetAmounts.length === 0) {
-      filteredAssetAmounts.push({ id: ALPH.id })
-    }
-
-    setSelectedAssetRowIndex(0)
-    onAssetAmountsChange(filteredAssetAmounts)
-
-    // We want to potentially update the list of assets ONLY when the address changes because the newly chosen address
-    // might not have the tokens that were selected before
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address])
 
   const renderOption = (option: SelectOption<string>) => {
     const token = tokens.find((token) => token.id === option.value)

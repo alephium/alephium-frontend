@@ -29,7 +29,6 @@ import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { chunk } from 'lodash'
 
 import {
-  fetchAddressesTokensBalances,
   fetchAddressesTransactions,
   fetchAddressesTransactionsNextPage,
   fetchAddressTransactionsNextPage
@@ -67,7 +66,6 @@ export const syncAddressesData = createAsyncThunk(
     const addresses = payload ?? (state.addresses.ids as AddressHash[])
 
     try {
-      await dispatch(syncAddressesTokensBalances(addresses))
       await dispatch(syncAddressesTransactions(addresses))
     } catch (e) {
       throw getHumanReadableError(e, i18n.t("Encountered error while syncing your addresses' data."))
@@ -78,11 +76,6 @@ export const syncAddressesData = createAsyncThunk(
 export const syncAddressesTransactions = createAsyncThunk(
   'addresses/syncAddressesTransactions',
   async (addresses: AddressHash[]) => await fetchAddressesTransactions(addresses)
-)
-
-export const syncAddressesTokensBalances = createAsyncThunk(
-  'addresses/syncAddressesTokensBalances',
-  async (addresses: AddressHash[]) => await fetchAddressesTokensBalances(addresses)
 )
 
 export const syncAddressTransactionsNextPage = createAsyncThunk(
