@@ -24,9 +24,9 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
 import { useAppSelector } from '~/hooks/redux'
 import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN } from '~/style/globalStyle'
 
@@ -46,7 +46,7 @@ const NFTModal = ({ nftId, ...props }: NFTModalProps) => {
   return (
     <ModalContent verticalGap {...props}>
       <ScreenSection>
-        <BottomModalScreenTitle>{nft.name}</BottomModalScreenTitle>
+        <ModalScreenTitle>{nft.name}</ModalScreenTitle>
       </ScreenSection>
       <ScreenSection>
         <NFTFullSizeImage nftId={nftId} size={nftFullSize} />

@@ -23,10 +23,10 @@ import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
 import { walletDeleted } from '~/store/wallet/walletActions'
@@ -69,7 +69,7 @@ const WalletDeleteModal = ({ onDelete, ...props }: WalletDeleteModalProps) => {
     <>
       <ModalContent verticalGap {...props}>
         <ScreenSection>
-          <BottomModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</BottomModalScreenTitle>
+          <ModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</ModalScreenTitle>
         </ScreenSection>
         <ScreenSection>
           <AppText color="secondary" size={18}>

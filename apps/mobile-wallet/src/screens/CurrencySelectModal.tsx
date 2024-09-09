@@ -19,9 +19,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { CURRENCIES, Currency, fiatCurrencyChanged } from '@alephium/shared'
 
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 const currencyOptions = Object.values(CURRENCIES).map((currency) => ({

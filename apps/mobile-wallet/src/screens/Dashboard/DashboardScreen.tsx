@@ -35,14 +35,14 @@ import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
-import BottomModal from '~/components/layout/BottomModal'
-import { ModalContent } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
-import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
+import BottomModal from '~/features/modals/DeprecatedBottomModal'
+import { openModal } from '~/features/modals/modalActions'
+import { ModalContent } from '~/features/modals/ModalContent'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import { useAppSelector } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
@@ -66,6 +66,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const insets = useSafeAreaInsets()
   const { t } = useTranslation()
   const theme = useTheme()
+  const dispatch = useAppDispatch()
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
@@ -79,7 +80,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isFundPasswordReminderModalOpen, setIsFundPasswordReminderModalOpen] = useState(false)
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
-  const [isBuyModalOpen, setIsBuyModalOpen] = useState(false)
   const { data: isNewWallet } = useAsyncData(getIsNewWallet)
 
   useEffect(() => {
@@ -120,6 +120,8 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     }
   }
 
+  const openBuyModal = () => dispatch(openModal({ name: 'BuyModal' }))
+
   return (
     <DashboardScreenStyled
       refreshControl={<RefreshSpinner />}
@@ -153,14 +155,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           <ButtonsRowContainer>
             <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" round flex short />
             <Button onPress={handleReceivePress} iconProps={{ name: 'download' }} variant="contrast" round flex short />
-            <Button
-              onPress={() => setIsBuyModalOpen(true)}
-              iconProps={{ name: 'credit-card' }}
-              variant="contrast"
-              round
-              flex
-              short
-            />
+            <Button onPress={openBuyModal} iconProps={{ name: 'credit-card' }} variant="contrast" round flex short />
           </ButtonsRowContainer>
         )}
       </WalletCard>
@@ -179,9 +174,9 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           Content={(props) => (
             <ModalContent verticalGap {...props}>
               <ScreenSection>
-                <BottomModalScreenTitle>
+                <ModalScreenTitle>
                   {isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}
-                </BottomModalScreenTitle>
+                </ModalScreenTitle>
               </ScreenSection>
               <ScreenSection>
                 {isNewWallet ? (
@@ -241,7 +236,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         isOpen={isFundPasswordReminderModalOpen}
         onClose={() => setIsFundPasswordReminderModalOpen(false)}
       />
-      <BuyModal isOpen={isBuyModalOpen} onClose={() => setIsBuyModalOpen(false)} />
     </DashboardScreenStyled>
   )
 }

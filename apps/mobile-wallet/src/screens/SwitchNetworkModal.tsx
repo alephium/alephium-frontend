@@ -23,9 +23,9 @@ import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { persistSettings } from '~/persistent-storage/settings'
 
@@ -60,7 +60,7 @@ const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchN
   return (
     <ModalContent verticalGap {...props}>
       <ScreenSection>
-        <BottomModalScreenTitle>{t('Current network')}</BottomModalScreenTitle>
+        <ModalScreenTitle>{t('Current network')}</ModalScreenTitle>
       </ScreenSection>
       <View>
         <BoxSurface>

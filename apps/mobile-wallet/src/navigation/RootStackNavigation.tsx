@@ -30,6 +30,7 @@ import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletCon
 import useAutoLock from '~/features/auto-lock/useAutoLock'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
+import AppModals from '~/features/modals/AppModals'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import BackupMnemonicNavigation from '~/navigation/BackupMnemonicNavigation'
@@ -133,6 +134,7 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                   component={ImportWalletAddressDiscoveryScreen}
                 />
               </RootStack.Navigator>
+              <AppModals />
             </WalletConnectContextProvider>
           </Analytics>
           <AppUnlockModal initialRouteName={initialRouteName || 'InWalletTabsNavigation'} />

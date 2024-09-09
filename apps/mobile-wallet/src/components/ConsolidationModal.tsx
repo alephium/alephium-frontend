@@ -24,8 +24,8 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
 
 interface ConsolidationModalProps extends ModalContentProps {
   onConsolidate: () => void
@@ -38,7 +38,7 @@ const ConsolidationModal = ({ onConsolidate, fees, ...props }: ConsolidationModa
   return (
     <ModalContent verticalGap {...props}>
       <ScreenSection>
-        <BottomModalScreenTitle>{t('Consolidation required')}</BottomModalScreenTitle>
+        <ModalScreenTitle>{t('Consolidation required')}</ModalScreenTitle>
       </ScreenSection>
       <ScreenSection>
         <View>

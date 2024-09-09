@@ -20,9 +20,9 @@ import { memo, useState } from 'react'
 import { TouchableOpacity } from 'react-native'
 import { Portal } from 'react-native-portalize'
 
-import BottomModal from '~/components/layout/BottomModal'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
 import NFTModal from '~/components/NFTModal'
+import BottomModal from '~/features/modals/DeprecatedBottomModal'
 
 const NFTThumbnail = (props: NFTImageProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false)

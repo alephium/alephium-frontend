@@ -25,11 +25,11 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import BottomModal from '~/components/layout/BottomModal'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalContent } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import BottomModal from '~/features/modals/DeprecatedBottomModal'
+import { ModalContent } from '~/features/modals/ModalContent'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import WalletConnectSVG from '~/images/logos/WalletConnectLogo'
 import WalletConnectPairingsModal from '~/screens/Dashboard/WalletConnectPairingsModal'
@@ -114,7 +114,7 @@ const WalletConnectHeaderButton = () => {
           Content={(props) => (
             <ModalContent verticalGap {...props}>
               <ScreenSection>
-                <BottomModalScreenTitle>{t('Could not connect to WalletConnect')}</BottomModalScreenTitle>
+                <ModalScreenTitle>{t('Could not connect to WalletConnect')}</ModalScreenTitle>
               </ScreenSection>
               {walletConnectClientError && (
                 <ScreenSection>
