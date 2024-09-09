@@ -28,12 +28,10 @@ import Button from '@/components/Button'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { closeModal } from '@/features/modals/modalActions'
+import { closeModal, openModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import AddressSweepModal from '@/modals/AddressSweepModal'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import ModalPortal from '@/modals/ModalPortal'
 import { selectAddressByHash, selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { saveAddressSettings } from '@/storage/addresses/addressesStorageUtils'
 import { getName } from '@/utils/addresses'
@@ -58,7 +56,6 @@ const AddressOptionsModal = memo(({ id, addressHash }: ModalBaseProp & AddressOp
     color: address?.color || getRandomLabelColor()
   })
   const [isDefaultAddress, setIsDefaultAddress] = useState(address?.isDefault ?? false)
-  const [isAddressSweepModalOpen, setIsAddressSweepModalOpen] = useState(false)
 
   const {
     data: { availableBalance }
@@ -90,6 +87,14 @@ const AddressOptionsModal = memo(({ id, addressHash }: ModalBaseProp & AddressOp
     }
   }
 
+  const openSweepModal = () =>
+    dispatch(
+      openModal({
+        name: 'AddressSweepModal',
+        props: { addressHash, onSuccessfulSweep: onClose }
+      })
+    )
+
   let defaultAddressMessage = `${t('Default address for sending transactions.')} `
   defaultAddressMessage += isDefaultAddressToggleEnabled
     ? t('Note that if activated, "{{ address }}" will not be the default address anymore.', {
@@ -98,59 +103,43 @@ const AddressOptionsModal = memo(({ id, addressHash }: ModalBaseProp & AddressOp
     : t('To remove this address from being the default address, you must set another one as default first.')
 
   return (
-    <>
-      <CenteredModal title={t('Address options')} subtitle={getName(address)} id={id}>
-        {!isPassphraseUsed && (
-          <>
-            <AddressMetadataForm
-              label={addressLabel}
-              setLabel={setAddressLabel}
-              defaultAddressMessage={defaultAddressMessage}
-              isDefault={isDefaultAddress}
-              setIsDefault={setIsDefaultAddress}
-              isDefaultAddressToggleEnabled={isDefaultAddressToggleEnabled}
-              singleAddress
-            />
-            <HorizontalDivider narrow />
-          </>
-        )}
-        <KeyValueInput
-          label={t('Sweep address')}
-          description={t('Sweep all the unlocked funds of this address to another address.')}
-          InputComponent={
-            <SweepButton>
-              <Button
-                short
-                wide
-                onClick={() => isSweepButtonEnabled && setIsAddressSweepModalOpen(true)}
-                disabled={!isSweepButtonEnabled}
-              >
-                {t('Sweep')}
-              </Button>
-              <AvailableAmount tabIndex={0}>
-                {t('Available')}: <Amount value={availableBalance} color={theme.font.secondary} />
-              </AvailableAmount>
-            </SweepButton>
-          }
-        />
-        <HorizontalDivider narrow />
-        <ModalFooterButtons>
-          <ModalFooterButton role="secondary" onClick={onClose}>
-            {t('Cancel')}
-          </ModalFooterButton>
-          <ModalFooterButton onClick={onSaveClick}>{t('Save')}</ModalFooterButton>
-        </ModalFooterButtons>
-      </CenteredModal>
-      <ModalPortal>
-        {isAddressSweepModalOpen && (
-          <AddressSweepModal
-            sweepAddress={address}
-            onClose={() => setIsAddressSweepModalOpen(false)}
-            onSuccessfulSweep={onClose}
+    <CenteredModal title={t('Address options')} subtitle={getName(address)} id={id}>
+      {!isPassphraseUsed && (
+        <>
+          <AddressMetadataForm
+            label={addressLabel}
+            setLabel={setAddressLabel}
+            defaultAddressMessage={defaultAddressMessage}
+            isDefault={isDefaultAddress}
+            setIsDefault={setIsDefaultAddress}
+            isDefaultAddressToggleEnabled={isDefaultAddressToggleEnabled}
+            singleAddress
           />
-        )}
-      </ModalPortal>
-    </>
+          <HorizontalDivider narrow />
+        </>
+      )}
+      <KeyValueInput
+        label={t('Sweep address')}
+        description={t('Sweep all the unlocked funds of this address to another address.')}
+        InputComponent={
+          <SweepButton>
+            <Button short wide onClick={openSweepModal} disabled={!isSweepButtonEnabled}>
+              {t('Sweep')}
+            </Button>
+            <AvailableAmount tabIndex={0}>
+              {t('Available')}: <Amount value={availableBalance} color={theme.font.secondary} />
+            </AvailableAmount>
+          </SweepButton>
+        }
+      />
+      <HorizontalDivider narrow />
+      <ModalFooterButtons>
+        <ModalFooterButton role="secondary" onClick={onClose}>
+          {t('Cancel')}
+        </ModalFooterButton>
+        <ModalFooterButton onClick={onSaveClick}>{t('Save')}</ModalFooterButton>
+      </ModalFooterButtons>
+    </CenteredModal>
   )
 })
 
