@@ -38,6 +38,7 @@ import SecretPhraseModal from '@/modals/SecretPhraseModal'
 import SettingsModal from '@/modals/SettingsModal'
 import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
+import WalletConnectSessionProposalModal from '@/modals/WalletConnect/WalletConnectSessionProposalModal'
 import WalletConnectModal from '@/modals/WalletConnectModal'
 import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
 import AdvancedOperationsSideModal from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsSideModal'
@@ -89,6 +90,8 @@ const AppModals = () => {
             return <CallContractSendModal id={modal.id} key={modal.id} {...modal.params.props} />
           case 'DeployContractSendModal':
             return <DeployContractSendModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'WalletConnectSessionProposalModal':
+            return <WalletConnectSessionProposalModal id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
     </AnimatePresenceModalWrapper>

@@ -23,8 +23,11 @@ import {
   parseSessionProposalEvent,
   SessionProposalEvent
 } from '@alephium/shared'
+import { formatChain, isCompatibleAddressGroup } from '@alephium/walletconnect-provider'
+import { SessionTypes } from '@walletconnect/types'
+import { getSdkError } from '@walletconnect/utils'
 import { AlertTriangle, PlusSquare } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -33,7 +36,10 @@ import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
+import { useWalletConnectContext } from '@/contexts/walletconnect'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { closeModal } from '@/features/modals/modalActions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
@@ -43,171 +49,312 @@ import {
   selectDefaultAddress
 } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
+import { walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
 import { Address } from '@/types/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
-import { cleanUrl } from '@/utils/misc'
+import { cleanUrl, electron } from '@/utils/misc'
 
-interface WalletConnectSessionProposalModalProps {
-  approveProposal: (signerAddress: Address) => Promise<void>
-  rejectProposal: () => Promise<void>
+export interface WalletConnectSessionProposalModalProps {
   proposalEvent: SessionProposalEvent
-  onClose: () => void
 }
 
-const WalletConnectSessionProposalModal = ({
-  onClose,
-  approveProposal,
-  rejectProposal,
-  proposalEvent
-}: WalletConnectSessionProposalModalProps) => {
-  const { t } = useTranslation()
-  const { sendAnalytics } = useAnalytics()
-  const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
-  const currentNetworkName = useAppSelector((s) => s.network.name)
-  const dispatch = useAppDispatch()
-  const { requiredChainInfo, metadata } = parseSessionProposalEvent(proposalEvent)
-  const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, requiredChainInfo?.addressGroup))
-  const { generateAddress } = useAddressGeneration()
-  const defaultAddress = useAppSelector(selectDefaultAddress)
+const WalletConnectSessionProposalModal = memo(
+  ({ id, proposalEvent }: ModalBaseProp & WalletConnectSessionProposalModalProps) => {
+    const { t } = useTranslation()
+    const { sendAnalytics } = useAnalytics()
+    const { walletConnectClient, resetPendingDappConnectionUrl, activeSessions, refreshActiveSessions } =
+      useWalletConnectContext()
+    const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
+    const currentNetworkName = useAppSelector((s) => s.network.name)
+    const dispatch = useAppDispatch()
+    const { requiredChainInfo, metadata } = parseSessionProposalEvent(proposalEvent)
+    const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, requiredChainInfo?.addressGroup))
+    const { generateAddress } = useAddressGeneration()
+    const defaultAddress = useAppSelector(selectDefaultAddress)
+    const currentNetwork = useAppSelector((s) => s.network)
 
-  const [signerAddressHash, setSignerAddressHash] = useState<AddressHash | undefined>(addressesInGroup[0])
-  const signerAddress = useAppSelector((s) => selectAddressByHash(s, signerAddressHash ?? ''))
+    const [signerAddressHash, setSignerAddressHash] = useState<AddressHash | undefined>(addressesInGroup[0])
+    const signerAddress = useAppSelector((s) => selectAddressByHash(s, signerAddressHash ?? ''))
 
-  const group = requiredChainInfo?.addressGroup
+    const [sessionProposalEvent, setSessionProposalEvent] = useState<SessionProposalEvent>()
 
-  const showNetworkWarning =
-    requiredChainInfo?.networkId && !isNetworkValid(requiredChainInfo.networkId, currentNetworkId)
+    const group = requiredChainInfo?.addressGroup
 
-  useEffect(() => {
-    setSignerAddressHash(addressesInGroup.find((a) => a === defaultAddress.hash) ?? addressesInGroup[0])
-  }, [addressesInGroup, defaultAddress.hash])
+    const showNetworkWarning =
+      requiredChainInfo?.networkId && !isNetworkValid(requiredChainInfo.networkId, currentNetworkId)
 
-  const handleSwitchNetworkPress = () => {
-    if (
-      requiredChainInfo?.networkId === 'mainnet' ||
-      requiredChainInfo?.networkId === 'testnet' ||
-      requiredChainInfo?.networkId === 'devnet'
-    ) {
-      dispatch(networkPresetSwitched(requiredChainInfo?.networkId))
-    }
-  }
+    useEffect(() => {
+      setSignerAddressHash(addressesInGroup.find((a) => a === defaultAddress.hash) ?? addressesInGroup[0])
+    }, [addressesInGroup, defaultAddress.hash])
 
-  const generateAddressInGroup = () => {
-    try {
-      const address = generateAddress(group)
-      saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])
-
-      sendAnalytics({ event: 'New address created through WalletConnect modal' })
-    } catch {
-      sendAnalytics({ type: 'error', message: 'Error while saving newly generated address from WalletConnect modal' })
-    }
-  }
-
-  const rejectAndCloseModal = async () => {
-    await rejectProposal()
-    onClose()
-
-    sendAnalytics({ event: 'Rejected WalletConnect connection by closing modal' })
-  }
-
-  return (
-    <CenteredModal
-      title={
-        metadata.description ? t('Connect to {{ dAppUrl }}', { dAppUrl: cleanUrl(metadata.url) }) : t('Connect to dApp')
+    const handleSwitchNetworkPress = () => {
+      if (
+        requiredChainInfo?.networkId === 'mainnet' ||
+        requiredChainInfo?.networkId === 'testnet' ||
+        requiredChainInfo?.networkId === 'devnet'
+      ) {
+        dispatch(networkPresetSwitched(requiredChainInfo?.networkId))
       }
-      subtitle={metadata.description || metadata.url}
-      onClose={rejectAndCloseModal}
-      Icon={() =>
-        metadata?.icons &&
-        metadata.icons.length > 0 &&
-        metadata.icons[0] && <AssetLogo assetImageUrl={metadata.icons[0]} size={50} />
+    }
+
+    const generateAddressInGroup = () => {
+      try {
+        const address = generateAddress(group)
+        saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])
+
+        sendAnalytics({ event: 'New address created through WalletConnect modal' })
+      } catch {
+        sendAnalytics({ type: 'error', message: 'Error while saving newly generated address from WalletConnect modal' })
       }
-    >
-      {showNetworkWarning ? (
-        <>
-          <Section>
-            {/* TODO: Missing translations */}
-            <InfoBox label="Switch network" Icon={AlertTriangle}>
-              You are currently connected to <Highlight>{currentNetworkName}</Highlight>, but the dApp requires a
-              connection to <Highlight>{requiredChainInfo?.networkId}</Highlight>.
-            </InfoBox>
-          </Section>
-          <ModalFooterButtons>
-            <ModalFooterButton role="secondary" onClick={rejectProposal}>
-              {t('Decline')}
-            </ModalFooterButton>
-            <ModalFooterButton onClick={handleSwitchNetworkPress}>{t('Switch network')}</ModalFooterButton>
-          </ModalFooterButtons>
-        </>
-      ) : !signerAddress ? (
-        <>
-          <Section>
-            {/* TODO: Missing translations */}
-            <InfoBox label="New address needed" Icon={PlusSquare}>
-              The dApp asks for an address in group <Highlight> {requiredChainInfo?.addressGroup}</Highlight>. Click
-              below to generate one!
-            </InfoBox>
-          </Section>
-          <ModalFooterButtons>
-            <ModalFooterButton role="secondary" onClick={rejectProposal}>
-              {t('Decline')}
-            </ModalFooterButton>
-            <ModalFooterButton onClick={generateAddressInGroup}>{t('Generate new address')}</ModalFooterButton>
-          </ModalFooterButtons>
-        </>
-      ) : (
-        <>
-          <Paragraph style={{ marginBottom: 0 }}>
-            {group === undefined ? (
-              <Trans
-                t={t}
-                i18nKey="walletConnectProposalMessage"
-                values={{
-                  dAppUrl: cleanUrl(metadata.url)
-                }}
-                components={{
-                  1: <Highlight />
-                }}
+    }
+
+    const rejectAndCloseModal = async () => {
+      await rejectProposal()
+      dispatch(closeModal({ id }))
+
+      sendAnalytics({ event: 'Rejected WalletConnect connection by closing modal' })
+    }
+
+    const approveProposal = async (signerAddress: Address) => {
+      console.log('👍 USER APPROVED PROPOSAL TO CONNECT TO THE DAPP.')
+      console.log('⏳ VERIFYING USER PROVIDED DATA...')
+
+      if (!walletConnectClient || !sessionProposalEvent) {
+        console.error('❌ Could not find WalletConnect client or session proposal event')
+        return
+      }
+
+      const { id, relayProtocol, requiredNamespace, requiredChains, requiredChainInfo, metadata } =
+        parseSessionProposalEvent(sessionProposalEvent)
+
+      if (!requiredChains) {
+        dispatch(walletConnectProposalApprovalFailed(t('The proposal does not include a list of required chains')))
+        return
+      }
+
+      if (requiredChains?.length !== 1) {
+        dispatch(
+          walletConnectProposalApprovalFailed(
+            t('Too many chains in the WalletConnect proposal, expected 1, got {{ num }}', {
+              num: requiredChains?.length
+            })
+          )
+        )
+        return
+      }
+
+      if (!requiredChainInfo) {
+        dispatch(walletConnectProposalApprovalFailed(t('Could not find chain requirements in WalletConnect proposal')))
+        return
+      }
+
+      if (!isNetworkValid(requiredChainInfo.networkId, currentNetwork.settings.networkId)) {
+        dispatch(
+          walletConnectProposalApprovalFailed(
+            t(
+              'The current network ({{ currentNetwork }}) does not match the network requested by WalletConnect ({{ walletConnectNetwork }})',
+              {
+                currentNetwork: currentNetwork.name,
+                walletConnectNetwork: requiredChainInfo.networkId
+              }
+            )
+          )
+        )
+        return
+      }
+
+      if (!isCompatibleAddressGroup(signerAddress.group, requiredChainInfo.addressGroup)) {
+        dispatch(
+          walletConnectProposalApprovalFailed(
+            t(
+              'The group of the selected address ({{ addressGroup }}) does not match the group required by WalletConnect ({{ walletConnectGroup }})',
+              {
+                addressGroup: signerAddress.group,
+                walletConnectGroup: requiredChainInfo.addressGroup
+              }
+            )
+          )
+        )
+        return
+      }
+
+      const namespaces: SessionTypes.Namespaces = {
+        alephium: {
+          methods: requiredNamespace.methods,
+          events: requiredNamespace.events,
+          accounts: [
+            `${formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)}:${
+              signerAddress.publicKey
+            }/default`
+          ]
+        }
+      }
+
+      try {
+        console.log('⏳ APPROVING PROPOSAL...')
+
+        const existingSession = activeSessions.find((session) => session.peer.metadata.url === metadata.url)
+
+        if (existingSession) {
+          await walletConnectClient.disconnect({
+            topic: existingSession.topic,
+            reason: getSdkError('USER_DISCONNECTED')
+          })
+        }
+
+        const { topic, acknowledged } = await walletConnectClient.approve({ id, relayProtocol, namespaces })
+        console.log('👉 APPROVAL TOPIC RECEIVED:', topic)
+        console.log('✅ APPROVING: DONE!')
+
+        console.log('⏳ WAITING FOR DAPP ACKNOWLEDGEMENT...')
+        const res = await acknowledged()
+        console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', res.acknowledged)
+
+        setSessionProposalEvent(undefined)
+        refreshActiveSessions()
+
+        sendAnalytics({ event: 'Approved WalletConnect connection' })
+
+        electron?.app.hide()
+      } catch (e) {
+        console.error('❌ WC: Error while approving and acknowledging', e)
+      } finally {
+        dispatch(closeModal({ id }))
+        resetPendingDappConnectionUrl()
+      }
+    }
+
+    const rejectProposal = async () => {
+      if (!walletConnectClient || sessionProposalEvent === undefined) return
+
+      try {
+        console.log('👎 REJECTING SESSION PROPOSAL:', sessionProposalEvent.id)
+        await walletConnectClient.reject({ id: sessionProposalEvent.id, reason: getSdkError('USER_REJECTED') })
+        console.log('✅ REJECTING: DONE!')
+
+        setSessionProposalEvent(undefined)
+
+        sendAnalytics({ event: 'Rejected WalletConnect connection by clicking "Reject"' })
+
+        electron?.app.hide()
+      } catch (e) {
+        console.error('❌ WC: Error while approving and acknowledging', e)
+      } finally {
+        dispatch(closeModal({ id }))
+        resetPendingDappConnectionUrl()
+      }
+    }
+
+    return (
+      <CenteredModal
+        title={
+          metadata.description
+            ? t('Connect to {{ dAppUrl }}', { dAppUrl: cleanUrl(metadata.url) })
+            : t('Connect to dApp')
+        }
+        subtitle={metadata.description || metadata.url}
+        onClose={rejectAndCloseModal}
+        Icon={() =>
+          metadata?.icons &&
+          metadata.icons.length > 0 &&
+          metadata.icons[0] && <AssetLogo assetImageUrl={metadata.icons[0]} size={50} />
+        }
+      >
+        {showNetworkWarning ? (
+          <>
+            <Section>
+              <InfoBox label="Switch network" Icon={AlertTriangle}>
+                <Trans
+                  t={t}
+                  i18nKey="walletConnectSwitchNetwork"
+                  values={{ currentNetworkName, network: requiredChainInfo?.networkId }}
+                  components={{ 1: <Highlight /> }}
+                >
+                  {
+                    'You are currently connected to <1>{{ currentNetworkName }}</1>, but the dApp requires a connection to <1>{{ network }}</1>.'
+                  }
+                </Trans>
+              </InfoBox>
+            </Section>
+            <ModalFooterButtons>
+              <ModalFooterButton role="secondary" onClick={rejectProposal}>
+                {t('Decline')}
+              </ModalFooterButton>
+              <ModalFooterButton onClick={handleSwitchNetworkPress}>{t('Switch network')}</ModalFooterButton>
+            </ModalFooterButtons>
+          </>
+        ) : !signerAddress ? (
+          <>
+            <Section>
+              <InfoBox label="New address needed" Icon={PlusSquare}>
+                <Trans
+                  t={t}
+                  i18nKey="walletConnectNewAddress"
+                  values={{ group: requiredChainInfo?.addressGroup }}
+                  components={{ 1: <Highlight /> }}
+                >
+                  {
+                    'The dApp asks for an address in group <1>{{ currentNetworkName }}</1>. Click below to generate one!'
+                  }
+                </Trans>
+              </InfoBox>
+            </Section>
+            <ModalFooterButtons>
+              <ModalFooterButton role="secondary" onClick={rejectProposal}>
+                {t('Decline')}
+              </ModalFooterButton>
+              <ModalFooterButton onClick={generateAddressInGroup}>{t('Generate new address')}</ModalFooterButton>
+            </ModalFooterButtons>
+          </>
+        ) : (
+          <>
+            <Paragraph style={{ marginBottom: 0 }}>
+              {group === undefined ? (
+                <Trans
+                  t={t}
+                  i18nKey="walletConnectProposalMessage"
+                  values={{ dAppUrl: cleanUrl(metadata.url) }}
+                  components={{ 1: <Highlight /> }}
+                >
+                  {'Connect to <1>{{ dAppUrl }}</1> with one of your addresses:'}
+                </Trans>
+              ) : (
+                <Trans
+                  t={t}
+                  i18nKey="walletConnectProposalMessageWithGroup"
+                  values={{ dAppUrl: cleanUrl(metadata.url), group }}
+                  components={{ 1: <Highlight /> }}
+                >
+                  {'Connect to <1>{{ dAppUrl }}</1> with one of your addresses in group <1>{{ group }}</1>:'}
+                </Trans>
+              )}
+            </Paragraph>
+            <AddressSelect
+              label={t('Connect with address')}
+              title={t('Select an address to connect with.')}
+              addressOptions={addressesInGroup}
+              defaultAddress={signerAddressHash}
+              onAddressChange={setSignerAddressHash}
+              id="from-address"
+            />
+            <ModalFooterButtons>
+              <ModalFooterButton role="secondary" onClick={rejectProposal}>
+                {t('Decline')}
+              </ModalFooterButton>
+              <ModalFooterButton
+                variant="valid"
+                onClick={() => approveProposal(signerAddress)}
+                disabled={!signerAddress}
               >
-                {'Connect to <1>{{ dAppUrl }}</1> with one of your addresses:'}
-              </Trans>
-            ) : (
-              <Trans
-                t={t}
-                i18nKey="walletConnectProposalMessageWithGroup"
-                values={{
-                  dAppUrl: cleanUrl(metadata.url),
-                  group
-                }}
-                components={{
-                  1: <Highlight />
-                }}
-              >
-                {'Connect to <1>{{ dAppUrl }}</1> with one of your addresses in group <1>{{ group }}</1>:'}
-              </Trans>
-            )}
-          </Paragraph>
-          <AddressSelect
-            label={t('Connect with address')}
-            title={t('Select an address to connect with.')}
-            addressOptions={addressesInGroup}
-            defaultAddress={signerAddressHash}
-            onAddressChange={setSignerAddressHash}
-            id="from-address"
-          />
-          <ModalFooterButtons>
-            <ModalFooterButton role="secondary" onClick={rejectProposal}>
-              {t('Decline')}
-            </ModalFooterButton>
-            <ModalFooterButton variant="valid" onClick={() => approveProposal(signerAddress)} disabled={!signerAddress}>
-              {t('Accept')}
-            </ModalFooterButton>
-          </ModalFooterButtons>
-        </>
-      )}
-    </CenteredModal>
-  )
-}
+                {t('Accept')}
+              </ModalFooterButton>
+            </ModalFooterButtons>
+          </>
+        )}
+      </CenteredModal>
+    )
+  }
+)
 
 export default WalletConnectSessionProposalModal
 
