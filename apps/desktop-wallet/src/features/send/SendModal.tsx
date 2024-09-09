@@ -30,7 +30,7 @@ import { fadeIn } from '@/animations'
 import { buildSweepTransactions } from '@/api/transactions'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { closeModal } from '@/features/modals/modalActions'
+import { closeModal, openModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import {
   buildCallContractTransaction,
@@ -65,8 +65,6 @@ import TransferCheckTxModalContent from '@/features/send/Transfer/CheckTxModalCo
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
-import ConsolidateUTXOsModal from '@/modals/ConsolidateUTXOsModal'
-import ModalPortal from '@/modals/ModalPortal'
 import {
   transactionBuildFailed,
   transactionSendFailed,
@@ -106,7 +104,6 @@ function SendModal<PT extends { fromAddress: Address }>({
   const [transactionData, setTransactionData] = useState(txData)
   const [isLoading, setIsLoading] = useState(false)
   const [step, setStep] = useState<Step>('addresses')
-  const [isConsolidateUTXOsModalVisible, setIsConsolidateUTXOsModalVisible] = useState(false)
   const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isSweeping, setIsSweeping] = useState(false)
   const [sweepUnsignedTxs, setSweepUnsignedTxs] = useState<node.SweepAddressTransaction[]>([])
@@ -123,24 +120,6 @@ function SendModal<PT extends { fromAddress: Address }>({
 
     if (triggeredByWalletConnect) sendUserRejectedResponse()
   }, [dispatch, id, sendUserRejectedResponse, triggeredByWalletConnect])
-
-  useEffect(() => {
-    if (!consolidationRequired || !transactionData) return
-
-    const buildConsolidationTransactions = async () => {
-      setIsSweeping(true)
-      setIsLoading(true)
-
-      const { fromAddress } = transactionData
-      const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress, fromAddress.hash)
-
-      setSweepUnsignedTxs(unsignedTxs)
-      setFees(fees)
-      setIsLoading(false)
-    }
-
-    buildConsolidationTransactions()
-  }, [consolidationRequired, transactionData])
 
   const txContext: TxContext = useMemo(
     () => ({
@@ -159,77 +138,7 @@ function SendModal<PT extends { fromAddress: Address }>({
     [consolidationRequired, isSweeping, sweepUnsignedTxs, unsignedTransaction, unsignedTxId]
   )
 
-  const buildTransactionExtended = useCallback(
-    async (data: TxData) => {
-      setTransactionData(data)
-      setIsLoading(true)
-
-      try {
-        if (type === 'transfer') {
-          await buildTransferTransaction(data as TransferTxData, txContext)
-        } else if (type === 'call-contract') {
-          await buildCallContractTransaction(data as CallContractTxData, txContext)
-        } else {
-          await buildDeployContractTransaction(data as DeployContractTxData, txContext)
-        }
-
-        if (!isConsolidateUTXOsModalVisible) {
-          setStep('info-check')
-        }
-      } catch (e) {
-        // When API error codes are available, replace this substring check with a proper error code check
-        // https://github.com/alephium/alephium-frontend/issues/610
-        const error = (e as unknown as string).toString()
-
-        if (error.includes('consolidating') || error.includes('consolidate')) {
-          setIsConsolidateUTXOsModalVisible(true)
-          setConsolidationRequired(true)
-          sendAnalytics({ event: 'Could not build tx, consolidation required' })
-        } else {
-          const message = 'Error while building transaction'
-          const errorMessage = getHumanReadableError(e, t(message))
-
-          if (error.includes('NotEnoughApprovedBalance')) {
-            dispatch(transactionBuildFailed('Your address does not have enough balance for this transaction'))
-          } else {
-            dispatch(transactionBuildFailed(errorMessage))
-            sendAnalytics({ type: 'error', message })
-          }
-
-          if (isRequestToApproveContractCall && triggeredByWalletConnect) {
-            sendFailureResponse({
-              message: errorMessage,
-              code: WALLETCONNECT_ERRORS.TRANSACTION_BUILD_FAILED
-            })
-            dispatch(closeModal({ id }))
-          }
-        }
-      }
-
-      setIsLoading(false)
-    },
-    [
-      dispatch,
-      id,
-      isConsolidateUTXOsModalVisible,
-      isRequestToApproveContractCall,
-      sendFailureResponse,
-      sendAnalytics,
-      t,
-      triggeredByWalletConnect,
-      txContext,
-      type
-    ]
-  )
-
-  useEffect(() => {
-    if (isRequestToApproveContractCall && !isTransactionBuildTriggered && transactionData) {
-      setIsTransactionBuildTriggered(true)
-      buildTransactionExtended(transactionData)
-    }
-  }, [buildTransactionExtended, isRequestToApproveContractCall, isTransactionBuildTriggered, transactionData])
-
-  const handleSendExtended = async () => {
+  const handleSendExtended = useCallback(async () => {
     if (!transactionData) return
 
     setIsLoading(true)
@@ -269,7 +178,108 @@ function SendModal<PT extends { fromAddress: Address }>({
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [
+    contractAddress,
+    dispatch,
+    id,
+    isSweeping,
+    posthog,
+    sendAnalytics,
+    sendFailureResponse,
+    sendSuccessResponse,
+    sweepUnsignedTxs.length,
+    t,
+    transactionData,
+    triggeredByWalletConnect,
+    txContext,
+    type
+  ])
+
+  const buildTransactionExtended = useCallback(
+    async (data: TxData) => {
+      setTransactionData(data)
+      setIsLoading(true)
+
+      try {
+        if (type === 'transfer') {
+          await buildTransferTransaction(data as TransferTxData, txContext)
+        } else if (type === 'call-contract') {
+          await buildCallContractTransaction(data as CallContractTxData, txContext)
+        } else {
+          await buildDeployContractTransaction(data as DeployContractTxData, txContext)
+        }
+
+        setStep('info-check')
+      } catch (e) {
+        // When API error codes are available, replace this substring check with a proper error code check
+        // https://github.com/alephium/alephium-frontend/issues/610
+        const error = (e as unknown as string).toString()
+
+        if (error.includes('consolidating') || error.includes('consolidate')) {
+          setIsSweeping(true)
+          setIsLoading(true)
+
+          const { fromAddress } = data
+          const { unsignedTxs, fees } = await buildSweepTransactions(fromAddress, fromAddress.hash)
+
+          setSweepUnsignedTxs(unsignedTxs)
+          setIsLoading(false)
+
+          dispatch(
+            openModal({
+              name: 'ConsolidateUTXOsModal',
+              props: {
+                fee: fees,
+                onConsolidateClick: settings.passwordRequirement ? confirmPassword : handleSendExtended
+              }
+            })
+          )
+          setConsolidationRequired(true)
+          sendAnalytics({ event: 'Could not build tx, consolidation required' })
+        } else {
+          const message = 'Error while building transaction'
+          const errorMessage = getHumanReadableError(e, t(message))
+
+          if (error.includes('NotEnoughApprovedBalance')) {
+            dispatch(transactionBuildFailed('Your address does not have enough balance for this transaction'))
+          } else {
+            dispatch(transactionBuildFailed(errorMessage))
+            sendAnalytics({ type: 'error', message })
+          }
+
+          if (isRequestToApproveContractCall && triggeredByWalletConnect) {
+            sendFailureResponse({
+              message: errorMessage,
+              code: WALLETCONNECT_ERRORS.TRANSACTION_BUILD_FAILED
+            })
+            dispatch(closeModal({ id }))
+          }
+        }
+      }
+
+      setIsLoading(false)
+    },
+    [
+      type,
+      txContext,
+      dispatch,
+      settings.passwordRequirement,
+      handleSendExtended,
+      sendAnalytics,
+      t,
+      isRequestToApproveContractCall,
+      triggeredByWalletConnect,
+      sendFailureResponse,
+      id
+    ]
+  )
+
+  useEffect(() => {
+    if (isRequestToApproveContractCall && !isTransactionBuildTriggered && transactionData) {
+      setIsTransactionBuildTriggered(true)
+      buildTransactionExtended(transactionData)
+    }
+  }, [buildTransactionExtended, isRequestToApproveContractCall, isTransactionBuildTriggered, transactionData])
 
   const moveToSecondStep = (data: AddressesTxModalData) => {
     setAddressesData(data)
@@ -280,10 +290,7 @@ function SendModal<PT extends { fromAddress: Address }>({
     if (step === 'tx-sent') setTimeout(onClose, 2000)
   }, [onClose, step])
 
-  const confirmPassword = () => {
-    if (consolidationRequired) setIsConsolidateUTXOsModalVisible(false)
-    setStep('password-check')
-  }
+  const confirmPassword = () => setStep('password-check')
 
   const onBackCallback = {
     addresses: undefined,
@@ -382,17 +389,6 @@ function SendModal<PT extends { fromAddress: Address }>({
           </ConfirmationCheckContainer>
         </ScrollableModalContent>
       )}
-      <ModalPortal>
-        {isConsolidateUTXOsModalVisible && (
-          <ScrollableModalContent>
-            <ConsolidateUTXOsModal
-              onClose={() => setIsConsolidateUTXOsModalVisible(false)}
-              onConsolidateClick={settings.passwordRequirement ? confirmPassword : handleSendExtended}
-              fee={fees}
-            />
-          </ScrollableModalContent>
-        )}
-      </ModalPortal>
     </CenteredModal>
   )
 }
