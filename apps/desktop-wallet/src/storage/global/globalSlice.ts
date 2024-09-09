@@ -27,6 +27,7 @@ import {
   modalOpened,
   osThemeChangeDetected,
   receiveTestnetTokens,
+  toggleAppLoading,
   transfersPageInfoMessageClosed
 } from '@/storage/global/globalActions'
 import {
@@ -105,6 +106,7 @@ const globalSlice = createSlice({
       .addCase(addressDiscoveryFinished, (state, action) => toggleLoading(state, false, action.payload))
       .addCase(languageChangeStarted, (state) => toggleLoading(state, true, true))
       .addCase(languageChangeFinished, (state) => toggleLoading(state, false, true))
+      .addCase(toggleAppLoading, (state, action) => toggleLoading(state, action.payload))
       .addCase(walletSaved, (state, action) => {
         const { id, name, encrypted, lastUsed } = action.payload.wallet
 
