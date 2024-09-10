@@ -100,12 +100,12 @@ const AddressSweepModal = memo(
       [addresses]
     )
 
-    const onOriginAddressChange = useCallback(
+    const handleOriginAddressChange = useCallback(
       (newAddress: AddressHash) => onAddressChange('from', newAddress),
       [onAddressChange]
     )
 
-    const onDestinationAddressChange = useCallback(
+    const handleDestinationAddressChange = useCallback(
       (newAddress: AddressHash) => onAddressChange('to', newAddress),
       [onAddressChange]
     )
@@ -114,7 +114,7 @@ const AddressSweepModal = memo(
 
     const onClose = () => dispatch(closeModal({ id }))
 
-    const onSweepClick = async () => {
+    const handleSweepClick = async () => {
       if (!sweepAddresses.from || !sweepAddresses.to || !builtUnsignedTxs) return
       setIsLoading(true)
       try {
@@ -160,7 +160,7 @@ const AddressSweepModal = memo(
             title={t('Select the address to sweep the funds from.')}
             addressOptions={fromAddressOptions}
             defaultAddress={sweepAddresses.from.hash}
-            onAddressChange={onOriginAddressChange}
+            onAddressChange={handleOriginAddressChange}
             disabled={!isUtxoConsolidation}
             id="from-address"
           />
@@ -171,7 +171,7 @@ const AddressSweepModal = memo(
               !isUtxoConsolidation ? allAddressHashes.filter((hash) => hash !== fromAddress?.hash) : allAddressHashes
             }
             defaultAddress={sweepAddresses.to.hash}
-            onAddressChange={onDestinationAddressChange}
+            onAddressChange={handleDestinationAddressChange}
             id="to-address"
           />
           {isConsolidationRedundant ? (
@@ -205,7 +205,7 @@ const AddressSweepModal = memo(
           <ModalFooterButton role="secondary" onClick={onClose}>
             {t('Cancel')}
           </ModalFooterButton>
-          <ModalFooterButton onClick={onSweepClick} disabled={isConsolidationButtonDisabled}>
+          <ModalFooterButton onClick={handleSweepClick} disabled={isConsolidationButtonDisabled}>
             {!isUtxoConsolidation ? t('Sweep') : t('Consolidate')}
           </ModalFooterButton>
         </ModalFooterButtons>
