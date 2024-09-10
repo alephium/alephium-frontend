@@ -23,6 +23,7 @@ import styled, { useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
 import Input from '@/components/Inputs/Input'
+import Logo from '@/components/Logo'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Table, { TableRow } from '@/components/Table'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
@@ -56,8 +57,7 @@ const WalletConnectModal = memo(({ id }: ModalBaseProp) => {
                 <Row>
                   <div style={{ width: 35 }}>
                     {metadata.icons[0] ? (
-                      // TODO: Render image
-                      metadata.icons[0]
+                      <Logo image={metadata.icons[0]} size={35} />
                     ) : (
                       <BinaryIcon size={35} color={theme.font.secondary} />
                     )}
