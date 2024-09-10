@@ -33,6 +33,7 @@ import styled from 'styled-components'
 
 import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
+import Logo from '@/components/Logo'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
 import useAnalytics from '@/features/analytics/useAnalytics'
@@ -260,9 +261,7 @@ const WalletConnectSessionProposalModal = memo(
         Icon={() =>
           metadata?.icons &&
           metadata.icons.length > 0 &&
-          metadata.icons[0] &&
-          // TODO: Render image like <AssetLogo assetImageUrl={metadata.icons[0]} size={50} />
-          metadata.icons[0]
+          metadata.icons[0] && <Logo image={metadata.icons[0]} size={50} />
         }
       >
         {showNetworkWarning ? (
