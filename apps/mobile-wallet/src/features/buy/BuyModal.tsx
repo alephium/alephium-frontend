@@ -100,7 +100,7 @@ const BuyModal = memo(({ id }: ModalBaseProp) => {
       noPadding
       Content={(props) => (
         <ModalContent {...props} contentContainerStyle={{ flex: 1, paddingTop: 0 }}>
-          {!isDisclaimerAccepted && (
+          {!isDisclaimerAccepted ? (
             <DisclaimerContent>
               <ScreenTitle title={t('Disclaimer')} />
               <AppText style={{ flex: 1 }}>
@@ -123,22 +123,23 @@ const BuyModal = memo(({ id }: ModalBaseProp) => {
                 style={{ marginBottom: insets.bottom }}
               />
             </DisclaimerContent>
+          ) : (
+            <WebView
+              ref={webViewRef}
+              source={{
+                uri: currentUrl
+              }}
+              originWhitelist={['*']}
+              allowsInlineMediaPlayback
+              enableApplePay
+              mediaPlaybackRequiresUserAction={false}
+              containerStyle={{ padding: 0 }}
+              allowsBackForwardNavigationGestures
+              onNavigationStateChange={handleNavigationChange}
+              setSupportMultipleWindows={false}
+              nestedScrollEnabled
+            />
           )}
-          <WebView
-            ref={webViewRef}
-            source={{
-              uri: currentUrl
-            }}
-            originWhitelist={['*']}
-            allowsInlineMediaPlayback
-            enableApplePay
-            mediaPlaybackRequiresUserAction={false}
-            containerStyle={{ padding: 0 }}
-            allowsBackForwardNavigationGestures
-            onNavigationStateChange={handleNavigationChange}
-            setSupportMultipleWindows={false}
-            nestedScrollEnabled
-          />
         </ModalContent>
       )}
     />
