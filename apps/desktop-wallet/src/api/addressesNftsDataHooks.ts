@@ -20,9 +20,10 @@ import { AddressHash, client, NFT, ONE_DAY_MS, TOKENS_QUERY_LIMIT } from '@aleph
 import { NFTTokenUriMetaData } from '@alephium/web3'
 import { useQueries } from '@tanstack/react-query'
 import axios from 'axios'
-import { chunk, isArray } from 'lodash'
+import { chunk } from 'lodash'
 
 import useAddressesUnlistedTokensByType from '@/api/apiDataHooks/useAddressesUnlistedTokensByType'
+import { matchesNFTTokenUriMetaDataSchema } from '@/api/utils'
 import { isDefined } from '@/utils/misc'
 
 export const useAddressesNFTsIds = (addressHash?: AddressHash) => {
@@ -81,15 +82,3 @@ export const useAddressesNFTs = (addressHash?: AddressHash) => {
     isLoading: isLoadingNftIds || isLoadingNftsMetadata || isLoadingNftsData
   }
 }
-
-export const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
-  typeof nft.name === 'string' &&
-  typeof nft.image === 'string' &&
-  (typeof nft.description === 'undefined' || typeof nft.description === 'string') &&
-  (typeof nft.attributes === 'undefined' ||
-    (isArray(nft.attributes) &&
-      nft.attributes.every(
-        (attr) =>
-          typeof attr.trait_type === 'string' &&
-          (typeof attr.value === 'string' || typeof attr.value === 'number' || typeof attr.value === 'boolean')
-      )))

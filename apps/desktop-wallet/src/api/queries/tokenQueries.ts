@@ -22,8 +22,7 @@ import { TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 import axios from 'axios'
 
-import { matchesNFTTokenUriMetaDataSchema } from '@/api/addressesNftsDataHooks'
-import { convertDecimalsToNumber } from '@/api/addressesUnlistedTokensHooks'
+import { convertDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/utils'
 import { TokenId } from '@/types/tokens'
 
 export type TokenTypesQueryFnData = Record<explorer.TokenStdInterfaceId, TokenId[]>
