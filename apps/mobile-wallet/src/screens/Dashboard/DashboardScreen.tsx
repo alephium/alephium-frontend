@@ -18,9 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useEffect, useMemo, useState } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
-import { Portal } from 'react-native-portalize'
+import { useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
@@ -33,11 +32,8 @@ import BlurredCard from '~/components/BlurredCard'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
-import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
-import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { openModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
@@ -72,8 +68,15 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsFundPasswordReminder = useAppSelector((s) => s.fundPassword.needsReminder)
 
-  const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
   const { data: isNewWallet } = useAsyncData(getIsNewWallet)
+
+  useEffect(() => {
+    if (isNewWallet === undefined) return
+
+    if (!isMnemonicBackedUp) {
+      dispatch(openModal({ name: 'BackupReminderModal', props: { isNewWallet } }))
+    }
+  }, [dispatch, isMnemonicBackedUp, isNewWallet])
 
   useEffect(() => {
     if (isMnemonicBackedUp && needsFundPasswordReminder) {
@@ -160,59 +163,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           </AppText>
         </EmptyPlaceholder>
       )}
-      <Portal>
-        <BottomModal
-          isOpen={isBackupReminderModalOpen}
-          onClose={() => setIsBackupReminderModalOpen(false)}
-          Content={(props) => (
-            <ModalContent verticalGap {...props}>
-              <ScreenSection>
-                <ModalScreenTitle>
-                  {isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}
-                </ModalScreenTitle>
-              </ScreenSection>
-              <ScreenSection>
-                {isNewWallet ? (
-                  <AppText color="secondary" size={18}>
-                    <Trans
-                      t={t}
-                      i18nKey="backupModalMessage1"
-                      components={{
-                        1: <AppText size={18} bold />
-                      }}
-                    >
-                      {
-                        'The first and most important step is to <1>write down your secret recovery phrase</1> and store it in a safe place.'
-                      }
-                    </Trans>
-                  </AppText>
-                ) : (
-                  <AppText color="secondary" size={18}>
-                    <Trans
-                      t={t}
-                      i18nKey="backupModalMessage2"
-                      components={{
-                        1: <AppText size={18} bold />
-                      }}
-                    >
-                      {
-                        'Have peace of mind by verifying that you <1>wrote your secret recovery phrase down</1> correctly.'
-                      }
-                    </Trans>
-                  </AppText>
-                )}
-              </ScreenSection>
-              <ScreenSection>
-                <Button
-                  title={t("Let's do that!")}
-                  onPress={() => navigation.navigate('BackupMnemonicNavigation')}
-                  variant="highlight"
-                />
-              </ScreenSection>
-            </ModalContent>
-          )}
-        />
-      </Portal>
     </DashboardScreenStyled>
   )
 }

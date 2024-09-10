@@ -16,8 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Children, isValidElement, memo, ReactElement, ReactNode, useEffect } from 'react'
+import { ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
+import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
 import { selectAllModals } from '~/features/modals/modalSelectors'
@@ -36,18 +39,56 @@ const AppModals = () => {
             return <BuyModal id={modal.id} key={modal.id} />
           case 'FundPasswordReminderModal':
             return <FundPasswordReminderModal id={modal.id} key={modal.id} />
+          case 'BackupReminderModal':
+            return <BackupReminderModal id={modal.id} key={modal.id} {...modal.params.props} />
+          default:
+            return null
         }
       })}
     </ModalsContainer>
   )
 }
 
+interface ModalsContainerProps {
+  children: ReactNode
+}
+
+const ModalsContainer = ({ children, ...props }: ModalsContainerProps & ViewProps) => {
+  useEffect(() => {
+    Children.forEach(children, (child) => {
+      if (isValidElement(child) && !isElementMemoized(child)) {
+        console.warn(`Warning: ${getElementName(child)} is not memoized! Please wrap it with React.memo().`)
+      }
+    })
+  }, [children])
+
+  return <ModalsContainerStyled {...props}>{children}</ModalsContainerStyled>
+}
+
 export default AppModals
 
-const ModalsContainer = styled.View`
+const ModalsContainerStyled = styled.View`
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
 `
+
+// TODO: Use functions defined in shared-react 👇
+
+const memoizedFn = memo(() => null)
+
+const isElementMemoized = <P,>(element: ReactElement<P>): boolean => {
+  if (!isValidElement(element)) return false
+
+  const elementType = element.type as unknown as { $$typeof?: symbol }
+
+  return !!elementType.$$typeof && elementType.$$typeof === (memoizedFn as unknown as { $$typeof: symbol }).$$typeof
+}
+
+const getElementName = <P,>(element: ReactElement<P>): string => {
+  const elementType = element.type as React.ComponentType<P>
+
+  return elementType.displayName || elementType.name || 'Component'
+}

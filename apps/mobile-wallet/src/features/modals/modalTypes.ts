@@ -16,9 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { BackupReminderModalProps } from '~/features/backup/BackupReminderModal'
+
 const ModalNames = {
   BuyModal: 'BuyModal',
-  FundPasswordReminderModal: 'FundPasswordReminderModal'
+  FundPasswordReminderModal: 'FundPasswordReminderModal',
+  BackupReminderModal: 'BackupReminderModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -29,6 +32,10 @@ export type OpenModalParams =
     }
   | {
       name: typeof ModalNames.FundPasswordReminderModal
+    }
+  | {
+      name: typeof ModalNames.BackupReminderModal
+      props: BackupReminderModalProps
     }
 
 export type ModalInstance = {
