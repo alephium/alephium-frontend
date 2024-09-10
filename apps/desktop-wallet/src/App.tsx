@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-  AddressHash,
   localStorageNetworkSettingsMigrated,
   selectDoVerifiedFungibleTokensNeedInitialization,
   syncVerifiedFungibleTokens
