@@ -16,76 +16,47 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/shared'
+import { convertToPositive, CURRENCIES, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import useToken, { isFT } from '@/api/apiDataHooks/useToken'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { discreetModeToggled } from '@/storage/settings/settingsActions'
+import { TokenId } from '@/types/tokens'
 
-interface AmountProps {
-  value?: bigint | number
-  decimals?: number
-  isFiat?: boolean
+interface AmountBaseProps {
   fadeDecimals?: boolean
-  fullPrecision?: boolean
-  nbOfDecimalsToShow?: number
   color?: string
   overrideSuffixColor?: boolean
   tabIndex?: number
-  suffix?: string
-  isNonStandardToken?: boolean
   highlight?: boolean
   showPlusMinus?: boolean
   className?: string
 }
 
-const Amount = ({
-  value,
-  decimals,
-  isFiat,
-  className,
-  fadeDecimals,
-  fullPrecision = false,
-  nbOfDecimalsToShow,
-  suffix,
-  color,
-  overrideSuffixColor,
-  tabIndex,
-  highlight,
-  isNonStandardToken,
-  showPlusMinus = false
-}: AmountProps) => {
+interface TokenAmountProps extends AmountBaseProps {
+  tokenId: TokenId
+  value: bigint
+  fullPrecision?: boolean
+  nbOfDecimalsToShow?: number
+}
+
+interface FiatAmountProps extends AmountBaseProps {
+  isFiat: true
+  value: number
+}
+
+type AmountProps = TokenAmountProps | FiatAmountProps
+
+const Amount = (props: AmountProps) => {
   const dispatch = useAppDispatch()
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const { t } = useTranslation()
 
-  let quantitySymbol = ''
-  let amount = ''
-  let isNegative = false
+  const { className, color, value, highlight, tabIndex, showPlusMinus } = props
 
-  if (value !== undefined) {
-    if (isFiat && typeof value === 'number') {
-      amount = formatFiatAmountForDisplay(value)
-    } else if (isNonStandardToken) {
-      amount = value.toString()
-    } else {
-      isNegative = value < 0
-      amount = formatAmountForDisplay({
-        amount: convertToPositive(value as bigint),
-        amountDecimals: decimals,
-        displayDecimals: nbOfDecimalsToShow,
-        fullPrecision
-      })
-    }
-
-    if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
-      quantitySymbol = amount.slice(-1)
-      amount = amount.slice(0, -1)
-    }
-  }
-
-  const [integralPart, fractionalPart] = amount.split('.')
+  const toggleDispatchMode = () => discreetMode && dispatch(discreetModeToggled())
 
   return (
     <AmountStyled
@@ -93,33 +64,89 @@ const Amount = ({
       data-tooltip-id="default"
       data-tooltip-content={discreetMode ? t('Click to deactivate discreet mode') : ''}
       data-tooltip-delay-show={500}
-      onClick={() => discreetMode && dispatch(discreetModeToggled())}
+      onClick={toggleDispatchMode}
     >
-      {value !== undefined ? (
-        <>
-          {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
-          {fadeDecimals ? (
-            <>
-              <span>{integralPart}</span>
-              {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
-              {quantitySymbol && <span>{quantitySymbol}</span>}
-            </>
-          ) : fractionalPart ? (
-            `${integralPart}.${fractionalPart}`
-          ) : (
-            integralPart
-          )}
-        </>
-      ) : (
-        '-'
-      )}
+      {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
 
-      {!isNonStandardToken && <Suffix color={overrideSuffixColor ? color : undefined}>{` ${suffix ?? 'ALPH'}`}</Suffix>}
+      {isFiat(props) ? <FiatAmount {...props} /> : <TokenAmount {...props} />}
     </AmountStyled>
   )
 }
 
 export default Amount
+
+const TokenAmount = ({
+  tokenId,
+  value,
+  fullPrecision,
+  nbOfDecimalsToShow,
+  fadeDecimals,
+  overrideSuffixColor,
+  color
+}: TokenAmountProps) => {
+  const { data: token } = useToken(tokenId)
+
+  const amount = isFT(token)
+    ? formatAmountForDisplay({
+        amount: convertToPositive(value),
+        amountDecimals: token.decimals,
+        displayDecimals: nbOfDecimalsToShow,
+        fullPrecision
+      })
+    : value.toString()
+
+  return (
+    <>
+      <AmountPartitions amount={amount} fadeDecimals={fadeDecimals} />
+
+      {isFT(token) && <Suffix color={overrideSuffixColor ? color : undefined}> {token.symbol}</Suffix>}
+    </>
+  )
+}
+
+const FiatAmount = ({ value, fadeDecimals, showPlusMinus, overrideSuffixColor, color }: FiatAmountProps) => {
+  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
+
+  const amount = formatFiatAmountForDisplay(value)
+
+  return (
+    <>
+      <AmountPartitions amount={amount} fadeDecimals={fadeDecimals} />
+
+      <Suffix color={overrideSuffixColor ? color : undefined}> {CURRENCIES[fiatCurrency].symbol}</Suffix>
+    </>
+  )
+}
+
+interface AmountPartitions extends Pick<AmountBaseProps, 'fadeDecimals'> {
+  amount: string
+}
+
+const AmountPartitions = ({ amount, fadeDecimals }: AmountPartitions) => {
+  let quantitySymbol = ''
+
+  if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
+    quantitySymbol = amount.slice(-1)
+    amount = amount.slice(0, -1)
+  }
+
+  const [integralPart, fractionalPart] = amount.split('.')
+
+  return fadeDecimals ? (
+    <>
+      <span>{integralPart}</span>
+      {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
+      {quantitySymbol && <span>{quantitySymbol}</span>}
+    </>
+  ) : fractionalPart ? (
+    `${integralPart}.${fractionalPart}`
+  ) : (
+    integralPart
+  )
+}
+
+const isFiat = (asset: FiatAmountProps | TokenAmountProps): asset is FiatAmountProps =>
+  (asset as FiatAmountProps).isFiat === true
 
 const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value'> & { discreetMode: boolean }>`
   color: ${({ color, highlight, value, theme }) =>

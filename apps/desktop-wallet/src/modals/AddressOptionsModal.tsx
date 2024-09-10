@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -127,7 +128,7 @@ const AddressOptionsModal = memo(({ id, addressHash }: ModalBaseProp & AddressOp
               {t('Sweep')}
             </Button>
             <AvailableAmount tabIndex={0}>
-              {t('Available')}: <Amount value={availableBalance} color={theme.font.secondary} />
+              {t('Available')}: <Amount tokenId={ALPH.id} value={availableBalance} color={theme.font.secondary} />
             </AvailableAmount>
           </SweepButton>
         }
