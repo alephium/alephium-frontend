@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, selectFungibleTokenById, selectNFTById } from '@alephium/shared'
+import { Asset } from '@alephium/shared'
 import styled, { css } from 'styled-components'
 
+import useToken, { isFT, isNFT } from '@/api/apiDataHooks/useToken'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
-import { useAppSelector } from '@/hooks/redux'
 
 export interface AssetBadgeStyleProps {
   simple?: boolean
@@ -37,22 +37,19 @@ interface AssetBadgeProps extends AssetBadgeStyleProps {
 }
 
 const AssetBadge = ({ assetId, amount, simple, hideNftName, className }: AssetBadgeProps) => {
-  const fungibleToken = useAppSelector((s) => selectFungibleTokenById(s, assetId))
-  const nftInfo = useAppSelector((s) => selectNFTById(s, assetId))
+  const { data: token } = useToken(assetId)
+
+  const tooltipContent = isFT(token) || isNFT(token) ? token.name : assetId
 
   return (
-    <div
-      className={className}
-      data-tooltip-id="default"
-      data-tooltip-content={fungibleToken?.name ?? nftInfo?.name ?? assetId}
-    >
+    <div className={className} data-tooltip-id="default" data-tooltip-content={tooltipContent}>
       <AssetLogo tokenId={assetId} size={20} />
-      {nftInfo?.name && !hideNftName ? (
-        <AssetSymbol>{nftInfo?.name}</AssetSymbol>
-      ) : amount !== undefined ? (
-        <Amount value={amount} suffix={fungibleToken?.symbol} decimals={fungibleToken?.decimals} />
+      {isNFT(token) && !hideNftName ? (
+        <AssetSymbol>{token.name}</AssetSymbol>
+      ) : isFT(token) && amount !== undefined ? (
+        <Amount tokenId={assetId} value={amount} />
       ) : (
-        !simple && fungibleToken?.symbol && <AssetSymbol>{fungibleToken.symbol}</AssetSymbol>
+        !simple && isFT(token) && <AssetSymbol>{token.symbol}</AssetSymbol>
       )}
     </div>
   )
