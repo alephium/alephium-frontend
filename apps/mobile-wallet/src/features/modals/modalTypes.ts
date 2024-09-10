@@ -17,14 +17,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 const ModalNames = {
-  BuyModal: 'BuyModal'
+  BuyModal: 'BuyModal',
+  FundPasswordReminderModal: 'FundPasswordReminderModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
 
-export type OpenModalParams = {
-  name: typeof ModalNames.BuyModal
-}
+export type OpenModalParams =
+  | {
+      name: typeof ModalNames.BuyModal
+    }
+  | {
+      name: typeof ModalNames.FundPasswordReminderModal
+    }
 
 export type ModalInstance = {
   id: number

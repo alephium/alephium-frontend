@@ -28,11 +28,11 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ScreenTitle from '~/components/layout/ScreenTitle'
 import LinkToWeb from '~/components/text/LinkToWeb'
-import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import BottomModal from '~/modals/BottomModal'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { selectDefaultAddress } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -94,10 +94,10 @@ const BuyModal = memo(({ id }: ModalBaseProp) => {
 
   return (
     <BottomModal
+      modalId={id}
       title={t('Buy')}
       maximisedContent
       noPadding
-      onClose={onClose}
       Content={(props) => (
         <ModalContent {...props} contentContainerStyle={{ flex: 1, paddingTop: 0 }}>
           {!isDisclaimerAccepted && (

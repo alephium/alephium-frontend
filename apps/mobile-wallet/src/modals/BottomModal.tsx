@@ -35,7 +35,9 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { CloseButton } from '~/components/buttons/Button'
+import { closeModal } from '~/features/modals/modalActions'
 import { ModalContentProps } from '~/features/modals/ModalContent'
+import { useAppDispatch } from '~/hooks/redux'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type ModalPositions = 'minimised' | 'maximised' | 'closing'
@@ -53,8 +55,9 @@ const springConfig: WithSpringConfig = {
 }
 
 export interface BottomModalProps {
+  modalId: number
   Content: (props: ModalContentProps) => ReactNode
-  onClose: () => void
+  onClose?: () => void
   title?: string
   maximisedContent?: boolean
   customMinHeight?: number
@@ -63,9 +66,17 @@ export interface BottomModalProps {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
-const BottomModal = ({ Content, onClose, title, maximisedContent, customMinHeight, noPadding }: BottomModalProps) => {
+const BottomModal = ({
+  modalId,
+  Content,
+  onClose,
+  title,
+  maximisedContent,
+  customMinHeight,
+  noPadding
+}: BottomModalProps) => {
   const insets = useSafeAreaInsets()
-
+  const dispatch = useAppDispatch()
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
 
   useEffect(() => {
@@ -134,13 +145,18 @@ const BottomModal = ({ Content, onClose, title, maximisedContent, customMinHeigh
     }
   }
 
+  const handleCloseOnJS = useCallback(() => {
+    if (onClose) onClose()
+    dispatch(closeModal({ id: modalId }))
+  }, [dispatch, modalId, onClose])
+
   const handleClose = useCallback(() => {
     'worklet'
 
     navHeight.value = withSpring(0, springConfig)
-    modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(onClose)())
+    modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(handleCloseOnJS)())
     position.value = 'closing'
-  }, [modalHeight, navHeight, onClose, position])
+  }, [handleCloseOnJS, modalHeight, navHeight, position])
 
   const handleMaximize = useCallback(() => {
     'worklet'

@@ -35,7 +35,6 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
-import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
 import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { openModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
@@ -74,16 +73,15 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsFundPasswordReminder = useAppSelector((s) => s.fundPassword.needsReminder)
 
-  const [isFundPasswordReminderModalOpen, setIsFundPasswordReminderModalOpen] = useState(false)
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const { data: isNewWallet } = useAsyncData(getIsNewWallet)
 
   useEffect(() => {
     if (isMnemonicBackedUp && needsFundPasswordReminder) {
-      setIsFundPasswordReminderModalOpen(true)
+      dispatch(openModal({ name: 'FundPasswordReminderModal' }))
     }
-  }, [isMnemonicBackedUp, needsFundPasswordReminder])
+  }, [dispatch, isMnemonicBackedUp, needsFundPasswordReminder])
 
   useEffect(() => {
     if (!isNewWallet) return
@@ -229,10 +227,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           )}
         />
       </Portal>
-      <FundPasswordReminderModal
-        isOpen={isFundPasswordReminderModalOpen}
-        onClose={() => setIsFundPasswordReminderModalOpen(false)}
-      />
     </DashboardScreenStyled>
   )
 }
