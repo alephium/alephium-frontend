@@ -47,7 +47,6 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
 import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
-import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -74,7 +73,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const needsFundPasswordReminder = useAppSelector((s) => s.fundPassword.needsReminder)
 
   const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
-  const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const { data: isNewWallet } = useAsyncData(getIsNewWallet)
 
   useEffect(() => {
@@ -212,18 +210,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
                 />
               </ScreenSection>
             </ModalContent>
-          )}
-        />
-
-        <BottomModal
-          isOpen={isSwitchNetworkModalOpen}
-          onClose={() => setIsSwitchNetworkModalOpen(false)}
-          Content={(props) => (
-            <SwitchNetworkModal
-              onClose={() => setIsSwitchNetworkModalOpen(false)}
-              onCustomNetworkPress={() => navigation.navigate('CustomNetworkScreen')}
-              {...props}
-            />
           )}
         />
       </Portal>
