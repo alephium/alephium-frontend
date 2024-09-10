@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { CURRENCIES } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
@@ -52,7 +51,6 @@ const chartAnimationVariants = {
 const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addressHash, children, showChart }) => {
   const { t } = useTranslation()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
-  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
   const { data: totalAmountWorth, isLoading: isLoadingTotalAmountWorth } = useAddressesTokensWorthTotal(addressHash)
   const { data: totalAlphAmountWorth, isLoading: isLoadingAlphAmountWorth } = useAddressesAlphWorthTotal(addressHash)
@@ -83,8 +81,10 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
               </Today>
               {isLoadingTotalAmountWorth ? (
                 <SkeletonLoader height="32px" style={{ marginBottom: 7, marginTop: 7 }} />
+              ) : balanceInFiat !== undefined ? (
+                <FiatTotalAmount tabIndex={0} value={balanceInFiat} isFiat />
               ) : (
-                <FiatTotalAmount tabIndex={0} value={balanceInFiat} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
+                '-'
               )}
               {hoveredDataPointWorth !== undefined && (
                 <Opacity>

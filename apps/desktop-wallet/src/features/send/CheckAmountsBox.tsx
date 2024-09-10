@@ -28,7 +28,6 @@ import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Box from '@/components/Box'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
-import { useAppSelector } from '@/hooks/redux'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 import { getTransactionAssetAmounts } from '@/utils/transactions'
@@ -42,42 +41,31 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
   const { t } = useTranslation()
   const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
   const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
-  const fungibleTokens = useAppSelector((s) => s.fungibleTokens.entities)
 
   const alphAsset = { id: ALPH.id, amount: attoAlphAmount }
   const assets = userSpecifiedAlphAmount ? [alphAsset, ...tokens] : [...tokens, alphAsset]
 
   return (
     <Box className={className}>
-      {assets.map((asset, index) => {
-        const fungibleToken = fungibleTokens[asset.id]
-
-        return (
-          <Fragment key={asset.id}>
-            {index > 0 && <HorizontalDivider />}
-            <AssetAmountRow>
-              <AssetLogo tokenId={asset.id} size={30} />
-              <AssetAmountStyled
-                value={BigInt(asset.amount)}
-                suffix={fungibleToken?.symbol}
-                decimals={fungibleToken?.decimals}
-                isNonStandardToken={!fungibleToken?.symbol}
-                fullPrecision
-              />
-              {asset.id === ALPH.id && !!extraAlphForDust && (
-                <ActionLink
-                  onClick={() => openInWebBrowser(links.utxoDust)}
-                  tooltip={t('{{ amount }} ALPH are added for UTXO spam prevention. Click here to know more.', {
-                    amount: toHumanReadableAmount(extraAlphForDust)
-                  })}
-                >
-                  <Info size={20} />
-                </ActionLink>
-              )}
-            </AssetAmountRow>
-          </Fragment>
-        )
-      })}
+      {assets.map((asset, index) => (
+        <Fragment key={asset.id}>
+          {index > 0 && <HorizontalDivider />}
+          <AssetAmountRow>
+            <AssetLogo tokenId={asset.id} size={30} />
+            <AssetAmountStyled tokenId={asset.id} value={BigInt(asset.amount)} fullPrecision />
+            {asset.id === ALPH.id && !!extraAlphForDust && (
+              <ActionLink
+                onClick={() => openInWebBrowser(links.utxoDust)}
+                tooltip={t('{{ amount }} ALPH are added for UTXO spam prevention. Click here to know more.', {
+                  amount: toHumanReadableAmount(extraAlphForDust)
+                })}
+              >
+                <Info size={20} />
+              </ActionLink>
+            )}
+          </AssetAmountRow>
+        </Fragment>
+      ))}
     </Box>
   )
 }

@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, getHumanReadableError } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { node } from '@alephium/web3'
 import { Info } from 'lucide-react'
 import { memo, useCallback, useEffect, useState } from 'react'
@@ -195,7 +196,7 @@ const AddressSweepModal = memo(
               </InfoBox>
               <Fee>
                 {t('Fee')}
-                <Amount value={fee} />
+                <Amount tokenId={ALPH.id} value={fee} />
               </Fee>
             </>
           )}
