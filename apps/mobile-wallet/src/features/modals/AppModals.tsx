@@ -31,6 +31,8 @@ const AppModals = () => {
 
   if (openedModals.length === 0) return null
 
+  console.log(JSON.stringify(openedModals))
+
   return (
     <ModalsContainer pointerEvents={openedModals.length > 0 ? 'auto' : 'none'}>
       {openedModals.map((modal) => {
