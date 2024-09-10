@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { addApostrophes, AddressHash, NFT, TransactionInfoType } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { partition } from 'lodash'
 import { memo } from 'react'
@@ -83,16 +84,9 @@ const TransactionDetailsModal = memo(({ id, txHash, addressHash }: ModalBaseProp
         <SummaryContent>
           <TransactionType infoType={infoType} isFailedScriptTx={transaction.scriptExecutionOk} />
           <AmountWrapper tabIndex={0}>
-            {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
+            {tokensWithSymbol.map(({ id, amount }) => (
               <AmountContainer key={id}>
-                <Amount
-                  tabIndex={0}
-                  value={amount}
-                  decimals={decimals}
-                  suffix={symbol}
-                  highlight={!isMoved}
-                  showPlusMinus={!isMoved}
-                />
+                <Amount tokenId={id} tabIndex={0} value={amount} highlight={!isMoved} showPlusMinus={!isMoved} />
               </AmountContainer>
             ))}
           </AmountWrapper>
@@ -203,19 +197,22 @@ const TransactionDetailsModal = memo(({ id, txHash, addressHash }: ModalBaseProp
             </DataList.Row>
           )}
           <DataList.Row label={t('Fee')}>
-            <Amount tabIndex={0} value={BigInt(transaction.gasAmount) * BigInt(transaction.gasPrice)} fullPrecision />
+            <Amount
+              tokenId={ALPH.id}
+              tabIndex={0}
+              value={BigInt(transaction.gasAmount) * BigInt(transaction.gasPrice)}
+              fullPrecision
+            />
           </DataList.Row>
           <DataList.Row label={t('Total value')}>
             <Amounts>
-              {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
+              {tokensWithSymbol.map(({ id, amount, symbol }) => (
                 <AmountContainer key={id}>
                   <Amount
+                    tokenId={id}
                     tabIndex={0}
                     value={amount}
                     fullPrecision
-                    decimals={decimals}
-                    suffix={symbol}
-                    isNonStandardToken={!symbol}
                     highlight={!isMoved}
                     showPlusMinus={!isMoved}
                   />
@@ -238,7 +235,7 @@ const TransactionDetailsModal = memo(({ id, txHash, addressHash }: ModalBaseProp
               <Amounts>
                 {unknownTokens.map(({ id, amount, symbol }) => (
                   <AmountContainer key={id}>
-                    <Amount tabIndex={0} value={amount} isNonStandardToken={!symbol} highlight />
+                    <Amount tokenId={id} tabIndex={0} value={amount} highlight />
                     {!symbol && <TokenHash hash={id} />}
                   </AmountContainer>
                 ))}
@@ -252,7 +249,7 @@ const TransactionDetailsModal = memo(({ id, txHash, addressHash }: ModalBaseProp
               <span tabIndex={0}>{addApostrophes(transaction.gasAmount.toString())}</span>
             </DataList.Row>
             <DataList.Row label={t('Gas price')}>
-              <Amount tabIndex={0} value={BigInt(transaction.gasPrice)} fullPrecision />
+              <Amount tokenId={ALPH.id} tabIndex={0} value={BigInt(transaction.gasPrice)} fullPrecision />
             </DataList.Row>
             <DataList.Row label={t('Inputs')}>
               <AddressList>

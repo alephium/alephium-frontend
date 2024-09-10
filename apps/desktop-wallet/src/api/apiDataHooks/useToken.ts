@@ -30,13 +30,6 @@ type Token = {
   isLoading: boolean
 }
 
-export const isListedFT = (token: Token['data']): token is ListedFT => (token as ListedFT).logoURI !== undefined
-
-export const isFT = (token: Token['data']): token is ListedFT | UnlistedFT =>
-  (token as ListedFT | UnlistedFT).symbol !== undefined
-
-export const isNFT = (token: Token['data']): token is NFT => (token as NFT).nftIndex !== undefined
-
 const useToken = (id: TokenId): Token => {
   const { data: fTList, isLoading: isLoadingFtList } = useFTList()
 
@@ -90,3 +83,10 @@ const useToken = (id: TokenId): Token => {
 }
 
 export default useToken
+
+export const isListedFT = (token: Token['data']): token is ListedFT => (token as ListedFT).logoURI !== undefined
+
+export const isFT = (token: Token['data']): token is ListedFT | UnlistedFT =>
+  (token as ListedFT | UnlistedFT).symbol !== undefined
+
+export const isNFT = (token: Token['data']): token is NFT => (token as NFT).nftIndex !== undefined

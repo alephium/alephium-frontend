@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ALPH } from '@alephium/token-list'
 import { Codesandbox } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -61,7 +62,7 @@ const ConsolidateUTXOsModal = memo(({ id, onConsolidateClick, fee }: ModalBasePr
           />
           <Fee>
             {t('Fee')}
-            {fee ? <Amount value={fee} /> : <Spinner size="12px" />}
+            {fee ? <Amount tokenId={ALPH.id} value={fee} /> : <Spinner size="12px" />}
           </Fee>
           <Button onClick={handleConsolidateClick} submit disabled={!fee}>
             {t('Consolidate')}
