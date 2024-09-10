@@ -248,14 +248,11 @@ const AssetAmountsInput = ({
 
                     <AvailableAmountColumn>
                       <AvailableAmount tabIndex={0}>
-                        <Amount
-                          value={amount}
-                          nbOfDecimalsToShow={4}
-                          color={theme.font.secondary}
-                          suffix={symbol}
-                          decimals={decimals}
-                          isNonStandardToken={token.type === 'nonStandardToken'}
-                        />
+                        {amount !== undefined ? (
+                          <Amount tokenId={id} value={amount} nbOfDecimalsToShow={4} color={theme.font.secondary} />
+                        ) : (
+                          '-'
+                        )}
                         <span> {t('Available').toLowerCase()}</span>
                       </AvailableAmount>
                       <ActionLink onClick={() => handleAssetAmountChange(index, availableHumanReadableAmount)}>

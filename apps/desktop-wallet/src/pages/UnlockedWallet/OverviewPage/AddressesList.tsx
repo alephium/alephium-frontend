@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, CURRENCIES } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
 import { useState } from 'react'
@@ -100,12 +100,13 @@ const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: Addr
 
 const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
   const { data: totalWorth, isLoading } = useAddressesTokensWorthTotal(addressHash)
-  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
   return isLoading ? (
     <SkeletonLoader height="15.5px" width="50%" />
+  ) : totalWorth !== undefined ? (
+    <AmountStyled isFiat value={totalWorth} tabIndex={0} />
   ) : (
-    <AmountStyled value={totalWorth} isFiat suffix={CURRENCIES[fiatCurrency].symbol} tabIndex={0} />
+    '-'
   )
 }
 

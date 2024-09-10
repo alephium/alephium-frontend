@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -58,7 +59,7 @@ const LockedAlphAmount = () => {
 const AlphBalance = ({ balance }: { balance: bigint }) => {
   const { isLoading } = useAddressesAlphBalancesTotal()
 
-  return isLoading ? <SkeletonLoader height="30px" /> : <AmountStyled tabIndex={0} value={balance} />
+  return isLoading ? <SkeletonLoader height="30px" /> : <AmountStyled tokenId={ALPH.id} tabIndex={0} value={balance} />
 }
 
 export default TotalAlphBalance
