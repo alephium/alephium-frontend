@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, Asset } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { ChevronRight } from 'lucide-react'
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -28,8 +29,8 @@ import ActionLink from '@/components/ActionLink'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Spinner from '@/components/Spinner'
 import Table, { TableCell, TableCellPlaceholder, TableHeader, TableRow } from '@/components/Table'
-import TransactionalInfo from '@/components/TransactionalInfo'
 import { openModal } from '@/features/modals/modalActions'
+import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
   syncAddressTransactionsNextPage,
@@ -46,7 +47,7 @@ import {
 } from '@/storage/transactions/transactionsSelectors'
 import { AddressConfirmedTransaction, Direction } from '@/types/transactions'
 import { onEnterOrSpace } from '@/utils/misc'
-import { getTransactionInfo } from '@/utils/transactions'
+import { getTransactionAmountDeltas, getTransactionInfoType } from '@/utils/transactions'
 
 interface TransactionListProps {
   addressHashes?: AddressHash[]
@@ -55,7 +56,7 @@ interface TransactionListProps {
   limit?: number
   compact?: boolean
   hideHeader?: boolean
-  hideFromColumn?: boolean
+  isInAddressDetailsModal?: boolean
   directions?: Direction[]
   assetIds?: Asset['id'][]
   headerExtraContent?: ReactNode
@@ -70,7 +71,7 @@ const TransactionList = ({
   limit,
   compact,
   hideHeader = false,
-  hideFromColumn = false,
+  isInAddressDetailsModal = false,
   directions,
   assetIds,
   headerExtraContent
@@ -92,7 +93,7 @@ const TransactionList = ({
   const [attemptToFindNewFilteredTxs, setAttemptToFindNewFilteredTxs] = useState(0)
 
   const singleAddress = addresses.length === 1
-  const filteredConfirmedTxs = applyFilters({ txs: confirmedTxs, directions, assetIds, hideFromColumn })
+  const filteredConfirmedTxs = applyFilters({ txs: confirmedTxs, directions, assetIds, isInAddressDetailsModal })
   const displayedConfirmedTxs = limit ? filteredConfirmedTxs.slice(0, limit - pendingTxs.length) : filteredConfirmedTxs
   const userAttemptedToLoadMoreTxs =
     attemptToFindNewFilteredTxs > 0 && attemptToFindNewFilteredTxs <= maxAttemptsToFindNewTxs
@@ -172,30 +173,24 @@ const TransactionList = ({
         </>
       )}
       {pendingTxs.map((tx) => (
-        <TableRow key={tx.hash} blinking role="row" tabIndex={0}>
-          <TransactionalInfo
-            transaction={tx}
-            addressHash={tx.address.hash}
-            showInternalInflows={hideFromColumn}
-            compact={compact}
-          />
-        </TableRow>
+        <TransactionRow
+          key={tx.hash}
+          tx={tx}
+          addressHash={tx.address.hash}
+          isInAddressDetailsModal={isInAddressDetailsModal}
+          compact={compact}
+        />
       ))}
       {displayedConfirmedTxs.map((tx) => (
-        <TableRow
+        <TransactionRow
           key={`${tx.hash}-${tx.address.hash}`}
-          role="row"
-          tabIndex={0}
+          tx={tx}
+          addressHash={tx.address.hash}
+          isInAddressDetailsModal={isInAddressDetailsModal}
+          compact={compact}
           onClick={() => openTransactionDetailsModal(tx.hash, tx.address.hash)}
           onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash, tx.address.hash))}
-        >
-          <TransactionalInfo
-            transaction={tx}
-            addressHash={tx.address.hash}
-            showInternalInflows={hideFromColumn}
-            compact={compact}
-          />
-        </TableRow>
+        />
       ))}
       {limit === undefined && (
         <TableRow role="row">
@@ -223,10 +218,10 @@ export default TransactionList
 
 const applyFilters = ({
   txs,
-  hideFromColumn,
+  isInAddressDetailsModal,
   directions,
   assetIds
-}: Pick<TransactionListProps, 'directions' | 'assetIds' | 'hideFromColumn'> & {
+}: Pick<TransactionListProps, 'directions' | 'assetIds' | 'isInAddressDetailsModal'> & {
   txs: AddressConfirmedTransaction[]
 }) => {
   const isDirectionsFilterEnabled = directions && directions.length > 0
@@ -234,11 +229,13 @@ const applyFilters = ({
 
   return isDirectionsFilterEnabled || isAssetsFilterEnabled
     ? txs.filter((tx) => {
-        const { assets, infoType } = getTransactionInfo(tx, tx.address.hash, hideFromColumn)
+        const { tokenAmounts } = getTransactionAmountDeltas(tx, tx.address.hash)
+        const tokenIds = [ALPH.id, ...tokenAmounts.map(({ id }) => id)]
+        const infoType = getTransactionInfoType(tx, tx.address.hash, isInAddressDetailsModal)
         const dir = infoType === 'pending' ? 'out' : infoType
 
         const passedDirectionsFilter = !isDirectionsFilterEnabled || directions.includes(dir)
-        const passedAssetsFilter = !isAssetsFilterEnabled || assets.some((asset) => assetIds.includes(asset.id))
+        const passedAssetsFilter = !isAssetsFilterEnabled || tokenIds.some((id) => assetIds.includes(id))
 
         return passedDirectionsFilter && passedAssetsFilter
       })

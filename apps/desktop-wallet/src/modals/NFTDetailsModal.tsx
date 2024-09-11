@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { client, NFT, selectNFTById } from '@alephium/shared'
+import { client, NFT } from '@alephium/shared'
 import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
 import { skipToken, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
@@ -24,14 +24,13 @@ import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import useNFT from '@/api/apiDataHooks/useNFT'
 import ActionLink from '@/components/ActionLink'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import Truncate from '@/components/Truncate'
-import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -41,47 +40,53 @@ export interface NFTDetailsModalProps {
 
 const NFTDetailsModal = memo(({ id, nftId }: ModalBaseProp & NFTDetailsModalProps) => {
   const { t } = useTranslation()
-  const nft = useAppSelector((s) => selectNFTById(s, nftId))
-  const dispatch = useAppDispatch()
-
-  if (!nft) return null
-
-  const onClose = () => dispatch(closeModal({ id }))
 
   return (
-    <SideModal onClose={onClose} title={t('NFT details')}>
+    <SideModal id={id} title={t('NFT details')}>
       <NFTImageContainer>
         <NFTThumbnail size="100%" nftId={nftId} />
       </NFTImageContainer>
-      <NFTMetadataContainer>
-        <DataList>
-          <DataList.Row label={t('Name')}>
-            <b>{nft.name}</b>
-          </DataList.Row>
-          <DataList.Row label={t('Description')}>{nft.description}</DataList.Row>
-          <DataList.Row label={t('ID')}>
-            <HashEllipsed hash={nft.id} tooltipText={t('Copy ID')} />
-          </DataList.Row>
-          <DataList.Row label={t('Image URL')}>
-            <ActionLink onClick={() => openInWebBrowser(nft.image)}>
-              <Truncate>{nft.image}</Truncate>
-            </ActionLink>
-          </DataList.Row>
-        </DataList>
-        {nft.attributes && (
-          <DataList title={t('Attributes')}>
-            {nft.attributes.map((attribute, index) => (
-              <DataList.Row key={index} label={attribute.trait_type}>
-                {attribute.value}
-              </DataList.Row>
-            ))}
-          </DataList>
-        )}
-        <NFTCollectionDetails collectionId={nft.collectionId} />
-      </NFTMetadataContainer>
+
+      <NFTDataList nftId={nftId} />
     </SideModal>
   )
 })
+
+const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
+  const { t } = useTranslation()
+  const { data: nft } = useNFT(nftId)
+
+  if (!nft) return null
+
+  return (
+    <NFTMetadataContainer>
+      <DataList>
+        <DataList.Row label={t('Name')}>
+          <b>{nft.name}</b>
+        </DataList.Row>
+        <DataList.Row label={t('Description')}>{nft.description}</DataList.Row>
+        <DataList.Row label={t('ID')}>
+          <HashEllipsed hash={nft.id} tooltipText={t('Copy ID')} />
+        </DataList.Row>
+        <DataList.Row label={t('Image URL')}>
+          <ActionLink onClick={() => openInWebBrowser(nft.image)}>
+            <Truncate>{nft.image}</Truncate>
+          </ActionLink>
+        </DataList.Row>
+      </DataList>
+      {nft.attributes && (
+        <DataList title={t('Attributes')}>
+          {nft.attributes.map((attribute, index) => (
+            <DataList.Row key={index} label={attribute.trait_type}>
+              {attribute.value}
+            </DataList.Row>
+          ))}
+        </DataList>
+      )}
+      <NFTCollectionDetails collectionId={nft.collectionId} />
+    </NFTMetadataContainer>
+  )
+}
 
 const NFTCollectionDetails = ({ collectionId }: Pick<NFT, 'collectionId'>) => {
   const { t } = useTranslation()

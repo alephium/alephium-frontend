@@ -19,10 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NFT } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
 
 import useFTList from '@/api/apiDataHooks/useFTList'
-import { fungibleTokenMetadataQuery, nftDataQuery, nftMetadataQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
+import useNFT from '@/api/apiDataHooks/useNFT'
+import { fungibleTokenMetadataQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
 import { ListedFT, NonStandardToken, TokenId, UnlistedFT } from '@/types/tokens'
 
 type Token = {
@@ -46,30 +46,9 @@ const useToken = (id: TokenId): Token => {
     })
   )
 
-  const { data: nftMetadata, isLoading: isLoadingNftMetadata } = useQuery(
-    nftMetadataQuery({
-      id,
-      skip: isLoadingTokenType || tokenType?.stdInterfaceId !== explorer.TokenStdInterfaceId.NonFungible
-    })
-  )
-
-  const { data: nftData, isLoading: isLoadingNftData } = useQuery(
-    nftDataQuery({
-      id,
-      tokenUri: nftMetadata?.tokenUri,
-      skip: isLoadingNftMetadata || tokenType?.stdInterfaceId !== explorer.TokenStdInterfaceId.NonFungible
-    })
-  )
-
-  const nft = useMemo(
-    () =>
-      !!nftMetadata && !!nftData
-        ? ({
-            ...nftMetadata,
-            ...nftData
-          } as NFT)
-        : undefined,
-    [nftData, nftMetadata]
+  const { data: nft, isLoading: isLoadingNft } = useNFT(
+    id,
+    isLoadingTokenType || tokenType?.stdInterfaceId !== explorer.TokenStdInterfaceId.NonFungible
   )
 
   return {
@@ -78,7 +57,7 @@ const useToken = (id: TokenId): Token => {
       : unlistedFT
         ? (unlistedFT as UnlistedFT)
         : nft || ({ id } as NonStandardToken),
-    isLoading: isLoadingFtList || isLoadingTokenType || isLoadingUnlistedFT || isLoadingNftMetadata || isLoadingNftData
+    isLoading: isLoadingFtList || isLoadingTokenType || isLoadingUnlistedFT || isLoadingNft
   }
 }
 

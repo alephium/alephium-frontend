@@ -16,14 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT, selectNFTById } from '@alephium/shared'
+import { NFT } from '@alephium/shared'
 import { colord } from 'colord'
 import { CameraOff } from 'lucide-react'
 import { useState } from 'react'
 import ReactPlayer from 'react-player'
 import styled, { css } from 'styled-components'
 
-import { useAppSelector } from '@/hooks/redux'
+import useNFT from '@/api/apiDataHooks/useNFT'
+import SkeletonLoader from '@/components/SkeletonLoader'
 
 interface NFTThumbnailProps {
   nftId: NFT['id']
@@ -33,24 +34,30 @@ interface NFTThumbnailProps {
 }
 
 const NFTThumbnail = ({ nftId, size = '100', ...props }: NFTThumbnailProps) => {
-  const nft = useAppSelector((s) => selectNFTById(s, nftId))
+  const { data: nft, isLoading } = useNFT(nftId)
 
   const [error, setError] = useState(false)
 
+  if (isLoading) return <SkeletonLoader height={size} />
+
   if (!nft) return null
 
-  return nft.image?.endsWith('.mp4') ? (
-    <ReactPlayerStyled url={nft.image} playing loop muted width={size} height={size} />
-  ) : nft.image && !error ? (
-    <NFTThumbnailStyled
-      src={nft.image}
-      alt={nft.description}
-      width={size}
-      height={size}
-      onError={() => setError(true)}
-      {...props}
-    />
-  ) : (
+  if (nft.image.endsWith('.mp4'))
+    return <ReactPlayerStyled url={nft.image} playing loop muted width={size} height={size} />
+
+  if (nft.image && !error)
+    return (
+      <NFTThumbnailStyled
+        src={nft.image}
+        alt={nft.description}
+        width={size}
+        height={size}
+        onError={() => setError(true)}
+        {...props}
+      />
+    )
+
+  return (
     <NoImagePlaceHolder>
       <CameraOff opacity={0.8} />
     </NoImagePlaceHolder>

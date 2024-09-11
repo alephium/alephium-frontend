@@ -30,7 +30,7 @@ export const convertUnconfirmedTxToPendingTx = (
   if (!tx.outputs) throw 'Missing transaction details'
 
   const toAddress = tx.outputs[0].address
-  const { alph: alphAmount, tokens } = calcTxAmountsDeltaForAddress(tx, toAddress)
+  const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, toAddress)
 
   if (!fromAddress) throw new Error('fromAddress is not defined')
   if (!toAddress) throw new Error('toAddress is not defined')
@@ -43,7 +43,7 @@ export const convertUnconfirmedTxToPendingTx = (
     timestamp: tx.lastSeen,
     type: 'transfer',
     amount: alphAmount.toString(),
-    tokens: tokens.map((token) => ({ ...token, amount: token.amount.toString() })),
+    tokens: tokenAmounts.map((token) => ({ ...token, amount: token.amount.toString() })),
     status: 'pending'
   }
 }
