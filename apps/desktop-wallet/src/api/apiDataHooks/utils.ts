@@ -33,3 +33,11 @@ export const flatMapCombine = <R>(results: UseQueryResult<R | R[], Error>[]) => 
   data: results.flatMap(({ data }) => data).filter(isDefined),
   ...combineIsLoading(results)
 })
+
+export const mapCombineDefined = <R>(results: UseQueryResult<R, Error>[]) => ({
+  data: results.reduce((acc, { data }) => {
+    if (data) acc.push(data)
+    return acc
+  }, [] as NonNullable<R>[]),
+  ...combineIsLoading(results)
+})

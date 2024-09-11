@@ -19,9 +19,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   calcTxAmountsDeltaForAddress,
   getDirection,
+  hasPositiveAndNegativeAmounts,
   isConsolidationTx,
   isMempoolTx,
-  isSwap,
   TransactionDirection,
   TransactionInfoType
 } from '@alephium/shared'
@@ -38,16 +38,16 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
   let infoType: TransactionInfoType
   let lockTime: Date | undefined
 
-  const { alph: alphDeltaAmount, tokens: tokensDeltaAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
+  const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
 
-  amount = alphDeltaAmount
+  amount = alphAmount
 
-  const assetsMetadata = useAssetsMetadata(map(tokensDeltaAmounts, 'id'))
+  const assetsMetadata = useAssetsMetadata(map(tokenAmounts, 'id'))
 
   if (isConsolidationTx(tx)) {
     direction = 'out'
     infoType = 'move'
-  } else if (isSwap(amount, tokensDeltaAmounts)) {
+  } else if (hasPositiveAndNegativeAmounts(amount, tokenAmounts)) {
     direction = 'swap'
     infoType = 'swap'
   } else if (isMempoolTx(tx)) {
@@ -65,7 +65,7 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
   )
   lockTime = lockTime?.toISOString() === new Date(0).toISOString() ? undefined : lockTime
 
-  const groupedTokens = tokensDeltaAmounts.reduce(
+  const groupedTokens = tokenAmounts.reduce(
     (acc, token) => {
       const fungibleToken = assetsMetadata.fungibleTokens.find((i) => i.id === token.id)
       const nonFungibleToken = assetsMetadata.nfts.find((i) => i.id === token.id)
