@@ -114,7 +114,7 @@ const AddressDetailsModal = memo(({ id, addressHash }: ModalBaseProp & AddressDe
           title={t('Address transactions')}
           addressHashes={[address.hash]}
           compact
-          hideFromColumn
+          isInAddressDetailsModal
           headerExtraContent={
             <Button short role="secondary" Icon={FileDown} onClick={openCSVExportModal}>
               {t('Export')}
