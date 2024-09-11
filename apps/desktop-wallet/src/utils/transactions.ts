@@ -21,21 +21,26 @@ import {
   AssetAmount,
   calcTxAmountsDeltaForAddress,
   convertToNegative,
-  getDirection,
+  hasPositiveAndNegativeAmounts,
   isConsolidationTx,
   isInternalTx,
-  isSwap,
   TransactionDirection,
-  TransactionInfoAsset,
   TransactionInfoType
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { DUST_AMOUNT, explorer, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { DUST_AMOUNT, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
+import { AssetOutput, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { colord } from 'colord'
 import dayjs from 'dayjs'
+import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, Repeat, Repeat2 } from 'lucide-react'
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useTheme } from 'styled-components'
 
 import { SelectOption } from '@/components/Inputs/Select'
+import { useAppSelector } from '@/hooks/redux'
 import i18n from '@/i18n'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import { store } from '@/storage/store'
 import { TranslationKey } from '@/types/i18next'
 import { Direction, PendingTransaction, TransactionTimePeriod } from '@/types/transactions'
@@ -124,73 +129,166 @@ export const directionOptions: {
   }
 ]
 
-type TransactionInfo = {
-  assets: TransactionInfoAsset[]
-  direction: TransactionDirection
-  infoType: TransactionInfoType
-  lockTime?: Date
+export const calcPendingTxAmountsDelta = (tx: PendingTransaction) => ({
+  alphAmount: tx.amount ? convertToNegative(BigInt(tx.amount)) : BigInt(0),
+  tokenAmounts: tx.tokens
+    ? tx.tokens.map((token) => ({ ...token, amount: convertToNegative(BigInt(token.amount)) }))
+    : []
+})
+
+export const useTransactionAmountDeltas = (tx: Transaction | PendingTransaction, addressHash: AddressHash) =>
+  useMemo(() => getTransactionAmountDeltas(tx, addressHash), [addressHash, tx])
+
+export const getTransactionAmountDeltas = (tx: Transaction | PendingTransaction, addressHash: AddressHash) =>
+  isPendingTx(tx) ? calcPendingTxAmountsDelta(tx) : calcTxAmountsDeltaForAddress(tx, addressHash)
+
+export const useTransactionDirection = (
+  tx: Transaction | PendingTransaction,
+  addressHash: AddressHash
+): TransactionDirection => {
+  const internalAddresses = useAppSelector(selectAllAddressHashes)
+
+  return useMemo(() => {
+    if (isPendingTx(tx)) {
+      if (internalAddresses.includes(tx.toAddress)) {
+        if (addressHash === tx.fromAddress) {
+          return 'out'
+        } else {
+          return 'in'
+        }
+      } else {
+        return 'out'
+      }
+    } else if (isConsolidationTx(tx)) {
+      return 'out'
+    } else {
+      const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
+
+      if (hasPositiveAndNegativeAmounts(alphAmount, tokenAmounts)) {
+        return 'swap'
+      } else {
+        // tokenAmounts is checked in the swap condition
+        if (alphAmount < 0) {
+          return 'out'
+        } else {
+          return 'in'
+        }
+      }
+    }
+  }, [addressHash, internalAddresses, tx])
 }
 
-export const getTransactionInfo = (
+export const useTransactionInfoType = (
   tx: Transaction | PendingTransaction,
   addressHash: AddressHash,
-  showInternalInflows?: boolean
-): TransactionInfo => {
+  isInAddressDetailsModal?: boolean
+): TransactionInfoType =>
+  useMemo(
+    () => getTransactionInfoType(tx, addressHash, isInAddressDetailsModal),
+    [addressHash, isInAddressDetailsModal, tx]
+  )
+
+export const getTransactionInfoType = (
+  tx: Transaction | PendingTransaction,
+  addressHash: AddressHash,
+  isInAddressDetailsModal?: boolean
+): TransactionInfoType => {
   const state = store.getState()
-  const fungibleTokens = state.fungibleTokens.entities
   const internalAddresses = state.addresses.ids as AddressHash[]
 
-  let amount: bigint | undefined = BigInt(0)
-  let direction: TransactionDirection
-  let infoType: TransactionInfoType
-  let lockTime: Date | undefined
-  let tokens: Required<AssetAmount>[] = []
-
   if (isPendingTx(tx)) {
-    direction = internalAddresses.includes(tx.toAddress) ? (addressHash === tx.fromAddress ? 'out' : 'in') : 'out'
-    infoType = 'pending'
-    amount = tx.amount ? convertToNegative(BigInt(tx.amount)) : undefined
-    tokens = tx.tokens ? tx.tokens.map((token) => ({ ...token, amount: convertToNegative(BigInt(token.amount)) })) : []
-    lockTime = tx.lockTime !== undefined ? new Date(tx.lockTime) : undefined
+    return 'pending'
+  } else if (isConsolidationTx(tx)) {
+    return 'move'
   } else {
-    const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
+    const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
 
-    amount = alphAmount
-    tokens = tokenAmounts.map((token) => ({ ...token, amount: token.amount }))
-
-    if (isConsolidationTx(tx)) {
-      direction = 'out'
-      infoType = 'move'
-    } else if (isSwap(amount, tokens)) {
-      direction = 'swap'
-      infoType = 'swap'
+    if (hasPositiveAndNegativeAmounts(alphAmount, tokenAmounts)) {
+      return 'swap'
     } else {
-      direction = getDirection(tx, addressHash)
       const isInternalTransfer = isInternalTx(tx, internalAddresses)
-      infoType =
-        (isInternalTransfer && showInternalInflows && direction === 'out') ||
-        (isInternalTransfer && !showInternalInflows)
-          ? 'move'
-          : direction
+      const alphAmountReduced = alphAmount < 0 // tokenAmounts is checked in the swap condition
+
+      if (
+        (isInternalTransfer && isInAddressDetailsModal && alphAmountReduced) ||
+        (isInternalTransfer && !isInAddressDetailsModal)
+      ) {
+        return 'move'
+      } else {
+        if (alphAmountReduced) {
+          return 'out'
+        } else {
+          return 'in'
+        }
+      }
     }
-
-    lockTime = (tx.outputs ?? []).reduce(
-      (a, b) =>
-        a > new Date((b as explorer.AssetOutput).lockTime ?? 0)
-          ? a
-          : new Date((b as explorer.AssetOutput).lockTime ?? 0),
-      new Date(0)
-    )
-    lockTime = lockTime.toISOString() === new Date(0).toISOString() ? undefined : lockTime
   }
+}
 
-  const tokenAssets = [...tokens.map((token) => ({ ...token, ...fungibleTokens[token.id] }))]
-  const assets = amount !== undefined ? [{ ...ALPH, amount }, ...tokenAssets] : tokenAssets
+export const useTransactionLockTime = (tx: Transaction | PendingTransaction) =>
+  useMemo(() => {
+    if (isPendingTx(tx)) {
+      if (tx.lockTime) return new Date(tx.lockTime)
+    } else {
+      if (tx.outputs) {
+        // TODO: The current algorithm finds lock time of ANY output that is the furthest in the future. But this is not
+        // a good representation of a transaction lock time. Some of the transaction outputs might be locked, some might
+        // not. We only care to see if the same outputs that are used to calculate the transaction delta amouts are also
+        // locked. The algorithm needs to be rewored. See https://github.com/alephium/alephium-frontend/issues/550
+        const latestLockTime = (tx.outputs as AssetOutput[]).reduce(
+          (acc, output) => (acc > new Date(output.lockTime ?? 0) ? acc : new Date(output.lockTime ?? 0)),
+          new Date(0)
+        )
 
-  return {
-    assets,
-    direction,
-    infoType,
-    lockTime
-  }
+        return latestLockTime.toISOString() === new Date(0).toISOString() ? undefined : latestLockTime
+      }
+    }
+  }, [tx])
+
+export const useTransactionIconLabel = (
+  tx: Transaction | PendingTransaction,
+  addressHash: AddressHash,
+  isInAddressDetailsModal?: boolean
+) => {
+  const theme = useTheme()
+  const { t } = useTranslation()
+  const infoType = useTransactionInfoType(tx, addressHash, isInAddressDetailsModal)
+
+  return !isPendingTx(tx) && !tx.scriptExecutionOk
+    ? {
+        label: t('dApp operation'),
+        Icon: Repeat2,
+        iconColor: colord(theme.global.complementary).alpha(0.5).toRgbString(),
+        iconBgColor: colord(theme.global.complementary).alpha(0.05).toRgbString()
+      }
+    : {
+        label: {
+          in: t('Received'),
+          out: t('Sent'),
+          move: t('Moved'),
+          pending: t('Pending'),
+          swap: t('dApp operation')
+        }[infoType],
+        Icon: {
+          in: ArrowDown,
+          out: ArrowUp,
+          move: ArrowLeftRight,
+          pending: CircleEllipsis,
+          swap: Repeat
+        }[infoType],
+        iconColor: {
+          in: theme.global.valid,
+          out: theme.font.highlight,
+          move: theme.font.secondary,
+          pending: theme.font.secondary,
+          swap: theme.global.complementary
+        }[infoType],
+        iconBgColor: {
+          in: colord(theme.global.valid).alpha(0.08).toRgbString(),
+          out: colord(theme.font.highlight).alpha(0.08).toRgbString(),
+          move: colord(theme.font.secondary).alpha(0.08).toRgbString(),
+          pending: colord(theme.font.secondary).alpha(0.08).toRgbString(),
+          swap: colord(theme.global.complementary).alpha(0.08).toRgbString()
+        }[infoType]
+      }
 }

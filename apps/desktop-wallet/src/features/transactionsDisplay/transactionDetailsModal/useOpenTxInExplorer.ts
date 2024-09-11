@@ -16,29 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Optional } from '@alephium/web3'
-import { Token } from '@alephium/web3/dist/src/api/api-explorer'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
-import { Asset, AssetAmount } from '@/types/assets'
+import { useAppSelector } from '@/hooks/redux'
+import { openInWebBrowser } from '@/utils/misc'
 
-export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
-  Required<AssetAmount>
+const useOpenTxInExplorer = (txHash: Transaction['hash']) => {
+  const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
 
-export type TransactionInfo = {
-  assets: TransactionInfoAsset[]
-  direction: TransactionDirection
-  infoType: TransactionInfoType
-  lockTime?: Date
+  return () => openInWebBrowser(`${explorerUrl}/transactions/${txHash}`)
 }
 
-export type TransactionDirection = 'out' | 'in' | 'swap'
-
-export type TransactionInfoType = TransactionDirection | 'move' | 'pending'
-
-export type AmountDeltas = {
-  alphAmount: bigint
-  tokenAmounts: {
-    id: Token['id']
-    amount: bigint
-  }[]
-}
+export default useOpenTxInExplorer

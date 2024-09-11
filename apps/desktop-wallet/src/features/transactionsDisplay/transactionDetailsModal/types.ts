@@ -16,29 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Optional } from '@alephium/web3'
-import { Token } from '@alephium/web3/dist/src/api/api-explorer'
+import { AddressHash } from '@alephium/shared'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
-import { Asset, AssetAmount } from '@/types/assets'
-
-export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
-  Required<AssetAmount>
-
-export type TransactionInfo = {
-  assets: TransactionInfoAsset[]
-  direction: TransactionDirection
-  infoType: TransactionInfoType
-  lockTime?: Date
-}
-
-export type TransactionDirection = 'out' | 'in' | 'swap'
-
-export type TransactionInfoType = TransactionDirection | 'move' | 'pending'
-
-export type AmountDeltas = {
-  alphAmount: bigint
-  tokenAmounts: {
-    id: Token['id']
-    amount: bigint
-  }[]
+export interface TransactionDetailsModalSectionProps {
+  tx: Transaction
+  addressHash: AddressHash
 }
