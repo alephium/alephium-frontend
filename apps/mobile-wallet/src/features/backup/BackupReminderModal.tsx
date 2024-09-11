@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 
 import AppText from '~/components/AppText'
@@ -24,7 +23,7 @@ import Button from '~/components/buttons/Button'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
+import withModalWrapper from '~/features/modals/withModalWrapper'
 import { useAppDispatch } from '~/hooks/redux'
 import BottomModal from '~/modals/BottomModal'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -33,7 +32,7 @@ export interface BackupReminderModalProps {
   isNewWallet: boolean
 }
 
-const BackupReminderModal = memo(({ id, isNewWallet }: ModalBaseProp & BackupReminderModalProps) => {
+const BackupReminderModal = withModalWrapper<BackupReminderModalProps>(({ id, isNewWallet }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -45,7 +44,7 @@ const BackupReminderModal = memo(({ id, isNewWallet }: ModalBaseProp & BackupRem
 
   return (
     <BottomModal
-      modalId={id}
+      id={id}
       Content={(props) => (
         <ModalContent verticalGap {...props}>
           <ScreenSection>

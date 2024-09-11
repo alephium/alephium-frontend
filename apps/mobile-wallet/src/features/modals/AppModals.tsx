@@ -16,34 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Children, isValidElement, memo, ReactElement, ReactNode, useEffect } from 'react'
+import { Children, isValidElement, ReactElement, ReactNode, useEffect } from 'react'
 import { ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
-import BackupReminderModal from '~/features/backup/BackupReminderModal'
-import BuyModal from '~/features/buy/BuyModal'
-import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
 import { selectAllModals } from '~/features/modals/modalSelectors'
+import { getModalComponent } from '~/features/modals/modalTypes'
+import withModalWrapper from '~/features/modals/withModalWrapper'
 import { useAppSelector } from '~/hooks/redux'
 
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
 
-  if (openedModals.length === 0) return null
-
   return (
     <ModalsContainer pointerEvents={openedModals.length > 0 ? 'auto' : 'none'}>
       {openedModals.map((modal) => {
-        switch (modal.params.name) {
-          case 'BuyModal':
-            return <BuyModal id={modal.id} key={modal.id} />
-          case 'FundPasswordReminderModal':
-            return <FundPasswordReminderModal id={modal.id} key={modal.id} />
-          case 'BackupReminderModal':
-            return <BackupReminderModal id={modal.id} key={modal.id} {...modal.params.props} />
-          default:
-            return null
-        }
+        const ModalComponent = getModalComponent(modal.params.name)
+        return <ModalComponent key={modal.id} id={modal.id} {...modal.params.props} />
       })}
     </ModalsContainer>
   )
@@ -56,8 +45,10 @@ interface ModalsContainerProps {
 const ModalsContainer = ({ children, ...props }: ModalsContainerProps & ViewProps) => {
   useEffect(() => {
     Children.forEach(children, (child) => {
-      if (isValidElement(child) && !isElementMemoized(child)) {
-        console.warn(`Warning: ${getElementName(child)} is not memoized! Please wrap it with React.memo().`)
+      if (isValidElement(child) && !isModalWrapped(child)) {
+        console.warn(
+          `Warning: ${getElementName(child)} is not wrapped! Please wrap it with the withModalWrapper function.`
+        )
       }
     })
   }, [children])
@@ -77,14 +68,16 @@ const ModalsContainerStyled = styled.View`
 
 // TODO: Use functions defined in shared-react 👇
 
-const memoizedFn = memo(() => null)
+const wrappedModalExample = withModalWrapper(() => null)
 
-const isElementMemoized = <P,>(element: ReactElement<P>): boolean => {
+const isModalWrapped = <P,>(element: ReactElement<P>): boolean => {
   if (!isValidElement(element)) return false
 
   const elementType = element.type as unknown as { $$typeof?: symbol }
 
-  return !!elementType.$$typeof && elementType.$$typeof === (memoizedFn as unknown as { $$typeof: symbol }).$$typeof
+  return (
+    !!elementType.$$typeof && elementType.$$typeof === (wrappedModalExample as unknown as { $$typeof: symbol }).$$typeof
+  )
 }
 
 const getElementName = <P,>(element: ReactElement<P>): string => {

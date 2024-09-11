@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { memo, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { BackHandler, Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -30,14 +30,14 @@ import ScreenTitle from '~/components/layout/ScreenTitle'
 import LinkToWeb from '~/components/text/LinkToWeb'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
+import withModalWrapper from '~/features/modals/withModalWrapper'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import BottomModal from '~/modals/BottomModal'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { selectDefaultAddress } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-const BuyModal = memo(({ id }: ModalBaseProp) => {
+const BuyModal = withModalWrapper(({ id }) => {
   const { t } = useTranslation()
   const navigation = useNavigation<NavigationProp<InWalletTabsParamList>>()
   const theme = useTheme()
@@ -94,7 +94,7 @@ const BuyModal = memo(({ id }: ModalBaseProp) => {
 
   return (
     <BottomModal
-      modalId={id}
+      id={id}
       title={t('Buy')}
       maximisedContent
       noPadding

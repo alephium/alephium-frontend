@@ -55,7 +55,7 @@ const springConfig: WithSpringConfig = {
 }
 
 export interface BottomModalProps {
-  modalId: number
+  id: number
   Content: (props: ModalContentProps) => ReactNode
   onClose?: () => void
   title?: string
@@ -67,7 +67,7 @@ export interface BottomModalProps {
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const BottomModal = ({
-  modalId,
+  id,
   Content,
   onClose,
   title,
@@ -147,8 +147,8 @@ const BottomModal = ({
 
   const handleCloseOnJS = useCallback(() => {
     if (onClose) onClose()
-    dispatch(closeModal({ id: modalId }))
-  }, [dispatch, modalId, onClose])
+    dispatch(closeModal({ id }))
+  }, [dispatch, id, onClose])
 
   const handleClose = useCallback(() => {
     'worklet'

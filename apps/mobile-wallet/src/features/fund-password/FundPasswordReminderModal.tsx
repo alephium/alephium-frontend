@@ -28,12 +28,12 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { fundPasswordReminded } from '~/features/fund-password/fundPasswordActions'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import { ModalBaseProp } from '~/features/modals/modalTypes'
+import withModalWrapper from '~/features/modals/withModalWrapper'
 import { useAppDispatch } from '~/hooks/redux'
 import BottomModal from '~/modals/BottomModal'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
-const FundPasswordReminderModal = ({ id }: ModalBaseProp) => {
+const FundPasswordReminderModal = withModalWrapper(({ id }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -65,7 +65,7 @@ const FundPasswordReminderModal = ({ id }: ModalBaseProp) => {
 
   return (
     <BottomModal
-      modalId={id}
+      id={id}
       Content={(props) => (
         <ModalContent {...props} verticalGap>
           <ScreenSection>
@@ -90,6 +90,6 @@ const FundPasswordReminderModal = ({ id }: ModalBaseProp) => {
       )}
     />
   )
-}
+})
 
 export default FundPasswordReminderModal

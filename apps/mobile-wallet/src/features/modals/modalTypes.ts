@@ -16,33 +16,38 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { BackupReminderModalProps } from '~/features/backup/BackupReminderModal'
+import BackupReminderModal, { BackupReminderModalProps } from '~/features/backup/BackupReminderModal'
+import BuyModal from '~/features/buy/BuyModal'
+import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
 
-const ModalNames = {
-  BuyModal: 'BuyModal',
-  FundPasswordReminderModal: 'FundPasswordReminderModal',
-  BackupReminderModal: 'BackupReminderModal'
-} as const
+export const ModalComponents = {
+  BuyModal,
+  FundPasswordReminderModal,
+  BackupReminderModal
+}
 
-export type ModalName = keyof typeof ModalNames
+export type ModalName = keyof typeof ModalComponents
 
-export type OpenModalParams =
-  | {
-      name: typeof ModalNames.BuyModal
-    }
-  | {
-      name: typeof ModalNames.FundPasswordReminderModal
-    }
-  | {
-      name: typeof ModalNames.BackupReminderModal
-      props: BackupReminderModalProps
-    }
+export interface ModalPropsMap {
+  BuyModal: never
+  FundPasswordReminderModal: never
+  BackupReminderModal: BackupReminderModalProps
+}
+
+export const getModalComponent = (name: ModalName) => ModalComponents[name]
+
+export type OpenModalParams = {
+  [K in ModalName]: {
+    name: K
+    props: ModalPropsMap[K]
+  }
+}[ModalName]
 
 export type ModalInstance = {
   id: number
   params: OpenModalParams
 }
 
-export interface ModalBaseProp {
+export interface ModalRequiredProps {
   id: ModalInstance['id']
 }
