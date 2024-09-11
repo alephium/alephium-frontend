@@ -54,7 +54,7 @@ const combine = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): Add
     (totalBalances, { data }) => {
       totalBalances.totalBalance += data ? data.alphBalances.totalBalance : BigInt(0)
       totalBalances.lockedBalance += data ? data.alphBalances.lockedBalance : BigInt(0)
-      totalBalances.availableBalance = data ? data.alphBalances.availableBalance : BigInt(0)
+      totalBalances.availableBalance += data ? data.alphBalances.availableBalance : BigInt(0)
 
       return totalBalances
     },

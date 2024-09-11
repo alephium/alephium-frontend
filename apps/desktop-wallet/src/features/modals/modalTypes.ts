@@ -19,19 +19,26 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { CallContractSendModalProps } from '@/features/send/callContract'
 import { DeployContractSendModalProps } from '@/features/send/deployContract'
 import { TransferSendModalProps } from '@/features/send/Transfer'
+import { ConfirmLockTimeModalProps } from '@/features/send/Transfer/ConfirmLockTimeModal'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
 import { SignMessageModalProps } from '@/features/walletConnect/SignMessageModal'
 import { SignUnsignedTxModalProps } from '@/features/walletConnect/SignUnsignedTxModal'
 import { WalletConnectSessionProposalModalProps } from '@/features/walletConnect/WalletConnectSessionProposalModal'
 import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal'
 import { AddressOptionsModalProps } from '@/modals/AddressOptionsModal'
+import { AddressSweepModalProps } from '@/modals/AddressSweepModal'
+import { ConfirmModalProps } from '@/modals/ConfirmModal'
+import { ConsolidateUTXOsModalProps } from '@/modals/ConsolidateUTXOsModal'
 import { ContactFormModalProps } from '@/modals/ContactFormModal'
 import { CSVExportModalProps } from '@/modals/CSVExportModal'
 import { NewAddressModalProps } from '@/modals/NewAddressModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
 import { ReceiveModalProps } from '@/modals/ReceiveModal'
 import { SettingsModalProps } from '@/modals/SettingsModal'
+import { CopyPrivateKeyConfirmationModalProps } from '@/modals/SettingsModal/CopyPrivateKeyConfirmationModal'
+import { DisablePasswordRequirementModalProps } from '@/modals/SettingsModal/DisablePasswordRequirementModal'
 import { TransactionDetailsModalProps } from '@/modals/TransactionDetailsModal'
+import { WalletRemovalModalProps } from '@/modals/WalletRemovalModal'
 
 const ModalNames = {
   AddressDetailsModal: 'AddressDetailsModal',
@@ -55,7 +62,14 @@ const ModalNames = {
   DeployContractSendModal: 'DeployContractSendModal',
   WalletConnectSessionProposalModal: 'WalletConnectSessionProposalModal',
   SignUnsignedTxModal: 'SignUnsignedTxModal',
-  SignMessageModal: 'SignMessageModal'
+  SignMessageModal: 'SignMessageModal',
+  ConsolidateUTXOsModal: 'ConsolidateUTXOsModal',
+  ConfirmLockTimeModal: 'ConfirmLockTimeModal',
+  ConfirmModal: 'ConfirmModal',
+  CopyPrivateKeyConfirmationModal: 'CopyPrivateKeyConfirmationModal',
+  DisablePasswordRequirementModal: 'DisablePasswordRequirementModal',
+  AddressSweepModal: 'AddressSweepModal',
+  WalletRemovalModal: 'WalletRemovalModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -142,6 +156,34 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.SignMessageModal
       props: SignMessageModalProps
+    }
+  | {
+      name: typeof ModalNames.ConsolidateUTXOsModal
+      props: ConsolidateUTXOsModalProps
+    }
+  | {
+      name: typeof ModalNames.ConfirmLockTimeModal
+      props: ConfirmLockTimeModalProps
+    }
+  | {
+      name: typeof ModalNames.ConfirmModal
+      props: ConfirmModalProps
+    }
+  | {
+      name: typeof ModalNames.CopyPrivateKeyConfirmationModal
+      props: CopyPrivateKeyConfirmationModalProps
+    }
+  | {
+      name: typeof ModalNames.DisablePasswordRequirementModal
+      props: DisablePasswordRequirementModalProps
+    }
+  | {
+      name: typeof ModalNames.AddressSweepModal
+      props: AddressSweepModalProps
+    }
+  | {
+      name: typeof ModalNames.WalletRemovalModal
+      props: WalletRemovalModalProps
     }
 
 export type ModalInstance = {

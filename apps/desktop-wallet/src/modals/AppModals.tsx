@@ -24,6 +24,7 @@ import { selectAllModals } from '@/features/modals/modalSelectors'
 import CallContractSendModal from '@/features/send/callContract'
 import DeployContractSendModal from '@/features/send/deployContract'
 import TransferSendModal from '@/features/send/Transfer'
+import ConfirmLockTimeModal from '@/features/send/Transfer/ConfirmLockTimeModal'
 import WalletUnlockModal from '@/features/switch-wallet/WalletUnlockModal'
 import SignMessageModal from '@/features/walletConnect/SignMessageModal'
 import SignUnsignedTxModal from '@/features/walletConnect/SignUnsignedTxModal'
@@ -32,6 +33,9 @@ import WalletConnectSessionProposalModal from '@/features/walletConnect/WalletCo
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModal from '@/modals/AddressDetailsModal'
 import AddressOptionsModal from '@/modals/AddressOptionsModal'
+import AddressSweepModal from '@/modals/AddressSweepModal'
+import ConfirmModal from '@/modals/ConfirmModal'
+import ConsolidateUTXOsModal from '@/modals/ConsolidateUTXOsModal'
 import ContactFormModal from '@/modals/ContactFormModal'
 import CSVExportModal from '@/modals/CSVExportModal'
 import CurrentWalletModal from '@/modals/CurrentWalletModal'
@@ -40,9 +44,12 @@ import NFTDetailsModal from '@/modals/NFTDetailsModal'
 import ReceiveModal from '@/modals/ReceiveModal'
 import SecretPhraseModal from '@/modals/SecretPhraseModal'
 import SettingsModal from '@/modals/SettingsModal'
+import CopyPrivateKeyConfirmationModal from '@/modals/SettingsModal/CopyPrivateKeyConfirmationModal'
+import DisablePasswordRequirementModal from '@/modals/SettingsModal/DisablePasswordRequirementModal'
 import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import TransactionDetailsModal from '@/modals/TransactionDetailsModal'
 import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
+import WalletRemovalModal from '@/modals/WalletRemovalModal'
 import AdvancedOperationsSideModal from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsSideModal'
 
 const AppModals = () => {
@@ -57,6 +64,8 @@ const AppModals = () => {
         switch (modal.params.name) {
           case 'SettingsModal':
             return <SettingsModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'WalletRemovalModal':
+            return <WalletRemovalModal id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
 
@@ -105,6 +114,18 @@ const AppModals = () => {
               return <SignUnsignedTxModal id={modal.id} key={modal.id} {...modal.params.props} />
             case 'SignMessageModal':
               return <SignMessageModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'ConsolidateUTXOsModal':
+              return <ConsolidateUTXOsModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'ConfirmLockTimeModal':
+              return <ConfirmLockTimeModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'ConfirmModal':
+              return <ConfirmModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'CopyPrivateKeyConfirmationModal':
+              return <CopyPrivateKeyConfirmationModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'DisablePasswordRequirementModal':
+              return <DisablePasswordRequirementModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'AddressSweepModal':
+              return <AddressSweepModal id={modal.id} key={modal.id} {...modal.params.props} />
           }
         })}
     </AnimatePresenceModalWrapper>
