@@ -20,7 +20,7 @@ import { client, ONE_DAY_MS, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { explorer, NFTMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions, skipToken } from '@tanstack/react-query'
-import { create, maxBatchSizeScheduler } from '@yornaath/batshit'
+import { create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 import axios from 'axios'
 
 import { convertDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/utils'
@@ -125,7 +125,7 @@ export const tokenTypesQuery = (ids: TokenId[]) =>
     staleTime: Infinity
   })
 
-const scheduler = maxBatchSizeScheduler({ maxBatchSize: TOKENS_QUERY_LIMIT })
+const scheduler = windowedFiniteBatchScheduler({ maxBatchSize: TOKENS_QUERY_LIMIT, windowMs: 10 })
 
 const tokenTypeBatchFetcher = create({
   fetcher: client.explorer.tokens.postTokens,
