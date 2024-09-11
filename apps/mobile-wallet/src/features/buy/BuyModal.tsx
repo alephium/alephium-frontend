@@ -37,7 +37,7 @@ import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { selectDefaultAddress } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-const BuyModal = withModalWrapper(({ id }) => {
+const BuyModal = withModalWrapper(({ id, isOpen }) => {
   const { t } = useTranslation()
   const navigation = useNavigation<NavigationProp<InWalletTabsParamList>>()
   const theme = useTheme()
@@ -95,6 +95,7 @@ const BuyModal = withModalWrapper(({ id }) => {
   return (
     <BottomModal
       id={id}
+      isOpen={isOpen}
       title={t('Buy')}
       maximisedContent
       noPadding

@@ -33,7 +33,7 @@ import { useAppDispatch } from '~/hooks/redux'
 import BottomModal from '~/modals/BottomModal'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
-const FundPasswordReminderModal = withModalWrapper(({ id }) => {
+const FundPasswordReminderModal = withModalWrapper(({ id, isOpen }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -66,6 +66,7 @@ const FundPasswordReminderModal = withModalWrapper(({ id }) => {
   return (
     <BottomModal
       id={id}
+      isOpen={isOpen}
       Content={(props) => (
         <ModalContent {...props} verticalGap>
           <ScreenSection>

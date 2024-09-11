@@ -29,18 +29,15 @@ export const ModalComponents = {
 export type ModalName = keyof typeof ModalComponents
 
 export interface ModalPropsMap {
-  BuyModal: never
-  FundPasswordReminderModal: never
+  BuyModal: undefined
+  FundPasswordReminderModal: undefined
   BackupReminderModal: BackupReminderModalProps
 }
 
 export const getModalComponent = (name: ModalName) => ModalComponents[name]
 
 export type OpenModalParams = {
-  [K in ModalName]: {
-    name: K
-    props: ModalPropsMap[K]
-  }
+  [K in ModalName]: ModalPropsMap[K] extends undefined ? { name: K } : { name: K; props: ModalPropsMap[K] }
 }[ModalName]
 
 export type ModalInstance = {
@@ -50,4 +47,5 @@ export type ModalInstance = {
 
 export interface ModalRequiredProps {
   id: ModalInstance['id']
+  isOpen: boolean
 }

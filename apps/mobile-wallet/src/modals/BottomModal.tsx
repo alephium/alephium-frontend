@@ -56,6 +56,7 @@ const springConfig: WithSpringConfig = {
 
 export interface BottomModalProps {
   id: number
+  isOpen: boolean
   Content: (props: ModalContentProps) => ReactNode
   onClose?: () => void
   title?: string
@@ -68,6 +69,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const BottomModal = ({
   id,
+  isOpen,
   Content,
   onClose,
   title,
@@ -78,6 +80,7 @@ const BottomModal = ({
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
+  const [isMounted, setIsMounted] = useState(true)
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -148,6 +151,7 @@ const BottomModal = ({
   const handleCloseOnJS = useCallback(() => {
     if (onClose) onClose()
     dispatch(closeModal({ id }))
+    setIsMounted(false)
   }, [dispatch, id, onClose])
 
   const handleClose = useCallback(() => {
@@ -221,6 +225,18 @@ const BottomModal = ({
       maxHeight
     ]
   )
+
+  // Allow handleClose to run when Modal must be unmounted
+  useEffect(() => {
+    if (!isOpen && isMounted) {
+      handleClose()
+    } else if (isOpen && !isMounted) {
+      canMaximize.value ? handleMaximize() : handleMinimize()
+      setIsMounted(true)
+    }
+  }, [canMaximize.value, handleClose, handleMaximize, handleMinimize, isMounted, isOpen])
+
+  if (!isMounted) return null
 
   return (
     <GestureDetector gesture={panGesture}>
