@@ -24,11 +24,11 @@ import { create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 import axios from 'axios'
 
 import { convertDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/utils'
-import { TokenId } from '@/types/tokens'
+import { TokenId, UnlistedFT } from '@/types/tokens'
 
 export type TokenTypesQueryFnData = Record<explorer.TokenStdInterfaceId, TokenId[]>
 
-const StdInterfaceIds = Object.values(explorer.TokenStdInterfaceId)
+export const StdInterfaceIds = Object.values(explorer.TokenStdInterfaceId)
 
 interface TokenQueryProps {
   id: TokenId
@@ -63,7 +63,7 @@ export const fungibleTokenMetadataQuery = ({ id, skip }: TokenQueryProps) =>
       ? async () => {
           const tokenMetadata = await fungibleTokenMetadataBatchFetcher.fetch(id)
 
-          return tokenMetadata ? convertDecimalsToNumber(tokenMetadata) : undefined
+          return tokenMetadata ? (convertDecimalsToNumber(tokenMetadata) as UnlistedFT) : undefined
         }
       : skipToken,
     staleTime: Infinity
@@ -85,8 +85,9 @@ export const nftDataQuery = ({ id, tokenUri, skip }: NFTQueryProps) =>
             const nftData = (await axios.get(tokenUri)).data as NFTTokenUriMetaData
 
             return matchesNFTTokenUriMetaDataSchema(nftData)
-              ? nftData
+              ? { id, ...nftData }
               : {
+                  id,
                   name: nftData?.name.toString() || 'Unsupported NFT',
                   image: nftData?.image.toString() || ''
                 }

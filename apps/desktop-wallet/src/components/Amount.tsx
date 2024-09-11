@@ -47,7 +47,12 @@ interface FiatAmountProps extends AmountBaseProps {
   value: number
 }
 
-type AmountProps = TokenAmountProps | FiatAmountProps
+interface CustomAmountProps extends AmountBaseProps {
+  value: number
+  suffix: string
+}
+
+type AmountProps = TokenAmountProps | FiatAmountProps | CustomAmountProps
 
 const Amount = (props: AmountProps) => {
   const dispatch = useAppDispatch()
@@ -68,7 +73,13 @@ const Amount = (props: AmountProps) => {
     >
       {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
 
-      {isFiat(props) ? <FiatAmount {...props} /> : <TokenAmount {...props} />}
+      {isFiat(props) ? (
+        <FiatAmount {...props} />
+      ) : isCustom(props) ? (
+        <CustomAmount {...props} />
+      ) : (
+        <TokenAmount {...props} />
+      )}
     </AmountStyled>
   )
 }
@@ -104,7 +115,7 @@ const TokenAmount = ({
   )
 }
 
-const FiatAmount = ({ value, fadeDecimals, showPlusMinus, overrideSuffixColor, color }: FiatAmountProps) => {
+const FiatAmount = ({ value, fadeDecimals, overrideSuffixColor, color }: FiatAmountProps) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
   const amount = formatFiatAmountForDisplay(value)
@@ -114,6 +125,18 @@ const FiatAmount = ({ value, fadeDecimals, showPlusMinus, overrideSuffixColor, c
       <AmountPartitions amount={amount} fadeDecimals={fadeDecimals} />
 
       <Suffix color={overrideSuffixColor ? color : undefined}> {CURRENCIES[fiatCurrency].symbol}</Suffix>
+    </>
+  )
+}
+
+const CustomAmount = ({ value, fadeDecimals, overrideSuffixColor, color, suffix }: CustomAmountProps) => {
+  const amount = (value < 1 ? value * -1 : value).toString()
+
+  return (
+    <>
+      <AmountPartitions amount={amount} fadeDecimals={fadeDecimals} />
+
+      <Suffix color={overrideSuffixColor ? color : undefined}> {suffix}</Suffix>
     </>
   )
 }
@@ -145,8 +168,11 @@ const AmountPartitions = ({ amount, fadeDecimals }: AmountPartitions) => {
   )
 }
 
-const isFiat = (asset: FiatAmountProps | TokenAmountProps): asset is FiatAmountProps =>
+const isFiat = (asset: FiatAmountProps | TokenAmountProps | CustomAmountProps): asset is FiatAmountProps =>
   (asset as FiatAmountProps).isFiat === true
+
+const isCustom = (asset: FiatAmountProps | TokenAmountProps | CustomAmountProps): asset is CustomAmountProps =>
+  (asset as CustomAmountProps).suffix !== undefined
 
 const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value'> & { discreetMode: boolean }>`
   color: ${({ color, highlight, value, theme }) =>
