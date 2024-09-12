@@ -16,34 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Children, isValidElement, ReactElement, ReactNode, useEffect, useState } from 'react'
+import { Children, isValidElement, ReactElement, ReactNode, useEffect } from 'react'
 import { ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
 import { selectAllModals } from '~/features/modals/modalSelectors'
-import { getModalComponent, ModalInstance } from '~/features/modals/modalTypes'
+import { getModalComponent } from '~/features/modals/modalTypes'
 import withModalWrapper from '~/features/modals/withModalWrapper'
 import { useAppSelector } from '~/hooks/redux'
 
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
-  const [allOpenedModals, setAllOpenedModals] = useState<ModalInstance[]>([])
-
-  useEffect(() => {
-    const newModal = openedModals.find((modal) => !allOpenedModals.some((openedModal) => openedModal.id === modal.id))
-
-    if (newModal) {
-      setAllOpenedModals((prev) => [...prev, newModal])
-    }
-  }, [allOpenedModals, openedModals])
 
   return (
     <ModalsContainer pointerEvents={openedModals.length > 0 ? 'auto' : 'none'}>
-      {allOpenedModals.map((modal) => {
-        const isModalOpen = !!openedModals.find((m) => m.id === modal.id)
-
+      {openedModals.map((modal) => {
         const ModalComponent = getModalComponent(modal.params.name)
-        return <ModalComponent key={modal.id} id={modal.id} isOpen={isModalOpen} {...modal.params.props} />
+        return <ModalComponent key={modal.id} id={modal.id} {...modal.params.props} />
       })}
     </ModalsContainer>
   )

@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice } from '@reduxjs/toolkit'
 
-import { closeModal, openModal } from '~/features/modals/modalActions'
+import { closeModal, openModal, removeModal } from '~/features/modals/modalActions'
 import { modalAdapter } from '~/features/modals/modalAdapters'
 
 const initialState = modalAdapter.getInitialState()
@@ -27,7 +27,7 @@ const modalSlice = createSlice({
   name: 'modals',
   initialState,
   reducers: {},
-  extraReducers(builder) {
+  extraReducers: (builder) => {
     builder
       .addCase(openModal, (state, action) => {
         // Allow only one modal of the same type to be open at the same time
@@ -37,10 +37,17 @@ const modalSlice = createSlice({
 
         modalAdapter.addOne(state, {
           id: Date.now(),
-          params: action.payload
+          params: action.payload,
+          isClosing: false
         })
       })
       .addCase(closeModal, (state, { payload: { id } }) => {
+        const modal = state.entities[id]
+        if (modal) {
+          modal.isClosing = true
+        }
+      })
+      .addCase(removeModal, (state, { payload: { id } }) => {
         modalAdapter.removeOne(state, id)
       })
   }

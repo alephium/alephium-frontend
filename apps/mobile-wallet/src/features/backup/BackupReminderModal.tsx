@@ -32,7 +32,7 @@ export interface BackupReminderModalProps {
   isNewWallet: boolean
 }
 
-const BackupReminderModal = withModalWrapper<BackupReminderModalProps>(({ id, isOpen, isNewWallet }) => {
+const BackupReminderModal = withModalWrapper<BackupReminderModalProps>(({ id, isNewWallet }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -45,7 +45,6 @@ const BackupReminderModal = withModalWrapper<BackupReminderModalProps>(({ id, is
   return (
     <BottomModal
       id={id}
-      isOpen={isOpen}
       Content={(props) => (
         <ModalContent verticalGap {...props}>
           <ScreenSection>

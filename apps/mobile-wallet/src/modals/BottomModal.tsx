@@ -35,9 +35,10 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { CloseButton } from '~/components/buttons/Button'
-import { closeModal } from '~/features/modals/modalActions'
+import { removeModal } from '~/features/modals/modalActions'
 import { ModalContentProps } from '~/features/modals/ModalContent'
-import { useAppDispatch } from '~/hooks/redux'
+import { selectModal } from '~/features/modals/modalSelectors'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type ModalPositions = 'minimised' | 'maximised' | 'closing'
@@ -56,7 +57,6 @@ const springConfig: WithSpringConfig = {
 
 export interface BottomModalProps {
   id: number
-  isOpen: boolean
   Content: (props: ModalContentProps) => ReactNode
   onClose?: () => void
   title?: string
@@ -69,7 +69,6 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const BottomModal = ({
   id,
-  isOpen,
   Content,
   onClose,
   title,
@@ -80,7 +79,7 @@ const BottomModal = ({
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
-  const [isMounted, setIsMounted] = useState(true)
+  const modalEntity = useAppSelector((s) => selectModal(s, id))
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -150,8 +149,9 @@ const BottomModal = ({
 
   const handleCloseOnJS = useCallback(() => {
     if (onClose) onClose()
-    dispatch(closeModal({ id }))
-    setIsMounted(false)
+
+    // Remove modal from stack
+    dispatch(removeModal({ id }))
   }, [dispatch, id, onClose])
 
   const handleClose = useCallback(() => {
@@ -226,17 +226,12 @@ const BottomModal = ({
     ]
   )
 
-  // Allow handleClose to run when Modal must be unmounted
+  // Trigger handle close when modal entity is closed from outside
   useEffect(() => {
-    if (!isOpen && isMounted) {
+    if (position.value !== 'closing' && modalEntity?.isClosing) {
       handleClose()
-    } else if (isOpen && !isMounted) {
-      canMaximize.value ? handleMaximize() : handleMinimize()
-      setIsMounted(true)
     }
-  }, [canMaximize.value, handleClose, handleMaximize, handleMinimize, isMounted, isOpen])
-
-  if (!isMounted) return null
+  }, [handleClose, modalEntity?.isClosing, position.value])
 
   return (
     <GestureDetector gesture={panGesture}>

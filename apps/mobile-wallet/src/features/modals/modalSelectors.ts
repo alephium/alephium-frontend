@@ -19,4 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { modalAdapter } from '~/features/modals/modalAdapters'
 import { RootState } from '~/store/store'
 
-export const { selectAll: selectAllModals } = modalAdapter.getSelectors<RootState>((state) => state.modals)
+export const { selectAll: selectAllModals, selectById: selectModal } = modalAdapter.getSelectors<RootState>(
+  (state) => state.modals
+)

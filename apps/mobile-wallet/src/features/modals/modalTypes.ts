@@ -43,9 +43,9 @@ export type OpenModalParams = {
 export type ModalInstance = {
   id: number
   params: OpenModalParams
+  isClosing: boolean
 }
 
 export interface ModalRequiredProps {
   id: ModalInstance['id']
-  isOpen: boolean
 }
