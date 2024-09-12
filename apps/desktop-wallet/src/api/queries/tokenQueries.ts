@@ -18,11 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { client, ONE_DAY_MS, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { explorer, NFTMetaData, NFTTokenUriMetaData } from '@alephium/web3'
-import { TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-explorer'
-import { queryOptions, skipToken } from '@tanstack/react-query'
+import { TokenInfo, TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-explorer'
+import { queryOptions, skipToken, UseQueryResult } from '@tanstack/react-query'
 import { create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 import axios from 'axios'
 
+import { combineIsLoading } from '@/api/apiDataHooks/utils'
 import { convertDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/utils'
 import { TokenId, UnlistedFT } from '@/types/tokens'
 
@@ -55,6 +56,30 @@ export const tokenTypeQuery = ({ id, skip }: TokenQueryProps) =>
       : skipToken,
     staleTime: Infinity
   })
+
+export const combineTokenTypeQueryResults = (results: UseQueryResult<TokenInfo | undefined>[]) => ({
+  data: results.reduce(
+    (tokenIdsByType, { data: tokenInfo }) => {
+      if (!tokenInfo) return tokenIdsByType
+      const stdInterfaceId = tokenInfo.stdInterfaceId as explorer.TokenStdInterfaceId
+
+      if (StdInterfaceIds.includes(stdInterfaceId)) {
+        tokenIdsByType[stdInterfaceId].push(tokenInfo.token)
+      } else {
+        // Except from NonStandard, the interface might be any string or undefined. We merge all that together.
+        tokenIdsByType[explorer.TokenStdInterfaceId.NonStandard].push(tokenInfo.token)
+      }
+
+      return tokenIdsByType
+    },
+    {
+      [explorer.TokenStdInterfaceId.Fungible]: [],
+      [explorer.TokenStdInterfaceId.NonFungible]: [],
+      [explorer.TokenStdInterfaceId.NonStandard]: []
+    } as Record<explorer.TokenStdInterfaceId, TokenId[]>
+  ),
+  ...combineIsLoading(results)
+})
 
 export const fungibleTokenMetadataQuery = ({ id, skip }: TokenQueryProps) =>
   queryOptions({

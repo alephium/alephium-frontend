@@ -23,13 +23,16 @@ import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import TabBar, { TabItem } from '@/components/TabBar'
+import TableTabBar from '@/components/TableTabBar'
 import i18next from '@/i18n'
 import AddressesTabContent from '@/pages/UnlockedWallet/AddressesPage/AddressesTabContent'
 import ContactsTabContent from '@/pages/UnlockedWallet/AddressesPage/ContactsTabContent'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
 
-const tabs = [
+type AddressesTabValue = 'addresses' | 'contacts'
+
+const tabs: TabItem<AddressesTabValue>[] = [
   { value: 'addresses', label: `📭 ${i18next.t('Addresses')}` },
   { value: 'contacts', label: `🫂 ${i18next.t('Contacts')}` }
 ]
@@ -39,7 +42,9 @@ const AddressesPage = () => {
   const { state } = useLocation()
   const tabsRowRef = useRef<HTMLDivElement>(null)
 
-  const [currentTab, setCurrentTab] = useState<TabItem>(tabs[state?.activeTab === 'contacts' ? 1 : 0])
+  const [currentTab, setCurrentTab] = useState<TabItem<AddressesTabValue>>(
+    tabs[state?.activeTab === 'contacts' ? 1 : 0]
+  )
 
   return (
     <UnlockedWalletPage
@@ -48,6 +53,7 @@ const AddressesPage = () => {
     >
       <TabBarPanel ref={tabsRowRef}>
         <TabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
+        <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
       </TabBarPanel>
 
       <TabContent>
