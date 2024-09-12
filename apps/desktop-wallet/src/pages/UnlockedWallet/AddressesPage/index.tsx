@@ -22,14 +22,11 @@ import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import TabBar, { TabItem } from '@/components/TabBar'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import i18next from '@/i18n'
 import AddressesTabContent from '@/pages/UnlockedWallet/AddressesPage/AddressesTabContent'
 import ContactsTabContent from '@/pages/UnlockedWallet/AddressesPage/ContactsTabContent'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
-import { addressesPageInfoMessageClosed } from '@/storage/global/globalActions'
-import { links } from '@/utils/links'
 
 const tabs = [
   { value: 'addresses', label: `📭 ${i18next.t('Addresses')}` },
@@ -39,23 +36,14 @@ const tabs = [
 const AddressesPage = () => {
   const { t } = useTranslation()
   const { state } = useLocation()
-  const dispatch = useAppDispatch()
   const tabsRowRef = useRef<HTMLDivElement>(null)
 
-  const isInfoMessageClosed = useAppSelector((s) => s.global.addressesPageInfoMessageClosed)
-
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[state?.activeTab === 'contacts' ? 1 : 0])
-
-  const closeInfoMessage = () => dispatch(addressesPageInfoMessageClosed())
 
   return (
     <UnlockedWalletPage
       title={t('Addresses & contacts')}
       subtitle={t('Easily organize your addresses and your contacts for a more serene transfer experience.')}
-      isInfoMessageVisible={!isInfoMessageClosed}
-      closeInfoMessage={closeInfoMessage}
-      infoMessageLink={links.faq}
-      infoMessage={t('Want to know more? Click here to take a look at our FAQ!')}
     >
       <TabBarPanel ref={tabsRowRef}>
         <TabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
