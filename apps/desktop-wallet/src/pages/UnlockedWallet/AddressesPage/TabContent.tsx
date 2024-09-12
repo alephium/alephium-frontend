@@ -21,7 +21,7 @@ import { SearchIcon } from 'lucide-react'
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-import { fadeIn, fadeInOut } from '@/animations'
+import { fadeInOut } from '@/animations'
 import Button from '@/components/Button'
 import Input from '@/components/Inputs/Input'
 
@@ -43,7 +43,7 @@ const TabContent: FC<TabContentProps> = ({
   children,
   className
 }) => (
-  <motion.div {...fadeIn} className={className}>
+  <TabContentStyled className={className}>
     <Header>
       <Searchbar
         placeholder={searchPlaceholder}
@@ -60,10 +60,15 @@ const TabContent: FC<TabContentProps> = ({
       </ButtonContainer>
     </Header>
     <Cards>{children}</Cards>
-  </motion.div>
+  </TabContentStyled>
 )
 
 export default TabContent
+
+const TabContentStyled = styled.div`
+  position: absolute;
+  width: 100%;
+`
 
 const Header = styled.div`
   display: flex;
