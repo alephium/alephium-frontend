@@ -18,31 +18,29 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { client, ONE_MINUTE_MS } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { queryOptions } from '@tanstack/react-query'
+import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import queryClient from '@/api/queryClient'
 
 interface TokensPriceQueryProps {
   symbols: string[]
   currency: string
+  skip?: boolean
 }
-
-type TokensPriceQueryFnData = {
-  symbol: string
-  price: number
-}[]
 
 const TOKEN_PRICES_KEY = 'tokenPrices'
 
-export const tokensPriceQuery = ({ symbols, currency }: TokensPriceQueryProps) => {
+export const tokensPriceQuery = ({ symbols, currency, skip }: TokensPriceQueryProps) => {
   const getQueryOptions = (_symbols: TokensPriceQueryProps['symbols']) =>
     queryOptions({
       queryKey: [TOKEN_PRICES_KEY, 'currentPrice', _symbols, { currency }],
-      queryFn: async (): Promise<TokensPriceQueryFnData> => {
-        const prices = await client.explorer.market.postMarketPrices({ currency }, _symbols)
+      queryFn: !skip
+        ? async () => {
+            const prices = await client.explorer.market.postMarketPrices({ currency }, _symbols)
 
-        return prices.map((price, i) => ({ price, symbol: _symbols[i] }))
-      },
+            return prices.map((price, i) => ({ price, symbol: _symbols[i] }))
+          }
+        : skipToken,
       refetchInterval: ONE_MINUTE_MS
     })
 

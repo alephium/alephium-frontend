@@ -63,9 +63,11 @@ const useToken = (id: TokenId): Token => {
 
 export default useToken
 
-export const isListedFT = (token: Token['data']): token is ListedFT => (token as ListedFT).logoURI !== undefined
-
 export const isFT = (token: Token['data']): token is ListedFT | UnlistedFT =>
   (token as ListedFT | UnlistedFT).symbol !== undefined
+
+export const isListedFT = (token: Token['data']): token is ListedFT => (token as ListedFT).logoURI !== undefined
+
+export const isUnlistedFT = (token: Token['data']) => isFT(token) && !isListedFT(token)
 
 export const isNFT = (token: Token['data']): token is NFT => (token as NFT).nftIndex !== undefined

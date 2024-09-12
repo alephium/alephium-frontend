@@ -21,17 +21,18 @@ import { motion } from 'framer-motion'
 import { fadeIn } from '@/animations'
 import { useAddressesUnlistedNonStandardTokenIds } from '@/api/addressesUnlistedTokensHooks'
 import { ExpandRow } from '@/components/Table'
+import { AddressNSTBalancesRow } from '@/features/assetsLists/AddressTokenBalancesRow'
 import TokenBalancesRow from '@/features/assetsLists/TokenBalancesRow'
-import { AssetsTabsProps } from '@/features/assetsLists/types'
+import { AddressTokensTabsProps, AssetsTabsProps } from '@/features/assetsLists/types'
 
-const NonStandardTokensBalancesList = ({ className, addressHash, isExpanded, onExpand }: AssetsTabsProps) => {
+export const AddressNSTsBalancesList = ({ className, addressHash, isExpanded, onExpand }: AddressTokensTabsProps) => {
   const { data: addressesNonStandardTokenIds } = useAddressesUnlistedNonStandardTokenIds(addressHash)
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
         {addressesNonStandardTokenIds.map((tokenId) => (
-          <TokenBalancesRow tokenId={tokenId} addressHash={addressHash} isExpanded={isExpanded} key={tokenId} />
+          <AddressNSTBalancesRow tokenId={tokenId} addressHash={addressHash} key={tokenId} />
         ))}
       </motion.div>
 
@@ -40,4 +41,19 @@ const NonStandardTokensBalancesList = ({ className, addressHash, isExpanded, onE
   )
 }
 
-export default NonStandardTokensBalancesList
+// TODO: Rework
+export const WalletNSTsBalancesList = ({ className, addressHash, isExpanded, onExpand }: AssetsTabsProps) => {
+  const { data: addressesNonStandardTokenIds } = useAddressesUnlistedNonStandardTokenIds(addressHash)
+
+  return (
+    <>
+      <motion.div {...fadeIn} className={className}>
+        {addressesNonStandardTokenIds.map((tokenId) => (
+          <TokenBalancesRow tokenId={tokenId} isExpanded={isExpanded} key={tokenId} />
+        ))}
+      </motion.div>
+
+      {!isExpanded && addressesNonStandardTokenIds.length > 3 && onExpand && <ExpandRow onClick={onExpand} />}
+    </>
+  )
+}
