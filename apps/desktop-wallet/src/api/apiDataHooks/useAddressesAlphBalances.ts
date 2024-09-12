@@ -55,7 +55,7 @@ const combine = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): Add
   data: results.reduce(
     (acc, { data }) => {
       if (data) {
-        acc[data.addressHash] = data.alphBalances
+        acc[data.addressHash] = data.balances
       }
       return acc
     },

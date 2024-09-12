@@ -22,7 +22,7 @@ import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import { AddressLatestTransactionHashQueryFnData } from '@/api/queries/transactionQueries'
 import queryClient from '@/api/queryClient'
-import { DisplayBalances, TokenDisplayBalances } from '@/types/tokens'
+import { DisplayBalances, TokenDisplayBalances, TokenId } from '@/types/tokens'
 
 interface AddressBalanceQueryProps extends AddressLatestTransactionHashQueryFnData {
   networkId: number
@@ -33,7 +33,7 @@ const ADDRESS_BALANCE_QUERY_KEYS = ['address', 'balance']
 
 export type AddressAlphBalancesQueryFnData = {
   addressHash: AddressHash
-  alphBalances: DisplayBalances
+  balances: DisplayBalances
 }
 
 // Adding latestTxHash in queryKey ensures that we'll refetch when new txs arrive.
@@ -48,12 +48,50 @@ export const addressAlphBalancesQuery = ({
   const getQueryOptions = (latestTxHash: AddressBalanceQueryProps['latestTxHash']) =>
     queryOptions({
       queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'ALPH', { addressHash, latestTxHash, networkId }],
-      queryFn: async (): Promise<AddressAlphBalancesQueryFnData> => {
+      queryFn: async () => {
         const balances = await client.explorer.addresses.getAddressesAddressBalance(addressHash)
 
         return {
           addressHash,
-          alphBalances: {
+          balances: {
+            totalBalance: BigInt(balances.balance),
+            lockedBalance: BigInt(balances.lockedBalance),
+            availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
+          }
+        }
+      },
+      staleTime: Infinity
+    })
+
+  const previousQueryKey = getQueryOptions(previousTxHash).queryKey
+  const latestQueryOptions = getQueryOptions(latestTxHash)
+
+  return queryOptions({
+    ...latestQueryOptions,
+    placeholderData: queryClient.getQueryData(previousQueryKey)
+  })
+}
+
+interface AddressTokenBalancesQueryProps extends AddressBalanceQueryProps {
+  tokenId: TokenId
+}
+
+export const addressTokenBalancesQuery = ({
+  addressHash,
+  tokenId,
+  networkId,
+  latestTxHash,
+  previousTxHash
+}: AddressTokenBalancesQueryProps) => {
+  const getQueryOptions = (latestTxHash: AddressBalanceQueryProps['latestTxHash']) =>
+    queryOptions({
+      queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, { addressHash, tokenId, latestTxHash, networkId }],
+      queryFn: async () => {
+        const balances = await client.explorer.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, tokenId)
+
+        return {
+          addressHash,
+          balances: {
             totalBalance: BigInt(balances.balance),
             lockedBalance: BigInt(balances.lockedBalance),
             availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
@@ -74,10 +112,10 @@ export const addressAlphBalancesQuery = ({
 
 export type AddressTokensBalancesQueryFnData = {
   addressHash: AddressHash
-  tokenBalances: TokenDisplayBalances[]
+  balances: TokenDisplayBalances[]
 }
 
-export const addressTokensBalanceQuery = ({
+export const addressTokensBalancesQuery = ({
   addressHash,
   networkId,
   latestTxHash,
@@ -112,7 +150,7 @@ export const addressTokensBalanceQuery = ({
 
             return {
               addressHash,
-              tokenBalances
+              balances: tokenBalances
             }
           }
         : skipToken,

@@ -16,24 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { ExpandRow } from '@/components/Table'
+import { TokensTabsBaseProps } from '@/features/assetsLists/types'
 
-export type TokensTabValue = 'fts' | 'nfts' | 'nsts'
-
-// TODO: Delete when not needed
-export interface AssetsTabsProps {
-  className?: string
-  addressHash?: AddressHash
-  isExpanded?: boolean
-  onExpand?: () => void
-  maxHeightInPx?: number
-  nftColumns?: number
+interface ExpandRowButtonProps extends TokensTabsBaseProps {
+  nbOfRows: number
 }
 
-export type TokensTabsBaseProps = Omit<AssetsTabsProps, 'addressHash'>
+const ExpandRowButton = ({ isExpanded, nbOfRows, onExpand }: ExpandRowButtonProps) =>
+  !isExpanded && nbOfRows > 3 && onExpand && <ExpandRow onClick={onExpand} />
 
-export type WalletTokensTabsProps = TokensTabsBaseProps
-
-export interface AddressTokensTabsProps extends TokensTabsBaseProps {
-  addressHash: AddressHash
-}
+export default ExpandRowButton
