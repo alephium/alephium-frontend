@@ -17,11 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NFT } from '@alephium/shared'
-import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { fadeIn } from '@/animations'
 import { useAddressesNFTsIds } from '@/api/addressesNftsDataHooks'
 import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
@@ -40,7 +38,7 @@ const NFTsGrid = ({ className, addressHash, isExpanded, onExpand, nftColumns }: 
 
   return (
     <>
-      <motion.div {...fadeIn} className={className}>
+      <div className={className}>
         <Grid role="row" tabIndex={isExpanded ? 0 : -1} columns={nftColumns}>
           {nftIds.map((nftId) => (
             <NFTCard key={nftId} nftId={nftId} onClick={() => openNFTDetailsModal(nftId)} />
@@ -55,7 +53,7 @@ const NFTsGrid = ({ className, addressHash, isExpanded, onExpand, nftColumns }: 
             </>
           )}
         </Grid>
-      </motion.div>
+      </div>
 
       {!isExpanded && nftIds.length > 4 && onExpand && <ExpandRow onClick={onExpand} />}
     </>

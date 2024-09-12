@@ -18,12 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 import { useAddressesUnlistedNonStandardTokenIds } from '@/api/addressesUnlistedTokensHooks'
 import FocusableContent from '@/components/FocusableContent'
 import { TabItem } from '@/components/TabBar'
 import { ExpandableTable } from '@/components/Table'
-import TableTabBar from '@/components/TableTabBar'
+import TableTabBar, { TabAnimation } from '@/components/TableTabBar'
 import FungibleTokensBalancesList from '@/features/assetsLists/FungibleTokensBalancesList'
 import NFTsGrid from '@/features/assetsLists/NFTsGrid'
 import NonStandardTokensBalancesList from '@/features/assetsLists/NonStandardTokensBalancesList'
@@ -42,7 +43,7 @@ const AssetsTabs = ({
   const { data: addressesNonStandardTokenIds } = useAddressesUnlistedNonStandardTokenIds(addressHash)
 
   const [tabs, setTabs] = useState([
-    { value: 'tokens', label: tokensTabTitle ?? '💰 ' + t('Tokens') },
+    { value: 'fts', label: tokensTabTitle ?? '💰 ' + t('Tokens') },
     { value: 'nfts', label: nftsTabTitle ?? '🖼️ ' + t('NFTs') }
   ])
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
@@ -52,7 +53,7 @@ const AssetsTabs = ({
 
   useEffect(() => {
     if (addressesNonStandardTokenIds.length > 0 && tabs.length === 2) {
-      setTabs([...tabs, { value: 'unknownTokens', label: unknownTokensTabTitle ?? '❔' + t('Unknown tokens') }])
+      setTabs([...tabs, { value: 'nsts', label: unknownTokensTabTitle ?? '❔' + t('Unknown tokens') }])
     }
   }, [t, tabs, addressesNonStandardTokenIds.length, unknownTokensTabTitle])
 
@@ -60,35 +61,44 @@ const AssetsTabs = ({
     <FocusableContent className={className} isFocused={isExpanded} onClose={() => setIsExpanded(false)}>
       <ExpandableTable isExpanded={isExpanded} maxHeightInPx={maxHeightInPx}>
         <TableTabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
-        {
-          {
-            tokens: (
-              <FungibleTokensBalancesList
-                addressHash={addressHash}
-                isExpanded={isExpanded || !maxHeightInPx}
-                onExpand={handleButtonClick}
-              />
-            ),
-            nfts: (
-              <NFTsGrid
-                addressHash={addressHash}
-                isExpanded={isExpanded || !maxHeightInPx}
-                onExpand={handleButtonClick}
-                nftColumns={nftColumns}
-              />
-            ),
-            unknownTokens: (
-              <NonStandardTokensBalancesList
-                addressHash={addressHash}
-                isExpanded={isExpanded || !maxHeightInPx}
-                onExpand={handleButtonClick}
-              />
-            )
-          }[currentTab.value]
-        }
+
+        <TabAnimation isVisible={currentTab.value === 'fts'}>
+          <TokensTabContent isExpanded={isExpanded}>
+            <FungibleTokensBalancesList
+              addressHash={addressHash}
+              isExpanded={isExpanded || !maxHeightInPx}
+              onExpand={handleButtonClick}
+              maxHeightInPx={maxHeightInPx}
+            />
+          </TokensTabContent>
+        </TabAnimation>
+        <TabAnimation isVisible={currentTab.value === 'nfts'}>
+          <TokensTabContent isExpanded={isExpanded}>
+            <NFTsGrid
+              addressHash={addressHash}
+              isExpanded={isExpanded || !maxHeightInPx}
+              onExpand={handleButtonClick}
+              nftColumns={nftColumns}
+            />
+          </TokensTabContent>
+        </TabAnimation>
+        <TabAnimation isVisible={currentTab.value === 'nsts'}>
+          <TokensTabContent isExpanded={isExpanded}>
+            <NonStandardTokensBalancesList
+              addressHash={addressHash}
+              isExpanded={isExpanded || !maxHeightInPx}
+              onExpand={handleButtonClick}
+            />
+          </TokensTabContent>
+        </TabAnimation>
       </ExpandableTable>
     </FocusableContent>
   )
 }
 
 export default AssetsTabs
+
+const TokensTabContent = styled.div<{ isExpanded: boolean }>`
+  position: ${({ isExpanded }) => (isExpanded ? 'relative' : 'absolute')};
+  width: 100%;
+`

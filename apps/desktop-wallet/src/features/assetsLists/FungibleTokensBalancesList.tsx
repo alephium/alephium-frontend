@@ -16,21 +16,24 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { motion } from 'framer-motion'
-
-import { fadeIn } from '@/animations'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { ExpandRow, TableRow } from '@/components/Table'
 import TokenBalancesRow from '@/features/assetsLists/TokenBalancesRow'
 import { AssetsTabsProps } from '@/features/assetsLists/types'
 import useAddressesSortedFungibleTokens from '@/features/assetsLists/useSortedFungibleTokens'
 
-const FungibleTokensBalancesList = ({ className, addressHash, isExpanded, onExpand }: AssetsTabsProps) => {
+const FungibleTokensBalancesList = ({
+  className,
+  addressHash,
+  isExpanded,
+  onExpand,
+  maxHeightInPx
+}: AssetsTabsProps) => {
   const { data, isLoading } = useAddressesSortedFungibleTokens(addressHash)
 
   return (
     <>
-      <motion.div {...fadeIn} className={className}>
+      <div className={className}>
         {data.map(({ id }) => (
           <TokenBalancesRow tokenId={id} addressHash={addressHash} isExpanded={isExpanded} key={id} />
         ))}
@@ -39,9 +42,9 @@ const FungibleTokensBalancesList = ({ className, addressHash, isExpanded, onExpa
             <SkeletonLoader height="37.5px" />
           </TableRow>
         )}
-      </motion.div>
+      </div>
 
-      {!isExpanded && data.length > 3 && onExpand && <ExpandRow onClick={onExpand} />}
+      {!isExpanded && data.length > 3 && onExpand && <ExpandRow onClick={onExpand} maxHeightInPx={maxHeightInPx} />}
     </>
   )
 }

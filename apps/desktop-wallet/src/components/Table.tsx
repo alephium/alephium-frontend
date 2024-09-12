@@ -181,11 +181,11 @@ const TableTitle = styled.div`
   font-weight: var(--fontWeight-semiBold);
 `
 
-export const ExpandRow = ({ onClick }: { onClick: () => void }) => {
+export const ExpandRow = ({ onClick, maxHeightInPx }: { onClick: () => void; maxHeightInPx?: number }) => {
   const { t } = useTranslation()
 
   return (
-    <ExpandRowStyled>
+    <ExpandRowStyled maxHeightInPx={maxHeightInPx}>
       <Button role="secondary" onClick={onClick} Icon={ChevronsUpDown} short>
         {t('Expand')}
       </Button>
@@ -193,12 +193,12 @@ export const ExpandRow = ({ onClick }: { onClick: () => void }) => {
   )
 }
 
-const ExpandRowStyled = styled.div`
+const ExpandRowStyled = styled.div<{ maxHeightInPx?: number }>`
   position: absolute;
   width: 100%;
   display: flex;
   justify-content: center;
-  bottom: 0;
+  top: ${({ maxHeightInPx }) => (maxHeightInPx ? maxHeightInPx - 127 : 0)}px;
   height: 70px;
   display: flex;
   align-items: flex-end;
@@ -222,6 +222,7 @@ export const ExpandableTable = styled(Table)<{ isExpanded: boolean; maxHeightInP
   overflow: hidden;
   position: relative;
   height: 100%;
+  border: 1px solid pink;
 
   ${({ isExpanded }) =>
     isExpanded &&

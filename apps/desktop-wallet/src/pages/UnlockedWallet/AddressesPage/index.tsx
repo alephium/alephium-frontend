@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { motion } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import TabBar, { TabItem } from '@/components/TabBar'
+import { TabAnimation } from '@/components/TableTabBar'
 import i18next from '@/i18n'
 import AddressesTabContent from '@/pages/UnlockedWallet/AddressesPage/AddressesTabContent'
 import ContactsTabContent from '@/pages/UnlockedWallet/AddressesPage/ContactsTabContent'
@@ -52,20 +52,10 @@ const AddressesPage = () => {
 
       <TabContent>
         <TabPanel>
-          <TabAnimation
-            animate={{
-              opacity: currentTab.value === 'addresses' ? 1 : 0,
-              zIndex: currentTab.value === 'addresses' ? 1 : 0
-            }}
-          >
+          <TabAnimation isVisible={currentTab.value === 'addresses'}>
             <AddressesTabContent />
           </TabAnimation>
-          <TabAnimation
-            animate={{
-              opacity: currentTab.value === 'contacts' ? 1 : 0,
-              zIndex: currentTab.value === 'contacts' ? 1 : 0
-            }}
-          >
+          <TabAnimation isVisible={currentTab.value === 'contacts'}>
             <ContactsTabContent />
           </TabAnimation>
         </TabPanel>
@@ -89,10 +79,6 @@ const TabContent = styled.div`
 `
 
 const TabPanel = styled(UnlockedWalletPanel)``
-
-const TabAnimation = styled(motion.div)`
-  position: relative;
-`
 
 const TabBarPanel = styled(TabPanel)`
   z-index: 1;

@@ -16,9 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { motion } from 'framer-motion'
-
-import { fadeIn } from '@/animations'
 import { useAddressesUnlistedNonStandardTokenIds } from '@/api/addressesUnlistedTokensHooks'
 import { ExpandRow } from '@/components/Table'
 import TokenBalancesRow from '@/features/assetsLists/TokenBalancesRow'
@@ -29,11 +26,11 @@ const NonStandardTokensBalancesList = ({ className, addressHash, isExpanded, onE
 
   return (
     <>
-      <motion.div {...fadeIn} className={className}>
+      <div className={className}>
         {addressesNonStandardTokenIds.map((tokenId) => (
           <TokenBalancesRow tokenId={tokenId} addressHash={addressHash} isExpanded={isExpanded} key={tokenId} />
         ))}
-      </motion.div>
+      </div>
 
       {!isExpanded && addressesNonStandardTokenIds.length > 3 && onExpand && <ExpandRow onClick={onExpand} />}
     </>

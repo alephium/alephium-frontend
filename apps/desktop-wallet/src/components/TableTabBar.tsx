@@ -16,6 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { motion } from 'framer-motion'
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 import TabBar, { Tab, TabBarProps } from '@/components/TabBar'
@@ -34,7 +36,7 @@ const TableTab = styled(Tab)`
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   margin-bottom: 0;
 
-  ${({ isActive, theme }) =>
+  ${({ isActive }) =>
     isActive &&
     css`
       border-bottom: 1px solid transparent;
@@ -48,4 +50,24 @@ const TableTab = styled(Tab)`
   &:last-child {
     border-radius: 0;
   }
+`
+
+interface TabAnimationProps {
+  isVisible: boolean
+  children: ReactNode
+}
+
+export const TabAnimation = ({ isVisible, children }: TabAnimationProps) => (
+  <TabAnimationStyled
+    animate={{
+      opacity: isVisible ? 1 : 0,
+      zIndex: isVisible ? 1 : 0
+    }}
+  >
+    {children}
+  </TabAnimationStyled>
+)
+
+const TabAnimationStyled = styled(motion.div)`
+  position: relative;
 `
