@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, client, PAGINATION_PAGE_LIMIT } from '@alephium/shared'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
-import { queryOptions } from '@tanstack/react-query'
+import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import { AddressLatestTransactionHashQueryFnData } from '@/api/queries/transactionQueries'
 import queryClient from '@/api/queryClient'
@@ -26,6 +26,7 @@ import { DisplayBalances, TokenDisplayBalances } from '@/types/tokens'
 
 interface AddressBalanceQueryProps extends AddressLatestTransactionHashQueryFnData {
   networkId: number
+  skip?: boolean
 }
 
 const ADDRESS_BALANCE_QUERY_KEYS = ['address', 'balance']
@@ -80,38 +81,41 @@ export const addressTokensBalanceQuery = ({
   addressHash,
   networkId,
   latestTxHash,
-  previousTxHash
+  previousTxHash,
+  skip
 }: AddressBalanceQueryProps) => {
   const getQueryOptions = (latestTxHash: AddressBalanceQueryProps['latestTxHash']) =>
     queryOptions({
       queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'tokens', { addressHash, latestTxHash, networkId }],
-      queryFn: async (): Promise<AddressTokensBalancesQueryFnData> => {
-        const tokenBalances = [] as TokenDisplayBalances[]
-        let tokenBalancesInPage = [] as AddressTokenBalance[]
-        let page = 1
+      queryFn: !skip
+        ? async (): Promise<AddressTokensBalancesQueryFnData> => {
+            const tokenBalances = [] as TokenDisplayBalances[]
+            let tokenBalancesInPage = [] as AddressTokenBalance[]
+            let page = 1
 
-        while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
-          tokenBalancesInPage = await client.explorer.addresses.getAddressesAddressTokensBalance(addressHash, {
-            limit: PAGINATION_PAGE_LIMIT,
-            page
-          })
+            while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
+              tokenBalancesInPage = await client.explorer.addresses.getAddressesAddressTokensBalance(addressHash, {
+                limit: PAGINATION_PAGE_LIMIT,
+                page
+              })
 
-          tokenBalances.push(
-            ...tokenBalancesInPage.map((tokenBalances) => ({
-              id: tokenBalances.tokenId,
-              totalBalance: BigInt(tokenBalances.balance),
-              lockedBalance: BigInt(tokenBalances.lockedBalance),
-              availableBalance: BigInt(tokenBalances.balance) - BigInt(tokenBalances.lockedBalance)
-            }))
-          )
-          page += 1
-        }
+              tokenBalances.push(
+                ...tokenBalancesInPage.map((tokenBalances) => ({
+                  id: tokenBalances.tokenId,
+                  totalBalance: BigInt(tokenBalances.balance),
+                  lockedBalance: BigInt(tokenBalances.lockedBalance),
+                  availableBalance: BigInt(tokenBalances.balance) - BigInt(tokenBalances.lockedBalance)
+                }))
+              )
+              page += 1
+            }
 
-        return {
-          addressHash,
-          tokenBalances
-        }
-      },
+            return {
+              addressHash,
+              tokenBalances
+            }
+          }
+        : skipToken,
 
       staleTime: Infinity
     })

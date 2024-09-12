@@ -25,7 +25,7 @@ import Box from '@/components/Box'
 import { ShortcutButtonsGroupAddress } from '@/components/Buttons/ShortcutButtons'
 import QRCode from '@/components/QRCode'
 import TransactionList from '@/components/TransactionList'
-import AssetsTabs from '@/features/assetsLists/AssetsTabs'
+import { AddressTokensTabs } from '@/features/assetsLists/TokensTabs'
 import AddressTransactionsCSVExportButton from '@/features/csvExport/AddressTransactionsCSVExportButton'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import AddressDetailsModalHeader from '@/modals/AddressDetailsModal/AddressDetailsModalHeader'
@@ -56,13 +56,7 @@ const AddressDetailsModal = memo(({ id, addressHash }: ModalBaseProp & AddressDe
             <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" solidBackground />
           </ButtonsGrid>
         </Shortcuts>
-        <AssetsTabs
-          addressHash={addressHash}
-          tokensTabTitle={`💰 ${t('Address tokens')}`}
-          unknownTokensTabTitle={`❔ ${t('Address unknown tokens')}`}
-          nftsTabTitle={`🖼️ ${t('Address NFTs')}`}
-          nftColumns={4}
-        />
+        <AddressTokensTabs addressHash={addressHash} nftColumns={4} />
         <TransactionList
           title={t('Address transactions')}
           addressHashes={[addressHash]}
