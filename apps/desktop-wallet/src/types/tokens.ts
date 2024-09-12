@@ -27,6 +27,9 @@ export interface NonStandardToken {
   id: string
 }
 
+// To represent a token that is not in the token list but we haven't discovered its type yet
+export type UnlistedToken = { id: string }
+
 // For stricter typings in our components that handle display of multiple token types
 export type TokenDisplay = ListedFTDisplay | UnlistedFTDisplay | NFTDisplay | NonStandardTokenDisplay
 

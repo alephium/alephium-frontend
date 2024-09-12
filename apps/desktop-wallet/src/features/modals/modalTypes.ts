@@ -25,7 +25,7 @@ import { TransactionDetailsModalProps } from '@/features/transactionsDisplay/tra
 import { SignMessageModalProps } from '@/features/walletConnect/SignMessageModal'
 import { SignUnsignedTxModalProps } from '@/features/walletConnect/SignUnsignedTxModal'
 import { WalletConnectSessionProposalModalProps } from '@/features/walletConnect/WalletConnectSessionProposalModal'
-import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal'
+import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal/AddressDetailsModal'
 import { AddressOptionsModalProps } from '@/modals/AddressOptionsModal'
 import { AddressSweepModalProps } from '@/modals/AddressSweepModal'
 import { ConfirmModalProps } from '@/modals/ConfirmModal'

@@ -44,9 +44,7 @@ import { openInWebBrowser } from '@/utils/misc'
 
 type SettingsModalTabNames = 'general' | 'wallets' | 'network' | 'devtools'
 
-interface SettingsTabItem extends TabItem {
-  value: SettingsModalTabNames
-}
+type SettingsTabItem = TabItem<SettingsModalTabNames>
 
 interface SocialMediaLogo {
   media: keyof Pick<typeof links, 'twitter' | 'discord' | 'github'>
@@ -80,7 +78,7 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
   )
   const activeTab = settingsModalTabs.find((t) => t.value === initialTabValue) || settingsModalTabs[0]
 
-  const [currentTab, setCurrentTab] = useState<TabItem>(activeTab)
+  const [currentTab, setCurrentTab] = useState<SettingsTabItem>(activeTab)
 
   const enabledTabs = !isWalletUnlocked
     ? settingsModalTabs.filter(({ value }) => value !== 'devtools')

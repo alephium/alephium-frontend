@@ -18,21 +18,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, NFT } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
-import { TokenInfo, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { useQueries, UseQueryResult } from '@tanstack/react-query'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import useFTList from '@/api/apiDataHooks/useFTList'
-import { combineIsLoading, mapCombineDefined } from '@/api/apiDataHooks/utils'
+import useSeparateListedFromUnlistedTokens from '@/api/apiDataHooks/useSeparateListedFromUnlistedTokens'
+import { mapCombineDefined } from '@/api/apiDataHooks/utils'
 import {
+  combineTokenTypeQueryResults,
   fungibleTokenMetadataQuery,
   nftDataQuery,
   nftMetadataQuery,
-  StdInterfaceIds,
   tokenTypeQuery
 } from '@/api/queries/tokenQueries'
-import { ListedFT, NonStandardToken, TokenId, UnlistedFT } from '@/types/tokens'
+import { ListedFT, NonStandardToken, UnlistedFT } from '@/types/tokens'
 import { PendingTransaction } from '@/types/transactions'
 import { useTransactionAmountDeltas } from '@/utils/transactions'
 
@@ -55,32 +54,17 @@ type TransactionTokens = {
 const useTransactionTokens = (tx: Transaction | PendingTransaction, addressHash: AddressHash): TransactionTokens => {
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
 
-  const { data: ftList, isLoading: isLoadingFtList } = useFTList()
-
-  const { listedFTs, unlistedTokens } = useMemo(() => {
-    const initial = { listedFTs: [] as TxListedFT[], unlistedTokens: [] as TxNST[] }
-
-    if (!ftList) return initial
-
-    return tokenAmounts.reduce((acc, { id, amount }) => {
-      const listedFT = ftList?.find((t) => t.id === id)
-
-      if (listedFT) {
-        acc.listedFTs.push({ ...listedFT, amount })
-      } else {
-        acc.unlistedTokens.push({ id, amount })
-      }
-
-      return acc
-    }, initial)
-  }, [ftList, tokenAmounts])
+  const {
+    data: { listedFTs: listedFTsAmounts, unlistedTokens: unlistedTokensAmounts },
+    isLoading: isLoadingFtList
+  } = useSeparateListedFromUnlistedTokens(tokenAmounts)
 
   const {
     data: { fungible: unlistedFTIds, 'non-fungible': nftIds },
     isLoading: isLoadingTokensByType
   } = useQueries({
-    queries: unlistedTokens.map(({ id }) => tokenTypeQuery({ id })),
-    combine
+    queries: unlistedTokensAmounts.map(({ id }) => tokenTypeQuery({ id })),
+    combine: combineTokenTypeQueryResults
   })
 
   const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useQueries({
@@ -100,12 +84,12 @@ const useTransactionTokens = (tx: Transaction | PendingTransaction, addressHash:
 
   const data = useMemo(() => {
     const initial = {
-      fungibleTokens: [{ ...ALPH, amount: alphAmount }, ...listedFTs] as TxFT[],
+      fungibleTokens: [{ ...ALPH, amount: alphAmount }, ...listedFTsAmounts] as TxFT[],
       nfts: [] as TxNFT[],
       nsts: [] as TxNST[]
     }
 
-    return unlistedTokens.reduce((acc, { id, amount }) => {
+    return unlistedTokensAmounts.reduce((acc, { id, amount }) => {
       const unlistedFT = unlistedFTs.find((t) => t.id === id)
 
       if (unlistedFT) {
@@ -130,7 +114,7 @@ const useTransactionTokens = (tx: Transaction | PendingTransaction, addressHash:
 
       return acc
     }, initial)
-  }, [alphAmount, listedFTs, nftsData, nftsMetadata, unlistedFTs, unlistedTokens])
+  }, [alphAmount, listedFTsAmounts, nftsData, nftsMetadata, unlistedFTs, unlistedTokensAmounts])
 
   return {
     data,
@@ -140,27 +124,3 @@ const useTransactionTokens = (tx: Transaction | PendingTransaction, addressHash:
 }
 
 export default useTransactionTokens
-
-const combine = (results: UseQueryResult<TokenInfo | undefined>[]) => ({
-  data: results.reduce(
-    (tokenIdsByType, { data: tokenInfo }) => {
-      if (!tokenInfo) return tokenIdsByType
-      const stdInterfaceId = tokenInfo.stdInterfaceId as explorer.TokenStdInterfaceId
-
-      if (StdInterfaceIds.includes(stdInterfaceId)) {
-        tokenIdsByType[stdInterfaceId].push(tokenInfo.token)
-      } else {
-        // Except from NonStandard, the interface might be any string or undefined. We merge all that together.
-        tokenIdsByType[explorer.TokenStdInterfaceId.NonStandard].push(tokenInfo.token)
-      }
-
-      return tokenIdsByType
-    },
-    {
-      [explorer.TokenStdInterfaceId.Fungible]: [],
-      [explorer.TokenStdInterfaceId.NonFungible]: [],
-      [explorer.TokenStdInterfaceId.NonStandard]: []
-    } as Record<explorer.TokenStdInterfaceId, TokenId[]>
-  ),
-  ...combineIsLoading(results)
-})
