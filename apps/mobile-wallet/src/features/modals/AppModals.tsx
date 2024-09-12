@@ -32,6 +32,7 @@ const AppModals = () => {
     <ModalsContainer pointerEvents={openedModals.length > 0 ? 'auto' : 'none'}>
       {openedModals.map((modal) => {
         const ModalComponent = getModalComponent(modal.params.name)
+
         return <ModalComponent key={modal.id} id={modal.id} {...modal.params.props} />
       })}
     </ModalsContainer>

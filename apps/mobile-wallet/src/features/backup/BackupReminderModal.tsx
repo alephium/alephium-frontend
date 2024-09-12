@@ -29,7 +29,7 @@ import BottomModal from '~/modals/BottomModal'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 export interface BackupReminderModalProps {
-  isNewWallet: boolean
+  isNewWallet?: boolean
 }
 
 const BackupReminderModal = withModalWrapper<BackupReminderModalProps>(({ id, isNewWallet }) => {
