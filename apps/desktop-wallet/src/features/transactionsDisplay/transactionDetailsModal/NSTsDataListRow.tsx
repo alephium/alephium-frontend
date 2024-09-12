@@ -19,11 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useTransactionTokens from '@/api/apiDataHooks/useTransactionTokens'
 import Amount from '@/components/Amount'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import useTransactionTokens from '@/features/transactionsDisplay/useTransactionTokens'
 
 const NSTsDataListRow = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {
   const {
