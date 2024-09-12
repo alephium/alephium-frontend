@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { motion } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
@@ -51,12 +52,22 @@ const AddressesPage = () => {
 
       <TabContent>
         <TabPanel>
-          {
-            {
-              addresses: <AddressesTabContent />,
-              contacts: <ContactsTabContent />
-            }[currentTab.value]
-          }
+          <TabAnimation
+            animate={{
+              opacity: currentTab.value === 'addresses' ? 1 : 0,
+              zIndex: currentTab.value === 'addresses' ? 1 : 0
+            }}
+          >
+            <AddressesTabContent />
+          </TabAnimation>
+          <TabAnimation
+            animate={{
+              opacity: currentTab.value === 'contacts' ? 1 : 0,
+              zIndex: currentTab.value === 'contacts' ? 1 : 0
+            }}
+          >
+            <ContactsTabContent />
+          </TabAnimation>
         </TabPanel>
       </TabContent>
     </UnlockedWalletPage>
@@ -78,6 +89,10 @@ const TabContent = styled.div`
 `
 
 const TabPanel = styled(UnlockedWalletPanel)``
+
+const TabAnimation = styled(motion.div)`
+  position: relative;
+`
 
 const TabBarPanel = styled(TabPanel)`
   z-index: 1;
