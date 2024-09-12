@@ -52,9 +52,9 @@ export default useAddressesAlphBalancesTotal
 const combine = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): AddressesAlphBalancesTotal => ({
   data: results.reduce(
     (totalBalances, { data }) => {
-      totalBalances.totalBalance += data ? data.alphBalances.totalBalance : BigInt(0)
-      totalBalances.lockedBalance += data ? data.alphBalances.lockedBalance : BigInt(0)
-      totalBalances.availableBalance += data ? data.alphBalances.availableBalance : BigInt(0)
+      totalBalances.totalBalance += data ? data.balances.totalBalance : BigInt(0)
+      totalBalances.lockedBalance += data ? data.balances.lockedBalance : BigInt(0)
+      totalBalances.availableBalance += data ? data.balances.availableBalance : BigInt(0)
 
       return totalBalances
     },
