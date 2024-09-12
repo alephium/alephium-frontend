@@ -20,11 +20,11 @@ import { NFT } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useTransactionTokens from '@/api/apiDataHooks/useTransactionTokens'
 import DataList from '@/components/DataList'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import { openModal } from '@/features/modals/modalActions'
 import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import useTransactionTokens from '@/features/transactionsDisplay/useTransactionTokens'
 import { useAppDispatch } from '@/hooks/redux'
 
 const NFTsDataListRow = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {

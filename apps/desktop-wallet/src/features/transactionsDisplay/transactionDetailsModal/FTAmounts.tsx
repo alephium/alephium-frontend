@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
-import useTransactionTokens from '@/api/apiDataHooks/useTransactionTokens'
 import Amount from '@/components/Amount'
 import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import useTransactionTokens from '@/features/transactionsDisplay/useTransactionTokens'
 import { useTransactionInfoType } from '@/utils/transactions'
 
 const FTAmounts = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {
