@@ -19,9 +19,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import useTransactionTokens from '@/api/apiDataHooks/useTransactionTokens'
 import Amount from '@/components/Amount'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
+import useTransactionTokens from '@/features/transactionsDisplay/useTransactionTokens'
 import { useTransactionInfoType } from '@/utils/transactions'
 
 interface TransactionOtherTokenAmountsProps extends TransactionRowProps {
