@@ -19,17 +19,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import BackupReminderModal, { BackupReminderModalProps } from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
+import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 export const ModalComponents = {
   BuyModal,
   FundPasswordReminderModal,
-  BackupReminderModal
+  BackupReminderModal,
+  SwitchNetworkModal
 }
 
 export interface ModalPropsMap {
   BuyModal: undefined
   FundPasswordReminderModal: undefined
   BackupReminderModal: BackupReminderModalProps
+  SwitchNetworkModal: undefined
 }
 
 export type ModalName = keyof typeof ModalComponents
@@ -46,6 +49,6 @@ export type ModalInstance = {
   isClosing: boolean
 }
 
-export interface ModalRequiredProps {
+export interface ModalBaseProp {
   id: ModalInstance['id']
 }

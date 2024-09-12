@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NetworkNames, NetworkPreset, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -25,18 +26,22 @@ import { View } from 'react-native'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
+import { ModalContent } from '~/features/modals/ModalContent'
+import withModalWrapper from '~/features/modals/withModalWrapper'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import BottomModal from '~/modals/BottomModal'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistSettings } from '~/persistent-storage/settings'
 
-interface SwitchNetworkModalProps extends ModalContentProps {
+export interface SwitchNetworkModalProps {
   onCustomNetworkPress: () => void
 }
 
-const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchNetworkModalProps) => {
+const SwitchNetworkModal = withModalWrapper<SwitchNetworkModalProps>(({ id, onCustomNetworkPress, ...props }) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetworkName === NetworkNames.custom)
   const [selectedNetworkName, setSelectedNetworkName] = useState(currentNetworkName)
@@ -45,8 +50,7 @@ const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchN
     setSelectedNetworkName(newNetworkName)
 
     if (newNetworkName === NetworkNames.custom) {
-      onClose && onClose()
-      onCustomNetworkPress()
+      navigation.navigate('CustomNetworkScreen')
     } else {
       await persistSettings('network', networkSettingsPresets[newNetworkName])
       dispatch(networkPresetSwitched(newNetworkName))
@@ -58,25 +62,30 @@ const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchN
   const networkNames = Object.values(NetworkNames)
 
   return (
-    <ModalContent verticalGap {...props}>
-      <ScreenSection>
-        <ModalScreenTitle>{t('Current network')}</ModalScreenTitle>
-      </ScreenSection>
-      <View>
-        <BoxSurface>
-          {networkNames.map((networkName, index) => (
-            <RadioButtonRow
-              key={networkName}
-              title={capitalize(networkName)}
-              onPress={() => handleNetworkItemPress(networkName)}
-              isActive={networkName === selectedNetworkName}
-              isLast={index === networkNames.length - 1}
-            />
-          ))}
-        </BoxSurface>
-      </View>
-    </ModalContent>
+    <BottomModal
+      id={id}
+      Content={(props) => (
+        <ModalContent verticalGap {...props}>
+          <ScreenSection>
+            <ModalScreenTitle>{t('Current network')}</ModalScreenTitle>
+          </ScreenSection>
+          <View>
+            <BoxSurface>
+              {networkNames.map((networkName, index) => (
+                <RadioButtonRow
+                  key={networkName}
+                  title={capitalize(networkName)}
+                  onPress={() => handleNetworkItemPress(networkName)}
+                  isActive={networkName === selectedNetworkName}
+                  isLast={index === networkNames.length - 1}
+                />
+              ))}
+            </BoxSurface>
+          </View>
+        </ModalContent>
+      )}
+    />
   )
-}
+})
 
 export default SwitchNetworkModal

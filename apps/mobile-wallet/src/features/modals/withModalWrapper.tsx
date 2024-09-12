@@ -18,10 +18,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ComponentType, memo } from 'react'
 
-import { ModalRequiredProps } from './modalTypes'
+import { ModalBaseProp } from './modalTypes'
 
-const withModalWrapper = <P extends object>(Component: ComponentType<ModalRequiredProps & P>) => {
-  const WrappedComponent = (props: ModalRequiredProps & P) => <Component {...props} />
+const withModalWrapper = <P extends object>(Component: ComponentType<ModalBaseProp & P>) => {
+  const WrappedComponent = (props: ModalBaseProp & P) => {
+    if (!props.id) {
+      throw new Error("The 'id' prop is required for all modals")
+    }
+    return <Component {...props} />
+  }
 
   return memo(WrappedComponent)
 }

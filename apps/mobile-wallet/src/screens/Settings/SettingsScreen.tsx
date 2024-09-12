@@ -43,6 +43,7 @@ import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { languageOptions } from '~/features/localization/languages'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import BottomModal from '~/features/modals/DeprecatedBottomModal'
+import { openModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
@@ -50,7 +51,6 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import CurrencySelectModal from '~/screens/CurrencySelectModal'
 import MnemonicModal from '~/screens/Settings/MnemonicModal'
 import WalletDeleteModal from '~/screens/Settings/WalletDeleteModal'
-import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import {
   analyticsToggled,
   biometricsToggled,
@@ -87,7 +87,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const { t } = useTranslation()
 
   const [isAutoLockSecondsModalOpen, setIsAutoLockSecondsModalOpen] = useState(false)
-  const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
   const [isLanguageSelectModalOpen, setIsLanguageSelectModalOpen] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
@@ -98,6 +97,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const [lastToggledBiometricsSetting, setLastToggledBiometricsSetting] = useState<
     'appAccess' | 'transactions' | undefined
   >()
+
+  const openNetworkModal = () => dispatch(openModal({ name: 'SwitchNetworkModal' }))
 
   const handleBiometricsAppAccessChange = (value: boolean) => {
     if (value || biometricsRequiredForTransactions) {
@@ -190,7 +191,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             <Row onPress={() => setIsCurrencySelectModalOpen(true)} title={t('Currency')}>
               <AppText bold>{currentCurrency}</AppText>
             </Row>
-            <Row title={t('Current network')} onPress={() => setIsSwitchNetworkModalOpen(true)}>
+            <Row title={t('Current network')} onPress={openNetworkModal}>
               <AppText bold>{capitalize(currentNetworkName)}</AppText>
             </Row>
             <Row title={t('Discreet mode')} subtitle={t('Hide all amounts')}>
@@ -374,18 +375,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
       </Portal>
 
       <Portal>
-        <BottomModal
-          isOpen={isSwitchNetworkModalOpen}
-          onClose={() => setIsSwitchNetworkModalOpen(false)}
-          Content={(props) => (
-            <SwitchNetworkModal
-              onClose={() => setIsSwitchNetworkModalOpen(false)}
-              onCustomNetworkPress={() => navigation.navigate('CustomNetworkScreen')}
-              {...props}
-            />
-          )}
-        />
-
         <BottomModal
           isOpen={isLanguageSelectModalOpen}
           onClose={() => setIsLanguageSelectModalOpen(false)}

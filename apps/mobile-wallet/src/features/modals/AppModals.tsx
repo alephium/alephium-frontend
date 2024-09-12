@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Children, isValidElement, ReactElement, ReactNode, useEffect } from 'react'
+import { Children, isValidElement, ReactNode, useEffect } from 'react'
 import { ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
 import { selectAllModals } from '~/features/modals/modalSelectors'
 import { getModalComponent } from '~/features/modals/modalTypes'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
 import { useAppSelector } from '~/hooks/redux'
 
 const AppModals = () => {
@@ -66,23 +66,3 @@ const ModalsContainerStyled = styled.View`
   right: 0;
   bottom: 0;
 `
-
-// TODO: Use functions defined in shared-react 👇
-
-const wrappedModalExample = withModalWrapper(() => null)
-
-const isModalWrapped = <P,>(element: ReactElement<P>): boolean => {
-  if (!isValidElement(element)) return false
-
-  const elementType = element.type as unknown as { $$typeof?: symbol }
-
-  return (
-    !!elementType.$$typeof && elementType.$$typeof === (wrappedModalExample as unknown as { $$typeof: symbol }).$$typeof
-  )
-}
-
-const getElementName = <P,>(element: ReactElement<P>): string => {
-  const elementType = element.type as React.ComponentType<P>
-
-  return elementType.displayName || elementType.name || 'Component'
-}
