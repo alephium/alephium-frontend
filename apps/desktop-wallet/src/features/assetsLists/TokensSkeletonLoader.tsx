@@ -16,24 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import SkeletonLoader from '@/components/SkeletonLoader'
+import { TableRow } from '@/components/Table'
 
-export type TokensTabValue = 'fts' | 'nfts' | 'nsts'
+const TokensSkeletonLoader = () => (
+  <TableRow>
+    <SkeletonLoader height="37.5px" />
+  </TableRow>
+)
 
-// TODO: Delete when not needed
-export interface AssetsTabsProps {
-  className?: string
-  addressHash?: AddressHash
-  isExpanded?: boolean
-  onExpand?: () => void
-  maxHeightInPx?: number
-  nftColumns?: number
-}
-
-export type TokensTabsBaseProps = Omit<AssetsTabsProps, 'addressHash'>
-
-export type WalletTokensTabsProps = TokensTabsBaseProps
-
-export interface AddressTokensTabsProps extends TokensTabsBaseProps {
-  addressHash: AddressHash
-}
+export default TokensSkeletonLoader

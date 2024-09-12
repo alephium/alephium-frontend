@@ -17,46 +17,42 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { useQueries, useQuery } from '@tanstack/react-query'
+import { ALPH } from '@alephium/token-list'
+import { useQuery } from '@tanstack/react-query'
 
-import useSeparateListedFromUnlistedTokens from '@/api/apiDataHooks/useSeparateListedFromUnlistedTokens'
-import { addressTokensBalanceQuery } from '@/api/queries/addressQueries'
-import { combineTokenTypeQueryResults, tokenTypeQuery } from '@/api/queries/tokenQueries'
+import useAddressAlphBalances from '@/api/apiDataHooks/useAddressAlphBalances'
+import { addressTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
+import { TokenId } from '@/types/tokens'
 
-const useAddressNSTs = (addressHash: AddressHash) => {
+const useAddressTokenBalances = (addressHash: AddressHash, tokenId: TokenId) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const queryProps = { addressHash, networkId }
 
+  const isALPH = tokenId === ALPH.id
+
   const { data: txHashes, isLoading: isLoadingTxHashes } = useQuery(addressLatestTransactionHashQuery(queryProps))
 
-  const { data, isLoading: isLoadingTokensBalances } = useQuery(
-    addressTokensBalanceQuery({
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressAlphBalances({
+    addressHash,
+    skip: !isALPH
+  })
+
+  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQuery(
+    addressTokenBalancesQuery({
       ...queryProps,
+      tokenId,
       latestTxHash: txHashes?.latestTxHash,
       previousTxHash: txHashes?.latestTxHash,
-      skip: isLoadingTxHashes
+      skip: isLoadingTxHashes || isALPH
     })
   )
 
-  const {
-    data: { unlistedTokens },
-    isLoading: isLoadingUnlistedTokens
-  } = useSeparateListedFromUnlistedTokens(data?.tokenBalances)
-
-  const {
-    data: { 'non-standard': nstIds },
-    isLoading: isLoadingTokensByType
-  } = useQueries({
-    queries: unlistedTokens.map(({ id }) => tokenTypeQuery({ id })),
-    combine: combineTokenTypeQueryResults
-  })
-
   return {
-    data: nstIds, // TODO: Add balances
-    isLoading: isLoadingTxHashes || isLoadingTokensBalances || isLoadingUnlistedTokens || isLoadingTokensByType
+    data: alphBalances ?? tokenBalances,
+    isLoading: isLoadingTokenBalances || isLoadingAlphBalances || isLoadingTxHashes
   }
 }
 
-export default useAddressNSTs
+export default useAddressTokenBalances
