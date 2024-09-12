@@ -18,16 +18,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 
+export type TokensTabValue = 'fts' | 'nfts' | 'nsts'
+
 export interface AssetsTabsProps {
   className?: string
   addressHash?: AddressHash
-  tokensTabTitle?: string
-  unknownTokensTabTitle?: string
-  nftsTabTitle?: string
-  showTokens?: boolean
-  showNfts?: boolean
   isExpanded?: boolean
   onExpand?: () => void
   maxHeightInPx?: number
   nftColumns?: number
+}
+
+export type TokensTabsBaseProps = Omit<AssetsTabsProps, 'addressHash'>
+
+export type WalletTokensTabsProps = TokensTabsBaseProps
+
+export interface AddressTokensTabsProps extends TokensTabsBaseProps {
+  addressHash: AddressHash
 }
