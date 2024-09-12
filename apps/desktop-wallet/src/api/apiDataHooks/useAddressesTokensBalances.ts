@@ -24,7 +24,7 @@ import { useMemo } from 'react'
 import useAddressesAlphBalances, { AddressesAlphBalances } from '@/api/apiDataHooks/useAddressesAlphBalances'
 import useAddressesLastTransactionHashes from '@/api/apiDataHooks/useAddressesLastTransactionHashes'
 import { mapCombine } from '@/api/apiDataHooks/utils'
-import { addressTokensBalanceQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
+import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { TokenDisplayBalances } from '@/types/tokens'
 
@@ -40,7 +40,7 @@ const useAddressesTokensBalances = (addressHash?: AddressHash): AddressesTokensB
 
   const { data: tokensBalances, isLoading } = useQueries({
     queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
-      addressTokensBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
+      addressTokensBalancesQuery({ addressHash, latestTxHash, previousTxHash, networkId })
     ),
     combine: mapCombine
   })
@@ -58,13 +58,13 @@ const combineAlphAndTokens = (
   tokensBalances: AddressTokensBalancesQueryFnData[]
 ): AddressesTokensBalances['data'] =>
   tokensBalances.reduce(
-    (acc, { addressHash, tokenBalances }) => {
+    (acc, { addressHash, balances }) => {
       const addressAlphBalances = alphBalances[addressHash]
 
       acc[addressHash] =
         addressAlphBalances && addressAlphBalances.totalBalance > 0
-          ? [{ id: ALPH.id, ...addressAlphBalances }, ...tokenBalances]
-          : tokenBalances
+          ? [{ id: ALPH.id, ...addressAlphBalances }, ...balances]
+          : balances
 
       return acc
     },

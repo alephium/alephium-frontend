@@ -27,6 +27,7 @@ import useAddressesTokensBalancesTotal from '@/api/apiDataHooks/useAddressesToke
 import useAddressesTokensWorth from '@/api/apiDataHooks/useAddressesTokensWorth'
 import { ListedFTDisplay, NFTDisplay, NonStandardTokenDisplay, TokenDisplay, UnlistedFTDisplay } from '@/types/tokens'
 
+// TODO: Delete
 const useAddressesDisplayTokens = (addressHash?: AddressHash) => {
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalancesTotal(addressHash)
   const { data: tokensWorth, isLoading: isLoadingTokensWorth } = useAddressesTokensWorth(addressHash)

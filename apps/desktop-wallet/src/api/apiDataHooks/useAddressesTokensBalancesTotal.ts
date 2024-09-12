@@ -24,7 +24,7 @@ import { useMemo } from 'react'
 import useAddressesAlphBalancesTotal from '@/api/apiDataHooks/useAddressesAlphBalancesTotal'
 import useAddressesLastTransactionHashes from '@/api/apiDataHooks/useAddressesLastTransactionHashes'
 import { combineIsLoading } from '@/api/apiDataHooks/utils'
-import { addressTokensBalanceQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
+import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { DisplayBalances } from '@/types/tokens'
 
@@ -42,7 +42,7 @@ const useAddressesTokensBalancesTotal = (addressHash?: AddressHash): AddressesTo
 
   const { data, isLoading } = useQueries({
     queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
-      addressTokensBalanceQuery({ addressHash, latestTxHash, previousTxHash, networkId })
+      addressTokensBalancesQuery({ addressHash, latestTxHash, previousTxHash, networkId })
     ),
     combine
   })
@@ -66,7 +66,7 @@ export default useAddressesTokensBalancesTotal
 const combine = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]): AddressesTokensBalancesTotal => ({
   data: results.reduce(
     (tokensBalances, { data: balances }) => {
-      balances?.tokenBalances.forEach(({ id, totalBalance, lockedBalance, availableBalance }) => {
+      balances?.balances.forEach(({ id, totalBalance, lockedBalance, availableBalance }) => {
         tokensBalances[id] = {
           totalBalance: totalBalance + (tokensBalances[id]?.totalBalance ?? BigInt(0)),
           lockedBalance: lockedBalance + (tokensBalances[id]?.lockedBalance ?? BigInt(0)),
