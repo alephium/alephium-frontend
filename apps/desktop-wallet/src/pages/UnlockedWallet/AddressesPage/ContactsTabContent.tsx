@@ -20,11 +20,10 @@ import { Contact } from '@alephium/shared'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { ArrowUp, Pencil } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { fadeIn } from '@/animations'
 import Box from '@/components/Box'
 import Button from '@/components/Button'
 import Card from '@/components/Card'
@@ -38,7 +37,7 @@ import { stringToColour } from '@/utils/colors'
 import { filterContacts } from '@/utils/contacts'
 import { getInitials } from '@/utils/misc'
 
-const ContactsTabContent = () => {
+const ContactsTabContent = memo(() => {
   const { t } = useTranslation()
   const contacts = useAppSelector(selectAllContacts)
   const defaultAddress = useAppSelector(selectDefaultAddress)
@@ -68,49 +67,47 @@ const ContactsTabContent = () => {
   const openNewContactFormModal = () => dispatch(openModal({ name: 'ContactFormModal', props: {} }))
 
   return (
-    <motion.div {...fadeIn}>
-      <TabContent
-        searchPlaceholder={t('Search for name or a hash...')}
-        onSearch={setSearchInput}
-        buttonText={newContactButtonText}
-        onButtonClick={openNewContactFormModal}
-      >
-        <ContactBox>
-          {filteredContacts.map((contact) => (
-            <Card key={contact.address}>
-              <ContentRow>
-                <Initials color={stringToColour(contact.address)}>{getInitials(contact.name)}</Initials>
-                <Name>{contact.name}</Name>
-                <HashEllipsedStyled hash={contact.address} />
-              </ContentRow>
-              <ButtonsRow>
-                <SendButton transparent borderless onClick={() => openSendModal(contact)}>
-                  <ArrowUp strokeWidth={1} />
-                  <ButtonText>{t('Send')}</ButtonText>
-                </SendButton>
-                <Separator />
-                <EditButton transparent borderless onClick={() => openEditContactModal(contact)}>
-                  <Pencil strokeWidth={1} />
-                  <ButtonText>{t('Edit')}</ButtonText>
-                </EditButton>
-              </ButtonsRow>
-            </Card>
-          ))}
-          {contacts.length === 0 && (
-            <PlaceholderCard layout isPlaceholder>
-              <Text>{t('Create contacts to avoid mistakes when sending transactions!')}</Text>
-              <motion.div>
-                <Button role="secondary" short onClick={openNewContactFormModal}>
-                  {newContactButtonText}
-                </Button>
-              </motion.div>
-            </PlaceholderCard>
-          )}
-        </ContactBox>
-      </TabContent>
-    </motion.div>
+    <TabContent
+      searchPlaceholder={t('Search for name or a hash...')}
+      onSearch={setSearchInput}
+      buttonText={newContactButtonText}
+      onButtonClick={openNewContactFormModal}
+    >
+      <ContactBox>
+        {filteredContacts.map((contact) => (
+          <Card key={contact.address}>
+            <ContentRow>
+              <Initials color={stringToColour(contact.address)}>{getInitials(contact.name)}</Initials>
+              <Name>{contact.name}</Name>
+              <HashEllipsedStyled hash={contact.address} />
+            </ContentRow>
+            <ButtonsRow>
+              <SendButton transparent borderless onClick={() => openSendModal(contact)}>
+                <ArrowUp strokeWidth={1} />
+                <ButtonText>{t('Send')}</ButtonText>
+              </SendButton>
+              <Separator />
+              <EditButton transparent borderless onClick={() => openEditContactModal(contact)}>
+                <Pencil strokeWidth={1} />
+                <ButtonText>{t('Edit')}</ButtonText>
+              </EditButton>
+            </ButtonsRow>
+          </Card>
+        ))}
+        {contacts.length === 0 && (
+          <PlaceholderCard layout isPlaceholder>
+            <Text>{t('Create contacts to avoid mistakes when sending transactions!')}</Text>
+            <motion.div>
+              <Button role="secondary" short onClick={openNewContactFormModal}>
+                {newContactButtonText}
+              </Button>
+            </motion.div>
+          </PlaceholderCard>
+        )}
+      </ContactBox>
+    </TabContent>
   )
-}
+})
 
 export default ContactsTabContent
 
