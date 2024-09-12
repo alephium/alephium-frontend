@@ -40,10 +40,6 @@ export const modalOpened = createAction<ModalId>('app/modalOpened')
 
 export const modalClosed = createAction('app/modalClosed')
 
-export const addressesPageInfoMessageClosed = createAction('app/addressesPageInfoMessageClosed')
-
-export const transfersPageInfoMessageClosed = createAction('app/transfersPageInfoMessageClosed')
-
 export const osThemeChangeDetected = createAction<ThemeType>('app/osThemeChangeDetected')
 
 export const devModeShortcutDetected = createAction<{ activate: boolean }>('app/devModeShortcutDetected')
