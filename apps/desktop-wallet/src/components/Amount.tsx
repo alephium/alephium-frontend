@@ -61,7 +61,7 @@ const Amount = (props: AmountProps) => {
 
   const { className, color, value, highlight, tabIndex, showPlusMinus } = props
 
-  const toggleDispatchMode = () => discreetMode && dispatch(discreetModeToggled())
+  const toggleDiscreetMode = () => discreetMode && dispatch(discreetModeToggled())
 
   return (
     <AmountStyled
@@ -69,7 +69,7 @@ const Amount = (props: AmountProps) => {
       data-tooltip-id="default"
       data-tooltip-content={discreetMode ? t('Click to deactivate discreet mode') : ''}
       data-tooltip-delay-show={500}
-      onClick={toggleDispatchMode}
+      onClick={toggleDiscreetMode}
     >
       {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
 
