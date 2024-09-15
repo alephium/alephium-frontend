@@ -20,7 +20,7 @@ import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useAddressesUnlistedNonStandardTokenIds } from '@/api/addressesUnlistedTokensHooks'
-import useAddressTokensByType from '@/api/apiDataHooks/useAddressTokensByType'
+import useAddressTokensByType from '@/api/apiDataHooks/address/useAddressTokensByType'
 import FocusableContent from '@/components/FocusableContent'
 import { TabItem } from '@/components/TabBar'
 import { ExpandableTable } from '@/components/Table'

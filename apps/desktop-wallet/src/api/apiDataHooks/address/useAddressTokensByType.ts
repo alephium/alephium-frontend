@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { useQueries } from '@tanstack/react-query'
 
-import useAddressTokensBalances from '@/api/apiDataHooks/useAddressTokensBalances'
+import useAddressTokensBalances from '@/api/apiDataHooks/address/useAddressTokensBalances'
 import useSeparateListedFromUnlistedTokens from '@/api/apiDataHooks/useSeparateListedFromUnlistedTokens'
 import { combineTokenTypeQueryResults, tokenTypeQuery } from '@/api/queries/tokenQueries'
 
