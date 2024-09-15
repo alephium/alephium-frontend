@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion } from 'framer-motion'
 
-import useAddressFTs from '@/api/apiDataHooks/useAddressFTs'
+import useAddressFTs from '@/api/apiDataHooks/address/useAddressFTs'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { AddressFTBalancesRow } from '@/features/assetsLists/AddressTokenBalancesRow'
 import ExpandRowButton from '@/features/assetsLists/ExpandRowButton'

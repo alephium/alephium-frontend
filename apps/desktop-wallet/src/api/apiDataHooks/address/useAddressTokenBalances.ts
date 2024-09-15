@@ -20,7 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 
-import useAddressAlphBalances from '@/api/apiDataHooks/useAddressAlphBalances'
+import useAddressAlphBalances from '@/api/apiDataHooks/address/useAddressAlphBalances'
 import { addressTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
