@@ -21,7 +21,7 @@ import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import useAddressTokenBalances from '@/api/apiDataHooks/useAddressTokenBalances'
+import useAddressTokenBalances from '@/api/apiDataHooks/address/useAddressTokenBalances'
 import useToken, { isFT, isUnlistedFT } from '@/api/apiDataHooks/useToken'
 import { useTokenPrice } from '@/api/apiDataHooks/useTokenPrices'
 import Amount from '@/components/Amount'
