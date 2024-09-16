@@ -22,15 +22,9 @@ import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import useSeparateListedFromUnlistedTokens from '@/api/apiDataHooks/useSeparateListedFromUnlistedTokens'
+import useSeparateTokens from '@/api/apiDataHooks/useSeparateTokens'
 import { mapCombineDefined } from '@/api/apiDataHooks/utils'
-import {
-  combineTokenTypeQueryResults,
-  fungibleTokenMetadataQuery,
-  nftDataQuery,
-  nftMetadataQuery,
-  tokenTypeQuery
-} from '@/api/queries/tokenQueries'
+import { fungibleTokenMetadataQuery, nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
 import { ListedFT, NonStandardToken, UnlistedFT } from '@/types/tokens'
 import { PendingTransaction } from '@/types/transactions'
 import { useTransactionAmountDeltas } from '@/utils/transactions'
@@ -55,17 +49,9 @@ const useTransactionTokens = (tx: Transaction | PendingTransaction, addressHash:
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
 
   const {
-    data: { listedFTs: listedFTsAmounts, unlistedTokens: unlistedTokensAmounts },
-    isLoading: isLoadingFtList
-  } = useSeparateListedFromUnlistedTokens(tokenAmounts)
-
-  const {
-    data: { fungible: unlistedFTIds, 'non-fungible': nftIds },
+    data: { listedFTs, unlistedTokens, unlistedFTIds, nftIds },
     isLoading: isLoadingTokensByType
-  } = useQueries({
-    queries: unlistedTokensAmounts.map(({ id }) => tokenTypeQuery({ id })),
-    combine: combineTokenTypeQueryResults
-  })
+  } = useSeparateTokens(tokenAmounts)
 
   const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useQueries({
     queries: unlistedFTIds.map((id) => fungibleTokenMetadataQuery({ id })),
@@ -84,12 +70,12 @@ const useTransactionTokens = (tx: Transaction | PendingTransaction, addressHash:
 
   const data = useMemo(() => {
     const initial = {
-      fungibleTokens: [{ ...ALPH, amount: alphAmount }, ...listedFTsAmounts] as TxFT[],
+      fungibleTokens: [{ ...ALPH, amount: alphAmount }, ...listedFTs] as TxFT[],
       nfts: [] as TxNFT[],
       nsts: [] as TxNST[]
     }
 
-    return unlistedTokensAmounts.reduce((acc, { id, amount }) => {
+    return unlistedTokens.reduce((acc, { id, amount }) => {
       const unlistedFT = unlistedFTs.find((t) => t.id === id)
 
       if (unlistedFT) {
@@ -114,12 +100,11 @@ const useTransactionTokens = (tx: Transaction | PendingTransaction, addressHash:
 
       return acc
     }, initial)
-  }, [alphAmount, listedFTsAmounts, nftsData, nftsMetadata, unlistedFTs, unlistedTokensAmounts])
+  }, [alphAmount, listedFTs, nftsData, nftsMetadata, unlistedFTs, unlistedTokens])
 
   return {
     data,
-    isLoading:
-      isLoadingFtList || isLoadingTokensByType || isLoadingUnlistedFTs || isLoadingNFTsMetadata || isLoadingNFTsData
+    isLoading: isLoadingTokensByType || isLoadingUnlistedFTs || isLoadingNFTsMetadata || isLoadingNFTsData
   }
 }
 
