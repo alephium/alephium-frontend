@@ -27,8 +27,7 @@ const throttle = pThrottle({
   interval: 1000
 })
 
-const fetch = window.fetch.bind(window)
-const throttledFetch = throttle(fetch)
+const throttledFetch = throttle((url, options = {}) => fetch(url, options))
 
 class Client {
   explorer: ExplorerProvider
