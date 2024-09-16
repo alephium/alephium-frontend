@@ -21,8 +21,9 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import TimeSince from '@/components/TimeSince'
+import { isPendingTx } from '@/features/transactionsDisplay/transactionDisplayUtils'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
-import { isPendingTx, useTransactionIconLabel } from '@/utils/transactions'
+import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
 const IconLabelTimeCell = ({ tx, addressHash, isInAddressDetailsModal }: TransactionRowProps) => {
   const { t } = useTranslation()

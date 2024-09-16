@@ -30,6 +30,10 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import Spinner from '@/components/Spinner'
 import Table, { TableCell, TableCellPlaceholder, TableHeader, TableRow } from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
+import {
+  getTransactionAmountDeltas,
+  getTransactionInfoType
+} from '@/features/transactionsDisplay/transactionDisplayUtils'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
@@ -47,7 +51,6 @@ import {
 } from '@/storage/transactions/transactionsSelectors'
 import { AddressConfirmedTransaction, Direction } from '@/types/transactions'
 import { onEnterOrSpace } from '@/utils/misc'
-import { getTransactionAmountDeltas, getTransactionInfoType } from '@/utils/transactions'
 
 interface TransactionListProps {
   addressHashes?: AddressHash[]

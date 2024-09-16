@@ -21,8 +21,8 @@ import styled from 'styled-components'
 
 import AssetBadge from '@/components/AssetBadge'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
+import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
 import { deviceBreakPoints } from '@/style/globalStyles'
-import { useTransactionAmountDeltas } from '@/utils/transactions'
 
 const TokenBadgesListCell = ({ tx, addressHash, compact }: TransactionRowProps) => {
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)

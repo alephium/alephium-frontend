@@ -25,9 +25,9 @@ import { useMemo } from 'react'
 import useSeparateTokens from '@/api/apiDataHooks/useSeparateTokens'
 import { combineDefined } from '@/api/apiDataHooks/utils'
 import { fungibleTokenMetadataQuery, nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
+import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
 import { ListedFT, NonStandardToken, UnlistedFT } from '@/types/tokens'
 import { PendingTransaction } from '@/types/transactions'
-import { useTransactionAmountDeltas } from '@/utils/transactions'
 
 type AmountDelta = { amount: bigint }
 type TxFT = TxListedFT | TxUnlistedFT
