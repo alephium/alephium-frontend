@@ -24,17 +24,12 @@ export const combineIsLoading = <R>(results: UseQueryResult<R, Error>[]) => ({
   isLoading: results.some(({ isLoading }) => isLoading)
 })
 
-export const mapCombine = <R>(results: UseQueryResult<R, Error>[]) => ({
-  data: results.map(({ data }) => data).filter(isDefined),
-  ...combineIsLoading(results)
-})
-
 export const flatMapCombine = <R>(results: UseQueryResult<R | R[], Error>[]) => ({
   data: results.flatMap(({ data }) => data).filter(isDefined),
   ...combineIsLoading(results)
 })
 
-export const mapCombineDefined = <R>(results: UseQueryResult<R, Error>[]) => ({
+export const combineDefined = <R>(results: UseQueryResult<R, Error>[]) => ({
   data: results.reduce((acc, { data }) => {
     if (data) acc.push(data)
     return acc

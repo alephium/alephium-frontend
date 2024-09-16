@@ -23,7 +23,7 @@ import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
 import useTokenPrices from '@/api/apiDataHooks/useTokenPrices'
-import { mapCombineDefined } from '@/api/apiDataHooks/utils'
+import { combineDefined } from '@/api/apiDataHooks/utils'
 import useWalletAlphBalancesTotal from '@/api/apiDataHooks/wallet/useWalletAlphBalancesTotal'
 import useWalletTokensByType from '@/api/apiDataHooks/wallet/useWalletTokensByType'
 import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
@@ -41,7 +41,7 @@ const useWalletFTs = (props?: UseWalletFTsProps) => {
 
   const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useQueries({
     queries: unlistedFTIds.map((id) => fungibleTokenMetadataQuery({ id })),
-    combine: mapCombineDefined
+    combine: combineDefined
   })
 
   const sort = props?.sort !== false
