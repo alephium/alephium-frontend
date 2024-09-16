@@ -19,13 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { motion } from 'framer-motion'
 
 import useAddressFTs from '@/api/apiDataHooks/address/useAddressFTs'
-import SkeletonLoader from '@/components/SkeletonLoader'
-import { AddressFTBalancesRow } from '@/features/assetsLists/AddressTokenBalancesRow'
+import useWalletFTs from '@/api/apiDataHooks/wallet/useWalletFTs'
 import ExpandRowButton from '@/features/assetsLists/ExpandRowButton'
-import TokenBalancesRow from '@/features/assetsLists/TokenBalancesRow'
+import { AddressFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/AddressTokenBalancesRow'
+import { WalletFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
 import TokensSkeletonLoader from '@/features/assetsLists/TokensSkeletonLoader'
 import { AddressTokensTabsProps, WalletTokensTabsProps } from '@/features/assetsLists/types'
-import useAddressesSortedFungibleTokens from '@/features/assetsLists/useSortedFungibleTokens'
 
 export const AddressFTsBalancesList = ({ addressHash, isExpanded, className, onExpand }: AddressTokensTabsProps) => {
   const { listedFTs, unlistedFTs, isLoading } = useAddressFTs({ addressHash })
@@ -39,7 +38,7 @@ export const AddressFTsBalancesList = ({ addressHash, isExpanded, className, onE
         {unlistedFTs.map(({ id }) => (
           <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
         ))}
-        {isLoading && <SkeletonLoader />}
+        {isLoading && <TokensSkeletonLoader />}
       </motion.div>
 
       <ExpandRowButton isExpanded={isExpanded} onExpand={onExpand} nbOfRows={listedFTs.length + unlistedFTs.length} />
@@ -47,21 +46,22 @@ export const AddressFTsBalancesList = ({ addressHash, isExpanded, className, onE
   )
 }
 
-// TODO: Rework
 export const WalletFTsBalancesList = ({ isExpanded, className, onExpand }: WalletTokensTabsProps) => {
-  const { data, isLoading } = useAddressesSortedFungibleTokens()
+  const { listedFTs, unlistedFTs, isLoading } = useWalletFTs()
 
   return (
     <>
       <motion.div className={className}>
-        {data.map(({ id }) => (
-          // TODO: Rework
-          <TokenBalancesRow tokenId={id} isExpanded={isExpanded} key={id} />
+        {listedFTs.map(({ id }) => (
+          <WalletFTBalancesRow tokenId={id} key={id} />
+        ))}
+        {unlistedFTs.map(({ id }) => (
+          <WalletFTBalancesRow tokenId={id} key={id} />
         ))}
         {isLoading && <TokensSkeletonLoader />}
       </motion.div>
 
-      <ExpandRowButton isExpanded={isExpanded} onExpand={onExpand} nbOfRows={data.length} />
+      <ExpandRowButton isExpanded={isExpanded} onExpand={onExpand} nbOfRows={listedFTs.length + unlistedFTs.length} />
     </>
   )
 }

@@ -21,7 +21,7 @@ import {
   selectDoVerifiedFungibleTokensNeedInitialization,
   syncVerifiedFungibleTokens
 } from '@alephium/shared'
-import { useInitializeClient, useInterval } from '@alephium/shared-react'
+import { useInitializeThrottledClient, useInterval } from '@alephium/shared-react'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
@@ -86,7 +86,7 @@ const App = () => {
   const _window = window as unknown as AlephiumWindow
   const electron = _window.electron
 
-  useInitializeClient()
+  useInitializeThrottledClient()
   useAutoLock()
 
   useEffect(() => {

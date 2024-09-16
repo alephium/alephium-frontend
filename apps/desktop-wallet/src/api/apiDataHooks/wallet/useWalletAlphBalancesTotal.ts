@@ -16,23 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
-import useAddressesLastTransactionHashes from '@/api/apiDataHooks/useAddressesLastTransactionHashes'
+import { DataHook, SkipProp } from '@/api/apiDataHooks/types'
 import { combineIsLoading } from '@/api/apiDataHooks/utils'
+import useWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useWalletLastTransactionHashes'
 import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { DisplayBalances } from '@/types/tokens'
 
-interface AddressesAlphBalancesTotal {
-  data: DisplayBalances
-  isLoading: boolean
-}
-
-// TODO: Deprecate in favor of useWalletAlphBalancesTotal
-const useAddressesAlphBalancesTotal = (addressHash?: AddressHash): AddressesAlphBalancesTotal => {
-  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useAddressesLastTransactionHashes(addressHash)
+const useWalletAlphBalancesTotal = (props?: SkipProp): DataHook<DisplayBalances | undefined> => {
+  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useWalletLastTransactionHashes(props)
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data, isLoading } = useQueries({
@@ -43,14 +37,14 @@ const useAddressesAlphBalancesTotal = (addressHash?: AddressHash): AddressesAlph
   })
 
   return {
-    data,
+    data: props?.skip ? undefined : data,
     isLoading: isLoading || isLoadingLatestTxHashes
   }
 }
 
-export default useAddressesAlphBalancesTotal
+export default useWalletAlphBalancesTotal
 
-const combine = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): AddressesAlphBalancesTotal => ({
+const combine = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): DataHook<DisplayBalances> => ({
   data: results.reduce(
     (totalBalances, { data }) => {
       totalBalances.totalBalance += data ? data.balances.totalBalance : BigInt(0)

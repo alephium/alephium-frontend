@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, client, PAGINATION_PAGE_LIMIT } from '@alephium/shared'
+import { AddressHash, PAGINATION_PAGE_LIMIT, throttledClient } from '@alephium/shared'
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
@@ -49,7 +49,7 @@ export const addressAlphBalancesQuery = ({
     queryOptions({
       queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'ALPH', { addressHash, latestTxHash, networkId }],
       queryFn: async () => {
-        const balances = await client.explorer.addresses.getAddressesAddressBalance(addressHash)
+        const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
 
         return {
           addressHash,
@@ -76,7 +76,7 @@ interface AddressTokenBalancesQueryProps extends AddressBalanceQueryProps {
   tokenId: TokenId
 }
 
-export const addressTokenBalancesQuery = ({
+export const addressSingleTokenBalancesQuery = ({
   addressHash,
   tokenId,
   networkId,
@@ -87,7 +87,10 @@ export const addressTokenBalancesQuery = ({
     queryOptions({
       queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, { addressHash, tokenId, latestTxHash, networkId }],
       queryFn: async () => {
-        const balances = await client.explorer.addresses.getAddressesAddressTokensTokenIdBalance(addressHash, tokenId)
+        const balances = await throttledClient.explorer.addresses.getAddressesAddressTokensTokenIdBalance(
+          addressHash,
+          tokenId
+        )
 
         return {
           addressHash,
@@ -126,16 +129,19 @@ export const addressTokensBalancesQuery = ({
     queryOptions({
       queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'tokens', { addressHash, latestTxHash, networkId }],
       queryFn: !skip
-        ? async (): Promise<AddressTokensBalancesQueryFnData> => {
+        ? async () => {
             const tokenBalances = [] as TokenDisplayBalances[]
             let tokenBalancesInPage = [] as AddressTokenBalance[]
             let page = 1
 
             while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
-              tokenBalancesInPage = await client.explorer.addresses.getAddressesAddressTokensBalance(addressHash, {
-                limit: PAGINATION_PAGE_LIMIT,
-                page
-              })
+              tokenBalancesInPage = await throttledClient.explorer.addresses.getAddressesAddressTokensBalance(
+                addressHash,
+                {
+                  limit: PAGINATION_PAGE_LIMIT,
+                  page
+                }
+              )
 
               tokenBalances.push(
                 ...tokenBalancesInPage.map((tokenBalances) => ({
