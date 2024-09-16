@@ -16,33 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useQueries } from '@tanstack/react-query'
-
-import useSeparateListedFromUnlistedTokens from '@/api/apiDataHooks/useSeparateListedFromUnlistedTokens'
+import useSeparateTokens from '@/api/apiDataHooks/useSeparateTokens'
 import useWalletTokensBalancesTotal from '@/api/apiDataHooks/wallet/useWalletTokensBalancesTotal'
-import { combineTokenTypeQueryResults, tokenTypeQuery } from '@/api/queries/tokenQueries'
 
 const useWalletTokensByType = () => {
   const { data: tokenBalances, isLoading: isLoadingTokensBalances } = useWalletTokensBalancesTotal()
-
-  // TODO: From here and below it's the same as in useAddressTokensByType. DRY?
-  const {
-    data: { listedFTs, unlistedTokens },
-    isLoading: isLoadingUnlistedTokens
-  } = useSeparateListedFromUnlistedTokens(tokenBalances)
-
-  const {
-    data: { fungible: unlistedFTIds, 'non-fungible': nftIds, 'non-standard': nstIds },
-    isLoading: isLoadingTokensByType
-  } = useQueries({
-    queries: unlistedTokens.map(({ id }) => tokenTypeQuery({ id })),
-    combine: combineTokenTypeQueryResults
-  })
+  const { data, isLoading } = useSeparateTokens(tokenBalances)
 
   return {
-    // TODO: Add balances?
-    data: { listedFTs, unlistedFTIds, nftIds, nstIds },
-    isLoading: isLoadingTokensBalances || isLoadingUnlistedTokens || isLoadingTokensByType
+    data,
+    isLoading: isLoading || isLoadingTokensBalances
   }
 }
 
