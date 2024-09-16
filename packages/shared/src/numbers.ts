@@ -38,7 +38,7 @@ const getNumberOfTrailingZeros = (numString: string) => {
   return numberOfZeros
 }
 
-const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) => {
+export const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) => {
   const numberOfZeros = getNumberOfTrailingZeros(numString)
   const numStringWithoutTrailingZeros = numString.substring(0, numString.length - numberOfZeros)
 
