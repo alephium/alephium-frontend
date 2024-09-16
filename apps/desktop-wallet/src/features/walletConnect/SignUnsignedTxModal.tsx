@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring } from '@alephium/keyring'
-import { client, getHumanReadableError, WALLETCONNECT_ERRORS } from '@alephium/shared'
+import { getHumanReadableError, throttledClient, WALLETCONNECT_ERRORS } from '@alephium/shared'
 import { SignUnsignedTxResult } from '@alephium/web3'
 import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -57,7 +57,7 @@ const SignUnsignedTxModal = memo(({ id, txData }: ModalBaseProp & SignUnsignedTx
       setIsLoading(true)
 
       try {
-        const decodedResult = await client.node.transactions.postTransactionsDecodeUnsignedTx({
+        const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
           unsignedTx: txData.unsignedTx
         })
 

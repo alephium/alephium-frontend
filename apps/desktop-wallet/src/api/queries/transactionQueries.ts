@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, client, TRANSACTIONS_REFRESH_INTERVAL } from '@alephium/shared'
+import { AddressHash, throttledClient, TRANSACTIONS_REFRESH_INTERVAL } from '@alephium/shared'
 import { queryOptions } from '@tanstack/react-query'
 
 import queryClient from '@/api/queryClient'
@@ -37,8 +37,8 @@ export interface AddressLatestTransactionHashQueryFnData {
 export const addressLatestTransactionHashQuery = ({ addressHash, networkId }: AddressLatestTransactionHashQueryProps) =>
   queryOptions({
     queryKey: [...ADDRESS_TRANSACTIONS_QUERY_KEYS, 'latest', { addressHash, networkId }],
-    queryFn: async ({ queryKey }): Promise<AddressLatestTransactionHashQueryFnData> => {
-      const transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHash, {
+    queryFn: async ({ queryKey }) => {
+      const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
         page: 1,
         limit: 1
       })

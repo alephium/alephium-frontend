@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressHash, client } from '@alephium/shared'
+import { AddressHash, throttledClient } from '@alephium/shared'
 import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
 import { Address, AddressTransactionsSyncResult } from '@/types/addresses'
@@ -33,7 +33,9 @@ export const fetchAddressesTransactions = async (
   const results = []
 
   for (const addressHash of addressHashes) {
-    const transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: 1 })
+    const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
+      page: 1
+    })
 
     results.push({
       hash: addressHash,
@@ -50,7 +52,7 @@ export const fetchAddressTransactionsNextPage = async (address: Address) => {
 
   if (!address.allTransactionPagesLoaded) {
     nextPage += 1
-    nextPageTransactions = await client.explorer.addresses.getAddressesAddressTransactions(address.hash, {
+    nextPageTransactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(address.hash, {
       page: nextPage
     })
   }
@@ -64,7 +66,10 @@ export const fetchAddressTransactionsNextPage = async (address: Address) => {
 
 export const fetchAddressesTransactionsNextPage = async (addresses: Address[], nextPage: number) => {
   const addressHashes = addresses.filter((address) => !address.allTransactionPagesLoaded).map((address) => address.hash)
-  const transactions = await client.explorer.addresses.postAddressesTransactions({ page: nextPage }, addressHashes)
+  const transactions = await throttledClient.explorer.addresses.postAddressesTransactions(
+    { page: nextPage },
+    addressHashes
+  )
 
   return transactions
 }
@@ -124,7 +129,7 @@ const getActiveAddressesResults = async (addressesToCheckIfActive: string[]): Pr
 
   while (addressesToCheckIfActive.length > results.length) {
     const addressesToQuery = addressesToCheckIfActive.slice(queryPage * QUERY_LIMIT, ++queryPage * QUERY_LIMIT)
-    const response = await client.explorer.addresses.postAddressesUsed(addressesToQuery)
+    const response = await throttledClient.explorer.addresses.postAddressesUsed(addressesToQuery)
 
     results.push(...response)
   }
