@@ -22,9 +22,10 @@ import styled from 'styled-components'
 import AddressBadge from '@/components/AddressBadge'
 import Badge from '@/components/Badge'
 import IOList from '@/components/IOList'
+import { isPendingTx } from '@/features/transactionsDisplay/transactionDisplayUtils'
 import AddressCell from '@/features/transactionsDisplay/transactionRow/AddressCell'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
-import { isPendingTx, useTransactionDirection } from '@/utils/transactions'
+import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 
 const SecondAddressColumnCell = ({ tx, addressHash, isInAddressDetailsModal }: TransactionRowProps) => {
   const { t } = useTranslation()

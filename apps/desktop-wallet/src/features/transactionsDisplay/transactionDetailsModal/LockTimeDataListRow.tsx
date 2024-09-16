@@ -20,8 +20,8 @@ import { useTranslation } from 'react-i18next'
 
 import DataList from '@/components/DataList'
 import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import useTransactionLockTime from '@/features/transactionsDisplay/useTransactionLockTime'
 import { formatDateForDisplay } from '@/utils/misc'
-import { useTransactionLockTime } from '@/utils/transactions'
 
 const LockTimeDataListRow = ({ tx }: Pick<TransactionDetailsModalSectionProps, 'tx'>) => {
   const { t } = useTranslation()

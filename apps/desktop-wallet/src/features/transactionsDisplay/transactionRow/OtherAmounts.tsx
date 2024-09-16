@@ -21,8 +21,8 @@ import { useTranslation } from 'react-i18next'
 
 import Amount from '@/components/Amount'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
+import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
 import useTransactionTokens from '@/features/transactionsDisplay/useTransactionTokens'
-import { useTransactionInfoType } from '@/utils/transactions'
 
 interface TransactionOtherTokenAmountsProps extends TransactionRowProps {
   type: 'nfts' | 'nsts'
