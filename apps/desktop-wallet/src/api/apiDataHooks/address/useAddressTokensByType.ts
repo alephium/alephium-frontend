@@ -17,32 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { useQueries } from '@tanstack/react-query'
 
 import useAddressTokensBalances from '@/api/apiDataHooks/address/useAddressTokensBalances'
-import useSeparateListedFromUnlistedTokens from '@/api/apiDataHooks/useSeparateListedFromUnlistedTokens'
-import { combineTokenTypeQueryResults, tokenTypeQuery } from '@/api/queries/tokenQueries'
+import useSeparateTokens from '@/api/apiDataHooks/useSeparateTokens'
 
 const useAddressTokensByType = (addressHash: AddressHash) => {
-  const { data, isLoading: isLoadingTokensBalances } = useAddressTokensBalances(addressHash)
-
-  const {
-    data: { listedFTs, unlistedTokens },
-    isLoading: isLoadingUnlistedTokens
-  } = useSeparateListedFromUnlistedTokens(data?.balances)
-
-  const {
-    data: { fungible: unlistedFTIds, 'non-fungible': nftIds, 'non-standard': nstIds },
-    isLoading: isLoadingTokensByType
-  } = useQueries({
-    queries: unlistedTokens.map(({ id }) => tokenTypeQuery({ id })),
-    combine: combineTokenTypeQueryResults
-  })
+  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressTokensBalances(addressHash)
+  const { data, isLoading } = useSeparateTokens(tokensBalances?.balances)
 
   return {
-    // TODO: Add balances?
-    data: { listedFTs, unlistedFTIds, nftIds, nstIds },
-    isLoading: isLoadingTokensBalances || isLoadingUnlistedTokens || isLoadingTokensByType
+    data,
+    isLoading: isLoading || isLoadingTokensBalances
   }
 }
 

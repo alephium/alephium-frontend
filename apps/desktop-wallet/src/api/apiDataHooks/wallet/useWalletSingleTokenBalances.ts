@@ -17,15 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH } from '@alephium/token-list'
-import { useQueries, UseQueryResult } from '@tanstack/react-query'
+import { useQueries } from '@tanstack/react-query'
 
-import { DataHook } from '@/api/apiDataHooks/types'
-import { combineIsLoading } from '@/api/apiDataHooks/utils'
+import combineBalances from '@/api/apiDataHooks/wallet/combineBalances'
 import useWalletAlphBalancesTotal from '@/api/apiDataHooks/wallet/useWalletAlphBalancesTotal'
 import useWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useWalletLastTransactionHashes'
-import { AddressAlphBalancesQueryFnData, addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
+import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { DisplayBalances, TokenId } from '@/types/tokens'
+import { TokenId } from '@/types/tokens'
 
 const useWalletSingleTokenBalances = (tokenId: TokenId) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
@@ -41,7 +40,7 @@ const useWalletSingleTokenBalances = (tokenId: TokenId) => {
     queries: isALPH
       ? []
       : latestTxHashes.map((props) => addressSingleTokenBalancesQuery({ ...props, tokenId, networkId })),
-    combine
+    combine: combineBalances
   })
 
   return {
@@ -51,22 +50,3 @@ const useWalletSingleTokenBalances = (tokenId: TokenId) => {
 }
 
 export default useWalletSingleTokenBalances
-
-// TODO: Same as combine in useWalletAlphBalancesTotal. DRY?
-const combine = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): DataHook<DisplayBalances> => ({
-  data: results.reduce(
-    (totalBalances, { data }) => {
-      totalBalances.totalBalance += data ? data.balances.totalBalance : BigInt(0)
-      totalBalances.lockedBalance += data ? data.balances.lockedBalance : BigInt(0)
-      totalBalances.availableBalance += data ? data.balances.availableBalance : BigInt(0)
-
-      return totalBalances
-    },
-    {
-      totalBalance: BigInt(0),
-      lockedBalance: BigInt(0),
-      availableBalance: BigInt(0)
-    } as DisplayBalances
-  ),
-  ...combineIsLoading(results)
-})
