@@ -38,6 +38,7 @@ export const useInitializeThrottledClient = () => {
       await throttledClient.explorer.infos.getInfos()
       dispatch(apiClientInitSucceeded({ networkId, networkName: network.name }))
     } catch (e) {
+      console.error(e)
       dispatch(apiClientInitFailed({ networkName: network.name }))
     }
   }, [network.settings.nodeHost, network.settings.explorerApiHost, network.name, dispatch])
