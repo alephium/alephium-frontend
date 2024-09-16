@@ -20,15 +20,18 @@ import { motion } from 'framer-motion'
 
 import useAddressFTs from '@/api/apiDataHooks/address/useAddressFTs'
 import useWalletFTs from '@/api/apiDataHooks/wallet/useWalletFTs'
+import SkeletonLoader from '@/components/SkeletonLoader'
+import { TableRow } from '@/components/Table'
 import ExpandRowButton from '@/features/assetsLists/ExpandRowButton'
 import { AddressFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/AddressTokenBalancesRow'
 import { WalletFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
-import TokensSkeletonLoader from '@/features/assetsLists/TokensSkeletonLoader'
-import { AddressTokensTabsProps, WalletTokensTabsProps } from '@/features/assetsLists/types'
+import { AddressTokensTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
 
 export const AddressFTsBalancesList = ({ addressHash, isExpanded, className, onExpand }: AddressTokensTabsProps) => {
   const { listedFTs, unlistedFTs, isLoading } = useAddressFTs({ addressHash })
 
+  const nbOfItems = listedFTs.length + unlistedFTs.length
+
   return (
     <>
       <motion.div className={className}>
@@ -41,14 +44,16 @@ export const AddressFTsBalancesList = ({ addressHash, isExpanded, className, onE
         {isLoading && <TokensSkeletonLoader />}
       </motion.div>
 
-      <ExpandRowButton isExpanded={isExpanded} onExpand={onExpand} nbOfRows={listedFTs.length + unlistedFTs.length} />
+      <ExpandRowButton isExpanded={isExpanded} onExpand={onExpand} isEnabled={nbOfItems > 3} />
     </>
   )
 }
 
-export const WalletFTsBalancesList = ({ isExpanded, className, onExpand }: WalletTokensTabsProps) => {
+export const WalletFTsBalancesList = ({ isExpanded, className, onExpand }: TokensTabsBaseProps) => {
   const { listedFTs, unlistedFTs, isLoading } = useWalletFTs()
 
+  const nbOfItems = listedFTs.length + unlistedFTs.length
+
   return (
     <>
       <motion.div className={className}>
@@ -61,7 +66,13 @@ export const WalletFTsBalancesList = ({ isExpanded, className, onExpand }: Walle
         {isLoading && <TokensSkeletonLoader />}
       </motion.div>
 
-      <ExpandRowButton isExpanded={isExpanded} onExpand={onExpand} nbOfRows={listedFTs.length + unlistedFTs.length} />
+      <ExpandRowButton isExpanded={isExpanded} onExpand={onExpand} isEnabled={nbOfItems > 3} />
     </>
   )
 }
+
+const TokensSkeletonLoader = () => (
+  <TableRow>
+    <SkeletonLoader height="37.5px" />
+  </TableRow>
+)

@@ -50,7 +50,7 @@ const useAddressSingleTokenBalances = (addressHash: AddressHash, tokenId: TokenI
   )
 
   return {
-    data: alphBalances ?? tokenBalances?.balances,
+    data: isALPH ? alphBalances : tokenBalances?.balances,
     isLoading: isLoadingTokenBalances || isLoadingAlphBalances || isLoadingTxHashes
   }
 }
