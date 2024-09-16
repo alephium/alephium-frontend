@@ -25,7 +25,7 @@ import { useMemo } from 'react'
 import useAddressAlphBalances from '@/api/apiDataHooks/address/useAddressAlphBalances'
 import useAddressTokensByType from '@/api/apiDataHooks/address/useAddressTokensByType'
 import useTokenPrices from '@/api/apiDataHooks/useTokenPrices'
-import { mapCombineDefined } from '@/api/apiDataHooks/utils'
+import { combineDefined } from '@/api/apiDataHooks/utils'
 import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
 
 interface UseAddressFTsProps {
@@ -42,7 +42,7 @@ const useAddressFTs = ({ addressHash, sort = true }: UseAddressFTsProps) => {
 
   const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useQueries({
     queries: unlistedFTIds.map((id) => fungibleTokenMetadataQuery({ id })),
-    combine: mapCombineDefined
+    combine: combineDefined
   })
 
   const { data: tokenPrices } = useTokenPrices({ skip: !sort })
