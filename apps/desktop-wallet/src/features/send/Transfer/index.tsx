@@ -26,9 +26,9 @@ import { buildSweepTransactions, signAndSendTransaction } from '@/api/transactio
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import SendModal, { ConfigurableSendModalProps } from '@/features/send/SendModal'
 import { TransferTxData, TransferTxModalData, TxContext } from '@/features/send/sendTypes'
+import { getTransactionAssetAmounts } from '@/features/send/sendUtils'
 import { store } from '@/storage/store'
 import { transactionSent } from '@/storage/transactions/transactionsActions'
-import { getTransactionAssetAmounts } from '@/utils/transactions'
 
 export type TransferSendModalProps = ConfigurableSendModalProps<TransferTxModalData>
 

@@ -22,7 +22,7 @@ import styled from 'styled-components'
 
 import HiddenLabel from '@/components/HiddenLabel'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
-import { useTransactionDirection } from '@/utils/transactions'
+import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 
 const DirectionCell = ({ tx, addressHash, isInAddressDetailsModal }: TransactionRowProps) => {
   const { t } = useTranslation()

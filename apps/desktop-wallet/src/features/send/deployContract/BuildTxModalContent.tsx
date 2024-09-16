@@ -30,10 +30,10 @@ import ToggleSection from '@/components/ToggleSection'
 import AssetAmountsInput from '@/features/send/AssetAmountsInput'
 import GasSettings from '@/features/send/GasSettings'
 import { DeployContractTxData, DeployContractTxModalData, TxPreparation } from '@/features/send/sendTypes'
+import { isAmountWithinRange } from '@/features/send/sendUtils'
 import useGasSettings from '@/hooks/useGasSettings'
 import useStateObject from '@/hooks/useStateObject'
 import { AssetAmountInputType } from '@/types/assets'
-import { isAmountWithinRange } from '@/utils/transactions'
 
 export interface DeployContractBuildTxModalContentProps {
   data: DeployContractTxModalData
