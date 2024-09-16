@@ -27,7 +27,7 @@ import IOList from '@/components/IOList'
 import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useOnAddressClick from '@/features/transactionsDisplay/transactionDetailsModal/useOnAddressClick'
 import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
-import { useTransactionDirection } from '@/utils/transactions'
+import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 
 const AddressesDataRows = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {
   const { t } = useTranslation()

@@ -20,7 +20,7 @@ import styled from 'styled-components'
 
 import Badge from '@/components/Badge'
 import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
-import { useTransactionIconLabel } from '@/utils/transactions'
+import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
 const TransactionType = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {
   const { label, Icon, iconColor } = useTransactionIconLabel(tx, addressHash)

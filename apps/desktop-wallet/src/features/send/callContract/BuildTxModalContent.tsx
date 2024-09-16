@@ -31,11 +31,11 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import AssetAmountsInput from '@/features/send/AssetAmountsInput'
 import GasSettings from '@/features/send/GasSettings'
 import { CallContractTxData, CallContractTxModalData, TxPreparation } from '@/features/send/sendTypes'
+import { isAmountWithinRange } from '@/features/send/sendUtils'
 import useAreAmountsWithinAvailableBalance from '@/features/send/useAreAmountsWithinAvailableBalance'
 import useGasSettings from '@/hooks/useGasSettings'
 import useStateObject from '@/hooks/useStateObject'
 import { AssetAmountInputType } from '@/types/assets'
-import { isAmountWithinRange } from '@/utils/transactions'
 
 interface CallContractBuildTxModalContentProps {
   data: CallContractTxModalData

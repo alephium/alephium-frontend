@@ -26,9 +26,9 @@ import { signAndSendTransaction } from '@/api/transactions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import SendModal, { ConfigurableSendModalProps } from '@/features/send/SendModal'
 import { CallContractTxData, CallContractTxModalData, TxContext } from '@/features/send/sendTypes'
+import { getOptionalTransactionAssetAmounts } from '@/features/send/sendUtils'
 import { store } from '@/storage/store'
 import { transactionSent } from '@/storage/transactions/transactionsActions'
-import { getOptionalTransactionAssetAmounts } from '@/utils/transactions'
 
 export type CallContractSendModalProps = ConfigurableSendModalProps<CallContractTxModalData>
 

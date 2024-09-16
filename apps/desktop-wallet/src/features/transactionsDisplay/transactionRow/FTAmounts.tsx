@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import Amount from '@/components/Amount'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
+import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
 import useTransactionTokens from '@/features/transactionsDisplay/useTransactionTokens'
-import { useTransactionInfoType } from '@/utils/transactions'
 
 const FTAmounts = ({ tx, addressHash, isInAddressDetailsModal }: TransactionRowProps) => {
   const {
