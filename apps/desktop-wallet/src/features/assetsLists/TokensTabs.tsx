@@ -26,12 +26,12 @@ import { TabItem } from '@/components/TabBar'
 import { ExpandableTable } from '@/components/Table'
 import TableTabBar from '@/components/TableTabBar'
 import { AddressFTsBalancesList, WalletFTsBalancesList } from '@/features/assetsLists/FTsBalancesList'
-import NFTsGrid from '@/features/assetsLists/NFTsGrid'
+import { AddressNFTsGrid, WalletNFTsGrid } from '@/features/assetsLists/NFTsGrid'
 import { AddressNSTsBalancesList, WalletNSTsBalancesList } from '@/features/assetsLists/NSTsBalancesList'
 import { AddressTokensTabsProps, TokensTabValue, WalletTokensTabsProps } from '@/features/assetsLists/types'
 import useTokensTabs from '@/features/assetsLists/useTokensTabs'
 
-export const AddressTokensTabs = ({ addressHash, maxHeightInPx, nftColumns }: AddressTokensTabsProps) => {
+export const AddressTokensTabs = ({ addressHash }: AddressTokensTabsProps) => {
   const { t } = useTranslation()
   const {
     data: { nstIds }
@@ -46,24 +46,16 @@ export const AddressTokensTabs = ({ addressHash, maxHeightInPx, nftColumns }: Ad
 
   const [currentTab, setCurrentTab] = useState<TabItem<TokensTabValue>>(tabs[0])
 
-  const _isExpanded = isExpanded || !maxHeightInPx
+  const props = { addressHash, isExpanded, onExpand: toggleExpansion }
 
   const renderTab = (tabValue: TokensTabValue) => {
     switch (tabValue) {
       case 'fts':
-        return <AddressFTsBalancesList addressHash={addressHash} isExpanded={_isExpanded} onExpand={toggleExpansion} />
+        return <AddressFTsBalancesList {...props} />
       case 'nfts':
-        return (
-          // TODO: Rework
-          <NFTsGrid
-            addressHash={addressHash}
-            isExpanded={_isExpanded}
-            onExpand={toggleExpansion}
-            nftColumns={nftColumns}
-          />
-        )
+        return <AddressNFTsGrid {...props} />
       case 'nsts':
-        return <AddressNSTsBalancesList addressHash={addressHash} isExpanded={_isExpanded} onExpand={toggleExpansion} />
+        return <AddressNSTsBalancesList {...props} />
     }
   }
 
@@ -74,14 +66,13 @@ export const AddressTokensTabs = ({ addressHash, maxHeightInPx, nftColumns }: Ad
       setCurrentTab={setCurrentTab}
       isExpanded={isExpanded}
       toggleExpansion={toggleExpansion}
-      maxHeightInPx={maxHeightInPx}
     >
       {renderTab(currentTab.value)}
     </TokensTabs>
   )
 }
 
-export const WalletTokensTabs = ({ maxHeightInPx, nftColumns, className }: WalletTokensTabsProps) => {
+export const WalletTokensTabs = ({ maxHeightInPx, className }: WalletTokensTabsProps) => {
   const { t } = useTranslation()
   const {
     data: { nstIds }
@@ -96,17 +87,16 @@ export const WalletTokensTabs = ({ maxHeightInPx, nftColumns, className }: Walle
 
   const [currentTab, setCurrentTab] = useState<TabItem<TokensTabValue>>(tabs[0])
 
-  const _isExpanded = isExpanded || !maxHeightInPx
+  const props = { isExpanded: isExpanded || !maxHeightInPx, onExpand: toggleExpansion }
 
   const renderTab = (tabValue: TokensTabValue) => {
     switch (tabValue) {
       case 'fts':
-        return <WalletFTsBalancesList isExpanded={_isExpanded} onExpand={toggleExpansion} />
+        return <WalletFTsBalancesList {...props} />
       case 'nfts':
-        // TODO: Rework
-        return <NFTsGrid isExpanded={_isExpanded} onExpand={toggleExpansion} nftColumns={nftColumns} />
+        return <WalletNFTsGrid {...props} />
       case 'nsts':
-        return <WalletNSTsBalancesList isExpanded={_isExpanded} onExpand={toggleExpansion} />
+        return <WalletNSTsBalancesList {...props} />
     }
   }
 

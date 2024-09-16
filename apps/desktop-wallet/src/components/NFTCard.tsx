@@ -21,29 +21,32 @@ import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
-import { useAddressesNFTs } from '@/api/addressesNftsDataHooks'
+import useNFT from '@/api/apiDataHooks/useNFT'
 import NFTThumbnail from '@/components/NFTThumbnail'
+import SkeletonLoader from '@/components/SkeletonLoader'
 import Truncate from '@/components/Truncate'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch } from '@/hooks/redux'
 
 interface NFTCardProps {
   nftId: NFT['id']
-  onClick?: () => void
 }
 
-const NFTCard = ({ nftId, onClick }: NFTCardProps) => {
-  const { data: nfts } = useAddressesNFTs()
+const NFTCard = ({ nftId }: NFTCardProps) => {
+  const dispatch = useAppDispatch()
 
-  const nft = nfts.find((nft) => nft.id === nftId)
+  const { data: nft, isLoading } = useNFT(nftId)
 
-  if (!nft) return null
+  const openNFTDetailsModal = () => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
 
   return (
-    <NFTCardStyled onClick={onClick}>
+    <NFTCardStyled onClick={openNFTDetailsModal}>
       <CardContent>
         <NFTPictureContainer>
           <NFTThumbnail nftId={nftId} size="100%" />
         </NFTPictureContainer>
-        <NFTName>{nft.name || '-'}</NFTName>
+
+        {nft ? <NFTName>{nft.name}</NFTName> : isLoading && <SkeletonLoader height="15px" />}
       </CardContent>
     </NFTCardStyled>
   )
