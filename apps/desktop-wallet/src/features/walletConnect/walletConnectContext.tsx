@@ -18,11 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import {
   AssetAmount,
-  client,
   getActiveWalletConnectSessions,
   getHumanReadableError,
   SessionProposalEvent,
   SessionRequestEvent,
+  throttledClient,
   WALLETCONNECT_ERRORS,
   WalletConnectClientStatus,
   WalletConnectError
@@ -396,7 +396,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
           case 'alph_requestNodeApi': {
             walletConnectClient.core.expirer.set(event.id, calcExpiry(5))
             const p = request.params as ApiRequestArguments
-            const result = await client.node.request(p)
+            const result = await throttledClient.node.request(p)
 
             await walletConnectClient.respond({
               topic: event.topic,
@@ -410,7 +410,11 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
             const p = request.params as ApiRequestArguments
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const call = (client.explorer as any)[`${p.path}`][`${p.method}`] as (...arg0: any[]) => Promise<any>
+            const call = (throttledClient.explorer as any)[`${p.path}`][`${p.method}`] as (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ...arg0: any[]
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ) => Promise<any>
             const result = await call(...p.params)
 
             await walletConnectClient.respond({

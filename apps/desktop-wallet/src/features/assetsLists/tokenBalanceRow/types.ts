@@ -16,8 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/redux'
-export * from '@/useInitializeClient'
-export * from '@/useInitializeThrottledClient'
-export * from '@/useInterval'
-export * from '@/utils'
+import { AddressHash } from '@alephium/shared'
+import { ReactNode } from 'react'
+
+export interface TokenBalancesRowBaseProps {
+  tokenId: string
+}
+
+export interface TokenBalancesRowAmountsProps extends TokenBalancesRowBaseProps {
+  children: ReactNode
+}
+
+export interface AddressHashProp {
+  addressHash: AddressHash
+}
+
+export type AddressTokenBalancesRowProps = AddressHashProp & TokenBalancesRowBaseProps
+
+export type AddressTokenBalancesRowAmountsProps = AddressHashProp & TokenBalancesRowAmountsProps

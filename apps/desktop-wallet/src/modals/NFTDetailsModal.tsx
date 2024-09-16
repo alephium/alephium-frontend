@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { client, NFT } from '@alephium/shared'
+import { NFT, throttledClient } from '@alephium/shared'
 import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
 import { skipToken, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
@@ -96,7 +96,9 @@ const NFTCollectionDetails = ({ collectionId }: Pick<NFT, 'collectionId'>) => {
     queryFn: !collectionId
       ? skipToken
       : async () =>
-          (await client.explorer.tokens.postTokensNftCollectionMetadata([addressFromContractId(collectionId)]))[0],
+          (
+            await throttledClient.explorer.tokens.postTokensNftCollectionMetadata([addressFromContractId(collectionId)])
+          )[0],
     staleTime: Infinity
   })
 

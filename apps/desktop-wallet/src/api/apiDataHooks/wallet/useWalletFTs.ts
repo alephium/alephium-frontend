@@ -16,34 +16,35 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, calculateAmountWorth } from '@alephium/shared'
+import { calculateAmountWorth } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { useQueries } from '@tanstack/react-query'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
-import useAddressAlphBalances from '@/api/apiDataHooks/address/useAddressAlphBalances'
-import useAddressTokensByType from '@/api/apiDataHooks/address/useAddressTokensByType'
 import useTokenPrices from '@/api/apiDataHooks/useTokenPrices'
 import { mapCombineDefined } from '@/api/apiDataHooks/utils'
+import useWalletAlphBalancesTotal from '@/api/apiDataHooks/wallet/useWalletAlphBalancesTotal'
+import useWalletTokensByType from '@/api/apiDataHooks/wallet/useWalletTokensByType'
 import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
 
-interface UseAddressFTsProps {
-  addressHash: AddressHash
-  sort?: boolean
+interface UseWalletFTsProps {
+  sort: boolean
 }
 
-const useAddressFTs = ({ addressHash, sort = true }: UseAddressFTsProps) => {
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressAlphBalances({ addressHash })
+const useWalletFTs = (props?: UseWalletFTsProps) => {
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useWalletAlphBalancesTotal()
   const {
     data: { listedFTs, unlistedFTIds },
     isLoading: isLoadingTokensByType
-  } = useAddressTokensByType(addressHash)
+  } = useWalletTokensByType()
 
   const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useQueries({
     queries: unlistedFTIds.map((id) => fungibleTokenMetadataQuery({ id })),
     combine: mapCombineDefined
   })
+
+  const sort = props?.sort !== false
 
   const { data: tokenPrices } = useTokenPrices({ skip: !sort })
 
@@ -77,4 +78,4 @@ const useAddressFTs = ({ addressHash, sort = true }: UseAddressFTsProps) => {
   }
 }
 
-export default useAddressFTs
+export default useWalletFTs

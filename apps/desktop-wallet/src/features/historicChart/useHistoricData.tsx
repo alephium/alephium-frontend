@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, CHART_DATE_FORMAT, client, ONE_DAY_MS, TokenHistoricalPrice } from '@alephium/shared'
+import { AddressHash, CHART_DATE_FORMAT, ONE_DAY_MS, throttledClient, TokenHistoricalPrice } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { useQueries, useQuery } from '@tanstack/react-query'
@@ -38,7 +38,7 @@ const useHistoricData = () => {
   const { data: alphPriceHistory, isLoading: isLoadingAlphPriceHistory } = useQuery({
     queryKey: [HISTORY_QUERY_KEY, 'price', ALPH.symbol, { currency }],
     queryFn: () =>
-      client.explorer.market.getMarketPricesSymbolCharts(ALPH.symbol, { currency }).then((rawHistory) => {
+      throttledClient.explorer.market.getMarketPricesSymbolCharts(ALPH.symbol, { currency }).then((rawHistory) => {
         const today = dayjs().format(CHART_DATE_FORMAT)
         const history = [] as TokenHistoricalPrice[]
 
@@ -76,7 +76,7 @@ const useHistoricData = () => {
         const thisMoment = now.valueOf()
         const oneYearAgo = now.subtract(365, 'days').valueOf()
 
-        const { amountHistory } = await client.explorer.addresses.getAddressesAddressAmountHistory(hash, {
+        const { amountHistory } = await throttledClient.explorer.addresses.getAddressesAddressAmountHistory(hash, {
           fromTs: oneYearAgo,
           toTs: thisMoment,
           'interval-type': DAILY

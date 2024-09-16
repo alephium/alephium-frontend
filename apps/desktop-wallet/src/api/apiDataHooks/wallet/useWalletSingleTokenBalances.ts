@@ -16,41 +16,44 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
-import useAddressesLastTransactionHashes from '@/api/apiDataHooks/useAddressesLastTransactionHashes'
+import { DataHook } from '@/api/apiDataHooks/types'
 import { combineIsLoading } from '@/api/apiDataHooks/utils'
-import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
+import useWalletAlphBalancesTotal from '@/api/apiDataHooks/wallet/useWalletAlphBalancesTotal'
+import useWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useWalletLastTransactionHashes'
+import { AddressAlphBalancesQueryFnData, addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { DisplayBalances } from '@/types/tokens'
+import { DisplayBalances, TokenId } from '@/types/tokens'
 
-interface AddressesAlphBalancesTotal {
-  data: DisplayBalances
-  isLoading: boolean
-}
-
-// TODO: Deprecate in favor of useWalletAlphBalancesTotal
-const useAddressesAlphBalancesTotal = (addressHash?: AddressHash): AddressesAlphBalancesTotal => {
-  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useAddressesLastTransactionHashes(addressHash)
+const useWalletSingleTokenBalances = (tokenId: TokenId) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useWalletLastTransactionHashes()
 
-  const { data, isLoading } = useQueries({
-    queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
-      addressAlphBalancesQuery({ addressHash, latestTxHash, previousTxHash, networkId })
-    ),
+  const isALPH = tokenId === ALPH.id
+
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useWalletAlphBalancesTotal({
+    skip: !isALPH
+  })
+
+  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQueries({
+    queries: isALPH
+      ? []
+      : latestTxHashes.map((props) => addressSingleTokenBalancesQuery({ ...props, tokenId, networkId })),
     combine
   })
 
   return {
-    data,
-    isLoading: isLoading || isLoadingLatestTxHashes
+    data: isALPH ? alphBalances : tokenBalances,
+    isLoading: isLoadingLatestTxHashes || isLoadingTokenBalances || isLoadingAlphBalances
   }
 }
 
-export default useAddressesAlphBalancesTotal
+export default useWalletSingleTokenBalances
 
-const combine = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): AddressesAlphBalancesTotal => ({
+// TODO: Same as combine in useWalletAlphBalancesTotal. DRY?
+const combine = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): DataHook<DisplayBalances> => ({
   data: results.reduce(
     (totalBalances, { data }) => {
       totalBalances.totalBalance += data ? data.balances.totalBalance : BigInt(0)

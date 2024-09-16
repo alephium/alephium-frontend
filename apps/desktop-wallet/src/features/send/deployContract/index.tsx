@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { client } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared'
 import { binToHex, contractIdFromAddress, SignDeployContractTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
 import { memo } from 'react'
@@ -42,7 +42,7 @@ export default DeployContractSendModal
 export const buildDeployContractTransaction = async (data: DeployContractTxData, context: TxContext) => {
   const initialAttoAlphAmount =
     data.initialAlphAmount !== undefined ? data.initialAlphAmount.amount?.toString() : undefined
-  const response = await client.node.contracts.postContractsUnsignedTxDeployContract({
+  const response = await throttledClient.node.contracts.postContractsUnsignedTxDeployContract({
     fromPublicKey: data.fromAddress.publicKey,
     bytecode: data.bytecode,
     initialAttoAlphAmount,
