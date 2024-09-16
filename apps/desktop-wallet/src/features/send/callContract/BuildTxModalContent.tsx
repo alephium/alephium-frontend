@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useAddressesAlphBalancesTotal from '@/api/apiDataHooks/useAddressesAlphBalancesTotal'
+import useAddressAlphBalances from '@/api/apiDataHooks/address/useAddressAlphBalances'
 import FooterButton from '@/components/Buttons/FooterButton'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
@@ -60,13 +60,14 @@ const CallContractBuildTxModalContent = ({ data, onSubmit, onCancel }: CallContr
     fromAddress: data.fromAddress ?? '',
     bytecode: data.bytecode ?? ''
   })
+
+  const { fromAddress, bytecode, alphAmount } = txPrep
+  const { data: addressAlphBalances } = useAddressAlphBalances({ addressHash: fromAddress.hash })
+  const availableBalance = addressAlphBalances?.availableBalance ?? BigInt(0)
+
   const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[] | undefined>(data.assetAmounts)
   const [isAmountValid, setIsAmountValid] = useState(false)
 
-  const { fromAddress, bytecode, alphAmount } = txPrep
-  const {
-    data: { availableBalance }
-  } = useAddressesAlphBalancesTotal(fromAddress.hash)
   const allAssetAmountsAreWithinAvailableBalance = useAreAmountsWithinAvailableBalance(
     fromAddress.hash,
     assetAmounts ?? []

@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
-import useAddressesLastTransactionHashes from '@/api/apiDataHooks/useAddressesLastTransactionHashes'
 import { combineIsLoading } from '@/api/apiDataHooks/utils'
+import useWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useWalletLastTransactionHashes'
 import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { DisplayBalances } from '@/types/tokens'
@@ -32,8 +32,8 @@ export interface AddressesAlphBalances {
   isLoading: boolean
 }
 
-const useAddressesAlphBalances = (addressHash?: AddressHash): AddressesAlphBalances => {
-  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useAddressesLastTransactionHashes(addressHash)
+const useAlphBalancesByAddress = (): AddressesAlphBalances => {
+  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useWalletLastTransactionHashes()
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data, isLoading } = useQueries({
@@ -49,7 +49,7 @@ const useAddressesAlphBalances = (addressHash?: AddressHash): AddressesAlphBalan
   }
 }
 
-export default useAddressesAlphBalances
+export default useAlphBalancesByAddress
 
 const combine = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): AddressesAlphBalances => ({
   data: results.reduce(
