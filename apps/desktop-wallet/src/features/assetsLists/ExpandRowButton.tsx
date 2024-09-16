@@ -20,10 +20,10 @@ import { ExpandRow } from '@/components/Table'
 import { TokensTabsBaseProps } from '@/features/assetsLists/types'
 
 interface ExpandRowButtonProps extends TokensTabsBaseProps {
-  nbOfRows: number
+  isEnabled: boolean
 }
 
-const ExpandRowButton = ({ isExpanded, nbOfRows, onExpand }: ExpandRowButtonProps) =>
-  !isExpanded && nbOfRows > 3 && onExpand && <ExpandRow onClick={onExpand} />
+const ExpandRowButton = ({ isExpanded, isEnabled, onExpand }: ExpandRowButtonProps) =>
+  !isExpanded && isEnabled && onExpand && <ExpandRow onClick={onExpand} />
 
 export default ExpandRowButton
