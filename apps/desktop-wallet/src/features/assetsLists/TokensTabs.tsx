@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useAddressesUnlistedNonStandardTokenIds } from '@/api/addressesUnlistedTokensHooks'
 import useAddressTokensByType from '@/api/apiDataHooks/address/useAddressTokensByType'
+import useWalletTokensByType from '@/api/apiDataHooks/wallet/useWalletTokensByType'
 import FocusableContent from '@/components/FocusableContent'
 import { TabItem } from '@/components/TabBar'
 import { ExpandableTable } from '@/components/Table'
@@ -83,10 +83,12 @@ export const AddressTokensTabs = ({ addressHash, maxHeightInPx, nftColumns }: Ad
 
 export const WalletTokensTabs = ({ maxHeightInPx, nftColumns, className }: WalletTokensTabsProps) => {
   const { t } = useTranslation()
-  const { data: addressesNSTIds } = useAddressesUnlistedNonStandardTokenIds()
+  const {
+    data: { nstIds }
+  } = useWalletTokensByType()
 
   const { tabs, isExpanded, toggleExpansion } = useTokensTabs({
-    numberOfNSTs: addressesNSTIds.length,
+    numberOfNSTs: nstIds.length,
     ftsTabTitle: `💰 ${t('Tokens')}`,
     nstsTabTitle: `❔ ${t('Unknown tokens')}`,
     nftsTabTitle: `🖼️ ${t('NFTs')}`
@@ -99,13 +101,11 @@ export const WalletTokensTabs = ({ maxHeightInPx, nftColumns, className }: Walle
   const renderTab = (tabValue: TokensTabValue) => {
     switch (tabValue) {
       case 'fts':
-        // TODO: Rework
         return <WalletFTsBalancesList isExpanded={_isExpanded} onExpand={toggleExpansion} />
       case 'nfts':
         // TODO: Rework
         return <NFTsGrid isExpanded={_isExpanded} onExpand={toggleExpansion} nftColumns={nftColumns} />
       case 'nsts':
-        // TODO: Rework
         return <WalletNSTsBalancesList isExpanded={_isExpanded} onExpand={toggleExpansion} />
     }
   }

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { client, ONE_MINUTE_MS } from '@alephium/shared'
+import { throttledClient, ONE_MINUTE_MS } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
@@ -36,7 +36,7 @@ export const tokensPriceQuery = ({ symbols, currency, skip }: TokensPriceQueryPr
       queryKey: [TOKEN_PRICES_KEY, 'currentPrice', _symbols, { currency }],
       queryFn: !skip
         ? async () => {
-            const prices = await client.explorer.market.postMarketPrices({ currency }, _symbols)
+            const prices = await throttledClient.explorer.market.postMarketPrices({ currency }, _symbols)
 
             return prices.map((price, i) => ({ price, symbol: _symbols[i] }))
           }
