@@ -29,6 +29,7 @@ interface AddressesUnlistedTokenTypes {
   isLoading: boolean
 }
 
+// TODO: Delete in favor of new hooks
 const useAddressesUnlistedTokensByType = (addressHash?: AddressHash): AddressesUnlistedTokenTypes => {
   const { unknownTypeTokenIds, isLoading: isLoadingUnknownTypeTokens } = useAddressesListedFTs(addressHash)
 

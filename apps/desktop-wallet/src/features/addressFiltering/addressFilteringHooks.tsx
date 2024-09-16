@@ -20,8 +20,8 @@ import { AddressHash } from '@alephium/shared'
 import { useEffect, useMemo, useState } from 'react'
 
 import { useAddressesUnlistedFTs } from '@/api/addressesUnlistedTokensHooks'
-import useAddressesAlphBalances from '@/api/apiDataHooks/useAddressesAlphBalances'
 import useAddressesTokensBalances from '@/api/apiDataHooks/useAddressesTokensBalances'
+import useAlphBalancesByAddress from '@/api/apiDataHooks/useAlphBalancesByAddress'
 import useFTList from '@/api/apiDataHooks/useFTList'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
@@ -31,7 +31,7 @@ export const useFilterAddressesByText = (text = '') => {
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
   const { data: fungibleTokenList } = useFTList()
   const { data: unlistedFungibleTokens } = useAddressesUnlistedFTs()
-  const { data: addressesAlphBalances } = useAddressesAlphBalances()
+  const { data: addressesAlphBalances } = useAlphBalancesByAddress()
   const { data: addressesTokensBalances } = useAddressesTokensBalances()
 
   const [filteredAddressHashes, setFilteredAddressHashes] = useState<AddressHash[]>()
@@ -86,7 +86,7 @@ export const useFilterAddressesByText = (text = '') => {
 
 export const useAddressesWithBalance = () => {
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
-  const { data: addressesAlphBalances } = useAddressesAlphBalances()
+  const { data: addressesAlphBalances } = useAlphBalancesByAddress()
 
   const filteredAddressHashes = useMemo(
     () =>
