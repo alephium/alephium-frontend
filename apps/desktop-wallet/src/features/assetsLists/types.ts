@@ -20,19 +20,15 @@ import { AddressHash } from '@alephium/shared'
 
 export type TokensTabValue = 'fts' | 'nfts' | 'nsts'
 
-// TODO: Delete when not needed
-export interface AssetsTabsProps {
+export type TokensTabsBaseProps = {
   className?: string
-  addressHash?: AddressHash
   isExpanded?: boolean
   onExpand?: () => void
-  maxHeightInPx?: number
-  nftColumns?: number
 }
 
-export type TokensTabsBaseProps = Omit<AssetsTabsProps, 'addressHash'>
-
-export type WalletTokensTabsProps = TokensTabsBaseProps
+export interface WalletTokensTabsProps extends TokensTabsBaseProps {
+  maxHeightInPx: number
+}
 
 export interface AddressTokensTabsProps extends TokensTabsBaseProps {
   addressHash: AddressHash

@@ -16,53 +16,77 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT } from '@alephium/shared'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { useAddressesNFTsIds } from '@/api/addressesNftsDataHooks'
+import useAddressTokensByType from '@/api/apiDataHooks/address/useAddressTokensByType'
+import useWalletTokensByType from '@/api/apiDataHooks/wallet/useWalletTokensByType'
 import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { ExpandRow, TableRow } from '@/components/Table'
-import { AssetsTabsProps } from '@/features/assetsLists/types'
-import { openModal } from '@/features/modals/modalActions'
-import { useAppDispatch } from '@/hooks/redux'
+import { TableRow } from '@/components/Table'
+import ExpandRowButton from '@/features/assetsLists/ExpandRowButton'
+import { AddressTokensTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
 import { deviceBreakPoints } from '@/style/globalStyles'
+import { TokenId } from '@/types/tokens'
 
-const NFTsGrid = ({ className, addressHash, isExpanded, onExpand, nftColumns }: AssetsTabsProps) => {
-  const { t } = useTranslation()
-  const { data: nftIds, isLoading } = useAddressesNFTsIds(addressHash)
-  const dispatch = useAppDispatch()
+export const AddressNFTsGrid = ({ addressHash, ...props }: AddressTokensTabsProps) => {
+  const {
+    data: { nftIds },
+    isLoading
+  } = useAddressTokensByType(addressHash)
 
-  const openNFTDetailsModal = (nftId: NFT['id']) => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
-
-  return (
-    <>
-      <motion.div {...fadeIn} className={className}>
-        <Grid role="row" tabIndex={isExpanded ? 0 : -1} columns={nftColumns}>
-          {nftIds.map((nftId) => (
-            <NFTCard key={nftId} nftId={nftId} onClick={() => openNFTDetailsModal(nftId)} />
-          ))}
-          {nftIds.length === 0 && <PlaceholderText>{t('No NFTs found.')}</PlaceholderText>}
-          {isLoading && (
-            <>
-              <SkeletonLoader height="205px" />
-              <SkeletonLoader height="205px" />
-              <SkeletonLoader height="205px" />
-              <SkeletonLoader height="205px" />
-            </>
-          )}
-        </Grid>
-      </motion.div>
-
-      {!isExpanded && nftIds.length > 4 && onExpand && <ExpandRow onClick={onExpand} />}
-    </>
-  )
+  return <NFTsGrid {...props} columns={4} nftIds={nftIds} isLoading={isLoading} />
 }
 
-export default NFTsGrid
+export const WalletNFTsGrid = (props: TokensTabsBaseProps) => {
+  const {
+    data: { nftIds },
+    isLoading
+  } = useWalletTokensByType()
+
+  return <NFTsGrid {...props} columns={5} nftIds={nftIds} isLoading={isLoading} />
+}
+
+interface NFTsGridProps extends TokensTabsBaseProps {
+  columns: number
+  nftIds: TokenId[]
+  isLoading: boolean
+}
+
+const NFTsGrid = ({ className, isExpanded, onExpand, columns, nftIds, isLoading }: NFTsGridProps) => (
+  <>
+    <motion.div {...fadeIn} className={className}>
+      <Grid role="row" tabIndex={isExpanded ? 0 : -1} columns={columns}>
+        {isLoading ? (
+          <NFTsLoader />
+        ) : nftIds.length === 0 ? (
+          <NoNFTsPlaceholder />
+        ) : (
+          nftIds.map((nftId) => <NFTCard key={nftId} nftId={nftId} />)
+        )}
+      </Grid>
+    </motion.div>
+
+    <ExpandRowButton isExpanded={isExpanded} onExpand={onExpand} isEnabled={nftIds.length > 4} />
+  </>
+)
+
+const NFTsLoader = () => (
+  <>
+    <SkeletonLoader height="205px" />
+    <SkeletonLoader height="205px" />
+    <SkeletonLoader height="205px" />
+    <SkeletonLoader height="205px" />
+  </>
+)
+
+const NoNFTsPlaceholder = () => {
+  const { t } = useTranslation()
+
+  return <PlaceholderText>{t('No NFTs found.')}</PlaceholderText>
+}
 
 const PlaceholderText = styled.div`
   height: 36px;
@@ -71,9 +95,9 @@ const PlaceholderText = styled.div`
   justify-content: center;
 `
 
-const Grid = styled(TableRow)<{ columns?: number }>`
+const Grid = styled(TableRow)<{ columns: number }>`
   display: grid;
-  grid-template-columns: repeat(${({ columns }) => columns ?? 5}, minmax(0, 1fr));
+  grid-template-columns: repeat(${({ columns }) => columns}, minmax(0, 1fr));
   grid-auto-flow: initial;
   gap: 25px;
   padding: 15px;

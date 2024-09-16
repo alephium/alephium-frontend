@@ -24,7 +24,7 @@ import useWalletTokensByType from '@/api/apiDataHooks/wallet/useWalletTokensByTy
 import { ExpandRow } from '@/components/Table'
 import { AddressNSTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/AddressTokenBalancesRow'
 import { WalletNSTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
-import { AddressTokensTabsProps, AssetsTabsProps } from '@/features/assetsLists/types'
+import { AddressTokensTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
 
 export const AddressNSTsBalancesList = ({ className, addressHash, isExpanded, onExpand }: AddressTokensTabsProps) => {
   const {
@@ -44,7 +44,7 @@ export const AddressNSTsBalancesList = ({ className, addressHash, isExpanded, on
   )
 }
 
-export const WalletNSTsBalancesList = ({ className, isExpanded, onExpand }: AssetsTabsProps) => {
+export const WalletNSTsBalancesList = ({ className, isExpanded, onExpand }: TokensTabsBaseProps) => {
   const {
     data: { nstIds }
   } = useWalletTokensByType()

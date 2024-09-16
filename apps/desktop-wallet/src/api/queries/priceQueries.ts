@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { throttledClient, ONE_MINUTE_MS } from '@alephium/shared'
+import { ONE_MINUTE_MS, throttledClient } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 

@@ -56,7 +56,7 @@ const AddressDetailsModal = memo(({ id, addressHash }: ModalBaseProp & AddressDe
             <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" solidBackground />
           </ButtonsGrid>
         </Shortcuts>
-        <AddressTokensTabs addressHash={addressHash} nftColumns={4} />
+        <AddressTokensTabs addressHash={addressHash} />
         <TransactionList
           title={t('Address transactions')}
           addressHashes={[addressHash]}
