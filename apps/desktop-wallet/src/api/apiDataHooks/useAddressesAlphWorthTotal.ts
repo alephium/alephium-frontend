@@ -22,6 +22,7 @@ import { useMemo } from 'react'
 import useAddressesAlphBalancesTotal from '@/api/apiDataHooks/useAddressesAlphBalancesTotal'
 import useAlphPrice from '@/api/apiDataHooks/useAlphPrice'
 
+// TODO: Delete in favor of new hooks
 const useAddressesAlphWorthTotal = (addressHash?: AddressHash) => {
   const { data: totalAlphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalancesTotal(addressHash)
   const { data: alphPrice, isLoading: isLoadingAlphPrice } = useAlphPrice()

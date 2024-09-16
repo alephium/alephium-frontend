@@ -29,6 +29,7 @@ interface AddressesListedFTs {
   isLoading: boolean
 }
 
+// TODO: Delete in favor of new hooks
 const useAddressesListedFTs = (addressHash?: AddressHash): AddressesListedFTs => {
   const { data: fungibleTokenList, isLoading: isLoadingFTList } = useFTList()
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalances(addressHash)

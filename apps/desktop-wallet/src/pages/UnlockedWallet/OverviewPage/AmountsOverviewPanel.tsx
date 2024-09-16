@@ -48,6 +48,7 @@ const chartAnimationVariants = {
   hidden: { height: 0 }
 }
 
+// TODO: Refactor to use new hooks and smaller components
 const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addressHash, children, showChart }) => {
   const { t } = useTranslation()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)

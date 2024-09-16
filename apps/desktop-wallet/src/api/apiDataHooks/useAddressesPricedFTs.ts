@@ -22,6 +22,7 @@ import { useMemo } from 'react'
 
 import useAddressesListedFTs from '@/api/apiDataHooks/useAddressesListedFTs'
 
+// TODO: Delete in favor of new hooks
 const useAddressesPricedFTs = (addressHash?: AddressHash) => {
   const { data: listedFTs, isLoading: isLoadingListedFTs } = useAddressesListedFTs(addressHash)
 
