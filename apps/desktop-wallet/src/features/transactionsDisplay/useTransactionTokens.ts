@@ -23,7 +23,7 @@ import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import useSeparateTokens from '@/api/apiDataHooks/useSeparateTokens'
-import { mapCombineDefined } from '@/api/apiDataHooks/utils'
+import { combineDefined } from '@/api/apiDataHooks/utils'
 import { fungibleTokenMetadataQuery, nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
 import { ListedFT, NonStandardToken, UnlistedFT } from '@/types/tokens'
 import { PendingTransaction } from '@/types/transactions'
@@ -55,17 +55,17 @@ const useTransactionTokens = (tx: Transaction | PendingTransaction, addressHash:
 
   const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useQueries({
     queries: unlistedFTIds.map((id) => fungibleTokenMetadataQuery({ id })),
-    combine: mapCombineDefined
+    combine: combineDefined
   })
 
   const { data: nftsMetadata, isLoading: isLoadingNFTsMetadata } = useQueries({
     queries: nftIds.map((id) => nftMetadataQuery({ id })),
-    combine: mapCombineDefined
+    combine: combineDefined
   })
 
   const { data: nftsData, isLoading: isLoadingNFTsData } = useQueries({
     queries: nftsMetadata.map(({ id, tokenUri }) => nftDataQuery({ id, tokenUri })),
-    combine: mapCombineDefined
+    combine: combineDefined
   })
 
   const data = useMemo(() => {
