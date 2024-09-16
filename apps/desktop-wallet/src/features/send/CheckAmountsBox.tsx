@@ -28,9 +28,9 @@ import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Box from '@/components/Box'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
+import { getTransactionAssetAmounts } from '@/features/send/sendUtils'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
-import { getTransactionAssetAmounts } from '@/utils/transactions'
 
 interface CheckAmountsBoxProps {
   assetAmounts: AssetAmount[]
