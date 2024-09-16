@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, client, NFT, ONE_DAY_MS, TOKENS_QUERY_LIMIT } from '@alephium/shared'
+import { AddressHash, NFT, ONE_DAY_MS, throttledClient, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { NFTTokenUriMetaData } from '@alephium/web3'
 import { useQueries } from '@tanstack/react-query'
 import axios from 'axios'
@@ -44,7 +44,7 @@ export const useAddressesNFTs = (addressHash?: AddressHash) => {
   const { data: nftsMetadata, isLoading: isLoadingNftsMetadata } = useQueries({
     queries: chunk(nftIds, TOKENS_QUERY_LIMIT).map((ids) => ({
       queryKey: ['tokens', 'non-fungible', 'metadata', ids],
-      queryFn: () => client.explorer.tokens.postTokensNftMetadata(ids),
+      queryFn: () => throttledClient.explorer.tokens.postTokensNftMetadata(ids),
       staleTime: Infinity
     })),
     combine: (results) => ({

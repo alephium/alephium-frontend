@@ -21,12 +21,12 @@ import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 
 import useAddressAlphBalances from '@/api/apiDataHooks/address/useAddressAlphBalances'
-import { addressTokenBalancesQuery } from '@/api/queries/addressQueries'
+import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { TokenId } from '@/types/tokens'
 
-const useAddressTokenBalances = (addressHash: AddressHash, tokenId: TokenId) => {
+const useAddressSingleTokenBalances = (addressHash: AddressHash, tokenId: TokenId) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const queryProps = { addressHash, networkId }
 
@@ -40,7 +40,7 @@ const useAddressTokenBalances = (addressHash: AddressHash, tokenId: TokenId) => 
   })
 
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQuery(
-    addressTokenBalancesQuery({
+    addressSingleTokenBalancesQuery({
       ...queryProps,
       tokenId,
       latestTxHash: txHashes?.latestTxHash,
@@ -50,9 +50,9 @@ const useAddressTokenBalances = (addressHash: AddressHash, tokenId: TokenId) => 
   )
 
   return {
-    data: alphBalances ?? tokenBalances,
+    data: alphBalances ?? tokenBalances?.balances,
     isLoading: isLoadingTokenBalances || isLoadingAlphBalances || isLoadingTxHashes
   }
 }
 
-export default useAddressTokenBalances
+export default useAddressSingleTokenBalances

@@ -19,41 +19,45 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { motion } from 'framer-motion'
 
 import { fadeIn } from '@/animations'
-import { useAddressesUnlistedNonStandardTokenIds } from '@/api/addressesUnlistedTokensHooks'
+import useAddressTokensByType from '@/api/apiDataHooks/address/useAddressTokensByType'
+import useWalletTokensByType from '@/api/apiDataHooks/wallet/useWalletTokensByType'
 import { ExpandRow } from '@/components/Table'
-import { AddressNSTBalancesRow } from '@/features/assetsLists/AddressTokenBalancesRow'
-import TokenBalancesRow from '@/features/assetsLists/TokenBalancesRow'
+import { AddressNSTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/AddressTokenBalancesRow'
+import { WalletNSTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
 import { AddressTokensTabsProps, AssetsTabsProps } from '@/features/assetsLists/types'
 
 export const AddressNSTsBalancesList = ({ className, addressHash, isExpanded, onExpand }: AddressTokensTabsProps) => {
-  const { data: addressesNonStandardTokenIds } = useAddressesUnlistedNonStandardTokenIds(addressHash)
+  const {
+    data: { nstIds }
+  } = useAddressTokensByType(addressHash)
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {addressesNonStandardTokenIds.map((tokenId) => (
+        {nstIds.map((tokenId) => (
           <AddressNSTBalancesRow tokenId={tokenId} addressHash={addressHash} key={tokenId} />
         ))}
       </motion.div>
 
-      {!isExpanded && addressesNonStandardTokenIds.length > 3 && onExpand && <ExpandRow onClick={onExpand} />}
+      {!isExpanded && nstIds.length > 3 && onExpand && <ExpandRow onClick={onExpand} />}
     </>
   )
 }
 
-// TODO: Rework
-export const WalletNSTsBalancesList = ({ className, addressHash, isExpanded, onExpand }: AssetsTabsProps) => {
-  const { data: addressesNonStandardTokenIds } = useAddressesUnlistedNonStandardTokenIds(addressHash)
+export const WalletNSTsBalancesList = ({ className, isExpanded, onExpand }: AssetsTabsProps) => {
+  const {
+    data: { nstIds }
+  } = useWalletTokensByType()
 
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {addressesNonStandardTokenIds.map((tokenId) => (
-          <TokenBalancesRow tokenId={tokenId} isExpanded={isExpanded} key={tokenId} />
+        {nstIds.map((tokenId) => (
+          <WalletNSTBalancesRow tokenId={tokenId} key={tokenId} />
         ))}
       </motion.div>
 
-      {!isExpanded && addressesNonStandardTokenIds.length > 3 && onExpand && <ExpandRow onClick={onExpand} />}
+      {!isExpanded && nstIds.length > 3 && onExpand && <ExpandRow onClick={onExpand} />}
     </>
   )
 }

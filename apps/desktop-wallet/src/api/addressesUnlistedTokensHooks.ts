@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, client, TOKENS_QUERY_LIMIT } from '@alephium/shared'
+import { AddressHash, throttledClient, TOKENS_QUERY_LIMIT } from '@alephium/shared'
 import { useQueries } from '@tanstack/react-query'
 import { chunk } from 'lodash'
 
@@ -46,7 +46,7 @@ export const useAddressesUnlistedFTs = (addressHash?: AddressHash) => {
   const { data, isLoading } = useQueries({
     queries: chunk(unlistedFungibleTokenIds, TOKENS_QUERY_LIMIT).map((ids) => ({
       queryKey: ['tokens', 'fungible', 'unlisted', ids],
-      queryFn: () => client.explorer.tokens.postTokensFungibleMetadata(ids),
+      queryFn: () => throttledClient.explorer.tokens.postTokensFungibleMetadata(ids),
       staleTime: Infinity
     })),
     combine: (results) => ({

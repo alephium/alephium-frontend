@@ -16,8 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export * from '@/redux'
-export * from '@/useInitializeClient'
-export * from '@/useInitializeThrottledClient'
-export * from '@/useInterval'
-export * from '@/utils'
+import styled from 'styled-components'
+
+import AssetLogo from '@/components/AssetLogo'
+import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
+
+const TokenLogo = ({ tokenId }: TokenBalancesRowBaseProps) => <TokenLogoStyled tokenId={tokenId} size={30} />
+
+export default TokenLogo
+
+const TokenLogoStyled = styled(AssetLogo)`
+  margin-right: 20px;
+`

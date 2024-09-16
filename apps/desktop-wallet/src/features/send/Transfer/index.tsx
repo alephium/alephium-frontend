@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { client, fromHumanReadableAmount } from '@alephium/shared'
+import { fromHumanReadableAmount, throttledClient } from '@alephium/shared'
 import { SignTransferTxResult } from '@alephium/web3'
 import { PostHog } from 'posthog-js'
 import { memo } from 'react'
@@ -52,7 +52,7 @@ export const buildTransferTransaction = async (transactionData: TransferTxData, 
   } else {
     const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
 
-    const data = await client.node.transactions.postTransactionsBuild({
+    const data = await throttledClient.node.transactions.postTransactionsBuild({
       fromPublicKey: fromAddress.publicKey,
       destinations: [
         {
