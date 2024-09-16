@@ -16,12 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ComponentType } from 'react'
+
 import BackupReminderModal, { BackupReminderModalProps } from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
-import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
+import SwitchNetworkModal, { SwitchNetworkModalProps } from '~/screens/SwitchNetworkModal'
 
-export const ModalComponents = {
+export const ModalComponents: {
+  [K in ModalName]: ComponentType<ModalProps<K>>
+} = {
   BuyModal,
   FundPasswordReminderModal,
   BackupReminderModal,
@@ -32,15 +36,23 @@ export interface ModalPropsMap {
   BuyModal: undefined
   FundPasswordReminderModal: undefined
   BackupReminderModal: BackupReminderModalProps
-  SwitchNetworkModal: undefined
+  SwitchNetworkModal: SwitchNetworkModalProps
 }
 
-export type ModalName = keyof typeof ModalComponents
+export type ModalProps<K extends ModalName> = [ModalPropsMap[K]] extends [undefined]
+  ? ModalBaseProp
+  : ModalPropsMap[K] & ModalBaseProp
 
-export const getModalComponent = (name: ModalName) => ModalComponents[name]
+export type ModalName = keyof ModalPropsMap
+
+export function getModalComponent<K extends ModalName>(name: K): ComponentType<ModalProps<K>> {
+  return ModalComponents[name]
+}
 
 export type OpenModalParams = {
-  [K in ModalName]: { name: K; props?: ModalPropsMap[K] }
+  [K in ModalName]: ModalPropsMap[K] extends undefined
+    ? { name: K; props?: ModalPropsMap[K] }
+    : { name: K; props: ModalPropsMap[K] }
 }[ModalName]
 
 export type ModalInstance = {

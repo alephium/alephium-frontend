@@ -33,7 +33,7 @@ const AppModals = () => {
       {openedModals.map((modal) => {
         const ModalComponent = getModalComponent(modal.params.name)
 
-        return <ModalComponent key={modal.id} id={modal.id} {...modal.params.props} />
+        return <ModalComponent key={modal.id} id={modal.id} {...(modal.params.props || {})} />
       })}
     </ModalsContainer>
   )

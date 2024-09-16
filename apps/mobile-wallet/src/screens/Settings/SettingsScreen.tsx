@@ -98,7 +98,13 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
     'appAccess' | 'transactions' | undefined
   >()
 
-  const openNetworkModal = () => dispatch(openModal({ name: 'SwitchNetworkModal' }))
+  const openNetworkModal = () =>
+    dispatch(
+      openModal({
+        name: 'SwitchNetworkModal',
+        props: { onCustomNetworkPress: () => navigation.navigate('CustomNetworkScreen') }
+      })
+    )
 
   const handleBiometricsAppAccessChange = (value: boolean) => {
     if (value || biometricsRequiredForTransactions) {

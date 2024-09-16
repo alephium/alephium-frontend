@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NetworkNames, NetworkPreset, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -30,18 +29,16 @@ import { ModalContent } from '~/features/modals/ModalContent'
 import withModalWrapper from '~/features/modals/withModalWrapper'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import BottomModal from '~/modals/BottomModal'
-import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistSettings } from '~/persistent-storage/settings'
 
 export interface SwitchNetworkModalProps {
   onCustomNetworkPress: () => void
 }
 
-const SwitchNetworkModal = withModalWrapper<SwitchNetworkModalProps>(({ id, onCustomNetworkPress, ...props }) => {
+const SwitchNetworkModal = withModalWrapper<SwitchNetworkModalProps>(({ id, onCustomNetworkPress }) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const [showCustomNetworkForm, setShowCustomNetworkForm] = useState(currentNetworkName === NetworkNames.custom)
   const [selectedNetworkName, setSelectedNetworkName] = useState(currentNetworkName)
@@ -50,7 +47,7 @@ const SwitchNetworkModal = withModalWrapper<SwitchNetworkModalProps>(({ id, onCu
     setSelectedNetworkName(newNetworkName)
 
     if (newNetworkName === NetworkNames.custom) {
-      navigation.navigate('CustomNetworkScreen')
+      onCustomNetworkPress()
     } else {
       await persistSettings('network', networkSettingsPresets[newNetworkName])
       dispatch(networkPresetSwitched(newNetworkName))
