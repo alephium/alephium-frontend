@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
-import { getTokenDisplayData } from '@/api/useAddressesDisplayTokens'
+import useToken, { isFT, isNFT } from '@/api/apiDataHooks/useToken'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import HashEllipsed from '@/components/HashEllipsed'
@@ -31,25 +31,22 @@ type SelectOptionTokenProps = TokenDisplay & {
   className?: string
 }
 
-const SelectOptionToken = ({ isSelected, className, ...token }: SelectOptionTokenProps) => {
-  const { image, name, symbol, amount, decimals } = getTokenDisplayData(token)
+const SelectOptionToken = ({ isSelected, className, id, ...tokenProps }: SelectOptionTokenProps) => {
+  const { data: token } = useToken(id)
+
+  const name = isFT(token) || isNFT(token) ? token.name : undefined
+  const symbol = isFT(token) ? token.symbol : undefined
+  const amount = tokenProps.type !== 'NFT' ? tokenProps.availableBalance : undefined
 
   return (
     <SelectOptionItemContent
       MainContent={
         <>
           <AssetName>
-            <AssetLogo assetImageUrl={image} size={20} assetName={name} isNft={token.type === 'NFT'} />
+            <AssetLogo tokenId={token.id} size={20} />
             <Truncate>{name ? `${name} ${symbol ? `(${symbol})` : ''}` : <HashEllipsed hash={token.id} />}</Truncate>
           </AssetName>
-          {amount !== undefined && (
-            <AmountStyled
-              value={amount}
-              suffix={symbol}
-              decimals={decimals}
-              isNonStandardToken={token.type === 'nonStandardToken'}
-            />
-          )}
+          {amount !== undefined && <AmountStyled tokenId={token.id} value={amount} />}
         </>
       }
       isSelected={isSelected}

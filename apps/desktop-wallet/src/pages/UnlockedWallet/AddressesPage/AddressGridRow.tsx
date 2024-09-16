@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, CURRENCIES } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -41,7 +41,6 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const { data: totalWorth, isLoading: isLoadingTotalWorth } = useAddressesTokensWorthTotal(addressHash)
   const dispatch = useAppDispatch()
 
@@ -84,8 +83,10 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
       <FiatAmountCell>
         {stateUninitialized || isLoadingTotalWorth ? (
           <SkeletonLoader height="18.5px" />
+        ) : totalWorth !== undefined ? (
+          <Amount value={totalWorth} isFiat />
         ) : (
-          <Amount value={totalWorth} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
+          '-'
         )}
       </FiatAmountCell>
     </GridRow>

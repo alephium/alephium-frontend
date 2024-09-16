@@ -20,7 +20,7 @@ import { fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } f
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { MoreVertical, Plus } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -177,24 +177,6 @@ const AssetAmountsInput = ({
     handleAssetSelect(option.value)
   }
 
-  useEffect(() => {
-    const addressTokenIds = address.tokens.map((token) => token.tokenId)
-    const filteredAssetAmounts = assetAmounts.filter(
-      (asset) => addressTokenIds.includes(asset.id) || asset.id === ALPH.id
-    )
-
-    if (filteredAssetAmounts.length === 0) {
-      filteredAssetAmounts.push({ id: ALPH.id })
-    }
-
-    setSelectedAssetRowIndex(0)
-    onAssetAmountsChange(filteredAssetAmounts)
-
-    // We want to potentially update the list of assets ONLY when the address changes because the newly chosen address
-    // might not have the tokens that were selected before
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address])
-
   const renderOption = (option: SelectOption<string>) => {
     const token = tokens.find((token) => token.id === option.value)
     return token && <SelectOptionToken {...token} />
@@ -219,7 +201,7 @@ const AssetAmountsInput = ({
           const token = tokens.find((token) => token.id === id)
           if (!token) return
 
-          const { image, name, symbol, amount, decimals } = getTokenDisplayData(token)
+          const { name, symbol, amount, decimals } = getTokenDisplayData(token)
           const availableHumanReadableAmount = toHumanReadableAmount(amount ?? BigInt(0), decimals)
 
           return (
@@ -233,7 +215,7 @@ const AssetAmountsInput = ({
                   disabled={disabled || !allowMultiple || !canAddMultipleAssets}
                   id={id}
                 >
-                  <AssetLogo assetImageUrl={image} size={20} assetName={name} isNft={token.type === 'NFT'} />
+                  <AssetLogo tokenId={id} size={20} />
                   <AssetName>
                     <Truncate>{name ? `${name} ${symbol ? `(${symbol})` : ''}` : <HashEllipsed hash={id} />}</Truncate>
                   </AssetName>
@@ -266,14 +248,11 @@ const AssetAmountsInput = ({
 
                     <AvailableAmountColumn>
                       <AvailableAmount tabIndex={0}>
-                        <Amount
-                          value={amount}
-                          nbOfDecimalsToShow={4}
-                          color={theme.font.secondary}
-                          suffix={symbol}
-                          decimals={decimals}
-                          isNonStandardToken={token.type === 'nonStandardToken'}
-                        />
+                        {amount !== undefined ? (
+                          <Amount tokenId={id} value={amount} nbOfDecimalsToShow={4} color={theme.font.secondary} />
+                        ) : (
+                          '-'
+                        )}
                         <span> {t('Available').toLowerCase()}</span>
                       </AvailableAmount>
                       <ActionLink onClick={() => handleAssetAmountChange(index, availableHumanReadableAmount)}>

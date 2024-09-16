@@ -17,9 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressHash, AddressTokensSyncResult, client } from '@alephium/shared'
+import { AddressHash, client } from '@alephium/shared'
 import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
-import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { Address, AddressTransactionsSyncResult } from '@/types/addresses'
 import {
@@ -27,38 +26,6 @@ import {
   getGapFromLastActiveAddress,
   splitResultsArrayIntoOneArrayPerGroup
 } from '@/utils/addresses'
-
-const PAGE_LIMIT = 100
-
-export const fetchAddressesTokensBalances = async (
-  addressHashes: AddressHash[]
-): Promise<AddressTokensSyncResult[]> => {
-  const results = []
-
-  for (const hash of addressHashes) {
-    const addressTotalTokenBalances = [] as AddressTokenBalance[]
-    let addressTokensPageResults = [] as AddressTokenBalance[]
-    let page = 1
-
-    while (page === 1 || addressTokensPageResults.length === PAGE_LIMIT) {
-      addressTokensPageResults = await client.explorer.addresses.getAddressesAddressTokensBalance(hash, {
-        limit: PAGE_LIMIT,
-        page
-      })
-
-      addressTotalTokenBalances.push(...addressTokensPageResults)
-
-      page += 1
-    }
-
-    results.push({
-      hash,
-      tokenBalances: addressTotalTokenBalances
-    })
-  }
-
-  return results
-}
 
 export const fetchAddressesTransactions = async (
   addressHashes: AddressHash[]

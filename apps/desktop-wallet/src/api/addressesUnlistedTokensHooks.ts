@@ -17,11 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, client, TOKENS_QUERY_LIMIT } from '@alephium/shared'
-import { FungibleTokenMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries } from '@tanstack/react-query'
 import { chunk } from 'lodash'
 
 import useAddressesUnlistedTokensByType from '@/api/apiDataHooks/useAddressesUnlistedTokensByType'
+import { convertDecimalsToNumber } from '@/api/utils'
 import { UnlistedFT } from '@/types/tokens'
 import { isDefined } from '@/utils/misc'
 
@@ -58,14 +58,5 @@ export const useAddressesUnlistedFTs = (addressHash?: AddressHash) => {
   return {
     data,
     isLoading: isLoading || isLoadingUnlistedTokenTypes
-  }
-}
-
-const convertDecimalsToNumber = (token: FungibleTokenMetadata) => {
-  const parsedDecimals = parseInt(token.decimals)
-
-  return {
-    ...token,
-    decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0
   }
 }

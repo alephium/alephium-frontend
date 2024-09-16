@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, CURRENCIES } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -29,7 +29,6 @@ import { TableRow } from '@/components/Table'
 import TableCellAmount from '@/components/TableCellAmount'
 import Truncate from '@/components/Truncate'
 import { AssetsTabsProps } from '@/features/assetsLists/types'
-import { useAppSelector } from '@/hooks/redux'
 
 interface TokenBalancesRowProps {
   tokenId: string
@@ -40,18 +39,17 @@ interface TokenBalancesRowProps {
 const TokenBalancesRow = ({ tokenId, addressHash, isExpanded }: TokenBalancesRowProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const { data: tokens, isLoadingFTs } = useAddressesDisplayTokens(addressHash)
   const token = tokens.find((token) => token.id === tokenId)
 
   if (!token) return null
 
-  const { image, name, symbol, totalBalance, availableBalance, decimals, worth } = getTokenDisplayData(token)
+  const { name, symbol, totalBalance, availableBalance, worth } = getTokenDisplayData(token)
 
   return (
     <TableRow key={tokenId} role="row" tabIndex={isExpanded ? 0 : -1}>
       <TokenRow>
-        <AssetLogoStyled assetImageUrl={image} size={30} assetName={name} />
+        <AssetLogoStyled tokenId={tokenId} size={30} />
         <NameColumn>
           <TokenName>
             {name ?? <HashEllipsed hash={tokenId} tooltipText={t('Copy token hash')} disableCopy={!isExpanded} />}
@@ -68,28 +66,21 @@ const TokenBalancesRow = ({ tokenId, addressHash, isExpanded }: TokenBalancesRow
             <SkeletonLoader height="20px" width="30%" />
           ) : (
             <>
-              <TokenAmount
-                value={totalBalance}
-                suffix={symbol}
-                decimals={decimals}
-                isNonStandardToken={token.type === 'nonStandardToken'}
-              />
+              {totalBalance ? <TokenAmount tokenId={tokenId} value={totalBalance} /> : '-'}
               {availableBalance !== totalBalance && (
                 <AmountSubtitle>
                   {`${t('Available')}: `}
-                  <Amount
-                    value={availableBalance}
-                    suffix={symbol}
-                    color={theme.font.tertiary}
-                    decimals={decimals}
-                    isNonStandardToken={token.type === 'nonStandardToken'}
-                  />
+                  {availableBalance !== undefined ? (
+                    <Amount tokenId={tokenId} value={availableBalance} color={theme.font.tertiary} />
+                  ) : (
+                    '-'
+                  )}
                 </AmountSubtitle>
               )}
               {token.type === 'nonStandardToken' && <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>}
               {worth !== undefined && (
                 <Price>
-                  <Amount value={worth} isFiat suffix={CURRENCIES[fiatCurrency].symbol} />
+                  <Amount value={worth} isFiat />
                 </Price>
               )}
             </>

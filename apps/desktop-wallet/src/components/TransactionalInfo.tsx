@@ -176,10 +176,10 @@ const TransactionalInfo = ({
         </CellAddress>
       </DirectionAndAddresses>
       <TableCellAmount aria-hidden="true">
-        {knownAssets.map(({ id, amount, decimals, symbol }) => (
+        {knownAssets.map(({ id, amount }) => (
           <AmountContainer key={id}>
             {lockTime && lockTime > new Date() && <LockStyled unlockAt={lockTime} />}
-            <Amount value={amount} decimals={decimals} suffix={symbol} highlight={!isMoved} showPlusMinus={!isMoved} />
+            <Amount tokenId={id} value={amount} highlight={!isMoved} showPlusMinus={!isMoved} />
           </AmountContainer>
         ))}
       </TableCellAmount>

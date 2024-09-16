@@ -16,15 +16,84 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { client } from '@alephium/shared'
-import { explorer } from '@alephium/web3'
-import { queryOptions } from '@tanstack/react-query'
+import { client, ONE_DAY_MS, TOKENS_QUERY_LIMIT } from '@alephium/shared'
+import { explorer, NFTMetaData, NFTTokenUriMetaData } from '@alephium/web3'
+import { TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-explorer'
+import { queryOptions, skipToken } from '@tanstack/react-query'
+import { create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
+import axios from 'axios'
 
+import { convertDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/utils'
 import { TokenId } from '@/types/tokens'
 
 export type TokenTypesQueryFnData = Record<explorer.TokenStdInterfaceId, TokenId[]>
 
 const StdInterfaceIds = Object.values(explorer.TokenStdInterfaceId)
+
+interface TokenQueryProps {
+  id: TokenId
+  skip?: boolean
+}
+
+interface NFTQueryProps {
+  id: TokenId
+  tokenUri?: NFTMetaData['tokenUri']
+  skip?: boolean
+}
+
+export const tokenTypeQuery = ({ id, skip }: TokenQueryProps) =>
+  queryOptions({
+    queryKey: ['token', 'type', id],
+    queryFn: !skip
+      ? async () => {
+          const tokenInfo = await tokenTypeBatchFetcher.fetch(id)
+
+          return tokenInfo?.stdInterfaceId
+            ? { ...tokenInfo, stdInterfaceId: tokenInfo.stdInterfaceId as TokenStdInterfaceId }
+            : undefined
+        }
+      : skipToken,
+    staleTime: Infinity
+  })
+
+export const fungibleTokenMetadataQuery = ({ id, skip }: TokenQueryProps) =>
+  queryOptions({
+    queryKey: ['token', 'fungible', 'metadata', id],
+    queryFn: !skip
+      ? async () => {
+          const tokenMetadata = await fungibleTokenMetadataBatchFetcher.fetch(id)
+
+          return tokenMetadata ? convertDecimalsToNumber(tokenMetadata) : undefined
+        }
+      : skipToken,
+    staleTime: Infinity
+  })
+
+export const nftMetadataQuery = ({ id, skip }: TokenQueryProps) =>
+  queryOptions({
+    queryKey: ['token', 'non-fungible', 'metadata', id],
+    queryFn: !skip ? () => nftMetadataBatchFetcher.fetch(id) : skipToken,
+    staleTime: Infinity
+  })
+
+export const nftDataQuery = ({ id, tokenUri, skip }: NFTQueryProps) =>
+  queryOptions({
+    queryKey: ['token', 'non-fungible', 'data', id],
+    queryFn:
+      !skip && !!tokenUri
+        ? async () => {
+            const nftData = (await axios.get(tokenUri)).data as NFTTokenUriMetaData
+
+            return matchesNFTTokenUriMetaDataSchema(nftData)
+              ? nftData
+              : {
+                  name: nftData?.name.toString() || 'Unsupported NFT',
+                  image: nftData?.image.toString() || ''
+                }
+          }
+        : skipToken,
+    staleTime: ONE_DAY_MS
+  })
 
 export const tokenTypesQuery = (ids: TokenId[]) =>
   queryOptions({
@@ -55,3 +124,26 @@ export const tokenTypesQuery = (ids: TokenId[]) =>
     },
     staleTime: Infinity
   })
+
+const scheduler = windowedFiniteBatchScheduler({ maxBatchSize: TOKENS_QUERY_LIMIT, windowMs: 10 })
+
+const tokenTypeBatchFetcher = create({
+  fetcher: client.explorer.tokens.postTokens,
+  resolver: (results, queryTokenId) => results.find(({ token }) => token === queryTokenId),
+  scheduler
+})
+
+const tokenIdResolver = <T extends { id: string }>(results: T[], queryTokenId: string) =>
+  results.find(({ id }) => id === queryTokenId)
+
+const fungibleTokenMetadataBatchFetcher = create({
+  fetcher: client.explorer.tokens.postTokensFungibleMetadata,
+  resolver: tokenIdResolver,
+  scheduler
+})
+
+const nftMetadataBatchFetcher = create({
+  fetcher: client.explorer.tokens.postTokensNftMetadata,
+  resolver: tokenIdResolver,
+  scheduler
+})
