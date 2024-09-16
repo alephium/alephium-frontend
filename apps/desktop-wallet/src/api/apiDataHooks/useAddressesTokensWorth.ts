@@ -33,6 +33,7 @@ interface AddressesTokensWorth {
   isLoading: boolean
 }
 
+// TODO: Delete in favor of new hooks
 const useAddressesTokensWorth = (addressHash?: AddressHash): AddressesTokensWorth => {
   const { data: tokenPrices, isLoading: isLoadingTokenPrices } = useAddressesTokensPrices()
   const { data: tokensWithPrice, isLoading: isLoadingTokensWithPrice } = useAddressesPricedFTs(addressHash)

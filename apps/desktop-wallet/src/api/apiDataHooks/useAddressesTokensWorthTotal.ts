@@ -21,6 +21,7 @@ import { useMemo } from 'react'
 
 import useAddressesTokensWorth from '@/api/apiDataHooks/useAddressesTokensWorth'
 
+// TODO: Delete in favor of new hooks
 const useAddressesTokensWorthTotal = (addressHash?: AddressHash) => {
   const { data: tokensWorth, isLoading } = useAddressesTokensWorth(addressHash)
 

@@ -35,6 +35,7 @@ interface AddressesTokensBalancesTotal {
 
 type TokenId = string
 
+// TODO: Delete in favor of new hooks
 const useAddressesTokensBalancesTotal = (addressHash?: AddressHash): AddressesTokensBalancesTotal => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalancesTotal(addressHash)

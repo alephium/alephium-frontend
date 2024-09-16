@@ -21,8 +21,8 @@ import { ALPH } from '@alephium/token-list'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import useAddressesAlphBalances, { AddressesAlphBalances } from '@/api/apiDataHooks/useAddressesAlphBalances'
 import useAddressesLastTransactionHashes from '@/api/apiDataHooks/useAddressesLastTransactionHashes'
+import useAlphBalancesByAddress, { AddressesAlphBalances } from '@/api/apiDataHooks/useAlphBalancesByAddress'
 import { mapCombine } from '@/api/apiDataHooks/utils'
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
@@ -35,7 +35,7 @@ export interface AddressesTokensBalances {
 
 const useAddressesTokensBalances = (addressHash?: AddressHash): AddressesTokensBalances => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressesAlphBalances(addressHash)
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAlphBalancesByAddress()
   const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useAddressesLastTransactionHashes(addressHash)
 
   const { data: tokensBalances, isLoading } = useQueries({

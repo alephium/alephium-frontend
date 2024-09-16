@@ -22,7 +22,7 @@ import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import useAddressesAlphBalancesTotal from '@/api/apiDataHooks/useAddressesAlphBalancesTotal'
+import useAddressAlphBalances from '@/api/apiDataHooks/address/useAddressAlphBalances'
 import AddressMetadataForm from '@/components/AddressMetadataForm'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
@@ -52,20 +52,19 @@ const AddressOptionsModal = memo(({ id, addressHash }: ModalBaseProp & AddressOp
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
 
+  const { data: addressAlphBalances } = useAddressAlphBalances({ addressHash })
+
   const [addressLabel, setAddressLabel] = useState({
     title: address?.label ?? '',
     color: address?.color || getRandomLabelColor()
   })
   const [isDefaultAddress, setIsDefaultAddress] = useState(address?.isDefault ?? false)
 
-  const {
-    data: { availableBalance }
-  } = useAddressesAlphBalancesTotal(addressHash)
-
   if (!address || !defaultAddress) return null
 
+  const availableBalance = addressAlphBalances?.availableBalance
   const isDefaultAddressToggleEnabled = defaultAddress.hash !== address.hash
-  const isSweepButtonEnabled = addresses.length > 1 && availableBalance > 0
+  const isSweepButtonEnabled = addresses.length > 1 && availableBalance !== undefined && availableBalance > 0
 
   const onClose = () => dispatch(closeModal({ id }))
 
@@ -127,9 +126,12 @@ const AddressOptionsModal = memo(({ id, addressHash }: ModalBaseProp & AddressOp
             <Button short wide onClick={openSweepModal} disabled={!isSweepButtonEnabled}>
               {t('Sweep')}
             </Button>
-            <AvailableAmount tabIndex={0}>
-              {t('Available')}: <Amount tokenId={ALPH.id} value={availableBalance} color={theme.font.secondary} />
-            </AvailableAmount>
+
+            {availableBalance !== undefined && (
+              <AvailableAmount tabIndex={0}>
+                {t('Available')}: <Amount tokenId={ALPH.id} value={availableBalance} color={theme.font.secondary} />
+              </AvailableAmount>
+            )}
           </SweepButton>
         }
       />
