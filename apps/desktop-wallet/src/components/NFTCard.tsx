@@ -21,7 +21,7 @@ import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
-import useNFT from '@/api/apiDataHooks/useNFT'
+import useFetchNft from '@/api/apiDataHooks/useFetchNft'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Truncate from '@/components/Truncate'
@@ -35,7 +35,7 @@ interface NFTCardProps {
 const NFTCard = ({ nftId }: NFTCardProps) => {
   const dispatch = useAppDispatch()
 
-  const { data: nft, isLoading } = useNFT({ id: nftId })
+  const { data: nft, isLoading } = useFetchNft({ id: nftId })
 
   const openNFTDetailsModal = () => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
 

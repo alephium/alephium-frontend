@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset } from '@alephium/shared'
 import styled, { css } from 'styled-components'
 
-import useToken, { isFT, isNFT } from '@/api/apiDataHooks/useToken'
+import useFetchToken, { isFT, isNFT } from '@/api/apiDataHooks/useFetchToken'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 
@@ -37,7 +37,7 @@ interface AssetBadgeProps extends AssetBadgeStyleProps {
 }
 
 const AssetBadge = ({ assetId, amount, simple, hideNftName, className }: AssetBadgeProps) => {
-  const { data: token } = useToken(assetId)
+  const { data: token } = useFetchToken(assetId)
 
   const tooltipContent = isFT(token) || isNFT(token) ? token.name : assetId
 

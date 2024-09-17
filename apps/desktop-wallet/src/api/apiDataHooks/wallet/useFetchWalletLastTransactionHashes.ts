@@ -16,22 +16,24 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { explorer } from '@alephium/web3'
-import { useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useQueries } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/types'
-import { tokensPriceQuery } from '@/api/queries/priceQueries'
+import { flatMapCombine } from '@/api/apiDataHooks/utils'
+import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
-const pricedTokens = Object.keys(explorer.TokensWithPrice)
+const useFetchWalletLastTransactionHashes = (props?: SkipProp) => {
+  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
-const useTokenPrices = (props?: SkipProp) => {
-  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-
-  const { data, isLoading } = useQuery(
-    tokensPriceQuery({ symbols: pricedTokens, currency: fiatCurrency.toLowerCase(), skip: props?.skip })
-  )
+  const { data, isLoading } = useQueries({
+    queries: !props?.skip
+      ? allAddressHashes.map((addressHash) => addressLatestTransactionHashQuery({ addressHash, networkId }))
+      : [],
+    combine: flatMapCombine
+  })
 
   return {
     data,
@@ -39,13 +41,4 @@ const useTokenPrices = (props?: SkipProp) => {
   }
 }
 
-export default useTokenPrices
-
-export const useTokenPrice = (symbol: string) => {
-  const { data, isLoading } = useTokenPrices()
-
-  return {
-    data: useMemo(() => data?.find((tokenPrice) => tokenPrice.symbol === symbol), [data, symbol]),
-    isLoading
-  }
-}
+export default useFetchWalletLastTransactionHashes

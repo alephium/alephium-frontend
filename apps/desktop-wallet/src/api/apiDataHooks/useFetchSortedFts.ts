@@ -23,7 +23,7 @@ import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/types'
-import useTokenPrices from '@/api/apiDataHooks/useTokenPrices'
+import useFetchTokenPrices from '@/api/apiDataHooks/useFetchTokenPrices'
 import { combineDefined } from '@/api/apiDataHooks/utils'
 import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
 import { DisplayBalances, ListedFT, TokenId } from '@/types/tokens'
@@ -34,13 +34,13 @@ interface UseSortFTsProps extends SkipProp {
   alphBalances: DisplayBalances | undefined
 }
 
-const useSortFTs = ({ listedFTs, unlistedFTIds, alphBalances, skip }: UseSortFTsProps) => {
+const useFetchSortedFts = ({ listedFTs, unlistedFTIds, alphBalances, skip }: UseSortFTsProps) => {
   const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useQueries({
     queries: unlistedFTIds.map((id) => fungibleTokenMetadataQuery({ id })),
     combine: combineDefined
   })
 
-  const { data: tokenPrices } = useTokenPrices({ skip })
+  const { data: tokenPrices } = useFetchTokenPrices({ skip })
 
   return {
     sortedUnlistedFTs: useMemo(
@@ -72,4 +72,4 @@ const useSortFTs = ({ listedFTs, unlistedFTIds, alphBalances, skip }: UseSortFTs
   }
 }
 
-export default useSortFTs
+export default useFetchSortedFts

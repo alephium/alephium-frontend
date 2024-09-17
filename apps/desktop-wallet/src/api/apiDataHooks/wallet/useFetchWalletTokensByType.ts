@@ -16,14 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import useFetchSeparatedTokensByType from '@/api/apiDataHooks/useFetchSeparatedTokensByType'
+import useFetchWalletTokensBalancesTotal from '@/api/apiDataHooks/wallet/useFetchWalletTokensBalancesTotal'
 
-import useAddressTokensBalances from '@/api/apiDataHooks/address/useAddressTokensBalances'
-import useSeparateTokens from '@/api/apiDataHooks/useSeparateTokens'
-
-const useAddressTokensByType = (addressHash: AddressHash) => {
-  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressTokensBalances(addressHash)
-  const { data, isLoading } = useSeparateTokens(tokensBalances?.balances)
+const useFetchWalletTokensByType = () => {
+  const { data: tokenBalances, isLoading: isLoadingTokensBalances } = useFetchWalletTokensBalancesTotal()
+  const { data, isLoading } = useFetchSeparatedTokensByType(tokenBalances)
 
   return {
     data,
@@ -31,4 +29,4 @@ const useAddressTokensByType = (addressHash: AddressHash) => {
   }
 }
 
-export default useAddressTokensByType
+export default useFetchWalletTokensByType

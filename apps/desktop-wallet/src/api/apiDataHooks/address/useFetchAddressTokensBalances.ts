@@ -23,7 +23,7 @@ import { addressTokensBalancesQuery } from '@/api/queries/addressQueries'
 import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 
-const useAddressTokensBalances = (addressHash: AddressHash) => {
+const useFetchAddressTokensBalances = (addressHash: AddressHash) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const queryProps = { addressHash, networkId }
 
@@ -44,4 +44,4 @@ const useAddressTokensBalances = (addressHash: AddressHash) => {
   }
 }
 
-export default useAddressTokensBalances
+export default useFetchAddressTokensBalances

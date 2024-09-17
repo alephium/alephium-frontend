@@ -16,22 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import useSortFTs from '@/api/apiDataHooks/useSortFTs'
-import useWalletAlphBalancesTotal from '@/api/apiDataHooks/wallet/useWalletAlphBalancesTotal'
-import useWalletTokensByType from '@/api/apiDataHooks/wallet/useWalletTokensByType'
+import useFetchSortedFts from '@/api/apiDataHooks/useFetchSortedFts'
+import useFetchWalletAlphBalancesTotal from '@/api/apiDataHooks/wallet/useFetchWalletAlphBalancesTotal'
+import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 
 interface UseWalletFTsProps {
   sort: boolean
 }
 
-const useWalletFTs = (props?: UseWalletFTsProps) => {
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useWalletAlphBalancesTotal()
+const useFetchWalletFts = (props?: UseWalletFTsProps) => {
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletAlphBalancesTotal()
   const {
     data: { listedFTs, unlistedFTIds },
     isLoading: isLoadingTokensByType
-  } = useWalletTokensByType()
+  } = useFetchWalletTokensByType()
 
-  const { sortedListedFTs, sortedUnlistedFTs, isLoading } = useSortFTs({
+  const { sortedListedFTs, sortedUnlistedFTs, isLoading } = useFetchSortedFts({
     listedFTs,
     unlistedFTIds,
     alphBalances,
@@ -45,4 +45,4 @@ const useWalletFTs = (props?: UseWalletFTsProps) => {
   }
 }
 
-export default useWalletFTs
+export default useFetchWalletFts

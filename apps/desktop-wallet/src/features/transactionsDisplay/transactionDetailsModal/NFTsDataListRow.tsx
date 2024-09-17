@@ -24,13 +24,13 @@ import DataList from '@/components/DataList'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import { openModal } from '@/features/modals/modalActions'
 import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
-import useTransactionTokens from '@/features/transactionsDisplay/useTransactionTokens'
+import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 import { useAppDispatch } from '@/hooks/redux'
 
 const NFTsDataListRow = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {
   const {
     data: { nfts }
-  } = useTransactionTokens(tx, addressHash)
+  } = useFetchTransactionTokens(tx, addressHash)
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
