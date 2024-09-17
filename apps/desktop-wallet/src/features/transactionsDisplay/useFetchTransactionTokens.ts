@@ -22,7 +22,7 @@ import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import useFetchSeparatedTokensByType from '@/api/apiDataHooks/useFetchSeparatedTokensByType'
+import useFetchSeparatedTokensByType from '@/api/apiDataHooks/utils/useFetchSeparatedTokensByType'
 import { combineDefined } from '@/api/apiDataHooks/utils'
 import { fungibleTokenMetadataQuery, nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
@@ -52,11 +52,11 @@ const useFetchTransactionTokens = (
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
 
   const {
-    data: { listedFTs, unlistedTokens, unlistedFTIds, nftIds },
+    data: { listedFts, unlistedTokens, unlistedFTIds, nftIds },
     isLoading: isLoadingTokensByType
   } = useFetchSeparatedTokensByType(tokenAmounts)
 
-  const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useQueries({
+  const { data: unlistedFts, isLoading: isLoadingUnlistedFTs } = useQueries({
     queries: unlistedFTIds.map((id) => fungibleTokenMetadataQuery({ id })),
     combine: combineDefined
   })
@@ -73,13 +73,13 @@ const useFetchTransactionTokens = (
 
   const data = useMemo(() => {
     const initial = {
-      fungibleTokens: [{ ...ALPH, amount: alphAmount }, ...listedFTs] as TxFT[],
+      fungibleTokens: [{ ...ALPH, amount: alphAmount }, ...listedFts] as TxFT[],
       nfts: [] as TxNFT[],
       nsts: [] as TxNST[]
     }
 
     return unlistedTokens.reduce((acc, { id, amount }) => {
-      const unlistedFT = unlistedFTs.find((t) => t.id === id)
+      const unlistedFT = unlistedFts.find((t) => t.id === id)
 
       if (unlistedFT) {
         acc.fungibleTokens.push({ ...unlistedFT, amount })
@@ -103,7 +103,7 @@ const useFetchTransactionTokens = (
 
       return acc
     }, initial)
-  }, [alphAmount, listedFTs, nftsData, nftsMetadata, unlistedFTs, unlistedTokens])
+  }, [alphAmount, listedFts, nftsData, nftsMetadata, unlistedFts, unlistedTokens])
 
   return {
     data,

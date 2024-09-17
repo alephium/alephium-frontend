@@ -18,33 +18,31 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 
-import useFetchAddressAlphBalances from '@/api/apiDataHooks/address/useFetchAddressAlphBalances'
 import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
-import useFetchSortedFts from '@/api/apiDataHooks/useFetchSortedFts'
+import { SkipProp } from '@/api/apiDataHooks/types'
+import useFetchSortedFts from '@/api/apiDataHooks/utils/useFetchSortedFts'
 
-interface UseAddressFTsProps {
+interface UseAddressFTsProps extends SkipProp {
   addressHash: AddressHash
   sort?: boolean
 }
 
-const useFetchAddressFts = ({ addressHash, sort = true }: UseAddressFTsProps) => {
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressAlphBalances({ addressHash })
+const useFetchAddressFts = ({ addressHash, sort = true, skip }: UseAddressFTsProps) => {
   const {
-    data: { listedFTs, unlistedFTIds },
+    data: { listedFts, unlistedFTIds },
     isLoading: isLoadingTokensByType
-  } = useFetchAddressTokensByType(addressHash)
+  } = useFetchAddressTokensByType({ addressHash, skip, includeAlph: true })
 
   const { sortedListedFTs, sortedUnlistedFTs, isLoading } = useFetchSortedFts({
-    listedFTs,
+    listedFts,
     unlistedFTIds,
-    alphBalances,
-    skip: !sort
+    skip: !sort || skip
   })
 
   return {
-    listedFTs: sortedListedFTs,
-    unlistedFTs: sortedUnlistedFTs,
-    isLoading: isLoading || isLoadingTokensByType || isLoadingAlphBalances
+    listedFts: sortedListedFTs,
+    unlistedFts: sortedUnlistedFTs,
+    isLoading: isLoading || isLoadingTokensByType
   }
 }
 

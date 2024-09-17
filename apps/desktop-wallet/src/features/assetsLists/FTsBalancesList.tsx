@@ -26,14 +26,14 @@ import { WalletFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/Wall
 import { AddressTokensTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
 
 export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressTokensTabsProps) => {
-  const { listedFTs, unlistedFTs, isLoading } = useFetchAddressFts({ addressHash })
+  const { listedFts, unlistedFts, isLoading } = useFetchAddressFts({ addressHash })
 
   return (
-    <ExpandableTokensBalancesList {...props} nbOfItems={listedFTs.length + unlistedFTs.length}>
-      {listedFTs.map(({ id }) => (
+    <ExpandableTokensBalancesList {...props} nbOfItems={listedFts.length + unlistedFts.length}>
+      {listedFts.map(({ id }) => (
         <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
       ))}
-      {unlistedFTs.map(({ id }) => (
+      {unlistedFts.map(({ id }) => (
         <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
       ))}
       {isLoading && <TokensSkeletonLoader />}
@@ -42,14 +42,14 @@ export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressTokensT
 }
 
 export const WalletFTsBalancesList = (props: TokensTabsBaseProps) => {
-  const { listedFTs, unlistedFTs, isLoading } = useFetchWalletFts()
+  const { listedFts, unlistedFts, isLoading } = useFetchWalletFts()
 
   return (
-    <ExpandableTokensBalancesList {...props} nbOfItems={listedFTs.length + unlistedFTs.length}>
-      {listedFTs.map(({ id }) => (
+    <ExpandableTokensBalancesList {...props} nbOfItems={listedFts.length + unlistedFts.length}>
+      {listedFts.map(({ id }) => (
         <WalletFTBalancesRow tokenId={id} key={id} />
       ))}
-      {unlistedFTs.map(({ id }) => (
+      {unlistedFts.map(({ id }) => (
         <WalletFTBalancesRow tokenId={id} key={id} />
       ))}
       {isLoading && <TokensSkeletonLoader />}

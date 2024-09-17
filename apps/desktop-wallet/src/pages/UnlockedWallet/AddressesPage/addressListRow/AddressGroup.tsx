@@ -17,19 +17,32 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
-export type TokensTabValue = 'fts' | 'nfts' | 'nsts'
+import { useAppSelector } from '@/hooks/redux'
+import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
-export interface TokensTabsBaseProps {
-  className?: string
-  isExpanded?: boolean
-  onExpand?: () => void
-}
-
-export interface WalletTokensTabsProps extends TokensTabsBaseProps {
-  maxHeightInPx: number
-}
-
-export interface AddressTokensTabsProps extends TokensTabsBaseProps {
+interface AddressListRowGroupProps {
   addressHash: AddressHash
 }
+
+const AddressGroup = ({ addressHash }: AddressListRowGroupProps) => {
+  const { t } = useTranslation()
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+
+  if (!address) return null
+
+  return (
+    <AddressListRowGroupStyled>
+      {t('Group')} {address.group}
+    </AddressListRowGroupStyled>
+  )
+}
+
+export default AddressGroup
+
+const AddressListRowGroupStyled = styled.div`
+  color: ${({ theme }) => theme.font.tertiary};
+  font-size: 11px;
+`

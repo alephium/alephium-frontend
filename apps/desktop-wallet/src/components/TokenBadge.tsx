@@ -16,46 +16,61 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/shared'
 import styled, { css } from 'styled-components'
 
 import useFetchToken, { isFT, isNFT } from '@/api/apiDataHooks/useFetchToken'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
+import SkeletonLoader from '@/components/SkeletonLoader'
+import { TokenId } from '@/types/tokens'
 
-export interface AssetBadgeStyleProps {
-  simple?: boolean
+export interface TokenBadgeStyleProps {
   withBorder?: boolean
   withBackground?: boolean
-  hideNftName?: boolean
   className?: string
+  showSymbol?: boolean
+  showNftName?: boolean
+  showAmount?: boolean
 }
 
-interface AssetBadgeProps extends AssetBadgeStyleProps {
-  assetId: Asset['id']
+interface TokenBadgeProps extends TokenBadgeStyleProps {
+  tokenId: TokenId
   amount?: bigint
+  isLoading?: boolean
 }
 
-const AssetBadge = ({ assetId, amount, simple, hideNftName, className }: AssetBadgeProps) => {
-  const { data: token } = useFetchToken(assetId)
+const TokenBadge = ({ tokenId, className, ...props }: TokenBadgeProps) => {
+  const { data: token } = useFetchToken(tokenId)
 
-  const tooltipContent = isFT(token) || isNFT(token) ? token.name : assetId
+  const tooltipContent = isFT(token) || isNFT(token) ? token.name : tokenId
 
   return (
-    <div className={className} data-tooltip-id="default" data-tooltip-content={tooltipContent}>
-      <AssetLogo tokenId={assetId} size={20} />
-      {isNFT(token) && !hideNftName ? (
-        <AssetSymbol>{token.name}</AssetSymbol>
-      ) : isFT(token) && amount !== undefined ? (
-        <Amount tokenId={assetId} value={amount} />
-      ) : (
-        !simple && isFT(token) && <AssetSymbol>{token.symbol}</AssetSymbol>
-      )}
-    </div>
+    <TokenBadgeStyled className={className} data-tooltip-id="default" data-tooltip-content={tooltipContent}>
+      <AssetLogo tokenId={tokenId} size={20} />
+
+      <TokenBadgeText tokenId={tokenId} {...props} />
+    </TokenBadgeStyled>
   )
 }
 
-export default styled(AssetBadge)`
+const TokenBadgeText = ({ tokenId, amount, isLoading, showNftName, showAmount, showSymbol }: TokenBadgeProps) => {
+  const { data: token } = useFetchToken(tokenId)
+
+  if (isNFT(token) && showNftName) return <TokenSymbol>{token.name}</TokenSymbol>
+
+  if (isFT(token) && isLoading) return <SkeletonLoader height="20px" />
+
+  if (isFT(token) && showAmount && amount !== undefined)
+    return <Amount tokenId={tokenId} value={amount} useTinyAmountShorthand />
+
+  if (isFT(token) && showSymbol) return <TokenSymbol>{token.symbol}</TokenSymbol>
+
+  return null
+}
+
+export default TokenBadge
+
+const TokenBadgeStyled = styled.div<Pick<TokenBadgeProps, 'withBackground' | 'withBorder'>>`
   display: flex;
   align-items: center;
   gap: 6px;
@@ -77,6 +92,6 @@ export default styled(AssetBadge)`
     `}
 `
 
-const AssetSymbol = styled.div`
+const TokenSymbol = styled.div`
   font-weight: var(--fontWeight-semiBold);
 `
