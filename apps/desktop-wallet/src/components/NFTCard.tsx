@@ -35,7 +35,7 @@ interface NFTCardProps {
 const NFTCard = ({ nftId }: NFTCardProps) => {
   const dispatch = useAppDispatch()
 
-  const { data: nft, isLoading } = useNFT(nftId)
+  const { data: nft, isLoading } = useNFT({ id: nftId })
 
   const openNFTDetailsModal = () => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
 

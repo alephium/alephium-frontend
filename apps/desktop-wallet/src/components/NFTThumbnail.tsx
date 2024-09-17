@@ -34,7 +34,7 @@ interface NFTThumbnailProps {
 }
 
 const NFTThumbnail = ({ nftId, size = '100', ...props }: NFTThumbnailProps) => {
-  const { data: nft, isLoading } = useNFT(nftId)
+  const { data: nft, isLoading } = useNFT({ id: nftId })
 
   const [error, setError] = useState(false)
 
