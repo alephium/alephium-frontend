@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, throttledClient, TRANSACTIONS_REFRESH_INTERVAL } from '@alephium/shared'
-import { queryOptions } from '@tanstack/react-query'
+import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import queryClient from '@/api/queryClient'
 
@@ -26,6 +26,7 @@ const ADDRESS_TRANSACTIONS_QUERY_KEYS = ['address', 'transactions']
 interface AddressLatestTransactionHashQueryProps {
   addressHash: AddressHash
   networkId: number
+  skip?: boolean
 }
 
 export interface AddressLatestTransactionHashQueryFnData {
@@ -34,25 +35,31 @@ export interface AddressLatestTransactionHashQueryFnData {
   previousTxHash?: string
 }
 
-export const addressLatestTransactionHashQuery = ({ addressHash, networkId }: AddressLatestTransactionHashQueryProps) =>
+export const addressLatestTransactionHashQuery = ({
+  addressHash,
+  networkId,
+  skip
+}: AddressLatestTransactionHashQueryProps) =>
   queryOptions({
     queryKey: [...ADDRESS_TRANSACTIONS_QUERY_KEYS, 'latest', { addressHash, networkId }],
-    queryFn: async ({ queryKey }) => {
-      const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
-        page: 1,
-        limit: 1
-      })
+    queryFn: !skip
+      ? async ({ queryKey }) => {
+          const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
+            page: 1,
+            limit: 1
+          })
 
-      const latestTxHash = transactions.length > 0 ? transactions[0].hash : undefined
-      const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionHashQueryFnData | undefined
-      const cachedLatestTxHash = cachedData?.latestTxHash
-      const cachedPreviousTxHash = cachedData?.previousTxHash
+          const latestTxHash = transactions.length > 0 ? transactions[0].hash : undefined
+          const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionHashQueryFnData | undefined
+          const cachedLatestTxHash = cachedData?.latestTxHash
+          const cachedPreviousTxHash = cachedData?.previousTxHash
 
-      return {
-        addressHash,
-        latestTxHash,
-        previousTxHash: cachedLatestTxHash !== latestTxHash ? cachedLatestTxHash : cachedPreviousTxHash
-      }
-    },
+          return {
+            addressHash,
+            latestTxHash,
+            previousTxHash: cachedLatestTxHash !== latestTxHash ? cachedLatestTxHash : cachedPreviousTxHash
+          }
+        }
+      : skipToken,
     refetchInterval: TRANSACTIONS_REFRESH_INTERVAL
   })

@@ -16,20 +16,29 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { Wrench } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
-export type TokensTabValue = 'fts' | 'nfts' | 'nsts'
+import Button from '@/components/Button'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch } from '@/hooks/redux'
 
-export interface TokensTabsBaseProps {
-  className?: string
-  isExpanded?: boolean
-  onExpand?: () => void
+const AdvancedOperationsButton = () => {
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+
+  const openAdvancedOperationsSideModal = () => dispatch(openModal({ name: 'AdvancedOperationsSideModal' }))
+
+  return (
+    <Button
+      role="secondary"
+      squared
+      Icon={Wrench}
+      onClick={openAdvancedOperationsSideModal}
+      data-tooltip-id="default"
+      data-tooltip-content={t('Advanced operations')}
+    />
+  )
 }
 
-export interface WalletTokensTabsProps extends TokensTabsBaseProps {
-  maxHeightInPx: number
-}
-
-export interface AddressTokensTabsProps extends TokensTabsBaseProps {
-  addressHash: AddressHash
-}
+export default AdvancedOperationsButton

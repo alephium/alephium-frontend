@@ -34,13 +34,13 @@ const useAddressesListedFTs = (addressHash?: AddressHash): AddressesListedFTs =>
   const { data: fungibleTokenList, isLoading: isLoadingFTList } = useFetchFtList()
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalances(addressHash)
 
-  const { listedFTs, unknownTypeTokenIds } = useMemo(
+  const { listedFts, unknownTypeTokenIds } = useMemo(
     () => separateTokens(tokensBalances, fungibleTokenList),
     [fungibleTokenList, tokensBalances]
   )
 
   return {
-    data: listedFTs,
+    data: listedFts,
     unknownTypeTokenIds,
     isLoading: isLoadingFTList || isLoadingTokensBalances
   }
@@ -55,9 +55,9 @@ const separateTokens = (tokensBalances: AddressesTokensBalances['data'], fungibl
         const listedFungibleToken = fungibleTokenList?.find((token) => token.id === id)
 
         if (listedFungibleToken) {
-          const alreadyAddedToArray = acc.listedFTs.some((token) => token.id === listedFungibleToken?.id)
+          const alreadyAddedToArray = acc.listedFts.some((token) => token.id === listedFungibleToken?.id)
 
-          if (!alreadyAddedToArray) acc.listedFTs.push(listedFungibleToken)
+          if (!alreadyAddedToArray) acc.listedFts.push(listedFungibleToken)
         } else {
           acc.unknownTypeTokenIds.push(id)
         }
@@ -65,7 +65,7 @@ const separateTokens = (tokensBalances: AddressesTokensBalances['data'], fungibl
       return acc
     },
     {
-      listedFTs: [] as ListedFT[],
+      listedFts: [] as ListedFT[],
       unknownTypeTokenIds: [] as TokenId[]
     }
   )

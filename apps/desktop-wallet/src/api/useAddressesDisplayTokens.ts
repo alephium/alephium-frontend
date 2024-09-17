@@ -31,8 +31,8 @@ import { ListedFTDisplay, NFTDisplay, NonStandardTokenDisplay, TokenDisplay, Unl
 const useAddressesDisplayTokens = (addressHash?: AddressHash) => {
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalancesTotal(addressHash)
   const { data: tokensWorth, isLoading: isLoadingTokensWorth } = useAddressesTokensWorth(addressHash)
-  const { data: listedFTs, isLoading: isLoadingListedFTs } = useAddressesListedFTs(addressHash)
-  const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useAddressesUnlistedFTs(addressHash)
+  const { data: listedFts, isLoading: isLoadingListedFTs } = useAddressesListedFTs(addressHash)
+  const { data: unlistedFts, isLoading: isLoadingUnlistedFTs } = useAddressesUnlistedFTs(addressHash)
   const { data: NFTs, isLoading: isLoadingNFTs } = useAddressesNFTs(addressHash)
   const { data: nonStandardTokens, isLoading: isLoadingNonStandardTokens } =
     useAddressesUnlistedNonStandardTokenIds(addressHash)
@@ -44,7 +44,7 @@ const useAddressesDisplayTokens = (addressHash?: AddressHash) => {
     data: useMemo(
       () => [
         ...orderBy(
-          listedFTs.map((token) => {
+          listedFts.map((token) => {
             const balances = tokensBalances[token.id]
 
             return {
@@ -60,7 +60,7 @@ const useAddressesDisplayTokens = (addressHash?: AddressHash) => {
           ['desc', 'asc']
         ),
         ...orderBy(
-          unlistedFTs.map((token) => {
+          unlistedFts.map((token) => {
             const balances = tokensBalances[token.id]
 
             return {
@@ -95,7 +95,7 @@ const useAddressesDisplayTokens = (addressHash?: AddressHash) => {
           'asc'
         )
       ],
-      [NFTs, listedFTs, nonStandardTokens, tokensBalances, tokensWorth, unlistedFTs]
+      [NFTs, listedFts, nonStandardTokens, tokensBalances, tokensWorth, unlistedFts]
     )
   }
 }

@@ -52,10 +52,10 @@ export const AddressNSTBalancesRow = ({ tokenId, addressHash }: AddressTokenBala
 )
 
 const FTAmounts = ({ tokenId, addressHash }: AddressTokenBalancesRowProps) => {
-  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useFetchAddressSingleTokenBalances(
+  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useFetchAddressSingleTokenBalances({
     addressHash,
     tokenId
-  )
+  })
 
   return (
     <AddressTokenBalancesRowAmounts tokenId={tokenId} addressHash={addressHash}>
@@ -65,10 +65,10 @@ const FTAmounts = ({ tokenId, addressHash }: AddressTokenBalancesRowProps) => {
 }
 
 const AddressTokenBalancesRowAmounts = ({ tokenId, addressHash, children }: AddressTokenBalancesRowAmountsProps) => {
-  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useFetchAddressSingleTokenBalances(
+  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useFetchAddressSingleTokenBalances({
     addressHash,
     tokenId
-  )
+  })
 
   return (
     <AmountsColumn

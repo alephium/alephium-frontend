@@ -22,7 +22,7 @@ import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
-import AssetsLogosList from '@/features/assetsLists/AssetsBadgesList'
+import AddressTokensBadgesList from '@/features/assetsLists/AddressTokensBadgesList'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
@@ -52,7 +52,7 @@ const SelectOptionAddress = ({ addressHash, isSelected, className }: SelectOptio
           </Group>
         </Header>
       }
-      SecondaryContent={<AssetsLogosList addressHash={addressHash} withBackground showAmount />}
+      SecondaryContent={<AddressTokensBadgesList addressHash={addressHash} withBackground showAmount />}
     />
   )
 }
