@@ -16,17 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, calculateAmountWorth } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
-import { useQueries } from '@tanstack/react-query'
-import { orderBy } from 'lodash'
-import { useMemo } from 'react'
+import { AddressHash } from '@alephium/shared'
 
 import useAddressAlphBalances from '@/api/apiDataHooks/address/useAddressAlphBalances'
 import useAddressTokensByType from '@/api/apiDataHooks/address/useAddressTokensByType'
-import useTokenPrices from '@/api/apiDataHooks/useTokenPrices'
-import { combineDefined } from '@/api/apiDataHooks/utils'
-import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
+import useSortFTs from '@/api/apiDataHooks/useSortFTs'
 
 interface UseAddressFTsProps {
   addressHash: AddressHash
@@ -40,40 +34,17 @@ const useAddressFTs = ({ addressHash, sort = true }: UseAddressFTsProps) => {
     isLoading: isLoadingTokensByType
   } = useAddressTokensByType(addressHash)
 
-  const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useQueries({
-    queries: unlistedFTIds.map((id) => fungibleTokenMetadataQuery({ id })),
-    combine: combineDefined
+  const { sortedListedFTs, sortedUnlistedFTs, isLoading } = useSortFTs({
+    listedFTs,
+    unlistedFTIds,
+    alphBalances,
+    skip: !sort
   })
 
-  const { data: tokenPrices } = useTokenPrices({ skip: !sort })
-
   return {
-    unlistedFTs: useMemo(
-      () => (sort ? orderBy(unlistedFTs, ['name', 'id'], ['asc', 'asc']) : unlistedFTs),
-      [sort, unlistedFTs]
-    ),
-    listedFTs: useMemo(
-      () =>
-        sort && alphBalances
-          ? orderBy(
-              [...listedFTs, { ...ALPH, ...alphBalances }],
-              [
-                (token) => {
-                  const tokenPrice = tokenPrices?.find((tokenPrice) => tokenPrice.symbol === token.symbol)?.price
-
-                  return tokenPrice !== undefined
-                    ? calculateAmountWorth(token.totalBalance, tokenPrice, token.decimals)
-                    : -1
-                },
-                'name',
-                'id'
-              ],
-              ['desc', 'asc', 'asc']
-            )
-          : listedFTs,
-      [sort, alphBalances, listedFTs, tokenPrices]
-    ),
-    isLoading: isLoadingAlphBalances || isLoadingUnlistedFTs || isLoadingTokensByType
+    listedFTs: sortedListedFTs,
+    unlistedFTs: sortedUnlistedFTs,
+    isLoading: isLoading || isLoadingTokensByType || isLoadingAlphBalances
   }
 }
 

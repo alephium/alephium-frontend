@@ -20,12 +20,12 @@ import { ONE_MINUTE_MS, throttledClient } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
+import { SkipProp } from '@/api/apiDataHooks/types'
 import queryClient from '@/api/queryClient'
 
-interface TokensPriceQueryProps {
+interface TokensPriceQueryProps extends SkipProp {
   symbols: string[]
   currency: string
-  skip?: boolean
 }
 
 const TOKEN_PRICES_KEY = 'tokenPrices'

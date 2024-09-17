@@ -16,58 +16,44 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { motion } from 'framer-motion'
-
 import useAddressFTs from '@/api/apiDataHooks/address/useAddressFTs'
 import useWalletFTs from '@/api/apiDataHooks/wallet/useWalletFTs'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TableRow } from '@/components/Table'
-import ExpandRowButton from '@/features/assetsLists/ExpandRowButton'
+import ExpandableTokensBalancesList from '@/features/assetsLists/ExpandableTokensBalancesList'
 import { AddressFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/AddressTokenBalancesRow'
 import { WalletFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
 import { AddressTokensTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
 
-export const AddressFTsBalancesList = ({ addressHash, isExpanded, className, onExpand }: AddressTokensTabsProps) => {
+export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressTokensTabsProps) => {
   const { listedFTs, unlistedFTs, isLoading } = useAddressFTs({ addressHash })
 
-  const nbOfItems = listedFTs.length + unlistedFTs.length
-
   return (
-    <>
-      <motion.div className={className}>
-        {listedFTs.map(({ id }) => (
-          <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
-        ))}
-        {unlistedFTs.map(({ id }) => (
-          <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
-        ))}
-        {isLoading && <TokensSkeletonLoader />}
-      </motion.div>
-
-      <ExpandRowButton isExpanded={isExpanded} onExpand={onExpand} isEnabled={nbOfItems > 3} />
-    </>
+    <ExpandableTokensBalancesList {...props} nbOfItems={listedFTs.length + unlistedFTs.length}>
+      {listedFTs.map(({ id }) => (
+        <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
+      ))}
+      {unlistedFTs.map(({ id }) => (
+        <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
+      ))}
+      {isLoading && <TokensSkeletonLoader />}
+    </ExpandableTokensBalancesList>
   )
 }
 
-export const WalletFTsBalancesList = ({ isExpanded, className, onExpand }: TokensTabsBaseProps) => {
+export const WalletFTsBalancesList = (props: TokensTabsBaseProps) => {
   const { listedFTs, unlistedFTs, isLoading } = useWalletFTs()
 
-  const nbOfItems = listedFTs.length + unlistedFTs.length
-
   return (
-    <>
-      <motion.div className={className}>
-        {listedFTs.map(({ id }) => (
-          <WalletFTBalancesRow tokenId={id} key={id} />
-        ))}
-        {unlistedFTs.map(({ id }) => (
-          <WalletFTBalancesRow tokenId={id} key={id} />
-        ))}
-        {isLoading && <TokensSkeletonLoader />}
-      </motion.div>
-
-      <ExpandRowButton isExpanded={isExpanded} onExpand={onExpand} isEnabled={nbOfItems > 3} />
-    </>
+    <ExpandableTokensBalancesList {...props} nbOfItems={listedFTs.length + unlistedFTs.length}>
+      {listedFTs.map(({ id }) => (
+        <WalletFTBalancesRow tokenId={id} key={id} />
+      ))}
+      {unlistedFTs.map(({ id }) => (
+        <WalletFTBalancesRow tokenId={id} key={id} />
+      ))}
+      {isLoading && <TokensSkeletonLoader />}
+    </ExpandableTokensBalancesList>
   )
 }
 

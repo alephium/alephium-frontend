@@ -22,6 +22,7 @@ import { TokenInfo, TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-
 import { queryOptions, skipToken, UseQueryResult } from '@tanstack/react-query'
 import axios from 'axios'
 
+import { SkipProp } from '@/api/apiDataHooks/types'
 import { combineIsLoading } from '@/api/apiDataHooks/utils'
 import { convertTokenDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/utils'
 import { TokenId } from '@/types/tokens'
@@ -30,15 +31,12 @@ export type TokenTypesQueryFnData = Record<explorer.TokenStdInterfaceId, TokenId
 
 export const StdInterfaceIds = Object.values(explorer.TokenStdInterfaceId)
 
-interface TokenQueryProps {
+interface TokenQueryProps extends SkipProp {
   id: TokenId
-  skip?: boolean
 }
 
-interface NFTQueryProps {
-  id: TokenId
+interface NFTQueryProps extends TokenQueryProps {
   tokenUri?: NFTMetaData['tokenUri']
-  skip?: boolean
 }
 
 export const tokenTypeQuery = ({ id, skip }: TokenQueryProps) =>

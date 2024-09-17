@@ -46,10 +46,10 @@ const useToken = (id: TokenId): Token => {
     })
   )
 
-  const { data: nft, isLoading: isLoadingNft } = useNFT(
+  const { data: nft, isLoading: isLoadingNft } = useNFT({
     id,
-    isLoadingTokenType || tokenType?.stdInterfaceId !== explorer.TokenStdInterfaceId.NonFungible
-  )
+    skip: isLoadingTokenType || tokenType?.stdInterfaceId !== explorer.TokenStdInterfaceId.NonFungible
+  })
 
   return {
     data: listedFT ?? unlistedFT ?? nft ?? { id },

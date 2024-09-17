@@ -29,9 +29,9 @@ const useWalletLastTransactionHashes = (props?: SkipProp) => {
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
   const { data, isLoading } = useQueries({
-    queries: props?.skip
-      ? []
-      : allAddressHashes.map((addressHash) => addressLatestTransactionHashQuery({ addressHash, networkId })),
+    queries: !props?.skip
+      ? allAddressHashes.map((addressHash) => addressLatestTransactionHashQuery({ addressHash, networkId }))
+      : [],
     combine: flatMapCombine
   })
 
