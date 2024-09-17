@@ -21,8 +21,7 @@ import { useQueries } from '@tanstack/react-query'
 import { chunk } from 'lodash'
 
 import useAddressesUnlistedTokensByType from '@/api/apiDataHooks/useAddressesUnlistedTokensByType'
-import { convertDecimalsToNumber } from '@/api/utils'
-import { UnlistedFT } from '@/types/tokens'
+import { convertTokenDecimalsToNumber } from '@/api/utils'
 import { isDefined } from '@/utils/misc'
 
 export const useAddressesUnlistedNonStandardTokenIds = (addressHash?: AddressHash) => {
@@ -50,7 +49,7 @@ export const useAddressesUnlistedFTs = (addressHash?: AddressHash) => {
       staleTime: Infinity
     })),
     combine: (results) => ({
-      data: results.flatMap(({ data }) => data && data.map(convertDecimalsToNumber)).filter(isDefined) as UnlistedFT[],
+      data: results.flatMap(({ data }) => data && data.map(convertTokenDecimalsToNumber)).filter(isDefined),
       isLoading: results.some(({ isLoading }) => isLoading)
     })
   })
