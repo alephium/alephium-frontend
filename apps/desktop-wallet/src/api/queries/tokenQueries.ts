@@ -50,13 +50,13 @@ export const tokenTypeQuery = ({ id, skip }: TokenQueryProps) =>
 
           return tokenInfo?.stdInterfaceId
             ? { ...tokenInfo, stdInterfaceId: tokenInfo.stdInterfaceId as TokenStdInterfaceId }
-            : undefined
+            : null
         }
       : skipToken,
     staleTime: Infinity
   })
 
-export const combineTokenTypeQueryResults = (results: UseQueryResult<TokenInfo | undefined>[]) => ({
+export const combineTokenTypeQueryResults = (results: UseQueryResult<TokenInfo | null>[]) => ({
   data: results.reduce(
     (tokenIdsByType, { data: tokenInfo }) => {
       if (!tokenInfo) return tokenIdsByType
@@ -87,7 +87,7 @@ export const fungibleTokenMetadataQuery = ({ id, skip }: TokenQueryProps) =>
       ? async () => {
           const tokenMetadata = await batchers.ftMetadataBatcher.fetch(id)
 
-          return tokenMetadata ? convertTokenDecimalsToNumber(tokenMetadata) : undefined
+          return tokenMetadata ? convertTokenDecimalsToNumber(tokenMetadata) : null
         }
       : skipToken,
     staleTime: Infinity
