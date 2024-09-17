@@ -24,11 +24,11 @@ import useAddressesListedFTs from '@/api/apiDataHooks/useAddressesListedFTs'
 
 // TODO: Delete in favor of new hooks
 const useAddressesPricedFTs = (addressHash?: AddressHash) => {
-  const { data: listedFTs, isLoading: isLoadingListedFTs } = useAddressesListedFTs(addressHash)
+  const { data: listedFts, isLoading: isLoadingListedFTs } = useAddressesListedFTs(addressHash)
 
   const listedFTsWithPrice = useMemo(
-    () => listedFTs.filter((token) => token.symbol in explorer.TokensWithPrice),
-    [listedFTs]
+    () => listedFts.filter((token) => token.symbol in explorer.TokensWithPrice),
+    [listedFts]
   )
 
   return {

@@ -16,20 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
+import { useMemo } from 'react'
 
-export type TokensTabValue = 'fts' | 'nfts' | 'nsts'
+import { DisplayBalances, TokenDisplayBalances } from '@/types/tokens'
 
-export interface TokensTabsBaseProps {
-  className?: string
-  isExpanded?: boolean
-  onExpand?: () => void
+interface UseMergeAllTokensBalancesProps {
+  includeAlph: boolean
+  alphBalances?: DisplayBalances
+  tokensBalances?: TokenDisplayBalances[]
 }
 
-export interface WalletTokensTabsProps extends TokensTabsBaseProps {
-  maxHeightInPx: number
-}
+const useMergeAllTokensBalances = ({
+  includeAlph,
+  alphBalances,
+  tokensBalances = []
+}: UseMergeAllTokensBalancesProps) =>
+  useMemo(
+    () => [...(includeAlph && alphBalances?.totalBalance ? [{ id: ALPH.id, ...alphBalances }] : []), ...tokensBalances],
+    [includeAlph, alphBalances, tokensBalances]
+  )
 
-export interface AddressTokensTabsProps extends TokensTabsBaseProps {
-  addressHash: AddressHash
-}
+export default useMergeAllTokensBalances

@@ -33,6 +33,7 @@ interface AmountBaseProps {
   highlight?: boolean
   showPlusMinus?: boolean
   className?: string
+  useTinyAmountShorthand?: boolean
 }
 
 interface TokenAmountProps extends AmountBaseProps {
@@ -93,7 +94,8 @@ const TokenAmount = ({
   nbOfDecimalsToShow,
   fadeDecimals,
   overrideSuffixColor,
-  color
+  color,
+  useTinyAmountShorthand
 }: TokenAmountProps) => {
   const { data: token } = useFetchToken(tokenId)
 
@@ -108,7 +110,7 @@ const TokenAmount = ({
 
   return (
     <>
-      <AmountPartitions amount={amount} fadeDecimals={fadeDecimals} />
+      <AmountPartitions amount={amount} fadeDecimals={fadeDecimals} useTinyAmountShorthand={useTinyAmountShorthand} />
 
       {isFT(token) && <Suffix color={overrideSuffixColor ? color : undefined}> {token.symbol}</Suffix>}
     </>
@@ -141,11 +143,11 @@ const CustomAmount = ({ value, fadeDecimals, overrideSuffixColor, color, suffix 
   )
 }
 
-interface AmountPartitions extends Pick<AmountBaseProps, 'fadeDecimals'> {
+interface AmountPartitions extends Pick<AmountBaseProps, 'fadeDecimals' | 'useTinyAmountShorthand'> {
   amount: string
 }
 
-const AmountPartitions = ({ amount, fadeDecimals }: AmountPartitions) => {
+const AmountPartitions = ({ amount, fadeDecimals, useTinyAmountShorthand }: AmountPartitions) => {
   let quantitySymbol = ''
 
   if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
@@ -153,7 +155,12 @@ const AmountPartitions = ({ amount, fadeDecimals }: AmountPartitions) => {
     amount = amount.slice(0, -1)
   }
 
-  const [integralPart, fractionalPart] = amount.split('.')
+  let [integralPart, fractionalPart] = amount.split('.')
+
+  if (useTinyAmountShorthand && amount.startsWith('0.0000')) {
+    integralPart = '< 0'
+    fractionalPart = '0001'
+  }
 
   return fadeDecimals ? (
     <>
