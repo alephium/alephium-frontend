@@ -18,17 +18,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { explorer } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
+import { SkipProp } from '@/api/apiDataHooks/types'
 import { tokensPriceQuery } from '@/api/queries/priceQueries'
 import { useAppSelector } from '@/hooks/redux'
 
-interface UseTokenPricesProps {
-  skip?: boolean
-}
-
 const pricedTokens = Object.keys(explorer.TokensWithPrice)
 
-const useTokenPrices = (props?: UseTokenPricesProps) => {
+const useTokenPrices = (props?: SkipProp) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
   const { data, isLoading } = useQuery(
@@ -43,20 +41,11 @@ const useTokenPrices = (props?: UseTokenPricesProps) => {
 
 export default useTokenPrices
 
-interface UseTokenPriceProps {
-  symbol?: string
-  skip?: boolean
-}
-
-export const useTokenPrice = ({ symbol, skip }: UseTokenPriceProps) => {
-  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-
-  const { data, isLoading } = useQuery(
-    tokensPriceQuery({ symbols: pricedTokens, currency: fiatCurrency.toLowerCase(), skip })
-  )
+export const useTokenPrice = (symbol: string) => {
+  const { data, isLoading } = useTokenPrices()
 
   return {
-    data: symbol ? data?.find((tokenPrice) => tokenPrice.symbol === symbol) : undefined,
+    data: useMemo(() => data?.find((tokenPrice) => tokenPrice.symbol === symbol), [data, symbol]),
     isLoading
   }
 }

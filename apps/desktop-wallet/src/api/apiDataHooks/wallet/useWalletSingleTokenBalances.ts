@@ -37,9 +37,9 @@ const useWalletSingleTokenBalances = (tokenId: TokenId) => {
   })
 
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQueries({
-    queries: isALPH
-      ? []
-      : latestTxHashes.map((props) => addressSingleTokenBalancesQuery({ ...props, tokenId, networkId })),
+    queries: !isALPH
+      ? latestTxHashes.map((props) => addressSingleTokenBalancesQuery({ ...props, tokenId, networkId }))
+      : [],
     combine: combineBalances
   })
 

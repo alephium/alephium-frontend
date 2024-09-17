@@ -54,7 +54,7 @@ const NFTDetailsModal = memo(({ id, nftId }: ModalBaseProp & NFTDetailsModalProp
 
 const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
-  const { data: nft } = useNFT(nftId)
+  const { data: nft } = useNFT({ id: nftId })
 
   if (!nft) return null
 
