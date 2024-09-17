@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { intersection } from 'lodash'
 import { Wrench } from 'lucide-react'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -32,7 +32,7 @@ import { useAppDispatch } from '@/hooks/redux'
 import AddressGridRow from '@/pages/UnlockedWallet/AddressesPage/AddressGridRow'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
 
-const AddressesTabContent = () => {
+const AddressesTabContent = memo(() => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
@@ -78,7 +78,7 @@ const AddressesTabContent = () => {
       </TableGrid>
     </TabContent>
   )
-}
+})
 
 export default AddressesTabContent
 

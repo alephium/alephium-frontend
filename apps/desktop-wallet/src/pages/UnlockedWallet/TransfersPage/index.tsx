@@ -26,15 +26,13 @@ import styled from 'styled-components'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import TransactionList from '@/components/TransactionList'
 import { useScrollContext } from '@/contexts/scroll'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAppSelector } from '@/hooks/redux'
 import FiltersPanel from '@/pages/UnlockedWallet/TransfersPage/FiltersPanel'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
-import { transfersPageInfoMessageClosed } from '@/storage/global/globalActions'
 import { walletSidebarWidthPx } from '@/style/globalStyles'
 import { TokenDisplay } from '@/types/tokens'
-import { links } from '@/utils/links'
 import { directionOptions } from '@/utils/transactions'
 
 interface TransfersPageProps {
@@ -43,8 +41,6 @@ interface TransfersPageProps {
 
 const TransfersPage = ({ className }: TransfersPageProps) => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-  const infoMessageClosed = useAppSelector((s) => s.global.transfersPageInfoMessageClosed)
   const addresses = useAppSelector(selectAllAddresses)
   const { scrollDirection } = useScrollContext()
 
@@ -52,8 +48,6 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
   const [selectedAddresses, setSelectedAddresses] = useState(addresses)
   const [selectedDirections, setSelectedDirections] = useState(directionOptions)
   const [selectedAssets, setSelectedAssets] = useState<TokenDisplay[]>()
-
-  const closeInfoMessage = () => dispatch(transfersPageInfoMessageClosed())
 
   useEffect(() => {
     scrollDirection?.onChange(setDirection)
@@ -65,10 +59,6 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
     <UnlockedWalletPage
       title={t('Transfers')}
       subtitle={t('Browse your transaction history. Execute new transfers easily.')}
-      isInfoMessageVisible={!infoMessageClosed}
-      closeInfoMessage={closeInfoMessage}
-      infoMessageLink={links.faq}
-      infoMessage={t('Do you have questions about transfers? Click here!')}
       className={className}
     >
       <FiltersPanel

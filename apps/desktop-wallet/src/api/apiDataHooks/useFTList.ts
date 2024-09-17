@@ -30,15 +30,20 @@ export interface FTList {
   isLoading: boolean
 }
 
-const useFTList = (): FTList => {
+type FTListProps = {
+  skip: boolean
+}
+
+const useFTList = (props?: FTListProps): FTList => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const network = networkId === 0 ? 'mainnet' : networkId === 1 ? 'testnet' : undefined
 
   const { data, isLoading } = useQuery({
     queryKey: [TOKEN_LIST_QUERY_KEY, network],
-    queryFn: !network
-      ? skipToken
-      : () => axios.get(getTokensURL(network)).then(({ data }) => (data as TokenList)?.tokens),
+    queryFn:
+      !network || props?.skip
+        ? skipToken
+        : () => axios.get(getTokensURL(network)).then(({ data }) => (data as TokenList)?.tokens),
     placeholderData: network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : [],
     staleTime: ONE_DAY_MS
   })

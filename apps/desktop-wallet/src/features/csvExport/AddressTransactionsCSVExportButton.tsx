@@ -17,22 +17,28 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { FileDown } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
-export type TokensTabValue = 'fts' | 'nfts' | 'nsts'
+import Button from '@/components/Button'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch } from '@/hooks/redux'
 
-export interface AssetsTabsProps {
-  className?: string
-  addressHash?: AddressHash
-  isExpanded?: boolean
-  onExpand?: () => void
-  maxHeightInPx?: number
-  nftColumns?: number
-}
-
-export type TokensTabsBaseProps = Omit<AssetsTabsProps, 'addressHash'>
-
-export type WalletTokensTabsProps = TokensTabsBaseProps
-
-export interface AddressTokensTabsProps extends TokensTabsBaseProps {
+interface AddressTransactionsCSVExportButton {
   addressHash: AddressHash
 }
+
+const AddressTransactionsCSVExportButton = ({ addressHash }: AddressTransactionsCSVExportButton) => {
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+
+  const openCSVExportModal = () => dispatch(openModal({ name: 'CSVExportModal', props: { addressHash } }))
+
+  return (
+    <Button short role="secondary" Icon={FileDown} onClick={openCSVExportModal}>
+      {t('Export')}
+    </Button>
+  )
+}
+
+export default AddressTransactionsCSVExportButton
