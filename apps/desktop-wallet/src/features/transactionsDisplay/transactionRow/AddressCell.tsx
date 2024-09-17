@@ -16,29 +16,26 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Optional } from '@alephium/web3'
-import { Token } from '@alephium/web3/dist/src/api/api-explorer'
+import styled, { css } from 'styled-components'
 
-import { Asset, AssetAmount } from '@/types/assets'
+const AddressCell = styled.div<{ alignRight?: boolean; hasMargins?: boolean }>`
+  min-width: 0;
+  max-width: 120px;
+  flex-grow: 1;
+  align-items: baseline;
+  display: flex;
 
-export type TransactionInfoAsset = Optional<Omit<Asset, 'balance' | 'lockedBalance'>, 'decimals'> &
-  Required<AssetAmount>
+  ${({ hasMargins }) =>
+    hasMargins &&
+    css`
+      margin: 0 var(--spacing-4);
+    `}
 
-export type TransactionInfo = {
-  assets: TransactionInfoAsset[]
-  direction: TransactionDirection
-  infoType: TransactionInfoType
-  lockTime?: Date
-}
+  ${({ alignRight }) =>
+    alignRight &&
+    css`
+      justify-content: flex-end;
+    `}
+`
 
-export type TransactionDirection = 'out' | 'in' | 'swap'
-
-export type TransactionInfoType = TransactionDirection | 'move' | 'pending'
-
-export type AmountDeltas = {
-  alphAmount: bigint
-  tokenAmounts: {
-    id: Token['id']
-    amount: bigint
-  }[]
-}
+export default AddressCell
