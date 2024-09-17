@@ -20,6 +20,8 @@ import { NFTTokenUriMetaData } from '@alephium/web3'
 import { FungibleTokenMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { isArray } from 'lodash'
 
+import { UnlistedFT } from '@/types/tokens'
+
 export const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
   typeof nft.name === 'string' &&
   typeof nft.image === 'string' &&
@@ -32,7 +34,7 @@ export const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
           (typeof attr.value === 'string' || typeof attr.value === 'number' || typeof attr.value === 'boolean')
       )))
 
-export const convertDecimalsToNumber = (token: FungibleTokenMetadata) => {
+export const convertTokenDecimalsToNumber = (token: FungibleTokenMetadata): UnlistedFT => {
   const parsedDecimals = parseInt(token.decimals)
 
   return {

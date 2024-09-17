@@ -23,8 +23,8 @@ import { queryOptions, skipToken, UseQueryResult } from '@tanstack/react-query'
 import axios from 'axios'
 
 import { combineIsLoading } from '@/api/apiDataHooks/utils'
-import { convertDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/utils'
-import { TokenId, UnlistedFT } from '@/types/tokens'
+import { convertTokenDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/utils'
+import { TokenId } from '@/types/tokens'
 
 export type TokenTypesQueryFnData = Record<explorer.TokenStdInterfaceId, TokenId[]>
 
@@ -87,7 +87,7 @@ export const fungibleTokenMetadataQuery = ({ id, skip }: TokenQueryProps) =>
       ? async () => {
           const tokenMetadata = await batchers.ftMetadataBatcher.fetch(id)
 
-          return tokenMetadata ? (convertDecimalsToNumber(tokenMetadata) as UnlistedFT) : undefined
+          return tokenMetadata ? convertTokenDecimalsToNumber(tokenMetadata) : undefined
         }
       : skipToken,
     staleTime: Infinity
