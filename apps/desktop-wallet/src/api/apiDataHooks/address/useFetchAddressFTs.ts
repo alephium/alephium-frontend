@@ -18,23 +18,23 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 
-import useAddressAlphBalances from '@/api/apiDataHooks/address/useAddressAlphBalances'
-import useAddressTokensByType from '@/api/apiDataHooks/address/useAddressTokensByType'
-import useSortFTs from '@/api/apiDataHooks/useSortFTs'
+import useFetchAddressAlphBalances from '@/api/apiDataHooks/address/useFetchAddressAlphBalances'
+import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
+import useFetchSortedFts from '@/api/apiDataHooks/useFetchSortedFts'
 
 interface UseAddressFTsProps {
   addressHash: AddressHash
   sort?: boolean
 }
 
-const useAddressFTs = ({ addressHash, sort = true }: UseAddressFTsProps) => {
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressAlphBalances({ addressHash })
+const useFetchAddressFts = ({ addressHash, sort = true }: UseAddressFTsProps) => {
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressAlphBalances({ addressHash })
   const {
     data: { listedFTs, unlistedFTIds },
     isLoading: isLoadingTokensByType
-  } = useAddressTokensByType(addressHash)
+  } = useFetchAddressTokensByType(addressHash)
 
-  const { sortedListedFTs, sortedUnlistedFTs, isLoading } = useSortFTs({
+  const { sortedListedFTs, sortedUnlistedFTs, isLoading } = useFetchSortedFts({
     listedFTs,
     unlistedFTIds,
     alphBalances,
@@ -48,4 +48,4 @@ const useAddressFTs = ({ addressHash, sort = true }: UseAddressFTsProps) => {
   }
 }
 
-export default useAddressFTs
+export default useFetchAddressFts

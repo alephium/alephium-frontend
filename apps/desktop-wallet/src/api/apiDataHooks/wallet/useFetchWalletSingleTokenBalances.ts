@@ -20,19 +20,19 @@ import { ALPH } from '@alephium/token-list'
 import { useQueries } from '@tanstack/react-query'
 
 import combineBalances from '@/api/apiDataHooks/wallet/combineBalances'
-import useWalletAlphBalancesTotal from '@/api/apiDataHooks/wallet/useWalletAlphBalancesTotal'
-import useWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useWalletLastTransactionHashes'
+import useFetchWalletAlphBalancesTotal from '@/api/apiDataHooks/wallet/useFetchWalletAlphBalancesTotal'
+import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
 import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { TokenId } from '@/types/tokens'
 
-const useWalletSingleTokenBalances = (tokenId: TokenId) => {
+const useFetchWalletSingleTokenBalances = (tokenId: TokenId) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useWalletLastTransactionHashes()
+  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useFetchWalletLastTransactionHashes()
 
   const isALPH = tokenId === ALPH.id
 
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useWalletAlphBalancesTotal({
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletAlphBalancesTotal({
     skip: !isALPH
   })
 
@@ -49,4 +49,4 @@ const useWalletSingleTokenBalances = (tokenId: TokenId) => {
   }
 }
 
-export default useWalletSingleTokenBalances
+export default useFetchWalletSingleTokenBalances

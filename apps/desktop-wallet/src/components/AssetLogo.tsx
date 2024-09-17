@@ -21,7 +21,7 @@ import { memo } from 'react'
 import ReactPlayer from 'react-player'
 import styled from 'styled-components'
 
-import useToken, { isFT, isListedFT, isNFT } from '@/api/apiDataHooks/useToken'
+import useFetchToken, { isFT, isListedFT, isNFT } from '@/api/apiDataHooks/useFetchToken'
 import { TokenId } from '@/types/tokens'
 
 interface AssetLogoProps {
@@ -31,7 +31,7 @@ interface AssetLogoProps {
 }
 
 const AssetLogo = memo(({ tokenId, size, className }: AssetLogoProps) => {
-  const { data: token } = useToken(tokenId)
+  const { data: token } = useFetchToken(tokenId)
   const image = isListedFT(token) ? token.logoURI : isNFT(token) ? token.image : undefined
   const name = isFT(token) || isNFT(token) ? token.name : undefined
 

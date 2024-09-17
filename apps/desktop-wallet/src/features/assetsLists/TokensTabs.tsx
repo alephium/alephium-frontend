@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import useAddressTokensByType from '@/api/apiDataHooks/address/useAddressTokensByType'
-import useWalletTokensByType from '@/api/apiDataHooks/wallet/useWalletTokensByType'
+import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
+import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import FocusableContent from '@/components/FocusableContent'
 import { TabItem } from '@/components/TabBar'
 import { ExpandableTable } from '@/components/Table'
@@ -35,7 +35,7 @@ export const AddressTokensTabs = ({ addressHash }: AddressTokensTabsProps) => {
   const { t } = useTranslation()
   const {
     data: { nstIds }
-  } = useAddressTokensByType(addressHash)
+  } = useFetchAddressTokensByType(addressHash)
 
   const { tabs, isExpanded, toggleExpansion } = useTokensTabs({
     numberOfNSTs: nstIds.length,
@@ -76,7 +76,7 @@ export const WalletTokensTabs = ({ maxHeightInPx, className }: WalletTokensTabsP
   const { t } = useTranslation()
   const {
     data: { nstIds }
-  } = useWalletTokensByType()
+  } = useFetchWalletTokensByType()
 
   const { tabs, isExpanded, toggleExpansion } = useTokensTabs({
     numberOfNSTs: nstIds.length,

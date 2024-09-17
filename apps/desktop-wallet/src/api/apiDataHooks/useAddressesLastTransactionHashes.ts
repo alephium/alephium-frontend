@@ -24,7 +24,7 @@ import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQuer
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
-// TODO: Deprecate in favor of useWalletLastTransactionHashes
+// TODO: Deprecate in favor of useFetchWalletLastTransactionHashes
 const useAddressesLastTransactionHashes = (addressHash?: AddressHash) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)

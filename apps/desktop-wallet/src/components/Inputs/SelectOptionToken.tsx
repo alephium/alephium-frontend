@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
-import useToken, { isFT, isNFT } from '@/api/apiDataHooks/useToken'
+import useFetchToken, { isFT, isNFT } from '@/api/apiDataHooks/useFetchToken'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import HashEllipsed from '@/components/HashEllipsed'
@@ -32,7 +32,7 @@ type SelectOptionTokenProps = TokenDisplay & {
 }
 
 const SelectOptionToken = ({ isSelected, className, id, ...tokenProps }: SelectOptionTokenProps) => {
-  const { data: token } = useToken(id)
+  const { data: token } = useFetchToken(id)
 
   const name = isFT(token) || isNFT(token) ? token.name : undefined
   const symbol = isFT(token) ? token.symbol : undefined
