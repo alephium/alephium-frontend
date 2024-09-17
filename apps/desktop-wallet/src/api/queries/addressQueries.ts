@@ -20,13 +20,13 @@ import { AddressHash, PAGINATION_PAGE_LIMIT, throttledClient } from '@alephium/s
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
+import { SkipProp } from '@/api/apiDataHooks/types'
 import { AddressLatestTransactionHashQueryFnData } from '@/api/queries/transactionQueries'
 import queryClient from '@/api/queryClient'
 import { DisplayBalances, TokenDisplayBalances, TokenId } from '@/types/tokens'
 
-interface AddressBalanceQueryProps extends AddressLatestTransactionHashQueryFnData {
+interface AddressBalanceQueryProps extends AddressLatestTransactionHashQueryFnData, SkipProp {
   networkId: number
-  skip?: boolean
 }
 
 const ADDRESS_BALANCE_QUERY_KEYS = ['address', 'balance']

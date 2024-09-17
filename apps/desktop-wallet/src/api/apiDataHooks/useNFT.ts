@@ -19,10 +19,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
+import { SkipProp } from '@/api/apiDataHooks/types'
 import { nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
 import { TokenId } from '@/types/tokens'
 
-const useNFT = (id: TokenId, skip?: boolean) => {
+interface UseNFTProps extends SkipProp {
+  id: TokenId
+}
+
+const useNFT = ({ id, skip }: UseNFTProps) => {
   const { data: nftMetadata, isLoading: isLoadingNftMetadata } = useQuery(nftMetadataQuery({ id, skip }))
 
   const { data: nftData, isLoading: isLoadingNftData } = useQuery(
