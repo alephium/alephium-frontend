@@ -18,18 +18,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 
-export type TokensTabValue = 'fts' | 'nfts' | 'nsts'
+import useFetchAddressWorth from '@/api/apiDataHooks/address/useFetchAddressWorth'
+import Amount from '@/components/Amount'
+import SkeletonLoader from '@/components/SkeletonLoader'
 
-export interface TokensTabsBaseProps {
-  className?: string
-  isExpanded?: boolean
-  onExpand?: () => void
-}
-
-export interface WalletTokensTabsProps extends TokensTabsBaseProps {
-  maxHeightInPx: number
-}
-
-export interface AddressTokensTabsProps extends TokensTabsBaseProps {
+interface AddressWorthProps {
   addressHash: AddressHash
 }
+
+const AddressWorth = ({ addressHash }: AddressWorthProps) => {
+  const { data: worth, isLoading } = useFetchAddressWorth(addressHash)
+
+  if (isLoading) return <SkeletonLoader height="18.5px" />
+
+  return <Amount value={worth} isFiat />
+}
+
+export default AddressWorth

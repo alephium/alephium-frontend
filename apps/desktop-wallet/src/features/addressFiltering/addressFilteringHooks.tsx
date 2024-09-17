@@ -16,77 +16,67 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
-import { useAddressesUnlistedFTs } from '@/api/addressesUnlistedTokensHooks'
-import useAddressesTokensBalances from '@/api/apiDataHooks/useAddressesTokensBalances'
-import useFetchAlphBalancesByAddress from '@/api/apiDataHooks/useFetchAlphBalancesByAddress'
-import useFetchFtList from '@/api/apiDataHooks/useFetchFtList'
+import useFetchWalletAlphBalancesByAddress from '@/api/apiDataHooks/wallet/useFetchWalletAlphBalancesByAddress'
+import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
+import { useFetchWalletTokensBalancesByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletTokensBalancesBy'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
 export const useFilterAddressesByText = (text = '') => {
   const allAddresses = useAppSelector(selectAllAddresses)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
-  const { data: fungibleTokenList } = useFetchFtList()
-  const { data: unlistedFungibleTokens } = useAddressesUnlistedFTs()
-  const { data: addressesAlphBalances } = useFetchAlphBalancesByAddress()
-  const { data: addressesTokensBalances } = useAddressesTokensBalances()
+  const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
+  const { data: addressesAlphBalances } = useFetchWalletAlphBalancesByAddress()
+  const { data: addressesTokensBalances } = useFetchWalletTokensBalancesByAddress()
 
-  const [filteredAddressHashes, setFilteredAddressHashes] = useState<AddressHash[]>()
-
-  useEffect(() => {
-    setFilteredAddressHashes(
+  return useMemo(
+    () =>
       text.length < 2
         ? allAddressHashes
         : allAddressHashes.filter((addressHash) => {
+            // Step 1. Validate against address hash
+            if (addressHash.toLowerCase().includes(text)) return true
+
+            // Step 2. Validate against address label
             const address = allAddresses.find((address) => address.hash === addressHash)
+
+            if (!address) return false
+            if (address.label?.toLowerCase().includes(text)) return true
+
+            // Step 3. Validate against token names
             const addressAlphBalances = addressesAlphBalances[addressHash]
-            const addressHasAlphBalances = addressAlphBalances?.totalBalance !== BigInt(0)
-            const addressTokensBalances = addressesTokensBalances[addressHash] ?? []
-            const addressTokenNamesWithBalance = addressTokensBalances
-              .filter(({ totalBalance }) => totalBalance !== BigInt(0))
-              .map(({ id }) => {
-                const listedFungibleToken = fungibleTokenList?.find((token) => token.id === id)
-                const unlistedFungibleToken = unlistedFungibleTokens?.find((token) => token.id === id)
+            const addressHasAlphBalances = (addressAlphBalances?.totalBalance ?? 0) > 0
 
-                return listedFungibleToken
-                  ? `${listedFungibleToken.name} ${listedFungibleToken.symbol} ${id}`
-                  : unlistedFungibleToken
-                    ? `${unlistedFungibleToken.name} ${unlistedFungibleToken.symbol} ${id}`
-                    : id
-              })
-              .join(' ')
+            if (addressHasAlphBalances) {
+              if ('alephium alph'.includes(text)) return true
 
-            const addressAssetNamesWithBalances = `${addressHasAlphBalances ? 'Alephium ALPH ' : ''}${
-              addressTokenNamesWithBalance ?? ''
-            }`.toLowerCase()
+              const addressTokensBalances = addressesTokensBalances[addressHash] ?? []
+              const addressSearchableString = addressTokensBalances
+                .map(({ id }) => {
+                  const listedFt = listedFts.find((token) => token.id === id)
 
-            return (
-              address &&
-              (address.label?.toLowerCase().includes(text) ||
-                address.hash.toLowerCase().includes(text) ||
-                addressAssetNamesWithBalances.includes(text))
-            )
-          })
-    )
-  }, [
-    addressesAlphBalances,
-    addressesTokensBalances,
-    allAddressHashes,
-    allAddresses,
-    fungibleTokenList,
-    text,
-    unlistedFungibleTokens
-  ])
+                  if (listedFt) return `${listedFt.name} ${listedFt.symbol} ${id}`
 
-  return filteredAddressHashes
+                  const unlistedFt = unlistedFts.find((token) => token.id === id)
+
+                  if (unlistedFt) return `${unlistedFt.name} ${unlistedFt.symbol} ${id}`
+                })
+                .join('')
+
+              if (addressSearchableString.toLowerCase().includes(text)) return true
+            } else {
+              return false
+            }
+          }),
+    [addressesAlphBalances, addressesTokensBalances, allAddressHashes, allAddresses, listedFts, text, unlistedFts]
+  )
 }
 
 export const useAddressesWithBalance = () => {
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
-  const { data: addressesAlphBalances } = useFetchAlphBalancesByAddress()
+  const { data: addressesAlphBalances } = useFetchWalletAlphBalancesByAddress()
 
   const filteredAddressHashes = useMemo(
     () =>

@@ -21,31 +21,43 @@ import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 
 import useFetchAddressAlphBalances from '@/api/apiDataHooks/address/useFetchAddressAlphBalances'
+import { SkipProp } from '@/api/apiDataHooks/types'
 import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { TokenId } from '@/types/tokens'
 
-const useFetchAddressSingleTokenBalances = (addressHash: AddressHash, tokenId: TokenId) => {
+interface UseFetchAddressSingleTokenBalancesProps extends SkipProp {
+  addressHash: AddressHash
+  tokenId: TokenId
+}
+
+const useFetchAddressSingleTokenBalances = ({
+  addressHash,
+  tokenId,
+  skip
+}: UseFetchAddressSingleTokenBalancesProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const queryProps = { addressHash, networkId }
 
   const isALPH = tokenId === ALPH.id
 
-  const { data: txHashes, isLoading: isLoadingTxHashes } = useQuery(addressLatestTransactionHashQuery(queryProps))
+  const { data: txHashes, isLoading: isLoadingTxHashes } = useQuery(
+    addressLatestTransactionHashQuery({ addressHash, networkId, skip })
+  )
 
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressAlphBalances({
     addressHash,
-    skip: !isALPH
+    skip: !isALPH || skip
   })
 
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQuery(
     addressSingleTokenBalancesQuery({
-      ...queryProps,
+      addressHash,
+      networkId,
       tokenId,
       latestTxHash: txHashes?.latestTxHash,
       previousTxHash: txHashes?.latestTxHash,
-      skip: isLoadingTxHashes || isALPH
+      skip: isLoadingTxHashes || isALPH || skip
     })
   )
 

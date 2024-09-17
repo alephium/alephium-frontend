@@ -26,7 +26,7 @@ import { AddressTokensTabsProps, TokensTabsBaseProps } from '@/features/assetsLi
 export const AddressNSTsBalancesList = ({ addressHash, ...props }: AddressTokensTabsProps) => {
   const {
     data: { nstIds }
-  } = useFetchAddressTokensByType(addressHash)
+  } = useFetchAddressTokensByType({ addressHash, includeAlph: false })
 
   return (
     <ExpandableTokensBalancesList {...props} nbOfItems={3}>
@@ -40,7 +40,7 @@ export const AddressNSTsBalancesList = ({ addressHash, ...props }: AddressTokens
 export const WalletNSTsBalancesList = (props: TokensTabsBaseProps) => {
   const {
     data: { nstIds }
-  } = useFetchWalletTokensByType()
+  } = useFetchWalletTokensByType({ includeAlph: false })
 
   return (
     <ExpandableTokensBalancesList {...props} nbOfItems={3}>

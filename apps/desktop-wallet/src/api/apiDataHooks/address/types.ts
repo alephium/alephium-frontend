@@ -18,18 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 
-export type TokensTabValue = 'fts' | 'nfts' | 'nsts'
+import { SkipProp } from '@/api/apiDataHooks/types'
 
-export interface TokensTabsBaseProps {
-  className?: string
-  isExpanded?: boolean
-  onExpand?: () => void
-}
-
-export interface WalletTokensTabsProps extends TokensTabsBaseProps {
-  maxHeightInPx: number
-}
-
-export interface AddressTokensTabsProps extends TokensTabsBaseProps {
+export interface UseFetchAddressProps extends SkipProp {
   addressHash: AddressHash
 }

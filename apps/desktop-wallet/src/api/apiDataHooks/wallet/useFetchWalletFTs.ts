@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import useFetchSortedFts from '@/api/apiDataHooks/useFetchSortedFts'
-import useFetchWalletAlphBalancesTotal from '@/api/apiDataHooks/wallet/useFetchWalletAlphBalancesTotal'
+import useFetchSortedFts from '@/api/apiDataHooks/utils/useFetchSortedFts'
 import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 
 interface UseWalletFTsProps {
@@ -25,23 +24,21 @@ interface UseWalletFTsProps {
 }
 
 const useFetchWalletFts = (props?: UseWalletFTsProps) => {
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletAlphBalancesTotal()
   const {
-    data: { listedFTs, unlistedFTIds },
+    data: { listedFts, unlistedFTIds },
     isLoading: isLoadingTokensByType
-  } = useFetchWalletTokensByType()
+  } = useFetchWalletTokensByType({ includeAlph: true })
 
   const { sortedListedFTs, sortedUnlistedFTs, isLoading } = useFetchSortedFts({
-    listedFTs,
+    listedFts,
     unlistedFTIds,
-    alphBalances,
     skip: props?.sort === false
   })
 
   return {
-    listedFTs: sortedListedFTs,
-    unlistedFTs: sortedUnlistedFTs,
-    isLoading: isLoading || isLoadingTokensByType || isLoadingAlphBalances
+    listedFts: sortedListedFTs,
+    unlistedFts: sortedUnlistedFTs,
+    isLoading: isLoading || isLoadingTokensByType
   }
 }
 

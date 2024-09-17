@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import styled from 'styled-components'
 
-import AssetBadge from '@/components/AssetBadge'
+import TokenBadge from '@/components/TokenBadge'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
 import { deviceBreakPoints } from '@/style/globalStyles'
@@ -30,9 +30,9 @@ const TokenBadgesListCell = ({ tx, addressHash, compact }: TransactionRowProps) 
   return (
     <TokenBadgesListCellStyled compact={compact}>
       <AssetBadges>
-        {alphAmount !== undefined && <AssetBadge assetId={ALPH.id} simple />}
+        {alphAmount !== undefined && <TokenBadge tokenId={ALPH.id} />}
         {tokenAmounts.map(({ id }) => (
-          <AssetBadge assetId={id} simple key={id} hideNftName />
+          <TokenBadge tokenId={id} key={id} />
         ))}
       </AssetBadges>
     </TokenBadgesListCellStyled>
