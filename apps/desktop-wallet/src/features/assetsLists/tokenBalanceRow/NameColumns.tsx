@@ -19,14 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useToken, { isFT, isUnlistedFT } from '@/api/apiDataHooks/useToken'
+import useFetchToken, { isFT, isUnlistedFT } from '@/api/apiDataHooks/useFetchToken'
 import HashEllipsed from '@/components/HashEllipsed'
 import Truncate from '@/components/Truncate'
 import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
 
 export const FTNameColumn = ({ tokenId }: TokenBalancesRowBaseProps) => {
   const { t } = useTranslation()
-  const { data: token } = useToken(tokenId)
+  const { data: token } = useFetchToken(tokenId)
 
   if (!token || !isFT(token)) return null
 

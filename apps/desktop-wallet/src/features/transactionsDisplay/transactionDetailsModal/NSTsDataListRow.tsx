@@ -23,12 +23,12 @@ import Amount from '@/components/Amount'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
-import useTransactionTokens from '@/features/transactionsDisplay/useTransactionTokens'
+import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 
 const NSTsDataListRow = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {
   const {
     data: { nsts }
-  } = useTransactionTokens(tx, addressHash)
+  } = useFetchTransactionTokens(tx, addressHash)
   const { t } = useTranslation()
 
   if (nsts.length === 0) return null

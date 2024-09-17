@@ -23,7 +23,7 @@ import { useState } from 'react'
 import ReactPlayer from 'react-player'
 import styled, { css } from 'styled-components'
 
-import useNFT from '@/api/apiDataHooks/useNFT'
+import useFetchNft from '@/api/apiDataHooks/useFetchNft'
 import SkeletonLoader from '@/components/SkeletonLoader'
 
 interface NFTThumbnailProps {
@@ -34,7 +34,7 @@ interface NFTThumbnailProps {
 }
 
 const NFTThumbnail = ({ nftId, size = '100', ...props }: NFTThumbnailProps) => {
-  const { data: nft, isLoading } = useNFT({ id: nftId })
+  const { data: nft, isLoading } = useFetchNft({ id: nftId })
 
   const [error, setError] = useState(false)
 

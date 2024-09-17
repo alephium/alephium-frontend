@@ -20,7 +20,7 @@ import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useWalletAlphBalancesTotal from '@/api/apiDataHooks/wallet/useWalletAlphBalancesTotal'
+import useFetchWalletAlphBalancesTotal from '@/api/apiDataHooks/wallet/useFetchWalletAlphBalancesTotal'
 import Amount from '@/components/Amount'
 import SkeletonLoader from '@/components/SkeletonLoader'
 
@@ -45,7 +45,7 @@ const TotalAlphBalance = ({ className, type }: TotalAlphBalanceProps) => {
 }
 
 const AvailableAlphAmount = () => {
-  const { data, isLoading } = useWalletAlphBalancesTotal()
+  const { data, isLoading } = useFetchWalletAlphBalancesTotal()
 
   if (isLoading) return <AmountLoader />
 
@@ -57,7 +57,7 @@ const AvailableAlphAmount = () => {
 }
 
 const LockedAlphAmount = () => {
-  const { data, isLoading } = useWalletAlphBalancesTotal()
+  const { data, isLoading } = useFetchWalletAlphBalancesTotal()
 
   if (isLoading) return <AmountLoader />
 

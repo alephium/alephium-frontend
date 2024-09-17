@@ -20,7 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { combineIsLoading } from '@/api/apiDataHooks/utils'
-import useWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useWalletLastTransactionHashes'
+import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
 import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { DisplayBalances } from '@/types/tokens'
@@ -32,8 +32,8 @@ export interface AddressesAlphBalances {
   isLoading: boolean
 }
 
-const useAlphBalancesByAddress = (): AddressesAlphBalances => {
-  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useWalletLastTransactionHashes()
+const useFetchAlphBalancesByAddress = (): AddressesAlphBalances => {
+  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useFetchWalletLastTransactionHashes()
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data, isLoading } = useQueries({
@@ -49,7 +49,7 @@ const useAlphBalancesByAddress = (): AddressesAlphBalances => {
   }
 }
 
-export default useAlphBalancesByAddress
+export default useFetchAlphBalancesByAddress
 
 const combine = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): AddressesAlphBalances => ({
   data: results.reduce(
