@@ -22,7 +22,7 @@ import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import useAddressAlphBalances from '@/api/apiDataHooks/address/useAddressAlphBalances'
+import useFetchAddressAlphBalances from '@/api/apiDataHooks/address/useFetchAddressAlphBalances'
 import AddressMetadataForm from '@/components/AddressMetadataForm'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
@@ -52,7 +52,7 @@ const AddressOptionsModal = memo(({ id, addressHash }: ModalBaseProp & AddressOp
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
 
-  const { data: addressAlphBalances } = useAddressAlphBalances({ addressHash })
+  const { data: addressAlphBalances } = useFetchAddressAlphBalances({ addressHash })
 
   const [addressLabel, setAddressLabel] = useState({
     title: address?.label ?? '',

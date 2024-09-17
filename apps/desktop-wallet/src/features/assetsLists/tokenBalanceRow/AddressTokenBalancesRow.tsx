@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
-import useAddressSingleTokenBalances from '@/api/apiDataHooks/address/useAddressSingleTokenBalances'
+import useFetchAddressSingleTokenBalances from '@/api/apiDataHooks/address/useFetchAddressSingleTokenBalances'
 import { TableRow } from '@/components/Table'
 import AmountsColumn, { RawAmountSubtitle } from '@/features/assetsLists/tokenBalanceRow/AmountsColumn'
 import FTWorth from '@/features/assetsLists/tokenBalanceRow/FTWorth'
@@ -52,7 +52,10 @@ export const AddressNSTBalancesRow = ({ tokenId, addressHash }: AddressTokenBala
 )
 
 const FTAmounts = ({ tokenId, addressHash }: AddressTokenBalancesRowProps) => {
-  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useAddressSingleTokenBalances(addressHash, tokenId)
+  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useFetchAddressSingleTokenBalances(
+    addressHash,
+    tokenId
+  )
 
   return (
     <AddressTokenBalancesRowAmounts tokenId={tokenId} addressHash={addressHash}>
@@ -62,7 +65,10 @@ const FTAmounts = ({ tokenId, addressHash }: AddressTokenBalancesRowProps) => {
 }
 
 const AddressTokenBalancesRowAmounts = ({ tokenId, addressHash, children }: AddressTokenBalancesRowAmountsProps) => {
-  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useAddressSingleTokenBalances(addressHash, tokenId)
+  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useFetchAddressSingleTokenBalances(
+    addressHash,
+    tokenId
+  )
 
   return (
     <AmountsColumn

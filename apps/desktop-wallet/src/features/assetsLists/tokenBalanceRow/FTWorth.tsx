@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { calculateAmountWorth } from '@alephium/shared'
 import styled from 'styled-components'
 
-import useToken, { isFT } from '@/api/apiDataHooks/useToken'
-import useTokenPrices, { useTokenPrice } from '@/api/apiDataHooks/useTokenPrices'
+import useFetchToken, { isFT } from '@/api/apiDataHooks/useFetchToken'
+import useFetchTokenPrices, { useFetchTokenPrice } from '@/api/apiDataHooks/useFetchTokenPrices'
 import Amount from '@/components/Amount'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
@@ -31,8 +31,8 @@ interface FTWorth extends TokenBalancesRowBaseProps {
 }
 
 const FTWorth = ({ tokenId, totalBalance, isLoadingBalance }: FTWorth) => {
-  const { data: token } = useToken(tokenId)
-  const { isLoading: isLoadingTokenPrices } = useTokenPrices()
+  const { data: token } = useFetchToken(tokenId)
+  const { isLoading: isLoadingTokenPrices } = useFetchTokenPrices()
 
   if (!isFT(token)) return null
 
@@ -54,7 +54,7 @@ interface FTWorthAmountProps {
 }
 
 const FTWorthAmount = ({ symbol, totalBalance, decimals }: FTWorthAmountProps) => {
-  const { data: tokenPrice } = useTokenPrice(symbol)
+  const { data: tokenPrice } = useFetchTokenPrice(symbol)
 
   const worth =
     totalBalance !== undefined && tokenPrice !== undefined
