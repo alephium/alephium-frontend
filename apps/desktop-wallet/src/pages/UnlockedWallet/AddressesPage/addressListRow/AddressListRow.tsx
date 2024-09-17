@@ -17,34 +17,26 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import dayjs from 'dayjs'
-import { useTranslation } from 'react-i18next'
+import { memo } from 'react'
 import styled from 'styled-components'
 
-import useAddressesTokensWorthTotal from '@/api/apiDataHooks/useAddressesTokensWorthTotal'
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
-import Amount from '@/components/Amount'
-import SkeletonLoader from '@/components/SkeletonLoader'
-import AssetsBadgesList from '@/features/assetsLists/AssetsBadgesList'
+import AddressTokensBadgesList from '@/features/assetsLists/AddressTokensBadgesList'
 import { openModal } from '@/features/modals/modalActions'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectAddressByHash, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
+import { useAppDispatch } from '@/hooks/redux'
+import AddressGroup from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressGroup'
+import AddressLastActivity from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressLastActivity'
+import AddressWorth from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressWorth'
 import { onEnterOrSpace } from '@/utils/misc'
 
-interface AddressGridRowProps {
+interface AddressListRowProps {
   addressHash: AddressHash
   className?: string
 }
 
-const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
-  const { t } = useTranslation()
-  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
-  const { data: totalWorth, isLoading: isLoadingTotalWorth } = useAddressesTokensWorthTotal(addressHash)
+const AddressListRow = memo(({ addressHash, className }: AddressListRowProps) => {
   const dispatch = useAppDispatch()
-
-  if (!address) return null
 
   const openAddressDetailsModal = () => dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
 
@@ -63,37 +55,23 @@ const AddressGridRow = ({ addressHash, className }: AddressGridRowProps) => {
           <Label>
             <AddressBadge addressHash={addressHash} hideColorIndication truncate disableA11y />
           </Label>
-          {stateUninitialized ? (
-            <SkeletonLoader height="15.5px" />
-          ) : (
-            <SecondaryText>
-              {address.lastUsed ? `${t('Last activity')} ${dayjs(address.lastUsed).fromNow()}` : t('Never used')}
-            </SecondaryText>
-          )}
+          <AddressLastActivity addressHash={addressHash} />
         </Column>
       </AddressNameCell>
       <Cell>
-        <SecondaryText>
-          {t('Group')} {address.group}
-        </SecondaryText>
+        <AddressGroup addressHash={addressHash} />
       </Cell>
       <Cell>
-        <AssetsBadgesListStyled addressHash={addressHash} simple />
+        <AddressTokensBadgesListStyled addressHash={addressHash} />
       </Cell>
       <FiatAmountCell>
-        {stateUninitialized || isLoadingTotalWorth ? (
-          <SkeletonLoader height="18.5px" />
-        ) : totalWorth !== undefined ? (
-          <Amount value={totalWorth} isFiat />
-        ) : (
-          '-'
-        )}
+        <AddressWorth addressHash={addressHash} />
       </FiatAmountCell>
     </GridRow>
   )
-}
+})
 
-export default AddressGridRow
+export default AddressListRow
 
 const Column = styled.div`
   display: flex;
@@ -107,11 +85,6 @@ const Label = styled.div`
   font-weight: var(--fontWeight-semiBold);
   display: flex;
   max-width: 150px;
-`
-
-const SecondaryText = styled.div`
-  color: ${({ theme }) => theme.font.tertiary};
-  font-size: 11px;
 `
 
 const Cell = styled.div`
@@ -152,7 +125,7 @@ const AddressNameCell = styled(Cell)`
   cursor: pointer;
 `
 
-const AssetsBadgesListStyled = styled(AssetsBadgesList)`
+const AddressTokensBadgesListStyled = styled(AddressTokensBadgesList)`
   padding: 0px 16px;
   gap: var(--spacing-3);
 `

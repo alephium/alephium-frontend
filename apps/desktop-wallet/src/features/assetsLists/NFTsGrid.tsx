@@ -35,7 +35,7 @@ export const AddressNFTsGrid = ({ addressHash, ...props }: AddressTokensTabsProp
   const {
     data: { nftIds },
     isLoading
-  } = useFetchAddressTokensByType(addressHash)
+  } = useFetchAddressTokensByType({ addressHash, includeAlph: false })
 
   return <NFTsGrid {...props} columns={4} nftIds={nftIds} isLoading={isLoading} />
 }
@@ -44,7 +44,7 @@ export const WalletNFTsGrid = (props: TokensTabsBaseProps) => {
   const {
     data: { nftIds },
     isLoading
-  } = useFetchWalletTokensByType()
+  } = useFetchWalletTokensByType({ includeAlph: false })
 
   return <NFTsGrid {...props} columns={5} nftIds={nftIds} isLoading={isLoading} />
 }

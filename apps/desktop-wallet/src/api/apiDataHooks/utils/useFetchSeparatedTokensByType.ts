@@ -25,7 +25,7 @@ import { ListedFT, TokenId, UnlistedToken } from '@/types/tokens'
 
 interface TokensByType<T> {
   data: {
-    listedFTs: (ListedFT & T)[]
+    listedFts: (ListedFT & T)[]
     unlistedTokens: (UnlistedToken & T)[]
     unlistedFTIds: TokenId[]
     nftIds: TokenId[]
@@ -37,8 +37,8 @@ interface TokensByType<T> {
 const useFetchSeparatedTokensByType = <T extends UnlistedToken>(tokens: T[] = []): TokensByType<T> => {
   const { data: ftList, isLoading } = useFetchFtList({ skip: tokens.length === 0 })
 
-  const { listedFTs, unlistedTokens } = useMemo(() => {
-    const initial = { listedFTs: [] as (ListedFT & T)[], unlistedTokens: [] as (UnlistedToken & T)[] }
+  const { listedFts, unlistedTokens } = useMemo(() => {
+    const initial = { listedFts: [] as (ListedFT & T)[], unlistedTokens: [] as (UnlistedToken & T)[] }
 
     if (!ftList) return initial
 
@@ -46,7 +46,7 @@ const useFetchSeparatedTokensByType = <T extends UnlistedToken>(tokens: T[] = []
       const listedFT = ftList?.find((t) => t.id === token.id)
 
       if (listedFT) {
-        acc.listedFTs.push({ ...listedFT, ...token })
+        acc.listedFts.push({ ...listedFT, ...token })
       } else {
         acc.unlistedTokens.push(token)
       }
@@ -64,7 +64,7 @@ const useFetchSeparatedTokensByType = <T extends UnlistedToken>(tokens: T[] = []
   })
 
   return {
-    data: { listedFTs, unlistedTokens, unlistedFTIds, nftIds, nstIds }, // TODO: Consider adding balances instead of IDs?
+    data: { listedFts, unlistedTokens, unlistedFTIds, nftIds, nstIds }, // TODO: Consider adding balances instead of IDs?
     isLoading: isLoading || isLoadingTokensByType
   }
 }

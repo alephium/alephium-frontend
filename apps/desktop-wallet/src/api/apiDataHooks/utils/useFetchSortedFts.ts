@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calculateAmountWorth } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
 import { useQueries } from '@tanstack/react-query'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
@@ -29,13 +28,12 @@ import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
 import { DisplayBalances, ListedFT, TokenId } from '@/types/tokens'
 
 interface UseSortFTsProps extends SkipProp {
-  listedFTs: (ListedFT & DisplayBalances)[]
+  listedFts: (ListedFT & DisplayBalances)[]
   unlistedFTIds: TokenId[]
-  alphBalances: DisplayBalances | undefined
 }
 
-const useFetchSortedFts = ({ listedFTs, unlistedFTIds, alphBalances, skip }: UseSortFTsProps) => {
-  const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useQueries({
+const useFetchSortedFts = ({ listedFts, unlistedFTIds, skip }: UseSortFTsProps) => {
+  const { data: unlistedFts, isLoading: isLoadingUnlistedFTs } = useQueries({
     queries: unlistedFTIds.map((id) => fungibleTokenMetadataQuery({ id })),
     combine: combineDefined
   })
@@ -44,14 +42,14 @@ const useFetchSortedFts = ({ listedFTs, unlistedFTIds, alphBalances, skip }: Use
 
   return {
     sortedUnlistedFTs: useMemo(
-      () => (!skip ? orderBy(unlistedFTs, ['name', 'id'], ['asc', 'asc']) : unlistedFTs),
-      [skip, unlistedFTs]
+      () => (!skip ? orderBy(unlistedFts, ['name', 'id'], ['asc', 'asc']) : unlistedFts),
+      [skip, unlistedFts]
     ),
     sortedListedFTs: useMemo(
       () =>
-        !skip && alphBalances
+        !skip
           ? orderBy(
-              [...listedFTs, { ...ALPH, ...alphBalances }],
+              listedFts,
               [
                 (token) => {
                   const tokenPrice = tokenPrices?.find((tokenPrice) => tokenPrice.symbol === token.symbol)?.price
@@ -65,8 +63,8 @@ const useFetchSortedFts = ({ listedFTs, unlistedFTIds, alphBalances, skip }: Use
               ],
               ['desc', 'asc', 'asc']
             )
-          : listedFTs,
-      [skip, alphBalances, listedFTs, tokenPrices]
+          : listedFts,
+      [listedFts, skip, tokenPrices]
     ),
     isLoading: isLoadingUnlistedFTs
   }

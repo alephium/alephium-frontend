@@ -17,19 +17,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { intersection } from 'lodash'
-import { Wrench } from 'lucide-react'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Box from '@/components/Box'
-import Button from '@/components/Button'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useAddressesWithBalance, useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
-import AddressGridRow from '@/pages/UnlockedWallet/AddressesPage/AddressGridRow'
+import AddressListRow from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressListRow'
+import AdvancedOperationsButton from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsButton'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
 
 const AddressesTabContent = memo(() => {
@@ -43,7 +42,6 @@ const AddressesTabContent = memo(() => {
 
   const visibleAddresses = hideEmptyAddresses ? intersection(filteredByText, filteredByToggle) : filteredByText
 
-  const openAdvancedOperationsSideModal = () => dispatch(openModal({ name: 'AdvancedOperationsSideModal' }))
   const openNewAddressModal = () => dispatch(openModal({ name: 'NewAddressModal', props: { title: t('New address') } }))
 
   return (
@@ -59,21 +57,14 @@ const AddressesTabContent = memo(() => {
             <VerticalDivider />
             <Toggle onToggle={setHideEmptyAddresses} label={t('Hide empty')} toggled={hideEmptyAddresses} />
           </HideEmptyAddressesToggle>
-          <Button
-            role="secondary"
-            squared
-            Icon={Wrench}
-            onClick={openAdvancedOperationsSideModal}
-            data-tooltip-id="default"
-            data-tooltip-content={t('Advanced operations')}
-          />
+          <AdvancedOperationsButton />
         </HeaderMiddle>
       }
     >
       <TableGrid>
         <TableGridContent>
-          {visibleAddresses?.map((addressHash) => <AddressGridRow addressHash={addressHash} key={addressHash} />)}
-          {visibleAddresses?.length === 0 && <Placeholder>{t('No addresses match the search criteria.')}</Placeholder>}
+          {visibleAddresses?.map((addressHash) => <AddressListRow addressHash={addressHash} key={addressHash} />)}
+          <Placeholder>{t('No addresses match the search criteria.')}</Placeholder>
         </TableGridContent>
       </TableGrid>
     </TabContent>
@@ -112,12 +103,17 @@ const TableGrid = styled(Box)`
   flex-direction: column;
 `
 
+const Placeholder = styled.div`
+  display: none;
+  padding: 20px;
+`
+
 const TableGridContent = styled.div`
   background-color: ${({ theme }) => theme.border.secondary};
   display: flex;
   flex-direction: column;
-`
 
-const Placeholder = styled.div`
-  padding: 20px;
+  > :only-child {
+    display: block;
+  }
 `

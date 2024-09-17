@@ -35,7 +35,7 @@ export const AddressTokensTabs = ({ addressHash }: AddressTokensTabsProps) => {
   const { t } = useTranslation()
   const {
     data: { nstIds }
-  } = useFetchAddressTokensByType(addressHash)
+  } = useFetchAddressTokensByType({ addressHash, includeAlph: false })
 
   const { tabs, isExpanded, toggleExpansion } = useTokensTabs({
     numberOfNSTs: nstIds.length,
@@ -76,7 +76,7 @@ export const WalletTokensTabs = ({ maxHeightInPx, className }: WalletTokensTabsP
   const { t } = useTranslation()
   const {
     data: { nstIds }
-  } = useFetchWalletTokensByType()
+  } = useFetchWalletTokensByType({ includeAlph: false })
 
   const { tabs, isExpanded, toggleExpansion } = useTokensTabs({
     numberOfNSTs: nstIds.length,

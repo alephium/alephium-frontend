@@ -16,18 +16,35 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
-
+import { UseFetchAddressProps } from '@/api/apiDataHooks/address/types'
+import useFetchAddressAlphBalances from '@/api/apiDataHooks/address/useFetchAddressAlphBalances'
 import useFetchAddressTokensBalances from '@/api/apiDataHooks/address/useFetchAddressTokensBalances'
-import useFetchSeparatedTokensByType from '@/api/apiDataHooks/useFetchSeparatedTokensByType'
+import useFetchSeparatedTokensByType from '@/api/apiDataHooks/utils/useFetchSeparatedTokensByType'
+import useMergeAllTokensBalances from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
 
-const useFetchAddressTokensByType = (addressHash: AddressHash) => {
-  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressTokensBalances(addressHash)
-  const { data, isLoading } = useFetchSeparatedTokensByType(tokensBalances?.balances)
+interface UseFetchAddressTokensByType extends UseFetchAddressProps {
+  includeAlph: boolean
+}
+
+const useFetchAddressTokensByType = ({ addressHash, skip, includeAlph }: UseFetchAddressTokensByType) => {
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressAlphBalances({
+    addressHash,
+    skip: skip || !includeAlph
+  })
+  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressTokensBalances({
+    addressHash,
+    skip
+  })
+  const allTokensBalances = useMergeAllTokensBalances({
+    includeAlph,
+    alphBalances,
+    tokensBalances: tokensBalances?.balances
+  })
+  const { data, isLoading } = useFetchSeparatedTokensByType(allTokensBalances)
 
   return {
     data,
-    isLoading: isLoading || isLoadingTokensBalances
+    isLoading: isLoading || isLoadingTokensBalances || isLoadingAlphBalances
   }
 }
 
