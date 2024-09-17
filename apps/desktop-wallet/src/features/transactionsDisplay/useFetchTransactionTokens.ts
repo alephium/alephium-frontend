@@ -22,7 +22,7 @@ import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import useSeparateTokens from '@/api/apiDataHooks/useSeparateTokens'
+import useFetchSeparatedTokensByType from '@/api/apiDataHooks/useFetchSeparatedTokensByType'
 import { combineDefined } from '@/api/apiDataHooks/utils'
 import { fungibleTokenMetadataQuery, nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
@@ -45,13 +45,16 @@ type TransactionTokens = {
   isLoading: boolean
 }
 
-const useTransactionTokens = (tx: Transaction | PendingTransaction, addressHash: AddressHash): TransactionTokens => {
+const useFetchTransactionTokens = (
+  tx: Transaction | PendingTransaction,
+  addressHash: AddressHash
+): TransactionTokens => {
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
 
   const {
     data: { listedFTs, unlistedTokens, unlistedFTIds, nftIds },
     isLoading: isLoadingTokensByType
-  } = useSeparateTokens(tokenAmounts)
+  } = useFetchSeparatedTokensByType(tokenAmounts)
 
   const { data: unlistedFTs, isLoading: isLoadingUnlistedFTs } = useQueries({
     queries: unlistedFTIds.map((id) => fungibleTokenMetadataQuery({ id })),
@@ -108,4 +111,4 @@ const useTransactionTokens = (tx: Transaction | PendingTransaction, addressHash:
   }
 }
 
-export default useTransactionTokens
+export default useFetchTransactionTokens

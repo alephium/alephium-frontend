@@ -20,13 +20,13 @@ import styled from 'styled-components'
 
 import Amount from '@/components/Amount'
 import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
-import useTransactionTokens from '@/features/transactionsDisplay/useTransactionTokens'
 
 const FTAmounts = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {
   const {
     data: { fungibleTokens }
-  } = useTransactionTokens(tx, addressHash)
+  } = useFetchTransactionTokens(tx, addressHash)
   const infoType = useTransactionInfoType(tx, addressHash)
 
   const isMoved = infoType === 'move'

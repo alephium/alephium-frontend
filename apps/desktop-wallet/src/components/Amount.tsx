@@ -20,7 +20,7 @@ import { convertToPositive, CURRENCIES, formatAmountForDisplay, formatFiatAmount
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import useToken, { isFT } from '@/api/apiDataHooks/useToken'
+import useFetchToken, { isFT } from '@/api/apiDataHooks/useFetchToken'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { discreetModeToggled } from '@/storage/settings/settingsActions'
 import { TokenId } from '@/types/tokens'
@@ -95,7 +95,7 @@ const TokenAmount = ({
   overrideSuffixColor,
   color
 }: TokenAmountProps) => {
-  const { data: token } = useToken(tokenId)
+  const { data: token } = useFetchToken(tokenId)
 
   const amount = isFT(token)
     ? formatAmountForDisplay({

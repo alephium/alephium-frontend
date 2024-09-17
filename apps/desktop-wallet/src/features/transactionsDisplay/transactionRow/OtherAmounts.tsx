@@ -21,8 +21,8 @@ import { useTranslation } from 'react-i18next'
 
 import Amount from '@/components/Amount'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
+import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
-import useTransactionTokens from '@/features/transactionsDisplay/useTransactionTokens'
 
 interface TransactionOtherTokenAmountsProps extends TransactionRowProps {
   type: 'nfts' | 'nsts'
@@ -31,7 +31,7 @@ interface TransactionOtherTokenAmountsProps extends TransactionRowProps {
 const OtherAmounts = ({ tx, addressHash, isInAddressDetailsModal, type }: TransactionOtherTokenAmountsProps) => {
   const {
     data: { [type]: tokens }
-  } = useTransactionTokens(tx, addressHash)
+  } = useFetchTransactionTokens(tx, addressHash)
   const infoType = useTransactionInfoType(tx, addressHash, isInAddressDetailsModal)
   const { t } = useTranslation()
 

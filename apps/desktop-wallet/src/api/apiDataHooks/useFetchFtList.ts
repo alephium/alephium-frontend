@@ -34,7 +34,7 @@ type FTListProps = {
   skip: boolean
 }
 
-const useFTList = (props?: FTListProps): FTList => {
+const useFetchFtList = (props?: FTListProps): FTList => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const network = networkId === 0 ? 'mainnet' : networkId === 1 ? 'testnet' : undefined
 
@@ -55,4 +55,4 @@ const useFTList = (props?: FTListProps): FTList => {
   }
 }
 
-export default useFTList
+export default useFetchFtList

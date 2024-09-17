@@ -20,8 +20,8 @@ import { NFT } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 
-import useFTList from '@/api/apiDataHooks/useFTList'
-import useNFT from '@/api/apiDataHooks/useNFT'
+import useFetchFtList from '@/api/apiDataHooks/useFetchFtList'
+import useFetchNft from '@/api/apiDataHooks/useFetchNft'
 import { fungibleTokenMetadataQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
 import { ListedFT, NonStandardToken, TokenId, UnlistedFT } from '@/types/tokens'
 
@@ -30,8 +30,8 @@ type Token = {
   isLoading: boolean
 }
 
-const useToken = (id: TokenId): Token => {
-  const { data: fTList, isLoading: isLoadingFtList } = useFTList()
+const useFetchToken = (id: TokenId): Token => {
+  const { data: fTList, isLoading: isLoadingFtList } = useFetchFtList()
 
   const listedFT = fTList?.find((t) => t.id === id)
 
@@ -46,7 +46,7 @@ const useToken = (id: TokenId): Token => {
     })
   )
 
-  const { data: nft, isLoading: isLoadingNft } = useNFT({
+  const { data: nft, isLoading: isLoadingNft } = useFetchNft({
     id,
     skip: isLoadingTokenType || tokenType?.stdInterfaceId !== explorer.TokenStdInterfaceId.NonFungible
   })
@@ -57,7 +57,7 @@ const useToken = (id: TokenId): Token => {
   }
 }
 
-export default useToken
+export default useFetchToken
 
 export const isFT = (token: Token['data']): token is ListedFT | UnlistedFT =>
   (token as ListedFT | UnlistedFT).symbol !== undefined

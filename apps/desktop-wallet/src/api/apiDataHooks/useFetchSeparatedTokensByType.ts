@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import useFTList from '@/api/apiDataHooks/useFTList'
+import useFetchFtList from '@/api/apiDataHooks/useFetchFtList'
 import { combineTokenTypeQueryResults, tokenTypeQuery } from '@/api/queries/tokenQueries'
 import { ListedFT, TokenId, UnlistedToken } from '@/types/tokens'
 
@@ -34,8 +34,8 @@ interface TokensByType<T> {
   isLoading: boolean
 }
 
-const useSeparateTokens = <T extends UnlistedToken>(tokens: T[] = []): TokensByType<T> => {
-  const { data: ftList, isLoading } = useFTList({ skip: tokens.length === 0 })
+const useFetchSeparatedTokensByType = <T extends UnlistedToken>(tokens: T[] = []): TokensByType<T> => {
+  const { data: ftList, isLoading } = useFetchFtList({ skip: tokens.length === 0 })
 
   const { listedFTs, unlistedTokens } = useMemo(() => {
     const initial = { listedFTs: [] as (ListedFT & T)[], unlistedTokens: [] as (UnlistedToken & T)[] }
@@ -69,4 +69,4 @@ const useSeparateTokens = <T extends UnlistedToken>(tokens: T[] = []): TokensByT
   }
 }
 
-export default useSeparateTokens
+export default useFetchSeparatedTokensByType

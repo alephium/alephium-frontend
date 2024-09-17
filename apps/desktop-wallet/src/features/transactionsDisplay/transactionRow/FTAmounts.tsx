@@ -18,13 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import Amount from '@/components/Amount'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
+import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
-import useTransactionTokens from '@/features/transactionsDisplay/useTransactionTokens'
 
 const FTAmounts = ({ tx, addressHash, isInAddressDetailsModal }: TransactionRowProps) => {
   const {
     data: { fungibleTokens }
-  } = useTransactionTokens(tx, addressHash)
+  } = useFetchTransactionTokens(tx, addressHash)
   const infoType = useTransactionInfoType(tx, addressHash, isInAddressDetailsModal)
 
   return fungibleTokens.map(({ id, amount }) => (
