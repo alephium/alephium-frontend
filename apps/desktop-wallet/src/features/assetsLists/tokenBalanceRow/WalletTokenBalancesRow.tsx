@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
-import useWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useWalletSingleTokenBalances'
+import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
 import { TableRow } from '@/components/Table'
 import AmountsColumn, { RawAmountSubtitle } from '@/features/assetsLists/tokenBalanceRow/AmountsColumn'
 import FTWorth from '@/features/assetsLists/tokenBalanceRow/FTWorth'
@@ -49,7 +49,7 @@ export const WalletNSTBalancesRow = ({ tokenId }: TokenBalancesRowBaseProps) => 
 )
 
 const FTAmounts = ({ tokenId }: TokenBalancesRowBaseProps) => {
-  const { data: walletTokenBalances, isLoading: isLoadingTokenBalances } = useWalletSingleTokenBalances(tokenId)
+  const { data: walletTokenBalances, isLoading: isLoadingTokenBalances } = useFetchWalletSingleTokenBalances(tokenId)
 
   return (
     <WalletTokenBalancesRowAmounts tokenId={tokenId}>
@@ -63,7 +63,7 @@ const FTAmounts = ({ tokenId }: TokenBalancesRowBaseProps) => {
 }
 
 const WalletTokenBalancesRowAmounts = ({ tokenId, children }: TokenBalancesRowAmountsProps) => {
-  const { data: walletTokenBalances, isLoading: isLoadingTokenBalances } = useWalletSingleTokenBalances(tokenId)
+  const { data: walletTokenBalances, isLoading: isLoadingTokenBalances } = useFetchWalletSingleTokenBalances(tokenId)
 
   return (
     <AmountsColumn

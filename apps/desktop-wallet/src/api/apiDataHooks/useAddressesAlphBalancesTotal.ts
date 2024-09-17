@@ -30,7 +30,7 @@ interface AddressesAlphBalancesTotal {
   isLoading: boolean
 }
 
-// TODO: Deprecate in favor of useWalletAlphBalancesTotal
+// TODO: Deprecate in favor of useFetchWalletAlphBalancesTotal
 const useAddressesAlphBalancesTotal = (addressHash?: AddressHash): AddressesAlphBalancesTotal => {
   const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useAddressesLastTransactionHashes(addressHash)
   const networkId = useAppSelector((s) => s.network.settings.networkId)

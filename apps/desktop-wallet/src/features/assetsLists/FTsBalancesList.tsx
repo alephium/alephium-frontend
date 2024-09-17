@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import useAddressFTs from '@/api/apiDataHooks/address/useAddressFTs'
-import useWalletFTs from '@/api/apiDataHooks/wallet/useWalletFTs'
+import useFetchAddressFts from '@/api/apiDataHooks/address/useFetchAddressFts'
+import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TableRow } from '@/components/Table'
 import ExpandableTokensBalancesList from '@/features/assetsLists/ExpandableTokensBalancesList'
@@ -26,7 +26,7 @@ import { WalletFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/Wall
 import { AddressTokensTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
 
 export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressTokensTabsProps) => {
-  const { listedFTs, unlistedFTs, isLoading } = useAddressFTs({ addressHash })
+  const { listedFTs, unlistedFTs, isLoading } = useFetchAddressFts({ addressHash })
 
   return (
     <ExpandableTokensBalancesList {...props} nbOfItems={listedFTs.length + unlistedFTs.length}>
@@ -42,7 +42,7 @@ export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressTokensT
 }
 
 export const WalletFTsBalancesList = (props: TokensTabsBaseProps) => {
-  const { listedFTs, unlistedFTs, isLoading } = useWalletFTs()
+  const { listedFTs, unlistedFTs, isLoading } = useFetchWalletFts()
 
   return (
     <ExpandableTokensBalancesList {...props} nbOfItems={listedFTs.length + unlistedFTs.length}>

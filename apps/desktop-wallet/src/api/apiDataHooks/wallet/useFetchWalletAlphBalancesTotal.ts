@@ -18,27 +18,28 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useQueries } from '@tanstack/react-query'
 
-import { SkipProp } from '@/api/apiDataHooks/types'
-import { flatMapCombine } from '@/api/apiDataHooks/utils'
-import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
+import { DataHook, SkipProp } from '@/api/apiDataHooks/types'
+import combineBalances from '@/api/apiDataHooks/wallet/combineBalances'
+import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
+import { addressAlphBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { DisplayBalances } from '@/types/tokens'
 
-const useWalletLastTransactionHashes = (props?: SkipProp) => {
+const useFetchWalletAlphBalancesTotal = (props?: SkipProp): DataHook<DisplayBalances | undefined> => {
+  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useFetchWalletLastTransactionHashes(props)
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
   const { data, isLoading } = useQueries({
-    queries: !props?.skip
-      ? allAddressHashes.map((addressHash) => addressLatestTransactionHashQuery({ addressHash, networkId }))
-      : [],
-    combine: flatMapCombine
+    queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
+      addressAlphBalancesQuery({ addressHash, latestTxHash, previousTxHash, networkId })
+    ),
+    combine: combineBalances
   })
 
   return {
-    data,
-    isLoading
+    data: props?.skip ? undefined : data,
+    isLoading: isLoading || isLoadingLatestTxHashes
   }
 }
 
-export default useWalletLastTransactionHashes
+export default useFetchWalletAlphBalancesTotal

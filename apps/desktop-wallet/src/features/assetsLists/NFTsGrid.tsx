@@ -21,8 +21,8 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import useAddressTokensByType from '@/api/apiDataHooks/address/useAddressTokensByType'
-import useWalletTokensByType from '@/api/apiDataHooks/wallet/useWalletTokensByType'
+import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
+import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TableRow } from '@/components/Table'
@@ -35,7 +35,7 @@ export const AddressNFTsGrid = ({ addressHash, ...props }: AddressTokensTabsProp
   const {
     data: { nftIds },
     isLoading
-  } = useAddressTokensByType(addressHash)
+  } = useFetchAddressTokensByType(addressHash)
 
   return <NFTsGrid {...props} columns={4} nftIds={nftIds} isLoading={isLoading} />
 }
@@ -44,7 +44,7 @@ export const WalletNFTsGrid = (props: TokensTabsBaseProps) => {
   const {
     data: { nftIds },
     isLoading
-  } = useWalletTokensByType()
+  } = useFetchWalletTokensByType()
 
   return <NFTsGrid {...props} columns={5} nftIds={nftIds} isLoading={isLoading} />
 }

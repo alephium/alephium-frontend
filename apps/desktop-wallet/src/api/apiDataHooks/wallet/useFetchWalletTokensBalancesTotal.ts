@@ -19,14 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { combineIsLoading } from '@/api/apiDataHooks/utils'
-import useWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useWalletLastTransactionHashes'
+import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { DisplayBalances, TokenDisplayBalances, TokenId } from '@/types/tokens'
 
-const useWalletTokensBalancesTotal = () => {
+const useFetchWalletTokensBalancesTotal = () => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useWalletLastTransactionHashes()
+  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useFetchWalletLastTransactionHashes()
 
   const { data, isLoading } = useQueries({
     queries: latestTxHashes.map(({ addressHash, latestTxHash, previousTxHash }) =>
@@ -41,7 +41,7 @@ const useWalletTokensBalancesTotal = () => {
   }
 }
 
-export default useWalletTokensBalancesTotal
+export default useFetchWalletTokensBalancesTotal
 
 const combine = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => {
   const tokenBalancesByTokenId = results.reduce(

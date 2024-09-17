@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import useAddressTokensByType from '@/api/apiDataHooks/address/useAddressTokensByType'
-import useWalletTokensByType from '@/api/apiDataHooks/wallet/useWalletTokensByType'
+import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
+import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import ExpandableTokensBalancesList from '@/features/assetsLists/ExpandableTokensBalancesList'
 import { AddressNSTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/AddressTokenBalancesRow'
 import { WalletNSTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
@@ -26,7 +26,7 @@ import { AddressTokensTabsProps, TokensTabsBaseProps } from '@/features/assetsLi
 export const AddressNSTsBalancesList = ({ addressHash, ...props }: AddressTokensTabsProps) => {
   const {
     data: { nstIds }
-  } = useAddressTokensByType(addressHash)
+  } = useFetchAddressTokensByType(addressHash)
 
   return (
     <ExpandableTokensBalancesList {...props} nbOfItems={3}>
@@ -40,7 +40,7 @@ export const AddressNSTsBalancesList = ({ addressHash, ...props }: AddressTokens
 export const WalletNSTsBalancesList = (props: TokensTabsBaseProps) => {
   const {
     data: { nstIds }
-  } = useWalletTokensByType()
+  } = useFetchWalletTokensByType()
 
   return (
     <ExpandableTokensBalancesList {...props} nbOfItems={3}>

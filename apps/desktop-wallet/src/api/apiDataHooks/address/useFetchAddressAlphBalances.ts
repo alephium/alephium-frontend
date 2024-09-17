@@ -17,42 +17,36 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 
-import useAddressAlphBalances from '@/api/apiDataHooks/address/useAddressAlphBalances'
-import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
+import { SkipProp } from '@/api/apiDataHooks/types'
+import { addressAlphBalancesQuery } from '@/api/queries/addressQueries'
 import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { TokenId } from '@/types/tokens'
 
-const useAddressSingleTokenBalances = (addressHash: AddressHash, tokenId: TokenId) => {
+interface UseAddressAlphBalancesProps extends SkipProp {
+  addressHash: AddressHash
+}
+
+const useFetchAddressAlphBalances = ({ addressHash, skip }: UseAddressAlphBalancesProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const queryProps = { addressHash, networkId }
 
-  const isALPH = tokenId === ALPH.id
-
   const { data: txHashes, isLoading: isLoadingTxHashes } = useQuery(addressLatestTransactionHashQuery(queryProps))
 
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAddressAlphBalances({
-    addressHash,
-    skip: !isALPH
-  })
-
-  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQuery(
-    addressSingleTokenBalancesQuery({
+  const { data, isLoading: isLoadingAlphBalances } = useQuery(
+    addressAlphBalancesQuery({
       ...queryProps,
-      tokenId,
       latestTxHash: txHashes?.latestTxHash,
       previousTxHash: txHashes?.latestTxHash,
-      skip: isLoadingTxHashes || isALPH
+      skip: isLoadingTxHashes || skip
     })
   )
 
   return {
-    data: isALPH ? alphBalances : tokenBalances?.balances,
-    isLoading: isLoadingTokenBalances || isLoadingAlphBalances || isLoadingTxHashes
+    data: data?.balances,
+    isLoading: isLoadingAlphBalances || isLoadingTxHashes
   }
 }
 
-export default useAddressSingleTokenBalances
+export default useFetchAddressAlphBalances

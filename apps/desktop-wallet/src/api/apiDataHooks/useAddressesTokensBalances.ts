@@ -22,7 +22,7 @@ import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import useAddressesLastTransactionHashes from '@/api/apiDataHooks/useAddressesLastTransactionHashes'
-import useAlphBalancesByAddress, { AddressesAlphBalances } from '@/api/apiDataHooks/useAlphBalancesByAddress'
+import useFetchAlphBalancesByAddress, { AddressesAlphBalances } from '@/api/apiDataHooks/useFetchAlphBalancesByAddress'
 import { combineDefined } from '@/api/apiDataHooks/utils'
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
@@ -35,7 +35,7 @@ export interface AddressesTokensBalances {
 
 const useAddressesTokensBalances = (addressHash?: AddressHash): AddressesTokensBalances => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useAlphBalancesByAddress()
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAlphBalancesByAddress()
   const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useAddressesLastTransactionHashes(addressHash)
 
   const { data: tokensBalances, isLoading } = useQueries({

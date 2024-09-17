@@ -24,7 +24,7 @@ import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useNFT from '@/api/apiDataHooks/useNFT'
+import useFetchNft from '@/api/apiDataHooks/useFetchNft'
 import ActionLink from '@/components/ActionLink'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
@@ -54,7 +54,7 @@ const NFTDetailsModal = memo(({ id, nftId }: ModalBaseProp & NFTDetailsModalProp
 
 const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
-  const { data: nft } = useNFT({ id: nftId })
+  const { data: nft } = useFetchNft({ id: nftId })
 
   if (!nft) return null
 

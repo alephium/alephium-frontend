@@ -21,17 +21,17 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { useAddressesUnlistedFTs } from '@/api/addressesUnlistedTokensHooks'
 import useAddressesTokensBalances from '@/api/apiDataHooks/useAddressesTokensBalances'
-import useAlphBalancesByAddress from '@/api/apiDataHooks/useAlphBalancesByAddress'
-import useFTList from '@/api/apiDataHooks/useFTList'
+import useFetchAlphBalancesByAddress from '@/api/apiDataHooks/useFetchAlphBalancesByAddress'
+import useFetchFtList from '@/api/apiDataHooks/useFetchFtList'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
 export const useFilterAddressesByText = (text = '') => {
   const allAddresses = useAppSelector(selectAllAddresses)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
-  const { data: fungibleTokenList } = useFTList()
+  const { data: fungibleTokenList } = useFetchFtList()
   const { data: unlistedFungibleTokens } = useAddressesUnlistedFTs()
-  const { data: addressesAlphBalances } = useAlphBalancesByAddress()
+  const { data: addressesAlphBalances } = useFetchAlphBalancesByAddress()
   const { data: addressesTokensBalances } = useAddressesTokensBalances()
 
   const [filteredAddressHashes, setFilteredAddressHashes] = useState<AddressHash[]>()
@@ -86,7 +86,7 @@ export const useFilterAddressesByText = (text = '') => {
 
 export const useAddressesWithBalance = () => {
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
-  const { data: addressesAlphBalances } = useAlphBalancesByAddress()
+  const { data: addressesAlphBalances } = useFetchAlphBalancesByAddress()
 
   const filteredAddressHashes = useMemo(
     () =>

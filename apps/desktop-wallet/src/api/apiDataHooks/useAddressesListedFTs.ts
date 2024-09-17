@@ -20,7 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { useMemo } from 'react'
 
 import useAddressesTokensBalances, { AddressesTokensBalances } from '@/api/apiDataHooks/useAddressesTokensBalances'
-import useFTList, { FTList } from '@/api/apiDataHooks/useFTList'
+import useFetchFtList, { FTList } from '@/api/apiDataHooks/useFetchFtList'
 import { ListedFT, TokenId } from '@/types/tokens'
 
 interface AddressesListedFTs {
@@ -31,7 +31,7 @@ interface AddressesListedFTs {
 
 // TODO: Delete in favor of new hooks
 const useAddressesListedFTs = (addressHash?: AddressHash): AddressesListedFTs => {
-  const { data: fungibleTokenList, isLoading: isLoadingFTList } = useFTList()
+  const { data: fungibleTokenList, isLoading: isLoadingFTList } = useFetchFtList()
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalances(addressHash)
 
   const { listedFTs, unknownTypeTokenIds } = useMemo(

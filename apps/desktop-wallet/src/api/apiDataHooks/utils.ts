@@ -31,7 +31,7 @@ export const flatMapCombine = <R>(results: UseQueryResult<R | R[], Error>[]) => 
 
 export const combineDefined = <R>(results: UseQueryResult<R, Error>[]) => ({
   data: results.reduce((acc, { data }) => {
-    if (data) acc.push(data)
+    if (data !== undefined && data !== null) acc.push(data)
     return acc
   }, [] as NonNullable<R>[]),
   ...combineIsLoading(results)
