@@ -20,7 +20,7 @@ import { calculateAmountWorth } from '@alephium/shared'
 import styled from 'styled-components'
 
 import useToken, { isFT } from '@/api/apiDataHooks/useToken'
-import { useTokenPrice } from '@/api/apiDataHooks/useTokenPrices'
+import useTokenPrices, { useTokenPrice } from '@/api/apiDataHooks/useTokenPrices'
 import Amount from '@/components/Amount'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
@@ -32,30 +32,39 @@ interface FTWorth extends TokenBalancesRowBaseProps {
 
 const FTWorth = ({ tokenId, totalBalance, isLoadingBalance }: FTWorth) => {
   const { data: token } = useToken(tokenId)
-
-  const symbol = isFT(token) ? token.symbol : undefined
-
-  const { data: tokenPrice, isLoading: isLoadingTokenPrice } = useTokenPrice(symbol ? { symbol } : { skip: true })
+  const { isLoading: isLoadingTokenPrices } = useTokenPrices()
 
   if (!isFT(token)) return null
 
-  if (isLoadingBalance || isLoadingTokenPrice) return <SkeletonLoader height="20px" width="30%" />
-
-  const worth =
-    totalBalance !== undefined && tokenPrice !== undefined
-      ? calculateAmountWorth(totalBalance, tokenPrice.price, token.decimals)
-      : undefined
-
-  if (worth === undefined) return null
+  if (isLoadingBalance || isLoadingTokenPrices) return <SkeletonLoader height="20px" width="30%" />
 
   return (
     <Worth>
-      <Amount value={worth} isFiat />
+      <FTWorthAmount symbol={token.symbol} decimals={token.decimals} totalBalance={totalBalance} />
     </Worth>
   )
 }
 
 export default FTWorth
+
+interface FTWorthAmountProps {
+  symbol: string
+  decimals: number
+  totalBalance?: bigint
+}
+
+const FTWorthAmount = ({ symbol, totalBalance, decimals }: FTWorthAmountProps) => {
+  const { data: tokenPrice } = useTokenPrice(symbol)
+
+  const worth =
+    totalBalance !== undefined && tokenPrice !== undefined
+      ? calculateAmountWorth(totalBalance, tokenPrice.price, decimals)
+      : undefined
+
+  if (worth === undefined) return null
+
+  return <Amount value={worth} isFiat />
+}
 
 const Worth = styled.div`
   font-size: 11px;
