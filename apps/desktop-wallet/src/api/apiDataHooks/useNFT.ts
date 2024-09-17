@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
@@ -34,10 +33,10 @@ const useNFT = (id: TokenId, skip?: boolean) => {
     data: useMemo(
       () =>
         !!nftMetadata && !!nftData
-          ? ({
+          ? {
               ...nftMetadata,
               ...nftData
-            } as NFT)
+            }
           : undefined,
       [nftData, nftMetadata]
     ),

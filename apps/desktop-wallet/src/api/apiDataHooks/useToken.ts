@@ -52,11 +52,7 @@ const useToken = (id: TokenId): Token => {
   )
 
   return {
-    data: listedFT
-      ? (listedFT as ListedFT)
-      : unlistedFT
-        ? (unlistedFT as UnlistedFT)
-        : nft || ({ id } as NonStandardToken),
+    data: listedFT ?? unlistedFT ?? nft ?? { id },
     isLoading: isLoadingFtList || isLoadingTokenType || isLoadingUnlistedFT || isLoadingNft
   }
 }
