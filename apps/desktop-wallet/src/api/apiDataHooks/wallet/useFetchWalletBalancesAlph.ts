@@ -19,13 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useQueries } from '@tanstack/react-query'
 
 import { DataHook, SkipProp } from '@/api/apiDataHooks/types'
-import combineBalances from '@/api/apiDataHooks/wallet/combineBalances'
+import { combineBalances } from '@/api/apiDataHooks/wallet/combineBalances'
 import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
 import { addressAlphBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { DisplayBalances } from '@/types/tokens'
 
-const useFetchWalletAlphBalancesTotal = (props?: SkipProp): DataHook<DisplayBalances | undefined> => {
+const useFetchWalletBalancesAlph = (props?: SkipProp): DataHook<DisplayBalances | undefined> => {
   const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useFetchWalletLastTransactionHashes(props)
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
@@ -42,4 +42,4 @@ const useFetchWalletAlphBalancesTotal = (props?: SkipProp): DataHook<DisplayBala
   }
 }
 
-export default useFetchWalletAlphBalancesTotal
+export default useFetchWalletBalancesAlph

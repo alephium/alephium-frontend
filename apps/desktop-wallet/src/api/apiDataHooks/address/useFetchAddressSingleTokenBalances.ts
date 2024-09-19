@@ -20,7 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 
-import useFetchAddressAlphBalances from '@/api/apiDataHooks/address/useFetchAddressAlphBalances'
+import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddressBalancesAlph'
 import { SkipProp } from '@/api/apiDataHooks/types'
 import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
@@ -45,7 +45,7 @@ const useFetchAddressSingleTokenBalances = ({
     addressLatestTransactionHashQuery({ addressHash, networkId, skip })
   )
 
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressAlphBalances({
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
     addressHash,
     skip: !isALPH || skip
   })
