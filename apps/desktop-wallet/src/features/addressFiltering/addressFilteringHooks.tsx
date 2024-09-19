@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useMemo } from 'react'
 
 import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
-import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
 import { useFetchWalletTokensBalancesByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensBy'
+import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
