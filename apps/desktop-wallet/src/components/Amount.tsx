@@ -17,10 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { convertToPositive, CURRENCIES, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/shared'
+import { Optional } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import useFetchToken, { isFT } from '@/api/apiDataHooks/useFetchToken'
+import SkeletonLoader from '@/components/SkeletonLoader'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { discreetModeToggled } from '@/storage/settings/settingsActions'
 import { TokenId } from '@/types/tokens'
@@ -55,12 +57,29 @@ interface CustomAmountProps extends AmountBaseProps {
 
 type AmountProps = TokenAmountProps | FiatAmountProps | CustomAmountProps
 
-const Amount = (props: AmountProps) => {
+type AmountPropsWithOptionalAmount =
+  | Optional<TokenAmountProps, 'value'>
+  | Optional<FiatAmountProps, 'value'>
+  | Optional<CustomAmountProps, 'value'>
+
+interface LoaderProps {
+  isLoading?: boolean
+  loaderSizeInPx?: string
+}
+
+const Amount = ({ isLoading, loaderSizeInPx = '15', ...props }: AmountPropsWithOptionalAmount & LoaderProps) => {
   const dispatch = useAppDispatch()
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const { t } = useTranslation()
 
-  const { className, color, value, highlight, tabIndex, showPlusMinus } = props
+  if (isLoading) return <SkeletonLoader height={`${loaderSizeInPx}px`} />
+
+  if (props.value === undefined) return null
+
+  // Since we checked above that value is defined it's safe to cast the type so that the stricter components can work
+  const amountProps = props as AmountProps
+
+  const { className, color, value, highlight, tabIndex, showPlusMinus } = amountProps
 
   const toggleDiscreetMode = () => discreetMode && dispatch(discreetModeToggled())
 
@@ -74,12 +93,12 @@ const Amount = (props: AmountProps) => {
     >
       {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
 
-      {isFiat(props) ? (
-        <FiatAmount {...props} />
-      ) : isCustom(props) ? (
-        <CustomAmount {...props} />
+      {isFiat(amountProps) ? (
+        <FiatAmount {...amountProps} />
+      ) : isCustom(amountProps) ? (
+        <CustomAmount {...amountProps} />
       ) : (
-        <TokenAmount {...props} />
+        <TokenAmount {...amountProps} />
       )}
     </AmountStyled>
   )
@@ -175,11 +194,9 @@ const AmountPartitions = ({ amount, fadeDecimals, useTinyAmountShorthand }: Amou
   )
 }
 
-const isFiat = (asset: FiatAmountProps | TokenAmountProps | CustomAmountProps): asset is FiatAmountProps =>
-  (asset as FiatAmountProps).isFiat === true
+const isFiat = (asset: AmountProps): asset is FiatAmountProps => (asset as FiatAmountProps).isFiat === true
 
-const isCustom = (asset: FiatAmountProps | TokenAmountProps | CustomAmountProps): asset is CustomAmountProps =>
-  (asset as CustomAmountProps).suffix !== undefined
+const isCustom = (asset: AmountProps): asset is CustomAmountProps => (asset as CustomAmountProps).suffix !== undefined
 
 const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value'> & { discreetMode: boolean }>`
   color: ${({ color, highlight, value, theme }) =>
