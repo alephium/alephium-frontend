@@ -23,9 +23,9 @@ import { useMemo } from 'react'
 
 import useAddressesLastTransactionHashes from '@/api/apiDataHooks/useAddressesLastTransactionHashes'
 import { combineDefined } from '@/api/apiDataHooks/utils'
-import useFetchWalletAlphBalancesByAddress, {
+import useFetchWalletBalancesAlphByAddress, {
   AddressesAlphBalances
-} from '@/api/apiDataHooks/wallet/useFetchWalletAlphBalancesByAddress'
+} from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { TokenDisplayBalances } from '@/types/tokens'
@@ -37,7 +37,7 @@ export interface AddressesTokensBalances {
 
 const useAddressesTokensBalances = (addressHash?: AddressHash): AddressesTokensBalances => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletAlphBalancesByAddress()
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphByAddress()
   const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useAddressesLastTransactionHashes(addressHash)
 
   const { data: tokensBalances, isLoading } = useQueries({
