@@ -16,32 +16,37 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
-import { UseFetchAddressProps } from '@/api/apiDataHooks/address/types'
-import { addressTokensBalancesQuery } from '@/api/queries/addressQueries'
+import { SkipProp } from '@/api/apiDataHooks/types'
+import { addressAlphBalancesQuery } from '@/api/queries/addressQueries'
 import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 
-const useFetchAddressTokensBalances = ({ addressHash, skip }: UseFetchAddressProps) => {
+interface UseAddressAlphBalancesProps extends SkipProp {
+  addressHash: AddressHash
+}
+
+const useFetchAddressBalancesAlph = ({ addressHash, skip }: UseAddressAlphBalancesProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const queryProps = { addressHash, networkId, skip }
+  const queryProps = { addressHash, networkId }
 
   const { data: txHashes, isLoading: isLoadingTxHashes } = useQuery(addressLatestTransactionHashQuery(queryProps))
 
-  const { data, isLoading: isLoadingTokensBalances } = useQuery(
-    addressTokensBalancesQuery({
+  const { data, isLoading: isLoadingAlphBalances } = useQuery(
+    addressAlphBalancesQuery({
       ...queryProps,
       latestTxHash: txHashes?.latestTxHash,
       previousTxHash: txHashes?.latestTxHash,
-      skip: isLoadingTxHashes
+      skip: isLoadingTxHashes || skip
     })
   )
 
   return {
-    data,
-    isLoading: isLoadingTokensBalances || isLoadingTxHashes
+    data: data?.balances,
+    isLoading: isLoadingAlphBalances || isLoadingTxHashes
   }
 }
 
-export default useFetchAddressTokensBalances
+export default useFetchAddressBalancesAlph

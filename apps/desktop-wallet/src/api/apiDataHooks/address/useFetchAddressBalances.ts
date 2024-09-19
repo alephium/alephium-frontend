@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { UseFetchAddressProps } from '@/api/apiDataHooks/address/types'
-import useFetchAddressAlphBalances from '@/api/apiDataHooks/address/useFetchAddressAlphBalances'
-import useFetchAddressTokensBalances from '@/api/apiDataHooks/address/useFetchAddressTokensBalances'
+import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddressBalancesAlph'
+import useFetchAddressBalancesTokens from '@/api/apiDataHooks/address/useFetchAddressBalancesTokens'
 import useMergeAllTokensBalances from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
 
 interface UseFetchAddressBalancesProps extends UseFetchAddressProps {
@@ -26,11 +26,11 @@ interface UseFetchAddressBalancesProps extends UseFetchAddressProps {
 }
 
 const useFetchAddressBalances = ({ addressHash, skip, includeAlph = true }: UseFetchAddressBalancesProps) => {
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressAlphBalances({
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
     addressHash,
     skip: skip || !includeAlph
   })
-  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressTokensBalances({
+  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressBalancesTokens({
     addressHash,
     skip
   })

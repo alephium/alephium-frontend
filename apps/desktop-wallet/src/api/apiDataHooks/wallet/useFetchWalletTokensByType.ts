@@ -18,18 +18,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import useFetchSeparatedTokensByType from '@/api/apiDataHooks/utils/useFetchSeparatedTokensByType'
 import useMergeAllTokensBalances from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
-import useFetchWalletAlphBalancesTotal from '@/api/apiDataHooks/wallet/useFetchWalletAlphBalancesTotal'
-import useFetchWalletTokensBalancesTotal from '@/api/apiDataHooks/wallet/useFetchWalletTokensBalancesTotal'
+import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import useFetchWalletBalancesTokens from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
 
 interface UseFetchWalletTokensByType {
   includeAlph: boolean
 }
 
 const useFetchWalletTokensByType = ({ includeAlph }: UseFetchWalletTokensByType) => {
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletAlphBalancesTotal({
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlph({
     skip: !includeAlph
   })
-  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchWalletTokensBalancesTotal()
+  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchWalletBalancesTokens()
   const allTokensBalances = useMergeAllTokensBalances({
     includeAlph,
     alphBalances,

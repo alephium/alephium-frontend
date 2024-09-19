@@ -21,7 +21,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchAddressAlphBalances from '@/api/apiDataHooks/address/useFetchAddressAlphBalances'
+import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddressBalancesAlph'
 import FooterButton from '@/components/Buttons/FooterButton'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
@@ -66,7 +66,7 @@ const DeployContractBuildTxModalContent = ({ data, onSubmit, onCancel }: DeployC
   const alphAsset = assetAmounts[0]
 
   const { fromAddress, bytecode, issueTokenAmount } = txPrep
-  const { data: addressAlphBalances } = useFetchAddressAlphBalances({ addressHash: fromAddress.hash })
+  const { data: addressAlphBalances } = useFetchAddressBalancesAlph({ addressHash: fromAddress.hash })
   const availableBalance = addressAlphBalances?.availableBalance ?? BigInt(0)
 
   if (fromAddress === undefined) {

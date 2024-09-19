@@ -16,19 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
-import { combineIsLoading } from '@/api/apiDataHooks/utils'
+import { combineBalancesByAddress, combineBalancesByToken } from '@/api/apiDataHooks/wallet/combineBalances'
 import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { DisplayBalances, TokenDisplayBalances, TokenId } from '@/types/tokens'
 
-export const useFetchWalletTokensBalancesByToken = () => useFetchWalletTokensBalancesBy(combineByToken)
-export const useFetchWalletTokensBalancesByAddress = () => useFetchWalletTokensBalancesBy(combineByAddress)
+export const useFetchWalletTokensBalancesByToken = () => useFetchWalletBalancesTokensBy(combineBalancesByToken)
 
-const useFetchWalletTokensBalancesBy = <T>(
+export const useFetchWalletTokensBalancesByAddress = () => useFetchWalletBalancesTokensBy(combineBalancesByAddress)
+
+const useFetchWalletBalancesTokensBy = <T>(
   combine: (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => { data: T; isLoading: boolean }
 ) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
@@ -46,33 +45,3 @@ const useFetchWalletTokensBalancesBy = <T>(
     isLoading: isLoading || isLoadingLatestTxHashes
   }
 }
-
-const combineByToken = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => ({
-  data: results.reduce(
-    (tokensBalances, { data: balances }) => {
-      balances?.balances.forEach(({ id, totalBalance, lockedBalance, availableBalance }) => {
-        tokensBalances[id] = {
-          totalBalance: totalBalance + (tokensBalances[id]?.totalBalance ?? BigInt(0)),
-          lockedBalance: lockedBalance + (tokensBalances[id]?.lockedBalance ?? BigInt(0)),
-          availableBalance: availableBalance + (tokensBalances[id]?.availableBalance ?? BigInt(0))
-        }
-      })
-      return tokensBalances
-    },
-    {} as Record<TokenId, DisplayBalances | undefined>
-  ),
-  ...combineIsLoading(results)
-})
-
-const combineByAddress = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => ({
-  data: results.reduce(
-    (acc, { data }) => {
-      if (data) {
-        acc[data.addressHash] = data.balances
-      }
-      return acc
-    },
-    {} as Record<AddressHash, TokenDisplayBalances[] | undefined>
-  ),
-  ...combineIsLoading(results)
-})

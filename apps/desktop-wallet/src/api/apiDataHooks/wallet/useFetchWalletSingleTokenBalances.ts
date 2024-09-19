@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { useQueries } from '@tanstack/react-query'
 
-import combineBalances from '@/api/apiDataHooks/wallet/combineBalances'
-import useFetchWalletAlphBalancesTotal from '@/api/apiDataHooks/wallet/useFetchWalletAlphBalancesTotal'
+import { combineBalances } from '@/api/apiDataHooks/wallet/combineBalances'
+import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
 import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
@@ -32,7 +32,7 @@ const useFetchWalletSingleTokenBalances = (tokenId: TokenId) => {
 
   const isALPH = tokenId === ALPH.id
 
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletAlphBalancesTotal({
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlph({
     skip: !isALPH
   })
 
