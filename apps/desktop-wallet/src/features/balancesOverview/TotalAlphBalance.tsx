@@ -22,7 +22,6 @@ import styled from 'styled-components'
 
 import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import Amount from '@/components/Amount'
-import SkeletonLoader from '@/components/SkeletonLoader'
 
 interface TotalAlphBalanceProps {
   type: 'available' | 'locked'
@@ -47,26 +46,32 @@ const TotalAlphBalance = ({ className, type }: TotalAlphBalanceProps) => {
 const AvailableAlphAmount = () => {
   const { data, isLoading } = useFetchWalletBalancesAlph()
 
-  if (isLoading) return <AmountLoader />
-
   return (
-    data?.availableBalance !== undefined && (
-      <AmountStyled tokenId={ALPH.id} tabIndex={0} value={data.availableBalance} />
-    )
+    <AmountStyled
+      tokenId={ALPH.id}
+      tabIndex={0}
+      value={data?.availableBalance}
+      isLoading={isLoading}
+      loaderSizeInPx="30"
+    />
   )
 }
 
 const LockedAlphAmount = () => {
   const { data, isLoading } = useFetchWalletBalancesAlph()
 
-  if (isLoading) return <AmountLoader />
-
-  return data?.lockedBalance !== undefined && <AmountStyled tokenId={ALPH.id} tabIndex={0} value={data.lockedBalance} />
+  return (
+    <AmountStyled
+      tokenId={ALPH.id}
+      tabIndex={0}
+      value={data?.lockedBalance}
+      isLoading={isLoading}
+      loaderSizeInPx="30"
+    />
+  )
 }
 
 export default TotalAlphBalance
-
-const AmountLoader = () => <SkeletonLoader height="30px" />
 
 const BalanceLabel = styled.label`
   color: ${({ theme }) => theme.font.tertiary};

@@ -30,7 +30,6 @@ import ActionLink from '@/components/ActionLink'
 import AddressRow from '@/components/AddressRow'
 import Amount from '@/components/Amount'
 import FocusableContent from '@/components/FocusableContent'
-import SkeletonLoader from '@/components/SkeletonLoader'
 import { ExpandableTable, ExpandRow, TableHeader } from '@/components/Table'
 import TableCellAmount from '@/components/TableCellAmount'
 import { openModal } from '@/features/modals/modalActions'
@@ -101,13 +100,7 @@ const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: Addr
 const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
   const { data: totalWorth, isLoading } = useAddressesTokensWorthTotal(addressHash)
 
-  return isLoading ? (
-    <SkeletonLoader height="15.5px" width="50%" />
-  ) : totalWorth !== undefined ? (
-    <AmountStyled isFiat value={totalWorth} tabIndex={0} />
-  ) : (
-    '-'
-  )
+  return <AmountStyled isFiat value={totalWorth} tabIndex={0} isLoading={isLoading} loaderSizeInPx="15.5" />
 }
 
 export default styled(AddressesList)`
