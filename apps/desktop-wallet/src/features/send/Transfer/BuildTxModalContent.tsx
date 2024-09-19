@@ -30,7 +30,7 @@ import ToggleSection from '@/components/ToggleSection'
 import AssetAmountsInput from '@/features/send/AssetAmountsInput'
 import GasSettings from '@/features/send/GasSettings'
 import { TransferTxData, TransferTxModalData } from '@/features/send/sendTypes'
-import useAreAmountsWithinAvailableBalance from '@/features/send/useAreAmountsWithinAvailableBalance'
+import useAreAmountsWithinAddressAvailableBalances from '@/features/send/useAreAmountsWithinAddressAvailableBalances'
 import useGasSettings from '@/hooks/useGasSettings'
 import { AssetAmountInputType } from '@/types/assets'
 
@@ -59,7 +59,7 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
   const { fromAddress, toAddress } = data
 
   const { data: tokensBalances } = useAddressesTokensBalancesTotal(fromAddress.hash)
-  const allAssetAmountsAreWithinAvailableBalance = useAreAmountsWithinAvailableBalance(
+  const allAssetAmountsAreWithinAvailableBalance = useAreAmountsWithinAddressAvailableBalances(
     fromAddress.hash,
     assetAmounts ?? []
   )
