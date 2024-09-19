@@ -18,13 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
-import { combineIsLoading } from '@/api/apiDataHooks/utils'
+import { combineBalancesByToken } from '@/api/apiDataHooks/wallet/combineBalances'
 import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { DisplayBalances, TokenDisplayBalances, TokenId } from '@/types/tokens'
+import { TokenDisplayBalances } from '@/types/tokens'
 
-const useFetchWalletTokensBalancesTotal = () => {
+const useFetchWalletBalancesTokens = () => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useFetchWalletLastTransactionHashes()
 
@@ -41,28 +41,16 @@ const useFetchWalletTokensBalancesTotal = () => {
   }
 }
 
-export default useFetchWalletTokensBalancesTotal
+export default useFetchWalletBalancesTokens
 
 const combine = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => {
-  const tokenBalancesByTokenId = results.reduce(
-    (tokensBalances, { data: balances }) => {
-      balances?.balances.forEach(({ id, totalBalance, lockedBalance, availableBalance }) => {
-        tokensBalances[id] = {
-          totalBalance: totalBalance + (tokensBalances[id]?.totalBalance ?? BigInt(0)),
-          lockedBalance: lockedBalance + (tokensBalances[id]?.lockedBalance ?? BigInt(0)),
-          availableBalance: availableBalance + (tokensBalances[id]?.availableBalance ?? BigInt(0))
-        }
-      })
-      return tokensBalances
-    },
-    {} as Record<TokenId, DisplayBalances>
-  )
+  const { data: tokenBalancesByToken, isLoading } = combineBalancesByToken(results)
 
   return {
-    data: Object.keys(tokenBalancesByTokenId).map((id) => ({
+    data: Object.keys(tokenBalancesByToken).map((id) => ({
       id,
-      ...tokenBalancesByTokenId[id]
+      ...tokenBalancesByToken[id]
     })) as TokenDisplayBalances[],
-    ...combineIsLoading(results)
+    isLoading
   }
 }

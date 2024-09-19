@@ -32,7 +32,7 @@ export interface AddressesAlphBalances {
   isLoading: boolean
 }
 
-const useFetchWalletAlphBalancesByAddress = (): AddressesAlphBalances => {
+const useFetchWalletBalancesAlphByAddress = (): AddressesAlphBalances => {
   const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useFetchWalletLastTransactionHashes()
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
@@ -49,7 +49,7 @@ const useFetchWalletAlphBalancesByAddress = (): AddressesAlphBalances => {
   }
 }
 
-export default useFetchWalletAlphBalancesByAddress
+export default useFetchWalletBalancesAlphByAddress
 
 const combine = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): AddressesAlphBalances => ({
   data: results.reduce(
