@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useMemo } from 'react'
 
-import useFetchWalletAlphBalancesByAddress from '@/api/apiDataHooks/wallet/useFetchWalletAlphBalancesByAddress'
+import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
 import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
-import { useFetchWalletTokensBalancesByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletTokensBalancesBy'
+import { useFetchWalletTokensBalancesByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensBy'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
@@ -28,7 +28,7 @@ export const useFilterAddressesByText = (text = '') => {
   const allAddresses = useAppSelector(selectAllAddresses)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
   const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
-  const { data: addressesAlphBalances } = useFetchWalletAlphBalancesByAddress()
+  const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
   const { data: addressesTokensBalances } = useFetchWalletTokensBalancesByAddress()
 
   return useMemo(
@@ -76,7 +76,7 @@ export const useFilterAddressesByText = (text = '') => {
 
 export const useAddressesWithBalance = () => {
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
-  const { data: addressesAlphBalances } = useFetchWalletAlphBalancesByAddress()
+  const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
 
   const filteredAddressHashes = useMemo(
     () =>
