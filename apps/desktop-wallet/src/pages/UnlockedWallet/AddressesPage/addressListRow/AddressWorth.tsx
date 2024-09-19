@@ -20,7 +20,6 @@ import { AddressHash } from '@alephium/shared'
 
 import useFetchAddressWorth from '@/api/apiDataHooks/address/useFetchAddressWorth'
 import Amount from '@/components/Amount'
-import SkeletonLoader from '@/components/SkeletonLoader'
 
 interface AddressWorthProps {
   addressHash: AddressHash
@@ -29,9 +28,7 @@ interface AddressWorthProps {
 const AddressWorth = ({ addressHash }: AddressWorthProps) => {
   const { data: worth, isLoading } = useFetchAddressWorth(addressHash)
 
-  if (isLoading) return <SkeletonLoader height="18.5px" />
-
-  return <Amount value={worth} isFiat />
+  return <Amount value={worth} isFiat isLoading={isLoading} loaderSizeInPx="18.5" />
 }
 
 export default AddressWorth
