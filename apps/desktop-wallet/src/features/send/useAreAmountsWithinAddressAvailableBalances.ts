@@ -18,17 +18,24 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 
-import useAddressesTokensBalancesTotal from '@/api/apiDataHooks/useAddressesTokensBalancesTotal'
+import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
 import { AssetAmountInputType } from '@/types/assets'
 
-const useAreAmountsWithinAvailableBalance = (addressHash: AddressHash, amounts: AssetAmountInputType[]): boolean => {
-  const { data: tokensBalances } = useAddressesTokensBalancesTotal(addressHash)
+const useAreAmountsWithinAddressAvailableBalances = (
+  addressHash: AddressHash,
+  amounts: AssetAmountInputType[]
+): boolean => {
+  const amountsWithBalance = amounts.filter(({ amount }) => !!amount)
+  const { data: addressTokensBalances } = useFetchAddressBalances({
+    addressHash,
+    skip: amountsWithBalance.length === 0
+  })
 
-  return amounts.every((asset) => {
-    const balances = tokensBalances[asset.id]
+  return amountsWithBalance.every(({ id, amount }) => {
+    const balances = addressTokensBalances.find((token) => token.id === id)
 
-    return !asset.amount ? true : !balances ? false : asset.amount <= balances.availableBalance
+    return !amount ? true : !balances ? false : amount <= balances.availableBalance
   })
 }
 
-export default useAreAmountsWithinAvailableBalance
+export default useAreAmountsWithinAddressAvailableBalances

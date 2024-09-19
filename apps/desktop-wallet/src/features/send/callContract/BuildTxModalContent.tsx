@@ -32,7 +32,7 @@ import AssetAmountsInput from '@/features/send/AssetAmountsInput'
 import GasSettings from '@/features/send/GasSettings'
 import { CallContractTxData, CallContractTxModalData, TxPreparation } from '@/features/send/sendTypes'
 import { isAmountWithinRange } from '@/features/send/sendUtils'
-import useAreAmountsWithinAvailableBalance from '@/features/send/useAreAmountsWithinAvailableBalance'
+import useAreAmountsWithinAddressAvailableBalances from '@/features/send/useAreAmountsWithinAddressAvailableBalances'
 import useGasSettings from '@/hooks/useGasSettings'
 import useStateObject from '@/hooks/useStateObject'
 import { AssetAmountInputType } from '@/types/assets'
@@ -68,7 +68,7 @@ const CallContractBuildTxModalContent = ({ data, onSubmit, onCancel }: CallContr
   const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[] | undefined>(data.assetAmounts)
   const [isAmountValid, setIsAmountValid] = useState(false)
 
-  const allAssetAmountsAreWithinAvailableBalance = useAreAmountsWithinAvailableBalance(
+  const allAssetAmountsAreWithinAvailableBalance = useAreAmountsWithinAddressAvailableBalances(
     fromAddress.hash,
     assetAmounts ?? []
   )
