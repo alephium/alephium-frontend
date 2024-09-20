@@ -52,12 +52,12 @@ const useFetchTransactionTokens = (
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
 
   const {
-    data: { listedFts, unlistedTokens, unlistedFTIds, nftIds },
+    data: { listedFts, unlistedTokens, unlistedFtIds, nftIds },
     isLoading: isLoadingTokensByType
   } = useFetchSeparatedTokensByType(tokenAmounts)
 
   const { data: unlistedFts, isLoading: isLoadingUnlistedFTs } = useQueries({
-    queries: unlistedFTIds.map((id) => fungibleTokenMetadataQuery({ id })),
+    queries: unlistedFtIds.map((id) => fungibleTokenMetadataQuery({ id })),
     combine: combineDefined
   })
 
