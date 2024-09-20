@@ -29,19 +29,19 @@ interface UseAddressFTsProps extends SkipProp {
 
 const useFetchAddressFts = ({ addressHash, sort = true, skip }: UseAddressFTsProps) => {
   const {
-    data: { listedFts, unlistedFTIds },
+    data: { listedFts, unlistedFtIds },
     isLoading: isLoadingTokensByType
   } = useFetchAddressTokensByType({ addressHash, skip, includeAlph: true })
 
-  const { sortedListedFTs, sortedUnlistedFTs, isLoading } = useFetchSortedFts({
+  const { sortedListedFts, sortedUnlistedFts, isLoading } = useFetchSortedFts({
     listedFts,
-    unlistedFTIds,
+    unlistedFtIds,
     skip: !sort || skip
   })
 
   return {
-    listedFts: sortedListedFTs,
-    unlistedFts: sortedUnlistedFTs,
+    listedFts: sortedListedFts,
+    unlistedFts: sortedUnlistedFts,
     isLoading: isLoading || isLoadingTokensByType
   }
 }
