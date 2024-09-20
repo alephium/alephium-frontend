@@ -25,19 +25,19 @@ interface UseWalletFTsProps {
 
 const useFetchWalletFts = (props?: UseWalletFTsProps) => {
   const {
-    data: { listedFts, unlistedFTIds },
+    data: { listedFts, unlistedFtIds },
     isLoading: isLoadingTokensByType
   } = useFetchWalletTokensByType({ includeAlph: true })
 
-  const { sortedListedFTs, sortedUnlistedFTs, isLoading } = useFetchSortedFts({
+  const { sortedListedFts, sortedUnlistedFts, isLoading } = useFetchSortedFts({
     listedFts,
-    unlistedFTIds,
+    unlistedFtIds,
     skip: props?.sort === false
   })
 
   return {
-    listedFts: sortedListedFTs,
-    unlistedFts: sortedUnlistedFTs,
+    listedFts: sortedListedFts,
+    unlistedFts: sortedUnlistedFts,
     isLoading: isLoading || isLoadingTokensByType
   }
 }

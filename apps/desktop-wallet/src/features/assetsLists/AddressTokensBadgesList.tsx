@@ -37,18 +37,18 @@ const AddressTokensBadgesList = ({
   ...badgeProps
 }: AddressTokensBadgesListProps) => {
   const {
-    data: { listedFts, unlistedFTIds, nftIds, nstIds },
+    data: { listedFts, unlistedFtIds, nftIds, nstIds },
     isLoading: isLoadingTokens
   } = useFetchAddressTokensByType({ addressHash, includeAlph: true })
 
   const { displayedStandardTokenIds, hiddenStandardTokensIds } = useMemo(() => {
-    const standardTokens = [...listedFts.map(({ id }) => id), ...unlistedFTIds, ...nftIds]
+    const standardTokens = [...listedFts.map(({ id }) => id), ...unlistedFtIds, ...nftIds]
 
     return {
       displayedStandardTokenIds: standardTokens.slice(0, maxDisplayedAssets),
       hiddenStandardTokensIds: standardTokens.slice(maxDisplayedAssets)
     }
-  }, [listedFts, maxDisplayedAssets, nftIds, unlistedFTIds])
+  }, [listedFts, maxDisplayedAssets, nftIds, unlistedFtIds])
 
   if (isLoadingTokens) return <SkeletonLoader height="33.5px" />
 
