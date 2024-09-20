@@ -16,7 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { orderBy } from 'lodash'
+import { NFTTokenUriMetaData } from '@alephium/web3'
+import { isArray, orderBy } from 'lodash'
+import sanitize from 'sanitize-html'
 
 import { calculateAmountWorth } from '@/numbers'
 import { Asset, FungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
@@ -69,3 +71,26 @@ export const calculateAssetsData = (
 
     return acc
   }, [] as Asset[])
+
+export const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
+  typeof nft.name === 'string' &&
+  typeof nft.image === 'string' &&
+  (typeof nft.description === 'undefined' || typeof nft.description === 'string') &&
+  (typeof nft.attributes === 'undefined' ||
+    (isArray(nft.attributes) &&
+      nft.attributes.every(
+        (attr) =>
+          typeof attr.trait_type === 'string' &&
+          (typeof attr.value === 'string' || typeof attr.value === 'number' || typeof attr.value === 'boolean')
+      )))
+
+export const sanitizeNft = (nft: NFT): NFT => ({
+  ...nft,
+  name: sanitize(nft.name),
+  description: nft.description ? sanitize(nft.description) : nft.description,
+  image: sanitize(nft.image),
+  attributes: nft.attributes?.map(({ trait_type, value }) => ({
+    trait_type: sanitize(trait_type),
+    value: sanitize(value.toString())
+  }))
+})

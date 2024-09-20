@@ -16,7 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NetworkPreset, ONE_DAY_MS, ONE_HOUR_MS, ONE_MINUTE_MS, TOKENS_QUERY_LIMIT } from '@alephium/shared'
+import {
+  matchesNFTTokenUriMetaDataSchema,
+  NetworkPreset,
+  ONE_DAY_MS,
+  ONE_HOUR_MS,
+  ONE_MINUTE_MS,
+  TOKENS_QUERY_LIMIT
+} from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
 import { addressFromContractId, NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
@@ -157,7 +164,27 @@ export const assetsQueries = {
       queryOptions({
         queryKey: ['nftData', dataUri],
         queryFn: (): Promise<NFTTokenUriMetaData & { assetId: string }> | undefined =>
-          fetch(dataUri).then((res) => res.json().then((f) => ({ ...f, assetId }))),
+          fetch(dataUri).then(async (res) => {
+            let data: NFTTokenUriMetaData | undefined
+            try {
+              data = (await res.json()) as NFTTokenUriMetaData
+
+              if (!matchesNFTTokenUriMetaDataSchema(data)) {
+                data = undefined
+                return Promise.reject()
+              }
+            } catch (e) {
+              if (dataUri.startsWith('data:application/json;utf8,')) {
+                data = JSON.parse(dataUri.split('data:application/json;utf8,')[1])
+              }
+            }
+
+            if (data) {
+              return { ...data, assetId }
+            } else {
+              return Promise.reject()
+            }
+          }),
         staleTime: ONE_DAY_MS
       }),
     collection: (collectionUri: string, collectionId: string, collectionAddress: string) =>
