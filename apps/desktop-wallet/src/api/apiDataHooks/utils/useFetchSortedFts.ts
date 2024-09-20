@@ -29,23 +29,23 @@ import { DisplayBalances, ListedFT, TokenId } from '@/types/tokens'
 
 interface UseSortFTsProps extends SkipProp {
   listedFts: (ListedFT & DisplayBalances)[]
-  unlistedFTIds: TokenId[]
+  unlistedFtIds: TokenId[]
 }
 
-const useFetchSortedFts = ({ listedFts, unlistedFTIds, skip }: UseSortFTsProps) => {
+const useFetchSortedFts = ({ listedFts, unlistedFtIds, skip }: UseSortFTsProps) => {
   const { data: unlistedFts, isLoading: isLoadingUnlistedFTs } = useQueries({
-    queries: unlistedFTIds.map((id) => fungibleTokenMetadataQuery({ id })),
+    queries: unlistedFtIds.map((id) => fungibleTokenMetadataQuery({ id })),
     combine: combineDefined
   })
 
   const { data: tokenPrices } = useFetchTokenPrices({ skip })
 
   return {
-    sortedUnlistedFTs: useMemo(
+    sortedUnlistedFts: useMemo(
       () => (!skip ? orderBy(unlistedFts, ['name', 'id'], ['asc', 'asc']) : unlistedFts),
       [skip, unlistedFts]
     ),
-    sortedListedFTs: useMemo(
+    sortedListedFts: useMemo(
       () =>
         !skip
           ? orderBy(

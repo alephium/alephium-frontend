@@ -27,7 +27,7 @@ interface TokensByType<T> {
   data: {
     listedFts: (ListedFT & T)[]
     unlistedTokens: (UnlistedToken & T)[]
-    unlistedFTIds: TokenId[]
+    unlistedFtIds: TokenId[]
     nftIds: TokenId[]
     nstIds: TokenId[]
   }
@@ -56,7 +56,7 @@ const useFetchSeparatedTokensByType = <T extends UnlistedToken>(tokens: T[] = []
   }, [ftList, tokens])
 
   const {
-    data: { fungible: unlistedFTIds, 'non-fungible': nftIds, 'non-standard': nstIds },
+    data: { fungible: unlistedFtIds, 'non-fungible': nftIds, 'non-standard': nstIds },
     isLoading: isLoadingTokensByType
   } = useQueries({
     queries: unlistedTokens.map(({ id }) => tokenTypeQuery({ id })),
@@ -64,7 +64,7 @@ const useFetchSeparatedTokensByType = <T extends UnlistedToken>(tokens: T[] = []
   })
 
   return {
-    data: { listedFts, unlistedTokens, unlistedFTIds, nftIds, nstIds }, // TODO: Consider adding balances instead of IDs?
+    data: { listedFts, unlistedTokens, unlistedFtIds, nftIds, nstIds }, // TODO: Consider adding balances instead of IDs?
     isLoading: isLoading || isLoadingTokensByType
   }
 }
