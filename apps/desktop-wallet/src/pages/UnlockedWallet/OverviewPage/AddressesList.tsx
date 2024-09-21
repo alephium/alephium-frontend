@@ -25,7 +25,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import useAddressesTokensWorthTotal from '@/api/apiDataHooks/useAddressesTokensWorthTotal'
+import useFetchAddressWorth from '@/api/apiDataHooks/address/useFetchAddressWorth'
 import ActionLink from '@/components/ActionLink'
 import AddressRow from '@/components/AddressRow'
 import Amount from '@/components/Amount'
@@ -98,7 +98,7 @@ const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: Addr
 }
 
 const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
-  const { data: totalWorth, isLoading } = useAddressesTokensWorthTotal(addressHash)
+  const { data: totalWorth, isLoading } = useFetchAddressWorth(addressHash)
 
   return <AmountStyled isFiat value={totalWorth} tabIndex={0} isLoading={isLoading} loaderSizeInPx="15.5" />
 }

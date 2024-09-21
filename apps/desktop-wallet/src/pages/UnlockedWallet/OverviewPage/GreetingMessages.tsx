@@ -17,13 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { CURRENCIES, formatFiatAmountForDisplay } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeInOut } from '@/animations'
-import useAlphPrice from '@/api/apiDataHooks/useAlphPrice'
+import { useFetchTokenPrice } from '@/api/apiDataHooks/useFetchTokenPrices'
 import { useAppSelector } from '@/hooks/redux'
 import TimeOfDayMessage from '@/pages/UnlockedWallet/OverviewPage/TimeOfDayMessage'
 import { messagesLeftMarginPx } from '@/style/globalStyles'
@@ -37,7 +38,7 @@ const swapDelayInSeconds = 8
 const GreetingMessages = ({ className }: GreetingMessagesProps) => {
   const { t } = useTranslation()
   const activeWallet = useAppSelector((s) => s.activeWallet)
-  const { data: alphPrice, isLoading: isLoadingAlphPrice } = useAlphPrice()
+  const { data: alphPrice, isLoading: isLoadingAlphPrice } = useFetchTokenPrice(ALPH.symbol)
 
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
@@ -46,9 +47,9 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
 
   const priceComponent = (
     <span key="price">
-      {alphPrice !== undefined
+      {alphPrice?.price !== undefined
         ? '📈 ' +
-          t('ALPH price: {{ price }}', { price: formatFiatAmountForDisplay(alphPrice) }) +
+          t('ALPH price: {{ price }}', { price: formatFiatAmountForDisplay(alphPrice.price) }) +
           CURRENCIES[fiatCurrency].symbol
         : '💜'}
     </span>

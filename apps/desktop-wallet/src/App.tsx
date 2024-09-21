@@ -22,11 +22,12 @@ import {
   syncVerifiedFungibleTokens
 } from '@alephium/shared'
 import { useInitializeThrottledClient, useInterval } from '@alephium/shared-react'
+import { ALPH } from '@alephium/token-list'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
-import useAlphPrice from '@/api/apiDataHooks/useAlphPrice'
+import { useFetchTokenPrice } from '@/api/apiDataHooks/useFetchTokenPrices'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
@@ -74,7 +75,7 @@ const App = () => {
   const showDevIndication = useDevModeShortcut()
   const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
-  useAlphPrice() // TODO: Group with other prefetch queries in a usePrefetchData hook
+  useFetchTokenPrice(ALPH.symbol) // TODO: Group with other prefetch queries in a usePrefetchData hook
 
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)

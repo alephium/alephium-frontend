@@ -22,7 +22,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useAddressesTokensBalancesTotal from '@/api/apiDataHooks/useAddressesTokensBalancesTotal'
+import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
@@ -58,7 +58,7 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
 
   const { fromAddress, toAddress } = data
 
-  const { data: tokensBalances } = useAddressesTokensBalancesTotal(fromAddress.hash)
+  const { data: tokensBalances } = useFetchAddressBalances({ addressHash: fromAddress.hash })
   const allAssetAmountsAreWithinAvailableBalance = useAreAmountsWithinAddressAvailableBalances(
     fromAddress.hash,
     assetAmounts ?? []
@@ -85,12 +85,11 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
     atLeastOneAssetWithAmountIsSet &&
     allAssetAmountsAreWithinAvailableBalance
 
-  const shouldSweep = Object.keys(tokensBalances).every((tokenId) => {
-    const balances = tokensBalances[tokenId]
-    const asset = assetAmounts.find((asset) => asset.id === tokenId)
-
-    return !balances || !balances.totalBalance ? true : !asset ? false : balances.totalBalance === asset.amount
-  })
+  const shouldSweep =
+    assetAmounts.length === tokensBalances.length &&
+    tokensBalances.every(
+      ({ id, totalBalance }) => totalBalance === assetAmounts.find((asset) => asset.id === id)?.amount
+    )
 
   return (
     <>
