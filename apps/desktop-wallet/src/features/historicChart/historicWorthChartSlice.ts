@@ -16,22 +16,28 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { createSlice } from '@reduxjs/toolkit'
 
-import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
-import useFetchListedFtsWorth from '@/api/apiDataHooks/utils/useFetchListedFtsWorth'
+import { ChartLength } from '@/features/historicChart/historicChartTypes'
+import { chartLengthChanged } from '@/features/historicChart/historicWorthChartActions'
 
-const useFetchAddressWorth = (addressHash: AddressHash) => {
-  const {
-    data: { listedFts },
-    isLoading: isLoadingTokensByType
-  } = useFetchAddressTokensByType({ addressHash, includeAlph: true })
-  const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth({ listedFts })
-
-  return {
-    data: worth,
-    isLoading: isLoadingWorth || isLoadingTokensByType
-  }
+interface HistoricWorthChartState {
+  chartLength: ChartLength
 }
 
-export default useFetchAddressWorth
+const initialState: HistoricWorthChartState = {
+  chartLength: '1m'
+}
+
+const historicWorthChartSlice = createSlice({
+  name: 'historicWorthChart',
+  initialState,
+  reducers: {},
+  extraReducers(builder) {
+    builder.addCase(chartLengthChanged, (state, { payload: chartLength }) => {
+      state.chartLength = chartLength
+    })
+  }
+})
+
+export default historicWorthChartSlice

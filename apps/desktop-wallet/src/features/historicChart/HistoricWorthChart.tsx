@@ -22,6 +22,7 @@ import { memo, useEffect, useState } from 'react'
 import Chart from 'react-apexcharts'
 import styled, { useTheme } from 'styled-components'
 
+import useFetchWalletWorthAlph from '@/api/apiDataHooks/wallet/useFetchWalletWorthAlph'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/features/historicChart/historicChartTypes'
 import { getChartOptions, getFilteredChartData } from '@/features/historicChart/historicChartUtils'
 import useHistoricData from '@/features/historicChart/useHistoricData'
@@ -29,10 +30,8 @@ import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
 interface HistoricWorthChartProps {
-  length: ChartLength
   onDataPointHover: (dataPoint?: DataPoint) => void
   onWorthInBeginningOfChartChange: (worthInBeginningOfChart?: DataPoint['worth']) => void
-  latestWorth?: number
   addressHash?: AddressHash
 }
 
@@ -46,18 +45,16 @@ const startingDates: Record<ChartLength, Dayjs> = {
   '1y': now.subtract(1, 'year')
 }
 
-// Note: It's necessary to wrap in memo, otherwise the chart rerenders everytime onDataPointHover is called because the
-// state of the parent component changes
 const HistoricWorthChart = memo(function HistoricWorthChart({
   addressHash,
-  latestWorth,
-  length = '1y',
   onDataPointHover,
   onWorthInBeginningOfChartChange
 }: HistoricWorthChartProps) {
+  const theme = useTheme()
+  const length = useAppSelector((s) => s.historicWorthChart.chartLength)
   const allAddressesHashes = useAppSelector(selectAllAddressHashes)
   const { alphBalanceHistoryPerAddress, alphPriceHistory, isLoading: isLoadingHistoricData } = useHistoricData()
-  const theme = useTheme()
+  const { data: latestWorth } = useFetchWalletWorthAlph()
 
   const [chartData, setChartData] = useState<DataPoint[]>([])
 
