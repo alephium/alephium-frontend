@@ -16,16 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
-
-import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
 import useFetchListedFtsWorth from '@/api/apiDataHooks/utils/useFetchListedFtsWorth'
+import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 
-const useFetchAddressWorth = (addressHash: AddressHash) => {
+const useFetchWalletWorth = () => {
   const {
     data: { listedFts },
     isLoading: isLoadingTokensByType
-  } = useFetchAddressTokensByType({ addressHash, includeAlph: true })
+  } = useFetchWalletTokensByType({ includeAlph: true })
   const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth({ listedFts })
 
   return {
@@ -34,4 +32,4 @@ const useFetchAddressWorth = (addressHash: AddressHash) => {
   }
 }
 
-export default useFetchAddressWorth
+export default useFetchWalletWorth

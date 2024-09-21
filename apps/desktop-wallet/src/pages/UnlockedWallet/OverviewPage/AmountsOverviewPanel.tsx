@@ -18,21 +18,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useAddressesAlphWorthTotal from '@/api/apiDataHooks/useAddressesAlphWorthTotal'
-import useAddressesTokensWorthTotal from '@/api/apiDataHooks/useAddressesTokensWorthTotal'
-import Amount from '@/components/Amount'
-import Button from '@/components/Button'
-import DeltaPercentage from '@/components/DeltaPercentage'
-import SkeletonLoader from '@/components/SkeletonLoader'
 import TotalAlphBalance from '@/features/balancesOverview/TotalAlphBalance'
-import { ChartLength, chartLengths, DataPoint } from '@/features/historicChart/historicChartTypes'
+import ChartLengthBadges from '@/features/historicChart/ChartLengthBadges'
+import FiatDeltaPercentage from '@/features/historicChart/FiatDeltaPercentage'
+import { DataPoint } from '@/features/historicChart/historicChartTypes'
 import HistoricWorthChart, { historicWorthChartHeight } from '@/features/historicChart/HistoricWorthChart'
-import useHistoricData from '@/features/historicChart/useHistoricData'
 import { useAppSelector } from '@/hooks/redux'
+import WalletWorth from '@/pages/UnlockedWallet/OverviewPage/WalletWorth'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 
 interface AmountsOverviewPanelProps {
@@ -41,6 +37,7 @@ interface AmountsOverviewPanelProps {
   className?: string
   showChart?: boolean
   animateChartEntry?: boolean
+  children?: ReactNode
 }
 
 const chartAnimationVariants = {
@@ -48,26 +45,18 @@ const chartAnimationVariants = {
   hidden: { height: 0 }
 }
 
-// TODO: Refactor to use new hooks and smaller components
-const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addressHash, children, showChart }) => {
+const AmountsOverviewPanel = ({ className, addressHash, children, showChart }: AmountsOverviewPanelProps) => {
   const { t } = useTranslation()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
 
-  const { data: totalAmountWorth, isLoading: isLoadingTotalAmountWorth } = useAddressesTokensWorthTotal(addressHash)
-  const { data: totalAlphAmountWorth, isLoading: isLoadingAlphAmountWorth } = useAddressesAlphWorthTotal(addressHash)
-  const { hasHistoricBalances, isLoading: isLoadingHistoricData } = useHistoricData()
-
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
-  const [chartLength, setChartLength] = useState<ChartLength>('1m')
   const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
 
-  const { date: hoveredDataPointDate, worth: hoveredDataPointWorth } = hoveredDataPoint ?? {
-    date: undefined,
-    worth: undefined
-  }
+  const hoveredDataPointDate = hoveredDataPoint ? dayjs(hoveredDataPoint.date).format('DD/MM/YYYY') : undefined
+  const hoveredDataPointWorth = hoveredDataPoint?.worth
+
   const singleAddress = !!addressHash
-  const balanceInFiat = hoveredDataPointWorth ?? totalAmountWorth
-  const isHoveringChart = !!hoveredDataPointWorth
+  const isHoveringChart = hoveredDataPointWorth !== undefined
 
   return (
     <UnlockedWalletPanelStyled className={className}>
@@ -75,57 +64,22 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
         <Balances>
           <BalancesRow>
             <BalancesColumn>
-              <Today>
-                {hoveredDataPointDate
-                  ? dayjs(hoveredDataPointDate).format('DD/MM/YYYY') + ' (ALPH only)'
-                  : t('Value today')}
-              </Today>
-              {isLoadingTotalAmountWorth ? (
-                <SkeletonLoader height="32px" style={{ marginBottom: 7, marginTop: 7 }} />
-              ) : balanceInFiat !== undefined ? (
-                <FiatTotalAmount tabIndex={0} value={balanceInFiat} isFiat />
-              ) : (
-                '-'
-              )}
-              {hoveredDataPointWorth !== undefined && (
+              <Today>{!hoveredDataPointDate ? t('Value today') : `${hoveredDataPointDate} (${t('ALPH only')})`}</Today>
+
+              <WalletWorth overrideWorth={hoveredDataPointWorth} />
+
+              {isHoveringChart && (
                 <Opacity>
-                  <FiatDeltaPercentage>
-                    {isLoadingAlphAmountWorth ||
-                    isLoadingHistoricData ||
-                    (hasHistoricBalances && worthInBeginningOfChart === undefined) ? (
-                      <SkeletonLoader height="18px" width="70px" style={{ marginBottom: 6 }} />
-                    ) : hasHistoricBalances && worthInBeginningOfChart && hoveredDataPointWorth !== undefined ? (
-                      <DeltaPercentage initialValue={worthInBeginningOfChart} latestValue={hoveredDataPointWorth} />
-                    ) : null}
-                  </FiatDeltaPercentage>
+                  <FiatDeltaPercentage
+                    worthInBeginningOfChart={worthInBeginningOfChart}
+                    hoveredDataPointWorth={hoveredDataPointWorth}
+                  />
                 </Opacity>
               )}
 
-              <ChartLengthBadges>
-                {chartLengths.map((length) =>
-                  isLoadingAlphAmountWorth || isLoadingHistoricData ? (
-                    <SkeletonLoader
-                      key={length}
-                      height="25px"
-                      width="30px"
-                      style={{ marginTop: 6, marginBottom: 12 }}
-                    />
-                  ) : (
-                    hasHistoricBalances && (
-                      <ButtonStyled
-                        key={length}
-                        transparent
-                        short
-                        isActive={length === chartLength}
-                        onClick={() => setChartLength(length)}
-                      >
-                        {length}
-                      </ButtonStyled>
-                    )
-                  )
-                )}
-              </ChartLengthBadges>
+              <ChartLengthBadges />
             </BalancesColumn>
+
             {!singleAddress && (
               <>
                 <Divider />
@@ -140,19 +94,12 @@ const AmountsOverviewPanel: FC<AmountsOverviewPanelProps> = ({ className, addres
         {children && <RightColumnContent fadeOut={isHoveringChart}>{children}</RightColumnContent>}
       </Panel>
 
-      <ChartOuterContainer
-        variants={chartAnimationVariants}
-        animate={
-          showChart && hasHistoricBalances && !discreetMode && totalAlphAmountWorth !== undefined ? 'shown' : 'hidden'
-        }
-      >
+      <ChartOuterContainer variants={chartAnimationVariants} animate={showChart && !discreetMode ? 'shown' : 'hidden'}>
         <ChartInnerContainer animate={{ opacity: discreetMode ? 0 : 1 }} transition={{ duration: 0.5 }}>
           <HistoricWorthChart
             addressHash={addressHash}
             onDataPointHover={setHoveredDataPoint}
             onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
-            latestWorth={totalAlphAmountWorth}
-            length={chartLength}
           />
         </ChartInnerContainer>
       </ChartOuterContainer>
@@ -219,40 +166,10 @@ const Divider = styled.div`
   margin: 17px 55px;
 `
 
-const FiatTotalAmount = styled(Amount)`
-  font-size: 34px;
-  font-weight: var(--fontWeight-bold);
-`
-
-const FiatDeltaPercentage = styled.div`
-  font-size: 18px;
-  margin-top: 5px;
-`
-
 const Today = styled.div`
   color: ${({ theme }) => theme.font.secondary};
   font-size: 16px;
   margin-bottom: 8px;
-`
-
-const ChartLengthBadges = styled.div`
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-`
-
-const ButtonStyled = styled(Button)<{ isActive: boolean }>`
-  color: ${({ theme }) => theme.font.primary};
-  opacity: ${({ isActive }) => (isActive ? 1 : 0.4)};
-  border-color: ${({ theme }) => theme.font.primary};
-  padding: 3px;
-  height: auto;
-  min-width: 32px;
-  border-radius: var(--radius-small);
-
-  &:hover {
-    border-color: ${({ theme }) => theme.font.tertiary};
-  }
 `
 
 const ChartOuterContainer = styled(motion.div)`
