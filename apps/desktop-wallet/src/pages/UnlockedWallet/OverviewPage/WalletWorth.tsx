@@ -16,22 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { memo } from 'react'
+import styled from 'styled-components'
 
-import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
-import useFetchListedFtsWorth from '@/api/apiDataHooks/utils/useFetchListedFtsWorth'
+import useFetchWalletWorth from '@/api/apiDataHooks/wallet/useFetchWalletWorth'
+import Amount from '@/components/Amount'
 
-const useFetchAddressWorth = (addressHash: AddressHash) => {
-  const {
-    data: { listedFts },
-    isLoading: isLoadingTokensByType
-  } = useFetchAddressTokensByType({ addressHash, includeAlph: true })
-  const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth({ listedFts })
-
-  return {
-    data: worth,
-    isLoading: isLoadingWorth || isLoadingTokensByType
-  }
+interface WalletWorthProps {
+  overrideWorth?: number
 }
 
-export default useFetchAddressWorth
+const WalletWorth = memo(({ overrideWorth }: WalletWorthProps) => {
+  const { data: worth, isLoading } = useFetchWalletWorth()
+
+  return (
+    <WalletWorthStyled value={overrideWorth ?? worth} isFiat isLoading={isLoading} loaderSizeInPx="32" tabIndex={0} />
+  )
+})
+
+export default WalletWorth
+
+const WalletWorthStyled = styled(Amount)`
+  font-size: 34px;
+  font-weight: var(--fontWeight-bold);
+`

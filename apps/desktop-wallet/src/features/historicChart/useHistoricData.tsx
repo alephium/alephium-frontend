@@ -19,9 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, CHART_DATE_FORMAT, ONE_DAY_MS, throttledClient, TokenHistoricalPrice } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
-import { useQueries, useQuery } from '@tanstack/react-query'
+import { AmountHistory } from '@alephium/web3/dist/src/api/api-explorer'
+import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
+import { combineIsLoading } from '@/api/apiDataHooks/utils'
 import { useAppSelector } from '@/hooks/redux'
 
 const HISTORY_QUERY_KEY = 'history'
@@ -37,6 +39,7 @@ const useHistoricData = () => {
 
   const { data: alphPriceHistory, isLoading: isLoadingAlphPriceHistory } = useQuery({
     queryKey: [HISTORY_QUERY_KEY, 'price', ALPH.symbol, { currency }],
+    staleTime: ONE_DAY_MS,
     queryFn: () =>
       throttledClient.explorer.market.getMarketPricesSymbolCharts(ALPH.symbol, { currency }).then((rawHistory) => {
         const today = dayjs().format(CHART_DATE_FORMAT)
@@ -71,6 +74,7 @@ const useHistoricData = () => {
   } = useQueries({
     queries: allAddressHashes.map((hash) => ({
       queryKey: [HISTORY_QUERY_KEY, 'addressBalance', DAILY, ALPH.symbol, { hash, networkId }],
+      staleTime: ONE_DAY_MS,
       queryFn: async () => {
         const now = dayjs()
         const thisMoment = now.valueOf()
@@ -86,33 +90,9 @@ const useHistoricData = () => {
           address: hash,
           amountHistory
         }
-      },
-      staleTime: ONE_DAY_MS
+      }
     })),
-    combine: (results) => ({
-      data: results.reduce(
-        (historyPerAddress, { data }) => {
-          if (data) {
-            historyPerAddress[data.address] = !data.amountHistory
-              ? undefined
-              : data.amountHistory.reduce(
-                  (amountPerDate, [timestamp, amount]) => {
-                    const date = dayjs(timestamp).format(CHART_DATE_FORMAT)
-                    amountPerDate[date] = amount
-
-                    return amountPerDate
-                  },
-                  {} as Record<Timestamp, Amount>
-                )
-          }
-
-          return historyPerAddress
-        },
-        {} as Record<AddressHash, Record<Timestamp, Amount> | undefined>
-      ),
-      isLoading: results.some(({ isLoading }) => isLoading),
-      hasHistoricBalances: results.some(({ data }) => data?.amountHistory?.length)
-    })
+    combine
   })
 
   return {
@@ -126,3 +106,33 @@ const useHistoricData = () => {
 }
 
 export default useHistoricData
+
+const combine = (
+  results: UseQueryResult<{
+    address: AddressHash
+    amountHistory: AmountHistory['amountHistory']
+  }>[]
+) => ({
+  data: results.reduce(
+    (historyPerAddress, { data }) => {
+      if (data) {
+        historyPerAddress[data.address] = !data.amountHistory
+          ? undefined
+          : data.amountHistory.reduce(
+              (amountPerDate, [timestamp, amount]) => {
+                const date = dayjs(timestamp).format(CHART_DATE_FORMAT)
+                amountPerDate[date] = amount
+
+                return amountPerDate
+              },
+              {} as Record<Timestamp, Amount>
+            )
+      }
+
+      return historyPerAddress
+    },
+    {} as Record<AddressHash, Record<Timestamp, Amount> | undefined>
+  ),
+  ...combineIsLoading(results),
+  hasHistoricBalances: results.some(({ data }) => data?.amountHistory?.length)
+})

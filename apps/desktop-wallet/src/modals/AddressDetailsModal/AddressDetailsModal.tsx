@@ -46,9 +46,9 @@ const AddressDetailsModal = memo(({ id, addressHash }: ModalBaseProp & AddressDe
       width={800}
       header={<AddressDetailsModalHeader addressHash={addressHash} />}
     >
-      <StyledAmountsOverviewPanel addressHash={addressHash} showChart>
+      <AmountsOverviewPanelStyled addressHash={addressHash} showChart>
         <QRCode value={addressHash} size={130} />
-      </StyledAmountsOverviewPanel>
+      </AmountsOverviewPanelStyled>
 
       <Content>
         <Shortcuts>
@@ -71,7 +71,7 @@ const AddressDetailsModal = memo(({ id, addressHash }: ModalBaseProp & AddressDe
 
 export default AddressDetailsModal
 
-const StyledAmountsOverviewPanel = styled(AmountsOverviewPanel)`
+const AmountsOverviewPanelStyled = styled(AmountsOverviewPanel)`
   padding: 0;
 `
 
