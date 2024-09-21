@@ -16,22 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { createAction } from '@reduxjs/toolkit'
 
-import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
-import useFetchListedFtsWorth from '@/api/apiDataHooks/utils/useFetchListedFtsWorth'
+import { ChartLength } from '@/features/historicChart/historicChartTypes'
 
-const useFetchAddressWorth = (addressHash: AddressHash) => {
-  const {
-    data: { listedFts },
-    isLoading: isLoadingTokensByType
-  } = useFetchAddressTokensByType({ addressHash, includeAlph: true })
-  const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth({ listedFts })
-
-  return {
-    data: worth,
-    isLoading: isLoadingWorth || isLoadingTokensByType
-  }
-}
-
-export default useFetchAddressWorth
+export const chartLengthChanged = createAction<ChartLength>('historicWorthChart/chartLengthChanged')
