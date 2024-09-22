@@ -23,9 +23,9 @@ import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFe
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 
-export const useFetchWalletTokensBalancesByToken = () => useFetchWalletBalancesTokensBy(combineBalancesByToken)
+export const useFetchWalletBalancesTokensByToken = () => useFetchWalletBalancesTokensBy(combineBalancesByToken)
 
-export const useFetchWalletTokensBalancesByAddress = () => useFetchWalletBalancesTokensBy(combineBalancesByAddress)
+export const useFetchWalletBalancesTokensByAddress = () => useFetchWalletBalancesTokensBy(combineBalancesByAddress)
 
 const useFetchWalletBalancesTokensBy = <T>(
   combine: (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => { data: T; isLoading: boolean }
