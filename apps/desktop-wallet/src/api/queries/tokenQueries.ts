@@ -24,7 +24,7 @@ import axios from 'axios'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { convertTokenDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/utils'
+import { convertTokenDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/apiUtils'
 import { TokenId } from '@/types/tokens'
 
 export type TokenTypesQueryFnData = Record<explorer.TokenStdInterfaceId, TokenId[]>
