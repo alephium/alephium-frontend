@@ -17,18 +17,28 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import useFetchListedFtsWorth from '@/api/apiDataHooks/utils/useFetchListedFtsWorth'
-import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
+import useFetchSeparatedTokensByListing from '@/api/apiDataHooks/utils/useFetchSeparatedTokensByListing'
+import useMergeAllTokensBalances from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
+import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import useFetchWalletBalancesTokens from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
 
 const useFetchWalletWorth = () => {
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlph()
+  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchWalletBalancesTokens()
+  const allTokensBalances = useMergeAllTokensBalances({
+    includeAlph: true,
+    alphBalances,
+    tokensBalances
+  })
   const {
     data: { listedFts },
-    isLoading: isLoadingTokensByType
-  } = useFetchWalletTokensByType({ includeAlph: true })
+    isLoading: isLoadingTokensByListing
+  } = useFetchSeparatedTokensByListing(allTokensBalances)
   const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth({ listedFts })
 
   return {
     data: worth,
-    isLoading: isLoadingWorth || isLoadingTokensByType
+    isLoading: isLoadingWorth || isLoadingTokensByListing || isLoadingAlphBalances || isLoadingTokensBalances
   }
 }
 
