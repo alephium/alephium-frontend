@@ -94,7 +94,7 @@ export const fungibleTokenMetadataQuery = ({ id, skip }: TokenQueryProps) =>
 export const nftMetadataQuery = ({ id, skip }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', 'non-fungible', 'metadata', id],
-    queryFn: !skip ? () => batchers.nftMetadataBatcher.fetch(id) : skipToken,
+    queryFn: !skip ? async () => (await batchers.nftMetadataBatcher.fetch(id)) ?? null : skipToken,
     staleTime: Infinity
   })
 
