@@ -28,10 +28,10 @@ import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
 import ToggleSection from '@/components/ToggleSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import AssetAmountsInput from '@/features/send/AssetAmountsInput'
 import GasSettings from '@/features/send/GasSettings'
 import { CallContractTxData, CallContractTxModalData, TxPreparation } from '@/features/send/sendTypes'
 import { isAmountWithinRange } from '@/features/send/sendUtils'
+import TokensAmountInputs from '@/features/send/TokensAmountInputs'
 import useAreAmountsWithinAddressAvailableBalances from '@/features/send/useAreAmountsWithinAddressAvailableBalances'
 import useGasSettings from '@/hooks/useGasSettings'
 import useStateObject from '@/hooks/useStateObject'
@@ -93,10 +93,10 @@ const CallContractBuildTxModalContent = ({ data, onSubmit, onCancel }: CallContr
     <>
       <InputFieldsColumn>
         {assetAmounts && (
-          <AssetAmountsInput
+          <TokensAmountInputs
             address={fromAddress}
             assetAmounts={assetAmounts}
-            onAssetAmountsChange={setAssetAmounts}
+            onTokenAmountsChange={setAssetAmounts}
             id="asset-amounts"
           />
         )}

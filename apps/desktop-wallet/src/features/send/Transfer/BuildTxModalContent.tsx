@@ -27,9 +27,9 @@ import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
 import ToggleSection from '@/components/ToggleSection'
-import AssetAmountsInput from '@/features/send/AssetAmountsInput'
 import GasSettings from '@/features/send/GasSettings'
 import { TransferTxData, TransferTxModalData } from '@/features/send/sendTypes'
+import TokensAmountInputs from '@/features/send/TokensAmountInputs'
 import useAreAmountsWithinAddressAvailableBalances from '@/features/send/useAreAmountsWithinAddressAvailableBalances'
 import useGasSettings from '@/hooks/useGasSettings'
 import { AssetAmountInputType } from '@/types/assets'
@@ -94,10 +94,10 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
   return (
     <>
       <InputFieldsColumn>
-        <AssetAmountsInput
+        <TokensAmountInputs
           address={fromAddress}
           assetAmounts={assetAmounts}
-          onAssetAmountsChange={setAssetAmounts}
+          onTokenAmountsChange={setAssetAmounts}
           id="asset-amounts"
         />
       </InputFieldsColumn>
