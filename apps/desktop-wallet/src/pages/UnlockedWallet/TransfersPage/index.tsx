@@ -32,7 +32,7 @@ import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { walletSidebarWidthPx } from '@/style/globalStyles'
-import { TokenDisplay } from '@/types/tokens'
+import { TokenId } from '@/types/tokens'
 import { directionOptions } from '@/utils/transactions'
 
 interface TransfersPageProps {
@@ -47,7 +47,7 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
   const [direction, setDirection] = useState(scrollDirection?.get())
   const [selectedAddresses, setSelectedAddresses] = useState(addresses)
   const [selectedDirections, setSelectedDirections] = useState(directionOptions)
-  const [selectedAssets, setSelectedAssets] = useState<TokenDisplay[]>()
+  const [selectedTokensIds, setSelectedTokensIds] = useState<TokenId[]>()
 
   useEffect(() => {
     scrollDirection?.onChange(setDirection)
@@ -66,14 +66,14 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
         setSelectedAddresses={setSelectedAddresses}
         selectedDirections={selectedDirections}
         setSelectedDirections={setSelectedDirections}
-        selectedAssets={selectedAssets}
-        setSelectedAssets={setSelectedAssets}
+        selectedTokensIds={selectedTokensIds}
+        setSelectedTokensIds={setSelectedTokensIds}
       />
       <StyledUnlockedWalletPanel doubleTop bottom backgroundColor="background1">
         <TransactionList
           addressHashes={map(selectedAddresses, 'hash')}
           directions={map(selectedDirections, 'value')}
-          assetIds={map(selectedAssets, 'id')}
+          assetIds={selectedTokensIds}
           hideHeader
         />
       </StyledUnlockedWalletPanel>

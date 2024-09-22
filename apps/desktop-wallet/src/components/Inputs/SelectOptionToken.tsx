@@ -16,44 +16,54 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-import useFetchToken, { isFT, isNFT } from '@/api/apiDataHooks/useFetchToken'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
-import HashEllipsed from '@/components/HashEllipsed'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
+import SelectOptionTokenName from '@/components/Inputs/SelectOptionTokenName'
 import Truncate from '@/components/Truncate'
-import { TokenDisplay } from '@/types/tokens'
+import { TokenId } from '@/types/tokens'
 
-type SelectOptionTokenProps = TokenDisplay & {
+export interface SelectOptionTokenBaseProps {
+  tokenId: TokenId
   isSelected?: boolean
   className?: string
 }
 
-const SelectOptionToken = ({ isSelected, className, id, ...tokenProps }: SelectOptionTokenProps) => {
-  const { data: token } = useFetchToken(id)
-
-  const name = isFT(token) || isNFT(token) ? token.name : undefined
-  const symbol = isFT(token) ? token.symbol : undefined
-  const amount = tokenProps.type !== 'NFT' ? tokenProps.availableBalance : undefined
-
-  return (
-    <SelectOptionItemContent
-      MainContent={
-        <>
-          <AssetName>
-            <AssetLogo tokenId={token.id} size={20} />
-            <Truncate>{name ? `${name} ${symbol ? `(${symbol})` : ''}` : <HashEllipsed hash={token.id} />}</Truncate>
-          </AssetName>
-          {amount !== undefined && <AmountStyled tokenId={token.id} value={amount} />}
-        </>
-      }
-      isSelected={isSelected}
-      className={className}
-    />
-  )
+interface SelectOptionTokenProps extends SelectOptionTokenBaseProps {
+  isLoading: boolean
+  showAmount?: boolean
+  amount?: bigint
+  children?: ReactNode
 }
+
+const SelectOptionToken = ({
+  tokenId,
+  showAmount,
+  isLoading,
+  amount,
+  isSelected,
+  className
+}: SelectOptionTokenProps) => (
+  <SelectOptionItemContent
+    MainContent={
+      <>
+        <AssetName>
+          <AssetLogo tokenId={tokenId} size={20} />
+          <Truncate>
+            <SelectOptionTokenName tokenId={tokenId} />
+          </Truncate>
+        </AssetName>
+
+        {showAmount && <AmountStyled tokenId={tokenId} value={amount} isLoading={isLoading} />}
+      </>
+    }
+    isSelected={isSelected}
+    className={className}
+  />
+)
 
 export default SelectOptionToken
 
