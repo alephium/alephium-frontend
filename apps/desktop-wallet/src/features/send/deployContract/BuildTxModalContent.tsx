@@ -27,10 +27,10 @@ import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
 import ToggleSection from '@/components/ToggleSection'
-import AssetAmountsInput from '@/features/send/AssetAmountsInput'
 import GasSettings from '@/features/send/GasSettings'
 import { DeployContractTxData, DeployContractTxModalData, TxPreparation } from '@/features/send/sendTypes'
 import { isAmountWithinRange } from '@/features/send/sendUtils'
+import TokensAmountInputs from '@/features/send/TokensAmountInputs'
 import useGasSettings from '@/hooks/useGasSettings'
 import useStateObject from '@/hooks/useStateObject'
 import { AssetAmountInputType } from '@/types/assets'
@@ -83,10 +83,10 @@ const DeployContractBuildTxModalContent = ({ data, onSubmit, onCancel }: DeployC
   return (
     <>
       <InputFieldsColumn>
-        <AssetAmountsInput
+        <TokensAmountInputs
           address={fromAddress}
           assetAmounts={assetAmounts}
-          onAssetAmountsChange={setAssetAmounts}
+          onTokenAmountsChange={setAssetAmounts}
           allowMultiple={false}
           id="asset-amounts"
         />
