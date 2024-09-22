@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, extractTokenIds, selectAllFungibleTokens, selectNFTIds } from '@alephium/shared'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { makeSelectAddresses } from '@/storage/addresses/addressesSelectors'
@@ -54,35 +53,3 @@ export const makeSelectAddressesHashesWithPendingTransactions = () =>
       )
       .map(({ hash }) => hash)
   )
-
-// Same as in mobile wallet
-export const selectTransactionUnknownTokenIds = createSelector(
-  [selectAllFungibleTokens, selectNFTIds, selectAllConfirmedTransactions],
-  (fungibleTokens, nftIds, allConfirmedTransactions) => {
-    const transactionTokenIds = allConfirmedTransactions.reduce(
-      (acc, transaction) => {
-        extractTokenIds(acc, transaction.inputs)
-        extractTokenIds(acc, transaction.outputs)
-
-        return acc
-      },
-      [] as Asset['id'][]
-    )
-
-    const tokensWithoutMetadata = transactionTokenIds.reduce(
-      (acc, tokenId) => {
-        const hasTokenMetadata = !!fungibleTokens.find((t) => t.id === tokenId)
-        const hasNFTMetadata = nftIds.includes(tokenId)
-
-        if (!hasTokenMetadata && !hasNFTMetadata) {
-          acc.push(tokenId)
-        }
-
-        return acc
-      },
-      [] as Asset['id'][]
-    )
-
-    return tokensWithoutMetadata
-  }
-)
