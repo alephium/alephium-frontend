@@ -29,6 +29,7 @@ import Input from '@/components/Inputs/Input'
 import ToggleSection from '@/components/ToggleSection'
 import GasSettings from '@/features/send/GasSettings'
 import { TransferTxData, TransferTxModalData } from '@/features/send/sendTypes'
+import { shouldBuildSweepTransactions } from '@/features/send/sendUtils'
 import TokensAmountInputs from '@/features/send/TokensAmountInputs'
 import useAreAmountsWithinAddressAvailableBalances from '@/features/send/useAreAmountsWithinAddressAvailableBalances'
 import useGasSettings from '@/hooks/useGasSettings'
@@ -85,11 +86,7 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
     atLeastOneAssetWithAmountIsSet &&
     allAssetAmountsAreWithinAvailableBalance
 
-  const shouldSweep =
-    assetAmounts.length === tokensBalances.length &&
-    tokensBalances.every(
-      ({ id, totalBalance }) => totalBalance === assetAmounts.find((asset) => asset.id === id)?.amount
-    )
+  const shouldSweep = shouldBuildSweepTransactions(assetAmounts, tokensBalances)
 
   return (
     <>
