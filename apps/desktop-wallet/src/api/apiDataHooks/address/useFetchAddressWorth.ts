@@ -18,19 +18,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 
-import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
+import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
 import useFetchListedFtsWorth from '@/api/apiDataHooks/utils/useFetchListedFtsWorth'
+import useFetchSeparatedTokensByListing from '@/api/apiDataHooks/utils/useFetchSeparatedTokensByListing'
 
 const useFetchAddressWorth = (addressHash: AddressHash) => {
+  const { data: allTokensBalances, isLoading: isLoadingBalances } = useFetchAddressBalances({ addressHash })
   const {
     data: { listedFts },
-    isLoading: isLoadingTokensByType
-  } = useFetchAddressTokensByType({ addressHash, includeAlph: true })
+    isLoading: isLoadingTokensByListing
+  } = useFetchSeparatedTokensByListing(allTokensBalances)
   const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth({ listedFts })
 
   return {
     data: worth,
-    isLoading: isLoadingWorth || isLoadingTokensByType
+    isLoading: isLoadingWorth || isLoadingTokensByListing || isLoadingBalances
   }
 }
 
