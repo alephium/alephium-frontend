@@ -17,9 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useQueries } from '@tanstack/react-query'
-import { useMemo } from 'react'
 
-import useFetchFtList from '@/api/apiDataHooks/useFetchFtList'
+import useFetchSeparatedTokensByListing from '@/api/apiDataHooks/utils/useFetchSeparatedTokensByListing'
 import { combineTokenTypeQueryResults, tokenTypeQuery } from '@/api/queries/tokenQueries'
 import { ListedFT, TokenId, UnlistedToken } from '@/types/tokens'
 
@@ -35,25 +34,10 @@ interface TokensByType<T> {
 }
 
 const useFetchSeparatedTokensByType = <T extends UnlistedToken>(tokens: T[] = []): TokensByType<T> => {
-  const { data: ftList, isLoading } = useFetchFtList({ skip: tokens.length === 0 })
-
-  const { listedFts, unlistedTokens } = useMemo(() => {
-    const initial = { listedFts: [] as (ListedFT & T)[], unlistedTokens: [] as (UnlistedToken & T)[] }
-
-    if (!ftList) return initial
-
-    return tokens.reduce((acc, token) => {
-      const listedFT = ftList?.find((t) => t.id === token.id)
-
-      if (listedFT) {
-        acc.listedFts.push({ ...listedFT, ...token })
-      } else {
-        acc.unlistedTokens.push(token)
-      }
-
-      return acc
-    }, initial)
-  }, [ftList, tokens])
+  const {
+    data: { listedFts, unlistedTokens },
+    isLoading: isLoadingTokensByListing
+  } = useFetchSeparatedTokensByListing(tokens)
 
   const {
     data: { fungible: unlistedFtIds, 'non-fungible': nftIds, 'non-standard': nstIds },
@@ -65,7 +49,7 @@ const useFetchSeparatedTokensByType = <T extends UnlistedToken>(tokens: T[] = []
 
   return {
     data: { listedFts, unlistedTokens, unlistedFtIds, nftIds, nstIds }, // TODO: Consider adding balances instead of IDs?
-    isLoading: isLoading || isLoadingTokensByType
+    isLoading: isLoadingTokensByListing || isLoadingTokensByType
   }
 }
 
