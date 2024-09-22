@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { UseQueryResult } from '@tanstack/react-query'
 
-import { DataHook } from '@/api/apiDataHooks/types'
-import { combineIsLoading } from '@/api/apiDataHooks/utils'
+import { DataHook } from '@/api/apiDataHooks/apiDataHooksTypes'
+import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { AddressAlphBalancesQueryFnData, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { DisplayBalances, TokenDisplayBalances, TokenId } from '@/types/tokens'
 

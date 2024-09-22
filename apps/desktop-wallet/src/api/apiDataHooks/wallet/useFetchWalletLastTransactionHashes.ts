@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useQueries } from '@tanstack/react-query'
 
-import { SkipProp } from '@/api/apiDataHooks/types'
-import { flatMapCombine } from '@/api/apiDataHooks/utils'
+import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
+import { flatMapCombine } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'

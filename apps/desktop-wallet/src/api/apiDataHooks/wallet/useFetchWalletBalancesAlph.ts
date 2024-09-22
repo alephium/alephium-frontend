@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useQueries } from '@tanstack/react-query'
 
-import { DataHook, SkipProp } from '@/api/apiDataHooks/types'
+import { DataHook, SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineBalances } from '@/api/apiDataHooks/wallet/combineBalances'
 import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
 import { addressAlphBalancesQuery } from '@/api/queries/addressQueries'

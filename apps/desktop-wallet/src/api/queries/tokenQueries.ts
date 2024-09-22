@@ -22,8 +22,8 @@ import { TokenInfo, TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-
 import { queryOptions, skipToken, UseQueryResult } from '@tanstack/react-query'
 import axios from 'axios'
 
-import { SkipProp } from '@/api/apiDataHooks/types'
-import { combineIsLoading } from '@/api/apiDataHooks/utils'
+import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
+import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { convertTokenDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/utils'
 import { TokenId } from '@/types/tokens'
 
