@@ -32,9 +32,13 @@ import confirmedTransactionsSlice from '@/storage/transactions/confirmedTransact
 import pendingTransactionsSlice from '@/storage/transactions/pendingTransactionsSlice'
 import activeWalletSlice from '@/storage/wallets/activeWalletSlice'
 
+// TODO: Remove deconstruction when API related slices are removed from the shared reducer
+const { network, clients } = sharedReducer
+
 export const store = configureStore({
   reducer: {
-    ...sharedReducer,
+    network,
+    clients,
     [globalSlice.name]: globalSlice.reducer,
     [activeWalletSlice.name]: activeWalletSlice.reducer,
     [contactsSlice.name]: contactsSlice.reducer,
