@@ -21,7 +21,7 @@ import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 
 import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddressBalancesAlph'
-import { SkipProp } from '@/api/apiDataHooks/types'
+import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'

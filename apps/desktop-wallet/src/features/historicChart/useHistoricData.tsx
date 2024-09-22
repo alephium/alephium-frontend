@@ -23,7 +23,7 @@ import { AmountHistory } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
-import { combineIsLoading } from '@/api/apiDataHooks/utils'
+import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { useAppSelector } from '@/hooks/redux'
 
 const HISTORY_QUERY_KEY = 'history'

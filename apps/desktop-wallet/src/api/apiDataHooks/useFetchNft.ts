@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { SkipProp } from '@/api/apiDataHooks/types'
+import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
 import { TokenId } from '@/types/tokens'
 

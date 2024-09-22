@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { useQueries } from '@tanstack/react-query'
 
-import { SkipProp } from '@/api/apiDataHooks/types'
+import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineBalances } from '@/api/apiDataHooks/wallet/combineBalances'
 import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
