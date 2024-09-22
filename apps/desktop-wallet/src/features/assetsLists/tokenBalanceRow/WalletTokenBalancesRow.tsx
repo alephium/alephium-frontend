@@ -49,7 +49,9 @@ export const WalletNSTBalancesRow = ({ tokenId }: TokenBalancesRowBaseProps) => 
 )
 
 const FTAmounts = ({ tokenId }: TokenBalancesRowBaseProps) => {
-  const { data: walletTokenBalances, isLoading: isLoadingTokenBalances } = useFetchWalletSingleTokenBalances(tokenId)
+  const { data: walletTokenBalances, isLoading: isLoadingTokenBalances } = useFetchWalletSingleTokenBalances({
+    tokenId
+  })
 
   return (
     <WalletTokenBalancesRowAmounts tokenId={tokenId}>
@@ -63,7 +65,9 @@ const FTAmounts = ({ tokenId }: TokenBalancesRowBaseProps) => {
 }
 
 const WalletTokenBalancesRowAmounts = ({ tokenId, children }: TokenBalancesRowAmountsProps) => {
-  const { data: walletTokenBalances, isLoading: isLoadingTokenBalances } = useFetchWalletSingleTokenBalances(tokenId)
+  const { data: walletTokenBalances, isLoading: isLoadingTokenBalances } = useFetchWalletSingleTokenBalances({
+    tokenId
+  })
 
   return (
     <AmountsColumn

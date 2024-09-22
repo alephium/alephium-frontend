@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { useQueries } from '@tanstack/react-query'
 
+import { SkipProp } from '@/api/apiDataHooks/types'
 import { combineBalances } from '@/api/apiDataHooks/wallet/combineBalances'
 import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
@@ -26,20 +27,25 @@ import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { TokenId } from '@/types/tokens'
 
-const useFetchWalletSingleTokenBalances = (tokenId: TokenId) => {
+interface UseFetchWalletSingleTokenBalancesProps extends SkipProp {
+  tokenId: TokenId
+}
+
+const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSingleTokenBalancesProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useFetchWalletLastTransactionHashes()
+  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useFetchWalletLastTransactionHashes({ skip })
 
   const isALPH = tokenId === ALPH.id
 
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlph({
-    skip: !isALPH
+    skip: !isALPH || skip
   })
 
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQueries({
-    queries: !isALPH
-      ? latestTxHashes.map((props) => addressSingleTokenBalancesQuery({ ...props, tokenId, networkId }))
-      : [],
+    queries:
+      !isALPH && !skip
+        ? latestTxHashes.map((props) => addressSingleTokenBalancesQuery({ ...props, tokenId, networkId }))
+        : [],
     combine: combineBalances
   })
 
