@@ -20,7 +20,7 @@ import { explorer } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { SkipProp } from '@/api/apiDataHooks/types'
+import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { tokensPriceQuery } from '@/api/queries/priceQueries'
 import { useAppSelector } from '@/hooks/redux'
 

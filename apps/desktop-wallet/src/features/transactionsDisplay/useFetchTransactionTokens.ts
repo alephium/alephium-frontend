@@ -22,7 +22,7 @@ import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { combineDefined } from '@/api/apiDataHooks/utils'
+import { combineDefined } from '@/api/apiDataHooks/apiDataHooksUtils'
 import useFetchSeparatedTokensByType from '@/api/apiDataHooks/utils/useFetchSeparatedTokensByType'
 import { fungibleTokenMetadataQuery, nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
