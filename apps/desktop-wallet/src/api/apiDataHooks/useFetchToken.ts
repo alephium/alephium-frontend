@@ -20,7 +20,7 @@ import { NFT } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 
-import { DataHook } from '@/api/apiDataHooks/types'
+import { DataHook } from '@/api/apiDataHooks/apiDataHooksTypes'
 import useFetchFtList from '@/api/apiDataHooks/useFetchFtList'
 import useFetchNft from '@/api/apiDataHooks/useFetchNft'
 import { fungibleTokenMetadataQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'

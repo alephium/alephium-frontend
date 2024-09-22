@@ -21,9 +21,9 @@ import { useQueries } from '@tanstack/react-query'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
-import { SkipProp } from '@/api/apiDataHooks/types'
+import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import useFetchTokenPrices from '@/api/apiDataHooks/useFetchTokenPrices'
-import { combineDefined } from '@/api/apiDataHooks/utils'
+import { combineDefined } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
 import { DisplayBalances, ListedFT, TokenId } from '@/types/tokens'
 
