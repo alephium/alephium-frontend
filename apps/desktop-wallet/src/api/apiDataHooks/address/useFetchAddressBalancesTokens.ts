@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useQuery } from '@tanstack/react-query'
 
-import { UseFetchAddressProps } from '@/api/apiDataHooks/address/types'
+import { UseFetchAddressProps } from '@/api/apiDataHooks/address/addressApiDataHooksTypes'
 import { addressTokensBalancesQuery } from '@/api/queries/addressQueries'
 import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
