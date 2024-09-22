@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useMemo } from 'react'
 
 import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
-import { useFetchWalletTokensBalancesByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensBy'
+import { useFetchWalletBalancesTokensByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensBy'
 import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
@@ -29,7 +29,7 @@ export const useFilterAddressesByText = (text = '') => {
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
   const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
   const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
-  const { data: addressesTokensBalances } = useFetchWalletTokensBalancesByAddress()
+  const { data: addressesTokensBalances } = useFetchWalletBalancesTokensByAddress()
 
   return useMemo(
     () =>

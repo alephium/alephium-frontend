@@ -49,10 +49,12 @@ import { partition } from 'lodash'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import useAddressesTokensBalances from '@/api/apiDataHooks/useAddressesTokensBalances'
+import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
+import { useFetchWalletBalancesTokensByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensBy'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/features/send/sendTypes'
+import { shouldBuildSweepTransactions } from '@/features/send/sendUtils'
 import { SignMessageData, SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import {
   cleanBeforeInit,
@@ -104,7 +106,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   const addresses = useAppSelector(selectAllAddresses)
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
-  const { data: addressesTokensBalances, isLoading: isLoadingTokensBalances } = useAddressesTokensBalances()
+  const { data: alphBalancesByAddress } = useFetchWalletBalancesAlphByAddress()
+  const { data: tokensBalancesByAddress } = useFetchWalletBalancesTokensByAddress()
 
   const [walletConnectClient, setWalletConnectClient] = useState(initialContext.walletConnectClient)
   const [activeSessions, setActiveSessions] = useState(initialContext.activeSessions)
@@ -271,16 +274,14 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
               { id: ALPH.id, amount: BigInt(dest.attoAlphAmount) },
               ...(dest.tokens ? dest.tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
             ]
-            const tokensBalances = addressesTokensBalances[p.signerAddress]
-            const shouldSweep = isLoadingTokensBalances
-              ? false
-              : tokensBalances
-                ? tokensBalances.every(({ id, totalBalance }) => {
-                    const asset = assetAmounts.find((token) => token.id === id)
+            const alphBalances = alphBalancesByAddress[p.signerAddress]
+            const tokensBalances = tokensBalancesByAddress[p.signerAddress]
+            const allTokensBalances = [
+              ...(alphBalances ? [{ id: ALPH.id, ...alphBalances }] : []),
+              ...(tokensBalances ? tokensBalances : [])
+            ]
 
-                    return totalBalance === asset?.amount
-                  })
-                : false
+            const shouldSweep = shouldBuildSweepTransactions(assetAmounts, allTokensBalances)
 
             const txData: TransferTxData = {
               fromAddress: getSignerAddressByHash(p.signerAddress),
@@ -440,12 +441,12 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     },
     [
       addresses,
-      addressesTokensBalances,
+      alphBalancesByAddress,
       cleanStorage,
       dispatch,
-      isLoadingTokensBalances,
       respondToWalletConnectWithError,
       sendAnalytics,
+      tokensBalancesByAddress,
       walletConnectClient
     ]
   )
