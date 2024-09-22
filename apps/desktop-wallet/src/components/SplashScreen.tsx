@@ -17,23 +17,34 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 import { slowTransition } from '@/animations'
 import alephiumLogo from '@/images/alephium_logo_light.svg'
 
-const SplashScreen = ({ onSplashScreenShown }: { onSplashScreenShown: () => void }) => (
-  <StyledSplashScreen
-    initial={{ opacity: 1 }}
-    animate={{ opacity: 0 }}
-    transition={{ duration: 0.3, delay: 1 }}
-    onAnimationComplete={onSplashScreenShown}
-  >
-    <AlephiumLogoContainer initial={{ opacity: 0, scale: 1.5 }} animate={{ opacity: 1, scale: 1 }} {...slowTransition}>
-      <AlephiumLogo />
-    </AlephiumLogoContainer>
-  </StyledSplashScreen>
-)
+const SplashScreen = () => {
+  const [splashScreenVisible, setSplashScreenVisible] = useState(true)
+
+  if (!splashScreenVisible) return null
+
+  return (
+    <StyledSplashScreen
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 0 }}
+      transition={{ duration: 0.3, delay: 1 }}
+      onAnimationComplete={() => setSplashScreenVisible(false)}
+    >
+      <AlephiumLogoContainer
+        initial={{ opacity: 0, scale: 1.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        {...slowTransition}
+      >
+        <AlephiumLogo />
+      </AlephiumLogoContainer>
+    </StyledSplashScreen>
+  )
+}
 
 export default SplashScreen
 

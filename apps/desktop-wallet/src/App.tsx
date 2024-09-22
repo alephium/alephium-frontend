@@ -18,17 +18,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
 import { useInitializeThrottledClient, useInterval } from '@alephium/shared-react'
-import { ALPH } from '@alephium/token-list'
-import { usePostHog } from 'posthog-js/react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
-import { useFetchTokenPrice } from '@/api/apiDataHooks/useFetchTokenPrices'
+import useFetchTokenPrices from '@/api/apiDataHooks/useFetchTokenPrices'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
 import SplashScreen from '@/components/SplashScreen'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -50,126 +49,35 @@ import {
 import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
-import { AlephiumWindow } from '@/types/window'
-import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
+import { electron } from '@/utils/misc'
 import { languageOptions } from '@/utils/settings'
 
 const App = () => {
   const dispatch = useAppDispatch()
+  const theme = useAppSelector((s) => s.global.theme)
+
+  // TODO: Clean up following block when transactions move to Tanstack
   const addressHashes = useAppSelector(selectAllAddressHashes)
   const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
   const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
-  const networkProxy = useAppSelector((s) => s.network.settings.proxy)
   const networkStatus = useAppSelector((s) => s.network.status)
-  const networkName = useAppSelector((s) => s.network.name)
-  const theme = useAppSelector((s) => s.global.theme)
-  const loading = useAppSelector((s) => s.global.loading)
-  const settings = useAppSelector((s) => s.settings)
-  const wallets = useAppSelector((s) => s.global.wallets)
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
-  const showDevIndication = useDevModeShortcut()
-  const posthog = usePostHog()
-  const { sendAnalytics } = useAnalytics()
-  useFetchTokenPrice(ALPH.symbol) // TODO: Group with other prefetch queries in a usePrefetchData hook
-
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
+  const { sendAnalytics } = useAnalytics()
 
-  const [splashScreenVisible, setSplashScreenVisible] = useState(true)
-
-  const _window = window as unknown as AlephiumWindow
-  const electron = _window.electron
-
-  useInitializeThrottledClient()
   useAutoLock()
 
-  useEffect(() => {
-    const shouldListenToOSThemeChanges = settings.theme === 'system'
+  useMigrateStoredSettings()
+  useTrackUserSettings()
 
-    if (!shouldListenToOSThemeChanges) return
+  useInitializeThrottledClient()
+  useInitializeNetworkProxy()
+  useInitializeTokenPrices()
 
-    const removeOSThemeChangeListener = electron?.theme.onShouldUseDarkColors((useDark: boolean) =>
-      dispatch(osThemeChangeDetected(useDark ? 'dark' : 'light'))
-    )
-
-    const removeGetNativeThemeListener = electron?.theme.onGetNativeTheme((nativeTheme) =>
-      dispatch(osThemeChangeDetected(nativeTheme.shouldUseDarkColors ? 'dark' : 'light'))
-    )
-
-    electron?.theme.getNativeTheme()
-
-    return () => {
-      removeGetNativeThemeListener && removeGetNativeThemeListener()
-      removeOSThemeChangeListener && removeOSThemeChangeListener()
-    }
-  }, [dispatch, electron?.theme, settings.theme])
-
-  useEffect(() => {
-    try {
-      const generalSettings = migrateGeneralSettings()
-      const networkSettings = migrateNetworkSettings()
-      migrateWalletData()
-
-      dispatch(localStorageGeneralSettingsMigrated(generalSettings))
-      dispatch(localStorageNetworkSettingsMigrated(networkSettings))
-    } catch {
-      sendAnalytics({ type: 'error', message: 'Local storage data migration failed' })
-      dispatch(localStorageDataMigrationFailed())
-    }
-  }, [dispatch, sendAnalytics])
-
-  useEffect(() => {
-    if (posthog.__loaded)
-      posthog.people.set({
-        desktop_wallet_version: currentVersion,
-        wallets: wallets.length,
-        theme: settings.theme,
-        devTools: settings.devTools,
-        lockTimeInMs: settings.walletLockTimeInMinutes,
-        language: settings.language,
-        passwordRequirement: settings.passwordRequirement,
-        fiatCurrency: settings.fiatCurrency,
-        network: networkName
-      })
-  }, [
-    networkName,
-    posthog.__loaded,
-    posthog.people,
-    settings.devTools,
-    settings.fiatCurrency,
-    settings.language,
-    settings.passwordRequirement,
-    settings.theme,
-    settings.walletLockTimeInMinutes,
-    wallets.length
-  ])
-
-  const setSystemLanguage = useCallback(async () => {
-    const systemLanguage = await electron?.app.getSystemLanguage()
-
-    if (!systemLanguage) {
-      dispatch(systemLanguageMatchFailed())
-      return
-    }
-
-    const systemLanguageCode = systemLanguage.substring(0, 2)
-    const matchedLanguage = languageOptions.find((lang) => lang.value.startsWith(systemLanguageCode))
-
-    if (matchedLanguage) {
-      dispatch(systemLanguageMatchSucceeded(matchedLanguage.value))
-    } else {
-      dispatch(systemLanguageMatchFailed())
-    }
-  }, [dispatch, electron?.app])
-
-  useEffect(() => {
-    if (settings.language === undefined) setSystemLanguage()
-  }, [settings.language, setSystemLanguage])
-
-  useEffect(() => {
-    if (networkProxy) electron?.app.setProxySettings(networkProxy)
-  }, [electron?.app, networkProxy])
+  useSystemTheme()
+  useSystemLanguage()
 
   useEffect(() => {
     if (networkStatus === 'online') {
@@ -207,10 +115,10 @@ const App = () => {
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <GlobalStyle />
 
-      {splashScreenVisible && <SplashScreen onSplashScreenShown={() => setSplashScreenVisible(false)} />}
+      <SplashScreen />
 
       <WalletConnectContextProvider>
-        <AppContainer showDevIndication={showDevIndication}>
+        <AppContainer>
           <CenteredSection>
             <Router />
           </CenteredSection>
@@ -220,26 +128,12 @@ const App = () => {
       </WalletConnectContextProvider>
       <SnackbarManager />
       <AutoUpdateSnackbar />
-      {loading && <AppSpinner />}
+      <AppSpinner />
     </ThemeProvider>
   )
 }
 
 export default App
-
-const AppContainer = styled.div<{ showDevIndication: boolean }>`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-
-  background-color: ${({ theme }) => theme.bg.secondary};
-
-  ${({ showDevIndication, theme }) =>
-    showDevIndication &&
-    css`
-      border: 5px solid ${theme.global.valid};
-    `};
-`
 
 const useDevModeShortcut = () => {
   const dispatch = useAppDispatch()
@@ -263,3 +157,109 @@ const useDevModeShortcut = () => {
 
   return devMode
 }
+
+const useSystemTheme = () => {
+  const theme = useAppSelector((s) => s.settings.theme)
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    const shouldListenToOSThemeChanges = theme === 'system'
+
+    if (!shouldListenToOSThemeChanges) return
+
+    const removeOSThemeChangeListener = electron?.theme.onShouldUseDarkColors((useDark: boolean) =>
+      dispatch(osThemeChangeDetected(useDark ? 'dark' : 'light'))
+    )
+
+    const removeGetNativeThemeListener = electron?.theme.onGetNativeTheme((nativeTheme) =>
+      dispatch(osThemeChangeDetected(nativeTheme.shouldUseDarkColors ? 'dark' : 'light'))
+    )
+
+    electron?.theme.getNativeTheme()
+
+    return () => {
+      removeGetNativeThemeListener && removeGetNativeThemeListener()
+      removeOSThemeChangeListener && removeOSThemeChangeListener()
+    }
+  }, [dispatch, theme])
+}
+
+const useInitializeTokenPrices = () => useFetchTokenPrices()
+
+const useMigrateStoredSettings = () => {
+  const dispatch = useAppDispatch()
+  const { sendAnalytics } = useAnalytics()
+
+  useEffect(() => {
+    try {
+      const generalSettings = migrateGeneralSettings()
+      const networkSettings = migrateNetworkSettings()
+      migrateWalletData()
+
+      dispatch(localStorageGeneralSettingsMigrated(generalSettings))
+      dispatch(localStorageNetworkSettingsMigrated(networkSettings))
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Local storage data migration failed' })
+      dispatch(localStorageDataMigrationFailed())
+    }
+  }, [dispatch, sendAnalytics])
+}
+
+const useSystemLanguage = () => {
+  const dispatch = useAppDispatch()
+  const language = useAppSelector((s) => s.settings.language)
+
+  const setSystemLanguage = useCallback(async () => {
+    const systemLanguage = await electron?.app.getSystemLanguage()
+
+    if (!systemLanguage) {
+      dispatch(systemLanguageMatchFailed())
+      return
+    }
+
+    const systemLanguageCode = systemLanguage.substring(0, 2)
+    const matchedLanguage = languageOptions.find((lang) => lang.value.startsWith(systemLanguageCode))
+
+    if (matchedLanguage) {
+      dispatch(systemLanguageMatchSucceeded(matchedLanguage.value))
+    } else {
+      dispatch(systemLanguageMatchFailed())
+    }
+  }, [dispatch])
+
+  useEffect(() => {
+    if (language === undefined) setSystemLanguage()
+  }, [language, setSystemLanguage])
+}
+
+const useInitializeNetworkProxy = () => {
+  const networkProxy = useAppSelector((s) => s.network.settings.proxy)
+
+  useEffect(() => {
+    if (networkProxy) electron?.app.setProxySettings(networkProxy)
+  }, [networkProxy])
+}
+
+interface AppContainerProps {
+  children: ReactNode
+}
+
+const AppContainer = ({ children }: AppContainerProps) => {
+  const showDevIndication = useDevModeShortcut()
+
+  return <AppContainerStyled showDevIndication={showDevIndication}>{children}</AppContainerStyled>
+}
+
+const AppContainerStyled = styled.div<{ showDevIndication: boolean }>`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  background-color: ${({ theme }) => theme.bg.secondary};
+
+  ${({ showDevIndication, theme }) =>
+    showDevIndication &&
+    css`
+      border: 5px solid ${theme.global.valid};
+    `};
+`
