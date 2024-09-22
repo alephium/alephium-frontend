@@ -16,11 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  localStorageNetworkSettingsMigrated,
-  selectDoVerifiedFungibleTokensNeedInitialization,
-  syncVerifiedFungibleTokens
-} from '@alephium/shared'
+import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
 import { useInitializeThrottledClient, useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { usePostHog } from 'posthog-js/react'
@@ -79,8 +75,6 @@ const App = () => {
 
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
-  const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
 
   const [splashScreenVisible, setSplashScreenVisible] = useState(true)
 
@@ -198,15 +192,6 @@ const App = () => {
     networkStatus,
     sendAnalytics
   ])
-
-  // Fetch verified tokens from GitHub token-list
-  useEffect(() => {
-    if (networkStatus === 'online' && !isLoadingVerifiedFungibleTokens) {
-      if (verifiedFungibleTokensNeedInitialization) {
-        dispatch(syncVerifiedFungibleTokens())
-      }
-    }
-  }, [dispatch, isLoadingVerifiedFungibleTokens, networkStatus, verifiedFungibleTokensNeedInitialization])
 
   const refreshAddressesData = useCallback(() => {
     try {
