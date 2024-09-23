@@ -23,7 +23,7 @@ import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddr
 import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import FocusableContent from '@/components/FocusableContent'
 import { TabItem } from '@/components/TabBar'
-import { ExpandableTable } from '@/components/Table'
+import Table, { ExpandableTable } from '@/components/Table'
 import TableTabBar from '@/components/TableTabBar'
 import { AddressFTsBalancesList, WalletFTsBalancesList } from '@/features/assetsLists/FTsBalancesList'
 import { AddressNFTsGrid, WalletNFTsGrid } from '@/features/assetsLists/NFTsGrid'
@@ -60,13 +60,7 @@ export const AddressTokensTabs = ({ addressHash }: AddressTokensTabsProps) => {
   }
 
   return (
-    <TokensTabs
-      tabs={tabs}
-      currentTab={currentTab}
-      setCurrentTab={setCurrentTab}
-      isExpanded={isExpanded}
-      toggleExpansion={toggleExpansion}
-    >
+    <TokensTabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab}>
       {renderTab(currentTab.value)}
     </TokensTabs>
   )
@@ -120,8 +114,8 @@ interface TokensTabsProps {
   children: ReactNode
   currentTab: TabItem<TokensTabValue>
   setCurrentTab: (tab: TabItem<TokensTabValue>) => void
-  isExpanded: boolean
-  toggleExpansion: () => void
+  isExpanded?: boolean
+  toggleExpansion?: () => void
   className?: string
   maxHeightInPx?: number
 }
@@ -135,12 +129,19 @@ const TokensTabs = ({
   maxHeightInPx,
   className,
   children
-}: TokensTabsProps) => (
-  <FocusableContent className={className} isFocused={isExpanded} onClose={toggleExpansion}>
-    <ExpandableTable isExpanded={isExpanded} maxHeightInPx={maxHeightInPx}>
+}: TokensTabsProps) =>
+  isExpanded !== undefined && toggleExpansion ? (
+    <FocusableContent className={className} isFocused={isExpanded} onClose={toggleExpansion}>
+      <ExpandableTable isExpanded={isExpanded} maxHeightInPx={maxHeightInPx}>
+        <TableTabBar items={tabs} onTabChange={setCurrentTab} activeTab={currentTab} />
+
+        {children}
+      </ExpandableTable>
+    </FocusableContent>
+  ) : (
+    <Table className={className}>
       <TableTabBar items={tabs} onTabChange={setCurrentTab} activeTab={currentTab} />
 
       {children}
-    </ExpandableTable>
-  </FocusableContent>
-)
+    </Table>
+  )
