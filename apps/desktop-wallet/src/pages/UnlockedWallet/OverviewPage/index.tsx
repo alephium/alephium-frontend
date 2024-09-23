@@ -37,19 +37,22 @@ interface OverviewPageProps {
 
 const maxPanelHeightInPx = 350
 
+let wasChartAnimatedOnce = false
+
 const OverviewPage = ({ className }: OverviewPageProps) => {
   const { t } = useTranslation()
 
-  const [showChart, setShowChart] = useState(false)
+  const [isChartVisible, setIsChartVisible] = useState(wasChartAnimatedOnce)
+
+  const handleAnimationComplete = () => {
+    setIsChartVisible(true)
+    wasChartAnimatedOnce = true
+  }
 
   return (
-    <UnlockedWalletPage
-      className={className}
-      onAnimationComplete={() => setShowChart(true)}
-      onAnimationStart={() => setShowChart(false)}
-    >
+    <UnlockedWalletPage className={className} onAnimationComplete={() => handleAnimationComplete()}>
       <GreetingMessages />
-      <AmountsOverviewPanel showChart={showChart}>
+      <AmountsOverviewPanel isChartVisible={isChartVisible} isChartInitiallyHidden={!isChartVisible}>
         <Shortcuts>
           <ShortcutsHeader title={t('Shortcuts')} />
           <ButtonsGrid>
