@@ -26,11 +26,11 @@ import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { fundPasswordReminded } from '~/features/fund-password/fundPasswordActions'
+import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModalWrapper from '~/features/modals/withModalWrapper'
 import { useAppDispatch } from '~/hooks/redux'
-import BottomModal from '~/modals/BottomModal'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 const FundPasswordReminderModal = withModalWrapper(({ id }) => {

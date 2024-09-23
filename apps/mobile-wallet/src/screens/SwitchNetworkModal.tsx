@@ -25,10 +25,10 @@ import { View } from 'react-native'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
+import BottomModal from '~/features/modals/BottomModal'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModalWrapper from '~/features/modals/withModalWrapper'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import BottomModal from '~/modals/BottomModal'
 import { persistSettings } from '~/persistent-storage/settings'
 
 export interface SwitchNetworkModalProps {

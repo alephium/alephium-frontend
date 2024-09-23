@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dimensions, LayoutChangeEvent, Modal, View } from 'react-native'
+import { Modal, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
@@ -156,15 +156,6 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { t } = useTranslation()
 
-  const { width, height } = Dimensions.get('window')
-  const [dimensions, setDimensions] = useState({ width, height })
-
-  const handleScreenLayoutChange = (e: LayoutChangeEvent) => {
-    const { width, height } = e.nativeEvent.layout
-
-    setDimensions({ width, height })
-  }
-
   const initializeAppWithStoredWallet = useCallback(async () => {
     try {
       dispatch(walletUnlocked(await getStoredWalletMetadata()))
@@ -261,11 +252,7 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
   useAutoLock(unlockApp)
 
   return (
-    <Modal
-      visible={!!lastUsedWalletId && biometricsRequiredForAppAccess && !isWalletUnlocked}
-      onLayout={handleScreenLayoutChange}
-      animationType="none"
-    >
+    <Modal visible={!!lastUsedWalletId && biometricsRequiredForAppAccess && !isWalletUnlocked} animationType="none">
       <View style={{ backgroundColor: 'black', flex: 1 }}>
         <AnimatedCirclesBackground isAnimated />
       </View>

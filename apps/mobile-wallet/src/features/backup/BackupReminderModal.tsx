@@ -21,11 +21,11 @@ import { Trans, useTranslation } from 'react-i18next'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModalWrapper from '~/features/modals/withModalWrapper'
 import { useAppDispatch } from '~/hooks/redux'
-import BottomModal from '~/modals/BottomModal'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 export interface BackupReminderModalProps {
