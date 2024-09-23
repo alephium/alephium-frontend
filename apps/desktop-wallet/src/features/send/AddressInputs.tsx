@@ -29,18 +29,13 @@ import AddressInput from '@/components/Inputs/AddressInput'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
-import SkeletonLoader from '@/components/SkeletonLoader'
 import Truncate from '@/components/Truncate'
 import InputsSection from '@/features/send/InputsSection'
 import { useAppSelector } from '@/hooks/redux'
 import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
-import {
-  selectAllAddressHashes,
-  selectAllContacts,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
+import { selectAllAddressHashes, selectAllContacts } from '@/storage/addresses/addressesSelectors'
 import { filterContacts } from '@/utils/contacts'
 
 interface AddressInputsProps {
@@ -66,7 +61,6 @@ const AddressInputs = ({
   const updatedInitialAddress = fromAddresses.find((a) => a === defaultFromAddress) ?? fromAddresses[0]
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const contacts = useAppSelector(selectAllContacts)
-  const isAddressesStateUninitialized = useAppSelector(selectIsStateUninitialized)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
   const theme = useTheme()
 
@@ -109,19 +103,15 @@ const AddressInputs = ({
         className={className}
       >
         <BoxStyled>
-          {isAddressesStateUninitialized ? (
-            <SkeletonLoader height="55px" />
-          ) : (
-            <AddressSelect
-              title={t('Select the address to send funds from.')}
-              addressOptions={fromAddresses}
-              defaultAddress={updatedInitialAddress}
-              onAddressChange={onFromAddressChange}
-              id="from-address"
-              simpleMode
-              shouldDisplayAddressSelectModal={isAddressSelectModalOpen}
-            />
-          )}
+          <AddressSelect
+            title={t('Select the address to send funds from.')}
+            addressOptions={fromAddresses}
+            defaultAddress={updatedInitialAddress}
+            onAddressChange={onFromAddressChange}
+            id="from-address"
+            simpleMode
+            shouldDisplayAddressSelectModal={isAddressSelectModalOpen}
+          />
         </BoxStyled>
       </InputsSection>
       {toAddress && onToAddressChange && (
