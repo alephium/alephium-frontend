@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useMemo } from 'react'
 
-import useFetchFtList from '@/api/apiDataHooks/tokens/useFetchFtList'
+import useFetchFtList from '@/api/apiDataHooks/utils/useFetchFtList'
 import { ListedFT, UnlistedToken } from '@/types/tokens'
 
 interface TokensByListing<T> {
