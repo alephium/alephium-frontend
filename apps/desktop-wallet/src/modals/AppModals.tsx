@@ -56,8 +56,6 @@ const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
   const isWalletUnlocked = useAppSelector((s) => !!s.activeWallet.id)
 
-  if (openedModals.length === 0) return null
-
   return (
     <AnimatePresenceModalWrapper>
       {openedModals.map((modal) => {
