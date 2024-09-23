@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import dayjs from 'dayjs'
-import { motion } from 'framer-motion'
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -26,8 +25,7 @@ import TotalAlphBalance from '@/features/balancesOverview/TotalAlphBalance'
 import ChartLengthBadges from '@/features/historicChart/ChartLengthBadges'
 import FiatDeltaPercentage from '@/features/historicChart/FiatDeltaPercentage'
 import { DataPoint } from '@/features/historicChart/historicChartTypes'
-import HistoricWorthChart, { historicWorthChartHeight } from '@/features/historicChart/HistoricWorthChart'
-import { useAppSelector } from '@/hooks/redux'
+import HistoricWorthChart from '@/features/historicChart/HistoricWorthChart'
 import WalletWorth from '@/pages/UnlockedWallet/OverviewPage/WalletWorth'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 
@@ -35,19 +33,20 @@ interface AmountsOverviewPanelProps {
   addressHash?: string
   isLoading?: boolean
   className?: string
-  showChart?: boolean
+  isChartVisible?: boolean
+  isChartInitiallyHidden?: boolean
   animateChartEntry?: boolean
   children?: ReactNode
 }
 
-const chartAnimationVariants = {
-  shown: { height: historicWorthChartHeight },
-  hidden: { height: 0 }
-}
-
-const AmountsOverviewPanel = ({ className, addressHash, children, showChart }: AmountsOverviewPanelProps) => {
+const AmountsOverviewPanel = ({
+  className,
+  addressHash,
+  children,
+  isChartVisible,
+  isChartInitiallyHidden
+}: AmountsOverviewPanelProps) => {
   const { t } = useTranslation()
-  const discreetMode = useAppSelector((s) => s.settings.discreetMode)
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
   const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
@@ -94,15 +93,13 @@ const AmountsOverviewPanel = ({ className, addressHash, children, showChart }: A
         {children && <RightColumnContent fadeOut={isHoveringChart}>{children}</RightColumnContent>}
       </Panel>
 
-      <ChartOuterContainer variants={chartAnimationVariants} animate={showChart && !discreetMode ? 'shown' : 'hidden'}>
-        <ChartInnerContainer animate={{ opacity: discreetMode ? 0 : 1 }} transition={{ duration: 0.5 }}>
-          <HistoricWorthChart
-            addressHash={addressHash}
-            onDataPointHover={setHoveredDataPoint}
-            onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
-          />
-        </ChartInnerContainer>
-      </ChartOuterContainer>
+      <HistoricWorthChart
+        addressHash={addressHash}
+        onDataPointHover={setHoveredDataPoint}
+        onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
+        isChartVisible={isChartVisible}
+        isChartInitiallyHidden={isChartInitiallyHidden}
+      />
     </UnlockedWalletPanelStyled>
   )
 }
@@ -170,19 +167,4 @@ const Today = styled.div`
   color: ${({ theme }) => theme.font.secondary};
   font-size: 16px;
   margin-bottom: 8px;
-`
-
-const ChartOuterContainer = styled(motion.div)`
-  display: flex;
-  align-items: center;
-  right: 0;
-  left: 0;
-  margin: var(--spacing-4) 0;
-
-  overflow: hidden;
-`
-
-const ChartInnerContainer = styled(motion.div)`
-  height: 100%;
-  width: 100%;
 `
