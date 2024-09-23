@@ -24,8 +24,8 @@ import ExpandRowButton from '@/features/assetsLists/ExpandRowButton'
 import { TokensTabsBaseProps } from '@/features/assetsLists/types'
 
 interface ExpandableTokensBalancesListProps extends TokensTabsBaseProps {
-  nbOfItems: number
   children: ReactNode[]
+  nbOfItems?: number
 }
 
 const ExpandableTokensBalancesList = ({
@@ -38,7 +38,7 @@ const ExpandableTokensBalancesList = ({
     <motion.div {...fadeIn} className={className}>
       {children}
     </motion.div>
-    <ExpandRowButton {...props} isEnabled={nbOfItems > 3} />
+    {nbOfItems !== undefined && <ExpandRowButton {...props} isEnabled={nbOfItems > 3} />}
   </>
 )
 
