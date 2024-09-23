@@ -18,9 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, CHART_DATE_FORMAT, toHumanReadableAmount } from '@alephium/shared'
 import dayjs, { Dayjs } from 'dayjs'
+import { motion } from 'framer-motion'
 import { memo, useEffect, useState } from 'react'
 import Chart from 'react-apexcharts'
-import styled, { useTheme } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 
 import useFetchWalletWorthAlph from '@/api/apiDataHooks/wallet/useFetchWalletWorthAlph'
 import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/features/historicChart/historicChartTypes'
@@ -32,10 +33,17 @@ import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 interface HistoricWorthChartProps {
   onDataPointHover: (dataPoint?: DataPoint) => void
   onWorthInBeginningOfChartChange: (worthInBeginningOfChart?: DataPoint['worth']) => void
+  isChartVisible?: boolean
+  isChartInitiallyHidden?: boolean
   addressHash?: AddressHash
 }
 
 export const historicWorthChartHeight = 100
+
+const chartAnimationVariants = {
+  shown: { height: historicWorthChartHeight, opacity: 1 },
+  hidden: { height: 0, opacity: 0 }
+}
 
 const now = dayjs()
 const startingDates: Record<ChartLength, Dayjs> = {
@@ -46,11 +54,14 @@ const startingDates: Record<ChartLength, Dayjs> = {
 }
 
 const HistoricWorthChart = memo(function HistoricWorthChart({
+  isChartVisible,
+  isChartInitiallyHidden,
   addressHash,
   onDataPointHover,
   onWorthInBeginningOfChartChange
 }: HistoricWorthChartProps) {
   const theme = useTheme()
+  const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const length = useAppSelector((s) => s.historicWorthChart.chartLength)
   const allAddressesHashes = useAppSelector(selectAllAddressHashes)
   const { alphBalanceHistoryPerAddress, alphPriceHistory, isLoading: isLoadingHistoricData } = useHistoricData()
@@ -119,12 +130,12 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
     startingDate
   ])
 
-  if (!isDataAvailable || chartData.length < 2 || !firstItem || latestWorth === undefined) return null
+  const shouldHideChart = !isDataAvailable || chartData.length < 2 || !firstItem || latestWorth === undefined
 
   const xAxisDatesData = chartData.map(({ date }) => date)
   const yAxisWorthData = chartData.map(({ worth }) => worth)
 
-  const worthHasGoneUp = firstItem.worth < latestWorth
+  const worthHasGoneUp = (firstItem?.worth ?? 0) < latestWorth
   const chartColor = worthHasGoneUp ? theme.global.valid : theme.global.alert
 
   const chartOptions = getChartOptions(chartColor, xAxisDatesData, {
@@ -137,13 +148,42 @@ const HistoricWorthChart = memo(function HistoricWorthChart({
   })
 
   return (
-    <ChartWrapper>
-      <Chart options={chartOptions} series={[{ data: yAxisWorthData }]} type="area" width="100%" height="100%" />
-    </ChartWrapper>
+    <ChartOuterContainer
+      isChartInitiallyHidden={isChartInitiallyHidden}
+      variants={chartAnimationVariants}
+      animate={isChartVisible && !discreetMode && !shouldHideChart ? 'shown' : 'hidden'}
+    >
+      <ChartInnerContainer animate={{ opacity: discreetMode ? 0 : 1 }} transition={{ duration: 0.5 }}>
+        <ChartWrapper>
+          <Chart options={chartOptions} series={[{ data: yAxisWorthData }]} type="area" width="100%" height="100%" />
+        </ChartWrapper>
+      </ChartInnerContainer>
+    </ChartOuterContainer>
   )
 })
 
 export default HistoricWorthChart
+
+const ChartOuterContainer = styled(motion.div)<Pick<HistoricWorthChartProps, 'isChartInitiallyHidden'>>`
+  display: flex;
+  align-items: center;
+  right: 0;
+  left: 0;
+  margin: var(--spacing-4) 0;
+
+  ${({ isChartInitiallyHidden }) =>
+    isChartInitiallyHidden &&
+    css`
+      height: 0;
+    `}
+
+  overflow: hidden;
+`
+
+const ChartInnerContainer = styled(motion.div)`
+  height: 100%;
+  width: 100%;
+`
 
 const ChartWrapper = styled.div`
   width: 100%;
