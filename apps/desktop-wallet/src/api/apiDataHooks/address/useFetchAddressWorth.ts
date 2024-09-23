@@ -20,14 +20,14 @@ import { AddressHash } from '@alephium/shared'
 
 import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
 import useFetchListedFtsWorth from '@/api/apiDataHooks/utils/useFetchListedFtsWorth'
-import useFetchSeparatedTokensByListing from '@/api/apiDataHooks/utils/useFetchSeparatedTokensByListing'
+import useFetchTokensSeparatedByListing from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
 
 const useFetchAddressWorth = (addressHash: AddressHash) => {
   const { data: allTokensBalances, isLoading: isLoadingBalances } = useFetchAddressBalances({ addressHash })
   const {
     data: { listedFts },
     isLoading: isLoadingTokensByListing
-  } = useFetchSeparatedTokensByListing(allTokensBalances)
+  } = useFetchTokensSeparatedByListing(allTokensBalances)
   const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth({ listedFts })
 
   return {

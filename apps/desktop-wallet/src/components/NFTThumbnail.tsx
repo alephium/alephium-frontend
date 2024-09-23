@@ -23,7 +23,7 @@ import { useState } from 'react'
 import ReactPlayer from 'react-player'
 import styled, { css } from 'styled-components'
 
-import useFetchNft from '@/api/apiDataHooks/useFetchNft'
+import useFetchNft from '@/api/apiDataHooks/tokens/useFetchNft'
 import SkeletonLoader from '@/components/SkeletonLoader'
 
 interface NFTThumbnailProps {
