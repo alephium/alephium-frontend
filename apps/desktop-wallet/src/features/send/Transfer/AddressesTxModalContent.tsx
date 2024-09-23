@@ -26,7 +26,7 @@ import AddressInputs from '@/features/send/AddressInputs'
 import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { ModalContent } from '@/modals/CenteredModal'
-import { selectAddressByHash, selectIsStateUninitialized } from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { isAddressValid, requiredErrorMessage } from '@/utils/form-validation'
 
 interface TransferAddressesTxModalContentProps {
@@ -38,7 +38,6 @@ interface TransferAddressesTxModalContentProps {
 const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferAddressesTxModalContentProps) => {
   const { t } = useTranslation()
   const fromAddresses = useAddressesWithBalance()
-  const isAddressesStateUninitialized = useAppSelector(selectIsStateUninitialized)
 
   const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
   const [toAddress, setToAddress] = useStateWithError(data?.toAddress ?? '')
@@ -56,7 +55,7 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
     return null
   }
 
-  const isSubmitButtonActive = toAddress.value && !toAddress.error && !isAddressesStateUninitialized
+  const isSubmitButtonActive = toAddress.value && !toAddress.error
 
   return (
     <ModalContent>
