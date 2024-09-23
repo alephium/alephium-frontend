@@ -98,7 +98,7 @@ const NFTCollectionDetails = ({ collectionId }: Pick<NFT, 'collectionId'>) => {
       : async () =>
           (
             await throttledClient.explorer.tokens.postTokensNftCollectionMetadata([addressFromContractId(collectionId)])
-          )[0],
+          )[0] ?? null,
     staleTime: Infinity
   })
 
