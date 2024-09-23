@@ -29,7 +29,7 @@ import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesNFTs } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-interface NFTsGridProps extends Partial<FlashListProps<unknown>> {
+interface NFTsGridProps extends Omit<Partial<FlashListProps<unknown>>, 'contentContainerStyle'> {
   addressHash?: AddressHash
   nfts?: NFT[]
   nftsPerRow?: number
