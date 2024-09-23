@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import useFetchListedFtsWorth from '@/api/apiDataHooks/utils/useFetchListedFtsWorth'
-import useFetchSeparatedTokensByListing from '@/api/apiDataHooks/utils/useFetchSeparatedTokensByListing'
+import useFetchTokensSeparatedByListing from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
 import useMergeAllTokensBalances from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
 import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import useFetchWalletBalancesTokens from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
@@ -33,7 +33,7 @@ const useFetchWalletWorth = () => {
   const {
     data: { listedFts },
     isLoading: isLoadingTokensByListing
-  } = useFetchSeparatedTokensByListing(allTokensBalances)
+  } = useFetchTokensSeparatedByListing(allTokensBalances)
   const { data: worth, isLoading: isLoadingWorth } = useFetchListedFtsWorth({ listedFts })
 
   return {

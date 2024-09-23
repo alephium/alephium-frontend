@@ -21,7 +21,7 @@ import { Optional } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import useFetchToken, { isFT } from '@/api/apiDataHooks/useFetchToken'
+import useFetchToken, { isFT } from '@/api/apiDataHooks/tokens/useFetchToken'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { discreetModeToggled } from '@/storage/settings/settingsActions'

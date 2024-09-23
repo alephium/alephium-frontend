@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 
 import useFetchAddressSingleTokenBalances from '@/api/apiDataHooks/address/useFetchAddressSingleTokenBalances'
-import useFetchToken, { isNFT } from '@/api/apiDataHooks/useFetchToken'
+import useFetchToken, { isNFT } from '@/api/apiDataHooks/tokens/useFetchToken'
 import TokenBadge, { TokenBadgeStyleProps } from '@/components/TokenBadge'
 import { TokenId } from '@/types/tokens'
 

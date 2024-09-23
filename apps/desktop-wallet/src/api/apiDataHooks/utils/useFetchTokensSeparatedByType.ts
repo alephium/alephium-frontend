@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useQueries } from '@tanstack/react-query'
 
-import useFetchSeparatedTokensByListing from '@/api/apiDataHooks/utils/useFetchSeparatedTokensByListing'
+import useFetchTokensSeparatedByListing from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
 import { combineTokenTypeQueryResults, tokenTypeQuery } from '@/api/queries/tokenQueries'
 import { ListedFT, TokenId, UnlistedToken } from '@/types/tokens'
 
@@ -33,11 +33,11 @@ interface TokensByType<T> {
   isLoading: boolean
 }
 
-const useFetchSeparatedTokensByType = <T extends UnlistedToken>(tokens: T[] = []): TokensByType<T> => {
+const useFetchTokensSeparatedByType = <T extends UnlistedToken>(tokens: T[] = []): TokensByType<T> => {
   const {
     data: { listedFts, unlistedTokens },
     isLoading: isLoadingTokensByListing
-  } = useFetchSeparatedTokensByListing(tokens)
+  } = useFetchTokensSeparatedByListing(tokens)
 
   const {
     data: { fungible: unlistedFtIds, 'non-fungible': nftIds, 'non-standard': nstIds },
@@ -53,4 +53,4 @@ const useFetchSeparatedTokensByType = <T extends UnlistedToken>(tokens: T[] = []
   }
 }
 
-export default useFetchSeparatedTokensByType
+export default useFetchTokensSeparatedByType

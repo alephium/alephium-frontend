@@ -21,7 +21,7 @@ import { useInitializeThrottledClient, useInterval } from '@alephium/shared-reac
 import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
-import useFetchTokenPrices from '@/api/apiDataHooks/useFetchTokenPrices'
+import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'

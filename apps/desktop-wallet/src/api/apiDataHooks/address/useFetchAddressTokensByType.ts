@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { UseFetchAddressProps } from '@/api/apiDataHooks/address/addressApiDataHooksTypes'
 import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
-import useFetchSeparatedTokensByType from '@/api/apiDataHooks/utils/useFetchSeparatedTokensByType'
+import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
 
 interface UseFetchAddressTokensByType extends UseFetchAddressProps {
   includeAlph: boolean
@@ -26,7 +26,7 @@ interface UseFetchAddressTokensByType extends UseFetchAddressProps {
 
 const useFetchAddressTokensByType = (props: UseFetchAddressTokensByType) => {
   const { data: allTokensBalances, isLoading: isLoadingBalances } = useFetchAddressBalances(props)
-  const { data, isLoading } = useFetchSeparatedTokensByType(allTokensBalances)
+  const { data, isLoading } = useFetchTokensSeparatedByType(allTokensBalances)
 
   return {
     data,
