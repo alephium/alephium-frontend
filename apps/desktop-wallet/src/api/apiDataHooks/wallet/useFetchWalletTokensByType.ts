@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import useFetchSeparatedTokensByType from '@/api/apiDataHooks/utils/useFetchSeparatedTokensByType'
+import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
 import useMergeAllTokensBalances from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
 import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import useFetchWalletBalancesTokens from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
@@ -35,7 +35,7 @@ const useFetchWalletTokensByType = ({ includeAlph }: UseFetchWalletTokensByType)
     alphBalances,
     tokensBalances
   })
-  const { data, isLoading } = useFetchSeparatedTokensByType(allTokensBalances)
+  const { data, isLoading } = useFetchTokensSeparatedByType(allTokensBalances)
 
   return {
     data,

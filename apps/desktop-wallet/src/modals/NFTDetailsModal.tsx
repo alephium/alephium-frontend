@@ -24,7 +24,7 @@ import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchNft from '@/api/apiDataHooks/useFetchNft'
+import useFetchNft from '@/api/apiDataHooks/tokens/useFetchNft'
 import ActionLink from '@/components/ActionLink'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
