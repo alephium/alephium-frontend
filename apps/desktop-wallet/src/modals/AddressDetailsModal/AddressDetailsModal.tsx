@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -39,14 +39,17 @@ export interface AddressDetailsModalProps {
 const AddressDetailsModal = memo(({ id, addressHash }: ModalBaseProp & AddressDetailsModalProps) => {
   const { t } = useTranslation()
 
+  const [showChart, setShowChart] = useState(false)
+
   return (
     <SideModal
       id={id}
       title={t('Address details')}
       width={800}
       header={<AddressDetailsModalHeader addressHash={addressHash} />}
+      onAnimationComplete={() => setShowChart(true)}
     >
-      <AmountsOverviewPanelStyled addressHash={addressHash} showChart>
+      <AmountsOverviewPanelStyled addressHash={addressHash} isChartVisible={showChart} isChartInitiallyHidden>
         <QRCode value={addressHash} size={130} />
       </AmountsOverviewPanelStyled>
 
