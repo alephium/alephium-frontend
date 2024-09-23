@@ -88,7 +88,9 @@ const NFTsGrid = ({ className, isExpanded, onExpand, columns, nftIds, isLoading,
         ))}
     </motion.div>
 
-    <ExpandRowButton isExpanded={isExpanded} onExpand={onExpand} isEnabled={nftIds.length > 4} />
+    {isExpanded !== undefined && onExpand && (
+      <ExpandRowButton isExpanded={isExpanded} onExpand={onExpand} isEnabled={nftIds.length > 4} />
+    )}
   </>
 )
 
