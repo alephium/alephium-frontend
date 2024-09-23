@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import useFetchToken, { isFT, isNFT } from '@/api/apiDataHooks/tokens/useFetchToken'
+import useFetchToken, { isFT, isNFT } from '@/api/apiDataHooks/token/useFetchToken'
 import HashEllipsed from '@/components/HashEllipsed'
 import { TokenId } from '@/types/tokens'
 
