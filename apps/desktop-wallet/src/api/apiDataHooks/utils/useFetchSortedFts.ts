@@ -23,7 +23,7 @@ import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineDefined } from '@/api/apiDataHooks/apiDataHooksUtils'
-import useFetchTokenPrices from '@/api/apiDataHooks/useFetchTokenPrices'
+import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
 import { DisplayBalances, ListedFT, TokenId } from '@/types/tokens'
 

@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeInOut } from '@/animations'
-import { useFetchTokenPrice } from '@/api/apiDataHooks/useFetchTokenPrices'
+import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import { useAppSelector } from '@/hooks/redux'
 import TimeOfDayMessage from '@/pages/UnlockedWallet/OverviewPage/TimeOfDayMessage'
 import { messagesLeftMarginPx } from '@/style/globalStyles'

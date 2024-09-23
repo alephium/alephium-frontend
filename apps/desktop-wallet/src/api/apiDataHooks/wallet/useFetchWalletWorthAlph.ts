@@ -20,7 +20,7 @@ import { calculateAmountWorth } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { useMemo } from 'react'
 
-import { useFetchTokenPrice } from '@/api/apiDataHooks/useFetchTokenPrices'
+import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 
 const useFetchWalletWorthAlph = () => {
