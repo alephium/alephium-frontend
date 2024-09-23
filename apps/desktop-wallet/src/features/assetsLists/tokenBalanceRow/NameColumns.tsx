@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchToken, { isFT, isUnlistedFT } from '@/api/apiDataHooks/useFetchToken'
+import useFetchToken, { isFT, isUnlistedFT } from '@/api/apiDataHooks/tokens/useFetchToken'
 import HashEllipsed from '@/components/HashEllipsed'
 import Truncate from '@/components/Truncate'
 import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'

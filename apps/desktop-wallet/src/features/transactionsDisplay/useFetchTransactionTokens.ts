@@ -23,7 +23,7 @@ import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import { combineDefined } from '@/api/apiDataHooks/apiDataHooksUtils'
-import useFetchSeparatedTokensByType from '@/api/apiDataHooks/utils/useFetchSeparatedTokensByType'
+import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
 import { fungibleTokenMetadataQuery, nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
 import { ListedFT, NonStandardToken, UnlistedFT } from '@/types/tokens'
@@ -54,7 +54,7 @@ const useFetchTransactionTokens = (
   const {
     data: { listedFts, unlistedTokens, unlistedFtIds, nftIds },
     isLoading: isLoadingTokensByType
-  } = useFetchSeparatedTokensByType(tokenAmounts)
+  } = useFetchTokensSeparatedByType(tokenAmounts)
 
   const { data: unlistedFts, isLoading: isLoadingUnlistedFTs } = useQueries({
     queries: unlistedFtIds.map((id) => fungibleTokenMetadataQuery({ id })),

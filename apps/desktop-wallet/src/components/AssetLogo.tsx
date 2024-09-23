@@ -21,7 +21,7 @@ import { memo } from 'react'
 import ReactPlayer from 'react-player'
 import styled from 'styled-components'
 
-import useFetchToken, { isFT, isListedFT, isNFT } from '@/api/apiDataHooks/useFetchToken'
+import useFetchToken, { isFT, isListedFT, isNFT } from '@/api/apiDataHooks/tokens/useFetchToken'
 import { TokenId } from '@/types/tokens'
 
 interface AssetLogoProps {

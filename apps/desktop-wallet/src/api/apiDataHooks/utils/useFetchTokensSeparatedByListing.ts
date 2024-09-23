@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useMemo } from 'react'
 
-import useFetchFtList from '@/api/apiDataHooks/useFetchFtList'
+import useFetchFtList from '@/api/apiDataHooks/tokens/useFetchFtList'
 import { ListedFT, UnlistedToken } from '@/types/tokens'
 
 interface TokensByListing<T> {
@@ -29,7 +29,7 @@ interface TokensByListing<T> {
   isLoading: boolean
 }
 
-const useFetchSeparatedTokensByListing = <T extends UnlistedToken>(tokens: T[] = []): TokensByListing<T> => {
+const useFetchTokensSeparatedByListing = <T extends UnlistedToken>(tokens: T[] = []): TokensByListing<T> => {
   const { data: ftList, isLoading } = useFetchFtList({ skip: tokens.length === 0 })
 
   const data = useMemo(() => {
@@ -56,4 +56,4 @@ const useFetchSeparatedTokensByListing = <T extends UnlistedToken>(tokens: T[] =
   }
 }
 
-export default useFetchSeparatedTokensByListing
+export default useFetchTokensSeparatedByListing

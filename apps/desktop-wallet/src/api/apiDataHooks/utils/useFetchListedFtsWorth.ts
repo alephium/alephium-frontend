@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { calculateAmountWorth } from '@alephium/shared'
 import { useMemo } from 'react'
 
-import useFetchTokenPrices from '@/api/apiDataHooks/useFetchTokenPrices'
+import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import { DisplayBalances, ListedFT } from '@/types/tokens'
 
 interface UseListedFtsWorthProps {
