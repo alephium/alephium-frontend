@@ -16,44 +16,37 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ComponentType } from 'react'
+import { createAction } from '@reduxjs/toolkit'
+import { ComponentProps } from 'react'
 
-import BackupReminderModal, { BackupReminderModalProps } from '~/features/backup/BackupReminderModal'
+import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
-import SwitchNetworkModal, { SwitchNetworkModalProps } from '~/screens/SwitchNetworkModal'
+import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
-export const ModalComponents: {
-  [K in ModalName]: ComponentType<ModalProps<K>>
-} = {
+export const ModalComponents = {
   BuyModal,
   FundPasswordReminderModal,
   BackupReminderModal,
   SwitchNetworkModal
 }
 
-export interface ModalPropsMap {
-  BuyModal: undefined
-  FundPasswordReminderModal: undefined
-  BackupReminderModal: BackupReminderModalProps
-  SwitchNetworkModal: SwitchNetworkModalProps
-}
+type ModalName = keyof typeof ModalComponents
 
-export type ModalProps<K extends ModalName> = [ModalPropsMap[K]] extends [undefined]
-  ? ModalBaseProp
-  : ModalPropsMap[K] & ModalBaseProp
+type ModalParams<K extends ModalName> =
+  RequiredKeys<ModalPropsMap[K]> extends never ? { name: K } : { name: K; props: ModalPropsMap[K] }
 
-export type ModalName = keyof ModalPropsMap
-
-export function getModalComponent<K extends ModalName>(name: K): ComponentType<ModalProps<K>> {
-  return ModalComponents[name]
+type ModalPropsMap = {
+  [K in ModalName]: Omit<ComponentProps<(typeof ModalComponents)[K]>, 'id'>
 }
 
 export type OpenModalParams = {
-  [K in ModalName]: ModalPropsMap[K] extends undefined
-    ? { name: K; props?: ModalPropsMap[K] }
-    : { name: K; props: ModalPropsMap[K] }
+  [K in ModalName]: ModalParams<K>
 }[ModalName]
+
+export const openModal = createAction<OpenModalParams>('modal/openModal')
+
+export const getModalComponent = (name: ModalName) => ModalComponents[name]
 
 export type ModalInstance = {
   id: number
@@ -64,3 +57,7 @@ export type ModalInstance = {
 export interface ModalBaseProp {
   id: ModalInstance['id']
 }
+
+type RequiredKeys<T> = {
+  [K in keyof T]-?: undefined extends T[K] ? never : K
+}[keyof T]

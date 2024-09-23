@@ -20,10 +20,13 @@ import { Children, isValidElement, ReactNode, useEffect } from 'react'
 import { ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
+import BackupReminderModal from '~/features/backup/BackupReminderModal'
+import BuyModal from '~/features/buy/BuyModal'
+import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
 import { selectAllModals } from '~/features/modals/modalSelectors'
-import { getModalComponent } from '~/features/modals/modalTypes'
 import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
 import { useAppSelector } from '~/hooks/redux'
+import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
@@ -31,9 +34,20 @@ const AppModals = () => {
   return (
     <ModalsContainer pointerEvents={openedModals.length > 0 ? 'auto' : 'none'}>
       {openedModals.map((modal) => {
-        const ModalComponent = getModalComponent(modal.params.name)
+        const { id, params } = modal
 
-        return <ModalComponent key={modal.id} id={modal.id} {...(modal.params.props || {})} />
+        switch (params.name) {
+          case 'BuyModal':
+            return <BuyModal key={id} id={id} />
+          case 'FundPasswordReminderModal':
+            return <FundPasswordReminderModal key={id} id={id} />
+          case 'BackupReminderModal':
+            return <BackupReminderModal key={id} id={id} {...params.props} />
+          case 'SwitchNetworkModal':
+            return <SwitchNetworkModal key={id} id={id} {...params.props} />
+          default:
+            return null
+        }
       })}
     </ModalsContainer>
   )
