@@ -29,7 +29,7 @@ export const AddressNSTsBalancesList = ({ addressHash, ...props }: AddressTokens
   } = useFetchAddressTokensByType({ addressHash, includeAlph: false })
 
   return (
-    <ExpandableTokensBalancesList {...props} nbOfItems={3}>
+    <ExpandableTokensBalancesList {...props}>
       {nstIds.map((tokenId) => (
         <AddressNSTBalancesRow tokenId={tokenId} addressHash={addressHash} key={tokenId} />
       ))}

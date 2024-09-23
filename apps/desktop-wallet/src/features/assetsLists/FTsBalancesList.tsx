@@ -33,7 +33,7 @@ export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressTokensT
   const { listedFts, unlistedFts, isLoading } = useFetchAddressFts({ addressHash })
 
   return (
-    <ExpandableTokensBalancesList {...props} nbOfItems={listedFts.length + unlistedFts.length}>
+    <ExpandableTokensBalancesList {...props}>
       {listedFts.map(({ id }) => (
         <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
       ))}
