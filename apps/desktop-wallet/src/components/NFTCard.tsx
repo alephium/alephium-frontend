@@ -21,7 +21,7 @@ import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
-import useFetchNft from '@/api/apiDataHooks/tokens/useFetchNft'
+import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Truncate from '@/components/Truncate'
