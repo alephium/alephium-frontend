@@ -26,6 +26,7 @@ import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
 
 import { Analytics, sendAnalytics } from '~/analytics'
+import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import useAutoLock from '~/features/auto-lock/useAutoLock'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
@@ -189,7 +190,9 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
         try {
           await triggerBiometricsAuthGuard({
             settingsToCheck: 'appAccess',
-            successCallback: initializeAppWithStoredWallet
+            successCallback: initializeAppWithStoredWallet,
+            failureCallback: (message: string) =>
+              showToast({ type: 'error', text1: 'Biometrics authentication failed', text2: message })
           })
 
           if (deprecatedWallet) {
@@ -266,6 +269,7 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
       <View style={{ backgroundColor: 'black', flex: 1 }}>
         <CoolAlephiumCanvas {...dimensions} onPress={unlockApp} />
       </View>
+      <ToastAnchor />
     </Modal>
   )
 }
