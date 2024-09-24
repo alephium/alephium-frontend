@@ -52,7 +52,7 @@ const AvailableAlphAmount = () => {
       tabIndex={0}
       value={data?.availableBalance}
       isLoading={isLoading}
-      loaderSizeInPx="30"
+      loaderHeight={30}
     />
   )
 }
@@ -61,13 +61,7 @@ const LockedAlphAmount = () => {
   const { data, isLoading } = useFetchWalletBalancesAlph()
 
   return (
-    <AmountStyled
-      tokenId={ALPH.id}
-      tabIndex={0}
-      value={data?.lockedBalance}
-      isLoading={isLoading}
-      loaderSizeInPx="30"
-    />
+    <AmountStyled tokenId={ALPH.id} tabIndex={0} value={data?.lockedBalance} isLoading={isLoading} loaderHeight={30} />
   )
 }
 

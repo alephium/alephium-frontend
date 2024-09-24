@@ -64,15 +64,15 @@ type AmountPropsWithOptionalAmount =
 
 interface LoaderProps {
   isLoading?: boolean
-  loaderSizeInPx?: string
+  loaderHeight?: number
 }
 
-const Amount = ({ isLoading, loaderSizeInPx = '15', ...props }: AmountPropsWithOptionalAmount & LoaderProps) => {
+const Amount = ({ isLoading, loaderHeight = 15, ...props }: AmountPropsWithOptionalAmount & LoaderProps) => {
   const dispatch = useAppDispatch()
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const { t } = useTranslation()
 
-  if (isLoading) return <SkeletonLoader height={`${loaderSizeInPx}px`} />
+  if (isLoading) return <SkeletonLoader height={`${loaderHeight}px`} width={`${loaderHeight * 5}px`} />
 
   if (props.value === undefined) return null
 

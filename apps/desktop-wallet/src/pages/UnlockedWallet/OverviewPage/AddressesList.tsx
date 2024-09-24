@@ -100,7 +100,7 @@ const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: Addr
 const AddressWorth = ({ addressHash }: { addressHash: AddressHash }) => {
   const { data: totalWorth, isLoading } = useFetchAddressWorth(addressHash)
 
-  return <AmountStyled isFiat value={totalWorth} tabIndex={0} isLoading={isLoading} loaderSizeInPx="15.5" />
+  return <AmountStyled isFiat value={totalWorth} tabIndex={0} isLoading={isLoading} loaderHeight={15.5} />
 }
 
 export default styled(AddressesList)`

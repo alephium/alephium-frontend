@@ -30,7 +30,7 @@ const WalletWorth = memo(({ overrideWorth }: WalletWorthProps) => {
   const { data: worth, isLoading } = useFetchWalletWorth()
 
   return (
-    <WalletWorthStyled value={overrideWorth ?? worth} isFiat isLoading={isLoading} loaderSizeInPx="32" tabIndex={0} />
+    <WalletWorthStyled value={overrideWorth ?? worth} isFiat isLoading={isLoading} loaderHeight={32} tabIndex={0} />
   )
 })
 
