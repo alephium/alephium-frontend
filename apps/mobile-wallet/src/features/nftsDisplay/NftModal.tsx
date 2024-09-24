@@ -55,7 +55,9 @@ const NftModal = withModalWrapper<NftModalProps>(({ id, nftId }) => {
             <ModalScreenTitle>{nft.name}</ModalScreenTitle>
           </ScreenSection>
           <ScreenSection>
-            <NFTFullSizeImage nftId={nftId} size={nftFullSize} />
+            <NftImageContainer>
+              <NFTImage nftId={nftId} size={nftFullSize} />
+            </NftImageContainer>
 
             {nft.description && (
               <NFTDescriptionContainer>
@@ -91,8 +93,10 @@ const NftModal = withModalWrapper<NftModalProps>(({ id, nftId }) => {
 
 export default NftModal
 
-const NFTFullSizeImage = styled(NFTImage)`
+const NftImageContainer = styled.View`
   flex: 1;
+  align-items: center;
+  justify-content: center;
 `
 
 const NFTDescriptionContainer = styled.View`
@@ -110,6 +114,7 @@ const AttributesGrid = styled.View`
 `
 
 const Attribute = styled.View`
+  flex: 1;
   background-color: ${({ theme }) => theme.bg.primary};
   padding: 10px;
   border-radius: ${BORDER_RADIUS_SMALL}px;
