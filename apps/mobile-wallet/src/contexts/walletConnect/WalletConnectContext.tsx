@@ -211,6 +211,12 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     }
   }, [dispatch, walletConnectClientInitializationAttempts])
 
+  useEffect(() => {
+    if (walletConnectClientStatus === 'initialized' && !walletConnectClient) {
+      dispatch(walletConnectClientInitializeFailed(t('Lost connection to WalletConnect')))
+    }
+  }, [dispatch, t, walletConnectClient, walletConnectClientStatus])
+
   const shouldInitializeImmediately =
     isWalletConnectEnabled &&
     walletConnectClientInitializationAttempts === 0 &&
