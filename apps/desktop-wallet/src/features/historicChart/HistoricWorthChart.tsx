@@ -53,114 +53,116 @@ const startingDates: Record<ChartLength, Dayjs> = {
   '1y': now.subtract(1, 'year')
 }
 
-const HistoricWorthChart = memo(function HistoricWorthChart({
-  isChartVisible,
-  isChartInitiallyHidden,
-  addressHash,
-  onDataPointHover,
-  onWorthInBeginningOfChartChange
-}: HistoricWorthChartProps) {
-  const theme = useTheme()
-  const discreetMode = useAppSelector((s) => s.settings.discreetMode)
-  const length = useAppSelector((s) => s.historicWorthChart.chartLength)
-  const allAddressesHashes = useAppSelector(selectAllAddressHashes)
-  const { alphBalanceHistoryPerAddress, alphPriceHistory, isLoading: isLoadingHistoricData } = useHistoricData()
-  const { data: latestWorth } = useFetchWalletWorthAlph()
+const HistoricWorthChart = memo(
+  ({
+    isChartVisible,
+    isChartInitiallyHidden,
+    addressHash,
+    onDataPointHover,
+    onWorthInBeginningOfChartChange
+  }: HistoricWorthChartProps) => {
+    const theme = useTheme()
+    const discreetMode = useAppSelector((s) => s.settings.discreetMode)
+    const length = useAppSelector((s) => s.historicWorthChart.chartLength)
+    const allAddressesHashes = useAppSelector(selectAllAddressHashes)
+    const { alphBalanceHistoryPerAddress, alphPriceHistory, isLoading: isLoadingHistoricData } = useHistoricData()
+    const { data: latestWorth } = useFetchWalletWorthAlph()
 
-  const [chartData, setChartData] = useState<DataPoint[]>([])
+    const [chartData, setChartData] = useState<DataPoint[]>([])
 
-  const startingDate = startingDates[length].format(CHART_DATE_FORMAT)
-  const isDataAvailable = !isLoadingHistoricData && !!alphPriceHistory
-  const firstItem = chartData.at(0)
+    const startingDate = startingDates[length].format(CHART_DATE_FORMAT)
+    const isDataAvailable = !isLoadingHistoricData && !!alphPriceHistory
+    const firstItem = chartData.at(0)
 
-  useEffect(() => {
-    onWorthInBeginningOfChartChange(firstItem?.worth)
-  }, [firstItem?.worth, onWorthInBeginningOfChartChange])
+    useEffect(() => {
+      onWorthInBeginningOfChartChange(firstItem?.worth)
+    }, [firstItem?.worth, onWorthInBeginningOfChartChange])
 
-  useEffect(() => {
-    if (!isDataAvailable) {
-      setChartData([])
-      return
-    }
+    useEffect(() => {
+      if (!isDataAvailable) {
+        setChartData([])
+        return
+      }
 
-    const computeChartDataPoints = (): DataPoint[] => {
-      const addressesLatestAmount: LatestAmountPerAddress = {}
+      const computeChartDataPoints = (): DataPoint[] => {
+        const addressesLatestAmount: LatestAmountPerAddress = {}
 
-      const dataPoints = alphPriceHistory.map(({ date, value }) => {
-        let totalAmountPerDate = BigInt(0)
-        const addresses = addressHash ? [addressHash] : allAddressesHashes
+        const dataPoints = alphPriceHistory.map(({ date, value }) => {
+          let totalAmountPerDate = BigInt(0)
+          const addresses = addressHash ? [addressHash] : allAddressesHashes
 
-        addresses.forEach((hash) => {
-          const addressAlphBalanceHistory = alphBalanceHistoryPerAddress[hash]
-          const amountOnDate = addressAlphBalanceHistory?.[date]
+          addresses.forEach((hash) => {
+            const addressAlphBalanceHistory = alphBalanceHistoryPerAddress[hash]
+            const amountOnDate = addressAlphBalanceHistory?.[date]
 
-          if (amountOnDate !== undefined) {
-            const amount = BigInt(amountOnDate)
-            totalAmountPerDate += amount
-            addressesLatestAmount[hash] = amount
-          } else {
-            totalAmountPerDate += addressesLatestAmount[hash] ?? BigInt(0)
+            if (amountOnDate !== undefined) {
+              const amount = BigInt(amountOnDate)
+              totalAmountPerDate += amount
+              addressesLatestAmount[hash] = amount
+            } else {
+              totalAmountPerDate += addressesLatestAmount[hash] ?? BigInt(0)
+            }
+          })
+
+          return {
+            date,
+            worth: value * parseFloat(toHumanReadableAmount(totalAmountPerDate))
           }
         })
 
-        return {
-          date,
-          worth: value * parseFloat(toHumanReadableAmount(totalAmountPerDate))
-        }
-      })
+        if (latestWorth !== undefined) dataPoints.push({ date: dayjs().format(CHART_DATE_FORMAT), worth: latestWorth })
 
-      if (latestWorth !== undefined) dataPoints.push({ date: dayjs().format(CHART_DATE_FORMAT), worth: latestWorth })
+        return dataPoints
+      }
 
-      return dataPoints
-    }
+      const trimInitialZeroDataPoints = (data: DataPoint[]) => data.slice(data.findIndex((point) => point.worth !== 0))
 
-    const trimInitialZeroDataPoints = (data: DataPoint[]) => data.slice(data.findIndex((point) => point.worth !== 0))
+      let dataPoints = computeChartDataPoints()
+      dataPoints = trimInitialZeroDataPoints(dataPoints)
 
-    let dataPoints = computeChartDataPoints()
-    dataPoints = trimInitialZeroDataPoints(dataPoints)
+      setChartData(getFilteredChartData(dataPoints, startingDate))
+    }, [
+      addressHash,
+      allAddressesHashes,
+      alphBalanceHistoryPerAddress,
+      alphPriceHistory,
+      isDataAvailable,
+      latestWorth,
+      startingDate
+    ])
 
-    setChartData(getFilteredChartData(dataPoints, startingDate))
-  }, [
-    addressHash,
-    allAddressesHashes,
-    alphBalanceHistoryPerAddress,
-    alphPriceHistory,
-    isDataAvailable,
-    latestWorth,
-    startingDate
-  ])
+    const shouldHideChart = !isDataAvailable || chartData.length < 2 || !firstItem || latestWorth === undefined
 
-  const shouldHideChart = !isDataAvailable || chartData.length < 2 || !firstItem || latestWorth === undefined
+    const xAxisDatesData = chartData.map(({ date }) => date)
+    const yAxisWorthData = chartData.map(({ worth }) => worth)
 
-  const xAxisDatesData = chartData.map(({ date }) => date)
-  const yAxisWorthData = chartData.map(({ worth }) => worth)
+    const worthHasGoneUp = (firstItem?.worth ?? 0) < latestWorth
+    const chartColor = worthHasGoneUp ? theme.global.valid : theme.global.alert
 
-  const worthHasGoneUp = (firstItem?.worth ?? 0) < latestWorth
-  const chartColor = worthHasGoneUp ? theme.global.valid : theme.global.alert
+    const chartOptions = getChartOptions(chartColor, xAxisDatesData, {
+      mouseMove(e, chart, options) {
+        onDataPointHover(options.dataPointIndex === -1 ? undefined : chartData[options.dataPointIndex])
+      },
+      mouseLeave() {
+        onDataPointHover(undefined)
+      }
+    })
 
-  const chartOptions = getChartOptions(chartColor, xAxisDatesData, {
-    mouseMove(e, chart, options) {
-      onDataPointHover(options.dataPointIndex === -1 ? undefined : chartData[options.dataPointIndex])
-    },
-    mouseLeave() {
-      onDataPointHover(undefined)
-    }
-  })
-
-  return (
-    <ChartOuterContainer
-      isChartInitiallyHidden={isChartInitiallyHidden}
-      variants={chartAnimationVariants}
-      animate={isChartVisible && !discreetMode && !shouldHideChart ? 'shown' : 'hidden'}
-    >
-      <ChartInnerContainer animate={{ opacity: discreetMode ? 0 : 1 }} transition={{ duration: 0.5 }}>
-        <ChartWrapper>
-          <Chart options={chartOptions} series={[{ data: yAxisWorthData }]} type="area" width="100%" height="100%" />
-        </ChartWrapper>
-      </ChartInnerContainer>
-    </ChartOuterContainer>
-  )
-})
+    return (
+      <ChartOuterContainer
+        isChartInitiallyHidden={isChartInitiallyHidden}
+        variants={chartAnimationVariants}
+        animate={isChartVisible && !discreetMode && !shouldHideChart ? 'shown' : 'hidden'}
+      >
+        <ChartInnerContainer animate={{ opacity: discreetMode ? 0 : 1 }} transition={{ duration: 0.5 }}>
+          <ChartWrapper>
+            <Chart options={chartOptions} series={[{ data: yAxisWorthData }]} type="area" width="100%" height="100%" />
+          </ChartWrapper>
+        </ChartInnerContainer>
+      </ChartOuterContainer>
+    )
+  }
+)
 
 export default HistoricWorthChart
 
