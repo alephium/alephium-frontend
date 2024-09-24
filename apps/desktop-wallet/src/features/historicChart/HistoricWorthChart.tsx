@@ -33,8 +33,8 @@ import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 interface HistoricWorthChartProps {
   onDataPointHover: (dataPoint?: DataPoint) => void
   onWorthInBeginningOfChartChange: (worthInBeginningOfChart?: DataPoint['worth']) => void
-  isChartVisible?: boolean
-  isChartInitiallyHidden?: boolean
+  chartVisible?: boolean
+  chartInitiallyHidden?: boolean
   addressHash?: AddressHash
 }
 
@@ -55,8 +55,8 @@ const startingDates: Record<ChartLength, Dayjs> = {
 
 const HistoricWorthChart = memo(
   ({
-    isChartVisible,
-    isChartInitiallyHidden,
+    chartVisible,
+    chartInitiallyHidden,
     addressHash,
     onDataPointHover,
     onWorthInBeginningOfChartChange
@@ -150,9 +150,9 @@ const HistoricWorthChart = memo(
 
     return (
       <ChartOuterContainer
-        isChartInitiallyHidden={isChartInitiallyHidden}
+        chartInitiallyHidden={chartInitiallyHidden}
         variants={chartAnimationVariants}
-        animate={isChartVisible && !discreetMode && !shouldHideChart ? 'shown' : 'hidden'}
+        animate={chartVisible && !discreetMode && !shouldHideChart ? 'shown' : 'hidden'}
       >
         <ChartInnerContainer animate={{ opacity: discreetMode ? 0 : 1 }} transition={{ duration: 0.5 }}>
           <ChartWrapper>
@@ -166,15 +166,15 @@ const HistoricWorthChart = memo(
 
 export default HistoricWorthChart
 
-const ChartOuterContainer = styled(motion.div)<Pick<HistoricWorthChartProps, 'isChartInitiallyHidden'>>`
+const ChartOuterContainer = styled(motion.div)<Pick<HistoricWorthChartProps, 'chartInitiallyHidden'>>`
   display: flex;
   align-items: center;
   right: 0;
   left: 0;
   margin: var(--spacing-4) 0;
 
-  ${({ isChartInitiallyHidden }) =>
-    isChartInitiallyHidden &&
+  ${({ chartInitiallyHidden }) =>
+    chartInitiallyHidden &&
     css`
       height: 0;
     `}
