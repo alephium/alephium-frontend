@@ -49,7 +49,7 @@ const AddressDetailsModal = memo(({ id, addressHash }: ModalBaseProp & AddressDe
       header={<AddressDetailsModalHeader addressHash={addressHash} />}
       onAnimationComplete={() => setShowChart(true)}
     >
-      <AmountsOverviewPanelStyled addressHash={addressHash} isChartVisible={showChart} isChartInitiallyHidden>
+      <AmountsOverviewPanelStyled addressHash={addressHash} chartVisible={showChart} chartInitiallyHidden>
         <QRCode value={addressHash} size={130} />
       </AmountsOverviewPanelStyled>
 

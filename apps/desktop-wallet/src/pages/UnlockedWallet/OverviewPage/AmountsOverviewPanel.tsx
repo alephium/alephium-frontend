@@ -33,8 +33,8 @@ interface AmountsOverviewPanelProps {
   addressHash?: string
   isLoading?: boolean
   className?: string
-  isChartVisible?: boolean
-  isChartInitiallyHidden?: boolean
+  chartVisible?: boolean
+  chartInitiallyHidden?: boolean
   animateChartEntry?: boolean
   children?: ReactNode
 }
@@ -43,8 +43,8 @@ const AmountsOverviewPanel = ({
   className,
   addressHash,
   children,
-  isChartVisible,
-  isChartInitiallyHidden
+  chartVisible,
+  chartInitiallyHidden
 }: AmountsOverviewPanelProps) => {
   const { t } = useTranslation()
 
@@ -97,8 +97,8 @@ const AmountsOverviewPanel = ({
         addressHash={addressHash}
         onDataPointHover={setHoveredDataPoint}
         onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
-        isChartVisible={isChartVisible}
-        isChartInitiallyHidden={isChartInitiallyHidden}
+        chartVisible={chartVisible}
+        chartInitiallyHidden={chartInitiallyHidden}
       />
     </UnlockedWalletPanelStyled>
   )
