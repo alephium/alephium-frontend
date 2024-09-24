@@ -32,7 +32,7 @@ const AddressTokenBadge = ({ addressHash, tokenId, ...props }: AddressTokenBadge
   const { data: token } = useFetchToken(tokenId)
   const { data, isLoading } = useFetchAddressSingleTokenBalances({ addressHash, tokenId, skip: isNFT(token) })
 
-  return <TokenBadge {...props} tokenId={tokenId} amount={data?.totalBalance} isLoading={isLoading} />
+  return <TokenBadge {...props} tokenId={tokenId} amount={data?.totalBalance} isLoadingAmount={isLoading} />
 }
 
 export default AddressTokenBadge

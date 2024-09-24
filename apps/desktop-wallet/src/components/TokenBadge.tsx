@@ -28,7 +28,6 @@ export interface TokenBadgeStyleProps {
   withBorder?: boolean
   withBackground?: boolean
   className?: string
-  showSymbol?: boolean
   showNftName?: boolean
   showAmount?: boolean
 }
@@ -36,7 +35,7 @@ export interface TokenBadgeStyleProps {
 interface TokenBadgeProps extends TokenBadgeStyleProps {
   tokenId: TokenId
   amount?: bigint
-  isLoading?: boolean
+  isLoadingAmount?: boolean
 }
 
 const TokenBadge = ({ tokenId, className, ...props }: TokenBadgeProps) => {
@@ -53,17 +52,15 @@ const TokenBadge = ({ tokenId, className, ...props }: TokenBadgeProps) => {
   )
 }
 
-const TokenBadgeText = ({ tokenId, amount, isLoading, showNftName, showAmount, showSymbol }: TokenBadgeProps) => {
-  const { data: token } = useFetchToken(tokenId)
+const TokenBadgeText = ({ tokenId, amount, isLoadingAmount, showNftName, showAmount }: TokenBadgeProps) => {
+  const { data: token, isLoading: isLoadingToken } = useFetchToken(tokenId)
+
+  if (isLoadingToken) return <SkeletonLoader height="20px" />
 
   if (isNFT(token) && showNftName) return <TokenSymbol>{token.name}</TokenSymbol>
 
-  if (isFT(token) && isLoading) return <SkeletonLoader height="20px" />
-
-  if (isFT(token) && showAmount && amount !== undefined)
-    return <Amount tokenId={tokenId} value={amount} useTinyAmountShorthand />
-
-  if (isFT(token) && showSymbol) return <TokenSymbol>{token.symbol}</TokenSymbol>
+  if (!isNFT(token) && showAmount)
+    return <Amount tokenId={tokenId} value={amount} useTinyAmountShorthand isLoading={isLoadingAmount} />
 
   return null
 }
