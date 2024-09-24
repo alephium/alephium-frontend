@@ -20,6 +20,7 @@ import {
   AssetAmount,
   getActiveWalletConnectSessions,
   getHumanReadableError,
+  parseSessionProposalEvent,
   SessionProposalEvent,
   SessionRequestEvent,
   throttledClient,
@@ -29,7 +30,7 @@ import {
 } from '@alephium/shared'
 import { useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
-import { RelayMethod } from '@alephium/walletconnect-provider'
+import { formatChain, RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
   node,
@@ -64,7 +65,7 @@ import {
 } from '@/features/walletConnect/walletConnectUtils'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
-import { walletConnectPairingFailed } from '@/storage/dApps/dAppActions'
+import { walletConnectPairingFailed, walletConnectProposalValidationFailed } from '@/storage/dApps/dAppActions'
 import { isRcVersion } from '@/utils/app-data'
 import { electron } from '@/utils/misc'
 
@@ -214,10 +215,60 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       console.log('👉 ARGS:', proposalEvent)
       console.log('⏳ WAITING FOR PROPOSAL APPROVAL OR REJECTION')
 
-      setPendingDappConnectionUrl(proposalEvent.params.proposer.metadata.url)
-      dispatch(openModal({ name: 'WalletConnectSessionProposalModal', props: { proposalEvent } }))
+      try {
+        const { requiredChains, requiredChainInfo, requiredNamespace, metadata, relayProtocol } =
+          parseSessionProposalEvent(proposalEvent)
+
+        if (!requiredChains) {
+          dispatch(walletConnectProposalValidationFailed(t('The proposal does not include a list of required chains')))
+          return
+        }
+
+        if (requiredChains?.length !== 1) {
+          dispatch(
+            walletConnectProposalValidationFailed(
+              t('Too many chains in the WalletConnect proposal, expected 1, got {{ num }}', {
+                num: requiredChains?.length
+              })
+            )
+          )
+          return
+        }
+
+        if (!requiredChainInfo) {
+          dispatch(
+            walletConnectProposalValidationFailed(t('Could not find chain requirements in WalletConnect proposal'))
+          )
+          return
+        }
+
+        const chain = formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)
+
+        setPendingDappConnectionUrl(proposalEvent.params.proposer.metadata.url)
+
+        dispatch(
+          openModal({
+            name: 'WalletConnectSessionProposalModal',
+            props: {
+              proposalEventId: proposalEvent.id,
+              chain,
+              chainInfo: requiredChainInfo,
+              requiredNamespaceMethods: requiredNamespace.methods,
+              requiredNamespaceEvents: requiredNamespace.events,
+              metadata,
+              relayProtocol
+            }
+          })
+        )
+      } catch (error) {
+        dispatch(
+          walletConnectProposalValidationFailed(
+            getHumanReadableError(error, t('There is something wrong in the received WalletConnect data.'))
+          )
+        )
+      }
     },
-    [dispatch]
+    [dispatch, t]
   )
 
   const sendSuccessResponse = async (
