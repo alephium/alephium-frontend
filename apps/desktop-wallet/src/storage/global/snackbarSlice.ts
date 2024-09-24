@@ -28,7 +28,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import i18n from '@/i18n'
 import { contactDeletionFailed, contactStorageFailed, syncAddressesData } from '@/storage/addresses/addressesActions'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
-import { walletConnectPairingFailed, walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
+import {
+  walletConnectPairingFailed,
+  walletConnectProposalApprovalFailed,
+  walletConnectProposalValidationFailed
+} from '@/storage/dApps/dAppActions'
 import {
   copiedToClipboard,
   copyToClipboardFailed,
@@ -180,6 +184,7 @@ const snackbarSlice = createSlice({
       })
       .addCase(walletConnectPairingFailed, displayError)
       .addCase(walletConnectProposalApprovalFailed, displayError)
+      .addCase(walletConnectProposalValidationFailed, displayError)
       .addCase(receiveTestnetTokens.fulfilled, (state) =>
         displayMessageImmediately(state, {
           text: i18n.t('Testnet tokens incoming.'),
