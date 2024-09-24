@@ -25,6 +25,9 @@ import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
 import { selectAllModals } from '~/features/modals/modalSelectors'
 import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
+import NftGridModal from '~/features/nftsDisplay/NftGridModal'
+import NftModal from '~/features/nftsDisplay/NftModal'
+import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import { useAppSelector } from '~/hooks/redux'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
@@ -45,6 +48,12 @@ const AppModals = () => {
             return <BackupReminderModal key={id} id={id} {...params.props} />
           case 'SwitchNetworkModal':
             return <SwitchNetworkModal key={id} id={id} {...params.props} />
+          case 'TransactionModal':
+            return <TransactionModal key={id} id={id} {...params.props} />
+          case 'NftModal':
+            return <NftModal key={id} id={id} {...params.props} />
+          case 'NftGridModal':
+            return <NftGridModal key={id} id={id} {...params.props} />
           default:
             return null
         }

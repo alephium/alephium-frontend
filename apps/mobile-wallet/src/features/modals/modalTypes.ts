@@ -16,19 +16,24 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createAction } from '@reduxjs/toolkit'
 import { ComponentProps } from 'react'
 
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
+import NftGridModal from '~/features/nftsDisplay/NftGridModal'
+import NftModal from '~/features/nftsDisplay/NftModal'
+import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 export const ModalComponents = {
   BuyModal,
   FundPasswordReminderModal,
   BackupReminderModal,
-  SwitchNetworkModal
+  SwitchNetworkModal,
+  TransactionModal,
+  NftModal,
+  NftGridModal
 }
 
 type ModalName = keyof typeof ModalComponents
@@ -43,8 +48,6 @@ type ModalPropsMap = {
 export type OpenModalParams = {
   [K in ModalName]: ModalParams<K>
 }[ModalName]
-
-export const openModal = createAction<OpenModalParams>('modal/openModal')
 
 export const getModalComponent = (name: ModalName) => ModalComponents[name]
 

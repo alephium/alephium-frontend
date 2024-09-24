@@ -16,23 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { memo } from 'react'
-import { TouchableOpacity } from 'react-native'
+import { NFT } from '@alephium/shared'
 
-import NFTImage, { NFTImageProps } from '~/components/NFTImage'
-import { openModal } from '~/features/modals/modalActions'
-import { useAppDispatch } from '~/hooks/redux'
+import NFTsGrid from '~/components/NFTsGrid'
+import BottomModal from '~/features/modals/BottomModal'
+import withModalWrapper from '~/features/modals/withModalWrapper'
 
-const NFTThumbnail = (props: NFTImageProps) => {
-  const dispatch = useAppDispatch()
-
-  const openNftModal = () => dispatch(openModal({ name: 'NftModal', props: { nftId: props.nftId } }))
-
-  return (
-    <TouchableOpacity onPress={openNftModal}>
-      <NFTImage {...props} />
-    </TouchableOpacity>
-  )
+interface NftGridModalProps {
+  nftsData: NFT[]
 }
 
-export default memo(NFTThumbnail)
+const NftGridModal = withModalWrapper<NftGridModalProps>(({ id, nftsData }) => (
+  <BottomModal id={id} Content={(props) => <NFTsGrid {...props} nfts={nftsData} />} />
+))
+
+export default NftGridModal

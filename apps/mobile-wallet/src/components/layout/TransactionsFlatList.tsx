@@ -16,18 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ForwardedRef, forwardRef, useCallback, useState } from 'react'
+import { ForwardedRef, forwardRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, FlatList, FlatListProps } from 'react-native'
-import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import RefreshSpinner from '~/components/RefreshSpinner'
-import BottomModal from '~/features/modals/DeprecatedBottomModal'
+import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import TransactionModal from '~/screens/TransactionModal'
 import { syncAllAddressesTransactionsNextPage } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN, SCREEN_OVERFLOW } from '~/style/globalStyle'
 import { AddressConfirmedTransaction, AddressPendingTransaction, AddressTransaction } from '~/types/transactions'
@@ -68,9 +66,6 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
   const isLoading = useAppSelector((s) => s.loaders.loadingTransactionsNextPage)
   const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
 
-  const [txModalOpen, setTxModalOpen] = useState(false)
-  const [selectedTx, setSelectedTx] = useState<AddressConfirmedTransaction>()
-
   const renderConfirmedTransactionItem = ({ item, index }: TransactionItem) =>
     renderTransactionItem({ item, index, isLast: index === confirmedTransactions.length - 1 })
 
@@ -81,8 +76,7 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
       isLast={isLast}
       onPress={() => {
         if (!isPendingTx(tx)) {
-          setSelectedTx(tx)
-          setTxModalOpen(true)
+          dispatch(openModal({ name: 'TransactionModal', props: { tx } }))
         }
       }}
     />
@@ -95,72 +89,62 @@ const TransactionsFlatList = forwardRef(function TransactionsFlatList(
   }, [allConfirmedTransactionsLoaded, dispatch, isLoading])
 
   return (
-    <>
-      <FlatList
-        {...props}
-        contentContainerStyle={props.contentContainerStyle}
-        scrollEventThrottle={16}
-        ref={ref}
-        data={confirmedTransactions}
-        renderItem={renderConfirmedTransactionItem}
-        keyExtractor={transactionKeyExtractor}
-        onEndReached={loadNextTransactionsPage}
-        style={{ overflow: SCREEN_OVERFLOW }}
-        refreshControl={<RefreshSpinner />}
-        refreshing={pendingTransactions.length > 0}
-        extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
-        ListHeaderComponent={
-          <>
-            {ListHeaderComponent}
-            {pendingTransactions.length > 0 && (
-              <>
-                <PendingTransactionsSectionTitle>
-                  <ScreenSectionTitleStyled>{t('Pending transactions')}</ScreenSectionTitleStyled>
-                  <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
-                </PendingTransactionsSectionTitle>
-                {pendingTransactions.map((pendingTransaction, index) =>
-                  renderTransactionItem({
-                    item: pendingTransaction,
-                    index,
-                    isLast: index === pendingTransactions.length - 1
-                  })
-                )}
-                <ScreenSectionTitleStyled>{t('Confirmed transactions')}</ScreenSectionTitleStyled>
-              </>
-            )}
-          </>
-        }
-        ListFooterComponent={
-          <Footer>
-            <InfiniteLoadingIndicator>
-              {allConfirmedTransactionsLoaded && confirmedTransactions.length > 0 && (
-                <AppText color="tertiary" semiBold style={{ maxWidth: '75%', textAlign: 'center' }}>
-                  👏 {t('You reached the end of the transactions history.')}
-                </AppText>
-              )}
-              {isLoading && !allConfirmedTransactionsLoaded && (
+    <FlatList
+      {...props}
+      contentContainerStyle={props.contentContainerStyle}
+      scrollEventThrottle={16}
+      ref={ref}
+      data={confirmedTransactions}
+      renderItem={renderConfirmedTransactionItem}
+      keyExtractor={transactionKeyExtractor}
+      onEndReached={loadNextTransactionsPage}
+      style={{ overflow: SCREEN_OVERFLOW }}
+      refreshControl={<RefreshSpinner />}
+      refreshing={pendingTransactions.length > 0}
+      extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
+      ListHeaderComponent={
+        <>
+          {ListHeaderComponent}
+          {pendingTransactions.length > 0 && (
+            <>
+              <PendingTransactionsSectionTitle>
+                <ScreenSectionTitleStyled>{t('Pending transactions')}</ScreenSectionTitleStyled>
                 <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
+              </PendingTransactionsSectionTitle>
+              {pendingTransactions.map((pendingTransaction, index) =>
+                renderTransactionItem({
+                  item: pendingTransaction,
+                  index,
+                  isLast: index === pendingTransactions.length - 1
+                })
               )}
-            </InfiniteLoadingIndicator>
-            {confirmedTransactions.length === 0 && !isLoading && (
-              <EmptyPlaceholder style={{ width: '90%' }}>
-                <AppText color="secondary" semiBold>
-                  {t('No transactions yet')} 🤷‍♂️
-                </AppText>
-              </EmptyPlaceholder>
+              <ScreenSectionTitleStyled>{t('Confirmed transactions')}</ScreenSectionTitleStyled>
+            </>
+          )}
+        </>
+      }
+      ListFooterComponent={
+        <Footer>
+          <InfiniteLoadingIndicator>
+            {allConfirmedTransactionsLoaded && confirmedTransactions.length > 0 && (
+              <AppText color="tertiary" semiBold style={{ maxWidth: '75%', textAlign: 'center' }}>
+                👏 {t('You reached the end of the transactions history.')}
+              </AppText>
             )}
-          </Footer>
-        }
-      />
-
-      <Portal>
-        <BottomModal
-          Content={(props) => selectedTx && <TransactionModal {...props} tx={selectedTx} />}
-          isOpen={txModalOpen}
-          onClose={() => setTxModalOpen(false)}
-        />
-      </Portal>
-    </>
+            {isLoading && !allConfirmedTransactionsLoaded && (
+              <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
+            )}
+          </InfiniteLoadingIndicator>
+          {confirmedTransactions.length === 0 && !isLoading && (
+            <EmptyPlaceholder style={{ width: '90%' }}>
+              <AppText color="secondary" semiBold>
+                {t('No transactions yet')} 🤷‍♂️
+              </AppText>
+            </EmptyPlaceholder>
+          )}
+        </Footer>
+      }
+    />
   )
 })
 

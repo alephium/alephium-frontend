@@ -150,8 +150,7 @@ const BottomModal = ({
   const handleCloseOnJS = useCallback(() => {
     if (onClose) onClose()
 
-    // Remove modal from stack
-    dispatch(removeModal({ id }))
+    dispatch(removeModal({ id })) // Remove modal from stack after animation is done
   }, [dispatch, id, onClose])
 
   const handleClose = useCallback(() => {
