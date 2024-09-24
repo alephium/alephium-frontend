@@ -42,7 +42,7 @@ let wasChartAnimatedOnce = false
 const OverviewPage = ({ className }: OverviewPageProps) => {
   const { t } = useTranslation()
 
-  const [isChartVisible, setIsChartVisible] = useState(wasChartAnimatedOnce)
+  const [chartVisible, setIsChartVisible] = useState(wasChartAnimatedOnce)
 
   const handleAnimationComplete = () => {
     setIsChartVisible(true)
@@ -52,7 +52,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
   return (
     <UnlockedWalletPage className={className} onAnimationComplete={() => handleAnimationComplete()}>
       <GreetingMessages />
-      <AmountsOverviewPanel isChartVisible={isChartVisible} isChartInitiallyHidden={!isChartVisible}>
+      <AmountsOverviewPanel chartVisible={chartVisible} chartInitiallyHidden={!chartVisible}>
         <Shortcuts>
           <ShortcutsHeader title={t('Shortcuts')} />
           <ButtonsGrid>
