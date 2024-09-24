@@ -19,9 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
 import backupAnimationSrc from '~/animations/lottie/backup.json'
@@ -32,10 +31,10 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import CenteredInstructions from '~/components/text/CenteredInstructions'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
-import BottomModal from '~/features/modals/DeprecatedBottomModal'
+import { openModal } from '~/features/modals/modalActions'
+import { useAppDispatch } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import MnemonicModal from '~/features/settings/MnemonicModal'
 
 interface BackupIntroScreenProps
   extends StackScreenProps<SendNavigationParamList, 'BackupIntroScreen'>,
@@ -46,8 +45,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
   const { t } = useTranslation()
-
-  const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
+  const dispatch = useAppDispatch()
 
   useFocusEffect(
     useCallback(() => {
@@ -57,12 +55,17 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
     }, [navigation, setHeaderOptions])
   )
 
+  const openMnemonicModal = () =>
+    dispatch(
+      openModal({ name: 'MnemonicModal', props: { onVerifyPress: () => navigation.navigate('VerifyMnemonicScreen') } })
+    )
+
   const onShowSecretRecoveryPhraseButtonPress = () => {
     triggerBiometricsAuthGuard({
       settingsToCheck: 'appAccessOrTransactions',
       successCallback: () =>
         triggerFundPasswordAuthGuard({
-          successCallback: () => setIsMnemonicModalVisible(true)
+          successCallback: openMnemonicModal
         })
     })
   }
@@ -99,22 +102,6 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
           />
         </FooterButtonContainer>
       </ScrollScreen>
-
-      <Portal>
-        <BottomModal
-          isOpen={isMnemonicModalVisible}
-          onClose={() => setIsMnemonicModalVisible(false)}
-          Content={(props) => (
-            <MnemonicModal
-              {...props}
-              onVerifyButtonPress={() => {
-                props.onClose && props.onClose()
-                navigation.navigate('VerifyMnemonicScreen')
-              }}
-            />
-          )}
-        />
-      </Portal>
       {fundPasswordModal}
     </>
   )

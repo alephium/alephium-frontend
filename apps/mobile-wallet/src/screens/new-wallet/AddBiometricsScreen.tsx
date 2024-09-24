@@ -18,25 +18,22 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import LottieView from 'lottie-react-native'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Portal } from 'react-native-portalize'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import animationSrc from '~/animations/lottie/fingerprint.json'
-import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import ActionButtonsStack from '~/components/buttons/ActionButtonsStack'
 import Button from '~/components/buttons/Button'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import i18n from '~/features/localization/i18n'
-import BottomModal from '~/features/modals/DeprecatedBottomModal'
+import { openModal } from '~/features/modals/modalActions'
+import { allBiometricsEnabled } from '~/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds } from '~/store/addressesSlice'
-import { allBiometricsEnabled } from '~/features/settings/settingsActions'
 import { resetNavigation } from '~/utils/navigation'
 
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}
@@ -52,9 +49,12 @@ const AddBiometricsScreen = ({ navigation, ...props }: AddBiometricsScreenProps)
   const addressIds = useAppSelector(selectAddressIds)
   const { t } = useTranslation()
 
-  const [isBiometricsWarningModalOpen, setIsBiometricsWarningModalOpen] = useState(false)
-
   const skipAddressDiscovery = method === 'create' || addressIds.length > 1
+
+  const openBiometricsWarningModal = () =>
+    dispatch(
+      openModal({ name: 'BiometricsWarningModal', props: { onConfirm: handleLaterPress, confirmText: t('Skip') } })
+    )
 
   const activateBiometrics = () => {
     dispatch(allBiometricsEnabled())
@@ -65,7 +65,6 @@ const AddBiometricsScreen = ({ navigation, ...props }: AddBiometricsScreenProps)
   }
 
   const handleLaterPress = () => {
-    setIsBiometricsWarningModalOpen(false)
     sendAnalytics({ event: 'Skipped biometrics activation from wallet creation flow' })
 
     resetNavigation(
@@ -75,29 +74,18 @@ const AddBiometricsScreen = ({ navigation, ...props }: AddBiometricsScreenProps)
   }
 
   return (
-    <>
-      <ScrollScreen fill headerOptions={{ type: 'stack' }} {...props}>
-        <AnimationContainer>
-          <WhiteCircle>
-            <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
-          </WhiteCircle>
-        </AnimationContainer>
-        <CenteredInstructions instructions={instructions} stretch />
-        <ActionButtonsStack>
-          <Button title={t('Activate')} type="primary" variant="highlight" onPress={activateBiometrics} />
-          <Button title={t('Later')} type="secondary" onPress={() => setIsBiometricsWarningModalOpen(true)} />
-        </ActionButtonsStack>
-      </ScrollScreen>
-      <Portal>
-        <BottomModal
-          isOpen={isBiometricsWarningModalOpen}
-          onClose={() => setIsBiometricsWarningModalOpen(false)}
-          Content={(props) => (
-            <BiometricsWarningModal onConfirm={handleLaterPress} confirmText={t('Skip')} {...props} />
-          )}
-        />
-      </Portal>
-    </>
+    <ScrollScreen fill headerOptions={{ type: 'stack' }} {...props}>
+      <AnimationContainer>
+        <WhiteCircle>
+          <StyledAnimation source={animationSrc} autoPlay speed={1.5} />
+        </WhiteCircle>
+      </AnimationContainer>
+      <CenteredInstructions instructions={instructions} stretch />
+      <ActionButtonsStack>
+        <Button title={t('Activate')} type="primary" variant="highlight" onPress={activateBiometrics} />
+        <Button title={t('Later')} type="secondary" onPress={openBiometricsWarningModal} />
+      </ActionButtonsStack>
+    </ScrollScreen>
   )
 }
 

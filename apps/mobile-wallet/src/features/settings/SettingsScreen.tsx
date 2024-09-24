@@ -27,7 +27,6 @@ import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import Button from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalScreenTitle, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
@@ -46,7 +45,6 @@ import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { openModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
-import MnemonicModal from '~/features/settings/MnemonicModal'
 import {
   analyticsToggled,
   biometricsToggled,
@@ -88,10 +86,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isAutoLockSecondsModalOpen, setIsAutoLockSecondsModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
   const [isLanguageSelectModalOpen, setIsLanguageSelectModalOpen] = useState(false)
-  const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
   const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
   const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
-  const [isBiometricsWarningModalOpen, setIsBiometricsWarningModalOpen] = useState(false)
   const [lastToggledBiometricsSetting, setLastToggledBiometricsSetting] = useState<
     'appAccess' | 'transactions' | undefined
   >()
@@ -104,12 +100,17 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
       })
     )
 
+  const openBiometricsWarningModal = () =>
+    dispatch(openModal({ name: 'BiometricsWarningModal', props: { onConfirm: handleDisableBiometricsPress } }))
+
+  const openMnemonicModal = () => dispatch(openModal({ name: 'MnemonicModal' }))
+
   const handleBiometricsAppAccessChange = (value: boolean) => {
     if (value || biometricsRequiredForTransactions) {
       toggleBiometricsAppAccess()
     } else {
       setLastToggledBiometricsSetting('appAccess')
-      setIsBiometricsWarningModalOpen(true)
+      openBiometricsWarningModal()
     }
   }
 
@@ -118,7 +119,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
       toggleBiometricsTransactions()
     } else {
       setLastToggledBiometricsSetting('transactions')
-      setIsBiometricsWarningModalOpen(true)
+      openBiometricsWarningModal()
     }
   }
 
@@ -137,8 +138,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   }
 
   const handleDisableBiometricsPress = () => {
-    setIsBiometricsWarningModalOpen(false)
-
     lastToggledBiometricsSetting === 'appAccess' ? toggleBiometricsAppAccess() : toggleBiometricsTransactions()
   }
 
@@ -369,7 +368,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                       settingsToCheck: 'appAccessOrTransactions',
                       successCallback: () =>
                         triggerFundPasswordAuthGuard({
-                          successCallback: () => setIsMnemonicModalVisible(true)
+                          successCallback: openMnemonicModal
                         })
                     })
                   }}
@@ -397,18 +396,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           isOpen={isAutoLockSecondsModalOpen}
           onClose={() => setIsAutoLockSecondsModalOpen(false)}
           Content={(props) => <AutoLockOptionsModal onClose={() => setIsAutoLockSecondsModalOpen(false)} {...props} />}
-        />
-
-        <BottomModal
-          isOpen={isMnemonicModalVisible}
-          onClose={() => setIsMnemonicModalVisible(false)}
-          Content={(props) => <MnemonicModal {...props} />}
-        />
-
-        <BottomModal
-          isOpen={isBiometricsWarningModalOpen}
-          onClose={() => setIsBiometricsWarningModalOpen(false)}
-          Content={(props) => <BiometricsWarningModal onConfirm={handleDisableBiometricsPress} {...props} />}
         />
       </Portal>
       {fundPasswordModal}
