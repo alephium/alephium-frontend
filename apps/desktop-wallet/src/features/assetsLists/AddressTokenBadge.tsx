@@ -29,8 +29,12 @@ interface AddressTokenBadgeProps extends TokenBadgeStyleProps {
 }
 
 const AddressTokenBadge = ({ addressHash, tokenId, ...props }: AddressTokenBadgeProps) => {
-  const { data: token } = useFetchToken(tokenId)
-  const { data, isLoading } = useFetchAddressSingleTokenBalances({ addressHash, tokenId, skip: isNFT(token) })
+  const { data: token, isLoading: isLoadingToken } = useFetchToken(tokenId)
+  const { data, isLoading } = useFetchAddressSingleTokenBalances({
+    addressHash,
+    tokenId,
+    skip: isNFT(token) || isLoadingToken
+  })
 
   return <TokenBadge {...props} tokenId={tokenId} amount={data?.totalBalance} isLoadingAmount={isLoading} />
 }
