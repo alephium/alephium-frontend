@@ -16,15 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressHash,
-  isNetworkValid,
-  networkPresetSwitched,
-  parseSessionProposalEvent,
-  SessionProposalEvent
-} from '@alephium/shared'
-import { formatChain, isCompatibleAddressGroup } from '@alephium/walletconnect-provider'
-import { SessionTypes } from '@walletconnect/types'
+import { AddressHash, isNetworkValid, networkPresetSwitched, SessionProposalEvent } from '@alephium/shared'
+import { ChainInfo, isCompatibleAddressGroup } from '@alephium/walletconnect-provider'
+import { CoreTypes, ProposalTypes, SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
 import { AlertTriangle, PlusSquare } from 'lucide-react'
 import { memo, useEffect, useState } from 'react'
@@ -56,11 +50,26 @@ import { getRandomLabelColor } from '@/utils/colors'
 import { cleanUrl, electron } from '@/utils/misc'
 
 export interface WalletConnectSessionProposalModalProps {
-  proposalEvent: SessionProposalEvent
+  chain: string
+  proposalEventId: SessionProposalEvent['id']
+  requiredNamespaceMethods: ProposalTypes.BaseRequiredNamespace['methods']
+  requiredNamespaceEvents: ProposalTypes.BaseRequiredNamespace['events']
+  metadata: CoreTypes.Metadata
+  chainInfo: ChainInfo
+  relayProtocol?: string
 }
 
 const WalletConnectSessionProposalModal = memo(
-  ({ id: modalId, proposalEvent }: ModalBaseProp & WalletConnectSessionProposalModalProps) => {
+  ({
+    id: modalId,
+    proposalEventId,
+    relayProtocol,
+    requiredNamespaceMethods,
+    requiredNamespaceEvents,
+    metadata,
+    chainInfo,
+    chain
+  }: ModalBaseProp & WalletConnectSessionProposalModalProps) => {
     const { t } = useTranslation()
     const { sendAnalytics } = useAnalytics()
     const { walletConnectClient, resetPendingDappConnectionUrl, activeSessions, refreshActiveSessions } =
@@ -68,31 +77,24 @@ const WalletConnectSessionProposalModal = memo(
     const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
     const currentNetworkName = useAppSelector((s) => s.network.name)
     const dispatch = useAppDispatch()
-    const { requiredChainInfo, metadata } = parseSessionProposalEvent(proposalEvent)
-    const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, requiredChainInfo?.addressGroup))
+    const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, chainInfo.addressGroup))
     const { generateAddress } = useAddressGeneration()
     const defaultAddress = useAppSelector(selectDefaultAddress)
-    const currentNetwork = useAppSelector((s) => s.network)
 
     const [signerAddressHash, setSignerAddressHash] = useState<AddressHash | undefined>(addressesInGroup[0])
     const signerAddress = useAppSelector((s) => selectAddressByHash(s, signerAddressHash ?? ''))
 
-    const group = requiredChainInfo?.addressGroup
+    const group = chainInfo.addressGroup
 
-    const showNetworkWarning =
-      requiredChainInfo?.networkId && !isNetworkValid(requiredChainInfo.networkId, currentNetworkId)
+    const showNetworkWarning = chainInfo.networkId && !isNetworkValid(chainInfo.networkId, currentNetworkId)
 
     useEffect(() => {
       setSignerAddressHash(addressesInGroup.find((a) => a === defaultAddress.hash) ?? addressesInGroup[0])
     }, [addressesInGroup, defaultAddress.hash])
 
     const handleSwitchNetworkPress = () => {
-      if (
-        requiredChainInfo?.networkId === 'mainnet' ||
-        requiredChainInfo?.networkId === 'testnet' ||
-        requiredChainInfo?.networkId === 'devnet'
-      ) {
-        dispatch(networkPresetSwitched(requiredChainInfo?.networkId))
+      if (chainInfo.networkId === 'mainnet' || chainInfo.networkId === 'testnet' || chainInfo.networkId === 'devnet') {
+        dispatch(networkPresetSwitched(chainInfo.networkId))
       }
     }
 
@@ -127,38 +129,14 @@ const WalletConnectSessionProposalModal = memo(
         return
       }
 
-      const { id, relayProtocol, requiredNamespace, requiredChains, requiredChainInfo, metadata } =
-        parseSessionProposalEvent(proposalEvent)
-
-      if (!requiredChains) {
-        dispatch(walletConnectProposalApprovalFailed(t('The proposal does not include a list of required chains')))
-        return
-      }
-
-      if (requiredChains?.length !== 1) {
-        dispatch(
-          walletConnectProposalApprovalFailed(
-            t('Too many chains in the WalletConnect proposal, expected 1, got {{ num }}', {
-              num: requiredChains?.length
-            })
-          )
-        )
-        return
-      }
-
-      if (!requiredChainInfo) {
-        dispatch(walletConnectProposalApprovalFailed(t('Could not find chain requirements in WalletConnect proposal')))
-        return
-      }
-
-      if (!isNetworkValid(requiredChainInfo.networkId, currentNetwork.settings.networkId)) {
+      if (!isCompatibleAddressGroup(signerAddress.group, chainInfo.addressGroup)) {
         dispatch(
           walletConnectProposalApprovalFailed(
             t(
-              'The current network ({{ currentNetwork }}) does not match the network requested by WalletConnect ({{ walletConnectNetwork }})',
+              'The group of the selected address ({{ addressGroup }}) does not match the group required by WalletConnect ({{ walletConnectGroup }})',
               {
-                currentNetwork: currentNetwork.name,
-                walletConnectNetwork: requiredChainInfo.networkId
+                addressGroup: signerAddress.group,
+                walletConnectGroup: chainInfo.addressGroup
               }
             )
           )
@@ -166,14 +144,14 @@ const WalletConnectSessionProposalModal = memo(
         return
       }
 
-      if (!isCompatibleAddressGroup(signerAddress.group, requiredChainInfo.addressGroup)) {
+      if (!isNetworkValid(chainInfo.networkId, currentNetworkId)) {
         dispatch(
           walletConnectProposalApprovalFailed(
             t(
-              'The group of the selected address ({{ addressGroup }}) does not match the group required by WalletConnect ({{ walletConnectGroup }})',
+              'The current network ({{ currentNetwork }}) does not match the network requested by WalletConnect ({{ walletConnectNetwork }})',
               {
-                addressGroup: signerAddress.group,
-                walletConnectGroup: requiredChainInfo.addressGroup
+                currentNetwork: currentNetworkName,
+                walletConnectNetwork: chainInfo.networkId
               }
             )
           )
@@ -183,13 +161,9 @@ const WalletConnectSessionProposalModal = memo(
 
       const namespaces: SessionTypes.Namespaces = {
         alephium: {
-          methods: requiredNamespace.methods,
-          events: requiredNamespace.events,
-          accounts: [
-            `${formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)}:${
-              signerAddress.publicKey
-            }/default`
-          ]
+          methods: requiredNamespaceMethods,
+          events: requiredNamespaceEvents,
+          accounts: [`${chain}:${signerAddress.publicKey}/default`]
         }
       }
 
@@ -207,7 +181,11 @@ const WalletConnectSessionProposalModal = memo(
           })
         }
 
-        const { topic, acknowledged } = await walletConnectClient.approve({ id, relayProtocol, namespaces })
+        const { topic, acknowledged } = await walletConnectClient.approve({
+          id: proposalEventId,
+          relayProtocol,
+          namespaces
+        })
         console.log('👉 APPROVAL TOPIC RECEIVED:', topic)
         console.log('✅ APPROVING: DONE!')
 
@@ -233,8 +211,8 @@ const WalletConnectSessionProposalModal = memo(
       if (!walletConnectClient) return
 
       try {
-        console.log('👎 REJECTING SESSION PROPOSAL:', proposalEvent.id)
-        walletConnectClient.reject({ id: proposalEvent.id, reason: getSdkError('USER_REJECTED') })
+        console.log('👎 REJECTING SESSION PROPOSAL:', proposalEventId)
+        walletConnectClient.reject({ id: proposalEventId, reason: getSdkError('USER_REJECTED') })
         console.log('✅ REJECTING: DONE!')
 
         sendAnalytics({ event: 'Rejected WalletConnect connection by clicking "Reject"' })
@@ -271,7 +249,7 @@ const WalletConnectSessionProposalModal = memo(
                 <Trans
                   t={t}
                   i18nKey="walletConnectSwitchNetwork"
-                  values={{ currentNetworkName, network: requiredChainInfo?.networkId }}
+                  values={{ currentNetworkName, network: chainInfo.networkId }}
                   components={{ 1: <Highlight /> }}
                 >
                   {
@@ -294,7 +272,7 @@ const WalletConnectSessionProposalModal = memo(
                 <Trans
                   t={t}
                   i18nKey="walletConnectNewAddress"
-                  values={{ group: requiredChainInfo?.addressGroup }}
+                  values={{ group: chainInfo.addressGroup }}
                   components={{ 1: <Highlight /> }}
                 >
                   {

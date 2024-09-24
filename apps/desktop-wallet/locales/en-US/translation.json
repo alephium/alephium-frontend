@@ -459,5 +459,6 @@
   "This address doesn't have any tokens.": "This address doesn't have any tokens.",
   "This address doesn't have any NFTs.": "This address doesn't have any NFTs.",
   "The wallet doesn't have any tokens. Tokens of all your addresses will appear here.": "The wallet doesn't have any tokens. Tokens of all your addresses will appear here.",
-  "The wallet doesn't have any NFTs. NFTs of all your addresses will appear here.": "The wallet doesn't have any NFTs. NFTs of all your addresses will appear here."
+  "The wallet doesn't have any NFTs. NFTs of all your addresses will appear here.": "The wallet doesn't have any NFTs. NFTs of all your addresses will appear here.",
+  "There is something wrong in the received WalletConnect data.": "There is something wrong in the received WalletConnect data."
 }
