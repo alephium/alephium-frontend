@@ -51,7 +51,7 @@ const GasUTXOsExpandableSection = ({ tx }: Pick<TransactionDetailsModalSectionPr
     const isLockTimeInFuture = unlocksAt > new Date()
 
     return (
-      <OutputRow>
+      <OutputRow key={output.key}>
         {isLockTimeInFuture && <Lock unlockAt={unlocksAt} />}
         <ActionLinkStyled
           key={`${output.key}`}
