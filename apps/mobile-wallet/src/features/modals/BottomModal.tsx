@@ -234,7 +234,7 @@ const BottomModal = ({
 
   return (
     <GestureDetector gesture={panGesture}>
-      <Animated.View style={{ flex: 1 }}>
+      <ExternalContainer>
         <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
         <Container>
           <ModalStyled style={modalHeightAnimatedStyle}>
@@ -253,12 +253,20 @@ const BottomModal = ({
             </ContentContainer>
           </ModalStyled>
         </Container>
-      </Animated.View>
+      </ExternalContainer>
     </GestureDetector>
   )
 }
 
 export default BottomModal
+
+const ExternalContainer = styled.View`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+`
 
 const Container = styled.View`
   position: absolute;
