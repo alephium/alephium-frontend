@@ -36,7 +36,7 @@ import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressIds } from '~/store/addressesSlice'
-import { allBiometricsEnabled } from '~/store/settings/settingsActions'
+import { allBiometricsEnabled } from '~/features/settings/settingsActions'
 import { resetNavigation } from '~/utils/navigation'
 
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}

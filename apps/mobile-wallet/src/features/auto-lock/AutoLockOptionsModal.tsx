@@ -21,8 +21,8 @@ import { ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { autoLockSecondsOptions } from '~/features/auto-lock/utils'
 import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
+import { autoLockSecondsChanged } from '~/features/settings/settingsSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { autoLockSecondsChanged } from '~/store/settingsSlice'
 
 const AutoLockOptionsModal = ({ onClose, ...props }: ModalContentProps) => {
   const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)

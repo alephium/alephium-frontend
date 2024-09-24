@@ -23,6 +23,7 @@ import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
 import NftGridModal from '~/features/nftsDisplay/NftGridModal'
 import NftModal from '~/features/nftsDisplay/NftModal'
+import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
@@ -33,7 +34,8 @@ export const ModalComponents = {
   SwitchNetworkModal,
   TransactionModal,
   NftModal,
-  NftGridModal
+  NftGridModal,
+  WalletDeleteModal
 }
 
 type ModalName = keyof typeof ModalComponents

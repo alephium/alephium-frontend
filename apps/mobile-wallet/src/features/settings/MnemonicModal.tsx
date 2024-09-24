@@ -24,7 +24,7 @@ import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
 import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/wallet'
-import OrderedTable from '~/screens/Settings/OrderedTable'
+import OrderedTable from '~/features/settings/OrderedTable'
 
 interface MnemonicModalProps extends ModalContentProps {
   onVerifyButtonPress?: () => void

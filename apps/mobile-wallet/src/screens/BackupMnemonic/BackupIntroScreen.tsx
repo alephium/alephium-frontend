@@ -35,7 +35,7 @@ import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import MnemonicModal from '~/screens/Settings/MnemonicModal'
+import MnemonicModal from '~/features/settings/MnemonicModal'
 
 interface BackupIntroScreenProps
   extends StackScreenProps<SendNavigationParamList, 'BackupIntroScreen'>,

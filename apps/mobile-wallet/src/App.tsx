@@ -37,9 +37,9 @@ import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { useLocalization } from '~/features/localization/useLocalization'
+import useLoadStoredSettings from '~/features/settings/useLoadStoredSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
-import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
 import {
   getStoredWalletMetadataWithoutThrowingError,

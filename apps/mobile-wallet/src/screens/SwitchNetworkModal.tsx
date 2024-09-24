@@ -28,8 +28,8 @@ import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal from '~/features/modals/BottomModal'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModalWrapper from '~/features/modals/withModalWrapper'
+import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { persistSettings } from '~/persistent-storage/settings'
 
 export interface SwitchNetworkModalProps {
   onCustomNetworkPress: () => void

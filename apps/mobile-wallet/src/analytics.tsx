@@ -24,7 +24,7 @@ import { useCallback, useEffect } from 'react'
 
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
-import { analyticsIdGenerated } from '~/store/settings/settingsActions'
+import { analyticsIdGenerated } from '~/features/settings/settingsActions'
 
 const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
 const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'

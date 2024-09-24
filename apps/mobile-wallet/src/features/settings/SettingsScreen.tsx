@@ -45,12 +45,8 @@ import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { openModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
-import RootStackParamList from '~/navigation/rootStackRoutes'
-import CurrencySelectModal from '~/screens/CurrencySelectModal'
-import MnemonicModal from '~/screens/Settings/MnemonicModal'
-import WalletDeleteModal from '~/screens/Settings/WalletDeleteModal'
+import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
+import MnemonicModal from '~/features/settings/MnemonicModal'
 import {
   analyticsToggled,
   biometricsToggled,
@@ -58,7 +54,10 @@ import {
   passwordRequirementToggled,
   themeChanged,
   walletConnectToggled
-} from '~/store/settingsSlice'
+} from '~/features/settings/settingsSlice'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { resetNavigation } from '~/utils/navigation'
 
@@ -91,7 +90,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const [isLanguageSelectModalOpen, setIsLanguageSelectModalOpen] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
   const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
-  const [isWalletDeleteModalOpen, setIsWalletDeleteModalOpen] = useState(false)
   const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
   const [isBiometricsWarningModalOpen, setIsBiometricsWarningModalOpen] = useState(false)
   const [lastToggledBiometricsSetting, setLastToggledBiometricsSetting] = useState<
@@ -160,7 +158,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const toggleWalletConnect = () => dispatch(walletConnectToggled())
 
   const handleDeleteButtonPress = () => {
-    setIsWalletDeleteModalOpen(true)
+    dispatch(
+      openModal({ name: 'WalletDeleteModal', props: { onDelete: () => resetNavigation(navigation, 'LandingScreen') } })
+    )
   }
 
   const handleWalletConnectEnablePress = () => {
@@ -403,15 +403,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           isOpen={isMnemonicModalVisible}
           onClose={() => setIsMnemonicModalVisible(false)}
           Content={(props) => <MnemonicModal {...props} />}
-        />
-
-        <BottomModal
-          isOpen={isWalletDeleteModalOpen}
-          onClose={() => setIsWalletDeleteModalOpen(false)}
-          maximisedContent={Platform.OS === 'ios'}
-          Content={(props) => (
-            <WalletDeleteModal onDelete={() => resetNavigation(navigation, 'LandingScreen')} {...props} />
-          )}
         />
 
         <BottomModal

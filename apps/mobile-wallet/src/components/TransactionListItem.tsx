@@ -23,7 +23,7 @@ import styled from 'styled-components/native'
 import Amount from '~/components/Amount'
 import AssetLogo from '~/components/AssetLogo'
 import ListItem, { ListItemProps } from '~/components/ListItem'
-import { useTransactionUI } from '~/hooks/useTransactionUI'
+import { useTransactionUI } from '~/features/transactionsDisplay/useTransactionUI'
 import { AddressTransaction } from '~/types/transactions'
 import { getTransactionInfo, isPendingTx } from '~/utils/transactions'
 

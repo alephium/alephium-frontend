@@ -27,6 +27,7 @@ import { selectAllModals } from '~/features/modals/modalSelectors'
 import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
 import NftGridModal from '~/features/nftsDisplay/NftGridModal'
 import NftModal from '~/features/nftsDisplay/NftModal'
+import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import { useAppSelector } from '~/hooks/redux'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
@@ -54,6 +55,8 @@ const AppModals = () => {
             return <NftModal key={id} id={id} {...params.props} />
           case 'NftGridModal':
             return <NftGridModal key={id} id={id} {...params.props} />
+          case 'WalletDeleteModal':
+            return <WalletDeleteModal key={id} id={id} {...params.props} />
           default:
             return null
         }
