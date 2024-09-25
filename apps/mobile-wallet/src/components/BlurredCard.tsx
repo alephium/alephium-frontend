@@ -28,6 +28,7 @@ interface BlurredCardProps {
 
 const BlurredCard = ({ children, style }: BlurredCardProps) => {
   const theme = useTheme()
+
   return (
     <BlurredCardContainer style={style}>
       {Platform.OS === 'android' ? (

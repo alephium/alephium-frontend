@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Children, isValidElement, ReactNode, useEffect } from 'react'
-import { ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
@@ -41,7 +40,7 @@ const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
 
   return (
-    <ModalsContainer pointerEvents={openedModals.length > 0 ? 'auto' : 'none'}>
+    <ModalsContainer>
       {openedModals.map((modal) => {
         const { id, params } = modal
 
@@ -84,7 +83,9 @@ interface ModalsContainerProps {
   children: ReactNode
 }
 
-const ModalsContainer = ({ children, ...props }: ModalsContainerProps & ViewProps) => {
+const ModalsContainer = ({ children }: ModalsContainerProps) => {
+  const hasOpenedModals = useAppSelector((s) => selectAllModals(s).length > 0)
+
   useEffect(() => {
     Children.forEach(children, (child) => {
       if (isValidElement(child) && !isModalWrapped(child)) {
@@ -95,7 +96,7 @@ const ModalsContainer = ({ children, ...props }: ModalsContainerProps & ViewProp
     })
   }, [children])
 
-  return <ModalsContainerStyled {...props}>{children}</ModalsContainerStyled>
+  return <ModalsContainerStyled pointerEvents={hasOpenedModals ? 'auto' : 'none'}>{children}</ModalsContainerStyled>
 }
 
 export default AppModals

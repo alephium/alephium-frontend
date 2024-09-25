@@ -26,7 +26,7 @@ import NFTsGrid from '~/components/NFTsGrid'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 
-interface NFTListScreenProps extends StackScreenProps<InWalletTabsParamList, 'NFTListScreen'>, ScreenProps {}
+type NFTListScreenProps = StackScreenProps<InWalletTabsParamList, 'NFTListScreen'> & ScreenProps
 
 const NFTListScreen = ({ navigation }: NFTListScreenProps) => {
   const { t } = useTranslation()

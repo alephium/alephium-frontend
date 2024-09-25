@@ -71,9 +71,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const { data: isNewWallet } = useAsyncData(getIsNewWallet)
 
   useEffect(() => {
-    if (isNewWallet === undefined) return
-
-    if (!isMnemonicBackedUp) {
+    if (!isMnemonicBackedUp && isNewWallet !== undefined) {
       dispatch(openModal({ name: 'BackupReminderModal', props: { isNewWallet } }))
     }
   }, [dispatch, isMnemonicBackedUp, isNewWallet])
