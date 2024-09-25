@@ -20,6 +20,7 @@ import { HasOptionalProps, HasRequiredProps } from '@alephium/shared'
 import { ComponentProps } from 'react'
 
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
+import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
@@ -40,7 +41,8 @@ export const ModalComponents = {
   NftGridModal,
   WalletDeleteModal,
   BiometricsWarningModal,
-  MnemonicModal
+  MnemonicModal,
+  AutoLockOptionsModal
 }
 
 type ModalName = keyof typeof ModalComponents

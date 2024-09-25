@@ -36,7 +36,6 @@ import Row from '~/components/Row'
 import LinkToWeb from '~/components/text/LinkToWeb'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
-import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import { getAutoLockLabel } from '~/features/auto-lock/utils'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { languageOptions } from '~/features/localization/languages'
@@ -83,7 +82,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
   const { t } = useTranslation()
 
-  const [isAutoLockSecondsModalOpen, setIsAutoLockSecondsModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
   const [isLanguageSelectModalOpen, setIsLanguageSelectModalOpen] = useState(false)
   const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
@@ -102,6 +100,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const openBiometricsWarningModal = () =>
     dispatch(openModal({ name: 'BiometricsWarningModal', props: { onConfirm: handleDisableBiometricsPress } }))
+
+  const openAutoLockOptionsModal = () => dispatch(openModal({ name: 'AutoLockOptionsModal' }))
 
   const openMnemonicModal = () => dispatch(openModal({ name: 'MnemonicModal' }))
 
@@ -274,7 +274,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
               title={t('Auto-lock')}
               subtitle={t('Amount of time before app locks')}
               isLast
-              onPress={() => setIsAutoLockSecondsModalOpen(true)}
+              onPress={openAutoLockOptionsModal}
             >
               <AppText bold>{getAutoLockLabel(autoLockSeconds)}</AppText>
             </Row>
@@ -390,12 +390,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           isOpen={isCurrencySelectModalOpen}
           onClose={() => setIsCurrencySelectModalOpen(false)}
           Content={(props) => <CurrencySelectModal onClose={() => setIsCurrencySelectModalOpen(false)} {...props} />}
-        />
-
-        <BottomModal
-          isOpen={isAutoLockSecondsModalOpen}
-          onClose={() => setIsAutoLockSecondsModalOpen(false)}
-          Content={(props) => <AutoLockOptionsModal onClose={() => setIsAutoLockSecondsModalOpen(false)} {...props} />}
         />
       </Portal>
       {fundPasswordModal}

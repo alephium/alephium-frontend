@@ -21,6 +21,7 @@ import { ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
+import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
@@ -63,6 +64,8 @@ const AppModals = () => {
             return <BiometricsWarningModal key={id} id={id} {...params.props} />
           case 'MnemonicModal':
             return <MnemonicModal key={id} id={id} {...params.props} />
+          case 'AutoLockOptionsModal':
+            return <AutoLockOptionsModal key={id} id={id} />
           default:
             return null
         }
