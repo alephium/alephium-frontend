@@ -39,11 +39,9 @@ import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectC
 import { getAutoLockLabel } from '~/features/auto-lock/utils'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { languageOptions } from '~/features/localization/languages'
-import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { openModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import {
   analyticsToggled,
   biometricsToggled,
@@ -82,13 +80,15 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
   const { t } = useTranslation()
 
-  const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
-  const [isLanguageSelectModalOpen, setIsLanguageSelectModalOpen] = useState(false)
   const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
   const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
   const [lastToggledBiometricsSetting, setLastToggledBiometricsSetting] = useState<
     'appAccess' | 'transactions' | undefined
   >()
+
+  const openLanguageSelectModal = () => dispatch(openModal({ name: 'LanguageSelectModal' }))
+
+  const openCurrencySelectModal = () => dispatch(openModal({ name: 'CurrencySelectModal' }))
 
   const openNetworkModal = () =>
     dispatch(
@@ -190,10 +190,10 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>{t('General')}</ScreenSectionTitle>
           <BoxSurface>
-            <Row onPress={() => setIsLanguageSelectModalOpen(true)} title="Language">
+            <Row onPress={openLanguageSelectModal} title="Language">
               <AppText bold>{languageOptions.find((l) => l.value === language)?.label}</AppText>
             </Row>
-            <Row onPress={() => setIsCurrencySelectModalOpen(true)} title={t('Currency')}>
+            <Row onPress={openCurrencySelectModal} title={t('Currency')}>
               <AppText bold>{currentCurrency}</AppText>
             </Row>
             <Row title={t('Current network')} onPress={openNetworkModal}>
@@ -376,20 +376,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
               </ScreenSection>
             </ModalContent>
           )}
-        />
-      </Portal>
-
-      <Portal>
-        <BottomModal
-          isOpen={isLanguageSelectModalOpen}
-          onClose={() => setIsLanguageSelectModalOpen(false)}
-          Content={(props) => <LanguageSelectModal onClose={() => setIsLanguageSelectModalOpen(false)} {...props} />}
-        />
-
-        <BottomModal
-          isOpen={isCurrencySelectModalOpen}
-          onClose={() => setIsCurrencySelectModalOpen(false)}
-          Content={(props) => <CurrencySelectModal onClose={() => setIsCurrencySelectModalOpen(false)} {...props} />}
         />
       </Portal>
       {fundPasswordModal}

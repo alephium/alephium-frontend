@@ -21,7 +21,10 @@ import { CURRENCIES, Currency, fiatCurrencyChanged } from '@alephium/shared'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
+import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
+import { ModalContent } from '~/features/modals/ModalContent'
+import withModalWrapper from '~/features/modals/withModalWrapper'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 const currencyOptions = Object.values(CURRENCIES).map((currency) => ({
@@ -29,32 +32,37 @@ const currencyOptions = Object.values(CURRENCIES).map((currency) => ({
   value: currency.ticker
 }))
 
-const CurrencySelectModal = ({ onClose, ...props }: ModalContentProps) => {
+const CurrencySelectModal = withModalWrapper(({ id }) => {
   const dispatch = useAppDispatch()
   const currentCurrency = useAppSelector((s) => s.settings.currency)
 
   const handleCurrencyChange = (currency: Currency) => {
     dispatch(fiatCurrencyChanged(currency))
-    onClose && onClose()
+    dispatch(closeModal({ id }))
   }
 
   return (
-    <ModalContent verticalGap {...props}>
-      <ScreenSection>
-        <BoxSurface>
-          {currencyOptions.map((currencyOption, index) => (
-            <RadioButtonRow
-              key={currencyOption.label}
-              title={currencyOption.label}
-              onPress={() => handleCurrencyChange(currencyOption.value)}
-              isActive={currentCurrency === currencyOption.value}
-              isLast={index === currencyOptions.length - 1}
-            />
-          ))}
-        </BoxSurface>
-      </ScreenSection>
-    </ModalContent>
+    <BottomModal
+      id={id}
+      Content={(props) => (
+        <ModalContent verticalGap {...props}>
+          <ScreenSection>
+            <BoxSurface>
+              {currencyOptions.map((currencyOption, index) => (
+                <RadioButtonRow
+                  key={currencyOption.label}
+                  title={currencyOption.label}
+                  onPress={() => handleCurrencyChange(currencyOption.value)}
+                  isActive={currentCurrency === currencyOption.value}
+                  isLast={index === currencyOptions.length - 1}
+                />
+              ))}
+            </BoxSurface>
+          </ScreenSection>
+        </ModalContent>
+      )}
+    />
   )
-}
+})
 
 export default CurrencySelectModal

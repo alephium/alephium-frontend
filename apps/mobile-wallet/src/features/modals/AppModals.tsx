@@ -25,10 +25,12 @@ import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
+import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import { selectAllModals } from '~/features/modals/modalSelectors'
 import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
 import NftGridModal from '~/features/nftsDisplay/NftGridModal'
 import NftModal from '~/features/nftsDisplay/NftModal'
+import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
@@ -66,6 +68,10 @@ const AppModals = () => {
             return <MnemonicModal key={id} id={id} {...params.props} />
           case 'AutoLockOptionsModal':
             return <AutoLockOptionsModal key={id} id={id} />
+          case 'CurrencySelectModal':
+            return <CurrencySelectModal key={id} id={id} />
+          case 'LanguageSelectModal':
+            return <LanguageSelectModal key={id} id={id} />
           default:
             return null
         }
