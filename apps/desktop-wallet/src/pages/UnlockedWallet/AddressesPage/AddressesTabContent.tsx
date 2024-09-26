@@ -42,7 +42,8 @@ const AddressesTabContent = memo(() => {
 
   const visibleAddresses = hideEmptyAddresses ? intersection(filteredByText, filteredByToggle) : filteredByText
 
-  const openNewAddressModal = () => dispatch(openModal({ name: 'NewAddressModal', props: { title: t('New address') } }))
+  const openNewAddressModal = () =>
+    dispatch(openModal({ name: 'NewAddressModal', props: { title: t('New address'), singleAddress: true } }))
 
   return (
     <TabContent
