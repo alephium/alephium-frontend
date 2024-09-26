@@ -28,7 +28,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import SideModal from '@/modals/SideModal'
 import OperationBox from '@/pages/UnlockedWallet/AddressesPage/OperationBox'
-import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -40,6 +40,7 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
   const dispatch = useAppDispatch()
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const defaultAddress = useAppSelector(selectDefaultAddress)
+  const allAddressesIndexes = useAppSelector((s) => selectAllAddresses(s).map(({ index }) => index))
 
   const handleOneAddressPerGroupClick = () => {
     isPassphraseUsed
@@ -49,7 +50,7 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
   }
 
   const handleDiscoverAddressesClick = () => {
-    discoverAndSaveUsedAddresses()
+    discoverAndSaveUsedAddresses({ skipIndexes: allAddressesIndexes })
     sendAnalytics({ event: 'Advanced operation to discover addresses clicked' })
   }
 
