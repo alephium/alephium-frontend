@@ -42,10 +42,12 @@ const modalSlice = createSlice({
         })
       })
       .addCase(closeModal, (state, { payload: { id } }) => {
-        const modal = state.entities[id]
-        if (modal) {
-          modal.isClosing = true
-        }
+        modalAdapter.updateOne(state, {
+          id,
+          changes: {
+            isClosing: true
+          }
+        })
       })
       .addCase(removeModal, (state, { payload: { id } }) => {
         modalAdapter.removeOne(state, id)
