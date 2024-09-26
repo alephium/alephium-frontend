@@ -29,6 +29,7 @@ import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 import { uniq } from 'lodash'
 
 import {
+  addressDeleted,
   addressesRestoredFromMetadata,
   addressRestorationStarted,
   addressSettingsSaved,
@@ -118,6 +119,9 @@ const addressesSlice = createSlice({
         state.status = 'initialized'
         state.syncingAddressData = false
         state.loadingTransactions = false
+      })
+      .addCase(addressDeleted, (state, { payload: addressHash }) => {
+        addressesAdapter.removeOne(state, addressHash)
       })
       .addCase(syncAddressesTransactions.fulfilled, (state, action) => {
         const addressData = action.payload

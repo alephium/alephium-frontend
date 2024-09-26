@@ -20,6 +20,7 @@ import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { modalAdapter } from '@/features/modals/modalAdapters'
+import { addressDeleted } from '@/storage/addresses/addressesActions'
 import { activeWalletDeleted, walletLocked, walletSwitched } from '@/storage/wallets/walletActions'
 
 const initialState = modalAdapter.getInitialState()
@@ -40,7 +41,7 @@ const modalSlice = createSlice({
         modalAdapter.removeOne(state, id)
       })
 
-    builder.addMatcher(isAnyOf(walletSwitched, walletLocked, activeWalletDeleted), (state) => {
+    builder.addMatcher(isAnyOf(walletSwitched, walletLocked, activeWalletDeleted, addressDeleted), (state) => {
       modalAdapter.removeAll(state)
     })
   }

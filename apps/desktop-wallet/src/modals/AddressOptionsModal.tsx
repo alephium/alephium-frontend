@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
+import { Trash2 } from 'lucide-react'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -33,8 +34,10 @@ import { closeModal, openModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
+import { addressDeleted } from '@/storage/addresses/addressesActions'
 import { selectAddressByHash, selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { saveAddressSettings } from '@/storage/addresses/addressesStorageUtils'
+import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
@@ -50,6 +53,7 @@ const AddressOptionsModal = memo(({ id, addressHash }: ModalBaseProp & AddressOp
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const addresses = useAppSelector(selectAllAddresses)
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const dispatch = useAppDispatch()
 
   const { data: addressAlphBalances } = useFetchAddressBalancesAlph({ addressHash })
@@ -60,7 +64,7 @@ const AddressOptionsModal = memo(({ id, addressHash }: ModalBaseProp & AddressOp
   })
   const [isDefaultAddress, setIsDefaultAddress] = useState(address?.isDefault ?? false)
 
-  if (!address || !defaultAddress) return null
+  if (!address || !defaultAddress || !activeWalletId) return null
 
   const availableBalance = addressAlphBalances?.availableBalance
   const isDefaultAddressToggleEnabled = defaultAddress.hash !== address.hash
@@ -94,6 +98,31 @@ const AddressOptionsModal = memo(({ id, addressHash }: ModalBaseProp & AddressOp
         props: { addressHash, onSuccessfulSweep: onClose }
       })
     )
+
+  const handleDeletePress = () => {
+    const onDeleteConfirm = () => {
+      try {
+        addressMetadataStorage.deleteOne(activeWalletId, address.index)
+        dispatch(addressDeleted(address.hash))
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    dispatch(
+      openModal({
+        name: 'ConfirmModal',
+        props: {
+          Icon: Trash2,
+          onConfirm: onDeleteConfirm,
+          narrow: true,
+          text: t('Are you sure you want to remove "{{ address }}" from your address list?', {
+            address: getName(address)
+          })
+        }
+      })
+    )
+  }
 
   let defaultAddressMessage = `${t('Default address for sending transactions.')} `
   defaultAddressMessage += isDefaultAddressToggleEnabled
@@ -137,6 +166,21 @@ const AddressOptionsModal = memo(({ id, addressHash }: ModalBaseProp & AddressOp
       />
       <HorizontalDivider narrow />
       <ModalFooterButtons>
+        {address.isDefault ? (
+          <div
+            data-tooltip-id="default"
+            data-tooltip-content={t('To delete this address set another one as the default one first.')}
+            style={{ width: '100%' }}
+          >
+            <ModalFooterButton role="secondary" variant="alert" disabled={true}>
+              {t('Delete')}
+            </ModalFooterButton>
+          </div>
+        ) : (
+          <ModalFooterButton role="secondary" variant="alert" onClick={handleDeletePress} disabled={address.isDefault}>
+            {t('Delete')}
+          </ModalFooterButton>
+        )}
         <ModalFooterButton role="secondary" onClick={onClose}>
           {t('Cancel')}
         </ModalFooterButton>
