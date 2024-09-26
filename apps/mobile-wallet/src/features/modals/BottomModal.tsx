@@ -37,7 +37,7 @@ import AppText from '~/components/AppText'
 import { CloseButton } from '~/components/buttons/Button'
 import { removeModal } from '~/features/modals/modalActions'
 import { ModalContentProps } from '~/features/modals/ModalContent'
-import { selectModal } from '~/features/modals/modalSelectors'
+import { selectModalById } from '~/features/modals/modalSelectors'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -79,7 +79,7 @@ const BottomModal = ({
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
-  const modalEntity = useAppSelector((s) => selectModal(s, id))
+  const modalEntity = useAppSelector((s) => selectModalById(s, id))
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
