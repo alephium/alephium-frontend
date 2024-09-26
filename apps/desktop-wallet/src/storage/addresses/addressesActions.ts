@@ -47,6 +47,8 @@ export const addressRestorationStarted = createAction('addresses/addressRestorat
 
 export const newAddressesSaved = createAction<AddressBase[]>('addresses/newAddressesSaved')
 
+export const addressDeleted = createAction<AddressHash>('addresses/addressDeleted')
+
 export const defaultAddressChanged = createAction<Address>('addresses/defaultAddressChanged')
 
 export const addressDiscoveryStarted = createAction<LoadingEnabled>('addresses/addressDiscoveryStarted')
