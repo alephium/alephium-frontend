@@ -16,14 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { MAX_API_RETRIES, ONE_MINUTE_MS } from '@alephium/shared'
+import { FIVE_MINUTES_MS, MAX_API_RETRIES, ONE_MINUTE_MS } from '@alephium/shared'
 import { QueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
+
+export const DELETE_INACTIVE_QUERY_DATA_AFTER = FIVE_MINUTES_MS
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: ONE_MINUTE_MS,
+      gcTime: DELETE_INACTIVE_QUERY_DATA_AFTER,
       retry: (failureCount, error) => {
         if (
           (error instanceof AxiosError && error.response?.status !== 429) ||

@@ -21,8 +21,8 @@ import '@/i18n'
 import '@yaireo/tagify/dist/tagify.css' // Tagify CSS: important to import after index.css file
 
 import isPropValid from '@emotion/is-prop-valid'
-import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { StrictMode, Suspense } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
@@ -35,6 +35,7 @@ import Tooltips from '@/components/Tooltips'
 import AnalyticsProvider from '@/features/analytics/AnalyticsProvider'
 import * as serviceWorker from '@/serviceWorker'
 import { store } from '@/storage/store'
+import tanstackIndexedDBPersister from '@/storage/tanstackIndexedDBPersister'
 
 // The app still behaves as if React 17 is used. This is because
 // `react-custom-scrollbars` is not working with React 18 yet.
@@ -48,10 +49,13 @@ ReactDOM.render(
         <Router>
           <Suspense fallback="loading">
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>
-              <QueryClientProvider client={queryClient}>
+              <PersistQueryClientProvider
+                client={queryClient}
+                persistOptions={{ persister: tanstackIndexedDBPersister, maxAge: Infinity }}
+              >
                 <App />
                 <ReactQueryDevtools initialIsOpen={false} />
-              </QueryClientProvider>
+              </PersistQueryClientProvider>
               <Tooltips />
             </StyleSheetManager>
           </Suspense>
