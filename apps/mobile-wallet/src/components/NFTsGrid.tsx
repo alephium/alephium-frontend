@@ -63,7 +63,7 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, scroll
           <NFTThumbnail nftId={nft.id} size={size} />
         </NFTThumbnailContainer>
       )}
-      contentContainerStyle={{ paddingHorizontal: containerHorizontalPadding, paddingBottom: 100 }}
+      contentContainerStyle={{ paddingHorizontal: containerHorizontalPadding, paddingBottom: 70 }}
       numColumns={columns}
       estimatedItemSize={64}
       scrollEnabled={scrollEnabled}

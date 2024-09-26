@@ -48,8 +48,6 @@ export interface BaseHeaderProps extends ViewProps {
   CustomContent?: ReactNode
 }
 
-export const scrollEndThreshold = 80
-
 const isIos = Platform.OS === 'ios'
 
 const BaseHeader = ({
@@ -67,7 +65,7 @@ const BaseHeader = ({
   const [headerHeight, setHeaderHeight] = useState(80)
 
   const gradientHeight = headerHeight + 30
-  const defaultScrollRange = [0 + scrollEffectOffset, scrollEndThreshold + scrollEffectOffset]
+  const defaultScrollRange = [0 + scrollEffectOffset, 80 + scrollEffectOffset]
   const paddingTop = isIos ? insets.top : insets.top + 7
 
   const HeaderRight = (headerRight && headerRight({})) || <HeaderSidePlaceholder />
@@ -84,7 +82,7 @@ const BaseHeader = ({
       ? {
           opacity: interpolate(
             scrollY?.value || 0,
-            [40 + scrollEffectOffset, 60 + scrollEffectOffset],
+            [30 + scrollEffectOffset, 50 + scrollEffectOffset],
             [0, 1],
             Extrapolation.CLAMP
           )

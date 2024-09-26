@@ -103,19 +103,21 @@ const BuyModal = withModal(({ id }) => {
           {!isDisclaimerAccepted ? (
             <DisclaimerContent>
               <ScreenTitle title={t('Disclaimer')} />
-              <AppText style={{ flex: 1 }}>
-                <Trans
-                  t={t}
-                  i18nKey="banxaDisclaimer"
-                  components={{
-                    1: <LinkToWeb url="https://www.banxa.com" />
-                  }}
-                >
-                  {
-                    'You are about to access 3rd party services provided by <1>Banxa.com</1> through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding.'
-                  }
-                </Trans>
-              </AppText>
+              <TextContainer>
+                <AppText>
+                  <Trans
+                    t={t}
+                    i18nKey="banxaDisclaimer"
+                    components={{
+                      1: <LinkToWeb url="https://www.banxa.com" />
+                    }}
+                  >
+                    {
+                      'You are about to access 3rd party services provided by <1>Banxa.com</1> through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding.'
+                    }
+                  </Trans>
+                </AppText>
+              </TextContainer>
               <Button
                 title={t("Alright, let's get to it.")}
                 onPress={() => setIsDisclaimerAccepted(true)}
@@ -157,4 +159,8 @@ const DisclaimerContent = styled.View`
   z-index: 1;
   background-color: ${({ theme }) => theme.bg.primary};
   padding: ${DEFAULT_MARGIN}px;
+`
+
+const TextContainer = styled.View`
+  flex: 1;
 `
