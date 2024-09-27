@@ -26,6 +26,7 @@ import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModalWrapper from '~/features/modals/withModalWrapper'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
@@ -54,6 +55,8 @@ const SwitchNetworkModal = withModalWrapper<SwitchNetworkModalProps>(({ id, onCu
 
       if (showCustomNetworkForm) setShowCustomNetworkForm(false)
     }
+
+    dispatch(closeModal({ id }))
   }
 
   const networkNames = Object.values(NetworkNames)
