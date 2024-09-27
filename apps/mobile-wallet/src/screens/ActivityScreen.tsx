@@ -17,14 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { FlashList } from '@shopify/flash-list'
 import { useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FlatList } from 'react-native'
 
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
-import TransactionsFlatList from '~/components/layout/TransactionsFlatList'
+import TransactionsFlashList from '~/components/layout/TransactionsFlashList'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
@@ -37,7 +37,7 @@ import { AddressTransaction } from '~/types/transactions'
 type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'ActivityScreen'>
 
 const ActivityScreen = ({ navigation }: ScreenProps) => {
-  const listRef = useRef<FlatList<AddressTransaction>>(null)
+  const listRef = useRef<FlashList<AddressTransaction>>(null)
   const { t } = useTranslation()
 
   const selectAddressesConfirmedTransactions = useMemo(makeSelectAddressesConfirmedTransactions, [])
@@ -52,13 +52,12 @@ const ActivityScreen = ({ navigation }: ScreenProps) => {
   return (
     <Screen>
       <BaseHeader options={{ headerTitle: t('Activity') }} scrollY={screenScrollY} />
-      <TransactionsFlatList
+      <TransactionsFlashList
+        ref={listRef}
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
-        initialNumToRender={8}
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
-        ref={listRef}
         ListHeaderComponent={<ScreenTitle title={t('Activity')} scrollY={screenScrollY} sideDefaultMargin />}
       />
     </Screen>

@@ -29,7 +29,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import StackHeader from '~/components/headers/StackHeader'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
-import TransactionsFlatList from '~/components/layout/TransactionsFlatList'
+import TransactionsFlashList from '~/components/layout/TransactionsFlashList'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -102,11 +102,9 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
         goBack={navigation.canGoBack() ? navigation.goBack : undefined}
         scrollY={screenScrollY}
       />
-      <TransactionsFlatList
+      <TransactionsFlashList
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
-        initialNumToRender={8}
-        contentContainerStyle={{ flexGrow: 1 }}
         onScroll={screenScrollHandler}
         ref={listRef}
         ListHeaderComponent={
