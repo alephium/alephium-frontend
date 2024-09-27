@@ -186,7 +186,13 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      <ScrollScreenStyled verticalGap screenTitle={t('Settings')} headerOptions={{ type: 'stack' }} {...props}>
+      <ScrollScreenStyled
+        verticalGap
+        screenTitle={t('Settings')}
+        headerOptions={{ type: 'stack' }}
+        contentPaddingTop
+        {...props}
+      >
         <ScreenSection>
           <ScreenSectionTitle>{t('General')}</ScreenSectionTitle>
           <BoxSurface>

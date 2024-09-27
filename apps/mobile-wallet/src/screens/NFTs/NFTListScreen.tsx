@@ -45,7 +45,7 @@ const NFTListScreen = ({ navigation }: NFTListScreenProps) => {
         ref={listRef}
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
-        ListHeaderComponent={<ScreenTitle title={t('NFTs')} scrollY={screenScrollY} sideDefaultMargin />}
+        ListHeaderComponent={<ScreenTitle title={t('NFTs')} scrollY={screenScrollY} sideDefaultMargin paddingTop />}
       />
     </Screen>
   )

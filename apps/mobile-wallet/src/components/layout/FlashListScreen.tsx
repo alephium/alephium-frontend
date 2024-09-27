@@ -68,7 +68,7 @@ const FlashListScreen = <T,>({
         }
         contentContainerStyle={{
           paddingBottom: insets.bottom,
-          paddingTop: typeof contentPaddingTop === 'boolean' ? 15 : contentPaddingTop,
+          paddingTop: typeof contentPaddingTop === 'boolean' ? 120 : contentPaddingTop,
           ...contentContainerStyle
         }}
         {...props}

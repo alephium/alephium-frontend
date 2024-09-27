@@ -86,7 +86,12 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
 
   return (
     <>
-      <BottomBarScrollScreen refreshControl={<RefreshSpinner progressViewOffset={190} />} hasBottomBar {...props}>
+      <BottomBarScrollScreen
+        refreshControl={<RefreshSpinner progressViewOffset={190} />}
+        hasBottomBar
+        contentPaddingTop
+        {...props}
+      >
         <Content style={contentStyle}>
           <Carousel
             data={addressHashes}

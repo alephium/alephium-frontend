@@ -44,7 +44,7 @@ interface ScreenProps
 
 const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, assetAmounts, buildTransaction, setToAddress } = useSendContext()
-  const { setHeaderOptions, screenScrollY } = useHeaderContext()
+  const { setHeaderOptions, screenScrollY, screenScrollHandler } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
@@ -107,6 +107,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         screenTitle={t('Assets')}
         screenIntro={t('With Alephium, you can send multiple assets in one transaction.')}
         estimatedItemSize={64}
+        onScroll={screenScrollHandler}
         {...props}
       />
       <SpinnerModal isActive={isLoading} />

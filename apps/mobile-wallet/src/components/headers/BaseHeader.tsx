@@ -144,6 +144,7 @@ export default BaseHeader
 const BaseHeaderStyled = styled(Animated.View)`
   width: 100%;
   z-index: 1;
+  position: absolute;
 `
 
 const HeaderGradientCanvas = styled(Canvas)<{ height: number }>`
