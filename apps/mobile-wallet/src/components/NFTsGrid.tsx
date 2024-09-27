@@ -40,7 +40,7 @@ interface NFTsGridProps extends Omit<Partial<FlashListProps<NFT>>, 'contentConta
 const gap = DEFAULT_MARGIN / 2
 const containerHorizontalPadding = DEFAULT_MARGIN - gap
 
-const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, ...props }: NFTsGridProps) => {
+const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, scrollEnabled, ...props }: NFTsGridProps) => {
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
@@ -66,6 +66,7 @@ const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, ...pro
       contentContainerStyle={{ paddingHorizontal: containerHorizontalPadding, paddingBottom: 100 }}
       numColumns={columns}
       estimatedItemSize={64}
+      scrollEnabled={scrollEnabled}
       ListEmptyComponent={
         <NoNFTsMessage>
           {isLoadingNfts ? (
