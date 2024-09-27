@@ -90,7 +90,7 @@ const ModalsContainer = ({ children }: ModalsContainerProps) => {
     Children.forEach(children, (child) => {
       if (isValidElement(child) && !isModalWrapped(child)) {
         console.warn(
-          `Warning: ${getElementName(child)} is not wrapped! Please wrap it with the withModalWrapper function.`
+          `Warning: ${getElementName(child)} is not wrapped! Please wrap it with the withModal function.`
         )
       }
     })

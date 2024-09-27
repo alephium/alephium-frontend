@@ -25,7 +25,7 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
 
 interface BiometricsWarningModalProps {
@@ -33,7 +33,7 @@ interface BiometricsWarningModalProps {
   confirmText?: string
 }
 
-const BiometricsWarningModal = withModalWrapper<BiometricsWarningModalProps>(({ id, onConfirm, confirmText }) => {
+const BiometricsWarningModal = withModal<BiometricsWarningModalProps>(({ id, onConfirm, confirmText }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 

@@ -24,10 +24,10 @@ import { languageChanged } from '~/features/localization/localizationActions'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const LanguageSelectModal = withModalWrapper(({ id }) => {
+const LanguageSelectModal = withModal(({ id }) => {
   const dispatch = useAppDispatch()
   const currentLanguage = useAppSelector((s) => s.settings.language)
 

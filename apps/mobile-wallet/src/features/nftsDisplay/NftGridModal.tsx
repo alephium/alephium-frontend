@@ -20,13 +20,13 @@ import { NFT } from '@alephium/shared'
 
 import NFTsGrid from '~/components/NFTsGrid'
 import BottomModal from '~/features/modals/BottomModal'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 
 interface NftGridModalProps {
   nftsData: NFT[]
 }
 
-const NftGridModal = withModalWrapper<NftGridModalProps>(({ id, nftsData }) => (
+const NftGridModal = withModal<NftGridModalProps>(({ id, nftsData }) => (
   <BottomModal id={id} Content={(props) => <NFTsGrid {...props} nfts={nftsData} />} />
 ))
 

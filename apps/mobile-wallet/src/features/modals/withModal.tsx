@@ -20,7 +20,7 @@ import { ComponentType, memo } from 'react'
 
 import { ModalBaseProp } from './modalTypes'
 
-const withModalWrapper = <P extends object>(Component: ComponentType<ModalBaseProp & P>) => {
+const withModal = <P extends object>(Component: ComponentType<ModalBaseProp & P>) => {
   const WrappedComponent = (props: ModalBaseProp & P) => {
     if (!props.id) {
       throw new Error("The 'id' prop is required for all modals")
@@ -31,4 +31,4 @@ const withModalWrapper = <P extends object>(Component: ComponentType<ModalBasePr
   return memo(WrappedComponent)
 }
 
-export default withModalWrapper
+export default withModal

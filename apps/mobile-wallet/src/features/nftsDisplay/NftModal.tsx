@@ -28,7 +28,7 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
 import BottomModal from '~/features/modals/BottomModal'
 import { ModalContent } from '~/features/modals/ModalContent'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 import { useAppSelector } from '~/hooks/redux'
 import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN } from '~/style/globalStyle'
 
@@ -39,7 +39,7 @@ const windowWidth = Dimensions.get('window').width
 const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
 const attributeWidth = (nftFullSize - attributeGap) / 2
 
-const NftModal = withModalWrapper<NftModalProps>(({ id, nftId }) => {
+const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
   const { t } = useTranslation()
 

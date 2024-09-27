@@ -23,11 +23,11 @@ import { autoLockSecondsOptions } from '~/features/auto-lock/utils'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 import { autoLockSecondsChanged } from '~/features/settings/settingsSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const AutoLockOptionsModal = withModalWrapper(({ id }) => {
+const AutoLockOptionsModal = withModal(({ id }) => {
   const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
   const dispatch = useAppDispatch()
 

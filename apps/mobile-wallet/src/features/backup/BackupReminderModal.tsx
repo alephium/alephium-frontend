@@ -24,7 +24,7 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
@@ -32,7 +32,7 @@ export interface BackupReminderModalProps {
   isNewWallet: boolean
 }
 
-const BackupReminderModal = withModalWrapper<BackupReminderModalProps>(({ id, isNewWallet }) => {
+const BackupReminderModal = withModal<BackupReminderModalProps>(({ id, isNewWallet }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()

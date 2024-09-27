@@ -28,7 +28,7 @@ import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
@@ -36,7 +36,7 @@ export interface SwitchNetworkModalProps {
   onCustomNetworkPress: () => void
 }
 
-const SwitchNetworkModal = withModalWrapper<SwitchNetworkModalProps>(({ id, onCustomNetworkPress }) => {
+const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNetworkPress }) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()

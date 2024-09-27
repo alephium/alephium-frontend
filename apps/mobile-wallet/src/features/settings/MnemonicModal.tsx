@@ -25,7 +25,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 import OrderedTable from '~/features/settings/OrderedTable'
 import { useAppDispatch } from '~/hooks/redux'
 import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/wallet'
@@ -34,7 +34,7 @@ interface MnemonicModalProps {
   onVerifyPress?: () => void
 }
 
-const MnemonicModal = withModalWrapper<MnemonicModalProps>(({ id, onVerifyPress }) => {
+const MnemonicModal = withModal<MnemonicModalProps>(({ id, onVerifyPress }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 

@@ -29,7 +29,7 @@ import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal from '~/features/modals/BottomModal'
 import { ModalContent } from '~/features/modals/ModalContent'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
 import { walletDeleted } from '~/store/wallet/walletActions'
@@ -39,7 +39,7 @@ interface WalletDeleteModalProps {
   onDelete: () => void
 }
 
-const WalletDeleteModal = withModalWrapper<WalletDeleteModalProps>(({ id, onDelete }) => {
+const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) => {
   const dispatch = useAppDispatch()
   const walletName = useAppSelector((s) => s.wallet.name)
   const { resetWalletConnectStorage } = useWalletConnectContext()

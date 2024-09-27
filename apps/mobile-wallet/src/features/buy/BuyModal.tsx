@@ -31,13 +31,13 @@ import LinkToWeb from '~/components/text/LinkToWeb'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { selectDefaultAddress } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-const BuyModal = withModalWrapper(({ id }) => {
+const BuyModal = withModal(({ id }) => {
   const { t } = useTranslation()
   const navigation = useNavigation<NavigationProp<InWalletTabsParamList>>()
   const theme = useTheme()

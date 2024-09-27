@@ -18,11 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { isValidElement, ReactElement } from 'react'
 
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 
 // TODO: Move those functions to shared react package
 
-const wrappedModalExample = withModalWrapper(() => null)
+const wrappedModalExample = withModal(() => null)
 
 export const isModalWrapped = <P,>(element: ReactElement<P>): boolean => {
   if (!isValidElement(element)) return false

@@ -24,7 +24,7 @@ import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 const currencyOptions = Object.values(CURRENCIES).map((currency) => ({
@@ -32,7 +32,7 @@ const currencyOptions = Object.values(CURRENCIES).map((currency) => ({
   value: currency.ticker
 }))
 
-const CurrencySelectModal = withModalWrapper(({ id }) => {
+const CurrencySelectModal = withModal(({ id }) => {
   const dispatch = useAppDispatch()
   const currentCurrency = useAppSelector((s) => s.settings.currency)
 

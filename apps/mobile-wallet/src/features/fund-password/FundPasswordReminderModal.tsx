@@ -29,11 +29,11 @@ import { fundPasswordReminded } from '~/features/fund-password/fundPasswordActio
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
-const FundPasswordReminderModal = withModalWrapper(({ id }) => {
+const FundPasswordReminderModal = withModal(({ id }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()

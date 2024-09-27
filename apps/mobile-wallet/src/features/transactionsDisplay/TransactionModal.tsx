@@ -35,7 +35,7 @@ import Row from '~/components/Row'
 import BottomModal from '~/features/modals/BottomModal'
 import { openModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import withModalWrapper from '~/features/modals/withModalWrapper'
+import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { AddressConfirmedTransaction } from '~/types/transactions'
 import { getTransactionInfo } from '~/utils/transactions'
@@ -44,7 +44,7 @@ interface TransactionModalProps {
   tx: AddressConfirmedTransaction
 }
 
-const TransactionModal = withModalWrapper<TransactionModalProps>(({ id, tx }) => {
+const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
   const allNFTs = useAppSelector((s) => s.nfts.entities)
   const { t } = useTranslation()
