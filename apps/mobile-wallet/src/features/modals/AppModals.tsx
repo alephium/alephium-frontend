@@ -37,7 +37,12 @@ import { useAppSelector } from '~/hooks/redux'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 const AppModals = () => {
+  const isUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const openedModals = useAppSelector(selectAllModals)
+
+  if (!isUnlocked) {
+    return null
+  }
 
   return (
     <ModalsContainer>
@@ -89,9 +94,7 @@ const ModalsContainer = ({ children }: ModalsContainerProps) => {
   useEffect(() => {
     Children.forEach(children, (child) => {
       if (isValidElement(child) && !isModalWrapped(child)) {
-        console.warn(
-          `Warning: ${getElementName(child)} is not wrapped! Please wrap it with the withModal function.`
-        )
+        console.warn(`Warning: ${getElementName(child)} is not wrapped! Please wrap it with the withModal function.`)
       }
     })
   }, [children])
