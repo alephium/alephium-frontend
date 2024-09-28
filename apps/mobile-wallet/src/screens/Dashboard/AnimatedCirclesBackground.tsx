@@ -44,8 +44,6 @@ interface AnimatedCirclesBackgroundProps {
 
 const AnimatedCanvas = Animated.createAnimatedComponent(Canvas)
 
-// TODO: FIX JUMPING ISSUES LINKED TO THIS COMPONENT
-
 const AnimatedCirclesBackground = ({
   height = 400,
   scrollY,

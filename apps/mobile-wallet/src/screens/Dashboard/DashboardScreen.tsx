@@ -122,7 +122,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       hasBottomBar
       verticalGap
       onScroll={screenScrollHandler}
-      floatingHeader
       contentPaddingTop={20}
       headerScrollEffectOffset={70}
       headerOptions={{
@@ -132,7 +131,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     >
       <AnimatedCirclesBackground height={400} scrollY={screenScrollY} />
       <CardContainer style={{ marginTop: insets.top }}>
-        <BlurredCard>
+        <AmountBlurredCard>
           <WalletCardHeader>
             <HeaderButtons />
           </WalletCardHeader>
@@ -151,7 +150,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               <Button onPress={openBuyModal} iconProps={{ name: 'credit-card' }} variant="contrast" round flex short />
             </ButtonsRowContainer>
           )}
-        </BlurredCard>
+        </AmountBlurredCard>
       </CardContainer>
       <AddressesTokensList />
       {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
@@ -186,4 +185,8 @@ const ButtonsRowContainer = styled(Animated.View)`
   align-items: center;
   justify-content: center;
   gap: 10px;
+`
+
+const AmountBlurredCard = styled(BlurredCard)`
+  height: 240px;
 `

@@ -48,7 +48,6 @@ const BlurredCard = ({ children, style }: BlurredCardProps) => {
 export default BlurredCard
 
 const BlurredCardContainer = styled.View`
-  flex: 1;
   border-radius: 38px;
   overflow: hidden;
 `
