@@ -162,5 +162,5 @@ const DisclaimerContent = styled.View`
 `
 
 const TextContainer = styled.View`
-  flex: 1;
+  height: 80%;
 `
