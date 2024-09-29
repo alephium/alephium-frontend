@@ -35,11 +35,14 @@ import Animated, {
 } from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
+
 interface AnimatedCirclesBackgroundProps {
   height?: number
   scrollY?: SharedValue<number>
   isAnimated?: boolean
   isFullScreen?: boolean
+  showAlephiumLogo?: boolean
 }
 
 const AnimatedCanvas = Animated.createAnimatedComponent(Canvas)
@@ -47,8 +50,9 @@ const AnimatedCanvas = Animated.createAnimatedComponent(Canvas)
 const AnimatedCirclesBackground = ({
   height = 400,
   scrollY,
-  isAnimated = false,
-  isFullScreen = false
+  isAnimated,
+  isFullScreen,
+  showAlephiumLogo
 }: AnimatedCirclesBackgroundProps) => {
   const gyroscope = useAnimatedSensor(SensorType.ROTATION)
   const { width: screenWidth, height: screenHeight } = useWindowDimensions()
@@ -131,7 +135,7 @@ const AnimatedCirclesBackground = ({
             danceYAmplitude * Math.sin(angle.value + (2 * Math.PI) / 3 + randomOffset2) +
             gyroscope.sensor.value.pitch * 20
         )
-      : withSpring(canvasCenterY.value - 60 + gyroscope.sensor.value.pitch * 20, { mass: 20, damping: 20 })
+      : withSpring(canvasCenterY.value - 80 + gyroscope.sensor.value.pitch * 20, { mass: 20, damping: 20 })
   )
 
   const circle3X = useDerivedValue(() =>
@@ -163,6 +167,11 @@ const AnimatedCirclesBackground = ({
           <Circle r={90} color="#FB21FF" cx={circle3X} cy={circle3Y} />
         </Group>
       </AnimatedCanvas>
+      {showAlephiumLogo && (
+        <AlephiumLogoContainer>
+          <AlephiumLogo color="white" style={{ width: '15%' }} />
+        </AlephiumLogoContainer>
+      )}
     </AnimatedContainer>
   )
 }
@@ -174,4 +183,13 @@ const AnimatedContainer = styled(Animated.View)`
   top: 0;
   right: 0;
   left: 0;
+`
+const AlephiumLogoContainer = styled.View`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
 `

@@ -22,13 +22,12 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StatusBar } from 'react-native'
 import Animated from 'react-native-reanimated'
-import styled, { ThemeProvider, useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import BlurredCard from '~/components/BlurredCard'
 import Button from '~/components/buttons/Button'
-import { ScreenProps } from '~/components/layout/Screen'
+import Screen, { ScreenProps } from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
-import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -36,7 +35,6 @@ import { storedWalletExists } from '~/persistent-storage/wallet'
 import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
-import { themes } from '~/style/themes'
 import { resetNavigation } from '~/utils/navigation'
 
 interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
@@ -93,37 +91,35 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   }
 
   return (
-    <ThemeProvider theme={themes.dark}>
-      <ScrollScreen verticalGap fill headerOptions={{ type: 'stack' }} {...props}>
-        {isScreenContentVisible && (
-          <>
-            <AnimatedCirclesBackground isAnimated isFullScreen />
-            <CardContainer>
-              <WelcomeCard>
-                <AlephiumLogo color="white" style={{ width: '20%' }} />
-                <ScreenTitle title={t('Welcome to Alephium!')} />
-              </WelcomeCard>
-            </CardContainer>
-            <BottomArea>
-              <ButtonsContainer>
-                <Button
-                  title={t('New wallet')}
-                  type="primary"
-                  onPress={() => handleButtonPress('create')}
-                  variant="highlight"
-                  iconProps={{ name: 'sun' }}
-                />
-                <Button
-                  title={t('Import wallet')}
-                  onPress={() => handleButtonPress('import')}
-                  iconProps={{ name: 'download' }}
-                />
-              </ButtonsContainer>
-            </BottomArea>
-          </>
-        )}
-      </ScrollScreen>
-    </ThemeProvider>
+    <Screen {...props}>
+      {isScreenContentVisible && (
+        <>
+          <AnimatedCirclesBackground isAnimated isFullScreen />
+          <CardContainer>
+            <WelcomeCard>
+              <AlephiumLogo color="white" style={{ width: '20%' }} />
+              <ScreenTitle title={t('Welcome to Alephium!')} />
+            </WelcomeCard>
+          </CardContainer>
+          <BottomArea>
+            <ButtonsContainer>
+              <Button
+                title={t('New wallet')}
+                type="primary"
+                onPress={() => handleButtonPress('create')}
+                variant="highlight"
+                iconProps={{ name: 'sun' }}
+              />
+              <Button
+                title={t('Import wallet')}
+                onPress={() => handleButtonPress('import')}
+                iconProps={{ name: 'download' }}
+              />
+            </ButtonsContainer>
+          </BottomArea>
+        </>
+      )}
+    </Screen>
   )
 }
 

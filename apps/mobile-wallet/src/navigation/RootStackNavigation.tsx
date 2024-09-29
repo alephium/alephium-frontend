@@ -20,10 +20,10 @@ import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, View } from 'react-native'
+import { Modal } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
-import { useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { Analytics, sendAnalytics } from '~/analytics'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
@@ -252,10 +252,15 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
   useAutoLock(unlockApp)
 
   return (
-    <Modal visible={!!lastUsedWalletId && biometricsRequiredForAppAccess && !isWalletUnlocked} animationType="none">
-      <View style={{ backgroundColor: 'black', flex: 1 }}>
-        <AnimatedCirclesBackground isAnimated />
-      </View>
+    <Modal visible={!!lastUsedWalletId && biometricsRequiredForAppAccess && !isWalletUnlocked} animationType="fade">
+      <AppUnlockModalContainer>
+        <AnimatedCirclesBackground isAnimated isFullScreen showAlephiumLogo />
+      </AppUnlockModalContainer>
     </Modal>
   )
 }
+
+const AppUnlockModalContainer = styled.View`
+  flex: 1;
+  background-color: ${({ theme }) => theme.bg.back2};
+`
