@@ -24,9 +24,8 @@ import Box from '@/components/Box'
 import { ShortcutButtonsGroupAddress } from '@/components/Buttons/ShortcutButtons'
 import QRCode from '@/components/QRCode'
 import { AddressTokensTabs } from '@/features/assetsLists/TokensTabs'
-import AddressTransactionsCSVExportButton from '@/features/csvExport/AddressTransactionsCSVExportButton'
 import { AddressModalProps } from '@/features/modals/modalTypes'
-import TransactionList from '@/features/transactionsDisplay/TransactionList'
+import AddressTransactionList from '@/features/transactionsDisplay/AddressTransactionList'
 import AddressDetailsModalHeader from '@/modals/AddressDetailsModal/AddressDetailsModalHeader'
 import SideModal from '@/modals/SideModal'
 import AmountsOverviewPanel from '@/pages/UnlockedWallet/OverviewPage/AmountsOverviewPanel'
@@ -55,13 +54,7 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
           </ButtonsGrid>
         </Shortcuts>
         <AddressTokensTabs addressHash={addressHash} />
-        <TransactionList
-          title={t('Address transactions')}
-          addressHashes={[addressHash]}
-          compact
-          isInAddressDetailsModal
-          headerExtraContent={<AddressTransactionsCSVExportButton addressHash={addressHash} />}
-        />
+        <AddressTransactionList addressHash={addressHash} />
       </Content>
     </SideModal>
   )
