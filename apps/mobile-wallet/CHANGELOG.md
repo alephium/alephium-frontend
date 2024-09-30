@@ -1,5 +1,12 @@
 # @alephium/mobile-wallet
 
+## 1.1.7
+
+### Patch Changes
+
+- 2844f25: Show biometrics auth error to user
+- ec6b2c0: Fix WalletConnect button inactivity
+
 ## 1.1.6
 
 ### Patch Changes
