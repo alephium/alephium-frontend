@@ -79,7 +79,7 @@ const BottomModal = ({
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
-  const modalEntity = useAppSelector((s) => selectModalById(s, id))
+  const isModalClosing = useAppSelector((s) => selectModalById(s, id)?.isClosing)
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -224,10 +224,10 @@ const BottomModal = ({
 
   // Trigger handle close when modal entity is closed from outside
   useEffect(() => {
-    if (position.value !== 'closing' && modalEntity?.isClosing) {
+    if (position.value !== 'closing' && isModalClosing) {
       handleClose()
     }
-  }, [handleClose, modalEntity?.isClosing, position.value])
+  }, [handleClose, isModalClosing, position.value])
 
   return (
     <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
