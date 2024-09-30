@@ -67,14 +67,15 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsFundPasswordReminder = useAppSelector((s) => s.fundPassword.needsReminder)
+  const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
 
   const { data: isNewWallet } = useAsyncData(getIsNewWallet)
 
   useEffect(() => {
-    if (!isMnemonicBackedUp && isNewWallet !== undefined) {
+    if (needsBackupReminder && !isMnemonicBackedUp && isNewWallet !== undefined) {
       dispatch(openModal({ name: 'BackupReminderModal', props: { isNewWallet } }))
     }
-  }, [dispatch, isMnemonicBackedUp, isNewWallet])
+  }, [dispatch, isMnemonicBackedUp, isNewWallet, needsBackupReminder])
 
   useEffect(() => {
     if (isMnemonicBackedUp && needsFundPasswordReminder) {
