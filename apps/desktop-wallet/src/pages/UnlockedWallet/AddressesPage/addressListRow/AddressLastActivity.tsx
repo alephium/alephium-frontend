@@ -21,7 +21,7 @@ import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchAddressLastTransactionHash from '@/api/apiDataHooks/address/useFetchAddressLastTransactionHash'
+import useFetchAddressLastTransaction from '@/api/apiDataHooks/address/useFetchAddressLastTransaction'
 import { useAppSelector } from '@/hooks/redux'
 import { selectConfirmedTransactionByHash } from '@/storage/transactions/transactionsSelectors'
 
@@ -31,11 +31,11 @@ interface AddressListRowLastUsedProps {
 
 const AddressLastActivity = ({ addressHash }: AddressListRowLastUsedProps) => {
   const { t } = useTranslation()
-  const { data } = useFetchAddressLastTransactionHash(addressHash)
+  const { data } = useFetchAddressLastTransaction(addressHash)
 
   return (
     <AddressListRowLastUsedStyled>
-      {data?.latestTxHash ? <LastTransactionTimestamp txHash={data.latestTxHash} /> : t('Never used')}
+      {data?.latestTx ? <LastTransactionTimestamp txHash={data.latestTx.hash} /> : t('Never used')}
     </AddressListRowLastUsedStyled>
   )
 }

@@ -18,60 +18,56 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
+import { uniqBy } from 'lodash'
+import { ChevronRight } from 'lucide-react'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
-import useFetchAddressLastTransaction from '@/api/apiDataHooks/address/useFetchAddressLastTransaction'
-import { addressTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
+import useFetchWalletLastTransaction from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHash'
+import { walletLatestTransactionsQuery } from '@/api/queries/transactionQueries'
 import ActionLink from '@/components/ActionLink'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import Spinner from '@/components/Spinner'
-import Table, { TableCell, TableCellPlaceholder, TableHeader, TableRow } from '@/components/Table'
-import AddressTransactionsCSVExportButton from '@/features/csvExport/AddressTransactionsCSVExportButton'
+import Table, { TableCellPlaceholder, TableHeader, TableRow } from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import { makeSelectAddressesPendingTransactions } from '@/storage/transactions/transactionsSelectors'
 import { onEnterOrSpace } from '@/utils/misc'
 
-interface AddressTransactionListProps {
-  addressHash: AddressHash
-}
-
-const AddressTransactionList = ({ addressHash }: AddressTransactionListProps) => {
+const WalletLatestTransactionsList = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
-  const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
-  const pendingTxs = useAppSelector((s) => selectAddressesPendingTransactions(s, [addressHash])) // TODO
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
-  const { data } = useFetchAddressLastTransaction(addressHash)
-  const {
-    data: confirmedTxsPages,
-    fetchNextPage,
-    isLoading,
-    hasNextPage,
-    isFetchingNextPage
-  } = useInfiniteQuery(
-    addressTransactionsInfiniteQuery({
-      addressHash,
+  const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
+  const pendingTxs = useAppSelector((s) => selectAddressesPendingTransactions(s, allAddressHashes))
+
+  const { data } = useFetchWalletLastTransaction()
+  const { data: confirmedTxs, isLoading } = useQuery(
+    walletLatestTransactionsQuery({
+      allAddressHashes,
       latestTxHash: data?.latestTx?.hash,
       previousTxHash: data?.previousTx?.hash,
       networkId
     })
   )
 
-  const openTransactionDetailsModal = (txHash: Transaction['hash']) =>
+  const openTransactionDetailsModal = (txHash: Transaction['hash'], addressHash: AddressHash) =>
     dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash, addressHash } }))
-
-  const confirmedTxs = confirmedTxsPages?.pages.flat()
 
   return (
     <Table minWidth="500px">
-      <TableHeader title={t('Address transactions')}>
-        <AddressTransactionsCSVExportButton addressHash={addressHash} />
+      <TableHeader title={t('Latest transactions')}>
+        <ActionLinkStyled onClick={() => navigate('/wallet/transfers')} Icon={ChevronRight} withBackground>
+          {t('See more')}
+        </ActionLinkStyled>
       </TableHeader>
 
       {isLoading &&
@@ -82,34 +78,29 @@ const AddressTransactionList = ({ addressHash }: AddressTransactionListProps) =>
         ))}
 
       {pendingTxs.map((tx) => (
-        <TransactionRow key={tx.hash} tx={tx} addressHash={addressHash} isInAddressDetailsModal compact blinking />
+        <TransactionRow key={tx.hash} tx={tx} addressHash={tx.address.hash} compact blinking />
       ))}
 
-      {confirmedTxs?.map((tx) => (
-        <TransactionRow
-          key={tx.hash}
-          tx={tx}
-          addressHash={addressHash}
-          isInAddressDetailsModal
-          compact
-          onClick={() => openTransactionDetailsModal(tx.hash)}
-          onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash))}
-        />
-      ))}
+      {/* TODO: Remove uniqBy once backend removes duplicates from its results */}
+      {uniqBy(confirmedTxs, 'hash').map((tx) => {
+        const basedOnAddress = allAddressHashes.find(
+          (addressHash) =>
+            tx.inputs?.some((input) => input.address === addressHash) ||
+            tx.outputs?.some((output) => output.address === addressHash)
+        )
 
-      {!isLoading && confirmedTxs && confirmedTxs?.length > 0 && (
-        <TableRow role="row">
-          <TableCell align="center" role="gridcell">
-            {!hasNextPage ? (
-              <span>{t('All transactions loaded!')}</span>
-            ) : isFetchingNextPage ? (
-              <Spinner size="15px" />
-            ) : (
-              <ActionLink onClick={fetchNextPage}>{t('Show more')}</ActionLink>
-            )}
-          </TableCell>
-        </TableRow>
-      )}
+        if (!basedOnAddress) return null
+
+        return (
+          <TransactionRow
+            key={tx.hash}
+            tx={tx}
+            addressHash={basedOnAddress}
+            onClick={() => openTransactionDetailsModal(tx.hash, basedOnAddress)}
+            onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash, basedOnAddress))}
+          />
+        )
+      })}
 
       {!isLoading && pendingTxs.length === 0 && (!confirmedTxs || confirmedTxs.length === 0) && (
         <TableRow role="row" tabIndex={0}>
@@ -120,4 +111,8 @@ const AddressTransactionList = ({ addressHash }: AddressTransactionListProps) =>
   )
 }
 
-export default AddressTransactionList
+export default WalletLatestTransactionsList
+
+const ActionLinkStyled = styled(ActionLink)`
+  margin-left: 20px;
+`

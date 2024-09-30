@@ -23,7 +23,7 @@ import { useQuery } from '@tanstack/react-query'
 import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddressBalancesAlph'
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
-import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
+import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { TokenId } from '@/types/tokens'
 
@@ -41,8 +41,8 @@ const useFetchAddressSingleTokenBalances = ({
 
   const isALPH = tokenId === ALPH.id
 
-  const { data: txHashes, isLoading: isLoadingTxHashes } = useQuery(
-    addressLatestTransactionHashQuery({ addressHash, networkId, skip })
+  const { data: txs, isLoading: isLoadingTxHashes } = useQuery(
+    addressLatestTransactionQuery({ addressHash, networkId, skip })
   )
 
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
@@ -55,8 +55,8 @@ const useFetchAddressSingleTokenBalances = ({
       addressHash,
       networkId,
       tokenId,
-      latestTxHash: txHashes?.latestTxHash,
-      previousTxHash: txHashes?.latestTxHash,
+      latestTxHash: txs?.latestTx?.hash,
+      previousTxHash: txs?.previousTx?.hash,
       skip: isLoadingTxHashes || isALPH || skip
     })
   )
