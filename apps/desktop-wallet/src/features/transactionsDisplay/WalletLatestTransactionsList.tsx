@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, findTransactionReferenceAddress } from '@alephium/shared'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import { uniqBy } from 'lodash'
@@ -83,21 +83,17 @@ const WalletLatestTransactionsList = () => {
 
       {/* TODO: Remove uniqBy once backend removes duplicates from its results */}
       {uniqBy(confirmedTxs, 'hash').map((tx) => {
-        const basedOnAddress = allAddressHashes.find(
-          (addressHash) =>
-            tx.inputs?.some((input) => input.address === addressHash) ||
-            tx.outputs?.some((output) => output.address === addressHash)
-        )
+        const txRefAddress = findTransactionReferenceAddress(allAddressHashes, tx)
 
-        if (!basedOnAddress) return null
+        if (!txRefAddress) return null
 
         return (
           <TransactionRow
             key={tx.hash}
             tx={tx}
-            addressHash={basedOnAddress}
-            onClick={() => openTransactionDetailsModal(tx.hash, basedOnAddress)}
-            onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash, basedOnAddress))}
+            addressHash={txRefAddress}
+            onClick={() => openTransactionDetailsModal(tx.hash, txRefAddress)}
+            onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash, txRefAddress))}
           />
         )
       })}

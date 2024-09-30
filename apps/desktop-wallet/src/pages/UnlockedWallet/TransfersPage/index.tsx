@@ -25,7 +25,7 @@ import styled from 'styled-components'
 
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import { useScrollContext } from '@/contexts/scroll'
-import TransactionList from '@/features/transactionsDisplay/TransactionList'
+import WalletTransactionList from '@/features/transactionsDisplay/WalletTransactionList'
 import { useAppSelector } from '@/hooks/redux'
 import FiltersPanel from '@/pages/UnlockedWallet/TransfersPage/FiltersPanel'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
@@ -70,11 +70,10 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
         setSelectedTokensIds={setSelectedTokensIds}
       />
       <StyledUnlockedWalletPanel doubleTop bottom backgroundColor="background1">
-        <TransactionList
+        <WalletTransactionList
           addressHashes={map(selectedAddresses, 'hash')}
           directions={map(selectedDirections, 'value')}
           assetIds={selectedTokensIds}
-          hideHeader
         />
       </StyledUnlockedWalletPanel>
       <BottomRow
