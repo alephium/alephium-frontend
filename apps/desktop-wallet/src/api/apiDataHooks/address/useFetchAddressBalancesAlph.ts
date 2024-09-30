@@ -21,7 +21,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { addressAlphBalancesQuery } from '@/api/queries/addressQueries'
-import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
+import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 
 interface UseAddressAlphBalancesProps extends SkipProp {
@@ -32,13 +32,13 @@ const useFetchAddressBalancesAlph = ({ addressHash, skip }: UseAddressAlphBalanc
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const queryProps = { addressHash, networkId }
 
-  const { data: txHashes, isLoading: isLoadingTxHashes } = useQuery(addressLatestTransactionHashQuery(queryProps))
+  const { data: txs, isLoading: isLoadingTxHashes } = useQuery(addressLatestTransactionQuery(queryProps))
 
   const { data, isLoading: isLoadingAlphBalances } = useQuery(
     addressAlphBalancesQuery({
       ...queryProps,
-      latestTxHash: txHashes?.latestTxHash,
-      previousTxHash: txHashes?.latestTxHash,
+      latestTxHash: txs?.latestTx?.hash,
+      previousTxHash: txs?.previousTx?.hash,
       skip: isLoadingTxHashes || skip
     })
   )

@@ -24,7 +24,7 @@ import Box from '@/components/Box'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import { TableHeader } from '@/components/Table'
 import { WalletTokensTabs } from '@/features/assetsLists/TokensTabs'
-import TransactionList from '@/features/transactionsDisplay/TransactionList'
+import WalletLatestTransactionsList from '@/features/transactionsDisplay/WalletLatestTransactionsList'
 import AddressesList from '@/pages/UnlockedWallet/OverviewPage/AddressesList'
 import AmountsOverviewPanel from '@/pages/UnlockedWallet/OverviewPage/AmountsOverviewPanel'
 import GreetingMessages from '@/pages/UnlockedWallet/OverviewPage/GreetingMessages'
@@ -65,7 +65,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
           <WalletTokensTabsStyled maxHeightInPx={maxPanelHeightInPx} />
           <AddressesListStyled maxHeightInPx={maxPanelHeightInPx} />
         </AssetAndAddressesRow>
-        <TransactionList title={t('Latest transactions')} limit={5} />
+        <WalletLatestTransactionsList />
       </UnlockedWalletPanel>
     </UnlockedWalletPage>
   )
