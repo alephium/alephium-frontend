@@ -31,7 +31,6 @@ import useAutoLock from '~/features/auto-lock/useAutoLock'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import AppModals from '~/features/modals/AppModals'
-import EditWalletNameScreen from '~/features/settings/EditWalletName'
 import { loadBiometricsSettings } from '~/features/settings/settingsPersistentStorage'
 import SettingsScreen from '~/features/settings/SettingsScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -126,7 +125,6 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                 <RootStack.Screen name="DecryptScannedMnemonicScreen" component={DecryptScannedMnemonicScreen} />
                 <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
                 <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
-                <RootStack.Screen name="EditWalletNameScreen" component={EditWalletNameScreen} />
                 <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
                 <RootStack.Screen name="PublicKeysScreen" component={PublicKeysScreen} />
                 <RootStack.Screen name="FundPasswordScreen" component={FundPasswordScreen} />

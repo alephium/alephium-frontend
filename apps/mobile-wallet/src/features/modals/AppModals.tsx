@@ -30,6 +30,7 @@ import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
 import NftGridModal from '~/features/nftsDisplay/NftGridModal'
 import NftModal from '~/features/nftsDisplay/NftModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
+import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
@@ -76,6 +77,8 @@ const AppModals = () => {
             return <CurrencySelectModal key={id} id={id} />
           case 'LanguageSelectModal':
             return <LanguageSelectModal key={id} id={id} />
+          case 'EditWalletNameModal':
+            return <EditWalletNameModal key={id} id={id} />
           default:
             return null
         }

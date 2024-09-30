@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 // HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
 
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dimensions, KeyboardAvoidingView, Pressable } from 'react-native'
+import { Dimensions, Keyboard, KeyboardAvoidingView, Pressable } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   interpolate,
@@ -39,11 +39,11 @@ import { removeModal } from '~/features/modals/modalActions'
 import { ModalContentProps } from '~/features/modals/ModalContent'
 import { selectModalById } from '~/features/modals/modalSelectors'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 type ModalPositions = 'minimised' | 'maximised' | 'closing'
 
-const NAV_HEIGHT = 40
+const NAV_HEIGHT = 46
 const DRAG_BUFFER = 40
 
 const springConfig: WithSpringConfig = {
@@ -110,11 +110,6 @@ const BottomModal = ({
     )
   }))
 
-  const modalNavigationAnimatedStyle = useAnimatedStyle(() => ({
-    height: navHeight.value,
-    overflow: 'hidden'
-  }))
-
   const handleAnimatedStyle = useAnimatedStyle(() => ({
     opacity: shouldMaximizeOnOpen.value
       ? 0
@@ -140,7 +135,7 @@ const BottomModal = ({
           ? customMinHeight
           : shouldMaximizeOnOpen.value
             ? maxHeight
-            : contentHeight.value + VERTICAL_GAP
+            : contentHeight.value + NAV_HEIGHT
 
         shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
       })()
@@ -156,6 +151,8 @@ const BottomModal = ({
   const handleClose = useCallback(() => {
     'worklet'
 
+    runOnJS(() => Keyboard.dismiss()) // Close keyboard if open to avoid visual artifacts
+
     navHeight.value = withSpring(0, springConfig)
     modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(handleCloseOnJS)())
     position.value = 'closing'
@@ -164,7 +161,7 @@ const BottomModal = ({
   const handleMaximize = useCallback(() => {
     'worklet'
 
-    navHeight.value = withSpring(NAV_HEIGHT + 6, springConfig)
+    navHeight.value = withSpring(NAV_HEIGHT, springConfig)
     modalHeight.value = withSpring(-maxHeight, springConfig)
     position.value = 'maximised'
   }, [maxHeight, modalHeight, navHeight, position])
@@ -242,9 +239,9 @@ const BottomModal = ({
               <HandleContainer>
                 <Handle style={handleAnimatedStyle} />
               </HandleContainer>
-              <Navigation style={modalNavigationAnimatedStyle}>
+              <Navigation>
                 <NavigationButtonContainer align="left" />
-                {title && <Title semiBold>{title}</Title>}
+                <Title semiBold>{title}</Title>
                 <NavigationButtonContainer align="right">
                   <CloseButton onPress={handleClose} compact />
                 </NavigationButtonContainer>

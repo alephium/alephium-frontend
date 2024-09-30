@@ -105,6 +105,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const openMnemonicModal = () => dispatch(openModal({ name: 'MnemonicModal' }))
 
+  const openEditWalletNameModal = () => dispatch(openModal({ name: 'EditWalletNameModal' }))
+
   const handleBiometricsAppAccessChange = (value: boolean) => {
     if (value || biometricsRequiredForTransactions) {
       toggleBiometricsAppAccess()
@@ -299,7 +301,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>{t('Wallet')}</ScreenSectionTitle>
           <BoxSurface>
-            <Row onPress={() => navigation.navigate('EditWalletNameScreen')} title={t('Wallet name')}>
+            <Row onPress={openEditWalletNameModal} title={t('Wallet name')}>
               <AppText bold>{walletName}</AppText>
             </Row>
             <Row onPress={() => navigation.navigate('AddressDiscoveryScreen')} title={t('Scan for active addresses')}>

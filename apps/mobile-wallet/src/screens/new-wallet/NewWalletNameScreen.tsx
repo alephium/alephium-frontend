@@ -96,6 +96,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
     <ScrollScreen
       usesKeyboard
       fill
+      contentPaddingTop
       headerOptions={{
         type: 'stack',
         headerRight: () => <ContinueButton onPress={handleButtonPress} disabled={name.length < 3} />

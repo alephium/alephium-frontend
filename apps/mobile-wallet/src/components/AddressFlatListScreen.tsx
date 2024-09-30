@@ -57,9 +57,6 @@ const AddressFlatListScreen = ({
         />
       )}
       shouldUseGaps
-      style={{
-        paddingTop: typeof contentPaddingTop === 'boolean' ? 120 : contentPaddingTop
-      }}
       {...props}
     />
   )

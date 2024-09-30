@@ -49,12 +49,13 @@ export const ModalContent = ({
 
   return (
     <GHScrollView
-      {...scrollDefaultProps}
-      {...props}
+      keyboardShouldPersistTaps="handled"
       contentContainerStyle={getDefaultContentContainerStyle({
         verticalGap,
         contentContainerStyle: [contentContainerStyle, { paddingBottom: insets.bottom }]
       })}
+      {...scrollDefaultProps}
+      {...props}
     >
       {children}
     </GHScrollView>
