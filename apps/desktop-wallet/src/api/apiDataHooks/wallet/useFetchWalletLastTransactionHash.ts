@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
@@ -23,9 +24,8 @@ import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { addressLatestTransactionQuery, AddressLatestTransactionQueryFnData } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
-import { isDefined } from '@/utils/misc'
 
-const useFetchWalletLastTransactionHashes = (props?: SkipProp) => {
+const useFetchWalletLastTransaction = (props?: SkipProp) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
@@ -33,7 +33,7 @@ const useFetchWalletLastTransactionHashes = (props?: SkipProp) => {
     queries: !props?.skip
       ? allAddressHashes.map((addressHash) => addressLatestTransactionQuery({ addressHash, networkId }))
       : [],
-    combine
+    combine: extractMostRecentTransaction
   })
 
   return {
@@ -42,15 +42,21 @@ const useFetchWalletLastTransactionHashes = (props?: SkipProp) => {
   }
 }
 
-export default useFetchWalletLastTransactionHashes
+export default useFetchWalletLastTransaction
 
-const combine = (results: UseQueryResult<AddressLatestTransactionQueryFnData>[]) => ({
-  data: results
-    .flatMap(({ data }) =>
-      data
-        ? { addressHash: data.addressHash, latestTxHash: data?.latestTx?.hash, previousTxHash: data?.previousTx?.hash }
-        : undefined
-    )
-    .filter(isDefined),
+const extractMostRecentTransaction = (results: UseQueryResult<AddressLatestTransactionQueryFnData>[]) => ({
+  data: results.reduce(
+    (acc, { data }) => {
+      acc.latestTx = (data?.latestTx?.timestamp ?? 0) > (acc.latestTx?.timestamp ?? 0) ? data?.latestTx : acc.latestTx
+      acc.previousTx =
+        (data?.previousTx?.timestamp ?? 0) > (acc.previousTx?.timestamp ?? 0) ? data?.previousTx : acc.previousTx
+
+      return acc
+    },
+    {
+      latestTx: undefined as Transaction | undefined,
+      previousTx: undefined as Transaction | undefined
+    }
+  ),
   ...combineIsLoading(results)
 })
