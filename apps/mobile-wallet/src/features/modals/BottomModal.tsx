@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 // HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
 
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dimensions, Pressable } from 'react-native'
+import { Dimensions, KeyboardAvoidingView, Pressable } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   interpolate,
@@ -233,28 +233,30 @@ const BottomModal = ({
   }, [handleClose, modalEntity?.isClosing, position.value])
 
   return (
-    <GestureDetector gesture={panGesture}>
-      <ExternalContainer>
-        <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
-        <Container>
-          <ModalStyled style={modalHeightAnimatedStyle}>
-            <HandleContainer>
-              <Handle style={handleAnimatedStyle} />
-            </HandleContainer>
-            <Navigation style={modalNavigationAnimatedStyle}>
-              <NavigationButtonContainer align="left" />
-              {title && <Title semiBold>{title}</Title>}
-              <NavigationButtonContainer align="right">
-                <CloseButton onPress={handleClose} compact />
-              </NavigationButtonContainer>
-            </Navigation>
-            <ContentContainer noPadding={noPadding}>
-              <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
-            </ContentContainer>
-          </ModalStyled>
-        </Container>
-      </ExternalContainer>
-    </GestureDetector>
+    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+      <GestureDetector gesture={panGesture}>
+        <ExternalContainer>
+          <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
+          <Container>
+            <ModalStyled style={modalHeightAnimatedStyle}>
+              <HandleContainer>
+                <Handle style={handleAnimatedStyle} />
+              </HandleContainer>
+              <Navigation style={modalNavigationAnimatedStyle}>
+                <NavigationButtonContainer align="left" />
+                {title && <Title semiBold>{title}</Title>}
+                <NavigationButtonContainer align="right">
+                  <CloseButton onPress={handleClose} compact />
+                </NavigationButtonContainer>
+              </Navigation>
+              <ContentContainer noPadding={noPadding}>
+                <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
+              </ContentContainer>
+            </ModalStyled>
+          </Container>
+        </ExternalContainer>
+      </GestureDetector>
+    </KeyboardAvoidingView>
   )
 }
 

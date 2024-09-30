@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Platform } from 'react-native'
 
 import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
@@ -69,7 +68,6 @@ const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) =
   return (
     <BottomModal
       id={id}
-      maximisedContent={Platform.OS === 'ios'}
       Content={(props) => (
         <>
           <ModalContent verticalGap {...props}>
