@@ -32,6 +32,7 @@ const modalSlice = createSlice({
       .addCase(openModal, (state, action) => {
         // Allow only one modal of the same type to be open at the same time
         if (Object.values(state.entities).find((m) => m?.params.name === action.payload.name)) {
+          console.error(`Modal ${action.payload.name} is already open!`)
           return
         }
 
