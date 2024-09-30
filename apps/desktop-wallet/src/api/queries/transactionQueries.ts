@@ -94,33 +94,32 @@ export const addressTransactionsInfiniteQuery = ({
 interface WalletTransactionsInfiniteQueryProps {
   networkId: number
   allAddressHashes: AddressHash[]
-  latestTxHash?: string
-  previousTxHash?: string
+  timestamp: number
+  skip?: boolean
 }
 
 export const walletTransactionsInfiniteQuery = ({
   allAddressHashes,
-  latestTxHash,
-  previousTxHash,
-  networkId
-}: WalletTransactionsInfiniteQueryProps) => {
-  const getQueryOptions = (latestTxHash: WalletTransactionsInfiniteQueryProps['latestTxHash']) =>
-    infiniteQueryOptions({
-      queryKey: ['wallet', 'transactions', { latestTxHash, networkId, allAddressHashes }],
-      queryFn: ({ pageParam }) =>
-        throttledClient.explorer.addresses.postAddressesTransactions({ page: pageParam }, allAddressHashes),
-      initialPageParam: 1,
-      getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null),
-      staleTime: Infinity
-    })
-
-  const previousQueryKey = getQueryOptions(previousTxHash).queryKey
-  const latestQueryOptions = getQueryOptions(latestTxHash)
-
-  return infiniteQueryOptions({
-    ...latestQueryOptions,
-    placeholderData: queryClient.getQueryData(previousQueryKey) as InfiniteData<Transaction[], number> // Casting needed because second argument appears to be `unknown`
+  timestamp,
+  networkId,
+  skip
+}: WalletTransactionsInfiniteQueryProps) =>
+  infiniteQueryOptions({
+    queryKey: ['wallet', 'transactions', { timestamp, networkId, allAddressHashes }],
+    queryFn: !skip
+      ? ({ pageParam }) =>
+          throttledClient.explorer.addresses.postAddressesTransactions({ page: pageParam }, allAddressHashes)
+      : skipToken,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null),
+    staleTime: Infinity
   })
+
+interface WalletLatestTransactionsQueryProps {
+  networkId: number
+  allAddressHashes: AddressHash[]
+  latestTxHash?: string
+  previousTxHash?: string
 }
 
 export const walletLatestTransactionsQuery = ({
@@ -128,8 +127,8 @@ export const walletLatestTransactionsQuery = ({
   latestTxHash,
   previousTxHash,
   networkId
-}: WalletTransactionsInfiniteQueryProps) => {
-  const getQueryOptions = (latestTxHash: WalletTransactionsInfiniteQueryProps['latestTxHash']) =>
+}: WalletLatestTransactionsQueryProps) => {
+  const getQueryOptions = (latestTxHash: WalletLatestTransactionsQueryProps['latestTxHash']) =>
     queryOptions({
       queryKey: ['wallet', 'transactions', 'latest', { latestTxHash, networkId, allAddressHashes }],
       queryFn: () =>

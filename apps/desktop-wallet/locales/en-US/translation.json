@@ -462,5 +462,6 @@
   "The wallet doesn't have any tokens. Tokens of all your addresses will appear here.": "The wallet doesn't have any tokens. Tokens of all your addresses will appear here.",
   "The wallet doesn't have any NFTs. NFTs of all your addresses will appear here.": "The wallet doesn't have any NFTs. NFTs of all your addresses will appear here.",
   "There is something wrong in the received WalletConnect data.": "There is something wrong in the received WalletConnect data.",
-  "To delete this address set another one as the default one first.": "To delete this address set another one as the default one first."
+  "To delete this address set another one as the default one first.": "To delete this address set another one as the default one first.",
+  "Click to display new transactions": "Click to display new transactions"
 }
