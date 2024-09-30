@@ -17,7 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, throttledClient, TRANSACTIONS_REFRESH_INTERVAL } from '@alephium/shared'
-import { queryOptions, skipToken } from '@tanstack/react-query'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { InfiniteData, infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
 import queryClient from '@/api/queryClient'
 
@@ -63,3 +64,32 @@ export const addressLatestTransactionHashQuery = ({
       : skipToken,
     refetchInterval: TRANSACTIONS_REFRESH_INTERVAL
   })
+
+interface AddressTransactionsInfiniteQueryProps extends AddressLatestTransactionHashQueryFnData {
+  networkId: number
+}
+
+export const addressTransactionsInfiniteQuery = ({
+  addressHash,
+  latestTxHash,
+  previousTxHash,
+  networkId
+}: AddressTransactionsInfiniteQueryProps) => {
+  const getQueryOptions = (latestTxHash: AddressTransactionsInfiniteQueryProps['latestTxHash']) =>
+    infiniteQueryOptions({
+      queryKey: ['address', addressHash, 'transactions', { latestTxHash, networkId }],
+      queryFn: ({ pageParam }) =>
+        throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: pageParam }),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null),
+      staleTime: Infinity
+    })
+
+  const previousQueryKey = getQueryOptions(previousTxHash).queryKey
+  const latestQueryOptions = getQueryOptions(latestTxHash)
+
+  return infiniteQueryOptions({
+    ...latestQueryOptions,
+    placeholderData: queryClient.getQueryData(previousQueryKey) as InfiniteData<Transaction[], number> // Casting needed because second argument appears to be `unknown`
+  })
+}
