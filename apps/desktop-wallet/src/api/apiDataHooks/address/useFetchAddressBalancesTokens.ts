@@ -20,20 +20,20 @@ import { useQuery } from '@tanstack/react-query'
 
 import { UseFetchAddressProps } from '@/api/apiDataHooks/address/addressApiDataHooksTypes'
 import { addressTokensBalancesQuery } from '@/api/queries/addressQueries'
-import { addressLatestTransactionHashQuery } from '@/api/queries/transactionQueries'
+import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 
 const useFetchAddressBalancesTokens = ({ addressHash, skip }: UseFetchAddressProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const queryProps = { addressHash, networkId, skip }
 
-  const { data: txHashes, isLoading: isLoadingTxHashes } = useQuery(addressLatestTransactionHashQuery(queryProps))
+  const { data: txs, isLoading: isLoadingTxHashes } = useQuery(addressLatestTransactionQuery(queryProps))
 
   const { data, isLoading: isLoadingTokensBalances } = useQuery(
     addressTokensBalancesQuery({
       ...queryProps,
-      latestTxHash: txHashes?.latestTxHash,
-      previousTxHash: txHashes?.latestTxHash,
+      latestTxHash: txs?.latestTx?.hash,
+      previousTxHash: txs?.previousTx?.hash,
       skip: isLoadingTxHashes
     })
   )
