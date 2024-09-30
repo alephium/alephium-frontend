@@ -118,11 +118,7 @@ export const hasPositiveAndNegativeAmounts = (alphAmout: bigint, tokensAmount: R
 }
 
 export const getTransactionsOfAddress = (transactions: Transaction[], addressHash: AddressHash) =>
-  transactions.filter(
-    (tx) =>
-      tx.inputs?.some((input) => input.address === addressHash) ||
-      tx.outputs?.some((output) => output.address === addressHash)
-  )
+  transactions.filter((tx) => isAddressPresentInInputsOutputs(addressHash, tx))
 
 export const extractNewTransactions = (
   incomingTransactions: Transaction[],
@@ -139,3 +135,10 @@ export const extractTokenIds = (tokenIds: Asset['id'][], ios: Transaction['input
     })
   })
 }
+
+export const findTransactionReferenceAddress = (addresses: AddressHash[], tx: Transaction) =>
+  addresses.find((address) => isAddressPresentInInputsOutputs(address, tx))
+
+const isAddressPresentInInputsOutputs = (addressHash: AddressHash, tx: Transaction) =>
+  tx.inputs?.some((input) => input.address === addressHash) ||
+  tx.outputs?.some((output) => output.address === addressHash)
