@@ -19,7 +19,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 // HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
 
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dimensions, Keyboard, KeyboardAvoidingView, Pressable } from 'react-native'
+import {
+  Dimensions,
+  Keyboard,
+  KeyboardAvoidingView,
+  LayoutChangeEvent,
+  Pressable,
+  StyleProp,
+  View,
+  ViewStyle
+} from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   interpolate,
@@ -36,14 +45,13 @@ import styled from 'styled-components/native'
 import AppText from '~/components/AppText'
 import { CloseButton } from '~/components/buttons/Button'
 import { removeModal } from '~/features/modals/modalActions'
-import { ModalContentProps } from '~/features/modals/ModalContent'
 import { selectModalById } from '~/features/modals/modalSelectors'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type ModalPositions = 'minimised' | 'maximised' | 'closing'
 
-const NAV_HEIGHT = 46
+const NAV_HEIGHT = 50
 const DRAG_BUFFER = 40
 
 const springConfig: WithSpringConfig = {
@@ -57,24 +65,28 @@ const springConfig: WithSpringConfig = {
 
 export interface BottomModalProps {
   id: number
-  Content: (props: ModalContentProps) => ReactNode
+  children: ReactNode
   onClose?: () => void
   title?: string
   maximisedContent?: boolean
   customMinHeight?: number
   noPadding?: boolean
+  contentVerticalGap?: boolean
+  contentContainerStyle?: StyleProp<ViewStyle>
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const BottomModal = ({
   id,
-  Content,
+  children,
   onClose,
   title,
   maximisedContent,
   customMinHeight,
-  noPadding
+  noPadding,
+  contentVerticalGap,
+  contentContainerStyle
 }: BottomModalProps) => {
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
@@ -121,7 +133,9 @@ const BottomModal = ({
     pointerEvents: position.value === 'closing' ? 'none' : 'auto'
   }))
 
-  const handleContentSizeChange = (w: number, newContentHeight: number) => {
+  const handleContentLayoutChange = (e: LayoutChangeEvent) => {
+    const { height: newContentHeight } = e.nativeEvent.layout
+
     if (!modalHeight.value || newContentHeight > contentHeight.value + 1) {
       // 👆 Add one to avoid floating point issues
 
@@ -135,7 +149,7 @@ const BottomModal = ({
           ? customMinHeight
           : shouldMaximizeOnOpen.value
             ? maxHeight
-            : contentHeight.value + NAV_HEIGHT
+            : contentHeight.value + NAV_HEIGHT + insets.bottom + DEFAULT_MARGIN
 
         shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
       })()
@@ -230,7 +244,7 @@ const BottomModal = ({
   }, [handleClose, isModalClosing, position.value])
 
   return (
-    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }} enabled={!maximisedContent}>
       <GestureDetector gesture={panGesture}>
         <ExternalContainer>
           <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
@@ -247,7 +261,12 @@ const BottomModal = ({
                 </NavigationButtonContainer>
               </Navigation>
               <ContentContainer noPadding={noPadding}>
-                <Content onClose={handleClose} onContentSizeChange={handleContentSizeChange} />
+                <View
+                  onLayout={handleContentLayoutChange}
+                  style={[contentContainerStyle, { gap: contentVerticalGap ? VERTICAL_GAP : undefined }]}
+                >
+                  {children}
+                </View>
               </ContentContainer>
             </ModalStyled>
           </Container>
@@ -316,6 +335,7 @@ const Navigation = styled(Animated.View)`
   align-items: center;
   justify-content: flex-end;
   padding: 0 ${DEFAULT_MARGIN - 1}px;
+  height: ${NAV_HEIGHT}px;
 `
 
 const NavigationButtonContainer = styled.View<{ align: 'right' | 'left' }>`
@@ -324,7 +344,7 @@ const NavigationButtonContainer = styled.View<{ align: 'right' | 'left' }>`
   justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : 'flex-start')};
 `
 
-const ContentContainer = styled(Animated.View)<Pick<BottomModalProps, 'noPadding'>>`
+const ContentContainer = styled.View<Pick<BottomModalProps, 'noPadding'>>`
   flex: 1;
   padding: ${({ noPadding }) => (noPadding ? 0 : `0 ${DEFAULT_MARGIN - 1}px`)};
 `

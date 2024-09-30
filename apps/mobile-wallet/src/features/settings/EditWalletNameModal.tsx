@@ -26,7 +26,6 @@ import { ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { updateStoredWalletMetadata } from '~/persistent-storage/wallet'
@@ -48,7 +47,7 @@ const EditWalletNameModal = withModal(({ id }) => {
       await updateStoredWalletMetadata({ name })
       dispatch(walletNameChanged(name))
 
-      sendAnalytics({ event: 'Wallet: Editted wallet name' })
+      sendAnalytics({ event: 'Wallet: Edited wallet name' })
     } catch (error) {
       const message = 'Could not edit wallet name'
 
@@ -61,19 +60,13 @@ const EditWalletNameModal = withModal(({ id }) => {
   }
 
   return (
-    <BottomModal
-      id={id}
-      title={t('Wallet name')}
-      Content={(props) => (
-        <ModalContent {...props}>
-          <ScreenSection verticalGap fill>
-            <Input value={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
-            <Button title={t('Save')} onPress={handleSavePress} variant="highlight" />
-          </ScreenSection>
-          <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
-        </ModalContent>
-      )}
-    />
+    <BottomModal id={id} title={t('Wallet name')}>
+      <ScreenSection verticalGap fill>
+        <Input value={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
+        <Button title={t('Save')} onPress={handleSavePress} variant="highlight" />
+      </ScreenSection>
+      <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
+    </BottomModal>
   )
 })
 

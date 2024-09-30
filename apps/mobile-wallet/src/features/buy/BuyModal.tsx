@@ -30,7 +30,6 @@ import ScreenTitle from '~/components/layout/ScreenTitle'
 import LinkToWeb from '~/components/text/LinkToWeb'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
@@ -93,74 +92,61 @@ const BuyModal = withModal(({ id }) => {
   }
 
   return (
-    <BottomModal
-      id={id}
-      title={t('Buy')}
-      maximisedContent
-      noPadding
-      Content={(props) => (
-        <ModalContent {...props} contentContainerStyle={{ flex: 1, paddingTop: 0 }}>
-          {!isDisclaimerAccepted ? (
-            <DisclaimerContent>
-              <ScreenTitle title={t('Disclaimer')} />
-              <TextContainer>
-                <AppText>
-                  <Trans
-                    t={t}
-                    i18nKey="banxaDisclaimer"
-                    components={{
-                      1: <LinkToWeb url="https://www.banxa.com" />
-                    }}
-                  >
-                    {
-                      'You are about to access 3rd party services provided by <1>Banxa.com</1> through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding.'
-                    }
-                  </Trans>
-                </AppText>
-              </TextContainer>
-              <Button
-                title={t("Alright, let's get to it.")}
-                onPress={() => setIsDisclaimerAccepted(true)}
-                variant="highlight"
-                style={{ marginBottom: insets.bottom }}
-              />
-            </DisclaimerContent>
-          ) : (
-            <WebView
-              ref={webViewRef}
-              source={{
-                uri: currentUrl
-              }}
-              originWhitelist={['*']}
-              allowsInlineMediaPlayback
-              enableApplePay
-              mediaPlaybackRequiresUserAction={false}
-              containerStyle={{ padding: 0 }}
-              allowsBackForwardNavigationGestures
-              onNavigationStateChange={handleNavigationChange}
-              setSupportMultipleWindows={false}
-              nestedScrollEnabled
-            />
-          )}
-        </ModalContent>
+    <BottomModal id={id} title={t('Buy')} maximisedContent noPadding contentContainerStyle={{ flex: 1 }}>
+      {!isDisclaimerAccepted ? (
+        <DisclaimerContent>
+          <ScreenTitle title={t('Disclaimer')} />
+          <TextContainer>
+            <AppText>
+              <Trans
+                t={t}
+                i18nKey="banxaDisclaimer"
+                components={{
+                  1: <LinkToWeb url="https://www.banxa.com" />
+                }}
+              >
+                {
+                  'You are about to access 3rd party services provided by <1>Banxa.com</1> through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding.'
+                }
+              </Trans>
+            </AppText>
+          </TextContainer>
+          <Button
+            title={t("Alright, let's get to it.")}
+            onPress={() => setIsDisclaimerAccepted(true)}
+            variant="highlight"
+            style={{ marginBottom: insets.bottom }}
+          />
+        </DisclaimerContent>
+      ) : (
+        <WebView
+          ref={webViewRef}
+          source={{
+            uri: currentUrl
+          }}
+          originWhitelist={['*']}
+          allowsInlineMediaPlayback
+          enableApplePay
+          mediaPlaybackRequiresUserAction={false}
+          containerStyle={{ padding: 0 }}
+          allowsBackForwardNavigationGestures
+          onNavigationStateChange={handleNavigationChange}
+          setSupportMultipleWindows={false}
+          nestedScrollEnabled
+        />
       )}
-    />
+    </BottomModal>
   )
 })
 
 export default BuyModal
 
 const DisclaimerContent = styled.View`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  z-index: 1;
+  flex: 1;
   background-color: ${({ theme }) => theme.bg.primary};
   padding: ${DEFAULT_MARGIN}px;
 `
 
 const TextContainer = styled.View`
-  height: 80%;
+  flex: 1;
 `

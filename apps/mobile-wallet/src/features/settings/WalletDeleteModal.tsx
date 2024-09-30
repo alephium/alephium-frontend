@@ -27,7 +27,6 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal from '~/features/modals/BottomModal'
-import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
@@ -66,42 +65,37 @@ const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) =
   }
 
   return (
-    <BottomModal
-      id={id}
-      Content={(props) => (
-        <>
-          <ModalContent verticalGap {...props}>
-            <ScreenSection>
-              <ModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</ModalScreenTitle>
-            </ScreenSection>
-            <ScreenSection>
-              <AppText color="secondary" size={18}>
-                {t('Do you really want to delete this wallet from your device?')}
-              </AppText>
-              <AppText color="secondary" size={18}>
-                {t('You can always restore it later using your secret recovery phrase.')}
-              </AppText>
-              <AppText color="secondary" size={18}>
-                {t('If so, please enter the wallet name below, and hit the delete button.')}
-              </AppText>
-            </ScreenSection>
-            <ScreenSection>
-              <Input label={t('Wallet name')} value={inputWalletName} onChangeText={setInputWalletName} />
-            </ScreenSection>
-            <ScreenSection>
-              <Button
-                title={t('Delete')}
-                variant="alert"
-                onPress={handleDeleteConfirmPress}
-                disabled={inputWalletName !== walletName}
-                iconProps={{ name: 'trash' }}
-              />
-            </ScreenSection>
-          </ModalContent>
-          <SpinnerModal isActive={isLoading} />
-        </>
-      )}
-    />
+    <>
+      <BottomModal id={id} contentVerticalGap>
+        <ScreenSection>
+          <ModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</ModalScreenTitle>
+        </ScreenSection>
+        <ScreenSection>
+          <AppText color="secondary" size={18}>
+            {t('Do you really want to delete this wallet from your device?')}
+          </AppText>
+          <AppText color="secondary" size={18}>
+            {t('You can always restore it later using your secret recovery phrase.')}
+          </AppText>
+          <AppText color="secondary" size={18}>
+            {t('If so, please enter the wallet name below, and hit the delete button.')}
+          </AppText>
+        </ScreenSection>
+        <ScreenSection>
+          <Input label={t('Wallet name')} value={inputWalletName} onChangeText={setInputWalletName} />
+        </ScreenSection>
+        <ScreenSection>
+          <Button
+            title={t('Delete')}
+            variant="alert"
+            onPress={handleDeleteConfirmPress}
+            disabled={inputWalletName !== walletName}
+            iconProps={{ name: 'trash' }}
+          />
+        </ScreenSection>
+      </BottomModal>
+      <SpinnerModal isActive={isLoading} />
+    </>
   )
 })
 
