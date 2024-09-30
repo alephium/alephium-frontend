@@ -20,9 +20,11 @@ import { AddressHash, Asset, findTransactionReferenceAddress } from '@alephium/s
 import { ALPH } from '@alephium/token-list'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useInfiniteQuery } from '@tanstack/react-query'
+import { colord } from 'colord'
 import { uniqBy } from 'lodash'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 import useFetchWalletLastTransaction from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHash'
 import { walletTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
@@ -57,46 +59,63 @@ const WalletTransactionList = ({ addressHashes, directions, assetIds }: WalletTr
   const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
   const pendingTxs = useAppSelector((s) => selectAddressesPendingTransactions(s, addressHashes)) // TODO
 
-  const { data } = useFetchWalletLastTransaction()
+  const { data: detectedTxUpdates, isLoading: isLoadingLatestTx } = useFetchWalletLastTransaction()
+
+  const [fetchedTransactionListAt, setRefreshedTransactionListAt] = useState(0)
+
+  const handleRefresh = () => setRefreshedTransactionListAt(new Date().getTime())
+
   const {
     data: confirmedTxsPages,
     fetchNextPage,
-    isLoading,
+    isLoading: isLoadingConfirmedTxs,
     hasNextPage,
     isFetchingNextPage
   } = useInfiniteQuery(
     walletTransactionsInfiniteQuery({
       allAddressHashes,
-      latestTxHash: data?.latestTx?.hash,
-      previousTxHash: data?.previousTx?.hash,
-      networkId
+      timestamp: fetchedTransactionListAt,
+      networkId,
+      skip: isLoadingLatestTx
     })
   )
 
   const openTransactionDetailsModal = (txHash: Transaction['hash'], addressHash: AddressHash) =>
     dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash, addressHash } }))
 
+  const fetchedConfirmedTxs = useMemo(() => confirmedTxsPages?.pages.flat() ?? [], [confirmedTxsPages?.pages])
   const filteredConfirmedTxs = useMemo(
     () =>
       applyFilters({
-        txs: confirmedTxsPages?.pages.flat() ?? [],
+        txs: fetchedConfirmedTxs,
         addressHashes,
         allAddressHashes,
         directions,
         assetIds
       }),
-    [addressHashes, allAddressHashes, assetIds, confirmedTxsPages?.pages, directions]
+    [addressHashes, allAddressHashes, assetIds, directions, fetchedConfirmedTxs]
   )
+  const latestFetchedTxHash = fetchedConfirmedTxs[0]?.hash
+  const latestUnfetchedTxHash = detectedTxUpdates.latestTx?.hash
 
   return (
     <Table minWidth="500px">
-      {isLoading &&
+      {isLoadingConfirmedTxs &&
         Array.from({ length: 3 }).map((_, i) => (
           <TableRow key={i}>
             <SkeletonLoader height="37.5px" />
           </TableRow>
         ))}
 
+      {!isLoadingConfirmedTxs && latestUnfetchedTxHash && latestFetchedTxHash !== latestUnfetchedTxHash && (
+        <NewTransactionsRow role="row" onClick={handleRefresh}>
+          <TableCell align="center" role="gridcell">
+            🆕 {t('Click to display new transactions')}
+          </TableCell>
+        </NewTransactionsRow>
+      )}
+
+      {/* TODO: Remove pending txs from tx list */}
       {pendingTxs.map((tx) => (
         <TransactionRow key={tx.hash} tx={tx} addressHash={tx.address.hash} blinking />
       ))}
@@ -118,7 +137,7 @@ const WalletTransactionList = ({ addressHashes, directions, assetIds }: WalletTr
         )
       })}
 
-      {!isLoading && filteredConfirmedTxs && filteredConfirmedTxs?.length > 0 && (
+      {!isLoadingConfirmedTxs && filteredConfirmedTxs && filteredConfirmedTxs?.length > 0 && (
         <TableRow role="row">
           <TableCell align="center" role="gridcell">
             {!hasNextPage ? (
@@ -132,11 +151,13 @@ const WalletTransactionList = ({ addressHashes, directions, assetIds }: WalletTr
         </TableRow>
       )}
 
-      {!isLoading && pendingTxs.length === 0 && (!filteredConfirmedTxs || filteredConfirmedTxs.length === 0) && (
-        <TableRow role="row" tabIndex={0}>
-          <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
-        </TableRow>
-      )}
+      {!isLoadingConfirmedTxs &&
+        pendingTxs.length === 0 &&
+        (!filteredConfirmedTxs || filteredConfirmedTxs.length === 0) && (
+          <TableRow role="row" tabIndex={0}>
+            <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
+          </TableRow>
+        )}
     </Table>
   )
 }
@@ -179,3 +200,7 @@ const applyFilters = ({
       })
     : txs
 }
+
+const NewTransactionsRow = styled(TableRow)`
+  background-color: ${({ theme }) => colord(theme.global.accent).alpha(0.15).toHex()};
+`
