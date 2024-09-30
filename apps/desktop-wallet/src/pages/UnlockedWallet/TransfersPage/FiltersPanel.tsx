@@ -58,7 +58,7 @@ const FiltersPanel = ({
   const { t } = useTranslation()
   const addresses = useAppSelector(selectAllAddresses)
 
-  const { listedFts, unlistedFts } = useFetchWalletFts()
+  const { listedFts, unlistedFts, isLoading: isLoadingFts } = useFetchWalletFts()
   const {
     data: { nftIds, nstIds },
     isLoading: isLoadingTokensByType
@@ -100,10 +100,10 @@ const FiltersPanel = ({
   }
 
   useEffect(() => {
-    if (!isLoadingTokensByType && !selectedTokensIds) {
+    if (!isLoadingTokensByType && !isLoadingFts && !selectedTokensIds) {
       setSelectedTokensIds(sortedTokenIds)
     }
-  }, [isLoadingTokensByType, selectedTokensIds, setSelectedTokensIds, sortedTokenIds])
+  }, [isLoadingFts, isLoadingTokensByType, selectedTokensIds, setSelectedTokensIds, sortedTokenIds])
 
   return (
     <UnlockedWalletPanel className={className}>
