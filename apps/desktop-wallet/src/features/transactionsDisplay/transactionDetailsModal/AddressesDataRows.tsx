@@ -24,12 +24,12 @@ import AddressBadge from '@/components/AddressBadge'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import IOList from '@/components/IOList'
-import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useOnAddressClick from '@/features/transactionsDisplay/transactionDetailsModal/useOnAddressClick'
 import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
 import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 
-const AddressesDataRows = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {
+const AddressesDataRows = ({ tx, addressHash }: TransactionDetailsModalTxProps) => {
   const { t } = useTranslation()
   const direction = useTransactionDirection(tx, addressHash)
   const onAddressClick = useOnAddressClick()

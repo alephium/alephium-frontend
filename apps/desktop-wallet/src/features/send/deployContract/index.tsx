@@ -91,7 +91,7 @@ export const handleDeployContractSend = async (
       toAddress: '',
       timestamp: new Date().getTime(),
       type: 'contract',
-      status: 'pending'
+      status: 'sent'
     })
   )
 

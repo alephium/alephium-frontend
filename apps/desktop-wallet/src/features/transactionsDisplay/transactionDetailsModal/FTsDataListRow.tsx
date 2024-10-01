@@ -21,11 +21,11 @@ import styled from 'styled-components'
 
 import Amount from '@/components/Amount'
 import DataList from '@/components/DataList'
-import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
 
-const FTsDataListRow = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {
+const FTsDataListRow = ({ tx, addressHash }: TransactionDetailsModalTxProps) => {
   const {
     data: { fungibleTokens }
   } = useFetchTransactionTokens(tx, addressHash)

@@ -16,17 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressHash,
-  customNetworkSettingsSaved,
-  extractNewTransactions,
-  getTransactionsOfAddress,
-  networkPresetSwitched,
-  syncingAddressDataStarted
-} from '@alephium/shared'
+import { AddressHash, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
 import { groupOfAddress } from '@alephium/web3'
-import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
-import { uniq } from 'lodash'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import {
   addressDeleted,
@@ -34,16 +26,9 @@ import {
   addressRestorationStarted,
   addressSettingsSaved,
   defaultAddressChanged,
-  newAddressesSaved,
-  syncAddressesData,
-  syncAddressesTransactions,
-  syncAddressTransactionsNextPage,
-  syncAllAddressesTransactionsNextPage,
-  transactionsLoadingStarted
+  newAddressesSaved
 } from '@/storage/addresses/addressesActions'
 import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
-import { receiveTestnetTokens } from '@/storage/global/globalActions'
-import { transactionSent } from '@/storage/transactions/transactionsActions'
 import {
   activeWalletDeleted,
   walletLocked,
@@ -58,8 +43,7 @@ import { getInitialAddressSettings } from '@/utils/addresses'
 const initialState: AddressesState = addressesAdapter.getInitialState({
   loadingTransactions: false,
   syncingAddressData: false,
-  isRestoringAddressesFromMetadata: false,
-  status: 'uninitialized'
+  isRestoringAddressesFromMetadata: false
 })
 
 const addressesSlice = createSlice({
@@ -68,13 +52,6 @@ const addressesSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(syncingAddressDataStarted, (state) => {
-        state.syncingAddressData = true
-        state.loadingTransactions = true
-      })
-      .addCase(transactionsLoadingStarted, (state) => {
-        state.loadingTransactions = true
-      })
       .addCase(addressSettingsSaved, (state, action) => {
         const { addressHash, settings } = action.payload
 
@@ -110,99 +87,12 @@ const addressesSlice = createSlice({
         addressesAdapter.setAll(state, [])
         addressesAdapter.addMany(state, addresses.map(getDefaultAddressState))
         state.isRestoringAddressesFromMetadata = false
-        state.status = 'uninitialized'
       })
       .addCase(addressRestorationStarted, (state) => {
         state.isRestoringAddressesFromMetadata = true
       })
-      .addCase(syncAddressesData.fulfilled, (state, action) => {
-        state.status = 'initialized'
-        state.syncingAddressData = false
-        state.loadingTransactions = false
-      })
       .addCase(addressDeleted, (state, { payload: addressHash }) => {
         addressesAdapter.removeOne(state, addressHash)
-      })
-      .addCase(syncAddressesTransactions.fulfilled, (state, action) => {
-        const addressData = action.payload
-        const updatedAddresses = addressData.map(({ hash, transactions }) => {
-          const address = state.entities[hash]
-
-          // There should not be a case that we try to sync address data without having the address already in our
-          // store. If there is no address found in the store, however, it's safer to return an empty changes object.
-          if (!address)
-            return {
-              id: hash,
-              changes: {}
-            }
-
-          const lastUsed = transactions.length > 0 ? transactions[0].timestamp : address.lastUsed
-
-          return {
-            id: hash,
-            changes: {
-              transactions: uniq([...address.transactions, ...transactions.map((tx) => tx.hash)]),
-              transactionsPageLoaded: address.transactionsPageLoaded === 0 ? 1 : address.transactionsPageLoaded,
-              lastUsed
-            }
-          }
-        })
-
-        addressesAdapter.updateMany(state, updatedAddresses)
-
-        state.loadingTransactions = false
-      })
-      .addCase(syncAddressesData.rejected, (state) => {
-        state.status = 'initialized'
-        state.syncingAddressData = false
-        state.loadingTransactions = false
-      })
-      .addCase(syncAddressesTransactions.rejected, (state) => {
-        state.loadingTransactions = false
-      })
-      .addCase(syncAddressTransactionsNextPage.fulfilled, (state, action) => {
-        const addressTransactionsData = action.payload
-
-        if (!addressTransactionsData) return
-
-        const { hash, transactions, page } = addressTransactionsData
-        const address = state.entities[hash]
-
-        if (!address) return
-
-        const newTxHashes = extractNewTransactions(transactions, address.transactions).map(({ hash }) => hash)
-
-        addressesAdapter.updateOne(state, {
-          id: hash,
-          changes: {
-            transactions: address.transactions.concat(newTxHashes),
-            transactionsPageLoaded: newTxHashes.length > 0 ? page : address.transactionsPageLoaded,
-            allTransactionPagesLoaded: transactions.length === 0
-          }
-        })
-
-        state.loadingTransactions = false
-      })
-      .addCase(syncAllAddressesTransactionsNextPage.fulfilled, (state, { payload: { transactions } }) => {
-        const addresses = getAddresses(state)
-
-        const updatedAddresses = addresses.map((address) => {
-          const transactionsOfAddress = getTransactionsOfAddress(transactions, address.hash)
-          const newTxHashes = extractNewTransactions(transactionsOfAddress, address.transactions).map(
-            ({ hash }) => hash
-          )
-
-          return {
-            id: address.hash,
-            changes: {
-              transactions: address.transactions.concat(newTxHashes)
-            }
-          }
-        })
-
-        addressesAdapter.updateMany(state, updatedAddresses)
-
-        state.loadingTransactions = false
       })
       .addCase(walletSaved, (state, action) => addInitialAddress(state, action.payload.initialAddress))
       .addCase(walletUnlocked, addPassphraseInitialAddress)
@@ -211,15 +101,6 @@ const addressesSlice = createSlice({
       .addCase(activeWalletDeleted, () => initialState)
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
-
-    builder.addMatcher(isAnyOf(transactionSent, receiveTestnetTokens.fulfilled), (state, action) => {
-      const pendingTransaction = action.payload
-      const fromAddress = state.entities[pendingTransaction.fromAddress] as Address
-      const toAddress = state.entities[pendingTransaction.toAddress] as Address
-
-      if (fromAddress) fromAddress.transactions.push(pendingTransaction.hash)
-      if (toAddress && toAddress !== fromAddress) toAddress.transactions.push(pendingTransaction.hash)
-    })
   }
 })
 
@@ -234,11 +115,7 @@ const getAddresses = (state: AddressesState, addressHashes?: AddressHash[]) => {
 
 const getDefaultAddressState = (address: AddressBase): Address => ({
   ...address,
-  group: groupOfAddress(address.hash),
-  transactions: [],
-  transactionsPageLoaded: 0,
-  allTransactionPagesLoaded: false,
-  lastUsed: 0
+  group: groupOfAddress(address.hash)
 })
 
 const updateOldDefaultAddress = (state: AddressesState) => {
@@ -259,13 +136,10 @@ const clearAddressesNetworkData = (state: AddressesState) => {
     state,
     getAddresses(state).map((address) => ({ id: address.hash, changes: getDefaultAddressState(address) }))
   )
-
-  state.status = 'uninitialized'
 }
 
 const addInitialAddress = (state: AddressesState, address: AddressBase) => {
   addressesAdapter.removeAll(state)
-  state.status = 'uninitialized'
   return addressesAdapter.addOne(state, getDefaultAddressState(address))
 }
 

@@ -75,7 +75,7 @@ export const handleCallContractSend = async (
       tokens,
       timestamp: new Date().getTime(),
       type: 'contract',
-      status: 'pending'
+      status: 'sent'
     })
   )
 

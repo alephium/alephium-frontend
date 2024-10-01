@@ -128,7 +128,7 @@ const AddressSweepModal = memo(
               toAddress: sweepAddresses.to.hash,
               timestamp: new Date().getTime(),
               type: 'sweep',
-              status: 'pending'
+              status: 'sent'
             })
           )
         }

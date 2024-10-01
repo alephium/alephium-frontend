@@ -22,14 +22,13 @@ import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
 import historicWorthChartSlice from '@/features/historicChart/historicWorthChartSlice'
 import modalSlice from '@/features/modals/modalSlice'
+import sentTransactionsSlice from '@/features/sentTransactions/sentTransactionsSlice'
 import addressesSlice from '@/storage/addresses/addressesSlice'
 import contactsSlice from '@/storage/addresses/contactsSlice'
 import globalSlice from '@/storage/global/globalSlice'
 import snackbarSlice from '@/storage/global/snackbarSlice'
 import { networkListenerMiddleware } from '@/storage/settings/networkMiddleware'
 import settingsSlice, { settingsListenerMiddleware } from '@/storage/settings/settingsSlice'
-import confirmedTransactionsSlice from '@/storage/transactions/confirmedTransactionsSlice'
-import pendingTransactionsSlice from '@/storage/transactions/pendingTransactionsSlice'
 import activeWalletSlice from '@/storage/wallets/activeWalletSlice'
 
 // TODO: Remove deconstruction when API related slices are removed from the shared reducer
@@ -44,8 +43,7 @@ export const store = configureStore({
     [contactsSlice.name]: contactsSlice.reducer,
     [settingsSlice.name]: settingsSlice.reducer,
     [addressesSlice.name]: addressesSlice.reducer,
-    [confirmedTransactionsSlice.name]: confirmedTransactionsSlice.reducer,
-    [pendingTransactionsSlice.name]: pendingTransactionsSlice.reducer,
+    [sentTransactionsSlice.name]: sentTransactionsSlice.reducer,
     [snackbarSlice.name]: snackbarSlice.reducer,
     [modalSlice.name]: modalSlice.reducer,
     [historicWorthChartSlice.name]: historicWorthChartSlice.reducer

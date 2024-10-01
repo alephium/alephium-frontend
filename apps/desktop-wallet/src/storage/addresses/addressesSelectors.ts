@@ -54,17 +54,6 @@ export const makeSelectContactByAddress = () =>
     contacts.find((contact) => contact.address === addressHash)
   )
 
-export const selectIsStateUninitialized = createSelector(
-  (state: RootState) => state.addresses.status,
-  (status) => status === 'uninitialized'
-)
-
-export const selectHaveAllPagesLoaded = createSelector(
-  [selectAllAddresses, (state: RootState) => state.confirmedTransactions.allLoaded],
-  (addresses, allTransactionsLoaded) =>
-    addresses.every((address) => address.allTransactionPagesLoaded) || allTransactionsLoaded
-)
-
 export const selectAddressesInGroup = createSelector(
   [selectAllAddresses, (_, group?: AddressGroup) => group],
   (addresses, group) =>

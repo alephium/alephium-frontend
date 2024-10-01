@@ -20,9 +20,9 @@ import { AssetOutput, Transaction } from '@alephium/web3/dist/src/api/api-explor
 import { useMemo } from 'react'
 
 import { isPendingTx } from '@/features/transactionsDisplay/transactionDisplayUtils'
-import { PendingTransaction } from '@/types/transactions'
+import { SentTransaction } from '@/types/transactions'
 
-const useTransactionLockTime = (tx: Transaction | PendingTransaction) =>
+const useTransactionLockTime = (tx: Transaction | SentTransaction) =>
   useMemo(() => {
     if (isPendingTx(tx)) {
       if (tx.lockTime) return new Date(tx.lockTime)

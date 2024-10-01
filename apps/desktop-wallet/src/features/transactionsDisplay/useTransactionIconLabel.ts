@@ -25,10 +25,10 @@ import { useTheme } from 'styled-components'
 
 import { isPendingTx } from '@/features/transactionsDisplay/transactionDisplayUtils'
 import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
-import { PendingTransaction } from '@/types/transactions'
+import { SentTransaction } from '@/types/transactions'
 
 const useTransactionIconLabel = (
-  tx: Transaction | PendingTransaction,
+  tx: Transaction | SentTransaction,
   addressHash: AddressHash,
   isInAddressDetailsModal?: boolean
 ) => {
