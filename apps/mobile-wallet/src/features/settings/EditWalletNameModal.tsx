@@ -61,7 +61,7 @@ const EditWalletNameModal = withModal(({ id }) => {
 
   return (
     <BottomModal id={id} title={t('Wallet name')}>
-      <ScreenSection verticalGap fill>
+      <ScreenSection verticalGap>
         <Input value={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
         <Button title={t('Save')} onPress={handleSavePress} variant="highlight" />
       </ScreenSection>

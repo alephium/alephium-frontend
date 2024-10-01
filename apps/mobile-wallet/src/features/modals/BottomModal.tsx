@@ -19,16 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 // HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
 
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import {
-  Dimensions,
-  Keyboard,
-  KeyboardAvoidingView,
-  LayoutChangeEvent,
-  Pressable,
-  StyleProp,
-  View,
-  ViewStyle
-} from 'react-native'
+import { Dimensions, Keyboard, KeyboardAvoidingView, Pressable, ScrollView, StyleProp, ViewStyle } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   interpolate,
@@ -133,9 +124,7 @@ const BottomModal = ({
     pointerEvents: position.value === 'closing' ? 'none' : 'auto'
   }))
 
-  const handleContentLayoutChange = (e: LayoutChangeEvent) => {
-    const { height: newContentHeight } = e.nativeEvent.layout
-
+  const handleContentSizeChange = (_w: number, newContentHeight: number) => {
     if (!modalHeight.value || newContentHeight > contentHeight.value + 1) {
       // 👆 Add one to avoid floating point issues
 
@@ -149,7 +138,7 @@ const BottomModal = ({
           ? customMinHeight
           : shouldMaximizeOnOpen.value
             ? maxHeight
-            : contentHeight.value + NAV_HEIGHT + insets.bottom + DEFAULT_MARGIN
+            : contentHeight.value + NAV_HEIGHT + insets.bottom
 
         shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
       })()
@@ -260,14 +249,17 @@ const BottomModal = ({
                   <CloseButton onPress={handleClose} compact />
                 </NavigationButtonContainer>
               </Navigation>
-              <ContentContainer noPadding={noPadding}>
-                <View
-                  onLayout={handleContentLayoutChange}
-                  style={[contentContainerStyle, { gap: contentVerticalGap ? VERTICAL_GAP : undefined }]}
-                >
-                  {children}
-                </View>
-              </ContentContainer>
+              <ScrollView
+                onContentSizeChange={handleContentSizeChange}
+                keyboardShouldPersistTaps="handled"
+                scrollEnabled={false}
+                contentContainerStyle={[
+                  contentContainerStyle,
+                  { gap: contentVerticalGap ? VERTICAL_GAP : undefined, padding: noPadding ? 0 : DEFAULT_MARGIN }
+                ]}
+              >
+                {children}
+              </ScrollView>
             </ModalStyled>
           </Container>
         </ExternalContainer>
@@ -342,9 +334,4 @@ const NavigationButtonContainer = styled.View<{ align: 'right' | 'left' }>`
   width: 10%;
   flex-direction: row;
   justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : 'flex-start')};
-`
-
-const ContentContainer = styled.View<Pick<BottomModalProps, 'noPadding'>>`
-  flex: 1;
-  padding: ${({ noPadding }) => (noPadding ? 0 : `0 ${DEFAULT_MARGIN - 1}px`)};
 `

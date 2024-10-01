@@ -28,7 +28,6 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { fundPasswordReminded } from '~/features/fund-password/fundPasswordActions'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -64,31 +63,26 @@ const FundPasswordReminderModal = withModal(({ id }) => {
   }
 
   return (
-    <BottomModal
-      id={id}
-      Content={(props) => (
-        <ModalContent {...props} verticalGap>
-          <ScreenSection>
-            <ModalScreenTitle>{t('Pin replaced by fund password')}</ModalScreenTitle>
-          </ScreenSection>
-          <ScreenSection>
-            <AppText color="secondary" size={18}>
-              <Trans t={t} i18nKey="fundPasswordModalDescription" components={{ 1: <AppText size={18} bold /> }}>
-                {
-                  'The <1>fund password</1> is an additional authentication layer for critical operations involving the safety of your funds such as <1>revealing your seed phrase</1> or <1>sending funds</1>.\nYou can set it up in the app settings.'
-                }
-              </Trans>
-            </AppText>
-          </ScreenSection>
-          <ScreenSection>
-            <ButtonsRow>
-              <Button title={t('Later')} onPress={handleClose} flex />
-              <Button variant="highlight" title={t('Set password')} onPress={handleSetPasswordPress} flex />
-            </ButtonsRow>
-          </ScreenSection>
-        </ModalContent>
-      )}
-    />
+    <BottomModal id={id} contentVerticalGap>
+      <ScreenSection>
+        <ModalScreenTitle>{t('Pin replaced by fund password')}</ModalScreenTitle>
+      </ScreenSection>
+      <ScreenSection>
+        <AppText color="secondary" size={18}>
+          <Trans t={t} i18nKey="fundPasswordModalDescription" components={{ 1: <AppText size={18} bold /> }}>
+            {
+              'The <1>fund password</1> is an additional authentication layer for critical operations involving the safety of your funds such as <1>revealing your seed phrase</1> or <1>sending funds</1>.\nYou can set it up in the app settings.'
+            }
+          </Trans>
+        </AppText>
+      </ScreenSection>
+      <ScreenSection>
+        <ButtonsRow>
+          <Button title={t('Later')} onPress={handleClose} flex />
+          <Button variant="highlight" title={t('Set password')} onPress={handleSetPasswordPress} flex />
+        </ButtonsRow>
+      </ScreenSection>
+    </BottomModal>
   )
 })
 

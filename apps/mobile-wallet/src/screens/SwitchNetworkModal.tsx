@@ -27,7 +27,6 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -62,29 +61,24 @@ const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNet
   const networkNames = Object.values(NetworkNames)
 
   return (
-    <BottomModal
-      id={id}
-      Content={(props) => (
-        <ModalContent verticalGap {...props}>
-          <ScreenSection>
-            <ModalScreenTitle>{t('Current network')}</ModalScreenTitle>
-          </ScreenSection>
-          <View>
-            <BoxSurface>
-              {networkNames.map((networkName, index) => (
-                <RadioButtonRow
-                  key={networkName}
-                  title={capitalize(networkName)}
-                  onPress={() => handleNetworkItemPress(networkName)}
-                  isActive={networkName === selectedNetworkName}
-                  isLast={index === networkNames.length - 1}
-                />
-              ))}
-            </BoxSurface>
-          </View>
-        </ModalContent>
-      )}
-    />
+    <BottomModal id={id} contentVerticalGap>
+      <ScreenSection>
+        <ModalScreenTitle>{t('Current network')}</ModalScreenTitle>
+      </ScreenSection>
+      <View>
+        <BoxSurface>
+          {networkNames.map((networkName, index) => (
+            <RadioButtonRow
+              key={networkName}
+              title={capitalize(networkName)}
+              onPress={() => handleNetworkItemPress(networkName)}
+              isActive={networkName === selectedNetworkName}
+              isLast={index === networkNames.length - 1}
+            />
+          ))}
+        </BoxSurface>
+      </View>
+    </BottomModal>
   )
 })
 

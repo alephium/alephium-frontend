@@ -23,7 +23,6 @@ import Button from '~/components/buttons/Button'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -43,48 +42,43 @@ const BackupReminderModal = withModal<BackupReminderModalProps>(({ id, isNewWall
   }
 
   return (
-    <BottomModal
-      id={id}
-      Content={(props) => (
-        <ModalContent verticalGap {...props}>
-          <ScreenSection>
-            <ModalScreenTitle>{isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}</ModalScreenTitle>
-          </ScreenSection>
-          <ScreenSection>
-            {isNewWallet ? (
-              <AppText color="secondary" size={18}>
-                <Trans
-                  t={t}
-                  i18nKey="backupModalMessage1"
-                  components={{
-                    1: <AppText size={18} bold />
-                  }}
-                >
-                  {
-                    'The first and most important step is to <1>write down your secret recovery phrase</1> and store it in a safe place.'
-                  }
-                </Trans>
-              </AppText>
-            ) : (
-              <AppText color="secondary" size={18}>
-                <Trans
-                  t={t}
-                  i18nKey="backupModalMessage2"
-                  components={{
-                    1: <AppText size={18} bold />
-                  }}
-                >
-                  {'Have peace of mind by verifying that you <1>wrote your secret recovery phrase down</1> correctly.'}
-                </Trans>
-              </AppText>
-            )}
-          </ScreenSection>
-          <ScreenSection>
-            <Button title={t("Let's do that!")} onPress={handleValidatePress} variant="highlight" />
-          </ScreenSection>
-        </ModalContent>
-      )}
-    />
+    <BottomModal id={id} contentVerticalGap>
+      <ScreenSection>
+        <ModalScreenTitle>{isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}</ModalScreenTitle>
+      </ScreenSection>
+      <ScreenSection>
+        {isNewWallet ? (
+          <AppText color="secondary" size={18}>
+            <Trans
+              t={t}
+              i18nKey="backupModalMessage1"
+              components={{
+                1: <AppText size={18} bold />
+              }}
+            >
+              {
+                'The first and most important step is to <1>write down your secret recovery phrase</1> and store it in a safe place.'
+              }
+            </Trans>
+          </AppText>
+        ) : (
+          <AppText color="secondary" size={18}>
+            <Trans
+              t={t}
+              i18nKey="backupModalMessage2"
+              components={{
+                1: <AppText size={18} bold />
+              }}
+            >
+              {'Have peace of mind by verifying that you <1>wrote your secret recovery phrase down</1> correctly.'}
+            </Trans>
+          </AppText>
+        )}
+      </ScreenSection>
+      <ScreenSection>
+        <Button title={t("Let's do that!")} onPress={handleValidatePress} variant="highlight" />
+      </ScreenSection>
+    </BottomModal>
   )
 })
 
