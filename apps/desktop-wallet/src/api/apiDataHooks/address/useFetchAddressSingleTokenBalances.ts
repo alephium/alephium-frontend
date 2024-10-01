@@ -21,9 +21,9 @@ import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 
 import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddressBalancesAlph'
+import useFetchAddressLastTransaction from '@/api/apiDataHooks/address/useFetchAddressLastTransaction'
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
-import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { TokenId } from '@/types/tokens'
 
@@ -41,22 +41,18 @@ const useFetchAddressSingleTokenBalances = ({
 
   const isALPH = tokenId === ALPH.id
 
-  const { data: txs, isLoading: isLoadingTxHashes } = useQuery(
-    addressLatestTransactionQuery({ addressHash, networkId, skip })
-  )
-
+  const { data: detectedNewTxs, isLoading: isLoadingTxHashes } = useFetchAddressLastTransaction({ addressHash, skip })
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
     addressHash,
     skip: !isALPH || skip
   })
-
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQuery(
     addressSingleTokenBalancesQuery({
       addressHash,
       networkId,
       tokenId,
-      latestTxHash: txs?.latestTx?.hash,
-      previousTxHash: txs?.previousTx?.hash,
+      latestTxHash: detectedNewTxs?.latestTx?.hash,
+      previousTxHash: detectedNewTxs?.previousTx?.hash,
       skip: isLoadingTxHashes || isALPH || skip
     })
   )
