@@ -28,10 +28,10 @@ import DataList from '@/components/DataList'
 import ExpandableSection from '@/components/ExpandableSection'
 import HashEllipsed from '@/components/HashEllipsed'
 import Lock from '@/components/Lock'
-import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useOnAddressClick from '@/features/transactionsDisplay/transactionDetailsModal/useOnAddressClick'
 
-const GasUTXOsExpandableSection = ({ tx }: Pick<TransactionDetailsModalSectionProps, 'tx'>) => {
+const GasUTXOsExpandableSection = ({ tx }: Pick<TransactionDetailsModalTxProps, 'tx'>) => {
   const { t } = useTranslation()
   const handleShowAddress = useOnAddressClick()
 

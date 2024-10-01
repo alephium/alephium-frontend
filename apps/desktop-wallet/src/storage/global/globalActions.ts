@@ -22,7 +22,7 @@ import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import i18n from '@/i18n'
 import { ThemeType } from '@/types/settings'
 import { OptionalMessage, SnackbarMessage } from '@/types/snackbar'
-import { PendingTransaction } from '@/types/transactions'
+import { SentTransaction } from '@/types/transactions'
 
 type ModalId = string
 
@@ -54,7 +54,7 @@ export const walletConnectCacheClearFailed = createAction('app/walletConnectCach
 
 export const toggleAppLoading = createAction<boolean>('app/toggleAppLoading')
 
-export const receiveTestnetTokens = createAsyncThunk<PendingTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
+export const receiveTestnetTokens = createAsyncThunk<SentTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
   'assets/receiveTestnetTokens',
   async (destinationAddress: AddressHash, { rejectWithValue, fulfillWithValue }) => {
     const response = await exponentialBackoffFetchRetry('https://faucet.testnet.alephium.org/send', {
@@ -76,13 +76,13 @@ export const receiveTestnetTokens = createAsyncThunk<PendingTransaction, Address
 
     const hash = responseURL.match(/\/([a-fA-F0-9]+)$/)?.[1] || ''
 
-    const pendingTransaction: PendingTransaction = {
+    const pendingTransaction: SentTransaction = {
       hash: hash,
       fromAddress: 'Faucet',
       toAddress: destinationAddress,
       amount: undefined,
       timestamp: new Date().getTime(),
-      status: 'pending',
+      status: 'sent',
       type: 'transfer'
     }
 

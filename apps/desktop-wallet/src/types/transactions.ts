@@ -19,9 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, TransactionInfoType } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 
-import { Address } from '@/types/addresses'
-
-export type PendingTransaction = {
+export type SentTransaction = {
   hash: string
   fromAddress: string
   toAddress: string
@@ -30,12 +28,8 @@ export type PendingTransaction = {
   amount?: string
   tokens?: explorer.Token[]
   lockTime?: number
-  status: 'pending'
+  status: 'sent' | 'mempooled' | 'confirmed'
 }
-
-export type AddressConfirmedTransaction = explorer.Transaction & { address: Address }
-export type AddressPendingTransaction = PendingTransaction & { address: Address }
-export type AddressTransaction = AddressConfirmedTransaction | AddressPendingTransaction
 
 export type TransactionTimePeriod = '24h' | '1w' | '1m' | '6m' | '12m' | 'previousYear' | 'thisYear'
 

@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import useFetchAddressLastTransaction from '@/api/apiDataHooks/address/useFetchAddressLastTransaction'
@@ -32,7 +31,6 @@ import AddressTransactionsCSVExportButton from '@/features/csvExport/AddressTran
 import { openModal } from '@/features/modals/modalActions'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { makeSelectAddressesPendingTransactions } from '@/storage/transactions/transactionsSelectors'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface AddressTransactionListProps {
@@ -44,10 +42,7 @@ const AddressTransactionList = ({ addressHash }: AddressTransactionListProps) =>
   const dispatch = useAppDispatch()
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
-  const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
-  const pendingTxs = useAppSelector((s) => selectAddressesPendingTransactions(s, [addressHash])) // TODO
-
-  const { data } = useFetchAddressLastTransaction(addressHash)
+  const { data } = useFetchAddressLastTransaction({ addressHash })
   const {
     data: confirmedTxsPages,
     fetchNextPage,
@@ -81,10 +76,6 @@ const AddressTransactionList = ({ addressHash }: AddressTransactionListProps) =>
           </TableRow>
         ))}
 
-      {pendingTxs.map((tx) => (
-        <TransactionRow key={tx.hash} tx={tx} addressHash={addressHash} isInAddressDetailsModal compact blinking />
-      ))}
-
       {confirmedTxs?.map((tx) => (
         <TransactionRow
           key={tx.hash}
@@ -111,7 +102,7 @@ const AddressTransactionList = ({ addressHash }: AddressTransactionListProps) =>
         </TableRow>
       )}
 
-      {!isLoading && pendingTxs.length === 0 && (!confirmedTxs || confirmedTxs.length === 0) && (
+      {!isLoading && (!confirmedTxs || confirmedTxs.length === 0) && (
         <TableRow role="row" tabIndex={0}>
           <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
         </TableRow>

@@ -29,12 +29,9 @@ import { useMemo } from 'react'
 import { isPendingTx } from '@/features/transactionsDisplay/transactionDisplayUtils'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
-import { PendingTransaction } from '@/types/transactions'
+import { SentTransaction } from '@/types/transactions'
 
-const useTransactionDirection = (
-  tx: Transaction | PendingTransaction,
-  addressHash: AddressHash
-): TransactionDirection => {
+const useTransactionDirection = (tx: Transaction | SentTransaction, addressHash: AddressHash): TransactionDirection => {
   const internalAddresses = useAppSelector(selectAllAddressHashes)
 
   return useMemo(() => {

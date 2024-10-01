@@ -28,13 +28,13 @@ import {
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { store } from '@/storage/store'
-import { PendingTransaction } from '@/types/transactions'
+import { SentTransaction } from '@/types/transactions'
 
-export const isPendingTx = (tx: Transaction | PendingTransaction): tx is PendingTransaction =>
-  (tx as PendingTransaction).status === 'pending'
+export const isPendingTx = (tx: Transaction | SentTransaction): tx is SentTransaction =>
+  (tx as SentTransaction).status !== undefined
 
 export const getTransactionInfoType = (
-  tx: Transaction | PendingTransaction,
+  tx: Transaction | SentTransaction,
   addressHash: AddressHash,
   isInAddressDetailsModal?: boolean
 ): TransactionInfoType => {
@@ -70,10 +70,10 @@ export const getTransactionInfoType = (
   }
 }
 
-export const getTransactionAmountDeltas = (tx: Transaction | PendingTransaction, addressHash: AddressHash) =>
+export const getTransactionAmountDeltas = (tx: Transaction | SentTransaction, addressHash: AddressHash) =>
   isPendingTx(tx) ? calcPendingTxAmountsDelta(tx) : calcTxAmountsDeltaForAddress(tx, addressHash)
 
-const calcPendingTxAmountsDelta = (tx: PendingTransaction) => ({
+const calcPendingTxAmountsDelta = (tx: SentTransaction) => ({
   alphAmount: tx.amount ? convertToNegative(BigInt(tx.amount)) : BigInt(0),
   tokenAmounts: tx.tokens
     ? tx.tokens.map((token) => ({ ...token, amount: convertToNegative(BigInt(token.amount)) }))

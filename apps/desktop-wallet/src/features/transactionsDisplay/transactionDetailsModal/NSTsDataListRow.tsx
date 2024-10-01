@@ -22,10 +22,10 @@ import styled from 'styled-components'
 import Amount from '@/components/Amount'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
-import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 
-const NSTsDataListRow = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {
+const NSTsDataListRow = ({ tx, addressHash }: TransactionDetailsModalTxProps) => {
   const {
     data: { nsts }
   } = useFetchTransactionTokens(tx, addressHash)

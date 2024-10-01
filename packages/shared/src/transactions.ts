@@ -16,7 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetOutput, Input, MempoolTransaction, Output, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import {
+  AssetOutput,
+  Input,
+  MempoolTransaction,
+  Output,
+  PendingTransaction,
+  Transaction
+} from '@alephium/web3/dist/src/api/api-explorer'
 
 import { AddressHash } from '@/types/addresses'
 import { Asset, AssetAmount } from '@/types/assets'
@@ -142,3 +149,6 @@ export const findTransactionReferenceAddress = (addresses: AddressHash[], tx: Tr
 const isAddressPresentInInputsOutputs = (addressHash: AddressHash, tx: Transaction) =>
   tx.inputs?.some((input) => input.address === addressHash) ||
   tx.outputs?.some((output) => output.address === addressHash)
+
+export const isTxConfirmed = (tx?: Transaction | PendingTransaction): tx is Transaction =>
+  (tx as Transaction).blockHash !== undefined

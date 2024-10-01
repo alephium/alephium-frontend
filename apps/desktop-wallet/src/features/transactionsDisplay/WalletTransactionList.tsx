@@ -40,7 +40,6 @@ import {
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
-import { makeSelectAddressesPendingTransactions } from '@/storage/transactions/transactionsSelectors'
 import { Direction } from '@/types/transactions'
 import { onEnterOrSpace } from '@/utils/misc'
 
@@ -55,9 +54,6 @@ const WalletTransactionList = ({ addressHashes, directions, assetIds }: WalletTr
   const dispatch = useAppDispatch()
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
-
-  const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
-  const pendingTxs = useAppSelector((s) => selectAddressesPendingTransactions(s, addressHashes)) // TODO
 
   const { data: detectedTxUpdates, isLoading: isLoadingLatestTx } = useFetchWalletLastTransaction()
 
@@ -115,11 +111,6 @@ const WalletTransactionList = ({ addressHashes, directions, assetIds }: WalletTr
         </NewTransactionsRow>
       )}
 
-      {/* TODO: Remove pending txs from tx list */}
-      {pendingTxs.map((tx) => (
-        <TransactionRow key={tx.hash} tx={tx} addressHash={tx.address.hash} blinking />
-      ))}
-
       {/* TODO: Remove uniqBy once backend removes duplicates from its results */}
       {uniqBy(filteredConfirmedTxs, 'hash').map((tx) => {
         const basedOnAddress = findTransactionReferenceAddress(allAddressHashes, tx)
@@ -151,13 +142,11 @@ const WalletTransactionList = ({ addressHashes, directions, assetIds }: WalletTr
         </TableRow>
       )}
 
-      {!isLoadingConfirmedTxs &&
-        pendingTxs.length === 0 &&
-        (!filteredConfirmedTxs || filteredConfirmedTxs.length === 0) && (
-          <TableRow role="row" tabIndex={0}>
-            <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
-          </TableRow>
-        )}
+      {!isLoadingConfirmedTxs && (!filteredConfirmedTxs || filteredConfirmedTxs.length === 0) && (
+        <TableRow role="row" tabIndex={0}>
+          <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
+        </TableRow>
+      )}
     </Table>
   )
 }

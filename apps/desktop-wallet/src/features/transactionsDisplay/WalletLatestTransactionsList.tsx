@@ -21,7 +21,6 @@ import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import { uniqBy } from 'lodash'
 import { ChevronRight } from 'lucide-react'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -35,7 +34,6 @@ import { openModal } from '@/features/modals/modalActions'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
-import { makeSelectAddressesPendingTransactions } from '@/storage/transactions/transactionsSelectors'
 import { onEnterOrSpace } from '@/utils/misc'
 
 const WalletLatestTransactionsList = () => {
@@ -45,9 +43,6 @@ const WalletLatestTransactionsList = () => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
-
-  const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
-  const pendingTxs = useAppSelector((s) => selectAddressesPendingTransactions(s, allAddressHashes))
 
   const { data } = useFetchWalletLastTransaction()
   const { data: confirmedTxs, isLoading } = useQuery(
@@ -77,10 +72,6 @@ const WalletLatestTransactionsList = () => {
           </TableRow>
         ))}
 
-      {pendingTxs.map((tx) => (
-        <TransactionRow key={tx.hash} tx={tx} addressHash={tx.address.hash} compact blinking />
-      ))}
-
       {/* TODO: Remove uniqBy once backend removes duplicates from its results */}
       {uniqBy(confirmedTxs, 'hash').map((tx) => {
         const txRefAddress = findTransactionReferenceAddress(allAddressHashes, tx)
@@ -98,7 +89,7 @@ const WalletLatestTransactionsList = () => {
         )
       })}
 
-      {!isLoading && pendingTxs.length === 0 && (!confirmedTxs || confirmedTxs.length === 0) && (
+      {!isLoading && (!confirmedTxs || confirmedTxs.length === 0) && (
         <TableRow role="row" tabIndex={0}>
           <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
         </TableRow>

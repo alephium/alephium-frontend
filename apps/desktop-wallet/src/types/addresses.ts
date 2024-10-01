@@ -21,9 +21,6 @@ import { AddressBalancesSyncResult, AddressHash, AddressSettings, AddressTokensS
 import { explorer } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
-import { TimeInMs } from '@/types/numbers'
-import { PendingTransaction } from '@/types/transactions'
-
 export type DeprecatedAddressSettings = {
   isMain: boolean
   label?: string
@@ -38,10 +35,6 @@ export type AddressBase = AddressSettings & NonSensitiveAddressData
 
 export type Address = AddressBase & {
   group: number
-  transactions: (explorer.Transaction['hash'] | PendingTransaction['hash'])[]
-  transactionsPageLoaded: number
-  allTransactionPagesLoaded: boolean
-  lastUsed: TimeInMs
 }
 
 export type LoadingEnabled = boolean | undefined
@@ -49,10 +42,7 @@ export type LoadingEnabled = boolean | undefined
 export type AddressDataSyncResult = AddressBalancesSyncResult & AddressTokensSyncResult & AddressTransactionsSyncResult
 
 export interface AddressesState extends EntityState<Address> {
-  loadingTransactions: boolean
-  syncingAddressData: boolean
   isRestoringAddressesFromMetadata: boolean
-  status: 'uninitialized' | 'initialized'
 }
 
 export type AddressTransactionsSyncResult = {

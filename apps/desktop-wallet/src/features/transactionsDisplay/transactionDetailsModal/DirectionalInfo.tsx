@@ -21,10 +21,10 @@ import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import IOList from '@/components/IOList'
-import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 
-const DirectionalInfo = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {
+const DirectionalInfo = ({ tx, addressHash }: TransactionDetailsModalTxProps) => {
   const direction = useTransactionDirection(tx, addressHash)
   const { t } = useTranslation()
 

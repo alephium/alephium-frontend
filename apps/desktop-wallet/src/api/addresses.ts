@@ -17,62 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NonSensitiveAddressData } from '@alephium/keyring'
-import { AddressHash, throttledClient } from '@alephium/shared'
-import { explorer, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { throttledClient } from '@alephium/shared'
+import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
-import { Address, AddressTransactionsSyncResult } from '@/types/addresses'
 import {
   deriveAddressesInGroup,
   getGapFromLastActiveAddress,
   splitResultsArrayIntoOneArrayPerGroup
 } from '@/utils/addresses'
-
-export const fetchAddressesTransactions = async (
-  addressHashes: AddressHash[]
-): Promise<AddressTransactionsSyncResult[]> => {
-  const results = []
-
-  for (const addressHash of addressHashes) {
-    const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
-      page: 1
-    })
-
-    results.push({
-      hash: addressHash,
-      transactions
-    })
-  }
-
-  return results
-}
-
-export const fetchAddressTransactionsNextPage = async (address: Address) => {
-  let nextPage = address.transactionsPageLoaded
-  let nextPageTransactions = [] as explorer.Transaction[]
-
-  if (!address.allTransactionPagesLoaded) {
-    nextPage += 1
-    nextPageTransactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(address.hash, {
-      page: nextPage
-    })
-  }
-
-  return {
-    hash: address.hash,
-    transactions: nextPageTransactions,
-    page: nextPage
-  }
-}
-
-export const fetchAddressesTransactionsNextPage = async (addresses: Address[], nextPage: number) => {
-  const addressHashes = addresses.filter((address) => !address.allTransactionPagesLoaded).map((address) => address.hash)
-  const transactions = await throttledClient.explorer.addresses.postAddressesTransactions(
-    { page: nextPage },
-    addressHashes
-  )
-
-  return transactions
-}
 
 export const discoverAndCacheActiveAddresses = async (
   addressIndexesToSkip: number[] = [],
