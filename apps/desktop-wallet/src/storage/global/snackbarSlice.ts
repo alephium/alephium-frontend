@@ -27,7 +27,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { nanoid } from 'nanoid'
 
 import i18n from '@/i18n'
-import { contactDeletionFailed, contactStorageFailed, syncAddressesData } from '@/storage/addresses/addressesActions'
+import { contactDeletionFailed, contactStorageFailed } from '@/storage/addresses/addressesActions'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import {
   walletConnectPairingFailed,
@@ -54,7 +54,6 @@ import {
   messageSignFailed,
   transactionBuildFailed,
   transactionSendFailed,
-  transactionsSendSucceeded,
   unsignedTransactionDecodingFailed,
   unsignedTransactionSignFailed
 } from '@/storage/transactions/transactionsActions'
@@ -81,11 +80,6 @@ const snackbarSlice = createSlice({
     builder
       .addCase(snackbarDisplayTimeExpired, (state) => {
         if (state.messages.length > 0) state.messages.shift()
-      })
-      .addCase(syncAddressesData.rejected, (state, action) => {
-        const message = action.error.message
-
-        if (message) queueMessage(state, { type: 'alert', text: message })
       })
       .addCase(apiClientInitSucceeded, (state, action) => {
         state.offlineMessageWasVisibleOnce = false
@@ -124,14 +118,6 @@ const snackbarSlice = createSlice({
       .addCase(contactStorageFailed, displayError)
       .addCase(contactDeletionFailed, displayError)
       .addCase(walletCreationFailed, displayError)
-      .addCase(transactionsSendSucceeded, (state, action) => {
-        const { nbOfTransactionsSent } = action.payload
-
-        displayMessageImmediately(state, {
-          text: nbOfTransactionsSent > 1 ? i18n.t('Transactions sent!') : i18n.t('Transaction sent!'),
-          type: 'success'
-        })
-      })
       .addCase(copiedToClipboard, (state, action) =>
         displayMessageImmediately(state, { text: action.payload || i18n.t('Copied to clipboard!') })
       )

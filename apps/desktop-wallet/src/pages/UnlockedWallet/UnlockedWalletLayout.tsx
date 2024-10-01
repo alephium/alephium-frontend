@@ -20,23 +20,18 @@ import { useInterval } from '@alephium/shared-react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Album, ArrowLeftRight, Layers, RefreshCw } from 'lucide-react'
+import { Album, ArrowLeftRight, Layers } from 'lucide-react'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme } from 'styled-components'
 
 import { fadeInSlowly } from '@/animations'
-import AppHeader from '@/components/AppHeader'
-import Button from '@/components/Button'
 import NavItem from '@/components/NavItem'
 import SideBar from '@/components/PageComponents/SideBar'
 import Scrollbar from '@/components/Scrollbar'
-import Spinner from '@/components/Spinner'
-import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { ReactComponent as AlephiumLogoSVG } from '@/images/alephium_logo_monochrome.svg'
-import { syncAddressesData } from '@/storage/addresses/addressesActions'
 import { getInitials, onEnterOrSpace } from '@/utils/misc'
 
 interface UnlockedWalletLayoutProps {
@@ -53,10 +48,7 @@ const walletNameHideAfterSeconds = 4
 const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayoutProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const networkStatus = useAppSelector((s) => s.network.status)
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
-  const isLoadingData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const { sendAnalytics } = useAnalytics()
   const previousWalletName = useRef<string>()
 
   const [fullWalletNameVisible, setFullWalletNameVisible] = useState(true)
@@ -91,16 +83,6 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
   if (!activeWalletName) return null
 
   const activeWalletNameInitials = getInitials(activeWalletName)
-
-  const refreshAddressesData = () => {
-    try {
-      dispatch(syncAddressesData())
-
-      sendAnalytics({ event: 'Refreshed data' })
-    } catch {
-      sendAnalytics({ type: 'error', message: 'Could not sync address data when refreshing manually' })
-    }
-  }
 
   return (
     <motion.div {...fadeInSlowly} className={className}>
@@ -153,24 +135,6 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
 
       <Scrollbar>
         <MainContent>{children}</MainContent>
-
-        <AppHeader title={title}>
-          {networkStatus === 'online' && (
-            <RefreshButton
-              role="secondary"
-              transparent
-              squared
-              short
-              onClick={refreshAddressesData}
-              disabled={isLoadingData}
-              aria-label={t('Refresh')}
-              data-tooltip-id="default"
-              data-tooltip-content={t('Refresh data')}
-            >
-              {isLoadingData ? <Spinner /> : <RefreshCw />}
-            </RefreshButton>
-          )}
-        </AppHeader>
       </Scrollbar>
     </motion.div>
   )
@@ -221,8 +185,6 @@ const SideNavigation = styled.nav`
   flex-direction: column;
   gap: 15px;
 `
-
-const RefreshButton = styled(Button)``
 
 const CurrentWalletInitials = styled(motion.div)`
   width: 48px;

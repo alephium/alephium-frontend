@@ -16,21 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, TransactionInfoType } from '@alephium/shared'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { useMemo } from 'react'
+import { createEntityAdapter } from '@reduxjs/toolkit'
 
-import { getTransactionInfoType } from '@/features/transactionsDisplay/transactionDisplayUtils'
 import { SentTransaction } from '@/types/transactions'
 
-const useTransactionInfoType = (
-  tx: Transaction | SentTransaction,
-  addressHash: AddressHash,
-  isInAddressDetailsModal?: boolean
-): TransactionInfoType =>
-  useMemo(
-    () => getTransactionInfoType(tx, addressHash, isInAddressDetailsModal),
-    [addressHash, isInAddressDetailsModal, tx]
-  )
-
-export default useTransactionInfoType
+export const sentTransactionsAdapter = createEntityAdapter<SentTransaction>({
+  selectId: (transaction) => transaction.hash,
+  sortComparer: (a, b) => a.timestamp - b.timestamp
+})

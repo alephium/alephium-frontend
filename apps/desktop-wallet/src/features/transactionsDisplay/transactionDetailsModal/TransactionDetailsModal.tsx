@@ -16,16 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { isTxConfirmed } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { useQuery } from '@tanstack/react-query'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import { confirmedTransactionQuery } from '@/api/queries/transactionQueries'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
 import DataList from '@/components/DataList'
+import SkeletonLoader from '@/components/SkeletonLoader'
 import Tooltip from '@/components/Tooltip'
 import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
 import AddressesDataRows from '@/features/transactionsDisplay/transactionDetailsModal/AddressesDataRows'
@@ -37,11 +41,9 @@ import LockTimeDataListRow from '@/features/transactionsDisplay/transactionDetai
 import NFTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NFTsDataListRow'
 import NSTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NSTsDataListRow'
 import TransactionType from '@/features/transactionsDisplay/transactionDetailsModal/TransactionType'
-import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import { TransactionDetailsModalTxHashProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
-import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
-import { selectConfirmedTransactionByHash } from '@/storage/transactions/transactionsSelectors'
 import { formatDateForDisplay } from '@/utils/misc'
 
 export interface TransactionDetailsModalProps extends AddressModalBaseProp {
@@ -50,14 +52,11 @@ export interface TransactionDetailsModalProps extends AddressModalBaseProp {
 
 const TransactionDetailsModal = memo(({ id, txHash, addressHash }: ModalBaseProp & TransactionDetailsModalProps) => {
   const { t } = useTranslation()
-  const tx = useAppSelector((s) => selectConfirmedTransactionByHash(s, txHash))
-
-  if (!tx) return null
 
   return (
     <SideModal id={id} title={t('Transaction details')}>
-      <Summary tx={tx} addressHash={addressHash} />
-      <Details tx={tx} addressHash={addressHash} />
+      <Summary txHash={txHash} addressHash={addressHash} />
+      <Details txHash={txHash} addressHash={addressHash} />
       <Tooltip />
     </SideModal>
   )
@@ -65,16 +64,24 @@ const TransactionDetailsModal = memo(({ id, txHash, addressHash }: ModalBaseProp
 
 export default TransactionDetailsModal
 
-const Summary = (props: TransactionDetailsModalSectionProps) => {
+const Summary = ({ txHash, addressHash }: TransactionDetailsModalTxHashProps) => {
   const { t } = useTranslation()
-  const handleShowTxInExplorer = useOpenTxInExplorer(props.tx.hash)
+
+  const handleShowTxInExplorer = useOpenTxInExplorer(txHash)
+
+  const { data: tx } = useQuery(confirmedTransactionQuery({ txHash }))
 
   return (
     <SummaryStyled>
       <SummaryContent>
-        <TransactionType {...props} />
-        <FTAmounts {...props} />
-        <DirectionalInfo {...props} />
+        {tx && isTxConfirmed(tx) && (
+          <>
+            <TransactionType tx={tx} addressHash={addressHash} />
+            <FTAmounts tx={tx} addressHash={addressHash} />
+            <DirectionalInfo tx={tx} addressHash={addressHash} />
+          </>
+        )}
+
         <ActionLink onClick={handleShowTxInExplorer} withBackground>
           {t('Show in explorer')} ↗
         </ActionLink>
@@ -83,48 +90,51 @@ const Summary = (props: TransactionDetailsModalSectionProps) => {
   )
 }
 
-const Details = (props: TransactionDetailsModalSectionProps) => {
+const Details = ({ txHash, addressHash }: TransactionDetailsModalTxHashProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
 
+  const { data: tx, isLoading } = useQuery(confirmedTransactionQuery({ txHash }))
+
   return (
     <DetailsStyled role="table">
-      <DataList>
-        <AddressesDataRows {...props} />
+      {isLoading && <SkeletonLoader height="400px" />}
 
-        <DataList.Row label={t('Status')}>
-          {props.tx.scriptExecutionOk ? (
-            <Badge color={theme.global.valid}>
-              <span tabIndex={0}>{t('Confirmed')}</span>
-            </Badge>
-          ) : (
-            <Badge color={theme.global.alert}>
-              <span tabIndex={0}>{t('Script execution failed')}</span>
-            </Badge>
-          )}
-        </DataList.Row>
+      {tx && isTxConfirmed(tx) && (
+        <>
+          <DataList>
+            <AddressesDataRows tx={tx} addressHash={addressHash} />
 
-        <DataList.Row label={t('Timestamp')}>
-          <span tabIndex={0}>{formatDateForDisplay(props.tx.timestamp)}</span>
-        </DataList.Row>
+            <DataList.Row label={t('Status')}>
+              {tx.scriptExecutionOk ? (
+                <Badge color={theme.global.valid}>
+                  <span tabIndex={0}>{t('Confirmed')}</span>
+                </Badge>
+              ) : (
+                <Badge color={theme.global.alert}>
+                  <span tabIndex={0}>{t('Script execution failed')}</span>
+                </Badge>
+              )}
+            </DataList.Row>
 
-        <LockTimeDataListRow tx={props.tx} />
+            <DataList.Row label={t('Timestamp')}>
+              <span tabIndex={0}>{formatDateForDisplay(tx.timestamp)}</span>
+            </DataList.Row>
 
-        <DataList.Row label={t('Fee')}>
-          <Amount
-            tokenId={ALPH.id}
-            tabIndex={0}
-            value={BigInt(props.tx.gasAmount) * BigInt(props.tx.gasPrice)}
-            fullPrecision
-          />
-        </DataList.Row>
+            <LockTimeDataListRow tx={tx} />
 
-        <FTsDataListRow {...props} />
-        <NFTsDataListRow {...props} />
-        <NSTsDataListRow {...props} />
-      </DataList>
+            <DataList.Row label={t('Fee')}>
+              <Amount tokenId={ALPH.id} tabIndex={0} value={BigInt(tx.gasAmount) * BigInt(tx.gasPrice)} fullPrecision />
+            </DataList.Row>
 
-      <GasUTXOsExpandableSection tx={props.tx} />
+            <FTsDataListRow tx={tx} addressHash={addressHash} />
+            <NFTsDataListRow tx={tx} addressHash={addressHash} />
+            <NSTsDataListRow tx={tx} addressHash={addressHash} />
+          </DataList>
+
+          <GasUTXOsExpandableSection tx={tx} />
+        </>
+      )}
     </DetailsStyled>
   )
 }

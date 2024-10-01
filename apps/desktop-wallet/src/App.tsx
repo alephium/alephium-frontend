@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
-import { useInitializeThrottledClient, useInterval } from '@alephium/shared-react'
-import { ReactNode, useCallback, useEffect, useMemo } from 'react'
+import { useInitializeThrottledClient } from '@alephium/shared-react'
+import { ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
@@ -34,8 +34,6 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
 import AppModals from '@/modals/AppModals'
 import Router from '@/routes'
-import { syncAddressesData } from '@/storage/addresses/addressesActions'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrationFailed,
@@ -46,7 +44,6 @@ import {
   systemLanguageMatchFailed,
   systemLanguageMatchSucceeded
 } from '@/storage/settings/settingsActions'
-import { makeSelectAddressesHashesWithPendingTransactions } from '@/storage/transactions/transactionsSelectors'
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
@@ -54,18 +51,7 @@ import { electron } from '@/utils/misc'
 import { languageOptions } from '@/utils/settings'
 
 const App = () => {
-  const dispatch = useAppDispatch()
   const theme = useAppSelector((s) => s.global.theme)
-
-  // TODO: Clean up following block when transactions move to Tanstack
-  const addressHashes = useAppSelector(selectAllAddressHashes)
-  const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
-  const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
-  const networkStatus = useAppSelector((s) => s.network.status)
-  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
-  const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const { sendAnalytics } = useAnalytics()
 
   useAutoLock()
 
@@ -78,38 +64,6 @@ const App = () => {
 
   useSystemTheme()
   useSystemLanguage()
-
-  useEffect(() => {
-    if (networkStatus === 'online') {
-      if (addressesStatus === 'uninitialized') {
-        if (!isSyncingAddressData && addressHashes.length > 0 && activeWalletId) {
-          try {
-            dispatch(syncAddressesData())
-          } catch {
-            sendAnalytics({ type: 'error', message: 'Could not sync address data automatically' })
-          }
-        }
-      }
-    }
-  }, [
-    activeWalletId,
-    addressHashes.length,
-    addressesStatus,
-    dispatch,
-    isSyncingAddressData,
-    networkStatus,
-    sendAnalytics
-  ])
-
-  const refreshAddressesData = useCallback(() => {
-    try {
-      dispatch(syncAddressesData(addressesWithPendingTxs))
-    } catch {
-      sendAnalytics({ type: 'error', message: 'Could not sync address data when refreshing automatically' })
-    }
-  }, [dispatch, addressesWithPendingTxs, sendAnalytics])
-
-  useInterval(refreshAddressesData, 5000, addressesWithPendingTxs.length === 0 || isSyncingAddressData)
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>

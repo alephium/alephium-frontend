@@ -96,7 +96,7 @@ export const handleTransferSend = async (transactionData: TransferTxData, contex
             timestamp: new Date().getTime(),
             lockTime,
             type,
-            status: 'pending'
+            status: 'sent'
           })
         )
       }
@@ -115,7 +115,7 @@ export const handleTransferSend = async (transactionData: TransferTxData, contex
           timestamp: new Date().getTime(),
           lockTime,
           type: 'transfer',
-          status: 'pending'
+          status: 'sent'
         })
       )
 

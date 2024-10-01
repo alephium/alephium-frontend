@@ -19,11 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import styled from 'styled-components'
 
 import Amount from '@/components/Amount'
-import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
 
-const FTAmounts = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {
+const FTAmounts = ({ tx, addressHash }: TransactionDetailsModalTxProps) => {
   const {
     data: { fungibleTokens }
   } = useFetchTransactionTokens(tx, addressHash)

@@ -20,6 +20,7 @@ import { AddressHash, throttledClient, TRANSACTIONS_REFRESH_INTERVAL } from '@al
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { InfiniteData, infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
+import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import queryClient from '@/api/queryClient'
 
 const ADDRESS_TRANSACTIONS_QUERY_KEYS = ['address', 'transactions']
@@ -28,6 +29,7 @@ interface AddressLatestTransactionQueryProps {
   addressHash: AddressHash
   networkId: number
   skip?: boolean
+  pause?: boolean
 }
 
 export interface AddressLatestTransactionHashesProps extends AddressLatestTransactionQueryProps {
@@ -41,7 +43,12 @@ export interface AddressLatestTransactionQueryFnData {
   previousTx?: Transaction
 }
 
-export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
+export const addressLatestTransactionQuery = ({
+  addressHash,
+  networkId,
+  skip,
+  pause
+}: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: [...ADDRESS_TRANSACTIONS_QUERY_KEYS, 'latest', { addressHash, networkId }],
     queryFn: !skip
@@ -63,7 +70,7 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
           }
         }
       : skipToken,
-    refetchInterval: TRANSACTIONS_REFRESH_INTERVAL
+    refetchInterval: !pause ? TRANSACTIONS_REFRESH_INTERVAL : undefined
   })
 
 export const addressTransactionsInfiniteQuery = ({
@@ -144,3 +151,21 @@ export const walletLatestTransactionsQuery = ({
     placeholderData: queryClient.getQueryData(previousQueryKey)
   })
 }
+
+interface TransactionQueryProps extends SkipProp {
+  txHash: string
+}
+
+export const confirmedTransactionQuery = ({ txHash, skip }: TransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['transaction', txHash],
+    queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken,
+    staleTime: Infinity
+  })
+
+export const pendingTransactionQuery = ({ txHash, skip }: TransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['transaction', txHash],
+    queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken,
+    refetchInterval: 3000
+  })
