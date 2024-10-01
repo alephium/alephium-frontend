@@ -130,9 +130,9 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       }}
       {...props}
     >
-      <AnimatedCirclesBackground height={400} scrollY={screenScrollY} />
       <CardContainer style={{ marginTop: insets.top }}>
         <AmountBlurredCard>
+          <AnimatedCirclesBackground height={400} scrollY={screenScrollY} />
           <WalletCardHeader>
             <HeaderButtons />
           </WalletCardHeader>

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Canvas, Circle, Group } from '@shopify/react-native-skia'
+import { Blur, Canvas, Circle, Group } from '@shopify/react-native-skia'
 import { useEffect } from 'react'
 import { useWindowDimensions } from 'react-native'
 import Animated, {
@@ -62,8 +62,8 @@ const AnimatedCirclesBackground = ({
   const canvasWidth = useSharedValue(isFullScreen ? screenWidth : height)
 
   useEffect(() => {
-    canvasHeight.value = withSpring(isFullScreen ? screenHeight : height, { mass: 20, damping: 60 })
-    canvasWidth.value = withSpring(isFullScreen ? screenWidth : height, { mass: 20, damping: 60 })
+    canvasHeight.value = withSpring(isFullScreen ? screenHeight : height, { mass: 5, damping: 60 })
+    canvasWidth.value = withSpring(isFullScreen ? screenWidth : height, { mass: 5, damping: 60 })
   }, [isFullScreen, screenWidth, canvasHeight, canvasWidth, screenHeight, height])
 
   const animatedCanvasStyle = useAnimatedStyle(() => ({
@@ -103,9 +103,9 @@ const AnimatedCirclesBackground = ({
       ? withSpring(
           canvasWidth.value / 4 +
             danceXAmplitude * Math.cos(angle.value + randomOffset1) +
-            gyroscope.sensor.value.roll * 25
+            gyroscope.sensor.value.roll * 50
         )
-      : withSpring(100 + gyroscope.sensor.value.roll * 25, { mass: 20, damping: 20 })
+      : withSpring(100 + gyroscope.sensor.value.roll * 50, { mass: 10, damping: 10 })
   )
 
   const circle1Y = useDerivedValue(() =>
@@ -113,9 +113,9 @@ const AnimatedCirclesBackground = ({
       ? withSpring(
           canvasCenterY.value +
             danceYAmplitude * Math.sin(angle.value + randomOffset1) +
-            gyroscope.sensor.value.pitch * 25
+            gyroscope.sensor.value.pitch * 50
         )
-      : withSpring(canvasCenterY.value + gyroscope.sensor.value.pitch * 25, { mass: 20, damping: 40 })
+      : withSpring(canvasCenterY.value + gyroscope.sensor.value.pitch * 35, { mass: 10, damping: 10 })
   )
 
   const circle2X = useDerivedValue(() =>
@@ -123,9 +123,9 @@ const AnimatedCirclesBackground = ({
       ? withSpring(
           canvasWidth.value / 2 +
             danceXAmplitude * Math.cos(angle.value + (2 * Math.PI) / 3 + randomOffset2) +
-            gyroscope.sensor.value.roll * 20
+            gyroscope.sensor.value.roll * 40
         )
-      : withSpring(screenWidth / 2 + gyroscope.sensor.value.roll * 20, { mass: 40, damping: 20 })
+      : withSpring(screenWidth / 2 + gyroscope.sensor.value.roll * 40, { mass: 40, damping: 10 })
   )
 
   const circle2Y = useDerivedValue(() =>
@@ -133,9 +133,9 @@ const AnimatedCirclesBackground = ({
       ? withSpring(
           canvasCenterY.value +
             danceYAmplitude * Math.sin(angle.value + (2 * Math.PI) / 3 + randomOffset2) +
-            gyroscope.sensor.value.pitch * 20
+            gyroscope.sensor.value.pitch * 60
         )
-      : withSpring(canvasCenterY.value - 80 + gyroscope.sensor.value.pitch * 20, { mass: 20, damping: 20 })
+      : withSpring(canvasCenterY.value - 120 + gyroscope.sensor.value.pitch * 20, { mass: 10, damping: 10 })
   )
 
   const circle3X = useDerivedValue(() =>
@@ -143,9 +143,9 @@ const AnimatedCirclesBackground = ({
       ? withSpring(
           (3 * canvasWidth.value) / 4 +
             danceXAmplitude * Math.cos(angle.value + (4 * Math.PI) / 3 + randomOffset3) +
-            gyroscope.sensor.value.roll * 23
+            gyroscope.sensor.value.roll * 42
         )
-      : withSpring(screenWidth - 90 + gyroscope.sensor.value.roll * 23, { mass: 30, damping: 20 })
+      : withSpring(screenWidth - 70 + gyroscope.sensor.value.roll * 42, { mass: 10, damping: 10 })
   )
 
   const circle3Y = useDerivedValue(() =>
@@ -153,19 +153,20 @@ const AnimatedCirclesBackground = ({
       ? withSpring(
           canvasCenterY.value +
             danceYAmplitude * Math.sin(angle.value + (4 * Math.PI) / 3 + randomOffset3) +
-            gyroscope.sensor.value.pitch * 23
+            gyroscope.sensor.value.pitch * 42
         )
-      : withSpring(canvasCenterY.value - 20 + gyroscope.sensor.value.pitch * 23, { mass: 20, damping: 20 })
+      : withSpring(canvasCenterY.value - 60 + gyroscope.sensor.value.pitch * 42, { mass: 10, damping: 10 })
   )
 
   return (
     <AnimatedContainer style={parallaxAnimatedStyle}>
       <AnimatedCanvas style={animatedCanvasStyle}>
         <Group>
-          <Circle r={96} color="#FF2E21" cx={circle1X} cy={circle1Y} />
-          <Circle r={86} color="#FFA621" cx={circle2X} cy={circle2Y} />
-          <Circle r={90} color="#FB21FF" cx={circle3X} cy={circle3Y} />
+          <Circle r={140} color="#86acff" cx={circle1X} cy={circle1Y} />
+          <Circle r={70} color="#2ac6ff" cx={circle2X} cy={circle2Y} />
+          <Circle r={100} color="#1856ff" cx={circle3X} cy={circle3Y} />
         </Group>
+        <Blur blur={50} />
       </AnimatedCanvas>
       {showAlephiumLogo && (
         <AlephiumLogoContainer>
