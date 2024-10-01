@@ -19,13 +19,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
+import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 
-const useFetchAddressLastTransaction = (addressHash: AddressHash) => {
+interface UseFetchAddressLastTransactionProps extends SkipProp {
+  addressHash: AddressHash
+}
+
+const useFetchAddressLastTransaction = ({ addressHash, skip }: UseFetchAddressLastTransactionProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
-  return useQuery(addressLatestTransactionQuery({ addressHash, networkId }))
+  return useQuery(addressLatestTransactionQuery({ addressHash, networkId, skip }))
 }
 
 export default useFetchAddressLastTransaction

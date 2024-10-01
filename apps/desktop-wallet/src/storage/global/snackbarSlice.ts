@@ -24,6 +24,7 @@ import {
   customNetworkSettingsSaved
 } from '@alephium/shared'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { nanoid } from 'nanoid'
 
 import i18n from '@/i18n'
 import { contactDeletionFailed, contactStorageFailed, syncAddressesData } from '@/storage/addresses/addressesActions'
@@ -60,8 +61,10 @@ import {
 import { newWalletNameStored, walletCreationFailed, walletNameStorageFailed } from '@/storage/wallets/walletActions'
 import { Message, SnackbarMessage } from '@/types/snackbar'
 
+export type SnackbarMessageInstance = Required<SnackbarMessage> & { id: string }
+
 interface SnackbarSliceState {
-  messages: Required<SnackbarMessage>[]
+  messages: SnackbarMessageInstance[]
   offlineMessageWasVisibleOnce: boolean
 }
 
@@ -223,11 +226,11 @@ const defaultSnackbarMessageSettings: Required<SnackbarMessage> = {
 }
 
 const queueMessage = (state: SnackbarSliceState, message: SnackbarMessage) => {
-  state.messages.push({ ...defaultSnackbarMessageSettings, ...message })
+  state.messages.push({ id: nanoid(), ...defaultSnackbarMessageSettings, ...message })
 }
 
 const displayMessageImmediately = (state: SnackbarSliceState, message: SnackbarMessage) => {
-  state.messages = [{ ...defaultSnackbarMessageSettings, ...message }]
+  state.messages = [{ id: nanoid(), ...defaultSnackbarMessageSettings, ...message }]
 }
 
 const displayError = (state: SnackbarSliceState, action: PayloadAction<Message>) =>
