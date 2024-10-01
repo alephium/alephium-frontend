@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 // HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
 
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dimensions, Keyboard, KeyboardAvoidingView, Pressable, ScrollView, StyleProp, ViewStyle } from 'react-native'
+import { Dimensions, KeyboardAvoidingView, Pressable, ScrollView, StyleProp, ViewStyle } from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, {
   interpolate,
@@ -67,6 +67,7 @@ export interface BottomModalProps {
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView)
 
 const BottomModal = ({
   id,
@@ -93,6 +94,7 @@ const BottomModal = ({
   }, [])
 
   const contentHeight = useSharedValue(0)
+  const [isScrollable, setIsScrollable] = useState(false)
 
   const maxHeight = dimensions.height
 
@@ -141,6 +143,9 @@ const BottomModal = ({
             : contentHeight.value + NAV_HEIGHT + insets.bottom
 
         shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
+
+        // Determine if scrolling is needed
+        runOnJS(setIsScrollable)(contentHeight.value > dimensions.height * 0.9)
       })()
     }
   }
@@ -153,8 +158,6 @@ const BottomModal = ({
 
   const handleClose = useCallback(() => {
     'worklet'
-
-    runOnJS(() => Keyboard.dismiss()) // Close keyboard if open to avoid visual artifacts
 
     navHeight.value = withSpring(0, springConfig)
     modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(handleCloseOnJS)())
@@ -180,7 +183,8 @@ const BottomModal = ({
   const panGesture = useMemo(
     () =>
       Gesture.Pan()
-        .onStart((e) => {
+        .activeOffsetY(5)
+        .onStart(() => {
           offsetY.value = modalHeight.value
         })
         .onChange((e) => {
@@ -249,17 +253,21 @@ const BottomModal = ({
                   <CloseButton onPress={handleClose} compact />
                 </NavigationButtonContainer>
               </Navigation>
-              <ScrollView
+              <AnimatedScrollView
                 onContentSizeChange={handleContentSizeChange}
                 keyboardShouldPersistTaps="handled"
-                scrollEnabled={false}
+                scrollEnabled={isScrollable}
+                scrollEventThrottle={16}
                 contentContainerStyle={[
                   contentContainerStyle,
-                  { gap: contentVerticalGap ? VERTICAL_GAP : undefined, padding: noPadding ? 0 : DEFAULT_MARGIN }
+                  {
+                    gap: contentVerticalGap ? VERTICAL_GAP : undefined,
+                    padding: noPadding ? 0 : DEFAULT_MARGIN
+                  }
                 ]}
               >
                 {children}
-              </ScrollView>
+              </AnimatedScrollView>
             </ModalStyled>
           </Container>
         </ExternalContainer>

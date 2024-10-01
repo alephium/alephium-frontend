@@ -45,7 +45,7 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
   if (!nft) return null
 
   return (
-    <BottomModal id={id} noPadding contentVerticalGap>
+    <BottomModal id={id} contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{nft.name}</ModalScreenTitle>
       </ScreenSection>
