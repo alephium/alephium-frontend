@@ -23,7 +23,7 @@ import styled from 'styled-components'
 
 import { fadeInBottom, fadeOut } from '@/animations'
 import Button from '@/components/Button'
-import { SnackbarManagerContainer, SnackbarPopup } from '@/components/SnackbarManager'
+import { SnackbarManagerContainer, SnackbarPopupStyled } from '@/components/SnackbarManager'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useLatestGitHubRelease from '@/features/autoUpdate/useLatestGitHubRelease'
 import ModalPortal from '@/modals/ModalPortal'
@@ -166,7 +166,7 @@ const ProgressBar = styled.progress`
   width: 100%;
 `
 
-const SnackbarPopupWithButton = styled(SnackbarPopup)`
+const SnackbarPopupWithButton = styled(SnackbarPopupStyled)`
   display: flex;
   gap: var(--spacing-2);
   width: 400px;

@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 
 import { fadeInBottom, fadeOut } from '@/animations'
@@ -26,12 +26,28 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import { snackbarDisplayTimeExpired } from '@/storage/global/globalActions'
 import { deviceBreakPoints, walletSidebarWidthPx } from '@/style/globalStyles'
+import { SnackbarMessage } from '@/types/snackbar'
 
 const SnackbarManager = () => {
-  const dispatch = useAppDispatch()
   const messages = useAppSelector((state) => state.snackbar.messages)
 
-  const message = messages.length > 0 ? messages[0] : undefined
+  return (
+    <ModalPortal>
+      {messages.length > 0 && (
+        <SnackbarManagerContainer>
+          {messages.map((message) => (
+            <SnackbarPopup key={message.id} message={message} />
+          ))}
+        </SnackbarManagerContainer>
+      )}
+    </ModalPortal>
+  )
+}
+
+export default SnackbarManager
+
+const SnackbarPopup = memo(({ message }: { message: Required<SnackbarMessage> }) => {
+  const dispatch = useAppDispatch()
 
   // Remove snackbar popup after its duration
   useEffect(() => {
@@ -47,19 +63,11 @@ const SnackbarManager = () => {
   }, [dispatch, message])
 
   return (
-    <ModalPortal>
-      {message?.text && (
-        <SnackbarManagerContainer>
-          <SnackbarPopup {...fadeInBottom} {...fadeOut} className={message.type} style={{ textAlign: 'center' }}>
-            {message.text}
-          </SnackbarPopup>
-        </SnackbarManagerContainer>
-      )}
-    </ModalPortal>
+    <SnackbarPopupStyled {...fadeInBottom} {...fadeOut} className={message.type} style={{ textAlign: 'center' }}>
+      <Message>{message.text}</Message>
+    </SnackbarPopupStyled>
   )
-}
-
-export default SnackbarManager
+})
 
 export const getSnackbarStyling = (color: string) => css`
   background-color: ${colord(color).alpha(0.9).toHex()};
@@ -71,17 +79,14 @@ export const SnackbarManagerContainer = styled.div`
   position: fixed;
   bottom: 0;
   left: ${walletSidebarWidthPx}px;
-  display: flex;
-  justify-content: flex-end;
   z-index: 2;
-  max-height: 20vh;
 
   @media ${deviceBreakPoints.mobile} {
     justify-content: center;
   }
 `
 
-export const SnackbarPopup = styled(motion.div)`
+export const SnackbarPopupStyled = styled(motion.div)`
   margin: var(--spacing-3);
   min-width: 200px;
   padding: var(--spacing-4) var(--spacing-3);
@@ -104,4 +109,8 @@ export const SnackbarPopup = styled(motion.div)`
   &.success {
     ${({ theme }) => getSnackbarStyling(theme.global.valid)}
   }
+`
+
+const Message = styled.div`
+  max-height: 20vh;
 `
