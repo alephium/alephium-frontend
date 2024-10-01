@@ -23,7 +23,11 @@ import posthog from 'posthog-js'
 import { fetchCsv } from '@/api/transactions'
 import i18n from '@/i18n'
 import { Message, SnackbarMessage } from '@/types/snackbar'
-import { CsvExportQueryParams, PendingTransaction } from '@/types/transactions'
+import { CsvExportQueryParams, SentTransaction } from '@/types/transactions'
+
+// TODO: Move into these features:
+// - send
+// - walletConnect
 
 export const transactionBuildFailed = createAction<Message>('tx/transactionBuildFailed')
 
@@ -41,7 +45,7 @@ export const messageSignSucceeded = createAction('tx/messageSignSucceeded')
 
 export const messageSignFailed = createAction<Message>('tx/messageSignFailed')
 
-export const transactionSent = createAction<PendingTransaction>('tx/transactionSent')
+export const transactionSent = createAction<SentTransaction>('tx/transactionSent')
 
 export const csvFileGenerationStarted = createAction('tx/csvFileGenerationStarted')
 

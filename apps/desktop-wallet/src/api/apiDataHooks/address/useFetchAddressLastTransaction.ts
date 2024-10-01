@@ -21,6 +21,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
+import { makeSelectAddressPendingSentTransactions } from '@/features/sentTransactions/sentTransactionsSelectors'
 import { useAppSelector } from '@/hooks/redux'
 
 interface UseFetchAddressLastTransactionProps extends SkipProp {
@@ -29,8 +30,10 @@ interface UseFetchAddressLastTransactionProps extends SkipProp {
 
 const useFetchAddressLastTransaction = ({ addressHash, skip }: UseFetchAddressLastTransactionProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const selectAddressPendingSentTxs = makeSelectAddressPendingSentTransactions()
+  const pendingSentTxs = useAppSelector((s) => selectAddressPendingSentTxs(s, addressHash))
 
-  return useQuery(addressLatestTransactionQuery({ addressHash, networkId, skip }))
+  return useQuery(addressLatestTransactionQuery({ addressHash, networkId, skip, pause: pendingSentTxs.length > 0 }))
 }
 
 export default useFetchAddressLastTransaction

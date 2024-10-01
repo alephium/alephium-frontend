@@ -19,7 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
-export interface TransactionDetailsModalSectionProps {
+export interface TransactionDetailsModalTxHashProps {
+  txHash: Transaction['hash']
+  addressHash: AddressHash
+}
+
+export interface TransactionDetailsModalTxProps {
   tx: Transaction
   addressHash: AddressHash
 }

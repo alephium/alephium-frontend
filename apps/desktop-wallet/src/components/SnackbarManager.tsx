@@ -22,6 +22,8 @@ import { memo, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 
 import { fadeInBottom, fadeOut } from '@/animations'
+import SentTransactionSnackbarPopup from '@/features/sentTransactions/SentTransactionSnackbarPopup'
+import { selectAllSentTransactions } from '@/features/sentTransactions/sentTransactionsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import { snackbarDisplayTimeExpired } from '@/storage/global/globalActions'
@@ -30,11 +32,15 @@ import { SnackbarMessage } from '@/types/snackbar'
 
 const SnackbarManager = () => {
   const messages = useAppSelector((state) => state.snackbar.messages)
+  const sentTxs = useAppSelector(selectAllSentTransactions)
 
   return (
     <ModalPortal>
-      {messages.length > 0 && (
+      {(messages.length > 0 || sentTxs.length > 0) && (
         <SnackbarManagerContainer>
+          {sentTxs.map((sentTxs) => (
+            <SentTransactionSnackbarPopup key={sentTxs.hash} txHash={sentTxs.hash} />
+          ))}
           {messages.map((message) => (
             <SnackbarPopup key={message.id} message={message} />
           ))}

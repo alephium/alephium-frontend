@@ -19,11 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useTranslation } from 'react-i18next'
 
 import DataList from '@/components/DataList'
-import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useTransactionLockTime from '@/features/transactionsDisplay/useTransactionLockTime'
 import { formatDateForDisplay } from '@/utils/misc'
 
-const LockTimeDataListRow = ({ tx }: Pick<TransactionDetailsModalSectionProps, 'tx'>) => {
+const LockTimeDataListRow = ({ tx }: Pick<TransactionDetailsModalTxProps, 'tx'>) => {
   const { t } = useTranslation()
   const lockTime = useTransactionLockTime(tx)
 

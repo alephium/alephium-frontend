@@ -29,6 +29,7 @@ const useFetchWalletLastTransactionHashes = (props?: SkipProp) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
+  // TODO
   const { data, isLoading } = useQueries({
     queries: !props?.skip
       ? allAddressHashes.map((addressHash) => addressLatestTransactionQuery({ addressHash, networkId }))

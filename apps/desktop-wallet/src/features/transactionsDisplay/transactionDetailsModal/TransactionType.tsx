@@ -19,10 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import styled from 'styled-components'
 
 import Badge from '@/components/Badge'
-import { TransactionDetailsModalSectionProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
+import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
-const TransactionType = ({ tx, addressHash }: TransactionDetailsModalSectionProps) => {
+const TransactionType = ({ tx, addressHash }: TransactionDetailsModalTxProps) => {
   const { label, Icon, iconColor } = useTransactionIconLabel(tx, addressHash)
 
   return (

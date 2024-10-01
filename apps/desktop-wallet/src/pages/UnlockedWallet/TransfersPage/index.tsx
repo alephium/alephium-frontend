@@ -50,7 +50,7 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
   const [selectedTokensIds, setSelectedTokensIds] = useState<TokenId[]>()
 
   useEffect(() => {
-    scrollDirection?.onChange(setDirection)
+    scrollDirection?.on('change', setDirection)
 
     return () => scrollDirection?.destroy()
   }, [scrollDirection])

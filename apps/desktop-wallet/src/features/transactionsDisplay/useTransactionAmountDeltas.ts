@@ -21,9 +21,9 @@ import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useMemo } from 'react'
 
 import { getTransactionAmountDeltas } from '@/features/transactionsDisplay/transactionDisplayUtils'
-import { PendingTransaction } from '@/types/transactions'
+import { SentTransaction } from '@/types/transactions'
 
-const useTransactionAmountDeltas = (tx: Transaction | PendingTransaction, addressHash: AddressHash) =>
+const useTransactionAmountDeltas = (tx: Transaction | SentTransaction, addressHash: AddressHash) =>
   useMemo(() => getTransactionAmountDeltas(tx, addressHash), [addressHash, tx])
 
 export default useTransactionAmountDeltas

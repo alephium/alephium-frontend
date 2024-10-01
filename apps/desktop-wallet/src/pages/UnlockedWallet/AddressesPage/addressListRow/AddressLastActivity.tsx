@@ -17,13 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import useFetchAddressLastTransaction from '@/api/apiDataHooks/address/useFetchAddressLastTransaction'
-import { useAppSelector } from '@/hooks/redux'
-import { selectConfirmedTransactionByHash } from '@/storage/transactions/transactionsSelectors'
 
 interface AddressListRowLastUsedProps {
   addressHash: AddressHash
@@ -31,28 +30,21 @@ interface AddressListRowLastUsedProps {
 
 const AddressLastActivity = ({ addressHash }: AddressListRowLastUsedProps) => {
   const { t } = useTranslation()
-  const { data } = useFetchAddressLastTransaction(addressHash)
+  const { data } = useFetchAddressLastTransaction({ addressHash })
 
   return (
     <AddressListRowLastUsedStyled>
-      {data?.latestTx ? <LastTransactionTimestamp txHash={data.latestTx.hash} /> : t('Never used')}
+      {data?.latestTx ? <LastTransactionTimestamp timestamp={data.latestTx.timestamp} /> : t('Never used')}
     </AddressListRowLastUsedStyled>
   )
 }
 
 export default AddressLastActivity
 
-interface LastTransactionTimestampProps {
-  txHash: string
-}
-
-const LastTransactionTimestamp = ({ txHash }: LastTransactionTimestampProps) => {
+const LastTransactionTimestamp = ({ timestamp }: Pick<Transaction, 'timestamp'>) => {
   const { t } = useTranslation()
-  const transaction = useAppSelector((s) => selectConfirmedTransactionByHash(s, txHash))
 
-  if (!transaction) return null
-
-  return `${t('Last activity')} ${dayjs(transaction.timestamp).fromNow()}`
+  return `${t('Last activity')} ${dayjs(timestamp).fromNow()}`
 }
 
 const AddressListRowLastUsedStyled = styled.div`

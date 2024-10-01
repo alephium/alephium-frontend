@@ -20,10 +20,9 @@ import { AddressHash } from '@alephium/shared'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { TableRowProps } from '@/components/Table'
-import { PendingTransaction } from '@/types/transactions'
 
 export interface TransactionRowProps extends TableRowProps {
-  tx: Transaction | PendingTransaction
+  tx: Transaction
   addressHash: AddressHash
   isInAddressDetailsModal?: boolean
   compact?: boolean
