@@ -30,6 +30,7 @@ import { pendingTransactionQuery } from '@/api/queries/transactionQueries'
 import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
 import { openModal } from '@/features/modals/modalActions'
+import { selectTopModal } from '@/features/modals/modalSelectors'
 import { sentTransactionStatusChanged } from '@/features/sentTransactions/sentTransactionsActions'
 import { selectSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
 import SnackbarBox from '@/features/snackbar/SnackbarBox'
@@ -63,8 +64,6 @@ const SentTransactionSnackbarPopup = memo(({ txHash }: { txHash: string }) => {
 
   if (!sentTx || hide) return null
 
-  const openTransactionDetailsModal = () => dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))
-
   return (
     <SentTransactionSnackbarPopupStyled {...fadeInBottom} {...fadeOut} className="info">
       <Columns>
@@ -76,11 +75,8 @@ const SentTransactionSnackbarPopup = memo(({ txHash }: { txHash: string }) => {
           <Progress status={sentTx.status} />
         </Rows>
         <ButtonsRow>
-          {sentTx.status !== 'sent' && (
-            <Button role="secondary" short borderless onClick={openTransactionDetailsModal}>
-              {t('See more')}
-            </Button>
-          )}
+          {sentTx.status !== 'sent' && <DetailsButton hash={txHash} />}
+
           <Button aria-label={t('Close')} squared role="secondary" onClick={() => setHide(true)} borderless transparent>
             <X />
           </Button>
@@ -122,6 +118,25 @@ const Progress = ({ status }: Pick<SentTransaction, 'status'>) => {
   useInterval(() => setProgress((prevValue) => prevValue + 0.015), 1000, status === 'confirmed' || progress > 0.9)
 
   return <ProgressBar value={progress} />
+}
+
+const DetailsButton = ({ hash }: Pick<SentTransaction, 'hash'>) => {
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+  const topModal = useAppSelector(selectTopModal)
+
+  const openTransactionDetailsModal = () => {
+    // Do not open the same transaction details modal if it's the current top one
+    if (topModal && topModal.params.name === 'TransactionDetailsModal' && topModal.params.props.txHash === hash) return
+
+    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash: hash } }))
+  }
+
+  return (
+    <Button role="secondary" short borderless onClick={openTransactionDetailsModal}>
+      {t('See more')}
+    </Button>
+  )
 }
 
 const HashEllipsedStyled = styled(HashEllipsed)`
