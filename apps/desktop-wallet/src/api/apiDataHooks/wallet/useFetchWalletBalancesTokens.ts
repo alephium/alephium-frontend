@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { combineBalancesByToken } from '@/api/apiDataHooks/wallet/combineBalances'
-import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
+import { useFetchWalletLastTransactionHashes } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { TokenDisplayBalances } from '@/types/tokens'
