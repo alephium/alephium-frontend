@@ -20,7 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
+import { useFetchWalletLastTransactionHashes } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { DisplayBalances } from '@/types/tokens'

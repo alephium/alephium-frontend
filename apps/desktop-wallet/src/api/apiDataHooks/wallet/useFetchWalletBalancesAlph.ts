@@ -20,7 +20,7 @@ import { useQueries } from '@tanstack/react-query'
 
 import { DataHook, SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineBalances } from '@/api/apiDataHooks/wallet/combineBalances'
-import useFetchWalletLastTransactionHashes from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHashes'
+import { useFetchWalletLastTransactionHashes } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { addressAlphBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { DisplayBalances } from '@/types/tokens'

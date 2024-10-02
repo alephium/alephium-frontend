@@ -25,7 +25,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
-import useFetchWalletLastTransaction from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactionHash'
+import { useFetchWalletLastTransaction } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { walletLatestTransactionsQuery } from '@/api/queries/transactionQueries'
 import ActionLink from '@/components/ActionLink'
 import SkeletonLoader from '@/components/SkeletonLoader'
