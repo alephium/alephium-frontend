@@ -41,7 +41,7 @@ export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressTokensT
         <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
       ))}
       {!isLoading && listedFts.length === 0 && unlistedFts.length === 0 && (
-        <PlaceholderText>{t("This address doesn't have any tokens.")}</PlaceholderText>
+        <PlaceholderText>{t("This address doesn't have any tokens yet.")}</PlaceholderText>
       )}
       {isLoading && <TokensSkeletonLoader />}
     </ExpandableTokensBalancesList>

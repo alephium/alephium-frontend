@@ -45,7 +45,7 @@ export const AddressNFTsGrid = ({ addressHash, ...props }: AddressTokensTabsProp
       columns={4}
       nftIds={nftIds}
       isLoading={isLoading}
-      placeholderText={t("This address doesn't have any NFTs.")}
+      placeholderText={t("This address doesn't have any NFTs yet.")}
     />
   )
 }
