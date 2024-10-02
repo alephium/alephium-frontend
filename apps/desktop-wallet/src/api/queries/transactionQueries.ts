@@ -152,14 +152,14 @@ interface TransactionQueryProps extends SkipProp {
 
 export const confirmedTransactionQuery = ({ txHash, skip }: TransactionQueryProps) =>
   queryOptions({
-    queryKey: ['transaction', txHash],
+    queryKey: ['transaction', 'confirmed', txHash],
     queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken,
     staleTime: Infinity
   })
 
 export const pendingTransactionQuery = ({ txHash, skip }: TransactionQueryProps) =>
   queryOptions({
-    queryKey: ['transaction', txHash],
+    queryKey: ['transaction', 'pending', txHash],
     queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken,
     refetchInterval: 3000
   })

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { isConfirmedTx } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -24,8 +25,8 @@ import IOList from '@/components/IOList'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 
-const DirectionalInfo = ({ tx, addressHash }: TransactionDetailsModalTxProps) => {
-  const direction = useTransactionDirection(tx, addressHash)
+const DirectionalInfo = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
+  const direction = useTransactionDirection(tx, refAddressHash)
   const { t } = useTranslation()
 
   return (
@@ -42,26 +43,26 @@ const DirectionalInfo = ({ tx, addressHash }: TransactionDetailsModalTxProps) =>
         </FromIn>
         {direction === 'swap' ? (
           <>
-            <AddressBadge addressHash={addressHash} truncate withBorders isShort />
+            <AddressBadge addressHash={refAddressHash} truncate withBorders isShort />
             <FromIn>{t('and')}</FromIn>
             <SwapPartnerAddress>
               <IOList
-                currentAddress={addressHash}
+                currentAddress={refAddressHash}
                 isOut={false}
                 outputs={tx.outputs}
                 inputs={tx.inputs}
-                timestamp={tx.timestamp}
+                timestamp={isConfirmedTx(tx) ? tx.timestamp : undefined}
                 linkToExplorer
               />
             </SwapPartnerAddress>
           </>
         ) : (
           <IOList
-            currentAddress={addressHash}
+            currentAddress={refAddressHash}
             isOut={direction === 'out'}
             outputs={tx.outputs}
             inputs={tx.inputs}
-            timestamp={tx.timestamp}
+            timestamp={isConfirmedTx(tx) ? tx.timestamp : undefined}
             truncate
           />
         )}

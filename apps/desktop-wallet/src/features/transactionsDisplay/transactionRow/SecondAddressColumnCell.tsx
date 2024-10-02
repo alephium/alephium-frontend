@@ -16,44 +16,32 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
-import Badge from '@/components/Badge'
 import IOList from '@/components/IOList'
-import { isPendingTx } from '@/features/transactionsDisplay/transactionDisplayUtils'
 import AddressCell from '@/features/transactionsDisplay/transactionRow/AddressCell'
-import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
+import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 
-const SecondAddressColumnCell = ({ tx, addressHash, isInAddressDetailsModal }: TransactionRowProps) => {
-  const { t } = useTranslation()
-  const direction = useTransactionDirection(tx, addressHash)
+const SecondAddressColumnCell = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionRowSectionProps) => {
+  const direction = useTransactionDirection(tx, refAddressHash)
 
   return (
     <AddressCell hasMargins={!isInAddressDetailsModal}>
       <DirectionalAddress>
         {direction !== 'in' || (direction === 'in' && isInAddressDetailsModal) ? (
-          isPendingTx(tx) ? (
-            tx.type === 'contract' ? (
-              <Badge>{t('Smart contract')}</Badge>
-            ) : (
-              <AddressBadge truncate addressHash={direction === 'in' ? tx.fromAddress : tx.toAddress} withBorders />
-            )
-          ) : (
-            <IOList
-              currentAddress={addressHash}
-              isOut={direction === 'out'}
-              outputs={tx.outputs}
-              inputs={tx.inputs}
-              timestamp={tx.timestamp}
-              truncate
-              disableA11y
-            />
-          )
+          <IOList
+            currentAddress={refAddressHash}
+            isOut={direction === 'out'}
+            outputs={tx.outputs}
+            inputs={tx.inputs}
+            timestamp={tx.timestamp}
+            truncate
+            disableA11y
+          />
         ) : (
-          <AddressBadge addressHash={addressHash} truncate disableA11y withBorders />
+          <AddressBadge addressHash={refAddressHash} truncate disableA11y withBorders />
         )}
       </DirectionalAddress>
     </AddressCell>

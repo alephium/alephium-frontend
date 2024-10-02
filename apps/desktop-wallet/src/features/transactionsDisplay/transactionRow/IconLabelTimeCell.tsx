@@ -16,18 +16,18 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { isConfirmedTx } from '@alephium/shared'
 import { colord } from 'colord'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import TimeSince from '@/components/TimeSince'
-import { isPendingTx } from '@/features/transactionsDisplay/transactionDisplayUtils'
-import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
+import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
-const IconLabelTimeCell = ({ tx, addressHash, isInAddressDetailsModal }: TransactionRowProps) => {
+const IconLabelTimeCell = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionRowSectionProps) => {
   const { t } = useTranslation()
-  const { label, Icon, iconColor, iconBgColor } = useTransactionIconLabel(tx, addressHash, isInAddressDetailsModal)
+  const { label, Icon, iconColor, iconBgColor } = useTransactionIconLabel(tx, refAddressHash, isInAddressDetailsModal)
 
   return (
     <IconLabelTimeCellStyled>
@@ -35,7 +35,7 @@ const IconLabelTimeCell = ({ tx, addressHash, isInAddressDetailsModal }: Transac
         <TransactionIcon color={iconBgColor}>
           <Icon size={13} strokeWidth={3} color={iconColor} />
 
-          {!isPendingTx(tx) && !tx.scriptExecutionOk && (
+          {isConfirmedTx(tx) && !tx.scriptExecutionOk && (
             <FailedTXBubble data-tooltip-id="default" data-tooltip-content={t('Script execution failed')}>
               !
             </FailedTXBubble>

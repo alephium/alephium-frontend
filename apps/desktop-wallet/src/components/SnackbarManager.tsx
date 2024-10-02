@@ -16,14 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
-import { motion } from 'framer-motion'
 import { memo, useEffect } from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 import { fadeInBottom, fadeOut } from '@/animations'
 import SentTransactionSnackbarPopup from '@/features/sentTransactions/SentTransactionSnackbarPopup'
 import { selectAllSentTransactions } from '@/features/sentTransactions/sentTransactionsSelectors'
+import SnackbarBox from '@/features/snackbar/SnackbarBox'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import { snackbarDisplayTimeExpired } from '@/storage/global/globalActions'
@@ -69,17 +68,11 @@ const SnackbarPopup = memo(({ message }: { message: Required<SnackbarMessage> })
   }, [dispatch, message])
 
   return (
-    <SnackbarPopupStyled {...fadeInBottom} {...fadeOut} className={message.type} style={{ textAlign: 'center' }}>
+    <SnackbarBox {...fadeInBottom} {...fadeOut} className={message.type} style={{ textAlign: 'center' }}>
       <Message>{message.text}</Message>
-    </SnackbarPopupStyled>
+    </SnackbarBox>
   )
 })
-
-export const getSnackbarStyling = (color: string) => css`
-  background-color: ${colord(color).alpha(0.9).toHex()};
-  border: 1px solid ${colord(color).lighten(0.1).toHex()};
-  color: rgba(255, 255, 255, 0.8);
-`
 
 export const SnackbarManagerContainer = styled.div`
   position: fixed;
@@ -89,31 +82,6 @@ export const SnackbarManagerContainer = styled.div`
 
   @media ${deviceBreakPoints.mobile} {
     justify-content: center;
-  }
-`
-
-export const SnackbarPopupStyled = styled(motion.div)`
-  margin: var(--spacing-3);
-  min-width: 200px;
-  padding: var(--spacing-4) var(--spacing-3);
-  color: ${({ theme }) => theme.font.primary};
-  border-radius: var(--radius-medium);
-  backdrop-filter: blur(10px);
-  max-width: 800px;
-  word-wrap: break-word;
-  overflow-y: auto;
-
-  &.alert {
-    ${({ theme }) => getSnackbarStyling(theme.global.alert)}
-  }
-
-  &.info {
-    ${({ theme }) =>
-      theme.name === 'light' ? getSnackbarStyling(theme.bg.contrast) : getSnackbarStyling(theme.bg.background2)}
-  }
-
-  &.success {
-    ${({ theme }) => getSnackbarStyling(theme.global.valid)}
   }
 `
 

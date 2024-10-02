@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { findTransactionReferenceAddress } from '@alephium/shared'
 import { memo } from 'react'
 import styled, { css } from 'styled-components'
 
@@ -29,32 +30,41 @@ import OtherAmounts from '@/features/transactionsDisplay/transactionRow/OtherAmo
 import SecondAddressColumnCell from '@/features/transactionsDisplay/transactionRow/SecondAddressColumnCell'
 import TokenBadgesListCell from '@/features/transactionsDisplay/transactionRow/TokenBadgesListCell'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
+import { useAppSelector } from '@/hooks/redux'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
-const TransactionRow = memo(({ tx, addressHash, isInAddressDetailsModal, compact, ...props }: TransactionRowProps) => {
-  const commonProps = { tx, addressHash, isInAddressDetailsModal }
+const TransactionRow = memo(
+  ({ tx, refAddressHash, isInAddressDetailsModal, compact, ...props }: TransactionRowProps) => {
+    const allAddressHashes = useAppSelector(selectAllAddressHashes)
+    const referenceAddress = refAddressHash ?? findTransactionReferenceAddress(allAddressHashes, tx)
 
-  return (
-    <TableRowStyled role="row" tabIndex={0} {...props}>
-      <IconLabelTimeCell {...commonProps} />
+    if (!referenceAddress) return null
 
-      <TokenBadgesListCell tx={tx} addressHash={addressHash} compact={compact} />
+    const commonProps = { tx, refAddressHash: referenceAddress, isInAddressDetailsModal }
 
-      <DirectionalAddresses stackVertically={isInAddressDetailsModal}>
-        {!isInAddressDetailsModal && <FirstAddressColumnCell tx={tx} addressHash={addressHash} />}
-        <DirectionCell {...commonProps} />
-        <SecondAddressColumnCell {...commonProps} />
-      </DirectionalAddresses>
+    return (
+      <TableRowStyled role="row" tabIndex={0} {...props}>
+        <IconLabelTimeCell {...commonProps} />
 
-      <TableCellAmount aria-hidden="true">
-        <AmountsList>
-          <FTAmounts {...commonProps} />
-          <OtherAmounts type="nfts" {...commonProps} />
-          <OtherAmounts type="nsts" {...commonProps} />
-        </AmountsList>
-      </TableCellAmount>
-    </TableRowStyled>
-  )
-})
+        <TokenBadgesListCell tx={tx} refAddressHash={referenceAddress} compact={compact} />
+
+        <DirectionalAddresses stackVertically={isInAddressDetailsModal}>
+          {!isInAddressDetailsModal && <FirstAddressColumnCell tx={tx} refAddressHash={referenceAddress} />}
+          <DirectionCell {...commonProps} />
+          <SecondAddressColumnCell {...commonProps} />
+        </DirectionalAddresses>
+
+        <TableCellAmount aria-hidden="true">
+          <AmountsList>
+            <FTAmounts {...commonProps} />
+            <OtherAmounts type="nfts" {...commonProps} />
+            <OtherAmounts type="nsts" {...commonProps} />
+          </AmountsList>
+        </TableCellAmount>
+      </TableRowStyled>
+    )
+  }
+)
 
 export default TransactionRow
 

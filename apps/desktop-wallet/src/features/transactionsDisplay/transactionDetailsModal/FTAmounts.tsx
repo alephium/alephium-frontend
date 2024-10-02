@@ -23,11 +23,11 @@ import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/t
 import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
 
-const FTAmounts = ({ tx, addressHash }: TransactionDetailsModalTxProps) => {
+const FTAmounts = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
   const {
     data: { fungibleTokens }
-  } = useFetchTransactionTokens(tx, addressHash)
-  const infoType = useTransactionInfoType(tx, addressHash)
+  } = useFetchTransactionTokens(tx, refAddressHash)
+  const infoType = useTransactionInfoType(tx, refAddressHash)
 
   const isMoved = infoType === 'move'
 

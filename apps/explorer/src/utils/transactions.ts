@@ -20,8 +20,8 @@ import {
   calcTxAmountsDeltaForAddress,
   getDirection,
   hasPositiveAndNegativeAmounts,
+  isConfirmedTx,
   isConsolidationTx,
-  isMempoolTx,
   TransactionDirection,
   TransactionInfoType
 } from '@alephium/shared'
@@ -50,7 +50,7 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
   } else if (hasPositiveAndNegativeAmounts(amount, tokenAmounts)) {
     direction = 'swap'
     infoType = 'swap'
-  } else if (isMempoolTx(tx)) {
+  } else if (!isConfirmedTx(tx)) {
     direction = getDirection(tx, addressHash)
     infoType = 'pending'
   } else {
