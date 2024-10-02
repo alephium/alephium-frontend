@@ -20,17 +20,17 @@ import { AddressHash } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
+import { addressUpdatesSignalQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 
 interface UseFetchAddressLastTransactionProps extends SkipProp {
   addressHash: AddressHash
 }
 
-const useFetchAddressLastTransaction = ({ addressHash, skip }: UseFetchAddressLastTransactionProps) => {
+const useFetchAddressUpdatesSignal = ({ addressHash, skip }: UseFetchAddressLastTransactionProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
-  return useQuery(addressLatestTransactionQuery({ addressHash, networkId, skip }))
+  return useQuery(addressUpdatesSignalQuery({ addressHash, networkId, skip }))
 }
 
-export default useFetchAddressLastTransaction
+export default useFetchAddressUpdatesSignal

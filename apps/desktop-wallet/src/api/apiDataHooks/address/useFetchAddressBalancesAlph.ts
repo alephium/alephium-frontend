@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
-import useFetchAddressLastTransaction from '@/api/apiDataHooks/address/useFetchAddressLastTransaction'
+import useFetchAddressUpdatesSignal from '@/api/apiDataHooks/address/useFetchAddressUpdatesSignal'
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { addressAlphBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
@@ -30,22 +30,21 @@ interface UseAddressAlphBalancesProps extends SkipProp {
 
 const useFetchAddressBalancesAlph = ({ addressHash, skip }: UseAddressAlphBalancesProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const queryProps = { addressHash, networkId }
 
-  const { data: detectedNewTxs, isLoading: isLoadingTxHashes } = useFetchAddressLastTransaction({ addressHash })
-
+  const { data: updatesSignal, isLoading: isLoadingUpdatesSignal } = useFetchAddressUpdatesSignal({ addressHash, skip })
   const { data, isLoading: isLoadingAlphBalances } = useQuery(
     addressAlphBalancesQuery({
-      ...queryProps,
-      latestTxHash: detectedNewTxs?.latestTx?.hash,
-      previousTxHash: detectedNewTxs?.previousTx?.hash,
-      skip: isLoadingTxHashes || skip
+      addressHash,
+      networkId,
+      latestTxHash: updatesSignal?.latestTx?.hash,
+      previousTxHash: updatesSignal?.previousTx?.hash,
+      skip: isLoadingUpdatesSignal || skip
     })
   )
 
   return {
     data: data?.balances,
-    isLoading: isLoadingAlphBalances || isLoadingTxHashes
+    isLoading: isLoadingAlphBalances || isLoadingUpdatesSignal
   }
 }
 

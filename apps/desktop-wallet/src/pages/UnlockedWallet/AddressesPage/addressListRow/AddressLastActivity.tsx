@@ -22,7 +22,7 @@ import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchAddressLastTransaction from '@/api/apiDataHooks/address/useFetchAddressLastTransaction'
+import useFetchAddressUpdatesSignal from '@/api/apiDataHooks/address/useFetchAddressUpdatesSignal'
 
 interface AddressListRowLastUsedProps {
   addressHash: AddressHash
@@ -30,7 +30,7 @@ interface AddressListRowLastUsedProps {
 
 const AddressLastActivity = ({ addressHash }: AddressListRowLastUsedProps) => {
   const { t } = useTranslation()
-  const { data } = useFetchAddressLastTransaction({ addressHash })
+  const { data } = useFetchAddressUpdatesSignal({ addressHash })
 
   return (
     <AddressListRowLastUsedStyled>
