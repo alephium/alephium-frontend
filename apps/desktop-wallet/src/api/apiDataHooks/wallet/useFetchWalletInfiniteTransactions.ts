@@ -26,7 +26,7 @@ import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
 const useFetchWalletInfiniteTransactions = () => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const allAddressHashes = useAppSelector(selectAllAddressHashes) // TODO: Display warning if > 80 addresses
 
   const [fetchedTransactionListAt, setRefreshedTransactionListAt] = useState(0)
   const refresh = useCallback(() => setRefreshedTransactionListAt(new Date().getTime()), [])
