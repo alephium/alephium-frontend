@@ -19,28 +19,27 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useQuery } from '@tanstack/react-query'
 
 import { UseFetchAddressProps } from '@/api/apiDataHooks/address/addressApiDataHooksTypes'
-import useFetchAddressLastTransaction from '@/api/apiDataHooks/address/useFetchAddressLastTransaction'
+import useFetchAddressUpdatesSignal from '@/api/apiDataHooks/address/useFetchAddressUpdatesSignal'
 import { addressTokensBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 
 const useFetchAddressBalancesTokens = ({ addressHash, skip }: UseFetchAddressProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const queryProps = { addressHash, networkId, skip }
 
-  const { data: detectedNewTxs, isLoading: isLoadingTxHashes } = useFetchAddressLastTransaction({ addressHash })
-
+  const { data: updatesSignal, isLoading: isLoadingUpdatesSignal } = useFetchAddressUpdatesSignal({ addressHash, skip })
   const { data, isLoading: isLoadingTokensBalances } = useQuery(
     addressTokensBalancesQuery({
-      ...queryProps,
-      latestTxHash: detectedNewTxs?.latestTx?.hash,
-      previousTxHash: detectedNewTxs?.previousTx?.hash,
-      skip: isLoadingTxHashes
+      addressHash,
+      networkId,
+      latestTxHash: updatesSignal?.latestTx?.hash,
+      previousTxHash: updatesSignal?.previousTx?.hash,
+      skip: isLoadingUpdatesSignal || skip
     })
   )
 
   return {
     data,
-    isLoading: isLoadingTokensBalances || isLoadingTxHashes
+    isLoading: isLoadingTokensBalances || isLoadingUpdatesSignal
   }
 }
 

@@ -43,7 +43,7 @@ export interface AddressLatestTransactionQueryFnData {
   previousTx?: Transaction
 }
 
-export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
+export const addressUpdatesSignalQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: [...ADDRESS_TRANSACTIONS_QUERY_KEYS, 'latest', { addressHash, networkId }],
     queryFn: !skip
