@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, NFT } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { PendingTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
@@ -27,7 +27,6 @@ import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchToke
 import { fungibleTokenMetadataQuery, nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
 import { ListedFT, NonStandardToken, UnlistedFT } from '@/types/tokens'
-import { SentTransaction } from '@/types/transactions'
 
 type AmountDelta = { amount: bigint }
 type TxFT = TxListedFT | TxUnlistedFT
@@ -45,7 +44,10 @@ type TransactionTokens = {
   isLoading: boolean
 }
 
-const useFetchTransactionTokens = (tx: Transaction | SentTransaction, addressHash: AddressHash): TransactionTokens => {
+const useFetchTransactionTokens = (
+  tx: Transaction | PendingTransaction,
+  addressHash: AddressHash
+): TransactionTokens => {
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
 
   const {

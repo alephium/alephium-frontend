@@ -25,10 +25,10 @@ import HashEllipsed from '@/components/HashEllipsed'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 
-const NSTsDataListRow = ({ tx, addressHash }: TransactionDetailsModalTxProps) => {
+const NSTsDataListRow = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
   const {
     data: { nsts }
-  } = useFetchTransactionTokens(tx, addressHash)
+  } = useFetchTransactionTokens(tx, refAddressHash)
   const { t } = useTranslation()
 
   if (nsts.length === 0) return null

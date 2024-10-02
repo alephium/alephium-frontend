@@ -31,7 +31,7 @@ import { AmountDeltas, TransactionDirection } from '@/types/transactions'
 import { uniq } from '@/utils'
 
 export const calcTxAmountsDeltaForAddress = (
-  tx: Transaction | MempoolTransaction,
+  tx: Transaction | PendingTransaction | MempoolTransaction,
   address: string,
   skipConsolidationCheck = false
 ): AmountDeltas => {
@@ -82,20 +82,22 @@ const summarizeAddressInputOutputAmounts = (address: string, io: (Input | Output
     { alphAmount: BigInt(0), tokenAmounts: [] } as AmountDeltas
   )
 
-export const getDirection = (tx: Transaction | MempoolTransaction, address: string): TransactionDirection =>
-  calcTxAmountsDeltaForAddress(tx, address, true).alphAmount < 0 ? 'out' : 'in'
+export const getDirection = (
+  tx: Transaction | PendingTransaction | MempoolTransaction,
+  address: string
+): TransactionDirection => (calcTxAmountsDeltaForAddress(tx, address, true).alphAmount < 0 ? 'out' : 'in')
 
-export const isConsolidationTx = (tx: Transaction | MempoolTransaction): boolean => {
+export const isConsolidationTx = (tx: Transaction | PendingTransaction | MempoolTransaction): boolean => {
   const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
   const outputAddresses = tx.outputs ? uniq(tx.outputs.map((output) => output.address)) : []
 
   return inputAddresses.length === 1 && outputAddresses.length === 1 && inputAddresses[0] === outputAddresses[0]
 }
 
-export const isMempoolTx = (transaction: Transaction | MempoolTransaction): transaction is MempoolTransaction =>
-  !('blockHash' in transaction)
+export const isConfirmedTx = (tx: Transaction | PendingTransaction | MempoolTransaction): tx is Transaction =>
+  'blockHash' in tx
 
-export const isInternalTx = (tx: Transaction, internalAddresses: AddressHash[]): boolean =>
+export const isInternalTx = (tx: Transaction | PendingTransaction, internalAddresses: AddressHash[]): boolean =>
   [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every((io) => io?.address && internalAddresses.includes(io.address))
 
 export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outputs: AssetOutput[] | Output[]) => {
@@ -143,12 +145,9 @@ export const extractTokenIds = (tokenIds: Asset['id'][], ios: Transaction['input
   })
 }
 
-export const findTransactionReferenceAddress = (addresses: AddressHash[], tx: Transaction) =>
+export const findTransactionReferenceAddress = (addresses: AddressHash[], tx: Transaction | PendingTransaction) =>
   addresses.find((address) => isAddressPresentInInputsOutputs(address, tx))
 
-const isAddressPresentInInputsOutputs = (addressHash: AddressHash, tx: Transaction) =>
+const isAddressPresentInInputsOutputs = (addressHash: AddressHash, tx: Transaction | PendingTransaction) =>
   tx.inputs?.some((input) => input.address === addressHash) ||
   tx.outputs?.some((output) => output.address === addressHash)
-
-export const isTxConfirmed = (tx?: Transaction | PendingTransaction): tx is Transaction =>
-  (tx as Transaction).blockHash !== undefined

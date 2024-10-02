@@ -20,12 +20,12 @@ import { ALPH } from '@alephium/token-list'
 import styled from 'styled-components'
 
 import TokenBadge from '@/components/TokenBadge'
-import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
+import { TransactionRowProps, TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
 import { deviceBreakPoints } from '@/style/globalStyles'
 
-const TokenBadgesListCell = ({ tx, addressHash, compact }: TransactionRowProps) => {
-  const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
+const TokenBadgesListCell = ({ tx, refAddressHash, compact }: TransactionRowSectionProps) => {
+  const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, refAddressHash)
 
   return (
     <TokenBadgesListCellStyled compact={compact}>

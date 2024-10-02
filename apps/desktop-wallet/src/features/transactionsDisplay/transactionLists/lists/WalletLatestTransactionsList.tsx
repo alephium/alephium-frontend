@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, findTransactionReferenceAddress } from '@alephium/shared'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import { uniqBy } from 'lodash'
@@ -55,8 +54,8 @@ const WalletLatestTransactionsList = () => {
     })
   )
 
-  const openTransactionDetailsModal = (txHash: Transaction['hash'], addressHash: AddressHash) =>
-    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash, addressHash } }))
+  const openTransactionDetailsModal = (txHash: Transaction['hash']) =>
+    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))
 
   return (
     <Table minWidth="500px">
@@ -69,21 +68,14 @@ const WalletLatestTransactionsList = () => {
       {isLoading && <TableRowsLoader />}
 
       {/* TODO: Remove uniqBy once backend removes duplicates from its results */}
-      {uniqBy(confirmedTxs, 'hash').map((tx) => {
-        const txRefAddress = findTransactionReferenceAddress(allAddressHashes, tx)
-
-        if (!txRefAddress) return null
-
-        return (
-          <TransactionRow
-            key={tx.hash}
-            tx={tx}
-            addressHash={txRefAddress}
-            onClick={() => openTransactionDetailsModal(tx.hash, txRefAddress)}
-            onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash, txRefAddress))}
-          />
-        )
-      })}
+      {uniqBy(confirmedTxs, 'hash').map((tx) => (
+        <TransactionRow
+          key={tx.hash}
+          tx={tx}
+          onClick={() => openTransactionDetailsModal(tx.hash)}
+          onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash))}
+        />
+      ))}
 
       {!isLoading && (
         <TransactionsListFooter

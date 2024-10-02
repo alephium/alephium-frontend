@@ -22,24 +22,21 @@ import styled from 'styled-components'
 import AddressBadge from '@/components/AddressBadge'
 import HiddenLabel from '@/components/HiddenLabel'
 import IOList from '@/components/IOList'
-import { isPendingTx } from '@/features/transactionsDisplay/transactionDisplayUtils'
 import AddressCell from '@/features/transactionsDisplay/transactionRow/AddressCell'
-import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
+import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 
-const FirstAddressColumnCell = ({ tx, addressHash }: TransactionRowProps) => {
+const FirstAddressColumnCell = ({ tx, refAddressHash }: TransactionRowSectionProps) => {
   const { t } = useTranslation()
-  const direction = useTransactionDirection(tx, addressHash)
+  const direction = useTransactionDirection(tx, refAddressHash)
 
   return (
     <AddressCell alignRight hasMargins>
       <HiddenLabel text={direction === 'swap' ? t('between') : t('from')} />
 
-      {isPendingTx(tx) ? (
-        <AddressBadgeStyled addressHash={tx.fromAddress} truncate disableA11y withBorders />
-      ) : direction === 'in' ? (
+      {direction === 'in' ? (
         <IOList
-          currentAddress={addressHash}
+          currentAddress={refAddressHash}
           isOut={false}
           outputs={tx.outputs}
           inputs={tx.inputs}
@@ -48,7 +45,7 @@ const FirstAddressColumnCell = ({ tx, addressHash }: TransactionRowProps) => {
           disableA11y
         />
       ) : (
-        <AddressBadgeStyled addressHash={addressHash} truncate disableA11y withBorders />
+        <AddressBadgeStyled addressHash={refAddressHash} truncate disableA11y withBorders />
       )}
     </AddressCell>
   )

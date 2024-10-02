@@ -16,22 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isTxConfirmed } from '@alephium/shared'
+import { AddressHash, findTransactionReferenceAddress, isConfirmedTx } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { useQuery } from '@tanstack/react-query'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import { confirmedTransactionQuery } from '@/api/queries/transactionQueries'
+import useFetchTransaction from '@/api/apiDataHooks/transaction/useFetchTransaction'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
 import DataList from '@/components/DataList'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Tooltip from '@/components/Tooltip'
-import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
 import AddressesDataRows from '@/features/transactionsDisplay/transactionDetailsModal/AddressesDataRows'
 import DirectionalInfo from '@/features/transactionsDisplay/transactionDetailsModal/DirectionalInfo'
 import FTAmounts from '@/features/transactionsDisplay/transactionDetailsModal/FTAmounts'
@@ -41,22 +40,24 @@ import LockTimeDataListRow from '@/features/transactionsDisplay/transactionDetai
 import NFTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NFTsDataListRow'
 import NSTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NSTsDataListRow'
 import TransactionType from '@/features/transactionsDisplay/transactionDetailsModal/TransactionType'
-import { TransactionDetailsModalTxHashProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
+import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import { formatDateForDisplay } from '@/utils/misc'
 
-export interface TransactionDetailsModalProps extends AddressModalBaseProp {
+export interface TransactionDetailsModalProps {
   txHash: Transaction['hash']
+  refAddressHash?: AddressHash
 }
 
-const TransactionDetailsModal = memo(({ id, txHash, addressHash }: ModalBaseProp & TransactionDetailsModalProps) => {
+const TransactionDetailsModal = memo(({ id, txHash, refAddressHash }: ModalBaseProp & TransactionDetailsModalProps) => {
   const { t } = useTranslation()
 
   return (
     <SideModal id={id} title={t('Transaction details')}>
-      <Summary txHash={txHash} addressHash={addressHash} />
-      <Details txHash={txHash} addressHash={addressHash} />
+      <Summary txHash={txHash} refAddressHash={refAddressHash} />
+      <Details txHash={txHash} refAddressHash={refAddressHash} />
       <Tooltip />
     </SideModal>
   )
@@ -64,49 +65,74 @@ const TransactionDetailsModal = memo(({ id, txHash, addressHash }: ModalBaseProp
 
 export default TransactionDetailsModal
 
-const Summary = ({ txHash, addressHash }: TransactionDetailsModalTxHashProps) => {
-  const { t } = useTranslation()
+const Summary = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
+  const { data: tx } = useFetchTransaction({ txHash })
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
-  const handleShowTxInExplorer = useOpenTxInExplorer(txHash)
+  if (!tx) return null
 
-  const { data: tx } = useQuery(confirmedTransactionQuery({ txHash }))
+  const referenceAddress = refAddressHash ?? findTransactionReferenceAddress(allAddressHashes, tx)
+
+  if (!referenceAddress) return null
 
   return (
     <SummaryStyled>
       <SummaryContent>
-        {tx && isTxConfirmed(tx) && (
-          <>
-            <TransactionType tx={tx} addressHash={addressHash} />
-            <FTAmounts tx={tx} addressHash={addressHash} />
-            <DirectionalInfo tx={tx} addressHash={addressHash} />
-          </>
-        )}
+        <TransactionType tx={tx} refAddressHash={referenceAddress} />
+        <FTAmounts tx={tx} refAddressHash={referenceAddress} />
+        <DirectionalInfo tx={tx} refAddressHash={referenceAddress} />
 
-        <ActionLink onClick={handleShowTxInExplorer} withBackground>
-          {t('Show in explorer')} ↗
-        </ActionLink>
+        <ShowInExplorerButton txHash={txHash} />
       </SummaryContent>
     </SummaryStyled>
   )
 }
 
-const Details = ({ txHash, addressHash }: TransactionDetailsModalTxHashProps) => {
+const ShowInExplorerButton = ({ txHash }: Pick<TransactionDetailsModalProps, 'txHash'>) => {
+  const { t } = useTranslation()
+
+  const handleShowTxInExplorer = useOpenTxInExplorer(txHash)
+
+  return (
+    <ActionLink onClick={handleShowTxInExplorer} withBackground>
+      {t('Show in explorer')} ↗
+    </ActionLink>
+  )
+}
+
+const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
-  const { data: tx, isLoading } = useQuery(confirmedTransactionQuery({ txHash }))
+  const { data: tx, isLoading } = useFetchTransaction({ txHash })
+
+  if (isLoading)
+    return (
+      <DetailsStyled>
+        <SkeletonLoader height="400px" />
+      </DetailsStyled>
+    )
+
+  if (!tx) return null
+
+  const referenceAddress = refAddressHash ?? findTransactionReferenceAddress(allAddressHashes, tx)
+
+  if (!referenceAddress) return null
 
   return (
     <DetailsStyled role="table">
-      {isLoading && <SkeletonLoader height="400px" />}
-
-      {tx && isTxConfirmed(tx) && (
+      {tx && (
         <>
           <DataList>
-            <AddressesDataRows tx={tx} addressHash={addressHash} />
+            <AddressesDataRows tx={tx} refAddressHash={referenceAddress} />
 
             <DataList.Row label={t('Status')}>
-              {tx.scriptExecutionOk ? (
+              {!isConfirmedTx(tx) ? (
+                <Badge color={theme.font.secondary}>
+                  <span tabIndex={0}>{t('Pending')}</span>
+                </Badge>
+              ) : tx.scriptExecutionOk ? (
                 <Badge color={theme.global.valid}>
                   <span tabIndex={0}>{t('Confirmed')}</span>
                 </Badge>
@@ -117,9 +143,11 @@ const Details = ({ txHash, addressHash }: TransactionDetailsModalTxHashProps) =>
               )}
             </DataList.Row>
 
-            <DataList.Row label={t('Timestamp')}>
-              <span tabIndex={0}>{formatDateForDisplay(tx.timestamp)}</span>
-            </DataList.Row>
+            {isConfirmedTx(tx) && (
+              <DataList.Row label={t('Timestamp')}>
+                <span tabIndex={0}>{formatDateForDisplay(tx.timestamp)}</span>
+              </DataList.Row>
+            )}
 
             <LockTimeDataListRow tx={tx} />
 
@@ -127,9 +155,9 @@ const Details = ({ txHash, addressHash }: TransactionDetailsModalTxHashProps) =>
               <Amount tokenId={ALPH.id} tabIndex={0} value={BigInt(tx.gasAmount) * BigInt(tx.gasPrice)} fullPrecision />
             </DataList.Row>
 
-            <FTsDataListRow tx={tx} addressHash={addressHash} />
-            <NFTsDataListRow tx={tx} addressHash={addressHash} />
-            <NSTsDataListRow tx={tx} addressHash={addressHash} />
+            <FTsDataListRow tx={tx} refAddressHash={referenceAddress} />
+            <NFTsDataListRow tx={tx} refAddressHash={referenceAddress} />
+            <NSTsDataListRow tx={tx} refAddressHash={referenceAddress} />
           </DataList>
 
           <GasUTXOsExpandableSection tx={tx} />

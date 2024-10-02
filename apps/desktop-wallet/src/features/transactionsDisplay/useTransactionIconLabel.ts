@@ -16,19 +16,17 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { AddressHash, isConfirmedTx } from '@alephium/shared'
+import { PendingTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { colord } from 'colord'
 import { ArrowDown, ArrowLeftRight, ArrowUp, CircleEllipsis, Repeat, Repeat2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components'
 
-import { isPendingTx } from '@/features/transactionsDisplay/transactionDisplayUtils'
 import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
-import { SentTransaction } from '@/types/transactions'
 
 const useTransactionIconLabel = (
-  tx: Transaction | SentTransaction,
+  tx: Transaction | PendingTransaction,
   addressHash: AddressHash,
   isInAddressDetailsModal?: boolean
 ) => {
@@ -36,7 +34,7 @@ const useTransactionIconLabel = (
   const { t } = useTranslation()
   const infoType = useTransactionInfoType(tx, addressHash, isInAddressDetailsModal)
 
-  return !isPendingTx(tx) && !tx.scriptExecutionOk
+  return isConfirmedTx(tx) && !tx.scriptExecutionOk
     ? {
         label: t('dApp operation'),
         Icon: Repeat2,

@@ -22,8 +22,8 @@ import Badge from '@/components/Badge'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
-const TransactionType = ({ tx, addressHash }: TransactionDetailsModalTxProps) => {
-  const { label, Icon, iconColor } = useTransactionIconLabel(tx, addressHash)
+const TransactionType = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
+  const { label, Icon, iconColor } = useTransactionIconLabel(tx, refAddressHash)
 
   return (
     <TransactionTypeStyled short color={iconColor}>

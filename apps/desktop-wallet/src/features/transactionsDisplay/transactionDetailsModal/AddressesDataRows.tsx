@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { isConfirmedTx } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -29,15 +30,15 @@ import useOnAddressClick from '@/features/transactionsDisplay/transactionDetails
 import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
 import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 
-const AddressesDataRows = ({ tx, addressHash }: TransactionDetailsModalTxProps) => {
+const AddressesDataRows = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
   const { t } = useTranslation()
-  const direction = useTransactionDirection(tx, addressHash)
+  const direction = useTransactionDirection(tx, refAddressHash)
   const onAddressClick = useOnAddressClick()
   const handleShowTxInExplorer = useOpenTxInExplorer(tx.hash)
 
   if (direction === 'swap') return null
 
-  const handleAddressClick = () => onAddressClick(addressHash)
+  const handleAddressClick = () => onAddressClick(refAddressHash)
 
   return (
     <>
@@ -49,31 +50,31 @@ const AddressesDataRows = ({ tx, addressHash }: TransactionDetailsModalTxProps) 
       <DataList.Row label={t('From')}>
         {direction === 'out' ? (
           <ActionLinkStyled onClick={handleAddressClick}>
-            <AddressBadge addressHash={addressHash} truncate withBorders />
+            <AddressBadge addressHash={refAddressHash} truncate withBorders />
           </ActionLinkStyled>
         ) : (
           <IOList
-            currentAddress={addressHash}
+            currentAddress={refAddressHash}
             isOut={false}
             outputs={tx.outputs}
             inputs={tx.inputs}
-            timestamp={tx.timestamp}
+            timestamp={isConfirmedTx(tx) ? tx.timestamp : undefined}
             linkToExplorer
           />
         )}
       </DataList.Row>
       <DataList.Row label={t('To')}>
         {direction !== 'out' ? (
-          <ActionLinkStyled onClick={handleAddressClick} key={addressHash}>
-            <AddressBadge addressHash={addressHash} truncate withBorders />
+          <ActionLinkStyled onClick={handleAddressClick} key={refAddressHash}>
+            <AddressBadge addressHash={refAddressHash} truncate withBorders />
           </ActionLinkStyled>
         ) : (
           <IOList
-            currentAddress={addressHash}
+            currentAddress={refAddressHash}
             isOut={direction === 'out'}
             outputs={tx.outputs}
             inputs={tx.inputs}
-            timestamp={tx.timestamp}
+            timestamp={isConfirmedTx(tx) ? tx.timestamp : undefined}
             linkToExplorer
           />
         )}

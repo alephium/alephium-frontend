@@ -33,7 +33,7 @@ import { openInWebBrowser } from '@/utils/misc'
 interface IOListProps {
   currentAddress: string
   isOut: boolean
-  timestamp: number
+  timestamp?: number
   outputs?: explorer.Output[]
   inputs?: explorer.Input[]
   linkToExplorer?: boolean

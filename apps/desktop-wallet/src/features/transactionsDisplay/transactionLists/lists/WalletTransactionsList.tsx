@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, Asset, findTransactionReferenceAddress } from '@alephium/shared'
+import { AddressHash, Asset, calcTxAmountsDeltaForAddress, findTransactionReferenceAddress } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { uniqBy } from 'lodash'
@@ -26,10 +26,7 @@ import { useTranslation } from 'react-i18next'
 import useFetchWalletInfiniteTransactions from '@/api/apiDataHooks/wallet/useFetchWalletInfiniteTransactions'
 import Table from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
-import {
-  getTransactionAmountDeltas,
-  getTransactionInfoType
-} from '@/features/transactionsDisplay/transactionDisplayUtils'
+import { getTransactionInfoType } from '@/features/transactionsDisplay/transactionDisplayUtils'
 import NewTransactionsButtonRow from '@/features/transactionsDisplay/transactionLists/NewTransactionsButtonRow'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
@@ -60,8 +57,8 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
     showNewTxsMessage
   } = useFetchWalletInfiniteTransactions()
 
-  const openTransactionDetailsModal = (txHash: Transaction['hash'], addressHash: AddressHash) =>
-    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash, addressHash } }))
+  const openTransactionDetailsModal = (txHash: Transaction['hash']) =>
+    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))
 
   const filteredConfirmedTxs = useMemo(
     () =>
@@ -82,21 +79,14 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
       {showNewTxsMessage && <NewTransactionsButtonRow onClick={refresh} />}
 
       {/* TODO: Remove uniqBy once backend removes duplicates from its results */}
-      {uniqBy(filteredConfirmedTxs, 'hash').map((tx) => {
-        const basedOnAddress = findTransactionReferenceAddress(allAddressHashes, tx)
-
-        if (!basedOnAddress) return null
-
-        return (
-          <TransactionRow
-            key={tx.hash}
-            tx={tx}
-            addressHash={basedOnAddress}
-            onClick={() => openTransactionDetailsModal(tx.hash, basedOnAddress)}
-            onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash, basedOnAddress))}
-          />
-        )
-      })}
+      {uniqBy(filteredConfirmedTxs, 'hash').map((tx) => (
+        <TransactionRow
+          key={tx.hash}
+          tx={tx}
+          onClick={() => openTransactionDetailsModal(tx.hash)}
+          onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash))}
+        />
+      ))}
 
       {!isLoading && (
         <TransactionsListFooter
@@ -137,7 +127,7 @@ const applyFilters = ({
 
         if (!txRefAddress) return false
 
-        const { tokenAmounts } = getTransactionAmountDeltas(tx, txRefAddress)
+        const { tokenAmounts } = calcTxAmountsDeltaForAddress(tx, txRefAddress)
         const infoType = getTransactionInfoType(tx, txRefAddress)
 
         const dir = infoType === 'pending' ? 'out' : infoType
