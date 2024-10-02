@@ -16,7 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { createSelector } from '@reduxjs/toolkit'
+
 import { modalAdapter } from '@/features/modals/modalAdapters'
 import { RootState } from '@/storage/store'
 
 export const { selectAll: selectAllModals } = modalAdapter.getSelectors<RootState>((state) => state.modals)
+
+export const selectTopModal = createSelector(selectAllModals, (allModals) => allModals[allModals.length - 1])
