@@ -22,12 +22,16 @@ import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import IOList from '@/components/IOList'
+import { selectPendingSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
+import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/PendingSentAddressBadge'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
+import { useAppSelector } from '@/hooks/redux'
 
 const DirectionalInfo = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
   const direction = useTransactionDirection(tx, refAddressHash)
   const { t } = useTranslation()
+  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
 
   return (
     <DirectionalInfoStyled>
@@ -56,6 +60,8 @@ const DirectionalInfo = ({ tx, refAddressHash }: TransactionDetailsModalTxProps)
               />
             </SwapPartnerAddress>
           </>
+        ) : pendingSentTx ? (
+          <PendingSentAddressBadge tx={tx} refAddressHash={refAddressHash} />
         ) : (
           <IOList
             currentAddress={refAddressHash}

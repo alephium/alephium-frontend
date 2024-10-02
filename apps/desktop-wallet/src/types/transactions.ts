@@ -24,7 +24,7 @@ export type SentTransaction = {
   fromAddress: string
   toAddress: string
   timestamp: number
-  type: 'consolidation' | 'transfer' | 'sweep' | 'contract'
+  type: 'consolidation' | 'transfer' | 'sweep' | 'contract' | 'faucet'
   amount?: string
   tokens?: explorer.Token[]
   lockTime?: number

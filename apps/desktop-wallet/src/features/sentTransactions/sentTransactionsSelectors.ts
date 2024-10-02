@@ -36,3 +36,7 @@ export const makeSelectAddressPendingSentTransactions = () =>
     (sentTransactions, addressHash): SentTransaction[] =>
       sentTransactions.filter((tx) => tx.fromAddress === addressHash || tx.toAddress === addressHash)
   )
+
+export const selectPendingSentTransactionByHash = createSelector(selectSentTransactionByHash, (sentTx) =>
+  sentTx?.status !== 'confirmed' ? sentTx : undefined
+)

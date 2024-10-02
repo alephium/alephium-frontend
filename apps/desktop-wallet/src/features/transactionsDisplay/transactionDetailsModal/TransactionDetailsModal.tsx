@@ -29,6 +29,7 @@ import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
 import DataList from '@/components/DataList'
 import SkeletonLoader from '@/components/SkeletonLoader'
+import Spinner from '@/components/Spinner'
 import Tooltip from '@/components/Tooltip'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import AddressesDataRows from '@/features/transactionsDisplay/transactionDetailsModal/AddressesDataRows'
@@ -130,7 +131,9 @@ const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
             <DataList.Row label={t('Status')}>
               {!isConfirmedTx(tx) ? (
                 <Badge color={theme.font.secondary}>
-                  <span tabIndex={0}>{t('Pending')}</span>
+                  <span tabIndex={0}>
+                    {t('Pending')} <Spinner size="10px" />
+                  </span>
                 </Badge>
               ) : tx.scriptExecutionOk ? (
                 <Badge color={theme.global.valid}>
