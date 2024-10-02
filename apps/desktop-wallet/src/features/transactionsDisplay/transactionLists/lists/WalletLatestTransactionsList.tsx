@@ -27,7 +27,7 @@ import styled from 'styled-components'
 import { useFetchWalletLastTransaction } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { walletLatestTransactionsQuery } from '@/api/queries/transactionQueries'
 import ActionLink from '@/components/ActionLink'
-import Table, { TableCellPlaceholder, TableHeader, TableRow } from '@/components/Table'
+import Table, { TableHeader } from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
@@ -82,14 +82,8 @@ const WalletLatestTransactionsList = () => {
           isDisplayingTxs={(confirmedTxs?.length ?? 0) > 0}
           showLoadMoreBtn={false}
           showSpinner={false}
-          noTxsMsg={t('No transactions to display')}
+          noTxsMsg={t("This wallet doesn't have any transactions yet.")}
         />
-      )}
-
-      {!isLoading && (!confirmedTxs || confirmedTxs.length === 0) && (
-        <TableRow role="row" tabIndex={0}>
-          <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
-        </TableRow>
       )}
     </Table>
   )
