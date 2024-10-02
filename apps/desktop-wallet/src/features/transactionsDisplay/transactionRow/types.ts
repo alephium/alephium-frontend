@@ -23,7 +23,11 @@ import { TableRowProps } from '@/components/Table'
 
 export interface TransactionRowProps extends TableRowProps {
   tx: Transaction
-  addressHash: AddressHash
+  refAddressHash?: AddressHash
   isInAddressDetailsModal?: boolean
   compact?: boolean
+}
+
+export interface TransactionRowSectionProps extends Omit<TransactionRowProps, 'refAddressHash'> {
+  refAddressHash: AddressHash
 }

@@ -52,7 +52,7 @@ const AddressTransactionsList = ({ addressHash }: AddressTransactionListProps) =
   })
 
   const openTransactionDetailsModal = (txHash: Transaction['hash']) =>
-    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash, addressHash } }))
+    dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash, refAddressHash: addressHash } }))
 
   return (
     <Table minWidth="500px">
@@ -68,7 +68,7 @@ const AddressTransactionsList = ({ addressHash }: AddressTransactionListProps) =
         <TransactionRow
           key={tx.hash}
           tx={tx}
-          addressHash={addressHash}
+          refAddressHash={addressHash}
           isInAddressDetailsModal
           compact
           onClick={() => openTransactionDetailsModal(tx.hash)}

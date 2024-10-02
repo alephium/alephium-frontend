@@ -21,12 +21,12 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import HiddenLabel from '@/components/HiddenLabel'
-import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
+import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 
-const DirectionCell = ({ tx, addressHash, isInAddressDetailsModal }: TransactionRowProps) => {
+const DirectionCell = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionRowSectionProps) => {
   const { t } = useTranslation()
-  const direction = useTransactionDirection(tx, addressHash)
+  const direction = useTransactionDirection(tx, refAddressHash)
 
   return (
     <CellDirection>

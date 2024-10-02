@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { AddressHash, calcTxAmountsDeltaForAddress } from '@alephium/shared'
+import { PendingTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useMemo } from 'react'
 
-import { getTransactionAmountDeltas } from '@/features/transactionsDisplay/transactionDisplayUtils'
-import { SentTransaction } from '@/types/transactions'
-
-const useTransactionAmountDeltas = (tx: Transaction | SentTransaction, addressHash: AddressHash) =>
-  useMemo(() => getTransactionAmountDeltas(tx, addressHash), [addressHash, tx])
+const useTransactionAmountDeltas = (tx: Transaction | PendingTransaction, addressHash: AddressHash) =>
+  useMemo(() => calcTxAmountsDeltaForAddress(tx, addressHash), [addressHash, tx])
 
 export default useTransactionAmountDeltas
