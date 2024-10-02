@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, throttledClient, TRANSACTIONS_REFRESH_INTERVAL } from '@alephium/shared'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { InfiniteData, infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
+import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import queryClient from '@/api/queryClient'
@@ -68,36 +68,35 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
     refetchInterval: TRANSACTIONS_REFRESH_INTERVAL
   })
 
-export const addressTransactionsInfiniteQuery = ({
-  addressHash,
-  latestTxHash,
-  previousTxHash,
-  networkId
-}: AddressLatestTransactionHashesProps) => {
-  const getQueryOptions = (latestTxHash: AddressLatestTransactionHashesProps['latestTxHash']) =>
-    infiniteQueryOptions({
-      queryKey: ['address', addressHash, 'transactions', { latestTxHash, networkId }],
-      queryFn: ({ pageParam }) =>
-        throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: pageParam }),
-      initialPageParam: 1,
-      getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null),
-      staleTime: Infinity
-    })
-
-  const previousQueryKey = getQueryOptions(previousTxHash).queryKey
-  const latestQueryOptions = getQueryOptions(latestTxHash)
-
-  return infiniteQueryOptions({
-    ...latestQueryOptions,
-    placeholderData: queryClient.getQueryData(previousQueryKey) as InfiniteData<Transaction[], number> // Casting needed because second argument appears to be `unknown`
-  })
-}
-
-interface WalletTransactionsInfiniteQueryProps {
+interface TransactionsInfiniteQueryBaseProps {
   networkId: number
-  allAddressHashes: AddressHash[]
   timestamp: number
   skip?: boolean
+}
+
+interface AddressTransactionsInfiniteQueryProps extends TransactionsInfiniteQueryBaseProps {
+  addressHash: AddressHash
+}
+
+export const addressTransactionsInfiniteQuery = ({
+  addressHash,
+  timestamp,
+  networkId,
+  skip
+}: AddressTransactionsInfiniteQueryProps) =>
+  infiniteQueryOptions({
+    queryKey: ['address', addressHash, 'transactions', { timestamp, networkId }],
+    queryFn: !skip
+      ? ({ pageParam }) =>
+          throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: pageParam })
+      : skipToken,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null),
+    staleTime: Infinity
+  })
+
+interface WalletTransactionsInfiniteQueryProps extends TransactionsInfiniteQueryBaseProps {
+  allAddressHashes: AddressHash[]
 }
 
 export const walletTransactionsInfiniteQuery = ({
