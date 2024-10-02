@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useFocusEffect } from '@react-navigation/native'
-import { StackScreenProps } from '@react-navigation/stack'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StatusBar } from 'react-native'
@@ -27,7 +27,7 @@ import styled, { useTheme } from 'styled-components/native'
 import AnimatedBackground from '~/components/AnimatedBackground'
 import BlurredCard from '~/components/BlurredCard'
 import Button from '~/components/buttons/Button'
-import Screen, { ScreenProps } from '~/components/layout/Screen'
+import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
@@ -37,7 +37,7 @@ import { methodSelected, WalletGenerationMethod } from '~/store/walletGeneration
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { resetNavigation } from '~/utils/navigation'
 
-interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
+interface LandingScreenProps extends NativeStackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
 
 const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
@@ -91,16 +91,14 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   }
 
   return (
-    <Screen {...props}>
+    <Screen>
       {isScreenContentVisible && (
-        <>
-          <AnimatedBackground isAnimated isFullScreen />
-          <CardContainer>
-            <WelcomeCard>
-              <AlephiumLogo color="white" style={{ width: '20%' }} />
-              <ScreenTitle title={t('Welcome to Alephium!')} />
-            </WelcomeCard>
-          </CardContainer>
+        <ScreenSection fill verticalGap>
+          <WelcomeCard>
+            <AnimatedBackground isAnimated height={600} width={400} />
+            <AlephiumLogo color="white" style={{ width: '20%' }} />
+            <ScreenTitle title={t('Welcome to Alephium!')} />
+          </WelcomeCard>
           <BottomArea>
             <ButtonsContainer>
               <Button
@@ -117,7 +115,7 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
               />
             </ButtonsContainer>
           </BottomArea>
-        </>
+        </ScreenSection>
       )}
     </Screen>
   )
@@ -125,16 +123,13 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 
 export default LandingScreen
 
-const CardContainer = styled.View`
-  flex: 1;
-  margin: 0 ${DEFAULT_MARGIN / 2}px;
-`
-
 const WelcomeCard = styled(BlurredCard)`
+  flex: 3;
   padding: ${DEFAULT_MARGIN * 2}px;
 `
 
 const BottomArea = styled(Animated.View)`
+  flex: 1;
   margin: 0 ${DEFAULT_MARGIN}px;
   overflow: hidden;
 `

@@ -48,7 +48,7 @@ const Screen = ({ children, headerOptions, ...props }: ScreenProps) => {
   )
 }
 
-const ScreenStyled = styled.View<ScreenProps>`
+const ScreenStyled = styled.SafeAreaView<ScreenProps>`
   flex: 1;
   background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.highlight : theme.bg.back2)};
 `

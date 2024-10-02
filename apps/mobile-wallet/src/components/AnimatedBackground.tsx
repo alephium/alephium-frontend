@@ -39,6 +39,7 @@ import AlephiumLogo from '~/images/logos/AlephiumLogo'
 
 interface AnimatedBackgroundProps {
   height?: number
+  width?: number
   scrollY?: SharedValue<number>
   isAnimated?: boolean
   isFullScreen?: boolean
@@ -49,6 +50,7 @@ const AnimatedCanvas = Animated.createAnimatedComponent(Canvas)
 
 const AnimatedBackground = ({
   height = 400,
+  width = 400,
   scrollY,
   isAnimated,
   isFullScreen,
@@ -59,12 +61,12 @@ const AnimatedBackground = ({
 
   // Canvas size animation
   const canvasHeight = useSharedValue(isFullScreen ? screenHeight : height)
-  const canvasWidth = useSharedValue(isFullScreen ? screenWidth : height)
+  const canvasWidth = useSharedValue(isFullScreen ? screenWidth : width)
 
   useEffect(() => {
     canvasHeight.value = withSpring(isFullScreen ? screenHeight : height, { mass: 5, damping: 60 })
-    canvasWidth.value = withSpring(isFullScreen ? screenWidth : height, { mass: 5, damping: 60 })
-  }, [isFullScreen, screenWidth, canvasHeight, canvasWidth, screenHeight, height])
+    canvasWidth.value = withSpring(isFullScreen ? screenWidth : width, { mass: 5, damping: 60 })
+  }, [isFullScreen, screenWidth, canvasHeight, canvasWidth, screenHeight, height, width])
 
   const animatedCanvasStyle = useAnimatedStyle(() => ({
     height: canvasHeight.value,
