@@ -269,49 +269,47 @@ const BottomModal = ({
   }, [handleClose, isModalClosing, position.value])
 
   return (
-    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }} enabled={!maximisedContent}>
-      <GestureDetector gesture={panGesture}>
-        <ExternalContainer>
-          <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
-          <Container>
-            <ModalStyled style={modalHeightAnimatedStyle}>
-              <HandleContainer>
-                <Handle style={handleAnimatedStyle} />
-              </HandleContainer>
-              <Navigation>
-                <NavigationButtonContainer align="left" />
-                <Title semiBold>{title}</Title>
-                <NavigationButtonContainer align="right">
-                  <CloseButton onPress={handleClose} compact />
-                </NavigationButtonContainer>
-              </Navigation>
-              <AnimatedScrollView
-                onContentSizeChange={handleContentSizeChange}
-                keyboardShouldPersistTaps="handled"
-                scrollEnabled={isScrollable}
-                scrollEventThrottle={16}
-                onScroll={contentScrollHandler}
-                contentContainerStyle={[
-                  contentContainerStyle,
-                  {
-                    gap: contentVerticalGap ? VERTICAL_GAP : undefined,
-                    padding: noPadding ? 0 : DEFAULT_MARGIN
-                  }
-                ]}
-              >
-                {children}
-              </AnimatedScrollView>
-            </ModalStyled>
-          </Container>
-        </ExternalContainer>
-      </GestureDetector>
-    </KeyboardAvoidingView>
+    <GestureDetector gesture={panGesture}>
+      <ExternalContainer behavior="height" enabled={!maximisedContent}>
+        <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
+        <Container>
+          <ModalStyled style={modalHeightAnimatedStyle}>
+            <HandleContainer>
+              <Handle style={handleAnimatedStyle} />
+            </HandleContainer>
+            <Navigation>
+              <NavigationButtonContainer align="left" />
+              <Title semiBold>{title}</Title>
+              <NavigationButtonContainer align="right">
+                <CloseButton onPress={handleClose} compact />
+              </NavigationButtonContainer>
+            </Navigation>
+            <AnimatedScrollView
+              onContentSizeChange={handleContentSizeChange}
+              keyboardShouldPersistTaps="handled"
+              scrollEnabled={isScrollable}
+              scrollEventThrottle={16}
+              onScroll={contentScrollHandler}
+              contentContainerStyle={[
+                contentContainerStyle,
+                {
+                  gap: contentVerticalGap ? VERTICAL_GAP : undefined,
+                  padding: noPadding ? 0 : DEFAULT_MARGIN
+                }
+              ]}
+            >
+              {children}
+            </AnimatedScrollView>
+          </ModalStyled>
+        </Container>
+      </ExternalContainer>
+    </GestureDetector>
   )
 }
 
 export default BottomModal
 
-const ExternalContainer = styled.View`
+const ExternalContainer = styled(KeyboardAvoidingView)`
   position: absolute;
   bottom: 0;
   left: 0;
