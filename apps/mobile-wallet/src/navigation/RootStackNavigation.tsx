@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
-import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Modal } from 'react-native'
@@ -71,7 +71,7 @@ import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
 
-const RootStack = createStackNavigator<RootStackParamList>()
+const RootStack = createNativeStackNavigator<RootStackParamList>()
 
 interface RootStackNavigationProps {
   initialRouteName?: keyof RootStackParamList
@@ -103,7 +103,7 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                 initialRouteName={initialRouteName || 'LandingScreen'}
                 screenOptions={{ headerShown: false }}
               >
-                <RootStack.Group screenOptions={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}>
+                <RootStack.Group>
                   <RootStack.Screen name="LandingScreen" component={LandingScreen} />
                   <RootStack.Screen name="LoginWithPinScreen" component={LoginWithPinScreen} />
                   <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
