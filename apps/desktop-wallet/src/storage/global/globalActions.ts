@@ -83,7 +83,7 @@ export const receiveTestnetTokens = createAsyncThunk<SentTransaction, AddressHas
       amount: undefined,
       timestamp: new Date().getTime(),
       status: 'sent',
-      type: 'transfer'
+      type: 'faucet'
     }
 
     return fulfillWithValue(pendingTransaction)

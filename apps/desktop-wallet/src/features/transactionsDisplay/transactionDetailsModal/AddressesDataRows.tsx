@@ -25,16 +25,20 @@ import AddressBadge from '@/components/AddressBadge'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import IOList from '@/components/IOList'
+import { selectPendingSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
+import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/PendingSentAddressBadge'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useOnAddressClick from '@/features/transactionsDisplay/transactionDetailsModal/useOnAddressClick'
 import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
 import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
+import { useAppSelector } from '@/hooks/redux'
 
 const AddressesDataRows = ({ tx, refAddressHash }: TransactionDetailsModalTxProps) => {
   const { t } = useTranslation()
   const direction = useTransactionDirection(tx, refAddressHash)
   const onAddressClick = useOnAddressClick()
   const handleShowTxInExplorer = useOpenTxInExplorer(tx.hash)
+  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
 
   if (direction === 'swap') return null
 
@@ -64,7 +68,9 @@ const AddressesDataRows = ({ tx, refAddressHash }: TransactionDetailsModalTxProp
         )}
       </DataList.Row>
       <DataList.Row label={t('To')}>
-        {direction !== 'out' ? (
+        {pendingSentTx ? (
+          <PendingSentAddressBadge tx={tx} refAddressHash={refAddressHash} isDestinationAddress />
+        ) : direction !== 'out' ? (
           <ActionLinkStyled onClick={handleAddressClick} key={refAddressHash}>
             <AddressBadge addressHash={refAddressHash} truncate withBorders />
           </ActionLinkStyled>
