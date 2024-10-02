@@ -16,19 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
+import { UseFetchAddressProps } from '@/api/apiDataHooks/address/addressApiDataHooksTypes'
 import useFetchAddressUpdatesSignal from '@/api/apiDataHooks/address/useFetchAddressUpdatesSignal'
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { addressAlphBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 
-interface UseAddressAlphBalancesProps extends SkipProp {
-  addressHash: AddressHash
-}
-
-const useFetchAddressBalancesAlph = ({ addressHash, skip }: UseAddressAlphBalancesProps) => {
+const useFetchAddressBalancesAlph = ({ addressHash, skip }: UseFetchAddressProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data: updatesSignal, isLoading: isLoadingUpdatesSignal } = useFetchAddressUpdatesSignal({ addressHash, skip })

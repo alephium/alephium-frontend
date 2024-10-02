@@ -16,14 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
-
+import { UseFetchAddressProps } from '@/api/apiDataHooks/address/addressApiDataHooksTypes'
 import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import useFetchSortedFts from '@/api/apiDataHooks/utils/useFetchSortedFts'
 
-interface UseAddressFTsProps extends SkipProp {
-  addressHash: AddressHash
+interface UseAddressFTsProps extends UseFetchAddressProps {
   sort?: boolean
 }
 
