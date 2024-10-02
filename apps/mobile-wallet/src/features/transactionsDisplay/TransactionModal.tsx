@@ -64,7 +64,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
       <ScreenSectionStyled>
         <ModalScreenTitle>{t('Transaction')}</ModalScreenTitle>
         <Button
-          iconProps={{ name: 'x' }}
+          iconProps={{ name: 'arrow-up-right' }}
           onPress={() => openBrowserAsync(explorerTxUrl)}
           variant="accent"
           compact

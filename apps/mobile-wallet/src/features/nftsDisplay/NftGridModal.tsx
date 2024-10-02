@@ -27,7 +27,7 @@ interface NftGridModalProps {
 }
 
 const NftGridModal = withModal<NftGridModalProps>(({ id, nftsData }) => (
-  <BottomModal id={id}>
+  <BottomModal id={id} noPadding>
     <NFTsGrid nfts={nftsData} scrollEnabled={false} />
   </BottomModal>
 ))
