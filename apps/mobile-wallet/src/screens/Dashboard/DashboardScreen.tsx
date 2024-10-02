@@ -26,6 +26,7 @@ import styled from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Amount from '~/components/Amount'
+import AnimatedBackground from '~/components/AnimatedBackground'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import BlurredCard from '~/components/BlurredCard'
@@ -41,7 +42,6 @@ import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
-import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
 import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
@@ -132,7 +132,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     >
       <CardContainer style={{ marginTop: insets.top }}>
         <AmountBlurredCard>
-          <AnimatedCirclesBackground height={400} scrollY={screenScrollY} isAnimated />
+          <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
           <WalletCardHeader>
             <HeaderButtons />
           </WalletCardHeader>

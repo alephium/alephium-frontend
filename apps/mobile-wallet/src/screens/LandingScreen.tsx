@@ -24,6 +24,7 @@ import { StatusBar } from 'react-native'
 import Animated from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import AnimatedBackground from '~/components/AnimatedBackground'
 import BlurredCard from '~/components/BlurredCard'
 import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
@@ -32,7 +33,6 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { storedWalletExists } from '~/persistent-storage/wallet'
-import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { resetNavigation } from '~/utils/navigation'
@@ -94,7 +94,7 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
     <Screen {...props}>
       {isScreenContentVisible && (
         <>
-          <AnimatedCirclesBackground isAnimated isFullScreen />
+          <AnimatedBackground isAnimated isFullScreen />
           <CardContainer>
             <WelcomeCard>
               <AlephiumLogo color="white" style={{ width: '20%' }} />

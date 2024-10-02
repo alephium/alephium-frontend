@@ -37,7 +37,7 @@ import styled from 'styled-components/native'
 
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 
-interface AnimatedCirclesBackgroundProps {
+interface AnimatedBackgroundProps {
   height?: number
   scrollY?: SharedValue<number>
   isAnimated?: boolean
@@ -47,13 +47,13 @@ interface AnimatedCirclesBackgroundProps {
 
 const AnimatedCanvas = Animated.createAnimatedComponent(Canvas)
 
-const AnimatedCirclesBackground = ({
+const AnimatedBackground = ({
   height = 400,
   scrollY,
   isAnimated,
   isFullScreen,
   showAlephiumLogo
-}: AnimatedCirclesBackgroundProps) => {
+}: AnimatedBackgroundProps) => {
   const gyroscope = useAnimatedSensor(SensorType.ROTATION)
   const { width: screenWidth, height: screenHeight } = useWindowDimensions()
 
@@ -177,7 +177,7 @@ const AnimatedCirclesBackground = ({
   )
 }
 
-export default AnimatedCirclesBackground
+export default AnimatedBackground
 
 const AnimatedContainer = styled(Animated.View)`
   position: absolute;

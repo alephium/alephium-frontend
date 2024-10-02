@@ -26,6 +26,7 @@ import { Host } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
 import { Analytics, sendAnalytics } from '~/analytics'
+import AnimatedBackground from '~/components/AnimatedBackground'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import useAutoLock from '~/features/auto-lock/useAutoLock'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
@@ -55,7 +56,6 @@ import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
 import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
 import NewContactScreen from '~/screens/Addresses/Contact/NewContactScreen'
 import CustomNetworkScreen from '~/screens/CustomNetworkScreen'
-import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
 import LandingScreen from '~/screens/LandingScreen'
 import LoginWithPinScreen from '~/screens/LoginWithPinScreen'
 import AddBiometricsScreen from '~/screens/new-wallet/AddBiometricsScreen'
@@ -252,7 +252,7 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
   return (
     <Modal visible={!!lastUsedWalletId && biometricsRequiredForAppAccess && !isWalletUnlocked} animationType="fade">
       <AppUnlockModalContainer>
-        <AnimatedCirclesBackground isAnimated isFullScreen showAlephiumLogo />
+        <AnimatedBackground isAnimated isFullScreen showAlephiumLogo />
       </AppUnlockModalContainer>
     </Modal>
   )
