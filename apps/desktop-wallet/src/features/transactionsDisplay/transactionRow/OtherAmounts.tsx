@@ -20,19 +20,19 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Amount from '@/components/Amount'
-import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
+import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
 
-interface TransactionOtherTokenAmountsProps extends TransactionRowProps {
+interface TransactionOtherTokenAmountsProps extends TransactionRowSectionProps {
   type: 'nfts' | 'nsts'
 }
 
-const OtherAmounts = ({ tx, addressHash, isInAddressDetailsModal, type }: TransactionOtherTokenAmountsProps) => {
+const OtherAmounts = ({ tx, refAddressHash, isInAddressDetailsModal, type }: TransactionOtherTokenAmountsProps) => {
   const {
     data: { [type]: tokens }
-  } = useFetchTransactionTokens(tx, addressHash)
-  const infoType = useTransactionInfoType(tx, addressHash, isInAddressDetailsModal)
+  } = useFetchTransactionTokens(tx, refAddressHash)
+  const infoType = useTransactionInfoType(tx, refAddressHash, isInAddressDetailsModal)
   const { t } = useTranslation()
 
   const { nbOfTokensReceived, nbOfTokensSent } = useMemo(

@@ -19,29 +19,25 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   AddressHash,
   calcTxAmountsDeltaForAddress,
-  convertToNegative,
   hasPositiveAndNegativeAmounts,
+  isConfirmedTx,
   isConsolidationTx,
   isInternalTx,
   TransactionInfoType
 } from '@alephium/shared'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { PendingTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { store } from '@/storage/store'
-import { SentTransaction } from '@/types/transactions'
-
-export const isPendingTx = (tx: Transaction | SentTransaction): tx is SentTransaction =>
-  (tx as SentTransaction).status !== undefined
 
 export const getTransactionInfoType = (
-  tx: Transaction | SentTransaction,
+  tx: Transaction | PendingTransaction,
   addressHash: AddressHash,
   isInAddressDetailsModal?: boolean
 ): TransactionInfoType => {
   const state = store.getState()
   const internalAddresses = state.addresses.ids as AddressHash[]
 
-  if (isPendingTx(tx)) {
+  if (!isConfirmedTx(tx)) {
     return 'pending'
   } else if (isConsolidationTx(tx)) {
     return 'move'
@@ -69,13 +65,3 @@ export const getTransactionInfoType = (
     }
   }
 }
-
-export const getTransactionAmountDeltas = (tx: Transaction | SentTransaction, addressHash: AddressHash) =>
-  isPendingTx(tx) ? calcPendingTxAmountsDelta(tx) : calcTxAmountsDeltaForAddress(tx, addressHash)
-
-const calcPendingTxAmountsDelta = (tx: SentTransaction) => ({
-  alphAmount: tx.amount ? convertToNegative(BigInt(tx.amount)) : BigInt(0),
-  tokenAmounts: tx.tokens
-    ? tx.tokens.map((token) => ({ ...token, amount: convertToNegative(BigInt(token.amount)) }))
-    : []
-})

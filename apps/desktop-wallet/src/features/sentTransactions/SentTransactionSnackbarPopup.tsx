@@ -16,19 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isTxConfirmed } from '@alephium/shared'
+import { isConfirmedTx } from '@alephium/shared'
 import { useInterval } from '@alephium/shared-react'
 import { useQuery } from '@tanstack/react-query'
+import { t } from 'i18next'
+import { X } from 'lucide-react'
 import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeInBottom, fadeOut } from '@/animations'
 import { pendingTransactionQuery } from '@/api/queries/transactionQueries'
+import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
-import { SnackbarPopupStyled } from '@/components/SnackbarManager'
+import { openModal } from '@/features/modals/modalActions'
 import { sentTransactionStatusChanged } from '@/features/sentTransactions/sentTransactionsActions'
 import { selectSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
+import SnackbarBox from '@/features/snackbar/SnackbarBox'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { SentTransaction } from '@/types/transactions'
 
@@ -42,7 +46,7 @@ const SentTransactionSnackbarPopup = memo(({ txHash }: { txHash: string }) => {
   useEffect(() => {
     if (!tx) return
 
-    dispatch(sentTransactionStatusChanged({ hash: tx.hash, status: isTxConfirmed(tx) ? 'confirmed' : 'mempooled' }))
+    dispatch(sentTransactionStatusChanged({ hash: tx.hash, status: isConfirmedTx(tx) ? 'confirmed' : 'mempooled' }))
   }, [dispatch, tx])
 
   useEffect(() => {
@@ -59,22 +63,38 @@ const SentTransactionSnackbarPopup = memo(({ txHash }: { txHash: string }) => {
 
   if (!sentTx || hide) return null
 
-  // TODO: Open modal on click?
+  const openTransactionDetailsModal = () => dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))
 
   return (
-    <SnackbarPopupStyled {...fadeInBottom} {...fadeOut} className="info" style={{ width: 400 }}>
-      <Rows>
-        <Message status={sentTx.status} />
+    <SentTransactionSnackbarPopupStyled {...fadeInBottom} {...fadeOut} className="info">
+      <Columns>
+        <Rows>
+          <Message status={sentTx.status} />
 
-        <HashEllipsedStyled hash={txHash} tooltipText="Copy transaction hash" showSnackbarOnCopied={false} />
+          <HashEllipsedStyled hash={txHash} tooltipText={t('Copy hash')} showSnackbarOnCopied={false} />
 
-        <Progress status={sentTx.status} />
-      </Rows>
-    </SnackbarPopupStyled>
+          <Progress status={sentTx.status} />
+        </Rows>
+        <ButtonsRow>
+          {sentTx.status !== 'sent' && (
+            <Button role="secondary" short borderless onClick={openTransactionDetailsModal}>
+              {t('See more')}
+            </Button>
+          )}
+          <Button aria-label={t('Close')} squared role="secondary" onClick={() => setHide(true)} borderless transparent>
+            <X />
+          </Button>
+        </ButtonsRow>
+      </Columns>
+    </SentTransactionSnackbarPopupStyled>
   )
 })
 
 export default SentTransactionSnackbarPopup
+
+const SentTransactionSnackbarPopupStyled = styled(SnackbarBox)`
+  min-width: 400px;
+`
 
 const Message = ({ status }: Pick<SentTransaction, 'status'>) => {
   const { t } = useTranslation()
@@ -99,7 +119,7 @@ const Progress = ({ status }: Pick<SentTransaction, 'status'>) => {
     }
   }, [status])
 
-  useInterval(() => setProgress((prevValue) => prevValue + 0.02), 1000, status === 'confirmed' || progress > 0.9)
+  useInterval(() => setProgress((prevValue) => prevValue + 0.015), 1000, status === 'confirmed' || progress > 0.9)
 
   return <ProgressBar value={progress} />
 }
@@ -129,7 +149,20 @@ const ProgressBar = styled.progress`
 `
 
 const Rows = styled.div`
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   gap: 10px;
+`
+
+const Columns = styled.div`
+  display: flex;
+  gap: 30px;
+  align-items: center;
+`
+
+const ButtonsRow = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
 `

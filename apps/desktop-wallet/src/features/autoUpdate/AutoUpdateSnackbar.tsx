@@ -23,9 +23,10 @@ import styled from 'styled-components'
 
 import { fadeInBottom, fadeOut } from '@/animations'
 import Button from '@/components/Button'
-import { SnackbarManagerContainer, SnackbarPopupStyled } from '@/components/SnackbarManager'
+import { SnackbarManagerContainer } from '@/components/SnackbarManager'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useLatestGitHubRelease from '@/features/autoUpdate/useLatestGitHubRelease'
+import SnackbarBox from '@/features/snackbar/SnackbarBox'
 import ModalPortal from '@/modals/ModalPortal'
 import { AlephiumWindow } from '@/types/window'
 import { currentVersion } from '@/utils/app-data'
@@ -166,7 +167,7 @@ const ProgressBar = styled.progress`
   width: 100%;
 `
 
-const SnackbarPopupWithButton = styled(SnackbarPopupStyled)`
+const SnackbarPopupWithButton = styled(SnackbarBox)`
   display: flex;
   gap: var(--spacing-2);
   width: 400px;

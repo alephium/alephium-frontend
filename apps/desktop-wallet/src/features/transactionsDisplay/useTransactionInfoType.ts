@@ -17,14 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, TransactionInfoType } from '@alephium/shared'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { PendingTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useMemo } from 'react'
 
 import { getTransactionInfoType } from '@/features/transactionsDisplay/transactionDisplayUtils'
-import { SentTransaction } from '@/types/transactions'
 
 const useTransactionInfoType = (
-  tx: Transaction | SentTransaction,
+  tx: Transaction | PendingTransaction,
   addressHash: AddressHash,
   isInAddressDetailsModal?: boolean
 ): TransactionInfoType =>
