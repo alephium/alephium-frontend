@@ -43,12 +43,7 @@ export interface AddressLatestTransactionQueryFnData {
   previousTx?: Transaction
 }
 
-export const addressLatestTransactionQuery = ({
-  addressHash,
-  networkId,
-  skip,
-  pause
-}: AddressLatestTransactionQueryProps) =>
+export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: [...ADDRESS_TRANSACTIONS_QUERY_KEYS, 'latest', { addressHash, networkId }],
     queryFn: !skip
@@ -70,7 +65,7 @@ export const addressLatestTransactionQuery = ({
           }
         }
       : skipToken,
-    refetchInterval: !pause ? TRANSACTIONS_REFRESH_INTERVAL : undefined
+    refetchInterval: TRANSACTIONS_REFRESH_INTERVAL
   })
 
 export const addressTransactionsInfiniteQuery = ({

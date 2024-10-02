@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
@@ -25,13 +26,21 @@ import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import { isDefined } from '@/utils/misc'
 
-const useFetchWalletLastTransactionHashes = (props?: SkipProp) => {
+export const useFetchWalletLastTransaction = (props?: SkipProp) =>
+  useFetchWalletLastTransactions({ combine: extractMostRecentTransaction, skip: props?.skip })
+
+export const useFetchWalletLastTransactionHashes = (props?: SkipProp) =>
+  useFetchWalletLastTransactions({ combine: extractLastTransactionHashes, skip: props?.skip })
+
+interface UseFetchWalletLastTransactionsProps<T> extends SkipProp {
+  combine: (results: UseQueryResult<AddressLatestTransactionQueryFnData>[]) => { data: T; isLoading: boolean }
+}
+const useFetchWalletLastTransactions = <T>({ combine, skip }: UseFetchWalletLastTransactionsProps<T>) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
-  // TODO
   const { data, isLoading } = useQueries({
-    queries: !props?.skip
+    queries: !skip
       ? allAddressHashes.map((addressHash) => addressLatestTransactionQuery({ addressHash, networkId }))
       : [],
     combine
@@ -43,9 +52,24 @@ const useFetchWalletLastTransactionHashes = (props?: SkipProp) => {
   }
 }
 
-export default useFetchWalletLastTransactionHashes
+const extractMostRecentTransaction = (results: UseQueryResult<AddressLatestTransactionQueryFnData>[]) => ({
+  data: results.reduce(
+    (acc, { data }) => {
+      acc.latestTx = (data?.latestTx?.timestamp ?? 0) > (acc.latestTx?.timestamp ?? 0) ? data?.latestTx : acc.latestTx
+      acc.previousTx =
+        (data?.previousTx?.timestamp ?? 0) > (acc.previousTx?.timestamp ?? 0) ? data?.previousTx : acc.previousTx
 
-const combine = (results: UseQueryResult<AddressLatestTransactionQueryFnData>[]) => ({
+      return acc
+    },
+    {
+      latestTx: undefined as Transaction | undefined,
+      previousTx: undefined as Transaction | undefined
+    }
+  ),
+  ...combineIsLoading(results)
+})
+
+const extractLastTransactionHashes = (results: UseQueryResult<AddressLatestTransactionQueryFnData>[]) => ({
   data: results
     .flatMap(({ data }) =>
       data
