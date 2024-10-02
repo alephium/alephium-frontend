@@ -26,6 +26,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme } from 'styled-components'
 
 import { fadeInSlowly } from '@/animations'
+import AppHeader from '@/components/AppHeader'
 import NavItem from '@/components/NavItem'
 import SideBar from '@/components/PageComponents/SideBar'
 import Scrollbar from '@/components/Scrollbar'
@@ -135,6 +136,7 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
 
       <Scrollbar>
         <MainContent>{children}</MainContent>
+        <AppHeader title={title} />
       </Scrollbar>
     </motion.div>
   )

@@ -19,24 +19,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, Asset, findTransactionReferenceAddress } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { useInfiniteQuery } from '@tanstack/react-query'
-import { colord } from 'colord'
 import { uniqBy } from 'lodash'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
-import { useFetchWalletLastTransaction } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
-import { walletTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
-import ActionLink from '@/components/ActionLink'
-import SkeletonLoader from '@/components/SkeletonLoader'
-import Spinner from '@/components/Spinner'
-import Table, { TableCell, TableCellPlaceholder, TableRow } from '@/components/Table'
+import useFetchWalletInfiniteTransactions from '@/api/apiDataHooks/wallet/useFetchWalletInfiniteTransactions'
+import Table from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
 import {
   getTransactionAmountDeltas,
   getTransactionInfoType
 } from '@/features/transactionsDisplay/transactionDisplayUtils'
+import NewTransactionsButtonRow from '@/features/transactionsDisplay/transactionLists/NewTransactionsButtonRow'
+import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
+import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
@@ -49,37 +45,24 @@ interface WalletTransactionListProps {
   assetIds?: Asset['id'][]
 }
 
-const WalletTransactionList = ({ addressHashes, directions, assetIds }: WalletTransactionListProps) => {
+const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletTransactionListProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
-  const { data: detectedTxUpdates, isLoading: isLoadingLatestTx } = useFetchWalletLastTransaction()
-
-  const [fetchedTransactionListAt, setRefreshedTransactionListAt] = useState(0)
-
-  const handleRefresh = () => setRefreshedTransactionListAt(new Date().getTime())
-
   const {
-    data: confirmedTxsPages,
-    fetchNextPage,
-    isLoading: isLoadingConfirmedTxs,
+    data: fetchedConfirmedTxs,
+    isLoading,
+    refresh,
     hasNextPage,
-    isFetchingNextPage
-  } = useInfiniteQuery(
-    walletTransactionsInfiniteQuery({
-      allAddressHashes,
-      timestamp: fetchedTransactionListAt,
-      networkId,
-      skip: isLoadingLatestTx
-    })
-  )
+    fetchNextPage,
+    isFetchingNextPage,
+    showNewTxsMessage
+  } = useFetchWalletInfiniteTransactions()
 
   const openTransactionDetailsModal = (txHash: Transaction['hash'], addressHash: AddressHash) =>
     dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash, addressHash } }))
 
-  const fetchedConfirmedTxs = useMemo(() => confirmedTxsPages?.pages.flat() ?? [], [confirmedTxsPages?.pages])
   const filteredConfirmedTxs = useMemo(
     () =>
       applyFilters({
@@ -91,25 +74,12 @@ const WalletTransactionList = ({ addressHashes, directions, assetIds }: WalletTr
       }),
     [addressHashes, allAddressHashes, assetIds, directions, fetchedConfirmedTxs]
   )
-  const latestFetchedTxHash = fetchedConfirmedTxs[0]?.hash
-  const latestUnfetchedTxHash = detectedTxUpdates.latestTx?.hash
 
   return (
     <Table minWidth="500px">
-      {isLoadingConfirmedTxs &&
-        Array.from({ length: 3 }).map((_, i) => (
-          <TableRow key={i}>
-            <SkeletonLoader height="37.5px" />
-          </TableRow>
-        ))}
+      {isLoading && <TableRowsLoader />}
 
-      {!isLoadingConfirmedTxs && latestUnfetchedTxHash && latestFetchedTxHash !== latestUnfetchedTxHash && (
-        <NewTransactionsRow role="row" onClick={handleRefresh}>
-          <TableCell align="center" role="gridcell">
-            🆕 {t('Click to display new transactions')}
-          </TableCell>
-        </NewTransactionsRow>
-      )}
+      {showNewTxsMessage && <NewTransactionsButtonRow onClick={refresh} />}
 
       {/* TODO: Remove uniqBy once backend removes duplicates from its results */}
       {uniqBy(filteredConfirmedTxs, 'hash').map((tx) => {
@@ -128,30 +98,21 @@ const WalletTransactionList = ({ addressHashes, directions, assetIds }: WalletTr
         )
       })}
 
-      {!isLoadingConfirmedTxs && filteredConfirmedTxs && filteredConfirmedTxs?.length > 0 && (
-        <TableRow role="row">
-          <TableCell align="center" role="gridcell">
-            {!hasNextPage ? (
-              <span>{t('All transactions loaded!')}</span>
-            ) : isFetchingNextPage ? (
-              <Spinner size="15px" />
-            ) : (
-              <ActionLink onClick={fetchNextPage}>{t('Show more')}</ActionLink>
-            )}
-          </TableCell>
-        </TableRow>
-      )}
-
-      {!isLoadingConfirmedTxs && (!filteredConfirmedTxs || filteredConfirmedTxs.length === 0) && (
-        <TableRow role="row" tabIndex={0}>
-          <TableCellPlaceholder align="center">{t('No transactions to display')}</TableCellPlaceholder>
-        </TableRow>
+      {!isLoading && (
+        <TransactionsListFooter
+          isDisplayingTxs={filteredConfirmedTxs && filteredConfirmedTxs?.length > 0}
+          showLoadMoreBtn={hasNextPage}
+          showSpinner={isFetchingNextPage}
+          onShowMoreClick={fetchNextPage}
+          noTxsMsg={t('No transactions to display')}
+          allTxsLoadedMsg={t('All the transactions that match the filtering criteria were loaded!')}
+        />
       )}
     </Table>
   )
 }
 
-export default WalletTransactionList
+export default WalletTransactionsList
 
 const applyFilters = ({
   txs,
@@ -189,7 +150,3 @@ const applyFilters = ({
       })
     : txs
 }
-
-const NewTransactionsRow = styled(TableRow)`
-  background-color: ${({ theme }) => colord(theme.global.accent).alpha(0.15).toHex()};
-`
