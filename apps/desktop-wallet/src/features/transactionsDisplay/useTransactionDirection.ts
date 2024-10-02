@@ -26,12 +26,29 @@ import {
 import { PendingTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useMemo } from 'react'
 
+import { selectPendingSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
+import { useAppSelector } from '@/hooks/redux'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+
 const useTransactionDirection = (
   tx: Transaction | PendingTransaction,
   addressHash: AddressHash
-): TransactionDirection =>
-  useMemo(() => {
-    if (isConsolidationTx(tx)) {
+): TransactionDirection => {
+  const internalAddresses = useAppSelector(selectAllAddressHashes)
+  const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
+
+  return useMemo(() => {
+    if (pendingSentTx) {
+      if (internalAddresses.includes(pendingSentTx.toAddress)) {
+        if (addressHash === pendingSentTx.fromAddress) {
+          return 'out'
+        } else {
+          return 'in'
+        }
+      } else {
+        return 'out'
+      }
+    } else if (isConsolidationTx(tx)) {
       return 'out'
     } else {
       const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
@@ -47,6 +64,7 @@ const useTransactionDirection = (
         }
       }
     }
-  }, [addressHash, tx])
+  }, [addressHash, internalAddresses, pendingSentTx, tx])
+}
 
 export default useTransactionDirection
