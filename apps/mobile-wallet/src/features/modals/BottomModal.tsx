@@ -25,6 +25,7 @@ import Animated, {
   interpolate,
   runOnJS,
   runOnUI,
+  useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -95,6 +96,7 @@ const BottomModal = ({
 
   const contentHeight = useSharedValue(0)
   const [isScrollable, setIsScrollable] = useState(false)
+  const contentScrollY = useSharedValue(0)
 
   const maxHeight = dimensions.height
 
@@ -180,10 +182,36 @@ const BottomModal = ({
     position.value = 'minimised'
   }, [minHeight.value, modalHeight, navHeight, position])
 
+  // Modal panning gesture handler 👇
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleDragEnd = () => {
+    'worklet'
+
+    const shouldMinimise = position.value === 'maximised' && -modalHeight.value < dimensions.height - DRAG_BUFFER
+
+    const shouldMaximise =
+      canMaximize.value && position.value === 'minimised' && -modalHeight.value > minHeight.value + DRAG_BUFFER
+
+    const shouldClose =
+      ['minimised', 'closing'].includes(position.value) && -modalHeight.value < minHeight.value - DRAG_BUFFER
+
+    if (shouldMaximise) {
+      handleMaximize()
+    } else if (shouldMinimise) {
+      shouldMaximizeOnOpen.value ? handleClose() : handleMinimize()
+    } else if (shouldClose) {
+      handleClose()
+    } else {
+      modalHeight.value =
+        position.value === 'maximised'
+          ? withSpring(-maxHeight, springConfig)
+          : withSpring(-minHeight.value, springConfig)
+    }
+  }
+
   const panGesture = useMemo(
     () =>
       Gesture.Pan()
-        .activeOffsetY(5)
         .onStart(() => {
           offsetY.value = modalHeight.value
         })
@@ -193,41 +221,45 @@ const BottomModal = ({
           }
         })
         .onEnd(() => {
-          const shouldMinimise = position.value === 'maximised' && -modalHeight.value < dimensions.height - DRAG_BUFFER
-
-          const shouldMaximise =
-            canMaximize.value && position.value === 'minimised' && -modalHeight.value > minHeight.value + DRAG_BUFFER
-
-          const shouldClose =
-            ['minimised', 'closing'].includes(position.value) && -modalHeight.value < minHeight.value - DRAG_BUFFER
-
-          if (shouldMaximise) {
-            handleMaximize()
-          } else if (shouldMinimise) {
-            shouldMaximizeOnOpen.value ? handleClose() : handleMinimize()
-          } else if (shouldClose) {
-            handleClose()
-          } else {
-            modalHeight.value =
-              position.value === 'maximised'
-                ? withSpring(-maxHeight, springConfig)
-                : withSpring(-minHeight.value, springConfig)
-          }
+          handleDragEnd()
         }),
-    [
-      offsetY,
-      modalHeight,
-      position.value,
-      dimensions.height,
-      canMaximize.value,
-      minHeight.value,
-      handleMaximize,
-      shouldMaximizeOnOpen.value,
-      handleClose,
-      handleMinimize,
-      maxHeight
-    ]
+    [offsetY, modalHeight, position.value, handleDragEnd]
   )
+
+  // Content scroll management 👇
+  const previousContentScrollY = useSharedValue(0)
+  const isContentDragged = useSharedValue(false)
+  const modalHeightDelta = useSharedValue(0)
+
+  const contentScrollHandler = useAnimatedScrollHandler({
+    onScroll: (e) => {
+      contentScrollY.value = e.contentOffset.y
+
+      if (!isContentDragged.value) return
+
+      if (contentScrollY.value <= 0) {
+        // move the whole modal
+        if (contentScrollY.value < previousContentScrollY.value) {
+          const newModalHeightValue = modalHeight.value - contentScrollY.value
+          modalHeightDelta.value = modalHeight.value - newModalHeightValue
+          modalHeight.value = newModalHeightValue
+        }
+      } else if (-modalHeight.value < maxHeight) {
+        handleMaximize()
+      }
+      previousContentScrollY.value = contentScrollY.value
+    },
+    onBeginDrag: () => {
+      isContentDragged.value = true
+    },
+    onEndDrag: () => {
+      isContentDragged.value = false
+
+      if (modalHeightDelta.value < -1) {
+        handleClose()
+      }
+    }
+  })
 
   // Trigger handle close when modal entity is closed from outside
   useEffect(() => {
@@ -258,6 +290,7 @@ const BottomModal = ({
                 keyboardShouldPersistTaps="handled"
                 scrollEnabled={isScrollable}
                 scrollEventThrottle={16}
+                onScroll={contentScrollHandler}
                 contentContainerStyle={[
                   contentContainerStyle,
                   {
