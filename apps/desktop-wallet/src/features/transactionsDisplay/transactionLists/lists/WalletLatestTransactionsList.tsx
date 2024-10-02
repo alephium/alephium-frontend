@@ -28,9 +28,10 @@ import styled from 'styled-components'
 import { useFetchWalletLastTransaction } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { walletLatestTransactionsQuery } from '@/api/queries/transactionQueries'
 import ActionLink from '@/components/ActionLink'
-import SkeletonLoader from '@/components/SkeletonLoader'
 import Table, { TableCellPlaceholder, TableHeader, TableRow } from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
+import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
+import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
@@ -65,12 +66,7 @@ const WalletLatestTransactionsList = () => {
         </ActionLinkStyled>
       </TableHeader>
 
-      {isLoading &&
-        Array.from({ length: 3 }).map((_, i) => (
-          <TableRow key={i}>
-            <SkeletonLoader height="37.5px" />
-          </TableRow>
-        ))}
+      {isLoading && <TableRowsLoader />}
 
       {/* TODO: Remove uniqBy once backend removes duplicates from its results */}
       {uniqBy(confirmedTxs, 'hash').map((tx) => {
@@ -88,6 +84,15 @@ const WalletLatestTransactionsList = () => {
           />
         )
       })}
+
+      {!isLoading && (
+        <TransactionsListFooter
+          isDisplayingTxs={(confirmedTxs?.length ?? 0) > 0}
+          showLoadMoreBtn={false}
+          showSpinner={false}
+          noTxsMsg={t('No transactions to display')}
+        />
+      )}
 
       {!isLoading && (!confirmedTxs || confirmedTxs.length === 0) && (
         <TableRow role="row" tabIndex={0}>
