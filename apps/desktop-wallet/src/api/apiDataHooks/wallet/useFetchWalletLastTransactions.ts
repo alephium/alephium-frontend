@@ -21,7 +21,7 @@ import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { addressLatestTransactionQuery, AddressLatestTransactionQueryFnData } from '@/api/queries/transactionQueries'
+import { AddressLatestTransactionQueryFnData, addressUpdatesSignalQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import { isDefined } from '@/utils/misc'
@@ -40,9 +40,7 @@ const useFetchWalletLastTransactions = <T>({ combine, skip }: UseFetchWalletLast
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
   const { data, isLoading } = useQueries({
-    queries: !skip
-      ? allAddressHashes.map((addressHash) => addressLatestTransactionQuery({ addressHash, networkId }))
-      : [],
+    queries: !skip ? allAddressHashes.map((addressHash) => addressUpdatesSignalQuery({ addressHash, networkId })) : [],
     combine
   })
 
