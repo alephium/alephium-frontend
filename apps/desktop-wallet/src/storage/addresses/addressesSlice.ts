@@ -41,8 +41,6 @@ import { UnlockedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
-  loadingTransactions: false,
-  syncingAddressData: false,
   isRestoringAddressesFromMetadata: false
 })
 
