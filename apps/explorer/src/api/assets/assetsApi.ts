@@ -29,6 +29,7 @@ import { addressFromContractId, NFTCollectionUriMetaData, NFTTokenUriMetaData } 
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions } from '@tanstack/react-query'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
+import axios from 'axios'
 
 import client from '@/api/client'
 import i18n from '@/i18n'
@@ -163,28 +164,11 @@ export const assetsQueries = {
     item: (dataUri: string, assetId: string) =>
       queryOptions({
         queryKey: ['nftData', dataUri],
-        queryFn: (): Promise<NFTTokenUriMetaData & { assetId: string }> | undefined =>
-          fetch(dataUri).then(async (res) => {
-            let data: NFTTokenUriMetaData | undefined
-            try {
-              data = (await res.json()) as NFTTokenUriMetaData
+        queryFn: async (): Promise<NFTTokenUriMetaData & { assetId: string }> => {
+          const nftData = (await axios.get(dataUri)).data as NFTTokenUriMetaData
 
-              if (!matchesNFTTokenUriMetaDataSchema(data)) {
-                data = undefined
-                return Promise.reject()
-              }
-            } catch (e) {
-              if (dataUri.startsWith('data:application/json;utf8,')) {
-                data = JSON.parse(dataUri.split('data:application/json;utf8,')[1])
-              }
-            }
-
-            if (data) {
-              return { ...data, assetId }
-            } else {
-              return Promise.reject()
-            }
-          }),
+          return matchesNFTTokenUriMetaDataSchema(nftData) ? { ...nftData, assetId } : Promise.reject()
+        },
         staleTime: ONE_DAY_MS
       }),
     collection: (collectionUri: string, collectionId: string, collectionAddress: string) =>
