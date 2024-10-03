@@ -16,23 +16,26 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { memo } from 'react'
-import { TouchableOpacity } from 'react-native'
+import { isValidElement, ReactElement } from 'react'
 
-import NFTImage, { NFTImageProps } from '~/components/NFTImage'
-import { openModal } from '~/features/modals/modalActions'
-import { useAppDispatch } from '~/hooks/redux'
+import withModal from '~/features/modals/withModal'
 
-const NFTThumbnail = (props: NFTImageProps) => {
-  const dispatch = useAppDispatch()
+// TODO: Move those functions to shared react package
 
-  const openNftModal = () => dispatch(openModal({ name: 'NftModal', props: { nftId: props.nftId } }))
+const wrappedModalExample = withModal(() => null)
+
+export const isModalWrapped = <P,>(element: ReactElement<P>): boolean => {
+  if (!isValidElement(element)) return false
+
+  const elementType = element.type as unknown as { $$typeof?: symbol }
 
   return (
-    <TouchableOpacity onPress={openNftModal}>
-      <NFTImage {...props} />
-    </TouchableOpacity>
+    !!elementType.$$typeof && elementType.$$typeof === (wrappedModalExample as unknown as { $$typeof: symbol }).$$typeof
   )
 }
 
-export default memo(NFTThumbnail)
+export const getElementName = <P,>(element: ReactElement<P>): string => {
+  const elementType = element.type as React.ComponentType<P>
+
+  return elementType.displayName || elementType.name || 'Component'
+}

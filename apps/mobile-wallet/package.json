@@ -62,6 +62,7 @@
     "expo-linking": "^6.3.1",
     "expo-local-authentication": "~14.0.1",
     "expo-localization": "~15.0.3",
+    "expo-navigation-bar": "~3.0.7",
     "expo-screen-capture": "~6.0.1",
     "expo-secure-store": "~13.0.2",
     "expo-sensors": "~13.0.9",

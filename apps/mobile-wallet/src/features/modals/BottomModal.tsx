@@ -35,7 +35,10 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { CloseButton } from '~/components/buttons/Button'
+import { removeModal } from '~/features/modals/modalActions'
 import { ModalContentProps } from '~/features/modals/ModalContent'
+import { selectModalById } from '~/features/modals/modalSelectors'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type ModalPositions = 'minimised' | 'maximised' | 'closing'
@@ -53,8 +56,9 @@ const springConfig: WithSpringConfig = {
 }
 
 export interface BottomModalProps {
+  id: number
   Content: (props: ModalContentProps) => ReactNode
-  onClose: () => void
+  onClose?: () => void
   title?: string
   maximisedContent?: boolean
   customMinHeight?: number
@@ -63,10 +67,19 @@ export interface BottomModalProps {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
-const BottomModal = ({ Content, onClose, title, maximisedContent, customMinHeight, noPadding }: BottomModalProps) => {
+const BottomModal = ({
+  id,
+  Content,
+  onClose,
+  title,
+  maximisedContent,
+  customMinHeight,
+  noPadding
+}: BottomModalProps) => {
   const insets = useSafeAreaInsets()
-
+  const dispatch = useAppDispatch()
   const [dimensions, setDimensions] = useState(Dimensions.get('window'))
+  const modalEntity = useAppSelector((s) => selectModalById(s, id))
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -134,13 +147,19 @@ const BottomModal = ({ Content, onClose, title, maximisedContent, customMinHeigh
     }
   }
 
+  const handleCloseOnJS = useCallback(() => {
+    if (onClose) onClose()
+
+    dispatch(removeModal({ id })) // Remove modal from stack after animation is done
+  }, [dispatch, id, onClose])
+
   const handleClose = useCallback(() => {
     'worklet'
 
     navHeight.value = withSpring(0, springConfig)
-    modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(onClose)())
+    modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(handleCloseOnJS)())
     position.value = 'closing'
-  }, [modalHeight, navHeight, onClose, position])
+  }, [handleCloseOnJS, modalHeight, navHeight, position])
 
   const handleMaximize = useCallback(() => {
     'worklet'
@@ -206,9 +225,16 @@ const BottomModal = ({ Content, onClose, title, maximisedContent, customMinHeigh
     ]
   )
 
+  // Trigger handle close when modal entity is closed from outside
+  useEffect(() => {
+    if (position.value !== 'closing' && modalEntity?.isClosing) {
+      handleClose()
+    }
+  }, [handleClose, modalEntity?.isClosing, position.value])
+
   return (
     <GestureDetector gesture={panGesture}>
-      <Animated.View style={{ flex: 1 }}>
+      <ExternalContainer>
         <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
         <Container>
           <ModalStyled style={modalHeightAnimatedStyle}>
@@ -227,12 +253,20 @@ const BottomModal = ({ Content, onClose, title, maximisedContent, customMinHeigh
             </ContentContainer>
           </ModalStyled>
         </Container>
-      </Animated.View>
+      </ExternalContainer>
     </GestureDetector>
   )
 }
 
 export default BottomModal
+
+const ExternalContainer = styled.View`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+`
 
 const Container = styled.View`
   position: absolute;

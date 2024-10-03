@@ -19,17 +19,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import styled from 'styled-components/native'
 
 import ButtonStack, { ButtonStackProps } from '~/components/buttons/ButtonStack'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 const ActionButtonsStack = ({ style, ...props }: ButtonStackProps) => (
   <ActionsContainer style={style}>
-    <ButtonStack {...props} style={{ width: '75%' }} />
+    <ButtonStack {...props} />
   </ActionsContainer>
 )
 
 export default ActionButtonsStack
 
 const ActionsContainer = styled.View`
-  flex: 1.5;
-  justify-content: center;
-  align-items: center;
+  margin: 0 ${DEFAULT_MARGIN}px;
 `

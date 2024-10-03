@@ -16,19 +16,26 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Platform } from 'react-native'
+import { NFT } from '@alephium/shared'
 
-// ALL VALUES IN PIXELS
+import NFTsGrid from '~/components/NFTsGrid'
+import BottomModal from '~/features/modals/BottomModal'
+import { ModalContent } from '~/features/modals/ModalContent'
+import withModal from '~/features/modals/withModal'
 
-export const BORDER_RADIUS_HUGE = 28
-export const BORDER_RADIUS_BIG = 16
-export const BORDER_RADIUS = 16
-export const BORDER_RADIUS_SMALL = 6
+interface NftGridModalProps {
+  nftsData: NFT[]
+}
 
-export const INPUTS_HEIGHT = 60
-export const INPUTS_PADDING = 16
+const NftGridModal = withModal<NftGridModalProps>(({ id, nftsData }) => (
+  <BottomModal
+    id={id}
+    Content={(props) => (
+      <ModalContent {...props}>
+        <NFTsGrid nfts={nftsData} scrollEnabled={false} />
+      </ModalContent>
+    )}
+  />
+))
 
-export const DEFAULT_MARGIN = 18
-export const VERTICAL_GAP = 25
-
-export const SCREEN_OVERFLOW = Platform.OS === 'ios' ? 'visible' : 'scroll'
+export default NftGridModal

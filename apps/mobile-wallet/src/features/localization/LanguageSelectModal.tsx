@@ -21,35 +21,43 @@ import { ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { Language, languageOptions } from '~/features/localization/languages'
 import { languageChanged } from '~/features/localization/localizationActions'
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
+import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
+import { ModalContent } from '~/features/modals/ModalContent'
+import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-const LanguageSelectModal = ({ onClose, ...props }: ModalContentProps) => {
+const LanguageSelectModal = withModal(({ id }) => {
   const dispatch = useAppDispatch()
   const currentLanguage = useAppSelector((s) => s.settings.language)
 
   const handleLanguageChange = (language: Language) => {
     dispatch(languageChanged(language))
-    onClose && onClose()
+    dispatch(closeModal({ id }))
   }
 
   return (
-    <ModalContent verticalGap {...props}>
-      <ScreenSection>
-        <BoxSurface>
-          {languageOptions.map((languageOption, index) => (
-            <RadioButtonRow
-              key={languageOption.label}
-              title={languageOption.label}
-              onPress={() => handleLanguageChange(languageOption.value)}
-              isActive={currentLanguage === languageOption.value}
-              isLast={index === languageOptions.length - 1}
-            />
-          ))}
-        </BoxSurface>
-      </ScreenSection>
-    </ModalContent>
+    <BottomModal
+      id={id}
+      Content={(props) => (
+        <ModalContent {...props} verticalGap>
+          <ScreenSection>
+            <BoxSurface>
+              {languageOptions.map((languageOption, index) => (
+                <RadioButtonRow
+                  key={languageOption.label}
+                  title={languageOption.label}
+                  onPress={() => handleLanguageChange(languageOption.value)}
+                  isActive={currentLanguage === languageOption.value}
+                  isLast={index === languageOptions.length - 1}
+                />
+              ))}
+            </BoxSurface>
+          </ScreenSection>
+        </ModalContent>
+      )}
+    />
   )
-}
+})
 
 export default LanguageSelectModal

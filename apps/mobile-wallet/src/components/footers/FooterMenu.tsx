@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { Canvas, LinearGradient, Rect, vec } from '@shopify/react-native-skia'
+import { colord } from 'colord'
 import { useState } from 'react'
 import { LayoutChangeEvent, StyleProp, useWindowDimensions, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -65,8 +66,8 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
             end={vec(0, 0)}
             colors={
               theme.name === 'dark'
-                ? ['rgba(0, 0, 0, 1)', 'rgba(0, 0, 0, 0)']
-                : ['rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0)']
+                ? [theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]
+                : [theme.bg.highlight, colord(theme.bg.highlight).alpha(0).toHex()]
             }
           />
         </Rect>

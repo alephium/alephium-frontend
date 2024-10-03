@@ -16,19 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Platform } from 'react-native'
+export type RequiredKeys<T> = {
+  [K in keyof T]-?: undefined extends T[K] ? never : K
+}[keyof T]
 
-// ALL VALUES IN PIXELS
+export type OptionalKeys<T> = {
+  [K in keyof T]-?: undefined extends T[K] ? K : never
+}[keyof T]
 
-export const BORDER_RADIUS_HUGE = 28
-export const BORDER_RADIUS_BIG = 16
-export const BORDER_RADIUS = 16
-export const BORDER_RADIUS_SMALL = 6
+export type HasRequiredProps<T> = [RequiredKeys<T>] extends [never] ? false : true
 
-export const INPUTS_HEIGHT = 60
-export const INPUTS_PADDING = 16
-
-export const DEFAULT_MARGIN = 18
-export const VERTICAL_GAP = 25
-
-export const SCREEN_OVERFLOW = Platform.OS === 'ios' ? 'visible' : 'scroll'
+export type HasOptionalProps<T> = [OptionalKeys<T>] extends [never] ? false : true

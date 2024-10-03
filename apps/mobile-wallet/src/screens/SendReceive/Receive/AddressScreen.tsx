@@ -54,7 +54,6 @@ const AddressScreen = ({ navigation }: ScreenProps) => {
       onAddressPress={(addressHash) => handleAddressPress(addressHash)}
       screenTitle={t('To address')}
       screenIntro={t('Select the address which you want to receive funds to.')}
-      contrastedBg
       contentPaddingTop
       onScroll={screenScrollHandler}
     />

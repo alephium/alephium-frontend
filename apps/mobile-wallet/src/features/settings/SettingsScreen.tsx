@@ -27,7 +27,6 @@ import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import Button from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalScreenTitle, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
@@ -37,20 +36,12 @@ import Row from '~/components/Row'
 import LinkToWeb from '~/components/text/LinkToWeb'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
-import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import { getAutoLockLabel } from '~/features/auto-lock/utils'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { languageOptions } from '~/features/localization/languages'
-import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import BottomModal from '~/features/modals/DeprecatedBottomModal'
+import { openModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
-import RootStackParamList from '~/navigation/rootStackRoutes'
-import CurrencySelectModal from '~/screens/CurrencySelectModal'
-import MnemonicModal from '~/screens/Settings/MnemonicModal'
-import WalletDeleteModal from '~/screens/Settings/WalletDeleteModal'
-import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import {
   analyticsToggled,
   biometricsToggled,
@@ -58,7 +49,10 @@ import {
   passwordRequirementToggled,
   themeChanged,
   walletConnectToggled
-} from '~/store/settingsSlice'
+} from '~/features/settings/settingsSlice'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { resetNavigation } from '~/utils/navigation'
 
@@ -86,25 +80,37 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
   const { t } = useTranslation()
 
-  const [isAutoLockSecondsModalOpen, setIsAutoLockSecondsModalOpen] = useState(false)
-  const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
-  const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
-  const [isLanguageSelectModalOpen, setIsLanguageSelectModalOpen] = useState(false)
-  const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
   const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
-  const [isWalletDeleteModalOpen, setIsWalletDeleteModalOpen] = useState(false)
   const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
-  const [isBiometricsWarningModalOpen, setIsBiometricsWarningModalOpen] = useState(false)
   const [lastToggledBiometricsSetting, setLastToggledBiometricsSetting] = useState<
     'appAccess' | 'transactions' | undefined
   >()
+
+  const openLanguageSelectModal = () => dispatch(openModal({ name: 'LanguageSelectModal' }))
+
+  const openCurrencySelectModal = () => dispatch(openModal({ name: 'CurrencySelectModal' }))
+
+  const openNetworkModal = () =>
+    dispatch(
+      openModal({
+        name: 'SwitchNetworkModal',
+        props: { onCustomNetworkPress: () => navigation.navigate('CustomNetworkScreen') }
+      })
+    )
+
+  const openBiometricsWarningModal = () =>
+    dispatch(openModal({ name: 'BiometricsWarningModal', props: { onConfirm: handleDisableBiometricsPress } }))
+
+  const openAutoLockOptionsModal = () => dispatch(openModal({ name: 'AutoLockOptionsModal' }))
+
+  const openMnemonicModal = () => dispatch(openModal({ name: 'MnemonicModal' }))
 
   const handleBiometricsAppAccessChange = (value: boolean) => {
     if (value || biometricsRequiredForTransactions) {
       toggleBiometricsAppAccess()
     } else {
       setLastToggledBiometricsSetting('appAccess')
-      setIsBiometricsWarningModalOpen(true)
+      openBiometricsWarningModal()
     }
   }
 
@@ -113,7 +119,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
       toggleBiometricsTransactions()
     } else {
       setLastToggledBiometricsSetting('transactions')
-      setIsBiometricsWarningModalOpen(true)
+      openBiometricsWarningModal()
     }
   }
 
@@ -132,8 +138,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   }
 
   const handleDisableBiometricsPress = () => {
-    setIsBiometricsWarningModalOpen(false)
-
     lastToggledBiometricsSetting === 'appAccess' ? toggleBiometricsAppAccess() : toggleBiometricsTransactions()
   }
 
@@ -153,7 +157,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const toggleWalletConnect = () => dispatch(walletConnectToggled())
 
   const handleDeleteButtonPress = () => {
-    setIsWalletDeleteModalOpen(true)
+    dispatch(
+      openModal({ name: 'WalletDeleteModal', props: { onDelete: () => resetNavigation(navigation, 'LandingScreen') } })
+    )
   }
 
   const handleWalletConnectEnablePress = () => {
@@ -184,13 +190,13 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>{t('General')}</ScreenSectionTitle>
           <BoxSurface>
-            <Row onPress={() => setIsLanguageSelectModalOpen(true)} title="Language">
+            <Row onPress={openLanguageSelectModal} title="Language">
               <AppText bold>{languageOptions.find((l) => l.value === language)?.label}</AppText>
             </Row>
-            <Row onPress={() => setIsCurrencySelectModalOpen(true)} title={t('Currency')}>
+            <Row onPress={openCurrencySelectModal} title={t('Currency')}>
               <AppText bold>{currentCurrency}</AppText>
             </Row>
-            <Row title={t('Current network')} onPress={() => setIsSwitchNetworkModalOpen(true)}>
+            <Row title={t('Current network')} onPress={openNetworkModal}>
               <AppText bold>{capitalize(currentNetworkName)}</AppText>
             </Row>
             <Row title={t('Discreet mode')} subtitle={t('Hide all amounts')}>
@@ -268,7 +274,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
               title={t('Auto-lock')}
               subtitle={t('Amount of time before app locks')}
               isLast
-              onPress={() => setIsAutoLockSecondsModalOpen(true)}
+              onPress={openAutoLockOptionsModal}
             >
               <AppText bold>{getAutoLockLabel(autoLockSeconds)}</AppText>
             </Row>
@@ -362,7 +368,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                       settingsToCheck: 'appAccessOrTransactions',
                       successCallback: () =>
                         triggerFundPasswordAuthGuard({
-                          successCallback: () => setIsMnemonicModalVisible(true)
+                          successCallback: openMnemonicModal
                         })
                     })
                   }}
@@ -370,59 +376,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
               </ScreenSection>
             </ModalContent>
           )}
-        />
-      </Portal>
-
-      <Portal>
-        <BottomModal
-          isOpen={isSwitchNetworkModalOpen}
-          onClose={() => setIsSwitchNetworkModalOpen(false)}
-          Content={(props) => (
-            <SwitchNetworkModal
-              onClose={() => setIsSwitchNetworkModalOpen(false)}
-              onCustomNetworkPress={() => navigation.navigate('CustomNetworkScreen')}
-              {...props}
-            />
-          )}
-        />
-
-        <BottomModal
-          isOpen={isLanguageSelectModalOpen}
-          onClose={() => setIsLanguageSelectModalOpen(false)}
-          Content={(props) => <LanguageSelectModal onClose={() => setIsLanguageSelectModalOpen(false)} {...props} />}
-        />
-
-        <BottomModal
-          isOpen={isCurrencySelectModalOpen}
-          onClose={() => setIsCurrencySelectModalOpen(false)}
-          Content={(props) => <CurrencySelectModal onClose={() => setIsCurrencySelectModalOpen(false)} {...props} />}
-        />
-
-        <BottomModal
-          isOpen={isAutoLockSecondsModalOpen}
-          onClose={() => setIsAutoLockSecondsModalOpen(false)}
-          Content={(props) => <AutoLockOptionsModal onClose={() => setIsAutoLockSecondsModalOpen(false)} {...props} />}
-        />
-
-        <BottomModal
-          isOpen={isMnemonicModalVisible}
-          onClose={() => setIsMnemonicModalVisible(false)}
-          Content={(props) => <MnemonicModal {...props} />}
-        />
-
-        <BottomModal
-          isOpen={isWalletDeleteModalOpen}
-          onClose={() => setIsWalletDeleteModalOpen(false)}
-          maximisedContent={Platform.OS === 'ios'}
-          Content={(props) => (
-            <WalletDeleteModal onDelete={() => resetNavigation(navigation, 'LandingScreen')} {...props} />
-          )}
-        />
-
-        <BottomModal
-          isOpen={isBiometricsWarningModalOpen}
-          onClose={() => setIsBiometricsWarningModalOpen(false)}
-          Content={(props) => <BiometricsWarningModal onConfirm={handleDisableBiometricsPress} {...props} />}
         />
       </Portal>
       {fundPasswordModal}

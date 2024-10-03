@@ -18,29 +18,22 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
-import { colord } from 'colord'
-import { BlurView } from 'expo-blur'
-import { useEffect, useMemo, useState } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
-import { Platform, StyleSheet } from 'react-native'
-import { Portal } from 'react-native-portalize'
+import { useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
+import BlurredCard from '~/components/BlurredCard'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
-import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
-import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
-import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { openModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
@@ -50,7 +43,6 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
 import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
-import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -65,7 +57,6 @@ interface ScreenProps
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const insets = useSafeAreaInsets()
   const { t } = useTranslation()
-  const theme = useTheme()
   const dispatch = useAppDispatch()
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const currency = useAppSelector((s) => s.settings.currency)
@@ -77,16 +68,19 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsFundPasswordReminder = useAppSelector((s) => s.fundPassword.needsReminder)
 
-  const [isFundPasswordReminderModalOpen, setIsFundPasswordReminderModalOpen] = useState(false)
-  const [isBackupReminderModalOpen, setIsBackupReminderModalOpen] = useState(!isMnemonicBackedUp)
-  const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const { data: isNewWallet } = useAsyncData(getIsNewWallet)
 
   useEffect(() => {
-    if (isMnemonicBackedUp && needsFundPasswordReminder) {
-      setIsFundPasswordReminderModalOpen(true)
+    if (!isMnemonicBackedUp && isNewWallet !== undefined) {
+      dispatch(openModal({ name: 'BackupReminderModal', props: { isNewWallet } }))
     }
-  }, [isMnemonicBackedUp, needsFundPasswordReminder])
+  }, [dispatch, isMnemonicBackedUp, isNewWallet])
+
+  useEffect(() => {
+    if (isMnemonicBackedUp && needsFundPasswordReminder) {
+      dispatch(openModal({ name: 'FundPasswordReminderModal' }))
+    }
+  }, [dispatch, isMnemonicBackedUp, needsFundPasswordReminder])
 
   useEffect(() => {
     if (!isNewWallet) return
@@ -124,41 +118,41 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <DashboardScreenStyled
-      refreshControl={<RefreshSpinner />}
+      refreshControl={<RefreshSpinner progressViewOffset={70} />}
       hasBottomBar
       verticalGap
-      contrastedBg
       onScroll={screenScrollHandler}
       floatingHeader
+      contentPaddingTop={20}
       headerScrollEffectOffset={70}
       headerOptions={{
         headerTitle: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold />
       }}
       {...props}
     >
-      <AnimatedCirclesBackground scrollY={screenScrollY} />
-      <WalletCard style={{ marginTop: insets.top }}>
-        {Platform.OS === 'android' ? (
-          <TransparentCardBackground style={StyleSheet.absoluteFill} />
-        ) : (
-          <BlurView
-            style={StyleSheet.absoluteFill}
-            intensity={80}
-            tint={theme.name === 'dark' ? 'systemThickMaterialDark' : 'systemThickMaterialLight'}
-          />
-        )}
-        <WalletCardHeader>
-          <HeaderButtons />
-        </WalletCardHeader>
-        <BalanceSummary dateLabel={t('VALUE TODAY')} />
-        {totalBalance > BigInt(0) && (
-          <ButtonsRowContainer>
-            <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" round flex short />
-            <Button onPress={handleReceivePress} iconProps={{ name: 'download' }} variant="contrast" round flex short />
-            <Button onPress={openBuyModal} iconProps={{ name: 'credit-card' }} variant="contrast" round flex short />
-          </ButtonsRowContainer>
-        )}
-      </WalletCard>
+      <AnimatedCirclesBackground height={400} scrollY={screenScrollY} />
+      <CardContainer style={{ marginTop: insets.top }}>
+        <BlurredCard>
+          <WalletCardHeader>
+            <HeaderButtons />
+          </WalletCardHeader>
+          <BalanceSummary dateLabel={t('VALUE TODAY')} />
+          {totalBalance > BigInt(0) && (
+            <ButtonsRowContainer>
+              <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" round flex short />
+              <Button
+                onPress={handleReceivePress}
+                iconProps={{ name: 'download' }}
+                variant="contrast"
+                round
+                flex
+                short
+              />
+              <Button onPress={openBuyModal} iconProps={{ name: 'credit-card' }} variant="contrast" round flex short />
+            </ButtonsRowContainer>
+          )}
+        </BlurredCard>
+      </CardContainer>
       <AddressesTokensList />
       {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
         <EmptyPlaceholder>
@@ -167,75 +161,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           </AppText>
         </EmptyPlaceholder>
       )}
-      <Portal>
-        <BottomModal
-          isOpen={isBackupReminderModalOpen}
-          onClose={() => setIsBackupReminderModalOpen(false)}
-          Content={(props) => (
-            <ModalContent verticalGap {...props}>
-              <ScreenSection>
-                <ModalScreenTitle>
-                  {isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}
-                </ModalScreenTitle>
-              </ScreenSection>
-              <ScreenSection>
-                {isNewWallet ? (
-                  <AppText color="secondary" size={18}>
-                    <Trans
-                      t={t}
-                      i18nKey="backupModalMessage1"
-                      components={{
-                        1: <AppText size={18} bold />
-                      }}
-                    >
-                      {
-                        'The first and most important step is to <1>write down your secret recovery phrase</1> and store it in a safe place.'
-                      }
-                    </Trans>
-                  </AppText>
-                ) : (
-                  <AppText color="secondary" size={18}>
-                    <Trans
-                      t={t}
-                      i18nKey="backupModalMessage2"
-                      components={{
-                        1: <AppText size={18} bold />
-                      }}
-                    >
-                      {
-                        'Have peace of mind by verifying that you <1>wrote your secret recovery phrase down</1> correctly.'
-                      }
-                    </Trans>
-                  </AppText>
-                )}
-              </ScreenSection>
-              <ScreenSection>
-                <Button
-                  title={t("Let's do that!")}
-                  onPress={() => navigation.navigate('BackupMnemonicNavigation')}
-                  variant="highlight"
-                />
-              </ScreenSection>
-            </ModalContent>
-          )}
-        />
-
-        <BottomModal
-          isOpen={isSwitchNetworkModalOpen}
-          onClose={() => setIsSwitchNetworkModalOpen(false)}
-          Content={(props) => (
-            <SwitchNetworkModal
-              onClose={() => setIsSwitchNetworkModalOpen(false)}
-              onCustomNetworkPress={() => navigation.navigate('CustomNetworkScreen')}
-              {...props}
-            />
-          )}
-        />
-      </Portal>
-      <FundPasswordReminderModal
-        isOpen={isFundPasswordReminderModalOpen}
-        onClose={() => setIsFundPasswordReminderModalOpen(false)}
-      />
     </DashboardScreenStyled>
   )
 }
@@ -246,19 +171,12 @@ const DashboardScreenStyled = styled(BottomBarScrollScreen)`
   gap: 15px;
 `
 
-const WalletCard = styled.View`
-  flex: 1;
+const CardContainer = styled.View`
   margin: 0 ${DEFAULT_MARGIN / 2}px;
-  border-radius: 38px;
-  overflow: hidden;
 `
 
 const WalletCardHeader = styled.View`
   padding: 20px 20px 0;
-`
-
-const TransparentCardBackground = styled.View`
-  background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.95).toHex()};
 `
 
 const ButtonsRowContainer = styled(Animated.View)`

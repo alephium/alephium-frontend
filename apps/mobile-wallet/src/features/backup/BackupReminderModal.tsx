@@ -15,17 +15,12 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { Alert } from 'react-native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
-import { fundPasswordReminded } from '~/features/fund-password/fundPasswordActions'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
@@ -33,58 +28,59 @@ import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
-const FundPasswordReminderModal = withModal(({ id }) => {
+export interface BackupReminderModalProps {
+  isNewWallet: boolean
+}
+
+const BackupReminderModal = withModal<BackupReminderModalProps>(({ id, isNewWallet }) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
-  useEffect(() => {
-    dispatch(fundPasswordReminded())
-  }, [dispatch])
-
-  const onClose = () => dispatch(closeModal({ id }))
-
-  const handleClose = () => {
-    Alert.alert(t('Are you sure?'), t('To enhance your security it is recommended to use a fund password.'), [
-      {
-        text: t('Later'),
-        onPress: onClose
-      },
-      {
-        text: t('Set fund password'),
-        onPress: handleSetPasswordPress
-      }
-    ])
-  }
-
-  const handleSetPasswordPress = () => {
-    onClose()
-
-    navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: true })
+  const handleValidatePress = () => {
+    dispatch(closeModal({ id }))
+    navigation.navigate('BackupMnemonicNavigation')
   }
 
   return (
     <BottomModal
       id={id}
       Content={(props) => (
-        <ModalContent {...props} verticalGap>
+        <ModalContent verticalGap {...props}>
           <ScreenSection>
-            <ModalScreenTitle>{t('Pin replaced by fund password')}</ModalScreenTitle>
+            <ModalScreenTitle>{isNewWallet ? `${t('Hello there!')} 👋` : `${t("Let's verify!")} 😌`}</ModalScreenTitle>
           </ScreenSection>
           <ScreenSection>
-            <AppText color="secondary" size={18}>
-              <Trans t={t} i18nKey="fundPasswordModalDescription" components={{ 1: <AppText size={18} bold /> }}>
-                {
-                  'The <1>fund password</1> is an additional authentication layer for critical operations involving the safety of your funds such as <1>revealing your seed phrase</1> or <1>sending funds</1>.\nYou can set it up in the app settings.'
-                }
-              </Trans>
-            </AppText>
+            {isNewWallet ? (
+              <AppText color="secondary" size={18}>
+                <Trans
+                  t={t}
+                  i18nKey="backupModalMessage1"
+                  components={{
+                    1: <AppText size={18} bold />
+                  }}
+                >
+                  {
+                    'The first and most important step is to <1>write down your secret recovery phrase</1> and store it in a safe place.'
+                  }
+                </Trans>
+              </AppText>
+            ) : (
+              <AppText color="secondary" size={18}>
+                <Trans
+                  t={t}
+                  i18nKey="backupModalMessage2"
+                  components={{
+                    1: <AppText size={18} bold />
+                  }}
+                >
+                  {'Have peace of mind by verifying that you <1>wrote your secret recovery phrase down</1> correctly.'}
+                </Trans>
+              </AppText>
+            )}
           </ScreenSection>
           <ScreenSection>
-            <ButtonsRow>
-              <Button title={t('Later')} onPress={handleClose} flex />
-              <Button variant="highlight" title={t('Set password')} onPress={handleSetPasswordPress} flex />
-            </ButtonsRow>
+            <Button title={t("Let's do that!")} onPress={handleValidatePress} variant="highlight" />
           </ScreenSection>
         </ModalContent>
       )}
@@ -92,4 +88,4 @@ const FundPasswordReminderModal = withModal(({ id }) => {
   )
 })
 
-export default FundPasswordReminderModal
+export default BackupReminderModal

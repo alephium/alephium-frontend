@@ -21,9 +21,9 @@ import { useEffect } from 'react'
 
 import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
 import { hasStoredFundPassword } from '~/features/fund-password/fundPasswordStorage'
+import { loadSettings } from '~/features/settings/settingsPersistentStorage'
+import { storedGeneralSettingsLoaded } from '~/features/settings/settingsSlice'
 import { useAppDispatch } from '~/hooks/redux'
-import { loadSettings } from '~/persistent-storage/settings'
-import { storedGeneralSettingsLoaded } from '~/store/settingsSlice'
 import { GeneralSettings } from '~/types/settings'
 import { migrateNetworkSettings } from '~/utils/migration'
 

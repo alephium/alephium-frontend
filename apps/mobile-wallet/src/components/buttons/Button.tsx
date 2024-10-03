@@ -75,6 +75,7 @@ const Button = ({
   flex,
   animated,
   haptics,
+  wide,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
@@ -124,7 +125,7 @@ const Button = ({
         tint: undefined
       }[type],
       height: short ? 45 : compact ? 30 : hasOnlyIcon ? 40 : 55,
-      width: round ? (compact ? 30 : 40) : props.wide ? '75%' : hasOnlyIcon ? 40 : 'auto',
+      width: round ? (compact ? 30 : 40) : wide ? '75%' : hasOnlyIcon ? 40 : 'auto',
       justifyContent: round ? 'center' : undefined,
       alignItems: round ? 'center' : undefined,
       gap: compact ? 5 : 10,
@@ -168,6 +169,7 @@ const Button = ({
       onPressOut={handlePressOut}
       {...props}
     >
+      {iconProps && !(compact || round) && <EmptyPlaceholder />}
       {title && (
         <AnimatedAppText
           style={{ flexGrow: 1, color: font, textAlign: 'center' }}
@@ -258,4 +260,9 @@ export default styled(Button)`
 const IconContainer = styled.View`
   align-items: center;
   justify-content: center;
+  width: 22px;
+`
+
+const EmptyPlaceholder = styled.View`
+  width: 22px;
 `

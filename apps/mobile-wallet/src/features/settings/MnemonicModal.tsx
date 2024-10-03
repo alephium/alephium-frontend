@@ -22,16 +22,21 @@ import { useTranslation } from 'react-i18next'
 
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
+import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
+import { ModalContent } from '~/features/modals/ModalContent'
+import withModal from '~/features/modals/withModal'
+import OrderedTable from '~/features/settings/OrderedTable'
+import { useAppDispatch } from '~/hooks/redux'
 import { dangerouslyExportWalletMnemonic } from '~/persistent-storage/wallet'
-import OrderedTable from '~/screens/Settings/OrderedTable'
 
-interface MnemonicModalProps extends ModalContentProps {
-  onVerifyButtonPress?: () => void
+interface MnemonicModalProps {
+  onVerifyPress?: () => void
 }
 
-const MnemonicModal = ({ onVerifyButtonPress, ...props }: MnemonicModalProps) => {
+const MnemonicModal = withModal<MnemonicModalProps>(({ id, onVerifyPress }) => {
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
   const [mnemonic, setMnemonic] = useState<string>()
 
@@ -45,18 +50,28 @@ const MnemonicModal = ({ onVerifyButtonPress, ...props }: MnemonicModalProps) =>
 
   usePreventScreenCapture()
 
+  const handleVerifyButtonPress = () => {
+    onVerifyPress && onVerifyPress()
+    dispatch(closeModal({ id }))
+  }
+
   return (
-    <ModalContent verticalGap {...props}>
-      <ScreenSection fill>
-        <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
-      </ScreenSection>
-      {onVerifyButtonPress && (
-        <ScreenSection>
-          <Button variant="highlight" title={t('Verify')} onPress={onVerifyButtonPress} />
-        </ScreenSection>
+    <BottomModal
+      id={id}
+      Content={(props) => (
+        <ModalContent verticalGap {...props}>
+          <ScreenSection fill>
+            <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
+          </ScreenSection>
+          {onVerifyPress && (
+            <ScreenSection>
+              <Button variant="highlight" title={t('Verify')} onPress={handleVerifyButtonPress} />
+            </ScreenSection>
+          )}
+        </ModalContent>
       )}
-    </ModalContent>
+    />
   )
-}
+})
 
 export default MnemonicModal

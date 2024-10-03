@@ -24,8 +24,8 @@ import {
   systemLanguageMatchFailed,
   systemLanguageMatchSucceeded
 } from '~/features/localization/localizationActions'
-import { defaultGeneralSettings, persistSettings } from '~/persistent-storage/settings'
-import { allBiometricsEnabled, analyticsIdGenerated } from '~/store/settings/settingsActions'
+import { allBiometricsEnabled, analyticsIdGenerated } from '~/features/settings/settingsActions'
+import { defaultGeneralSettings, persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { RootState } from '~/store/store'
 import { GeneralSettings } from '~/types/settings'
 

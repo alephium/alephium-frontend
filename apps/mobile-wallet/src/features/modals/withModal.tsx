@@ -16,19 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Platform } from 'react-native'
+import { ComponentType, memo } from 'react'
 
-// ALL VALUES IN PIXELS
+import { ModalBaseProp } from './modalTypes'
 
-export const BORDER_RADIUS_HUGE = 28
-export const BORDER_RADIUS_BIG = 16
-export const BORDER_RADIUS = 16
-export const BORDER_RADIUS_SMALL = 6
+const withModal = <P extends object>(Component: ComponentType<ModalBaseProp & P>) => {
+  const WrappedComponent = (props: ModalBaseProp & P) => {
+    if (!props.id) {
+      throw new Error("The 'id' prop is required for all modals")
+    }
+    return <Component {...props} />
+  }
 
-export const INPUTS_HEIGHT = 60
-export const INPUTS_PADDING = 16
+  return memo(WrappedComponent)
+}
 
-export const DEFAULT_MARGIN = 18
-export const VERTICAL_GAP = 25
-
-export const SCREEN_OVERFLOW = Platform.OS === 'ios' ? 'visible' : 'scroll'
+export default withModal

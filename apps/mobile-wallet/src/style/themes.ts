@@ -25,7 +25,7 @@ export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
     highlight: '#ffffff',
-    primary: '#fcfdff',
+    primary: 'rgba(0, 0, 0, 0.01)',
     secondary: '#f1f4f9',
     tertiary: '#eff1f6',
     back1: '#f2f3f7',

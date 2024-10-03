@@ -26,25 +26,26 @@ import {
   TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
+import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ViewProps } from 'react-native'
+import { Platform, ViewProps } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { useLocalization } from '~/features/localization/useLocalization'
-import SplashScreen from '~/features/splash-screen/SplashScreen'
+import useLoadStoredSettings from '~/features/settings/useLoadStoredSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
-import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
 import {
   getStoredWalletMetadataWithoutThrowingError,
   validateAndRepareStoredWalletData
 } from '~/persistent-storage/wallet'
+import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
 import {
   makeSelectAddressesUnknownTokens,
   selectAllAddressVerifiedFungibleTokenSymbols,
@@ -63,7 +64,13 @@ const App = () => {
   useEffect(
     () =>
       store.subscribe(() => {
-        setTheme(themes[store.getState().settings.theme])
+        const currentTheme = themes[store.getState().settings.theme]
+        setTheme(currentTheme)
+        if (Platform.OS === 'android') {
+          NavigationBar.setBackgroundColorAsync(
+            currentTheme.name === 'light' ? currentTheme.bg.highlight : currentTheme.bg.back2
+          )
+        }
       }),
     []
   )
@@ -80,7 +87,7 @@ const App = () => {
           ) : (
             // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
             // splash screen to be show after the default one gets hidden, before we can show app content.
-            <SplashScreen />
+            <AnimatedCirclesBackground isAnimated />
           )}
           <ToastAnchor />
         </ThemeProvider>

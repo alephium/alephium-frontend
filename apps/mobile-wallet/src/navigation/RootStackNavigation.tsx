@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dimensions, LayoutChangeEvent, Modal, View } from 'react-native'
+import { Modal, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
@@ -31,6 +31,9 @@ import useAutoLock from '~/features/auto-lock/useAutoLock'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import AppModals from '~/features/modals/AppModals'
+import EditWalletNameScreen from '~/features/settings/EditWalletName'
+import { loadBiometricsSettings } from '~/features/settings/settingsPersistentStorage'
+import SettingsScreen from '~/features/settings/SettingsScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import BackupMnemonicNavigation from '~/navigation/BackupMnemonicNavigation'
@@ -39,7 +42,6 @@ import ReceiveNavigation from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
 import { appInstallationTimestampMissing, rememberAppInstallation, wasAppUninstalled } from '~/persistent-storage/app'
-import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
   deleteDeprecatedWallet,
   getDeprecatedStoredWallet,
@@ -54,7 +56,8 @@ import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
 import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
 import NewContactScreen from '~/screens/Addresses/Contact/NewContactScreen'
 import CustomNetworkScreen from '~/screens/CustomNetworkScreen'
-import LandingScreen, { CoolAlephiumCanvas } from '~/screens/LandingScreen'
+import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
+import LandingScreen from '~/screens/LandingScreen'
 import LoginWithPinScreen from '~/screens/LoginWithPinScreen'
 import AddBiometricsScreen from '~/screens/new-wallet/AddBiometricsScreen'
 import DecryptScannedMnemonicScreen from '~/screens/new-wallet/DecryptScannedMnemonicScreen'
@@ -65,8 +68,6 @@ import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScreen'
 import PublicKeysScreen from '~/screens/PublicKeysScreen'
-import EditWalletNameScreen from '~/screens/Settings/EditWalletName'
-import SettingsScreen from '~/screens/Settings/SettingsScreen'
 import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
@@ -154,15 +155,6 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { t } = useTranslation()
-
-  const { width, height } = Dimensions.get('window')
-  const [dimensions, setDimensions] = useState({ width, height })
-
-  const handleScreenLayoutChange = (e: LayoutChangeEvent) => {
-    const { width, height } = e.nativeEvent.layout
-
-    setDimensions({ width, height })
-  }
 
   const initializeAppWithStoredWallet = useCallback(async () => {
     try {
@@ -260,13 +252,9 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
   useAutoLock(unlockApp)
 
   return (
-    <Modal
-      visible={!!lastUsedWalletId && biometricsRequiredForAppAccess && !isWalletUnlocked}
-      onLayout={handleScreenLayoutChange}
-      animationType="none"
-    >
+    <Modal visible={!!lastUsedWalletId && biometricsRequiredForAppAccess && !isWalletUnlocked} animationType="none">
       <View style={{ backgroundColor: 'black', flex: 1 }}>
-        <CoolAlephiumCanvas {...dimensions} onPress={unlockApp} />
+        <AnimatedCirclesBackground isAnimated />
       </View>
     </Modal>
   )

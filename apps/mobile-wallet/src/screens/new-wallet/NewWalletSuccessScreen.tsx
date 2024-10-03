@@ -72,7 +72,7 @@ const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreen
         fontSize={19}
       />
       <ActionsContainer>
-        <ScreenSection centered>
+        <ScreenSection>
           <HighlightButton title={t("Let's go!")} wide onPress={() => resetNavigation(navigation)} />
         </ScreenSection>
       </ActionsContainer>
@@ -90,8 +90,8 @@ const AnimationContainer = styled.View`
 
 const StyledAlephiumLogo = styled(AlephiumLogo)`
   position: absolute;
-  width: 60%;
-  height: 60%;
+  width: 70%;
+  height: 70%;
 `
 
 const StyledAnimation = styled(LottieView)`
