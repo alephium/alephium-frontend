@@ -16,13 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
 import { UseQueryResult } from '@tanstack/react-query'
 
 import { DataHook } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { AddressAlphBalancesQueryFnData, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
-import { DisplayBalances, TokenDisplayBalances, TokenId } from '@/types/tokens'
+import { AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
+import { DisplayBalances } from '@/types/tokens'
 
 export const combineBalances = (
   results: UseQueryResult<AddressAlphBalancesQueryFnData>[]
@@ -40,36 +39,6 @@ export const combineBalances = (
       lockedBalance: BigInt(0),
       availableBalance: BigInt(0)
     } as DisplayBalances
-  ),
-  ...combineIsLoading(results)
-})
-
-export const combineBalancesByToken = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => ({
-  data: results.reduce(
-    (tokensBalances, { data: balances }) => {
-      balances?.balances.forEach(({ id, totalBalance, lockedBalance, availableBalance }) => {
-        tokensBalances[id] = {
-          totalBalance: totalBalance + (tokensBalances[id]?.totalBalance ?? BigInt(0)),
-          lockedBalance: lockedBalance + (tokensBalances[id]?.lockedBalance ?? BigInt(0)),
-          availableBalance: availableBalance + (tokensBalances[id]?.availableBalance ?? BigInt(0))
-        }
-      })
-      return tokensBalances
-    },
-    {} as Record<TokenId, DisplayBalances | undefined>
-  ),
-  ...combineIsLoading(results)
-})
-
-export const combineBalancesByAddress = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => ({
-  data: results.reduce(
-    (acc, { data }) => {
-      if (data) {
-        acc[data.addressHash] = data.balances
-      }
-      return acc
-    },
-    {} as Record<AddressHash, TokenDisplayBalances[] | undefined>
   ),
   ...combineIsLoading(results)
 })

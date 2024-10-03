@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import useMergeAllTokensBalances from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
-import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import useFetchWalletBalancesTokens from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
+import { useFetchWalletBalancesAlph } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import { useFetchWalletBalancesTokensArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
 
 interface UseFetchWalletBalancesProps {
   includeAlph?: boolean
@@ -30,7 +30,7 @@ const useFetchWalletBalances = (props?: UseFetchWalletBalancesProps) => {
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlph({
     skip: !includeAlph
   })
-  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchWalletBalancesTokens()
+  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchWalletBalancesTokensArray()
   const allTokensBalances = useMergeAllTokensBalances({
     includeAlph,
     alphBalances,
