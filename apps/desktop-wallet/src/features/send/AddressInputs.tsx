@@ -22,6 +22,7 @@ import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import useFetchWalletAddressesSortedByActivity from '@/api/apiDataHooks/wallet/useFetchWalletAddressesSortedByActivity'
 import Box from '@/components/Box'
 import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
@@ -35,7 +36,7 @@ import { useAppSelector } from '@/hooks/redux'
 import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
-import { selectAllAddressHashes, selectAllContacts } from '@/storage/addresses/addressesSelectors'
+import { selectAllContacts } from '@/storage/addresses/addressesSelectors'
 import { filterContacts } from '@/utils/contacts'
 
 interface AddressInputsProps {
@@ -61,7 +62,7 @@ const AddressInputs = ({
   const updatedInitialAddress = fromAddresses.find((a) => a === defaultFromAddress) ?? fromAddresses[0]
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const contacts = useAppSelector(selectAllContacts)
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const { data: allAddressHashes } = useFetchWalletAddressesSortedByActivity()
   const theme = useTheme()
 
   const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
