@@ -30,9 +30,10 @@ export interface ConfirmModalProps extends Pick<CenteredModalProps, 'narrow'> {
   Icon?: LucideIcon
   onConfirm: () => void
   text: string
+  note?: string
 }
 
-const ConfirmModal = memo(({ onConfirm, Icon, text, id, ...props }: ModalBaseProp & ConfirmModalProps) => {
+const ConfirmModal = memo(({ onConfirm, Icon, text, note, id, ...props }: ModalBaseProp & ConfirmModalProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
@@ -46,6 +47,9 @@ const ConfirmModal = memo(({ onConfirm, Icon, text, id, ...props }: ModalBasePro
   return (
     <CenteredModal title={t('Confirm')} id={id} {...props}>
       <InfoBox Icon={Icon}>{text}</InfoBox>
+
+      {note && <InfoBox importance="accent">{note}</InfoBox>}
+
       <ModalFooterButtons>
         <ModalFooterButton role="secondary" onClick={onClose}>
           {t('Cancel')}

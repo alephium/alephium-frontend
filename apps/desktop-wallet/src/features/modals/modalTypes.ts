@@ -66,7 +66,8 @@ const ModalNames = {
   CopyPrivateKeyConfirmationModal: 'CopyPrivateKeyConfirmationModal',
   DisablePasswordRequirementModal: 'DisablePasswordRequirementModal',
   AddressSweepModal: 'AddressSweepModal',
-  WalletRemovalModal: 'WalletRemovalModal'
+  WalletRemovalModal: 'WalletRemovalModal',
+  DeleteAddressesModal: 'DeleteAddressesModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -181,6 +182,9 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.WalletRemovalModal
       props: WalletRemovalModalProps
+    }
+  | {
+      name: typeof ModalNames.DeleteAddressesModal
     }
 
 export type ModalInstance = {
