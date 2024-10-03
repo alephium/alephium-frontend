@@ -16,21 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { ReactNode } from 'react'
+import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-interface FooterButtonContainerProps {
+interface BottomButtonsProps {
   children: ReactNode
+  style?: StyleProp<ViewStyle>
 }
 
-const FooterButtonContainer = ({ children }: FooterButtonContainerProps) => <Container>{children}</Container>
+const BottomButtons = ({ children, style }: BottomButtonsProps) => <Container style={style}>{children}</Container>
 
-export default FooterButtonContainer
+export default BottomButtons
 
 const Container = styled.View`
-  flex-direction: row;
   justify-content: center;
-  align-items: center;
-  margin: 10% ${DEFAULT_MARGIN}px;
+  align-items: flex-end;
+  margin: ${VERTICAL_GAP * 2}px ${DEFAULT_MARGIN}px ${VERTICAL_GAP}px;
+  gap: 20px;
 `

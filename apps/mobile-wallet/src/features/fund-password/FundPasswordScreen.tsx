@@ -25,8 +25,8 @@ import { Alert } from 'react-native'
 import { useTheme } from 'styled-components'
 
 import { sendAnalytics } from '~/analytics'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
-import ButtonStack from '~/components/buttons/ButtonStack'
 import Input from '~/components/inputs/Input'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
@@ -179,18 +179,16 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
               onSubmitEditing={isEditingPasswordConfirmed ? handleSavePress : undefined}
             />
           </ScreenSection>
-          <ScreenSection>
-            <ButtonStack>
-              {cameFromBackupScreen && <Button title="Skip" onPress={handleSkipPress} flex />}
-              <Button
-                variant="highlight"
-                title={t('Save')}
-                onPress={handleSavePress}
-                disabled={!isEditingPasswordConfirmed}
-                flex
-              />
-            </ButtonStack>
-          </ScreenSection>
+          <BottomButtons>
+            {cameFromBackupScreen && <Button title="Skip" onPress={handleSkipPress} flex />}
+            <Button
+              variant="highlight"
+              title={t('Save')}
+              onPress={handleSavePress}
+              disabled={!isEditingPasswordConfirmed}
+              flex
+            />
+          </BottomButtons>
         </>
       ) : (
         <ScreenSection>

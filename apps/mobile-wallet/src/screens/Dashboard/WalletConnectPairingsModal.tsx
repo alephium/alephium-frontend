@@ -22,8 +22,8 @@ import { Image } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
-import ButtonStack from '~/components/buttons/ButtonStack'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import ListItem from '~/components/ListItem'
@@ -74,22 +74,20 @@ const WalletConnectPairingsModal = ({
           <AppText>{t('There are no connections yet.')} 🔌</AppText>
         </EmptyPlaceholder>
       )}
-      <ScreenSection>
-        <ButtonStack>
-          <Button
-            title={t('Paste a WalletConnect URI')}
-            variant="accent"
-            onPress={onPasteWcUrlPress}
-            iconProps={{ name: 'copy' }}
-          />
-          <Button
-            title={t('Scan QR code')}
-            variant="accent"
-            onPress={onScanQRCodePress}
-            iconProps={{ name: 'maximize' }}
-          />
-        </ButtonStack>
-      </ScreenSection>
+      <BottomButtons>
+        <Button
+          title={t('Paste a WalletConnect URI')}
+          variant="accent"
+          onPress={onPasteWcUrlPress}
+          iconProps={{ name: 'copy' }}
+        />
+        <Button
+          title={t('Scan QR code')}
+          variant="accent"
+          onPress={onScanQRCodePress}
+          iconProps={{ name: 'maximize' }}
+        />
+      </BottomButtons>
     </ModalContent>
   )
 }

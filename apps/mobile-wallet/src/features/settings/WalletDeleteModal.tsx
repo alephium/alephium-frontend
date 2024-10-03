@@ -27,6 +27,7 @@ import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { deleteWallet } from '~/persistent-storage/wallet'
@@ -61,6 +62,7 @@ const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) =
       showExceptionToast(error, t('Error while deleting wallet'))
     } finally {
       setIsLoading(false)
+      dispatch(closeModal({ id }))
     }
   }
 

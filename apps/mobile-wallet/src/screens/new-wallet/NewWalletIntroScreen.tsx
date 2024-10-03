@@ -16,13 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackScreenProps } from '@react-navigation/stack'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import LottieView from 'lottie-react-native'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import animationSrc from '~/animations/lottie/wallet.json'
-import ActionButtonsStack from '~/components/buttons/ActionButtonsStack'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
@@ -30,7 +30,9 @@ import CenteredInstructions, { Instruction } from '~/components/text/CenteredIns
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
-interface NewWalletIntroScreenProps extends StackScreenProps<RootStackParamList, 'NewWalletIntroScreen'>, ScreenProps {}
+interface NewWalletIntroScreenProps
+  extends NativeStackScreenProps<RootStackParamList, 'NewWalletIntroScreen'>,
+    ScreenProps {}
 
 const instructionsCreate: Instruction[] = [
   { text: 'You are about to create a wallet 🎉', type: 'primary' },
@@ -51,12 +53,12 @@ const NewWalletIntroScreen = ({ navigation, ...props }: NewWalletIntroScreenProp
   const { t } = useTranslation()
 
   return (
-    <ScrollScreen fill headerOptions={{ type: 'stack' }} {...props}>
+    <ScrollScreen fill contentPaddingTop headerOptions={{ type: 'stack' }} {...props}>
       <AnimationContainer>
         <StyledAnimation source={animationSrc} autoPlay />
       </AnimationContainer>
       <CenteredInstructions instructions={instructions[method]} />
-      <ActionButtonsStackStyled>
+      <BottomButtonsStyled>
         <Button
           title={t("Let's go!")}
           type="primary"
@@ -64,7 +66,7 @@ const NewWalletIntroScreen = ({ navigation, ...props }: NewWalletIntroScreenProp
           onPress={() => navigation.navigate('NewWalletNameScreen')}
         />
         <Button title={t('Cancel')} type="secondary" onPress={() => navigation.goBack()} />
-      </ActionButtonsStackStyled>
+      </BottomButtonsStyled>
     </ScrollScreen>
   )
 }
@@ -82,7 +84,7 @@ const StyledAnimation = styled(LottieView)`
   height: 100%;
 `
 
-const ActionButtonsStackStyled = styled(ActionButtonsStack)`
+const BottomButtonsStyled = styled(BottomButtons)`
   flex: 2;
   justify-content: flex-end;
 `

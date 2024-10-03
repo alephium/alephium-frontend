@@ -103,7 +103,7 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                 initialRouteName={initialRouteName || 'LandingScreen'}
                 screenOptions={{ headerShown: false }}
               >
-                <RootStack.Group>
+                <RootStack.Group screenOptions={{ animation: 'fade' }}>
                   <RootStack.Screen name="LandingScreen" component={LandingScreen} />
                   <RootStack.Screen name="LoginWithPinScreen" component={LoginWithPinScreen} />
                   <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />

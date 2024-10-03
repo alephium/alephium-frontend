@@ -56,6 +56,7 @@ const FlashListScreen = <T,>({
         ref={FlashListRef}
         onScroll={screenScrollHandler}
         scrollEventThrottle={16}
+        keyboardShouldPersistTaps="handled"
         ListHeaderComponent={() =>
           screenTitle && (
             <ScreenIntro

@@ -24,8 +24,8 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import backupAnimationSrc from '~/animations/lottie/backup.json'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button, { BackButton } from '~/components/buttons/Button'
-import FooterButtonContainer from '~/components/buttons/FooterButtonContainer'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import CenteredInstructions from '~/components/text/CenteredInstructions'
@@ -92,7 +92,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
             ]}
           />
         </ScreenSection>
-        <FooterButtonContainer>
+        <BottomButtons>
           <Button
             title={t('Show secret recovery phrase')}
             iconProps={{ name: 'key' }}
@@ -100,7 +100,7 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
             variant="highlight"
             onPress={onShowSecretRecoveryPhraseButtonPress}
           />
-        </FooterButtonContainer>
+        </BottomButtons>
       </ScrollScreen>
       {fundPasswordModal}
     </>
