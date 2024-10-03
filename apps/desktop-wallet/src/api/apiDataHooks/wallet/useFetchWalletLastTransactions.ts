@@ -28,7 +28,7 @@ import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 export const useFetchWalletLastTransaction = (props?: SkipProp) =>
   useFetchWalletLastTransactions({ combine: extractMostRecentTransaction, skip: props?.skip })
 
-export const useFetchWalletLastTransactionHashes = (props?: SkipProp) =>
+export const useFetchWalletUpdatesSignals = (props?: SkipProp) =>
   useFetchWalletLastTransactions({ combine: extractLastTransactionHashes, skip: props?.skip })
 
 interface UseFetchWalletLastTransactionsProps<T> extends SkipProp {
@@ -69,7 +69,11 @@ const extractMostRecentTransaction = (results: UseQueryResult<AddressLatestTrans
 const extractLastTransactionHashes = (results: UseQueryResult<AddressLatestTransactionQueryFnData>[]) => ({
   data: results.flatMap(({ data }) =>
     data
-      ? { addressHash: data.addressHash, latestTxHash: data?.latestTx?.hash, previousTxHash: data?.previousTx?.hash }
+      ? {
+          addressHash: data.addressHash,
+          latestTxHash: data.latestTx?.hash,
+          previousTxHash: data.previousTx?.hash
+        }
       : []
   ),
   ...combineIsLoading(results)

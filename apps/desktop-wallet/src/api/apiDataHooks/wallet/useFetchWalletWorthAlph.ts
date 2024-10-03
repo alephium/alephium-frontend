@@ -21,7 +21,7 @@ import { ALPH } from '@alephium/token-list'
 import { useMemo } from 'react'
 
 import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import { useFetchWalletBalancesAlph } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 
 const useFetchWalletWorthAlph = () => {
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlph()
