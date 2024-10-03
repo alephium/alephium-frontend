@@ -26,6 +26,7 @@ import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
 import useFetchAddressWorth from '@/api/apiDataHooks/address/useFetchAddressWorth'
+import useFetchWalletAddressesSortedByActivity from '@/api/apiDataHooks/wallet/useFetchWalletAddressesSortedByActivity'
 import ActionLink from '@/components/ActionLink'
 import AddressRow from '@/components/AddressRow'
 import Amount from '@/components/Amount'
@@ -33,8 +34,7 @@ import FocusableContent from '@/components/FocusableContent'
 import { ExpandableTable, ExpandRow, TableHeader } from '@/components/Table'
 import TableCellAmount from '@/components/TableCellAmount'
 import { openModal } from '@/features/modals/modalActions'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { useAppDispatch } from '@/hooks/redux'
 
 interface AddressesListProps {
   className?: string
@@ -72,7 +72,7 @@ const AddressesList = ({ className, maxHeightInPx }: AddressesListProps) => {
 }
 
 const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: AddressListProps) => {
-  const addressHashes = useAppSelector(selectAllAddressHashes)
+  const { data: allAddressHashes } = useFetchWalletAddressesSortedByActivity()
   const dispatch = useAppDispatch()
 
   const handleRowClick = (addressHash: AddressHash) => {
@@ -83,7 +83,7 @@ const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: Addr
   return (
     <>
       <motion.div {...fadeIn} className={className}>
-        {addressHashes.map((addressHash) => (
+        {allAddressHashes.map((addressHash) => (
           <AddressRow addressHash={addressHash} onClick={handleRowClick} key={addressHash}>
             <TableCellAmount>
               <AddressWorth addressHash={addressHash} />
@@ -92,7 +92,7 @@ const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: Addr
         ))}
       </motion.div>
 
-      {!isExpanded && addressHashes.length > 5 && onExpand && <ExpandRow onClick={onExpand} />}
+      {!isExpanded && allAddressHashes.length > 5 && onExpand && <ExpandRow onClick={onExpand} />}
     </>
   )
 }

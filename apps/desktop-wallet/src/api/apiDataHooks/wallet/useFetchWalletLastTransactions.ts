@@ -31,6 +31,9 @@ export const useFetchWalletLastTransaction = (props?: SkipProp) =>
 export const useFetchWalletUpdatesSignals = (props?: SkipProp) =>
   useFetchWalletLastTransactions({ combine: extractLastTransactionHashes, skip: props?.skip })
 
+export const useFetchWalletActivityTimestamps = (props?: SkipProp) =>
+  useFetchWalletLastTransactions({ combine: extractLastTransactionTimestamps, skip: props?.skip })
+
 interface UseFetchWalletLastTransactionsProps<T> extends SkipProp {
   combine: (results: UseQueryResult<AddressLatestTransactionQueryFnData>[]) => { data: T; isLoading: boolean }
 }
@@ -76,5 +79,19 @@ const extractLastTransactionHashes = (results: UseQueryResult<AddressLatestTrans
         }
       : []
   ),
+  ...combineIsLoading(results)
+})
+
+const extractLastTransactionTimestamps = (results: UseQueryResult<AddressLatestTransactionQueryFnData>[]) => ({
+  data: results
+    .flatMap(({ data }) =>
+      data
+        ? {
+            addressHash: data.addressHash,
+            latestTxTimestamp: data.latestTx?.timestamp
+          }
+        : undefined
+    )
+    .filter(isDefined),
   ...combineIsLoading(results)
 })
