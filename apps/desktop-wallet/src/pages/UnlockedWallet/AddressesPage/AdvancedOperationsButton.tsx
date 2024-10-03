@@ -30,14 +30,9 @@ const AdvancedOperationsButton = () => {
   const openAdvancedOperationsSideModal = () => dispatch(openModal({ name: 'AdvancedOperationsSideModal' }))
 
   return (
-    <Button
-      role="secondary"
-      squared
-      Icon={Wrench}
-      onClick={openAdvancedOperationsSideModal}
-      data-tooltip-id="default"
-      data-tooltip-content={t('Advanced operations')}
-    />
+    <Button role="secondary" Icon={Wrench} short onClick={openAdvancedOperationsSideModal} style={{ height: 40 }}>
+      {t('Advanced operations')}
+    </Button>
   )
 }
 
