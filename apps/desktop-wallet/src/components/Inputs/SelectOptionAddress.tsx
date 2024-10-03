@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -30,9 +31,10 @@ interface SelectOptionAddressProps {
   addressHash: AddressHash
   isSelected?: boolean
   className?: string
+  subtitle?: ReactNode
 }
 
-const SelectOptionAddress = ({ addressHash, isSelected, className }: SelectOptionAddressProps) => {
+const SelectOptionAddress = ({ addressHash, isSelected, className, subtitle }: SelectOptionAddressProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
@@ -46,6 +48,7 @@ const SelectOptionAddress = ({ addressHash, isSelected, className }: SelectOptio
         <Header>
           <AddressBadgeContainer>
             <AddressBadgeStyled addressHash={addressHash} disableA11y truncate appendHash />
+            {subtitle && <Subtitle>{subtitle}</Subtitle>}
           </AddressBadgeContainer>
           <Group>
             {t('Group')} {address?.group}
@@ -76,9 +79,16 @@ const Group = styled.div`
 const AddressBadgeContainer = styled.div`
   flex: 1;
   min-width: 0;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
   font-size: 17px;
   max-width: 70%;
+`
+
+const Subtitle = styled.div`
+  font-weight: 500;
 `

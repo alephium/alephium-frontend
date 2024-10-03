@@ -20,6 +20,7 @@ import { getElementName, isElementMemoized } from '@alephium/shared-react'
 import { AnimatePresence } from 'framer-motion'
 import { Children, isValidElement, ReactNode, useEffect } from 'react'
 
+import DeleteAddressesModal from '@/features/addressDeletion/DeleteAddressesModal'
 import { selectAllModals } from '@/features/modals/modalSelectors'
 import CallContractSendModal from '@/features/send/callContract'
 import DeployContractSendModal from '@/features/send/deployContract'
@@ -124,6 +125,8 @@ const AppModals = () => {
               return <DisablePasswordRequirementModal id={modal.id} key={modal.id} {...modal.params.props} />
             case 'AddressSweepModal':
               return <AddressSweepModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'DeleteAddressesModal':
+              return <DeleteAddressesModal id={modal.id} key={modal.id} />
           }
         })}
     </AnimatePresenceModalWrapper>

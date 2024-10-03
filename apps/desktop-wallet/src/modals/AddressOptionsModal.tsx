@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH } from '@alephium/token-list'
-import { Trash2 } from 'lucide-react'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -28,15 +27,14 @@ import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
+import ForgetAddress from '@/features/addressDeletion/ForgetAddressButton'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { AddressModalProps } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { addressDeleted } from '@/storage/addresses/addressesActions'
 import { selectAddressByHash, selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { saveAddressSettings } from '@/storage/addresses/addressesStorageUtils'
-import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
@@ -94,31 +92,6 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
       })
     )
 
-  const handleDeletePress = () => {
-    const onDeleteConfirm = () => {
-      try {
-        addressMetadataStorage.deleteOne(activeWalletId, address.index)
-        dispatch(addressDeleted(address.hash))
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    dispatch(
-      openModal({
-        name: 'ConfirmModal',
-        props: {
-          Icon: Trash2,
-          onConfirm: onDeleteConfirm,
-          narrow: true,
-          text: t('Are you sure you want to remove "{{ address }}" from your address list?', {
-            address: getName(address)
-          })
-        }
-      })
-    )
-  }
-
   let defaultAddressMessage = `${t('Default address for sending transactions.')} `
   defaultAddressMessage += isDefaultAddressToggleEnabled
     ? t('Note that if activated, "{{ address }}" will not be the default address anymore.', {
@@ -161,21 +134,7 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
       />
       <HorizontalDivider narrow />
       <ModalFooterButtons>
-        {address.isDefault ? (
-          <div
-            data-tooltip-id="default"
-            data-tooltip-content={t('To delete this address set another one as the default one first.')}
-            style={{ width: '100%' }}
-          >
-            <ModalFooterButton role="secondary" variant="alert" disabled={true}>
-              {t('Delete')}
-            </ModalFooterButton>
-          </div>
-        ) : (
-          <ModalFooterButton role="secondary" variant="alert" onClick={handleDeletePress} disabled={address.isDefault}>
-            {t('Delete')}
-          </ModalFooterButton>
-        )}
+        <ForgetAddress addressHash={addressHash} addressName={getName(address)} />
         <ModalFooterButton role="secondary" onClick={onClose}>
           {t('Cancel')}
         </ModalFooterButton>
