@@ -95,20 +95,20 @@ export const addressTransactionsInfiniteQuery = ({
   })
 
 interface WalletTransactionsInfiniteQueryProps extends TransactionsInfiniteQueryBaseProps {
-  allAddressHashes: AddressHash[]
+  addressHashes: AddressHash[]
 }
 
 export const walletTransactionsInfiniteQuery = ({
-  allAddressHashes,
+  addressHashes,
   timestamp,
   networkId,
   skip
 }: WalletTransactionsInfiniteQueryProps) =>
   infiniteQueryOptions({
-    queryKey: ['wallet', 'transactions', { timestamp, networkId, allAddressHashes }],
+    queryKey: ['wallet', 'transactions', { timestamp, networkId, addressHashes }],
     queryFn: !skip
       ? ({ pageParam }) =>
-          throttledClient.explorer.addresses.postAddressesTransactions({ page: pageParam }, allAddressHashes)
+          throttledClient.explorer.addresses.postAddressesTransactions({ page: pageParam }, addressHashes)
       : skipToken,
     initialPageParam: 1,
     getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null),
@@ -117,22 +117,21 @@ export const walletTransactionsInfiniteQuery = ({
 
 interface WalletLatestTransactionsQueryProps {
   networkId: number
-  allAddressHashes: AddressHash[]
+  addressHashes: AddressHash[]
   latestTxHash?: string
   previousTxHash?: string
 }
 
 export const walletLatestTransactionsQuery = ({
-  allAddressHashes,
+  addressHashes,
   latestTxHash,
   previousTxHash,
   networkId
 }: WalletLatestTransactionsQueryProps) => {
   const getQueryOptions = (latestTxHash: WalletLatestTransactionsQueryProps['latestTxHash']) =>
     queryOptions({
-      queryKey: ['wallet', 'transactions', 'latest', { latestTxHash, networkId, allAddressHashes }],
-      queryFn: () =>
-        throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, allAddressHashes),
+      queryKey: ['wallet', 'transactions', 'latest', { latestTxHash, networkId, addressHashes }],
+      queryFn: () => throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, addressHashes),
       staleTime: Infinity
     })
 

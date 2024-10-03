@@ -19,14 +19,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
+import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { useFetchWalletActivityTimestamps } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
-const useFetchWalletAddressesSortedByActivity = () => {
+const useFetchWalletAddressesSortedByActivity = (props?: SkipProp) => {
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
-  const { data, isLoading } = useFetchWalletActivityTimestamps()
+  const { data, isLoading } = useFetchWalletActivityTimestamps(props)
 
   const sortedAddressHashes = useMemo(
     () =>
@@ -40,7 +41,7 @@ const useFetchWalletAddressesSortedByActivity = () => {
   )
 
   return {
-    data: !isLoading ? sortedAddressHashes : allAddressHashes,
+    data: !isLoading && !props?.skip ? sortedAddressHashes : allAddressHashes,
     isLoading
   }
 }
