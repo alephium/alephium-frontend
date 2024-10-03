@@ -23,10 +23,11 @@ import { uniqBy } from 'lodash'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import useFetchWalletInfiniteTransactions from '@/api/apiDataHooks/wallet/useFetchWalletInfiniteTransactions'
+import useFetchWalletTransactionsInfinite from '@/api/apiDataHooks/wallet/useFetchWalletTransactionsInfinite'
 import Table from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
 import { getTransactionInfoType } from '@/features/transactionsDisplay/transactionDisplayUtils'
+import AddressLimitWarning from '@/features/transactionsDisplay/transactionLists/AddressLimitWarning'
 import NewTransactionsButtonRow from '@/features/transactionsDisplay/transactionLists/NewTransactionsButtonRow'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
@@ -54,8 +55,9 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-    showNewTxsMessage
-  } = useFetchWalletInfiniteTransactions()
+    showNewTxsMessage,
+    isDataComplete
+  } = useFetchWalletTransactionsInfinite()
 
   const openTransactionDetailsModal = (txHash: Transaction['hash']) =>
     dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))
@@ -73,32 +75,36 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
   )
 
   return (
-    <Table minWidth="500px">
-      {isLoading && <TableRowsLoader />}
+    <>
+      {!isDataComplete && <AddressLimitWarning />}
 
-      {showNewTxsMessage && <NewTransactionsButtonRow onClick={refresh} />}
+      <Table minWidth="500px">
+        {isLoading && <TableRowsLoader />}
 
-      {/* TODO: Remove uniqBy once backend removes duplicates from its results */}
-      {uniqBy(filteredConfirmedTxs, 'hash').map((tx) => (
-        <TransactionRow
-          key={tx.hash}
-          tx={tx}
-          onClick={() => openTransactionDetailsModal(tx.hash)}
-          onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash))}
-        />
-      ))}
+        {showNewTxsMessage && <NewTransactionsButtonRow onClick={refresh} />}
 
-      {!isLoading && (
-        <TransactionsListFooter
-          isDisplayingTxs={filteredConfirmedTxs && filteredConfirmedTxs?.length > 0}
-          showLoadMoreBtn={hasNextPage}
-          showSpinner={isFetchingNextPage}
-          onShowMoreClick={fetchNextPage}
-          noTxsMsg={t('No transactions to display')}
-          allTxsLoadedMsg={t('All the transactions that match the filtering criteria were loaded!')}
-        />
-      )}
-    </Table>
+        {/* TODO: Remove uniqBy once backend removes duplicates from its results */}
+        {uniqBy(filteredConfirmedTxs, 'hash').map((tx) => (
+          <TransactionRow
+            key={tx.hash}
+            tx={tx}
+            onClick={() => openTransactionDetailsModal(tx.hash)}
+            onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash))}
+          />
+        ))}
+
+        {!isLoading && (
+          <TransactionsListFooter
+            isDisplayingTxs={filteredConfirmedTxs && filteredConfirmedTxs?.length > 0}
+            showLoadMoreBtn={hasNextPage}
+            showSpinner={isFetchingNextPage}
+            onShowMoreClick={fetchNextPage}
+            noTxsMsg={t('No transactions to display')}
+            allTxsLoadedMsg={t('All the transactions that match the filtering criteria were loaded!')}
+          />
+        )}
+      </Table>
+    </>
   )
 }
 
