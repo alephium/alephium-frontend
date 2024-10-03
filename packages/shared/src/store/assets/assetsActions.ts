@@ -20,13 +20,13 @@ import { TokenList } from '@alephium/token-list'
 import { explorer, NFTTokenUriMetaData } from '@alephium/web3'
 import { NFTMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { chunk, groupBy, isArray } from 'lodash'
+import { chunk, groupBy } from 'lodash'
 import posthog from 'posthog-js'
-import sanitize from 'sanitize-html'
 
 import { client } from '@/api/client'
 import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
+import { matchesNFTTokenUriMetaDataSchema, sanitizeNft } from '@/assets'
 import { SharedRootState } from '@/store/store'
 import { Asset, FungibleTokenBasicMetadata, NFT } from '@/types/assets'
 import { isPromiseFulfilled } from '@/utils'
@@ -160,27 +160,4 @@ export const syncNFTsInfo = createAsyncThunk('assets/syncNFTsInfo', async (token
     .flatMap((r) => sanitizeNft(r.value)) as NFT[]
 
   return nftsData
-})
-
-const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
-  typeof nft.name === 'string' &&
-  typeof nft.image === 'string' &&
-  (typeof nft.description === 'undefined' || typeof nft.description === 'string') &&
-  (typeof nft.attributes === 'undefined' ||
-    (isArray(nft.attributes) &&
-      nft.attributes.every(
-        (attr) =>
-          typeof attr.trait_type === 'string' &&
-          (typeof attr.value === 'string' || typeof attr.value === 'number' || typeof attr.value === 'boolean')
-      )))
-
-const sanitizeNft = (nft: NFT): NFT => ({
-  ...nft,
-  name: sanitize(nft.name),
-  description: nft.description ? sanitize(nft.description) : nft.description,
-  image: sanitize(nft.image),
-  attributes: nft.attributes?.map(({ trait_type, value }) => ({
-    trait_type: sanitize(trait_type),
-    value: sanitize(value.toString())
-  }))
 })

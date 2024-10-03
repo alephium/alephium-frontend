@@ -144,22 +144,14 @@ interface NFTItemProps {
   onClick: () => void
 }
 
-const NFTItem = ({ nft, onClick }: NFTItemProps) => {
-  const { t } = useTranslation()
-
-  return (
-    <NFTCardStyled onClick={onClick}>
-      <NFTPictureContainer>
-        <NFTThumbnail src={nft.file?.image} showPlayIconIfVideo playOnHover />
-      </NFTPictureContainer>
-      {nft.file?.name ? (
-        <NFTName>{nft.file.name}</NFTName>
-      ) : (
-        <MissingMetadataText>{t('Wrong/old format')}</MissingMetadataText>
-      )}
-    </NFTCardStyled>
-  )
-}
+const NFTItem = ({ nft, onClick }: NFTItemProps) => (
+  <NFTCardStyled onClick={onClick}>
+    <NFTPictureContainer>
+      <NFTThumbnail src={nft.file?.image} showPlayIconIfVideo playOnHover />
+    </NFTPictureContainer>
+    {nft.file?.name && <NFTName>{nft.file.name}</NFTName>}
+  </NFTCardStyled>
+)
 
 export default NFTList
 
@@ -209,13 +201,16 @@ const NFTListStyled = styled.div`
 `
 
 const NFTPictureContainer = styled(motion.div)`
+  flex: 1;
   position: relative;
   overflow: hidden;
-  height: 200px;
   display: flex;
 `
 
 const NFTCardStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 260px;
   background-color: ${({ theme }) => theme.bg.primary};
   border-radius: 9px;
   overflow: hidden;
@@ -223,7 +218,6 @@ const NFTCardStyled = styled.div`
   &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.bg.hover};
-    box-shadow: ${({ theme }) => theme.shadow.primary};
     transition: all 0.1s ease-in-out;
 
     ${NFTPictureContainer} {
@@ -238,11 +232,6 @@ const NFTName = styled.div`
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
-`
-
-const MissingMetadataText = styled(NFTName)`
-  color: ${({ theme }) => theme.font.secondary};
-  font-style: italic;
 `
 
 const NoNFTsMessage = styled.div`
