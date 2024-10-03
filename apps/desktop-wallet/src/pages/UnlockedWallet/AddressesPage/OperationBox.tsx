@@ -60,7 +60,7 @@ const OperationBox = ({
         {placeholder ? (
           <ActionLink onClick={onButtonClick}>{buttonText}</ActionLink>
         ) : (
-          <Button short wide onClick={onButtonClick}>
+          <Button short wide onClick={onButtonClick} style={{ minWidth: 100 }}>
             {buttonText}
           </Button>
         )}

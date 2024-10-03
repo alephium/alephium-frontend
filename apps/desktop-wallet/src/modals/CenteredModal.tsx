@@ -46,6 +46,7 @@ export interface CenteredModalProps extends ModalContainerProps {
   noPadding?: boolean
   disableBack?: boolean
   Icon?: (() => ReactNode) | LucideIcon
+  hasBottomButtons?: boolean
 }
 
 const CenteredModal: FC<CenteredModalProps> = ({
@@ -64,6 +65,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
   noPadding,
   disableBack,
   Icon,
+  hasBottomButtons,
   ...rest
 }) => {
   const { t } = useTranslation()
@@ -113,7 +115,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
             <ModalContent>{children}</ModalContent>
           )
         ) : (
-          <ScrollableModalContent>{children}</ScrollableModalContent>
+          <ScrollableModalContent hasBottomButtons={hasBottomButtons}>{children}</ScrollableModalContent>
         )}
 
         {isLoading && (
@@ -132,9 +134,12 @@ const CenteredModal: FC<CenteredModalProps> = ({
 
 export default CenteredModal
 
-export const ScrollableModalContent: FC = ({ children }) => (
+export const ScrollableModalContent = ({
+  children,
+  hasBottomButtons
+}: Pick<CenteredModalProps, 'hasBottomButtons' | 'children'>) => (
   <Scrollbar translateContentSizeYToHolder>
-    <ModalContent>{children}</ModalContent>
+    <ModalContent noBottomPadding={hasBottomButtons}>{children}</ModalContent>
   </Scrollbar>
 )
 
@@ -207,11 +212,17 @@ const BackButton = styled(Button)`
   margin-left: var(--spacing-2);
 `
 
-export const ModalContent = styled.div`
+export const ModalContent = styled.div<{ noBottomPadding?: boolean }>`
   display: flex;
   flex-direction: column;
   padding: var(--spacing-4) var(--spacing-6);
   width: 100%;
+
+  ${({ noBottomPadding }) =>
+    noBottomPadding &&
+    css`
+      padding-bottom: 0;
+    `}
 `
 
 export const ModalFooterButtons = styled.div`
