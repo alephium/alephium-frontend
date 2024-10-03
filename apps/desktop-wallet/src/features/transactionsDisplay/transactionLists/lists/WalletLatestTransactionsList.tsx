@@ -17,42 +17,28 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { useQuery } from '@tanstack/react-query'
 import { uniqBy } from 'lodash'
 import { ChevronRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { useFetchWalletLastTransaction } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
-import { walletLatestTransactionsQuery } from '@/api/queries/transactionQueries'
+import useFetchWalletTransactionsLimitted from '@/api/apiDataHooks/wallet/useFetchWalletTransactionsLimitted'
 import ActionLink from '@/components/ActionLink'
 import Table, { TableHeader } from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { useAppDispatch } from '@/hooks/redux'
 import { onEnterOrSpace } from '@/utils/misc'
 
 const WalletLatestTransactionsList = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
 
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
-
-  const { data } = useFetchWalletLastTransaction()
-  const { data: confirmedTxs, isLoading } = useQuery(
-    walletLatestTransactionsQuery({
-      allAddressHashes,
-      latestTxHash: data?.latestTx?.hash,
-      previousTxHash: data?.previousTx?.hash,
-      networkId
-    })
-  )
+  const { data: confirmedTxs, isLoading } = useFetchWalletTransactionsLimitted()
 
   const openTransactionDetailsModal = (txHash: Transaction['hash']) =>
     dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))

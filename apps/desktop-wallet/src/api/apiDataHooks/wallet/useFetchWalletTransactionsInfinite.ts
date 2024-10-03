@@ -19,14 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useCallback, useMemo, useState } from 'react'
 
+import useLimitedWalletAddresses from '@/api/apiDataHooks/utils/useLimitedWalletAddresses'
 import { useFetchWalletLastTransaction } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { walletTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
-const useFetchWalletInfiniteTransactions = () => {
+const useFetchWalletTransactionsInfinite = () => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const allAddressHashes = useAppSelector(selectAllAddressHashes) // TODO: Display warning if > 80 addresses
+  const { addressHashes, isLimited } = useLimitedWalletAddresses()
 
   const [fetchedTransactionListAt, setFetchedTransactionListAt] = useState(0)
   const refresh = useCallback(() => setFetchedTransactionListAt(new Date().getTime()), [])
@@ -34,7 +34,7 @@ const useFetchWalletInfiniteTransactions = () => {
   const { data: detectedTxUpdates, isLoading: isLoadingLatestTx } = useFetchWalletLastTransaction()
   const { data, fetchNextPage, isLoading, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
     walletTransactionsInfiniteQuery({
-      allAddressHashes,
+      addressHashes,
       timestamp: fetchedTransactionListAt,
       networkId,
       skip: isLoadingLatestTx
@@ -53,8 +53,9 @@ const useFetchWalletInfiniteTransactions = () => {
     hasNextPage,
     isFetchingNextPage,
     refresh,
-    showNewTxsMessage
+    showNewTxsMessage,
+    isDataComplete: !isLimited
   }
 }
 
-export default useFetchWalletInfiniteTransactions
+export default useFetchWalletTransactionsInfinite
