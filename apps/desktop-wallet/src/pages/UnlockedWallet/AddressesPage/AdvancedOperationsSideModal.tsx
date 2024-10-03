@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Codesandbox, HardHat, Lightbulb, Search } from 'lucide-react'
+import { Codesandbox, HardHat, Lightbulb, Search, Trash2 } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -66,6 +66,11 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
     sendAnalytics({ event: 'Advanced operation to share ideas clicked' })
   }
 
+  const handleDeleteAddressesClick = () => {
+    dispatch(openModal({ name: 'DeleteAddressesModal' }))
+    sendAnalytics({ event: 'Advanced operation to delete addresses clicked' })
+  }
+
   return (
     <SideModal id={id} title={t('Advanced operations')}>
       <AdvancedOperations>
@@ -75,7 +80,13 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
           description={t('Scan the blockchain for addresses you used in the past.')}
           buttonText={t('Search')}
           onButtonClick={handleDiscoverAddressesClick}
-          infoLink={links.miningWallet}
+        />
+        <OperationBox
+          title={t('Forget addresses')}
+          Icon={<Trash2 color={theme.global.highlight} strokeWidth={1} size={55} />}
+          description={t("Clean up your wallet by removing addresses you don't need.")}
+          buttonText={t('Start')}
+          onButtonClick={handleDeleteAddressesClick}
         />
         <OperationBox
           title={t('Generate one address per group')}
