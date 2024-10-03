@@ -22,5 +22,4 @@ import { Address } from '@/types/addresses'
 
 export const addressesAdapter = createEntityAdapter<Address>({
   selectId: (address) => address.hash
-  // TODO: Find a new way to get sorted addresses
 })
