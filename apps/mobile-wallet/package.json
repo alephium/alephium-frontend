@@ -110,7 +110,7 @@
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
-    "@babel/core": "^7.24.7",
+    "@babel/core": "^7.25.7",
     "@types/lodash": "^4.14.182",
     "@types/react": "~18.2.79",
     "@types/react-native-background-timer": "^2.0.2",
