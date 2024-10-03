@@ -38,23 +38,26 @@ export const addressAlphBalancesQuery = ({
   addressHash,
   networkId,
   latestTxHash,
-  previousTxHash
+  previousTxHash,
+  skip
 }: AddressLatestTransactionHashesProps) => {
   const getQueryOptions = (latestTxHash: AddressLatestTransactionHashesProps['latestTxHash']) =>
     queryOptions({
       queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'ALPH', { addressHash, latestTxHash, networkId }],
-      queryFn: async () => {
-        const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
+      queryFn: !skip
+        ? async () => {
+            const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
 
-        return {
-          addressHash,
-          balances: {
-            totalBalance: BigInt(balances.balance),
-            lockedBalance: BigInt(balances.lockedBalance),
-            availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
+            return {
+              addressHash,
+              balances: {
+                totalBalance: BigInt(balances.balance),
+                lockedBalance: BigInt(balances.lockedBalance),
+                availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
+              }
+            }
           }
-        }
-      },
+        : skipToken,
       staleTime: Infinity
     })
 

@@ -21,8 +21,8 @@ import { useQueries } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineBalances } from '@/api/apiDataHooks/wallet/combineBalances'
-import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { useFetchWalletLastTransactionHashes } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
+import { useFetchWalletBalancesAlph } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import { useFetchWalletUpdatesSignals } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { TokenId } from '@/types/tokens'
@@ -33,7 +33,7 @@ interface UseFetchWalletSingleTokenBalancesProps extends SkipProp {
 
 const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSingleTokenBalancesProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { data: latestTxHashes, isLoading: isLoadingLatestTxHashes } = useFetchWalletLastTransactionHashes({ skip })
+  const { data: updatesSignals, isLoading: isLoadingUpdateSignals } = useFetchWalletUpdatesSignals({ skip })
 
   const isALPH = tokenId === ALPH.id
 
@@ -44,14 +44,14 @@ const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSing
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQueries({
     queries:
       !isALPH && !skip
-        ? latestTxHashes.map((props) => addressSingleTokenBalancesQuery({ ...props, tokenId, networkId }))
+        ? updatesSignals.map((props) => addressSingleTokenBalancesQuery({ ...props, tokenId, networkId }))
         : [],
     combine: combineBalances
   })
 
   return {
     data: isALPH ? alphBalances : tokenBalances,
-    isLoading: isLoadingLatestTxHashes || isLoadingTokenBalances || isLoadingAlphBalances
+    isLoading: isLoadingUpdateSignals || isLoadingTokenBalances || isLoadingAlphBalances
   }
 }
 
