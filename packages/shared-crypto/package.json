@@ -19,13 +19,13 @@
     "base-x": "^4.0.0",
     "bcfg": "~0.1.6",
     "crypto-js": "^4.1.1",
-    "elliptic": "^6.5.4"
+    "elliptic": "^6.5.7"
   },
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
     "@types/crypto-js": "^4.1.1",
-    "@types/elliptic": "^6.4.13",
+    "@types/elliptic": "^6.4.18",
     "@types/jest": "^29.4.0",
     "@types/node": "^16.10.1",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
