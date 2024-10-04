@@ -167,9 +167,17 @@ export const assetsQueries = {
         queryFn: async (): Promise<NFTTokenUriMetaData & { assetId: string }> => {
           const nftData = (await axios.get(dataUri)).data as NFTTokenUriMetaData
 
-          return matchesNFTTokenUriMetaDataSchema(nftData) ? { ...nftData, assetId } : Promise.reject()
+          return matchesNFTTokenUriMetaDataSchema(nftData)
+            ? { ...nftData, assetId }
+            : !!nftData?.name || !!nftData?.image
+              ? {
+                  assetId,
+                  name: nftData?.name ? nftData?.name.toString() : 'Unsupported NFT',
+                  image: nftData?.image ? nftData?.image.toString() : ''
+                }
+              : Promise.reject()
         },
-        staleTime: ONE_DAY_MS
+        staleTime: 0
       }),
     collection: (collectionUri: string, collectionId: string, collectionAddress: string) =>
       queryOptions({
