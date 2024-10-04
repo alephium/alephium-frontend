@@ -177,7 +177,7 @@ export const assetsQueries = {
                 }
               : Promise.reject()
         },
-        staleTime: 0
+        staleTime: ONE_DAY_MS
       }),
     collection: (collectionUri: string, collectionId: string, collectionAddress: string) =>
       queryOptions({
