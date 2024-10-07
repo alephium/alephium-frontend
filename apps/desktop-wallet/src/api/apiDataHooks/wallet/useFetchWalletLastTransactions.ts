@@ -83,15 +83,13 @@ const extractLastTransactionHashes = (results: UseQueryResult<AddressLatestTrans
 })
 
 const extractLastTransactionTimestamps = (results: UseQueryResult<AddressLatestTransactionQueryFnData>[]) => ({
-  data: results
-    .flatMap(({ data }) =>
-      data
-        ? {
-            addressHash: data.addressHash,
-            latestTxTimestamp: data.latestTx?.timestamp
-          }
-        : undefined
-    )
-    .filter(isDefined),
+  data: results.flatMap(({ data }) =>
+    data
+      ? {
+          addressHash: data.addressHash,
+          latestTxTimestamp: data.latestTx?.timestamp
+        }
+      : []
+  ),
   ...combineIsLoading(results)
 })
