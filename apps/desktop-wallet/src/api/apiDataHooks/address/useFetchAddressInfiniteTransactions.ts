@@ -31,8 +31,8 @@ interface UseFetchAddressInfiniteTransactionsProps {
 const useFetchAddressInfiniteTransactions = ({ addressHash }: UseFetchAddressInfiniteTransactionsProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
-  const [fetchedTransactionListAt, setRefreshedTransactionListAt] = useState(0)
-  const refresh = useCallback(() => setRefreshedTransactionListAt(new Date().getTime()), [])
+  const [fetchedTransactionListAt, setFetchedTransactionListAt] = useState(0)
+  const refresh = useCallback(() => setFetchedTransactionListAt(new Date().getTime()), [])
 
   const { data: updatesSignal, isLoading: isLoadingUpdatesSignal } = useFetchAddressUpdatesSignal({ addressHash })
   const { data, fetchNextPage, isLoading, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
