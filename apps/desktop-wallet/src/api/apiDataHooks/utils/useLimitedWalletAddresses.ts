@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ADDRESSES_QUERY_LIMIT } from '@alephium/shared'
 import { useMemo } from 'react'
 
-import useFetchWalletAddressesSortedByActivity from '@/api/apiDataHooks/wallet/useFetchWalletAddressesSortedByActivity'
+import useFetchWalletAddressesHashesSortedByActivity from '@/api/apiDataHooks/wallet/useFetchWalletAddressesHashesSortedByActivity'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
@@ -27,11 +27,10 @@ const useLimitedWalletAddresses = () => {
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
   const exceedsAddressLimit = allAddressHashes.length > ADDRESSES_QUERY_LIMIT
-  const { data: allAddressHashesSorted, isLoading: isLoadingSortedAddresses } = useFetchWalletAddressesSortedByActivity(
-    {
+  const { data: allAddressHashesSorted, isLoading: isLoadingSortedAddresses } =
+    useFetchWalletAddressesHashesSortedByActivity({
       skip: !exceedsAddressLimit
-    }
-  )
+    })
 
   return {
     isLimited: exceedsAddressLimit,
