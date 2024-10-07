@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
 import { groupOfAddress } from '@alephium/web3'
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit'
 
 import {
   addressDeleted,
@@ -95,10 +95,10 @@ const addressesSlice = createSlice({
       .addCase(walletSaved, (state, action) => addInitialAddress(state, action.payload.initialAddress))
       .addCase(walletUnlocked, addPassphraseInitialAddress)
       .addCase(walletSwitched, (_, action) => addPassphraseInitialAddress({ ...initialState }, action))
-      .addCase(walletLocked, () => initialState)
-      .addCase(activeWalletDeleted, () => initialState)
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
+
+    builder.addMatcher(isAnyOf(walletLocked, activeWalletDeleted), () => initialState)
   }
 })
 
