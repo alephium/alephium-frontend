@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
-import useFetchWalletTransactionsLimitted from '@/api/apiDataHooks/wallet/useFetchWalletTransactionsLimitted'
+import useFetchWalletTransactionsLimited from '@/api/apiDataHooks/wallet/useFetchWalletTransactionsLimited'
 import ActionLink from '@/components/ActionLink'
 import Table, { TableHeader } from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
@@ -38,7 +38,7 @@ const WalletLatestTransactionsList = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
-  const { data: confirmedTxs, isLoading } = useFetchWalletTransactionsLimitted()
+  const { data: confirmedTxs, isLoading } = useFetchWalletTransactionsLimited()
 
   const openTransactionDetailsModal = (txHash: Transaction['hash']) =>
     dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))
