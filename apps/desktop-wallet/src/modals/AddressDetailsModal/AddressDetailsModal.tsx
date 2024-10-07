@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -26,17 +25,13 @@ import { ShortcutButtonsGroupAddress } from '@/components/Buttons/ShortcutButton
 import QRCode from '@/components/QRCode'
 import { AddressTokensTabs } from '@/features/assetsLists/TokensTabs'
 import AddressTransactionsCSVExportButton from '@/features/csvExport/AddressTransactionsCSVExportButton'
-import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { AddressModalProps } from '@/features/modals/modalTypes'
 import TransactionList from '@/features/transactionsDisplay/TransactionList'
 import AddressDetailsModalHeader from '@/modals/AddressDetailsModal/AddressDetailsModalHeader'
 import SideModal from '@/modals/SideModal'
 import AmountsOverviewPanel from '@/pages/UnlockedWallet/OverviewPage/AmountsOverviewPanel'
 
-export interface AddressDetailsModalProps {
-  addressHash: AddressHash
-}
-
-const AddressDetailsModal = memo(({ id, addressHash }: ModalBaseProp & AddressDetailsModalProps) => {
+const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
 
   const [showChart, setShowChart] = useState(false)
