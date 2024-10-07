@@ -172,8 +172,8 @@ export const assetsQueries = {
             : !!nftData?.name || !!nftData?.image
               ? {
                   assetId,
-                  name: nftData?.name ? nftData?.name.toString() : 'Unsupported NFT',
-                  image: nftData?.image ? nftData?.image.toString() : ''
+                  name: nftData?.name ? nftData.name.toString() : 'Unsupported NFT',
+                  image: nftData?.image ? nftData.image.toString() : ''
                 }
               : Promise.reject()
         },
