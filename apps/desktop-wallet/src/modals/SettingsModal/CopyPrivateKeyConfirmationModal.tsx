@@ -32,7 +32,7 @@ import CenteredModal from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { copiedToClipboard, copyToClipboardFailed } from '@/storage/global/globalActions'
 
-const CopyPrivateKeyConfirmationModal = memo(({ id, addressHash, ...props }: AddressModalProps) => {
+const CopyPrivateKeyConfirmationModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
