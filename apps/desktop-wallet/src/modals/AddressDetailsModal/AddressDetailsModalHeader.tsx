@@ -24,12 +24,12 @@ import AddressColorIndicator from '@/components/AddressColorIndicator'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
+import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppSelector } from '@/hooks/redux'
-import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal/AddressDetailsModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { openInWebBrowser } from '@/utils/misc'
 
-const Header = ({ addressHash }: AddressDetailsModalProps) => {
+const Header = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
 
@@ -50,7 +50,7 @@ const Header = ({ addressHash }: AddressDetailsModalProps) => {
 
 export default Header
 
-const TitleBadge = ({ addressHash }: AddressDetailsModalProps) => {
+const TitleBadge = ({ addressHash }: AddressModalBaseProp) => {
   const theme = useTheme()
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
