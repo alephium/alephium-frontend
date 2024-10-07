@@ -2,7 +2,7 @@ name: Release desktop wallet
 
 on:
   push:
-    tags: ['alephium-desktop-wallet@[0-9]+.[0-9]+.[0-9]+', 'alephium-desktop-wallet@[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+']
+    tags: ['alephium-desktop-wallet@[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?']
 
 env:
   GH_TOKEN: ${{ secrets.github_token }}
