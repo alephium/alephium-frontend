@@ -33,7 +33,7 @@ const useFetchAddressFts = ({ addressHash, sort = true, skip }: UseAddressFTsPro
   const { sortedListedFts, sortedUnlistedFts, isLoading } = useFetchSortedFts({
     listedFts,
     unlistedFtIds,
-    skip: !sort || skip
+    skip: skip || !sort
   })
 
   return {

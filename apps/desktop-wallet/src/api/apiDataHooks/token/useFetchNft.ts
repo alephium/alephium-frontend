@@ -31,7 +31,7 @@ const useFetchNft = ({ id, skip }: UseNFTProps) => {
   const { data: nftMetadata, isLoading: isLoadingNftMetadata } = useQuery(nftMetadataQuery({ id, skip }))
 
   const { data: nftData, isLoading: isLoadingNftData } = useQuery(
-    nftDataQuery({ id, tokenUri: nftMetadata?.tokenUri, skip: isLoadingNftMetadata || skip })
+    nftDataQuery({ id, tokenUri: nftMetadata?.tokenUri, skip: skip || isLoadingNftMetadata })
   )
 
   return {
