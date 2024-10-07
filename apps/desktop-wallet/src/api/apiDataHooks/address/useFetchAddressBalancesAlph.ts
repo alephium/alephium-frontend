@@ -33,7 +33,7 @@ const useFetchAddressBalancesAlph = ({ addressHash, skip }: UseFetchAddressProps
       networkId,
       latestTxHash: updatesSignal?.latestTx?.hash,
       previousTxHash: updatesSignal?.previousTx?.hash,
-      skip: isLoadingUpdatesSignal || skip
+      skip: skip || isLoadingUpdatesSignal
     })
   )
 

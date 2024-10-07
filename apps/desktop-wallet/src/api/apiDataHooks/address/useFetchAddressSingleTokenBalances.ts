@@ -44,7 +44,7 @@ const useFetchAddressSingleTokenBalances = ({
   const { data: updatesSignal, isLoading: isLoadingUpdatesSignal } = useFetchAddressUpdatesSignal({ addressHash, skip })
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
     addressHash,
-    skip: !isALPH || skip
+    skip: skip || !isALPH
   })
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQuery(
     addressSingleTokenBalancesQuery({
@@ -53,7 +53,7 @@ const useFetchAddressSingleTokenBalances = ({
       tokenId,
       latestTxHash: updatesSignal?.latestTx?.hash,
       previousTxHash: updatesSignal?.previousTx?.hash,
-      skip: isLoadingUpdatesSignal || isALPH || skip
+      skip: skip || isLoadingUpdatesSignal || isALPH
     })
   )
 
