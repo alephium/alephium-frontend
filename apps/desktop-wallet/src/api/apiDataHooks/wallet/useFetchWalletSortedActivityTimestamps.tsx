@@ -16,23 +16,31 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import useFetchWalletAddressesActivityTimestampsSorted from '@/api/apiDataHooks/wallet/useFetchWalletAddressesActivityTimestampsSorted'
+import { useFetchWalletActivityTimestamps } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
-const useFetchWalletAddressesSortedByActivity = (props?: SkipProp) => {
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
-  const { data, isLoading } = useFetchWalletAddressesActivityTimestampsSorted(props)
-
-  const sortedAddressHashes = useMemo(() => data.map(({ addressHash }) => addressHash), [data])
+const useFetchWalletSortedActivityTimestamps = (props?: SkipProp) => {
+  const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
+  const { data: addressesTimestamps, isLoading } = useFetchWalletActivityTimestamps({ skip: props?.skip })
 
   return {
-    data: !isLoading && !props?.skip ? sortedAddressHashes : allAddressHashes,
+    data: useMemo(
+      () =>
+        orderBy(
+          addressesTimestamps,
+          ({ addressHash, latestTxTimestamp }) =>
+            addressHash === defaultAddressHash ? undefined : latestTxTimestamp ?? 0,
+          'desc'
+        ),
+      [addressesTimestamps, defaultAddressHash]
+    ),
     isLoading
   }
 }
 
-export default useFetchWalletAddressesSortedByActivity
+export default useFetchWalletSortedActivityTimestamps

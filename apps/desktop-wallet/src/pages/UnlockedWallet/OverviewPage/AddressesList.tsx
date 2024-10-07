@@ -26,7 +26,7 @@ import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
 import useFetchAddressWorth from '@/api/apiDataHooks/address/useFetchAddressWorth'
-import useFetchWalletAddressesSortedByActivity from '@/api/apiDataHooks/wallet/useFetchWalletAddressesSortedByActivity'
+import useFetchWalletAddressesHashesSortedByActivity from '@/api/apiDataHooks/wallet/useFetchWalletAddressesHashesSortedByActivity'
 import ActionLink from '@/components/ActionLink'
 import AddressRow from '@/components/AddressRow'
 import Amount from '@/components/Amount'
@@ -72,7 +72,7 @@ const AddressesList = ({ className, maxHeightInPx }: AddressesListProps) => {
 }
 
 const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: AddressListProps) => {
-  const { data: allAddressHashes } = useFetchWalletAddressesSortedByActivity()
+  const { data: allAddressHashes } = useFetchWalletAddressesHashesSortedByActivity()
   const dispatch = useAppDispatch()
 
   const handleRowClick = (addressHash: AddressHash) => {
