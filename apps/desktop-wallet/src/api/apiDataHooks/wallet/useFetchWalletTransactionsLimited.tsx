@@ -23,7 +23,7 @@ import { useFetchWalletLastTransaction } from '@/api/apiDataHooks/wallet/useFetc
 import { walletLatestTransactionsQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 
-const useFetchWalletTransactionsLimitted = () => {
+const useFetchWalletTransactionsLimited = () => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const { addressHashes, isLimited } = useLimitedWalletAddresses()
 
@@ -44,4 +44,4 @@ const useFetchWalletTransactionsLimitted = () => {
   }
 }
 
-export default useFetchWalletTransactionsLimitted
+export default useFetchWalletTransactionsLimited
