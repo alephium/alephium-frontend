@@ -16,6 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
+
 import { CallContractSendModalProps } from '@/features/send/callContract'
 import { DeployContractSendModalProps } from '@/features/send/deployContract'
 import { TransferSendModalProps } from '@/features/send/Transfer'
@@ -25,18 +27,13 @@ import { TransactionDetailsModalProps } from '@/features/transactionsDisplay/tra
 import { SignMessageModalProps } from '@/features/walletConnect/SignMessageModal'
 import { SignUnsignedTxModalProps } from '@/features/walletConnect/SignUnsignedTxModal'
 import { WalletConnectSessionProposalModalProps } from '@/features/walletConnect/WalletConnectSessionProposalModal'
-import { AddressDetailsModalProps } from '@/modals/AddressDetailsModal/AddressDetailsModal'
-import { AddressOptionsModalProps } from '@/modals/AddressOptionsModal'
 import { AddressSweepModalProps } from '@/modals/AddressSweepModal'
 import { ConfirmModalProps } from '@/modals/ConfirmModal'
 import { ConsolidateUTXOsModalProps } from '@/modals/ConsolidateUTXOsModal'
 import { ContactFormModalProps } from '@/modals/ContactFormModal'
-import { CSVExportModalProps } from '@/modals/CSVExportModal'
 import { NewAddressModalProps } from '@/modals/NewAddressModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
-import { ReceiveModalProps } from '@/modals/ReceiveModal'
 import { SettingsModalProps } from '@/modals/SettingsModal'
-import { CopyPrivateKeyConfirmationModalProps } from '@/modals/SettingsModal/CopyPrivateKeyConfirmationModal'
 import { DisablePasswordRequirementModalProps } from '@/modals/SettingsModal/DisablePasswordRequirementModal'
 import { WalletRemovalModalProps } from '@/modals/WalletRemovalModal'
 
@@ -77,11 +74,11 @@ export type ModalName = keyof typeof ModalNames
 export type OpenModalParams =
   | {
       name: typeof ModalNames.AddressDetailsModal
-      props: AddressDetailsModalProps
+      props: AddressModalBaseProp
     }
   | {
       name: typeof ModalNames.CSVExportModal
-      props: CSVExportModalProps
+      props: AddressModalBaseProp
     }
   | {
       name: typeof ModalNames.NFTDetailsModal
@@ -93,7 +90,7 @@ export type OpenModalParams =
     }
   | {
       name: typeof ModalNames.AddressOptionsModal
-      props: AddressOptionsModalProps
+      props: AddressModalBaseProp
     }
   | {
       name: typeof ModalNames.SettingsModal
@@ -101,7 +98,7 @@ export type OpenModalParams =
     }
   | {
       name: typeof ModalNames.ReceiveModal
-      props: ReceiveModalProps
+      props: AddressModalBaseProp
     }
   | {
       name: typeof ModalNames.WalletConnectModal
@@ -171,7 +168,7 @@ export type OpenModalParams =
     }
   | {
       name: typeof ModalNames.CopyPrivateKeyConfirmationModal
-      props: CopyPrivateKeyConfirmationModalProps
+      props: AddressModalBaseProp
     }
   | {
       name: typeof ModalNames.DisablePasswordRequirementModal
@@ -194,3 +191,9 @@ export type ModalInstance = {
 export interface ModalBaseProp {
   id: ModalInstance['id']
 }
+
+export interface AddressModalBaseProp {
+  addressHash: AddressHash
+}
+
+export type AddressModalProps = ModalBaseProp & AddressModalBaseProp

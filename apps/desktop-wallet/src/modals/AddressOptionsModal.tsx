@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { Trash2 } from 'lucide-react'
 import { memo, useState } from 'react'
@@ -31,7 +30,7 @@ import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal, openModal } from '@/features/modals/modalActions'
-import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { AddressModalProps } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { addressDeleted } from '@/storage/addresses/addressesActions'
@@ -41,11 +40,7 @@ import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersi
 import { getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
-export interface AddressOptionsModalProps {
-  addressHash: AddressHash
-}
-
-const AddressOptionsModal = memo(({ id, addressHash }: ModalBaseProp & AddressOptionsModalProps) => {
+const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const { sendAnalytics } = useAnalytics()

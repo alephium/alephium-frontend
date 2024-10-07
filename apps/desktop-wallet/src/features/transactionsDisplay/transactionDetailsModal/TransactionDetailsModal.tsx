@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { memo } from 'react'
@@ -28,7 +27,7 @@ import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
 import DataList from '@/components/DataList'
 import Tooltip from '@/components/Tooltip'
-import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
 import AddressesDataRows from '@/features/transactionsDisplay/transactionDetailsModal/AddressesDataRows'
 import DirectionalInfo from '@/features/transactionsDisplay/transactionDetailsModal/DirectionalInfo'
 import FTAmounts from '@/features/transactionsDisplay/transactionDetailsModal/FTAmounts'
@@ -45,9 +44,8 @@ import SideModal from '@/modals/SideModal'
 import { selectConfirmedTransactionByHash } from '@/storage/transactions/transactionsSelectors'
 import { formatDateForDisplay } from '@/utils/misc'
 
-export interface TransactionDetailsModalProps {
+export interface TransactionDetailsModalProps extends AddressModalBaseProp {
   txHash: Transaction['hash']
-  addressHash: AddressHash
 }
 
 const TransactionDetailsModal = memo(({ id, txHash, addressHash }: ModalBaseProp & TransactionDetailsModalProps) => {
