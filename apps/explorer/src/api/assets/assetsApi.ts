@@ -25,7 +25,7 @@ import {
   TOKENS_QUERY_LIMIT
 } from '@alephium/shared'
 import { TokenList } from '@alephium/token-list'
-import { addressFromContractId, NFTCollectionUriMetaData, NFTTokenUriMetaData } from '@alephium/web3'
+import { addressFromContractId, NFTCollectionUriMetaData, NFTTokenUriMetaData, Optional } from '@alephium/web3'
 import { NFTCollectionMetadata } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions } from '@tanstack/react-query'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
@@ -164,16 +164,21 @@ export const assetsQueries = {
     item: (dataUri: string, assetId: string) =>
       queryOptions({
         queryKey: ['nftData', dataUri],
-        queryFn: async (): Promise<NFTTokenUriMetaData & { assetId: string }> => {
+        // TODO: Should the image field in NFTTokenUriMetaData be optional?
+        queryFn: async (): Promise<Optional<NFTTokenUriMetaData, 'image'> & { assetId: string }> => {
           const nftData = (await axios.get(dataUri)).data as NFTTokenUriMetaData
+
+          if (!nftData || !nftData.name) {
+            return Promise.reject()
+          }
 
           return matchesNFTTokenUriMetaDataSchema(nftData)
             ? { ...nftData, assetId }
-            : !!nftData?.name || !!nftData?.image
+            : nftData.name
               ? {
                   assetId,
-                  name: nftData?.name ? nftData.name.toString() : 'Unsupported NFT',
-                  image: nftData?.image ? nftData.image.toString() : ''
+                  name: nftData.name,
+                  image: nftData.image ? nftData.image.toString() : undefined
                 }
               : Promise.reject()
         },
