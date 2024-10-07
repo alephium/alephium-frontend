@@ -56,6 +56,13 @@ jobs:
           name: notarization-error-log
           path: ${{ github.workspace }}/apps/desktop-wallet/notarization-error.log
 
+      - name: Skip signing for rc versions
+        if: contains(github.event.ref, '-rc.')
+        uses: jaywcjlove/github-action-package@v2.0.0
+        with:
+          path: apps/desktop-wallet/package.json
+          unset: build.win.sign
+
       # Windows
       - name: Build & release Windows Electron app
         if: startsWith(matrix.os, 'windows')
