@@ -22,7 +22,7 @@ import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import useFetchWalletAddressesSortedByActivity from '@/api/apiDataHooks/wallet/useFetchWalletAddressesSortedByActivity'
+import useFetchWalletAddressesHashesSortedByActivity from '@/api/apiDataHooks/wallet/useFetchWalletAddressesHashesSortedByActivity'
 import Box from '@/components/Box'
 import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
@@ -62,7 +62,7 @@ const AddressInputs = ({
   const updatedInitialAddress = fromAddresses.find((a) => a === defaultFromAddress) ?? fromAddresses[0]
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const contacts = useAppSelector(selectAllContacts)
-  const { data: allAddressHashes } = useFetchWalletAddressesSortedByActivity()
+  const { data: allAddressHashes } = useFetchWalletAddressesHashesSortedByActivity()
   const theme = useTheme()
 
   const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)

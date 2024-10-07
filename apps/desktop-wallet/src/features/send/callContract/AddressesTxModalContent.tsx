@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import useFetchWalletAddressesSortedByActivity from '@/api/apiDataHooks/wallet/useFetchWalletAddressesSortedByActivity'
+import useFetchWalletAddressesHashesSortedByActivity from '@/api/apiDataHooks/wallet/useFetchWalletAddressesHashesSortedByActivity'
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import AddressInputs from '@/features/send/AddressInputs'
@@ -40,7 +40,7 @@ const CallContractAddressesTxModalContent = ({
   onCancel
 }: CallContractAddressesTxModalContentProps) => {
   const { t } = useTranslation()
-  const { data: allAddressHashes } = useFetchWalletAddressesSortedByActivity()
+  const { data: allAddressHashes } = useFetchWalletAddressesHashesSortedByActivity()
 
   const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))
