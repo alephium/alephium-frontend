@@ -20,7 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import useFetchWalletAddressesActivityTimestampsSorted from '@/api/apiDataHooks/wallet/useFetchWalletAddressesActivityTimestampsSorted'
+import useFetchWalletSortedActivityTimestamps from '@/api/apiDataHooks/wallet/useFetchWalletSortedActivityTimestamps'
 import InfoBox from '@/components/InfoBox'
 import { OptionItem, OptionSelect } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
@@ -35,17 +35,20 @@ import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
 const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
-  const { data, isLoading } = useFetchWalletAddressesActivityTimestampsSorted()
+  const { data: addressesActivityTimestamps, isLoading } = useFetchWalletSortedActivityTimestamps()
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
   const dispatch = useAppDispatch()
 
-  const reversedAddressesArray = useMemo(() => [...data].reverse(), [data])
+  const reversedAddressesArray = useMemo(
+    () => [...addressesActivityTimestamps].reverse(),
+    [addressesActivityTimestamps]
+  )
 
   const [selectedAddressesForDeletion, setSelectedAddressesForDeletion] = useState<AddressHash[]>([])
 
   useEffect(() => {
     if (!isLoading) {
-      const neverUsedAddresses = data
+      const neverUsedAddresses = addressesActivityTimestamps
         .filter(({ latestTxTimestamp }) => latestTxTimestamp === undefined)
         .map(({ addressHash }) => addressHash)
 
