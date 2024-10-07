@@ -24,7 +24,6 @@ import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { AddressLatestTransactionQueryFnData, addressUpdatesSignalQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
-import { isDefined } from '@/utils/misc'
 
 export const useFetchWalletLastTransaction = (props?: SkipProp) =>
   useFetchWalletLastTransactions({ combine: extractMostRecentTransaction, skip: props?.skip })
@@ -68,12 +67,10 @@ const extractMostRecentTransaction = (results: UseQueryResult<AddressLatestTrans
 })
 
 const extractLastTransactionHashes = (results: UseQueryResult<AddressLatestTransactionQueryFnData>[]) => ({
-  data: results
-    .flatMap(({ data }) =>
-      data
-        ? { addressHash: data.addressHash, latestTxHash: data?.latestTx?.hash, previousTxHash: data?.previousTx?.hash }
-        : undefined
-    )
-    .filter(isDefined),
+  data: results.flatMap(({ data }) =>
+    data
+      ? { addressHash: data.addressHash, latestTxHash: data?.latestTx?.hash, previousTxHash: data?.previousTx?.hash }
+      : []
+  ),
   ...combineIsLoading(results)
 })
