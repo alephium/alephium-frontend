@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createSlice, EntityState } from '@reduxjs/toolkit'
+import { createSlice, EntityState, isAnyOf } from '@reduxjs/toolkit'
 
 import { sentTransactionStatusChanged } from '@/features/sentTransactions/sentTransactionsActions'
 import { sentTransactionsAdapter } from '@/features/sentTransactions/sentTransactionsAdapter'
@@ -40,9 +40,8 @@ const sentTransactionsSlice = createSlice({
       .addCase(sentTransactionStatusChanged, (state, { payload: { hash, status } }) => {
         sentTransactionsAdapter.updateOne(state, { id: hash, changes: { status } })
       })
-      .addCase(walletLocked, () => initialState)
-      .addCase(walletSwitched, () => initialState)
-      .addCase(activeWalletDeleted, () => initialState)
+
+    builder.addMatcher(isAnyOf(walletLocked, walletSwitched, activeWalletDeleted), () => initialState)
   }
 })
 
