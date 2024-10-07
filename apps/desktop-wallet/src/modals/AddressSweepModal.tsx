@@ -32,7 +32,7 @@ import AddressSelect from '@/components/Inputs/AddressSelect'
 import { useAddressesWithBalance } from '@/features/addressFiltering/addressFilteringHooks'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
-import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectAddressByHash, selectAllAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
@@ -44,8 +44,7 @@ import {
 import { Address } from '@/types/addresses'
 import { getName } from '@/utils/addresses'
 
-export interface AddressSweepModalProps {
-  addressHash: AddressHash
+export interface AddressSweepModalProps extends AddressModalBaseProp {
   onSuccessfulSweep?: () => void
   isUtxoConsolidation?: boolean
 }

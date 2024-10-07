@@ -16,10 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { modalAdapter } from '@/features/modals/modalAdapters'
+import { AddressModalBaseProp, ModalInstance } from '@/features/modals/modalTypes'
+import { addressDeleted } from '@/storage/addresses/addressesActions'
 import { activeWalletDeleted, walletLocked, walletSwitched } from '@/storage/wallets/walletActions'
 
 const initialState = modalAdapter.getInitialState()
@@ -39,6 +42,13 @@ const modalSlice = createSlice({
       .addCase(closeModal, (state, { payload: { id } }) => {
         modalAdapter.removeOne(state, id)
       })
+      .addCase(addressDeleted, (state, { payload: addressHash }) => {
+        const openAddressModals = state.ids.filter(
+          (id) => state.entities[id] && isAddressModalOpen(state.entities[id], addressHash)
+        )
+
+        modalAdapter.removeMany(state, openAddressModals)
+      })
 
     builder.addMatcher(isAnyOf(walletSwitched, walletLocked, activeWalletDeleted), (state) => {
       modalAdapter.removeAll(state)
@@ -47,3 +57,6 @@ const modalSlice = createSlice({
 })
 
 export default modalSlice
+
+const isAddressModalOpen = (modalInstance: ModalInstance, addressHash: AddressHash) =>
+  (modalInstance.params as { props: AddressModalBaseProp })?.props?.addressHash === addressHash

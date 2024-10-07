@@ -32,6 +32,7 @@
   "and": "and",
   "Anyone with your private keys can steal any assets held in your addresses.": "Anyone with your private keys can steal any assets held in your addresses.",
   "Are you sure you want to remove \"{{ contactName }}\" from your contact list?": "Are you sure you want to remove \"{{ contactName }}\" from your contact list?",
+  "Are you sure you want to remove \"{{ address }}\" from your address list?": "Are you sure you want to remove \"{{ address }}\" from your address list?",
   "Asset": "Asset",
   "Assets": "Assets",
   "Available": "Available",
@@ -460,5 +461,6 @@
   "This address doesn't have any NFTs.": "This address doesn't have any NFTs.",
   "The wallet doesn't have any tokens. Tokens of all your addresses will appear here.": "The wallet doesn't have any tokens. Tokens of all your addresses will appear here.",
   "The wallet doesn't have any NFTs. NFTs of all your addresses will appear here.": "The wallet doesn't have any NFTs. NFTs of all your addresses will appear here.",
-  "There is something wrong in the received WalletConnect data.": "There is something wrong in the received WalletConnect data."
+  "There is something wrong in the received WalletConnect data.": "There is something wrong in the received WalletConnect data.",
+  "To delete this address set another one as the default one first.": "To delete this address set another one as the default one first."
 }
