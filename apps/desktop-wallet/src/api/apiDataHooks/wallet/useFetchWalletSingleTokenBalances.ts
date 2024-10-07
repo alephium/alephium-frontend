@@ -38,7 +38,7 @@ const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSing
   const isALPH = tokenId === ALPH.id
 
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlph({
-    skip: !isALPH || skip
+    skip: skip || !isALPH
   })
 
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQueries({
