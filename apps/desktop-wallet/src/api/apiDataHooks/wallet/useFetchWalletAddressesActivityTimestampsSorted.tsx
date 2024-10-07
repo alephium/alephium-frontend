@@ -26,18 +26,18 @@ import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
 const useFetchWalletAddressesActivityTimestampsSorted = (props?: SkipProp) => {
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
-  const { data, isLoading } = useFetchWalletActivityTimestamps({ skip: props?.skip })
+  const { data: addressesTimestamps, isLoading } = useFetchWalletActivityTimestamps({ skip: props?.skip })
 
   return {
     data: useMemo(
       () =>
         orderBy(
-          data,
+          addressesTimestamps,
           ({ addressHash, latestTxTimestamp }) =>
             addressHash === defaultAddressHash ? undefined : latestTxTimestamp ?? 0,
           'desc'
         ),
-      [data, defaultAddressHash]
+      [addressesTimestamps, defaultAddressHash]
     ),
     isLoading
   }
