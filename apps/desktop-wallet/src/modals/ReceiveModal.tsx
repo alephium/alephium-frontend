@@ -22,18 +22,14 @@ import styled from 'styled-components'
 
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import QRCode from '@/components/QRCode'
-import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { AddressModalProps } from '@/features/modals/modalTypes'
 import { useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
-export interface ReceiveModalProps {
-  addressHash: string
-}
-
 const QRCodeSize = 250
 
-const ReceiveModal = memo(({ id, addressHash }: ModalBaseProp & ReceiveModalProps) => {
+const ReceiveModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
