@@ -29,7 +29,6 @@ interface AddressLatestTransactionQueryProps {
   addressHash: AddressHash
   networkId: number
   skip?: boolean
-  pause?: boolean
 }
 
 export interface AddressLatestTransactionHashesProps extends AddressLatestTransactionQueryProps {
