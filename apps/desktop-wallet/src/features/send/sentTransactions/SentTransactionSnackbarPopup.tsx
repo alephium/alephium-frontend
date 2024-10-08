@@ -43,6 +43,8 @@ const SentTransactionSnackbarPopup = memo(({ txHash }: SentTransactionSnackbarPo
   const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
   const [hide, setHide] = useState(false)
 
+  // The snackbar component is a transaction-specific component that is always mounted when a tx is being sent, so it's
+  // the most appropriate place for polling.
   usePendingTxPolling(txHash)
 
   useEffect(() => {
