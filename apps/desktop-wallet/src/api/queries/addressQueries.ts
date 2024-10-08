@@ -21,7 +21,7 @@ import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
-import { DisplayBalances, TokenDisplayBalances, TokenId } from '@/types/tokens'
+import { DisplayBalances, TokenDisplayBalances } from '@/types/tokens'
 
 export type AddressAlphBalancesQueryFnData = {
   addressHash: AddressHash
@@ -47,31 +47,6 @@ export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: Addre
           }
         }
       : skipToken,
-    staleTime: Infinity
-  })
-
-interface AddressTokenBalancesQueryProps extends AddressLatestTransactionQueryProps {
-  tokenId: TokenId
-}
-
-export const addressSingleTokenBalancesQuery = ({ addressHash, tokenId, networkId }: AddressTokenBalancesQueryProps) =>
-  queryOptions({
-    queryKey: ['address', addressHash, 'balance', 'token', tokenId, { networkId }],
-    queryFn: async () => {
-      const balances = await throttledClient.explorer.addresses.getAddressesAddressTokensTokenIdBalance(
-        addressHash,
-        tokenId
-      )
-
-      return {
-        addressHash,
-        balances: {
-          totalBalance: BigInt(balances.balance),
-          lockedBalance: BigInt(balances.lockedBalance),
-          availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
-        }
-      }
-    },
     staleTime: Infinity
   })
 
