@@ -26,7 +26,7 @@ import {
 import { PendingTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useMemo } from 'react'
 
-import { selectPendingSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
+import { selectPendingSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 
