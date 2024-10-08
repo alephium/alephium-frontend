@@ -30,12 +30,11 @@ import OtherAmounts from '@/features/transactionsDisplay/transactionRow/OtherAmo
 import SecondAddressColumnCell from '@/features/transactionsDisplay/transactionRow/SecondAddressColumnCell'
 import TokenBadgesListCell from '@/features/transactionsDisplay/transactionRow/TokenBadgesListCell'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
-import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 
 const TransactionRow = memo(
   ({ tx, refAddressHash, isInAddressDetailsModal, compact, ...props }: TransactionRowProps) => {
-    const allAddressHashes = useAppSelector(selectAllAddressHashes)
+    const allAddressHashes = useUnsortedAddressesHashes()
     const referenceAddress = refAddressHash ?? findTransactionReferenceAddress(allAddressHashes, tx)
 
     if (!referenceAddress) return null

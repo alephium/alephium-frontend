@@ -21,10 +21,10 @@ import { useTranslation } from 'react-i18next'
 
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
-import { useAddressesWithBalance } from '@/features/addressFiltering/addressFilteringHooks'
 import AddressInputs from '@/features/send/AddressInputs'
 import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
+import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import { ModalContent } from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { isAddressValid, requiredErrorMessage } from '@/utils/form-validation'
@@ -37,7 +37,7 @@ interface TransferAddressesTxModalContentProps {
 
 const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferAddressesTxModalContentProps) => {
   const { t } = useTranslation()
-  const fromAddresses = useAddressesWithBalance()
+  const { data: fromAddresses } = useFetchAddressesHashesWithBalance()
 
   const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
   const [toAddress, setToAddress] = useStateWithError(data?.toAddress ?? '')

@@ -21,10 +21,10 @@ import { useTranslation } from 'react-i18next'
 
 import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
-import { useAddressesWithBalance } from '@/features/addressFiltering/addressFilteringHooks'
 import AddressInputs from '@/features/send/AddressInputs'
 import { DeployContractTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
+import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import { ModalContent } from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
@@ -40,7 +40,7 @@ const DeployContractAddressesTxModalContent = ({
   onCancel
 }: DeployContractAddressesTxModalContentProps) => {
   const { t } = useTranslation()
-  const fromAddresses = useAddressesWithBalance()
+  const { data: fromAddresses } = useFetchAddressesHashesWithBalance()
 
   const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))

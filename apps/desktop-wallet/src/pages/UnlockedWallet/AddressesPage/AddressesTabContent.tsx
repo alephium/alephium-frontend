@@ -24,9 +24,10 @@ import styled from 'styled-components'
 import Box from '@/components/Box'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
-import { useAddressesWithBalance, useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
+import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
+import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import AddressListRow from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressListRow'
 import AdvancedOperationsButton from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsButton'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
@@ -38,7 +39,7 @@ const AddressesTabContent = memo(() => {
   const [searchInput, setSearchInput] = useState('')
   const [hideEmptyAddresses, setHideEmptyAddresses] = useState(false)
   const filteredByText = useFilterAddressesByText(searchInput.toLowerCase())
-  const filteredByToggle = useAddressesWithBalance()
+  const { data: filteredByToggle } = useFetchAddressesHashesWithBalance()
 
   const visibleAddresses = hideEmptyAddresses ? intersection(filteredByText, filteredByToggle) : filteredByText
 

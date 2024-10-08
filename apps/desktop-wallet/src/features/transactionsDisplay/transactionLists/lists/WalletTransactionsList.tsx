@@ -32,8 +32,8 @@ import NewTransactionsButtonRow from '@/features/transactionsDisplay/transaction
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { useAppDispatch } from '@/hooks/redux'
+import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 import { Direction } from '@/types/transactions'
 import { onEnterOrSpace } from '@/utils/misc'
 
@@ -46,7 +46,7 @@ interface WalletTransactionListProps {
 const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletTransactionListProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const allAddressHashes = useUnsortedAddressesHashes()
 
   const {
     data: fetchedConfirmedTxs,
