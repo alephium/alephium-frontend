@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.10.6
+
+### Patch Changes
+
+- 71efb5b: Support partial NFT data (ANS like)
+
 ## 1.10.5
 
 ### Patch Changes
