@@ -26,7 +26,6 @@ import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
 import useFetchAddressWorth from '@/api/apiDataHooks/address/useFetchAddressWorth'
-import useFetchWalletAddressesHashesSortedByActivity from '@/api/apiDataHooks/wallet/useFetchWalletAddressesHashesSortedByActivity'
 import ActionLink from '@/components/ActionLink'
 import AddressRow from '@/components/AddressRow'
 import Amount from '@/components/Amount'
@@ -35,6 +34,7 @@ import { ExpandableTable, ExpandRow, TableHeader } from '@/components/Table'
 import TableCellAmount from '@/components/TableCellAmount'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
+import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
 
 interface AddressesListProps {
   className?: string
@@ -72,7 +72,7 @@ const AddressesList = ({ className, maxHeightInPx }: AddressesListProps) => {
 }
 
 const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: AddressListProps) => {
-  const { data: allAddressHashes } = useFetchWalletAddressesHashesSortedByActivity()
+  const { data: allAddressHashes } = useFetchSortedAddressesHashes()
   const dispatch = useAppDispatch()
 
   const handleRowClick = (addressHash: AddressHash) => {

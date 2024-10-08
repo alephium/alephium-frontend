@@ -24,7 +24,6 @@ import { memo, useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchWalletAddressesHashesSortedByActivity from '@/api/apiDataHooks/wallet/useFetchWalletAddressesHashesSortedByActivity'
 import { buildSweepTransactions, signAndSendTransaction } from '@/api/transactions'
 import Amount from '@/components/Amount'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
@@ -35,6 +34,7 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectAddressByHash, selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import {
@@ -55,7 +55,7 @@ const AddressSweepModal = memo(
     const { t } = useTranslation()
     const dispatch = useAppDispatch()
     const addresses = useAppSelector(selectAllAddresses)
-    const { data: allAddressHashes } = useFetchWalletAddressesHashesSortedByActivity()
+    const { data: allAddressHashes } = useFetchSortedAddressesHashes()
     const { sendAnalytics } = useAnalytics()
     const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
