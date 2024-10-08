@@ -82,6 +82,8 @@ const summarizeAddressInputOutputAmounts = (address: string, io: (Input | Output
     { alphAmount: BigInt(0), tokenAmounts: [] } as AmountDeltas
   )
 
+// TODO: Clean up use of Transaction | PendingTransaction | MempoolTransaction
+
 export const getDirection = (
   tx: Transaction | PendingTransaction | MempoolTransaction,
   address: string
