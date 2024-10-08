@@ -151,3 +151,6 @@ export const findTransactionReferenceAddress = (addresses: AddressHash[], tx: Tr
 const isAddressPresentInInputsOutputs = (addressHash: AddressHash, tx: Transaction | PendingTransaction) =>
   tx.inputs?.some((input) => input.address === addressHash) ||
   tx.outputs?.some((output) => output.address === addressHash)
+
+export const findTransactionInternalAddresses = (addresses: AddressHash[], tx: Transaction) =>
+  addresses.filter((addressHash) => isAddressPresentInInputsOutputs(addressHash, tx))
