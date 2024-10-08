@@ -20,7 +20,7 @@ import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useFetchWalletBalancesAlph } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import { useFetchWalletBalancesAlphArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import Amount from '@/components/Amount'
 
 interface TotalAlphBalanceProps {
@@ -44,7 +44,7 @@ const TotalAlphBalance = ({ className, type }: TotalAlphBalanceProps) => {
 }
 
 const AvailableAlphAmount = () => {
-  const { data, isLoading } = useFetchWalletBalancesAlph()
+  const { data, isLoading } = useFetchWalletBalancesAlphArray()
 
   return (
     <AmountStyled
@@ -58,7 +58,7 @@ const AvailableAlphAmount = () => {
 }
 
 const LockedAlphAmount = () => {
-  const { data, isLoading } = useFetchWalletBalancesAlph()
+  const { data, isLoading } = useFetchWalletBalancesAlphArray()
 
   return (
     <AmountStyled tokenId={ALPH.id} tabIndex={0} value={data?.lockedBalance} isLoading={isLoading} loaderHeight={30} />

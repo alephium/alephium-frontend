@@ -21,7 +21,7 @@ import { useQueries } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineBalances } from '@/api/apiDataHooks/wallet/combineBalances'
-import { useFetchWalletBalancesAlph } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import { useFetchWalletBalancesAlphArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
@@ -37,7 +37,7 @@ const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSing
 
   const isALPH = tokenId === ALPH.id
 
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlph({
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphArray({
     skip: skip || !isALPH
   })
 
