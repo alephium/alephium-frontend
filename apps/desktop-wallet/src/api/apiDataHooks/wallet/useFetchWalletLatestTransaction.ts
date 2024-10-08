@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { maxBy } from 'lodash'
 import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
@@ -27,14 +27,7 @@ const useFetchWalletLatestTransaction = (props?: SkipProp) => {
 
   return {
     data: useMemo(
-      () =>
-        latestTxsOfEachAddress.reduce(
-          (latestWalletTx, latestAddressTx) =>
-            (latestAddressTx?.latestTx?.timestamp ?? 0) > (latestWalletTx?.timestamp ?? 0)
-              ? latestAddressTx?.latestTx
-              : latestWalletTx,
-          undefined as Transaction | undefined
-        ),
+      () => maxBy(latestTxsOfEachAddress, (tx) => tx.latestTx?.timestamp)?.latestTx,
       [latestTxsOfEachAddress]
     ),
     isLoading
