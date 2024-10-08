@@ -18,23 +18,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useQuery } from '@tanstack/react-query'
 
-import { confirmedTransactionQuery, pendingTransactionQuery } from '@/api/queries/transactionQueries'
+import { UseFetchTransactionProps } from '@/api/apiDataHooks/transaction/transactionTypes'
+import useFetchPendingTransaction from '@/api/apiDataHooks/transaction/useFetchPendingTransaction'
+import { confirmedTransactionQuery } from '@/api/queries/transactionQueries'
 import { selectSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
 import { useAppSelector } from '@/hooks/redux'
 
-interface UseFetchTransactionProps {
-  txHash: string
-}
-
-const useFetchTransaction = ({ txHash }: UseFetchTransactionProps) => {
+const useFetchTransaction = ({ txHash, skip }: UseFetchTransactionProps) => {
   const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
 
   const isPendingTx = sentTx && sentTx.status !== 'confirmed'
 
   const { data: confirmedTx, isLoading: isLoadingConfirmedTx } = useQuery(
-    confirmedTransactionQuery({ txHash, skip: isPendingTx })
+    confirmedTransactionQuery({ txHash, skip: skip || isPendingTx })
   )
-  const { data: pendingTx } = useQuery(pendingTransactionQuery({ txHash, skip: !isPendingTx }))
+  const { data: pendingTx } = useFetchPendingTransaction({ txHash, skip: skip || !isPendingTx })
 
   return {
     data: confirmedTx ?? pendingTx,
