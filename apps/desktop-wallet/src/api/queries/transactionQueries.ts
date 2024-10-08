@@ -49,8 +49,6 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
           const cachedLatestTx = cachedData?.latestTx
 
           if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
-            console.log('💥💥💥💥💥💥💥💥💥💥💥💥💥 Running invalidation for:', addressHash)
-
             queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
             queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions', 'latest'] })
           }
