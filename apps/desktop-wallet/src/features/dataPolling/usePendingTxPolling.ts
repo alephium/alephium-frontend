@@ -22,8 +22,8 @@ import { useEffect } from 'react'
 
 import useFetchPendingTransaction from '@/api/apiDataHooks/transaction/useFetchPendingTransaction'
 import queryClient from '@/api/queryClient'
-import { sentTransactionStatusChanged } from '@/features/sentTransactions/sentTransactionsActions'
-import { selectSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
+import { sentTransactionStatusChanged } from '@/features/send/sentTransactions/sentTransactionsActions'
+import { selectSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 
