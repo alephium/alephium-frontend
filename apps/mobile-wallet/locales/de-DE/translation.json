@@ -172,6 +172,7 @@
   "Created fund password": "Guthaben Passwort erstellt",
   "Delete fund password": "Guthaben Passwort löschen",
   "Fund password was deleted.": "Guthaben Passwort wurde gelöscht.",
+  "Could not save fund password.": "Konnte Fondpasswort nicht speichern.",
   "You can set a new password below. This password will be required for critical operations involving the safety of your funds and cannot be recovered.": "Sie können unten ein neues Passwort festlegen. Dieses Passwort wird für kritische Operationen mit der Sicherheit Ihrer Guthaben benötigt und kann nicht wiederhergestellt werden.",
   "The fund password acts as an additional authentication layer for critical operations involving the safety of your funds such as revealing your secret recovery phrase or sending funds.": "Das Guthaben Passwort fungiert als zusätzliche Authentifizierungsschicht für kritische Vorgänge in Bezug auf die Sicherheit Ihres Guthabens, wie z. B. das Offenlegen Ihrer geheimen Wiederherstellungsphrase oder das Senden von Guthaben.",
   "Edit password": "Passwort ändern",
@@ -371,5 +372,8 @@
   "Due to an unexpected error some of your app's data are missing. Would you like to regenerate them? Your funds are safe.": "Aufgrund eines unerwarteten Fehlers fehlen einige Daten Ihrer App. Möchten Sie diese neu generieren? Ihr Guthaben ist sicher.",
   "We noticed that you deleted the app, would you like to restore your last wallet?": "Wir haben festgestellt, dass Sie die App gelöscht haben, möchten Sie Ihre letzte Wallet wiederherstellen?",
   "Yes": "Ja",
-  "No": "Nein"
+  "No": "Nein",
+  "Welcome back to Alephium!": "Willkommen zurück bei Alephium!",
+  "Enjoy your restored wallet!": "Geniessen Sie Ihre wiederhergestellte Wallet!",
+  "Lost connection to WalletConnect": "Verbindung zu WalletConnect verloren"
 }
