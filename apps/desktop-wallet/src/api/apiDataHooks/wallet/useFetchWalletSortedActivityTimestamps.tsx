@@ -20,26 +20,25 @@ import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import { useFetchWalletActivityTimestamps } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
+import useFetchLatestTransactionOfEachAddress from '@/api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
 import { useAppSelector } from '@/hooks/redux'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
 const useFetchWalletSortedActivityTimestamps = (props?: SkipProp) => {
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
-  const { data: addressesTimestamps, isLoading } = useFetchWalletActivityTimestamps({ skip: props?.skip })
+  const { data: latestTxs, isLoading: isLoadingLatestTxs } = useFetchLatestTransactionOfEachAddress(props)
 
   return {
     data: useMemo(
       () =>
         orderBy(
-          addressesTimestamps,
-          ({ addressHash, latestTxTimestamp }) =>
-            addressHash === defaultAddressHash ? undefined : latestTxTimestamp ?? 0,
+          latestTxs,
+          ({ addressHash, latestTx }) => (addressHash === defaultAddressHash ? undefined : latestTx?.timestamp ?? 0),
           'desc'
         ),
-      [addressesTimestamps, defaultAddressHash]
+      [latestTxs, defaultAddressHash]
     ),
-    isLoading
+    isLoading: isLoadingLatestTxs
   }
 }
 

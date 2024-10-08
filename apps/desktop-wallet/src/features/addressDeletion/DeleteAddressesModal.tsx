@@ -20,7 +20,6 @@ import { AddressHash } from '@alephium/shared'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import useFetchWalletSortedActivityTimestamps from '@/api/apiDataHooks/wallet/useFetchWalletSortedActivityTimestamps'
 import InfoBox from '@/components/InfoBox'
 import { OptionItem, OptionSelect } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
@@ -29,27 +28,25 @@ import ForgetMulitpleAddressesButton from '@/features/addressDeletion/ForgetMuli
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useFetchSortedAddressesHashesWithLatestTx } from '@/hooks/useAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import AddressLastActivity from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressLastActivity'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
 const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
-  const { data: addressesActivityTimestamps, isLoading } = useFetchWalletSortedActivityTimestamps()
+  const { data: sortedAddresses, isLoading: isLoadingSortedAddresses } = useFetchSortedAddressesHashesWithLatestTx()
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
   const dispatch = useAppDispatch()
 
-  const reversedAddressesArray = useMemo(
-    () => [...addressesActivityTimestamps].reverse(),
-    [addressesActivityTimestamps]
-  )
+  const reversedAddressesArray = useMemo(() => [...sortedAddresses].reverse(), [sortedAddresses])
 
   const [selectedAddressesForDeletion, setSelectedAddressesForDeletion] = useState<AddressHash[]>([])
 
   useEffect(() => {
-    if (!isLoading) {
-      const neverUsedAddresses = addressesActivityTimestamps
-        .filter(({ latestTxTimestamp }) => latestTxTimestamp === undefined)
+    if (!isLoadingSortedAddresses) {
+      const neverUsedAddresses = sortedAddresses
+        .filter(({ latestTx }) => latestTx?.timestamp === undefined)
         .map(({ addressHash }) => addressHash)
 
       setSelectedAddressesForDeletion(neverUsedAddresses)
@@ -57,9 +54,9 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
 
     // We want to initialize the selected addresses only once, we don't care if txs come in the meantime that will update the data array
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading])
+  }, [isLoadingSortedAddresses])
 
-  if (isLoading) return <SkeletonLoader height="300px" />
+  if (isLoadingSortedAddresses) return <SkeletonLoader height="300px" />
 
   const handleOptionClick = (addressHash: AddressHash) => {
     setSelectedAddressesForDeletion((prevValue) =>
@@ -80,7 +77,7 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
         </>
       </InfoBox>
       <OptionSelect>
-        {reversedAddressesArray.map(({ addressHash, latestTxTimestamp }) => {
+        {reversedAddressesArray.map(({ addressHash }) => {
           if (addressHash === defaultAddressHash) return
 
           const isSelected = selectedAddressesForDeletion.some((hash) => hash === addressHash)
@@ -111,7 +108,10 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
           {t('Cancel')}
         </ModalFooterButton>
 
-        <ForgetMulitpleAddressesButton addressHashes={selectedAddressesForDeletion} isLoading={isLoading} />
+        <ForgetMulitpleAddressesButton
+          addressHashes={selectedAddressesForDeletion}
+          isLoading={isLoadingSortedAddresses}
+        />
       </ModalFooterButtons>
     </CenteredModal>
   )

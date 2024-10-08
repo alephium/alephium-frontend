@@ -16,26 +16,24 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useMemo } from 'react'
+import { useQueries } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import useFetchWalletSortedActivityTimestamps from '@/api/apiDataHooks/wallet/useFetchWalletSortedActivityTimestamps'
+import { flatMapCombine } from '@/api/apiDataHooks/apiDataHooksUtils'
+import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
-const useFetchWalletAddressesHashesSortedByActivity = (props?: SkipProp) => {
+const useFetchLatestTransactionOfEachAddress = (props?: SkipProp) => {
+  const networkId = useAppSelector((s) => s.network.settings.networkId)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
-  const { data: addressesActivityTimestamps, isLoading } = useFetchWalletSortedActivityTimestamps(props)
 
-  const sortedAddressHashes = useMemo(
-    () => addressesActivityTimestamps.map(({ addressHash }) => addressHash),
-    [addressesActivityTimestamps]
-  )
-
-  return {
-    data: !isLoading && !props?.skip ? sortedAddressHashes : allAddressHashes,
-    isLoading
-  }
+  return useQueries({
+    queries: !props?.skip
+      ? allAddressHashes.map((addressHash) => addressLatestTransactionQuery({ addressHash, networkId }))
+      : [],
+    combine: flatMapCombine
+  })
 }
 
-export default useFetchWalletAddressesHashesSortedByActivity
+export default useFetchLatestTransactionOfEachAddress

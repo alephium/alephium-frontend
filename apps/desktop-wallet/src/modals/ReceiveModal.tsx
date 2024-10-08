@@ -20,17 +20,17 @@ import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchWalletAddressesHashesSortedByActivity from '@/api/apiDataHooks/wallet/useFetchWalletAddressesHashesSortedByActivity'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import QRCode from '@/components/QRCode'
 import { AddressModalProps } from '@/features/modals/modalTypes'
+import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
 import CenteredModal from '@/modals/CenteredModal'
 
 const QRCodeSize = 250
 
 const ReceiveModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
-  const { data: allAddressHashes } = useFetchWalletAddressesHashesSortedByActivity()
+  const { data: allAddressHashes } = useFetchSortedAddressesHashes()
 
   const [selectedAddress, setSelectedAddress] = useState(addressHash)
 
