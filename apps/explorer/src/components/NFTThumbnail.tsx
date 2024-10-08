@@ -68,7 +68,7 @@ const NFTThumbnail = memo(
               <ErrorMessage>{t('Unsupported media type')}</ErrorMessage>
             )
           ) : (
-            <ErrorMessage>{t('Missing data')}</ErrorMessage>
+            <ErrorMessage>{t('No media')}</ErrorMessage>
           )
         ) : (
           <SpinnerContainer>

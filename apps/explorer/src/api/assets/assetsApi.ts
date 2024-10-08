@@ -164,10 +164,23 @@ export const assetsQueries = {
     item: (dataUri: string, assetId: string) =>
       queryOptions({
         queryKey: ['nftData', dataUri],
+        // TODO: Should the image field in NFTTokenUriMetaData be optional?
         queryFn: async (): Promise<NFTTokenUriMetaData & { assetId: string }> => {
           const nftData = (await axios.get(dataUri)).data as NFTTokenUriMetaData
 
-          return matchesNFTTokenUriMetaDataSchema(nftData) ? { ...nftData, assetId } : Promise.reject()
+          if (!nftData || !nftData.name) {
+            return Promise.reject()
+          }
+
+          return matchesNFTTokenUriMetaDataSchema(nftData)
+            ? { ...nftData, assetId }
+            : nftData.name
+              ? {
+                  assetId,
+                  name: nftData.name,
+                  image: nftData.image ? nftData.image.toString() : ''
+                }
+              : Promise.reject()
         },
         staleTime: ONE_DAY_MS
       }),
