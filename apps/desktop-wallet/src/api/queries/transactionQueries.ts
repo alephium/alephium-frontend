@@ -48,6 +48,8 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
           const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionQueryFnData | undefined
           const cachedLatestTx = cachedData?.latestTx
 
+          // The following block invalidates queries that need to refetch data if a new transaction hash has been
+          // detected. This way, we don't need to use the latest tx hash in the queryKey of each of those queries.
           if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
             queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
             queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions', 'latest'] })
