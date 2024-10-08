@@ -18,12 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
 import { useInitializeThrottledClient } from '@alephium/shared-react'
-import { useQueries } from '@tanstack/react-query'
 import { ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
@@ -31,9 +29,9 @@ import SplashScreen from '@/components/SplashScreen'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
+import useAddressesDataPolling from '@/features/dataPolling/useAddressesDataPolling'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 import useAutoLock from '@/hooks/useAutoLock'
 import AppModals from '@/modals/AppModals'
 import Router from '@/routes'
@@ -92,15 +90,6 @@ const App = () => {
 }
 
 export default App
-
-const useAddressesDataPolling = () => {
-  const allAddressHashes = useUnsortedAddressesHashes()
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
-
-  useQueries({
-    queries: allAddressHashes.map((addressHash) => addressLatestTransactionQuery({ addressHash, networkId }))
-  })
-}
 
 const useDevModeShortcut = () => {
   const dispatch = useAppDispatch()
