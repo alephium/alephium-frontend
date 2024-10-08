@@ -34,17 +34,17 @@ export interface AddressesAlphBalances {
   isLoading: boolean
 }
 
-export const useFetchWalletBalancesAlph = (props?: SkipProp) =>
-  useFetchWalletBalancesAlphBy({ combine: combineBalances, skip: props?.skip })
+export const useFetchWalletBalancesAlphArray = (props?: SkipProp) =>
+  useFetchWalletBalancesAlph({ combine: combineBalances, skip: props?.skip })
 
 export const useFetchWalletBalancesAlphByAddress = (props?: SkipProp) =>
-  useFetchWalletBalancesAlphBy({ combine: combineBalancesByAddress, skip: props?.skip })
+  useFetchWalletBalancesAlph({ combine: combineBalancesByAddress, skip: props?.skip })
 
 interface UseFetchWalletBalancesAlphProps<T> extends SkipProp {
   combine: (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]) => { data: T; isLoading: boolean }
 }
 
-const useFetchWalletBalancesAlphBy = <T>({ combine, skip }: UseFetchWalletBalancesAlphProps<T>) => {
+const useFetchWalletBalancesAlph = <T>({ combine, skip }: UseFetchWalletBalancesAlphProps<T>) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
