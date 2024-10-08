@@ -23,28 +23,20 @@ import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-q
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import queryClient from '@/api/queryClient'
 
-const ADDRESS_TRANSACTIONS_QUERY_KEYS = ['address', 'transactions']
-
-interface AddressLatestTransactionQueryProps {
+export interface AddressLatestTransactionQueryProps {
   addressHash: AddressHash
   networkId: number
   skip?: boolean
 }
 
-export interface AddressLatestTransactionHashesProps extends AddressLatestTransactionQueryProps {
-  latestTxHash?: Transaction['hash']
-  previousTxHash?: Transaction['hash']
-}
-
 export interface AddressLatestTransactionQueryFnData {
   addressHash: AddressHash
   latestTx?: Transaction
-  previousTx?: Transaction
 }
 
-export const addressUpdatesSignalQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
+export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: [...ADDRESS_TRANSACTIONS_QUERY_KEYS, 'latest', { addressHash, networkId }],
+    queryKey: ['address', addressHash, 'transaction', 'latest', { networkId }],
     queryFn: !skip
       ? async ({ queryKey }) => {
           const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
@@ -55,12 +47,17 @@ export const addressUpdatesSignalQuery = ({ addressHash, networkId, skip }: Addr
           const latestTx = transactions.length > 0 ? transactions[0] : undefined
           const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionQueryFnData | undefined
           const cachedLatestTx = cachedData?.latestTx
-          const cachedPreviousTx = cachedData?.previousTx
+
+          if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
+            console.log('💥💥💥💥💥💥💥💥💥💥💥💥💥 Running invalidation for:', addressHash)
+
+            queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
+            queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions', 'latest'] })
+          }
 
           return {
-            addressHash,
-            latestTx,
-            previousTx: cachedLatestTx !== latestTx ? cachedLatestTx : cachedPreviousTx
+            addressHash, // Needed in combine functions to identify which address the latestTx refers to
+            latestTx
           }
         }
       : skipToken,
@@ -118,31 +115,14 @@ export const walletTransactionsInfiniteQuery = ({
 interface WalletLatestTransactionsQueryProps {
   networkId: number
   addressHashes: AddressHash[]
-  latestTxHash?: string
-  previousTxHash?: string
 }
 
-export const walletLatestTransactionsQuery = ({
-  addressHashes,
-  latestTxHash,
-  previousTxHash,
-  networkId
-}: WalletLatestTransactionsQueryProps) => {
-  const getQueryOptions = (latestTxHash: WalletLatestTransactionsQueryProps['latestTxHash']) =>
-    queryOptions({
-      queryKey: ['wallet', 'transactions', 'latest', { latestTxHash, networkId, addressHashes }],
-      queryFn: () => throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, addressHashes),
-      staleTime: Infinity
-    })
-
-  const previousQueryKey = getQueryOptions(previousTxHash).queryKey
-  const latestQueryOptions = getQueryOptions(latestTxHash)
-
-  return queryOptions({
-    ...latestQueryOptions,
-    placeholderData: queryClient.getQueryData(previousQueryKey)
+export const walletLatestTransactionsQuery = ({ addressHashes, networkId }: WalletLatestTransactionsQueryProps) =>
+  queryOptions({
+    queryKey: ['wallet', 'transactions', 'latest', { networkId, addressHashes }],
+    queryFn: () => throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, addressHashes),
+    staleTime: Infinity
   })
-}
 
 interface TransactionQueryProps extends SkipProp {
   txHash: string

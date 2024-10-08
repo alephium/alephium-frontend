@@ -20,153 +20,101 @@ import { AddressHash, PAGINATION_PAGE_LIMIT, throttledClient } from '@alephium/s
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
-import { AddressLatestTransactionHashesProps } from '@/api/queries/transactionQueries'
-import queryClient from '@/api/queryClient'
+import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
 import { DisplayBalances, TokenDisplayBalances, TokenId } from '@/types/tokens'
-
-const ADDRESS_BALANCE_QUERY_KEYS = ['address', 'balance']
 
 export type AddressAlphBalancesQueryFnData = {
   addressHash: AddressHash
   balances: DisplayBalances
 }
 
-// Adding latestTxHash in queryKey ensures that we'll refetch when new txs arrive.
 // Adding networkId in queryKey ensures that switching the network we get different data.
 // TODO: Should we add explorerBackendUrl instead?
-export const addressAlphBalancesQuery = ({
-  addressHash,
-  networkId,
-  latestTxHash,
-  previousTxHash,
-  skip
-}: AddressLatestTransactionHashesProps) => {
-  const getQueryOptions = (latestTxHash: AddressLatestTransactionHashesProps['latestTxHash']) =>
-    queryOptions({
-      queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'ALPH', { addressHash, latestTxHash, networkId }],
-      queryFn: !skip
-        ? async () => {
-            const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
+export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'balance', 'ALPH', { networkId }],
+    queryFn: !skip
+      ? async () => {
+          const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
 
-            return {
-              addressHash,
-              balances: {
-                totalBalance: BigInt(balances.balance),
-                lockedBalance: BigInt(balances.lockedBalance),
-                availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
-              }
+          return {
+            addressHash,
+            balances: {
+              totalBalance: BigInt(balances.balance),
+              lockedBalance: BigInt(balances.lockedBalance),
+              availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
             }
           }
-        : skipToken,
-      staleTime: Infinity
-    })
-
-  const previousQueryKey = getQueryOptions(previousTxHash).queryKey
-  const latestQueryOptions = getQueryOptions(latestTxHash)
-
-  return queryOptions({
-    ...latestQueryOptions,
-    placeholderData: queryClient.getQueryData(previousQueryKey)
+        }
+      : skipToken,
+    staleTime: Infinity
   })
-}
 
-interface AddressTokenBalancesQueryProps extends AddressLatestTransactionHashesProps {
+interface AddressTokenBalancesQueryProps extends AddressLatestTransactionQueryProps {
   tokenId: TokenId
 }
 
-export const addressSingleTokenBalancesQuery = ({
-  addressHash,
-  tokenId,
-  networkId,
-  latestTxHash,
-  previousTxHash
-}: AddressTokenBalancesQueryProps) => {
-  const getQueryOptions = (latestTxHash: AddressLatestTransactionHashesProps['latestTxHash']) =>
-    queryOptions({
-      queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, { addressHash, tokenId, latestTxHash, networkId }],
-      queryFn: async () => {
-        const balances = await throttledClient.explorer.addresses.getAddressesAddressTokensTokenIdBalance(
-          addressHash,
-          tokenId
-        )
+export const addressSingleTokenBalancesQuery = ({ addressHash, tokenId, networkId }: AddressTokenBalancesQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'balance', 'token', tokenId, { networkId }],
+    queryFn: async () => {
+      const balances = await throttledClient.explorer.addresses.getAddressesAddressTokensTokenIdBalance(
+        addressHash,
+        tokenId
+      )
 
-        return {
-          addressHash,
-          balances: {
-            totalBalance: BigInt(balances.balance),
-            lockedBalance: BigInt(balances.lockedBalance),
-            availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
-          }
+      return {
+        addressHash,
+        balances: {
+          totalBalance: BigInt(balances.balance),
+          lockedBalance: BigInt(balances.lockedBalance),
+          availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
         }
-      },
-      staleTime: Infinity
-    })
-
-  const previousQueryKey = getQueryOptions(previousTxHash).queryKey
-  const latestQueryOptions = getQueryOptions(latestTxHash)
-
-  return queryOptions({
-    ...latestQueryOptions,
-    placeholderData: queryClient.getQueryData(previousQueryKey)
+      }
+    },
+    staleTime: Infinity
   })
-}
 
 export type AddressTokensBalancesQueryFnData = {
   addressHash: AddressHash
   balances: TokenDisplayBalances[]
 }
 
-export const addressTokensBalancesQuery = ({
-  addressHash,
-  networkId,
-  latestTxHash,
-  previousTxHash,
-  skip
-}: AddressLatestTransactionHashesProps) => {
-  const getQueryOptions = (latestTxHash: AddressLatestTransactionHashesProps['latestTxHash']) =>
-    queryOptions({
-      queryKey: [...ADDRESS_BALANCE_QUERY_KEYS, 'tokens', { addressHash, latestTxHash, networkId }],
-      queryFn: !skip
-        ? async () => {
-            const tokenBalances = [] as TokenDisplayBalances[]
-            let tokenBalancesInPage = [] as AddressTokenBalance[]
-            let page = 1
+export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'balance', 'tokens', { networkId }],
+    queryFn: !skip
+      ? async () => {
+          const tokenBalances = [] as TokenDisplayBalances[]
+          let tokenBalancesInPage = [] as AddressTokenBalance[]
+          let page = 1
 
-            while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
-              tokenBalancesInPage = await throttledClient.explorer.addresses.getAddressesAddressTokensBalance(
-                addressHash,
-                {
-                  limit: PAGINATION_PAGE_LIMIT,
-                  page
-                }
-              )
-
-              tokenBalances.push(
-                ...tokenBalancesInPage.map((tokenBalances) => ({
-                  id: tokenBalances.tokenId,
-                  totalBalance: BigInt(tokenBalances.balance),
-                  lockedBalance: BigInt(tokenBalances.lockedBalance),
-                  availableBalance: BigInt(tokenBalances.balance) - BigInt(tokenBalances.lockedBalance)
-                }))
-              )
-              page += 1
-            }
-
-            return {
+          while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
+            tokenBalancesInPage = await throttledClient.explorer.addresses.getAddressesAddressTokensBalance(
               addressHash,
-              balances: tokenBalances
-            }
+              {
+                limit: PAGINATION_PAGE_LIMIT,
+                page
+              }
+            )
+
+            tokenBalances.push(
+              ...tokenBalancesInPage.map((tokenBalances) => ({
+                id: tokenBalances.tokenId,
+                totalBalance: BigInt(tokenBalances.balance),
+                lockedBalance: BigInt(tokenBalances.lockedBalance),
+                availableBalance: BigInt(tokenBalances.balance) - BigInt(tokenBalances.lockedBalance)
+              }))
+            )
+            page += 1
           }
-        : skipToken,
 
-      staleTime: Infinity
-    })
+          return {
+            addressHash,
+            balances: tokenBalances
+          }
+        }
+      : skipToken,
 
-  const previousQueryKey = getQueryOptions(previousTxHash).queryKey
-  const latestQueryOptions = getQueryOptions(latestTxHash)
-
-  return queryOptions({
-    ...latestQueryOptions,
-    placeholderData: queryClient.getQueryData(previousQueryKey)
+    staleTime: Infinity
   })
-}

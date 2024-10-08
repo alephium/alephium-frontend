@@ -22,9 +22,9 @@ import { useQueries } from '@tanstack/react-query'
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineBalances } from '@/api/apiDataHooks/wallet/combineBalances'
 import { useFetchWalletBalancesAlph } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { useFetchWalletUpdatesSignals } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import { TokenId } from '@/types/tokens'
 
 interface UseFetchWalletSingleTokenBalancesProps extends SkipProp {
@@ -33,7 +33,7 @@ interface UseFetchWalletSingleTokenBalancesProps extends SkipProp {
 
 const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSingleTokenBalancesProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { data: updatesSignals, isLoading: isLoadingUpdateSignals } = useFetchWalletUpdatesSignals({ skip })
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
   const isALPH = tokenId === ALPH.id
 
@@ -44,14 +44,14 @@ const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSing
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQueries({
     queries:
       !isALPH && !skip
-        ? updatesSignals.map((props) => addressSingleTokenBalancesQuery({ ...props, tokenId, networkId }))
+        ? allAddressHashes.map((addressHash) => addressSingleTokenBalancesQuery({ addressHash, tokenId, networkId }))
         : [],
     combine: combineBalances
   })
 
   return {
     data: isALPH ? alphBalances : tokenBalances,
-    isLoading: isLoadingUpdateSignals || isLoadingTokenBalances || isLoadingAlphBalances
+    isLoading: isLoadingTokenBalances || isLoadingAlphBalances
   }
 }
 

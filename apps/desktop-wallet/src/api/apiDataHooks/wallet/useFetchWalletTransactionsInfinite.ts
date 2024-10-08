@@ -31,7 +31,7 @@ const useFetchWalletTransactionsInfinite = () => {
   const [fetchedTransactionListAt, setFetchedTransactionListAt] = useState(0)
   const refresh = useCallback(() => setFetchedTransactionListAt(new Date().getTime()), [])
 
-  const { data: detectedTxUpdates, isLoading: isLoadingLatestTx } = useFetchWalletLastTransaction()
+  const { data: latestTx, isLoading: isLoadingLatestTx } = useFetchWalletLastTransaction()
   const { data, fetchNextPage, isLoading, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
     walletTransactionsInfiniteQuery({
       addressHashes,
@@ -43,7 +43,7 @@ const useFetchWalletTransactionsInfinite = () => {
 
   const fetchedConfirmedTxs = useMemo(() => data?.pages.flat() ?? [], [data?.pages])
   const latestFetchedTxHash = fetchedConfirmedTxs[0]?.hash
-  const latestUnfetchedTxHash = detectedTxUpdates.latestTx?.hash
+  const latestUnfetchedTxHash = latestTx?.hash
   const showNewTxsMessage = !isLoading && latestUnfetchedTxHash && latestFetchedTxHash !== latestUnfetchedTxHash
 
   return {

@@ -22,9 +22,9 @@ import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { combineBalances } from '@/api/apiDataHooks/wallet/combineBalances'
-import { useFetchWalletUpdatesSignals } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import { DisplayBalances } from '@/types/tokens'
 
 // Using undefined to avoid adding noUncheckedIndexedAccess in tsconfig while maintaining strong typing when accessing
@@ -46,17 +46,12 @@ interface UseFetchWalletBalancesAlphProps<T> extends SkipProp {
 
 const useFetchWalletBalancesAlphBy = <T>({ combine, skip }: UseFetchWalletBalancesAlphProps<T>) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { data: updatesSignals, isLoading: isLoadingUpdateSignals } = useFetchWalletUpdatesSignals({ skip })
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
-  const { data, isLoading } = useQueries({
-    queries: updatesSignals.map((hashes) => addressAlphBalancesQuery({ ...hashes, networkId, skip })),
+  return useQueries({
+    queries: allAddressHashes.map((addressHash) => addressAlphBalancesQuery({ addressHash, networkId, skip })),
     combine
   })
-
-  return {
-    data,
-    isLoading: isLoading || isLoadingUpdateSignals
-  }
 }
 
 const combineBalancesByAddress = (
