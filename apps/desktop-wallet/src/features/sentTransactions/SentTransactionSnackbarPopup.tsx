@@ -16,9 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isConfirmedTx } from '@alephium/shared'
 import { useInterval } from '@alephium/shared-react'
-import { useQuery } from '@tanstack/react-query'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { t } from 'i18next'
 import { X } from 'lucide-react'
 import { memo, useEffect, useState } from 'react'
@@ -26,29 +25,25 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeInBottom, fadeOut } from '@/animations'
-import { pendingTransactionQuery } from '@/api/queries/transactionQueries'
 import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
+import usePendingTxPolling from '@/features/dataPolling/usePendingTxPolling'
 import { openModal } from '@/features/modals/modalActions'
 import { selectTopModal } from '@/features/modals/modalSelectors'
-import { sentTransactionStatusChanged } from '@/features/sentTransactions/sentTransactionsActions'
 import { selectSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
 import SnackbarBox from '@/features/snackbar/SnackbarBox'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { SentTransaction } from '@/types/transactions'
 
-const SentTransactionSnackbarPopup = memo(({ txHash }: { txHash: string }) => {
-  const dispatch = useAppDispatch()
+interface SentTransactionSnackbarPopupProps {
+  txHash: Transaction['hash']
+}
+
+const SentTransactionSnackbarPopup = memo(({ txHash }: SentTransactionSnackbarPopupProps) => {
   const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
   const [hide, setHide] = useState(false)
 
-  const { data: tx } = useQuery(pendingTransactionQuery({ txHash, skip: !sentTx || sentTx.status === 'confirmed' }))
-
-  useEffect(() => {
-    if (!tx) return
-
-    dispatch(sentTransactionStatusChanged({ hash: tx.hash, status: isConfirmedTx(tx) ? 'confirmed' : 'mempooled' }))
-  }, [dispatch, tx])
+  usePendingTxPolling(txHash)
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>
