@@ -22,7 +22,7 @@ import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
 import historicWorthChartSlice from '@/features/historicChart/historicWorthChartSlice'
 import modalSlice from '@/features/modals/modalSlice'
-import sentTransactionsSlice from '@/features/sentTransactions/sentTransactionsSlice'
+import sentTransactionsSlice from '@/features/send/sentTransactions/sentTransactionsSlice'
 import addressesSlice from '@/storage/addresses/addressesSlice'
 import contactsSlice from '@/storage/addresses/contactsSlice'
 import globalSlice from '@/storage/global/globalSlice'

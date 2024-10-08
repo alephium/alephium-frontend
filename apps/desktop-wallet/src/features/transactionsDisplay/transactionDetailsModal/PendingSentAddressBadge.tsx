@@ -22,7 +22,7 @@ import { Badge } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import AddressBadge from '@/components/AddressBadge'
-import { selectPendingSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
+import { selectPendingSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 import { useAppSelector } from '@/hooks/redux'
 

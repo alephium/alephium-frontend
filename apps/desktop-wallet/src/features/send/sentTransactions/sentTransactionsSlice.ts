@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createSlice, EntityState, isAnyOf } from '@reduxjs/toolkit'
 
-import { sentTransactionStatusChanged } from '@/features/sentTransactions/sentTransactionsActions'
-import { sentTransactionsAdapter } from '@/features/sentTransactions/sentTransactionsAdapter'
+import { sentTransactionStatusChanged } from '@/features/send/sentTransactions/sentTransactionsActions'
+import { sentTransactionsAdapter } from '@/features/send/sentTransactions/sentTransactionsAdapter'
 import { receiveTestnetTokens } from '@/storage/global/globalActions'
 import { transactionSent } from '@/storage/transactions/transactionsActions'
 import { activeWalletDeleted, walletLocked, walletSwitched } from '@/storage/wallets/walletActions'

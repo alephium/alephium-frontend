@@ -22,7 +22,7 @@ import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import IOList from '@/components/IOList'
-import { selectPendingSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
+import { selectPendingSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/PendingSentAddressBadge'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
