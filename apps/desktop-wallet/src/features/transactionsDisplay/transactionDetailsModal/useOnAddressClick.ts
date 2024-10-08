@@ -20,12 +20,12 @@ import { AddressHash } from '@alephium/shared'
 
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 import { openInWebBrowser } from '@/utils/misc'
 
 const useOnAddressClick = () => {
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
-  const internalAddressHashes = useAppSelector(selectAllAddressHashes)
+  const internalAddressHashes = useUnsortedAddressesHashes()
 
   const dispatch = useAppDispatch()
 
