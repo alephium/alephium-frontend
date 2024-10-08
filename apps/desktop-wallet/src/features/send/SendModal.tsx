@@ -32,22 +32,30 @@ import PasswordConfirmation from '@/components/PasswordConfirmation'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import CallContractAddressesTxModalContent from '@/features/send/sendModals/callContract/AddressesTxModalContent'
+import CallContractBuildTxModalContent from '@/features/send/sendModals/callContract/BuildTxModalContent'
 import {
   buildCallContractTransaction,
   getCallContractWalletConnectResult,
   handleCallContractSend
-} from '@/features/send/callContract'
-import CallContractAddressesTxModalContent from '@/features/send/callContract/AddressesTxModalContent'
-import CallContractBuildTxModalContent from '@/features/send/callContract/BuildTxModalContent'
-import CallContractCheckTxModalContent from '@/features/send/callContract/CheckTxModalContent'
+} from '@/features/send/sendModals/callContract/CallContractSendModal'
+import CallContractCheckTxModalContent from '@/features/send/sendModals/callContract/CheckTxModalContent'
+import DeployContractAddressesTxModalContent from '@/features/send/sendModals/deployContract/AddressesTxModalContent'
+import DeployContractBuildTxModalContent from '@/features/send/sendModals/deployContract/BuildTxModalContent'
+import DeployContractCheckTxModalContent from '@/features/send/sendModals/deployContract/CheckTxModalContent'
 import {
   buildDeployContractTransaction,
   getDeployContractWalletConnectResult,
   handleDeployContractSend
-} from '@/features/send/deployContract'
-import DeployContractAddressesTxModalContent from '@/features/send/deployContract/AddressesTxModalContent'
-import DeployContractBuildTxModalContent from '@/features/send/deployContract/BuildTxModalContent'
-import DeployContractCheckTxModalContent from '@/features/send/deployContract/CheckTxModalContent'
+} from '@/features/send/sendModals/deployContract/DeployContractSendModal'
+import TransferAddressesTxModalContent from '@/features/send/sendModals/transfer/AddressesTxModalContent'
+import TransferBuildTxModalContent from '@/features/send/sendModals/transfer/BuildTxModalContent'
+import TransferCheckTxModalContent from '@/features/send/sendModals/transfer/CheckTxModalContent'
+import {
+  buildTransferTransaction,
+  getTransferWalletConnectResult,
+  handleTransferSend
+} from '@/features/send/sendModals/transfer/TransferSendModal'
 import {
   AddressesTxModalData,
   CallContractTxData,
@@ -58,10 +66,6 @@ import {
   UnsignedTx
 } from '@/features/send/sendTypes'
 import StepsProgress, { Step } from '@/features/send/StepsProgress'
-import { buildTransferTransaction, getTransferWalletConnectResult, handleTransferSend } from '@/features/send/Transfer'
-import TransferAddressesTxModalContent from '@/features/send/Transfer/AddressesTxModalContent'
-import TransferBuildTxModalContent from '@/features/send/Transfer/BuildTxModalContent'
-import TransferCheckTxModalContent from '@/features/send/Transfer/CheckTxModalContent'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
