@@ -1,7 +1,7 @@
 {
   "name": "@alephium/explorer",
   "description": "The Alephium explorer frontend",
-  "version": "1.10.4",
+  "version": "1.10.6",
   "private": true,
   "scripts": {
     "start": "turbo start:app",
@@ -45,6 +45,7 @@
     "@tanstack/react-query-persist-client": "^5.45.0",
     "@yornaath/batshit": "^0.10.0",
     "apexcharts": "^3.35.0",
+    "axios": "^1.7.4",
     "colord": "^2.9.3",
     "dayjs": "^1.10.7",
     "framer-motion": "^11.2.12",
@@ -92,9 +93,9 @@
     "rollup-plugin-node-polyfills": "^0.2.1",
     "serve": "^14.1.2",
     "typescript": "^5.5.3",
-    "vite": "^4.5.2",
+    "vite": "^5.4.8",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0",
-    "vitest": "^0.31.0"
+    "vitest": "^2.1.2"
   }
 }

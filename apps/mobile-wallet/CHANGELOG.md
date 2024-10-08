@@ -1,5 +1,14 @@
 # @alephium/mobile-wallet
 
+## 1.1.8
+
+### Patch Changes
+
+- Updated dependencies [3eca397]
+  - @alephium/shared@0.7.11
+  - @alephium/keyring@0.0.1
+  - @alephium/shared-react@0.0.3
+
 ## 1.1.7
 
 ### Patch Changes

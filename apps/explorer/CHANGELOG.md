@@ -1,5 +1,20 @@
 # @alephium/explorer
 
+## 1.10.6
+
+### Patch Changes
+
+- 71efb5b: Support partial NFT data (ANS like)
+
+## 1.10.5
+
+### Patch Changes
+
+- 3eca397: Improve display of NFTs
+- Updated dependencies [3eca397]
+  - @alephium/shared@0.7.11
+  - @alephium/shared-react@0.0.3
+
 ## 1.10.2
 
 ### Patch Changes
