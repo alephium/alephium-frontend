@@ -28,13 +28,13 @@ import { useMemo } from 'react'
 
 import { selectPendingSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 
 const useTransactionDirection = (
   tx: Transaction | PendingTransaction,
   addressHash: AddressHash
 ): TransactionDirection => {
-  const internalAddresses = useAppSelector(selectAllAddressHashes)
+  const internalAddresses = useUnsortedAddressesHashes()
   const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
 
   return useMemo(() => {

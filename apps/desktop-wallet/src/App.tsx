@@ -33,10 +33,10 @@ import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 import useAutoLock from '@/hooks/useAutoLock'
 import AppModals from '@/modals/AppModals'
 import Router from '@/routes'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrationFailed,
@@ -94,7 +94,7 @@ const App = () => {
 export default App
 
 const useAddressesDataPolling = () => {
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const allAddressHashes = useUnsortedAddressesHashes()
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   useQueries({

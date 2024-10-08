@@ -42,9 +42,8 @@ import NFTsDataListRow from '@/features/transactionsDisplay/transactionDetailsMo
 import NSTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NSTsDataListRow'
 import TransactionType from '@/features/transactionsDisplay/transactionDetailsModal/TransactionType'
 import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
-import { useAppSelector } from '@/hooks/redux'
+import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 import SideModal from '@/modals/SideModal'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import { formatDateForDisplay } from '@/utils/misc'
 
 export interface TransactionDetailsModalProps {
@@ -68,7 +67,7 @@ export default TransactionDetailsModal
 
 const Summary = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
   const { data: tx } = useFetchTransaction({ txHash })
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const allAddressHashes = useUnsortedAddressesHashes()
 
   if (!tx) return null
 
@@ -104,7 +103,7 @@ const ShowInExplorerButton = ({ txHash }: Pick<TransactionDetailsModalProps, 'tx
 const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const allAddressHashes = useUnsortedAddressesHashes()
 
   const { data: tx, isLoading } = useFetchTransaction({ txHash })
 

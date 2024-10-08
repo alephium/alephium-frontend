@@ -28,7 +28,7 @@ import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/features/histo
 import { getChartOptions, getFilteredChartData } from '@/features/historicChart/historicChartUtils'
 import useHistoricData from '@/features/historicChart/useHistoricData'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 
 interface HistoricWorthChartProps {
   onDataPointHover: (dataPoint?: DataPoint) => void
@@ -64,7 +64,7 @@ const HistoricWorthChart = memo(
     const theme = useTheme()
     const discreetMode = useAppSelector((s) => s.settings.discreetMode)
     const length = useAppSelector((s) => s.historicWorthChart.chartLength)
-    const allAddressesHashes = useAppSelector(selectAllAddressHashes)
+    const allAddressesHashes = useUnsortedAddressesHashes()
     const { alphBalanceHistoryPerAddress, alphPriceHistory, isLoading: isLoadingHistoricData } = useHistoricData()
     const { data: latestWorth } = useFetchWalletWorthAlph()
 

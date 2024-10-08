@@ -22,13 +22,14 @@ import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import useFetchLatestTransactionOfEachAddress from '@/api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
+import { useFetchWalletBalancesAlphByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
 export const useUnsortedAddressesHashes = (): AddressHash[] => useAppSelector(selectAllAddressHashes)
 
 export const useFetchSortedAddressesHashes = (props?: SkipProp) => {
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const allAddressHashes = useUnsortedAddressesHashes()
   const { data: sortedAddresses, isLoading } = useFetchSortedAddressesHashesWithLatestTx(props)
 
   const sortedAddressHashes = useMemo(() => sortedAddresses.map(({ addressHash }) => addressHash), [sortedAddresses])
@@ -58,7 +59,7 @@ export const useFetchSortedAddressesHashesWithLatestTx = (props?: SkipProp) => {
 }
 
 export const useCappedAddressesHashes = () => {
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const allAddressHashes = useUnsortedAddressesHashes()
 
   const exceedsAddressLimit = allAddressHashes.length > ADDRESSES_QUERY_LIMIT
   const { data: allAddressHashesSorted, isLoading: isLoadingSortedAddresses } = useFetchSortedAddressesHashes({
@@ -76,5 +77,23 @@ export const useCappedAddressesHashes = () => {
           : allAddressHashes,
       [allAddressHashes, allAddressHashesSorted, exceedsAddressLimit, isLoadingSortedAddresses]
     )
+  }
+}
+
+export const useFetchAddressesHashesWithBalance = () => {
+  const allAddressHashes = useUnsortedAddressesHashes()
+  const { data: addressesAlphBalances, isLoading } = useFetchWalletBalancesAlphByAddress()
+
+  const filteredAddressHashes = useMemo(
+    () =>
+      allAddressHashes.filter(
+        (addressHash) => addressesAlphBalances[addressHash] && addressesAlphBalances[addressHash].totalBalance > 0
+      ),
+    [addressesAlphBalances, allAddressHashes]
+  )
+
+  return {
+    data: filteredAddressHashes,
+    isLoading
   }
 }

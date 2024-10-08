@@ -24,7 +24,7 @@ import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { combineBalances } from '@/api/apiDataHooks/wallet/combineBalances'
 import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 import { DisplayBalances } from '@/types/tokens'
 
 // Using undefined to avoid adding noUncheckedIndexedAccess in tsconfig while maintaining strong typing when accessing
@@ -46,7 +46,7 @@ interface UseFetchWalletBalancesAlphProps<T> extends SkipProp {
 
 const useFetchWalletBalancesAlph = <T>({ combine, skip }: UseFetchWalletBalancesAlphProps<T>) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const allAddressHashes = useUnsortedAddressesHashes()
 
   return useQueries({
     queries: allAddressHashes.map((addressHash) => addressAlphBalancesQuery({ addressHash, networkId, skip })),
