@@ -16,30 +16,29 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { orderBy } from 'lodash'
+import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import useFetchLatestTransactionOfEachAddress from '@/api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
-import { useAppSelector } from '@/hooks/redux'
-import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
-const useFetchWalletSortedActivityTimestamps = (props?: SkipProp) => {
-  const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
-  const { data: latestTxs, isLoading: isLoadingLatestTxs } = useFetchLatestTransactionOfEachAddress(props)
+const useFetchWalletLatestTransaction = (props?: SkipProp) => {
+  const { data: latestTxsOfEachAddress, isLoading } = useFetchLatestTransactionOfEachAddress(props)
 
   return {
     data: useMemo(
       () =>
-        orderBy(
-          latestTxs,
-          ({ addressHash, latestTx }) => (addressHash === defaultAddressHash ? undefined : latestTx?.timestamp ?? 0),
-          'desc'
+        latestTxsOfEachAddress.reduce(
+          (latestWalletTx, latestAddressTx) =>
+            (latestAddressTx?.latestTx?.timestamp ?? 0) > (latestWalletTx?.timestamp ?? 0)
+              ? latestAddressTx?.latestTx
+              : latestWalletTx,
+          undefined as Transaction | undefined
         ),
-      [latestTxs, defaultAddressHash]
+      [latestTxsOfEachAddress]
     ),
-    isLoading: isLoadingLatestTxs
+    isLoading
   }
 }
 
-export default useFetchWalletSortedActivityTimestamps
+export default useFetchWalletLatestTransaction
