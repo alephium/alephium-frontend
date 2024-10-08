@@ -30,7 +30,7 @@ interface ForgetAddressButtonProps {
   addressName: string
 }
 
-const ForgetAddress = ({ addressHash, addressName }: ForgetAddressButtonProps) => {
+const ForgetAddressButton = ({ addressHash, addressName }: ForgetAddressButtonProps) => {
   const { t } = useTranslation()
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
   const isDefault = addressHash === defaultAddressHash
@@ -64,4 +64,4 @@ const ForgetAddress = ({ addressHash, addressName }: ForgetAddressButtonProps) =
   )
 }
 
-export default ForgetAddress
+export default ForgetAddressButton
