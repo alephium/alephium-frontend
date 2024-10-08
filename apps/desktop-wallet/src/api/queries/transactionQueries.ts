@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, throttledClient, TRANSACTIONS_REFRESH_INTERVAL } from '@alephium/shared'
+import { AddressHash, throttledClient } from '@alephium/shared'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
@@ -60,8 +60,7 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
             latestTx
           }
         }
-      : skipToken,
-    refetchInterval: TRANSACTIONS_REFRESH_INTERVAL
+      : skipToken
   })
 
 interface TransactionsInfiniteQueryBaseProps {

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { TRANSACTIONS_REFRESH_INTERVAL } from '@alephium/shared'
 import { useQueries } from '@tanstack/react-query'
 
 import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
@@ -27,7 +28,10 @@ const useAddressesDataPolling = () => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   useQueries({
-    queries: allAddressHashes.map((addressHash) => addressLatestTransactionQuery({ addressHash, networkId }))
+    queries: allAddressHashes.map((addressHash) => ({
+      ...addressLatestTransactionQuery({ addressHash, networkId }),
+      refetchInterval: TRANSACTIONS_REFRESH_INTERVAL
+    }))
   })
 }
 
