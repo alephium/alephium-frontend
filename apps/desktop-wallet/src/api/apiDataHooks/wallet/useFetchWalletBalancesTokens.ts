@@ -20,9 +20,9 @@ import { AddressHash } from '@alephium/shared'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { useFetchWalletUpdatesSignals } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import { DisplayBalances, TokenDisplayBalances, TokenId } from '@/types/tokens'
 
 export const useFetchWalletBalancesTokensArray = () => useFetchWalletBalancesTokens(combineBalancesToArray)
@@ -35,17 +35,12 @@ const useFetchWalletBalancesTokens = <T>(
   combine: (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => { data: T; isLoading: boolean }
 ) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { data: updatesSignals, isLoading: isLoadingUpdateSignals } = useFetchWalletUpdatesSignals()
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
-  const { data, isLoading } = useQueries({
-    queries: updatesSignals.map((hashes) => addressTokensBalancesQuery({ ...hashes, networkId })),
+  return useQueries({
+    queries: allAddressHashes.map((addressHash) => addressTokensBalancesQuery({ addressHash, networkId })),
     combine
   })
-
-  return {
-    data,
-    isLoading: isLoading || isLoadingUpdateSignals
-  }
 }
 
 const combineBalancesByToken = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => ({

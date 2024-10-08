@@ -20,7 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useCallback, useMemo, useState } from 'react'
 
-import useFetchAddressUpdatesSignal from '@/api/apiDataHooks/address/useFetchAddressUpdatesSignal'
+import useFetchAddressLatestTransaction from '@/api/apiDataHooks/address/useFetchAddressLatestTransaction'
 import { addressTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 
@@ -34,19 +34,19 @@ const useFetchAddressInfiniteTransactions = ({ addressHash }: UseFetchAddressInf
   const [fetchedTransactionListAt, setFetchedTransactionListAt] = useState(0)
   const refresh = useCallback(() => setFetchedTransactionListAt(new Date().getTime()), [])
 
-  const { data: updatesSignal, isLoading: isLoadingUpdatesSignal } = useFetchAddressUpdatesSignal({ addressHash })
+  const { data: addressLatestTx, isLoading: isLoadingLatestTx } = useFetchAddressLatestTransaction({ addressHash })
   const { data, fetchNextPage, isLoading, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
     addressTransactionsInfiniteQuery({
       addressHash,
       timestamp: fetchedTransactionListAt,
       networkId,
-      skip: isLoadingUpdatesSignal
+      skip: isLoadingLatestTx
     })
   )
 
   const fetchedConfirmedTxs = useMemo(() => data?.pages.flat() ?? [], [data?.pages])
   const latestFetchedTxHash = fetchedConfirmedTxs[0]?.hash
-  const latestUnfetchedTxHash = updatesSignal?.latestTx?.hash
+  const latestUnfetchedTxHash = addressLatestTx?.latestTx?.hash
   const showNewTxsMessage = !isLoading && latestUnfetchedTxHash && latestFetchedTxHash !== latestUnfetchedTxHash
 
   return {

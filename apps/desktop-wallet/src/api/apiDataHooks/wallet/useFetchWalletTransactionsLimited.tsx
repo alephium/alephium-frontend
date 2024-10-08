@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useQuery } from '@tanstack/react-query'
 
 import useLimitedWalletAddresses from '@/api/apiDataHooks/utils/useLimitedWalletAddresses'
-import { useFetchWalletLastTransaction } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
 import { walletLatestTransactionsQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 
@@ -27,15 +26,7 @@ const useFetchWalletTransactionsLimited = () => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const { addressHashes, isLimited } = useLimitedWalletAddresses()
 
-  const { data } = useFetchWalletLastTransaction()
-  const { data: confirmedTxs, isLoading } = useQuery(
-    walletLatestTransactionsQuery({
-      addressHashes,
-      latestTxHash: data?.latestTx?.hash,
-      previousTxHash: data?.previousTx?.hash,
-      networkId
-    })
-  )
+  const { data: confirmedTxs, isLoading } = useQuery(walletLatestTransactionsQuery({ addressHashes, networkId }))
 
   return {
     data: confirmedTxs,

@@ -18,10 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
 import { useInitializeThrottledClient } from '@alephium/shared-react'
+import { useQueries } from '@tanstack/react-query'
 import { ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
+import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
@@ -34,6 +36,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
 import AppModals from '@/modals/AppModals'
 import Router from '@/routes'
+import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrationFailed,
@@ -54,6 +57,7 @@ const App = () => {
   const theme = useAppSelector((s) => s.global.theme)
 
   useAutoLock()
+  useAddressesDataPolling()
 
   useMigrateStoredSettings()
   useTrackUserSettings()
@@ -88,6 +92,15 @@ const App = () => {
 }
 
 export default App
+
+const useAddressesDataPolling = () => {
+  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const networkId = useAppSelector((s) => s.network.settings.networkId)
+
+  useQueries({
+    queries: allAddressHashes.map((addressHash) => addressLatestTransactionQuery({ addressHash, networkId }))
+  })
+}
 
 const useDevModeShortcut = () => {
   const dispatch = useAppDispatch()

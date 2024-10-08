@@ -19,28 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useQuery } from '@tanstack/react-query'
 
 import { UseFetchAddressProps } from '@/api/apiDataHooks/address/addressApiDataHooksTypes'
-import useFetchAddressUpdatesSignal from '@/api/apiDataHooks/address/useFetchAddressUpdatesSignal'
 import { addressTokensBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 
 const useFetchAddressBalancesTokens = ({ addressHash, skip }: UseFetchAddressProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
-  const { data: updatesSignal, isLoading: isLoadingUpdatesSignal } = useFetchAddressUpdatesSignal({ addressHash, skip })
-  const { data, isLoading: isLoadingTokensBalances } = useQuery(
-    addressTokensBalancesQuery({
-      addressHash,
-      networkId,
-      latestTxHash: updatesSignal?.latestTx?.hash,
-      previousTxHash: updatesSignal?.previousTx?.hash,
-      skip: skip || isLoadingUpdatesSignal
-    })
-  )
-
-  return {
-    data,
-    isLoading: isLoadingTokensBalances || isLoadingUpdatesSignal
-  }
+  return useQuery(addressTokensBalancesQuery({ addressHash, networkId, skip }))
 }
 
 export default useFetchAddressBalancesTokens

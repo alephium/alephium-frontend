@@ -21,7 +21,6 @@ import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 
 import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddressBalancesAlph'
-import useFetchAddressUpdatesSignal from '@/api/apiDataHooks/address/useFetchAddressUpdatesSignal'
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
@@ -41,7 +40,6 @@ const useFetchAddressSingleTokenBalances = ({
 
   const isALPH = tokenId === ALPH.id
 
-  const { data: updatesSignal, isLoading: isLoadingUpdatesSignal } = useFetchAddressUpdatesSignal({ addressHash, skip })
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
     addressHash,
     skip: skip || !isALPH
@@ -51,15 +49,13 @@ const useFetchAddressSingleTokenBalances = ({
       addressHash,
       networkId,
       tokenId,
-      latestTxHash: updatesSignal?.latestTx?.hash,
-      previousTxHash: updatesSignal?.previousTx?.hash,
-      skip: skip || isLoadingUpdatesSignal || isALPH
+      skip: skip || isALPH
     })
   )
 
   return {
     data: isALPH ? alphBalances : tokenBalances?.balances,
-    isLoading: isLoadingTokenBalances || isLoadingAlphBalances || isLoadingUpdatesSignal
+    isLoading: isLoadingTokenBalances || isLoadingAlphBalances
   }
 }
 
