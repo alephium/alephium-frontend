@@ -21,15 +21,12 @@ import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { AddressLatestTransactionQueryFnData, addressUpdatesSignalQuery } from '@/api/queries/transactionQueries'
+import { addressLatestTransactionQuery, AddressLatestTransactionQueryFnData } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
 
 export const useFetchWalletLastTransaction = (props?: SkipProp) =>
   useFetchWalletLastTransactions({ combine: extractMostRecentTransaction, skip: props?.skip })
-
-export const useFetchWalletUpdatesSignals = (props?: SkipProp) =>
-  useFetchWalletLastTransactions({ combine: extractLastTransactionHashes, skip: props?.skip })
 
 export const useFetchWalletActivityTimestamps = (props?: SkipProp) =>
   useFetchWalletLastTransactions({ combine: extractLastTransactionTimestamps, skip: props?.skip })
@@ -42,7 +39,9 @@ const useFetchWalletLastTransactions = <T>({ combine, skip }: UseFetchWalletLast
   const allAddressHashes = useAppSelector(selectAllAddressHashes)
 
   const { data, isLoading } = useQueries({
-    queries: !skip ? allAddressHashes.map((addressHash) => addressUpdatesSignalQuery({ addressHash, networkId })) : [],
+    queries: !skip
+      ? allAddressHashes.map((addressHash) => addressLatestTransactionQuery({ addressHash, networkId }))
+      : [],
     combine
   })
 
@@ -54,30 +53,8 @@ const useFetchWalletLastTransactions = <T>({ combine, skip }: UseFetchWalletLast
 
 const extractMostRecentTransaction = (results: UseQueryResult<AddressLatestTransactionQueryFnData>[]) => ({
   data: results.reduce(
-    (acc, { data }) => {
-      acc.latestTx = (data?.latestTx?.timestamp ?? 0) > (acc.latestTx?.timestamp ?? 0) ? data?.latestTx : acc.latestTx
-      acc.previousTx =
-        (data?.previousTx?.timestamp ?? 0) > (acc.previousTx?.timestamp ?? 0) ? data?.previousTx : acc.previousTx
-
-      return acc
-    },
-    {
-      latestTx: undefined as Transaction | undefined,
-      previousTx: undefined as Transaction | undefined
-    }
-  ),
-  ...combineIsLoading(results)
-})
-
-const extractLastTransactionHashes = (results: UseQueryResult<AddressLatestTransactionQueryFnData>[]) => ({
-  data: results.flatMap(({ data }) =>
-    data
-      ? {
-          addressHash: data.addressHash,
-          latestTxHash: data.latestTx?.hash,
-          previousTxHash: data.previousTx?.hash
-        }
-      : []
+    (latestTx, { data }) => ((data?.latestTx?.timestamp ?? 0) > (latestTx?.timestamp ?? 0) ? data?.latestTx : latestTx),
+    undefined as Transaction | undefined
   ),
   ...combineIsLoading(results)
 })

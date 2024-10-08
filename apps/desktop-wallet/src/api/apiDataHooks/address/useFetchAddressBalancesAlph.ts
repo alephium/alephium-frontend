@@ -19,27 +19,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useQuery } from '@tanstack/react-query'
 
 import { UseFetchAddressProps } from '@/api/apiDataHooks/address/addressApiDataHooksTypes'
-import useFetchAddressUpdatesSignal from '@/api/apiDataHooks/address/useFetchAddressUpdatesSignal'
 import { addressAlphBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 
 const useFetchAddressBalancesAlph = ({ addressHash, skip }: UseFetchAddressProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
-  const { data: updatesSignal, isLoading: isLoadingUpdatesSignal } = useFetchAddressUpdatesSignal({ addressHash, skip })
-  const { data, isLoading: isLoadingAlphBalances } = useQuery(
-    addressAlphBalancesQuery({
-      addressHash,
-      networkId,
-      latestTxHash: updatesSignal?.latestTx?.hash,
-      previousTxHash: updatesSignal?.previousTx?.hash,
-      skip: skip || isLoadingUpdatesSignal
-    })
-  )
+  const { data, isLoading } = useQuery(addressAlphBalancesQuery({ addressHash, networkId, skip }))
 
   return {
     data: data?.balances,
-    isLoading: isLoadingAlphBalances || isLoadingUpdatesSignal
+    isLoading
   }
 }
 
