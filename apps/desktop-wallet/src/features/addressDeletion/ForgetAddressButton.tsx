@@ -36,9 +36,8 @@ const ForgetAddressButton = ({ addressHash, addressName }: ForgetAddressButtonPr
   const isDefault = addressHash === defaultAddressHash
 
   const deleteAddress = useDeleteAddress()
-  const onConfirmDelete = () => deleteAddress(addressHash)
   const handleDeletePress = useConfirmDeleteAddresses({
-    onConfirm: onConfirmDelete,
+    onConfirm: () => deleteAddress(addressHash),
     confirmationText: t('Are you sure you want to remove "{{ address }}" from your address list?', {
       address: addressName
     })
