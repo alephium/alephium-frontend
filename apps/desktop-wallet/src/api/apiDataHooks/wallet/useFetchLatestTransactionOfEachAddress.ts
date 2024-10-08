@@ -22,11 +22,11 @@ import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { flatMapCombine } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 
 const useFetchLatestTransactionOfEachAddress = (props?: SkipProp) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const allAddressHashes = useUnsortedAddressesHashes()
 
   return useQueries({
     queries: !props?.skip

@@ -23,7 +23,7 @@ import { useFetchWalletBalancesTokensByAddress } from '@/api/apiDataHooks/wallet
 import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
 import { useAppSelector } from '@/hooks/redux'
 import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
-import { selectAllAddresses, selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 
 export const useFilterAddressesByText = (text = '') => {
   const allAddresses = useAppSelector(selectAllAddresses)
@@ -73,19 +73,4 @@ export const useFilterAddressesByText = (text = '') => {
           }),
     [addressesAlphBalances, addressesTokensBalances, allAddressHashes, allAddresses, listedFts, text, unlistedFts]
   )
-}
-
-export const useAddressesWithBalance = () => {
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
-  const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
-
-  const filteredAddressHashes = useMemo(
-    () =>
-      allAddressHashes.filter(
-        (addressHash) => addressesAlphBalances[addressHash] && addressesAlphBalances[addressHash].totalBalance > 0
-      ),
-    [addressesAlphBalances, allAddressHashes]
-  )
-
-  return filteredAddressHashes
 }

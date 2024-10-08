@@ -22,7 +22,7 @@ import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 import { DisplayBalances, TokenDisplayBalances, TokenId } from '@/types/tokens'
 
 export const useFetchWalletBalancesTokensArray = () => useFetchWalletBalancesTokens(combineBalancesToArray)
@@ -35,7 +35,7 @@ const useFetchWalletBalancesTokens = <T>(
   combine: (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => { data: T; isLoading: boolean }
 ) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const allAddressHashes = useAppSelector(selectAllAddressHashes)
+  const allAddressHashes = useUnsortedAddressesHashes()
 
   return useQueries({
     queries: allAddressHashes.map((addressHash) => addressTokensBalancesQuery({ addressHash, networkId })),

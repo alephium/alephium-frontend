@@ -29,12 +29,11 @@ import Amount from '@/components/Amount'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
-import { useAddressesWithBalance } from '@/features/addressFiltering/addressFilteringHooks'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
+import { useFetchAddressesHashesWithBalance, useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectAddressByHash, selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import {
@@ -60,7 +59,7 @@ const AddressSweepModal = memo(
     const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
     const toAddressOptions = addressHash ? addresses.filter(({ hash }) => hash !== fromAddress?.hash) : addresses
-    const fromAddressOptions = useAddressesWithBalance()
+    const { data: fromAddressOptions } = useFetchAddressesHashesWithBalance()
 
     const [sweepAddresses, setSweepAddresses] = useState<{ from?: Address; to?: Address }>({
       from: fromAddress,
