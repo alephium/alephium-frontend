@@ -19,9 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
+import { DataHook, SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { combineBalances } from '@/api/apiDataHooks/wallet/combineBalances'
 import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
@@ -65,6 +64,24 @@ const combineBalancesByAddress = (
       return acc
     },
     {} as AddressesAlphBalances['data']
+  ),
+  ...combineIsLoading(results)
+})
+
+const combineBalances = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): DataHook<DisplayBalances> => ({
+  data: results.reduce(
+    (totalBalances, { data }) => {
+      totalBalances.totalBalance += data ? data.balances.totalBalance : BigInt(0)
+      totalBalances.lockedBalance += data ? data.balances.lockedBalance : BigInt(0)
+      totalBalances.availableBalance += data ? data.balances.availableBalance : BigInt(0)
+
+      return totalBalances
+    },
+    {
+      totalBalance: BigInt(0),
+      lockedBalance: BigInt(0),
+      availableBalance: BigInt(0)
+    } as DisplayBalances
   ),
   ...combineIsLoading(results)
 })
