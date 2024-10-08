@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useCallback, useMemo, useState } from 'react'
 
-import { useFetchWalletLastTransaction } from '@/api/apiDataHooks/wallet/useFetchWalletLastTransactions'
+import useFetchWalletLatestTransaction from '@/api/apiDataHooks/wallet/useFetchWalletLatestTransaction'
 import { walletTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { useCappedAddressesHashes } from '@/hooks/useAddresses'
@@ -31,7 +31,7 @@ const useFetchWalletTransactionsInfinite = () => {
   const [fetchedTransactionListAt, setFetchedTransactionListAt] = useState(0)
   const refresh = useCallback(() => setFetchedTransactionListAt(new Date().getTime()), [])
 
-  const { data: latestTx, isLoading: isLoadingLatestTx } = useFetchWalletLastTransaction()
+  const { data: latestTx, isLoading: isLoadingLatestTx } = useFetchWalletLatestTransaction()
   const { data, fetchNextPage, isLoading, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
     walletTransactionsInfiniteQuery({
       addressHashes,
