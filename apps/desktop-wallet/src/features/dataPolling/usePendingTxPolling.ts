@@ -18,10 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { findTransactionInternalAddresses, isConfirmedTx } from '@alephium/shared'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 
-import { pendingTransactionQuery } from '@/api/queries/transactionQueries'
+import useFetchPendingTransaction from '@/api/apiDataHooks/transaction/useFetchPendingTransaction'
 import queryClient from '@/api/queryClient'
 import { sentTransactionStatusChanged } from '@/features/sentTransactions/sentTransactionsActions'
 import { selectSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
@@ -34,7 +33,7 @@ const usePendingTxPolling = (txHash: Transaction['hash']) => {
   const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
   const allAddressHashes = useUnsortedAddressesHashes()
 
-  const { data: tx } = useQuery(pendingTransactionQuery({ txHash, skip: !sentTx || sentTx.status === 'confirmed' }))
+  const { data: tx } = useFetchPendingTransaction({ txHash, skip: !sentTx || sentTx.status === 'confirmed' })
 
   useEffect(() => {
     if (!tx) return
