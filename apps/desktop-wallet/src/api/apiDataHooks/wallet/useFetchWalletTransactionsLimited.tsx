@@ -18,20 +18,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useQuery } from '@tanstack/react-query'
 
-import useLimitedWalletAddresses from '@/api/apiDataHooks/utils/useLimitedWalletAddresses'
 import { walletLatestTransactionsQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
+import { useCappedAddressesHashes } from '@/hooks/useAddresses'
 
 const useFetchWalletTransactionsLimited = () => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
-  const { addressHashes, isLimited } = useLimitedWalletAddresses()
+  const { addressHashes, isCapped } = useCappedAddressesHashes()
 
   const { data: confirmedTxs, isLoading } = useQuery(walletLatestTransactionsQuery({ addressHashes, networkId }))
 
   return {
     data: confirmedTxs,
     isLoading,
-    isDataComplete: !isLimited
+    isDataComplete: !isCapped
   }
 }
 
