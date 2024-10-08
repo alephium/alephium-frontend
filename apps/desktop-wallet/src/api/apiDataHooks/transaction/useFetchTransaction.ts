@@ -21,7 +21,7 @@ import { useQuery } from '@tanstack/react-query'
 import { UseFetchTransactionProps } from '@/api/apiDataHooks/transaction/transactionTypes'
 import useFetchPendingTransaction from '@/api/apiDataHooks/transaction/useFetchPendingTransaction'
 import { confirmedTransactionQuery } from '@/api/queries/transactionQueries'
-import { selectSentTransactionByHash } from '@/features/sentTransactions/sentTransactionsSelectors'
+import { selectSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppSelector } from '@/hooks/redux'
 
 const useFetchTransaction = ({ txHash, skip }: UseFetchTransactionProps) => {

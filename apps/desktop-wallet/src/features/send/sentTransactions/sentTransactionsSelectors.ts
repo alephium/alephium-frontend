@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { createSelector } from '@reduxjs/toolkit'
 
-import { sentTransactionsAdapter } from '@/features/sentTransactions/sentTransactionsAdapter'
+import { sentTransactionsAdapter } from '@/features/send/sentTransactions/sentTransactionsAdapter'
 import { RootState } from '@/storage/store'
 import { SentTransaction } from '@/types/transactions'
 
