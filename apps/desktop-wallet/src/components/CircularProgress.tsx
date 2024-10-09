@@ -54,7 +54,6 @@ const CircularProgress = ({ value, radius = 18, railColor, className }: Circular
               fill="transparent"
               strokeDasharray={circumference}
               strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
               style={{
                 transition: 'stroke-dashoffset 0.5s ease',
                 transformOrigin: 'center',
@@ -83,7 +82,7 @@ export default CircularProgress
 const CircularProgressStyled = styled.div<{ value: number }>`
   color: ${({ theme, value }) => (value < 1 ? theme.global.accent : theme.global.valid)};
   background-color: ${({ theme, value }) =>
-    value < 1 ? 'transparent' : colord(theme.global.valid).alpha(0.2).toHex()};
+    value < 1 ? 'transparent' : colord(theme.global.valid).alpha(0.15).toHex()};
 
   svg {
     transition: stroke-dashoffset 0.5s ease;
