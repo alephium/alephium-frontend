@@ -33,6 +33,7 @@ import NftModal from '~/features/nftsDisplay/NftModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
+import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import { useAppSelector } from '~/hooks/redux'
@@ -82,6 +83,8 @@ const AppModals = () => {
             return <EditWalletNameModal key={id} id={id} />
           case 'FundPasswordModal':
             return <FundPasswordModal key={id} id={id} {...params.props} />
+          case 'SafePlaceWarningModal':
+            return <SafePlaceWarningModal key={id} id={id} />
           default:
             return null
         }

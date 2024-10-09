@@ -31,6 +31,7 @@ import NftModal from '~/features/nftsDisplay/NftModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
+import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
@@ -50,7 +51,8 @@ export const ModalComponents = {
   CurrencySelectModal,
   LanguageSelectModal,
   EditWalletNameModal,
-  FundPasswordModal
+  FundPasswordModal,
+  SafePlaceWarningModal
 }
 
 type ModalName = keyof typeof ModalComponents

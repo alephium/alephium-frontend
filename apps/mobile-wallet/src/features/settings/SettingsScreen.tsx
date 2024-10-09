@@ -21,15 +21,13 @@ import { StackScreenProps } from '@react-navigation/stack'
 import * as Application from 'expo-application'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { Alert, Platform } from 'react-native'
-import { Portal } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalScreenTitle, ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
+import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
@@ -37,11 +35,8 @@ import LinkToWeb from '~/components/text/LinkToWeb'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { getAutoLockLabel } from '~/features/auto-lock/utils'
-import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { languageOptions } from '~/features/localization/languages'
-import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { openModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
 import {
   analyticsToggled,
   biometricsToggled,
@@ -60,6 +55,8 @@ interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScre
 
 const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
+  const theme = useTheme()
+  const { t } = useTranslation()
   const { deviceSupportsBiometrics, deviceHasEnrolledBiometrics } = useBiometrics()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
@@ -74,13 +71,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const language = useAppSelector((s) => s.settings.language)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletName = useAppSelector((s) => s.wallet.name)
-  const theme = useTheme()
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
-  const { t } = useTranslation()
-
-  const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
   const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
   const [lastToggledBiometricsSetting, setLastToggledBiometricsSetting] = useState<
     'appAccess' | 'transactions' | undefined
@@ -103,9 +95,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   const openAutoLockOptionsModal = () => dispatch(openModal({ name: 'AutoLockOptionsModal' }))
 
-  const openMnemonicModal = () => dispatch(openModal({ name: 'MnemonicModal' }))
-
   const openEditWalletNameModal = () => dispatch(openModal({ name: 'EditWalletNameModal' }))
+
+  const openSafePlaceWarningModal = () => dispatch(openModal({ name: 'SafePlaceWarningModal' }))
 
   const handleBiometricsAppAccessChange = (value: boolean) => {
     if (value || biometricsRequiredForTransactions) {
@@ -315,7 +307,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <BoxSurface>
             <Row
-              onPress={() => setIsSafePlaceWarningModalOpen(true)}
+              onPress={openSafePlaceWarningModal}
               title={t('View secret recovery phrase')}
               titleColor={theme.global.warning}
             >
@@ -339,53 +331,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
       </ScrollScreenStyled>
 
       <ModalWithBackdrop animationType="fade" visible={isThemeSwitchOverlayVisible} color="black" />
-
-      <Portal>
-        <BottomModal
-          isOpen={isSafePlaceWarningModalOpen}
-          onClose={() => setIsSafePlaceWarningModalOpen(false)}
-          Content={(props) => (
-            <ModalContent verticalGap {...props}>
-              <ScreenSection>
-                <ModalScreenTitle>{t('Be careful!')} 🕵️‍♀️</ModalScreenTitle>
-              </ScreenSection>
-              <ScreenSection>
-                <AppText color="secondary" size={18}>
-                  {t("Don't share your secret recovery phrase with anyone!")}
-                </AppText>
-                <AppText color="secondary" size={18}>
-                  <Trans
-                    t={t}
-                    i18nKey="viewMnemonicModalWarning"
-                    components={{
-                      1: <AppText bold size={18} />
-                    }}
-                  >
-                    {'Before displaying it, make sure to be in an <1>non-public</1> space.'}
-                  </Trans>
-                </AppText>
-              </ScreenSection>
-              <ScreenSection>
-                <Button
-                  title={t('I understand')}
-                  variant="accent"
-                  onPress={() => {
-                    props.onClose && props.onClose()
-
-                    triggerBiometricsAuthGuard({
-                      settingsToCheck: 'appAccessOrTransactions',
-                      successCallback: () =>
-                        triggerFundPasswordAuthGuard({
-                          successCallback: openMnemonicModal
-                        })
-                    })
-                  }}
-                />
-              </ScreenSection>
-            </ModalContent>
-          )}
-        />
-      </Portal>
     </>
   )
 }
