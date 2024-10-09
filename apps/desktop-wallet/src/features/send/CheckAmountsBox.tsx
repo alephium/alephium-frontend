@@ -29,7 +29,9 @@ import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Box from '@/components/Box'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
+import { openModal } from '@/features/modals/modalActions'
 import { getTransactionAssetAmounts } from '@/features/send/sendUtils'
+import { useAppDispatch } from '@/hooks/redux'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -50,7 +52,7 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
       {assets.map((asset, index) => (
         <Fragment key={asset.id}>
           {index > 0 && <HorizontalDivider />}
-          <AssetAmountRowComponent tokenId={asset.id} amount={asset.amount} extraAlphForDust={extraAlphForDust} />
+          <AssetAmountRow tokenId={asset.id} amount={asset.amount} extraAlphForDust={extraAlphForDust} />
         </Fragment>
       ))}
     </Box>
@@ -59,23 +61,29 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
 
 export default CheckAmountsBox
 
-interface AssetAmountRowComponentProps {
+interface AssetAmountRowProps {
   tokenId: string
   amount: string
   extraAlphForDust: bigint
 }
 
-const AssetAmountRowComponent = ({ tokenId, amount, extraAlphForDust }: AssetAmountRowComponentProps) => {
+const AssetAmountRow = ({ tokenId, amount, extraAlphForDust }: AssetAmountRowProps) => {
   const { t } = useTranslation()
   const { data: token } = useFetchToken(tokenId)
+  const dispatch = useAppDispatch()
+
+  const handleRowClick = () => {
+    if (isNFT(token)) dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId: tokenId } }))
+  }
 
   return (
-    <AssetAmountRow>
+    <AssetAmountRowStyled onClick={isNFT(token) ? handleRowClick : undefined}>
       <AssetLogo tokenId={tokenId} size={30} />
 
       <TokenText>
         {isNFT(token) ? token.name : <Amount tokenId={tokenId} value={BigInt(amount)} fullPrecision />}
       </TokenText>
+
       {tokenId === ALPH.id && !!extraAlphForDust && (
         <ActionLink
           onClick={() => openInWebBrowser(links.utxoDust)}
@@ -86,16 +94,18 @@ const AssetAmountRowComponent = ({ tokenId, amount, extraAlphForDust }: AssetAmo
           <Info size={20} />
         </ActionLink>
       )}
-    </AssetAmountRow>
+    </AssetAmountRowStyled>
   )
 }
 
-const AssetAmountRow = styled.div`
+const AssetAmountRowStyled = styled.div`
   display: flex;
   padding: 23px 0;
   justify-content: center;
   align-items: center;
   gap: 15px;
+
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
 `
 
 const TokenText = styled.span`
