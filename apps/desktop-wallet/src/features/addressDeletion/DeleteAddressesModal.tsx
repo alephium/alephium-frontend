@@ -68,41 +68,51 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
 
   return (
     <CenteredModal title={t('Forget addresses')} id={id} hasBottomButtons>
-      <InfoBox importance="accent">
+      {reversedAddressesArray.length === 1 && (
+        <InfoBox importance="accent">{t('You only have one address. You cannot forget it.')}</InfoBox>
+      )}
+
+      {reversedAddressesArray.length > 1 && (
         <>
-          {t('Forgetting addresses does not delete your assets in them.')}{' '}
-          {t(
-            'If you choose to forget an address with assets, you can always re-add it to your wallet using the "Discover active addresses" feature.'
-          )}
+          <InfoBox importance="accent">
+            <>
+              {t('Forgetting addresses does not delete your assets in them.')}{' '}
+              {t(
+                'If you choose to forget an address with assets, you can always re-add it to your wallet using the "Discover active addresses" feature.'
+              )}
+            </>
+          </InfoBox>
+
+          <OptionSelect>
+            {reversedAddressesArray.map(({ addressHash }) => {
+              if (addressHash === defaultAddressHash) return
+
+              const isSelected = selectedAddressesForDeletion.some((hash) => hash === addressHash)
+
+              return (
+                <OptionItem
+                  key={addressHash}
+                  tabIndex={0}
+                  role="listitem"
+                  onClick={() => handleOptionClick(addressHash)}
+                  selected={isSelected}
+                  focusable
+                  aria-label={addressHash}
+                  hasCustomOptionRender={true}
+                  isFloating
+                >
+                  <SelectOptionAddress
+                    addressHash={addressHash}
+                    isSelected={isSelected}
+                    subtitle={<AddressLastActivity addressHash={addressHash} />}
+                  />
+                </OptionItem>
+              )
+            })}
+          </OptionSelect>
         </>
-      </InfoBox>
-      <OptionSelect>
-        {reversedAddressesArray.map(({ addressHash }) => {
-          if (addressHash === defaultAddressHash) return
+      )}
 
-          const isSelected = selectedAddressesForDeletion.some((hash) => hash === addressHash)
-
-          return (
-            <OptionItem
-              key={addressHash}
-              tabIndex={0}
-              role="listitem"
-              onClick={() => handleOptionClick(addressHash)}
-              selected={isSelected}
-              focusable
-              aria-label={addressHash}
-              hasCustomOptionRender={true}
-              isFloating
-            >
-              <SelectOptionAddress
-                addressHash={addressHash}
-                isSelected={isSelected}
-                subtitle={<AddressLastActivity addressHash={addressHash} />}
-              />
-            </OptionItem>
-          )
-        })}
-      </OptionSelect>
       <ModalFooterButtons>
         <ModalFooterButton role="secondary" onClick={handleCancelClick}>
           {t('Cancel')}
