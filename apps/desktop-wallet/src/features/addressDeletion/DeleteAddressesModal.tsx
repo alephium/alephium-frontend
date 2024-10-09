@@ -111,6 +111,7 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
         <ForgetMulitpleAddressesButton
           addressHashes={selectedAddressesForDeletion}
           isLoading={isLoadingSortedAddresses}
+          modalId={id}
         />
       </ModalFooterButtons>
     </CenteredModal>
