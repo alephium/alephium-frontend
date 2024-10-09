@@ -23,6 +23,7 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import queryClient from '@/api/queryClient'
 import ActionLink from '@/components/ActionLink'
 import Box from '@/components/Box'
 import Button from '@/components/Button'
@@ -36,7 +37,12 @@ import { openModal } from '@/features/modals/modalActions'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
-import { walletConnectCacheCleared, walletConnectCacheClearFailed } from '@/storage/global/globalActions'
+import {
+  appDataCleared,
+  appDataClearFailed,
+  walletConnectCacheCleared,
+  walletConnectCacheClearFailed
+} from '@/storage/global/globalActions'
 import {
   analyticsToggled,
   discreetModeToggled,
@@ -117,7 +123,14 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
       }
   }
 
-  const handleClearWCCacheButtonPress = async () => {
+  const handleClearCacheButtonPress = async () => {
+    try {
+      queryClient.clear()
+      dispatch(appDataCleared())
+    } catch (e) {
+      dispatch(appDataClearFailed())
+      console.error(e)
+    }
     try {
       await reset()
       dispatch(walletConnectCacheCleared())
@@ -248,16 +261,19 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
         description={t('Help us improve your experience!')}
         InputComponent={<Toggle toggled={analytics} onToggle={handleAnalyticsToggle} />}
       >
-        <ActionLinkStyled onClick={() => openInWebBrowser(links.analytics)}>
-          <Info size={12} /> {t('More info')}
-        </ActionLinkStyled>
+        <ActionLink onClick={() => openInWebBrowser(links.analytics)}>
+          <MoreInfoLinkContent>
+            <Info size={12} />
+            <span>{t('More info')}</span>
+          </MoreInfoLinkContent>
+        </ActionLink>
       </KeyValueInput>
       <HorizontalDivider />
       <KeyValueInput
-        label={t('Clear WalletConnect cache')}
-        description={t('Helps avoid crashes due to WalletConnect')}
+        label={t('Clear cache')}
+        description={t('Deletes cached wallet and WalletConnect data.')}
         InputComponent={
-          <ButtonStyled role="secondary" Icon={Eraser} wide onClick={handleClearWCCacheButtonPress}>
+          <ButtonStyled role="secondary" Icon={Eraser} wide onClick={handleClearCacheButtonPress}>
             {t('Clear')}
           </ButtonStyled>
         }
@@ -268,8 +284,10 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
 
 export default GeneralSettingsSection
 
-const ActionLinkStyled = styled(ActionLink)`
-  gap: 0.3em;
+const MoreInfoLinkContent = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
 `
 
 const Disclaimer = styled.div`

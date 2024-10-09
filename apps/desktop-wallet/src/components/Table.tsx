@@ -157,7 +157,7 @@ export const TableRow = styled(TableColumns)<TableRowProps>`
 export const TableFooter = styled(TableColumns)``
 
 export const TableCellPlaceholder = styled(TableCell)`
-  color: ${({ theme }) => theme.font.secondary};
+  color: ${({ theme }) => theme.font.tertiary};
 `
 
 export const TableHeader: FC<{ title: string; className?: string }> = ({ title, children, className }) => (

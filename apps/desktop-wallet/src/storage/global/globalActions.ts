@@ -54,6 +54,10 @@ export const walletConnectCacheClearFailed = createAction('app/walletConnectCach
 
 export const toggleAppLoading = createAction<boolean>('app/toggleAppLoading')
 
+export const appDataCleared = createAction('app/appDataCleared')
+
+export const appDataClearFailed = createAction('app/appDataClearFailed')
+
 export const receiveTestnetTokens = createAsyncThunk<SentTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
   'assets/receiveTestnetTokens',
   async (destinationAddress: AddressHash, { rejectWithValue, fulfillWithValue }) => {

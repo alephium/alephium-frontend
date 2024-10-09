@@ -46,7 +46,6 @@ export interface CenteredModalProps extends ModalContainerProps {
   noPadding?: boolean
   disableBack?: boolean
   Icon?: (() => ReactNode) | LucideIcon
-  hasBottomButtons?: boolean
 }
 
 const CenteredModal: FC<CenteredModalProps> = ({
@@ -65,7 +64,6 @@ const CenteredModal: FC<CenteredModalProps> = ({
   noPadding,
   disableBack,
   Icon,
-  hasBottomButtons,
   ...rest
 }) => {
   const { t } = useTranslation()
@@ -115,7 +113,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
             <ModalContent>{children}</ModalContent>
           )
         ) : (
-          <ScrollableModalContent hasBottomButtons={hasBottomButtons}>{children}</ScrollableModalContent>
+          <ScrollableModalContent>{children}</ScrollableModalContent>
         )}
 
         {isLoading && (
@@ -134,12 +132,9 @@ const CenteredModal: FC<CenteredModalProps> = ({
 
 export default CenteredModal
 
-export const ScrollableModalContent = ({
-  children,
-  hasBottomButtons
-}: Pick<CenteredModalProps, 'hasBottomButtons' | 'children'>) => (
+export const ScrollableModalContent = ({ children }: Pick<CenteredModalProps, 'children'>) => (
   <Scrollbar translateContentSizeYToHolder>
-    <ModalContent noBottomPadding={hasBottomButtons}>{children}</ModalContent>
+    <ModalContent>{children}</ModalContent>
   </Scrollbar>
 )
 
