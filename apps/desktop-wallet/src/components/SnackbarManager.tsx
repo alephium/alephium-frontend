@@ -78,7 +78,7 @@ export const SnackbarManagerContainer = styled.div`
   position: fixed;
   bottom: 0;
   left: ${walletSidebarWidthPx}px;
-  z-index: 2;
+  z-index: 3;
 
   @media ${deviceBreakPoints.mobile} {
     justify-content: center;

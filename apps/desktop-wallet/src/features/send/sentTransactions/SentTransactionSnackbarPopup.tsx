@@ -64,21 +64,23 @@ const SentTransactionSnackbarPopup = memo(({ txHash }: SentTransactionSnackbarPo
 
   if (!sentTx || hide) return null
 
+  const message = {
+    sent: `${t('Transaction was sent...')} 💸`,
+    mempooled: `${t('Transaction is about to be included in the blockchain...')} ⏳⛓️`,
+    confirmed: `${t('Transaction is now part of the blockchain')} 🎉`
+  }[sentTx.status]
+
   return (
     <SentTransactionSnackbarPopupStyled {...fadeInBottom} {...fadeOut} className="info">
       <Columns>
         <Progress status={sentTx.status} />
         <Rows>
-          <b>
-            <Message status={sentTx.status} />
-          </b>
-
+          <Message>{message}</Message>
           <HashAndDetails>
             <HashEllipsedStyled hash={txHash} tooltipText={t('Copy hash')} showSnackbarOnCopied={false} />
             {sentTx.status !== 'sent' && <DetailsLink hash={txHash} />}
           </HashAndDetails>
         </Rows>
-
         <Button aria-label={t('Close')} squared role="secondary" onClick={() => setHide(true)} borderless transparent>
           <X />
         </Button>
@@ -95,16 +97,6 @@ const SentTransactionSnackbarPopupStyled = styled(SnackbarBox)`
   min-width: 400px;
 `
 
-const Message = ({ status }: Pick<SentTransaction, 'status'>) => {
-  const { t } = useTranslation()
-
-  if (status === 'sent') return `${t('Transaction was sent...')} 💸`
-
-  if (status === 'mempooled') return `${t('Transaction is about to be included in the blockchain...')} ⏳⛓️`
-
-  if (status === 'confirmed') return `${t('Transaction is now part of the blockchain')} 🎉`
-}
-
 const Progress = ({ status }: Pick<SentTransaction, 'status'>) => {
   const [progress, setProgress] = useState(0)
   const theme = useTheme()
@@ -119,11 +111,7 @@ const Progress = ({ status }: Pick<SentTransaction, 'status'>) => {
     }
   }, [status])
 
-  useInterval(
-    () => setProgress((prevValue) => Math.min(prevValue + 0.015, 1)),
-    1000,
-    status === 'confirmed' || progress > 0.9
-  )
+  useInterval(() => setProgress((prevValue) => prevValue + 0.015), 1000, status === 'confirmed' || progress > 0.9)
 
   return (
     <CircularProgressStyled
@@ -176,6 +164,10 @@ const Columns = styled.div`
   display: flex;
   gap: 30px;
   align-items: center;
+`
+
+const Message = styled.span`
+  font-weight: bold;
 `
 
 const DetailsLinkStyled = styled(ActionLink)`
