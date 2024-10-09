@@ -18,10 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { PendingTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-import { Badge } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import AddressBadge from '@/components/AddressBadge'
+import Badge from '@/components/Badge'
 import { selectPendingSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import useTransactionDirection from '@/features/transactionsDisplay/useTransactionDirection'
 import { useAppSelector } from '@/hooks/redux'
