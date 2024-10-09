@@ -481,5 +481,6 @@
   "If you choose to forget an address with assets, you can always re-add it to your wallet using the \"Discover active addresses\" feature.": "If you choose to forget an address with assets, you can always re-add it to your wallet using the \"Discover active addresses\" feature.",
   "This will remove {{ num }} address(es) from your address list.": "This will remove {{ num }} address(es) from your address list.",
   "Forget selected addresses": "Forget selected addresses",
-  "You only have one address. You cannot forget it.": "You only have one address. You cannot forget it."
+  "You only have one address. You cannot forget it.": "You only have one address. You cannot forget it.",
+  "Total worth": "Total worth"
 }
