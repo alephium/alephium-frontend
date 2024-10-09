@@ -17,15 +17,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH } from '@alephium/token-list'
-import { useQueries } from '@tanstack/react-query'
+import { useQueries, UseQueryResult } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import { combineBalances } from '@/api/apiDataHooks/wallet/combineBalances'
+import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { useFetchWalletBalancesAlphArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { addressSingleTokenBalancesQuery } from '@/api/queries/addressQueries'
+import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
-import { TokenId } from '@/types/tokens'
+import { DisplayBalances, TokenId } from '@/types/tokens'
 
 interface UseFetchWalletSingleTokenBalancesProps extends SkipProp {
   tokenId: TokenId
@@ -44,9 +45,12 @@ const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSing
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQueries({
     queries:
       !isALPH && !skip
-        ? allAddressHashes.map((addressHash) => addressSingleTokenBalancesQuery({ addressHash, tokenId, networkId }))
+        ? allAddressHashes.map((addressHash) => addressTokensBalancesQuery({ addressHash, networkId }))
         : [],
-    combine: combineBalances
+    combine: useMemo(
+      () => (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => combineTokenBalances(tokenId, results),
+      [tokenId]
+    )
   })
 
   return {
@@ -56,3 +60,23 @@ const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSing
 }
 
 export default useFetchWalletSingleTokenBalances
+
+const combineTokenBalances = (tokenId: string, results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => ({
+  data: results.reduce(
+    (totalBalances, { data }) => {
+      const balances = data?.balances.find(({ id }) => id === tokenId)
+
+      totalBalances.totalBalance += balances ? balances.totalBalance : BigInt(0)
+      totalBalances.lockedBalance += balances ? balances.lockedBalance : BigInt(0)
+      totalBalances.availableBalance += balances ? balances.availableBalance : BigInt(0)
+
+      return totalBalances
+    },
+    {
+      totalBalance: BigInt(0),
+      lockedBalance: BigInt(0),
+      availableBalance: BigInt(0)
+    } as DisplayBalances
+  ),
+  ...combineIsLoading(results)
+})
