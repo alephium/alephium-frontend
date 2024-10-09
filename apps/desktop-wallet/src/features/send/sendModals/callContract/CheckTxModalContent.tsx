@@ -24,6 +24,7 @@ import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckAmountsBox from '@/features/send/CheckAmountsBox'
 import CheckFeeLockTimeBox from '@/features/send/CheckFeeLockTimeBox'
 import CheckModalContent from '@/features/send/CheckModalContent'
+import CheckWorthBox from '@/features/send/CheckWorthBox'
 import { CallContractTxData, CheckTxProps } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 
@@ -35,6 +36,7 @@ const CallContractCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProps<
     <>
       <CheckModalContent>
         {data.assetAmounts && <CheckAmountsBox assetAmounts={data.assetAmounts} />}
+        {data.assetAmounts && <CheckWorthBox assetAmounts={data.assetAmounts} />}
         <CheckAddressesBox fromAddress={data.fromAddress} />
         <CheckFeeLockTimeBox fee={fees} />
         <InfoBox label={t('Bytecode')} text={data.bytecode} wordBreak />

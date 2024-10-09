@@ -25,6 +25,7 @@ import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckAmountsBox from '@/features/send/CheckAmountsBox'
 import CheckFeeLockTimeBox from '@/features/send/CheckFeeLockTimeBox'
 import CheckModalContent from '@/features/send/CheckModalContent'
+import CheckWorthBox from '@/features/send/CheckWorthBox'
 import InfoRow from '@/features/send/InfoRow'
 import { CheckTxProps, DeployContractTxData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
@@ -36,7 +37,12 @@ const DeployContractCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProp
   return (
     <>
       <CheckModalContent>
-        {data.initialAlphAmount && <CheckAmountsBox assetAmounts={[data.initialAlphAmount]} />}
+        {data.initialAlphAmount && (
+          <>
+            <CheckAmountsBox assetAmounts={[data.initialAlphAmount]} />
+            <CheckWorthBox assetAmounts={[data.initialAlphAmount]} />
+          </>
+        )}
         <CheckAddressesBox fromAddress={data.fromAddress} />
         {data.issueTokenAmount && (
           <Box>
