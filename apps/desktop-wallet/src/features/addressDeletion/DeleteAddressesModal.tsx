@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 import InfoBox from '@/components/InfoBox'
 import { OptionItem, OptionSelect } from '@/components/Inputs/Select'
@@ -29,7 +30,7 @@ import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchSortedAddressesHashesWithLatestTx } from '@/hooks/useAddresses'
-import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
+import CenteredModal, { ModalFooterButton, ModalFooterButtons, ScrollableModalContent } from '@/modals/CenteredModal'
 import AddressLastActivity from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressLastActivity'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
@@ -67,53 +68,55 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
   const handleCancelClick = () => dispatch(closeModal({ id }))
 
   return (
-    <CenteredModal title={t('Forget addresses')} id={id} hasBottomButtons>
-      {reversedAddressesArray.length === 1 && (
-        <InfoBox importance="accent">{t('You only have one address. You cannot forget it.')}</InfoBox>
-      )}
+    <CenteredModal title={t('Forget addresses')} id={id} dynamicContent noPadding>
+      <ScrollableModalContent>
+        {reversedAddressesArray.length === 1 && (
+          <InfoBox importance="accent">{t('You only have one address. You cannot forget it.')}</InfoBox>
+        )}
 
-      {reversedAddressesArray.length > 1 && (
-        <>
-          <InfoBox importance="accent">
-            <>
-              {t('Forgetting addresses does not delete your assets in them.')}{' '}
-              {t(
-                'If you choose to forget an address with assets, you can always re-add it to your wallet using the "Discover active addresses" feature.'
-              )}
-            </>
-          </InfoBox>
+        {reversedAddressesArray.length > 1 && (
+          <>
+            <InfoBox importance="accent">
+              <>
+                {t('Forgetting addresses does not delete your assets in them.')}{' '}
+                {t(
+                  'If you choose to forget an address with assets, you can always re-add it to your wallet using the "Discover active addresses" feature.'
+                )}
+              </>
+            </InfoBox>
 
-          <OptionSelect>
-            {reversedAddressesArray.map(({ addressHash }) => {
-              if (addressHash === defaultAddressHash) return
+            <OptionSelect>
+              {reversedAddressesArray.map(({ addressHash }) => {
+                if (addressHash === defaultAddressHash) return
 
-              const isSelected = selectedAddressesForDeletion.some((hash) => hash === addressHash)
+                const isSelected = selectedAddressesForDeletion.some((hash) => hash === addressHash)
 
-              return (
-                <OptionItem
-                  key={addressHash}
-                  tabIndex={0}
-                  role="listitem"
-                  onClick={() => handleOptionClick(addressHash)}
-                  selected={isSelected}
-                  focusable
-                  aria-label={addressHash}
-                  hasCustomOptionRender={true}
-                  isFloating
-                >
-                  <SelectOptionAddress
-                    addressHash={addressHash}
-                    isSelected={isSelected}
-                    subtitle={<AddressLastActivity addressHash={addressHash} />}
-                  />
-                </OptionItem>
-              )
-            })}
-          </OptionSelect>
-        </>
-      )}
+                return (
+                  <OptionItem
+                    key={addressHash}
+                    tabIndex={0}
+                    role="listitem"
+                    onClick={() => handleOptionClick(addressHash)}
+                    selected={isSelected}
+                    focusable
+                    aria-label={addressHash}
+                    hasCustomOptionRender={true}
+                    isFloating
+                  >
+                    <SelectOptionAddress
+                      addressHash={addressHash}
+                      isSelected={isSelected}
+                      subtitle={<AddressLastActivity addressHash={addressHash} />}
+                    />
+                  </OptionItem>
+                )
+              })}
+            </OptionSelect>
+          </>
+        )}
+      </ScrollableModalContent>
 
-      <ModalFooterButtons>
+      <ModalFooterButtonsStyled>
         <ModalFooterButton role="secondary" onClick={handleCancelClick}>
           {t('Cancel')}
         </ModalFooterButton>
@@ -123,9 +126,13 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
           isLoading={isLoadingSortedAddresses}
           modalId={id}
         />
-      </ModalFooterButtons>
+      </ModalFooterButtonsStyled>
     </CenteredModal>
   )
 })
 
 export default DeleteAddressesModal
+
+const ModalFooterButtonsStyled = styled(ModalFooterButtons)`
+  margin: var(--spacing-4) var(--spacing-6);
+`
