@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, getHumanReadableError } from '@alephium/shared'
+import { getSecp259K1Path } from '@alephium/web3-wallet'
 import { AlertOctagon, Download, FileCode, TerminalSquare } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -132,7 +133,7 @@ const DevToolsSettingsSection = () => {
             <Paragraph>{t('Copy the keys of an address.')}</Paragraph>
             <Table>
               {addresses.map((address) => (
-                <AddressRow addressHash={address.hash} key={address.hash}>
+                <AddressRow addressHash={address.hash} key={address.hash} subtitle={getSecp259K1Path(address.index)}>
                   <Buttons>
                     <ButtonStyled role="secondary" short onClick={() => copyPublicKey(address)}>
                       {t('Public key')}
