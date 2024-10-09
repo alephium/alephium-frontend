@@ -25,8 +25,7 @@ const SnackbarBox = styled(motion.div)`
   min-width: 200px;
   padding: var(--spacing-4) var(--spacing-3);
   color: ${({ theme }) => theme.font.primary};
-  border-radius: var(--radius-medium);
-  backdrop-filter: blur(10px);
+  border-radius: var(--radius-big);
   max-width: 800px;
   word-wrap: break-word;
   overflow-y: auto;
@@ -48,7 +47,7 @@ const SnackbarBox = styled(motion.div)`
 export default SnackbarBox
 
 const getSnackbarStyling = (color: string) => css`
-  background-color: ${colord(color).alpha(0.9).toHex()};
+  background-color: ${color};
   border: 1px solid ${colord(color).lighten(0.1).toHex()};
   color: rgba(255, 255, 255, 0.8);
 `
