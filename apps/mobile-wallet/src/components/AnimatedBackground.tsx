@@ -46,6 +46,9 @@ interface AnimatedBackgroundProps {
   showAlephiumLogo?: boolean
 }
 
+const GYRO_MULTIPLIER_X = 100
+const GYRO_MULTIPLIER_Y = 100
+
 const AnimatedCanvas = Animated.createAnimatedComponent(Canvas)
 
 const AnimatedBackground = ({
@@ -80,6 +83,10 @@ const AnimatedBackground = ({
   // Circle animations
   const angle = useSharedValue(0)
 
+  // Using sin allows to smoothen movements (espacially when phon is upside down)
+  const sinRoll = useDerivedValue(() => Math.sin(gyroscope.sensor.value.roll))
+  const sinPitch = useDerivedValue(() => Math.sin(gyroscope.sensor.value.pitch))
+
   useEffect(() => {
     if (isAnimated) {
       angle.value = withRepeat(
@@ -93,21 +100,21 @@ const AnimatedBackground = ({
   }, [angle, isAnimated])
 
   const canvasCenterY = useDerivedValue(() => canvasHeight.value / 2)
-  const danceXAmplitude = 20 + Math.random() * 5 // Adding randomness to amplitude
-  const danceYAmplitude = 40 + Math.random() * 5 // Adding randomness to amplitude
+  const danceXAmplitude = 20 + Math.random() * 5
+  const danceYAmplitude = 40 + Math.random() * 5
 
-  const randomOffset1 = Math.random() * 0.5 // Random offset for circle 1
-  const randomOffset2 = Math.random() * 0.5 // Random offset for circle 2
-  const randomOffset3 = Math.random() * 0.5 // Random offset for circle 3
+  const randomOffset1 = Math.random() * 0.5
+  const randomOffset2 = Math.random() * 0.5
+  const randomOffset3 = Math.random() * 0.5
 
   const circle1X = useDerivedValue(() =>
     isAnimated
       ? withSpring(
           canvasWidth.value / 4 +
             danceXAmplitude * Math.cos(angle.value + randomOffset1) +
-            gyroscope.sensor.value.roll * 50
+            sinRoll.value * GYRO_MULTIPLIER_X
         )
-      : withSpring(100 + gyroscope.sensor.value.roll * 50, { mass: 10, damping: 10 })
+      : withSpring(100 + sinRoll.value * GYRO_MULTIPLIER_X, { mass: 10, damping: 10 })
   )
 
   const circle1Y = useDerivedValue(() =>
@@ -115,19 +122,20 @@ const AnimatedBackground = ({
       ? withSpring(
           canvasCenterY.value +
             danceYAmplitude * Math.sin(angle.value + randomOffset1) +
-            gyroscope.sensor.value.pitch * 50
+            sinPitch.value * GYRO_MULTIPLIER_Y
         )
-      : withSpring(canvasCenterY.value + gyroscope.sensor.value.pitch * 35, { mass: 10, damping: 10 })
+      : withSpring(canvasCenterY.value + sinPitch.value * GYRO_MULTIPLIER_Y, { mass: 10, damping: 10 })
   )
 
+  // Repeat similar changes for circle2 and circle3
   const circle2X = useDerivedValue(() =>
     isAnimated
       ? withSpring(
           canvasWidth.value / 2 +
             danceXAmplitude * Math.cos(angle.value + (2 * Math.PI) / 3 + randomOffset2) +
-            gyroscope.sensor.value.roll * 40
+            sinRoll.value * GYRO_MULTIPLIER_X
         )
-      : withSpring(screenWidth / 2 + gyroscope.sensor.value.roll * 40, { mass: 40, damping: 10 })
+      : withSpring(screenWidth / 2 + sinRoll.value * GYRO_MULTIPLIER_X, { mass: 40, damping: 10 })
   )
 
   const circle2Y = useDerivedValue(() =>
@@ -135,9 +143,9 @@ const AnimatedBackground = ({
       ? withSpring(
           canvasCenterY.value +
             danceYAmplitude * Math.sin(angle.value + (2 * Math.PI) / 3 + randomOffset2) +
-            gyroscope.sensor.value.pitch * 60
+            sinPitch.value * GYRO_MULTIPLIER_Y
         )
-      : withSpring(canvasCenterY.value - 120 + gyroscope.sensor.value.pitch * 20, { mass: 10, damping: 10 })
+      : withSpring(canvasCenterY.value - 120 + sinPitch.value * GYRO_MULTIPLIER_Y, { mass: 10, damping: 10 })
   )
 
   const circle3X = useDerivedValue(() =>
@@ -145,9 +153,9 @@ const AnimatedBackground = ({
       ? withSpring(
           (3 * canvasWidth.value) / 4 +
             danceXAmplitude * Math.cos(angle.value + (4 * Math.PI) / 3 + randomOffset3) +
-            gyroscope.sensor.value.roll * 42
+            sinRoll.value * GYRO_MULTIPLIER_X
         )
-      : withSpring(screenWidth - 70 + gyroscope.sensor.value.roll * 42, { mass: 10, damping: 10 })
+      : withSpring(screenWidth - 70 + sinRoll.value * GYRO_MULTIPLIER_X, { mass: 10, damping: 10 })
   )
 
   const circle3Y = useDerivedValue(() =>
@@ -155,9 +163,9 @@ const AnimatedBackground = ({
       ? withSpring(
           canvasCenterY.value +
             danceYAmplitude * Math.sin(angle.value + (4 * Math.PI) / 3 + randomOffset3) +
-            gyroscope.sensor.value.pitch * 42
+            sinPitch.value * GYRO_MULTIPLIER_Y
         )
-      : withSpring(canvasCenterY.value - 60 + gyroscope.sensor.value.pitch * 42, { mass: 10, damping: 10 })
+      : withSpring(canvasCenterY.value - 60 + sinPitch.value * GYRO_MULTIPLIER_Y, { mass: 10, damping: 10 })
   )
 
   return (
