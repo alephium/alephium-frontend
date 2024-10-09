@@ -87,6 +87,8 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
           description={t("Clean up your wallet by removing addresses you don't need.")}
           buttonText={t('Start')}
           onButtonClick={handleDeleteAddressesClick}
+          isButtonDisabled={allAddressesIndexes.length === 1}
+          disabledButtonTooltip={t('You only have one address. You cannot forget it.')}
         />
         <OperationBox
           title={t('Generate one address per group')}
