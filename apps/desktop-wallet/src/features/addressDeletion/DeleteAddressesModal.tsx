@@ -92,7 +92,7 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
                 const isSelected = selectedAddressesForDeletion.some((hash) => hash === addressHash)
 
                 return (
-                  <OptionItem
+                  <OptionItemStyled
                     key={addressHash}
                     tabIndex={0}
                     role="listitem"
@@ -108,7 +108,7 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
                       isSelected={isSelected}
                       subtitle={<AddressLastActivity addressHash={addressHash} />}
                     />
-                  </OptionItem>
+                  </OptionItemStyled>
                 )
               })}
             </OptionSelect>
@@ -135,4 +135,9 @@ export default DeleteAddressesModal
 
 const ModalFooterButtonsStyled = styled(ModalFooterButtons)`
   margin: var(--spacing-2) var(--spacing-6);
+`
+
+const OptionItemStyled = styled(OptionItem)`
+  margin-left: 0;
+  margin-right: 0;
 `
