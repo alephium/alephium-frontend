@@ -134,5 +134,5 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
 export default DeleteAddressesModal
 
 const ModalFooterButtonsStyled = styled(ModalFooterButtons)`
-  margin: var(--spacing-4) var(--spacing-6);
+  margin: var(--spacing-2) var(--spacing-6);
 `
