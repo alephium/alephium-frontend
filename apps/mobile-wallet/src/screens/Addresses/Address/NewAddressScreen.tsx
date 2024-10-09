@@ -91,6 +91,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
         initialValues={initialValues}
         onSubmit={handleGeneratePress}
         allowGroupSelection
+        contentPaddingTop
       />
       <SpinnerModal isActive={loading} text={`${t('Generating new address')}...`} />
     </>

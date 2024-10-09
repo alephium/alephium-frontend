@@ -38,10 +38,10 @@ import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import BottomModal from '~/features/modals/DeprecatedBottomModal'
+import { openModal } from '~/features/modals/modalActions'
 import { ModalContentProps } from '~/features/modals/ModalContent'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/navigation/SendNavigation'
-import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import SelectContactModal from '~/screens/SendReceive/Send/SelectContactModal'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { cameraToggled } from '~/store/appSlice'
@@ -72,7 +72,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const { t } = useTranslation()
 
   const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
-  const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
   const shouldFlash = useSharedValue(0)
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
@@ -119,12 +118,14 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   }
 
   const handleAddressPress = (addressHash: AddressHash, closeModal?: ModalContentProps['onClose']) => {
-    closeModal && closeModal()
     setToAddress(addressHash)
     flashInputBg()
 
     sendAnalytics({ event: 'Send: Selected own address to send funds to' })
   }
+
+  const openAddressSelectModal = () =>
+    dispatch(openModal({ name: 'SelectAddressModal', props: { onAddressPress: handleAddressPress } }))
 
   const handleContinuePress = useCallback(
     (formData: FormData) => {
@@ -228,7 +229,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
               compact
               iconProps={{ name: 'bookmark' }}
               title={t('Addresses')}
-              onPress={() => setIsAddressSelectModalOpen(true)}
+              onPress={openAddressSelectModal}
               variant="accent"
               type="secondary"
             />
@@ -257,18 +258,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             />
           )}
           onClose={() => setIsContactSelectModalOpen(false)}
-        />
-
-        <BottomModal
-          isOpen={isAddressSelectModalOpen}
-          Content={(props) => (
-            <SelectAddressModal
-              onAddressPress={(addressHash) => handleAddressPress(addressHash, props.onClose)}
-              {...props}
-            />
-          )}
-          onClose={() => setIsAddressSelectModalOpen(false)}
-          maximisedContent
         />
       </Portal>
     </>

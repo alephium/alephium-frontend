@@ -37,6 +37,7 @@ import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import { useAppSelector } from '~/hooks/redux'
+import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 const AppModals = () => {
@@ -85,6 +86,8 @@ const AppModals = () => {
             return <FundPasswordModal key={id} id={id} {...params.props} />
           case 'SafePlaceWarningModal':
             return <SafePlaceWarningModal key={id} id={id} />
+          case 'SelectAddressModal':
+            return <SelectAddressModal key={id} id={id} {...params.props} />
           default:
             return null
         }

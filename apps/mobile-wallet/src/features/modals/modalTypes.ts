@@ -34,6 +34,7 @@ import MnemonicModal from '~/features/settings/MnemonicModal'
 import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
+import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 export const ModalComponents = {
@@ -52,7 +53,8 @@ export const ModalComponents = {
   LanguageSelectModal,
   EditWalletNameModal,
   FundPasswordModal,
-  SafePlaceWarningModal
+  SafePlaceWarningModal,
+  SelectAddressModal
 }
 
 type ModalName = keyof typeof ModalComponents

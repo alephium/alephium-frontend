@@ -16,36 +16,49 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
+
 import AddressBox from '~/components/AddressBox'
-import { AddressFlatListScreenProps } from '~/components/AddressFlatListScreen'
-import { ModalContentProps, ModalFlatListContent } from '~/features/modals/ModalContent'
-import { useAppSelector } from '~/hooks/redux'
+import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
+import { ModalFlatListContent } from '~/features/modals/ModalContent'
+import withModal from '~/features/modals/withModal'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addressesSlice'
 
-type SelectAddressModalProps = ModalContentProps & Pick<AddressFlatListScreenProps, 'onAddressPress'>
+interface SelectAddressModalProps {
+  onAddressPress: (addressHash: AddressHash) => void
+}
 
-const SelectAddressModal = ({ onAddressPress, ...props }: SelectAddressModalProps) => {
+const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPress }) => {
   const addresses = useAppSelector(selectAllAddresses)
+  const dispatch = useAppDispatch()
+
+  const handleAddressPress = (addressHash: AddressHash) => {
+    dispatch(closeModal({ id }))
+    onAddressPress(addressHash)
+  }
 
   return (
-    <ModalFlatListContent
-      data={addresses}
-      verticalGap
-      keyExtractor={(item) => item.hash}
-      renderItem={({ item: address, index }) => (
-        <AddressBox
-          key={address.hash}
-          addressHash={address.hash}
-          style={{
-            marginTop: index === 0 ? 20 : undefined,
-            marginBottom: index === addresses.length - 1 ? 40 : undefined
-          }}
-          onPress={() => onAddressPress(address.hash)}
-        />
-      )}
-      {...props}
-    />
+    <BottomModal id={id}>
+      <ModalFlatListContent
+        data={addresses}
+        verticalGap
+        keyExtractor={(item) => item.hash}
+        renderItem={({ item: address, index }) => (
+          <AddressBox
+            key={address.hash}
+            addressHash={address.hash}
+            style={{
+              marginTop: index === 0 ? 20 : undefined,
+              marginBottom: index === addresses.length - 1 ? 40 : undefined
+            }}
+            onPress={() => handleAddressPress(address.hash)}
+          />
+        )}
+      />
+    </BottomModal>
   )
-}
+})
 
 export default SelectAddressModal
