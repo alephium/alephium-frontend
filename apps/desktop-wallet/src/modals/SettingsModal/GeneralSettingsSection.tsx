@@ -261,9 +261,12 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
         description={t('Help us improve your experience!')}
         InputComponent={<Toggle toggled={analytics} onToggle={handleAnalyticsToggle} />}
       >
-        <ActionLinkStyled onClick={() => openInWebBrowser(links.analytics)}>
-          <Info size={12} /> {t('More info')}
-        </ActionLinkStyled>
+        <ActionLink onClick={() => openInWebBrowser(links.analytics)}>
+          <MoreInfoLinkContent>
+            <Info size={12} />
+            <span>{t('More info')}</span>
+          </MoreInfoLinkContent>
+        </ActionLink>
       </KeyValueInput>
       <HorizontalDivider />
       <KeyValueInput
@@ -281,8 +284,10 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
 
 export default GeneralSettingsSection
 
-const ActionLinkStyled = styled(ActionLink)`
-  gap: 0.3em;
+const MoreInfoLinkContent = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
 `
 
 const Disclaimer = styled.div`
