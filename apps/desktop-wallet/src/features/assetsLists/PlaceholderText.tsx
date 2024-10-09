@@ -24,6 +24,7 @@ const PlaceholderText = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  color: ${({ theme }) => theme.font.tertiary};
 `
 
 export default PlaceholderText
