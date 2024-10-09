@@ -23,6 +23,7 @@ import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import useFetchToken, { isNFT } from '@/api/apiDataHooks/token/useFetchToken'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -38,7 +39,6 @@ interface CheckAmountsBoxProps {
 }
 
 const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
-  const { t } = useTranslation()
   const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
   const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
 
@@ -50,20 +50,7 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
       {assets.map((asset, index) => (
         <Fragment key={asset.id}>
           {index > 0 && <HorizontalDivider />}
-          <AssetAmountRow>
-            <AssetLogo tokenId={asset.id} size={30} />
-            <AssetAmountStyled tokenId={asset.id} value={BigInt(asset.amount)} fullPrecision />
-            {asset.id === ALPH.id && !!extraAlphForDust && (
-              <ActionLink
-                onClick={() => openInWebBrowser(links.utxoDust)}
-                tooltip={t('{{ amount }} ALPH are added for UTXO spam prevention. Click here to know more.', {
-                  amount: toHumanReadableAmount(extraAlphForDust)
-                })}
-              >
-                <Info size={20} />
-              </ActionLink>
-            )}
-          </AssetAmountRow>
+          <AssetAmountRowComponent tokenId={asset.id} amount={asset.amount} extraAlphForDust={extraAlphForDust} />
         </Fragment>
       ))}
     </Box>
@@ -71,6 +58,37 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
 }
 
 export default CheckAmountsBox
+
+interface AssetAmountRowComponentProps {
+  tokenId: string
+  amount: string
+  extraAlphForDust: bigint
+}
+
+const AssetAmountRowComponent = ({ tokenId, amount, extraAlphForDust }: AssetAmountRowComponentProps) => {
+  const { t } = useTranslation()
+  const { data: token } = useFetchToken(tokenId)
+
+  return (
+    <AssetAmountRow>
+      <AssetLogo tokenId={tokenId} size={30} />
+
+      <TokenText>
+        {isNFT(token) ? token.name : <Amount tokenId={tokenId} value={BigInt(amount)} fullPrecision />}
+      </TokenText>
+      {tokenId === ALPH.id && !!extraAlphForDust && (
+        <ActionLink
+          onClick={() => openInWebBrowser(links.utxoDust)}
+          tooltip={t('{{ amount }} ALPH are added for UTXO spam prevention. Click here to know more.', {
+            amount: toHumanReadableAmount(extraAlphForDust)
+          })}
+        >
+          <Info size={20} />
+        </ActionLink>
+      )}
+    </AssetAmountRow>
+  )
+}
 
 const AssetAmountRow = styled.div`
   display: flex;
@@ -80,7 +98,7 @@ const AssetAmountRow = styled.div`
   gap: 15px;
 `
 
-const AssetAmountStyled = styled(Amount)`
+const TokenText = styled.span`
   font-weight: var(--fontWeight-semiBold);
   font-size: 26px;
 `
