@@ -43,7 +43,7 @@ interface BackupIntroScreenProps
 const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => {
   const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
+  const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
@@ -71,39 +71,36 @@ const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => 
   }
 
   return (
-    <>
-      <ScrollScreen fill onScroll={screenScrollHandler} {...props}>
-        <ScreenSection fill centered verticallyCentered>
-          <StyledAnimation source={backupAnimationSrc} autoPlay />
-        </ScreenSection>
-        <ScreenSection fill>
-          <CenteredInstructions
-            instructions={[
-              {
-                text: t('In the following screens you will see and verify your secret recovery phrase.'),
-                type: 'secondary'
-              },
-              { text: t('Write it down and store it in a safe place.'), type: 'primary' },
-              {
-                text: t('Why is this important?'),
-                type: 'link',
-                url: 'https://docs.alephium.org/frequently-asked-questions#why-is-it-important-to-back-up-your-secret-recovery-phrase'
-              }
-            ]}
-          />
-        </ScreenSection>
-        <BottomButtons>
-          <Button
-            title={t('Show secret recovery phrase')}
-            iconProps={{ name: 'key' }}
-            type="primary"
-            variant="highlight"
-            onPress={onShowSecretRecoveryPhraseButtonPress}
-          />
-        </BottomButtons>
-      </ScrollScreen>
-      {fundPasswordModal}
-    </>
+    <ScrollScreen fill onScroll={screenScrollHandler} {...props}>
+      <ScreenSection fill centered verticallyCentered>
+        <StyledAnimation source={backupAnimationSrc} autoPlay />
+      </ScreenSection>
+      <ScreenSection fill>
+        <CenteredInstructions
+          instructions={[
+            {
+              text: t('In the following screens you will see and verify your secret recovery phrase.'),
+              type: 'secondary'
+            },
+            { text: t('Write it down and store it in a safe place.'), type: 'primary' },
+            {
+              text: t('Why is this important?'),
+              type: 'link',
+              url: 'https://docs.alephium.org/frequently-asked-questions#why-is-it-important-to-back-up-your-secret-recovery-phrase'
+            }
+          ]}
+        />
+      </ScreenSection>
+      <BottomButtons>
+        <Button
+          title={t('Show secret recovery phrase')}
+          iconProps={{ name: 'key' }}
+          type="primary"
+          variant="highlight"
+          onPress={onShowSecretRecoveryPhraseButtonPress}
+        />
+      </BottomButtons>
+    </ScrollScreen>
   )
 }
 

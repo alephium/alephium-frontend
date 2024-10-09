@@ -145,7 +145,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const dispatch = useAppDispatch()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
+  const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const { t } = useTranslation()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
@@ -1128,7 +1128,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           />
         )}
       </Portal>
-      {fundPasswordModal}
       <SpinnerModal isActive={!!loading} text={loading} />
     </WalletConnectContext.Provider>
   )

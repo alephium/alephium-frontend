@@ -77,7 +77,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const theme = useTheme()
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
+  const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const { t } = useTranslation()
 
   const [isSafePlaceWarningModalOpen, setIsSafePlaceWarningModalOpen] = useState(false)
@@ -386,7 +386,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           )}
         />
       </Portal>
-      {fundPasswordModal}
     </>
   )
 }

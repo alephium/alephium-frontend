@@ -54,7 +54,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
   const { setHeaderOptions } = useHeaderContext()
   const currentFundPassword = useFundPassword()
   const dispatch = useAppDispatch()
-  const { fundPasswordModal, triggerFundPasswordAuthGuard } = useFundPasswordGuard()
+  const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const { t } = useTranslation()
 
   const [isEditingPassword, setIsEditingPassword] = useState<boolean>()
@@ -152,6 +152,8 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
     <ScrollScreen
       verticalGap
       fill
+      contentPaddingTop
+      usesKeyboard
       screenTitle={t('Fund password')}
       screenIntro={screenIntro}
       headerOptions={{ type: cameFromBackupScreen ? 'default' : 'stack' }}
@@ -202,8 +204,6 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
           </BoxSurface>
         </ScreenSection>
       )}
-
-      {fundPasswordModal}
     </ScrollScreen>
   )
 }

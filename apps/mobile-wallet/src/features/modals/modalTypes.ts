@@ -23,6 +23,7 @@ import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
+import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import NftGridModal from '~/features/nftsDisplay/NftGridModal'
@@ -48,7 +49,8 @@ export const ModalComponents = {
   AutoLockOptionsModal,
   CurrencySelectModal,
   LanguageSelectModal,
-  EditWalletNameModal
+  EditWalletNameModal,
+  FundPasswordModal
 }
 
 type ModalName = keyof typeof ModalComponents

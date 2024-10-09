@@ -56,21 +56,18 @@ const MnemonicModal = withModal<MnemonicModalProps>(({ id, onVerifyPress }) => {
   }
 
   return (
-    <BottomModal
-      id={id}
-      Content={(props) => (
-        <ModalContent verticalGap {...props}>
-          <ScreenSection fill>
-            <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
+    <BottomModal id={id}>
+      <ModalContent verticalGap>
+        <ScreenSection fill>
+          <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />
+        </ScreenSection>
+        {onVerifyPress && (
+          <ScreenSection>
+            <Button variant="highlight" title={t('Verify')} onPress={handleVerifyButtonPress} />
           </ScreenSection>
-          {onVerifyPress && (
-            <ScreenSection>
-              <Button variant="highlight" title={t('Verify')} onPress={handleVerifyButtonPress} />
-            </ScreenSection>
-          )}
-        </ModalContent>
-      )}
-    />
+        )}
+      </ModalContent>
+    </BottomModal>
   )
 })
 

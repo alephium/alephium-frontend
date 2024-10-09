@@ -75,7 +75,7 @@ const SendContext = createContext(initialValues)
 
 export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
+  const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
@@ -221,7 +221,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
           onClose={() => setIsConsolidateModalVisible(false)}
         />
       </Portal>
-      {fundPasswordModal}
     </SendContext.Provider>
   )
 }
