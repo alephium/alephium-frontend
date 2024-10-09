@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AssetAmount, calculateAmountWorth } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
@@ -54,10 +55,19 @@ const CheckWorthBox = ({ assetAmounts }: CheckWorthBoxProps) => {
   return (
     <Box>
       <InfoRow label={t('Total worth')}>
-        <Amount tokenId={ALPH.id} value={totalWorth} isFiat isLoading={isLoadingTokensByType || isLoadingTokenPrices} />
+        <AmountStyled
+          tokenId={ALPH.id}
+          value={totalWorth}
+          isFiat
+          isLoading={isLoadingTokensByType || isLoadingTokenPrices}
+        />
       </InfoRow>
     </Box>
   )
 }
 
 export default CheckWorthBox
+
+const AmountStyled = styled(Amount)`
+  color: ${({ theme }) => theme.font.highlight};
+`
