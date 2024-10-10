@@ -121,7 +121,8 @@ const FiatAmount = ({ symbol, amount, decimals }: FiatAmountProps) => {
 }
 
 const FiatAmountStyled = styled(Amount)`
-  color: ${({ theme }) => theme.font.highlight};
+  color: ${({ theme }) => theme.font.secondary};
+  font-weight: var(--font-weight-medium);
 `
 
 const AssetAmountRowStyled = styled.div`
