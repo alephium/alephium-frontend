@@ -20,6 +20,8 @@ import 'styled-components'
 
 import { Currency, NetworkSettings } from '@alephium/shared'
 
+import { NumberFormatLocales } from '@/features/settings/numberFormatLocales'
+
 export interface GeneralSettings {
   theme: ThemeSettings
   walletLockTimeInMinutes: number | null
@@ -29,6 +31,7 @@ export interface GeneralSettings {
   devTools: boolean
   analytics: boolean
   fiatCurrency: Currency
+  numberFormatRegion: NumberFormatLocales | undefined
 }
 
 export interface Settings {
