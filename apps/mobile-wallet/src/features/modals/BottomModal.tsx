@@ -18,42 +18,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 // HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
 
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { Dimensions, KeyboardAvoidingView, Pressable, ScrollView, StyleProp, ViewStyle } from 'react-native'
-import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import Animated, {
-  interpolate,
-  runOnJS,
-  runOnUI,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  WithSpringConfig
-} from 'react-native-reanimated'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { ReactNode } from 'react'
+import { KeyboardAvoidingView, Pressable, ScrollView, StyleProp, ViewStyle } from 'react-native'
+import { GestureDetector } from 'react-native-gesture-handler'
+import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { CloseButton } from '~/components/buttons/Button'
-import { removeModal } from '~/features/modals/modalActions'
-import { selectModalById } from '~/features/modals/modalSelectors'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { useBottomModalState } from '~/features/modals/useBottomModalState'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
-
-type ModalPositions = 'minimised' | 'maximised' | 'closing'
-
-const NAV_HEIGHT = 50
-const DRAG_BUFFER = 40
-
-const springConfig: WithSpringConfig = {
-  damping: 50,
-  mass: 0.3,
-  stiffness: 120,
-  overshootClamping: true,
-  restSpeedThreshold: 0.3,
-  restDisplacementThreshold: 0.3
-}
 
 export interface BottomModalProps {
   id: number
@@ -61,7 +35,8 @@ export interface BottomModalProps {
   onClose?: () => void
   title?: string
   maximisedContent?: boolean
-  customMinHeight?: number
+  minHeight?: number
+  navHeight?: number
   noPadding?: boolean
   contentVerticalGap?: boolean
   contentContainerStyle?: StyleProp<ViewStyle>
@@ -76,208 +51,39 @@ const BottomModal = ({
   onClose,
   title,
   maximisedContent,
-  customMinHeight,
+  minHeight,
+  navHeight = 50,
   noPadding,
   contentVerticalGap,
   contentContainerStyle
 }: BottomModalProps) => {
-  const insets = useSafeAreaInsets()
-  const dispatch = useAppDispatch()
-  const [dimensions, setDimensions] = useState(Dimensions.get('window'))
-  const isModalClosing = useAppSelector((s) => selectModalById(s, id)?.isClosing)
-
-  useEffect(() => {
-    const subscription = Dimensions.addEventListener('change', ({ window }) => {
-      setDimensions(window)
-    })
-
-    return () => subscription?.remove()
-  }, [])
-
-  const contentHeight = useSharedValue(0)
-  const [isScrollable, setIsScrollable] = useState(false)
-  const contentScrollY = useSharedValue(0)
-
-  const maxHeight = dimensions.height
-
-  const minHeight = useSharedValue(customMinHeight || 0)
-  const modalHeight = useSharedValue(0)
-  const position = useSharedValue<ModalPositions>('minimised')
-  const navHeight = useSharedValue(0)
-  const offsetY = useSharedValue(0)
-
-  const canMaximize = useSharedValue(false)
-  const shouldMaximizeOnOpen = useSharedValue(maximisedContent)
-
-  const modalHeightAnimatedStyle = useAnimatedStyle(() => ({
-    height: -modalHeight.value,
-    paddingTop: withSpring(
-      position.value === 'maximised' ? insets.top : position.value === 'closing' ? 0 : 10,
-      springConfig
-    )
-  }))
-
-  const handleAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: shouldMaximizeOnOpen.value
-      ? 0
-      : interpolate(-modalHeight.value, [0, minHeight.value, dimensions.height], [0, 1, 0])
-  }))
-
-  const backdropAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(-modalHeight.value, [0, dimensions.height - 100], [0, 1]),
-    pointerEvents: position.value === 'closing' ? 'none' : 'auto'
-  }))
-
-  const handleContentSizeChange = (_w: number, newContentHeight: number) => {
-    if (!modalHeight.value || newContentHeight > contentHeight.value + 1) {
-      // 👆 Add one to avoid floating point issues
-
-      // 👇 This is where we initiate the layout main values based on children height
-      runOnUI(() => {
-        contentHeight.value = newContentHeight
-        canMaximize.value = contentHeight.value > 0.3 * dimensions.height
-        shouldMaximizeOnOpen.value = maximisedContent || newContentHeight > dimensions.height
-
-        minHeight.value = customMinHeight
-          ? customMinHeight
-          : shouldMaximizeOnOpen.value
-            ? maxHeight
-            : contentHeight.value + NAV_HEIGHT + insets.bottom
-
-        shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
-
-        // Determine if scrolling is needed
-        runOnJS(setIsScrollable)(contentHeight.value > dimensions.height * 0.9)
-      })()
-    }
-  }
-
-  const handleCloseOnJS = useCallback(() => {
-    if (onClose) onClose()
-
-    dispatch(removeModal({ id })) // Remove modal from stack after animation is done
-  }, [dispatch, id, onClose])
-
-  const handleClose = useCallback(() => {
-    'worklet'
-
-    navHeight.value = withSpring(0, springConfig)
-    modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(handleCloseOnJS)())
-    position.value = 'closing'
-  }, [handleCloseOnJS, modalHeight, navHeight, position])
-
-  const handleMaximize = useCallback(() => {
-    'worklet'
-
-    navHeight.value = withSpring(NAV_HEIGHT, springConfig)
-    modalHeight.value = withSpring(-maxHeight, springConfig)
-    position.value = 'maximised'
-  }, [maxHeight, modalHeight, navHeight, position])
-
-  const handleMinimize = useCallback(() => {
-    'worklet'
-
-    navHeight.value = withSpring(0, springConfig)
-    modalHeight.value = withSpring(-minHeight.value, springConfig)
-    position.value = 'minimised'
-  }, [minHeight.value, modalHeight, navHeight, position])
-
-  // Modal panning gesture handler 👇
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleDragEnd = () => {
-    'worklet'
-
-    const shouldMinimise = position.value === 'maximised' && -modalHeight.value < dimensions.height - DRAG_BUFFER
-
-    const shouldMaximise =
-      canMaximize.value && position.value === 'minimised' && -modalHeight.value > minHeight.value + DRAG_BUFFER
-
-    const shouldClose =
-      ['minimised', 'closing'].includes(position.value) && -modalHeight.value < minHeight.value - DRAG_BUFFER
-
-    if (shouldMaximise) {
-      handleMaximize()
-    } else if (shouldMinimise) {
-      shouldMaximizeOnOpen.value ? handleClose() : handleMinimize()
-    } else if (shouldClose) {
-      handleClose()
-    } else {
-      modalHeight.value =
-        position.value === 'maximised'
-          ? withSpring(-maxHeight, springConfig)
-          : withSpring(-minHeight.value, springConfig)
-    }
-  }
-
-  const panGesture = useMemo(
-    () =>
-      Gesture.Pan()
-        .onStart(() => {
-          offsetY.value = modalHeight.value
-        })
-        .onChange((e) => {
-          if (position.value !== 'closing') {
-            modalHeight.value = offsetY.value + e.translationY
-          }
-        })
-        .onEnd(() => {
-          handleDragEnd()
-        }),
-    [offsetY, modalHeight, position.value, handleDragEnd]
-  )
-
-  // Content scroll management 👇
-  const previousContentScrollY = useSharedValue(0)
-  const isContentDragged = useSharedValue(false)
-  const modalHeightDelta = useSharedValue(0)
-
-  const contentScrollHandler = useAnimatedScrollHandler({
-    onScroll: (e) => {
-      contentScrollY.value = e.contentOffset.y
-
-      if (!isContentDragged.value) return
-
-      if (contentScrollY.value <= 0) {
-        // move the whole modal
-        if (contentScrollY.value < previousContentScrollY.value) {
-          const newModalHeightValue = modalHeight.value - contentScrollY.value
-          modalHeightDelta.value = modalHeight.value - newModalHeightValue
-          modalHeight.value = newModalHeightValue
-        }
-      } else if (-modalHeight.value < maxHeight) {
-        handleMaximize()
-      }
-      previousContentScrollY.value = contentScrollY.value
-    },
-    onBeginDrag: () => {
-      isContentDragged.value = true
-    },
-    onEndDrag: () => {
-      isContentDragged.value = false
-
-      if (modalHeightDelta.value < -1) {
-        handleClose()
-      }
-    }
+  const {
+    modalHeightAnimatedStyle,
+    handleAnimatedStyle,
+    backdropAnimatedStyle,
+    handleContentSizeChange,
+    panGesture,
+    handleClose,
+    contentScrollHandler,
+    isScrollable
+  } = useBottomModalState({
+    id,
+    maximisedContent,
+    minHeight,
+    navHeight,
+    onClose
   })
-
-  // Trigger handle close when modal entity is closed from outside
-  useEffect(() => {
-    if (position.value !== 'closing' && isModalClosing) {
-      handleClose()
-    }
-  }, [handleClose, isModalClosing, position.value])
 
   return (
     <GestureDetector gesture={panGesture}>
-      <ExternalContainer behavior="height" enabled={!maximisedContent}>
+      <KeyboardAvoidingViewStyled behavior="height" enabled={!maximisedContent}>
         <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
         <Container>
           <ModalStyled style={modalHeightAnimatedStyle}>
             <HandleContainer>
               <Handle style={handleAnimatedStyle} />
             </HandleContainer>
-            <Navigation>
+            <Navigation style={{ height: navHeight }}>
               <NavigationButtonContainer align="left" />
               <Title semiBold>{title}</Title>
               <NavigationButtonContainer align="right">
@@ -302,14 +108,14 @@ const BottomModal = ({
             </AnimatedScrollView>
           </ModalStyled>
         </Container>
-      </ExternalContainer>
+      </KeyboardAvoidingViewStyled>
     </GestureDetector>
   )
 }
 
 export default BottomModal
 
-const ExternalContainer = styled(KeyboardAvoidingView)`
+const KeyboardAvoidingViewStyled = styled(KeyboardAvoidingView)`
   position: absolute;
   bottom: 0;
   left: 0;
@@ -366,7 +172,6 @@ const Navigation = styled(Animated.View)`
   align-items: center;
   justify-content: flex-end;
   padding: 0 ${DEFAULT_MARGIN - 1}px;
-  height: ${NAV_HEIGHT}px;
 `
 
 const NavigationButtonContainer = styled.View<{ align: 'right' | 'left' }>`
