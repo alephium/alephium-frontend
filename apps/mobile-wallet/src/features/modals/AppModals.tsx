@@ -39,6 +39,7 @@ import MnemonicModal from '~/features/settings/MnemonicModal'
 import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
+import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectErrorModal'
 import { useAppSelector } from '~/hooks/redux'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
@@ -94,6 +95,8 @@ const AppModals = () => {
             return <SelectContactModal key={id} id={id} {...params.props} />
           case 'ConsolidationModal':
             return <ConsolidationModal key={id} id={id} {...params.props} />
+          case 'WalletConnectErrorModal':
+            return <WalletConnectErrorModal key={id} id={id} {...params.props} />
           default:
             return null
         }

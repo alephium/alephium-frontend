@@ -17,19 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, Platform } from 'react-native'
 import { Portal } from 'react-native-portalize'
-import styled, { useTheme } from 'styled-components/native'
+import { useTheme } from 'styled-components/native'
 
-import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import ButtonsRow from '~/components/buttons/ButtonsRow'
-import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal from '~/features/modals/DeprecatedBottomModal'
-import { ModalContent } from '~/features/modals/ModalContent'
+import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import WalletConnectSVG from '~/images/logos/WalletConnectLogo'
 import WalletConnectPairingsModal from '~/screens/Dashboard/WalletConnectPairingsModal'
@@ -39,23 +34,21 @@ import { cameraToggled } from '~/store/appSlice'
 const WalletConnectHeaderButton = () => {
   const theme = useTheme()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
-  const walletConnectClientError = useAppSelector((s) => s.clients.walletConnect.errorMessage)
-  const { activeSessions, resetWalletConnectClientInitializationAttempts } = useWalletConnectContext()
+  const { activeSessions } = useWalletConnectContext()
   const dispatch = useAppDispatch()
-  const { t } = useTranslation()
 
   const [isWalletConnectPairingsModalOpen, setIsWalletConnectPairingsModalOpen] = useState(false)
   const [isWalletConnectPasteUrlModalOpen, setIsWalletConnectPasteUrlModalOpen] = useState(false)
-  const [isWalletConnectErrorModalOpen, setIsWalletConnectErrorModalOpen] = useState(false)
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
+  const openWalletConnectErrorModal = () => dispatch(openModal({ name: 'WalletConnectErrorModal' }))
 
   return (
     <>
       {walletConnectClientStatus === 'initialization-failed' ? (
         <Button
           variant="alert"
-          onPress={() => setIsWalletConnectErrorModalOpen(true)}
+          onPress={openWalletConnectErrorModal}
           customIcon={<WalletConnectSVG width={20} color={theme.global.alert} />}
           round
         />
@@ -107,47 +100,8 @@ const WalletConnectHeaderButton = () => {
           onClose={() => setIsWalletConnectPairingsModalOpen(false)}
         />
       </Portal>
-      <Portal>
-        <BottomModal
-          isOpen={isWalletConnectErrorModalOpen}
-          onClose={() => setIsWalletConnectErrorModalOpen(false)}
-          Content={(props) => (
-            <ModalContent verticalGap {...props}>
-              <ScreenSection>
-                <ModalScreenTitle>{t('Could not connect to WalletConnect')}</ModalScreenTitle>
-              </ScreenSection>
-              {walletConnectClientError && (
-                <ScreenSection>
-                  <BoxSurface>
-                    <AppTextStyled>{walletConnectClientError}</AppTextStyled>
-                  </BoxSurface>
-                </ScreenSection>
-              )}
-              <ScreenSection centered>
-                <ButtonsRow>
-                  <Button title={t('Close')} onPress={props.onClose && props.onClose} flex />
-                  <Button
-                    title={t('Retry')}
-                    variant="accent"
-                    onPress={() => {
-                      resetWalletConnectClientInitializationAttempts()
-                      props.onClose && props.onClose()
-                    }}
-                    flex
-                  />
-                </ButtonsRow>
-              </ScreenSection>
-            </ModalContent>
-          )}
-        />
-      </Portal>
     </>
   )
 }
 
 export default WalletConnectHeaderButton
-
-const AppTextStyled = styled(AppText)`
-  font-family: monospace;
-  padding: 10px;
-`
