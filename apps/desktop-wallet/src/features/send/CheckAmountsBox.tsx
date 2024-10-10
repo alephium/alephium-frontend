@@ -136,7 +136,8 @@ const AssetAmountRowStyled = styled.div`
 `
 
 const TokenName = styled.span`
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: var(--fontWeight-medium);
 `
 
 const LogoAndName = styled.div`
