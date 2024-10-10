@@ -23,12 +23,13 @@ import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
 import withModal from '~/features/modals/withModal'
 
 interface NftGridModalProps {
-  nftsData: NFT[]
+  addressHash?: string
+  nftsData?: NFT[]
 }
 
-const NftGridModal = withModal<NftGridModalProps>(({ id, nftsData }) => (
+const NftGridModal = withModal<NftGridModalProps>(({ id, addressHash, nftsData }) => (
   <BottomModalFlashList modalId={id} noPadding>
-    {(props) => <NFTsGrid nfts={nftsData} {...props} />}
+    {(props) => <NFTsGrid addressHash={addressHash} nfts={nftsData} {...props} />}
   </BottomModalFlashList>
 ))
 
