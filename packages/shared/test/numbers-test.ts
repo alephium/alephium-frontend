@@ -44,10 +44,10 @@ it('Should abbreviate ALPH amount', () => {
     expect(formatAmountForDisplay({ amount: BigInt('20000000000000000') })).toEqual('0.02'),
     expect(formatAmountForDisplay({ amount: BigInt('200000000000000000') })).toEqual('0.20'),
     expect(formatAmountForDisplay({ amount: BigInt('2000000000000000000') })).toEqual('2.00'),
-    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000') })).toEqual("1'230.00"),
-    expect(formatAmountForDisplay({ amount: BigInt('10230000000000000000000') })).toEqual("10'230.00"),
-    expect(formatAmountForDisplay({ amount: BigInt('100230000000000000000000') })).toEqual("100'230.00"),
-    expect(formatAmountForDisplay({ amount: BigInt('999999990000000000000000') })).toEqual("999'999.99"),
+    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000') })).toEqual('1,230.00'),
+    expect(formatAmountForDisplay({ amount: BigInt('10230000000000000000000') })).toEqual('10,230.00'),
+    expect(formatAmountForDisplay({ amount: BigInt('100230000000000000000000') })).toEqual('100,230.00'),
+    expect(formatAmountForDisplay({ amount: BigInt('999999990000000000000000') })).toEqual('999,999.99'),
     expect(formatAmountForDisplay({ amount: BigInt('999999999000000000000000') })).toEqual('1.00M'),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000') })).toEqual('1.23M'),
     expect(formatAmountForDisplay({ amount: BigInt('1000000000000000000000000') })).toEqual('1.00M'),
@@ -59,7 +59,7 @@ it('Should abbreviate ALPH amount', () => {
     expect(formatAmountForDisplay({ amount: BigInt('1235000000000000000000000000') })).toEqual('1.24B'),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000') })).toEqual('1.23T'),
     expect(formatAmountForDisplay({ amount: BigInt('1237000000000000000000000000000') })).toEqual('1.24T'),
-    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000') })).toEqual("1'230.00T"),
+    expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000') })).toEqual('1,230.00T'),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000000') })).toEqual('1.23e+18'),
     expect(
       formatAmountForDisplay({ amount: BigInt('999999999990000000000000000000000000000'), truncate: true })
@@ -92,10 +92,10 @@ it('Should abbreviate token amount', () => {
     expect(formatAmountForDisplay({ amount: BigInt('200000000000000000'), amountDecimals: 17 })).toEqual('2.00'),
     expect(formatAmountForDisplay({ amount: BigInt('2000000000000000000'), amountDecimals: 17 })).toEqual('20.00'),
     expect(formatAmountForDisplay({ amount: BigInt('1230000000000000000000'), amountDecimals: 17 })).toEqual(
-      "12'300.00"
+      '12,300.00'
     ),
     expect(formatAmountForDisplay({ amount: BigInt('10230000000000000000000'), amountDecimals: 17 })).toEqual(
-      "102'300.00"
+      '102,300.00'
     ),
     expect(formatAmountForDisplay({ amount: BigInt('100230000000000000000000'), amountDecimals: 17 })).toEqual('1.00M'),
     expect(formatAmountForDisplay({ amount: BigInt('999999990000000000000000'), amountDecimals: 17 })).toEqual(
@@ -136,13 +136,13 @@ it('Should abbreviate token amount', () => {
     ),
     expect(
       formatAmountForDisplay({ amount: BigInt('1230000000000000000000000000000000'), amountDecimals: 17 })
-    ).toEqual("12'300.00T"),
+    ).toEqual('12,300.00T'),
     expect(
       formatAmountForDisplay({
         amount: BigInt('10000000000000000000000000000000000'),
         amountDecimals: 17
       })
-    ).toEqual("100'000.00T"),
+    ).toEqual('100,000.00T'),
     expect(
       formatAmountForDisplay({
         amount: BigInt('99999999999999999999999999999999999'),

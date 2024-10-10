@@ -42,9 +42,12 @@ import {
   languageChangeFinished,
   languageChangeStarted,
   localStorageGeneralSettingsMigrated,
+  numberFormatRegionChanged,
   passwordRequirementToggled,
   systemLanguageMatchFailed,
   systemLanguageMatchSucceeded,
+  systemRegionMatchFailed,
+  systemRegionMatchSucceeded,
   themeSettingsChanged,
   themeToggled,
   walletLockTimeChanged
@@ -62,11 +65,11 @@ const settingsSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(localStorageGeneralSettingsMigrated, (_, { payload: generalSettings }) => generalSettings)
-      .addCase(systemLanguageMatchSucceeded, (state, { payload: language }) => {
-        state.language = language
-      })
       .addCase(systemLanguageMatchFailed, (state) => {
         state.language = 'en-US'
+      })
+      .addCase(systemRegionMatchFailed, (state) => {
+        state.numberFormatRegion = 'en-US'
       })
       .addCase(themeSettingsChanged, (state, action) => {
         state.theme = action.payload
@@ -83,9 +86,6 @@ const settingsSlice = createSlice({
       .addCase(devToolsToggled, (state) => {
         state.devTools = !state.devTools
       })
-      .addCase(languageChanged, (state, action) => {
-        state.language = action.payload
-      })
       .addCase(walletLockTimeChanged, (state, action) => {
         state.walletLockTimeInMinutes = action.payload
       })
@@ -94,6 +94,14 @@ const settingsSlice = createSlice({
       })
       .addCase(fiatCurrencyChanged, (state, action) => {
         state.fiatCurrency = action.payload
+      })
+
+    builder
+      .addMatcher(isAnyOf(numberFormatRegionChanged, systemRegionMatchSucceeded), (state, action) => {
+        state.numberFormatRegion = action.payload
+      })
+      .addMatcher(isAnyOf(languageChanged, systemLanguageMatchSucceeded), (state, action) => {
+        state.language = action.payload
       })
   }
 })
@@ -111,6 +119,8 @@ settingsListenerMiddleware.startListening({
     languageChanged,
     systemLanguageMatchSucceeded,
     systemLanguageMatchFailed,
+    systemRegionMatchSucceeded,
+    systemRegionMatchFailed,
     walletLockTimeChanged,
     analyticsToggled,
     fiatCurrencyChanged
