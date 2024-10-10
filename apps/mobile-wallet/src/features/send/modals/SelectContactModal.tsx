@@ -16,14 +16,19 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { Contact } from '@alephium/shared'
+
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
-import ContactListScreenBase, { ContactListScreenBaseProps } from '~/screens/ContactListScreenBase'
+import ContactListScreenBase from '~/screens/ContactListScreenBase'
 
-type SelectContactModalProps = ContactListScreenBaseProps
+interface SelectContactModalProps {
+  onContactPress: (contactId: Contact['id']) => void
+  onNewContactPress?: () => void
+}
 
 const SelectContactModal = withModal<SelectContactModalProps>(({ id, onContactPress, onNewContactPress }) => {
   const dispatch = useAppDispatch()
