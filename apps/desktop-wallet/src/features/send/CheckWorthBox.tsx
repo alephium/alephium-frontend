@@ -69,5 +69,5 @@ const CheckWorthBox = ({ assetAmounts }: CheckWorthBoxProps) => {
 export default CheckWorthBox
 
 const AmountStyled = styled(Amount)`
-  color: ${({ theme }) => theme.font.highlight};
+  color: ${({ theme }) => theme.font.primary};
 `
