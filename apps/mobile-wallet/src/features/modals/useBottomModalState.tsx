@@ -120,7 +120,7 @@ export const useBottomModalState = ({
       if (!modalHeight.value || newContentHeight > contentHeight.value + 1) {
         runOnUI(() => {
           contentHeight.value = newContentHeight
-          canMaximize.value = contentHeight.value > 0.3 * maxHeight
+          canMaximize.value = contentHeight.value > maxHeight
           shouldMaximizeOnOpen.value = maximisedContent || contentHeight.value > maxHeight
 
           minHeight.value = customMinHeight
@@ -153,6 +153,7 @@ export const useBottomModalState = ({
     ]
   )
 
+  // Content ccroll handlers
   const contentScrollHandlers: ContentScrollHandlers = {
     onScroll: (e) => {
       contentScrollY.value = e.nativeEvent.contentOffset.y

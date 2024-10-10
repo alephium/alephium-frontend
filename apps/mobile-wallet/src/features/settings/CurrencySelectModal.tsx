@@ -42,26 +42,23 @@ const CurrencySelectModal = withModal(({ id }) => {
   }
 
   return (
-    <BottomModal
-      modalId={id}
-      Content={(props) => (
-        <ModalContent verticalGap {...props}>
-          <ScreenSection>
-            <BoxSurface>
-              {currencyOptions.map((currencyOption, index) => (
-                <RadioButtonRow
-                  key={currencyOption.label}
-                  title={currencyOption.label}
-                  onPress={() => handleCurrencyChange(currencyOption.value)}
-                  isActive={currentCurrency === currencyOption.value}
-                  isLast={index === currencyOptions.length - 1}
-                />
-              ))}
-            </BoxSurface>
-          </ScreenSection>
-        </ModalContent>
-      )}
-    />
+    <BottomModal modalId={id}>
+      <ModalContent verticalGap>
+        <ScreenSection>
+          <BoxSurface>
+            {currencyOptions.map((currencyOption, index) => (
+              <RadioButtonRow
+                key={currencyOption.label}
+                title={currencyOption.label}
+                onPress={() => handleCurrencyChange(currencyOption.value)}
+                isActive={currentCurrency === currencyOption.value}
+                isLast={index === currencyOptions.length - 1}
+              />
+            ))}
+          </BoxSurface>
+        </ScreenSection>
+      </ModalContent>
+    </BottomModal>
   )
 })
 

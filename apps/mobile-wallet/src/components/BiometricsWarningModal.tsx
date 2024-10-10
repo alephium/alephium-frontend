@@ -43,29 +43,26 @@ const BiometricsWarningModal = withModal<BiometricsWarningModalProps>(({ id, onC
   }
 
   return (
-    <BottomModal
-      modalId={id}
-      Content={(props) => (
-        <ModalContent verticalGap {...props}>
-          <ScreenSection>
-            <ModalScreenTitle>⚠️ {t('Are you sure?')}</ModalScreenTitle>
-          </ScreenSection>
-          <ScreenSection>
-            <AppText color="secondary" size={18}>
-              {t(
-                "If you don't turn on biometrics, anyone who gains access to your device can open the app and steal your funds."
-              )}
-            </AppText>
-          </ScreenSection>
-          <ScreenSection centered>
-            <ButtonsRow>
-              <Button title={t('Cancel')} onPress={props.onClose} flex short />
-              <Button title={confirmText ?? t('Disable')} onPress={handleConfirm} variant="alert" flex short />
-            </ButtonsRow>
-          </ScreenSection>
-        </ModalContent>
-      )}
-    />
+    <BottomModal modalId={id}>
+      <ModalContent verticalGap>
+        <ScreenSection>
+          <ModalScreenTitle>⚠️ {t('Are you sure?')}</ModalScreenTitle>
+        </ScreenSection>
+        <ScreenSection>
+          <AppText color="secondary" size={18}>
+            {t(
+              "If you don't turn on biometrics, anyone who gains access to your device can open the app and steal your funds."
+            )}
+          </AppText>
+        </ScreenSection>
+        <ScreenSection centered>
+          <ButtonsRow>
+            <Button title={t('Cancel')} onPress={() => dispatch(closeModal({ id }))} flex short />
+            <Button title={confirmText ?? t('Disable')} onPress={handleConfirm} variant="alert" flex short />
+          </ButtonsRow>
+        </ScreenSection>
+      </ModalContent>
+    </BottomModal>
   )
 })
 
