@@ -30,11 +30,6 @@ const modalSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(openModal, (state, action) => {
-        // Allow only one modal of the same type to be open at the same time
-        if (Object.values(state.entities).find((m) => m?.params.name === action.payload.name)) {
-          return
-        }
-
         modalAdapter.addOne(state, {
           id: Date.now(),
           params: action.payload,

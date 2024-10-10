@@ -16,13 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackScreenProps } from '@react-navigation/stack'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
-import { ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
@@ -46,7 +45,9 @@ const instructions: Instruction[] = [
   { text: i18n.t('How should we name this wallet?'), type: 'primary' }
 ]
 
-interface NewWalletNameScreenProps extends StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>, ScreenProps {}
+interface NewWalletNameScreenProps
+  extends NativeStackScreenProps<RootStackParamList, 'NewWalletNameScreen'>,
+    ScreenProps {}
 
 const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method)
@@ -94,13 +95,14 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
 
   return (
     <ScrollScreen
-      usesKeyboard
       fill
-      headerOptions={{
-        type: 'stack',
-        headerRight: () => <ContinueButton onPress={handleButtonPress} disabled={name.length < 3} />
-      }}
+      usesKeyboard
+      contentPaddingTop
       keyboardShouldPersistTaps="always"
+      scrollEnabled={false}
+      headerOptions={{
+        type: 'stack'
+      }}
       {...props}
     >
       <ContentContainer>

@@ -68,8 +68,8 @@ const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
       selectedAddress={fromAddress}
       screenTitle={t('Origin')}
       screenIntro={t('Select the address from which to send the transaction.')}
-      contentPaddingTop
       onScroll={screenScrollHandler}
+      contentPaddingTop
     />
   )
 }

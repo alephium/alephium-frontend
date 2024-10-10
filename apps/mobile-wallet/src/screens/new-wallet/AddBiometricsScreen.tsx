@@ -23,7 +23,7 @@ import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import animationSrc from '~/animations/lottie/fingerprint.json'
-import ActionButtonsStack from '~/components/buttons/ActionButtonsStack'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
@@ -81,10 +81,10 @@ const AddBiometricsScreen = ({ navigation, ...props }: AddBiometricsScreenProps)
         </WhiteCircle>
       </AnimationContainer>
       <CenteredInstructions instructions={instructions} stretch />
-      <ActionButtonsStack>
+      <BottomButtons>
         <Button title={t('Activate')} type="primary" variant="highlight" onPress={activateBiometrics} />
         <Button title={t('Later')} type="secondary" onPress={openBiometricsWarningModal} />
-      </ActionButtonsStack>
+      </BottomButtons>
     </ScrollScreen>
   )
 }

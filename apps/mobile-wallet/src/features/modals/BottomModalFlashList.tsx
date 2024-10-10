@@ -15,48 +15,47 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-
-// HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
-
+import { ContentStyle } from '@shopify/flash-list'
 import { ReactNode } from 'react'
-import { KeyboardAvoidingView, Pressable, ScrollView, StyleProp, ViewStyle } from 'react-native'
+import { KeyboardAvoidingView, Pressable } from 'react-native'
 import { GestureDetector } from 'react-native-gesture-handler'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { CloseButton } from '~/components/buttons/Button'
-import { useBottomModalState } from '~/features/modals/useBottomModalState'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { ContentScrollHandlers, useBottomModalState } from '~/features/modals/useBottomModalState'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-export interface BottomModalProps {
+export interface BottomModalFlashListProps {
   modalId: number
-  children: ReactNode
   onClose?: () => void
   title?: string
   maximisedContent?: boolean
   minHeight?: number
   navHeight?: number
   noPadding?: boolean
-  contentVerticalGap?: boolean
-  contentContainerStyle?: StyleProp<ViewStyle>
+  children: (scrollHandlers: {
+    contentContainerStyle: ContentStyle
+    onScroll: ContentScrollHandlers['onScroll']
+    onScrollBeginDrag: ContentScrollHandlers['onScrollBeginDrag']
+    onScrollEndDrag: ContentScrollHandlers['onScrollEndDrag']
+    onContentSizeChange: (w: number, h: number) => void
+  }) => ReactNode
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
-const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView)
 
-const BottomModal = ({
+const BottomModalFlashList = ({
   modalId,
-  children,
   onClose,
   title,
   maximisedContent,
   minHeight,
   navHeight = 50,
   noPadding,
-  contentVerticalGap,
-  contentContainerStyle
-}: BottomModalProps) => {
+  children
+}: BottomModalFlashListProps) => {
   const {
     modalHeightAnimatedStyle,
     handleAnimatedStyle,
@@ -64,8 +63,7 @@ const BottomModal = ({
     handleContentSizeChange,
     panGesture,
     handleClose,
-    contentScrollHandlers,
-    isScrollable
+    contentScrollHandlers
   } = useBottomModalState({
     modalId,
     maximisedContent,
@@ -90,22 +88,13 @@ const BottomModal = ({
                 <CloseButton onPress={handleClose} compact />
               </NavigationButtonContainer>
             </Navigation>
-            <AnimatedScrollView
-              onContentSizeChange={handleContentSizeChange}
-              keyboardShouldPersistTaps="handled"
-              scrollEnabled={isScrollable}
-              scrollEventThrottle={16}
-              contentContainerStyle={[
-                contentContainerStyle,
-                {
-                  gap: contentVerticalGap ? VERTICAL_GAP : undefined,
-                  padding: noPadding ? 0 : DEFAULT_MARGIN
-                }
-              ]}
-              {...contentScrollHandlers}
-            >
-              {children}
-            </AnimatedScrollView>
+            {children({
+              ...contentScrollHandlers,
+              onContentSizeChange: handleContentSizeChange,
+              contentContainerStyle: {
+                padding: noPadding ? 0 : DEFAULT_MARGIN
+              }
+            })}
           </ModalStyled>
         </Container>
       </KeyboardAvoidingViewStyled>
@@ -113,7 +102,7 @@ const BottomModal = ({
   )
 }
 
-export default BottomModal
+export default BottomModalFlashList
 
 const KeyboardAvoidingViewStyled = styled(KeyboardAvoidingView)`
   position: absolute;

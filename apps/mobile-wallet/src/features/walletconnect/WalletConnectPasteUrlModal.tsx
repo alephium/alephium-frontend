@@ -26,12 +26,21 @@ import Input from '~/components/inputs/Input'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
+import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
+import { ModalContent } from '~/features/modals/ModalContent'
+import withModal from '~/features/modals/withModal'
+import { useAppDispatch } from '~/hooks/redux'
 import { showToast } from '~/utils/layout'
 
-const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
+interface WalletConnectPasteUrlModalProps {
+  onClose?: () => void
+}
+
+const WalletConnectPasteUrlModal = withModal<WalletConnectPasteUrlModalProps>(({ id, onClose }) => {
   const { pairWithDapp } = useWalletConnectContext()
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
   const [inputWcUrl, setInputWcUrl] = useState('')
   const [error, setError] = useState('')
@@ -50,8 +59,9 @@ const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
 
       setIsLoading(false)
 
-      props.onClose && props.onClose()
+      onClose && onClose()
       sendAnalytics({ event: 'WC: Connected by manually pasting URI' })
+      dispatch(closeModal({ id }))
     } else {
       showToast({
         text1: 'Invalid URI',
@@ -62,8 +72,8 @@ const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
   }
 
   return (
-    <>
-      <ModalContent verticalGap {...props}>
+    <BottomModal modalId={id}>
+      <ModalContent verticalGap>
         <ScreenSection>
           <ModalScreenTitle>{t('Connect to dApp')}</ModalScreenTitle>
         </ScreenSection>
@@ -80,8 +90,8 @@ const WalletConnectPasteUrlModal = (props: ModalContentProps) => {
         </ScreenSection>
       </ModalContent>
       <SpinnerModal isActive={isLoading} />
-    </>
+    </BottomModal>
   )
-}
+})
 
 export default WalletConnectPasteUrlModal

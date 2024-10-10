@@ -16,40 +16,29 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 
-import FundPasswordModal, { FundPasswordModalProps } from '~/features/fund-password/FundPasswordModal'
-import { useAppSelector } from '~/hooks/redux'
+import { FundPasswordModalProps } from '~/features/fund-password/FundPasswordModal'
+import { openModal } from '~/features/modals/modalActions'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 const useFundPasswordGuard = () => {
+  const dispatch = useAppDispatch()
   const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
-
-  const [onCorrectPasswordCallback, setOnCorrectPasswordCallback] = useState<() => void>(() => () => null)
-  const [isFundPasswordModalOpen, setIsFundPasswordModalOpen] = useState(false)
 
   const triggerFundPasswordAuthGuard = useCallback(
     ({ successCallback }: Pick<FundPasswordModalProps, 'successCallback'>) => {
       if (isUsingFundPassword) {
-        setOnCorrectPasswordCallback(() => successCallback)
-        setIsFundPasswordModalOpen(true)
+        dispatch(openModal({ name: 'FundPasswordModal', props: { successCallback } }))
       } else {
         successCallback()
       }
     },
-    [isUsingFundPassword]
-  )
-
-  const fundPasswordModal = (
-    <FundPasswordModal
-      isOpen={isFundPasswordModalOpen}
-      onClose={() => setIsFundPasswordModalOpen(false)}
-      successCallback={onCorrectPasswordCallback}
-    />
+    [dispatch, isUsingFundPassword]
   )
 
   return {
-    triggerFundPasswordAuthGuard,
-    fundPasswordModal
+    triggerFundPasswordAuthGuard
   }
 }
 

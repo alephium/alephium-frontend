@@ -27,10 +27,10 @@ import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
+import AssetRow from '~/features/send/screens/AssetsScreen/AssetRow'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import AssetRow from '~/screens/SendReceive/Send/AssetsScreen/AssetRow'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
@@ -44,7 +44,7 @@ interface ScreenProps
 
 const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, assetAmounts, buildTransaction, setToAddress } = useSendContext()
-  const { setHeaderOptions, screenScrollY } = useHeaderContext()
+  const { setHeaderOptions, screenScrollY, screenScrollHandler } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
@@ -101,12 +101,11 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
           />
         )}
         verticalGap
-        usesKeyboard
         contentPaddingTop
-        keyboardShouldPersistTaps="handled"
         screenTitle={t('Assets')}
         screenIntro={t('With Alephium, you can send multiple assets in one transaction.')}
         estimatedItemSize={64}
+        onScroll={screenScrollHandler}
         {...props}
       />
       <SpinnerModal isActive={isLoading} />

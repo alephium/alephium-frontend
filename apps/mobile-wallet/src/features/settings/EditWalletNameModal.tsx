@@ -16,27 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { StackScreenProps } from '@react-navigation/stack'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import { ContinueButton } from '~/components/buttons/Button'
+import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
+import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
+import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
 import { updateStoredWalletMetadata } from '~/persistent-storage/wallet'
 import { walletNameChanged } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 
-interface EditWalletNameScreenProps
-  extends StackScreenProps<RootStackParamList, 'EditWalletNameScreen'>,
-    ScrollScreenProps {}
-
-const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalletNameScreenProps) => {
+const EditWalletNameModal = withModal(({ id }) => {
   const walletName = useAppSelector((s) => s.wallet.name)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -51,7 +47,7 @@ const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalle
       await updateStoredWalletMetadata({ name })
       dispatch(walletNameChanged(name))
 
-      sendAnalytics({ event: 'Wallet: Editted wallet name' })
+      sendAnalytics({ event: 'Wallet: Edited wallet name' })
     } catch (error) {
       const message = 'Could not edit wallet name'
 
@@ -60,30 +56,18 @@ const EditWalletNameScreen = ({ navigation, headerOptions, ...props }: EditWalle
     }
 
     setLoading(false)
-
-    navigation.goBack()
+    dispatch(closeModal({ id }))
   }
 
   return (
-    <>
-      <ScrollScreen
-        usesKeyboard
-        fill
-        screenTitle={t('Wallet name')}
-        headerOptions={{
-          type: 'stack',
-          headerRight: () => <ContinueButton title={t('Save')} onPress={handleSavePress} iconProps={undefined} />,
-          ...headerOptions
-        }}
-        {...props}
-      >
-        <ScreenSection verticalGap fill>
-          <Input value={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
-        </ScreenSection>
-      </ScrollScreen>
+    <BottomModal modalId={id} title={t('Wallet name')}>
+      <ScreenSection verticalGap>
+        <Input value={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
+        <Button title={t('Save')} onPress={handleSavePress} variant="highlight" />
+      </ScreenSection>
       <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
-    </>
+    </BottomModal>
   )
-}
+})
 
-export default EditWalletNameScreen
+export default EditWalletNameModal

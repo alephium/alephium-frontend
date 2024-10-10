@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { sharedReducer } from '@alephium/shared'
 import { configureStore } from '@reduxjs/toolkit'
 
+import backupSlice from '~/features/backup/backupSlice'
 import fundPasswordSlice from '~/features/fund-password/fundPasswordSlice'
 import modalSlice from '~/features/modals/modalSlice'
 import settingsSlice, { settingsListenerMiddleware } from '~/features/settings/settingsSlice'
@@ -35,14 +36,15 @@ import walletGenerationSlice from '~/store/walletGenerationSlice'
 export const store = configureStore({
   reducer: {
     ...sharedReducer,
-    walletGeneration: walletGenerationSlice.reducer,
-    settings: settingsSlice.reducer,
+    [walletGenerationSlice.name]: walletGenerationSlice.reducer,
+    [settingsSlice.name]: settingsSlice.reducer,
     [walletSlice.name]: walletSlice.reducer,
-    addresses: addressesSlice.reducer,
-    app: appSlice.reducer,
-    addressDiscovery: addressDiscoverySlice.reducer,
-    confirmedTransactions: confirmedTransactionsSlice.reducer,
-    pendingTransactions: pendingTransactionsSlice.reducer,
+    [addressesSlice.name]: addressesSlice.reducer,
+    [appSlice.name]: appSlice.reducer,
+    [addressDiscoverySlice.name]: addressDiscoverySlice.reducer,
+    [confirmedTransactionsSlice.name]: confirmedTransactionsSlice.reducer,
+    [pendingTransactionsSlice.name]: pendingTransactionsSlice.reducer,
+    [backupSlice.name]: backupSlice.reducer,
     [fundPasswordSlice.name]: fundPasswordSlice.reducer,
     [contactsSlice.name]: contactsSlice.reducer,
     [loadersSlice.name]: loadersSlice.reducer,

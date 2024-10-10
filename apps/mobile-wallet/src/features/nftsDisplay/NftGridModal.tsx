@@ -19,23 +19,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NFT } from '@alephium/shared'
 
 import NFTsGrid from '~/components/NFTsGrid'
-import BottomModal from '~/features/modals/BottomModal'
-import { ModalContent } from '~/features/modals/ModalContent'
+import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
 import withModal from '~/features/modals/withModal'
 
 interface NftGridModalProps {
-  nftsData: NFT[]
+  addressHash?: string
+  nftsData?: NFT[]
 }
 
-const NftGridModal = withModal<NftGridModalProps>(({ id, nftsData }) => (
-  <BottomModal
-    id={id}
-    Content={(props) => (
-      <ModalContent {...props}>
-        <NFTsGrid nfts={nftsData} scrollEnabled={false} />
-      </ModalContent>
-    )}
-  />
+const NftGridModal = withModal<NftGridModalProps>(({ id, addressHash, nftsData }) => (
+  <BottomModalFlashList modalId={id} noPadding>
+    {(props) => <NFTsGrid addressHash={addressHash} nfts={nftsData} {...props} />}
+  </BottomModalFlashList>
 ))
 
 export default NftGridModal
