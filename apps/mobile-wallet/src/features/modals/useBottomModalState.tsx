@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { useCallback, useEffect, useState } from 'react'
-import { useWindowDimensions } from 'react-native'
-import { Gesture, ScrollView } from 'react-native-gesture-handler'
+import { NativeScrollEvent, NativeSyntheticEvent, useWindowDimensions } from 'react-native'
+import { Gesture } from 'react-native-gesture-handler'
 import { interpolate, runOnJS, runOnUI, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -35,10 +35,10 @@ interface UseBottomModalStateParams {
   onClose?: () => void
 }
 
-interface ContentScrollHandlers {
-  onScroll: ScrollView['props']['onScroll']
-  onScrollBeginDrag: ScrollView['props']['onScrollBeginDrag']
-  onScrollEndDrag: ScrollView['props']['onScrollEndDrag']
+export interface ContentScrollHandlers {
+  onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void
+  onScrollBeginDrag: () => void
+  onScrollEndDrag: () => void
 }
 
 const springConfig = {

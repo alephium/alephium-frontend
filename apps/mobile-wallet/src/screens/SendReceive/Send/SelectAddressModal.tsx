@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { FlashList } from '@shopify/flash-list'
 
 import AddressBox from '~/components/AddressBox'
 import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
@@ -39,22 +40,26 @@ const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPr
   }
 
   return (
-    <BottomModalFlashList
-      modalId={id}
-      data={addresses}
-      keyExtractor={(item) => item.hash}
-      estimatedItemSize={70}
-      renderItem={({ item: address, index }) => (
-        <AddressBox
-          key={address.hash}
-          addressHash={address.hash}
-          style={{
-            marginBottom: 20
-          }}
-          onPress={() => handleAddressPress(address.hash)}
+    <BottomModalFlashList modalId={id}>
+      {(props) => (
+        <FlashList
+          data={addresses}
+          keyExtractor={(item) => item.hash}
+          estimatedItemSize={70}
+          renderItem={({ item: address }) => (
+            <AddressBox
+              key={address.hash}
+              addressHash={address.hash}
+              style={{
+                marginBottom: 20
+              }}
+              onPress={() => handleAddressPress(address.hash)}
+            />
+          )}
+          {...props}
         />
       )}
-    />
+    </BottomModalFlashList>
   )
 })
 
