@@ -34,11 +34,18 @@ interface NFTThumbnailProps {
 }
 
 const NFTThumbnail = ({ nftId, size = '100', ...props }: NFTThumbnailProps) => {
-  const { data: nft, isLoading } = useFetchNft({ id: nftId })
+  const { data: nft, isLoading, error: fetchNftError } = useFetchNft({ id: nftId })
 
   const [error, setError] = useState(false)
 
-  if (isLoading) return <SkeletonLoader height={size} />
+  if (isLoading) return <SkeletonLoader height={size === '100%' ? '300px' : size} />
+
+  if (fetchNftError)
+    return (
+      <NoImagePlaceHolder>
+        <CameraOff opacity={0.8} />
+      </NoImagePlaceHolder>
+    )
 
   if (!nft) return null
 
