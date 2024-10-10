@@ -68,7 +68,7 @@ const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) =
 
   return (
     <>
-      <BottomModal id={id} contentVerticalGap>
+      <BottomModal modalId={id} contentVerticalGap>
         <ScreenSection>
           <ModalScreenTitle>⚠️ {t('Delete "{{ walletName }}"?', { walletName })}</ModalScreenTitle>
         </ScreenSection>

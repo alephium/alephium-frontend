@@ -17,16 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { useCallback, useEffect, useState } from 'react'
 import { useWindowDimensions } from 'react-native'
-import { Gesture } from 'react-native-gesture-handler'
-import {
-  interpolate,
-  runOnJS,
-  runOnUI,
-  useAnimatedScrollHandler,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring
-} from 'react-native-reanimated'
+import { Gesture, ScrollView } from 'react-native-gesture-handler'
+import { interpolate, runOnJS, runOnUI, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { removeModal } from '~/features/modals/modalActions'
@@ -36,11 +28,17 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 type BottomModalPositions = 'minimised' | 'maximised' | 'closing'
 
 interface UseBottomModalStateParams {
-  id: number
+  modalId: number
   navHeight: number
   maximisedContent?: boolean
   minHeight?: number
   onClose?: () => void
+}
+
+interface ContentScrollHandlers {
+  onScroll: ScrollView['props']['onScroll']
+  onScrollBeginDrag: ScrollView['props']['onScrollBeginDrag']
+  onScrollEndDrag: ScrollView['props']['onScrollEndDrag']
 }
 
 const springConfig = {
@@ -55,7 +53,7 @@ const springConfig = {
 const DRAG_BUFFER = 40
 
 export const useBottomModalState = ({
-  id,
+  modalId,
   maximisedContent,
   minHeight: customMinHeight,
   navHeight: customNavHeight,
@@ -85,15 +83,15 @@ export const useBottomModalState = ({
 
   const [isScrollable, setIsScrollable] = useState(false)
 
-  const isModalClosing = useAppSelector((s) => selectModalById(s, id)?.isClosing)
+  const isModalClosing = useAppSelector((s) => selectModalById(s, modalId)?.isClosing)
 
   // Handlers
   // ----------------------------
   const handleCloseOnJS = useCallback(() => {
     if (onClose) onClose()
 
-    dispatch(removeModal({ id })) // Remove modal from stack after animation is done
-  }, [dispatch, id, onClose])
+    dispatch(removeModal({ id: modalId })) // Remove modal from stack after animation is done
+  }, [dispatch, modalId, onClose])
 
   const handleClose = useCallback(() => {
     'worklet'
@@ -123,7 +121,7 @@ export const useBottomModalState = ({
         runOnUI(() => {
           contentHeight.value = newContentHeight
           canMaximize.value = contentHeight.value > 0.3 * maxHeight
-          shouldMaximizeOnOpen.value = maximisedContent || newContentHeight > maxHeight
+          shouldMaximizeOnOpen.value = maximisedContent || contentHeight.value > maxHeight
 
           minHeight.value = customMinHeight
             ? customMinHeight
@@ -149,15 +147,15 @@ export const useBottomModalState = ({
       customMinHeight,
       customNavHeight,
       insets.bottom,
-      dimensions.height,
       handleMaximize,
-      handleMinimize
+      handleMinimize,
+      dimensions.height
     ]
   )
 
-  const contentScrollHandler = useAnimatedScrollHandler({
+  const contentScrollHandlers: ContentScrollHandlers = {
     onScroll: (e) => {
-      contentScrollY.value = e.contentOffset.y
+      contentScrollY.value = e.nativeEvent.contentOffset.y
 
       if (!isContentDragged.value) return
 
@@ -173,17 +171,17 @@ export const useBottomModalState = ({
       }
       previousContentScrollY.value = contentScrollY.value
     },
-    onBeginDrag: () => {
+    onScrollBeginDrag: () => {
       isContentDragged.value = true
     },
-    onEndDrag: () => {
+    onScrollEndDrag: () => {
       isContentDragged.value = false
 
       if (modalHeightDelta.value < -1) {
         handleClose()
       }
     }
-  })
+  }
 
   // Animated Styles
   // ----------------------------
@@ -257,7 +255,7 @@ export const useBottomModalState = ({
     handleContentSizeChange,
     panGesture,
     handleClose,
-    contentScrollHandler,
+    contentScrollHandlers,
     isScrollable
   }
 }

@@ -56,7 +56,7 @@ const MnemonicModal = withModal<MnemonicModalProps>(({ id, onVerifyPress }) => {
   }
 
   return (
-    <BottomModal id={id}>
+    <BottomModal modalId={id}>
       <ModalContent verticalGap>
         <ScreenSection fill>
           <OrderedTable items={mnemonic ? mnemonic.split(' ') : []} />

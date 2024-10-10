@@ -43,7 +43,7 @@ const CurrencySelectModal = withModal(({ id }) => {
 
   return (
     <BottomModal
-      id={id}
+      modalId={id}
       Content={(props) => (
         <ModalContent verticalGap {...props}>
           <ScreenSection>

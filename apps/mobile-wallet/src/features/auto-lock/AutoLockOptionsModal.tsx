@@ -38,7 +38,7 @@ const AutoLockOptionsModal = withModal(({ id }) => {
 
   return (
     <BottomModal
-      id={id}
+      modalId={id}
       Content={(props) => (
         <ModalContent {...props} verticalGap>
           <ScreenSection>

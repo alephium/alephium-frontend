@@ -19,9 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 
 import AddressBox from '~/components/AddressBox'
-import BottomModal from '~/features/modals/BottomModal'
+import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
 import { closeModal } from '~/features/modals/modalActions'
-import { ModalFlatListContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addressesSlice'
@@ -40,24 +39,22 @@ const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPr
   }
 
   return (
-    <BottomModal id={id}>
-      <ModalFlatListContent
-        data={addresses}
-        verticalGap
-        keyExtractor={(item) => item.hash}
-        renderItem={({ item: address, index }) => (
-          <AddressBox
-            key={address.hash}
-            addressHash={address.hash}
-            style={{
-              marginTop: index === 0 ? 20 : undefined,
-              marginBottom: index === addresses.length - 1 ? 40 : undefined
-            }}
-            onPress={() => handleAddressPress(address.hash)}
-          />
-        )}
-      />
-    </BottomModal>
+    <BottomModalFlashList
+      modalId={id}
+      data={addresses}
+      keyExtractor={(item) => item.hash}
+      estimatedItemSize={70}
+      renderItem={({ item: address, index }) => (
+        <AddressBox
+          key={address.hash}
+          addressHash={address.hash}
+          style={{
+            marginBottom: 20
+          }}
+          onPress={() => handleAddressPress(address.hash)}
+        />
+      )}
+    />
   )
 })
 

@@ -61,7 +61,7 @@ const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNet
   const networkNames = Object.values(NetworkNames)
 
   return (
-    <BottomModal id={id} contentVerticalGap>
+    <BottomModal modalId={id} contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Current network')}</ModalScreenTitle>
       </ScreenSection>

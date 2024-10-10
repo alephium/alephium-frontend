@@ -92,7 +92,7 @@ const BuyModal = withModal(({ id }) => {
   }
 
   return (
-    <BottomModal id={id} title={t('Buy')} maximisedContent noPadding contentContainerStyle={{ flex: 1 }}>
+    <BottomModal modalId={id} title={t('Buy')} maximisedContent noPadding contentContainerStyle={{ flex: 1 }}>
       {!isDisclaimerAccepted ? (
         <DisclaimerContent>
           <ScreenTitle title={t('Disclaimer')} />

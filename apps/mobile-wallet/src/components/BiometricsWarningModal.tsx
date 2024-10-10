@@ -44,7 +44,7 @@ const BiometricsWarningModal = withModal<BiometricsWarningModalProps>(({ id, onC
 
   return (
     <BottomModal
-      id={id}
+      modalId={id}
       Content={(props) => (
         <ModalContent verticalGap {...props}>
           <ScreenSection>

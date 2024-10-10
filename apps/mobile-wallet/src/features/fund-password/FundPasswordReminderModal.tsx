@@ -63,7 +63,7 @@ const FundPasswordReminderModal = withModal(({ id }) => {
   }
 
   return (
-    <BottomModal id={id} contentVerticalGap>
+    <BottomModal modalId={id} contentVerticalGap>
       <ScreenSection>
         <ModalScreenTitle>{t('Pin replaced by fund password')}</ModalScreenTitle>
       </ScreenSection>

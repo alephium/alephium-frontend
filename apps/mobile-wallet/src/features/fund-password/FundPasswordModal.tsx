@@ -66,7 +66,7 @@ const FundPasswordModal = withModal<FundPasswordModalProps>(({ id, successCallba
   }
 
   return (
-    <BottomModal id={id}>
+    <BottomModal modalId={id}>
       <ModalContent verticalGap>
         <ScreenSection>
           <ModalScreenTitle>{t('Fund password')}</ModalScreenTitle>

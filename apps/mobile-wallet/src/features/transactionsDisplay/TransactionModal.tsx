@@ -60,7 +60,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
   const openNftGridModal = () => dispatch(openModal({ name: 'NftGridModal', props: { nftsData } }))
 
   return (
-    <BottomModal id={id} contentVerticalGap>
+    <BottomModal modalId={id} contentVerticalGap>
       <ScreenSectionStyled>
         <ModalScreenTitle>{t('Transaction')}</ModalScreenTitle>
         <Button
