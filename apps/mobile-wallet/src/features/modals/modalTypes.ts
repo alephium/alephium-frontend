@@ -38,6 +38,8 @@ import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectErrorModal'
+import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPairingsModal'
+import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPasteUrlModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 export const ModalComponents = {
@@ -60,7 +62,9 @@ export const ModalComponents = {
   SelectAddressModal,
   ConsolidationModal,
   SelectContactModal,
-  WalletConnectErrorModal
+  WalletConnectErrorModal,
+  WalletConnectPasteUrlModal,
+  WalletConnectPairingsModal
 }
 
 type ModalName = keyof typeof ModalComponents

@@ -40,6 +40,8 @@ import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectErrorModal'
+import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPairingsModal'
+import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPasteUrlModal'
 import { useAppSelector } from '~/hooks/redux'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
@@ -97,6 +99,10 @@ const AppModals = () => {
             return <ConsolidationModal key={id} id={id} {...params.props} />
           case 'WalletConnectErrorModal':
             return <WalletConnectErrorModal key={id} id={id} {...params.props} />
+          case 'WalletConnectPairingsModal':
+            return <WalletConnectPairingsModal key={id} id={id} {...params.props} />
+          case 'WalletConnectPasteUrlModal':
+            return <WalletConnectPasteUrlModal key={id} id={id} {...params.props} />
           default:
             return null
         }
