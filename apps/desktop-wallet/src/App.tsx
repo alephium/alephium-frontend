@@ -30,6 +30,7 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
 import useAddressesDataPolling from '@/features/dataPolling/useAddressesDataPolling'
+import { numberFormatRegionsOptions } from '@/features/settings/numberFormatLocales'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
@@ -43,7 +44,9 @@ import {
 import {
   localStorageGeneralSettingsMigrated,
   systemLanguageMatchFailed,
-  systemLanguageMatchSucceeded
+  systemLanguageMatchSucceeded,
+  systemRegionMatchFailed,
+  systemRegionMatchSucceeded
 } from '@/storage/settings/settingsActions'
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
@@ -66,6 +69,7 @@ const App = () => {
 
   useSystemTheme()
   useSystemLanguage()
+  useSystemRegion()
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
@@ -159,6 +163,30 @@ const useMigrateStoredSettings = () => {
       dispatch(localStorageDataMigrationFailed())
     }
   }, [dispatch, sendAnalytics])
+}
+
+const useSystemRegion = () => {
+  const dispatch = useAppDispatch()
+  const region = useAppSelector((s) => s.settings.numberFormatRegion)
+
+  useEffect(() => {
+    if (region === undefined)
+      electron?.app.getSystemRegion().then((systemRegion) => {
+        if (!systemRegion) {
+          dispatch(systemRegionMatchFailed())
+          return
+        }
+
+        const systemRegionCode = systemRegion.substring(3)
+        const matchedRegion = numberFormatRegionsOptions.find((region) => region.value.endsWith(systemRegionCode))
+
+        if (matchedRegion) {
+          dispatch(systemRegionMatchSucceeded(matchedRegion.value))
+        } else {
+          dispatch(systemRegionMatchFailed())
+        }
+      })
+  }, [dispatch, region])
 }
 
 const useSystemLanguage = () => {
