@@ -29,13 +29,14 @@ import FundPasswordReminderModal from '~/features/fund-password/FundPasswordRemi
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import NftGridModal from '~/features/nftsDisplay/NftGridModal'
 import NftModal from '~/features/nftsDisplay/NftModal'
+import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
+import SelectContactModal from '~/features/send/modals/SelectContactModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
 import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
-import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 export const ModalComponents = {
@@ -56,7 +57,8 @@ export const ModalComponents = {
   FundPasswordModal,
   SafePlaceWarningModal,
   SelectAddressModal,
-  ConsolidationModal
+  ConsolidationModal,
+  SelectContactModal
 }
 
 type ModalName = keyof typeof ModalComponents

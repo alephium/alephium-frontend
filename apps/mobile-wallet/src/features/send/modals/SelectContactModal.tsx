@@ -16,15 +16,30 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
+import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
+import { ModalContent } from '~/features/modals/ModalContent'
+import withModal from '~/features/modals/withModal'
+import { useAppDispatch } from '~/hooks/redux'
 import ContactListScreenBase, { ContactListScreenBaseProps } from '~/screens/ContactListScreenBase'
 
-type SelectContactModalProps = ModalContentProps & ContactListScreenBaseProps
+type SelectContactModalProps = ContactListScreenBaseProps
 
-const SelectContactModal = ({ onContactPress, onNewContactPress, ...props }: SelectContactModalProps) => (
-  <ModalContent {...props}>
-    <ContactListScreenBase onContactPress={onContactPress} onNewContactPress={onNewContactPress} />
-  </ModalContent>
-)
+const SelectContactModal = withModal<SelectContactModalProps>(({ id, onContactPress, onNewContactPress }) => {
+  const dispatch = useAppDispatch()
+
+  const handleContactPress = (contactId: string) => {
+    onContactPress(contactId)
+    dispatch(closeModal({ id }))
+  }
+
+  return (
+    <BottomModal modalId={id}>
+      <ModalContent>
+        <ContactListScreenBase onContactPress={handleContactPress} onNewContactPress={onNewContactPress} />
+      </ModalContent>
+    </BottomModal>
+  )
+})
 
 export default SelectContactModal

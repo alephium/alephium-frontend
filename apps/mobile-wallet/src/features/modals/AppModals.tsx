@@ -20,6 +20,7 @@ import { Children, isValidElement, ReactNode, useEffect } from 'react'
 import styled from 'styled-components/native'
 
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
+import ConsolidationModal from '~/components/ConsolidationModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
@@ -30,6 +31,8 @@ import { selectAllModals } from '~/features/modals/modalSelectors'
 import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
 import NftGridModal from '~/features/nftsDisplay/NftGridModal'
 import NftModal from '~/features/nftsDisplay/NftModal'
+import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
+import SelectContactModal from '~/features/send/modals/SelectContactModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
@@ -37,7 +40,6 @@ import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import { useAppSelector } from '~/hooks/redux'
-import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 const AppModals = () => {
@@ -88,6 +90,10 @@ const AppModals = () => {
             return <SafePlaceWarningModal key={id} id={id} />
           case 'SelectAddressModal':
             return <SelectAddressModal key={id} id={id} {...params.props} />
+          case 'SelectContactModal':
+            return <SelectContactModal key={id} id={id} {...params.props} />
+          case 'ConsolidationModal':
+            return <ConsolidationModal key={id} id={id} {...params.props} />
           default:
             return null
         }

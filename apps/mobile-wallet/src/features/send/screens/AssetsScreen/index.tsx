@@ -27,10 +27,10 @@ import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
+import AssetRow from '~/features/send/screens/AssetsScreen/AssetRow'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import AssetRow from '~/screens/SendReceive/Send/AssetsScreen/AssetRow'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
