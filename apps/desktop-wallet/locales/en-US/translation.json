@@ -482,5 +482,6 @@
   "This will remove {{ num }} address(es) from your address list.": "This will remove {{ num }} address(es) from your address list.",
   "Forget selected addresses": "Forget selected addresses",
   "You only have one address. You cannot forget it.": "You only have one address. You cannot forget it.",
-  "Total worth": "Total worth"
+  "Total worth": "Total worth",
+  "Could not load NFT metadata": "Could not load NFT metadata"
 }
