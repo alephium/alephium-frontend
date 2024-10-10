@@ -194,9 +194,7 @@ export const useBottomModalState = ({
   }))
 
   const handleAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: shouldMaximizeOnOpen.value
-      ? 0
-      : interpolate(-modalHeight.value, [0, minHeight.value, maxHeight], [0, 1, 0])
+    width: shouldMaximizeOnOpen.value ? 60 : interpolate(-modalHeight.value, [0, maxHeight], [30, 60])
   }))
 
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
