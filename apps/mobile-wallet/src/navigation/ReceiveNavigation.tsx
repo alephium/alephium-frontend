@@ -23,9 +23,9 @@ import { useTranslation } from 'react-i18next'
 
 import ProgressHeader from '~/components/headers/ProgressHeader'
 import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
+import AddressScreen from '~/features/receive/screens/AddressScreen'
+import QRCodeScreen from '~/features/receive/screens/QRCodeScreen'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import AddressScreen from '~/screens/SendReceive/Receive/AddressScreen'
-import QRCodeScreen from '~/screens/SendReceive/Receive/QRCodeScreen'
 import { SCREEN_OVERFLOW } from '~/style/globalStyle'
 
 export interface ReceiveNavigationParamList extends ParamListBase {
