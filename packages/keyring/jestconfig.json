@@ -2,6 +2,7 @@
   "transform": {
     "^.+\\.(t|j)sx?$": "ts-jest"
   },
+  "transformIgnorePatterns": ["node_modules/(?!(p-throttle)/)"],
   "testRegex": "(/test/(?!fixtures).*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
   "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
   "collectCoverage": true,

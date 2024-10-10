@@ -20,24 +20,19 @@ import { useInterval } from '@alephium/shared-react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Album, ArrowLeftRight, Layers, RefreshCw } from 'lucide-react'
+import { Album, ArrowLeftRight, Layers } from 'lucide-react'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme } from 'styled-components'
 
 import { fadeInSlowly } from '@/animations'
 import AppHeader from '@/components/AppHeader'
-import Button from '@/components/Button'
 import NavItem from '@/components/NavItem'
 import SideBar from '@/components/PageComponents/SideBar'
 import Scrollbar from '@/components/Scrollbar'
-import Spinner from '@/components/Spinner'
-import useAnalytics from '@/features/analytics/useAnalytics'
+import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { ReactComponent as AlephiumLogoSVG } from '@/images/alephium_logo_monochrome.svg'
-import ModalPortal from '@/modals/ModalPortal'
-import NotificationsModal from '@/modals/NotificationsModal'
-import { syncAddressesData } from '@/storage/addresses/addressesActions'
 import { getInitials, onEnterOrSpace } from '@/utils/misc'
 
 interface UnlockedWalletLayoutProps {
@@ -54,17 +49,13 @@ const walletNameHideAfterSeconds = 4
 const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayoutProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const networkStatus = useAppSelector((s) => s.network.status)
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
-  const isLoadingData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const { sendAnalytics } = useAnalytics()
   const previousWalletName = useRef<string>()
 
   const [fullWalletNameVisible, setFullWalletNameVisible] = useState(true)
-  const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false)
   const [showAlephiumLogo, setShowAlephiumLogo] = useState(false)
 
-  const openNotificationsModal = () => setIsNotificationsModalOpen(true)
+  const openCurrentWalletModal = () => dispatch(openModal({ name: 'CurrentWalletModal' }))
 
   useInterval(() => {
     setShowAlephiumLogo(true)
@@ -94,93 +85,60 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
 
   const activeWalletNameInitials = getInitials(activeWalletName)
 
-  const refreshAddressesData = () => {
-    try {
-      dispatch(syncAddressesData())
-
-      sendAnalytics({ event: 'Refreshed data' })
-    } catch {
-      sendAnalytics({ type: 'error', message: 'Could not sync address data when refreshing manually' })
-    }
-  }
-
   return (
-    <>
-      <motion.div {...fadeInSlowly} className={className}>
-        <SideBar>
-          <AnimatePresence>
-            {fullWalletNameVisible && (
-              <OnEnterWalletName
-                initial={{ x: 100, opacity: 0, scaleX: 1 }}
-                animate={{ x: 130, opacity: 1, scaleX: 1 }}
-                exit={{ x: -50, opacity: 0, scaleX: 0.5 }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 700,
-                  damping: 70,
-                  delay: walletNameAppearAfterSeconds
-                }}
-              >
-                👋 {t('Wallet')}: {activeWalletName}
-              </OnEnterWalletName>
-            )}
+    <motion.div {...fadeInSlowly} className={className}>
+      <SideBar>
+        <AnimatePresence>
+          {fullWalletNameVisible && (
+            <OnEnterWalletName
+              initial={{ x: 100, opacity: 0, scaleX: 1 }}
+              animate={{ x: 130, opacity: 1, scaleX: 1 }}
+              exit={{ x: -50, opacity: 0, scaleX: 0.5 }}
+              transition={{
+                type: 'spring',
+                stiffness: 700,
+                damping: 70,
+                delay: walletNameAppearAfterSeconds
+              }}
+            >
+              👋 {t('Wallet')}: {activeWalletName}
+            </OnEnterWalletName>
+          )}
+        </AnimatePresence>
+        <CurrentWalletInitials
+          onClick={openCurrentWalletModal}
+          onKeyDown={(e) => onEnterOrSpace(e, openCurrentWalletModal)}
+          initial={{ opacity: 0, x: 100 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: walletNameHideAfterSeconds, type: 'spring', stiffness: 500, damping: 70 }}
+          key={`initials-${activeWalletName}`}
+          role="button"
+          tabIndex={0}
+        >
+          <AnimatePresence mode="wait">
+            <WalletInitialsContainer
+              key={`initials-${showAlephiumLogo}`}
+              initial={{ opacity: 0, y: -15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 15 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 70 }}
+            >
+              {showAlephiumLogo ? <AlephiumLogo /> : activeWalletNameInitials}
+            </WalletInitialsContainer>
           </AnimatePresence>
-          <CurrentWalletInitials
-            onClick={openNotificationsModal}
-            onKeyDown={(e) => onEnterOrSpace(e, openNotificationsModal)}
-            style={{ zIndex: isNotificationsModalOpen ? 2 : undefined }}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: walletNameHideAfterSeconds, type: 'spring', stiffness: 500, damping: 70 }}
-            key={`initials-${activeWalletName}`}
-            role="button"
-            tabIndex={0}
-          >
-            <AnimatePresence mode="wait">
-              <WalletInitialsContainer
-                key={`initials-${showAlephiumLogo}`}
-                initial={{ opacity: 0, y: -15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 15 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 70 }}
-              >
-                {showAlephiumLogo ? <AlephiumLogo /> : activeWalletNameInitials}
-              </WalletInitialsContainer>
-            </AnimatePresence>
-          </CurrentWalletInitials>
-          <SideNavigation>
-            <NavItem Icon={Layers} label={t('Overview')} to="/wallet/overview" />
-            <NavItem Icon={ArrowLeftRight} label={t('Transfers')} to="/wallet/transfers" />
-            <NavItem Icon={Album} label={t('Addresses')} to="/wallet/addresses" />
-          </SideNavigation>
-        </SideBar>
+        </CurrentWalletInitials>
+        <SideNavigation>
+          <NavItem Icon={Layers} label={t('Overview')} to="/wallet/overview" />
+          <NavItem Icon={ArrowLeftRight} label={t('Transfers')} to="/wallet/transfers" />
+          <NavItem Icon={Album} label={t('Addresses')} to="/wallet/addresses" />
+        </SideNavigation>
+      </SideBar>
 
-        <Scrollbar>
-          <MainContent>{children}</MainContent>
-
-          <AppHeader title={title}>
-            {networkStatus === 'online' && (
-              <RefreshButton
-                role="secondary"
-                transparent
-                squared
-                short
-                onClick={refreshAddressesData}
-                disabled={isLoadingData}
-                aria-label={t('Refresh')}
-                data-tooltip-id="default"
-                data-tooltip-content={t('Refresh data')}
-              >
-                {isLoadingData ? <Spinner /> : <RefreshCw />}
-              </RefreshButton>
-            )}
-          </AppHeader>
-        </Scrollbar>
-      </motion.div>
-      <ModalPortal>
-        {isNotificationsModalOpen && <NotificationsModal onClose={() => setIsNotificationsModalOpen(false)} />}
-      </ModalPortal>
-    </>
+      <Scrollbar>
+        <MainContent>{children}</MainContent>
+        <AppHeader title={title} />
+      </Scrollbar>
+    </motion.div>
   )
 }
 
@@ -229,8 +187,6 @@ const SideNavigation = styled.nav`
   flex-direction: column;
   gap: 15px;
 `
-
-const RefreshButton = styled(Button)``
 
 const CurrentWalletInitials = styled(motion.div)`
   width: 48px;

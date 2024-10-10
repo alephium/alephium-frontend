@@ -66,6 +66,10 @@ const OptionMainContent = styled.div`
 const OptionSecondaryContent = styled.div`
   background-color: ${({ theme }) => theme.bg.background1};
   padding: var(--spacing-3);
+
+  &:empty {
+    display: none;
+  }
 `
 
 const CheckMarkContainer = styled.div``

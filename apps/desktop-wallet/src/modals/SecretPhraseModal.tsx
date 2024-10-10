@@ -26,15 +26,18 @@ import styled from 'styled-components'
 import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
-import { useAppSelector } from '@/hooks/redux'
+import { closeModal } from '@/features/modals/modalActions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 
-const SecretPhraseModal = ({ onClose }: { onClose: () => void }) => {
+const SecretPhraseModal = ({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const [isDisplayingPhrase, setIsDisplayingPhrase] = useState(false)
   const [mnemonic, setMnemonic] = useState<string>()
+  const dispatch = useAppDispatch()
 
   if (!activeWalletId) return null
 
@@ -53,11 +56,12 @@ const SecretPhraseModal = ({ onClose }: { onClose: () => void }) => {
 
   const handleClose = () => {
     setMnemonic('')
-    onClose()
+    dispatch(closeModal({ id }))
   }
 
   return (
     <CenteredModal
+      id={id}
       title={t('Secret recovery phrase')}
       onClose={handleClose}
       focusMode
@@ -86,6 +90,8 @@ const SecretPhraseModal = ({ onClose }: { onClose: () => void }) => {
   )
 }
 
+export default SecretPhraseModal
+
 const PhraseBox = styled.div`
   width: 100%;
   padding: var(--spacing-4);
@@ -95,5 +101,3 @@ const PhraseBox = styled.div`
   border-radius: var(--radius-small);
   margin-bottom: var(--spacing-4);
 `
-
-export default SecretPhraseModal

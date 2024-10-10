@@ -27,11 +27,28 @@ interface AddressMetadataStorageStoreProps {
 }
 
 class AddressMetadataStorage extends PersistentArrayStorage<AddressMetadata> {
+  deleteOne(walletId: StoredEncryptedWallet['id'], addressIndex: number) {
+    const addressesMetadata = this.load(walletId)
+    const existingAddressMetadata = addressesMetadata.find((address) => address.index === addressIndex)
+
+    if (!existingAddressMetadata) {
+      throw new Error('Could not delete address, address metadata not found.')
+    }
+
+    if (existingAddressMetadata.isDefault) {
+      throw new Error('The default address should not be deleted.')
+    }
+
+    addressesMetadata.splice(addressesMetadata.indexOf(existingAddressMetadata), 1)
+
+    console.log(`🟠 Deleting address metadata with index ${addressIndex}`)
+
+    super.store(walletId, addressesMetadata)
+  }
+
   storeOne(walletId: StoredEncryptedWallet['id'], { index, settings }: AddressMetadataStorageStoreProps) {
     const addressesMetadata = this.load(walletId)
-    const existingAddressMetadata: AddressMetadata | undefined = addressesMetadata.find(
-      (data: AddressMetadata) => data.index === index
-    )
+    const existingAddressMetadata = addressesMetadata.find((address) => address.index === index)
     const currentDefaultAddress = addressesMetadata.find((data) => data.isDefault)
 
     if (!existingAddressMetadata) {

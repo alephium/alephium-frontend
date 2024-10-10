@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -25,19 +24,17 @@ import FooterButton from '@/components/Buttons/FooterButton'
 import Select from '@/components/Inputs/Select'
 import Paragraph from '@/components/Paragraph'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { closeModal } from '@/features/modals/modalActions'
+import { AddressModalProps } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import CenteredModal, { CenteredModalProps } from '@/modals/CenteredModal'
+import CenteredModal from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { csvFileGenerationFinished, fetchTransactionsCsv } from '@/storage/transactions/transactionsActions'
 import { TransactionTimePeriod } from '@/types/transactions'
 import { generateCsvFile, getCsvExportTimeRangeQueryParams } from '@/utils/csvExport'
 import { timePeriodsOptions } from '@/utils/transactions'
 
-interface CSVExportModalProps extends CenteredModalProps {
-  addressHash: AddressHash
-}
-
-const CSVExportModal = ({ addressHash, ...props }: CSVExportModalProps) => {
+const CSVExportModal = ({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
@@ -48,8 +45,10 @@ const CSVExportModal = ({ addressHash, ...props }: CSVExportModalProps) => {
 
   if (!address) return null
 
+  const onClose = () => dispatch(closeModal({ id }))
+
   const handleExportClick = () => {
-    props.onClose()
+    onClose()
     getCSVFile()
 
     sendAnalytics({ event: 'Exported CSV', props: { time_period: selectedTimePeriod } })
@@ -67,7 +66,7 @@ const CSVExportModal = ({ addressHash, ...props }: CSVExportModalProps) => {
   }
 
   return (
-    <CenteredModal title={t('Export address transactions')} subtitle={address.label || address.hash} {...props}>
+    <CenteredModal title={t('Export address transactions')} subtitle={address.label || address.hash} onClose={onClose}>
       <Paragraph>
         {t(
           'You can download the address transaction history for a selected time period. This can be useful for tax reporting.'

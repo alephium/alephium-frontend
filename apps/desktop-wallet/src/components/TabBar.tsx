@@ -22,22 +22,22 @@ import styled, { css } from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 
-export interface TabItem {
-  value: string
+export interface TabItem<T extends string> {
+  value: T
   label: string
 }
 
-export interface TabBarProps {
-  items: TabItem[]
-  onTabChange: (tab: TabItem) => void
-  activeTab: TabItem
+export interface TabBarProps<T extends string> {
+  items: TabItem<T>[]
+  onTabChange: (tab: TabItem<T>) => void
+  activeTab: TabItem<T>
   linkText?: string
   onLinkClick?: () => void
   TabComponent?: typeof Tab
   className?: string
 }
 
-const TabBar = ({
+const TabBar = <T extends string>({
   items,
   onTabChange,
   activeTab,
@@ -45,11 +45,11 @@ const TabBar = ({
   onLinkClick,
   TabComponent = Tab,
   className
-}: TabBarProps) => {
+}: TabBarProps<T>) => {
   const { t } = useTranslation()
 
   return (
-    <div className={className} role="tablist" aria-label={t('Tab navigation')}>
+    <TabBarStyled className={className} role="tablist" aria-label={t('Tab navigation')}>
       {items.map((item) => {
         const isActive = activeTab.value === item.value
 
@@ -57,7 +57,7 @@ const TabBar = ({
           <TabComponent
             key={item.value}
             onClick={() => onTabChange(item)}
-            onKeyPress={() => onTabChange(item)}
+            onKeyDown={() => onTabChange(item)}
             role="tab"
             tabIndex={0}
             aria-selected={isActive}
@@ -72,11 +72,13 @@ const TabBar = ({
           {linkText}
         </ActionLinkStyled>
       )}
-    </div>
+    </TabBarStyled>
   )
 }
 
-export default styled(TabBar)`
+export default TabBar
+
+const TabBarStyled = styled.div`
   display: flex;
   height: 55px;
 `

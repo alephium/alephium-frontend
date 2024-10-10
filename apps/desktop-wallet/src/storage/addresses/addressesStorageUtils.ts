@@ -18,13 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressSettings } from '@alephium/shared'
 
-import {
-  addressSettingsSaved,
-  defaultAddressChanged,
-  newAddressesSaved,
-  syncAddressesAlphHistoricBalances,
-  syncAddressesData
-} from '@/storage/addresses/addressesActions'
+import { addressSettingsSaved, defaultAddressChanged, newAddressesSaved } from '@/storage/addresses/addressesActions'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { store } from '@/storage/store'
 import { Address, AddressBase } from '@/types/addresses'
@@ -46,11 +40,7 @@ export const saveNewAddresses = (addresses: AddressBase[]) => {
       })
     )
 
-  const addressHashes = addresses.map((address) => address.hash)
-
   store.dispatch(newAddressesSaved(addresses))
-  store.dispatch(syncAddressesData(addressHashes))
-  store.dispatch(syncAddressesAlphHistoricBalances(addressHashes))
 }
 
 export const changeDefaultAddress = (address: Address) => {

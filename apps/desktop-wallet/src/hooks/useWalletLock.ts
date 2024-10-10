@@ -97,10 +97,8 @@ const useWalletLock = () => {
       initialAddress
     }
 
-    dispatch(event === 'unlock' ? walletUnlocked(payload) : walletSwitched(payload))
-
     if (!isPassphraseUsed) {
-      restoreAddressesFromMetadata(encryptedWallet.id, isPassphraseUsed)
+      await restoreAddressesFromMetadata(encryptedWallet.id, isPassphraseUsed)
 
       walletStorage.update(walletId, { lastUsed: Date.now() })
 
@@ -113,6 +111,8 @@ const useWalletLock = () => {
         }
       })
     }
+
+    dispatch(event === 'unlock' ? walletUnlocked(payload) : walletSwitched(payload))
 
     afterUnlock()
 

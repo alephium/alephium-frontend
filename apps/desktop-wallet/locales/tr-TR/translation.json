@@ -52,7 +52,7 @@
   "Duration in minutes after which an idle wallet will lock automatically.": "Boşta beklenirken kaç dakika içinde adresin otomatik olarak kilitleneceği süreç.",
   "Enter": "Giriş",
   "Enter password": "Şifreyi gir",
-  "Enter password for \"{{ switchToWalletName }}\"": " \"{{ switchToWalletName }}\" için şifre girin",
+  "Enter password for \"{{ walletName }}\"": " \"{{ walletName }}\" için şifre girin",
   "Enter your password to send the transaction.": "İşlemi göndermek için şifrenizi girin.",
   "Error while building transaction": "İşlem oluşturulurken hata oluştu",
   "Error while importing wallet": "Cüzdan içe aktarılırken hata oluştu",

@@ -16,76 +16,72 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/shared'
+import { convertToPositive, CURRENCIES, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/shared'
+import { Optional } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import useFetchToken, { isFT } from '@/api/apiDataHooks/token/useFetchToken'
+import SkeletonLoader from '@/components/SkeletonLoader'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { discreetModeToggled } from '@/storage/settings/settingsActions'
+import { TokenId } from '@/types/tokens'
 
-interface AmountProps {
-  value?: bigint | number
-  decimals?: number
-  isFiat?: boolean
+interface AmountBaseProps {
   fadeDecimals?: boolean
-  fullPrecision?: boolean
-  nbOfDecimalsToShow?: number
   color?: string
   overrideSuffixColor?: boolean
   tabIndex?: number
-  suffix?: string
-  isUnknownToken?: boolean
   highlight?: boolean
   showPlusMinus?: boolean
   className?: string
+  useTinyAmountShorthand?: boolean
 }
 
-const Amount = ({
-  value,
-  decimals,
-  isFiat,
-  className,
-  fadeDecimals,
-  fullPrecision = false,
-  nbOfDecimalsToShow,
-  suffix,
-  color,
-  overrideSuffixColor,
-  tabIndex,
-  highlight,
-  isUnknownToken,
-  showPlusMinus = false
-}: AmountProps) => {
+interface TokenAmountProps extends AmountBaseProps {
+  tokenId: TokenId
+  value: bigint
+  fullPrecision?: boolean
+  nbOfDecimalsToShow?: number
+}
+
+interface FiatAmountProps extends AmountBaseProps {
+  isFiat: true
+  value: number
+}
+
+interface CustomAmountProps extends AmountBaseProps {
+  value: number
+  suffix: string
+}
+
+type AmountProps = TokenAmountProps | FiatAmountProps | CustomAmountProps
+
+type AmountPropsWithOptionalAmount =
+  | Optional<TokenAmountProps, 'value'>
+  | Optional<FiatAmountProps, 'value'>
+  | Optional<CustomAmountProps, 'value'>
+
+interface LoaderProps {
+  isLoading?: boolean
+  loaderHeight?: number
+}
+
+const Amount = ({ isLoading, loaderHeight = 15, ...props }: AmountPropsWithOptionalAmount & LoaderProps) => {
   const dispatch = useAppDispatch()
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const { t } = useTranslation()
 
-  let quantitySymbol = ''
-  let amount = ''
-  let isNegative = false
+  if (isLoading) return <SkeletonLoader height={`${loaderHeight}px`} width={`${loaderHeight * 5}px`} />
 
-  if (value !== undefined) {
-    if (isFiat && typeof value === 'number') {
-      amount = formatFiatAmountForDisplay(value)
-    } else if (isUnknownToken) {
-      amount = value.toString()
-    } else {
-      isNegative = value < 0
-      amount = formatAmountForDisplay({
-        amount: convertToPositive(value as bigint),
-        amountDecimals: decimals,
-        displayDecimals: nbOfDecimalsToShow,
-        fullPrecision
-      })
-    }
+  if (props.value === undefined) return null
 
-    if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
-      quantitySymbol = amount.slice(-1)
-      amount = amount.slice(0, -1)
-    }
-  }
+  // Since we checked above that value is defined it's safe to cast the type so that the stricter components can work
+  const amountProps = props as AmountProps
 
-  const [integralPart, fractionalPart] = amount.split('.')
+  const { className, color, value, highlight, tabIndex, showPlusMinus } = amountProps
+
+  const toggleDiscreetMode = () => discreetMode && dispatch(discreetModeToggled())
 
   return (
     <AmountStyled
@@ -93,33 +89,114 @@ const Amount = ({
       data-tooltip-id="default"
       data-tooltip-content={discreetMode ? t('Click to deactivate discreet mode') : ''}
       data-tooltip-delay-show={500}
-      onClick={() => discreetMode && dispatch(discreetModeToggled())}
+      onClick={toggleDiscreetMode}
     >
-      {value !== undefined ? (
-        <>
-          {showPlusMinus && <span>{isNegative ? '-' : '+'}</span>}
-          {fadeDecimals ? (
-            <>
-              <span>{integralPart}</span>
-              {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
-              {quantitySymbol && <span>{quantitySymbol}</span>}
-            </>
-          ) : fractionalPart ? (
-            `${integralPart}.${fractionalPart}`
-          ) : (
-            integralPart
-          )}
-        </>
-      ) : (
-        '-'
-      )}
+      {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
 
-      {!isUnknownToken && <Suffix color={overrideSuffixColor ? color : undefined}>{` ${suffix ?? 'ALPH'}`}</Suffix>}
+      {isFiat(amountProps) ? (
+        <FiatAmount {...amountProps} />
+      ) : isCustom(amountProps) ? (
+        <CustomAmount {...amountProps} />
+      ) : (
+        <TokenAmount {...amountProps} />
+      )}
     </AmountStyled>
   )
 }
 
 export default Amount
+
+const TokenAmount = ({
+  tokenId,
+  value,
+  fullPrecision,
+  nbOfDecimalsToShow,
+  fadeDecimals,
+  overrideSuffixColor,
+  color,
+  useTinyAmountShorthand
+}: TokenAmountProps) => {
+  const { data: token } = useFetchToken(tokenId)
+
+  const amount = isFT(token)
+    ? formatAmountForDisplay({
+        amount: convertToPositive(value),
+        amountDecimals: token.decimals,
+        displayDecimals: nbOfDecimalsToShow,
+        fullPrecision
+      })
+    : value.toString()
+
+  return (
+    <>
+      <AmountPartitions amount={amount} fadeDecimals={fadeDecimals} useTinyAmountShorthand={useTinyAmountShorthand} />
+
+      {isFT(token) && <Suffix color={overrideSuffixColor ? color : undefined}> {token.symbol}</Suffix>}
+    </>
+  )
+}
+
+const FiatAmount = ({ value, fadeDecimals, overrideSuffixColor, color }: FiatAmountProps) => {
+  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
+
+  const amount = formatFiatAmountForDisplay(value)
+
+  return (
+    <>
+      <AmountPartitions amount={amount} fadeDecimals={fadeDecimals} />
+
+      <Suffix color={overrideSuffixColor ? color : undefined}> {CURRENCIES[fiatCurrency].symbol}</Suffix>
+    </>
+  )
+}
+
+const CustomAmount = ({ value, fadeDecimals, overrideSuffixColor, color, suffix }: CustomAmountProps) => {
+  const amount = (value < 1 ? value * -1 : value).toString()
+
+  return (
+    <>
+      <AmountPartitions amount={amount} fadeDecimals={fadeDecimals} />
+
+      <Suffix color={overrideSuffixColor ? color : undefined}> {suffix}</Suffix>
+    </>
+  )
+}
+
+interface AmountPartitions extends Pick<AmountBaseProps, 'fadeDecimals' | 'useTinyAmountShorthand'> {
+  amount: string
+}
+
+const AmountPartitions = ({ amount, fadeDecimals, useTinyAmountShorthand }: AmountPartitions) => {
+  let quantitySymbol = ''
+
+  if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
+    quantitySymbol = amount.slice(-1)
+    amount = amount.slice(0, -1)
+  }
+
+  let [integralPart, fractionalPart] = amount.split('.')
+
+  if (useTinyAmountShorthand && amount.startsWith('0.0000')) {
+    integralPart = '< 0'
+    fractionalPart = '0001'
+  }
+
+  return fadeDecimals ? (
+    <>
+      <span>{integralPart}</span>
+      {fractionalPart && <Decimals>.{fractionalPart}</Decimals>}
+      {quantitySymbol && <span>{quantitySymbol}</span>}
+    </>
+  ) : fractionalPart ? (
+    `${integralPart}.${fractionalPart}`
+  ) : (
+    integralPart
+  )
+}
+
+const isFiat = (asset: AmountProps): asset is FiatAmountProps => (asset as FiatAmountProps).isFiat === true
+
+const isCustom = (asset: AmountProps): asset is CustomAmountProps => (asset as CustomAmountProps).suffix !== undefined
 
 const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value'> & { discreetMode: boolean }>`
   color: ${({ color, highlight, value, theme }) =>

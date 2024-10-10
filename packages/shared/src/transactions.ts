@@ -16,7 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AssetOutput, Input, MempoolTransaction, Output, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import {
+  AssetOutput,
+  Input,
+  MempoolTransaction,
+  Output,
+  PendingTransaction,
+  Transaction
+} from '@alephium/web3/dist/src/api/api-explorer'
 
 import { AddressHash } from '@/types/addresses'
 import { Asset, AssetAmount } from '@/types/assets'
@@ -24,7 +31,7 @@ import { AmountDeltas, TransactionDirection } from '@/types/transactions'
 import { uniq } from '@/utils'
 
 export const calcTxAmountsDeltaForAddress = (
-  tx: Transaction | MempoolTransaction,
+  tx: Transaction | PendingTransaction | MempoolTransaction,
   address: string,
   skipConsolidationCheck = false
 ): AmountDeltas => {
@@ -36,8 +43,8 @@ export const calcTxAmountsDeltaForAddress = (
   if (!skipConsolidationCheck && isConsolidationTx(tx))
     return removeConsolidationChangeAmount(outputAmounts, tx.outputs)
 
-  const tokensDelta = outputAmounts.tokens
-  inputAmounts.tokens.forEach((inputToken) => {
+  const tokensDelta = outputAmounts.tokenAmounts
+  inputAmounts.tokenAmounts.forEach((inputToken) => {
     const tokenDelta = tokensDelta.find(({ id }) => id === inputToken.id)
 
     tokenDelta
@@ -46,8 +53,8 @@ export const calcTxAmountsDeltaForAddress = (
   })
 
   return {
-    alph: outputAmounts.alph - inputAmounts.alph,
-    tokens: tokensDelta.filter(({ amount }) => amount !== BigInt(0))
+    alphAmount: outputAmounts.alphAmount - inputAmounts.alphAmount,
+    tokenAmounts: tokensDelta.filter(({ amount }) => amount !== BigInt(0))
   }
 }
 
@@ -56,15 +63,15 @@ const summarizeAddressInputOutputAmounts = (address: string, io: (Input | Output
     (acc, io) => {
       if (io.address !== address) return acc
 
-      acc.alph += BigInt(io.attoAlphAmount ?? 0)
+      acc.alphAmount += BigInt(io.attoAlphAmount ?? 0)
 
       if (!io.tokens) return acc
 
       io.tokens.forEach((token) => {
-        const existingToken = acc.tokens.find((t) => t.id === token.id)
+        const existingToken = acc.tokenAmounts.find((t) => t.id === token.id)
         existingToken
           ? (existingToken.amount += BigInt(token.amount))
-          : acc.tokens.push({
+          : acc.tokenAmounts.push({
               id: token.id,
               amount: BigInt(token.amount)
             })
@@ -72,23 +79,27 @@ const summarizeAddressInputOutputAmounts = (address: string, io: (Input | Output
 
       return acc
     },
-    { alph: BigInt(0), tokens: [] } as AmountDeltas
+    { alphAmount: BigInt(0), tokenAmounts: [] } as AmountDeltas
   )
 
-export const getDirection = (tx: Transaction | MempoolTransaction, address: string): TransactionDirection =>
-  calcTxAmountsDeltaForAddress(tx, address, true).alph < 0 ? 'out' : 'in'
+// TODO: Clean up use of Transaction | PendingTransaction | MempoolTransaction
 
-export const isConsolidationTx = (tx: Transaction | MempoolTransaction): boolean => {
+export const getDirection = (
+  tx: Transaction | PendingTransaction | MempoolTransaction,
+  address: string
+): TransactionDirection => (calcTxAmountsDeltaForAddress(tx, address, true).alphAmount < 0 ? 'out' : 'in')
+
+export const isConsolidationTx = (tx: Transaction | PendingTransaction | MempoolTransaction): boolean => {
   const inputAddresses = tx.inputs ? uniq(tx.inputs.map((input) => input.address)) : []
   const outputAddresses = tx.outputs ? uniq(tx.outputs.map((output) => output.address)) : []
 
   return inputAddresses.length === 1 && outputAddresses.length === 1 && inputAddresses[0] === outputAddresses[0]
 }
 
-export const isMempoolTx = (transaction: Transaction | MempoolTransaction): transaction is MempoolTransaction =>
-  !('blockHash' in transaction)
+export const isConfirmedTx = (tx: Transaction | PendingTransaction | MempoolTransaction): tx is Transaction =>
+  'blockHash' in tx
 
-export const isInternalTx = (tx: Transaction, internalAddresses: AddressHash[]): boolean =>
+export const isInternalTx = (tx: Transaction | PendingTransaction, internalAddresses: AddressHash[]): boolean =>
   [...(tx.outputs ?? []), ...(tx.inputs ?? [])].every((io) => io?.address && internalAddresses.includes(io.address))
 
 export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outputs: AssetOutput[] | Output[]) => {
@@ -97,8 +108,8 @@ export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outp
   return outputs.length > 1
     ? // If there are multiple outputs, the last one must be the change amount (this is a heuristic and not guaranteed)
       {
-        alph: totalOutputs.alph - BigInt(lastOutput.attoAlphAmount),
-        tokens: totalOutputs.tokens
+        alphAmount: totalOutputs.alphAmount - BigInt(lastOutput.attoAlphAmount),
+        tokenAmounts: totalOutputs.tokenAmounts
           .map((token) => ({
             ...token,
             amount: token.amount - BigInt(lastOutput.tokens?.find((t) => t.id === token.id)?.amount ?? 0)
@@ -109,7 +120,7 @@ export const removeConsolidationChangeAmount = (totalOutputs: AmountDeltas, outp
       totalOutputs
 }
 
-export const isSwap = (alphAmout: bigint, tokensAmount: Required<AssetAmount>[]) => {
+export const hasPositiveAndNegativeAmounts = (alphAmout: bigint, tokensAmount: Required<AssetAmount>[]): boolean => {
   const allAmounts = [alphAmout, ...tokensAmount.map((tokenAmount) => tokenAmount.amount)]
   const allAmountsArePositive = allAmounts.every((amount) => amount >= 0)
   const allAmountsAreNegative = allAmounts.every((amount) => amount <= 0)
@@ -118,11 +129,7 @@ export const isSwap = (alphAmout: bigint, tokensAmount: Required<AssetAmount>[])
 }
 
 export const getTransactionsOfAddress = (transactions: Transaction[], addressHash: AddressHash) =>
-  transactions.filter(
-    (tx) =>
-      tx.inputs?.some((input) => input.address === addressHash) ||
-      tx.outputs?.some((output) => output.address === addressHash)
-  )
+  transactions.filter((tx) => isAddressPresentInInputsOutputs(addressHash, tx))
 
 export const extractNewTransactions = (
   incomingTransactions: Transaction[],
@@ -139,3 +146,13 @@ export const extractTokenIds = (tokenIds: Asset['id'][], ios: Transaction['input
     })
   })
 }
+
+export const findTransactionReferenceAddress = (addresses: AddressHash[], tx: Transaction | PendingTransaction) =>
+  addresses.find((address) => isAddressPresentInInputsOutputs(address, tx))
+
+const isAddressPresentInInputsOutputs = (addressHash: AddressHash, tx: Transaction | PendingTransaction) =>
+  tx.inputs?.some((input) => input.address === addressHash) ||
+  tx.outputs?.some((output) => output.address === addressHash)
+
+export const findTransactionInternalAddresses = (addresses: AddressHash[], tx: Transaction) =>
+  addresses.filter((addressHash) => isAddressPresentInInputsOutputs(addressHash, tx))

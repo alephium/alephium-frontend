@@ -24,12 +24,19 @@ import {
   customNetworkSettingsSaved
 } from '@alephium/shared'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { nanoid } from 'nanoid'
 
 import i18n from '@/i18n'
-import { contactDeletionFailed, contactStorageFailed, syncAddressesData } from '@/storage/addresses/addressesActions'
+import { contactDeletionFailed, contactStorageFailed } from '@/storage/addresses/addressesActions'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
-import { walletConnectPairingFailed, walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
 import {
+  walletConnectPairingFailed,
+  walletConnectProposalApprovalFailed,
+  walletConnectProposalValidationFailed
+} from '@/storage/dApps/dAppActions'
+import {
+  appDataCleared,
+  appDataClearFailed,
   copiedToClipboard,
   copyToClipboardFailed,
   devModeShortcutDetected,
@@ -49,15 +56,16 @@ import {
   messageSignFailed,
   transactionBuildFailed,
   transactionSendFailed,
-  transactionsSendSucceeded,
   unsignedTransactionDecodingFailed,
   unsignedTransactionSignFailed
 } from '@/storage/transactions/transactionsActions'
 import { newWalletNameStored, walletCreationFailed, walletNameStorageFailed } from '@/storage/wallets/walletActions'
 import { Message, SnackbarMessage } from '@/types/snackbar'
 
+export type SnackbarMessageInstance = Required<SnackbarMessage> & { id: string }
+
 interface SnackbarSliceState {
-  messages: Required<SnackbarMessage>[]
+  messages: SnackbarMessageInstance[]
   offlineMessageWasVisibleOnce: boolean
 }
 
@@ -74,11 +82,6 @@ const snackbarSlice = createSlice({
     builder
       .addCase(snackbarDisplayTimeExpired, (state) => {
         if (state.messages.length > 0) state.messages.shift()
-      })
-      .addCase(syncAddressesData.rejected, (state, action) => {
-        const message = action.error.message
-
-        if (message) queueMessage(state, { type: 'alert', text: message })
       })
       .addCase(apiClientInitSucceeded, (state, action) => {
         state.offlineMessageWasVisibleOnce = false
@@ -101,13 +104,13 @@ const snackbarSlice = createSlice({
         state.offlineMessageWasVisibleOnce = true
       })
       .addCase(contactStoredInPersistentStorage, (state) =>
-        displayMessageImmediately(state, { text: i18n.t('Contact saved'), type: 'success' })
+        queueMessage(state, { text: i18n.t('Contact saved'), type: 'success' })
       )
       .addCase(contactDeletedFromPersistentStorage, (state) =>
-        displayMessageImmediately(state, { text: i18n.t('Contact deleted'), type: 'success' })
+        queueMessage(state, { text: i18n.t('Contact deleted'), type: 'success' })
       )
       .addCase(customNetworkSettingsSaved, (state) =>
-        displayMessageImmediately(state, { text: i18n.t('Custom network settings saved.') })
+        queueMessage(state, { text: i18n.t('Custom network settings saved.') })
       )
       .addCase(transactionBuildFailed, displayError)
       .addCase(unsignedTransactionSignFailed, displayError)
@@ -117,37 +120,29 @@ const snackbarSlice = createSlice({
       .addCase(contactStorageFailed, displayError)
       .addCase(contactDeletionFailed, displayError)
       .addCase(walletCreationFailed, displayError)
-      .addCase(transactionsSendSucceeded, (state, action) => {
-        const { nbOfTransactionsSent } = action.payload
-
-        displayMessageImmediately(state, {
-          text: nbOfTransactionsSent > 1 ? i18n.t('Transactions sent!') : i18n.t('Transaction sent!'),
-          type: 'success'
-        })
-      })
       .addCase(copiedToClipboard, (state, action) =>
-        displayMessageImmediately(state, { text: action.payload || i18n.t('Copied to clipboard!') })
+        queueMessage(state, { text: action.payload || i18n.t('Copied to clipboard!') })
       )
       .addCase(copyToClipboardFailed, (state, action) =>
-        displayMessageImmediately(state, { text: action.payload || i18n.t('Copy to clipboard failed'), type: 'alert' })
+        queueMessage(state, { text: action.payload || i18n.t('Copy to clipboard failed'), type: 'alert' })
       )
       .addCase(passwordValidationFailed, (state) =>
-        displayMessageImmediately(state, { text: i18n.t('Invalid password'), type: 'alert' })
+        queueMessage(state, { text: i18n.t('Invalid password'), type: 'alert' })
       )
       .addCase(userDataMigrationFailed, (state) =>
-        displayMessageImmediately(state, { text: 'User data migration failed', type: 'alert' })
+        queueMessage(state, { text: 'User data migration failed', type: 'alert' })
       )
       .addCase(localStorageDataMigrationFailed, (state) =>
-        displayMessageImmediately(state, { text: 'Local storage data migration failed', type: 'alert' })
+        queueMessage(state, { text: 'Local storage data migration failed', type: 'alert' })
       )
       .addCase(loadingDataFromLocalStorageFailed, (state) =>
-        displayMessageImmediately(state, { text: 'Loading data from local storage failed', type: 'alert' })
+        queueMessage(state, { text: 'Loading data from local storage failed', type: 'alert' })
       )
       .addCase(storingDataToLocalStorageFailed, (state) =>
-        displayMessageImmediately(state, { text: 'Storing data to local storage failed', type: 'alert' })
+        queueMessage(state, { text: 'Storing data to local storage failed', type: 'alert' })
       )
       .addCase(devModeShortcutDetected, (state, action) =>
-        displayMessageImmediately(
+        queueMessage(
           state,
           action.payload.activate
             ? { text: '💪 GOD mode activated!', type: 'success' }
@@ -155,20 +150,20 @@ const snackbarSlice = createSlice({
         )
       )
       .addCase(newWalletNameStored, (state, action) =>
-        displayMessageImmediately(state, {
+        queueMessage(state, {
           text: i18n.t('Wallet name updated to: {{ newWalletName }}', { newWalletName: action.payload }),
           type: 'success'
         })
       )
       .addCase(walletNameStorageFailed, displayError)
       .addCase(csvFileGenerationStarted, (state) =>
-        displayMessageImmediately(state, {
+        queueMessage(state, {
           text: i18n.t('Your CSV file is being compiled in the background.'),
           duration: -1
         })
       )
       .addCase(csvFileGenerationFinished, (state) =>
-        displayMessageImmediately(state, {
+        queueMessage(state, {
           text: i18n.t('Your CSV file has been generated successfully.'),
           type: 'success'
         })
@@ -176,12 +171,13 @@ const snackbarSlice = createSlice({
       .addCase(fetchTransactionsCsv.rejected, (state, action) => {
         const message = action.payload
 
-        if (message) displayMessageImmediately(state, message)
+        if (message) queueMessage(state, message)
       })
       .addCase(walletConnectPairingFailed, displayError)
       .addCase(walletConnectProposalApprovalFailed, displayError)
+      .addCase(walletConnectProposalValidationFailed, displayError)
       .addCase(receiveTestnetTokens.fulfilled, (state) =>
-        displayMessageImmediately(state, {
+        queueMessage(state, {
           text: i18n.t('Testnet tokens incoming.'),
           type: 'success',
           duration: 5000
@@ -190,17 +186,29 @@ const snackbarSlice = createSlice({
       .addCase(receiveTestnetTokens.rejected, (state, action) => {
         const message = action.payload
 
-        if (message) displayMessageImmediately(state, message)
+        if (message) queueMessage(state, message)
       })
       .addCase(walletConnectCacheCleared, (state) => {
-        displayMessageImmediately(state, {
+        queueMessage(state, {
           text: i18n.t('WalletConnect cache cleared successfully.'),
           type: 'success'
         })
       })
       .addCase(walletConnectCacheClearFailed, (state) => {
-        displayMessageImmediately(state, {
+        queueMessage(state, {
           text: i18n.t('Could not clear WalletConnect cache.'),
+          type: 'alert'
+        })
+      })
+      .addCase(appDataCleared, (state) => {
+        queueMessage(state, {
+          text: i18n.t('App data cleared successfully.'),
+          type: 'success'
+        })
+      })
+      .addCase(appDataClearFailed, (state) => {
+        queueMessage(state, {
+          text: i18n.t('Could not clear app data.'),
           type: 'alert'
         })
       })
@@ -218,12 +226,8 @@ const defaultSnackbarMessageSettings: Required<SnackbarMessage> = {
 }
 
 const queueMessage = (state: SnackbarSliceState, message: SnackbarMessage) => {
-  state.messages.push({ ...defaultSnackbarMessageSettings, ...message })
-}
-
-const displayMessageImmediately = (state: SnackbarSliceState, message: SnackbarMessage) => {
-  state.messages = [{ ...defaultSnackbarMessageSettings, ...message }]
+  state.messages.push({ id: nanoid(), ...defaultSnackbarMessageSettings, ...message })
 }
 
 const displayError = (state: SnackbarSliceState, action: PayloadAction<Message>) =>
-  displayMessageImmediately(state, { text: action.payload, type: 'alert', duration: 10000 })
+  queueMessage(state, { text: action.payload, type: 'alert', duration: 10000 })

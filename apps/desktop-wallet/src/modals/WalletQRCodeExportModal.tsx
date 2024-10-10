@@ -21,7 +21,7 @@ import { resetArray } from '@alephium/shared'
 import { encrypt } from '@alephium/shared-crypto'
 import { ScanLine } from 'lucide-react'
 import { dataToFrames } from 'qrloop'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import QRCode from 'react-qr-code'
 import styled, { useTheme } from 'styled-components'
@@ -29,6 +29,7 @@ import styled, { useTheme } from 'styled-components'
 import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
 import { selectAllAddresses, selectAllContacts } from '@/storage/addresses/addressesSelectors'
@@ -40,7 +41,7 @@ import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 
 const FPS = 5
 
-const WalletQRCodeExportModal = ({ onClose }: { onClose: () => void }) => {
+const WalletQRCodeExportModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
@@ -96,7 +97,7 @@ const WalletQRCodeExportModal = ({ onClose }: { onClose: () => void }) => {
   }
 
   return (
-    <CenteredModal title={t('Export wallet')} onClose={onClose} focusMode narrow={frames.length === 0} skipFocusOnMount>
+    <CenteredModal title={t('Export wallet')} id={id} focusMode narrow={frames.length === 0} skipFocusOnMount>
       {frames.length === 0 ? (
         <div>
           <PasswordConfirmation
@@ -123,7 +124,7 @@ const WalletQRCodeExportModal = ({ onClose }: { onClose: () => void }) => {
       )}
     </CenteredModal>
   )
-}
+})
 
 export default WalletQRCodeExportModal
 

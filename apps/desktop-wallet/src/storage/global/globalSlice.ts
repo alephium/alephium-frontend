@@ -21,13 +21,12 @@ import { createSelector, createSlice } from '@reduxjs/toolkit'
 
 import { addressDiscoveryFinished, addressDiscoveryStarted } from '@/storage/addresses/addressesActions'
 import {
-  addressesPageInfoMessageClosed,
   devModeShortcutDetected,
   modalClosed,
   modalOpened,
   osThemeChangeDetected,
   receiveTestnetTokens,
-  transfersPageInfoMessageClosed
+  toggleAppLoading
 } from '@/storage/global/globalActions'
 import {
   languageChangeFinished,
@@ -51,8 +50,6 @@ import { getThemeType } from '@/utils/settings'
 interface AppState {
   loading: boolean
   visibleModals: string[]
-  addressesPageInfoMessageClosed: boolean
-  transfersPageInfoMessageClosed: boolean
   wallets: StoredEncryptedWallet[]
   theme: ThemeType
   devMode: boolean
@@ -62,8 +59,6 @@ interface AppState {
 const initialState: AppState = {
   loading: false,
   visibleModals: [],
-  addressesPageInfoMessageClosed: true, // See: https://github.com/alephium/desktop-wallet/issues/644
-  transfersPageInfoMessageClosed: true, // See: https://github.com/alephium/desktop-wallet/issues/644
   wallets: walletStorage.list(),
   theme: getThemeType(),
   devMode: false,
@@ -84,12 +79,6 @@ const globalSlice = createSlice({
       .addCase(modalClosed, (state) => {
         state.visibleModals.pop()
       })
-      .addCase(addressesPageInfoMessageClosed, (state) => {
-        state.addressesPageInfoMessageClosed = true
-      })
-      .addCase(transfersPageInfoMessageClosed, (state) => {
-        state.transfersPageInfoMessageClosed = true
-      })
       .addCase(walletDeleted, (state, action) => {
         const deletedWalletId = action.payload
 
@@ -105,6 +94,7 @@ const globalSlice = createSlice({
       .addCase(addressDiscoveryFinished, (state, action) => toggleLoading(state, false, action.payload))
       .addCase(languageChangeStarted, (state) => toggleLoading(state, true, true))
       .addCase(languageChangeFinished, (state) => toggleLoading(state, false, true))
+      .addCase(toggleAppLoading, (state, action) => toggleLoading(state, action.payload))
       .addCase(walletSaved, (state, action) => {
         const { id, name, encrypted, lastUsed } = action.payload.wallet
 

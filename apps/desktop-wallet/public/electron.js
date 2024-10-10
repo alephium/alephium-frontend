@@ -326,6 +326,10 @@ app.on('ready', async function () {
     deepLinkUri = null
   })
 
+  ipcMain.handle('app:reload', () => {
+    mainWindow.reload()
+  })
+
   createWindow()
 })
 

@@ -20,11 +20,15 @@ import styled, { css } from 'styled-components'
 
 import TabBar, { Tab, TabBarProps } from '@/components/TabBar'
 
-const TableTabBar = (props: TabBarProps) => <TabBar {...props} TabComponent={TableTab} />
+const TableTabBar = <T extends string>(props: TabBarProps<T>) => (
+  <TableTabBarStyled {...props} TabComponent={TableTab} />
+)
 
-export default styled(TableTabBar)`
+export default TableTabBar
+
+const TableTabBarStyled = styled(TabBar)`
   background-color: ${({ theme }) => theme.bg.secondary};
-`
+` as typeof TabBar
 
 const TableTab = styled(Tab)`
   min-width: 60px;

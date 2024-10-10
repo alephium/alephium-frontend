@@ -19,23 +19,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-import { validateChildrenType } from '@/utils/misc'
-
 interface DataListProps {
   children: ReactNode
   title?: string
 }
 
-const DataList = ({ children, title }: DataListProps) => {
-  validateChildrenType({ children, childType: DataListRow, parentName: 'DataList' })
+const DataList = ({ children, title }: DataListProps) => (
+  // validateChildrenType({ children, childType: DataListRow, parentName: 'DataList' })
 
-  return (
-    <DataListStyled>
-      {title && <DataListTitle>{title}</DataListTitle>}
-      {children}
-    </DataListStyled>
-  )
-}
+  <DataListStyled>
+    {title && <DataListTitle>{title}</DataListTitle>}
+    {children}
+  </DataListStyled>
+)
 
 export interface DataListRowProps {
   label: string

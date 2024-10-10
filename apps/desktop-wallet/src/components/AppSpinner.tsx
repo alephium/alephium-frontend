@@ -19,18 +19,27 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import styled from 'styled-components'
 
 import Spinner from '@/components/Spinner'
+import { useAppSelector } from '@/hooks/redux'
 
 interface AppSpinnerProps {
   className?: string
 }
 
-const AppSpinner = ({ className }: AppSpinnerProps) => (
-  <div className={className}>
-    <Spinner size="60px" />
-  </div>
-)
+const AppSpinner = ({ className }: AppSpinnerProps) => {
+  const loading = useAppSelector((s) => s.global.loading)
 
-export default styled(AppSpinner)`
+  if (!loading) return null
+
+  return (
+    <AppSpinnerStyled className={className}>
+      <Spinner size="60px" />
+    </AppSpinnerStyled>
+  )
+}
+
+export default AppSpinner
+
+const AppSpinnerStyled = styled.div`
   position: absolute;
   top: 0;
   bottom: 0;

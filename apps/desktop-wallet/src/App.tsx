@@ -16,37 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressHash,
-  localStorageNetworkSettingsMigrated,
-  selectDoVerifiedFungibleTokensNeedInitialization,
-  syncTokenPriceHistories,
-  syncUnknownTokensInfo,
-  syncVerifiedFungibleTokens
-} from '@alephium/shared'
-import { useInitializeClient, useInterval } from '@alephium/shared-react'
-import { difference, union } from 'lodash'
-import { usePostHog } from 'posthog-js/react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
+import { useInitializeThrottledClient } from '@alephium/shared-react'
+import { ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
+import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
 import SplashScreen from '@/components/SplashScreen'
-import { WalletConnectContextProvider } from '@/contexts/walletconnect'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
-import { useAlphPrice } from '@/features/tokenPrices/tokenPricesHooks'
+import useAddressesDataPolling from '@/features/dataPolling/useAddressesDataPolling'
+import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
+import AppModals from '@/modals/AppModals'
 import Router from '@/routes'
-import { syncAddressesAlphHistoricBalances, syncAddressesData } from '@/storage/addresses/addressesActions'
-import {
-  makeSelectAddressesUnknownTokens,
-  selectAddressIds,
-  selectAllAddressVerifiedFungibleTokenSymbols
-} from '@/storage/addresses/addressesSelectors'
 import {
   devModeShortcutDetected,
   localStorageDataMigrationFailed,
@@ -57,249 +45,51 @@ import {
   systemLanguageMatchFailed,
   systemLanguageMatchSucceeded
 } from '@/storage/settings/settingsActions'
-import {
-  makeSelectAddressesHashesWithPendingTransactions,
-  selectTransactionUnknownTokenIds
-} from '@/storage/transactions/transactionsSelectors'
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
-import { AlephiumWindow } from '@/types/window'
-import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
+import { electron } from '@/utils/misc'
 import { languageOptions } from '@/utils/settings'
 
 const App = () => {
-  const dispatch = useAppDispatch()
-  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const selectAddressesHashesWithPendingTransactions = useMemo(makeSelectAddressesHashesWithPendingTransactions, [])
-  const addressesWithPendingTxs = useAppSelector(selectAddressesHashesWithPendingTransactions)
-  const networkProxy = useAppSelector((s) => s.network.settings.proxy)
-  const networkStatus = useAppSelector((s) => s.network.status)
-  const networkName = useAppSelector((s) => s.network.name)
   const theme = useAppSelector((s) => s.global.theme)
-  const loading = useAppSelector((s) => s.global.loading)
-  const settings = useAppSelector((s) => s.settings)
-  const wallets = useAppSelector((s) => s.global.wallets)
-  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
-  const showDevIndication = useDevModeShortcut()
-  const posthog = usePostHog()
-  const { sendAnalytics } = useAnalytics()
-  useAlphPrice() // TODO: Group with other prefetch queries in a usePrefetchData hook
 
-  const addressesStatus = useAppSelector((s) => s.addresses.status)
-  const isSyncingAddressData = useAppSelector((s) => s.addresses.syncingAddressData)
-  const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
-  const isLoadingVerifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingVerified)
-  const isLoadingUnverifiedFungibleTokens = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
-  const verifiedFungibleTokenSymbols = useAppSelector(selectAllAddressVerifiedFungibleTokenSymbols)
-
-  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
-  const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens).map(({ id }) => id)
-  const txUnknownTokenIds = useAppSelector(selectTransactionUnknownTokenIds)
-  const checkedUnknownTokenIds = useAppSelector((s) => s.fungibleTokens.checkedUnknownTokenIds)
-  const newUnknownTokens = difference(union(addressUnknownTokenIds, txUnknownTokenIds), checkedUnknownTokenIds)
-
-  const [splashScreenVisible, setSplashScreenVisible] = useState(true)
-
-  const _window = window as unknown as AlephiumWindow
-  const electron = _window.electron
-
-  useInitializeClient()
   useAutoLock()
+  useAddressesDataPolling()
 
-  useEffect(() => {
-    const shouldListenToOSThemeChanges = settings.theme === 'system'
+  useMigrateStoredSettings()
+  useTrackUserSettings()
 
-    if (!shouldListenToOSThemeChanges) return
+  useInitializeThrottledClient()
+  useInitializeNetworkProxy()
+  useInitializeTokenPrices()
 
-    const removeOSThemeChangeListener = electron?.theme.onShouldUseDarkColors((useDark: boolean) =>
-      dispatch(osThemeChangeDetected(useDark ? 'dark' : 'light'))
-    )
-
-    const removeGetNativeThemeListener = electron?.theme.onGetNativeTheme((nativeTheme) =>
-      dispatch(osThemeChangeDetected(nativeTheme.shouldUseDarkColors ? 'dark' : 'light'))
-    )
-
-    electron?.theme.getNativeTheme()
-
-    return () => {
-      removeGetNativeThemeListener && removeGetNativeThemeListener()
-      removeOSThemeChangeListener && removeOSThemeChangeListener()
-    }
-  }, [dispatch, electron?.theme, settings.theme])
-
-  useEffect(() => {
-    try {
-      const generalSettings = migrateGeneralSettings()
-      const networkSettings = migrateNetworkSettings()
-      migrateWalletData()
-
-      dispatch(localStorageGeneralSettingsMigrated(generalSettings))
-      dispatch(localStorageNetworkSettingsMigrated(networkSettings))
-    } catch {
-      sendAnalytics({ type: 'error', message: 'Local storage data migration failed' })
-      dispatch(localStorageDataMigrationFailed())
-    }
-  }, [dispatch, sendAnalytics])
-
-  useEffect(() => {
-    if (posthog.__loaded)
-      posthog.people.set({
-        desktop_wallet_version: currentVersion,
-        wallets: wallets.length,
-        theme: settings.theme,
-        devTools: settings.devTools,
-        lockTimeInMs: settings.walletLockTimeInMinutes,
-        language: settings.language,
-        passwordRequirement: settings.passwordRequirement,
-        fiatCurrency: settings.fiatCurrency,
-        network: networkName
-      })
-  }, [
-    networkName,
-    posthog.__loaded,
-    posthog.people,
-    settings.devTools,
-    settings.fiatCurrency,
-    settings.language,
-    settings.passwordRequirement,
-    settings.theme,
-    settings.walletLockTimeInMinutes,
-    wallets.length
-  ])
-
-  const setSystemLanguage = useCallback(async () => {
-    const systemLanguage = await electron?.app.getSystemLanguage()
-
-    if (!systemLanguage) {
-      dispatch(systemLanguageMatchFailed())
-      return
-    }
-
-    const systemLanguageCode = systemLanguage.substring(0, 2)
-    const matchedLanguage = languageOptions.find((lang) => lang.value.startsWith(systemLanguageCode))
-
-    if (matchedLanguage) {
-      dispatch(systemLanguageMatchSucceeded(matchedLanguage.value))
-    } else {
-      dispatch(systemLanguageMatchFailed())
-    }
-  }, [dispatch, electron?.app])
-
-  useEffect(() => {
-    if (settings.language === undefined) setSystemLanguage()
-  }, [settings.language, setSystemLanguage])
-
-  useEffect(() => {
-    if (networkProxy) electron?.app.setProxySettings(networkProxy)
-  }, [electron?.app, networkProxy])
-
-  useEffect(() => {
-    if (networkStatus === 'online') {
-      if (addressesStatus === 'uninitialized') {
-        if (!isSyncingAddressData && addressHashes.length > 0 && activeWalletId) {
-          try {
-            dispatch(syncAddressesData())
-          } catch {
-            sendAnalytics({ type: 'error', message: 'Could not sync address data automatically' })
-          }
-
-          try {
-            dispatch(syncAddressesAlphHistoricBalances())
-          } catch {
-            sendAnalytics({ type: 'error', message: 'Could not sync alph historic balances automatically' })
-          }
-        }
-      } else if (addressesStatus === 'initialized') {
-        if (
-          !verifiedFungibleTokensNeedInitialization &&
-          !isLoadingUnverifiedFungibleTokens &&
-          newUnknownTokens.length > 0
-        ) {
-          dispatch(syncUnknownTokensInfo(newUnknownTokens))
-        }
-      }
-    }
-  }, [
-    addressHashes.length,
-    addressesStatus,
-    verifiedFungibleTokensNeedInitialization,
-    dispatch,
-    isLoadingUnverifiedFungibleTokens,
-    isSyncingAddressData,
-    networkStatus,
-    newUnknownTokens,
-    activeWalletId,
-    sendAnalytics
-  ])
-
-  // Fetch verified tokens from GitHub token-list and sync historical prices for each verified fungible
-  // token found in each address
-  useEffect(() => {
-    if (networkStatus === 'online' && !isLoadingVerifiedFungibleTokens) {
-      if (verifiedFungibleTokensNeedInitialization) {
-        dispatch(syncVerifiedFungibleTokens())
-      } else if (verifiedFungibleTokenSymbols.uninitialized.length > 0) {
-        const symbols = verifiedFungibleTokenSymbols.uninitialized
-
-        dispatch(syncTokenPriceHistories({ verifiedFungibleTokenSymbols: symbols, currency: settings.fiatCurrency }))
-      }
-    }
-  }, [
-    dispatch,
-    isLoadingVerifiedFungibleTokens,
-    networkStatus,
-    settings.fiatCurrency,
-    verifiedFungibleTokenSymbols.uninitialized,
-    verifiedFungibleTokensNeedInitialization
-  ])
-
-  const refreshAddressesData = useCallback(() => {
-    try {
-      dispatch(syncAddressesData(addressesWithPendingTxs))
-    } catch {
-      sendAnalytics({ type: 'error', message: 'Could not sync address data when refreshing automatically' })
-    }
-  }, [dispatch, addressesWithPendingTxs, sendAnalytics])
-
-  useInterval(refreshAddressesData, 5000, addressesWithPendingTxs.length === 0 || isSyncingAddressData)
+  useSystemTheme()
+  useSystemLanguage()
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <GlobalStyle />
 
-      {splashScreenVisible && <SplashScreen onSplashScreenShown={() => setSplashScreenVisible(false)} />}
+      <SplashScreen />
 
       <WalletConnectContextProvider>
-        <AppContainer showDevIndication={showDevIndication}>
+        <AppContainer>
           <CenteredSection>
             <Router />
           </CenteredSection>
         </AppContainer>
-      </WalletConnectContextProvider>
 
+        <AppModals />
+      </WalletConnectContextProvider>
       <SnackbarManager />
       <AutoUpdateSnackbar />
-      {loading && <AppSpinner />}
+      <AppSpinner />
     </ThemeProvider>
   )
 }
 
 export default App
-
-const AppContainer = styled.div<{ showDevIndication: boolean }>`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-
-  background-color: ${({ theme }) => theme.bg.secondary};
-
-  ${({ showDevIndication, theme }) =>
-    showDevIndication &&
-    css`
-      border: 5px solid ${theme.global.valid};
-    `};
-`
 
 const useDevModeShortcut = () => {
   const dispatch = useAppDispatch()
@@ -323,3 +113,109 @@ const useDevModeShortcut = () => {
 
   return devMode
 }
+
+const useSystemTheme = () => {
+  const theme = useAppSelector((s) => s.settings.theme)
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    const shouldListenToOSThemeChanges = theme === 'system'
+
+    if (!shouldListenToOSThemeChanges) return
+
+    const removeOSThemeChangeListener = electron?.theme.onShouldUseDarkColors((useDark: boolean) =>
+      dispatch(osThemeChangeDetected(useDark ? 'dark' : 'light'))
+    )
+
+    const removeGetNativeThemeListener = electron?.theme.onGetNativeTheme((nativeTheme) =>
+      dispatch(osThemeChangeDetected(nativeTheme.shouldUseDarkColors ? 'dark' : 'light'))
+    )
+
+    electron?.theme.getNativeTheme()
+
+    return () => {
+      removeGetNativeThemeListener && removeGetNativeThemeListener()
+      removeOSThemeChangeListener && removeOSThemeChangeListener()
+    }
+  }, [dispatch, theme])
+}
+
+const useInitializeTokenPrices = () => useFetchTokenPrices()
+
+const useMigrateStoredSettings = () => {
+  const dispatch = useAppDispatch()
+  const { sendAnalytics } = useAnalytics()
+
+  useEffect(() => {
+    try {
+      const generalSettings = migrateGeneralSettings()
+      const networkSettings = migrateNetworkSettings()
+      migrateWalletData()
+
+      dispatch(localStorageGeneralSettingsMigrated(generalSettings))
+      dispatch(localStorageNetworkSettingsMigrated(networkSettings))
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Local storage data migration failed' })
+      dispatch(localStorageDataMigrationFailed())
+    }
+  }, [dispatch, sendAnalytics])
+}
+
+const useSystemLanguage = () => {
+  const dispatch = useAppDispatch()
+  const language = useAppSelector((s) => s.settings.language)
+
+  const setSystemLanguage = useCallback(async () => {
+    const systemLanguage = await electron?.app.getSystemLanguage()
+
+    if (!systemLanguage) {
+      dispatch(systemLanguageMatchFailed())
+      return
+    }
+
+    const systemLanguageCode = systemLanguage.substring(0, 2)
+    const matchedLanguage = languageOptions.find((lang) => lang.value.startsWith(systemLanguageCode))
+
+    if (matchedLanguage) {
+      dispatch(systemLanguageMatchSucceeded(matchedLanguage.value))
+    } else {
+      dispatch(systemLanguageMatchFailed())
+    }
+  }, [dispatch])
+
+  useEffect(() => {
+    if (language === undefined) setSystemLanguage()
+  }, [language, setSystemLanguage])
+}
+
+const useInitializeNetworkProxy = () => {
+  const networkProxy = useAppSelector((s) => s.network.settings.proxy)
+
+  useEffect(() => {
+    if (networkProxy) electron?.app.setProxySettings(networkProxy)
+  }, [networkProxy])
+}
+
+interface AppContainerProps {
+  children: ReactNode
+}
+
+const AppContainer = ({ children }: AppContainerProps) => {
+  const showDevIndication = useDevModeShortcut()
+
+  return <AppContainerStyled showDevIndication={showDevIndication}>{children}</AppContainerStyled>
+}
+
+const AppContainerStyled = styled.div<{ showDevIndication: boolean }>`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  background-color: ${({ theme }) => theme.bg.secondary};
+
+  ${({ showDevIndication, theme }) =>
+    showDevIndication &&
+    css`
+      border: 5px solid ${theme.global.valid};
+    `};
+`

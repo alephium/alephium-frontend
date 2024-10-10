@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion } from 'framer-motion'
 import { ChevronsUpDown } from 'lucide-react'
+import { HTMLProps } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -84,7 +85,11 @@ export const TableCell = styled.div<TableCellProps>`
     `};
 `
 
-const TableColumns = styled.div<{ columnWidths?: (string | undefined)[] }>`
+interface TableColumnsProps extends Omit<HTMLProps<HTMLDivElement>, 'ref'> {
+  columnWidths?: (string | undefined)[]
+}
+
+const TableColumns = styled.div<TableColumnsProps>`
   display: grid;
   ${({ columnWidths }) =>
     columnWidths
@@ -101,7 +106,11 @@ const TableColumns = styled.div<{ columnWidths?: (string | undefined)[] }>`
   min-height: 55px;
 `
 
-export const TableRow = styled(TableColumns)<{ onClick?: () => void; blinking?: boolean }>`
+export interface TableRowProps extends TableColumnsProps {
+  blinking?: boolean
+}
+
+export const TableRow = styled(TableColumns)<TableRowProps>`
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
 
   &:last-child {
@@ -148,7 +157,7 @@ export const TableRow = styled(TableColumns)<{ onClick?: () => void; blinking?: 
 export const TableFooter = styled(TableColumns)``
 
 export const TableCellPlaceholder = styled(TableCell)`
-  color: ${({ theme }) => theme.font.secondary};
+  color: ${({ theme }) => theme.font.tertiary};
 `
 
 export const TableHeader: FC<{ title: string; className?: string }> = ({ title, children, className }) => (

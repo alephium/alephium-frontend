@@ -21,12 +21,15 @@ import { KeyboardEvent, ReactNode, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
 import { fadeInOutFast } from '@/animations'
+import { closeModal } from '@/features/modals/modalActions'
+import { ModalInstance } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useFocusOnMount from '@/hooks/useFocusOnMount'
 import { modalClosed, modalOpened } from '@/storage/global/globalActions'
 
 export interface ModalContainerProps extends MotionProps {
-  onClose: () => void
+  id?: ModalInstance['id'] // TODO: Make required when all modals have been refactored
+  onClose?: () => void // TODO: Delete when all modals have been refactored
   children?: ReactNode | ReactNode[]
   focusMode?: boolean
   hasPadding?: boolean
@@ -34,11 +37,14 @@ export interface ModalContainerProps extends MotionProps {
   skipFocusOnMount?: boolean
 }
 
-const ModalContainer = ({ onClose, children, focusMode, className, skipFocusOnMount }: ModalContainerProps) => {
+const ModalContainer = ({ id, onClose, children, focusMode, className, skipFocusOnMount }: ModalContainerProps) => {
   const dispatch = useAppDispatch()
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const modalRef = useFocusOnMount<HTMLDivElement>(skipFocusOnMount)
   const modalId = useRef<string>(`modal-${new Date().valueOf()}`)
+
+  // TODO: Delete when onClose is deleted and id has become required
+  if (!id && !onClose) throw new Error('Either id or onClose is required')
 
   // Prevent body scroll on mount
   useEffect(() => {
@@ -53,19 +59,26 @@ const ModalContainer = ({ onClose, children, focusMode, className, skipFocusOnMo
   // Handle escape key press
   const handleEscapeKeyPress = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Escape') {
-      closeModal()
+      handleBackdropClick()
       e.stopPropagation()
     }
   }
 
-  const closeModal = () => {
-    onClose()
+  const handleBackdropClick = () => {
+    // TODO: Simplify when all modals have been migrated
+    if (onClose) {
+      onClose()
+    } else if (id) {
+      dispatch(closeModal({ id }))
+    } else {
+      // This should never happen
+    }
     moveFocusOnPreviousModal()
   }
 
   return (
     <motion.div className={className} onKeyDown={handleEscapeKeyPress} tabIndex={0} id={modalId.current} ref={modalRef}>
-      <ModalBackdrop {...fadeInOutFast} onClick={closeModal} focusMode={focusMode} />
+      <ModalBackdrop {...fadeInOutFast} onClick={handleBackdropClick} focusMode={focusMode} />
       {children}
     </motion.div>
   )

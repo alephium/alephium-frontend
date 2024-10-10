@@ -17,13 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { CURRENCIES, formatFiatAmountForDisplay } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeInOut } from '@/animations'
-import { useAddressesTokensPrices, useAlphPrice } from '@/features/tokenPrices/tokenPricesHooks'
+import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import { useAppSelector } from '@/hooks/redux'
 import TimeOfDayMessage from '@/pages/UnlockedWallet/OverviewPage/TimeOfDayMessage'
 import { messagesLeftMarginPx } from '@/style/globalStyles'
@@ -37,8 +38,7 @@ const swapDelayInSeconds = 8
 const GreetingMessages = ({ className }: GreetingMessagesProps) => {
   const { t } = useTranslation()
   const activeWallet = useAppSelector((s) => s.activeWallet)
-  const alphPrice = useAlphPrice()
-  const { isPending: isPendingTokenPrices } = useAddressesTokensPrices()
+  const { data: alphPrice, isLoading: isLoadingAlphPrice } = useFetchTokenPrice(ALPH.symbol)
 
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
 
@@ -47,9 +47,9 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
 
   const priceComponent = (
     <span key="price">
-      {alphPrice !== undefined
+      {alphPrice?.price !== undefined
         ? '📈 ' +
-          t('ALPH price: {{ price }}', { price: formatFiatAmountForDisplay(alphPrice) }) +
+          t('ALPH price: {{ price }}', { price: formatFiatAmountForDisplay(alphPrice.price) }) +
           CURRENCIES[fiatCurrency].symbol
         : '💜'}
     </span>
@@ -66,13 +66,13 @@ const GreetingMessages = ({ className }: GreetingMessagesProps) => {
 
   const showNextMessage = useCallback(() => {
     setCurrentComponentIndex((prevIndex) => {
-      if (prevIndex === 0 && (isPendingTokenPrices || alphPrice === undefined)) {
+      if (prevIndex === 0 && (isLoadingAlphPrice || alphPrice === undefined)) {
         return prevIndex
       }
       return (prevIndex + 1) % componentList.length
     })
     setLastChangeTime(Date.now())
-  }, [componentList.length, isPendingTokenPrices, alphPrice])
+  }, [componentList.length, isLoadingAlphPrice, alphPrice])
 
   const handleClick = useCallback(() => {
     showNextMessage()

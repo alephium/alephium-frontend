@@ -36,8 +36,8 @@ export type TransactionDirection = 'out' | 'in' | 'swap'
 export type TransactionInfoType = TransactionDirection | 'move' | 'pending'
 
 export type AmountDeltas = {
-  alph: bigint
-  tokens: {
+  alphAmount: bigint
+  tokenAmounts: {
     id: Token['id']
     amount: bigint
   }[]

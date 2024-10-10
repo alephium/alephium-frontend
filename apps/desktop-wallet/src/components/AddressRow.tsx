@@ -16,33 +16,36 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
 import { TableRow } from '@/components/Table'
-import { Address } from '@/types/addresses'
 
 interface AddressRowProps {
-  address: Address
-  disableAddressCopy?: boolean
-  onClick?: (address: Address) => void
+  addressHash: AddressHash
+  onClick?: (addressHash: AddressHash) => void
   className?: string
+  subtitle?: string
+  children?: ReactNode
 }
 
-const AddressRow: FC<AddressRowProps> = ({ address, disableAddressCopy, onClick, children, className }) => (
+const AddressRow = ({ addressHash, onClick, children, className, subtitle }: AddressRowProps) => (
   <TableRow
-    key={address.hash}
+    key={addressHash}
     role="row"
     tabIndex={0}
-    onClick={() => onClick && onClick(address)}
-    onKeyPress={() => onClick && onClick(address)}
+    onClick={() => onClick && onClick(addressHash)}
+    onKeyDown={() => onClick && onClick(addressHash)}
     className={className}
   >
     <Row>
-      <AddressColorIndicatorStyled addressHash={address.hash} />
+      <AddressColorIndicatorStyled addressHash={addressHash} />
       <Label>
-        <AddressBadge addressHash={address.hash} hideColorIndication truncate appendHash displayHashUnder />
+        <AddressBadge addressHash={addressHash} hideColorIndication truncate appendHash displayHashUnder />
+        <AddressSubtitle>{subtitle}</AddressSubtitle>
       </Label>
       {children}
     </Row>
@@ -65,4 +68,10 @@ const Label = styled.div`
   font-size: 14px;
   font-weight: var(--fontWeight-medium);
   max-width: 120px;
+`
+
+const AddressSubtitle = styled.span`
+  font-family: 'Roboto Mono';
+  font-size: 12px;
+  color: ${({ theme }) => theme.font.tertiary};
 `

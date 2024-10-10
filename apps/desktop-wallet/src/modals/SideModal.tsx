@@ -25,6 +25,8 @@ import styled from 'styled-components'
 import { normalTransition } from '@/animations'
 import Button from '@/components/Button'
 import Scrollbar from '@/components/Scrollbar'
+import { closeModal } from '@/features/modals/modalActions'
+import { useAppDispatch } from '@/hooks/redux'
 import useFocusOnMount from '@/hooks/useFocusOnMount'
 import ModalContainer, { ModalContainerProps } from '@/modals/ModalContainer'
 
@@ -36,6 +38,7 @@ export interface SideModalProps extends ModalContainerProps {
 }
 
 const SideModal = ({
+  id,
   onClose,
   children,
   title,
@@ -46,9 +49,12 @@ const SideModal = ({
 }: SideModalProps) => {
   const { t } = useTranslation()
   const elRef = useFocusOnMount<HTMLDivElement>()
+  const dispatch = useAppDispatch()
+
+  const _onClose = id ? () => dispatch(closeModal({ id })) : onClose
 
   return (
-    <ModalContainer onClose={onClose}>
+    <ModalContainer id={id} onClose={_onClose}>
       <Sidebar
         role="dialog"
         initial={{ x: 30, opacity: 0 }}
@@ -61,7 +67,7 @@ const SideModal = ({
         {!hideHeader && (
           <ModalHeader>
             <HeaderColumn>{header ?? <Title>{title}</Title>}</HeaderColumn>
-            <CloseButton aria-label={t('Close')} squared role="secondary" transparent onClick={onClose} Icon={X} />
+            <CloseButton aria-label={t('Close')} squared role="secondary" transparent onClick={_onClose} Icon={X} />
           </ModalHeader>
         )}
         <Scrollbar>

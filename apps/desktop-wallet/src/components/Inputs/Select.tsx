@@ -474,7 +474,6 @@ export const OptionItem = styled.button<{
           margin: var(--spacing-2) var(--spacing-4);
           border-radius: var(--radius-medium);
           border: ${selected ? `2px solid ${theme.global.accent}` : `1px solid ${theme.border.primary}`};
-          box-shadow: ${theme.shadow.secondary};
           background-color: ${theme.bg.primary};
           overflow: hidden;
         `

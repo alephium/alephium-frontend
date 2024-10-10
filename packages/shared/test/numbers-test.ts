@@ -16,8 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import rewire from 'rewire'
-
 import {
   aboveExpLimit,
   addApostrophes,
@@ -26,7 +24,9 @@ import {
   formatAmountForDisplay,
   formatFiatAmountForDisplay,
   fromHumanReadableAmount,
+  isNumber,
   produceZeros,
+  removeTrailingZeros,
   toHumanReadableAmount
 } from '../src/numbers'
 
@@ -457,30 +457,24 @@ it('should produce the right number of zeros', () => {
     expect(produceZeros(-1)).toEqual('')
 })
 
-describe('should test not exported functions', () => {
-  const numberUtils = rewire('../dist/index.cjs')
-  const removeTrailingZeros = numberUtils.__get__('removeTrailingZeros')
-  const isNumber = numberUtils.__get__('isNumber')
+it('Should remove trailing zeros', () => {
+  expect(removeTrailingZeros('0.00010000', minDigits)).toEqual('0.0001'),
+    expect(removeTrailingZeros('10000.000', minDigits)).toEqual('10000.000'),
+    expect(removeTrailingZeros('10000.100', minDigits)).toEqual('10000.100'),
+    expect(removeTrailingZeros('-10000.0001000', minDigits)).toEqual('-10000.0001'),
+    expect(removeTrailingZeros('-0.0001020000', minDigits)).toEqual('-0.000102'),
+    expect(removeTrailingZeros('0.00010000')).toEqual('0.0001'),
+    expect(removeTrailingZeros('10000.000')).toEqual('10000'),
+    expect(removeTrailingZeros('-10000.0001000')).toEqual('-10000.0001'),
+    expect(removeTrailingZeros('-0.0001020000')).toEqual('-0.000102')
+})
 
-  it('Should remove trailing zeros', () => {
-    expect(removeTrailingZeros('0.00010000', minDigits)).toEqual('0.0001'),
-      expect(removeTrailingZeros('10000.000', minDigits)).toEqual('10000.000'),
-      expect(removeTrailingZeros('10000.100', minDigits)).toEqual('10000.100'),
-      expect(removeTrailingZeros('-10000.0001000', minDigits)).toEqual('-10000.0001'),
-      expect(removeTrailingZeros('-0.0001020000', minDigits)).toEqual('-0.000102'),
-      expect(removeTrailingZeros('0.00010000')).toEqual('0.0001'),
-      expect(removeTrailingZeros('10000.000')).toEqual('10000'),
-      expect(removeTrailingZeros('-10000.0001000')).toEqual('-10000.0001'),
-      expect(removeTrailingZeros('-0.0001020000')).toEqual('-0.000102')
-  })
-
-  it('Should check if string is a number', () => {
-    expect(isNumber('0.00010000')).toBeTruthy(),
-      expect(isNumber('1')).toBeTruthy(),
-      expect(isNumber('10000000')).toBeTruthy(),
-      expect(isNumber('010000000')).toBeTruthy(),
-      expect(isNumber('1.01e+1')).toBeTruthy(),
-      expect(isNumber('')).toBeFalsy(),
-      expect(isNumber('1a')).toBeFalsy()
-  })
+it('Should check if string is a number', () => {
+  expect(isNumber('0.00010000')).toBeTruthy(),
+    expect(isNumber('1')).toBeTruthy(),
+    expect(isNumber('10000000')).toBeTruthy(),
+    expect(isNumber('010000000')).toBeTruthy(),
+    expect(isNumber('1.01e+1')).toBeTruthy(),
+    expect(isNumber('')).toBeFalsy(),
+    expect(isNumber('1a')).toBeFalsy()
 })

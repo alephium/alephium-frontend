@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NetworkName, NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
 import { upperFirst } from 'lodash'
 import { ArrowRight } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -27,9 +27,8 @@ import Button from '@/components/Button'
 import DotIcon from '@/components/DotIcon'
 import Select from '@/components/Inputs/Select'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import ModalPortal from '@/modals/ModalPortal'
-import SettingsModal from '@/modals/SettingsModal'
 
 interface NetworkSelectOption {
   label: string
@@ -44,8 +43,6 @@ const NetworkSwitch = () => {
   const network = useAppSelector((state) => state.network)
   const isDevToolsEnabled = useAppSelector((s) => s.settings.devTools)
   const { sendAnalytics } = useAnalytics()
-
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false)
 
   const excludedNetworks: NetworkName[] = isDevToolsEnabled ? ['custom'] : ['custom', 'devnet']
   const networkNames = Object.values(NetworkNames).filter(
@@ -77,29 +74,24 @@ const NetworkSwitch = () => {
     [dispatch, network.name, sendAnalytics]
   )
 
+  const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: { initialTabValue: 'network' } }))
+
   return (
-    <>
-      <Select
-        options={networkSelectOptions}
-        onSelect={handleNetworkPresetChange}
-        controlledValue={networkSelectOptions.find((n) => n.value === network.name)}
-        title={t('Current network')}
-        id="network"
-        noMargin
-        renderCustomComponent={SelectCustomComponent}
-        skipEqualityCheck
-        ListBottomComponent={
-          <MoreOptionsItem onClick={() => setIsSettingsModalOpen(true)}>
-            {t('More options')} <ArrowRight size={16} />
-          </MoreOptionsItem>
-        }
-      />
-      <ModalPortal>
-        {isSettingsModalOpen && (
-          <SettingsModal onClose={() => setIsSettingsModalOpen(false)} initialTabValue="network" />
-        )}
-      </ModalPortal>
-    </>
+    <Select
+      options={networkSelectOptions}
+      onSelect={handleNetworkPresetChange}
+      controlledValue={networkSelectOptions.find((n) => n.value === network.name)}
+      title={t('Current network')}
+      id="network"
+      noMargin
+      renderCustomComponent={SelectCustomComponent}
+      skipEqualityCheck
+      ListBottomComponent={
+        <MoreOptionsItem onClick={openSettingsModal}>
+          {t('More options')} <ArrowRight size={16} />
+        </MoreOptionsItem>
+      }
+    />
   )
 }
 
