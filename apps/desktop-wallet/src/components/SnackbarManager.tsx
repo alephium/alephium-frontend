@@ -56,14 +56,10 @@ const SnackbarPopup = memo(({ message }: { message: Required<SnackbarMessage> })
 
   // Remove snackbar popup after its duration
   useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>
-
     if (message && message.duration >= 0) {
-      timer = setTimeout(() => dispatch(snackbarDisplayTimeExpired()), message.duration)
-    }
+      const timer = setTimeout(() => dispatch(snackbarDisplayTimeExpired()), message.duration)
 
-    return () => {
-      if (timer) clearTimeout(timer)
+      return () => clearTimeout(timer)
     }
   }, [dispatch, message])
 

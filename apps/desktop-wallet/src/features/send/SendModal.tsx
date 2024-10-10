@@ -291,7 +291,11 @@ function SendModal<PT extends { fromAddress: Address }>({
   }
 
   useEffect(() => {
-    if (step === 'tx-sent') setTimeout(onClose, 2000)
+    if (step === 'tx-sent') {
+      const timeoutId = setTimeout(onClose, 2000)
+
+      return () => clearTimeout(timeoutId)
+    }
   }, [onClose, step])
 
   const confirmPassword = () => setStep('password-check')

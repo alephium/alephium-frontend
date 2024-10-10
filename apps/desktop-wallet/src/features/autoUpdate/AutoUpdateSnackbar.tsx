@@ -51,6 +51,8 @@ const AutoUpdateSnackbar = () => {
   useEffect(() => {
     if (!newVersion || requiresManualDownload) return
 
+    let timer: ReturnType<typeof setTimeout>
+
     setStatus('downloading')
     electron?.updater.startUpdateDownload()
 
@@ -59,7 +61,7 @@ const AutoUpdateSnackbar = () => {
     )
     const removeUpdateDownloadedListener = electron?.updater.onUpdateDownloaded(() => {
       // Delay success message to give time for download validation errors to arise if any
-      setTimeout(() => setStatus('download-finished'), 1000)
+      timer = setTimeout(() => setStatus('download-finished'), 1000)
     })
     const removeonErrorListener = electron?.updater.onError((error) => {
       setStatus('download-failed')
@@ -70,7 +72,8 @@ const AutoUpdateSnackbar = () => {
     return () => {
       removeUpdateDownloadProgressListener && removeUpdateDownloadProgressListener()
       removeUpdateDownloadedListener && removeUpdateDownloadedListener()
-      removeonErrorListener && removeonErrorListener
+      removeonErrorListener && removeonErrorListener()
+      if (timer) clearTimeout(timer)
     }
   }, [newVersion, requiresManualDownload, sendAnalytics])
 
