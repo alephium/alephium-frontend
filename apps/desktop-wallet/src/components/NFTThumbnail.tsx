@@ -30,15 +30,18 @@ interface NFTThumbnailProps {
   nftId: NFT['id']
   size?: string
   onClick?: () => void
+  hideIfError?: boolean
   className?: string
 }
 
-const NFTThumbnail = ({ nftId, size = '100', ...props }: NFTThumbnailProps) => {
+const NFTThumbnail = ({ nftId, size = '100', hideIfError = false, ...props }: NFTThumbnailProps) => {
   const { data: nft, isLoading, error: fetchNftError } = useFetchNft({ id: nftId })
 
   const [error, setError] = useState(false)
 
-  if (isLoading) return <SkeletonLoader height={size === '100%' ? '300px' : size} />
+  if (isLoading) return <SkeletonLoader height={size === '100%' ? '130px' : size} />
+
+  if (hideIfError && fetchNftError) return null
 
   if (fetchNftError)
     return (
