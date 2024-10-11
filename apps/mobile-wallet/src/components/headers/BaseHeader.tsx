@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackHeaderProps } from '@react-navigation/stack'
-import { Canvas, LinearGradient, Rect, vec } from '@shopify/react-native-skia'
 import { colord } from 'colord'
+import { LinearGradient } from 'expo-linear-gradient'
 import { ReactNode, RefObject, useState } from 'react'
 import { LayoutChangeEvent, Platform, useWindowDimensions, View, ViewProps } from 'react-native'
 import Animated, {
@@ -50,6 +50,8 @@ export interface BaseHeaderProps extends ViewProps {
 
 const isIos = Platform.OS === 'ios'
 
+const AnimatedHeaderGradient = Animated.createAnimatedComponent(LinearGradient)
+
 const BaseHeader = ({
   options: { headerRight, headerLeft, headerTitle, headerTitleRight },
   headerRef,
@@ -64,7 +66,7 @@ const BaseHeader = ({
   const { width: screenWidth } = useWindowDimensions()
   const [headerHeight, setHeaderHeight] = useState(80)
 
-  const gradientHeight = headerHeight + 30
+  const gradientHeight = headerHeight + 60
   const defaultScrollRange = [0 + scrollEffectOffset, 80 + scrollEffectOffset]
   const paddingTop = isIos ? insets.top : insets.top + 7
 
@@ -97,19 +99,18 @@ const BaseHeader = ({
   return (
     <BaseHeaderStyled ref={headerRef} onLayout={handleHeaderLayout} {...props}>
       <View pointerEvents="none">
-        <HeaderGradientCanvas height={gradientHeight} pointerEvents="none">
-          <Rect x={0} y={0} width={screenWidth} height={gradientHeight} opacity={animatedOpacity}>
-            <LinearGradient
-              start={vec(0, gradientHeight / 1.5)}
-              end={vec(0, gradientHeight)}
-              colors={
-                theme.name === 'dark'
-                  ? [theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]
-                  : [theme.bg.highlight, colord(theme.bg.highlight).alpha(0).toHex()]
-              }
-            />
-          </Rect>
-        </HeaderGradientCanvas>
+        <HeaderGradient
+          pointerEvents="none"
+          style={{ opacity: animatedOpacity, width: screenWidth, height: gradientHeight }}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          locations={[0.5, 1]}
+          colors={
+            theme.name === 'dark'
+              ? [theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]
+              : [theme.bg.highlight, colord(theme.bg.highlight).alpha(0).toHex()]
+          }
+        />
       </View>
       <HeaderContainer>
         <Header style={{ paddingTop }}>
@@ -147,12 +148,11 @@ const BaseHeaderStyled = styled(Animated.View)`
   position: absolute;
 `
 
-const HeaderGradientCanvas = styled(Canvas)<{ height: number }>`
+const HeaderGradient = styled(AnimatedHeaderGradient)`
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: ${({ height }) => height}px;
 `
 
 const HeaderContainer = styled(Animated.View)`
