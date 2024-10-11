@@ -44,6 +44,7 @@ import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectError
 import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPairingsModal'
 import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPasteUrlModal'
 import { useAppSelector } from '~/hooks/redux'
+import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 const AppModals = () => {
@@ -106,6 +107,8 @@ const AppModals = () => {
             return <WalletConnectPasteUrlModal key={id} id={id} {...params.props} />
           case 'WalletConnectSessionProposalModal':
             return <WalletConnectSessionProposalModal key={id} id={id} {...params.props} />
+          case 'GroupSelectModal':
+            return <GroupSelectModal key={id} id={id} {...params.props} />
           default:
             return null
         }

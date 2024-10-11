@@ -41,6 +41,7 @@ import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectErrorModal'
 import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPairingsModal'
 import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPasteUrlModal'
+import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 export const ModalComponents = {
@@ -66,7 +67,8 @@ export const ModalComponents = {
   WalletConnectErrorModal,
   WalletConnectPasteUrlModal,
   WalletConnectPairingsModal,
-  WalletConnectSessionProposalModal
+  WalletConnectSessionProposalModal,
+  GroupSelectModal
 }
 
 type ModalName = keyof typeof ModalComponents
