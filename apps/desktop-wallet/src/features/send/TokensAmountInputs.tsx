@@ -212,8 +212,7 @@ const TokensAmountInputs = ({
 
           if (!tokenBalances) return
 
-          const ft =
-            listedFts.find(({ id }) => selectedTokenId === id) ?? unlistedFts.find(({ id }) => selectedTokenId === id)
+          const ft = listedFts.find((token) => token.id === id) ?? unlistedFts.find((token) => token.id === id)
 
           const availableHumanReadableAmount = toHumanReadableAmount(
             tokenBalances.availableBalance ?? BigInt(0),
