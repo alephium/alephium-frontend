@@ -110,6 +110,10 @@ const TokensAmountInputs = ({
       amount: nftIds.includes(id) ? BigInt(1) : undefined
     })
 
+    const newErrors = [...errors]
+    newErrors.splice(selectedTokenRowIndex, 1, '')
+    setErrors(newErrors)
+
     onTokenAmountsChange(newTokenAmounts)
   }
 
