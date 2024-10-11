@@ -83,7 +83,14 @@ const WalletConnectPasteUrlModal = withModal<WalletConnectPasteUrlModalProps>(({
           </AppText>
         </ScreenSection>
         <ScreenSection>
-          <Input label={t('WalletConnect URI')} value={inputWcUrl} onChangeText={handleInputChange} error={error} />
+          <Input
+            label={t('WalletConnect URI')}
+            value={inputWcUrl}
+            onChangeText={handleInputChange}
+            error={error}
+            autoFocus
+            showPasteButton
+          />
         </ScreenSection>
         <ScreenSection>
           <Button title={t('Connect')} variant="highlight" onPress={handleConnect} disabled={!inputWcUrl || !!error} />
