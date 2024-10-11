@@ -15,22 +15,26 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { ReactNode } from 'react'
-import styled from 'styled-components/native'
 
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { createSlice } from '@reduxjs/toolkit'
 
-interface FooterButtonContainerProps {
-  children: ReactNode
+import { openModal } from '~/features/modals/modalActions'
+
+const initialState = {
+  needsReminder: true
 }
 
-const FooterButtonContainer = ({ children }: FooterButtonContainerProps) => <Container>{children}</Container>
+const backupSlice = createSlice({
+  name: 'backup',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(openModal, (state, { payload: { name: modalName } }) => {
+      if (modalName === 'BackupReminderModal') {
+        state.needsReminder = false
+      }
+    })
+  }
+})
 
-export default FooterButtonContainer
-
-const Container = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin: 10% ${DEFAULT_MARGIN}px;
-`
+export default backupSlice

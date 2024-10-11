@@ -71,7 +71,8 @@ const FlatListScreen = <T,>({
           {
             paddingBottom: insets.bottom,
             flex: fill ? 1 : undefined,
-            gap: shouldUseGaps ? VERTICAL_GAP : 0
+            gap: shouldUseGaps ? VERTICAL_GAP : 0,
+            paddingTop: 120
           },
           contentContainerStyle
         ]}

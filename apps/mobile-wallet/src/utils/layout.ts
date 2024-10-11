@@ -17,15 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { getHumanReadableError } from '@alephium/shared'
+import { FlashList } from '@shopify/flash-list'
 import { MutableRefObject } from 'react'
 import { FlatList, ScrollView } from 'react-native'
 import Toast, { ToastShowParams } from 'react-native-toast-message'
 
-export const checkIfScrollView = (view: ScrollView | FlatList): view is ScrollView => 'scrollTo' in view
+export const checkIfScrollView = (view: ScrollView | FlatList | FlashList<unknown>): view is ScrollView =>
+  'scrollTo' in view
 
 export const scrollScreenTo = (
   position: number,
-  viewRef: MutableRefObject<ScrollView | FlatList | null>,
+  viewRef: MutableRefObject<ScrollView | FlatList | FlashList<unknown> | null>,
   animated = false
 ) => {
   if (!viewRef?.current) return

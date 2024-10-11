@@ -15,16 +15,24 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { ReactNode } from 'react'
+import { StyleProp, ViewStyle } from 'react-native'
+import styled from 'styled-components/native'
 
-import { ModalContent, ModalContentProps } from '~/features/modals/ModalContent'
-import ContactListScreenBase, { ContactListScreenBaseProps } from '~/screens/ContactListScreenBase'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-type SelectContactModalProps = ModalContentProps & ContactListScreenBaseProps
+interface BottomButtonsProps {
+  children: ReactNode
+  style?: StyleProp<ViewStyle>
+}
 
-const SelectContactModal = ({ onContactPress, onNewContactPress, ...props }: SelectContactModalProps) => (
-  <ModalContent {...props}>
-    <ContactListScreenBase onContactPress={onContactPress} onNewContactPress={onNewContactPress} />
-  </ModalContent>
-)
+const BottomButtons = ({ children, style }: BottomButtonsProps) => <Container style={style}>{children}</Container>
 
-export default SelectContactModal
+export default BottomButtons
+
+const Container = styled.View`
+  justify-content: center;
+  align-items: flex-end;
+  margin: ${VERTICAL_GAP * 2}px ${DEFAULT_MARGIN}px ${VERTICAL_GAP}px;
+  gap: 20px;
+`

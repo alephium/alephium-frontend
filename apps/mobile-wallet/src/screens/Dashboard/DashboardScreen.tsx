@@ -26,6 +26,7 @@ import styled from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Amount from '~/components/Amount'
+import AnimatedBackground from '~/components/AnimatedBackground'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import BlurredCard from '~/components/BlurredCard'
@@ -41,7 +42,6 @@ import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
-import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
 import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
@@ -67,14 +67,15 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsFundPasswordReminder = useAppSelector((s) => s.fundPassword.needsReminder)
+  const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
 
   const { data: isNewWallet } = useAsyncData(getIsNewWallet)
 
   useEffect(() => {
-    if (!isMnemonicBackedUp && isNewWallet !== undefined) {
+    if (needsBackupReminder && !isMnemonicBackedUp && isNewWallet !== undefined) {
       dispatch(openModal({ name: 'BackupReminderModal', props: { isNewWallet } }))
     }
-  }, [dispatch, isMnemonicBackedUp, isNewWallet])
+  }, [dispatch, isMnemonicBackedUp, isNewWallet, needsBackupReminder])
 
   useEffect(() => {
     if (isMnemonicBackedUp && needsFundPasswordReminder) {
@@ -122,7 +123,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       hasBottomBar
       verticalGap
       onScroll={screenScrollHandler}
-      floatingHeader
       contentPaddingTop={20}
       headerScrollEffectOffset={70}
       headerOptions={{
@@ -130,9 +130,9 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       }}
       {...props}
     >
-      <AnimatedCirclesBackground height={400} scrollY={screenScrollY} />
       <CardContainer style={{ marginTop: insets.top }}>
-        <BlurredCard>
+        <AmountBlurredCard>
+          <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
           <WalletCardHeader>
             <HeaderButtons />
           </WalletCardHeader>
@@ -151,7 +151,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               <Button onPress={openBuyModal} iconProps={{ name: 'credit-card' }} variant="contrast" round flex short />
             </ButtonsRowContainer>
           )}
-        </BlurredCard>
+        </AmountBlurredCard>
       </CardContainer>
       <AddressesTokensList />
       {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
@@ -186,4 +186,8 @@ const ButtonsRowContainer = styled(Animated.View)`
   align-items: center;
   justify-content: center;
   gap: 10px;
+`
+
+const AmountBlurredCard = styled(BlurredCard)`
+  height: 240px;
 `

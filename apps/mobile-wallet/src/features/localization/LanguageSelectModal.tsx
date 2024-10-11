@@ -37,26 +37,23 @@ const LanguageSelectModal = withModal(({ id }) => {
   }
 
   return (
-    <BottomModal
-      id={id}
-      Content={(props) => (
-        <ModalContent {...props} verticalGap>
-          <ScreenSection>
-            <BoxSurface>
-              {languageOptions.map((languageOption, index) => (
-                <RadioButtonRow
-                  key={languageOption.label}
-                  title={languageOption.label}
-                  onPress={() => handleLanguageChange(languageOption.value)}
-                  isActive={currentLanguage === languageOption.value}
-                  isLast={index === languageOptions.length - 1}
-                />
-              ))}
-            </BoxSurface>
-          </ScreenSection>
-        </ModalContent>
-      )}
-    />
+    <BottomModal modalId={id}>
+      <ModalContent verticalGap>
+        <ScreenSection>
+          <BoxSurface>
+            {languageOptions.map((languageOption, index) => (
+              <RadioButtonRow
+                key={languageOption.label}
+                title={languageOption.label}
+                onPress={() => handleLanguageChange(languageOption.value)}
+                isActive={currentLanguage === languageOption.value}
+                isLast={index === languageOptions.length - 1}
+              />
+            ))}
+          </BoxSurface>
+        </ScreenSection>
+      </ModalContent>
+    </BottomModal>
   )
 })
 

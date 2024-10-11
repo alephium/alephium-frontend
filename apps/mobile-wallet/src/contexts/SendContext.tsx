@@ -20,13 +20,11 @@ import { AddressHash, AssetAmount } from '@alephium/shared'
 import { node } from '@alephium/web3'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Portal } from 'react-native-portalize'
 
 import { sendAnalytics } from '~/analytics'
 import { buildSweepTransactions, buildUnsignedTransactions, signAndSendTransaction } from '~/api/transactions'
-import ConsolidationModal from '~/components/ConsolidationModal'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
-import BottomModal from '~/features/modals/DeprecatedBottomModal'
+import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { selectAddressByHash } from '~/store/addressesSlice'
@@ -75,7 +73,7 @@ const SendContext = createContext(initialValues)
 
 export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
+  const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
@@ -85,7 +83,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
   const [unsignedTxData, setUnsignedTxData] = useState<UnsignedTxData>({ unsignedTxs: [], fees: initialValues.fees })
 
   const [consolidationRequired, setConsolidationRequired] = useState(false)
-  const [isConsolidateModalVisible, setIsConsolidateModalVisible] = useState(false)
   const [onSendSuccessCallback, setOnSendSuccessCallback] = useState<() => void>(() => () => null)
 
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
@@ -115,30 +112,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       showExceptionToast(e, t('Could not build transaction'))
     }
   }, [address, t])
-
-  const buildTransaction = useCallback(
-    async (callbacks: BuildTransactionCallbacks) => {
-      if (!address || !toAddress) return
-
-      try {
-        const data = await buildUnsignedTransactions(address, toAddress, assetAmounts)
-        if (data) setUnsignedTxData(data)
-        callbacks.onBuildSuccess()
-      } catch (e) {
-        const error = (e as unknown as string).toString()
-
-        if (error.includes('consolidating') || error.includes('consolidate')) {
-          setConsolidationRequired(true)
-          setIsConsolidateModalVisible(true)
-          setOnSendSuccessCallback(() => callbacks.onConsolidationSuccess)
-          await buildConsolidationTransactions()
-        } else {
-          showExceptionToast(e, t('Could not build transaction'))
-        }
-      }
-    },
-    [address, assetAmounts, buildConsolidationTransactions, t, toAddress]
-  )
 
   const sendTransaction = useCallback(
     async (onSendSuccess: () => void) => {
@@ -190,6 +163,50 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
     [sendTransaction, triggerBiometricsAuthGuard, triggerFundPasswordAuthGuard]
   )
 
+  const buildTransaction = useCallback(
+    async (callbacks: BuildTransactionCallbacks) => {
+      if (!address || !toAddress) return
+
+      try {
+        const data = await buildUnsignedTransactions(address, toAddress, assetAmounts)
+        if (data) setUnsignedTxData(data)
+        callbacks.onBuildSuccess()
+      } catch (e) {
+        const error = (e as unknown as string).toString()
+
+        if (error.includes('consolidating') || error.includes('consolidate')) {
+          setConsolidationRequired(true)
+          dispatch(
+            openModal({
+              name: 'ConsolidationModal',
+              props: {
+                onConsolidate: () => {
+                  authenticateAndSend(onSendSuccessCallback)
+                },
+                fees: unsignedTxData.fees
+              }
+            })
+          )
+          setOnSendSuccessCallback(() => callbacks.onConsolidationSuccess)
+          await buildConsolidationTransactions()
+        } else {
+          showExceptionToast(e, t('Could not build transaction'))
+        }
+      }
+    },
+    [
+      address,
+      assetAmounts,
+      authenticateAndSend,
+      buildConsolidationTransactions,
+      dispatch,
+      onSendSuccessCallback,
+      t,
+      toAddress,
+      unsignedTxData.fees
+    ]
+  )
+
   return (
     <SendContext.Provider
       value={{
@@ -205,23 +222,6 @@ export const SendContextProvider = ({ children }: { children: ReactNode }) => {
       }}
     >
       {children}
-      <Portal>
-        <BottomModal
-          Content={(props) => (
-            <ConsolidationModal
-              {...props}
-              onConsolidate={() => {
-                authenticateAndSend(onSendSuccessCallback)
-                props.onClose && props.onClose()
-              }}
-              fees={unsignedTxData.fees}
-            />
-          )}
-          isOpen={isConsolidateModalVisible}
-          onClose={() => setIsConsolidateModalVisible(false)}
-        />
-      </Portal>
-      {fundPasswordModal}
     </SendContext.Provider>
   )
 }

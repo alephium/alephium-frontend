@@ -30,7 +30,7 @@ import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Platform, ViewProps } from 'react-native'
+import { Platform, View, ViewProps } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
@@ -40,12 +40,12 @@ import { useLocalization } from '~/features/localization/useLocalization'
 import useLoadStoredSettings from '~/features/settings/useLoadStoredSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
 import {
   getStoredWalletMetadataWithoutThrowingError,
   validateAndRepareStoredWalletData
 } from '~/persistent-storage/wallet'
-import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
 import {
   makeSelectAddressesUnknownTokens,
   selectAllAddressVerifiedFungibleTokenSymbols,
@@ -87,7 +87,9 @@ const App = () => {
           ) : (
             // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
             // splash screen to be show after the default one gets hidden, before we can show app content.
-            <AnimatedCirclesBackground isAnimated />
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <AlephiumLogo style={{ width: '15%' }} />
+            </View>
           )}
           <ToastAnchor />
         </ThemeProvider>

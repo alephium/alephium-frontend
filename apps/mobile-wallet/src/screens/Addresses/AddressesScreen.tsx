@@ -22,7 +22,6 @@ import * as Haptics from 'expo-haptics'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
-import { Portal } from 'react-native-portalize'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
@@ -34,13 +33,14 @@ import Carousel from '~/components/Carousel'
 import BottomBarScrollScreen from '~/components/layout/BottomBarScrollScreen'
 import { TabBarPageScreenProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
-import BottomModal from '~/features/modals/DeprecatedBottomModal'
-import { useAppSelector } from '~/hooks/redux'
+import { openModal } from '~/features/modals/modalActions'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import SelectAddressModal from '~/screens/SendReceive/Send/SelectAddressModal'
 import { selectAddressByHash, selectAddressIds, selectAllAddresses, selectDefaultAddress } from '~/store/addressesSlice'
 
 const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const addresses = useAppSelector(selectAllAddresses)
@@ -48,9 +48,6 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const [selectedAddressHash, setSelectedAddressHash] = useState(defaultAddress?.hash ?? '')
   const selectedAddress = useAppSelector((s) => selectAddressByHash(s, selectedAddressHash))
-  const { t } = useTranslation()
-
-  const [isQuickSelectionModalOpen, setIsQuickSelectionModalOpen] = useState(false)
 
   const [heightCarouselItem, setHeightCarouselItem] = useState(235)
   const [scrollToCarouselPage, setScrollToCarouselPage] = useState<number>()
@@ -73,6 +70,15 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
     }
   }
 
+  const handleAddressSelect = (addressHash: AddressHash) => {
+    setSelectedAddressHash(addressHash)
+    setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === addressHash))
+    sendAnalytics({ event: 'Used address quick navigation' })
+  }
+
+  const openAddressSelectModal = () =>
+    dispatch(openModal({ name: 'SelectAddressModal', props: { onAddressPress: handleAddressSelect } }))
+
   const renderAddressCard = ({ item }: { item: string }) => (
     <View onLayout={(event) => setHeightCarouselItem(event.nativeEvent.layout.height + 15)} key={item}>
       <AddressCard
@@ -85,62 +91,41 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   if (!selectedAddress) return null
 
   return (
-    <>
-      <BottomBarScrollScreen refreshControl={<RefreshSpinner progressViewOffset={190} />} hasBottomBar {...props}>
-        <Content style={contentStyle}>
-          <Carousel
-            data={addressHashes}
-            renderItem={renderAddressCard}
-            onSwipingStart={() => setIsSwiping(true)}
-            onScrollEnd={onAddressCardsScrollEnd}
-            padding={20}
-            distance={10}
-            height={heightCarouselItem}
-            scrollTo={scrollToCarouselPage}
-            FooterComponent={
-              <>
-                {addresses.length > 2 && (
-                  <Button
-                    onPress={() => setIsQuickSelectionModalOpen(true)}
-                    iconProps={{ name: 'list' }}
-                    round
-                    compact
-                  />
-                )}
-                <Button
-                  onPress={() => navigation.navigate('NewAddressScreen')}
-                  iconProps={{ name: 'plus' }}
-                  title={t('New address')}
-                  variant="highlightedIcon"
-                  compact
-                  style={{ marginLeft: addresses.length <= 2 ? 'auto' : undefined }}
-                />
-              </>
-            }
-          />
-          {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} isRefreshing={isSwiping} />}
-        </Content>
-      </BottomBarScrollScreen>
-
-      <Portal>
-        <BottomModal
-          isOpen={isQuickSelectionModalOpen}
-          onClose={() => setIsQuickSelectionModalOpen(false)}
-          maximisedContent
-          Content={(props) => (
-            <SelectAddressModal
-              onAddressPress={(addressHash) => {
-                setSelectedAddressHash(addressHash)
-                setScrollToCarouselPage(addressHashes.findIndex((hash) => hash === addressHash))
-                props.onClose && props.onClose()
-                sendAnalytics({ event: 'Used address quick navigation' })
-              }}
-              {...props}
-            />
-          )}
+    <BottomBarScrollScreen
+      refreshControl={<RefreshSpinner progressViewOffset={190} />}
+      hasBottomBar
+      contentPaddingTop
+      {...props}
+    >
+      <Content style={contentStyle}>
+        <Carousel
+          data={addressHashes}
+          renderItem={renderAddressCard}
+          onSwipingStart={() => setIsSwiping(true)}
+          onScrollEnd={onAddressCardsScrollEnd}
+          padding={20}
+          distance={10}
+          height={heightCarouselItem}
+          scrollTo={scrollToCarouselPage}
+          FooterComponent={
+            <>
+              {addresses.length > 2 && (
+                <Button onPress={openAddressSelectModal} iconProps={{ name: 'list' }} round compact />
+              )}
+              <Button
+                onPress={() => navigation.navigate('NewAddressScreen')}
+                iconProps={{ name: 'plus' }}
+                title={t('New address')}
+                variant="highlightedIcon"
+                compact
+                style={{ marginLeft: addresses.length <= 2 ? 'auto' : undefined }}
+              />
+            </>
+          }
         />
-      </Portal>
-    </>
+        {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} isRefreshing={isSwiping} />}
+      </Content>
+    </BottomBarScrollScreen>
   )
 }
 

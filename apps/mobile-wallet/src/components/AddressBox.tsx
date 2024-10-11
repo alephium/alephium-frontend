@@ -18,10 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { groupBy } from 'lodash'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
-import { Portal } from 'react-native-portalize'
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -30,9 +29,8 @@ import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Checkmark from '~/components/Checkmark'
-import NFTsGrid from '~/components/NFTsGrid'
-import BottomModal from '~/features/modals/DeprecatedBottomModal'
-import { useAppSelector } from '~/hooks/redux'
+import { openModal } from '~/features/modals/modalActions'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
@@ -49,6 +47,7 @@ interface AddressBoxProps extends PressableProps {
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxProps) => {
+  const dispatch = useAppDispatch()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
@@ -56,8 +55,6 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const theme = useTheme()
   const { t } = useTranslation()
-
-  const [isNftsModalOpen, setIsNftsModalOpen] = useState(false)
 
   const boxAnimatedStyle = useAnimatedStyle(() => ({
     borderColor: withSpring(isSelected ? theme.global.accent : theme.border.primary, fastestSpringConfiguration),
@@ -71,6 +68,8 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
 
   const nftsGroupedByCollection = groupBy(nfts, 'collectionId')
   const nbOfNftCollections = Object.keys(nftsGroupedByCollection).length
+
+  const openNftsGridModal = () => dispatch(openModal({ name: 'NftGridModal', props: { addressHash } }))
 
   return (
     <AddressBoxStyled {...props} onPress={handlePress} style={[boxAnimatedStyle, props.style]}>
@@ -96,7 +95,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
           ))}
         </AssetsRow>
         {nfts.length > 0 && (
-          <Pressable onPress={() => setIsNftsModalOpen(true)}>
+          <Pressable onPress={openNftsGridModal}>
             <AssetsRow style={{ marginTop: VERTICAL_GAP }}>
               <NbOfNftsBadge>
                 <AppText>
@@ -119,13 +118,6 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
           </Pressable>
         )}
       </AddressBoxBottom>
-      <Portal>
-        <BottomModal
-          Content={(props) => <NFTsGrid addressHash={addressHash} {...props} />}
-          isOpen={isNftsModalOpen}
-          onClose={() => setIsNftsModalOpen(false)}
-        />
-      </Portal>
     </AddressBoxStyled>
   )
 }
