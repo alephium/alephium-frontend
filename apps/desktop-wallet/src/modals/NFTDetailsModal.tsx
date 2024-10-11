@@ -46,7 +46,7 @@ const NFTDetailsModal = memo(({ id, nftId }: ModalBaseProp & NFTDetailsModalProp
   return (
     <SideModal id={id} title={t('NFT details')}>
       <NFTImageContainer>
-        <NFTThumbnail size="100%" nftId={nftId} />
+        <NFTThumbnail size="100%" nftId={nftId} hideIfError />
       </NFTImageContainer>
 
       <NFTDataList nftId={nftId} />
@@ -162,6 +162,10 @@ export default NFTDetailsModal
 
 const NFTImageContainer = styled.div`
   padding: var(--spacing-3);
+
+  &:empty {
+    display: none;
+  }
 `
 
 const NFTMetadataContainer = styled.div`
