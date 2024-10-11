@@ -153,7 +153,7 @@ export const useBottomModalState = ({
     ]
   )
 
-  // Content ccroll handlers
+  // Content scroll handlers
   const contentScrollHandlers: ContentScrollHandlers = {
     onScroll: (e) => {
       contentScrollY.value = e.nativeEvent.contentOffset.y
