@@ -21,6 +21,7 @@ import { ComponentProps } from 'react'
 
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
+import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
@@ -64,7 +65,8 @@ export const ModalComponents = {
   SelectContactModal,
   WalletConnectErrorModal,
   WalletConnectPasteUrlModal,
-  WalletConnectPairingsModal
+  WalletConnectPairingsModal,
+  WalletConnectSessionProposalModal
 }
 
 type ModalName = keyof typeof ModalComponents
