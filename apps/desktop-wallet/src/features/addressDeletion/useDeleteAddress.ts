@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 
+import queryClient from '@/api/queryClient'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { addressDeleted } from '@/storage/addresses/addressesActions'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
@@ -34,6 +35,7 @@ const useDeleteAddress = () => {
 
     try {
       addressMetadataStorage.deleteOne(activeWalletId, address.index)
+      queryClient.removeQueries({ queryKey: ['address', addressHash] })
       dispatch(addressDeleted(address.hash))
     } catch (error) {
       console.error(error)
