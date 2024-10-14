@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import WalletPassphrase from '@/components/Inputs/WalletPassphrase'
@@ -36,7 +36,6 @@ export interface WalletUnlockModalProps {
 const WalletUnlockModal = memo(({ id, walletId }: ModalBaseProp & WalletUnlockModalProps) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  const location = useLocation()
   const { unlockWallet } = useWalletLock()
   const { t } = useTranslation()
   const wallets = useAppSelector((s) => s.global.wallets)
@@ -47,15 +46,15 @@ const WalletUnlockModal = memo(({ id, walletId }: ModalBaseProp & WalletUnlockMo
 
   const onUnlockClick = (password: string) => {
     dispatch(closeModal({ id }))
+
+    navigate('/')
+
     unlockWallet({
       event: 'switch',
       walletId,
       password,
       passphrase,
-      afterUnlock: () => {
-        const nextPageLocation = '/wallet/overview'
-        if (location.pathname !== nextPageLocation) navigate(nextPageLocation)
-      }
+      afterUnlock: () => navigate('/wallet/overview')
     })
 
     setPassphrase('')

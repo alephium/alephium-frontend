@@ -24,7 +24,7 @@ import { del, get, set } from 'idb-keyval'
  * @see https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
  * @see https://tanstack.com/query/latest/docs/framework/react/plugins/persistQueryClient#building-a-persister
  */
-const createTanstackIndexedDBPersister = (idbValidKey: IDBValidKey = 'tanstackQuery') =>
+export const createTanstackIndexedDBPersister = (idbValidKey: IDBValidKey = 'tanstackQuery') =>
   ({
     persistClient: async (client: PersistedClient) => {
       await set(idbValidKey, client)
@@ -34,7 +34,3 @@ const createTanstackIndexedDBPersister = (idbValidKey: IDBValidKey = 'tanstackQu
       await del(idbValidKey)
     }
   }) as Persister
-
-const tanstackIndexedDBPersister = createTanstackIndexedDBPersister()
-
-export default tanstackIndexedDBPersister
