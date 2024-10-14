@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, FIVE_MINUTES_MS, throttledClient } from '@alephium/shared'
+import { AddressHash, FIVE_MINUTES_MS, ONE_MINUTE_MS, throttledClient } from '@alephium/shared'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
@@ -83,7 +83,7 @@ export const addressTransactionsInfiniteQuery = ({
   infiniteQueryOptions({
     queryKey: ['address', addressHash, 'transactions', { networkId }],
     staleTime: Infinity,
-    gcTime: FIVE_MINUTES_MS,
+    gcTime: 15 * ONE_MINUTE_MS, // Since the tx list is only visible in the AddressDetailsModal, we remove the data from the memory 15 minutes after the modal has been closed
     meta: { isInfinite: true, isMainnet: networkId === 0 },
     queryFn:
       !skip && networkId !== undefined
@@ -106,7 +106,7 @@ export const walletTransactionsInfiniteQuery = ({
   infiniteQueryOptions({
     queryKey: ['wallet', 'transactions', { networkId, addressHashes }],
     staleTime: Infinity,
-    gcTime: FIVE_MINUTES_MS,
+    gcTime: 15 * ONE_MINUTE_MS, // We remove cached data 15 minutes after the list of addresses changes or the user has navigated away from the Transfers page
     meta: { isInfinite: true, isMainnet: networkId === 0 },
     queryFn:
       !skip && networkId !== undefined
@@ -126,7 +126,7 @@ export const walletLatestTransactionsQuery = ({ addressHashes, networkId }: Wall
   queryOptions({
     queryKey: ['wallet', 'transactions', 'latest', { networkId, addressHashes }],
     staleTime: Infinity,
-    gcTime: FIVE_MINUTES_MS,
+    gcTime: 15 * ONE_MINUTE_MS, // We remove cached data 15 minutes after the list of addresses changes or the user has navigated away from the Overview page
     meta: { isMainnet: networkId === 0 },
     queryFn:
       networkId !== undefined
@@ -142,14 +142,14 @@ export const confirmedTransactionQuery = ({ txHash, skip }: TransactionQueryProp
   queryOptions({
     queryKey: ['transaction', 'confirmed', txHash],
     staleTime: Infinity,
-    gcTime: FIVE_MINUTES_MS,
+    gcTime: FIVE_MINUTES_MS, // 5 minutes after the TransactionDetailsModal has been closed we can safely remove the cached data from the memory
     queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken
   })
 
 export const pendingTransactionQuery = ({ txHash, skip }: TransactionQueryProps) =>
   queryOptions({
     queryKey: ['transaction', 'pending', txHash],
-    gcTime: FIVE_MINUTES_MS,
+    gcTime: ONE_MINUTE_MS, // Since this query refreshes every 3 seconds, we don't need to keep the data for too long
     refetchInterval: 3000,
     queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken
   })

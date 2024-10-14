@@ -30,7 +30,7 @@ export const tokensPriceQuery = ({ symbols, currency, skip }: TokensPriceQueryPr
   queryOptions({
     queryKey: ['tokenPrices', 'currentPrice', symbols, { currency }],
     refetchInterval: ONE_MINUTE_MS,
-    gcTime: FIVE_MINUTES_MS,
+    gcTime: FIVE_MINUTES_MS, // When the user changes the currency settings, we don't want to keep the prices from the previous currency for too long
     queryFn: !skip
       ? async () => {
           const prices = await throttledClient.explorer.market.postMarketPrices({ currency }, symbols)
