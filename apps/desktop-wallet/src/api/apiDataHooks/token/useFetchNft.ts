@@ -30,9 +30,11 @@ interface UseNFTProps extends SkipProp {
 const useFetchNft = ({ id, skip }: UseNFTProps) => {
   const { data: nftMetadata, isLoading: isLoadingNftMetadata } = useQuery(nftMetadataQuery({ id, skip }))
 
-  const { data: nftData, isLoading: isLoadingNftData } = useQuery(
-    nftDataQuery({ id, tokenUri: nftMetadata?.tokenUri, skip: skip || isLoadingNftMetadata })
-  )
+  const {
+    data: nftData,
+    isLoading: isLoadingNftData,
+    error
+  } = useQuery(nftDataQuery({ id, tokenUri: nftMetadata?.tokenUri, skip: skip || isLoadingNftMetadata }))
 
   return {
     data: useMemo(
@@ -45,7 +47,9 @@ const useFetchNft = ({ id, skip }: UseNFTProps) => {
           : undefined,
       [nftData, nftMetadata]
     ),
-    isLoading: isLoadingNftMetadata || isLoadingNftData
+    isLoading: isLoadingNftMetadata || isLoadingNftData,
+    error,
+    nftMetadata
   }
 }
 

@@ -110,6 +110,10 @@ const TokensAmountInputs = ({
       amount: nftIds.includes(id) ? BigInt(1) : undefined
     })
 
+    const newErrors = [...errors]
+    newErrors.splice(selectedTokenRowIndex, 1, '')
+    setErrors(newErrors)
+
     onTokenAmountsChange(newTokenAmounts)
   }
 
@@ -212,9 +216,9 @@ const TokensAmountInputs = ({
 
           if (!tokenBalances) return
 
-          const ft =
-            listedFts.find(({ id }) => selectedTokenId === id) ?? unlistedFts.find(({ id }) => selectedTokenId === id)
+          const ft = listedFts.find((token) => token.id === id) ?? unlistedFts.find((token) => token.id === id)
 
+          // TODO: If ALPH, subtract dust for each other token, possibly by querying the node `/addresses/{address}/utxos`
           const availableHumanReadableAmount = toHumanReadableAmount(
             tokenBalances.availableBalance ?? BigInt(0),
             ft?.decimals ?? 0

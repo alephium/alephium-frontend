@@ -19,7 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NFT, throttledClient } from '@alephium/shared'
 import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
 import { skipToken, useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
+import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -28,6 +29,7 @@ import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
 import ActionLink from '@/components/ActionLink'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
+import InfoBox from '@/components/InfoBox'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import Truncate from '@/components/Truncate'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
@@ -44,7 +46,7 @@ const NFTDetailsModal = memo(({ id, nftId }: ModalBaseProp & NFTDetailsModalProp
   return (
     <SideModal id={id} title={t('NFT details')}>
       <NFTImageContainer>
-        <NFTThumbnail size="100%" nftId={nftId} />
+        <NFTThumbnail size="100%" nftId={nftId} hideIfError />
       </NFTImageContainer>
 
       <NFTDataList nftId={nftId} />
@@ -54,27 +56,26 @@ const NFTDetailsModal = memo(({ id, nftId }: ModalBaseProp & NFTDetailsModalProp
 
 const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
-  const { data: nft } = useFetchNft({ id: nftId })
-
-  if (!nft) return null
+  const { data: nft, nftMetadata, error } = useFetchNft({ id: nftId })
 
   return (
     <NFTMetadataContainer>
+      {error && error instanceof AxiosError && <NftMetadataError error={error} />}
       <DataList>
-        <DataList.Row label={t('Name')}>
-          <b>{nft.name}</b>
-        </DataList.Row>
-        <DataList.Row label={t('Description')}>{nft.description}</DataList.Row>
+        <NftNameDataListRow label={t('Name')}>{nft?.name}</NftNameDataListRow>
+        <DataList.Row label={t('Description')}>{nft?.description}</DataList.Row>
         <DataList.Row label={t('ID')}>
-          <HashEllipsed hash={nft.id} tooltipText={t('Copy ID')} />
+          <HashEllipsed hash={nftId} tooltipText={t('Copy ID')} />
         </DataList.Row>
         <DataList.Row label={t('Image URL')}>
-          <ActionLink onClick={() => openInWebBrowser(nft.image)}>
-            <Truncate>{nft.image}</Truncate>
-          </ActionLink>
+          {nft?.image && (
+            <ActionLink onClick={() => openInWebBrowser(nft.image)}>
+              <Truncate>{nft.image}</Truncate>
+            </ActionLink>
+          )}
         </DataList.Row>
       </DataList>
-      {nft.attributes && (
+      {nft?.attributes && (
         <DataList title={t('Attributes')}>
           {nft.attributes.map((attribute, index) => (
             <DataList.Row key={index} label={attribute.trait_type}>
@@ -83,7 +84,10 @@ const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
           ))}
         </DataList>
       )}
-      <NFTCollectionDetails collectionId={nft.collectionId} />
+      {nft?.collectionId ||
+        (nftMetadata?.collectionId && (
+          <NFTCollectionDetails collectionId={nft?.collectionId ?? nftMetadata?.collectionId} />
+        ))}
     </NFTMetadataContainer>
   )
 }
@@ -131,10 +135,37 @@ const NFTCollectionDetails = ({ collectionId }: Pick<NFT, 'collectionId'>) => {
   )
 }
 
+interface NftMetadataErrorProps {
+  error: AxiosError
+}
+
+const NftMetadataError = ({ error }: NftMetadataErrorProps) => {
+  const { t } = useTranslation()
+
+  return (
+    <InfoBox importance="alert" Icon={AlertTriangle}>
+      <ErrorContents>
+        {error?.response?.config?.url && (
+          <>
+            <ErrorTitle>{t('Could not load NFT metadata')}</ErrorTitle>
+            <span>{error.response.config.url}</span>
+          </>
+        )}
+
+        <ErrorDescription>{error.message}</ErrorDescription>
+      </ErrorContents>
+    </InfoBox>
+  )
+}
+
 export default NFTDetailsModal
 
 const NFTImageContainer = styled.div`
   padding: var(--spacing-3);
+
+  &:empty {
+    display: none;
+  }
 `
 
 const NFTMetadataContainer = styled.div`
@@ -148,3 +179,21 @@ const matchesNFTCollectionUriMetaDataSchema = (nftCollection: NFTCollectionUriMe
   typeof nftCollection.name === 'string' &&
   typeof nftCollection.image === 'string' &&
   typeof nftCollection.description === 'string'
+
+const NftNameDataListRow = styled(DataList.Row)`
+  font-size: var(--fontWeight-semiBold);
+`
+
+const ErrorTitle = styled.div`
+  font-weight: var(--fontWeight-semiBold);
+`
+
+const ErrorDescription = styled.div`
+  font-family: 'Roboto Mono';
+`
+
+const ErrorContents = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+`
