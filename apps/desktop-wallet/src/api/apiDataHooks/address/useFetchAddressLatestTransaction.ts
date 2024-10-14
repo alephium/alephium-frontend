@@ -21,9 +21,10 @@ import { useQuery } from '@tanstack/react-query'
 import { UseFetchAddressProps } from '@/api/apiDataHooks/address/addressApiDataHooksTypes'
 import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
 const useFetchAddressLatestTransaction = ({ addressHash, skip }: UseFetchAddressProps) => {
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
 
   return useQuery(addressLatestTransactionQuery({ addressHash, networkId, skip }))
 }

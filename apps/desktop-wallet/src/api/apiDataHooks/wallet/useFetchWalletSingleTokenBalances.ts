@@ -26,6 +26,7 @@ import { useFetchWalletBalancesAlphArray } from '@/api/apiDataHooks/wallet/useFe
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 import { DisplayBalances, TokenId } from '@/types/tokens'
 
 interface UseFetchWalletSingleTokenBalancesProps extends SkipProp {
@@ -33,7 +34,7 @@ interface UseFetchWalletSingleTokenBalancesProps extends SkipProp {
 }
 
 const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSingleTokenBalancesProps) => {
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const allAddressHashes = useUnsortedAddressesHashes()
 
   const isALPH = tokenId === ALPH.id

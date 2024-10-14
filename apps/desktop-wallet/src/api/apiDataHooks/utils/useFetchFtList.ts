@@ -22,6 +22,7 @@ import { skipToken, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 
 import { useAppSelector } from '@/hooks/redux'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
 export interface FTList {
   data: TokenList['tokens'] | undefined
@@ -33,7 +34,7 @@ type FTListProps = {
 }
 
 const useFetchFtList = (props?: FTListProps): FTList => {
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const network = networkId === 0 ? 'mainnet' : networkId === 1 ? 'testnet' : undefined
 
   const { data, isLoading } = useQuery({
