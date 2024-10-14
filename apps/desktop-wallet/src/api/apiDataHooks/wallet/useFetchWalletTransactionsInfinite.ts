@@ -17,10 +17,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import useFetchWalletLatestTransaction from '@/api/apiDataHooks/wallet/useFetchWalletLatestTransaction'
 import { walletTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
+import queryClient from '@/api/queryClient'
 import { useAppSelector } from '@/hooks/redux'
 import { useCappedAddressesHashes } from '@/hooks/useAddresses'
 
@@ -28,18 +29,13 @@ const useFetchWalletTransactionsInfinite = () => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
   const { addressHashes, isCapped } = useCappedAddressesHashes()
 
-  const [fetchedTransactionListAt, setFetchedTransactionListAt] = useState(0)
-  const refresh = useCallback(() => setFetchedTransactionListAt(new Date().getTime()), [])
-
   const { data: latestTx, isLoading: isLoadingLatestTx } = useFetchWalletLatestTransaction()
-  const { data, fetchNextPage, isLoading, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
-    walletTransactionsInfiniteQuery({
-      addressHashes,
-      timestamp: fetchedTransactionListAt,
-      networkId,
-      skip: isLoadingLatestTx
-    })
-  )
+
+  const query = walletTransactionsInfiniteQuery({ addressHashes, networkId, skip: isLoadingLatestTx })
+
+  const { data, fetchNextPage, isLoading, hasNextPage, isFetchingNextPage } = useInfiniteQuery(query)
+
+  const refresh = useCallback(() => queryClient.refetchQueries({ queryKey: query.queryKey }), [query.queryKey])
 
   const fetchedConfirmedTxs = useMemo(() => data?.pages.flat() ?? [], [data?.pages])
   const latestFetchedTxHash = fetchedConfirmedTxs[0]?.hash

@@ -76,6 +76,7 @@ const useHistoricData = () => {
       queryKey: ['address', hash, 'history', 'addressBalance', DAILY, ALPH.symbol, { networkId }],
       staleTime: ONE_DAY_MS,
       gcTime: Infinity, // We don't want to delete the balance history if the user stays on a page without a chart for too long
+      meta: { isMainnet: networkId === 0 },
       queryFn: async () => {
         const now = dayjs()
         const thisMoment = now.valueOf()
