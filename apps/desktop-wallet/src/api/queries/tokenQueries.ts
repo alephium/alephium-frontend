@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { batchers, ONE_DAY_MS, throttledClient } from '@alephium/shared'
+import { batchers, ONE_DAY_MS } from '@alephium/shared'
 import { explorer, NFTMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { TokenInfo, TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions, skipToken, UseQueryResult } from '@tanstack/react-query'
@@ -42,6 +42,10 @@ interface NFTQueryProps extends TokenQueryProps {
 export const tokenTypeQuery = ({ id, skip }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', 'type', id],
+    staleTime: Infinity,
+    // We always want to remember the type of a token, even when user navigates for too long from components that use
+    // tokens.
+    gcTime: Infinity,
     queryFn: !skip
       ? async () => {
           const tokenInfo = await batchers.tokenTypeBatcher.fetch(id)
@@ -50,8 +54,7 @@ export const tokenTypeQuery = ({ id, skip }: TokenQueryProps) =>
             ? { ...tokenInfo, stdInterfaceId: tokenInfo.stdInterfaceId as TokenStdInterfaceId }
             : null
         }
-      : skipToken,
-    staleTime: Infinity
+      : skipToken
   })
 
 export const combineTokenTypeQueryResults = (results: UseQueryResult<TokenInfo | null>[]) => ({
@@ -81,26 +84,31 @@ export const combineTokenTypeQueryResults = (results: UseQueryResult<TokenInfo |
 export const fungibleTokenMetadataQuery = ({ id, skip }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', 'fungible', 'metadata', id],
+    staleTime: Infinity,
+    // We don't want to delete the fungible token metadata when the user navigates away components that need them.
+    gcTime: Infinity,
     queryFn: !skip
       ? async () => {
           const tokenMetadata = await batchers.ftMetadataBatcher.fetch(id)
 
           return tokenMetadata ? convertTokenDecimalsToNumber(tokenMetadata) : null
         }
-      : skipToken,
-    staleTime: Infinity
+      : skipToken
   })
 
 export const nftMetadataQuery = ({ id, skip }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', 'non-fungible', 'metadata', id],
-    queryFn: !skip ? async () => (await batchers.nftMetadataBatcher.fetch(id)) ?? null : skipToken,
-    staleTime: Infinity
+    staleTime: Infinity,
+    gcTime: Infinity, // We don't want to delete the NFT metadata when the user navigates away from NFT components.
+    queryFn: !skip ? async () => (await batchers.nftMetadataBatcher.fetch(id)) ?? null : skipToken
   })
 
 export const nftDataQuery = ({ id, tokenUri, skip }: NFTQueryProps) =>
   queryOptions({
     queryKey: ['token', 'non-fungible', 'data', id],
+    staleTime: ONE_DAY_MS,
+    gcTime: Infinity, // We don't want to delete the NFT data when the user navigates away from NFT components.
     queryFn:
       !skip && !!tokenUri
         ? async () => {
@@ -114,36 +122,5 @@ export const nftDataQuery = ({ id, tokenUri, skip }: NFTQueryProps) =>
                   image: nftData?.image.toString() || ''
                 }
           }
-        : skipToken,
-    staleTime: ONE_DAY_MS
-  })
-
-export const tokenTypesQuery = (ids: TokenId[]) =>
-  queryOptions({
-    queryKey: ['tokens', 'type', ids],
-    queryFn: async (): Promise<TokenTypesQueryFnData> => {
-      const tokensInfo = await throttledClient.explorer.tokens.postTokens(ids)
-
-      return tokensInfo.reduce(
-        (tokenIdsByType, tokenInfo) => {
-          if (!tokenInfo) return tokenIdsByType
-          const stdInterfaceId = tokenInfo.stdInterfaceId as explorer.TokenStdInterfaceId
-
-          if (StdInterfaceIds.includes(stdInterfaceId)) {
-            tokenIdsByType[stdInterfaceId].push(tokenInfo.token)
-          } else {
-            // Except from NonStandard, the interface might be any string or undefined. We merge all that together.
-            tokenIdsByType[explorer.TokenStdInterfaceId.NonStandard].push(tokenInfo.token)
-          }
-
-          return tokenIdsByType
-        },
-        {
-          [explorer.TokenStdInterfaceId.Fungible]: [],
-          [explorer.TokenStdInterfaceId.NonFungible]: [],
-          [explorer.TokenStdInterfaceId.NonStandard]: []
-        } as TokenTypesQueryFnData
-      )
-    },
-    staleTime: Infinity
+        : skipToken
   })

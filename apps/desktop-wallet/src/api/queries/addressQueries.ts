@@ -33,6 +33,11 @@ export type AddressAlphBalancesQueryFnData = {
 export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: ['address', addressHash, 'balance', 'ALPH', { networkId }],
+    staleTime: Infinity,
+    // We don't want address data to be deleted when the user navigates away from components that need them since these
+    // data are essential for the major parts of the app. We manually remove cached data when the user deletes an
+    // address.
+    gcTime: Infinity,
     queryFn: !skip
       ? async () => {
           const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
@@ -46,8 +51,7 @@ export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: Addre
             }
           }
         }
-      : skipToken,
-    staleTime: Infinity
+      : skipToken
   })
 
 export type AddressTokensBalancesQueryFnData = {
@@ -58,6 +62,11 @@ export type AddressTokensBalancesQueryFnData = {
 export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: ['address', addressHash, 'balance', 'tokens', { networkId }],
+    staleTime: Infinity,
+    // We don't want address data to be deleted when the user navigates away from components that need them since these
+    // data are essential for the major parts of the app. We manually remove cached data when the user deletes an
+    // address.
+    gcTime: Infinity,
     queryFn: !skip
       ? async () => {
           const tokenBalances = [] as TokenDisplayBalances[]
@@ -89,7 +98,5 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
             balances: tokenBalances
           }
         }
-      : skipToken,
-
-    staleTime: Infinity
+      : skipToken
   })
