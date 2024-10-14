@@ -36,20 +36,21 @@ export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: Addre
     staleTime: Infinity,
     gcTime: Infinity,
     meta: { isMainnet: networkId === 0 },
-    queryFn: !skip
-      ? async () => {
-          const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
+    queryFn:
+      !skip && networkId !== undefined
+        ? async () => {
+            const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
 
-          return {
-            addressHash,
-            balances: {
-              totalBalance: BigInt(balances.balance),
-              lockedBalance: BigInt(balances.lockedBalance),
-              availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
+            return {
+              addressHash,
+              balances: {
+                totalBalance: BigInt(balances.balance),
+                lockedBalance: BigInt(balances.lockedBalance),
+                availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
+              }
             }
           }
-        }
-      : skipToken
+        : skipToken
   })
 
 export type AddressTokensBalancesQueryFnData = {
@@ -63,36 +64,37 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
     staleTime: Infinity,
     gcTime: Infinity,
     meta: { isMainnet: networkId === 0 },
-    queryFn: !skip
-      ? async () => {
-          const tokenBalances = [] as TokenDisplayBalances[]
-          let tokenBalancesInPage = [] as AddressTokenBalance[]
-          let page = 1
+    queryFn:
+      !skip && networkId !== undefined
+        ? async () => {
+            const tokenBalances = [] as TokenDisplayBalances[]
+            let tokenBalancesInPage = [] as AddressTokenBalance[]
+            let page = 1
 
-          while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
-            tokenBalancesInPage = await throttledClient.explorer.addresses.getAddressesAddressTokensBalance(
+            while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
+              tokenBalancesInPage = await throttledClient.explorer.addresses.getAddressesAddressTokensBalance(
+                addressHash,
+                {
+                  limit: PAGINATION_PAGE_LIMIT,
+                  page
+                }
+              )
+
+              tokenBalances.push(
+                ...tokenBalancesInPage.map((tokenBalances) => ({
+                  id: tokenBalances.tokenId,
+                  totalBalance: BigInt(tokenBalances.balance),
+                  lockedBalance: BigInt(tokenBalances.lockedBalance),
+                  availableBalance: BigInt(tokenBalances.balance) - BigInt(tokenBalances.lockedBalance)
+                }))
+              )
+              page += 1
+            }
+
+            return {
               addressHash,
-              {
-                limit: PAGINATION_PAGE_LIMIT,
-                page
-              }
-            )
-
-            tokenBalances.push(
-              ...tokenBalancesInPage.map((tokenBalances) => ({
-                id: tokenBalances.tokenId,
-                totalBalance: BigInt(tokenBalances.balance),
-                lockedBalance: BigInt(tokenBalances.lockedBalance),
-                availableBalance: BigInt(tokenBalances.balance) - BigInt(tokenBalances.lockedBalance)
-              }))
-            )
-            page += 1
+              balances: tokenBalances
+            }
           }
-
-          return {
-            addressHash,
-            balances: tokenBalances
-          }
-        }
-      : skipToken
+        : skipToken
   })

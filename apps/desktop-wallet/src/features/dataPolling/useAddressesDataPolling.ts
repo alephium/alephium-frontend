@@ -22,10 +22,11 @@ import { useQueries } from '@tanstack/react-query'
 import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
 const useAddressesDataPolling = () => {
   const allAddressHashes = useUnsortedAddressesHashes()
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
 
   useQueries({
     queries: allAddressHashes.map((addressHash) => ({

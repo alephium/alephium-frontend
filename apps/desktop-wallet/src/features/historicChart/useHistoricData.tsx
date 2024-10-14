@@ -25,6 +25,7 @@ import dayjs from 'dayjs'
 
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { useAppSelector } from '@/hooks/redux'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
 const DAILY = explorer.IntervalType.Daily
 
@@ -34,7 +35,7 @@ type Amount = string
 const useHistoricData = () => {
   const allAddressHashes = useAppSelector((s) => s.addresses.ids as AddressHash[])
   const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
 
   const { data: alphPriceHistory, isLoading: isLoadingAlphPriceHistory } = useQuery({
     queryKey: ['history', 'price', ALPH.symbol, { currency }],
@@ -72,28 +73,34 @@ const useHistoricData = () => {
     isLoading: isLoadingHistoricalAlphBalances,
     hasHistoricBalances
   } = useQueries({
-    queries: allAddressHashes.map((hash) => ({
-      queryKey: ['address', hash, 'history', 'addressBalance', DAILY, ALPH.symbol, { networkId }],
-      staleTime: ONE_DAY_MS,
-      gcTime: Infinity,
-      meta: { isMainnet: networkId === 0 },
-      queryFn: async () => {
-        const now = dayjs()
-        const thisMoment = now.valueOf()
-        const oneYearAgo = now.subtract(365, 'days').valueOf()
+    queries:
+      networkId !== undefined
+        ? allAddressHashes.map((hash) => ({
+            queryKey: ['address', hash, 'history', 'addressBalance', DAILY, ALPH.symbol, { networkId }],
+            staleTime: ONE_DAY_MS,
+            gcTime: Infinity,
+            meta: { isMainnet: networkId === 0 },
+            queryFn: async () => {
+              const now = dayjs()
+              const thisMoment = now.valueOf()
+              const oneYearAgo = now.subtract(365, 'days').valueOf()
 
-        const { amountHistory } = await throttledClient.explorer.addresses.getAddressesAddressAmountHistory(hash, {
-          fromTs: oneYearAgo,
-          toTs: thisMoment,
-          'interval-type': DAILY
-        })
+              const { amountHistory } = await throttledClient.explorer.addresses.getAddressesAddressAmountHistory(
+                hash,
+                {
+                  fromTs: oneYearAgo,
+                  toTs: thisMoment,
+                  'interval-type': DAILY
+                }
+              )
 
-        return {
-          address: hash,
-          amountHistory
-        }
-      }
-    })),
+              return {
+                address: hash,
+                amountHistory
+              }
+            }
+          }))
+        : [],
     combine
   })
 

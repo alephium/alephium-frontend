@@ -25,7 +25,7 @@ import queryClient from '@/api/queryClient'
 
 export interface AddressLatestTransactionQueryProps {
   addressHash: AddressHash
-  networkId: number
+  networkId?: number
   skip?: boolean
 }
 
@@ -39,30 +39,31 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
     queryKey: ['address', addressHash, 'transaction', 'latest', { networkId }],
     gcTime: Infinity,
     meta: { isMainnet: networkId === 0 },
-    queryFn: !skip
-      ? async ({ queryKey }) => {
-          const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
-            page: 1,
-            limit: 1
-          })
+    queryFn:
+      !skip && networkId !== undefined
+        ? async ({ queryKey }) => {
+            const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
+              page: 1,
+              limit: 1
+            })
 
-          const latestTx = transactions.length > 0 ? transactions[0] : undefined
-          const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionQueryFnData | undefined
-          const cachedLatestTx = cachedData?.latestTx
+            const latestTx = transactions.length > 0 ? transactions[0] : undefined
+            const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionQueryFnData | undefined
+            const cachedLatestTx = cachedData?.latestTx
 
-          // The following block invalidates queries that need to refetch data if a new transaction hash has been
-          // detected. This way, we don't need to use the latest tx hash in the queryKey of each of those queries.
-          if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
-            queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
-            queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions', 'latest'] })
+            // The following block invalidates queries that need to refetch data if a new transaction hash has been
+            // detected. This way, we don't need to use the latest tx hash in the queryKey of each of those queries.
+            if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
+              queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
+              queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions', 'latest'] })
+            }
+
+            return {
+              addressHash, // Needed in combine functions to identify which address the latestTx refers to
+              latestTx
+            }
           }
-
-          return {
-            addressHash, // Needed in combine functions to identify which address the latestTx refers to
-            latestTx
-          }
-        }
-      : skipToken
+        : skipToken
   })
 
 interface TransactionsInfiniteQueryBaseProps {
@@ -84,10 +85,11 @@ export const addressTransactionsInfiniteQuery = ({
     staleTime: Infinity,
     gcTime: FIVE_MINUTES_MS,
     meta: { isInfinite: true, isMainnet: networkId === 0 },
-    queryFn: !skip
-      ? ({ pageParam }) =>
-          throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: pageParam })
-      : skipToken,
+    queryFn:
+      !skip && networkId !== undefined
+        ? ({ pageParam }) =>
+            throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: pageParam })
+        : skipToken,
     initialPageParam: 1,
     getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null)
   })
@@ -106,16 +108,17 @@ export const walletTransactionsInfiniteQuery = ({
     staleTime: Infinity,
     gcTime: FIVE_MINUTES_MS,
     meta: { isInfinite: true, isMainnet: networkId === 0 },
-    queryFn: !skip
-      ? ({ pageParam }) =>
-          throttledClient.explorer.addresses.postAddressesTransactions({ page: pageParam }, addressHashes)
-      : skipToken,
+    queryFn:
+      !skip && networkId !== undefined
+        ? ({ pageParam }) =>
+            throttledClient.explorer.addresses.postAddressesTransactions({ page: pageParam }, addressHashes)
+        : skipToken,
     initialPageParam: 1,
     getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null)
   })
 
 interface WalletLatestTransactionsQueryProps {
-  networkId: number
+  networkId?: number
   addressHashes: AddressHash[]
 }
 
@@ -125,7 +128,10 @@ export const walletLatestTransactionsQuery = ({ addressHashes, networkId }: Wall
     staleTime: Infinity,
     gcTime: FIVE_MINUTES_MS,
     meta: { isMainnet: networkId === 0 },
-    queryFn: () => throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, addressHashes)
+    queryFn:
+      networkId !== undefined
+        ? () => throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, addressHashes)
+        : skipToken
   })
 
 interface TransactionQueryProps extends SkipProp {
