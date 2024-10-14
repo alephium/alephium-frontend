@@ -76,6 +76,7 @@ const useHistoricData = () => {
       queryKey: ['address', hash, 'history', 'addressBalance', DAILY, ALPH.symbol, { networkId }],
       staleTime: ONE_DAY_MS,
       gcTime: Infinity,
+      meta: { isMainnet: networkId === 0 },
       queryFn: async () => {
         const now = dayjs()
         const thisMoment = now.valueOf()

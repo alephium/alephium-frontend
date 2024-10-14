@@ -21,6 +21,7 @@ import '@/i18n'
 import '@yaireo/tagify/dist/tagify.css' // Tagify CSS: important to import after index.css file
 
 import isPropValid from '@emotion/is-prop-valid'
+import { defaultShouldDehydrateQuery } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { StrictMode, Suspense } from 'react'
@@ -51,7 +52,25 @@ ReactDOM.render(
             <StyleSheetManager shouldForwardProp={shouldForwardProp}>
               <PersistQueryClientProvider
                 client={queryClient}
-                persistOptions={{ persister: tanstackIndexedDBPersister, maxAge: Infinity }}
+                persistOptions={{
+                  persister: tanstackIndexedDBPersister,
+                  maxAge: Infinity,
+                  dehydrateOptions: {
+                    shouldDehydrateQuery: (query) => {
+                      if (
+                        query.queryKey[0] === 'tokenPrices' ||
+                        query.queryKey[0] === 'transaction' ||
+                        query.queryKey[0] === 'wallet' ||
+                        query.meta?.['isInfinite'] ||
+                        query.meta?.['isMainnet'] === false
+                      ) {
+                        return false
+                      }
+
+                      return defaultShouldDehydrateQuery(query)
+                    }
+                  }
+                }}
               >
                 <App />
                 <ReactQueryDevtools initialIsOpen={false} />

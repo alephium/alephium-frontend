@@ -38,6 +38,7 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
   queryOptions({
     queryKey: ['address', addressHash, 'transaction', 'latest', { networkId }],
     gcTime: Infinity,
+    meta: { isMainnet: networkId === 0 },
     queryFn: !skip
       ? async ({ queryKey }) => {
           const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
@@ -66,7 +67,6 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
 
 interface TransactionsInfiniteQueryBaseProps {
   networkId: number
-  timestamp: number
   skip?: boolean
 }
 
@@ -76,14 +76,14 @@ interface AddressTransactionsInfiniteQueryProps extends TransactionsInfiniteQuer
 
 export const addressTransactionsInfiniteQuery = ({
   addressHash,
-  timestamp,
   networkId,
   skip
 }: AddressTransactionsInfiniteQueryProps) =>
   infiniteQueryOptions({
-    queryKey: ['address', addressHash, 'transactions', { timestamp, networkId }],
+    queryKey: ['address', addressHash, 'transactions', { networkId }],
     staleTime: Infinity,
     gcTime: FIVE_MINUTES_MS,
+    meta: { isInfinite: true, isMainnet: networkId === 0 },
     queryFn: !skip
       ? ({ pageParam }) =>
           throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: pageParam })
@@ -98,14 +98,14 @@ interface WalletTransactionsInfiniteQueryProps extends TransactionsInfiniteQuery
 
 export const walletTransactionsInfiniteQuery = ({
   addressHashes,
-  timestamp,
   networkId,
   skip
 }: WalletTransactionsInfiniteQueryProps) =>
   infiniteQueryOptions({
-    queryKey: ['wallet', 'transactions', { timestamp, networkId, addressHashes }],
+    queryKey: ['wallet', 'transactions', { networkId, addressHashes }],
     staleTime: Infinity,
     gcTime: FIVE_MINUTES_MS,
+    meta: { isInfinite: true, isMainnet: networkId === 0 },
     queryFn: !skip
       ? ({ pageParam }) =>
           throttledClient.explorer.addresses.postAddressesTransactions({ page: pageParam }, addressHashes)
@@ -124,6 +124,7 @@ export const walletLatestTransactionsQuery = ({ addressHashes, networkId }: Wall
     queryKey: ['wallet', 'transactions', 'latest', { networkId, addressHashes }],
     staleTime: Infinity,
     gcTime: FIVE_MINUTES_MS,
+    meta: { isMainnet: networkId === 0 },
     queryFn: () => throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, addressHashes)
   })
 

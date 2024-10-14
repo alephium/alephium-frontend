@@ -35,6 +35,7 @@ export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: Addre
     queryKey: ['address', addressHash, 'balance', 'ALPH', { networkId }],
     staleTime: Infinity,
     gcTime: Infinity,
+    meta: { isMainnet: networkId === 0 },
     queryFn: !skip
       ? async () => {
           const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
@@ -61,6 +62,7 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
     queryKey: ['address', addressHash, 'balance', 'tokens', { networkId }],
     staleTime: Infinity,
     gcTime: Infinity,
+    meta: { isMainnet: networkId === 0 },
     queryFn: !skip
       ? async () => {
           const tokenBalances = [] as TokenDisplayBalances[]
