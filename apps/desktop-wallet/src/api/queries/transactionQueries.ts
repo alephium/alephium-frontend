@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, throttledClient } from '@alephium/shared'
+import { AddressHash, FIVE_MINUTES_MS, throttledClient } from '@alephium/shared'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
@@ -37,6 +37,7 @@ export interface AddressLatestTransactionQueryFnData {
 export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: ['address', addressHash, 'transaction', 'latest', { networkId }],
+    gcTime: Infinity,
     queryFn: !skip
       ? async ({ queryKey }) => {
           const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
@@ -81,13 +82,14 @@ export const addressTransactionsInfiniteQuery = ({
 }: AddressTransactionsInfiniteQueryProps) =>
   infiniteQueryOptions({
     queryKey: ['address', addressHash, 'transactions', { timestamp, networkId }],
+    staleTime: Infinity,
+    gcTime: FIVE_MINUTES_MS,
     queryFn: !skip
       ? ({ pageParam }) =>
           throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: pageParam })
       : skipToken,
     initialPageParam: 1,
-    getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null),
-    staleTime: Infinity
+    getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null)
   })
 
 interface WalletTransactionsInfiniteQueryProps extends TransactionsInfiniteQueryBaseProps {
@@ -102,13 +104,14 @@ export const walletTransactionsInfiniteQuery = ({
 }: WalletTransactionsInfiniteQueryProps) =>
   infiniteQueryOptions({
     queryKey: ['wallet', 'transactions', { timestamp, networkId, addressHashes }],
+    staleTime: Infinity,
+    gcTime: FIVE_MINUTES_MS,
     queryFn: !skip
       ? ({ pageParam }) =>
           throttledClient.explorer.addresses.postAddressesTransactions({ page: pageParam }, addressHashes)
       : skipToken,
     initialPageParam: 1,
-    getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null),
-    staleTime: Infinity
+    getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null)
   })
 
 interface WalletLatestTransactionsQueryProps {
@@ -119,8 +122,9 @@ interface WalletLatestTransactionsQueryProps {
 export const walletLatestTransactionsQuery = ({ addressHashes, networkId }: WalletLatestTransactionsQueryProps) =>
   queryOptions({
     queryKey: ['wallet', 'transactions', 'latest', { networkId, addressHashes }],
-    queryFn: () => throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, addressHashes),
-    staleTime: Infinity
+    staleTime: Infinity,
+    gcTime: FIVE_MINUTES_MS,
+    queryFn: () => throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, addressHashes)
   })
 
 interface TransactionQueryProps extends SkipProp {
@@ -130,13 +134,15 @@ interface TransactionQueryProps extends SkipProp {
 export const confirmedTransactionQuery = ({ txHash, skip }: TransactionQueryProps) =>
   queryOptions({
     queryKey: ['transaction', 'confirmed', txHash],
-    queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken,
-    staleTime: Infinity
+    staleTime: Infinity,
+    gcTime: FIVE_MINUTES_MS,
+    queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken
   })
 
 export const pendingTransactionQuery = ({ txHash, skip }: TransactionQueryProps) =>
   queryOptions({
     queryKey: ['transaction', 'pending', txHash],
-    queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken,
-    refetchInterval: 3000
+    gcTime: FIVE_MINUTES_MS,
+    refetchInterval: 3000,
+    queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken
   })

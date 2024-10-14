@@ -23,8 +23,6 @@ import axios from 'axios'
 
 import { useAppSelector } from '@/hooks/redux'
 
-const TOKEN_LIST_QUERY_KEY = 'tokenList'
-
 export interface FTList {
   data: TokenList['tokens'] | undefined
   isLoading: boolean
@@ -39,13 +37,14 @@ const useFetchFtList = (props?: FTListProps): FTList => {
   const network = networkId === 0 ? 'mainnet' : networkId === 1 ? 'testnet' : undefined
 
   const { data, isLoading } = useQuery({
-    queryKey: [TOKEN_LIST_QUERY_KEY, network],
+    queryKey: ['tokenList', network],
+    staleTime: ONE_DAY_MS,
+    gcTime: Infinity,
     queryFn:
       !network || props?.skip
         ? skipToken
         : () => axios.get(getTokensURL(network)).then(({ data }) => (data as TokenList)?.tokens),
-    placeholderData: network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : [],
-    staleTime: ONE_DAY_MS
+    placeholderData: network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : []
   })
 
   // TODO: Maybe return an object instead of an array for faster search?

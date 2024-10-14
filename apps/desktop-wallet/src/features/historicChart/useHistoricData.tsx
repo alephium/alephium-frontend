@@ -26,7 +26,6 @@ import dayjs from 'dayjs'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { useAppSelector } from '@/hooks/redux'
 
-const HISTORY_QUERY_KEY = 'history'
 const DAILY = explorer.IntervalType.Daily
 
 type Timestamp = string
@@ -38,8 +37,9 @@ const useHistoricData = () => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
   const { data: alphPriceHistory, isLoading: isLoadingAlphPriceHistory } = useQuery({
-    queryKey: [HISTORY_QUERY_KEY, 'price', ALPH.symbol, { currency }],
+    queryKey: ['history', 'price', ALPH.symbol, { currency }],
     staleTime: ONE_DAY_MS,
+    gcTime: Infinity,
     queryFn: () =>
       throttledClient.explorer.market.getMarketPricesSymbolCharts(ALPH.symbol, { currency }).then((rawHistory) => {
         const today = dayjs().format(CHART_DATE_FORMAT)
@@ -73,8 +73,9 @@ const useHistoricData = () => {
     hasHistoricBalances
   } = useQueries({
     queries: allAddressHashes.map((hash) => ({
-      queryKey: [HISTORY_QUERY_KEY, 'addressBalance', DAILY, ALPH.symbol, { hash, networkId }],
+      queryKey: ['address', hash, 'history', 'addressBalance', DAILY, ALPH.symbol, { networkId }],
       staleTime: ONE_DAY_MS,
+      gcTime: Infinity,
       queryFn: async () => {
         const now = dayjs()
         const thisMoment = now.valueOf()
