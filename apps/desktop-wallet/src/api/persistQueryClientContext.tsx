@@ -21,7 +21,13 @@ import {
   persistQueryClientRestore,
   persistQueryClientSubscribe
 } from '@tanstack/query-persist-client-core'
-import { IsRestoringProvider, OmitKeyof, QueryClientProvider, QueryClientProviderProps } from '@tanstack/react-query'
+import {
+  defaultShouldDehydrateQuery,
+  IsRestoringProvider,
+  OmitKeyof,
+  QueryClientProvider,
+  QueryClientProviderProps
+} from '@tanstack/react-query'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
 import queryClient from '@/api/queryClient'
@@ -55,10 +61,14 @@ export const PersistQueryClientContextProvider = ({ children }: { children: Reac
   }, [unsubscribeFromQueryClientFn])
 
   const restoreQueryCache = useCallback(async (walletId: string) => {
-    const options = {
+    const options: PersistQueryClientOptions = {
       queryClient,
       maxAge: Infinity,
-      persister: createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId)
+      persister: createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId),
+      dehydrateOptions: {
+        shouldDehydrateQuery: (query) =>
+          query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
+      }
     }
 
     setIsRestoring(true)

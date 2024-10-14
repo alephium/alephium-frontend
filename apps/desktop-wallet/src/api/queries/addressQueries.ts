@@ -38,6 +38,7 @@ export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: Addre
     // data are essential for the major parts of the app. We manually remove cached data when the user deletes an
     // address.
     gcTime: Infinity,
+    meta: { isMainnet: networkId === 0 },
     queryFn: !skip
       ? async () => {
           const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
@@ -67,6 +68,7 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
     // data are essential for the major parts of the app. We manually remove cached data when the user deletes an
     // address.
     gcTime: Infinity,
+    meta: { isMainnet: networkId === 0 },
     queryFn: !skip
       ? async () => {
           const tokenBalances = [] as TokenDisplayBalances[]

@@ -18,10 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import useFetchAddressLatestTransaction from '@/api/apiDataHooks/address/useFetchAddressLatestTransaction'
 import { addressTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
+import queryClient from '@/api/queryClient'
 import { useAppSelector } from '@/hooks/redux'
 
 interface UseFetchAddressInfiniteTransactionsProps {
@@ -31,18 +32,13 @@ interface UseFetchAddressInfiniteTransactionsProps {
 const useFetchAddressInfiniteTransactions = ({ addressHash }: UseFetchAddressInfiniteTransactionsProps) => {
   const networkId = useAppSelector((s) => s.network.settings.networkId)
 
-  const [fetchedTransactionListAt, setFetchedTransactionListAt] = useState(0)
-  const refresh = useCallback(() => setFetchedTransactionListAt(new Date().getTime()), [])
-
   const { data: addressLatestTx, isLoading: isLoadingLatestTx } = useFetchAddressLatestTransaction({ addressHash })
-  const { data, fetchNextPage, isLoading, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
-    addressTransactionsInfiniteQuery({
-      addressHash,
-      timestamp: fetchedTransactionListAt,
-      networkId,
-      skip: isLoadingLatestTx
-    })
-  )
+
+  const query = addressTransactionsInfiniteQuery({ addressHash, networkId, skip: isLoadingLatestTx })
+
+  const { data, fetchNextPage, isLoading, hasNextPage, isFetchingNextPage } = useInfiniteQuery(query)
+
+  const refresh = useCallback(() => queryClient.refetchQueries({ queryKey: query.queryKey }), [query.queryKey])
 
   const fetchedConfirmedTxs = useMemo(() => data?.pages.flat() ?? [], [data?.pages])
   const latestFetchedTxHash = fetchedConfirmedTxs[0]?.hash
