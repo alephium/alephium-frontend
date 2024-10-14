@@ -23,6 +23,7 @@ import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 import { DisplayBalances, TokenDisplayBalances, TokenId } from '@/types/tokens'
 
 export const useFetchWalletBalancesTokensArray = () => useFetchWalletBalancesTokens(combineBalancesToArray)
@@ -34,7 +35,7 @@ export const useFetchWalletBalancesTokensByAddress = () => useFetchWalletBalance
 const useFetchWalletBalancesTokens = <T>(
   combine: (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => { data: T; isLoading: boolean }
 ) => {
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const allAddressHashes = useUnsortedAddressesHashes()
 
   return useQueries({
