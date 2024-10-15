@@ -50,7 +50,7 @@ export const initialPersistQueryClientContext: PersistQueryClientContextType = {
 export const PersistQueryClientContext = createContext<PersistQueryClientContextType>(initialPersistQueryClientContext)
 
 // Inspired by https://github.com/TanStack/query/blob/1adaf3ff86fa2bf720dbc958714c60553c4aae08/packages/react-query-persist-client/src/PersistQueryClientProvider.tsx
-export const PersistQueryClientContextProvider = ({ children }: { children: ReactNode | ReactNode[] }) => {
+export const PersistQueryClientContextProvider = ({ children }: { children: ReactNode }) => {
   const [isRestoring, setIsRestoring] = useState(true)
   const [unsubscribeFromQueryClientFn, setUnsubscribeFromQueryClientFn] = useState(() => () => {})
 
