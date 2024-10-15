@@ -16,8 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
-import { createSelector, createSlice } from '@reduxjs/toolkit'
+import {
+  apiClientInitFailed,
+  apiClientInitSucceeded,
+  customNetworkSettingsSaved,
+  localStorageNetworkSettingsMigrated,
+  networkPresetSwitched
+} from '@alephium/shared'
+import { createSelector, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import { addressDiscoveryFinished, addressDiscoveryStarted } from '@/storage/addresses/addressesActions'
 import {
@@ -119,6 +125,14 @@ const globalSlice = createSlice({
       })
       .addCase(receiveTestnetTokens.rejected, (state) => {
         state.faucetCallPending = false
+      })
+
+    builder
+      .addMatcher(isAnyOf(networkPresetSwitched, customNetworkSettingsSaved), (state) => {
+        toggleLoading(state, true)
+      })
+      .addMatcher(isAnyOf(apiClientInitSucceeded, apiClientInitFailed), (state) => {
+        toggleLoading(state, false)
       })
   }
 })
