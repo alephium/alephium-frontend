@@ -115,7 +115,7 @@ interface FiatAmountProps {
 const FiatAmount = ({ symbol, amount, decimals }: FiatAmountProps) => {
   const { data: tokenPrice, isLoading: isLoadingTokenPrice } = useFetchTokenPrice(symbol)
 
-  const worth = tokenPrice?.price !== undefined ? calculateAmountWorth(amount, tokenPrice.price, decimals) : undefined
+  const worth = tokenPrice !== undefined ? calculateAmountWorth(amount, tokenPrice, decimals) : undefined
 
   return <FiatAmountStyled value={worth} isFiat isLoading={isLoadingTokenPrice} />
 }
