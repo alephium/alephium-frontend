@@ -37,7 +37,7 @@ const useFetchAddressBalances = ({ addressHash, skip, includeAlph = true }: UseF
   const allTokensBalances = useMergeAllTokensBalances({
     includeAlph,
     alphBalances,
-    tokensBalances: tokensBalances?.balances
+    tokensBalances
   })
 
   return {

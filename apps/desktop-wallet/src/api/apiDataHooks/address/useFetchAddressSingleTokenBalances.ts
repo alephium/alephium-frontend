@@ -46,7 +46,7 @@ const useFetchAddressSingleTokenBalances = ({
   })
 
   return {
-    data: isALPH ? alphBalances : addressTokensBalances?.balances.find(({ id }) => id === tokenId),
+    data: isALPH ? alphBalances : addressTokensBalances?.find(({ id }) => id === tokenId),
     isLoading: isLoadingTokenBalances || isLoadingAlphBalances
   }
 }

@@ -29,12 +29,17 @@ const useFetchLatestTransactionOfEachAddress = (props?: SkipProp) => {
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const allAddressHashes = useUnsortedAddressesHashes()
 
-  return useQueries({
+  const { data, isLoading } = useQueries({
     queries: !props?.skip
       ? allAddressHashes.map((addressHash) => addressLatestTransactionQuery({ addressHash, networkId }))
       : [],
     combine: flatMapCombine
   })
+
+  return {
+    data,
+    isLoading
+  }
 }
 
 export default useFetchLatestTransactionOfEachAddress

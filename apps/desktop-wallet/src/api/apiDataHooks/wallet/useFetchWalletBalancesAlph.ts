@@ -48,10 +48,15 @@ const useFetchWalletBalancesAlph = <T>({ combine, skip }: UseFetchWalletBalances
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const allAddressHashes = useUnsortedAddressesHashes()
 
-  return useQueries({
+  const { data, isLoading } = useQueries({
     queries: allAddressHashes.map((addressHash) => addressAlphBalancesQuery({ addressHash, networkId, skip })),
     combine
   })
+
+  return {
+    data,
+    isLoading
+  }
 }
 
 const combineBalancesByAddress = (
