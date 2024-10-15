@@ -18,10 +18,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
+import { useQuery } from '@tanstack/react-query'
 
 import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddressBalancesAlph'
-import useFetchAddressBalancesTokens from '@/api/apiDataHooks/address/useFetchAddressBalancesTokens'
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
+import { addressTokensBalancesQuery } from '@/api/queries/addressQueries'
+import { useAppSelector } from '@/hooks/redux'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 import { TokenId } from '@/types/tokens'
 
 interface UseFetchAddressSingleTokenBalancesProps extends SkipProp {
@@ -34,19 +37,21 @@ const useFetchAddressSingleTokenBalances = ({
   tokenId,
   skip
 }: UseFetchAddressSingleTokenBalancesProps) => {
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const isALPH = tokenId === ALPH.id
 
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
     addressHash,
     skip: skip || !isALPH
   })
-  const { data: addressTokensBalances, isLoading: isLoadingTokenBalances } = useFetchAddressBalancesTokens({
-    addressHash,
-    skip: skip || isALPH
+
+  const { data: addressTokenBalances, isLoading: isLoadingTokenBalances } = useQuery({
+    ...addressTokensBalancesQuery({ addressHash, networkId, skip: skip || isALPH }),
+    select: (data) => data?.balances.find(({ id }) => id === tokenId)
   })
 
   return {
-    data: isALPH ? alphBalances : addressTokensBalances?.find(({ id }) => id === tokenId),
+    data: isALPH ? alphBalances : addressTokenBalances,
     isLoading: isLoadingTokenBalances || isLoadingAlphBalances
   }
 }
