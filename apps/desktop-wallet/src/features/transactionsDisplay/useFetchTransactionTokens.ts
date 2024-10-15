@@ -26,6 +26,8 @@ import { combineDefined } from '@/api/apiDataHooks/apiDataHooksUtils'
 import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
 import { fungibleTokenMetadataQuery, nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
+import { useAppSelector } from '@/hooks/redux'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 import { ListedFT, NonStandardToken, UnlistedFT } from '@/types/tokens'
 
 type AmountDelta = { amount: bigint }
@@ -48,6 +50,7 @@ const useFetchTransactionTokens = (
   tx: Transaction | PendingTransaction,
   addressHash: AddressHash
 ): TransactionTokens => {
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
 
   const {
@@ -56,17 +59,17 @@ const useFetchTransactionTokens = (
   } = useFetchTokensSeparatedByType(tokenAmounts)
 
   const { data: unlistedFts, isLoading: isLoadingUnlistedFTs } = useQueries({
-    queries: unlistedFtIds.map((id) => fungibleTokenMetadataQuery({ id })),
+    queries: unlistedFtIds.map((id) => fungibleTokenMetadataQuery({ id, networkId })),
     combine: combineDefined
   })
 
   const { data: nftsMetadata, isLoading: isLoadingNFTsMetadata } = useQueries({
-    queries: nftIds.map((id) => nftMetadataQuery({ id })),
+    queries: nftIds.map((id) => nftMetadataQuery({ id, networkId })),
     combine: combineDefined
   })
 
   const { data: nftsData, isLoading: isLoadingNFTsData } = useQueries({
-    queries: nftsMetadata.map(({ id, tokenUri }) => nftDataQuery({ id, tokenUri })),
+    queries: nftsMetadata.map(({ id, tokenUri }) => nftDataQuery({ id, tokenUri, networkId })),
     combine: combineDefined
   })
 
