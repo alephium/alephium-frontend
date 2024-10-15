@@ -38,10 +38,15 @@ const useFetchWalletBalancesTokens = <T>(
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const allAddressHashes = useUnsortedAddressesHashes()
 
-  return useQueries({
+  const { data, isLoading } = useQueries({
     queries: allAddressHashes.map((addressHash) => addressTokensBalancesQuery({ addressHash, networkId })),
     combine
   })
+
+  return {
+    data,
+    isLoading
+  }
 }
 
 const combineBalancesByToken = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => ({

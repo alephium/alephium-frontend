@@ -21,6 +21,7 @@ import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
+import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import queryClient from '@/api/queryClient'
 
 export interface AddressLatestTransactionQueryProps {
@@ -37,8 +38,7 @@ export interface AddressLatestTransactionQueryFnData {
 export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: ['address', addressHash, 'transaction', 'latest', { networkId }],
-    gcTime: FIVE_MINUTES_MS,
-    meta: { isMainnet: networkId === 0 },
+    ...getQueryConfig({ gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       !skip && networkId !== undefined
         ? async ({ queryKey }) => {
@@ -82,10 +82,8 @@ export const addressTransactionsInfiniteQuery = ({
 }: AddressTransactionsInfiniteQueryProps) =>
   infiniteQueryOptions({
     queryKey: ['address', addressHash, 'transactions', { networkId }],
-    staleTime: Infinity,
     // 5 minutes after the user navigates away from the address details modal, the cached data will be deleted.
-    gcTime: FIVE_MINUTES_MS,
-    meta: { isMainnet: networkId === 0 },
+    ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       !skip && networkId !== undefined
         ? ({ pageParam }) =>
@@ -106,11 +104,9 @@ export const walletTransactionsInfiniteQuery = ({
 }: WalletTransactionsInfiniteQueryProps) =>
   infiniteQueryOptions({
     queryKey: ['wallet', 'transactions', { networkId, addressHashes }],
-    staleTime: Infinity,
     // When the user navigates away from the Transfers page for 5 minutes or when addresses are generated/removed the
     // cached data will be deleted.
-    gcTime: FIVE_MINUTES_MS,
-    meta: { isMainnet: networkId === 0 },
+    ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       !skip && networkId !== undefined
         ? ({ pageParam }) =>
@@ -128,11 +124,9 @@ interface WalletLatestTransactionsQueryProps {
 export const walletLatestTransactionsQuery = ({ addressHashes, networkId }: WalletLatestTransactionsQueryProps) =>
   queryOptions({
     queryKey: ['wallet', 'transactions', 'latest', { networkId, addressHashes }],
-    staleTime: Infinity,
     // When the user navigates away from the Overview page for 5 minutes or when addresses are generated/removed the
     // cached data will be deleted.
-    gcTime: FIVE_MINUTES_MS,
-    meta: { isMainnet: networkId === 0 },
+    ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       networkId !== undefined
         ? () => throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, addressHashes)
@@ -147,11 +141,9 @@ interface TransactionQueryProps extends SkipProp {
 export const confirmedTransactionQuery = ({ txHash, networkId, skip }: TransactionQueryProps) =>
   queryOptions({
     queryKey: ['transaction', 'confirmed', txHash],
-    staleTime: Infinity,
     // When the user navigates away from the transaction details modal for 5 minutes or when a sent tx confirms the
     // cached data will be deleted.
-    gcTime: FIVE_MINUTES_MS,
-    meta: { isMainnet: networkId === 0 },
+    ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken
   })
 
@@ -161,8 +153,7 @@ export const pendingTransactionQuery = ({ txHash, networkId, skip }: Transaction
     // 5 minutes after a sent tx is confirmed, the cached data will be deleted. We cannot set it to a lower value than
     // the default one because the highest gcTime is always in effect. We would need to set the default to a lower one
     // just for this one, but is it worth it?
-    gcTime: FIVE_MINUTES_MS,
-    meta: { isMainnet: networkId === 0 },
+    ...getQueryConfig({ gcTime: FIVE_MINUTES_MS, networkId }),
     refetchInterval: 3000,
     queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken
   })

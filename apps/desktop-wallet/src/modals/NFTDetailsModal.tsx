@@ -26,6 +26,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
+import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import ActionLink from '@/components/ActionLink'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
@@ -100,9 +101,8 @@ const NFTCollectionDetails = ({ collectionId }: Pick<NFT, 'collectionId'>) => {
 
   const { data: nftCollectionMetadata } = useQuery({
     queryKey: ['nfts', 'nftCollection', 'nftCollectionMetadata', collectionId],
-    staleTime: Infinity,
-    gcTime: Infinity, // We don't want to delete the collection metadata when the user navigates away from the NFT details modal
-    meta: { isMainnet: networkId === 0 },
+    // We don't want to delete the collection metadata when the user navigates away from the NFT details modal
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: !collectionId
       ? skipToken
       : async () =>
@@ -114,9 +114,8 @@ const NFTCollectionDetails = ({ collectionId }: Pick<NFT, 'collectionId'>) => {
   const collectionUri = nftCollectionMetadata?.collectionUri
   const { data: nftCollectionData } = useQuery({
     queryKey: ['nfts', 'nftCollection', 'nftCollectionData', collectionId],
-    staleTime: Infinity,
-    gcTime: Infinity, // We don't want to delete the collection data when the user navigates away from the NFT details modal
-    meta: { isMainnet: networkId === 0 },
+    // We don't want to delete the collection data when the user navigates away from the NFT details modal
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: !collectionUri
       ? skipToken
       : async () => {

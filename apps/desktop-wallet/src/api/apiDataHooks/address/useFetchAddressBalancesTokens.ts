@@ -26,7 +26,12 @@ import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelect
 const useFetchAddressBalancesTokens = ({ addressHash, skip }: UseFetchAddressProps) => {
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
 
-  return useQuery(addressTokensBalancesQuery({ addressHash, networkId, skip }))
+  const { data, isLoading } = useQuery(addressTokensBalancesQuery({ addressHash, networkId, skip }))
+
+  return {
+    data: data?.balances,
+    isLoading
+  }
 }
 
 export default useFetchAddressBalancesTokens

@@ -26,7 +26,12 @@ import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelect
 const useFetchPendingTransaction = (props: UseFetchTransactionProps) => {
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
 
-  return useQuery(pendingTransactionQuery({ ...props, networkId }))
+  const { data, isLoading } = useQuery(pendingTransactionQuery({ ...props, networkId }))
+
+  return {
+    data,
+    isLoading
+  }
 }
 
 export default useFetchPendingTransaction

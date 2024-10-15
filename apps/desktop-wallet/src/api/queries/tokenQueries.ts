@@ -24,6 +24,7 @@ import axios from 'axios'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
+import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import { convertTokenDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/apiUtils'
 import { TokenId } from '@/types/tokens'
 
@@ -43,11 +44,9 @@ interface NFTQueryProps extends TokenQueryProps {
 export const tokenTypeQuery = ({ id, networkId, skip }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', 'type', id],
-    staleTime: Infinity,
     // We always want to remember the type of a token, even when user navigates for too long from components that use
     // tokens.
-    gcTime: Infinity,
-    meta: { isMainnet: networkId === 0 },
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: !skip
       ? async () => {
           const tokenInfo = await batchers.tokenTypeBatcher.fetch(id)
@@ -86,9 +85,7 @@ export const combineTokenTypeQueryResults = (results: UseQueryResult<TokenInfo |
 export const fungibleTokenMetadataQuery = ({ id, networkId, skip }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', 'fungible', 'metadata', id],
-    staleTime: Infinity,
-    // We don't want to delete the fungible token metadata when the user navigates away components that need them.
-    gcTime: Infinity,
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     meta: { isMainnet: networkId === 0 },
     queryFn: !skip
       ? async () => {
@@ -102,18 +99,15 @@ export const fungibleTokenMetadataQuery = ({ id, networkId, skip }: TokenQueryPr
 export const nftMetadataQuery = ({ id, networkId, skip }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', 'non-fungible', 'metadata', id],
-    staleTime: Infinity,
-    gcTime: Infinity, // We don't want to delete the NFT metadata when the user navigates away from NFT components.
-    meta: { isMainnet: networkId === 0 },
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: !skip ? async () => (await batchers.nftMetadataBatcher.fetch(id)) ?? null : skipToken
   })
 
 export const nftDataQuery = ({ id, tokenUri, networkId, skip }: NFTQueryProps) =>
   queryOptions({
     queryKey: ['token', 'non-fungible', 'data', id],
-    staleTime: ONE_DAY_MS,
-    gcTime: Infinity, // We don't want to delete the NFT data when the user navigates away from NFT components.
-    meta: { isMainnet: networkId === 0 },
+    // We don't want to delete the NFT data when the user navigates away from NFT components.
+    ...getQueryConfig({ staleTime: ONE_DAY_MS, gcTime: Infinity, networkId }),
     queryFn:
       !skip && !!tokenUri
         ? async () => {

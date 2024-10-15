@@ -58,7 +58,7 @@ const FTWorthAmount = ({ symbol, totalBalance, decimals }: FTWorthAmountProps) =
 
   const worth =
     totalBalance !== undefined && tokenPrice !== undefined
-      ? calculateAmountWorth(totalBalance, tokenPrice.price, decimals)
+      ? calculateAmountWorth(totalBalance, tokenPrice, decimals)
       : undefined
 
   if (worth === undefined) return null

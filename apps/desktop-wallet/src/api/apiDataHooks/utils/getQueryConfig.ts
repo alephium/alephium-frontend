@@ -16,29 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import dayjs from 'dayjs'
-import { useTranslation } from 'react-i18next'
-
-const TimeOfDayMessage = () => {
-  const { t } = useTranslation()
-
-  const hour = dayjs().hour()
-
-  return (
-    <span>
-      {
-        hour >= 0 && hour < 5
-          ? '🌝 ' + t('Good night.')
-          : hour >= 5 && hour < 12
-            ? '🌅 ' + t('Good morning.')
-            : hour >= 12 && hour < 18
-              ? '🌞 ' + t('Good afternoon.')
-              : hour >= 18 && hour < 21
-                ? '🌇 ' + t('Good evening.')
-                : '🌝 ' + t('Good night.') // handle hour 21 to 23 and overflow to 0 to cover all hours
-      }
-    </span>
-  )
+interface GetQueryConfigProps {
+  gcTime: number
+  staleTime?: number
+  networkId?: number
 }
 
-export default TimeOfDayMessage
+export const getQueryConfig = ({ staleTime, gcTime, networkId }: GetQueryConfigProps) => ({
+  staleTime,
+  gcTime,
+  meta: { isMainnet: networkId === 0 }
+})
