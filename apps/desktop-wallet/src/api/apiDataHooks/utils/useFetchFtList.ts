@@ -22,8 +22,7 @@ import { skipToken, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 
 import { useAppSelector } from '@/hooks/redux'
-
-const TOKEN_LIST_QUERY_KEY = 'tokenList'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
 export interface FTList {
   data: TokenList['tokens'] | undefined
@@ -35,17 +34,21 @@ type FTListProps = {
 }
 
 const useFetchFtList = (props?: FTListProps): FTList => {
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const network = networkId === 0 ? 'mainnet' : networkId === 1 ? 'testnet' : undefined
 
   const { data, isLoading } = useQuery({
-    queryKey: [TOKEN_LIST_QUERY_KEY, network],
+    queryKey: ['tokenList', network],
+    staleTime: ONE_DAY_MS,
+    // The token list is essential for the whole app so we don't want to ever delete it. Even if we set a lower gcTime,
+    // it will never become inactive (since it's always used by a mount component).
+    gcTime: Infinity,
+    meta: { isMainnet: networkId === 0 },
     queryFn:
       !network || props?.skip
         ? skipToken
         : () => axios.get(getTokensURL(network)).then(({ data }) => (data as TokenList)?.tokens),
-    placeholderData: network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : [],
-    staleTime: ONE_DAY_MS
+    placeholderData: network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : []
   })
 
   // TODO: Maybe return an object instead of an array for faster search?

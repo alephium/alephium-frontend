@@ -25,8 +25,8 @@ import dayjs from 'dayjs'
 
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { useAppSelector } from '@/hooks/redux'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
-const HISTORY_QUERY_KEY = 'history'
 const DAILY = explorer.IntervalType.Daily
 
 type Timestamp = string
@@ -35,11 +35,12 @@ type Amount = string
 const useHistoricData = () => {
   const allAddressHashes = useAppSelector((s) => s.addresses.ids as AddressHash[])
   const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
 
   const { data: alphPriceHistory, isLoading: isLoadingAlphPriceHistory } = useQuery({
-    queryKey: [HISTORY_QUERY_KEY, 'price', ALPH.symbol, { currency }],
+    queryKey: ['history', 'price', ALPH.symbol, { currency }],
     staleTime: ONE_DAY_MS,
+    gcTime: Infinity, // We don't want to delete the price history if the user stays on a page without a chart for too long
     queryFn: () =>
       throttledClient.explorer.market.getMarketPricesSymbolCharts(ALPH.symbol, { currency }).then((rawHistory) => {
         const today = dayjs().format(CHART_DATE_FORMAT)
@@ -72,26 +73,34 @@ const useHistoricData = () => {
     isLoading: isLoadingHistoricalAlphBalances,
     hasHistoricBalances
   } = useQueries({
-    queries: allAddressHashes.map((hash) => ({
-      queryKey: [HISTORY_QUERY_KEY, 'addressBalance', DAILY, ALPH.symbol, { hash, networkId }],
-      staleTime: ONE_DAY_MS,
-      queryFn: async () => {
-        const now = dayjs()
-        const thisMoment = now.valueOf()
-        const oneYearAgo = now.subtract(365, 'days').valueOf()
+    queries:
+      networkId !== undefined
+        ? allAddressHashes.map((hash) => ({
+            queryKey: ['address', hash, 'history', 'addressBalance', DAILY, ALPH.symbol, { networkId }],
+            staleTime: ONE_DAY_MS,
+            gcTime: Infinity, // We don't want to delete the balance history if the user stays on a page without a chart for too long
+            meta: { isMainnet: networkId === 0 },
+            queryFn: async () => {
+              const now = dayjs()
+              const thisMoment = now.valueOf()
+              const oneYearAgo = now.subtract(365, 'days').valueOf()
 
-        const { amountHistory } = await throttledClient.explorer.addresses.getAddressesAddressAmountHistory(hash, {
-          fromTs: oneYearAgo,
-          toTs: thisMoment,
-          'interval-type': DAILY
-        })
+              const { amountHistory } = await throttledClient.explorer.addresses.getAddressesAddressAmountHistory(
+                hash,
+                {
+                  fromTs: oneYearAgo,
+                  toTs: thisMoment,
+                  'interval-type': DAILY
+                }
+              )
 
-        return {
-          address: hash,
-          amountHistory
-        }
-      }
-    })),
+              return {
+                address: hash,
+                amountHistory
+              }
+            }
+          }))
+        : [],
     combine
   })
 

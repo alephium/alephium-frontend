@@ -33,21 +33,27 @@ export type AddressAlphBalancesQueryFnData = {
 export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: ['address', addressHash, 'balance', 'ALPH', { networkId }],
-    queryFn: !skip
-      ? async () => {
-          const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
+    staleTime: Infinity,
+    // We don't want address data to be deleted when the user navigates away from components that need them since these
+    // data are essential for the major parts of the app. We manually remove cached data when the user deletes an
+    // address.
+    gcTime: Infinity,
+    meta: { isMainnet: networkId === 0 },
+    queryFn:
+      !skip && networkId !== undefined
+        ? async () => {
+            const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
 
-          return {
-            addressHash,
-            balances: {
-              totalBalance: BigInt(balances.balance),
-              lockedBalance: BigInt(balances.lockedBalance),
-              availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
+            return {
+              addressHash,
+              balances: {
+                totalBalance: BigInt(balances.balance),
+                lockedBalance: BigInt(balances.lockedBalance),
+                availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
+              }
             }
           }
-        }
-      : skipToken,
-    staleTime: Infinity
+        : skipToken
   })
 
 export type AddressTokensBalancesQueryFnData = {
@@ -58,38 +64,43 @@ export type AddressTokensBalancesQueryFnData = {
 export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: ['address', addressHash, 'balance', 'tokens', { networkId }],
-    queryFn: !skip
-      ? async () => {
-          const tokenBalances = [] as TokenDisplayBalances[]
-          let tokenBalancesInPage = [] as AddressTokenBalance[]
-          let page = 1
+    staleTime: Infinity,
+    // We don't want address data to be deleted when the user navigates away from components that need them since these
+    // data are essential for the major parts of the app. We manually remove cached data when the user deletes an
+    // address.
+    gcTime: Infinity,
+    meta: { isMainnet: networkId === 0 },
+    queryFn:
+      !skip && networkId !== undefined
+        ? async () => {
+            const tokenBalances = [] as TokenDisplayBalances[]
+            let tokenBalancesInPage = [] as AddressTokenBalance[]
+            let page = 1
 
-          while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
-            tokenBalancesInPage = await throttledClient.explorer.addresses.getAddressesAddressTokensBalance(
+            while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {
+              tokenBalancesInPage = await throttledClient.explorer.addresses.getAddressesAddressTokensBalance(
+                addressHash,
+                {
+                  limit: PAGINATION_PAGE_LIMIT,
+                  page
+                }
+              )
+
+              tokenBalances.push(
+                ...tokenBalancesInPage.map((tokenBalances) => ({
+                  id: tokenBalances.tokenId,
+                  totalBalance: BigInt(tokenBalances.balance),
+                  lockedBalance: BigInt(tokenBalances.lockedBalance),
+                  availableBalance: BigInt(tokenBalances.balance) - BigInt(tokenBalances.lockedBalance)
+                }))
+              )
+              page += 1
+            }
+
+            return {
               addressHash,
-              {
-                limit: PAGINATION_PAGE_LIMIT,
-                page
-              }
-            )
-
-            tokenBalances.push(
-              ...tokenBalancesInPage.map((tokenBalances) => ({
-                id: tokenBalances.tokenId,
-                totalBalance: BigInt(tokenBalances.balance),
-                lockedBalance: BigInt(tokenBalances.lockedBalance),
-                availableBalance: BigInt(tokenBalances.balance) - BigInt(tokenBalances.lockedBalance)
-              }))
-            )
-            page += 1
+              balances: tokenBalances
+            }
           }
-
-          return {
-            addressHash,
-            balances: tokenBalances
-          }
-        }
-      : skipToken,
-
-    staleTime: Infinity
+        : skipToken
   })

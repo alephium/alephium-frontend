@@ -16,39 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ONE_MINUTE_MS, throttledClient } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
+import { FIVE_MINUTES_MS, ONE_MINUTE_MS, throttledClient } from '@alephium/shared'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import queryClient from '@/api/queryClient'
 
 interface TokensPriceQueryProps extends SkipProp {
   symbols: string[]
   currency: string
 }
 
-const TOKEN_PRICES_KEY = 'tokenPrices'
+export const tokensPriceQuery = ({ symbols, currency, skip }: TokensPriceQueryProps) =>
+  queryOptions({
+    queryKey: ['tokenPrices', 'currentPrice', symbols, { currency }],
+    refetchInterval: ONE_MINUTE_MS,
+    // When the user changes currency settings we don't want to keep the previous cache for too long.
+    gcTime: FIVE_MINUTES_MS,
+    queryFn: !skip
+      ? async () => {
+          const prices = await throttledClient.explorer.market.postMarketPrices({ currency }, symbols)
 
-export const tokensPriceQuery = ({ symbols, currency, skip }: TokensPriceQueryProps) => {
-  const getQueryOptions = (_symbols: TokensPriceQueryProps['symbols']) =>
-    queryOptions({
-      queryKey: [TOKEN_PRICES_KEY, 'currentPrice', _symbols, { currency }],
-      queryFn: !skip
-        ? async () => {
-            const prices = await throttledClient.explorer.market.postMarketPrices({ currency }, _symbols)
-
-            return prices.map((price, i) => ({ price, symbol: _symbols[i] }))
-          }
-        : skipToken,
-      refetchInterval: ONE_MINUTE_MS
-    })
-
-  const previousQueryKey = getQueryOptions([ALPH.symbol]).queryKey
-  const latestQueryOptions = getQueryOptions(symbols)
-
-  return queryOptions({
-    ...latestQueryOptions,
-    placeholderData: queryClient.getQueryData(previousQueryKey)
+          return prices.map((price, i) => ({ price, symbol: symbols[i] }))
+        }
+      : skipToken
   })
-}

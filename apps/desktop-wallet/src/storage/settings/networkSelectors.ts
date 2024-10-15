@@ -16,17 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useQuery } from '@tanstack/react-query'
+import { createSelector } from '@reduxjs/toolkit'
 
-import { UseFetchTransactionProps } from '@/api/apiDataHooks/transaction/transactionTypes'
-import { pendingTransactionQuery } from '@/api/queries/transactionQueries'
-import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { RootState } from '@/storage/store'
 
-const useFetchPendingTransaction = (props: UseFetchTransactionProps) => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
-
-  return useQuery(pendingTransactionQuery({ ...props, networkId }))
-}
-
-export default useFetchPendingTransaction
+export const selectCurrentlyOnlineNetworkId = createSelector(
+  (state: RootState) => state.network,
+  (network) => (network.status === 'online' ? network.settings.networkId : undefined)
+)

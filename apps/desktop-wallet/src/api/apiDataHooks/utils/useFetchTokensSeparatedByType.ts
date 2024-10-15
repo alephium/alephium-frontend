@@ -20,6 +20,8 @@ import { useQueries } from '@tanstack/react-query'
 
 import useFetchTokensSeparatedByListing from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
 import { combineTokenTypeQueryResults, tokenTypeQuery } from '@/api/queries/tokenQueries'
+import { useAppSelector } from '@/hooks/redux'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 import { ListedFT, TokenId, UnlistedToken } from '@/types/tokens'
 
 interface TokensByType<T> {
@@ -34,6 +36,8 @@ interface TokensByType<T> {
 }
 
 const useFetchTokensSeparatedByType = <T extends UnlistedToken>(tokens: T[] = []): TokensByType<T> => {
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+
   const {
     data: { listedFts, unlistedTokens },
     isLoading: isLoadingTokensByListing
@@ -43,7 +47,7 @@ const useFetchTokensSeparatedByType = <T extends UnlistedToken>(tokens: T[] = []
     data: { fungible: unlistedFtIds, 'non-fungible': nftIds, 'non-standard': nstIds },
     isLoading: isLoadingTokensByType
   } = useQueries({
-    queries: unlistedTokens.map(({ id }) => tokenTypeQuery({ id })),
+    queries: unlistedTokens.map(({ id }) => tokenTypeQuery({ id, networkId })),
     combine: combineTokenTypeQueryResults
   })
 

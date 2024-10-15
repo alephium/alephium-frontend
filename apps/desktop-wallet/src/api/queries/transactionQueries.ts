@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, throttledClient } from '@alephium/shared'
+import { AddressHash, FIVE_MINUTES_MS, throttledClient } from '@alephium/shared'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
@@ -25,7 +25,7 @@ import queryClient from '@/api/queryClient'
 
 export interface AddressLatestTransactionQueryProps {
   addressHash: AddressHash
-  networkId: number
+  networkId?: number
   skip?: boolean
 }
 
@@ -37,35 +37,37 @@ export interface AddressLatestTransactionQueryFnData {
 export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: ['address', addressHash, 'transaction', 'latest', { networkId }],
-    queryFn: !skip
-      ? async ({ queryKey }) => {
-          const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
-            page: 1,
-            limit: 1
-          })
+    gcTime: FIVE_MINUTES_MS,
+    meta: { isMainnet: networkId === 0 },
+    queryFn:
+      !skip && networkId !== undefined
+        ? async ({ queryKey }) => {
+            const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
+              page: 1,
+              limit: 1
+            })
 
-          const latestTx = transactions.length > 0 ? transactions[0] : undefined
-          const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionQueryFnData | undefined
-          const cachedLatestTx = cachedData?.latestTx
+            const latestTx = transactions.length > 0 ? transactions[0] : undefined
+            const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionQueryFnData | undefined
+            const cachedLatestTx = cachedData?.latestTx
 
-          // The following block invalidates queries that need to refetch data if a new transaction hash has been
-          // detected. This way, we don't need to use the latest tx hash in the queryKey of each of those queries.
-          if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
-            queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
-            queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions', 'latest'] })
+            // The following block invalidates queries that need to refetch data if a new transaction hash has been
+            // detected. This way, we don't need to use the latest tx hash in the queryKey of each of those queries.
+            if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
+              queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
+              queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions', 'latest'] })
+            }
+
+            return {
+              addressHash, // Needed in combine functions to identify which address the latestTx refers to
+              latestTx
+            }
           }
-
-          return {
-            addressHash, // Needed in combine functions to identify which address the latestTx refers to
-            latestTx
-          }
-        }
-      : skipToken
+        : skipToken
   })
 
 interface TransactionsInfiniteQueryBaseProps {
   networkId: number
-  timestamp: number
   skip?: boolean
 }
 
@@ -75,19 +77,22 @@ interface AddressTransactionsInfiniteQueryProps extends TransactionsInfiniteQuer
 
 export const addressTransactionsInfiniteQuery = ({
   addressHash,
-  timestamp,
   networkId,
   skip
 }: AddressTransactionsInfiniteQueryProps) =>
   infiniteQueryOptions({
-    queryKey: ['address', addressHash, 'transactions', { timestamp, networkId }],
-    queryFn: !skip
-      ? ({ pageParam }) =>
-          throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: pageParam })
-      : skipToken,
+    queryKey: ['address', addressHash, 'transactions', { networkId }],
+    staleTime: Infinity,
+    // 5 minutes after the user navigates away from the address details modal, the cached data will be deleted.
+    gcTime: FIVE_MINUTES_MS,
+    meta: { isMainnet: networkId === 0 },
+    queryFn:
+      !skip && networkId !== undefined
+        ? ({ pageParam }) =>
+            throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: pageParam })
+        : skipToken,
     initialPageParam: 1,
-    getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null),
-    staleTime: Infinity
+    getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null)
   })
 
 interface WalletTransactionsInfiniteQueryProps extends TransactionsInfiniteQueryBaseProps {
@@ -96,47 +101,68 @@ interface WalletTransactionsInfiniteQueryProps extends TransactionsInfiniteQuery
 
 export const walletTransactionsInfiniteQuery = ({
   addressHashes,
-  timestamp,
   networkId,
   skip
 }: WalletTransactionsInfiniteQueryProps) =>
   infiniteQueryOptions({
-    queryKey: ['wallet', 'transactions', { timestamp, networkId, addressHashes }],
-    queryFn: !skip
-      ? ({ pageParam }) =>
-          throttledClient.explorer.addresses.postAddressesTransactions({ page: pageParam }, addressHashes)
-      : skipToken,
+    queryKey: ['wallet', 'transactions', { networkId, addressHashes }],
+    staleTime: Infinity,
+    // When the user navigates away from the Transfers page for 5 minutes or when addresses are generated/removed the
+    // cached data will be deleted.
+    gcTime: FIVE_MINUTES_MS,
+    meta: { isMainnet: networkId === 0 },
+    queryFn:
+      !skip && networkId !== undefined
+        ? ({ pageParam }) =>
+            throttledClient.explorer.addresses.postAddressesTransactions({ page: pageParam }, addressHashes)
+        : skipToken,
     initialPageParam: 1,
-    getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null),
-    staleTime: Infinity
+    getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null)
   })
 
 interface WalletLatestTransactionsQueryProps {
-  networkId: number
+  networkId?: number
   addressHashes: AddressHash[]
 }
 
 export const walletLatestTransactionsQuery = ({ addressHashes, networkId }: WalletLatestTransactionsQueryProps) =>
   queryOptions({
     queryKey: ['wallet', 'transactions', 'latest', { networkId, addressHashes }],
-    queryFn: () => throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, addressHashes),
-    staleTime: Infinity
+    staleTime: Infinity,
+    // When the user navigates away from the Overview page for 5 minutes or when addresses are generated/removed the
+    // cached data will be deleted.
+    gcTime: FIVE_MINUTES_MS,
+    meta: { isMainnet: networkId === 0 },
+    queryFn:
+      networkId !== undefined
+        ? () => throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, addressHashes)
+        : skipToken
   })
 
 interface TransactionQueryProps extends SkipProp {
   txHash: string
+  networkId?: number
 }
 
-export const confirmedTransactionQuery = ({ txHash, skip }: TransactionQueryProps) =>
+export const confirmedTransactionQuery = ({ txHash, networkId, skip }: TransactionQueryProps) =>
   queryOptions({
     queryKey: ['transaction', 'confirmed', txHash],
-    queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken,
-    staleTime: Infinity
+    staleTime: Infinity,
+    // When the user navigates away from the transaction details modal for 5 minutes or when a sent tx confirms the
+    // cached data will be deleted.
+    gcTime: FIVE_MINUTES_MS,
+    meta: { isMainnet: networkId === 0 },
+    queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken
   })
 
-export const pendingTransactionQuery = ({ txHash, skip }: TransactionQueryProps) =>
+export const pendingTransactionQuery = ({ txHash, networkId, skip }: TransactionQueryProps) =>
   queryOptions({
     queryKey: ['transaction', 'pending', txHash],
-    queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken,
-    refetchInterval: 3000
+    // 5 minutes after a sent tx is confirmed, the cached data will be deleted. We cannot set it to a lower value than
+    // the default one because the highest gcTime is always in effect. We would need to set the default to a lower one
+    // just for this one, but is it worth it?
+    gcTime: FIVE_MINUTES_MS,
+    meta: { isMainnet: networkId === 0 },
+    refetchInterval: 3000,
+    queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken
   })

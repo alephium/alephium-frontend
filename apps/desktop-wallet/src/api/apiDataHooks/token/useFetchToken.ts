@@ -24,22 +24,26 @@ import { DataHook } from '@/api/apiDataHooks/apiDataHooksTypes'
 import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
 import useFetchFtList from '@/api/apiDataHooks/utils/useFetchFtList'
 import { fungibleTokenMetadataQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
+import { useAppSelector } from '@/hooks/redux'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 import { ListedFT, NonStandardToken, TokenId, UnlistedFT } from '@/types/tokens'
 
 type UseFetchTokenResponse = DataHook<ListedFT | UnlistedFT | NFT | NonStandardToken>
 
 const useFetchToken = (id: TokenId): UseFetchTokenResponse => {
   const { data: fTList, isLoading: isLoadingFtList } = useFetchFtList()
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
 
   const listedFT = fTList?.find((t) => t.id === id)
 
   const { data: tokenType, isLoading: isLoadingTokenType } = useQuery(
-    tokenTypeQuery({ id, skip: isLoadingFtList || !!listedFT })
+    tokenTypeQuery({ id, networkId, skip: isLoadingFtList || !!listedFT })
   )
 
   const { data: unlistedFT, isLoading: isLoadingUnlistedFT } = useQuery(
     fungibleTokenMetadataQuery({
       id,
+      networkId,
       skip: isLoadingTokenType || tokenType?.stdInterfaceId !== explorer.TokenStdInterfaceId.Fungible
     })
   )

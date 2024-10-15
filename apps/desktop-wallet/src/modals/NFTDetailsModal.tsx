@@ -33,7 +33,9 @@ import InfoBox from '@/components/InfoBox'
 import NFTThumbnail from '@/components/NFTThumbnail'
 import Truncate from '@/components/Truncate'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 import { openInWebBrowser } from '@/utils/misc'
 
 export interface NFTDetailsModalProps {
@@ -94,21 +96,27 @@ const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
 
 const NFTCollectionDetails = ({ collectionId }: Pick<NFT, 'collectionId'>) => {
   const { t } = useTranslation()
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
 
   const { data: nftCollectionMetadata } = useQuery({
     queryKey: ['nfts', 'nftCollection', 'nftCollectionMetadata', collectionId],
+    staleTime: Infinity,
+    gcTime: Infinity, // We don't want to delete the collection metadata when the user navigates away from the NFT details modal
+    meta: { isMainnet: networkId === 0 },
     queryFn: !collectionId
       ? skipToken
       : async () =>
           (
             await throttledClient.explorer.tokens.postTokensNftCollectionMetadata([addressFromContractId(collectionId)])
-          )[0] ?? null,
-    staleTime: Infinity
+          )[0] ?? null
   })
 
   const collectionUri = nftCollectionMetadata?.collectionUri
   const { data: nftCollectionData } = useQuery({
     queryKey: ['nfts', 'nftCollection', 'nftCollectionData', collectionId],
+    staleTime: Infinity,
+    gcTime: Infinity, // We don't want to delete the collection data when the user navigates away from the NFT details modal
+    meta: { isMainnet: networkId === 0 },
     queryFn: !collectionUri
       ? skipToken
       : async () => {
@@ -121,8 +129,7 @@ const NFTCollectionDetails = ({ collectionId }: Pick<NFT, 'collectionId'>) => {
               `Response does not match the NFT collection metadata schema. NFT collection URI: ${collectionUri}`
             )
           }
-        },
-    staleTime: Infinity
+        }
   })
 
   if (!nftCollectionData) return null
