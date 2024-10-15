@@ -23,14 +23,16 @@ import useFetchPendingTransaction from '@/api/apiDataHooks/transaction/useFetchP
 import { confirmedTransactionQuery } from '@/api/queries/transactionQueries'
 import { selectSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppSelector } from '@/hooks/redux'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
 const useFetchTransaction = ({ txHash, skip }: UseFetchTransactionProps) => {
   const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
 
   const isPendingTx = sentTx && sentTx.status !== 'confirmed'
 
   const { data: confirmedTx, isLoading: isLoadingConfirmedTx } = useQuery(
-    confirmedTransactionQuery({ txHash, skip: skip || isPendingTx })
+    confirmedTransactionQuery({ txHash, networkId, skip: skip || isPendingTx })
   )
   const { data: pendingTx } = useFetchPendingTransaction({ txHash, skip: skip || !isPendingTx })
 

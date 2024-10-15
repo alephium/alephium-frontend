@@ -20,7 +20,13 @@ import { useQuery } from '@tanstack/react-query'
 
 import { UseFetchTransactionProps } from '@/api/apiDataHooks/transaction/transactionTypes'
 import { pendingTransactionQuery } from '@/api/queries/transactionQueries'
+import { useAppSelector } from '@/hooks/redux'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
-const useFetchPendingTransaction = (props: UseFetchTransactionProps) => useQuery(pendingTransactionQuery(props))
+const useFetchPendingTransaction = (props: UseFetchTransactionProps) => {
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+
+  return useQuery(pendingTransactionQuery({ ...props, networkId }))
+}
 
 export default useFetchPendingTransaction

@@ -85,7 +85,7 @@ export const addressTransactionsInfiniteQuery = ({
     staleTime: Infinity,
     // 5 minutes after the user navigates away from the address details modal, the cached data will be deleted.
     gcTime: FIVE_MINUTES_MS,
-    meta: { isInfinite: true, isMainnet: networkId === 0 },
+    meta: { isMainnet: networkId === 0 },
     queryFn:
       !skip && networkId !== undefined
         ? ({ pageParam }) =>
@@ -110,7 +110,7 @@ export const walletTransactionsInfiniteQuery = ({
     // When the user navigates away from the Transfers page for 5 minutes or when addresses are generated/removed the
     // cached data will be deleted.
     gcTime: FIVE_MINUTES_MS,
-    meta: { isInfinite: true, isMainnet: networkId === 0 },
+    meta: { isMainnet: networkId === 0 },
     queryFn:
       !skip && networkId !== undefined
         ? ({ pageParam }) =>
@@ -141,25 +141,28 @@ export const walletLatestTransactionsQuery = ({ addressHashes, networkId }: Wall
 
 interface TransactionQueryProps extends SkipProp {
   txHash: string
+  networkId?: number
 }
 
-export const confirmedTransactionQuery = ({ txHash, skip }: TransactionQueryProps) =>
+export const confirmedTransactionQuery = ({ txHash, networkId, skip }: TransactionQueryProps) =>
   queryOptions({
     queryKey: ['transaction', 'confirmed', txHash],
     staleTime: Infinity,
     // When the user navigates away from the transaction details modal for 5 minutes or when a sent tx confirms the
     // cached data will be deleted.
     gcTime: FIVE_MINUTES_MS,
+    meta: { isMainnet: networkId === 0 },
     queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken
   })
 
-export const pendingTransactionQuery = ({ txHash, skip }: TransactionQueryProps) =>
+export const pendingTransactionQuery = ({ txHash, networkId, skip }: TransactionQueryProps) =>
   queryOptions({
     queryKey: ['transaction', 'pending', txHash],
     // 5 minutes after a sent tx is confirmed, the cached data will be deleted. We cannot set it to a lower value than
     // the default one because the highest gcTime is always in effect. We would need to set the default to a lower one
     // just for this one, but is it worth it?
     gcTime: FIVE_MINUTES_MS,
+    meta: { isMainnet: networkId === 0 },
     refetchInterval: 3000,
     queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken
   })
