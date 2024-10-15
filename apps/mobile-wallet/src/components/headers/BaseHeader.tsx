@@ -66,9 +66,9 @@ const BaseHeader = ({
   const { width: screenWidth } = useWindowDimensions()
   const [headerHeight, setHeaderHeight] = useState(80)
 
-  const gradientHeight = headerHeight + 60
+  const gradientHeight = headerHeight + 42
   const defaultScrollRange = [0 + scrollEffectOffset, 80 + scrollEffectOffset]
-  const paddingTop = isIos ? insets.top : insets.top + 7
+  const paddingTop = isIos ? insets.top : insets.top + 18
 
   const HeaderRight = (headerRight && headerRight({})) || <HeaderSidePlaceholder />
   const HeaderLeft = (headerLeft && headerLeft({})) || <HeaderSidePlaceholder />
@@ -104,7 +104,7 @@ const BaseHeader = ({
           style={{ opacity: animatedOpacity, width: screenWidth, height: gradientHeight }}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
-          locations={[0.5, 1]}
+          locations={[0.6, 1]}
           colors={
             theme.name === 'dark'
               ? [theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]

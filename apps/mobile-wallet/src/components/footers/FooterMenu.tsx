@@ -20,7 +20,7 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useState } from 'react'
-import { LayoutChangeEvent, StyleProp, View, ViewStyle } from 'react-native'
+import { LayoutChangeEvent, Platform, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { css, useTheme } from 'styled-components/native'
 
@@ -30,12 +30,14 @@ interface FooterMenuProps extends BottomTabBarProps {
   style?: StyleProp<ViewStyle>
 }
 
+const isIos = Platform.OS === 'ios'
+
 const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
   const insets = useSafeAreaInsets()
   const theme = useTheme()
   const [footerHeight, setFooterHeight] = useState(120)
 
-  const gradientHeight = footerHeight + 30
+  const gradientHeight = footerHeight + 50
 
   const footerContent = (
     <>
@@ -53,7 +55,7 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
   )
 
   const handleFooterLayout = (e: LayoutChangeEvent) => {
-    setFooterHeight(e.nativeEvent.layout.height + insets.bottom)
+    setFooterHeight(e.nativeEvent.layout.height)
   }
 
   return (
@@ -69,7 +71,9 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
         }
         style={{ height: gradientHeight }}
       />
-      <FooterMenuContent style={{ paddingBottom: insets.bottom }}>{footerContent}</FooterMenuContent>
+      <FooterMenuContent style={{ paddingBottom: isIos ? insets.bottom : insets.bottom + 18 }}>
+        {footerContent}
+      </FooterMenuContent>
     </View>
   )
 }
@@ -94,9 +98,10 @@ const FooterMenuContent = styled.View`
   ${footerMenuStyles}
 `
 
+// Bottom value is to avoid glitch on Android
 const FooterGradient = styled(LinearGradient)`
   position: absolute;
-  bottom: 0;
+  bottom: -1px;
   left: 0;
   right: 0;
 `
