@@ -31,7 +31,8 @@ const useAddressesDataPolling = () => {
   useQueries({
     queries: allAddressHashes.map((addressHash) => ({
       ...addressLatestTransactionQuery({ addressHash, networkId }),
-      refetchInterval: TRANSACTIONS_REFRESH_INTERVAL
+      refetchInterval: TRANSACTIONS_REFRESH_INTERVAL,
+      notifyOnChangeProps: []
     }))
   })
 }
