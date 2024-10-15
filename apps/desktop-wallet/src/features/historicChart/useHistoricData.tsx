@@ -24,6 +24,7 @@ import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
+import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import { useAppSelector } from '@/hooks/redux'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
@@ -39,8 +40,8 @@ const useHistoricData = () => {
 
   const { data: alphPriceHistory, isLoading: isLoadingAlphPriceHistory } = useQuery({
     queryKey: ['history', 'price', ALPH.symbol, { currency }],
-    staleTime: ONE_DAY_MS,
-    gcTime: Infinity, // We don't want to delete the price history if the user stays on a page without a chart for too long
+    // We don't want to delete the price history if the user stays on a page without a chart for too long
+    ...getQueryConfig({ staleTime: ONE_DAY_MS, gcTime: Infinity }),
     queryFn: () =>
       throttledClient.explorer.market.getMarketPricesSymbolCharts(ALPH.symbol, { currency }).then((rawHistory) => {
         const today = dayjs().format(CHART_DATE_FORMAT)
@@ -77,9 +78,8 @@ const useHistoricData = () => {
       networkId !== undefined
         ? allAddressHashes.map((hash) => ({
             queryKey: ['address', hash, 'history', 'addressBalance', DAILY, ALPH.symbol, { networkId }],
-            staleTime: ONE_DAY_MS,
-            gcTime: Infinity, // We don't want to delete the balance history if the user stays on a page without a chart for too long
-            meta: { isMainnet: networkId === 0 },
+            // We don't want to delete the balance history if the user stays on a page without a chart for too long
+            ...getQueryConfig({ staleTime: ONE_DAY_MS, gcTime: Infinity, networkId }),
             queryFn: async () => {
               const now = dayjs()
               const thisMoment = now.valueOf()

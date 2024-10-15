@@ -20,6 +20,7 @@ import { AddressHash, PAGINATION_PAGE_LIMIT, throttledClient } from '@alephium/s
 import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
+import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
 import { DisplayBalances, TokenDisplayBalances } from '@/types/tokens'
 
@@ -33,12 +34,10 @@ export type AddressAlphBalancesQueryFnData = {
 export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: ['address', addressHash, 'balance', 'ALPH', { networkId }],
-    staleTime: Infinity,
     // We don't want address data to be deleted when the user navigates away from components that need them since these
     // data are essential for the major parts of the app. We manually remove cached data when the user deletes an
     // address.
-    gcTime: Infinity,
-    meta: { isMainnet: networkId === 0 },
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn:
       !skip && networkId !== undefined
         ? async () => {
@@ -64,12 +63,10 @@ export type AddressTokensBalancesQueryFnData = {
 export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: ['address', addressHash, 'balance', 'tokens', { networkId }],
-    staleTime: Infinity,
     // We don't want address data to be deleted when the user navigates away from components that need them since these
     // data are essential for the major parts of the app. We manually remove cached data when the user deletes an
     // address.
-    gcTime: Infinity,
-    meta: { isMainnet: networkId === 0 },
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn:
       !skip && networkId !== undefined
         ? async () => {

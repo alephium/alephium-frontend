@@ -24,6 +24,8 @@ import axios from 'axios'
 import { useAppSelector } from '@/hooks/redux'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
+import { getQueryConfig } from './getQueryConfig'
+
 export interface FTList {
   data: TokenList['tokens'] | undefined
   isLoading: boolean
@@ -39,11 +41,9 @@ const useFetchFtList = (props?: FTListProps): FTList => {
 
   const { data, isLoading } = useQuery({
     queryKey: ['tokenList', { networkId }],
-    staleTime: ONE_DAY_MS,
     // The token list is essential for the whole app so we don't want to ever delete it. Even if we set a lower gcTime,
     // it will never become inactive (since it's always used by a mount component).
-    gcTime: Infinity,
-    meta: { isMainnet: networkId === 0 },
+    ...getQueryConfig({ staleTime: ONE_DAY_MS, gcTime: Infinity, networkId }),
     queryFn:
       !network || props?.skip
         ? skipToken
