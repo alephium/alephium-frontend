@@ -26,7 +26,12 @@ import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelect
 const useFetchAddressLatestTransaction = ({ addressHash, skip }: UseFetchAddressProps) => {
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
 
-  return useQuery(addressLatestTransactionQuery({ addressHash, networkId, skip }))
+  const { data, isLoading } = useQuery(addressLatestTransactionQuery({ addressHash, networkId, skip }))
+
+  return {
+    data,
+    isLoading
+  }
 }
 
 export default useFetchAddressLatestTransaction
