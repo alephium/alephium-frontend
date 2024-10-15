@@ -20,6 +20,7 @@ import { FIVE_MINUTES_MS, ONE_MINUTE_MS, throttledClient } from '@alephium/share
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
+import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 
 interface TokensPriceQueryProps extends SkipProp {
   symbols: string[]
@@ -31,7 +32,7 @@ export const tokensPriceQuery = ({ symbols, currency, skip }: TokensPriceQueryPr
     queryKey: ['tokenPrices', 'currentPrice', symbols, { currency }],
     refetchInterval: ONE_MINUTE_MS,
     // When the user changes currency settings we don't want to keep the previous cache for too long.
-    gcTime: FIVE_MINUTES_MS,
+    ...getQueryConfig({ gcTime: FIVE_MINUTES_MS }),
     queryFn: !skip
       ? async () => {
           const prices = await throttledClient.explorer.market.postMarketPrices({ currency }, symbols)
