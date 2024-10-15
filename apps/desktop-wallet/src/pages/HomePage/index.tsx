@@ -16,13 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ONE_MINUTE_MS } from '@alephium/shared'
-import { useInterval } from '@alephium/shared-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { fadeInSlowly } from '@/animations'
-import { DELETE_INACTIVE_QUERY_DATA_AFTER } from '@/api/queryClient'
 import AppHeader from '@/components/AppHeader'
 import { FloatingPanel } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
@@ -30,15 +27,12 @@ import { useAppSelector } from '@/hooks/redux'
 import NewWalletActions from '@/pages/HomePage/NewWalletActions'
 import UnlockPanel from '@/pages/HomePage/UnlockPanel'
 import LockedWalletLayout from '@/pages/LockedWalletLayout'
-import { electron } from '@/utils/misc'
 
 const HomePage = () => {
   const { t } = useTranslation()
   const hasAtLeastOneWallet = useAppSelector((state) => state.global.wallets.length > 0)
 
   const [showNewWalletActions, setShowNewWalletActions] = useState(false)
-
-  useInterval(() => electron?.app.reload(), DELETE_INACTIVE_QUERY_DATA_AFTER - ONE_MINUTE_MS)
 
   return (
     <LockedWalletLayout {...fadeInSlowly} animateSideBar>
