@@ -27,7 +27,6 @@ import { WalletTokensTabs } from '@/features/assetsLists/TokensTabs'
 import WalletLatestTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/WalletLatestTransactionsList'
 import AddressesList from '@/pages/UnlockedWallet/OverviewPage/AddressesList'
 import AmountsOverviewPanel from '@/pages/UnlockedWallet/OverviewPage/AmountsOverviewPanel'
-import GreetingMessages from '@/pages/UnlockedWallet/OverviewPage/GreetingMessages'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
 
@@ -51,7 +50,6 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
 
   return (
     <UnlockedWalletPage className={className} onAnimationComplete={() => handleAnimationComplete()}>
-      <GreetingMessages />
       <AmountsOverviewPanel chartVisible={chartVisible} chartInitiallyHidden={!chartVisible}>
         <Shortcuts>
           <ShortcutsHeader title={t('Shortcuts')} />
