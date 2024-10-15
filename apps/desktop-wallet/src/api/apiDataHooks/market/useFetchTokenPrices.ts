@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { explorer } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { tokensPriceQuery } from '@/api/queries/priceQueries'
