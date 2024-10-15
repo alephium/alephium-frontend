@@ -29,8 +29,8 @@ const useFetchWalletWorthAlph = () => {
 
   return {
     data: useMemo(
-      () => calculateAmountWorth(alphBalances?.totalBalance ?? BigInt(0), alphPrice?.price ?? 0, ALPH.decimals),
-      [alphBalances?.totalBalance, alphPrice?.price]
+      () => calculateAmountWorth(alphBalances?.totalBalance ?? BigInt(0), alphPrice ?? 0, ALPH.decimals),
+      [alphBalances?.totalBalance, alphPrice]
     ),
     isLoading: isLoadingAlphBalances || isLoadingAlphPrice
   }
