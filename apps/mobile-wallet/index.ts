@@ -26,14 +26,6 @@ Sentry.init({
   dsn: 'https://d369e561c12a0bbbbe1ba386854363ff@o4508131914874880.ingest.de.sentry.io/4508131917430864'
 })
 
-const defaultErrorHandler = ErrorUtils.getGlobalHandler()
-
-ErrorUtils.setGlobalHandler((error, isFatal) => {
-  console.log('Global JS Error: ', error, isFatal)
-  Sentry.captureException(error, { data: { isFatal } })
-  defaultErrorHandler(error, isFatal)
-})
-
 import App from '~/App'
 
 registerRootComponent(App)
