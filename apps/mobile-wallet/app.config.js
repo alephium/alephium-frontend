@@ -79,6 +79,7 @@ export default {
       permissions: [
         'android.permission.FOREGROUND_SERVICE',
         'android.permission.FOREGROUND_SERVICE_DATA_SYNC',
+        'android.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND', // To potentially fix crash due to ForegroundServiceStartNotAllowedException
         'android.permission.WAKE_LOCK'
       ],
       package: 'org.alephium.wallet'
