@@ -210,4 +210,4 @@ const Main = ({ children, ...props }: ViewProps) => {
   )
 }
 
-export default Sentry.wrap(App)
+export default __DEV__ ? App : Sentry.wrap(App)
