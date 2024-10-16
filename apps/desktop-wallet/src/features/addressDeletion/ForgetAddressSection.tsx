@@ -17,20 +17,22 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import Button from '@/components/Button'
+import InlineLabelValueInput from '@/components/Inputs/InlineLabelValueInput'
 import useConfirmDeleteAddresses from '@/features/addressDeletion/useConfirmDeleteAddresses'
 import useDeleteAddress from '@/features/addressDeletion/useDeleteAddress'
 import { useAppSelector } from '@/hooks/redux'
-import { ModalFooterButton } from '@/modals/CenteredModal'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 
-interface ForgetAddressButtonProps {
+interface ForgetAddressSectionProps {
   addressHash: AddressHash
   addressName: string
 }
 
-const ForgetAddressButton = ({ addressHash, addressName }: ForgetAddressButtonProps) => {
+const ForgetAddressSection = ({ addressHash, addressName }: ForgetAddressSectionProps) => {
   const { t } = useTranslation()
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
   const isDefault = addressHash === defaultAddressHash
@@ -43,24 +45,36 @@ const ForgetAddressButton = ({ addressHash, addressName }: ForgetAddressButtonPr
     })
   })
 
-  if (isDefault)
-    return (
-      <div
-        data-tooltip-id="default"
-        data-tooltip-content={t('To forget this address set another one as the default one first.')}
-        style={{ width: '100%' }}
-      >
-        <ModalFooterButton role="secondary" variant="alert" disabled={true}>
-          {t('Forget')}
-        </ModalFooterButton>
-      </div>
-    )
-
   return (
-    <ModalFooterButton role="secondary" variant="alert" onClick={handleDeletePress} disabled={isDefault}>
-      {t('Forget')}
-    </ModalFooterButton>
+    <InlineLabelValueInput
+      label={t('forgetAddress_one')}
+      description={`${t('Declutter your wallet by removing this address from your lists.')} ${t(
+        'Forgetting addresses does not delete your assets in them.'
+      )}`}
+      InputComponent={
+        <div
+          data-tooltip-id="default"
+          data-tooltip-content={
+            isDefault ? t('To forget this address set another one as the default one first.') : undefined
+          }
+        >
+          <Button
+            short
+            wide
+            onClick={handleDeletePress}
+            disabled={isDefault}
+            role="secondary"
+            variant="alert"
+            borderless
+            style={{ minWidth: 120 }}
+            Icon={Trash2}
+          >
+            {t('Forget')}
+          </Button>
+        </div>
+      }
+    />
   )
 }
 
-export default ForgetAddressButton
+export default ForgetAddressSection
