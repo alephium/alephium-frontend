@@ -82,9 +82,9 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
           onButtonClick={handleDiscoverAddressesClick}
         />
         <OperationBox
-          title={t('Forget addresses')}
+          title={t('forgetAddress_other')}
           Icon={<Trash2 color={theme.global.highlight} strokeWidth={1} size={55} />}
-          description={t("Clean up your wallet by removing addresses you don't need.")}
+          description={t("Declutter your wallet by removing addresses you don't need.")}
           buttonText={t('Start')}
           onButtonClick={handleDeleteAddressesClick}
           isButtonDisabled={allAddressesIndexes.length === 1}

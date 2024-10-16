@@ -42,7 +42,7 @@ const AddressLimitWarning = () => {
           )}
         </span>
         <Button short onClick={handleForgetAddressesClick}>
-          {t('Forget addresses')}
+          {t('forgetAddress_other')}
         </Button>
       </Contents>
     </InfoBox>
