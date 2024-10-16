@@ -51,7 +51,7 @@ const BottomModalFlashList = ({
   })
 
   return (
-    <BottomModalBase title={title} modalId={modalId} {...modalState}>
+    <BottomModalBase title={title} modalId={modalId} navHeight={navHeight} {...modalState}>
       {children({
         ...modalState.contentScrollHandlers,
         onContentSizeChange: modalState.handleContentSizeChange,

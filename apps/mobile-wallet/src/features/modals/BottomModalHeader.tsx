@@ -32,7 +32,11 @@ interface BottomModalHeaderProps {
 const BottomModalHeader = ({ height, handleClose, title }: BottomModalHeaderProps) => (
   <HeaderContainer style={{ height }}>
     <HeaderSideContainer align="left" />
-    {title && <Title semiBold>{title}</Title>}
+    {title && (
+      <Title semiBold size={16}>
+        {title}
+      </Title>
+    )}
     <HeaderSideContainer align="right">
       <CloseButton onPress={handleClose} compact />
     </HeaderSideContainer>

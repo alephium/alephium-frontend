@@ -52,7 +52,7 @@ const BottomModal = ({
   })
 
   return (
-    <BottomModalBase modalId={modalId} title={title} {...modalState}>
+    <BottomModalBase modalId={modalId} title={title} navHeight={navHeight} {...modalState}>
       <AnimatedScrollView
         onContentSizeChange={modalState.handleContentSizeChange}
         keyboardShouldPersistTaps="handled"
