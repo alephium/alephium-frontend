@@ -25,7 +25,7 @@ import styled from 'styled-components/native'
 import BottomModalHeader from '~/features/modals/BottomModalHeader'
 import { useBottomModalState } from '~/features/modals/useBottomModalState'
 
-export interface BottomModalBaseProps extends ReturnType<typeof useBottomModalState> {
+export interface BottomModalBaseProps {
   modalId: number
   children: ReactNode
   onClose?: () => void
@@ -50,7 +50,7 @@ const BottomModalBase = ({
   title,
   isContentScrollable,
   children
-}: BottomModalBaseProps) => (
+}: BottomModalBaseProps & ReturnType<typeof useBottomModalState>) => (
   <KeyboardAvoidingViewStyled behavior="height" enabled={!maximisedContent}>
     <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
     <Container>
