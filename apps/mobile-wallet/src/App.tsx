@@ -26,6 +26,7 @@ import {
   TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
+import * as Sentry from '@sentry/react-native'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -209,4 +210,4 @@ const Main = ({ children, ...props }: ViewProps) => {
   )
 }
 
-export default App
+export default Sentry.wrap(App)

@@ -19,7 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import './shim'
 import '~/features/localization/i18n'
 
+import * as Sentry from '@sentry/react-native'
 import { registerRootComponent } from 'expo'
+
+Sentry.init({
+  dsn: 'https://d369e561c12a0bbbbe1ba386854363ff@o4508131914874880.ingest.de.sentry.io/4508131917430864'
+})
 
 import App from '~/App'
 
