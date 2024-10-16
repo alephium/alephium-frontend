@@ -20,7 +20,7 @@ import { colord } from 'colord'
 import { HTMLMotionProps, motion } from 'framer-motion'
 import { LucideIcon } from 'lucide-react'
 import { ReactNode, useEffect, useRef, useState } from 'react'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
 import Spinner from '@/components/Spinner'
@@ -48,7 +48,6 @@ export interface ButtonProps extends HTMLMotionProps<'button'> {
 const Button = ({ children, disabled, submit, Icon, className, isHighlighted, loading, ...props }: ButtonProps) => {
   const [canBeAnimated, setCanBeAnimated] = useState(props.squared ? true : false)
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const theme = useTheme()
 
   useEffect(() => {
     if (!submit) return
