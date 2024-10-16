@@ -38,10 +38,15 @@ const SelectContactModal = withModal<SelectContactModalProps>(({ id, onContactPr
     dispatch(closeModal({ id }))
   }
 
+  const handleNewContactPress = () => {
+    onNewContactPress && onNewContactPress()
+    dispatch(closeModal({ id }))
+  }
+
   return (
     <BottomModal modalId={id}>
       <ModalContent>
-        <ContactListScreenBase onContactPress={handleContactPress} onNewContactPress={onNewContactPress} />
+        <ContactListScreenBase onContactPress={handleContactPress} onNewContactPress={handleNewContactPress} />
       </ModalContent>
     </BottomModal>
   )
