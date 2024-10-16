@@ -136,7 +136,7 @@ const AddressSweepModal = memo(
         onClose()
         onSuccessfulSweep && onSuccessfulSweep()
 
-        sendAnalytics({ event: 'Swept address assets' })
+        sendAnalytics({ event: 'Swept address assets', props: { from: 'maxAmount' } })
       } catch (error) {
         dispatch(
           transactionSendFailed(
