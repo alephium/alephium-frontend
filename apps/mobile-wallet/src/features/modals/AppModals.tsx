@@ -22,6 +22,7 @@ import styled from 'styled-components/native'
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
+import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
@@ -109,6 +110,8 @@ const AppModals = () => {
             return <WalletConnectSessionProposalModal key={id} id={id} {...params.props} />
           case 'GroupSelectModal':
             return <GroupSelectModal key={id} id={id} {...params.props} />
+          case 'WalletConnectSessionRequestModal':
+            return <WalletConnectSessionRequestModal key={id} id={id} {...params.props} />
           default:
             return null
         }

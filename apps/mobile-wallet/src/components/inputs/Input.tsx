@@ -16,7 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
+import { getStringAsync } from 'expo-clipboard'
+import { LinearGradient } from 'expo-linear-gradient'
 import { ReactNode, RefObject, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   NativeSyntheticEvent,
   StyleProp,
@@ -31,6 +35,7 @@ import styled, { css, useTheme } from 'styled-components/native'
 
 import { fastSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import Row from '~/components/Row'
 import { BORDER_RADIUS } from '~/style/globalStyle'
 
@@ -44,6 +49,7 @@ export interface InputProps<T extends InputValue> extends Omit<TextInputProps, '
   resetDisabledColor?: boolean
   RightContent?: ReactNode
   renderValue?: RenderValueFunc<T>
+  showPasteButton?: boolean
   error?: string
   style?: StyleProp<ViewStyle>
   layout?: AnimatedProps<ViewProps>['layout']
@@ -60,13 +66,16 @@ const Input = <T extends InputValue>({
   resetDisabledColor,
   RightContent,
   renderValue,
+  showPasteButton,
   error,
   layout,
   inputRef,
   ...props
 }: InputProps<T>) => {
+  const { t } = useTranslation()
   const theme = useTheme()
   const [isActive, setIsActive] = useState(false)
+  const [copiedText, setCopiedText] = useState('')
   const localInputRef = useRef<TextInput>(null)
   const usedInputRef = inputRef || localInputRef
 
@@ -82,6 +91,15 @@ const Input = <T extends InputValue>({
   }))
 
   useEffect(() => {
+    const fetchCopiedText = async () => {
+      const text = await getStringAsync()
+      setCopiedText(text)
+    }
+
+    fetchCopiedText()
+  })
+
+  useEffect(() => {
     if (renderedValue) {
       setIsActive(true)
     }
@@ -95,6 +113,10 @@ const Input = <T extends InputValue>({
   const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     !renderedValue && setIsActive(false)
     onBlur && onBlur(e)
+  }
+
+  const handlePasteButtonPress = () => {
+    usedInputRef.current?.setNativeProps({ text: copiedText })
   }
 
   return (
@@ -129,6 +151,19 @@ const Input = <T extends InputValue>({
           hide={showCustomValueRendering}
           {...props}
         />
+        {copiedText && showPasteButton && (
+          <PasteButtonContainer>
+            <PasteButtonContainerBackground
+              colors={[colord(theme.bg.highlight).alpha(0.1).toHex(), theme.bg.highlight]}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              locations={[0, 0.2]}
+            />
+            <Button compact onPress={handlePasteButtonPress}>
+              <AppText>{t('Paste')}</AppText>
+            </Button>
+          </PasteButtonContainer>
+        )}
       </InputContainer>
       {RightContent}
       {error && (
@@ -204,4 +239,21 @@ const Error = styled(AppText)`
   color: ${({ theme }) => theme.global.alert};
 
   font-size: 11px;
+`
+
+const PasteButtonContainer = styled.View`
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+`
+
+const PasteButtonContainerBackground = styled(LinearGradient)`
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
 `
