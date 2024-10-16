@@ -48,7 +48,7 @@ const InlineLabelValueInput = ({
 
 export default InlineLabelValueInput
 
-const KeyValueInputContainer = styled.div<{ noHorizontalPadding: InlineLabelValueInputProps['noHorizontalPadding'] }>`
+const KeyValueInputContainer = styled.div<Pick<InlineLabelValueInputProps, 'noHorizontalPadding'>>`
   display: flex;
   padding: var(--spacing-4) ${({ noHorizontalPadding }) => (noHorizontalPadding ? '0' : 'var(--spacing-3)')};
   gap: var(--spacing-8);
