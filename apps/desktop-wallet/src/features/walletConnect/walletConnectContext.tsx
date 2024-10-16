@@ -603,6 +603,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   useEffect(() => {
     if (walletLockedBeforeProcessingWCRequest && sessionRequestEvent && addresses.length > 0) {
       onSessionRequest(sessionRequestEvent)
+      setWalletLockedBeforeProcessingWCRequest(false)
     }
   }, [addresses.length, onSessionRequest, sessionRequestEvent, walletLockedBeforeProcessingWCRequest])
 
