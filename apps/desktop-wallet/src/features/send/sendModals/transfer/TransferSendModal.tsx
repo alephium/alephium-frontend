@@ -101,7 +101,7 @@ export const handleTransferSend = async (transactionData: TransferTxData, contex
         )
       }
 
-      posthog.capture('Swept address assets')
+      posthog.capture('Swept address assets', { from: 'button' })
     } else if (unsignedTransaction) {
       const data = await signAndSendTransaction(fromAddress, unsignedTxId, unsignedTransaction.unsignedTx)
 
