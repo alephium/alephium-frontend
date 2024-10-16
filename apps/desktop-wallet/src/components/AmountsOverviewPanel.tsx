@@ -26,6 +26,7 @@ import ChartLengthBadges from '@/features/historicChart/ChartLengthBadges'
 import FiatDeltaPercentage from '@/features/historicChart/FiatDeltaPercentage'
 import { DataPoint } from '@/features/historicChart/historicChartTypes'
 import HistoricWorthChart from '@/features/historicChart/HistoricWorthChart'
+import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
 import WalletWorth from '@/pages/UnlockedWallet/OverviewPage/WalletWorth'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 
@@ -65,7 +66,11 @@ const AmountsOverviewPanel = ({
             <BalancesColumn>
               <Today>{!hoveredDataPointDate ? t('Value today') : `${hoveredDataPointDate} (${t('ALPH only')})`}</Today>
 
-              <WalletWorth overrideWorth={hoveredDataPointWorth} />
+              {singleAddress ? (
+                <AddressWorth overrideWorth={hoveredDataPointWorth} addressHash={addressHash} />
+              ) : (
+                <WalletWorth overrideWorth={hoveredDataPointWorth} />
+              )}
 
               {isHoveringChart && (
                 <Opacity>
