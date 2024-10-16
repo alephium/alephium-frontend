@@ -162,7 +162,7 @@ export const useBottomModalState = ({
 
       if (!isContentDragged.value) return
 
-      if (contentScrollY.value <= 0) {
+      if (contentScrollY.value <= 5) {
         // Move the modal
         if (contentScrollY.value < previousContentScrollY.value) {
           const newModalHeightValue = modalHeight.value - contentScrollY.value

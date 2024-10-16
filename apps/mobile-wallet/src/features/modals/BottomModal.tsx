@@ -75,14 +75,14 @@ const BottomModal = ({
   })
 
   return (
-    <GestureDetector gesture={panGesture}>
-      <KeyboardAvoidingViewStyled behavior="height" enabled={!maximisedContent}>
-        <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
-        <Container>
-          <ModalStyled style={modalHeightAnimatedStyle}>
-            <HandleContainer>
-              <Handle style={handleAnimatedStyle} />
-            </HandleContainer>
+    <KeyboardAvoidingViewStyled behavior="height" enabled={!maximisedContent}>
+      <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
+      <Container>
+        <ModalStyled style={modalHeightAnimatedStyle}>
+          <HandleContainer>
+            <Handle style={handleAnimatedStyle} />
+          </HandleContainer>
+          <GestureDetector gesture={panGesture}>
             <Navigation style={{ height: navHeight }}>
               <NavigationButtonContainer align="left" />
               <Title semiBold>{title}</Title>
@@ -90,26 +90,26 @@ const BottomModal = ({
                 <CloseButton onPress={handleClose} compact />
               </NavigationButtonContainer>
             </Navigation>
-            <AnimatedScrollView
-              onContentSizeChange={handleContentSizeChange}
-              keyboardShouldPersistTaps="handled"
-              scrollEnabled={isScrollable}
-              scrollEventThrottle={16}
-              contentContainerStyle={[
-                contentContainerStyle,
-                {
-                  gap: contentVerticalGap ? VERTICAL_GAP : undefined,
-                  padding: noPadding ? 0 : DEFAULT_MARGIN
-                }
-              ]}
-              {...contentScrollHandlers}
-            >
-              {children}
-            </AnimatedScrollView>
-          </ModalStyled>
-        </Container>
-      </KeyboardAvoidingViewStyled>
-    </GestureDetector>
+          </GestureDetector>
+          <AnimatedScrollView
+            onContentSizeChange={handleContentSizeChange}
+            keyboardShouldPersistTaps="handled"
+            scrollEnabled={isScrollable}
+            scrollEventThrottle={16}
+            contentContainerStyle={[
+              contentContainerStyle,
+              {
+                gap: contentVerticalGap ? VERTICAL_GAP : undefined,
+                padding: noPadding ? 0 : DEFAULT_MARGIN
+              }
+            ]}
+            {...contentScrollHandlers}
+          >
+            {children}
+          </AnimatedScrollView>
+        </ModalStyled>
+      </Container>
+    </KeyboardAvoidingViewStyled>
   )
 }
 

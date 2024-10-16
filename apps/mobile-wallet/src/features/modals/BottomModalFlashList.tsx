@@ -35,7 +35,7 @@ export interface BottomModalFlashListProps {
   minHeight?: number
   navHeight?: number
   noPadding?: boolean
-  children: (scrollHandlers: {
+  children: (flashListProps: {
     contentContainerStyle: ContentStyle
     onScroll: ContentScrollHandlers['onScroll']
     onScrollBeginDrag: ContentScrollHandlers['onScrollBeginDrag']
@@ -73,14 +73,14 @@ const BottomModalFlashList = ({
   })
 
   return (
-    <GestureDetector gesture={panGesture}>
-      <KeyboardAvoidingViewStyled behavior="height" enabled={!maximisedContent}>
-        <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
-        <Container>
-          <ModalStyled style={modalHeightAnimatedStyle}>
-            <HandleContainer>
-              <Handle style={handleAnimatedStyle} />
-            </HandleContainer>
+    <KeyboardAvoidingViewStyled behavior="height" enabled={!maximisedContent}>
+      <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
+      <Container>
+        <ModalStyled style={modalHeightAnimatedStyle}>
+          <HandleContainer>
+            <Handle style={handleAnimatedStyle} />
+          </HandleContainer>
+          <GestureDetector gesture={panGesture}>
             <Navigation style={{ height: navHeight }}>
               <NavigationButtonContainer align="left" />
               <Title semiBold>{title}</Title>
@@ -88,17 +88,17 @@ const BottomModalFlashList = ({
                 <CloseButton onPress={handleClose} compact />
               </NavigationButtonContainer>
             </Navigation>
-            {children({
-              ...contentScrollHandlers,
-              onContentSizeChange: handleContentSizeChange,
-              contentContainerStyle: {
-                padding: noPadding ? 0 : DEFAULT_MARGIN
-              }
-            })}
-          </ModalStyled>
-        </Container>
-      </KeyboardAvoidingViewStyled>
-    </GestureDetector>
+          </GestureDetector>
+          {children({
+            ...contentScrollHandlers,
+            onContentSizeChange: handleContentSizeChange,
+            contentContainerStyle: {
+              padding: noPadding ? 0 : DEFAULT_MARGIN
+            }
+          })}
+        </ModalStyled>
+      </Container>
+    </KeyboardAvoidingViewStyled>
   )
 }
 

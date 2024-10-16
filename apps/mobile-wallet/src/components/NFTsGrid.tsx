@@ -62,6 +62,7 @@ const NFTsGrid = forwardRef(
         {...props}
         data={data}
         ref={ref}
+        overScrollMode="auto"
         keyExtractor={(item) => item.id}
         renderItem={({ item: nft }) => (
           <NFTThumbnailContainer key={nft.id}>

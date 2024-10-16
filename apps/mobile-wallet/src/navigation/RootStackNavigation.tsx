@@ -106,7 +106,7 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                   presentation: Platform.OS === 'android' ? 'transparentModal' : undefined
                 }}
               >
-                <RootStack.Group screenOptions={{ animation: 'ios' }}>
+                <RootStack.Group screenOptions={{ animation: 'fade' }}>
                   <RootStack.Screen name="LandingScreen" component={LandingScreen} />
                   <RootStack.Screen name="LoginWithPinScreen" component={LoginWithPinScreen} />
                   <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
