@@ -83,7 +83,7 @@ export const useBottomModalState = ({
 
   const offsetY = useSharedValue(0)
 
-  const [isScrollable, setIsScrollable] = useState(false)
+  const [isContentScrollable, setIsContentScrollable] = useState(false)
 
   const isModalClosing = useAppSelector((s) => selectModalById(s, modalId)?.isClosing)
 
@@ -134,7 +134,7 @@ export const useBottomModalState = ({
           shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
 
           // Determine if scrolling is needed
-          runOnJS(setIsScrollable)(contentHeight.value > dimensions.height * 0.9)
+          runOnJS(setIsContentScrollable)(contentHeight.value > dimensions.height * 0.9)
         })()
       }
     },
@@ -257,6 +257,6 @@ export const useBottomModalState = ({
     panGesture,
     handleClose,
     contentScrollHandlers,
-    isScrollable
+    isContentScrollable
   }
 }

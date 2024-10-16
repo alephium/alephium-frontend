@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ReactNode } from 'react'
-import { KeyboardAvoidingView, Pressable } from 'react-native'
+import { KeyboardAvoidingView, Pressable, View } from 'react-native'
 import { GestureDetector } from 'react-native-gesture-handler'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
@@ -50,6 +50,7 @@ const BottomModalBase = ({
   panGesture,
   navHeight,
   title,
+  isContentScrollable,
   children
 }: BottomModalBaseProps) => (
   <KeyboardAvoidingViewStyled behavior="height" enabled={!maximisedContent}>
@@ -60,15 +61,18 @@ const BottomModalBase = ({
           <Handle style={handleAnimatedStyle} />
         </HandleContainer>
         <GestureDetector gesture={panGesture}>
-          <Navigation style={{ height: navHeight }}>
-            <NavigationButtonContainer align="left" />
-            <Title semiBold>{title}</Title>
-            <NavigationButtonContainer align="right">
-              <CloseButton onPress={handleClose} compact />
-            </NavigationButtonContainer>
-          </Navigation>
+          <View>
+            <Navigation style={{ height: navHeight }}>
+              <NavigationButtonContainer align="left" />
+              <Title semiBold>{title}</Title>
+              <NavigationButtonContainer align="right">
+                <CloseButton onPress={handleClose} compact />
+              </NavigationButtonContainer>
+            </Navigation>
+            {!isContentScrollable && children}
+          </View>
         </GestureDetector>
-        {children}
+        {isContentScrollable && children}
       </ModalStyled>
     </Container>
   </KeyboardAvoidingViewStyled>

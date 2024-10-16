@@ -56,7 +56,7 @@ const BottomModal = ({
       <AnimatedScrollView
         onContentSizeChange={modalState.handleContentSizeChange}
         keyboardShouldPersistTaps="handled"
-        scrollEnabled={modalState.isScrollable}
+        scrollEnabled={modalState.isContentScrollable}
         scrollEventThrottle={16}
         contentContainerStyle={[
           contentContainerStyle,
