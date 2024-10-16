@@ -22,10 +22,8 @@ import { GestureDetector } from 'react-native-gesture-handler'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
-import { CloseButton } from '~/components/buttons/Button'
+import BottomModalHeader from '~/features/modals/BottomModalHeader'
 import { useBottomModalState } from '~/features/modals/useBottomModalState'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export interface BottomModalBaseProps extends ReturnType<typeof useBottomModalState> {
   modalId: number
@@ -62,13 +60,7 @@ const BottomModalBase = ({
         </HandleContainer>
         <GestureDetector gesture={panGesture}>
           <View>
-            <Navigation style={{ height: navHeight }}>
-              <NavigationButtonContainer align="left" />
-              <Title semiBold>{title}</Title>
-              <NavigationButtonContainer align="right">
-                <CloseButton onPress={handleClose} compact />
-              </NavigationButtonContainer>
-            </Navigation>
+            <BottomModalHeader title={title} height={navHeight} handleClose={handleClose} />
             {!isContentScrollable && children}
           </View>
         </GestureDetector>
@@ -125,22 +117,4 @@ const Handle = styled(Animated.View)`
   border-radius: 8px;
   background-color: ${({ theme }) => theme.border.primary};
   margin-top: -15px;
-`
-
-const Title = styled(AppText)`
-  flex: 1;
-  text-align: center;
-`
-
-const Navigation = styled(Animated.View)`
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 ${DEFAULT_MARGIN - 1}px;
-`
-
-const NavigationButtonContainer = styled.View<{ align: 'right' | 'left' }>`
-  width: 10%;
-  flex-direction: row;
-  justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : 'flex-start')};
 `
