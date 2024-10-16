@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH } from '@alephium/token-list'
+import { Sparkles } from 'lucide-react'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -27,7 +28,7 @@ import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
-import ForgetAddress from '@/features/addressDeletion/ForgetAddressButton'
+import ForgetAddressSection from '@/features/addressDeletion/ForgetAddressSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { AddressModalProps } from '@/features/modals/modalTypes'
@@ -115,12 +116,21 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
           <HorizontalDivider narrow />
         </>
       )}
+
       <KeyValueInput
         label={t('Sweep address')}
         description={t('Sweep all the unlocked funds of this address to another address.')}
+        noHorizontalPadding
         InputComponent={
           <SweepButton>
-            <Button short wide onClick={openSweepModal} disabled={!isSweepButtonEnabled}>
+            <Button
+              short
+              wide
+              onClick={openSweepModal}
+              disabled={!isSweepButtonEnabled}
+              style={{ minWidth: 120 }}
+              Icon={Sparkles}
+            >
               {t('Sweep')}
             </Button>
 
@@ -132,9 +142,14 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
           </SweepButton>
         }
       />
+
       <HorizontalDivider narrow />
+
+      <ForgetAddressSection addressHash={addressHash} addressName={getName(address)} />
+
+      <HorizontalDivider narrow />
+
       <ModalFooterButtons>
-        <ForgetAddress addressHash={addressHash} addressName={getName(address)} />
         <ModalFooterButton role="secondary" onClick={onClose}>
           {t('Cancel')}
         </ModalFooterButton>

@@ -16,19 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { memo } from 'react'
+import styled from 'styled-components'
 
-import useFetchWalletWorth from '@/api/apiDataHooks/wallet/useFetchWalletWorth'
-import WorthOverview from '@/components/WorthOverview'
+import Amount from '@/components/Amount'
 
-interface WalletWorthProps {
+interface WorthOverviewProps {
+  worth: number
+  isLoading: boolean
   overrideWorth?: number
 }
 
-const WalletWorth = memo((props: WalletWorthProps) => {
-  const { data: worth, isLoading } = useFetchWalletWorth()
+const WorthOverview = ({ overrideWorth, isLoading, worth }: WorthOverviewProps) => (
+  <WorthOverviewStyled value={overrideWorth ?? worth} isFiat isLoading={isLoading} loaderHeight={32} tabIndex={0} />
+)
 
-  return <WorthOverview worth={worth} isLoading={isLoading} {...props} />
-})
+export default WorthOverview
 
-export default WalletWorth
+const WorthOverviewStyled = styled(Amount)`
+  font-size: 34px;
+  font-weight: var(--fontWeight-bold);
+`

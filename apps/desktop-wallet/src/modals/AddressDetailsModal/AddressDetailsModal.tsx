@@ -20,6 +20,7 @@ import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import AmountsOverviewPanel from '@/components/AmountsOverviewPanel'
 import Box from '@/components/Box'
 import { ShortcutButtonsGroupAddress } from '@/components/Buttons/ShortcutButtons'
 import QRCode from '@/components/QRCode'
@@ -28,7 +29,6 @@ import { AddressModalProps } from '@/features/modals/modalTypes'
 import AddressTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/AddressTransactionsList'
 import AddressDetailsModalHeader from '@/modals/AddressDetailsModal/AddressDetailsModalHeader'
 import SideModal from '@/modals/SideModal'
-import AmountsOverviewPanel from '@/pages/UnlockedWallet/OverviewPage/AmountsOverviewPanel'
 
 const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
