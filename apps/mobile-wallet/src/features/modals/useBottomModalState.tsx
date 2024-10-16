@@ -27,7 +27,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 type BottomModalPositions = 'minimised' | 'maximised' | 'closing'
 
-interface UseBottomModalStateParams {
+export interface UseBottomModalStateParams {
   modalId: number
   navHeight: number
   maximisedContent?: boolean
