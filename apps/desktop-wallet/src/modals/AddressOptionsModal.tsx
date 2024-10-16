@@ -120,6 +120,7 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
       <KeyValueInput
         label={t('Sweep address')}
         description={t('Sweep all the unlocked funds of this address to another address.')}
+        noHorizontalPadding
         InputComponent={
           <SweepButton>
             <Button

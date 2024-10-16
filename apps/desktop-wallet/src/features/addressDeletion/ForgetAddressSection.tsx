@@ -51,6 +51,7 @@ const ForgetAddressSection = ({ addressHash, addressName }: ForgetAddressSection
       description={`${t('Declutter your wallet by removing this address from your lists.')} ${t(
         'Forgetting addresses does not delete your assets in them.'
       )}`}
+      noHorizontalPadding
       InputComponent={
         <div
           data-tooltip-id="default"
