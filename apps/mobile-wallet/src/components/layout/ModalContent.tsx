@@ -51,11 +51,12 @@ export const ModalContent = ({
     <GHScrollView
       {...scrollDefaultProps}
       {...props}
-      hitSlop={undefined}
       contentContainerStyle={getDefaultContentContainerStyle({
         verticalGap,
         contentContainerStyle: [contentContainerStyle, { paddingBottom: insets.bottom }]
       })}
+      // TODO: Remove when react-native-gesture-handler is updated to 2.17.X or above (after expo-doctor allows it)
+      hitSlop={undefined}
     >
       {children}
     </GHScrollView>
@@ -78,6 +79,7 @@ export const ModalFlatListContent = <T,>({
       })}
       {...scrollDefaultProps}
       {...props}
+      // TODO: Remove when react-native-gesture-handler is updated to 2.17.X or above (after expo-doctor allows it)
       hitSlop={undefined}
     >
       {children}
