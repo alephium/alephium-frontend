@@ -16,13 +16,25 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import './shim'
-import '~/features/localization/i18n'
-import './setupErrorHandling'
-
 import * as Sentry from '@sentry/react-native'
-import { registerRootComponent } from 'expo'
+import { Alert, Linking } from 'react-native'
 
-import App from '~/App'
+if (!__DEV__) {
+  Sentry.init({
+    dsn: 'https://d369e561c12a0bbbbe1ba386854363ff@o4508131914874880.ingest.de.sentry.io/4508131917430864'
+  })
 
-registerRootComponent(__DEV__ ? App : Sentry.wrap(App))
+  ErrorUtils.setGlobalHandler((error, isFatal) => {
+    console.error('A global error occurred:', error)
+
+    Sentry.captureException(error, { data: { isFatal } })
+
+    Alert.alert('An error occurred', 'We are working on fixing this.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Send report',
+        onPress: () => Linking.openURL(`mailto:developer@alephium.org?subject=Crash report&body=${error}`)
+      }
+    ])
+  })
+}
