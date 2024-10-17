@@ -18,22 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import './shim'
 import '~/features/localization/i18n'
+import './setupErrorHandling'
 
-import * as Sentry from '@sentry/react-native'
 import { registerRootComponent } from 'expo'
-
-if (!__DEV__)
-  Sentry.init({
-    dsn: 'https://d369e561c12a0bbbbe1ba386854363ff@o4508131914874880.ingest.de.sentry.io/4508131917430864'
-  })
-
-ErrorUtils.setGlobalHandler((error, isFatal) => {
-  console.error('A global error occurred:', error)
-
-  if (!__DEV__) Sentry.captureException(error, { data: { isFatal } })
-
-  alert(`An error occurred. Please let us know! ${error}`)
-})
 
 import App from '~/App'
 
