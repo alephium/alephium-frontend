@@ -16,8 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AddressHash } from '@alephium/shared'
 import { MoreVertical } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
@@ -27,19 +28,16 @@ import { sectionChildrenVariants } from '@/components/PageComponents/PageContain
 import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
-import { Address } from '@/types/addresses'
-import { addressHasAssets, filterAddressesWithoutAssets } from '@/utils/addresses'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface AddressSelectProps {
   id: string
   title: string
-  options: Address[]
-  onAddressChange: (address: Address) => void
-  defaultAddress?: Address
+  addressOptions: AddressHash[]
+  onAddressChange: (address: AddressHash) => void
+  defaultAddress?: AddressHash
   label?: string
   disabled?: boolean
-  hideAddressesWithoutAssets?: boolean
   simpleMode?: boolean
   noMargin?: boolean
   className?: string
@@ -47,7 +45,7 @@ interface AddressSelectProps {
 }
 
 function AddressSelect({
-  options,
+  addressOptions,
   title,
   label,
   disabled,
@@ -55,7 +53,6 @@ function AddressSelect({
   className,
   id,
   onAddressChange,
-  hideAddressesWithoutAssets,
   noMargin,
   simpleMode = false
 }: AddressSelectProps) {
@@ -63,19 +60,7 @@ function AddressSelect({
 
   const [canBeAnimated, setCanBeAnimated] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
-  const addresses = hideAddressesWithoutAssets ? filterAddressesWithoutAssets(options) : options
-  const defaultAddressHasAssets = defaultAddress && addressHasAssets(defaultAddress)
-
-  let initialAddress = defaultAddress
-  if (hideAddressesWithoutAssets) {
-    if (!defaultAddressHasAssets && addresses.length > 0) {
-      initialAddress = addresses[0]
-    }
-  } else if (!initialAddress && addresses.length > 0) {
-    initialAddress = addresses[0]
-  }
-
-  const [address, setAddress] = useState(initialAddress)
+  const [selectedAddress, setSelectedAddress] = useState(defaultAddress)
 
   const handleAddressSelectModalClose = () => {
     setIsAddressSelectModalOpen(false)
@@ -84,19 +69,21 @@ function AddressSelect({
 
   const openAddressSelectModal = () => !disabled && setIsAddressSelectModalOpen(true)
 
-  useEffect(() => {
-    if (!address && addresses.length === 1) {
-      setAddress(addresses[0])
-    }
-  }, [addresses, setAddress, address])
+  const handleAddressSelect = useCallback(
+    (addressHash: AddressHash) => {
+      setSelectedAddress(addressHash)
+      onAddressChange(addressHash)
+    },
+    [onAddressChange]
+  )
 
   useEffect(() => {
-    if (address && address.hash !== defaultAddress?.hash) {
-      onAddressChange(address)
-    }
-  }, [address, defaultAddress, onAddressChange])
+    const selectedAddressIsNotPartOfOptions = !addressOptions.some((hash) => hash === selectedAddress)
 
-  if (!address) return null
+    if (selectedAddressIsNotPartOfOptions) handleAddressSelect(addressOptions[0])
+  }, [handleAddressSelect, addressOptions, selectedAddress])
+
+  if (!selectedAddress) return null
 
   return (
     <>
@@ -113,7 +100,7 @@ function AddressSelect({
         noMargin={noMargin}
       >
         {label && (
-          <InputLabel isElevated={!!address} htmlFor={id}>
+          <InputLabel isElevated={!!selectedAddress} htmlFor={id}>
             {label}
           </InputLabel>
         )}
@@ -129,22 +116,20 @@ function AddressSelect({
           disabled={disabled}
           id={id}
           simpleMode={simpleMode}
-          value={address.hash}
+          value={selectedAddress}
           label={label}
         >
-          {(!hideAddressesWithoutAssets || options.find((option) => option.hash === address.hash)) && (
-            <AddressBadge addressHash={address.hash} appendHash />
-          )}
+          <AddressBadge addressHash={selectedAddress} appendHash />
         </ClickableInput>
       </AddressSelectContainer>
       <ModalPortal>
         {isAddressSelectModalOpen && (
           <AddressSelectModal
             title={title}
-            options={options}
-            onAddressSelect={setAddress}
+            addressOptions={addressOptions}
+            onAddressSelect={handleAddressSelect}
             onClose={handleAddressSelectModalClose}
-            selectedAddress={address}
+            defaultSelectedAddress={selectedAddress}
           />
         )}
       </ModalPortal>

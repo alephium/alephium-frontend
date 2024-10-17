@@ -16,32 +16,30 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
-import { useState } from 'react'
+import { ALPH } from '@alephium/token-list'
+import { Sparkles } from 'lucide-react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddressBalancesAlph'
 import AddressMetadataForm from '@/components/AddressMetadataForm'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
+import ForgetAddressSection from '@/features/addressDeletion/ForgetAddressSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { useAppSelector } from '@/hooks/redux'
-import AddressSweepModal from '@/modals/AddressSweepModal'
+import { closeModal, openModal } from '@/features/modals/modalActions'
+import { AddressModalProps } from '@/features/modals/modalTypes'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import ModalPortal from '@/modals/ModalPortal'
 import { selectAddressByHash, selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { saveAddressSettings } from '@/storage/addresses/addressesStorageUtils'
-import { getAvailableBalance, getName } from '@/utils/addresses'
+import { getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
-interface AddressOptionsModalProps {
-  addressHash: AddressHash
-  onClose: () => void
-}
-
-const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps) => {
+const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const { sendAnalytics } = useAnalytics()
@@ -49,19 +47,24 @@ const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps)
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const addresses = useAppSelector(selectAllAddresses)
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const activeWalletId = useAppSelector((s) => s.activeWallet.id)
+  const dispatch = useAppDispatch()
+
+  const { data: addressAlphBalances } = useFetchAddressBalancesAlph({ addressHash })
 
   const [addressLabel, setAddressLabel] = useState({
     title: address?.label ?? '',
     color: address?.color || getRandomLabelColor()
   })
   const [isDefaultAddress, setIsDefaultAddress] = useState(address?.isDefault ?? false)
-  const [isAddressSweepModalOpen, setIsAddressSweepModalOpen] = useState(false)
 
-  if (!address || !defaultAddress) return null
+  if (!address || !defaultAddress || !activeWalletId) return null
 
-  const availableBalance = getAvailableBalance(address)
+  const availableBalance = addressAlphBalances?.availableBalance
   const isDefaultAddressToggleEnabled = defaultAddress.hash !== address.hash
-  const isSweepButtonEnabled = addresses.length > 1 && availableBalance > 0
+  const isSweepButtonEnabled = addresses.length > 1 && availableBalance !== undefined && availableBalance > 0
+
+  const onClose = () => dispatch(closeModal({ id }))
 
   const onSaveClick = () => {
     try {
@@ -82,6 +85,14 @@ const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps)
     }
   }
 
+  const openSweepModal = () =>
+    dispatch(
+      openModal({
+        name: 'AddressSweepModal',
+        props: { addressHash, onSuccessfulSweep: onClose }
+      })
+    )
+
   let defaultAddressMessage = `${t('Default address for sending transactions.')} `
   defaultAddressMessage += isDefaultAddressToggleEnabled
     ? t('Note that if activated, "{{ address }}" will not be the default address anymore.', {
@@ -90,61 +101,63 @@ const AddressOptionsModal = ({ addressHash, onClose }: AddressOptionsModalProps)
     : t('To remove this address from being the default address, you must set another one as default first.')
 
   return (
-    <>
-      <CenteredModal title={t('Address options')} subtitle={getName(address)} onClose={onClose}>
-        {!isPassphraseUsed && (
-          <>
-            <AddressMetadataForm
-              label={addressLabel}
-              setLabel={setAddressLabel}
-              defaultAddressMessage={defaultAddressMessage}
-              isDefault={isDefaultAddress}
-              setIsDefault={setIsDefaultAddress}
-              isDefaultAddressToggleEnabled={isDefaultAddressToggleEnabled}
-              singleAddress
-            />
-            <HorizontalDivider narrow />
-          </>
-        )}
-        <KeyValueInput
-          label={t('Sweep address')}
-          description={t('Sweep all the unlocked funds of this address to another address.')}
-          InputComponent={
-            <SweepButton>
-              <Button
-                short
-                wide
-                onClick={() => isSweepButtonEnabled && setIsAddressSweepModalOpen(true)}
-                disabled={!isSweepButtonEnabled}
-              >
-                {t('Sweep')}
-              </Button>
-              <AvailableAmount tabIndex={0}>
-                {t('Available')}: <Amount value={availableBalance} color={theme.font.secondary} />
-              </AvailableAmount>
-            </SweepButton>
-          }
-        />
-        <HorizontalDivider narrow />
-        <ModalFooterButtons>
-          <ModalFooterButton role="secondary" onClick={onClose}>
-            {t('Cancel')}
-          </ModalFooterButton>
-          <ModalFooterButton onClick={onSaveClick}>{t('Save')}</ModalFooterButton>
-        </ModalFooterButtons>
-      </CenteredModal>
-      <ModalPortal>
-        {isAddressSweepModalOpen && (
-          <AddressSweepModal
-            sweepAddress={address}
-            onClose={() => setIsAddressSweepModalOpen(false)}
-            onSuccessfulSweep={onClose}
+    <CenteredModal title={t('Address options')} subtitle={getName(address)} id={id}>
+      {!isPassphraseUsed && (
+        <>
+          <AddressMetadataForm
+            label={addressLabel}
+            setLabel={setAddressLabel}
+            defaultAddressMessage={defaultAddressMessage}
+            isDefault={isDefaultAddress}
+            setIsDefault={setIsDefaultAddress}
+            isDefaultAddressToggleEnabled={isDefaultAddressToggleEnabled}
+            singleAddress
           />
-        )}
-      </ModalPortal>
-    </>
+          <HorizontalDivider narrow />
+        </>
+      )}
+
+      <KeyValueInput
+        label={t('Sweep address')}
+        description={t('Sweep all the unlocked funds of this address to another address.')}
+        noHorizontalPadding
+        InputComponent={
+          <SweepButton>
+            <Button
+              short
+              wide
+              onClick={openSweepModal}
+              disabled={!isSweepButtonEnabled}
+              style={{ minWidth: 120 }}
+              Icon={Sparkles}
+            >
+              {t('Sweep')}
+            </Button>
+
+            {availableBalance !== undefined && (
+              <AvailableAmount tabIndex={0}>
+                {t('Available')}: <Amount tokenId={ALPH.id} value={availableBalance} color={theme.font.secondary} />
+              </AvailableAmount>
+            )}
+          </SweepButton>
+        }
+      />
+
+      <HorizontalDivider narrow />
+
+      <ForgetAddressSection addressHash={addressHash} addressName={getName(address)} />
+
+      <HorizontalDivider narrow />
+
+      <ModalFooterButtons>
+        <ModalFooterButton role="secondary" onClick={onClose}>
+          {t('Cancel')}
+        </ModalFooterButton>
+        <ModalFooterButton onClick={onSaveClick}>{t('Save')}</ModalFooterButton>
+      </ModalFooterButtons>
+    </CenteredModal>
   )
-}
+})
 
 export default AddressOptionsModal
 

@@ -16,32 +16,44 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT, selectNFTById } from '@alephium/shared'
+import { NFT } from '@alephium/shared'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
+import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
+import Ellipsed from '@/components/Ellipsed'
 import NFTThumbnail from '@/components/NFTThumbnail'
+import SkeletonLoader from '@/components/SkeletonLoader'
 import Truncate from '@/components/Truncate'
-import { useAppSelector } from '@/hooks/redux'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch } from '@/hooks/redux'
 
 interface NFTCardProps {
   nftId: NFT['id']
-  onClick?: () => void
 }
 
-const NFTCard = ({ nftId, onClick }: NFTCardProps) => {
-  const nft = useAppSelector((s) => selectNFTById(s, nftId))
+const NFTCard = ({ nftId }: NFTCardProps) => {
+  const dispatch = useAppDispatch()
 
-  if (!nft) return null
+  const { data: nft, isLoading } = useFetchNft({ id: nftId })
+
+  const openNFTDetailsModal = () => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
 
   return (
-    <NFTCardStyled onClick={onClick}>
+    <NFTCardStyled onClick={openNFTDetailsModal}>
       <CardContent>
         <NFTPictureContainer>
           <NFTThumbnail nftId={nftId} size="100%" />
         </NFTPictureContainer>
-        <NFTName>{nft.name || '-'}</NFTName>
+
+        {isLoading ? (
+          <SkeletonLoader height="15px" />
+        ) : nft?.name ? (
+          <NFTName>{nft.name}</NFTName>
+        ) : (
+          <EllipsedStyled text={nftId} />
+        )}
       </CardContent>
     </NFTCardStyled>
   )
@@ -67,8 +79,9 @@ const CardContent = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 10px 10px 0 10px;
+  padding: 10px;
   overflow: hidden;
+  gap: 10px;
 `
 
 const NFTPictureContainer = styled(motion.div)`
@@ -82,7 +95,10 @@ const NFTPictureContainer = styled(motion.div)`
 const NFTName = styled(Truncate)`
   text-align: center;
   font-weight: 600;
-  margin: 10px 0;
   max-width: 100%;
   text-overflow: ellipsis;
+`
+
+const EllipsedStyled = styled(Ellipsed)`
+  text-align: center;
 `

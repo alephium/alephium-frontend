@@ -22,7 +22,7 @@ import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import i18n from '@/i18n'
 import { ThemeType } from '@/types/settings'
 import { OptionalMessage, SnackbarMessage } from '@/types/snackbar'
-import { PendingTransaction } from '@/types/transactions'
+import { SentTransaction } from '@/types/transactions'
 
 type ModalId = string
 
@@ -40,10 +40,6 @@ export const modalOpened = createAction<ModalId>('app/modalOpened')
 
 export const modalClosed = createAction('app/modalClosed')
 
-export const addressesPageInfoMessageClosed = createAction('app/addressesPageInfoMessageClosed')
-
-export const transfersPageInfoMessageClosed = createAction('app/transfersPageInfoMessageClosed')
-
 export const osThemeChangeDetected = createAction<ThemeType>('app/osThemeChangeDetected')
 
 export const devModeShortcutDetected = createAction<{ activate: boolean }>('app/devModeShortcutDetected')
@@ -56,7 +52,13 @@ export const walletConnectCacheCleared = createAction('app/walletConnectCacheCle
 
 export const walletConnectCacheClearFailed = createAction('app/walletConnectCacheClearFailed')
 
-export const receiveTestnetTokens = createAsyncThunk<PendingTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
+export const toggleAppLoading = createAction<boolean>('app/toggleAppLoading')
+
+export const appDataCleared = createAction('app/appDataCleared')
+
+export const appDataClearFailed = createAction('app/appDataClearFailed')
+
+export const receiveTestnetTokens = createAsyncThunk<SentTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
   'assets/receiveTestnetTokens',
   async (destinationAddress: AddressHash, { rejectWithValue, fulfillWithValue }) => {
     const response = await exponentialBackoffFetchRetry('https://faucet.testnet.alephium.org/send', {
@@ -78,14 +80,14 @@ export const receiveTestnetTokens = createAsyncThunk<PendingTransaction, Address
 
     const hash = responseURL.match(/\/([a-fA-F0-9]+)$/)?.[1] || ''
 
-    const pendingTransaction: PendingTransaction = {
+    const pendingTransaction: SentTransaction = {
       hash: hash,
       fromAddress: 'Faucet',
       toAddress: destinationAddress,
       amount: undefined,
       timestamp: new Date().getTime(),
-      status: 'pending',
-      type: 'transfer'
+      status: 'sent',
+      type: 'faucet'
     }
 
     return fulfillWithValue(pendingTransaction)

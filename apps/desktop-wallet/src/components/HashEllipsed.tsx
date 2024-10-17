@@ -29,6 +29,7 @@ interface HashEllipsedProps extends HTMLAttributes<HTMLDivElement> {
   disableA11y?: boolean
   disableCopy?: boolean
   className?: string
+  showSnackbarOnCopied?: boolean
 }
 
 const HashEllipsed = ({
@@ -37,6 +38,7 @@ const HashEllipsed = ({
   disableCopy = false,
   tooltipText,
   className,
+  showSnackbarOnCopied = true,
   ...props
 }: HashEllipsedProps) => {
   const { t } = useTranslation()
@@ -51,6 +53,7 @@ const HashEllipsed = ({
       tooltip={tooltipText ?? t('Copy address')}
       disableA11y={disableA11y}
       className={className}
+      showSnackbarOnCopied={showSnackbarOnCopied}
     >
       <Ellipsed text={hash} {...props} />
     </ClipboardButton>

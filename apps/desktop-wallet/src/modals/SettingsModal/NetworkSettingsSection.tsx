@@ -17,14 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-  client,
   customNetworkSettingsSaved,
   getNetworkName,
   NetworkName,
   NetworkNames,
   networkPresetSwitched,
   NetworkSettings,
-  networkSettingsPresets
+  networkSettingsPresets,
+  throttledClient
 } from '@alephium/shared'
 import { AlertOctagon } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
@@ -125,7 +125,7 @@ const NetworkSettingsSection = () => {
         }
 
         if (networkId === undefined) {
-          const response = await client.node.infos.getInfosChainParams()
+          const response = await throttledClient.node.infos.getInfosChainParams()
           networkId = response.networkId
         }
 

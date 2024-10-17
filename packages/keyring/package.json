@@ -30,7 +30,6 @@
     "@alephium/typescript-config": "workspace:*",
     "@types/jest": "^29.4.0",
     "@types/node": "^16.10.1",
-    "@types/rewire": "^2.5.28",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "babel-eslint": "^10.1.0",
@@ -44,7 +43,6 @@
     "eslint-plugin-unused-imports": "^3.0.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "rewire": "^6.0.0",
     "ts-jest": "^29.2.5",
     "tslib": "^2.3.1",
     "typescript": "^5.3.3"

@@ -17,90 +17,73 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
+import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
 import { useAppSelector } from '@/hooks/redux'
-import { Address } from '@/types/addresses'
-import { addressHasAssets, filterAddresses, filterAddressesWithoutAssets } from '@/utils/addresses'
+import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 
 interface AddressSelectModalProps {
   title: string
-  options: Address[]
-  onAddressSelect: (address: Address) => void
+  addressOptions: AddressHash[]
+  onAddressSelect: (address: AddressHash) => void
   onClose: () => void
-  selectedAddress?: Address
+  defaultSelectedAddress?: AddressHash
   emptyListPlaceholder?: string
-  hideAddressesWithoutAssets?: boolean
 }
 
 const AddressSelectModal = ({
   title,
-  options,
+  addressOptions,
   onAddressSelect,
   onClose,
-  selectedAddress,
-  emptyListPlaceholder,
-  hideAddressesWithoutAssets
+  defaultSelectedAddress,
+  emptyListPlaceholder
 }: AddressSelectModalProps) => {
   const { t } = useTranslation()
-  const fungibleTokens = useAppSelector((state) => state.fungibleTokens.entities)
+  const addresses = useAppSelector(selectAllAddresses)
 
-  const addresses = hideAddressesWithoutAssets ? filterAddressesWithoutAssets(options) : options
-  const [filteredAddresses, setFilteredAddresses] = useState(addresses)
-  const selectedAddressHasAssets = selectedAddress && addressHasAssets(selectedAddress)
+  const [searchInput, setSearchInput] = useState('')
+  const filteredAddresses = useFilterAddressesByText(searchInput.toLowerCase())
 
-  let initialAddress = selectedAddress
-  if (hideAddressesWithoutAssets) {
-    if (!selectedAddressHasAssets && addresses.length > 0) {
-      initialAddress = addresses[0]
-    }
-  } else if (!initialAddress && addresses.length > 0) {
-    initialAddress = addresses[0]
-  }
-
-  const [address, setAddress] = useState(initialAddress)
-
-  const addressSelectOptions: SelectOption<AddressHash>[] = addresses.map((address) => ({
-    value: address.hash,
-    label: address.label ?? address.hash
+  const addressSelectOptions: SelectOption<AddressHash>[] = addressOptions.map((addressHash) => ({
+    value: addressHash,
+    label: addresses.find((address) => address.hash === addressHash)?.label ?? addressHash
   }))
 
-  const selectAddress = (option: SelectOption<AddressHash>) => {
-    const selectedAddress = addresses.find((address) => address.hash === option.value)
+  const defaultSelectedOption = addressSelectOptions.find((a) => a.value === defaultSelectedAddress)
+  const [selectedOption, setSelectedOption] = useState(defaultSelectedOption)
 
-    selectedAddress && setAddress(selectedAddress)
-    selectedAddress && onAddressSelect(selectedAddress)
-  }
+  const handleAddressSelect = useCallback(
+    (option: SelectOption<AddressHash>) => {
+      setSelectedOption(option)
+      onAddressSelect(option.value)
+    },
+    [onAddressSelect]
+  )
 
-  const handleSearch = (searchInput: string) =>
-    setFilteredAddresses(filterAddresses(addresses, searchInput.toLowerCase(), fungibleTokens))
+  useEffect(() => {
+    const selectedOptionIsNotPartOfOptions = !addressOptions.some((option) => option === selectedOption?.value)
+
+    if (selectedOptionIsNotPartOfOptions) handleAddressSelect(addressSelectOptions[0])
+  }, [addressSelectOptions, handleAddressSelect, addressOptions, selectedOption?.value])
 
   return (
     <SelectOptionsModal
       title={title}
       options={addressSelectOptions}
-      selectedOption={addressSelectOptions.find((a) => a.value === address?.hash)}
-      showOnly={filteredAddresses.map((address) => address.hash)}
-      setValue={selectAddress}
+      selectedOption={selectedOption}
+      showOnly={filteredAddresses}
+      setValue={handleAddressSelect}
       onClose={onClose}
-      onSearchInput={handleSearch}
+      onSearchInput={setSearchInput}
       searchPlaceholder={t('Search for name or a hash...')}
       minWidth={620}
-      optionRender={(option, isSelected) => {
-        const address = addresses.find((address) => address.hash === option.value)
-        if (address) return <SelectOptionAddress address={address} isSelected={isSelected} />
-      }}
-      emptyListPlaceholder={
-        emptyListPlaceholder ||
-        (hideAddressesWithoutAssets
-          ? t(
-              'There are no addresses with available balance. Please, send some funds to one of your addresses, and try again.'
-            )
-          : t('There are no available addresses.'))
-      }
+      optionRender={(option, isSelected) => <SelectOptionAddress addressHash={option.value} isSelected={isSelected} />}
+      emptyListPlaceholder={emptyListPlaceholder || t('There are no available addresses.')}
       floatingOptions
     />
   )
