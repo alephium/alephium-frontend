@@ -118,7 +118,15 @@ export default {
         }
       ],
       'expo-localization',
-      'expo-secure-store'
+      'expo-secure-store',
+      [
+        '@sentry/react-native/expo',
+        {
+          url: 'https://sentry.io/',
+          project: 'alephium-mobile-wallet',
+          organization: 'alephium'
+        }
+      ]
     ],
     extra: {
       eas: {
