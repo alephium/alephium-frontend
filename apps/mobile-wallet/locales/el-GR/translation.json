@@ -303,7 +303,7 @@
   "Use max": "Χρήση μέγιστου",
   "Assets": "Περιουσιακά στοιχεία",
   "With Alephium, you can send multiple assets in one transaction.": "Με το Alephium, μπορείτε να στείλετε πολλαπλά περιουσιακά στοιχεία σε μία συναλλαγή.",
-  "This is not a valid Alephium address": "Αυτή η διεύθυνση Alephium δεν είναι έγκυρη",
+  "This is not a valid Alephium address.": "Αυτή η διεύθυνση Alephium δεν είναι έγκυρη.",
   "Please, double check that everything is correct before sending.": "Παρακαλώ, ελέγξτε δύο φορές ότι όλα είναι σωστά πριν την αποστολή.",
   "Settings": "Ρυθμίσεις",
   "General": "Γενικά",
