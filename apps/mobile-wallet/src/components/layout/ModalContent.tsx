@@ -51,6 +51,7 @@ export const ModalContent = ({
     <GHScrollView
       {...scrollDefaultProps}
       {...props}
+      hitSlop={undefined}
       contentContainerStyle={getDefaultContentContainerStyle({
         verticalGap,
         contentContainerStyle: [contentContainerStyle, { paddingBottom: insets.bottom }]
@@ -77,6 +78,7 @@ export const ModalFlatListContent = <T,>({
       })}
       {...scrollDefaultProps}
       {...props}
+      hitSlop={undefined}
     >
       {children}
     </GHFlatList>

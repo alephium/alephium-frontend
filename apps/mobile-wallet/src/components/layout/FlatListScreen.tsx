@@ -78,6 +78,7 @@ const FlatListScreen = <T,>({
         ]}
         style={[{ overflow: SCREEN_OVERFLOW }, style]}
         {...props}
+        hitSlop={undefined}
       />
     </Screen>
   )
