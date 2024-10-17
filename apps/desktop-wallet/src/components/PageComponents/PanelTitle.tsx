@@ -47,7 +47,7 @@ const PanelTitle: FC<PanelTitleProps> = ({
       {onBackButtonClick && (
         <BackArrow
           onClick={onBackButtonClick}
-          onKeyPress={onBackButtonClick}
+          onKeyDown={onBackButtonClick}
           strokeWidth={3}
           role="button"
           tabIndex={0}

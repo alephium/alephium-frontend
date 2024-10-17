@@ -1,5 +1,11 @@
 # @alephium/mobile-wallet
 
+## 1.1.9
+
+### Patch Changes
+
+- abb7ffe: Integrate Sentry for improved crash reporting
+
 ## 1.1.8
 
 ### Patch Changes

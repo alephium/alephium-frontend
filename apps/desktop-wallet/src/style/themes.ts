@@ -25,7 +25,7 @@ export const lightTheme: DefaultTheme = {
     primary: '#fcfdff',
     secondary: '#fbfbfb',
     tertiary: '#f9f9f9',
-    contrast: '#212126',
+    contrast: '#000',
     background1: '#f7f7f7',
     background2: '#f0f0f0',
     hover: colord('#ffffff').darken(0.015).toHex(),
@@ -50,10 +50,10 @@ export const lightTheme: DefaultTheme = {
     tertiary: '0 0 50px rgba(0, 0, 0, 0.15)'
   },
   global: {
-    accent: '#598bed',
+    accent: '#3d6fec',
     complementary: '#b07dcb',
     alert: '#e53b24',
-    valid: '#19b660',
+    valid: '#189b3c',
     highlight: '#e5ae0e',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
   }
@@ -90,7 +90,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: '0 0 50px rgb(0, 0, 0)'
   },
   global: {
-    accent: '#598bed',
+    accent: '#3c71d9',
     complementary: '#d488eb',
     alert: '#ed4a34',
     valid: '#3ed282',

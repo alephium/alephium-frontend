@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { colord } from 'colord'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 import { Eye, EyeOff, WifiOff } from 'lucide-react'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -29,13 +28,12 @@ import CompactToggle from '@/components/Inputs/CompactToggle'
 import NetworkSwitch from '@/components/NetworkSwitch'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useScrollContext } from '@/contexts/scroll'
-import { useWalletConnectContext } from '@/contexts/walletconnect'
+import { openModal } from '@/features/modals/modalActions'
+import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import { ReactComponent as WalletConnectLogo } from '@/images/wallet-connect-logo.svg'
-import ModalPortal from '@/modals/ModalPortal'
-import WalletConnectModal from '@/modals/WalletConnectModal'
-import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { discreetModeToggled } from '@/storage/settings/settingsActions'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
 
@@ -57,10 +55,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
   const networkStatus = useAppSelector((s) => s.network.status)
-  const addresses = useAppSelector(selectAllAddresses)
   const { activeSessions } = useWalletConnectContext()
-
-  const [isWalletConnectModalOpen, setIsWalletConnectModalOpen] = useState(false)
 
   const offlineText = t('The wallet is offline.')
 
@@ -81,79 +76,74 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
 
   if (invisible) return <motion.header id="app-header" className={className} />
 
+  const openWalletConnectModal = () => dispatch(openModal({ name: 'WalletConnectModal' }))
+
   return (
-    <>
-      <motion.header id="app-header" style={headerStyles} className={className}>
-        <Title style={titleStyles}>{title}</Title>
-        <HeaderButtons>
-          {networkStatus === 'offline' && (
-            <>
-              <OfflineIcon
-                tabIndex={0}
-                aria-label={offlineText}
-                data-tooltip-content={offlineText}
-                data-tooltip-id="default"
-              >
-                <WifiOff size={20} color={theme.global.alert} />
-              </OfflineIcon>
+    <motion.header id="app-header" style={headerStyles} className={className}>
+      <Title style={titleStyles}>{title}</Title>
+      <HeaderButtons>
+        {networkStatus === 'offline' && (
+          <>
+            <OfflineIcon
+              tabIndex={0}
+              aria-label={offlineText}
+              data-tooltip-content={offlineText}
+              data-tooltip-id="default"
+            >
+              <WifiOff size={20} color={theme.global.alert} />
+            </OfflineIcon>
 
-              <VerticalDivider />
-            </>
-          )}
-
-          {children && (
-            <>
-              {children}
-              <VerticalDivider />
-            </>
-          )}
-
-          <CompactToggle
-            toggled={discreetMode}
-            onToggle={toggleDiscreetMode}
-            IconOn={EyeOff}
-            IconOff={Eye}
-            data-tooltip-id="default"
-            data-tooltip-content={t('Discreet mode')}
-            short
-          />
-          <VerticalDivider />
-
-          {isWalletUnlocked && (
-            <>
-              <Button
-                transparent
-                squared
-                short
-                role="secondary"
-                onClick={() => setIsWalletConnectModalOpen(true)}
-                aria-label="WalletConnect"
-                isHighlighted={activeSessions.length > 0}
-                data-tooltip-id="default"
-                data-tooltip-content={t('Connect wallet to dApp')}
-              >
-                <WalletConnectLogoStyled />
-              </Button>
-              <VerticalDivider />
-            </>
-          )}
-
-          {defaultAddress && !isPassphraseUsed && (
-            <>
-              <DefaultAddressSwitch />
-              <VerticalDivider />
-            </>
-          )}
-
-          <NetworkSwitch />
-        </HeaderButtons>
-      </motion.header>
-      <ModalPortal>
-        {isWalletConnectModalOpen && addresses.length > 0 && (
-          <WalletConnectModal onClose={() => setIsWalletConnectModalOpen(false)} />
+            <VerticalDivider />
+          </>
         )}
-      </ModalPortal>
-    </>
+
+        {children && (
+          <>
+            {children}
+            <VerticalDivider />
+          </>
+        )}
+
+        <CompactToggle
+          toggled={discreetMode}
+          onToggle={toggleDiscreetMode}
+          IconOn={EyeOff}
+          IconOff={Eye}
+          data-tooltip-id="default"
+          data-tooltip-content={t('Discreet mode')}
+          short
+        />
+        <VerticalDivider />
+
+        {isWalletUnlocked && (
+          <>
+            <Button
+              transparent
+              squared
+              short
+              role="secondary"
+              onClick={openWalletConnectModal}
+              aria-label="WalletConnect"
+              isHighlighted={activeSessions.length > 0}
+              data-tooltip-id="default"
+              data-tooltip-content={t('Connect wallet to dApp')}
+            >
+              <WalletConnectLogoStyled />
+            </Button>
+            <VerticalDivider />
+          </>
+        )}
+
+        {defaultAddress && !isPassphraseUsed && (
+          <>
+            <DefaultAddressSwitch />
+            <VerticalDivider />
+          </>
+        )}
+
+        <NetworkSwitch />
+      </HeaderButtons>
+    </motion.header>
   )
 }
 

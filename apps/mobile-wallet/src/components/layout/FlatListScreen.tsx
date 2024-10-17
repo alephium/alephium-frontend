@@ -78,6 +78,8 @@ const FlatListScreen = <T,>({
         ]}
         style={[{ overflow: SCREEN_OVERFLOW }, style]}
         {...props}
+        // TODO: Remove when react-native-gesture-handler is updated to 2.17.X or above (after expo-doctor allows it)
+        hitSlop={undefined}
       />
     </Screen>
   )

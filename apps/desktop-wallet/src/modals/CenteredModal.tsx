@@ -29,6 +29,8 @@ import PanelTitle, { TitleContainer } from '@/components/PageComponents/PanelTit
 import Scrollbar from '@/components/Scrollbar'
 import Spinner from '@/components/Spinner'
 import Tooltip from '@/components/Tooltip'
+import { closeModal } from '@/features/modals/modalActions'
+import { useAppDispatch } from '@/hooks/redux'
 import useFocusOnMount from '@/hooks/useFocusOnMount'
 import ModalContainer, { ModalBackdrop, ModalContainerProps } from '@/modals/ModalContainer'
 
@@ -47,9 +49,9 @@ export interface CenteredModalProps extends ModalContainerProps {
 }
 
 const CenteredModal: FC<CenteredModalProps> = ({
+  id,
   title,
   subtitle,
-  onClose,
   focusMode,
   isLoading,
   header,
@@ -66,9 +68,12 @@ const CenteredModal: FC<CenteredModalProps> = ({
 }) => {
   const { t } = useTranslation()
   const elRef = useFocusOnMount<HTMLSpanElement>(skipFocusOnMount)
+  const dispatch = useAppDispatch()
+
+  const onClose = id ? () => dispatch(closeModal({ id })) : undefined
 
   return (
-    <ModalContainer onClose={onClose} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
+    <ModalContainer id={id} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
       <CenteredBox role="dialog" {...fadeInOutScaleFast} narrow={narrow}>
         <ModalHeader transparent={transparentHeader}>
           <TitleRow>
@@ -88,7 +93,14 @@ const CenteredModal: FC<CenteredModalProps> = ({
               </span>
               {subtitle && <ModalSubtitle>{subtitle}</ModalSubtitle>}
             </PanelTitle>
-            <CloseButton aria-label={t('Close')} squared role="secondary" transparent onClick={onClose} borderless>
+            <CloseButton
+              aria-label={t('Close')}
+              squared
+              role="secondary"
+              transparent
+              onClick={rest.onClose ?? onClose}
+              borderless
+            >
               <X />
             </CloseButton>
           </TitleRow>
@@ -120,7 +132,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
 
 export default CenteredModal
 
-export const ScrollableModalContent: FC = ({ children }) => (
+export const ScrollableModalContent = ({ children }: Pick<CenteredModalProps, 'children'>) => (
   <Scrollbar translateContentSizeYToHolder>
     <ModalContent>{children}</ModalContent>
   </Scrollbar>
@@ -195,11 +207,17 @@ const BackButton = styled(Button)`
   margin-left: var(--spacing-2);
 `
 
-export const ModalContent = styled.div`
+export const ModalContent = styled.div<{ noBottomPadding?: boolean }>`
   display: flex;
   flex-direction: column;
   padding: var(--spacing-4) var(--spacing-6);
   width: 100%;
+
+  ${({ noBottomPadding }) =>
+    noBottomPadding &&
+    css`
+      padding-bottom: 0;
+    `}
 `
 
 export const ModalFooterButtons = styled.div`

@@ -20,14 +20,13 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import AmountsOverviewPanel from '@/components/AmountsOverviewPanel'
 import Box from '@/components/Box'
-import ShortcutButtons from '@/components/Buttons/ShortcutButtons'
+import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import { TableHeader } from '@/components/Table'
-import TransactionList from '@/components/TransactionList'
-import AddressesContactsList from '@/pages/UnlockedWallet/OverviewPage/AddressesContactsList'
-import AmountsOverviewPanel from '@/pages/UnlockedWallet/OverviewPage/AmountsOverviewPanel'
-import AssetsList from '@/pages/UnlockedWallet/OverviewPage/AssetsList'
-import GreetingMessages from '@/pages/UnlockedWallet/OverviewPage/GreetingMessages'
+import { WalletTokensTabs } from '@/features/assetsLists/TokensTabs'
+import WalletLatestTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/WalletLatestTransactionsList'
+import AddressesList from '@/pages/UnlockedWallet/OverviewPage/AddressesList'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
 
@@ -37,32 +36,34 @@ interface OverviewPageProps {
 
 const maxPanelHeightInPx = 350
 
+let wasChartAnimatedOnce = false
+
 const OverviewPage = ({ className }: OverviewPageProps) => {
   const { t } = useTranslation()
 
-  const [showChart, setShowChart] = useState(false)
+  const [chartVisible, setIsChartVisible] = useState(wasChartAnimatedOnce)
+
+  const handleAnimationComplete = () => {
+    setIsChartVisible(true)
+    wasChartAnimatedOnce = true
+  }
 
   return (
-    <UnlockedWalletPage
-      className={className}
-      onAnimationComplete={() => setShowChart(true)}
-      onAnimationStart={() => setShowChart(false)}
-    >
-      <GreetingMessages />
-      <AmountsOverviewPanel showChart={showChart}>
+    <UnlockedWalletPage className={className} onAnimationComplete={() => handleAnimationComplete()}>
+      <AmountsOverviewPanel chartVisible={chartVisible} chartInitiallyHidden={!chartVisible}>
         <Shortcuts>
           <ShortcutsHeader title={t('Shortcuts')} />
           <ButtonsGrid>
-            <ShortcutButtons send receive lock walletSettings analyticsOrigin="overview_page" solidBackground />
+            <ShortcutButtonsGroupWallet lock settings analyticsOrigin="overview_page" solidBackground />
           </ButtonsGrid>
         </Shortcuts>
       </AmountsOverviewPanel>
       <UnlockedWalletPanel bottom top>
         <AssetAndAddressesRow>
-          <AssetsListStyled maxHeightInPx={maxPanelHeightInPx} />
-          <AddressesContactsListStyled maxHeightInPx={maxPanelHeightInPx} />
+          <WalletTokensTabsStyled maxHeightInPx={maxPanelHeightInPx} />
+          <AddressesListStyled maxHeightInPx={maxPanelHeightInPx} />
         </AssetAndAddressesRow>
-        <TransactionList title={t('Latest transactions')} limit={5} />
+        <WalletLatestTransactionsList />
       </UnlockedWalletPanel>
     </UnlockedWalletPage>
   )
@@ -77,11 +78,12 @@ const AssetAndAddressesRow = styled.div`
   gap: 30px;
 `
 
-const AssetsListStyled = styled(AssetsList)`
+const WalletTokensTabsStyled = styled(WalletTokensTabs)`
   flex: 2;
+  margin-bottom: 45px;
 `
 
-const AddressesContactsListStyled = styled(AddressesContactsList)`
+const AddressesListStyled = styled(AddressesList)`
   flex: 1;
 `
 

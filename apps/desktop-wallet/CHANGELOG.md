@@ -1,5 +1,23 @@
 # alephium-desktop-wallet
 
+## 2.4.0
+
+### Minor Changes
+
+- 61ab7c9: Improve data loading experience with offline storage
+
+### Patch Changes
+
+- f12de08: Replace data fetching library from Redux to Tanstack (React Query)
+- 47f4f2c: Warn user when wallet has too many addresses
+- 93225ad: Fix app crash on invalid received WalletConnect data
+- a8d5454: Display total transaction worth when sending
+- f12de08: Improve display of pending transactions
+- 312beb0: Allow user to delete addresses in bulk
+- 407cbf5: Display address derivation path in developer tools
+- 7161163: Improve NFT sending flow
+- f0acbad: Allow user to delete address from their address list
+
 ## 2.3.7
 
 ### Patch Changes

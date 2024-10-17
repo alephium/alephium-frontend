@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset } from '@alephium/shared'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { map } from 'lodash'
@@ -24,20 +23,16 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import ShortcutButtons from '@/components/Buttons/ShortcutButtons'
-import TransactionList from '@/components/TransactionList'
+import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import { useScrollContext } from '@/contexts/scroll'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import ModalPortal from '@/modals/ModalPortal'
-import ReceiveModal from '@/modals/ReceiveModal'
-import SendModalTransfer from '@/modals/SendModals/Transfer'
+import WalletTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/WalletTransactionsList'
+import { useAppSelector } from '@/hooks/redux'
 import FiltersPanel from '@/pages/UnlockedWallet/TransfersPage/FiltersPanel'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
-import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import { transfersPageInfoMessageClosed } from '@/storage/global/globalActions'
+import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { walletSidebarWidthPx } from '@/style/globalStyles'
-import { links } from '@/utils/links'
+import { TokenId } from '@/types/tokens'
 import { directionOptions } from '@/utils/transactions'
 
 interface TransfersPageProps {
@@ -46,23 +41,16 @@ interface TransfersPageProps {
 
 const TransfersPage = ({ className }: TransfersPageProps) => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-  const infoMessageClosed = useAppSelector((s) => s.global.transfersPageInfoMessageClosed)
   const addresses = useAppSelector(selectAllAddresses)
   const { scrollDirection } = useScrollContext()
-  const defaultAddress = useAppSelector(selectDefaultAddress)
 
   const [direction, setDirection] = useState(scrollDirection?.get())
   const [selectedAddresses, setSelectedAddresses] = useState(addresses)
   const [selectedDirections, setSelectedDirections] = useState(directionOptions)
-  const [selectedAssets, setSelectedAssets] = useState<Asset[]>()
-  const [isSendModalOpen, setIsSendModalOpen] = useState(false)
-  const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false)
-
-  const closeInfoMessage = () => dispatch(transfersPageInfoMessageClosed())
+  const [selectedTokensIds, setSelectedTokensIds] = useState<TokenId[]>()
 
   useEffect(() => {
-    scrollDirection?.onChange(setDirection)
+    scrollDirection?.on('change', setDirection)
 
     return () => scrollDirection?.destroy()
   }, [scrollDirection])
@@ -71,10 +59,6 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
     <UnlockedWalletPage
       title={t('Transfers')}
       subtitle={t('Browse your transaction history. Execute new transfers easily.')}
-      isInfoMessageVisible={!infoMessageClosed}
-      closeInfoMessage={closeInfoMessage}
-      infoMessageLink={links.faq}
-      infoMessage={t('Do you have questions about transfers? Click here!')}
       className={className}
     >
       <FiltersPanel
@@ -82,15 +66,14 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
         setSelectedAddresses={setSelectedAddresses}
         selectedDirections={selectedDirections}
         setSelectedDirections={setSelectedDirections}
-        selectedAssets={selectedAssets}
-        setSelectedAssets={setSelectedAssets}
+        selectedTokensIds={selectedTokensIds}
+        setSelectedTokensIds={setSelectedTokensIds}
       />
       <StyledUnlockedWalletPanel doubleTop bottom backgroundColor="background1">
-        <TransactionList
+        <WalletTransactionsList
           addressHashes={map(selectedAddresses, 'hash')}
           directions={map(selectedDirections, 'value')}
-          assetIds={map(selectedAssets, 'id')}
-          hideHeader
+          assetIds={selectedTokensIds}
         />
       </StyledUnlockedWalletPanel>
       <BottomRow
@@ -99,19 +82,10 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
       >
         <CornerButtons>
           <ButtonsGrid>
-            <ShortcutButtons receive send highlight analyticsOrigin="transfer_page" />
+            <ShortcutButtonsGroupWallet highlight analyticsOrigin="transfer_page" />
           </ButtonsGrid>
         </CornerButtons>
       </BottomRow>
-      <ModalPortal>
-        {isSendModalOpen && defaultAddress && (
-          <SendModalTransfer
-            initialTxData={{ fromAddress: defaultAddress }}
-            onClose={() => setIsSendModalOpen(false)}
-          />
-        )}
-        {isReceiveModalOpen && <ReceiveModal onClose={() => setIsReceiveModalOpen(false)} />}
-      </ModalPortal>
     </UnlockedWalletPage>
   )
 }

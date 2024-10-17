@@ -91,8 +91,6 @@ export const syncLatestTransactions = createAsyncThunk(
     payload: { addresses: AddressHash | AddressHash[] | 'all'; areAddressesNew: boolean },
     { getState, dispatch }
   ) => {
-    console.log('Checking for new transactions')
-
     const { addresses: _addresses, areAddressesNew } = payload
     const state = getState() as RootState
 

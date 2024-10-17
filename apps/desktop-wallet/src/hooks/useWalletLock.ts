@@ -19,13 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import { useCallback } from 'react'
 
+import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
-import { userDataMigrationFailed } from '@/storage/global/globalActions'
+import { toggleAppLoading, userDataMigrationFailed } from '@/storage/global/globalActions'
 import { walletLocked, walletSwitched, walletUnlocked } from '@/storage/wallets/walletActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { StoredEncryptedWallet } from '@/types/wallet'
@@ -44,15 +45,19 @@ const useWalletLock = () => {
   const { restoreAddressesFromMetadata } = useAddressGeneration()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
+  const { restoreQueryCache, clearQueryCache } = usePersistQueryClientContext()
 
   const lockWallet = useCallback(
     (lockedFrom?: string) => {
       keyring.clear()
+
+      clearQueryCache()
+
       dispatch(walletLocked())
 
       if (lockedFrom) sendAnalytics({ event: 'Locked wallet', props: { origin: lockedFrom } })
     },
-    [dispatch, sendAnalytics]
+    [dispatch, sendAnalytics, clearQueryCache]
   )
 
   const unlockWallet = async (props: UnlockWalletProps | null) => {
@@ -73,6 +78,8 @@ const useWalletLock = () => {
       dispatch(passwordValidationFailed())
       return
     }
+
+    dispatch(toggleAppLoading(true))
 
     try {
       await migrateUserData(encryptedWallet.id, password, version)
@@ -97,10 +104,11 @@ const useWalletLock = () => {
       initialAddress
     }
 
-    dispatch(event === 'unlock' ? walletUnlocked(payload) : walletSwitched(payload))
+    clearQueryCache()
+    await restoreQueryCache(encryptedWallet.id)
 
     if (!isPassphraseUsed) {
-      restoreAddressesFromMetadata(encryptedWallet.id, isPassphraseUsed)
+      await restoreAddressesFromMetadata(encryptedWallet.id, isPassphraseUsed)
 
       walletStorage.update(walletId, { lastUsed: Date.now() })
 
@@ -113,6 +121,10 @@ const useWalletLock = () => {
         }
       })
     }
+
+    dispatch(event === 'unlock' ? walletUnlocked(payload) : walletSwitched(payload))
+
+    dispatch(toggleAppLoading(false))
 
     afterUnlock()
 
