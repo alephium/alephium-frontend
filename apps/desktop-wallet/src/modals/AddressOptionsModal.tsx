@@ -145,7 +145,7 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
 
       <HorizontalDivider narrow />
 
-      <ForgetAddressSection addressHash={addressHash} addressName={getName(address)} />
+      {address.index !== 0 && <ForgetAddressSection addressHash={addressHash} addressName={getName(address)} />}
 
       <HorizontalDivider narrow />
 

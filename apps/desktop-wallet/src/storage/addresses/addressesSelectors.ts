@@ -47,6 +47,10 @@ export const selectDefaultAddress = createSelector(
   (addresses) => addresses.find((address) => address.isDefault) || addresses[0]
 )
 
+export const selectInitialAddress = createSelector(selectAllAddresses, (addresses) =>
+  addresses.find((address) => address.index === 0)
+)
+
 export const { selectAll: selectAllContacts } = contactsAdapter.getSelectors<RootState>((state) => state.contacts)
 
 export const makeSelectContactByAddress = () =>
