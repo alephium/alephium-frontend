@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import zxcvbn from 'zxcvbn'
 
+import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import Button from '@/components/Button'
 import InfoBox from '@/components/InfoBox'
 import Input from '@/components/Inputs/Input'
@@ -53,6 +54,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
   const { sendAnalytics } = useAnalytics()
   const { discoverAndSaveUsedAddresses } = useAddressGeneration()
   const { mnemonic, resetCachedMnemonic } = useWalletContext()
+  const { restoreQueryCache, clearQueryCache } = usePersistQueryClientContext()
 
   const [walletName, setWalletNameState] = useState('')
   const [walletNameError, setWalletNameError] = useState('')
@@ -93,8 +95,10 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
     sendAnalytics({ event: 'Creating wallet: Creating password: Clicked next' })
 
     try {
-      saveNewWallet({ walletName, encrypted: await encryptMnemonic(mnemonic, password) })
+      const newWalletId = saveNewWallet({ walletName, encrypted: await encryptMnemonic(mnemonic, password) })
       resetCachedMnemonic()
+      clearQueryCache()
+      await restoreQueryCache(newWalletId)
 
       if (isRestoring) {
         discoverAndSaveUsedAddresses({ skipIndexes: [0], enableLoading: false })
