@@ -42,4 +42,9 @@ const queryClient = new QueryClient({
   }
 })
 
+// Useful for debugging
+// queryClient.getQueryCache().subscribe((event) => {
+//   console.log('event', event)
+// })
+
 export default queryClient
