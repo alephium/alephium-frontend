@@ -40,12 +40,14 @@ export type PersistQueryClientProviderProps = QueryClientProviderProps & {
 
 export interface PersistQueryClientContextType {
   restoreQueryCache: (walletId: string, isPassphraseUsed?: boolean) => Promise<void>
+  deletePersistedCache: (walletId: string, isPassphraseUsed?: boolean) => void
   clearQueryCache: () => void
 }
 
 export const initialPersistQueryClientContext: PersistQueryClientContextType = {
   restoreQueryCache: () => Promise.resolve(),
-  clearQueryCache: () => {}
+  deletePersistedCache: () => null,
+  clearQueryCache: () => null
 }
 
 export const PersistQueryClientContext = createContext<PersistQueryClientContextType>(initialPersistQueryClientContext)
@@ -89,8 +91,12 @@ export const PersistQueryClientContextProvider = ({ children }: { children: Reac
     setIsRestoring(false)
   }, [])
 
+  const deletePersistedCache = useCallback((walletId: string) => {
+    createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId).removeClient()
+  }, [])
+
   return (
-    <PersistQueryClientContext.Provider value={{ restoreQueryCache, clearQueryCache }}>
+    <PersistQueryClientContext.Provider value={{ restoreQueryCache, clearQueryCache, deletePersistedCache }}>
       <QueryClientProvider client={queryClient}>
         <IsRestoringProvider value={isRestoring}>{children}</IsRestoringProvider>
       </QueryClientProvider>
