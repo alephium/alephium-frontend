@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { sleep } from '@alephium/web3'
 import {
   PersistQueryClientOptions,
   persistQueryClientRestore,
@@ -38,7 +39,7 @@ export type PersistQueryClientProviderProps = QueryClientProviderProps & {
 }
 
 export interface PersistQueryClientContextType {
-  restoreQueryCache: (walletId: string) => Promise<void>
+  restoreQueryCache: (walletId: string, isPassphraseUsed?: boolean) => Promise<void>
   clearQueryCache: () => void
 }
 
@@ -60,24 +61,30 @@ export const PersistQueryClientContextProvider = ({ children }: { children: Reac
     queryClient.clear()
   }, [unsubscribeFromQueryClientFn])
 
-  const restoreQueryCache = useCallback(async (walletId: string) => {
+  const restoreQueryCache = useCallback(async (walletId: string, isPassphraseUsed?: boolean) => {
     setIsRestoring(true)
 
-    const options: PersistQueryClientOptions = {
-      queryClient,
-      maxAge: Infinity,
-      persister: createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId),
-      dehydrateOptions: {
-        shouldDehydrateQuery: (query) =>
-          query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
+    if (!isPassphraseUsed) {
+      const options: PersistQueryClientOptions = {
+        queryClient,
+        maxAge: Infinity,
+        persister: createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId),
+        dehydrateOptions: {
+          shouldDehydrateQuery: (query) =>
+            query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
+        }
       }
+
+      await persistQueryClientRestore(options)
+
+      const newUnsubscribeFromQueryClientFn = persistQueryClientSubscribe(options)
+
+      setUnsubscribeFromQueryClientFn(() => newUnsubscribeFromQueryClientFn)
+    } else {
+      // Even when we don't restore data in the case of passphrase wallet, we need to set `isRestoring` to `true` and
+      // then to `false` to make sure the useQuery instances are reset.
+      await sleep(500)
     }
-
-    await persistQueryClientRestore(options)
-
-    const newUnsubscribeFromQueryClientFn = persistQueryClientSubscribe(options)
-
-    setUnsubscribeFromQueryClientFn(() => newUnsubscribeFromQueryClientFn)
 
     setIsRestoring(false)
   }, [])
