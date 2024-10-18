@@ -61,6 +61,8 @@ export const PersistQueryClientContextProvider = ({ children }: { children: Reac
   }, [unsubscribeFromQueryClientFn])
 
   const restoreQueryCache = useCallback(async (walletId: string) => {
+    setIsRestoring(true)
+
     const options: PersistQueryClientOptions = {
       queryClient,
       maxAge: Infinity,
@@ -70,8 +72,6 @@ export const PersistQueryClientContextProvider = ({ children }: { children: Reac
           query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
       }
     }
-
-    setIsRestoring(true)
 
     await persistQueryClientRestore(options)
 

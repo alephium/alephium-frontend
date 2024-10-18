@@ -29,7 +29,6 @@ import SplashScreen from '@/components/SplashScreen'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
-import useAddressesDataPolling from '@/features/dataPolling/useAddressesDataPolling'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
@@ -55,7 +54,6 @@ const App = () => {
   const theme = useAppSelector((s) => s.global.theme)
 
   useAutoLock()
-  useAddressesDataPolling()
 
   useMigrateStoredSettings()
   useTrackUserSettings()
