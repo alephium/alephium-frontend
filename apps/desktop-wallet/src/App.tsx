@@ -52,7 +52,7 @@ import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } fro
 import { electron } from '@/utils/misc'
 import { languageOptions } from '@/utils/settings'
 
-import PersistedCacheVersionStorage from './api/persistedCacheVersionStorage'
+import PersistedQueryCacheVersionStorage from './api/persistedCacheVersionStorage'
 
 const App = () => {
   const theme = useAppSelector((s) => s.global.theme)
@@ -61,7 +61,7 @@ const App = () => {
 
   useMigrateStoredSettings()
   useTrackUserSettings()
-  useClearQueryPersistedCacheOnVersionUpdate()
+  useClearPersistedQueryCacheOnVersionUpdate()
 
   useInitializeThrottledClient()
   useInitializeNetworkProxy()
@@ -199,6 +199,23 @@ const useInitializeNetworkProxy = () => {
   }, [networkProxy])
 }
 
+const useClearPersistedQueryCacheOnVersionUpdate = () => {
+  const { deletePersistedCache } = usePersistQueryClientContext()
+  const wallets = useAppSelector((s) => s.global.wallets)
+
+  useEffect(() => {
+    const cacheVersion = PersistedQueryCacheVersionStorage.load()
+
+    if (cacheVersion !== currentVersion) {
+      wallets.forEach((wallet) => {
+        deletePersistedCache(wallet.id)
+      })
+
+      PersistedQueryCacheVersionStorage.set(currentVersion)
+    }
+  }, [deletePersistedCache, wallets])
+}
+
 interface AppContainerProps {
   children: ReactNode
 }
@@ -222,20 +239,3 @@ const AppContainerStyled = styled.div<{ showDevIndication: boolean }>`
       border: 5px solid ${theme.global.valid};
     `};
 `
-
-const useClearQueryPersistedCacheOnVersionUpdate = () => {
-  const { deletePersistedCache } = usePersistQueryClientContext()
-  const wallets = useAppSelector((s) => s.global.wallets)
-
-  useEffect(() => {
-    const cacheVersion = PersistedCacheVersionStorage.load()
-
-    if (cacheVersion !== currentVersion) {
-      wallets.forEach((wallet) => {
-        deletePersistedCache(wallet.id)
-      })
-
-      PersistedCacheVersionStorage.set(currentVersion)
-    }
-  }, [deletePersistedCache, wallets])
-}

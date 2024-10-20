@@ -16,22 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export type PersistedCacheVersion = string
+export type PersistedQueryCacheVersion = string
 
-class PersistedCacheVersionStorage {
-  private static localStorageKey = 'persisted-cache-version'
+class PersistedQueryCacheVersionStorage {
+  private static localStorageKey = 'persisted-query-cache-version'
 
   set(version: string): void {
-    window.localStorage.setItem(PersistedCacheVersionStorage.localStorageKey, version)
+    window.localStorage.setItem(PersistedQueryCacheVersionStorage.localStorageKey, version)
   }
 
-  load(): PersistedCacheVersion | null {
-    const rawData = window.localStorage.getItem(PersistedCacheVersionStorage.localStorageKey)
+  load(): PersistedQueryCacheVersion | null {
+    const rawData = window.localStorage.getItem(PersistedQueryCacheVersionStorage.localStorageKey)
 
     return rawData
   }
 }
 
-const Storage = new PersistedCacheVersionStorage()
+const Storage = new PersistedQueryCacheVersionStorage()
 
 export default Storage
