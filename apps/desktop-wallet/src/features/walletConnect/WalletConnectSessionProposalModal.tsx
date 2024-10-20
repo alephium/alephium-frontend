@@ -272,7 +272,7 @@ const WalletConnectSessionProposalModal = memo(
                 <Trans
                   t={t}
                   i18nKey="walletConnectNewAddress"
-                  values={{ group: chainInfo.addressGroup }}
+                  values={{ currentNetworkName }}
                   components={{ 1: <Highlight /> }}
                 >
                   {

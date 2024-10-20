@@ -21,7 +21,7 @@ import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components'
 
-import queryClient from '@/api/queryClient'
+import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import Button from '@/components/Button'
 import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
@@ -30,7 +30,6 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 import CenteredModal from '@/modals/CenteredModal'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { activeWalletDeleted, walletDeleted } from '@/storage/wallets/walletActions'
@@ -47,15 +46,15 @@ const WalletRemovalModal = memo(({ id, walletId, walletName }: ModalBaseProp & W
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
-  const allAddressHashes = useUnsortedAddressesHashes()
+  const { deletePersistedCache, clearQueryCache } = usePersistQueryClientContext()
 
   const removeWallet = () => {
     walletStorage.delete(walletId)
     addressMetadataStorage.delete(walletId)
 
-    allAddressHashes.forEach((addressHash) => {
-      queryClient.removeQueries({ queryKey: ['address', addressHash] })
-    })
+    deletePersistedCache(walletId)
+
+    if (activeWalletId === walletId) clearQueryCache()
 
     dispatch(walletId === activeWalletId ? activeWalletDeleted() : walletDeleted(walletId))
     dispatch(closeModal({ id }))

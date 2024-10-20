@@ -32,12 +32,13 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchSortedAddressesHashesWithLatestTx } from '@/hooks/useAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons, ScrollableModalContent } from '@/modals/CenteredModal'
 import AddressLastActivity from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressLastActivity'
-import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectDefaultAddress, selectInitialAddress } from '@/storage/addresses/addressesSelectors'
 
 const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
   const { data: sortedAddresses, isLoading: isLoadingSortedAddresses } = useFetchSortedAddressesHashesWithLatestTx()
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
+  const initialAddress = useAppSelector(selectInitialAddress)
   const dispatch = useAppDispatch()
 
   const reversedAddressesArray = useMemo(() => [...sortedAddresses].reverse(), [sortedAddresses])
@@ -87,7 +88,7 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
 
             <OptionSelect>
               {reversedAddressesArray.map(({ addressHash }) => {
-                if (addressHash === defaultAddressHash) return
+                if (addressHash === defaultAddressHash || addressHash === initialAddress?.hash) return
 
                 const isSelected = selectedAddressesForDeletion.some((hash) => hash === addressHash)
 
