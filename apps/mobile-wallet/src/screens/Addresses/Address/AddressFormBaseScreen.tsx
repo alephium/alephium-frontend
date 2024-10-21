@@ -77,7 +77,6 @@ const AddressForm = ({
 
   return (
     <ScrollScreen
-      usesKeyboard
       fill
       verticalGap
       screenTitle={screenTitle}

@@ -55,7 +55,6 @@ export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProp
   scrollViewRef?: RefObject<ScrollView>
   verticalGap?: number | boolean
   contentPaddingTop?: number | boolean
-  usesKeyboard?: boolean
 }
 
 const ScrollScreen = ({
@@ -68,7 +67,6 @@ const ScrollScreen = ({
   verticalGap,
   fill,
   headerOptions,
-  usesKeyboard,
   screenTitle,
   screenIntro,
   screenTitleAlwaysVisible,
@@ -92,66 +90,60 @@ const ScrollScreen = ({
 
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
-  const screen = (
-    <ScrollViewContainer style={containerStyle}>
-      {headerOptions && (
-        <HeaderComponent
-          goBack={navigation.canGoBack() ? navigation.goBack : undefined}
-          options={{ headerTitle: screenTitle, ...headerOptions }}
-          scrollY={screenScrollY}
-          scrollEffectOffset={headerScrollEffectOffset}
-          titleAlwaysVisible={screenTitleAlwaysVisible}
-          style={floatingHeader ? { position: 'absolute', top: 0, left: 0, right: 0 } : undefined}
-        />
-      )}
-      <ScrollView
-        ref={viewRef}
-        scrollEventThrottle={16}
-        alwaysBounceVertical={true}
-        onScroll={handleScroll}
-        onScrollEndDrag={scrollEndHandler}
-        style={{ overflow: SCREEN_OVERFLOW }}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={[
-          {
-            flexGrow: fill ? 1 : undefined,
-            paddingTop: typeof contentPaddingTop === 'boolean' ? 120 : contentPaddingTop
-          },
-          contentContainerStyle
-        ]}
-        {...props}
-      >
-        {screenTitle && (
-          <ScreenIntro
-            title={screenTitle}
-            subtitle={screenIntro}
-            TitleSideComponent={TitleSideComponent}
+  return (
+    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+      <ScrollViewContainer style={containerStyle}>
+        {headerOptions && (
+          <HeaderComponent
+            goBack={navigation.canGoBack() ? navigation.goBack : undefined}
+            options={{ headerTitle: screenTitle, ...headerOptions }}
             scrollY={screenScrollY}
-            paddingBottom={!!screenIntro}
+            scrollEffectOffset={headerScrollEffectOffset}
+            titleAlwaysVisible={screenTitleAlwaysVisible}
+            style={floatingHeader ? { position: 'absolute', top: 0, left: 0, right: 0 } : undefined}
           />
         )}
-        <View
-          style={[
+        <ScrollView
+          ref={viewRef}
+          scrollEventThrottle={16}
+          alwaysBounceVertical={true}
+          onScroll={handleScroll}
+          onScrollEndDrag={scrollEndHandler}
+          style={{ overflow: SCREEN_OVERFLOW }}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={[
             {
-              gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
-              paddingBottom: insets.bottom + DEFAULT_MARGIN,
-              flex: fill ? 1 : undefined
+              flexGrow: fill ? 1 : undefined,
+              paddingTop: typeof contentPaddingTop === 'boolean' ? 120 : contentPaddingTop
             },
-            style
+            contentContainerStyle
           ]}
+          {...props}
         >
-          {children}
-        </View>
-      </ScrollView>
-    </ScrollViewContainer>
-  )
-
-  return usesKeyboard ? (
-    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
-      {screen}
+          {screenTitle && (
+            <ScreenIntro
+              title={screenTitle}
+              subtitle={screenIntro}
+              TitleSideComponent={TitleSideComponent}
+              scrollY={screenScrollY}
+              paddingBottom={!!screenIntro}
+            />
+          )}
+          <View
+            style={[
+              {
+                gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
+                paddingBottom: insets.bottom + DEFAULT_MARGIN,
+                flex: fill ? 1 : undefined
+              },
+              style
+            ]}
+          >
+            {children}
+          </View>
+        </ScrollView>
+      </ScrollViewContainer>
     </KeyboardAvoidingView>
-  ) : (
-    screen
   )
 }
 

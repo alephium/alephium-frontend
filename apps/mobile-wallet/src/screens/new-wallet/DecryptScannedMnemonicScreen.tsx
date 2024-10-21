@@ -139,7 +139,6 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
   return (
     <ScrollScreen
       verticalGap
-      usesKeyboard
       fill
       keyboardShouldPersistTaps="always"
       headerOptions={{

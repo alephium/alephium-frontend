@@ -153,7 +153,6 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
       verticalGap
       fill
       contentPaddingTop
-      usesKeyboard
       screenTitle={t('Fund password')}
       screenIntro={screenIntro}
       headerOptions={{ type: cameFromBackupScreen ? 'default' : 'stack' }}
