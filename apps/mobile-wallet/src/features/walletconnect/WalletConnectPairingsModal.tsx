@@ -53,14 +53,6 @@ const WalletConnectPairingsModal = withModal<WalletConnectPairingsModalProps>(
       await unpairFromDapp(pairingTopic)
     }
 
-    const handlePasteWcUrlPress = () => {
-      onPasteWcUrlPress()
-    }
-
-    const handleScanQRCodePress = () => {
-      onScanQRCodePress()
-    }
-
     return (
       <BottomModal modalId={id}>
         <ModalContent verticalGap>
@@ -88,13 +80,13 @@ const WalletConnectPairingsModal = withModal<WalletConnectPairingsModalProps>(
             <Button
               title={t('Paste a WalletConnect URI')}
               variant="accent"
-              onPress={handlePasteWcUrlPress}
+              onPress={onPasteWcUrlPress}
               iconProps={{ name: 'copy' }}
             />
             <Button
               title={t('Scan QR code')}
               variant="accent"
-              onPress={handleScanQRCodePress}
+              onPress={onScanQRCodePress}
               iconProps={{ name: 'maximize' }}
             />
           </BottomButtons>
