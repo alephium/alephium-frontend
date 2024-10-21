@@ -21,7 +21,7 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 import { slowTransition } from '@/animations'
-import alephiumLogo from '@/images/alephium_logo_light.svg'
+import alephiumLogo from '@/images/alephium_logo_light.svg?url'
 
 const SplashScreen = () => {
   const [splashScreenVisible, setSplashScreenVisible] = useState(true)
