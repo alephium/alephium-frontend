@@ -63,7 +63,7 @@ const WalletConnectSessionRequestEventHandler = ({
 }: WalletConnectSessionRequestEventHandlerProps) => {
   const { data: alphBalancesByAddress, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphByAddress()
   const { data: tokensBalancesByAddress, isLoading: isLoadingTokensBalances } = useFetchWalletBalancesTokensByAddress()
-  const { walletConnectClient, respondToWalletConnectWithError } = useWalletConnectContext()
+  const { walletConnectClient, respondToWalletConnectWithError, respondToWalletConnect } = useWalletConnectContext()
   const addresses = useAppSelector(selectAllAddresses)
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
@@ -228,10 +228,7 @@ const WalletConnectSessionRequestEventHandler = ({
             const p = request.params as ApiRequestArguments
             const result = await throttledClient.node.request(p)
 
-            await walletConnectClient.respond({
-              topic: event.topic,
-              response: { id: event.id, jsonrpc: '2.0', result }
-            })
+            await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
             await cleanStorage(event)
             break
           }
@@ -247,10 +244,7 @@ const WalletConnectSessionRequestEventHandler = ({
             ) => Promise<any>
             const result = await call(...p.params)
 
-            await walletConnectClient.respond({
-              topic: event.topic,
-              response: { id: event.id, jsonrpc: '2.0', result }
-            })
+            await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
             await cleanStorage(event)
             break
           }
@@ -273,6 +267,7 @@ const WalletConnectSessionRequestEventHandler = ({
       alphBalancesByAddress,
       cleanStorage,
       dispatch,
+      respondToWalletConnect,
       respondToWalletConnectWithError,
       sendAnalytics,
       tokensBalancesByAddress,

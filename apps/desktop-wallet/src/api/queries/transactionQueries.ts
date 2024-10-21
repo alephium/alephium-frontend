@@ -67,7 +67,7 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
   })
 
 interface TransactionsInfiniteQueryBaseProps {
-  networkId: number
+  networkId?: number
   skip?: boolean
 }
 

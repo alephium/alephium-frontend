@@ -79,7 +79,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
   const openWalletConnectModal = () => dispatch(openModal({ name: 'WalletConnectModal' }))
 
   return (
-    <motion.header id="app-header" style={headerStyles} className={className}>
+    <AppHeaderStyled id="app-header" style={headerStyles} className={className} invisible={invisible}>
       <Title style={titleStyles}>{title}</Title>
       <HeaderButtons>
         {networkStatus === 'offline' && (
@@ -143,11 +143,13 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
 
         <NetworkSwitch />
       </HeaderButtons>
-    </motion.header>
+    </AppHeaderStyled>
   )
 }
 
-export default styled(AppHeader)`
+export default AppHeader
+
+const AppHeaderStyled = styled(motion.header)<Pick<AppHeader, 'invisible'>>`
   position: fixed;
   top: 0;
   right: 0;
@@ -162,6 +164,7 @@ export default styled(AppHeader)`
   gap: var(--spacing-1);
 
   backdrop-filter: ${({ invisible }) => (!invisible ? 'blur(10px)' : 'none')};
+  z-index: 1;
 `
 
 const OfflineIcon = styled.div`

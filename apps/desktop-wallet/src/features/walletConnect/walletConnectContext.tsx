@@ -63,6 +63,7 @@ export interface WalletConnectContextProps {
   sendFailureResponse: (error: WalletConnectError) => void
   resetPendingDappConnectionUrl: () => void
   isAwaitingSessionRequestApproval: boolean
+  respondToWalletConnect: (event: SessionRequestEvent, response: EngineTypes.RespondParams['response']) => Promise<void>
   respondToWalletConnectWithError: (
     sessionRequestEvent: SessionRequestEvent,
     error: ReturnType<typeof getSdkError>
@@ -82,7 +83,8 @@ const initialContext: WalletConnectContextProps = {
   sendFailureResponse: () => null,
   resetPendingDappConnectionUrl: () => null,
   isAwaitingSessionRequestApproval: false,
-  respondToWalletConnectWithError: () => Promise.resolve()
+  respondToWalletConnectWithError: () => Promise.resolve(),
+  respondToWalletConnect: () => Promise.resolve()
 }
 
 const WalletConnectContext = createContext<WalletConnectContextProps>(initialContext)
@@ -520,7 +522,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         sendSuccessResponse,
         sendFailureResponse,
         refreshActiveSessions,
-        respondToWalletConnectWithError
+        respondToWalletConnectWithError,
+        respondToWalletConnect
       }}
     >
       {sessionRequestEvent && isWalletUnlocked && (
