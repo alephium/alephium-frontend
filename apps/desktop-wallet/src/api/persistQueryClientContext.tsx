@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { sleep } from '@alephium/web3'
 import {
   PersistQueryClientOptions,
   persistQueryClientRestore,
@@ -38,13 +39,15 @@ export type PersistQueryClientProviderProps = QueryClientProviderProps & {
 }
 
 export interface PersistQueryClientContextType {
-  restoreQueryCache: (walletId: string) => Promise<void>
+  restoreQueryCache: (walletId: string, isPassphraseUsed?: boolean) => Promise<void>
+  deletePersistedCache: (walletId: string, isPassphraseUsed?: boolean) => void
   clearQueryCache: () => void
 }
 
 export const initialPersistQueryClientContext: PersistQueryClientContextType = {
   restoreQueryCache: () => Promise.resolve(),
-  clearQueryCache: () => {}
+  deletePersistedCache: () => null,
+  clearQueryCache: () => null
 }
 
 export const PersistQueryClientContext = createContext<PersistQueryClientContextType>(initialPersistQueryClientContext)
@@ -60,30 +63,40 @@ export const PersistQueryClientContextProvider = ({ children }: { children: Reac
     queryClient.clear()
   }, [unsubscribeFromQueryClientFn])
 
-  const restoreQueryCache = useCallback(async (walletId: string) => {
-    const options: PersistQueryClientOptions = {
-      queryClient,
-      maxAge: Infinity,
-      persister: createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId),
-      dehydrateOptions: {
-        shouldDehydrateQuery: (query) =>
-          query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
-      }
-    }
-
+  const restoreQueryCache = useCallback(async (walletId: string, isPassphraseUsed?: boolean) => {
     setIsRestoring(true)
 
-    await persistQueryClientRestore(options)
+    if (!isPassphraseUsed) {
+      const options: PersistQueryClientOptions = {
+        queryClient,
+        maxAge: Infinity,
+        persister: createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId),
+        dehydrateOptions: {
+          shouldDehydrateQuery: (query) =>
+            query.meta?.['isMainnet'] === false ? false : defaultShouldDehydrateQuery(query)
+        }
+      }
 
-    const newUnsubscribeFromQueryClientFn = persistQueryClientSubscribe(options)
+      await persistQueryClientRestore(options)
 
-    setUnsubscribeFromQueryClientFn(() => newUnsubscribeFromQueryClientFn)
+      const newUnsubscribeFromQueryClientFn = persistQueryClientSubscribe(options)
+
+      setUnsubscribeFromQueryClientFn(() => newUnsubscribeFromQueryClientFn)
+    } else {
+      // Even when we don't restore data in the case of passphrase wallet, we need to set `isRestoring` to `true` and
+      // then to `false` to make sure the useQuery instances are reset.
+      await sleep(500)
+    }
 
     setIsRestoring(false)
   }, [])
 
+  const deletePersistedCache = useCallback((walletId: string) => {
+    createTanstackIndexedDBPersister('tanstack-cache-for-wallet-' + walletId).removeClient()
+  }, [])
+
   return (
-    <PersistQueryClientContext.Provider value={{ restoreQueryCache, clearQueryCache }}>
+    <PersistQueryClientContext.Provider value={{ restoreQueryCache, clearQueryCache, deletePersistedCache }}>
       <QueryClientProvider client={queryClient}>
         <IsRestoringProvider value={isRestoring}>{children}</IsRestoringProvider>
       </QueryClientProvider>

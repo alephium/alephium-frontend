@@ -306,7 +306,7 @@
   "Use max": "Maximal verwenden",
   "Assets": "Assets",
   "With Alephium, you can send multiple assets in one transaction.": "Mit Alephium können Sie mehrere Assets in einer Transaktion senden.",
-  "This is not a valid Alephium address": "Dies ist keine gültige Alephium Adresse",
+  "This is not a valid Alephium address.": "Dies ist keine gültige Alephium Adresse.",
   "Please, double check that everything is correct before sending.": "Bitte überprüfen Sie vor dem Versenden noch einmal, ob alles korrekt ist.",
   "Settings": "Einstellungen",
   "General": "Allgemein",

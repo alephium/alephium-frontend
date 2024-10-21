@@ -306,7 +306,8 @@
   "Use max": "Use max",
   "Assets": "Assets",
   "With Alephium, you can send multiple assets in one transaction.": "With Alephium, you can send multiple assets in one transaction.",
-  "This is not a valid Alephium address": "This is not a valid Alephium address",
+  "This is not a valid Alephium address.": "This is not a valid Alephium address.",
+  "Make sure you are not scanning an address of a different chain.": "Make sure you are not scanning an address of a different chain.",
   "Please, double check that everything is correct before sending.": "Please, double check that everything is correct before sending.",
   "Settings": "Settings",
   "General": "General",
@@ -375,5 +376,9 @@
   "No": "No",
   "Welcome back to Alephium!": "Welcome back to Alephium!",
   "Enjoy your restored wallet!": "Enjoy your restored wallet!",
-  "Lost connection to WalletConnect": "Lost connection to WalletConnect"
+  "Lost connection to WalletConnect": "Lost connection to WalletConnect",
+  "You scanned an Ethereum address": "You scanned an Ethereum address",
+  "To move funds to Ethereum use the bridge at {{ url }}": "To move funds to Ethereum use the bridge at {{ url }}",
+  "Invalid scanned data": "Invalid scanned data",
+  "Did not detect a valid Alephium address or a WalletConnect QR code in scanned data: {{ data }}": "Did not detect a valid Alephium address or a WalletConnect QR code in scanned data: {{ data }}"
 }

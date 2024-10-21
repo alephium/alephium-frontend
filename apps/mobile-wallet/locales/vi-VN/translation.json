@@ -305,7 +305,7 @@
   "Use max": "Sử dụng tất cả",
   "Assets": "Chọn tài sản",
   "With Alephium, you can send multiple assets in one transaction.": "Với Alephium, bạn có thể gửi nhiều tài sản khác nhau trong một giao dịch.",
-  "This is not a valid Alephium address": "Địa chỉ ví Alephium không khả dụng",
+  "This is not a valid Alephium address.": "Địa chỉ ví Alephium không khả dụng.",
   "Please, double check that everything is correct before sending.": "Vui lòng, kiểm tra kỹ lại mọi thứ đều chính xác trước khi gửi giao dịch.",
   "Settings": "Cài đặt",
   "General": "Tổng quan",

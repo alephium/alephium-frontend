@@ -24,9 +24,10 @@ import { walletTransactionsInfiniteQuery } from '@/api/queries/transactionQuerie
 import queryClient from '@/api/queryClient'
 import { useAppSelector } from '@/hooks/redux'
 import { useCappedAddressesHashes } from '@/hooks/useAddresses'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
 const useFetchWalletTransactionsInfinite = () => {
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const { addressHashes, isCapped } = useCappedAddressesHashes()
 
   const { data: latestTx, isLoading: isLoadingLatestTx } = useFetchWalletLatestTransaction()

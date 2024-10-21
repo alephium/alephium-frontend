@@ -17,46 +17,27 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-  AssetAmount,
   getActiveWalletConnectSessions,
   getHumanReadableError,
   parseSessionProposalEvent,
   SessionProposalEvent,
   SessionRequestEvent,
-  throttledClient,
-  WALLETCONNECT_ERRORS,
   WalletConnectClientStatus,
   WalletConnectError
 } from '@alephium/shared'
 import { useInterval } from '@alephium/shared-react'
-import { ALPH } from '@alephium/token-list'
-import { formatChain, RelayMethod } from '@alephium/walletconnect-provider'
-import {
-  ApiRequestArguments,
-  node,
-  SignDeployContractTxParams,
-  SignExecuteScriptTxParams,
-  SignMessageParams,
-  SignMessageResult,
-  SignTransferTxParams,
-  SignUnsignedTxParams,
-  SignUnsignedTxResult
-} from '@alephium/web3'
+import { formatChain } from '@alephium/walletconnect-provider'
+import { node, SignMessageResult, SignUnsignedTxResult } from '@alephium/web3'
 import { Expirer } from '@walletconnect/core'
 import SignClient from '@walletconnect/sign-client'
 import { EngineTypes, SessionTypes, SignClientTypes } from '@walletconnect/types'
-import { calcExpiry, getSdkError } from '@walletconnect/utils'
-import { partition } from 'lodash'
+import { getSdkError } from '@walletconnect/utils'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useFetchWalletBalancesAlphByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { useFetchWalletBalancesTokensByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
-import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/features/send/sendTypes'
-import { shouldBuildSweepTransactions } from '@/features/send/sendUtils'
-import { SignMessageData, SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
+import WalletConnectSessionRequestEventHandler from '@/features/walletConnect/WalletConnectSessionRequestEventHandler'
 import {
   cleanBeforeInit,
   cleanHistory,
@@ -64,7 +45,6 @@ import {
   clearWCStorage
 } from '@/features/walletConnect/walletConnectUtils'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { walletConnectPairingFailed, walletConnectProposalValidationFailed } from '@/storage/dApps/dAppActions'
 import { isRcVersion } from '@/utils/app-data'
 import { electron } from '@/utils/misc'
@@ -83,6 +63,11 @@ export interface WalletConnectContextProps {
   sendFailureResponse: (error: WalletConnectError) => void
   resetPendingDappConnectionUrl: () => void
   isAwaitingSessionRequestApproval: boolean
+  respondToWalletConnect: (event: SessionRequestEvent, response: EngineTypes.RespondParams['response']) => Promise<void>
+  respondToWalletConnectWithError: (
+    sessionRequestEvent: SessionRequestEvent,
+    error: ReturnType<typeof getSdkError>
+  ) => Promise<void>
   walletConnectClient?: SignClient
   pendingDappConnectionUrl?: string
 }
@@ -97,24 +82,23 @@ const initialContext: WalletConnectContextProps = {
   sendSuccessResponse: () => Promise.resolve(),
   sendFailureResponse: () => null,
   resetPendingDappConnectionUrl: () => null,
-  isAwaitingSessionRequestApproval: false
+  isAwaitingSessionRequestApproval: false,
+  respondToWalletConnectWithError: () => Promise.resolve(),
+  respondToWalletConnect: () => Promise.resolve()
 }
 
 const WalletConnectContext = createContext<WalletConnectContextProps>(initialContext)
 
 export const WalletConnectContextProvider: FC = ({ children }) => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAllAddresses)
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
-  const { data: alphBalancesByAddress } = useFetchWalletBalancesAlphByAddress()
-  const { data: tokensBalancesByAddress } = useFetchWalletBalancesTokensByAddress()
+  const isWalletUnlocked = useAppSelector((s) => !!s.activeWallet.id)
 
   const [walletConnectClient, setWalletConnectClient] = useState(initialContext.walletConnectClient)
   const [activeSessions, setActiveSessions] = useState(initialContext.activeSessions)
   const [sessionRequestEvent, setSessionRequestEvent] = useState<SessionRequestEvent>()
   const [walletConnectClientStatus, setWalletConnectClientStatus] = useState<WalletConnectClientStatus>('uninitialized')
-  const [walletLockedBeforeProcessingWCRequest, setWalletLockedBeforeProcessingWCRequest] = useState(false)
   const [pendingDappConnectionUrl, setPendingDappConnectionUrl] = useState<string>()
 
   const initializeWalletConnectClient = useCallback(async () => {
@@ -293,13 +277,6 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
 
       setSessionRequestEvent(event)
 
-      const getSignerAddressByHash = (hash: string) => {
-        const address = addresses.find((a) => a.hash === hash)
-        if (!address) throw new Error(`Unknown signer address: ${hash}`)
-
-        return address
-      }
-
       const {
         params: { request }
       } = event
@@ -310,196 +287,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       if (request.method.startsWith('alph_sign')) {
         electron?.app.show()
       }
-
-      if (addresses.length === 0) {
-        setWalletLockedBeforeProcessingWCRequest(true)
-        return
-      }
-
-      try {
-        switch (request.method as RelayMethod) {
-          case 'alph_signAndSubmitTransferTx': {
-            const p = request.params as SignTransferTxParams
-            const dest = p.destinations[0]
-            const assetAmounts = [
-              { id: ALPH.id, amount: BigInt(dest.attoAlphAmount) },
-              ...(dest.tokens ? dest.tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
-            ]
-            const alphBalances = alphBalancesByAddress[p.signerAddress]
-            const tokensBalances = tokensBalancesByAddress[p.signerAddress]
-            const allTokensBalances = [
-              ...(alphBalances ? [{ id: ALPH.id, ...alphBalances }] : []),
-              ...(tokensBalances ? tokensBalances : [])
-            ]
-
-            const shouldSweep = shouldBuildSweepTransactions(assetAmounts, allTokensBalances)
-
-            const txData: TransferTxData = {
-              fromAddress: getSignerAddressByHash(p.signerAddress),
-              toAddress: p.destinations[0].address,
-              assetAmounts,
-              gasAmount: p.gasAmount,
-              gasPrice: p.gasPrice?.toString(),
-              shouldSweep
-            }
-
-            dispatch(
-              openModal({
-                name: 'TransferSendModal',
-                props: {
-                  initialStep: 'info-check',
-                  initialTxData: txData,
-                  txData,
-                  triggeredByWalletConnect: true
-                }
-              })
-            )
-            break
-          }
-          case 'alph_signAndSubmitDeployContractTx': {
-            const { initialAttoAlphAmount, bytecode, issueTokenAmount, gasAmount, gasPrice, signerAddress } =
-              request.params as SignDeployContractTxParams
-            const initialAlphAmount: AssetAmount | undefined = initialAttoAlphAmount
-              ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
-              : undefined
-
-            const txData: DeployContractTxData = {
-              fromAddress: getSignerAddressByHash(signerAddress),
-              bytecode,
-              initialAlphAmount,
-              issueTokenAmount: issueTokenAmount?.toString(),
-              gasAmount,
-              gasPrice: gasPrice?.toString()
-            }
-
-            dispatch(
-              openModal({
-                name: 'DeployContractSendModal',
-                props: {
-                  initialTxData: txData,
-                  txData: txData as DeployContractTxData,
-                  triggeredByWalletConnect: true
-                }
-              })
-            )
-            break
-          }
-          case 'alph_signAndSubmitExecuteScriptTx': {
-            const { tokens, bytecode, gasAmount, gasPrice, signerAddress, attoAlphAmount } =
-              request.params as SignExecuteScriptTxParams
-            let assetAmounts: AssetAmount[] = []
-            let allAlphAssets: AssetAmount[] = attoAlphAmount ? [{ id: ALPH.id, amount: BigInt(attoAlphAmount) }] : []
-
-            if (tokens) {
-              const assets = tokens.map((token) => ({ id: token.id, amount: BigInt(token.amount) }))
-              const [alphAssets, tokenAssets] = partition(assets, (asset) => asset.id === ALPH.id)
-
-              assetAmounts = tokenAssets
-              allAlphAssets = [...allAlphAssets, ...alphAssets]
-            }
-
-            if (allAlphAssets.length > 0) {
-              assetAmounts.push({
-                id: ALPH.id,
-                amount: allAlphAssets.reduce((total, asset) => total + (asset.amount ?? BigInt(0)), BigInt(0))
-              })
-            }
-
-            const txData: CallContractTxData = {
-              fromAddress: getSignerAddressByHash(signerAddress),
-              bytecode,
-              assetAmounts,
-              gasAmount,
-              gasPrice: gasPrice?.toString()
-            }
-
-            dispatch(
-              openModal({
-                name: 'CallContractSendModal',
-                props: {
-                  initialStep: 'info-check',
-                  initialTxData: txData,
-                  txData,
-                  triggeredByWalletConnect: true
-                }
-              })
-            )
-            break
-          }
-          case 'alph_signMessage': {
-            const { message, messageHasher, signerAddress } = request.params as SignMessageParams
-            const txData: SignMessageData = {
-              fromAddress: getSignerAddressByHash(signerAddress),
-              message,
-              messageHasher
-            }
-            dispatch(openModal({ name: 'SignMessageModal', props: { txData } }))
-            break
-          }
-          case 'alph_signUnsignedTx': {
-            const { unsignedTx, signerAddress } = request.params as SignUnsignedTxParams
-            const txData: SignUnsignedTxData = {
-              fromAddress: getSignerAddressByHash(signerAddress),
-              unsignedTx
-            }
-            dispatch(openModal({ name: 'SignUnsignedTxModal', props: { txData } }))
-            break
-          }
-          case 'alph_requestNodeApi': {
-            walletConnectClient.core.expirer.set(event.id, calcExpiry(5))
-            const p = request.params as ApiRequestArguments
-            const result = await throttledClient.node.request(p)
-
-            await walletConnectClient.respond({
-              topic: event.topic,
-              response: { id: event.id, jsonrpc: '2.0', result }
-            })
-            await cleanStorage(event)
-            break
-          }
-          case 'alph_requestExplorerApi': {
-            walletConnectClient.core.expirer.set(event.id, calcExpiry(5))
-            const p = request.params as ApiRequestArguments
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const call = (throttledClient.explorer as any)[`${p.path}`][`${p.method}`] as (
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              ...arg0: any[]
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ) => Promise<any>
-            const result = await call(...p.params)
-
-            await walletConnectClient.respond({
-              topic: event.topic,
-              response: { id: event.id, jsonrpc: '2.0', result }
-            })
-            await cleanStorage(event)
-            break
-          }
-          default:
-            respondToWalletConnectWithError(event, getSdkError('WC_METHOD_UNSUPPORTED'))
-            throw new Error(`Method not supported: ${request.method}`)
-        }
-      } catch (error) {
-        const message = 'Could not parse WalletConnect session request'
-
-        sendAnalytics({ type: 'error', error, message })
-        respondToWalletConnectWithError(event, {
-          message: getHumanReadableError(error, message),
-          code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
-        })
-      }
     },
-    [
-      addresses,
-      alphBalancesByAddress,
-      cleanStorage,
-      dispatch,
-      respondToWalletConnectWithError,
-      sendAnalytics,
-      tokensBalancesByAddress,
-      walletConnectClient
-    ]
+    [walletConnectClient]
   )
 
   const pairWithDapp = useCallback(
@@ -599,13 +388,6 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
 
   const shouldInitialize = walletConnectClientStatus !== 'initialized'
   useInterval(initializeWalletConnectClient, 3000, !shouldInitialize)
-
-  useEffect(() => {
-    if (walletLockedBeforeProcessingWCRequest && sessionRequestEvent && addresses.length > 0) {
-      onSessionRequest(sessionRequestEvent)
-      setWalletLockedBeforeProcessingWCRequest(false)
-    }
-  }, [addresses.length, onSessionRequest, sessionRequestEvent, walletLockedBeforeProcessingWCRequest])
 
   useEffect(() => {
     if (!walletConnectClient || walletConnectClientStatus !== 'initialized') return
@@ -739,9 +521,14 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         sendUserRejectedResponse,
         sendSuccessResponse,
         sendFailureResponse,
-        refreshActiveSessions
+        refreshActiveSessions,
+        respondToWalletConnectWithError,
+        respondToWalletConnect
       }}
     >
+      {sessionRequestEvent && isWalletUnlocked && (
+        <WalletConnectSessionRequestEventHandler sessionRequestEvent={sessionRequestEvent} />
+      )}
       {children}
     </WalletConnectContext.Provider>
   )

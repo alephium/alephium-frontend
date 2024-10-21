@@ -16,24 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ONE_MINUTE_MS } from '@alephium/shared'
-import { useIdleTimer } from 'react-idle-timer'
+export type PersistedQueryCacheVersion = string
 
-import { useAppSelector } from '@/hooks/redux'
-import useWalletLock from '@/hooks/useWalletLock'
+class PersistedQueryCacheVersionStorage {
+  private static localStorageKey = 'persisted-query-cache-version'
 
-const useAutoLock = () => {
-  const walletLockTimeInMinutes = useAppSelector((s) => s.settings.walletLockTimeInMinutes)
-  const lockAfterMs = (walletLockTimeInMinutes || 0) * ONE_MINUTE_MS
+  set(version: string): void {
+    window.localStorage.setItem(PersistedQueryCacheVersionStorage.localStorageKey, version)
+  }
 
-  const { lockWallet, isWalletUnlocked } = useWalletLock()
+  load(): PersistedQueryCacheVersion | null {
+    const rawData = window.localStorage.getItem(PersistedQueryCacheVersionStorage.localStorageKey)
 
-  useIdleTimer({
-    onIdle: () => lockWallet('Auto lock'),
-    timeout: lockAfterMs,
-    throttle: 500,
-    disabled: !isWalletUnlocked
-  })
+    return rawData
+  }
 }
 
-export default useAutoLock
+const Storage = new PersistedQueryCacheVersionStorage()
+
+export default Storage

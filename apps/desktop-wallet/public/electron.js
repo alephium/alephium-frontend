@@ -284,7 +284,7 @@ app.on('ready', async function () {
 
   ipcMain.handle('app:hide', () => {
     if (isWindows) {
-      mainWindow.minimize()
+      mainWindow.blur()
     } else {
       app.hide()
     }
@@ -292,6 +292,7 @@ app.on('ready', async function () {
 
   ipcMain.handle('app:show', () => {
     if (isWindows) {
+      mainWindow.minimize()
       mainWindow.restore()
     } else {
       mainWindow.show()

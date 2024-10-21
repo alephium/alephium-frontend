@@ -26,10 +26,11 @@ import { sentTransactionStatusChanged } from '@/features/send/sentTransactions/s
 import { selectSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
 const usePendingTxPolling = (txHash: Transaction['hash']) => {
   const dispatch = useAppDispatch()
-  const networkId = useAppSelector((s) => s.network.settings.networkId)
+  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
   const allAddressHashes = useUnsortedAddressesHashes()
 
