@@ -1,5 +1,17 @@
 # alephium-desktop-wallet
 
+## 2.4.1
+
+### Patch Changes
+
+- fc0a73f: Fix display of NFT collection details
+- 5e2db37: Fix auto-lock idle detection mechanism
+- 3139b9b: Fix logos display
+- 4c1eb9e: Fix wallet import and passphrase unlock data initialization
+- c67f965: Fix window minimize on dApp interactions (Windows)
+- 180e547: Fix wallet initials animation
+- bf3991f: Fix transactions caching
+
 ## 2.4.0
 
 ### Minor Changes
