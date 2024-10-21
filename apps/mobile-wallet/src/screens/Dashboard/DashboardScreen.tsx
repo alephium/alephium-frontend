@@ -29,11 +29,11 @@ import Amount from '~/components/Amount'
 import AnimatedBackground from '~/components/AnimatedBackground'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
-import BlurredCard from '~/components/BlurredCard'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import RefreshSpinner from '~/components/RefreshSpinner'
+import RoundedCard from '~/components/RoundedCard'
 import { openModal } from '~/features/modals/modalActions'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -131,7 +131,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       {...props}
     >
       <CardContainer style={{ marginTop: insets.top }}>
-        <AmountBlurredCard>
+        <AmountRoundedCard>
           <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
           <WalletCardHeader>
             <HeaderButtons />
@@ -151,7 +151,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               <Button onPress={openBuyModal} iconProps={{ name: 'credit-card' }} variant="contrast" round flex short />
             </ButtonsRowContainer>
           )}
-        </AmountBlurredCard>
+        </AmountRoundedCard>
       </CardContainer>
       <AddressesTokensList />
       {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
@@ -188,6 +188,6 @@ const ButtonsRowContainer = styled(Animated.View)`
   gap: 10px;
 `
 
-const AmountBlurredCard = styled(BlurredCard)`
+const AmountRoundedCard = styled(RoundedCard)`
   height: 240px;
 `

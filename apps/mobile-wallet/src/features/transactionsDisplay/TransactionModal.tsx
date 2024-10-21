@@ -29,7 +29,6 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import IOList from '~/components/IOList'
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
 import BottomModal from '~/features/modals/BottomModal'
@@ -60,18 +59,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
   const openNftGridModal = () => dispatch(openModal({ name: 'NftGridModal', props: { nftsData } }))
 
   return (
-    <BottomModal modalId={id} contentVerticalGap>
-      <ScreenSectionStyled>
-        <ModalScreenTitle>{t('Transaction')}</ModalScreenTitle>
-        <Button
-          iconProps={{ name: 'arrow-up-right' }}
-          onPress={() => openBrowserAsync(explorerTxUrl)}
-          variant="accent"
-          compact
-          title={t('Explorer')}
-        />
-      </ScreenSectionStyled>
-
+    <BottomModal modalId={id} contentVerticalGap title={t('Transaction')}>
       <BoxSurface type="highlight">
         <Row title={t('Amount')} noMaxWidth transparent>
           {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
@@ -149,6 +137,11 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
           </Row>
         )}
       </BoxSurface>
+      <Button
+        iconProps={{ name: 'arrow-up-right' }}
+        onPress={() => openBrowserAsync(explorerTxUrl)}
+        title={t('Explorer')}
+      />
     </BottomModal>
   )
 })
@@ -161,13 +154,6 @@ const AmountStyled = styled(Amount)`
 
 const AppTextStyled = styled(AppText)`
   text-align: right;
-`
-
-const ScreenSectionStyled = styled(ScreenSection)`
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
 `
 
 const TokenId = styled.View`

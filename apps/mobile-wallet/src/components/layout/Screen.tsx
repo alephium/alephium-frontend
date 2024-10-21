@@ -31,10 +31,9 @@ export interface ScreenProps extends ViewProps {
     type?: 'default' | 'stack'
   }
   safeAreaPadding?: boolean
-  usesKeyboard?: boolean
 }
 
-const Screen = ({ children, headerOptions, safeAreaPadding, usesKeyboard, ...props }: ScreenProps) => {
+const Screen = ({ children, headerOptions, safeAreaPadding, ...props }: ScreenProps) => {
   const navigation = useNavigation()
   const insets = useSafeAreaInsets()
 
@@ -44,21 +43,15 @@ const Screen = ({ children, headerOptions, safeAreaPadding, usesKeyboard, ...pro
     ? { paddingTop: insets.top, paddingBottom: insets.bottom }
     : {}
 
-  const screen = (
-    <ScreenStyled {...props} style={[props.style, paddingStyle]}>
-      {headerOptions && (
-        <HeaderComponent goBack={navigation.canGoBack() ? navigation.goBack : undefined} options={headerOptions} />
-      )}
-      {children}
-    </ScreenStyled>
-  )
-
-  return usesKeyboard ? (
+  return (
     <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
-      {screen}
+      <ScreenStyled {...props} style={[props.style, paddingStyle]}>
+        {headerOptions && (
+          <HeaderComponent goBack={navigation.canGoBack() ? navigation.goBack : undefined} options={headerOptions} />
+        )}
+        {children}
+      </ScreenStyled>
     </KeyboardAvoidingView>
-  ) : (
-    screen
   )
 }
 

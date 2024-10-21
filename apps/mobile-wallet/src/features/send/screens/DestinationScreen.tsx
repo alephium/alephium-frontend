@@ -177,7 +177,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
   return (
     <ScrollScreen
-      usesKeyboard
       verticalGap
       contentPaddingTop
       screenTitle={t('Destination')}
