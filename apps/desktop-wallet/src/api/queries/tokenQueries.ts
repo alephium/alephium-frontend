@@ -47,15 +47,16 @@ export const tokenTypeQuery = ({ id, networkId, skip }: TokenQueryProps) =>
     // We always want to remember the type of a token, even when user navigates for too long from components that use
     // tokens.
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
-    queryFn: !skip
-      ? async () => {
-          const tokenInfo = await batchers.tokenTypeBatcher.fetch(id)
+    queryFn:
+      !skip && networkId !== undefined
+        ? async () => {
+            const tokenInfo = await batchers.tokenTypeBatcher.fetch(id)
 
-          return tokenInfo?.stdInterfaceId
-            ? { ...tokenInfo, stdInterfaceId: tokenInfo.stdInterfaceId as TokenStdInterfaceId }
-            : null
-        }
-      : skipToken
+            return tokenInfo?.stdInterfaceId
+              ? { ...tokenInfo, stdInterfaceId: tokenInfo.stdInterfaceId as TokenStdInterfaceId }
+              : null
+          }
+        : skipToken
   })
 
 export const combineTokenTypeQueryResults = (results: UseQueryResult<TokenInfo | null>[]) => ({
