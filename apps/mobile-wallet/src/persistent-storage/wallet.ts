@@ -80,6 +80,10 @@ export const validateAndRepareStoredWalletData = async (
 
   if (mnemonicV2Exists) {
     if (walletMetadata) {
+      if (!isStoredWalletMetadataMigrated(walletMetadata)) {
+        await migrateAddressMetadata()
+      }
+
       // If we have both mnemonic and metadata available, then all good
       return 'valid'
     } else {
@@ -275,7 +279,7 @@ export const getStoredWalletMetadata = async (error?: string): Promise<WalletMet
   return walletMetadata
 }
 
-export const storedWalletMetadataIsMigrated = (
+export const isStoredWalletMetadataMigrated = (
   addressMetadata: WalletMetadata | DeprecatedWalletMetadata
 ): addressMetadata is WalletMetadata =>
   (addressMetadata as WalletMetadata).addresses.every((address) => address.hash !== undefined)

@@ -29,8 +29,8 @@ import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import {
   getStoredWalletMetadata,
-  migrateDeprecatedMnemonic,
-  storedWalletMetadataIsMigrated
+  isStoredWalletMetadataMigrated,
+  migrateDeprecatedMnemonic
 } from '~/persistent-storage/wallet'
 import { allBiometricsEnabled } from '~/store/settings/settingsActions'
 import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
@@ -63,7 +63,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
 
         const wallet = await getStoredWalletMetadata()
 
-        if (!storedWalletMetadataIsMigrated(wallet)) throw new Error('Wallet metadata is not migrated')
+        if (!isStoredWalletMetadataMigrated(wallet)) throw new Error('Wallet metadata is not migrated')
 
         dispatch(walletUnlocked(wallet))
         resetNavigation(navigation)

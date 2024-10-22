@@ -45,10 +45,10 @@ import {
   getDeprecatedStoredWallet,
   getStoredWalletMetadata,
   getWalletMetadata,
+  isStoredWalletMetadataMigrated,
   migrateAddressMetadata,
   migrateDeprecatedMnemonic,
-  storedMnemonicV2Exists,
-  storedWalletMetadataIsMigrated
+  storedMnemonicV2Exists
 } from '~/persistent-storage/wallet'
 import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
 import EditAddressScreen from '~/screens/Addresses/Address/EditAddressScreen'
@@ -176,7 +176,7 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
     }
 
     try {
-      if (!storedWalletMetadataIsMigrated(metadata)) {
+      if (!isStoredWalletMetadataMigrated(metadata)) {
         await migrateAddressMetadata()
         metadata = await getStoredWalletMetadata()
       }
@@ -186,7 +186,7 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
       sendAnalytics({ type: 'error', message })
     }
 
-    if (!storedWalletMetadataIsMigrated(metadata)) {
+    if (!isStoredWalletMetadataMigrated(metadata)) {
       const message = 'Could not unlock wallet because metadata is not migrated'
       sendAnalytics({ type: 'error', message })
       throw new Error(message)
