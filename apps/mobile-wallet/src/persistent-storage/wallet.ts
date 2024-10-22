@@ -280,13 +280,12 @@ export const getStoredWalletMetadata = async (error?: string): Promise<WalletMet
 }
 
 export const isStoredWalletMetadataMigrated = (
-  addressMetadata: WalletMetadata | DeprecatedWalletMetadata
-): addressMetadata is WalletMetadata =>
-  (addressMetadata as WalletMetadata).addresses.every((address) => address.hash !== undefined)
+  metadata: WalletMetadata | DeprecatedWalletMetadata
+): metadata is WalletMetadata => (metadata as WalletMetadata).addresses.every(addressMetadataIncludesHash)
 
 export const addressMetadataIncludesHash = (
-  addressMetadata: AddressMetadata | AddressMetadataWithHash
-): addressMetadata is AddressMetadataWithHash => (addressMetadata as AddressMetadataWithHash).hash !== undefined
+  metadata: AddressMetadata | AddressMetadataWithHash
+): metadata is AddressMetadataWithHash => (metadata as AddressMetadataWithHash).hash !== undefined
 
 export const getStoredWalletMetadataWithoutThrowingError = () => getWalletMetadata(false)
 
