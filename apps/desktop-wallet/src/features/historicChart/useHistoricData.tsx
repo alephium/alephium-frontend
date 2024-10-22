@@ -20,7 +20,7 @@ import { AddressHash, CHART_DATE_FORMAT, ONE_DAY_MS, throttledClient, TokenHisto
 import { ALPH } from '@alephium/token-list'
 import { explorer } from '@alephium/web3'
 import { AmountHistory } from '@alephium/web3/dist/src/api/api-explorer'
-import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query'
+import { skipToken, useQueries, useQuery, UseQueryResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
@@ -42,31 +42,36 @@ const useHistoricData = () => {
     queryKey: ['history', 'price', ALPH.symbol, { currency }],
     // We don't want to delete the price history if the user stays on a page without a chart for too long
     ...getQueryConfig({ staleTime: ONE_DAY_MS, gcTime: Infinity }),
-    queryFn: () =>
-      throttledClient.explorer.market.getMarketPricesSymbolCharts(ALPH.symbol, { currency }).then((rawHistory) => {
-        const today = dayjs().format(CHART_DATE_FORMAT)
-        const history = [] as TokenHistoricalPrice[]
+    queryFn:
+      networkId !== undefined
+        ? () =>
+            throttledClient.explorer.market
+              .getMarketPricesSymbolCharts(ALPH.symbol, { currency })
+              .then((rawHistory) => {
+                const today = dayjs().format(CHART_DATE_FORMAT)
+                const history = [] as TokenHistoricalPrice[]
 
-        if (rawHistory.timestamps && rawHistory.prices) {
-          for (let index = 0; index < rawHistory.timestamps.length; index++) {
-            const timestamp = rawHistory.timestamps[index]
-            const price = rawHistory.prices[index]
+                if (rawHistory.timestamps && rawHistory.prices) {
+                  for (let index = 0; index < rawHistory.timestamps.length; index++) {
+                    const timestamp = rawHistory.timestamps[index]
+                    const price = rawHistory.prices[index]
 
-            const itemDate = dayjs(timestamp).format(CHART_DATE_FORMAT)
-            const prevItemDate =
-              index > 1 ? dayjs(rawHistory.timestamps[index - 1]).format(CHART_DATE_FORMAT) : undefined
+                    const itemDate = dayjs(timestamp).format(CHART_DATE_FORMAT)
+                    const prevItemDate =
+                      index > 1 ? dayjs(rawHistory.timestamps[index - 1]).format(CHART_DATE_FORMAT) : undefined
 
-            if (itemDate !== prevItemDate && itemDate !== today) {
-              history.push({
-                date: itemDate,
-                value: price
+                    if (itemDate !== prevItemDate && itemDate !== today) {
+                      history.push({
+                        date: itemDate,
+                        value: price
+                      })
+                    }
+                  }
+                }
+
+                return history
               })
-            }
-          }
-        }
-
-        return history
-      })
+        : skipToken
   })
 
   const {
