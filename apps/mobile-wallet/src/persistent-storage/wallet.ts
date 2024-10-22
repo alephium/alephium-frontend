@@ -21,7 +21,7 @@ import {
   keyring,
   mnemonicJsonStringifiedObjectToUint8Array
 } from '@alephium/keyring'
-import { AddressHash, resetArray } from '@alephium/shared'
+import { AddressHash, AddressMetadata, resetArray } from '@alephium/shared'
 import * as SecureStore from 'expo-secure-store'
 import { nanoid } from 'nanoid'
 import { Alert } from 'react-native'
@@ -241,7 +241,9 @@ const generateAndStoreWalletMetadata = async (name: WalletStoredState['name'], i
   }
 }
 
-export const getWalletMetadata = async (throwError = true): Promise<WalletMetadata | null> => {
+export const getWalletMetadata = async (
+  throwError = true
+): Promise<WalletMetadata | DeprecatedWalletMetadata | null> => {
   let rawWalletMetadata
   let walletMetadata = null
 
@@ -264,7 +266,7 @@ export const getWalletMetadata = async (throwError = true): Promise<WalletMetada
 }
 
 // TODO: Simplify getStoredWalletMetadata and getWalletMetadata that are very similar
-export const getStoredWalletMetadata = async (error?: string): Promise<WalletMetadata> => {
+export const getStoredWalletMetadata = async (error?: string): Promise<WalletMetadata | DeprecatedWalletMetadata> => {
   const walletMetadata = await getWalletMetadata()
 
   if (!walletMetadata)
@@ -272,6 +274,15 @@ export const getStoredWalletMetadata = async (error?: string): Promise<WalletMet
 
   return walletMetadata
 }
+
+export const storedWalletMetadataIsMigrated = (
+  addressMetadata: WalletMetadata | DeprecatedWalletMetadata
+): addressMetadata is WalletMetadata =>
+  (addressMetadata as WalletMetadata).addresses.every((address) => address.hash !== undefined)
+
+export const addressMetadataIncludesHash = (
+  addressMetadata: AddressMetadata | AddressMetadataWithHash
+): addressMetadata is AddressMetadataWithHash => (addressMetadata as AddressMetadataWithHash).hash !== undefined
 
 export const getStoredWalletMetadataWithoutThrowingError = () => getWalletMetadata(false)
 
@@ -333,8 +344,10 @@ export const deleteWallet = async () => {
   const wallet = await getStoredWalletMetadata()
 
   for (const address of wallet.addresses) {
-    await deleteAddressPublicKey(address.hash)
-    await deleteAddressPrivateKey(address.hash)
+    if (addressMetadataIncludesHash(address)) {
+      await deleteAddressPublicKey(address.hash)
+      await deleteAddressPrivateKey(address.hash)
+    }
   }
 
   await deleteSecurelyWithReportableError(MNEMONIC_V2, true, '')
@@ -390,6 +403,16 @@ export const migrateDeprecatedMnemonic = async (deprecatedMnemonic: string) => {
     await deleteDeprecatedWallet()
 
     // Step 3: Add hash in address metadata for faster app unlock and store public and private key in secure store
+    await migrateAddressMetadata()
+  } finally {
+    keyring.clear()
+  }
+}
+
+export const migrateAddressMetadata = async () => {
+  try {
+    if (!keyring.isInitialized()) await initializeKeyringWithStoredWallet()
+
     const { addresses } = await getStoredWalletMetadata(
       `${i18n.t('Could not migrate address metadata')}: ${i18n.t('Wallet metadata not found')}`
     )
@@ -449,7 +472,7 @@ export const getAddressAsymetricKey = async (addressHash: AddressHash, keyType: 
         keyType === 'public' ? 'Could not get address public key' : 'Could not get address private key'
       )}: ${i18n.t('Wallet metadata not found')}`
     )
-    const address = addresses.find((address) => address.hash === addressHash)
+    const address = addresses.find((address) => addressMetadataIncludesHash(address) && address.hash === addressHash)
 
     if (!address)
       throw new Error(
@@ -487,7 +510,7 @@ const generateWalletMetadata = (name: string, firstAddressHash: string, isMnemon
   contacts: []
 })
 
-export const storeWalletMetadata = async (metadata: WalletMetadata) =>
+export const storeWalletMetadata = async (metadata: WalletMetadata | DeprecatedWalletMetadata) =>
   storeWithReportableError(WALLET_METADATA_STORAGE_KEY, JSON.stringify(metadata))
 
 export const storeWalletMetadataDeprecated = async (metadata: DeprecatedWalletMetadata) =>
