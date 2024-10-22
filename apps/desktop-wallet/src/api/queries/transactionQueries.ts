@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, FIVE_MINUTES_MS, throttledClient } from '@alephium/shared'
+import { sleep } from '@alephium/web3'
 import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
@@ -155,5 +156,12 @@ export const pendingTransactionQuery = ({ txHash, networkId, skip }: Transaction
     // just for this one, but is it worth it?
     ...getQueryConfig({ gcTime: FIVE_MINUTES_MS, networkId }),
     refetchInterval: 3000,
-    queryFn: !skip ? () => throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash) : skipToken
+    queryFn: !skip
+      ? async () => {
+          // Delay initial query to give the tx some time to enter the mempool instead of getting 404's
+          if (!queryClient.getQueryData(['transaction', 'pending', txHash])) await sleep(3000)
+
+          return throttledClient.explorer.transactions.getTransactionsTransactionHash(txHash)
+        }
+      : skipToken
   })
