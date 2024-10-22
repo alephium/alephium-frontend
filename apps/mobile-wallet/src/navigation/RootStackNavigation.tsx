@@ -46,7 +46,6 @@ import {
   getStoredWalletMetadata,
   getWalletMetadata,
   isStoredWalletMetadataMigrated,
-  migrateAddressMetadata,
   migrateDeprecatedMnemonic,
   storedMnemonicV2Exists
 } from '~/persistent-storage/wallet'
@@ -167,25 +166,10 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
   }
 
   const initializeAppWithStoredWallet = useCallback(async () => {
-    let metadata = await getWalletMetadata(false)
+    const metadata = await getStoredWalletMetadata()
 
-    if (!metadata) {
-      const message = 'Could not find wallet metadata'
-      sendAnalytics({ type: 'error', message })
-      throw new Error(message)
-    }
-
-    try {
-      if (!isStoredWalletMetadataMigrated(metadata)) {
-        await migrateAddressMetadata()
-        metadata = await getStoredWalletMetadata()
-      }
-    } catch (error) {
-      const message = 'Could not migrate address metadata'
-      showExceptionToast(error, message)
-      sendAnalytics({ type: 'error', message })
-    }
-
+    // Note: metadata should have already been migrated in validateAndRepareStoredWalletData if mnemonic V2 exists or
+    // migrateDeprecatedMnemonic if it doesn't
     if (!isStoredWalletMetadataMigrated(metadata)) {
       const message = 'Could not unlock wallet because metadata is not migrated'
       sendAnalytics({ type: 'error', message })
