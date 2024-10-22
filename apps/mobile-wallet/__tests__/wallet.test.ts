@@ -26,8 +26,8 @@ import {
   deleteWallet,
   getStoredWalletMetadata,
   getWalletMetadata,
-  migrateDeprecatedMnemonic,
   isStoredWalletMetadataMigrated,
+  migrateDeprecatedMnemonic,
   storeWalletMetadata,
   storeWalletMetadataDeprecated,
   validateAndRepareStoredWalletData
