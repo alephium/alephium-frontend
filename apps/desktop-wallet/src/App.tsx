@@ -22,6 +22,7 @@ import { ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
+import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
@@ -29,7 +30,6 @@ import SplashScreen from '@/components/SplashScreen'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
-import useAddressesDataPolling from '@/features/dataPolling/useAddressesDataPolling'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
@@ -47,18 +47,21 @@ import {
 } from '@/storage/settings/settingsActions'
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
+import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 import { electron } from '@/utils/misc'
 import { languageOptions } from '@/utils/settings'
+
+import PersistedQueryCacheVersionStorage from './api/persistedCacheVersionStorage'
 
 const App = () => {
   const theme = useAppSelector((s) => s.global.theme)
 
   useAutoLock()
-  useAddressesDataPolling()
 
   useMigrateStoredSettings()
   useTrackUserSettings()
+  useClearPersistedQueryCacheOnVersionUpdate()
 
   useInitializeThrottledClient()
   useInitializeNetworkProxy()
@@ -194,6 +197,23 @@ const useInitializeNetworkProxy = () => {
   useEffect(() => {
     if (networkProxy) electron?.app.setProxySettings(networkProxy)
   }, [networkProxy])
+}
+
+const useClearPersistedQueryCacheOnVersionUpdate = () => {
+  const { deletePersistedCache } = usePersistQueryClientContext()
+  const wallets = useAppSelector((s) => s.global.wallets)
+
+  useEffect(() => {
+    const cacheVersion = PersistedQueryCacheVersionStorage.load()
+
+    if (cacheVersion !== currentVersion) {
+      wallets.forEach((wallet) => {
+        deletePersistedCache(wallet.id)
+      })
+
+      PersistedQueryCacheVersionStorage.set(currentVersion)
+    }
+  }, [deletePersistedCache, wallets])
 }
 
 interface AppContainerProps {

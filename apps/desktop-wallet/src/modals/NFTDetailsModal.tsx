@@ -61,6 +61,8 @@ const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
   const { data: nft, nftMetadata, error } = useFetchNft({ id: nftId })
 
+  const collectionId = nft?.collectionId || nftMetadata?.collectionId
+
   return (
     <NFTMetadataContainer>
       {error && error instanceof AxiosError && <NftMetadataError error={error} />}
@@ -87,10 +89,7 @@ const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
           ))}
         </DataList>
       )}
-      {nft?.collectionId ||
-        (nftMetadata?.collectionId && (
-          <NFTCollectionDetails collectionId={nft?.collectionId ?? nftMetadata?.collectionId} />
-        ))}
+      {collectionId && <NFTCollectionDetails collectionId={collectionId} />}
     </NFTMetadataContainer>
   )
 }

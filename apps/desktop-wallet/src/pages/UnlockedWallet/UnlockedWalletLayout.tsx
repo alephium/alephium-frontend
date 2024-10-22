@@ -21,7 +21,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Album, ArrowLeftRight, Layers } from 'lucide-react'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme } from 'styled-components'
 
@@ -50,36 +50,24 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
-  const previousWalletName = useRef<string>()
 
   const [fullWalletNameVisible, setFullWalletNameVisible] = useState(true)
   const [showAlephiumLogo, setShowAlephiumLogo] = useState(false)
 
   const openCurrentWalletModal = () => dispatch(openModal({ name: 'CurrentWalletModal' }))
 
-  useInterval(() => {
-    setShowAlephiumLogo(true)
-
-    setTimeout(() => {
-      setShowAlephiumLogo(false)
-    }, 8000)
-  }, 20000)
+  useInterval(() => setShowAlephiumLogo(!showAlephiumLogo), 10000)
 
   useEffect(() => {
-    if (activeWalletName !== previousWalletName.current) {
-      setFullWalletNameVisible(true)
-      previousWalletName.current = activeWalletName
-    }
+    if (!fullWalletNameVisible) return
 
-    const timeoutHandle = setTimeout(
-      () => {
-        if (fullWalletNameVisible) setFullWalletNameVisible(false)
-      },
+    const timeoutId = setTimeout(
+      () => setFullWalletNameVisible(false),
       (walletNameHideAfterSeconds - walletNameAppearAfterSeconds) * 1000
     )
 
-    return () => clearTimeout(timeoutHandle)
-  }, [activeWalletName, fullWalletNameVisible])
+    return () => clearTimeout(timeoutId)
+  }, [fullWalletNameVisible])
 
   if (!activeWalletName) return null
 

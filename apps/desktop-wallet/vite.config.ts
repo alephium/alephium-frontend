@@ -54,6 +54,7 @@ export default defineConfig({
   build: {
     target: 'es2020',
     outDir: 'build',
+    assetsInlineLimit: 0, // Prevents small assets from being inlined (was causing some svgs to not load)
     commonjsOptions: {
       include: [/node_modules/, /shared-crypto/]
     }

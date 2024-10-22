@@ -105,7 +105,7 @@ const useWalletLock = () => {
     }
 
     clearQueryCache()
-    await restoreQueryCache(encryptedWallet.id)
+    await restoreQueryCache(encryptedWallet.id, isPassphraseUsed)
 
     if (!isPassphraseUsed) {
       await restoreAddressesFromMetadata(encryptedWallet.id, isPassphraseUsed)

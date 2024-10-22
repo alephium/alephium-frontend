@@ -25,17 +25,19 @@ import useFetchLatestTransactionOfEachAddress from '@/api/apiDataHooks/wallet/us
 import { useFetchWalletBalancesAlphByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
 export const useUnsortedAddressesHashes = (): AddressHash[] => useAppSelector(selectAllAddressHashes)
 
 export const useFetchSortedAddressesHashes = (props?: SkipProp) => {
+  const isNetworkOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
   const allAddressHashes = useUnsortedAddressesHashes()
   const { data: sortedAddresses, isLoading } = useFetchSortedAddressesHashesWithLatestTx(props)
 
   const sortedAddressHashes = useMemo(() => sortedAddresses.map(({ addressHash }) => addressHash), [sortedAddresses])
 
   return {
-    data: !isLoading && !props?.skip ? sortedAddressHashes : allAddressHashes,
+    data: !isLoading && !props?.skip && !isNetworkOffline ? sortedAddressHashes : allAddressHashes,
     isLoading
   }
 }
@@ -81,15 +83,18 @@ export const useCappedAddressesHashes = () => {
 }
 
 export const useFetchAddressesHashesWithBalance = () => {
+  const isNetworkOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
   const allAddressHashes = useUnsortedAddressesHashes()
   const { data: addressesAlphBalances, isLoading } = useFetchWalletBalancesAlphByAddress()
 
   const filteredAddressHashes = useMemo(
     () =>
-      allAddressHashes.filter(
-        (addressHash) => addressesAlphBalances[addressHash] && addressesAlphBalances[addressHash].totalBalance > 0
-      ),
-    [addressesAlphBalances, allAddressHashes]
+      isNetworkOffline
+        ? allAddressHashes
+        : allAddressHashes.filter(
+            (addressHash) => addressesAlphBalances[addressHash] && addressesAlphBalances[addressHash].totalBalance > 0
+          ),
+    [addressesAlphBalances, allAddressHashes, isNetworkOffline]
   )
 
   return {

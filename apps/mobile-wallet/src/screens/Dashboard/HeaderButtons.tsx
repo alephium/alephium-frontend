@@ -20,8 +20,9 @@ import { isValidAddress } from '@alephium/web3'
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { Linking, StyleProp, View, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
+import { isAddress as isEthereumAddress } from 'web3-validator'
 
 import { sendAnalytics } from '~/analytics'
 import Button from '~/components/buttons/Button'
@@ -78,6 +79,21 @@ const HeaderButtons = ({ style }: HeaderButtonsProps) => {
           onPress: () => navigation.navigate('SettingsScreen')
         })
       }
+    } else if (isEthereumAddress(text)) {
+      showToast({
+        text1: t('You scanned an Ethereum address'),
+        text2: t('To move funds to Ethereum use the bridge at {{ url }}', { url: 'https://bridge.alephium.org' }),
+        onPress: () => Linking.openURL('https://bridge.alephium.org'),
+        type: 'error'
+      })
+    } else {
+      showToast({
+        text1: t('Invalid scanned data'),
+        text2: t('Did not detect a valid Alephium address or a WalletConnect QR code in scanned data: {{ data }}', {
+          data: text
+        }),
+        type: 'error'
+      })
     }
   }
 
