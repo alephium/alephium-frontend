@@ -338,11 +338,7 @@ describe(validateAndRepareStoredWalletData, () => {
     expect(recreatedDeprecatedWalletMetadata?.addresses.length).toBe(1)
 
     if (recreatedDeprecatedWalletMetadata) {
-      expect(isStoredWalletMetadataMigrated(recreatedDeprecatedWalletMetadata)).toBe(true)
-
-      if (isStoredWalletMetadataMigrated(recreatedDeprecatedWalletMetadata)) {
-        expect(recreatedDeprecatedWalletMetadata?.addresses[0].hash).toBeUndefined() // ensure it's deprecated metadata
-      }
+      expect(isStoredWalletMetadataMigrated(recreatedDeprecatedWalletMetadata)).toBe(false) // ensure it's deprecated metadata
     }
     expect(status === 'valid').toBe(true)
   })
