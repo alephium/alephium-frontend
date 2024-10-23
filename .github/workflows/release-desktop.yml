@@ -42,6 +42,8 @@ jobs:
           APPLEID: ${{ secrets.APPLE_ID }}
           APPLEIDPASS: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: |
           echo "Enter desktop wallet dir, install deps, build app, package it with electron-builder, and release it"
           cd apps/desktop-wallet
@@ -75,6 +77,8 @@ jobs:
           WINDOWS_SIGN_PASSWORD: ${{ secrets.WINDOWS_SIGN_PASSWORD }}
           WINDOWS_SIGN_CREDENTIAL_ID: ${{ secrets.WINDOWS_SIGN_CREDENTIAL_ID }}
           WINDOWS_SIGN_TOTP_SECRET: ${{ secrets.WINDOWS_SIGN_TOTP_SECRET }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: |
           echo "Enter desktop wallet dir, install deps, build app, package it with electron-builder, and release it"
           cd apps/desktop-wallet
@@ -91,6 +95,8 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: |
           echo "Enter desktop wallet dir, install deps, build app, package it with electron-builder, and release it"
           cd apps/desktop-wallet

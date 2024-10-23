@@ -16,10 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+require('dotenv').config()
+const isDev = require('electron-is-dev')
+const Sentry = require('@sentry/electron/main')
+
+if (!isDev) Sentry.init({ dsn: process.env.SENTRY_DSN })
+
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, dialog, ipcMain, Menu, nativeTheme, shell, nativeImage, protocol } = require('electron')
 const path = require('path')
-const isDev = require('electron-is-dev')
+
 const contextMenu = require('electron-context-menu')
 const { autoUpdater } = require('electron-updater')
 
