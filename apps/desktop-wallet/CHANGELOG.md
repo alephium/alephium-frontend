@@ -1,5 +1,12 @@
 # alephium-desktop-wallet
 
+## 2.4.2
+
+### Patch Changes
+
+- 8817e92: Fix white screen when auto-lock set to "off"
+- 8817e92: Fix display of NFTs with missing images
+
 ## 2.4.1
 
 ### Patch Changes
