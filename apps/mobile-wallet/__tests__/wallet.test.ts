@@ -26,6 +26,7 @@ import {
   deleteWallet,
   getStoredWalletMetadata,
   getWalletMetadata,
+  isStoredWalletMetadataMigrated,
   migrateDeprecatedMnemonic,
   storeWalletMetadata,
   storeWalletMetadataDeprecated,
@@ -197,8 +198,12 @@ describe(migrateDeprecatedMnemonic, () => {
     await migrateDeprecatedMnemonic(testWalletMnemonicString)
     const wallet = await getStoredWalletMetadata()
 
-    expect(wallet.addresses[0].hash).toEqual('1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')
-    expect(wallet.addresses[1].hash).toEqual('1Bf9jthiwQo74V94LHT37dwEEiV22KkpKySf4TmRDzZqf')
+    expect(isStoredWalletMetadataMigrated(wallet)).toBe(true)
+
+    if (isStoredWalletMetadataMigrated(wallet)) {
+      expect(wallet.addresses[0].hash).toEqual('1DrDyTr9RpRsQnDnXo2YRiPzPW4ooHX5LLoqXrqfMrpQH')
+      expect(wallet.addresses[1].hash).toEqual('1Bf9jthiwQo74V94LHT37dwEEiV22KkpKySf4TmRDzZqf')
+    }
   })
 })
 
@@ -331,7 +336,10 @@ describe(validateAndRepareStoredWalletData, () => {
 
     expect(recreatedDeprecatedWalletMetadata).toBeTruthy()
     expect(recreatedDeprecatedWalletMetadata?.addresses.length).toBe(1)
-    expect(recreatedDeprecatedWalletMetadata?.addresses[0].hash).toBeUndefined() // ensure it's deprecated metadata
+
+    if (recreatedDeprecatedWalletMetadata) {
+      expect(isStoredWalletMetadataMigrated(recreatedDeprecatedWalletMetadata)).toBe(false) // ensure it's deprecated metadata
+    }
     expect(status === 'valid').toBe(true)
   })
 

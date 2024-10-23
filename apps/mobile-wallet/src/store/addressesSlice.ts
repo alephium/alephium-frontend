@@ -53,6 +53,7 @@ import {
 import { chunk } from 'lodash'
 
 import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsNextPage } from '~/api/addresses'
+import { addressMetadataIncludesHash } from '~/persistent-storage/wallet'
 import { RootState } from '~/store/store'
 import {
   appLaunchedWithLastUsedWallet,
@@ -312,12 +313,14 @@ const addressesSlice = createSlice({
       .addCase(appReset, () => initialState)
       .addCase(walletDeleted, () => initialState)
     builder.addMatcher(isAnyOf(walletUnlocked, appLaunchedWithLastUsedWallet), (state, { payload: { addresses } }) => {
-      const addressesToInitialize = addresses.filter((address) => !state.entities[address.hash])
+      const addressesToInitialize = addresses.filter(
+        (address) => addressMetadataIncludesHash(address) && !state.entities[address.hash]
+      )
 
       if (addressesToInitialize.length > 0) {
         addressesAdapter.addMany(
           state,
-          addressesToInitialize.map(({ index, hash, ...settings }) =>
+          addressesToInitialize.filter(addressMetadataIncludesHash).map(({ index, hash, ...settings }) =>
             getInitialAddressState({
               index,
               hash,

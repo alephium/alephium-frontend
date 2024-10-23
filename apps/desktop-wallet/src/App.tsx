@@ -22,6 +22,7 @@ import { ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
+import PersistedQueryCacheVersionStorage from '@/api/persistedCacheVersionStorage'
 import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
@@ -51,8 +52,6 @@ import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 import { electron } from '@/utils/misc'
 import { languageOptions } from '@/utils/settings'
-
-import PersistedQueryCacheVersionStorage from './api/persistedCacheVersionStorage'
 
 const App = () => {
   const theme = useAppSelector((s) => s.global.theme)

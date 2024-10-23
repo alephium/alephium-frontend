@@ -44,8 +44,10 @@ import {
   deleteDeprecatedWallet,
   getDeprecatedStoredWallet,
   getStoredWalletMetadata,
+  getWalletMetadata,
+  isStoredWalletMetadataMigrated,
   migrateDeprecatedMnemonic,
-  storedWalletExists
+  storedMnemonicV2Exists
 } from '~/persistent-storage/wallet'
 import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
 import EditAddressScreen from '~/screens/Addresses/Address/EditAddressScreen'
@@ -164,8 +166,18 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
   }
 
   const initializeAppWithStoredWallet = useCallback(async () => {
+    const metadata = await getStoredWalletMetadata()
+
+    // Note: metadata should have already been migrated in validateAndRepareStoredWalletData if mnemonic V2 exists or
+    // migrateDeprecatedMnemonic if it doesn't
+    if (!isStoredWalletMetadataMigrated(metadata)) {
+      const message = 'Could not unlock wallet because metadata is not migrated'
+      sendAnalytics({ type: 'error', message })
+      throw new Error(message)
+    }
+
     try {
-      dispatch(walletUnlocked(await getStoredWalletMetadata()))
+      dispatch(walletUnlocked(metadata))
 
       const lastRoute = rootStackNavigationRef.current?.getCurrentRoute()?.name
 
@@ -183,10 +195,10 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
     if (isWalletUnlocked) return
 
     try {
-      const walletExists = await storedWalletExists()
+      const mnemonicV2Exists = await storedMnemonicV2Exists()
       const deprecatedWallet = await getDeprecatedStoredWallet({ authenticationPrompt: t('Unlock your wallet') })
 
-      if (walletExists) {
+      if (mnemonicV2Exists) {
         try {
           await triggerBiometricsAuthGuard({
             settingsToCheck: 'appAccess',
@@ -232,7 +244,9 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
       }
 
       try {
-        if ((await appInstallationTimestampMissing()) || (!walletExists && !deprecatedWallet)) {
+        const metadataExist = !!(await getWalletMetadata())
+
+        if ((await appInstallationTimestampMissing()) || (!metadataExist && !mnemonicV2Exists && !deprecatedWallet)) {
           if (await wasAppUninstalled()) {
             try {
               await deleteFundPassword()

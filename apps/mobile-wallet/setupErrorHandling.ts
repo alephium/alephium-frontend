@@ -29,11 +29,13 @@ if (!__DEV__) {
 
     Sentry.captureException(error, { data: { isFatal } })
 
+    const url = `mailto:developer@alephium.org?subject=Crash report&body=${error}`
+
     Alert.alert('An error occurred', 'We are working on fixing this.', [
       { text: 'Cancel', style: 'cancel' },
       {
         text: 'Send report',
-        onPress: () => Linking.openURL(`mailto:developer@alephium.org?subject=Crash report&body=${error}`)
+        onPress: () => Linking.canOpenURL(url).then((result) => (result ? Linking.openURL(url) : false))
       }
     ])
   })

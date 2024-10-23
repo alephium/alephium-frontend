@@ -1,5 +1,13 @@
 # @alephium/mobile-wallet
 
+## 1.1.10
+
+### Patch Changes
+
+- d206aeb: Fix address metadata migration
+- d206aeb: Only send crash report email if it can send emails
+- 2739f04: Improve error messages on wrong QR code scanned data
+
 ## 1.1.9
 
 ### Patch Changes

@@ -40,9 +40,9 @@ const useLatestGitHubRelease = () => {
     try {
       const response = await exponentialBackoffFetchRetry(links.latestReleaseApi)
       const data = await response.json()
-      const version = data.tag_name.replace('alephium-desktop-wallet@', '')
+      const version = data?.tag_name?.replace('alephium-desktop-wallet@', '')
 
-      if (isVersionNewer(version)) {
+      if (version && isVersionNewer(version)) {
         setNewVersion(version)
         setRequiresManualDownload(true)
       }
