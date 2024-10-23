@@ -16,14 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, calcTxAmountsDeltaForAddress } from '@alephium/shared'
+import { AddressHash, AmountDeltas, calcTxAmountsDeltaForAddress } from '@alephium/shared'
 import { PendingTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import { useMemo } from 'react'
 
 import { selectPendingSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppSelector } from '@/hooks/redux'
 
-const useTransactionAmountDeltas = (tx: Transaction | PendingTransaction, addressHash: AddressHash) => {
+const useTransactionAmountDeltas = (tx: Transaction | PendingTransaction, addressHash: AddressHash): AmountDeltas => {
   const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
 
   return useMemo(
@@ -31,7 +31,7 @@ const useTransactionAmountDeltas = (tx: Transaction | PendingTransaction, addres
       pendingSentTx
         ? {
             alphAmount: -BigInt(pendingSentTx.amount ?? 0),
-            tokenAmounts: pendingSentTx.tokens?.map(({ id, amount }) => ({ id, amount: -BigInt(amount) }))
+            tokenAmounts: pendingSentTx.tokens?.map(({ id, amount }) => ({ id, amount: -BigInt(amount) })) ?? []
           }
         : calcTxAmountsDeltaForAddress(tx, addressHash),
     [addressHash, tx, pendingSentTx]
