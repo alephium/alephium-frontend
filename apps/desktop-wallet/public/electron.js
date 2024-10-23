@@ -305,6 +305,10 @@ app.on('ready', async function () {
     if (preferedLanguages.length > 0) return preferedLanguages[0]
   })
 
+  ipcMain.handle('app:getSystemRegion', () => {
+    return app.getSystemLocale()
+  })
+
   ipcMain.handle('app:setProxySettings', async (_, proxySettings) => {
     const { address, port } = proxySettings
     const proxyRules = !address && !port ? undefined : `socks5://${address}:${port}`

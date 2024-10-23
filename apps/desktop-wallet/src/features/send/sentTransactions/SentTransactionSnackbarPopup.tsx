@@ -51,14 +51,10 @@ const SentTransactionSnackbarPopup = memo(({ txHash }: SentTransactionSnackbarPo
   usePendingTxPolling(txHash)
 
   useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>
-
     if (sentTx?.status === 'confirmed') {
-      timer = setTimeout(() => setHide(true), 5000)
-    }
+      const timer = setTimeout(() => setHide(true), 5000)
 
-    return () => {
-      if (timer) clearTimeout(timer)
+      return () => clearTimeout(timer)
     }
   }, [sentTx?.status])
 
