@@ -118,8 +118,8 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip }: NFTQueryProps) =
               ? { id, ...nftData }
               : {
                   id,
-                  name: nftData?.name.toString() || 'Unsupported NFT',
-                  image: nftData?.image.toString() || ''
+                  name: nftData?.name?.toString() || 'Unsupported NFT',
+                  image: nftData?.image?.toString() || ''
                 }
           }
         : skipToken
