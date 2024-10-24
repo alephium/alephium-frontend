@@ -26,7 +26,6 @@ const ConnectWithLedgerButton = () => {
   const navigate = useNavigate()
 
   const handleLedgerConnectClick = () => {
-    console.log('handleLedgerConnectClick')
     navigate('/ledger')
   }
 

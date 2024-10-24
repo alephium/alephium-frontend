@@ -24,6 +24,8 @@ const contextMenu = require('electron-context-menu')
 const { autoUpdater } = require('electron-updater')
 const TransportNodeHid = require('@ledgerhq/hw-transport-node-hid').default
 const AlephiumLedgerApp = require('@alephium/ledger-app').AlephiumApp
+const { listen } = require('@ledgerhq/logs')
+const web3 = require('@alephium/web3-wallet')
 
 let alephiumLedgerApp
 
@@ -337,12 +339,16 @@ app.on('ready', async function () {
   })
 
   ipcMain.handle('ledger:connectViaUsb', async () => {
-    try {
+    const connect = async () => {
       console.log('🔌... connecting to Ledger via USB')
 
-      const transport = await TransportNodeHid.create()
+      const transport = await TransportNodeHid.open('')
 
       console.log('🔌✅ connected to Ledger via USB!')
+
+      if (isDev) {
+        listen((log) => console.log('Ledger log message:', log.message))
+      }
 
       alephiumLedgerApp = new AlephiumLedgerApp(transport)
 
@@ -350,11 +356,35 @@ app.on('ready', async function () {
 
       console.log('🔌✅ Ledger version:', version)
 
-      return { success: true, version }
+      const keyType = 'default'
+
+      const initialAddressPath = web3.getHDWalletPath(keyType, 0)
+
+      const [account, _] = await alephiumLedgerApp.getAccount(initialAddressPath, undefined, keyType)
+
+      const response = {
+        success: true,
+        version,
+        initialAddress: { hash: account.address, index: 0, publicKey: account.publicKey },
+        deviceModel: alephiumLedgerApp.transport.deviceModel.productName
+      }
+
+      transport.close()
+
+      return response
+    }
+
+    try {
+      return await connect()
     } catch (error) {
       console.error('🔌❌', error)
 
-      return { success: false, version: undefined, error }
+      // Retry one more time if the error is unknown, usually the Ledger app needs a moment
+      if (error.message.includes('UNKNOWN_ERROR')) {
+        return new Promise((s) => setTimeout(s, 1000)).then(connect).catch((error) => ({ success: false, error }))
+      }
+
+      return { success: false, error }
     }
   })
 

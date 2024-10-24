@@ -68,6 +68,7 @@
     "@electron/notarize": "^1.2.3",
     "@json-rpc-tools/utils": "^1.7.6",
     "@ledgerhq/hw-transport-node-hid": "^6.29.5",
+    "@ledgerhq/logs": "^6.12.0",
     "@reduxjs/toolkit": "^1.9.1",
     "@tanstack/eslint-plugin-query": "^5.50.1",
     "@testing-library/jest-dom": "^5.14.1",

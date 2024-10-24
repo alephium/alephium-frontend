@@ -28,6 +28,7 @@ import InfoBox from '@/components/InfoBox'
 import { FloatingPanel, FooterActionsContainer } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
+import useInitializeAppWithLedgerData from '@/features/ledger/useInitializeAppWithLedgerData'
 import { useAppDispatch } from '@/hooks/redux'
 import LockedWalletLayout from '@/pages/LockedWalletLayout'
 import { toggleAppLoading } from '@/storage/global/globalActions'
@@ -40,6 +41,7 @@ const ConnectLedgerInstructionsPage = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const [error, setError] = useState<string>()
+  const initializeAppWithLedgerData = useInitializeAppWithLedgerData()
 
   const handleContinuePress = async () => {
     setError(undefined)
@@ -51,7 +53,7 @@ const ConnectLedgerInstructionsPage = () => {
       const response = await electron.ledger.connectViaUsb()
 
       if (response.success) {
-        console.log('response', response)
+        await initializeAppWithLedgerData(response.deviceModel, response.initialAddress)
       } else {
         setError(response.error.message)
       }
@@ -71,7 +73,17 @@ const ConnectLedgerInstructionsPage = () => {
         <Paragraph secondary>
           2. Open the Alephium Ledger app. The Alephium app can be installed via Ledger Live.
         </Paragraph>
-        {error && <InfoBox importance="alert">{error}</InfoBox>}
+        {error && (
+          <>
+            <InfoBox importance="warning">
+              <div>Is your device plugged in and the Alephium app open?</div>
+              <div>Your Ledger should say "Alephium is ready".</div>
+            </InfoBox>
+            <InfoBox importance="alert">
+              <div>{error}</div>
+            </InfoBox>
+          </>
+        )}
         <FooterActionsContainer>
           <Button onClick={handleContinuePress}>{t('Continue')}</Button>
         </FooterActionsContainer>
