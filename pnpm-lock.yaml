@@ -92,6 +92,9 @@ importers:
       '@alephium/keyring':
         specifier: workspace:*
         version: link:../../packages/keyring
+      '@alephium/ledger-app':
+        specifier: ^0.6.0
+        version: 0.6.0
       '@alephium/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -122,6 +125,9 @@ importers:
       '@json-rpc-tools/utils':
         specifier: ^1.7.6
         version: 1.7.6
+      '@ledgerhq/hw-transport-node-hid':
+        specifier: ^6.29.5
+        version: 6.29.5
       '@reduxjs/toolkit':
         specifier: ^1.9.1
         version: 1.9.7(react-redux@8.1.3(@types/react-dom@18.2.18)(@types/react@18.2.79)(react-dom@18.2.0(react@18.2.0))(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
@@ -184,7 +190,7 @@ importers:
         version: 1.1.1(@react-native-async-storage/async-storage@1.23.1)
       '@walletconnect/react-native-compat':
         specifier: 2.15.1
-        version: 2.15.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(@react-native-community/netinfo@11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(expo-application@5.9.1(expo@51.0.38(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))))(react-native-get-random-values@1.11.0(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
+        version: 2.15.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(@react-native-community/netinfo@11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(expo-application@5.9.1)(react-native-get-random-values@1.11.0(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
       '@walletconnect/sign-client':
         specifier: 2.15.1
         version: 2.15.1(@react-native-async-storage/async-storage@1.23.1)
@@ -635,7 +641,7 @@ importers:
         version: 1.1.1(@react-native-async-storage/async-storage@1.23.1)
       '@walletconnect/react-native-compat':
         specifier: 2.15.1
-        version: 2.15.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(@react-native-community/netinfo@11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(expo-application@5.9.1(expo@51.0.38(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))))(react-native-get-random-values@1.11.0(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
+        version: 2.15.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(@react-native-community/netinfo@11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(expo-application@5.9.1)(react-native-get-random-values@1.11.0(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
       '@walletconnect/sign-client':
         specifier: 2.15.1
         version: 2.15.1(@react-native-async-storage/async-storage@1.23.1)
@@ -1328,6 +1334,10 @@ packages:
 
   '@adobe/css-tools@4.3.2':
     resolution: {integrity: sha512-DA5a1C0gD/pLOvhv33YMrbf2FK3oUzwNl9oOJqE4XVjuEtt6XIakRcsd7eLiOSPkp1kTRQGICTA8cKra/vFbjw==}
+
+  '@alephium/ledger-app@0.6.0':
+    resolution: {integrity: sha512-qszjWh1R30YRaxggPSa6le9Hu1XFQTKFJnn2C7z8QLC6I5DcF4QRjFPbeRJVSSZc2GMvLsIvt7oUlFLjcvBiHA==}
+    engines: {node: '>=14.0.0', npm: '>=7.0.0'}
 
   '@alephium/token-list@0.0.19':
     resolution: {integrity: sha512-5DJjIue90c1zEXdqSICBbzi4nCQEx/VX85Elcbi3wP2UIBwaR9TH7gQDqPR1/OABXYgh+hMhnke6K/Yk0QVUgQ==}
@@ -3063,6 +3073,27 @@ packages:
     resolution: {integrity: sha512-HjA8x/U/Q78HRRe19yh8HVKoZ+Iaoo3YZjakJYxR+rw52NHo6jM+VE9b8+7ygkCFXl/EHID5wh/MkXaE/jGyYw==}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
+  '@ledgerhq/devices@8.4.4':
+    resolution: {integrity: sha512-sz/ryhe/R687RHtevIE9RlKaV8kkKykUV4k29e7GAVwzHX1gqG+O75cu1NCJUHLbp3eABV5FdvZejqRUlLis9A==}
+
+  '@ledgerhq/errors@6.19.1':
+    resolution: {integrity: sha512-75yK7Nnit/Gp7gdrJAz0ipp31CCgncRp+evWt6QawQEtQKYEDfGo10QywgrrBBixeRxwnMy1DP6g2oCWRf1bjw==}
+
+  '@ledgerhq/hw-transport-node-hid-noevents@6.30.5':
+    resolution: {integrity: sha512-nOPbhFU87LgLERVAQ+HhxV8E8c+7d8ptllkgiJUc4QwL2z9zkIOAEtgdvCaZ066Oi9XGnln/GF1oAgByYnYDPw==}
+
+  '@ledgerhq/hw-transport-node-hid@6.29.5':
+    resolution: {integrity: sha512-2bAp4K50V1kdCufU9JdQPcw4aLyvA+yQRJU/X39B+PC+rnis40gEbqNh0henhzv876sXdbNk6G/MkDWXpwDIow==}
+
+  '@ledgerhq/hw-transport@6.31.0':
+    resolution: {integrity: sha512-BY1poLk8vlJdIYngp8Zfaa/V9n14dqgt1G7iNetVRhJVFEKp9EYONeC3x6q/N7x81LUpzBk6M+T+s46Z4UiXHw==}
+
+  '@ledgerhq/hw-transport@6.31.4':
+    resolution: {integrity: sha512-6c1ir/cXWJm5dCWdq55NPgCJ3UuKuuxRvf//Xs36Bq9BwkV2YaRQhZITAkads83l07NAdR16hkTWqqpwFMaI6A==}
+
+  '@ledgerhq/logs@6.12.0':
+    resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
+
   '@malept/cross-spawn-promise@1.1.1':
     resolution: {integrity: sha512-RTBGWL5FWQcg9orDOCcp4LvItNzUPcyEU9bwaeJX0rJ1IQxzucC48Y0/sQLp/g6t99IQgAlGIaesJS+gTn7tVQ==}
     engines: {node: '>= 10'}
@@ -4094,6 +4125,9 @@ packages:
 
   '@types/verror@1.10.9':
     resolution: {integrity: sha512-MLx9Z+9lGzwEuW16ubGeNkpBDE84RpB/NyGgg6z2BTpWzKkGU451cAY3UkUzZEp72RHF585oJ3V8JVNqIplcAQ==}
+
+  '@types/w3c-web-usb@1.0.10':
+    resolution: {integrity: sha512-CHgUI5kTc/QLMP8hODUHhge0D4vx+9UiAwIGiT0sTy/B2XpdX1U5rJt6JSISgr6ikRT7vxV9EVAFeYZqUnl1gQ==}
 
   '@types/yaireo__tagify@4.18.0':
     resolution: {integrity: sha512-iT1it1OyTiuZl7G9Gh2mTBGQ2dssiWChJpmD41/+zLux1x1r2tSroIZ+mXFvdsoqG1yprjd2x+taV+0u9QF9zA==}
@@ -8346,6 +8380,12 @@ packages:
   node-addon-api@1.7.2:
     resolution: {integrity: sha512-ibPK3iA+vaY1eEjESkQkM0BbCqFOaZMiXRTtdB0u7b4djtY6JnsjvPdUHVMg6xQt3B8fpTTWHI9A+ADjM9frzg==}
 
+  node-addon-api@3.2.1:
+    resolution: {integrity: sha512-mmcei9JghVNDYydghQmeDX8KoAm0FAiYyIcUt/N4nhyAipB17pllZQDOJD2fotxABnt4Mdz+dKTO7eftLg4d0A==}
+
+  node-addon-api@6.1.0:
+    resolution: {integrity: sha512-+eawOlIgy680F0kBzPUNFhMZGtJ1YmqM6l4+Crf4IkImjYrO/mqPwRMh352g23uIaQKFItcQ64I7KMaJxHgAVA==}
+
   node-addon-api@7.0.0:
     resolution: {integrity: sha512-vgbBJTS4m5/KkE16t5Ly0WW9hz46swAstv0hYYwMtbG7AznRhNyfLRe8HZAiWIpcHzoO7HxhLuBQj9rJ/Ho0ZA==}
 
@@ -8368,6 +8408,15 @@ packages:
   node-forge@1.3.1:
     resolution: {integrity: sha512-dPEtOeMvF9VMcYV/1Wb8CPoVAXtp6MKMlcbAt4ddqmGqUJ6fQZFXkNZNkNlfevtNkGtaSoXf/vNNNSvgrdXwtA==}
     engines: {node: '>= 6.13.0'}
+
+  node-gyp-build@4.8.2:
+    resolution: {integrity: sha512-IRUxE4BVsHWXkV/SFOut4qTlagw2aM8T5/vnTsmrHJvVoKueJHRc/JaFND7QDDc61kLYUJ6qlZM3sqTSyx2dTw==}
+    hasBin: true
+
+  node-hid@2.1.2:
+    resolution: {integrity: sha512-qhCyQqrPpP93F/6Wc/xUR7L8mAJW0Z6R7HMQV8jCHHksAxNDe/4z4Un/H9CpLOT+5K39OPyt9tIQlavxWES3lg==}
+    engines: {node: '>=10'}
+    hasBin: true
 
   node-int64@0.4.0:
     resolution: {integrity: sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==}
@@ -10760,6 +10809,10 @@ packages:
   url-parse@1.5.10:
     resolution: {integrity: sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==}
 
+  usb@2.9.0:
+    resolution: {integrity: sha512-G0I/fPgfHUzWH8xo2KkDxTTFruUWfppgSFJ+bQxz/kVY2x15EQ/XDB7dqD1G432G4gBG4jYQuF3U7j/orSs5nw==}
+    engines: {node: '>=10.20.0 <11.x || >=12.17.0 <13.0 || >=14.0.0'}
+
   use-latest-callback@0.1.9:
     resolution: {integrity: sha512-CL/29uS74AwreI/f2oz2hLTW7ZqVeV5+gxFeGudzQrgkCytrHw33G4KbnQOrRlAEzzAFXi7dDLMC9zhWcVpzmw==}
     peerDependencies:
@@ -11387,6 +11440,14 @@ snapshots:
       uuid: 3.4.0
 
   '@adobe/css-tools@4.3.2': {}
+
+  '@alephium/ledger-app@0.6.0':
+    dependencies:
+      '@alephium/web3': 1.5.1
+      '@ledgerhq/hw-transport': 6.31.0
+      blakejs: 1.2.1
+    transitivePeerDependencies:
+      - encoding
 
   '@alephium/token-list@0.0.19':
     dependencies:
@@ -13749,6 +13810,50 @@ snapshots:
       '@json-rpc-tools/types': 1.7.6
       '@pedrouid/environment': 1.0.1
 
+  '@ledgerhq/devices@8.4.4':
+    dependencies:
+      '@ledgerhq/errors': 6.19.1
+      '@ledgerhq/logs': 6.12.0
+      rxjs: 7.8.1
+      semver: 7.6.3
+
+  '@ledgerhq/errors@6.19.1': {}
+
+  '@ledgerhq/hw-transport-node-hid-noevents@6.30.5':
+    dependencies:
+      '@ledgerhq/devices': 8.4.4
+      '@ledgerhq/errors': 6.19.1
+      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/logs': 6.12.0
+      node-hid: 2.1.2
+
+  '@ledgerhq/hw-transport-node-hid@6.29.5':
+    dependencies:
+      '@ledgerhq/devices': 8.4.4
+      '@ledgerhq/errors': 6.19.1
+      '@ledgerhq/hw-transport': 6.31.4
+      '@ledgerhq/hw-transport-node-hid-noevents': 6.30.5
+      '@ledgerhq/logs': 6.12.0
+      lodash: 4.17.21
+      node-hid: 2.1.2
+      usb: 2.9.0
+
+  '@ledgerhq/hw-transport@6.31.0':
+    dependencies:
+      '@ledgerhq/devices': 8.4.4
+      '@ledgerhq/errors': 6.19.1
+      '@ledgerhq/logs': 6.12.0
+      events: 3.3.0
+
+  '@ledgerhq/hw-transport@6.31.4':
+    dependencies:
+      '@ledgerhq/devices': 8.4.4
+      '@ledgerhq/errors': 6.19.1
+      '@ledgerhq/logs': 6.12.0
+      events: 3.3.0
+
+  '@ledgerhq/logs@6.12.0': {}
+
   '@malept/cross-spawn-promise@1.1.1':
     dependencies:
       cross-spawn: 7.0.3
@@ -15194,6 +15299,8 @@ snapshots:
   '@types/verror@1.10.9':
     optional: true
 
+  '@types/w3c-web-usb@1.0.10': {}
+
   '@types/yaireo__tagify@4.18.0':
     dependencies:
       '@types/react': 18.2.79
@@ -15680,7 +15787,7 @@ snapshots:
       '@walletconnect/safe-json': 1.0.2
       pino: 7.11.0
 
-  '@walletconnect/react-native-compat@2.15.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(@react-native-community/netinfo@11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(expo-application@5.9.1(expo@51.0.38(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))))(react-native-get-random-values@1.11.0(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))':
+  '@walletconnect/react-native-compat@2.15.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(@react-native-community/netinfo@11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(expo-application@5.9.1)(react-native-get-random-values@1.11.0(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))':
     dependencies:
       '@react-native-async-storage/async-storage': 1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
       '@react-native-community/netinfo': 11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
@@ -20734,6 +20841,10 @@ snapshots:
   node-addon-api@1.7.2:
     optional: true
 
+  node-addon-api@3.2.1: {}
+
+  node-addon-api@6.1.0: {}
+
   node-addon-api@7.0.0: {}
 
   node-dir@0.1.17:
@@ -20747,6 +20858,14 @@ snapshots:
       whatwg-url: 5.0.0
 
   node-forge@1.3.1: {}
+
+  node-gyp-build@4.8.2: {}
+
+  node-hid@2.1.2:
+    dependencies:
+      bindings: 1.5.0
+      node-addon-api: 3.2.1
+      prebuild-install: 7.1.1
 
   node-int64@0.4.0: {}
 
@@ -23338,6 +23457,12 @@ snapshots:
     dependencies:
       querystringify: 2.2.0
       requires-port: 1.0.0
+
+  usb@2.9.0:
+    dependencies:
+      '@types/w3c-web-usb': 1.0.10
+      node-addon-api: 6.1.0
+      node-gyp-build: 4.8.2
 
   use-latest-callback@0.1.9(react@18.2.0):
     dependencies:

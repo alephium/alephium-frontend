@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NonSensitiveAddressData } from '@alephium/keyring'
 import { Error, ProgressInfo, UpdateDownloadedEvent } from 'electron-updater'
 
 import { ThemeSettings } from './settings'
@@ -52,6 +53,12 @@ export interface AlephiumWindow extends Window {
       getSystemLanguage: () => Promise<string | undefined>
       setProxySettings: (proxySettings: ProxySettings) => Promise<void>
       restart: () => void
+    }
+    ledger: {
+      connectViaUsb: () => Promise<
+        | { success: true; version: string; initialAddress: NonSensitiveAddressData; deviceModel: string }
+        | { success: false; error: Error }
+      >
     }
   }
 }

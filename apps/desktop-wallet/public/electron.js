@@ -22,6 +22,11 @@ const path = require('path')
 const isDev = require('electron-is-dev')
 const contextMenu = require('electron-context-menu')
 const { autoUpdater } = require('electron-updater')
+const TransportNodeHid = require('@ledgerhq/hw-transport-node-hid').default
+const AlephiumLedgerApp = require('@alephium/ledger-app').AlephiumApp
+const web3 = require('@alephium/web3-wallet')
+
+let alephiumLedgerApp
 
 const CURRENT_VERSION = app.getVersion()
 const IS_RC = CURRENT_VERSION.includes('-rc.')
@@ -173,6 +178,7 @@ function createWindow() {
     minHeight: 700,
     titleBarStyle: isWindows ? 'default' : 'hidden',
     webPreferences: {
+      nodeIntegration: true,
       nodeIntegrationInWorker: true,
       preload: path.join(__dirname, 'preload.js'),
       spellcheck: true
@@ -325,6 +331,42 @@ app.on('ready', async function () {
 
   ipcMain.handle('wc:resetDeepLinkUri', () => {
     deepLinkUri = null
+  })
+
+  ipcMain.handle('ledger:connectViaUsb', async () => {
+    try {
+      console.log('🔌... connecting to Ledger via USB')
+
+      const transport = await TransportNodeHid.create()
+
+      console.log('🔌✅ connected to Ledger via USB!')
+
+      alephiumLedgerApp = new AlephiumLedgerApp(transport)
+
+      const version = await alephiumLedgerApp.getVersion()
+
+      console.log('🔌✅ Ledger version:', version)
+
+      const keyType = 'default'
+
+      const initialAddressPath = web3.getHDWalletPath(keyType, 0)
+
+      const [account, hdIndex] = await alephiumLedgerApp.getAccount(initialAddressPath, undefined, keyType)
+
+      console.log('🔌✅ Ledger account:', account)
+      console.log('🔌✅ Ledger HD index:', hdIndex)
+
+      return {
+        success: true,
+        version,
+        initialAddress: { hash: account.address, index: 0, publicKey: account.publicKey },
+        deviceModel: alephiumLedgerApp.transport.deviceModel.productName
+      }
+    } catch (error) {
+      console.error('🔌❌', error)
+
+      return { success: false, error }
+    }
   })
 
   createWindow()
