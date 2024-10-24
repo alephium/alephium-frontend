@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import DataList from '@/components/DataList'
-import NFTThumbnail from '@/components/NFTThumbnail'
+import NFTThumbnail from '@/features/thumbnails/NFTThumbnail'
 import { openModal } from '@/features/modals/modalActions'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'

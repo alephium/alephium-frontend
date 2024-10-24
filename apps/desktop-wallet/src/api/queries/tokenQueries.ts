@@ -41,6 +41,15 @@ interface NFTQueryProps extends TokenQueryProps {
   tokenUri?: NFTMetaData['tokenUri']
 }
 
+enum NFTDataTypes {
+  image = 'image',
+  video = 'video',
+  audio = 'audio',
+  other = 'other'
+}
+
+type NFTDataType = keyof typeof NFTDataTypes
+
 export const tokenTypeQuery = ({ id, networkId, skip }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', 'type', id],
@@ -112,15 +121,30 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip }: NFTQueryProps) =
     queryFn:
       !skip && !!tokenUri
         ? async () => {
-            const nftData = (await axios.get(tokenUri)).data as NFTTokenUriMetaData
+            const res = await axios.get(tokenUri)
+            const nftData = res.data as NFTTokenUriMetaData
+
+            if (!nftData || !nftData.name) {
+              return Promise.reject()
+            }
+
+            // NOTE: Couldn't get the proper content type with axios
+            const dataTypeRes = nftData.image ? (await fetch(nftData.image)).headers.get('content-type') || '' : ''
+
+            const dataTypeCategory = dataTypeRes.split('/')[0]
+
+            const dataType = dataTypeCategory in NFTDataTypes ? (dataTypeCategory as NFTDataType) : 'other'
 
             return matchesNFTTokenUriMetaDataSchema(nftData)
-              ? { id, ...nftData }
-              : {
-                  id,
-                  name: nftData?.name?.toString() || 'Unsupported NFT',
-                  image: nftData?.image?.toString() || ''
-                }
+              ? { id, dataType, ...nftData }
+              : nftData.name
+                ? {
+                    id,
+                    dataType,
+                    name: nftData.name,
+                    image: nftData.image ? nftData.image.toString() : ''
+                  }
+                : Promise.reject()
           }
         : skipToken
   })
