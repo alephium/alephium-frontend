@@ -54,5 +54,10 @@ export interface AlephiumWindow extends Window {
       setProxySettings: (proxySettings: ProxySettings) => Promise<void>
       restart: () => void
     }
+    ledger: {
+      connectViaUsb: () => Promise<
+        { success: true; version: string } | { success: false; version: undefined; error: Error }
+      >
+    }
   }
 }

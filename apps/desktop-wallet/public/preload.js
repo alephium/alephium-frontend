@@ -68,5 +68,8 @@ contextBridge.exposeInMainWorld('electron', {
     getSystemRegion: () => ipcRenderer.invoke('app:getSystemRegion'),
     setProxySettings: (proxySettings) => ipcRenderer.invoke('app:setProxySettings', proxySettings),
     restart: () => ipcRenderer.invoke('app:restart')
+  },
+  ledger: {
+    connectViaUsb: () => ipcRenderer.invoke('ledger:connectViaUsb')
   }
 })

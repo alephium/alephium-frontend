@@ -22,6 +22,10 @@ const path = require('path')
 const isDev = require('electron-is-dev')
 const contextMenu = require('electron-context-menu')
 const { autoUpdater } = require('electron-updater')
+const TransportNodeHid = require('@ledgerhq/hw-transport-node-hid').default
+const AlephiumLedgerApp = require('@alephium/ledger-app').AlephiumApp
+
+let alephiumLedgerApp
 
 const CURRENT_VERSION = app.getVersion()
 const IS_RC = CURRENT_VERSION.includes('-rc.')
@@ -173,6 +177,7 @@ function createWindow() {
     minHeight: 700,
     titleBarStyle: isWindows ? 'default' : 'hidden',
     webPreferences: {
+      nodeIntegration: true,
       nodeIntegrationInWorker: true,
       preload: path.join(__dirname, 'preload.js'),
       spellcheck: true
@@ -329,6 +334,28 @@ app.on('ready', async function () {
 
   ipcMain.handle('wc:resetDeepLinkUri', () => {
     deepLinkUri = null
+  })
+
+  ipcMain.handle('ledger:connectViaUsb', async () => {
+    try {
+      console.log('🔌... connecting to Ledger via USB')
+
+      const transport = await TransportNodeHid.create()
+
+      console.log('🔌✅ connected to Ledger via USB!')
+
+      alephiumLedgerApp = new AlephiumLedgerApp(transport)
+
+      const version = await alephiumLedgerApp.getVersion()
+
+      console.log('🔌✅ Ledger version:', version)
+
+      return { success: true, version }
+    } catch (error) {
+      console.error('🔌❌', error)
+
+      return { success: false, version: undefined, error }
+    }
   })
 
   createWindow()
