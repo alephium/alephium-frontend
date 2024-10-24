@@ -485,5 +485,9 @@
   "Forget selected addresses": "Forget selected addresses",
   "You only have one address. You cannot forget it.": "You only have one address. You cannot forget it.",
   "Total worth": "Total worth",
-  "Could not load NFT metadata": "Could not load NFT metadata"
+  "Could not load NFT metadata": "Could not load NFT metadata",
+  "Video thumbnail": "Video thumbnail",
+  "Unsupported media type": "Unsupported media type",
+  "No media": "No media",
+  "Error": "Error"
 }

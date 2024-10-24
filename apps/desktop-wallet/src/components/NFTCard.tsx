@@ -23,10 +23,10 @@ import styled from 'styled-components'
 
 import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
 import Ellipsed from '@/components/Ellipsed'
-import NFTThumbnail from '@/components/NFTThumbnail'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Truncate from '@/components/Truncate'
 import { openModal } from '@/features/modals/modalActions'
+import NFTThumbnail from '@/features/thumbnails/NFTThumbnail'
 import { useAppDispatch } from '@/hooks/redux'
 
 interface NFTCardProps {
@@ -50,9 +50,13 @@ const NFTCard = ({ nftId }: NFTCardProps) => {
         {isLoading ? (
           <SkeletonLoader height="15px" />
         ) : nft?.name ? (
-          <NFTName>{nft.name}</NFTName>
+          <NFTNameContainer>
+            <NFTName>{nft.name}</NFTName>
+          </NFTNameContainer>
         ) : (
-          <EllipsedStyled text={nftId} />
+          <NFTNameContainer>
+            <EllipsedStyled text={nftId} />
+          </NFTNameContainer>
         )}
       </CardContent>
     </NFTCardStyled>
@@ -65,6 +69,7 @@ const NFTCardStyled = styled.div`
   display: flex;
   background-color: ${({ theme }) => theme.bg.background2};
   border-radius: var(--radius-huge);
+  overflow: hidden;
   transition: all cubic-bezier(0.2, 0.65, 0.5, 1) 0.1s;
   height: 200px;
 
@@ -79,23 +84,29 @@ const CardContent = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 10px;
   overflow: hidden;
-  gap: 10px;
 `
 
 const NFTPictureContainer = styled(motion.div)`
   flex: 1;
   position: relative;
-  border-radius: var(--radius-big);
-  overflow: hidden;
   background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.06).toHex()};
+  overflow: hidden;
+`
+
+const NFTNameContainer = styled.div`
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 80%;
+  align-self: center;
 `
 
 const NFTName = styled(Truncate)`
+  overflow: hidden;
   text-align: center;
   font-weight: 600;
-  max-width: 100%;
   text-overflow: ellipsis;
 `
 
