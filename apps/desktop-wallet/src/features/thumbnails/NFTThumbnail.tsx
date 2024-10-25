@@ -35,6 +35,7 @@ interface NFTThumbnailProps {
   autoPlay?: boolean
   playOnHover?: boolean
   showPlayIconIfVideo?: boolean
+  onClick?: () => void
 }
 
 const NFTThumbnail = memo(
@@ -46,7 +47,8 @@ const NFTThumbnail = memo(
     borderRadius,
     autoPlay,
     showPlayIconIfVideo,
-    playOnHover
+    playOnHover,
+    onClick
   }: NFTThumbnailProps) => {
     const { t } = useTranslation()
     const theme = useTheme()
@@ -70,6 +72,7 @@ const NFTThumbnail = memo(
           height: size,
           width: size
         }}
+        onClick={onClick}
       >
         {!isLoading ? (
           src ? (

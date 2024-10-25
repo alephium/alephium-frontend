@@ -21,8 +21,8 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import DataList from '@/components/DataList'
-import NFTThumbnail from '@/features/thumbnails/NFTThumbnail'
 import { openModal } from '@/features/modals/modalActions'
+import NFTThumbnail from '@/features/thumbnails/NFTThumbnail'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 import { useAppDispatch } from '@/hooks/redux'
@@ -42,7 +42,7 @@ const NFTsDataListRow = ({ tx, refAddressHash }: TransactionDetailsModalTxProps)
     <DataList.Row label={t('NFTs')}>
       <NFTThumbnails>
         {nfts.map((nft) => (
-          <NFTThumbnail nftId={nft.id} key={nft.id} onClick={() => openNFTDetailsModal(nft.id)} />
+          <NFTThumbnail nftId={nft.id} key={nft.id} onClick={() => openNFTDetailsModal(nft.id)} autoPlay />
         ))}
       </NFTThumbnails>
     </DataList.Row>
