@@ -49,7 +49,7 @@ const NFTDetailsModal = memo(({ id, nftId }: ModalBaseProp & NFTDetailsModalProp
   return (
     <SideModal id={id} title={t('NFT details')}>
       <NFTImageContainer>
-        <NFTThumbnail size="100%" nftId={nftId} hideIfError />
+        <NFTThumbnail size="100%" nftId={nftId} hideIfError autoPlay />
       </NFTImageContainer>
 
       <NFTDataList nftId={nftId} />
