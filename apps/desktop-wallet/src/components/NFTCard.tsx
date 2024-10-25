@@ -44,7 +44,7 @@ const NFTCard = ({ nftId }: NFTCardProps) => {
     <NFTCardStyled onClick={openNFTDetailsModal}>
       <CardContent>
         <NFTPictureContainer>
-          <NFTThumbnail nftId={nftId} size="100%" />
+          <NFTThumbnail nftId={nftId} size="100%" playOnHover showPlayIconIfVideo />
         </NFTPictureContainer>
 
         {isLoading ? (

@@ -79,7 +79,7 @@ const VideoThumbnail = ({ videoUrl, showPlayIcon, playOnHover }: VideoThumbnailP
           <Thumbnail
             src={thumbnailUrl}
             alt={t('Video thumbnail')}
-            style={{ filter: isHovered ? 'blur(30px)' : undefined }}
+            style={{ filter: isHovered ? 'blur(10px)' : undefined }}
           />
           {showPlayIcon && <PlayIcon />}
           {playOnHover && isHovered && (
