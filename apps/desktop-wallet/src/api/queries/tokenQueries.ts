@@ -128,8 +128,7 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip }: NFTQueryProps) =
               return Promise.reject()
             }
 
-            // NOTE: Couldn't get the proper content type with axios
-            const dataTypeRes = nftData.image ? (await fetch(nftData.image)).headers.get('content-type') || '' : ''
+            const dataTypeRes = nftData.image ? (await axios.get(nftData.image)).headers['content-type'] || '' : ''
 
             const dataTypeCategory = dataTypeRes.split('/')[0]
 
