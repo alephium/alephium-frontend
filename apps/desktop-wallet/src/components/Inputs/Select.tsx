@@ -111,9 +111,8 @@ function Select<T extends OptionValue>({
   const [hookCoordinates, setHookCoordinates] = useState<Coordinates | undefined>(undefined)
 
   const [searchInput, setSearchInput] = useState('')
-  const filteredOptions = options
-    .filter((o) => o.label.toLowerCase().includes(searchInput.toLowerCase()))
-    .map((o) => o.value)
+  const filteredOptions =
+    searchInput.length > 2 ? options.filter((o) => o.label.toLocaleLowerCase().includes(searchInput)) : options
 
   const multipleAvailableOptions = options.length > 1
 
@@ -243,8 +242,8 @@ function Select<T extends OptionValue>({
             onClose={handlePopupClose}
             parentSelectRef={selectedValueRef}
             ListBottomComponent={ListBottomComponent}
-            showOnly={filteredOptions}
-            onSearchInput={isSearchable ? setSearchInput : undefined}
+            showOnly={searchInput.length > 2 ? filteredOptions.map((o) => o.value) : undefined}
+            onSearchInput={isSearchable ? (text) => setSearchInput(text.toLocaleLowerCase()) : undefined}
           />
         )}
       </ModalPortal>

@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAction } from '@reduxjs/toolkit'
 
-import { RegionLocales } from '@/features/settings/numberFormatLocales'
 import { Language, Settings, ThemeType } from '@/types/settings'
 
 export const languageChangeStarted = createAction('settings/languageChangeStarted')
@@ -29,7 +28,7 @@ export const systemLanguageMatchSucceeded = createAction<Language>('settings/sys
 
 export const systemLanguageMatchFailed = createAction('settings/systemLanguageMatchFailed')
 
-export const systemRegionMatchSucceeded = createAction<RegionLocales>('settings/systemRegionMatchSucceeded')
+export const systemRegionMatchSucceeded = createAction<string>('settings/systemRegionMatchSucceeded')
 
 export const systemRegionMatchFailed = createAction('settings/systemRegionMatchFailed')
 

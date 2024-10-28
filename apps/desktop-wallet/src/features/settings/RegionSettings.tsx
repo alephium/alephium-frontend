@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
 import Select from '@/components/Inputs/Select'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { RegionLocales, regionsOptions } from '@/features/settings/numberFormatLocales'
+import useRegionOptions from '@/features/settings/useRegionOptions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { numberFormatRegionChanged } from '@/storage/settings/settingsActions'
 
@@ -30,8 +30,9 @@ const RegionSettings = () => {
   const currentRegion = useAppSelector((s) => s.settings.region)
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
+  const regionOptions = useRegionOptions()
 
-  const handleRegionSelect = (region: RegionLocales) => {
+  const handleRegionSelect = (region: string) => {
     dispatch(numberFormatRegionChanged(region))
 
     sendAnalytics({ event: 'Region changed', props: { region } })
@@ -44,9 +45,9 @@ const RegionSettings = () => {
       InputComponent={
         <Select
           id="region"
-          options={regionsOptions}
+          options={regionOptions}
           onSelect={handleRegionSelect}
-          controlledValue={regionsOptions.find((region) => region.value === currentRegion)}
+          controlledValue={regionOptions.find((region) => region.value === currentRegion)}
           noMargin
           title={t('Region')}
           heightSize="small"
