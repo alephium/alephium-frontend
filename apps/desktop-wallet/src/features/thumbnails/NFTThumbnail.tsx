@@ -121,6 +121,7 @@ const ErrorMessage = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   height: 100%;
   width: 100%;
   color: ${({ theme }) => theme.font.secondary};
