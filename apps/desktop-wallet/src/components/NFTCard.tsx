@@ -63,6 +63,13 @@ const NFTCard = ({ nftId }: NFTCardProps) => {
 
 export default NFTCard
 
+const NFTPictureContainer = styled(motion.div)`
+  flex: 1;
+  position: relative;
+  background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.06).toHex()};
+  overflow: hidden;
+`
+
 const NFTCardStyled = styled.div`
   display: flex;
   background-color: ${({ theme }) => theme.bg.background2};
@@ -73,8 +80,11 @@ const NFTCardStyled = styled.div`
 
   &:hover {
     cursor: pointer;
-    background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.05).toHex()};
-    transform: scale(1.02);
+    background-color: ${({ theme }) => colord(theme.bg.background2).lighten(0.02).toHex()};
+
+    ${NFTPictureContainer} {
+      filter: brightness(1.05);
+    }
   }
 `
 
@@ -82,13 +92,6 @@ const CardContent = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-`
-
-const NFTPictureContainer = styled(motion.div)`
-  flex: 1;
-  position: relative;
-  background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.06).toHex()};
   overflow: hidden;
 `
 
