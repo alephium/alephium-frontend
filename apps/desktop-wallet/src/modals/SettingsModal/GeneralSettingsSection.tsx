@@ -128,7 +128,6 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
   const handleClearCacheButtonPress = async () => {
     try {
       queryClient.clear()
-      deleteThumbnailsDB()
       dispatch(appDataCleared())
     } catch (e) {
       dispatch(appDataClearFailed())
@@ -139,6 +138,12 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
       dispatch(walletConnectCacheCleared())
     } catch (e) {
       dispatch(walletConnectCacheClearFailed())
+      console.error(e)
+    }
+
+    try {
+      deleteThumbnailsDB()
+    } catch (e) {
       console.error(e)
     }
   }
