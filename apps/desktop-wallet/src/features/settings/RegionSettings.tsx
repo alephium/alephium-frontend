@@ -50,6 +50,7 @@ const RegionSettings = () => {
           noMargin
           title={t('Region')}
           heightSize="small"
+          isSearchable
         />
       }
     />

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { sleep } from '@alephium/web3'
 import { colord } from 'colord'
 import { isEqual, partition } from 'lodash'
 import { MoreVertical, SearchIcon } from 'lucide-react'
@@ -78,6 +79,7 @@ interface SelectProps<T extends OptionValue> {
   renderCustomComponent?: (value?: SelectOption<T>, disablePointer?: boolean) => ReactNode
   ListBottomComponent?: ReactNode
   allowReselectionOnClickWhenSingleOption?: boolean
+  isSearchable?: boolean
 }
 
 function Select<T extends OptionValue>({
@@ -98,7 +100,8 @@ function Select<T extends OptionValue>({
   heightSize,
   renderCustomComponent,
   ListBottomComponent,
-  allowReselectionOnClickWhenSingleOption
+  allowReselectionOnClickWhenSingleOption,
+  isSearchable
 }: SelectProps<T>) {
   const selectedValueRef = useRef<HTMLDivElement>(null)
 
@@ -106,6 +109,11 @@ function Select<T extends OptionValue>({
   const [value, setValue] = useState(controlledValue)
   const [showPopup, setShowPopup] = useState(false)
   const [hookCoordinates, setHookCoordinates] = useState<Coordinates | undefined>(undefined)
+
+  const [searchInput, setSearchInput] = useState('')
+  const filteredOptions = options
+    .filter((o) => o.label.toLowerCase().includes(searchInput.toLowerCase()))
+    .map((o) => o.value)
 
   const multipleAvailableOptions = options.length > 1
 
@@ -154,6 +162,7 @@ function Select<T extends OptionValue>({
   const handlePopupClose = () => {
     setShowPopup(false)
     selectedValueRef.current?.focus()
+    setSearchInput('')
   }
 
   useEffect(() => {
@@ -234,6 +243,8 @@ function Select<T extends OptionValue>({
             onClose={handlePopupClose}
             parentSelectRef={selectedValueRef}
             ListBottomComponent={ListBottomComponent}
+            showOnly={filteredOptions}
+            onSearchInput={isSearchable ? setSearchInput : undefined}
           />
         )}
       </ModalPortal>
@@ -279,6 +290,7 @@ export function SelectOptionsModal<T extends OptionValue>({
   const { t } = useTranslation()
   const optionSelectRef = useRef<HTMLDivElement>(null)
   const theme = useTheme()
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   // We hide instead of simply not rendering filtered options to avoid changing the height/width of the modal when
   // filtering. When the size of the modal depends on its contents, its size might change when filtering some options
@@ -309,6 +321,11 @@ export function SelectOptionsModal<T extends OptionValue>({
       ? parentSelectWidth + 10
       : undefined
 
+  useEffect(() => {
+    // Delay to attract attention
+    sleep(300).then(() => searchInputRef.current?.focus())
+  }, [])
+
   return (
     <Popup
       title={title}
@@ -319,7 +336,9 @@ export function SelectOptionsModal<T extends OptionValue>({
         onSearchInput &&
         !isEmpty && (
           <Searchbar
-            placeholder={searchPlaceholder}
+            name="search"
+            inputFieldRef={searchInputRef}
+            placeholder={searchPlaceholder ?? t('Search')}
             Icon={SearchIcon}
             onChange={(e) => onSearchInput(e.target.value)}
             heightSize="small"
