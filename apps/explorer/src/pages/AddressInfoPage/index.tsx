@@ -197,7 +197,7 @@ const AddressInfoPage = () => {
             }
           />
           <InfoGrid.Cell
-            label={t('Fiat price')}
+            label={t('Address worth')}
             value={addressWorth && <Amount value={addressWorth} isFiat suffix="$" />}
             sublabel={client.networkType === 'testnet' && t('Worth of mainnet equivalent')}
           />

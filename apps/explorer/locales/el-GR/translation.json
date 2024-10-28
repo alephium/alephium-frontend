@@ -130,5 +130,6 @@
   "Orphan": "Ορφανό",
   "It appears that this block is not part of the main chain.": "Φαίνεται ότι αυτό το μπλοκ δεν αποτελεί μέρος της κύριας αλυσίδας.",
   "confirmationsKey_one": "{{ count }} Επαλήθευση",
-  "confirmationsKey_other": "{{ count }} Επαληθεύσεις"
+  "confirmationsKey_other": "{{ count }} Επαληθεύσεις",
+  "Address worth": "Αξία διεύθυνσης"
 }
