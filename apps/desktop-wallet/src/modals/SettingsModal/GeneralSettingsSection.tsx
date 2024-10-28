@@ -35,6 +35,7 @@ import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import RegionSettings from '@/features/settings/RegionSettings'
+import { deleteThumbnailsDB } from '@/features/thumbnails/thumbnailStorage'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
@@ -127,6 +128,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
   const handleClearCacheButtonPress = async () => {
     try {
       queryClient.clear()
+      deleteThumbnailsDB()
       dispatch(appDataCleared())
     } catch (e) {
       dispatch(appDataClearFailed())

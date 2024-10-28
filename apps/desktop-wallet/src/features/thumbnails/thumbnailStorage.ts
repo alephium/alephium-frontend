@@ -202,3 +202,5 @@ export const fetchThumbnailUrl = async (videoUrl: string): Promise<string> => {
 
   return generatedThumbnailUrl
 }
+
+export const deleteThumbnailsDB = async () => indexedDB.deleteDatabase(DB_NAME)
