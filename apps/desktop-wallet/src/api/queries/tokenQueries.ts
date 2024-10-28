@@ -137,14 +137,12 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip }: NFTQueryProps) =
 
             return matchesNFTTokenUriMetaDataSchema(nftData)
               ? { id, dataType, ...nftData }
-              : nftData.name
-                ? {
-                    id,
-                    dataType,
-                    name: nftData.name,
-                    image: nftData.image ? nftData.image.toString() : ''
-                  }
-                : Promise.reject()
+              : {
+                  id,
+                  dataType,
+                  name: nftData.name,
+                  image: nftData.image ? nftData.image.toString() : ''
+                }
           }
         : skipToken
   })
