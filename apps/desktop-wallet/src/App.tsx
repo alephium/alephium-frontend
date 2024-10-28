@@ -31,7 +31,7 @@ import SplashScreen from '@/components/SplashScreen'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
-import { numberFormatRegionsOptions } from '@/features/settings/numberFormatLocales'
+import { regionsOptions } from '@/features/settings/numberFormatLocales'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
@@ -169,7 +169,7 @@ const useMigrateStoredSettings = () => {
 
 const useSystemRegion = () => {
   const dispatch = useAppDispatch()
-  const region = useAppSelector((s) => s.settings.numberFormatRegion)
+  const region = useAppSelector((s) => s.settings.region)
 
   useEffect(() => {
     if (region === undefined)
@@ -180,7 +180,7 @@ const useSystemRegion = () => {
         }
 
         const systemRegionCode = systemRegion.substring(3)
-        const matchedRegion = numberFormatRegionsOptions.find((region) => region.value.endsWith(systemRegionCode))
+        const matchedRegion = regionsOptions.find((region) => region.value.endsWith(systemRegionCode))
 
         if (matchedRegion) {
           dispatch(systemRegionMatchSucceeded(matchedRegion.value))

@@ -21,34 +21,34 @@ import { useTranslation } from 'react-i18next'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
 import Select from '@/components/Inputs/Select'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { NumberFormatLocales, numberFormatRegionsOptions } from '@/features/settings/numberFormatLocales'
+import { RegionLocales, regionsOptions } from '@/features/settings/numberFormatLocales'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { numberFormatRegionChanged } from '@/storage/settings/settingsActions'
 
-const NumberFormatSettings = () => {
+const RegionSettings = () => {
   const { t } = useTranslation()
-  const numberFormatRegion = useAppSelector((s) => s.settings.numberFormatRegion)
+  const currentRegion = useAppSelector((s) => s.settings.region)
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
 
-  const handleRegionSelect = (region: NumberFormatLocales) => {
+  const handleRegionSelect = (region: RegionLocales) => {
     dispatch(numberFormatRegionChanged(region))
 
-    sendAnalytics({ event: 'Number format changed', props: { region } })
+    sendAnalytics({ event: 'Region changed', props: { region } })
   }
 
   return (
     <KeyValueInput
-      label={t('Number format')}
-      description={t('Choose how numbers are displayed.')}
+      label={t('Region')}
+      description={t('Choose your region to update formats of dates, time, and currencies.')}
       InputComponent={
         <Select
-          id="numberFormat"
-          options={numberFormatRegionsOptions}
+          id="region"
+          options={regionsOptions}
           onSelect={handleRegionSelect}
-          controlledValue={numberFormatRegionsOptions.find((region) => region.value === numberFormatRegion)}
+          controlledValue={regionsOptions.find((region) => region.value === currentRegion)}
           noMargin
-          title={t('Number format')}
+          title={t('Region')}
           heightSize="small"
         />
       }
@@ -56,4 +56,4 @@ const NumberFormatSettings = () => {
   )
 }
 
-export default NumberFormatSettings
+export default RegionSettings

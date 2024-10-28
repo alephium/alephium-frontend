@@ -31,7 +31,7 @@ const mockSettings: Settings = {
     devTools: false,
     analytics: false,
     fiatCurrency: 'USD' as Currency,
-    numberFormatRegion: undefined
+    region: undefined
   },
   network: {
     networkId: 123,

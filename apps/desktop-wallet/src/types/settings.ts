@@ -20,7 +20,7 @@ import 'styled-components'
 
 import { Currency, NetworkSettings } from '@alephium/shared'
 
-import { NumberFormatLocales } from '@/features/settings/numberFormatLocales'
+import { RegionLocales } from '@/features/settings/numberFormatLocales'
 
 export interface GeneralSettings {
   theme: ThemeSettings
@@ -31,7 +31,7 @@ export interface GeneralSettings {
   devTools: boolean
   analytics: boolean
   fiatCurrency: Currency
-  numberFormatRegion: NumberFormatLocales | undefined
+  region: RegionLocales | undefined
 }
 
 export interface Settings {

@@ -69,7 +69,7 @@ const settingsSlice = createSlice({
         state.language = 'en-US'
       })
       .addCase(systemRegionMatchFailed, (state) => {
-        state.numberFormatRegion = 'en-US'
+        state.region = 'en-US'
       })
       .addCase(themeSettingsChanged, (state, action) => {
         state.theme = action.payload
@@ -98,7 +98,7 @@ const settingsSlice = createSlice({
 
     builder
       .addMatcher(isAnyOf(numberFormatRegionChanged, systemRegionMatchSucceeded), (state, action) => {
-        state.numberFormatRegion = action.payload
+        state.region = action.payload
       })
       .addMatcher(isAnyOf(languageChanged, systemLanguageMatchSucceeded), (state, action) => {
         state.language = action.payload

@@ -138,9 +138,9 @@ const TokenAmount = ({
 
 const FiatAmount = ({ value }: FiatAmountProps) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
-  const numberFormatRegion = useAppSelector((s) => s.settings.numberFormatRegion)
+  const region = useAppSelector((s) => s.settings.region)
 
-  return new Intl.NumberFormat(numberFormatRegion, { style: 'currency', currency: fiatCurrency }).format(value)
+  return new Intl.NumberFormat(region, { style: 'currency', currency: fiatCurrency }).format(value)
 }
 
 const CustomAmount = ({ value, fadeDecimals, overrideSuffixColor, color, suffix }: CustomAmountProps) => {

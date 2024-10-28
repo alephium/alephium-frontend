@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { SelectOption } from '@/components/Inputs/Select'
 
-export type NumberFormatLocales =
+export type RegionLocales =
   | 'en-US'
   | 'fr-FR'
   | 'de-DE'
@@ -33,7 +33,7 @@ export type NumberFormatLocales =
   | 'el-GR'
   | 'de-CH'
 
-export const numberFormatRegionsOptions: SelectOption<NumberFormatLocales>[] = [
+export const regionsOptions: SelectOption<RegionLocales>[] = [
   { label: 'US', value: 'en-US' },
   { label: 'DE', value: 'de-DE' },
   { label: 'ES', value: 'es-ES' },
