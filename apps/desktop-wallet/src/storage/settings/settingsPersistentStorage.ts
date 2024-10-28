@@ -31,7 +31,8 @@ export const defaultSettings: Settings = {
     language: undefined,
     devTools: false,
     analytics: true,
-    fiatCurrency: 'USD'
+    fiatCurrency: 'USD',
+    region: undefined
   },
   network: defaultNetworkSettings
 }

@@ -34,6 +34,7 @@ import Toggle from '@/components/Inputs/Toggle'
 import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
+import RegionSettings from '@/features/settings/RegionSettings'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
@@ -255,6 +256,10 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
           />
         }
       />
+      <HorizontalDivider />
+
+      <RegionSettings />
+
       <HorizontalDivider />
       <KeyValueInput
         label={t('Analytics')}

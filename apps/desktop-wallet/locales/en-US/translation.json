@@ -485,5 +485,7 @@
   "Forget selected addresses": "Forget selected addresses",
   "You only have one address. You cannot forget it.": "You only have one address. You cannot forget it.",
   "Total worth": "Total worth",
-  "Could not load NFT metadata": "Could not load NFT metadata"
+  "Could not load NFT metadata": "Could not load NFT metadata",
+  "Region": "Region",
+  "Choose your region to update formats of dates, time, and currencies.": "Choose your region to update formats of dates, time, and currencies."
 }

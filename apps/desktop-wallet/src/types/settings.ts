@@ -29,6 +29,7 @@ export interface GeneralSettings {
   devTools: boolean
   analytics: boolean
   fiatCurrency: Currency
+  region: string | undefined
 }
 
 export interface Settings {
