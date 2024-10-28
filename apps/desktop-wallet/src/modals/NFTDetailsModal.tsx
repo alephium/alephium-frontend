@@ -31,9 +31,9 @@ import ActionLink from '@/components/ActionLink'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import InfoBox from '@/components/InfoBox'
-import NFTThumbnail from '@/components/NFTThumbnail'
 import Truncate from '@/components/Truncate'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import NFTThumbnail from '@/features/thumbnails/NFTThumbnail'
 import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
@@ -49,7 +49,7 @@ const NFTDetailsModal = memo(({ id, nftId }: ModalBaseProp & NFTDetailsModalProp
   return (
     <SideModal id={id} title={t('NFT details')}>
       <NFTImageContainer>
-        <NFTThumbnail size="100%" nftId={nftId} hideIfError />
+        <NFTThumbnail size="100%" nftId={nftId} hideIfError autoPlay />
       </NFTImageContainer>
 
       <NFTDataList nftId={nftId} />
@@ -167,6 +167,9 @@ export default NFTDetailsModal
 
 const NFTImageContainer = styled.div`
   padding: var(--spacing-3);
+  min-height: 500px;
+  display: flex;
+  align-items: center;
 
   &:empty {
     display: none;
