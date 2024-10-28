@@ -47,17 +47,15 @@ const NFTCard = ({ nftId }: NFTCardProps) => {
           <NFTThumbnail nftId={nftId} size="100%" playOnHover showPlayIconIfVideo />
         </NFTPictureContainer>
 
-        {isLoading ? (
-          <SkeletonLoader height="15px" />
-        ) : nft?.name ? (
-          <NFTNameContainer>
+        <NFTNameContainer>
+          {isLoading ? (
+            <SkeletonLoader height="15px" />
+          ) : nft?.name ? (
             <NFTName>{nft.name}</NFTName>
-          </NFTNameContainer>
-        ) : (
-          <NFTNameContainer>
+          ) : (
             <EllipsedStyled text={nftId} />
-          </NFTNameContainer>
-        )}
+          )}
+        </NFTNameContainer>
       </CardContent>
     </NFTCardStyled>
   )
@@ -95,11 +93,11 @@ const NFTPictureContainer = styled(motion.div)`
 `
 
 const NFTNameContainer = styled.div`
-  padding: 8px 0;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  max-width: 80%;
+  width: 100%;
   align-self: center;
 `
 
