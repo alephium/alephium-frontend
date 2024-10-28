@@ -18,17 +18,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { NFT } from '@alephium/shared'
 import { CameraOff } from 'lucide-react'
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
 import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
-import Spinner from '@/components/Spinner'
+import SkeletonLoader from '@/components/SkeletonLoader'
 import VideoThumbnail from '@/features/thumbnails/VideoThumbnail'
 
 interface NFTThumbnailProps {
   nftId: NFT['id']
-  size?: number | string
+  size?: string
   border?: boolean
   borderRadius?: number
   hideIfError?: boolean
@@ -38,85 +38,83 @@ interface NFTThumbnailProps {
   onClick?: () => void
 }
 
-const NFTThumbnail = memo(
-  ({
-    nftId,
-    size,
-    border,
-    hideIfError,
-    borderRadius,
-    autoPlay,
-    showPlayIconIfVideo,
-    playOnHover,
-    onClick
-  }: NFTThumbnailProps) => {
-    const { t } = useTranslation()
-    const theme = useTheme()
+const NFTThumbnail = ({ border, borderRadius, onClick, hideIfError, ...props }: NFTThumbnailProps) => {
+  const { error } = useFetchNft({ id: props.nftId })
 
-    const { data: nft, error, isLoading } = useFetchNft({ id: nftId })
+  if (hideIfError && error) return null
 
-    if (error && !hideIfError)
-      return (
-        <ErrorMessage>
-          <CameraOff opacity={0.8} />
-        </ErrorMessage>
-      )
+  return (
+    <NftThumbnailStyled border={border} borderRadius={borderRadius} onClick={onClick} size={props.size}>
+      <NftThumbnailMedia {...props} />
+    </NftThumbnailStyled>
+  )
+}
 
-    const src = nft?.image
+export default NFTThumbnail
 
-    return (
-      <Container
-        style={{
-          borderRadius: borderRadius || 0,
-          boxShadow: border ? `0 0 0 1px ${theme.border.primary}` : 'initial',
-          height: size,
-          width: size
-        }}
-        onClick={onClick}
-      >
-        {!isLoading ? (
-          src ? (
-            nft.dataType === 'image' ? (
-              <Image src={src} height={size} width={size} />
-            ) : nft.dataType === 'video' ? (
-              autoPlay ? (
-                <video src={src} autoPlay={autoPlay} loop width="100%" height="100%" preload="auto" muted playsInline />
-              ) : (
-                <VideoThumbnail videoUrl={src} showPlayIcon={showPlayIconIfVideo} playOnHover={playOnHover} />
-              )
-            ) : (
-              <ErrorMessage>{t('Unsupported media type')}</ErrorMessage>
-            )
-          ) : (
-            <ErrorMessage>{t('No media')}</ErrorMessage>
-          )
-        ) : (
-          <SpinnerContainer>
-            <Spinner />
-          </SpinnerContainer>
-        )}
-      </Container>
+const NftThumbnailMedia = memo(({ nftId, size, ...props }: NFTThumbnailProps) => {
+  const { t } = useTranslation()
+
+  const { data: nft, isLoading, error: fetchNftError } = useFetchNft({ id: nftId })
+
+  if (isLoading) return <SkeletonLoaderStyled height={size} />
+
+  if (fetchNftError || !nft || (nft && !nft.image)) return <MissingMediaPlaceholder />
+
+  if (nft.dataType === 'image') return <NftThumbnailMediaImage src={nft.image} alt={nft.description} size={size} />
+
+  if (nft.dataType === 'video') return <NftThumbnailMediaVideo {...props} src={nft.image} />
+
+  return <ErrorMessage>{t('Unsupported media type')}</ErrorMessage>
+})
+
+interface NftThumbnailMediaImageProps {
+  src: string
+  alt?: string
+  size?: string
+}
+
+const NftThumbnailMediaImage = memo(({ src, alt, size }: NftThumbnailMediaImageProps) => {
+  const [error, setError] = useState(false)
+
+  if (error) return <MissingMediaPlaceholder />
+
+  return <Image src={src} alt={alt} height={size} width={size} onError={() => setError(true)} />
+})
+
+interface NftThumbnailMediaVideoProps
+  extends Pick<NFTThumbnailProps, 'playOnHover' | 'autoPlay' | 'showPlayIconIfVideo'> {
+  src: string
+}
+
+const NftThumbnailMediaVideo = memo(
+  ({ src, showPlayIconIfVideo, playOnHover, autoPlay }: NftThumbnailMediaVideoProps) =>
+    autoPlay ? (
+      <video src={src} autoPlay={autoPlay} loop width="100%" height="100%" preload="auto" muted playsInline />
+    ) : (
+      <VideoThumbnail videoUrl={src} showPlayIcon={showPlayIconIfVideo} playOnHover={playOnHover} />
     )
-  }
 )
 
-const Container = styled.div`
+const MissingMediaPlaceholder = () => (
+  <ErrorMessage>
+    <CameraOff opacity={0.8} />
+  </ErrorMessage>
+)
+
+const NftThumbnailStyled = styled.div<Pick<NFTThumbnailProps, 'border' | 'borderRadius' | 'size'>>`
   flex: 1;
   overflow: hidden;
+  border-radius: ${({ borderRadius }) => borderRadius || 0}px;
+  box-shadow: ${({ theme, border }) => border && `0 0 0 1px ${theme.border.primary}`};
+  height: ${({ size }) => size};
+  width: ${({ size }) => size};
 `
 
 const Image = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-`
-
-const SpinnerContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
 `
 
 const ErrorMessage = styled.div`
@@ -128,4 +126,6 @@ const ErrorMessage = styled.div`
   color: ${({ theme }) => theme.font.secondary};
 `
 
-export default NFTThumbnail
+const SkeletonLoaderStyled = styled(SkeletonLoader)`
+  border-radius: 0;
+`

@@ -167,6 +167,7 @@ export default NFTDetailsModal
 
 const NFTImageContainer = styled.div`
   padding: var(--spacing-3);
+  min-height: 500px;
 
   &:empty {
     display: none;
