@@ -185,3 +185,20 @@ export const getOrCreateThumbnail = async (videoUrl: string): Promise<Blob> => {
 
   return thumbnailGenerationPromises[videoUrl]
 }
+
+export const fetchThumbnailUrl = async (videoUrl: string): Promise<string> => {
+  const cachedBlob = await loadThumbnailFromDB(videoUrl)
+
+  if (cachedBlob && isValidThumbnail(cachedBlob)) {
+    const cachedUrl = URL.createObjectURL(cachedBlob)
+
+    return cachedUrl
+  }
+
+  const generatedThumbnailBlob = await getOrCreateThumbnail(videoUrl)
+  const generatedThumbnailUrl = URL.createObjectURL(generatedThumbnailBlob)
+
+  saveThumbnailToDB(videoUrl, generatedThumbnailBlob)
+
+  return generatedThumbnailUrl
+}
