@@ -111,8 +111,8 @@ importers:
         specifier: 1.5.1
         version: 1.5.1(@react-native-async-storage/async-storage@1.23.1)
       '@alephium/web3':
-        specifier: 1.5.1
-        version: 1.5.1
+        specifier: 1.8.4
+        version: 1.8.4
       '@alephium/web3-wallet':
         specifier: 1.5.1
         version: 1.5.1
@@ -390,8 +390,8 @@ importers:
         specifier: ^0.0.19
         version: 0.0.19
       '@alephium/web3':
-        specifier: 1.5.1
-        version: 1.5.1
+        specifier: 1.8.4
+        version: 1.8.4
       '@tanstack/query-sync-storage-persister':
         specifier: 5.45.0
         version: 5.45.0
@@ -580,8 +580,8 @@ importers:
         specifier: 1.5.1
         version: 1.5.1(@react-native-async-storage/async-storage@1.23.1)
       '@alephium/web3':
-        specifier: 1.5.1
-        version: 1.5.1
+        specifier: 1.8.4
+        version: 1.8.4
       '@expo/vector-icons':
         specifier: ^14.0.4
         version: 14.0.4
@@ -990,8 +990,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       '@alephium/web3':
-        specifier: 1.5.1
-        version: 1.5.1
+        specifier: 1.8.4
+        version: 1.8.4
       '@metamask/scure-bip39':
         specifier: ^2.1.1
         version: 2.1.1(patch_hash=4mkpybhyrxbheknii5rno7c5b4)
@@ -1072,8 +1072,8 @@ importers:
         specifier: 1.5.1
         version: 1.5.1(@react-native-async-storage/async-storage@1.23.1)
       '@alephium/web3':
-        specifier: 1.5.1
-        version: 1.5.1
+        specifier: 1.8.4
+        version: 1.8.4
       '@metamask/scure-bip39':
         specifier: ^2.1.1
         version: 2.1.1(patch_hash=4mkpybhyrxbheknii5rno7c5b4)
@@ -1341,8 +1341,8 @@ packages:
     resolution: {integrity: sha512-ZeH4PTlQoDNLYi7V+lE02evO5bhYvpYMrqifvNiIOskrRh11y9O/vLgFFplRFJ8kIkt6uKip4msQ3D8c+a8AcA==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
 
-  '@alephium/web3@1.5.1':
-    resolution: {integrity: sha512-BJh7A1gF9FVCt79j0fsG7wtdMwOQqYL2utv/Ca6byJc+WV5/VKG+m6pB0Sxt1nwmjl8ZcAv1ulO62xXwS1Euzg==}
+  '@alephium/web3@1.8.4':
+    resolution: {integrity: sha512-i1BQ0PnWa843TTGG1EUQH+L3AqBcdmvc+kRF+A0guuJmzKVbbHYH8mmxtxD3XfwdAHhxYtx1rUgAKE6u7YBM5Q==}
     engines: {node: '>=14.0.0', npm: '>=7.0.0'}
 
   '@ampproject/remapping@2.2.1':
@@ -4459,6 +4459,7 @@ packages:
   '@xmldom/xmldom@0.7.13':
     resolution: {integrity: sha512-lm2GW5PkosIzccsaZIz7tp8cPADSIlIHWDFTR1N0SzfinhhYgeIQjFMz4rYzanCScr3DqQLeomUDArp6MWKm+g==}
     engines: {node: '>=10.0.0'}
+    deprecated: this version is no longer supported, please update to at least 0.8.*
 
   '@xmldom/xmldom@0.8.10':
     resolution: {integrity: sha512-2WALfTl4xo2SkGCYRt6rDTFfk9R1czmBvUQy12gK2KuRKIpWEhcbbzy8EZXtz/jkRqHX8bFEc6FC1HjX4TUWYw==}
@@ -4897,6 +4898,7 @@ packages:
 
   boolean@3.2.0:
     resolution: {integrity: sha512-d0II/GO9uf9lfUHH2BQsjxzRJZBdsjgsBiW4BvhWk/3qoKwQFjIDVN19PfX8F2D/r9PCMTtLWjYVCFrpeYUzsw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   boxen@7.0.0:
     resolution: {integrity: sha512-j//dBVuyacJbvW+tvZ9HuH03fZ46QcaKvvhZickZqtB271DxJ7SNRSNxrV/dZX0085m7hISRZWbzWlJvx/rHSg==}
@@ -6230,6 +6232,7 @@ packages:
   eslint@8.56.0:
     resolution: {integrity: sha512-Go19xM6T9puCOWntie1/P997aXxFsOi37JIHRWI514Hc6ZnaHGKY9xFhrU65RT6CcBEzZoGG1e6Nq+DT04ZtZQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   espree@9.6.1:
@@ -11396,7 +11399,7 @@ snapshots:
 
   '@alephium/walletconnect-provider@1.5.1(@react-native-async-storage/async-storage@1.23.1)':
     dependencies:
-      '@alephium/web3': 1.5.1
+      '@alephium/web3': 1.8.4
       '@alephium/web3-wallet': 1.5.1
       '@walletconnect/core': 2.15.1(@react-native-async-storage/async-storage@1.23.1)
       '@walletconnect/keyvaluestorage': 1.1.1(@react-native-async-storage/async-storage@1.23.1)
@@ -11425,7 +11428,7 @@ snapshots:
 
   '@alephium/web3-wallet@1.5.1':
     dependencies:
-      '@alephium/web3': 1.5.1
+      '@alephium/web3': 1.8.4
       '@noble/secp256k1': 1.7.1
       '@types/node': 16.18.74
       bip32: 3.1.0
@@ -11435,7 +11438,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@alephium/web3@1.5.1':
+  '@alephium/web3@1.8.4':
     dependencies:
       '@noble/secp256k1': 1.7.1
       base-x: 4.0.0
@@ -12800,7 +12803,7 @@ snapshots:
     dependencies:
       commander: 5.1.0
       glob: 7.2.3
-      minimatch: 9.0.5
+      minimatch: 3.1.2
 
   '@electron/get@2.0.3':
     dependencies:
