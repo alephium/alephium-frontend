@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NFT } from '@alephium/shared'
-import { X } from 'lucide-react'
+import { CameraOff } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -58,7 +58,7 @@ const NFTThumbnail = memo(
     if (error && !hideIfError)
       return (
         <ErrorMessage>
-          <X />
+          <CameraOff opacity={0.8} />
         </ErrorMessage>
       )
 
