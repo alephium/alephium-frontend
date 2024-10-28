@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { sleep } from '@alephium/web3'
 import { colord } from 'colord'
 import { isEqual, partition } from 'lodash'
 import { MoreVertical, SearchIcon } from 'lucide-react'
@@ -322,7 +321,9 @@ export function SelectOptionsModal<T extends OptionValue>({
 
   useEffect(() => {
     // Delay to attract attention
-    sleep(300).then(() => searchInputRef.current?.focus())
+    const timer = setTimeout(() => searchInputRef.current?.focus(), 300)
+
+    return () => clearTimeout(timer)
   }, [])
 
   return (
