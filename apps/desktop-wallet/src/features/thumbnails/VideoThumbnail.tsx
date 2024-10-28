@@ -22,12 +22,7 @@ import { RiPlayCircleLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
 import Spinner from '@/components/Spinner'
-import {
-  getOrCreateThumbnail,
-  isValidThumbnail,
-  loadThumbnailFromDB,
-  saveThumbnailToDB
-} from '@/features/thumbnails/thumbnailStorage'
+import { fetchThumbnailUrl } from '@/features/thumbnails/thumbnailStorage'
 
 interface VideoThumbnailProps {
   videoUrl: string
@@ -41,25 +36,11 @@ const VideoThumbnail = ({ videoUrl, showPlayIcon, playOnHover }: VideoThumbnailP
   const [isHovered, setIsHovered] = useState(false)
 
   useEffect(() => {
-    const fetchThumbnail = async () => {
-      try {
-        const cachedBlob = await loadThumbnailFromDB(videoUrl)
-        if (cachedBlob && isValidThumbnail(cachedBlob)) {
-          const cachedUrl = URL.createObjectURL(cachedBlob)
-          setThumbnailUrl(cachedUrl)
-          return
-        }
-
-        const generatedThumbnailBlob = await getOrCreateThumbnail(videoUrl)
-        const generatedThumbnailUrl = URL.createObjectURL(generatedThumbnailBlob)
-        setThumbnailUrl(generatedThumbnailUrl)
-        await saveThumbnailToDB(videoUrl, generatedThumbnailBlob)
-      } catch (error) {
-        console.error('Error loading thumbnail:', error)
-      }
+    try {
+      fetchThumbnailUrl(videoUrl).then(setThumbnailUrl)
+    } catch (error) {
+      console.error('Error fetching thumbnail:', error)
     }
-
-    fetchThumbnail()
   }, [videoUrl])
 
   const handlePointerEnter = () => {
