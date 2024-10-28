@@ -20,30 +20,29 @@ import { SelectOption } from '@/components/Inputs/Select'
 
 export type RegionLocales =
   | 'en-US'
-  | 'fr-FR'
+  | 'de-CH'
   | 'de-DE'
-  | 'vi-VN'
+  | 'es-ES'
+  | 'fr-FR'
+  | 'el-GR'
+  | 'id-ID'
+  | 'it-IT'
   | 'pt-PT'
   | 'ru-RU'
-  | 'bg-BG'
-  | 'es-ES'
-  | 'id-ID'
   | 'tr-TR'
-  | 'it-IT'
-  | 'el-GR'
-  | 'de-CH'
+  | 'vi-VN'
 
 export const regionsOptions: SelectOption<RegionLocales>[] = [
   { label: 'US', value: 'en-US' },
+  { label: 'CH', value: 'de-CH' },
   { label: 'DE', value: 'de-DE' },
   { label: 'ES', value: 'es-ES' },
   { label: 'FR', value: 'fr-FR' },
+  { label: 'GR', value: 'el-GR' },
   { label: 'ID', value: 'id-ID' },
   { label: 'IT', value: 'it-IT' },
   { label: 'PT', value: 'pt-PT' },
   { label: 'RU', value: 'ru-RU' },
   { label: 'TR', value: 'tr-TR' },
-  { label: 'VM', value: 'vi-VN' },
-  { label: 'GR', value: 'el-GR' },
-  { label: 'CH', value: 'de-CH' }
+  { label: 'VM', value: 'vi-VN' }
 ]
