@@ -53,19 +53,17 @@ const NFTThumbnail = ({ border, borderRadius, onClick, hideIfError, ...props }: 
 export default NFTThumbnail
 
 const NftThumbnailMedia = memo(({ nftId, size, ...props }: NFTThumbnailProps) => {
-  const { t } = useTranslation()
-
   const { data: nft, isLoading, error: fetchNftError } = useFetchNft({ id: nftId })
 
   if (isLoading) return <SkeletonLoaderStyled height={size} />
 
   if (fetchNftError || !nft || (nft && !nft.image)) return <MissingMediaPlaceholder />
 
-  if (nft.dataType === 'image') return <NftThumbnailMediaImage src={nft.image} alt={nft.description} size={size} />
-
   if (nft.dataType === 'video') return <NftThumbnailMediaVideo {...props} src={nft.image} />
 
-  return <ErrorMessage>{t('Unsupported media type')}</ErrorMessage>
+  // TODO: Add support for audio, possibly with an `audio` element
+
+  return <NftThumbnailMediaImage src={nft.image} alt={nft.description} size={size} />
 })
 
 interface NftThumbnailMediaImageProps {
@@ -75,9 +73,10 @@ interface NftThumbnailMediaImageProps {
 }
 
 const NftThumbnailMediaImage = memo(({ src, alt, size }: NftThumbnailMediaImageProps) => {
+  const { t } = useTranslation()
   const [error, setError] = useState(false)
 
-  if (error) return <MissingMediaPlaceholder />
+  if (error) return <ErrorMessage>{t('Unsupported media type')}</ErrorMessage>
 
   return <Image src={src} alt={alt} height={size} width={size} onError={() => setError(true)} />
 })
