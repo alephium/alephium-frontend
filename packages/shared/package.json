@@ -20,7 +20,7 @@
   "dependencies": {
     "@alephium/token-list": "^0.0.19",
     "@alephium/walletconnect-provider": "1.5.1",
-    "@alephium/web3": "1.8.4",
+    "@alephium/web3": "1.5.1",
     "@metamask/scure-bip39": "^2.1.1",
     "@reduxjs/toolkit": "^1.9.1",
     "@walletconnect/sign-client": "2.15.1",
