@@ -16,21 +16,24 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Modules to control application life and create native browser window
-const { app, BrowserWindow, dialog, ipcMain, Menu, nativeTheme, shell, nativeImage, protocol } = require('electron')
-const path = require('path')
-const isDev = require('electron-is-dev')
-const contextMenu = require('electron-context-menu')
-const { autoUpdater } = require('electron-updater')
-const TransportNodeHid = require('@ledgerhq/hw-transport-node-hid').default
-const AlephiumLedgerApp = require('@alephium/ledger-app').AlephiumApp
-const { listen } = require('@ledgerhq/logs')
-const web3 = require('@alephium/web3-wallet')
+import { AlephiumApp as AlephiumLedgerApp } from '@alephium/ledger-app'
+import { getHumanReadableError } from '@alephium/shared'
+import web3 from '@alephium/web3-wallet'
+import TransportNodeHid from '@ledgerhq/hw-transport-node-hid'
+import { listen } from '@ledgerhq/logs'
+import { app, BrowserWindow, ipcMain, nativeImage, protocol, shell } from 'electron'
+import contextMenu from 'electron-context-menu'
+import isDev from 'electron-is-dev'
+import path from 'path'
+
+import { configureAutoUpdater, handleAutoUpdaterUserActions, setupAutoUpdaterListeners } from '@/electron/autoUpdater'
+import { setupAppMenu } from '@/electron/menu'
+import { handleNativeThemeUserActions, setupNativeThemeListeners } from '@/electron/nativeTheme'
+import { IS_RC, isMac, isWindows } from '@/electron/utils'
+
+configureAutoUpdater()
 
 let alephiumLedgerApp
-
-const CURRENT_VERSION = app.getVersion()
-const IS_RC = CURRENT_VERSION.includes('-rc.')
 
 // Handle deep linking for alephium://
 const ALEPHIUM = 'alephium'
@@ -55,123 +58,17 @@ if (process.defaultApp) {
 
 contextMenu()
 
-autoUpdater.autoDownload = false
-autoUpdater.allowPrerelease = IS_RC
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow: Electron.BrowserWindow | null
 
 // Build menu
 
-const isMac = process.platform === 'darwin'
-const isWindows = process.platform === 'win32'
-
-const template = [
-  ...(isMac
-    ? [
-        {
-          label: app.name,
-          submenu: [
-            { role: 'about' },
-            { type: 'separator' },
-            { role: 'services' },
-            { type: 'separator' },
-            { role: 'hide' },
-            { role: 'hideOthers' },
-            { role: 'unhide' },
-            { type: 'separator' },
-            { role: 'quit' }
-          ]
-        }
-      ]
-    : []),
-  {
-    label: 'Edit',
-    submenu: [
-      { role: 'undo' },
-      { role: 'redo' },
-      { type: 'separator' },
-      { role: 'cut' },
-      { role: 'copy' },
-      { role: 'paste' },
-      ...(isMac
-        ? [
-            { role: 'pasteAndMatchStyle' },
-            { role: 'delete' },
-            { role: 'selectAll' },
-            { type: 'separator' },
-            {
-              label: 'Speech',
-              submenu: [{ role: 'startSpeaking' }, { role: 'stopSpeaking' }]
-            }
-          ]
-        : [{ role: 'delete' }, { type: 'separator' }, { role: 'selectAll' }])
-    ]
-  },
-  {
-    label: 'View',
-    submenu: [
-      { role: 'resetZoom' },
-      { role: 'zoomIn' },
-      { role: 'zoomOut' },
-      { type: 'separator' },
-      { role: 'togglefullscreen' },
-      { type: 'separator' },
-      { role: 'reload' },
-      { role: 'forceReload' }
-    ]
-  },
-  {
-    label: 'Window',
-    submenu: [
-      { role: 'minimize' },
-      ...(isMac ? [{ role: 'zoom' }, { type: 'separator' }, { role: 'front' }] : [{ role: 'close' }])
-    ]
-  },
-  {
-    role: 'help',
-    submenu: [
-      ...(isMac
-        ? []
-        : isWindows
-          ? [{ role: 'about' }, { type: 'separator' }]
-          : [
-              {
-                label: 'About',
-                click: async () => {
-                  dialog.showMessageBox(mainWindow, {
-                    message: `Version ${CURRENT_VERSION}`,
-                    title: 'About',
-                    type: 'info'
-                  })
-                }
-              }
-            ]),
-      {
-        label: 'Report an issue',
-        click: async () => {
-          await shell.openExternal('https://github.com/alephium/alephium-frontend/issues/new')
-        }
-      },
-      {
-        label: 'Get some help',
-        click: async () => {
-          await shell.openExternal('https://discord.gg/JErgRBfRSB')
-        }
-      }
-    ]
-  }
-]
-
 const appURL = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`
 
-let deepLinkUri = null
+let deepLinkUri: string | null = null
 
-function createWindow() {
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
-
+const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -185,6 +82,8 @@ function createWindow() {
       spellcheck: true
     }
   })
+
+  setupAppMenu(mainWindow)
 
   if (!isMac && !isWindows) {
     mainWindow.setIcon(
@@ -205,17 +104,10 @@ function createWindow() {
     return { action: 'deny' }
   })
 
-  nativeTheme.on('updated', () =>
-    mainWindow?.webContents.send('theme:shouldUseDarkColors', nativeTheme.shouldUseDarkColors)
-  )
-
   mainWindow.on('closed', () => (mainWindow = null))
 
-  autoUpdater.on('download-progress', (info) => mainWindow?.webContents.send('updater:download-progress', info))
-
-  autoUpdater.on('error', (error) => mainWindow?.webContents.send('updater:error', error))
-
-  autoUpdater.on('update-downloaded', (event) => mainWindow?.webContents.send('updater:updateDownloaded', event))
+  setupNativeThemeListeners(mainWindow)
+  setupAutoUpdaterListeners(mainWindow)
 
   if (!isMac) {
     if (process.argv.length > 1) {
@@ -230,7 +122,6 @@ function createWindow() {
 
 if (!app.requestSingleInstanceLock()) {
   app.quit()
-  return
 }
 
 // Activate the window of primary instance when a second instance starts
@@ -258,40 +149,20 @@ app.on('second-instance', (_event, args) => {
 app.on('ready', async function () {
   if (isDev) {
     const {
-      default: { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS }
+      default: installExtension,
+      REACT_DEVELOPER_TOOLS,
+      REDUX_DEVTOOLS
     } = await import('electron-devtools-installer')
     await installExtension(REACT_DEVELOPER_TOOLS)
     await installExtension(REDUX_DEVTOOLS)
   }
 
-  ipcMain.handle('theme:setNativeTheme', (_, theme) => (nativeTheme.themeSource = theme))
-
-  // nativeTheme must be reassigned like this because its properties are all computed, so
-  // they can't be serialized to be passed over channels.
-  ipcMain.handle('theme:getNativeTheme', ({ sender }) =>
-    sender.send('theme:getNativeTheme', {
-      shouldUseDarkColors: nativeTheme.shouldUseDarkColors,
-      themeSource: nativeTheme.themeSource
-    })
-  )
-
-  ipcMain.handle('updater:checkForUpdates', async () => {
-    try {
-      const result = await autoUpdater.checkForUpdates()
-
-      return result?.updateInfo?.version
-    } catch (e) {
-      console.error(e)
-    }
-  })
-
-  ipcMain.handle('updater:startUpdateDownload', () => autoUpdater.downloadUpdate())
-
-  ipcMain.handle('updater:quitAndInstallUpdate', () => autoUpdater.quitAndInstall())
+  handleNativeThemeUserActions()
+  handleAutoUpdaterUserActions()
 
   ipcMain.handle('app:hide', () => {
     if (isWindows) {
-      mainWindow.blur()
+      mainWindow?.blur()
     } else {
       app.hide()
     }
@@ -299,10 +170,10 @@ app.on('ready', async function () {
 
   ipcMain.handle('app:show', () => {
     if (isWindows) {
-      mainWindow.minimize()
-      mainWindow.restore()
+      mainWindow?.minimize()
+      mainWindow?.restore()
     } else {
-      mainWindow.show()
+      mainWindow?.show()
     }
   })
 
@@ -312,16 +183,14 @@ app.on('ready', async function () {
     if (preferedLanguages.length > 0) return preferedLanguages[0]
   })
 
-  ipcMain.handle('app:getSystemRegion', () => {
-    return app.getSystemLocale()
-  })
+  ipcMain.handle('app:getSystemRegion', () => app.getSystemLocale())
 
   ipcMain.handle('app:setProxySettings', async (_, proxySettings) => {
     const { address, port } = proxySettings
     const proxyRules = !address && !port ? undefined : `socks5://${address}:${port}`
 
     try {
-      await mainWindow.webContents.session.setProxy({ proxyRules })
+      await mainWindow?.webContents.session.setProxy({ proxyRules })
     } catch (e) {
       console.error(e)
     }
@@ -366,7 +235,7 @@ app.on('ready', async function () {
         success: true,
         version,
         initialAddress: { hash: account.address, index: 0, publicKey: account.publicKey },
-        deviceModel: alephiumLedgerApp.transport.deviceModel.productName
+        deviceModel: alephiumLedgerApp.transport.deviceModel?.productName
       }
 
       transport.close()
@@ -380,7 +249,7 @@ app.on('ready', async function () {
       console.error('🔌❌', error)
 
       // Retry one more time if the error is unknown, usually the Ledger app needs a moment
-      if (error.message.includes('UNKNOWN_ERROR')) {
+      if (getHumanReadableError(error, '').includes('UNKNOWN_ERROR')) {
         return new Promise((s) => setTimeout(s, 1000)).then(connect).catch((error) => ({ success: false, error }))
       }
 
@@ -411,7 +280,7 @@ app.on('open-url', (_, url) => {
   }
 })
 
-const extractWalletConnectUri = (url) =>
+const extractWalletConnectUri = (url: string) =>
   url.substring(url.indexOf(ALEPHIUM_WALLET_CONNECT_URI_PREFIX) + ALEPHIUM_WALLET_CONNECT_URI_PREFIX.length)
 
 // Handle window controls via IPC
