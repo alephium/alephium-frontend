@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, calculateAmountWorth, sortAssets } from '@alephium/shared'
+import { AddressHash, calculateAmountWorth, PRICED_TOKENS, sortAssets } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
@@ -27,7 +27,7 @@ import { RiCopperDiamondLine, RiNftLine, RiQuestionLine } from 'react-icons/ri'
 import styled, { useTheme } from 'styled-components'
 
 import { queries } from '@/api'
-import { useAssetsMetadata, useTokensPrices, useTokensWithAvailablePrice } from '@/api/assets/assetsHooks'
+import { useAssetsMetadata, useTokensPrices } from '@/api/assets/assetsHooks'
 import TableTabBar, { TabItem } from '@/components/Table/TableTabBar'
 import NFTList from '@/pages/AddressInfoPage/NFTList'
 import TokenList from '@/pages/AddressInfoPage/TokenList'
@@ -54,10 +54,9 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
     unknown: unknownAssetsIds
   } = useAssetsMetadata(assetIds)
 
-  const tokensWithAvailablePrice = useTokensWithAvailablePrice()
   const tokensPrices = useTokensPrices([
     ALPH.symbol,
-    ...fungibleTokensMetadata.flatMap((t) => (tokensWithAvailablePrice.includes(t.symbol) && t.symbol) || [])
+    ...fungibleTokensMetadata.flatMap((t) => (PRICED_TOKENS.includes(t.symbol) && t.symbol) || [])
   ])
 
   const isLoading = assetsLoading

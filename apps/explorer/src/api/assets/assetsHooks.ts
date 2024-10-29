@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { PRICED_TOKENS } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 import { flatMap, uniq } from 'lodash'
 import { useMemo } from 'react'
@@ -173,13 +173,8 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   } else return returnedCompleteMetadata
 }
 
-export const useTokensWithAvailablePrice = () => Object.values(explorer.TokensWithPrice) as string[]
-
 export const useTokensPrices = <T extends string>(assetSymbols: T[] = []) => {
-  const availableTokensSymbols = useTokensWithAvailablePrice()
-  const tokensToFetch = uniq(assetSymbols).filter(
-    (symbol) => !!symbol && !!availableTokensSymbols && availableTokensSymbols.includes(symbol)
-  )
+  const tokensToFetch = uniq(assetSymbols).filter((symbol) => !!symbol && PRICED_TOKENS.includes(symbol))
 
   const { data: prices } = useQueriesData(
     tokensToFetch.map((symbol) => ({
