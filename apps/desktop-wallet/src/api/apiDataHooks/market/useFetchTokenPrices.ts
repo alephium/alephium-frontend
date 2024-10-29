@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { explorer } from '@alephium/web3'
+import { PRICED_TOKENS } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
@@ -24,15 +24,13 @@ import { tokensPriceQuery } from '@/api/queries/priceQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
 
-const pricedTokens = Object.keys(explorer.TokensWithPrice)
-
 const useFetchTokenPrices = (props?: SkipProp) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const networkIsOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
 
   const { data, isLoading } = useQuery(
     tokensPriceQuery({
-      symbols: pricedTokens,
+      symbols: PRICED_TOKENS,
       currency: fiatCurrency.toLowerCase(),
       skip: props?.skip || networkIsOffline
     })
@@ -51,7 +49,7 @@ export const useFetchTokenPrice = (symbol: string) => {
   const networkIsOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
 
   const { data, isLoading } = useQuery({
-    ...tokensPriceQuery({ symbols: pricedTokens, currency: fiatCurrency.toLowerCase(), skip: networkIsOffline }),
+    ...tokensPriceQuery({ symbols: PRICED_TOKENS, currency: fiatCurrency.toLowerCase(), skip: networkIsOffline }),
     select: (data) => data.find((tokenPrice) => tokenPrice.symbol === symbol)?.price
   })
 
