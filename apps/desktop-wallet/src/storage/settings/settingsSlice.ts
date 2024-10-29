@@ -121,6 +121,7 @@ settingsListenerMiddleware.startListening({
     systemLanguageMatchFailed,
     systemRegionMatchSucceeded,
     systemRegionMatchFailed,
+    numberFormatRegionChanged,
     walletLockTimeChanged,
     analyticsToggled,
     fiatCurrencyChanged
