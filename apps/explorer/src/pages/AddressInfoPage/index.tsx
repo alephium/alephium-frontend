@@ -141,7 +141,8 @@ const AddressInfoPage = () => {
   const lockedBalance = addressBalance?.lockedBalance
 
   const addressWorth =
-    knownTokensWorth + (totalBalance ? calculateAmountWorth(BigInt(totalBalance), tokensPrices[ALPH.symbol] || NaN) : 0)
+    knownTokensWorth +
+    (totalBalance ? calculateAmountWorth(BigInt(totalBalance), tokensPrices[ALPH.symbol] || NaN, ALPH.decimals) : 0)
 
   const totalNbOfAssets =
     tokenBalances.length +

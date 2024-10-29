@@ -86,7 +86,8 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
         ...alphMetadata,
         balance: BigInt(addressBalance.balance),
         lockedBalance: BigInt(addressBalance.lockedBalance),
-        worth: calculateAmountWorth(BigInt(addressBalance.balance), tokensPrices[ALPH.symbol]) || undefined
+        worth:
+          calculateAmountWorth(BigInt(addressBalance.balance), tokensPrices[ALPH.symbol], ALPH.decimals) || undefined
       })
     }
 
