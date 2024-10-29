@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH } from '@alephium/token-list'
-import { TokensWithPrice } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 import { flatMap, uniq } from 'lodash'
 import { useMemo } from 'react'
@@ -173,14 +173,12 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
   } else return returnedCompleteMetadata
 }
 
-// We should get this list from the backend
-// See: https://github.com/alephium/explorer-backend/issues/512
-export const useTokensWithAvailablePrice = () => Object.values(TokensWithPrice)
+export const useTokensWithAvailablePrice = () => Object.values(explorer.TokensWithPrice) as string[]
 
 export const useTokensPrices = <T extends string>(assetSymbols: T[] = []) => {
   const availableTokensSymbols = useTokensWithAvailablePrice()
   const tokensToFetch = uniq(assetSymbols).filter(
-    (symbol) => !!symbol && !!availableTokensSymbols && availableTokensSymbols.includes(symbol as TokensWithPrice)
+    (symbol) => !!symbol && !!availableTokensSymbols && availableTokensSymbols.includes(symbol)
   )
 
   const { data: prices } = useQueriesData(

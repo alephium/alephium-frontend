@@ -72,7 +72,9 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
               ...t,
               balance: BigInt(balance.balance),
               lockedBalance: BigInt(balance.lockedBalance),
-              worth: (t.verified && calculateAmountWorth(BigInt(balance.balance), tokensPrices[t.symbol])) || undefined
+              worth:
+                (t.verified && calculateAmountWorth(BigInt(balance.balance), tokensPrices[t.symbol], t.decimals)) ||
+                undefined
             }
           ]
         : []
