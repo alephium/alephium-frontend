@@ -16,6 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { NUM_OF_ZEROS_IN_QUINTILLION } from '@/constants'
+
 import {
   aboveExpLimit,
   addApostrophes,
@@ -377,38 +379,42 @@ it('should convert Set amount to Alph amount', () => {
 })
 
 it('should convert Set amount to fiat amount', () => {
-  expect(calculateAmountWorth(BigInt('1000000000000000000'), 2)).toEqual(2),
-    expect(calculateAmountWorth(BigInt('100000000000000000'), 2)).toEqual(0.2),
-    expect(calculateAmountWorth(BigInt('10000000000000000'), 2)).toEqual(0.02),
-    expect(calculateAmountWorth(BigInt('1000000000000000'), 2)).toEqual(0.002),
-    expect(calculateAmountWorth(BigInt('100000000000000'), 2)).toEqual(0.0002),
-    expect(calculateAmountWorth(BigInt('10000000000000'), 2)).toEqual(0.00002),
-    expect(calculateAmountWorth(BigInt('1000000000000'), 2)).toEqual(0.000002),
-    expect(calculateAmountWorth(BigInt('100000000000'), 2)).toEqual(0.0000002),
-    expect(calculateAmountWorth(BigInt('10000000000'), 2)).toEqual(0.00000002),
-    expect(calculateAmountWorth(BigInt('1000000000'), 2)).toEqual(0.000000002),
-    expect(calculateAmountWorth(BigInt('100000000'), 2)).toEqual(0.0000000002),
-    expect(calculateAmountWorth(BigInt('10000000'), 2)).toEqual(0.00000000002),
-    expect(calculateAmountWorth(BigInt('1000000'), 2)).toEqual(0.000000000002),
-    expect(calculateAmountWorth(BigInt('100000'), 2)).toEqual(0.0000000000002),
-    expect(calculateAmountWorth(BigInt('10000'), 2)).toEqual(0.00000000000002),
-    expect(calculateAmountWorth(BigInt('1000'), 2)).toEqual(0.000000000000002),
-    expect(calculateAmountWorth(BigInt('100'), 2)).toEqual(0.0000000000000002),
-    expect(calculateAmountWorth(BigInt('10'), 2)).toEqual(0.00000000000000002),
-    expect(calculateAmountWorth(BigInt('1'), 2)).toEqual(0.000000000000000002),
-    expect(calculateAmountWorth(BigInt('1000000000000000000'), 2.1)).toEqual(2.1),
-    expect(calculateAmountWorth(BigInt('1000000000000000000'), 2.100000000001)).toEqual(2.100000000001),
-    expect(calculateAmountWorth(BigInt('1000000000000000000'), 0)).toEqual(0),
-    expect(calculateAmountWorth(BigInt('10000000000000000000'), 3)).toEqual(30),
-    expect(calculateAmountWorth(BigInt('1000000000000000000000000000'), 3)).toEqual(3000000000),
-    expect(calculateAmountWorth(BigInt('1000000000000000000'), 1e1)).toEqual(10),
-    expect(() => calculateAmountWorth(BigInt('1000000000000000000'), -2)).toThrow(
+  expect(calculateAmountWorth(BigInt('1000000000000000000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(2),
+    expect(calculateAmountWorth(BigInt('100000000000000000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.2),
+    expect(calculateAmountWorth(BigInt('10000000000000000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.02),
+    expect(calculateAmountWorth(BigInt('1000000000000000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.002),
+    expect(calculateAmountWorth(BigInt('100000000000000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.0002),
+    expect(calculateAmountWorth(BigInt('10000000000000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.00002),
+    expect(calculateAmountWorth(BigInt('1000000000000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.000002),
+    expect(calculateAmountWorth(BigInt('100000000000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.0000002),
+    expect(calculateAmountWorth(BigInt('10000000000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.00000002),
+    expect(calculateAmountWorth(BigInt('1000000000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.000000002),
+    expect(calculateAmountWorth(BigInt('100000000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.0000000002),
+    expect(calculateAmountWorth(BigInt('10000000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.00000000002),
+    expect(calculateAmountWorth(BigInt('1000000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.000000000002),
+    expect(calculateAmountWorth(BigInt('100000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.0000000000002),
+    expect(calculateAmountWorth(BigInt('10000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.00000000000002),
+    expect(calculateAmountWorth(BigInt('1000'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.000000000000002),
+    expect(calculateAmountWorth(BigInt('100'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.0000000000000002),
+    expect(calculateAmountWorth(BigInt('10'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.00000000000000002),
+    expect(calculateAmountWorth(BigInt('1'), 2, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0.000000000000000002),
+    expect(calculateAmountWorth(BigInt('1000000000000000000'), 2.1, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(2.1),
+    expect(calculateAmountWorth(BigInt('1000000000000000000'), 2.100000000001, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(
+      2.100000000001
+    ),
+    expect(calculateAmountWorth(BigInt('1000000000000000000'), 0, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(0),
+    expect(calculateAmountWorth(BigInt('10000000000000000000'), 3, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(30),
+    expect(calculateAmountWorth(BigInt('1000000000000000000000000000'), 3, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(
+      3000000000
+    ),
+    expect(calculateAmountWorth(BigInt('1000000000000000000'), 1e1, NUM_OF_ZEROS_IN_QUINTILLION)).toEqual(10),
+    expect(() => calculateAmountWorth(BigInt('1000000000000000000'), -2, NUM_OF_ZEROS_IN_QUINTILLION)).toThrow(
       'Invalid fiat price: -2. Fiat price cannot be negative.'
     ),
-    expect(() => calculateAmountWorth(BigInt('1000000000000000000'), -0.2)).toThrow(
+    expect(() => calculateAmountWorth(BigInt('1000000000000000000'), -0.2, NUM_OF_ZEROS_IN_QUINTILLION)).toThrow(
       'Invalid fiat price: -0.2. Fiat price cannot be negative.'
     ),
-    expect(() => calculateAmountWorth(BigInt('1000000000000000000'), -1e-1)).toThrow(
+    expect(() => calculateAmountWorth(BigInt('1000000000000000000'), -1e-1, NUM_OF_ZEROS_IN_QUINTILLION)).toThrow(
       'Invalid fiat price: -0.1. Fiat price cannot be negative.'
     )
 })

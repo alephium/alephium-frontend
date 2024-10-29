@@ -129,9 +129,12 @@ const AddressInfoPage = () => {
 
   const knownTokensWorth = tokenBalances.reduce((acc, b) => {
     const token = fungibleTokensMetadata.find((t) => t.verified && t.id === b.tokenId)
-    const price = tokensPrices[token?.symbol || '']
 
-    return acc + (price ? calculateAmountWorth(BigInt(b.balance), price, token?.decimals) : 0)
+    if (!token) return acc
+
+    const price = tokensPrices[token.symbol] || 0
+
+    return acc + calculateAmountWorth(BigInt(b.balance), price, token.decimals)
   }, 0)
 
   const addressLatestActivity =
