@@ -131,7 +131,7 @@ const AddressInfoPage = () => {
     const token = fungibleTokensMetadata.find((t) => t.verified && t.id === b.tokenId)
     const price = tokensPrices[token?.symbol || '']
 
-    return acc + (price ? calculateAmountWorth(BigInt(b.balance), price) : 0)
+    return acc + (price ? calculateAmountWorth(BigInt(b.balance), price, token?.decimals) : 0)
   }, 0)
 
   const addressLatestActivity =
