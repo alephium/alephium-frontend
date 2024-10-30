@@ -21,9 +21,9 @@ import { AddressMetadata, Contact, NetworkSettings, networkSettingsPresets } fro
 import { encrypt } from '@alephium/shared-crypto'
 import { nanoid } from 'nanoid'
 
+import SettingsStorage from '@/features/settings/settingsPersistentStorage'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
-import SettingsStorage from '@/features/settings/settingsPersistentStorage'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { DeprecatedAddressMetadata } from '@/types/addresses'
 import * as migrate from '@/utils/migration'

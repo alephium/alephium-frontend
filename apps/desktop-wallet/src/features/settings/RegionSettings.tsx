@@ -21,9 +21,9 @@ import { useTranslation } from 'react-i18next'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
 import Select from '@/components/Inputs/Select'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { numberFormatRegionChanged } from '@/features/settings/settingsActions'
 import useRegionOptions from '@/features/settings/useRegionOptions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { numberFormatRegionChanged } from '@/features/settings/settingsActions'
 
 const RegionSettings = () => {
   const { t } = useTranslation()

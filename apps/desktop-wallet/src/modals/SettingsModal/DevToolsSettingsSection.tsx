@@ -33,10 +33,10 @@ import Paragraph from '@/components/Paragraph'
 import Table from '@/components/Table'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
+import { devToolsToggled } from '@/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { copiedToClipboard, copyToClipboardFailed, receiveTestnetTokens } from '@/storage/global/globalActions'
-import { devToolsToggled } from '@/features/settings/settingsActions'
 import { Address } from '@/types/addresses'
 
 const DevToolsSettingsSection = () => {

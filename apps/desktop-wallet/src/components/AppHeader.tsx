@@ -29,12 +29,12 @@ import NetworkSwitch from '@/components/NetworkSwitch'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useScrollContext } from '@/contexts/scroll'
 import { openModal } from '@/features/modals/modalActions'
+import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import { ReactComponent as WalletConnectLogo } from '@/images/wallet-connect-logo.svg'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
 
 interface AppHeader {

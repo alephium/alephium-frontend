@@ -23,12 +23,12 @@ import { setupListeners } from '@reduxjs/toolkit/dist/query'
 import historicWorthChartSlice from '@/features/historicChart/historicWorthChartSlice'
 import modalSlice from '@/features/modals/modalSlice'
 import sentTransactionsSlice from '@/features/send/sentTransactions/sentTransactionsSlice'
+import settingsSlice, { settingsListenerMiddleware } from '@/features/settings/settingsSlice'
 import addressesSlice from '@/storage/addresses/addressesSlice'
 import contactsSlice from '@/storage/addresses/contactsSlice'
 import globalSlice from '@/storage/global/globalSlice'
 import snackbarSlice from '@/storage/global/snackbarSlice'
 import { networkListenerMiddleware } from '@/storage/network/networkMiddleware'
-import settingsSlice, { settingsListenerMiddleware } from '@/features/settings/settingsSlice'
 import activeWalletSlice from '@/storage/wallets/activeWalletSlice'
 
 // TODO: Remove deconstruction when API related slices are removed from the shared reducer
