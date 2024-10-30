@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { app, BrowserWindow, dialog, Menu, MenuItemConstructorOptions, shell } from 'electron'
 
-import { CURRENT_VERSION, isMac, isWindows } from '@/electron/utils'
+import { CURRENT_VERSION, isMac, isWindows } from './utils'
 
 export const setupAppMenu = (mainWindow: BrowserWindow) => {
   const menu = Menu.buildFromTemplate(generateMenuTemplate(mainWindow))

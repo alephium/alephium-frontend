@@ -17,8 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AlephiumApp as AlephiumLedgerApp } from '@alephium/ledger-app'
-import { getHumanReadableError } from '@alephium/shared'
-import web3 from '@alephium/web3-wallet'
+import web3Wallet from '@alephium/web3-wallet'
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid'
 import { listen } from '@ledgerhq/logs'
 import { app, BrowserWindow, ipcMain, nativeImage, protocol, shell } from 'electron'
@@ -26,10 +25,10 @@ import contextMenu from 'electron-context-menu'
 import isDev from 'electron-is-dev'
 import path from 'path'
 
-import { configureAutoUpdater, handleAutoUpdaterUserActions, setupAutoUpdaterListeners } from './autoUpdater'
-import { setupAppMenu } from './menu'
-import { handleNativeThemeUserActions, setupNativeThemeListeners } from './nativeTheme'
-import { IS_RC, isMac, isWindows } from './utils'
+import { configureAutoUpdater, handleAutoUpdaterUserActions, setupAutoUpdaterListeners } from '@/modules/autoUpdater'
+import { setupAppMenu } from '@/modules/menu'
+import { handleNativeThemeUserActions, setupNativeThemeListeners } from '@/modules/nativeTheme'
+import { IS_RC, isMac, isWindows } from '@/modules/utils'
 
 configureAutoUpdater()
 
@@ -227,9 +226,9 @@ app.on('ready', async function () {
 
       const keyType = 'default'
 
-      const initialAddressPath = web3.getHDWalletPath(keyType, 0)
+      const initialAddressPath = web3Wallet.getHDWalletPath(keyType, 0)
 
-      const [account, _] = await alephiumLedgerApp.getAccount(initialAddressPath, undefined, keyType)
+      const [account] = await alephiumLedgerApp.getAccount(initialAddressPath, undefined, keyType)
 
       const response = {
         success: true,
@@ -249,9 +248,9 @@ app.on('ready', async function () {
       console.error('🔌❌', error)
 
       // Retry one more time if the error is unknown, usually the Ledger app needs a moment
-      if (getHumanReadableError(error, '').includes('UNKNOWN_ERROR')) {
-        return new Promise((s) => setTimeout(s, 1000)).then(connect).catch((error) => ({ success: false, error }))
-      }
+      // if (getHumanReadableError(error, '').includes('UNKNOWN_ERROR')) {
+      //   return new Promise((s) => setTimeout(s, 1000)).then(connect).catch((error) => ({ success: false, error }))
+      // }
 
       return { success: false, error }
     }

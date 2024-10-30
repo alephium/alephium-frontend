@@ -1,11 +1,16 @@
 {
   "extends": "@alephium/typescript-config/base",
-  "include": ["electron/**/*"],
+  "include": ["**/*.ts", "preload.js"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
-    "outDir": "build",
+
     "module": "commonjs",
+    "paths": {
+      "@/*": ["./*"],
+      "*": ["../../../node_modules/*"]
+    },
+    "allowJs": true,
 
     "noImplicitAny": true,
     "sourceMap": false,

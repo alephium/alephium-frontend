@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { BrowserWindow, ipcMain } from 'electron'
 import { autoUpdater } from 'electron-updater'
 
-import { IS_RC } from '@/electron/utils'
+import { IS_RC } from './utils'
 
 export const configureAutoUpdater = () => {
   autoUpdater.autoDownload = false
