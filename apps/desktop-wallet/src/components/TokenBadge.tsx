@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { memo } from 'react'
 import styled, { css } from 'styled-components'
 
 import useFetchToken, { isFT, isNFT } from '@/api/apiDataHooks/token/useFetchToken'
@@ -38,7 +39,7 @@ interface TokenBadgeProps extends TokenBadgeStyleProps {
   isLoadingAmount?: boolean
 }
 
-const TokenBadge = ({ tokenId, className, ...props }: TokenBadgeProps) => {
+const TokenBadge = memo(({ tokenId, className, ...props }: TokenBadgeProps) => {
   const { data: token } = useFetchToken(tokenId)
 
   const tooltipContent = isFT(token) || isNFT(token) ? token.name : tokenId
@@ -50,7 +51,7 @@ const TokenBadge = ({ tokenId, className, ...props }: TokenBadgeProps) => {
       {(props.showNftName || props.showAmount) && <TokenBadgeText tokenId={tokenId} {...props} />}
     </TokenBadgeStyled>
   )
-}
+})
 
 const TokenBadgeText = ({ tokenId, amount, isLoadingAmount, showNftName, showAmount }: TokenBadgeProps) => {
   const { data: token, isLoading: isLoadingToken } = useFetchToken(tokenId)
