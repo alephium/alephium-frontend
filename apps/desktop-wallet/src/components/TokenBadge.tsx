@@ -47,7 +47,7 @@ const TokenBadge = ({ tokenId, className, ...props }: TokenBadgeProps) => {
     <TokenBadgeStyled className={className} data-tooltip-id="default" data-tooltip-content={tooltipContent}>
       <AssetLogo tokenId={tokenId} size={20} />
 
-      <TokenBadgeText tokenId={tokenId} {...props} />
+      {(props.showNftName || props.showAmount) && <TokenBadgeText tokenId={tokenId} {...props} />}
     </TokenBadgeStyled>
   )
 }
