@@ -23,8 +23,8 @@ import styled, { css } from 'styled-components'
 
 import useFetchToken, { isFT } from '@/api/apiDataHooks/token/useFetchToken'
 import SkeletonLoader from '@/components/SkeletonLoader'
+import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { discreetModeToggled } from '@/storage/settings/settingsActions'
 import { TokenId } from '@/types/tokens'
 
 interface AmountBaseProps {

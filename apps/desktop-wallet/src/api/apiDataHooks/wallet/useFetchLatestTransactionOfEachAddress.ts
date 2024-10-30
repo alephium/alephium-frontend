@@ -23,7 +23,7 @@ import { flatMapCombine } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const useFetchLatestTransactionOfEachAddress = (props?: SkipProp) => {
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)

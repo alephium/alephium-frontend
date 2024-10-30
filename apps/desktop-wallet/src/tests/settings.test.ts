@@ -18,8 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Currency, getNetworkName, networkSettingsPresets } from '@alephium/shared'
 
-import SettingsStorage, { defaultSettings } from '@/storage/settings/settingsPersistentStorage'
-import { Language, Settings, ThemeSettings } from '@/types/settings'
+import { defaultSettings } from '@/features/settings/settingsConstants'
+import SettingsStorage from '@/features/settings/settingsPersistentStorage'
+import { Language, Settings } from '@/features/settings/settingsTypes'
+import { ThemeSettings } from '@/types/theme'
 
 const mockSettings: Settings = {
   general: {

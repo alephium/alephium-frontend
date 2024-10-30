@@ -23,7 +23,7 @@ import styled from 'styled-components'
 
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppSelector } from '@/hooks/redux'
-import { toggleTheme } from '@/storage/settings/settingsStorageUtils'
+import { toggleTheme } from '@/features/settings/settingsStorageUtils'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface ThemeSwitcherProps {

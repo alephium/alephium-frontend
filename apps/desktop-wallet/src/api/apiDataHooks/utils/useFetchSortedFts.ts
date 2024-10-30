@@ -26,7 +26,7 @@ import { combineDefined } from '@/api/apiDataHooks/apiDataHooksUtils'
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { DisplayBalances, ListedFT, TokenId } from '@/types/tokens'
 
 interface UseSortFTsProps extends SkipProp {

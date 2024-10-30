@@ -33,7 +33,6 @@ import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit
 import dayjs from 'dayjs'
 import posthog from 'posthog-js'
 
-import i18next from '@/i18n'
 import {
   analyticsToggled,
   devToolsToggled,
@@ -51,10 +50,11 @@ import {
   themeSettingsChanged,
   themeToggled,
   walletLockTimeChanged
-} from '@/storage/settings/settingsActions'
-import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
+} from '@/features/settings/settingsActions'
+import SettingsStorage from '@/features/settings/settingsPersistentStorage'
+import { GeneralSettings } from '@/features/settings/settingsTypes'
+import i18next from '@/i18n'
 import { RootState } from '@/storage/store'
-import { GeneralSettings } from '@/types/settings'
 
 const initialState = SettingsStorage.load('general') as GeneralSettings
 

@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { discreetModeToggled } from '@/storage/settings/settingsActions'
+import { discreetModeToggled } from '@/features/settings/settingsActions'
 
 interface DeltaPercentageProps {
   initialValue: number

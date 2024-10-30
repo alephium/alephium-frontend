@@ -27,7 +27,7 @@ import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchToke
 import { fungibleTokenMetadataQuery, nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
 import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { ListedFT, NonStandardToken, UnlistedFT } from '@/types/tokens'
 
 type AmountDelta = { amount: bigint }

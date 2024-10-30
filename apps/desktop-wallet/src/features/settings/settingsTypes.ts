@@ -16,20 +16,37 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { themeSettingsChanged, themeToggled } from '@/storage/settings/settingsActions'
-import { store } from '@/storage/store'
-import { ThemeSettings, ThemeType } from '@/types/settings'
-import { AlephiumWindow } from '@/types/window'
+import { Currency, NetworkSettings } from '@alephium/shared'
 
-const _window = window as unknown as AlephiumWindow
-const electron = _window.electron
+import { ThemeSettings } from '@/types/theme'
 
-export const switchTheme = (theme: ThemeSettings) => {
-  electron?.theme.setNativeTheme(theme)
-  store.dispatch(themeSettingsChanged(theme))
+export interface GeneralSettings {
+  theme: ThemeSettings
+  walletLockTimeInMinutes: number | null
+  discreetMode: boolean
+  passwordRequirement: boolean
+  language: Language | undefined
+  devTools: boolean
+  analytics: boolean
+  fiatCurrency: Currency
+  region: string | undefined
 }
 
-export const toggleTheme = (theme: ThemeType) => {
-  electron?.theme.setNativeTheme(theme)
-  store.dispatch(themeToggled(theme))
+export interface Settings {
+  general: GeneralSettings
+  network: NetworkSettings
 }
+
+export type Language =
+  | 'en-US'
+  | 'fr-FR'
+  | 'de-DE'
+  | 'vi-VN'
+  | 'pt-PT'
+  | 'ru-RU'
+  | 'bg-BG'
+  | 'es-ES'
+  | 'id-ID'
+  | 'tr-TR'
+  | 'it-IT'
+  | 'el-GR'

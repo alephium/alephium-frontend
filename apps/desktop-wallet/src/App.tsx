@@ -31,6 +31,14 @@ import SplashScreen from '@/components/SplashScreen'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
+import {
+  localStorageGeneralSettingsMigrated,
+  systemLanguageMatchFailed,
+  systemLanguageMatchSucceeded,
+  systemRegionMatchFailed,
+  systemRegionMatchSucceeded
+} from '@/features/settings/settingsActions'
+import { languageOptions } from '@/features/settings/settingsConstants'
 import useRegionOptions from '@/features/settings/useRegionOptions'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -42,19 +50,11 @@ import {
   localStorageDataMigrationFailed,
   osThemeChangeDetected
 } from '@/storage/global/globalActions'
-import {
-  localStorageGeneralSettingsMigrated,
-  systemLanguageMatchFailed,
-  systemLanguageMatchSucceeded,
-  systemRegionMatchFailed,
-  systemRegionMatchSucceeded
-} from '@/storage/settings/settingsActions'
 import { GlobalStyle } from '@/style/globalStyles'
 import { darkTheme, lightTheme } from '@/style/themes'
 import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 import { electron } from '@/utils/misc'
-import { languageOptions } from '@/utils/settings'
 
 const App = () => {
   const theme = useAppSelector((s) => s.global.theme)

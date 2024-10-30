@@ -36,7 +36,7 @@ import { ModalBaseProp } from '@/features/modals/modalTypes'
 import NFTThumbnail from '@/features/thumbnails/NFTThumbnail'
 import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { openInWebBrowser } from '@/utils/misc'
 
 export interface NFTDetailsModalProps {

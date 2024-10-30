@@ -22,7 +22,7 @@ import { useMemo } from 'react'
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { TokenId } from '@/types/tokens'
 
 interface UseNFTProps extends SkipProp {

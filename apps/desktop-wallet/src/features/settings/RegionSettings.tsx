@@ -23,7 +23,7 @@ import Select from '@/components/Inputs/Select'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useRegionOptions from '@/features/settings/useRegionOptions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { numberFormatRegionChanged } from '@/storage/settings/settingsActions'
+import { numberFormatRegionChanged } from '@/features/settings/settingsActions'
 
 const RegionSettings = () => {
   const { t } = useTranslation()

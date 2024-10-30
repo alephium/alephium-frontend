@@ -16,22 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useQuery } from '@tanstack/react-query'
+import { apiClientInitSucceeded, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
+import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit'
 
-import { UseFetchTransactionProps } from '@/api/apiDataHooks/transaction/transactionTypes'
-import { pendingTransactionQuery } from '@/api/queries/transactionQueries'
-import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
+import SettingsStorage from '@/features/settings/settingsPersistentStorage'
+import { RootState } from '@/storage/store'
 
-const useFetchPendingTransaction = (props: UseFetchTransactionProps) => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+export const networkListenerMiddleware = createListenerMiddleware()
 
-  const { data, isLoading } = useQuery(pendingTransactionQuery({ ...props, networkId }))
+// When the network changes, store settings in persistent storage
+networkListenerMiddleware.startListening({
+  matcher: isAnyOf(networkPresetSwitched, customNetworkSettingsSaved, apiClientInitSucceeded),
+  effect: (_, { getState }) => {
+    const state = getState() as RootState
 
-  return {
-    data,
-    isLoading
+    SettingsStorage.store('network', state.network.settings)
   }
-}
-
-export default useFetchPendingTransaction
+})

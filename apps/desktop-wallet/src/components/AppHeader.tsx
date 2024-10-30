@@ -34,7 +34,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import { ReactComponent as WalletConnectLogo } from '@/images/wallet-connect-logo.svg'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import { discreetModeToggled } from '@/storage/settings/settingsActions'
+import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
 
 interface AppHeader {

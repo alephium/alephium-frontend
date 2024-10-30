@@ -16,20 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { apiClientInitSucceeded, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
-import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit'
+import { themeSettingsChanged, themeToggled } from '@/features/settings/settingsActions'
+import { store } from '@/storage/store'
+import { ThemeSettings, ThemeType } from '@/types/theme'
+import { AlephiumWindow } from '@/types/window'
 
-import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
-import { RootState } from '@/storage/store'
+const _window = window as unknown as AlephiumWindow
+const electron = _window.electron
 
-export const networkListenerMiddleware = createListenerMiddleware()
+export const switchTheme = (theme: ThemeSettings) => {
+  electron?.theme.setNativeTheme(theme)
+  store.dispatch(themeSettingsChanged(theme))
+}
 
-// When the network changes, store settings in persistent storage
-networkListenerMiddleware.startListening({
-  matcher: isAnyOf(networkPresetSwitched, customNetworkSettingsSaved, apiClientInitSucceeded),
-  effect: (_, { getState }) => {
-    const state = getState() as RootState
-
-    SettingsStorage.store('network', state.network.settings)
-  }
-})
+export const toggleTheme = (theme: ThemeType) => {
+  electron?.theme.setNativeTheme(theme)
+  store.dispatch(themeToggled(theme))
+}

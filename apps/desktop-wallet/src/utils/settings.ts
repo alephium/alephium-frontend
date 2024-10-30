@@ -16,43 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { CURRENCIES, Currency } from '@alephium/shared'
-
-import { SelectOption } from '@/components/Inputs/Select'
-import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
-import { GeneralSettings, Language } from '@/types/settings'
-
-export const languageOptions: SelectOption<Language>[] = [
-  { label: 'English', value: 'en-US' },
-  { label: 'Български', value: 'bg-BG' },
-  { label: 'Deutsch', value: 'de-DE' },
-  { label: 'Español', value: 'es-ES' },
-  { label: 'Français', value: 'fr-FR' },
-  { label: 'Bahasa Indonesia', value: 'id-ID' },
-  { label: 'Italiano', value: 'it-IT' },
-  { label: 'Português', value: 'pt-PT' },
-  { label: 'Русский', value: 'ru-RU' },
-  { label: 'Türkçe', value: 'tr-TR' },
-  { label: 'Tiếng Việt', value: 'vi-VN' },
-  { label: 'Ελληνικά', value: 'el-GR' }
-]
-
-export const fiatCurrencyOptions: SelectOption<Currency>[] = Object.values(CURRENCIES).map((currency) => ({
-  label: currency.ticker,
-  value: currency.ticker
-}))
-
-export const LockTimes = {
-  ONE_MIN: 0,
-  TWO_MIN: 2,
-  FIVE_MIN: 5,
-  TEN_MIN: 10,
-  THIRTY_MIN: 30,
-  ONE_HOUR: 60,
-  TWO_HOURS: 120
-}
-
-export const locktimeInMinutes = Object.values(LockTimes)
+import SettingsStorage from '@/features/settings/settingsPersistentStorage'
+import { GeneralSettings } from '@/features/settings/settingsTypes'
 
 export const getThemeType = () => {
   const storedSettings = SettingsStorage.load('general') as GeneralSettings

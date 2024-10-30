@@ -23,7 +23,7 @@ import { nanoid } from 'nanoid'
 
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { contactsStorage } from '@/storage/addresses/contactsPersistentStorage'
-import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
+import SettingsStorage from '@/features/settings/settingsPersistentStorage'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { DeprecatedAddressMetadata } from '@/types/addresses'
 import * as migrate from '@/utils/migration'

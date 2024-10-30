@@ -39,7 +39,7 @@ import {
   languageChangeStarted,
   themeSettingsChanged,
   themeToggled
-} from '@/storage/settings/settingsActions'
+} from '@/features/settings/settingsActions'
 import { RootState } from '@/storage/store'
 import {
   activeWalletDeleted,
@@ -49,7 +49,7 @@ import {
   walletSaved
 } from '@/storage/wallets/walletActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
-import { ThemeType } from '@/types/settings'
+import { ThemeType } from '@/types/theme'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { getThemeType } from '@/utils/settings'
 

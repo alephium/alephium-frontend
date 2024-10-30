@@ -25,7 +25,7 @@ import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { CenteredModalProps } from '@/modals/CenteredModal'
-import { passwordRequirementToggled } from '@/storage/settings/settingsActions'
+import { passwordRequirementToggled } from '@/features/settings/settingsActions'
 
 export type DisablePasswordRequirementModalProps = Pick<CenteredModalProps, 'focusMode'>
 

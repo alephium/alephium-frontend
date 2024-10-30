@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Error, ProgressInfo, UpdateDownloadedEvent } from 'electron-updater'
 
-import { ThemeSettings } from './settings'
+import { ThemeSettings } from './theme'
 
 interface NativeTheme {
   shouldUseDarkColors: boolean

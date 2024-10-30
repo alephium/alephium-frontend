@@ -20,7 +20,7 @@ import { AddressHash, exponentialBackoffFetchRetry } from '@alephium/shared'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 
 import i18n from '@/i18n'
-import { ThemeType } from '@/types/settings'
+import { ThemeType } from '@/types/theme'
 import { OptionalMessage, SnackbarMessage } from '@/types/snackbar'
 import { SentTransaction } from '@/types/transactions'
 

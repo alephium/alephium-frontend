@@ -23,7 +23,7 @@ import useFetchPendingTransaction from '@/api/apiDataHooks/transaction/useFetchP
 import { confirmedTransactionQuery } from '@/api/queries/transactionQueries'
 import { selectSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const useFetchTransaction = ({ txHash, skip }: UseFetchTransactionProps) => {
   const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
