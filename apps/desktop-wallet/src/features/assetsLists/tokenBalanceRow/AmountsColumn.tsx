@@ -43,12 +43,12 @@ const AmountsColumn = ({ isLoading, totalBalance, availableBalance, children, to
         <SkeletonLoader height="20px" width="30%" />
       ) : (
         <>
-          {totalBalance && <TokenAmount tokenId={tokenId} value={totalBalance} />}
+          {totalBalance && <Amount tokenId={tokenId} value={totalBalance} />}
 
           {availableBalance !== totalBalance && availableBalance !== undefined && (
             <AmountSubtitle>
               {`${t('Available')}: `}
-              <Amount tokenId={tokenId} value={availableBalance} color={theme.font.tertiary} />
+              <Amount tokenId={tokenId} value={availableBalance} color={theme.font.tertiary} overrideSuffixColor />
             </AmountSubtitle>
           )}
         </>
@@ -66,10 +66,6 @@ export const RawAmountSubtitle = () => {
 }
 
 export default AmountsColumn
-
-const TokenAmount = styled(Amount)`
-  color: ${({ theme }) => theme.font.primary};
-`
 
 const AmountSubtitle = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
