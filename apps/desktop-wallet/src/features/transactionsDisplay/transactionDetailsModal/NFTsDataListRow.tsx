@@ -40,7 +40,7 @@ const NFTsDataListRow = ({ tx, refAddressHash }: TransactionDetailsModalTxProps)
 
   return (
     <DataList.Row label={t('NFTs')}>
-      <NFTThumbnails>
+      <NFTThumbnails columns={nfts.length > 3 ? 3 : nfts.length}>
         {nfts.map((nft) => (
           <NFTThumbnail nftId={nft.id} key={nft.id} onClick={() => openNFTDetailsModal(nft.id)} autoPlay />
         ))}
@@ -51,8 +51,9 @@ const NFTsDataListRow = ({ tx, refAddressHash }: TransactionDetailsModalTxProps)
 
 export default NFTsDataListRow
 
-const NFTThumbnails = styled.div`
-  display: flex;
+const NFTThumbnails = styled.div<{ columns: number }>`
+  display: grid;
+  grid-template-columns: repeat(${({ columns }) => columns}, minmax(0, 1fr));
+  grid-auto-flow: initial;
   gap: 10px;
-  flex-wrap: wrap;
 `

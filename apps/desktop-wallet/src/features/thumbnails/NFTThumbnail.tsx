@@ -102,7 +102,7 @@ const MissingMediaPlaceholder = () => (
 )
 
 const NftThumbnailStyled = styled.div<Pick<NFTThumbnailProps, 'border' | 'borderRadius' | 'size'>>`
-  flex: 1;
+  flex-grow: 1;
   overflow: hidden;
   border-radius: ${({ borderRadius }) => borderRadius || 0}px;
   box-shadow: ${({ theme, border }) => border && `0 0 0 1px ${theme.border.primary}`};
