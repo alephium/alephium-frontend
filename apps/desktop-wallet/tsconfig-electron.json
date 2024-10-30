@@ -1,0 +1,14 @@
+{
+  "extends": "@alephium/typescript-config/base",
+  "include": ["electron/**/*"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "build",
+    "module": "commonjs",
+
+    "noImplicitAny": true,
+    "sourceMap": false,
+    "resolveJsonModule": true
+  }
+}

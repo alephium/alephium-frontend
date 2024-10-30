@@ -26,10 +26,10 @@ import contextMenu from 'electron-context-menu'
 import isDev from 'electron-is-dev'
 import path from 'path'
 
-import { configureAutoUpdater, handleAutoUpdaterUserActions, setupAutoUpdaterListeners } from '@/electron/autoUpdater'
-import { setupAppMenu } from '@/electron/menu'
-import { handleNativeThemeUserActions, setupNativeThemeListeners } from '@/electron/nativeTheme'
-import { IS_RC, isMac, isWindows } from '@/electron/utils'
+import { configureAutoUpdater, handleAutoUpdaterUserActions, setupAutoUpdaterListeners } from './autoUpdater'
+import { setupAppMenu } from './menu'
+import { handleNativeThemeUserActions, setupNativeThemeListeners } from './nativeTheme'
+import { IS_RC, isMac, isWindows } from './utils'
 
 configureAutoUpdater()
 

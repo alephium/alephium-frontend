@@ -159,7 +159,6 @@
     "productName": "Alephium",
     "files": [
       "build/**/*",
-      "public/electron.js",
       "public/preload.js",
       "node_modules/**/*",
       "../../node_modules/**/*"
