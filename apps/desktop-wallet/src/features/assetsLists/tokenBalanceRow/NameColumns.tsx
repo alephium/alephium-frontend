@@ -57,7 +57,7 @@ const TokenSymbolAndPrice = ({ tokenSymbol }: { tokenSymbol: string }) => {
       {tokenPrice !== undefined ? (
         <>
           {tokenSymbol}
-          <PriceSeparator> | </PriceSeparator>
+          <PriceSeparator> • </PriceSeparator>
           <AmountStyled isFiat value={tokenPrice} overrideSuffixColor color="tertiary" />
         </>
       ) : (
