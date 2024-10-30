@@ -21,11 +21,12 @@ import { merge } from 'lodash'
 import posthog from 'posthog-js'
 
 import { Settings } from '@/types/settings'
+import { LockTimes } from '@/utils/settings'
 
 export const defaultSettings: Settings = {
   general: {
     theme: 'system',
-    walletLockTimeInMinutes: 3,
+    walletLockTimeInMinutes: LockTimes.FIVE_MIN,
     discreetMode: false,
     passwordRequirement: false,
     language: undefined,
