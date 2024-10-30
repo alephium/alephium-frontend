@@ -219,6 +219,6 @@ const Decimals = styled.span`
 `
 
 const Suffix = styled.span<{ color?: string }>`
-  color: ${({ color, theme }) => color ?? theme.font.secondary};
+  color: ${({ color, theme }) => color ?? theme.font.primary};
   font-weight: var(--fontWeight-medium);
 `
