@@ -21,10 +21,7 @@ import SettingsStorage from '@/features/settings/settingsPersistentStorage'
 import { GeneralSettings } from '@/features/settings/settingsTypes'
 import { ThemeSettings, ThemeType } from '@/features/theme/themeTypes'
 import { store } from '@/storage/store'
-import { AlephiumWindow } from '@/types/window'
-
-const _window = window as unknown as AlephiumWindow
-const electron = _window.electron
+import { electron } from '@/utils/misc'
 
 export const switchTheme = (theme: ThemeSettings) => {
   electron?.theme.setNativeTheme(theme)
