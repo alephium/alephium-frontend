@@ -20,7 +20,6 @@
   "Copy token ID": "Copy token ID",
   "Daily": "Daily",
   "Download CSV": "Download CSV",
-  "Fiat price": "Fiat price",
   "Gas Amount": "Gas Amount",
   "Gas Price": "Gas Price",
   "Hash": "Hash",
@@ -137,5 +136,6 @@
   "Uncle": "Uncle",
   "Unsupported media type": "Unsupported media type",
   "Video thumbnail": "Video thumbnail",
-  "No media": "No media"
+  "No media": "No media",
+  "Address worth": "Address worth"
 }

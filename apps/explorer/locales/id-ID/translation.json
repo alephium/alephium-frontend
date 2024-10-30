@@ -20,7 +20,6 @@
   "Copy token ID": "Salin ID token",
   "Daily": "Harian",
   "Download CSV": "Unduh CSV",
-  "Fiat price": "Harga dalam mata uang fiat",
   "Gas Amount": "Jumlah Gas",
   "Gas Price": "Harga Gas",
   "Hashrate": "hashrate",
@@ -101,5 +100,6 @@
   "Page not found": "Halaman tidak ditemukan",
   "letsGoBack": "Mari kembali ke <1>beranda</1>.",
   "Unknown error": "Kesalahan yang tidak diketahui",
-  "It appears that this block is not part of the main chain.": "Tampaknya blok ini bukan bagian dari rantai utama."
+  "It appears that this block is not part of the main chain.": "Tampaknya blok ini bukan bagian dari rantai utama.",
+  "Address worth": "Nilai alamat"
 }

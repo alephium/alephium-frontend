@@ -16,12 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFTTokenUriMetaData } from '@alephium/web3'
+import { explorer, NFTTokenUriMetaData } from '@alephium/web3'
 import { isArray, orderBy } from 'lodash'
 import sanitize from 'sanitize-html'
 
 import { calculateAmountWorth } from '@/numbers'
 import { Asset, FungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
+
+export const PRICED_TOKENS = Object.keys(explorer.TokensWithPrice)
 
 export const sortAssets = (assets: Asset[]) =>
   orderBy(
