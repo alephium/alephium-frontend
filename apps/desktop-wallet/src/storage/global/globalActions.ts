@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, exponentialBackoffFetchRetry } from '@alephium/shared'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 
+import { ThemeType } from '@/features/theme/themeTypes'
 import i18n from '@/i18n'
-import { ThemeType } from '@/types/theme'
 import { OptionalMessage, SnackbarMessage } from '@/types/snackbar'
 import { SentTransaction } from '@/types/transactions'
 

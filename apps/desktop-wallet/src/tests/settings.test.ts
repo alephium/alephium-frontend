@@ -21,7 +21,7 @@ import { Currency, getNetworkName, networkSettingsPresets } from '@alephium/shar
 import { defaultSettings } from '@/features/settings/settingsConstants'
 import SettingsStorage from '@/features/settings/settingsPersistentStorage'
 import { Language, Settings } from '@/features/settings/settingsTypes'
-import { ThemeSettings } from '@/types/theme'
+import { ThemeSettings } from '@/features/theme/themeTypes'
 
 const mockSettings: Settings = {
   general: {

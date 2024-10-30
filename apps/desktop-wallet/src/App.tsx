@@ -40,6 +40,7 @@ import {
 } from '@/features/settings/settingsActions'
 import { languageOptions } from '@/features/settings/settingsConstants'
 import useRegionOptions from '@/features/settings/useRegionOptions'
+import { darkTheme, lightTheme } from '@/features/theme/themes'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
@@ -51,7 +52,6 @@ import {
   osThemeChangeDetected
 } from '@/storage/global/globalActions'
 import { GlobalStyle } from '@/style/globalStyles'
-import { darkTheme, lightTheme } from '@/style/themes'
 import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 import { electron } from '@/utils/misc'

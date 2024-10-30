@@ -25,6 +25,14 @@ import {
 } from '@alephium/shared'
 import { createSelector, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
+import {
+  languageChangeFinished,
+  languageChangeStarted,
+  themeSettingsChanged,
+  themeToggled
+} from '@/features/settings/settingsActions'
+import { ThemeType } from '@/features/theme/themeTypes'
+import { getThemeType } from '@/features/theme/themeUtils'
 import { addressDiscoveryFinished, addressDiscoveryStarted } from '@/storage/addresses/addressesActions'
 import {
   devModeShortcutDetected,
@@ -34,12 +42,6 @@ import {
   receiveTestnetTokens,
   toggleAppLoading
 } from '@/storage/global/globalActions'
-import {
-  languageChangeFinished,
-  languageChangeStarted,
-  themeSettingsChanged,
-  themeToggled
-} from '@/features/settings/settingsActions'
 import { RootState } from '@/storage/store'
 import {
   activeWalletDeleted,
@@ -49,9 +51,7 @@ import {
   walletSaved
 } from '@/storage/wallets/walletActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
-import { ThemeType } from '@/types/theme'
 import { StoredEncryptedWallet } from '@/types/wallet'
-import { getThemeType } from '@/utils/settings'
 
 interface AppState {
   loading: boolean

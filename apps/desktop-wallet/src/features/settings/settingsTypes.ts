@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Currency, NetworkSettings } from '@alephium/shared'
 
-import { ThemeSettings } from '@/types/theme'
+import { ThemeSettings } from '@/features/theme/themeTypes'
 
 export interface GeneralSettings {
   theme: ThemeSettings

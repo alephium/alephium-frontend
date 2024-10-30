@@ -43,8 +43,9 @@ import {
   walletLockTimeChanged
 } from '@/features/settings/settingsActions'
 import { fiatCurrencyOptions, languageOptions, locktimeInMinutes } from '@/features/settings/settingsConstants'
-import { switchTheme } from '@/features/settings/settingsStorageUtils'
 import { Language } from '@/features/settings/settingsTypes'
+import { ThemeSettings } from '@/features/theme/themeTypes'
+import { switchTheme } from '@/features/theme/themeUtils'
 import { deleteThumbnailsDB } from '@/features/thumbnails/thumbnailStorage'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -55,7 +56,6 @@ import {
   walletConnectCacheCleared,
   walletConnectCacheClearFailed
 } from '@/storage/global/globalActions'
-import { ThemeSettings } from '@/types/theme'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
