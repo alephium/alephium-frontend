@@ -27,8 +27,6 @@ const AlephiumLedgerApp = require('@alephium/ledger-app').AlephiumApp
 const { listen } = require('@ledgerhq/logs')
 const web3 = require('@alephium/web3-wallet')
 
-let alephiumLedgerApp
-
 const CURRENT_VERSION = app.getVersion()
 const IS_RC = CURRENT_VERSION.includes('-rc.')
 
@@ -338,55 +336,7 @@ app.on('ready', async function () {
     deepLinkUri = null
   })
 
-  ipcMain.handle('ledger:connectViaUsb', async () => {
-    const connect = async () => {
-      console.log('🔌... connecting to Ledger via USB')
-
-      const transport = await TransportNodeHid.open('')
-
-      console.log('🔌✅ connected to Ledger via USB!')
-
-      if (isDev) {
-        listen((log) => console.log('Ledger log message:', log.message))
-      }
-
-      alephiumLedgerApp = new AlephiumLedgerApp(transport)
-
-      const version = await alephiumLedgerApp.getVersion()
-
-      console.log('🔌✅ Ledger version:', version)
-
-      const keyType = 'default'
-
-      const initialAddressPath = web3.getHDWalletPath(keyType, 0)
-
-      const [account, _] = await alephiumLedgerApp.getAccount(initialAddressPath, undefined, keyType)
-
-      const response = {
-        success: true,
-        version,
-        initialAddress: { hash: account.address, index: 0, publicKey: account.publicKey },
-        deviceModel: alephiumLedgerApp.transport.deviceModel.productName
-      }
-
-      transport.close()
-
-      return response
-    }
-
-    try {
-      return await connect()
-    } catch (error) {
-      console.error('🔌❌', error)
-
-      // Retry one more time if the error is unknown, usually the Ledger app needs a moment
-      if (error.message.includes('UNKNOWN_ERROR')) {
-        return new Promise((s) => setTimeout(s, 1000)).then(connect).catch((error) => ({ success: false, error }))
-      }
-
-      return { success: false, error }
-    }
-  })
+  setupLedger()
 
   createWindow()
 })
@@ -420,3 +370,82 @@ ipcMain.on('shell:open', () => {
   const pagePath = path.join('file://', pageDirectory, 'index.html')
   shell.openExternal(pagePath)
 })
+
+const connectToLedger = async (callback) => {
+  console.log('🔌... connecting to Ledger via USB')
+  const transport = await TransportNodeHid.open('')
+  console.log('🔌✅ connected to Ledger via USB!')
+
+  if (isDev) listen((log) => console.log('Ledger log message:', log.message))
+
+  const alephiumLedgerApp = new AlephiumLedgerApp(transport)
+
+  const version = await alephiumLedgerApp.getVersion()
+  console.log('🔌✅ Ledger version:', version)
+
+  alephiumLedgerApp.getAccount()
+
+  const result = await callback(alephiumLedgerApp)
+
+  await transport.close()
+
+  return result
+}
+
+const setupLedger = () => {
+  ipcMain.handle('ledger:connectViaUsb', async () => {
+    const connect = async () => {
+      const result = await connectToLedger(async (alephiumLedgerApp) => {
+        const keyType = 'default'
+
+        const initialAddressPath = web3.getHDWalletPath(keyType, 0)
+
+        const [account, _] = await alephiumLedgerApp.getAccount(initialAddressPath, undefined, keyType)
+        const version = await alephiumLedgerApp.getVersion()
+
+        const response = {
+          success: true,
+          version,
+          initialAddress: { hash: account.address, index: 0, publicKey: account.publicKey },
+          deviceModel: alephiumLedgerApp.transport.deviceModel.productName
+        }
+
+        return response
+      })
+
+      return result
+    }
+
+    try {
+      return await connect()
+    } catch (error) {
+      console.error('🔌❌', error)
+
+      // Retry one more time if the error is unknown, usually the Ledger app needs a moment
+      if (error.message.includes('UNKNOWN_ERROR')) {
+        return new Promise((s) => setTimeout(s, 1000)).then(connect).catch((error) => ({ success: false, error }))
+      }
+
+      return { success: false, error }
+    }
+  })
+
+  ipcMain.handle('ledger:generateAddress', async (_, index, group) => {
+    const result = await connectToLedger(async (alephiumLedgerApp) => {
+      const keyType = 'default'
+
+      const addressPath = web3.getHDWalletPath(keyType, index)
+
+      const [account, _] = await alephiumLedgerApp.getAccount(addressPath, group, keyType)
+
+      const response = {
+        success: true,
+        address: { hash: account.address, index: 0, publicKey: account.publicKey }
+      }
+
+      return response
+    })
+
+    return result
+  })
+}
