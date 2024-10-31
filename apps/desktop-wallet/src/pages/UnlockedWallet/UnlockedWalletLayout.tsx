@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useInterval } from '@alephium/shared-react'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -32,7 +31,6 @@ import SideBar from '@/components/PageComponents/SideBar'
 import Scrollbar from '@/components/Scrollbar'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { ReactComponent as AlephiumLogoSVG } from '@/images/alephium_logo_monochrome.svg'
 import { getInitials, onEnterOrSpace } from '@/utils/misc'
 
 interface UnlockedWalletLayoutProps {
@@ -52,11 +50,8 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
 
   const [fullWalletNameVisible, setFullWalletNameVisible] = useState(true)
-  const [showAlephiumLogo, setShowAlephiumLogo] = useState(false)
 
   const openCurrentWalletModal = () => dispatch(openModal({ name: 'CurrentWalletModal' }))
-
-  useInterval(() => setShowAlephiumLogo(!showAlephiumLogo), 10000)
 
   useEffect(() => {
     if (!fullWalletNameVisible) return
@@ -105,13 +100,12 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
         >
           <AnimatePresence mode="wait">
             <WalletInitialsContainer
-              key={`initials-${showAlephiumLogo}`}
               initial={{ opacity: 0, y: -15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 15 }}
               transition={{ type: 'spring', stiffness: 500, damping: 70 }}
             >
-              {showAlephiumLogo ? <AlephiumLogo /> : activeWalletNameInitials}
+              {activeWalletNameInitials}
             </WalletInitialsContainer>
           </AnimatePresence>
         </CurrentWalletInitials>
@@ -212,13 +206,4 @@ const WalletInitialsContainer = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: center;
-`
-
-const AlephiumLogo = styled(AlephiumLogoSVG)`
-  height: 25px;
-  width: 25px;
-
-  * {
-    fill: ${({ theme }) => theme.font.primary} !important;
-  }
 `
