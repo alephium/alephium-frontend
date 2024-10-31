@@ -95,6 +95,8 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
 export default BalanceSummary
 
 const BalanceSummaryContainer = styled.View`
+  flex: 1;
+  justify-content: center;
   margin: 10px 0 10px;
 `
 

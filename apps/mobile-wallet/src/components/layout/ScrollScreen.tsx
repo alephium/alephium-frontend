@@ -111,10 +111,11 @@ const ScrollScreen = ({
         onScroll={handleScroll}
         onScrollEndDrag={scrollEndHandler}
         style={{ overflow: SCREEN_OVERFLOW }}
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={[
           {
             flexGrow: fill ? 1 : undefined,
-            paddingTop: typeof contentPaddingTop === 'boolean' ? 15 : contentPaddingTop
+            paddingTop: typeof contentPaddingTop === 'boolean' ? 120 : contentPaddingTop
           },
           contentContainerStyle
         ]}

@@ -38,6 +38,8 @@ export interface ModalFlatListContentProps<T> extends ModalContentBaseProps, Fla
 
 const scrollDefaultProps = { bounces: false, scrollEventThrottle: 16 }
 
+// TODO: DELETE THIS COMPONENT ONCE BOTTOM MODAL IS REFACTORED
+
 export const ModalContent = ({
   children,
   verticalGap,
@@ -49,12 +51,13 @@ export const ModalContent = ({
 
   return (
     <GHScrollView
-      {...scrollDefaultProps}
-      {...props}
+      keyboardShouldPersistTaps="handled"
       contentContainerStyle={getDefaultContentContainerStyle({
         verticalGap,
         contentContainerStyle: [contentContainerStyle, { paddingBottom: insets.bottom }]
       })}
+      {...scrollDefaultProps}
+      {...props}
     >
       {children}
     </GHScrollView>

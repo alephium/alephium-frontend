@@ -17,29 +17,27 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useFocusEffect } from '@react-navigation/native'
-import { StackScreenProps } from '@react-navigation/stack'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StatusBar } from 'react-native'
-import Animated from 'react-native-reanimated'
-import styled, { ThemeProvider, useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
+import AnimatedBackground from '~/components/AnimatedBackground'
 import BlurredCard from '~/components/BlurredCard'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
-import { ScreenProps } from '~/components/layout/Screen'
+import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
-import ScrollScreen from '~/components/layout/ScrollScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { storedWalletExists } from '~/persistent-storage/wallet'
-import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
-import { themes } from '~/style/themes'
 import { resetNavigation } from '~/utils/navigation'
 
-interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
+interface LandingScreenProps extends NativeStackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
 
 const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
@@ -93,56 +91,43 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   }
 
   return (
-    <ThemeProvider theme={themes.dark}>
-      <ScrollScreen verticalGap fill headerOptions={{ type: 'stack' }} {...props}>
-        {isScreenContentVisible && (
-          <>
-            <AnimatedCirclesBackground isAnimated isFullScreen />
-            <CardContainer>
-              <WelcomeCard>
-                <AlephiumLogo color="white" style={{ width: '20%' }} />
-                <ScreenTitle title={t('Welcome to Alephium!')} />
-              </WelcomeCard>
-            </CardContainer>
-            <BottomArea>
-              <ButtonsContainer>
-                <Button
-                  title={t('New wallet')}
-                  type="primary"
-                  onPress={() => handleButtonPress('create')}
-                  variant="highlight"
-                  iconProps={{ name: 'sun' }}
-                />
-                <Button
-                  title={t('Import wallet')}
-                  onPress={() => handleButtonPress('import')}
-                  iconProps={{ name: 'download' }}
-                />
-              </ButtonsContainer>
-            </BottomArea>
-          </>
-        )}
-      </ScrollScreen>
-    </ThemeProvider>
+    <Screen safeAreaPadding>
+      {isScreenContentVisible && (
+        <>
+          <ScreenSection fill verticalGap>
+            <WelcomeCard>
+              <AnimatedBackground isAnimated height={600} width={400} />
+              <AlephiumLogo color="white" style={{ width: '20%' }} />
+              <ScreenTitle title={t('Welcome to Alephium!')} />
+            </WelcomeCard>
+          </ScreenSection>
+          <ButtonsContainer>
+            <Button
+              title={t('New wallet')}
+              type="primary"
+              onPress={() => handleButtonPress('create')}
+              variant="highlight"
+              iconProps={{ name: 'sun' }}
+            />
+            <Button
+              title={t('Import wallet')}
+              onPress={() => handleButtonPress('import')}
+              iconProps={{ name: 'download' }}
+            />
+          </ButtonsContainer>
+        </>
+      )}
+    </Screen>
   )
 }
 
 export default LandingScreen
 
-const CardContainer = styled.View`
-  flex: 1;
-  margin: 0 ${DEFAULT_MARGIN / 2}px;
-`
-
 const WelcomeCard = styled(BlurredCard)`
+  flex: 1;
   padding: ${DEFAULT_MARGIN * 2}px;
 `
 
-const BottomArea = styled(Animated.View)`
-  margin: 0 ${DEFAULT_MARGIN}px;
-  overflow: hidden;
-`
-
-const ButtonsContainer = styled(Animated.View)`
+const ButtonsContainer = styled(BottomButtons)`
   gap: 16px;
 `

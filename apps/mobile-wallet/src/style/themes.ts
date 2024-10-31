@@ -59,7 +59,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 20px; shadow-opacity: 0.02; shadow-radius: 50px; elevation: 40;'
   },
   global: {
-    accent: '#1575f9',
+    accent: '#155ef9',
     alert: '#ed4a34',
     warning: '#f48826',
     valid: '#2DA023',
@@ -116,7 +116,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 25px; shadow-opacity: 0.2; shadow-radius: 25px; elevation: 5;'
   },
   global: {
-    accent: '#2f8cef',
+    accent: '#155ef9',
     alert: '#ed4a34',
     warning: '#ed882d',
     valid: '#3ed282',

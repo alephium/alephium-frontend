@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, NFT } from '@alephium/shared'
 import { FlashList, FlashListProps } from '@shopify/flash-list'
-import { useMemo } from 'react'
+import { ForwardedRef, forwardRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, Dimensions, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -40,48 +40,54 @@ interface NFTsGridProps extends Omit<Partial<FlashListProps<NFT>>, 'contentConta
 const gap = DEFAULT_MARGIN / 2
 const containerHorizontalPadding = DEFAULT_MARGIN - gap
 
-const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, scrollEnabled, ...props }: NFTsGridProps) => {
-  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
-  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
-  const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
-  const theme = useTheme()
-  const { t } = useTranslation()
+const NFTsGrid = forwardRef(
+  (
+    { addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, scrollEnabled, ...props }: NFTsGridProps,
+    ref: ForwardedRef<FlashList<NFT>>
+  ) => {
+    const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
+    const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
+    const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
+    const theme = useTheme()
+    const { t } = useTranslation()
 
-  const data = nftsProp ?? nfts
-  const columns = nftsPerRow
-  const { width: windowWidth } = Dimensions.get('window')
-  const totalGapSize = columns * gap * 2 + containerHorizontalPadding * 2
-  const size = nftSize ?? (windowWidth - totalGapSize) / columns
+    const data = nftsProp ?? nfts
+    const columns = nftsPerRow
+    const { width: windowWidth } = Dimensions.get('window')
+    const totalGapSize = columns * gap * 2 + containerHorizontalPadding * 2
+    const size = nftSize ?? (windowWidth - totalGapSize) / columns
 
-  return (
-    <FlashList
-      {...props}
-      data={data}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item: nft }) => (
-        <NFTThumbnailContainer key={nft.id}>
-          <NFTThumbnail nftId={nft.id} size={size} />
-        </NFTThumbnailContainer>
-      )}
-      contentContainerStyle={{ paddingHorizontal: containerHorizontalPadding, paddingBottom: 100 }}
-      numColumns={columns}
-      estimatedItemSize={64}
-      scrollEnabled={scrollEnabled}
-      ListEmptyComponent={
-        <NoNFTsMessage>
-          {isLoadingNfts ? (
-            <>
-              <AppText color={theme.font.tertiary}>👀</AppText>
-              <ActivityIndicator />
-            </>
-          ) : (
-            <AppText color={theme.font.tertiary}>{t('No NFTs yet')} 🖼️</AppText>
-          )}
-        </NoNFTsMessage>
-      }
-    />
-  )
-}
+    return (
+      <FlashList
+        {...props}
+        data={data}
+        ref={ref}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item: nft }) => (
+          <NFTThumbnailContainer key={nft.id}>
+            <NFTThumbnail nftId={nft.id} size={size} />
+          </NFTThumbnailContainer>
+        )}
+        contentContainerStyle={{ paddingHorizontal: containerHorizontalPadding, paddingBottom: 70 }}
+        numColumns={columns}
+        estimatedItemSize={64}
+        scrollEnabled={scrollEnabled}
+        ListEmptyComponent={
+          <NoNFTsMessage>
+            {isLoadingNfts ? (
+              <>
+                <AppText color={theme.font.tertiary}>👀</AppText>
+                <ActivityIndicator />
+              </>
+            ) : (
+              <AppText color={theme.font.tertiary}>{t('No NFTs yet')} 🖼️</AppText>
+            )}
+          </NoNFTsMessage>
+        }
+      />
+    )
+  }
+)
 
 export default NFTsGrid
 

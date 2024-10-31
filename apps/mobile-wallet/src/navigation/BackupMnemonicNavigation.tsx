@@ -21,10 +21,10 @@ import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 
 import ProgressHeader from '~/components/headers/ProgressHeader'
 import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
+import BackupIntroScreen from '~/features/backup/backupScreens/BackupIntroScreen'
+import VerificationSuccessScreen from '~/features/backup/backupScreens/VerificationSuccessScreen'
+import VerifyMnemonicScreen from '~/features/backup/backupScreens/VerifyMnemonicScreen'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import BackupIntroScreen from '~/screens/BackupMnemonic/BackupIntroScreen'
-import VerificationSuccessScreen from '~/screens/BackupMnemonic/VerificationSuccessScreen'
-import VerifyMnemonicScreen from '~/screens/BackupMnemonic/VerifyMnemonicScreen'
 import { SCREEN_OVERFLOW } from '~/style/globalStyle'
 
 export interface BackupMnemonicNavigationParamList extends ParamListBase {

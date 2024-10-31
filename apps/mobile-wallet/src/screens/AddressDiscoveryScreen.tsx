@@ -134,6 +134,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
     <ScrollScreen
       verticalGap
       fill
+      contentPaddingTop
       screenTitle={t('Active addresses')}
       screenIntro={t(
         'Scan the blockchain to find your active addresses on the {{ networkName }} network. This process might take a while.',

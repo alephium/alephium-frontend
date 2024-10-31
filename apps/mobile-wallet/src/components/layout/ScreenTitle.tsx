@@ -28,15 +28,24 @@ export interface ScreenTitleProps {
   scrollY?: SharedValue<number>
   sideDefaultMargin?: boolean
   SideComponent?: ReactNode
+  paddingTop?: number | boolean
 }
 
-const ScreenTitle = ({ title, scrollY, sideDefaultMargin, SideComponent }: ScreenTitleProps) => {
+const ScreenTitle = ({ title, scrollY, sideDefaultMargin, SideComponent, paddingTop }: ScreenTitleProps) => {
   const titleAnimatedStyle = useAnimatedStyle(() => ({
     opacity: interpolate(scrollY?.value || 0, [0, 40], [1, 0], Extrapolate.CLAMP)
   }))
 
   return (
-    <TitleContainer style={[titleAnimatedStyle, { marginHorizontal: sideDefaultMargin ? DEFAULT_MARGIN : 0 }]}>
+    <TitleContainer
+      style={[
+        titleAnimatedStyle,
+        {
+          marginHorizontal: sideDefaultMargin ? DEFAULT_MARGIN : 0,
+          paddingTop: typeof paddingTop === 'boolean' ? 70 : paddingTop
+        }
+      ]}
+    >
       <Title>{title}</Title>
       {SideComponent}
     </TitleContainer>
@@ -46,7 +55,7 @@ const ScreenTitle = ({ title, scrollY, sideDefaultMargin, SideComponent }: Scree
 export default ScreenTitle
 
 const TitleContainer = styled(Animated.View)`
-  padding: 5px 0 15px 0;
+  padding-bottom: 15px;
   align-self: flex-start;
   flex-direction: row;
   align-items: center;

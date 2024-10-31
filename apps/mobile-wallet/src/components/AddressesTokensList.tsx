@@ -20,13 +20,10 @@ import { AddressHash, Asset } from '@alephium/shared'
 import { Skeleton } from 'moti/skeleton'
 import { useEffect, useMemo, useState } from 'react'
 import { ActivityIndicator, StyleProp, ViewStyle } from 'react-native'
-import { Portal } from 'react-native-portalize'
 import Animated, { CurvedTransition } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import NFTsGrid from '~/components/NFTsGrid'
 import UnknownTokensListItem, { UnknownTokensEntry } from '~/components/UnknownTokensListItem'
-import BottomModal from '~/features/modals/DeprecatedBottomModal'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesCheckedUnknownTokens, makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -59,7 +56,6 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
   const showTokensSkeleton = isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes
 
   const [tokenRows, setTokenRows] = useState<TokensRow[]>([])
-  const [isNftsModalOpen, setIsNftsModalOpen] = useState(false)
 
   useEffect(() => {
     const entries: TokensRow[] = [
@@ -104,13 +100,6 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
           </Loader>
         </>
       )}
-      <Portal>
-        <BottomModal
-          Content={(props) => <NFTsGrid addressHash={addressHash} {...props} />}
-          isOpen={isNftsModalOpen}
-          onClose={() => setIsNftsModalOpen(false)}
-        />
-      </Portal>
     </ListContainer>
   )
 }

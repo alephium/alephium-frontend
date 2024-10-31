@@ -20,7 +20,6 @@ import { AddressSettings } from '@alephium/shared'
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
-import { Portal } from 'react-native-portalize'
 
 import AppText from '~/components/AppText'
 import { ContinueButton } from '~/components/buttons/Button'
@@ -32,8 +31,8 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
-import BottomModal from '~/features/modals/DeprecatedBottomModal'
-import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
+import { openModal } from '~/features/modals/modalActions'
+import { useAppDispatch } from '~/hooks/redux'
 
 export type AddressFormData = AddressSettings & {
   group?: number
@@ -61,12 +60,12 @@ const AddressForm = ({
   ...props
 }: AddressFormProps) => {
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
   const [label, setLabel] = useState(initialValues.label)
   const [color, setColor] = useState(initialValues.color)
   const [isDefault, setIsDefault] = useState(initialValues.isDefault)
   const [group, setGroup] = useState<number>()
-  const [isGroupSelectModalOpen, setIsGroupSelectModalOpen] = useState(false)
 
   const toggleIsMain = () => {
     if (!disableIsMainToggle) {
@@ -74,71 +73,62 @@ const AddressForm = ({
     }
   }
 
-  return (
-    <>
-      <ScrollScreen
-        usesKeyboard
-        fill
-        verticalGap
-        screenTitle={screenTitle}
-        headerOptions={{
-          type: 'stack',
-          headerRight: () => (
-            <ContinueButton
-              title={buttonText || t('Generate')}
-              onPress={() => onSubmit({ isDefault, label, color, group })}
-              iconProps={undefined}
-            />
-          ),
-          headerTitle: screenTitle,
-          ...headerOptions
-        }}
-        {...props}
-      >
-        <View>{HeaderComponent}</View>
-        <ScreenSection verticalGap fill>
-          <Input value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} />
-          <ColorPicker value={color} onChange={setColor} />
-          <BoxSurface>
-            <Row
-              title={t('Default address')}
-              subtitle={`${t('Default address for operations')}${
-                disableIsMainToggle
-                  ? `. ${t(
-                      'To remove this address from being the default address, you must set another one as main first.'
-                    )}`
-                  : ''
-              }`}
-              onPress={toggleIsMain}
-              isLast
-            >
-              <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
-            </Row>
-          </BoxSurface>
+  const openGroupSelectModal = () => dispatch(openModal({ name: 'GroupSelectModal', props: { onSelect: setGroup } }))
 
-          {allowGroupSelection && (
-            <ExpandableRow>
-              <BoxSurface>
-                <Row title={t('Address group')} onPress={() => setIsGroupSelectModalOpen(true)}>
-                  <AppText>
-                    {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Default')}
-                  </AppText>
-                </Row>
-              </BoxSurface>
-            </ExpandableRow>
-          )}
-        </ScreenSection>
-      </ScrollScreen>
-      <Portal>
-        <BottomModal
-          isOpen={isGroupSelectModalOpen}
-          onClose={() => setIsGroupSelectModalOpen(false)}
-          Content={(props) => (
-            <GroupSelectModal onClose={() => setIsGroupSelectModalOpen(false)} onSelect={setGroup} {...props} />
-          )}
-        />
-      </Portal>
-    </>
+  return (
+    <ScrollScreen
+      usesKeyboard
+      fill
+      verticalGap
+      screenTitle={screenTitle}
+      headerOptions={{
+        type: 'stack',
+        headerRight: () => (
+          <ContinueButton
+            title={buttonText || t('Generate')}
+            onPress={() => onSubmit({ isDefault, label, color, group })}
+            iconProps={undefined}
+          />
+        ),
+        headerTitle: screenTitle,
+        ...headerOptions
+      }}
+      {...props}
+    >
+      <View>{HeaderComponent}</View>
+      <ScreenSection verticalGap fill>
+        <Input value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} />
+        <ColorPicker value={color} onChange={setColor} />
+        <BoxSurface>
+          <Row
+            title={t('Default address')}
+            subtitle={`${t('Default address for operations')}${
+              disableIsMainToggle
+                ? `. ${t(
+                    'To remove this address from being the default address, you must set another one as main first.'
+                  )}`
+                : ''
+            }`}
+            onPress={toggleIsMain}
+            isLast
+          >
+            <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
+          </Row>
+        </BoxSurface>
+
+        {allowGroupSelection && (
+          <ExpandableRow>
+            <BoxSurface>
+              <Row title={t('Address group')} onPress={openGroupSelectModal}>
+                <AppText>
+                  {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Default')}
+                </AppText>
+              </Row>
+            </BoxSurface>
+          </ExpandableRow>
+        )}
+      </ScreenSection>
+    </ScrollScreen>
   )
 }
 

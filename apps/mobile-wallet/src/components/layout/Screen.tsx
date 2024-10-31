@@ -17,7 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useNavigation } from '@react-navigation/native'
-import { KeyboardAvoidingView, ViewProps } from 'react-native'
+import { KeyboardAvoidingView, StyleProp, ViewProps, ViewStyle } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -29,22 +30,35 @@ export interface ScreenProps extends ViewProps {
   headerOptions?: BaseHeaderOptions & {
     type?: 'default' | 'stack'
   }
+  safeAreaPadding?: boolean
+  usesKeyboard?: boolean
 }
 
-const Screen = ({ children, headerOptions, ...props }: ScreenProps) => {
+const Screen = ({ children, headerOptions, safeAreaPadding, usesKeyboard, ...props }: ScreenProps) => {
   const navigation = useNavigation()
+  const insets = useSafeAreaInsets()
 
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
-  return (
-    <ScreenStyled {...props}>
-      <KeyboardAvoidingView behavior="height" style={{ flex: 1 }} keyboardVerticalOffset={100}>
-        {headerOptions && (
-          <HeaderComponent goBack={navigation.canGoBack() ? navigation.goBack : undefined} options={headerOptions} />
-        )}
-        {children}
-      </KeyboardAvoidingView>
+  const paddingStyle: StyleProp<ViewStyle> = safeAreaPadding
+    ? { paddingTop: insets.top, paddingBottom: insets.bottom }
+    : {}
+
+  const screen = (
+    <ScreenStyled {...props} style={[props.style, paddingStyle]}>
+      {headerOptions && (
+        <HeaderComponent goBack={navigation.canGoBack() ? navigation.goBack : undefined} options={headerOptions} />
+      )}
+      {children}
     </ScreenStyled>
+  )
+
+  return usesKeyboard ? (
+    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+      {screen}
+    </KeyboardAvoidingView>
+  ) : (
+    screen
   )
 }
 

@@ -15,33 +15,33 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-
 import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
 import styled from 'styled-components/native'
 
-import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
+import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-interface ConsolidationModalProps {
-  onConsolidate: () => void
-  fees: bigint
+interface WalletConnectErrorModalProps {
+  onClose?: () => void
 }
 
-const ConsolidationModal = withModal<ConsolidationModalProps>(({ id, onConsolidate, fees }) => {
+const WalletConnectErrorModal = withModal<WalletConnectErrorModalProps>(({ id, onClose }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const walletConnectClientError = useAppSelector((s) => s.clients.walletConnect.errorMessage)
+  const { resetWalletConnectClientInitializationAttempts } = useWalletConnectContext()
 
-  const handleConsolidate = () => {
-    onConsolidate()
+  const handleClose = () => {
+    onClose && onClose()
     dispatch(closeModal({ id }))
   }
 
@@ -49,25 +49,27 @@ const ConsolidationModal = withModal<ConsolidationModalProps>(({ id, onConsolida
     <BottomModal modalId={id}>
       <ModalContent verticalGap>
         <ScreenSection>
-          <ModalScreenTitle>{t('Consolidation required')}</ModalScreenTitle>
+          <ModalScreenTitle>{t('Could not connect to WalletConnect')}</ModalScreenTitle>
         </ScreenSection>
-        <ScreenSection>
-          <View>
-            <AppText>
-              {t(
-                'It appears that the address you use to send funds from has too many UTXOs! Would you like to consolidate them? This will cost as small fee.'
-              )}
-            </AppText>
-            <Fee>
-              <AppText>{t('Fee')}:</AppText>
-              <Amount value={fees} fullPrecision fadeDecimals bold />
-            </Fee>
-          </View>
-        </ScreenSection>
+        {walletConnectClientError && (
+          <ScreenSection>
+            <BoxSurface>
+              <AppTextStyled>{walletConnectClientError}</AppTextStyled>
+            </BoxSurface>
+          </ScreenSection>
+        )}
         <ScreenSection centered>
           <ButtonsRow>
-            <Button title={t('Cancel')} onPress={() => dispatch(closeModal({ id }))} flex variant="accent" short />
-            <Button title={t('Consolidate')} onPress={handleConsolidate} variant="highlight" flex short />
+            <Button title={t('Close')} onPress={handleClose} flex />
+            <Button
+              title={t('Retry')}
+              variant="accent"
+              onPress={() => {
+                resetWalletConnectClientInitializationAttempts()
+                dispatch(closeModal({ id }))
+              }}
+              flex
+            />
           </ButtonsRow>
         </ScreenSection>
       </ModalContent>
@@ -75,10 +77,9 @@ const ConsolidationModal = withModal<ConsolidationModalProps>(({ id, onConsolida
   )
 })
 
-export default ConsolidationModal
+export default WalletConnectErrorModal
 
-const Fee = styled.View`
-  flex-direction: row;
-  gap: 5px;
-  margin-top: 20px;
+const AppTextStyled = styled(AppText)`
+  font-family: monospace;
+  padding: 10px;
 `

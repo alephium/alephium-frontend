@@ -17,21 +17,21 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
-import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, View } from 'react-native'
+import { Modal } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
-import { useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { Analytics, sendAnalytics } from '~/analytics'
+import AnimatedBackground from '~/components/AnimatedBackground'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import useAutoLock from '~/features/auto-lock/useAutoLock'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import AppModals from '~/features/modals/AppModals'
-import EditWalletNameScreen from '~/features/settings/EditWalletName'
 import { loadBiometricsSettings } from '~/features/settings/settingsPersistentStorage'
 import SettingsScreen from '~/features/settings/SettingsScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -56,7 +56,6 @@ import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
 import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
 import NewContactScreen from '~/screens/Addresses/Contact/NewContactScreen'
 import CustomNetworkScreen from '~/screens/CustomNetworkScreen'
-import AnimatedCirclesBackground from '~/screens/Dashboard/AnimatedCirclesBackground'
 import LandingScreen from '~/screens/LandingScreen'
 import LoginWithPinScreen from '~/screens/LoginWithPinScreen'
 import AddBiometricsScreen from '~/screens/new-wallet/AddBiometricsScreen'
@@ -72,7 +71,7 @@ import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
 
-const RootStack = createStackNavigator<RootStackParamList>()
+const RootStack = createNativeStackNavigator<RootStackParamList>()
 
 interface RootStackNavigationProps {
   initialRouteName?: keyof RootStackParamList
@@ -104,7 +103,7 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                 initialRouteName={initialRouteName || 'LandingScreen'}
                 screenOptions={{ headerShown: false }}
               >
-                <RootStack.Group screenOptions={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}>
+                <RootStack.Group screenOptions={{ animation: 'fade' }}>
                   <RootStack.Screen name="LandingScreen" component={LandingScreen} />
                   <RootStack.Screen name="LoginWithPinScreen" component={LoginWithPinScreen} />
                   <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
@@ -126,7 +125,6 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                 <RootStack.Screen name="DecryptScannedMnemonicScreen" component={DecryptScannedMnemonicScreen} />
                 <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
                 <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
-                <RootStack.Screen name="EditWalletNameScreen" component={EditWalletNameScreen} />
                 <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
                 <RootStack.Screen name="PublicKeysScreen" component={PublicKeysScreen} />
                 <RootStack.Screen name="FundPasswordScreen" component={FundPasswordScreen} />
@@ -252,10 +250,15 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
   useAutoLock(unlockApp)
 
   return (
-    <Modal visible={!!lastUsedWalletId && biometricsRequiredForAppAccess && !isWalletUnlocked} animationType="none">
-      <View style={{ backgroundColor: 'black', flex: 1 }}>
-        <AnimatedCirclesBackground isAnimated />
-      </View>
+    <Modal visible={!!lastUsedWalletId && biometricsRequiredForAppAccess && !isWalletUnlocked} animationType="fade">
+      <AppUnlockModalContainer>
+        <AnimatedBackground isAnimated isFullScreen showAlephiumLogo />
+      </AppUnlockModalContainer>
     </Modal>
   )
 }
+
+const AppUnlockModalContainer = styled.View`
+  flex: 1;
+  background-color: ${({ theme }) => theme.bg.back2};
+`

@@ -56,6 +56,7 @@ const FlashListScreen = <T,>({
         ref={FlashListRef}
         onScroll={screenScrollHandler}
         scrollEventThrottle={16}
+        keyboardShouldPersistTaps="handled"
         ListHeaderComponent={() =>
           screenTitle && (
             <ScreenIntro
@@ -68,7 +69,7 @@ const FlashListScreen = <T,>({
         }
         contentContainerStyle={{
           paddingBottom: insets.bottom,
-          paddingTop: typeof contentPaddingTop === 'boolean' ? 15 : contentPaddingTop,
+          paddingTop: typeof contentPaddingTop === 'boolean' ? 120 : contentPaddingTop,
           ...contentContainerStyle
         }}
         {...props}
