@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ONE_DAY_MS } from '@alephium/shared'
-import { getTokensURL, mainnet, testnet, TokenList } from '@alephium/token-list'
+import { ALPH, getTokensURL, mainnet, testnet, TokenList } from '@alephium/token-list'
 import { skipToken, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 
@@ -37,7 +37,7 @@ type FTListProps = {
 
 const useFetchFtList = (props?: FTListProps): FTList => {
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
-  const network = networkId === 0 ? 'mainnet' : networkId === 1 ? 'testnet' : undefined
+  const network = networkId === 0 ? 'mainnet' : networkId === 1 ? 'testnet' : networkId === 4 ? 'devnet' : undefined
 
   const { data, isLoading } = useQuery({
     queryKey: ['tokenList', { networkId }],
@@ -47,7 +47,10 @@ const useFetchFtList = (props?: FTListProps): FTList => {
     queryFn:
       !network || props?.skip
         ? skipToken
-        : () => axios.get(getTokensURL(network)).then(({ data }) => (data as TokenList)?.tokens),
+        : () =>
+            network === 'devnet'
+              ? [ALPH]
+              : axios.get(getTokensURL(network)).then(({ data }) => (data as TokenList)?.tokens),
     placeholderData: network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : []
   })
 
