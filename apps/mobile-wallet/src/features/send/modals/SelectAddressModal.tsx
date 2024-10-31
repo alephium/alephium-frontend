@@ -45,7 +45,7 @@ const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPr
     <BottomModalFlashList
       modalId={id}
       title={t('Addresses')}
-      flashListRenderer={(props) => (
+      flashListRender={(props) => (
         <FlashList
           data={addresses}
           keyExtractor={(item) => item.hash}
