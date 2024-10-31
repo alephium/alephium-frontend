@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.10.7
+
+### Patch Changes
+
+- aacde83: Fix address worth display
+
 ## 1.10.6
 
 ### Patch Changes
