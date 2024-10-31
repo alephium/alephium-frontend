@@ -33,7 +33,8 @@ export const languageOptions: SelectOption<Language>[] = [
   { label: 'Русский', value: 'ru-RU' },
   { label: 'Türkçe', value: 'tr-TR' },
   { label: 'Tiếng Việt', value: 'vi-VN' },
-  { label: 'Ελληνικά', value: 'el-GR' }
+  { label: 'Ελληνικά', value: 'el-GR' },
+  { label: '简体中文', value: 'zh-CN' }
 ]
 
 export const fiatCurrencyOptions: SelectOption<Currency>[] = Object.values(CURRENCIES).map((currency) => ({

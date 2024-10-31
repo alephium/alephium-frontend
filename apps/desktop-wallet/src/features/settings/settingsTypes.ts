@@ -50,3 +50,4 @@ export type Language =
   | 'tr-TR'
   | 'it-IT'
   | 'el-GR'
+  | 'zh-CN'

@@ -27,6 +27,7 @@ import 'dayjs/locale/ru'
 import 'dayjs/locale/tr'
 import 'dayjs/locale/vi'
 import 'dayjs/locale/el'
+import 'dayjs/locale/zh-cn'
 
 import { fiatCurrencyChanged } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
