@@ -23,7 +23,7 @@ import { ContentScrollHandlers, useBottomModalState } from '~/features/modals/us
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export interface BottomModalFlashListProps extends Omit<BottomModalBaseProps, 'children'> {
-  children: (flashListProps: {
+  flashListRenderer: (flashListProps: {
     contentContainerStyle: ContentStyle
     onScroll: ContentScrollHandlers['onScroll']
     onScrollBeginDrag: ContentScrollHandlers['onScrollBeginDrag']
@@ -40,7 +40,7 @@ const BottomModalFlashList = ({
   minHeight,
   navHeight = 50,
   noPadding,
-  children
+  flashListRenderer
 }: BottomModalFlashListProps) => {
   const modalState = useBottomModalState({
     modalId,
@@ -52,7 +52,7 @@ const BottomModalFlashList = ({
 
   return (
     <BottomModalBase title={title} modalId={modalId} navHeight={navHeight} {...modalState}>
-      {children({
+      {flashListRenderer({
         ...modalState.contentScrollHandlers,
         onContentSizeChange: modalState.handleContentSizeChange,
         contentContainerStyle: {

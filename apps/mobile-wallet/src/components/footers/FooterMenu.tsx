@@ -70,6 +70,7 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
             : [theme.bg.highlight, colord(theme.bg.highlight).alpha(0).toHex()]
         }
         style={{ height: gradientHeight }}
+        pointerEvents="none"
       />
       <FooterMenuContent style={{ paddingBottom: isIos ? insets.bottom : insets.bottom + 18 }}>
         {footerContent}
