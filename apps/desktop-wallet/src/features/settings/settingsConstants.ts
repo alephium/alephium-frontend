@@ -16,11 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { CURRENCIES, Currency } from '@alephium/shared'
+import { CURRENCIES, Currency, defaultNetworkSettings } from '@alephium/shared'
 
 import { SelectOption } from '@/components/Inputs/Select'
-import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
-import { GeneralSettings, Language } from '@/types/settings'
+import { Language, Settings } from '@/features/settings/settingsTypes'
 
 export const languageOptions: SelectOption<Language>[] = [
   { label: 'English', value: 'en-US' },
@@ -34,7 +33,8 @@ export const languageOptions: SelectOption<Language>[] = [
   { label: 'Русский', value: 'ru-RU' },
   { label: 'Türkçe', value: 'tr-TR' },
   { label: 'Tiếng Việt', value: 'vi-VN' },
-  { label: 'Ελληνικά', value: 'el-GR' }
+  { label: 'Ελληνικά', value: 'el-GR' },
+  { label: '简体中文', value: 'zh-CN' }
 ]
 
 export const fiatCurrencyOptions: SelectOption<Currency>[] = Object.values(CURRENCIES).map((currency) => ({
@@ -42,10 +42,29 @@ export const fiatCurrencyOptions: SelectOption<Currency>[] = Object.values(CURRE
   value: currency.ticker
 }))
 
-export const locktimeInMinutes = [0, 2, 5, 10, 30, 60, 120]
+export const LockTimes = {
+  ONE_MIN: 0,
+  TWO_MIN: 2,
+  FIVE_MIN: 5,
+  TEN_MIN: 10,
+  THIRTY_MIN: 30,
+  ONE_HOUR: 60,
+  TWO_HOURS: 120
+}
 
-export const getThemeType = () => {
-  const storedSettings = SettingsStorage.load('general') as GeneralSettings
+export const locktimeInMinutes = Object.values(LockTimes)
 
-  return storedSettings.theme === 'system' ? 'dark' : storedSettings.theme
+export const defaultSettings: Settings = {
+  general: {
+    theme: 'system',
+    walletLockTimeInMinutes: LockTimes.FIVE_MIN,
+    discreetMode: false,
+    passwordRequirement: false,
+    language: undefined,
+    devTools: false,
+    analytics: true,
+    fiatCurrency: 'USD',
+    region: undefined
+  },
+  network: defaultNetworkSettings
 }

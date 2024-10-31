@@ -33,7 +33,7 @@ const SkeletonLoader = ({ className, style }: SkeletonLoaderProps) => (
 )
 
 export default styled(SkeletonLoader)`
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.03);
   width: ${({ width }) => width || '100%'};
   height: ${({ height }) => height || '20px'};
   border-radius: var(--radius-big);
@@ -44,7 +44,7 @@ const AnimatedBackground = styled.div`
   width: 100%;
   height: 100%;
 
-  background-image: linear-gradient(-90deg, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.05));
+  background-image: linear-gradient(-90deg, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.05));
   background-size: 400% 400%;
   animation: gradientAnimation 1.5s ease-in-out infinite;
 

@@ -129,9 +129,12 @@ const AddressInfoPage = () => {
 
   const knownTokensWorth = tokenBalances.reduce((acc, b) => {
     const token = fungibleTokensMetadata.find((t) => t.verified && t.id === b.tokenId)
-    const price = tokensPrices[token?.symbol || '']
 
-    return acc + (price ? calculateAmountWorth(BigInt(b.balance), price) : 0)
+    if (!token) return acc
+
+    const price = tokensPrices[token.symbol] || 0
+
+    return acc + calculateAmountWorth(BigInt(b.balance), price, token.decimals)
   }, 0)
 
   const addressLatestActivity =
@@ -141,7 +144,8 @@ const AddressInfoPage = () => {
   const lockedBalance = addressBalance?.lockedBalance
 
   const addressWorth =
-    knownTokensWorth + (totalBalance ? calculateAmountWorth(BigInt(totalBalance), tokensPrices[ALPH.symbol] || NaN) : 0)
+    knownTokensWorth +
+    (totalBalance ? calculateAmountWorth(BigInt(totalBalance), tokensPrices[ALPH.symbol] || NaN, ALPH.decimals) : 0)
 
   const totalNbOfAssets =
     tokenBalances.length +
@@ -197,7 +201,7 @@ const AddressInfoPage = () => {
             }
           />
           <InfoGrid.Cell
-            label={t('Fiat price')}
+            label={t('Address worth')}
             value={addressWorth && <Amount value={addressWorth} isFiat suffix="$" />}
             sublabel={client.networkType === 'testnet' && t('Worth of mainnet equivalent')}
           />

@@ -21,8 +21,8 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import DataList from '@/components/DataList'
-import NFTThumbnail from '@/components/NFTThumbnail'
 import { openModal } from '@/features/modals/modalActions'
+import NFTThumbnail from '@/features/thumbnails/NFTThumbnail'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 import { useAppDispatch } from '@/hooks/redux'
@@ -40,9 +40,9 @@ const NFTsDataListRow = ({ tx, refAddressHash }: TransactionDetailsModalTxProps)
 
   return (
     <DataList.Row label={t('NFTs')}>
-      <NFTThumbnails>
+      <NFTThumbnails columns={nfts.length > 3 ? 3 : nfts.length}>
         {nfts.map((nft) => (
-          <NFTThumbnail nftId={nft.id} key={nft.id} onClick={() => openNFTDetailsModal(nft.id)} />
+          <NFTThumbnail nftId={nft.id} key={nft.id} onClick={() => openNFTDetailsModal(nft.id)} autoPlay />
         ))}
       </NFTThumbnails>
     </DataList.Row>
@@ -51,8 +51,9 @@ const NFTsDataListRow = ({ tx, refAddressHash }: TransactionDetailsModalTxProps)
 
 export default NFTsDataListRow
 
-const NFTThumbnails = styled.div`
-  display: flex;
+const NFTThumbnails = styled.div<{ columns: number }>`
+  display: grid;
+  grid-template-columns: repeat(${({ columns }) => columns}, minmax(0, 1fr));
+  grid-auto-flow: initial;
   gap: 10px;
-  flex-wrap: wrap;
 `

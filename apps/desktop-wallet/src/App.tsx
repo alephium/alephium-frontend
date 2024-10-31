@@ -22,6 +22,7 @@ import { ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
+import PersistedQueryCacheVersionStorage from '@/api/persistedCacheVersionStorage'
 import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
@@ -30,6 +31,16 @@ import SplashScreen from '@/components/SplashScreen'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
+import {
+  localStorageGeneralSettingsMigrated,
+  systemLanguageMatchFailed,
+  systemLanguageMatchSucceeded,
+  systemRegionMatchFailed,
+  systemRegionMatchSucceeded
+} from '@/features/settings/settingsActions'
+import { languageOptions } from '@/features/settings/settingsConstants'
+import useRegionOptions from '@/features/settings/useRegionOptions'
+import { darkTheme, lightTheme } from '@/features/theme/themes'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
@@ -40,19 +51,10 @@ import {
   localStorageDataMigrationFailed,
   osThemeChangeDetected
 } from '@/storage/global/globalActions'
-import {
-  localStorageGeneralSettingsMigrated,
-  systemLanguageMatchFailed,
-  systemLanguageMatchSucceeded
-} from '@/storage/settings/settingsActions'
 import { GlobalStyle } from '@/style/globalStyles'
-import { darkTheme, lightTheme } from '@/style/themes'
 import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 import { electron } from '@/utils/misc'
-import { languageOptions } from '@/utils/settings'
-
-import PersistedQueryCacheVersionStorage from './api/persistedCacheVersionStorage'
 
 const App = () => {
   const theme = useAppSelector((s) => s.global.theme)
@@ -69,6 +71,7 @@ const App = () => {
 
   useSystemTheme()
   useSystemLanguage()
+  useSystemRegion()
 
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
@@ -162,6 +165,33 @@ const useMigrateStoredSettings = () => {
       dispatch(localStorageDataMigrationFailed())
     }
   }, [dispatch, sendAnalytics])
+}
+
+const useSystemRegion = () => {
+  const dispatch = useAppDispatch()
+  const region = useAppSelector((s) => s.settings.region)
+  const regionOptions = useRegionOptions()
+
+  useEffect(() => {
+    if (region === undefined)
+      electron?.app.getSystemRegion().then((systemRegion) => {
+        if (!systemRegion) {
+          dispatch(systemRegionMatchFailed())
+          return
+        }
+
+        const systemRegionCode = systemRegion.substring(3)
+        const matchedRegion = regionOptions.find(
+          (region) => region.value === systemRegion || region.value.endsWith(systemRegionCode)
+        )
+
+        if (matchedRegion) {
+          dispatch(systemRegionMatchSucceeded(matchedRegion.value))
+        } else {
+          dispatch(systemRegionMatchFailed())
+        }
+      })
+  }, [dispatch, region, regionOptions])
 }
 
 const useSystemLanguage = () => {

@@ -57,7 +57,7 @@ const TokenSymbolAndPrice = ({ tokenSymbol }: { tokenSymbol: string }) => {
       {tokenPrice !== undefined ? (
         <>
           {tokenSymbol}
-          <Bullet> • </Bullet>
+          <PriceSeparator> • </PriceSeparator>
           <AmountStyled isFiat value={tokenPrice} overrideSuffixColor color="tertiary" />
         </>
       ) : (
@@ -111,8 +111,8 @@ const AmountStyled = styled(Amount)`
   font-weight: var(--fontWeight-medium);
 `
 
-const Bullet = styled.span`
-  font-size: 8px;
+const PriceSeparator = styled.span`
+  font-size: 9px;
 `
 
 const InfoIcon = styled.div`

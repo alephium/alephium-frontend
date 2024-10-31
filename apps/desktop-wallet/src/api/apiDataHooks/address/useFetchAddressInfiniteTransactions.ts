@@ -24,7 +24,7 @@ import useFetchAddressLatestTransaction from '@/api/apiDataHooks/address/useFetc
 import { addressTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
 import queryClient from '@/api/queryClient'
 import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 interface UseFetchAddressInfiniteTransactionsProps {
   addressHash: AddressHash

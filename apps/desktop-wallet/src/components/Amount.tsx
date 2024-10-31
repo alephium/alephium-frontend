@@ -16,15 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { convertToPositive, CURRENCIES, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/shared'
+import { convertToPositive, formatAmountForDisplay } from '@alephium/shared'
 import { Optional } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import useFetchToken, { isFT } from '@/api/apiDataHooks/token/useFetchToken'
 import SkeletonLoader from '@/components/SkeletonLoader'
+import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { discreetModeToggled } from '@/storage/settings/settingsActions'
 import { TokenId } from '@/types/tokens'
 
 interface AmountBaseProps {
@@ -136,18 +136,11 @@ const TokenAmount = ({
   )
 }
 
-const FiatAmount = ({ value, fadeDecimals, overrideSuffixColor, color }: FiatAmountProps) => {
+const FiatAmount = ({ value }: FiatAmountProps) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
+  const region = useAppSelector((s) => s.settings.region)
 
-  const amount = formatFiatAmountForDisplay(value)
-
-  return (
-    <>
-      <AmountPartitions amount={amount} fadeDecimals={fadeDecimals} />
-
-      <Suffix color={overrideSuffixColor ? color : undefined}> {CURRENCIES[fiatCurrency].symbol}</Suffix>
-    </>
-  )
+  return new Intl.NumberFormat(region, { style: 'currency', currency: fiatCurrency }).format(value)
 }
 
 const CustomAmount = ({ value, fadeDecimals, overrideSuffixColor, color, suffix }: CustomAmountProps) => {
@@ -226,6 +219,6 @@ const Decimals = styled.span`
 `
 
 const Suffix = styled.span<{ color?: string }>`
-  color: ${({ color, theme }) => color ?? theme.font.secondary};
+  color: ${({ color, theme }) => color ?? theme.font.primary};
   font-weight: var(--fontWeight-medium);
 `

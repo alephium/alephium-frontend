@@ -20,7 +20,6 @@
   "Copy token ID": "Copia l'ID del token",
   "Daily": "Quotidiano",
   "Download CSV": "Scarica il CSV",
-  "Fiat price": "Prezzo Fiat",
   "Gas Amount": "Quantità di Gas",
   "Gas Price": "Prezzo del Gas",
   "Hashrate": "Tasso di Hashrate",
@@ -131,5 +130,6 @@
   "uncleBlock_other": "Blocchi zio",
   "Uncle": "Zio",
   "Unsupported media type": "Tipo di contenuto multimediale non supportato",
-  "Video thumbnail": "Miniatura video"
+  "Video thumbnail": "Miniatura video",
+  "Address worth": "Valore dell'indirizzo"
 }

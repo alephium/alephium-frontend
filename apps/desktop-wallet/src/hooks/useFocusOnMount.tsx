@@ -23,7 +23,10 @@ export default function <T extends HTMLElement>(skipFocusOnMount?: boolean) {
 
   useEffect(() => {
     if (skipFocusOnMount) return
-    setTimeout(() => ref.current?.focus(), 0)
+
+    const timer = setTimeout(() => ref.current?.focus(), 0)
+
+    return () => clearTimeout(timer)
   }, [ref, skipFocusOnMount])
 
   return ref

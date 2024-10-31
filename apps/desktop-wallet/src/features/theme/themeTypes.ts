@@ -18,38 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import 'styled-components'
 
-import { Currency, NetworkSettings } from '@alephium/shared'
-
-export interface GeneralSettings {
-  theme: ThemeSettings
-  walletLockTimeInMinutes: number | null
-  discreetMode: boolean
-  passwordRequirement: boolean
-  language: Language | undefined
-  devTools: boolean
-  analytics: boolean
-  fiatCurrency: Currency
-}
-
-export interface Settings {
-  general: GeneralSettings
-  network: NetworkSettings
-}
-
-export type Language =
-  | 'en-US'
-  | 'fr-FR'
-  | 'de-DE'
-  | 'vi-VN'
-  | 'pt-PT'
-  | 'ru-RU'
-  | 'bg-BG'
-  | 'es-ES'
-  | 'id-ID'
-  | 'tr-TR'
-  | 'it-IT'
-  | 'el-GR'
-
 export type ThemeType = 'light' | 'dark'
 
 export type ThemeSettings = ThemeType | 'system'

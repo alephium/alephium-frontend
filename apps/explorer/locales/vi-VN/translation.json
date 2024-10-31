@@ -20,7 +20,6 @@
   "Copy token ID": "Sao chép token ID",
   "Daily": "Hằng ngày",
   "Download CSV": "Tải CSV",
-  "Fiat price": "Trị giá",
   "Gas Amount": "Số lượng Gas",
   "Gas Price": "Giá Gas",
   "Hash": "Hash",
@@ -129,5 +128,6 @@
   "Unknown error": "Lỗi không xác định",
   "It appears that this block is not part of the main chain.": "Có vẻ như block này không thuộc về một phần của chain chính.",
   "confirmationsKey_one": "{{ count }} Xác nhận",
-  "confirmationsKey_other": "{{ count }} Xác nhận"
+  "confirmationsKey_other": "{{ count }} Xác nhận",
+  "Address worth": "Giá trị của địa chỉ"
 }

@@ -27,13 +27,13 @@ import 'dayjs/locale/ru'
 import 'dayjs/locale/tr'
 import 'dayjs/locale/vi'
 import 'dayjs/locale/el'
+import 'dayjs/locale/zh-cn'
 
 import { fiatCurrencyChanged } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
 import posthog from 'posthog-js'
 
-import i18next from '@/i18n'
 import {
   analyticsToggled,
   devToolsToggled,
@@ -42,16 +42,20 @@ import {
   languageChangeFinished,
   languageChangeStarted,
   localStorageGeneralSettingsMigrated,
+  numberFormatRegionChanged,
   passwordRequirementToggled,
   systemLanguageMatchFailed,
   systemLanguageMatchSucceeded,
+  systemRegionMatchFailed,
+  systemRegionMatchSucceeded,
   themeSettingsChanged,
   themeToggled,
   walletLockTimeChanged
-} from '@/storage/settings/settingsActions'
-import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
+} from '@/features/settings/settingsActions'
+import SettingsStorage from '@/features/settings/settingsPersistentStorage'
+import { GeneralSettings } from '@/features/settings/settingsTypes'
+import i18next from '@/i18n'
 import { RootState } from '@/storage/store'
-import { GeneralSettings } from '@/types/settings'
 
 const initialState = SettingsStorage.load('general') as GeneralSettings
 
@@ -62,11 +66,11 @@ const settingsSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(localStorageGeneralSettingsMigrated, (_, { payload: generalSettings }) => generalSettings)
-      .addCase(systemLanguageMatchSucceeded, (state, { payload: language }) => {
-        state.language = language
-      })
       .addCase(systemLanguageMatchFailed, (state) => {
         state.language = 'en-US'
+      })
+      .addCase(systemRegionMatchFailed, (state) => {
+        state.region = 'en-US'
       })
       .addCase(themeSettingsChanged, (state, action) => {
         state.theme = action.payload
@@ -83,9 +87,6 @@ const settingsSlice = createSlice({
       .addCase(devToolsToggled, (state) => {
         state.devTools = !state.devTools
       })
-      .addCase(languageChanged, (state, action) => {
-        state.language = action.payload
-      })
       .addCase(walletLockTimeChanged, (state, action) => {
         state.walletLockTimeInMinutes = action.payload
       })
@@ -94,6 +95,14 @@ const settingsSlice = createSlice({
       })
       .addCase(fiatCurrencyChanged, (state, action) => {
         state.fiatCurrency = action.payload
+      })
+
+    builder
+      .addMatcher(isAnyOf(numberFormatRegionChanged, systemRegionMatchSucceeded), (state, action) => {
+        state.region = action.payload
+      })
+      .addMatcher(isAnyOf(languageChanged, systemLanguageMatchSucceeded), (state, action) => {
+        state.language = action.payload
       })
   }
 })
@@ -111,6 +120,9 @@ settingsListenerMiddleware.startListening({
     languageChanged,
     systemLanguageMatchSucceeded,
     systemLanguageMatchFailed,
+    systemRegionMatchSucceeded,
+    systemRegionMatchFailed,
+    numberFormatRegionChanged,
     walletLockTimeChanged,
     analyticsToggled,
     fiatCurrencyChanged

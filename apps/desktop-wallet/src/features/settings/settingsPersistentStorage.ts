@@ -16,25 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { defaultNetworkSettings } from '@alephium/shared'
 import { merge } from 'lodash'
 import posthog from 'posthog-js'
 
-import { Settings } from '@/types/settings'
-
-export const defaultSettings: Settings = {
-  general: {
-    theme: 'system',
-    walletLockTimeInMinutes: 3,
-    discreetMode: false,
-    passwordRequirement: false,
-    language: undefined,
-    devTools: false,
-    analytics: true,
-    fiatCurrency: 'USD'
-  },
-  network: defaultNetworkSettings
-}
+import { defaultSettings } from '@/features/settings/settingsConstants'
+import { Settings } from '@/features/settings/settingsTypes'
 
 type SettingsKey = keyof Settings
 

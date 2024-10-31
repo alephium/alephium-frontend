@@ -20,8 +20,8 @@ import { ArrowDownRight, ArrowUpRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
+import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { discreetModeToggled } from '@/storage/settings/settingsActions'
 
 interface DeltaPercentageProps {
   initialValue: number

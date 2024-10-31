@@ -21,7 +21,7 @@ export default {
     name: 'Alephium',
     owner: 'alephium-dev',
     slug: 'alephium-mobile-wallet',
-    version: '1.1.9',
+    version: '1.1.10',
     orientation: 'portrait',
     icon: './assets/icon.png',
     scheme: ['wc', 'alephium'],
@@ -37,7 +37,8 @@ export default {
       supportsTablet: true,
       bundleIdentifier: 'org.alephium.mobilewallet',
       infoPlist: {
-        BGTaskSchedulerPermittedIdentifiers: ['$(PRODUCT_BUNDLE_PACKAGE_TYPE)']
+        BGTaskSchedulerPermittedIdentifiers: ['$(PRODUCT_BUNDLE_PACKAGE_TYPE)'],
+        LSMinimumSystemVersion: '12.0'
       },
       config: {
         usesNonExemptEncryption: false
