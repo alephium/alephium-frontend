@@ -16,13 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { themeSettingsChanged, themeToggled } from '@/storage/settings/settingsActions'
+import { themeSettingsChanged, themeToggled } from '@/features/settings/settingsActions'
+import SettingsStorage from '@/features/settings/settingsPersistentStorage'
+import { GeneralSettings } from '@/features/settings/settingsTypes'
+import { ThemeSettings, ThemeType } from '@/features/theme/themeTypes'
 import { store } from '@/storage/store'
-import { ThemeSettings, ThemeType } from '@/types/settings'
-import { AlephiumWindow } from '@/types/window'
-
-const _window = window as unknown as AlephiumWindow
-const electron = _window.electron
+import { electron } from '@/utils/misc'
 
 export const switchTheme = (theme: ThemeSettings) => {
   electron?.theme.setNativeTheme(theme)
@@ -32,4 +31,10 @@ export const switchTheme = (theme: ThemeSettings) => {
 export const toggleTheme = (theme: ThemeType) => {
   electron?.theme.setNativeTheme(theme)
   store.dispatch(themeToggled(theme))
+}
+
+export const getThemeType = () => {
+  const storedSettings = SettingsStorage.load('general') as GeneralSettings
+
+  return storedSettings.theme === 'system' ? 'dark' : storedSettings.theme
 }

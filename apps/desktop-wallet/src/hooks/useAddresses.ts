@@ -25,7 +25,7 @@ import useFetchLatestTransactionOfEachAddress from '@/api/apiDataHooks/wallet/us
 import { useFetchWalletBalancesAlphByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 export const useUnsortedAddressesHashes = (): AddressHash[] => useAppSelector(selectAllAddressHashes)
 

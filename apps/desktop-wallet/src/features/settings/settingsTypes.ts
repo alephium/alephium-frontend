@@ -16,20 +16,37 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { apiClientInitSucceeded, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
-import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit'
+import { Currency, NetworkSettings } from '@alephium/shared'
 
-import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
-import { RootState } from '@/storage/store'
+import { ThemeSettings } from '@/features/theme/themeTypes'
 
-export const networkListenerMiddleware = createListenerMiddleware()
+export interface GeneralSettings {
+  theme: ThemeSettings
+  walletLockTimeInMinutes: number | null
+  discreetMode: boolean
+  passwordRequirement: boolean
+  language: Language | undefined
+  devTools: boolean
+  analytics: boolean
+  fiatCurrency: Currency
+  region: string | undefined
+}
 
-// When the network changes, store settings in persistent storage
-networkListenerMiddleware.startListening({
-  matcher: isAnyOf(networkPresetSwitched, customNetworkSettingsSaved, apiClientInitSucceeded),
-  effect: (_, { getState }) => {
-    const state = getState() as RootState
+export interface Settings {
+  general: GeneralSettings
+  network: NetworkSettings
+}
 
-    SettingsStorage.store('network', state.network.settings)
-  }
-})
+export type Language =
+  | 'en-US'
+  | 'fr-FR'
+  | 'de-DE'
+  | 'vi-VN'
+  | 'pt-PT'
+  | 'ru-RU'
+  | 'bg-BG'
+  | 'es-ES'
+  | 'id-ID'
+  | 'tr-TR'
+  | 'it-IT'
+  | 'el-GR'

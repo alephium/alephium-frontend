@@ -24,7 +24,7 @@ import { walletTransactionsInfiniteQuery } from '@/api/queries/transactionQuerie
 import queryClient from '@/api/queryClient'
 import { useAppSelector } from '@/hooks/redux'
 import { useCappedAddressesHashes } from '@/hooks/useAddresses'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const useFetchWalletTransactionsInfinite = () => {
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)

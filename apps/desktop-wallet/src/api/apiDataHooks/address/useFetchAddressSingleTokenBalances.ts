@@ -24,7 +24,7 @@ import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddr
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { addressTokensBalancesQuery } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { TokenId } from '@/types/tokens'
 
 interface UseFetchAddressSingleTokenBalancesProps extends SkipProp {

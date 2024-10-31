@@ -25,7 +25,7 @@ import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
 import useFetchFtList from '@/api/apiDataHooks/utils/useFetchFtList'
 import { fungibleTokenMetadataQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { ListedFT, NonStandardToken, TokenId, UnlistedFT } from '@/types/tokens'
 
 type UseFetchTokenResponse = DataHook<ListedFT | UnlistedFT | NFT | NonStandardToken>

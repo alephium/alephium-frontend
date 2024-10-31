@@ -25,7 +25,7 @@ import '@testing-library/jest-dom'
 
 import { ThemeConsumer } from 'styled-components'
 
-import { lightTheme } from './style/themes'
+import { lightTheme } from './features/theme/themes'
 
 beforeEach(() => {
   ThemeConsumer._currentValue = lightTheme // Make `theme` prop available in all components

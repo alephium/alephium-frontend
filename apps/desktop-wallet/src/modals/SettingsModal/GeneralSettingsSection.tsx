@@ -35,6 +35,17 @@ import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import RegionSettings from '@/features/settings/RegionSettings'
+import {
+  analyticsToggled,
+  discreetModeToggled,
+  languageChanged,
+  passwordRequirementToggled,
+  walletLockTimeChanged
+} from '@/features/settings/settingsActions'
+import { fiatCurrencyOptions, languageOptions, locktimeInMinutes } from '@/features/settings/settingsConstants'
+import { Language } from '@/features/settings/settingsTypes'
+import { ThemeSettings } from '@/features/theme/themeTypes'
+import { switchTheme } from '@/features/theme/themeUtils'
 import { deleteThumbnailsDB } from '@/features/thumbnails/thumbnailStorage'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -45,18 +56,8 @@ import {
   walletConnectCacheCleared,
   walletConnectCacheClearFailed
 } from '@/storage/global/globalActions'
-import {
-  analyticsToggled,
-  discreetModeToggled,
-  languageChanged,
-  passwordRequirementToggled,
-  walletLockTimeChanged
-} from '@/storage/settings/settingsActions'
-import { switchTheme } from '@/storage/settings/settingsStorageUtils'
-import { Language, ThemeSettings } from '@/types/settings'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
-import { fiatCurrencyOptions, languageOptions, locktimeInMinutes } from '@/utils/settings'
 
 interface GeneralSettingsSectionProps {
   className?: string

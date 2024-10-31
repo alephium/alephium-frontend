@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { upperFirst } from 'lodash'
 import { useMemo } from 'react'
 
+import { Language } from '@/features/settings/settingsTypes'
 import { useAppSelector } from '@/hooks/redux'
-import { Language } from '@/types/settings'
 
 import regionsLocales from './regions.json'
 

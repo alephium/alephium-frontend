@@ -26,7 +26,7 @@ import dayjs from 'dayjs'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const DAILY = explorer.IntervalType.Daily
 

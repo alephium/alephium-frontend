@@ -22,7 +22,7 @@ import { skipToken, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 
 import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 import { getQueryConfig } from './getQueryConfig'
 

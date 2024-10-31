@@ -18,7 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAction } from '@reduxjs/toolkit'
 
-import { Language, Settings, ThemeType } from '@/types/settings'
+import { Language, Settings } from '@/features/settings/settingsTypes'
+import { ThemeType } from '@/features/theme/themeTypes'
 
 export const languageChangeStarted = createAction('settings/languageChangeStarted')
 

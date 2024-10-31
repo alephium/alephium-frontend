@@ -22,7 +22,7 @@ import { useQuery } from '@tanstack/react-query'
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { tokensPriceQuery } from '@/api/queries/priceQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/settings/networkSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const useFetchTokenPrices = (props?: SkipProp) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
