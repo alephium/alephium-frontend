@@ -1,5 +1,14 @@
 # alephium-desktop-wallet
 
+## 2.4.3
+
+### Patch Changes
+
+- 57eeb92: Format displayed numbers and amounts based on user's current or selected region
+- dbfb5b1: Fix default lock time
+- e297fd8: Better support for video NFT display
+- 3894654: Fix pending transaction amount display
+
 ## 2.4.2
 
 ### Patch Changes
