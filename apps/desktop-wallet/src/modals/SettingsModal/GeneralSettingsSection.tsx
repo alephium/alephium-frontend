@@ -221,7 +221,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
         </>
       )}
       <KeyValueInput
-        label={t('Language')}
+        label="Language"
         description={t('Change the wallet language.')}
         InputComponent={
           <Select
