@@ -21,6 +21,7 @@ import 'dayjs/locale/id'
 import 'dayjs/locale/el'
 import 'dayjs/locale/de'
 import 'dayjs/locale/vi'
+import 'dayjs/locale/zh-cn'
 
 import dayjs from 'dayjs'
 import i18next from 'i18next'
@@ -34,7 +35,7 @@ interface LanguageSwitchProps {
   className?: string
 }
 
-type Language = 'en-US' | 'fr-FR' | 'id-ID' | 'el-GR' | 'de-DE' | 'vi-VN'
+type Language = 'en-US' | 'fr-FR' | 'id-ID' | 'el-GR' | 'de-DE' | 'vi-VN' | 'zh-CN'
 
 interface LangItem {
   label: string
@@ -47,7 +48,8 @@ const languageOptions: LangItem[] = [
   { label: 'Bahasa Indonesia', value: 'id-ID' },
   { label: 'Ελληνικά', value: 'el-GR' },
   { label: 'Deutsch', value: 'de-DE' },
-  { label: 'Tiếng Việt', value: 'vi-VN' }
+  { label: 'Tiếng Việt', value: 'vi-VN' },
+  { label: '简体中文', value: 'zh-CN' }
 ]
 
 const LanguageSwitch: React.FC<LanguageSwitchProps> = ({ className }) => {
