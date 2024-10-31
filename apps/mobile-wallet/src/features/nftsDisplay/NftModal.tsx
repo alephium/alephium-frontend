@@ -24,7 +24,7 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ScreenSection } from '~/components/layout/Screen'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
 import BottomModal from '~/features/modals/BottomModal'
 import withModal from '~/features/modals/withModal'
@@ -45,10 +45,7 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
   if (!nft) return null
 
   return (
-    <BottomModal modalId={id} contentVerticalGap>
-      <ScreenSection>
-        <ModalScreenTitle>{nft.name}</ModalScreenTitle>
-      </ScreenSection>
+    <BottomModal modalId={id} contentVerticalGap title={nft.name}>
       <ScreenSection>
         <NftImageContainer>
           <NFTImage nftId={nftId} size={nftFullSize} />

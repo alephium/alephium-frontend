@@ -16,23 +16,16 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled, { css, DefaultTheme } from 'styled-components/native'
+import styled, { DefaultTheme } from 'styled-components/native'
 
 import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 
 interface BoxSurfaceProps {
   type?: keyof DefaultTheme['bg']
-  border?: keyof DefaultTheme['border']
 }
 
 export default styled.View<BoxSurfaceProps>`
   background-color: ${({ theme, type }) => theme.bg[type || 'primary']};
   border-radius: ${BORDER_RADIUS_BIG}px;
   overflow: hidden;
-
-  ${({ border, theme }) =>
-    border &&
-    css`
-      border: 1px solid ${theme.border[border]};
-    `}
 `

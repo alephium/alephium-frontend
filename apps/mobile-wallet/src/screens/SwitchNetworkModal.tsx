@@ -23,7 +23,6 @@ import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
@@ -61,10 +60,7 @@ const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNet
   const networkNames = Object.values(NetworkNames)
 
   return (
-    <BottomModal modalId={id} contentVerticalGap>
-      <ScreenSection>
-        <ModalScreenTitle>{t('Current network')}</ModalScreenTitle>
-      </ScreenSection>
+    <BottomModal modalId={id} title={t('Current network')} contentVerticalGap>
       <View>
         <BoxSurface>
           {networkNames.map((networkName, index) => (
