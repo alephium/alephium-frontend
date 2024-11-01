@@ -26,7 +26,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import BoxSurface from '~/components/layout/BoxSurface'
+import Surface from '~/components/layout/Surface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ListItem from '~/components/ListItem'
 import { useAppSelector } from '~/hooks/redux'
@@ -145,7 +145,7 @@ const NoContactContainer = styled.View`
   justify-content: center;
 `
 
-const NoContactMessageBox = styled(BoxSurface)`
+const NoContactMessageBox = styled(Surface)`
   padding: 25px;
   gap: ${VERTICAL_GAP}px;
   align-items: center;

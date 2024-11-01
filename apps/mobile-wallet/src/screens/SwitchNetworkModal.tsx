@@ -22,7 +22,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
-import BoxSurface from '~/components/layout/BoxSurface'
+import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
@@ -62,7 +62,7 @@ const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNet
   return (
     <BottomModal modalId={id} title={t('Current network')} contentVerticalGap>
       <View>
-        <BoxSurface>
+        <Surface>
           {networkNames.map((networkName, index) => (
             <RadioButtonRow
               key={networkName}
@@ -72,7 +72,7 @@ const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNet
               isLast={index === networkNames.length - 1}
             />
           ))}
-        </BoxSurface>
+        </Surface>
       </View>
     </BottomModal>
   )

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import BoxSurface from '~/components/layout/BoxSurface'
+import Surface from '~/components/layout/Surface'
 import { ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { autoLockSecondsOptions } from '~/features/auto-lock/utils'
@@ -40,7 +40,7 @@ const AutoLockOptionsModal = withModal(({ id }) => {
     <BottomModal modalId={id}>
       <ModalContent verticalGap>
         <ScreenSection>
-          <BoxSurface>
+          <Surface>
             {autoLockSecondsOptions.map((autoLockOption, index) => (
               <RadioButtonRow
                 key={autoLockOption.label}
@@ -50,7 +50,7 @@ const AutoLockOptionsModal = withModal(({ id }) => {
                 isLast={index === autoLockSecondsOptions.length - 1}
               />
             ))}
-          </BoxSurface>
+          </Surface>
         </ScreenSection>
       </ModalContent>
     </BottomModal>

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import BoxSurface from '~/components/layout/BoxSurface'
+import Surface from '~/components/layout/Surface'
 import { ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { Language, languageOptions } from '~/features/localization/languages'
@@ -40,7 +40,7 @@ const LanguageSelectModal = withModal(({ id }) => {
     <BottomModal modalId={id}>
       <ModalContent verticalGap>
         <ScreenSection>
-          <BoxSurface>
+          <Surface>
             {languageOptions.map((languageOption, index) => (
               <RadioButtonRow
                 key={languageOption.label}
@@ -50,7 +50,7 @@ const LanguageSelectModal = withModal(({ id }) => {
                 isLast={index === languageOptions.length - 1}
               />
             ))}
-          </BoxSurface>
+          </Surface>
         </ScreenSection>
       </ModalContent>
     </BottomModal>

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { CURRENCIES, Currency, fiatCurrencyChanged } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 
-import BoxSurface from '~/components/layout/BoxSurface'
+import Surface from '~/components/layout/Surface'
 import { ScreenSection } from '~/components/layout/Screen'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal from '~/features/modals/BottomModal'
@@ -47,7 +47,7 @@ const CurrencySelectModal = withModal(({ id }) => {
     <BottomModal modalId={id} title={t('Currency')}>
       <ModalContent verticalGap>
         <ScreenSection>
-          <BoxSurface>
+          <Surface>
             {currencyOptions.map((currencyOption, index) => (
               <RadioButtonRow
                 key={currencyOption.label}
@@ -57,7 +57,7 @@ const CurrencySelectModal = withModal(({ id }) => {
                 isLast={index === currencyOptions.length - 1}
               />
             ))}
-          </BoxSurface>
+          </Surface>
         </ScreenSection>
       </ModalContent>
     </BottomModal>

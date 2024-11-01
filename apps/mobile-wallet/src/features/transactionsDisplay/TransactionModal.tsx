@@ -28,7 +28,7 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import IOList from '~/components/IOList'
-import BoxSurface from '~/components/layout/BoxSurface'
+import Surface from '~/components/layout/Surface'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
 import BottomModal from '~/features/modals/BottomModal'
@@ -60,7 +60,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
 
   return (
     <BottomModal modalId={id} contentVerticalGap title={t('Transaction')}>
-      <BoxSurface>
+      <Surface>
         <Row title={t('Amount')} transparent>
           {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
             <AmountStyled
@@ -136,7 +136,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
             <Button title={t('See NFTs')} onPress={openNftGridModal} />
           </Row>
         )}
-      </BoxSurface>
+      </Surface>
       <Button
         iconProps={{ name: 'arrow-up-right' }}
         onPress={() => openBrowserAsync(explorerTxUrl)}

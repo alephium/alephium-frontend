@@ -27,7 +27,7 @@ import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
 import Button, { BackButton, ContinueButton } from '~/components/buttons/Button'
-import BoxSurface from '~/components/layout/BoxSurface'
+import Surface from '~/components/layout/Surface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Row from '~/components/Row'
@@ -88,7 +88,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         <Button title={t('Copy address')} onPress={handleCopyAddressPress} iconProps={{ name: 'copy' }} />
       </ScreenSection>
       <ScreenSection>
-        <BoxSurface>
+        <Surface>
           <Row title={t('Address')} isLast={!address?.settings.label}>
             <AddressBadge addressHash={params.addressHash} />
           </Row>
@@ -100,7 +100,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
               </AppText>
             </Row>
           )}
-        </BoxSurface>
+        </Surface>
       </ScreenSection>
     </ScrollScreen>
   )

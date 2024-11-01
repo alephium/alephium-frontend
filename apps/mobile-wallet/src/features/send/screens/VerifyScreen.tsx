@@ -28,9 +28,9 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import { BackButton, ContinueButton } from '~/components/buttons/Button'
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
@@ -77,7 +77,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
       {...props}
     >
       <ScreenSection>
-        <BoxSurface>
+        <Surface>
           <Row title={t('Sending')} titleColor="secondary">
             <AssetAmounts>
               {assets.map(({ id, amount }) =>
@@ -93,7 +93,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
           <Row title={t('From')} titleColor="secondary" isLast>
             <AddressBadge addressHash={fromAddress} />
           </Row>
-        </BoxSurface>
+        </Surface>
       </ScreenSection>
       <ScreenSection>
         <FeeBox>

@@ -45,7 +45,7 @@ import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import BoxSurface from '~/components/layout/BoxSurface'
+import Surface from '~/components/layout/Surface'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Row from '~/components/Row'
 import BottomModal from '~/features/modals/BottomModal'
@@ -298,7 +298,7 @@ const WalletConnectSessionRequestModal = withModal(
             </ScreenSection>
           )}
           <ScreenSection>
-            <BoxSurface>
+            <Surface>
               {(requestData.type === 'transfer' || requestData.type === 'call-contract') &&
                 requestData.wcData.assetAmounts &&
                 requestData.wcData.assetAmounts.length > 0 && (
@@ -368,7 +368,7 @@ const WalletConnectSessionRequestModal = withModal(
                   <AppText>{requestData.wcData.message}</AppText>
                 </Row>
               )}
-            </BoxSurface>
+            </Surface>
           </ScreenSection>
           {fees !== undefined && (
             <ScreenSection>

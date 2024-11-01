@@ -26,9 +26,9 @@ import { Alert, Platform } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Surface from '~/components/layout/Surface'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import LinkToWeb from '~/components/text/LinkToWeb'
@@ -330,6 +330,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
 export default SettingsScreen
 
-const BiometricsRecommendationBox = styled(BoxSurface)`
+const BiometricsRecommendationBox = styled(Surface)`
   padding: 20px;
 `
