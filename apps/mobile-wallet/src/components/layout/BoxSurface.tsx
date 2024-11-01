@@ -18,13 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled, { DefaultTheme } from 'styled-components/native'
 
-import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 
 interface BoxSurfaceProps {
   type?: keyof DefaultTheme['bg']
 }
 
 export default styled.View<BoxSurfaceProps>`
-  border-radius: ${BORDER_RADIUS_BIG}px;
+  background-color: ${({ theme, type }) => (type ? theme.bg[type] : 'transparent')};
+  border-radius: ${BORDER_RADIUS}px;
   overflow: hidden;
 `
