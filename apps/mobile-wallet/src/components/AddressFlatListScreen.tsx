@@ -31,12 +31,7 @@ export interface AddressFlatListScreenProps extends Partial<FlatListScreenProps<
   contentPaddingTop?: boolean | number
 }
 
-const AddressFlatListScreen = ({
-  onAddressPress,
-  selectedAddress,
-  contentPaddingTop,
-  ...props
-}: AddressFlatListScreenProps) => {
+const AddressFlatListScreen = ({ onAddressPress, selectedAddress, ...props }: AddressFlatListScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
 
   return (

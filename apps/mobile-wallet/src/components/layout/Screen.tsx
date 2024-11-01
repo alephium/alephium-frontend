@@ -102,7 +102,7 @@ export const ModalScreenTitle = styled(AppText)`
 `
 
 export const ScreenSectionTitle = styled(AppText)`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: ${({ theme }) => theme.font.tertiary};
   margin-bottom: 16px;

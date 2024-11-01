@@ -21,22 +21,12 @@ import { getStringAsync } from 'expo-clipboard'
 import { LinearGradient } from 'expo-linear-gradient'
 import { ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  NativeSyntheticEvent,
-  StyleProp,
-  TextInput,
-  TextInputFocusEventData,
-  TextInputProps,
-  ViewProps,
-  ViewStyle
-} from 'react-native'
-import Animated, { AnimatedProps, FadeIn, FadeOut, useAnimatedStyle, withSpring } from 'react-native-reanimated'
+import { StyleProp, TextInput, TextInputProps, ViewProps, ViewStyle } from 'react-native'
+import Animated, { AnimatedProps, FadeIn, FadeOut } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
-import { fastSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import Row from '~/components/Row'
 import { BORDER_RADIUS } from '~/style/globalStyle'
 
 export type InputValue = string | number | undefined | unknown
@@ -74,21 +64,12 @@ const Input = <T extends InputValue>({
 }: InputProps<T>) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const [isActive, setIsActive] = useState(false)
   const [copiedText, setCopiedText] = useState('')
   const localInputRef = useRef<TextInput>(null)
   const usedInputRef = inputRef || localInputRef
 
   const renderedValue = renderValue ? renderValue(value) : value ? (value as object).toString() : ''
   const showCustomValueRendering = typeof renderedValue !== 'string' && renderedValue !== undefined
-
-  const labelStyle = useAnimatedStyle(() => ({
-    bottom: withSpring(!isActive ? 0 : 30, fastSpringConfiguration)
-  }))
-
-  const labelTextStyle = useAnimatedStyle(() => ({
-    fontSize: withSpring(!isActive ? 15 : 11, fastSpringConfiguration)
-  }))
 
   useEffect(() => {
     const fetchCopiedText = async () => {
@@ -99,54 +80,23 @@ const Input = <T extends InputValue>({
     fetchCopiedText()
   })
 
-  useEffect(() => {
-    if (renderedValue) {
-      setIsActive(true)
-    }
-  }, [renderedValue])
-
-  const handleFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
-    setIsActive(true)
-    onFocus && onFocus(e)
-  }
-
-  const handleBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
-    !renderedValue && setIsActive(false)
-    onBlur && onBlur(e)
-  }
-
   const handlePasteButtonPress = () => {
     usedInputRef.current?.setNativeProps({ text: copiedText })
   }
 
   return (
-    <Row
-      onPress={onPress}
-      isInput
-      hasRightContent={!!RightContent}
-      style={[
-        style,
-        {
-          shadowColor: 'black',
-          shadowOpacity: theme.name === 'light' ? 0.05 : 0.2,
-          shadowRadius: 8,
-          shadowOffset: { height: 5, width: 0 }
-        }
-      ]}
-      layout={layout}
-    >
+    <InputStyled onPress={onPress}>
       <InputContainer>
-        <Label style={labelStyle}>
-          <LabelText style={labelTextStyle}>{label}</LabelText>
-        </Label>
         {showCustomValueRendering && <CustomRenderedValue>{renderedValue}</CustomRenderedValue>}
         <TextInputStyled
-          selectionColor={theme.gradient.yellow}
+          selectionColor={theme.global.accent}
           value={renderedValue?.toString()}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
+          onFocus={onFocus}
+          onBlur={onBlur}
           ref={usedInputRef}
+          placeholder={label}
           forwardedAs={TextInput}
+          placeholderTextColor={theme.font.tertiary}
           style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
           hide={showCustomValueRendering}
           {...props}
@@ -175,13 +125,16 @@ const Input = <T extends InputValue>({
           <Error>{error}</Error>
         </ErrorContainer>
       )}
-    </Row>
+    </InputStyled>
   )
 }
 
-export default styled(Input)`
-  background-color: ${({ theme }) => theme.bg.highlight};
+export default Input
+
+const InputStyled = styled.Pressable`
+  background-color: ${({ theme }) => theme.bg.primary};
   border-radius: ${BORDER_RADIUS}px;
+  padding: 18px;
 `
 
 const InputContainer = styled.View`
@@ -191,7 +144,6 @@ const InputContainer = styled.View`
 
 const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
   height: 100%;
-  padding-top: 12px;
   color: ${({ theme }) => theme.font.primary};
   font-size: 15px;
 
@@ -200,18 +152,6 @@ const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
     css`
       opacity: 0;
     `}
-`
-
-const Label = styled(Animated.View)`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  justify-content: center;
-`
-
-const LabelText = styled(Animated.Text)`
-  color: ${({ theme }) => theme.font.secondary};
 `
 
 const CustomRenderedValue = styled.View`

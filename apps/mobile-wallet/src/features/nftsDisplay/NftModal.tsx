@@ -24,8 +24,9 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import { ScreenSection } from '~/components/layout/Screen'
+import Surface from '~/components/layout/Surface'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
+import Row from '~/components/Row'
 import BottomModal from '~/features/modals/BottomModal'
 import withModal from '~/features/modals/withModal'
 import { useAppSelector } from '~/hooks/redux'
@@ -33,10 +34,8 @@ import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN } from '~/style/globalStyle'
 
 type NftModalProps = Pick<NFTImageProps, 'nftId'>
 
-const attributeGap = 12
 const windowWidth = Dimensions.get('window').width
 const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
-const attributeWidth = (nftFullSize - attributeGap) / 2
 
 const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
@@ -44,38 +43,33 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
 
   if (!nft) return null
 
+  const attributes = nft.attributes
+
   return (
     <BottomModal modalId={id} contentVerticalGap title={nft.name}>
-      <ScreenSection>
-        <NftImageContainer>
-          <NFTImage nftId={nftId} size={nftFullSize} />
-        </NftImageContainer>
+      <NftImageContainer>
+        <NFTImage nftId={nftId} size={nftFullSize} />
+      </NftImageContainer>
 
-        {nft.description && (
-          <NFTDescriptionContainer>
-            <AppText color="secondary" size={16}>
-              {nft.description}
-            </AppText>
-          </NFTDescriptionContainer>
-        )}
-        {nft.attributes && nft.attributes.length > 0 && (
-          <AttributesGrid>
-            {nft.attributes.map((attribute) => (
-              <Attribute key={attribute.trait_type} style={{ width: attributeWidth }}>
-                <AttributeType color="tertiary" semiBold>
-                  {attribute.trait_type}
-                </AttributeType>
-                <AttributeValue semiBold>{attribute.value}</AttributeValue>
-              </Attribute>
-            ))}
-          </AttributesGrid>
-        )}
-      </ScreenSection>
+      {nft.description && (
+        <NFTDescriptionContainer>
+          <AppText color="secondary" size={16}>
+            {nft.description}
+          </AppText>
+        </NFTDescriptionContainer>
+      )}
+      {attributes && attributes.length > 0 && (
+        <Surface>
+          {attributes.map((attribute, i) => (
+            <Row key={attribute.trait_type} title={attribute.trait_type} isLast={i === attributes.length - 1}>
+              <AttributeValue semiBold>{attribute.value}</AttributeValue>
+            </Row>
+          ))}
+        </Surface>
+      )}
 
       {!nft.image.startsWith('data:image/') && (
-        <ScreenSection>
-          <Button title={t('View full size')} onPress={() => openBrowserAsync(nft.image)} />
-        </ScreenSection>
+        <Button title={t('View full size')} onPress={() => openBrowserAsync(nft.image)} />
       )}
     </BottomModal>
   )
@@ -94,25 +88,6 @@ const NFTDescriptionContainer = styled.View`
   background-color: ${({ theme }) => theme.bg.highlight};
   padding: 10px;
   border-radius: ${BORDER_RADIUS_SMALL}px;
-`
-
-const AttributesGrid = styled.View`
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: ${attributeGap}px;
-  margin-top: 20px;
-`
-
-const Attribute = styled.View`
-  flex: 1;
-  background-color: ${({ theme }) => theme.bg.primary};
-  padding: 10px;
-  border-radius: ${BORDER_RADIUS_SMALL}px;
-`
-
-const AttributeType = styled(AppText)`
-  font-weight: 500;
-  font-size: 14px;
 `
 
 const AttributeValue = styled(AppText)`

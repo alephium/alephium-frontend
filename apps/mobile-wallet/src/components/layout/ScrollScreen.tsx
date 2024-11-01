@@ -114,7 +114,7 @@ const ScrollScreen = ({
           contentContainerStyle={[
             {
               flexGrow: fill ? 1 : undefined,
-              paddingTop: typeof contentPaddingTop === 'boolean' ? 120 : contentPaddingTop
+              paddingTop: typeof contentPaddingTop === 'boolean' ? 110 : contentPaddingTop
             },
             contentContainerStyle
           ]}

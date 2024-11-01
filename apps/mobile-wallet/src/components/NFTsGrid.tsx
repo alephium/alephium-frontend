@@ -72,7 +72,6 @@ const NFTsGrid = forwardRef(
         contentContainerStyle={{ paddingHorizontal: containerHorizontalPadding, paddingBottom: 70 }}
         numColumns={columns}
         estimatedItemSize={props.estimatedItemSize || 64}
-        scrollEnabled={scrollEnabled}
         ListEmptyComponent={
           <NoNFTsMessage>
             {isLoadingNfts ? (
