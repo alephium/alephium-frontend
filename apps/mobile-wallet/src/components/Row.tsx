@@ -114,8 +114,7 @@ export default styled(Row)`
         `
       : css`
           min-height: ${INPUTS_HEIGHT}px;
-          padding: 20px;
-          background-color: ${transparent ? 'transparent' : isSecondary ? theme.bg.accent : theme.bg.primary};
+          padding: 16px 0;
           border-bottom-width: ${isLast ? 0 : 1}px;
           border-bottom-color: ${theme.border.secondary};
 
@@ -164,6 +163,6 @@ const RightContent = styled.View<Pick<RowProps, 'isVertical' | 'noMaxWidth'>>`
     !noMaxWidth &&
     !isVertical &&
     css`
-      max-width: 200px;
+      max-width: 60%;
     `};
 `

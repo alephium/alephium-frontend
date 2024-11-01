@@ -60,8 +60,8 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
 
   return (
     <BottomModal modalId={id} contentVerticalGap title={t('Transaction')}>
-      <BoxSurface type="highlight">
-        <Row title={t('Amount')} noMaxWidth transparent>
+      <BoxSurface>
+        <Row title={t('Amount')} transparent>
           {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
             <AmountStyled
               key={id}

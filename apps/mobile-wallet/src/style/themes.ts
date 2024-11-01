@@ -34,9 +34,9 @@ export const lightTheme: DefaultTheme = {
     contrast: '#212126'
   },
   font: {
-    primary: '#171717',
-    secondary: '#404040',
-    tertiary: '#ababab',
+    primary: '#000',
+    secondary: '#4d4d4d',
+    tertiary: '#999',
     contrast: '#ffffff',
     highlight: '#d4a10d'
   },

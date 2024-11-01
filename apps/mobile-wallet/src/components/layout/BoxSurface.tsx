@@ -25,7 +25,6 @@ interface BoxSurfaceProps {
 }
 
 export default styled.View<BoxSurfaceProps>`
-  background-color: ${({ theme, type }) => theme.bg[type || 'primary']};
   border-radius: ${BORDER_RADIUS_BIG}px;
   overflow: hidden;
 `
