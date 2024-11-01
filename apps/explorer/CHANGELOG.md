@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.10.8
+
+### Patch Changes
+
+- 4c210a3: Add Chinese translations
+
 ## 1.10.7
 
 ### Patch Changes
