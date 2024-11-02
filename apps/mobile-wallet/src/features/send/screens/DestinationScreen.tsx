@@ -29,6 +29,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button, { CloseButton, ContinueButton } from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
@@ -176,78 +177,89 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   }))
 
   return (
-    <ScrollScreen
-      verticalGap
-      contentPaddingTop
-      screenTitle={t('Destination')}
-      screenIntro={t('Send to an address, a contact, or one of your other addresses.')}
-      onScroll={screenScrollHandler}
-      {...props}
-    >
-      <ScreenSection>
-        <Controller
-          name="toAddressHash"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              label={t('Destination address')}
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              error={errors.toAddressHash?.type === 'required' ? requiredErrorMessage : errors.toAddressHash?.message}
-              style={inputStyle}
+    <>
+      <ScrollScreen
+        verticalGap
+        contentPaddingTop
+        headerTitleAlwaysVisible
+        headerOptions={{
+          type: 'stack',
+          headerTitle: t('Send')
+        }}
+        screenTitle={t('Destination')}
+        screenIntro={t('Send to an address, a contact, or one of your other addresses.')}
+        onScroll={screenScrollHandler}
+        fill
+        {...props}
+      >
+        <ScreenSection>
+          <Controller
+            name="toAddressHash"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label={t('Destination address')}
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.toAddressHash?.type === 'required' ? requiredErrorMessage : errors.toAddressHash?.message}
+                style={inputStyle}
+              />
+            )}
+            rules={{
+              required: true,
+              validate: validateIsAddressValid
+            }}
+            control={control}
+          />
+        </ScreenSection>
+        <ScreenSection>
+          <ButtonsRow>
+            <Button
+              compact
+              iconProps={{ name: 'maximize' }}
+              title={t('Scan')}
+              onPress={openQRCodeScannerModal}
+              variant="accent"
+              type="secondary"
             />
-          )}
-          rules={{
-            required: true,
-            validate: validateIsAddressValid
-          }}
-          control={control}
-        />
-      </ScreenSection>
-      <ScreenSection>
-        <ButtonsRow>
-          <Button
-            compact
-            iconProps={{ name: 'maximize' }}
-            title={t('Scan')}
-            onPress={openQRCodeScannerModal}
-            variant="accent"
-            type="secondary"
+            <Button
+              compact
+              iconProps={{ name: 'copy' }}
+              title={t('Paste')}
+              onPress={handlePastePress}
+              variant="accent"
+              type="secondary"
+            />
+            <Button
+              compact
+              iconProps={{ name: 'user' }}
+              title={t('Contacts')}
+              onPress={openSelectContactModal}
+              variant="accent"
+              type="secondary"
+            />
+            <Button
+              compact
+              iconProps={{ name: 'bookmark' }}
+              title={t('Addresses')}
+              onPress={openAddressSelectModal}
+              variant="accent"
+              type="secondary"
+            />
+          </ButtonsRow>
+        </ScreenSection>
+        {isCameraOpen && (
+          <QRCodeScannerModal
+            onClose={closeQRCodeScannerModal}
+            onQRCodeScan={handleQRCodeScan}
+            text={t('Scan an Alephium address QR code')}
           />
-          <Button
-            compact
-            iconProps={{ name: 'copy' }}
-            title={t('Paste')}
-            onPress={handlePastePress}
-            variant="accent"
-            type="secondary"
-          />
-          <Button
-            compact
-            iconProps={{ name: 'user' }}
-            title={t('Contacts')}
-            onPress={openSelectContactModal}
-            variant="accent"
-            type="secondary"
-          />
-          <Button
-            compact
-            iconProps={{ name: 'bookmark' }}
-            title={t('Addresses')}
-            onPress={openAddressSelectModal}
-            variant="accent"
-            type="secondary"
-          />
-        </ButtonsRow>
-      </ScreenSection>
-      {isCameraOpen && (
-        <QRCodeScannerModal
-          onClose={closeQRCodeScannerModal}
-          onQRCodeScan={handleQRCodeScan}
-          text={t('Scan an Alephium address QR code')}
-        />
-      )}
-    </ScrollScreen>
+        )}
+      </ScrollScreen>
+      <BottomButtons bottomInset>
+        <Button title={t('Continue')} variant="highlight" onPress={handleSubmit(handleContinuePress)} />
+      </BottomButtons>
+    </>
   )
 }
 

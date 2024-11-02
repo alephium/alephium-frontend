@@ -89,7 +89,7 @@ const BaseHeader = ({
             Extrapolation.CLAMP
           )
         }
-      : {}
+      : { opacity: 1 }
   )
 
   const handleHeaderLayout = (e: LayoutChangeEvent) => {

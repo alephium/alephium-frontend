@@ -44,7 +44,6 @@ const SendStack = createStackNavigator<SendNavigationParamList>()
 const SendNavigation = () => (
   <SendContextProvider>
     <HeaderContextProvider>
-      <SendProgressHeader />
       <SendStack.Navigator
         screenOptions={{
           headerShown: false,
