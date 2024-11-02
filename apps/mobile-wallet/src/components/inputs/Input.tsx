@@ -27,7 +27,7 @@ import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import { BORDER_RADIUS } from '~/style/globalStyle'
+import { BORDER_RADIUS, INPUTS_HEIGHT } from '~/style/globalStyle'
 
 export type InputValue = string | number | undefined | unknown
 export type RenderValueFunc<T> = T extends InputValue ? (value: T) => ReactNode : never
@@ -132,9 +132,10 @@ const Input = <T extends InputValue>({
 export default Input
 
 const InputStyled = styled.Pressable`
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.highlight};
   border-radius: ${BORDER_RADIUS}px;
-  padding: 18px;
+  padding: 0 18px;
+  height: ${INPUTS_HEIGHT}px;
 `
 
 const InputContainer = styled.View`

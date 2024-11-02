@@ -25,7 +25,7 @@ export const BORDER_RADIUS_BIG = 21
 export const BORDER_RADIUS = 16
 export const BORDER_RADIUS_SMALL = 6
 
-export const INPUTS_HEIGHT = 60
+export const INPUTS_HEIGHT = 54
 export const INPUTS_PADDING = 16
 
 export const DEFAULT_MARGIN = 18
