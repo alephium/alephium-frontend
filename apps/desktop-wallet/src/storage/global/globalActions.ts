@@ -58,8 +58,8 @@ export const appDataCleared = createAction('app/appDataCleared')
 
 export const appDataClearFailed = createAction('app/appDataClearFailed')
 
-export const receiveTestnetTokens = createAsyncThunk<SentTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
-  'assets/receiveTestnetTokens',
+export const receiveFaucetTokens = createAsyncThunk<SentTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
+  'assets/receiveFaucetTokens',
   async (destinationAddress: AddressHash, { rejectWithValue, fulfillWithValue }) => {
     const response = await exponentialBackoffFetchRetry('https://faucet.testnet.alephium.org/send', {
       method: 'POST',
