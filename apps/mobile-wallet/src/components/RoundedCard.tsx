@@ -25,12 +25,12 @@ interface RoundedCardProps {
 }
 
 const RoundedCard = ({ children, style }: RoundedCardProps) => (
-  <RoundedCardContainer style={style}>{children}</RoundedCardContainer>
+  <RoundedCardStyled style={style}>{children}</RoundedCardStyled>
 )
 
 export default RoundedCard
 
-const RoundedCardContainer = styled.View`
+const RoundedCardStyled = styled.View`
   border-radius: 38px;
   overflow: hidden;
   background-color: ${({ theme }) => theme.bg.primary};

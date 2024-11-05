@@ -48,8 +48,6 @@ export interface BaseHeaderProps extends ViewProps {
   CustomContent?: ReactNode
 }
 
-const isIos = Platform.OS === 'ios'
-
 const AnimatedHeaderGradient = Animated.createAnimatedComponent(LinearGradient)
 
 const BaseHeader = ({
@@ -68,7 +66,7 @@ const BaseHeader = ({
 
   const gradientHeight = headerHeight + 42
   const defaultScrollRange = [0 + scrollEffectOffset, 80 + scrollEffectOffset]
-  const paddingTop = isIos ? insets.top : insets.top + 18
+  const paddingTop = Platform.OS === 'ios' ? insets.top : insets.top + 18
 
   const HeaderRight = (headerRight && headerRight({})) || <HeaderSidePlaceholder />
   const HeaderLeft = (headerLeft && headerLeft({})) || <HeaderSidePlaceholder />

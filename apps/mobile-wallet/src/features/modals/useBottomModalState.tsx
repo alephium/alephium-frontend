@@ -41,8 +41,6 @@ export interface ContentScrollHandlers {
   onScrollEndDrag: () => void
 }
 
-const isIos = Platform.OS === 'ios'
-
 const springConfig = {
   damping: 50,
   mass: 0.3,
@@ -129,7 +127,7 @@ export const useBottomModalState = ({
             ? customMinHeight
             : shouldMaximizeOnOpen.value
               ? maxHeight
-              : contentHeight.value + customNavHeight + (isIos ? insets.bottom : insets.bottom + 18)
+              : contentHeight.value + customNavHeight + (Platform.OS === 'ios' ? insets.bottom : insets.bottom + 18)
 
           shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
 

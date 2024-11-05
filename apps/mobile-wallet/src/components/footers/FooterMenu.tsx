@@ -30,8 +30,6 @@ interface FooterMenuProps extends BottomTabBarProps {
   style?: StyleProp<ViewStyle>
 }
 
-const isIos = Platform.OS === 'ios'
-
 const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
   const insets = useSafeAreaInsets()
   const theme = useTheme()
@@ -72,7 +70,7 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
         style={{ height: gradientHeight }}
         pointerEvents="none"
       />
-      <FooterMenuContent style={{ paddingBottom: isIos ? insets.bottom : insets.bottom + 18 }}>
+      <FooterMenuContent style={{ paddingBottom: Platform.OS === 'ios' ? insets.bottom : insets.bottom + 18 }}>
         {footerContent}
       </FooterMenuContent>
     </View>
