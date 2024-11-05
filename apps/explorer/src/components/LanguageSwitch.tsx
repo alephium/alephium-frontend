@@ -35,7 +35,7 @@ interface LanguageSwitchProps {
   className?: string
 }
 
-type Language = 'en-US' | 'fr-FR' | 'id-ID' | 'el-GR' | 'de-DE' | 'vi-VN' | 'zh-CN'
+type Language = 'en' | 'fr' | 'id' | 'el' | 'de' | 'vi' | 'zh'
 
 interface LangItem {
   label: string
@@ -43,21 +43,22 @@ interface LangItem {
 }
 
 const languageOptions: LangItem[] = [
-  { label: 'English', value: 'en-US' },
-  { label: 'Français', value: 'fr-FR' },
-  { label: 'Bahasa Indonesia', value: 'id-ID' },
-  { label: 'Ελληνικά', value: 'el-GR' },
-  { label: 'Deutsch', value: 'de-DE' },
-  { label: 'Tiếng Việt', value: 'vi-VN' },
-  { label: '简体中文', value: 'zh-CN' }
+  { label: 'English', value: 'en' },
+  { label: 'Français', value: 'fr' },
+  { label: 'Bahasa Indonesia', value: 'id' },
+  { label: 'Ελληνικά', value: 'el' },
+  { label: 'Deutsch', value: 'de' },
+  { label: 'Tiếng Việt', value: 'vi' },
+  { label: '简体中文', value: 'zh' }
 ]
 
 const LanguageSwitch: React.FC<LanguageSwitchProps> = ({ className }) => {
-  const [langValue, setLangValue] = useStateWithLocalStorage<Language>('language', 'en-US')
+  const [langValue, setLangValue] = useStateWithLocalStorage<Language>('language', 'en')
 
   useEffect(() => {
+    console.log(langValue)
     i18next.changeLanguage(langValue)
-    dayjs.locale(langValue.slice(0, 2))
+    dayjs.locale(langValue)
   }, [langValue])
 
   const items = languageOptions.map((lang) => ({
