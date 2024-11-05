@@ -81,6 +81,8 @@ const DevToolsSettingsSection = () => {
   const openDeployContractModal = () =>
     dispatch(openModal({ name: 'DeployContractSendModal', props: { initialTxData: { fromAddress: defaultAddress } } }))
 
+  const isOnTestNetwork = ['testnet', 'devnet'].includes(currentNetwork.name)
+
   return (
     <>
       <Section align="flex-start">
@@ -99,7 +101,7 @@ const DevToolsSettingsSection = () => {
               {t('Token faucet')}
             </h2>
             <Paragraph>{t('Receive test tokens in your default address.')}</Paragraph>
-            {!['testnet', 'devnet'].includes(currentNetwork.name) && (
+            {!isOnTestNetwork && (
               <InfoBox
                 importance="accent"
                 Icon={AlertOctagon}
@@ -109,9 +111,11 @@ const DevToolsSettingsSection = () => {
                 )}
               />
             )}
-            <Button Icon={Download} onClick={handleFaucetCall} role="secondary" loading={faucetCallPending} wide>
-              {t('Receive test tokens')}
-            </Button>
+            {isOnTestNetwork && (
+              <Button Icon={Download} onClick={handleFaucetCall} role="secondary" loading={faucetCallPending} wide>
+                {t('Receive test tokens')}
+              </Button>
+            )}
           </Section>
           <Section align="flex-start" inList>
             <h2 tabIndex={0} role="label">
