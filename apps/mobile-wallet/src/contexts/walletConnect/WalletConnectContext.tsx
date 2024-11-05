@@ -741,7 +741,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         openModal({
           name: 'WalletConnectSessionRequestModal',
           props: {
-            walletConnectClient,
             requestData: sessionRequestData,
             onApprove: handleApprovePress,
             onReject: handleRejectPress,

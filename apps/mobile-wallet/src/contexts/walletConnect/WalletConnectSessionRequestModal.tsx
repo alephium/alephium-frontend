@@ -30,7 +30,6 @@ import {
   SignUnsignedTxResult,
   transactionSign
 } from '@alephium/web3'
-import SignClient from '@walletconnect/sign-client'
 import { SessionTypes } from '@walletconnect/types'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -45,9 +44,10 @@ import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import Surface from '~/components/layout/Surface'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
+import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
@@ -62,7 +62,6 @@ import { showExceptionToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 interface WalletConnectSessionRequestModalProps<T extends SessionRequestData> {
-  walletConnectClient: SignClient
   requestData: T
   onApprove: (
     sendTransaction: () => Promise<
@@ -79,7 +78,6 @@ interface WalletConnectSessionRequestModalProps<T extends SessionRequestData> {
 const WalletConnectSessionRequestModal = withModal(
   <T extends SessionRequestData>({
     id,
-    walletConnectClient,
     requestData,
     onApprove,
     onReject,
@@ -89,6 +87,7 @@ const WalletConnectSessionRequestModal = withModal(
     sessionRequestEvent
   }: WalletConnectSessionRequestModalProps<T> & ModalBaseProp) => {
     const dispatch = useAppDispatch()
+    const { walletConnectClient } = useWalletConnectContext()
     const signAddress = useAppSelector((s) => selectAddressByHash(s, requestData.wcData.fromAddress))
     const { t } = useTranslation()
 
