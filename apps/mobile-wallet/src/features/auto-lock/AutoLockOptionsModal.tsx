@@ -16,8 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import Surface from '~/components/layout/Surface'
 import { ScreenSection } from '~/components/layout/Screen'
+import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { autoLockSecondsOptions } from '~/features/auto-lock/utils'
 import BottomModal from '~/features/modals/BottomModal'

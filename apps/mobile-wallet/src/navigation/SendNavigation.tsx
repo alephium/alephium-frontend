@@ -19,10 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { ParamListBase } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import { useTranslation } from 'react-i18next'
 
-import ProgressHeader from '~/components/headers/ProgressHeader'
-import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
+import { HeaderContextProvider } from '~/contexts/HeaderContext'
 import { SendContextProvider } from '~/contexts/SendContext'
 import AssetsScreen from '~/features/send/screens/AssetsScreen'
 import DestinationScreen from '~/features/send/screens/DestinationScreen'
@@ -59,19 +57,5 @@ const SendNavigation = () => (
     </HeaderContextProvider>
   </SendContextProvider>
 )
-
-const SendProgressHeader = () => {
-  const { headerOptions, screenScrollY } = useHeaderContext()
-  const { t } = useTranslation()
-
-  return (
-    <ProgressHeader
-      options={{ headerTitle: t('Send'), ...headerOptions }}
-      titleAlwaysVisible
-      workflow="send"
-      scrollY={screenScrollY}
-    />
-  )
-}
 
 export default SendNavigation

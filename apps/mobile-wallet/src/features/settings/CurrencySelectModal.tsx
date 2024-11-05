@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { CURRENCIES, Currency, fiatCurrencyChanged } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 
-import Surface from '~/components/layout/Surface'
 import { ScreenSection } from '~/components/layout/Screen'
+import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'

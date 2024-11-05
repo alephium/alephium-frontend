@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { map } from 'lodash'
 
-import Surface from '~/components/layout/Surface'
 import { ScreenSection } from '~/components/layout/Screen'
+import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import i18n from '~/features/localization/i18n'
 import BottomModal from '~/features/modals/BottomModal'
