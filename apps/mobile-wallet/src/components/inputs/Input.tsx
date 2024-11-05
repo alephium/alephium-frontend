@@ -72,13 +72,8 @@ const Input = <T extends InputValue>({
   const showCustomValueRendering = typeof renderedValue !== 'string' && renderedValue !== undefined
 
   useEffect(() => {
-    const fetchCopiedText = async () => {
-      const text = await getStringAsync()
-      setCopiedText(text)
-    }
-
-    fetchCopiedText()
-  })
+    getStringAsync().then(setCopiedText)
+  }, [])
 
   const handlePasteButtonPress = () => {
     usedInputRef.current?.setNativeProps({ text: copiedText })
