@@ -23,7 +23,7 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import AddressFlatListScreen from '~/components/AddressFlatListScreen'
+import AddressFlashListScreen from '~/components/AddressFlashListScreen'
 import { CloseButton } from '~/components/buttons/Button'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
@@ -50,7 +50,7 @@ const AddressScreen = ({ navigation }: ScreenProps) => {
   )
 
   return (
-    <AddressFlatListScreen
+    <AddressFlashListScreen
       onAddressPress={(addressHash) => handleAddressPress(addressHash)}
       screenTitle={t('To address')}
       screenIntro={t('Select the address which you want to receive funds to.')}

@@ -21,7 +21,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import AddressFlatListScreen from '~/components/AddressFlatListScreen'
+import AddressFlashListScreen from '~/components/AddressFlashListScreen'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -51,7 +51,7 @@ const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
 
   return (
     <>
-      <AddressFlatListScreen
+      <AddressFlashListScreen
         onAddressPress={setFromAddress}
         selectedAddress={fromAddress}
         headerTitleAlwaysVisible

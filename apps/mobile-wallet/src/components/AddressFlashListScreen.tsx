@@ -19,32 +19,34 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 
 import AddressBox from '~/components/AddressBox'
-import FlatListScreen, { FlatListScreenProps } from '~/components/layout/FlatListScreen'
+import FlashListScreen, { FlashListScreenProps } from '~/components/layout/FlashListScreen'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { Address } from '~/types/addresses'
 
-export interface AddressFlatListScreenProps extends Partial<FlatListScreenProps<Address>> {
+export interface AddressFlashListScreenProps extends Partial<FlashListScreenProps<Address>> {
   onAddressPress: (addressHash: AddressHash) => void
   selectedAddress?: AddressHash
   contentPaddingTop?: boolean | number
 }
 
-const AddressFlatListScreen = ({ onAddressPress, selectedAddress, ...props }: AddressFlatListScreenProps) => {
+const AddressFlashListScreen = ({ onAddressPress, selectedAddress, ...props }: AddressFlashListScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
 
   return (
-    <FlatListScreen
+    <FlashListScreen
       data={addresses}
       keyExtractor={(item) => item.hash}
+      estimatedItemSize={70}
       renderItem={({ item: address, index }) => (
         <AddressBox
           key={address.hash}
           addressHash={address.hash}
           isSelected={address.hash === selectedAddress}
           style={{
-            marginTop: index === 0 ? 20 : undefined,
+            margin: index === 0 ? 20 : 0,
+            marginBottom: 20,
             marginLeft: DEFAULT_MARGIN,
             marginRight: DEFAULT_MARGIN
           }}
@@ -57,4 +59,4 @@ const AddressFlatListScreen = ({ onAddressPress, selectedAddress, ...props }: Ad
   )
 }
 
-export default AddressFlatListScreen
+export default AddressFlashListScreen
