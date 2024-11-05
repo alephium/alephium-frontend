@@ -44,11 +44,11 @@ const SendStack = createStackNavigator<SendNavigationParamList>()
 const SendNavigation = () => (
   <SendContextProvider>
     <HeaderContextProvider>
-      <SendNavigationHeader />
       <SendStack.Navigator
         screenOptions={{
-          headerShown: false,
-          cardStyle: { overflow: SCREEN_OVERFLOW }
+          header: () => <SendNavigationHeader />,
+          cardStyle: { overflow: SCREEN_OVERFLOW },
+          headerMode: 'float'
         }}
         initialRouteName="DestinationScreen"
       >
