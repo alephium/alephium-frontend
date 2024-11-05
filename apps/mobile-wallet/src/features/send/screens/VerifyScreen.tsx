@@ -17,9 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { ALPH } from '@alephium/token-list'
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -27,7 +25,7 @@ import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
-import { BackButton, ContinueButton } from '~/components/buttons/Button'
+import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Surface from '~/components/layout/Surface'
@@ -42,28 +40,13 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyS
 
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
-  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
+  const { screenScrollHandler, screenScrollY } = useHeaderContext()
   const { t } = useTranslation()
 
   useScrollToTopOnFocus(screenScrollY)
 
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
   const assets = [{ id: ALPH.id, amount: attoAlphAmount }, ...tokens]
-
-  useFocusEffect(
-    useCallback(() => {
-      setHeaderOptions({
-        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-        headerRight: () => (
-          <ContinueButton
-            onPress={() => sendTransaction(() => navigation.navigate('ActivityScreen'))}
-            iconProps={{ name: 'send' }}
-            title={t('Send')}
-          />
-        )
-      })
-    }, [navigation, sendTransaction, setHeaderOptions, t])
-  )
 
   if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
 
@@ -74,6 +57,13 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
       screenTitle={t('Verify')}
       screenIntro={t('Please, double check that everything is correct before sending.')}
       onScroll={screenScrollHandler}
+      bottomButtonsRender={() => (
+        <Button
+          title={t('Send')}
+          variant="valid"
+          onPress={() => sendTransaction(() => navigation.navigate('ActivityScreen'))}
+        />
+      )}
       {...props}
     >
       <ScreenSection>

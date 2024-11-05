@@ -119,7 +119,7 @@ export const darkTheme: DefaultTheme = {
     accent: '#155ef9',
     alert: '#ed4a34',
     warning: '#ed882d',
-    valid: '#3ed282',
+    valid: '#16a324',
     star: '#FFD66D',
     pale: '#f7d1b6',
     complementary: '#d488eb',
