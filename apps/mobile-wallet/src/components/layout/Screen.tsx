@@ -47,7 +47,10 @@ const Screen = ({ children, headerOptions, safeAreaPadding, ...props }: ScreenPr
     <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
       <ScreenStyled {...props} style={[props.style, paddingStyle]}>
         {headerOptions && (
-          <HeaderComponent goBack={navigation.canGoBack() ? navigation.goBack : undefined} options={headerOptions} />
+          <HeaderComponent
+            onBackPress={navigation.canGoBack() ? navigation.goBack : undefined}
+            options={headerOptions}
+          />
         )}
         {children}
       </ScreenStyled>

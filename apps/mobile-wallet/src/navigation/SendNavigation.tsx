@@ -17,10 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { ParamListBase } from '@react-navigation/native'
+import { ParamListBase, useNavigation } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import { useTranslation } from 'react-i18next'
 
-import { HeaderContextProvider } from '~/contexts/HeaderContext'
+import StackHeader from '~/components/headers/StackHeader'
+import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
 import { SendContextProvider } from '~/contexts/SendContext'
 import AssetsScreen from '~/features/send/screens/AssetsScreen'
 import DestinationScreen from '~/features/send/screens/DestinationScreen'
@@ -42,6 +44,7 @@ const SendStack = createStackNavigator<SendNavigationParamList>()
 const SendNavigation = () => (
   <SendContextProvider>
     <HeaderContextProvider>
+      <SendNavigationHeader />
       <SendStack.Navigator
         screenOptions={{
           headerShown: false,
@@ -57,5 +60,20 @@ const SendNavigation = () => (
     </HeaderContextProvider>
   </SendContextProvider>
 )
+
+const SendNavigationHeader = () => {
+  const { headerOptions, screenScrollY } = useHeaderContext()
+  const navigation = useNavigation()
+  const { t } = useTranslation()
+
+  return (
+    <StackHeader
+      options={{ headerTitle: t('Send'), ...headerOptions }}
+      titleAlwaysVisible
+      scrollY={screenScrollY}
+      onBackPress={() => navigation.goBack()}
+    />
+  )
+}
 
 export default SendNavigation

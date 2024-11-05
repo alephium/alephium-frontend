@@ -58,7 +58,7 @@ export default BottomButtons
 const Container = styled.View`
   justify-content: center;
   align-items: flex-end;
-  margin: ${VERTICAL_GAP * 2}px ${DEFAULT_MARGIN}px ${VERTICAL_GAP}px;
+  padding: ${VERTICAL_GAP * 2}px ${DEFAULT_MARGIN}px ${VERTICAL_GAP}px ${DEFAULT_MARGIN}px;
   gap: 20px;
 `
 

@@ -42,7 +42,7 @@ export interface BaseHeaderProps extends ViewProps {
   options: BaseHeaderOptions
   headerRef?: RefObject<Animated.View>
   titleAlwaysVisible?: boolean
-  goBack?: () => void
+  onBackPress?: () => void
   scrollY?: SharedValue<number>
   scrollEffectOffset?: number
   CustomContent?: ReactNode

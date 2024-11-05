@@ -95,7 +95,7 @@ const ScrollScreen = ({
       <ScrollViewContainer style={containerStyle}>
         {headerOptions && (
           <HeaderComponent
-            goBack={navigation.canGoBack() ? navigation.goBack : undefined}
+            onBackPress={navigation.canGoBack() ? navigation.goBack : undefined}
             options={{ headerTitle: screenTitle, ...headerOptions }}
             scrollY={screenScrollY}
             scrollEffectOffset={headerScrollEffectOffset}
