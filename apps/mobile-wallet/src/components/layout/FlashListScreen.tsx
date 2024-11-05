@@ -17,9 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { FlashList, FlashListProps } from '@shopify/flash-list'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import BottomButtons from '~/components/buttons/BottomButtons'
 import BaseHeader from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
@@ -42,12 +43,18 @@ const FlashListScreen = <T,>({
   screenIntro,
   shouldUseGaps,
   contentPaddingTop,
+  bottomButtonsRender,
   ...props
 }: FlashListScreenProps<T>) => {
   const insets = useSafeAreaInsets()
   const FlashListRef = useRef<FlashList<T>>(null)
+  const [paddingBottom, setPaddingBottom] = useState(0)
 
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
+
+  const handleBottomButtonsHeightChange = (newHeight: number) => {
+    setPaddingBottom(newHeight)
+  }
 
   return (
     <Screen>
@@ -68,12 +75,17 @@ const FlashListScreen = <T,>({
           )
         }
         contentContainerStyle={{
-          paddingBottom: insets.bottom,
+          paddingBottom: insets.bottom + paddingBottom,
           paddingTop: typeof contentPaddingTop === 'boolean' ? 120 : contentPaddingTop,
           ...contentContainerStyle
         }}
         {...props}
       />
+      {bottomButtonsRender && (
+        <BottomButtons float bottomInset onHeightChange={handleBottomButtonsHeightChange}>
+          {bottomButtonsRender()}
+        </BottomButtons>
+      )}
     </Screen>
   )
 }

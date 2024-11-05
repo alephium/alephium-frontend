@@ -22,7 +22,6 @@ import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AddressFlashListScreen from '~/components/AddressFlashListScreen'
-import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
@@ -50,20 +49,18 @@ const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
   )
 
   return (
-    <>
-      <AddressFlashListScreen
-        onAddressPress={setFromAddress}
-        selectedAddress={fromAddress}
-        headerTitleAlwaysVisible
-        screenTitle={t('Origin')}
-        screenIntro={t('Select the address from which to send the transaction.')}
-        contentPaddingTop
-        onScroll={screenScrollHandler}
-      />
-      <BottomButtons bottomInset>
+    <AddressFlashListScreen
+      onAddressPress={setFromAddress}
+      selectedAddress={fromAddress}
+      headerTitleAlwaysVisible
+      screenTitle={t('Origin')}
+      screenIntro={t('Select the address from which to send the transaction.')}
+      contentPaddingTop
+      onScroll={screenScrollHandler}
+      bottomButtonsRender={() => (
         <Button title={t('Continue')} variant="highlight" onPress={() => navigation.navigate('AssetsScreen')} />
-      </BottomButtons>
-    </>
+      )}
+    />
   )
 }
 
