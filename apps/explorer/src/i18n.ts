@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import i18next from 'i18next'
+import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
 
 import de from '../locales/de-DE/translation.json'
@@ -27,21 +28,27 @@ import id from '../locales/id-ID/translation.json'
 import vi from '../locales/vi-VN/translation.json'
 import zh from '../locales/zh-CN/translation.json'
 
-i18next.use(initReactI18next).init({
-  resources: {
-    'en-US': { translation: en },
-    'fr-FR': { translation: fr },
-    'id-ID': { translation: id },
-    'el-GR': { translation: el },
-    'de-DE': { translation: de },
-    'vi-VN': { translation: vi },
-    'zh-CN': { translation: zh }
-  },
-  lng: 'en-US',
-  fallbackLng: 'en-US',
-  interpolation: {
-    escapeValue: false
-  }
-})
+i18next
+  .use(initReactI18next)
+  .use(LanguageDetector)
+  .init({
+    resources: {
+      en: { translation: en },
+      fr: { translation: fr },
+      id: { translation: id },
+      el: { translation: el },
+      de: { translation: de },
+      vi: { translation: vi },
+      zh: { translation: zh }
+    },
+    supportedLngs: ['en', 'fr', 'id', 'el', 'de', 'vi', 'zh'],
+    fallbackLng: 'en',
+    detection: {
+      lookupLocalStorage: 'language'
+    },
+    interpolation: {
+      escapeValue: false
+    }
+  })
 
 export default i18next
