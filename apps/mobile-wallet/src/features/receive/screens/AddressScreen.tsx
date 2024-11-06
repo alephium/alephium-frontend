@@ -16,46 +16,42 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { sendAnalytics } from '~/analytics'
 import AddressFlashListScreen from '~/components/AddressFlashListScreen'
-import { CloseButton } from '~/components/buttons/Button'
+import Button from '~/components/buttons/Button'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
+import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import { selectDefaultAddress } from '~/store/addressesSlice'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'AddressScreen'>, ScrollScreenProps {}
 
 const AddressScreen = ({ navigation }: ScreenProps) => {
-  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
+  const { screenScrollHandler } = useHeaderContext()
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+  const [addressHash, setAddressHash] = useState(defaultAddress.hash)
   const { t } = useTranslation()
-
-  const handleAddressPress = (addressHash: AddressHash) => {
-    sendAnalytics({ event: 'Pressed on address to see QR code to receive funds' })
-
-    navigation.navigate('QRCodeScreen', { addressHash })
-  }
-
-  useFocusEffect(
-    useCallback(() => {
-      setHeaderOptions({
-        headerLeft: () => <CloseButton onPress={() => navigation.goBack()} />
-      })
-    }, [navigation, setHeaderOptions])
-  )
 
   return (
     <AddressFlashListScreen
-      onAddressPress={(addressHash) => handleAddressPress(addressHash)}
+      onAddressPress={(hash) => setAddressHash(hash)}
+      selectedAddress={addressHash}
       screenTitle={t('To address')}
       screenIntro={t('Select the address which you want to receive funds to.')}
       contentPaddingTop
       onScroll={screenScrollHandler}
+      bottomButtonsRender={() => (
+        <Button
+          title={t('Continue')}
+          variant="highlight"
+          disabled={!addressHash}
+          onPress={() => navigation.navigate('QRCodeScreen', { addressHash })}
+        />
+      )}
     />
   )
 }

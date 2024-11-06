@@ -39,11 +39,12 @@ const AddressFlashListScreen = ({ onAddressPress, selectedAddress, ...props }: A
       data={addresses}
       keyExtractor={(item) => item.hash}
       estimatedItemSize={70}
-      renderItem={({ item: address, index }) => (
+      extraData={{ selectedAddress }}
+      renderItem={({ item: address, index, extraData }) => (
         <AddressBox
           key={address.hash}
           addressHash={address.hash}
-          isSelected={address.hash === selectedAddress}
+          isSelected={address.hash === extraData.selectedAddress}
           style={{
             margin: index === 0 ? 20 : 0,
             marginBottom: 20,
