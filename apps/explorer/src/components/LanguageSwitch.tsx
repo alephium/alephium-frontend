@@ -56,7 +56,6 @@ const LanguageSwitch: React.FC<LanguageSwitchProps> = ({ className }) => {
   const [langValue, setLangValue] = useStateWithLocalStorage<Language>('language', 'en')
 
   useEffect(() => {
-    console.log(langValue)
     i18next.changeLanguage(langValue)
     dayjs.locale(langValue)
   }, [langValue])
