@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.10.9
+
+### Patch Changes
+
+- dc3097c: Add language detection
+
 ## 1.10.8
 
 ### Patch Changes
