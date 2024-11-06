@@ -66,6 +66,12 @@ export const receiveFaucetTokens = createAsyncThunk<SentTransaction, AddressHash
     const state = getState() as RootState
     const currentNetwork = state.network
 
+    if (!['testnet', 'devnet'].includes(currentNetwork.name))
+      return rejectWithValue({
+        text: i18n.t('You need to be on testnet or devnet in order to use the faucet.'),
+        type: 'alert'
+      })
+
     const txBoilerplate: Omit<SentTransaction, 'hash'> = {
       fromAddress: 'Faucet',
       toAddress: destinationAddress,
