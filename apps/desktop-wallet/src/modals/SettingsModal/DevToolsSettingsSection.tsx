@@ -36,7 +36,7 @@ import { openModal } from '@/features/modals/modalActions'
 import { devToolsToggled } from '@/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import { copiedToClipboard, copyToClipboardFailed, receiveTestnetTokens } from '@/storage/global/globalActions'
+import { copiedToClipboard, copyToClipboardFailed, receiveFaucetTokens } from '@/storage/global/globalActions'
 import { Address } from '@/types/addresses'
 
 const DevToolsSettingsSection = () => {
@@ -71,7 +71,7 @@ const DevToolsSettingsSection = () => {
   }
 
   const handleFaucetCall = () => {
-    defaultAddress && dispatch(receiveTestnetTokens(defaultAddress.hash))
+    defaultAddress && dispatch(receiveFaucetTokens(defaultAddress.hash))
     sendAnalytics({ event: 'Requested testnet tokens' })
   }
 
@@ -80,6 +80,8 @@ const DevToolsSettingsSection = () => {
 
   const openDeployContractModal = () =>
     dispatch(openModal({ name: 'DeployContractSendModal', props: { initialTxData: { fromAddress: defaultAddress } } }))
+
+  const isOnTestNetwork = ['testnet', 'devnet'].includes(currentNetwork.name)
 
   return (
     <>
@@ -96,22 +98,24 @@ const DevToolsSettingsSection = () => {
         <>
           <Section align="flex-start" inList>
             <h2 tabIndex={0} role="label">
-              {t('Testnet faucet')}
+              {t('Token faucet')}
             </h2>
-            <Paragraph>{t('Receive testnet tokens in your default address.')}</Paragraph>
-            {currentNetwork.name !== 'testnet' && (
+            <Paragraph>{t('Receive test tokens in your default address.')}</Paragraph>
+            {!isOnTestNetwork && (
               <InfoBox
                 importance="accent"
                 Icon={AlertOctagon}
                 text={t(
-                  'You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet network to see your tokens.',
+                  'You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet or devnet network to see your tokens.',
                   { currentNetwork: currentNetwork.name }
                 )}
               />
             )}
-            <Button Icon={Download} onClick={handleFaucetCall} role="secondary" loading={faucetCallPending} wide>
-              {t('Receive testnet tokens')}
-            </Button>
+            {isOnTestNetwork && (
+              <Button Icon={Download} onClick={handleFaucetCall} role="secondary" loading={faucetCallPending} wide>
+                {t('Receive test tokens')}
+              </Button>
+            )}
           </Section>
           <Section align="flex-start" inList>
             <h2 tabIndex={0} role="label">

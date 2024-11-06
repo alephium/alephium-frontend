@@ -41,7 +41,7 @@ const PendingSentAddressBadge = ({ tx, refAddressHash, isDestinationAddress }: P
 
   if (pendingSentTx.type === 'contract') return <Badge>{t('Smart contract')}</Badge>
 
-  if (pendingSentTx.type === 'faucet') return <Badge>{t('Testnet faucet')}</Badge>
+  if (pendingSentTx.type === 'faucet') return <Badge>{t('Token faucet')}</Badge>
 
   return (
     <AddressBadge
