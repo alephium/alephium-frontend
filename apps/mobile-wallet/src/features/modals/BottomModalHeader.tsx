@@ -24,12 +24,12 @@ import { CloseButton } from '~/components/buttons/Button'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface BottomModalHeaderProps {
-  handleClose: () => void
+  onClose: () => void
   height?: number
   title?: string
 }
 
-const BottomModalHeader = ({ height, handleClose, title }: BottomModalHeaderProps) => (
+const BottomModalHeader = ({ height, onClose, title }: BottomModalHeaderProps) => (
   <HeaderContainer style={{ height }}>
     <HeaderSideContainer align="left" />
     {title && (
@@ -38,7 +38,7 @@ const BottomModalHeader = ({ height, handleClose, title }: BottomModalHeaderProp
       </Title>
     )}
     <HeaderSideContainer align="right">
-      <CloseButton onPress={handleClose} compact />
+      <CloseButton onPress={onClose} compact />
     </HeaderSideContainer>
   </HeaderContainer>
 )

@@ -60,7 +60,7 @@ const BottomModalBase = ({
         </HandleContainer>
         <GestureDetector gesture={panGesture}>
           <View style={{ flex: !isContentScrollable ? 1 : 0 }}>
-            <BottomModalHeader title={title} height={navHeight} handleClose={handleClose} />
+            <BottomModalHeader title={title} height={navHeight} onClose={handleClose} />
             {!isContentScrollable && children}
           </View>
         </GestureDetector>
