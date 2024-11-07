@@ -36,6 +36,7 @@ interface AddressBadgeProps extends PressableProps {
   color?: string
   canCopy?: boolean
   showCopyBtn?: boolean
+  alwaysShowHash?: boolean
   style?: StyleProp<ViewStyle>
 }
 

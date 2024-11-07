@@ -26,17 +26,19 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AddressBadge from '~/components/AddressBadge'
+import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
-import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
+import AssetLogo from '~/components/AssetLogo'
 import Checkmark from '~/components/Checkmark'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
   selectAddressByHash
 } from '~/store/addressesSlice'
-import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface AddressBoxProps extends PressableProps {
@@ -49,6 +51,8 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxProps) => {
   const dispatch = useAppDispatch()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
+  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
@@ -73,25 +77,18 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
 
   return (
     <AddressBoxStyled {...props} onPress={handlePress} style={[boxAnimatedStyle, props.style]}>
-      <AddressBoxTop>
+      <AddressBoxLeft>
         <AddressBadgeStyled onPress={handlePress} addressHash={addressHash} textStyle={{ fontSize: 18 }} />
         <Group>
-          <AppText color="tertiary" size={14}>
-            {t('group {{ groupNumber }}', { groupNumber: address?.group })}
-          </AppText>
+          <AppText color="tertiary">{t('group {{ groupNumber }}', { groupNumber: address?.group })}</AppText>
           {isSelected && <Checkmark />}
         </Group>
-      </AddressBoxTop>
-      <AddressBoxBottom>
+      </AddressBoxLeft>
+      <AddressBoxRight>
+        <Amount isFiat>{balanceInFiat}</Amount>
         <AssetsRow>
           {knownFungibleTokens.map((asset) => (
-            <AssetAmountWithLogo
-              key={asset.id}
-              assetId={asset.id}
-              logoSize={15}
-              amount={asset.balance - asset.lockedBalance}
-              useTinyAmountShorthand
-            />
+            <AssetLogo key={asset.id} assetId={asset.id} size={15} />
           ))}
         </AssetsRow>
         {nfts.length > 0 && (
@@ -117,7 +114,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
             </AssetsRow>
           </Pressable>
         )}
-      </AddressBoxBottom>
+      </AddressBoxRight>
     </AddressBoxStyled>
   )
 }
@@ -125,11 +122,11 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
 export default AddressBox
 
 const AddressBoxStyled = styled(AnimatedPressable)`
-  border-radius: ${BORDER_RADIUS}px;
-  overflow: hidden;
+  flex-direction: row;
 `
 
-const AddressBoxTop = styled.View`
+const AddressBoxLeft = styled.View`
+  flex: 1;
   padding: 15px;
   flex-direction: row;
   justify-content: space-between;
@@ -140,11 +137,8 @@ const AddressBoxTop = styled.View`
   align-items: center;
 `
 
-const AddressBoxBottom = styled.View`
-  padding: 13px 15px;
-  border-top-width: 1px;
-  border-top-color: ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.primary};
+const AddressBoxRight = styled.View`
+  flex: 1;
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
