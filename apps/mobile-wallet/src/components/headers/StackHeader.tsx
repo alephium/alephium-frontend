@@ -16,15 +16,29 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { SceneProgress } from '@react-navigation/stack/lib/typescript/src/types'
+import { Animated } from 'react-native'
+
 import Button from '~/components/buttons/Button'
 import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
 
-export type StackHeaderCustomProps = BaseHeaderProps
+export type StackHeaderCustomProps = BaseHeaderProps & {
+  progress: SceneProgress
+}
 
-const StackHeader = ({ onBackPress: goBack, options, ...props }: StackHeaderCustomProps) => {
+const StackHeader = ({ onBackPress: goBack, options, progress, ...props }: StackHeaderCustomProps) => {
   const HeaderLeft = goBack ? <Button onPress={goBack} iconProps={{ name: 'arrow-left' }} round /> : null
 
-  return <BaseHeader options={{ headerLeft: () => HeaderLeft, ...options }} {...props} />
+  const opacity = Animated.add(progress.current, progress.next || 0).interpolate({
+    inputRange: [0, 1, 2],
+    outputRange: [0, 1, 0]
+  })
+
+  return (
+    <Animated.View style={{ opacity }}>
+      <BaseHeader options={{ headerLeft: () => HeaderLeft, ...options }} {...props} />
+    </Animated.View>
+  )
 }
 
 export default StackHeader
