@@ -362,7 +362,10 @@ export const makeSelectAddressesTokens = () =>
     [selectAllFungibleTokens, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses(), selectAllPrices],
     (fungibleTokens, nfts, alphAsset, addresses, tokenPrices): Asset[] => {
       const tokenBalances = getAddressesTokenBalances(addresses)
-      const tokens = calculateAssetsData([alphAsset, ...tokenBalances], fungibleTokens, nfts, tokenPrices)
+
+      if (alphAsset.balance > BigInt(0)) tokenBalances.push(alphAsset)
+
+      const tokens = calculateAssetsData(tokenBalances, fungibleTokens, nfts, tokenPrices)
 
       return sortAssets(tokens)
     }
