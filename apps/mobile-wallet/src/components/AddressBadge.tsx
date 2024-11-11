@@ -20,10 +20,10 @@ import { AddressHash } from '@alephium/shared'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import AddressColorSymbol from '~/components/AddressColorSymbol'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { useAppSelector } from '~/hooks/redux'
-import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectContactByHash } from '~/store/addresses/addressesSelectors'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { copyAddressToClipboard } from '~/utils/addresses'
@@ -62,16 +62,8 @@ const AddressBadge = ({
       {...props}
     >
       {address ? (
-        <>
-          {!hideSymbol && (
-            <Symbol>
-              {address.settings.isDefault ? (
-                <DefaultAddressBadge size={16} color={address.settings.color} />
-              ) : (
-                <Dot color={address.settings.color} />
-              )}
-            </Symbol>
-          )}
+        <AddressBadgeContainer>
+          {!hideSymbol && <AddressColorSymbol addressHash={addressHash} size={16} />}
           {address.settings.label ? (
             <Label numberOfLines={1} style={[textStyle]} color={textColor}>
               {address.settings.label}
@@ -81,18 +73,14 @@ const AddressBadge = ({
               {address.hash}
             </Label>
           )}
-        </>
+        </AddressBadgeContainer>
       ) : contact ? (
-        <>
-          {!hideSymbol && (
-            <Symbol>
-              <Dot color={stringToColour(contact.address)} />
-            </Symbol>
-          )}
+        <AddressBadgeContainer>
+          {!hideSymbol && <Dot color={stringToColour(contact.address)} />}
           <Label numberOfLines={1} style={[textStyle]} color={textColor}>
             {contact.name}
           </Label>
-        </>
+        </AddressBadgeContainer>
       ) : (
         <Label numberOfLines={1} ellipsizeMode="middle" style={[textStyle]} color={textColor}>
           {addressHash}
@@ -117,8 +105,9 @@ export default styled(AddressBadge)`
   align-items: center;
 `
 
-const Symbol = styled.View`
-  margin-right: 5px;
+const AddressBadgeContainer = styled.View`
+  flex-direction: row;
+  gap: 5px;
 `
 
 const Dot = styled.View<{ color?: string }>`
