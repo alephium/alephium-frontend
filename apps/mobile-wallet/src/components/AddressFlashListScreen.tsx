@@ -53,6 +53,7 @@ const AddressFlashListScreen = ({
           key={address.hash}
           addressHash={address.hash}
           isSelected={address.hash === extraData.selectedAddress}
+          isLast={index === data.length - 1}
           style={{
             margin: index === 0 ? 20 : 0,
             marginBottom: 20,

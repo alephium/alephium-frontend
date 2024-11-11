@@ -58,7 +58,7 @@ const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPr
               key={address.hash}
               addressHash={address.hash}
               onPress={() => handleAddressPress(address.hash)}
-              isLast={index === addresses.length - 1}
+              isLast={index === data.length - 1}
             />
           )}
           {...props}

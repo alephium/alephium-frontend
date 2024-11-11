@@ -69,7 +69,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, ...props 
       <TextualContent style={{ borderBottomWidth: !isLast ? 1 : 0 }}>
         <AddressBoxLeft>
           {address.settings.label && (
-            <AddressName numberOfLines={1} ellipsizeMode="middle" semiBold>
+            <AddressName numberOfLines={1} ellipsizeMode="middle" semiBold size={16}>
               {address.settings.label}
             </AddressName>
           )}
