@@ -70,7 +70,7 @@ const FlashListScreen = <T,>({
               title={screenTitle}
               subtitle={screenIntro}
               scrollY={screenScrollY}
-              paddingBottom={!!screenIntro && !shouldUseGaps}
+              paddingBottom={!!screenIntro}
             />
           )
         }

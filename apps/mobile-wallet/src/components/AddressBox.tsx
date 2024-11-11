@@ -17,9 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, CURRENCIES } from '@alephium/shared'
+import { colord } from 'colord'
+import { LinearGradient } from 'expo-linear-gradient'
+import { Check } from 'lucide-react-native'
 import { useMemo } from 'react'
 import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
-import Animated from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressColorSymbol from '~/components/AddressColorSymbol'
@@ -44,6 +47,7 @@ interface AddressBoxProps extends PressableProps {
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+const AnimatedSelectedLinearGradient = Animated.createAnimatedComponent(LinearGradient)
 
 const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, ...props }: AddressBoxProps) => {
   const theme = useTheme()
@@ -65,7 +69,27 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, ...props 
 
   return (
     <AddressBoxStyled {...props} onPress={handlePress} style={style}>
-      <AddressColorSymbol addressHash={addressHash} size={16} />
+      {isSelected && (
+        <SelectedLinearGradient
+          pointerEvents="none"
+          style={{ width: 100, height: '100%' }}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          locations={[0, 1]}
+          colors={[colord(theme.global.accent).alpha(0.2).toHex(), colord(theme.global.accent).alpha(0).toHex()]}
+          entering={FadeIn}
+          exiting={FadeOut}
+        />
+      )}
+      <BadgeContainer>
+        {isSelected ? (
+          <SelectedBadge>
+            <Check color="white" size={18} />
+          </SelectedBadge>
+        ) : (
+          <AddressColorSymbol addressHash={addressHash} size={16} />
+        )}
+      </BadgeContainer>
       <TextualContent style={{ borderBottomWidth: !isLast ? 1 : 0 }}>
         <AddressBoxLeft>
           {address.settings.label && (
@@ -108,6 +132,25 @@ export default AddressBox
 const AddressBoxStyled = styled(AnimatedPressable)`
   flex-direction: row;
   align-items: center;
+`
+
+const BadgeContainer = styled.View`
+  width: 6%;
+  align-items: center;
+`
+
+const SelectedBadge = styled.View`
+  height: 22px;
+  width: 22px;
+  background-color: ${({ theme }) => theme.global.accent};
+  border-radius: 22px;
+  align-items: center;
+  justify-content: center;
+`
+
+const SelectedLinearGradient = styled(AnimatedSelectedLinearGradient)`
+  position: absolute;
+  left: -${DEFAULT_MARGIN}px;
 `
 
 const TextualContent = styled.View`
