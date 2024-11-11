@@ -50,14 +50,12 @@ const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPr
           data={addresses}
           keyExtractor={(item) => item.hash}
           estimatedItemSize={70}
-          renderItem={({ item: address }) => (
+          renderItem={({ item: address, index }) => (
             <AddressBox
               key={address.hash}
               addressHash={address.hash}
-              style={{
-                marginBottom: 20
-              }}
               onPress={() => handleAddressPress(address.hash)}
+              isLast={index === addresses.length - 1}
             />
           )}
           {...props}
