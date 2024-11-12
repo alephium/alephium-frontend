@@ -43,7 +43,7 @@ const BottomModalBase = ({
   maximisedContent,
   backdropAnimatedStyle,
   handleClose,
-  modalHeightAnimatedStyle,
+  modalAnimatedStyle,
   handleAnimatedStyle,
   panGesture,
   navHeight,
@@ -54,7 +54,7 @@ const BottomModalBase = ({
   <KeyboardAvoidingViewStyled behavior="height" enabled={!maximisedContent}>
     <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
     <Container>
-      <ModalStyled style={modalHeightAnimatedStyle}>
+      <ModalStyled style={modalAnimatedStyle}>
         <HandleContainer>
           <Handle style={handleAnimatedStyle} />
         </HandleContainer>
@@ -98,7 +98,6 @@ const Backdrop = styled(AnimatedPressable)`
 
 const ModalStyled = styled(Animated.View)`
   justify-content: flex-start;
-  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.highlight : theme.bg.primary)};
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   min-height: 80px;

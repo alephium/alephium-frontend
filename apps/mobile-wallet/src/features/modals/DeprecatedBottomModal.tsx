@@ -98,7 +98,7 @@ const BottomModal = ({
   const canMaximize = useSharedValue(false)
   const shouldMaximizeOnOpen = useSharedValue(maximisedContent)
 
-  const modalHeightAnimatedStyle = useAnimatedStyle(() => ({
+  const modalAnimatedStyle = useAnimatedStyle(() => ({
     height: -modalHeight.value,
     paddingTop: withSpring(
       position.value === 'maximised' ? insets.top : position.value === 'closing' ? 0 : 10,
@@ -220,7 +220,7 @@ const BottomModal = ({
       <Animated.View style={{ flex: 1 }}>
         <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
         <Container>
-          <ModalStyled style={modalHeightAnimatedStyle}>
+          <ModalStyled style={modalAnimatedStyle}>
             <HandleContainer>
               <Handle style={handleAnimatedStyle} />
             </HandleContainer>

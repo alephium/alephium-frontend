@@ -18,8 +18,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useCallback, useEffect, useState } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent, Platform, useWindowDimensions } from 'react-native'
 import { Gesture } from 'react-native-gesture-handler'
-import { interpolate, runOnJS, runOnUI, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
+import {
+  interpolate,
+  interpolateColor,
+  runOnJS,
+  runOnUI,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring
+} from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useTheme } from 'styled-components'
 
 import { removeModal } from '~/features/modals/modalActions'
 import { selectModalById } from '~/features/modals/modalSelectors'
@@ -62,6 +71,7 @@ export const useBottomModalState = ({
   const insets = useSafeAreaInsets()
   const dimensions = useWindowDimensions()
   const dispatch = useAppDispatch()
+  const theme = useTheme()
   const maxHeight = dimensions.height - insets.top
 
   // Initialize shared values
@@ -188,8 +198,16 @@ export const useBottomModalState = ({
 
   // Animated Styles
   // ----------------------------
-  const modalHeightAnimatedStyle = useAnimatedStyle(() => ({
-    height: -modalHeight.value
+  const modalAnimatedStyle = useAnimatedStyle(() => ({
+    height: -modalHeight.value,
+    backgroundColor: interpolateColor(
+      -modalHeight.value,
+      [0, maxHeight],
+      [
+        theme.name === 'light' ? theme.bg.highlight : theme.bg.primary,
+        theme.name === 'light' ? theme.bg.highlight : theme.bg.back2
+      ]
+    )
   }))
 
   const handleAnimatedStyle = useAnimatedStyle(() => ({
@@ -246,7 +264,7 @@ export const useBottomModalState = ({
   }, [isModalClosing, position, handleClose])
 
   return {
-    modalHeightAnimatedStyle,
+    modalAnimatedStyle,
     handleAnimatedStyle,
     backdropAnimatedStyle,
     handleContentSizeChange,
