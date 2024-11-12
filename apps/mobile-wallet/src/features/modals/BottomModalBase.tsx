@@ -112,9 +112,8 @@ const HandleContainer = styled.View`
 `
 
 const Handle = styled(Animated.View)`
-  width: 15%;
+  width: 10%;
   height: 4px;
   border-radius: 8px;
   background-color: ${({ theme }) => theme.border.primary};
-  margin-top: -15px;
 `
