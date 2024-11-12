@@ -46,6 +46,8 @@ interface AddressBoxProps extends PressableProps {
   isLast?: boolean
 }
 
+const maxNbOfTokenLogos = 5
+
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 const AnimatedSelectedLinearGradient = Animated.createAnimatedComponent(LinearGradient)
 
@@ -87,7 +89,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, ...props 
             <Check color="white" size={18} />
           </SelectedBadge>
         ) : (
-          <AddressColorSymbol addressHash={addressHash} size={16} />
+          <AddressColorSymbol addressHash={addressHash} size={18} />
         )}
       </BadgeContainer>
       <TextualContent style={{ borderBottomWidth: !isLast ? 1 : 0 }}>
@@ -107,20 +109,24 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, ...props 
           </AddressHashLabel>
         </AddressBoxLeft>
         <AddressBoxRight>
-          <Amount isFiat value={balanceInFiat} suffix={CURRENCIES[currency].symbol} semiBold />
-          <AssetsRow>
-            {knownFungibleTokens.map((asset, i) => i < 5 && <AssetLogo key={asset.id} assetId={asset.id} size={15} />)}
-            {knownFungibleTokens.length > 5 && (
-              <Badge>
-                <NbOfAssetsText>+{knownFungibleTokens.length - 5}</NbOfAssetsText>
+          <Amount isFiat value={balanceInFiat} suffix={CURRENCIES[currency].symbol} semiBold size={16} />
+          {(knownFungibleTokens.length > 0 || nfts.length > 0) && (
+            <AssetsRow>
+              <Badge rounded>
+                {knownFungibleTokens.map(
+                  (asset, i) => i < maxNbOfTokenLogos && <AssetLogo key={asset.id} assetId={asset.id} size={15} />
+                )}
+                {knownFungibleTokens.length > 5 && (
+                  <NbOfAssetsText>+{knownFungibleTokens.length - maxNbOfTokenLogos}</NbOfAssetsText>
+                )}
               </Badge>
-            )}
-            {nfts.length > 0 && (
-              <Badge>
-                <NbOfAssetsText>{nfts.length} NFTs</NbOfAssetsText>
-              </Badge>
-            )}
-          </AssetsRow>
+              {nfts.length > 0 && (
+                <Badge>
+                  <NbOfAssetsText>{nfts.length} NFTs</NbOfAssetsText>
+                </Badge>
+              )}
+            </AssetsRow>
+          )}
         </AddressBoxRight>
       </TextualContent>
     </AddressBoxStyled>
@@ -155,6 +161,7 @@ const SelectedLinearGradient = styled(AnimatedSelectedLinearGradient)`
 
 const TextualContent = styled.View`
   flex: 1;
+  min-height: 60px;
   flex-direction: row;
   gap: ${DEFAULT_MARGIN}px;
   align-items: center;
@@ -187,7 +194,6 @@ const AssetsRow = styled.View`
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  flex-wrap: wrap;
   gap: 4px;
 `
 

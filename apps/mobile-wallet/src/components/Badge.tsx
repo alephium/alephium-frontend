@@ -37,6 +37,9 @@ const Badge = ({ style, color, children }: BadgeProps) => (
 )
 
 export default styled(Badge)`
+  flex-direction: row;
+  gap: 4px;
+
   ${({ color, theme, rounded, border, light }) => {
     const usedColor = color || theme.font.primary
 
