@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
-import { AlertCircle, CheckCircle, Icon, InfoIcon } from 'lucide-react-native'
+import { AlertCircle, CheckCircle, InfoIcon, LucideIcon } from 'lucide-react-native'
 import { ToastConfigParams, ToastType } from 'react-native-toast-message'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -31,7 +31,7 @@ const Toast = ({
 }: Pick<ToastConfigParams<unknown>, 'text1' | 'text2' | 'onPress' | 'type'>) => {
   const theme = useTheme()
 
-  const Icons: Record<ToastType, { color: string; Icon: Icon }> = {
+  const Icons: Record<ToastType, { color: string; Icon: LucideIcon }> = {
     success: {
       Icon: CheckCircle,
       color: theme.global.valid
