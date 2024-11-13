@@ -55,20 +55,23 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(({ id, tokenId, addres
 
   return (
     <BottomModal modalId={id} title={token?.name}>
-      <InputWrapper>
-        <TokenAmoutInput
-          value={amount}
-          onChangeText={setAmount}
-          placeholder="0"
-          keyboardType="numeric"
-          autoComplete="off"
-          autoFocus
-          allowFontScaling
-          fontSize={getFontSize(amount)}
-        />
-        <SuffixText fontSize={getFontSize(amount)}>{token?.symbol}</SuffixText>
-      </InputWrapper>
-      <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
+      <ContentWrapper>
+        <InputWrapper>
+          <TokenAmoutInput
+            value={amount}
+            onChangeText={setAmount}
+            placeholder="0"
+            keyboardType="numeric"
+            autoComplete="off"
+            autoFocus
+            allowFontScaling
+            fontSize={getFontSize(amount)}
+          />
+          <SuffixText fontSize={getFontSize(amount)}>{token?.symbol}</SuffixText>
+        </InputWrapper>
+        <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
+      </ContentWrapper>
+      <Button title={t('Continue')} variant="highlight" />
     </BottomModal>
   )
 })
@@ -84,6 +87,12 @@ const getFontSize = (text: string) => {
 }
 
 export default TokenAmountModal
+
+const ContentWrapper = styled.View`
+  height: 160px;
+  align-items: center;
+  justify-content: center;
+`
 
 const InputWrapper = styled.View`
   flex-direction: row;
