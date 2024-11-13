@@ -29,7 +29,7 @@ export interface BottomModalBaseProps {
   modalId: number
   children: ReactNode
   onClose?: () => void
-  title?: string
+  title?: string | ReactNode
   maximisedContent?: boolean
   minHeight?: number
   noPadding?: boolean

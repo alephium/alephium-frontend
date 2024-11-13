@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import AssetLogo from '~/components/AssetLogo'
 import Button from '~/components/buttons/Button'
 import BottomModal from '~/features/modals/BottomModal'
 import withModal from '~/features/modals/withModal'
@@ -45,16 +46,26 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(({ id, tokenId, addres
   const { t } = useTranslation()
   const [amount, setAmount] = useState('')
 
-  const handleUseMaxAmountPress = () => {
-    if (!token) return
+  if (!token) return
 
+  const handleUseMaxAmountPress = () => {
     const maxAmount = token.balance - token.lockedBalance
 
     setAmount(toHumanReadableAmount(maxAmount, token.decimals))
   }
 
   return (
-    <BottomModal modalId={id} title={token?.name}>
+    <BottomModal
+      modalId={id}
+      title={
+        <ModalHeader>
+          <AssetLogo size={18} assetId={token?.id} />
+          <AppText semiBold size={16}>
+            {token?.name}
+          </AppText>
+        </ModalHeader>
+      }
+    >
       <ContentWrapper>
         <InputWrapper>
           <TokenAmoutInput
@@ -87,6 +98,14 @@ const getFontSize = (text: string) => {
 }
 
 export default TokenAmountModal
+
+const ModalHeader = styled.View`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+`
 
 const ContentWrapper = styled.View`
   height: 160px;
