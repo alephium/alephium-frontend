@@ -52,6 +52,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const inputRef = useRef<TextInput>(null)
   const { assetAmounts, setAssetAmount } = useSendContext()
   const { t } = useTranslation()
+  const { fromAddress } = useSendContext()
 
   const assetAmount = assetAmounts.find(({ id }) => id === asset.id)
   const assetIsNft = isNft(asset)
@@ -110,7 +111,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
     vibrate(ImpactStyle.Medium)
 
     if (!assetIsNft) {
-      dispatch(openModal({ name: 'TokenAmountModal', props: { tokenId: asset.id } }))
+      dispatch(openModal({ name: 'TokenAmountModal', props: { tokenId: asset.id, addressHash: fromAddress } }))
     }
   }
 

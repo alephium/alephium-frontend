@@ -16,14 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FungibleToken, toHumanReadableAmount } from '@alephium/shared'
+import { AddressHash, FungibleToken, toHumanReadableAmount } from '@alephium/shared'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import { useSendContext } from '~/contexts/SendContext'
 import BottomModal from '~/features/modals/BottomModal'
 import withModal from '~/features/modals/withModal'
 import { useAppSelector } from '~/hooks/redux'
@@ -31,16 +30,16 @@ import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
 
 interface TokenAmountModalProps {
   tokenId: FungibleToken['id']
+  addressHash?: AddressHash
 }
 
 const MAX_FONT_SIZE = 42
 const MIN_FONT_SIZE = 22
 const MAX_FONT_LENGTH = 10
 
-const TokenAmountModal = withModal<TokenAmountModalProps>(({ id, tokenId }) => {
-  const { fromAddress } = useSendContext()
+const TokenAmountModal = withModal<TokenAmountModalProps>(({ id, tokenId, addressHash }) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, fromAddress))
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const token = knownFungibleTokens.find((t) => t.id === tokenId)
 
   const { t } = useTranslation()
