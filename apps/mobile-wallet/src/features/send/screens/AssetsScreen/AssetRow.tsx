@@ -67,6 +67,10 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
 
   const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
 
+  const handleAmountValidate = (amount: string) => {
+    setAmount(amount)
+  }
+
   const handleOnAmountChange = (inputAmount: string) => {
     if (assetIsNft) return
 
@@ -111,7 +115,12 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
     vibrate(ImpactStyle.Medium)
 
     if (!assetIsNft) {
-      dispatch(openModal({ name: 'TokenAmountModal', props: { tokenId: asset.id, addressHash: fromAddress } }))
+      dispatch(
+        openModal({
+          name: 'TokenAmountModal',
+          props: { tokenId: asset.id, addressHash: fromAddress, onAmountValidate: handleAmountValidate }
+        })
+      )
     }
   }
 

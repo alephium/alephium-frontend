@@ -25,12 +25,14 @@ import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import Button from '~/components/buttons/Button'
 import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppSelector } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
 
 interface TokenAmountModalProps {
   tokenId: FungibleToken['id']
+  onAmountValidate: (amount: string) => void
   addressHash?: AddressHash
 }
 
@@ -38,7 +40,8 @@ const MAX_FONT_SIZE = 42
 const MIN_FONT_SIZE = 22
 const MAX_FONT_LENGTH = 10
 
-const TokenAmountModal = withModal<TokenAmountModalProps>(({ id, tokenId, addressHash }) => {
+const TokenAmountModal = withModal<TokenAmountModalProps>(({ id, tokenId, addressHash, onAmountValidate }) => {
+  const dispatch = useAppDispatch()
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const token = knownFungibleTokens.find((t) => t.id === tokenId)
@@ -52,6 +55,11 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(({ id, tokenId, addres
     const maxAmount = token.balance - token.lockedBalance
 
     setAmount(toHumanReadableAmount(maxAmount, token.decimals))
+  }
+
+  const handleAmountValidate = () => {
+    onAmountValidate(amount)
+    dispatch(closeModal({ id }))
   }
 
   return (
@@ -82,7 +90,7 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(({ id, tokenId, addres
         </InputWrapper>
         <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
       </ContentWrapper>
-      <Button title={t('Continue')} variant="highlight" />
+      <Button title={t('Continue')} variant="highlight" onPress={handleAmountValidate} />
     </BottomModal>
   )
 })
