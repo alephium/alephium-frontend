@@ -21,7 +21,7 @@ import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Keyboard, Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
 import Animated, { FadeIn, useAnimatedStyle, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -34,6 +34,8 @@ import Checkmark from '~/components/Checkmark'
 import ListItem from '~/components/ListItem'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import { useSendContext } from '~/contexts/SendContext'
+import { openModal } from '~/features/modals/modalActions'
+import { useAppDispatch } from '~/hooks/redux'
 import { isNft } from '~/utils/assets'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 import { isNumericStringValid } from '~/utils/numbers'
@@ -46,6 +48,7 @@ interface AssetRowProps {
 
 const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const theme = useTheme()
+  const dispatch = useAppDispatch()
   const inputRef = useRef<TextInput>(null)
   const { assetAmounts, setAssetAmount } = useSendContext()
   const { t } = useTranslation()
@@ -106,21 +109,10 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const handleOnRowPress = () => {
     vibrate(ImpactStyle.Medium)
 
-    const isNowSelected = !isSelected
-    setIsSelected(isNowSelected)
+    console.log('PRESS')
 
-    if (isNowSelected) {
-      if (assetIsNft) {
-        setAmount('1')
-        setAssetAmount(asset.id, BigInt(1))
-      } else {
-        setTimeout(() => inputRef.current?.focus(), 500)
-      }
-    } else {
-      setAmount('')
-      setAssetAmount(asset.id, undefined)
-      setError('')
-      Keyboard.dismiss()
+    if (!assetIsNft) {
+      dispatch(openModal({ name: 'TokenAmountModal', props: { tokenId: asset.id } }))
     }
   }
 
