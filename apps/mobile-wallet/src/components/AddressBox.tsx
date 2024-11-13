@@ -78,18 +78,24 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, ...props 
           start={{ x: 0, y: 0.5 }}
           end={{ x: 1, y: 0.5 }}
           locations={[0, 1]}
-          colors={[colord(theme.global.accent).alpha(0.2).toHex(), colord(theme.global.accent).alpha(0).toHex()]}
+          colors={[colord(theme.global.accent).alpha(0.4).toHex(), colord(theme.global.accent).alpha(0).toHex()]}
           entering={FadeIn}
           exiting={FadeOut}
         />
       )}
       <BadgeContainer>
         {isSelected ? (
-          <SelectedBadge>
-            <Check color="white" size={18} />
-          </SelectedBadge>
+          <BadgeAbsoluteInnerContainer>
+            <SelectedBadge entering={FadeIn} exiting={FadeOut}>
+              <Check color="white" size={18} />
+            </SelectedBadge>
+          </BadgeAbsoluteInnerContainer>
         ) : (
-          <AddressColorSymbol addressHash={addressHash} size={18} />
+          <BadgeAbsoluteInnerContainer>
+            <Animated.View entering={FadeIn} exiting={FadeOut}>
+              <AddressColorSymbol addressHash={addressHash} size={18} />
+            </Animated.View>
+          </BadgeAbsoluteInnerContainer>
         )}
       </BadgeContainer>
       <TextualContent style={{ borderBottomWidth: !isLast ? 1 : 0 }}>
@@ -142,14 +148,22 @@ const AddressBoxStyled = styled(AnimatedPressable)`
 
 const BadgeContainer = styled.View`
   width: 6%;
-  align-items: center;
+  height: 100%;
 `
 
-const SelectedBadge = styled.View`
-  height: 22px;
-  width: 22px;
+const BadgeAbsoluteInnerContainer = styled.View`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`
+
+const SelectedBadge = styled(Animated.View)`
+  height: 26px;
+  width: 26px;
   background-color: ${({ theme }) => theme.global.accent};
-  border-radius: 22px;
+  border-radius: 26px;
   align-items: center;
   justify-content: center;
 `
