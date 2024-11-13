@@ -109,8 +109,6 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const handleOnRowPress = () => {
     vibrate(ImpactStyle.Medium)
 
-    console.log('PRESS')
-
     if (!assetIsNft) {
       dispatch(openModal({ name: 'TokenAmountModal', props: { tokenId: asset.id } }))
     }
