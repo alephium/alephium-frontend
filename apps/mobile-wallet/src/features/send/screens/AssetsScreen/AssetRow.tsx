@@ -22,15 +22,10 @@ import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
-import Animated, { FadeIn, useAnimatedStyle, withSpring } from 'react-native-reanimated'
-import styled, { useTheme } from 'styled-components/native'
+import Animated, { FadeIn } from 'react-native-reanimated'
 
-import { fastSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import Amount from '~/components/Amount'
-import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
-import Button from '~/components/buttons/Button'
-import Checkmark from '~/components/Checkmark'
 import ListItem from '~/components/ListItem'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import { useSendContext } from '~/contexts/SendContext'
@@ -47,7 +42,6 @@ interface AssetRowProps {
 }
 
 const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
-  const theme = useTheme()
   const dispatch = useAppDispatch()
   const inputRef = useRef<TextInput>(null)
   const { assetAmounts, setAssetAmount } = useSendContext()
@@ -57,7 +51,6 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const assetAmount = assetAmounts.find(({ id }) => id === asset.id)
   const assetIsNft = isNft(asset)
 
-  const [isSelected, setIsSelected] = useState(!!assetAmount)
   const [amount, setAmount] = useState(
     assetAmount && assetAmount.amount
       ? toHumanReadableAmount(assetAmount.amount, !assetIsNft ? asset.decimals : undefined)
@@ -66,10 +59,6 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const [error, setError] = useState('')
 
   const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
-
-  const handleAmountValidate = (amount: string) => {
-    setAmount(amount)
-  }
 
   const handleOnAmountChange = (inputAmount: string) => {
     if (assetIsNft) return
@@ -102,23 +91,14 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
     setAssetAmount(asset.id, amount)
   }
 
-  const handleUseMaxAmountPress = () => {
-    if (assetIsNft) return
-
-    const maxAmount = asset.balance - asset.lockedBalance
-
-    setAmount(toHumanReadableAmount(maxAmount, asset.decimals))
-    setAssetAmount(asset.id, maxAmount)
-  }
-
-  const handleOnRowPress = () => {
+  const handlePress = () => {
     vibrate(ImpactStyle.Medium)
 
     if (!assetIsNft) {
       dispatch(
         openModal({
           name: 'TokenAmountModal',
-          props: { tokenId: asset.id, addressHash: fromAddress, onAmountValidate: handleAmountValidate }
+          props: { tokenId: asset.id, addressHash: fromAddress, onAmountValidate: setAmount }
         })
       )
     }
@@ -128,33 +108,13 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
     setTimeout(() => inputRef.current?.focus(), 0)
   }
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    borderWidth: withSpring(isSelected ? 2 : 0, fastSpringConfiguration),
-    borderColor: withSpring(isSelected ? theme.global.accent : theme.border.secondary, fastSpringConfiguration),
-    marginBottom: withSpring(isSelected ? 15 : 0, fastSpringConfiguration)
-  }))
-
-  const topRowAnimatedStyle = useAnimatedStyle(() => ({
-    paddingLeft: withSpring(isSelected ? 11 : 0, fastSpringConfiguration),
-    backgroundColor: isSelected ? theme.bg.highlight : 'transparent'
-  }))
-
-  const bottomRowAnimatedStyle = useAnimatedStyle(() => ({
-    height: assetIsNft ? 0 : withSpring(isSelected ? 90 : 0, fastSpringConfiguration),
-    opacity: assetIsNft ? 0 : withSpring(isSelected ? 1 : 0, fastSpringConfiguration),
-    borderTopWidth: assetIsNft ? 0 : withSpring(isSelected ? 1 : 0, fastSpringConfiguration)
-  }))
-
   return (
     <ListItem
-      style={[style, animatedStyle]}
-      innerStyle={topRowAnimatedStyle}
+      style={[style]}
       isLast={isLast}
-      hideSeparator={isSelected}
       title={asset.name || asset.id}
-      onPress={handleOnRowPress}
+      onPress={handlePress}
       height={64}
-      rightSideContent={<CheckmarkContainer>{isSelected && <Checkmark />}</CheckmarkContainer>}
       subtitle={
         assetIsNft ? (
           asset.description
@@ -172,98 +132,10 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
       icon={assetIsNft ? <NFTThumbnail nftId={asset.id} size={38} /> : <AssetLogo assetId={asset.id} size={38} />}
     >
       <Pressable onPress={handleBottomRowPress}>
-        <Animated.View entering={FadeIn}>
-          <BottomRow style={bottomRowAnimatedStyle}>
-            <AmountInputRow>
-              <AppText semiBold size={15}>
-                {t('Amount')}
-              </AppText>
-              <AmountInputValue>
-                <AmountTextInput
-                  value={amount}
-                  onChangeText={handleOnAmountChange}
-                  keyboardType="number-pad"
-                  inputMode="decimal"
-                  multiline={true}
-                  numberOfLines={2}
-                  textAlignVertical="center"
-                  ref={inputRef}
-                />
-              </AmountInputValue>
-              {!assetIsNft && (
-                <AppText semiBold size={23} color="secondary">
-                  {asset.symbol}
-                </AppText>
-              )}
-            </AmountInputRow>
-            <InputBottomPart>
-              <ErrorText color="alert" size={11}>
-                {error}
-              </ErrorText>
-              <UseMaxButton
-                title={t('Use max')}
-                onPress={handleUseMaxAmountPress}
-                type="transparent"
-                variant="accent"
-              />
-            </InputBottomPart>
-          </BottomRow>
-        </Animated.View>
+        <Animated.View entering={FadeIn}></Animated.View>
       </Pressable>
     </ListItem>
   )
 }
 
 export default AssetRow
-
-const BottomRow = styled(Animated.View)`
-  padding: 0 15px;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.bg.primary};
-  border-top-width: 0px;
-  border-top-color: ${({ theme }) => theme.border.primary};
-`
-
-const AmountInputRow = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-`
-
-const UseMaxButton = styled(Button)`
-  padding: 0;
-  height: 23px;
-`
-
-const InputBottomPart = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  height: 35%;
-  overflow: hidden;
-`
-
-const AmountInputValue = styled.View`
-  flex: 1;
-  justify-content: flex-end;
-  overflow: hidden;
-`
-
-const AmountTextInput = styled(TextInput)`
-  color: ${({ theme }) => theme.font.primary};
-  font-weight: 600;
-  text-align: right;
-  font-size: 23px;
-  margin-top: -5px;
-`
-
-const CheckmarkContainer = styled.View`
-  width: 30px;
-  align-items: center;
-  justify-content: center;
-`
-
-const ErrorText = styled(AppText)`
-  max-width: 150px;
-`

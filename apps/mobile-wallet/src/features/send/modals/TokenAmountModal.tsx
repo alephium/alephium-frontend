@@ -16,10 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, FungibleToken, toHumanReadableAmount } from '@alephium/shared'
+import { AddressHash, FungibleToken, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
+import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
@@ -29,6 +31,7 @@ import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
+import { isNumericStringValid } from '~/utils/numbers'
 
 interface TokenAmountModalProps {
   tokenId: FungibleToken['id']
@@ -42,18 +45,48 @@ const MAX_FONT_LENGTH = 10
 
 const TokenAmountModal = withModal<TokenAmountModalProps>(({ id, tokenId, addressHash, onAmountValidate }) => {
   const dispatch = useAppDispatch()
+  const theme = useTheme()
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const token = knownFungibleTokens.find((t) => t.id === tokenId)
 
   const { t } = useTranslation()
   const [amount, setAmount] = useState('')
+  const [error, setError] = useState('')
 
   if (!token) return
 
-  const handleUseMaxAmountPress = () => {
-    const maxAmount = token.balance - token.lockedBalance
+  const maxAmount = useMemo(() => token.balance - token.lockedBalance, [token.balance, token.lockedBalance])
+  const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
 
+  const handleAmountChange = (amount: string) => {
+    let cleanedAmount = amount.replace(',', '.')
+    cleanedAmount = isNumericStringValid(cleanedAmount, true) ? cleanedAmount : ''
+
+    setAmount(cleanedAmount)
+    2
+    const isAboveMaxAmount = parseFloat(amount) > parseFloat(toHumanReadableAmount(maxAmount, token.decimals))
+    const amountValueAsFloat = parseFloat(cleanedAmount)
+    const tooManyDecimals = getNumberOfDecimals(cleanedAmount) > (token.decimals ?? 0)
+
+    const newError = isAboveMaxAmount
+      ? t('Amount exceeds available balance')
+      : token.id === ALPH.id && amountValueAsFloat < parseFloat(minAmountInAlph) && amountValueAsFloat !== 0
+        ? t('Amount must be greater than {{ minAmount }}', { minAmount: minAmountInAlph })
+        : tooManyDecimals
+          ? t('This asset cannot have more than {{ numberOfDecimals }} decimals', {
+              numberOfDecimals: token.decimals
+            })
+          : ''
+
+    setError(newError)
+
+    if (newError) return
+
+    setAmount(cleanedAmount)
+  }
+
+  const handleUseMaxAmountPress = () => {
     setAmount(toHumanReadableAmount(maxAmount, token.decimals))
   }
 
@@ -78,19 +111,23 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(({ id, tokenId, addres
         <InputWrapper>
           <TokenAmoutInput
             value={amount}
-            onChangeText={setAmount}
+            onChangeText={handleAmountChange}
             placeholder="0"
             keyboardType="numeric"
             autoComplete="off"
             autoFocus
             allowFontScaling
             fontSize={getFontSize(amount)}
+            style={{
+              color: error ? theme.global.alert : theme.font.primary
+            }}
           />
           <SuffixText fontSize={getFontSize(amount)}>{token?.symbol}</SuffixText>
         </InputWrapper>
         <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
+        {error && <ErrorMessage>{error}</ErrorMessage>}
       </ContentWrapper>
-      <Button title={t('Continue')} variant="highlight" onPress={handleAmountValidate} />
+      <Button title={t('Continue')} variant="highlight" onPress={handleAmountValidate} disabled={!!error} />
     </BottomModal>
   )
 })
@@ -131,7 +168,6 @@ const TokenAmoutInput = styled.TextInput<{ fontSize: number }>`
   font-size: ${({ fontSize }) => fontSize}px;
   font-weight: 600;
   text-align: right;
-  color: ${({ theme }) => theme.font.primary};
   flex-shrink: 1;
 `
 
@@ -140,4 +176,10 @@ const SuffixText = styled(AppText)<{ fontSize: number }>`
   font-weight: 600;
   color: ${({ theme }) => theme.font.tertiary};
   margin-left: 6px;
+`
+
+const ErrorMessage = styled(AppText)`
+  position: absolute;
+  bottom: 20px;
+  color: ${({ theme }) => theme.global.alert};
 `
