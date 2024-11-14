@@ -16,7 +16,13 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, FungibleToken, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
+import {
+  AddressHash,
+  fromHumanReadableAmount,
+  FungibleToken,
+  getNumberOfDecimals,
+  toHumanReadableAmount
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { useMemo, useState } from 'react'
@@ -35,7 +41,7 @@ import { isNumericStringValid } from '~/utils/numbers'
 
 interface TokenAmountModalProps {
   tokenId: FungibleToken['id']
-  onAmountValidate: (amount: string) => void
+  onAmountValidate: (amount: bigint) => void
   addressHash?: AddressHash
 }
 
@@ -63,8 +69,6 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(({ id, tokenId, addres
     let cleanedAmount = amount.replace(',', '.')
     cleanedAmount = isNumericStringValid(cleanedAmount, true) ? cleanedAmount : ''
 
-    setAmount(cleanedAmount)
-    2
     const isAboveMaxAmount = parseFloat(amount) > parseFloat(toHumanReadableAmount(maxAmount, token.decimals))
     const amountValueAsFloat = parseFloat(cleanedAmount)
     const tooManyDecimals = getNumberOfDecimals(cleanedAmount) > (token.decimals ?? 0)
@@ -91,7 +95,7 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(({ id, tokenId, addres
   }
 
   const handleAmountValidate = () => {
-    onAmountValidate(amount)
+    onAmountValidate(fromHumanReadableAmount(amount))
     dispatch(closeModal({ id }))
   }
 

@@ -16,13 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, fromHumanReadableAmount, getNumberOfDecimals, NFT, toHumanReadableAmount } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
-import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
-import { useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
-import Animated, { FadeIn } from 'react-native-reanimated'
+import { Asset, NFT } from '@alephium/shared'
+import { useState } from 'react'
+import { StyleProp, ViewStyle } from 'react-native'
 
 import Amount from '~/components/Amount'
 import AssetLogo from '~/components/AssetLogo'
@@ -33,7 +29,6 @@ import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
 import { isNft } from '~/utils/assets'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
-import { isNumericStringValid } from '~/utils/numbers'
 
 interface AssetRowProps {
   asset: Asset | NFT
@@ -43,69 +38,28 @@ interface AssetRowProps {
 
 const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const dispatch = useAppDispatch()
-  const inputRef = useRef<TextInput>(null)
-  const { assetAmounts, setAssetAmount } = useSendContext()
-  const { t } = useTranslation()
-  const { fromAddress } = useSendContext()
+  const { fromAddress, setAssetAmount: setAssetAmountInContext } = useSendContext()
 
-  const assetAmount = assetAmounts.find(({ id }) => id === asset.id)
   const assetIsNft = isNft(asset)
 
-  const [amount, setAmount] = useState(
-    assetAmount && assetAmount.amount
-      ? toHumanReadableAmount(assetAmount.amount, !assetIsNft ? asset.decimals : undefined)
-      : ''
-  )
-  const [error, setError] = useState('')
+  const [amount, setAmount] = useState<bigint>()
 
-  const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
-
-  const handleOnAmountChange = (inputAmount: string) => {
-    if (assetIsNft) return
-
-    let cleanedAmount = inputAmount.replace(',', '.')
-    cleanedAmount = isNumericStringValid(cleanedAmount, true) ? cleanedAmount : ''
-
-    setAmount(cleanedAmount)
-
-    const amountValueAsFloat = parseFloat(cleanedAmount)
-    const tooManyDecimals = getNumberOfDecimals(cleanedAmount) > (asset?.decimals ?? 0)
-    const availableAmount = toHumanReadableAmount(asset.balance - asset.lockedBalance, asset.decimals)
-
-    const newError =
-      amountValueAsFloat > parseFloat(availableAmount)
-        ? t('Amount exceeds available balance')
-        : asset.id === ALPH.id && amountValueAsFloat < parseFloat(minAmountInAlph) && amountValueAsFloat !== 0
-          ? t('Amount must be greater than {{ minAmount }}', { minAmount: minAmountInAlph })
-          : tooManyDecimals
-            ? t('This asset cannot have more than {{ numberOfDecimals }} decimals', {
-                numberOfDecimals: asset.decimals
-              })
-            : ''
-
-    setError(newError)
-
-    if (newError) return
-
-    const amount = !cleanedAmount ? undefined : fromHumanReadableAmount(cleanedAmount, asset.decimals)
-    setAssetAmount(asset.id, amount)
-  }
-
-  const handlePress = () => {
+  const handleRowPress = () => {
     vibrate(ImpactStyle.Medium)
 
     if (!assetIsNft) {
       dispatch(
         openModal({
           name: 'TokenAmountModal',
-          props: { tokenId: asset.id, addressHash: fromAddress, onAmountValidate: setAmount }
+          props: { tokenId: asset.id, addressHash: fromAddress, onAmountValidate: onAmountSet }
         })
       )
     }
   }
 
-  const handleBottomRowPress = () => {
-    setTimeout(() => inputRef.current?.focus(), 0)
+  const onAmountSet = (amount: bigint) => {
+    setAmount(amount)
+    setAssetAmountInContext(asset.id, amount)
   }
 
   return (
@@ -113,12 +67,13 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
       style={[style]}
       isLast={isLast}
       title={asset.name || asset.id}
-      onPress={handlePress}
+      onPress={handleRowPress}
       height={64}
+      rightSideContent={!assetIsNft && amount ? <Amount value={amount} semiBold suffix={asset.symbol} /> : null}
       subtitle={
         assetIsNft ? (
           asset.description
-        ) : (
+        ) : !amount ? (
           <Amount
             value={asset.balance - asset.lockedBalance}
             suffix={asset.symbol}
@@ -127,14 +82,10 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
             medium
             color="secondary"
           />
-        )
+        ) : undefined
       }
       icon={assetIsNft ? <NFTThumbnail nftId={asset.id} size={38} /> : <AssetLogo assetId={asset.id} size={38} />}
-    >
-      <Pressable onPress={handleBottomRowPress}>
-        <Animated.View entering={FadeIn}></Animated.View>
-      </Pressable>
-    </ListItem>
+    />
   )
 }
 
