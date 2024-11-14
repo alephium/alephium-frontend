@@ -40,12 +40,12 @@ interface AssetRowProps {
 
 const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const dispatch = useAppDispatch()
-  const { fromAddress, setAssetAmount: setAssetAmountInContext } = useSendContext()
+  const { fromAddress, setAssetAmount: setAssetAmountInContext, assetAmounts } = useSendContext()
   const theme = useTheme()
 
   const assetIsNft = isNft(asset)
 
-  const [amount, setAmount] = useState<bigint>()
+  const [amount, setAmount] = useState<bigint>(assetAmounts.find((a) => a.id === asset.id)?.amount || BigInt(0))
 
   const handleRowPress = () => {
     vibrate(ImpactStyle.Medium)
