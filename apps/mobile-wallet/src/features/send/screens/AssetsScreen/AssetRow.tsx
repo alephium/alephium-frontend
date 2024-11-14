@@ -61,7 +61,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
         })
       )
     } else {
-      setAssetAmountInContext(asset.id, BigInt(1))
+      setAssetAmountInContext(asset.id, assetAmounts.find((a) => a.id === asset.id) ? BigInt(0) : BigInt(1))
     }
   }
 
@@ -94,6 +94,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
                 suffix={asset.symbol}
                 decimals={asset.decimals}
                 isUnknownToken={!asset.symbol}
+                fullPrecision
                 color="white"
               />
             </Badge>
