@@ -66,6 +66,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
     <ListItem
       style={[style]}
       isLast={isLast}
+      isSelected={!!amount}
       title={asset.name || asset.id}
       onPress={handleRowPress}
       height={64}

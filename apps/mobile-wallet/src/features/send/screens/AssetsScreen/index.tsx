@@ -21,7 +21,6 @@ import { orderBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import FlashListScreen from '~/components/layout/FlashListScreen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -97,14 +96,12 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         estimatedItemSize={64}
         onScroll={screenScrollHandler}
         bottomButtonsRender={() => (
-          <BottomButtons bottomInset style={{ position: 'absolute', bottom: 0, right: 0, left: 0 }}>
-            <Button
-              title={t('Continue')}
-              variant="highlight"
-              onPress={handleContinueButtonPress}
-              disabled={isContinueButtonDisabled}
-            />
-          </BottomButtons>
+          <Button
+            title={t('Continue')}
+            variant="highlight"
+            onPress={handleContinueButtonPress}
+            disabled={isContinueButtonDisabled}
+          />
         )}
         {...props}
       />

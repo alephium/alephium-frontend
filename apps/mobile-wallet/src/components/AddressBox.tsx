@@ -51,6 +51,8 @@ const maxNbOfTokenLogos = 5
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 const AnimatedSelectedLinearGradient = Animated.createAnimatedComponent(LinearGradient)
 
+// TODO: Use ListItem
+
 const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, ...props }: AddressBoxProps) => {
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
