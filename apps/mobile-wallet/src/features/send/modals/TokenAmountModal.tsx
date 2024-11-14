@@ -43,98 +43,99 @@ interface TokenAmountModalProps {
   tokenId: FungibleToken['id']
   onAmountValidate: (amount: bigint) => void
   addressHash?: AddressHash
+  initialAmount?: bigint
 }
 
 const MAX_FONT_SIZE = 42
 const MIN_FONT_SIZE = 22
 const MAX_FONT_LENGTH = 10
 
-const TokenAmountModal = withModal<TokenAmountModalProps>(({ id, tokenId, addressHash, onAmountValidate }) => {
-  const dispatch = useAppDispatch()
-  const theme = useTheme()
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
-  const token = knownFungibleTokens.find((t) => t.id === tokenId)
+const TokenAmountModal = withModal<TokenAmountModalProps>(
+  ({ id, tokenId, onAmountValidate, addressHash, initialAmount }) => {
+    const dispatch = useAppDispatch()
+    const theme = useTheme()
+    const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+    const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
+    const token = knownFungibleTokens.find((t) => t.id === tokenId)
 
-  const { t } = useTranslation()
-  const [amount, setAmount] = useState('')
-  const [error, setError] = useState('')
+    const { t } = useTranslation()
+    const [amount, setAmount] = useState(initialAmount ? toHumanReadableAmount(initialAmount, token?.decimals) : '')
 
-  if (!token) return
+    const [error, setError] = useState('')
 
-  const maxAmount = useMemo(() => token.balance - token.lockedBalance, [token.balance, token.lockedBalance])
-  const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
+    if (!token) return
 
-  const handleAmountChange = (amount: string) => {
-    let cleanedAmount = amount.replace(',', '.')
-    cleanedAmount = isNumericStringValid(cleanedAmount, true) ? cleanedAmount : ''
+    const maxAmount = useMemo(() => token.balance - token.lockedBalance, [token.balance, token.lockedBalance])
+    const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
 
-    const isAboveMaxAmount = parseFloat(amount) > parseFloat(toHumanReadableAmount(maxAmount, token.decimals))
-    const amountValueAsFloat = parseFloat(cleanedAmount)
-    const tooManyDecimals = getNumberOfDecimals(cleanedAmount) > (token.decimals ?? 0)
+    const handleAmountChange = (amount: string) => {
+      let cleanedAmount = amount.replace(',', '.')
+      cleanedAmount = isNumericStringValid(cleanedAmount, true) ? cleanedAmount : ''
 
-    const newError = isAboveMaxAmount
-      ? t('Amount exceeds available balance')
-      : token.id === ALPH.id && amountValueAsFloat < parseFloat(minAmountInAlph) && amountValueAsFloat !== 0
-        ? t('Amount must be greater than {{ minAmount }}', { minAmount: minAmountInAlph })
-        : tooManyDecimals
-          ? t('This asset cannot have more than {{ numberOfDecimals }} decimals', {
-              numberOfDecimals: token.decimals
-            })
-          : ''
+      const isAboveMaxAmount = parseFloat(amount) > parseFloat(toHumanReadableAmount(maxAmount, token.decimals))
+      const amountValueAsFloat = parseFloat(cleanedAmount)
+      const tooManyDecimals = getNumberOfDecimals(cleanedAmount) > (token.decimals ?? 0)
 
-    setError(newError)
+      const newError = isAboveMaxAmount
+        ? t('Amount exceeds available balance')
+        : token.id === ALPH.id && amountValueAsFloat < parseFloat(minAmountInAlph) && amountValueAsFloat !== 0
+          ? t('Amount must be greater than {{ minAmount }}', { minAmount: minAmountInAlph })
+          : tooManyDecimals
+            ? t('This asset cannot have more than {{ numberOfDecimals }} decimals', {
+                numberOfDecimals: token.decimals
+              })
+            : ''
 
-    if (newError) return
+      setError(newError)
+      setAmount(cleanedAmount)
+    }
 
-    setAmount(cleanedAmount)
+    const handleUseMaxAmountPress = () => {
+      setAmount(toHumanReadableAmount(maxAmount, token.decimals))
+    }
+
+    const handleAmountValidate = () => {
+      onAmountValidate(amount ? fromHumanReadableAmount(amount) : BigInt(0))
+      dispatch(closeModal({ id }))
+    }
+
+    return (
+      <BottomModal
+        modalId={id}
+        title={
+          <ModalHeader>
+            <AssetLogo size={18} assetId={token?.id} />
+            <AppText semiBold size={16}>
+              {token?.name}
+            </AppText>
+          </ModalHeader>
+        }
+      >
+        <ContentWrapper>
+          <InputWrapper>
+            <TokenAmoutInput
+              value={amount}
+              onChangeText={handleAmountChange}
+              placeholder="0"
+              keyboardType="numeric"
+              autoComplete="off"
+              autoFocus
+              allowFontScaling
+              fontSize={getFontSize(amount)}
+              style={{
+                color: error ? theme.global.alert : theme.font.primary
+              }}
+            />
+            <SuffixText fontSize={getFontSize(amount)}>{token?.symbol}</SuffixText>
+          </InputWrapper>
+          <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+        </ContentWrapper>
+        <Button title={t('Continue')} variant="highlight" onPress={handleAmountValidate} disabled={!!error} />
+      </BottomModal>
+    )
   }
-
-  const handleUseMaxAmountPress = () => {
-    setAmount(toHumanReadableAmount(maxAmount, token.decimals))
-  }
-
-  const handleAmountValidate = () => {
-    onAmountValidate(fromHumanReadableAmount(amount))
-    dispatch(closeModal({ id }))
-  }
-
-  return (
-    <BottomModal
-      modalId={id}
-      title={
-        <ModalHeader>
-          <AssetLogo size={18} assetId={token?.id} />
-          <AppText semiBold size={16}>
-            {token?.name}
-          </AppText>
-        </ModalHeader>
-      }
-    >
-      <ContentWrapper>
-        <InputWrapper>
-          <TokenAmoutInput
-            value={amount}
-            onChangeText={handleAmountChange}
-            placeholder="0"
-            keyboardType="numeric"
-            autoComplete="off"
-            autoFocus
-            allowFontScaling
-            fontSize={getFontSize(amount)}
-            style={{
-              color: error ? theme.global.alert : theme.font.primary
-            }}
-          />
-          <SuffixText fontSize={getFontSize(amount)}>{token?.symbol}</SuffixText>
-        </InputWrapper>
-        <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
-        {error && <ErrorMessage>{error}</ErrorMessage>}
-      </ContentWrapper>
-      <Button title={t('Continue')} variant="highlight" onPress={handleAmountValidate} disabled={!!error} />
-    </BottomModal>
-  )
-})
+)
 
 const getFontSize = (text: string) => {
   if (text.length <= MAX_FONT_LENGTH) {

@@ -51,7 +51,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
       dispatch(
         openModal({
           name: 'TokenAmountModal',
-          props: { tokenId: asset.id, addressHash: fromAddress, onAmountValidate: onAmountSet }
+          props: { tokenId: asset.id, addressHash: fromAddress, onAmountValidate: onAmountSet, initialAmount: amount }
         })
       )
     }
