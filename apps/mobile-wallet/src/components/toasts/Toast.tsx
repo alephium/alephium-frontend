@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
+import { LinearGradient } from 'expo-linear-gradient'
 import { AlertCircle, CheckCircle, InfoIcon, LucideIcon } from 'lucide-react-native'
 import { ToastConfigParams, ToastType } from 'react-native-toast-message'
 import styled, { useTheme } from 'styled-components/native'
@@ -51,6 +52,18 @@ const Toast = ({
 
   return (
     <ToastContainer onPress={onPress}>
+      <Gradient
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        locations={[0.4, 1]}
+        colors={
+          theme.name === 'dark'
+            ? [theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]
+            : [theme.bg.highlight, colord(theme.bg.highlight).alpha(0).toHex()]
+        }
+        style={{ height: 100 }}
+        pointerEvents="none"
+      />
       <ToastContent>
         <IconContainer>
           <Icon color={color} />
@@ -67,14 +80,14 @@ const Toast = ({
 export default Toast
 
 const ToastContainer = styled.Pressable`
-  width: 85%;
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.bg.contrast};
+  position: absolute;
+  top: 0;
+  width: 100%;
 `
 
 const ToastContent = styled.View`
   flex-direction: row;
-  padding: 15px 20px;
+  padding: 20px;
 `
 
 const IconContainer = styled.View`
@@ -87,10 +100,17 @@ const TextContainer = styled.View`
 `
 
 const Title = styled(AppText)`
-  color: ${({ theme }) => theme.font.contrast};
-  font-weight: 500;
+  color: ${({ theme }) => theme.font.primary};
+  font-weight: 600;
 `
 
 const Subtitle = styled(AppText)`
-  color: ${({ theme }) => colord(theme.font.contrast).alpha(0.7).toHex()};
+  color: ${({ theme }) => theme.font.secondary};
+`
+
+const Gradient = styled(LinearGradient)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 `

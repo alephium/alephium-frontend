@@ -33,6 +33,7 @@ import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
 import { isNft } from '~/utils/assets'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
+import { showToast, ToastDuration } from '~/utils/layout'
 
 interface AssetRowProps {
   asset: Asset | NFT
@@ -61,13 +62,28 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
         })
       )
     } else {
-      setAssetAmountInContext(asset.id, assetAmounts.find((a) => a.id === asset.id) ? BigInt(0) : BigInt(1))
+      const isRemovingNft = !!assetAmounts.find((a) => a.id === asset.id)
+      setAssetAmountInContext(asset.id, isRemovingNft ? BigInt(0) : BigInt(1))
+
+      showToast({
+        text1: isRemovingNft ? `Removed ${asset.name}` : `Added ${asset.name}`, // TODO: translate
+        type: 'info',
+        visibilityTime: ToastDuration.SHORT
+      })
     }
   }
 
   const onAmountSet = (amount: bigint) => {
     setAmount(amount)
     setAssetAmountInContext(asset.id, amount)
+
+    const isRemovingToken = amount === BigInt(0)
+
+    showToast({
+      text1: isRemovingToken ? `Removed ${asset.name}` : `Added ${asset.name}`, // TODO: translate
+      type: 'info',
+      visibilityTime: ToastDuration.SHORT
+    })
   }
 
   return (
