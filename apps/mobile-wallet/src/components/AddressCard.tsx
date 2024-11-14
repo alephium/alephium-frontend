@@ -145,13 +145,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
           <HeaderButtons>
             <Button
               onPress={handleDefaultAddressToggle}
-              customIcon={
-                <DefaultAddressBadge
-                  strokeOnly={!isDefaultAddress}
-                  size={18}
-                  color={isDefaultAddress ? theme.global.accent : textColor}
-                />
-              }
+              customIcon={<DefaultAddressBadge size={18} color={isDefaultAddress ? theme.global.accent : textColor} />}
               style={{ backgroundColor: isDefaultAddress ? 'rgba(255, 255, 255, 0.2)' : buttonsBackground }}
               round
             />

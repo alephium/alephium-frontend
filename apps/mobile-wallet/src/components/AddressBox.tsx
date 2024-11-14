@@ -16,108 +16,127 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
-import { groupBy } from 'lodash'
+import { AddressHash, CURRENCIES } from '@alephium/shared'
+import { colord } from 'colord'
+import { LinearGradient } from 'expo-linear-gradient'
+import { Check } from 'lucide-react-native'
 import { useMemo } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
 import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
-import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
-import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
-import AddressBadge from '~/components/AddressBadge'
+import AddressColorSymbol from '~/components/AddressColorSymbol'
+import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
-import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
-import Checkmark from '~/components/Checkmark'
-import { openModal } from '~/features/modals/modalActions'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import AssetLogo from '~/components/AssetLogo'
+import Badge from '~/components/Badge'
+import { useAppSelector } from '~/hooks/redux'
+import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
   selectAddressByHash
 } from '~/store/addressesSlice'
-import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface AddressBoxProps extends PressableProps {
   addressHash: AddressHash
   isSelected?: boolean
+  isLast?: boolean
 }
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+const maxNbOfTokenLogos = 5
 
-const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxProps) => {
-  const dispatch = useAppDispatch()
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
+const AnimatedSelectedLinearGradient = Animated.createAnimatedComponent(LinearGradient)
+
+// TODO: Use ListItem
+
+const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, ...props }: AddressBoxProps) => {
+  const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const currency = useAppSelector((s) => s.settings.currency)
+  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
+  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
-  const theme = useTheme()
-  const { t } = useTranslation()
 
-  const boxAnimatedStyle = useAnimatedStyle(() => ({
-    borderColor: withSpring(isSelected ? theme.global.accent : theme.border.primary, fastestSpringConfiguration),
-    borderWidth: 2
-  }))
+  if (!address) return
 
   const handlePress = (e: GestureResponderEvent) => {
     vibrate(ImpactStyle.Heavy)
     onPress && onPress(e)
   }
 
-  const nftsGroupedByCollection = groupBy(nfts, 'collectionId')
-  const nbOfNftCollections = Object.keys(nftsGroupedByCollection).length
-
-  const openNftsGridModal = () => dispatch(openModal({ name: 'NftGridModal', props: { addressHash } }))
-
   return (
-    <AddressBoxStyled {...props} onPress={handlePress} style={[boxAnimatedStyle, props.style]}>
-      <AddressBoxTop>
-        <AddressBadgeStyled onPress={handlePress} addressHash={addressHash} textStyle={{ fontSize: 18 }} />
-        <Group>
-          <AppText color="tertiary" size={14}>
-            {t('group {{ groupNumber }}', { groupNumber: address?.group })}
-          </AppText>
-          {isSelected && <Checkmark />}
-        </Group>
-      </AddressBoxTop>
-      <AddressBoxBottom>
-        <AssetsRow>
-          {knownFungibleTokens.map((asset) => (
-            <AssetAmountWithLogo
-              key={asset.id}
-              assetId={asset.id}
-              logoSize={15}
-              amount={asset.balance - asset.lockedBalance}
-              useTinyAmountShorthand
-            />
-          ))}
-        </AssetsRow>
-        {nfts.length > 0 && (
-          <Pressable onPress={openNftsGridModal}>
-            <AssetsRow style={{ marginTop: VERTICAL_GAP }}>
-              <NbOfNftsBadge>
-                <AppText>
-                  <Trans
-                    t={t}
-                    i18nKey="numberOfNFTsInCollections"
-                    values={{
-                      nftsNumber: nfts.length,
-                      nftsCollectionsNumber: nbOfNftCollections
-                    }}
-                    components={{
-                      1: <AppText bold />
-                    }}
-                  >
-                    {'+<1>{{ nftsNumber }}</1> NFTs in <1>{{ nftsCollectionsNumber }}</1> collections'}
-                  </Trans>
-                </AppText>
-              </NbOfNftsBadge>
-            </AssetsRow>
-          </Pressable>
+    <AddressBoxStyled {...props} onPress={handlePress} style={style}>
+      {isSelected && (
+        <SelectedLinearGradient
+          pointerEvents="none"
+          style={{ width: 100, height: '100%' }}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          locations={[0, 1]}
+          colors={[colord(theme.global.accent).alpha(0.4).toHex(), colord(theme.global.accent).alpha(0).toHex()]}
+          entering={FadeIn}
+          exiting={FadeOut}
+        />
+      )}
+      <BadgeContainer>
+        {isSelected ? (
+          <BadgeAbsoluteInnerContainer>
+            <SelectedBadge entering={FadeIn} exiting={FadeOut}>
+              <Check color="white" size={18} />
+            </SelectedBadge>
+          </BadgeAbsoluteInnerContainer>
+        ) : (
+          <BadgeAbsoluteInnerContainer>
+            <Animated.View entering={FadeIn} exiting={FadeOut}>
+              <AddressColorSymbol addressHash={addressHash} size={18} />
+            </Animated.View>
+          </BadgeAbsoluteInnerContainer>
         )}
-      </AddressBoxBottom>
+      </BadgeContainer>
+      <TextualContent style={{ borderBottomWidth: !isLast ? 1 : 0 }}>
+        <AddressBoxLeft>
+          {address.settings.label && (
+            <AddressName numberOfLines={1} ellipsizeMode="middle" semiBold size={16}>
+              {address.settings.label}
+            </AddressName>
+          )}
+          <AddressHashLabel
+            numberOfLines={1}
+            ellipsizeMode="middle"
+            semiBold={!address?.settings.label}
+            color={address.settings.label && theme.font.tertiary}
+          >
+            {address?.hash}
+          </AddressHashLabel>
+        </AddressBoxLeft>
+        <AddressBoxRight>
+          <Amount isFiat value={balanceInFiat} suffix={CURRENCIES[currency].symbol} semiBold size={16} />
+          {(knownFungibleTokens.length > 0 || nfts.length > 0) && (
+            <AssetsRow>
+              <Badge rounded>
+                {knownFungibleTokens.map(
+                  (asset, i) => i < maxNbOfTokenLogos && <AssetLogo key={asset.id} assetId={asset.id} size={15} />
+                )}
+                {knownFungibleTokens.length > 5 && (
+                  <NbOfAssetsText>+{knownFungibleTokens.length - maxNbOfTokenLogos}</NbOfAssetsText>
+                )}
+              </Badge>
+              {nfts.length > 0 && (
+                <Badge>
+                  <NbOfAssetsText>{nfts.length} NFTs</NbOfAssetsText>
+                </Badge>
+              )}
+            </AssetsRow>
+          )}
+        </AddressBoxRight>
+      </TextualContent>
     </AddressBoxStyled>
   )
 }
@@ -125,50 +144,76 @@ const AddressBox = ({ addressHash, isSelected, onPress, ...props }: AddressBoxPr
 export default AddressBox
 
 const AddressBoxStyled = styled(AnimatedPressable)`
-  border-radius: ${BORDER_RADIUS}px;
-  overflow: hidden;
-`
-
-const AddressBoxTop = styled.View`
-  padding: 15px;
   flex-direction: row;
-  justify-content: space-between;
-  background-color: ${({ theme }) => theme.bg.highlight};
-  border-top-right-radius: 6px;
-  border-top-left-radius: 6px;
-  gap: ${DEFAULT_MARGIN}px;
   align-items: center;
 `
 
-const AddressBoxBottom = styled.View`
-  padding: 13px 15px;
-  border-top-width: 1px;
-  border-top-color: ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.primary};
+const BadgeContainer = styled.View`
+  width: 6%;
+  height: 100%;
 `
 
-const AddressBadgeStyled = styled(AddressBadge)`
-  max-width: 80%;
-  flex-shrink: 1;
+const BadgeAbsoluteInnerContainer = styled.View`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`
+
+const SelectedBadge = styled(Animated.View)`
+  height: 26px;
+  width: 26px;
+  background-color: ${({ theme }) => theme.global.accent};
+  border-radius: 26px;
+  align-items: center;
+  justify-content: center;
+`
+
+const SelectedLinearGradient = styled(AnimatedSelectedLinearGradient)`
+  position: absolute;
+  left: -${DEFAULT_MARGIN}px;
+`
+
+const TextualContent = styled.View`
+  flex: 1;
+  min-height: 60px;
+  flex-direction: row;
+  gap: ${DEFAULT_MARGIN}px;
+  align-items: center;
+  border-color: ${({ theme }) => theme.border.secondary};
+  padding: ${VERTICAL_GAP / 2}px 0;
+  margin-left: ${DEFAULT_MARGIN}px;
+`
+
+const AddressBoxLeft = styled.View`
+  flex: 1;
+  gap: ${VERTICAL_GAP / 4}px;
+  overflow: hidden;
+`
+
+const AddressBoxRight = styled.View`
+  flex: 1;
+  align-items: flex-end;
+  gap: ${VERTICAL_GAP / 4}px;
+`
+
+const AddressName = styled(AppText)`
+  max-width: 120px;
+`
+
+const AddressHashLabel = styled(AppText)`
+  max-width: 120px;
 `
 
 const AssetsRow = styled.View`
   flex-direction: row;
-  flex-wrap: wrap;
-  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
 `
 
-const Group = styled.View`
-  flex-direction: row;
-  gap: ${DEFAULT_MARGIN}px;
-  flex-shrink: 0;
-  align-items: center;
-`
-
-const NbOfNftsBadge = styled.View`
-  flex-direction: row;
-  padding: 3px 7px 3px 3px;
-  background-color: ${({ theme }) => theme.bg.tertiary};
-  border-radius: 24px;
-  align-items: center;
+const NbOfAssetsText = styled(AppText)`
+  text-align: right;
+  font-size: 12px;
 `

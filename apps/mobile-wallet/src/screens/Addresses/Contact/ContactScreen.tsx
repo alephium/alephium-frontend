@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
-import { Clipboard, LucideProps, Share2Icon, Upload } from 'lucide-react-native'
+import { Clipboard, LucideIcon, Share2Icon, Upload } from 'lucide-react-native'
 import { useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PressableProps, Share } from 'react-native'
@@ -145,7 +145,7 @@ export default ContactScreen
 
 interface ContactButtonProps extends PressableProps {
   title: string
-  Icon?: (props: LucideProps) => JSX.Element
+  Icon?: LucideIcon
 }
 
 const ContactButton = ({ Icon, title, children, ...props }: ContactButtonProps) => {

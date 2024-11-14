@@ -27,6 +27,7 @@ const ToastAnchor = () => (
       success: (props) => <Toast text1={props.text1} {...props} type="success" />,
       error: (props) => <Toast {...props} type="error" />
     }}
+    position="top"
   />
 )
 

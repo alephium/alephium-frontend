@@ -102,7 +102,7 @@ const Input = <T extends InputValue>({
               colors={[colord(theme.bg.highlight).alpha(0.1).toHex(), theme.bg.highlight]}
               start={{ x: 0, y: 0.5 }}
               end={{ x: 1, y: 0.5 }}
-              locations={[0, 0.2]}
+              locations={[0, 0.3]}
             />
             <Button compact onPress={handlePasteButtonPress}>
               <AppText>{t('Paste')}</AppText>
@@ -112,11 +112,7 @@ const Input = <T extends InputValue>({
       </InputContainer>
       {RightContent}
       {error && (
-        <ErrorContainer
-          style={{ shadowColor: 'black', shadowRadius: 5, shadowOpacity: 0.2 }}
-          entering={FadeIn}
-          exiting={FadeOut}
-        >
+        <ErrorContainer entering={FadeIn} exiting={FadeOut}>
           <Error>{error}</Error>
         </ErrorContainer>
       )}
@@ -162,13 +158,9 @@ const CustomRenderedValue = styled.View`
 
 const ErrorContainer = styled(Animated.View)`
   position: absolute;
-  bottom: -10px;
-  right: -5px;
+  bottom: -22px;
+  right: 0px;
   padding: 5px;
-  background: ${({ theme }) => theme.bg.highlight};
-  border-width: 1px;
-  border-color: ${({ theme }) => theme.border.primary};
-  border-radius: 100px;
 `
 
 const Error = styled(AppText)`
@@ -189,7 +181,7 @@ const PasteButtonContainer = styled.View`
 const PasteButtonContainerBackground = styled(LinearGradient)`
   position: absolute;
   right: 0;
-  left: 0;
+  left: -20px;
   top: 0;
   bottom: 0;
 `

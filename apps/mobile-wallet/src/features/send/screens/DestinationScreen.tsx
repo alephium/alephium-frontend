@@ -19,7 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, Contact } from '@alephium/shared'
 import { isValidAddress } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'
-import * as Clipboard from 'expo-clipboard'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -72,13 +71,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
 
   const [nextScreen, setNextScreen] = useState<PossibleNextScreenAfterDestination>('OriginScreen')
-
-  const handlePastePress = async () => {
-    const text = await Clipboard.getStringAsync()
-    setValue('toAddressHash', text)
-
-    sendAnalytics({ event: 'Send: Pasted destination address' })
-  }
 
   const handleQRCodeScan = (addressHash: string) => {
     if (isValidAddress(addressHash)) {
@@ -187,6 +179,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
               onBlur={onBlur}
               error={errors.toAddressHash?.type === 'required' ? requiredErrorMessage : errors.toAddressHash?.message}
               style={inputStyle}
+              showPasteButton
             />
           )}
           rules={{
@@ -203,14 +196,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             iconProps={{ name: 'maximize' }}
             title={t('Scan')}
             onPress={openQRCodeScannerModal}
-            variant="accent"
-            type="secondary"
-          />
-          <Button
-            compact
-            iconProps={{ name: 'copy' }}
-            title={t('Paste')}
-            onPress={handlePastePress}
             variant="accent"
             type="secondary"
           />
@@ -248,5 +233,4 @@ export default DestinationScreen
 const ButtonsRow = styled.View`
   flex-direction: row;
   gap: 15px;
-  flex-wrap: wrap;
 `

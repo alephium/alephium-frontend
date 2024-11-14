@@ -62,7 +62,8 @@ const BottomModal = ({
           contentContainerStyle,
           {
             gap: contentVerticalGap ? VERTICAL_GAP : undefined,
-            padding: noPadding ? 0 : DEFAULT_MARGIN
+            padding: noPadding ? 0 : DEFAULT_MARGIN,
+            paddingTop: 0
           }
         ]}
         {...modalState.contentScrollHandlers}

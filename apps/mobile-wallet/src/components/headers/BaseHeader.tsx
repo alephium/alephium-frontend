@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackHeaderProps } from '@react-navigation/stack'
+import { SceneProgress } from '@react-navigation/stack/lib/typescript/src/types'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { ReactNode, RefObject, useState } from 'react'
@@ -32,6 +33,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import useSceneProgressSharedValues from '~/hooks/layout/useSceneProgressSharedValues'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export type BaseHeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'> & {
@@ -46,6 +48,7 @@ export interface BaseHeaderProps extends ViewProps {
   scrollY?: SharedValue<number>
   scrollEffectOffset?: number
   CustomContent?: ReactNode
+  progress?: SceneProgress
 }
 
 const AnimatedHeaderGradient = Animated.createAnimatedComponent(LinearGradient)
@@ -57,12 +60,14 @@ const BaseHeader = ({
   scrollY,
   scrollEffectOffset = 0,
   CustomContent,
+  progress,
   ...props
 }: BaseHeaderProps) => {
   const insets = useSafeAreaInsets()
   const theme = useTheme()
   const { width: screenWidth } = useWindowDimensions()
   const [headerHeight, setHeaderHeight] = useState(80)
+  const { currentProgress, nextProgress } = useSceneProgressSharedValues(progress)
 
   const gradientHeight = headerHeight + 42
   const defaultScrollRange = [0 + scrollEffectOffset, 80 + scrollEffectOffset]
@@ -75,7 +80,8 @@ const BaseHeader = ({
     headerTitle && typeof headerTitle === 'function' ? headerTitle({ children: '' }) : undefined
   const HeaderTitleRight = headerTitleRight && headerTitleRight()
 
-  const animatedOpacity = useDerivedValue(() => interpolate(scrollY?.value || 0, defaultScrollRange, [0, 1]))
+  const animatedHeaderOpacity = interpolate(currentProgress.value + (nextProgress.value || 0), [0, 1, 2], [0, 1, 0])
+  const animatedGradientOpacity = useDerivedValue(() => interpolate(scrollY?.value || 0, defaultScrollRange, [0, 1]))
 
   const centerContainerAnimatedStyle = useAnimatedStyle(() =>
     headerTitle && !titleAlwaysVisible
@@ -95,11 +101,16 @@ const BaseHeader = ({
   }
 
   return (
-    <BaseHeaderStyled ref={headerRef} onLayout={handleHeaderLayout} {...props}>
+    <BaseHeaderStyled
+      ref={headerRef}
+      onLayout={handleHeaderLayout}
+      style={{ opacity: animatedHeaderOpacity }}
+      {...props}
+    >
       <View pointerEvents="none">
         <HeaderGradient
           pointerEvents="none"
-          style={{ opacity: animatedOpacity, width: screenWidth, height: gradientHeight }}
+          style={{ opacity: animatedGradientOpacity, width: screenWidth, height: gradientHeight }}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
           locations={[0.6, 1]}
