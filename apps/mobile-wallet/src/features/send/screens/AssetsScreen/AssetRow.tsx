@@ -76,7 +76,13 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
       rightSideContent={
         !assetIsNft && amount ? (
           <Badge rounded solid color={theme.global.accent}>
-            <Amount value={amount} semiBold suffix={asset.symbol} />
+            <Amount
+              value={amount}
+              semiBold
+              suffix={asset.symbol}
+              decimals={asset.decimals}
+              isUnknownToken={!asset.symbol}
+            />
           </Badge>
         ) : null
       }

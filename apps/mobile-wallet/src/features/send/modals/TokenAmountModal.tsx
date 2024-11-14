@@ -59,8 +59,8 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
     const token = knownFungibleTokens.find((t) => t.id === tokenId)
 
     const { t } = useTranslation()
-    const [amount, setAmount] = useState(initialAmount ? toHumanReadableAmount(initialAmount, token?.decimals) : '')
 
+    const [amount, setAmount] = useState(initialAmount ? toHumanReadableAmount(initialAmount, token?.decimals) : '')
     const [error, setError] = useState('')
 
     if (!token) return
@@ -95,9 +95,11 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
     }
 
     const handleAmountValidate = () => {
-      onAmountValidate(amount ? fromHumanReadableAmount(amount) : BigInt(0))
+      onAmountValidate(amount ? fromHumanReadableAmount(amount, token.decimals) : BigInt(0))
       dispatch(closeModal({ id }))
     }
+
+    const fontSize = getFontSize(`${amount}+${token.symbol}`)
 
     return (
       <BottomModal
@@ -121,12 +123,12 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
               autoComplete="off"
               autoFocus
               allowFontScaling
-              fontSize={getFontSize(amount)}
+              fontSize={fontSize}
               style={{
                 color: error ? theme.global.alert : theme.font.primary
               }}
             />
-            <SuffixText fontSize={getFontSize(amount)}>{token?.symbol}</SuffixText>
+            <SuffixText fontSize={fontSize}>{token?.symbol}</SuffixText>
           </InputWrapper>
           <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
           {error && <ErrorMessage>{error}</ErrorMessage>}
