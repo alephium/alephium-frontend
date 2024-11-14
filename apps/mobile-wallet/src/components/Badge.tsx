@@ -31,9 +31,15 @@ interface BadgeProps {
   style?: StyleProp<ViewStyle>
 }
 
-const Badge = ({ style, color, children }: BadgeProps) => (
+const Badge = ({ style, color, solid, children }: BadgeProps) => (
   <View style={style}>
-    {['string', 'number'].includes(typeof children) ? <BadgeText color={color}>{children}</BadgeText> : children}
+    {['string', 'number'].includes(typeof children) ? (
+      <BadgeText color={color} solid={solid}>
+        {children}
+      </BadgeText>
+    ) : (
+      children
+    )}
   </View>
 )
 
@@ -81,8 +87,8 @@ export default styled(Badge)`
   }}
 `
 
-const BadgeText = styled.Text<{ color?: string }>`
-  ${({ color, theme }) => css`
-    color: ${color || theme.font.primary};
+const BadgeText = styled.Text<{ color?: string; solid?: boolean }>`
+  ${({ color, solid, theme }) => css`
+    color: ${solid ? 'white' : color || theme.font.primary};
   `}
 `

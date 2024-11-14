@@ -23,6 +23,7 @@ import { StyleProp, ViewStyle } from 'react-native'
 import { useTheme } from 'styled-components'
 
 import Amount from '~/components/Amount'
+import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import Badge from '~/components/Badge'
 import ListItem from '~/components/ListItem'
@@ -78,18 +79,25 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
       onPress={handleRowPress}
       height={64}
       rightSideContent={
-        assetIsNft ? (
-          <Badge>{t('NFT')}</Badge>
-        ) : amount ? (
-          <Badge rounded solid color={theme.global.accent}>
-            <Amount
-              value={amount}
-              semiBold
-              suffix={asset.symbol}
-              decimals={asset.decimals}
-              isUnknownToken={!asset.symbol}
-            />
-          </Badge>
+        amount ? (
+          assetIsNft ? (
+            <Badge rounded solid color={theme.global.accent}>
+              <AppText color="white" semiBold>
+                {t('NFT')}
+              </AppText>
+            </Badge>
+          ) : (
+            <Badge rounded solid color={theme.global.accent}>
+              <Amount
+                value={amount}
+                semiBold
+                suffix={asset.symbol}
+                decimals={asset.decimals}
+                isUnknownToken={!asset.symbol}
+                color="white"
+              />
+            </Badge>
+          )
         ) : null
       }
       subtitle={
