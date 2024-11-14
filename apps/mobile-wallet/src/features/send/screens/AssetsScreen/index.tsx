@@ -81,6 +81,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       <FlashListScreen
         data={orderedAssets}
         keyExtractor={({ id }) => id}
+        extraData={{ assetAmounts }}
         renderItem={({ item: asset, index }) => (
           <AssetRow
             key={asset.id}

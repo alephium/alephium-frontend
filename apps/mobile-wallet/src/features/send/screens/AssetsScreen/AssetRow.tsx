@@ -49,7 +49,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
 
   const assetIsNft = isNft(asset)
 
-  const [amount, setAmount] = useState<bigint>(assetAmounts.find((a) => a.id === asset.id)?.amount || BigInt(0))
+  const [amount, setAmount] = useState<bigint | undefined>(assetAmounts.find((a) => a.id === asset.id)?.amount)
 
   const handleRowPress = () => {
     vibrate(ImpactStyle.Medium)
@@ -62,8 +62,9 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
         })
       )
     } else {
+      console.log(assetAmounts)
       const isRemovingNft = !!assetAmounts.find((a) => a.id === asset.id)
-      setAssetAmountInContext(asset.id, isRemovingNft ? BigInt(0) : BigInt(1))
+      setAssetAmountInContext(asset.id, isRemovingNft ? undefined : BigInt(1))
 
       showToast({
         text1: isRemovingNft ? `Removed ${asset.name}` : `Added ${asset.name}`, // TODO: translate
