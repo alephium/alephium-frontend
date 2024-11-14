@@ -93,7 +93,7 @@ export const darkTheme: DefaultTheme = {
   font: {
     primary: '#E3E3E3',
     secondary: 'rgba(255, 255, 255, 0.75)',
-    tertiary: 'rgba(255, 255, 255, 0.40)',
+    tertiary: 'rgba(255, 255, 255, 0.45)',
     contrast: '#171717',
     highlight: '#f0d590'
   },

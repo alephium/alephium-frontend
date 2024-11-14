@@ -27,6 +27,7 @@ interface BadgeProps {
   rounded?: boolean
   border?: boolean
   light?: boolean
+  solid?: boolean
   style?: StyleProp<ViewStyle>
 }
 
@@ -40,12 +41,12 @@ export default styled(Badge)`
   flex-direction: row;
   gap: 4px;
 
-  ${({ color, theme, rounded, border, light }) => {
+  ${({ color, theme, rounded, border, light, solid }) => {
     const usedColor = color || theme.font.primary
 
     return css`
       min-width: 25px;
-      padding: 2px 5px;
+      padding: 2px 8px;
       align-items: center;
       justify-content: center;
       border-radius: ${rounded ? '30px' : '7px'};
@@ -70,6 +71,11 @@ export default styled(Badge)`
       !border &&
       css`
         background-color: ${({ theme }) => theme.bg.secondary};
+      `}
+
+      ${solid &&
+      css`
+        background-color: ${usedColor};
       `}
     `
   }}

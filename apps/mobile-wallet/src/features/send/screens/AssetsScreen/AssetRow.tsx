@@ -19,9 +19,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { Asset, NFT } from '@alephium/shared'
 import { useState } from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
+import { useTheme } from 'styled-components'
 
 import Amount from '~/components/Amount'
 import AssetLogo from '~/components/AssetLogo'
+import Badge from '~/components/Badge'
 import ListItem from '~/components/ListItem'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import { useSendContext } from '~/contexts/SendContext'
@@ -39,6 +41,7 @@ interface AssetRowProps {
 const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
   const dispatch = useAppDispatch()
   const { fromAddress, setAssetAmount: setAssetAmountInContext } = useSendContext()
+  const theme = useTheme()
 
   const assetIsNft = isNft(asset)
 
@@ -70,7 +73,13 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
       title={asset.name || asset.id}
       onPress={handleRowPress}
       height={64}
-      rightSideContent={!assetIsNft && amount ? <Amount value={amount} semiBold suffix={asset.symbol} /> : null}
+      rightSideContent={
+        !assetIsNft && amount ? (
+          <Badge rounded solid color={theme.global.accent}>
+            <Amount value={amount} semiBold suffix={asset.symbol} />
+          </Badge>
+        ) : null
+      }
       subtitle={
         assetIsNft ? (
           asset.description
@@ -81,7 +90,7 @@ const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
             decimals={asset.decimals}
             isUnknownToken={!asset.symbol}
             medium
-            color="secondary"
+            color="tertiary"
           />
         ) : undefined
       }
