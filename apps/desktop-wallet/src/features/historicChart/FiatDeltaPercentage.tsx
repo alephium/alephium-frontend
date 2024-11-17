@@ -23,8 +23,9 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import useHistoricData from '@/features/historicChart/useHistoricData'
 
 interface FiatDeltaPercentageProps {
-  worthInBeginningOfChart?: number
   hoveredDataPointWorth: number
+  worthInBeginningOfChart?: number
+  className?: string
 }
 
 const FiatDeltaPercentage = ({ worthInBeginningOfChart, hoveredDataPointWorth }: FiatDeltaPercentageProps) => {
