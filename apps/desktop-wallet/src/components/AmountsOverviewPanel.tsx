@@ -21,7 +21,6 @@ import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import TotalAlphBalance from '@/features/balancesOverview/TotalAlphBalance'
 import ChartLengthBadges from '@/features/historicChart/ChartLengthBadges'
 import FiatDeltaPercentage from '@/features/historicChart/FiatDeltaPercentage'
 import { DataPoint } from '@/features/historicChart/historicChartTypes'
@@ -72,27 +71,17 @@ const AmountsOverviewPanel = ({
                 <WalletWorth overrideWorth={hoveredDataPointWorth} />
               )}
 
-              {isHoveringChart && (
-                <Opacity>
+              <FiatDeltaOpacityContainer>
+                {isHoveringChart && (
                   <FiatDeltaPercentage
                     worthInBeginningOfChart={worthInBeginningOfChart}
                     hoveredDataPointWorth={hoveredDataPointWorth}
                   />
-                </Opacity>
-              )}
+                )}
+              </FiatDeltaOpacityContainer>
 
               <ChartLengthBadges />
             </BalancesColumn>
-
-            {!singleAddress && (
-              <>
-                <Divider />
-                <AvailableLockedBalancesColumn fadeOut={isHoveringChart}>
-                  <TotalAlphBalance type="available" />
-                  <TotalAlphBalance type="locked" />
-                </AvailableLockedBalancesColumn>
-              </>
-            )}
           </BalancesRow>
         </Balances>
         {children && <RightColumnContent fadeOut={isHoveringChart}>{children}</RightColumnContent>}
@@ -119,6 +108,7 @@ const UnlockedWalletPanelStyled = styled(UnlockedWalletPanel)`
 const Panel = styled.div`
   position: relative;
   display: flex;
+  flex-direction: column;
   gap: 30px;
   align-items: center;
 
@@ -133,7 +123,6 @@ const Balances = styled.div`
 
 const BalancesRow = styled.div`
   display: flex;
-  padding: 0 6%;
 `
 
 const Opacity = styled.div<{ fadeOut?: boolean }>`
@@ -152,24 +141,17 @@ const BalancesColumn = styled(Opacity)`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   min-width: 200px;
 `
 
-const AvailableLockedBalancesColumn = styled(BalancesColumn)`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 20px;
-`
-
-const Divider = styled.div`
-  width: 1px;
-  background-color: ${({ theme }) => theme.border.secondary};
-  margin: 17px 55px;
-`
-
 const Today = styled.div`
-  color: ${({ theme }) => theme.font.secondary};
+  color: ${({ theme }) => theme.font.tertiary};
   font-size: 16px;
   margin-bottom: 8px;
+  text-align: center;
+`
+
+const FiatDeltaOpacityContainer = styled(Opacity)`
+  height: 5px;
 `

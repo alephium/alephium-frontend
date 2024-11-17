@@ -109,14 +109,14 @@ export default styled(Button)`
       : {
           primary: {
             default: theme.global.accent,
-            contrast: theme.bg.background2,
+            contrast: theme.bg.contrast,
             valid: theme.global.valid,
             alert: theme.global.alert,
             faded: colord(theme.global.accent).alpha(0.07).toRgbString()
           }[variant],
           secondary: {
             default: theme.bg.primary,
-            contrast: theme.bg.background2,
+            contrast: theme.font.primary,
             valid: theme.global.valid,
             alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
             faded: colord(theme.bg.primary).alpha(0.07).toRgbString()
@@ -130,7 +130,7 @@ export default styled(Button)`
       : {
           primary: {
             default: colord(theme.global.accent).darken(0.04).toRgbString(),
-            contrast: colord(theme.bg.background2).lighten(0.04).toRgbString(),
+            contrast: colord(theme.bg.contrast).lighten(0.01).toRgbString(),
             valid: colord(theme.global.valid).darken(0.04).toRgbString(),
             alert: colord(theme.global.alert).darken(0.04).toRgbString(),
             faded: colord(theme.global.accent).darken(0.04).toRgbString()
@@ -151,7 +151,7 @@ export default styled(Button)`
       : {
           primary: {
             default: colord(theme.global.accent).lighten(0.03).toRgbString(),
-            contrast: colord(theme.bg.background2).darken(0.08).toRgbString(),
+            contrast: colord(theme.bg.contrast).darken(0.08).toRgbString(),
             valid: colord(theme.global.valid).lighten(0.03).toRgbString(),
             alert: colord(theme.global.alert).lighten(0.03).toRgbString(),
             faded: colord(theme.global.accent).lighten(0.03).toRgbString()
@@ -170,7 +170,7 @@ export default styled(Button)`
       : {
           primary: {
             default: 'white',
-            contrast: theme.font.secondary,
+            contrast: theme.font.contrastPrimary,
             valid: theme.font.contrastPrimary,
             alert: 'white',
             faded: theme.global.accent
@@ -225,7 +225,7 @@ export default styled(Button)`
       : {
           primary: {
             default: 'white',
-            contrast: theme.font.secondary,
+            contrast: theme.font.contrastSecondary,
             valid: theme.font.primary,
             alert: 'white',
             faded: 'white'
