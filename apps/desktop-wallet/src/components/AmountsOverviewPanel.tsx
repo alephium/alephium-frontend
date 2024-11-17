@@ -21,6 +21,7 @@ import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import AnimatedBackground from '@/components/AnimatedBackground'
 import ChartLengthBadges from '@/features/historicChart/ChartLengthBadges'
 import FiatDeltaPercentage from '@/features/historicChart/FiatDeltaPercentage'
 import { DataPoint } from '@/features/historicChart/historicChartTypes'
@@ -59,6 +60,7 @@ const AmountsOverviewPanel = ({
 
   return (
     <UnlockedWalletPanelStyled className={className}>
+      <AnimatedBackground height={400} />
       <Panel>
         <Balances>
           <BalancesRow>
@@ -103,6 +105,7 @@ export default AmountsOverviewPanel
 const UnlockedWalletPanelStyled = styled(UnlockedWalletPanel)`
   position: relative;
   padding: 0;
+  overflow: visible;
 `
 
 const Panel = styled.div`
@@ -111,8 +114,8 @@ const Panel = styled.div`
   flex-direction: column;
   gap: 30px;
   align-items: center;
-
   padding: 40px 60px 0;
+  overflow: visible;
 `
 
 const Balances = styled.div`
