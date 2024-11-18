@@ -61,13 +61,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
 
   const toggleDiscreetMode = () => dispatch(discreetModeToggled())
 
-  const headerStyles = {
-    backgroundColor: useTransform(
-      scrollY,
-      [0, 100],
-      [colord(theme.bg.background1).alpha(0).toHex(), colord(theme.bg.tertiary).alpha(0.9).toHex()]
-    )
-  }
+  const gradientOpacity = useTransform(scrollY, [0, 100], [0, 1])
 
   const titleStyles = {
     opacity: useTransform(scrollY, [0, 100, 100], [0, 0, 1]),
@@ -79,82 +73,84 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
   const openWalletConnectModal = () => dispatch(openModal({ name: 'WalletConnectModal' }))
 
   return (
-    <AppHeaderStyled id="app-header" style={headerStyles} className={className} invisible={invisible}>
-      <Title style={titleStyles}>{title}</Title>
-      <HeaderButtons>
-        {networkStatus === 'offline' && (
-          <>
-            <OfflineIcon
-              tabIndex={0}
-              aria-label={offlineText}
-              data-tooltip-content={offlineText}
-              data-tooltip-id="default"
-            >
-              <WifiOff size={20} color={theme.global.alert} />
-            </OfflineIcon>
-
-            <VerticalDivider />
-          </>
-        )}
-
-        {children && (
-          <>
-            {children}
-            <VerticalDivider />
-          </>
-        )}
-
-        <CompactToggle
-          toggled={discreetMode}
-          onToggle={toggleDiscreetMode}
-          IconOn={EyeOff}
-          IconOff={Eye}
-          data-tooltip-id="default"
-          data-tooltip-content={t('Discreet mode')}
-          short
-        />
-        <VerticalDivider />
-
-        {isWalletUnlocked && (
-          <>
-            <Button
-              transparent
-              squared
-              short
-              role="secondary"
-              onClick={openWalletConnectModal}
-              aria-label="WalletConnect"
-              isHighlighted={activeSessions.length > 0}
-              data-tooltip-id="default"
-              data-tooltip-content={t('Connect wallet to dApp')}
-            >
-              <WalletConnectLogoStyled />
-            </Button>
-            <VerticalDivider />
-          </>
-        )}
-
-        {defaultAddress && !isPassphraseUsed && (
-          <>
-            <DefaultAddressSwitch />
-            <VerticalDivider />
-          </>
-        )}
-
-        <NetworkSwitch />
-      </HeaderButtons>
+    <AppHeaderStyled>
+      <GradientBackground style={{ opacity: gradientOpacity }} />
+      <AppHeaderContainer id="app-header" className={className}>
+        <Title style={titleStyles}>{title}</Title>
+        <HeaderButtons>
+          {networkStatus === 'offline' && (
+            <>
+              <OfflineIcon
+                tabIndex={0}
+                aria-label={offlineText}
+                data-tooltip-content={offlineText}
+                data-tooltip-id="default"
+              >
+                <WifiOff size={20} color={theme.global.alert} />
+              </OfflineIcon>
+              <VerticalDivider />
+            </>
+          )}
+          {children && (
+            <>
+              {children}
+              <VerticalDivider />
+            </>
+          )}
+          <CompactToggle
+            toggled={discreetMode}
+            onToggle={toggleDiscreetMode}
+            IconOn={EyeOff}
+            IconOff={Eye}
+            data-tooltip-id="default"
+            data-tooltip-content={t('Discreet mode')}
+            short
+          />
+          <VerticalDivider />
+          {isWalletUnlocked && (
+            <>
+              <Button
+                transparent
+                squared
+                short
+                role="secondary"
+                onClick={openWalletConnectModal}
+                aria-label="WalletConnect"
+                isHighlighted={activeSessions.length > 0}
+                data-tooltip-id="default"
+                data-tooltip-content={t('Connect wallet to dApp')}
+              >
+                <WalletConnectLogoStyled />
+              </Button>
+              <VerticalDivider />
+            </>
+          )}
+          {defaultAddress && !isPassphraseUsed && (
+            <>
+              <DefaultAddressSwitch />
+              <VerticalDivider />
+            </>
+          )}
+          <NetworkSwitch />
+        </HeaderButtons>
+      </AppHeaderContainer>
     </AppHeaderStyled>
   )
 }
 
 export default AppHeader
 
-const AppHeaderStyled = styled(motion.header)<Pick<AppHeader, 'invisible'>>`
+const AppHeaderStyled = styled(motion.header)`
   position: fixed;
   top: 0;
   right: 0;
   left: ${walletSidebarWidthPx}px;
 
+  z-index: 1;
+`
+
+const AppHeaderContainer = styled.div`
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -162,9 +158,17 @@ const AppHeaderStyled = styled(motion.header)<Pick<AppHeader, 'invisible'>>`
   height: ${appHeaderHeightPx}px;
   padding: 0 var(--spacing-4) 0 60px;
   gap: var(--spacing-1);
+`
 
-  backdrop-filter: ${({ invisible }) => (!invisible ? 'blur(10px)' : 'none')};
-  z-index: 1;
+const GradientBackground = styled(motion.div)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 130px;
+  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 25%, transparent)`};
+  pointer-events: none;
+  z-index: 0;
 `
 
 const OfflineIcon = styled.div`
