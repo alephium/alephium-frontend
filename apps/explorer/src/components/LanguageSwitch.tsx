@@ -22,6 +22,7 @@ import 'dayjs/locale/el'
 import 'dayjs/locale/de'
 import 'dayjs/locale/vi'
 import 'dayjs/locale/zh-cn'
+import 'dayjs/locale/it'
 
 import dayjs from 'dayjs'
 import i18next from 'i18next'
@@ -35,7 +36,7 @@ interface LanguageSwitchProps {
   className?: string
 }
 
-type Language = 'en' | 'fr' | 'id' | 'el' | 'de' | 'vi' | 'zh'
+type Language = 'en' | 'fr' | 'id' | 'el' | 'de' | 'vi' | 'zh' | 'it'
 
 interface LangItem {
   label: string
@@ -44,10 +45,11 @@ interface LangItem {
 
 const languageOptions: LangItem[] = [
   { label: 'English', value: 'en' },
-  { label: 'Français', value: 'fr' },
   { label: 'Bahasa Indonesia', value: 'id' },
-  { label: 'Ελληνικά', value: 'el' },
   { label: 'Deutsch', value: 'de' },
+  { label: 'Ελληνικά', value: 'el' },
+  { label: 'Français', value: 'fr' },
+  { label: 'Italiano', value: 'it' },
   { label: 'Tiếng Việt', value: 'vi' },
   { label: '简体中文', value: 'zh' }
 ]

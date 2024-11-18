@@ -25,6 +25,7 @@ import el from '../locales/el-GR/translation.json'
 import en from '../locales/en-US/translation.json'
 import fr from '../locales/fr-FR/translation.json'
 import id from '../locales/id-ID/translation.json'
+import it from '../locales/it-IT/translation.json'
 import vi from '../locales/vi-VN/translation.json'
 import zh from '../locales/zh-CN/translation.json'
 
@@ -39,9 +40,10 @@ i18next
       el: { translation: el },
       de: { translation: de },
       vi: { translation: vi },
-      zh: { translation: zh }
+      zh: { translation: zh },
+      it: { translation: it }
     },
-    supportedLngs: ['en', 'fr', 'id', 'el', 'de', 'vi', 'zh'],
+    supportedLngs: ['en', 'fr', 'id', 'el', 'de', 'vi', 'zh', 'it'],
     fallbackLng: 'en',
     detection: {
       lookupLocalStorage: 'language'
