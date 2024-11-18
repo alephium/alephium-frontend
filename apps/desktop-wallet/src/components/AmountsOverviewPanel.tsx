@@ -60,7 +60,7 @@ const AmountsOverviewPanel = ({
 
   return (
     <UnlockedWalletPanelStyled className={className}>
-      <AnimatedBackground height={400} />
+      <AnimatedBackground height={600} />
       <Panel>
         <Balances>
           <BalancesRow>

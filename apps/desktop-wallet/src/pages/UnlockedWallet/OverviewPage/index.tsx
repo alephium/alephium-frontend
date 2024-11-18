@@ -30,7 +30,7 @@ interface OverviewPageProps {
   className?: string
 }
 
-const maxPanelHeightInPx = 350
+const maxPanelHeightInPx = 500
 
 let wasChartAnimatedOnce = false
 
