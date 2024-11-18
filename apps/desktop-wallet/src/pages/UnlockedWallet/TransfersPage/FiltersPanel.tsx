@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -29,9 +28,7 @@ import MultiSelect from '@/components/Inputs/MultiSelect'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import SelectOptionWalletToken from '@/components/Inputs/SelectOptionWalletToken'
 import { useAppSelector } from '@/hooks/redux'
-import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
-import { appHeaderHeightPx } from '@/style/globalStyles'
 import { Address } from '@/types/addresses'
 import { TokenId } from '@/types/tokens'
 import { directionOptions } from '@/utils/transactions'
@@ -106,7 +103,7 @@ const FiltersPanel = ({
   }, [isLoadingFts, isLoadingTokensByType, selectedTokensIds, setSelectedTokensIds, sortedTokenIds])
 
   return (
-    <UnlockedWalletPanel className={className}>
+    <div className={className}>
       <FilterTiles>
         <Tile>
           <MultiSelect
@@ -157,20 +154,15 @@ const FiltersPanel = ({
           {t('Reset filters')}
         </Button>
       </Buttons>
-    </UnlockedWalletPanel>
+    </div>
   )
 }
 
 export default styled(FiltersPanel)`
-  border-top: 1px solid;
-  border-bottom: 1px solid;
-  border-color: ${({ theme }) => theme.border.primary};
   display: flex;
-  position: sticky;
+  flex: 1;
+  border-color: ${({ theme }) => theme.border.primary};
   justify-content: space-between;
-  top: ${appHeaderHeightPx}px;
-  background-color: ${({ theme }) => colord(theme.bg.secondary).alpha(0.9).toHex()};
-  backdrop-filter: blur(10px);
   z-index: 1;
 `
 
@@ -181,7 +173,7 @@ const FilterTiles = styled.div`
 `
 
 const FilterTile = styled.div`
-  padding: 10px;
+  padding: 5px 10px;
   border-right: 1px solid ${({ theme }) => theme.border.primary};
 `
 
