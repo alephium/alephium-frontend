@@ -45,13 +45,13 @@ interface LangItem {
 
 const languageOptions: LangItem[] = [
   { label: 'English', value: 'en' },
-  { label: 'Français', value: 'fr' },
   { label: 'Bahasa Indonesia', value: 'id' },
-  { label: 'Ελληνικά', value: 'el' },
   { label: 'Deutsch', value: 'de' },
+  { label: 'Ελληνικά', value: 'el' },
+  { label: 'Français', value: 'fr' },
+  { label: 'Italiano', value: 'it' },
   { label: 'Tiếng Việt', value: 'vi' },
-  { label: '简体中文', value: 'zh' },
-  { label: 'Italiano', value: 'it' }
+  { label: '简体中文', value: 'zh' }
 ]
 
 const LanguageSwitch: React.FC<LanguageSwitchProps> = ({ className }) => {
