@@ -28,7 +28,10 @@ if (!__DEV__) {
   ErrorUtils.setGlobalHandler((error, isFatal) => {
     console.error('A global error occurred:', error)
 
-    Sentry.captureException(new Error(error), { data: { isFatal } })
+    // See https://github.com/alephium/alephium-frontend/issues/972
+    if (error.code != -32600) {
+      Sentry.captureException(new Error(error), { data: { isFatal } })
+    }
 
     const url = `mailto:developer@alephium.org?subject=Crash report&body=${error}`
 
