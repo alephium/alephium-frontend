@@ -23,6 +23,7 @@ if (!__DEV__) {
   Sentry.init({
     dsn: 'https://d369e561c12a0bbbbe1ba386854363ff@o4508131914874880.ingest.de.sentry.io/4508131917430864',
     appHangTimeoutInterval: 5,
+    // See https://docs.sentry.io/platforms/react-native/configuration/filtering/
     beforeSend: (event) => {
       // See https://github.com/alephium/alephium-frontend/issues/927
       if (event.contexts?.device?.model?.includes('iPad Pro') && event.contexts?.device?.model_id?.includes('Mac')) {
