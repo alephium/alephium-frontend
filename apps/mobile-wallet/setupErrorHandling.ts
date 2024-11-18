@@ -21,7 +21,8 @@ import { Alert, Linking } from 'react-native'
 
 if (!__DEV__) {
   Sentry.init({
-    dsn: 'https://d369e561c12a0bbbbe1ba386854363ff@o4508131914874880.ingest.de.sentry.io/4508131917430864'
+    dsn: 'https://d369e561c12a0bbbbe1ba386854363ff@o4508131914874880.ingest.de.sentry.io/4508131917430864',
+    appHangTimeoutInterval: 5
   })
 
   ErrorUtils.setGlobalHandler((error, isFatal) => {
