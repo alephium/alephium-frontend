@@ -28,7 +28,7 @@ if (!__DEV__) {
   ErrorUtils.setGlobalHandler((error, isFatal) => {
     console.error('A global error occurred:', error)
 
-    Sentry.captureException(error, { data: { isFatal } })
+    Sentry.captureException(new Error(error), { data: { isFatal } })
 
     const url = `mailto:developer@alephium.org?subject=Crash report&body=${error}`
 
