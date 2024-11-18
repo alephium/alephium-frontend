@@ -106,7 +106,7 @@ export const validateAndRepareStoredWalletData = async (
               try {
                 await generateAndStoreWalletMetadata('My wallet', false)
               } catch (error) {
-                console.error(error)
+                if (__DEV__) console.error(error)
               } finally {
                 walletMetadata = await getWalletMetadata(false)
               }
