@@ -52,9 +52,7 @@ const SentTransactionSnackbarPopup = memo(({ txHash }: SentTransactionSnackbarPo
 
   useEffect(() => {
     if (sentTx?.status === 'confirmed') {
-      const timer = setTimeout(() => setHide(true), 5000)
-
-      return () => clearTimeout(timer)
+      setTimeout(() => setHide(true), 5000)
     }
   }, [sentTx?.status])
 
