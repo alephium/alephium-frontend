@@ -66,8 +66,8 @@ export const darkTheme: DefaultTheme = {
     secondary: '#161618',
     tertiary: '#141416',
     contrast: 'rgba(255, 255, 255, 1)',
-    background1: '#121214',
-    background2: '#0e0e10',
+    background1: '#111112',
+    background2: '#0e0e0f',
     hover: colord('#18181a').lighten(0.02).toHex(),
     highlight: '#27272a',
     accent: colord('#598bed').alpha(0.07).toHex()
@@ -90,7 +90,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: '0 0 50px rgb(0, 0, 0)'
   },
   global: {
-    accent: '#3c71d9',
+    accent: '#155ef9',
     complementary: '#d488eb',
     alert: '#ed4a34',
     valid: '#3ed282',

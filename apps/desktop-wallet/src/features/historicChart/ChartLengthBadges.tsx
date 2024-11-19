@@ -43,7 +43,7 @@ const ChartLengthBadges = memo(({ className }: ChartLengthBadgesProps) => {
         const isActive = length === chartLength
 
         return isLoadingHistoricData ? (
-          <SkeletonLoader key={length} height="25px" width="30px" style={{ marginTop: 6, marginBottom: 12 }} />
+          <SkeletonLoader key={length} height="25px" width="30px" style={{ marginTop: 20, marginBottom: 12 }} />
         ) : (
           hasHistoricBalances && (
             <ButtonStyled
