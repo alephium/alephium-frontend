@@ -1,5 +1,11 @@
 # @alephium/explorer
 
+## 1.10.10
+
+### Patch Changes
+
+- 803b7c3: Enable Italian translations
+
 ## 1.10.9
 
 ### Patch Changes
