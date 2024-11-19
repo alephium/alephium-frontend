@@ -25,7 +25,6 @@ import styled from 'styled-components'
 
 import queryClient from '@/api/queryClient'
 import ActionLink from '@/components/ActionLink'
-import Box from '@/components/Box'
 import Button from '@/components/Button'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
@@ -165,7 +164,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
     : 0
 
   return (
-    <Box className={className}>
+    <>
       <KeyValueInput
         label={t('Lock time')}
         description={t('Duration in minutes after which an idle wallet will lock automatically.')}
@@ -291,7 +290,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
           </ButtonStyled>
         }
       />
-    </Box>
+    </>
   )
 }
 

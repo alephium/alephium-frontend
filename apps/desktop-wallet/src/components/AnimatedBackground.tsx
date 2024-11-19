@@ -103,7 +103,7 @@ const SvgFilters = () => (
   <svg width="0" height="0" style={{ position: 'absolute' }}>
     <filter id="combinedFilter">
       <feGaussianBlur in="SourceGraphic" stdDeviation="80" result="blurred" />
-      <feTurbulence type="turbulence" baseFrequency="0.5" numOctaves="2" />
+      <feTurbulence type="turbulence" baseFrequency="1" numOctaves="2" />
       <feComposite in="noise" in2="blurred" operator="in" result="maskedNoise" />
       <feBlend in="blurred" in2="maskedNoise" mode="screen" />
     </filter>

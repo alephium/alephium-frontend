@@ -20,7 +20,6 @@ import { memo } from 'react'
 import styled from 'styled-components'
 
 import Button from '@/components/Button'
-import SkeletonLoader from '@/components/SkeletonLoader'
 import { ChartLength, chartLengths } from '@/features/historicChart/historicChartTypes'
 import { chartLengthChanged } from '@/features/historicChart/historicWorthChartActions'
 import useHistoricData from '@/features/historicChart/useHistoricData'
@@ -42,17 +41,18 @@ const ChartLengthBadges = memo(({ className }: ChartLengthBadgesProps) => {
       {chartLengths.map((length) => {
         const isActive = length === chartLength
 
-        return isLoadingHistoricData ? (
-          <SkeletonLoader key={length} height="25px" width="30px" style={{ marginTop: 20, marginBottom: 12 }} />
-        ) : (
+        return (
+          !isLoadingHistoricData &&
           hasHistoricBalances && (
             <ButtonStyled
               key={length}
-              role={isActive ? 'primary' : 'secondary'}
-              variant={isActive ? 'contrast' : 'default'}
+              role="primary"
+              variant="contrast"
+              style={{ opacity: isActive ? 0.8 : 0.3 }}
               onClick={() => handleChartLengthButtonClick(length)}
               short
               rounded
+              borderless
             >
               {length}
             </ButtonStyled>
