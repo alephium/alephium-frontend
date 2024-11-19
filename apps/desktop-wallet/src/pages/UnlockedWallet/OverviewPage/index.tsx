@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useState } from 'react'
 import styled from 'styled-components'
 
-import AmountsOverviewPanel from '@/components/AmountsOverviewPanel'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
+import WorthOverviewPanel from '@/components/WorthOverviewPanel'
 import { WalletTokensTabs } from '@/features/assetsLists/TokensTabs'
 import WalletLatestTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/WalletLatestTransactionsList'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
@@ -45,11 +45,11 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
   return (
     <UnlockedWalletPage className={className} onAnimationComplete={() => handleAnimationComplete()}>
       <UnlockedWalletPanel bottom top>
-        <AmountsOverviewPanel chartVisible={chartVisible} chartInitiallyHidden={!chartVisible}>
+        <WorthOverviewPanel chartVisible={chartVisible} chartInitiallyHidden={!chartVisible}>
           <Shortcuts>
             <ShortcutButtonsGroupWallet analyticsOrigin="overview_page" solidBackground />
           </Shortcuts>
-        </AmountsOverviewPanel>
+        </WorthOverviewPanel>
       </UnlockedWalletPanel>
       <UnlockedWalletPanel bottom>
         <WalletTokensTabsStyled maxHeightInPx={maxPanelHeightInPx} />

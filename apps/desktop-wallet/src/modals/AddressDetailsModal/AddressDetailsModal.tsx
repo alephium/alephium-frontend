@@ -20,10 +20,10 @@ import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import AmountsOverviewPanel from '@/components/AmountsOverviewPanel'
 import Box from '@/components/Box'
 import { ShortcutButtonsGroupAddress } from '@/components/Buttons/ShortcutButtons'
 import QRCode from '@/components/QRCode'
+import WorthOverviewPanel from '@/components/WorthOverviewPanel'
 import { AddressTokensTabs } from '@/features/assetsLists/TokensTabs'
 import { AddressModalProps } from '@/features/modals/modalTypes'
 import AddressTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/AddressTransactionsList'
@@ -43,9 +43,9 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
       header={<AddressDetailsModalHeader addressHash={addressHash} />}
       onAnimationComplete={() => setShowChart(true)}
     >
-      <AmountsOverviewPanelStyled addressHash={addressHash} chartVisible={showChart} chartInitiallyHidden>
+      <WorthOverviewPanelStyled addressHash={addressHash} chartVisible={showChart} chartInitiallyHidden>
         <QRCode value={addressHash} size={130} />
-      </AmountsOverviewPanelStyled>
+      </WorthOverviewPanelStyled>
 
       <Content>
         <Shortcuts>
@@ -62,7 +62,7 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
 
 export default AddressDetailsModal
 
-const AmountsOverviewPanelStyled = styled(AmountsOverviewPanel)`
+const WorthOverviewPanelStyled = styled(WorthOverviewPanel)`
   padding: 0;
 `
 
