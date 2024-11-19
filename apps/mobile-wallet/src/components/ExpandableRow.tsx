@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ChevronDown } from 'lucide-react-native'
 import { ReactNode, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
@@ -28,29 +27,30 @@ import AppText from '~/components/AppText'
 interface ExpandableRowProps {
   children: ReactNode
   title?: string
+  titleComponent?: ReactNode
   style?: StyleProp<ViewStyle>
 }
 
-const ExpandableRow = ({ children, title, style }: ExpandableRowProps) => {
+const ExpandableRow = ({ children, title, titleComponent, style }: ExpandableRowProps) => {
   const theme = useTheme()
-  const { t } = useTranslation()
 
   const [isExpanded, setIsExpanded] = useState(false)
 
   const toggleExpanded = () => setIsExpanded(!isExpanded)
 
   const collapsableSectionStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(isExpanded ? 1 : 0)
+    opacity: withTiming(isExpanded ? 1 : 0),
+    height: withTiming(isExpanded ? 'auto' : 0)
   }))
 
   const chevronStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: withTiming(isExpanded ? '180deg' : '0deg') }]
+    transform: [{ rotate: withTiming(isExpanded ? '-180deg' : '-90deg') }]
   }))
 
   return (
     <View style={style}>
       <Header onPress={toggleExpanded}>
-        <Title>{title ?? t('Advanced options')}</Title>
+        {titleComponent ?? <Title>{title}</Title>}
         <Animated.View style={chevronStyle}>
           <ChevronDownStyled size={20} color={theme.font.primary} />
         </Animated.View>

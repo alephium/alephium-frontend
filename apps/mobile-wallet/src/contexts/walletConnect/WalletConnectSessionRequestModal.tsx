@@ -43,6 +43,7 @@ import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
+import ExpandableRow from '~/components/ExpandableRow'
 import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
 import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
@@ -321,9 +322,17 @@ const WalletConnectSessionRequestModal = <T extends SessionRequestData>({
           )}
 
           {(requestData.type === 'deploy-contract' || requestData.type === 'call-contract') && (
-            <Row isVertical title={t('Bytecode')} titleColor="secondary">
-              <AppText>{requestData.wcData.bytecode}</AppText>
-            </Row>
+            <ExpandableRow
+              titleComponent={
+                <AppTextStyled medium color="secondary">
+                  {t('Bytecode')}
+                </AppTextStyled>
+              }
+            >
+              <Row isVertical>
+                <AppText>{requestData.wcData.bytecode}</AppText>
+              </Row>
+            </ExpandableRow>
           )}
           {requestData.type === 'sign-unsigned-tx' && (
             <>
@@ -384,4 +393,8 @@ const FeeBox = styled.View`
 const DAppIcon = styled(Image)`
   width: 50px;
   height: 50px;
+`
+
+const AppTextStyled = styled(AppText)`
+  padding-left: 14px;
 `
