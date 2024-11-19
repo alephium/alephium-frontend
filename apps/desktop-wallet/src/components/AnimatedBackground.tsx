@@ -58,39 +58,38 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          opacity: 0.5,
-          top: '-30%'
+          opacity: 0.5
         }}
       >
         <Circle
           custom={80}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: '#6abce8', width: 320, height: 180 }}
+          style={{ backgroundColor: '#5fcd9d', width: 720, height: 180 }}
         />
         <Circle
           custom={120}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: '#2930ff', width: 380, height: 140 }}
+          style={{ backgroundColor: '#ffc6a0', width: 1080, height: 240 }}
         />
         <Circle
           custom={100}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: '#0762ff', width: 360, height: 120 }}
+          style={{ backgroundColor: '#ffba9e', width: 960, height: 220 }}
         />
         <Circle
           custom={140}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: '#00a2ff', width: 500, height: 260 }}
+          style={{ backgroundColor: '#006eff', width: 1000, height: 260 }}
         />
         <Circle
           custom={60}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: '#00eeff', width: 240, height: 200 }}
+          style={{ backgroundColor: '#00b3ff', width: 540, height: 200 }}
         />
       </motion.div>
       <SvgFilters />
@@ -103,8 +102,8 @@ export default AnimatedBackground
 const SvgFilters = () => (
   <svg width="0" height="0" style={{ position: 'absolute' }}>
     <filter id="combinedFilter">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="50" result="blurred" />
-      <feTurbulence type="turbulence" baseFrequency="0.8" numOctaves="2" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="80" result="blurred" />
+      <feTurbulence type="turbulence" baseFrequency="0.5" numOctaves="2" />
       <feComposite in="noise" in2="blurred" operator="in" result="maskedNoise" />
       <feBlend in="blurred" in2="maskedNoise" mode="screen" />
     </filter>
