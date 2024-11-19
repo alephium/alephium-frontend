@@ -136,7 +136,7 @@ const HistoricWorthChart = memo(
     const xAxisDatesData = chartData.map(({ date }) => date)
     const yAxisWorthData = chartData.map(({ worth }) => worth)
 
-    const chartColor = theme.font.secondary
+    const chartColor = theme.font.primary
 
     const chartOptions = getChartOptions(chartColor, xAxisDatesData, {
       mouseMove(e, chart, options) {
@@ -170,7 +170,7 @@ const ChartOuterContainer = styled(motion.div)<Pick<HistoricWorthChartProps, 'ch
   align-items: center;
   right: 0;
   left: 0;
-  margin: var(--spacing-2) 0 var(--spacing-6) 0;
+  margin-bottom: var(--spacing-8);
 
   ${({ chartInitiallyHidden }) =>
     chartInitiallyHidden &&
@@ -189,7 +189,7 @@ const ChartInnerContainer = styled(motion.div)`
 const ChartWrapper = styled.div`
   width: 100%;
   height: ${historicWorthChartHeight}px;
-  opacity: 0.3;
+  opacity: 0.5;
   transition: opacity 0.2s ease-out;
 
   &:hover {
