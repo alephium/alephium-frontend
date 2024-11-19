@@ -43,12 +43,7 @@ export const getChartOptions = (
     },
     events,
     animations: {
-      enabled: false,
-      easing: 'easeout',
-      speed: 500,
-      dynamicAnimation: {
-        enabled: false
-      }
+      enabled: false
     }
   },
   xaxis: {
@@ -60,14 +55,21 @@ export const getChartOptions = (
     axisBorder: {
       show: false
     },
-    tooltip: {
-      enabled: false
-    },
-    labels: {
-      show: false
-    },
     crosshairs: {
       show: false
+    }
+  },
+  tooltip: {
+    enabled: true,
+    x: {
+      show: true,
+      format: 'dd MMM'
+    },
+    y: {
+      formatter: undefined,
+      title: {
+        formatter: (seriesName) => seriesName
+      }
     }
   },
   yaxis: {
@@ -84,12 +86,6 @@ export const getChartOptions = (
     curve: 'smooth',
     colors: [chartColor],
     width: 2
-  },
-  tooltip: {
-    custom: () => null,
-    fixed: {
-      enabled: true
-    }
   },
   markers: {
     colors: [chartColor],

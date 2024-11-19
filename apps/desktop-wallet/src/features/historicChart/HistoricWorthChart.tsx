@@ -136,8 +136,7 @@ const HistoricWorthChart = memo(
     const xAxisDatesData = chartData.map(({ date }) => date)
     const yAxisWorthData = chartData.map(({ worth }) => worth)
 
-    const worthHasGoneUp = (firstItem?.worth ?? 0) < latestWorth
-    const chartColor = worthHasGoneUp ? theme.global.valid : theme.global.alert
+    const chartColor = theme.font.secondary
 
     const chartOptions = getChartOptions(chartColor, xAxisDatesData, {
       mouseMove(e, chart, options) {
@@ -193,10 +192,7 @@ const ChartWrapper = styled.div`
   opacity: 0.3;
   transition: opacity 0.2s ease-out;
 
-  filter: saturate(0);
-
   &:hover {
     opacity: 1;
-    filter: saturate(1);
   }
 `

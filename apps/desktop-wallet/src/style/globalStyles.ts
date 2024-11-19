@@ -94,9 +94,6 @@ export const GlobalStyle = createGlobalStyle`
     transition: none !important;
   }
 
-  .apexcharts-tooltip {
-    display: none !important;
-  }
 `
 
 // Breakpoints

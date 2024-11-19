@@ -60,7 +60,7 @@ export const WalletNFTsGrid = (props: TokensTabsBaseProps) => {
   return (
     <NFTsGrid
       {...props}
-      columns={5}
+      columns={6}
       nftIds={nftIds}
       isLoading={isLoading}
       placeholderText={t("The wallet doesn't have any NFTs. NFTs of all your addresses will appear here.")}
