@@ -182,8 +182,8 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
               label: currentLockTime ? `${currentLockTime} ${t('Minutes')}` : t('Off')
             }}
             noMargin
-            title={t('Lock time')}
             heightSize="small"
+            title={t('Lock time')}
           />
         }
       />
@@ -198,8 +198,8 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             onSelect={handleThemeSelect}
             controlledValue={themeOptions.find((l) => l.value === theme)}
             noMargin
-            title={t('Theme')}
             heightSize="small"
+            title={t('Theme')}
           />
         }
       />
@@ -230,8 +230,8 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             onSelect={handleLanguageChange}
             controlledValue={languageOptions.find((l) => l.value === language)}
             noMargin
-            title={t('Language')}
             heightSize="small"
+            title={t('Language')}
           />
         }
       >
@@ -259,8 +259,8 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             onSelect={handleFiatCurrencyChange}
             controlledValue={fiatCurrencyOptions.find((l) => l.value === fiatCurrency)}
             noMargin
-            title={t('Currency')}
             heightSize="small"
+            title={t('Currency')}
           />
         }
       />
@@ -286,7 +286,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
         label={t('Clear cache')}
         description={t('Deletes cached wallet and WalletConnect data.')}
         InputComponent={
-          <ButtonStyled role="secondary" Icon={Eraser} wide onClick={handleClearCacheButtonPress}>
+          <ButtonStyled role="secondary" Icon={Eraser} wide onClick={handleClearCacheButtonPress} short>
             {t('Clear')}
           </ButtonStyled>
         }

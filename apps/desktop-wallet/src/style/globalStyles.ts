@@ -49,8 +49,8 @@ export const GlobalStyle = createGlobalStyle`
     --radius-tiny: 4px;
     --radius-small: 7px;
     --radius-medium: 9px;
-    --radius-big: 12px;
-    --radius-huge: 16px;
+    --radius-big: 14px;
+    --radius-huge: 22px;
     --radius-full: 100%;
 
     --fontWeight-normal: 400;
@@ -58,8 +58,8 @@ export const GlobalStyle = createGlobalStyle`
     --fontWeight-semiBold: 600;
     --fontWeight-bold: 700;
 
-    --inputHeight: 55px;
-    --tableCellHeight: 47px;
+    --inputHeight: 50px;
+    --tableCellHeight: 46px;
     --toggleWidth: 52px;
   }
 

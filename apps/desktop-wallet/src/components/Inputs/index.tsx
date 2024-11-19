@@ -69,10 +69,11 @@ export const inputDefaultStyle = (
   largeText?: boolean
 ) => css`
   background-image: none;
-  height: ${heightSize === 'small' ? '50px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
+  height: ${heightSize === 'small' ? '38px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
   width: 100%;
   border-radius: var(--radius-big);
-  background-color: ${({ theme }) => (isContrasted && theme.name === 'dark' ? theme.bg.background2 : theme.bg.primary)};
+  background-color: ${({ theme }) =>
+    isContrasted && theme.name === 'dark' ? theme.bg.background2 : theme.bg.highlight};
   border: 1px solid ${({ theme }) => theme.border.primary};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 45px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};

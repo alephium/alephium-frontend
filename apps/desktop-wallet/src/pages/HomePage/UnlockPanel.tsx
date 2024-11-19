@@ -115,7 +115,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
         >
           {t('Unlock')}
         </ButtonStyled>
-        <ButtonStyled onClick={onNewWalletLinkClick} role="secondary">
+        <ButtonStyled onClick={onNewWalletLinkClick} role="secondary" tall>
           {t('Import or create a wallet')}
         </ButtonStyled>
       </ButtonsSection>
@@ -138,7 +138,7 @@ const ButtonsSection = styled(SectionStyled)`
 `
 
 const ButtonStyled = styled(Button)`
-  margin-top: 20px;
+  margin-top: 10px;
 `
 
 const WalletPassphraseStyled = styled(WalletPassphrase)`
