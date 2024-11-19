@@ -191,115 +191,112 @@ const TokensAmountInputs = ({
   }
 
   return (
-    <InputsSection
-      title={t(assetAmounts.length < 2 ? 'Asset' : 'Assets')}
-      HeaderActions={
-        canAddMultipleAssets && (
-          <AddAssetSection>
-            <ActionLink Icon={Plus} onClick={handleAddAssetClick} withBackground iconPosition="left">
-              {t('Add asset')}
-            </ActionLink>
-          </AddAssetSection>
-        )
-      }
-      className={className}
-    >
-      <AssetAmounts ref={selectedValueRef}>
-        {assetAmounts.map(({ id, amountInput = '' }, index) => {
-          const tokenBalances = tokensBalances.find((token) => token.id === id)
+    <>
+      <InputsSection title={t(assetAmounts.length < 2 ? 'Asset' : 'Assets')} className={className}>
+        <AssetAmounts ref={selectedValueRef}>
+          {assetAmounts.map(({ id, amountInput = '' }, index) => {
+            const tokenBalances = tokensBalances.find((token) => token.id === id)
 
-          if (!tokenBalances) return
+            if (!tokenBalances) return
 
-          const ft = listedFts.find((token) => token.id === id) ?? unlistedFts.find((token) => token.id === id)
+            const ft = listedFts.find((token) => token.id === id) ?? unlistedFts.find((token) => token.id === id)
 
-          // TODO: If ALPH, subtract dust for each other token, possibly by querying the node `/addresses/{address}/utxos`
-          const availableHumanReadableAmount = toHumanReadableAmount(
-            tokenBalances.availableBalance ?? BigInt(0),
-            ft?.decimals ?? 0
-          )
+            // TODO: If ALPH, subtract dust for each other token, possibly by querying the node `/addresses/{address}/utxos`
+            const availableHumanReadableAmount = toHumanReadableAmount(
+              tokenBalances.availableBalance ?? BigInt(0),
+              ft?.decimals ?? 0
+            )
 
-          return (
-            <BoxStyled key={id}>
-              <AssetSelect
-                onMouseDown={() => handleOpenAddressTokensSelectModal(index)}
-                onKeyDown={(e) => onEnterOrSpace(e, () => handleOpenAddressTokensSelectModal(index))}
-              >
-                <SelectInput
-                  className={className}
-                  disabled={disabled || !allowMultiple || !canAddMultipleAssets}
-                  id={id}
+            return (
+              <BoxStyled key={id}>
+                <AssetSelect
+                  onMouseDown={() => handleOpenAddressTokensSelectModal(index)}
+                  onKeyDown={(e) => onEnterOrSpace(e, () => handleOpenAddressTokensSelectModal(index))}
                 >
-                  <AssetLogo tokenId={id} size={20} />
-                  <AssetName>
-                    <Truncate>
-                      <SelectOptionTokenName tokenId={id} />
-                    </Truncate>
-                  </AssetName>
-                  {!disabled && (
-                    <SelectVerticalDots>
-                      <MoreVertical size={16} />
-                    </SelectVerticalDots>
-                  )}
-                </SelectInput>
-              </AssetSelect>
+                  <SelectInput
+                    className={className}
+                    disabled={disabled || !allowMultiple || !canAddMultipleAssets}
+                    id={id}
+                  >
+                    <AssetLogo tokenId={id} size={20} />
+                    <AssetName>
+                      <Truncate>
+                        <SelectOptionTokenName tokenId={id} />
+                      </Truncate>
+                    </AssetName>
+                    {!disabled && (
+                      <SelectVerticalDots>
+                        <MoreVertical size={16} />
+                      </SelectVerticalDots>
+                    )}
+                  </SelectInput>
+                </AssetSelect>
 
-              {!nftIds.includes(id) && (
-                <>
-                  <HorizontalDividerStyled />
+                {!nftIds.includes(id) && (
+                  <>
+                    <HorizontalDividerStyled />
 
-                  <AssetAmountRow>
-                    <AssetAmountInput
-                      value={amountInput}
-                      onChange={(e) => handleTokenAmountChange(index, e.target.value)}
-                      onClick={() => setSelectedTokenRowIndex(index)}
-                      onMouseDown={() => setSelectedTokenRowIndex(index)}
-                      onKeyDown={(e) => onEnterOrSpace(e, () => setSelectedTokenRowIndex(index))}
-                      type="number"
-                      min={id === ALPH.id ? minAmountInAlph : 0}
-                      max={availableHumanReadableAmount}
-                      aria-label={t('Amount')}
-                      label={`${t('Amount')} ${ft ? `(${ft.symbol})` : ''}`}
-                      error={errors[index]}
-                    />
+                    <AssetAmountRow>
+                      <AssetAmountInput
+                        value={amountInput}
+                        onChange={(e) => handleTokenAmountChange(index, e.target.value)}
+                        onClick={() => setSelectedTokenRowIndex(index)}
+                        onMouseDown={() => setSelectedTokenRowIndex(index)}
+                        onKeyDown={(e) => onEnterOrSpace(e, () => setSelectedTokenRowIndex(index))}
+                        type="number"
+                        min={id === ALPH.id ? minAmountInAlph : 0}
+                        max={availableHumanReadableAmount}
+                        aria-label={t('Amount')}
+                        label={`${t('Amount')} ${ft ? `(${ft.symbol})` : ''}`}
+                        error={errors[index]}
+                      />
 
-                    <AvailableAmountColumn>
-                      <AvailableAmount tabIndex={0}>
-                        <Amount
-                          tokenId={id}
-                          value={tokenBalances.availableBalance}
-                          nbOfDecimalsToShow={4}
-                          color={theme.font.secondary}
-                          isLoading={isLoadingTokensBalances}
-                        />
-                        <span> {t('Available').toLowerCase()}</span>
-                      </AvailableAmount>
-                      <ActionLink onClick={() => handleTokenAmountChange(index, availableHumanReadableAmount)}>
-                        {t('Use max amount')}
-                      </ActionLink>
-                    </AvailableAmountColumn>
-                  </AssetAmountRow>
-                </>
-              )}
-              {assetAmounts.length > 1 && <DeleteButton onClick={() => handleRemoveAssetClick(index)} />}
-            </BoxStyled>
-          )
-        })}
-      </AssetAmounts>
-      <ModalPortal>
-        {isAssetSelectModalOpen && selectedOption && remainingAvailableAssetsOptions.length > 0 && (
-          <SelectOptionsModal
-            title={t('Select an asset')}
-            options={remainingAvailableAssetsOptions}
-            selectedOption={selectedOption}
-            setValue={selectAsset}
-            onClose={handleAssetSelectModalClose}
-            parentSelectRef={selectedValueRef}
-            optionRender={renderOption}
-            isSearchable
-          />
-        )}
-      </ModalPortal>
-    </InputsSection>
+                      <AvailableAmountColumn>
+                        <AvailableAmount tabIndex={0}>
+                          <Amount
+                            tokenId={id}
+                            value={tokenBalances.availableBalance}
+                            nbOfDecimalsToShow={4}
+                            color={theme.font.secondary}
+                            isLoading={isLoadingTokensBalances}
+                          />
+                          <span> {t('Available').toLowerCase()}</span>
+                        </AvailableAmount>
+                        <ActionLink onClick={() => handleTokenAmountChange(index, availableHumanReadableAmount)}>
+                          {t('Use max amount')}
+                        </ActionLink>
+                      </AvailableAmountColumn>
+                    </AssetAmountRow>
+                  </>
+                )}
+                {assetAmounts.length > 1 && <DeleteButton onClick={() => handleRemoveAssetClick(index)} />}
+              </BoxStyled>
+            )
+          })}
+        </AssetAmounts>
+        <ModalPortal>
+          {isAssetSelectModalOpen && selectedOption && remainingAvailableAssetsOptions.length > 0 && (
+            <SelectOptionsModal
+              title={t('Select an asset')}
+              options={remainingAvailableAssetsOptions}
+              selectedOption={selectedOption}
+              setValue={selectAsset}
+              onClose={handleAssetSelectModalClose}
+              parentSelectRef={selectedValueRef}
+              optionRender={renderOption}
+              isSearchable
+            />
+          )}
+        </ModalPortal>
+      </InputsSection>
+      {canAddMultipleAssets && (
+        <AddAssetSection>
+          <ActionLink Icon={Plus} onClick={handleAddAssetClick} withBackground iconPosition="left">
+            {t('Add asset')}
+          </ActionLink>
+        </AddAssetSection>
+      )}
+    </>
   )
 }
 
