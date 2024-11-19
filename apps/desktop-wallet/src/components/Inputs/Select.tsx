@@ -293,13 +293,9 @@ export function SelectOptionsModal<T extends OptionValue>({
   // We hide instead of simply not rendering filtered options to avoid changing the height/width of the modal when
   // filtering. When the size of the modal depends on its contents, its size might change when filtering some options
   // out, unless its size is fixed.
-  const [visibleOptions, invisibleOptions] = showOnly
-    ? partition(options, (option) => showOnly.includes(option.value))
-    : [options, []]
+  const [visibleOptions] = showOnly ? partition(options, (option) => showOnly.includes(option.value)) : [options, []]
   const isEmpty = options.length === 0 && emptyListPlaceholder
   const emptySearchResults = visibleOptions.length === 0 && onSearchInput
-  // To display the message without changing the height, remove one of the invisible options
-  if (emptySearchResults) invisibleOptions.pop()
 
   const handleOptionSelect = useCallback(
     (value: T) => {
@@ -384,14 +380,6 @@ export function SelectOptionsModal<T extends OptionValue>({
           )
         })}
         {ListBottomComponent && <div onClick={onClose}>{ListBottomComponent}</div>}
-        {invisibleOptions.map((option) => {
-          const isSelected = option.value === selectedOption?.value
-          return (
-            <OptionItem key={option.value} selected={isSelected} invisible>
-              {optionRender ? optionRender(option, isSelected) : option.label}
-            </OptionItem>
-          )
-        })}
       </OptionSelect>
     </Popup>
   )
