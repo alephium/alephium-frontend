@@ -49,11 +49,12 @@ const AddressesPage = () => {
     <UnlockedWalletPage
       title={t('Addresses & contacts')}
       subtitle={t('Easily organize your addresses and your contacts for a more serene transfer experience.')}
+      BottomComponent={
+        <TabBarPanel ref={tabsRowRef}>
+          <TabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
+        </TabBarPanel>
+      }
     >
-      <TabBarPanel ref={tabsRowRef}>
-        <TabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
-      </TabBarPanel>
-
       <TabContent>
         <TabPanel>
           <TabAnimation

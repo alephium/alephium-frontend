@@ -22,13 +22,13 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import AnimatedBackground from '@/components/AnimatedBackground'
+import Box from '@/components/Box'
 import ChartLengthBadges from '@/features/historicChart/ChartLengthBadges'
 import FiatDeltaPercentage from '@/features/historicChart/FiatDeltaPercentage'
 import { DataPoint } from '@/features/historicChart/historicChartTypes'
 import HistoricWorthChart from '@/features/historicChart/HistoricWorthChart'
 import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
 import WalletWorth from '@/pages/UnlockedWallet/OverviewPage/WalletWorth'
-import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 
 interface AmountsOverviewPanelProps {
   addressHash?: string
@@ -59,7 +59,7 @@ const AmountsOverviewPanel = ({
   const isHoveringChart = hoveredDataPointWorth !== undefined
 
   return (
-    <UnlockedWalletPanelStyled className={className}>
+    <AmountsOverviewPanelStyled className={className}>
       <AnimatedBackground height={600} />
       <Panel>
         <Balances>
@@ -96,16 +96,15 @@ const AmountsOverviewPanel = ({
         chartVisible={chartVisible}
         chartInitiallyHidden={chartInitiallyHidden}
       />
-    </UnlockedWalletPanelStyled>
+    </AmountsOverviewPanelStyled>
   )
 }
 
 export default AmountsOverviewPanel
 
-const UnlockedWalletPanelStyled = styled(UnlockedWalletPanel)`
+const AmountsOverviewPanelStyled = styled(Box)`
   position: relative;
-  padding: 0;
-  overflow: visible;
+  overflow: hidden;
 `
 
 const Panel = styled.div`
