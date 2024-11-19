@@ -80,7 +80,7 @@ export default TabBar
 
 const TabBarStyled = styled.div`
   display: flex;
-  height: 55px;
+  height: 48px;
 `
 
 export const Tab = styled.div<{ isActive: boolean }>`
@@ -91,8 +91,6 @@ export const Tab = styled.div<{ isActive: boolean }>`
   justify-content: center;
   align-items: center;
   background-color: ${({ isActive, theme }) => (isActive ? theme.bg.background1 : 'transparent')};
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  border-bottom: none;
   cursor: pointer;
   font-size: 14px;
   font-weight: var(--fontWeight-semiBold);
@@ -106,10 +104,6 @@ export const Tab = styled.div<{ isActive: boolean }>`
       : css`
           color: ${theme.font.tertiary};
         `}
-
-  &:not(:first-child) {
-    border-left: none;
-  }
 
   &:hover {
     color: ${({ theme }) => theme.font.primary};

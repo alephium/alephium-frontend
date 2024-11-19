@@ -24,7 +24,6 @@ import styled from 'styled-components'
 import AnimatedBackground from '@/components/AnimatedBackground'
 import Box from '@/components/Box'
 import ChartLengthBadges from '@/features/historicChart/ChartLengthBadges'
-import FiatDeltaPercentage from '@/features/historicChart/FiatDeltaPercentage'
 import { DataPoint } from '@/features/historicChart/historicChartTypes'
 import HistoricWorthChart from '@/features/historicChart/HistoricWorthChart'
 import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
@@ -72,15 +71,6 @@ const WorthOverviewPanel = ({
               ) : (
                 <WalletWorth overrideWorth={hoveredDataPointWorth} />
               )}
-
-              <FiatDeltaOpacityContainer>
-                {isHoveringChart && (
-                  <FiatDeltaPercentage
-                    worthInBeginningOfChart={worthInBeginningOfChart}
-                    hoveredDataPointWorth={hoveredDataPointWorth}
-                  />
-                )}
-              </FiatDeltaOpacityContainer>
             </BalancesColumn>
           </BalancesRow>
         </Balances>

@@ -22,7 +22,7 @@ import resets from '@/style/resets'
 import tags from '@/style/tags'
 
 export const appHeaderHeightPx = 60
-export const walletSidebarWidthPx = 75
+export const walletSidebarWidthPx = 68
 export const messagesLeftMarginPx = 70
 
 const electronWindowDimensions = `
@@ -50,7 +50,7 @@ export const GlobalStyle = createGlobalStyle`
     --radius-small: 7px;
     --radius-medium: 9px;
     --radius-big: 14px;
-    --radius-huge: 22px;
+    --radius-huge: 24px;
     --radius-full: 100%;
 
     --fontWeight-normal: 400;

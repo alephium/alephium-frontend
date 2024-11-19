@@ -27,25 +27,19 @@ const TableTabBar = <T extends string>(props: TabBarProps<T>) => (
 export default TableTabBar
 
 const TableTabBarStyled = styled(TabBar)`
-  background-color: ${({ theme }) => theme.bg.secondary};
+  margin: 12px;
+  gap: 10px;
 ` as typeof TabBar
 
 const TableTab = styled(Tab)`
   min-width: 60px;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.primary : theme.bg.tertiary)};
+  border-radius: var(--radius-big);
+  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.highlight : theme.bg.primary)};
+  overflow: hidden;
 
   ${({ isActive, theme }) =>
     isActive &&
     css`
       border-bottom: 1px solid transparent;
     `}
-
-  &:not(:last-child) {
-    border-right: 1px solid ${({ theme }) => theme.border.primary};
-  }
-
-  &:first-child,
-  &:last-child {
-    border-radius: 0;
-  }
 `

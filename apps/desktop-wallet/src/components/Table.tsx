@@ -49,8 +49,8 @@ export default Table
 const TableWrapper = styled(motion.div)<Pick<TableProps, 'minWidth'>>`
   width: 100%;
   overflow: auto;
-  border-radius: var(--radius-big);
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  border-radius: var(--radius-huge);
+  border: 1px solid ${({ theme }) => (theme.name === 'light' ? theme.border.primary : 'tranparent')};
 
   background-color: ${({ theme }) => theme.bg.primary};
   box-shadow: ${({ theme }) => theme.shadow.primary};

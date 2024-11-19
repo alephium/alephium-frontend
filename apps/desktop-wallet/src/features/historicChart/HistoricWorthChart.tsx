@@ -189,10 +189,10 @@ const ChartInnerContainer = styled(motion.div)`
 const ChartWrapper = styled.div`
   width: 100%;
   height: ${historicWorthChartHeight}px;
-  opacity: 0.5;
+  opacity: 0.3;
   transition: opacity 0.2s ease-out;
 
   &:hover {
-    opacity: 1;
+    opacity: 0.8;
   }
 `

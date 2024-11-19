@@ -140,7 +140,7 @@ export const UnlockedWalletPanel = styled.div<{
   ${({ bottom }) =>
     bottom &&
     css`
-      padding-bottom: 60px;
+      padding-bottom: 40px;
     `}
 
   ${({ backgroundColor }) =>
@@ -179,8 +179,7 @@ const CurrentWalletInitials = styled(motion.div)`
   align-items: center;
   justify-content: center;
   font-weight: var(--fontWeight-semiBold);
-  background-color: ${({ theme }) => theme.bg.primary};
-  box-shadow: ${({ theme }) => theme.shadow.primary};
+  background-color: ${({ theme }) => theme.bg.highlight};
   overflow: hidden;
 
   &:hover {

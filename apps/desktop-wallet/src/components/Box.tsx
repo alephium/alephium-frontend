@@ -21,7 +21,8 @@ import styled from 'styled-components'
 
 const Box = styled(motion.div)`
   background-color: ${({ theme }) => theme.bg.primary};
-  border-radius: var(--radius-big);
+  border: 1px solid ${({ theme }) => (theme.name === 'light' ? theme.border.primary : 'tranparent')};
+  border-radius: var(--radius-huge);
   width: 100%;
 `
 

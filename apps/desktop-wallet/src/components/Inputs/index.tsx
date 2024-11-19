@@ -90,7 +90,6 @@ export const inputDefaultStyle = (
 
   &:focus {
     background-color: ${({ theme }) => theme.bg.primary};
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.global.accent};
     border: 1px solid ${({ theme }) => theme.global.accent};
   }
 

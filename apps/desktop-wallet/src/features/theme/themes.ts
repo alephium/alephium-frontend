@@ -22,12 +22,12 @@ import { DefaultTheme } from 'styled-components'
 export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
-    primary: '#fcfdff',
-    secondary: '#fbfbfb',
+    primary: '#fff',
+    secondary: '#fcfcfc',
     tertiary: '#f9f9f9',
     contrast: '#000',
-    background1: '#f7f7f7',
-    background2: '#f0f0f0',
+    background1: '#fcfcfc',
+    background2: '#fafafa',
     hover: colord('#ffffff').darken(0.015).toHex(),
     highlight: '#ffffff',
     accent: colord('#598bed').alpha(0.05).toHex()
@@ -41,8 +41,8 @@ export const lightTheme: DefaultTheme = {
     highlight: '#d4a10d'
   },
   border: {
-    primary: '#e7e7e7',
-    secondary: '#f0f0f0'
+    primary: '#f2f2f2',
+    secondary: '#f5f5f5'
   },
   shadow: {
     primary: '0 1px 1px rgba(0, 0, 0, 0.03)',
@@ -81,8 +81,8 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f0d590'
   },
   border: {
-    primary: '#232325',
-    secondary: '#202022'
+    primary: '#272729',
+    secondary: '#1a1a1c'
   },
   shadow: {
     primary: '0 2px 3px rgba(0, 0, 0, 0.3)',

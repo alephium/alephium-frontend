@@ -85,7 +85,7 @@ export const getChartOptions = (
   stroke: {
     curve: 'smooth',
     colors: [chartColor],
-    width: 2
+    width: 1
   },
   markers: {
     colors: [chartColor],
