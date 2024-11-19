@@ -57,6 +57,7 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
       title={t('Transfers')}
       subtitle={t('Browse your transaction history. Execute new transfers easily.')}
       className={className}
+      borderBottom
       BottomComponent={
         <FilterPanelContainer>
           <FiltersPanel

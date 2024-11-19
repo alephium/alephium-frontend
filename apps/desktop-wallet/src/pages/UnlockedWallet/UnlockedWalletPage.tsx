@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion, MotionProps } from 'framer-motion'
 import { ReactNode } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { fadeIn } from '@/animations'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
@@ -27,14 +27,22 @@ import { appHeaderHeightPx } from '@/style/globalStyles'
 interface UnlockedWalletPageProps extends MotionProps {
   title?: string
   subtitle?: string
+  borderBottom?: boolean
   BottomComponent?: ReactNode
   className?: string
 }
 
-const UnlockedWalletPage: FC<UnlockedWalletPageProps> = ({ title, subtitle, BottomComponent, children, ...props }) => (
+const UnlockedWalletPage: FC<UnlockedWalletPageProps> = ({
+  title,
+  subtitle,
+  borderBottom,
+  BottomComponent,
+  children,
+  ...props
+}) => (
   <motion.div {...fadeIn} {...props}>
     {(title || subtitle) && (
-      <PageHeader>
+      <PageHeader borderBottom={borderBottom}>
         <TitleContainer style={{ marginBottom: BottomComponent ? 0 : 50 }}>
           {title && <PageTitle>{title}</PageTitle>}
           {subtitle && <PageSubtitle>{subtitle}</PageSubtitle>}
@@ -51,13 +59,17 @@ export default styled(UnlockedWalletPage)`
   padding-top: ${appHeaderHeightPx}px;
 `
 
-const PageHeader = styled(UnlockedWalletPanel)`
+const PageHeader = styled(UnlockedWalletPanel)<{ borderBottom?: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 40px;
   margin-top: 35px;
-  margin-left: var(--spacing-4);
+  ${({ borderBottom }) =>
+    borderBottom &&
+    css`
+      border-bottom: 1px solid ${({ theme }) => theme.border.primary};
+    `};
 `
 
 const TitleContainer = styled.div`

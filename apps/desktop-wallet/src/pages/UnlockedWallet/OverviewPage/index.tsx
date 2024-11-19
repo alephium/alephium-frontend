@@ -44,15 +44,17 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
 
   return (
     <UnlockedWalletPage className={className} onAnimationComplete={() => handleAnimationComplete()}>
-      <AmountsOverviewPanel chartVisible={chartVisible} chartInitiallyHidden={!chartVisible}>
-        <Shortcuts>
-          <ShortcutButtonsGroupWallet analyticsOrigin="overview_page" solidBackground />
-        </Shortcuts>
-      </AmountsOverviewPanel>
       <UnlockedWalletPanel bottom top>
-        <AssetAndAddressesRow>
-          <WalletTokensTabsStyled maxHeightInPx={maxPanelHeightInPx} />
-        </AssetAndAddressesRow>
+        <AmountsOverviewPanel chartVisible={chartVisible} chartInitiallyHidden={!chartVisible}>
+          <Shortcuts>
+            <ShortcutButtonsGroupWallet analyticsOrigin="overview_page" solidBackground />
+          </Shortcuts>
+        </AmountsOverviewPanel>
+      </UnlockedWalletPanel>
+      <UnlockedWalletPanel bottom>
+        <WalletTokensTabsStyled maxHeightInPx={maxPanelHeightInPx} />
+      </UnlockedWalletPanel>
+      <UnlockedWalletPanel bottom>
         <WalletLatestTransactionsList />
       </UnlockedWalletPanel>
     </UnlockedWalletPage>
@@ -63,14 +65,8 @@ export default styled(OverviewPage)`
   background-color: ${({ theme }) => theme.bg.background1};
 `
 
-const AssetAndAddressesRow = styled.div`
-  display: flex;
-  gap: 30px;
-`
-
 const WalletTokensTabsStyled = styled(WalletTokensTabs)`
   flex: 2;
-  margin-bottom: 45px;
 `
 
 const Shortcuts = styled.div`

@@ -128,7 +128,7 @@ export const UnlockedWalletPanel = styled.div<{
   top?: boolean
   bottom?: boolean
   doubleTop?: boolean
-  backgroundColor?: keyof Pick<DefaultTheme['bg'], 'background1' | 'background2'>
+  backgroundColor?: keyof DefaultTheme['bg']
 }>`
   padding-left: 60px;
   padding-right: 60px;
