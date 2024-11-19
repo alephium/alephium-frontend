@@ -30,7 +30,7 @@ import HistoricWorthChart from '@/features/historicChart/HistoricWorthChart'
 import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
 import WalletWorth from '@/pages/UnlockedWallet/OverviewPage/WalletWorth'
 
-interface AmountsOverviewPanelProps {
+interface WorthOverviewPanelProps {
   addressHash?: string
   isLoading?: boolean
   className?: string
@@ -40,13 +40,13 @@ interface AmountsOverviewPanelProps {
   children?: ReactNode
 }
 
-const AmountsOverviewPanel = ({
+const WorthOverviewPanel = ({
   className,
   addressHash,
   children,
   chartVisible,
   chartInitiallyHidden
-}: AmountsOverviewPanelProps) => {
+}: WorthOverviewPanelProps) => {
   const { t } = useTranslation()
 
   const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
@@ -59,7 +59,7 @@ const AmountsOverviewPanel = ({
   const isHoveringChart = hoveredDataPointWorth !== undefined
 
   return (
-    <AmountsOverviewPanelStyled className={className}>
+    <WorthOverviewPanelStyled className={className}>
       <AnimatedBackground height={600} />
       <Panel>
         <Balances>
@@ -96,13 +96,13 @@ const AmountsOverviewPanel = ({
         chartVisible={chartVisible}
         chartInitiallyHidden={chartInitiallyHidden}
       />
-    </AmountsOverviewPanelStyled>
+    </WorthOverviewPanelStyled>
   )
 }
 
-export default AmountsOverviewPanel
+export default WorthOverviewPanel
 
-const AmountsOverviewPanelStyled = styled(Box)`
+const WorthOverviewPanelStyled = styled(Box)`
   position: relative;
   overflow: hidden;
 `
