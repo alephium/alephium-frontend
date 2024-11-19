@@ -89,8 +89,8 @@ const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground, highlig
       borderless
       onClick={addressHash ? () => handleAddressSettingsClick(addressHash) : handleWalletSettingsClick}
       Icon={Settings}
-      iconBackground
       highlight={highlight}
+      rounded
     >
       <ButtonText>{t('Settings')}</ButtonText>
     </ShortcutButton>
@@ -120,8 +120,8 @@ const ReceiveButton = ({
       borderless
       onClick={handleReceiveClick}
       Icon={ArrowDown}
-      iconBackground
       highlight={highlight}
+      rounded
       short
     >
       <ButtonText>{t('Receive')}</ButtonText>
@@ -164,9 +164,10 @@ const SendButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }
       borderless
       onClick={isDisabled ? undefined : handleSendClick}
       Icon={ArrowUp}
-      iconBackground
       highlight={highlight}
       style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
+      rounded
+      short
     >
       <ButtonText>{t('Send')}</ButtonText>
     </ShortcutButton>
@@ -179,13 +180,6 @@ const ShortcutButton = styled(Button)<Pick<ShortcutButtonBaseProps, 'highlight'>
   height: 42px;
   box-shadow: none;
   max-width: initial;
-  border-radius: 100px;
-
-  color: ${({ theme }) => theme.font.secondary};
-
-  &:hover {
-    color: ${({ theme }) => theme.font.primary};
-  }
 `
 
 const ButtonText = styled.div`

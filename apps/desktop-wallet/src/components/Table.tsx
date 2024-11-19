@@ -186,7 +186,7 @@ export const ExpandRow = ({ onClick }: { onClick: () => void }) => {
 
   return (
     <ExpandRowStyled>
-      <Button role="secondary" onClick={onClick} Icon={ChevronsUpDown} short>
+      <Button role="secondary" onClick={onClick} Icon={ChevronsUpDown} short rounded>
         {t('Expand')}
       </Button>
     </ExpandRowStyled>

@@ -171,7 +171,7 @@ const ChartOuterContainer = styled(motion.div)<Pick<HistoricWorthChartProps, 'ch
   align-items: center;
   right: 0;
   left: 0;
-  margin: var(--spacing-4) 0;
+  margin: var(--spacing-2) 0 var(--spacing-6) 0;
 
   ${({ chartInitiallyHidden }) =>
     chartInitiallyHidden &&

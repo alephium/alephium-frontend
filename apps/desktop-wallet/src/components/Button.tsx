@@ -35,9 +35,9 @@ export interface ButtonProps extends HTMLMotionProps<'button'> {
   short?: boolean
   tall?: boolean
   wide?: boolean
+  rounded?: boolean
   Icon?: LucideIcon
   iconColor?: string
-  iconBackground?: boolean
   borderless?: boolean
   isHighlighted?: boolean
   disablePointer?: boolean
@@ -94,16 +94,7 @@ const Button = ({ children, disabled, submit, Icon, className, isHighlighted, lo
 }
 
 export default styled(Button)`
-  ${({
-    theme,
-    role = 'primary',
-    variant = 'default',
-    transparent,
-    borderless,
-    iconBackground,
-    iconColor,
-    children
-  }) => {
+  ${({ theme, role = 'primary', variant = 'default', transparent, borderless, iconColor, children }) => {
     const bgColor = transparent
       ? 'transparent'
       : {
@@ -115,7 +106,7 @@ export default styled(Button)`
             faded: colord(theme.global.accent).alpha(0.07).toRgbString()
           }[variant],
           secondary: {
-            default: theme.bg.primary,
+            default: theme.bg.highlight,
             contrast: theme.font.primary,
             valid: theme.global.valid,
             alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
@@ -130,7 +121,7 @@ export default styled(Button)`
       : {
           primary: {
             default: colord(theme.global.accent).darken(0.04).toRgbString(),
-            contrast: colord(theme.bg.contrast).lighten(0.01).toRgbString(),
+            contrast: colord(theme.bg.contrast).alpha(0.8).toRgbString(),
             valid: colord(theme.global.valid).darken(0.04).toRgbString(),
             alert: colord(theme.global.alert).darken(0.04).toRgbString(),
             faded: colord(theme.global.accent).darken(0.04).toRgbString()
@@ -151,7 +142,7 @@ export default styled(Button)`
       : {
           primary: {
             default: colord(theme.global.accent).lighten(0.03).toRgbString(),
-            contrast: colord(theme.bg.contrast).darken(0.08).toRgbString(),
+            contrast: colord(theme.bg.contrast).alpha(0.8).toRgbString(),
             valid: colord(theme.global.valid).lighten(0.03).toRgbString(),
             alert: colord(theme.global.alert).lighten(0.03).toRgbString(),
             faded: colord(theme.global.accent).lighten(0.03).toRgbString()
@@ -225,7 +216,7 @@ export default styled(Button)`
       : {
           primary: {
             default: 'white',
-            contrast: theme.font.contrastSecondary,
+            contrast: theme.font.contrastPrimary,
             valid: theme.font.primary,
             alert: 'white',
             faded: 'white'
@@ -244,12 +235,6 @@ export default styled(Button)`
       color: ${fontColor};
       border: 1px solid ${borderColor};
       position: relative;
-
-      ${!transparent &&
-      !borderless &&
-      css`
-        box-shadow: ${({ theme }) => theme.shadow.primary};
-      `}
 
       &:hover {
         color: ${hoverColor};
@@ -272,17 +257,6 @@ export default styled(Button)`
           margin-right: var(--spacing-2);
         `}
 
-        ${({ theme }) =>
-          iconBackground &&
-          css`
-            background-color: ${colord(iconColor || theme.font.tertiary)
-              .alpha(0.08)
-              .toHex()};
-            padding: 6px;
-            border-radius: var(--radius-full);
-            color: ${iconColor || fontColor};
-          `}
-
         svg {
           color: ${iconColor || fontColor};
         }
@@ -296,7 +270,7 @@ export default styled(Button)`
   height: ${({ squared, short, tall }) => (short ? '32px' : squared ? '40px' : tall ? '55px' : '52px')};
   width: ${({ squared, short, wide }) => (squared ? '40px' : short && !wide ? 'auto' : wide ? '100%' : '80%')};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
-  border-radius: ${({ short }) => (short ? 'var(--radius-medium)' : 'var(--radius-big)')};
+  border-radius: ${({ short, rounded }) => (rounded ? '100px' : short ? 'var(--radius-medium)' : 'var(--radius-big)')};
   font-weight: ${({ role, variant }) =>
     role === 'secondary' || variant === 'faded' ? 'var(--fontWeight-medium)' : 'var(--fontWeight-semiBold)'};
   font-size: 13px;

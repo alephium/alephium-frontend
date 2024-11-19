@@ -26,7 +26,11 @@ import { chartLengthChanged } from '@/features/historicChart/historicWorthChartA
 import useHistoricData from '@/features/historicChart/useHistoricData'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 
-const ChartLengthBadges = memo(() => {
+interface ChartLengthBadgesProps {
+  className?: string
+}
+
+const ChartLengthBadges = memo(({ className }: ChartLengthBadgesProps) => {
   const dispatch = useAppDispatch()
   const chartLength = useAppSelector((s) => s.historicWorthChart.chartLength)
   const { hasHistoricBalances, isLoading: isLoadingHistoricData } = useHistoricData()
@@ -34,24 +38,27 @@ const ChartLengthBadges = memo(() => {
   const handleChartLengthButtonClick = (length: ChartLength) => dispatch(chartLengthChanged(length))
 
   return (
-    <ChartLengthBadgesStyled>
-      {chartLengths.map((length) =>
-        isLoadingHistoricData ? (
+    <ChartLengthBadgesStyled className={className}>
+      {chartLengths.map((length) => {
+        const isActive = length === chartLength
+
+        return isLoadingHistoricData ? (
           <SkeletonLoader key={length} height="25px" width="30px" style={{ marginTop: 6, marginBottom: 12 }} />
         ) : (
           hasHistoricBalances && (
             <ButtonStyled
               key={length}
-              transparent
-              short
-              isActive={length === chartLength}
+              role={isActive ? 'primary' : 'secondary'}
+              variant={isActive ? 'contrast' : 'default'}
               onClick={() => handleChartLengthButtonClick(length)}
+              short
+              rounded
             >
               {length}
             </ButtonStyled>
           )
         )
-      )}
+      })}
     </ChartLengthBadgesStyled>
   )
 })
@@ -59,21 +66,12 @@ const ChartLengthBadges = memo(() => {
 export default ChartLengthBadges
 
 const ChartLengthBadgesStyled = styled.div`
-  margin-top: 20px;
   display: flex;
-  gap: 10px;
+  gap: 5px;
 `
 
-const ButtonStyled = styled(Button)<{ isActive: boolean }>`
-  color: ${({ theme }) => theme.font.primary};
-  opacity: ${({ isActive }) => (isActive ? 1 : 0.4)};
-  border-color: ${({ theme }) => theme.font.primary};
+const ButtonStyled = styled(Button)`
   padding: 3px;
   height: auto;
   min-width: 32px;
-  border-radius: var(--radius-small);
-
-  &:hover {
-    border-color: ${({ theme }) => theme.font.tertiary};
-  }
 `

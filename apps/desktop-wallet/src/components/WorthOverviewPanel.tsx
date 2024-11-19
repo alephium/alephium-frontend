@@ -81,8 +81,6 @@ const WorthOverviewPanel = ({
                   />
                 )}
               </FiatDeltaOpacityContainer>
-
-              <ChartLengthBadges />
             </BalancesColumn>
           </BalancesRow>
         </Balances>
@@ -96,6 +94,9 @@ const WorthOverviewPanel = ({
         chartVisible={chartVisible}
         chartInitiallyHidden={chartInitiallyHidden}
       />
+      <ChartLengthsContainer>
+        <ChartLengthBadges />
+      </ChartLengthsContainer>
     </WorthOverviewPanelStyled>
   )
 }
@@ -156,4 +157,14 @@ const Today = styled.div`
 
 const FiatDeltaOpacityContainer = styled(Opacity)`
   height: 5px;
+`
+
+const ChartLengthsContainer = styled.div`
+  position: absolute;
+  bottom: 5px;
+  right: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
