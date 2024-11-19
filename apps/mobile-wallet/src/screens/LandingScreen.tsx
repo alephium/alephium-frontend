@@ -36,6 +36,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { ThemeProvider, useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
@@ -84,7 +85,9 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
             setIsScreenContentVisible(true)
           }
         })
-        .catch((error) => console.error('Could not determine if stored wallet exists', error))
+        .catch((error) => {
+          sendAnalytics({ type: 'error', error, message: 'Could not determine if stored wallet exists' })
+        })
     }, [isWalletUnlocked, navigation])
   )
 
