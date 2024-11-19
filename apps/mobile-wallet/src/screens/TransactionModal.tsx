@@ -74,20 +74,22 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
       </ScreenSectionStyled>
 
       <BoxSurface type="highlight">
-        <Row title={t('Amount')} noMaxWidth transparent>
-          {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
-            <AmountStyled
-              key={id}
-              value={amount}
-              decimals={decimals}
-              suffix={symbol}
-              isUnknownToken={!symbol}
-              highlight={!isMoved}
-              showPlusMinus={!isMoved}
-              fullPrecision
-              bold
-            />
-          ))}
+        <Row title={t('Amount')} transparent>
+          <AmountsContainer>
+            {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
+              <AmountStyled
+                key={id}
+                value={amount}
+                decimals={decimals}
+                suffix={symbol}
+                isUnknownToken={!symbol}
+                highlight={!isMoved}
+                showPlusMinus={!isMoved}
+                fullPrecision
+                bold
+              />
+            ))}
+          </AmountsContainer>
         </Row>
         <Row title={t('Timestamp')} transparent>
           <AppTextStyled semiBold>
@@ -188,4 +190,8 @@ const UnknownTokenAmount = styled.View`
   column-gap: 10px;
   justify-content: flex-end;
   align-items: center;
+`
+
+const AmountsContainer = styled.View`
+  gap: 10px;
 `
