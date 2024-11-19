@@ -129,7 +129,19 @@ const template = [
       ...(isMac
         ? []
         : isWindows
-          ? [{ role: 'about' }, { type: 'separator' }]
+          ? [
+              {
+                label: `About ${app.getName()}`,
+                click: async () => {
+                  dialog.showMessageBoxSync(mainWindow, {
+                    message: `Version ${CURRENT_VERSION}`,
+                    title: app.getName(),
+                    type: 'info'
+                  })
+                }
+              },
+              { type: 'separator' }
+            ]
           : [
               {
                 label: 'About',
