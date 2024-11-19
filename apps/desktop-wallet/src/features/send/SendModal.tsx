@@ -292,9 +292,7 @@ function SendModal<PT extends { fromAddress: Address }>({
 
   useEffect(() => {
     if (step === 'tx-sent') {
-      const timeoutId = setTimeout(onClose, 2000)
-
-      return () => clearTimeout(timeoutId)
+      setTimeout(onClose, 2000)
     }
   }, [onClose, step])
 
