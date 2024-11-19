@@ -412,7 +412,6 @@ const SelectedValue = styled.div<InputProps>`
   display: flex;
   align-items: center;
   min-width: 0;
-  box-shadow: ${({ theme }) => theme.shadow.primary};
 
   ${({ simpleMode }) =>
     simpleMode &&
@@ -431,7 +430,7 @@ export const SelectContainer = styled(InputContainer)<
   cursor: ${({ showPointer }) => showPointer && 'pointer'};
   margin: ${({ noMargin, simpleMode }) => (noMargin || simpleMode ? 0 : '16px 0')};
   height: ${({ heightSize }) =>
-    heightSize === 'small' ? '50px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
+    heightSize === 'small' ? '38px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
 
   &:focus {
     ${SelectedValue} {
@@ -478,7 +477,6 @@ export const OptionItem = styled.button<{
       ? css`
           margin: var(--spacing-2) var(--spacing-4);
           border-radius: var(--radius-medium);
-          border: ${selected ? `2px solid ${theme.global.accent}` : `1px solid ${theme.border.primary}`};
           background-color: ${theme.bg.primary};
           overflow: hidden;
         `
