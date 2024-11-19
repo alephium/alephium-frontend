@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
+import { AddressHash, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { MoreVertical, Plus } from 'lucide-react'
@@ -28,6 +28,7 @@ import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressB
 import useFetchAddressFts from '@/api/apiDataHooks/address/useFetchAddressFts'
 import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
 import useSortedTokenIds from '@/api/apiDataHooks/utils/useSortedTokenIds'
+import useFetchWalletNftsSearchStrings from '@/api/apiDataHooks/wallet/useFetchWalletNftsSearchStrings'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -70,20 +71,13 @@ const TokensAmountInputs = ({
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressBalances({
     addressHash: address.hash
   })
+
   const { listedFts, unlistedFts } = useFetchAddressFts({ addressHash: address.hash })
   const {
-    data: { nftIds, nstIds }
+    data: { nftIds }
   } = useFetchAddressTokensByType({ addressHash: address.hash, includeAlph: true })
-  const sortedTokenIds = useSortedTokenIds({ listedFts, unlistedFts, nftIds, nstIds })
 
-  const allTokensOptions = useMemo(
-    () =>
-      sortedTokenIds.map((id) => ({
-        value: id,
-        label: id
-      })),
-    [sortedTokenIds]
-  )
+  const allTokensOptions = useAddressTokensSelectOptions(address.hash)
 
   const [isAssetSelectModalOpen, setIsTokenSelectModalOpen] = useState(false)
   const [selectedTokenRowIndex, setSelectedTokenRowIndex] = useState(0)
@@ -95,7 +89,7 @@ const TokensAmountInputs = ({
   const selectedAssetIds = assetAmounts.map(({ id }) => id)
   const remainingAvailableAssetsOptions = allTokensOptions.filter((option) => !selectedAssetIds.includes(option.value))
   const disabled = remainingAvailableAssetsOptions.length === 0
-  const canAddMultipleAssets = allowMultiple && assetAmounts.length < sortedTokenIds.length
+  const canAddMultipleAssets = allowMultiple && assetAmounts.length < allTokensOptions.length
 
   const handleOpenAddressTokensSelectModal = useCallback((tokenRowIndex: number) => {
     setSelectedTokenRowIndex(tokenRowIndex)
@@ -301,6 +295,7 @@ const TokensAmountInputs = ({
             onClose={handleAssetSelectModalClose}
             parentSelectRef={selectedValueRef}
             optionRender={renderOption}
+            isSearchable
           />
         )}
       </ModalPortal>
@@ -309,6 +304,33 @@ const TokensAmountInputs = ({
 }
 
 export default TokensAmountInputs
+
+const useAddressTokensSelectOptions = (addressHash: AddressHash) => {
+  const { listedFts, unlistedFts } = useFetchAddressFts({ addressHash })
+  const {
+    data: { nftIds, nstIds }
+  } = useFetchAddressTokensByType({ addressHash, includeAlph: true })
+  const sortedTokenIds = useSortedTokenIds({ listedFts, unlistedFts, nftIds, nstIds })
+  const { data: nftsSearchStringsByNftId } = useFetchWalletNftsSearchStrings()
+
+  const allTokensOptions = useMemo(() => {
+    const fts = [...listedFts, ...unlistedFts]
+
+    return sortedTokenIds.map((id) => {
+      const ft = fts.find((ft) => ft.id === id)
+
+      return {
+        value: id,
+        label: id,
+        searchString: `${id.toLowerCase()} ${ft?.name.toLowerCase()} ${ft?.symbol.toLowerCase()} ${
+          nftsSearchStringsByNftId[id]?.toLowerCase() ?? ''
+        }`
+      }
+    })
+  }, [sortedTokenIds, listedFts, unlistedFts, nftsSearchStringsByNftId])
+
+  return allTokensOptions
+}
 
 const AddAssetSection = styled.div`
   display: flex;
