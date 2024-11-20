@@ -147,11 +147,11 @@ export default styled(Row)`
 `
 
 const Title = styled(AppText)<{ isVertical?: boolean }>`
-  ${({ isVertical }) =>
+  ${({ isVertical, color }) =>
     isVertical &&
     css`
       font-size: 13px;
-      color: ${({ theme }) => theme.font.secondary};
+      color: ${({ theme }) => color || theme.font.secondary};
     `}
 `
 

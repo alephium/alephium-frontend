@@ -23,7 +23,7 @@ import { groupBy, partition } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Portal } from 'react-native-portalize'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
@@ -50,6 +50,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
   const allNFTs = useAppSelector((s) => s.nfts.entities)
   const { t } = useTranslation()
+  const theme = useTheme()
 
   const [isNftsModalOpen, setIsNftsModalOpen] = useState(false)
 
@@ -87,7 +88,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
           </Row>
         )}
         {!isMoved && groupedIOAmounts.in && (
-          <Row title={t('Received')} transparent isVertical>
+          <Row title={t('Received')} transparent isVertical titleColor={theme.global.receive}>
             <AmountsContainer>
               {groupedIOAmounts.in.map(({ id, amount }) => (
                 <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
@@ -96,7 +97,7 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
           </Row>
         )}
         {!isMoved && groupedIOAmounts.out && (
-          <Row title={t('Sent')} transparent isVertical>
+          <Row title={t('Sent')} transparent isVertical titleColor={theme.global.send}>
             <AmountsContainer>
               {groupedIOAmounts.out.map(({ id, amount }) => (
                 <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
