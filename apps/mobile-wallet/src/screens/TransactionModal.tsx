@@ -74,10 +74,10 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
       </ScreenSectionStyled>
 
       <BoxSurface type="highlight">
-        <Row title={t('Amount')} transparent>
+        <Row title={t('Amount')} transparent isVertical>
           <AmountsContainer>
             {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
-              <AmountStyled
+              <Amount
                 key={id}
                 value={amount}
                 decimals={decimals}
@@ -86,28 +86,29 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
                 highlight={!isMoved}
                 showPlusMinus={!isMoved}
                 fullPrecision
-                bold
+                fadeSuffix
+                semiBold
               />
             ))}
           </AmountsContainer>
         </Row>
-        <Row title={t('Timestamp')} transparent>
-          <AppTextStyled semiBold>
+        <Row title={t('Timestamp')} transparent isVertical>
+          <AppText semiBold>
             {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-          </AppTextStyled>
+          </AppText>
         </Row>
-        <Row title={t('Status')} transparent>
+        <Row title={t('Status')} transparent isVertical>
           <AppText semiBold>
             {!tx.scriptExecutionOk ? t('Script execution failed') : tx.blockHash ? t('Confirmed') : t('Pending')}
           </AppText>
         </Row>
-        <Row title={t('From')} transparent>
+        <Row title={t('From')} transparent isVertical>
           {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
         </Row>
-        <Row title={t('To')} transparent>
+        <Row title={t('To')} transparent isVertical>
           {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
         </Row>
-        <Row title={t('Fee')} transparent isLast={unknownTokens.length === 0 && nftsData.length === 0}>
+        <Row title={t('Fee')} transparent isLast={unknownTokens.length === 0 && nftsData.length === 0} isVertical>
           <Amount
             value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
             fadeDecimals
@@ -117,18 +118,19 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
           />
         </Row>
         {unknownTokens.length > 0 && (
-          <Row title={t('Unknown tokens')} transparent isLast={nftsData.length === 0}>
+          <Row title={t('Unknown tokens')} transparent isLast={nftsData.length === 0} isVertical>
             {unknownTokens.map(({ id, amount, decimals, symbol }) => (
               <UnknownTokenAmount key={id}>
-                <AmountStyled
+                <Amount
                   value={amount}
                   decimals={decimals}
                   suffix={symbol}
                   isUnknownToken={!symbol}
                   highlight={!isMoved}
                   showPlusMinus={!isMoved}
+                  fadeSuffix
                   fullPrecision
-                  bold
+                  semiBold
                 />
                 {!symbol && (
                   <TokenId>
@@ -165,14 +167,6 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
 
 export default TransactionModal
 
-const AmountStyled = styled(Amount)`
-  text-align: right;
-`
-
-const AppTextStyled = styled(AppText)`
-  text-align: right;
-`
-
 const ScreenSectionStyled = styled(ScreenSection)`
   flex-direction: row;
   align-items: center;
@@ -188,10 +182,7 @@ const UnknownTokenAmount = styled.View`
   display: flex;
   flex-direction: row;
   column-gap: 10px;
-  justify-content: flex-end;
   align-items: center;
 `
 
-const AmountsContainer = styled.View`
-  gap: 10px;
-`
+const AmountsContainer = styled.View``
