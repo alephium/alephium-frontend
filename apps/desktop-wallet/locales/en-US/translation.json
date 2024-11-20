@@ -490,5 +490,7 @@
   "Choose your region to update formats of dates, time, and currencies.": "Choose your region to update formats of dates, time, and currencies.",
   "Video thumbnail": "Video thumbnail",
   "Unsupported media type": "Unsupported media type",
-  "You need to be on testnet or devnet in order to use the faucet.": "You need to be on testnet or devnet in order to use the faucet."
+  "You need to be on testnet or devnet in order to use the faucet.": "You need to be on testnet or devnet in order to use the faucet.",
+  "Could not get latest data": "Could not get latest data",
+  "Updating...": "Updating..."
 }
