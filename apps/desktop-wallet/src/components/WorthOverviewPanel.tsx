@@ -58,7 +58,7 @@ const WorthOverviewPanel = ({
   const isHoveringChart = hoveredDataPointWorth !== undefined
 
   return (
-    <WorthOverviewPanelStyled className={className}>
+    <WorthOverviewPanelStyled className={className} secondary>
       <AnimatedBackground height={600} />
       <Panel>
         <Balances>

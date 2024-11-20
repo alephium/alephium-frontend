@@ -51,7 +51,7 @@ export interface TextAreaProps extends InputHTMLAttributes<HTMLTextAreaElement> 
 }
 
 export const inputPlaceHolderVariants: Variants = {
-  up: { y: '-25%', scale: 0.85 },
+  up: { y: '-10px', scale: 0.8 },
   down: { y: 0, scale: 1 }
 }
 
@@ -69,7 +69,7 @@ export const inputDefaultStyle = (
   largeText?: boolean
 ) => css`
   background-image: none;
-  height: ${heightSize === 'small' ? '38px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
+  height: ${heightSize === 'small' ? '38px' : heightSize === 'big' ? '50px' : 'var(--inputHeight)'};
   width: 100%;
   border-radius: var(--radius-big);
   background-color: ${({ theme }) =>
@@ -85,7 +85,7 @@ export const inputDefaultStyle = (
   ${hasValue &&
   hasLabel &&
   css`
-    padding-top: 15px;
+    padding-top: 13px;
   `}
 
   &:focus {
@@ -154,7 +154,7 @@ const StyledInputLabel = styled(motion.label)`
   display: flex;
   align-items: center;
   font-weight: var(--fontWeight-semiBold);
-  color: ${({ theme }) => theme.font.secondary};
+  color: ${({ theme }) => theme.font.tertiary};
   pointer-events: none;
   transform-origin: left;
 `

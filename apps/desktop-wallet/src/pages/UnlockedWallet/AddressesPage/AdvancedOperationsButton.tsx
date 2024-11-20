@@ -30,7 +30,7 @@ const AdvancedOperationsButton = () => {
   const openAdvancedOperationsSideModal = () => dispatch(openModal({ name: 'AdvancedOperationsSideModal' }))
 
   return (
-    <Button role="secondary" Icon={Wrench} short onClick={openAdvancedOperationsSideModal} style={{ height: 40 }}>
+    <Button role="secondary" Icon={Wrench} onClick={openAdvancedOperationsSideModal}>
       {t('Advanced operations')}
     </Button>
   )

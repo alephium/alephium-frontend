@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled, { css } from 'styled-components'
+import { colord } from 'colord'
+import styled from 'styled-components'
 
 import TabBar, { Tab, TabBarProps } from '@/components/TabBar'
 
@@ -34,12 +35,7 @@ const TableTabBarStyled = styled(TabBar)`
 const TableTab = styled(Tab)`
   min-width: 60px;
   border-radius: var(--radius-big);
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.highlight : theme.bg.primary)};
+  background-color: ${({ isActive, theme }) =>
+    isActive ? theme.bg.highlight : colord(theme.bg.highlight).alpha(0.4).toHex()};
   overflow: hidden;
-
-  ${({ isActive, theme }) =>
-    isActive &&
-    css`
-      border-bottom: 1px solid transparent;
-    `}
 `

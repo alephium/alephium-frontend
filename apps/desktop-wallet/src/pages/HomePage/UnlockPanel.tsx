@@ -95,6 +95,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
           onSelect={setSelectedWallet}
           title={t('Select a wallet')}
           id="wallet"
+          heightSize="big"
         />
         <Input
           label={t('Password')}
@@ -104,6 +105,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
           value={password}
           id="password"
           autoFocus
+          heightSize="big"
         />
       </SectionStyled>
       <ButtonsSection>
@@ -115,7 +117,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
         >
           {t('Unlock')}
         </ButtonStyled>
-        <ButtonStyled onClick={onNewWalletLinkClick} role="secondary" tall>
+        <ButtonStyled onClick={onNewWalletLinkClick} role="secondary" transparent short>
           {t('Import or create a wallet')}
         </ButtonStyled>
       </ButtonsSection>
@@ -142,7 +144,7 @@ const ButtonStyled = styled(Button)`
 `
 
 const WalletPassphraseStyled = styled(WalletPassphrase)`
-  margin: 16px 0;
+  margin: 10px 0;
   width: 100%;
   position: fixed;
   bottom: 5px;

@@ -53,7 +53,7 @@ const TableWrapper = styled(motion.div)<Pick<TableProps, 'minWidth'>>`
   border: 1px solid ${({ theme }) => (theme.name === 'light' ? theme.border.primary : 'tranparent')};
 
   background-color: ${({ theme }) => theme.bg.primary};
-  box-shadow: ${({ theme }) => theme.shadow.primary};
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.02);
 
   ${({ minWidth }) =>
     minWidth &&
@@ -209,7 +209,7 @@ const ExpandRowStyled = styled.div`
   pointer-events: none;
 
   ${({ theme }) => {
-    const gradientMaxOpacity = theme.name === 'light' ? 0.05 : 0.25
+    const gradientMaxOpacity = theme.name === 'light' ? 0.02 : 0.25
 
     return css`
       background: linear-gradient(0deg, rgba(0, 0, 0, ${gradientMaxOpacity}) 0%, rgba(0, 0, 0, 0) 100%);
@@ -227,7 +227,6 @@ export const ExpandableTable = styled(Table)<{ isExpanded: boolean; maxHeightInP
     isExpanded &&
     css`
       max-height: none;
-      box-shadow: ${({ theme }) => theme.shadow.tertiary};
     `}
 
   &:hover {

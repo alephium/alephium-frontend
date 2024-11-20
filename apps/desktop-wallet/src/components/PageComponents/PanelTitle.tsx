@@ -90,6 +90,6 @@ const H1 = styled(motion.h1)<PanelTitleProps>`
   flex: 1;
   margin: 0;
   color: ${({ theme, color }) => (color ? color : theme.font.primary)};
-  font-size: ${({ size }) => (size === 'small' ? '21px' : size === 'big' ? '42px' : 'revert')};
-  font-weight: ${({ size }) => (size === 'big' ? 'var(--fontWeight-bold)' : 'var(--fontWeight-semiBold)')};
+  font-size: ${({ size }) => (size === 'small' ? '21px' : size === 'big' ? '38px' : 'revert')};
+  font-weight: var(--fontWeight-semiBold);
 `

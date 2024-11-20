@@ -267,7 +267,7 @@ export default styled(Button)`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: ${({ squared, short, tall }) => (short ? '38px' : squared ? '40px' : tall ? '50px' : '42px')};
+  height: ${({ squared, short, tall }) => (short ? '34px' : squared ? '40px' : tall ? '48px' : '42px')};
   width: ${({ squared, short, wide }) => (squared ? '40px' : short && !wide ? 'auto' : wide ? '100%' : '80%')};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
   border-radius: ${({ short, rounded }) => (rounded ? '100px' : short ? 'var(--radius-medium)' : 'var(--radius-big)')};

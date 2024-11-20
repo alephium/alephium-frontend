@@ -186,7 +186,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
           />
         }
       />
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={t('Theme')}
         description={t('Select the theme and please your eyes.')}
@@ -202,13 +202,13 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
           />
         }
       />
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={discreetModeText}
         description={t('Toggle discreet mode (hide amounts).')}
         InputComponent={<Toggle label={discreetModeText} toggled={discreetMode} onToggle={handleDiscreetModeToggle} />}
       />
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       {isWalletUnlocked && (
         <>
           <KeyValueInput
@@ -216,7 +216,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             description={t('Require password confirmation before sending each transaction.')}
             InputComponent={<Toggle toggled={passwordRequirement} onToggle={onPasswordRequirementChange} />}
           />
-          <HorizontalDivider />
+          <HorizontalDivider secondary />
         </>
       )}
       <KeyValueInput
@@ -247,7 +247,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
           </div>
         )}
       </KeyValueInput>
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={t('Currency')}
         description={t('Change the currency to use to display amounts.')}
@@ -263,11 +263,11 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
           />
         }
       />
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
 
       <RegionSettings />
 
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={t('Analytics')}
         description={t('Help us improve your experience!')}
@@ -280,7 +280,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
           </MoreInfoLinkContent>
         </ActionLink>
       </KeyValueInput>
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={t('Clear cache')}
         description={t('Deletes cached wallet and WalletConnect data.')}
