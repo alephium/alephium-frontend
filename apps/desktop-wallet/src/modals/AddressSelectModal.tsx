@@ -49,7 +49,7 @@ const AddressSelectModal = ({
 }: AddressSelectModalProps) => {
   const { t } = useTranslation()
 
-  const addressSelectOptions: SelectOption<AddressHash>[] = useAddressSelectOptions()
+  const addressSelectOptions: SelectOption<AddressHash>[] = useAddressSelectOptions(addressOptions)
 
   const defaultSelectedOption = addressSelectOptions.find((a) => a.value === defaultSelectedAddress)
   const [selectedOption, setSelectedOption] = useState(defaultSelectedOption)
@@ -87,7 +87,7 @@ const AddressSelectModal = ({
 export default AddressSelectModal
 
 // TODO: See how it can be DRY'ed with useFilterAddressesByText
-const useAddressSelectOptions = () => {
+const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
   const addresses = useAppSelector(selectAllAddresses)
   const { data: sortedAddressHashes } = useFetchSortedAddressesHashes()
   const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
@@ -97,38 +97,41 @@ const useAddressSelectOptions = () => {
 
   return useMemo(
     () =>
-      sortedAddressHashes.map((hash) => {
-        const address = addresses.find((address) => address.hash === hash)
-        const addressAlphBalances = addressesAlphBalances[hash]
-        const addressHasAlphBalances = (addressAlphBalances?.totalBalance ?? 0) > 0
-        const addressTokensBalances = addressesTokensBalances[hash] ?? []
-        const addressTokensSearchableString = addressTokensBalances
-          .map(({ id }) => {
-            const listedFt = listedFts.find((token) => token.id === id)
+      sortedAddressHashes
+        .filter((hash) => addressOptions.includes(hash))
+        .map((hash) => {
+          const address = addresses.find((address) => address.hash === hash)
+          const addressAlphBalances = addressesAlphBalances[hash]
+          const addressHasAlphBalances = (addressAlphBalances?.totalBalance ?? 0) > 0
+          const addressTokensBalances = addressesTokensBalances[hash] ?? []
+          const addressTokensSearchableString = addressTokensBalances
+            .map(({ id }) => {
+              const listedFt = listedFts.find((token) => token.id === id)
 
-            if (listedFt) return `${listedFt.name.toLowerCase()} ${listedFt.symbol.toLowerCase()} ${id}`
+              if (listedFt) return `${listedFt.name.toLowerCase()} ${listedFt.symbol.toLowerCase()} ${id}`
 
-            const unlistedFt = unlistedFts.find((token) => token.id === id)
+              const unlistedFt = unlistedFts.find((token) => token.id === id)
 
-            if (unlistedFt) return `${unlistedFt.name.toLowerCase()} ${unlistedFt.symbol.toLowerCase()} ${id}`
+              if (unlistedFt) return `${unlistedFt.name.toLowerCase()} ${unlistedFt.symbol.toLowerCase()} ${id}`
 
-            const nftSearchString = nftsSearchStringsByNftId[id]
+              const nftSearchString = nftsSearchStringsByNftId[id]
 
-            if (nftSearchString) return nftSearchString.toLowerCase()
+              if (nftSearchString) return nftSearchString.toLowerCase()
 
-            return ''
-          })
-          .join(' ')
+              return ''
+            })
+            .join(' ')
 
-        return {
-          value: hash,
-          label: address?.label || hash,
-          searchString: `${hash.toLowerCase()} ${address?.label?.toLowerCase() ?? ''} ${
-            addressHasAlphBalances ? 'alephium alph' : ''
-          } ${addressTokensSearchableString}`
-        }
-      }),
+          return {
+            value: hash,
+            label: address?.label || hash,
+            searchString: `${hash.toLowerCase()} ${address?.label?.toLowerCase() ?? ''} ${
+              addressHasAlphBalances ? 'alephium alph' : ''
+            } ${addressTokensSearchableString}`
+          }
+        }),
     [
+      addressOptions,
       addresses,
       addressesAlphBalances,
       addressesTokensBalances,
