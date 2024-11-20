@@ -20,7 +20,7 @@ import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, View } from 'react-native'
+import { Modal, Pressable } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
@@ -33,6 +33,7 @@ import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import BackupMnemonicNavigation from '~/navigation/BackupMnemonicNavigation'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import ReceiveNavigation from '~/navigation/ReceiveNavigation'
@@ -267,7 +268,12 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
 
   return (
     <Modal visible={!!lastUsedWalletId && biometricsRequiredForAppAccess && !isWalletUnlocked} animationType="none">
-      <View style={{ backgroundColor: 'black', flex: 1 }} />
+      <Pressable
+        onPress={unlockApp}
+        style={{ backgroundColor: 'black', flex: 1, alignItems: 'center', justifyContent: 'center' }}
+      >
+        <AlephiumLogo style={{ width: '25%' }} />
+      </Pressable>
       <ToastAnchor />
     </Modal>
   )
