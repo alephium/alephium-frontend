@@ -350,7 +350,7 @@
   "Custom network": "自定义网络",
   "Node host": "节点主机",
   "Explorer API host": "Explorer API 主机",
-  "Explorer URL": "Explorer URL",
+  "Explorer URL": "区块浏览器 URL",
   "Explorer": "浏览器",
   "Public keys": "公钥",
   "Tap on an address to copy its public key to the clipboard.": "点击地址将其公钥复制到剪贴板。",
