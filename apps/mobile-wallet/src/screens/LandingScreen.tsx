@@ -48,8 +48,17 @@ const LandingScreen = ({ navigation }: LandingScreenProps) => {
       storedWalletExists()
         .then((walletExists) => {
           if (walletExists) {
+            // Normally, when the app is unlocked, this screen is not in focus. However, under certain conditions we end
+            // up with an unlocked wallet and no screen in focus at all. This happens when:
+            // 1. the auto-lock is set to anything but "Fast"
+            // 2. the user manually kills the app before the auto-lock timer completes
+            // 3. the WalletConnect feature is activated
+            // Since there is no screen in focus and since the default screen set in the RootStackNavigation is this
+            // screen, we need to navigate back to the dashboard.
             if (isWalletUnlocked) resetNavigation(navigation)
           } else {
+            // Only display this screen's contents when we have no stored wallet. If there is a wallet, the
+            // AppUnlockModal will be displayed
             setIsScreenContentVisible(true)
           }
         })
