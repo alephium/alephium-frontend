@@ -56,7 +56,7 @@ const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSing
 
   return {
     data: isALPH ? alphBalances : tokenBalances,
-    isLoading: isLoadingTokenBalances || isLoadingAlphBalances
+    isLoading: isALPH ? isLoadingAlphBalances : isLoadingTokenBalances
   }
 }
 
