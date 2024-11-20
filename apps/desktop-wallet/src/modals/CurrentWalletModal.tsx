@@ -57,7 +57,7 @@ export default CurrentWalletModal
 
 const NotificationsBox = styled(motion.div)`
   display: flex;
-  gap: 25px;
+  gap: 20px;
   flex-direction: column;
 
   position: absolute;
@@ -65,7 +65,7 @@ const NotificationsBox = styled(motion.div)`
   top: ${appHeaderHeightPx}px;
   overflow: hidden;
 
-  padding: 27px 19px;
+  padding: 20px 19px;
   width: 304px;
   max-height: 95vh;
 

@@ -32,7 +32,7 @@ const AppSpinner = ({ className }: AppSpinnerProps) => {
 
   return (
     <AppSpinnerStyled className={className}>
-      <Spinner size="60px" />
+      <Spinner size="40px" />
     </AppSpinnerStyled>
   )
 }

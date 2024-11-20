@@ -75,7 +75,7 @@ export default styled(SideBar)`
   padding: ${appHeaderHeightPx}px var(--spacing-4) var(--spacing-4);
 
   border-right: 1px solid ${({ theme }) => theme.border.secondary};
-  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.highlight : theme.bg.primary)};
+  background-color: ${({ theme }) => theme.bg.background1};
 `
 
 const BottomButtons = styled.div`

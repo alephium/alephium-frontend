@@ -126,7 +126,7 @@ export default Input
 export const InputContainer = styled(motion.div)<Pick<InputProps, 'noMargin' | 'heightSize'>>`
   position: relative;
   width: 100%;
-  margin: ${({ noMargin }) => (noMargin ? 0 : '16px 0')};
+  margin: ${({ noMargin }) => (noMargin ? 0 : '10px 0')};
 `
 
 export const InputBase = styled.input<InputProps>`
