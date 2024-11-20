@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NFT } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
-import { partition } from 'lodash'
+import { groupBy, partition } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Portal } from 'react-native-portalize'
@@ -28,6 +28,7 @@ import styled from 'styled-components/native'
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
+import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Button from '~/components/buttons/Button'
 import IOList from '~/components/IOList'
 import BottomModal from '~/components/layout/BottomModal'
@@ -60,6 +61,8 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
   const isOut = direction === 'out'
   const isMoved = infoType === 'move'
 
+  const groupedIOAmounts = groupBy(tokensWithSymbol, (t) => (t.amount > 0 ? 'in' : 'out'))
+
   return (
     <ModalContent {...props} verticalGap>
       <ScreenSectionStyled>
@@ -74,24 +77,33 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
       </ScreenSectionStyled>
 
       <BoxSurface type="highlight">
-        <Row title={t('Amount')} transparent isVertical>
-          <AmountsContainer>
-            {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
-              <Amount
-                key={id}
-                value={amount}
-                decimals={decimals}
-                suffix={symbol}
-                isUnknownToken={!symbol}
-                highlight={!isMoved}
-                showPlusMinus={!isMoved}
-                fullPrecision
-                fadeSuffix
-                semiBold
-              />
-            ))}
-          </AmountsContainer>
-        </Row>
+        {isMoved && (
+          <Row title={t('Moved')} transparent isVertical>
+            <AmountsContainer>
+              {tokensWithSymbol.map(({ id, amount }) => (
+                <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
+              ))}
+            </AmountsContainer>
+          </Row>
+        )}
+        {!isMoved && groupedIOAmounts.in && (
+          <Row title={t('Received')} transparent isVertical>
+            <AmountsContainer>
+              {groupedIOAmounts.in.map(({ id, amount }) => (
+                <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
+              ))}
+            </AmountsContainer>
+          </Row>
+        )}
+        {!isMoved && groupedIOAmounts.out && (
+          <Row title={t('Sent')} transparent isVertical>
+            <AmountsContainer>
+              {groupedIOAmounts.out.map(({ id, amount }) => (
+                <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
+              ))}
+            </AmountsContainer>
+          </Row>
+        )}
         <Row title={t('Timestamp')} transparent isVertical>
           <AppText semiBold>
             {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
@@ -185,4 +197,7 @@ const UnknownTokenAmount = styled.View`
   align-items: center;
 `
 
-const AmountsContainer = styled.View``
+const AmountsContainer = styled.View`
+  gap: 5px;
+  align-items: flex-start;
+`
