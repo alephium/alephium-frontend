@@ -41,7 +41,7 @@ export const lightTheme: DefaultTheme = {
     highlight: '#d4a10d'
   },
   border: {
-    primary: '#f2f2f2',
+    primary: '#e8e8e8',
     secondary: '#f5f5f5'
   },
   shadow: {
@@ -69,7 +69,7 @@ export const darkTheme: DefaultTheme = {
     background1: '#111112',
     background2: '#111112',
     hover: colord('#18181a').lighten(0.02).toHex(),
-    highlight: '#232326',
+    highlight: '#28282b',
     accent: colord('#598bed').alpha(0.07).toHex()
   },
   font: {
@@ -81,8 +81,8 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f0d590'
   },
   border: {
-    primary: '#272729',
-    secondary: '#1e1e21'
+    primary: '#313133',
+    secondary: '#232326'
   },
   shadow: {
     primary: '0 2px 3px rgba(0, 0, 0, 0.3)',
