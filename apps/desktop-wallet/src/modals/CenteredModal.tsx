@@ -210,7 +210,7 @@ const TitleRow = styled.div`
 
 const CloseButton = styled(Button)`
   color: ${({ theme }) => theme.font.primary};
-  margin-right: var(--spacing-2);
+  margin-right: var(--spacing-1);
 `
 
 const BackButton = styled(Button)`

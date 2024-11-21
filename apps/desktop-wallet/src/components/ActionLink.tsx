@@ -24,8 +24,8 @@ import styled, { css } from 'styled-components'
 import { HasTooltip } from '@/components/Tooltip'
 
 interface ActionLinkProps {
-  children: ReactNode
   onClick: () => void
+  children?: ReactNode
   Icon?: LucideIcon
   iconPosition?: 'right' | 'left'
   withBackground?: boolean
