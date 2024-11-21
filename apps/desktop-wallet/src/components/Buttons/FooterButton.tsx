@@ -39,5 +39,5 @@ const ModalFooter = styled.div`
   display: flex;
   justify-content: center;
   margin-top: var(--spacing-6);
-  margin: var(--spacing-6) calc(-1 * var(--spacing-4)) 0;
+  margin: var(--spacing-4) calc(-1 * var(--spacing-4)) 0;
 `
