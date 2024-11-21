@@ -493,5 +493,6 @@
   "Could not get latest data": "Could not get latest data",
   "Updating...": "Updating...",
   "To send funds you first need to load your wallet with some.": "To send funds you first need to load your wallet with some.",
-  "The wallet is empty. Use the faucet in the developer tools in the app settings.": "The wallet is empty. Use the faucet in the developer tools in the app settings."
+  "The wallet is empty. Use the faucet in the developer tools in the app settings.": "The wallet is empty. Use the faucet in the developer tools in the app settings.",
+  "Buy": "Buy"
 }
