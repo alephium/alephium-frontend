@@ -23,8 +23,18 @@ import { useFetchWalletBalancesAlphArray } from '@/api/apiDataHooks/wallet/useFe
 import { useFetchWalletBalancesTokensArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
 
 const useFetchWalletWorth = () => {
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphArray()
-  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchWalletBalancesTokensArray()
+  const {
+    data: alphBalances,
+    isLoading: isLoadingAlphBalances,
+    isFetching: isFetchingAlphBalances,
+    error: errorAlphBalances
+  } = useFetchWalletBalancesAlphArray()
+  const {
+    data: tokensBalances,
+    isLoading: isLoadingTokensBalances,
+    isFetching: isFetchingTokensBalances,
+    error: errorTokensBalances
+  } = useFetchWalletBalancesTokensArray()
   const allTokensBalances = useMergeAllTokensBalances({
     includeAlph: true,
     alphBalances,
@@ -38,7 +48,9 @@ const useFetchWalletWorth = () => {
 
   return {
     data: worth,
-    isLoading: isLoadingWorth || isLoadingTokensByListing || isLoadingAlphBalances || isLoadingTokensBalances
+    isLoading: isLoadingWorth || isLoadingTokensByListing || isLoadingAlphBalances || isLoadingTokensBalances,
+    isFetching: isFetchingAlphBalances || isFetchingTokensBalances,
+    error: errorAlphBalances || errorTokensBalances
   }
 }
 
