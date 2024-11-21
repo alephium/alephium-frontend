@@ -76,7 +76,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
 
   return (
     <ModalContainer id={id} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
-      <CenteredBox role="dialog" {...fadeInOutScaleFast} narrow={narrow}>
+      <CenteredBox role="dialog" {...fadeInOutScaleFast} narrow={narrow} fullScreen={fullScreen}>
         <ModalHeader transparent={transparentHeader}>
           <TitleRow>
             {onBack && !disableBack && (
@@ -153,7 +153,7 @@ export const HeaderLogo = styled.div`
   width: 100%;
 `
 
-const CenteredBox = styled(motion.div)<{ narrow: boolean }>`
+const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>`
   display: flex;
   flex-direction: column;
 
@@ -172,8 +172,17 @@ const CenteredBox = styled(motion.div)<{ narrow: boolean }>`
 
   ${TitleContainer} {
     flex: 1;
-    margin: var(--spacing-3) var(--spacing-4) var(--spacing-3) var(--spacing-4);
+    margin: var(--spacing-3) var(--spacing-4);
   }
+
+  ${({ fullScreen }) =>
+    fullScreen &&
+    css`
+      max-height: 92vw;
+      max-width: 95vw;
+      height: 92vh;
+      width: 95vw;
+    `}
 `
 
 export const ModalHeader = styled.header<{ transparent?: boolean }>`
