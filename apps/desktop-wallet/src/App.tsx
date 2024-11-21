@@ -21,7 +21,6 @@ import { useInitializeThrottledClient } from '@alephium/shared-react'
 import { ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
-import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import PersistedQueryCacheVersionStorage from '@/api/persistedCacheVersionStorage'
 import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import AppSpinner from '@/components/AppSpinner'
@@ -67,7 +66,6 @@ const App = () => {
 
   useInitializeThrottledClient()
   useInitializeNetworkProxy()
-  useInitializeTokenPrices()
 
   useSystemTheme()
   useSystemLanguage()
@@ -145,8 +143,6 @@ const useSystemTheme = () => {
     }
   }, [dispatch, theme])
 }
-
-const useInitializeTokenPrices = () => useFetchTokenPrices()
 
 const useMigrateStoredSettings = () => {
   const dispatch = useAppDispatch()
