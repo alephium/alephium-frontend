@@ -40,6 +40,7 @@ export interface CenteredModalProps extends ModalContainerProps {
   isLoading?: boolean
   header?: ReactNode
   transparentHeader?: boolean
+  fullScreen?: boolean
   narrow?: boolean
   dynamicContent?: boolean
   onBack?: () => void
@@ -56,6 +57,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
   isLoading,
   header,
   transparentHeader = false,
+  fullScreen = false,
   narrow = false,
   dynamicContent = false,
   onBack,
