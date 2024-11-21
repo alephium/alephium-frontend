@@ -178,10 +178,10 @@ const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>
   ${({ fullScreen }) =>
     fullScreen &&
     css`
-      max-height: 92vw;
-      max-width: 95vw;
-      height: 92vh;
-      width: 95vw;
+      max-height: 90vw;
+      max-width: 90vw;
+      height: 90vh;
+      width: 90vw;
     `}
 `
 

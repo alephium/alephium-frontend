@@ -53,6 +53,7 @@ export interface AlephiumWindow extends Window {
       getSystemLanguage: () => Promise<string | undefined>
       getSystemRegion: () => Promise<string>
       setProxySettings: (proxySettings: ProxySettings) => Promise<void>
+      openOnRampServiceWindow: ({ url: string, targetLocation: string }) => void
       restart: () => void
     }
   }

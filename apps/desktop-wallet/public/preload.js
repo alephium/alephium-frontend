@@ -69,6 +69,7 @@ contextBridge.exposeInMainWorld('electron', {
     getSystemLanguage: () => ipcRenderer.invoke('app:getSystemLanguage'),
     getSystemRegion: () => ipcRenderer.invoke('app:getSystemRegion'),
     setProxySettings: (proxySettings) => ipcRenderer.invoke('app:setProxySettings', proxySettings),
+    openOnRampServiceWindow: ({ url, targetLocation }) => ipcRenderer.invoke('app:openOnRampServiceWindow', { url, targetLocation }),
     restart: () => ipcRenderer.invoke('app:restart')
   }
 })
