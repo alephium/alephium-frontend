@@ -87,19 +87,19 @@ const TransactionModal = ({ tx, ...props }: TransactionModalProps) => {
             </AmountsContainer>
           </Row>
         )}
-        {!isMoved && groupedIOAmounts.in && (
-          <Row title={t('Received')} transparent isVertical titleColor={theme.global.receive}>
+        {!isMoved && groupedIOAmounts.out && (
+          <Row title={t('Sent')} transparent isVertical titleColor={theme.global.send}>
             <AmountsContainer>
-              {groupedIOAmounts.in.map(({ id, amount }) => (
+              {groupedIOAmounts.out.map(({ id, amount }) => (
                 <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
               ))}
             </AmountsContainer>
           </Row>
         )}
-        {!isMoved && groupedIOAmounts.out && (
-          <Row title={t('Sent')} transparent isVertical titleColor={theme.global.send}>
+        {!isMoved && groupedIOAmounts.in && (
+          <Row title={t('Received')} transparent isVertical titleColor={theme.global.receive}>
             <AmountsContainer>
-              {groupedIOAmounts.out.map(({ id, amount }) => (
+              {groupedIOAmounts.in.map(({ id, amount }) => (
                 <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
               ))}
             </AmountsContainer>
