@@ -29,7 +29,6 @@ const ActionButtonsStack = ({ style, ...props }: ButtonStackProps) => (
 export default ActionButtonsStack
 
 const ActionsContainer = styled.View`
-  flex: 1.5;
   justify-content: center;
   align-items: center;
 `
