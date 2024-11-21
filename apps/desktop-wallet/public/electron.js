@@ -56,6 +56,9 @@ autoUpdater.allowPrerelease = IS_RC
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
+// Window for on-ramp services
+let onRampWindow
+
 // Build menu
 
 const isMac = process.platform === 'darwin'
@@ -330,6 +333,39 @@ app.on('ready', async function () {
   ipcMain.handle('wc:resetDeepLinkUri', () => {
     deepLinkUri = null
   })
+
+  ipcMain.handle('app:openOnRampServiceWindow', (event, { url, targetLocation }) => {
+
+    console.log(url)
+    if (onRampWindow) return; // Prevent multiple windows
+
+    onRampWindow = new BrowserWindow({
+        width: 1000,
+        height: 800,
+        parent: mainWindow,
+        webPreferences: {
+            contextIsolation: true,
+            webSecurity: true,
+        },
+    });
+
+    onRampWindow.loadURL(url);
+
+    onRampWindow.webContents.on('did-navigate', (event, currentUrl) => {
+        console.log(`Navigated to: ${currentUrl}`);
+        if (currentUrl.includes(targetLocation)) {
+            onRampWindow.close();
+            onRampWindow = null;
+
+            mainWindow.webContents.send('target-location-reached');
+        }
+    });
+
+    // Ensure window reference is cleaned up
+    onRampWindow.on('closed', () => {
+        onRampWindow = null;
+    });
+});
 
   createWindow()
 })

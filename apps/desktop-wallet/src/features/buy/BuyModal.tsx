@@ -25,7 +25,7 @@ import ActionLink from '@/components/ActionLink'
 import Button from '@/components/Button'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import CenteredModal from '@/modals/CenteredModal'
-import { openInWebBrowser } from '@/utils/misc'
+import { electron, openInWebBrowser } from '@/utils/misc'
 
 export interface BuyModalProps {
   addressHash: AddressHash
@@ -45,6 +45,11 @@ const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
     `&primaryColor=${theme.global.accent.slice(1)}` +
     `&secondaryColor=${theme.global.complementary.slice(1)}`
 
+  const handleAcceptDisclaimer = () => {
+    setIsDisclaimerAccepted(true)
+    electron?.app.openOnRampServiceWindow({ url: banxaURL, targetLocation: 'https://alephium.org' })
+  }
+
   return (
     <CenteredModal id={id} title={t('Buy')} fullScreen dynamicContent noPadding>
       <Content>
@@ -60,7 +65,7 @@ const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
                 so please read and understand them before proceeding.
               </Trans>
             </span>
-            <Button onClick={() => setIsDisclaimerAccepted(true)} role="primary" tall>
+            <Button onClick={handleAcceptDisclaimer} role="primary" tall>
               {t('Continue')}
             </Button>
           </DisclaimerOverlay>
