@@ -40,7 +40,7 @@ patchedDependencies:
 importers:
 
   .:
-    dependencies:
+    devDependencies:
       '@alephium/eslint-config':
         specifier: workspace:*
         version: link:packages/eslint-config
