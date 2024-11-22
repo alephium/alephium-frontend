@@ -23,14 +23,6 @@
   "engines": {
     "node": ">=20"
   },
-  "dependencies": {
-    "@alephium/eslint-config": "workspace:*",
-    "@alephium/typescript-config": "workspace:*",
-    "@changesets/cli": "^2.26.2",
-    "@manypkg/cli": "latest",
-    "prettier": "^3.0.3",
-    "turbo": "1.13.4"
-  },
   "pnpm": {
     "patchedDependencies": {
       "react-native-aes-crypto@2.1.1": "patches/react-native-aes-crypto@2.1.1.patch",
@@ -63,5 +55,13 @@
     "ignoredRules": [
       "INTERNAL_MISMATCH"
     ]
+  },
+  "devDependencies": {
+    "@alephium/eslint-config": "workspace:*",
+    "@alephium/typescript-config": "workspace:*",
+    "@changesets/cli": "^2.26.2",
+    "@manypkg/cli": "latest",
+    "prettier": "^3.0.3",
+    "turbo": "1.13.4"
   }
 }
