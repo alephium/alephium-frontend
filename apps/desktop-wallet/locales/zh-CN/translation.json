@@ -489,5 +489,7 @@
   "Region": "地区",
   "Choose your region to update formats of dates, time, and currencies.": "选择您的地区来更新日期、时间和货币的格式。",
   "Video thumbnail": "视频缩略图",
-  "Unsupported media type": "不支持的媒体类型"
+  "Unsupported media type": "不支持的媒体类型",
+  "Your balance is zero. Cannot proceed sent request.": "您的余额为零。无法继续发送请求。",
+  "Zero Balance Warning": "警告! 余额为零。"
 }

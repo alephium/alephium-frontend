@@ -27,6 +27,7 @@ import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { useFetchWalletBalancesAlphArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 
 interface ShortcutButtonBaseProps {
   analyticsOrigin: string
@@ -156,11 +157,18 @@ const SendButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
 
+  //retrivev amount data
+  const { data } = useFetchWalletBalancesAlphArray()
   if (!fromAddress) return null
 
   const handleSendClick = () => {
-    dispatch(openModal({ name: 'TransferSendModal', props: { initialTxData: { fromAddress } } }))
-    sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
+    console.log(`Balance: ${data?.availableBalance}`)
+    if (data?.availableBalance != BigInt(0)) {
+      dispatch(openModal({ name: 'TransferSendModal', props: { initialTxData: { fromAddress } } }))
+      sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
+    } else {
+      dispatch(openModal({ name: 'ZeroBalanceWarnModal' }))
+    }
   }
 
   return (

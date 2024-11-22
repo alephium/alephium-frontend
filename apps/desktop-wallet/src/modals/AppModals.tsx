@@ -52,6 +52,7 @@ import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
 import WalletRemovalModal from '@/modals/WalletRemovalModal'
 import AdvancedOperationsSideModal from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsSideModal'
+import ZeroBalanceWarnModal from '@/modals/ZeroBalanceWarnModal'
 
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
@@ -127,6 +128,8 @@ const AppModals = () => {
               return <AddressSweepModal id={modal.id} key={modal.id} {...modal.params.props} />
             case 'DeleteAddressesModal':
               return <DeleteAddressesModal id={modal.id} key={modal.id} />
+            case 'ZeroBalanceWarnModal':
+              return <ZeroBalanceWarnModal id={modal.id} key={modal.id} />
           }
         })}
     </AnimatePresenceModalWrapper>

@@ -492,5 +492,7 @@
   "Unsupported media type": "Unsupported media type",
   "You need to be on testnet or devnet in order to use the faucet.": "You need to be on testnet or devnet in order to use the faucet.",
   "Could not get latest data": "Could not get latest data",
-  "Updating...": "Updating..."
+  "Updating...": "Updating...",
+  "Zero Balance Warning": "Zero Balance Warning",
+  "Your balance is zero. Cannot proceed sent request.": "Your balance is zero. Cannot proceed sent request."
 }

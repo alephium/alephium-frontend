@@ -67,7 +67,8 @@ const ModalNames = {
   DisablePasswordRequirementModal: 'DisablePasswordRequirementModal',
   AddressSweepModal: 'AddressSweepModal',
   WalletRemovalModal: 'WalletRemovalModal',
-  DeleteAddressesModal: 'DeleteAddressesModal'
+  DeleteAddressesModal: 'DeleteAddressesModal',
+  ZeroBalanceWarnModal: 'ZeroBalanceWarnModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -185,6 +186,9 @@ export type OpenModalParams =
     }
   | {
       name: typeof ModalNames.DeleteAddressesModal
+    }
+  | {
+      name: typeof ModalNames.ZeroBalanceWarnModal
     }
 
 export type ModalInstance = {
