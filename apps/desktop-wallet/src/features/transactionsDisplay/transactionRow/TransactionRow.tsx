@@ -23,11 +23,12 @@ import styled, { css } from 'styled-components'
 import { TableRow } from '@/components/Table'
 import TableCellAmount from '@/components/TableCellAmount'
 import DirectionCell from '@/features/transactionsDisplay/transactionRow/DirectionCell'
+import DirectionIconCell from '@/features/transactionsDisplay/transactionRow/DirectionIconCell'
 import FirstAddressColumnCell from '@/features/transactionsDisplay/transactionRow/FirstAddressColumnCell'
 import FTAmounts from '@/features/transactionsDisplay/transactionRow/FTAmounts'
-import IconLabelTimeCell from '@/features/transactionsDisplay/transactionRow/IconLabelTimeCell'
 import OtherAmounts from '@/features/transactionsDisplay/transactionRow/OtherAmounts'
 import SecondAddressColumnCell from '@/features/transactionsDisplay/transactionRow/SecondAddressColumnCell'
+import TimestampCell from '@/features/transactionsDisplay/transactionRow/TimestampCell'
 import TokenBadgesListCell from '@/features/transactionsDisplay/transactionRow/TokenBadgesListCell'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
@@ -43,7 +44,9 @@ const TransactionRow = memo(
 
     return (
       <TableRowStyled role="row" tabIndex={0} {...props}>
-        <IconLabelTimeCell {...commonProps} />
+        <DirectionIconCell {...commonProps} />
+
+        <TimestampCell {...commonProps} />
 
         <TokenBadgesListCell tx={tx} refAddressHash={referenceAddress} compact={compact} />
 
@@ -70,9 +73,9 @@ export default TransactionRow
 const TableRowStyled = styled(TableRow)`
   display: flex;
   text-align: center;
-  border-radius: 3px;
   white-space: nowrap;
   flex-grow: 1;
+  align-items: stretch;
 `
 
 const DirectionalAddresses = styled.div<{ stackVertically?: boolean }>`

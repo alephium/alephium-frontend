@@ -21,64 +21,36 @@ import { colord } from 'colord'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import TimeSince from '@/components/TimeSince'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
 const IconLabelTimeCell = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionRowSectionProps) => {
   const { t } = useTranslation()
-  const { label, Icon, iconColor, iconBgColor } = useTransactionIconLabel(tx, refAddressHash, isInAddressDetailsModal)
+  const { Icon, iconColor, iconBgColor } = useTransactionIconLabel(tx, refAddressHash, isInAddressDetailsModal)
 
   return (
-    <IconLabelTimeCellStyled>
-      <div>
-        <TransactionIcon color={iconBgColor}>
-          <Icon size={13} strokeWidth={3} color={iconColor} />
+    <DirectionIconCellStyled>
+      <TransactionIcon color={iconBgColor}>
+        <Icon size={13} strokeWidth={3} color={iconColor} />
 
-          {isConfirmedTx(tx) && !tx.scriptExecutionOk && (
-            <FailedTXBubble data-tooltip-id="default" data-tooltip-content={t('Script execution failed')}>
-              !
-            </FailedTXBubble>
-          )}
-        </TransactionIcon>
-      </div>
-      <LabelTime>
-        <DirectionLabel>{label}</DirectionLabel>
-
-        <AssetTime>
-          <TimeSince timestamp={tx.timestamp} faded />
-        </AssetTime>
-      </LabelTime>
-    </IconLabelTimeCellStyled>
+        {isConfirmedTx(tx) && !tx.scriptExecutionOk && (
+          <FailedTXBubble data-tooltip-id="default" data-tooltip-content={t('Script execution failed')}>
+            !
+          </FailedTXBubble>
+        )}
+      </TransactionIcon>
+    </DirectionIconCellStyled>
   )
 }
 
 export default IconLabelTimeCell
 
-const IconLabelTimeCellStyled = styled.div`
+const DirectionIconCellStyled = styled.div`
   display: flex;
   align-items: center;
-  margin-right: 28px;
-  text-align: left;
-  width: 25%;
+  width: 50px;
   gap: 20px;
-`
-
-const LabelTime = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-`
-
-const DirectionLabel = styled.span`
-  color: ${({ theme }) => theme.font.primary};
-  font-weight: var(--fontWeight-medium);
-  font-size: 14px;
-`
-
-const AssetTime = styled.div`
-  font-size: 12px;
-  max-width: 120px;
+  border: 0;
 `
 
 const FailedTXBubble = styled.div`

@@ -100,9 +100,7 @@ const TableColumns = styled.div<TableColumnsProps>`
           grid-auto-flow: column;
         `};
 
-  align-items: center;
   padding: 0 20px;
-  min-height: 55px;
 `
 
 export interface TableRowProps extends TableColumnsProps {
@@ -112,7 +110,7 @@ export interface TableRowProps extends TableColumnsProps {
 export const TableRow = styled(TableColumns)<TableRowProps>`
   & > * {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-    padding: 10px 0;
+    padding: 20px 0;
   }
 
   ${({ onClick }) =>

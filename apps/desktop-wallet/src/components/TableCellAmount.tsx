@@ -22,6 +22,7 @@ export default styled.div<{ color?: string }>`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  justify-content: center;
   flex-grow: 1;
   gap: 6px;
   font-weight: var(--fontWeight-semiBold);

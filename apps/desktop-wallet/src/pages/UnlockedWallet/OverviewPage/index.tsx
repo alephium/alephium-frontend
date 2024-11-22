@@ -22,15 +22,12 @@ import styled from 'styled-components'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import WorthOverviewPanel from '@/components/WorthOverviewPanel'
 import { WalletTokensTabs } from '@/features/assetsLists/TokensTabs'
-import WalletLatestTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/WalletLatestTransactionsList'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
 
 interface OverviewPageProps {
   className?: string
 }
-
-const maxPanelHeightInPx = 500
 
 let wasChartAnimatedOnce = false
 
@@ -52,10 +49,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
         </WorthOverviewPanel>
       </UnlockedWalletPanel>
       <UnlockedWalletPanel bottom>
-        <WalletTokensTabsStyled maxHeightInPx={maxPanelHeightInPx} />
-      </UnlockedWalletPanel>
-      <UnlockedWalletPanel bottom>
-        <WalletLatestTransactionsList />
+        <WalletTokensTabsStyled />
       </UnlockedWalletPanel>
     </UnlockedWalletPage>
   )
