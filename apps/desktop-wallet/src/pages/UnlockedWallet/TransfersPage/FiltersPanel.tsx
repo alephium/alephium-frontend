@@ -150,7 +150,7 @@ const FiltersPanel = ({
         </Tile>
       </FilterTiles>
       <Buttons>
-        <Button role="secondary" short onClick={resetFilters}>
+        <Button role="secondary" wide onClick={resetFilters}>
           {t('Reset filters')}
         </Button>
       </Buttons>
@@ -160,25 +160,20 @@ const FiltersPanel = ({
 
 export default styled(FiltersPanel)`
   display: flex;
+  align-items: center;
   flex: 1;
-  border-color: ${({ theme }) => theme.border.primary};
-  justify-content: space-between;
-  z-index: 1;
+  gap: 20px;
 `
 
 const FilterTiles = styled.div`
   display: flex;
-  min-width: 0;
   flex: 1;
+  gap: 20px;
 `
 
-const FilterTile = styled.div`
-  padding: 5px 10px;
-  border-right: 1px solid ${({ theme }) => theme.border.primary};
-`
+const FilterTile = styled.div``
 
 const Tile = styled(FilterTile)`
-  min-width: 200px;
   flex: 1;
 `
 
