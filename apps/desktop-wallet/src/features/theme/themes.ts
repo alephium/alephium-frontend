@@ -26,22 +26,22 @@ export const lightTheme: DefaultTheme = {
     secondary: '#fcfcfc',
     tertiary: '#f9f9f9',
     contrast: '#000',
-    background1: '#fcfcfc',
-    background2: '#ffffff',
+    background1: '#f8f8fa',
+    background2: '#f8f8fa',
     hover: colord('#ffffff').darken(0.015).toHex(),
-    highlight: '#f0f0f0',
+    highlight: '#ebebf0',
     accent: colord('#598bed').alpha(0.05).toHex()
   },
   font: {
-    primary: '#1d1d1d',
-    secondary: '#6a6a6a',
-    tertiary: '#989898',
+    primary: '#00001d',
+    secondary: '#000026',
+    tertiary: '#8a8a99',
     contrastPrimary: 'rgba(255, 255, 255, 1)',
     contrastSecondary: 'rgba(255, 255, 255, 0.8)',
     highlight: '#d4a10d'
   },
   border: {
-    primary: '#ededed',
+    primary: '#ebebf2',
     secondary: '#f5f5f5'
   },
   shadow: {
@@ -62,14 +62,14 @@ export const lightTheme: DefaultTheme = {
 export const darkTheme: DefaultTheme = {
   name: 'dark',
   bg: {
-    primary: '#19191c',
+    primary: '#141417',
     secondary: '#17171a',
     tertiary: '#141416',
     contrast: 'rgba(255, 255, 255, 1)',
-    background1: '#111112',
-    background2: '#0f0f0f',
+    background1: '#0d0d0f',
+    background2: '#0d0d0f',
     hover: colord('#18181a').lighten(0.02).toHex(),
-    highlight: '#28282b',
+    highlight: '#25252b',
     accent: colord('#598bed').alpha(0.07).toHex()
   },
   font: {

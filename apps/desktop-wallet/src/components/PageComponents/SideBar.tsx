@@ -67,15 +67,11 @@ export default styled(SideBar)`
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
   z-index: 1;
 
   width: ${walletSidebarWidthPx}px;
-  padding: ${appHeaderHeightPx}px var(--spacing-4) var(--spacing-4);
-
-  border-right: 1px solid ${({ theme }) => theme.border.secondary};
-  background-color: ${({ theme }) => theme.bg.background1};
+  padding: ${appHeaderHeightPx - 10}px var(--spacing-4) var(--spacing-3);
 `
 
 const BottomButtons = styled.div`

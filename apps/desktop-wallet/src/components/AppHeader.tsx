@@ -145,7 +145,6 @@ const AppHeaderStyled = styled(motion.header)`
   top: 0;
   right: 0;
   left: ${walletSidebarWidthPx}px;
-
   z-index: 1;
 `
 
@@ -156,7 +155,7 @@ const AppHeaderContainer = styled.div`
   align-items: center;
 
   height: ${appHeaderHeightPx}px;
-  padding: 0 var(--spacing-4) 0 60px;
+  padding: 0 var(--spacing-4) 0 30px;
   gap: var(--spacing-1);
 `
 
@@ -165,8 +164,8 @@ const GradientBackground = styled(motion.div)`
   top: 0;
   left: 0;
   right: 0;
-  height: 130px;
-  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 25%, transparent)`};
+  height: 100px;
+  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 35%, transparent)`};
   pointer-events: none;
   z-index: 0;
 `

@@ -48,7 +48,7 @@ const ChartLengthBadges = memo(({ className }: ChartLengthBadgesProps) => {
               key={length}
               role="primary"
               variant="contrast"
-              style={{ opacity: isActive ? 0.8 : 0.3 }}
+              style={{ opacity: isActive ? 0.8 : 0.1 }}
               onClick={() => handleChartLengthButtonClick(length)}
               short
               rounded

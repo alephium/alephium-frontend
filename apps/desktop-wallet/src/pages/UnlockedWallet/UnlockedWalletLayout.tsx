@@ -74,8 +74,8 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
         <AnimatePresence>
           {fullWalletNameVisible && (
             <OnEnterWalletName
-              initial={{ x: 100, opacity: 0, scaleX: 1 }}
-              animate={{ x: 130, opacity: 1, scaleX: 1 }}
+              initial={{ x: 80, opacity: 0, scaleX: 1 }}
+              animate={{ x: 100, opacity: 1, scaleX: 1 }}
               exit={{ x: -50, opacity: 0, scaleX: 0.5 }}
               transition={{
                 type: 'spring',
@@ -130,8 +130,8 @@ export const UnlockedWalletPanel = styled.div<{
   doubleTop?: boolean
   backgroundColor?: keyof DefaultTheme['bg']
 }>`
-  padding-left: 60px;
-  padding-right: 60px;
+  padding-left: 30px;
+  padding-right: 50px;
 
   ${({ top, doubleTop }) => css`
     padding-top: ${top ? 20 : doubleTop ? 40 : 0}px;
@@ -165,6 +165,7 @@ const MainContent = styled.main`
 `
 
 const SideNavigation = styled.nav`
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -181,6 +182,7 @@ const CurrentWalletInitials = styled(motion.div)`
   font-weight: var(--fontWeight-semiBold);
   background-color: ${({ theme }) => theme.bg.primary};
   overflow: hidden;
+  margin-bottom: 40px;
 
   &:hover {
     cursor: pointer;

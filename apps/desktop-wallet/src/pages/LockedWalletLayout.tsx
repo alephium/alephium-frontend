@@ -49,10 +49,12 @@ export default styled(LockedWalletLayout)`
 `
 
 const Logo = styled.div`
+  flex: 1;
   padding: 5px;
 `
 
 const AlephiumLogotypeStyled = styled(AlephiumLogotype)`
+  height: 120px;
   fill: ${({ theme }) => theme.font.primary};
   color: ${({ theme }) => theme.font.primary};
 `
