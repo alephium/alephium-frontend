@@ -30,7 +30,7 @@ export const lightTheme: DefaultTheme = {
     background2: '#f8f8fa',
     hover: colord('#ffffff').darken(0.015).toHex(),
     highlight: '#ebebf0',
-    accent: colord('#598bed').alpha(0.05).toHex()
+    accent: colord('#3d6fec').alpha(0.1).toHex()
   },
   font: {
     primary: '#00001d',
@@ -70,7 +70,7 @@ export const darkTheme: DefaultTheme = {
     background2: '#0d0d0f',
     hover: colord('#18181a').lighten(0.02).toHex(),
     highlight: '#25252b',
-    accent: colord('#598bed').alpha(0.07).toHex()
+    accent: colord('#155ef9').alpha(0.1).toHex()
   },
   font: {
     primary: '#e3e3e3',

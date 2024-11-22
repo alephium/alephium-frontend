@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { motion } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
@@ -32,14 +32,13 @@ import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
 type AddressesTabValue = 'addresses' | 'contacts'
 
 const tabs: TabItem<AddressesTabValue>[] = [
-  { value: 'addresses', label: `📭 ${i18next.t('Addresses')}` },
-  { value: 'contacts', label: `🫂 ${i18next.t('Contacts')}` }
+  { value: 'addresses', label: i18next.t('Addresses') },
+  { value: 'contacts', label: i18next.t('Contacts') }
 ]
 
 const AddressesPage = () => {
   const { t } = useTranslation()
   const { state } = useLocation()
-  const tabsRowRef = useRef<HTMLDivElement>(null)
 
   const [currentTab, setCurrentTab] = useState<TabItem<AddressesTabValue>>(
     tabs[state?.activeTab === 'contacts' ? 1 : 0]
@@ -49,11 +48,7 @@ const AddressesPage = () => {
     <UnlockedWalletPage
       title={t('Addresses & contacts')}
       subtitle={t('Easily organize your addresses and your contacts for a more serene transfer experience.')}
-      BottomComponent={
-        <TabBarPanel ref={tabsRowRef}>
-          <TabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />
-        </TabBarPanel>
-      }
+      BottomComponent={<TabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} />}
     >
       <TabContent>
         <TabPanel>
@@ -90,15 +85,10 @@ const TabContent = styled.div`
   border-bottom: none;
   flex: 1;
   background-color: ${({ theme }) => theme.bg.background1};
-  border-top: 1px solid ${({ theme }) => theme.border.primary};
 `
 
 const TabPanel = styled(UnlockedWalletPanel)``
 
 const TabAnimation = styled(motion.div)`
   position: relative;
-`
-
-const TabBarPanel = styled(TabPanel)`
-  z-index: 1;
 `
