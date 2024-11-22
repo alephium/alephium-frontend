@@ -58,7 +58,7 @@ const WorthOverviewPanel = ({
   const isHoveringChart = hoveredDataPointWorth !== undefined
 
   return (
-    <WorthOverviewPanelStyled className={className} secondary>
+    <WorthOverviewPanelStyled className={className}>
       <AnimatedBackground height={600} />
       <Panel>
         <Balances>
@@ -151,9 +151,8 @@ const FiatDeltaOpacityContainer = styled(Opacity)`
 
 const ChartLengthsContainer = styled.div`
   position: absolute;
-  bottom: 5px;
-  right: 0;
-  left: 0;
+  bottom: 0;
+  left: 12px;
   display: flex;
   justify-content: center;
   align-items: center;

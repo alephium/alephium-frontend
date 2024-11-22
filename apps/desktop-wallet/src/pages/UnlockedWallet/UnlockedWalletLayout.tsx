@@ -179,7 +179,7 @@ const CurrentWalletInitials = styled(motion.div)`
   align-items: center;
   justify-content: center;
   font-weight: var(--fontWeight-semiBold);
-  background-color: ${({ theme }) => theme.bg.highlight};
+  background-color: ${({ theme }) => theme.bg.primary};
   overflow: hidden;
 
   &:hover {

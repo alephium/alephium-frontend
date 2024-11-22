@@ -65,7 +65,7 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
           custom={80}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: '#5fcd9d', width: 720, height: 180 }}
+          style={{ backgroundColor: '#0f9ce3', width: 720, height: 180 }}
         />
         <Circle
           custom={120}
@@ -89,7 +89,7 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
           custom={60}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: '#00b3ff', width: 540, height: 200 }}
+          style={{ backgroundColor: '#0088ff', width: 540, height: 200 }}
         />
       </motion.div>
       <SvgFilters />
