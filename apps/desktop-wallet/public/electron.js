@@ -375,37 +375,37 @@ app.on('ready', async function () {
   })
 
   ipcMain.handle('app:openOnRampServiceWindow', (event, { url, targetLocation }) => {
-
-    console.log(url)
-    if (onRampWindow) return; // Prevent multiple windows
+    if (onRampWindow) {
+      onRampWindow.show()
+      return
+    }
 
     onRampWindow = new BrowserWindow({
         width: 1000,
         height: 800,
-        parent: mainWindow,
         webPreferences: {
             contextIsolation: true,
             webSecurity: true,
         },
-    });
+    })
 
-    onRampWindow.loadURL(url);
+    onRampWindow.loadURL(url)
 
     onRampWindow.webContents.on('did-navigate', (event, currentUrl) => {
-        console.log(`Navigated to: ${currentUrl}`);
+        console.log(`Navigated to: ${currentUrl}`)
         if (currentUrl.includes(targetLocation)) {
-            onRampWindow.close();
-            onRampWindow = null;
+            onRampWindow.close()
+            onRampWindow = null
 
-            mainWindow.webContents.send('target-location-reached');
+            mainWindow.webContents.send('target-location-reached')
         }
-    });
+    })
 
     // Ensure window reference is cleaned up
     onRampWindow.on('closed', () => {
-        onRampWindow = null;
-    });
-});
+        onRampWindow = null
+    })
+})
 
   createWindow()
 })

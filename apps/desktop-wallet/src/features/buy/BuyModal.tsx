@@ -23,7 +23,9 @@ import styled, { useTheme } from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 import FooterButton from '@/components/Buttons/FooterButton'
+import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
 import { electron, openInWebBrowser } from '@/utils/misc'
 
@@ -31,12 +33,16 @@ export interface BuyModalProps {
   addressHash: AddressHash
 }
 
+// TODO: Support multiple fiat on-ramp provider.
+// Use modal to compare fees, and or let user define how much they want to buy
+
 const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
+  const dispatch = useAppDispatch()
 
   const banxaURL =
-    'https://alephium.banxa.com/' +
+    'https://alephium.banxa-sandbox.com/' +
     `?walletAddress=${addressHash}` +
     `&theme=${theme.name}` +
     `&backgroundColor=${theme.bg.primary.slice(1)}` +
@@ -46,6 +52,7 @@ const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
 
   const handleAcceptDisclaimer = () => {
     electron?.app.openOnRampServiceWindow({ url: banxaURL, targetLocation: 'https://alephium.org' })
+    dispatch(closeModal({ id }))
   }
 
   return (
