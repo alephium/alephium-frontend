@@ -101,7 +101,7 @@ const TableColumns = styled.div<TableColumnsProps>`
         `};
 
   align-items: center;
-  padding: 18px 20px;
+  padding: 0 20px;
   min-height: 55px;
 `
 
@@ -110,7 +110,10 @@ export interface TableRowProps extends TableColumnsProps {
 }
 
 export const TableRow = styled(TableColumns)<TableRowProps>`
-  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  & > * {
+    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+    padding: 18px 0;
+  }
 
   &:last-child {
     border-bottom: none;

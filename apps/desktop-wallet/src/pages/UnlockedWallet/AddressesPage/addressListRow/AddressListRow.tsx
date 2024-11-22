@@ -49,15 +49,17 @@ const AddressListRow = memo(({ addressHash, className }: AddressListRowProps) =>
       role="row"
       tabIndex={0}
     >
-      <AddressNameCell>
+      <Cell>
         <AddressColorIndicator addressHash={addressHash} size={16} />
+      </Cell>
+      <Cell>
         <Column>
           <Label>
             <AddressBadge addressHash={addressHash} hideColorIndication truncate disableA11y />
           </Label>
           <AddressLastActivity addressHash={addressHash} />
         </Column>
-      </AddressNameCell>
+      </Cell>
       <Cell>
         <AddressGroup addressHash={addressHash} />
       </Cell>
@@ -88,21 +90,26 @@ const Label = styled.div`
 `
 
 const Cell = styled.div`
-  padding: 20px 20px;
+  padding: 20px 0;
   align-items: center;
   display: flex;
-  background-color: ${({ theme }) => theme.bg.primary};
 `
 
 const GridRow = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: 40px 1fr 1fr 1fr 1fr;
+  background-color: ${({ theme }) => theme.bg.primary};
+  padding: 0 20px;
 
   &:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+    ${Cell} {
+      &:not(:first-child) {
+        border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+      }
+    }
   }
 
-  &:hover ${Cell} {
+  &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.bg.hover};
   }
@@ -118,11 +125,6 @@ const AmountCell = styled(Cell)`
 const FiatAmountCell = styled(AmountCell)`
   color: ${({ theme }) => theme.font.primary};
   font-size: 15px;
-`
-
-const AddressNameCell = styled(Cell)`
-  gap: 20px;
-  cursor: pointer;
 `
 
 const AddressTokensBadgesListStyled = styled(AddressTokensBadgesList)`
