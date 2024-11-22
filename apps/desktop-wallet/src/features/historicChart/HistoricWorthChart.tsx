@@ -136,7 +136,7 @@ const HistoricWorthChart = memo(
     const xAxisDatesData = chartData.map(({ date }) => date)
     const yAxisWorthData = chartData.map(({ worth }) => worth)
 
-    const chartColor = theme.font.primary
+    const chartColor = theme.font.secondary
 
     const chartOptions = getChartOptions(chartColor, xAxisDatesData, {
       mouseMove(e, chart, options) {

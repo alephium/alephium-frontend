@@ -219,7 +219,7 @@ const BuyButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }:
 const ShortcutButton = styled(Button)<Pick<ShortcutButtonBaseProps, 'highlight'>>`
   margin: 0;
   box-shadow: none;
-  min-width: 100px;
+  min-width: 120px;
 `
 
 const ButtonText = styled.div`
