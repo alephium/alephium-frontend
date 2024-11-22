@@ -74,7 +74,7 @@ const WorthOverviewPanel = ({
             </BalancesColumn>
           </BalancesRow>
         </Balances>
-        {children && <RightColumnContent fadeOut={isHoveringChart}>{children}</RightColumnContent>}
+        {children && <ChildrenContainer>{children}</ChildrenContainer>}
       </Panel>
 
       <HistoricWorthChart
@@ -118,18 +118,13 @@ const BalancesRow = styled.div`
   display: flex;
 `
 
-const Opacity = styled.div<{ fadeOut?: boolean }>`
-  transition: opacity 0.2s ease-out;
-  opacity: ${({ fadeOut }) => (fadeOut ? 0.23 : 1)};
-`
-
-const RightColumnContent = styled(Opacity)`
+const ChildrenContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
 `
 
-const BalancesColumn = styled(Opacity)`
+const BalancesColumn = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -145,7 +140,7 @@ const Today = styled.div`
   text-align: center;
 `
 
-const FiatDeltaOpacityContainer = styled(Opacity)`
+const FiatDeltaOpacityContainer = styled.div`
   height: 5px;
 `
 

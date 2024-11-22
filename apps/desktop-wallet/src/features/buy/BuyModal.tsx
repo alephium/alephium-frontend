@@ -17,15 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 import FooterButton from '@/components/Buttons/FooterButton'
-import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
-import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
 import { electron, openInWebBrowser } from '@/utils/misc'
 
@@ -39,7 +37,7 @@ export interface BuyModalProps {
 const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const dispatch = useAppDispatch()
+  const [disclaimerAccepted, setDisclaimerAccepted] = useState(false)
 
   const banxaURL =
     'https://alephium.banxa-sandbox.com/' +
@@ -52,22 +50,28 @@ const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
 
   const handleAcceptDisclaimer = () => {
     electron?.app.openOnRampServiceWindow({ url: banxaURL, targetLocation: 'https://alephium.org' })
-    dispatch(closeModal({ id }))
+    setDisclaimerAccepted(true)
   }
 
   return (
-    <CenteredModal id={id} title={t('Disclaimer')}>
-      <DisclaimerText>
-        <Trans t={t} i18nKey="banxaDisclaimer">
-          You are about to access 3rd party services provided by
-          <ActionLinkStyled onClick={() => openInWebBrowser('https://www.banxa.com')}></ActionLinkStyled> through an
-          in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please
-          read and understand them before proceeding.
-        </Trans>
-      </DisclaimerText>
-      <FooterButton onClick={handleAcceptDisclaimer} role="primary" tall>
-        {t('Continue')}
-      </FooterButton>
+    <CenteredModal id={id} title={!disclaimerAccepted ? t('Disclaimer') : t('Buy')} narrow dynamicContent>
+      <TextContainer>
+        {!disclaimerAccepted ? (
+          <Trans t={t} i18nKey="banxaDisclaimer">
+            You are about to access 3rd party services provided by
+            <ActionLinkStyled onClick={() => openInWebBrowser('https://www.banxa.com')}></ActionLinkStyled> through an
+            in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so
+            please read and understand them before proceeding.
+          </Trans>
+        ) : (
+          t('You can now complete your purchase in the dedicated window!') + ' 🤑'
+        )}
+      </TextContainer>
+      {!disclaimerAccepted && (
+        <FooterButton onClick={handleAcceptDisclaimer} role="primary" tall>
+          {t('Continue')}
+        </FooterButton>
+      )}
     </CenteredModal>
   )
 })
@@ -78,6 +82,7 @@ const ActionLinkStyled = styled(ActionLink)`
   display: inline;
 `
 
-const DisclaimerText = styled.span`
+const TextContainer = styled.span`
   font-size: 14px;
+  text-align: center;
 `
