@@ -155,11 +155,7 @@ export default MultiSelect
 
 const MultiSelectInputArea = styled(InputArea)`
   ${inputDefaultStyle(true, true, true)};
-  border: 1px solid transparent;
-
-  &:not(:hover) {
-    background-color: transparent;
-  }
+  border: 1px solid ${({ theme }) => theme.border.secondary};
 
   &:hover {
     border: 1px solid ${({ theme }) => theme.border.primary};

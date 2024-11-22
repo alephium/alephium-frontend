@@ -18,11 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { colord } from 'colord'
 import { map } from 'lodash'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useScrollContext } from '@/contexts/scroll'
 import WalletTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/WalletTransactionsList'
 import { useAppSelector } from '@/hooks/redux'
 import FiltersPanel from '@/pages/UnlockedWallet/TransfersPage/FiltersPanel'
@@ -39,25 +38,16 @@ interface TransfersPageProps {
 const TransfersPage = ({ className }: TransfersPageProps) => {
   const { t } = useTranslation()
   const addresses = useAppSelector(selectAllAddresses)
-  const { scrollDirection } = useScrollContext()
 
-  const [direction, setDirection] = useState(scrollDirection?.get())
   const [selectedAddresses, setSelectedAddresses] = useState(addresses)
   const [selectedDirections, setSelectedDirections] = useState(directionOptions)
   const [selectedTokensIds, setSelectedTokensIds] = useState<TokenId[]>()
-
-  useEffect(() => {
-    scrollDirection?.on('change', setDirection)
-
-    return () => scrollDirection?.destroy()
-  }, [scrollDirection])
 
   return (
     <UnlockedWalletPage
       title={t('Transfers')}
       subtitle={t('Browse your transaction history. Execute new transfers easily.')}
       className={className}
-      borderBottom
       BottomComponent={
         <FilterPanelContainer>
           <FiltersPanel
@@ -71,7 +61,7 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
         </FilterPanelContainer>
       }
     >
-      <StyledUnlockedWalletPanel doubleTop bottom backgroundColor="background1">
+      <StyledUnlockedWalletPanel top bottom backgroundColor="background1">
         <WalletTransactionsList
           addressHashes={map(selectedAddresses, 'hash')}
           directions={map(selectedDirections, 'value')}
