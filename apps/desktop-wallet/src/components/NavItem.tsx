@@ -57,6 +57,7 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
       data-tooltip-id="sidenav"
       data-tooltip-content={label}
       iconColor={theme.font.primary}
+      rounded
     />
   )
 }

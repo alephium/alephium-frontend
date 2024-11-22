@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { motion, useAnimation } from 'framer-motion'
 import React, { useEffect } from 'react'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 interface AnimatedBackgroundProps {
   height?: number
@@ -39,12 +39,15 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
   isAnimated = false
 }) => {
   const controls = useAnimation()
+  const theme = useTheme()
 
   useEffect(() => {
     if (isAnimated) {
       controls.start({ rotate: 360, transition: { duration: 40, repeat: Infinity, ease: 'linear' } })
     }
   }, [controls, isAnimated])
+
+  const isDarkTheme = theme.name === 'dark'
 
   return (
     <AnimatedContainer style={{ width, height }}>
@@ -58,14 +61,14 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          opacity: 0.5
+          opacity: isDarkTheme ? 0.5 : 0.6
         }}
       >
         <Circle
           custom={80}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: '#0f9ce3', width: 720, height: 180 }}
+          style={{ backgroundColor: isDarkTheme ? '#0f9ce3' : '#ffb299', width: 720, height: 180 }}
         />
         <Circle
           custom={120}
@@ -83,13 +86,13 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
           custom={140}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: '#006eff', width: 1000, height: 260 }}
+          style={{ backgroundColor: isDarkTheme ? '#006eff' : '#8280ff', width: 900, height: 360 }}
         />
         <Circle
           custom={60}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: '#0088ff', width: 540, height: 200 }}
+          style={{ backgroundColor: isDarkTheme ? '#0088ff' : '#8476ff', width: 540, height: 300 }}
         />
       </motion.div>
       <SvgFilters />
@@ -103,7 +106,7 @@ const SvgFilters = () => (
   <svg width="0" height="0" style={{ position: 'absolute' }}>
     <filter id="combinedFilter">
       <feGaussianBlur in="SourceGraphic" stdDeviation="80" result="blurred" />
-      <feTurbulence type="turbulence" baseFrequency="1" numOctaves="2" />
+      <feTurbulence type="turbulence" baseFrequency="0.5" numOctaves="2" />
       <feComposite in="noise" in2="blurred" operator="in" result="maskedNoise" />
       <feBlend in="blurred" in2="maskedNoise" mode="screen" />
     </filter>

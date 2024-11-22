@@ -112,13 +112,7 @@ export interface TableRowProps extends TableColumnsProps {
 export const TableRow = styled(TableColumns)<TableRowProps>`
   & > * {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-    padding: 18px 0;
-  }
-
-  &:last-child {
-    border-bottom: none;
-    border-bottom-left-radius: var(--radius-small);
-    border-bottom-right-radius: var(--radius-small);
+    padding: 10px 0;
   }
 
   ${({ onClick }) =>
@@ -173,9 +167,9 @@ const TableHeaderRow = styled(TableRow)`
   display: flex;
   justify-content: space-between;
   height: 55px;
-  background-color: ${({ theme }) => theme.bg.tertiary};
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   padding-right: var(--spacing-2);
+  padding-left: var(--spacing-4);
 `
 
 const TableTitle = styled.div`
