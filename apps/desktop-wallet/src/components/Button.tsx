@@ -83,7 +83,7 @@ const Button = ({ children, disabled, submit, Icon, className, isHighlighted, lo
         <>
           {Icon && (
             <ButtonIcon>
-              <Icon size={16} />
+              <Icon size={17} />
             </ButtonIcon>
           )}
           {children as ReactNode}

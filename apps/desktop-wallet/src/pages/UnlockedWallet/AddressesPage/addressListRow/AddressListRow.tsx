@@ -117,14 +117,14 @@ const GridRow = styled.div`
 
 const AmountCell = styled(Cell)`
   text-align: right;
-  font-size: 15px;
+  font-size: 14px;
   color: ${({ theme }) => theme.font.secondary};
   justify-content: flex-end;
 `
 
 const FiatAmountCell = styled(AmountCell)`
   color: ${({ theme }) => theme.font.primary};
-  font-size: 15px;
+  font-size: 14px;
 `
 
 const AddressTokensBadgesListStyled = styled(AddressTokensBadgesList)`

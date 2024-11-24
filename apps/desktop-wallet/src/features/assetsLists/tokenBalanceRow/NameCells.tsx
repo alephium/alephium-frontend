@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isNumber } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -46,26 +45,18 @@ export const FTNameCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
         )}
       </TokenName>
 
-      <TokenSymbolAndPrice tokenSymbol={token.symbol} />
+      <TokenPrice tokenSymbol={token.symbol} />
     </TableCell>
   )
 }
 
-const TokenSymbolAndPrice = ({ tokenSymbol }: { tokenSymbol: string }) => {
+const TokenPrice = ({ tokenSymbol }: { tokenSymbol: string }) => {
   const { data: tokenPrice } = useFetchTokenPrice(tokenSymbol)
 
   return (
-    <TokenSymbolAndPriceStyled>
-      {isNumber(tokenPrice) ? (
-        <>
-          {tokenSymbol}
-          <PriceSeparator> • </PriceSeparator>
-          <AmountStyled isFiat value={tokenPrice} overrideSuffixColor color="tertiary" />
-        </>
-      ) : (
-        tokenSymbol
-      )}
-    </TokenSymbolAndPriceStyled>
+    <TokenPriceStyled>
+      {tokenPrice !== undefined && <AmountStyled isFiat value={tokenPrice} overrideSuffixColor color="tertiary" />}
+    </TokenPriceStyled>
   )
 }
 
@@ -84,12 +75,12 @@ export const NSTNameCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
 const TokenName = styled(Truncate)`
   display: flex;
   font-size: 14px;
-  font-weight: var(--fontWeight-medium);
+  font-weight: var(--fontWeight-semiBold);
   gap: 5px;
   align-items: center;
 `
 
-const TokenSymbolAndPriceStyled = styled.div`
+const TokenPriceStyled = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 12px;
   width: 200px;
@@ -100,10 +91,6 @@ const TokenSymbolAndPriceStyled = styled.div`
 
 const AmountStyled = styled(Amount)`
   font-weight: var(--fontWeight-medium);
-`
-
-const PriceSeparator = styled.span`
-  font-size: 9px;
 `
 
 const InfoIcon = styled.div`

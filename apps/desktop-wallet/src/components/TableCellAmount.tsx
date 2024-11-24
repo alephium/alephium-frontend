@@ -26,7 +26,8 @@ export default styled(TableCell)<{ color?: string }>`
   align-items: flex-end;
   justify-content: center;
   flex-grow: 1;
-  gap: 6px;
+  min-width: 6em;
+  flex-basis: 100px;
   font-weight: var(--fontWeight-semiBold);
 
   ${({ color }) =>

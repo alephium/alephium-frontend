@@ -150,7 +150,7 @@ const FiltersPanel = ({
         </Tile>
       </FilterTiles>
       <Buttons>
-        <Button role="secondary" wide onClick={resetFilters}>
+        <Button role="secondary" wide onClick={resetFilters} short>
           {t('Reset filters')}
         </Button>
       </Buttons>
