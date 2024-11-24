@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
 import { TableCell, TableRow } from '@/components/Table'
-import AmountsColumn, { RawAmountSubtitle } from '@/features/assetsLists/tokenBalanceRow/AmountsColumn'
+import AmountsColumn, { RawAmountSubtitle } from '@/features/assetsLists/tokenBalanceRow/AmountsCell'
 import FTWorth from '@/features/assetsLists/tokenBalanceRow/FTWorth'
 import { FTNameCell, NSTNameCell } from '@/features/assetsLists/tokenBalanceRow/NameCells'
 import TokenLogo from '@/features/assetsLists/tokenBalanceRow/TokenLogo'
@@ -26,10 +26,11 @@ import { TokenBalancesRowAmountsProps, TokenBalancesRowBaseProps } from '@/featu
 
 export const WalletFTBalancesRow = ({ tokenId }: TokenBalancesRowBaseProps) => (
   <TableRow key={tokenId} role="row">
-    <TableCell maxWidth={50}>
+    <TableCell maxWidth={50} noBorder>
       <TokenLogo tokenId={tokenId} />
     </TableCell>
     <FTNameCell tokenId={tokenId} />
+
     <FTAmountsCell tokenId={tokenId} />
   </TableRow>
 )

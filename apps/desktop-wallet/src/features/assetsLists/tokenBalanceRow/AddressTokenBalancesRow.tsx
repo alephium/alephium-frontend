@@ -20,7 +20,7 @@ import styled from 'styled-components'
 
 import useFetchAddressSingleTokenBalances from '@/api/apiDataHooks/address/useFetchAddressSingleTokenBalances'
 import { TableRow } from '@/components/Table'
-import AmountsColumn, { RawAmountSubtitle } from '@/features/assetsLists/tokenBalanceRow/AmountsColumn'
+import AmountsCell, { RawAmountSubtitle } from '@/features/assetsLists/tokenBalanceRow/AmountsCell'
 import FTWorth from '@/features/assetsLists/tokenBalanceRow/FTWorth'
 import { FTNameCell, NSTNameCell } from '@/features/assetsLists/tokenBalanceRow/NameCells'
 import TokenLogo from '@/features/assetsLists/tokenBalanceRow/TokenLogo'
@@ -71,14 +71,14 @@ const AddressTokenBalancesRowAmounts = ({ tokenId, addressHash, children }: Addr
   })
 
   return (
-    <AmountsColumn
+    <AmountsCell
       isLoading={isLoadingTokenBalances}
       totalBalance={tokenBalances?.totalBalance}
       availableBalance={tokenBalances?.availableBalance}
       tokenId={tokenId}
     >
       {children}
-    </AmountsColumn>
+    </AmountsCell>
   )
 }
 

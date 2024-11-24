@@ -24,8 +24,6 @@ import styled, { css } from 'styled-components'
 
 import Button from '@/components/Button'
 
-type AlignType = 'start' | 'center' | 'end'
-
 export interface TableProps {
   minWidth?: string
   className?: string
@@ -33,8 +31,7 @@ export interface TableProps {
 
 interface TableCellProps {
   maxWidth?: number
-  truncate?: boolean
-  align?: AlignType
+  noBorder?: boolean
 }
 
 const Table: FC<TableProps> = ({ className, children, minWidth }) => (
@@ -64,9 +61,10 @@ const TableWrapper = styled(motion.div)<Pick<TableProps, 'minWidth'>>`
 
 export const TableCell = styled.div<TableCellProps>`
   display: flex;
+  align-items: center;
   font-weight: var(--fontWeight-semiBold);
   position: relative;
-  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  border-bottom: ${({ theme, noBorder }) => `1px solid ${noBorder ? 'transparent' : theme.border.secondary}`};
   padding: 20px 0;
   max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : 'none')};
 `
@@ -130,6 +128,8 @@ export const TableFooter = styled(TableColumns)``
 
 export const TableCellPlaceholder = styled(TableCell)`
   color: ${({ theme }) => theme.font.tertiary};
+  align-self: center;
+  justify-self: center;
 `
 
 export const TableHeader: FC<{ title: string; className?: string }> = ({ title, children, className }) => (
@@ -149,7 +149,7 @@ const TableHeaderRow = styled(TableRow)`
 `
 
 const TableTitle = styled.div`
-  font-size: 15px;
+  font-size: 14px;
   font-weight: var(--fontWeight-semiBold);
 `
 

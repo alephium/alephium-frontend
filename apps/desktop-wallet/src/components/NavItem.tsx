@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { LucideIcon } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import styled, { useTheme } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
 
@@ -49,20 +49,29 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
       aria-label={label}
       onClick={handleClick}
       Icon={Icon}
-      borderless={!isActive}
+      borderless
       squared
-      role="secondary"
       transparent={!isActive}
       isActive={isActive}
       data-tooltip-id="sidenav"
       data-tooltip-content={label}
-      iconColor={theme.font.primary}
+      iconColor={isActive ? theme.global.accent : theme.font.primary}
       rounded
     />
   )
 }
 
 const ButtonStyled = styled(Button)<{ isActive: boolean }>`
+  ${({ isActive, theme }) =>
+    isActive
+      ? css`
+          background-color: ${theme.bg.accent};
+          stroke: ${theme.global.accent};
+        `
+      : css`
+          stroke: ${theme.font.tertiary};
+        `}
+
   &:not(:hover) {
     opacity: ${({ isActive }) => (isActive ? 1 : 0.5)} !important;
   }
