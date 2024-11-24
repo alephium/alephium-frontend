@@ -16,55 +16,53 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled from 'styled-components'
-
 import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
-import { TableRow } from '@/components/Table'
+import { TableCell, TableRow } from '@/components/Table'
 import AmountsColumn, { RawAmountSubtitle } from '@/features/assetsLists/tokenBalanceRow/AmountsColumn'
 import FTWorth from '@/features/assetsLists/tokenBalanceRow/FTWorth'
-import { FTNameColumn, NSTNameColumn } from '@/features/assetsLists/tokenBalanceRow/NameColumns'
+import { FTNameCell, NSTNameCell } from '@/features/assetsLists/tokenBalanceRow/NameCells'
 import TokenLogo from '@/features/assetsLists/tokenBalanceRow/TokenLogo'
 import { TokenBalancesRowAmountsProps, TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
 
 export const WalletFTBalancesRow = ({ tokenId }: TokenBalancesRowBaseProps) => (
   <TableRow key={tokenId} role="row">
-    <TokenRow>
+    <TableCell maxWidth={50}>
       <TokenLogo tokenId={tokenId} />
-      <FTNameColumn tokenId={tokenId} />
-      <FTAmounts tokenId={tokenId} />
-    </TokenRow>
+    </TableCell>
+    <FTNameCell tokenId={tokenId} />
+    <FTAmountsCell tokenId={tokenId} />
   </TableRow>
 )
 
 export const WalletNSTBalancesRow = ({ tokenId }: TokenBalancesRowBaseProps) => (
   <TableRow key={tokenId} role="row">
-    <TokenRow>
+    <TableCell maxWidth={50}>
       <TokenLogo tokenId={tokenId} />
-      <NSTNameColumn tokenId={tokenId} />
-      <WalletTokenBalancesRowAmounts tokenId={tokenId}>
-        <RawAmountSubtitle />
-      </WalletTokenBalancesRowAmounts>
-    </TokenRow>
+    </TableCell>
+    <NSTNameCell tokenId={tokenId} />
+    <WalletTokenBalancesAmountsCell tokenId={tokenId}>
+      <RawAmountSubtitle />
+    </WalletTokenBalancesAmountsCell>
   </TableRow>
 )
 
-const FTAmounts = ({ tokenId }: TokenBalancesRowBaseProps) => {
+const FTAmountsCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
   const { data: walletTokenBalances, isLoading: isLoadingTokenBalances } = useFetchWalletSingleTokenBalances({
     tokenId
   })
 
   return (
-    <WalletTokenBalancesRowAmounts tokenId={tokenId}>
+    <WalletTokenBalancesAmountsCell tokenId={tokenId}>
       <FTWorth
         tokenId={tokenId}
         totalBalance={walletTokenBalances?.totalBalance}
         isLoadingBalance={isLoadingTokenBalances}
       />
-    </WalletTokenBalancesRowAmounts>
+    </WalletTokenBalancesAmountsCell>
   )
 }
 
-const WalletTokenBalancesRowAmounts = ({ tokenId, children }: TokenBalancesRowAmountsProps) => {
+const WalletTokenBalancesAmountsCell = ({ tokenId, children }: TokenBalancesRowAmountsProps) => {
   const { data: walletTokenBalances, isLoading: isLoadingTokenBalances } = useFetchWalletSingleTokenBalances({
     tokenId
   })
@@ -80,9 +78,3 @@ const WalletTokenBalancesRowAmounts = ({ tokenId, children }: TokenBalancesRowAm
     </AmountsColumn>
   )
 }
-
-const TokenRow = styled.div`
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-`

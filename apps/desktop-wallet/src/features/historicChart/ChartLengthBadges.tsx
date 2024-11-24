@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { memo } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import Button from '@/components/Button'
 import { ChartLength, chartLengths } from '@/features/historicChart/historicChartTypes'
@@ -46,13 +46,12 @@ const ChartLengthBadges = memo(({ className }: ChartLengthBadgesProps) => {
           hasHistoricBalances && (
             <ButtonStyled
               key={length}
-              role="primary"
-              variant="contrast"
-              style={{ opacity: isActive ? 0.8 : 0.1 }}
+              role="secondary"
               onClick={() => handleChartLengthButtonClick(length)}
               short
               rounded
               borderless
+              isActive={isActive}
             >
               {length}
             </ButtonStyled>
@@ -70,8 +69,14 @@ const ChartLengthBadgesStyled = styled.div`
   gap: 5px;
 `
 
-const ButtonStyled = styled(Button)`
+const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   padding: 3px;
   height: auto;
   min-width: 32px;
+  ${({ isActive, theme }) => css`
+    background-color: ${isActive ? theme.bg.contrast : 'transparent'};
+    color: ${isActive ? theme.font.contrastPrimary : theme.font.tertiary};
+    border: 1px solid ${isActive ? 'transparent' : theme.font.tertiary};
+    opacity: ${isActive ? 1 : 0.5};
+  `}
 `

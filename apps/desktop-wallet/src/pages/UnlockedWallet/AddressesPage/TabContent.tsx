@@ -89,8 +89,7 @@ const Cards = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 25px;
-  padding-top: var(--spacing-4);
-  padding-bottom: 60px;
+  padding-bottom: 20px;
 `
 
 const HeaderButton = styled(Button)``

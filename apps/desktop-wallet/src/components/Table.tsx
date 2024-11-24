@@ -32,6 +32,7 @@ export interface TableProps {
 }
 
 interface TableCellProps {
+  maxWidth?: number
   truncate?: boolean
   align?: AlignType
 }
@@ -62,26 +63,12 @@ const TableWrapper = styled(motion.div)<Pick<TableProps, 'minWidth'>>`
 `
 
 export const TableCell = styled.div<TableCellProps>`
-  display: inline-flex;
+  display: flex;
   font-weight: var(--fontWeight-semiBold);
   position: relative;
-  ${({ truncate }) =>
-    truncate &&
-    css`
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    `}
-
-  &:not(:last-child) {
-    padding-right: var(--spacing-5);
-  }
-  ${({ align }) =>
-    align &&
-    css`
-      justify-self: ${align};
-      text-align: ${align === 'end' ? 'right' : 'auto'};
-    `};
+  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  padding: 20px 0;
+  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : 'none')};
 `
 
 interface TableColumnsProps extends Omit<HTMLProps<HTMLDivElement>, 'ref'> {
@@ -89,17 +76,7 @@ interface TableColumnsProps extends Omit<HTMLProps<HTMLDivElement>, 'ref'> {
 }
 
 const TableColumns = styled.div<TableColumnsProps>`
-  display: grid;
-  ${({ columnWidths }) =>
-    columnWidths
-      ? css`
-          grid-template-columns: ${columnWidths.map((columnWidth) => `minmax(${columnWidth || '0px'}, 1fr)`).join(' ')};
-        `
-      : css`
-          grid-auto-columns: minmax(0px, 1fr);
-          grid-auto-flow: column;
-        `};
-
+  display: flex;
   padding: 0 20px;
 `
 
@@ -108,11 +85,6 @@ export interface TableRowProps extends TableColumnsProps {
 }
 
 export const TableRow = styled(TableColumns)<TableRowProps>`
-  & > * {
-    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-    padding: 20px 0;
-  }
-
   ${({ onClick }) =>
     onClick &&
     css`
@@ -146,6 +118,12 @@ export const TableRow = styled(TableColumns)<TableRowProps>`
         }
       }
     `}
+
+  &:last-child {
+    ${TableCell} {
+      border-bottom: none;
+    }
+  }
 `
 
 export const TableFooter = styled(TableColumns)``

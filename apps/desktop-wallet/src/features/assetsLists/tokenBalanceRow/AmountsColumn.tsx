@@ -25,7 +25,7 @@ import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/TableCellAmount'
 import { TokenId } from '@/types/tokens'
 
-interface AmountsColumnProps {
+interface AmountsCellProps {
   isLoading: boolean
   tokenId: TokenId
   children: ReactNode
@@ -33,7 +33,7 @@ interface AmountsColumnProps {
   availableBalance?: bigint
 }
 
-const AmountsColumn = ({ isLoading, totalBalance, availableBalance, children, tokenId }: AmountsColumnProps) => {
+const AmountsCell = ({ isLoading, totalBalance, availableBalance, children, tokenId }: AmountsCellProps) => {
   const theme = useTheme()
   const { t } = useTranslation()
 
@@ -65,7 +65,7 @@ export const RawAmountSubtitle = () => {
   return <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>
 }
 
-export default AmountsColumn
+export default AmountsCell
 
 const AmountSubtitle = styled.div`
   color: ${({ theme }) => theme.font.tertiary};

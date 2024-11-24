@@ -20,7 +20,7 @@ import { findTransactionReferenceAddress } from '@alephium/shared'
 import { memo } from 'react'
 import styled, { css } from 'styled-components'
 
-import { TableRow } from '@/components/Table'
+import { TableCell, TableRow } from '@/components/Table'
 import TableCellAmount from '@/components/TableCellAmount'
 import DirectionCell from '@/features/transactionsDisplay/transactionRow/DirectionCell'
 import DirectionIconCell from '@/features/transactionsDisplay/transactionRow/DirectionIconCell'
@@ -78,7 +78,7 @@ const TableRowStyled = styled(TableRow)`
   align-items: stretch;
 `
 
-const DirectionalAddresses = styled.div<{ stackVertically?: boolean }>`
+const DirectionalAddresses = styled(TableCell)<{ stackVertically?: boolean }>`
   display: flex;
   align-items: center;
   min-width: 35%;

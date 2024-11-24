@@ -16,11 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { TableCell, TableRow } from '@/components/Table'
+import Button from '@/components/Button'
+import { TableRow } from '@/components/Table'
 
 interface NewTransactionsButtonRowProps {
   onClick: () => void
@@ -31,9 +31,9 @@ const NewTransactionsButtonRow = ({ onClick }: NewTransactionsButtonRowProps) =>
 
   return (
     <NewTransactionsButtonRowStyled role="row" onClick={onClick}>
-      <TableCell align="center" role="gridcell">
-        🆕 {t('Click to display new transactions')}
-      </TableCell>
+      <Button role="primary" short rounded>
+        {t('Click to display new transactions')}
+      </Button>
     </NewTransactionsButtonRowStyled>
   )
 }
@@ -41,5 +41,7 @@ const NewTransactionsButtonRow = ({ onClick }: NewTransactionsButtonRowProps) =>
 export default NewTransactionsButtonRow
 
 const NewTransactionsButtonRowStyled = styled(TableRow)`
-  background-color: ${({ theme }) => colord(theme.global.accent).alpha(0.15).toHex()};
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid ${({ theme }) => theme.border.primary};
 `

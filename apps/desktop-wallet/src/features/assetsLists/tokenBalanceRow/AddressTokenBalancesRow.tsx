@@ -22,7 +22,7 @@ import useFetchAddressSingleTokenBalances from '@/api/apiDataHooks/address/useFe
 import { TableRow } from '@/components/Table'
 import AmountsColumn, { RawAmountSubtitle } from '@/features/assetsLists/tokenBalanceRow/AmountsColumn'
 import FTWorth from '@/features/assetsLists/tokenBalanceRow/FTWorth'
-import { FTNameColumn, NSTNameColumn } from '@/features/assetsLists/tokenBalanceRow/NameColumns'
+import { FTNameCell, NSTNameCell } from '@/features/assetsLists/tokenBalanceRow/NameCells'
 import TokenLogo from '@/features/assetsLists/tokenBalanceRow/TokenLogo'
 import {
   AddressTokenBalancesRowAmountsProps,
@@ -33,7 +33,7 @@ export const AddressFTBalancesRow = ({ tokenId, addressHash }: AddressTokenBalan
   <TableRow key={tokenId} role="row">
     <TokenRow>
       <TokenLogo tokenId={tokenId} />
-      <FTNameColumn tokenId={tokenId} />
+      <FTNameCell tokenId={tokenId} />
       <FTAmounts tokenId={tokenId} addressHash={addressHash} />
     </TokenRow>
   </TableRow>
@@ -43,7 +43,7 @@ export const AddressNSTBalancesRow = ({ tokenId, addressHash }: AddressTokenBala
   <TableRow key={tokenId} role="row">
     <TokenRow>
       <TokenLogo tokenId={tokenId} />
-      <NSTNameColumn tokenId={tokenId} />
+      <NSTNameCell tokenId={tokenId} />
       <AddressTokenBalancesRowAmounts tokenId={tokenId} addressHash={addressHash}>
         <RawAmountSubtitle />
       </AddressTokenBalancesRowAmounts>

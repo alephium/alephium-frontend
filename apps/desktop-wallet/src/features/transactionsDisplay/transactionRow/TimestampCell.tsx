@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
+import { TableCell } from '@/components/Table'
 import TimeSince from '@/components/TimeSince'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
@@ -40,7 +41,7 @@ const TimestampCell = ({ tx, refAddressHash, isInAddressDetailsModal }: Transact
 
 export default TimestampCell
 
-const TimestampCellStyled = styled.div`
+const TimestampCellStyled = styled(TableCell)`
   display: flex;
   align-items: center;
   text-align: left;

@@ -21,6 +21,7 @@ import { colord } from 'colord'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { TableCell } from '@/components/Table'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useTransactionIconLabel from '@/features/transactionsDisplay/useTransactionIconLabel'
 
@@ -45,7 +46,7 @@ const IconLabelTimeCell = ({ tx, refAddressHash, isInAddressDetailsModal }: Tran
 
 export default IconLabelTimeCell
 
-const DirectionIconCellStyled = styled.div`
+const DirectionIconCellStyled = styled(TableCell)`
   display: flex;
   align-items: center;
   width: 50px;

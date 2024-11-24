@@ -58,7 +58,7 @@ export const GlobalStyle = createGlobalStyle`
     --fontWeight-semiBold: 600;
     --fontWeight-bold: 700;
 
-    --inputHeight: 42px;
+    --inputHeight: 44px;
     --tableCellHeight: 46px;
     --toggleWidth: 52px;
   }
