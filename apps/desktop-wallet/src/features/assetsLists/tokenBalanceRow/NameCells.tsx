@@ -24,16 +24,18 @@ import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrice
 import useFetchToken, { isFT, isUnlistedFT } from '@/api/apiDataHooks/token/useFetchToken'
 import Amount from '@/components/Amount'
 import HashEllipsed from '@/components/HashEllipsed'
+import { TableCell } from '@/components/Table'
+import Truncate from '@/components/Truncate'
 import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
 
-export const FTNameColumn = ({ tokenId }: TokenBalancesRowBaseProps) => {
+export const FTNameCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
   const { t } = useTranslation()
   const { data: token } = useFetchToken(tokenId)
 
   if (!token || !isFT(token)) return null
 
   return (
-    <NameColumn>
+    <TableCell>
       <TokenName>
         {token.name}
 
@@ -45,7 +47,7 @@ export const FTNameColumn = ({ tokenId }: TokenBalancesRowBaseProps) => {
       </TokenName>
 
       <TokenSymbolAndPrice tokenSymbol={token.symbol} />
-    </NameColumn>
+    </TableCell>
   )
 }
 
@@ -67,29 +69,19 @@ const TokenSymbolAndPrice = ({ tokenSymbol }: { tokenSymbol: string }) => {
   )
 }
 
-export const NSTNameColumn = ({ tokenId }: TokenBalancesRowBaseProps) => {
+export const NSTNameCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
   const { t } = useTranslation()
 
   return (
-    <NameColumn>
+    <TableCell>
       <TokenName>
         <HashEllipsed hash={tokenId} tooltipText={t('Copy token hash')} />
       </TokenName>
-    </NameColumn>
+    </TableCell>
   )
 }
 
-const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`
-
-const NameColumn = styled(Column)`
-  margin-right: 50px;
-`
-
-const TokenName = styled.div`
+const TokenName = styled(Truncate)`
   display: flex;
   font-size: 14px;
   font-weight: var(--fontWeight-medium);

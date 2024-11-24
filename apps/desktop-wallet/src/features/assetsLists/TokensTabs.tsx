@@ -134,7 +134,6 @@ const TokensTabs = ({
     <FocusableContent className={className} isFocused={isExpanded} onClose={toggleExpansion}>
       <ExpandableTable isExpanded={isExpanded} maxHeightInPx={maxHeightInPx}>
         <TableTabBar items={tabs} onTabChange={setCurrentTab} activeTab={currentTab} />
-
         {children}
       </ExpandableTable>
     </FocusableContent>

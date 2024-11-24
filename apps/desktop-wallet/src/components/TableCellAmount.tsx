@@ -18,7 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled, { css } from 'styled-components'
 
-export default styled.div<{ color?: string }>`
+import { TableCell } from '@/components/Table'
+
+export default styled(TableCell)<{ color?: string }>`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
