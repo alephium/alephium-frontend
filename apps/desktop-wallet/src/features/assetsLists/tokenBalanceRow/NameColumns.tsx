@@ -24,7 +24,6 @@ import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrice
 import useFetchToken, { isFT, isUnlistedFT } from '@/api/apiDataHooks/token/useFetchToken'
 import Amount from '@/components/Amount'
 import HashEllipsed from '@/components/HashEllipsed'
-import Truncate from '@/components/Truncate'
 import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
 
 export const FTNameColumn = ({ tokenId }: TokenBalancesRowBaseProps) => {
@@ -90,13 +89,12 @@ const NameColumn = styled(Column)`
   margin-right: 50px;
 `
 
-const TokenName = styled(Truncate)`
+const TokenName = styled.div`
   display: flex;
   font-size: 14px;
   font-weight: var(--fontWeight-medium);
   gap: 5px;
   align-items: center;
-  width: 200px;
 `
 
 const TokenSymbolAndPriceStyled = styled.div`
