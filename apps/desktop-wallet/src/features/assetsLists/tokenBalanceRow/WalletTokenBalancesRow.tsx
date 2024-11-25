@@ -16,13 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
 import { TableCell, TableRow } from '@/components/Table'
-import AmountsColumn, { RawAmountSubtitle } from '@/features/assetsLists/tokenBalanceRow/AmountsCell'
-import FTWorth from '@/features/assetsLists/tokenBalanceRow/FTWorth'
+import { FTWalletAmountCell, RawAmountSubtitle } from '@/features/assetsLists/tokenBalanceRow/FTAmountCells'
+import FTWorthCell from '@/features/assetsLists/tokenBalanceRow/FTWorthCell'
 import { FTNameCell, NSTNameCell } from '@/features/assetsLists/tokenBalanceRow/NameCells'
 import TokenLogo from '@/features/assetsLists/tokenBalanceRow/TokenLogo'
-import { TokenBalancesRowAmountsProps, TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
+import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
 
 export const WalletFTBalancesRow = ({ tokenId }: TokenBalancesRowBaseProps) => (
   <TableRow key={tokenId} role="row">
@@ -30,8 +29,8 @@ export const WalletFTBalancesRow = ({ tokenId }: TokenBalancesRowBaseProps) => (
       <TokenLogo tokenId={tokenId} />
     </TableCell>
     <FTNameCell tokenId={tokenId} />
-
-    <FTAmountsCell tokenId={tokenId} />
+    <FTWorthCell tokenId={tokenId} />
+    <FTWalletAmountCell tokenId={tokenId} />
   </TableRow>
 )
 
@@ -41,41 +40,6 @@ export const WalletNSTBalancesRow = ({ tokenId }: TokenBalancesRowBaseProps) => 
       <TokenLogo tokenId={tokenId} />
     </TableCell>
     <NSTNameCell tokenId={tokenId} />
-    <WalletTokenBalancesAmountsCell tokenId={tokenId}>
-      <RawAmountSubtitle />
-    </WalletTokenBalancesAmountsCell>
+    <RawAmountSubtitle />
   </TableRow>
 )
-
-const FTAmountsCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
-  const { data: walletTokenBalances, isLoading: isLoadingTokenBalances } = useFetchWalletSingleTokenBalances({
-    tokenId
-  })
-
-  return (
-    <WalletTokenBalancesAmountsCell tokenId={tokenId}>
-      <FTWorth
-        tokenId={tokenId}
-        totalBalance={walletTokenBalances?.totalBalance}
-        isLoadingBalance={isLoadingTokenBalances}
-      />
-    </WalletTokenBalancesAmountsCell>
-  )
-}
-
-const WalletTokenBalancesAmountsCell = ({ tokenId, children }: TokenBalancesRowAmountsProps) => {
-  const { data: walletTokenBalances, isLoading: isLoadingTokenBalances } = useFetchWalletSingleTokenBalances({
-    tokenId
-  })
-
-  return (
-    <AmountsColumn
-      isLoading={isLoadingTokenBalances}
-      totalBalance={walletTokenBalances?.totalBalance}
-      availableBalance={walletTokenBalances?.availableBalance}
-      tokenId={tokenId}
-    >
-      {children}
-    </AmountsColumn>
-  )
-}

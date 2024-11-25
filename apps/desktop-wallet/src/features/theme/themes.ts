@@ -70,7 +70,7 @@ export const darkTheme: DefaultTheme = {
     background2: '#0d0d0f',
     hover: colord('#18181a').lighten(0.02).toHex(),
     highlight: '#25252b',
-    accent: colord('#155ef9').alpha(0.15).toHex()
+    accent: colord('#487df0').alpha(0.15).toHex()
   },
   font: {
     primary: '#e3e3e3',
@@ -90,7 +90,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: '0 0 50px rgb(0, 0, 0)'
   },
   global: {
-    accent: '#155ef9',
+    accent: '#487df0',
     complementary: '#d488eb',
     alert: '#ed4a34',
     valid: '#3ed282',

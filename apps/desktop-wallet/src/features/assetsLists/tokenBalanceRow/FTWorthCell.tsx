@@ -22,16 +22,16 @@ import styled from 'styled-components'
 
 import useFetchTokenPrices, { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import useFetchToken, { isFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
 import Amount from '@/components/Amount'
 import SkeletonLoader from '@/components/SkeletonLoader'
+import { TableCell } from '@/components/Table'
 import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
 
-interface FTWorth extends TokenBalancesRowBaseProps {
-  isLoadingBalance: boolean
-  totalBalance?: bigint
-}
-
-const FTWorth = ({ tokenId, totalBalance, isLoadingBalance }: FTWorth) => {
+const FTWorthCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
+  const { data: totalBalance, isLoading: isLoadingBalance } = useFetchWalletSingleTokenBalances({
+    tokenId
+  })
   const { data: token } = useFetchToken(tokenId)
   const { isLoading: isLoadingTokenPrices } = useFetchTokenPrices()
 
@@ -41,12 +41,12 @@ const FTWorth = ({ tokenId, totalBalance, isLoadingBalance }: FTWorth) => {
 
   return (
     <Worth>
-      <FTWorthAmount symbol={token.symbol} decimals={token.decimals} totalBalance={totalBalance} />
+      <FTWorthAmount symbol={token.symbol} decimals={token.decimals} totalBalance={totalBalance?.totalBalance} />
     </Worth>
   )
 }
 
-export default FTWorth
+export default FTWorthCell
 
 interface FTWorthAmountProps {
   symbol: string
@@ -67,7 +67,7 @@ const FTWorthAmount = ({ symbol, totalBalance, decimals }: FTWorthAmountProps) =
   return <Amount value={worth} isFiat />
 }
 
-const Worth = styled.div`
+const Worth = styled(TableCell)`
   font-size: 11px;
   color: ${({ theme }) => theme.font.secondary};
 `

@@ -71,7 +71,7 @@ export const WalletFTsBalancesList = (props: TokensTabsBaseProps) => {
 }
 
 const TokensSkeletonLoader = () => (
-  <TableRow>
+  <TableRow style={{ padding: 20 }}>
     <SkeletonLoader height="37.5px" />
   </TableRow>
 )

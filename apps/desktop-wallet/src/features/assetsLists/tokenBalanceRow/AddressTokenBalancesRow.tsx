@@ -18,23 +18,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
-import useFetchAddressSingleTokenBalances from '@/api/apiDataHooks/address/useFetchAddressSingleTokenBalances'
 import { TableRow } from '@/components/Table'
-import AmountsCell, { RawAmountSubtitle } from '@/features/assetsLists/tokenBalanceRow/AmountsCell'
-import FTWorth from '@/features/assetsLists/tokenBalanceRow/FTWorth'
+import { FTAddressAmountCell, RawAmountSubtitle } from '@/features/assetsLists/tokenBalanceRow/FTAmountCells'
+import FTWorth from '@/features/assetsLists/tokenBalanceRow/FTWorthCell'
 import { FTNameCell, NSTNameCell } from '@/features/assetsLists/tokenBalanceRow/NameCells'
 import TokenLogo from '@/features/assetsLists/tokenBalanceRow/TokenLogo'
-import {
-  AddressTokenBalancesRowAmountsProps,
-  AddressTokenBalancesRowProps
-} from '@/features/assetsLists/tokenBalanceRow/types'
+import { AddressTokenBalancesRowProps } from '@/features/assetsLists/tokenBalanceRow/types'
 
 export const AddressFTBalancesRow = ({ tokenId, addressHash }: AddressTokenBalancesRowProps) => (
   <TableRow key={tokenId} role="row">
     <TokenRow>
       <TokenLogo tokenId={tokenId} />
       <FTNameCell tokenId={tokenId} />
-      <FTAmounts tokenId={tokenId} addressHash={addressHash} />
+      <FTAddressAmountCell tokenId={tokenId} addressHash={addressHash} />
+      <FTWorth tokenId={tokenId} />
     </TokenRow>
   </TableRow>
 )
@@ -44,43 +41,10 @@ export const AddressNSTBalancesRow = ({ tokenId, addressHash }: AddressTokenBala
     <TokenRow>
       <TokenLogo tokenId={tokenId} />
       <NSTNameCell tokenId={tokenId} />
-      <AddressTokenBalancesRowAmounts tokenId={tokenId} addressHash={addressHash}>
-        <RawAmountSubtitle />
-      </AddressTokenBalancesRowAmounts>
+      <RawAmountSubtitle />
     </TokenRow>
   </TableRow>
 )
-
-const FTAmounts = ({ tokenId, addressHash }: AddressTokenBalancesRowProps) => {
-  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useFetchAddressSingleTokenBalances({
-    addressHash,
-    tokenId
-  })
-
-  return (
-    <AddressTokenBalancesRowAmounts tokenId={tokenId} addressHash={addressHash}>
-      <FTWorth tokenId={tokenId} totalBalance={tokenBalances?.totalBalance} isLoadingBalance={isLoadingTokenBalances} />
-    </AddressTokenBalancesRowAmounts>
-  )
-}
-
-const AddressTokenBalancesRowAmounts = ({ tokenId, addressHash, children }: AddressTokenBalancesRowAmountsProps) => {
-  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useFetchAddressSingleTokenBalances({
-    addressHash,
-    tokenId
-  })
-
-  return (
-    <AmountsCell
-      isLoading={isLoadingTokenBalances}
-      totalBalance={tokenBalances?.totalBalance}
-      availableBalance={tokenBalances?.availableBalance}
-      tokenId={tokenId}
-    >
-      {children}
-    </AmountsCell>
-  )
-}
 
 const TokenRow = styled.div`
   display: flex;
