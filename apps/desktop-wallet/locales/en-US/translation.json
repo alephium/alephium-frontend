@@ -492,5 +492,7 @@
   "Unsupported media type": "Unsupported media type",
   "You need to be on testnet or devnet in order to use the faucet.": "You need to be on testnet or devnet in order to use the faucet.",
   "Could not get latest data": "Could not get latest data",
-  "Updating...": "Updating..."
+  "Updating...": "Updating...",
+  "To send funds you first need to load your wallet with some.": "To send funds you first need to load your wallet with some.",
+  "The wallet is empty. Use the faucet in the developer tools in the app settings.": "The wallet is empty. Use the faucet in the developer tools in the app settings."
 }
