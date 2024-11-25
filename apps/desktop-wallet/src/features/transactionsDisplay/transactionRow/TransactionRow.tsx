@@ -21,7 +21,6 @@ import { memo } from 'react'
 import styled, { css } from 'styled-components'
 
 import { TableCell, TableRow } from '@/components/Table'
-import TableCellAmount from '@/components/TableCellAmount'
 import DirectionCell from '@/features/transactionsDisplay/transactionRow/DirectionCell'
 import DirectionIconCell from '@/features/transactionsDisplay/transactionRow/DirectionIconCell'
 import FirstAddressColumnCell from '@/features/transactionsDisplay/transactionRow/FirstAddressColumnCell'
@@ -56,13 +55,13 @@ const TransactionRow = memo(
           <SecondAddressColumnCell {...commonProps} />
         </DirectionalAddresses>
 
-        <TableCellAmount aria-hidden="true">
+        <TableCell aria-hidden="true">
           <AmountsList>
             <FTAmounts {...commonProps} />
             <OtherAmounts type="nfts" {...commonProps} />
             <OtherAmounts type="nsts" {...commonProps} />
           </AmountsList>
-        </TableCellAmount>
+        </TableCell>
       </TableRowStyled>
     )
   }

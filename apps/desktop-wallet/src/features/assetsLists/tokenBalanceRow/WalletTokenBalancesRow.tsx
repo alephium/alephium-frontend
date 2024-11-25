@@ -17,7 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TableCell, TableRow } from '@/components/Table'
-import { FTWalletAmountCell, RawAmountSubtitle } from '@/features/assetsLists/tokenBalanceRow/FTAmountCells'
+import { FTWalletAmountCell } from '@/features/assetsLists/tokenBalanceRow/FTAmountCells'
+import FTPriceCell from '@/features/assetsLists/tokenBalanceRow/FTPriceCell'
 import FTWorthCell from '@/features/assetsLists/tokenBalanceRow/FTWorthCell'
 import { FTNameCell, NSTNameCell } from '@/features/assetsLists/tokenBalanceRow/NameCells'
 import TokenLogo from '@/features/assetsLists/tokenBalanceRow/TokenLogo'
@@ -25,21 +26,22 @@ import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRo
 
 export const WalletFTBalancesRow = ({ tokenId }: TokenBalancesRowBaseProps) => (
   <TableRow key={tokenId} role="row">
-    <TableCell maxWidth={50} noBorder>
+    <TableCell fixedWidth={50} noBorder>
       <TokenLogo tokenId={tokenId} />
     </TableCell>
     <FTNameCell tokenId={tokenId} />
-    <FTWorthCell tokenId={tokenId} />
+    <FTPriceCell tokenId={tokenId} />
     <FTWalletAmountCell tokenId={tokenId} />
+    <FTWorthCell tokenId={tokenId} />
   </TableRow>
 )
 
 export const WalletNSTBalancesRow = ({ tokenId }: TokenBalancesRowBaseProps) => (
   <TableRow key={tokenId} role="row">
-    <TableCell maxWidth={50}>
+    <TableCell fixedWidth={50}>
       <TokenLogo tokenId={tokenId} />
     </TableCell>
     <NSTNameCell tokenId={tokenId} />
-    <RawAmountSubtitle />
+    <FTWalletAmountCell tokenId={tokenId} />
   </TableRow>
 )

@@ -30,7 +30,7 @@ const IconLabelTimeCell = ({ tx, refAddressHash, isInAddressDetailsModal }: Tran
   const { Icon, iconColor, iconBgColor } = useTransactionIconLabel(tx, refAddressHash, isInAddressDetailsModal)
 
   return (
-    <DirectionIconCellStyled>
+    <DirectionIconCellStyled fixedWidth={50}>
       <TransactionIcon color={iconBgColor}>
         <Icon size={13} strokeWidth={3} color={iconColor} />
 
@@ -49,7 +49,6 @@ export default IconLabelTimeCell
 const DirectionIconCellStyled = styled(TableCell)`
   display: flex;
   align-items: center;
-  width: 50px;
   gap: 20px;
   border: 0;
 `

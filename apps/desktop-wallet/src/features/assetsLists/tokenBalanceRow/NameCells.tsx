@@ -19,9 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import useFetchToken, { isFT, isUnlistedFT } from '@/api/apiDataHooks/token/useFetchToken'
-import Amount from '@/components/Amount'
 import HashEllipsed from '@/components/HashEllipsed'
 import { TableCell } from '@/components/Table'
 import Truncate from '@/components/Truncate'
@@ -44,19 +42,7 @@ export const FTNameCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
           </InfoIcon>
         )}
       </TokenName>
-
-      <TokenPrice tokenSymbol={token.symbol} />
     </TableCell>
-  )
-}
-
-const TokenPrice = ({ tokenSymbol }: { tokenSymbol: string }) => {
-  const { data: tokenPrice } = useFetchTokenPrice(tokenSymbol)
-
-  return (
-    <TokenPriceStyled>
-      {tokenPrice !== undefined && <AmountStyled isFiat value={tokenPrice} overrideSuffixColor color="tertiary" />}
-    </TokenPriceStyled>
   )
 }
 
@@ -78,19 +64,6 @@ const TokenName = styled(Truncate)`
   font-weight: var(--fontWeight-semiBold);
   gap: 5px;
   align-items: center;
-`
-
-const TokenPriceStyled = styled.div`
-  color: ${({ theme }) => theme.font.tertiary};
-  font-size: 12px;
-  width: 200px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-`
-
-const AmountStyled = styled(Amount)`
-  font-weight: var(--fontWeight-medium);
 `
 
 const InfoIcon = styled.div`

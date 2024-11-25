@@ -16,23 +16,30 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled, { css } from 'styled-components'
+import { useTranslation } from 'react-i18next'
 
-import { TableCell } from '@/components/Table'
+import { TableCell, TableHeader } from '@/components/Table'
 
-export default styled(TableCell)<{ color?: string }>`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
-  flex-grow: 1;
-  min-width: 6em;
-  flex-basis: 100px;
-  font-weight: var(--fontWeight-semiBold);
+const TokensBalancesHeader = () => {
+  const { t } = useTranslation()
 
-  ${({ color }) =>
-    color &&
-    css`
-      color: ${color};
-    `}
-`
+  return (
+    <TableHeader>
+      <TableCell fixedWidth={50} />
+      <TableCell>
+        <span>{t('Token')}</span>
+      </TableCell>
+      <TableCell>
+        <span>{t('Price')}</span>
+      </TableCell>
+      <TableCell align="right">
+        <span>{t('Amount')}</span>
+      </TableCell>
+      <TableCell align="right">
+        <span>{t('Value')}</span>
+      </TableCell>
+    </TableHeader>
+  )
+}
+
+export default TokensBalancesHeader

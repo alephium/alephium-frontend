@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { calculateAmountWorth } from '@alephium/shared'
 import { isNumber } from 'lodash'
-import styled from 'styled-components'
 
 import useFetchTokenPrices, { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import useFetchToken, { isFT } from '@/api/apiDataHooks/token/useFetchToken'
@@ -40,9 +39,9 @@ const FTWorthCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
   if (isLoadingBalance || isLoadingTokenPrices) return <SkeletonLoader height="20px" width="30%" />
 
   return (
-    <Worth>
+    <TableCell align="right">
       <FTWorthAmount symbol={token.symbol} decimals={token.decimals} totalBalance={totalBalance?.totalBalance} />
-    </Worth>
+    </TableCell>
   )
 }
 
@@ -66,8 +65,3 @@ const FTWorthAmount = ({ symbol, totalBalance, decimals }: FTWorthAmountProps) =
 
   return <Amount value={worth} isFiat />
 }
-
-const Worth = styled(TableCell)`
-  font-size: 11px;
-  color: ${({ theme }) => theme.font.secondary};
-`
