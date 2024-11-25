@@ -16,24 +16,61 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
+import { AddressHash } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import useFetchAddressSingleTokenBalances from '@/api/apiDataHooks/address/useFetchAddressSingleTokenBalances'
+import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
 import Amount from '@/components/Amount'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import TableCellAmount from '@/components/TableCellAmount'
 import { TokenId } from '@/types/tokens'
 
-interface AmountsCellProps {
-  isLoading: boolean
+interface FTAddressAmountCellProps {
   tokenId: TokenId
-  children: ReactNode
-  totalBalance?: bigint
-  availableBalance?: bigint
+  addressHash: AddressHash
 }
 
-const AmountsCell = ({ isLoading, totalBalance, availableBalance, children, tokenId }: AmountsCellProps) => {
+export const FTAddressAmountCell = ({ tokenId, addressHash }: FTAddressAmountCellProps) => {
+  const { data: balances, isLoading } = useFetchAddressSingleTokenBalances({
+    addressHash: addressHash,
+    tokenId
+  })
+
+  return (
+    <FTAmountCell
+      tokenId={tokenId}
+      totalBalance={balances?.totalBalance}
+      availableBalance={balances?.availableBalance}
+      isLoading={isLoading}
+    />
+  )
+}
+
+export const FTWalletAmountCell = ({ tokenId }: Omit<FTAddressAmountCellProps, 'addressHash'>) => {
+  const { data: balances, isLoading } = useFetchWalletSingleTokenBalances({
+    tokenId
+  })
+
+  return (
+    <FTAmountCell
+      tokenId={tokenId}
+      totalBalance={balances?.totalBalance}
+      availableBalance={balances?.availableBalance}
+      isLoading={isLoading}
+    />
+  )
+}
+
+interface FTAmountCellProps {
+  tokenId: TokenId
+  totalBalance?: bigint
+  availableBalance?: bigint
+  isLoading: boolean
+}
+
+const FTAmountCell = ({ tokenId, isLoading, totalBalance, availableBalance }: FTAmountCellProps) => {
   const theme = useTheme()
   const { t } = useTranslation()
 
@@ -53,8 +90,6 @@ const AmountsCell = ({ isLoading, totalBalance, availableBalance, children, toke
           )}
         </>
       )}
-
-      {children}
     </TableCellAmount>
   )
 }
@@ -64,8 +99,6 @@ export const RawAmountSubtitle = () => {
 
   return <AmountSubtitle>{t('Raw amount')}</AmountSubtitle>
 }
-
-export default AmountsCell
 
 const AmountSubtitle = styled.div`
   color: ${({ theme }) => theme.font.tertiary};

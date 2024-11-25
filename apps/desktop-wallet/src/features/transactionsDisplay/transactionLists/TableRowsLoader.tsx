@@ -21,7 +21,7 @@ import { TableRow } from '@/components/Table'
 
 const TableRowsLoader = () =>
   Array.from({ length: 3 }).map((_, i) => (
-    <TableRow key={i}>
+    <TableRow key={i} style={{ padding: 20 }}>
       <SkeletonLoader height="37.5px" />
     </TableRow>
   ))
