@@ -26,6 +26,7 @@ import ExpandableTokensBalancesList from '@/features/assetsLists/ExpandableToken
 import PlaceholderText from '@/features/assetsLists/PlaceholderText'
 import { AddressFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/AddressTokenBalancesRow'
 import { WalletFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
+import TokensBalancesHeader from '@/features/assetsLists/TokensBalancesHeader'
 import { AddressTokensTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
 
 export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressTokensTabsProps) => {
@@ -54,6 +55,7 @@ export const WalletFTsBalancesList = (props: TokensTabsBaseProps) => {
 
   return (
     <ExpandableTokensBalancesList {...props} nbOfItems={listedFts.length + unlistedFts.length}>
+      <TokensBalancesHeader />
       {listedFts.map(({ id }) => (
         <WalletFTBalancesRow tokenId={id} key={id} />
       ))}

@@ -24,7 +24,7 @@ import useFetchAddressSingleTokenBalances from '@/api/apiDataHooks/address/useFe
 import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
 import Amount from '@/components/Amount'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import TableCellAmount from '@/components/TableCellAmount'
+import { TableCell } from '@/components/Table'
 import { TokenId } from '@/types/tokens'
 
 interface FTAddressAmountCellProps {
@@ -75,7 +75,7 @@ const FTAmountCell = ({ tokenId, isLoading, totalBalance, availableBalance }: FT
   const { t } = useTranslation()
 
   return (
-    <TableCellAmount>
+    <TableCell align="right">
       {isLoading ? (
         <SkeletonLoader height="20px" width="30%" />
       ) : (
@@ -90,7 +90,7 @@ const FTAmountCell = ({ tokenId, isLoading, totalBalance, availableBalance }: FT
           )}
         </>
       )}
-    </TableCellAmount>
+    </TableCell>
   )
 }
 

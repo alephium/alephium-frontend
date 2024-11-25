@@ -33,6 +33,6 @@ const WorthOverview = ({ overrideWorth, worth, ...props }: WorthOverviewProps) =
 export default WorthOverview
 
 const WorthOverviewStyled = styled(Amount)`
-  font-size: 32px;
-  font-weight: var(--fontWeight-bold);
+  font-size: 40px;
+  font-weight: var(--fontWeight-semiBold);
 `

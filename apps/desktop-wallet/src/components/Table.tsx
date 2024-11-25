@@ -30,8 +30,9 @@ export interface TableProps {
 }
 
 interface TableCellProps {
-  maxWidth?: number
+  fixedWidth?: number
   noBorder?: boolean
+  align?: 'left' | 'center' | 'right'
 }
 
 const Table: FC<TableProps> = ({ className, children, minWidth }) => (
@@ -61,12 +62,14 @@ const TableWrapper = styled(motion.div)<Pick<TableProps, 'minWidth'>>`
 
 export const TableCell = styled.div<TableCellProps>`
   display: flex;
+  flex: ${({ fixedWidth }) => (fixedWidth ? '0' : '1')};
   align-items: center;
+  justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : align === 'center' ? 'center' : 'flex-start')};
   font-weight: var(--fontWeight-semiBold);
   position: relative;
   border-bottom: ${({ theme, noBorder }) => `1px solid ${noBorder ? 'transparent' : theme.border.secondary}`};
   padding: 20px 0;
-  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : 'none')};
+  min-width: ${({ fixedWidth }) => (fixedWidth ? `${fixedWidth}px` : 'auto')};
 `
 
 interface TableColumnsProps extends Omit<HTMLProps<HTMLDivElement>, 'ref'> {
@@ -132,9 +135,13 @@ export const TableCellPlaceholder = styled(TableCell)`
   justify-self: center;
 `
 
-export const TableHeader: FC<{ title: string; className?: string }> = ({ title, children, className }) => (
+interface TableHeaderProps extends TableRowProps {
+  title?: string
+}
+
+export const TableHeader = ({ title, children, className }: TableHeaderProps) => (
   <TableHeaderRow className={className}>
-    <TableTitle>{title}</TableTitle>
+    {title && <TableTitle>{title}</TableTitle>}
     {children}
   </TableHeaderRow>
 )
@@ -144,8 +151,11 @@ const TableHeaderRow = styled(TableRow)`
   justify-content: space-between;
   height: 55px;
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-  padding-right: var(--spacing-2);
-  padding-left: var(--spacing-4);
+  color: ${({ theme }) => theme.font.tertiary};
+
+  ${TableCell} {
+    border-bottom: none;
+  }
 `
 
 const TableTitle = styled.div`

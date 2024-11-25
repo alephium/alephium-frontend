@@ -150,6 +150,8 @@ const FiatAmount = ({ value }: FiatAmountProps) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const region = useAppSelector((s) => s.settings.region)
 
+  if (value === null) return null
+
   return new Intl.NumberFormat(region, { style: 'currency', currency: fiatCurrency }).format(value)
 }
 
@@ -228,7 +230,6 @@ const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value
   display: inline-flex;
   position: relative;
   white-space: pre;
-  font-weight: var(--fontWeight-bold);
   font-feature-settings: 'tnum' on;
   ${({ discreetMode }) =>
     discreetMode &&
@@ -245,7 +246,7 @@ const Decimals = styled.span`
 `
 
 const Suffix = styled.span<{ color?: string }>`
-  color: ${({ color, theme }) => color ?? theme.font.primary};
+  color: ${({ color, theme }) => color ?? theme.font.secondary};
   font-weight: var(--fontWeight-medium);
 `
 
