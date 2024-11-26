@@ -49,8 +49,8 @@ const ChartLengthBadges = memo(({ className }: ChartLengthBadgesProps) => {
               role="secondary"
               onClick={() => handleChartLengthButtonClick(length)}
               short
-              rounded
               borderless
+              transparent
               isActive={isActive}
             >
               {length}
@@ -74,9 +74,8 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   height: auto;
   min-width: 32px;
   ${({ isActive, theme }) => css`
-    background-color: ${isActive ? theme.bg.contrast : 'transparent'};
-    color: ${isActive ? theme.font.contrastPrimary : theme.font.tertiary};
-    border: 1px solid ${isActive ? 'transparent' : theme.font.tertiary};
+    color: ${isActive ? theme.font.primary : theme.font.tertiary};
+    border: 1px solid ${isActive ? theme.font.primary : theme.font.tertiary};
     opacity: ${isActive ? 1 : 0.5};
   `}
 `

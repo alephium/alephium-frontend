@@ -61,7 +61,7 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          opacity: isDarkTheme ? 0.5 : 0.3
+          opacity: isDarkTheme ? 0.5 : 0.6
         }}
       >
         <Circle

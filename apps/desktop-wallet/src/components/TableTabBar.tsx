@@ -35,6 +35,6 @@ const TableTabBarStyled = styled(TabBar)`
 
 const TableTab = styled(Tab)`
   min-width: 60px;
-  border: 1px solid ${({ theme, isActive }) => (isActive ? 'transparent' : theme.border.primary)};
   overflow: hidden;
+  font-size: 14px;
 `
