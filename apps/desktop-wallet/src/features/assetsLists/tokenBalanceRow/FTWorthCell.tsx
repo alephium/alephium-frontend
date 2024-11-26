@@ -36,11 +36,13 @@ const FTWorthCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
 
   if (!isFT(token)) return null
 
-  if (isLoadingBalance || isLoadingTokenPrices) return <SkeletonLoader height="20px" width="30%" />
-
   return (
     <TableCell align="right">
-      <FTWorthAmount symbol={token.symbol} decimals={token.decimals} totalBalance={totalBalance?.totalBalance} />
+      {isLoadingBalance || isLoadingTokenPrices ? (
+        <SkeletonLoader height="20px" width="30%" />
+      ) : (
+        <FTWorthAmount symbol={token.symbol} decimals={token.decimals} totalBalance={totalBalance?.totalBalance} />
+      )}
     </TableCell>
   )
 }
@@ -61,7 +63,7 @@ const FTWorthAmount = ({ symbol, totalBalance, decimals }: FTWorthAmountProps) =
       ? calculateAmountWorth(totalBalance, tokenPrice, decimals)
       : undefined
 
-  if (worth === undefined) return null
+  if (worth === undefined) return '-'
 
-  return <Amount value={worth} isFiat />
+  return <Amount value={worth} isFiat semiBold />
 }

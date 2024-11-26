@@ -80,7 +80,7 @@ const FTAmountCell = ({ tokenId, isLoading, totalBalance, availableBalance }: FT
         <SkeletonLoader height="20px" width="30%" />
       ) : (
         <>
-          {totalBalance && <Amount tokenId={tokenId} value={totalBalance} />}
+          {totalBalance && <Amount tokenId={tokenId} value={totalBalance} semiBold />}
 
           {availableBalance !== totalBalance && availableBalance !== undefined && (
             <AmountSubtitle>

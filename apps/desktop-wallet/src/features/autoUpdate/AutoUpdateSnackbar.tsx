@@ -162,7 +162,7 @@ const Texts = styled.div`
 `
 
 const Title = styled.div`
-  font-weight: var(--fontWeight-bold);
+  font-weight: var(--fontWeight-semiBold);
   margin-bottom: var(--spacing-1);
 `
 
