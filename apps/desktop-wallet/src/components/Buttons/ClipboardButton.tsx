@@ -79,11 +79,12 @@ const ClipboardButton: FC<ClipboardButtonProps> = ({
   }, [dispatch, hasBeenCopied, showSnackbarOnCopied])
 
   return (
-    <div className={className}>
+    <ClipboardButtonStyled>
       <ClipboardContent>{children}</ClipboardContent>
       <ClipboardIcon
         data-tooltip-content={!hasBeenCopied ? tooltip ?? t('Copy to clipboard') : t('Copied')}
         data-tooltip-id="copy"
+        className={className}
       >
         {!hasBeenCopied ? (
           <Copy
@@ -99,9 +100,18 @@ const ClipboardButton: FC<ClipboardButtonProps> = ({
           <Check className="check" />
         )}
       </ClipboardIcon>
-    </div>
+    </ClipboardButtonStyled>
   )
 }
+
+export default ClipboardButton
+
+const ClipboardContent = styled.div`
+  overflow: hidden;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`
 
 const ClipboardIcon = styled.div`
   opacity: 0;
@@ -131,15 +141,7 @@ const ClipboardIcon = styled.div`
   }
 `
 
-const ClipboardContent = styled.div`
-  margin-right: -0.5em;
-  overflow: hidden;
-  width: 100%;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-`
-
-export default styled(ClipboardButton)`
+const ClipboardButtonStyled = styled.div`
   display: flex;
   align-items: center;
   overflow: hidden;

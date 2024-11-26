@@ -48,7 +48,7 @@ const HashEllipsed = ({
       <Ellipsed text={hash} {...props} />
     </Container>
   ) : (
-    <ClipboardButton
+    <ClipboardButtonStyled
       textToCopy={hash}
       tooltip={tooltipText ?? t('Copy address')}
       disableA11y={disableA11y}
@@ -56,7 +56,7 @@ const HashEllipsed = ({
       showSnackbarOnCopied={showSnackbarOnCopied}
     >
       <Ellipsed text={hash} {...props} />
-    </ClipboardButton>
+    </ClipboardButtonStyled>
   )
 }
 
@@ -66,4 +66,9 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   overflow: hidden;
+`
+
+const ClipboardButtonStyled = styled(ClipboardButton)`
+  position: absolute;
+  right: 6px;
 `
