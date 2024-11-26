@@ -27,7 +27,7 @@ const TableTabBar = <T extends string>(props: TabBarProps<T>) => (
 export default TableTabBar
 
 const TableTabBarStyled = styled(TabBar)`
-  height: 56px;
+  height: 57px;
   padding: 8px;
   gap: 10px;
   justify-content: center;

@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { isConfirmedTx } from '@alephium/shared'
-import { colord } from 'colord'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -76,9 +75,4 @@ const TransactionIcon = styled.span<{ color?: string }>`
   position: relative;
   border-radius: 30px;
   background-color: ${({ color, theme }) => color || theme.font.primary};
-  border: 1px solid
-    ${({ color, theme }) =>
-      colord(color || theme.font.primary)
-        .alpha(0.15)
-        .toHex()};
 `

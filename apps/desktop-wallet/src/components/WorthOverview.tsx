@@ -34,5 +34,5 @@ export default WorthOverview
 
 const WorthOverviewStyled = styled(Amount)`
   font-size: 40px;
-  font-weight: var(--fontWeight-semiBold);
+  font-weight: var(--fontWeight-bold);
 `

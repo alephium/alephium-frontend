@@ -84,7 +84,7 @@ export const getChartOptions = (
   },
   stroke: {
     colors: [chartColor],
-    width: 2
+    width: 1
   },
   markers: {
     colors: [chartColor],
