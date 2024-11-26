@@ -63,6 +63,7 @@ const AddressBadge = ({
     <AddressBadgeStyled
       className={className}
       withBorders={contact || address ? withBorders : false}
+      hideColorIndication={hideColorIndication}
       truncate={truncate}
       isShort={isShort}
     >
@@ -115,11 +116,13 @@ const AddressBadge = ({
 
 export default AddressBadge
 
-const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'isShort'>>`
+const AddressBadgeStyled = styled.div<
+  Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'isShort' | 'hideColorIndication'>
+>`
   display: flex;
   position: relative;
   align-items: center;
-  text-align: center;
+  text-align: ${({ hideColorIndication }) => (hideColorIndication ? 'left' : 'center')};
   gap: 6px;
 
   ${({ withBorders }) =>

@@ -90,7 +90,7 @@ const Label = styled.div`
 `
 
 const Cell = styled.div`
-  padding: 20px 0;
+  padding: 14px 0;
   align-items: center;
   display: flex;
 `
