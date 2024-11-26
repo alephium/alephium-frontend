@@ -71,9 +71,13 @@ const AddressBadge = ({
           {disableCopy ? (
             contact.name
           ) : (
-            <ClipboardButton textToCopy={contact.address} tooltip={t('Copy contact address')} disableA11y={disableA11y}>
+            <ClipboardButtonStyled
+              textToCopy={contact.address}
+              tooltip={t('Copy contact address')}
+              disableA11y={disableA11y}
+            >
               {contact.name}
-            </ClipboardButton>
+            </ClipboardButtonStyled>
           )}
         </Label>
       ) : !address ? (
@@ -87,9 +91,13 @@ const AddressBadge = ({
                 {disableCopy || appendHash ? (
                   address.label
                 ) : (
-                  <ClipboardButton textToCopy={address.hash} tooltip={t('Copy address')} disableA11y={disableA11y}>
+                  <ClipboardButtonStyled
+                    textToCopy={address.hash}
+                    tooltip={t('Copy address')}
+                    disableA11y={disableA11y}
+                  >
                     {address.label}
-                  </ClipboardButton>
+                  </ClipboardButtonStyled>
                 )}
               </Label>
               {appendHash && (
@@ -109,7 +117,9 @@ export default AddressBadge
 
 const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'isShort'>>`
   display: flex;
+  position: relative;
   align-items: center;
+  text-align: center;
   gap: 6px;
 
   ${({ withBorders }) =>
@@ -150,6 +160,7 @@ const LabelAndHash = styled.div<{ isColumn: boolean }>`
 `
 
 const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
+  position: relative;
   margin-right: 2px;
   white-space: nowrap;
   max-width: 125px;
@@ -165,9 +176,13 @@ const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
 const NotKnownAddress = styled(HashEllipsed)``
 
 const ShortHashEllipsed = styled(HashEllipsed)`
-  max-width: 150px;
   min-width: 80px;
   font-size: 12px;
   color: ${({ theme }) => theme.font.secondary};
   width: 100%;
+`
+
+const ClipboardButtonStyled = styled(ClipboardButton)`
+  position: absolute;
+  right: 6px;
 `

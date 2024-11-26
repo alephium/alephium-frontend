@@ -28,7 +28,6 @@ import FTAmounts from '@/features/transactionsDisplay/transactionRow/FTAmounts'
 import OtherAmounts from '@/features/transactionsDisplay/transactionRow/OtherAmounts'
 import SecondAddressColumnCell from '@/features/transactionsDisplay/transactionRow/SecondAddressColumnCell'
 import TimestampCell from '@/features/transactionsDisplay/transactionRow/TimestampCell'
-import TokenBadgesListCell from '@/features/transactionsDisplay/transactionRow/TokenBadgesListCell'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 
@@ -46,8 +45,6 @@ const TransactionRow = memo(
         <DirectionIconCell {...commonProps} />
 
         <TimestampCell {...commonProps} />
-
-        <TokenBadgesListCell tx={tx} refAddressHash={referenceAddress} compact={compact} />
 
         <DirectionalAddresses stackVertically={isInAddressDetailsModal}>
           {!isInAddressDetailsModal && <FirstAddressColumnCell tx={tx} refAddressHash={referenceAddress} />}
@@ -79,8 +76,6 @@ const TableRowStyled = styled(TableRow)`
 
 const DirectionalAddresses = styled(TableCell)<{ stackVertically?: boolean }>`
   display: flex;
-  align-items: center;
-  min-width: 35%;
 
   ${({ stackVertically }) =>
     stackVertically &&

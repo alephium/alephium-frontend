@@ -67,7 +67,7 @@ const AddressColorIndicatorStyled = styled(AddressColorIndicator)`
 const Label = styled.div`
   font-size: 14px;
   font-weight: var(--fontWeight-medium);
-  max-width: 120px;
+  max-width: 160px;
 `
 
 const AddressSubtitle = styled.span`
