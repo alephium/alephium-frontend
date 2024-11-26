@@ -148,7 +148,7 @@ export const TableHeader = ({ title, children, className }: TableHeaderProps) =>
 const TableHeaderRow = styled(TableRow)`
   display: flex;
   justify-content: space-between;
-  height: 44px;
+  height: 48px;
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   color: ${({ theme }) => theme.font.tertiary};
 
