@@ -34,6 +34,7 @@ interface AmountBaseProps {
   tabIndex?: number
   highlight?: boolean
   showPlusMinus?: boolean
+  semiBold?: boolean
   className?: string
   useTinyAmountShorthand?: boolean
 }
@@ -87,13 +88,13 @@ const Amount = ({
   // Since we checked above that value is defined it's safe to cast the type so that the stricter components can work
   const amountProps = props as AmountProps
 
-  const { className, color, value, highlight, tabIndex, showPlusMinus } = amountProps
+  const { className, color, value, highlight, tabIndex, showPlusMinus, semiBold } = amountProps
 
   const toggleDiscreetMode = () => discreetMode && dispatch(discreetModeToggled())
 
   return (
     <AmountStyled
-      {...{ className, color, value, highlight, tabIndex: tabIndex ?? -1, discreetMode }}
+      {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1, discreetMode }}
       data-tooltip-id="default"
       data-tooltip-content={discreetMode ? t('Click to deactivate discreet mode') : ''}
       data-tooltip-delay-show={500}
@@ -218,8 +219,10 @@ const isFiat = (asset: AmountProps): asset is FiatAmountProps => (asset as FiatA
 
 const isCustom = (asset: AmountProps): asset is CustomAmountProps => (asset as CustomAmountProps).suffix !== undefined
 
-const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value'> & { discreetMode: boolean }>`
-  color: ${({ color, highlight, value, theme }) =>
+const AmountStyled = styled.div<
+  Pick<AmountProps, 'color' | 'highlight' | 'value' | 'semiBold'> & { discreetMode: boolean }
+>`
+  color: ${({ color, highlight, value, semiBold, theme }) =>
     color
       ? color
       : highlight && value !== undefined
@@ -229,6 +232,7 @@ const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value
         : 'inherit'};
   display: inline-flex;
   position: relative;
+  font-weight: var(--fontWeight-${({ semiBold }) => (semiBold ? 'semiBold' : 'medium')});
   white-space: pre;
   font-feature-settings: 'tnum' on;
   ${({ discreetMode }) =>

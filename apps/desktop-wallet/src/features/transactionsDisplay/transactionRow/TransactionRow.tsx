@@ -55,7 +55,7 @@ const TransactionRow = memo(
           <SecondAddressColumnCell {...commonProps} />
         </DirectionalAddresses>
 
-        <TableCell aria-hidden="true">
+        <TableCell aria-hidden="true" align="right">
           <AmountsList>
             <FTAmounts {...commonProps} />
             <OtherAmounts type="nfts" {...commonProps} />

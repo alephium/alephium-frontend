@@ -65,10 +65,9 @@ export const TableCell = styled.div<TableCellProps>`
   flex: ${({ fixedWidth }) => (fixedWidth ? '0' : '1')};
   align-items: center;
   justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : align === 'center' ? 'center' : 'flex-start')};
-  font-weight: var(--fontWeight-semiBold);
   position: relative;
   border-bottom: ${({ theme, noBorder }) => `1px solid ${noBorder ? 'transparent' : theme.border.secondary}`};
-  padding: 20px 0;
+  padding: 18px 0;
   min-width: ${({ fixedWidth }) => (fixedWidth ? `${fixedWidth}px` : 'auto')};
 `
 
@@ -149,7 +148,7 @@ export const TableHeader = ({ title, children, className }: TableHeaderProps) =>
 const TableHeaderRow = styled(TableRow)`
   display: flex;
   justify-content: space-between;
-  height: 55px;
+  height: 44px;
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   color: ${({ theme }) => theme.font.tertiary};
 
