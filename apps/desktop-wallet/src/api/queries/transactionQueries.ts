@@ -110,8 +110,18 @@ export const walletTransactionsInfiniteQuery = ({
     ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       !skip && networkId !== undefined
-        ? ({ pageParam }) =>
-            throttledClient.explorer.addresses.postAddressesTransactions({ page: pageParam }, addressHashes)
+        ? async ({ pageParam }) => {
+            let results: Transaction[] = []
+            const args = { page: pageParam }
+
+            if (addressHashes.length === 1) {
+              results = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHashes[0], args)
+            } else if (addressHashes.length > 1) {
+              results = await throttledClient.explorer.addresses.postAddressesTransactions(args, addressHashes)
+            }
+
+            return results
+          }
         : skipToken,
     initialPageParam: 1,
     getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null)
@@ -130,7 +140,18 @@ export const walletLatestTransactionsQuery = ({ addressHashes, networkId }: Wall
     ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       networkId !== undefined
-        ? () => throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, addressHashes)
+        ? async () => {
+            let results: Transaction[] = []
+            const args = { page: 1, limit: 5 }
+
+            if (addressHashes.length === 1) {
+              results = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHashes[0], args)
+            } else if (addressHashes.length > 1) {
+              results = await throttledClient.explorer.addresses.postAddressesTransactions(args, addressHashes)
+            }
+
+            return results
+          }
         : skipToken
   })
 
