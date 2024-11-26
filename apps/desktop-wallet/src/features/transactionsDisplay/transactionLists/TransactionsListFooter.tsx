@@ -47,7 +47,7 @@ const TransactionsListFooter = (props: InfiniteTransactionsListFooterProps | Sta
 
   return (
     <TableRow role="row" tabIndex={0}>
-      <TableCellPlaceholder>
+      <TableCellPlaceholder align="center">
         {props.isDisplayingTxs ? (
           props.showSpinner ? (
             <Spinner size="15px" />

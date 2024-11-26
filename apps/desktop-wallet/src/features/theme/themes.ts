@@ -62,15 +62,15 @@ export const lightTheme: DefaultTheme = {
 export const darkTheme: DefaultTheme = {
   name: 'dark',
   bg: {
-    primary: '#141417',
-    secondary: '#121214',
-    tertiary: '#101012',
+    primary: '#121214',
+    secondary: '#101012',
+    tertiary: '#0e0e0f',
     contrast: 'rgba(255, 255, 255, 1)',
-    background1: '#0d0d0f',
-    background2: '#0d0d0f',
+    background1: '#0b0b0d',
+    background2: '#0b0b0d',
     hover: colord('#18181a').lighten(0.02).toHex(),
     highlight: '#25252b',
-    accent: colord('#487df0').alpha(0.15).toHex()
+    accent: colord('#487df0').alpha(0.12).toHex()
   },
   font: {
     primary: '#e3e3e3',
