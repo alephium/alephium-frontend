@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld('electron', {
     setNativeTheme: (theme) => ipcRenderer.invoke('theme:setNativeTheme', theme),
     getNativeTheme: () => ipcRenderer.invoke('theme:getNativeTheme'),
     onGetNativeTheme: (callback) => {
+      // See: https://www.electronjs.org/docs/latest/tutorial/ipc#2-expose-ipcrendereron-via-preload
       const callbackWithEventArg = (_, arg2) => callback(arg2)
       ipcRenderer.on('theme:getNativeTheme', callbackWithEventArg)
       return () => ipcRenderer.removeListener('theme:getNativeTheme', callbackWithEventArg)
@@ -42,8 +43,9 @@ contextBridge.exposeInMainWorld('electron', {
       return () => ipcRenderer.removeListener('updater:download-progress', callbackWithEventArg)
     },
     onUpdateDownloaded: (callback) => {
-      ipcRenderer.on('updater:updateDownloaded', callback)
-      return () => ipcRenderer.removeListener('updater:updateDownloaded', callback)
+      const callbackWithEventArg = (_, arg2) => callback(arg2)
+      ipcRenderer.on('updater:updateDownloaded', callbackWithEventArg)
+      return () => ipcRenderer.removeListener('updater:updateDownloaded', callbackWithEventArg)
     },
     quitAndInstallUpdate: () => ipcRenderer.invoke('updater:quitAndInstallUpdate'),
     onError: (callback) => {
