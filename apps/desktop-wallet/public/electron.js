@@ -177,7 +177,7 @@ function createWindow() {
     minHeight: 700,
     titleBarStyle: isWindows ? 'default' : 'hidden',
     webPreferences: {
-      nodeIntegration: true,
+      // nodeIntegration: true, // This is mentioned in Ledger docs, but it doesn't seem to be needed
       nodeIntegrationInWorker: true,
       preload: path.join(__dirname, 'preload.js'),
       spellcheck: true
