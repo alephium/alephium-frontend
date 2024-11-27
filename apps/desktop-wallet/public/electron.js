@@ -23,6 +23,9 @@ const isDev = require('electron-is-dev')
 const contextMenu = require('electron-context-menu')
 const { autoUpdater } = require('electron-updater')
 
+// See https://www.electronjs.org/docs/latest/tutorial/performance#8-call-menusetapplicationmenunull-when-you-do-not-need-a-default-menu
+Menu.setApplicationMenu(null)
+
 const CURRENT_VERSION = app.getVersion()
 const IS_RC = CURRENT_VERSION.includes('-rc.')
 
