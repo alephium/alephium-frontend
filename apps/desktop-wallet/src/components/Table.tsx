@@ -69,6 +69,9 @@ export const TableCell = styled.div<TableCellProps>`
   border-bottom: ${({ theme, noBorder }) => `1px solid ${noBorder ? 'transparent' : theme.border.secondary}`};
   padding: 16px 0;
   min-width: ${({ fixedWidth }) => (fixedWidth ? `${fixedWidth}px` : 'auto')};
+  min-height: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `
 
 interface TableColumnsProps extends Omit<HTMLProps<HTMLDivElement>, 'ref'> {
@@ -148,6 +151,7 @@ export const TableHeader = ({ title, children, className }: TableHeaderProps) =>
 const TableHeaderRow = styled(TableRow)`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   height: 48px;
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   color: ${({ theme }) => theme.font.tertiary};

@@ -59,15 +59,13 @@ export const NSTNameCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
 }
 
 const TokenName = styled(Truncate)`
-  display: flex;
   font-size: 14px;
   font-weight: var(--fontWeight-semiBold);
-  gap: 5px;
-  align-items: center;
+  padding-right: 10px;
 `
 
 const InfoIcon = styled.div`
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   height: 14px;
@@ -78,4 +76,5 @@ const InfoIcon = styled.div`
   background-color: ${({ theme }) => theme.bg.background2};
   border-radius: 50%;
   cursor: default;
+  margin-left: 6px;
 `

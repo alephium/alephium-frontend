@@ -93,7 +93,7 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
             <CurrentWalletInitials
               onClick={openCurrentWalletModal}
               onKeyDown={(e) => onEnterOrSpace(e, openCurrentWalletModal)}
-              initial={{ opacity: 0, x: 100 }}
+              initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: walletNameHideAfterSeconds, type: 'spring', stiffness: 500, damping: 70 }}
               key={`initials-${activeWalletName}`}
@@ -199,7 +199,7 @@ const OnEnterWalletName = styled(CurrentWalletInitials)`
   position: absolute;
   left: 20px;
   width: auto;
-  border-radius: var(--radius-big);
+  border-radius: 100px;
   white-space: nowrap;
   padding: 20px;
   font-size: 15px;
