@@ -12,6 +12,10 @@ Then, to start the electron app, run:
 
 ```shell
 pnpm start
+
+# Alternatively, other helpful scripts to start the app are:
+pnpm start:web   # Starts only the renderer process
+pnpm start:debug # Inspects React re-renders
 ```
 
 ## Packaging
