@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AnimatePresence, motion } from 'framer-motion'
 import { LucideIcon } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import styled, { css, useTheme } from 'styled-components'
@@ -56,10 +57,21 @@ const NavItem = ({ Icon, label, isExpanded, to, onClick }: NavItemProps) => {
       data-tooltip-id="sidenav"
       data-tooltip-content={!isExpanded ? label : undefined}
       iconColor={isActive ? theme.global.accent : theme.font.primary}
-      title="yo"
       rounded
+      animate={!isExpanded ? { width: 42, minWidth: 42, gap: 0 } : {}}
     >
-      {label}
+      <AnimatePresence>
+        {isExpanded && (
+          <LabelContainer
+            initial={{ opacity: 0, width: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, width: 0 }}
+            transition={{ delay: 1 }}
+          >
+            {label}
+          </LabelContainer>
+        )}
+      </AnimatePresence>
     </ButtonStyled>
   )
 }
@@ -84,5 +96,7 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
     border-color: ${({ theme }) => theme.border.primary};
   }
 `
+
+const LabelContainer = styled(motion.div)``
 
 export default NavItem
