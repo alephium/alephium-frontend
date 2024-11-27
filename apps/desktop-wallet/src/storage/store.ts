@@ -20,7 +20,6 @@ import { sharedReducer } from '@alephium/shared'
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
-import historicWorthChartSlice from '@/features/historicChart/historicWorthChartSlice'
 import modalSlice from '@/features/modals/modalSlice'
 import sentTransactionsSlice from '@/features/send/sentTransactions/sentTransactionsSlice'
 import settingsSlice, { settingsListenerMiddleware } from '@/features/settings/settingsSlice'
@@ -45,8 +44,7 @@ export const store = configureStore({
     [addressesSlice.name]: addressesSlice.reducer,
     [sentTransactionsSlice.name]: sentTransactionsSlice.reducer,
     [snackbarSlice.name]: snackbarSlice.reducer,
-    [modalSlice.name]: modalSlice.reducer,
-    [historicWorthChartSlice.name]: historicWorthChartSlice.reducer
+    [modalSlice.name]: modalSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

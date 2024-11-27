@@ -67,7 +67,7 @@ export const TableCell = styled.div<TableCellProps>`
   justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : align === 'center' ? 'center' : 'flex-start')};
   position: relative;
   border-bottom: ${({ theme, noBorder }) => `1px solid ${noBorder ? 'transparent' : theme.border.secondary}`};
-  padding: 18px 0;
+  padding: 16px 0;
   min-width: ${({ fixedWidth }) => (fixedWidth ? `${fixedWidth}px` : 'auto')};
 `
 

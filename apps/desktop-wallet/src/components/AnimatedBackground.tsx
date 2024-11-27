@@ -61,20 +61,20 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          opacity: isDarkTheme ? 0.5 : 0.6
+          opacity: isDarkTheme ? 0.5 : 0.8
         }}
       >
         <Circle
           custom={80}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: isDarkTheme ? '#120096' : '#c689ff', width: 1000, height: 580 }}
+          style={{ backgroundColor: isDarkTheme ? '#120096' : '#c689ff', width: 1000, height: 480 }}
         />
         <Circle
           custom={300}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: '#fda066', width: 400, height: 640 }}
+          style={{ backgroundColor: '#fda066', width: 400, height: 540 }}
         />
         <Circle
           custom={200}
@@ -86,7 +86,7 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
           custom={140}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: isDarkTheme ? '#e484ff' : '#d579ff', width: 1000, height: 300 }}
+          style={{ backgroundColor: isDarkTheme ? '#e484ff' : '#d579ff', width: 1000, height: 200 }}
         />
         <Circle
           custom={20}
