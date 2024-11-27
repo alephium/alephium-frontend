@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import { createGlobalStyle } from 'styled-components'
 
 import resets from '@/style/resets'
@@ -94,6 +95,13 @@ export const GlobalStyle = createGlobalStyle`
     transition: none !important;
   }
 
+  .rcs-inner-handle {
+    color: white;
+    background-color: ${({ theme }) =>
+      colord(theme.font.tertiary)
+        .alpha(theme.name === 'light' ? 0.4 : 0.15)
+        .toHex()} !important;
+  }
 `
 
 // Breakpoints

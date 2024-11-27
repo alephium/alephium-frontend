@@ -35,7 +35,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import { ReactComponent as WalletConnectLogo } from '@/images/wallet-connect-logo.svg'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
+import { appHeaderHeightPx } from '@/style/globalStyles'
 
 interface AppHeader {
   title?: string
@@ -141,11 +141,11 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
 export default AppHeader
 
 const AppHeaderStyled = styled(motion.header)`
-  position: fixed;
+  position: sticky;
   top: 0;
   right: 0;
-  left: ${walletSidebarWidthPx}px;
-  z-index: 1;
+  left: 0;
+  z-index: 2;
 `
 
 const AppHeaderContainer = styled.div`
