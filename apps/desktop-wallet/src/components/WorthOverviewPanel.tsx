@@ -16,16 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import dayjs from 'dayjs'
-import { ReactNode, useState } from 'react'
+import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import AnimatedBackground from '@/components/AnimatedBackground'
 import Box from '@/components/Box'
-import ChartLengthBadges from '@/features/historicChart/ChartLengthBadges'
-import { DataPoint } from '@/features/historicChart/historicChartTypes'
-import HistoricWorthChart from '@/features/historicChart/HistoricWorthChart'
 import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
 import WalletWorth from '@/pages/UnlockedWallet/OverviewPage/WalletWorth'
 
@@ -48,14 +44,7 @@ const WorthOverviewPanel = ({
 }: WorthOverviewPanelProps) => {
   const { t } = useTranslation()
 
-  const [hoveredDataPoint, setHoveredDataPoint] = useState<DataPoint>()
-  const [worthInBeginningOfChart, setWorthInBeginningOfChart] = useState<DataPoint['worth']>()
-
-  const hoveredDataPointDate = hoveredDataPoint ? dayjs(hoveredDataPoint.date).format('DD/MM/YYYY') : undefined
-  const hoveredDataPointWorth = hoveredDataPoint?.worth
-
   const singleAddress = !!addressHash
-  const isHoveringChart = hoveredDataPointWorth !== undefined
 
   return (
     <WorthOverviewPanelStyled className={className}>
@@ -64,29 +53,13 @@ const WorthOverviewPanel = ({
         <Balances>
           <BalancesRow>
             <BalancesColumn>
-              <Today>{!hoveredDataPointDate ? t('Value today') : `${hoveredDataPointDate} (${t('ALPH only')})`}</Today>
-
-              {singleAddress ? (
-                <AddressWorth overrideWorth={hoveredDataPointWorth} addressHash={addressHash} />
-              ) : (
-                <WalletWorth overrideWorth={hoveredDataPointWorth} />
-              )}
+              <Today>{t('Value today')}</Today>
+              {singleAddress ? <AddressWorth addressHash={addressHash} /> : <WalletWorth />}
             </BalancesColumn>
           </BalancesRow>
         </Balances>
         {children && <ChildrenContainer>{children}</ChildrenContainer>}
       </Panel>
-
-      <HistoricWorthChart
-        addressHash={addressHash}
-        onDataPointHover={setHoveredDataPoint}
-        onWorthInBeginningOfChartChange={setWorthInBeginningOfChart}
-        chartVisible={chartVisible}
-        chartInitiallyHidden={chartInitiallyHidden}
-      />
-      <ChartLengthsContainer>
-        <ChartLengthBadges />
-      </ChartLengthsContainer>
     </WorthOverviewPanelStyled>
   )
 }
@@ -104,7 +77,7 @@ const Panel = styled.div`
   flex-direction: column;
   gap: 30px;
   align-items: center;
-  padding: 40px 60px 0;
+  padding: 40px 60px;
   overflow: visible;
 `
 
@@ -136,20 +109,6 @@ const BalancesColumn = styled.div`
 const Today = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 16px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   text-align: center;
-`
-
-const FiatDeltaOpacityContainer = styled.div`
-  height: 5px;
-`
-
-const ChartLengthsContainer = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  pointer-events: none;
 `

@@ -232,5 +232,4 @@ const ButtonsContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin-bottom: 20px;
 `

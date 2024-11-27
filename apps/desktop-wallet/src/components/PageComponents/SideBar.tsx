@@ -32,18 +32,17 @@ import { useWindowSize } from '@/utils/hooks'
 interface SideBarProps {
   renderTopComponent: (isExpanded: boolean) => ReactNode
   noExpansion?: boolean
-  animateEntry?: boolean
   className?: string
 }
 
-const SideBar = ({ renderTopComponent, noExpansion, animateEntry, className }: SideBarProps) => {
+const SideBar = ({ renderTopComponent, noExpansion, className }: SideBarProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { width: windowWidth } = useWindowSize()
 
   const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: {} }))
 
-  const isExpanded = noExpansion ? false : windowWidth ? windowWidth > 1300 : false
+  const isExpanded = noExpansion ? false : windowWidth ? windowWidth > 1200 : false
 
   return (
     <motion.div
