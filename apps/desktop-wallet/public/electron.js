@@ -175,9 +175,9 @@ function createWindow() {
   Menu.setApplicationMenu(menu)
 
   mainWindow = new BrowserWindow({
-    width: 1200,
+    width: 1000,
     height: 800,
-    minWidth: 1200,
+    minWidth: 1000,
     minHeight: 700,
     titleBarStyle: isWindows ? 'default' : 'hidden',
     webPreferences: {
