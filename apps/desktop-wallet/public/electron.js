@@ -158,6 +158,8 @@ const template = [
   }
 ]
 
+// TODO: Do not serve using file:// protocol
+// See: https://www.electronjs.org/docs/latest/tutorial/security#18-avoid-usage-of-the-file-protocol-and-prefer-usage-of-custom-protocols
 const appURL = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`
 
 let deepLinkUri = null
@@ -193,6 +195,8 @@ function createWindow() {
 
   // Set default window open handler (open new windows in the web browser by default)
   mainWindow?.webContents.setWindowOpenHandler(({ url }) => {
+    // TODO: Review use of openExternal.
+    // See https://www.electronjs.org/docs/latest/tutorial/security#15-do-not-use-shellopenexternal-with-untrusted-content
     shell.openExternal(url)
     return { action: 'deny' }
   })
@@ -394,6 +398,8 @@ const extractWalletConnectUri = (url) =>
 ipcMain.on('shell:open', () => {
   const pageDirectory = __dirname.replace('app.asar', 'app.asar.unpacked')
   const pagePath = path.join('file://', pageDirectory, 'index.html')
+  // TODO: Review use of openExternal.
+  // See https://www.electronjs.org/docs/latest/tutorial/security#15-do-not-use-shellopenexternal-with-untrusted-content
   shell.openExternal(pagePath)
 })
 
