@@ -19,8 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { fadeInSlowly } from '@/animations'
-import AppHeader from '@/components/AppHeader'
 import { FloatingPanel } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import { useAppSelector } from '@/hooks/redux'
@@ -35,7 +33,7 @@ const HomePage = () => {
   const [showNewWalletActions, setShowNewWalletActions] = useState(false)
 
   return (
-    <LockedWalletLayout {...fadeInSlowly} animateSideBar>
+    <LockedWalletLayout>
       <FloatingPanel verticalAlign="center" horizontalAlign="center" transparentBg borderless>
         {showNewWalletActions ? (
           <>
@@ -55,8 +53,6 @@ const HomePage = () => {
           </>
         )}
       </FloatingPanel>
-
-      <AppHeader />
     </LockedWalletLayout>
   )
 }

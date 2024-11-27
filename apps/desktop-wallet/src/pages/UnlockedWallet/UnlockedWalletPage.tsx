@@ -22,7 +22,6 @@ import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import { appHeaderHeightPx } from '@/style/globalStyles'
 
 interface UnlockedWalletPageProps extends MotionProps {
   title?: string
@@ -48,7 +47,6 @@ const UnlockedWalletPage: FC<UnlockedWalletPageProps> = ({ title, subtitle, Bott
 
 export default styled(UnlockedWalletPage)`
   background-color: ${({ theme }) => theme.bg.background1};
-  padding-top: ${appHeaderHeightPx}px;
 `
 
 const PageHeader = styled(UnlockedWalletPanel)`

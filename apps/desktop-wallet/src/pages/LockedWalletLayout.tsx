@@ -19,19 +19,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { motion, MotionProps } from 'framer-motion'
 import styled from 'styled-components'
 
+import AppHeader from '@/components/AppHeader'
 import SideBar from '@/components/PageComponents/SideBar'
-import Scrollbar from '@/components/Scrollbar'
+import ScrollbarCustom from '@/components/Scrollbar'
 import { ReactComponent as AlephiumLogotype } from '@/images/logotype.svg'
 
 interface LockedWalletLayoutProps extends MotionProps {
   className?: string
-  animateSideBar?: boolean
 }
 
-const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, animateSideBar, ...props }) => (
+const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, ...props }) => (
   <motion.main {...props}>
     <SideBar
-      animateEntry={animateSideBar}
       noExpansion
       renderTopComponent={() => (
         <Logo>
@@ -39,9 +38,10 @@ const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, animateSide
         </Logo>
       )}
     ></SideBar>
-    <Scrollbar>
+    <ScrollbarCustom flex="1">
+      <AppHeader />
       <CenteredContainer>{children}</CenteredContainer>
-    </Scrollbar>
+    </ScrollbarCustom>
   </motion.main>
 )
 
@@ -61,6 +61,12 @@ const AlephiumLogotypeStyled = styled(AlephiumLogotype)`
   height: 120px;
   fill: ${({ theme }) => theme.font.primary};
   color: ${({ theme }) => theme.font.primary};
+`
+
+const Content = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 `
 
 const CenteredContainer = styled.div`

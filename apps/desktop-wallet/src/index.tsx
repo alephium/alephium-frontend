@@ -23,7 +23,7 @@ import '@yaireo/tagify/dist/tagify.css' // Tagify CSS: important to import after
 import isPropValid from '@emotion/is-prop-valid'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { StrictMode, Suspense } from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { HashRouter as Router } from 'react-router-dom'
 import { StyleSheetManager } from 'styled-components'
@@ -37,10 +37,10 @@ import { store } from '@/storage/store'
 
 // The app still behaves as if React 17 is used. This is because
 // `react-custom-scrollbars` is not working with React 18 yet.
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-// const root = createRoot(document.getElementById('root')!)
 
-ReactDOM.render(
+const root = createRoot(document.getElementById('root')!)
+
+root.render(
   <AnalyticsProvider>
     <StrictMode>
       <Provider store={store}>
@@ -57,8 +57,7 @@ ReactDOM.render(
         </Router>
       </Provider>
     </StrictMode>
-  </AnalyticsProvider>,
-  document.getElementById('root')
+  </AnalyticsProvider>
 )
 
 //

@@ -28,7 +28,7 @@ import { fadeInSlowly } from '@/animations'
 import AppHeader from '@/components/AppHeader'
 import NavItem from '@/components/NavItem'
 import SideBar from '@/components/PageComponents/SideBar'
-import Scrollbar from '@/components/Scrollbar'
+import ScrollbarCustom from '@/components/Scrollbar'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { getInitials, onEnterOrSpace } from '@/utils/misc'
@@ -120,10 +120,12 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
         )}
       ></SideBar>
 
-      <Scrollbar>
-        <MainContent>{children}</MainContent>
-        <AppHeader title={title} />
-      </Scrollbar>
+      <ScrollbarCustom>
+        <MainContent>
+          <AppHeader title={title} />
+          {children}
+        </MainContent>
+      </ScrollbarCustom>
     </motion.div>
   )
 }
@@ -156,7 +158,6 @@ export const UnlockedWalletPanel = styled.div<{
 
 export default styled(UnlockedWalletLayout)`
   display: flex;
-  width: 100%;
   height: 100%;
 `
 
