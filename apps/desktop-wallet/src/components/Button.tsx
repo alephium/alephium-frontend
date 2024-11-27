@@ -45,7 +45,17 @@ export interface ButtonProps extends HTMLMotionProps<'button'> {
   className?: string
 }
 
-const Button = ({ children, disabled, submit, Icon, className, isHighlighted, loading, ...props }: ButtonProps) => {
+const Button = ({
+  children,
+  disabled,
+  submit,
+  Icon,
+  className,
+  isHighlighted,
+  loading,
+  animate,
+  ...props
+}: ButtonProps) => {
   const [canBeAnimated, setCanBeAnimated] = useState(props.squared ? true : false)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -72,7 +82,7 @@ const Button = ({ children, disabled, submit, Icon, className, isHighlighted, lo
       variants={sectionChildrenVariants}
       custom={disabled}
       disabled={disabled || loading}
-      animate={canBeAnimated ? (!disabled ? 'shown' : 'disabled') : false}
+      animate={animate || canBeAnimated ? (!disabled ? 'shown' : 'disabled') : false}
       onAnimationComplete={() => setCanBeAnimated(true)}
       type={submit ? 'submit' : 'button'}
       ref={buttonRef}
@@ -252,15 +262,15 @@ export default styled(Button)`
       }
 
       ${ButtonIcon} {
-        ${children &&
-        css`
-          margin-right: var(--spacing-2);
-        `}
-
         svg {
           color: ${iconColor || fontColor};
         }
       }
+
+      ${children &&
+      css`
+        gap: 10px;
+      `}
     `
   }}
 

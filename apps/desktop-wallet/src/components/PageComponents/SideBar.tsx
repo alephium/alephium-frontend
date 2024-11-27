@@ -52,20 +52,23 @@ const SideBar = ({ renderTopComponent, noExpansion, className }: SideBarProps) =
       transition={{ delay: 1.1, type: 'spring', damping: 20 }}
     >
       {renderTopComponent(isExpanded)}
-      <BottomButtons>
-        <ThemeSwitcher />
-        <Button
-          transparent
-          squared
-          role="secondary"
-          onClick={openSettingsModal}
-          aria-label={t('Settings')}
-          Icon={Settings}
-          data-tooltip-id="sidenav"
-          data-tooltip-content={t('Settings')}
-        />
-        <WalletNameButton />
-      </BottomButtons>
+      <BottomButtonsContainer>
+        <BottomButtons>
+          <ThemeSwitcher />
+          <Button
+            transparent
+            squared
+            role="secondary"
+            onClick={openSettingsModal}
+            aria-label={t('Settings')}
+            Icon={Settings}
+            data-tooltip-id="sidenav"
+            rounded
+            data-tooltip-content={t('Settings')}
+          />
+          <WalletNameButton />
+        </BottomButtons>
+      </BottomButtonsContainer>
     </motion.div>
   )
 }
@@ -80,8 +83,14 @@ export default styled(SideBar)`
   padding: ${appHeaderHeightPx - 10}px var(--spacing-4) var(--spacing-3);
 `
 
+const BottomButtonsContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+`
+
 const BottomButtons = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 15px;
 `
