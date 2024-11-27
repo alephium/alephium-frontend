@@ -32,7 +32,8 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
     "clean": "rm -rf dist build",
-    "clean:node-modules": "rm -rf node_modules"
+    "clean:node-modules": "rm -rf node_modules",
+    "debug:scan": "pnpm start && npx react-scan@latest localhost:3000"
   },
   "browserslist": [
     ">0.2%",
