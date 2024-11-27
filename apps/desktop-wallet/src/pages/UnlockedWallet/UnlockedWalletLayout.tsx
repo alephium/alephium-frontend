@@ -70,51 +70,55 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
 
   return (
     <motion.div {...fadeInSlowly} className={className}>
-      <SideBar>
-        <AnimatePresence>
-          {fullWalletNameVisible && (
-            <OnEnterWalletName
-              initial={{ x: 80, opacity: 0, scaleX: 1 }}
-              animate={{ x: 100, opacity: 1, scaleX: 1 }}
-              exit={{ x: -50, opacity: 0, scaleX: 0.5 }}
-              transition={{
-                type: 'spring',
-                stiffness: 700,
-                damping: 70,
-                delay: walletNameAppearAfterSeconds
-              }}
+      <SideBar
+        renderTopComponent={(isExpanded) => (
+          <>
+            <AnimatePresence>
+              {fullWalletNameVisible && (
+                <OnEnterWalletName
+                  initial={{ x: 80, opacity: 0, scaleX: 1 }}
+                  animate={{ x: 100, opacity: 1, scaleX: 1 }}
+                  exit={{ x: -50, opacity: 0, scaleX: 0.5 }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 700,
+                    damping: 70,
+                    delay: walletNameAppearAfterSeconds
+                  }}
+                >
+                  👋 {t('Wallet')}: {activeWalletName}
+                </OnEnterWalletName>
+              )}
+            </AnimatePresence>
+            <CurrentWalletInitials
+              onClick={openCurrentWalletModal}
+              onKeyDown={(e) => onEnterOrSpace(e, openCurrentWalletModal)}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: walletNameHideAfterSeconds, type: 'spring', stiffness: 500, damping: 70 }}
+              key={`initials-${activeWalletName}`}
+              role="button"
+              tabIndex={0}
             >
-              👋 {t('Wallet')}: {activeWalletName}
-            </OnEnterWalletName>
-          )}
-        </AnimatePresence>
-        <CurrentWalletInitials
-          onClick={openCurrentWalletModal}
-          onKeyDown={(e) => onEnterOrSpace(e, openCurrentWalletModal)}
-          initial={{ opacity: 0, x: 100 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: walletNameHideAfterSeconds, type: 'spring', stiffness: 500, damping: 70 }}
-          key={`initials-${activeWalletName}`}
-          role="button"
-          tabIndex={0}
-        >
-          <AnimatePresence mode="wait">
-            <WalletInitialsContainer
-              initial={{ opacity: 0, y: -15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 15 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 70 }}
-            >
-              {activeWalletNameInitials}
-            </WalletInitialsContainer>
-          </AnimatePresence>
-        </CurrentWalletInitials>
-        <SideNavigation>
-          <NavItem Icon={Layers} label={t('Overview')} to="/wallet/overview" />
-          <NavItem Icon={ArrowLeftRight} label={t('Transfers')} to="/wallet/transfers" />
-          <NavItem Icon={Album} label={t('Addresses')} to="/wallet/addresses" />
-        </SideNavigation>
-      </SideBar>
+              <AnimatePresence mode="wait">
+                <WalletInitialsContainer
+                  initial={{ opacity: 0, y: -15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 15 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 70 }}
+                >
+                  {activeWalletNameInitials}
+                </WalletInitialsContainer>
+              </AnimatePresence>
+            </CurrentWalletInitials>
+            <SideNavigation>
+              <NavItem Icon={Layers} label={t('Overview')} to="/wallet/overview" />
+              <NavItem Icon={ArrowLeftRight} label={t('Transfers')} to="/wallet/transfers" />
+              <NavItem Icon={Album} label={t('Addresses')} to="/wallet/addresses" />
+            </SideNavigation>
+          </>
+        )}
+      ></SideBar>
 
       <Scrollbar>
         <MainContent>{children}</MainContent>

@@ -45,11 +45,7 @@ const sectionVariants: Variants = {
   shown: (apparitionDelay = 0) => ({
     opacity: 1,
     transition: {
-      duration: 0.1,
-      when: 'beforeChildren',
-      delay: apparitionDelay,
-      staggerChildren: 0.1,
-      delayChildren: 0.1
+      duration: 0.1
     }
   }),
   out: {

@@ -30,11 +30,15 @@ interface LockedWalletLayoutProps extends MotionProps {
 
 const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, animateSideBar, ...props }) => (
   <motion.main {...props}>
-    <SideBar animateEntry={animateSideBar}>
-      <Logo>
-        <AlephiumLogotypeStyled />
-      </Logo>
-    </SideBar>
+    <SideBar
+      animateEntry={animateSideBar}
+      noExpansion
+      renderTopComponent={() => (
+        <Logo>
+          <AlephiumLogotypeStyled />
+        </Logo>
+      )}
+    ></SideBar>
     <Scrollbar>
       <CenteredContainer>{children}</CenteredContainer>
     </Scrollbar>

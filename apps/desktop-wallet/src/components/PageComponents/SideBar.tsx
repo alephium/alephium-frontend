@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion } from 'framer-motion'
 import { Settings } from 'lucide-react'
+import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -26,26 +27,31 @@ import ThemeSwitcher from '@/components/ThemeSwitcher'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
+import { useWindowSize } from '@/utils/hooks'
 
 interface SideBarProps {
+  renderTopComponent: (isExpanded: boolean) => ReactNode
+  noExpansion?: boolean
   animateEntry?: boolean
   className?: string
 }
 
-const SideBar: FC<SideBarProps> = ({ animateEntry, className, children }) => {
+const SideBar = ({ renderTopComponent, noExpansion, animateEntry, className }: SideBarProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const { width: windowWidth } = useWindowSize()
 
   const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: {} }))
+
+  const isExpanded = noExpansion ? false : windowWidth ? windowWidth > 1300 : false
 
   return (
     <motion.div
       className={className}
-      initial={{ x: animateEntry ? '-100%' : 0 }}
-      animate={{ x: 0 }}
+      animate={{ width: isExpanded ? walletSidebarWidthPx * 3 : walletSidebarWidthPx }}
       transition={{ delay: 1.1, type: 'spring', damping: 20 }}
     >
-      {children}
+      {renderTopComponent(isExpanded)}
       <BottomButtons>
         <ThemeSwitcher />
         <Button
