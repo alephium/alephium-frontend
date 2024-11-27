@@ -24,6 +24,7 @@ import styled from 'styled-components'
 
 import Button from '@/components/Button'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
+import WalletNameButton from '@/components/WalletNameButton'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
@@ -63,6 +64,7 @@ const SideBar = ({ renderTopComponent, noExpansion, className }: SideBarProps) =
           data-tooltip-id="sidenav"
           data-tooltip-content={t('Settings')}
         />
+        <WalletNameButton />
       </BottomButtons>
     </motion.div>
   )
@@ -72,7 +74,6 @@ export default styled(SideBar)`
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
   z-index: 1;
 
   width: ${walletSidebarWidthPx}px;
@@ -82,6 +83,5 @@ export default styled(SideBar)`
 const BottomButtons = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 15px;
 `

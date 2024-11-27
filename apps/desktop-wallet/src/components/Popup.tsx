@@ -78,7 +78,7 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
     <Content
       role="dialog"
       ref={contentRef}
-      style={hookOffset && { x: hookOffset.x, y: hookOffset.y - 15 }}
+      style={hookOffset && { x: hookOffset.x }}
       animate={hookOffset && { ...fadeInOutScaleFast.animate, ...hookOffset }}
       exit={fadeInOutScaleFast.exit}
       minWidth={minWidth}
@@ -90,7 +90,7 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
           {extraHeaderContent}
         </Header>
       )}
-      <Scrollbar translateContentSizeYToHolder>{children}</Scrollbar>
+      <Scrollbar>{children}</Scrollbar>
     </Content>
   )
 

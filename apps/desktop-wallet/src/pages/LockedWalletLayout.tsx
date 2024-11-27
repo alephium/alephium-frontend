@@ -38,7 +38,7 @@ const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, ...props })
         </Logo>
       )}
     ></SideBar>
-    <ScrollbarCustom flex="1">
+    <ScrollbarCustom>
       <AppHeader />
       <CenteredContainer>{children}</CenteredContainer>
     </ScrollbarCustom>

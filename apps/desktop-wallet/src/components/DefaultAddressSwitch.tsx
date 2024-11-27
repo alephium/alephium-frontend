@@ -98,6 +98,7 @@ const SelectCustomComponent = (value?: SelectOption<AddressHash>, disablePointer
 
 const AddressBadgeStyled = styled(AddressBadge)`
   width: 100%;
+  overflow: hidden;
 `
 
 const OptionContent = styled.div`

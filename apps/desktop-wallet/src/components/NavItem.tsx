@@ -25,11 +25,12 @@ import Button from '@/components/Button'
 interface NavItemProps {
   Icon: LucideIcon
   label: string
+  isExpanded: boolean
   to?: string
   onClick?: () => void
 }
 
-const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
+const NavItem = ({ Icon, label, isExpanded, to, onClick }: NavItemProps) => {
   const navigate = useNavigate()
   const location = useLocation()
   const theme = useTheme()
@@ -50,14 +51,16 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
       onClick={handleClick}
       Icon={Icon}
       borderless
-      squared
       transparent={!isActive}
       isActive={isActive}
       data-tooltip-id="sidenav"
-      data-tooltip-content={label}
+      data-tooltip-content={!isExpanded ? label : undefined}
       iconColor={isActive ? theme.global.accent : theme.font.primary}
+      title="yo"
       rounded
-    />
+    >
+      {label}
+    </ButtonStyled>
   )
 }
 
@@ -66,6 +69,7 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
     isActive
       ? css`
           background-color: ${theme.bg.accent};
+          color: ${theme.global.accent};
           stroke: ${theme.global.accent};
         `
       : css`

@@ -80,7 +80,7 @@ const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
           custom={200}
           variants={circleVariants}
           animate="animate"
-          style={{ backgroundColor: '#ff998e', width: 660, height: 400 }}
+          style={{ backgroundColor: '#ff6969', width: 660, height: 400 }}
         />
         <Circle
           custom={140}

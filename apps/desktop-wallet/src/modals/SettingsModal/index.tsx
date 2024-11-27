@@ -132,7 +132,7 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
               <X />
             </Button>
           </ColumnHeader>
-          <Scrollbar translateContentSizeYToHolder>
+          <Scrollbar>
             <ColumnContent>
               {
                 {
