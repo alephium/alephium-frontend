@@ -25,6 +25,7 @@ interface NativeTheme {
   themeSource: string
 }
 
+// TODO: See https://www.electronjs.org/docs/latest/tutorial/context-isolation#usage-with-typescript
 export interface AlephiumWindow extends Window {
   electron?: {
     theme: {
