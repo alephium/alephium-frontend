@@ -18,9 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Album, ArrowLeftRight, Layers } from 'lucide-react'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme } from 'styled-components'
 
@@ -29,9 +29,7 @@ import AppHeader from '@/components/AppHeader'
 import NavItem from '@/components/NavItem'
 import SideBar from '@/components/PageComponents/SideBar'
 import ScrollbarCustom from '@/components/Scrollbar'
-import { openModal } from '@/features/modals/modalActions'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { getInitials, onEnterOrSpace } from '@/utils/misc'
+import { useAppSelector } from '@/hooks/redux'
 
 interface UnlockedWalletLayoutProps {
   title?: string
@@ -41,82 +39,21 @@ interface UnlockedWalletLayoutProps {
 
 dayjs.extend(relativeTime)
 
-const walletNameAppearAfterSeconds = 1
-const walletNameHideAfterSeconds = 4
-
 const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayoutProps) => {
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
 
-  const [fullWalletNameVisible, setFullWalletNameVisible] = useState(true)
-
-  const openCurrentWalletModal = () => dispatch(openModal({ name: 'CurrentWalletModal' }))
-
-  useEffect(() => {
-    if (!fullWalletNameVisible) return
-
-    const timeoutId = setTimeout(
-      () => setFullWalletNameVisible(false),
-      (walletNameHideAfterSeconds - walletNameAppearAfterSeconds) * 1000
-    )
-
-    return () => clearTimeout(timeoutId)
-  }, [fullWalletNameVisible])
-
   if (!activeWalletName) return null
-
-  const activeWalletNameInitials = getInitials(activeWalletName)
 
   return (
     <motion.div {...fadeInSlowly} className={className}>
       <SideBar
         renderTopComponent={(isExpanded) => (
-          <>
-            <AnimatePresence>
-              {fullWalletNameVisible && (
-                <OnEnterWalletName
-                  initial={{ x: 80, opacity: 0, scaleX: 1 }}
-                  animate={{ x: 100, opacity: 1, scaleX: 1 }}
-                  exit={{ x: -50, opacity: 0, scaleX: 0.5 }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 700,
-                    damping: 70,
-                    delay: walletNameAppearAfterSeconds
-                  }}
-                >
-                  👋 {t('Wallet')}: {activeWalletName}
-                </OnEnterWalletName>
-              )}
-            </AnimatePresence>
-            <CurrentWalletInitials
-              onClick={openCurrentWalletModal}
-              onKeyDown={(e) => onEnterOrSpace(e, openCurrentWalletModal)}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: walletNameHideAfterSeconds, type: 'spring', stiffness: 500, damping: 70 }}
-              key={`initials-${activeWalletName}`}
-              role="button"
-              tabIndex={0}
-            >
-              <AnimatePresence mode="wait">
-                <WalletInitialsContainer
-                  initial={{ opacity: 0, y: -15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 15 }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 70 }}
-                >
-                  {activeWalletNameInitials}
-                </WalletInitialsContainer>
-              </AnimatePresence>
-            </CurrentWalletInitials>
-            <SideNavigation>
-              <NavItem Icon={Layers} label={t('Overview')} to="/wallet/overview" />
-              <NavItem Icon={ArrowLeftRight} label={t('Transfers')} to="/wallet/transfers" />
-              <NavItem Icon={Album} label={t('Addresses')} to="/wallet/addresses" />
-            </SideNavigation>
-          </>
+          <SideNavigation>
+            <NavItem Icon={Layers} label={t('Overview')} to="/wallet/overview" isExpanded={isExpanded} />
+            <NavItem Icon={ArrowLeftRight} label={t('Transfers')} to="/wallet/transfers" isExpanded={isExpanded} />
+            <NavItem Icon={Album} label={t('Addresses')} to="/wallet/addresses" isExpanded={isExpanded} />
+          </SideNavigation>
         )}
       ></SideBar>
 
@@ -173,43 +110,4 @@ const SideNavigation = styled.nav`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-`
-
-const CurrentWalletInitials = styled(motion.div)`
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-full);
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: var(--fontWeight-semiBold);
-  background-color: ${({ theme }) => theme.bg.primary};
-  overflow: hidden;
-  margin-bottom: 40px;
-
-  &:hover {
-    cursor: pointer;
-    background-color: ${({ theme }) => theme.bg.hover};
-  }
-`
-
-const OnEnterWalletName = styled(CurrentWalletInitials)`
-  position: absolute;
-  left: 20px;
-  width: auto;
-  border-radius: 100px;
-  white-space: nowrap;
-  padding: 20px;
-  font-size: 15px;
-  pointer-events: none;
-  box-shadow: ${({ theme }) => theme.shadow.secondary};
-  border: 2px solid ${({ theme }) => theme.global.accent};
-`
-
-const WalletInitialsContainer = styled(motion.div)`
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `

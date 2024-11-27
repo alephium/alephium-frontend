@@ -119,9 +119,8 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
                 isHighlighted={activeSessions.length > 0}
                 data-tooltip-id="default"
                 data-tooltip-content={t('Connect wallet to dApp')}
-              >
-                <WalletConnectLogoStyled />
-              </Button>
+                Icon={WalletConnectLogoStyled}
+              />
               <VerticalDivider />
             </>
           )}
@@ -155,7 +154,7 @@ const AppHeaderContainer = styled.div`
   align-items: center;
 
   height: ${appHeaderHeightPx}px;
-  padding: 0 var(--spacing-4) 0 30px;
+  padding: 0 var(--spacing-7) 0 30px;
   gap: var(--spacing-1);
 `
 
@@ -200,4 +199,5 @@ const HeaderButtons = styled.div`
 
 const WalletConnectLogoStyled = styled(WalletConnectLogo)`
   height: auto;
+  width: 100%;
 `

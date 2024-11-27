@@ -83,10 +83,10 @@ const Button = ({ children, disabled, submit, Icon, className, isHighlighted, lo
         <>
           {Icon && (
             <ButtonIcon>
-              <Icon size={17} />
+              <Icon size={18} />
             </ButtonIcon>
           )}
-          {children as ReactNode}
+          <ButtonContent>{children as ReactNode}</ButtonContent>
         </>
       )}
     </motion.button>
@@ -266,14 +266,14 @@ export default styled(Button)`
 
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: ${({ Icon }) => (Icon ? 'center' : 'flex-start')};
   height: ${({ squared, short, tall }) => (short ? '34px' : squared ? '40px' : tall ? '48px' : '42px')};
   width: ${({ squared, short, wide }) => (squared ? '40px' : short && !wide ? 'auto' : wide ? '100%' : '80%')};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
   border-radius: ${({ short, rounded }) => (rounded ? '100px' : short ? 'var(--radius-medium)' : 'var(--radius-big)')};
   font-weight: ${({ role, variant }) =>
     role === 'secondary' || variant === 'faded' ? 'var(--fontWeight-medium)' : 'var(--fontWeight-semiBold)'};
-  font-size: 13px;
+  font-size: 14px;
   font-family: inherit;
   margin: ${({ squared }) => (squared ? '0' : '12px 0')};
   padding: ${({ squared }) => (squared ? 'var(--spacing-2)' : '0 13px')};
@@ -317,4 +317,9 @@ export default styled(Button)`
 
 const ButtonIcon = styled.div`
   display: flex;
+`
+
+const ButtonContent = styled.div`
+  flex: 1;
+  width: 100%;
 `
