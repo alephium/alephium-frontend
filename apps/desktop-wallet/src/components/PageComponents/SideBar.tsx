@@ -16,11 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { motion } from 'framer-motion'
 import { Settings } from 'lucide-react'
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import Button from '@/components/Button'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
@@ -28,30 +27,24 @@ import WalletNameButton from '@/components/WalletNameButton'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
-import { useWindowSize } from '@/utils/hooks'
 
 interface SideBarProps {
-  renderTopComponent: (isExpanded: boolean) => ReactNode
+  renderTopComponent: () => ReactNode
   noExpansion?: boolean
   className?: string
 }
 
+export const SIDEBAR_EXPAND_THRESHOLD_PX = 1200
+
 const SideBar = ({ renderTopComponent, noExpansion, className }: SideBarProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const { width: windowWidth } = useWindowSize()
 
   const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: {} }))
 
-  const isExpanded = noExpansion ? false : windowWidth ? windowWidth > 1200 : false
-
   return (
-    <motion.div
-      className={className}
-      animate={{ width: isExpanded ? walletSidebarWidthPx * 3 : walletSidebarWidthPx }}
-      transition={{ delay: 1.1, type: 'spring', damping: 20 }}
-    >
-      {renderTopComponent(isExpanded)}
+    <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion}>
+      {renderTopComponent()}
       <BottomButtonsContainer>
         <BottomButtons>
           <ThemeSwitcher />
@@ -69,18 +62,28 @@ const SideBar = ({ renderTopComponent, noExpansion, className }: SideBarProps) =
           <WalletNameButton />
         </BottomButtons>
       </BottomButtonsContainer>
-    </motion.div>
+    </SideBarStyled>
   )
 }
 
-export default styled(SideBar)`
+export default SideBar
+
+const SideBarStyled = styled.div<{ noExpansion?: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
   z-index: 1;
-
   width: ${walletSidebarWidthPx}px;
   padding: ${appHeaderHeightPx - 10}px var(--spacing-4) var(--spacing-3);
+  transition: width 0.4s ease-in-out;
+
+  ${({ noExpansion }) =>
+    !noExpansion &&
+    css`
+      @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+        width: ${walletSidebarWidthPx * 3}px;
+      }
+    `}
 `
 
 const BottomButtonsContainer = styled.div`

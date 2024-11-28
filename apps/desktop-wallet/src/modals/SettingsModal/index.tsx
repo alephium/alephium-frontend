@@ -262,7 +262,7 @@ const TabTitlesColumnHeader = styled(ColumnHeader)`
 
 const TabTitleButton = styled(Button)`
   height: 46px;
-  justify-content: flex-start;
+  text-align: left;
 
   &:first-child {
     margin-top: 0;

@@ -82,7 +82,7 @@ const Button = ({
       variants={sectionChildrenVariants}
       custom={disabled}
       disabled={disabled || loading}
-      animate={animate || canBeAnimated ? (!disabled ? 'shown' : 'disabled') : false}
+      animate={canBeAnimated ? (!disabled ? 'shown' : 'disabled') : false}
       onAnimationComplete={() => setCanBeAnimated(true)}
       type={submit ? 'submit' : 'button'}
       ref={buttonRef}
