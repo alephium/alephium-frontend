@@ -50,8 +50,8 @@ const TableWrapper = styled(motion.div)<Pick<TableProps, 'minWidth'>>`
   overflow: auto;
   border-radius: var(--radius-huge);
   border: 1px solid ${({ theme }) => theme.border.primary};
-
   background-color: ${({ theme }) => theme.bg.primary};
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.06);
 
   ${({ minWidth }) =>
     minWidth &&

@@ -48,11 +48,11 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
   return (
     <motion.div {...fadeInSlowly} className={className}>
       <SideBar
-        renderTopComponent={(isExpanded) => (
+        renderTopComponent={() => (
           <SideNavigation>
-            <NavItem Icon={Layers} label={t('Overview')} to="/wallet/overview" isExpanded={isExpanded} />
-            <NavItem Icon={ArrowLeftRight} label={t('Transfers')} to="/wallet/transfers" isExpanded={isExpanded} />
-            <NavItem Icon={Album} label={t('Addresses')} to="/wallet/addresses" isExpanded={isExpanded} />
+            <NavItem Icon={Layers} label={t('Overview')} to="/wallet/overview" />
+            <NavItem Icon={ArrowLeftRight} label={t('Transfers')} to="/wallet/transfers" />
+            <NavItem Icon={Album} label={t('Addresses')} to="/wallet/addresses" />
           </SideNavigation>
         )}
       ></SideBar>
@@ -110,4 +110,5 @@ const SideNavigation = styled.nav`
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 15px;
 `

@@ -286,7 +286,7 @@ export default styled(Button)`
   font-size: 14px;
   font-family: inherit;
   margin: ${({ squared }) => (squared ? '0' : '12px 0')};
-  padding: ${({ squared }) => (squared ? 'var(--spacing-2)' : '0 13px')};
+  padding: ${({ squared }) => (squared ? 'var(--spacing-2)' : '0 11px')};
   min-width: ${({ squared }) => (squared ? '40px' : '60px')};
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};
