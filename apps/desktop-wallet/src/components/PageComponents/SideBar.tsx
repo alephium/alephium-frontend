@@ -82,12 +82,19 @@ const SideBarStyled = styled.div<{ noExpansion?: boolean }>`
   transition: width 0.4s ease-in-out;
 
   ${({ noExpansion }) =>
-    !noExpansion &&
-    css`
-      @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
-        width: ${walletSidebarWidthPx * 3}px;
-      }
-    `}
+    !noExpansion
+      ? css`
+          @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+            width: ${walletSidebarWidthPx * 3}px;
+          }
+        `
+      : css`
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          top: 0;
+          z-index: 3;
+        `}
 `
 
 const AlephiumLogoContainer = styled.div`

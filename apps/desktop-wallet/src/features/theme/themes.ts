@@ -69,7 +69,7 @@ export const darkTheme: DefaultTheme = {
     background1: '#111114',
     background2: '#111114',
     hover: 'rgba(255, 255, 255, 0.01)',
-    highlight: 'rgba(0, 0, 0, 0.2)',
+    highlight: 'rgba(255, 255, 255, 0.07)',
     accent: colord('#487df0').alpha(0.1).toHex()
   },
   font: {
