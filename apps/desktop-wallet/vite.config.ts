@@ -18,8 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 /// <reference types="vitest" />
 
+import path from 'node:path'
+
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import electron from 'vite-plugin-electron/simple'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
 
@@ -41,7 +44,23 @@ export default defineConfig({
     },
     include: ['@alephium/shared-crypto'] // To allow for using npm link https://vitejs.dev/guide/dep-pre-bundling.html#monorepos-and-linked-dependencies
   },
-  plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
+  plugins: [
+    react(),
+    viteTsconfigPaths(),
+    svgrPlugin(),
+    electron({
+      main: {
+        // Shortcut of `build.lib.entry`.
+        entry: 'electron/main.ts'
+      },
+      preload: {
+        // Shortcut of `build.rollupOptions.input`.
+        // Preload scripts may contain Web assets, so use the `build.rollupOptions.input` instead `build.lib.entry`.
+        input: path.join(__dirname, 'electron/preload.js')
+        // input: path.join(__dirname, 'electron/preload.ts')
+      }
+    })
+  ],
   test: {
     globals: true,
     environment: 'jsdom',

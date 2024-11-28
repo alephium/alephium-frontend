@@ -3,7 +3,7 @@
   "description": "The official Alephium wallet",
   "version": "2.4.4",
   "author": "Alephium dev <dev@alephium.org>",
-  "main": "public/electron.js",
+  "main": "dist-electron/main.js",
   "homepage": "./",
   "private": true,
   "repository": {
@@ -13,8 +13,7 @@
   "scripts": {
     "build": "tsc && cross-env INLINE_RUNTIME_CHUNK=false VITE_VERSION=$npm_package_version vite build",
     "start": "turbo start:electron",
-    "start:web": "cross-env VITE_VERSION=$npm_package_version vite",
-    "start:electron": "concurrently \"pnpm start:web\" \"electron .\"",
+    "start:electron": "cross-env VITE_VERSION=$npm_package_version vite",
     "start:debug": "concurrently \"pnpm start:web\" \"npx react-scan@latest localhost:3000\"",
     "build:electron:windows": "electron-builder -w",
     "build:electron:macos": "electron-builder --mac --universal",
@@ -147,6 +146,7 @@
     "type-fest": "^3.5.1",
     "typescript": "^5.3.3",
     "vite": "^5.4.8",
+    "vite-plugin-electron": "^0.29.0",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0",
     "vitest": "^2.1.2",
@@ -158,8 +158,7 @@
     "productName": "Alephium",
     "files": [
       "build/**/*",
-      "public/electron.js",
-      "public/preload.js",
+      "dist-electron/**/*",
       "node_modules/**/*",
       "../../node_modules/**/*"
     ],
