@@ -109,7 +109,7 @@ export default styled(Button)`
       ? 'transparent'
       : {
           primary: {
-            default: theme.global.accent,
+            default: theme.bg.contrast,
             contrast: theme.bg.contrast,
             valid: theme.global.valid,
             alert: theme.global.alert,
@@ -170,7 +170,7 @@ export default styled(Button)`
       ? theme.font.secondary
       : {
           primary: {
-            default: 'white',
+            default: theme.font.contrastPrimary,
             contrast: theme.font.contrastPrimary,
             valid: theme.font.contrastPrimary,
             alert: 'white',
@@ -280,16 +280,17 @@ export default styled(Button)`
   height: ${({ squared, short, tall }) => (short ? '34px' : squared ? '40px' : tall ? '48px' : '42px')};
   width: ${({ squared, short, wide }) => (squared ? '40px' : short && !wide ? 'auto' : wide ? '100%' : '80%')};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
-  border-radius: ${({ short, rounded }) => (rounded ? '100px' : short ? 'var(--radius-medium)' : 'var(--radius-big)')};
+  border-radius: ${({ short, rounded }) => (rounded ? '100px' : short ? 'var(--radius-medium)' : '100px')};
   font-weight: ${({ role, variant }) =>
     role === 'secondary' || variant === 'faded' ? 'var(--fontWeight-medium)' : 'var(--fontWeight-semiBold)'};
   font-size: 14px;
   font-family: inherit;
   margin: ${({ squared }) => (squared ? '0' : '12px 0')};
-  padding: ${({ squared }) => (squared ? 'var(--spacing-2)' : '0 11px')};
+  padding: ${({ squared, Icon }) => (squared ? 'var(--spacing-2)' : Icon ? '0 28px 0 14px' : '0 14px')};
   min-width: ${({ squared }) => (squared ? '40px' : '60px')};
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};
+  transition: all 0.2s;
 
   &:disabled {
     opacity: 0.5;

@@ -30,18 +30,10 @@ interface WorthOverviewPanelProps {
   isLoading?: boolean
   className?: string
   chartVisible?: boolean
-  chartInitiallyHidden?: boolean
-  animateChartEntry?: boolean
   children?: ReactNode
 }
 
-const WorthOverviewPanel = ({
-  className,
-  addressHash,
-  children,
-  chartVisible,
-  chartInitiallyHidden
-}: WorthOverviewPanelProps) => {
+const WorthOverviewPanel = ({ className, addressHash, children }: WorthOverviewPanelProps) => {
   const { t } = useTranslation()
 
   const singleAddress = !!addressHash
@@ -75,9 +67,9 @@ const Panel = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 40px;
   align-items: center;
-  padding: 40px 60px;
+  padding: 50px;
   overflow: visible;
 `
 

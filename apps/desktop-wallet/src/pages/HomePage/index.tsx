@@ -34,25 +34,23 @@ const HomePage = () => {
 
   return (
     <LockedWalletLayout>
-      <FloatingPanel verticalAlign="center" horizontalAlign="center" transparentBg borderless>
-        {showNewWalletActions ? (
-          <>
-            <PanelTitle useLayoutId={false} size="big" centerText>
-              {t('New wallet')}
-            </PanelTitle>
-            <NewWalletActions onExistingWalletLinkClick={() => setShowNewWalletActions(false)} />
-          </>
-        ) : hasAtLeastOneWallet ? (
-          <UnlockPanel onNewWalletLinkClick={() => setShowNewWalletActions(true)} />
-        ) : (
-          <>
-            <PanelTitle useLayoutId={false} size="big" centerText>
-              {t('Welcome.')}
-            </PanelTitle>
-            <NewWalletActions />
-          </>
-        )}
-      </FloatingPanel>
+      {showNewWalletActions ? (
+        <FloatingPanel>
+          <PanelTitle useLayoutId={false} size="big" centerText>
+            {t('New wallet')}
+          </PanelTitle>
+          <NewWalletActions onExistingWalletLinkClick={() => setShowNewWalletActions(false)} />
+        </FloatingPanel>
+      ) : hasAtLeastOneWallet ? (
+        <UnlockPanel onNewWalletLinkClick={() => setShowNewWalletActions(true)} />
+      ) : (
+        <FloatingPanel>
+          <PanelTitle useLayoutId={false} size="big" centerText>
+            {t('Welcome.')}
+          </PanelTitle>
+          <NewWalletActions />
+        </FloatingPanel>
+      )}
     </LockedWalletLayout>
   )
 }

@@ -93,7 +93,9 @@ const WalletWordsPage = () => {
         </WordsContent>
       </PanelContentContainer>
       <FooterActionsContainer>
-        <Button onClick={handleNextPress}>{t("I've copied the words, continue")}</Button>
+        <Button onClick={handleNextPress} tall>
+          {t("I've copied the words, continue")}
+        </Button>
       </FooterActionsContainer>
     </FloatingPanel>
   )

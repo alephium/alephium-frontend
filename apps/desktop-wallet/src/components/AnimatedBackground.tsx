@@ -16,13 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { motion, useAnimation } from 'framer-motion'
-import React, { useEffect } from 'react'
 import styled, { useTheme } from 'styled-components'
 
 interface AnimatedBackgroundProps {
-  height?: number
-  width?: number
-  isAnimated?: boolean
+  height?: number | string
+  width?: number | string
+  className?: string
 }
 
 const circleVariants = {
@@ -33,24 +32,14 @@ const circleVariants = {
   })
 }
 
-const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({
-  height = '100%',
-  width = '100%',
-  isAnimated = false
-}) => {
+const AnimatedBackground = ({ height = '100%', width = '100%', className }: AnimatedBackgroundProps) => {
   const controls = useAnimation()
   const theme = useTheme()
-
-  useEffect(() => {
-    if (isAnimated) {
-      controls.start({ rotate: 360, transition: { duration: 40, repeat: Infinity, ease: 'linear' } })
-    }
-  }, [controls, isAnimated])
 
   const isDarkTheme = theme.name === 'dark'
 
   return (
-    <AnimatedContainer style={{ width, height }}>
+    <AnimatedContainer style={{ width, height }} className={className}>
       <motion.div
         animate={controls}
         style={{

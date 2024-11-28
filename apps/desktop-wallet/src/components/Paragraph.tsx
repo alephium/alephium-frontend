@@ -49,15 +49,18 @@ const Paragraph: FC<HTMLMotionProps<'p'> & ParagraphProps> = ({
 export default Paragraph
 
 const StyledParagraph = styled(motion.p)<ParagraphProps>`
+  font-size: 16px;
   white-space: pre-wrap;
   font-weight: var(--fontWeight-medium);
   width: 100%;
   line-height: 1.5em;
+  max-width: 400px;
 
   ${({ centered }) =>
     centered &&
     css`
       text-align: center;
+      align-self: center;
     `}
 
   ${({ secondary, theme }) =>

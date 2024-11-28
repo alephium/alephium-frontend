@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useState } from 'react'
 import styled from 'styled-components'
 
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
@@ -29,31 +28,20 @@ interface OverviewPageProps {
   className?: string
 }
 
-let wasChartAnimatedOnce = false
-
-const OverviewPage = ({ className }: OverviewPageProps) => {
-  const [chartVisible, setIsChartVisible] = useState(wasChartAnimatedOnce)
-
-  const handleAnimationComplete = () => {
-    setIsChartVisible(true)
-    wasChartAnimatedOnce = true
-  }
-
-  return (
-    <UnlockedWalletPage className={className} onAnimationComplete={() => handleAnimationComplete()}>
-      <UnlockedWalletPanel bottom top>
-        <WorthOverviewPanel chartVisible={chartVisible} chartInitiallyHidden={!chartVisible}>
-          <Shortcuts>
-            <ShortcutButtonsGroupWallet analyticsOrigin="overview_page" solidBackground />
-          </Shortcuts>
-        </WorthOverviewPanel>
-      </UnlockedWalletPanel>
-      <UnlockedWalletPanel bottom>
-        <WalletTokensTabsStyled />
-      </UnlockedWalletPanel>
-    </UnlockedWalletPage>
-  )
-}
+const OverviewPage = ({ className }: OverviewPageProps) => (
+  <UnlockedWalletPage className={className}>
+    <UnlockedWalletPanel bottom top>
+      <WorthOverviewPanel>
+        <Shortcuts>
+          <ShortcutButtonsGroupWallet analyticsOrigin="overview_page" solidBackground />
+        </Shortcuts>
+      </WorthOverviewPanel>
+    </UnlockedWalletPanel>
+    <UnlockedWalletPanel bottom>
+      <WalletTokensTabsStyled />
+    </UnlockedWalletPanel>
+  </UnlockedWalletPage>
+)
 
 export default styled(OverviewPage)`
   background-color: ${({ theme }) => theme.bg.background1};

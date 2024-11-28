@@ -49,7 +49,7 @@ const AppSpinnerStyled = styled.div`
   justify-content: center;
   align-items: center;
   color: var(--color-black);
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: ${({ theme }) => (theme.name === 'light' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)')};
   backdrop-filter: blur(3px);
   z-index: 2;
 `

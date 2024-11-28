@@ -220,7 +220,7 @@ const CheckWordsPage = () => {
         {t('Security Check')}
       </PanelTitle>
       <PanelContentContainer>
-        <Section>
+        <Section align="flex-start">
           <Paragraph>{t('Select the words in the right order.')}</Paragraph>
           <SelectedWordList className={selectedWords.length === wordList.length ? (isValid ? 'valid' : 'error') : ''}>
             {renderSelectedWords()}
@@ -248,10 +248,10 @@ const CheckWordsPage = () => {
       ) : null}
       {selectedWords.length === wordList.length && (
         <FooterActionsContainer>
-          <Button role="secondary" onClick={handleBackButtonPress}>
+          <Button role="secondary" onClick={handleBackButtonPress} tall>
             {t('Cancel')}
           </Button>
-          <Button onClick={handleNextButtonPress} disabled={!isValid}>
+          <Button onClick={handleNextButtonPress} disabled={!isValid} tall>
             {t('Continue')}
           </Button>
         </FooterActionsContainer>
