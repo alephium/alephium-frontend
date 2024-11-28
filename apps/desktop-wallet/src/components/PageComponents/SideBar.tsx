@@ -21,6 +21,7 @@ import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import AlephiumLogo from '@/components/AlephiumLogo'
 import Button from '@/components/Button'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 import WalletNameButton from '@/components/WalletNameButton'
@@ -29,7 +30,7 @@ import { useAppDispatch } from '@/hooks/redux'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
 
 interface SideBarProps {
-  renderTopComponent: () => ReactNode
+  renderTopComponent?: () => ReactNode
   noExpansion?: boolean
   className?: string
 }
@@ -44,7 +45,10 @@ const SideBar = ({ renderTopComponent, noExpansion, className }: SideBarProps) =
 
   return (
     <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion}>
-      {renderTopComponent()}
+      <AlephiumLogoContainer>
+        <AlephiumLogo />
+      </AlephiumLogoContainer>
+      <TopContainer>{renderTopComponent?.()}</TopContainer>
       <BottomButtonsContainer>
         <BottomButtons>
           <ThemeSwitcher />
@@ -74,7 +78,7 @@ const SideBarStyled = styled.div<{ noExpansion?: boolean }>`
   flex-direction: column;
   z-index: 1;
   width: ${walletSidebarWidthPx}px;
-  padding: ${appHeaderHeightPx - 10}px var(--spacing-4) var(--spacing-3);
+  padding: ${appHeaderHeightPx - 16}px var(--spacing-4) var(--spacing-4);
   transition: width 0.4s ease-in-out;
 
   ${({ noExpansion }) =>
@@ -84,6 +88,25 @@ const SideBarStyled = styled.div<{ noExpansion?: boolean }>`
         width: ${walletSidebarWidthPx * 3}px;
       }
     `}
+`
+
+const AlephiumLogoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px;
+  width: 40px;
+  height: 40px;
+  margin: 0 1px;
+  border-radius: 100px;
+  background-color: ${({ theme }) => theme.font.primary};
+  margin-bottom: var(--spacing-7);
+`
+
+const TopContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 `
 
 const BottomButtonsContainer = styled.div`

@@ -67,6 +67,8 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
 }
 
 const ButtonStyled = styled(Button)<{ isActive: boolean }>`
+  margin: 0;
+
   ${({ isActive, theme }) =>
     isActive
       ? css`
@@ -79,7 +81,7 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
         `}
 
   &:not(:hover) {
-    opacity: ${({ isActive }) => (isActive ? 1 : 0.5)} !important;
+    opacity: ${({ isActive }) => (isActive ? 1 : 0.7)} !important;
   }
 
   &:hover {
@@ -104,9 +106,12 @@ const TooltipStyleOverride = createGlobalStyle`
 `
 
 const LabelContainer = styled.div`
-  display: none;
+  width: 0;
+  transition: width 0.4s ease-in-out;
+  overflow: hidden;
+
   @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
-    display: block;
+    width: auto;
   }
 `
 
