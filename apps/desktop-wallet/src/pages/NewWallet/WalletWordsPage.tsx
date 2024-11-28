@@ -31,7 +31,6 @@ import {
   PanelContentContainer,
   Section
 } from '@/components/PageComponents/PageContainers'
-import PanelTitle from '@/components/PageComponents/PanelTitle'
 import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
 import useAnalytics from '@/features/analytics/useAnalytics'
@@ -78,9 +77,6 @@ const WalletWordsPage = () => {
 
   return (
     <FloatingPanel enforceMinHeight>
-      <PanelTitle color="primary" onBackButtonClick={handleBackPress}>
-        {t('Your Wallet')}
-      </PanelTitle>
       <PanelContentContainer>
         <WordsContent inList>
           <Label>{t('Secret recovery phrase')}</Label>
@@ -93,6 +89,9 @@ const WalletWordsPage = () => {
         </WordsContent>
       </PanelContentContainer>
       <FooterActionsContainer>
+        <Button onClick={handleBackPress} tall role="secondary">
+          {t('Back')}
+        </Button>
         <Button onClick={handleNextPress} tall>
           {t("I've copied the words, continue")}
         </Button>
@@ -121,18 +120,17 @@ const PhraseBox = styled.div`
   padding: var(--spacing-4);
   color: ${({ theme }) => theme.font.contrastPrimary};
   font-weight: var(--fontWeight-medium);
-  background-color: ${({ theme }) => colord(theme.global.alert).alpha(0.4).toRgbString()};
-  border: 1px solid ${({ theme }) => theme.global.alert};
-  border-radius: var(--radius-small);
+  background-color: ${({ theme }) => colord(theme.global.alert).alpha(0.1).toRgbString()};
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  border-radius: var(--radius-big);
   margin-bottom: var(--spacing-4);
   flex-wrap: wrap;
 `
 
 const MnemonicWordContainer = styled.div`
   margin: 6px;
-  border-radius: var(--radius-tiny);
+  border-radius: var(--radius-small);
   overflow: hidden;
-  box-shadow: ${({ theme }) => theme.shadow.primary};
 `
 
 const MnemonicNumber = styled.div`
@@ -141,9 +139,9 @@ const MnemonicNumber = styled.div`
   border-right: 1px ${({ theme }) => theme.bg.secondary};
   background-color: ${({ theme }) =>
     theme.name === 'light'
-      ? colord(theme.bg.primary).alpha(0.4).toRgbString()
-      : colord(theme.bg.contrast).alpha(0.4).toRgbString()};
-  color: ${({ theme }) => theme.font.primary};
+      ? colord(theme.font.primary).alpha(0.8).toRgbString()
+      : colord(theme.font.contrastPrimary).alpha(0.8).toRgbString()};
+  color: ${({ theme }) => (theme.name === 'light' ? theme.font.contrastPrimary : theme.font.primary)};
 `
 
 const MnemonicWord = styled.div`

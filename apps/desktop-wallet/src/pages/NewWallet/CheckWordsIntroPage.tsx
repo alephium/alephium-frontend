@@ -27,7 +27,6 @@ import {
   PanelContentContainer,
   Section
 } from '@/components/PageComponents/PageContainers'
-import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
 import useAnalytics from '@/features/analytics/useAnalytics'
@@ -51,9 +50,6 @@ const CheckWordsIntroPage = () => {
 
   return (
     <FloatingPanel enforceMinHeight>
-      <PanelTitle color="primary" onBackButtonClick={handleBackPress}>
-        {t('Security Check')}
-      </PanelTitle>
       <PanelContentContainer>
         <Section>
           <LockContainer>
@@ -77,6 +73,9 @@ const CheckWordsIntroPage = () => {
         </Section>
       </PanelContentContainer>
       <FooterActionsContainer>
+        <Button onClick={handleBackPress} tall role="secondary">
+          {t('Back')}
+        </Button>
         <Button onClick={handleNextPress} tall>
           {t('Ready!')}
         </Button>

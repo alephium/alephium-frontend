@@ -116,7 +116,7 @@ export default styled(Button)`
             faded: colord(theme.global.accent).alpha(0.07).toRgbString()
           }[variant],
           secondary: {
-            default: theme.bg.highlight,
+            default: theme.bg.secondary,
             contrast: theme.font.primary,
             valid: theme.global.valid,
             alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
@@ -137,7 +137,7 @@ export default styled(Button)`
             faded: colord(theme.global.accent).darken(0.04).toRgbString()
           }[variant],
           secondary: {
-            default: theme.bg.hover,
+            default: colord(theme.bg.secondary).lighten(0.04).toRgbString(),
             contrast: colord(theme.bg.background2).lighten(0.04).toRgbString(),
             valid: colord(theme.global.valid).darken(0.04).toRgbString(),
             alert: colord(theme.global.alert).alpha(0.2).toRgbString(),

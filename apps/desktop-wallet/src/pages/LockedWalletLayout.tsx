@@ -58,6 +58,6 @@ const AnimatedBackgroundStyled = styled(AnimatedBackground)`
   right: 0;
   left: 0;
   bottom: 0;
-  opacity: 0.8;
+  opacity: ${({ theme }) => (theme.name === 'dark' ? 0.8 : 0.9)};
   pointer-events: none;
 `

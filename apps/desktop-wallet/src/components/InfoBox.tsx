@@ -105,7 +105,7 @@ const IconContainer = styled.div`
 
 const TextContainer = styled.div<{ wordBreak?: boolean; ellipsis?: boolean }>`
   flex: 2;
-  font-weight: var(--fontWeight-medium);
+  font-weight: var(--fontWeight-semiBold);
   word-break: ${({ wordBreak }) => (wordBreak ? 'break-all' : 'initial')};
   text-align: left;
 
@@ -132,7 +132,7 @@ const StyledBox = styled(motion.div)<{
     contrast
       ? theme.bg.secondary
       : importance
-        ? colord(getImportanceColor(theme, importance)).alpha(0.05).toHex()
+        ? colord(getImportanceColor(theme, importance)).alpha(0.3).toHex()
         : theme.bg.primary};
 
   display: flex;
@@ -153,5 +153,5 @@ const Label = styled(motion.label)`
   margin-left: var(--spacing-3);
   margin-bottom: 7px;
   color: ${({ theme }) => theme.font.secondary};
-  font-weight: var(--fontWeight-medium);
+  font-weight: var(--fontWeight-semiBold);
 `
