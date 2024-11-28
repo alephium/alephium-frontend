@@ -59,9 +59,9 @@ export const sectionChildrenVariants: Variants = {
 }
 
 export const FloatingPanel: FC<MainPanelProps> = ({ children, ...props }) => (
-  <StyledFloatingPanel {...fadeIn} {...props}>
+  <FloatingPanelStyled {...fadeIn} {...props}>
     {children}
-  </StyledFloatingPanel>
+  </FloatingPanelStyled>
 )
 
 export const Section = ({ children, apparitionDelay, inList, align = 'center', style, className }: SectionProps) => (
@@ -86,17 +86,22 @@ export const BoxContainer = ({ children, ...props }: HTMLMotionProps<'div'>) => 
   </StyledBoxContainer>
 )
 
-const StyledFloatingPanel = styled(motion.div)<MainPanelProps>`
+const FloatingPanelStyled = styled(motion.div)<MainPanelProps>`
   width: 100%;
   margin: ${appHeaderHeightPx}px auto;
   max-width: 600px;
   min-height: ${({ enforceMinHeight }) => (enforceMinHeight ? '600px' : 'initial')};
-  padding: var(--spacing-5);
+  padding: var(--spacing-8) var(--spacing-6);
   display: flex;
   flex-direction: column;
   justify-content: ${({ verticalAlign }) => verticalAlign || 'flex-start'};
   align-items: ${({ horizontalAlign }) => horizontalAlign || 'stretch'};
   border-radius: var(--radius-huge);
+  border: 1px solid ${({ theme }) => (theme.name === 'light' ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.1)')};
+  box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.1);
+
+  backdrop-filter: blur(100px) brightness(${({ theme }) => (theme.name === 'light' ? '1.3' : '0.4')});
+  z-index: 1;
 
   ${({ borderless, theme }) => !borderless && css``}
 

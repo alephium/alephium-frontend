@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { motion, MotionProps } from 'framer-motion'
 import styled from 'styled-components'
 
+import AnimatedBackground from '@/components/AnimatedBackground'
 import AppHeader from '@/components/AppHeader'
 import SideBar from '@/components/PageComponents/SideBar'
 import ScrollbarCustom from '@/components/Scrollbar'
@@ -29,7 +30,8 @@ interface LockedWalletLayoutProps extends MotionProps {
 
 const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, ...props }) => (
   <motion.main {...props}>
-    <SideBar noExpansion></SideBar>
+    <SideBar noExpansion />
+    <AnimatedBackgroundStyled />
     <ScrollbarCustom>
       <AppHeader position="fixed" />
       <CenteredContainer>{children}</CenteredContainer>
@@ -48,4 +50,14 @@ const CenteredContainer = styled.div`
   display: flex;
   align-items: center;
   min-height: 100%;
+`
+
+const AnimatedBackgroundStyled = styled(AnimatedBackground)`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  opacity: 0.8;
+  pointer-events: none;
 `

@@ -77,15 +77,16 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
     `}
 
   &:not(:hover) {
-    opacity: ${({ isActive }) => (isActive ? 1 : 0.7)} !important;
+    opacity: ${({ isActive }) => (isActive ? 1 : 0.6)} !important;
   }
 
-  transition: width 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
 
   @media (max-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
     gap: 0;
     width: 42px;
     min-width: 42px;
+    padding: 11px;
   }
 `
 

@@ -130,8 +130,8 @@ export const InputContainer = styled(motion.div)<Pick<InputProps, 'noMargin' | '
 `
 
 export const InputBase = styled.input<InputProps>`
-  ${({ isValid, value, label, Icon, heightSize, contrast, largeText }) =>
-    inputDefaultStyle(isValid || !!Icon, !!value, !!label, heightSize, contrast, largeText)};
+  ${({ isValid, value, label, Icon, heightSize, largeText }) =>
+    inputDefaultStyle(isValid || !!Icon, !!value, !!label, heightSize, largeText)};
   color-scheme: ${({ theme }) => theme.name};
 `
 

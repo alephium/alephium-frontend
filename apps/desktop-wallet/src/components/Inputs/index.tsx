@@ -65,14 +65,12 @@ export const inputDefaultStyle = (
   hasValue?: boolean,
   hasLabel?: boolean,
   heightSize?: InputHeight,
-  isContrasted?: boolean,
   largeText?: boolean
 ) => css`
-  background-image: none;
   height: ${heightSize === 'small' ? '38px' : heightSize === 'big' ? '50px' : 'var(--inputHeight)'};
   width: 100%;
   border-radius: var(--radius-big);
-  background-color: ${({ theme }) => (isContrasted && theme.name === 'dark' ? theme.bg.background2 : theme.bg.primary)};
+  background-color: ${({ theme }) => theme.bg.highlight};
   border: 1px solid ${({ theme }) => theme.border.primary};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 45px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
@@ -80,6 +78,8 @@ export const inputDefaultStyle = (
   font-size: ${largeText ? '1.12em' : '1em'};
   text-align: left;
   font-family: inherit;
+
+  transition: all 0.2s;
 
   ${hasValue &&
   hasLabel &&
@@ -105,7 +105,7 @@ export const inputDefaultStyle = (
   }
 
   &:hover {
-    background-color: ${({ theme }) => theme.bg.hover};
+    background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.8).toRgbString()};
   }
 
   // Remove number arrows

@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, LucideIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -25,6 +25,7 @@ import ActionLink from '@/components/ActionLink'
 export interface TabItem<T extends string> {
   value: T
   label: string
+  Icon?: LucideIcon
 }
 
 export interface TabBarProps<T extends string> {
@@ -63,7 +64,14 @@ const TabBar = <T extends string>({
             aria-selected={isActive}
             isActive={isActive}
           >
-            <TabLabel isActive={isActive}>{item.label}</TabLabel>
+            <TabLabel isActive={isActive}>
+              {item.Icon && (
+                <TabIcon>
+                  <item.Icon />
+                </TabIcon>
+              )}
+              {item.label}
+            </TabLabel>
           </TabComponent>
         )
       })}
@@ -112,11 +120,20 @@ export const Tab = styled.div<{ isActive: boolean }>`
 `
 
 const TabLabel = styled.span<{ isActive: boolean }>`
+  display: flex;
+  align-items: center;
+
   ${({ isActive }) =>
     !isActive &&
     css`
       filter: saturate(10%);
     `}
+`
+
+const TabIcon = styled.div`
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
 `
 
 const ActionLinkStyled = styled(ActionLink)`

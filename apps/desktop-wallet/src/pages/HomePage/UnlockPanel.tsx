@@ -26,7 +26,7 @@ import Button from '@/components/Button'
 import Input from '@/components/Inputs/Input'
 import Select from '@/components/Inputs/Select'
 import WalletPassphrase from '@/components/Inputs/WalletPassphrase'
-import { Section } from '@/components/PageComponents/PageContainers'
+import { FloatingPanel, Section } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
@@ -76,51 +76,53 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
 
   return (
     <>
-      <PanelTitle useLayoutId={false} size="big" centerText>
-        {pendingDappConnectionUrl
-          ? t('Connect to dApp')
-          : isAwaitingSessionRequestApproval
-            ? t('Received dApp request')
-            : t('Welcome back.')}
-      </PanelTitle>
-      <ParagraphStyled centered secondary>
-        {pendingDappConnectionUrl ||
-          t(wallets.length === 1 ? 'Unlock your wallet to continue.' : 'Unlock a wallet to continue.')}
-      </ParagraphStyled>
-      <SectionStyled inList>
-        <Select
-          label={t('Wallet')}
-          options={walletOptions}
-          controlledValue={walletOptions.find((w) => w.value === selectedWallet)}
-          onSelect={setSelectedWallet}
-          title={t('Select a wallet')}
-          id="wallet"
-          heightSize="big"
-        />
-        <Input
-          label={t('Password')}
-          type="password"
-          autoComplete="off"
-          onChange={(e) => setPassword(e.target.value)}
-          value={password}
-          id="password"
-          autoFocus
-          heightSize="big"
-        />
-      </SectionStyled>
-      <ButtonsSection>
-        <ButtonStyled
-          onClick={handleUnlock}
-          submit
-          disabled={!selectedWalletOption || !password || !isPassphraseConfirmed}
-          tall
-        >
-          {t('Unlock')}
-        </ButtonStyled>
-        <ButtonStyled onClick={onNewWalletLinkClick} role="secondary" transparent short>
-          {t('Import or create a wallet')}
-        </ButtonStyled>
-      </ButtonsSection>
+      <FloatingPanelStyled verticalAlign="center" horizontalAlign="center" transparentBg borderless>
+        <PanelTitle useLayoutId={false} size="big" centerText>
+          {pendingDappConnectionUrl
+            ? t('Connect to dApp')
+            : isAwaitingSessionRequestApproval
+              ? t('Received dApp request')
+              : t('Welcome back.')}
+        </PanelTitle>
+        <ParagraphStyled centered secondary>
+          {pendingDappConnectionUrl ||
+            t(wallets.length === 1 ? 'Unlock your wallet to continue.' : 'Unlock a wallet to continue.')}
+        </ParagraphStyled>
+        <SectionStyled inList>
+          <Select
+            label={t('Wallet')}
+            options={walletOptions}
+            controlledValue={walletOptions.find((w) => w.value === selectedWallet)}
+            onSelect={setSelectedWallet}
+            title={t('Select a wallet')}
+            id="wallet"
+            heightSize="big"
+          />
+          <Input
+            label={t('Password')}
+            type="password"
+            autoComplete="off"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            id="password"
+            autoFocus
+            heightSize="big"
+          />
+        </SectionStyled>
+        <ButtonsSection>
+          <ButtonStyled
+            onClick={handleUnlock}
+            submit
+            disabled={!selectedWalletOption || !password || !isPassphraseConfirmed}
+            tall
+          >
+            {t('Unlock')}
+          </ButtonStyled>
+          <ButtonStyled onClick={onNewWalletLinkClick} role="secondary" transparent short>
+            {t('Import or create a wallet')}
+          </ButtonStyled>
+        </ButtonsSection>
+      </FloatingPanelStyled>
       <WalletPassphraseStyled
         onPassphraseConfirmed={setPassphrase}
         setIsPassphraseConfirmed={setIsPassphraseConfirmed}
@@ -134,6 +136,8 @@ export default UnlockPanel
 const SectionStyled = styled(Section)`
   min-width: 328px;
 `
+
+const FloatingPanelStyled = styled(FloatingPanel)``
 
 const ButtonsSection = styled(SectionStyled)`
   margin-top: 30px;

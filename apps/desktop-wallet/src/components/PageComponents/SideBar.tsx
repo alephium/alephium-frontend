@@ -99,7 +99,7 @@ const AlephiumLogoContainer = styled.div`
   height: 40px;
   margin: 0 1px;
   border-radius: 100px;
-  background-color: ${({ theme }) => theme.font.primary};
+  background-color: ${({ theme }) => theme.bg.contrast};
   margin-bottom: var(--spacing-7);
 `
 

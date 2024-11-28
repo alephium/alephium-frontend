@@ -35,12 +35,16 @@ const NewWalletActions = ({ onExistingWalletLinkClick }: NewWalletActionsProps) 
 
   return (
     <>
-      <Paragraph centered secondary>
+      <Paragraph centered secondary style={{ maxWidth: 300 }}>
         {t('Please choose whether you want to create a new wallet or import an existing one.')}
       </Paragraph>
       <Section inList>
-        <Button onClick={() => navigate('/create/0')}>{t('New wallet')}</Button>
-        <Button onClick={() => navigate('/import/0')}>{t('Import wallet')}</Button>
+        <Button onClick={() => navigate('/create/0')} tall>
+          {t('New wallet')}
+        </Button>
+        <Button onClick={() => navigate('/import/0')} tall>
+          {t('Import wallet')}
+        </Button>
         {onExistingWalletLinkClick && (
           <ActionLinkStyled onClick={onExistingWalletLinkClick}>{t('Use an existing wallet')}</ActionLinkStyled>
         )}
@@ -52,8 +56,8 @@ const NewWalletActions = ({ onExistingWalletLinkClick }: NewWalletActionsProps) 
 export default NewWalletActions
 
 const ActionLinkStyled = styled(ActionLink)`
-  font-weight: var(--fontWeight-medium);
-  font-size: 12px;
+  font-weight: var(--fontWeight-semiBold);
   font-family: inherit;
   height: var(--inputHeight);
+  color: ${({ theme }) => theme.font.primary};
 `
