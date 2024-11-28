@@ -32,6 +32,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import SpinnerModal from '~/components/SpinnerModal'
+import AddressCardDeleteButton from '~/features/address-deletion/AddressCardDeleteButton'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
@@ -143,6 +144,8 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
             />
           </AddressBadgeContainer>
           <HeaderButtons>
+            <AddressCardDeleteButton addressHash={addressHash} color={textColor} bg={buttonsBackground} />
+
             <Button
               onPress={handleDefaultAddressToggle}
               customIcon={
