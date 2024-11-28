@@ -111,7 +111,6 @@ const Placeholder = styled.div`
 `
 
 const TableGridContent = styled.div`
-  background-color: ${({ theme }) => theme.bg.primary};
   display: flex;
   flex-direction: column;
 

@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
 import { isEqual } from 'lodash'
 import { MoreVertical, SearchIcon } from 'lucide-react'
 import {
@@ -463,7 +462,7 @@ export const OptionItem = styled.button<{
   color: ${({ theme }) => theme.font.primary};
   user-select: none;
   text-align: left;
-  background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.4).toHex()};
+  background-color: ${({ theme }) => theme.bg.primary};
   visibility: ${({ invisible }) => invisible && 'hidden'};
   font-weight: ${({ selected }) => selected && 'var(--fontWeight-semiBold)'};
 

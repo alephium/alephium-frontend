@@ -58,7 +58,7 @@ const StyledSplashScreen = styled(motion.div)`
   justify-content: center;
   align-items: center;
   z-index: 2;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.background1};
 `
 
 const AlephiumLogoContainer = styled(motion.div)`

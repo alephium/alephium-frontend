@@ -79,7 +79,7 @@ export const inputDefaultStyle = (
   text-align: left;
   font-family: inherit;
 
-  transition: all 0.2s;
+  transition: all 0.15s;
 
   ${hasValue &&
   hasLabel &&
@@ -105,7 +105,7 @@ export const inputDefaultStyle = (
   }
 
   &:hover {
-    background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.8).toRgbString()};
+    background-color: ${({ theme }) => theme.bg.hover};
   }
 
   // Remove number arrows
@@ -153,7 +153,7 @@ const StyledInputLabel = styled(motion.label)`
   height: 100%;
   display: flex;
   align-items: center;
-  font-weight: var(--fontWeight-semiBold);
+  font-weight: var(--fontWeight-medium);
   color: ${({ theme }) => theme.font.tertiary};
   pointer-events: none;
   transform-origin: left;
