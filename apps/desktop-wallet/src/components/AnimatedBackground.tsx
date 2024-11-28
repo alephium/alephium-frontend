@@ -171,7 +171,7 @@ const AnimatedBackground = ({
         />
         <Circle
           style={{
-            backgroundColor: '#fda066',
+            backgroundColor: '#ff8119',
             width: 400,
             height: 540,
             x: circle2.x,
@@ -216,8 +216,7 @@ export default AnimatedBackground
 const SvgFilters = () => (
   <svg width="0" height="0" style={{ position: 'absolute' }}>
     <filter id="combinedFilter">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="80" result="blurred" />
-      {/* Additional filter definitions */}
+      <feGaussianBlur in="SourceGraphic" stdDeviation="100" result="blurred" />
     </filter>
   </svg>
 )
