@@ -53,9 +53,9 @@ const WalletNameButton = () => {
       <AnimatePresence>
         {fullWalletNameVisible && (
           <OnEnterWalletName
-            initial={{ x: 80, opacity: 0, scaleX: 1 }}
-            animate={{ x: 100, opacity: 1, scaleX: 1 }}
-            exit={{ x: -50, opacity: 0, scaleX: 0.5 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{
               type: 'spring',
               stiffness: 700,
@@ -70,23 +70,11 @@ const WalletNameButton = () => {
       <CurrentWalletInitials
         onClick={openCurrentWalletModal}
         onKeyDown={(e) => onEnterOrSpace(e, openCurrentWalletModal)}
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: walletNameHideAfterSeconds, type: 'spring', stiffness: 500, damping: 70 }}
         key={`initials-${activeWalletName}`}
         role="button"
         tabIndex={0}
       >
-        <AnimatePresence mode="wait">
-          <WalletInitialsContainer
-            initial={{ opacity: 0, y: -15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 15 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 70 }}
-          >
-            {activeWalletNameInitials}
-          </WalletInitialsContainer>
-        </AnimatePresence>
+        <WalletInitialsContainer>{activeWalletNameInitials}</WalletInitialsContainer>
       </CurrentWalletInitials>
     </>
   )
@@ -105,6 +93,7 @@ const CurrentWalletInitials = styled(motion.div)`
   font-weight: var(--fontWeight-semiBold);
   background-color: ${({ theme }) => theme.bg.primary};
   overflow: hidden;
+  z-index: 1;
 
   &:hover {
     cursor: pointer;
@@ -114,18 +103,23 @@ const CurrentWalletInitials = styled(motion.div)`
 
 const OnEnterWalletName = styled(CurrentWalletInitials)`
   position: absolute;
-  left: 20px;
+  left: 18px;
+  height: 52px;
+  padding-left: 56px;
+  padding-right: 20px;
+  bottom: 18px;
   width: auto;
   border-radius: 100px;
   white-space: nowrap;
-  padding: 20px;
-  font-size: 15px;
+  font-size: 14px;
   pointer-events: none;
   box-shadow: ${({ theme }) => theme.shadow.secondary};
   border: 2px solid ${({ theme }) => theme.global.accent};
+  display: flex;
+  align-items: center;
 `
 
-const WalletInitialsContainer = styled(motion.div)`
+const WalletInitialsContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
