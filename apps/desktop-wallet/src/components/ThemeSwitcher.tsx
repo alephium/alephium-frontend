@@ -30,7 +30,7 @@ interface ThemeSwitcherProps {
   className?: string
 }
 
-const switcherSize = 32
+const switcherSize = 40
 
 const lightColor = '#fab01e'
 const darkColor = '#422c08'

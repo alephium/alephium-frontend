@@ -61,7 +61,7 @@ const AssetLogoStyled = styled.div<Pick<AssetLogoProps, 'size'> & { isSquare: bo
   border-radius: ${({ size, isSquare }) => (isSquare ? 'var(--radius-tiny)' : `${size}px`)};
   flex-shrink: 0;
   overflow: hidden;
-  background: ${({ theme }) => theme.bg.tertiary};
+  background: ${({ theme }) => theme.bg.highlight};
 `
 
 const LogoImage = styled.img`

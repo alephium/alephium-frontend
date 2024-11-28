@@ -68,14 +68,14 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
     transition: 'opacity 0.2s ease-out'
   }
 
-  if (invisible) return <motion.header id="app-header" className={className} />
+  if (invisible) return <motion.header id="app-drag-region" className={className} />
 
   const openWalletConnectModal = () => dispatch(openModal({ name: 'WalletConnectModal' }))
 
   return (
     <AppHeaderStyled>
       <GradientBackground style={{ opacity: gradientOpacity }} />
-      <AppHeaderContainer id="app-header" className={className}>
+      <AppHeaderContainer id="app-drag-region" className={className}>
         <Title style={titleStyles}>{title}</Title>
         <HeaderButtons>
           {networkStatus === 'offline' && (

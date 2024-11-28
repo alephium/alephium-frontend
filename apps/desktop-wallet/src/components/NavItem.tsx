@@ -16,22 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AnimatePresence, motion } from 'framer-motion'
 import { LucideIcon } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { createGlobalStyle, css, useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
+import { SIDEBAR_EXPAND_THRESHOLD_PX } from '@/components/PageComponents/SideBar'
 
 interface NavItemProps {
   Icon: LucideIcon
   label: string
-  isExpanded: boolean
   to?: string
   onClick?: () => void
 }
 
-const NavItem = ({ Icon, label, isExpanded, to, onClick }: NavItemProps) => {
+const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
   const navigate = useNavigate()
   const location = useLocation()
   const theme = useTheme()
@@ -47,32 +46,23 @@ const NavItem = ({ Icon, label, isExpanded, to, onClick }: NavItemProps) => {
   }
 
   return (
-    <ButtonStyled
-      aria-label={label}
-      onClick={handleClick}
-      Icon={Icon}
-      borderless
-      transparent={!isActive}
-      isActive={isActive}
-      data-tooltip-id="sidenav"
-      data-tooltip-content={!isExpanded ? label : undefined}
-      iconColor={isActive ? theme.global.accent : theme.font.primary}
-      rounded
-      animate={!isExpanded ? { width: 42, minWidth: 42, gap: 0 } : {}}
-    >
-      <AnimatePresence>
-        {isExpanded && (
-          <LabelContainer
-            initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, width: 0 }}
-            transition={{ delay: 1 }}
-          >
-            {label}
-          </LabelContainer>
-        )}
-      </AnimatePresence>
-    </ButtonStyled>
+    <>
+      <TooltipStyleOverride />
+      <ButtonStyled
+        aria-label={label}
+        onClick={handleClick}
+        Icon={Icon}
+        borderless
+        transparent={!isActive}
+        isActive={isActive}
+        data-tooltip-id="sidenav"
+        data-tooltip-content={label}
+        iconColor={isActive ? theme.global.accent : theme.font.primary}
+        rounded
+      >
+        <LabelContainer>{label}</LabelContainer>
+      </ButtonStyled>
+    </>
   )
 }
 
@@ -95,8 +85,29 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   &:hover {
     border-color: ${({ theme }) => theme.border.primary};
   }
+
+  transition: width 0.4s ease-in-out;
+
+  @media (max-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+    gap: 0;
+    width: 42px;
+    min-width: 42px;
+  }
 `
 
-const LabelContainer = styled(motion.div)``
+const TooltipStyleOverride = createGlobalStyle`
+  @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+    #sidenav {
+      display: none !important;
+    }
+  }
+`
+
+const LabelContainer = styled.div`
+  display: none;
+  @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+    display: block;
+  }
+`
 
 export default NavItem

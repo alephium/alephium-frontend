@@ -53,7 +53,7 @@ a {
   color: inherit;
 }
 
-#app-header {
+#app-drag-region {
   -webkit-app-region: drag;
 }
 
