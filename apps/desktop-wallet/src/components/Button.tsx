@@ -290,7 +290,7 @@ export default styled(Button)`
   min-width: ${({ squared }) => (squared ? '40px' : '60px')};
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};
-  transition: all 0.2s;
+  transition: all 0.15s;
 
   &:disabled {
     opacity: 0.5;
