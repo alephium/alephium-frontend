@@ -63,6 +63,8 @@ const AddressCardDeleteButton = ({ addressHash, color, bg }: AddressCardDeleteBu
               text2: getHumanReadableError(error, '')
             })
           }
+
+          sendAnalytics({ event: 'Deleted address', props: { origin: 'Address card' } })
         }
       }
     ])
