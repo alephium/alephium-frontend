@@ -70,22 +70,14 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   margin: 0;
 
   ${({ isActive, theme }) =>
-    isActive
-      ? css`
-          background-color: ${theme.bg.accent};
-          color: ${theme.global.accent};
-          stroke: ${theme.global.accent};
-        `
-      : css`
-          stroke: ${theme.font.tertiary};
-        `}
+    isActive &&
+    css`
+      background-color: ${theme.bg.accent};
+      color: ${theme.global.accent};
+    `}
 
   &:not(:hover) {
     opacity: ${({ isActive }) => (isActive ? 1 : 0.7)} !important;
-  }
-
-  &:hover {
-    border-color: ${({ theme }) => theme.border.primary};
   }
 
   transition: width 0.4s ease-in-out;

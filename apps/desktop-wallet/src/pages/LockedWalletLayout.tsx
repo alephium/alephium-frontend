@@ -22,7 +22,6 @@ import styled from 'styled-components'
 import AppHeader from '@/components/AppHeader'
 import SideBar from '@/components/PageComponents/SideBar'
 import ScrollbarCustom from '@/components/Scrollbar'
-import { ReactComponent as AlephiumLogotype } from '@/images/logotype.svg'
 
 interface LockedWalletLayoutProps extends MotionProps {
   className?: string
@@ -32,7 +31,7 @@ const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, ...props })
   <motion.main {...props}>
     <SideBar noExpansion></SideBar>
     <ScrollbarCustom>
-      <AppHeader />
+      <AppHeader position="fixed" />
       <CenteredContainer>{children}</CenteredContainer>
     </ScrollbarCustom>
   </motion.main>
@@ -43,23 +42,6 @@ export default styled(LockedWalletLayout)`
   flex: 1;
   height: 100%;
   background-color: ${({ theme }) => theme.bg.background1};
-`
-
-const Logo = styled.div`
-  flex: 1;
-  padding: 5px;
-`
-
-const AlephiumLogotypeStyled = styled(AlephiumLogotype)`
-  height: 120px;
-  fill: ${({ theme }) => theme.font.primary};
-  color: ${({ theme }) => theme.font.primary};
-`
-
-const Content = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
 `
 
 const CenteredContainer = styled.div`
