@@ -40,10 +40,11 @@ import { appHeaderHeightPx } from '@/style/globalStyles'
 interface AppHeader {
   title?: string
   invisible?: boolean
+  position?: 'fixed' | 'sticky'
   className?: string
 }
 
-const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => {
+const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, position = 'sticky' }) => {
   const { t } = useTranslation()
   const { scrollY: scrollYContext } = useScrollContext()
   const initialScroll = useMotionValue(0)
@@ -73,7 +74,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
   const openWalletConnectModal = () => dispatch(openModal({ name: 'WalletConnectModal' }))
 
   return (
-    <AppHeaderStyled>
+    <AppHeaderStyled style={{ position }}>
       <GradientBackground style={{ opacity: gradientOpacity }} />
       <AppHeaderContainer id="app-drag-region" className={className}>
         <Title style={titleStyles}>{title}</Title>
