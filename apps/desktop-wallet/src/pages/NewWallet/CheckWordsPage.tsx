@@ -34,7 +34,6 @@ import {
   PanelContentContainer,
   Section
 } from '@/components/PageComponents/PageContainers'
-import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
@@ -216,9 +215,6 @@ const CheckWordsPage = () => {
 
   return (
     <FloatingPanel enforceMinHeight>
-      <PanelTitle color="primary" onBackButtonClick={onButtonBack} size="small">
-        {t('Security Check')}
-      </PanelTitle>
       <PanelContentContainer>
         <Section align="flex-start">
           <Paragraph>{t('Select the words in the right order.')}</Paragraph>
