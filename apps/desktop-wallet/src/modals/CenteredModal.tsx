@@ -135,7 +135,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
 export default CenteredModal
 
 export const ScrollableModalContent = ({ children }: Pick<CenteredModalProps, 'children'>) => (
-  <Scrollbar translateContentSizeYToHolder>
+  <Scrollbar>
     <ModalContent>{children}</ModalContent>
   </Scrollbar>
 )

@@ -69,8 +69,13 @@ const OtherAmounts = ({ tx, refAddressHash, isInAddressDetailsModal, type }: Tra
       border={type === 'nfts'}
       transparent={type !== 'nfts'}
       color={
-        infoType !== 'move' &&
-        (nbOfTokensReceived > 0 ? theme.global.valid : nbOfTokensSent > 0 ? theme.font.highlight : undefined)
+        infoType !== 'move'
+          ? nbOfTokensReceived > 0
+            ? theme.global.valid
+            : nbOfTokensSent > 0
+              ? theme.font.highlight
+              : undefined
+          : undefined
       }
     >
       {nbOfTokensReceived > 0 && <Amount suffix={suffix} value={nbOfTokensReceived} {...props} />}

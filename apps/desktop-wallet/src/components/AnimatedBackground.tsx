@@ -34,11 +34,9 @@ function useCircleAnimation(
   mouseY: MotionValue<number>,
   reactToPointer: boolean
 ) {
-  // Motion values for animation
   const xAnim = useMotionValue(0)
   const yAnim = useMotionValue(0)
 
-  // Start the animations
   useEffect(() => {
     const xValues = [0, offset, 0, -offset, 0]
     const yValues = [0, offset / 2, -offset / 2, offset / 2, 0]
@@ -62,7 +60,6 @@ function useCircleAnimation(
     }
   }, [offset, xAnim, yAnim])
 
-  // Transforms for pointer movement
   const xSpring = useSpring(useTransform(mouseX, [0, windowSize.width], [offset, -offset]), {
     stiffness: 100,
     damping: 80
@@ -74,10 +71,16 @@ function useCircleAnimation(
   })
 
   // Combine animations with pointer movement
-  const xTotal = useTransform([xAnim, xSpring], ([xA, xP]) => xA + xP)
-  const yTotal = useTransform([yAnim, ySpring], ([yA, yP]) => yA + yP)
+  const xTotal = useTransform([xAnim, xSpring], (inputs) => {
+    const [xA, xP] = inputs as [number, number]
+    return xA + xP
+  })
 
-  // Return the x and y values
+  const yTotal = useTransform([yAnim, ySpring], (inputs) => {
+    const [yA, yP] = inputs as [number, number]
+    return yA + yP
+  })
+
   const x = reactToPointer ? xTotal : xAnim
   const y = reactToPointer ? yTotal : yAnim
 
@@ -99,7 +102,6 @@ const AnimatedBackground = ({
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
 
-  // Update window size and initialize mouse position
   useEffect(() => {
     const updateSize = () => {
       if (typeof window !== 'undefined') {
@@ -113,7 +115,6 @@ const AnimatedBackground = ({
     return () => window.removeEventListener('resize', updateSize)
   }, [mouseX, mouseY])
 
-  // Handle global mouse movement
   useEffect(() => {
     let animationFrameId: number
 
@@ -139,7 +140,6 @@ const AnimatedBackground = ({
   // Offsets for each circle
   const offsets = [80, 300, 200, 140, 20]
 
-  // Use the custom hook for each circle
   const circle1 = useCircleAnimation(offsets[0], windowSize, mouseX, mouseY, reactToPointer)
   const circle2 = useCircleAnimation(offsets[1], windowSize, mouseX, mouseY, reactToPointer)
   const circle3 = useCircleAnimation(offsets[2], windowSize, mouseX, mouseY, reactToPointer)

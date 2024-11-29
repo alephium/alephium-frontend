@@ -20,7 +20,6 @@ import { colord } from 'colord'
 import { createGlobalStyle } from 'styled-components'
 
 import resets from '@/style/resets'
-import tags from '@/style/tags'
 
 export const appHeaderHeightPx = 58
 export const walletSidebarWidthPx = 72
@@ -72,8 +71,6 @@ export const GlobalStyle = createGlobalStyle`
     color: ${({ theme }) => theme.font.primary};
     background-color: ${({ theme }) => theme.bg.primary};
   }
-
-  ${tags}
 
   .skeleton-loader {
     background-image: linear-gradient(-90deg, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.05));

@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import '@/index.css' // Importing CSS through CSS file to avoid font flickering
 import '@/i18n'
-import '@yaireo/tagify/dist/tagify.css' // Tagify CSS: important to import after index.css file
 
 import isPropValid from '@emotion/is-prop-valid'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'

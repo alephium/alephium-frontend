@@ -18,17 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { keyring } from '@alephium/keyring'
 import { bip39Words } from '@alephium/shared'
-import Tagify, { BaseTagData, ChangeEventData, TagData } from '@yaireo/tagify'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '@/components/Button'
-import TextAreaTags from '@/components/Inputs/TextAreaTags'
 import {
   FloatingPanel,
   FooterActionsContainer,
-  PanelContentContainer,
-  Section
+  PanelContentContainer
 } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
@@ -46,25 +43,14 @@ const ImportWordsPage = () => {
   const allowedWords = useRef(bip39Words)
   const defaultPlaceholder = t('Type your recovery phrase')
   const [customPlaceholder, setCustomPlaceholder] = useState(defaultPlaceholder)
-  const tagifyRef = useRef<Tagify<TagData> | undefined>()
 
   // Alephium's node code uses 12 as the minimal mnemomic length.
   const isPhraseLongEnough = phrase.length >= 12
 
-  const handlePhraseChange = (event: CustomEvent<ChangeEventData<BaseTagData>>) => {
+  const handlePhraseChange = () => {
     // Split words where spaces are
-    const newPhrase = event.detail.value && JSON.parse(event.detail.value)
-    setPhrase(newPhrase || [])
-    setCustomPlaceholder(
-      newPhrase.length > 0 ? t('{{ amount }} words entered', { amount: newPhrase.length }) : defaultPlaceholder
-    )
+    // TODO
   }
-
-  useEffect(() => {
-    if (tagifyRef.current) {
-      tagifyRef.current.DOM.input.setAttribute('data-placeholder', customPlaceholder)
-    }
-  }, [customPlaceholder])
 
   const handleNextButtonPress = () => {
     if (!isPhraseLongEnough) return
@@ -86,14 +72,6 @@ const ImportWordsPage = () => {
     <FloatingPanel>
       <PanelTitle color="primary">{t('Secret recovery phrase')}</PanelTitle>
       <PanelContentContainer>
-        <Section>
-          <TextAreaTags
-            tagifyRef={tagifyRef}
-            placeholder={phrase.length.toString()}
-            whitelist={allowedWords.current}
-            onChange={handlePhraseChange}
-          />
-        </Section>
         <Paragraph secondary centered>
           {!isPhraseLongEnough
             ? t("Make sure to store the words in a secure location! They are your wallet's secret recovery phrase.")

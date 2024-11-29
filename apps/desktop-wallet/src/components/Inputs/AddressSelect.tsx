@@ -157,7 +157,7 @@ const AddressSelectContainer = styled(SelectContainer)<Pick<AddressSelectProps, 
 
 const ClickableInput = styled.div<InputProps & Pick<AddressSelectProps, 'simpleMode'>>`
   ${({ isValid, Icon, simpleMode, value, label }) =>
-    inputDefaultStyle(isValid || !!Icon, !!value, !!label, simpleMode ? 'normal' : 'big', false, true)};
+    inputDefaultStyle(isValid || !!Icon, !!value, !!label, simpleMode ? 'normal' : 'big', true)};
   display: flex;
   align-items: center;
   padding-right: 50px;
