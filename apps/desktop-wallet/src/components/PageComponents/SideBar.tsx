@@ -108,12 +108,14 @@ const AlephiumLogoContainer = styled.div`
   border-radius: 100px;
   background-color: ${({ theme }) => theme.bg.contrast};
   margin-bottom: var(--spacing-7);
+  app-region: no-drag;
 `
 
 const TopContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  app-region: no-drag;
 `
 
 const BottomButtonsContainer = styled.div`
@@ -126,4 +128,5 @@ const BottomButtons = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 15px;
+  app-region: no-drag;
 `

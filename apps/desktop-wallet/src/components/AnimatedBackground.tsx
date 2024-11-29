@@ -60,12 +60,12 @@ function useCircleAnimation(
     }
   }, [offset, xAnim, yAnim])
 
-  const xSpring = useSpring(useTransform(mouseX, [0, windowSize.width], [offset, -offset]), {
+  const xSpring = useSpring(useTransform(mouseX, [0, windowSize.width], [-offset, offset]), {
     stiffness: 100,
     damping: 80
   })
 
-  const ySpring = useSpring(useTransform(mouseY, [0, windowSize.height], [offset, -offset]), {
+  const ySpring = useSpring(useTransform(mouseY, [0, windowSize.height], [-offset, offset]), {
     stiffness: 100,
     damping: 80
   })
