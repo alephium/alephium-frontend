@@ -1,18 +1,14 @@
 {
   "extends": "@alephium/typescript-config/react",
-  "references": [{ "path": "./tsconfig.node.json" }],
-  "include": ["src", "electron"],
+  "include": ["src", "electron", "./vite.config.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
-    // override
-    "target": "ES2020",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "moduleResolution": "bundler", // probably why imports from @alephium/web3/dist/src/api/api-explorer throw errors, it used to be "node"
-    // new
+    "target": "ES2022",
+    "moduleResolution": "bundler",
     "useDefineForClassFields": true,
     "allowImportingTsExtensions": true
   }
