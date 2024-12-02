@@ -24,7 +24,6 @@ interface PanelTitleProps {
   color?: string
   onBackButtonClick?: () => void
   size?: 'small' | 'big'
-  useLayoutId?: boolean
   isSticky?: boolean
   centerText?: boolean
 }
@@ -34,7 +33,6 @@ const PanelTitle: FC<PanelTitleProps> = ({
   children,
   onBackButtonClick,
   size,
-  useLayoutId = true,
   isSticky = false,
   centerText = false
 }) => {
@@ -43,7 +41,7 @@ const PanelTitle: FC<PanelTitleProps> = ({
   const titleScale = useTransform(scrollY, [0, 50], [1, 0.6])
 
   return (
-    <TitleContainer layoutId={useLayoutId ? 'sectionTitle' : ''} isSticky={isSticky} centerText={centerText}>
+    <TitleContainer isSticky={isSticky} centerText={centerText}>
       {onBackButtonClick && (
         <BackArrow
           onClick={onBackButtonClick}

@@ -499,5 +499,6 @@
   "You can now complete your purchase in the dedicated window!": "You can now complete your purchase in the dedicated window!",
   "Token": "Token",
   "Price": "Price",
-  "Value": "Value"
+  "Value": "Value",
+  "Invalid mnemonic. Please double check your words.": "Invalid mnemonic. Please double check your words."
 }

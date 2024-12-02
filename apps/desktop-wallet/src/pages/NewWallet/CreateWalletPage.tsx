@@ -174,10 +174,10 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
         </Section>
       </PanelContentContainer>
       <FooterActionsContainer>
-        <Button role="secondary" onClick={handleBackPress}>
+        <Button role="secondary" onClick={handleBackPress} tall>
           {t('Back')}
         </Button>
-        <Button disabled={!isNextButtonActive} onClick={handleNextButtonClick}>
+        <Button disabled={!isNextButtonActive} onClick={handleNextButtonClick} tall>
           {t('Continue')}
         </Button>
       </FooterActionsContainer>

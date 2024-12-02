@@ -69,13 +69,13 @@ export const inputDefaultStyle = (
 ) => css`
   height: ${heightSize === 'small' ? '38px' : heightSize === 'big' ? '50px' : 'var(--inputHeight)'};
   width: 100%;
-  border-radius: var(--radius-big);
+  border-radius: var(--radius-medium);
   background-color: ${({ theme }) => theme.bg.highlight};
   border: 1px solid ${({ theme }) => theme.border.primary};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 45px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
   font-weight: var(--fontWeight-medium);
-  font-size: ${largeText ? '1.12em' : '1em'};
+  font-size: ${largeText ? '15px' : '14px'};
   text-align: left;
   font-family: inherit;
 
@@ -124,16 +124,16 @@ export const inputDefaultStyle = (
 
 export const InputErrorMessage = styled(motion.label)<InputProps>`
   position: absolute;
-  bottom: -7px;
-  right: var(--spacing-2);
+  bottom: 0px;
+  right: 0;
   font-weight: var(--fontWeight-medium);
   opacity: 0;
   font-size: 0.8em;
   color: ${({ theme }) => theme.global.alert};
   border: 1px solid ${({ theme }) => theme.global.alert};
   border-radius: var(--radius-huge);
-  padding: 6px 12px;
-  background-color: ${({ theme }) => theme.bg.primary};
+  padding: 2px 8px;
+  background-color: ${({ theme }) => theme.bg.background1};
 `
 
 export const InputLabel: FC<HTMLMotionProps<'label'> & { isElevated: boolean }> = ({ isElevated, ...props }) => (

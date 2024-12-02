@@ -49,7 +49,7 @@ const Paragraph: FC<HTMLMotionProps<'p'> & ParagraphProps> = ({
 export default Paragraph
 
 const StyledParagraph = styled(motion.p)<ParagraphProps>`
-  font-size: 16px;
+  font-size: 15px;
   white-space: pre-wrap;
   font-weight: var(--fontWeight-medium);
   width: 100%;
