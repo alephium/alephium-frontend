@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { FungibleTokenBasicMetadata, NFT, StringAlias } from '@alephium/shared'
 import { TokenInfo } from '@alephium/token-list'
-import { Token } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 
 // For better code readability
 export interface ListedFT extends TokenInfo {}
@@ -60,7 +60,7 @@ export type DisplayBalances = {
 }
 
 export type TokenDisplayBalances = DisplayBalances & {
-  id: Token['id']
+  id: e.Token['id']
 }
 
-export type TokenId = Token['id'] & StringAlias
+export type TokenId = e.Token['id'] & StringAlias

@@ -25,12 +25,12 @@ import {
   isInternalTx,
   TransactionInfoType
 } from '@alephium/shared'
-import { PendingTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 
 import { store } from '@/storage/store'
 
 export const getTransactionInfoType = (
-  tx: Transaction | PendingTransaction,
+  tx: e.Transaction | e.PendingTransaction,
   addressHash: AddressHash,
   isInAddressDetailsModal?: boolean
 ): TransactionInfoType => {

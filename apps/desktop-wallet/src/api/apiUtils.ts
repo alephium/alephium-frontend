@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFTTokenUriMetaData } from '@alephium/web3'
-import { FungibleTokenMetadata } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e, NFTTokenUriMetaData } from '@alephium/web3'
 import { isArray } from 'lodash'
 
 import { UnlistedFT } from '@/types/tokens'
@@ -34,7 +33,7 @@ export const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
           (typeof attr.value === 'string' || typeof attr.value === 'number' || typeof attr.value === 'boolean')
       )))
 
-export const convertTokenDecimalsToNumber = (token: FungibleTokenMetadata): UnlistedFT => {
+export const convertTokenDecimalsToNumber = (token: e.FungibleTokenMetadata): UnlistedFT => {
   const parsedDecimals = parseInt(token.decimals)
 
   return {

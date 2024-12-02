@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { PendingTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 
 import AddressBadge from '@/components/AddressBadge'
@@ -27,7 +27,7 @@ import useTransactionDirection from '@/features/transactionsDisplay/useTransacti
 import { useAppSelector } from '@/hooks/redux'
 
 interface PendingSentAddressBadgeProps {
-  tx: Transaction | PendingTransaction
+  tx: e.Transaction | e.PendingTransaction
   refAddressHash: AddressHash
   isDestinationAddress?: boolean
 }
