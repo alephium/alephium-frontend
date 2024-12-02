@@ -49,16 +49,8 @@ export default defineConfig({
     viteTsconfigPaths(),
     svgrPlugin(),
     electron({
-      main: {
-        // Shortcut of `build.lib.entry`.
-        entry: 'electron/main.ts'
-      },
-      preload: {
-        // Shortcut of `build.rollupOptions.input`.
-        // Preload scripts may contain Web assets, so use the `build.rollupOptions.input` instead `build.lib.entry`.
-        input: path.join(__dirname, 'electron/preload.js')
-        // input: path.join(__dirname, 'electron/preload.ts')
-      }
+      main: { entry: 'electron/main.ts' },
+      preload: { input: 'electron/preload.ts' }
     })
   ],
   test: {
