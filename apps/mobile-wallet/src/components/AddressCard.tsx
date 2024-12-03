@@ -143,7 +143,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
             />
           </AddressBadgeContainer>
           <HeaderButtons>
-            <AddressCardDeleteButton addressHash={addressHash} color={textColor} bg={buttonsBackground} />
+            <AddressCardDeleteButton addressHash={addressHash} color={textColor} />
 
             <Button
               onPress={handleDefaultAddressToggle}
@@ -154,15 +154,15 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
                   color={isDefaultAddress ? theme.global.accent : textColor}
                 />
               }
-              style={{ backgroundColor: isDefaultAddress ? 'rgba(255, 255, 255, 0.2)' : buttonsBackground }}
               round
+              type="transparent"
             />
             <Button
               iconProps={{ name: 'settings' }}
               color={textColor}
               onPress={onSettingsPress}
-              style={{ backgroundColor: buttonsBackground }}
               round
+              type="transparent"
             />
           </HeaderButtons>
         </Header>

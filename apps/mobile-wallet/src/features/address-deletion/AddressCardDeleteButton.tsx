@@ -31,10 +31,9 @@ import { showToast } from '~/utils/layout'
 interface AddressCardDeleteButtonProps {
   addressHash: AddressHash
   color: string
-  bg: string
 }
 
-const AddressCardDeleteButton = ({ addressHash, color, bg }: AddressCardDeleteButtonProps) => {
+const AddressCardDeleteButton = ({ addressHash, color }: AddressCardDeleteButtonProps) => {
   const canDeleteAddress = useCanDeleteAddress(addressHash)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -70,15 +69,7 @@ const AddressCardDeleteButton = ({ addressHash, color, bg }: AddressCardDeleteBu
     ])
   }
 
-  return (
-    <Button
-      iconProps={{ name: 'trash-2' }}
-      color={color}
-      onPress={handleDeletePress}
-      style={{ backgroundColor: bg }}
-      round
-    />
-  )
+  return <Button iconProps={{ name: 'trash-2' }} color={color} onPress={handleDeletePress} round type="transparent" />
 }
 
 export default AddressCardDeleteButton
