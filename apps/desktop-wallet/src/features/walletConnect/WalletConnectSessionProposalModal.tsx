@@ -47,7 +47,7 @@ import { walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions
 import { toggleAppLoading } from '@/storage/global/globalActions'
 import { Address } from '@/types/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
-import { cleanUrl, electron } from '@/utils/misc'
+import { cleanUrl } from '@/utils/misc'
 
 export interface WalletConnectSessionProposalModalProps {
   chain: string
@@ -197,7 +197,7 @@ const WalletConnectSessionProposalModal = memo(
 
         sendAnalytics({ event: 'Approved WalletConnect connection' })
 
-        electron?.app.hide()
+        window.electron?.app.hide()
       } catch (e) {
         console.error('❌ WC: Error while approving and acknowledging', e)
       } finally {
@@ -217,7 +217,7 @@ const WalletConnectSessionProposalModal = memo(
 
         sendAnalytics({ event: 'Rejected WalletConnect connection by clicking "Reject"' })
 
-        electron?.app.hide()
+        window.electron?.app.hide()
       } catch (e) {
         console.error('❌ WC: Error while approving and acknowledging', e)
       } finally {

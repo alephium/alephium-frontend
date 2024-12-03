@@ -360,6 +360,9 @@ importers:
       vite:
         specifier: ^5.4.8
         version: 5.4.8(@types/node@20.17.8)(terser@5.26.0)
+      vite-plugin-electron:
+        specifier: ^0.29.0
+        version: 0.29.0
       vite-plugin-svgr:
         specifier: ^3.2.0
         version: 3.3.0(rollup@4.22.4)(typescript@5.5.3)(vite@5.4.8(@types/node@20.17.8)(terser@5.26.0))
@@ -11051,6 +11054,14 @@ packages:
     resolution: {integrity: sha512-HPcGNN5g/7I2OtPjLqgOtCRu/qhVvBxTUD3qzitmL0SrG1cWFzxzhMDWussxSbrRYWqnKf8P2jiNhPMSN+ymsQ==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
+
+  vite-plugin-electron@0.29.0:
+    resolution: {integrity: sha512-HP0DI9Shg41hzt55IKYVnbrChWXHX95QtsEQfM+szQBpWjVhVGMlqRjVco6ebfQjWNr+Ga+PeoBjMIl8zMaufw==}
+    peerDependencies:
+      vite-plugin-electron-renderer: '*'
+    peerDependenciesMeta:
+      vite-plugin-electron-renderer:
+        optional: true
 
   vite-plugin-svgr@3.3.0:
     resolution: {integrity: sha512-vWZMCcGNdPqgziYFKQ3Y95XP0d0YGp28+MM3Dp9cTa/px5CKcHHrIoPl2Jw81rgVm6/ZUNONzjXbZQZ7Kw66og==}
@@ -24033,6 +24044,8 @@ snapshots:
       - sugarss
       - supports-color
       - terser
+
+  vite-plugin-electron@0.29.0: {}
 
   vite-plugin-svgr@3.3.0(rollup@4.22.4)(typescript@5.5.3)(vite@5.4.8(@types/node@20.17.8)(terser@5.26.0)):
     dependencies:

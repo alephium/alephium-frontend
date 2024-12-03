@@ -21,15 +21,14 @@ import SettingsStorage from '@/features/settings/settingsPersistentStorage'
 import { GeneralSettings } from '@/features/settings/settingsTypes'
 import { ThemeSettings, ThemeType } from '@/features/theme/themeTypes'
 import { store } from '@/storage/store'
-import { electron } from '@/utils/misc'
 
 export const switchTheme = (theme: ThemeSettings) => {
-  electron?.theme.setNativeTheme(theme)
+  window.electron?.theme.setNativeTheme(theme)
   store.dispatch(themeSettingsChanged(theme))
 }
 
 export const toggleTheme = (theme: ThemeType) => {
-  electron?.theme.setNativeTheme(theme)
+  window.electron?.theme.setNativeTheme(theme)
   store.dispatch(themeToggled(theme))
 }
 

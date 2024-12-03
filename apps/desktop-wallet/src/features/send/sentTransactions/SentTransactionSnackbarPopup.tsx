@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useInterval } from '@alephium/shared-react'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 import { colord } from 'colord'
 import { t } from 'i18next'
 import { X } from 'lucide-react'
@@ -39,7 +39,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { SentTransaction } from '@/types/transactions'
 
 interface SentTransactionSnackbarPopupProps {
-  txHash: Transaction['hash']
+  txHash: e.Transaction['hash']
 }
 
 const SentTransactionSnackbarPopup = memo(({ txHash }: SentTransactionSnackbarPopupProps) => {

@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, TransactionInfoType } from '@alephium/shared'
-import { explorer } from '@alephium/web3'
+import { explorer as e } from '@alephium/web3'
 
 export type SentTransaction = {
   hash: string
@@ -26,7 +26,7 @@ export type SentTransaction = {
   timestamp: number
   type: 'consolidation' | 'transfer' | 'sweep' | 'contract' | 'faucet'
   amount?: string
-  tokens?: explorer.Token[]
+  tokens?: e.Token[]
   lockTime?: number
   status: 'sent' | 'mempooled' | 'confirmed'
 }

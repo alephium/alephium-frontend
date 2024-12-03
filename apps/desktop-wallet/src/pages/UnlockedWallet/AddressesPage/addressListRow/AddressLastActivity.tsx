@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -41,7 +41,7 @@ const AddressLastActivity = ({ addressHash }: AddressListRowLastUsedProps) => {
 
 export default AddressLastActivity
 
-const LastTransactionTimestamp = ({ timestamp }: Pick<Transaction, 'timestamp'>) => {
+const LastTransactionTimestamp = ({ timestamp }: Pick<e.Transaction, 'timestamp'>) => {
   const { t } = useTranslation()
 
   return `${t('Last activity')} ${dayjs(timestamp).fromNow()}`

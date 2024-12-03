@@ -17,8 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, FIVE_MINUTES_MS, throttledClient } from '@alephium/shared'
-import { sleep } from '@alephium/web3'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e, sleep } from '@alephium/web3'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
@@ -33,7 +32,7 @@ export interface AddressLatestTransactionQueryProps {
 
 export interface AddressLatestTransactionQueryFnData {
   addressHash: AddressHash
-  latestTx?: Transaction
+  latestTx?: e.Transaction
 }
 
 export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
@@ -111,7 +110,7 @@ export const walletTransactionsInfiniteQuery = ({
     queryFn:
       !skip && networkId !== undefined
         ? async ({ pageParam }) => {
-            let results: Transaction[] = []
+            let results: e.Transaction[] = []
             const args = { page: pageParam }
 
             if (addressHashes.length === 1) {
@@ -141,7 +140,7 @@ export const walletLatestTransactionsQuery = ({ addressHashes, networkId }: Wall
     queryFn:
       networkId !== undefined
         ? async () => {
-            let results: Transaction[] = []
+            let results: e.Transaction[] = []
             const args = { page: 1, limit: 5 }
 
             if (addressHashes.length === 1) {

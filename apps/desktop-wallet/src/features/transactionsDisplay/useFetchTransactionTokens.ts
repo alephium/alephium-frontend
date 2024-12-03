@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, NFT } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { PendingTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
@@ -47,7 +47,7 @@ type TransactionTokens = {
 }
 
 const useFetchTransactionTokens = (
-  tx: Transaction | PendingTransaction,
+  tx: e.Transaction | e.PendingTransaction,
   addressHash: AddressHash
 ): TransactionTokens => {
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)

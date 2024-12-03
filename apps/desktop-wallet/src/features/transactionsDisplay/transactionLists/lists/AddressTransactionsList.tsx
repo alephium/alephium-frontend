@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 
 import useFetchAddressInfiniteTransactions from '@/api/apiDataHooks/address/useFetchAddressInfiniteTransactions'
@@ -51,7 +51,7 @@ const AddressTransactionsList = ({ addressHash }: AddressTransactionListProps) =
     addressHash
   })
 
-  const openTransactionDetailsModal = (txHash: Transaction['hash']) =>
+  const openTransactionDetailsModal = (txHash: e.Transaction['hash']) =>
     dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash, refAddressHash: addressHash } }))
 
   return (

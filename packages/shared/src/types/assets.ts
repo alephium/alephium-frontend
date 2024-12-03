@@ -17,11 +17,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenInfo } from '@alephium/token-list'
-import { FungibleTokenMetaData as FungibleTokenMetaDataBase, NFTTokenUriMetaData, Optional } from '@alephium/web3'
-import { AddressBalance, FungibleTokenMetadata, NFTMetadata, Token } from '@alephium/web3/dist/src/api/api-explorer'
+import {
+  explorer as e,
+  FungibleTokenMetaData as FungibleTokenMetaDataBase,
+  NFTTokenUriMetaData,
+  Optional
+} from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
-export type TokenBalances = AddressBalance & { id: Token['id'] }
+export type TokenBalances = e.AddressBalance & { id: e.Token['id'] }
 
 // Same as AddressBalance, but amounts are in BigInt, useful for display purposes
 export type DisplayBalances = {
@@ -54,10 +58,10 @@ export type AssetAmount = { id: Asset['id']; amount?: bigint }
 // https://github.com/alephium/alephium-web3/blob/master/packages/web3/std/fungible_token_interface.ral#L7
 // https://github.com/alephium/token-list/blob/master/lib/types.ts#L30
 // https://github.com/alephium/alephium-web3/blob/master/packages/web3/src/api/types.ts#L296
-export type FungibleTokenBasicMetadata = Omit<FungibleTokenMetadata, 'decimals'> &
+export type FungibleTokenBasicMetadata = Omit<e.FungibleTokenMetadata, 'decimals'> &
   Omit<FungibleTokenMetaDataBase, 'totalSupply'>
 
-export type NFT = NFTTokenUriMetaData & Omit<NFTMetadata, 'tokenUri'>
+export type NFT = NFTTokenUriMetaData & Omit<e.NFTMetadata, 'tokenUri'>
 
 export interface FungibleTokensState extends EntityState<FungibleToken> {
   loadingVerified: boolean
