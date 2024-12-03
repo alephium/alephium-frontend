@@ -140,7 +140,6 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
                 fontSize: 23,
                 fontWeight: '700'
               }}
-              showCopyBtn
             />
           </AddressBadgeContainer>
           <HeaderButtons>
