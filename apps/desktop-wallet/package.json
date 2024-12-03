@@ -32,7 +32,7 @@
     "syncTranslationFiles": "pnpm scripts/syncTranslationFiles.js && prettier --write ./locales/**/*.json",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
-    "clean": "rm -rf dist build",
+    "clean": "rm -rf dist build dist-electron dist .turbo",
     "clean:node-modules": "rm -rf node_modules"
   },
   "browserslist": [
