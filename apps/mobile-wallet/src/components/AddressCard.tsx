@@ -141,6 +141,11 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
                 fontWeight: '700'
               }}
             />
+            {address.settings.label && (
+              <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color={textColor} size={13}>
+                {addressHash}
+              </HashEllipsed>
+            )}
           </AddressBadgeContainer>
           <HeaderButtons>
             <AddressCardDeleteButton addressHash={addressHash} color={textColor} />
@@ -231,7 +236,6 @@ const Header = styled.View`
   justify-content: space-between;
   align-items: center;
   max-width: 100%;
-  align-items: center;
   gap: 18px;
   padding: 15px 15px 0px 20px;
 `
@@ -241,11 +245,7 @@ const AddressBadgeStyled = styled(AddressBadge)`
 `
 
 const AddressBadgeContainer = styled.View`
-  flex-direction: row;
   flex-shrink: 1;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 18px;
 `
 
 const HeaderButtons = styled.View`
@@ -276,4 +276,8 @@ const BottomRow = styled.View`
   justify-content: space-between;
   align-items: center;
   border-top-width: 1px;
+`
+
+const HashEllipsed = styled(AppText)`
+  max-width: 100px;
 `
