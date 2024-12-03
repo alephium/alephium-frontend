@@ -380,5 +380,9 @@
   "You scanned an Ethereum address": "You scanned an Ethereum address",
   "To move funds to Ethereum use the bridge at {{ url }}": "To move funds to Ethereum use the bridge at {{ url }}",
   "Invalid scanned data": "Invalid scanned data",
-  "Did not detect a valid Alephium address or a WalletConnect QR code in scanned data: {{ data }}": "Did not detect a valid Alephium address or a WalletConnect QR code in scanned data: {{ data }}"
+  "Did not detect a valid Alephium address or a WalletConnect QR code in scanned data: {{ data }}": "Did not detect a valid Alephium address or a WalletConnect QR code in scanned data: {{ data }}",
+  "Forget": "Forget",
+  "forgetAddress_one": "Forget address",
+  "You can always re-add it to your wallet.": "You can always re-add it to your wallet.",
+  "Could not forget address": "Could not forget address"
 }
