@@ -98,9 +98,9 @@ const WalletConnectSessionProposalModal = memo(
       }
     }
 
-    const generateAddressInGroup = () => {
+    const generateAddressInGroup = async () => {
       try {
-        const address = generateAddress(group)
+        const address = await generateAddress(group)
         saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])
 
         sendAnalytics({ event: 'New address created through WalletConnect modal' })

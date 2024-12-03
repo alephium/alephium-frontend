@@ -35,9 +35,10 @@ const useInitializeAppWithLedgerData = () => {
     dispatch(
       walletUnlocked({
         wallet: {
-          id: 'test',
+          id: 'ledger',
           name: deviceModel,
-          isPassphraseUsed: true
+          isPassphraseUsed: true,
+          isLedger: true
         },
         initialAddress
       })

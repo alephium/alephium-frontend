@@ -33,7 +33,8 @@ type ActiveWalletState = Partial<ActiveWallet>
 const initialState: ActiveWalletState = {
   id: undefined,
   name: undefined,
-  isPassphraseUsed: false
+  isPassphraseUsed: false,
+  isLedger: false
 }
 
 const activeWalletSlice = createSlice({

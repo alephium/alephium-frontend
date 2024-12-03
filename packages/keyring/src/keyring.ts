@@ -45,7 +45,7 @@ type NullableSensitiveAddressData = NonSensitiveAddressData & {
   privateKey: Uint8Array | null
 }
 
-type GenerateAddressProps = {
+export type GenerateAddressProps = {
   group?: number
   addressIndex?: number
   skipAddressIndexes?: number[]

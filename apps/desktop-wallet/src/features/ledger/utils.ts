@@ -16,8 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { GenerateAddressProps, NonSensitiveAddressData } from '@alephium/keyring'
 import { AlephiumApp as AlephiumLedgerApp } from '@alephium/ledger-app'
-import { KeyType } from '@alephium/web3'
+import { findNextAvailableAddressIndex } from '@alephium/shared'
+import { KeyType, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { getHDWalletPath } from '@alephium/web3-wallet'
 import TransportWebHID from '@ledgerhq/hw-transport-webhid'
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb'
@@ -30,6 +32,8 @@ export const getLedgerTransport = async () => {
   }
   return TransportWebUSB.create()
 }
+
+type NonSensitiveAddressDataWithGroup = NonSensitiveAddressData & { group: number }
 
 export class LedgerAlephium {
   // extends AccountDiscovery
@@ -48,9 +52,16 @@ export class LedgerAlephium {
     this.app = app
   }
 
-  private async getAccount(startIndex: number, group: number | undefined, keyType: KeyType) {
-    const path = getHDWalletPath(keyType, startIndex)
-    return await this.app.getAccount(path, group, keyType)
+  private _deriveAddress = async (
+    startIndex: number,
+    _group?: number,
+    keyType?: KeyType
+  ): Promise<NonSensitiveAddressDataWithGroup> => {
+    const _keyType = keyType ?? 'default'
+    const path = getHDWalletPath(_keyType, startIndex)
+    const [{ address: hash, publicKey, group }, index] = await this.app.getAccount(path, _group, _keyType)
+
+    return { hash, publicKey, index, group }
   }
 
   public getDeviceInfo = async () => ({
@@ -58,7 +69,46 @@ export class LedgerAlephium {
     deviceModal: this.app.transport.deviceModel?.productName
   })
 
-  public generateInitialAddress = async (keyType?: KeyType) => this.getAccount(0, undefined, keyType ?? 'default')
+  public generateInitialAddress = async () => {
+    const address = await this._deriveAddress(0)
+
+    this.close()
+
+    return address
+  }
+
+  public generateAddress = async ({ group, addressIndex, skipAddressIndexes = [] }: GenerateAddressProps) => {
+    if (group !== undefined && (!Number.isInteger(group) || group < 0 || group >= TOTAL_NUMBER_OF_GROUPS))
+      throw new Error(`Could not generate address in group ${group}, group is invalid`)
+
+    if (addressIndex !== undefined) {
+      if (!Number.isInteger(addressIndex) || addressIndex < 0)
+        throw new Error(`Keyring: Could not generate address, ${addressIndex} is not a valid addressIndex`)
+
+      if (group !== undefined || skipAddressIndexes.length > 0)
+        throw new Error(
+          'Keyring: Could not generate address, invalid arguments passed: when addressIndex is provided the group and skipAddressIndexes should not be provided.'
+        )
+
+      return this._deriveAddress(addressIndex)
+    }
+
+    const initialAddressIndex = 0
+
+    let nextAddressIndex = skipAddressIndexes.includes(initialAddressIndex)
+      ? findNextAvailableAddressIndex(initialAddressIndex, skipAddressIndexes)
+      : initialAddressIndex
+    let newAddressData = await this._deriveAddress(nextAddressIndex)
+
+    while (group !== undefined && newAddressData.group !== group) {
+      nextAddressIndex = findNextAvailableAddressIndex(newAddressData.index, skipAddressIndexes)
+      newAddressData = await this._deriveAddress(nextAddressIndex)
+    }
+
+    this.close()
+
+    return newAddressData
+  }
 
   // private async deriveAccount(
   //   networkId: string,

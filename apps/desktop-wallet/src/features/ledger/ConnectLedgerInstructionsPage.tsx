@@ -50,9 +50,9 @@ const ConnectLedgerInstructionsPage = () => {
     try {
       const alephiumLedgerApp = await LedgerAlephium.create()
       const deviceInfo = await alephiumLedgerApp.getDeviceInfo()
-      const [{ address: hash, publicKey }, index] = await alephiumLedgerApp.generateInitialAddress()
+      const initialAddress = await alephiumLedgerApp.generateInitialAddress()
 
-      await initializeAppWithLedgerData(deviceInfo.deviceModal ?? 'Ledger', { index, hash, publicKey })
+      await initializeAppWithLedgerData(deviceInfo.deviceModal ?? 'Ledger', initialAddress)
     } catch (error) {
       console.error(error)
       setError(getHumanReadableError(error, 'Error connecting to your Ledger device'))

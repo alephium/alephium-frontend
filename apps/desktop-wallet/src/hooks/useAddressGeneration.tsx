@@ -22,6 +22,7 @@ import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 
 import { discoverAndCacheActiveAddresses } from '@/api/addresses'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { LedgerAlephium } from '@/features/ledger/utils'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
   addressDiscoveryFinished,
@@ -57,13 +58,16 @@ const useAddressGeneration = () => {
   const dispatch = useAppDispatch()
   const addresses = useAppSelector(selectAllAddresses)
   const { sendAnalytics } = useAnalytics()
+  const isLedger = useAppSelector((s) => s.activeWallet.isLedger)
 
   const currentAddressIndexes = addresses.map(({ index }) => index)
 
-  const generateAddress = (group?: GenerateAddressProps['group']): NonSensitiveAddressData =>
-    keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes })
+  const generateAddress = async (group?: GenerateAddressProps['group']): Promise<NonSensitiveAddressData> =>
+    isLedger
+      ? (await LedgerAlephium.create()).generateAddress({ group, skipAddressIndexes: currentAddressIndexes })
+      : keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes })
 
-  const generateAndSaveOneAddressPerGroup = (
+  const generateAndSaveOneAddressPerGroup = async (
     { labelPrefix, labelColor, skipGroups = [] }: GenerateOneAddressPerGroupProps = { skipGroups: [] }
   ) => {
     const groups = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (_, group) => group).filter(
@@ -72,19 +76,24 @@ const useAddressGeneration = () => {
     const randomLabelColor = getRandomLabelColor()
 
     try {
-      const addresses: AddressBase[] = groups.map((group) => ({
-        ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes }),
-        isDefault: false,
-        label: labelPrefix ? `${labelPrefix} ${group}` : '',
-        color: labelColor ?? randomLabelColor
-      }))
+      for (const group of groups) {
+        addresses.push({
+          ...(await generateAddress(group)),
+          group,
+          isDefault: false,
+          label: labelPrefix ? `${labelPrefix} ${group}` : '',
+          color: labelColor ?? randomLabelColor
+        })
+      }
 
       try {
         saveNewAddresses(addresses)
-      } catch {
+      } catch (error) {
+        console.error(error)
         sendAnalytics({ type: 'error', message: 'Error while saving new address' })
       }
-    } catch {
+    } catch (error) {
+      console.error(error)
       sendAnalytics({ type: 'error', message: 'Could not generate one address per group' })
     }
   }

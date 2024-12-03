@@ -54,13 +54,20 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
   const [isDefaultAddress, setIsDefaultAddress] = useState(false)
   const [newAddressData, setNewAddressData] = useState<NonSensitiveAddressData>()
   const [newAddressGroup, setNewAddressGroup] = useState<number>()
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (singleAddress) {
       try {
-        const address = generateAddress()
-        setNewAddressData(address)
-        setNewAddressGroup(groupOfAddress(address.hash))
+        setIsLoading(true)
+        generateAddress()
+          .then((address) => {
+            setNewAddressData(address)
+            setNewAddressGroup(groupOfAddress(address.hash))
+          })
+          .finally(() => {
+            setIsLoading(false)
+          })
       } catch (e) {
         console.error(e)
       }
@@ -74,7 +81,7 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
 
   const onClose = () => dispatch(closeModal({ id }))
 
-  const onGenerateClick = () => {
+  const onGenerateClick = async () => {
     if (singleAddress && newAddressData) {
       const settings = {
         isDefault: isDefaultAddress,
@@ -90,7 +97,9 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
         sendAnalytics({ type: 'error', message: 'Error while saving newly generated address' })
       }
     } else {
-      generateAndSaveOneAddressPerGroup({ labelPrefix: addressLabel.title, labelColor: addressLabel.color })
+      setIsLoading(true)
+      await generateAndSaveOneAddressPerGroup({ labelPrefix: addressLabel.title, labelColor: addressLabel.color })
+      setIsLoading(false)
 
       sendAnalytics({ event: 'One address per group generated', props: { label_length: addressLabel.title.length } })
     }
@@ -109,20 +118,25 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
         : ''
   }
 
-  function onSelect(group?: number) {
+  const onSelect = async (group?: number) => {
     if (group === undefined) return
 
     try {
-      const address = generateAddress(group)
+      setIsLoading(true)
+
+      const address = await generateAddress(group)
+
       setNewAddressData(address)
       setNewAddressGroup(group)
     } catch (e) {
       console.error(e)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
-    <CenteredModal title={title} id={id}>
+    <CenteredModal title={title} id={id} isLoading={isLoading}>
       {!isPassphraseUsed && (
         <Section align="flex-start">
           <AddressMetadataForm
