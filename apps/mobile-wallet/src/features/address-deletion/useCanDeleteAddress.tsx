@@ -24,7 +24,7 @@ import { selectAddressByHash } from '~/store/addressesSlice'
 const useCanDeleteAddress = (addressHash: AddressHash) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
-  return address && !address.settings.isDefault && address.index !== 0
+  return address && !address.settings.isDefault
 }
 
 export default useCanDeleteAddress
