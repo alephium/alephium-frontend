@@ -24,6 +24,7 @@ import contextMenu from 'electron-context-menu'
 import isDev from 'electron-is-dev'
 
 import { configureAutoUpdater, handleAutoUpdaterUserActions, setupAutoUpdaterListeners } from './autoUpdater'
+import { setupLedger } from './ledger'
 import { setupAppMenu } from './menu'
 import { handleNativeThemeUserActions, setupNativeThemeListeners } from './nativeTheme'
 import { IS_RC, isIpcSenderValid, isMac, isWindows } from './utils'
@@ -59,6 +60,8 @@ if (process.defaultApp) {
 }
 
 contextMenu()
+
+setupLedger()
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
