@@ -22,7 +22,7 @@ import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
@@ -40,6 +40,7 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { copyAddressToClipboard } from '~/utils/addresses'
 import { showToast, ToastDuration } from '~/utils/layout'
 
 interface AddressCardProps {
@@ -132,20 +133,23 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
       >
         <Header>
           <AddressBadgeContainer>
-            <AddressBadgeStyled
-              addressHash={address.hash}
-              hideSymbol
-              color={textColor}
-              textStyle={{
-                fontSize: 23,
-                fontWeight: '700'
-              }}
-            />
-            {address.settings.label && (
-              <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color={textColor} size={13}>
-                {addressHash}
-              </HashEllipsed>
-            )}
+            <Pressable onLongPress={() => copyAddressToClipboard(addressHash)}>
+              <AddressBadgeStyled
+                addressHash={address.hash}
+                hideSymbol
+                color={textColor}
+                textStyle={{
+                  fontSize: 23,
+                  fontWeight: '700'
+                }}
+                canCopy={false}
+              />
+              {address.settings.label && (
+                <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color={textColor} size={13}>
+                  {addressHash}
+                </HashEllipsed>
+              )}
+            </Pressable>
           </AddressBadgeContainer>
           <HeaderButtons>
             <AddressCardDeleteButton addressHash={addressHash} color={textColor} />
