@@ -24,7 +24,6 @@ import contextMenu from 'electron-context-menu'
 import isDev from 'electron-is-dev'
 
 import { configureAutoUpdater, handleAutoUpdaterUserActions, setupAutoUpdaterListeners } from './autoUpdater'
-import { setupLedger } from './ledger'
 import { setupAppMenu } from './menu'
 import { handleNativeThemeUserActions, setupNativeThemeListeners } from './nativeTheme'
 import { IS_RC, isIpcSenderValid, isMac, isWindows } from './utils'
@@ -60,8 +59,6 @@ if (process.defaultApp) {
 }
 
 contextMenu()
-
-setupLedger()
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -107,6 +104,110 @@ function createWindow() {
     shell.openExternal(url)
     return { action: 'deny' }
   })
+
+  mainWindow.webContents.session.on('select-hid-device', (event, details, callback) => {
+    // Add events to handle devices being added or removed before the callback on
+    // `select-hid-device` is called.
+    mainWindow?.webContents.session.on('hid-device-added', (event, device) => {
+      console.log('hid-device-added FIRED WITH', device)
+      // Optionally update details.deviceList
+    })
+
+    mainWindow?.webContents.session.on('hid-device-removed', (event, device) => {
+      console.log('hid-device-removed FIRED WITH', device)
+      // Optionally update details.deviceList
+    })
+
+    event.preventDefault()
+    if (details.deviceList && details.deviceList.length > 0) {
+      callback(details.deviceList[0].deviceId)
+    }
+  })
+
+  // mainWindow.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin, details) => {
+  //   console.log('💥 permissionCheckHandler permission', permission)
+  //   console.log('💥 permissionCheckHandler requestingOrigin', requestingOrigin)
+  //   console.log('💥 permissionCheckHandler details', details)
+  //   if (
+  //     permission === 'hid' &&
+  //     (details.securityOrigin === 'file:///' || details.securityOrigin === 'http://localhost:3000/')
+  //   ) {
+  //     console.log('✅ permissionCheckHandler returning true')
+  //     return true
+  //   }
+  // })
+
+  mainWindow.webContents.session.setDevicePermissionHandler((details) => {
+    console.log('💥 devicePermissionHandler', details)
+    if (
+      details.deviceType === 'hid' &&
+      (details.origin === 'file://' || details.origin === 'http://localhost:3000') &&
+      details.device.vendorId === 0x2c97 // Ledger vendor ID
+    ) {
+      console.log('✅ devicePermissionHandler returning true for Ledger device')
+      return true
+    }
+    return false
+  })
+
+  // let grantedDeviceThroughPermHandler: Electron.HIDDevice | Electron.USBDevice | Electron.SerialPort | null = null
+
+  // mainWindow.webContents.session.on('select-usb-device', (event, details, callback) => {
+  //   // Add events to handle devices being added or removed before the callback on
+  //   // `select-usb-device` is called.
+  //   mainWindow?.webContents.session.on('usb-device-added', (event, device) => {
+  //     console.log('usb-device-added FIRED WITH', device)
+  //     // Optionally update details.deviceList
+  //   })
+
+  //   mainWindow?.webContents.session.on('usb-device-removed', (event, device) => {
+  //     console.log('usb-device-removed FIRED WITH', device)
+  //     // Optionally update details.deviceList
+  //   })
+
+  //   event.preventDefault()
+  //   if (details.deviceList && details.deviceList.length > 0) {
+  //     const deviceToReturn = details.deviceList.find(
+  //       (device) => !grantedDeviceThroughPermHandler || device.deviceId !== grantedDeviceThroughPermHandler.deviceId
+  //     )
+  //     if (deviceToReturn) {
+  //       callback(deviceToReturn.deviceId)
+  //     } else {
+  //       callback()
+  //     }
+  //   }
+  // })
+
+  // mainWindow.webContents.session.setPermissionCheckHandler((webContents, permission, requestingOrigin, details) => {
+  //   if (
+  //     permission === 'usb' &&
+  //     (details.securityOrigin === 'file:///' || details.securityOrigin === 'http://localhost:3000/')
+  //   ) {
+  //     console.log('✅ permissionCheckHandler returning true')
+  //     return true
+  //   }
+  // })
+
+  // mainWindow.webContents.session.setDevicePermissionHandler((details) => {
+  //   if (details.deviceType === 'usb' && (details.origin === 'file://' || details.origin === 'http://localhost:3000')) {
+  //     if (!grantedDeviceThroughPermHandler) {
+  //       grantedDeviceThroughPermHandler = details.device
+  //       console.log('✅ devicePermissionHandler returning true')
+  //       console.log('💥 devicePermissionHandler grantedDeviceThroughPermHandler', grantedDeviceThroughPermHandler)
+  //       return true
+  //     } else {
+  //       return false
+  //     }
+  //   }
+  // })
+
+  // mainWindow.webContents.session.setUSBProtectedClassesHandler((details) =>
+  //   details.protectedClasses.filter(
+  //     (usbClass) =>
+  //       // Exclude classes except for audio classes
+  //       usbClass.indexOf('audio') === -1
+  //   )
+  // )
 
   mainWindow.on('closed', () => (mainWindow = null))
 

@@ -29,6 +29,7 @@ import { FloatingPanel, FooterActionsContainer } from '@/components/PageComponen
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import useInitializeAppWithLedgerData from '@/features/ledger/useInitializeAppWithLedgerData'
+import { LedgerAlephium } from '@/features/ledger/utils'
 import { useAppDispatch } from '@/hooks/redux'
 import LockedWalletLayout from '@/pages/LockedWalletLayout'
 import { toggleAppLoading } from '@/storage/global/globalActions'
@@ -47,15 +48,11 @@ const ConnectLedgerInstructionsPage = () => {
     dispatch(toggleAppLoading(true))
 
     try {
-      if (!window.electron) return
+      const alephiumLedgerApp = await LedgerAlephium.create()
+      const deviceInfo = await alephiumLedgerApp.getDeviceInfo()
+      const [{ address: hash, publicKey }, index] = await alephiumLedgerApp.generateInitialAddress()
 
-      const response = await window.electron.ledger.connectViaUsb()
-
-      if (response.success) {
-        await initializeAppWithLedgerData(response.deviceModel, response.initialAddress)
-      } else {
-        setError(response.error.message)
-      }
+      await initializeAppWithLedgerData(deviceInfo.deviceModal ?? 'Ledger', { index, hash, publicKey })
     } catch (error) {
       console.error(error)
       setError(getHumanReadableError(error, 'Error connecting to your Ledger device'))

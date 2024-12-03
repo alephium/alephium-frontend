@@ -16,6 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { AlephiumApp as LedgerApp } from '@alephium/ledger-app'
+import TransportWebHID from '@ledgerhq/hw-transport-webhid'
+import { listen } from '@ledgerhq/logs'
 import { maxBy } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -75,6 +78,15 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
     setPassword('')
   }
 
+  const test = async () => {
+    const transport = await TransportWebHID.create()
+    console.log('💥💥💥💥💥💥💥💥💥💥💥 transport', transport)
+    listen((log) => console.log(log))
+    const app = new LedgerApp(transport)
+    const version = await app.getVersion()
+    console.log('💥💥💥💥💥💥💥💥💥💥💥 version', version)
+  }
+
   return (
     <>
       <PanelTitle useLayoutId={false} size="big" centerText>
@@ -118,6 +130,9 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
         </Button>
         <Button onClick={onNewWalletLinkClick} role="secondary">
           {t('Import or create a wallet')}
+        </Button>
+        <Button onClick={test} role="secondary">
+          {t('ledger')}
         </Button>
         <ConnectWithLedgerButton />
       </ButtonsSection>
