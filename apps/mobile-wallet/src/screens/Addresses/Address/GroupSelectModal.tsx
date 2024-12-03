@@ -19,8 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { map } from 'lodash'
 
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
+import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import i18n from '~/features/localization/i18n'
 import BottomModal from '~/features/modals/BottomModal'
@@ -51,7 +51,7 @@ const GroupSelectModal = withModal<GroupSelectModalProps>(({ id, onSelect, selec
     <BottomModal modalId={id}>
       <ModalContent>
         <ScreenSection>
-          <BoxSurface>
+          <Surface>
             {groupSelectOptions.map((groupOption, index) => (
               <RadioButtonRow
                 key={groupOption.label}
@@ -61,7 +61,7 @@ const GroupSelectModal = withModal<GroupSelectModalProps>(({ id, onSelect, selec
                 isLast={index === groupSelectOptions.length - 1}
               />
             ))}
-          </BoxSurface>
+          </Surface>
         </ScreenSection>
       </ModalContent>
     </BottomModal>

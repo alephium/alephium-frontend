@@ -89,12 +89,13 @@ const Row = styled(Animated.View)`
   flex-direction: row;
   align-items: center;
   padding-left: ${DEFAULT_MARGIN}px;
-  gap: 15px;
+  gap: 18px;
 `
 
 const RowContent = styled.View<{ showSeparator: boolean }>`
   flex-direction: row;
   gap: 10px;
+  padding: 16px 0;
   height: 100%;
   padding-right: ${DEFAULT_MARGIN}px;
   align-items: center;
@@ -121,5 +122,4 @@ const Icon = styled.View``
 const LeftSideContent = styled.View`
   flex: 1;
   justify-content: center;
-  padding: 7px 0;
 `

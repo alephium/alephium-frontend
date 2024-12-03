@@ -22,6 +22,7 @@ import { ComponentProps } from 'react'
 import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
+import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
@@ -68,6 +69,7 @@ export const ModalComponents = {
   WalletConnectPasteUrlModal,
   WalletConnectPairingsModal,
   WalletConnectSessionProposalModal,
+  WalletConnectSessionRequestModal,
   GroupSelectModal
 }
 

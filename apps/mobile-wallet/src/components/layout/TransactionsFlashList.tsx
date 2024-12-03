@@ -93,6 +93,7 @@ const TransactionsFlashList = forwardRef(
     return (
       <FlashList
         {...props}
+        ref={ref}
         scrollEventThrottle={16}
         data={confirmedTransactions}
         renderItem={renderConfirmedTransactionItem}

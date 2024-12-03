@@ -28,9 +28,11 @@ interface NftGridModalProps {
 }
 
 const NftGridModal = withModal<NftGridModalProps>(({ id, addressHash, nftsData }) => (
-  <BottomModalFlashList modalId={id} noPadding>
-    {(props) => <NFTsGrid addressHash={addressHash} nfts={nftsData} {...props} />}
-  </BottomModalFlashList>
+  <BottomModalFlashList
+    modalId={id}
+    noPadding
+    flashListRender={(props) => <NFTsGrid addressHash={addressHash} nfts={nftsData} {...props} />}
+  />
 ))
 
 export default NftGridModal

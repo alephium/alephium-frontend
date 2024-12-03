@@ -24,9 +24,9 @@ import styled from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Surface from '~/components/layout/Surface'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -70,7 +70,7 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
       {...props}
     >
       <ScreenSection fill>
-        <BoxSurfaceStyled type="primary">
+        <SurfaceStyled type="primary">
           <IconBox style={{ backgroundColor: 'rgba(61, 149, 190, 0.1)' }}>
             <Ionicons size={35} name="desktop" color="rgb(86, 201, 254)" />
           </IconBox>
@@ -81,10 +81,10 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
             {t('Export your wallet directly from the Desktop app! Convenient, quick and secure.')}
           </Subtitle>
           <Button variant="highlight" title={t('Scan the QR code')} onPress={openQRCodeScannerModal} />
-        </BoxSurfaceStyled>
+        </SurfaceStyled>
       </ScreenSection>
       <ScreenSection fill>
-        <BoxSurfaceStyled type="primary">
+        <SurfaceStyled type="primary">
           <IconBox style={{ backgroundColor: 'rgba(185, 111, 26, 0.1)' }}>
             <Ionicons size={35} name="list-outline" color="rgb(255, 147, 21)" />
           </IconBox>
@@ -99,7 +99,7 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
             title={t('Type your secret phrase')}
             onPress={() => navigation.navigate('ImportWalletSeedScreen')}
           />
-        </BoxSurfaceStyled>
+        </SurfaceStyled>
       </ScreenSection>
       {isCameraOpen && (
         <QRCodeScannerModal
@@ -115,7 +115,7 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
 
 export default SelectImportMethodScreen
 
-const BoxSurfaceStyled = styled(BoxSurface)`
+const SurfaceStyled = styled(Surface)`
   padding: ${DEFAULT_MARGIN}px;
 `
 
@@ -127,7 +127,7 @@ const Subtitle = styled(AppText)`
   margin-bottom: 35px;
 `
 
-const IconBox = styled(BoxSurface)`
+const IconBox = styled(Surface)`
   background-color: ${({ theme }) => theme.bg.back2};
   width: auto;
   align-self: flex-start;

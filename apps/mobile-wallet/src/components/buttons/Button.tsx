@@ -87,7 +87,7 @@ const Button = ({
     default: theme.button.primary,
     contrast: theme.font.primary,
     accent: type === 'primary' ? theme.button.primary : theme.button.secondary,
-    valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
+    valid: theme.global.valid,
     alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
     transparent: 'transparent',
     highlight: theme.global.accent,
@@ -100,7 +100,7 @@ const Button = ({
       default: theme.font.primary,
       contrast: theme.font.contrast,
       accent: theme.global.accent,
-      valid: theme.global.valid,
+      valid: theme.font.primary,
       alert: theme.global.alert,
       highlight: 'white',
       highlightedIcon: theme.font.primary

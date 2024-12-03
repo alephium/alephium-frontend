@@ -16,9 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import QRCode from 'react-qr-code'
 import styled, { useTheme } from 'styled-components/native'
@@ -26,10 +24,10 @@ import styled, { useTheme } from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
-import Button, { BackButton, ContinueButton } from '~/components/buttons/Button'
-import BoxSurface from '~/components/layout/BoxSurface'
+import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
@@ -43,7 +41,7 @@ interface ScreenProps extends StackScreenProps<ReceiveNavigationParamList, 'QRCo
 
 const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const theme = useTheme()
-  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
+  const { screenScrollHandler, screenScrollY } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
   const { t } = useTranslation()
 
@@ -55,21 +53,6 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     copyAddressToClipboard(params.addressHash)
   }
 
-  useFocusEffect(
-    useCallback(() => {
-      setHeaderOptions({
-        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-        headerRight: () => (
-          <ContinueButton
-            onPress={() => navigation.getParent()?.goBack()}
-            iconProps={{ name: 'check' }}
-            title={t('Done')}
-          />
-        )
-      })
-    }, [navigation, setHeaderOptions, t])
-  )
-
   return (
     <ScrollScreen
       verticalGap
@@ -77,6 +60,9 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       onScroll={screenScrollHandler}
       screenTitle={t('Receive assets')}
       screenIntro={t('Scan the QR code to send funds to this address.')}
+      bottomButtonsRender={() => (
+        <Button title={t('Done')} variant="highlight" onPress={() => navigation.getParent()?.goBack()} />
+      )}
       {...props}
     >
       <ScreenSection centered>
@@ -88,7 +74,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         <Button title={t('Copy address')} onPress={handleCopyAddressPress} iconProps={{ name: 'copy' }} />
       </ScreenSection>
       <ScreenSection>
-        <BoxSurface>
+        <Surface>
           <Row title={t('Address')} isLast={!address?.settings.label}>
             <AddressBadge addressHash={params.addressHash} />
           </Row>
@@ -100,7 +86,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
               </AppText>
             </Row>
           )}
-        </BoxSurface>
+        </Surface>
       </ScreenSection>
     </ScrollScreen>
   )

@@ -26,9 +26,9 @@ import { ContinueButton } from '~/components/buttons/Button'
 import ExpandableRow from '~/components/ExpandableRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { openModal } from '~/features/modals/modalActions'
@@ -77,7 +77,6 @@ const AddressForm = ({
 
   return (
     <ScrollScreen
-      usesKeyboard
       fill
       verticalGap
       screenTitle={screenTitle}
@@ -99,7 +98,7 @@ const AddressForm = ({
       <ScreenSection verticalGap fill>
         <Input value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} />
         <ColorPicker value={color} onChange={setColor} />
-        <BoxSurface>
+        <Surface>
           <Row
             title={t('Default address')}
             subtitle={`${t('Default address for operations')}${
@@ -114,17 +113,17 @@ const AddressForm = ({
           >
             <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
           </Row>
-        </BoxSurface>
+        </Surface>
 
         {allowGroupSelection && (
           <ExpandableRow>
-            <BoxSurface>
+            <Surface>
               <Row title={t('Address group')} onPress={openGroupSelectModal}>
                 <AppText>
                   {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Default')}
                 </AppText>
               </Row>
-            </BoxSurface>
+            </Surface>
           </ExpandableRow>
         )}
       </ScreenSection>

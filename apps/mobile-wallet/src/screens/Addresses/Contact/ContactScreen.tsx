@@ -99,7 +99,7 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
             />
           )
         }}
-        goBack={navigation.canGoBack() ? navigation.goBack : undefined}
+        onBackPress={navigation.canGoBack() ? navigation.goBack : undefined}
         scrollY={screenScrollY}
       />
       <TransactionsFlashList

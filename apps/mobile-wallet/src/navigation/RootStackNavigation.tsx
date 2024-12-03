@@ -20,7 +20,7 @@ import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal } from 'react-native'
+import { Modal, Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import styled, { useTheme } from 'styled-components/native'
@@ -101,7 +101,10 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
             <WalletConnectContextProvider>
               <RootStack.Navigator
                 initialRouteName={initialRouteName || 'LandingScreen'}
-                screenOptions={{ headerShown: false }}
+                screenOptions={{
+                  headerShown: false,
+                  presentation: Platform.OS === 'android' ? 'transparentModal' : undefined
+                }}
               >
                 <RootStack.Group screenOptions={{ animation: 'fade' }}>
                   <RootStack.Screen name="LandingScreen" component={LandingScreen} />

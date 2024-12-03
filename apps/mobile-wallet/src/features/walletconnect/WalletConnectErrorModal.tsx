@@ -21,8 +21,8 @@ import styled from 'styled-components/native'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import Surface from '~/components/layout/Surface'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
@@ -53,9 +53,9 @@ const WalletConnectErrorModal = withModal<WalletConnectErrorModalProps>(({ id, o
         </ScreenSection>
         {walletConnectClientError && (
           <ScreenSection>
-            <BoxSurface>
+            <Surface>
               <AppTextStyled>{walletConnectClientError}</AppTextStyled>
-            </BoxSurface>
+            </Surface>
           </ScreenSection>
         )}
         <ScreenSection centered>

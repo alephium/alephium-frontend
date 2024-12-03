@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { FlashList } from '@shopify/flash-list'
+import { useTranslation } from 'react-i18next'
 
 import AddressBox from '~/components/AddressBox'
 import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
@@ -33,6 +34,7 @@ interface SelectAddressModalProps {
 const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPress }) => {
   const addresses = useAppSelector(selectAllAddresses)
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   const handleAddressPress = (addressHash: AddressHash) => {
     dispatch(closeModal({ id }))
@@ -40,8 +42,10 @@ const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPr
   }
 
   return (
-    <BottomModalFlashList modalId={id}>
-      {(props) => (
+    <BottomModalFlashList
+      modalId={id}
+      title={t('Addresses')}
+      flashListRender={(props) => (
         <FlashList
           data={addresses}
           keyExtractor={(item) => item.hash}
@@ -59,7 +63,7 @@ const SelectAddressModal = withModal<SelectAddressModalProps>(({ id, onAddressPr
           {...props}
         />
       )}
-    </BottomModalFlashList>
+    />
   )
 })
 
