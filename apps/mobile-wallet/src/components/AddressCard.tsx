@@ -252,7 +252,7 @@ const HeaderButtons = styled.View`
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  gap: 15px;
+  gap: 5px;
 `
 
 const Amounts = styled.View`
