@@ -47,10 +47,10 @@ export const GlobalStyle = createGlobalStyle`
     --spacing-8: 40px;
 
     --radius-tiny: 4px;
-    --radius-small: 7px;
-    --radius-medium: 9px;
-    --radius-big: 12px;
-    --radius-huge: 20px;
+    --radius-small: 6px;
+    --radius-medium: 8px;
+    --radius-big: 10px;
+    --radius-huge: 18px;
     --radius-full: 100%;
 
     --fontWeight-normal: 400;

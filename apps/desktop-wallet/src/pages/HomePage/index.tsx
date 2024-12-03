@@ -36,7 +36,7 @@ const HomePage = () => {
     <LockedWalletLayout>
       {showNewWalletActions ? (
         <FloatingPanel>
-          <PanelTitle useLayoutId={false} size="big" centerText>
+          <PanelTitle size="big" centerText>
             {t('New wallet')}
           </PanelTitle>
           <NewWalletActions onExistingWalletLinkClick={() => setShowNewWalletActions(false)} />
@@ -45,7 +45,7 @@ const HomePage = () => {
         <UnlockPanel onNewWalletLinkClick={() => setShowNewWalletActions(true)} />
       ) : (
         <FloatingPanel>
-          <PanelTitle useLayoutId={false} size="big" centerText>
+          <PanelTitle size="big" centerText>
             {t('Welcome.')}
           </PanelTitle>
           <NewWalletActions />

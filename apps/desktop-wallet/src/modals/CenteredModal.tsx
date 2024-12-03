@@ -89,7 +89,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
                 <Icon />
               </IconContainer>
             )}
-            <PanelTitle size="small" useLayoutId={false}>
+            <PanelTitle size="small">
               <span ref={elRef} tabIndex={0} role="heading">
                 {title}
               </span>

@@ -123,10 +123,10 @@ const ImportWordsPage = () => {
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </PanelContentContainer>
         <FooterActionsContainer>
-          <Button role="secondary" onClick={onButtonBack}>
+          <Button role="secondary" onClick={onButtonBack} tall>
             {t('Cancel')}
           </Button>
-          <Button onClick={handleNextButtonPress} disabled={!isPhraseLongEnough}>
+          <Button onClick={handleNextButtonPress} disabled={!isPhraseLongEnough} tall>
             {t('Continue')}
           </Button>
         </FooterActionsContainer>
