@@ -19,6 +19,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import { AddressMetadata } from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { discoverAndCacheActiveAddresses } from '@/api/addresses'
 import useAnalytics from '@/features/analytics/useAnalytics'
@@ -33,6 +35,7 @@ import {
 import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
+import { showToast } from '@/storage/global/globalActions'
 import { AddressBase } from '@/types/addresses'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
@@ -59,13 +62,17 @@ const useAddressGeneration = () => {
   const addresses = useAppSelector(selectAllAddresses)
   const { sendAnalytics } = useAnalytics()
   const isLedger = useAppSelector((s) => s.activeWallet.isLedger)
+  const { t } = useTranslation()
 
-  const currentAddressIndexes = addresses.map(({ index }) => index)
+  const currentAddressIndexes = useMemo(() => addresses.map(({ index }) => index), [addresses])
 
-  const generateAddress = async (group?: GenerateAddressProps['group']): Promise<NonSensitiveAddressData> =>
-    isLedger
-      ? (await LedgerAlephium.create()).generateAddress({ group, skipAddressIndexes: currentAddressIndexes })
-      : keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes })
+  const generateAddress = useCallback(
+    async (group?: GenerateAddressProps['group']): Promise<NonSensitiveAddressData> =>
+      isLedger
+        ? (await LedgerAlephium.create()).generateAddress({ group, skipAddressIndexes: currentAddressIndexes })
+        : keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes }),
+    [currentAddressIndexes, isLedger]
+  )
 
   const generateAndSaveOneAddressPerGroup = async (
     { labelPrefix, labelColor, skipGroups = [] }: GenerateOneAddressPerGroupProps = { skipGroups: [] }
@@ -89,12 +96,15 @@ const useAddressGeneration = () => {
       try {
         saveNewAddresses(addresses)
       } catch (error) {
-        console.error(error)
-        sendAnalytics({ type: 'error', message: 'Error while saving new address' })
+        sendAnalytics({ type: 'error', message: 'Could not save new addresses' })
+        dispatch(
+          showToast({ text: `${t('could_not_save_new_address_other')}: ${error}`, type: 'alert', duration: 'long' })
+        )
       }
     } catch (error) {
-      console.error(error)
-      sendAnalytics({ type: 'error', message: 'Could not generate one address per group' })
+      const message = 'Could not generate one address per group'
+      sendAnalytics({ type: 'error', message })
+      dispatch(showToast({ text: `${t(message)}: ${error}`, type: 'alert', duration: 'long' }))
     }
   }
 

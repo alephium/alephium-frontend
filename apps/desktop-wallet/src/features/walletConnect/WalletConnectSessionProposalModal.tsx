@@ -44,7 +44,7 @@ import {
 } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
-import { toggleAppLoading } from '@/storage/global/globalActions'
+import { showToast, toggleAppLoading } from '@/storage/global/globalActions'
 import { Address } from '@/types/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 import { cleanUrl } from '@/utils/misc'
@@ -104,8 +104,9 @@ const WalletConnectSessionProposalModal = memo(
         saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])
 
         sendAnalytics({ event: 'New address created through WalletConnect modal' })
-      } catch {
+      } catch (error) {
         sendAnalytics({ type: 'error', message: 'Error while saving newly generated address from WalletConnect modal' })
+        dispatch(showToast({ text: `${t('could_not_save_new_address_one')}: ${error}`, type: 'alert' }))
       }
     }
 

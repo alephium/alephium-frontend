@@ -495,5 +495,9 @@
   "Updating...": "Updating...",
   "To send funds you first need to load your wallet with some.": "To send funds you first need to load your wallet with some.",
   "The wallet is empty. Use the faucet in the developer tools in the app settings.": "The wallet is empty. Use the faucet in the developer tools in the app settings.",
-  "Connect with Ledger": "Connect with Ledger"
+  "Connect with Ledger": "Connect with Ledger",
+  "Could not generate address": "Could not generate address",
+  "Could not generate one address per group": "Could not generate one address per group",
+  "could_not_save_new_address_one": "Could not save new address",
+  "could_not_save_new_address_other": "Could not save new addresses"
 }

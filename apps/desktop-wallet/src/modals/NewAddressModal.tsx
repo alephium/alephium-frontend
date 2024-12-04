@@ -34,6 +34,7 @@ import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
+import { showToast } from '@/storage/global/globalActions'
 import { getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
@@ -58,26 +59,22 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
 
   useEffect(() => {
     if (singleAddress) {
-      try {
-        setIsLoading(true)
-        generateAddress()
-          .then((address) => {
-            setNewAddressData(address)
-            setNewAddressGroup(groupOfAddress(address.hash))
-          })
-          .finally(() => {
-            setIsLoading(false)
-          })
-      } catch (e) {
-        console.error(e)
-      }
+      setIsLoading(true)
+      generateAddress()
+        .then((address) => {
+          setNewAddressData(address)
+          setNewAddressGroup(groupOfAddress(address.hash))
+        })
+        .catch((error) => {
+          const message = 'Could not generate address'
+          sendAnalytics({ type: 'error', message })
+          dispatch(showToast({ text: `${t(message)}: ${error}`, type: 'alert', duration: 'long' }))
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
     }
-    // Without disabling eslint, we need to add `generateAddress` in the deps. Doing so results in infinite renders,
-    // even after wrapping it in a useCallback. The only solution would be to implement generateAddress in this
-    // component and wrap it in useCallback. Which might not be a bad idea since it's not used anywhere else. But then
-    // we don't have a unique place for all address generation function. Which is also fine.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [singleAddress])
+  }, [dispatch, generateAddress, sendAnalytics, singleAddress, t])
 
   const onClose = () => dispatch(closeModal({ id }))
 
@@ -128,8 +125,10 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
 
       setNewAddressData(address)
       setNewAddressGroup(group)
-    } catch (e) {
-      console.error(e)
+    } catch (error) {
+      const message = 'Could not generate address'
+      sendAnalytics({ type: 'error', message })
+      dispatch(showToast({ text: `${t(message)}: ${error}`, type: 'alert', duration: 'long' }))
     } finally {
       setIsLoading(false)
     }
