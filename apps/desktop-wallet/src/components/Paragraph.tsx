@@ -55,6 +55,7 @@ const StyledParagraph = styled(motion.p)<ParagraphProps>`
   width: 100%;
   line-height: 1.5em;
   max-width: 400px;
+  margin: 8px 0;
 
   ${({ centered }) =>
     centered &&

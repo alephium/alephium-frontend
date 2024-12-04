@@ -285,7 +285,7 @@ export default styled(Button)`
     role === 'secondary' || variant === 'faded' ? 'var(--fontWeight-medium)' : 'var(--fontWeight-semiBold)'};
   font-size: 14px;
   font-family: inherit;
-  margin: ${({ squared }) => (squared ? '0' : '12px 0')};
+  margin: ${({ squared }) => (squared ? '0' : '10px 0')};
   padding: ${({ squared, Icon }) => (squared ? 'var(--spacing-2)' : Icon ? '0 28px 0 14px' : '0 14px')};
   min-width: ${({ squared }) => (squared ? '40px' : '60px')};
   text-align: center;

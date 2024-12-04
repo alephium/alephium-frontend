@@ -36,9 +36,7 @@ const HomePage = () => {
     <LockedWalletLayout>
       {showNewWalletActions ? (
         <FloatingPanel>
-          <PanelTitle size="big" centerText>
-            {t('New wallet')}
-          </PanelTitle>
+          <PanelTitle centerText>{t('New wallet')}</PanelTitle>
           <NewWalletActions onExistingWalletLinkClick={() => setShowNewWalletActions(false)} />
         </FloatingPanel>
       ) : hasAtLeastOneWallet ? (

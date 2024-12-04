@@ -55,23 +55,27 @@ const WalletWordsPage = () => {
 
   const renderMnemonicWords = () => {
     const mnemonicWords = dangerouslyConvertUint8ArrayMnemonicToString(mnemonic).split(' ')
-    const columnCount = Math.ceil(mnemonicWords.length / 6) // 6 words per column
-    const rowCount = 6 // Always 6 rows
 
-    // Distribute words vertically into columns
-    const wordsByColumns = Array.from({ length: columnCount }, (_, col) => mnemonicWords.slice(col * 6, (col + 1) * 6))
+    const columnCount = Math.ceil(mnemonicWords.length / 6) // Number of columns (6 words per column)
+
+    // Distribute words into columns
+    const wordsByColumns = Array.from({ length: columnCount }, (_, colIndex) =>
+      mnemonicWords.slice(colIndex * 6, (colIndex + 1) * 6)
+    )
 
     return (
-      <MnemonicWordsGrid columnCount={columnCount} rowCount={rowCount}>
-        {wordsByColumns.flatMap((columnWords, colIndex) =>
-          columnWords.map((word, rowIndex) => (
-            <MnemonicWordContainer key={`${colIndex}-${rowIndex}`}>
-              <MnemonicNumber>{colIndex * 6 + rowIndex + 1}</MnemonicNumber>
-              <MnemonicWord>{word}</MnemonicWord>
-            </MnemonicWordContainer>
-          ))
-        )}
-      </MnemonicWordsGrid>
+      <MnemonicColumnsContainer>
+        {wordsByColumns.map((columnWords, colIndex) => (
+          <MnemonicColumn key={colIndex} isLastColumn={colIndex === columnCount - 1}>
+            {columnWords.map((word, rowIndex) => (
+              <MnemonicWordContainer key={`${colIndex}-${rowIndex}`}>
+                <MnemonicNumber>{colIndex * 6 + rowIndex + 1}</MnemonicNumber>
+                <MnemonicWord>{word}</MnemonicWord>
+              </MnemonicWordContainer>
+            ))}
+          </MnemonicColumn>
+        ))}
+      </MnemonicColumnsContainer>
     )
   }
 
@@ -127,33 +131,39 @@ const WordsContent = styled(Section)`
 `
 
 const PhraseBox = styled.div`
-  display: flex;
   width: 100%;
-  padding: var(--spacing-4);
+  padding: var(--spacing-2) 0;
   color: ${({ theme }) => theme.font.contrastPrimary};
   font-weight: var(--fontWeight-medium);
   background-color: ${({ theme }) => colord(theme.global.alert).alpha(0.1).toRgbString()};
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-big);
   margin-bottom: var(--spacing-4);
-  flex-wrap: wrap;
 `
 
-const MnemonicWordsGrid = styled.div<{ columnCount: number; rowCount: number }>`
-  display: grid;
-  grid-template-columns: repeat(${({ columnCount }) => columnCount}, 1fr);
-  gap: 16px;
+const MnemonicColumnsContainer = styled.div`
+  display: flex;
+`
+
+const MnemonicColumn = styled.div<{ isLastColumn: boolean }>`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 0 8px;
+  gap: 15px;
+  border-right: ${({ theme, isLastColumn }) => (isLastColumn ? 'none' : `1px solid ${theme.font.tertiary}`)};
 `
 
 const MnemonicWordContainer = styled.div`
-  margin: 6px;
-  border-radius: var(--radius-small);
+  width: 100%;
+  display: flex;
+  border-radius: var(--radius-tiny);
   overflow: hidden;
 `
 
 const MnemonicNumber = styled.div`
-  display: inline-block;
   padding: var(--spacing-1);
+  font-size: 11px;
   border-right: 1px ${({ theme }) => theme.bg.secondary};
   background-color: ${({ theme }) =>
     theme.name === 'light'
@@ -163,9 +173,11 @@ const MnemonicNumber = styled.div`
 `
 
 const MnemonicWord = styled.div`
-  display: inline-block;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.primary : theme.bg.contrast)};
   color: ${({ theme }) => (theme.name === 'light' ? theme.font.primary : theme.font.contrastSecondary)};
-  padding: var(--spacing-1) 8px;
   font-weight: var(--fontWeight-semiBold);
 `

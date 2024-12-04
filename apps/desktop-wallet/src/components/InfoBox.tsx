@@ -132,7 +132,7 @@ const StyledBox = styled(motion.div)<{
     contrast
       ? theme.bg.secondary
       : importance
-        ? colord(getImportanceColor(theme, importance)).alpha(0.3).toHex()
+        ? colord(getImportanceColor(theme, importance)).alpha(0.15).toHex()
         : theme.bg.primary};
 
   display: flex;

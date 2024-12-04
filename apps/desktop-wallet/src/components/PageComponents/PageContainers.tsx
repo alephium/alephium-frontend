@@ -95,7 +95,7 @@ const FloatingPanelStyled = styled(motion.div)<MainPanelProps>`
   margin: ${({ noMargin }) => (noMargin ? 0 : `${appHeaderHeightPx}px auto`)};
   max-width: 500px;
   min-height: ${({ enforceMinHeight }) => (enforceMinHeight ? '600px' : 'initial')};
-  padding: var(--spacing-8) var(--spacing-6);
+  padding: var(--spacing-7) var(--spacing-6);
   display: flex;
   flex-direction: column;
   justify-content: ${({ verticalAlign }) => verticalAlign || 'flex-start'};
@@ -135,7 +135,7 @@ export const SectionContainer = styled(motion.div)<{ align: SectionContentAlignm
   flex-direction: column;
   min-width: 280px;
 
-  margin-top: ${({ inList }) => (inList ? 'var(--spacing-5)' : '0')};
+  margin-top: ${({ inList }) => (inList ? 'var(--spacing-3)' : '0')};
 `
 
 const StyledBoxContainer = styled(Box)`
@@ -146,7 +146,7 @@ const StyledBoxContainer = styled(Box)`
 
 export const FooterActionsContainer = styled(Section)`
   flex: 0;
-  margin-top: var(--spacing-5);
+  margin-top: var(--spacing-2);
   width: 100%;
 `
 
