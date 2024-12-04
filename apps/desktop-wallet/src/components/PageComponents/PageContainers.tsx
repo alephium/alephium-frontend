@@ -103,7 +103,7 @@ const FloatingPanelStyled = styled(motion.div)<MainPanelProps>`
   border-radius: var(--radius-huge);
   background-color: ${({ theme }) =>
     colord(theme.bg.background1)
-      .alpha(theme.name === 'light' ? 0.5 : 0.9)
+      .alpha(theme.name === 'light' ? 0.7 : 0.9)
       .toHex()};
   box-shadow: 0 0 40px rgba(0, 0, 0, ${({ theme }) => (theme.name === 'light' ? 0.2 : 0.5)});
   backdrop-filter: brightness(130%) saturate(120%) blur(80px);

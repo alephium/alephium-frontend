@@ -168,6 +168,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
       <KeyValueInput
         label={t('Lock time')}
         description={t('Duration in minutes after which an idle wallet will lock automatically.')}
+        noTopPadding
         InputComponent={
           <Select
             id="wallet-lock-time-in-minutes"
@@ -284,6 +285,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
       <KeyValueInput
         label={t('Clear cache')}
         description={t('Deletes cached wallet and WalletConnect data.')}
+        noBottomPadding
         InputComponent={
           <ButtonStyled role="secondary" Icon={Eraser} wide onClick={handleClearCacheButtonPress} short>
             {t('Clear')}

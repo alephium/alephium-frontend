@@ -24,7 +24,7 @@ import styled from 'styled-components'
 import Button from '@/components/Button'
 import CheckMark from '@/components/CheckMark'
 import InfoBox from '@/components/InfoBox'
-import { BoxContainer, Section } from '@/components/PageComponents/PageContainers'
+import { Section } from '@/components/PageComponents/PageContainers'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
@@ -52,9 +52,6 @@ const WalletsSettingsSection = () => {
   return (
     <>
       <Section align="flex-start" role="table">
-        <h2 tabIndex={0} role="label">
-          {t('Wallet list')} ({wallets.length})
-        </h2>
         <BoxContainerStyled role="rowgroup">
           {wallets.map((wallet) => (
             <WalletItem
@@ -185,7 +182,7 @@ const WalletName = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 10px;
+  font-size: 14px;
 `
 
 const ActionButtons = styled.div`
@@ -209,8 +206,8 @@ const ButtonStyled = styled(Button)<{ isVisible: boolean }>`
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)} !important;
 `
 
-const BoxContainerStyled = styled(BoxContainer)`
-  margin-top: var(--spacing-2);
+const BoxContainerStyled = styled.div`
+  width: 100%;
 `
 
 const ButtonTooltipWrapper = styled.div`

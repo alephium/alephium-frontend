@@ -24,6 +24,8 @@ interface InlineLabelValueInputProps {
   InputComponent: ReactNode
   description?: string
   noHorizontalPadding?: boolean
+  noTopPadding?: boolean
+  noBottomPadding?: boolean
   children?: ReactNode
   className?: string
 }
@@ -33,10 +35,17 @@ const InlineLabelValueInput = ({
   InputComponent,
   description,
   noHorizontalPadding,
+  noTopPadding,
+  noBottomPadding,
   children,
   className
 }: InlineLabelValueInputProps) => (
-  <KeyValueInputContainer className={className} noHorizontalPadding={noHorizontalPadding}>
+  <KeyValueInputContainer
+    className={className}
+    noHorizontalPadding={noHorizontalPadding}
+    noTopPadding={noTopPadding}
+    noBottomPadding={noBottomPadding}
+  >
     <KeyContainer>
       <Label>{label}</Label>
       {description && <DescriptionContainer>{description}</DescriptionContainer>}
@@ -48,9 +57,13 @@ const InlineLabelValueInput = ({
 
 export default InlineLabelValueInput
 
-const KeyValueInputContainer = styled.div<Pick<InlineLabelValueInputProps, 'noHorizontalPadding'>>`
+const KeyValueInputContainer = styled.div<
+  Pick<InlineLabelValueInputProps, 'noHorizontalPadding' | 'noTopPadding' | 'noBottomPadding'>
+>`
   display: flex;
   padding: var(--spacing-4) ${({ noHorizontalPadding }) => (noHorizontalPadding ? '0' : 'var(--spacing-3)')};
+  padding-top: ${({ noTopPadding }) => (noTopPadding ? '0' : 'var(--spacing-4)')};
+  padding-bottom: ${({ noBottomPadding }) => (noBottomPadding ? '0' : 'var(--spacing-4)')};
   gap: var(--spacing-8);
   width: 100%;
 `

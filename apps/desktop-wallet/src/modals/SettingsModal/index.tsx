@@ -102,18 +102,22 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
           </TabTitlesColumnHeader>
           <TabTitlesColumnContent>
             <TabTitles>
-              {enabledTabs.map((tab) => (
-                <TabTitleButton
-                  key={tab.value}
-                  role="secondary"
-                  wide
-                  transparent={currentTab.value !== tab.value}
-                  borderless={currentTab.value !== tab.value}
-                  onClick={() => setCurrentTab(tab)}
-                >
-                  {tab.label}
-                </TabTitleButton>
-              ))}
+              {enabledTabs.map((tab) => {
+                const isActive = currentTab.value === tab.value
+                return (
+                  <TabTitleButton
+                    key={tab.value}
+                    role={isActive ? 'primary' : 'secondary'}
+                    variant="faded"
+                    wide
+                    transparent={!isActive}
+                    borderless
+                    onClick={() => setCurrentTab(tab)}
+                  >
+                    {tab.label}
+                  </TabTitleButton>
+                )
+              })}
             </TabTitles>
             <SidebarFooter>
               <SocialMedias>
@@ -128,9 +132,16 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
         <TabContentsColumn>
           <ColumnHeader>
             <ColumnTitle>{currentTab.label}</ColumnTitle>
-            <Button aria-label={t('Close')} squared role="secondary" transparent onClick={onClose} borderless>
-              <X />
-            </Button>
+            <Button
+              aria-label={t('Close')}
+              squared
+              rounded
+              role="secondary"
+              transparent
+              onClick={onClose}
+              borderless
+              Icon={X}
+            />
           </ColumnHeader>
           <Scrollbar>
             <ColumnContent>
@@ -184,12 +195,12 @@ const TabContentsColumn = styled(Column)`
 `
 
 const ColumnHeader = styled.div`
-  padding: 20px;
+  padding: 0 10px 0 20px;
   border-bottom: 1px solid ${({ theme }) => theme.border.primary};
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 65px;
+  min-height: 54px;
 `
 
 const ColumnTitle = styled.div`
@@ -263,6 +274,7 @@ const TabTitlesColumnHeader = styled(ColumnHeader)`
 const TabTitleButton = styled(Button)`
   height: 46px;
   text-align: left;
+  border-radius: var(--radius-big);
 
   &:first-child {
     margin-top: 0;

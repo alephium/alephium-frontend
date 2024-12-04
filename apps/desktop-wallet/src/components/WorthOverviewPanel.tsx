@@ -66,7 +66,6 @@ const WorthOverviewPanelStyled = styled(Box)`
 const Panel = styled.div`
   position: relative;
   display: flex;
-  flex-direction: column;
   gap: 40px;
   align-items: center;
   padding: 50px;
@@ -93,14 +92,14 @@ const BalancesColumn = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
   min-width: 200px;
 `
 
 const Today = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
-  font-size: 16px;
+  font-size: 18px;
   margin-bottom: 4px;
   text-align: center;
 `
