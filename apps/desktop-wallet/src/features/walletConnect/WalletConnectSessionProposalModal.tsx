@@ -101,12 +101,16 @@ const WalletConnectSessionProposalModal = memo(
     const generateAddressInGroup = async () => {
       try {
         const address = await generateAddress(group)
+        if (!address) return
+
         saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])
 
         sendAnalytics({ event: 'New address created through WalletConnect modal' })
       } catch (error) {
         sendAnalytics({ type: 'error', message: 'Error while saving newly generated address from WalletConnect modal' })
-        dispatch(showToast({ text: `${t('could_not_save_new_address_one')}: ${error}`, type: 'alert' }))
+        dispatch(
+          showToast({ text: `${t('could_not_save_new_address_one')}: ${error}`, type: 'alert', duration: 'long' })
+        )
       }
     }
 

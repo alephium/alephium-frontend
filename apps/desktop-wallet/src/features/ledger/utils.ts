@@ -40,11 +40,19 @@ export class LedgerAlephium {
   app: AlephiumLedgerApp
 
   static async create(): Promise<LedgerAlephium> {
-    const transport = await getLedgerTransport()
-    const app = new AlephiumLedgerApp(transport)
-    const version = await app.getVersion()
-    console.debug(`Ledger app version: ${version}`)
-    return new LedgerAlephium(app)
+    const transportPromise = getLedgerTransport()
+    const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Timeout')), 5000))
+    const transport = await Promise.race([transportPromise, timeoutPromise])
+
+    try {
+      const app = new AlephiumLedgerApp(transport)
+      const version = await app.getVersion()
+      console.debug(`Ledger app version: ${version}`)
+      return new LedgerAlephium(app)
+    } catch (error) {
+      await transport.close()
+      throw error
+    }
   }
 
   private constructor(app: AlephiumLedgerApp) {

@@ -499,5 +499,6 @@
   "Could not generate address": "Could not generate address",
   "Could not generate one address per group": "Could not generate one address per group",
   "could_not_save_new_address_one": "Could not save new address",
-  "could_not_save_new_address_other": "Could not save new addresses"
+  "could_not_save_new_address_other": "Could not save new addresses",
+  "Could not connect to Alephium Ledger app": "Could not connect to Alephium Ledger app"
 }

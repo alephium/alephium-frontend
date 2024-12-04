@@ -67,11 +67,18 @@ const useAddressGeneration = () => {
   const currentAddressIndexes = useMemo(() => addresses.map(({ index }) => index), [addresses])
 
   const generateAddress = useCallback(
-    async (group?: GenerateAddressProps['group']): Promise<NonSensitiveAddressData> =>
+    async (group?: GenerateAddressProps['group']): Promise<NonSensitiveAddressData | null> =>
       isLedger
-        ? (await LedgerAlephium.create()).generateAddress({ group, skipAddressIndexes: currentAddressIndexes })
+        ? LedgerAlephium.create()
+            .catch((error) => {
+              console.error(error)
+              dispatch(
+                showToast({ text: `${t('Could not connect to Alephium Ledger app')}`, type: 'alert', duration: 'long' })
+              )
+            })
+            .then((app) => (app ? app.generateAddress({ group, skipAddressIndexes: currentAddressIndexes }) : null))
         : keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes }),
-    [currentAddressIndexes, isLedger]
+    [currentAddressIndexes, dispatch, isLedger, t]
   )
 
   const generateAndSaveOneAddressPerGroup = async (
@@ -84,8 +91,11 @@ const useAddressGeneration = () => {
 
     try {
       for (const group of groups) {
+        const address = await generateAddress(group)
+        if (!address) continue
+
         addresses.push({
-          ...(await generateAddress(group)),
+          ...address,
           group,
           isDefault: false,
           label: labelPrefix ? `${labelPrefix} ${group}` : '',

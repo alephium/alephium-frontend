@@ -15,10 +15,9 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { NonSensitiveAddressData } from '@alephium/keyring'
-import { groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { Info } from 'lucide-react'
-import { memo, useEffect, useState } from 'react'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AddressMetadataForm from '@/components/AddressMetadataForm'
@@ -53,33 +52,19 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
 
   const [addressLabel, setAddressLabel] = useState({ title: '', color: isPassphraseUsed ? '' : getRandomLabelColor() })
   const [isDefaultAddress, setIsDefaultAddress] = useState(false)
-  const [newAddressData, setNewAddressData] = useState<NonSensitiveAddressData>()
   const [newAddressGroup, setNewAddressGroup] = useState<number>()
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    if (singleAddress) {
-      setIsLoading(true)
-      generateAddress()
-        .then((address) => {
-          setNewAddressData(address)
-          setNewAddressGroup(groupOfAddress(address.hash))
-        })
-        .catch((error) => {
-          const message = 'Could not generate address'
-          sendAnalytics({ type: 'error', message })
-          dispatch(showToast({ text: `${t(message)}: ${error}`, type: 'alert', duration: 'long' }))
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
-    }
-  }, [dispatch, generateAddress, sendAnalytics, singleAddress, t])
-
   const onClose = () => dispatch(closeModal({ id }))
 
-  const onGenerateClick = async () => {
-    if (singleAddress && newAddressData) {
+  const generateSingleAddress = async () => {
+    setIsLoading(true)
+
+    try {
+      const address = await generateAddress(newAddressGroup)
+
+      if (!address) return
+
       const settings = {
         isDefault: isDefaultAddress,
         color: addressLabel.color,
@@ -87,44 +72,16 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
       }
 
       try {
-        saveNewAddresses([{ ...newAddressData, ...settings }])
+        saveNewAddresses([{ ...address, ...settings }])
 
         sendAnalytics({ event: 'New address created', props: { label_length: settings.label.length } })
-      } catch {
+        onClose()
+      } catch (error) {
+        dispatch(
+          showToast({ text: `${t('could_not_save_new_address_one')}: ${error}`, type: 'alert', duration: 'long' })
+        )
         sendAnalytics({ type: 'error', message: 'Error while saving newly generated address' })
       }
-    } else {
-      setIsLoading(true)
-      await generateAndSaveOneAddressPerGroup({ labelPrefix: addressLabel.title, labelColor: addressLabel.color })
-      setIsLoading(false)
-
-      sendAnalytics({ event: 'One address per group generated', props: { label_length: addressLabel.title.length } })
-    }
-    onClose()
-  }
-
-  let defaultAddressMessage = t('Default address for sending transactions.') as string
-
-  if (defaultAddress) {
-    defaultAddressMessage +=
-      defaultAddress.index !== newAddressData?.index
-        ? ' ' +
-          t('Note that if activated, "{{ address }}" will not be the default address anymore.', {
-            address: getName(defaultAddress)
-          })
-        : ''
-  }
-
-  const onSelect = async (group?: number) => {
-    if (group === undefined) return
-
-    try {
-      setIsLoading(true)
-
-      const address = await generateAddress(group)
-
-      setNewAddressData(address)
-      setNewAddressGroup(group)
     } catch (error) {
       const message = 'Could not generate address'
       sendAnalytics({ type: 'error', message })
@@ -133,6 +90,22 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
       setIsLoading(false)
     }
   }
+
+  const generateOneAddressPerGroup = async () => {
+    setIsLoading(true)
+    await generateAndSaveOneAddressPerGroup({ labelPrefix: addressLabel.title, labelColor: addressLabel.color })
+    setIsLoading(false)
+    onClose()
+
+    sendAnalytics({ event: 'One address per group generated', props: { label_length: addressLabel.title.length } })
+  }
+
+  const defaultAddressMessage = `${t('Default address for sending transactions.')} ${t(
+    'Note that if activated, "{{ address }}" will not be the default address anymore.',
+    {
+      address: getName(defaultAddress)
+    }
+  )}`
 
   return (
     <CenteredModal title={title} id={id} isLoading={isLoading}>
@@ -167,7 +140,7 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
             label={t('Group')}
             controlledValue={newAddressGroup !== undefined ? generateGroupSelectOption(newAddressGroup) : undefined}
             options={Array.from(Array(TOTAL_NUMBER_OF_GROUPS)).map((_, index) => generateGroupSelectOption(index))}
-            onSelect={onSelect}
+            onSelect={setNewAddressGroup}
             title={t('Select group')}
             id="group"
           />
@@ -177,7 +150,9 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
         <ModalFooterButton role="secondary" onClick={onClose}>
           {t('Cancel')}
         </ModalFooterButton>
-        <ModalFooterButton onClick={onGenerateClick}>{t('Generate')}</ModalFooterButton>
+        <ModalFooterButton onClick={singleAddress ? generateSingleAddress : generateOneAddressPerGroup}>
+          {t('Generate')}
+        </ModalFooterButton>
       </ModalFooterButtons>
     </CenteredModal>
   )
