@@ -164,7 +164,10 @@ const useAddressGeneration = () => {
     dispatch(addressDiscoveryStarted(enableLoading))
 
     try {
-      const derivedAddresses = await discoverAndCacheActiveAddresses(skipIndexes)
+      const derivedAddresses = isLedger
+        ? await LedgerAlephium.create().then((app) => app.discoverActiveAddresses(skipIndexes))
+        : await discoverAndCacheActiveAddresses(skipIndexes)
+
       const newAddresses = derivedAddresses.map((address) => ({
         ...address,
         isDefault: false,
@@ -177,7 +180,8 @@ const useAddressGeneration = () => {
         sendAnalytics({ type: 'error', message: 'Error while saving newly discovered address' })
       }
       dispatch(addressDiscoveryFinished(enableLoading))
-    } catch {
+    } catch (error) {
+      console.error(error)
       sendAnalytics({ type: 'error', message: 'Could not discover addresses' })
     }
   }

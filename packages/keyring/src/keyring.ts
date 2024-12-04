@@ -37,6 +37,8 @@ export type NonSensitiveAddressData = {
   publicKey: string
 }
 
+export type NonSensitiveAddressDataWithGroup = NonSensitiveAddressData & { group: number }
+
 type SensitiveAddressData = NonSensitiveAddressData & {
   privateKey: Uint8Array
 }

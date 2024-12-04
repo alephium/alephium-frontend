@@ -16,13 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { GenerateAddressProps, NonSensitiveAddressData } from '@alephium/keyring'
+import { GenerateAddressProps, NonSensitiveAddressDataWithGroup } from '@alephium/keyring'
 import { AlephiumApp as AlephiumLedgerApp } from '@alephium/ledger-app'
 import { findNextAvailableAddressIndex } from '@alephium/shared'
 import { KeyType, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { getHDWalletPath } from '@alephium/web3-wallet'
 import TransportWebHID from '@ledgerhq/hw-transport-webhid'
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb'
+
+import { AccountDiscovery } from '@/features/ledger/discovery'
 
 export const getLedgerTransport = async () => {
   try {
@@ -33,10 +35,7 @@ export const getLedgerTransport = async () => {
   return TransportWebUSB.create()
 }
 
-type NonSensitiveAddressDataWithGroup = NonSensitiveAddressData & { group: number }
-
-export class LedgerAlephium {
-  // extends AccountDiscovery
+export class LedgerAlephium extends AccountDiscovery {
   app: AlephiumLedgerApp
 
   static async create(): Promise<LedgerAlephium> {
@@ -56,7 +55,7 @@ export class LedgerAlephium {
   }
 
   private constructor(app: AlephiumLedgerApp) {
-    // super()
+    super()
     this.app = app
   }
 
@@ -116,6 +115,11 @@ export class LedgerAlephium {
     this.close()
 
     return newAddressData
+  }
+
+  // Copied from extension wallet
+  public async discoverActiveAddresses(skipIndexes: number[] = []): Promise<NonSensitiveAddressDataWithGroup[]> {
+    return await this.deriveActiveAccounts(this._deriveAddress, skipIndexes)
   }
 
   // private async deriveAccount(
