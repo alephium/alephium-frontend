@@ -26,11 +26,12 @@ import { useTranslation } from 'react-i18next'
 import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { useIsLedger } from '@/features/ledger/useIsLedger'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { SignMessageData } from '@/features/walletConnect/walletConnectTypes'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalContent, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { messageSignFailed, messageSignSucceeded } from '@/storage/transactions/transactionsActions'
 
@@ -43,7 +44,7 @@ const SignMessageModal = memo(({ id, txData }: ModalBaseProp & SignMessageModalP
   const { sendAnalytics } = useAnalytics()
   const dispatch = useAppDispatch()
   const { sendSuccessResponse, sendFailureResponse, sendUserRejectedResponse } = useWalletConnectContext()
-  const isLedger = useAppSelector((s) => s.activeWallet.isLedger)
+  const isLedger = useIsLedger()
 
   const handleSign = async () => {
     try {

@@ -99,7 +99,8 @@ const useWalletLock = () => {
       wallet: {
         id: encryptedWallet.id,
         name: encryptedWallet.name,
-        isPassphraseUsed
+        isPassphraseUsed,
+        isLedger: false
       },
       initialAddress
     }

@@ -18,23 +18,23 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { getHumanReadableError } from '@alephium/shared'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
 import { fadeInSlowly } from '@/animations'
+import ActionLink from '@/components/ActionLink'
 import AppHeader from '@/components/AppHeader'
 import Button from '@/components/Button'
 import InfoBox from '@/components/InfoBox'
 import { FloatingPanel, FooterActionsContainer } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
-import Paragraph from '@/components/Paragraph'
 import useInitializeAppWithLedgerData from '@/features/ledger/useInitializeAppWithLedgerData'
 import { LedgerAlephium } from '@/features/ledger/utils'
 import { useAppDispatch } from '@/hooks/redux'
 import LockedWalletLayout from '@/pages/LockedWalletLayout'
 import { toggleAppLoading } from '@/storage/global/globalActions'
-
-// TODO: Translate strings
+import { links } from '@/utils/links'
+import { openInWebBrowser } from '@/utils/misc'
 
 const ConnectLedgerInstructionsPage = () => {
   const { t } = useTranslation()
@@ -64,16 +64,20 @@ const ConnectLedgerInstructionsPage = () => {
   return (
     <LockedWalletLayout {...fadeInSlowly}>
       <FloatingPanel enforceMinHeight>
-        <PanelTitle onBackButtonClick={() => navigate('/')}>Connect your Ledger</PanelTitle>
-        <Paragraph secondary>1. Plug in and unlock your Ledger device.</Paragraph>
-        <Paragraph secondary>
-          2. Open the Alephium Ledger app. The Alephium app can be installed via Ledger Live.
-        </Paragraph>
+        <PanelTitle onBackButtonClick={() => navigate('/')}>{t('Connect your Ledger')}</PanelTitle>
+        <ol>
+          <li>{t('Plug in and unlock your Ledger device.')}</li>
+          <li>
+            <Trans t={t} i18nKey="ledgerInstructionsOpenApp">
+              Open the Alephium Ledger app. The Alephium app can be installed via
+              <ActionLink onClick={() => openInWebBrowser(links.ledgerLive)}>Ledger Live</ActionLink>.
+            </Trans>
+          </li>
+        </ol>
         {error && (
           <>
             <InfoBox importance="warning">
-              <div>Is your device plugged in and the Alephium app open?</div>
-              <div>Your Ledger should say "Alephium is ready".</div>
+              <div>{t('Is your device plugged in and the Alephium app open?')}</div>
             </InfoBox>
             <InfoBox importance="alert">
               <div>{error}</div>

@@ -25,7 +25,7 @@ export type ActiveWallet = {
   id: string
   name: string
   isPassphraseUsed: boolean
-  isLedger?: boolean
+  isLedger: boolean
 }
 
 export type GeneratedWallet = {

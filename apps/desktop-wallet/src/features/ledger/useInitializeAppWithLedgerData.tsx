@@ -44,8 +44,6 @@ const useInitializeAppWithLedgerData = () => {
       })
     )
 
-    // TODO: Discover active addresses? Too slow with Ledger...
-
     navigate('/wallet/overview')
   }
 

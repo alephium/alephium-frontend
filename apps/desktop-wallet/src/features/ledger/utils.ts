@@ -35,6 +35,7 @@ export const getLedgerTransport = async () => {
   return TransportWebUSB.create()
 }
 
+// Heavily inspired by the code in the extension wallet
 export class LedgerAlephium extends AccountDiscovery {
   app: AlephiumLedgerApp
 
@@ -133,79 +134,7 @@ export class LedgerAlephium extends AccountDiscovery {
     }
   }
 
-  // private async deriveAccount(
-  //   networkId: string,
-  //   startIndex: number,
-  //   keyType: KeyType,
-  //   group?: number
-  // ): Promise<WalletAccount> {
-  //   const [newAccount, hdIndex] = await this.getAccount(startIndex, group, keyType)
-  //   return {
-  //     address: newAccount.address,
-  //     networkId: networkId,
-  //     signer: {
-  //       type: 'ledger' as const,
-  //       publicKey: newAccount.publicKey,
-  //       keyType: newAccount.keyType,
-  //       derivationIndex: hdIndex,
-  //       group: groupOfAddress(newAccount.address)
-  //     },
-  //     type: 'alephium'
-  //   }
-  // }
-
-  // async createNewAccount(networkId: string, targetAddressGroup: number | undefined, keyType: string) {
-  //   if (keyType !== 'default') {
-  //     throw Error('Unsupported key type: ' + keyType)
-  //   }
-
-  //   const existingLedgerAccounts = await getAllLedgerAccounts(networkId)
-  //   let index = 0
-  //   // eslint-disable-next-line no-constant-condition
-  //   while (true) {
-  //     const newAccount = await this.deriveAccount(networkId, index, keyType, targetAddressGroup)
-  //     if (existingLedgerAccounts.find((account) => account.address === newAccount.address) === undefined) {
-  //       await this.app.close()
-  //       return newAccount
-  //     }
-  //     index = newAccount.signer.derivationIndex + 1
-  //   }
-  // }
-
-  // async verifyAccount(account: Account): Promise<boolean> {
-  //   const path = getHDWalletPath(account.signer.keyType, account.signer.derivationIndex)
-  //   const [deviceAccount, _] = await this.app.getAccount(path, undefined, account.signer.keyType, true)
-  //   await this.app.close()
-  //   return deviceAccount.address !== account.address
-  // }
-
-  // async signUnsignedTx(account: Account, unsignedTx: Buffer) {
-  //   const hdPath = getHDWalletPath(account.signer.keyType, account.signer.derivationIndex)
-  //   const signature = await this.app.signUnsignedTx(hdPath, unsignedTx)
-  //   await this.app.close()
-  //   return signature
-  // }
-
   async close() {
     await this.app.close()
   }
-
-  // public async discoverActiveAccounts(networkId: string): Promise<WalletAccount[]> {
-  //   const existingLedgerAccounts = await getAllLedgerAccounts(networkId)
-  //   const network = await getNetwork(networkId)
-  //   if (!network.explorerUrl) {
-  //     return []
-  //   }
-
-  //   console.info(`start discovering active ledger accounts for ${networkId}`)
-  //   const explorerProvider = new ExplorerProvider(network.explorerApiUrl)
-  //   const discoverAccount = (startIndex: number): Promise<WalletAccount> =>
-  //     this.deriveAccount(network.id, startIndex, 'default')
-  //   const walletAccounts = await this.deriveActiveAccountsForNetwork(explorerProvider, discoverAccount)
-  //   const newDiscoveredAccounts = walletAccounts.filter(
-  //     (account) => !existingLedgerAccounts.find((a) => a.address === account.address)
-  //   )
-  //   console.info(`Discovered ${newDiscoveredAccounts.length} new active accounts for ${networkId}`)
-  //   return newDiscoveredAccounts
-  // }
 }

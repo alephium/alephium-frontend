@@ -39,7 +39,7 @@ export const signAndSendTransaction = async (
   fromAddress: Address,
   txId: string,
   unsignedTx: string,
-  isLedger = false
+  isLedger: boolean
 ) => {
   const signature = isLedger
     ? await LedgerAlephium.create().then((app) => app.signUnsignedTx(fromAddress.index, unsignedTx))

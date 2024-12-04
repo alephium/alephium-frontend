@@ -75,7 +75,7 @@ export const handleTransferSend = async (
   transactionData: TransferTxData,
   context: TxContext,
   posthog: PostHog,
-  isLedger = false
+  isLedger: boolean
 ) => {
   const { fromAddress, toAddress, lockTime: lockDateTime, assetAmounts } = transactionData
   const { isSweeping, sweepUnsignedTxs, consolidationRequired, unsignedTxId, unsignedTransaction } = context

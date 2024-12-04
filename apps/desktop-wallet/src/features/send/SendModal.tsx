@@ -30,6 +30,7 @@ import { fadeIn } from '@/animations'
 import { buildSweepTransactions } from '@/api/transactions'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { useIsLedger } from '@/features/ledger/useIsLedger'
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import CallContractAddressesTxModalContent from '@/features/send/sendModals/callContract/AddressesTxModalContent'
@@ -103,7 +104,7 @@ function SendModal<PT extends { fromAddress: Address }>({
   const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
   const { sendUserRejectedResponse, sendSuccessResponse, sendFailureResponse } = useWalletConnectContext()
-  const isLedger = useAppSelector((s) => s.activeWallet.isLedger)
+  const isLedger = useIsLedger()
 
   const [addressesData, setAddressesData] = useState<AddressesTxModalData>(txData ?? initialTxData)
   const [transactionData, setTransactionData] = useState(txData)

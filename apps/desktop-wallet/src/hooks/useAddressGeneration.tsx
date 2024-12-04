@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next'
 
 import { discoverAndCacheActiveAddresses } from '@/api/addresses'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { useIsLedger } from '@/features/ledger/useIsLedger'
 import { LedgerAlephium } from '@/features/ledger/utils'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
@@ -61,7 +62,7 @@ const useAddressGeneration = () => {
   const dispatch = useAppDispatch()
   const addresses = useAppSelector(selectAllAddresses)
   const { sendAnalytics } = useAnalytics()
-  const isLedger = useAppSelector((s) => s.activeWallet.isLedger)
+  const isLedger = useIsLedger()
   const { t } = useTranslation()
 
   const currentAddressIndexes = useMemo(() => addresses.map(({ index }) => index), [addresses])

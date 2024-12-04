@@ -79,7 +79,7 @@ export const handleDeployContractSend = async (
   { fromAddress }: DeployContractTxData,
   context: TxContext,
   posthog: PostHog,
-  isLedger = false
+  isLedger: boolean
 ) => {
   if (!context.unsignedTransaction) throw Error('No unsignedTransaction available')
 

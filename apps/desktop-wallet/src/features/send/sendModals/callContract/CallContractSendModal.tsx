@@ -60,7 +60,7 @@ export const handleCallContractSend = async (
   { fromAddress, assetAmounts }: CallContractTxData,
   ctx: TxContext,
   posthog: PostHog,
-  isLedger = false
+  isLedger: boolean
 ) => {
   if (!ctx.unsignedTransaction) throw Error('No unsignedTransaction available')
 
