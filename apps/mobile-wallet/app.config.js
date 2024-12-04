@@ -83,6 +83,8 @@ export default {
         'android.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND', // To potentially fix crash due to ForegroundServiceStartNotAllowedException
         'android.permission.WAKE_LOCK'
       ],
+      // See https://github.com/alephium/alephium-frontend/issues/1021
+      blockedPermissions: ['android.permission.READ_MEDIA_IMAGES', 'android.permission.READ_MEDIA_VIDEO'],
       package: 'org.alephium.wallet'
     },
     web: {
