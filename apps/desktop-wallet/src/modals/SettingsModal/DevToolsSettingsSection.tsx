@@ -47,6 +47,7 @@ const DevToolsSettingsSection = () => {
   const currentNetwork = useAppSelector((s) => s.network)
   const faucetCallPending = useAppSelector((s) => s.global.faucetCallPending)
   const devTools = useAppSelector((state) => state.settings.devTools)
+  const isLedger = useAppSelector((state) => state.activeWallet.isLedger)
   const { sendAnalytics } = useAnalytics()
 
   const toggleDevTools = () => {
@@ -142,13 +143,15 @@ const DevToolsSettingsSection = () => {
                     <ButtonStyled role="secondary" short onClick={() => copyPublicKey(address)}>
                       {t('Public key')}
                     </ButtonStyled>
-                    <ButtonStyled
-                      role="secondary"
-                      short
-                      onClick={() => openCopyPrivateKeyConfirmationModal(address.hash)}
-                    >
-                      {t('Private key')}
-                    </ButtonStyled>
+                    {!isLedger && (
+                      <ButtonStyled
+                        role="secondary"
+                        short
+                        onClick={() => openCopyPrivateKeyConfirmationModal(address.hash)}
+                      >
+                        {t('Private key')}
+                      </ButtonStyled>
+                    )}
                   </Buttons>
                 </AddressRow>
               ))}
