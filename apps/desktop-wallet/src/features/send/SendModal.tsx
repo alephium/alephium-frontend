@@ -103,6 +103,7 @@ function SendModal<PT extends { fromAddress: Address }>({
   const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
   const { sendUserRejectedResponse, sendSuccessResponse, sendFailureResponse } = useWalletConnectContext()
+  const isLedger = useAppSelector((s) => s.activeWallet.isLedger)
 
   const [addressesData, setAddressesData] = useState<AddressesTxModalData>(txData ?? initialTxData)
   const [transactionData, setTransactionData] = useState(txData)
@@ -150,10 +151,10 @@ function SendModal<PT extends { fromAddress: Address }>({
     try {
       const signature =
         type === 'transfer'
-          ? await handleTransferSend(transactionData as TransferTxData, txContext, posthog)
+          ? await handleTransferSend(transactionData as TransferTxData, txContext, posthog, isLedger)
           : type === 'call-contract'
-            ? await handleCallContractSend(transactionData as CallContractTxData, txContext, posthog)
-            : await handleDeployContractSend(transactionData as DeployContractTxData, txContext, posthog)
+            ? await handleCallContractSend(transactionData as CallContractTxData, txContext, posthog, isLedger)
+            : await handleDeployContractSend(transactionData as DeployContractTxData, txContext, posthog, isLedger)
 
       if (signature && triggeredByWalletConnect) {
         const result =
@@ -186,6 +187,7 @@ function SendModal<PT extends { fromAddress: Address }>({
     contractAddress,
     dispatch,
     id,
+    isLedger,
     isSweeping,
     posthog,
     sendAnalytics,

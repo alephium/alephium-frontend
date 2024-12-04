@@ -57,6 +57,7 @@ const AddressSweepModal = memo(
     const { data: allAddressHashes } = useFetchSortedAddressesHashes()
     const { sendAnalytics } = useAnalytics()
     const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
+    const isLedger = useAppSelector((s) => s.activeWallet.isLedger)
 
     const toAddressOptions = addressHash ? addresses.filter(({ hash }) => hash !== fromAddress?.hash) : addresses
     const { data: fromAddressOptions } = useFetchAddressesHashesWithBalance()
@@ -119,7 +120,7 @@ const AddressSweepModal = memo(
       setIsLoading(true)
       try {
         for (const { txId, unsignedTx } of builtUnsignedTxs) {
-          const data = await signAndSendTransaction(sweepAddresses.from, txId, unsignedTx)
+          const data = await signAndSendTransaction(sweepAddresses.from, txId, unsignedTx, isLedger)
 
           dispatch(
             transactionSent({

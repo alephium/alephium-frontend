@@ -122,6 +122,17 @@ export class LedgerAlephium extends AccountDiscovery {
     return await this.deriveActiveAccounts(this._deriveAddress, skipIndexes)
   }
 
+  public signUnsignedTx = async (addressIndex: number, unsignedTx: string) => {
+    try {
+      const hdPath = getHDWalletPath('default', addressIndex)
+      const signature = await this.app.signUnsignedTx(hdPath, Buffer.from(unsignedTx, 'hex'))
+
+      return signature
+    } finally {
+      await this.close()
+    }
+  }
+
   // private async deriveAccount(
   //   networkId: string,
   //   startIndex: number,

@@ -500,5 +500,7 @@
   "Could not generate one address per group": "Could not generate one address per group",
   "could_not_save_new_address_one": "Could not save new address",
   "could_not_save_new_address_other": "Could not save new addresses",
-  "Could not connect to Alephium Ledger app": "Could not connect to Alephium Ledger app"
+  "Could not connect to Alephium Ledger app": "Could not connect to Alephium Ledger app",
+  "Not supported.": "Not supported.",
+  "Signing messages with Ledger is not supported.": "Signing messages with Ledger is not supported."
 }
