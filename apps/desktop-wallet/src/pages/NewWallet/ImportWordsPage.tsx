@@ -41,7 +41,7 @@ const ImportWordsPage = () => {
   const { setMnemonic } = useWalletContext()
   const { sendAnalytics } = useAnalytics()
 
-  const [phrase, setPhrase] = useState<string>('')
+  const [phrase, setPhrase] = useState('')
   const [error, setError] = useState<string | null>(null)
   const allowedWords = useRef(bip39Words)
 

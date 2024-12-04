@@ -216,7 +216,7 @@ export default AnimatedBackground
 const SvgFilters = () => (
   <svg width="0" height="0" style={{ position: 'absolute' }}>
     <filter id="combinedFilter">
-      <feGaussianBlur in="SourceGraphic" stdDeviation="120" result="blurred" />
+      <feGaussianBlur in="SourceGraphic" stdDeviation="100" result="blurred" />
     </filter>
   </svg>
 )

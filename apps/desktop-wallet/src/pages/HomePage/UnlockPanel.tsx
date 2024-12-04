@@ -76,7 +76,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
 
   return (
     <>
-      <FloatingPanelStyled verticalAlign="center" horizontalAlign="center" transparentBg borderless>
+      <FloatingPanel verticalAlign="center" horizontalAlign="center" transparentBg borderless>
         <PanelTitle centerText>
           {pendingDappConnectionUrl
             ? t('Connect to dApp')
@@ -122,7 +122,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
             {t('Import or create a wallet')}
           </ButtonStyled>
         </ButtonsSection>
-      </FloatingPanelStyled>
+      </FloatingPanel>
       <WalletPassphraseStyled
         onPassphraseConfirmed={setPassphrase}
         setIsPassphraseConfirmed={setIsPassphraseConfirmed}
@@ -136,8 +136,6 @@ export default UnlockPanel
 const SectionStyled = styled(Section)`
   min-width: 328px;
 `
-
-const FloatingPanelStyled = styled(FloatingPanel)``
 
 const ButtonsSection = styled(SectionStyled)`
   margin-top: 30px;

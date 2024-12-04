@@ -35,7 +35,7 @@ const NewWalletActions = ({ onExistingWalletLinkClick }: NewWalletActionsProps) 
 
   return (
     <>
-      <Paragraph centered secondary style={{ maxWidth: 300 }}>
+      <Paragraph centered secondary style={{ maxWidth: 360 }}>
         {t('Please choose whether you want to create a new wallet or import an existing one.')}
       </Paragraph>
       <Section inList>

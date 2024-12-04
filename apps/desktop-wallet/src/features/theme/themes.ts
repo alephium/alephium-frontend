@@ -30,7 +30,7 @@ export const lightTheme: DefaultTheme = {
     background2: '#fff',
     hover: 'rgba(0, 0, 0, 0.01)',
     highlight: '#fff',
-    accent: colord('#2338ee').alpha(0.15).toHex()
+    accent: colord('#3623ee').alpha(0.15).toHex()
   },
   font: {
     primary: '#00001d',
@@ -50,7 +50,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: '0 0 80px rgba(0, 0, 0, 0.2)'
   },
   global: {
-    accent: '#2338ee',
+    accent: '#3623ee',
     complementary: '#b07dcb',
     alert: '#e52437',
     valid: '#189b3c',
