@@ -20,11 +20,9 @@ import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
 const Box = styled(motion.div)<{ secondary?: boolean }>`
-  background-color: ${({ theme, secondary }) => (secondary ? theme.bg.secondary : theme.bg.primary)};
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  border: 1px solid ${({ theme }) => theme.border.secondary};
   border-radius: var(--radius-huge);
   width: 100%;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.04);
 `
 
 export default Box

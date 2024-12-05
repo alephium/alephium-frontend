@@ -21,7 +21,6 @@ import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import Box from '@/components/Box'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
@@ -99,8 +98,7 @@ const HeaderMiddle = styled.div`
   flex: 1;
 `
 
-const TableGrid = styled(Box)`
-  contain: paint; // This is amazing. It replaces "overflow: hidden". Using "overflow" on this prevents us from having a sticky table header.
+const TableGrid = styled.div`
   display: flex;
   flex-direction: column;
   border-radius: var(--radius-big);

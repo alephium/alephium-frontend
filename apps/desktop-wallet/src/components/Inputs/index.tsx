@@ -70,7 +70,7 @@ export const inputDefaultStyle = (
   height: ${heightSize === 'small' ? '38px' : heightSize === 'big' ? '50px' : 'var(--inputHeight)'};
   width: 100%;
   border-radius: var(--radius-medium);
-  background-color: ${({ theme }) => theme.bg.highlight};
+  background-color: ${({ theme }) => theme.bg.primary};
   border: 1px solid ${({ theme }) => theme.border.primary};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 45px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
@@ -105,10 +105,7 @@ export const inputDefaultStyle = (
   }
 
   &:hover {
-    background-color: ${({ theme }) =>
-      colord(theme.bg.highlight)
-        .alpha(theme.name === 'dark' ? 0.05 : 0.65)
-        .toHex()};
+    background-color: ${({ theme }) => theme.bg.highlight};
   }
 
   // Remove number arrows

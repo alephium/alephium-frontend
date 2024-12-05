@@ -78,7 +78,7 @@ const SideBarStyled = styled.div<{ noExpansion?: boolean }>`
   flex-direction: column;
   z-index: 1;
   width: ${walletSidebarWidthPx}px;
-  padding: ${appHeaderHeightPx - 16}px var(--spacing-4) var(--spacing-4);
+  padding: ${appHeaderHeightPx - 20}px 0 var(--spacing-4) var(--spacing-4);
   transition: width 0.4s ease-in-out;
 
   ${({ noExpansion }) =>

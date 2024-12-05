@@ -21,7 +21,7 @@ import { createGlobalStyle } from 'styled-components'
 
 import resets from '@/style/resets'
 
-export const appHeaderHeightPx = 68
+export const appHeaderHeightPx = 72
 export const walletSidebarWidthPx = 72
 export const messagesLeftMarginPx = 70
 
@@ -58,7 +58,7 @@ export const GlobalStyle = createGlobalStyle`
     --fontWeight-semiBold: 600;
     --fontWeight-bold: 700;
 
-    --inputHeight: 44px;
+    --inputHeight: 42px;
     --tableCellHeight: 46px;
     --toggleWidth: 52px;
   }

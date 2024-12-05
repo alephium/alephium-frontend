@@ -98,7 +98,6 @@ const Cell = styled.div`
 const GridRow = styled.div`
   display: grid;
   grid-template-columns: 40px 1fr 1fr 1fr 1fr;
-  padding: 0 20px;
 
   &:not(:last-child) {
     ${Cell} {

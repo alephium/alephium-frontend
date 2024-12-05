@@ -73,8 +73,8 @@ export const UnlockedWalletPanel = styled.div<{
   doubleTop?: boolean
   backgroundColor?: keyof DefaultTheme['bg']
 }>`
-  padding-left: 30px;
-  padding-right: 50px;
+  padding-left: 40px;
+  padding-right: 40px;
 
   ${({ top, doubleTop }) => css`
     padding-top: ${top ? 20 : doubleTop ? 40 : 0}px;

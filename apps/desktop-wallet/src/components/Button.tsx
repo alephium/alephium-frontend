@@ -141,7 +141,7 @@ export default styled(Button)`
             contrast: colord(theme.bg.background2).lighten(0.04).toRgbString(),
             valid: colord(theme.global.valid).darken(0.04).toRgbString(),
             alert: colord(theme.global.alert).alpha(0.2).toRgbString(),
-            faded: colord(theme.bg.primary).lighten(0.04).toRgbString()
+            faded: theme.bg.highlight
           }[variant]
         }[role]
 

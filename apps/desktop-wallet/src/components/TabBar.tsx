@@ -115,7 +115,8 @@ export const Tab = styled.div<{ isActive: boolean }>`
         `}
 
   &:hover {
-    color: ${({ theme }) => theme.font.primary};
+    color: ${({ isActive, theme }) => (isActive ? theme.font.contrastPrimary : theme.font.primary)};
+    background-color: ${({ isActive, theme }) => (isActive ? theme.global.accent : theme.bg.highlight)};
   }
 `
 

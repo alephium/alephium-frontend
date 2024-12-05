@@ -28,13 +28,13 @@ export default TableTabBar
 
 const TableTabBarStyled = styled(TabBar)`
   height: 52px;
-  padding: 8px;
   gap: 10px;
-  justify-content: center;
+  margin-bottom: var(--spacing-2);
 ` as typeof TabBar
 
 const TableTab = styled(Tab)`
   min-width: 60px;
   overflow: hidden;
   font-size: 14px;
+  height: var(--inputHeight);
 `
