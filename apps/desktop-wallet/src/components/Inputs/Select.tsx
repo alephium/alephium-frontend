@@ -179,7 +179,7 @@ function Select<T extends OptionValue>({
     if (!allowCustomValue && value && !options.find((option) => option.value === value.value)) {
       setValue(undefined)
     }
-  }, [options, value])
+  }, [allowCustomValue, options, value])
 
   return (
     <>
