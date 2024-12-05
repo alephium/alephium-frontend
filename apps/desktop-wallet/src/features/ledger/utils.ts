@@ -113,14 +113,20 @@ export class LedgerAlephium extends AccountDiscovery {
       newAddressData = await this._deriveAddress(nextAddressIndex)
     }
 
-    this.close()
+    if (!keepAppOpen) {
+      this.close()
+    }
 
     return newAddressData
   }
 
   // Copied from extension wallet
   public async discoverActiveAddresses(skipIndexes: number[] = []): Promise<NonSensitiveAddressDataWithGroup[]> {
-    return await this.deriveActiveAccounts(this._deriveAddress, skipIndexes)
+    const addresses = await this.deriveActiveAccounts(this._deriveAddress, skipIndexes)
+
+    this.close()
+
+    return addresses
   }
 
   public signUnsignedTx = async (addressIndex: number, unsignedTx: string) => {
