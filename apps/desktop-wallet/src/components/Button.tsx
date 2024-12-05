@@ -277,10 +277,10 @@ export default styled(Button)`
   display: flex;
   align-items: center;
   justify-content: ${({ Icon }) => (Icon ? 'center' : 'flex-start')};
-  height: ${({ squared, short, tall }) => (short ? '34px' : squared ? '40px' : tall ? '48px' : '42px')};
+  height: ${({ squared, short, tall }) => (short ? '38px' : squared ? '40px' : tall ? '48px' : '42px')};
   width: ${({ squared, short, wide }) => (squared ? '40px' : short && !wide ? 'auto' : wide ? '100%' : '80%')};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
-  border-radius: ${({ short, rounded }) => (rounded ? '100px' : short ? 'var(--radius-medium)' : '100px')};
+  border-radius: 100px;
   font-weight: ${({ role, variant }) =>
     role === 'secondary' || variant === 'faded' ? 'var(--fontWeight-medium)' : 'var(--fontWeight-semiBold)'};
   font-size: 14px;
@@ -290,7 +290,8 @@ export default styled(Button)`
   min-width: ${({ squared }) => (squared ? '40px' : '60px')};
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};
-  transition: all 0.15s;
+  backdrop-filter: blur(10px)
+    brightness(${({ theme, transparent }) => !transparent && (theme.name === 'dark' ? '1.5' : '2')}) saturate(1.2);
 
   &:disabled {
     opacity: 0.5;

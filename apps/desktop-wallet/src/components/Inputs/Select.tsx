@@ -397,6 +397,7 @@ export const MoreIcon = styled.div`
   display: flex;
   align-items: center;
   color: ${({ theme }) => theme.font.secondary};
+  z-index: 1;
 `
 
 const SelectedValue = styled.div<InputProps>`
@@ -443,7 +444,6 @@ export const OptionSelect = styled.div`
   overflow-y: auto;
   border: 0;
   color: inherit;
-  background: transparent;
   display: flex;
   flex-direction: column;
 `
@@ -462,7 +462,7 @@ export const OptionItem = styled.button<{
   color: ${({ theme }) => theme.font.primary};
   user-select: none;
   text-align: left;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.background1};
   visibility: ${({ invisible }) => invisible && 'hidden'};
   font-weight: ${({ selected }) => selected && 'var(--fontWeight-semiBold)'};
 
@@ -475,12 +475,11 @@ export const OptionItem = styled.button<{
       ? css`
           margin: var(--spacing-2) var(--spacing-4);
           border-radius: var(--radius-medium);
-          background-color: ${theme.bg.primary};
           overflow: hidden;
         `
       : css`
           &:not(:last-child) {
-            border-bottom: 1px solid ${({ theme }) => theme.border.primary};
+            border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
           }
         `}
 

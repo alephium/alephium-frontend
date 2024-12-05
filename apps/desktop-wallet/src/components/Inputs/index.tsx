@@ -56,8 +56,8 @@ export const inputPlaceHolderVariants: Variants = {
 }
 
 export const inputStyling = {
-  paddingRight: '12px',
-  paddingLeftRight: '15px'
+  paddingRight: '20px',
+  paddingLeftRight: '20px'
 }
 
 export const inputDefaultStyle = (
@@ -69,15 +69,15 @@ export const inputDefaultStyle = (
 ) => css`
   height: ${heightSize === 'small' ? '38px' : heightSize === 'big' ? '50px' : 'var(--inputHeight)'};
   width: 100%;
-  border-radius: var(--radius-medium);
+  border-radius: 100px;
   background-color: ${({ theme }) => theme.bg.primary};
-  border: 1px solid ${({ theme }) => theme.border.primary};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 45px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
   font-weight: var(--fontWeight-medium);
   font-size: ${largeText ? '15px' : '14px'};
   text-align: left;
   font-family: inherit;
+  backdrop-filter: blur(10px) brightness(2) saturate(1.2);
 
   transition: all 0.15s;
 
@@ -89,18 +89,15 @@ export const inputDefaultStyle = (
 
   &:focus {
     background-color: ${({ theme }) => theme.bg.highlight};
-    border: 1px solid ${({ theme }) => theme.global.accent};
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.global.accent};
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.global.accent};
   }
 
   &.error {
-    border: 1px solid ${({ theme }) => theme.global.alert};
     background-color: ${({ theme }) => colord(theme.global.alert).alpha(0.1).toRgbString()};
   }
 
   &:disabled {
     background-color: ${({ theme }) => theme.bg.secondary};
-    border: 1px solid ${({ theme }) => theme.border.primary};
     cursor: not-allowed;
   }
 
@@ -147,7 +144,6 @@ export const InputLabel: FC<HTMLMotionProps<'label'> & { isElevated: boolean }> 
 
 const StyledInputLabel = styled(motion.label)`
   position: absolute;
-
   left: ${inputStyling.paddingLeftRight};
   top: 0;
   height: 100%;
@@ -157,6 +153,7 @@ const StyledInputLabel = styled(motion.label)`
   color: ${({ theme }) => theme.font.tertiary};
   pointer-events: none;
   transform-origin: left;
+  z-index: 1;
 `
 
 export const InputIconContainer = styled(motion.div)`

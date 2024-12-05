@@ -80,8 +80,6 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
     opacity: ${({ isActive }) => (isActive ? 1 : 0.6)} !important;
   }
 
-  transition: all 0.15s ease-in-out;
-
   @media (max-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
     gap: 0;
     width: 42px;
