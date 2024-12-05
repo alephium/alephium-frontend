@@ -25,7 +25,7 @@ import { useTranslation } from 'react-i18next'
 import { discoverAndCacheActiveAddresses } from '@/api/addresses'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useIsLedger } from '@/features/ledger/useIsLedger'
-import { LedgerAlephium } from '@/features/ledger/utils'
+import { generateLedgerAddressesFromMetadata, LedgerAlephium } from '@/features/ledger/utils'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
   addressDiscoveryFinished,
@@ -67,19 +67,22 @@ const useAddressGeneration = () => {
 
   const currentAddressIndexes = useMemo(() => addresses.map(({ index }) => index), [addresses])
 
+  const onLedgerError = useCallback(
+    (error: Error) => {
+      console.error(error)
+      dispatch(showToast({ text: `${t('Could not connect to Alephium Ledger app')}`, type: 'alert', duration: 'long' }))
+    },
+    [dispatch, t]
+  )
+
   const generateAddress = useCallback(
     async (group?: GenerateAddressProps['group']): Promise<NonSensitiveAddressData | null> =>
       isLedger
         ? LedgerAlephium.create()
-            .catch((error) => {
-              console.error(error)
-              dispatch(
-                showToast({ text: `${t('Could not connect to Alephium Ledger app')}`, type: 'alert', duration: 'long' })
-              )
-            })
+            .catch(onLedgerError)
             .then((app) => (app ? app.generateAddress({ group, skipAddressIndexes: currentAddressIndexes }) : null))
         : keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes }),
-    [currentAddressIndexes, dispatch, isLedger, t]
+    [currentAddressIndexes, isLedger, onLedgerError]
   )
 
   const generateAndSaveOneAddressPerGroup = async (
@@ -119,7 +122,15 @@ const useAddressGeneration = () => {
     }
   }
 
-  const restoreAddressesFromMetadata = async (walletId: StoredEncryptedWallet['id'], isPassphraseUsed: boolean) => {
+  const restoreAddressesFromMetadata = async ({
+    walletId,
+    isPassphraseUsed,
+    isLedger
+  }: {
+    walletId: StoredEncryptedWallet['id']
+    isPassphraseUsed: boolean
+    isLedger: boolean
+  }) => {
     if (isPassphraseUsed) return
 
     const addressesMetadata: AddressMetadata[] = addressMetadataStorage.load(walletId)
@@ -134,10 +145,19 @@ const useAddressGeneration = () => {
     dispatch(addressRestorationStarted())
 
     try {
-      const addresses = addressesMetadata.map((metadata) => ({
-        ...keyring.generateAndCacheAddress({ addressIndex: metadata.index }),
-        ...metadata
-      })) as AddressBase[]
+      let addresses: AddressBase[] = []
+
+      if (isLedger) {
+        addresses = await generateLedgerAddressesFromMetadata({
+          addressesMetadata,
+          onError: onLedgerError
+        })
+      } else {
+        addresses = addressesMetadata.map((metadata) => ({
+          ...keyring.generateAndCacheAddress({ addressIndex: metadata.index }),
+          ...metadata
+        }))
+      }
 
       // Fix corrupted data if there is no default address in stored address metadata by making first address default
       if (!addresses.some((address) => address.isDefault)) {
@@ -153,7 +173,8 @@ const useAddressGeneration = () => {
       }
 
       dispatch(addressesRestoredFromMetadata(addresses))
-    } catch {
+    } catch (error) {
+      console.error(error)
       sendAnalytics({ type: 'error', message: 'Could not generate addresses from metadata' })
     }
   }

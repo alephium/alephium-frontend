@@ -18,13 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { GenerateAddressProps, NonSensitiveAddressDataWithGroup } from '@alephium/keyring'
 import { AlephiumApp as AlephiumLedgerApp } from '@alephium/ledger-app'
-import { findNextAvailableAddressIndex } from '@alephium/shared'
+import { AddressHash, AddressMetadata, findNextAvailableAddressIndex } from '@alephium/shared'
 import { KeyType, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { getHDWalletPath } from '@alephium/web3-wallet'
 import TransportWebHID from '@ledgerhq/hw-transport-webhid'
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb'
 
 import { AccountDiscovery } from '@/features/ledger/discovery'
+import { AddressBase } from '@/types/addresses'
 
 export const getLedgerTransport = async () => {
   try {
@@ -85,7 +86,12 @@ export class LedgerAlephium extends AccountDiscovery {
     return address
   }
 
-  public generateAddress = async ({ group, addressIndex, skipAddressIndexes = [] }: GenerateAddressProps) => {
+  public generateAddress = async ({
+    group,
+    addressIndex,
+    skipAddressIndexes = [],
+    keepAppOpen = false
+  }: GenerateAddressProps & { keepAppOpen?: boolean }) => {
     if (group !== undefined && (!Number.isInteger(group) || group < 0 || group >= TOTAL_NUMBER_OF_GROUPS))
       throw new Error(`Could not generate address in group ${group}, group is invalid`)
 
@@ -143,4 +149,39 @@ export class LedgerAlephium extends AccountDiscovery {
   async close() {
     await this.app.close()
   }
+}
+
+export const generateUuidFromInitialAddress = async (addressHash: AddressHash) => {
+  const msgUint8 = new TextEncoder().encode(addressHash)
+  const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgUint8)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+
+  return hashHex
+}
+
+interface GenerateLedgerAddressesFromMetadataProps {
+  addressesMetadata: AddressMetadata[]
+  onError: (error: Error) => void
+}
+
+export const generateLedgerAddressesFromMetadata = async ({
+  addressesMetadata,
+  onError
+}: GenerateLedgerAddressesFromMetadataProps): Promise<AddressBase[]> => {
+  const addresses: AddressBase[] = []
+  const app = await LedgerAlephium.create().catch(onError)
+
+  if (app) {
+    for (const metadata of addressesMetadata) {
+      addresses.push({
+        ...(await app.generateAddress({ addressIndex: metadata.index, keepAppOpen: true })),
+        ...metadata
+      })
+    }
+
+    app.close()
+  }
+
+  return addresses
 }

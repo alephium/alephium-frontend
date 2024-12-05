@@ -109,7 +109,7 @@ const useWalletLock = () => {
     await restoreQueryCache(encryptedWallet.id, isPassphraseUsed)
 
     if (!isPassphraseUsed) {
-      await restoreAddressesFromMetadata(encryptedWallet.id, isPassphraseUsed)
+      await restoreAddressesFromMetadata({ walletId: encryptedWallet.id, isPassphraseUsed, isLedger: false })
 
       walletStorage.update(walletId, { lastUsed: Date.now() })
 
