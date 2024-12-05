@@ -59,6 +59,7 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
         data-tooltip-content={label}
         iconColor={isActive ? theme.global.accent : theme.font.primary}
         rounded
+        wide
       >
         <LabelContainer>{label}</LabelContainer>
       </ButtonStyled>
@@ -68,6 +69,9 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
 
 const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   margin: 0;
+  border-radius: var(--radius-big);
+  text-align: left;
+  gap: 18px;
 
   ${({ isActive, theme }) =>
     isActive &&

@@ -32,28 +32,31 @@ import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
 interface SideBarProps {
   renderTopComponent?: () => ReactNode
   noExpansion?: boolean
+  noBorder?: boolean
   className?: string
 }
 
 export const SIDEBAR_EXPAND_THRESHOLD_PX = 1200
 
-const SideBar = ({ renderTopComponent, noExpansion, className }: SideBarProps) => {
+const SideBar = ({ renderTopComponent, noExpansion = false, noBorder = false, className }: SideBarProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
   const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: {} }))
 
   return (
-    <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion}>
-      <AlephiumLogoContainer>
-        <AlephiumLogo />
-      </AlephiumLogoContainer>
+    <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion} noBorder={noBorder}>
+      <BrandContainer>
+        <AlephiumLogoContainer>
+          <AlephiumLogo />
+        </AlephiumLogoContainer>
+        {!noExpansion && <AlephiumName>alephium</AlephiumName>}
+      </BrandContainer>
       <TopContainer>{renderTopComponent?.()}</TopContainer>
       <BottomButtonsContainer>
         <BottomButtons>
           <ThemeSwitcher />
           <Button
-            transparent
             squared
             role="secondary"
             onClick={openSettingsModal}
@@ -72,20 +75,22 @@ const SideBar = ({ renderTopComponent, noExpansion, className }: SideBarProps) =
 
 export default SideBar
 
-const SideBarStyled = styled.div<{ noExpansion?: boolean }>`
+const SideBarStyled = styled.div<{ noBorder: boolean; noExpansion: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
   z-index: 1;
   width: ${walletSidebarWidthPx}px;
-  padding: ${appHeaderHeightPx - 20}px 0 var(--spacing-4) var(--spacing-4);
-  transition: width 0.4s ease-in-out;
+  padding: ${appHeaderHeightPx - 20}px var(--spacing-4) var(--spacing-4) var(--spacing-4);
+  border-right: ${({ theme, noBorder }) => (!noBorder ? `1px solid ${theme.border.secondary}` : 'none')};
 
   ${({ noExpansion }) =>
     !noExpansion
       ? css`
           @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
             width: ${walletSidebarWidthPx * 3}px;
+            align-items: normal;
           }
         `
       : css`
@@ -95,6 +100,13 @@ const SideBarStyled = styled.div<{ noExpansion?: boolean }>`
           top: 0;
           z-index: 3;
         `}
+`
+
+const BrandContainer = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: var(--spacing-7);
 `
 
 const AlephiumLogoContainer = styled.div`
@@ -107,8 +119,16 @@ const AlephiumLogoContainer = styled.div`
   margin: 0 1px;
   border-radius: 100px;
   background-color: ${({ theme }) => theme.bg.contrast};
-  margin-bottom: var(--spacing-7);
-  app-region: no-drag;
+`
+
+const AlephiumName = styled.div`
+  font-size: 18px;
+  font-weight: var(--fontWeight-semiBold);
+  display: none;
+
+  @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+    display: block;
+  }
 `
 
 const TopContainer = styled.div`
@@ -121,6 +141,11 @@ const TopContainer = styled.div`
 const BottomButtonsContainer = styled.div`
   display: flex;
   justify-content: flex-start;
+
+  @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+    justify-content: space-around;
+    width: 100%;
+  }
 `
 
 const BottomButtons = styled.div`
@@ -129,4 +154,10 @@ const BottomButtons = styled.div`
   align-items: center;
   gap: 15px;
   app-region: no-drag;
+
+  @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+    flex: 1;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+  }
 `

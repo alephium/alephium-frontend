@@ -26,7 +26,7 @@ import SnackbarBox from '@/features/snackbar/SnackbarBox'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import { snackbarDisplayTimeExpired } from '@/storage/global/globalActions'
-import { deviceBreakPoints, walletSidebarWidthPx } from '@/style/globalStyles'
+import { deviceBreakPoints } from '@/style/globalStyles'
 import { SnackbarMessage } from '@/types/snackbar'
 
 const SnackbarManager = () => {
@@ -73,8 +73,12 @@ const SnackbarPopup = memo(({ message }: { message: Required<SnackbarMessage> })
 export const SnackbarManagerContainer = styled.div`
   position: fixed;
   bottom: 0;
-  left: ${walletSidebarWidthPx}px;
+  left: 0;
+  right: 0;
   z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   @media ${deviceBreakPoints.mobile} {
     justify-content: center;

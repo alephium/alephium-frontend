@@ -81,7 +81,6 @@ const HideEmptyAddressesToggle = styled.div`
   height: 42px;
   padding: 12px 16px;
   border-radius: var(--radius-big);
-  border: 1px solid ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.tertiary};
 `
 

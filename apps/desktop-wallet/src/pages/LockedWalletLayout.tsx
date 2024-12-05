@@ -32,7 +32,7 @@ const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, ...props })
   <>
     <AnimatedBackgroundStyled offsetTop={360} />
     <motion.main {...props}>
-      <SideBar noExpansion />
+      <SideBar noExpansion noBorder />
       <ScrollbarCustom>
         <AppHeader position="fixed" />
         <CenteredContainer>{children}</CenteredContainer>

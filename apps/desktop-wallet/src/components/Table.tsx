@@ -148,11 +148,10 @@ const TableHeaderRow = styled(TableRow)`
   justify-content: space-between;
   align-items: center;
   height: 48px;
-  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   color: ${({ theme }) => theme.font.tertiary};
 
   ${TableCell} {
-    border-bottom: none;
+    min-height: 48px;
   }
 `
 
