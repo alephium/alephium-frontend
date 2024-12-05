@@ -29,14 +29,16 @@ interface LockedWalletLayoutProps extends MotionProps {
 }
 
 const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, ...props }) => (
-  <motion.main {...props}>
-    <SideBar noExpansion />
-    <AnimatedBackgroundStyled />
-    <ScrollbarCustom>
-      <AppHeader position="fixed" />
-      <CenteredContainer>{children}</CenteredContainer>
-    </ScrollbarCustom>
-  </motion.main>
+  <>
+    <AnimatedBackgroundStyled offsetTop={360} />
+    <motion.main {...props}>
+      <SideBar noExpansion />
+      <ScrollbarCustom>
+        <AppHeader position="fixed" />
+        <CenteredContainer>{children}</CenteredContainer>
+      </ScrollbarCustom>
+    </motion.main>
+  </>
 )
 
 export default styled(LockedWalletLayout)`
@@ -54,10 +56,10 @@ const CenteredContainer = styled.div`
 
 const AnimatedBackgroundStyled = styled(AnimatedBackground)`
   position: absolute;
-  top: 0;
   right: 0;
   left: 0;
   bottom: 0;
+  top: 0;
+  bottom: 0;
   pointer-events: none;
-  overflow: hidden;
 `

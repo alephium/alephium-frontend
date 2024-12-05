@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
 import { HTMLMotionProps, motion, MotionStyle, Variants } from 'framer-motion'
 import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
@@ -100,14 +99,6 @@ const FloatingPanelStyled = styled(motion.div)<MainPanelProps>`
   flex-direction: column;
   justify-content: ${({ verticalAlign }) => verticalAlign || 'flex-start'};
   align-items: ${({ horizontalAlign }) => horizontalAlign || 'stretch'};
-  border-radius: var(--radius-huge);
-  background-color: ${({ theme }) =>
-    colord(theme.bg.background1)
-      .alpha(theme.name === 'light' ? 0.7 : 0.9)
-      .toHex()};
-  box-shadow: 0 0 40px rgba(0, 0, 0, ${({ theme }) => (theme.name === 'light' ? 0.2 : 0.5)});
-  backdrop-filter: brightness(130%) saturate(120%) blur(80px);
-  border: 1px solid ${({ theme }) => theme.border.primary};
   z-index: 1;
 
   ${({ borderless, theme }) => !borderless && css``}

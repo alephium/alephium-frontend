@@ -24,7 +24,7 @@ const Box = styled(motion.div)<{ secondary?: boolean }>`
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-huge);
   width: 100%;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.04);
 `
 
 export default Box

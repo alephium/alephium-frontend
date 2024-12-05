@@ -48,10 +48,10 @@ export default Table
 const TableWrapper = styled(motion.div)<Pick<TableProps, 'minWidth'>>`
   width: 100%;
   overflow: auto;
-  border-radius: var(--radius-huge);
+  border-radius: var(--radius-big);
   border: 1px solid ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.primary};
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.04);
 
   ${({ minWidth }) =>
     minWidth &&

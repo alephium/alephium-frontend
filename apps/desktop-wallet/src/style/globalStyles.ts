@@ -50,7 +50,7 @@ export const GlobalStyle = createGlobalStyle`
     --radius-small: 6px;
     --radius-medium: 10px;
     --radius-big: 12px;
-    --radius-huge: 28px;
+    --radius-huge: 22px;
     --radius-full: 100%;
 
     --fontWeight-normal: 400;

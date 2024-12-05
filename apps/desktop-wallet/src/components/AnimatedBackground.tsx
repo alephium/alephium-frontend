@@ -25,22 +25,141 @@ interface AnimatedBackgroundProps {
   width?: number | string
   className?: string
   reactToPointer?: boolean
+  offsetTop?: number
 }
 
-function useCircleAnimation(
+const AnimatedBackground = ({
+  height = '100%',
+  width = '100%',
+  className,
+  reactToPointer = true,
+  offsetTop = 0
+}: AnimatedBackgroundProps) => {
+  const theme = useTheme()
+  const isDarkTheme = theme.name === 'dark'
+
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
+
+  // Motion values for mouse position
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+
+  useEffect(() => {
+    const updateSize = () => {
+      if (typeof window !== 'undefined') {
+        setWindowSize({
+          width: window.innerWidth,
+          height: window.innerHeight
+        })
+        mouseX.set(window.innerWidth / 2)
+        mouseY.set(window.innerHeight / 2)
+      }
+    }
+    updateSize()
+    window.addEventListener('resize', updateSize)
+    return () => window.removeEventListener('resize', updateSize)
+  }, [mouseX, mouseY])
+
+  useEffect(() => {
+    let animationFrameId: number
+
+    const handleMouseMove = (event: MouseEvent) => {
+      animationFrameId = window.requestAnimationFrame(() => {
+        mouseX.set(event.clientX)
+        mouseY.set(event.clientY)
+      })
+    }
+
+    if (reactToPointer && typeof window !== 'undefined') {
+      window.addEventListener('mousemove', handleMouseMove)
+    }
+
+    return () => {
+      if (reactToPointer && typeof window !== 'undefined') {
+        window.removeEventListener('mousemove', handleMouseMove)
+        window.cancelAnimationFrame(animationFrameId)
+      }
+    }
+  }, [reactToPointer, mouseX, mouseY])
+
+  // Offsets for each circle
+  const offsets = [80, 300, 200, 140, 20]
+
+  // Apply offsetTop to each circle's animation
+  const circle1 = useCircleAnimation(offsets[0], windowSize, mouseX, mouseY, reactToPointer, offsetTop)
+  const circle2 = useCircleAnimation(offsets[1], windowSize, mouseX, mouseY, reactToPointer, offsetTop)
+  const circle3 = useCircleAnimation(offsets[2], windowSize, mouseX, mouseY, reactToPointer, offsetTop)
+  const circle4 = useCircleAnimation(offsets[3], windowSize, mouseX, mouseY, reactToPointer, offsetTop)
+  const circle5 = useCircleAnimation(offsets[4], windowSize, mouseX, mouseY, reactToPointer, offsetTop)
+
+  // Original hardcoded dimensions
+  const circlesDimensions = [
+    { width: 1200, height: 290 },
+    { width: 600, height: 380 },
+    { width: 760, height: 310 },
+    { width: 1100, height: 200 },
+    { width: 1040, height: 140 }
+  ]
+
+  return (
+    <AnimatedContainer style={{ width, height }} className={className}>
+      <motion.div
+        style={{
+          position: 'relative',
+          height: '100%',
+          width: '100%',
+          filter: 'url(#combinedFilter)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          opacity: isDarkTheme ? 0.5 : 0.8
+        }}
+      >
+        {circlesDimensions.map((dim, index) => {
+          const circleAnimation = [circle1, circle2, circle3, circle4, circle5][index]
+          const backgroundColors = [
+            isDarkTheme ? '#120096' : '#c689ff',
+            '#ff8119',
+            '#ff6969',
+            isDarkTheme ? '#e484ff' : '#d579ff',
+            isDarkTheme ? '#1600da' : '#ff9bc8'
+          ]
+          return (
+            <Circle
+              key={index}
+              style={{
+                backgroundColor: backgroundColors[index],
+                width: `${dim.width}px`,
+                height: `${dim.height}px`,
+                x: circleAnimation.x,
+                y: circleAnimation.y // This now includes offsetTop
+              }}
+            />
+          )
+        })}
+      </motion.div>
+      <SvgFilters />
+    </AnimatedContainer>
+  )
+}
+
+export default AnimatedBackground
+
+const useCircleAnimation = (
   offset: number,
   windowSize: { width: number; height: number },
   mouseX: MotionValue<number>,
   mouseY: MotionValue<number>,
-  reactToPointer: boolean
-) {
+  reactToPointer: boolean,
+  offsetY: number
+) => {
   const xAnim = useMotionValue(0)
   const yAnim = useMotionValue(0)
 
   useEffect(() => {
     const xValues = [0, offset, 0, -offset, 0]
     const yValues = [0, offset / 2, -offset / 2, offset / 2, 0]
-    const duration = offset / 5
+    const duration = Math.abs(offset) / 5
 
     const xControl = animate(xAnim, xValues, {
       duration,
@@ -84,134 +203,11 @@ function useCircleAnimation(
   const x = reactToPointer ? xTotal : xAnim
   const y = reactToPointer ? yTotal : yAnim
 
-  return { x, y }
+  // Adjust y with offsetY
+  const yWithOffset = useTransform(y, (value) => value + offsetY)
+
+  return { x, y: yWithOffset }
 }
-
-const AnimatedBackground = ({
-  height = '100%',
-  width = '100%',
-  className,
-  reactToPointer = true
-}: AnimatedBackgroundProps) => {
-  const theme = useTheme()
-  const isDarkTheme = theme.name === 'dark'
-
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
-
-  // Motion values for mouse position
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
-
-  useEffect(() => {
-    const updateSize = () => {
-      if (typeof window !== 'undefined') {
-        setWindowSize({ width: window.innerWidth, height: window.innerHeight })
-        mouseX.set(window.innerWidth / 2)
-        mouseY.set(window.innerHeight / 2)
-      }
-    }
-    updateSize()
-    window.addEventListener('resize', updateSize)
-    return () => window.removeEventListener('resize', updateSize)
-  }, [mouseX, mouseY])
-
-  useEffect(() => {
-    let animationFrameId: number
-
-    const handleMouseMove = (event: MouseEvent) => {
-      animationFrameId = window.requestAnimationFrame(() => {
-        mouseX.set(event.clientX)
-        mouseY.set(event.clientY)
-      })
-    }
-
-    if (reactToPointer && typeof window !== 'undefined') {
-      window.addEventListener('mousemove', handleMouseMove)
-    }
-
-    return () => {
-      if (reactToPointer && typeof window !== 'undefined') {
-        window.removeEventListener('mousemove', handleMouseMove)
-        window.cancelAnimationFrame(animationFrameId)
-      }
-    }
-  }, [reactToPointer, mouseX, mouseY])
-
-  // Offsets for each circle
-  const offsets = [80, 300, 200, 140, 20]
-
-  const circle1 = useCircleAnimation(offsets[0], windowSize, mouseX, mouseY, reactToPointer)
-  const circle2 = useCircleAnimation(offsets[1], windowSize, mouseX, mouseY, reactToPointer)
-  const circle3 = useCircleAnimation(offsets[2], windowSize, mouseX, mouseY, reactToPointer)
-  const circle4 = useCircleAnimation(offsets[3], windowSize, mouseX, mouseY, reactToPointer)
-  const circle5 = useCircleAnimation(offsets[4], windowSize, mouseX, mouseY, reactToPointer)
-
-  return (
-    <AnimatedContainer style={{ width, height }} className={className}>
-      <motion.div
-        style={{
-          position: 'relative',
-          height: '100%',
-          width: '100%',
-          filter: 'url(#combinedFilter)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity: isDarkTheme ? 0.5 : 0.8
-        }}
-      >
-        <Circle
-          style={{
-            backgroundColor: isDarkTheme ? '#120096' : '#c689ff',
-            width: 1000,
-            height: 480,
-            x: circle1.x,
-            y: circle1.y
-          }}
-        />
-        <Circle
-          style={{
-            backgroundColor: '#ff8119',
-            width: 400,
-            height: 540,
-            x: circle2.x,
-            y: circle2.y
-          }}
-        />
-        <Circle
-          style={{
-            backgroundColor: '#ff6969',
-            width: 660,
-            height: 400,
-            x: circle3.x,
-            y: circle3.y
-          }}
-        />
-        <Circle
-          style={{
-            backgroundColor: isDarkTheme ? '#e484ff' : '#d579ff',
-            width: 1000,
-            height: 200,
-            x: circle4.x,
-            y: circle4.y
-          }}
-        />
-        <Circle
-          style={{
-            backgroundColor: isDarkTheme ? '#1600da' : '#ff9bc8',
-            width: 940,
-            height: 140,
-            x: circle5.x,
-            y: circle5.y
-          }}
-        />
-      </motion.div>
-      <SvgFilters />
-    </AnimatedContainer>
-  )
-}
-
-export default AnimatedBackground
 
 const SvgFilters = () => (
   <svg width="0" height="0" style={{ position: 'absolute' }}>
@@ -224,14 +220,10 @@ const SvgFilters = () => (
 const AnimatedContainer = styled.div`
   flex: 1;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: absolute;
-  top: 0;
   right: 0;
   left: 0;
-  overflow: visible;
+  overflow: hidden;
 `
 
 const Circle = styled(motion.div)`

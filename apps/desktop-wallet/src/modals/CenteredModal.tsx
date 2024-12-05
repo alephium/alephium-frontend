@@ -99,12 +99,12 @@ const CenteredModal: FC<CenteredModalProps> = ({
               aria-label={t('Close')}
               squared
               role="secondary"
+              rounded
               transparent
               onClick={rest.onClose ?? onClose}
               borderless
-            >
-              <X />
-            </CloseButton>
+              Icon={X}
+            />
           </TitleRow>
           {header && <ModalHeaderContent>{header}</ModalHeaderContent>}
         </ModalHeader>
@@ -172,7 +172,7 @@ const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>
 
   ${TitleContainer} {
     flex: 1;
-    margin: var(--spacing-3) var(--spacing-4);
+    margin: var(--spacing-1) var(--spacing-4);
   }
 
   ${({ fullScreen }) =>

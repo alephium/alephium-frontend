@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { dangerouslyConvertUint8ArrayMnemonicToString, keyring } from '@alephium/keyring'
-import { colord } from 'colord'
 import { Edit3 } from 'lucide-react'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -69,7 +68,7 @@ const WalletWordsPage = () => {
           <MnemonicColumn key={colIndex} isLastColumn={colIndex === columnCount - 1}>
             {columnWords.map((word, rowIndex) => (
               <MnemonicWordContainer key={`${colIndex}-${rowIndex}`}>
-                <MnemonicNumber>{colIndex * 6 + rowIndex + 1}</MnemonicNumber>
+                <MnemonicNumber>{colIndex * 6 + rowIndex + 1}.</MnemonicNumber>
                 <MnemonicWord>{word}</MnemonicWord>
               </MnemonicWordContainer>
             ))}
@@ -120,10 +119,10 @@ export default WalletWordsPage
 
 const Label = styled.label`
   width: 100%;
-  padding-left: var(--spacing-3);
-  padding-bottom: var(--spacing-1);
+  padding-bottom: var(--spacing-2);
   color: ${({ theme }) => theme.font.secondary};
-  font-weight: var(--fontWeight-medium);
+  font-weight: var(--fontWeight-semiBold);
+  font-size: 16px;
 `
 
 const WordsContent = styled(Section)`
@@ -132,11 +131,9 @@ const WordsContent = styled(Section)`
 
 const PhraseBox = styled.div`
   width: 100%;
-  padding: var(--spacing-2) 0;
+  padding: var(--spacing-4) 0;
   color: ${({ theme }) => theme.font.contrastPrimary};
   font-weight: var(--fontWeight-medium);
-  background-color: ${({ theme }) => colord(theme.global.alert).alpha(0.1).toRgbString()};
-  border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-big);
   margin-bottom: var(--spacing-4);
 `
@@ -150,34 +147,27 @@ const MnemonicColumn = styled.div<{ isLastColumn: boolean }>`
   flex-direction: column;
   flex: 1;
   padding: 0 8px;
-  gap: 15px;
+  gap: 10px;
   border-right: ${({ theme, isLastColumn }) => (isLastColumn ? 'none' : `1px solid ${theme.font.tertiary}`)};
 `
 
 const MnemonicWordContainer = styled.div`
   width: 100%;
   display: flex;
-  border-radius: var(--radius-tiny);
+  align-items: center;
+  border-radius: var(--radius-small);
   overflow: hidden;
+  background-color: ${({ theme }) => theme.bg.contrast};
 `
 
 const MnemonicNumber = styled.div`
-  padding: var(--spacing-1);
-  font-size: 11px;
-  border-right: 1px ${({ theme }) => theme.bg.secondary};
-  background-color: ${({ theme }) =>
-    theme.name === 'light'
-      ? colord(theme.font.primary).alpha(0.8).toRgbString()
-      : colord(theme.font.contrastPrimary).alpha(0.8).toRgbString()};
-  color: ${({ theme }) => (theme.name === 'light' ? theme.font.contrastPrimary : theme.font.primary)};
+  font-size: 14px;
+  color: ${({ theme }) => theme.font.contrastSecondary};
+  padding: 8px 6px;
 `
 
 const MnemonicWord = styled.div`
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.primary : theme.bg.contrast)};
-  color: ${({ theme }) => (theme.name === 'light' ? theme.font.primary : theme.font.contrastSecondary)};
-  font-weight: var(--fontWeight-semiBold);
+  color: ${({ theme }) => theme.font.contrastPrimary};
+  font-size: 14px;
 `
