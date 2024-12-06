@@ -45,11 +45,11 @@ export const slowTransition = {
 }
 
 export const normalTransition = {
-  transition: { type: 'spring', damping: 50, stiffness: 400 }
+  transition: { type: 'spring', damping: 50, stiffness: 600 }
 }
 
 export const fastTransition = {
-  transition: { type: 'spring', damping: 40, stiffness: 500 }
+  transition: { type: 'spring', damping: 40, stiffness: 800 }
 }
 
 export const fadeInSlowly = {

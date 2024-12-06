@@ -54,9 +54,7 @@ DataList.Row = DataListRow
 const DataListStyled = styled.div`
   display: flex;
   flex-direction: column;
-  background-color: ${({ theme }) => theme.bg.primary};
-  border-radius: var(--radius-big);
-  padding: 0 var(--spacing-4);
+  padding: 0 var(--spacing-2);
 `
 
 const DataListTitle = styled.h2`

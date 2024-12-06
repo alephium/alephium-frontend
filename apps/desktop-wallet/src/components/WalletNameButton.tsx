@@ -91,7 +91,7 @@ const CurrentWalletInitials = styled(motion.div)`
   align-items: center;
   justify-content: center;
   font-weight: var(--fontWeight-semiBold);
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.background1};
   overflow: hidden;
   z-index: 1;
 

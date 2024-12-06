@@ -102,7 +102,6 @@ const ModalHeader = styled.div`
   align-items: center;
   padding: 10px 20px;
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-  background-color: ${({ theme }) => theme.bg.secondary};
 `
 
 const HeaderColumn = styled.div`

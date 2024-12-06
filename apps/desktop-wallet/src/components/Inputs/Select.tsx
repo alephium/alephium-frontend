@@ -462,12 +462,12 @@ export const OptionItem = styled.button<{
   color: ${({ theme }) => theme.font.primary};
   user-select: none;
   text-align: left;
-  background-color: ${({ theme }) => theme.bg.background1};
   visibility: ${({ invisible }) => invisible && 'hidden'};
   font-weight: ${({ selected }) => selected && 'var(--fontWeight-semiBold)'};
 
   ${({ hasCustomOptionRender }) => css`
-    padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-4)'};
+    padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-4) 0'};
+    margin: ${hasCustomOptionRender ? '0px' : '0 var(--spacing-4)'};
   `};
 
   ${({ isFloating, selected, theme }) =>
