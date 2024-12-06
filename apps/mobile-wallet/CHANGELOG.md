@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- 2ef3137: Update WalletConnect to fix connectivity issues
+- 2ef3137: Update WalletConnect packages
 - d86c477: Forget/hide address
 - 0dfbaf5: Optimize transactions loading for wallets with only 1 address
 - 5b5db06: Fix WalletConnect connection removal
