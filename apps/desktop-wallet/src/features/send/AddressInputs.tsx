@@ -111,15 +111,12 @@ const AddressInputs = ({
         </BoxStyled>
       </InputsSection>
       {toAddress && onToAddressChange && (
-        <InputsSection
-          title={t('Destination')}
-          subtitle={t('The address which will receive the assets.')}
-          className={className}
-        >
+        <InputsSection title={t('Destination')} className={className}>
           <AddressToInput
             value={toAddress.value}
             error={toAddress.error}
             onChange={(e) => onToAddressChange(e.target.value.trim())}
+            placeholder={t('The address which will receive the assets.')}
           />
           <DestinationActions>
             <Button
@@ -211,4 +208,5 @@ const AddressToInput = styled(AddressInput)`
 const DestinationActions = styled.div`
   display: flex;
   gap: 5px;
+  margin-top: var(--spacing-4);
 `

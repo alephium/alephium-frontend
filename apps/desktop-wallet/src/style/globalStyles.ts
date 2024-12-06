@@ -22,7 +22,7 @@ import { createGlobalStyle } from 'styled-components'
 import resets from '@/style/resets'
 
 export const appHeaderHeightPx = 72
-export const walletSidebarWidthPx = 72
+export const walletSidebarWidthPx = 80
 export const messagesLeftMarginPx = 70
 
 const electronWindowDimensions = `

@@ -58,7 +58,7 @@ const TabContent: FC<TabContentProps> = ({
         </HeaderButton>
       </ButtonContainer>
     </Header>
-    <Cards>{children}</Cards>
+    <Content>{children}</Content>
   </TabContentStyled>
 )
 
@@ -85,11 +85,9 @@ const Searchbar = styled(Input)`
   }
 `
 
-const Cards = styled.div`
+const Content = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  gap: 25px;
-  padding-bottom: 20px;
+  padding: var(--spacing-4) 0;
 `
 
 const HeaderButton = styled(Button)``

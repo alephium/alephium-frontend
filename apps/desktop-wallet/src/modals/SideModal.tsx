@@ -101,7 +101,6 @@ const ModalHeader = styled.div`
   display: flex;
   align-items: center;
   padding: 10px 20px;
-  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
 const HeaderColumn = styled.div`

@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { AnimatePresence, motion } from 'framer-motion'
-import { t } from 'i18next'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
@@ -63,7 +62,7 @@ const WalletNameButton = () => {
               delay: walletNameAppearAfterSeconds
             }}
           >
-            👋 {t('Wallet')}: {activeWalletName}
+            {activeWalletName}
           </OnEnterWalletName>
         )}
       </AnimatePresence>
@@ -103,11 +102,11 @@ const CurrentWalletInitials = styled(motion.div)`
 
 const OnEnterWalletName = styled(CurrentWalletInitials)`
   position: absolute;
-  left: 18px;
-  height: 52px;
-  padding-left: 56px;
+  left: 12px;
+  height: 56px;
+  padding-left: 60px;
   padding-right: 20px;
-  bottom: 18px;
+  bottom: 11px;
   width: auto;
   border-radius: 100px;
   white-space: nowrap;

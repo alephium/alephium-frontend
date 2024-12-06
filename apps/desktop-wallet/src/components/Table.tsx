@@ -147,7 +147,7 @@ const TableHeaderRow = styled(TableRow)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 48px;
+  height: 40px;
   color: ${({ theme }) => theme.font.tertiary};
 
   ${TableCell} {

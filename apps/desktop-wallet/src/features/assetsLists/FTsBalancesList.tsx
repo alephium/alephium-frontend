@@ -52,17 +52,18 @@ export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressTokensT
 export const WalletFTsBalancesList = (props: TokensTabsBaseProps) => {
   const { t } = useTranslation()
   const { listedFts, unlistedFts, isLoading } = useFetchWalletFts()
+  const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
 
   return (
     <ExpandableTokensBalancesList {...props} nbOfItems={listedFts.length + unlistedFts.length}>
-      <TokensBalancesHeader />
+      {!isEmpty && <TokensBalancesHeader />}
       {listedFts.map(({ id }) => (
         <WalletFTBalancesRow tokenId={id} key={id} />
       ))}
       {unlistedFts.map(({ id }) => (
         <WalletFTBalancesRow tokenId={id} key={id} />
       ))}
-      {!isLoading && listedFts.length === 0 && unlistedFts.length === 0 && (
+      {isEmpty && (
         <PlaceholderText>
           {t("The wallet doesn't have any tokens. Tokens of all your addresses will appear here.")}
         </PlaceholderText>

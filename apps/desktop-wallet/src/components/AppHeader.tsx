@@ -155,7 +155,7 @@ const AppHeaderContainer = styled.div`
   align-items: center;
 
   height: ${appHeaderHeightPx}px;
-  padding: 0 var(--spacing-4) 0 30px;
+  padding: 0 var(--spacing-4) 0 40px;
   gap: var(--spacing-1);
 `
 

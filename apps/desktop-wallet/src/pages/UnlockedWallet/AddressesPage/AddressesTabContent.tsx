@@ -98,6 +98,7 @@ const HeaderMiddle = styled.div`
 `
 
 const TableGrid = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   border-radius: var(--radius-big);
