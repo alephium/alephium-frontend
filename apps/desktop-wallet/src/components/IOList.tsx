@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, GENESIS_TIMESTAMP } from '@alephium/shared'
-import { explorer } from '@alephium/web3'
+import { explorer as e } from '@alephium/web3'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -34,8 +34,8 @@ interface IOListProps {
   currentAddress: string
   isOut: boolean
   timestamp?: number
-  outputs?: explorer.Output[]
-  inputs?: explorer.Input[]
+  outputs?: e.Output[]
+  inputs?: e.Input[]
   linkToExplorer?: boolean
   truncate?: boolean
   disableA11y?: boolean
@@ -56,7 +56,7 @@ const IOList = ({
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
   const dispatch = useAppDispatch()
 
-  const io = (isOut ? outputs : inputs) as Array<explorer.Output | explorer.Input> | undefined
+  const io = (isOut ? outputs : inputs) as Array<e.Output | e.Input> | undefined
 
   const handleShowAddress = (addressHash: AddressHash) =>
     internalAddressHashes.includes(addressHash)

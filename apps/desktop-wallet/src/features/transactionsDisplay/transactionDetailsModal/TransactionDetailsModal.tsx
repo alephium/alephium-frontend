@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, findTransactionReferenceAddress, isConfirmedTx } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -47,7 +47,7 @@ import SideModal from '@/modals/SideModal'
 import { formatDateForDisplay } from '@/utils/misc'
 
 export interface TransactionDetailsModalProps {
-  txHash: Transaction['hash']
+  txHash: e.Transaction['hash']
   refAddressHash?: AddressHash
 }
 

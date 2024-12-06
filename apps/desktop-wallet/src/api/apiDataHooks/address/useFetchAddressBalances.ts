@@ -28,7 +28,7 @@ interface UseFetchAddressBalancesProps extends UseFetchAddressProps {
 const useFetchAddressBalances = ({ addressHash, skip, includeAlph = true }: UseFetchAddressBalancesProps) => {
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
     addressHash,
-    skip: skip || !includeAlph
+    skip
   })
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressBalancesTokens({
     addressHash,
@@ -42,7 +42,7 @@ const useFetchAddressBalances = ({ addressHash, skip, includeAlph = true }: UseF
 
   return {
     data: allTokensBalances,
-    isLoading: isLoadingAlphBalances || isLoadingTokensBalances
+    isLoading: isLoadingTokensBalances || (includeAlph ? isLoadingAlphBalances : false)
   }
 }
 

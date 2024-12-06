@@ -17,8 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, FIVE_MINUTES_MS, throttledClient } from '@alephium/shared'
-import { sleep } from '@alephium/web3'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e, sleep } from '@alephium/web3'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
@@ -33,7 +32,7 @@ export interface AddressLatestTransactionQueryProps {
 
 export interface AddressLatestTransactionQueryFnData {
   addressHash: AddressHash
-  latestTx?: Transaction
+  latestTx?: e.Transaction
 }
 
 export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
@@ -110,8 +109,18 @@ export const walletTransactionsInfiniteQuery = ({
     ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       !skip && networkId !== undefined
-        ? ({ pageParam }) =>
-            throttledClient.explorer.addresses.postAddressesTransactions({ page: pageParam }, addressHashes)
+        ? async ({ pageParam }) => {
+            let results: e.Transaction[] = []
+            const args = { page: pageParam }
+
+            if (addressHashes.length === 1) {
+              results = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHashes[0], args)
+            } else if (addressHashes.length > 1) {
+              results = await throttledClient.explorer.addresses.postAddressesTransactions(args, addressHashes)
+            }
+
+            return results
+          }
         : skipToken,
     initialPageParam: 1,
     getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null)
@@ -130,7 +139,18 @@ export const walletLatestTransactionsQuery = ({ addressHashes, networkId }: Wall
     ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       networkId !== undefined
-        ? () => throttledClient.explorer.addresses.postAddressesTransactions({ page: 1, limit: 5 }, addressHashes)
+        ? async () => {
+            let results: e.Transaction[] = []
+            const args = { page: 1, limit: 5 }
+
+            if (addressHashes.length === 1) {
+              results = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHashes[0], args)
+            } else if (addressHashes.length > 1) {
+              results = await throttledClient.explorer.addresses.postAddressesTransactions(args, addressHashes)
+            }
+
+            return results
+          }
         : skipToken
   })
 

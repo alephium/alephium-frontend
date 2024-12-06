@@ -28,29 +28,30 @@ import AppText from '~/components/AppText'
 interface ExpandableRowProps {
   children: ReactNode
   title?: string
+  titleComponent?: ReactNode
   style?: StyleProp<ViewStyle>
 }
 
-const ExpandableRow = ({ children, title, style }: ExpandableRowProps) => {
+const ExpandableRow = ({ children, title, titleComponent, style }: ExpandableRowProps) => {
   const theme = useTheme()
   const { t } = useTranslation()
-
   const [isExpanded, setIsExpanded] = useState(false)
 
   const toggleExpanded = () => setIsExpanded(!isExpanded)
 
   const collapsableSectionStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(isExpanded ? 1 : 0)
+    opacity: withTiming(isExpanded ? 1 : 0),
+    height: withTiming(isExpanded ? 'auto' : 0)
   }))
 
   const chevronStyle = useAnimatedStyle(() => ({
-    transform: [{ rotate: withTiming(isExpanded ? '180deg' : '0deg') }]
+    transform: [{ rotate: withTiming(isExpanded ? '-180deg' : '-90deg') }]
   }))
 
   return (
     <View style={style}>
       <Header onPress={toggleExpanded}>
-        <Title>{title ?? t('Advanced options')}</Title>
+        {titleComponent ?? <Title>{title ?? t('Advanced options')}</Title>}
         <Animated.View style={chevronStyle}>
           <ChevronDownStyled size={20} color={theme.font.primary} />
         </Animated.View>
@@ -81,5 +82,6 @@ const ChevronDownStyled = styled(ChevronDown)`
 const Header = styled.TouchableOpacity`
   flex-direction: row;
   width: 100%;
-  padding: 25px 0 25px 6px;
+  padding: 25px 20px 25px 6px;
+  justify-content: space-between;
 `

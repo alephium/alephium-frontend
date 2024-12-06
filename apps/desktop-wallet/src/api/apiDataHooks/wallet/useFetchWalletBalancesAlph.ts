@@ -20,7 +20,7 @@ import { AddressHash } from '@alephium/shared'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { DataHook, SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
+import { combineError, combineIsFetching, combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
@@ -41,21 +41,28 @@ export const useFetchWalletBalancesAlphByAddress = (props?: SkipProp) =>
   useFetchWalletBalancesAlph({ combine: combineBalancesByAddress, skip: props?.skip })
 
 interface UseFetchWalletBalancesAlphProps<T> extends SkipProp {
-  combine: (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]) => { data: T; isLoading: boolean }
+  combine: (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]) => {
+    data: T
+    isLoading: boolean
+    isFetching?: boolean
+    error?: boolean
+  }
 }
 
 const useFetchWalletBalancesAlph = <T>({ combine, skip }: UseFetchWalletBalancesAlphProps<T>) => {
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const allAddressHashes = useUnsortedAddressesHashes()
 
-  const { data, isLoading } = useQueries({
+  const { data, isLoading, isFetching, error } = useQueries({
     queries: allAddressHashes.map((addressHash) => addressAlphBalancesQuery({ addressHash, networkId, skip })),
     combine
   })
 
   return {
     data,
-    isLoading
+    isLoading,
+    isFetching,
+    error
   }
 }
 
@@ -89,5 +96,7 @@ const combineBalances = (results: UseQueryResult<AddressAlphBalancesQueryFnData>
       availableBalance: BigInt(0)
     } as DisplayBalances
   ),
-  ...combineIsLoading(results)
+  ...combineIsLoading(results),
+  ...combineIsFetching(results),
+  ...combineError(results)
 })

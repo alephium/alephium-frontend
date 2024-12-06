@@ -57,7 +57,7 @@ type AnalyticsParams = EventAnalyticsParams | ErrorAnalyticsParams
 export const sendAnalytics = (params: AnalyticsParams) => {
   if (params.type === 'error') {
     const { error, message, isSensitive } = params
-    console.error(message, error)
+    console.error(message, isSensitive ? cleanExceptionMessage(error) : error)
 
     sendAnalytics({
       event: 'Error',

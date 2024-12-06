@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import FooterButton from '@/components/Buttons/FooterButton'
@@ -42,6 +42,12 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
   const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
   const [toAddress, setToAddress] = useStateWithError(data?.toAddress ?? '')
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))
+
+  useEffect(() => {
+    if (fromAddresses.length > 0 && !fromAddresses.find((a) => a === data.fromAddress.hash)) {
+      setFromAddressHash(fromAddresses[0])
+    }
+  }, [data.fromAddress.hash, fromAddresses])
 
   const handleToAddressChange = useCallback(
     (value: string) => {

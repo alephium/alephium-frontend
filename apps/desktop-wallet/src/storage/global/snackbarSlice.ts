@@ -42,7 +42,7 @@ import {
   devModeShortcutDetected,
   loadingDataFromLocalStorageFailed,
   localStorageDataMigrationFailed,
-  receiveTestnetTokens,
+  receiveFaucetTokens,
   snackbarDisplayTimeExpired,
   storingDataToLocalStorageFailed,
   userDataMigrationFailed,
@@ -176,14 +176,14 @@ const snackbarSlice = createSlice({
       .addCase(walletConnectPairingFailed, displayError)
       .addCase(walletConnectProposalApprovalFailed, displayError)
       .addCase(walletConnectProposalValidationFailed, displayError)
-      .addCase(receiveTestnetTokens.fulfilled, (state) =>
+      .addCase(receiveFaucetTokens.fulfilled, (state) =>
         queueMessage(state, {
-          text: i18n.t('Testnet tokens incoming.'),
+          text: i18n.t('Test tokens incoming.'),
           type: 'success',
           duration: 5000
         })
       )
-      .addCase(receiveTestnetTokens.rejected, (state, action) => {
+      .addCase(receiveFaucetTokens.rejected, (state, action) => {
         const message = action.payload
 
         if (message) queueMessage(state, message)

@@ -20,16 +20,10 @@ import { createGlobalStyle } from 'styled-components'
 
 import resets from '@/style/resets'
 import tags from '@/style/tags'
-import { isElectron } from '@/utils/misc'
 
 export const appHeaderHeightPx = 60
 export const walletSidebarWidthPx = 75
 export const messagesLeftMarginPx = 70
-
-const extensionWindowDimensions = `
-  height: 600px;
-  width: 400px;
-`
 
 const electronWindowDimensions = `
   height: 100%;
@@ -70,7 +64,7 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   html {
-    ${isElectron() ? electronWindowDimensions : extensionWindowDimensions}
+    ${electronWindowDimensions}
   }
 
   body {

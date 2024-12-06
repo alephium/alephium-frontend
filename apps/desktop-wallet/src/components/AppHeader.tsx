@@ -189,6 +189,7 @@ const HeaderButtons = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: var(--spacing-1);
+  app-region: no-drag;
 
   > *:not(:last-child) {
     margin-right: var(--spacing-1);

@@ -66,7 +66,7 @@ export const lightTheme: DefaultTheme = {
     star: '#FFD66D',
     pale: '#f7d1b6',
     complementary: '#b07dcb',
-    send: '#f7aa54',
+    send: '#f75d57',
     receive: '#61b15b'
   },
   gradient: {

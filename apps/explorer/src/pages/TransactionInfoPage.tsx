@@ -52,7 +52,7 @@ import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import { useSnackbar } from '@/hooks/useSnackbar'
 import { AssetType } from '@/types/assets'
-import { IOAmountsDelta } from '@/utils/transactions'
+import { calculateIoAmountsDelta } from '@/utils/transactions'
 
 type ParamTypes = {
   id: string
@@ -117,7 +117,7 @@ const TransactionInfoPage = () => {
 
   const confirmations = computeConfirmations(txBlock, txChain)
 
-  const { alph: alphDeltaAmounts, tokens: tokenDeltaAmounts } = IOAmountsDelta(
+  const { alph: alphDeltaAmounts, tokens: tokenDeltaAmounts } = calculateIoAmountsDelta(
     transactionData?.inputs,
     transactionData?.outputs
   )
