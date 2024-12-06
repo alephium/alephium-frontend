@@ -184,7 +184,6 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
             bold
             suffix={CURRENCIES[currency].symbol}
           />
-          <Amount value={BigInt(address.balance)} color={textColor} size={15} medium suffix="ALPH" />
           <AddressGroup>
             <AppText style={{ color: textColor }} size={13}>
               {t('Group {{ groupNumber }}', { groupNumber: address.group })}
