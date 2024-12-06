@@ -738,7 +738,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         setLoading('Disconnecting...')
 
         console.log('⏳ DISCONNECTING FROM:', topic)
-        await walletConnectClient.disconnectSession({ topic, reason: getSdkError('USER_DISCONNECTED') })
+
+        if (walletConnectClient.getActiveSessions()[topic]) {
+          await walletConnectClient.disconnectSession({ topic, reason: getSdkError('USER_DISCONNECTED') })
+        }
+
         console.log('✅ DISCONNECTING: DONE!')
 
         sendAnalytics({ event: 'WC: Disconnected from dApp' })

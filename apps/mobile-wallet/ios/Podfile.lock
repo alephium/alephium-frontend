@@ -1293,7 +1293,7 @@ PODS:
     - React-Core
   - react-native-background-timer (2.4.1):
     - React-Core
-  - react-native-compat (2.15.1):
+  - react-native-compat (2.17.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2132,7 +2132,7 @@ SPEC CHECKSUMS:
   react-native-aes: c75c46aa744bef7c2415fdf7f5b2dcb75ca4364d
   react-native-background-actions: ecffd3f0864140ef6cf21c29be6819a02b531a52
   react-native-background-timer: 17ea5e06803401a379ebf1f20505b793ac44d0fe
-  react-native-compat: 408a4b320fa4426f2c25ab74ed5764be6b3eb5aa
+  react-native-compat: 425ce849bdeb6dceeb1c003b254c3c2623a37ba1
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-pager-view: c1e29e1a6105a02807392ba822ad322447a72f55
@@ -2181,4 +2181,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 643da665b6a5e764a14ebf182d4d19c2d5d31db2
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
