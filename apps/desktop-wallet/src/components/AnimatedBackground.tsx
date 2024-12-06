@@ -159,7 +159,7 @@ const useCircleAnimation = (
   useEffect(() => {
     const xValues = [0, offset, 0, -offset, 0]
     const yValues = [0, offset / 2, -offset / 2, offset / 2, 0]
-    const duration = Math.abs(offset) / 5
+    const duration = Math.abs(offset) / 10
 
     const xControl = animate(xAnim, xValues, {
       duration,

@@ -77,7 +77,7 @@ export const inputDefaultStyle = (
   font-size: ${largeText ? '15px' : '14px'};
   text-align: left;
   font-family: inherit;
-  backdrop-filter: blur(10px) brightness(${({ theme }) => (theme.name === 'light' ? '2' : '1.2')}) saturate(1.2);
+  backdrop-filter: blur(10px) brightness(${({ theme }) => (theme.name === 'light' ? '2' : '1.5')}) saturate(1.2);
 
   transition: all 0.15s;
 

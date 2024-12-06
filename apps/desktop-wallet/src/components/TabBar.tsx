@@ -104,6 +104,7 @@ export const Tab = styled.div<{ isActive: boolean }>`
   font-weight: var(--fontWeight-semiBold);
   border-radius: 100px;
   padding: 0 30px;
+  height: calc(var(--inputHeight) - 2px);
 
   ${({ isActive, theme }) =>
     isActive

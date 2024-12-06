@@ -114,8 +114,8 @@ const AlephiumLogoContainer = styled.div`
   align-items: center;
   justify-content: center;
   padding: 13px;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   margin: 0 1px;
   border-radius: 100px;
   background-color: ${({ theme }) => theme.bg.contrast};
