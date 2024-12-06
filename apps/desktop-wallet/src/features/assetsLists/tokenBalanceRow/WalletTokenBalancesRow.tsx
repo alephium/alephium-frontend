@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TableCell, TableRow } from '@/components/Table'
+import FTAllocationCell from '@/features/assetsLists/tokenBalanceRow/FTAllocationCell'
 import { FTWalletAmountCell } from '@/features/assetsLists/tokenBalanceRow/FTAmountCells'
 import FTPriceCell from '@/features/assetsLists/tokenBalanceRow/FTPriceCell'
 import FTWorthCell from '@/features/assetsLists/tokenBalanceRow/FTWorthCell'
@@ -31,6 +32,7 @@ export const WalletFTBalancesRow = ({ tokenId }: TokenBalancesRowBaseProps) => (
     </TableCell>
     <FTNameCell tokenId={tokenId} />
     <FTPriceCell tokenId={tokenId} />
+    <FTAllocationCell tokenId={tokenId} />
     <FTWalletAmountCell tokenId={tokenId} />
     <FTWorthCell tokenId={tokenId} />
   </TableRow>

@@ -32,6 +32,9 @@ const TokensBalancesHeader = () => {
       <TableCell>
         <span>{t('Price')}</span>
       </TableCell>
+      <TableCell fixedWidth={140}>
+        <span>{t('Allocation')}</span>
+      </TableCell>
       <TableCell align="right">
         <span>{t('Amount')}</span>
       </TableCell>

@@ -27,7 +27,7 @@ const TableTabBar = <T extends string>(props: TabBarProps<T>) => (
 export default TableTabBar
 
 const TableTabBarStyled = styled(TabBar)`
-  height: 52px;
+  height: 50px;
   gap: 10px;
   margin-bottom: var(--spacing-2);
 ` as typeof TabBar
@@ -36,5 +36,5 @@ const TableTab = styled(Tab)`
   min-width: 60px;
   overflow: hidden;
   font-size: 14px;
-  height: var(--inputHeight);
+  height: calc(var(--inputHeight) - 4px);
 `
