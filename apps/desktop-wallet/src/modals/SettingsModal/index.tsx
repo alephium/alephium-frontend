@@ -111,7 +111,6 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
                     variant="faded"
                     wide
                     transparent={!isActive}
-                    borderless
                     onClick={() => setCurrentTab(tab)}
                   >
                     {tab.label}
@@ -132,16 +131,7 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
         <TabContentsColumn>
           <ColumnHeader>
             <ColumnTitle>{currentTab.label}</ColumnTitle>
-            <Button
-              aria-label={t('Close')}
-              squared
-              rounded
-              role="secondary"
-              transparent
-              onClick={onClose}
-              borderless
-              Icon={X}
-            />
+            <Button aria-label={t('Close')} squared rounded role="secondary" transparent onClick={onClose} Icon={X} />
           </ColumnHeader>
           <Scrollbar>
             <ColumnContent>

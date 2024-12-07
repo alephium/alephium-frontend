@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { HTMLMotionProps, motion, MotionStyle, Variants } from 'framer-motion'
 import { ReactNode } from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
 import Box from '@/components/Box'
@@ -29,7 +29,6 @@ interface MainPanelProps extends HTMLMotionProps<'div'> {
   horizontalAlign?: 'center' | 'stretch'
   enforceMinHeight?: boolean
   transparentBg?: boolean
-  borderless?: boolean
   noMargin?: boolean
   children?: ReactNode
 }
@@ -100,8 +99,6 @@ const FloatingPanelStyled = styled(motion.div)<MainPanelProps>`
   justify-content: ${({ verticalAlign }) => verticalAlign || 'flex-start'};
   align-items: ${({ horizontalAlign }) => horizontalAlign || 'stretch'};
   z-index: 1;
-
-  ${({ borderless, theme }) => !borderless && css``}
 
   @media ${deviceBreakPoints.mobile} {
     box-shadow: none;

@@ -76,7 +76,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
 
   return (
     <>
-      <FloatingPanel verticalAlign="center" horizontalAlign="center" transparentBg borderless>
+      <FloatingPanel verticalAlign="center" horizontalAlign="center" transparentBg>
         <PanelTitle centerText>
           {pendingDappConnectionUrl
             ? t('Connect to dApp')

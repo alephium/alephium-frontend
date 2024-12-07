@@ -43,7 +43,6 @@ export default TimestampCell
 
 const TimestampCellStyled = styled(TableCell)`
   display: flex;
-  align-items: center;
   text-align: left;
   width: 25%;
   gap: 20px;
@@ -57,7 +56,7 @@ const LabelTime = styled.div`
 
 const DirectionLabel = styled.span`
   color: ${({ theme }) => theme.font.primary};
-  font-weight: var(--fontWeight-medium);
+  font-weight: var(--fontWeight-semiBold);
   font-size: 14px;
 `
 

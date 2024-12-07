@@ -117,6 +117,7 @@ const AddressInputs = ({
             error={toAddress.error}
             onChange={(e) => onToAddressChange(e.target.value.trim())}
             placeholder={t('The address which will receive the assets.')}
+            heightSize="big"
           />
           <DestinationActions>
             <Button
@@ -124,7 +125,6 @@ const AddressInputs = ({
               iconColor={theme.global.accent}
               variant="faded"
               short
-              borderless
               onClick={() => setIsContactSelectModalOpen(true)}
             >
               {t('Contacts')}
@@ -134,7 +134,6 @@ const AddressInputs = ({
               iconColor={theme.global.accent}
               variant="faded"
               short
-              borderless
               onClick={() => setIsAddressSelectModalOpen(true)}
             >
               {t('Your addresses')}

@@ -119,7 +119,7 @@ const WalletWelcomePage = () => {
             sectionTitleOpen={t('Hide advanced options')}
             centered
           >
-            <InfoBox contrast noBorders>
+            <InfoBox contrast>
               <KeyValueInputStyled
                 label={t('Generate one address per group')}
                 description={t('For mining or DeFi use.')}

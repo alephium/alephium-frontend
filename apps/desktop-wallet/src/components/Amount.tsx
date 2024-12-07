@@ -263,7 +263,7 @@ const Decimals = styled.span`
 
 const Suffix = styled.span<{ color?: string }>`
   color: ${({ color, theme }) => color ?? theme.font.secondary};
-  font-weight: var(--fontWeight-medium);
+  font-weight: var(--fontWeight-semiBold);
 `
 
 const DataFetchIndicatorStyled = styled.div`

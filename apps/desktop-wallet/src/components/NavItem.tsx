@@ -52,12 +52,11 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
         aria-label={label}
         onClick={handleClick}
         Icon={Icon}
-        borderless
         transparent={!isActive}
         isActive={isActive}
         data-tooltip-id="sidenav"
         data-tooltip-content={label}
-        iconColor={isActive ? theme.global.accent : theme.font.primary}
+        iconColor={isActive ? theme.global.accent : theme.font.secondary}
         rounded
         wide
       >
@@ -71,7 +70,8 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   margin: 0;
   border-radius: var(--radius-big);
   text-align: left;
-  gap: 18px;
+  gap: 16px;
+  font-weight: ${({ isActive }) => (isActive ? 'var(--fontWeight-semiBold)' : 'var(--fontWeight-medium)')};
 
   ${({ isActive, theme }) =>
     isActive &&
@@ -79,10 +79,6 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
       background-color: ${theme.bg.accent};
       color: ${theme.global.accent};
     `}
-
-  &:not(:hover) {
-    opacity: ${({ isActive }) => (isActive ? 1 : 0.6)} !important;
-  }
 
   @media (max-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
     gap: 0;

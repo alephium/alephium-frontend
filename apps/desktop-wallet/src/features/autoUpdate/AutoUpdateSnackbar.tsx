@@ -127,24 +127,17 @@ const AutoUpdateSnackbar = () => {
               {status === 'downloading' && <ProgressBar value={parseFloat(percent) / 100} />}
             </Texts>
             {error && (
-              <CloseButton
-                aria-label={t('Close')}
-                squared
-                role="secondary"
-                transparent
-                onClick={closeSnackbar}
-                borderless
-              >
+              <CloseButton aria-label={t('Close')} squared role="secondary" transparent onClick={closeSnackbar}>
                 <X />
               </CloseButton>
             )}
             {status === 'download-available' && requiresManualDownload && (
-              <Button short borderless onClick={handleManualDownloadClick}>
+              <Button short onClick={handleManualDownloadClick}>
                 {t('Download')}
               </Button>
             )}
             {status === 'download-finished' && !error && (
-              <Button short borderless role="secondary" onClick={handleRestartClick}>
+              <Button short role="secondary" onClick={handleRestartClick}>
                 {t('Restart')}
               </Button>
             )}

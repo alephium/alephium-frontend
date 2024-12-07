@@ -21,7 +21,7 @@ import styled from 'styled-components'
 import { ReactComponent as AlephiumLogoSVG } from '@/images/alephium_logo_monochrome.svg'
 
 export default styled(AlephiumLogoSVG)`
-  width: 35px;
+  width: 38px;
   height: auto;
 
   path {

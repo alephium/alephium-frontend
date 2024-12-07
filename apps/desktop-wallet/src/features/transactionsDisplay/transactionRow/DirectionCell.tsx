@@ -61,4 +61,5 @@ const CellDirection = styled.div`
 const DirectionText = styled.div`
   min-width: 50px;
   display: flex;
+  font-weight: var(--fontWeight-semiBold);
 `

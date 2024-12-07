@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { colord } from 'colord'
 import { ArrowDownToLine, CreditCard, Send, Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -82,7 +83,7 @@ interface SettingsButtonProps extends ShortcutButtonBaseProps {
   addressHash?: AddressHash
 }
 
-const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }: SettingsButtonProps) => {
+const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground }: SettingsButtonProps) => {
   const { sendAnalytics } = useAnalytics()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -101,10 +102,8 @@ const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground, highlig
     <ShortcutButton
       transparent={!solidBackground}
       role="primary"
-      borderless
       onClick={addressHash ? () => handleAddressSettingsClick(addressHash) : handleWalletSettingsClick}
       Icon={Settings}
-      highlight={highlight}
       rounded
     >
       <ButtonText>{t('Settings')}</ButtonText>
@@ -112,12 +111,7 @@ const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground, highlig
   )
 }
 
-const ReceiveButton = ({
-  addressHash,
-  analyticsOrigin,
-  solidBackground,
-  highlight
-}: ShortcutButtonsGroupAddressProps) => {
+const ReceiveButton = ({ addressHash, analyticsOrigin, solidBackground }: ShortcutButtonsGroupAddressProps) => {
   const { sendAnalytics } = useAnalytics()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -131,11 +125,8 @@ const ReceiveButton = ({
     <ShortcutButton
       transparent={!solidBackground}
       role="primary"
-      variant="contrast"
-      borderless
       onClick={handleReceiveClick}
       Icon={ArrowDownToLine}
-      highlight={highlight}
       rounded
     >
       <ButtonText>{t('Receive')}</ButtonText>
@@ -143,7 +134,7 @@ const ReceiveButton = ({
   )
 }
 
-const SendButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }: ShortcutButtonsGroupAddressProps) => {
+const SendButton = ({ addressHash, analyticsOrigin, solidBackground }: ShortcutButtonsGroupAddressProps) => {
   const { sendAnalytics } = useAnalytics()
   const { t } = useTranslation()
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
@@ -174,11 +165,8 @@ const SendButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }
       data-tooltip-content={tooltipContent}
       transparent={!solidBackground}
       role="primary"
-      variant="contrast"
-      borderless
       onClick={isDisabled ? undefined : handleSendClick}
       Icon={Send}
-      highlight={highlight}
       style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
       rounded
     >
@@ -201,25 +189,18 @@ const BuyButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }:
   }
 
   return (
-    <ShortcutButton
-      transparent={!solidBackground}
-      role="primary"
-      variant="contrast"
-      borderless
-      onClick={handleBuyClick}
-      Icon={CreditCard}
-      highlight={highlight}
-      rounded
-    >
+    <ShortcutButton transparent={!solidBackground} role="primary" onClick={handleBuyClick} Icon={CreditCard} rounded>
       <ButtonText>{t('Buy')}</ButtonText>
     </ShortcutButton>
   )
 }
 
-const ShortcutButton = styled(Button)<Pick<ShortcutButtonBaseProps, 'highlight'>>`
+const ShortcutButton = styled(Button)`
   margin: 0;
-  box-shadow: none;
   min-width: 120px;
+  background-color: ${({ theme }) => colord(theme.bg.contrast).alpha(0.8).toHex()};
+  filter: saturate(120%) contrast(120%);
+  backdrop-filter: blur(10px) brightness(0.7) saturate(10);
 `
 
 const ButtonText = styled.div`

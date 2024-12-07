@@ -36,7 +36,6 @@ export interface InfoBoxProps {
   small?: boolean
   short?: boolean
   contrast?: boolean
-  noBorders?: boolean
   className?: string
 }
 
@@ -51,21 +50,14 @@ const InfoBox: FC<InfoBoxProps> = ({
   onClick,
   short,
   children,
-  contrast,
-  noBorders
+  contrast
 }) => {
   const theme = useTheme()
 
   return (
     <div className={className} onClick={onClick}>
       {label && <Label variants={sectionChildrenVariants}>{label}</Label>}
-      <StyledBox
-        variants={sectionChildrenVariants}
-        importance={importance}
-        short={short}
-        contrast={contrast}
-        noBorders={noBorders}
-      >
+      <StyledBox variants={sectionChildrenVariants} importance={importance} short={short} contrast={contrast}>
         {Icon && (
           <IconContainer>
             <Icon color={getImportanceColor(theme, importance)} strokeWidth={1.5} />
@@ -124,7 +116,6 @@ const StyledBox = styled(motion.div)<{
   importance?: InfoBoxImportance
   short?: boolean
   contrast?: boolean
-  noBorders?: boolean
 }>`
   padding: var(--spacing-3);
   height: ${({ short }) => (short ? 'var(--inputHeight)' : 'auto')};
@@ -132,19 +123,13 @@ const StyledBox = styled(motion.div)<{
     contrast
       ? theme.bg.secondary
       : importance
-        ? colord(getImportanceColor(theme, importance)).alpha(0.15).toHex()
+        ? colord(getImportanceColor(theme, importance)).alpha(0.08).toHex()
         : theme.bg.primary};
 
   display: flex;
   border-radius: var(--radius-big);
   align-items: center;
   gap: 15px;
-
-  ${({ theme, importance, noBorders }) =>
-    !noBorders &&
-    css`
-      border: 1px solid ${colord(getImportanceColor(theme, importance)).alpha(0.2).toHex()};
-    `}
 `
 
 const Label = styled(motion.label)`

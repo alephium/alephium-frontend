@@ -29,7 +29,7 @@ const IconLabelTimeCell = ({ tx, refAddressHash, isInAddressDetailsModal }: Tran
   const { Icon, iconColor, iconBgColor } = useTransactionIconLabel(tx, refAddressHash, isInAddressDetailsModal)
 
   return (
-    <DirectionIconCellStyled fixedWidth={60}>
+    <DirectionIconCellStyled fixedWidth={60} noBorder>
       <TransactionIcon color={iconBgColor}>
         <Icon size={15} strokeWidth={2} color={iconColor} />
 
@@ -45,12 +45,7 @@ const IconLabelTimeCell = ({ tx, refAddressHash, isInAddressDetailsModal }: Tran
 
 export default IconLabelTimeCell
 
-const DirectionIconCellStyled = styled(TableCell)`
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  border: 0;
-`
+const DirectionIconCellStyled = styled(TableCell)``
 
 const FailedTXBubble = styled.div`
   position: absolute;

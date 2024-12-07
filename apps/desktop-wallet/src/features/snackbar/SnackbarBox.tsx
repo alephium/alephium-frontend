@@ -72,7 +72,7 @@ const SnackBarBoxContainer = styled(motion.div)`
   }
 
   &.info {
-    ${({ theme }) => getSnackbarStyling(theme.global.accent)}
+    ${({ theme }) => getSnackbarStyling(colord(theme.global.accent).alpha(0.5).toHex())}
   }
 
   &.success {
@@ -89,6 +89,8 @@ const getSnackbarStyling = (color: string) => css`
 
   ${SnackbarBoxContent} {
     color: ${({ theme }) =>
-      theme.name === 'light' ? colord(color).darken(0.1).toHex() : colord(color).lighten(0.3).toHex()};
+      theme.name === 'light'
+        ? colord(color).alpha(1).darken(0.1).toHex()
+        : colord(color).alpha(1).lighten(0.3).toHex()};
   }
 `

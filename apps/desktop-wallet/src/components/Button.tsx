@@ -38,7 +38,6 @@ export interface ButtonProps extends HTMLMotionProps<'button'> {
   rounded?: boolean
   Icon?: LucideIcon
   iconColor?: string
-  borderless?: boolean
   isHighlighted?: boolean
   disablePointer?: boolean
   loading?: boolean
@@ -104,7 +103,7 @@ const Button = ({
 }
 
 export default styled(Button)`
-  ${({ theme, role = 'primary', variant = 'default', transparent, borderless, iconColor, children }) => {
+  ${({ theme, role = 'primary', variant = 'default', transparent, iconColor, children }) => {
     const bgColor = transparent
       ? 'transparent'
       : {
@@ -185,42 +184,6 @@ export default styled(Button)`
           }[variant]
         }[role]
 
-    const borderColor = borderless
-      ? 'transparent'
-      : transparent
-        ? {
-            primary: {
-              default: theme.global.accent,
-              contrast: theme.bg.background2,
-              valid: theme.global.valid,
-              alert: theme.global.alert,
-              faded: colord(theme.global.accent).alpha(0.25).toRgbString()
-            }[variant],
-            secondary: {
-              default: 'transparent',
-              contrast: theme.bg.background2,
-              valid: theme.global.valid,
-              alert: theme.global.alert,
-              faded: theme.border.secondary
-            }[variant]
-          }[role]
-        : {
-            primary: {
-              default: theme.border.primary,
-              contrast: theme.border.primary,
-              valid: theme.border.primary,
-              alert: theme.border.primary,
-              faded: theme.border.primary
-            }[variant],
-            secondary: {
-              default: 'transparent',
-              contrast: theme.border.primary,
-              valid: theme.global.valid,
-              alert: theme.global.alert,
-              faded: theme.border.primary
-            }[variant]
-          }[role]
-
     const hoverColor = transparent
       ? theme.font.primary
       : {
@@ -243,7 +206,6 @@ export default styled(Button)`
     return css`
       background-color: ${bgColor};
       color: ${fontColor};
-      border: 1px solid ${borderColor};
       position: relative;
 
       &:hover {
@@ -300,8 +262,7 @@ export default styled(Button)`
   pointer-events: ${({ disabled: deactivated }) => (deactivated ? 'none' : 'auto')};
 
   &:focus-visible {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.global.accent};
-    border: 1px solid ${({ theme }) => theme.global.accent};
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.global.accent};
   }
 
   // Highlight animation
@@ -314,7 +275,6 @@ export default styled(Button)`
       animation-iteration-count: infinite;
       animation-direction: alternate;
       animation-timing-function: ease-in-out;
-      border: 1px solid ${({ theme }) => theme.bg.accent};
     `}
 
   @keyframes breathing {

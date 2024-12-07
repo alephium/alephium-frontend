@@ -104,7 +104,7 @@ const SideBarStyled = styled.div<{ noBorder: boolean; noExpansion: boolean }>`
 
 const BrandContainer = styled.div`
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: center;
   margin-bottom: var(--spacing-7);
 `
@@ -113,10 +113,9 @@ const AlephiumLogoContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 13px;
-  width: 38px;
-  height: 38px;
-  margin: 0 1px;
+  padding: 12px;
+  width: 36px;
+  height: 36px;
   border-radius: 100px;
   background-color: ${({ theme }) => theme.bg.contrast};
 `

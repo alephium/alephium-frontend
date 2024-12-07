@@ -82,12 +82,12 @@ const ContactsTabContent = memo(() => {
               <HashEllipsedStyled hash={contact.address} />
             </ContentRow>
             <ButtonsRow>
-              <SendButton transparent borderless onClick={() => openSendModal(contact)}>
+              <SendButton transparent onClick={() => openSendModal(contact)}>
                 <ArrowUp strokeWidth={1} />
                 <ButtonText>{t('Send')}</ButtonText>
               </SendButton>
               <Separator />
-              <EditButton transparent borderless onClick={() => openEditContactModal(contact)}>
+              <EditButton transparent onClick={() => openEditContactModal(contact)}>
                 <Pencil strokeWidth={1} />
                 <ButtonText>{t('Edit')}</ButtonText>
               </EditButton>

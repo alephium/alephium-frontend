@@ -76,7 +76,6 @@ const WalletsSettingsSection = () => {
                 squared
                 role="secondary"
                 transparent
-                borderless
                 onClick={openEditWalletNameModal}
               >
                 <Pencil size={15} />
@@ -152,7 +151,6 @@ const WalletItem = ({ wallet, isCurrent, onWalletDelete, isPassphraseUsed }: Wal
           squared
           role="secondary"
           transparent
-          borderless
           onClick={() => onWalletDelete(wallet)}
           onBlur={() => setIsShowingDeleteButton(false)}
           disabled={!isShowingDeleteButton || isPassphraseUsed}

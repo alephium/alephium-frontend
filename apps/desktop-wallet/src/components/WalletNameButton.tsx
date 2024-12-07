@@ -112,7 +112,7 @@ const OnEnterWalletName = styled(CurrentWalletInitials)`
   white-space: nowrap;
   font-size: 14px;
   pointer-events: none;
-  box-shadow: ${({ theme }) => theme.shadow.secondary};
+  box-shadow: 0 0 60px 60px ${({ theme }) => theme.font.contrastPrimary};
   border: 2px solid ${({ theme }) => theme.global.accent};
   display: flex;
   align-items: center;
