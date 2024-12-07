@@ -239,8 +239,8 @@ export default styled(Button)`
   display: flex;
   align-items: center;
   justify-content: ${({ Icon }) => (Icon ? 'center' : 'flex-start')};
-  height: ${({ squared, short, tall }) => (short ? '36px' : squared ? '40px' : tall ? '48px' : '42px')};
-  width: ${({ squared, short, wide }) => (squared ? '40px' : short && !wide ? 'auto' : wide ? '100%' : '80%')};
+  height: ${({ squared, short, tall }) => (short ? '36px' : squared ? '36px' : tall ? '48px' : '42px')};
+  width: ${({ squared, short, wide }) => (squared ? '36px' : short && !wide ? 'auto' : wide ? '100%' : '80%')};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
   border-radius: 100px;
   font-weight: ${({ role, variant }) =>
@@ -249,7 +249,7 @@ export default styled(Button)`
   font-family: inherit;
   margin: ${({ squared }) => (squared ? '0' : '10px 0')};
   padding: ${({ squared, Icon }) => (squared ? 'var(--spacing-2)' : Icon ? '0 28px 0 14px' : '0 14px')};
-  min-width: ${({ squared }) => (squared ? '40px' : '60px')};
+  min-width: ${({ squared }) => (squared ? '36px' : '60px')};
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};
   backdrop-filter: blur(10px)

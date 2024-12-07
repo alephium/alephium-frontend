@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { ReactNode } from 'react'
@@ -67,13 +68,13 @@ const SideModal = ({
         {!hideHeader && (
           <ModalHeader>
             <HeaderColumn>{header ?? <Title>{title}</Title>}</HeaderColumn>
-            <CloseButton aria-label={t('Close')} squared role="secondary" transparent onClick={_onClose} Icon={X} />
+            <CloseButton aria-label={t('Close')} squared role="secondary" onClick={_onClose} Icon={X} />
           </ModalHeader>
         )}
         <Scrollbar>
-          <div ref={elRef} tabIndex={0} aria-label={title}>
+          <ContentContainer ref={elRef} tabIndex={0} aria-label={title}>
             {children}
-          </div>
+          </ContentContainer>
         </Scrollbar>
       </Sidebar>
     </ModalContainer>
@@ -90,17 +91,23 @@ const Sidebar = styled(motion.div)<{ width: number }>`
   max-height: 95vh;
   background-color: ${({ theme }) => theme.bg.background2};
   position: relative;
-  overflow: auto;
   margin: 25px 20px 25px auto;
   border-radius: var(--radius-huge);
   border: 1px solid ${({ theme }) => theme.border.primary};
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
+  overflow: hidden;
 `
 
 const ModalHeader = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
   display: flex;
   align-items: center;
-  padding: 10px 20px;
+  padding: 0 10px 16px 20px;
+  height: 70px;
+  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 55%, transparent)`};
 `
 
 const HeaderColumn = styled.div`
@@ -115,4 +122,8 @@ const CloseButton = styled(Button)`
 const Title = styled.div`
   font-weight: var(--fontWeight-semiBold);
   font-size: 16px;
+`
+
+const ContentContainer = styled.div`
+  padding-top: 50px;
 `

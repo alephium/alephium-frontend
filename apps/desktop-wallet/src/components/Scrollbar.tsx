@@ -26,9 +26,10 @@ import { ScrollContextProvider, ScrollContextType } from '@/contexts/scroll'
 
 interface ScrollbarCustomProps {
   children?: ReactNode
+  className?: string
 }
 
-const ScrollbarCustom = ({ children }: ScrollbarCustomProps) => {
+const ScrollbarCustom = ({ children, className }: ScrollbarCustomProps) => {
   const scrollY = useMotionValue(0)
   const contextValueRef = useRef<ScrollContextType>({ scrollY })
 
@@ -39,7 +40,7 @@ const ScrollbarCustom = ({ children }: ScrollbarCustomProps) => {
   // react-scrollbars-custom has a type issue where you can't just spread props
   // onto the component. That's why needed props are added as necessary.
   return (
-    <CustomScroll onScroll={handleScrollUpdate} flex="1">
+    <CustomScroll onScroll={handleScrollUpdate} flex="1" className={className}>
       <ScrollContextProvider value={contextValueRef.current}>{children}</ScrollContextProvider>
     </CustomScroll>
   )

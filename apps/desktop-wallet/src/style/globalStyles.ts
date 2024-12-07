@@ -91,7 +91,7 @@ export const GlobalStyle = createGlobalStyle`
     color: white;
     background-color: ${({ theme }) =>
       colord(theme.font.tertiary)
-        .alpha(theme.name === 'light' ? 0.4 : 0.15)
+        .alpha(theme.name === 'light' ? 0.1 : 0.15)
         .toHex()} !important;
   }
 `

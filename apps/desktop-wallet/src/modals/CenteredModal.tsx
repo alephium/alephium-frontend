@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { ChevronLeft, LucideIcon, X } from 'lucide-react'
 import { ReactNode } from 'react'
@@ -185,18 +186,19 @@ const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>
 `
 
 export const ModalHeader = styled.header<{ transparent?: boolean }>`
-  position: sticky;
+  position: absolute;
   top: 0;
-  z-index: 1;
-  ${({ transparent }) =>
-    !transparent &&
-    css`
-      background-color: ${({ theme }) => theme.bg.background2};
-      border-bottom: 1px solid ${({ theme }) => theme.border.primary};
-    `}
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 10px 16px 20px;
+  height: 70px;
+  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 55%, transparent)`};
 `
 
 const ModalHeaderContent = styled(motion.div)`
+  width: 100%;
   display: flex;
   justify-content: center;
   margin-bottom: 30px;
@@ -220,7 +222,8 @@ const BackButton = styled(Button)`
 export const ModalContent = styled.div<{ noBottomPadding?: boolean }>`
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-4) var(--spacing-6);
+  padding: var(--spacing-4) var(--spacing-4);
+  padding-top: 50px;
   width: 100%;
 
   ${({ noBottomPadding }) =>

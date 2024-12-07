@@ -20,7 +20,6 @@ import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import Box from '@/components/Box'
 import { ShortcutButtonsGroupAddress } from '@/components/Buttons/ShortcutButtons'
 import QRCode from '@/components/QRCode'
 import WorthOverviewPanel from '@/components/WorthOverviewPanel'
@@ -48,11 +47,8 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
       </WorthOverviewPanelStyled>
 
       <Content>
-        <Shortcuts>
-          <ButtonsGrid>
-            <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" solidBackground />
-          </ButtonsGrid>
-        </Shortcuts>
+        <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" solidBackground />
+
         <AddressTokensTabs addressHash={addressHash} />
         <AddressTransactionsList addressHash={addressHash} />
       </Content>
@@ -63,7 +59,8 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
 export default AddressDetailsModal
 
 const WorthOverviewPanelStyled = styled(WorthOverviewPanel)`
-  padding: 0;
+  margin: var(--spacing-4);
+  width: auto;
 `
 
 const Content = styled.div`
@@ -72,14 +69,6 @@ const Content = styled.div`
   gap: 45px;
   display: flex;
   flex-direction: column;
-`
-
-const Shortcuts = styled(Box)`
-  overflow: hidden;
-  background-color: ${({ theme }) => theme.bg.primary};
-  margin: 0 60px;
-  border-radius: 100px;
-  width: auto;
 `
 
 const ButtonsGrid = styled.div`
