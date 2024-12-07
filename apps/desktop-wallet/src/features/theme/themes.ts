@@ -41,7 +41,7 @@ export const lightTheme: DefaultTheme = {
     highlight: '#ef6c5c'
   },
   border: {
-    primary: 'rgba(0, 0, 0, 0.06)',
+    primary: 'rgba(0, 0, 0, 0.07)',
     secondary: 'rgba(0, 0, 0, 0.04)'
   },
   shadow: {
@@ -81,7 +81,7 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f0a990'
   },
   border: {
-    primary: 'rgba(255, 255, 255, 0.05)',
+    primary: 'rgba(255, 255, 255, 0.06)',
     secondary: 'rgba(255, 255, 255, 0.03)'
   },
   shadow: {

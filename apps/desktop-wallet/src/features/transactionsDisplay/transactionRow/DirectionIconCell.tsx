@@ -31,7 +31,7 @@ const IconLabelTimeCell = ({ tx, refAddressHash, isInAddressDetailsModal }: Tran
   return (
     <DirectionIconCellStyled fixedWidth={60}>
       <TransactionIcon color={iconBgColor}>
-        <Icon size={16} strokeWidth={3} color={iconColor} />
+        <Icon size={15} strokeWidth={2} color={iconColor} />
 
         {isConfirmedTx(tx) && !tx.scriptExecutionOk && (
           <FailedTXBubble data-tooltip-id="default" data-tooltip-content={t('Script execution failed')}>
@@ -70,9 +70,9 @@ const TransactionIcon = styled.span<{ color?: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   position: relative;
-  border-radius: 38px;
+  border-radius: 36px;
   background-color: ${({ color, theme }) => color || theme.font.primary};
 `

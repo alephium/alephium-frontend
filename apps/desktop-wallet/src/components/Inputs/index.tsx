@@ -70,7 +70,7 @@ export const inputDefaultStyle = (
   height: ${heightSize === 'small' ? '38px' : heightSize === 'big' ? '50px' : 'var(--inputHeight)'};
   width: 100%;
   border-radius: 100px;
-  background-color: ${({ theme }) => theme.bg.primary};
+  border: 2px solid ${({ theme }) => theme.border.primary};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 45px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
   font-weight: var(--fontWeight-medium);
@@ -89,7 +89,7 @@ export const inputDefaultStyle = (
 
   &:focus {
     background-color: ${({ theme }) => theme.bg.highlight};
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.global.accent};
+    border: 2px solid ${({ theme }) => theme.global.accent};
   }
 
   &.error {
@@ -144,7 +144,7 @@ export const InputLabel: FC<HTMLMotionProps<'label'> & { isElevated: boolean }> 
 
 const StyledInputLabel = styled(motion.label)`
   position: absolute;
-  left: ${inputStyling.paddingLeftRight};
+  left: calc(${inputStyling.paddingLeftRight} + 2px);
   top: 0;
   height: 100%;
   display: flex;
