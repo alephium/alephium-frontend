@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 interface PanelTitleProps {
@@ -26,16 +27,17 @@ interface PanelTitleProps {
   size?: 'small' | 'big'
   isSticky?: boolean
   centerText?: boolean
+  children?: ReactNode
 }
 
-const PanelTitle: FC<PanelTitleProps> = ({
+const PanelTitle = ({
   color,
   children,
   onBackButtonClick,
   size,
   isSticky = false,
   centerText = false
-}) => {
+}: PanelTitleProps) => {
   const { scrollY } = useScroll()
 
   const titleScale = useTransform(scrollY, [0, 50], [1, 0.6])
@@ -88,6 +90,6 @@ const H1 = styled(motion.h1)<PanelTitleProps>`
   flex: 1;
   margin: 10px 0;
   color: ${({ theme, color }) => (color ? color : theme.font.primary)};
-  font-size: ${({ size }) => (size === 'small' ? '18px' : size === 'big' ? '38px' : '28px')};
+  font-size: ${({ size }) => (size === 'small' ? '20px' : size === 'big' ? '32px' : '28px')};
   font-weight: var(--fontWeight-semiBold);
 `

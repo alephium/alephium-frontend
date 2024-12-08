@@ -58,24 +58,24 @@ const SideModal = ({
     <ModalContainer id={id} onClose={_onClose}>
       <Sidebar
         role="dialog"
-        initial={{ x: 30, opacity: 0 }}
+        initial={{ x: 10, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        exit={{ x: 30, opacity: 0 }}
+        exit={{ x: 10, opacity: 0 }}
         {...normalTransition}
         width={width}
         onAnimationComplete={onAnimationComplete}
       >
+        <Scrollbar>
+          <ContentContainer ref={elRef} tabIndex={0} aria-label={title}>
+            {children}
+          </ContentContainer>
+        </Scrollbar>
         {!hideHeader && (
           <ModalHeader>
             <HeaderColumn>{header ?? <Title>{title}</Title>}</HeaderColumn>
             <CloseButton aria-label={t('Close')} squared role="secondary" onClick={_onClose} Icon={X} />
           </ModalHeader>
         )}
-        <Scrollbar>
-          <ContentContainer ref={elRef} tabIndex={0} aria-label={title}>
-            {children}
-          </ContentContainer>
-        </Scrollbar>
       </Sidebar>
     </ModalContainer>
   )
@@ -93,7 +93,6 @@ const Sidebar = styled(motion.div)<{ width: number }>`
   position: relative;
   margin: 25px 20px 25px auto;
   border-radius: var(--radius-huge);
-  border: 1px solid ${({ theme }) => theme.border.primary};
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
   overflow: hidden;
 `

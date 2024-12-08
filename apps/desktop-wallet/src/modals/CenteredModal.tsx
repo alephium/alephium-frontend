@@ -101,7 +101,6 @@ const CenteredModal: FC<CenteredModalProps> = ({
               squared
               role="secondary"
               rounded
-              transparent
               onClick={rest.onClose ?? onClose}
               Icon={X}
             />
@@ -140,10 +139,7 @@ export const ScrollableModalContent = ({ children }: Pick<CenteredModalProps, 'c
   </Scrollbar>
 )
 
-export const HeaderContent = styled(Section)`
-  flex: 0;
-  margin-bottom: var(--spacing-4);
-`
+export const HeaderContent = styled(Section)``
 
 export const HeaderLogo = styled.div`
   height: 10vh;
@@ -161,18 +157,16 @@ const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>
 
   width: 100%;
   margin: auto;
-  max-width: ${({ narrow }) => (narrow ? '380px' : '600px')};
+  max-width: ${({ narrow }) => (narrow ? '380px' : '560px')};
   max-height: 90vh;
   overflow: hidden;
 
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
   border-radius: var(--radius-huge);
-  border: 1px solid ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.background1};
 
   ${TitleContainer} {
     flex: 1;
-    margin: var(--spacing-1) var(--spacing-4);
   }
 
   ${({ fullScreen }) =>
@@ -192,19 +186,19 @@ export const ModalHeader = styled.header<{ transparent?: boolean }>`
   left: 0;
   display: flex;
   align-items: center;
-  padding: 0 10px 16px 20px;
-  height: 70px;
+  padding: 0 6px 16px var(--spacing-6);
+  height: 80px;
   background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 55%, transparent)`};
 `
 
 const ModalHeaderContent = styled(motion.div)`
-  width: 100%;
   display: flex;
   justify-content: center;
   margin-bottom: 30px;
 `
 
 const TitleRow = styled.div`
+  flex: 1;
   display: flex;
   align-items: center;
 `
@@ -222,8 +216,7 @@ const BackButton = styled(Button)`
 export const ModalContent = styled.div<{ noBottomPadding?: boolean }>`
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-4) var(--spacing-4);
-  padding-top: 50px;
+  padding: 70px var(--spacing-6) var(--spacing-6) var(--spacing-6);
   width: 100%;
 
   ${({ noBottomPadding }) =>
@@ -240,7 +233,7 @@ export const ModalFooterButtons = styled.div`
   justify-content: space-between;
   gap: 20px;
   margin-top: var(--spacing-4);
-  background-color: ${({ theme }) => theme.bg.background1};
+  background: linear-gradient(to top, ${({ theme }) => theme.bg.background1}, transparent);
 `
 
 export const ModalFooterButton = ({ ...props }) => (

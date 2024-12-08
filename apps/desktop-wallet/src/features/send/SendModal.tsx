@@ -315,7 +315,6 @@ function SendModal<PT extends { fromAddress: Address }>({
       dynamicContent
       onBack={onBackCallback}
       focusMode
-      noPadding
       disableBack={isRequestToApproveContractCall && step !== 'password-check'}
     >
       {step === 'addresses' &&

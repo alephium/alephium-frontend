@@ -42,7 +42,7 @@ export const lightTheme: DefaultTheme = {
   },
   border: {
     primary: 'rgba(0, 0, 0, 0.07)',
-    secondary: 'rgba(0, 0, 0, 0.04)'
+    secondary: 'rgba(0, 0, 0, 0.05)'
   },
   shadow: {
     primary: '0 1px 1px rgba(0, 0, 0, 0.03)',
@@ -81,13 +81,13 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f0a990'
   },
   border: {
-    primary: 'rgba(255, 255, 255, 0.06)',
-    secondary: 'rgba(255, 255, 255, 0.03)'
+    primary: 'rgba(255, 255, 255, 0.08)',
+    secondary: 'rgba(255, 255, 255, 0.06)'
   },
   shadow: {
     primary: '0 2px 3px rgba(0, 0, 0, 0.3)',
-    secondary: '0 10px 10px rgba(0, 0, 0, 0.25)',
-    tertiary: '0 0 80px rgb(0, 0, 0)'
+    secondary: '0 10px 10px rgba(0, 0, 0, 0.25  )',
+    tertiary: '0 0 80px 30px rgb(0, 0, 0)'
   },
   global: {
     accent: '#3b62f0',

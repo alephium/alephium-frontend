@@ -207,5 +207,5 @@ const AddressToInput = styled(AddressInput)`
 const DestinationActions = styled.div`
   display: flex;
   gap: 5px;
-  margin-top: var(--spacing-4);
+  margin-top: var(--spacing-2);
 `
