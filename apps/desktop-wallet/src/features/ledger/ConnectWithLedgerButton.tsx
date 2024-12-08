@@ -16,16 +16,20 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export type Message = string
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
-export type OptionalMessage = Message | undefined
+import Button from '@/components/Button'
 
-export interface SnackbarMessage {
-  text: Message
-  type?: 'info' | 'alert' | 'success'
-  duration?: number
+const ConnectWithLedgerButton = () => {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+
+  const handleLedgerConnectClick = () => {
+    navigate('/ledger')
+  }
+
+  return <Button onClick={handleLedgerConnectClick}>{t('Connect with Ledger')}</Button>
 }
 
-export interface ToastMessage extends Omit<SnackbarMessage, 'duration'> {
-  duration: 'short' | 'long'
-}
+export default ConnectWithLedgerButton

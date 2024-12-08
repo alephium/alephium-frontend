@@ -29,6 +29,7 @@ import useAddressGeneration from '@/hooks/useAddressGeneration'
 import SideModal from '@/modals/SideModal'
 import OperationBox from '@/pages/UnlockedWallet/AddressesPage/OperationBox'
 import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { toggleAppLoading } from '@/storage/global/globalActions'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -42,10 +43,15 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const allAddressesIndexes = useAppSelector((s) => selectAllAddresses(s).map(({ index }) => index))
 
-  const handleOneAddressPerGroupClick = () => {
-    isPassphraseUsed
-      ? generateAndSaveOneAddressPerGroup()
-      : dispatch(openModal({ name: 'NewAddressModal', props: { title: t('Generate one address per group') } }))
+  const handleOneAddressPerGroupClick = async () => {
+    if (isPassphraseUsed) {
+      dispatch(toggleAppLoading(true))
+      await generateAndSaveOneAddressPerGroup()
+      dispatch(toggleAppLoading(false))
+    } else {
+      dispatch(openModal({ name: 'NewAddressModal', props: { title: t('Generate one address per group') } }))
+    }
+
     sendAnalytics({ event: 'Advanced operation to generate one address per group clicked' })
   }
 

@@ -16,16 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export type Message = string
+import { useAppSelector } from '@/hooks/redux'
 
-export type OptionalMessage = Message | undefined
+export const useIsLedger = () => {
+  const isLedger = useAppSelector((s) => s.activeWallet.isLedger)
 
-export interface SnackbarMessage {
-  text: Message
-  type?: 'info' | 'alert' | 'success'
-  duration?: number
-}
-
-export interface ToastMessage extends Omit<SnackbarMessage, 'duration'> {
-  duration: 'short' | 'long'
+  return !!isLedger
 }

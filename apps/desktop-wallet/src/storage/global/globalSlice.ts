@@ -104,7 +104,7 @@ const globalSlice = createSlice({
       .addCase(walletSaved, (state, action) => {
         const { id, name, encrypted, lastUsed } = action.payload.wallet
 
-        state.wallets.push({ id, name, encrypted, lastUsed })
+        state.wallets.push({ id, name, encrypted, lastUsed, isLedger: false })
       })
       .addCase(walletLocked, resetState)
       .addCase(activeWalletDeleted, resetState)

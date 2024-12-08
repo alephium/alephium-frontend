@@ -23,7 +23,7 @@ import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import { ThemeType } from '@/features/theme/themeTypes'
 import i18n from '@/i18n'
 import { RootState } from '@/storage/store'
-import { OptionalMessage, SnackbarMessage } from '@/types/snackbar'
+import { OptionalMessage, SnackbarMessage, ToastMessage } from '@/types/snackbar'
 import { SentTransaction } from '@/types/transactions'
 
 type ModalId = string
@@ -47,6 +47,8 @@ export const osThemeChangeDetected = createAction<ThemeType>('app/osThemeChangeD
 export const devModeShortcutDetected = createAction<{ activate: boolean }>('app/devModeShortcutDetected')
 
 export const snackbarDisplayTimeExpired = createAction('app/snackbarDisplayTimeExpired')
+
+export const showToast = createAction<ToastMessage>('app/showToast')
 
 export const userDataMigrationFailed = createAction('app/userDataMigrationFailed')
 

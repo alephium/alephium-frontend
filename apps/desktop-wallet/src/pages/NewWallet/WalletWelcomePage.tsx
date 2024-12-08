@@ -57,9 +57,9 @@ const WalletWelcomePage = () => {
     setConfettiRunning(false)
   }, 3000)
 
-  const onButtonClick = () => {
+  const onButtonClick = async () => {
     if (shouldGenerateOneAddressPerGroup && defaultAddress) {
-      generateAndSaveOneAddressPerGroup({
+      await generateAndSaveOneAddressPerGroup({
         labelPrefix: 'Address',
         labelColor: defaultAddress.color,
         skipGroups: [defaultAddress.group]
