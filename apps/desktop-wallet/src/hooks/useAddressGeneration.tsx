@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next'
 
 import { discoverAndCacheActiveAddresses } from '@/api/addresses'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { useIsLedger } from '@/features/ledger/useIsLedger'
+import { useLedger } from '@/features/ledger/useLedger'
 import { generateLedgerAddressesFromMetadata, LedgerAlephium } from '@/features/ledger/utils'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
@@ -62,18 +62,10 @@ const useAddressGeneration = () => {
   const dispatch = useAppDispatch()
   const addresses = useAppSelector(selectAllAddresses)
   const { sendAnalytics } = useAnalytics()
-  const isLedger = useIsLedger()
+  const { isLedger, onLedgerError } = useLedger()
   const { t } = useTranslation()
 
   const currentAddressIndexes = useMemo(() => addresses.map(({ index }) => index), [addresses])
-
-  const onLedgerError = useCallback(
-    (error: Error) => {
-      console.error(error)
-      dispatch(showToast({ text: `${t('Could not connect to Alephium Ledger app')}`, type: 'alert', duration: 'long' }))
-    },
-    [dispatch, t]
-  )
 
   const generateAddress = useCallback(
     async (group?: GenerateAddressProps['group']): Promise<NonSensitiveAddressData | null> =>
@@ -187,7 +179,9 @@ const useAddressGeneration = () => {
 
     try {
       const derivedAddresses = isLedger
-        ? await LedgerAlephium.create().then((app) => app.discoverActiveAddresses(skipIndexes))
+        ? await LedgerAlephium.create()
+            .catch(onLedgerError)
+            .then((app) => (app ? app.discoverActiveAddresses(skipIndexes) : []))
         : await discoverAndCacheActiveAddresses(skipIndexes)
 
       const newAddresses = derivedAddresses.map((address) => ({
@@ -201,10 +195,11 @@ const useAddressGeneration = () => {
       } catch {
         sendAnalytics({ type: 'error', message: 'Error while saving newly discovered address' })
       }
-      dispatch(addressDiscoveryFinished(enableLoading))
     } catch (error) {
       console.error(error)
       sendAnalytics({ type: 'error', message: 'Could not discover addresses' })
+    } finally {
+      dispatch(addressDiscoveryFinished(enableLoading))
     }
   }
 

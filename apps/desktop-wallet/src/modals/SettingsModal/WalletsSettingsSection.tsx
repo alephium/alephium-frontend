@@ -25,7 +25,7 @@ import Button from '@/components/Button'
 import CheckMark from '@/components/CheckMark'
 import InfoBox from '@/components/InfoBox'
 import { BoxContainer, Section } from '@/components/PageComponents/PageContainers'
-import { useIsLedger } from '@/features/ledger/useIsLedger'
+import { useLedger } from '@/features/ledger/useLedger'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
@@ -39,7 +39,7 @@ const WalletsSettingsSection = () => {
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const wallets = useAppSelector((s) => s.global.wallets)
   const { isWalletUnlocked, lockWallet } = useWalletLock()
-  const isLedger = useIsLedger()
+  const { isLedger } = useLedger()
 
   const openWalletRemoveModal = (walletId: string, walletName: string) => {
     dispatch(openModal({ name: 'WalletRemovalModal', props: { walletId, walletName } }))

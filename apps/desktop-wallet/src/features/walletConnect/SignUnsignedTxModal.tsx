@@ -25,7 +25,7 @@ import { useTranslation } from 'react-i18next'
 import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { useIsLedger } from '@/features/ledger/useIsLedger'
+import { useLedger } from '@/features/ledger/useLedger'
 import { LedgerAlephium } from '@/features/ledger/utils'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
@@ -48,7 +48,7 @@ const SignUnsignedTxModal = memo(({ id, txData }: ModalBaseProp & SignUnsignedTx
   const { sendAnalytics } = useAnalytics()
   const dispatch = useAppDispatch()
   const { sendUserRejectedResponse, sendSuccessResponse, sendFailureResponse } = useWalletConnectContext()
-  const isLedger = useIsLedger()
+  const { isLedger, onLedgerError } = useLedger()
 
   const [isLoading, setIsLoading] = useState(false)
   const [decodedUnsignedTx, setDecodedUnsignedTx] = useState<Omit<SignUnsignedTxResult, 'signature'> | undefined>(
@@ -97,10 +97,15 @@ const SignUnsignedTxModal = memo(({ id, txData }: ModalBaseProp & SignUnsignedTx
 
     try {
       const signature = isLedger
-        ? await LedgerAlephium.create().then((app) =>
-            app.signUnsignedTx(txData.fromAddress.index, decodedUnsignedTx.unsignedTx)
-          )
+        ? await LedgerAlephium.create()
+            .catch(onLedgerError)
+            .then((app) => (app ? app.signUnsignedTx(txData.fromAddress.index, decodedUnsignedTx.unsignedTx) : null))
         : keyring.signTransaction(decodedUnsignedTx.txId, txData.fromAddress.hash)
+
+      if (!signature) {
+        throw new Error()
+      }
+
       const signResult: SignUnsignedTxResult = { signature, ...decodedUnsignedTx }
       await sendSuccessResponse(signResult, true)
 

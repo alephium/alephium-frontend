@@ -30,7 +30,7 @@ import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { useIsLedger } from '@/features/ledger/useIsLedger'
+import { useLedger } from '@/features/ledger/useLedger'
 import { closeModal } from '@/features/modals/modalActions'
 import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -58,7 +58,7 @@ const AddressSweepModal = memo(
     const { data: allAddressHashes } = useFetchSortedAddressesHashes()
     const { sendAnalytics } = useAnalytics()
     const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
-    const isLedger = useIsLedger()
+    const { isLedger, onLedgerError } = useLedger()
 
     const toAddressOptions = addressHash ? addresses.filter(({ hash }) => hash !== fromAddress?.hash) : addresses
     const { data: fromAddressOptions } = useFetchAddressesHashesWithBalance()
@@ -121,7 +121,11 @@ const AddressSweepModal = memo(
       setIsLoading(true)
       try {
         for (const { txId, unsignedTx } of builtUnsignedTxs) {
-          const data = await signAndSendTransaction(sweepAddresses.from, txId, unsignedTx, isLedger)
+          const data = await signAndSendTransaction(sweepAddresses.from, txId, unsignedTx, isLedger, onLedgerError)
+
+          if (!data) {
+            return
+          }
 
           dispatch(
             transactionSent({

@@ -20,7 +20,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Select, { SelectOption } from '@/components/Inputs/Select'
-import { useIsLedger } from '@/features/ledger/useIsLedger'
+import { useLedger } from '@/features/ledger/useLedger'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { StoredEncryptedWallet } from '@/types/wallet'
@@ -31,7 +31,7 @@ const WalletSelect = () => {
   const wallets = useAppSelector((s) => s.global.wallets)
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
-  const isLedger = useIsLedger()
+  const { isLedger } = useLedger()
 
   const [selectedWalletOption, setSelectedWalletOption] = useState<SelectOption<string>>()
 

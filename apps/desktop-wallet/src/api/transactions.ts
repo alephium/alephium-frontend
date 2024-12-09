@@ -39,11 +39,19 @@ export const signAndSendTransaction = async (
   fromAddress: Address,
   txId: string,
   unsignedTx: string,
-  isLedger: boolean
+  isLedger: boolean,
+  onLedgerError: (error: Error) => void
 ) => {
   const signature = isLedger
-    ? await LedgerAlephium.create().then((app) => app.signUnsignedTx(fromAddress.index, unsignedTx))
+    ? await LedgerAlephium.create()
+        .catch(onLedgerError)
+        .then((app) => (app ? app.signUnsignedTx(fromAddress.index, unsignedTx) : null))
     : keyring.signTransaction(txId, fromAddress.hash)
+
+  if (!signature) {
+    throw new Error()
+  }
+
   const data = await throttledClient.node.transactions.postTransactionsSubmit({ unsignedTx, signature })
 
   return { ...data, signature }

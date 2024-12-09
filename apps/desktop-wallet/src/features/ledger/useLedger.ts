@@ -16,10 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useAppSelector } from '@/hooks/redux'
+import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
-export const useIsLedger = () => {
-  const isLedger = useAppSelector((s) => s.activeWallet.isLedger)
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { showToast } from '@/storage/global/globalActions'
 
-  return !!isLedger
+export const useLedger = () => {
+  const isLedger = useAppSelector((s) => !!s.activeWallet.isLedger)
+  const dispatch = useAppDispatch()
+  const { t } = useTranslation()
+
+  const onLedgerError = useCallback(
+    (error: Error) => {
+      console.error(error)
+      dispatch(showToast({ text: `${t('Could not connect to Alephium Ledger app')}`, type: 'alert', duration: 'long' }))
+    },
+    [dispatch, t]
+  )
+
+  return {
+    isLedger,
+    onLedgerError
+  }
 }

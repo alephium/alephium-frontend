@@ -75,7 +75,8 @@ export const handleTransferSend = async (
   transactionData: TransferTxData,
   context: TxContext,
   posthog: PostHog,
-  isLedger: boolean
+  isLedger: boolean,
+  onLedgerError: (error: Error) => void
 ) => {
   const { fromAddress, toAddress, lockTime: lockDateTime, assetAmounts } = transactionData
   const { isSweeping, sweepUnsignedTxs, consolidationRequired, unsignedTxId, unsignedTransaction } = context
@@ -89,7 +90,11 @@ export const handleTransferSend = async (
       const type = consolidationRequired ? 'consolidation' : 'sweep'
 
       for (const { txId, unsignedTx } of sweepUnsignedTxs) {
-        const data = await signAndSendTransaction(fromAddress, txId, unsignedTx, isLedger)
+        const data = await signAndSendTransaction(fromAddress, txId, unsignedTx, isLedger, onLedgerError)
+
+        if (!data) {
+          return
+        }
 
         store.dispatch(
           transactionSent({
@@ -108,7 +113,17 @@ export const handleTransferSend = async (
 
       posthog.capture('Swept address assets', { from: 'button' })
     } else if (unsignedTransaction) {
-      const data = await signAndSendTransaction(fromAddress, unsignedTxId, unsignedTransaction.unsignedTx, isLedger)
+      const data = await signAndSendTransaction(
+        fromAddress,
+        unsignedTxId,
+        unsignedTransaction.unsignedTx,
+        isLedger,
+        onLedgerError
+      )
+
+      if (!data) {
+        return
+      }
 
       store.dispatch(
         transactionSent({
