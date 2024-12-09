@@ -80,7 +80,9 @@ const BaseHeader = ({
     headerTitle && typeof headerTitle === 'function' ? headerTitle({ children: '' }) : undefined
   const HeaderTitleRight = headerTitleRight && headerTitleRight()
 
-  const animatedHeaderOpacity = interpolate(currentProgress.value + (nextProgress.value || 0), [0, 1, 2], [0, 1, 0])
+  const animatedHeaderOpacity = progress
+    ? interpolate(currentProgress.value + (nextProgress.value || 0), [0, 1, 2], [0, 1, 0])
+    : 1
   const animatedGradientOpacity = useDerivedValue(() => interpolate(scrollY?.value || 0, defaultScrollRange, [0, 1]))
 
   const centerContainerAnimatedStyle = useAnimatedStyle(() =>

@@ -103,6 +103,7 @@ const TransactionsFlashList = forwardRef(
         refreshing={pendingTransactions.length > 0}
         extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
         estimatedItemSize={64}
+        contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN }}
         ListHeaderComponent={
           <>
             {ListHeaderComponent}
