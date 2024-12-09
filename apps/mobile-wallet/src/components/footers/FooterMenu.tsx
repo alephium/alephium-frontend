@@ -18,8 +18,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { colord } from 'colord'
-import { BlurView } from 'expo-blur'
-import { Platform, StyleProp, View, ViewStyle } from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient'
+import { useState } from 'react'
+import { LayoutChangeEvent, Platform, StyleProp, View, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { css, useTheme } from 'styled-components/native'
 
@@ -32,6 +33,9 @@ interface FooterMenuProps extends BottomTabBarProps {
 const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) => {
   const insets = useSafeAreaInsets()
   const theme = useTheme()
+  const [footerHeight, setFooterHeight] = useState(120)
+
+  const gradientHeight = footerHeight + 50
 
   const footerContent = (
     <>
@@ -48,18 +52,27 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
     </>
   )
 
+  const handleFooterLayout = (e: LayoutChangeEvent) => {
+    setFooterHeight(e.nativeEvent.layout.height)
+  }
+
   return (
-    <View style={[style]}>
-      {Platform.OS === 'ios' ? (
-        <>
-          <FooterMenuContrastedBackground />
-          <FooterMenuContentBlured tint={theme.name} intensity={50} style={{ paddingBottom: insets.bottom }}>
-            {footerContent}
-          </FooterMenuContentBlured>
-        </>
-      ) : (
-        <FooterMenuContent style={{ paddingBottom: insets.bottom }}>{footerContent}</FooterMenuContent>
-      )}
+    <View style={style} onLayout={handleFooterLayout}>
+      <FooterGradient
+        start={{ x: 0.5, y: 1 }}
+        end={{ x: 0.5, y: 0 }}
+        locations={[0.45, 1]}
+        colors={
+          theme.name === 'dark'
+            ? [theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]
+            : [theme.bg.highlight, colord(theme.bg.highlight).alpha(0).toHex()]
+        }
+        style={{ height: gradientHeight }}
+        pointerEvents="none"
+      />
+      <FooterMenuContent style={{ paddingBottom: Platform.OS === 'ios' ? insets.bottom : insets.bottom + 18 }}>
+        {footerContent}
+      </FooterMenuContent>
     </View>
   )
 }
@@ -69,8 +82,6 @@ export default styled(FooterMenu)`
   right: 0;
   bottom: 0;
   left: 0;
-  border-top-color: ${({ theme }) => theme.border.secondary};
-  border-top-width: 1px;
 `
 
 const footerMenuStyles = css`
@@ -84,18 +95,12 @@ const footerMenuStyles = css`
 
 const FooterMenuContent = styled.View`
   ${footerMenuStyles}
-  background-color: ${({ theme }) => theme.bg.back2};
 `
 
-const FooterMenuContentBlured = styled(BlurView)`
-  ${footerMenuStyles}
-`
-
-const FooterMenuContrastedBackground = styled.View`
+// Bottom value is to avoid glitch on Android
+const FooterGradient = styled(LinearGradient)`
   position: absolute;
-  right: 0;
-  bottom: 0;
+  bottom: -1px;
   left: 0;
-  top: 0;
-  background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.75).toHex()};
+  right: 0;
 `

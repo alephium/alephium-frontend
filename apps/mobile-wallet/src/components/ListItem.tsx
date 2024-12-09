@@ -22,7 +22,7 @@ import Animated from 'react-native-reanimated'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { BORDER_RADIUS } from '~/style/globalStyle'
+import { BORDER_RADIUS, DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export interface ListItemProps extends PressableProps {
   title: string
@@ -88,15 +88,16 @@ const ListItemStyled = styled(Animated.View)`
 const Row = styled(Animated.View)`
   flex-direction: row;
   align-items: center;
-  padding-left: 15px;
-  gap: 15px;
+  padding-left: ${DEFAULT_MARGIN}px;
+  gap: 18px;
 `
 
 const RowContent = styled.View<{ showSeparator: boolean }>`
   flex-direction: row;
   gap: 10px;
+  padding: 16px 0;
   height: 100%;
-  padding-right: 15px;
+  padding-right: ${DEFAULT_MARGIN}px;
   align-items: center;
   flex: 1;
 
@@ -121,5 +122,4 @@ const Icon = styled.View``
 const LeftSideContent = styled.View`
   flex: 1;
   justify-content: center;
-  padding: 7px 0;
 `

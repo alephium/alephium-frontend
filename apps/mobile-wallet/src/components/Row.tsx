@@ -27,13 +27,11 @@ import { INPUTS_HEIGHT, INPUTS_PADDING } from '~/style/globalStyle'
 
 export interface RowProps {
   children?: ReactNode
-  isInput?: boolean
   isSecondary?: boolean
   title?: string
   titleColor?: AppTextProps['color']
   subtitle?: string
   onPress?: () => void
-  hasRightContent?: boolean
   truncate?: boolean
   noMaxWidth?: boolean
   transparent?: boolean
@@ -109,41 +107,19 @@ const Row = ({
 }
 
 export default styled(Row)`
-  ${({ theme, isInput, isSecondary, transparent, isLast, isVertical }) =>
-    isInput
-      ? css`
-          justify-content: center;
-          min-height: ${INPUTS_HEIGHT}px;
-          height: ${INPUTS_HEIGHT}px;
-          padding: 0 ${INPUTS_PADDING}px;
-          background-color: ${transparent ? 'transparent' : isSecondary ? theme.bg.accent : theme.bg.highlight};
-        `
-      : css`
-          min-height: ${INPUTS_HEIGHT}px;
-          padding: 18px;
-          background-color: ${transparent ? 'transparent' : isSecondary ? theme.bg.accent : theme.bg.primary};
-          border-bottom-width: ${isLast ? 0 : 1}px;
-          border-bottom-color: ${theme.border.secondary};
+  ${({ theme, isLast, isVertical }) => css`
+    min-height: ${INPUTS_HEIGHT}px;
+    padding: 16px 0;
+    border-bottom-width: ${isLast ? 0 : 1}px;
+    border-bottom-color: ${theme.border.secondary};
 
-          ${isVertical
-            ? css`
-                padding: 14px;
-              `
-            : css`
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-              `}
-        `}
-
-  ${({ isInput, hasRightContent }) =>
-    isInput &&
-    hasRightContent &&
+    ${!isVertical &&
     css`
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
     `}
+  `}
 `
 
 const Title = styled(AppText)<{ isVertical?: boolean }>`
@@ -182,6 +158,6 @@ const RightContent = styled.View<Pick<RowProps, 'isVertical' | 'noMaxWidth'>>`
     !noMaxWidth &&
     !isVertical &&
     css`
-      max-width: 200px;
+      max-width: 60%;
     `};
 `

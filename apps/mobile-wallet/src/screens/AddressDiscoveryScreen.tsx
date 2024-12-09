@@ -29,9 +29,9 @@ import { sendAnalytics } from '~/analytics'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
@@ -134,6 +134,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
     <ScrollScreen
       verticalGap
       fill
+      contentPaddingTop
       screenTitle={t('Active addresses')}
       screenIntro={t(
         'Scan the blockchain to find your active addresses on the {{ networkName }} network. This process might take a while.',
@@ -144,7 +145,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
     >
       <ScreenSection fill>
         <ScreenSectionTitle>{t('Current addresses')}</ScreenSectionTitle>
-        <BoxSurface>
+        <Surface>
           {addresses.map((address, index) => (
             <Row
               key={address.hash}
@@ -156,7 +157,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
               <Amount value={BigInt(address.balance)} fadeDecimals bold />
             </Row>
           ))}
-        </BoxSurface>
+        </Surface>
         {(loading || status === 'finished' || discoveredAddresses.length > 0) && !importLoading && (
           <>
             <ScreenSectionTitle style={{ marginTop: VERTICAL_GAP }}>
@@ -173,7 +174,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             )}
 
             {discoveredAddresses.length > 0 && (
-              <BoxSurface>
+              <Surface>
                 {discoveredAddresses.map(({ hash, balance }, index) => (
                   <Row
                     key={hash}
@@ -192,7 +193,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
                     </AmountContent>
                   </Row>
                 ))}
-              </BoxSurface>
+              </Surface>
             )}
             {discoveredAddresses.length === 0 && status === 'finished' && (
               <AppText>{t('Did not find any new addresses, please continue.')}</AppText>

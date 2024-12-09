@@ -17,17 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { ParamListBase } from '@react-navigation/native'
+import { ParamListBase, useNavigation } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
 
-import ProgressHeader from '~/components/headers/ProgressHeader'
+import StackHeader from '~/components/headers/StackHeader'
 import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
 import { SendContextProvider } from '~/contexts/SendContext'
-import AssetsScreen from '~/screens/SendReceive/Send/AssetsScreen'
-import DestinationScreen from '~/screens/SendReceive/Send/DestinationScreen'
-import OriginScreen from '~/screens/SendReceive/Send/OriginScreen'
-import VerifyScreen from '~/screens/SendReceive/Send/VerifyScreen'
+import AssetsScreen from '~/features/send/screens/AssetsScreen'
+import DestinationScreen from '~/features/send/screens/DestinationScreen'
+import OriginScreen from '~/features/send/screens/OriginScreen'
+import VerifyScreen from '~/features/send/screens/VerifyScreen'
 import { SCREEN_OVERFLOW } from '~/style/globalStyle'
 
 export interface SendNavigationParamList extends ParamListBase {
@@ -44,11 +44,11 @@ const SendStack = createStackNavigator<SendNavigationParamList>()
 const SendNavigation = () => (
   <SendContextProvider>
     <HeaderContextProvider>
-      <SendProgressHeader />
       <SendStack.Navigator
         screenOptions={{
-          headerShown: false,
-          cardStyle: { overflow: SCREEN_OVERFLOW }
+          header: () => <SendNavigationHeader />,
+          cardStyle: { overflow: SCREEN_OVERFLOW },
+          headerMode: 'float'
         }}
         initialRouteName="DestinationScreen"
       >
@@ -61,16 +61,17 @@ const SendNavigation = () => (
   </SendContextProvider>
 )
 
-const SendProgressHeader = () => {
+const SendNavigationHeader = () => {
   const { headerOptions, screenScrollY } = useHeaderContext()
+  const navigation = useNavigation()
   const { t } = useTranslation()
 
   return (
-    <ProgressHeader
+    <StackHeader
       options={{ headerTitle: t('Send'), ...headerOptions }}
       titleAlwaysVisible
-      workflow="send"
       scrollY={screenScrollY}
+      onBackPress={() => navigation.goBack()}
     />
   )
 }

@@ -22,18 +22,19 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
-import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalContent, ModalContentProps } from '~/components/layout/ModalContent'
-import { BottomModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
+import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
+import withModal from '~/features/modals/withModal'
+import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { persistSettings } from '~/persistent-storage/settings'
 
-interface SwitchNetworkModalProps extends ModalContentProps {
+export interface SwitchNetworkModalProps {
   onCustomNetworkPress: () => void
 }
 
-const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchNetworkModalProps) => {
+const SwitchNetworkModal = withModal<SwitchNetworkModalProps>(({ id, onCustomNetworkPress }) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -45,7 +46,6 @@ const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchN
     setSelectedNetworkName(newNetworkName)
 
     if (newNetworkName === NetworkNames.custom) {
-      onClose && onClose()
       onCustomNetworkPress()
     } else {
       await persistSettings('network', networkSettingsPresets[newNetworkName])
@@ -53,17 +53,16 @@ const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchN
 
       if (showCustomNetworkForm) setShowCustomNetworkForm(false)
     }
+
+    dispatch(closeModal({ id }))
   }
 
   const networkNames = Object.values(NetworkNames)
 
   return (
-    <ModalContent verticalGap {...props}>
-      <ScreenSection>
-        <BottomModalScreenTitle>{t('Current network')}</BottomModalScreenTitle>
-      </ScreenSection>
+    <BottomModal modalId={id} title={t('Current network')} contentVerticalGap>
       <View>
-        <BoxSurface>
+        <Surface>
           {networkNames.map((networkName, index) => (
             <RadioButtonRow
               key={networkName}
@@ -73,10 +72,10 @@ const SwitchNetworkModal = ({ onClose, onCustomNetworkPress, ...props }: SwitchN
               isLast={index === networkNames.length - 1}
             />
           ))}
-        </BoxSurface>
+        </Surface>
       </View>
-    </ModalContent>
+    </BottomModal>
   )
-}
+})
 
 export default SwitchNetworkModal

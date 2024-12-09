@@ -22,9 +22,9 @@ import PostHog from 'posthog-react-native'
 import { PosthogCaptureOptions } from 'posthog-react-native/lib/posthog-core/src'
 import { useCallback, useEffect } from 'react'
 
+import { analyticsIdGenerated } from '~/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
-import { analyticsIdGenerated } from '~/store/settings/settingsActions'
 
 const PUBLIC_POSTHOG_KEY = 'phc_pDAhdhvfHzZTljrFyr1pysqdkEFIQeOHqiiRHsn4mO'
 const PUBLIC_POSTHOG_HOST = 'https://eu.posthog.com'

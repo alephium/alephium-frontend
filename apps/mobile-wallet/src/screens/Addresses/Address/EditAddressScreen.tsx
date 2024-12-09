@@ -71,6 +71,7 @@ const EditAddressScreen = ({ navigation, route: { params } }: EditAddressScreenP
   return (
     <>
       <AddressFormBaseScreen
+        contentPaddingTop
         initialValues={address.settings}
         onSubmit={handleSavePress}
         buttonText="Save"
