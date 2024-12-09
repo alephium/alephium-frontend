@@ -32,7 +32,7 @@ interface TransactionListItemProps extends Partial<ListItemProps> {
   showInternalInflows?: boolean
 }
 
-const TransactionListItem = ({ tx, showInternalInflows = false, ...props }: TransactionListItemProps) => {
+const TransactionListItem = memo(({ tx, showInternalInflows = false, ...props }: TransactionListItemProps) => {
   const { assets, infoType } = getTransactionInfo(tx, showInternalInflows)
   const isFailedScriptTx = !isPendingTx(tx) && !tx.scriptExecutionOk
   const { Icon, iconColor, iconBgColor, label } = useTransactionUI({ infoType, isFailedScriptTx })
@@ -81,15 +81,9 @@ const TransactionListItem = ({ tx, showInternalInflows = false, ...props }: Tran
       }
     />
   )
-}
+})
 
-export default memo(
-  TransactionListItem,
-  (prevProps, nextProps) =>
-    prevProps.tx.hash === nextProps.tx.hash &&
-    prevProps.tx.address.hash === nextProps.tx.address.hash &&
-    prevProps.isLast === nextProps.isLast
-)
+export default TransactionListItem
 
 const TransactionIcon = styled.View<{ color?: string }>`
   justify-content: center;

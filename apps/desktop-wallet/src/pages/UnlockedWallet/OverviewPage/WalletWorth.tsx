@@ -26,9 +26,9 @@ interface WalletWorthProps {
 }
 
 const WalletWorth = memo((props: WalletWorthProps) => {
-  const { data: worth, isLoading } = useFetchWalletWorth()
+  const { data: worth, isLoading, isFetching, error } = useFetchWalletWorth()
 
-  return <WorthOverview worth={worth} isLoading={isLoading} {...props} />
+  return <WorthOverview worth={worth} isLoading={isLoading} isFetching={isFetching} error={error} {...props} />
 })
 
 export default WalletWorth

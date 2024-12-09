@@ -20,6 +20,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import electron from 'vite-plugin-electron/simple'
 import svgrPlugin from 'vite-plugin-svgr'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
 
@@ -41,7 +42,15 @@ export default defineConfig({
     },
     include: ['@alephium/shared-crypto'] // To allow for using npm link https://vitejs.dev/guide/dep-pre-bundling.html#monorepos-and-linked-dependencies
   },
-  plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
+  plugins: [
+    react(),
+    viteTsconfigPaths(),
+    svgrPlugin(),
+    electron({
+      main: { entry: 'electron/main.ts' },
+      preload: { input: 'electron/preload.ts' }
+    })
+  ],
   test: {
     globals: true,
     environment: 'jsdom',

@@ -47,7 +47,6 @@ import {
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { walletConnectPairingFailed, walletConnectProposalValidationFailed } from '@/storage/dApps/dAppActions'
 import { isRcVersion } from '@/utils/app-data'
-import { electron } from '@/utils/misc'
 
 export interface WalletConnectContextProps {
   pairWithDapp: (uri: string) => void
@@ -188,7 +187,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
     async (hideApp?: boolean) => {
       if (sessionRequestEvent) await respondToWalletConnectWithError(sessionRequestEvent, getSdkError('USER_REJECTED'))
 
-      if (hideApp) electron?.app.hide()
+      if (hideApp) window.electron?.app.hide()
     },
     [respondToWalletConnectWithError, sessionRequestEvent]
   )
@@ -261,7 +260,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
   ) => {
     if (sessionRequestEvent) await respondToWalletConnectWithSuccess(sessionRequestEvent, result)
 
-    if (hideApp) electron?.app.hide()
+    if (hideApp) window.electron?.app.hide()
   }
 
   const sendFailureResponse = useCallback(
@@ -285,7 +284,7 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       console.log('👉 REQUESTED METHOD:', request.method)
 
       if (request.method.startsWith('alph_sign')) {
-        electron?.app.show()
+        window.electron?.app.show()
       }
     },
     [walletConnectClient]
@@ -406,16 +405,16 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
 
     const connectAndReset = async (uri: string) => {
       await pairWithDapp(uri)
-      electron?.walletConnect.resetDeepLinkUri()
+      window.electron?.walletConnect.resetDeepLinkUri()
     }
 
     const getDeepLinkAndConnect = async () => {
-      const uri = await electron?.walletConnect.getDeepLinkUri()
+      const uri = await window.electron?.walletConnect.getDeepLinkUri()
 
       if (uri) {
         connectAndReset(uri)
       } else {
-        electron?.walletConnect.onConnect(async (uri: string) => {
+        window.electron?.walletConnect.onConnect(async (uri: string) => {
           connectAndReset(uri)
         })
       }

@@ -18,8 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, CHART_DATE_FORMAT, ONE_DAY_MS, throttledClient, TokenHistoricalPrice } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { explorer } from '@alephium/web3'
-import { AmountHistory } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 import { skipToken, useQueries, useQuery, UseQueryResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
@@ -28,7 +27,7 @@ import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import { useAppSelector } from '@/hooks/redux'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
-const DAILY = explorer.IntervalType.Daily
+const DAILY = e.IntervalType.Daily
 
 type Timestamp = string
 type Amount = string
@@ -124,7 +123,7 @@ export default useHistoricData
 const combine = (
   results: UseQueryResult<{
     address: AddressHash
-    amountHistory: AmountHistory['amountHistory']
+    amountHistory: e.AmountHistory['amountHistory']
   }>[]
 ) => ({
   data: results.reduce(

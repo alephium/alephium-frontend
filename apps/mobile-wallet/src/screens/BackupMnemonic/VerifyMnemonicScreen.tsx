@@ -72,7 +72,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
         setPossibleMatches(randomizedOptions.current[0])
       })
     } catch (e) {
-      console.error(e)
+      if (__DEV__) console.error(e)
     }
   }, [])
 

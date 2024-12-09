@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NFT } from '@alephium/shared'
-import { explorer } from '@alephium/web3'
+import { explorer as e } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 
 import { DataHook } from '@/api/apiDataHooks/apiDataHooksTypes'
@@ -44,13 +44,13 @@ const useFetchToken = (id: TokenId): UseFetchTokenResponse => {
     fungibleTokenMetadataQuery({
       id,
       networkId,
-      skip: isLoadingTokenType || tokenType?.stdInterfaceId !== explorer.TokenStdInterfaceId.Fungible
+      skip: isLoadingTokenType || tokenType?.stdInterfaceId !== e.TokenStdInterfaceId.Fungible
     })
   )
 
   const { data: nft, isLoading: isLoadingNft } = useFetchNft({
     id,
-    skip: isLoadingTokenType || tokenType?.stdInterfaceId !== explorer.TokenStdInterfaceId.NonFungible
+    skip: isLoadingTokenType || tokenType?.stdInterfaceId !== e.TokenStdInterfaceId.NonFungible
   })
 
   return {

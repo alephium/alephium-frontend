@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressBalancesSyncResult, AddressHash, AddressTokensSyncResult, client } from '@alephium/shared'
-import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
+import { AddressTokenBalance, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { Address, AddressTransactionsSyncResult } from '~/types/addresses'
 
@@ -85,10 +85,16 @@ export const fetchAddressesBalances = async (addressHashes: AddressHash[]): Prom
   return results
 }
 
-// Same as in desktop wallet, move to SDK?
 export const fetchAddressesTransactionsNextPage = async (addresses: Address[], nextPage: number) => {
-  const addressHashes = addresses.filter((address) => !address.allTransactionPagesLoaded).map((address) => address.hash)
-  const transactions = await client.explorer.addresses.postAddressesTransactions({ page: nextPage }, addressHashes)
+  let transactions: Transaction[] = []
+  const args = { page: nextPage }
+  const addressHashes = addresses.map((address) => address.hash)
+
+  if (addressHashes.length === 1) {
+    transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHashes[0], args)
+  } else if (addressHashes.length > 1) {
+    transactions = await client.explorer.addresses.postAddressesTransactions(args, addressHashes)
+  }
 
   return transactions
 }

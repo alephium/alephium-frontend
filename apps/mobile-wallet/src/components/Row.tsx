@@ -69,9 +69,15 @@ const Row = ({
   const componentContent = title ? (
     <>
       <LeftContent isVertical={isVertical}>
-        <AppText medium numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle" color={titleColor}>
+        <Title
+          medium
+          numberOfLines={truncate ? 1 : undefined}
+          ellipsizeMode="middle"
+          color={titleColor}
+          isVertical={isVertical}
+        >
           {title}
-        </AppText>
+        </Title>
         {subtitle && (
           <Subtitle numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle">
             {subtitle}
@@ -114,17 +120,20 @@ export default styled(Row)`
         `
       : css`
           min-height: ${INPUTS_HEIGHT}px;
-          padding: 20px;
+          padding: 18px;
           background-color: ${transparent ? 'transparent' : isSecondary ? theme.bg.accent : theme.bg.primary};
           border-bottom-width: ${isLast ? 0 : 1}px;
           border-bottom-color: ${theme.border.secondary};
 
-          ${!isVertical &&
-          css`
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-          `}
+          ${isVertical
+            ? css`
+                padding: 14px;
+              `
+            : css`
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+              `}
         `}
 
   ${({ isInput, hasRightContent }) =>
@@ -134,6 +143,15 @@ export default styled(Row)`
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
+    `}
+`
+
+const Title = styled(AppText)<{ isVertical?: boolean }>`
+  ${({ isVertical, color }) =>
+    isVertical &&
+    css`
+      font-size: 13px;
+      color: ${({ theme }) => color || theme.font.secondary};
     `}
 `
 
