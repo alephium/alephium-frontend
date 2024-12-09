@@ -15,20 +15,23 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { ReactNode } from 'react'
+import { StyleProp, ViewStyle } from 'react-native'
+import styled from 'styled-components/native'
 
-import { Platform } from 'react-native'
+interface RoundedCardProps {
+  children: ReactNode
+  style?: StyleProp<ViewStyle>
+}
 
-// ALL VALUES IN PIXELS
+const RoundedCard = ({ children, style }: RoundedCardProps) => (
+  <RoundedCardStyled style={style}>{children}</RoundedCardStyled>
+)
 
-export const BORDER_RADIUS_HUGE = 28
-export const BORDER_RADIUS_BIG = 21
-export const BORDER_RADIUS = 16
-export const BORDER_RADIUS_SMALL = 6
+export default RoundedCard
 
-export const INPUTS_HEIGHT = 54
-export const INPUTS_PADDING = 16
-
-export const DEFAULT_MARGIN = 18
-export const VERTICAL_GAP = 25
-
-export const SCREEN_OVERFLOW = Platform.OS === 'ios' ? 'visible' : 'scroll'
+const RoundedCardStyled = styled.View`
+  border-radius: 38px;
+  overflow: hidden;
+  background-color: ${({ theme }) => theme.bg.primary};
+`

@@ -29,8 +29,7 @@ import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Button from '~/components/buttons/Button'
 import IOList from '~/components/IOList'
-import BoxSurface from '~/components/layout/BoxSurface'
-import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import Surface from '~/components/layout/Surface'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
 import BottomModal from '~/features/modals/BottomModal'
@@ -64,19 +63,8 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
   const groupedIOAmounts = groupBy(tokensWithSymbol, (t) => (t.amount > 0 ? 'in' : 'out'))
 
   return (
-    <BottomModal modalId={id} contentVerticalGap>
-      <ScreenSectionStyled>
-        <ModalScreenTitle>{t('Transaction')}</ModalScreenTitle>
-        <Button
-          iconProps={{ name: 'external-link' }}
-          onPress={() => openBrowserAsync(explorerTxUrl)}
-          variant="accent"
-          compact
-          title={t('Explorer')}
-        />
-      </ScreenSectionStyled>
-
-      <BoxSurface type="highlight">
+    <BottomModal modalId={id} contentVerticalGap title={t('Transaction')}>
+      <Surface type="highlight">
         {isMoved && (
           <Row title={t('Moved')} transparent isVertical>
             <AmountsContainer>
@@ -165,19 +153,17 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
             <Button title={t('See NFTs')} onPress={openNftGridModal} />
           </Row>
         )}
-      </BoxSurface>
+      </Surface>
+      <Button
+        iconProps={{ name: 'arrow-up-right' }}
+        onPress={() => openBrowserAsync(explorerTxUrl)}
+        title={t('Explorer')}
+      />
     </BottomModal>
   )
 })
 
 export default TransactionModal
-
-const ScreenSectionStyled = styled(ScreenSection)`
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-`
 
 const TokenId = styled.View`
   max-width: 60px;

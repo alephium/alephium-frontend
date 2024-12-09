@@ -44,7 +44,7 @@ const ColorPicker = ({ value, onChange, style }: ColorPickerProps) => {
 
   return (
     <>
-      <HighlightRow isInput style={style} onPress={() => setIsModalVisible(!isModalVisible)}>
+      <HighlightRow style={style} onPress={() => setIsModalVisible(!isModalVisible)}>
         <AppText>{t('Color')}</AppText>
         <Dot color={value} />
       </HighlightRow>

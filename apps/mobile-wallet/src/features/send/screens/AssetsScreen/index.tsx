@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { BackButton, ContinueButton } from '~/components/buttons/Button'
+import BottomButtons from '~/components/buttons/BottomButtons'
+import Button from '~/components/buttons/Button'
 import FlashListScreen from '~/components/layout/FlashListScreen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
@@ -44,7 +44,7 @@ interface ScreenProps
 
 const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, assetAmounts, buildTransaction, setToAddress } = useSendContext()
-  const { setHeaderOptions, screenScrollY, screenScrollHandler } = useHeaderContext()
+  const { screenScrollY, screenScrollHandler } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
@@ -58,26 +58,14 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 
   const isContinueButtonDisabled = assetAmounts.length < 1
 
-  useFocusEffect(
-    useCallback(() => {
-      setHeaderOptions({
-        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-        headerRight: () => (
-          <ContinueButton
-            onPress={async () => {
-              setIsLoading(true)
-              await buildTransaction({
-                onBuildSuccess: () => navigation.navigate('VerifyScreen'),
-                onConsolidationSuccess: () => navigation.navigate('ActivityScreen')
-              })
-              setIsLoading(false)
-            }}
-            disabled={isContinueButtonDisabled}
-          />
-        )
-      })
-    }, [buildTransaction, isContinueButtonDisabled, navigation, setHeaderOptions])
-  )
+  const handleContinueButtonPress = async () => {
+    setIsLoading(true)
+    await buildTransaction({
+      onBuildSuccess: () => navigation.navigate('VerifyScreen'),
+      onConsolidationSuccess: () => navigation.navigate('ActivityScreen')
+    })
+    setIsLoading(false)
+  }
 
   useEffect(() => {
     if (params?.toAddressHash) setToAddress(params.toAddressHash)
@@ -108,6 +96,14 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         onScroll={screenScrollHandler}
         {...props}
       />
+      <BottomButtons bottomInset style={{ position: 'absolute', bottom: 0, right: 0, left: 0 }}>
+        <Button
+          title={t('Continue')}
+          variant="highlight"
+          onPress={handleContinueButtonPress}
+          disabled={isContinueButtonDisabled}
+        />
+      </BottomButtons>
       <SpinnerModal isActive={isLoading} />
     </>
   )

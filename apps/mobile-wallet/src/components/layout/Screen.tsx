@@ -31,10 +31,9 @@ export interface ScreenProps extends ViewProps {
     type?: 'default' | 'stack'
   }
   safeAreaPadding?: boolean
-  usesKeyboard?: boolean
 }
 
-const Screen = ({ children, headerOptions, safeAreaPadding, usesKeyboard, ...props }: ScreenProps) => {
+const Screen = ({ children, headerOptions, safeAreaPadding, ...props }: ScreenProps) => {
   const navigation = useNavigation()
   const insets = useSafeAreaInsets()
 
@@ -44,21 +43,18 @@ const Screen = ({ children, headerOptions, safeAreaPadding, usesKeyboard, ...pro
     ? { paddingTop: insets.top, paddingBottom: insets.bottom }
     : {}
 
-  const screen = (
-    <ScreenStyled {...props} style={[props.style, paddingStyle]}>
-      {headerOptions && (
-        <HeaderComponent goBack={navigation.canGoBack() ? navigation.goBack : undefined} options={headerOptions} />
-      )}
-      {children}
-    </ScreenStyled>
-  )
-
-  return usesKeyboard ? (
+  return (
     <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
-      {screen}
+      <ScreenStyled {...props} style={[props.style, paddingStyle]}>
+        {headerOptions && (
+          <HeaderComponent
+            onBackPress={navigation.canGoBack() ? navigation.goBack : undefined}
+            options={headerOptions}
+          />
+        )}
+        {children}
+      </ScreenStyled>
     </KeyboardAvoidingView>
-  ) : (
-    screen
   )
 }
 
@@ -109,8 +105,10 @@ export const ModalScreenTitle = styled(AppText)`
 `
 
 export const ScreenSectionTitle = styled(AppText)`
-  font-size: 17px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.font.primary};
-  margin-bottom: 15px;
+  font-size: 13px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.font.tertiary};
+  margin-bottom: 16px;
+  margin-top: 16px;
+  text-transform: uppercase;
 `

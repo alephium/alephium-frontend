@@ -105,8 +105,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
 }
 
 export default styled(AddressesTokensList)`
-  padding-top: 5px;
-  padding-bottom: 10px;
+  padding: 10px 0;
 `
 
 const LoadingRow = styled.View`

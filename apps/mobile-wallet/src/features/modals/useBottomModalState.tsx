@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { useCallback, useEffect, useState } from 'react'
-import { NativeScrollEvent, NativeSyntheticEvent, useWindowDimensions } from 'react-native'
+import { NativeScrollEvent, NativeSyntheticEvent, Platform, useWindowDimensions } from 'react-native'
 import { Gesture } from 'react-native-gesture-handler'
 import { interpolate, runOnJS, runOnUI, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -27,7 +27,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 type BottomModalPositions = 'minimised' | 'maximised' | 'closing'
 
-interface UseBottomModalStateParams {
+export interface UseBottomModalStateParams {
   modalId: number
   navHeight: number
   maximisedContent?: boolean
@@ -81,7 +81,7 @@ export const useBottomModalState = ({
 
   const offsetY = useSharedValue(0)
 
-  const [isScrollable, setIsScrollable] = useState(false)
+  const [isContentScrollable, setIsContentScrollable] = useState(false)
 
   const isModalClosing = useAppSelector((s) => selectModalById(s, modalId)?.isClosing)
 
@@ -127,12 +127,12 @@ export const useBottomModalState = ({
             ? customMinHeight
             : shouldMaximizeOnOpen.value
               ? maxHeight
-              : contentHeight.value + customNavHeight + insets.bottom
+              : contentHeight.value + customNavHeight + (Platform.OS === 'ios' ? insets.bottom : insets.bottom + 18)
 
           shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
 
           // Determine if scrolling is needed
-          runOnJS(setIsScrollable)(contentHeight.value > dimensions.height * 0.9)
+          runOnJS(setIsContentScrollable)(contentHeight.value > dimensions.height * 0.9)
         })()
       }
     },
@@ -160,7 +160,7 @@ export const useBottomModalState = ({
 
       if (!isContentDragged.value) return
 
-      if (contentScrollY.value <= 0) {
+      if (contentScrollY.value <= 5) {
         // Move the modal
         if (contentScrollY.value < previousContentScrollY.value) {
           const newModalHeightValue = modalHeight.value - contentScrollY.value
@@ -255,6 +255,6 @@ export const useBottomModalState = ({
     panGesture,
     handleClose,
     contentScrollHandlers,
-    isScrollable
+    isContentScrollable
   }
 }

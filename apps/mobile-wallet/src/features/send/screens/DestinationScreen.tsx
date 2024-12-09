@@ -18,7 +18,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, Contact } from '@alephium/shared'
 import { isValidAddress } from '@alephium/web3'
-import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
 import * as Clipboard from 'expo-clipboard'
 import { useCallback, useEffect, useState } from 'react'
@@ -31,7 +30,7 @@ import { isAddress as isEthereumAddress } from 'web3-validator'
 
 import { sendAnalytics } from '~/analytics'
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
-import Button, { CloseButton, ContinueButton } from '~/components/buttons/Button'
+import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
@@ -63,9 +62,9 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
   const theme = useTheme()
   const { setToAddress, setFromAddress, toAddress } = useSendContext()
-  const { setHeaderOptions, screenScrollHandler } = useHeaderContext()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
+  const { screenScrollHandler } = useHeaderContext()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
@@ -153,17 +152,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       })
     )
 
-  useFocusEffect(
-    useCallback(() => {
-      setHeaderOptions({
-        headerLeft: () => <CloseButton onPress={() => navigation.goBack()} />,
-        headerRight: () => (
-          <ContinueButton onPress={handleSubmit(handleContinuePress)} disabled={!!errors.toAddressHash?.message} />
-        )
-      })
-    }, [errors.toAddressHash?.message, handleContinuePress, handleSubmit, navigation, setHeaderOptions])
-  )
-
   useEffect(() => {
     if (params?.fromAddressHash) {
       setFromAddress(params.fromAddressHash)
@@ -188,12 +176,15 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
   return (
     <ScrollScreen
-      usesKeyboard
       verticalGap
       contentPaddingTop
       screenTitle={t('Destination')}
       screenIntro={t('Send to an address, a contact, or one of your other addresses.')}
       onScroll={screenScrollHandler}
+      fill
+      bottomButtonsRender={() => (
+        <Button title={t('Continue')} variant="highlight" onPress={handleSubmit(handleContinuePress)} />
+      )}
       {...props}
     >
       <ScreenSection>

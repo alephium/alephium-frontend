@@ -17,9 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { CURRENCIES, Currency, fiatCurrencyChanged } from '@alephium/shared'
+import { useTranslation } from 'react-i18next'
 
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
+import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
@@ -34,6 +35,7 @@ const currencyOptions = Object.values(CURRENCIES).map((currency) => ({
 
 const CurrencySelectModal = withModal(({ id }) => {
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
   const currentCurrency = useAppSelector((s) => s.settings.currency)
 
   const handleCurrencyChange = (currency: Currency) => {
@@ -42,10 +44,10 @@ const CurrencySelectModal = withModal(({ id }) => {
   }
 
   return (
-    <BottomModal modalId={id}>
+    <BottomModal modalId={id} title={t('Currency')}>
       <ModalContent verticalGap>
         <ScreenSection>
-          <BoxSurface>
+          <Surface>
             {currencyOptions.map((currencyOption, index) => (
               <RadioButtonRow
                 key={currencyOption.label}
@@ -55,7 +57,7 @@ const CurrencySelectModal = withModal(({ id }) => {
                 isLast={index === currencyOptions.length - 1}
               />
             ))}
-          </BoxSurface>
+          </Surface>
         </ScreenSection>
       </ModalContent>
     </BottomModal>

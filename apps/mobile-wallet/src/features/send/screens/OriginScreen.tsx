@@ -21,12 +21,11 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import AddressFlatListScreen from '~/components/AddressFlatListScreen'
-import { BackButton, ContinueButton } from '~/components/buttons/Button'
+import AddressFlashListScreen from '~/components/AddressFlashListScreen'
+import Button from '~/components/buttons/Button'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
-import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { selectDefaultAddress } from '~/store/addressesSlice'
@@ -35,11 +34,9 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginS
 
 const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
   const { fromAddress, setFromAddress, setToAddress } = useSendContext()
-  const { setHeaderOptions, screenScrollHandler, screenScrollY } = useHeaderContext()
   const defaultAddress = useAppSelector(selectDefaultAddress)
+  const { screenScrollHandler } = useHeaderContext()
   const { t } = useTranslation()
-
-  useScrollToTopOnFocus(screenScrollY)
 
   useEffect(() => {
     if (params?.toAddressHash) setToAddress(params.toAddressHash)
@@ -51,25 +48,18 @@ const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
     }, [defaultAddress, fromAddress, setFromAddress])
   )
 
-  useFocusEffect(
-    useCallback(() => {
-      setHeaderOptions({
-        headerLeft: () => <BackButton onPress={() => navigation.goBack()} />,
-        headerRight: () => (
-          <ContinueButton onPress={() => navigation.navigate('AssetsScreen')} disabled={!fromAddress} />
-        )
-      })
-    }, [fromAddress, navigation, setHeaderOptions])
-  )
-
   return (
-    <AddressFlatListScreen
+    <AddressFlashListScreen
       onAddressPress={setFromAddress}
       selectedAddress={fromAddress}
+      headerTitleAlwaysVisible
       screenTitle={t('Origin')}
       screenIntro={t('Select the address from which to send the transaction.')}
-      onScroll={screenScrollHandler}
       contentPaddingTop
+      onScroll={screenScrollHandler}
+      bottomButtonsRender={() => (
+        <Button title={t('Continue')} variant="highlight" onPress={() => navigation.navigate('AssetsScreen')} />
+      )}
     />
   )
 }

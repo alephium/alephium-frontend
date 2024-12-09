@@ -17,25 +17,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { ContentStyle } from '@shopify/flash-list'
 import { ReactNode } from 'react'
-import { KeyboardAvoidingView, Pressable } from 'react-native'
-import { GestureDetector } from 'react-native-gesture-handler'
-import Animated from 'react-native-reanimated'
-import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
-import { CloseButton } from '~/components/buttons/Button'
+import BottomModalBase, { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
 import { ContentScrollHandlers, useBottomModalState } from '~/features/modals/useBottomModalState'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-export interface BottomModalFlashListProps {
-  modalId: number
-  onClose?: () => void
-  title?: string
-  maximisedContent?: boolean
-  minHeight?: number
-  navHeight?: number
-  noPadding?: boolean
-  children: (scrollHandlers: {
+export interface BottomModalFlashListProps extends Omit<BottomModalBaseProps, 'children'> {
+  flashListRender: (flashListProps: {
     contentContainerStyle: ContentStyle
     onScroll: ContentScrollHandlers['onScroll']
     onScrollBeginDrag: ContentScrollHandlers['onScrollBeginDrag']
@@ -43,8 +31,6 @@ export interface BottomModalFlashListProps {
     onContentSizeChange: (w: number, h: number) => void
   }) => ReactNode
 }
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const BottomModalFlashList = ({
   modalId,
@@ -54,17 +40,9 @@ const BottomModalFlashList = ({
   minHeight,
   navHeight = 50,
   noPadding,
-  children
+  flashListRender
 }: BottomModalFlashListProps) => {
-  const {
-    modalHeightAnimatedStyle,
-    handleAnimatedStyle,
-    backdropAnimatedStyle,
-    handleContentSizeChange,
-    panGesture,
-    handleClose,
-    contentScrollHandlers
-  } = useBottomModalState({
+  const modalState = useBottomModalState({
     modalId,
     maximisedContent,
     minHeight,
@@ -73,98 +51,16 @@ const BottomModalFlashList = ({
   })
 
   return (
-    <GestureDetector gesture={panGesture}>
-      <KeyboardAvoidingViewStyled behavior="height" enabled={!maximisedContent}>
-        <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
-        <Container>
-          <ModalStyled style={modalHeightAnimatedStyle}>
-            <HandleContainer>
-              <Handle style={handleAnimatedStyle} />
-            </HandleContainer>
-            <Navigation style={{ height: navHeight }}>
-              <NavigationButtonContainer align="left" />
-              <Title semiBold>{title}</Title>
-              <NavigationButtonContainer align="right">
-                <CloseButton onPress={handleClose} compact />
-              </NavigationButtonContainer>
-            </Navigation>
-            {children({
-              ...contentScrollHandlers,
-              onContentSizeChange: handleContentSizeChange,
-              contentContainerStyle: {
-                padding: noPadding ? 0 : DEFAULT_MARGIN
-              }
-            })}
-          </ModalStyled>
-        </Container>
-      </KeyboardAvoidingViewStyled>
-    </GestureDetector>
+    <BottomModalBase title={title} modalId={modalId} navHeight={navHeight} {...modalState}>
+      {flashListRender({
+        ...modalState.contentScrollHandlers,
+        onContentSizeChange: modalState.handleContentSizeChange,
+        contentContainerStyle: {
+          padding: noPadding ? 0 : DEFAULT_MARGIN
+        }
+      })}
+    </BottomModalBase>
   )
 }
 
 export default BottomModalFlashList
-
-const KeyboardAvoidingViewStyled = styled(KeyboardAvoidingView)`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  top: 0;
-`
-
-const Container = styled.View`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-`
-
-const Backdrop = styled(AnimatedPressable)`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-`
-
-const ModalStyled = styled(Animated.View)`
-  justify-content: flex-start;
-  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.back1 : theme.bg.secondary)};
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  min-height: 80px;
-  overflow: hidden;
-`
-
-const HandleContainer = styled.View`
-  align-items: center;
-  justify-content: center;
-  padding-top: 5px;
-`
-
-const Handle = styled(Animated.View)`
-  width: 15%;
-  height: 4px;
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.border.primary};
-  margin-top: -15px;
-`
-
-const Title = styled(AppText)`
-  flex: 1;
-  text-align: center;
-`
-
-const Navigation = styled(Animated.View)`
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 ${DEFAULT_MARGIN - 1}px;
-`
-
-const NavigationButtonContainer = styled.View<{ align: 'right' | 'left' }>`
-  width: 10%;
-  flex-direction: row;
-  justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : 'flex-start')};
-`

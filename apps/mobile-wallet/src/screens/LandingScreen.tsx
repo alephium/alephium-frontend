@@ -24,11 +24,11 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AnimatedBackground from '~/components/AnimatedBackground'
-import BlurredCard from '~/components/BlurredCard'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScreenTitle from '~/components/layout/ScreenTitle'
+import RoundedCard from '~/components/RoundedCard'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -125,7 +125,7 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 
 export default LandingScreen
 
-const WelcomeCard = styled(BlurredCard)`
+const WelcomeCard = styled(RoundedCard)`
   flex: 1;
   padding: ${DEFAULT_MARGIN * 2}px;
 `

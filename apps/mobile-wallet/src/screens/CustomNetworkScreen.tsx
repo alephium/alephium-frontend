@@ -70,7 +70,6 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
   return (
     <>
       <ScrollScreen
-        usesKeyboard
         fill
         headerOptions={{
           type: 'stack',

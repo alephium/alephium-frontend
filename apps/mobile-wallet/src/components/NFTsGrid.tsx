@@ -62,6 +62,7 @@ const NFTsGrid = forwardRef(
         {...props}
         data={data}
         ref={ref}
+        overScrollMode="auto"
         keyExtractor={(item) => item.id}
         renderItem={({ item: nft }) => (
           <NFTThumbnailContainer key={nft.id}>
@@ -70,8 +71,7 @@ const NFTsGrid = forwardRef(
         )}
         contentContainerStyle={{ paddingHorizontal: containerHorizontalPadding, paddingBottom: 70 }}
         numColumns={columns}
-        estimatedItemSize={64}
-        scrollEnabled={scrollEnabled}
+        estimatedItemSize={props.estimatedItemSize || 64}
         ListEmptyComponent={
           <NoNFTsMessage>
             {isLoadingNfts ? (

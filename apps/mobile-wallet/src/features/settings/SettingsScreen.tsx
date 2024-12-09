@@ -26,9 +26,9 @@ import { Alert, Platform } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Surface from '~/components/layout/Surface'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import LinkToWeb from '~/components/text/LinkToWeb'
@@ -48,7 +48,6 @@ import {
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { VERTICAL_GAP } from '~/style/globalStyle'
 import { resetNavigation } from '~/utils/navigation'
 
 interface ScreenProps extends StackScreenProps<RootStackParamList, 'SettingsScreen'>, ScrollScreenProps {}
@@ -180,7 +179,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
   return (
     <>
-      <ScrollScreenStyled
+      <ScrollScreen
         verticalGap
         screenTitle={t('Settings')}
         headerOptions={{ type: 'stack' }}
@@ -189,27 +188,26 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
       >
         <ScreenSection>
           <ScreenSectionTitle>{t('General')}</ScreenSectionTitle>
-          <BoxSurface>
-            <Row onPress={openLanguageSelectModal} title="Language">
-              <AppText bold>{languageOptions.find((l) => l.value === language)?.label}</AppText>
-            </Row>
-            <Row onPress={openCurrencySelectModal} title={t('Currency')}>
-              <AppText bold>{currentCurrency}</AppText>
-            </Row>
-            <Row title={t('Current network')} onPress={openNetworkModal}>
-              <AppText bold>{capitalize(currentNetworkName)}</AppText>
-            </Row>
-            <Row title={t('Discreet mode')} subtitle={t('Hide all amounts')}>
-              <Toggle value={discreetMode} onValueChange={toggleDiscreetMode} />
-            </Row>
 
-            <Row title={t('Use dark theme')} subtitle={t("Try it, it's nice")}>
-              <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
-            </Row>
-            <Row title={t('Analytics')} subtitle={t('Help us improve your experience!')} isLast>
-              <Toggle value={analytics} onValueChange={toggleAnalytics} />
-            </Row>
-          </BoxSurface>
+          <Row onPress={openLanguageSelectModal} title="Language">
+            <AppText bold>{languageOptions.find((l) => l.value === language)?.label}</AppText>
+          </Row>
+          <Row onPress={openCurrencySelectModal} title={t('Currency')}>
+            <AppText bold>{currentCurrency}</AppText>
+          </Row>
+          <Row title={t('Current network')} onPress={openNetworkModal}>
+            <AppText bold>{capitalize(currentNetworkName)}</AppText>
+          </Row>
+          <Row title={t('Discreet mode')} subtitle={t('Hide all amounts')}>
+            <Toggle value={discreetMode} onValueChange={toggleDiscreetMode} />
+          </Row>
+
+          <Row title={t('Use dark theme')} subtitle={t("Try it, it's nice")}>
+            <Toggle value={currentTheme === 'dark'} onValueChange={toggleTheme} />
+          </Row>
+          <Row title={t('Analytics')} subtitle={t('Help us improve your experience!')} isLast>
+            <Toggle value={analytics} onValueChange={toggleAnalytics} />
+          </Row>
         </ScreenSection>
         <ScreenSection>
           <ScreenSectionTitle>{t('Security')}</ScreenSectionTitle>
@@ -222,101 +220,96 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
               </AppText>
             </BiometricsRecommendationBox>
           )}
-          <BoxSurface>
-            <Row
-              title={t('App access')}
-              subtitle={t(
-                !deviceHasEnrolledBiometrics && Platform.OS === 'ios'
-                  ? 'Require device passcode to open app'
-                  : 'Require biometrics to open app'
-              )}
-            >
+
+          <Row
+            title={t('App access')}
+            subtitle={t(
+              !deviceHasEnrolledBiometrics && Platform.OS === 'ios'
+                ? 'Require device passcode to open app'
+                : 'Require biometrics to open app'
+            )}
+          >
+            <Toggle
+              value={isBiometricsEnabled}
+              onValueChange={handleBiometricsAppAccessChange}
+              disabled={!deviceHasEnrolledBiometrics && Platform.OS === 'android'}
+            />
+          </Row>
+          <Row
+            title={t('Transactions')}
+            subtitle={t(
+              !deviceHasEnrolledBiometrics && Platform.OS === 'ios'
+                ? 'Require device passcode to transact'
+                : 'Require biometrics to transact'
+            )}
+          >
+            <Toggle
+              value={biometricsRequiredForTransactions}
+              onValueChange={handleBiometricsTransactionsChange}
+              disabled={!deviceHasEnrolledBiometrics && Platform.OS === 'android'}
+            />
+          </Row>
+          <Row
+            onPress={() =>
+              isUsingFundPassword &&
+              navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: false })
+            }
+            title={t('Fund password')}
+            subtitle={t('Enhance your security')}
+          >
+            {isUsingFundPassword ? (
+              <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
+            ) : (
               <Toggle
-                value={isBiometricsEnabled}
-                onValueChange={handleBiometricsAppAccessChange}
-                disabled={!deviceHasEnrolledBiometrics && Platform.OS === 'android'}
+                value={false}
+                onValueChange={() =>
+                  navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: true })
+                }
               />
-            </Row>
-            <Row
-              title={t('Transactions')}
-              subtitle={t(
-                !deviceHasEnrolledBiometrics && Platform.OS === 'ios'
-                  ? 'Require device passcode to transact'
-                  : 'Require biometrics to transact'
-              )}
-            >
-              <Toggle
-                value={biometricsRequiredForTransactions}
-                onValueChange={handleBiometricsTransactionsChange}
-                disabled={!deviceHasEnrolledBiometrics && Platform.OS === 'android'}
-              />
-            </Row>
-            <Row
-              onPress={() =>
-                isUsingFundPassword &&
-                navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: false })
-              }
-              title={t('Fund password')}
-              subtitle={t('Enhance your security')}
-            >
-              {isUsingFundPassword ? (
-                <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
-              ) : (
-                <Toggle
-                  value={false}
-                  onValueChange={() =>
-                    navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: true })
-                  }
-                />
-              )}
-            </Row>
-            <Row
-              title={t('Auto-lock')}
-              subtitle={t('Amount of time before app locks')}
-              isLast
-              onPress={openAutoLockOptionsModal}
-            >
-              <AppText bold>{getAutoLockLabel(autoLockSeconds)}</AppText>
-            </Row>
-          </BoxSurface>
+            )}
+          </Row>
+          <Row
+            title={t('Auto-lock')}
+            subtitle={t('Amount of time before app locks')}
+            isLast
+            onPress={openAutoLockOptionsModal}
+          >
+            <AppText bold>{getAutoLockLabel(autoLockSeconds)}</AppText>
+          </Row>
         </ScreenSection>
 
         <ScreenSection>
           <ScreenSectionTitle>{t('Experimental features')}</ScreenSectionTitle>
-          <BoxSurface>
-            <Row title="WalletConnect" subtitle={t('Connect to dApps')} isLast>
-              <Toggle value={isWalletConnectEnabled} onValueChange={handleWalletConnectEnablePress} />
-            </Row>
-          </BoxSurface>
+
+          <Row title="WalletConnect" subtitle={t('Connect to dApps')} isLast>
+            <Toggle value={isWalletConnectEnabled} onValueChange={handleWalletConnectEnablePress} />
+          </Row>
         </ScreenSection>
 
         <ScreenSection>
           <ScreenSectionTitle>{t('Wallet')}</ScreenSectionTitle>
-          <BoxSurface>
-            <Row onPress={openEditWalletNameModal} title={t('Wallet name')}>
-              <AppText bold>{walletName}</AppText>
-            </Row>
-            <Row onPress={() => navigation.navigate('AddressDiscoveryScreen')} title={t('Scan for active addresses')}>
-              <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
-            </Row>
-            <Row onPress={() => navigation.navigate('PublicKeysScreen')} title={t('Get public keys')} isLast>
-              <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
-            </Row>
-          </BoxSurface>
+
+          <Row onPress={openEditWalletNameModal} title={t('Wallet name')}>
+            <AppText bold>{walletName}</AppText>
+          </Row>
+          <Row onPress={() => navigation.navigate('AddressDiscoveryScreen')} title={t('Scan for active addresses')}>
+            <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
+          </Row>
+          <Row onPress={() => navigation.navigate('PublicKeysScreen')} title={t('Get public keys')} isLast>
+            <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
+          </Row>
         </ScreenSection>
         <ScreenSection>
-          <BoxSurface>
-            <Row
-              onPress={openSafePlaceWarningModal}
-              title={t('View secret recovery phrase')}
-              titleColor={theme.global.warning}
-            >
-              <Ionicons name="key" size={18} color={theme.global.warning} />
-            </Row>
-            <Row onPress={handleDeleteButtonPress} title={t('Delete wallet')} titleColor={theme.global.alert} isLast>
-              <Ionicons name="trash" size={18} color={theme.global.alert} />
-            </Row>
-          </BoxSurface>
+          <Row
+            onPress={openSafePlaceWarningModal}
+            title={t('View secret recovery phrase')}
+            titleColor={theme.global.warning}
+          >
+            <Ionicons name="key" size={18} color={theme.global.warning} />
+          </Row>
+          <Row onPress={handleDeleteButtonPress} title={t('Delete wallet')} titleColor={theme.global.alert} isLast>
+            <Ionicons name="trash" size={18} color={theme.global.alert} />
+          </Row>
         </ScreenSection>
         <ScreenSection>
           <AppText style={{ textAlign: 'center' }} color="secondary">
@@ -328,7 +321,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             {t('Privacy policy')}
           </LinkToWeb>
         </ScreenSection>
-      </ScrollScreenStyled>
+      </ScrollScreen>
 
       <ModalWithBackdrop animationType="fade" visible={isThemeSwitchOverlayVisible} color="black" />
     </>
@@ -337,11 +330,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
 export default SettingsScreen
 
-const ScrollScreenStyled = styled(ScrollScreen)`
-  gap: ${VERTICAL_GAP}px;
-`
-
-const BiometricsRecommendationBox = styled(BoxSurface)`
+const BiometricsRecommendationBox = styled(Surface)`
   padding: 20px;
-  margin-bottom: ${VERTICAL_GAP}px;
 `
