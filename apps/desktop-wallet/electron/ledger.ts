@@ -16,16 +16,14 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export type Message = string
+import { ledgerUSBVendorId } from '@ledgerhq/devices'
+import { BrowserWindow } from 'electron'
 
-export type OptionalMessage = Message | undefined
-
-export interface SnackbarMessage {
-  text: Message
-  type?: 'info' | 'alert' | 'success'
-  duration?: number
-}
-
-export interface ToastMessage extends Omit<SnackbarMessage, 'duration'> {
-  duration: 'short' | 'long'
+export const setupLedgerDevicePermissions = (mainWindow: BrowserWindow) => {
+  mainWindow.webContents.session.setDevicePermissionHandler(
+    ({ deviceType, origin, device: { vendorId } }) =>
+      (deviceType === 'hid' || deviceType === 'usb') &&
+      (origin === 'file://' || origin === 'http://localhost:3000') &&
+      vendorId === ledgerUSBVendorId
+  )
 }

@@ -24,6 +24,7 @@ import ActionLink from '@/components/ActionLink'
 import Button from '@/components/Button'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
+import ConnectWithLedgerButton from '@/features/ledger/ConnectWithLedgerButton'
 
 interface NewWalletActionsProps {
   onExistingWalletLinkClick?: () => void
@@ -41,6 +42,7 @@ const NewWalletActions = ({ onExistingWalletLinkClick }: NewWalletActionsProps) 
       <Section inList>
         <Button onClick={() => navigate('/create/0')}>{t('New wallet')}</Button>
         <Button onClick={() => navigate('/import/0')}>{t('Import wallet')}</Button>
+        <ConnectWithLedgerButton />
         {onExistingWalletLinkClick && (
           <ActionLinkStyled onClick={onExistingWalletLinkClick}>{t('Use an existing wallet')}</ActionLinkStyled>
         )}

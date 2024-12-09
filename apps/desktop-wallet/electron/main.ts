@@ -24,6 +24,7 @@ import contextMenu from 'electron-context-menu'
 import isDev from 'electron-is-dev'
 
 import { configureAutoUpdater, handleAutoUpdaterUserActions, setupAutoUpdaterListeners } from './autoUpdater'
+import { setupLedgerDevicePermissions } from './ledger'
 import { setupAppMenu } from './menu'
 import { handleNativeThemeUserActions, setupNativeThemeListeners } from './nativeTheme'
 import { IS_RC, isIpcSenderValid, isMac, isWindows } from './utils'
@@ -110,6 +111,8 @@ function createWindow() {
   setupNativeThemeListeners(mainWindow)
 
   setupAutoUpdaterListeners(mainWindow)
+
+  setupLedgerDevicePermissions(mainWindow)
 
   if (!isMac) {
     if (process.argv.length > 1) {

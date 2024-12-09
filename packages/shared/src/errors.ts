@@ -36,5 +36,5 @@ export const getHumanReadableError = (error: unknown, defaultErrorMsg: string) =
 export const cleanExceptionMessage = (error: unknown) =>
   getHumanReadableError(error, '').replace(new RegExp(`\\b(${bip39WordsString})\\b`, 'g'), '[...]')
 
-const errorHasMessageProp = (error: unknown): error is { message: string } =>
+export const errorHasMessageProp = (error: unknown): error is { message: string } =>
   'message' in (error as { message?: string })

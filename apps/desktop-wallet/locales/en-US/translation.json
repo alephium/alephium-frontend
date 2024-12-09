@@ -494,5 +494,17 @@
   "Could not get latest data": "Could not get latest data",
   "Updating...": "Updating...",
   "To send funds you first need to load your wallet with some.": "To send funds you first need to load your wallet with some.",
-  "The wallet is empty. Use the faucet in the developer tools in the app settings.": "The wallet is empty. Use the faucet in the developer tools in the app settings."
+  "The wallet is empty. Use the faucet in the developer tools in the app settings.": "The wallet is empty. Use the faucet in the developer tools in the app settings.",
+  "Connect with Ledger": "Connect with Ledger",
+  "Connect your Ledger": "Connect your Ledger",
+  "Could not generate address": "Could not generate address",
+  "Could not generate one address per group": "Could not generate one address per group",
+  "could_not_save_new_address_one": "Could not save new address",
+  "could_not_save_new_address_other": "Could not save new addresses",
+  "Could not connect to Alephium Ledger app": "Could not connect to Alephium Ledger app",
+  "Not supported.": "Not supported.",
+  "Signing messages with Ledger is not supported.": "Signing messages with Ledger is not supported.",
+  "Plug in and unlock your Ledger device.": "Plug in and unlock your Ledger device.",
+  "ledgerInstructionsOpenApp": "Open the Alephium Ledger app. The Alephium app can be installed via <1>Ledger Live</1>.",
+  "Is your device plugged in and the Alephium app open?": "Is your device plugged in and the Alephium app open?"
 }
