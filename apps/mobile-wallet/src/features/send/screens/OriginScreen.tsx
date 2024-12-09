@@ -57,6 +57,7 @@ const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
       screenIntro={t('Select the address from which to send the transaction.')}
       contentPaddingTop
       onScroll={screenScrollHandler}
+      hideEmptyAddresses
       bottomButtonsRender={() => (
         <Button title={t('Continue')} variant="highlight" onPress={() => navigation.navigate('AssetsScreen')} />
       )}

@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { ReactNode } from 'react'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
@@ -26,17 +27,20 @@ import { DEFAULT_MARGIN } from '~/style/globalStyle'
 interface BottomModalHeaderProps {
   onClose: () => void
   height?: number
-  title?: string
+  title?: string | ReactNode
 }
 
 const BottomModalHeader = ({ height, onClose, title }: BottomModalHeaderProps) => (
   <HeaderContainer style={{ height }}>
     <HeaderSideContainer align="left" />
-    {title && (
-      <Title semiBold size={16}>
-        {title}
-      </Title>
-    )}
+    {title &&
+      (typeof title === 'string' ? (
+        <Title semiBold size={16}>
+          {title}
+        </Title>
+      ) : (
+        title
+      ))}
     <HeaderSideContainer align="right">
       <CloseButton onPress={onClose} compact />
     </HeaderSideContainer>

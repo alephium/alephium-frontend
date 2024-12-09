@@ -41,13 +41,12 @@ export const scrollScreenTo = (
 
 export enum ToastDuration {
   SHORT = 3000,
-  LONG = 10000
+  LONG = 6000
 }
 
 export const showToast = (params: ToastShowParams) => {
   Toast.show({
-    position: 'bottom',
-    bottomOffset: 50,
+    position: 'top',
     visibilityTime: ToastDuration.LONG,
     onPress: Toast.hide,
     ...params

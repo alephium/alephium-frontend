@@ -18,8 +18,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useCallback, useEffect, useState } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent, Platform, useWindowDimensions } from 'react-native'
 import { Gesture } from 'react-native-gesture-handler'
-import { interpolate, runOnJS, runOnUI, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
+import {
+  interpolate,
+  interpolateColor,
+  runOnJS,
+  runOnUI,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring
+} from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useTheme } from 'styled-components'
 
 import { removeModal } from '~/features/modals/modalActions'
 import { selectModalById } from '~/features/modals/modalSelectors'
@@ -62,7 +71,8 @@ export const useBottomModalState = ({
   const insets = useSafeAreaInsets()
   const dimensions = useWindowDimensions()
   const dispatch = useAppDispatch()
-  const maxHeight = dimensions.height
+  const theme = useTheme()
+  const maxHeight = dimensions.height - insets.top
 
   // Initialize shared values
   // ----------------------------
@@ -121,7 +131,12 @@ export const useBottomModalState = ({
         runOnUI(() => {
           contentHeight.value = newContentHeight
           canMaximize.value = contentHeight.value > maxHeight
-          shouldMaximizeOnOpen.value = maximisedContent || contentHeight.value > maxHeight
+          const contentIsScrollable = contentHeight.value > dimensions.height * 0.9
+
+          shouldMaximizeOnOpen.value = maximisedContent || contentIsScrollable
+
+          // Determine if scrolling is needed
+          runOnJS(setIsContentScrollable)(contentIsScrollable)
 
           minHeight.value = customMinHeight
             ? customMinHeight
@@ -130,9 +145,6 @@ export const useBottomModalState = ({
               : contentHeight.value + customNavHeight + (Platform.OS === 'ios' ? insets.bottom : insets.bottom + 18)
 
           shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
-
-          // Determine if scrolling is needed
-          runOnJS(setIsContentScrollable)(contentHeight.value > dimensions.height * 0.9)
         })()
       }
     },
@@ -186,16 +198,20 @@ export const useBottomModalState = ({
 
   // Animated Styles
   // ----------------------------
-  const modalHeightAnimatedStyle = useAnimatedStyle(() => ({
+  const modalAnimatedStyle = useAnimatedStyle(() => ({
     height: -modalHeight.value,
-    paddingTop: withSpring(
-      position.value === 'maximised' ? insets.top : position.value === 'closing' ? 0 : 10,
-      springConfig
+    backgroundColor: interpolateColor(
+      -modalHeight.value,
+      [0, maxHeight],
+      [
+        theme.name === 'light' ? theme.bg.highlight : theme.bg.primary,
+        theme.name === 'light' ? theme.bg.highlight : theme.bg.back2
+      ]
     )
   }))
 
   const handleAnimatedStyle = useAnimatedStyle(() => ({
-    width: shouldMaximizeOnOpen.value ? 60 : interpolate(-modalHeight.value, [0, maxHeight], [30, 60])
+    width: shouldMaximizeOnOpen.value ? 40 : interpolate(-modalHeight.value, [0, maxHeight], [20, 40])
   }))
 
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
@@ -248,7 +264,7 @@ export const useBottomModalState = ({
   }, [isModalClosing, position, handleClose])
 
   return {
-    modalHeightAnimatedStyle,
+    modalAnimatedStyle,
     handleAnimatedStyle,
     backdropAnimatedStyle,
     handleContentSizeChange,

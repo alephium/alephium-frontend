@@ -35,6 +35,7 @@ import NftGridModal from '~/features/nftsDisplay/NftGridModal'
 import NftModal from '~/features/nftsDisplay/NftModal'
 import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
+import TokenAmountModal from '~/features/send/modals/TokenAmountModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
@@ -112,6 +113,8 @@ const AppModals = () => {
             return <GroupSelectModal key={id} id={id} {...params.props} />
           case 'WalletConnectSessionRequestModal':
             return <WalletConnectSessionRequestModal key={id} id={id} {...params.props} />
+          case 'TokenAmountModal':
+            return <TokenAmountModal key={id} id={id} {...params.props} />
           default:
             return null
         }

@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { ParamListBase, useNavigation } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import { SceneProgress } from '@react-navigation/stack/lib/typescript/src/types'
 import { useTranslation } from 'react-i18next'
 
 import StackHeader from '~/components/headers/StackHeader'
@@ -28,7 +29,6 @@ import AssetsScreen from '~/features/send/screens/AssetsScreen'
 import DestinationScreen from '~/features/send/screens/DestinationScreen'
 import OriginScreen from '~/features/send/screens/OriginScreen'
 import VerifyScreen from '~/features/send/screens/VerifyScreen'
-import { SCREEN_OVERFLOW } from '~/style/globalStyle'
 
 export interface SendNavigationParamList extends ParamListBase {
   DestinationScreen: { fromAddressHash?: AddressHash }
@@ -46,8 +46,7 @@ const SendNavigation = () => (
     <HeaderContextProvider>
       <SendStack.Navigator
         screenOptions={{
-          header: () => <SendNavigationHeader />,
-          cardStyle: { overflow: SCREEN_OVERFLOW },
+          header: ({ progress }) => <SendNavigationHeader progress={progress} />,
           headerMode: 'float'
         }}
         initialRouteName="DestinationScreen"
@@ -61,7 +60,7 @@ const SendNavigation = () => (
   </SendContextProvider>
 )
 
-const SendNavigationHeader = () => {
+const SendNavigationHeader = ({ progress }: { progress: SceneProgress }) => {
   const { headerOptions, screenScrollY } = useHeaderContext()
   const navigation = useNavigation()
   const { t } = useTranslation()
@@ -72,6 +71,7 @@ const SendNavigationHeader = () => {
       titleAlwaysVisible
       scrollY={screenScrollY}
       onBackPress={() => navigation.goBack()}
+      progress={progress}
     />
   )
 }

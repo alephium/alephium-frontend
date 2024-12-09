@@ -60,7 +60,7 @@ const BottomButtons = ({ children, bottomInset, float, onHeightChange, style }: 
         locations={[0.6, 1]}
         colors={
           theme.name === 'dark'
-            ? [theme.bg.back1, colord(theme.bg.back2).alpha(0).toHex()]
+            ? [theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]
             : [theme.bg.highlight, colord(theme.bg.highlight).alpha(0).toHex()]
         }
         style={{ height: gradientHeight }}
