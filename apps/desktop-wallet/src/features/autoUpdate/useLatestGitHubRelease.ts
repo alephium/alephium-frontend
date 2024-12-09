@@ -22,12 +22,9 @@ import { useState } from 'react'
 
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useThrottledGitHubApi from '@/hooks/useThrottledGitHubApi'
-import { AlephiumWindow } from '@/types/window'
 import { currentVersion, isRcVersion } from '@/utils/app-data'
 import { links } from '@/utils/links'
 
-const _window = window as unknown as AlephiumWindow
-const electron = _window.electron
 const semverRegex = isRcVersion ? /^(\d+\.\d+\.\d+)(?:-rc(\.\d+)?)?$/ : /^(\d+\.\d+\.\d+)?$/
 
 const useLatestGitHubRelease = () => {
@@ -40,9 +37,9 @@ const useLatestGitHubRelease = () => {
     try {
       const response = await exponentialBackoffFetchRetry(links.latestReleaseApi)
       const data = await response.json()
-      const version = data.tag_name.replace('alephium-desktop-wallet@', '')
+      const version = data?.tag_name?.replace('alephium-desktop-wallet@', '')
 
-      if (isVersionNewer(version)) {
+      if (version && isVersionNewer(version)) {
         setNewVersion(version)
         setRequiresManualDownload(true)
       }
@@ -54,7 +51,7 @@ const useLatestGitHubRelease = () => {
   useThrottledGitHubApi({
     lastGithubCallTimestampKey: 'lastTimeGitHubApiWasCalledForLatestVersion',
     githubApiCallback: async () => {
-      const version = await electron?.updater.checkForUpdates()
+      const version = await window.electron?.updater.checkForUpdates()
 
       if (!version) {
         await checkForManualDownload()

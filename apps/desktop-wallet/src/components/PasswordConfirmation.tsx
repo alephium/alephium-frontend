@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { decryptMnemonic } from '@alephium/keyring'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -28,16 +28,17 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 
-interface PasswordConfirmationProps {
+export interface PasswordConfirmationProps {
   onCorrectPasswordEntered: (password: string) => void
   isSubmitDisabled?: boolean
   text?: string
   buttonText?: string
   highlightButton?: boolean
   walletId?: string
+  children?: ReactNode
 }
 
-const PasswordConfirmation: FC<PasswordConfirmationProps> = ({
+const PasswordConfirmation = ({
   text,
   buttonText,
   onCorrectPasswordEntered,
@@ -45,7 +46,7 @@ const PasswordConfirmation: FC<PasswordConfirmationProps> = ({
   isSubmitDisabled = false,
   highlightButton = false,
   children
-}) => {
+}: PasswordConfirmationProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const activeWallet = useAppSelector((state) => state.activeWallet)

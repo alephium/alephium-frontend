@@ -16,10 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { keyring } from '@alephium/keyring'
-import { getHumanReadableError } from '@alephium/shared'
-import { AlertOctagon, AlertTriangle, Download, FileCode, TerminalSquare } from 'lucide-react'
-import { useState } from 'react'
+import { AddressHash, getHumanReadableError } from '@alephium/shared'
+import { getSecp259K1Path } from '@alephium/web3-wallet'
+import { AlertOctagon, Download, FileCode, TerminalSquare } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -31,17 +30,13 @@ import InlineLabelValueInput from '@/components/Inputs/InlineLabelValueInput'
 import Toggle from '@/components/Inputs/Toggle'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
-import PasswordConfirmation from '@/components/PasswordConfirmation'
 import Table from '@/components/Table'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { openModal } from '@/features/modals/modalActions'
+import { devToolsToggled } from '@/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import CenteredModal from '@/modals/CenteredModal'
-import ModalPortal from '@/modals/ModalPortal'
-import SendModalCallContact from '@/modals/SendModals/CallContract'
-import SendModalDeployContract from '@/modals/SendModals/DeployContract'
 import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import { copiedToClipboard, copyToClipboardFailed, receiveTestnetTokens } from '@/storage/global/globalActions'
-import { devToolsToggled } from '@/storage/settings/settingsActions'
+import { copiedToClipboard, copyToClipboardFailed, receiveFaucetTokens } from '@/storage/global/globalActions'
 import { Address } from '@/types/addresses'
 
 const DevToolsSettingsSection = () => {
@@ -54,37 +49,14 @@ const DevToolsSettingsSection = () => {
   const devTools = useAppSelector((state) => state.settings.devTools)
   const { sendAnalytics } = useAnalytics()
 
-  const [isDeployContractSendModalOpen, setIsDeployContractSendModalOpen] = useState(false)
-  const [isCallScriptSendModalOpen, setIsCallScriptSendModalOpen] = useState(false)
-  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
-  const [selectedAddress, setSelectedAddress] = useState<Address>()
-
   const toggleDevTools = () => {
     dispatch(devToolsToggled())
 
     sendAnalytics({ event: 'Enabled dev tools' })
   }
 
-  const confirmAddressPrivateKeyCopyWithPassword = (address: Address) => {
-    setIsPasswordModalOpen(true)
-    setSelectedAddress(address)
-  }
-
-  const copyPrivateKey = async () => {
-    if (!selectedAddress) return
-
-    try {
-      await navigator.clipboard.writeText(keyring.exportPrivateKeyOfAddress(selectedAddress.hash))
-      dispatch(copiedToClipboard(t('Private key copied.')))
-
-      sendAnalytics({ event: 'Copied address private key' })
-    } catch (error) {
-      dispatch(copyToClipboardFailed(getHumanReadableError(error, t('Could not copy private key.'))))
-      sendAnalytics({ type: 'error', message: 'Could not copy private key' })
-    } finally {
-      closePasswordModal()
-    }
-  }
+  const openCopyPrivateKeyConfirmationModal = (addressHash: AddressHash) =>
+    dispatch(openModal({ name: 'CopyPrivateKeyConfirmationModal', props: { addressHash } }))
 
   const copyPublicKey = async (address: Address) => {
     try {
@@ -98,15 +70,18 @@ const DevToolsSettingsSection = () => {
     }
   }
 
-  const closePasswordModal = () => {
-    setIsPasswordModalOpen(false)
-    setSelectedAddress(undefined)
-  }
-
   const handleFaucetCall = () => {
-    defaultAddress && dispatch(receiveTestnetTokens(defaultAddress.hash))
+    defaultAddress && dispatch(receiveFaucetTokens(defaultAddress.hash))
     sendAnalytics({ event: 'Requested testnet tokens' })
   }
+
+  const openCallContractModal = () =>
+    dispatch(openModal({ name: 'CallContractSendModal', props: { initialTxData: { fromAddress: defaultAddress } } }))
+
+  const openDeployContractModal = () =>
+    dispatch(openModal({ name: 'DeployContractSendModal', props: { initialTxData: { fromAddress: defaultAddress } } }))
+
+  const isOnTestNetwork = ['testnet', 'devnet'].includes(currentNetwork.name)
 
   return (
     <>
@@ -123,32 +98,34 @@ const DevToolsSettingsSection = () => {
         <>
           <Section align="flex-start" inList>
             <h2 tabIndex={0} role="label">
-              {t('Testnet faucet')}
+              {t('Token faucet')}
             </h2>
-            <Paragraph>{t('Receive testnet tokens in your default address.')}</Paragraph>
-            {currentNetwork.name !== 'testnet' && (
+            <Paragraph>{t('Receive test tokens in your default address.')}</Paragraph>
+            {!isOnTestNetwork && (
               <InfoBox
                 importance="accent"
                 Icon={AlertOctagon}
                 text={t(
-                  'You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet network to see your tokens.',
+                  'You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet or devnet network to see your tokens.',
                   { currentNetwork: currentNetwork.name }
                 )}
               />
             )}
-            <Button Icon={Download} onClick={handleFaucetCall} role="secondary" loading={faucetCallPending} wide>
-              {t('Receive testnet tokens')}
-            </Button>
+            {isOnTestNetwork && (
+              <Button Icon={Download} onClick={handleFaucetCall} role="secondary" loading={faucetCallPending} wide>
+                {t('Receive test tokens')}
+              </Button>
+            )}
           </Section>
           <Section align="flex-start" inList>
             <h2 tabIndex={0} role="label">
               {t('Smart contracts')}
             </h2>
             <ButtonsRow>
-              <Button Icon={FileCode} onClick={() => setIsDeployContractSendModalOpen(true)} role="secondary">
+              <Button Icon={FileCode} onClick={openDeployContractModal} role="secondary">
                 {t('Deploy contract')}
               </Button>
-              <Button Icon={TerminalSquare} onClick={() => setIsCallScriptSendModalOpen(true)} role="secondary">
+              <Button Icon={TerminalSquare} onClick={openCallContractModal} role="secondary">
                 {t('Call contract')}
               </Button>
             </ButtonsRow>
@@ -160,7 +137,7 @@ const DevToolsSettingsSection = () => {
             <Paragraph>{t('Copy the keys of an address.')}</Paragraph>
             <Table>
               {addresses.map((address) => (
-                <AddressRow address={address} disableAddressCopy key={address.hash}>
+                <AddressRow addressHash={address.hash} key={address.hash} subtitle={getSecp259K1Path(address.index)}>
                   <Buttons>
                     <ButtonStyled role="secondary" short onClick={() => copyPublicKey(address)}>
                       {t('Public key')}
@@ -168,7 +145,7 @@ const DevToolsSettingsSection = () => {
                     <ButtonStyled
                       role="secondary"
                       short
-                      onClick={() => confirmAddressPrivateKeyCopyWithPassword(address)}
+                      onClick={() => openCopyPrivateKeyConfirmationModal(address.hash)}
                     >
                       {t('Private key')}
                     </ButtonStyled>
@@ -179,37 +156,6 @@ const DevToolsSettingsSection = () => {
           </PrivateKeySection>
         </>
       )}
-      <ModalPortal>
-        {isDeployContractSendModalOpen && defaultAddress && (
-          <SendModalDeployContract
-            initialTxData={{ fromAddress: defaultAddress }}
-            onClose={() => setIsDeployContractSendModalOpen(false)}
-          />
-        )}
-        {isCallScriptSendModalOpen && defaultAddress && (
-          <SendModalCallContact
-            initialTxData={{ fromAddress: defaultAddress }}
-            onClose={() => setIsCallScriptSendModalOpen(false)}
-          />
-        )}
-        {isPasswordModalOpen && (
-          <CenteredModal title={t('Enter password')} onClose={closePasswordModal} skipFocusOnMount>
-            <PasswordConfirmation
-              text={t('Enter your password to copy the private key.')}
-              buttonText={t('Copy private key')}
-              onCorrectPasswordEntered={copyPrivateKey}
-            >
-              <InfoBox importance="alert" Icon={AlertTriangle}>
-                {`${t('This is a feature for developers only.')} ${t(
-                  'You will not be able to recover your account with the private key!'
-                )} ${t('Please, backup your secret phrase instead.')} ${t('Never disclose this key.')} ${t(
-                  'Anyone with your private keys can steal any assets held in your addresses.'
-                )}`}
-              </InfoBox>
-            </PasswordConfirmation>
-          </CenteredModal>
-        )}
-      </ModalPortal>
     </>
   )
 }

@@ -21,7 +21,7 @@ export default {
     name: 'Alephium',
     owner: 'alephium-dev',
     slug: 'alephium-mobile-wallet',
-    version: '1.1.6',
+    version: '1.1.12',
     orientation: 'portrait',
     icon: './assets/icon.png',
     scheme: ['wc', 'alephium'],
@@ -37,7 +37,8 @@ export default {
       supportsTablet: true,
       bundleIdentifier: 'org.alephium.mobilewallet',
       infoPlist: {
-        BGTaskSchedulerPermittedIdentifiers: ['$(PRODUCT_BUNDLE_PACKAGE_TYPE)']
+        BGTaskSchedulerPermittedIdentifiers: ['$(PRODUCT_BUNDLE_PACKAGE_TYPE)'],
+        LSMinimumSystemVersion: '12.0'
       },
       config: {
         usesNonExemptEncryption: false
@@ -79,8 +80,11 @@ export default {
       permissions: [
         'android.permission.FOREGROUND_SERVICE',
         'android.permission.FOREGROUND_SERVICE_DATA_SYNC',
+        'android.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND', // To potentially fix crash due to ForegroundServiceStartNotAllowedException
         'android.permission.WAKE_LOCK'
       ],
+      // See https://github.com/alephium/alephium-frontend/issues/1021
+      blockedPermissions: ['android.permission.READ_MEDIA_IMAGES', 'android.permission.READ_MEDIA_VIDEO'],
       package: 'org.alephium.wallet'
     },
     web: {
@@ -118,7 +122,15 @@ export default {
         }
       ],
       'expo-localization',
-      'expo-secure-store'
+      'expo-secure-store',
+      [
+        '@sentry/react-native/expo',
+        {
+          url: 'https://sentry.io/',
+          project: 'alephium-mobile-wallet',
+          organization: 'alephium'
+        }
+      ]
     ],
     extra: {
       eas: {

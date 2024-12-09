@@ -56,7 +56,7 @@ export enum BiometricAuthenticationStatus {
 type TriggerArgs<T> = {
   params?: T
   successCallback?: (params?: T) => void
-  failureCallback?: () => void
+  failureCallback?: (message: string) => void
 }
 
 /**
@@ -91,7 +91,7 @@ type TriggerArgs<T> = {
  */
 export function useBiometricPrompt<T = undefined>(
   successCallback?: (params?: T) => void,
-  failureCallback?: () => void
+  failureCallback?: (message: string) => void
 ): {
   triggerBiometricsPrompt: (args?: TriggerArgs<T>) => Promise<void>
 } {
@@ -104,7 +104,7 @@ export function useBiometricPrompt<T = undefined>(
     if (biometricAuthenticationSuccessful(authStatus) || biometricAuthenticationDisabledByOS(authStatus)) {
       _successCallback?.(args?.params)
     } else {
-      _failureCallback?.()
+      _failureCallback?.(authStatus.toString())
     }
   }
 
@@ -173,7 +173,7 @@ export const useBiometricsAuthGuard = () => {
     }: {
       settingsToCheck: 'appAccess' | 'transactions' | 'appAccessOrTransactions'
       successCallback: () => void
-      failureCallback?: () => void
+      failureCallback?: (message: string) => void
       onPromptDisplayed?: () => void
     }) => {
       const isBiometricsAuthRequired = {

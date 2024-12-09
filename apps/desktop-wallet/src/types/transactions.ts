@@ -16,157 +16,24 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import {
-  AddressHash,
-  AssetAmount,
-  TransactionDirection,
-  TransactionInfoAsset,
-  TransactionInfoType
-} from '@alephium/shared'
-import { explorer, node, SignMessageParams } from '@alephium/web3'
+import { AddressHash, TransactionInfoType } from '@alephium/shared'
+import { explorer as e } from '@alephium/web3'
 
-import { Address } from '@/types/addresses'
-
-export enum TxType {
-  TRANSFER,
-  DEPLOY_CONTRACT,
-  SIGN_UNSIGNED_TX,
-  SIGN_MESSAGE,
-  SCRIPT
-}
-
-export type PendingTxType = 'consolidation' | 'transfer' | 'sweep' | 'contract'
-
-export type PendingTransaction = {
+export type SentTransaction = {
   hash: string
   fromAddress: string
   toAddress: string
   timestamp: number
-  type: PendingTxType
+  type: 'consolidation' | 'transfer' | 'sweep' | 'contract' | 'faucet'
   amount?: string
-  tokens?: explorer.Token[]
+  tokens?: e.Token[]
   lockTime?: number
-  status: 'pending'
+  status: 'sent' | 'mempooled' | 'confirmed'
 }
-
-export type DappTxData =
-  | TransferTxData
-  | DeployContractTxData
-  | CallContractTxData
-  | SignUnsignedTxData
-  | SignMessageData
-
-export type TxDataToModalType =
-  | {
-      modalType: TxType.TRANSFER
-      txData: TransferTxData
-    }
-  | {
-      modalType: TxType.DEPLOY_CONTRACT
-      txData: DeployContractTxData
-    }
-  | {
-      modalType: TxType.SIGN_UNSIGNED_TX
-      txData: SignUnsignedTxData
-    }
-  | {
-      modalType: TxType.SIGN_MESSAGE
-      txData: SignMessageData
-    }
-  | {
-      modalType: TxType.SCRIPT
-      txData: CallContractTxData
-    }
-
-export interface DeployContractTxData {
-  fromAddress: Address
-  bytecode: string
-
-  initialAlphAmount?: AssetAmount
-  issueTokenAmount?: string
-  gasAmount?: number
-  gasPrice?: string
-}
-
-export interface CallContractTxData {
-  fromAddress: Address
-  bytecode: string
-
-  assetAmounts?: AssetAmount[]
-  gasAmount?: number
-  gasPrice?: string
-}
-
-export interface TransferTxData {
-  fromAddress: Address
-  toAddress: string
-  assetAmounts: AssetAmount[]
-  gasAmount?: number
-  gasPrice?: string
-  lockTime?: Date
-}
-
-export interface SignUnsignedTxData {
-  fromAddress: Address
-  unsignedTx: string
-}
-
-export interface SignMessageData extends Pick<SignMessageParams, 'message' | 'messageHasher'> {
-  fromAddress: Address
-}
-
-export interface TxPreparation {
-  fromAddress: Address
-  bytecode?: string
-  issueTokenAmount?: string
-  alphAmount?: string
-}
-
-export type PartialTxData<T, K extends keyof T> = {
-  [P in keyof Omit<T, K>]?: T[P]
-} & Pick<T, K>
-
-export type CheckTxProps<T> = {
-  data: T
-  fees: bigint
-  onSubmit: () => void
-}
-
-export type UnsignedTx = {
-  fromGroup: number
-  toGroup: number
-  unsignedTx: string
-  gasAmount: number
-  gasPrice: string
-}
-
-export type TxContext = {
-  setIsSweeping: (isSweeping: boolean) => void
-  sweepUnsignedTxs: node.SweepAddressTransaction[]
-  setSweepUnsignedTxs: (txs: node.SweepAddressTransaction[]) => void
-  setFees: (fees: bigint | undefined) => void
-  unsignedTransaction: UnsignedTx | undefined
-  setUnsignedTransaction: (tx: UnsignedTx | undefined) => void
-  unsignedTxId: string
-  setUnsignedTxId: (txId: string) => void
-  isSweeping: boolean
-  consolidationRequired: boolean
-}
-
-export type AddressConfirmedTransaction = explorer.Transaction & { address: Address }
-export type AddressPendingTransaction = PendingTransaction & { address: Address }
-export type AddressTransaction = AddressConfirmedTransaction | AddressPendingTransaction
 
 export type TransactionTimePeriod = '24h' | '1w' | '1m' | '6m' | '12m' | 'previousYear' | 'thisYear'
 
 export type Direction = Omit<TransactionInfoType, 'pending'>
-
-export type TransactionInfo = {
-  assets: TransactionInfoAsset[]
-  direction: TransactionDirection
-  infoType: TransactionInfoType
-  lockTime?: Date
-}
 
 export type CsvExportTimerangeQueryParams = {
   fromTs: number

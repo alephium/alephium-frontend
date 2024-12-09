@@ -16,13 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, exponentialBackoffFetchRetry } from '@alephium/shared'
+import { AddressHash, exponentialBackoffFetchRetry, throttledClient } from '@alephium/shared'
+import { transactionSign } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 
+import { ThemeType } from '@/features/theme/themeTypes'
 import i18n from '@/i18n'
-import { ThemeType } from '@/types/settings'
+import { RootState } from '@/storage/store'
 import { OptionalMessage, SnackbarMessage } from '@/types/snackbar'
-import { PendingTransaction } from '@/types/transactions'
+import { SentTransaction } from '@/types/transactions'
 
 type ModalId = string
 
@@ -40,10 +42,6 @@ export const modalOpened = createAction<ModalId>('app/modalOpened')
 
 export const modalClosed = createAction('app/modalClosed')
 
-export const addressesPageInfoMessageClosed = createAction('app/addressesPageInfoMessageClosed')
-
-export const transfersPageInfoMessageClosed = createAction('app/transfersPageInfoMessageClosed')
-
 export const osThemeChangeDetected = createAction<ThemeType>('app/osThemeChangeDetected')
 
 export const devModeShortcutDetected = createAction<{ activate: boolean }>('app/devModeShortcutDetected')
@@ -56,9 +54,60 @@ export const walletConnectCacheCleared = createAction('app/walletConnectCacheCle
 
 export const walletConnectCacheClearFailed = createAction('app/walletConnectCacheClearFailed')
 
-export const receiveTestnetTokens = createAsyncThunk<PendingTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
-  'assets/receiveTestnetTokens',
-  async (destinationAddress: AddressHash, { rejectWithValue, fulfillWithValue }) => {
+export const toggleAppLoading = createAction<boolean>('app/toggleAppLoading')
+
+export const appDataCleared = createAction('app/appDataCleared')
+
+export const appDataClearFailed = createAction('app/appDataClearFailed')
+
+export const receiveFaucetTokens = createAsyncThunk<SentTransaction, AddressHash, { rejectValue: SnackbarMessage }>(
+  'assets/receiveFaucetTokens',
+  async (destinationAddress: AddressHash, { getState, rejectWithValue, fulfillWithValue }) => {
+    const state = getState() as RootState
+    const currentNetwork = state.network
+
+    if (!['testnet', 'devnet'].includes(currentNetwork.name))
+      return rejectWithValue({
+        text: i18n.t('You need to be on testnet or devnet in order to use the faucet.'),
+        type: 'alert'
+      })
+
+    const txBoilerplate: Omit<SentTransaction, 'hash'> = {
+      fromAddress: 'Faucet',
+      toAddress: destinationAddress,
+      amount: undefined,
+      timestamp: new Date().getTime(),
+      status: 'sent',
+      type: 'faucet'
+    }
+
+    if (currentNetwork.name === 'devnet') {
+      throttledClient.init(currentNetwork.settings.nodeHost, currentNetwork.settings.explorerApiHost)
+
+      const faucetPublicKey = '0381818e63bd9e35a5489b52a430accefc608fd60aa2c7c0d1b393b5239aedf6b0'
+      const faucetPrivateKey = 'a642942e67258589cd2b1822c631506632db5a12aabcf413604e785300d762a5'
+
+      const builtTx = await throttledClient.node.transactions.postTransactionsBuild({
+        fromPublicKey: faucetPublicKey,
+        destinations: [
+          {
+            address: destinationAddress,
+            attoAlphAmount: BigInt(1e21).toString()
+          }
+        ]
+      })
+
+      const txRes = await throttledClient.node.transactions.postTransactionsSubmit({
+        unsignedTx: builtTx.unsignedTx,
+        signature: transactionSign(builtTx.txId, faucetPrivateKey)
+      })
+
+      return fulfillWithValue({
+        ...txBoilerplate,
+        hash: txRes.txId
+      })
+    }
+
     const response = await exponentialBackoffFetchRetry('https://faucet.testnet.alephium.org/send', {
       method: 'POST',
       body: destinationAddress
@@ -78,16 +127,9 @@ export const receiveTestnetTokens = createAsyncThunk<PendingTransaction, Address
 
     const hash = responseURL.match(/\/([a-fA-F0-9]+)$/)?.[1] || ''
 
-    const pendingTransaction: PendingTransaction = {
-      hash: hash,
-      fromAddress: 'Faucet',
-      toAddress: destinationAddress,
-      amount: undefined,
-      timestamp: new Date().getTime(),
-      status: 'pending',
-      type: 'transfer'
-    }
-
-    return fulfillWithValue(pendingTransaction)
+    return fulfillWithValue({
+      ...txBoilerplate,
+      hash: hash
+    })
   }
 )

@@ -16,26 +16,24 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, selectDoVerifiedFungibleTokensNeedInitialization } from '@alephium/shared'
 import { colord } from 'colord'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import useSortedTokenIds from '@/api/apiDataHooks/utils/useSortedTokenIds'
+import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
+import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import Button from '@/components/Button'
 import MultiSelect from '@/components/Inputs/MultiSelect'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
-import SelectOptionAsset from '@/components/Inputs/SelectOptionAsset'
-import { useSortTokensByWorth } from '@/features/tokenPrices/tokenPricesHooks'
+import SelectOptionWalletToken from '@/components/Inputs/SelectOptionWalletToken'
 import { useAppSelector } from '@/hooks/redux'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import {
-  makeSelectAddressesTokens,
-  selectAllAddresses,
-  selectIsStateUninitialized
-} from '@/storage/addresses/addressesSelectors'
+import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { appHeaderHeightPx } from '@/style/globalStyles'
 import { Address } from '@/types/addresses'
+import { TokenId } from '@/types/tokens'
 import { directionOptions } from '@/utils/transactions'
 
 interface FiltersPanelProps {
@@ -43,8 +41,8 @@ interface FiltersPanelProps {
   setSelectedAddresses: (addresses: Address[]) => void
   selectedDirections: typeof directionOptions
   setSelectedDirections: (directions: typeof directionOptions) => void
-  selectedAssets?: Asset[]
-  setSelectedAssets: (assets: Asset[]) => void
+  selectedTokensIds?: TokenId[]
+  setSelectedTokensIds: (ids: TokenId[]) => void
   className?: string
 }
 
@@ -53,18 +51,19 @@ const FiltersPanel = ({
   setSelectedAddresses,
   selectedDirections,
   setSelectedDirections,
-  selectedAssets,
-  setSelectedAssets,
+  selectedTokensIds,
+  setSelectedTokensIds,
   className
 }: FiltersPanelProps) => {
   const { t } = useTranslation()
   const addresses = useAppSelector(selectAllAddresses)
-  const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
-  const addressTokens = useAppSelector(selectAddressesTokens)
-  const assets = useSortTokensByWorth(addressTokens)
 
-  const verifiedFungibleTokensNeedInitialization = useAppSelector(selectDoVerifiedFungibleTokensNeedInitialization)
-  const stateUninitialized = useAppSelector(selectIsStateUninitialized)
+  const { listedFts, unlistedFts, isLoading: isLoadingFts } = useFetchWalletFts()
+  const {
+    data: { nftIds, nstIds },
+    isLoading: isLoadingTokensByType
+  } = useFetchWalletTokensByType({ includeAlph: true })
+  const sortedTokenIds = useSortedTokenIds({ listedFts, unlistedFts, nftIds, nstIds })
 
   const renderAddressesSelectedValue = () =>
     selectedAddresses.length === 0
@@ -82,26 +81,29 @@ const FiltersPanel = ({
         ? t('All selected')
         : selectedDirections.map((direction) => t(direction.label)).join(', ')
 
-  const renderAssetsSelectedValue = () =>
-    !selectedAssets
-      ? null
-      : selectedAssets.length === 0
-        ? ''
-        : selectedAssets.length === assets.length
-          ? t('All selected')
-          : selectedAssets.map((asset) => asset.symbol ?? asset.id).join(', ')
+  const getTokenName = (tokenId: TokenId) =>
+    (listedFts.find(({ id }) => id === tokenId) ?? unlistedFts.find(({ id }) => id === tokenId))?.symbol ?? tokenId
 
+  const renderAssetsSelectedValue = () => {
+    if (!selectedTokensIds) return null
+
+    if (selectedTokensIds.length === 0) return ''
+
+    if (selectedTokensIds.length === sortedTokenIds.length) return t('All selected')
+
+    return selectedTokensIds.map(getTokenName).join(', ')
+  }
   const resetFilters = () => {
     setSelectedAddresses(addresses)
     setSelectedDirections(directionOptions)
-    setSelectedAssets(assets)
+    setSelectedTokensIds(sortedTokenIds)
   }
 
   useEffect(() => {
-    if (!verifiedFungibleTokensNeedInitialization && !stateUninitialized && !selectedAssets) {
-      setSelectedAssets(assets)
+    if (!isLoadingTokensByType && !isLoadingFts && !selectedTokensIds) {
+      setSelectedTokensIds(sortedTokenIds)
     }
-  }, [verifiedFungibleTokensNeedInitialization, assets, selectedAssets, setSelectedAssets, stateUninitialized])
+  }, [isLoadingFts, isLoadingTokensByType, selectedTokensIds, setSelectedTokensIds, sortedTokenIds])
 
   return (
     <UnlockedWalletPanel className={className}>
@@ -116,7 +118,9 @@ const FiltersPanel = ({
             renderSelectedValue={renderAddressesSelectedValue}
             getOptionId={(address) => address.hash}
             getOptionText={(address) => address.label || address.hash}
-            renderOption={(address, isSelected) => <SelectOptionAddress address={address} isSelected={isSelected} />}
+            renderOption={(address, isSelected) => (
+              <SelectOptionAddress addressHash={address.hash} isSelected={isSelected} />
+            )}
             floatingOptions
           />
         </Tile>
@@ -124,13 +128,15 @@ const FiltersPanel = ({
           <MultiSelect
             label={t('Assets')}
             modalTitle={t('Select assets')}
-            options={assets}
-            selectedOptions={selectedAssets ?? []}
-            selectedOptionsSetter={setSelectedAssets}
+            options={sortedTokenIds}
+            selectedOptions={selectedTokensIds ?? []}
+            selectedOptionsSetter={setSelectedTokensIds}
             renderSelectedValue={renderAssetsSelectedValue}
-            getOptionId={(asset) => asset.id}
-            getOptionText={(asset) => asset.name ?? asset.symbol ?? asset.id}
-            renderOption={(asset, isSelected) => <SelectOptionAsset asset={asset} hideAmount isSelected={isSelected} />}
+            getOptionId={(tokenId) => tokenId}
+            getOptionText={getTokenName}
+            renderOption={(tokenId, isSelected) => (
+              <SelectOptionWalletToken tokenId={tokenId} isSelected={isSelected} />
+            )}
           />
         </Tile>
         <Tile>

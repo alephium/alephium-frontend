@@ -65,10 +65,10 @@ const NFTThumbnail = memo(
                 <VideoThumbnail videoUrl={src} showPlayIcon={showPlayIconIfVideo} playOnHover={playOnHover} />
               )
             ) : (
-              t('Unsupported media type')
+              <ErrorMessage>{t('Unsupported media type')}</ErrorMessage>
             )
           ) : (
-            t('Missing data')
+            <ErrorMessage>{t('No media')}</ErrorMessage>
           )
         ) : (
           <SpinnerContainer>
@@ -88,7 +88,7 @@ const Container = styled.div`
 const Image = styled.img`
   width: 100%;
   height: 100%;
-  max-width: 600px;
+  object-fit: contain;
 `
 
 const SpinnerContainer = styled.div`
@@ -97,6 +97,15 @@ const SpinnerContainer = styled.div`
   align-items: center;
   height: 100%;
   width: 100%;
+`
+
+const ErrorMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 export default NFTThumbnail

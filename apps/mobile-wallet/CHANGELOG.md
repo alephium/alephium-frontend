@@ -1,5 +1,53 @@
 # @alephium/mobile-wallet
 
+## 1.1.12
+
+### Patch Changes
+
+- 2ef3137: Update WalletConnect packages
+- d86c477: Forget/hide address
+- 0dfbaf5: Optimize transactions loading for wallets with only 1 address
+- 5b5db06: Fix WalletConnect connection removal
+
+## 1.1.11
+
+### Patch Changes
+
+- 259f96d: Hide bytecode field behind an expandable section
+- 162e209: Fix calculation of transaction amount deltas
+- 162e209: Fix wrapping of "Amount" label in transaction modal
+- 2143d0a: Add Chinese translations
+
+## 1.1.10
+
+### Patch Changes
+
+- d206aeb: Fix address metadata migration
+- d206aeb: Only send crash report email if it can send emails
+- 2739f04: Improve error messages on wrong QR code scanned data
+
+## 1.1.9
+
+### Patch Changes
+
+- abb7ffe: Integrate Sentry for improved crash reporting
+
+## 1.1.8
+
+### Patch Changes
+
+- Updated dependencies [3eca397]
+  - @alephium/shared@0.7.11
+  - @alephium/keyring@0.0.1
+  - @alephium/shared-react@0.0.3
+
+## 1.1.7
+
+### Patch Changes
+
+- 2844f25: Show biometrics auth error to user
+- ec6b2c0: Fix WalletConnect button inactivity
+
 ## 1.1.6
 
 ### Patch Changes

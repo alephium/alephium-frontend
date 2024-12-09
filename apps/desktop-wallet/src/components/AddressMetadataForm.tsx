@@ -59,6 +59,7 @@ const AddressMetadataForm = ({
               </Label>
             }
             description={defaultAddressMessage}
+            noHorizontalPadding
             InputComponent={
               <Toggle
                 toggled={isDefault}

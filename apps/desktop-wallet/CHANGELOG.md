@@ -1,5 +1,67 @@
 # alephium-desktop-wallet
 
+## 2.4.4
+
+### Patch Changes
+
+- 535683b: Enable search in asset selection modal
+- 8d30364: Fix displayed ALPH amounts
+- 162e209: Fix closing of send modal after 2 seconds
+- e322396: Disable send button when wallet is empty
+- 3b9ff24: Display token prices
+- 10ddaab: Improve accessibility for "Add asset" button
+- 77cbdd6: Fix asset selection in send flow when default address is empty
+- 8386e47: Fix display of ALPH on devnet
+- bbe047d: Display data loading indicator next to wallet worth
+- f86c95f: Add ability to get faucet tokens on devnet
+- 5bfd88c: Add Chinese translations
+
+## 2.4.3
+
+### Patch Changes
+
+- 57eeb92: Format displayed numbers and amounts based on user's current or selected region
+- dbfb5b1: Fix default lock time
+- e297fd8: Better support for video NFT display
+- 3894654: Fix pending transaction amount display
+
+## 2.4.2
+
+### Patch Changes
+
+- 8817e92: Fix white screen when auto-lock set to "off"
+- 8817e92: Fix display of NFTs with missing images
+
+## 2.4.1
+
+### Patch Changes
+
+- fc0a73f: Fix display of NFT collection details
+- 5e2db37: Fix auto-lock idle detection mechanism
+- 3139b9b: Fix logos display
+- 4c1eb9e: Fix wallet import and passphrase unlock data initialization
+- c67f965: Fix window minimize on dApp interactions (Windows)
+- 180e547: Fix wallet initials animation
+- bf3991f: Fix transactions caching
+
+## 2.4.0
+
+### Minor Changes
+
+- 61ab7c9: Improve data loading experience with offline storage
+
+### Patch Changes
+
+- f12de08: Replace data fetching library from Redux to Tanstack (React Query)
+- 47f4f2c: Warn user when wallet has too many addresses
+- 93225ad: Fix app crash on invalid received WalletConnect data
+- a8d5454: Display total transaction worth when sending
+- f12de08: Improve display of pending transactions
+- 312beb0: Allow user to delete addresses in bulk
+- 407cbf5: Display address derivation path in developer tools
+- 7161163: Improve NFT sending flow
+- f0acbad: Allow user to delete address from their address list
+
 ## 2.3.7
 
 ### Patch Changes

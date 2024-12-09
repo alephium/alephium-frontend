@@ -23,17 +23,14 @@ import styled from 'styled-components'
 
 import { fadeInBottom, fadeOut } from '@/animations'
 import Button from '@/components/Button'
-import { SnackbarManagerContainer, SnackbarPopup } from '@/components/SnackbarManager'
+import { SnackbarManagerContainer } from '@/components/SnackbarManager'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useLatestGitHubRelease from '@/features/autoUpdate/useLatestGitHubRelease'
+import SnackbarBox from '@/features/snackbar/SnackbarBox'
 import ModalPortal from '@/modals/ModalPortal'
-import { AlephiumWindow } from '@/types/window'
 import { currentVersion } from '@/utils/app-data'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
-
-const _window = window as unknown as AlephiumWindow
-const electron = _window.electron
 
 type UpdateStatus = 'download-available' | 'downloading' | 'download-finished' | 'download-failed'
 
@@ -50,17 +47,19 @@ const AutoUpdateSnackbar = () => {
   useEffect(() => {
     if (!newVersion || requiresManualDownload) return
 
-    setStatus('downloading')
-    electron?.updater.startUpdateDownload()
+    let timer: ReturnType<typeof setTimeout>
 
-    const removeUpdateDownloadProgressListener = electron?.updater.onUpdateDownloadProgress((info) =>
+    setStatus('downloading')
+    window.electron?.updater.startUpdateDownload()
+
+    const removeUpdateDownloadProgressListener = window.electron?.updater.onUpdateDownloadProgress((info) =>
       setPercent(info.percent.toFixed(2))
     )
-    const removeUpdateDownloadedListener = electron?.updater.onUpdateDownloaded(() => {
+    const removeUpdateDownloadedListener = window.electron?.updater.onUpdateDownloaded(() => {
       // Delay success message to give time for download validation errors to arise if any
-      setTimeout(() => setStatus('download-finished'), 1000)
+      timer = setTimeout(() => setStatus('download-finished'), 1000)
     })
-    const removeonErrorListener = electron?.updater.onError((error) => {
+    const removeonErrorListener = window.electron?.updater.onError((error) => {
       setStatus('download-failed')
       setError(error.toString())
       sendAnalytics({ type: 'error', error, message: 'Auto-update download failed' })
@@ -69,7 +68,8 @@ const AutoUpdateSnackbar = () => {
     return () => {
       removeUpdateDownloadProgressListener && removeUpdateDownloadProgressListener()
       removeUpdateDownloadedListener && removeUpdateDownloadedListener()
-      removeonErrorListener && removeonErrorListener
+      removeonErrorListener && removeonErrorListener()
+      if (timer) clearTimeout(timer)
     }
   }, [newVersion, requiresManualDownload, sendAnalytics])
 
@@ -86,7 +86,7 @@ const AutoUpdateSnackbar = () => {
 
   const handleRestartClick = () => {
     sendAnalytics({ event: 'Auto-update modal: Clicked "Restart"' })
-    electron?.updater.quitAndInstallUpdate()
+    window.electron?.updater.quitAndInstallUpdate()
   }
 
   const closeSnackbar = () => {
@@ -166,7 +166,7 @@ const ProgressBar = styled.progress`
   width: 100%;
 `
 
-const SnackbarPopupWithButton = styled(SnackbarPopup)`
+const SnackbarPopupWithButton = styled(SnackbarBox)`
   display: flex;
   gap: var(--spacing-2);
   width: 400px;

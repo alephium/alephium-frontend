@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { isMempoolTx } from '@alephium/shared'
+import { isConfirmedTx } from '@alephium/shared'
 import { MempoolTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -54,7 +54,7 @@ const AddressTransactionRow = ({ transaction: tx, addressHash, isInContract }: A
   const { assets, infoType } = useTransactionInfo(tx, addressHash)
 
   const isMoved = infoType === 'move'
-  const isPending = isMempoolTx(tx)
+  const isPending = !isConfirmedTx(tx)
   const isFailedScriptExecution = (tx as Transaction).scriptExecutionOk === false
 
   const { label, Icon, badgeColor, badgeBgColor, directionText } = getTransactionUI({

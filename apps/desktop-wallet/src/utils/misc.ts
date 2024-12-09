@@ -20,8 +20,6 @@ import { createHash } from '@alephium/shared-crypto'
 import dayjs from 'dayjs'
 import { Children, Fragment, isValidElement, KeyboardEvent, ReactNode } from 'react'
 
-import { AlephiumWindow } from '@/types/window'
-
 // ===================== //
 // ==== RUNNING ENV ==== //
 // ===================== //
@@ -90,11 +88,8 @@ export function removeItemFromArray<T>(array: T[], index: number) {
 
 export const cleanUrl = (url: string) => url.replace('https://', '')
 
-const _window = window as unknown as AlephiumWindow
-const electron = _window.electron
-
 export const restartElectron = () => {
-  electron?.app.restart()
+  window.electron?.app.restart()
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -119,3 +114,5 @@ export const validateChildrenType = <T extends (props: any) => ReactNode>({
     }
   })
 }
+
+export const isDefined = <T>(item: T | undefined): item is T => !!item

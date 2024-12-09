@@ -22,7 +22,7 @@ export default defineConfig((options: Options) => ({
     index: 'src/index.ts'
   },
   clean: true,
-  format: ['esm', 'cjs'],
+  format: ['esm'],
   dts: true,
   ...options
 }))

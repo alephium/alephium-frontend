@@ -44,7 +44,7 @@ const MnemonicModal = withModal<MnemonicModalProps>(({ id, onVerifyPress }) => {
     try {
       dangerouslyExportWalletMnemonic().then(setMnemonic)
     } catch (e) {
-      console.error(e)
+      if (__DEV__) console.error(e)
     }
   }, [])
 

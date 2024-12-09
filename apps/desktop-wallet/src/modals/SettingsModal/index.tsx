@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion } from 'framer-motion'
 import { Settings, X } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
@@ -26,6 +26,9 @@ import { fadeInOutScaleFast } from '@/animations'
 import Button from '@/components/Button'
 import Scrollbar from '@/components/Scrollbar'
 import { TabItem } from '@/components/TabBar'
+import { closeModal } from '@/features/modals/modalActions'
+import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { useAppDispatch } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import discordLogo from '@/images/brand-icon-discord.svg'
 import githubLogo from '@/images/brand-icon-github.svg'
@@ -41,9 +44,7 @@ import { openInWebBrowser } from '@/utils/misc'
 
 type SettingsModalTabNames = 'general' | 'wallets' | 'network' | 'devtools'
 
-interface SettingsTabItem extends TabItem {
-  value: SettingsModalTabNames
-}
+type SettingsTabItem = TabItem<SettingsModalTabNames>
 
 interface SocialMediaLogo {
   media: keyof Pick<typeof links, 'twitter' | 'discord' | 'github'>
@@ -56,15 +57,15 @@ const socialMediaLogos: SocialMediaLogo[] = [
   { media: 'github', img: githubLogo }
 ]
 
-interface SettingsModalProps {
-  onClose: () => void
+export interface SettingsModalProps {
   initialTabValue?: SettingsModalTabNames
 }
 
-const SettingsModal = ({ onClose, initialTabValue }: SettingsModalProps) => {
+const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsModalProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const { isWalletUnlocked } = useWalletLock()
+  const dispatch = useAppDispatch()
 
   const settingsModalTabs: SettingsTabItem[] = useMemo(
     () => [
@@ -77,7 +78,7 @@ const SettingsModal = ({ onClose, initialTabValue }: SettingsModalProps) => {
   )
   const activeTab = settingsModalTabs.find((t) => t.value === initialTabValue) || settingsModalTabs[0]
 
-  const [currentTab, setCurrentTab] = useState<TabItem>(activeTab)
+  const [currentTab, setCurrentTab] = useState<SettingsTabItem>(activeTab)
 
   const enabledTabs = !isWalletUnlocked
     ? settingsModalTabs.filter(({ value }) => value !== 'devtools')
@@ -87,8 +88,10 @@ const SettingsModal = ({ onClose, initialTabValue }: SettingsModalProps) => {
     setCurrentTab(activeTab)
   }, [activeTab])
 
+  const onClose = () => dispatch(closeModal({ id }))
+
   return (
-    <ModalContainer onClose={onClose}>
+    <ModalContainer id={id}>
       <CenteredBox role="dialog" {...fadeInOutScaleFast}>
         <TabTitlesColumn>
           <TabTitlesColumnHeader>
@@ -145,7 +148,7 @@ const SettingsModal = ({ onClose, initialTabValue }: SettingsModalProps) => {
       </CenteredBox>
     </ModalContainer>
   )
-}
+})
 
 export default SettingsModal
 

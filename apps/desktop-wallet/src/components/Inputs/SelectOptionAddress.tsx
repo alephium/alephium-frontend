@@ -16,33 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useMemo } from 'react'
+import { AddressHash } from '@alephium/shared'
+import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
-import AssetBadge from '@/components/AssetBadge'
-import Badge from '@/components/Badge'
 import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent'
-import { useSortTokensByWorth } from '@/features/tokenPrices/tokenPricesHooks'
+import AddressTokensBadgesList from '@/features/assetsLists/AddressTokensBadgesList'
 import { useAppSelector } from '@/hooks/redux'
-import { makeSelectAddressesTokens } from '@/storage/addresses/addressesSelectors'
-import { Address } from '@/types/addresses'
+import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 interface SelectOptionAddressProps {
-  address: Address
+  addressHash: AddressHash
   isSelected?: boolean
   className?: string
+  subtitle?: ReactNode
 }
 
-const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAddressProps) => {
+const SelectOptionAddress = ({ addressHash, isSelected, className, subtitle }: SelectOptionAddressProps) => {
   const { t } = useTranslation()
-  const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
-  const assets = useAppSelector((s) => selectAddressesTokens(s, address.hash))
-
-  const knownAssetsWithBalance = useSortTokensByWorth(assets.filter((a) => a.balance > 0 && a.name))
-  const unknownAssetsNb = assets.filter((a) => a.balance > 0 && !a.name).length
-  const showAssetList = knownAssetsWithBalance.length > 0 || unknownAssetsNb > 0
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
   return (
     <SelectOptionItemContent
@@ -53,23 +47,15 @@ const SelectOptionAddress = ({ address, isSelected, className }: SelectOptionAdd
       MainContent={
         <Header>
           <AddressBadgeContainer>
-            <AddressBadgeStyled addressHash={address.hash} disableA11y truncate appendHash />
+            <AddressBadgeStyled addressHash={addressHash} disableA11y truncate appendHash />
+            {subtitle && <Subtitle>{subtitle}</Subtitle>}
           </AddressBadgeContainer>
           <Group>
-            {t('Group')} {address.group}
+            {t('Group')} {address?.group}
           </Group>
         </Header>
       }
-      SecondaryContent={
-        showAssetList ? (
-          <AssetList>
-            {knownAssetsWithBalance.map((a) => (
-              <AssetBadge key={a.id} assetId={a.id} amount={a.balance} withBackground />
-            ))}
-            {unknownAssetsNb > 0 && <Badge compact>+ {unknownAssetsNb}</Badge>}
-          </AssetList>
-        ) : undefined
-      }
+      SecondaryContent={<AddressTokensBadgesList addressHash={addressHash} withBackground showAmount />}
     />
   )
 }
@@ -93,6 +79,9 @@ const Group = styled.div`
 const AddressBadgeContainer = styled.div`
   flex: 1;
   min-width: 0;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
@@ -100,9 +89,6 @@ const AddressBadgeStyled = styled(AddressBadge)`
   max-width: 70%;
 `
 
-const AssetList = styled.div`
-  display: flex;
-  gap: var(--spacing-2);
-  flex-wrap: wrap;
-  align-items: center;
+const Subtitle = styled.div`
+  font-weight: 500;
 `

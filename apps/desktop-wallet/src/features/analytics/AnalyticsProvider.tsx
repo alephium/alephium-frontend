@@ -20,8 +20,8 @@ import { PostHogConfig } from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
 
 import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
-import SettingsStorage from '@/storage/settings/settingsPersistentStorage'
-import { GeneralSettings } from '@/types/settings'
+import SettingsStorage from '@/features/settings/settingsPersistentStorage'
+import { GeneralSettings } from '@/features/settings/settingsTypes'
 import { currentVersion } from '@/utils/app-data'
 
 const PUBLIC_POSTHOG_KEY = 'phc_FLKGQDmMQSdSb3qjaTwHWwm9plmz7couyVJFG9GOMr7'

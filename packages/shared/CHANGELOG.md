@@ -1,5 +1,11 @@
 # @alephium/shared
 
+## 0.7.11
+
+### Patch Changes
+
+- 3eca397: Sanitize NFT data
+
 ## 0.7.10
 
 ### Patch Changes

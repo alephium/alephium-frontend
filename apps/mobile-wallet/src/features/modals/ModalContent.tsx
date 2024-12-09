@@ -58,6 +58,8 @@ export const ModalContent = ({
       })}
       {...scrollDefaultProps}
       {...props}
+      // TODO: Remove when react-native-gesture-handler is updated to 2.17.X or above (after expo-doctor allows it)
+      hitSlop={undefined}
     >
       {children}
     </GHScrollView>
@@ -80,6 +82,8 @@ export const ModalFlatListContent = <T,>({
       })}
       {...scrollDefaultProps}
       {...props}
+      // TODO: Remove when react-native-gesture-handler is updated to 2.17.X or above (after expo-doctor allows it)
+      hitSlop={undefined}
     >
       {children}
     </GHFlatList>
