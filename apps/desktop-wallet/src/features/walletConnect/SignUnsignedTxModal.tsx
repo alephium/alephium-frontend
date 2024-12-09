@@ -30,7 +30,7 @@ import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import { useAppDispatch } from '@/hooks/redux'
-import CenteredModal, { ModalContent, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
+import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import {
   unsignedTransactionDecodingFailed,
   unsignedTransactionSignFailed,
@@ -126,7 +126,7 @@ const SignUnsignedTxModal = memo(({ id, txData }: ModalBaseProp & SignUnsignedTx
       noPadding
     >
       {decodedUnsignedTx && (
-        <ModalContent>
+        <>
           <InputFieldsColumn>
             <InfoBox label={t('Transaction ID')} text={decodedUnsignedTx.txId} wordBreak />
             <InfoBox label={t('Unsigned transaction')} text={decodedUnsignedTx.unsignedTx} wordBreak />
@@ -139,7 +139,7 @@ const SignUnsignedTxModal = memo(({ id, txData }: ModalBaseProp & SignUnsignedTx
               {t('Sign')}
             </ModalFooterButton>
           </ModalFooterButtons>
-        </ModalContent>
+        </>
       )}
     </CenteredModal>
   )

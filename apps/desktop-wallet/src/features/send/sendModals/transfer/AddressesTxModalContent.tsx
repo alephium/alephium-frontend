@@ -20,6 +20,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import FooterButton from '@/components/Buttons/FooterButton'
+import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import AddressInputs from '@/features/send/AddressInputs'
 import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/features/send/sendTypes'
@@ -64,6 +65,7 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
 
   return (
     <>
+      <InfoBox>{t('Start by selecting the origin and destination addresses.')}</InfoBox>
       <InputFieldsColumn>
         <AddressInputs
           defaultFromAddress={fromAddressHash}

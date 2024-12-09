@@ -114,7 +114,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
             <ModalContent>{children}</ModalContent>
           )
         ) : (
-          <ScrollableModalContent>{children}</ScrollableModalContent>
+          <Scrollbar>{children}</Scrollbar>
         )}
 
         {isLoading && (
@@ -134,9 +134,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
 export default CenteredModal
 
 export const ScrollableModalContent = ({ children }: Pick<CenteredModalProps, 'children'>) => (
-  <Scrollbar>
-    <ModalContent>{children}</ModalContent>
-  </Scrollbar>
+  <Scrollbar>{children}</Scrollbar>
 )
 
 export const HeaderContent = styled(Section)``

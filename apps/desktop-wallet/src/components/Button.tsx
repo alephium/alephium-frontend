@@ -239,7 +239,7 @@ export default styled(Button)`
   display: flex;
   align-items: center;
   justify-content: ${({ Icon }) => (Icon ? 'center' : 'flex-start')};
-  height: ${({ squared, short, tall }) => (short ? '36px' : squared ? '36px' : tall ? '48px' : '42px')};
+  height: ${({ squared, short, tall }) => (short ? '32px' : squared ? '36px' : tall ? '48px' : '42px')};
   width: ${({ squared, short, wide }) => (squared ? '36px' : short && !wide ? 'auto' : wide ? '100%' : '80%')};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
   border-radius: 100px;

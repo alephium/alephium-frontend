@@ -22,7 +22,6 @@ import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import Box from '@/components/Box'
 import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
 import AddressInput from '@/components/Inputs/AddressInput'
@@ -93,12 +92,8 @@ const AddressInputs = ({
 
   return (
     <InputsContainer>
-      <InputsSection
-        title={t('Origin')}
-        subtitle={t('One of your addresses to send the assets from.')}
-        className={className}
-      >
-        <BoxStyled>
+      <InputsSection title={t('Origin')} className={className}>
+        <AddressSelectStyled>
           <AddressSelect
             title={t('Select the address to send funds from.')}
             addressOptions={fromAddresses}
@@ -108,7 +103,7 @@ const AddressInputs = ({
             simpleMode
             shouldDisplayAddressSelectModal={isAddressSelectModalOpen}
           />
-        </BoxStyled>
+        </AddressSelectStyled>
       </InputsSection>
       {toAddress && onToAddressChange && (
         <InputsSection title={t('Destination')} className={className}>
@@ -193,7 +188,7 @@ const HashEllipsedStyled = styled(HashEllipsed)`
   max-width: 150px;
 `
 
-const BoxStyled = styled(Box)`
+const AddressSelectStyled = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;

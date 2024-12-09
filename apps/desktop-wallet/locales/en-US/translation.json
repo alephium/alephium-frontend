@@ -426,7 +426,6 @@
   "Select the address to send assets to.": "Select the address to send assets to.",
   "Destination": "Destination",
   "Origin": "Origin",
-  "One of your addresses to send the assets from.": "One of your addresses to send the assets from.",
   "Clear cache": "Clear cache",
   "Clear": "Clear",
   "Deletes cached wallet and WalletConnect data.": "Deletes cached wallet and WalletConnect data.",
@@ -503,5 +502,6 @@
   "Invalid mnemonic. Please double check your words.": "Invalid mnemonic. Please double check your words.",
   "Incorrect word. Please try again.": "Incorrect word. Please try again.",
   "Select the correct word for word number <1>{{ number }} of 24</1>.": "Select the correct word for word number <1>{{ number }} of 24</1>.",
-  "Allocation": "Allocation"
+  "Allocation": "Allocation",
+  "Start by selecting the origin and destination addresses.": "Start by selecting the origin and destination addresses."
 }

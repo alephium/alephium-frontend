@@ -140,6 +140,10 @@ function AddressSelect({
 export default AddressSelect
 
 const AddressSelectContainer = styled(SelectContainer)<Pick<AddressSelectProps, 'disabled' | 'simpleMode'>>`
+  border: 2px solid ${({ theme }) => theme.border.primary};
+  border-radius: 100px;
+  height: 50px;
+
   ${({ disabled }) =>
     disabled &&
     css`
