@@ -19,7 +19,7 @@
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
-    "clean": "rm -rf build",
+    "clean": "rm -rf build .turbo",
     "clean:node-modules": "rm -rf node_modules"
   },
   "browserslist": {

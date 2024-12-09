@@ -13,7 +13,7 @@
     "test": "jest --useStderr --silent=false --verbose=true --config jestconfig.json --passWithNoTests",
     "test:watch": "pnpm run test -- --watch",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist .turbo coverage",
     "clean:node-modules": "rm -rf node_modules",
     "typecheck": "tsup"
   },
