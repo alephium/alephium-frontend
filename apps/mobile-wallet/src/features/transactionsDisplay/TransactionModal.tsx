@@ -19,13 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NFT } from '@alephium/shared'
 import dayjs from 'dayjs'
 import { openBrowserAsync } from 'expo-web-browser'
-import { partition } from 'lodash'
+import { groupBy, partition } from 'lodash'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
+import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Button from '~/components/buttons/Button'
 import IOList from '~/components/IOList'
 import BoxSurface from '~/components/layout/BoxSurface'
@@ -48,6 +49,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
   const allNFTs = useAppSelector((s) => s.nfts.entities)
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const theme = useTheme()
 
   const { direction, infoType, assets } = getTransactionInfo(tx)
   const [tokensWithSymbol, tokensWithoutSymbol] = partition(assets, (asset) => !!asset.symbol)
@@ -59,12 +61,14 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
 
   const openNftGridModal = () => dispatch(openModal({ name: 'NftGridModal', props: { nftsData } }))
 
+  const groupedIOAmounts = groupBy(tokensWithSymbol, (t) => (t.amount > 0 ? 'in' : 'out'))
+
   return (
     <BottomModal modalId={id} contentVerticalGap>
       <ScreenSectionStyled>
         <ModalScreenTitle>{t('Transaction')}</ModalScreenTitle>
         <Button
-          iconProps={{ name: 'arrow-up-right' }}
+          iconProps={{ name: 'external-link' }}
           onPress={() => openBrowserAsync(explorerTxUrl)}
           variant="accent"
           compact
@@ -73,38 +77,50 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
       </ScreenSectionStyled>
 
       <BoxSurface type="highlight">
-        <Row title={t('Amount')} noMaxWidth transparent>
-          {tokensWithSymbol.map(({ id, amount, decimals, symbol }) => (
-            <AmountStyled
-              key={id}
-              value={amount}
-              decimals={decimals}
-              suffix={symbol}
-              isUnknownToken={!symbol}
-              highlight={!isMoved}
-              showPlusMinus={!isMoved}
-              fullPrecision
-              bold
-            />
-          ))}
-        </Row>
-        <Row title={t('Timestamp')} transparent>
-          <AppTextStyled semiBold>
+        {isMoved && (
+          <Row title={t('Moved')} transparent isVertical>
+            <AmountsContainer>
+              {tokensWithSymbol.map(({ id, amount }) => (
+                <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
+              ))}
+            </AmountsContainer>
+          </Row>
+        )}
+        {!isMoved && groupedIOAmounts.out && (
+          <Row title={t('Sent')} transparent isVertical titleColor={theme.global.send}>
+            <AmountsContainer>
+              {groupedIOAmounts.out.map(({ id, amount }) => (
+                <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
+              ))}
+            </AmountsContainer>
+          </Row>
+        )}
+        {!isMoved && groupedIOAmounts.in && (
+          <Row title={t('Received')} transparent isVertical titleColor={theme.global.receive}>
+            <AmountsContainer>
+              {groupedIOAmounts.in.map(({ id, amount }) => (
+                <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
+              ))}
+            </AmountsContainer>
+          </Row>
+        )}
+        <Row title={t('Timestamp')} transparent isVertical>
+          <AppText semiBold>
             {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-          </AppTextStyled>
+          </AppText>
         </Row>
-        <Row title={t('Status')} transparent>
+        <Row title={t('Status')} transparent isVertical>
           <AppText semiBold>
             {!tx.scriptExecutionOk ? t('Script execution failed') : tx.blockHash ? t('Confirmed') : t('Pending')}
           </AppText>
         </Row>
-        <Row title={t('From')} transparent>
+        <Row title={t('From')} transparent isVertical>
           {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
         </Row>
-        <Row title={t('To')} transparent>
+        <Row title={t('To')} transparent isVertical>
           {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
         </Row>
-        <Row title={t('Fee')} transparent isLast={unknownTokens.length === 0 && nftsData.length === 0}>
+        <Row title={t('Fee')} transparent isLast={unknownTokens.length === 0 && nftsData.length === 0} isVertical>
           <Amount
             value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
             fadeDecimals
@@ -114,18 +130,19 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
           />
         </Row>
         {unknownTokens.length > 0 && (
-          <Row title={t('Unknown tokens')} transparent isLast={nftsData.length === 0}>
+          <Row title={t('Unknown tokens')} transparent isLast={nftsData.length === 0} isVertical>
             {unknownTokens.map(({ id, amount, decimals, symbol }) => (
               <UnknownTokenAmount key={id}>
-                <AmountStyled
+                <Amount
                   value={amount}
                   decimals={decimals}
                   suffix={symbol}
                   isUnknownToken={!symbol}
                   highlight={!isMoved}
                   showPlusMinus={!isMoved}
+                  fadeSuffix
                   fullPrecision
-                  bold
+                  semiBold
                 />
                 {!symbol && (
                   <TokenId>
@@ -155,14 +172,6 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
 
 export default TransactionModal
 
-const AmountStyled = styled(Amount)`
-  text-align: right;
-`
-
-const AppTextStyled = styled(AppText)`
-  text-align: right;
-`
-
 const ScreenSectionStyled = styled(ScreenSection)`
   flex-direction: row;
   align-items: center;
@@ -178,6 +187,10 @@ const UnknownTokenAmount = styled.View`
   display: flex;
   flex-direction: row;
   column-gap: 10px;
-  justify-content: flex-end;
   align-items: center;
+`
+
+const AmountsContainer = styled.View`
+  gap: 5px;
+  align-items: flex-start;
 `

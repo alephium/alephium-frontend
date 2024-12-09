@@ -16,32 +16,46 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { NFT, selectNFTById } from '@alephium/shared'
+import { NFT } from '@alephium/shared'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
-import NFTThumbnail from '@/components/NFTThumbnail'
+import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
+import Ellipsed from '@/components/Ellipsed'
+import SkeletonLoader from '@/components/SkeletonLoader'
 import Truncate from '@/components/Truncate'
-import { useAppSelector } from '@/hooks/redux'
+import { openModal } from '@/features/modals/modalActions'
+import NFTThumbnail from '@/features/thumbnails/NFTThumbnail'
+import { useAppDispatch } from '@/hooks/redux'
 
 interface NFTCardProps {
   nftId: NFT['id']
-  onClick?: () => void
 }
 
-const NFTCard = ({ nftId, onClick }: NFTCardProps) => {
-  const nft = useAppSelector((s) => selectNFTById(s, nftId))
+const NFTCard = ({ nftId }: NFTCardProps) => {
+  const dispatch = useAppDispatch()
 
-  if (!nft) return null
+  const { data: nft, isLoading } = useFetchNft({ id: nftId })
+
+  const openNFTDetailsModal = () => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
 
   return (
-    <NFTCardStyled onClick={onClick}>
+    <NFTCardStyled onClick={openNFTDetailsModal}>
       <CardContent>
         <NFTPictureContainer>
-          <NFTThumbnail nftId={nftId} size="100%" />
+          <NFTThumbnail nftId={nftId} size="100%" playOnHover showPlayIconIfVideo />
         </NFTPictureContainer>
-        <NFTName>{nft.name || '-'}</NFTName>
+
+        <NFTNameContainer>
+          {isLoading ? (
+            <SkeletonLoader height="15px" />
+          ) : nft?.name ? (
+            <NFTName>{nft.name}</NFTName>
+          ) : (
+            <EllipsedStyled text={nftId} />
+          )}
+        </NFTNameContainer>
       </CardContent>
     </NFTCardStyled>
   )
@@ -49,17 +63,28 @@ const NFTCard = ({ nftId, onClick }: NFTCardProps) => {
 
 export default NFTCard
 
+const NFTPictureContainer = styled(motion.div)`
+  flex: 1;
+  position: relative;
+  background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.06).toHex()};
+  overflow: hidden;
+`
+
 const NFTCardStyled = styled.div`
   display: flex;
   background-color: ${({ theme }) => theme.bg.background2};
   border-radius: var(--radius-huge);
+  overflow: hidden;
   transition: all cubic-bezier(0.2, 0.65, 0.5, 1) 0.1s;
   height: 200px;
 
   &:hover {
     cursor: pointer;
-    background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.05).toHex()};
-    transform: scale(1.02);
+    background-color: ${({ theme }) => colord(theme.bg.background2).lighten(0.02).toHex()};
+
+    ${NFTPictureContainer} {
+      filter: brightness(1.05);
+    }
   }
 `
 
@@ -67,22 +92,25 @@ const CardContent = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 10px 10px 0 10px;
   overflow: hidden;
 `
 
-const NFTPictureContainer = styled(motion.div)`
-  flex: 1;
-  position: relative;
-  border-radius: var(--radius-big);
-  overflow: hidden;
-  background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.06).toHex()};
+const NFTNameContainer = styled.div`
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  align-self: center;
 `
 
 const NFTName = styled(Truncate)`
+  overflow: hidden;
   text-align: center;
   font-weight: 600;
-  margin: 10px 0;
-  max-width: 100%;
   text-overflow: ellipsis;
+`
+
+const EllipsedStyled = styled(Ellipsed)`
+  text-align: center;
 `

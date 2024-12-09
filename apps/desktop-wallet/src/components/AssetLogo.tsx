@@ -16,40 +16,49 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FungibleToken, NFT } from '@alephium/shared'
 import { HelpCircle } from 'lucide-react'
+import { memo } from 'react'
 import ReactPlayer from 'react-player'
 import styled from 'styled-components'
 
+import useFetchToken, { isFT, isListedFT, isNFT } from '@/api/apiDataHooks/token/useFetchToken'
+import { TokenId } from '@/types/tokens'
+
 interface AssetLogoProps {
-  assetImageUrl: FungibleToken['logoURI'] | NFT['image']
+  tokenId: TokenId
   size: number
-  assetName?: FungibleToken['name']
-  isNft?: boolean
   className?: string
 }
 
-const AssetLogo = ({ assetImageUrl, size, assetName, className }: AssetLogoProps) => (
-  <div className={className}>
-    {assetImageUrl?.endsWith('.mp4') ? (
-      <ReactPlayer url={assetImageUrl} muted width={size} height={size} />
-    ) : assetImageUrl ? (
-      <LogoImage src={assetImageUrl} />
-    ) : assetName ? (
-      <Initials size={size}>{assetName.slice(0, 2)}</Initials>
-    ) : (
-      <HelpCircle size={size} />
-    )}
-  </div>
-)
+const AssetLogo = memo(({ tokenId, size, className }: AssetLogoProps) => {
+  const { data: token } = useFetchToken(tokenId)
+  const image = isListedFT(token) ? token.logoURI : isNFT(token) ? token.image : undefined
+  const name = isFT(token) || isNFT(token) ? token.name : undefined
 
-export default styled(AssetLogo)`
+  return (
+    <AssetLogoStyled className={className} size={size} isSquare={isNFT(token)}>
+      {image?.endsWith('.mp4') ? (
+        <ReactPlayer url={image} muted width={size} height={size} />
+      ) : image ? (
+        <LogoImage src={image} />
+      ) : name ? (
+        <Initials size={size}>{name.slice(0, 2)}</Initials>
+      ) : (
+        <HelpCircle size={size} />
+      )}
+    </AssetLogoStyled>
+  )
+})
+
+export default AssetLogo
+
+const AssetLogoStyled = styled.div<Pick<AssetLogoProps, 'size'> & { isSquare: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
-  border-radius: ${({ size, isNft }) => (isNft ? 'var(--radius-tiny)' : `${size}px`)};
+  border-radius: ${({ size, isSquare }) => (isSquare ? 'var(--radius-tiny)' : `${size}px`)};
   flex-shrink: 0;
   overflow: hidden;
   background: ${({ theme }) => theme.bg.tertiary};

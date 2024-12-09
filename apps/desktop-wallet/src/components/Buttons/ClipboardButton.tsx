@@ -29,6 +29,7 @@ interface ClipboardButtonProps {
   disableA11y?: boolean
   tooltip?: string
   className?: string
+  showSnackbarOnCopied?: boolean
 }
 
 const ClipboardButton: FC<ClipboardButtonProps> = ({
@@ -36,7 +37,8 @@ const ClipboardButton: FC<ClipboardButtonProps> = ({
   textToCopy,
   children,
   className,
-  disableA11y = false
+  disableA11y = false,
+  showSnackbarOnCopied = true
 }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -62,7 +64,7 @@ const ClipboardButton: FC<ClipboardButtonProps> = ({
     let interval: ReturnType<typeof setInterval>
     // Reset icon after copy
     if (hasBeenCopied) {
-      dispatch(copiedToClipboard())
+      if (showSnackbarOnCopied) dispatch(copiedToClipboard())
 
       interval = setInterval(() => {
         setHasBeenCopied(false)
@@ -74,7 +76,7 @@ const ClipboardButton: FC<ClipboardButtonProps> = ({
         clearInterval(interval)
       }
     }
-  }, [dispatch, hasBeenCopied])
+  }, [dispatch, hasBeenCopied, showSnackbarOnCopied])
 
   return (
     <div className={className}>
@@ -87,7 +89,7 @@ const ClipboardButton: FC<ClipboardButtonProps> = ({
           <Copy
             className="clipboard"
             onClick={handleInput}
-            onKeyPress={handleInput}
+            onKeyDown={handleInput}
             onMouseDown={handleInput}
             role="button"
             aria-label={disableA11y ? undefined : t('Copy to clipboard')}

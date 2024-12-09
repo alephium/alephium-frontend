@@ -28,7 +28,11 @@ import { allBiometricsEnabled } from '~/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { getStoredWalletMetadata, migrateDeprecatedMnemonic } from '~/persistent-storage/wallet'
+import {
+  getStoredWalletMetadata,
+  isStoredWalletMetadataMigrated,
+  migrateDeprecatedMnemonic
+} from '~/persistent-storage/wallet'
 import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
@@ -59,9 +63,18 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
 
         const wallet = await getStoredWalletMetadata()
 
+        if (!isStoredWalletMetadataMigrated(wallet)) throw new Error('Wallet metadata is not migrated')
+
         dispatch(walletUnlocked(wallet))
         resetNavigation(navigation)
-        sendAnalytics({ event: 'Unlocked wallet' })
+        sendAnalytics({
+          event: 'Unlocked wallet',
+          props: {
+            wallet_name_length: wallet.name.length,
+            number_of_addresses: wallet.addresses.length,
+            number_of_contacts: wallet.contacts.length
+          }
+        })
       } catch (error) {
         const message = 'Could not migrate mnemonic and unlock wallet'
 

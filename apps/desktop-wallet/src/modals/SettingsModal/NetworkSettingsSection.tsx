@@ -17,14 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import {
-  client,
   customNetworkSettingsSaved,
   getNetworkName,
   NetworkName,
   NetworkNames,
   networkPresetSwitched,
   NetworkSettings,
-  networkSettingsPresets
+  networkSettingsPresets,
+  throttledClient
 } from '@alephium/shared'
 import { AlertOctagon } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
@@ -41,7 +41,6 @@ import ToggleSection from '@/components/ToggleSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import i18next from '@/i18n'
-import { AlephiumWindow } from '@/types/window'
 import { useMountEffect } from '@/utils/hooks'
 
 interface NetworkSelectOption {
@@ -65,9 +64,6 @@ const NetworkSettingsSection = () => {
   const network = useAppSelector((state) => state.network)
   const { sendAnalytics } = useAnalytics()
   const theme = useTheme()
-
-  const _window = window as unknown as AlephiumWindow
-  const electron = _window.electron
 
   const [tempNetworkSettings, setTempNetworkSettings] = useState<NetworkSettings>(network.settings)
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkName>()
@@ -125,7 +121,7 @@ const NetworkSettingsSection = () => {
         }
 
         if (networkId === undefined) {
-          const response = await client.node.infos.getInfosChainParams()
+          const response = await throttledClient.node.infos.getInfosChainParams()
           networkId = response.networkId
         }
 
@@ -153,18 +149,10 @@ const NetworkSettingsSection = () => {
     dispatch(customNetworkSettingsSaved(tempNetworkSettings))
 
     // Proxy settings (no need to be awaited)
-    electron?.app.setProxySettings(tempNetworkSettings.proxy)
+    if (tempNetworkSettings.proxy) window.electron?.app.setProxySettings(tempNetworkSettings.proxy)
 
     sendAnalytics({ event: 'Saved custom network settings' })
-  }, [
-    dispatch,
-    electron?.app,
-    network.name,
-    overrideSelectionIfMatchesPreset,
-    selectedNetwork,
-    sendAnalytics,
-    tempNetworkSettings
-  ])
+  }, [dispatch, network.name, overrideSelectionIfMatchesPreset, selectedNetwork, sendAnalytics, tempNetworkSettings])
 
   // Set existing value on mount
   useMountEffect(() => {

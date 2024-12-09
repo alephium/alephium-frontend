@@ -18,10 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Currency, getNetworkName, networkSettingsPresets } from '@alephium/shared'
 
-import SettingsStorage, { defaultSettings } from '@/storage/settings/settingsPersistentStorage'
-import { Language, ThemeSettings } from '@/types/settings'
+import { defaultSettings } from '@/features/settings/settingsConstants'
+import SettingsStorage from '@/features/settings/settingsPersistentStorage'
+import { Language, Settings } from '@/features/settings/settingsTypes'
+import { ThemeSettings } from '@/features/theme/themeTypes'
 
-const mockSettings = {
+const mockSettings: Settings = {
   general: {
     theme: 'light' as ThemeSettings,
     walletLockTimeInMinutes: 999,
@@ -30,7 +32,8 @@ const mockSettings = {
     language: 'en-US' as Language,
     devTools: false,
     analytics: false,
-    fiatCurrency: 'USD' as Currency
+    fiatCurrency: 'USD' as Currency,
+    region: undefined
   },
   network: {
     networkId: 123,

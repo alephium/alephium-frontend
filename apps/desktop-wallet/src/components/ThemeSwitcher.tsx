@@ -22,8 +22,8 @@ import { Moon, Sun } from 'lucide-react'
 import styled from 'styled-components'
 
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { toggleTheme } from '@/features/theme/themeUtils'
 import { useAppSelector } from '@/hooks/redux'
-import { toggleTheme } from '@/storage/settings/settingsStorageUtils'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface ThemeSwitcherProps {

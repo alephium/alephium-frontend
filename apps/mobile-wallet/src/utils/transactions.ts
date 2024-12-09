@@ -22,9 +22,9 @@ import {
   calcTxAmountsDeltaForAddress,
   convertToNegative,
   getDirection,
+  hasPositiveAndNegativeAmounts,
   isConsolidationTx,
   isInternalTx,
-  isSwap,
   TransactionDirection,
   TransactionInfo,
   TransactionInfoType
@@ -59,7 +59,7 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
     tokens = tx.tokens ? tx.tokens.map((token) => ({ ...token, amount: convertToNegative(BigInt(token.amount)) })) : []
     lockTime = tx.lockTime !== undefined ? new Date(tx.lockTime) : undefined
   } else {
-    const { alph: alphAmount, tokens: tokenAmounts } = calcTxAmountsDeltaForAddress(tx, tx.address.hash)
+    const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, tx.address.hash)
 
     amount = alphAmount
     tokens = tokenAmounts.map((token) => ({ ...token, amount: token.amount }))
@@ -67,7 +67,7 @@ export const getTransactionInfo = (tx: AddressTransaction, showInternalInflows?:
     if (isConsolidationTx(tx)) {
       direction = 'out'
       infoType = 'move'
-    } else if (isSwap(amount, tokens)) {
+    } else if (hasPositiveAndNegativeAmounts(amount, tokens)) {
       direction = 'swap'
       infoType = 'swap'
     } else {

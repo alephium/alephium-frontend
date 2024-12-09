@@ -16,43 +16,33 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
-import { motion } from 'framer-motion'
-import { useEffect } from 'react'
-import styled, { css } from 'styled-components'
+import { memo, useEffect } from 'react'
+import styled from 'styled-components'
 
 import { fadeInBottom, fadeOut } from '@/animations'
+import SentTransactionSnackbarPopup from '@/features/send/sentTransactions/SentTransactionSnackbarPopup'
+import { selectAllSentTransactions } from '@/features/send/sentTransactions/sentTransactionsSelectors'
+import SnackbarBox from '@/features/snackbar/SnackbarBox'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import { snackbarDisplayTimeExpired } from '@/storage/global/globalActions'
 import { deviceBreakPoints, walletSidebarWidthPx } from '@/style/globalStyles'
+import { SnackbarMessage } from '@/types/snackbar'
 
 const SnackbarManager = () => {
-  const dispatch = useAppDispatch()
   const messages = useAppSelector((state) => state.snackbar.messages)
-
-  const message = messages.length > 0 ? messages[0] : undefined
-
-  // Remove snackbar popup after its duration
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>
-
-    if (message && message.duration >= 0) {
-      timer = setTimeout(() => dispatch(snackbarDisplayTimeExpired()), message.duration)
-    }
-
-    return () => {
-      if (timer) clearTimeout(timer)
-    }
-  }, [dispatch, message])
+  const sentTxs = useAppSelector(selectAllSentTransactions)
 
   return (
     <ModalPortal>
-      {message?.text && (
+      {(messages.length > 0 || sentTxs.length > 0) && (
         <SnackbarManagerContainer>
-          <SnackbarPopup {...fadeInBottom} {...fadeOut} className={message.type} style={{ textAlign: 'center' }}>
-            {message.text}
-          </SnackbarPopup>
+          {sentTxs.map((sentTxs) => (
+            <SentTransactionSnackbarPopup key={sentTxs.hash} txHash={sentTxs.hash} />
+          ))}
+          {messages.map((message) => (
+            <SnackbarPopup key={message.id} message={message} />
+          ))}
         </SnackbarManagerContainer>
       )}
     </ModalPortal>
@@ -61,47 +51,36 @@ const SnackbarManager = () => {
 
 export default SnackbarManager
 
-export const getSnackbarStyling = (color: string) => css`
-  background-color: ${colord(color).alpha(0.9).toHex()};
-  border: 1px solid ${colord(color).lighten(0.1).toHex()};
-  color: rgba(255, 255, 255, 0.8);
-`
+const SnackbarPopup = memo(({ message }: { message: Required<SnackbarMessage> }) => {
+  const dispatch = useAppDispatch()
+
+  // Remove snackbar popup after its duration
+  useEffect(() => {
+    if (message && message.duration >= 0) {
+      const timer = setTimeout(() => dispatch(snackbarDisplayTimeExpired()), message.duration)
+
+      return () => clearTimeout(timer)
+    }
+  }, [dispatch, message])
+
+  return (
+    <SnackbarBox {...fadeInBottom} {...fadeOut} className={message.type} style={{ textAlign: 'center' }}>
+      <Message>{message.text}</Message>
+    </SnackbarBox>
+  )
+})
 
 export const SnackbarManagerContainer = styled.div`
   position: fixed;
   bottom: 0;
   left: ${walletSidebarWidthPx}px;
-  display: flex;
-  justify-content: flex-end;
-  z-index: 2;
-  max-height: 20vh;
+  z-index: 3;
 
   @media ${deviceBreakPoints.mobile} {
     justify-content: center;
   }
 `
 
-export const SnackbarPopup = styled(motion.div)`
-  margin: var(--spacing-3);
-  min-width: 200px;
-  padding: var(--spacing-4) var(--spacing-3);
-  color: ${({ theme }) => theme.font.primary};
-  border-radius: var(--radius-medium);
-  backdrop-filter: blur(10px);
-  max-width: 800px;
-  word-wrap: break-word;
-  overflow-y: auto;
-
-  &.alert {
-    ${({ theme }) => getSnackbarStyling(theme.global.alert)}
-  }
-
-  &.info {
-    ${({ theme }) =>
-      theme.name === 'light' ? getSnackbarStyling(theme.bg.contrast) : getSnackbarStyling(theme.bg.background2)}
-  }
-
-  &.success {
-    ${({ theme }) => getSnackbarStyling(theme.global.valid)}
-  }
+const Message = styled.div`
+  max-height: 20vh;
 `

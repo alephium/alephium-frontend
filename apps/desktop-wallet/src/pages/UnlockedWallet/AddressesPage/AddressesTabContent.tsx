@@ -16,50 +16,42 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Wrench } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { intersection } from 'lodash'
+import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Box from '@/components/Box'
-import Button from '@/components/Button'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
-import { useAppSelector } from '@/hooks/redux'
-import ModalPortal from '@/modals/ModalPortal'
-import NewAddressModal from '@/modals/NewAddressModal'
-import AddressGridRow from '@/pages/UnlockedWallet/AddressesPage/AddressGridRow'
-import AdvancedOperationsSideModal from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsSideModal'
+import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch } from '@/hooks/redux'
+import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
+import AddressListRow from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressListRow'
+import AdvancedOperationsButton from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsButton'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
-import { filterAddresses } from '@/utils/addresses'
 
-const AddressesTabContent = () => {
-  const addresses = useAppSelector(selectAllAddresses)
-  const fungibleTokens = useAppSelector((state) => state.fungibleTokens.entities)
+const AddressesTabContent = memo(() => {
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
-  const [isGenerateNewAddressModalOpen, setIsGenerateNewAddressModalOpen] = useState(false)
-  const [visibleAddresses, setVisibleAddresses] = useState(addresses)
   const [searchInput, setSearchInput] = useState('')
   const [hideEmptyAddresses, setHideEmptyAddresses] = useState(false)
-  const [isAdvancedOperationsModalOpen, setIsAdvancedOperationsModalOpen] = useState(false)
+  const filteredByText = useFilterAddressesByText(searchInput.toLowerCase())
+  const { data: filteredByToggle } = useFetchAddressesHashesWithBalance()
 
-  useEffect(() => {
-    const filteredByText = filterAddresses(addresses, searchInput.toLowerCase(), fungibleTokens)
-    const filteredByToggle = hideEmptyAddresses
-      ? filteredByText.filter((address) => address.balance !== '0')
-      : filteredByText
+  const visibleAddresses = hideEmptyAddresses ? intersection(filteredByText, filteredByToggle) : filteredByText
 
-    setVisibleAddresses(filteredByToggle)
-  }, [addresses, fungibleTokens, hideEmptyAddresses, searchInput])
+  const openNewAddressModal = () =>
+    dispatch(openModal({ name: 'NewAddressModal', props: { title: t('New address'), singleAddress: true } }))
 
   return (
     <TabContent
       searchPlaceholder={t('Search for label, a hash or an asset...')}
       onSearch={setSearchInput}
       buttonText={`+ ${t('New address')}`}
-      onButtonClick={() => setIsGenerateNewAddressModalOpen(true)}
+      onButtonClick={openNewAddressModal}
       HeaderMiddleComponent={
         <HeaderMiddle>
           <HideEmptyAddressesToggle>
@@ -67,40 +59,19 @@ const AddressesTabContent = () => {
             <VerticalDivider />
             <Toggle onToggle={setHideEmptyAddresses} label={t('Hide empty')} toggled={hideEmptyAddresses} />
           </HideEmptyAddressesToggle>
-          <Button
-            role="secondary"
-            squared
-            Icon={Wrench}
-            onClick={() => setIsAdvancedOperationsModalOpen(true)}
-            data-tooltip-id="default"
-            data-tooltip-content={t('Advanced operations')}
-          />
+          <AdvancedOperationsButton />
         </HeaderMiddle>
       }
     >
       <TableGrid>
         <TableGridContent>
-          {visibleAddresses.map((address) => (
-            <AddressGridRow addressHash={address.hash} key={address.hash} />
-          ))}
+          {visibleAddresses?.map((addressHash) => <AddressListRow addressHash={addressHash} key={addressHash} />)}
+          <Placeholder>{t('No addresses match the search criteria.')}</Placeholder>
         </TableGridContent>
       </TableGrid>
-
-      <ModalPortal>
-        {isAdvancedOperationsModalOpen && (
-          <AdvancedOperationsSideModal onClose={() => setIsAdvancedOperationsModalOpen(false)} />
-        )}
-        {isGenerateNewAddressModalOpen && (
-          <NewAddressModal
-            singleAddress
-            title={t('New address')}
-            onClose={() => setIsGenerateNewAddressModalOpen(false)}
-          />
-        )}
-      </ModalPortal>
     </TabContent>
   )
-}
+})
 
 export default AddressesTabContent
 
@@ -134,8 +105,17 @@ const TableGrid = styled(Box)`
   flex-direction: column;
 `
 
+const Placeholder = styled.div`
+  display: none;
+  padding: 20px;
+`
+
 const TableGridContent = styled.div`
   background-color: ${({ theme }) => theme.border.secondary};
   display: flex;
   flex-direction: column;
+
+  > :only-child {
+    display: block;
+  }
 `

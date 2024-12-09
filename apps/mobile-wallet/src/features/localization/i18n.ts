@@ -24,6 +24,7 @@ import en from '../../../locales/en-US/translation.json'
 import fr from '../../../locales/fr-FR/translation.json'
 import pt from '../../../locales/pt-PT/translation.json'
 import vi from '../../../locales/vi-VN/translation.json'
+import zh from '../../../locales/zh-CN/translation.json'
 
 i18next.use(initReactI18next).init({
   compatibilityJSON: 'v3',
@@ -32,7 +33,8 @@ i18next.use(initReactI18next).init({
     'fr-FR': { translation: fr },
     'el-GR': { translation: gr },
     'vi-VN': { translation: vi },
-    'pt-PT': { translation: pt }
+    'pt-PT': { translation: pt },
+    'zh-CN': { translation: zh }
   },
   lng: 'en-US',
   fallbackLng: 'en-US',

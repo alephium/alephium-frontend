@@ -31,6 +31,7 @@ import pt from '../locales/pt-PT/translation.json'
 import ru from '../locales/ru-RU/translation.json'
 import tr from '../locales/tr-TR/translation.json'
 import vi from '../locales/vi-VN/translation.json'
+import zh from '../locales/zh-CN/translation.json'
 
 i18next.use(initReactI18next).init({
   resources: {
@@ -45,7 +46,8 @@ i18next.use(initReactI18next).init({
     'ru-RU': { translation: ru },
     'tr-TR': { translation: tr },
     'vi-VN': { translation: vi },
-    'el-GR': { translation: el }
+    'el-GR': { translation: el },
+    'zh-CN': { translation: zh }
   },
   lng: 'en-US',
   fallbackLng: 'en-US',

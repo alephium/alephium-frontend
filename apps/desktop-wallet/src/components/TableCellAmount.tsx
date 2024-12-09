@@ -23,8 +23,6 @@ export default styled.div<{ color?: string }>`
   flex-direction: column;
   align-items: flex-end;
   flex-grow: 1;
-  min-width: 6em;
-  flex-basis: 100px;
   gap: 6px;
   font-weight: var(--fontWeight-semiBold);
 

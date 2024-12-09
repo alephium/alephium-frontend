@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { createAction } from '@reduxjs/toolkit'
 
-import { GeneratedWallet, WalletMetadata, WalletState } from '~/types/wallet'
+import { DeprecatedWalletMetadata, GeneratedWallet, WalletMetadata, WalletState } from '~/types/wallet'
 
 export const walletUnlocked = createAction<WalletMetadata>('wallets/walletUnlocked')
 
@@ -32,4 +32,6 @@ export const walletNameChanged = createAction<WalletState['name']>('wallets/wall
 
 export const mnemonicMigrated = createAction('wallets/mnemonicMigrated')
 
-export const appLaunchedWithLastUsedWallet = createAction<WalletMetadata>('wallets/appLaunchedWithLastUsedWallet')
+export const appLaunchedWithLastUsedWallet = createAction<WalletMetadata | DeprecatedWalletMetadata>(
+  'wallets/appLaunchedWithLastUsedWallet'
+)

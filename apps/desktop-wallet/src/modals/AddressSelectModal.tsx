@@ -17,93 +17,128 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { useFetchWalletBalancesAlphByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import { useFetchWalletBalancesTokensByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
+import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
+import useFetchWalletNftsSearchStrings from '@/api/apiDataHooks/wallet/useFetchWalletNftsSearchStrings'
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import { useAppSelector } from '@/hooks/redux'
-import { Address } from '@/types/addresses'
-import { addressHasAssets, filterAddresses, filterAddressesWithoutAssets } from '@/utils/addresses'
+import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
+import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 
 interface AddressSelectModalProps {
   title: string
-  options: Address[]
-  onAddressSelect: (address: Address) => void
+  addressOptions: AddressHash[]
+  onAddressSelect: (address: AddressHash) => void
   onClose: () => void
-  selectedAddress?: Address
+  defaultSelectedAddress?: AddressHash
   emptyListPlaceholder?: string
-  hideAddressesWithoutAssets?: boolean
 }
 
 const AddressSelectModal = ({
   title,
-  options,
+  addressOptions,
   onAddressSelect,
   onClose,
-  selectedAddress,
-  emptyListPlaceholder,
-  hideAddressesWithoutAssets
+  defaultSelectedAddress,
+  emptyListPlaceholder
 }: AddressSelectModalProps) => {
   const { t } = useTranslation()
-  const fungibleTokens = useAppSelector((state) => state.fungibleTokens.entities)
 
-  const addresses = hideAddressesWithoutAssets ? filterAddressesWithoutAssets(options) : options
-  const [filteredAddresses, setFilteredAddresses] = useState(addresses)
-  const selectedAddressHasAssets = selectedAddress && addressHasAssets(selectedAddress)
+  const addressSelectOptions: SelectOption<AddressHash>[] = useAddressSelectOptions(addressOptions)
 
-  let initialAddress = selectedAddress
-  if (hideAddressesWithoutAssets) {
-    if (!selectedAddressHasAssets && addresses.length > 0) {
-      initialAddress = addresses[0]
-    }
-  } else if (!initialAddress && addresses.length > 0) {
-    initialAddress = addresses[0]
-  }
+  const defaultSelectedOption = addressSelectOptions.find((a) => a.value === defaultSelectedAddress)
+  const [selectedOption, setSelectedOption] = useState(defaultSelectedOption)
 
-  const [address, setAddress] = useState(initialAddress)
+  const handleAddressSelect = useCallback(
+    (option: SelectOption<AddressHash>) => {
+      setSelectedOption(option)
+      onAddressSelect(option.value)
+    },
+    [onAddressSelect]
+  )
 
-  const addressSelectOptions: SelectOption<AddressHash>[] = addresses.map((address) => ({
-    value: address.hash,
-    label: address.label ?? address.hash
-  }))
+  useEffect(() => {
+    const selectedOptionIsNotPartOfOptions = !addressOptions.some((option) => option === selectedOption?.value)
 
-  const selectAddress = (option: SelectOption<AddressHash>) => {
-    const selectedAddress = addresses.find((address) => address.hash === option.value)
-
-    selectedAddress && setAddress(selectedAddress)
-    selectedAddress && onAddressSelect(selectedAddress)
-  }
-
-  const handleSearch = (searchInput: string) =>
-    setFilteredAddresses(filterAddresses(addresses, searchInput.toLowerCase(), fungibleTokens))
+    if (selectedOptionIsNotPartOfOptions) handleAddressSelect(addressSelectOptions[0])
+  }, [addressSelectOptions, handleAddressSelect, addressOptions, selectedOption?.value])
 
   return (
     <SelectOptionsModal
       title={title}
       options={addressSelectOptions}
-      selectedOption={addressSelectOptions.find((a) => a.value === address?.hash)}
-      showOnly={filteredAddresses.map((address) => address.hash)}
-      setValue={selectAddress}
+      selectedOption={selectedOption}
+      setValue={handleAddressSelect}
       onClose={onClose}
-      onSearchInput={handleSearch}
-      searchPlaceholder={t('Search for name or a hash...')}
+      isSearchable
       minWidth={620}
-      optionRender={(option, isSelected) => {
-        const address = addresses.find((address) => address.hash === option.value)
-        if (address) return <SelectOptionAddress address={address} isSelected={isSelected} />
-      }}
-      emptyListPlaceholder={
-        emptyListPlaceholder ||
-        (hideAddressesWithoutAssets
-          ? t(
-              'There are no addresses with available balance. Please, send some funds to one of your addresses, and try again.'
-            )
-          : t('There are no available addresses.'))
-      }
+      optionRender={(option, isSelected) => <SelectOptionAddress addressHash={option.value} isSelected={isSelected} />}
+      emptyListPlaceholder={emptyListPlaceholder || t('There are no available addresses.')}
       floatingOptions
     />
   )
 }
 
 export default AddressSelectModal
+
+// TODO: See how it can be DRY'ed with useFilterAddressesByText
+const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
+  const addresses = useAppSelector(selectAllAddresses)
+  const { data: sortedAddressHashes } = useFetchSortedAddressesHashes()
+  const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
+  const { data: nftsSearchStringsByNftId } = useFetchWalletNftsSearchStrings()
+  const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
+  const { data: addressesTokensBalances } = useFetchWalletBalancesTokensByAddress()
+
+  return useMemo(
+    () =>
+      sortedAddressHashes
+        .filter((hash) => addressOptions.includes(hash))
+        .map((hash) => {
+          const address = addresses.find((address) => address.hash === hash)
+          const addressAlphBalances = addressesAlphBalances[hash]
+          const addressHasAlphBalances = (addressAlphBalances?.totalBalance ?? 0) > 0
+          const addressTokensBalances = addressesTokensBalances[hash] ?? []
+          const addressTokensSearchableString = addressTokensBalances
+            .map(({ id }) => {
+              const listedFt = listedFts.find((token) => token.id === id)
+
+              if (listedFt) return `${listedFt.name.toLowerCase()} ${listedFt.symbol.toLowerCase()} ${id}`
+
+              const unlistedFt = unlistedFts.find((token) => token.id === id)
+
+              if (unlistedFt) return `${unlistedFt.name.toLowerCase()} ${unlistedFt.symbol.toLowerCase()} ${id}`
+
+              const nftSearchString = nftsSearchStringsByNftId[id]
+
+              if (nftSearchString) return nftSearchString.toLowerCase()
+
+              return ''
+            })
+            .join(' ')
+
+          return {
+            value: hash,
+            label: address?.label || hash,
+            searchString: `${hash.toLowerCase()} ${address?.label?.toLowerCase() ?? ''} ${
+              addressHasAlphBalances ? 'alephium alph' : ''
+            } ${addressTokensSearchableString}`
+          }
+        }),
+    [
+      addressOptions,
+      addresses,
+      addressesAlphBalances,
+      addressesTokensBalances,
+      listedFts,
+      nftsSearchStringsByNftId,
+      sortedAddressHashes,
+      unlistedFts
+    ]
+  )
+}

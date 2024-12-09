@@ -24,8 +24,10 @@ import * as Clipboard from 'expo-clipboard'
 import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { Linking } from 'react-native'
 import { interpolateColor, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
+import { isAddress as isEthereumAddress } from 'web3-validator'
 
 import { sendAnalytics } from '~/analytics'
 import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
@@ -86,10 +88,19 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
       setValue('toAddressHash', addressHash)
 
       sendAnalytics({ event: 'Send: Captured destination address by scanning QR code' })
+    } else if (isEthereumAddress(addressHash)) {
+      showToast({
+        text1: t('You scanned an Ethereum address'),
+        text2: t('To move funds to Ethereum use the bridge at {{ url }}', { url: 'https://bridge.alephium.org' }),
+        onPress: () => Linking.openURL('https://bridge.alephium.org'),
+        type: 'error'
+      })
     } else {
       showToast({
         text1: t('Invalid address'),
-        text2: `${t('This is not a valid Alephium address')}: ${addressHash}`,
+        text2: `${t('This is not a valid Alephium address.')} ${t(
+          'Make sure you are not scanning an address of a different chain.'
+        )}`,
         type: 'error'
       })
     }

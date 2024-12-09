@@ -19,9 +19,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import {
   calcTxAmountsDeltaForAddress,
   getDirection,
+  hasPositiveAndNegativeAmounts,
+  isConfirmedTx,
   isConsolidationTx,
-  isMempoolTx,
-  isSwap,
   TransactionDirection,
   TransactionInfoType
 } from '@alephium/shared'
@@ -38,19 +38,19 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
   let infoType: TransactionInfoType
   let lockTime: Date | undefined
 
-  const { alph: alphDeltaAmount, tokens: tokensDeltaAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
+  const { alphAmount, tokenAmounts } = calcTxAmountsDeltaForAddress(tx, addressHash)
 
-  amount = alphDeltaAmount
+  amount = alphAmount
 
-  const assetsMetadata = useAssetsMetadata(map(tokensDeltaAmounts, 'id'))
+  const assetsMetadata = useAssetsMetadata(map(tokenAmounts, 'id'))
 
   if (isConsolidationTx(tx)) {
     direction = 'out'
     infoType = 'move'
-  } else if (isSwap(amount, tokensDeltaAmounts)) {
+  } else if (hasPositiveAndNegativeAmounts(amount, tokenAmounts)) {
     direction = 'swap'
     infoType = 'swap'
-  } else if (isMempoolTx(tx)) {
+  } else if (!isConfirmedTx(tx)) {
     direction = getDirection(tx, addressHash)
     infoType = 'pending'
   } else {
@@ -65,7 +65,7 @@ export const useTransactionInfo = (tx: Transaction | MempoolTransaction, address
   )
   lockTime = lockTime?.toISOString() === new Date(0).toISOString() ? undefined : lockTime
 
-  const groupedTokens = tokensDeltaAmounts.reduce(
+  const groupedTokens = tokenAmounts.reduce(
     (acc, token) => {
       const fungibleToken = assetsMetadata.fungibleTokens.find((i) => i.id === token.id)
       const nonFungibleToken = assetsMetadata.nfts.find((i) => i.id === token.id)
@@ -105,9 +105,9 @@ type UTXO = {
 export const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount> => {
   const validUtxos = utxos.filter((utxo) => utxo.address && utxo.attoAlphAmount)
 
-  const grouped = groupBy(validUtxos, 'address')
-  const summed = mapValues(grouped, (addressGroup) =>
-    reduce(addressGroup, (sum, utxo) => (BigInt(sum) + BigInt(utxo.attoAlphAmount || 0)).toString(), '0')
+  const utxosGroupedByAddress = groupBy(validUtxos, 'address')
+  const summed = mapValues(utxosGroupedByAddress, (addressUtxos) =>
+    reduce(addressUtxos, (sum, utxo) => (BigInt(sum) + BigInt(utxo.attoAlphAmount || 0)).toString(), '0')
   )
 
   return summed
@@ -116,22 +116,23 @@ export const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount>
 export const sumUpTokenAmounts = (utxos: UTXO[]): Record<Address, Record<Token['id'], TokenAmount>> => {
   const validUtxos = utxos.filter((utxo) => utxo.address && utxo.tokens && utxo.tokens.length > 0)
 
-  const grouped = groupBy(validUtxos, 'address')
-  const summed = mapValues(grouped, (addressGroup) => {
+  const utxosGroupedByAddress = groupBy(validUtxos, 'address')
+  const summed = mapValues(utxosGroupedByAddress, (addressUtxos) => {
     const tokenSums: Record<Token['id'], TokenAmount> = {}
 
-    for (const utxo of addressGroup) {
+    for (const utxo of addressUtxos) {
       for (const token of utxo.tokens || []) {
         tokenSums[token.id] = (BigInt(tokenSums[token.id] || 0) + BigInt(token.amount)).toString()
       }
     }
+
     return tokenSums
   })
 
   return summed
 }
 
-export const IOAmountsDelta = (
+export const calculateIoAmountsDelta = (
   inputs: UTXO[] = [],
   outputs: UTXO[] = []
 ): { alph: Record<Address, AttoAlphAmount>; tokens: Record<Address, Record<Token['id'], TokenAmount>> } => {

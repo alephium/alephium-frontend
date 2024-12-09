@@ -15,7 +15,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-
 import { useFocusEffect } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useCallback, useEffect, useState } from 'react'
@@ -23,6 +22,7 @@ import { useTranslation } from 'react-i18next'
 import { StatusBar } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AnimatedBackground from '~/components/AnimatedBackground'
 import BlurredCard from '~/components/BlurredCard'
 import BottomButtons from '~/components/buttons/BottomButtons'
@@ -41,9 +41,9 @@ interface LandingScreenProps extends NativeStackScreenProps<RootStackParamList, 
 
 const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
-  const theme = useTheme()
   const { t } = useTranslation()
-  const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
+  const theme = useTheme()
+  const isWalletUnlocked = useAppSelector((state) => state.wallet.isUnlocked)
 
   const [isScreenContentVisible, setIsScreenContentVisible] = useState(false)
 
@@ -66,7 +66,9 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
             setIsScreenContentVisible(true)
           }
         })
-        .catch((error) => console.error('Could not determine if stored wallet exists', error))
+        .catch((error) => {
+          sendAnalytics({ type: 'error', error, message: 'Could not determine if stored wallet exists' })
+        })
     }, [isWalletUnlocked, navigation])
   )
 
