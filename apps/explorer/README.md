@@ -30,3 +30,7 @@ Then, start the app:
 ```shell
 pnpm start
 ```
+
+## Releasing
+
+Follow the same [instructions as in the desktop wallet](../desktop-wallet/README.md). The only difference is that pushing a production tag will trigger the workflow to build and publish the Docker image. It will not deploy the explorer frontend to production. This is done by manually triggering the corresponding workflow from the GitHub interface.

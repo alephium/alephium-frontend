@@ -20,7 +20,6 @@
   "Copy token ID": "Copier le token ID",
   "Daily": "Par jour",
   "Download CSV": "Télécharger CSV",
-  "Fiat price": "Prix en fiat",
   "Gas Amount": "Quantité de gaz",
   "Gas Price": "Prix du gaz",
   "Hash": "Hash",
@@ -130,5 +129,6 @@
   "Orphan": "Orphelin",
   "It appears that this block is not part of the main chain.": "Il semble que ce bloc ne fait pas partie de la chaîne principale.",
   "confirmationsKey_one": "{{ count }} confirmation",
-  "confirmationsKey_other": "{{ count }} confirmations"
+  "confirmationsKey_other": "{{ count }} confirmations",
+  "Address worth": "Valeur de l'adresse"
 }

@@ -1293,7 +1293,7 @@ PODS:
     - React-Core
   - react-native-background-timer (2.4.1):
     - React-Core
-  - react-native-compat (2.15.1):
+  - react-native-compat (2.17.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1364,7 +1364,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-webview (13.12.3):
+  - react-native-webview (13.12.5):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1618,7 +1618,7 @@ PODS:
     - React-Core
   - RNFlashList (1.6.4):
     - React-Core
-  - RNGestureHandler (2.20.2):
+  - RNGestureHandler (2.21.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1684,7 +1684,30 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNSVG (15.2.0):
+  - RNSentry (6.0.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Sentry/HybridSDK (= 8.37.0)
+    - Yoga
+  - RNSVG (15.9.0):
     - React-Core
   - SDWebImage (5.19.2):
     - SDWebImage/Core (= 5.19.2)
@@ -1697,6 +1720,7 @@ PODS:
   - SDWebImageWebPCoder (0.14.6):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.17)
+  - Sentry/HybridSDK (8.37.0)
   - SocketRocket (0.7.0)
   - Yoga (0.0.0)
   - ZXingObjC/Core (3.6.9)
@@ -1809,6 +1833,7 @@ DEPENDENCIES:
   - RNLocalize (from `../../../node_modules/react-native-localize`)
   - RNReanimated (from `../../../node_modules/react-native-reanimated`)
   - RNScreens (from `../../../node_modules/react-native-screens`)
+  - "RNSentry (from `../../../node_modules/@sentry/react-native`)"
   - RNSVG (from `../../../node_modules/react-native-svg`)
   - Yoga (from `../../../node_modules/react-native/ReactCommon/yoga`)
 
@@ -1822,6 +1847,7 @@ SPEC REPOS:
     - SDWebImageAVIFCoder
     - SDWebImageSVGCoder
     - SDWebImageWebPCoder
+    - Sentry
     - SocketRocket
     - ZXingObjC
 
@@ -2029,6 +2055,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../../../node_modules/react-native-screens"
+  RNSentry:
+    :path: "../../../node_modules/@sentry/react-native"
   RNSVG:
     :path: "../../../node_modules/react-native-svg"
   Yoga:
@@ -2104,13 +2132,13 @@ SPEC CHECKSUMS:
   react-native-aes: c75c46aa744bef7c2415fdf7f5b2dcb75ca4364d
   react-native-background-actions: ecffd3f0864140ef6cf21c29be6819a02b531a52
   react-native-background-timer: 17ea5e06803401a379ebf1f20505b793ac44d0fe
-  react-native-compat: 408a4b320fa4426f2c25ab74ed5764be6b3eb5aa
+  react-native-compat: 425ce849bdeb6dceeb1c003b254c3c2623a37ba1
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
   react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-pager-view: c1e29e1a6105a02807392ba822ad322447a72f55
   react-native-safe-area-context: a240ad4b683349e48b1d51fed1611138d1bdad97
   react-native-skia: 4857f8a85d0e4fc152c7b8aff4fbcc7573be1cf9
-  react-native-webview: 445e447f227f775d8dd2b4823bca55c458d4eff7
+  react-native-webview: 66f10ef00efe847017fc1c809a84c412712bbef6
   React-nativeconfig: ba9a2e54e2f0882cf7882698825052793ed4c851
   React-NativeModulesApple: 8d11ff8955181540585c944cf48e9e7236952697
   React-perflogger: ed4e0c65781521e0424f2e5e40b40cc7879d737e
@@ -2136,19 +2164,21 @@ SPEC CHECKSUMS:
   ReactCommon: f7da14a8827b72704169a48c929bcde802698361
   RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
   RNFlashList: b521ebdd7f9352673817f1d98e8bdc0c8cf8545b
-  RNGestureHandler: a8e61b93b4c5c44e6cd797cdaba43126ec36acaa
+  RNGestureHandler: 6fee3422fd8c81c5ee756fa72e3d1780e9943d9d
   RNLocalize: b77875884750cb6a58cd6865863fe2ba2729b72b
   RNReanimated: 33c6135cdf421b795c2f1173075a11cca2a39bf2
   RNScreens: b32a9ff15bea7fcdbe5dff6477bc503f792b1208
-  RNSVG: 43b64ed39c14ce830d840903774154ca0c1f27ec
+  RNSentry: 8dbb424d199fa5c885406ac54b7765e4e4815a8e
+  RNSVG: 3d2bdcaef51c8071880a9c0072fe324f4423a3ba
   SDWebImage: dfe95b2466a9823cf9f0c6d01217c06550d7b29a
   SDWebImageAVIFCoder: 00310d246aab3232ce77f1d8f0076f8c4b021d90
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
+  Sentry: ee060c09b2f7ec1240e95c766ab44c04c7bdb052
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   Yoga: 950bbfd7e6f04790fdb51149ed51df41f329fcc8
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
 PODFILE CHECKSUM: 643da665b6a5e764a14ebf182d4d19c2d5d31db2
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

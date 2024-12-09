@@ -20,13 +20,13 @@ import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, Platform } from 'react-native'
+import { Modal, Platform, Pressable } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
-import styled, { useTheme } from 'styled-components/native'
+import { useTheme } from 'styled-components/native'
 
 import { Analytics, sendAnalytics } from '~/analytics'
-import AnimatedBackground from '~/components/AnimatedBackground'
+import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import useAutoLock from '~/features/auto-lock/useAutoLock'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
@@ -36,6 +36,7 @@ import { loadBiometricsSettings } from '~/features/settings/settingsPersistentSt
 import SettingsScreen from '~/features/settings/SettingsScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import BackupMnemonicNavigation from '~/navigation/BackupMnemonicNavigation'
 import InWalletTabsNavigation from '~/navigation/InWalletNavigation'
 import ReceiveNavigation from '~/navigation/ReceiveNavigation'
@@ -46,8 +47,10 @@ import {
   deleteDeprecatedWallet,
   getDeprecatedStoredWallet,
   getStoredWalletMetadata,
+  getWalletMetadata,
+  isStoredWalletMetadataMigrated,
   migrateDeprecatedMnemonic,
-  storedWalletExists
+  storedMnemonicV2Exists
 } from '~/persistent-storage/wallet'
 import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
 import EditAddressScreen from '~/screens/Addresses/Address/EditAddressScreen'
@@ -158,8 +161,18 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
   const { t } = useTranslation()
 
   const initializeAppWithStoredWallet = useCallback(async () => {
+    const metadata = await getStoredWalletMetadata()
+
+    // Note: metadata should have already been migrated in validateAndRepareStoredWalletData if mnemonic V2 exists or
+    // migrateDeprecatedMnemonic if it doesn't
+    if (!isStoredWalletMetadataMigrated(metadata)) {
+      const message = 'Could not unlock wallet because metadata is not migrated'
+      sendAnalytics({ type: 'error', message })
+      throw new Error(message)
+    }
+
     try {
-      dispatch(walletUnlocked(await getStoredWalletMetadata()))
+      dispatch(walletUnlocked(metadata))
 
       const lastRoute = rootStackNavigationRef.current?.getCurrentRoute()?.name
 
@@ -177,14 +190,16 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
     if (isWalletUnlocked) return
 
     try {
-      const walletExists = await storedWalletExists()
+      const mnemonicV2Exists = await storedMnemonicV2Exists()
       const deprecatedWallet = await getDeprecatedStoredWallet({ authenticationPrompt: t('Unlock your wallet') })
 
-      if (walletExists) {
+      if (mnemonicV2Exists) {
         try {
           await triggerBiometricsAuthGuard({
             settingsToCheck: 'appAccess',
-            successCallback: initializeAppWithStoredWallet
+            successCallback: initializeAppWithStoredWallet,
+            failureCallback: (message: string) =>
+              showToast({ type: 'error', text1: 'Biometrics authentication failed', text2: message })
           })
 
           if (deprecatedWallet) {
@@ -224,7 +239,9 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
       }
 
       try {
-        if ((await appInstallationTimestampMissing()) || (!walletExists && !deprecatedWallet)) {
+        const metadataExist = !!(await getWalletMetadata())
+
+        if ((await appInstallationTimestampMissing()) || (!metadataExist && !mnemonicV2Exists && !deprecatedWallet)) {
           if (await wasAppUninstalled()) {
             try {
               await deleteFundPassword()
@@ -253,15 +270,14 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
   useAutoLock(unlockApp)
 
   return (
-    <Modal visible={!!lastUsedWalletId && biometricsRequiredForAppAccess && !isWalletUnlocked} animationType="fade">
-      <AppUnlockModalContainer>
-        <AnimatedBackground isAnimated isFullScreen showAlephiumLogo />
-      </AppUnlockModalContainer>
+    <Modal visible={!!lastUsedWalletId && biometricsRequiredForAppAccess && !isWalletUnlocked} animationType="none">
+      <Pressable
+        onPress={unlockApp}
+        style={{ backgroundColor: 'black', flex: 1, alignItems: 'center', justifyContent: 'center' }}
+      >
+        <AlephiumLogo style={{ width: '25%' }} />
+      </Pressable>
+      <ToastAnchor />
     </Modal>
   )
 }
-
-const AppUnlockModalContainer = styled.View`
-  flex: 1;
-  background-color: ${({ theme }) => theme.bg.back2};
-`

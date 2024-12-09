@@ -51,7 +51,7 @@
   "Duration in minutes after which an idle wallet will lock automatically.": "Продължителност в минути, след която неактивният портфейл ще се заключи автоматично.",
   "Enter": "Въведи",
   "Enter password": "Въведете парола",
-  "Enter password for \"{{ switchToWalletName }}\"": "Въведете паролата за \"{{ switchToWalletName }}\"",
+  "Enter password for \"{{ walletName }}\"": "Въведете паролата за \"{{ walletName }}\"",
   "Enter your password to send the transaction.": "Въведете паролата си, за да изпратите транзакцията.",
   "Error while building transaction": "Грешка при изграждането на транзакцията",
   "Error while importing wallet": "Грешка при импортиране на портфейл",

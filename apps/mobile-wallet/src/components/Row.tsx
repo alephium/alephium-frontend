@@ -67,9 +67,15 @@ const Row = ({
   const componentContent = title ? (
     <>
       <LeftContent isVertical={isVertical}>
-        <AppText medium numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle" color={titleColor}>
+        <Title
+          medium
+          numberOfLines={truncate ? 1 : undefined}
+          ellipsizeMode="middle"
+          color={titleColor}
+          isVertical={isVertical}
+        >
           {title}
-        </AppText>
+        </Title>
         {subtitle && (
           <Subtitle numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle">
             {subtitle}
@@ -114,6 +120,15 @@ export default styled(Row)`
       justify-content: space-between;
     `}
   `}
+`
+
+const Title = styled(AppText)<{ isVertical?: boolean }>`
+  ${({ isVertical, color }) =>
+    isVertical &&
+    css`
+      font-size: 13px;
+      color: ${({ theme }) => color || theme.font.secondary};
+    `}
 `
 
 const Subtitle = styled(AppText)`

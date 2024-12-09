@@ -52,7 +52,7 @@ import Timestamp from '@/components/Timestamp'
 import TransactionIOList from '@/components/TransactionIOList'
 import { useSnackbar } from '@/hooks/useSnackbar'
 import { AssetType } from '@/types/assets'
-import { IOAmountsDelta } from '@/utils/transactions'
+import { calculateIoAmountsDelta } from '@/utils/transactions'
 
 type ParamTypes = {
   id: string
@@ -78,7 +78,7 @@ const TransactionInfoPage = () => {
     enabled: !!id,
     refetchInterval:
       isAppVisible &&
-      (!previousTransactionData.current || !isTxConfirmed(previousTransactionData.current)) &&
+      (!previousTransactionData.current || !isConfirmedTx(previousTransactionData.current)) &&
       !txInfoError.current
         ? 10000
         : undefined,
@@ -95,7 +95,7 @@ const TransactionInfoPage = () => {
     txInfoErrorStatus = txInfoError.current.includes('not found') ? 404 : 400
   }
 
-  const confirmedTxInfo = isTxConfirmed(transactionData) ? transactionData : undefined
+  const confirmedTxInfo = isConfirmedTx(transactionData) ? transactionData : undefined
 
   previousTransactionData.current = confirmedTxInfo
 
@@ -117,7 +117,7 @@ const TransactionInfoPage = () => {
 
   const confirmations = computeConfirmations(txBlock, txChain)
 
-  const { alph: alphDeltaAmounts, tokens: tokenDeltaAmounts } = IOAmountsDelta(
+  const { alph: alphDeltaAmounts, tokens: tokenDeltaAmounts } = calculateIoAmountsDelta(
     transactionData?.inputs,
     transactionData?.outputs
   )
@@ -358,7 +358,7 @@ const TransactionInfoPage = () => {
   )
 }
 
-const isTxConfirmed = (tx?: Transaction | AcceptedTransaction | PendingTransaction): tx is Transaction =>
+const isConfirmedTx = (tx?: Transaction | AcceptedTransaction | PendingTransaction): tx is Transaction =>
   !!tx && (tx as Transaction).blockHash !== undefined
 
 const computeConfirmations = (txBlock?: explorer.BlockEntryLite, txChain?: explorer.PerChainHeight): number => {

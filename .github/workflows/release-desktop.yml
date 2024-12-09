@@ -2,7 +2,7 @@ name: Release desktop wallet
 
 on:
   push:
-    tags: ['alephium-desktop-wallet@[0-9]+.[0-9]+.[0-9]+*']
+    tags: ['alephium-desktop-wallet@[0-9]+.[0-9]+.[0-9]+', 'alephium-desktop-wallet@[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+']
 
 env:
   GH_TOKEN: ${{ secrets.github_token }}
@@ -55,6 +55,13 @@ jobs:
         with:
           name: notarization-error-log
           path: ${{ github.workspace }}/apps/desktop-wallet/notarization-error.log
+
+      - name: Skip signing for rc versions
+        if: contains(github.event.ref, '-rc.')
+        uses: jaywcjlove/github-action-package@v2.0.0
+        with:
+          path: apps/desktop-wallet/package.json
+          unset: build.win.sign
 
       # Windows
       - name: Build & release Windows Electron app

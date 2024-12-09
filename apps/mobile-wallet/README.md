@@ -67,3 +67,11 @@ Only registered iOS devices will get internal releases.
 eas build --platform ios --profile internal
 eas submit --platform ios
 ```
+
+## Releasing
+
+In general, follow the same [instructions as in the desktop wallet](../desktop-wallet/README.md). The only difference is that `pnpm exec changeset version` will only update the version in the `package.json` but the version needs to be updated manually in 3 more places:
+
+- `/app.config.js`
+- `/android/app/build.gradle`
+- `/ios/Alephium/Info.plist`

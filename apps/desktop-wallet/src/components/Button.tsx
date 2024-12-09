@@ -20,7 +20,7 @@ import { colord } from 'colord'
 import { HTMLMotionProps, motion } from 'framer-motion'
 import { LucideIcon } from 'lucide-react'
 import { ReactNode, useEffect, useRef, useState } from 'react'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
 import Spinner from '@/components/Spinner'
@@ -45,20 +45,9 @@ export interface ButtonProps extends HTMLMotionProps<'button'> {
   className?: string
 }
 
-const Button = ({
-  children,
-  disabled,
-  submit,
-  Icon,
-  className,
-  iconColor,
-  isHighlighted,
-  loading,
-  ...props
-}: ButtonProps) => {
+const Button = ({ children, disabled, submit, Icon, className, isHighlighted, loading, ...props }: ButtonProps) => {
   const [canBeAnimated, setCanBeAnimated] = useState(props.squared ? true : false)
   const buttonRef = useRef<HTMLButtonElement>(null)
-  const theme = useTheme()
 
   useEffect(() => {
     if (!submit) return
@@ -94,7 +83,7 @@ const Button = ({
         <>
           {Icon && (
             <ButtonIcon>
-              <Icon size={15} color={iconColor || theme.font.tertiary} />
+              <Icon size={15} />
             </ButtonIcon>
           )}
           {children as ReactNode}
@@ -291,10 +280,11 @@ export default styled(Button)`
               .toHex()};
             padding: 6px;
             border-radius: var(--radius-full);
+            color: ${iconColor || fontColor};
           `}
 
         svg {
-          color: ${fontColor};
+          color: ${iconColor || fontColor};
         }
       }
     `

@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring } from '@alephium/keyring'
-import { client } from '@alephium/shared'
+import { throttledClient } from '@alephium/shared'
 
 import { discoverAndCacheActiveAddresses } from '@/api/addresses'
 
@@ -28,7 +28,7 @@ describe('Address discovery', () => {
     keyring.importMnemonicString(derivedAddresses.mnemonic)
 
     const mockedPostAddressesActive = vi.fn()
-    client.explorer.addresses.postAddressesUsed = mockedPostAddressesActive
+    throttledClient.explorer.addresses.postAddressesUsed = mockedPostAddressesActive
 
     // Scenario 1:
     // All derived addresses are inactive.
@@ -42,7 +42,7 @@ describe('Address discovery', () => {
     ])
 
     let results = await discoverAndCacheActiveAddresses()
-    expect(client.explorer.addresses.postAddressesUsed).toHaveBeenCalledTimes(1)
+    expect(throttledClient.explorer.addresses.postAddressesUsed).toHaveBeenCalledTimes(1)
     expect(results).toHaveLength(0)
     mockedPostAddressesActive.mockClear()
 
@@ -60,7 +60,7 @@ describe('Address discovery', () => {
       .mockResolvedValueOnce([false, false, false, false, false])
 
     results = await discoverAndCacheActiveAddresses()
-    expect(client.explorer.addresses.postAddressesUsed).toHaveBeenCalledTimes(2)
+    expect(throttledClient.explorer.addresses.postAddressesUsed).toHaveBeenCalledTimes(2)
     expect(results).toHaveLength(1)
     expect(results.map((a) => a.hash)).toContain(derivedAddresses.group0[4])
     mockedPostAddressesActive.mockClear()
@@ -87,7 +87,7 @@ describe('Address discovery', () => {
       .mockResolvedValueOnce([false, false, false, false, false])
 
     results = await discoverAndCacheActiveAddresses()
-    expect(client.explorer.addresses.postAddressesUsed).toHaveBeenCalledTimes(4)
+    expect(throttledClient.explorer.addresses.postAddressesUsed).toHaveBeenCalledTimes(4)
     expect(results).toHaveLength(3)
     const addresses = results.map((a) => a.hash)
     expect(addresses).toContain(derivedAddresses.group0[4])

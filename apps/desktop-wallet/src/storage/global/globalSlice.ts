@@ -16,25 +16,32 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
-import { createSelector, createSlice } from '@reduxjs/toolkit'
-
-import { addressDiscoveryFinished, addressDiscoveryStarted } from '@/storage/addresses/addressesActions'
 import {
-  addressesPageInfoMessageClosed,
-  devModeShortcutDetected,
-  modalClosed,
-  modalOpened,
-  osThemeChangeDetected,
-  receiveTestnetTokens,
-  transfersPageInfoMessageClosed
-} from '@/storage/global/globalActions'
+  apiClientInitFailed,
+  apiClientInitSucceeded,
+  customNetworkSettingsSaved,
+  localStorageNetworkSettingsMigrated,
+  networkPresetSwitched
+} from '@alephium/shared'
+import { createSelector, createSlice, isAnyOf } from '@reduxjs/toolkit'
+
 import {
   languageChangeFinished,
   languageChangeStarted,
   themeSettingsChanged,
   themeToggled
-} from '@/storage/settings/settingsActions'
+} from '@/features/settings/settingsActions'
+import { ThemeType } from '@/features/theme/themeTypes'
+import { getThemeType } from '@/features/theme/themeUtils'
+import { addressDiscoveryFinished, addressDiscoveryStarted } from '@/storage/addresses/addressesActions'
+import {
+  devModeShortcutDetected,
+  modalClosed,
+  modalOpened,
+  osThemeChangeDetected,
+  receiveFaucetTokens,
+  toggleAppLoading
+} from '@/storage/global/globalActions'
 import { RootState } from '@/storage/store'
 import {
   activeWalletDeleted,
@@ -44,15 +51,11 @@ import {
   walletSaved
 } from '@/storage/wallets/walletActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
-import { ThemeType } from '@/types/settings'
 import { StoredEncryptedWallet } from '@/types/wallet'
-import { getThemeType } from '@/utils/settings'
 
 interface AppState {
   loading: boolean
   visibleModals: string[]
-  addressesPageInfoMessageClosed: boolean
-  transfersPageInfoMessageClosed: boolean
   wallets: StoredEncryptedWallet[]
   theme: ThemeType
   devMode: boolean
@@ -62,8 +65,6 @@ interface AppState {
 const initialState: AppState = {
   loading: false,
   visibleModals: [],
-  addressesPageInfoMessageClosed: true, // See: https://github.com/alephium/desktop-wallet/issues/644
-  transfersPageInfoMessageClosed: true, // See: https://github.com/alephium/desktop-wallet/issues/644
   wallets: walletStorage.list(),
   theme: getThemeType(),
   devMode: false,
@@ -84,12 +85,6 @@ const globalSlice = createSlice({
       .addCase(modalClosed, (state) => {
         state.visibleModals.pop()
       })
-      .addCase(addressesPageInfoMessageClosed, (state) => {
-        state.addressesPageInfoMessageClosed = true
-      })
-      .addCase(transfersPageInfoMessageClosed, (state) => {
-        state.transfersPageInfoMessageClosed = true
-      })
       .addCase(walletDeleted, (state, action) => {
         const deletedWalletId = action.payload
 
@@ -105,6 +100,7 @@ const globalSlice = createSlice({
       .addCase(addressDiscoveryFinished, (state, action) => toggleLoading(state, false, action.payload))
       .addCase(languageChangeStarted, (state) => toggleLoading(state, true, true))
       .addCase(languageChangeFinished, (state) => toggleLoading(state, false, true))
+      .addCase(toggleAppLoading, (state, action) => toggleLoading(state, action.payload))
       .addCase(walletSaved, (state, action) => {
         const { id, name, encrypted, lastUsed } = action.payload.wallet
 
@@ -121,14 +117,22 @@ const globalSlice = createSlice({
       })
       .addCase(localStorageNetworkSettingsMigrated, refreshWalletList)
       .addCase(newWalletNameStored, refreshWalletList)
-      .addCase(receiveTestnetTokens.pending, (state) => {
+      .addCase(receiveFaucetTokens.pending, (state) => {
         state.faucetCallPending = true
       })
-      .addCase(receiveTestnetTokens.fulfilled, (state) => {
+      .addCase(receiveFaucetTokens.fulfilled, (state) => {
         state.faucetCallPending = false
       })
-      .addCase(receiveTestnetTokens.rejected, (state) => {
+      .addCase(receiveFaucetTokens.rejected, (state) => {
         state.faucetCallPending = false
+      })
+
+    builder
+      .addMatcher(isAnyOf(networkPresetSwitched, customNetworkSettingsSaved), (state) => {
+        toggleLoading(state, true)
+      })
+      .addMatcher(isAnyOf(apiClientInitSucceeded, apiClientInitFailed), (state) => {
+        toggleLoading(state, false)
       })
   }
 })

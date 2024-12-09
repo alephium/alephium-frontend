@@ -20,6 +20,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
+import useAddressesDataPolling from '@/features/dataPolling/useAddressesDataPolling'
 import { useAppSelector } from '@/hooks/redux'
 import AddressesPage from '@/pages/UnlockedWallet/AddressesPage'
 import OverviewPage from '@/pages/UnlockedWallet/OverviewPage'
@@ -32,6 +33,8 @@ const WalletRoutes = () => {
   const location = useLocation()
   const { t } = useTranslation()
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
+
+  useAddressesDataPolling()
 
   const headerTitles: { [key: string]: string } = {
     '/wallet/overview': t('Overview'),

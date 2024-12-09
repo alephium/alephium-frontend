@@ -29,7 +29,7 @@ import WalletPassphrase from '@/components/Inputs/WalletPassphrase'
 import { Section } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
-import { useWalletConnectContext } from '@/contexts/walletconnect'
+import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import { StoredEncryptedWallet } from '@/types/wallet'
@@ -42,7 +42,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   const { t } = useTranslation()
   const wallets = useAppSelector((state) => state.global.wallets)
   const { unlockWallet } = useWalletLock()
-  const { dAppUrlToConnectTo, sessionRequestEvent } = useWalletConnectContext()
+  const { pendingDappConnectionUrl, isAwaitingSessionRequestApproval } = useWalletConnectContext()
   const navigate = useNavigate()
 
   const walletOptions = wallets.map(({ id, name }) => ({ label: name, value: id }))
@@ -77,14 +77,14 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   return (
     <>
       <PanelTitle useLayoutId={false} size="big" centerText>
-        {dAppUrlToConnectTo
+        {pendingDappConnectionUrl
           ? t('Connect to dApp')
-          : sessionRequestEvent
+          : isAwaitingSessionRequestApproval
             ? t('Received dApp request')
             : t('Welcome back.')}
       </PanelTitle>
       <ParagraphStyled centered secondary>
-        {dAppUrlToConnectTo ||
+        {pendingDappConnectionUrl ||
           t(wallets.length === 1 ? 'Unlock your wallet to continue.' : 'Unlock a wallet to continue.')}
       </ParagraphStyled>
       <SectionStyled inList>

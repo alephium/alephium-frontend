@@ -1,11 +1,15 @@
 {
   "extends": "@alephium/typescript-config/react",
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["src", "electron", "./vite.config.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "target": "ES2022",
+    "moduleResolution": "bundler",
+    "useDefineForClassFields": true,
+    "allowImportingTsExtensions": true
   }
 }

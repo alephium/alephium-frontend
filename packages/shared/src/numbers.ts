@@ -38,7 +38,7 @@ const getNumberOfTrailingZeros = (numString: string) => {
   return numberOfZeros
 }
 
-const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) => {
+export const removeTrailingZeros = (numString: string, minNumberOfDecimals?: number) => {
   const numberOfZeros = getNumberOfTrailingZeros(numString)
   const numStringWithoutTrailingZeros = numString.substring(0, numString.length - numberOfZeros)
 
@@ -81,6 +81,7 @@ interface FormatAmountForDisplayProps {
   truncate?: boolean
   fullPrecision?: boolean
   smartRounding?: boolean
+  region?: string
 }
 
 export const formatAmountForDisplay = ({
@@ -89,7 +90,8 @@ export const formatAmountForDisplay = ({
   displayDecimals,
   truncate,
   smartRounding = true,
-  fullPrecision = false
+  fullPrecision = false,
+  region = 'en-US'
 }: FormatAmountForDisplayProps): string => {
   if (amount < BigInt(0)) return '???'
 
@@ -98,7 +100,7 @@ export const formatAmountForDisplay = ({
 
   if (amountNumber < 0.0001) {
     if (smartRounding && !fullPrecision) {
-      return smartRound(amountString)
+      return smartRound(amountString, region)
     } else {
       fullPrecision = true
     }
@@ -108,20 +110,25 @@ export const formatAmountForDisplay = ({
   const numberOfDecimalsToDisplay = displayDecimals ?? minNumberOfDecimals
 
   if (aboveExpLimit(amountString)) {
-    return toExponential(amountString, numberOfDecimalsToDisplay, truncate)
+    return toExponential(amountString, region, numberOfDecimalsToDisplay, truncate)
   }
 
   if (fullPrecision) {
-    return formatFullPrecision(amount, amountDecimals, numberOfDecimalsToDisplay)
+    return formatFullPrecision(amount, amountDecimals, numberOfDecimalsToDisplay, region)
   }
 
-  return formatRegularPrecision(amountNumber, numberOfDecimalsToDisplay, minNumberOfDecimals)
+  return formatRegularPrecision(amountNumber, numberOfDecimalsToDisplay, minNumberOfDecimals, region)
 }
 
 const getMinNumberOfDecimals = (amountNumber: number): number =>
   amountNumber <= 0 ? 0 : amountNumber < 0.01 && amountNumber >= 0.001 ? 3 : amountNumber < 0.001 ? 4 : 2
 
-const formatFullPrecision = (amount: bigint, amountDecimals: number, numberOfDecimalsToDisplay: number): string => {
+const formatFullPrecision = (
+  amount: bigint,
+  amountDecimals: number,
+  numberOfDecimalsToDisplay: number,
+  region: string
+): string => {
   const baseNumString = amount.toString()
   const numNonDecimals = baseNumString.length - amountDecimals
   const amountNumberString =
@@ -129,30 +136,36 @@ const formatFullPrecision = (amount: bigint, amountDecimals: number, numberOfDec
       ? baseNumString.substring(0, numNonDecimals) + '.' + baseNumString.substring(numNonDecimals)
       : '0.' + produceZeros(-numNonDecimals) + baseNumString
 
-  return removeTrailingZeros(amountNumberString, numberOfDecimalsToDisplay)
+  const formattedAmount = removeTrailingZeros(amountNumberString, numberOfDecimalsToDisplay)
+
+  return internationalizeAmountString(formattedAmount, region, false)
 }
 
 const formatRegularPrecision = (
   amountNumber: number,
   numberOfDecimalsToDisplay: number,
-  minNumberOfDecimals: number
+  minNumberOfDecimals: number,
+  region: string
 ): string => {
   if (amountNumber < 0.001) {
-    return removeTrailingZeros(amountNumber.toFixed(5), minNumberOfDecimals)
+    const formattedAmount = removeTrailingZeros(amountNumber.toFixed(5), minNumberOfDecimals)
+
+    return internationalizeAmountString(formattedAmount, region)
   }
 
-  if (amountNumber < 1000000 && parseFloat(amountNumber.toFixed(numberOfDecimalsToDisplay)) < 1000000) {
-    const formattedAmount = removeTrailingZeros(amountNumber.toFixed(numberOfDecimalsToDisplay), minNumberOfDecimals)
+  const formattedAmount = removeTrailingZeros(amountNumber.toFixed(numberOfDecimalsToDisplay), minNumberOfDecimals)
+  const decimalCount = (formattedAmount.split('.')[1] || '').length
 
-    return amountNumber >= 1000 ? addApostrophes(formattedAmount) : formattedAmount
-  }
-
-  const tier = getTier(amountNumber)
-
-  return appendMagnitudeSymbol(tier, amountNumber, numberOfDecimalsToDisplay)
+  return new Intl.NumberFormat(region, {
+    minimumFractionDigits: decimalCount,
+    maximumFractionDigits: decimalCount,
+    useGrouping: true,
+    notation: Number(formattedAmount) >= 1000000 ? 'compact' : 'standard',
+    compactDisplay: 'short'
+  }).format(amountNumber)
 }
 
-const smartRound = (amountString: string) => {
+const smartRound = (amountString: string, region: string) => {
   const match = amountString.match(/[1-9]/)
   if (!match) return amountString
 
@@ -162,19 +175,26 @@ const smartRound = (amountString: string) => {
   const secondSignigicantDigit = parseInt(amountString.charAt(indexOfFirstNonZero + 1))
 
   if (secondSignigicantDigit >= 5) {
-    return firstSignificantDigit === 9
-      ? amountString.slice(0, indexOfFirstNonZero - 1) + '1'
-      : amountString.slice(0, indexOfFirstNonZero) + (firstSignificantDigit + 1).toString()
+    const roundedUp =
+      firstSignificantDigit === 9
+        ? amountString.slice(0, indexOfFirstNonZero - 1) + '1'
+        : amountString.slice(0, indexOfFirstNonZero) + (firstSignificantDigit + 1).toString()
+
+    return internationalizeAmountString(roundedUp, region)
   }
 
-  return amountString.slice(0, indexOfFirstNonZero + 1)
+  const roundedUp = amountString.slice(0, indexOfFirstNonZero + 1)
+
+  return internationalizeAmountString(roundedUp, region)
 }
 
-const getTier = (amountNumber: number): number => {
-  if (amountNumber < 1000000000) return 2
-  if (amountNumber < 1000000000000) return 3
+const internationalizeAmountString = (amountString: string, region: string, useGrouping = true) => {
+  const decimalCount = amountString.includes('.') ? amountString.split('.')[1].length : 0
 
-  return 4
+  return new Intl.NumberFormat(region, {
+    minimumFractionDigits: decimalCount,
+    useGrouping
+  }).format(Number(amountString))
 }
 
 export const formatFiatAmountForDisplay = (amount: number): string => {
@@ -272,7 +292,7 @@ export const exponentialToLiteral = (str: string): string => {
   return response
 }
 
-export const toExponential = (num: number | string, fractionDigits = 0, truncate?: boolean): string => {
+export const toExponential = (num: number | string, region: string, fractionDigits = 0, truncate?: boolean): string => {
   const numValue = typeof num === 'string' ? Number(num) : num
 
   if (isNaN(numValue)) {
@@ -280,7 +300,18 @@ export const toExponential = (num: number | string, fractionDigits = 0, truncate
   }
 
   if (!truncate) {
-    return numValue.toExponential(fractionDigits)
+    const formattedNumber = new Intl.NumberFormat(region, {
+      notation: 'scientific',
+      minimumFractionDigits: fractionDigits
+    })
+      .format(numValue)
+      .toLocaleLowerCase()
+
+    // Add + sign for positive exponents
+    return formattedNumber.replace('e', () => {
+      const exponentPart = formattedNumber.split('e')[1]
+      return exponentPart.startsWith('-') ? 'e' : 'e+'
+    })
   }
 
   const expStr = numValue.toExponential()
@@ -293,7 +324,7 @@ export const toExponential = (num: number | string, fractionDigits = 0, truncate
     returnedBase = base.slice(0, decimalIndex + fractionDigits + 1)
   }
 
-  return returnedBase + 'e' + exponent
+  return `${internationalizeAmountString(returnedBase, region)}e${exponent}`
 }
 
 export const aboveExpLimit = (num: number | string): boolean => {
@@ -336,11 +367,7 @@ export const isExponentialNotation = (numString: string) => numString.includes('
 
 export const isNumber = (numString: string): boolean => !Number.isNaN(Number(numString)) && numString.length > 0
 
-export const calculateAmountWorth = (
-  amount: bigint,
-  fiatPrice: number,
-  decimals = NUM_OF_ZEROS_IN_QUINTILLION
-): number => {
+export const calculateAmountWorth = (amount: bigint, fiatPrice: number, decimals: number): number => {
   if (fiatPrice < 0) throw `Invalid fiat price: ${fiatPrice}. Fiat price cannot be negative.`
 
   return fiatPrice * parseFloat(toHumanReadableAmount(amount, decimals))
