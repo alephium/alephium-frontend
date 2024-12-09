@@ -43,7 +43,7 @@ const Toast = ({
     },
     info: {
       Icon: InfoIcon,
-      color: theme.global.accent
+      color: theme.bg.primary
     }
   }
 
@@ -55,13 +55,13 @@ const Toast = ({
       <Gradient
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
-        locations={[0.4, 1]}
+        locations={[0.6, 1]}
         colors={
           theme.name === 'dark'
-            ? [theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]
+            ? [color, colord(color).alpha(0).toHex()]
             : [theme.bg.highlight, colord(theme.bg.highlight).alpha(0).toHex()]
         }
-        style={{ height: 100 }}
+        style={{ height: 160 }}
         pointerEvents="none"
       />
       <ToastContent>
@@ -88,19 +88,28 @@ const ToastContainer = styled.Pressable`
 const ToastContent = styled.View`
   flex-direction: row;
   padding: 20px;
+  gap: 16px;
 `
 
 const IconContainer = styled.View`
-  width: 50px;
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.font.primary};
 `
 
 const TextContainer = styled.View`
   justify-content: center;
   flex: 1;
+  gap: 5px;
 `
 
 const Title = styled(AppText)`
   color: ${({ theme }) => theme.font.primary};
+  font-size: 16px;
   font-weight: 600;
 `
 
@@ -110,7 +119,7 @@ const Subtitle = styled(AppText)`
 
 const Gradient = styled(LinearGradient)`
   position: absolute;
-  top: 0;
+  top: -50px;
   left: 0;
   right: 0;
 `
