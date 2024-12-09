@@ -127,6 +127,7 @@ export class LedgerAlephium extends AccountDiscovery {
   }
 
   // Copied from extension wallet
+  // TODO: Merge with existing address discovery mechanism at discoverAndCacheActiveAddresses
   public async discoverActiveAddresses(skipIndexes: number[] = []): Promise<NonSensitiveAddressDataWithGroup[]> {
     const addresses = await this.deriveActiveAccounts(this._deriveAddress, skipIndexes)
 
