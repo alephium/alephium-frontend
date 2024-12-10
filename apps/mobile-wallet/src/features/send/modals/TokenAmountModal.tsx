@@ -99,7 +99,10 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
       dispatch(closeModal({ id }))
     }
 
+    const handleClearAmountPress = () => setAmount('')
+
     const fontSize = getFontSize(`${amount}+${token.symbol}`)
+    const amountIsSet = amount && amount !== '0'
 
     return (
       <BottomModal
@@ -130,7 +133,10 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
             />
             <SuffixText fontSize={fontSize}>{token?.symbol}</SuffixText>
           </InputWrapper>
-          <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
+          <Buttons>
+            <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
+            {amountIsSet && <Button title={t('clear_amount')} onPress={handleClearAmountPress} type="transparent" />}
+          </Buttons>
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </ContentWrapper>
         <Button title={t('Continue')} variant="highlight" onPress={handleAmountValidate} disabled={!!error} />
@@ -189,4 +195,8 @@ const ErrorMessage = styled(AppText)`
   position: absolute;
   bottom: 20px;
   color: ${({ theme }) => theme.global.alert};
+`
+
+const Buttons = styled.View`
+  flex-direction: row;
 `
