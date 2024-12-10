@@ -67,7 +67,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     >
       <ScreenSection centered>
         <QRCodeContainer>
-          <QRCode size={200} fgColor={theme.font.primary} value={params.addressHash} />
+          <QRCode size={200} value={params.addressHash} />
         </QRCodeContainer>
       </ScreenSection>
       <ScreenSection centered>

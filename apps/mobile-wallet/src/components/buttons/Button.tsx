@@ -84,7 +84,7 @@ const Button = ({
 
   const bg = {
     default: theme.button.primary,
-    contrast: theme.font.primary,
+    contrast: theme.bg.contrast,
     accent: type === 'primary' ? theme.button.primary : theme.button.secondary,
     valid: theme.global.valid,
     alert: colord(theme.global.alert).alpha(0.1).toRgbString(),

@@ -22,6 +22,8 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
+import BottomButtons from '~/components/buttons/BottomButtons'
+import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
@@ -116,6 +118,15 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           maxLength={24}
         />
       </ContentContainer>
+      <BottomButtons>
+        <Button
+          title={t("Let's go!")}
+          type="primary"
+          variant="highlight"
+          onPress={() => navigation.navigate('NewWalletNameScreen')}
+        />
+        <Button title={t('Cancel')} type="secondary" onPress={() => navigation.goBack()} />
+      </BottomButtons>
       <SpinnerModal isActive={loading} text={`${t('Creating wallet')}...`} />
     </ScrollScreen>
   )

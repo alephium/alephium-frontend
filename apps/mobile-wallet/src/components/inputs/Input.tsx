@@ -16,9 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
 import { getStringAsync } from 'expo-clipboard'
-import { LinearGradient } from 'expo-linear-gradient'
 import { ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleProp, TextInput, TextInputProps, ViewProps, ViewStyle } from 'react-native'
@@ -79,6 +77,8 @@ const Input = <T extends InputValue>({
     usedInputRef.current?.setNativeProps({ text: copiedText })
   }
 
+  const isShowingPasteButton = copiedText && showPasteButton
+
   return (
     <InputStyled onPress={onPress}>
       <InputContainer>
@@ -96,17 +96,9 @@ const Input = <T extends InputValue>({
           hide={showCustomValueRendering}
           {...props}
         />
-        {copiedText && showPasteButton && (
+        {isShowingPasteButton && (
           <PasteButtonContainer>
-            <PasteButtonContainerBackground
-              colors={[colord(theme.bg.highlight).alpha(0.1).toHex(), theme.bg.highlight]}
-              start={{ x: 0, y: 0.5 }}
-              end={{ x: 1, y: 0.5 }}
-              locations={[0, 0.3]}
-            />
-            <Button compact onPress={handlePasteButtonPress}>
-              <AppText>{t('Paste')}</AppText>
-            </Button>
+            <Button compact onPress={handlePasteButtonPress} variant="contrast" title={t('Paste')} />
           </PasteButtonContainer>
         )}
       </InputContainer>
@@ -130,11 +122,13 @@ const InputStyled = styled.Pressable`
 `
 
 const InputContainer = styled.View`
-  position: relative;
+  flex-direction: row;
   flex: 1;
+  gap: 5px;
 `
 
 const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
+  flex: 1;
   height: 100%;
   color: ${({ theme }) => theme.font.primary};
   font-size: 15px;
@@ -170,18 +164,6 @@ const Error = styled(AppText)`
 `
 
 const PasteButtonContainer = styled.View`
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
   align-items: center;
   justify-content: center;
-`
-
-const PasteButtonContainerBackground = styled(LinearGradient)`
-  position: absolute;
-  right: 0;
-  left: -20px;
-  top: 0;
-  bottom: 0;
 `

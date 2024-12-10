@@ -31,7 +31,7 @@ export const lightTheme: DefaultTheme = {
     back1: '#fff',
     back2: '#fff',
     accent: 'rgba(58, 111, 244, 0.12)',
-    contrast: '#212126'
+    contrast: '#111114'
   },
   font: {
     primary: '#000',
@@ -88,13 +88,13 @@ export const darkTheme: DefaultTheme = {
     back1: '#121214',
     back2: '#0E0E10',
     accent: 'rgba(93, 108, 243, 0.08)',
-    contrast: '#ffffff'
+    contrast: '#E3E3E3'
   },
   font: {
     primary: '#E3E3E3',
     secondary: 'rgba(255, 255, 255, 0.75)',
     tertiary: 'rgba(255, 255, 255, 0.45)',
-    contrast: '#171717',
+    contrast: '#000',
     highlight: '#f0d590'
   },
   button: {
