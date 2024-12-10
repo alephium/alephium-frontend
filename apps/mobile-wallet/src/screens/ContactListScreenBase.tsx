@@ -114,7 +114,9 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
 
 export default ContactListScreenBase
 
-const ContactList = styled.View``
+const ContactList = styled.View`
+  padding: 0 ${DEFAULT_MARGIN}px;
+`
 
 const ContactIcon = styled.View<{ color?: string }>`
   justify-content: center;

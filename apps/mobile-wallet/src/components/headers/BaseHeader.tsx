@@ -49,6 +49,7 @@ export interface BaseHeaderProps extends ViewProps {
   scrollEffectOffset?: number
   CustomContent?: ReactNode
   progress?: SceneProgress
+  isCentered?: boolean
 }
 
 const AnimatedHeaderGradient = Animated.createAnimatedComponent(LinearGradient)
@@ -61,6 +62,7 @@ const BaseHeader = ({
   scrollEffectOffset = 0,
   CustomContent,
   progress,
+  isCentered = true,
   ...props
 }: BaseHeaderProps) => {
   const insets = useSafeAreaInsets()
@@ -85,7 +87,7 @@ const BaseHeader = ({
     : 1
   const animatedGradientOpacity = useDerivedValue(() => interpolate(scrollY?.value || 0, defaultScrollRange, [0, 1]))
 
-  const centerContainerAnimatedStyle = useAnimatedStyle(() =>
+  const headerTitleContainerAnimatedStyle = useAnimatedStyle(() =>
     headerTitle && !titleAlwaysVisible
       ? {
           opacity: interpolate(
@@ -125,7 +127,7 @@ const BaseHeader = ({
             <>
               {HeaderLeft}
               {(headerTitleString || HeaderTitleComponent) && (
-                <CenterContainer style={centerContainerAnimatedStyle}>
+                <HeaderTitleContainer style={headerTitleContainerAnimatedStyle} isCentered={isCentered}>
                   {headerTitleString ? (
                     <AppText semiBold size={17}>
                       {headerTitleString}
@@ -134,12 +136,12 @@ const BaseHeader = ({
                     HeaderTitleComponent
                   ) : null}
                   {HeaderTitleRight}
-                </CenterContainer>
+                </HeaderTitleContainer>
               )}
               {HeaderRight}
             </>
           ) : (
-            <CenterContainer>{CustomContent}</CenterContainer>
+            <HeaderTitleContainer isCentered={isCentered}>{CustomContent}</HeaderTitleContainer>
           )}
         </Header>
       </HeaderContainer>
@@ -166,12 +168,12 @@ const HeaderContainer = styled(Animated.View)`
   flex-direction: column;
 `
 
-const CenterContainer = styled(Animated.View)`
+const HeaderTitleContainer = styled(Animated.View)<{ isCentered?: boolean }>`
   flex: 1;
   flex-direction: row;
   gap: 15px;
   align-items: center;
-  justify-content: center;
+  justify-content: ${({ isCentered }) => (isCentered ? 'center' : 'flex-start')};
   opacity: 1;
 `
 
