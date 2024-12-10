@@ -20,14 +20,7 @@ import Ionicons from '@expo/vector-icons/Feather'
 import { colord } from 'colord'
 import { ComponentProps, ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
-import Animated, {
-  FadeIn,
-  FadeOut,
-  LinearTransition,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring
-} from 'react-native-reanimated'
+import Animated, { LinearTransition, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
@@ -54,7 +47,6 @@ export interface ButtonProps extends PressableProps {
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
-const AnimatedAppText = Animated.createAnimatedComponent(AppText)
 const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons)
 
 const Button = ({
@@ -170,15 +162,9 @@ const Button = ({
     >
       {iconProps && !(compact || round) && <EmptyPlaceholder />}
       {title && (
-        <AnimatedAppText
-          style={{ color: font, textAlign: 'center' }}
-          medium
-          size={compact ? 14 : 16}
-          exiting={FadeOut}
-          entering={FadeIn}
-        >
+        <AppText style={{ color: font, textAlign: 'center' }} medium size={compact ? 14 : 16}>
           {title}
-        </AnimatedAppText>
+        </AppText>
       )}
       {children}
       {iconProps ? (
