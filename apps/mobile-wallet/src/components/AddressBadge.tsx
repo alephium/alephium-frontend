@@ -27,7 +27,6 @@ import { useAppSelector } from '~/hooks/redux'
 import { selectContactByHash } from '~/store/addresses/addressesSelectors'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { copyAddressToClipboard } from '~/utils/addresses'
-import { stringToColour } from '~/utils/colors'
 
 interface AddressBadgeProps extends PressableProps {
   addressHash: AddressHash
@@ -76,7 +75,7 @@ const AddressBadge = ({
         </AddressBadgeContainer>
       ) : contact ? (
         <AddressBadgeContainer>
-          {!hideSymbol && <Dot color={stringToColour(contact.address)} />}
+          {!hideSymbol && <AddressColorSymbol addressHash={contact.address} size={16} />}
           <Label numberOfLines={1} style={[textStyle]} color={textColor}>
             {contact.name}
           </Label>
@@ -108,13 +107,7 @@ export default styled(AddressBadge)`
 const AddressBadgeContainer = styled.View`
   flex-direction: row;
   gap: 5px;
-`
-
-const Dot = styled.View<{ color?: string }>`
-  width: 10px;
-  height: 10px;
-  border-radius: 10px;
-  background-color: ${({ color, theme }) => color || theme.font.primary};
+  align-items: center;
 `
 
 const Label = styled(AppText)`
