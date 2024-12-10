@@ -56,11 +56,7 @@ const Toast = ({
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
         locations={[0.6, 1]}
-        colors={
-          theme.name === 'dark'
-            ? [color, colord(color).alpha(0).toHex()]
-            : [theme.bg.highlight, colord(theme.bg.highlight).alpha(0).toHex()]
-        }
+        colors={[color, colord(color).alpha(0).toHex()]}
         style={{ height: 160 }}
         pointerEvents="none"
       />
@@ -98,7 +94,7 @@ const IconContainer = styled.View`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.font.primary};
+  background-color: ${({ theme }) => theme.bg.contrast};
 `
 
 const TextContainer = styled.View`
