@@ -23,7 +23,7 @@ import Reanimated, { AnimatedRef, interpolate, SharedValue, useAnimatedStyle } f
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { BORDER_RADIUS, DEFAULT_MARGIN } from '~/style/globalStyle'
+import { BORDER_RADIUS } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 type TabsLayout = Record<number, LayoutRectangle>
@@ -59,7 +59,7 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTa
     )
 
     return {
-      left: x - indicatorXPadding,
+      left: x,
       width: width + 2 * indicatorXPadding
     }
   }, [tabLayouts, tabLabels.length])
@@ -111,8 +111,9 @@ const HeaderContainer = styled(Reanimated.View)`
   flex-direction: row;
   gap: 25px;
   align-items: center;
+  justify-content: flex-start;
   height: 44px;
-  padding: 0 ${DEFAULT_MARGIN + indicatorXPadding}px;
+  padding-left: ${indicatorXPadding}px;
 `
 
 const TabBarItemStyled = styled.Pressable`

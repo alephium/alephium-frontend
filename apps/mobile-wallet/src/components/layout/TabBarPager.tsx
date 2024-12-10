@@ -85,7 +85,7 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
 
   return (
     <Screen>
-      <BaseHeader options={{ headerTitle }} scrollY={screenScrollY} CustomContent={TabBar} />
+      <BaseHeader options={{ headerTitle }} scrollY={screenScrollY} CustomContent={TabBar} isCentered={false} />
       <StyledPagerView initialPage={0} onPageScroll={pageScrollHandler} ref={pagerRef} {...props}>
         {pages.map((Page, i) => (
           <WrappedPage key={i} Page={Page} onScroll={screenScrollHandler} />
