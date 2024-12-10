@@ -32,7 +32,6 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AppText from '~/components/AppText'
-import { BORDER_RADIUS } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 export interface ButtonProps extends PressableProps {
@@ -125,7 +124,7 @@ const Button = ({
         tint: undefined
       }[type],
       height: short ? 45 : compact ? 30 : hasOnlyIcon ? 40 : 55,
-      width: round ? (compact ? 30 : 40) : wide ? '75%' : hasOnlyIcon ? 40 : 'auto',
+      width: round ? (compact ? 30 : 40) : wide ? '100%' : hasOnlyIcon ? 40 : null,
       justifyContent: round ? 'center' : undefined,
       alignItems: round ? 'center' : undefined,
       gap: compact ? 5 : 10,
@@ -134,7 +133,7 @@ const Button = ({
       marginHorizontal: centered ? 'auto' : undefined,
       paddingVertical: round ? 0 : compact ? 5 : !hasOnlyIcon ? 0 : undefined,
       paddingHorizontal: round ? 0 : compact ? 10 : !hasOnlyIcon ? 25 : undefined,
-      borderRadius: round || compact ? 100 : BORDER_RADIUS,
+      borderRadius: 100,
       backgroundColor: {
         primary: bg,
         secondary: bg,
@@ -172,7 +171,7 @@ const Button = ({
       {iconProps && !(compact || round) && <EmptyPlaceholder />}
       {title && (
         <AnimatedAppText
-          style={{ flexGrow: 1, color: font, textAlign: 'center' }}
+          style={{ color: font, textAlign: 'center' }}
           medium
           size={compact ? 14 : 16}
           exiting={FadeOut}

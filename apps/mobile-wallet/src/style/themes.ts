@@ -24,12 +24,12 @@ export type ThemeType = 'light' | 'dark'
 export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
-    highlight: '#ffffff',
-    primary: '#f2f2f2',
-    secondary: '#f1f4f9',
-    tertiary: '#eff1f6',
-    back1: '#f2f3f7',
-    back2: '#f0f1f5',
+    highlight: 'rgba(0, 0, 0, 0.06)',
+    primary: 'rgba(0, 0, 0, 0.05)',
+    secondary: 'rgba(0, 0, 0, 0.03)',
+    tertiary: 'rgba(0, 0, 0, 0.02)',
+    back1: '#fff',
+    back2: '#fff',
     accent: 'rgba(58, 111, 244, 0.12)',
     contrast: '#212126'
   },

@@ -18,15 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useCallback, useEffect, useState } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent, Platform, useWindowDimensions } from 'react-native'
 import { Gesture } from 'react-native-gesture-handler'
-import {
-  interpolate,
-  interpolateColor,
-  runOnJS,
-  runOnUI,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring
-} from 'react-native-reanimated'
+import { interpolate, runOnJS, runOnUI, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useTheme } from 'styled-components'
 
@@ -199,15 +191,7 @@ export const useBottomModalState = ({
   // Animated Styles
   // ----------------------------
   const modalAnimatedStyle = useAnimatedStyle(() => ({
-    height: -modalHeight.value,
-    backgroundColor: interpolateColor(
-      -modalHeight.value,
-      [0, maxHeight],
-      [
-        theme.name === 'light' ? theme.bg.highlight : theme.bg.primary,
-        theme.name === 'light' ? theme.bg.highlight : theme.bg.back2
-      ]
-    )
+    height: -modalHeight.value
   }))
 
   const handleAnimatedStyle = useAnimatedStyle(() => ({

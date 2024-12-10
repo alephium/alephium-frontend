@@ -103,7 +103,7 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
               <ScreenTitle title={t('Welcome to Alephium!')} />
             </WelcomeCard>
           </ScreenSection>
-          <ButtonsContainer>
+          <ButtonsContainer bottomInset>
             <Button
               title={t('New wallet')}
               type="primary"

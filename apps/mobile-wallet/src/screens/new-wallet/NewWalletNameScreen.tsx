@@ -132,5 +132,4 @@ const ContentContainer = styled.View`
 
 const StyledInput = styled(Input)`
   margin-top: ${DEFAULT_MARGIN}px;
-  width: 80%;
 `

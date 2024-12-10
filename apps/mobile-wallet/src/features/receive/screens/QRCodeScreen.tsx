@@ -67,11 +67,11 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     >
       <ScreenSection centered>
         <QRCodeContainer>
-          <QRCode size={200} bgColor={theme.bg.highlight} fgColor={theme.font.primary} value={params.addressHash} />
+          <QRCode size={200} fgColor={theme.font.primary} value={params.addressHash} />
         </QRCodeContainer>
       </ScreenSection>
       <ScreenSection centered>
-        <Button title={t('Copy address')} onPress={handleCopyAddressPress} iconProps={{ name: 'copy' }} />
+        <Button short title={t('Copy address')} onPress={handleCopyAddressPress} iconProps={{ name: 'copy' }} />
       </ScreenSection>
       <ScreenSection>
         <Surface>
@@ -98,5 +98,5 @@ const QRCodeContainer = styled.View`
   margin: 15px 0;
   padding: 25px;
   border-radius: ${BORDER_RADIUS_BIG}px;
-  background-color: ${({ theme }) => theme.bg.highlight};
+  border: 2px solid ${({ theme }) => theme.border.primary};
 `
