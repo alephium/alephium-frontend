@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { explorer, NFTTokenUriMetaData } from '@alephium/web3'
-import { isArray, orderBy } from 'lodash'
 import DOMPurify from 'dompurify'
+import { isArray, orderBy } from 'lodash'
 
 import { calculateAmountWorth } from '@/numbers'
 import { Asset, FungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
