@@ -20,7 +20,6 @@ import dayjs from 'dayjs'
 import { memo } from 'react'
 import styled from 'styled-components/native'
 
-import Amount from '~/components/Amount'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import ListItem, { ListItemProps } from '~/components/ListItem'
 import { useTransactionUI } from '~/features/transactionsDisplay/useTransactionUI'
@@ -83,19 +82,6 @@ const AmountColumn = styled.View`
   flex: 1;
   align-items: flex-end;
   flex-shrink: 0;
-`
-
-const AssetLogos = styled.View`
-  flex-shrink: 0;
-  flex: 1;
-  flex-direction: row;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  gap: 5px;
-`
-
-const AmountStyled = styled(Amount)`
-  text-align: right;
 `
 
 const FailedTXBubble = styled.View`
