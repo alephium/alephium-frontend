@@ -20,7 +20,7 @@ import { useState } from 'react'
 import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
 import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
 import Reanimated, { AnimatedRef, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { BORDER_RADIUS, DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -39,7 +39,6 @@ const indicatorXPadding = 10
 
 const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTabBarProps) => {
   const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
-  const theme = useTheme()
 
   const indicatorStyle = useAnimatedStyle(() => {
     const positionsArray = [...Array(tabLabels.length).keys()]
@@ -81,18 +80,7 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTa
 
   return (
     <HeaderContainer ref={tabBarRef}>
-      <Indicator
-        style={[
-          indicatorStyle,
-          {
-            shadowColor: 'black',
-            shadowOffset: { height: 3, width: 0 },
-            shadowOpacity: theme.name === 'dark' ? 0 : 0.08,
-            shadowRadius: 5,
-            elevation: 10
-          }
-        ]}
-      />
+      <Indicator style={indicatorStyle} />
       {tabLabels.map((label, i) => (
         <TabBarItem
           key={label}
