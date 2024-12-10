@@ -72,7 +72,7 @@ const TransactionsFlashList = forwardRef(
       renderTransactionItem({ item, index, isLast: index === confirmedTransactions.length - 1 })
 
     const renderTransactionItem = ({ item: tx, isLast }: TransactionItem) => (
-      <TransactionListItemStyled
+      <TransactionListItem
         key={transactionKeyExtractor(tx)}
         tx={tx}
         isLast={isLast}
@@ -157,8 +157,6 @@ const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
   margin-left: ${DEFAULT_MARGIN}px;
   margin-top: 22px;
 `
-
-const TransactionListItemStyled = styled(TransactionListItem)``
 
 const Footer = styled.View`
   padding-bottom: 150px;
