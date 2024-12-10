@@ -24,27 +24,33 @@ import AssetLogo from '~/components/AssetLogo'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import { useAppSelector } from '~/hooks/redux'
 
-interface AssetAmountWithLogoProps extends Pick<AmountProps, 'fullPrecision' | 'useTinyAmountShorthand'> {
+interface AssetAmountWithLogoProps
+  extends Pick<AmountProps, 'fullPrecision' | 'useTinyAmountShorthand' | 'showPlusMinus'> {
   assetId: Asset['id']
-  logoSize: number
   amount: bigint
+  logoSize?: number
+  logoPosition?: 'left' | 'right'
 }
 
 const AssetAmountWithLogo = ({
   assetId,
-  logoSize,
   amount,
   useTinyAmountShorthand,
-  fullPrecision
+  fullPrecision,
+  showPlusMinus,
+  logoSize = 18,
+  logoPosition = 'left'
 }: AssetAmountWithLogoProps) => {
   const asset = useAppSelector((s) => selectFungibleTokenById(s, assetId))
   const nft = useAppSelector((s) => selectNFTById(s, assetId))
+
+  const Logo = <AssetLogo assetId={assetId} size={logoSize} />
 
   return nft ? (
     <NFTThumbnail key={nft.id} nftId={nft.id} size={50} />
   ) : (
     <AssetStyled key={assetId}>
-      <AssetLogo assetId={assetId} size={logoSize} />
+      {logoPosition === 'left' && Logo}
       <Amount
         value={amount}
         isUnknownToken={!asset?.symbol}
@@ -54,7 +60,10 @@ const AssetAmountWithLogo = ({
         fadeSuffix
         fullPrecision={fullPrecision}
         useTinyAmountShorthand={useTinyAmountShorthand}
+        showPlusMinus={showPlusMinus}
+        highlight={showPlusMinus}
       />
+      {logoPosition === 'right' && Logo}
     </AssetStyled>
   )
 }

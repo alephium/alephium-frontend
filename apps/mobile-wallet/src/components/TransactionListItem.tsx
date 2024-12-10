@@ -21,7 +21,7 @@ import { memo } from 'react'
 import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
-import AssetLogo from '~/components/AssetLogo'
+import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import ListItem, { ListItemProps } from '~/components/ListItem'
 import { useTransactionUI } from '~/features/transactionsDisplay/useTransactionUI'
 import { AddressTransaction } from '~/types/transactions'
@@ -57,27 +57,11 @@ const TransactionListItem = memo(({ tx, showInternalInflows = false, ...props }:
         </TransactionIcon>
       }
       rightSideContent={
-        <>
-          <AssetLogos>
-            {assets.map((asset) => (
-              <AssetLogo assetId={asset.id} key={asset.id} size={20} />
-            ))}
-          </AssetLogos>
-          <AmountColumn>
-            {knownAssets.map(({ id, amount, decimals, symbol }) => (
-              <AmountStyled
-                key={id}
-                value={amount}
-                decimals={decimals}
-                suffix={symbol}
-                isUnknownToken={!symbol}
-                highlight={!isMoved}
-                showPlusMinus={!isMoved}
-                bold
-              />
-            ))}
-          </AmountColumn>
-        </>
+        <AmountColumn>
+          {knownAssets.map(({ id, amount, decimals, symbol }) => (
+            <AssetAmountWithLogo key={id} assetId={id} amount={amount} showPlusMinus={!isMoved} logoPosition="right" />
+          ))}
+        </AmountColumn>
       }
     />
   )

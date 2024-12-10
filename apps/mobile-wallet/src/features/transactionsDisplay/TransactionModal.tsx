@@ -68,7 +68,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
         <Row title={t('Moved')} transparent isVertical>
           <AmountsContainer>
             {tokensWithSymbol.map(({ id, amount }) => (
-              <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
+              <AssetAmountWithLogo key={id} assetId={id} amount={amount} />
             ))}
           </AmountsContainer>
         </Row>
@@ -77,7 +77,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
         <Row title={t('Sent')} transparent isVertical titleColor={theme.global.send}>
           <AmountsContainer>
             {groupedIOAmounts.out.map(({ id, amount }) => (
-              <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
+              <AssetAmountWithLogo key={id} assetId={id} amount={amount} />
             ))}
           </AmountsContainer>
         </Row>
@@ -86,7 +86,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
         <Row title={t('Received')} transparent isVertical titleColor={theme.global.receive}>
           <AmountsContainer>
             {groupedIOAmounts.in.map(({ id, amount }) => (
-              <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
+              <AssetAmountWithLogo key={id} assetId={id} amount={amount} />
             ))}
           </AmountsContainer>
         </Row>

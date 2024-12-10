@@ -305,9 +305,7 @@ const WalletConnectSessionRequestModal = withModal(
                   <Row title={t('Sending')} titleColor="secondary">
                     <AssetAmounts>
                       {requestData.wcData.assetAmounts.map(({ id, amount }) =>
-                        amount ? (
-                          <AssetAmountWithLogo key={id} assetId={id} logoSize={18} amount={BigInt(amount)} />
-                        ) : null
+                        amount ? <AssetAmountWithLogo key={id} assetId={id} amount={BigInt(amount)} /> : null
                       )}
                     </AssetAmounts>
                   </Row>
@@ -334,7 +332,6 @@ const WalletConnectSessionRequestModal = withModal(
                     <Row title={t('Initial amount')} titleColor="secondary">
                       <AssetAmountWithLogo
                         assetId={ALPH.id}
-                        logoSize={18}
                         amount={BigInt(requestData.wcData.initialAlphAmount.amount)}
                         fullPrecision
                       />
