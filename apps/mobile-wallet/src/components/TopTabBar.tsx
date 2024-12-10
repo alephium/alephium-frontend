@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
 import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
 import Reanimated, { AnimatedRef, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
@@ -33,11 +33,12 @@ interface TopTabBarProps {
   pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
   onTabPress: (index: number) => void
   tabBarRef?: AnimatedRef<Reanimated.View>
+  customContent?: ReactNode
 }
 
 const indicatorXPadding = 10
 
-const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTabBarProps) => {
+const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customContent }: TopTabBarProps) => {
   const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
 
   const indicatorStyle = useAnimatedStyle(() => {
@@ -59,7 +60,7 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTa
     )
 
     return {
-      left: x,
+      left: x - indicatorXPadding,
       width: width + 2 * indicatorXPadding
     }
   }, [tabLayouts, tabLabels.length])
@@ -79,17 +80,20 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef }: TopTa
   }
 
   return (
-    <HeaderContainer ref={tabBarRef}>
-      <Indicator style={indicatorStyle} />
-      {tabLabels.map((label, i) => (
-        <TabBarItem
-          key={label}
-          label={label}
-          onPress={() => handleOnTabPress(i)}
-          onLayout={(e) => handleTabLayoutEvent(i, e)}
-        />
-      ))}
-    </HeaderContainer>
+    <TopTabBarStyled>
+      {customContent}
+      <HeaderContainer ref={tabBarRef}>
+        <Indicator style={indicatorStyle} />
+        {tabLabels.map((label, i) => (
+          <TabBarItem
+            key={label}
+            label={label}
+            onPress={() => handleOnTabPress(i)}
+            onLayout={(e) => handleTabLayoutEvent(i, e)}
+          />
+        ))}
+      </HeaderContainer>
+    </TopTabBarStyled>
   )
 }
 
@@ -107,13 +111,19 @@ const TabBarItem = ({ label, ...props }: TabBarItemProps) => (
 
 export default TopTabBar
 
+const TopTabBarStyled = styled.View`
+  width: 100%;
+  flex-direction: column;
+  gap: 10px;
+`
+
 const HeaderContainer = styled(Reanimated.View)`
   flex-direction: row;
   gap: 25px;
   align-items: center;
   justify-content: flex-start;
   height: 44px;
-  padding-left: ${indicatorXPadding}px;
+  padding-left: ${indicatorXPadding * 2}px;
 `
 
 const TabBarItemStyled = styled.Pressable`
