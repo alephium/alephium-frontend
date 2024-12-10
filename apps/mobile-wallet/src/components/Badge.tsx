@@ -52,7 +52,7 @@ export default styled(Badge)`
 
     return css`
       min-width: 25px;
-      padding: 2px 8px;
+      padding: 4px 8px;
       align-items: center;
       justify-content: center;
       border-radius: ${rounded ? '30px' : '7px'};

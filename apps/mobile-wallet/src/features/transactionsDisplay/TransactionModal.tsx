@@ -27,6 +27,7 @@ import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
+import Badge from '~/components/Badge'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import IOList from '~/components/IOList'
@@ -62,10 +63,44 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
 
   const groupedIOAmounts = groupBy(tokensWithSymbol, (t) => (t.amount > 0 ? 'in' : 'out'))
 
+  const statuses = {
+    confirmed: {
+      color: theme.global.valid,
+      text: t('Confirmed')
+    },
+    pending: {
+      color: theme.bg.primary,
+      text: t('Pending')
+    },
+    scriptError: {
+      color: theme.global.alert,
+      text: t('Script execution failed')
+    }
+  }
+
+  const status = !tx.scriptExecutionOk ? statuses.scriptError : tx.blockHash ? statuses.confirmed : statuses.pending
+
   return (
     <BottomModal modalId={id} title={t('Transaction')}>
+      <Row title={t('From')} transparent>
+        {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
+      </Row>
+      <Row title={t('To')} transparent>
+        {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
+      </Row>
+      <Row title={t('Timestamp')} transparent>
+        <AppText semiBold>
+          {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+        </AppText>
+      </Row>
+      <Row title={t('Status')} transparent>
+        <Badge color={status.color}>{status.text}</Badge>
+      </Row>
+      <Row title={t('Fee')} transparent>
+        <Amount value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)} fadeDecimals fullPrecision bold showOnDiscreetMode />
+      </Row>
       {isMoved && (
-        <Row title={t('Moved')} transparent isVertical>
+        <Row title={t('Moved')} transparent>
           <AmountsContainer>
             {tokensWithSymbol.map(({ id, amount }) => (
               <AssetAmountWithLogo key={id} assetId={id} amount={amount} />
@@ -74,54 +109,36 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
         </Row>
       )}
       {!isMoved && groupedIOAmounts.out && (
-        <Row title={t('Sent')} transparent isVertical titleColor={theme.global.send}>
+        <Row title={t('Sent')} transparent titleColor={theme.global.send}>
           <AmountsContainer>
             {groupedIOAmounts.out.map(({ id, amount }) => (
-              <AssetAmountWithLogo key={id} assetId={id} amount={amount} />
+              <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoPosition="right" />
             ))}
           </AmountsContainer>
         </Row>
       )}
       {!isMoved && groupedIOAmounts.in && (
-        <Row title={t('Received')} transparent isVertical titleColor={theme.global.receive}>
+        <Row title={t('Received')} transparent titleColor={theme.global.receive}>
           <AmountsContainer>
             {groupedIOAmounts.in.map(({ id, amount }) => (
-              <AssetAmountWithLogo key={id} assetId={id} amount={amount} />
+              <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoPosition="right" />
             ))}
           </AmountsContainer>
         </Row>
       )}
+
       {nftsData.length === 1 && (
-        <Row title={t('NFT')} noMaxWidth transparent isLast>
+        <Row title={t('NFT')} noMaxWidth transparent>
           <NFTThumbnail nftId={nftsData[0].id} size={100} />
         </Row>
       )}
       {nftsData.length > 1 && (
-        <Row title={t('NFTs')} noMaxWidth transparent isLast>
-          <Button title={t('See NFTs')} onPress={openNftGridModal} />
+        <Row title={t('NFTs')} noMaxWidth transparent>
+          <Button title={t('See NFTs')} onPress={openNftGridModal} short />
         </Row>
       )}
-      <Row title={t('Timestamp')} transparent isVertical>
-        <AppText semiBold>
-          {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-        </AppText>
-      </Row>
-      <Row title={t('Status')} transparent isVertical>
-        <AppText semiBold>
-          {!tx.scriptExecutionOk ? t('Script execution failed') : tx.blockHash ? t('Confirmed') : t('Pending')}
-        </AppText>
-      </Row>
-      <Row title={t('From')} transparent isVertical>
-        {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
-      </Row>
-      <Row title={t('To')} transparent isVertical>
-        {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
-      </Row>
-      <Row title={t('Fee')} transparent isLast={unknownTokens.length === 0 && nftsData.length === 0} isVertical>
-        <Amount value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)} fadeDecimals fullPrecision bold showOnDiscreetMode />
-      </Row>
       {unknownTokens.length > 0 && (
-        <Row title={t('Unknown tokens')} transparent isLast={nftsData.length === 0} isVertical>
+        <Row title={t('Unknown tokens')} transparent isVertical>
           {unknownTokens.map(({ id, amount, decimals, symbol }) => (
             <UnknownTokenAmount key={id}>
               <Amount
@@ -173,5 +190,5 @@ const UnknownTokenAmount = styled.View`
 
 const AmountsContainer = styled.View`
   gap: 5px;
-  align-items: flex-start;
+  align-items: flex-end;
 `
