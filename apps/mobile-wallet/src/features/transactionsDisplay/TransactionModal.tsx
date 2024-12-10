@@ -91,6 +91,16 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
           </AmountsContainer>
         </Row>
       )}
+      {nftsData.length === 1 && (
+        <Row title={t('NFT')} noMaxWidth transparent isLast>
+          <NFTThumbnail nftId={nftsData[0].id} size={100} />
+        </Row>
+      )}
+      {nftsData.length > 1 && (
+        <Row title={t('NFTs')} noMaxWidth transparent isLast>
+          <Button title={t('See NFTs')} onPress={openNftGridModal} />
+        </Row>
+      )}
       <Row title={t('Timestamp')} transparent isVertical>
         <AppText semiBold>
           {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
@@ -134,16 +144,6 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
               )}
             </UnknownTokenAmount>
           ))}
-        </Row>
-      )}
-      {nftsData.length === 1 && (
-        <Row title={t('NFT')} noMaxWidth transparent isLast>
-          <NFTThumbnail nftId={nftsData[0].id} size={100} />
-        </Row>
-      )}
-      {nftsData.length > 1 && (
-        <Row title={t('NFTs')} noMaxWidth transparent isLast>
-          <Button title={t('See NFTs')} onPress={openNftGridModal} />
         </Row>
       )}
 

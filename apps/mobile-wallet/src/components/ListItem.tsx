@@ -112,7 +112,7 @@ const Row = styled(Animated.View)`
 const RowContent = styled.View<{ showSeparator: boolean }>`
   flex-direction: row;
   gap: 10px;
-  padding: 16px 0;
+  padding: 14px 0;
   height: 100%;
   align-items: center;
   flex: 1;
