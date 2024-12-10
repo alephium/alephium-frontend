@@ -36,7 +36,7 @@ import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
+import { makeSelectAddressesKnownFungibleTokens, makeSelectAddressesUnknownTokens } from '~/store/addressesSlice'
 import { isNumericStringValid } from '~/utils/numbers'
 
 interface TokenAmountModalProps {
@@ -56,7 +56,9 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
     const theme = useTheme()
     const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
     const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
-    const token = knownFungibleTokens.find((t) => t.id === tokenId)
+    const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
+    const unknownTokens = useAppSelector((s) => selectAddressesUnknownTokens(s, addressHash))
+    const token = knownFungibleTokens.find((t) => t.id === tokenId) ?? unknownTokens.find((t) => t.id === tokenId)
 
     const { t } = useTranslation()
 

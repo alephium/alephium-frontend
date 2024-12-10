@@ -40,23 +40,23 @@ const AssetAmountWithLogo = ({
   const asset = useAppSelector((s) => selectFungibleTokenById(s, assetId))
   const nft = useAppSelector((s) => selectNFTById(s, assetId))
 
-  return asset ? (
-    <AssetStyled key={asset.id}>
-      <AssetLogo assetId={asset.id} size={logoSize} />
+  return nft ? (
+    <NFTThumbnail key={nft.id} nftId={nft.id} size={50} />
+  ) : (
+    <AssetStyled key={assetId}>
+      <AssetLogo assetId={assetId} size={logoSize} />
       <Amount
         value={amount}
-        isUnknownToken={!asset.symbol}
-        suffix={asset.symbol}
-        decimals={asset.decimals}
+        isUnknownToken={!asset?.symbol}
+        suffix={asset?.symbol}
+        decimals={asset?.decimals}
         semiBold
         fadeSuffix
         fullPrecision={fullPrecision}
         useTinyAmountShorthand={useTinyAmountShorthand}
       />
     </AssetStyled>
-  ) : nft ? (
-    <NFTThumbnail key={nft.id} nftId={nft.id} size={50} />
-  ) : null
+  )
 }
 
 export default AssetAmountWithLogo

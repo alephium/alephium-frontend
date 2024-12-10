@@ -389,8 +389,13 @@ export const makeSelectAddressesKnownFungibleTokens = () =>
     tokens.filter((token): token is AddressFungibleToken => !!token.symbol)
   )
 
-// Same as in desktop wallet
 export const makeSelectAddressesUnknownTokens = () =>
+  createSelector([makeSelectAddressesTokens()], (tokens): Asset[] =>
+    tokens.filter((token): token is Asset => !token.name && !token.symbol && !token.verified && !token.logoURI)
+  )
+
+// Same as in desktop wallet
+export const makeSelectAddressesUnknownTokensIds = () =>
   createSelector(
     [selectAllFungibleTokens, selectNFTIds, makeSelectAddresses()],
     (fungibleTokens, nftIds, addresses): Asset['id'][] => {
@@ -415,7 +420,7 @@ export const makeSelectAddressesUnknownTokens = () =>
 // Same as in desktop wallet
 export const makeSelectAddressesCheckedUnknownTokens = () =>
   createSelector(
-    [makeSelectAddressesUnknownTokens(), (state: RootState) => state.app.checkedUnknownTokenIds],
+    [makeSelectAddressesUnknownTokensIds(), (state: RootState) => state.app.checkedUnknownTokenIds],
     (tokensWithoutMetadata, checkedUnknownTokenIds) =>
       tokensWithoutMetadata.filter((tokenId) => checkedUnknownTokenIds.includes(tokenId))
   )
