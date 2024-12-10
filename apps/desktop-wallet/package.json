@@ -119,7 +119,7 @@
     "jsdom": "^21.1.1",
     "lodash": "^4.17.21",
     "lucide-react": "^0.287.0",
-    "nanoid": "^5.0.0",
+    "nanoid": "^4.0.0",
     "posthog-js": "^1.52.0",
     "qrloop": "^1.4.1",
     "react": "^18.2.0",
