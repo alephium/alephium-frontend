@@ -73,7 +73,7 @@ const BottomButtons = ({ children, bottomInset, float, fullWidth, onHeightChange
 export default BottomButtons
 
 const BottomButtonsStyled = styled.View`
-  padding: ${VERTICAL_GAP * 2}px ${DEFAULT_MARGIN}px ${VERTICAL_GAP}px ${DEFAULT_MARGIN}px;
+  padding: ${VERTICAL_GAP * 1.5}px ${DEFAULT_MARGIN}px ${VERTICAL_GAP}px ${DEFAULT_MARGIN}px;
 `
 
 const Gradient = styled(LinearGradient)`

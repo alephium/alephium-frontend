@@ -27,9 +27,9 @@ import AddressBadge from '~/components/AddressBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import IOList from '~/components/IOList'
-import Surface from '~/components/layout/Surface'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import Row from '~/components/Row'
 import BottomModal from '~/features/modals/BottomModal'
@@ -63,102 +63,97 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
   const groupedIOAmounts = groupBy(tokensWithSymbol, (t) => (t.amount > 0 ? 'in' : 'out'))
 
   return (
-    <BottomModal modalId={id} contentVerticalGap title={t('Transaction')}>
-      <Surface type="highlight">
-        {isMoved && (
-          <Row title={t('Moved')} transparent isVertical>
-            <AmountsContainer>
-              {tokensWithSymbol.map(({ id, amount }) => (
-                <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
-              ))}
-            </AmountsContainer>
-          </Row>
-        )}
-        {!isMoved && groupedIOAmounts.out && (
-          <Row title={t('Sent')} transparent isVertical titleColor={theme.global.send}>
-            <AmountsContainer>
-              {groupedIOAmounts.out.map(({ id, amount }) => (
-                <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
-              ))}
-            </AmountsContainer>
-          </Row>
-        )}
-        {!isMoved && groupedIOAmounts.in && (
-          <Row title={t('Received')} transparent isVertical titleColor={theme.global.receive}>
-            <AmountsContainer>
-              {groupedIOAmounts.in.map(({ id, amount }) => (
-                <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
-              ))}
-            </AmountsContainer>
-          </Row>
-        )}
-        <Row title={t('Timestamp')} transparent isVertical>
-          <AppText semiBold>
-            {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-          </AppText>
-        </Row>
-        <Row title={t('Status')} transparent isVertical>
-          <AppText semiBold>
-            {!tx.scriptExecutionOk ? t('Script execution failed') : tx.blockHash ? t('Confirmed') : t('Pending')}
-          </AppText>
-        </Row>
-        <Row title={t('From')} transparent isVertical>
-          {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
-        </Row>
-        <Row title={t('To')} transparent isVertical>
-          {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
-        </Row>
-        <Row title={t('Fee')} transparent isLast={unknownTokens.length === 0 && nftsData.length === 0} isVertical>
-          <Amount
-            value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)}
-            fadeDecimals
-            fullPrecision
-            bold
-            showOnDiscreetMode
-          />
-        </Row>
-        {unknownTokens.length > 0 && (
-          <Row title={t('Unknown tokens')} transparent isLast={nftsData.length === 0} isVertical>
-            {unknownTokens.map(({ id, amount, decimals, symbol }) => (
-              <UnknownTokenAmount key={id}>
-                <Amount
-                  value={amount}
-                  decimals={decimals}
-                  suffix={symbol}
-                  isUnknownToken={!symbol}
-                  highlight={!isMoved}
-                  showPlusMinus={!isMoved}
-                  fadeSuffix
-                  fullPrecision
-                  semiBold
-                />
-                {!symbol && (
-                  <TokenId>
-                    <AppText numberOfLines={1} ellipsizeMode="middle">
-                      {id}
-                    </AppText>
-                  </TokenId>
-                )}
-              </UnknownTokenAmount>
+    <BottomModal modalId={id} title={t('Transaction')}>
+      {isMoved && (
+        <Row title={t('Moved')} transparent isVertical>
+          <AmountsContainer>
+            {tokensWithSymbol.map(({ id, amount }) => (
+              <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
             ))}
-          </Row>
-        )}
-        {nftsData.length === 1 && (
-          <Row title={t('NFT')} noMaxWidth transparent isLast>
-            <NFTThumbnail nftId={nftsData[0].id} size={100} />
-          </Row>
-        )}
-        {nftsData.length > 1 && (
-          <Row title={t('NFTs')} noMaxWidth transparent isLast>
-            <Button title={t('See NFTs')} onPress={openNftGridModal} />
-          </Row>
-        )}
-      </Surface>
-      <Button
-        iconProps={{ name: 'arrow-up-right' }}
-        onPress={() => openBrowserAsync(explorerTxUrl)}
-        title={t('Explorer')}
-      />
+          </AmountsContainer>
+        </Row>
+      )}
+      {!isMoved && groupedIOAmounts.out && (
+        <Row title={t('Sent')} transparent isVertical titleColor={theme.global.send}>
+          <AmountsContainer>
+            {groupedIOAmounts.out.map(({ id, amount }) => (
+              <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
+            ))}
+          </AmountsContainer>
+        </Row>
+      )}
+      {!isMoved && groupedIOAmounts.in && (
+        <Row title={t('Received')} transparent isVertical titleColor={theme.global.receive}>
+          <AmountsContainer>
+            {groupedIOAmounts.in.map(({ id, amount }) => (
+              <AssetAmountWithLogo key={id} assetId={id} amount={amount} logoSize={18} />
+            ))}
+          </AmountsContainer>
+        </Row>
+      )}
+      <Row title={t('Timestamp')} transparent isVertical>
+        <AppText semiBold>
+          {dayjs(tx.timestamp).toDate().toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+        </AppText>
+      </Row>
+      <Row title={t('Status')} transparent isVertical>
+        <AppText semiBold>
+          {!tx.scriptExecutionOk ? t('Script execution failed') : tx.blockHash ? t('Confirmed') : t('Pending')}
+        </AppText>
+      </Row>
+      <Row title={t('From')} transparent isVertical>
+        {isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
+      </Row>
+      <Row title={t('To')} transparent isVertical>
+        {!isOut ? <AddressBadge addressHash={tx.address.hash} /> : <IOList isOut={isOut} tx={tx} />}
+      </Row>
+      <Row title={t('Fee')} transparent isLast={unknownTokens.length === 0 && nftsData.length === 0} isVertical>
+        <Amount value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)} fadeDecimals fullPrecision bold showOnDiscreetMode />
+      </Row>
+      {unknownTokens.length > 0 && (
+        <Row title={t('Unknown tokens')} transparent isLast={nftsData.length === 0} isVertical>
+          {unknownTokens.map(({ id, amount, decimals, symbol }) => (
+            <UnknownTokenAmount key={id}>
+              <Amount
+                value={amount}
+                decimals={decimals}
+                suffix={symbol}
+                isUnknownToken={!symbol}
+                highlight={!isMoved}
+                showPlusMinus={!isMoved}
+                fadeSuffix
+                fullPrecision
+                semiBold
+              />
+              {!symbol && (
+                <TokenId>
+                  <AppText numberOfLines={1} ellipsizeMode="middle">
+                    {id}
+                  </AppText>
+                </TokenId>
+              )}
+            </UnknownTokenAmount>
+          ))}
+        </Row>
+      )}
+      {nftsData.length === 1 && (
+        <Row title={t('NFT')} noMaxWidth transparent isLast>
+          <NFTThumbnail nftId={nftsData[0].id} size={100} />
+        </Row>
+      )}
+      {nftsData.length > 1 && (
+        <Row title={t('NFTs')} noMaxWidth transparent isLast>
+          <Button title={t('See NFTs')} onPress={openNftGridModal} />
+        </Row>
+      )}
+
+      <BottomButtons fullWidth>
+        <Button
+          iconProps={{ name: 'arrow-up-right' }}
+          onPress={() => openBrowserAsync(explorerTxUrl)}
+          title={t('Explorer')}
+        />
+      </BottomButtons>
     </BottomModal>
   )
 })
