@@ -384,5 +384,7 @@
   "forgetAddress_one": "Forget address",
   "You can always re-add it to your wallet.": "You can always re-add it to your wallet.",
   "Could not forget address": "Could not forget address",
-  "clear_amount": "Clear"
+  "clear_amount": "Clear",
+  "Added {{ tokenName }}": "Added {{ tokenName }}",
+  "Removed {{ tokenName }}": "Removed {{ tokenName }}"
 }

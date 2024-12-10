@@ -62,23 +62,20 @@ const AssetRow = ({ asset, ...props }: AssetRowProps) => {
       )
     } else {
       const isRemovingNft = !!assetAmounts.find((a) => a.id === asset.id)
-      setAssetAmountInContext(asset.id, isRemovingNft ? undefined : BigInt(1))
 
-      showToast({
-        text1: isRemovingNft ? `Removed ${asset.name}` : `Added ${asset.name}`, // TODO: translate
-        type: 'info',
-        visibilityTime: ToastDuration.SHORT
-      })
+      setAssetAmountInContext(asset.id, isRemovingNft ? undefined : BigInt(1))
+      showMessage(isRemovingNft, asset.name)
     }
   }
 
   const onAmountSet = (amount: bigint) => {
     setAssetAmountInContext(asset.id, amount)
+    showMessage(amount === BigInt(0), asset.name ?? asset.id)
+  }
 
-    const isRemovingToken = amount === BigInt(0)
-
+  const showMessage = (isRemoved: boolean, tokenName: string) => {
     showToast({
-      text1: isRemovingToken ? `Removed ${asset.name}` : `Added ${asset.name}`, // TODO: translate
+      text1: isRemoved ? t('Removed {{ tokenName }}', { tokenName }) : t('Added {{ tokenName }}', { tokenName }),
       type: 'info',
       visibilityTime: ToastDuration.SHORT
     })
