@@ -20,7 +20,6 @@ import { NativeScrollEvent, NativeSyntheticEvent, Platform, useWindowDimensions 
 import { Gesture } from 'react-native-gesture-handler'
 import { interpolate, runOnJS, runOnUI, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useTheme } from 'styled-components'
 
 import { removeModal } from '~/features/modals/modalActions'
 import { selectModalById } from '~/features/modals/modalSelectors'
@@ -63,7 +62,6 @@ export const useBottomModalState = ({
   const insets = useSafeAreaInsets()
   const dimensions = useWindowDimensions()
   const dispatch = useAppDispatch()
-  const theme = useTheme()
   const maxHeight = dimensions.height - insets.top
 
   // Initialize shared values

@@ -36,7 +36,7 @@ import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
+import { makeSelectAddressesKnownFungibleTokens, makeSelectAddressesUnknownTokens } from '~/store/addressesSlice'
 import { isNumericStringValid } from '~/utils/numbers'
 
 interface TokenAmountModalProps {
@@ -56,7 +56,9 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
     const theme = useTheme()
     const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
     const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
-    const token = knownFungibleTokens.find((t) => t.id === tokenId)
+    const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
+    const unknownTokens = useAppSelector((s) => selectAddressesUnknownTokens(s, addressHash))
+    const token = knownFungibleTokens.find((t) => t.id === tokenId) ?? unknownTokens.find((t) => t.id === tokenId)
 
     const { t } = useTranslation()
 
@@ -99,7 +101,10 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
       dispatch(closeModal({ id }))
     }
 
+    const handleClearAmountPress = () => setAmount('')
+
     const fontSize = getFontSize(`${amount}+${token.symbol}`)
+    const amountIsSet = amount && amount !== '0'
 
     return (
       <BottomModal
@@ -130,7 +135,10 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
             />
             <SuffixText fontSize={fontSize}>{token?.symbol}</SuffixText>
           </InputWrapper>
-          <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
+          <Buttons>
+            <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
+            {amountIsSet && <Button title={t('clear_amount')} onPress={handleClearAmountPress} type="transparent" />}
+          </Buttons>
           {error && <ErrorMessage>{error}</ErrorMessage>}
         </ContentWrapper>
         <Button title={t('Continue')} variant="highlight" onPress={handleAmountValidate} disabled={!!error} />
@@ -189,4 +197,8 @@ const ErrorMessage = styled(AppText)`
   position: absolute;
   bottom: 20px;
   color: ${({ theme }) => theme.global.alert};
+`
+
+const Buttons = styled.View`
+  flex-direction: row;
 `

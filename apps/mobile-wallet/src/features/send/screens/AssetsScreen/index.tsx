@@ -34,6 +34,7 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
+  makeSelectAddressesUnknownTokens,
   selectAddressByHash
 } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -48,6 +49,8 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
+  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
+  const unknownTokens = useAppSelector((s) => selectAddressesUnknownTokens(s, address?.hash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, address?.hash))
   const { t } = useTranslation()
@@ -73,7 +76,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 
   if (!address) return null
 
-  const assets = [...knownFungibleTokens, ...nfts]
+  const assets = [...knownFungibleTokens, ...nfts, ...unknownTokens]
   const orderedAssets = orderBy(assets, (a) => assetAmounts.find((assetWithAmount) => a.id === assetWithAmount.id))
 
   return (
