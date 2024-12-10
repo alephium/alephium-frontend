@@ -116,11 +116,7 @@ const BaseHeader = ({
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
           locations={[0.6, 1]}
-          colors={
-            theme.name === 'dark'
-              ? [theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]
-              : [theme.bg.highlight, colord(theme.bg.highlight).alpha(0).toHex()]
-          }
+          colors={[theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]}
         />
       </View>
       <HeaderContainer>

@@ -85,7 +85,7 @@ export const darkTheme: DefaultTheme = {
     primary: '#1b1b1f',
     secondary: '#17171a',
     tertiary: '#141417',
-    back1: '#111114',
+    back1: '#121214',
     back2: '#0E0E10',
     accent: 'rgba(93, 108, 243, 0.08)',
     contrast: '#ffffff'

@@ -20,20 +20,29 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { ReactNode, useState } from 'react'
 import { LayoutChangeEvent, StyleProp, ViewStyle } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled, { useTheme } from 'styled-components/native'
+import styled, { DefaultTheme, useTheme } from 'styled-components/native'
 
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface BottomButtonsProps {
   children: ReactNode
   bottomInset?: boolean
   float?: boolean
+  backgroundColor?: keyof DefaultTheme['bg']
   fullWidth?: boolean
   onHeightChange?: (newHeight: number) => void
   style?: StyleProp<ViewStyle>
 }
 
-const BottomButtons = ({ children, bottomInset, float, fullWidth, onHeightChange, style }: BottomButtonsProps) => {
+const BottomButtons = ({
+  children,
+  bottomInset,
+  float,
+  fullWidth,
+  backgroundColor = 'back2',
+  onHeightChange,
+  style
+}: BottomButtonsProps) => {
   const theme = useTheme()
   const insets = useSafeAreaInsets()
   const [gradientHeight, setGradientHeight] = useState(0)
@@ -59,7 +68,7 @@ const BottomButtons = ({ children, bottomInset, float, fullWidth, onHeightChange
         start={{ x: 0.5, y: 1 }}
         end={{ x: 0.5, y: 0 }}
         locations={[0.6, 1]}
-        colors={[theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]}
+        colors={[theme.bg[backgroundColor], colord(theme.bg.back2).alpha(0).toHex()]}
         style={{ height: gradientHeight }}
         pointerEvents="none"
       />
@@ -73,7 +82,7 @@ const BottomButtons = ({ children, bottomInset, float, fullWidth, onHeightChange
 export default BottomButtons
 
 const BottomButtonsStyled = styled.View`
-  padding: ${VERTICAL_GAP * 1.5}px ${DEFAULT_MARGIN}px ${VERTICAL_GAP}px ${DEFAULT_MARGIN}px;
+  padding: ${VERTICAL_GAP * 1.5}px 0 ${VERTICAL_GAP}px 0;
 `
 
 const Gradient = styled(LinearGradient)`

@@ -102,7 +102,7 @@ const ModalStyled = styled(Animated.View)`
   border-top-right-radius: 20px;
   min-height: 80px;
   overflow: hidden;
-  background-color: ${({ theme }) => theme.bg.back2};
+  background-color: ${({ theme }) => theme.bg.back1};
 `
 
 const HandleContainer = styled.View`

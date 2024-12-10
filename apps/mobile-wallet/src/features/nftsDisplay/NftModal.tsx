@@ -23,14 +23,14 @@ import { Dimensions } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
-import Surface from '~/components/layout/Surface'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
 import Row from '~/components/Row'
 import BottomModal from '~/features/modals/BottomModal'
 import withModal from '~/features/modals/withModal'
 import { useAppSelector } from '~/hooks/redux'
-import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN } from '~/style/globalStyle'
+import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type NftModalProps = Pick<NFTImageProps, 'nftId'>
 
@@ -46,7 +46,7 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
   const attributes = nft.attributes
 
   return (
-    <BottomModal modalId={id} contentVerticalGap title={nft.name}>
+    <BottomModal modalId={id} title={nft.name}>
       <NftImageContainer>
         <NFTImage nftId={nftId} size={nftFullSize} />
       </NftImageContainer>
@@ -59,17 +59,19 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
         </NFTDescriptionContainer>
       )}
       {attributes && attributes.length > 0 && (
-        <Surface>
+        <>
           {attributes.map((attribute, i) => (
             <Row key={attribute.trait_type} title={attribute.trait_type} isLast={i === attributes.length - 1}>
               <AttributeValue semiBold>{attribute.value}</AttributeValue>
             </Row>
           ))}
-        </Surface>
+        </>
       )}
 
       {!nft.image.startsWith('data:image/') && (
-        <Button title={t('View full size')} onPress={() => openBrowserAsync(nft.image)} />
+        <BottomButtons bottomInset backgroundColor="back1">
+          <Button title={t('View full size')} onPress={() => openBrowserAsync(nft.image)} />
+        </BottomButtons>
       )}
     </BottomModal>
   )
@@ -81,6 +83,8 @@ const NftImageContainer = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
+  margin-top: ${VERTICAL_GAP}px;
+  margin-bottom: ${VERTICAL_GAP}px;
 `
 
 const NFTDescriptionContainer = styled.View`

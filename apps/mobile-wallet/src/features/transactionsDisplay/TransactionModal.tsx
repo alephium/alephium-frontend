@@ -147,7 +147,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
         </Row>
       )}
 
-      <BottomButtons fullWidth>
+      <BottomButtons backgroundColor="back1" fullWidth>
         <Button
           iconProps={{ name: 'arrow-up-right' }}
           onPress={() => openBrowserAsync(explorerTxUrl)}
