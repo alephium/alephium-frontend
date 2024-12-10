@@ -80,7 +80,9 @@ const TransactionListItem = memo(({ tx, showInternalInflows = false, ...props }:
           {unknownTokens.length > 0 && (
             <Badge>
               <AppText>
-                {unknownTokens.length} {t('Unknown tokens')}
+                {t(unknownTokens.length === 1 ? 'unknownTokensKey_one' : 'unknownTokensKey_other', {
+                  count: unknownTokens.length
+                })}
               </AppText>
             </Badge>
           )}
