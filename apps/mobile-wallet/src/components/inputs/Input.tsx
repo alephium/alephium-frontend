@@ -16,9 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
 import { getStringAsync } from 'expo-clipboard'
-import { LinearGradient } from 'expo-linear-gradient'
 import { ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleProp, TextInput, TextInputProps, ViewProps, ViewStyle } from 'react-native'
@@ -27,7 +25,7 @@ import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import { BORDER_RADIUS, INPUTS_HEIGHT } from '~/style/globalStyle'
+import { INPUTS_HEIGHT } from '~/style/globalStyle'
 
 export type InputValue = string | number | undefined | unknown
 export type RenderValueFunc<T> = T extends InputValue ? (value: T) => ReactNode : never
@@ -60,6 +58,7 @@ const Input = <T extends InputValue>({
   error,
   layout,
   inputRef,
+  onChangeText,
   ...props
 }: InputProps<T>) => {
   const { t } = useTranslation()
@@ -77,7 +76,10 @@ const Input = <T extends InputValue>({
 
   const handlePasteButtonPress = () => {
     usedInputRef.current?.setNativeProps({ text: copiedText })
+    onChangeText?.(copiedText)
   }
+
+  const isShowingPasteButton = copiedText && showPasteButton
 
   return (
     <InputStyled onPress={onPress}>
@@ -94,29 +96,18 @@ const Input = <T extends InputValue>({
           placeholderTextColor={theme.font.tertiary}
           style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
           hide={showCustomValueRendering}
+          onChangeText={onChangeText}
           {...props}
         />
-        {copiedText && showPasteButton && (
+        {isShowingPasteButton && (
           <PasteButtonContainer>
-            <PasteButtonContainerBackground
-              colors={[colord(theme.bg.highlight).alpha(0.1).toHex(), theme.bg.highlight]}
-              start={{ x: 0, y: 0.5 }}
-              end={{ x: 1, y: 0.5 }}
-              locations={[0, 0.2]}
-            />
-            <Button compact onPress={handlePasteButtonPress}>
-              <AppText>{t('Paste')}</AppText>
-            </Button>
+            <Button compact onPress={handlePasteButtonPress} variant="contrast" title={t('Paste')} />
           </PasteButtonContainer>
         )}
       </InputContainer>
       {RightContent}
       {error && (
-        <ErrorContainer
-          style={{ shadowColor: 'black', shadowRadius: 5, shadowOpacity: 0.2 }}
-          entering={FadeIn}
-          exiting={FadeOut}
-        >
+        <ErrorContainer entering={FadeIn} exiting={FadeOut}>
           <Error>{error}</Error>
         </ErrorContainer>
       )}
@@ -128,17 +119,19 @@ export default Input
 
 const InputStyled = styled.Pressable`
   background-color: ${({ theme }) => theme.bg.highlight};
-  border-radius: ${BORDER_RADIUS}px;
+  border-radius: 100px;
   padding: 0 18px;
   height: ${INPUTS_HEIGHT}px;
 `
 
 const InputContainer = styled.View`
-  position: relative;
+  flex-direction: row;
   flex: 1;
+  gap: 5px;
 `
 
 const TextInputStyled = styled.TextInput<{ hide?: boolean }>`
+  flex: 1;
   height: 100%;
   color: ${({ theme }) => theme.font.primary};
   font-size: 15px;
@@ -162,13 +155,9 @@ const CustomRenderedValue = styled.View`
 
 const ErrorContainer = styled(Animated.View)`
   position: absolute;
-  bottom: -10px;
-  right: -5px;
+  bottom: -22px;
+  right: 0px;
   padding: 5px;
-  background: ${({ theme }) => theme.bg.highlight};
-  border-width: 1px;
-  border-color: ${({ theme }) => theme.border.primary};
-  border-radius: 100px;
 `
 
 const Error = styled(AppText)`
@@ -178,18 +167,6 @@ const Error = styled(AppText)`
 `
 
 const PasteButtonContainer = styled.View`
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
   align-items: center;
   justify-content: center;
-`
-
-const PasteButtonContainerBackground = styled(LinearGradient)`
-  position: absolute;
-  right: 0;
-  left: 0;
-  top: 0;
-  bottom: 0;
 `

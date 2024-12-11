@@ -62,11 +62,7 @@ const FooterMenu = ({ state, descriptors, navigation, style }: FooterMenuProps) 
         start={{ x: 0.5, y: 1 }}
         end={{ x: 0.5, y: 0 }}
         locations={[0.45, 1]}
-        colors={
-          theme.name === 'dark'
-            ? [theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]
-            : [theme.bg.highlight, colord(theme.bg.highlight).alpha(0).toHex()]
-        }
+        colors={[theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]}
         style={{ height: gradientHeight }}
         pointerEvents="none"
       />

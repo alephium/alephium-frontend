@@ -97,13 +97,9 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
       {isScreenContentVisible && (
         <>
           <ScreenSection fill verticalGap>
-            <WelcomeCard>
-              <AnimatedBackground isAnimated height={600} width={400} />
-              <AlephiumLogo color="white" style={{ width: '20%' }} />
-              <ScreenTitle title={t('Welcome to Alephium!')} />
-            </WelcomeCard>
+            <WelcomeCard />
           </ScreenSection>
-          <ButtonsContainer>
+          <ButtonsContainer bottomInset>
             <Button
               title={t('New wallet')}
               type="primary"
@@ -125,7 +121,21 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
 
 export default LandingScreen
 
-const WelcomeCard = styled(RoundedCard)`
+const WelcomeCard = () => {
+  const { t } = useTranslation()
+
+  const [height, setHeight] = useState(600)
+
+  return (
+    <WelcomeCardStyled onLayout={(e) => setHeight(e.nativeEvent.layout.height)}>
+      <AnimatedBackground isAnimated height={height} width={400} />
+      <AlephiumLogo color="white" style={{ width: '20%' }} />
+      <ScreenTitle title={t('Welcome to Alephium!')} />
+    </WelcomeCardStyled>
+  )
+}
+
+const WelcomeCardStyled = styled(RoundedCard)`
   flex: 1;
   padding: ${DEFAULT_MARGIN * 2}px;
 `

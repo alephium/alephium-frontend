@@ -149,6 +149,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
           headerRight: () => <ContinueButton onPress={importWallet} disabled={!isImportButtonEnabled} />
         }}
         keyboardShouldPersistTaps="always"
+        contentPaddingTop
         screenTitle={t('Secret phrase')}
         screenIntro={t('Enter the secret phrase for the "{{ walletName }}" wallet.', { walletName: name })}
         {...props}

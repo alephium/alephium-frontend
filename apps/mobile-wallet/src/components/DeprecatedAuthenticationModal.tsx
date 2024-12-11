@@ -126,7 +126,7 @@ const DeprecatedAuthenticationModal = ({
         <ModalContent style={{ paddingTop: !onClose ? insets.top + 60 : undefined }}>
           {onClose && (
             <HeaderSection style={{ paddingTop: insets.top }}>
-              <Button round iconProps={{ name: 'arrow-left' }} onPress={onClose} />
+              <Button squared iconProps={{ name: 'arrow-left' }} onPress={onClose} />
             </HeaderSection>
           )}
           <CenteredInstructions instructions={shownInstructions} />

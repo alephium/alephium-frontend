@@ -16,19 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { SceneProgress } from '@react-navigation/stack/lib/typescript/src/types'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 
 import Button from '~/components/buttons/Button'
-import BaseHeader, { BaseHeaderProps } from '~/components/headers/BaseHeader'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
-export type StackHeaderCustomProps = BaseHeaderProps & {
-  progress?: SceneProgress
+const WalletSettingsButton = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList | SendNavigationParamList>>()
+
+  return <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings' }} squared />
 }
-
-const StackHeader = ({ onBackPress: goBack, options, ...props }: StackHeaderCustomProps) => {
-  const HeaderLeft = goBack ? <Button onPress={goBack} iconProps={{ name: 'arrow-left' }} squared /> : null
-
-  return <BaseHeader options={{ headerLeft: () => HeaderLeft, ...options }} {...props} />
-}
-
-export default StackHeader
+export default WalletSettingsButton

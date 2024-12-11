@@ -141,6 +141,7 @@ const LeftContent = styled.View<Pick<RowProps, 'isVertical'>>`
     !isVertical &&
     css`
       flex: 1;
+      align-self: flex-start;
     `}
 `
 

@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
 import QRCode from 'react-qr-code'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
@@ -40,7 +40,6 @@ import { copyAddressToClipboard } from '~/utils/addresses'
 interface ScreenProps extends StackScreenProps<ReceiveNavigationParamList, 'QRCodeScreen'>, ScrollScreenProps {}
 
 const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
-  const theme = useTheme()
   const { screenScrollHandler, screenScrollY } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
   const { t } = useTranslation()
@@ -67,11 +66,11 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     >
       <ScreenSection centered>
         <QRCodeContainer>
-          <QRCode size={200} bgColor={theme.bg.highlight} fgColor={theme.font.primary} value={params.addressHash} />
+          <QRCode size={200} value={params.addressHash} />
         </QRCodeContainer>
       </ScreenSection>
       <ScreenSection centered>
-        <Button title={t('Copy address')} onPress={handleCopyAddressPress} iconProps={{ name: 'copy' }} />
+        <Button short title={t('Copy address')} onPress={handleCopyAddressPress} iconProps={{ name: 'copy' }} />
       </ScreenSection>
       <ScreenSection>
         <Surface>
@@ -98,5 +97,5 @@ const QRCodeContainer = styled.View`
   margin: 15px 0;
   padding: 25px;
   border-radius: ${BORDER_RADIUS_BIG}px;
-  background-color: ${({ theme }) => theme.bg.highlight};
+  border: 2px solid ${({ theme }) => theme.border.primary};
 `

@@ -17,13 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import dayjs from 'dayjs'
+import { partition } from 'lodash'
 import { memo } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
-import Amount from '~/components/Amount'
-import AssetLogo from '~/components/AssetLogo'
+import AppText from '~/components/AppText'
+import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
+import Badge from '~/components/Badge'
 import ListItem, { ListItemProps } from '~/components/ListItem'
 import { useTransactionUI } from '~/features/transactionsDisplay/useTransactionUI'
+import { useAppSelector } from '~/hooks/redux'
 import { AddressTransaction } from '~/types/transactions'
 import { getTransactionInfo, isPendingTx } from '~/utils/transactions'
 
@@ -33,12 +37,17 @@ interface TransactionListItemProps extends Partial<ListItemProps> {
 }
 
 const TransactionListItem = memo(({ tx, showInternalInflows = false, ...props }: TransactionListItemProps) => {
+  const { t } = useTranslation()
   const { assets, infoType } = getTransactionInfo(tx, showInternalInflows)
   const isFailedScriptTx = !isPendingTx(tx) && !tx.scriptExecutionOk
   const { Icon, iconColor, iconBgColor, label } = useTransactionUI({ infoType, isFailedScriptTx })
+  const allNFTs = useAppSelector((s) => s.nfts.entities)
 
   const isMoved = infoType === 'move'
-  const knownAssets = assets.filter((asset) => !!asset.symbol)
+
+  // TODO: Implement type guard like in DW
+  const [tokensWithSymbol, tokensWithoutSymbol] = partition(assets, (asset) => !!asset.symbol)
+  const [nfts, unknownTokens] = partition(tokensWithoutSymbol, (token) => !!allNFTs[token.id])
 
   return (
     <ListItem
@@ -57,27 +66,27 @@ const TransactionListItem = memo(({ tx, showInternalInflows = false, ...props }:
         </TransactionIcon>
       }
       rightSideContent={
-        <>
-          <AssetLogos>
-            {assets.map((asset) => (
-              <AssetLogo assetId={asset.id} key={asset.id} size={20} />
-            ))}
-          </AssetLogos>
-          <AmountColumn>
-            {knownAssets.map(({ id, amount, decimals, symbol }) => (
-              <AmountStyled
-                key={id}
-                value={amount}
-                decimals={decimals}
-                suffix={symbol}
-                isUnknownToken={!symbol}
-                highlight={!isMoved}
-                showPlusMinus={!isMoved}
-                bold
-              />
-            ))}
-          </AmountColumn>
-        </>
+        <AmountColumn>
+          {tokensWithSymbol.map(({ id, amount }) => (
+            <AssetAmountWithLogo key={id} assetId={id} amount={amount} showPlusMinus={!isMoved} logoPosition="right" />
+          ))}
+          {nfts.length > 0 && (
+            <Badge>
+              <AppText>
+                {nfts.length} {t('NFTs')}
+              </AppText>
+            </Badge>
+          )}
+          {unknownTokens.length > 0 && (
+            <Badge>
+              <AppText>
+                {t(unknownTokens.length === 1 ? 'unknownTokensKey_one' : 'unknownTokensKey_other', {
+                  count: unknownTokens.length
+                })}
+              </AppText>
+            </Badge>
+          )}
+        </AmountColumn>
       }
     />
   )
@@ -99,19 +108,7 @@ const AmountColumn = styled.View`
   flex: 1;
   align-items: flex-end;
   flex-shrink: 0;
-`
-
-const AssetLogos = styled.View`
-  flex-shrink: 0;
-  flex: 1;
-  flex-direction: row;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  gap: 5px;
-`
-
-const AmountStyled = styled(Amount)`
-  text-align: right;
+  gap: 4px;
 `
 
 const FailedTXBubble = styled.View`

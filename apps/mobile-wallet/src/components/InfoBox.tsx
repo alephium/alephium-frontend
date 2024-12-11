@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { LucideProps } from 'lucide-react-native'
+import { LucideIcon } from 'lucide-react-native'
 import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -25,7 +25,7 @@ import AppText from '~/components/AppText'
 
 interface InfoBoxProps {
   title: string
-  Icon: (props: LucideProps) => JSX.Element
+  Icon: LucideIcon
   children: ReactNode
   iconColor?: string
   bgColor?: string

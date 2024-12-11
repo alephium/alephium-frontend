@@ -25,6 +25,7 @@ import WebView, { WebViewNavigation } from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import ScreenTitle from '~/components/layout/ScreenTitle'
 import LinkToWeb from '~/components/text/LinkToWeb'
@@ -111,12 +112,14 @@ const BuyModal = withModal(({ id }) => {
               </Trans>
             </AppText>
           </TextContainer>
-          <Button
-            title={t("Alright, let's get to it.")}
-            onPress={() => setIsDisclaimerAccepted(true)}
-            variant="highlight"
-            style={{ marginBottom: insets.bottom }}
-          />
+          <BottomButtons>
+            <Button
+              title={t("Alright, let's get to it.")}
+              onPress={() => setIsDisclaimerAccepted(true)}
+              variant="highlight"
+              style={{ marginBottom: insets.bottom }}
+            />
+          </BottomButtons>
         </DisclaimerContent>
       ) : (
         <WebView
@@ -143,7 +146,6 @@ export default BuyModal
 
 const DisclaimerContent = styled.View`
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.primary};
   padding: ${DEFAULT_MARGIN}px;
 `
 

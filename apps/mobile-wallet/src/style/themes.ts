@@ -24,14 +24,14 @@ export type ThemeType = 'light' | 'dark'
 export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
-    highlight: '#ffffff',
-    primary: '#f2f2f2',
-    secondary: '#f1f4f9',
-    tertiary: '#eff1f6',
-    back1: '#f2f3f7',
-    back2: '#f0f1f5',
+    highlight: 'rgba(0, 0, 0, 0.06)',
+    primary: 'rgba(0, 0, 0, 0.05)',
+    secondary: 'rgba(0, 0, 0, 0.03)',
+    tertiary: 'rgba(0, 0, 0, 0.02)',
+    back1: '#fff',
+    back2: '#fff',
     accent: 'rgba(58, 111, 244, 0.12)',
-    contrast: '#212126'
+    contrast: '#111114'
   },
   font: {
     primary: '#000',
@@ -85,16 +85,16 @@ export const darkTheme: DefaultTheme = {
     primary: '#1b1b1f',
     secondary: '#17171a',
     tertiary: '#141417',
-    back1: '#111114',
+    back1: '#121214',
     back2: '#0E0E10',
     accent: 'rgba(93, 108, 243, 0.08)',
-    contrast: '#ffffff'
+    contrast: '#E3E3E3'
   },
   font: {
     primary: '#E3E3E3',
     secondary: 'rgba(255, 255, 255, 0.75)',
-    tertiary: 'rgba(255, 255, 255, 0.40)',
-    contrast: '#171717',
+    tertiary: 'rgba(255, 255, 255, 0.45)',
+    contrast: '#000',
     highlight: '#f0d590'
   },
   button: {

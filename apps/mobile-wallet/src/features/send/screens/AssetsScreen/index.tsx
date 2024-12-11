@@ -17,10 +17,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { StackScreenProps } from '@react-navigation/stack'
+import { orderBy } from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import FlashListScreen from '~/components/layout/FlashListScreen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -34,6 +34,7 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
+  makeSelectAddressesUnknownTokens,
   selectAddressByHash
 } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -48,6 +49,8 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
+  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
+  const unknownTokens = useAppSelector((s) => selectAddressesUnknownTokens(s, address?.hash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, address?.hash))
   const { t } = useTranslation()
@@ -73,18 +76,20 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 
   if (!address) return null
 
-  const assets = [...knownFungibleTokens, ...nfts]
+  const assets = [...knownFungibleTokens, ...nfts, ...unknownTokens]
+  const orderedAssets = orderBy(assets, (a) => assetAmounts.find((assetWithAmount) => a.id === assetWithAmount.id))
 
   return (
     <>
       <FlashListScreen
-        data={assets}
+        data={orderedAssets}
         keyExtractor={({ id }) => id}
+        extraData={{ assetAmounts }}
         renderItem={({ item: asset, index }) => (
           <AssetRow
             key={asset.id}
             asset={asset}
-            isLast={index === assets.length - 1}
+            isLast={index === orderedAssets.length - 1}
             style={{ marginHorizontal: DEFAULT_MARGIN }}
           />
         )}
@@ -94,16 +99,17 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
         screenIntro={t('With Alephium, you can send multiple assets in one transaction.')}
         estimatedItemSize={64}
         onScroll={screenScrollHandler}
+        bottomButtonsRender={() => (
+          <Button
+            title={t('Continue')}
+            variant="highlight"
+            onPress={handleContinueButtonPress}
+            disabled={isContinueButtonDisabled}
+          />
+        )}
         {...props}
       />
-      <BottomButtons bottomInset style={{ position: 'absolute', bottom: 0, right: 0, left: 0 }}>
-        <Button
-          title={t('Continue')}
-          variant="highlight"
-          onPress={handleContinueButtonPress}
-          disabled={isContinueButtonDisabled}
-        />
-      </BottomButtons>
+
       <SpinnerModal isActive={isLoading} />
     </>
   )

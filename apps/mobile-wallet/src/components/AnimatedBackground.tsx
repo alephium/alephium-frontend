@@ -91,7 +91,7 @@ const AnimatedBackground = ({
     if (isAnimated) {
       angle.value = withRepeat(
         withTiming(2 * Math.PI, {
-          duration: 4000,
+          duration: 6000,
           easing: Easing.linear
         }),
         -1

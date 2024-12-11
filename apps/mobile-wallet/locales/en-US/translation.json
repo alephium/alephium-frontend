@@ -10,7 +10,6 @@
   "No transactions yet": "No transactions yet",
   "group {{ groupNumber }}": "group {{ groupNumber }}",
   "Group {{ groupNumber }}": "Group {{ groupNumber }}",
-  "numberOfNFTsInCollections": "+<1>{{ nftsNumber }}</1> NFTs in <1>{{ nftsCollectionsNumber }}</1> collections",
   "Updating default address": "Updating default address",
   "Tokens": "Tokens",
   "NFT": "NFT",
@@ -359,6 +358,8 @@
   "Status": "Status",
   "Script execution failed": "Script execution failed",
   "Unknown tokens": "Unknown tokens",
+  "unknownTokensKey_one": "{{ count }} unknown token",
+  "unknownTokensKey_other": "{{ count }} unknown tokens",
   "Address copied!": "Address copied!",
   "Error while copying address": "Error while copying address",
   "This address is not valid": "This address is not valid",
@@ -384,5 +385,10 @@
   "Forget": "Forget",
   "forgetAddress_one": "Forget address",
   "You can always re-add it to your wallet.": "You can always re-add it to your wallet.",
-  "Could not forget address": "Could not forget address"
+  "Could not forget address": "Could not forget address",
+  "clear_amount": "Clear",
+  "Added {{ tokenName }}": "Added {{ tokenName }}",
+  "Removed {{ tokenName }}": "Removed {{ tokenName }}",
+  "Address book": "Address book",
+  "Start by adding funds to your wallet.": "Start by adding funds to your wallet."
 }

@@ -20,10 +20,11 @@ import { AddressHash, NFT } from '@alephium/shared'
 import { FlashList, FlashListProps } from '@shopify/flash-list'
 import { ForwardedRef, forwardRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ActivityIndicator, Dimensions, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
+import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesNFTs } from '~/store/addressesSlice'
@@ -38,7 +39,7 @@ interface NFTsGridProps extends Omit<Partial<FlashListProps<NFT>>, 'contentConta
 }
 
 const gap = DEFAULT_MARGIN / 2
-const containerHorizontalPadding = DEFAULT_MARGIN - gap
+const containerHorizontalPadding = DEFAULT_MARGIN
 
 const NFTsGrid = forwardRef(
   (
@@ -53,9 +54,6 @@ const NFTsGrid = forwardRef(
 
     const data = nftsProp ?? nfts
     const columns = nftsPerRow
-    const { width: windowWidth } = Dimensions.get('window')
-    const totalGapSize = columns * gap * 2 + containerHorizontalPadding * 2
-    const size = nftSize ?? (windowWidth - totalGapSize) / columns
 
     return (
       <FlashList
@@ -66,23 +64,24 @@ const NFTsGrid = forwardRef(
         keyExtractor={(item) => item.id}
         renderItem={({ item: nft }) => (
           <NFTThumbnailContainer key={nft.id}>
-            <NFTThumbnail nftId={nft.id} size={size} />
+            <NFTThumbnail nftId={nft.id} />
           </NFTThumbnailContainer>
         )}
         contentContainerStyle={{ paddingHorizontal: containerHorizontalPadding, paddingBottom: 70 }}
         numColumns={columns}
         estimatedItemSize={props.estimatedItemSize || 64}
         ListEmptyComponent={
-          <NoNFTsMessage>
-            {isLoadingNfts ? (
-              <>
-                <AppText color={theme.font.tertiary}>👀</AppText>
-                <ActivityIndicator />
-              </>
-            ) : (
-              <AppText color={theme.font.tertiary}>{t('No NFTs yet')} 🖼️</AppText>
-            )}
-          </NoNFTsMessage>
+          isLoadingNfts ? (
+            <EmptyPlaceholder>
+              <AppText color={theme.font.tertiary}>👀</AppText>
+              <ActivityIndicator />
+            </EmptyPlaceholder>
+          ) : (
+            <EmptyPlaceholder>
+              <AppText size={28}>👻</AppText>
+              <AppText color={theme.font.secondary}>{t('No NFTs yet')}</AppText>
+            </EmptyPlaceholder>
+          )
         }
       />
     )
@@ -92,18 +91,10 @@ const NFTsGrid = forwardRef(
 export default NFTsGrid
 
 const NFTThumbnailContainer = styled.View`
-  margin: ${gap}px;
-  overflow: hidden;
-  border-radius: 9px;
-`
-
-const NoNFTsMessage = styled.View`
-  text-align: center;
-  justify-content: center;
+  //margin-bottom: ${gap}px;
   align-items: center;
-  flex: 1;
-  padding: 20px;
+  justify-content: center;
   border-radius: 9px;
-  border: 2px dashed ${({ theme }) => theme.border.primary};
-  margin: 15px;
+  overflow: hidden;
+  padding: 5px;
 `

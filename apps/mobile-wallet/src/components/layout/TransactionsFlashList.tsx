@@ -72,7 +72,7 @@ const TransactionsFlashList = forwardRef(
       renderTransactionItem({ item, index, isLast: index === confirmedTransactions.length - 1 })
 
     const renderTransactionItem = ({ item: tx, isLast }: TransactionItem) => (
-      <TransactionListItemStyled
+      <TransactionListItem
         key={transactionKeyExtractor(tx)}
         tx={tx}
         isLast={isLast}
@@ -103,6 +103,13 @@ const TransactionsFlashList = forwardRef(
         refreshing={pendingTransactions.length > 0}
         extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
         estimatedItemSize={64}
+        contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN }}
+        ListEmptyComponent={
+          <EmptyPlaceholder>
+            <AppText size={28}>🤷‍♂️</AppText>
+            <AppText color="secondary">{t('No transactions yet')}</AppText>
+          </EmptyPlaceholder>
+        }
         ListHeaderComponent={
           <>
             {ListHeaderComponent}
@@ -136,13 +143,6 @@ const TransactionsFlashList = forwardRef(
                 <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
               )}
             </InfiniteLoadingIndicator>
-            {confirmedTransactions.length === 0 && !isLoading && (
-              <EmptyPlaceholder style={{ width: '90%' }}>
-                <AppText color="secondary" semiBold>
-                  {t('No transactions yet')} 🤷‍♂️
-                </AppText>
-              </EmptyPlaceholder>
-            )}
           </Footer>
         }
       />
@@ -156,8 +156,6 @@ const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
   margin-left: ${DEFAULT_MARGIN}px;
   margin-top: 22px;
 `
-
-const TransactionListItemStyled = styled(TransactionListItem)``
 
 const Footer = styled.View`
   padding-bottom: 150px;

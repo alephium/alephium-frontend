@@ -58,7 +58,7 @@ const ActivityScreen = ({ navigation }: ScreenProps) => {
         pendingTransactions={pendingTransactions}
         onScroll={screenScrollHandler}
         onScrollEndDrag={scrollEndHandler}
-        ListHeaderComponent={<ScreenTitle title={t('Activity')} scrollY={screenScrollY} sideDefaultMargin paddingTop />}
+        ListHeaderComponent={<ScreenTitle title={t('Activity')} scrollY={screenScrollY} paddingTop />}
       />
     </Screen>
   )
