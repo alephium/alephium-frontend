@@ -320,7 +320,7 @@ const WalletConnectSessionProposalModal = memo(
               label={t('Connect with address')}
               title={t('Select an address to connect with.')}
               addressOptions={addressesInGroup}
-              defaultAddress={signerAddressHash}
+              selectedAddress={signerAddressHash}
               onAddressChange={setSignerAddressHash}
               id="from-address"
             />
