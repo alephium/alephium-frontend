@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
 import QRCode from 'react-qr-code'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
@@ -40,7 +40,6 @@ import { copyAddressToClipboard } from '~/utils/addresses'
 interface ScreenProps extends StackScreenProps<ReceiveNavigationParamList, 'QRCodeScreen'>, ScrollScreenProps {}
 
 const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
-  const theme = useTheme()
   const { screenScrollHandler, screenScrollY } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
   const { t } = useTranslation()
