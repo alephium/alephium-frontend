@@ -100,22 +100,22 @@ const HeaderButtons = ({ style }: HeaderButtonsProps) => {
   return (
     <>
       <View style={style}>
-        <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'maximize' }} round />
+        <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'maximize' }} squared />
         <CenteredButtons>
           {networkStatus === 'offline' && (
-            <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-off' }} variant="alert" round />
+            <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-off' }} variant="alert" squared />
           )}
           {!isMnemonicBackedUp && (
             <Button
               onPress={() => navigation.navigate('BackupMnemonicNavigation')}
               iconProps={{ name: 'alert-triangle' }}
               variant="alert"
-              round
+              squared
             />
           )}
           {isWalletConnectEnabled && <WalletConnectHeaderButton />}
         </CenteredButtons>
-        <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings' }} round />
+        <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings' }} squared />
       </View>
       {isCameraOpen && isFocused && (
         <QRCodeScannerModal

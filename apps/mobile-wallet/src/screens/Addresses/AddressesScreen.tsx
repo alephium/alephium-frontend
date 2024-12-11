@@ -107,7 +107,7 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
           scrollTo={scrollToCarouselPage}
           FooterComponent={
             addresses.length > 2 && (
-              <Button onPress={openAddressSelectModal} iconProps={{ name: 'list' }} round compact />
+              <Button onPress={openAddressSelectModal} iconProps={{ name: 'list' }} squared compact />
             )
           }
         />

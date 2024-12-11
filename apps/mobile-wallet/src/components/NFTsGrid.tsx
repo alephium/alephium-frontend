@@ -71,18 +71,17 @@ const NFTsGrid = forwardRef(
         numColumns={columns}
         estimatedItemSize={props.estimatedItemSize || 64}
         ListEmptyComponent={
-          <NoNFTsMessage>
-            {isLoadingNfts ? (
-              <>
-                <AppText color={theme.font.tertiary}>👀</AppText>
-                <ActivityIndicator />
-              </>
-            ) : (
-              <EmptyPlaceholder>
-                <AppText color={theme.font.secondary}>{t('No NFTs yet')} 👻</AppText>
-              </EmptyPlaceholder>
-            )}
-          </NoNFTsMessage>
+          isLoadingNfts ? (
+            <EmptyPlaceholder>
+              <AppText color={theme.font.tertiary}>👀</AppText>
+              <ActivityIndicator />
+            </EmptyPlaceholder>
+          ) : (
+            <EmptyPlaceholder>
+              <AppText size={28}>👻</AppText>
+              <AppText color={theme.font.secondary}>{t('No NFTs yet')}</AppText>
+            </EmptyPlaceholder>
+          )
         }
       />
     )
@@ -98,13 +97,4 @@ const NFTThumbnailContainer = styled.View`
   border-radius: 9px;
   overflow: hidden;
   padding: 5px;
-`
-
-const NoNFTsMessage = styled.View`
-  flex: 1;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  border-radius: 9px;
 `

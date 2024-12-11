@@ -389,5 +389,6 @@
   "clear_amount": "Clear",
   "Added {{ tokenName }}": "Added {{ tokenName }}",
   "Removed {{ tokenName }}": "Removed {{ tokenName }}",
-  "Address book": "Address book"
+  "Address book": "Address book",
+  "Start by adding funds to your wallet.": "Start by adding funds to your wallet."
 }

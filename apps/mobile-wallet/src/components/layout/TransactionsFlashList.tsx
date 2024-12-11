@@ -139,7 +139,8 @@ const TransactionsFlashList = forwardRef(
             </InfiniteLoadingIndicator>
             {confirmedTransactions.length === 0 && !isLoading && (
               <EmptyPlaceholder>
-                <AppText color="secondary">{t('No transactions yet')} 🤷‍♂️</AppText>
+                <AppText size={28}>🤷‍♂️</AppText>
+                <AppText color="secondary">{t('No transactions yet')}</AppText>
               </EmptyPlaceholder>
             )}
           </Footer>

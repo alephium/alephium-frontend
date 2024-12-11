@@ -48,14 +48,14 @@ const WalletConnectHeaderButton = () => {
       variant="alert"
       onPress={openWalletConnectErrorModal}
       customIcon={<WalletConnectSVG width={20} color={theme.global.alert} />}
-      round
+      squared
     />
   ) : walletConnectClientStatus === 'initialized' ? (
     <Button
       onPress={onpenWalletConnectPairingsModal}
       style={activeSessions.length ? { backgroundColor: '#3B99FC' } : undefined}
       customIcon={<WalletConnectSVG width={20} color={activeSessions.length ? '#fff' : '#3B99FC'} />}
-      round
+      squared
     />
   ) : (
     <Button
@@ -66,7 +66,7 @@ const WalletConnectHeaderButton = () => {
           <ActivityIndicator size={16} color={theme.font.tertiary} />
         </>
       }
-      round
+      squared
     />
   )
 }

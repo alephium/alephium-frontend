@@ -42,7 +42,7 @@ const BottomModalHeader = ({ height, onClose, title }: BottomModalHeaderProps) =
         title
       ))}
     <HeaderSideContainer align="right">
-      <CloseButton onPress={onClose} compact />
+      <CloseButton onPress={onClose} />
     </HeaderSideContainer>
   </HeaderContainer>
 )

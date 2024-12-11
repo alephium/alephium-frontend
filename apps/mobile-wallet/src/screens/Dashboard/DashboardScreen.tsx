@@ -45,7 +45,7 @@ import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 interface ScreenProps
   extends StackScreenProps<
@@ -131,25 +131,61 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       {...props}
     >
       <CardContainer style={{ marginTop: insets.top }}>
-        <AmountRoundedCard>
+        <RoundedCard>
           <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
           <WalletCardHeader>
             <HeaderButtons />
           </WalletCardHeader>
           <BalanceSummary dateLabel={t('VALUE TODAY')} />
-          <ButtonsRowContainer>
-            {totalBalance > BigInt(0) && (
-              <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" round flex short />
-            )}
-            <Button onPress={handleReceivePress} iconProps={{ name: 'download' }} variant="contrast" round flex short />
-            <Button onPress={openBuyModal} iconProps={{ name: 'credit-card' }} variant="contrast" round flex short />
-          </ButtonsRowContainer>
-        </AmountRoundedCard>
+          {totalBalance > BigInt(0) && (
+            <ButtonsRowContainer>
+              <>
+                <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" squared flex short />
+                <Button
+                  onPress={handleReceivePress}
+                  iconProps={{ name: 'download' }}
+                  variant="contrast"
+                  squared
+                  flex
+                  short
+                />
+                <Button
+                  onPress={openBuyModal}
+                  iconProps={{ name: 'credit-card' }}
+                  variant="contrast"
+                  squared
+                  flex
+                  short
+                />
+              </>
+            </ButtonsRowContainer>
+          )}
+        </RoundedCard>
       </CardContainer>
       <AddressesTokensList />
       {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
         <EmptyPlaceholder>
-          <AppText color="secondary">{t('There is so much left to discover!')} 🌈</AppText>
+          <AppText size={28}>🌈</AppText>
+          <AppText color="secondary">{t('There is so much left to discover!')}</AppText>
+          <AppText color="tertiary">{t('Start by adding funds to your wallet.')}</AppText>
+          <EmptyWalletActionButtons>
+            <Button
+              title={t('Receive')}
+              onPress={handleReceivePress}
+              iconProps={{ name: 'download' }}
+              variant="contrast"
+              squared
+              short
+            />
+            <Button
+              title={t('Buy')}
+              onPress={openBuyModal}
+              iconProps={{ name: 'credit-card' }}
+              variant="contrast"
+              squared
+              short
+            />
+          </EmptyWalletActionButtons>
         </EmptyPlaceholder>
       )}
     </DashboardScreenStyled>
@@ -179,6 +215,9 @@ const ButtonsRowContainer = styled(Animated.View)`
   gap: 10px;
 `
 
-const AmountRoundedCard = styled(RoundedCard)`
-  height: 240px;
+const AmountRoundedCard = styled(RoundedCard)``
+
+const EmptyWalletActionButtons = styled.View`
+  gap: ${VERTICAL_GAP / 2}px;
+  margin-top: ${VERTICAL_GAP}px;
 `

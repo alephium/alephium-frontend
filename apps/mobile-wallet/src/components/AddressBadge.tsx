@@ -91,7 +91,7 @@ const AddressBadge = ({
           iconProps={{ name: 'clipboard' }}
           type="transparent"
           color={color}
-          round
+          squared
           compact
         />
       )}

@@ -33,9 +33,11 @@ const EmptyPlaceholderStyled = styled.View`
 `
 
 const Content = styled.View`
-  gap: 25px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   padding: 20px;
-  border-radius: 18px;
+  border-radius: 22px;
   background-color: ${({ theme }) => theme.bg.primary};
 `
 

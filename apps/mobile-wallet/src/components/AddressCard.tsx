@@ -158,14 +158,14 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
               onPress={handleDefaultAddressToggle}
               customIcon={<DefaultAddressBadge size={18} color={isDefaultAddress ? theme.global.accent : textColor} />}
               style={{ backgroundColor: isDefaultAddress ? 'rgba(255, 255, 255, 0.2)' : buttonsBackground }}
-              round
+              squared
               type="transparent"
             />
             <Button
               iconProps={{ name: 'settings' }}
               color={textColor}
               onPress={onSettingsPress}
-              round
+              squared
               type="transparent"
             />
           </HeaderButtons>

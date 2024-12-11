@@ -69,7 +69,7 @@ const AddressCardDeleteButton = ({ addressHash, color }: AddressCardDeleteButton
     ])
   }
 
-  return <Button iconProps={{ name: 'trash-2' }} color={color} onPress={handleDeletePress} round type="transparent" />
+  return <Button iconProps={{ name: 'trash-2' }} color={color} onPress={handleDeletePress} squared type="transparent" />
 }
 
 export default AddressCardDeleteButton
