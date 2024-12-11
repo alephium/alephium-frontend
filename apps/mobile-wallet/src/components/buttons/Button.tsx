@@ -158,6 +158,7 @@ const Button = ({
       disabled={disabled}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
+      hitSlop={compact ? 12 : 8} // That's great. Increase touchable area
       {...props}
     >
       {iconProps && !(compact || squared) && <EmptyPlaceholder />}

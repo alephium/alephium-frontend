@@ -66,7 +66,8 @@ export default BalanceSummary
 
 const BalanceSummaryContainer = styled.View`
   justify-content: center;
-  margin: 10px 0 10px;
+  align-items: center;
+  margin: 10px 0;
 `
 
 const TextContainer = styled.View`

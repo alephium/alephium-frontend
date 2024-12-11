@@ -18,10 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { isValidAddress } from '@alephium/web3'
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
-import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Linking, StyleProp, View, ViewStyle } from 'react-native'
-import styled from 'styled-components/native'
+import { Linking } from 'react-native'
 import { isAddress as isEthereumAddress } from 'web3-validator'
 
 import { sendAnalytics } from '~/analytics'
@@ -31,36 +29,21 @@ import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectC
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import WalletConnectHeaderButton from '~/screens/Dashboard/WalletConnectHeaderButton'
 import { cameraToggled } from '~/store/appSlice'
 import { showToast } from '~/utils/layout'
 
-interface HeaderButtonsProps {
-  style?: StyleProp<ViewStyle>
-}
-
-const HeaderButtons = ({ style }: HeaderButtonsProps) => {
-  const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
-  const networkStatus = useAppSelector((s) => s.network.status)
+const CameraScanButton = () => {
+  const isFocused = useIsFocused()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const navigation = useNavigation<NavigationProp<RootStackParamList | SendNavigationParamList>>()
-  const dispatch = useAppDispatch()
   const { pairWithDapp } = useWalletConnectContext()
-  const isFocused = useIsFocused()
+  const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
-
-  const showOfflineMessage = () =>
-    showToast({
-      text1: `${t('Reconnecting')}...`,
-      text2: t('The app is offline and trying to reconnect. Please, check your network settings.'),
-      type: 'info',
-      onPress: () => navigation.navigate('SettingsScreen')
-    })
 
   const handleQRCodeScan = async (text: string) => {
     if (isValidAddress(text)) {
@@ -99,24 +82,7 @@ const HeaderButtons = ({ style }: HeaderButtonsProps) => {
 
   return (
     <>
-      <View style={style}>
-        <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'maximize' }} squared />
-        <CenteredButtons>
-          {networkStatus === 'offline' && (
-            <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-off' }} variant="alert" squared />
-          )}
-          {!isMnemonicBackedUp && (
-            <Button
-              onPress={() => navigation.navigate('BackupMnemonicNavigation')}
-              iconProps={{ name: 'alert-triangle' }}
-              variant="alert"
-              squared
-            />
-          )}
-          {isWalletConnectEnabled && <WalletConnectHeaderButton />}
-        </CenteredButtons>
-        <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings' }} squared />
-      </View>
+      <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'maximize' }} squared />
       {isCameraOpen && isFocused && (
         <QRCodeScannerModal
           onClose={closeQRCodeScannerModal}
@@ -131,16 +97,4 @@ const HeaderButtons = ({ style }: HeaderButtonsProps) => {
     </>
   )
 }
-
-export default memo(styled(HeaderButtons)`
-  flex-direction: row;
-  align-items: center;
-  gap: 15px;
-`)
-
-const CenteredButtons = styled.View`
-  flex: 1;
-  flex-direction: row;
-  justify-content: center;
-  gap: 10px;
-`
+export default CameraScanButton

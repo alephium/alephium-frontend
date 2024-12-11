@@ -42,7 +42,8 @@ import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
-import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
+import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
+import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
@@ -123,19 +124,18 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       hasBottomBar
       verticalGap
       onScroll={screenScrollHandler}
-      contentPaddingTop={20}
-      headerScrollEffectOffset={70}
+      contentPaddingTop={60}
+      headerScrollEffectOffset={30}
       headerOptions={{
-        headerTitle: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold />
+        headerLeft: () => <CameraScanButton />,
+        headerTitle: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold />,
+        headerRight: () => <WalletSettingsButton />
       }}
       {...props}
     >
       <CardContainer style={{ marginTop: insets.top }}>
         <RoundedCard>
           <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
-          <WalletCardHeader>
-            <HeaderButtons />
-          </WalletCardHeader>
           <BalanceSummary dateLabel={t('VALUE TODAY')} />
           {totalBalance > BigInt(0) && (
             <ButtonsRowContainer>
@@ -207,15 +207,12 @@ const WalletCardHeader = styled.View`
 `
 
 const ButtonsRowContainer = styled(Animated.View)`
-  margin: 10px ${DEFAULT_MARGIN}px 20px;
   flex-direction: row;
   border-radius: 100px;
   align-items: center;
   justify-content: center;
   gap: 10px;
 `
-
-const AmountRoundedCard = styled(RoundedCard)``
 
 const EmptyWalletActionButtons = styled.View`
   gap: ${VERTICAL_GAP / 2}px;

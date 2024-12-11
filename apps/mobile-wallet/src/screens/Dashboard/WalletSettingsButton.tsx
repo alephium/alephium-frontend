@@ -15,25 +15,16 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { ReactNode } from 'react'
-import { ViewProps } from 'react-native'
-import styled from 'styled-components/native'
 
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 
-interface RoundedCardProps extends ViewProps {
-  children: ReactNode
+import Button from '~/components/buttons/Button'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import { SendNavigationParamList } from '~/navigation/SendNavigation'
+
+const WalletSettingsButton = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList | SendNavigationParamList>>()
+
+  return <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings' }} squared />
 }
-
-const RoundedCard = ({ children, ...props }: RoundedCardProps) => (
-  <RoundedCardStyled {...props}>{children}</RoundedCardStyled>
-)
-
-export default RoundedCard
-
-const RoundedCardStyled = styled.View`
-  border-radius: 38px;
-  overflow: hidden;
-  background-color: ${({ theme }) => theme.bg.primary};
-  padding: ${DEFAULT_MARGIN}px;
-`
+export default WalletSettingsButton
