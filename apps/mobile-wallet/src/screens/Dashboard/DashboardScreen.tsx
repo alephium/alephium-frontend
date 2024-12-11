@@ -156,9 +156,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       <AddressesTokensList />
       {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
         <EmptyPlaceholder>
-          <AppText semiBold color="secondary">
-            {t('There is so much left to discover!')} 🌈
-          </AppText>
+          <AppText color="secondary">{t('There is so much left to discover!')} 🌈</AppText>
         </EmptyPlaceholder>
       )}
     </DashboardScreenStyled>
@@ -172,7 +170,7 @@ const DashboardScreenStyled = styled(BottomBarScrollScreen)`
 `
 
 const CardContainer = styled.View`
-  margin: 0 ${DEFAULT_MARGIN / 2}px;
+  margin: 0 ${DEFAULT_MARGIN}px;
 `
 
 const WalletCardHeader = styled.View`

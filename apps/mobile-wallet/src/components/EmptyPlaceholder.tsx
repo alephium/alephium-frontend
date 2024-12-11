@@ -19,19 +19,23 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
-
 const EmptyPlaceholder = ({ children, ...props }: ViewProps) => (
-  <EmptyPlaceholderStyled {...props}>{children}</EmptyPlaceholderStyled>
+  <EmptyPlaceholderStyled {...props}>
+    <Content>{children}</Content>
+  </EmptyPlaceholderStyled>
 )
 
 const EmptyPlaceholderStyled = styled.View`
-  text-align: center;
+  flex: 1;
   align-items: center;
+  justify-content: center;
+  min-height: 200px;
+`
+
+const Content = styled.View`
   gap: 25px;
   padding: 20px;
-  border-radius: 9px;
-  margin: ${DEFAULT_MARGIN}px;
+  border-radius: 18px;
   background-color: ${({ theme }) => theme.bg.primary};
 `
 

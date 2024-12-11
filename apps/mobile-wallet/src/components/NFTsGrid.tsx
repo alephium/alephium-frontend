@@ -20,7 +20,7 @@ import { AddressHash, NFT } from '@alephium/shared'
 import { FlashList, FlashListProps } from '@shopify/flash-list'
 import { ForwardedRef, forwardRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ActivityIndicator, Dimensions, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
+import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -54,9 +54,6 @@ const NFTsGrid = forwardRef(
 
     const data = nftsProp ?? nfts
     const columns = nftsPerRow
-    const { width: windowWidth } = Dimensions.get('window')
-    const totalGapSize = 2 * containerHorizontalPadding
-    const size = nftSize ?? (windowWidth - totalGapSize) / columns
 
     return (
       <FlashList
@@ -104,7 +101,7 @@ const NFTThumbnailContainer = styled.View`
 `
 
 const NoNFTsMessage = styled.View`
-  height: 100%;
+  flex: 1;
   text-align: center;
   justify-content: center;
   align-items: center;
