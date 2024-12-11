@@ -26,7 +26,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import WalletConnectSVG from '~/images/logos/WalletConnectLogo'
 import { cameraToggled } from '~/store/appSlice'
 
-const WalletConnectHeaderButton = () => {
+const WalletConnectButton = () => {
   const theme = useTheme()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const { activeSessions } = useWalletConnectContext()
@@ -71,4 +71,4 @@ const WalletConnectHeaderButton = () => {
   )
 }
 
-export default WalletConnectHeaderButton
+export default WalletConnectButton

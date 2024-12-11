@@ -74,6 +74,8 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
     setTokenRows(entries)
   }, [addressHash, showTokensSkeleton, knownFungibleTokens, unknownTokens.length])
 
+  if (tokenRows.length === 0 && !isRefreshing) return null
+
   return (
     <ListContainer style={style} layout={CurvedTransition}>
       {tokenRows.map((entry, index) =>

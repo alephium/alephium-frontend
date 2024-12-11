@@ -31,6 +31,7 @@ import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
+import { headerOffsetTop } from '~/components/headers/BaseHeader'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import RoundedCard from '~/components/RoundedCard'
@@ -124,7 +125,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       hasBottomBar
       verticalGap
       onScroll={screenScrollHandler}
-      contentPaddingTop={60}
+      contentPaddingTop={50 + headerOffsetTop}
       headerScrollEffectOffset={30}
       headerOptions={{
         headerLeft: () => <CameraScanButton />,
@@ -164,7 +165,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       </CardContainer>
       <AddressesTokensList />
       {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
-        <EmptyPlaceholder>
+        <EmptyPlaceholder style={{ marginHorizontal: DEFAULT_MARGIN }}>
           <AppText size={28}>🌈</AppText>
           <AppText color="secondary">{t('There is so much left to discover!')}</AppText>
           <AppText color="tertiary">{t('Start by adding funds to your wallet.')}</AppText>

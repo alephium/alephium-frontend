@@ -52,6 +52,8 @@ export interface BaseHeaderProps extends ViewProps {
   isCentered?: boolean
 }
 
+export const headerOffsetTop = Platform.OS === 'ios' ? 0 : 16
+
 const AnimatedHeaderGradient = Animated.createAnimatedComponent(LinearGradient)
 
 const BaseHeader = ({
@@ -73,7 +75,7 @@ const BaseHeader = ({
 
   const gradientHeight = headerHeight + 42
   const defaultScrollRange = [0 + scrollEffectOffset, 80 + scrollEffectOffset]
-  const paddingTop = Platform.OS === 'ios' ? insets.top : insets.top + 18
+  const paddingTop = insets.top + headerOffsetTop
 
   const HeaderRight = (headerRight && headerRight({})) || <HeaderSidePlaceholder />
   const HeaderLeft = (headerLeft && headerLeft({})) || <HeaderSidePlaceholder />

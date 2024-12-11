@@ -27,7 +27,7 @@ import Button from '~/components/buttons/Button'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import WalletConnectHeaderButton from '~/screens/Dashboard/WalletConnectHeaderButton'
+import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
 import { showToast } from '~/utils/layout'
 
 interface HeaderCenterContentProps {
@@ -63,7 +63,7 @@ const HeaderCenterContent = ({ style }: HeaderCenterContentProps) => {
             squared
           />
         )}
-        {isWalletConnectEnabled && <WalletConnectHeaderButton />}
+        {isWalletConnectEnabled && <WalletConnectButton />}
       </CenteredButtons>
     </Badge>
   )

@@ -27,14 +27,11 @@ const EmptyPlaceholder = ({ children, ...props }: ViewProps) => (
 
 const EmptyPlaceholderStyled = styled.View`
   flex: 1;
-  align-items: center;
   justify-content: center;
-  min-height: 200px;
 `
 
 const Content = styled.View`
   align-items: center;
-  justify-content: center;
   gap: 10px;
   padding: 20px;
   border-radius: 22px;

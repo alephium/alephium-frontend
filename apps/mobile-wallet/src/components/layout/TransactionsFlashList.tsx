@@ -104,6 +104,12 @@ const TransactionsFlashList = forwardRef(
         extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
         estimatedItemSize={64}
         contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN }}
+        ListEmptyComponent={
+          <EmptyPlaceholder>
+            <AppText size={28}>🤷‍♂️</AppText>
+            <AppText color="secondary">{t('No transactions yet')}</AppText>
+          </EmptyPlaceholder>
+        }
         ListHeaderComponent={
           <>
             {ListHeaderComponent}
@@ -137,12 +143,6 @@ const TransactionsFlashList = forwardRef(
                 <ActivityIndicatorStyled size={16} color={theme.font.tertiary} />
               )}
             </InfiniteLoadingIndicator>
-            {confirmedTransactions.length === 0 && !isLoading && (
-              <EmptyPlaceholder>
-                <AppText size={28}>🤷‍♂️</AppText>
-                <AppText color="secondary">{t('No transactions yet')}</AppText>
-              </EmptyPlaceholder>
-            )}
           </Footer>
         }
       />
