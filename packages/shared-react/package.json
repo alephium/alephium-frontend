@@ -10,7 +10,7 @@
     "typecheck": "tsup",
     "watch-dev": "tsup --watch",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist .turbo",
     "clean:node-modules": "rm -rf node_modules",
     "lint": "eslint . --ext .ts --max-warnings=0",
     "lint:fix": "eslint . --fix --ext .ts"
