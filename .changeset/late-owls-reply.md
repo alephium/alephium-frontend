@@ -2,4 +2,4 @@
 "alephium-desktop-wallet": patch
 ---
 
-Add Chinese translations
+Add data refresh button

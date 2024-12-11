@@ -13,7 +13,7 @@
     "test": "jest --useStderr --silent=false --verbose=true --config jestconfig.json --passWithNoTests",
     "test:watch": "pnpm run test -- --watch",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist .turbo coverage",
     "clean:node-modules": "rm -rf node_modules",
     "typecheck": "tsup"
   },
@@ -25,7 +25,7 @@
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
     "@types/jest": "^29.4.0",
-    "@types/node": "^16.10.1",
+    "@types/node": "^20.14.0",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "babel-eslint": "^10.1.0",

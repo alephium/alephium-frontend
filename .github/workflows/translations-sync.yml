@@ -22,7 +22,7 @@ jobs:
         with:
           config: 'crowdin.yml'
           upload_sources: true
-          upload_translations: true
+          upload_translations: false
           auto_approve_imported: true
           download_translations: true
           skip_untranslated_strings: true

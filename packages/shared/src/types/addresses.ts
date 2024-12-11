@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Optional } from '@alephium/web3'
-import { AddressInfo, AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e, Optional } from '@alephium/web3'
 
 import { StringAlias } from '@/types/utils'
 
@@ -43,13 +42,13 @@ export type AddressMetadata = AddressSettings & {
   index: AddressIndex
 }
 
-export type AddressBalancesSyncResult = Omit<AddressInfo, 'txNumber'> & {
+export type AddressBalancesSyncResult = Omit<e.AddressInfo, 'txNumber'> & {
   hash: AddressHash
 }
 
 export type AddressTokensSyncResult = {
   hash: AddressHash
-  tokenBalances: AddressTokenBalance[]
+  tokenBalances: e.AddressTokenBalance[]
 }
 
 export type BalanceHistory = {

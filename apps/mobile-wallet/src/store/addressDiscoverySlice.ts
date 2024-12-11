@@ -143,7 +143,7 @@ export const discoverAddresses = createAsyncThunk(
         }
       }
     } catch (e) {
-      console.error(e)
+      if (__DEV__) console.error(e)
     } finally {
       keyring.clear()
     }

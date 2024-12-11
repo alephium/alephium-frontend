@@ -22,7 +22,7 @@ import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
@@ -32,6 +32,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import SpinnerModal from '~/components/SpinnerModal'
+import AddressCardDeleteButton from '~/features/address-deletion/AddressCardDeleteButton'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
@@ -39,6 +40,7 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { copyAddressToClipboard } from '~/utils/addresses'
 import { showToast, ToastDuration } from '~/utils/layout'
 
 interface AddressCardProps {
@@ -131,18 +133,27 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
       >
         <Header>
           <AddressBadgeContainer>
-            <AddressBadgeStyled
-              addressHash={address.hash}
-              hideSymbol
-              color={textColor}
-              textStyle={{
-                fontSize: 23,
-                fontWeight: '700'
-              }}
-              showCopyBtn
-            />
+            <Pressable onLongPress={() => copyAddressToClipboard(addressHash)}>
+              <AddressBadgeStyled
+                addressHash={address.hash}
+                hideSymbol
+                color={textColor}
+                textStyle={{
+                  fontSize: 23,
+                  fontWeight: '700'
+                }}
+                canCopy={false}
+              />
+              {address.settings.label && (
+                <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color={textColor} size={13}>
+                  {addressHash}
+                </HashEllipsed>
+              )}
+            </Pressable>
           </AddressBadgeContainer>
           <HeaderButtons>
+            <AddressCardDeleteButton addressHash={addressHash} color={textColor} />
+
             <Button
               onPress={handleDefaultAddressToggle}
               customIcon={
@@ -152,15 +163,15 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
                   color={isDefaultAddress ? theme.global.accent : textColor}
                 />
               }
-              style={{ backgroundColor: isDefaultAddress ? 'rgba(255, 255, 255, 0.2)' : buttonsBackground }}
               round
+              type="transparent"
             />
             <Button
               iconProps={{ name: 'settings' }}
               color={textColor}
               onPress={onSettingsPress}
-              style={{ backgroundColor: buttonsBackground }}
               round
+              type="transparent"
             />
           </HeaderButtons>
         </Header>
@@ -173,7 +184,6 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
             bold
             suffix={CURRENCIES[currency].symbol}
           />
-          <Amount value={BigInt(address.balance)} color={textColor} size={15} medium suffix="ALPH" />
           <AddressGroup>
             <AppText style={{ color: textColor }} size={13}>
               {t('Group {{ groupNumber }}', { groupNumber: address.group })}
@@ -229,7 +239,6 @@ const Header = styled.View`
   justify-content: space-between;
   align-items: center;
   max-width: 100%;
-  align-items: center;
   gap: 18px;
   padding: 15px 15px 0px 20px;
 `
@@ -239,18 +248,14 @@ const AddressBadgeStyled = styled(AddressBadge)`
 `
 
 const AddressBadgeContainer = styled.View`
-  flex-direction: row;
   flex-shrink: 1;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 18px;
 `
 
 const HeaderButtons = styled.View`
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  gap: 15px;
+  gap: 5px;
 `
 
 const Amounts = styled.View`
@@ -274,4 +279,8 @@ const BottomRow = styled.View`
   justify-content: space-between;
   align-items: center;
   border-top-width: 1px;
+`
+
+const HashEllipsed = styled(AppText)`
+  max-width: 100px;
 `

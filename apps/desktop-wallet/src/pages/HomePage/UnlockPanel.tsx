@@ -29,6 +29,7 @@ import WalletPassphrase from '@/components/Inputs/WalletPassphrase'
 import { Section } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
+import ConnectWithLedgerButton from '@/features/ledger/ConnectWithLedgerButton'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
@@ -107,17 +108,18 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
         />
       </SectionStyled>
       <ButtonsSection>
-        <ButtonStyled
+        <Button
           onClick={handleUnlock}
           submit
           disabled={!selectedWalletOption || !password || !isPassphraseConfirmed}
           tall
         >
           {t('Unlock')}
-        </ButtonStyled>
-        <ButtonStyled onClick={onNewWalletLinkClick} role="secondary">
+        </Button>
+        <Button onClick={onNewWalletLinkClick} role="secondary">
           {t('Import or create a wallet')}
-        </ButtonStyled>
+        </Button>
+        <ConnectWithLedgerButton />
       </ButtonsSection>
       <WalletPassphraseStyled
         onPassphraseConfirmed={setPassphrase}
@@ -135,10 +137,7 @@ const SectionStyled = styled(Section)`
 
 const ButtonsSection = styled(SectionStyled)`
   margin-top: 30px;
-`
-
-const ButtonStyled = styled(Button)`
-  margin-top: 20px;
+  gap: 20px;
 `
 
 const WalletPassphraseStyled = styled(WalletPassphrase)`

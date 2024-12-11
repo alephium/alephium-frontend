@@ -29,7 +29,13 @@ export const storeFundPassword = (password: string) =>
 
 export const getFundPassword = () => getSecurelyWithReportableError(FUND_PASSWORD_KEY, true, '')
 
-export const hasStoredFundPassword = async () => !!(await getFundPassword())
+export const hasStoredFundPassword = async () => {
+  try {
+    return !!(await getFundPassword())
+  } catch {
+    return false
+  }
+}
 
 export const deleteFundPassword = async () => {
   await deleteSecurelyWithReportableError(FUND_PASSWORD_KEY, true, '')

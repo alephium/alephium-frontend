@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { addApostrophes } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { AssetOutput, Input } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -35,7 +35,7 @@ const GasUTXOsExpandableSection = ({ tx }: Pick<TransactionDetailsModalTxProps, 
   const { t } = useTranslation()
   const handleShowAddress = useOnAddressClick()
 
-  const renderInput = (input: Input) => {
+  const renderInput = (input: e.Input) => {
     const addressHash = input.address
     if (!addressHash) return null
 
@@ -46,7 +46,7 @@ const GasUTXOsExpandableSection = ({ tx }: Pick<TransactionDetailsModalTxProps, 
     )
   }
 
-  const renderOutput = (output: AssetOutput) => {
+  const renderOutput = (output: e.AssetOutput) => {
     const unlocksAt = new Date(output.lockTime ?? 0)
     const isLockTimeInFuture = unlocksAt > new Date()
 

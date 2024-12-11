@@ -38,11 +38,13 @@ jobs:
         run: echo "os=$(echo ${{ matrix.os }} | cut -d- -f1)" >> $GITHUB_OUTPUT
         shell: bash
 
+      - name: Skip desktop wallet signing
+        uses: jaywcjlove/github-action-package@v2.0.0
+        with:
+          path: apps/desktop-wallet/package.json
+          unset: build.win.sign
+
       - name: Building desktop wallet on ${{ steps.get-os.outputs.os }}
         run: cd apps/desktop-wallet && pnpm run ci:build:electron:${{ steps.get-os.outputs.os }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WINDOWS_SIGN_USER_NAME: ${{ secrets.WINDOWS_SIGN_USER_NAME }}
-          WINDOWS_SIGN_PASSWORD: ${{ secrets.WINDOWS_SIGN_PASSWORD }}
-          WINDOWS_SIGN_CREDENTIAL_ID: ${{ secrets.WINDOWS_SIGN_CREDENTIAL_ID }}
-          WINDOWS_SIGN_TOTP_SECRET: ${{ secrets.WINDOWS_SIGN_TOTP_SECRET }}

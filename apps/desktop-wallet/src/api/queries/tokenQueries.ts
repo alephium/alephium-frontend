@@ -17,8 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { batchers, ONE_DAY_MS } from '@alephium/shared'
-import { explorer, NFTMetaData, NFTTokenUriMetaData } from '@alephium/web3'
-import { TokenInfo, TokenStdInterfaceId } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e, NFTMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { queryOptions, skipToken, UseQueryResult } from '@tanstack/react-query'
 import axios from 'axios'
 
@@ -28,9 +27,9 @@ import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import { convertTokenDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/apiUtils'
 import { TokenId } from '@/types/tokens'
 
-export type TokenTypesQueryFnData = Record<explorer.TokenStdInterfaceId, TokenId[]>
+export type TokenTypesQueryFnData = Record<e.TokenStdInterfaceId, TokenId[]>
 
-export const StdInterfaceIds = Object.values(explorer.TokenStdInterfaceId)
+export const StdInterfaceIds = Object.values(e.TokenStdInterfaceId)
 
 interface TokenQueryProps extends SkipProp {
   id: TokenId
@@ -62,32 +61,32 @@ export const tokenTypeQuery = ({ id, networkId, skip }: TokenQueryProps) =>
             const tokenInfo = await batchers.tokenTypeBatcher.fetch(id)
 
             return tokenInfo?.stdInterfaceId
-              ? { ...tokenInfo, stdInterfaceId: tokenInfo.stdInterfaceId as TokenStdInterfaceId }
+              ? { ...tokenInfo, stdInterfaceId: tokenInfo.stdInterfaceId as e.TokenStdInterfaceId }
               : null
           }
         : skipToken
   })
 
-export const combineTokenTypeQueryResults = (results: UseQueryResult<TokenInfo | null>[]) => ({
+export const combineTokenTypeQueryResults = (results: UseQueryResult<e.TokenInfo | null>[]) => ({
   data: results.reduce(
     (tokenIdsByType, { data: tokenInfo }) => {
       if (!tokenInfo) return tokenIdsByType
-      const stdInterfaceId = tokenInfo.stdInterfaceId as explorer.TokenStdInterfaceId
+      const stdInterfaceId = tokenInfo.stdInterfaceId as e.TokenStdInterfaceId
 
       if (StdInterfaceIds.includes(stdInterfaceId)) {
         tokenIdsByType[stdInterfaceId].push(tokenInfo.token)
       } else {
         // Except from NonStandard, the interface might be any string or undefined. We merge all that together.
-        tokenIdsByType[explorer.TokenStdInterfaceId.NonStandard].push(tokenInfo.token)
+        tokenIdsByType[e.TokenStdInterfaceId.NonStandard].push(tokenInfo.token)
       }
 
       return tokenIdsByType
     },
     {
-      [explorer.TokenStdInterfaceId.Fungible]: [],
-      [explorer.TokenStdInterfaceId.NonFungible]: [],
-      [explorer.TokenStdInterfaceId.NonStandard]: []
-    } as Record<explorer.TokenStdInterfaceId, TokenId[]>
+      [e.TokenStdInterfaceId.Fungible]: [],
+      [e.TokenStdInterfaceId.NonFungible]: [],
+      [e.TokenStdInterfaceId.NonStandard]: []
+    } as Record<e.TokenStdInterfaceId, TokenId[]>
   ),
   ...combineIsLoading(results)
 })

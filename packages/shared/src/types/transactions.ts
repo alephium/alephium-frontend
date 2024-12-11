@@ -16,8 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Optional } from '@alephium/web3'
-import { Token } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e, Optional } from '@alephium/web3'
 
 import { Asset, AssetAmount } from '@/types/assets'
 
@@ -38,7 +37,7 @@ export type TransactionInfoType = TransactionDirection | 'move' | 'pending'
 export type AmountDeltas = {
   alphAmount: bigint
   tokenAmounts: {
-    id: Token['id']
+    id: e.Token['id']
     amount: bigint
   }[]
 }

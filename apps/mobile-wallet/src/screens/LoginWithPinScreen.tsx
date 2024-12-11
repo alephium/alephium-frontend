@@ -67,7 +67,14 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
 
         dispatch(walletUnlocked(wallet))
         resetNavigation(navigation)
-        sendAnalytics({ event: 'Unlocked wallet' })
+        sendAnalytics({
+          event: 'Unlocked wallet',
+          props: {
+            wallet_name_length: wallet.name.length,
+            number_of_addresses: wallet.addresses.length,
+            number_of_contacts: wallet.contacts.length
+          }
+        })
       } catch (error) {
         const message = 'Could not migrate mnemonic and unlock wallet'
 

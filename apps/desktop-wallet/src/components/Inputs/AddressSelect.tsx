@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { MoreVertical } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
@@ -35,7 +35,7 @@ interface AddressSelectProps {
   title: string
   addressOptions: AddressHash[]
   onAddressChange: (address: AddressHash) => void
-  defaultAddress?: AddressHash
+  selectedAddress?: AddressHash
   label?: string
   disabled?: boolean
   simpleMode?: boolean
@@ -49,7 +49,7 @@ function AddressSelect({
   title,
   label,
   disabled,
-  defaultAddress,
+  selectedAddress,
   className,
   id,
   onAddressChange,
@@ -60,7 +60,6 @@ function AddressSelect({
 
   const [canBeAnimated, setCanBeAnimated] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
-  const [selectedAddress, setSelectedAddress] = useState(defaultAddress)
 
   const handleAddressSelectModalClose = () => {
     setIsAddressSelectModalOpen(false)
@@ -69,19 +68,11 @@ function AddressSelect({
 
   const openAddressSelectModal = () => !disabled && setIsAddressSelectModalOpen(true)
 
-  const handleAddressSelect = useCallback(
-    (addressHash: AddressHash) => {
-      setSelectedAddress(addressHash)
-      onAddressChange(addressHash)
-    },
-    [onAddressChange]
-  )
-
   useEffect(() => {
     const selectedAddressIsNotPartOfOptions = !addressOptions.some((hash) => hash === selectedAddress)
 
-    if (selectedAddressIsNotPartOfOptions) handleAddressSelect(addressOptions[0])
-  }, [handleAddressSelect, addressOptions, selectedAddress])
+    if (selectedAddressIsNotPartOfOptions) onAddressChange(addressOptions[0])
+  }, [onAddressChange, addressOptions, selectedAddress])
 
   if (!selectedAddress) return null
 
@@ -127,7 +118,7 @@ function AddressSelect({
           <AddressSelectModal
             title={title}
             addressOptions={addressOptions}
-            onAddressSelect={handleAddressSelect}
+            onAddressSelect={onAddressChange}
             onClose={handleAddressSelectModalClose}
             defaultSelectedAddress={selectedAddress}
           />

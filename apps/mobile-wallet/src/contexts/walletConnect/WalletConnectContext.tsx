@@ -22,7 +22,6 @@ import {
   AddressHash,
   AssetAmount,
   client,
-  getActiveWalletConnectSessions,
   getHumanReadableError,
   isNetworkValid,
   parseSessionProposalEvent,
@@ -52,7 +51,9 @@ import {
   SignUnsignedTxResult
 } from '@alephium/web3'
 import { SignResult } from '@alephium/web3/dist/src/api/api-alephium'
+import { IWalletKit, WalletKit } from '@reown/walletkit'
 import {
+  Core,
   CORE_STORAGE_OPTIONS,
   CORE_STORAGE_PREFIX,
   Expirer,
@@ -63,7 +64,7 @@ import {
   STORE_STORAGE_VERSION
 } from '@walletconnect/core'
 import { KeyValueStorage } from '@walletconnect/keyvaluestorage'
-import SignClient, { REQUEST_CONTEXT, SESSION_CONTEXT, SIGN_CLIENT_STORAGE_PREFIX } from '@walletconnect/sign-client'
+import { REQUEST_CONTEXT, SESSION_CONTEXT, SIGN_CLIENT_STORAGE_PREFIX } from '@walletconnect/sign-client'
 import {
   EngineTypes,
   JsonRpcRecord,
@@ -112,7 +113,7 @@ const MaxRequestNumToKeep = 10
 const ONE_HOURS_IN_SECONDS = 60 * 60
 
 interface WalletConnectContextValue {
-  walletConnectClient?: SignClient
+  walletConnectClient?: IWalletKit
   pairWithDapp: (uri: string) => Promise<void>
   unpairFromDapp: (pairingTopic: string) => Promise<void>
   activeSessions: SessionTypes.Struct[]
@@ -132,6 +133,10 @@ const initialValues: WalletConnectContextValue = {
 const WalletConnectContext = createContext(initialValues)
 
 const MAX_WALLETCONNECT_RETRIES = 5
+
+const core = new Core({
+  projectId: '2a084aa1d7e09af2b9044a524f39afbe'
+})
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
   const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
@@ -162,6 +167,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const isWalletConnectClientReady =
     isWalletConnectEnabled && walletConnectClient && walletConnectClientStatus === 'initialized'
 
+  const updateActiveSessions = useCallback((client?: IWalletKit) => {
+    setActiveSessions(Object.values(client?.getActiveSessions() ?? {}))
+  }, [])
+
   const initializeWalletConnectClient = useCallback(async () => {
     let client
 
@@ -177,8 +186,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     setWalletConnectClientInitializationAttempts((prevAttempts) => prevAttempts + 1)
 
     try {
-      client = await SignClient.init({
-        projectId: '2a084aa1d7e09af2b9044a524f39afbe',
+      client = await WalletKit.init({
+        core,
         metadata: {
           name: 'Alephium mobile wallet',
           description: 'Alephium mobile wallet',
@@ -198,7 +207,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         error,
         message: `Could not initialize WalletConnect client on attempt ${
           walletConnectClientInitializationAttempts + 1
-        } (SignClient.init failed)`
+        } (IWalletKit.init failed)`
       })
     }
 
@@ -207,9 +216,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       setWalletConnectClient(client)
       dispatch(walletConnectClientInitialized())
-      setActiveSessions(getActiveWalletConnectSessions(client))
+      updateActiveSessions(client)
     }
-  }, [dispatch, walletConnectClientInitializationAttempts])
+  }, [dispatch, walletConnectClientInitializationAttempts, updateActiveSessions])
 
   useEffect(() => {
     if (walletConnectClientStatus === 'initialized' && !walletConnectClient) {
@@ -256,7 +265,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       if (!walletConnectClient) return
 
       console.log('⏳ RESPONDING TO WC WITH:', { topic: event.topic, response })
-      await walletConnectClient.respond({ topic: event.topic, response })
+      await walletConnectClient.respondSessionRequest({ topic: event.topic, response })
       console.log('✅ RESPONDING: DONE!')
       await cleanStorage(event)
     },
@@ -278,10 +287,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     async (requestEvent: SignClientTypes.EventArguments['session_request'], result: any) => {
       if (!walletConnectClient) return
 
-      const activeSesion = walletConnectClient.session.values.find((s) => s.topic === requestEvent.topic)
-
       try {
-        if (activeSesion) {
+        if (walletConnectClient.getActiveSessions()[requestEvent.topic]) {
           await respondToWalletConnect(requestEvent, { id: requestEvent.id, jsonrpc: '2.0', result })
         } else {
           await respondToWalletConnectWithError(requestEvent, getSdkError('USER_DISCONNECTED'))
@@ -586,35 +593,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('🧹 CLEANING UP STATE.')
 
       setSessionProposalEvent(undefined)
-      setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
+      updateActiveSessions(walletConnectClient)
     },
-    [walletConnectClient]
+    [updateActiveSessions, walletConnectClient]
   )
-
-  const onSessionUpdate = useCallback((args: SignClientTypes.EventArguments['session_update']) => {
-    console.log('📣 RECEIVED EVENT TO UPDATE SESSION')
-    console.log('👉 ARGS:', args)
-  }, [])
-
-  const onSessionEvent = useCallback((args: SignClientTypes.EventArguments['session_event']) => {
-    console.log('📣 RECEIVED SESSION EVENT')
-    console.log('👉 ARGS:', args)
-  }, [])
-
-  const onSessionPing = useCallback((args: SignClientTypes.EventArguments['session_ping']) => {
-    console.log('📣 RECEIVED EVENT TO PING SESSION')
-    console.log('👉 ARGS:', args)
-  }, [])
-
-  const onSessionExpire = useCallback((args: SignClientTypes.EventArguments['session_expire']) => {
-    console.log('📣 RECEIVED EVENT TO EXPIRE SESSION')
-    console.log('👉 ARGS:', args)
-  }, [])
-
-  const onSessionExtend = useCallback((args: SignClientTypes.EventArguments['session_extend']) => {
-    console.log('📣 RECEIVED EVENT TO EXTEND SESSION')
-    console.log('👉 ARGS:', args)
-  }, [])
 
   const onProposalExpire = useCallback((args: SignClientTypes.EventArguments['proposal_expire']) => {
     console.log('📣 RECEIVED EVENT TO EXPIRE PROPOSAL')
@@ -667,35 +649,20 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     walletConnectClient.on('session_proposal', onSessionProposal)
     walletConnectClient.on('session_request', onSessionRequest)
     walletConnectClient.on('session_delete', onSessionDelete)
-    walletConnectClient.on('session_update', onSessionUpdate)
-    walletConnectClient.on('session_event', onSessionEvent)
-    walletConnectClient.on('session_ping', onSessionPing)
-    walletConnectClient.on('session_expire', onSessionExpire)
-    walletConnectClient.on('session_extend', onSessionExtend)
     walletConnectClient.on('proposal_expire', onProposalExpire)
 
     return () => {
       walletConnectClient.off('session_proposal', onSessionProposal)
       walletConnectClient.off('session_request', onSessionRequest)
       walletConnectClient.off('session_delete', onSessionDelete)
-      walletConnectClient.off('session_update', onSessionUpdate)
-      walletConnectClient.off('session_event', onSessionEvent)
-      walletConnectClient.off('session_ping', onSessionPing)
-      walletConnectClient.off('session_expire', onSessionExpire)
-      walletConnectClient.off('session_extend', onSessionExtend)
       walletConnectClient.off('proposal_expire', onProposalExpire)
     }
   }, [
     isWalletConnectClientReady,
     onProposalExpire,
     onSessionDelete,
-    onSessionEvent,
-    onSessionExpire,
-    onSessionExtend,
-    onSessionPing,
     onSessionProposal,
     onSessionRequest,
-    onSessionUpdate,
     walletConnectClient
   ])
 
@@ -748,8 +715,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           }
         } else {
           console.log('⏳ PAIRING WITH WALLETCONNECT USING URI:', uri)
-          await walletConnectClient.core.pairing.pair({ uri })
-          console.log('✅ PAIRING: DONE!')
+          try {
+            await walletConnectClient.pair({ uri })
+          } catch (e) {
+            await walletConnectClient.core.pairing.pair({ uri })
+          } finally {
+            console.log('✅ PAIRING: DONE!')
+          }
         }
       } catch (e) {
         console.error('❌ COULD NOT PAIR WITH: ', uri, e)
@@ -766,19 +738,22 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         setLoading('Disconnecting...')
 
         console.log('⏳ DISCONNECTING FROM:', topic)
-        await walletConnectClient.disconnect({ topic, reason: getSdkError('USER_DISCONNECTED') })
-        console.log('✅ DISCONNECTING: DONE!')
 
-        setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
+        if (walletConnectClient.getActiveSessions()[topic]) {
+          await walletConnectClient.disconnectSession({ topic, reason: getSdkError('USER_DISCONNECTED') })
+        }
+
+        console.log('✅ DISCONNECTING: DONE!')
 
         sendAnalytics({ event: 'WC: Disconnected from dApp' })
       } catch (e) {
-        console.error('❌ COULD NOT DISCONNECT FROM DAPP')
+        console.error('❌ COULD NOT DISCONNECT FROM DAPP', e)
       } finally {
+        updateActiveSessions(walletConnectClient)
         setLoading('')
       }
     },
-    [walletConnectClient]
+    [updateActiveSessions, walletConnectClient]
   )
 
   const approveProposal = async (signerAddress: Address) => {
@@ -869,7 +844,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       const existingSession = activeSessions.find((session) => session.peer.metadata.url === metadata.url)
 
       if (existingSession) {
-        await walletConnectClient.disconnect({ topic: existingSession.topic, reason: getSdkError('USER_DISCONNECTED') })
+        await walletConnectClient.disconnectSession({
+          topic: existingSession.topic,
+          reason: getSdkError('USER_DISCONNECTED')
+        })
       }
 
       const publicKey = await getAddressAsymetricKey(signerAddress.hash, 'public')
@@ -882,16 +860,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         }
       }
 
-      const { topic, acknowledged } = await walletConnectClient.approve({ id, relayProtocol, namespaces })
+      const { topic, acknowledged } = await walletConnectClient.approveSession({ id, relayProtocol, namespaces })
       console.log('👉 APPROVAL TOPIC RECEIVED:', topic)
       console.log('✅ APPROVING: DONE!')
-
-      console.log('⏳ WAITING FOR DAPP ACKNOWLEDGEMENT...')
-      const res = await acknowledged()
-      console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', res.acknowledged)
+      console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', acknowledged)
 
       setSessionProposalEvent(undefined)
-      setActiveSessions(getActiveWalletConnectSessions(walletConnectClient))
+      updateActiveSessions(walletConnectClient)
 
       sendAnalytics({ event: 'WC: Approved connection' })
     } catch (e) {
@@ -909,7 +884,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     try {
       setLoading('Rejecting...')
       console.log('👎 REJECTING SESSION PROPOSAL:', sessionProposalEvent.id)
-      await walletConnectClient.reject({ id: sessionProposalEvent.id, reason: getSdkError('USER_REJECTED') })
+      await walletConnectClient.rejectSession({ id: sessionProposalEvent.id, reason: getSdkError('USER_REJECTED') })
       console.log('✅ REJECTING: DONE!')
 
       setSessionProposalEvent(undefined)
@@ -1059,21 +1034,18 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
     try {
       console.log('Disconnect all sessions')
-      const topics = walletConnectClient.session.keys
+      const topics = Object.keys(walletConnectClient.getActiveSessions())
       const reason = getSdkError('USER_DISCONNECTED')
       for (const topic of topics) {
         try {
-          await walletConnectClient.disconnect({ topic, reason })
+          await walletConnectClient.disconnectSession({ topic, reason })
         } catch (error) {
           console.error(`Failed to disconnect topic ${topic}, error: ${error}`)
         }
       }
-      setActiveSessions([])
+      updateActiveSessions(walletConnectClient)
 
       console.log('Clear walletconnect cache')
-      walletConnectClient.proposal.map.clear()
-      walletConnectClient.pendingRequest.map.clear()
-      walletConnectClient.session.map.clear()
       const expirer = walletConnectClient.core.expirer as Expirer
       expirer.expirations.clear()
       walletConnectClient.core.history.records.clear()
@@ -1083,11 +1055,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       walletConnectClient.core.relayer.subscriber.subscriptions.clear()
 
       console.log('Clear walletconnect storage')
-      await clearWCStorage()
+      await clearWCStorage(walletConnectClient)
     } catch (error) {
       sendAnalytics({ type: 'error', error, message: 'Error at resetting WalletConnect storage' })
     }
-  }, [walletConnectClient])
+  }, [updateActiveSessions, walletConnectClient])
 
   return (
     <WalletConnectContext.Provider
@@ -1261,7 +1233,7 @@ async function cleanBeforeInit() {
   }
 }
 
-function cleanHistory(client: SignClient, checkResponse: boolean) {
+function cleanHistory(client: IWalletKit, checkResponse: boolean) {
   try {
     const records = client.core.history.records
     for (const [id, record] of records) {
@@ -1277,7 +1249,7 @@ function cleanHistory(client: SignClient, checkResponse: boolean) {
   }
 }
 
-async function cleanMessages(client: SignClient, topic: string) {
+async function cleanMessages(client: IWalletKit, topic: string) {
   try {
     await client.core.relayer.messages.del(topic)
   } catch (error) {
@@ -1297,15 +1269,24 @@ async function cleanPendingRequest(storage: KeyValueStorage) {
   }
 }
 
-async function clearWCStorage() {
+async function clearWCStorage(walletConnectClient?: IWalletKit) {
+  if (walletConnectClient) {
+    try {
+      const keys = (await walletConnectClient.core.storage.getKeys()).filter((key) => key.startsWith('wc@'))
+
+      for (const key of keys) await walletConnectClient.core.storage.removeItem(key)
+    } catch (e) {
+      console.error('❌ COULD NOT CLEAR WALLETCONNECT STORAGE using walletConnectClient:', e)
+    }
+  }
+
   try {
     const storage = new KeyValueStorage({ ...CORE_STORAGE_OPTIONS })
     const keys = (await storage.getKeys()).filter((key) => key.startsWith('wc@'))
-    for (const key of keys) {
-      await storage.removeItem(key)
-    }
-  } catch (error) {
-    sendAnalytics({ type: 'error', error, message: 'Could not clear WalletConnect storage' })
+
+    for (const key of keys) await storage.removeItem(key)
+  } catch (e) {
+    console.error('❌ COULD NOT CLEAR WALLETCONNECT STORAGE:', e)
   }
 }
 

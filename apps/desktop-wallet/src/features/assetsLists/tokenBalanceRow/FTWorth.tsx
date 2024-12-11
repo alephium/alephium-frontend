@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calculateAmountWorth } from '@alephium/shared'
+import { isNumber } from 'lodash'
 import styled from 'styled-components'
 
 import useFetchTokenPrices, { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
@@ -57,7 +58,7 @@ const FTWorthAmount = ({ symbol, totalBalance, decimals }: FTWorthAmountProps) =
   const { data: tokenPrice } = useFetchTokenPrice(symbol)
 
   const worth =
-    totalBalance !== undefined && tokenPrice !== undefined
+    totalBalance !== undefined && isNumber(tokenPrice)
       ? calculateAmountWorth(totalBalance, tokenPrice, decimals)
       : undefined
 

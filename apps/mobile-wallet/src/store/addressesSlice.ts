@@ -54,6 +54,7 @@ import { chunk } from 'lodash'
 
 import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsNextPage } from '~/api/addresses'
 import { addressMetadataIncludesHash } from '~/persistent-storage/wallet'
+import { addressDeleted } from '~/store/addresses/addressesActions'
 import { RootState } from '~/store/store'
 import {
   appLaunchedWithLastUsedWallet,
@@ -106,13 +107,20 @@ export const syncLatestTransactions = createAsyncThunk(
       await Promise.all([dispatch(syncAddressesBalances(addresses)), dispatch(syncAddressesTokens(addresses))])
     }
 
-    const results = await Promise.all(
-      chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
-        client.explorer.addresses.postAddressesTransactions({ page: 1 }, addressesChunk)
-      )
-    )
+    let latestTransactions: Transaction[] = []
+    const args = { page: 1 }
 
-    const latestTransactions = results.flat()
+    if (addresses.length === 1) {
+      latestTransactions = await client.explorer.addresses.getAddressesAddressTransactions(addresses[0], args)
+    } else if (addresses.length > 1) {
+      const results = await Promise.all(
+        chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
+          client.explorer.addresses.postAddressesTransactions(args, addressesChunk)
+        )
+      )
+
+      latestTransactions = results.flat()
+    }
 
     const newTransactionsResults = addresses.reduce(
       (acc, addressHash) => {
@@ -310,6 +318,9 @@ const addressesSlice = createSlice({
       })
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
+      .addCase(addressDeleted, (state, { payload: addressHash }) => {
+        addressesAdapter.removeOne(state, addressHash)
+      })
       .addCase(appReset, () => initialState)
       .addCase(walletDeleted, () => initialState)
     builder.addMatcher(isAnyOf(walletUnlocked, appLaunchedWithLastUsedWallet), (state, { payload: { addresses } }) => {

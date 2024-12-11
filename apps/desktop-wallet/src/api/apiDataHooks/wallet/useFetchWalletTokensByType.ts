@@ -26,9 +26,7 @@ interface UseFetchWalletTokensByType {
 }
 
 const useFetchWalletTokensByType = ({ includeAlph }: UseFetchWalletTokensByType) => {
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphArray({
-    skip: !includeAlph
-  })
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphArray()
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchWalletBalancesTokensArray()
   const allTokensBalances = useMergeAllTokensBalances({
     includeAlph,
@@ -39,7 +37,7 @@ const useFetchWalletTokensByType = ({ includeAlph }: UseFetchWalletTokensByType)
 
   return {
     data,
-    isLoading: isLoading || isLoadingTokensBalances || isLoadingAlphBalances
+    isLoading: isLoading || isLoadingTokensBalances || (includeAlph ? isLoadingAlphBalances : false)
   }
 }
 

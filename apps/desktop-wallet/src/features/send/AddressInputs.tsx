@@ -37,7 +37,6 @@ import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
 import { selectAllContacts } from '@/storage/addresses/addressesSelectors'
-import { filterContacts } from '@/utils/contacts'
 
 interface AddressInputsProps {
   defaultFromAddress: AddressHash
@@ -59,7 +58,6 @@ const AddressInputs = ({
   className
 }: AddressInputsProps) => {
   const { t } = useTranslation()
-  const updatedInitialAddress = fromAddresses.find((a) => a === defaultFromAddress) ?? fromAddresses[0]
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const contacts = useAppSelector(selectAllContacts)
   const { data: allAddressHashes } = useFetchSortedAddressesHashes()
@@ -67,18 +65,15 @@ const AddressInputs = ({
 
   const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
-  const [filteredContacts, setFilteredContacts] = useState(contacts)
 
   const contactSelectOptions: SelectOption<AddressHash>[] = contacts.map((contact) => ({
     value: contact.address,
-    label: contact.name
+    label: contact.name,
+    searchString: `${contact.name.toLowerCase()} ${contact.address.toLowerCase()}`
   }))
 
   const handleContactSelect = (contactAddress: SelectOption<AddressHash>) =>
     onContactSelect && onContactSelect(contactAddress.value)
-
-  const handleContactsSearch = (searchInput: string) =>
-    setFilteredContacts(filterContacts(contacts, searchInput.toLowerCase()))
 
   const handleToOwnAddressModalClose = () => {
     setIsAddressSelectModalOpen(false)
@@ -87,7 +82,6 @@ const AddressInputs = ({
 
   const handleContactSelectModalClose = () => {
     setIsContactSelectModalOpen(false)
-    setFilteredContacts(contacts)
     moveFocusOnPreviousModal()
   }
 
@@ -107,7 +101,7 @@ const AddressInputs = ({
           <AddressSelect
             title={t('Select the address to send funds from.')}
             addressOptions={fromAddresses}
-            defaultAddress={updatedInitialAddress}
+            selectedAddress={defaultFromAddress}
             onAddressChange={onFromAddressChange}
             id="from-address"
             simpleMode
@@ -156,10 +150,9 @@ const AddressInputs = ({
           <SelectOptionsModal
             title={t('Choose a contact')}
             options={contactSelectOptions}
-            showOnly={filteredContacts.map((contact) => contact.address)}
             setValue={handleContactSelect}
             onClose={handleContactSelectModalClose}
-            onSearchInput={handleContactsSearch}
+            isSearchable
             searchPlaceholder={t('Search for name or a hash...')}
             optionRender={(contact) => (
               <SelectOptionItemContent

@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { calculateAmountWorth } from '@alephium/shared'
+import { isNumber } from 'lodash'
 import { useMemo } from 'react'
 
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
@@ -33,8 +34,9 @@ const useFetchListedFtsWorth = ({ listedFts }: UseListedFtsWorthProps) => {
     () =>
       listedFts.reduce((totalWorth, token) => {
         const tokenPrice = tokenPrices?.find(({ symbol }) => symbol === token.symbol)?.price
-        const tokenWorth =
-          tokenPrice !== undefined ? calculateAmountWorth(token.totalBalance, tokenPrice, token.decimals) : 0
+        const tokenWorth = isNumber(tokenPrice)
+          ? calculateAmountWorth(token.totalBalance, tokenPrice, token.decimals)
+          : 0
 
         return totalWorth + tokenWorth
       }, 0),

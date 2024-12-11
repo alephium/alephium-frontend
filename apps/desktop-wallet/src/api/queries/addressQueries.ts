@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, PAGINATION_PAGE_LIMIT, throttledClient } from '@alephium/shared'
-import { AddressTokenBalance } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
@@ -71,7 +71,7 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
       !skip && networkId !== undefined
         ? async () => {
             const tokenBalances = [] as TokenDisplayBalances[]
-            let tokenBalancesInPage = [] as AddressTokenBalance[]
+            let tokenBalancesInPage = [] as e.AddressTokenBalance[]
             let page = 1
 
             while (page === 1 || tokenBalancesInPage.length === PAGINATION_PAGE_LIMIT) {

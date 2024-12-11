@@ -20,7 +20,7 @@ import { createSlice, EntityState, isAnyOf } from '@reduxjs/toolkit'
 
 import { sentTransactionStatusChanged } from '@/features/send/sentTransactions/sentTransactionsActions'
 import { sentTransactionsAdapter } from '@/features/send/sentTransactions/sentTransactionsAdapter'
-import { receiveTestnetTokens } from '@/storage/global/globalActions'
+import { receiveFaucetTokens } from '@/storage/global/globalActions'
 import { transactionSent } from '@/storage/transactions/transactionsActions'
 import { activeWalletDeleted, walletLocked, walletSwitched } from '@/storage/wallets/walletActions'
 import { SentTransaction } from '@/types/transactions'
@@ -36,7 +36,7 @@ const sentTransactionsSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(transactionSent, sentTransactionsAdapter.addOne)
-      .addCase(receiveTestnetTokens.fulfilled, sentTransactionsAdapter.addOne)
+      .addCase(receiveFaucetTokens.fulfilled, sentTransactionsAdapter.addOne)
       .addCase(sentTransactionStatusChanged, (state, { payload: { hash, status } }) => {
         sentTransactionsAdapter.updateOne(state, { id: hash, changes: { status } })
       })

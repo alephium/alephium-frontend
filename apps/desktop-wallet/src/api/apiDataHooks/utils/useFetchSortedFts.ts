@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { calculateAmountWorth } from '@alephium/shared'
 import { useQueries } from '@tanstack/react-query'
-import { orderBy } from 'lodash'
+import { isNumber, orderBy } from 'lodash'
 import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
@@ -58,7 +58,7 @@ const useFetchSortedFts = ({ listedFts, unlistedFtIds, skip }: UseSortFTsProps) 
                 (token) => {
                   const tokenPrice = tokenPrices?.find((tokenPrice) => tokenPrice.symbol === token.symbol)?.price
 
-                  return tokenPrice !== undefined
+                  return isNumber(tokenPrice)
                     ? calculateAmountWorth(token.totalBalance, tokenPrice, token.decimals)
                     : -1
                 },

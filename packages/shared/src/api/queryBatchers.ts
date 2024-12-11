@@ -16,7 +16,8 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
+import { explorer as e } from '@alephium/web3'
+import { Batcher, create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
 import { TOKENS_QUERY_LIMIT } from '@/api/limits'
 import { throttledClient } from '@/api/throttledClient'
@@ -45,10 +46,13 @@ const createNFTMetadataBatcher = () =>
     scheduler: windowedFiniteBatchScheduler({ maxBatchSize: TOKENS_QUERY_LIMIT, windowMs: 10 })
   })
 
+// Explicitely annotating types
+// See https://chatgpt.com/c/67487a60-81f4-8007-ae20-bc89db07d4a7
 class Batchers {
-  tokenTypeBatcher = createTokenTypeBatcher()
-  ftMetadataBatcher = createFTMetadataBatcher()
-  nftMetadataBatcher = createNFTMetadataBatcher()
+  tokenTypeBatcher: Batcher<e.TokenInfo[], string, e.TokenInfo | undefined> = createTokenTypeBatcher()
+  ftMetadataBatcher: Batcher<e.FungibleTokenMetadata[], string, e.FungibleTokenMetadata | undefined> =
+    createFTMetadataBatcher()
+  nftMetadataBatcher: Batcher<e.NFTMetadata[], string, e.NFTMetadata | undefined> = createNFTMetadataBatcher()
 
   init() {
     this.tokenTypeBatcher = createTokenTypeBatcher()

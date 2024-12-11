@@ -17,12 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 
 import { TableRowProps } from '@/components/Table'
 
 export interface TransactionRowProps extends TableRowProps {
-  tx: Transaction
+  tx: e.Transaction
   refAddressHash?: AddressHash
   isInAddressDetailsModal?: boolean
   compact?: boolean

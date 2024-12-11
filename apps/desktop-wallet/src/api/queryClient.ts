@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { FIVE_MINUTES_MS, MAX_API_RETRIES, ONE_MINUTE_MS } from '@alephium/shared'
+import { FIVE_MINUTES_MS, ONE_MINUTE_MS } from '@alephium/shared'
 import { QueryClient } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 
@@ -30,9 +30,6 @@ const queryClient = new QueryClient({
           (error instanceof AxiosError && error.response?.status !== 429) ||
           (error instanceof String && !error?.message?.includes('Status code: 429'))
         ) {
-          return false
-        } else if (failureCount > MAX_API_RETRIES) {
-          console.error(`API failed after ${MAX_API_RETRIES} retries, won't retry anymore`, error)
           return false
         }
 

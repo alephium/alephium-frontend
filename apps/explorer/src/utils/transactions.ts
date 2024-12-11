@@ -105,9 +105,9 @@ type UTXO = {
 export const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount> => {
   const validUtxos = utxos.filter((utxo) => utxo.address && utxo.attoAlphAmount)
 
-  const grouped = groupBy(validUtxos, 'address')
-  const summed = mapValues(grouped, (addressGroup) =>
-    reduce(addressGroup, (sum, utxo) => (BigInt(sum) + BigInt(utxo.attoAlphAmount || 0)).toString(), '0')
+  const utxosGroupedByAddress = groupBy(validUtxos, 'address')
+  const summed = mapValues(utxosGroupedByAddress, (addressUtxos) =>
+    reduce(addressUtxos, (sum, utxo) => (BigInt(sum) + BigInt(utxo.attoAlphAmount || 0)).toString(), '0')
   )
 
   return summed
@@ -116,22 +116,23 @@ export const sumUpAlphAmounts = (utxos: UTXO[]): Record<Address, AttoAlphAmount>
 export const sumUpTokenAmounts = (utxos: UTXO[]): Record<Address, Record<Token['id'], TokenAmount>> => {
   const validUtxos = utxos.filter((utxo) => utxo.address && utxo.tokens && utxo.tokens.length > 0)
 
-  const grouped = groupBy(validUtxos, 'address')
-  const summed = mapValues(grouped, (addressGroup) => {
+  const utxosGroupedByAddress = groupBy(validUtxos, 'address')
+  const summed = mapValues(utxosGroupedByAddress, (addressUtxos) => {
     const tokenSums: Record<Token['id'], TokenAmount> = {}
 
-    for (const utxo of addressGroup) {
+    for (const utxo of addressUtxos) {
       for (const token of utxo.tokens || []) {
         tokenSums[token.id] = (BigInt(tokenSums[token.id] || 0) + BigInt(token.amount)).toString()
       }
     }
+
     return tokenSums
   })
 
   return summed
 }
 
-export const IOAmountsDelta = (
+export const calculateIoAmountsDelta = (
   inputs: UTXO[] = [],
   outputs: UTXO[] = []
 ): { alph: Record<Address, AttoAlphAmount>; tokens: Record<Address, Record<Token['id'], TokenAmount>> } => {

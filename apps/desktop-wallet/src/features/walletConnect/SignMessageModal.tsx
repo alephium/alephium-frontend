@@ -19,12 +19,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { keyring } from '@alephium/keyring'
 import { getHumanReadableError, WALLETCONNECT_ERRORS } from '@alephium/shared'
 import { hashMessage } from '@alephium/web3'
+import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { useLedger } from '@/features/ledger/useLedger'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
@@ -42,10 +44,12 @@ const SignMessageModal = memo(({ id, txData }: ModalBaseProp & SignMessageModalP
   const { sendAnalytics } = useAnalytics()
   const dispatch = useAppDispatch()
   const { sendSuccessResponse, sendFailureResponse, sendUserRejectedResponse } = useWalletConnectContext()
+  const { isLedger } = useLedger()
 
   const handleSign = async () => {
     try {
       const messageHash = hashMessage(txData.message, txData.messageHasher)
+
       const signature = keyring.signMessageHash(messageHash, txData.fromAddress.hash)
 
       await sendSuccessResponse({ signature }, true)
@@ -77,11 +81,20 @@ const SignMessageModal = memo(({ id, txData }: ModalBaseProp & SignMessageModalP
         <InputFieldsColumn>
           <InfoBox label={t('Message')} text={txData.message} />
         </InputFieldsColumn>
+        {isLedger && (
+          <InputFieldsColumn>
+            <InfoBox
+              text={t('Signing messages with Ledger is not supported.')}
+              importance="warning"
+              Icon={AlertTriangle}
+            />
+          </InputFieldsColumn>
+        )}
         <ModalFooterButtons>
           <ModalFooterButton role="secondary" onClick={() => rejectAndClose(true)}>
             {t('Reject')}
           </ModalFooterButton>
-          <ModalFooterButton onClick={handleSign}>{t('Sign')}</ModalFooterButton>
+          {!isLedger && <ModalFooterButton onClick={handleSign}>{t('Sign')}</ModalFooterButton>}
         </ModalFooterButtons>
       </ModalContent>
     </CenteredModal>

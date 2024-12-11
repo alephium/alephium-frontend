@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash } from '@alephium/shared'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
-import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
+import { combineError, combineIsFetching, combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
@@ -33,19 +33,26 @@ export const useFetchWalletBalancesTokensByToken = () => useFetchWalletBalancesT
 export const useFetchWalletBalancesTokensByAddress = () => useFetchWalletBalancesTokens(combineBalancesByAddress)
 
 const useFetchWalletBalancesTokens = <T>(
-  combine: (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => { data: T; isLoading: boolean }
+  combine: (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => {
+    data: T
+    isLoading: boolean
+    isFetching?: boolean
+    error?: boolean
+  }
 ) => {
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const allAddressHashes = useUnsortedAddressesHashes()
 
-  const { data, isLoading } = useQueries({
+  const { data, isLoading, isFetching, error } = useQueries({
     queries: allAddressHashes.map((addressHash) => addressTokensBalancesQuery({ addressHash, networkId })),
     combine
   })
 
   return {
     data,
-    isLoading
+    isLoading,
+    isFetching,
+    error
   }
 }
 
@@ -63,7 +70,9 @@ const combineBalancesByToken = (results: UseQueryResult<AddressTokensBalancesQue
     },
     {} as Record<TokenId, DisplayBalances | undefined>
   ),
-  ...combineIsLoading(results)
+  ...combineIsLoading(results),
+  ...combineIsFetching(results),
+  ...combineError(results)
 })
 
 const combineBalancesByAddress = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => ({
@@ -80,13 +89,15 @@ const combineBalancesByAddress = (results: UseQueryResult<AddressTokensBalancesQ
 })
 
 const combineBalancesToArray = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => {
-  const { data: tokenBalancesByToken, isLoading } = combineBalancesByToken(results)
+  const { data: tokenBalancesByToken, isLoading, isFetching, error } = combineBalancesByToken(results)
 
   return {
     data: Object.keys(tokenBalancesByToken).map((id) => ({
       id,
       ...tokenBalancesByToken[id]
     })) as TokenDisplayBalances[],
-    isLoading
+    isLoading,
+    isFetching,
+    error
   }
 }

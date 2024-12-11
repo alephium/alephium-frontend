@@ -17,8 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { TokenList } from '@alephium/token-list'
-import { explorer, NFTTokenUriMetaData } from '@alephium/web3'
-import { NFTMetadata } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e, NFTTokenUriMetaData } from '@alephium/web3'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { chunk, groupBy } from 'lodash'
 import posthog from 'posthog-js'
@@ -71,9 +70,9 @@ export const syncUnknownTokensInfo = createAsyncThunk(
     }))
 
     for await (const entry of tokenIdsByType) {
-      if (entry.stdInterfaceId === explorer.TokenStdInterfaceId.Fungible) {
+      if (entry.stdInterfaceId === e.TokenStdInterfaceId.Fungible) {
         dispatch(syncFungibleTokensInfo(entry.tokenIds))
-      } else if (entry.stdInterfaceId === explorer.TokenStdInterfaceId.NonFungible) {
+      } else if (entry.stdInterfaceId === e.TokenStdInterfaceId.NonFungible) {
         dispatch(syncNFTsInfo(entry.tokenIds))
       }
     }
@@ -112,7 +111,7 @@ export const syncFungibleTokensInfo = createAsyncThunk(
 )
 
 export const syncNFTsInfo = createAsyncThunk('assets/syncNFTsInfo', async (tokenIds: Asset['id'][]): Promise<NFT[]> => {
-  let nftsMetadata: NFTMetadata[] = []
+  let nftsMetadata: e.NFTMetadata[] = []
 
   try {
     nftsMetadata = (
