@@ -36,7 +36,7 @@ import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalType
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance, useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { selectAddressByHash, selectAllAddresses } from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash, selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import {
   transactionBuildFailed,
   transactionSendFailed,
@@ -58,14 +58,14 @@ const AddressSweepModal = memo(
     const { data: allAddressHashes } = useFetchSortedAddressesHashes()
     const { sendAnalytics } = useAnalytics()
     const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
+    const defaultAddress = useAppSelector(selectDefaultAddress)
     const { isLedger, onLedgerError } = useLedger()
 
-    const toAddressOptions = addressHash ? addresses.filter(({ hash }) => hash !== fromAddress?.hash) : addresses
     const { data: fromAddressOptions } = useFetchAddressesHashesWithBalance()
 
     const [sweepAddresses, setSweepAddresses] = useState<{ from?: Address; to?: Address }>({
       from: fromAddress,
-      to: toAddressOptions.length > 0 ? toAddressOptions[0] : fromAddress
+      to: defaultAddress
     })
     const [fee, setFee] = useState(BigInt(0))
     const [builtUnsignedTxs, setBuiltUnsignedTxs] = useState<node.SweepAddressTransaction[]>()
@@ -165,7 +165,7 @@ const AddressSweepModal = memo(
             label={t('From address')}
             title={t('Select the address to sweep the funds from.')}
             addressOptions={fromAddressOptions}
-            defaultAddress={sweepAddresses.from.hash}
+            selectedAddress={sweepAddresses.from.hash}
             onAddressChange={handleOriginAddressChange}
             disabled={!isUtxoConsolidation}
             id="from-address"
@@ -176,7 +176,7 @@ const AddressSweepModal = memo(
             addressOptions={
               !isUtxoConsolidation ? allAddressHashes.filter((hash) => hash !== fromAddress?.hash) : allAddressHashes
             }
-            defaultAddress={sweepAddresses.to.hash}
+            selectedAddress={sweepAddresses.to.hash}
             onAddressChange={handleDestinationAddressChange}
             id="to-address"
           />

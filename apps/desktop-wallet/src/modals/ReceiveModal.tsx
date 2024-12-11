@@ -41,7 +41,7 @@ const ReceiveModal = memo(({ id, addressHash }: AddressModalProps) => {
           label={t('Address')}
           title={t('Select the address to receive funds to.')}
           addressOptions={allAddressHashes}
-          defaultAddress={addressHash}
+          selectedAddress={selectedAddress}
           onAddressChange={setSelectedAddress}
           id="address"
           noMargin
