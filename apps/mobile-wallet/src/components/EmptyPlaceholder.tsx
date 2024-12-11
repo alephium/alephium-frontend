@@ -28,12 +28,11 @@ const EmptyPlaceholder = ({ children, ...props }: ViewProps) => (
 const EmptyPlaceholderStyled = styled.View`
   text-align: center;
   align-items: center;
-  flex: 1;
   gap: 25px;
   padding: 20px;
   border-radius: 9px;
-  border: 2px dashed ${({ theme }) => theme.border.primary};
   margin: ${DEFAULT_MARGIN}px;
+  background-color: ${({ theme }) => theme.bg.primary};
 `
 
 export default EmptyPlaceholder

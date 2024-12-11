@@ -82,7 +82,7 @@ const BottomButtons = ({
 export default BottomButtons
 
 const BottomButtonsStyled = styled.View`
-  padding: ${VERTICAL_GAP * 1.5}px 0 ${VERTICAL_GAP}px 0;
+  padding: ${VERTICAL_GAP}px 0;
 `
 
 const Gradient = styled(LinearGradient)`

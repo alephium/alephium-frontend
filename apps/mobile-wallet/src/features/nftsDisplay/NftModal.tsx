@@ -88,7 +88,7 @@ const NftImageContainer = styled.View`
 `
 
 const NFTDescriptionContainer = styled.View`
-  margin-top: 20px;
+  margin: 10px 0;
   background-color: ${({ theme }) => theme.bg.highlight};
   padding: 10px;
   border-radius: ${BORDER_RADIUS_SMALL}px;
