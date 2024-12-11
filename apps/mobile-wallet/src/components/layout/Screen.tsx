@@ -40,7 +40,7 @@ const Screen = ({ children, headerOptions, safeAreaPadding, ...props }: ScreenPr
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
   const paddingStyle: StyleProp<ViewStyle> = safeAreaPadding
-    ? { paddingTop: insets.top, paddingBottom: insets.bottom }
+    ? { paddingTop: insets.top, paddingBottom: insets.bottom || 20 }
     : {}
 
   return (
