@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
 import { useInitializeThrottledClient } from '@alephium/shared-react'
-import { ReactNode, useCallback, useEffect } from 'react'
+import { memo, ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 import PersistedQueryCacheVersionStorage from '@/api/persistedCacheVersionStorage'
@@ -54,7 +54,7 @@ import { GlobalStyle } from '@/style/globalStyles'
 import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
 
-const App = () => {
+const App = memo(() => {
   const theme = useAppSelector((s) => s.global.theme)
 
   useAutoLock()
@@ -90,7 +90,7 @@ const App = () => {
       <AppSpinner />
     </ThemeProvider>
   )
-}
+})
 
 export default App
 
