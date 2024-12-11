@@ -58,6 +58,7 @@ const Input = <T extends InputValue>({
   error,
   layout,
   inputRef,
+  onChangeText,
   ...props
 }: InputProps<T>) => {
   const { t } = useTranslation()
@@ -75,6 +76,7 @@ const Input = <T extends InputValue>({
 
   const handlePasteButtonPress = () => {
     usedInputRef.current?.setNativeProps({ text: copiedText })
+    onChangeText?.(copiedText)
   }
 
   const isShowingPasteButton = copiedText && showPasteButton
@@ -94,6 +96,7 @@ const Input = <T extends InputValue>({
           placeholderTextColor={theme.font.tertiary}
           style={resetDisabledColor && !props.editable ? { color: theme.font.primary } : undefined}
           hide={showCustomValueRendering}
+          onChangeText={onChangeText}
           {...props}
         />
         {isShowingPasteButton && (
