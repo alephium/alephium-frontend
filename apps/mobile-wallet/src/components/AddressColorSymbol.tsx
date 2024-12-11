@@ -17,11 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
+import { View } from 'react-native'
 import styled from 'styled-components/native'
 
 import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
+import { selectContactByHash } from '~/store/addresses/addressesSelectors'
 import { selectAddressByHash } from '~/store/addressesSlice'
+import { stringToColour } from '~/utils/colors'
 
 interface AddressColorSymbolProps {
   addressHash: AddressHash
@@ -30,23 +33,22 @@ interface AddressColorSymbolProps {
 
 const AddressColorSymbol = ({ addressHash, size = 10 }: AddressColorSymbolProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const contact = useAppSelector((s) => selectContactByHash(s, addressHash))
 
-  if (!address) return
+  if (!address && !contact) return
 
   return (
-    <AddressColorSymbolStyled>
-      {address.settings.isDefault ? (
+    <View>
+      {address?.settings.isDefault ? (
         <DefaultAddressBadge size={size + 2} color={address.settings.color} />
       ) : (
-        <Dot color={address.settings.color} size={size} />
+        <Dot color={contact ? stringToColour(contact.address) : address?.settings.color} size={size} />
       )}
-    </AddressColorSymbolStyled>
+    </View>
   )
 }
 
 export default AddressColorSymbol
-
-const AddressColorSymbolStyled = styled.View``
 
 const Dot = styled.View<{ color?: string; size?: number }>`
   width: ${({ size }) => size}px;

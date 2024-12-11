@@ -16,16 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { ReactNode } from 'react'
-import { StyleProp, ViewStyle } from 'react-native'
+import { ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
-interface RoundedCardProps {
+interface RoundedCardProps extends ViewProps {
   children: ReactNode
-  style?: StyleProp<ViewStyle>
 }
 
-const RoundedCard = ({ children, style }: RoundedCardProps) => (
-  <RoundedCardStyled style={style}>{children}</RoundedCardStyled>
+const RoundedCard = ({ children, ...props }: RoundedCardProps) => (
+  <RoundedCardStyled {...props}>{children}</RoundedCardStyled>
 )
 
 export default RoundedCard

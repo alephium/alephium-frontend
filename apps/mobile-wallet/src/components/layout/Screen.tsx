@@ -58,12 +58,12 @@ const Screen = ({ children, headerOptions, safeAreaPadding, ...props }: ScreenPr
   )
 }
 
+export default Screen
+
 const ScreenStyled = styled.View<ScreenProps>`
   flex: 1;
   background-color: ${({ theme }) => theme.bg.back2};
 `
-
-export default Screen
 
 export interface ScreenSectionProps extends ViewProps {
   fill?: boolean

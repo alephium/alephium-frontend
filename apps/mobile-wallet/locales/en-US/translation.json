@@ -358,6 +358,8 @@
   "Status": "Status",
   "Script execution failed": "Script execution failed",
   "Unknown tokens": "Unknown tokens",
+  "unknownTokensKey_one": "{{ count }} unknown token",
+  "unknownTokensKey_other": "{{ count }} unknown tokens",
   "Address copied!": "Address copied!",
   "Error while copying address": "Error while copying address",
   "This address is not valid": "This address is not valid",
