@@ -23,7 +23,7 @@ import styled from 'styled-components/native'
 import Amount from '~/components/Amount'
 import AssetLogo from '~/components/AssetLogo'
 import ListItem, { ListItemProps } from '~/components/ListItem'
-import { useTransactionUI } from '~/hooks/useTransactionUI'
+import { useTransactionUI } from '~/features/transactionsDisplay/useTransactionUI'
 import { AddressTransaction } from '~/types/transactions'
 import { getTransactionInfo, isPendingTx } from '~/utils/transactions'
 
@@ -99,7 +99,6 @@ const AmountColumn = styled.View`
   flex: 1;
   align-items: flex-end;
   flex-shrink: 0;
-  padding: 10px 0;
 `
 
 const AssetLogos = styled.View`
@@ -109,7 +108,6 @@ const AssetLogos = styled.View`
   justify-content: flex-start;
   flex-wrap: wrap;
   gap: 5px;
-  padding: 10px 0;
 `
 
 const AmountStyled = styled(Amount)`

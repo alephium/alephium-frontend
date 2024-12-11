@@ -16,10 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { FlashList } from '@shopify/flash-list'
 import { RefObject } from 'react'
 import { FlatList, NativeScrollEvent, NativeSyntheticEvent, ScrollView } from 'react-native'
 
-import { scrollEndThreshold } from '~/components/headers/BaseHeader'
 import { scrollScreenTo } from '~/utils/layout'
 
 type UseAutoScrollReturnedHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => void
@@ -27,6 +27,8 @@ type UseAutoScrollReturnedHandler = (e: NativeSyntheticEvent<NativeScrollEvent>)
 type UseAutoScrollOnDragEnd = {
   (scrollViewRef?: RefObject<ScrollView>): UseAutoScrollReturnedHandler
   (flatListRef?: RefObject<FlatList>): UseAutoScrollReturnedHandler
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (flashListRef?: RefObject<FlashList<any>>): UseAutoScrollReturnedHandler
 }
 
 const useAutoScrollOnDragEnd: UseAutoScrollOnDragEnd = (viewRef) => {
@@ -38,8 +40,8 @@ const useAutoScrollOnDragEnd: UseAutoScrollOnDragEnd = (viewRef) => {
 
     if (contentOffset.y < 60) {
       scrollScreenTo(0, viewRef, true)
-    } else if (contentOffset.y < scrollEndThreshold) {
-      scrollScreenTo(scrollEndThreshold, viewRef, true)
+    } else if (contentOffset.y < 80) {
+      scrollScreenTo(50, viewRef, true)
     }
   }
 

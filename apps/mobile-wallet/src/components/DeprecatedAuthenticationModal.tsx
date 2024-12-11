@@ -32,7 +32,7 @@ import ModalWithBackdrop, { ModalWithBackdropProps } from '~/components/ModalWit
 import { Spinner } from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
 import i18n from '~/features/localization/i18n'
-import { loadBiometricsSettings } from '~/persistent-storage/settings'
+import { loadBiometricsSettings } from '~/features/settings/settingsPersistentStorage'
 import { getDeprecatedStoredWallet, GetDeprecatedStoredWalletProps } from '~/persistent-storage/wallet'
 import { ShouldClearPin } from '~/types/misc'
 import { DeprecatedWalletState } from '~/types/wallet'

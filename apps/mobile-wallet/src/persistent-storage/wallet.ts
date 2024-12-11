@@ -29,9 +29,9 @@ import { Alert } from 'react-native'
 import { sendAnalytics } from '~/analytics'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import i18n from '~/features/localization/i18n'
+import { loadBiometricsSettings } from '~/features/settings/settingsPersistentStorage'
 import { wasAppUninstalled } from '~/persistent-storage/app'
 import { defaultBiometricsConfig } from '~/persistent-storage/config'
-import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
   deleteSecurelyWithReportableError,
   deleteWithReportableError,

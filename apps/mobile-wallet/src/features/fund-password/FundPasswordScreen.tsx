@@ -25,12 +25,12 @@ import { Alert } from 'react-native'
 import { useTheme } from 'styled-components'
 
 import { sendAnalytics } from '~/analytics'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
-import ButtonStack from '~/components/buttons/ButtonStack'
 import Input from '~/components/inputs/Input'
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
@@ -54,7 +54,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
   const { setHeaderOptions } = useHeaderContext()
   const currentFundPassword = useFundPassword()
   const dispatch = useAppDispatch()
-  const { fundPasswordModal, triggerFundPasswordAuthGuard } = useFundPasswordGuard()
+  const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const { t } = useTranslation()
 
   const [isEditingPassword, setIsEditingPassword] = useState<boolean>()
@@ -152,6 +152,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
     <ScrollScreen
       verticalGap
       fill
+      contentPaddingTop
       screenTitle={t('Fund password')}
       screenIntro={screenIntro}
       headerOptions={{ type: cameFromBackupScreen ? 'default' : 'stack' }}
@@ -179,33 +180,29 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
               onSubmitEditing={isEditingPasswordConfirmed ? handleSavePress : undefined}
             />
           </ScreenSection>
-          <ScreenSection>
-            <ButtonStack>
-              {cameFromBackupScreen && <Button title="Skip" onPress={handleSkipPress} flex />}
-              <Button
-                variant="highlight"
-                title={t('Save')}
-                onPress={handleSavePress}
-                disabled={!isEditingPasswordConfirmed}
-                flex
-              />
-            </ButtonStack>
-          </ScreenSection>
+          <BottomButtons>
+            {cameFromBackupScreen && <Button title="Skip" onPress={handleSkipPress} flex />}
+            <Button
+              variant="highlight"
+              title={t('Save')}
+              onPress={handleSavePress}
+              disabled={!isEditingPasswordConfirmed}
+              flex
+            />
+          </BottomButtons>
         </>
       ) : (
         <ScreenSection>
-          <BoxSurface>
+          <Surface>
             <Row title={t('Edit password')} onPress={handlePasswordEdit} titleColor={theme.global.accent}>
               <Ionicons name="pencil" size={18} color={theme.global.accent} />
             </Row>
             <Row title={t('Disable password')} onPress={handleDeletePress} titleColor={theme.global.alert} isLast>
               <Ionicons name="close" size={18} color={theme.global.alert} />
             </Row>
-          </BoxSurface>
+          </Surface>
         </ScreenSection>
       )}
-
-      {fundPasswordModal}
     </ScrollScreen>
   )
 }

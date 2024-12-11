@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { defaultNetworkSettings, NetworkSettings, networkSettingsPresets } from '@alephium/shared'
 import { merge } from 'lodash'
 
-import { loadSettings, persistSettings } from '~/persistent-storage/settings'
+import { loadSettings, persistSettings } from '~/features/settings/settingsPersistentStorage'
 
 export const migrateNetworkSettings = async () => {
   await _v1_0_6_networkSettingsMigration()

@@ -25,13 +25,15 @@ import { useTheme } from 'styled-components'
 
 import FooterMenu from '~/components/footers/FooterMenu'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
+import ActivityScreen from '~/screens/ActivityScreen'
 import DashboardScreen from '~/screens/Dashboard/DashboardScreen'
-import TransfersScreen from '~/screens/TransfersScreen'
+import NFTListScreen from '~/screens/NFTs/NFTListScreen'
 
 export type InWalletTabsParamList = {
   DashboardScreen: undefined
+  NFTListScreen: undefined
   AddressesTabNavigation: undefined
-  TransfersScreen: undefined
+  ActivityScreen: undefined
 }
 
 const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
@@ -60,12 +62,22 @@ const InWalletTabsNavigation = () => {
           }}
         />
         <InWalletTabs.Screen
-          name="TransfersScreen"
-          component={TransfersScreen}
+          name="NFTListScreen"
+          component={NFTListScreen}
           options={{
-            title: t('Transfers'),
+            title: t('NFTs'),
             tabBarIcon: ({ color, size, focused }) => (
-              <Ionicons name={focused ? 'receipt' : 'receipt-outline'} color={color} size={size} />
+              <Ionicons name={focused ? 'image' : 'image-outline'} color={color} size={size} />
+            )
+          }}
+        />
+        <InWalletTabs.Screen
+          name="ActivityScreen"
+          component={ActivityScreen}
+          options={{
+            title: t('Activity'),
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'list' : 'list-outline'} color={color} size={size} />
             )
           }}
         />
