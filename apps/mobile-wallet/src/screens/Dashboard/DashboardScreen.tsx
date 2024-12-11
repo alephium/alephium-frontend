@@ -137,20 +137,13 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
             <HeaderButtons />
           </WalletCardHeader>
           <BalanceSummary dateLabel={t('VALUE TODAY')} />
-          {totalBalance > BigInt(0) && (
-            <ButtonsRowContainer>
+          <ButtonsRowContainer>
+            {totalBalance > BigInt(0) && (
               <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" round flex short />
-              <Button
-                onPress={handleReceivePress}
-                iconProps={{ name: 'download' }}
-                variant="contrast"
-                round
-                flex
-                short
-              />
-              <Button onPress={openBuyModal} iconProps={{ name: 'credit-card' }} variant="contrast" round flex short />
-            </ButtonsRowContainer>
-          )}
+            )}
+            <Button onPress={handleReceivePress} iconProps={{ name: 'download' }} variant="contrast" round flex short />
+            <Button onPress={openBuyModal} iconProps={{ name: 'credit-card' }} variant="contrast" round flex short />
+          </ButtonsRowContainer>
         </AmountRoundedCard>
       </CardContainer>
       <AddressesTokensList />

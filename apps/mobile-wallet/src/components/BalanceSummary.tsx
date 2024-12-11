@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash, CURRENCIES } from '@alephium/shared'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { Skeleton } from 'moti/skeleton'
 import { useMemo } from 'react'
 import { View, ViewProps } from 'react-native'
@@ -25,13 +24,9 @@ import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
-import Button from '~/components/buttons/Button'
-import { openModal } from '~/features/modals/modalActions'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
-import RootStackParamList from '~/navigation/rootStackRoutes'
+import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
-import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
+import { selectAddressIds } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface BalanceSummaryProps extends ViewProps {
@@ -40,38 +35,20 @@ interface BalanceSummaryProps extends ViewProps {
 
 const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => {
   const theme = useTheme()
-  const dispatch = useAppDispatch()
   const currency = useAppSelector((s) => s.settings.currency)
-  const totalBalance = useAppSelector(selectTotalBalance)
-  const isLoadingAlphBalances = useAppSelector((s) => s.loaders.loadingBalances)
-  const addressesStatus = useAppSelector((s) => s.addresses.status)
   const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
-  const navigation = useNavigation<NavigationProp<RootStackParamList | ReceiveNavigationParamList>>()
-
-  const handleReceivePress = () => {
-    if (addressHashes.length === 1) {
-      navigation.navigate('ReceiveNavigation', {
-        screen: 'QRCodeScreen',
-        params: { addressHash: addressHashes[0] }
-      })
-    } else {
-      navigation.navigate('ReceiveNavigation')
-    }
-  }
-
-  const openBuyModal = () => dispatch(openModal({ name: 'BuyModal' }))
 
   return (
     <BalanceSummaryContainer style={style} {...props}>
       <TextContainer>
-        <DateLabelContainer>
+        <View>
           <AppText color="secondary" semiBold>
             {dateLabel}
           </AppText>
-        </DateLabelContainer>
+        </View>
 
         {addressesBalancesStatus === 'uninitialized' ? (
           <View style={{ marginTop: 13 }}>
@@ -81,13 +58,6 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
           <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={40} />
         )}
       </TextContainer>
-
-      {totalBalance === BigInt(0) && !isLoadingAlphBalances && addressesStatus === 'initialized' && (
-        <ReceiveFundsButtonContainer>
-          <Button onPress={handleReceivePress} iconProps={{ name: 'download' }} variant="highlight" short round flex />
-          <Button onPress={openBuyModal} iconProps={{ name: 'credit-card' }} variant="highlight" short round flex />
-        </ReceiveFundsButtonContainer>
-      )}
     </BalanceSummaryContainer>
   )
 }
@@ -103,13 +73,4 @@ const BalanceSummaryContainer = styled.View`
 const TextContainer = styled.View`
   align-items: center;
   margin: 10px ${DEFAULT_MARGIN + 10}px 15px ${DEFAULT_MARGIN + 10}px;
-`
-
-const DateLabelContainer = styled.View``
-
-const ReceiveFundsButtonContainer = styled.View`
-  flex-direction: row;
-  padding: 15px;
-  margin: 5px 10px 0;
-  gap: ${DEFAULT_MARGIN}px;
 `
