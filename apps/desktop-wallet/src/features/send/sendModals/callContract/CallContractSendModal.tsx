@@ -59,12 +59,24 @@ export const buildCallContractTransaction = async (txData: CallContractTxData, c
 export const handleCallContractSend = async (
   { fromAddress, assetAmounts }: CallContractTxData,
   ctx: TxContext,
-  posthog: PostHog
+  posthog: PostHog,
+  isLedger: boolean,
+  onLedgerError: (error: Error) => void
 ) => {
   if (!ctx.unsignedTransaction) throw Error('No unsignedTransaction available')
 
   const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(assetAmounts)
-  const data = await signAndSendTransaction(fromAddress, ctx.unsignedTxId, ctx.unsignedTransaction.unsignedTx)
+  const data = await signAndSendTransaction(
+    fromAddress,
+    ctx.unsignedTxId,
+    ctx.unsignedTransaction.unsignedTx,
+    isLedger,
+    onLedgerError
+  )
+
+  if (!data) {
+    return
+  }
 
   store.dispatch(
     transactionSent({

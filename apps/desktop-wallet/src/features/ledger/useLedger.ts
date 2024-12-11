@@ -16,16 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export type Message = string
+import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
-export type OptionalMessage = Message | undefined
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { showToast } from '@/storage/global/globalActions'
 
-export interface SnackbarMessage {
-  text: Message
-  type?: 'info' | 'alert' | 'success'
-  duration?: number
-}
+export const useLedger = () => {
+  const isLedger = useAppSelector((s) => !!s.activeWallet.isLedger)
+  const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
-export interface ToastMessage extends Omit<SnackbarMessage, 'duration'> {
-  duration: 'short' | 'long'
+  const onLedgerError = useCallback(
+    (error: Error) => {
+      console.error(error)
+      dispatch(showToast({ text: `${t('Could not connect to Alephium Ledger app')}`, type: 'alert', duration: 'long' }))
+    },
+    [dispatch, t]
+  )
+
+  return {
+    isLedger,
+    onLedgerError
+  }
 }

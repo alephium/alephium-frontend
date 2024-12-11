@@ -78,11 +78,23 @@ export const getDeployContractWalletConnectResult = (
 export const handleDeployContractSend = async (
   { fromAddress }: DeployContractTxData,
   context: TxContext,
-  posthog: PostHog
+  posthog: PostHog,
+  isLedger: boolean,
+  onLedgerError: (error: Error) => void
 ) => {
   if (!context.unsignedTransaction) throw Error('No unsignedTransaction available')
 
-  const data = await signAndSendTransaction(fromAddress, context.unsignedTxId, context.unsignedTransaction.unsignedTx)
+  const data = await signAndSendTransaction(
+    fromAddress,
+    context.unsignedTxId,
+    context.unsignedTransaction.unsignedTx,
+    isLedger,
+    onLedgerError
+  )
+
+  if (!data) {
+    return
+  }
 
   store.dispatch(
     transactionSent({
