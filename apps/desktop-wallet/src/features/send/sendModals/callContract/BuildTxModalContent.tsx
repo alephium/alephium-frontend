@@ -75,7 +75,9 @@ const CallContractBuildTxModalContent = ({ data, onSubmit, onCancel }: CallContr
 
   useEffect(() => {
     try {
-      setIsAmountValid(!alphAmount || isAmountWithinRange(fromHumanReadableAmount(alphAmount), availableBalance))
+      setIsAmountValid(
+        !alphAmount || isAmountWithinRange(fromHumanReadableAmount(alphAmount), BigInt(availableBalance))
+      )
     } catch (error) {
       sendAnalytics({ type: 'error', error, message: 'Could not determine if amount is valid' })
     }

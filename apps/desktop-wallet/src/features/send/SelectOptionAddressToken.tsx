@@ -34,10 +34,12 @@ const SelectOptionAddressToken = ({ tokenId, addressHash, ...props }: SelectOpti
     skip: isLoadingToken || isNFT(token)
   })
 
+  const amount = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+
   return (
     <SelectOptionToken
       tokenId={tokenId}
-      amount={tokenBalances?.totalBalance}
+      amount={amount}
       showAmount={!isNFT(token)}
       isLoading={isLoadingTokenBalances}
       {...props}

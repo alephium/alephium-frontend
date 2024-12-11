@@ -57,9 +57,11 @@ const FTAmounts = ({ tokenId, addressHash }: AddressTokenBalancesRowProps) => {
     tokenId
   })
 
+  const amount = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+
   return (
     <AddressTokenBalancesRowAmounts tokenId={tokenId} addressHash={addressHash}>
-      <FTWorth tokenId={tokenId} totalBalance={tokenBalances?.totalBalance} isLoadingBalance={isLoadingTokenBalances} />
+      <FTWorth tokenId={tokenId} totalBalance={amount} isLoadingBalance={isLoadingTokenBalances} />
     </AddressTokenBalancesRowAmounts>
   )
 }
@@ -70,11 +72,14 @@ const AddressTokenBalancesRowAmounts = ({ tokenId, addressHash, children }: Addr
     tokenId
   })
 
+  const totalBalance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+  const availableBalance = tokenBalances?.availableBalance ? BigInt(tokenBalances.availableBalance) : undefined
+
   return (
     <AmountsColumn
       isLoading={isLoadingTokenBalances}
-      totalBalance={tokenBalances?.totalBalance}
-      availableBalance={tokenBalances?.availableBalance}
+      totalBalance={totalBalance}
+      availableBalance={availableBalance}
       tokenId={tokenId}
     >
       {children}

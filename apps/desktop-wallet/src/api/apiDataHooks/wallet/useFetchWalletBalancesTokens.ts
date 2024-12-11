@@ -24,7 +24,7 @@ import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-import { DisplayBalances, TokenDisplayBalances, TokenId } from '@/types/tokens'
+import { ApiBalances, TokenApiBalances, TokenId } from '@/types/tokens'
 
 export const useFetchWalletBalancesTokensArray = () => useFetchWalletBalancesTokens(combineBalancesToArray)
 
@@ -56,24 +56,30 @@ const useFetchWalletBalancesTokens = <T>(
   }
 }
 
-const combineBalancesByToken = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => ({
-  data: results.reduce(
-    (tokensBalances, { data: balances }) => {
-      balances?.balances.forEach(({ id, totalBalance, lockedBalance, availableBalance }) => {
-        tokensBalances[id] = {
-          totalBalance: totalBalance + (tokensBalances[id]?.totalBalance ?? BigInt(0)),
-          lockedBalance: lockedBalance + (tokensBalances[id]?.lockedBalance ?? BigInt(0)),
-          availableBalance: availableBalance + (tokensBalances[id]?.availableBalance ?? BigInt(0))
-        }
-      })
-      return tokensBalances
-    },
-    {} as Record<TokenId, DisplayBalances | undefined>
-  ),
-  ...combineIsLoading(results),
-  ...combineIsFetching(results),
-  ...combineError(results)
-})
+let counter = 0
+
+const combineBalancesByToken = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => {
+  console.log('combine balances by token runs', counter++)
+
+  return {
+    data: results.reduce(
+      (tokensBalances, { data: balances }) => {
+        balances?.balances.forEach(({ id, totalBalance, lockedBalance, availableBalance }) => {
+          tokensBalances[id] = {
+            totalBalance: (BigInt(totalBalance) + BigInt(tokensBalances[id]?.totalBalance ?? 0)).toString(),
+            lockedBalance: (BigInt(lockedBalance) + BigInt(tokensBalances[id]?.lockedBalance ?? 0)).toString(),
+            availableBalance: (BigInt(availableBalance) + BigInt(tokensBalances[id]?.availableBalance ?? 0)).toString()
+          }
+        })
+        return tokensBalances
+      },
+      {} as Record<TokenId, ApiBalances | undefined>
+    ),
+    ...combineIsLoading(results),
+    ...combineIsFetching(results),
+    ...combineError(results)
+  }
+}
 
 const combineBalancesByAddress = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => ({
   data: results.reduce(
@@ -83,7 +89,7 @@ const combineBalancesByAddress = (results: UseQueryResult<AddressTokensBalancesQ
       }
       return acc
     },
-    {} as Record<AddressHash, TokenDisplayBalances[] | undefined>
+    {} as Record<AddressHash, TokenApiBalances[] | undefined>
   ),
   ...combineIsLoading(results)
 })
@@ -95,7 +101,7 @@ const combineBalancesToArray = (results: UseQueryResult<AddressTokensBalancesQue
     data: Object.keys(tokenBalancesByToken).map((id) => ({
       id,
       ...tokenBalancesByToken[id]
-    })) as TokenDisplayBalances[],
+    })) as TokenApiBalances[],
     isLoading,
     isFetching,
     error

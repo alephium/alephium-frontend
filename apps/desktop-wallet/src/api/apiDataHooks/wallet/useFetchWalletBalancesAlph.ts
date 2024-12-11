@@ -25,12 +25,12 @@ import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-import { DisplayBalances } from '@/types/tokens'
+import { ApiBalances } from '@/types/tokens'
 
 // Using undefined to avoid adding noUncheckedIndexedAccess in tsconfig while maintaining strong typing when accessing
 // values through indexes, ie: alphBalances[addressHash]
 export interface AddressesAlphBalances {
-  data: Record<AddressHash, DisplayBalances | undefined>
+  data: Record<AddressHash, ApiBalances | undefined>
   isLoading: boolean
 }
 
@@ -81,20 +81,26 @@ const combineBalancesByAddress = (
   ...combineIsLoading(results)
 })
 
-const combineBalances = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): DataHook<DisplayBalances> => ({
+const combineBalances = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): DataHook<ApiBalances> => ({
   data: results.reduce(
     (totalBalances, { data }) => {
-      totalBalances.totalBalance += data ? data.balances.totalBalance : BigInt(0)
-      totalBalances.lockedBalance += data ? data.balances.lockedBalance : BigInt(0)
-      totalBalances.availableBalance += data ? data.balances.availableBalance : BigInt(0)
+      totalBalances.totalBalance = (
+        BigInt(totalBalances.totalBalance) + BigInt(data ? data.balances.totalBalance : '0')
+      ).toString()
+      totalBalances.lockedBalance = (
+        BigInt(totalBalances.lockedBalance) + BigInt(data ? data.balances.lockedBalance : '0')
+      ).toString()
+      totalBalances.availableBalance = (
+        BigInt(totalBalances.availableBalance) + BigInt(data ? data.balances.availableBalance : '0')
+      ).toString()
 
       return totalBalances
     },
     {
-      totalBalance: BigInt(0),
-      lockedBalance: BigInt(0),
-      availableBalance: BigInt(0)
-    } as DisplayBalances
+      totalBalance: '0',
+      lockedBalance: '0',
+      availableBalance: '0'
+    } as ApiBalances
   ),
   ...combineIsLoading(results),
   ...combineIsFetching(results),

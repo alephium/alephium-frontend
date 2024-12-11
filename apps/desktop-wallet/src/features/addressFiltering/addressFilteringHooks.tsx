@@ -48,7 +48,7 @@ export const useFilterAddressesByText = (text = '') => {
 
             // Step 3. Validate against token names
             const addressAlphBalances = addressesAlphBalances[addressHash]
-            const addressHasAlphBalances = (addressAlphBalances?.totalBalance ?? 0) > 0
+            const addressHasAlphBalances = BigInt(addressAlphBalances?.totalBalance ?? 0) > 0
 
             if (addressHasAlphBalances) {
               if ('alephium alph'.includes(text)) return true

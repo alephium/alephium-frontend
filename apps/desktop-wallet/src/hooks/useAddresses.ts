@@ -92,7 +92,8 @@ export const useFetchAddressesHashesWithBalance = () => {
       isNetworkOffline
         ? allAddressHashes
         : allAddressHashes.filter(
-            (addressHash) => addressesAlphBalances[addressHash] && addressesAlphBalances[addressHash].totalBalance > 0
+            (addressHash) =>
+              addressesAlphBalances[addressHash] && addressesAlphBalances[addressHash].totalBalance !== '0'
           ),
     [addressesAlphBalances, allAddressHashes, isNetworkOffline]
   )

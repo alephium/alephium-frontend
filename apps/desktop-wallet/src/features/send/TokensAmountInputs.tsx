@@ -124,7 +124,7 @@ const TokensAmountInputs = ({
       const ft =
         listedFts.find(({ id }) => selectedTokenId === id) ?? unlistedFts.find(({ id }) => selectedTokenId === id)
       const availableAmount = toHumanReadableAmount(
-        selectedTokenBalances.availableBalance ?? BigInt(0),
+        BigInt(selectedTokenBalances.availableBalance ?? 0),
         ft?.decimals ?? 0
       )
 
@@ -203,7 +203,7 @@ const TokensAmountInputs = ({
 
             // TODO: If ALPH, subtract dust for each other token, possibly by querying the node `/addresses/{address}/utxos`
             const availableHumanReadableAmount = toHumanReadableAmount(
-              tokenBalances.availableBalance ?? BigInt(0),
+              BigInt(tokenBalances.availableBalance ?? 0),
               ft?.decimals ?? 0
             )
 
@@ -255,7 +255,7 @@ const TokensAmountInputs = ({
                         <AvailableAmount tabIndex={0}>
                           <Amount
                             tokenId={id}
-                            value={tokenBalances.availableBalance}
+                            value={BigInt(tokenBalances.availableBalance)}
                             nbOfDecimalsToShow={4}
                             color={theme.font.secondary}
                             isLoading={isLoadingTokensBalances}

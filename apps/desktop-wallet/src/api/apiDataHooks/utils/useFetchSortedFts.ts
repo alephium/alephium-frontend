@@ -27,10 +27,10 @@ import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-import { DisplayBalances, ListedFT, TokenId } from '@/types/tokens'
+import { ApiBalances, ListedFT, TokenId } from '@/types/tokens'
 
 interface UseSortFTsProps extends SkipProp {
-  listedFts: (ListedFT & DisplayBalances)[]
+  listedFts: (ListedFT & ApiBalances)[]
   unlistedFtIds: TokenId[]
 }
 
@@ -59,7 +59,7 @@ const useFetchSortedFts = ({ listedFts, unlistedFtIds, skip }: UseSortFTsProps) 
                   const tokenPrice = tokenPrices?.find((tokenPrice) => tokenPrice.symbol === token.symbol)?.price
 
                   return isNumber(tokenPrice)
-                    ? calculateAmountWorth(token.totalBalance, tokenPrice, token.decimals)
+                    ? calculateAmountWorth(BigInt(token.totalBalance), tokenPrice, token.decimals)
                     : -1
                 },
                 'name',

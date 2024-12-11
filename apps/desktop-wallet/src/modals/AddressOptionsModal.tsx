@@ -62,7 +62,7 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
 
   const availableBalance = addressAlphBalances?.availableBalance
   const isDefaultAddressToggleEnabled = defaultAddress.hash !== address.hash
-  const isSweepButtonEnabled = addresses.length > 1 && availableBalance !== undefined && availableBalance > 0
+  const isSweepButtonEnabled = addresses.length > 1 && availableBalance !== undefined && availableBalance !== '0'
 
   const onClose = () => dispatch(closeModal({ id }))
 
@@ -136,7 +136,8 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
 
             {availableBalance !== undefined && (
               <AvailableAmount tabIndex={0}>
-                {t('Available')}: <Amount tokenId={ALPH.id} value={availableBalance} color={theme.font.secondary} />
+                {t('Available')}:{' '}
+                <Amount tokenId={ALPH.id} value={BigInt(availableBalance)} color={theme.font.secondary} />
               </AvailableAmount>
             )}
           </SweepButton>

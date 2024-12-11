@@ -102,7 +102,7 @@ const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
         .map((hash) => {
           const address = addresses.find((address) => address.hash === hash)
           const addressAlphBalances = addressesAlphBalances[hash]
-          const addressHasAlphBalances = (addressAlphBalances?.totalBalance ?? 0) > 0
+          const addressHasAlphBalances = addressAlphBalances?.totalBalance !== '0'
           const addressTokensBalances = addressesTokensBalances[hash] ?? []
           const addressTokensSearchableString = addressTokensBalances
             .map(({ id }) => {
