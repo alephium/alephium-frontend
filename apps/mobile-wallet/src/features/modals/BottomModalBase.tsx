@@ -29,7 +29,7 @@ export interface BottomModalBaseProps {
   modalId: number
   children: ReactNode
   onClose?: () => void
-  title?: string
+  title?: string | ReactNode
   maximisedContent?: boolean
   minHeight?: number
   noPadding?: boolean
@@ -43,7 +43,7 @@ const BottomModalBase = ({
   maximisedContent,
   backdropAnimatedStyle,
   handleClose,
-  modalHeightAnimatedStyle,
+  modalAnimatedStyle,
   handleAnimatedStyle,
   panGesture,
   navHeight,
@@ -54,7 +54,7 @@ const BottomModalBase = ({
   <KeyboardAvoidingViewStyled behavior="height" enabled={!maximisedContent}>
     <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
     <Container>
-      <ModalStyled style={modalHeightAnimatedStyle}>
+      <ModalStyled style={modalAnimatedStyle}>
         <HandleContainer>
           <Handle style={handleAnimatedStyle} />
         </HandleContainer>
@@ -98,11 +98,11 @@ const Backdrop = styled(AnimatedPressable)`
 
 const ModalStyled = styled(Animated.View)`
   justify-content: flex-start;
-  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.highlight : theme.bg.primary)};
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   min-height: 80px;
   overflow: hidden;
+  background-color: ${({ theme }) => theme.bg.back1};
 `
 
 const HandleContainer = styled.View`
@@ -112,9 +112,8 @@ const HandleContainer = styled.View`
 `
 
 const Handle = styled(Animated.View)`
-  width: 15%;
+  width: 10%;
   height: 4px;
   border-radius: 8px;
   background-color: ${({ theme }) => theme.border.primary};
-  margin-top: -15px;
 `

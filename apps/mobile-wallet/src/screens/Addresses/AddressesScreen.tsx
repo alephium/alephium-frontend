@@ -20,7 +20,6 @@ import { AddressHash } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import * as Haptics from 'expo-haptics'
 import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
@@ -39,7 +38,6 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressByHash, selectAddressIds, selectAllAddresses, selectDefaultAddress } from '~/store/addressesSlice'
 
 const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
-  const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
@@ -108,19 +106,9 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
           height={heightCarouselItem}
           scrollTo={scrollToCarouselPage}
           FooterComponent={
-            <>
-              {addresses.length > 2 && (
-                <Button onPress={openAddressSelectModal} iconProps={{ name: 'list' }} round compact />
-              )}
-              <Button
-                onPress={() => navigation.navigate('NewAddressScreen')}
-                iconProps={{ name: 'plus' }}
-                title={t('New address')}
-                variant="highlightedIcon"
-                compact
-                style={{ marginLeft: addresses.length <= 2 ? 'auto' : undefined }}
-              />
-            </>
+            addresses.length > 2 && (
+              <Button onPress={openAddressSelectModal} iconProps={{ name: 'list' }} squared compact />
+            )
           }
         />
         {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} isRefreshing={isSwiping} />}

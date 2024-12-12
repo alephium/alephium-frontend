@@ -29,14 +29,22 @@ export interface AddressFlashListScreenProps extends Partial<FlashListScreenProp
   onAddressPress: (addressHash: AddressHash) => void
   selectedAddress?: AddressHash
   contentPaddingTop?: boolean | number
+  hideEmptyAddresses?: boolean
 }
 
-const AddressFlashListScreen = ({ onAddressPress, selectedAddress, ...props }: AddressFlashListScreenProps) => {
+const AddressFlashListScreen = ({
+  onAddressPress,
+  selectedAddress,
+  hideEmptyAddresses,
+  ...props
+}: AddressFlashListScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
+
+  const data = hideEmptyAddresses ? addresses.filter((a) => a.tokens.length !== 0 && a.balance !== '0') : addresses
 
   return (
     <FlashListScreen
-      data={addresses}
+      data={data}
       keyExtractor={(item) => item.hash}
       estimatedItemSize={70}
       extraData={{ selectedAddress }}
@@ -45,9 +53,8 @@ const AddressFlashListScreen = ({ onAddressPress, selectedAddress, ...props }: A
           key={address.hash}
           addressHash={address.hash}
           isSelected={address.hash === extraData.selectedAddress}
+          isLast={index === data.length - 1}
           style={{
-            margin: index === 0 ? 20 : 0,
-            marginBottom: 20,
             marginLeft: DEFAULT_MARGIN,
             marginRight: DEFAULT_MARGIN
           }}

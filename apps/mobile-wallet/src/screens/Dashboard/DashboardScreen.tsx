@@ -31,6 +31,7 @@ import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
+import { headerOffsetTop } from '~/components/headers/BaseHeader'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import RoundedCard from '~/components/RoundedCard'
@@ -42,10 +43,11 @@ import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
-import HeaderButtons from '~/screens/Dashboard/HeaderButtons'
+import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
+import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 interface ScreenProps
   extends StackScreenProps<
@@ -123,42 +125,68 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       hasBottomBar
       verticalGap
       onScroll={screenScrollHandler}
-      contentPaddingTop={20}
-      headerScrollEffectOffset={70}
+      contentPaddingTop={50 + headerOffsetTop}
+      headerScrollEffectOffset={30}
       headerOptions={{
-        headerTitle: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold />
+        headerLeft: () => <CameraScanButton />,
+        headerTitle: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold />,
+        headerRight: () => <WalletSettingsButton />
       }}
       {...props}
     >
       <CardContainer style={{ marginTop: insets.top }}>
-        <AmountRoundedCard>
+        <RoundedCard>
           <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
-          <WalletCardHeader>
-            <HeaderButtons />
-          </WalletCardHeader>
           <BalanceSummary dateLabel={t('VALUE TODAY')} />
           {totalBalance > BigInt(0) && (
             <ButtonsRowContainer>
-              <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" round flex short />
-              <Button
-                onPress={handleReceivePress}
-                iconProps={{ name: 'download' }}
-                variant="contrast"
-                round
-                flex
-                short
-              />
-              <Button onPress={openBuyModal} iconProps={{ name: 'credit-card' }} variant="contrast" round flex short />
+              <>
+                <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" squared flex short />
+                <Button
+                  onPress={handleReceivePress}
+                  iconProps={{ name: 'download' }}
+                  variant="contrast"
+                  squared
+                  flex
+                  short
+                />
+                <Button
+                  onPress={openBuyModal}
+                  iconProps={{ name: 'credit-card' }}
+                  variant="contrast"
+                  squared
+                  flex
+                  short
+                />
+              </>
             </ButtonsRowContainer>
           )}
-        </AmountRoundedCard>
+        </RoundedCard>
       </CardContainer>
       <AddressesTokensList />
       {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
-        <EmptyPlaceholder>
-          <AppText semiBold color="secondary">
-            {t('There is so much left to discover!')} 🌈
-          </AppText>
+        <EmptyPlaceholder style={{ marginHorizontal: DEFAULT_MARGIN }}>
+          <AppText size={28}>🌈</AppText>
+          <AppText color="secondary">{t('There is so much left to discover!')}</AppText>
+          <AppText color="tertiary">{t('Start by adding funds to your wallet.')}</AppText>
+          <EmptyWalletActionButtons>
+            <Button
+              title={t('Receive')}
+              onPress={handleReceivePress}
+              iconProps={{ name: 'download' }}
+              variant="contrast"
+              squared
+              short
+            />
+            <Button
+              title={t('Buy')}
+              onPress={openBuyModal}
+              iconProps={{ name: 'credit-card' }}
+              variant="contrast"
+              squared
+              short
+            />
+          </EmptyWalletActionButtons>
         </EmptyPlaceholder>
       )}
     </DashboardScreenStyled>
@@ -172,7 +200,7 @@ const DashboardScreenStyled = styled(BottomBarScrollScreen)`
 `
 
 const CardContainer = styled.View`
-  margin: 0 ${DEFAULT_MARGIN / 2}px;
+  margin: 0 ${DEFAULT_MARGIN}px;
 `
 
 const WalletCardHeader = styled.View`
@@ -180,7 +208,6 @@ const WalletCardHeader = styled.View`
 `
 
 const ButtonsRowContainer = styled(Animated.View)`
-  margin: 10px ${DEFAULT_MARGIN}px 20px;
   flex-direction: row;
   border-radius: 100px;
   align-items: center;
@@ -188,6 +215,7 @@ const ButtonsRowContainer = styled(Animated.View)`
   gap: 10px;
 `
 
-const AmountRoundedCard = styled(RoundedCard)`
-  height: 240px;
+const EmptyWalletActionButtons = styled.View`
+  gap: ${VERTICAL_GAP / 2}px;
+  margin-top: ${VERTICAL_GAP}px;
 `

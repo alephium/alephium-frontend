@@ -74,6 +74,8 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
     setTokenRows(entries)
   }, [addressHash, showTokensSkeleton, knownFungibleTokens, unknownTokens.length])
 
+  if (tokenRows.length === 0 && !isRefreshing) return null
+
   return (
     <ListContainer style={style} layout={CurvedTransition}>
       {tokenRows.map((entry, index) =>
@@ -120,6 +122,7 @@ const ListContainer = styled(Animated.View)`
   border-radius: ${BORDER_RADIUS_BIG}px;
   overflow: hidden;
   position: relative;
+  margin: 0 ${DEFAULT_MARGIN}px;
 `
 
 const LoadingOverlay = styled.View`

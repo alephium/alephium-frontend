@@ -1618,7 +1618,7 @@ PODS:
     - React-Core
   - RNFlashList (1.6.4):
     - React-Core
-  - RNGestureHandler (2.16.2):
+  - RNGestureHandler (2.21.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2164,7 +2164,7 @@ SPEC CHECKSUMS:
   ReactCommon: f7da14a8827b72704169a48c929bcde802698361
   RNCAsyncStorage: 826b603ae9c0f88b5ac4e956801f755109fa4d5c
   RNFlashList: b521ebdd7f9352673817f1d98e8bdc0c8cf8545b
-  RNGestureHandler: 2282cfbcf86c360d29f44ace393203afd5c6cff7
+  RNGestureHandler: 6fee3422fd8c81c5ee756fa72e3d1780e9943d9d
   RNLocalize: b77875884750cb6a58cd6865863fe2ba2729b72b
   RNReanimated: 33c6135cdf421b795c2f1173075a11cca2a39bf2
   RNScreens: b32a9ff15bea7fcdbe5dff6477bc503f792b1208

@@ -19,12 +19,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { CURRENCIES, Currency, fiatCurrencyChanged } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 
-import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
-import { ModalContent } from '~/features/modals/ModalContent'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
@@ -45,21 +43,17 @@ const CurrencySelectModal = withModal(({ id }) => {
 
   return (
     <BottomModal modalId={id} title={t('Currency')}>
-      <ModalContent verticalGap>
-        <ScreenSection>
-          <Surface>
-            {currencyOptions.map((currencyOption, index) => (
-              <RadioButtonRow
-                key={currencyOption.label}
-                title={currencyOption.label}
-                onPress={() => handleCurrencyChange(currencyOption.value)}
-                isActive={currentCurrency === currencyOption.value}
-                isLast={index === currencyOptions.length - 1}
-              />
-            ))}
-          </Surface>
-        </ScreenSection>
-      </ModalContent>
+      <Surface>
+        {currencyOptions.map((currencyOption, index) => (
+          <RadioButtonRow
+            key={currencyOption.label}
+            title={currencyOption.label}
+            onPress={() => handleCurrencyChange(currencyOption.value)}
+            isActive={currentCurrency === currencyOption.value}
+            isLast={index === currencyOptions.length - 1}
+          />
+        ))}
+      </Surface>
     </BottomModal>
   )
 })

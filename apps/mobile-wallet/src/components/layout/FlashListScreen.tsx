@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { FlashList, FlashListProps } from '@shopify/flash-list'
 import { useRef, useState } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import styled from 'styled-components/native'
 
 import BottomButtons from '~/components/buttons/BottomButtons'
 import BaseHeader from '~/components/headers/BaseHeader'
@@ -26,6 +27,7 @@ import Screen from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export interface FlashListScreenProps<T>
   extends FlashListProps<T>,
@@ -70,7 +72,7 @@ const FlashListScreen = <T,>({
               title={screenTitle}
               subtitle={screenIntro}
               scrollY={screenScrollY}
-              paddingBottom={!!screenIntro && !shouldUseGaps}
+              paddingBottom={!!screenIntro}
             />
           )
         }
@@ -82,12 +84,18 @@ const FlashListScreen = <T,>({
         {...props}
       />
       {bottomButtonsRender && (
-        <BottomButtons float bottomInset onHeightChange={handleBottomButtonsHeightChange}>
-          {bottomButtonsRender()}
-        </BottomButtons>
+        <BottomButtonsContainer>
+          <BottomButtons float bottomInset onHeightChange={handleBottomButtonsHeightChange}>
+            {bottomButtonsRender()}
+          </BottomButtons>
+        </BottomButtonsContainer>
       )}
     </Screen>
   )
 }
 
 export default FlashListScreen
+
+const BottomButtonsContainer = styled.View`
+  margin: 0 ${DEFAULT_MARGIN}px;
+`

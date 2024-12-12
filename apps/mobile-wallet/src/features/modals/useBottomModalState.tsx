@@ -62,7 +62,7 @@ export const useBottomModalState = ({
   const insets = useSafeAreaInsets()
   const dimensions = useWindowDimensions()
   const dispatch = useAppDispatch()
-  const maxHeight = dimensions.height
+  const maxHeight = dimensions.height - insets.top
 
   // Initialize shared values
   // ----------------------------
@@ -121,7 +121,12 @@ export const useBottomModalState = ({
         runOnUI(() => {
           contentHeight.value = newContentHeight
           canMaximize.value = contentHeight.value > maxHeight
-          shouldMaximizeOnOpen.value = maximisedContent || contentHeight.value > maxHeight
+          const contentIsScrollable = contentHeight.value > dimensions.height * 0.9
+
+          shouldMaximizeOnOpen.value = maximisedContent || contentIsScrollable
+
+          // Determine if scrolling is needed
+          runOnJS(setIsContentScrollable)(contentIsScrollable)
 
           minHeight.value = customMinHeight
             ? customMinHeight
@@ -130,9 +135,6 @@ export const useBottomModalState = ({
               : contentHeight.value + customNavHeight + (Platform.OS === 'ios' ? insets.bottom : insets.bottom + 18)
 
           shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
-
-          // Determine if scrolling is needed
-          runOnJS(setIsContentScrollable)(contentHeight.value > dimensions.height * 0.9)
         })()
       }
     },
@@ -186,16 +188,12 @@ export const useBottomModalState = ({
 
   // Animated Styles
   // ----------------------------
-  const modalHeightAnimatedStyle = useAnimatedStyle(() => ({
-    height: -modalHeight.value,
-    paddingTop: withSpring(
-      position.value === 'maximised' ? insets.top : position.value === 'closing' ? 0 : 10,
-      springConfig
-    )
+  const modalAnimatedStyle = useAnimatedStyle(() => ({
+    height: -modalHeight.value
   }))
 
   const handleAnimatedStyle = useAnimatedStyle(() => ({
-    width: shouldMaximizeOnOpen.value ? 60 : interpolate(-modalHeight.value, [0, maxHeight], [30, 60])
+    width: shouldMaximizeOnOpen.value ? 40 : interpolate(-modalHeight.value, [0, maxHeight], [20, 40])
   }))
 
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
@@ -248,7 +246,7 @@ export const useBottomModalState = ({
   }, [isModalClosing, position, handleClose])
 
   return {
-    modalHeightAnimatedStyle,
+    modalAnimatedStyle,
     handleAnimatedStyle,
     backdropAnimatedStyle,
     handleContentSizeChange,

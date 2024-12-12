@@ -47,7 +47,7 @@ import {
   validateAndRepareStoredWalletData
 } from '~/persistent-storage/wallet'
 import {
-  makeSelectAddressesUnknownTokens,
+  makeSelectAddressesUnknownTokensIds,
   selectAllAddressVerifiedFungibleTokenSymbols,
   syncLatestTransactions
 } from '~/store/addressesSlice'
@@ -132,7 +132,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const appJustLaunched = useAppSelector((s) => s.app.wasJustLaunched)
   const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
 
-  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
+  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokensIds, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
   const txUnknownTokenIds = useAppSelector(selectTransactionUnknownTokenIds)
   const checkedUnknownTokenIds = useAppSelector((s) => s.app.checkedUnknownTokenIds)

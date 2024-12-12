@@ -121,7 +121,7 @@ const ScrollScreen = ({
             contentContainerStyle={[
               {
                 flexGrow: fill ? 1 : undefined,
-                paddingTop: typeof contentPaddingTop === 'boolean' ? 110 : contentPaddingTop,
+                paddingTop: typeof contentPaddingTop === 'boolean' ? 120 : contentPaddingTop,
                 paddingBottom
               },
               contentContainerStyle
@@ -153,9 +153,11 @@ const ScrollScreen = ({
         </ScrollViewContainer>
       </KeyboardAvoidingView>
       {bottomButtonsRender && (
-        <BottomButtons float bottomInset onHeightChange={handleBottomButtonsHeightChange}>
-          {bottomButtonsRender()}
-        </BottomButtons>
+        <BottomButtonsContainer>
+          <BottomButtons float bottomInset onHeightChange={handleBottomButtonsHeightChange}>
+            {bottomButtonsRender()}
+          </BottomButtons>
+        </BottomButtonsContainer>
       )}
     </>
   )
@@ -165,5 +167,9 @@ export default ScrollScreen
 
 const ScrollViewContainer = styled.View`
   flex: 1;
-  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.highlight : theme.bg.back2)};
+  background-color: ${({ theme }) => theme.bg.back2};
+`
+
+const BottomButtonsContainer = styled.View`
+  margin: 0 ${DEFAULT_MARGIN}px;
 `

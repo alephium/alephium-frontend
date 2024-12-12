@@ -38,7 +38,7 @@ const ModalWithBackdrop = ({ children, closeModal, color, showCloseButton, ...pr
       <ModalContent>{children}</ModalContent>
       {showCloseButton && (
         <ScreenSectionHeader style={{ paddingTop: insets.top }}>
-          <CloseButton onPress={closeModal} style={{ marginLeft: 'auto' }} variant="highlight" />
+          <CloseButton onPress={closeModal} style={{ marginLeft: 'auto' }} variant="contrast" />
         </ScreenSectionHeader>
       )}
     </Modal>

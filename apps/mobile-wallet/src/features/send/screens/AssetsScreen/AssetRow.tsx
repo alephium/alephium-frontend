@@ -16,27 +16,23 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Asset, fromHumanReadableAmount, getNumberOfDecimals, NFT, toHumanReadableAmount } from '@alephium/shared'
-import { ALPH } from '@alephium/token-list'
-import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
-import { useRef, useState } from 'react'
+import { Asset, NFT } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
-import { Keyboard, Pressable, StyleProp, TextInput, ViewStyle } from 'react-native'
-import Animated, { FadeIn, useAnimatedStyle, withSpring } from 'react-native-reanimated'
-import styled, { useTheme } from 'styled-components/native'
+import { StyleProp, ViewStyle } from 'react-native'
+import { useTheme } from 'styled-components'
 
-import { fastSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
-import Button from '~/components/buttons/Button'
-import Checkmark from '~/components/Checkmark'
+import Badge from '~/components/Badge'
 import ListItem from '~/components/ListItem'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import { useSendContext } from '~/contexts/SendContext'
+import { openModal } from '~/features/modals/modalActions'
+import { useAppDispatch } from '~/hooks/redux'
 import { isNft } from '~/utils/assets'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
-import { isNumericStringValid } from '~/utils/numbers'
+import { showToast, ToastDuration } from '~/utils/layout'
 
 interface AssetRowProps {
   asset: Asset | NFT
@@ -44,226 +40,94 @@ interface AssetRowProps {
   style?: StyleProp<ViewStyle>
 }
 
-const AssetRow = ({ asset, style, isLast }: AssetRowProps) => {
+const AssetRow = ({ asset, ...props }: AssetRowProps) => {
+  const dispatch = useAppDispatch()
+  const { fromAddress, setAssetAmount: setAssetAmountInContext, assetAmounts } = useSendContext()
   const theme = useTheme()
-  const inputRef = useRef<TextInput>(null)
-  const { assetAmounts, setAssetAmount } = useSendContext()
   const { t } = useTranslation()
 
-  const assetAmount = assetAmounts.find(({ id }) => id === asset.id)
   const assetIsNft = isNft(asset)
 
-  const [isSelected, setIsSelected] = useState(!!assetAmount)
-  const [amount, setAmount] = useState(
-    assetAmount && assetAmount.amount
-      ? toHumanReadableAmount(assetAmount.amount, !assetIsNft ? asset.decimals : undefined)
-      : ''
-  )
-  const [error, setError] = useState('')
+  const amount = assetAmounts.find((a) => a.id === asset.id)?.amount
 
-  const minAmountInAlph = toHumanReadableAmount(MIN_UTXO_SET_AMOUNT)
-
-  const handleOnAmountChange = (inputAmount: string) => {
-    if (assetIsNft) return
-
-    let cleanedAmount = inputAmount.replace(',', '.')
-    cleanedAmount = isNumericStringValid(cleanedAmount, true) ? cleanedAmount : ''
-
-    setAmount(cleanedAmount)
-
-    const amountValueAsFloat = parseFloat(cleanedAmount)
-    const tooManyDecimals = getNumberOfDecimals(cleanedAmount) > (asset?.decimals ?? 0)
-    const availableAmount = toHumanReadableAmount(asset.balance - asset.lockedBalance, asset.decimals)
-
-    const newError =
-      amountValueAsFloat > parseFloat(availableAmount)
-        ? t('Amount exceeds available balance')
-        : asset.id === ALPH.id && amountValueAsFloat < parseFloat(minAmountInAlph) && amountValueAsFloat !== 0
-          ? t('Amount must be greater than {{ minAmount }}', { minAmount: minAmountInAlph })
-          : tooManyDecimals
-            ? t('This asset cannot have more than {{ numberOfDecimals }} decimals', {
-                numberOfDecimals: asset.decimals
-              })
-            : ''
-
-    setError(newError)
-
-    if (newError) return
-
-    const amount = !cleanedAmount ? undefined : fromHumanReadableAmount(cleanedAmount, asset.decimals)
-    setAssetAmount(asset.id, amount)
-  }
-
-  const handleUseMaxAmountPress = () => {
-    if (assetIsNft) return
-
-    const maxAmount = asset.balance - asset.lockedBalance
-
-    setAmount(toHumanReadableAmount(maxAmount, asset.decimals))
-    setAssetAmount(asset.id, maxAmount)
-  }
-
-  const handleOnRowPress = () => {
+  const handleRowPress = () => {
     vibrate(ImpactStyle.Medium)
 
-    const isNowSelected = !isSelected
-    setIsSelected(isNowSelected)
-
-    if (isNowSelected) {
-      if (assetIsNft) {
-        setAmount('1')
-        setAssetAmount(asset.id, BigInt(1))
-      } else {
-        setTimeout(() => inputRef.current?.focus(), 500)
-      }
+    if (!assetIsNft) {
+      dispatch(
+        openModal({
+          name: 'TokenAmountModal',
+          props: { tokenId: asset.id, addressHash: fromAddress, onAmountValidate: onAmountSet, initialAmount: amount }
+        })
+      )
     } else {
-      setAmount('')
-      setAssetAmount(asset.id, undefined)
-      setError('')
-      Keyboard.dismiss()
+      const isRemovingNft = !!assetAmounts.find((a) => a.id === asset.id)
+
+      setAssetAmountInContext(asset.id, isRemovingNft ? undefined : BigInt(1))
+      showMessage(isRemovingNft, asset.name)
     }
   }
 
-  const handleBottomRowPress = () => {
-    setTimeout(() => inputRef.current?.focus(), 0)
+  const onAmountSet = (amount: bigint) => {
+    setAssetAmountInContext(asset.id, amount)
+    showMessage(amount === BigInt(0), asset.name ?? asset.id)
   }
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    borderWidth: withSpring(isSelected ? 2 : 0, fastSpringConfiguration),
-    borderColor: withSpring(isSelected ? theme.global.accent : theme.border.secondary, fastSpringConfiguration),
-    marginBottom: withSpring(isSelected ? 15 : 0, fastSpringConfiguration)
-  }))
-
-  const topRowAnimatedStyle = useAnimatedStyle(() => ({
-    paddingLeft: withSpring(isSelected ? 11 : 0, fastSpringConfiguration),
-    backgroundColor: isSelected ? theme.bg.highlight : 'transparent'
-  }))
-
-  const bottomRowAnimatedStyle = useAnimatedStyle(() => ({
-    height: assetIsNft ? 0 : withSpring(isSelected ? 90 : 0, fastSpringConfiguration),
-    opacity: assetIsNft ? 0 : withSpring(isSelected ? 1 : 0, fastSpringConfiguration),
-    borderTopWidth: assetIsNft ? 0 : withSpring(isSelected ? 1 : 0, fastSpringConfiguration)
-  }))
+  const showMessage = (isRemoved: boolean, tokenName: string) => {
+    showToast({
+      text1: isRemoved ? t('Removed {{ tokenName }}', { tokenName }) : t('Added {{ tokenName }}', { tokenName }),
+      type: 'info',
+      visibilityTime: ToastDuration.SHORT
+    })
+  }
 
   return (
     <ListItem
-      style={[style, animatedStyle]}
-      innerStyle={topRowAnimatedStyle}
-      isLast={isLast}
-      hideSeparator={isSelected}
+      {...props}
+      isSelected={!!amount}
       title={asset.name || asset.id}
-      onPress={handleOnRowPress}
+      onPress={handleRowPress}
       height={64}
-      rightSideContent={<CheckmarkContainer>{isSelected && <Checkmark />}</CheckmarkContainer>}
+      rightSideContent={
+        amount ? (
+          assetIsNft ? (
+            <Badge rounded solid color={theme.global.accent}>
+              <AppText color="white" semiBold>
+                {t('NFT')}
+              </AppText>
+            </Badge>
+          ) : (
+            <Badge rounded solid color={theme.global.accent}>
+              <Amount
+                value={amount}
+                semiBold
+                suffix={asset.symbol}
+                decimals={asset.decimals}
+                isUnknownToken={!asset.symbol}
+                fullPrecision
+                color="white"
+              />
+            </Badge>
+          )
+        ) : null
+      }
       subtitle={
         assetIsNft ? (
           asset.description
-        ) : (
+        ) : !amount ? (
           <Amount
             value={asset.balance - asset.lockedBalance}
             suffix={asset.symbol}
             decimals={asset.decimals}
             isUnknownToken={!asset.symbol}
             medium
-            color="secondary"
+            color="tertiary"
           />
-        )
+        ) : undefined
       }
       icon={assetIsNft ? <NFTThumbnail nftId={asset.id} size={38} /> : <AssetLogo assetId={asset.id} size={38} />}
-    >
-      <Pressable onPress={handleBottomRowPress}>
-        <Animated.View entering={FadeIn}>
-          <BottomRow style={bottomRowAnimatedStyle}>
-            <AmountInputRow>
-              <AppText semiBold size={15}>
-                {t('Amount')}
-              </AppText>
-              <AmountInputValue>
-                <AmountTextInput
-                  value={amount}
-                  onChangeText={handleOnAmountChange}
-                  keyboardType="number-pad"
-                  inputMode="decimal"
-                  multiline={true}
-                  numberOfLines={2}
-                  textAlignVertical="center"
-                  ref={inputRef}
-                />
-              </AmountInputValue>
-              {!assetIsNft && (
-                <AppText semiBold size={23} color="secondary">
-                  {asset.symbol}
-                </AppText>
-              )}
-            </AmountInputRow>
-            <InputBottomPart>
-              <ErrorText color="alert" size={11}>
-                {error}
-              </ErrorText>
-              <UseMaxButton
-                title={t('Use max')}
-                onPress={handleUseMaxAmountPress}
-                type="transparent"
-                variant="accent"
-              />
-            </InputBottomPart>
-          </BottomRow>
-        </Animated.View>
-      </Pressable>
-    </ListItem>
+    />
   )
 }
 
 export default AssetRow
-
-const BottomRow = styled(Animated.View)`
-  padding: 0 15px;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.bg.primary};
-  border-top-width: 0px;
-  border-top-color: ${({ theme }) => theme.border.primary};
-`
-
-const AmountInputRow = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-`
-
-const UseMaxButton = styled(Button)`
-  padding: 0;
-  height: 23px;
-`
-
-const InputBottomPart = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  height: 35%;
-  overflow: hidden;
-`
-
-const AmountInputValue = styled.View`
-  flex: 1;
-  justify-content: flex-end;
-  overflow: hidden;
-`
-
-const AmountTextInput = styled(TextInput)`
-  color: ${({ theme }) => theme.font.primary};
-  font-weight: 600;
-  text-align: right;
-  font-size: 23px;
-  margin-top: -5px;
-`
-
-const CheckmarkContainer = styled.View`
-  width: 30px;
-  align-items: center;
-  justify-content: center;
-`
-
-const ErrorText = styled(AppText)`
-  max-width: 150px;
-`
