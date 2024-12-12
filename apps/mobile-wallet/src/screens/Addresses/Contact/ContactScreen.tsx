@@ -28,7 +28,7 @@ import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import StackHeader from '~/components/headers/StackHeader'
-import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
+import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import TransactionsFlashList from '~/components/layout/TransactionsFlashList'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
@@ -87,9 +87,10 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
   const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 
   return (
-    <>
+    <Screen>
       <StackHeader
         options={{
+          headerTitle: contact.name,
           headerRight: () => (
             <Button
               title={t('Edit')}
@@ -109,7 +110,7 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
         ref={listRef}
         ListHeaderComponent={
           <>
-            <CenteredSection>
+            <CenteredSection style={{ marginTop: 140 }}>
               <ContactIcon color={iconBgColor}>
                 <AppText semiBold size={32} color={textColor}>
                   {contact.name[0].toUpperCase()}
@@ -137,7 +138,7 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
           </>
         }
       />
-    </>
+    </Screen>
   )
 }
 
