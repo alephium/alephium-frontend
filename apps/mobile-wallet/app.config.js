@@ -95,7 +95,7 @@ export default {
         'expo-build-properties',
         {
           ios: {
-            deploymentTarget: '13.4',
+            deploymentTarget: '15.1',
             newArchEnabled: false,
             flipper: false // https://docs.expo.dev/guides/using-flipper/
           },
@@ -115,16 +115,13 @@ export default {
         }
       ],
       [
-        'expo-barcode-scanner',
+        'expo-font',
         {
-          cameraPermission:
-            'The app requires access to your camera to scan QR codes for sending transactions, connecting to WalletConnect and importing a wallet.'
-        }
-      ],
-      [
-        "expo-font",
-        {
-          "fonts": ["./assets/fonts/Inter-Medium.ttf", "./assets/fonts/Inter-SemiBold.ttf", "./assets/fonts/Inter-Bold.ttf"]
+          fonts: [
+            './assets/fonts/Inter-Medium.ttf',
+            './assets/fonts/Inter-SemiBold.ttf',
+            './assets/fonts/Inter-Bold.ttf'
+          ]
         }
       ],
       'expo-localization',
