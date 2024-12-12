@@ -27,7 +27,6 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import CenteredInstructions from '~/components/text/CenteredInstructions'
 import { useHeaderContext } from '~/contexts/HeaderContext'
-import { useAppSelector } from '~/hooks/redux'
 import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
 import { resetNavigation } from '~/utils/navigation'
 
@@ -36,7 +35,6 @@ interface VerificationSuccessScreenProps
     ScrollScreenProps {}
 
 const VerificationSuccessScreen = ({ navigation, ...props }: VerificationSuccessScreenProps) => {
-  const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
   const { setHeaderOptions } = useHeaderContext()
   const { t } = useTranslation()
 
@@ -64,19 +62,11 @@ const VerificationSuccessScreen = ({ navigation, ...props }: VerificationSuccess
         />
       </ScreenSection>
       <ScreenSection>
-        {isUsingFundPassword ? (
-          <Button
-            variant="highlight"
-            title={t('Return to my wallet')}
-            onPress={() => resetNavigation(navigation.getParent())}
-          />
-        ) : (
-          <Button
-            variant="highlight"
-            title={t('Continue')}
-            onPress={() => navigation.navigate('FundPasswordScreen', { origin: 'backup', newPassword: true })}
-          />
-        )}
+        <Button
+          variant="highlight"
+          title={t('Return to my wallet')}
+          onPress={() => resetNavigation(navigation.getParent())}
+        />
       </ScreenSection>
     </ScrollScreen>
   )

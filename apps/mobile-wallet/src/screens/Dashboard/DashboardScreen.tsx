@@ -68,7 +68,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
-  const needsFundPasswordReminder = useAppSelector((s) => s.fundPassword.needsReminder)
   const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
 
   const { data: isNewWallet } = useAsyncData(getIsNewWallet)
@@ -78,12 +77,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       dispatch(openModal({ name: 'BackupReminderModal', props: { isNewWallet } }))
     }
   }, [dispatch, isMnemonicBackedUp, isNewWallet, needsBackupReminder])
-
-  useEffect(() => {
-    if (isMnemonicBackedUp && needsFundPasswordReminder) {
-      dispatch(openModal({ name: 'FundPasswordReminderModal' }))
-    }
-  }, [dispatch, isMnemonicBackedUp, needsFundPasswordReminder])
 
   useEffect(() => {
     if (!isNewWallet) return
@@ -201,10 +194,6 @@ const DashboardScreenStyled = styled(BottomBarScrollScreen)`
 
 const CardContainer = styled.View`
   margin: 0 ${DEFAULT_MARGIN}px;
-`
-
-const WalletCardHeader = styled.View`
-  padding: 20px 20px 0;
 `
 
 const ButtonsRowContainer = styled(Animated.View)`

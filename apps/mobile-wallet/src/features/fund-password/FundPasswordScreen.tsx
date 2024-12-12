@@ -32,6 +32,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
+import Toggle from '~/components/Toggle'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
 import { deleteFundPassword, storeFundPassword } from '~/features/fund-password/fundPasswordStorage'
@@ -60,6 +61,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
   const [isEditingPassword, setIsEditingPassword] = useState<boolean>()
   const [password, setPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
+  const [confirmedSecretRecoveryPhrase, setConfirmedSecretRecoveryPhrase] = useState(false)
   const {
     password: confirmedNewPassword,
     handlePasswordChange: handleConfirmedNewPasswordChange,
@@ -79,25 +81,36 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
     if (currentFundPassword) setPassword(currentFundPassword)
   }, [currentFundPassword])
 
-  const handleSavePress = async () => {
-    try {
-      await storeFundPassword(newPassword || password)
-      dispatch(fundPasswordUseToggled(true))
-      showToast({
-        text1: t('Saved!'),
-        text2: newPassword ? t('Fund password was updated.') : t('Fund password was set up.'),
-        type: 'success'
-      })
-      cameFromBackupScreen ? resetNavigation(navigation) : navigation.goBack()
-      sendAnalytics({
-        event: newPassword ? t('Updated fund password') : t('Created fund password'),
-        props: {
-          origin: props.route.params.origin
-        }
-      })
-    } catch (error) {
-      showExceptionToast(error, t('Could not save fund password.'))
-    }
+  const handleSavePress = () =>
+    showConfirmDialog(async () => {
+      try {
+        await storeFundPassword(newPassword || password)
+        dispatch(fundPasswordUseToggled(true))
+        showToast({
+          text1: t('Saved!'),
+          text2: newPassword ? t('Fund password was updated.') : t('Fund password was set up.'),
+          type: 'success'
+        })
+        cameFromBackupScreen ? resetNavigation(navigation) : navigation.goBack()
+        sendAnalytics({
+          event: newPassword ? t('Updated fund password') : t('Created fund password'),
+          props: {
+            origin: props.route.params.origin
+          }
+        })
+      } catch (error) {
+        showExceptionToast(error, t('Could not save fund password.'))
+      }
+    })
+
+  const showConfirmDialog = (onPress: () => void) => {
+    Alert.alert(
+      t('Save fund password'),
+      t(
+        'If you lose access to your fund password, the only way to recover your funds is by using your secret recovery phrase.'
+      ),
+      [{ text: t('Cancel') }, { text: t('Save'), onPress }]
+    )
   }
 
   const handlePasswordEdit = () => {
@@ -111,7 +124,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
   const handleDeletePress = async () => {
     triggerFundPasswordAuthGuard({
       successCallback: () => {
-        showAlert(t('Delete fund password'), async () => {
+        showWarningDialog(t('Delete fund password'), async () => {
           await deleteFundPassword()
           dispatch(fundPasswordUseToggled(false))
           showToast({
@@ -127,13 +140,13 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
   }
 
   const handleSkipPress = async () => {
-    showAlert("I'll do it later", () => {
+    showWarningDialog(t("I'll do it later"), () => {
       resetNavigation(navigation)
       sendAnalytics({ event: 'Skipped fund password' })
     })
   }
 
-  const showAlert = (text: string, onPress: () => void) => {
+  const showWarningDialog = (text: string, onPress: () => void) => {
     Alert.alert(t('Are you sure?'), t('To enhance your security it is recommended to use a fund password.'), [
       { text: t('Cancel') },
       { text, onPress }
@@ -147,6 +160,8 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
     : t(
         'The fund password acts as an additional authentication layer for critical operations involving the safety of your funds such as revealing your secret recovery phrase or sending funds.'
       )
+
+  const isContinueButtonActive = confirmedSecretRecoveryPhrase && isEditingPasswordConfirmed
 
   return (
     <ScrollScreen
@@ -177,8 +192,15 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
               autoCapitalize="none"
               error={newPasswordError}
               blurOnSubmit={false}
-              onSubmitEditing={isEditingPasswordConfirmed ? handleSavePress : undefined}
+              onSubmitEditing={isContinueButtonActive ? handleSavePress : undefined}
             />
+            <Row
+              title={t('Secret recovery phrase backup')}
+              subtitle={t('I confirm that I have saved my secret recovery phrase securely.')}
+              isLast
+            >
+              <Toggle value={confirmedSecretRecoveryPhrase} onValueChange={setConfirmedSecretRecoveryPhrase} />
+            </Row>
           </ScreenSection>
           <BottomButtons>
             {cameFromBackupScreen && <Button title="Skip" onPress={handleSkipPress} flex />}
@@ -186,7 +208,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
               variant="highlight"
               title={t('Save')}
               onPress={handleSavePress}
-              disabled={!isEditingPasswordConfirmed}
+              disabled={!isContinueButtonActive}
               flex
             />
           </BottomButtons>

@@ -113,7 +113,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           value={name}
           onChangeText={setName}
           autoFocus
-          onSubmitEditing={handleButtonPress}
+          onSubmitEditing={() => !!name && handleButtonPress()}
           blurOnSubmit={false}
           maxLength={24}
         />
@@ -123,7 +123,8 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           title={t("Let's go!")}
           type="primary"
           variant="highlight"
-          onPress={() => navigation.navigate('NewWalletNameScreen')}
+          disabled={!name}
+          onPress={handleButtonPress}
         />
         <Button title={t('Cancel')} type="secondary" onPress={() => navigation.goBack()} />
       </BottomButtons>
@@ -143,4 +144,5 @@ const ContentContainer = styled.View`
 
 const StyledInput = styled(Input)`
   margin-top: ${DEFAULT_MARGIN}px;
+  width: 50%;
 `

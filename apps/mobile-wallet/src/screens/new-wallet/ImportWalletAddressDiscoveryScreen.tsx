@@ -55,7 +55,12 @@ const ImportWalletAddressDiscoveryScreen = ({ navigation, ...props }: ImportWall
   }
 
   return (
-    <ScrollScreen fill headerOptions={{ headerTitle: t('Active addresses'), type: 'stack' }} {...props}>
+    <ScrollScreen
+      fill
+      headerOptions={{ headerTitle: t('Active addresses'), type: 'stack' }}
+      contentPaddingTop
+      {...props}
+    >
       <AnimationContainer>
         <StyledAnimation source={animationSrc} autoPlay speed={1.2} style={{ width: '45%' }} />
       </AnimationContainer>

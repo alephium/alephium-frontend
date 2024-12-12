@@ -82,7 +82,7 @@ const Input = <T extends InputValue>({
   const isShowingPasteButton = copiedText && showPasteButton
 
   return (
-    <InputStyled onPress={onPress}>
+    <InputStyled onPress={onPress} style={style}>
       <InputContainer>
         {showCustomValueRendering && <CustomRenderedValue>{renderedValue}</CustomRenderedValue>}
         <TextInputStyled
