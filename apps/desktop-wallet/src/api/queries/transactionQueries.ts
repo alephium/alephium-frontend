@@ -54,6 +54,9 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
             // The following block invalidates queries that need to refetch data if a new transaction hash has been
             // detected. This way, we don't need to use the latest tx hash in the queryKey of each of those queries.
             if (latestTx !== undefined && latestTx.hash !== cachedLatestTx?.hash) {
+              // The backend needs some time to update the results of the following queries
+              // See https://github.com/alephium/alephium-frontend/issues/981#issuecomment-2535493157
+              await sleep(2000)
               queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
               queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions', 'latest'] })
             }

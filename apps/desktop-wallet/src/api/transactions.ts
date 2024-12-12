@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { keyring } from '@alephium/keyring'
 import { AddressHash, throttledClient } from '@alephium/shared'
 
+import { LedgerAlephium } from '@/features/ledger/utils'
 import { Address } from '@/types/addresses'
 import { CsvExportQueryParams } from '@/types/transactions'
 
@@ -34,8 +35,23 @@ export const buildSweepTransactions = async (fromAddress: Address, toAddressHash
   }
 }
 
-export const signAndSendTransaction = async (fromAddress: Address, txId: string, unsignedTx: string) => {
-  const signature = keyring.signTransaction(txId, fromAddress.hash)
+export const signAndSendTransaction = async (
+  fromAddress: Address,
+  txId: string,
+  unsignedTx: string,
+  isLedger: boolean,
+  onLedgerError: (error: Error) => void
+) => {
+  const signature = isLedger
+    ? await LedgerAlephium.create()
+        .catch(onLedgerError)
+        .then((app) => (app ? app.signUnsignedTx(fromAddress.index, unsignedTx) : null))
+    : keyring.signTransaction(txId, fromAddress.hash)
+
+  if (!signature) {
+    throw new Error()
+  }
+
   const data = await throttledClient.node.transactions.postTransactionsSubmit({ unsignedTx, signature })
 
   return { ...data, signature }

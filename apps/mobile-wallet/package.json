@@ -12,6 +12,8 @@
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
     "test": "jest",
+    "install:pods": "pnpm dlx pod-install",
+    "clean": "rm -rf .turbo expo ios/build ios/Pods",
     "clean:node-modules": "rm -rf node_modules",
     "postinstall": "turbo build:deps"
   },
@@ -78,7 +80,7 @@
     "lottie-react-native": "^6.7.0",
     "lucide-react-native": "^0.456.0",
     "moti": "^0.29.0",
-    "nanoid": "^4.0.0",
+    "nanoid": "^3.3.8",
     "posthog-react-native": "^2.7.1",
     "qrloop": "^1.4.1",
     "react": "^18.2.0",

@@ -25,6 +25,8 @@ import { useTranslation } from 'react-i18next'
 import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { useLedger } from '@/features/ledger/useLedger'
+import { LedgerAlephium } from '@/features/ledger/utils'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
@@ -46,6 +48,7 @@ const SignUnsignedTxModal = memo(({ id, txData }: ModalBaseProp & SignUnsignedTx
   const { sendAnalytics } = useAnalytics()
   const dispatch = useAppDispatch()
   const { sendUserRejectedResponse, sendSuccessResponse, sendFailureResponse } = useWalletConnectContext()
+  const { isLedger, onLedgerError } = useLedger()
 
   const [isLoading, setIsLoading] = useState(false)
   const [decodedUnsignedTx, setDecodedUnsignedTx] = useState<Omit<SignUnsignedTxResult, 'signature'> | undefined>(
@@ -90,12 +93,23 @@ const SignUnsignedTxModal = memo(({ id, txData }: ModalBaseProp & SignUnsignedTx
   const handleSign = async () => {
     if (!decodedUnsignedTx) return
 
+    setIsLoading(true)
+
     try {
-      const signature = keyring.signTransaction(decodedUnsignedTx.txId, txData.fromAddress.hash)
+      const signature = isLedger
+        ? await LedgerAlephium.create()
+            .catch(onLedgerError)
+            .then((app) => (app ? app.signUnsignedTx(txData.fromAddress.index, decodedUnsignedTx.unsignedTx) : null))
+        : keyring.signTransaction(decodedUnsignedTx.txId, txData.fromAddress.hash)
+
+      if (!signature) {
+        throw new Error()
+      }
+
       const signResult: SignUnsignedTxResult = { signature, ...decodedUnsignedTx }
       await sendSuccessResponse(signResult, true)
 
-      dispatch(unsignedTransactionSignSucceeded)
+      dispatch(unsignedTransactionSignSucceeded())
       dispatch(closeModal({ id }))
     } catch (error) {
       const message = 'Could not sign unsigned tx'
@@ -107,6 +121,8 @@ const SignUnsignedTxModal = memo(({ id, txData }: ModalBaseProp & SignUnsignedTx
         message: getHumanReadableError(error, message),
         code: WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
       })
+    } finally {
+      setIsLoading(false)
     }
   }
 

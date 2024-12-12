@@ -22,7 +22,7 @@ import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { flatMapCombine } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const useFetchLatestTransactionOfEachAddress = (props?: SkipProp) => {

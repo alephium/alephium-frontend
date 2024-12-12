@@ -20,15 +20,14 @@ import { AddressHash } from '@alephium/shared'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useFetchWalletBalancesAlphByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { useFetchWalletBalancesTokensByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
+import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
+import useFetchWalletBalancesTokensByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensByAddress'
 import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
 import useFetchWalletNftsSearchStrings from '@/api/apiDataHooks/wallet/useFetchWalletNftsSearchStrings'
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
-import { useAppSelector } from '@/hooks/redux'
 import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 
 interface AddressSelectModalProps {
   title: string
@@ -88,7 +87,7 @@ export default AddressSelectModal
 
 // TODO: See how it can be DRY'ed with useFilterAddressesByText
 const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
-  const addresses = useAppSelector(selectAllAddresses)
+  const addresses = useUnsortedAddresses()
   const { data: sortedAddressHashes } = useFetchSortedAddressesHashes()
   const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
   const { data: nftsSearchStringsByNftId } = useFetchWalletNftsSearchStrings()
@@ -102,7 +101,7 @@ const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
         .map((hash) => {
           const address = addresses.find((address) => address.hash === hash)
           const addressAlphBalances = addressesAlphBalances[hash]
-          const addressHasAlphBalances = (addressAlphBalances?.totalBalance ?? 0) > 0
+          const addressHasAlphBalances = addressAlphBalances?.totalBalance !== '0'
           const addressTokensBalances = addressesTokensBalances[hash] ?? []
           const addressTokensSearchableString = addressTokensBalances
             .map(({ id }) => {

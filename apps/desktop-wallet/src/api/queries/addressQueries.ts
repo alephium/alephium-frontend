@@ -22,11 +22,11 @@ import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
-import { DisplayBalances, TokenDisplayBalances } from '@/types/tokens'
+import { ApiBalances, TokenApiBalances } from '@/types/tokens'
 
 export type AddressAlphBalancesQueryFnData = {
   addressHash: AddressHash
-  balances: DisplayBalances
+  balances: ApiBalances
 }
 
 // Adding networkId in queryKey ensures that switching the network we get different data.
@@ -46,9 +46,9 @@ export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: Addre
             return {
               addressHash,
               balances: {
-                totalBalance: BigInt(balances.balance),
-                lockedBalance: BigInt(balances.lockedBalance),
-                availableBalance: BigInt(balances.balance) - BigInt(balances.lockedBalance)
+                totalBalance: balances.balance,
+                lockedBalance: balances.lockedBalance,
+                availableBalance: (BigInt(balances.balance) - BigInt(balances.lockedBalance)).toString()
               }
             }
           }
@@ -57,7 +57,7 @@ export const addressAlphBalancesQuery = ({ addressHash, networkId, skip }: Addre
 
 export type AddressTokensBalancesQueryFnData = {
   addressHash: AddressHash
-  balances: TokenDisplayBalances[]
+  balances: TokenApiBalances[]
 }
 
 export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
@@ -70,7 +70,7 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
     queryFn:
       !skip && networkId !== undefined
         ? async () => {
-            const tokenBalances = [] as TokenDisplayBalances[]
+            const tokenBalances = [] as TokenApiBalances[]
             let tokenBalancesInPage = [] as e.AddressTokenBalance[]
             let page = 1
 
@@ -86,9 +86,9 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
               tokenBalances.push(
                 ...tokenBalancesInPage.map((tokenBalances) => ({
                   id: tokenBalances.tokenId,
-                  totalBalance: BigInt(tokenBalances.balance),
-                  lockedBalance: BigInt(tokenBalances.lockedBalance),
-                  availableBalance: BigInt(tokenBalances.balance) - BigInt(tokenBalances.lockedBalance)
+                  totalBalance: tokenBalances.balance,
+                  lockedBalance: tokenBalances.lockedBalance,
+                  availableBalance: (BigInt(tokenBalances.balance) - BigInt(tokenBalances.lockedBalance)).toString()
                 }))
               )
               page += 1

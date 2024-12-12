@@ -32,21 +32,24 @@ import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
 import Table from '@/components/Table'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { useLedger } from '@/features/ledger/useLedger'
 import { openModal } from '@/features/modals/modalActions'
 import { devToolsToggled } from '@/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
+import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { copiedToClipboard, copyToClipboardFailed, receiveFaucetTokens } from '@/storage/global/globalActions'
 import { Address } from '@/types/addresses'
 
 const DevToolsSettingsSection = () => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const addresses = useAppSelector(selectAllAddresses)
+  const addresses = useUnsortedAddresses()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const currentNetwork = useAppSelector((s) => s.network)
   const faucetCallPending = useAppSelector((s) => s.global.faucetCallPending)
   const devTools = useAppSelector((state) => state.settings.devTools)
+  const { isLedger } = useLedger()
   const { sendAnalytics } = useAnalytics()
 
   const toggleDevTools = () => {
@@ -142,13 +145,15 @@ const DevToolsSettingsSection = () => {
                     <ButtonStyled role="secondary" short onClick={() => copyPublicKey(address)}>
                       {t('Public key')}
                     </ButtonStyled>
-                    <ButtonStyled
-                      role="secondary"
-                      short
-                      onClick={() => openCopyPrivateKeyConfirmationModal(address.hash)}
-                    >
-                      {t('Private key')}
-                    </ButtonStyled>
+                    {!isLedger && (
+                      <ButtonStyled
+                        role="secondary"
+                        short
+                        onClick={() => openCopyPrivateKeyConfirmationModal(address.hash)}
+                      >
+                        {t('Private key')}
+                      </ButtonStyled>
+                    )}
                   </Buttons>
                 </AddressRow>
               ))}

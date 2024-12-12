@@ -58,7 +58,6 @@ const AddressInputs = ({
   className
 }: AddressInputsProps) => {
   const { t } = useTranslation()
-  const updatedInitialAddress = fromAddresses.find((a) => a === defaultFromAddress) ?? fromAddresses[0]
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const contacts = useAppSelector(selectAllContacts)
   const { data: allAddressHashes } = useFetchSortedAddressesHashes()
@@ -102,7 +101,7 @@ const AddressInputs = ({
           <AddressSelect
             title={t('Select the address to send funds from.')}
             addressOptions={fromAddresses}
-            defaultAddress={updatedInitialAddress}
+            selectedAddress={defaultFromAddress}
             onAddressChange={onFromAddressChange}
             id="from-address"
             simpleMode

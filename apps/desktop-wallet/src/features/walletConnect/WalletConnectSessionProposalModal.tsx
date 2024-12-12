@@ -44,7 +44,7 @@ import {
 } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
-import { toggleAppLoading } from '@/storage/global/globalActions'
+import { showToast, toggleAppLoading } from '@/storage/global/globalActions'
 import { Address } from '@/types/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 import { cleanUrl } from '@/utils/misc'
@@ -98,14 +98,19 @@ const WalletConnectSessionProposalModal = memo(
       }
     }
 
-    const generateAddressInGroup = () => {
+    const generateAddressInGroup = async () => {
       try {
-        const address = generateAddress(group)
+        const address = await generateAddress(group)
+        if (!address) return
+
         saveNewAddresses([{ ...address, isDefault: false, color: getRandomLabelColor() }])
 
         sendAnalytics({ event: 'New address created through WalletConnect modal' })
-      } catch {
+      } catch (error) {
         sendAnalytics({ type: 'error', message: 'Error while saving newly generated address from WalletConnect modal' })
+        dispatch(
+          showToast({ text: `${t('could_not_save_new_address_one')}: ${error}`, type: 'alert', duration: 'long' })
+        )
       }
     }
 
@@ -315,7 +320,7 @@ const WalletConnectSessionProposalModal = memo(
               label={t('Connect with address')}
               title={t('Select an address to connect with.')}
               addressOptions={addressesInGroup}
-              defaultAddress={signerAddressHash}
+              selectedAddress={signerAddressHash}
               onAddressChange={setSignerAddressHash}
               id="from-address"
             />

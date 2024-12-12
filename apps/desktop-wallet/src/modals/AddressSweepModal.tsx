@@ -30,12 +30,14 @@ import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import InfoBox from '@/components/InfoBox'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { useLedger } from '@/features/ledger/useLedger'
 import { closeModal } from '@/features/modals/modalActions'
 import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance, useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { selectAddressByHash, selectAllAddresses } from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import {
   transactionBuildFailed,
   transactionSendFailed,
@@ -53,17 +55,18 @@ const AddressSweepModal = memo(
   ({ id, addressHash, onSuccessfulSweep, isUtxoConsolidation }: ModalBaseProp & AddressSweepModalProps) => {
     const { t } = useTranslation()
     const dispatch = useAppDispatch()
-    const addresses = useAppSelector(selectAllAddresses)
+    const addresses = useUnsortedAddresses()
     const { data: allAddressHashes } = useFetchSortedAddressesHashes()
     const { sendAnalytics } = useAnalytics()
     const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
+    const defaultAddress = useAppSelector(selectDefaultAddress)
+    const { isLedger, onLedgerError } = useLedger()
 
-    const toAddressOptions = addressHash ? addresses.filter(({ hash }) => hash !== fromAddress?.hash) : addresses
     const { data: fromAddressOptions } = useFetchAddressesHashesWithBalance()
 
     const [sweepAddresses, setSweepAddresses] = useState<{ from?: Address; to?: Address }>({
       from: fromAddress,
-      to: toAddressOptions.length > 0 ? toAddressOptions[0] : fromAddress
+      to: defaultAddress
     })
     const [fee, setFee] = useState(BigInt(0))
     const [builtUnsignedTxs, setBuiltUnsignedTxs] = useState<node.SweepAddressTransaction[]>()
@@ -119,7 +122,11 @@ const AddressSweepModal = memo(
       setIsLoading(true)
       try {
         for (const { txId, unsignedTx } of builtUnsignedTxs) {
-          const data = await signAndSendTransaction(sweepAddresses.from, txId, unsignedTx)
+          const data = await signAndSendTransaction(sweepAddresses.from, txId, unsignedTx, isLedger, onLedgerError)
+
+          if (!data) {
+            return
+          }
 
           dispatch(
             transactionSent({
@@ -159,7 +166,7 @@ const AddressSweepModal = memo(
             label={t('From address')}
             title={t('Select the address to sweep the funds from.')}
             addressOptions={fromAddressOptions}
-            defaultAddress={sweepAddresses.from.hash}
+            selectedAddress={sweepAddresses.from.hash}
             onAddressChange={handleOriginAddressChange}
             disabled={!isUtxoConsolidation}
             id="from-address"
@@ -170,7 +177,7 @@ const AddressSweepModal = memo(
             addressOptions={
               !isUtxoConsolidation ? allAddressHashes.filter((hash) => hash !== fromAddress?.hash) : allAddressHashes
             }
-            defaultAddress={sweepAddresses.to.hash}
+            selectedAddress={sweepAddresses.to.hash}
             onAddressChange={handleDestinationAddressChange}
             id="to-address"
           />

@@ -78,7 +78,7 @@ const DeployContractBuildTxModalContent = ({ data, onSubmit, onCancel }: DeployC
     !gasPriceError &&
     !gasAmountError &&
     !!bytecode &&
-    (!alphAsset.amount || isAmountWithinRange(alphAsset.amount, availableBalance))
+    (!alphAsset.amount || isAmountWithinRange(alphAsset.amount, BigInt(availableBalance)))
 
   return (
     <>

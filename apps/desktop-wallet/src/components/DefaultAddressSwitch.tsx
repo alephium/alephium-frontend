@@ -26,7 +26,8 @@ import Button from '@/components/Button'
 import CheckMark from '@/components/CheckMark'
 import Select, { SelectOption } from '@/components/Inputs/Select'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
+import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { changeDefaultAddress } from '@/storage/addresses/addressesStorageUtils'
 
 interface AddressOption {
@@ -36,7 +37,7 @@ interface AddressOption {
 
 const DefaultAddressSwitch = () => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAllAddresses)
+  const addresses = useUnsortedAddresses()
   const defaultAddress = useAppSelector(selectDefaultAddress)
 
   const addressOptions: AddressOption[] = addresses.map((address) => ({

@@ -19,12 +19,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { ALPH } from '@alephium/token-list'
 import { useMemo } from 'react'
 
-import { DisplayBalances, TokenDisplayBalances } from '@/types/tokens'
+import { ApiBalances, TokenApiBalances } from '@/types/tokens'
 
 interface UseMergeAllTokensBalancesProps {
   includeAlph: boolean
-  alphBalances?: DisplayBalances
-  tokensBalances?: TokenDisplayBalances[]
+  alphBalances?: ApiBalances
+  tokensBalances?: TokenApiBalances[]
 }
 
 const useMergeAllTokensBalances = ({

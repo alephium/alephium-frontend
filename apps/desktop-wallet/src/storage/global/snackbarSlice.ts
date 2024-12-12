@@ -43,6 +43,7 @@ import {
   loadingDataFromLocalStorageFailed,
   localStorageDataMigrationFailed,
   receiveFaucetTokens,
+  showToast,
   snackbarDisplayTimeExpired,
   storingDataToLocalStorageFailed,
   userDataMigrationFailed,
@@ -211,6 +212,11 @@ const snackbarSlice = createSlice({
           text: i18n.t('Could not clear app data.'),
           type: 'alert'
         })
+      })
+      .addCase(showToast, (state, { payload: toastMessage }) => {
+        const duration = toastMessage.duration === 'short' ? 3000 : 10000
+
+        queueMessage(state, { ...toastMessage, duration })
       })
   }
 })
