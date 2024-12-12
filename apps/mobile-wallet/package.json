@@ -12,6 +12,7 @@
     "lint:fix": "eslint . --fix --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --log-level silent",
     "test": "jest",
+    "prebuild": "expo prebuild && pnpm install:pods",
     "install:pods": "pnpm dlx pod-install",
     "clean": "rm -rf .turbo expo ios/build ios/Pods",
     "clean:node-modules": "rm -rf node_modules",
