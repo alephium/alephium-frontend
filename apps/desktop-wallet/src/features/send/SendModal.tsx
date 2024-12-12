@@ -108,7 +108,7 @@ function SendModal<PT extends { fromAddress: Address }>({
 
   const [addressesData, setAddressesData] = useState<AddressesTxModalData>(txData ?? initialTxData)
   const [transactionData, setTransactionData] = useState(txData)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState<boolean | string>(false)
   const [step, setStep] = useState<Step>('addresses')
   const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isSweeping, setIsSweeping] = useState(false)
@@ -147,7 +147,7 @@ function SendModal<PT extends { fromAddress: Address }>({
   const handleSendExtended = useCallback(async () => {
     if (!transactionData) return
 
-    setIsLoading(true)
+    setIsLoading(isLedger ? t('Please, confirm the transaction on your Ledger.') : true)
 
     try {
       const signature =

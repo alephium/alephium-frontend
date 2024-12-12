@@ -37,7 +37,7 @@ import ModalContainer, { ModalBackdrop, ModalContainerProps } from '@/modals/Mod
 export interface CenteredModalProps extends ModalContainerProps {
   title?: ReactNode
   subtitle?: string
-  isLoading?: boolean
+  isLoading?: boolean | string
   header?: ReactNode
   transparentHeader?: boolean
   narrow?: boolean
@@ -118,9 +118,10 @@ const CenteredModal: FC<CenteredModalProps> = ({
 
         {isLoading && (
           <>
-            <ModalBackdrop light />
+            <ModalBackdrop light blur />
             <ModalLoadingSpinner>
               <Spinner />
+              {typeof isLoading === 'string' && <ModalLoadingText>{isLoading}</ModalLoadingText>}
             </ModalLoadingSpinner>
           </>
         )}
@@ -252,8 +253,14 @@ const ModalLoadingSpinner = styled.div`
   height: 100%;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 `
 
 const IconContainer = styled.div`
   margin: var(--spacing-3) 0 var(--spacing-3) var(--spacing-4);
+`
+
+const ModalLoadingText = styled.div`
+  font-size: 14px;
+  margin-top: var(--spacing-3);
 `
