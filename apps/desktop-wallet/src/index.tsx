@@ -28,7 +28,7 @@ import { Provider } from 'react-redux'
 import { HashRouter as Router } from 'react-router-dom'
 import { StyleSheetManager } from 'styled-components'
 
-import ApiContextProvider from '@/api/apiContext'
+import ApiContextProvider from '@/api/context/apiContext'
 import { PersistQueryClientContextProvider } from '@/api/persistQueryClientContext'
 import App from '@/App'
 import Tooltips from '@/components/Tooltips'

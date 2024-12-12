@@ -20,7 +20,7 @@ import { useIsFetching } from '@tanstack/react-query'
 import { useCallback } from 'react'
 
 import queryClient from '@/api/queryClient'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
 const useRefreshBalances = () => {
   const addressHashes = useUnsortedAddressesHashes()

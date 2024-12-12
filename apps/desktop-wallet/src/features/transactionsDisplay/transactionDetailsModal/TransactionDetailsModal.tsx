@@ -42,7 +42,7 @@ import NFTsDataListRow from '@/features/transactionsDisplay/transactionDetailsMo
 import NSTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NSTsDataListRow'
 import TransactionType from '@/features/transactionsDisplay/transactionDetailsModal/TransactionType'
 import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import SideModal from '@/modals/SideModal'
 import { formatDateForDisplay } from '@/utils/misc'
 

@@ -26,14 +26,14 @@ import { discoverAndCacheActiveAddresses } from '@/api/addresses'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { generateLedgerAddressesFromMetadata, LedgerAlephium } from '@/features/ledger/utils'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAppDispatch } from '@/hooks/redux'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import {
   addressDiscoveryFinished,
   addressDiscoveryStarted,
   addressesRestoredFromMetadata,
   addressRestorationStarted
 } from '@/storage/addresses/addressesActions'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { showToast } from '@/storage/global/globalActions'
@@ -60,7 +60,7 @@ interface GenerateOneAddressPerGroupProps {
 
 const useAddressGeneration = () => {
   const dispatch = useAppDispatch()
-  const addresses = useAppSelector(selectAllAddresses)
+  const addresses = useUnsortedAddresses()
   const { sendAnalytics } = useAnalytics()
   const { isLedger, onLedgerError } = useLedger()
   const { t } = useTranslation()

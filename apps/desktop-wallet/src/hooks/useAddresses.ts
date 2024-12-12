@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ADDRESSES_QUERY_LIMIT, AddressHash } from '@alephium/shared'
+import { ADDRESSES_QUERY_LIMIT } from '@alephium/shared'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
@@ -24,10 +24,9 @@ import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import useFetchLatestTransactionOfEachAddress from '@/api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
 import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
 import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddressHashes, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
+import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-
-export const useUnsortedAddressesHashes = (): AddressHash[] => useAppSelector(selectAllAddressHashes)
 
 export const useFetchSortedAddressesHashes = (props?: SkipProp) => {
   const isNetworkOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined

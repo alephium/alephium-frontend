@@ -21,12 +21,11 @@ import { useMemo } from 'react'
 import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
 import useFetchWalletBalancesTokensByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensByAddress'
 import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
-import { useAppSelector } from '@/hooks/redux'
 import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 
 export const useFilterAddressesByText = (text = '') => {
-  const allAddresses = useAppSelector(selectAllAddresses)
+  const allAddresses = useUnsortedAddresses()
   const { data: allAddressHashes } = useFetchSortedAddressesHashes()
   const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
   const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
