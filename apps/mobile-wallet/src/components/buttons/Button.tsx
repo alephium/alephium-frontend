@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import Ionicons from '@expo/vector-icons/Feather'
 import { colord } from 'colord'
 import { ComponentProps, ReactNode } from 'react'
-import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import { ActivityIndicator, Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import Animated, { LinearTransition, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -44,6 +44,7 @@ export interface ButtonProps extends PressableProps {
   compact?: boolean
   animated?: boolean
   haptics?: boolean
+  loading?: boolean
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
@@ -67,6 +68,7 @@ const Button = ({
   animated,
   haptics,
   wide,
+  loading = false,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
@@ -155,10 +157,10 @@ const Button = ({
   return (
     <AnimatedPressable
       style={[buttonAnimatedStyle, buttonStyle]}
-      disabled={disabled}
+      disabled={disabled || loading}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      hitSlop={compact ? 12 : 8} // That's great. Increase touchable area
+      hitSlop={compact ? 12 : 8}
       {...props}
     >
       {iconProps && !(compact || squared) && <EmptyPlaceholder />}
@@ -168,7 +170,11 @@ const Button = ({
         </AppText>
       )}
       {children}
-      {iconProps ? (
+      {loading ? (
+        <IconContainer>
+          <ActivityIndicator color={font} size="small" />
+        </IconContainer>
+      ) : iconProps ? (
         <IconContainer
           style={
             variant === 'highlightedIcon'

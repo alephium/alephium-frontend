@@ -185,7 +185,13 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
                 label={selectedWords.length === 0 ? t('Type the first word') : t('Type the next word')}
               />
               {isImportButtonEnabled && (
-                <Button variant="highlight" onPress={importWallet} iconProps={{ name: 'arrow-right' }} squared />
+                <Button
+                  variant="highlight"
+                  onPress={importWallet}
+                  iconProps={{ name: 'arrow-right' }}
+                  squared
+                  loading={loading}
+                />
               )}
             </InputZone>
           </View>

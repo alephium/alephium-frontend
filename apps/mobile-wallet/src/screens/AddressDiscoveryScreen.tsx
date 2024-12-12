@@ -28,6 +28,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -189,6 +190,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
                         value={addressSelections[hash]}
                         disabled={loading}
                         onValueChange={() => toggleAddressSelection(hash)}
+                        style={{ borderRadius: 5 }}
                       />
                     </AmountContent>
                   </Row>
@@ -201,13 +203,13 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
           </>
         )}
       </ScreenSection>
-      <ScreenSection centered>
+      <BottomButtons>
         {status === 'idle' && (
           <ButtonStyled
             iconProps={{ name: 'search' }}
             title={t('Start scanning')}
             onPress={handleStartScanPress}
-            variant="highlight"
+            variant="contrast"
           />
         )}
         {status === 'started' && (
@@ -215,7 +217,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             iconProps={{ name: 'x' }}
             title={t('Stop scanning')}
             onPress={handleStopScanPress}
-            variant="highlight"
+            variant="contrast"
           />
         )}
         {status === 'stopped' && (
@@ -223,7 +225,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             iconProps={{ name: 'search' }}
             title={t('Continue scanning')}
             onPress={handleContinueScanPress}
-            variant="highlight"
+            variant="contrast"
           />
         )}
         {discoveredAddresses.length > 0 && (status === 'stopped' || status === 'finished') && (
@@ -232,7 +234,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             title={t('Import selected addresses')}
             onPress={importAddresses}
             disabled={selectedAddressesToImport.length === 0}
-            variant="highlight"
+            variant="contrast"
           />
         )}
         {discoveredAddresses.length === 0 && status === 'finished' && !importLoading && (
@@ -240,10 +242,10 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             iconProps={{ name: isImporting ? 'arrow-right' : 'arrow-left' }}
             title={isImporting ? t('Continue') : t('Go back')}
             onPress={continueToNextScreen}
-            variant={isImporting ? 'highlight' : 'accent'}
+            variant={isImporting ? 'contrast' : 'accent'}
           />
         )}
-      </ScreenSection>
+      </BottomButtons>
       <SpinnerModal isActive={importLoading} text={`${t('Importing addresses')}...`} blur={false} />
     </ScrollScreen>
   )

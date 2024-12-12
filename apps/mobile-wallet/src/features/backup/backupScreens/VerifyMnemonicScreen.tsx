@@ -143,7 +143,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
             <SecretPhraseBox
               style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}
             >
-              <SecretPhraseWordList words={selectedWords} color="valid" />
+              <SecretPhraseWordList words={selectedWords} />
             </SecretPhraseBox>
           )}
         </ScreenSection>
