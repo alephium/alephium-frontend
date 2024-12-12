@@ -172,7 +172,6 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
         tint={theme.name}
         intensity={80}
         style={{
-          borderTopWidth: possibleMatches.length > 0 ? 1 : 0,
           paddingTop: possibleMatches.length === 0 ? 10 : 0
         }}
       >
@@ -185,7 +184,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
               entering={FadeIn.delay(index * 100)}
               style={{ marginBottom: 5 }}
             >
-              <Word highlight={index === 0} bold style={{ paddingVertical: 3, paddingHorizontal: 5 }}>
+              <Word highlight={index === 0} bold>
                 {word}
               </Word>
             </PossibleWordBox>
@@ -237,7 +236,6 @@ const BottomInputContainer = styled(BlurView)`
 const PossibleMatches = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
-  border-radius: ${BORDER_RADIUS}px;
 `
 
 const WordInput = styled(Input)`
@@ -245,7 +243,8 @@ const WordInput = styled(Input)`
 `
 
 export const Word = styled(AppText)<{ highlight?: boolean }>`
-  color: ${({ highlight, theme }) => (highlight ? theme.font.contrast : theme.global.accent)};
+  border-radius: 100px;
+  color: ${({ highlight, theme }) => (highlight ? theme.font.primary : theme.global.accent)};
 `
 
 export const PossibleWordBox = styled(WordBox)<{ highlight?: boolean }>`

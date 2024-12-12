@@ -16,36 +16,28 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
 import { usePreventScreenCapture } from 'expo-screen-capture'
 import { useTranslation } from 'react-i18next'
-import { Pressable } from 'react-native'
-import Animated, { FadeIn, FadeOut, Layout } from 'react-native-reanimated'
-import styled, { DefaultTheme } from 'styled-components/native'
+import { Pressable, PressableProps } from 'react-native'
+import Animated, { AnimatedProps, FadeIn, FadeOut, Layout } from 'react-native-reanimated'
+import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
 interface SecretPhraseWordListProps {
   words: SelectedWord[]
   onWordPress?: (word: SelectedWord) => void
   showEmptyListMessage?: boolean
-  color?: GlobalColor
 }
 
-type GlobalColor = keyof DefaultTheme['global']
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 export type SelectedWord = {
   word: string
   timestamp: Date
 }
 
-const SecretPhraseWordList = ({
-  words,
-  onWordPress,
-  showEmptyListMessage,
-  color = 'accent'
-}: SecretPhraseWordListProps) => {
+const SecretPhraseWordList = ({ words, onWordPress, showEmptyListMessage }: SecretPhraseWordListProps) => {
   const { t } = useTranslation()
 
   usePreventScreenCapture()
@@ -60,17 +52,18 @@ const SecretPhraseWordList = ({
               entering={FadeIn}
               exiting={FadeOut}
               layout={Layout.duration(200).delay(200)}
-              color={color}
             >
-              <AppText color={color} bold>
+              <WordText semiBold>
                 {index + 1}. {word.word}
-              </AppText>
+              </WordText>
             </SelectedWordBox>
           ))
         : showEmptyListMessage && <AppText color="secondary">{t('Start entering your phrase')}... 👇</AppText>}
     </SecretPhraseWordListStyled>
   )
 }
+
+export const WordBox = (props: AnimatedProps<PressableProps>) => <StyledWordBox hitSlop={10} {...props} />
 
 export default SecretPhraseWordList
 
@@ -80,13 +73,17 @@ const SecretPhraseWordListStyled = styled.View`
   flex-wrap: wrap;
 `
 
-export const WordBox = styled(Animated.createAnimatedComponent(Pressable))`
-  background-color: ${({ theme }) => theme.bg.primary};
-  padding: 7px 10px;
-  margin: 0 10px 10px 0;
-  border-radius: ${BORDER_RADIUS_SMALL}px;
+const WordText = styled(AppText)`
+  color: ${({ theme }) => theme.font.contrast};
 `
 
-export const SelectedWordBox = styled(WordBox)<{ color: GlobalColor }>`
-  background-color: ${({ theme, color }) => colord(theme.global[color]).alpha(0.2).toHex()};
+export const StyledWordBox = styled(AnimatedPressable)`
+  background-color: ${({ theme }) => theme.bg.contrast};
+  padding: 8px 12px;
+  margin: 0 10px 10px 0;
+  border-radius: 100px;
+`
+
+export const SelectedWordBox = styled(WordBox)`
+  background-color: ${({ theme }) => theme.bg.contrast};
 `
