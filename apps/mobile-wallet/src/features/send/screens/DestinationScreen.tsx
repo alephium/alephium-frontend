@@ -23,12 +23,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Linking } from 'react-native'
-import { interpolateColor, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 import { isAddress as isEthereumAddress } from 'web3-validator'
 
 import { sendAnalytics } from '~/analytics'
-import { defaultSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
@@ -59,15 +57,12 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     setValue,
     formState: { errors }
   } = useForm<FormData>({ defaultValues: { toAddressHash: '' } })
-  const theme = useTheme()
   const { setToAddress, setFromAddress, toAddress } = useSendContext()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const contacts = useAppSelector(selectAllContacts)
   const { screenScrollHandler } = useHeaderContext()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-
-  const shouldFlash = useSharedValue(0)
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
@@ -97,17 +92,11 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     }
   }
 
-  const flashInputBg = () => {
-    shouldFlash.value = 1
-    setTimeout(() => (shouldFlash.value = 0), 300)
-  }
-
   const handleContactPress = (contactId: Contact['id']) => {
     const contact = contacts.find((c) => c.id === contactId)
 
     if (contact) {
       setToAddress(contact.address)
-      flashInputBg()
 
       sendAnalytics({ event: 'Send: Selected contact to send funds to' })
     }
@@ -115,7 +104,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
 
   const handleAddressPress = (addressHash: AddressHash) => {
     setToAddress(addressHash)
-    flashInputBg()
 
     sendAnalytics({ event: 'Send: Selected own address to send funds to' })
   }
@@ -159,13 +147,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     }
   }, [setValue, toAddress])
 
-  const inputStyle = useAnimatedStyle(() => ({
-    backgroundColor: withSpring(
-      interpolateColor(shouldFlash.value, [0, 1], [theme.bg.highlight, theme.global.accent]),
-      defaultSpringConfiguration
-    )
-  }))
-
   return (
     <ScrollScreen
       verticalGap
@@ -189,7 +170,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
               onChangeText={onChange}
               onBlur={onBlur}
               error={errors.toAddressHash?.type === 'required' ? requiredErrorMessage : errors.toAddressHash?.message}
-              style={inputStyle}
               showPasteButton
             />
           )}
