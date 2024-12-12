@@ -37,8 +37,8 @@ import { calcExpiry, getSdkError } from '@walletconnect/utils'
 import { partition } from 'lodash'
 import { useCallback, useEffect } from 'react'
 
-import { useFetchWalletBalancesAlphByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { useFetchWalletBalancesTokensByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
+import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
+import useFetchWalletBalancesTokensByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensByAddress'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/features/send/sendTypes'
@@ -46,8 +46,8 @@ import { shouldBuildSweepTransactions } from '@/features/send/sendUtils'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { SignMessageData, SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import { cleanHistory, cleanMessages } from '@/features/walletConnect/walletConnectUtils'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
+import { useAppDispatch } from '@/hooks/redux'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import { toggleAppLoading } from '@/storage/global/globalActions'
 
 // The purpose of this component is to conditionally use the useFetch hooks only when a wallet is unlocked. That's why
@@ -64,7 +64,7 @@ const WalletConnectSessionRequestEventHandler = ({
   const { data: alphBalancesByAddress, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphByAddress()
   const { data: tokensBalancesByAddress, isLoading: isLoadingTokensBalances } = useFetchWalletBalancesTokensByAddress()
   const { walletConnectClient, respondToWalletConnectWithError, respondToWalletConnect } = useWalletConnectContext()
-  const addresses = useAppSelector(selectAllAddresses)
+  const addresses = useUnsortedAddresses()
   const dispatch = useAppDispatch()
   const { sendAnalytics } = useAnalytics()
 

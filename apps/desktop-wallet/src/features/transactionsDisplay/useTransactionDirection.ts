@@ -28,7 +28,7 @@ import { useMemo } from 'react'
 
 import { selectPendingSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
 const useTransactionDirection = (
   tx: e.Transaction | e.PendingTransaction,

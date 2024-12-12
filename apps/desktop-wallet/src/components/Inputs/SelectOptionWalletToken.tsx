@@ -21,16 +21,17 @@ import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetc
 import SelectOptionToken, { SelectOptionTokenBaseProps } from '@/components/Inputs/SelectOptionToken'
 
 const SelectOptionWalletToken = ({ tokenId, ...props }: SelectOptionTokenBaseProps) => {
-  const { data: token, isLoading: isLoadingToken } = useFetchToken(tokenId)
+  const { data: token } = useFetchToken(tokenId)
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useFetchWalletSingleTokenBalances({
-    tokenId,
-    skip: isLoadingToken || isNFT(token)
+    tokenId
   })
+
+  const amount = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
 
   return (
     <SelectOptionToken
       tokenId={tokenId}
-      amount={tokenBalances?.totalBalance}
+      amount={amount}
       showAmount={!isNFT(token)}
       isLoading={isLoadingTokenBalances}
       {...props}

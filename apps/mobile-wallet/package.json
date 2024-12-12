@@ -77,7 +77,7 @@
     "lottie-react-native": "^6.7.0",
     "lucide-react-native": "^0.216.0",
     "moti": "^0.29.0",
-    "nanoid": "^4.0.0",
+    "nanoid": "^3.3.8",
     "posthog-react-native": "^2.7.1",
     "qrloop": "^1.4.1",
     "react": "^18.2.0",

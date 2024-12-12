@@ -16,28 +16,21 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ALPH } from '@alephium/token-list'
-import { useMemo } from 'react'
+import { ReactNode } from 'react'
 
-import { ApiBalances, TokenApiBalances } from '@/types/tokens'
+type ProviderProps = { children: ReactNode }
+type ProviderComponent = FC<ProviderProps>
 
-interface UseMergeAllTokensBalancesProps {
-  includeAlph: boolean
-  alphBalances?: ApiBalances
-  tokensBalances?: TokenApiBalances[]
-}
+export const composeProviders = (providers: ProviderComponent[]): ProviderComponent =>
+  providers.reduce<ProviderComponent>(
+    (AccumulatedProviders, CurrentProvider) => {
+      const CombinedProvider: ProviderComponent = ({ children }) => (
+        <AccumulatedProviders>
+          <CurrentProvider>{children}</CurrentProvider>
+        </AccumulatedProviders>
+      )
 
-const useMergeAllTokensBalances = ({
-  includeAlph,
-  alphBalances,
-  tokensBalances = []
-}: UseMergeAllTokensBalancesProps) =>
-  useMemo(
-    () =>
-      includeAlph && alphBalances?.totalBalance
-        ? [{ id: ALPH.id, ...alphBalances }, ...tokensBalances]
-        : tokensBalances,
-    [includeAlph, alphBalances, tokensBalances]
+      return CombinedProvider
+    },
+    ({ children }) => children
   )
-
-export default useMergeAllTokensBalances

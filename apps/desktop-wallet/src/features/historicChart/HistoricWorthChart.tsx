@@ -28,7 +28,7 @@ import { ChartLength, DataPoint, LatestAmountPerAddress } from '@/features/histo
 import { getChartOptions, getFilteredChartData } from '@/features/historicChart/historicChartUtils'
 import useHistoricData from '@/features/historicChart/useHistoricData'
 import { useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
 interface HistoricWorthChartProps {
   onDataPointHover: (dataPoint?: DataPoint) => void

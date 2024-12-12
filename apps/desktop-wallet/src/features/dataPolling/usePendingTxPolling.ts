@@ -25,7 +25,7 @@ import queryClient from '@/api/queryClient'
 import { sentTransactionStatusChanged } from '@/features/send/sentTransactions/sentTransactionsActions'
 import { selectSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const usePendingTxPolling = (txHash: e.Transaction['hash']) => {

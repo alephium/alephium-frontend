@@ -30,7 +30,7 @@ import OtherAmounts from '@/features/transactionsDisplay/transactionRow/OtherAmo
 import SecondAddressColumnCell from '@/features/transactionsDisplay/transactionRow/SecondAddressColumnCell'
 import TokenBadgesListCell from '@/features/transactionsDisplay/transactionRow/TokenBadgesListCell'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
 const TransactionRow = memo(
   ({ tx, refAddressHash, isInAddressDetailsModal, compact, ...props }: TransactionRowProps) => {

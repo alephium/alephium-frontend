@@ -16,30 +16,35 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useQueries } from '@tanstack/react-query'
+import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
-import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import { flatMapCombine } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
+import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
-const useFetchLatestTransactionOfEachAddress = (props?: SkipProp) => {
+const useFetchWalletBalancesAlph = <T>(
+  combine: (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]) => {
+    data: T
+    isLoading: boolean
+    isFetching?: boolean
+    error?: boolean
+  }
+) => {
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const allAddressHashes = useUnsortedAddressesHashes()
 
-  const { data, isLoading } = useQueries({
-    queries: !props?.skip
-      ? allAddressHashes.map((addressHash) => addressLatestTransactionQuery({ addressHash, networkId }))
-      : [],
-    combine: flatMapCombine
+  const { data, isLoading, isFetching, error } = useQueries({
+    queries: allAddressHashes.map((addressHash) => addressAlphBalancesQuery({ addressHash, networkId })),
+    combine
   })
 
   return {
     data,
-    isLoading
+    isLoading,
+    isFetching,
+    error
   }
 }
 
-export default useFetchLatestTransactionOfEachAddress
+export default useFetchWalletBalancesAlph
