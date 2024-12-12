@@ -20,7 +20,7 @@ import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const useFetchWalletBalancesAlph = <T>(

@@ -21,11 +21,16 @@ import { UseQueryResult } from '@tanstack/react-query'
 
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { useFetchWalletBalancesTokens } from '@/api/apiDataHooks/utils/useFetchWalletBalancesTokens'
+import { ApiContextProps } from '@/api/apiTypes'
 import { createDataContext } from '@/api/context/createDataContext'
 import { AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { TokenApiBalances } from '@/types/tokens'
 
-const combineBalancesByAddress = (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => ({
+type AddressesTokensBalances = ApiContextProps<Record<AddressHash, TokenApiBalances[] | undefined>>
+
+const combineBalancesByAddress = (
+  results: UseQueryResult<AddressTokensBalancesQueryFnData>[]
+): AddressesTokensBalances => ({
   data: results.reduce(
     (acc, { data }) => {
       if (data) {
@@ -33,7 +38,7 @@ const combineBalancesByAddress = (results: UseQueryResult<AddressTokensBalancesQ
       }
       return acc
     },
-    {} as Record<AddressHash, TokenApiBalances[] | undefined>
+    {} as AddressesTokensBalances['data']
   ),
   ...combineIsLoading(results)
 })
@@ -41,7 +46,7 @@ const combineBalancesByAddress = (results: UseQueryResult<AddressTokensBalancesQ
 const {
   useData: useFetchWalletBalancesTokensByAddress,
   DataContextProvider: UseFetchWalletBalancesTokensByAddressContextProvider
-} = createDataContext<AddressTokensBalancesQueryFnData, Record<AddressHash, TokenApiBalances[] | undefined>>({
+} = createDataContext<AddressTokensBalancesQueryFnData, AddressesTokensBalances['data']>({
   useDataHook: useFetchWalletBalancesTokens,
   combineFn: combineBalancesByAddress,
   defaultValue: {}
