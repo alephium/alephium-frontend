@@ -18,8 +18,26 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { explorer as e, NFTTokenUriMetaData } from '@alephium/web3'
 import { isArray } from 'lodash'
+import { ReactNode } from 'react'
 
 import { UnlistedFT } from '@/types/tokens'
+
+type ProviderProps = { children: ReactNode }
+type ProviderComponent = FC<ProviderProps>
+
+export const composeProviders = (providers: ProviderComponent[]): ProviderComponent =>
+  providers.reduce<ProviderComponent>(
+    (AccumulatedProviders, CurrentProvider) => {
+      const CombinedProvider: ProviderComponent = ({ children }) => (
+        <AccumulatedProviders>
+          <CurrentProvider>{children}</CurrentProvider>
+        </AccumulatedProviders>
+      )
+
+      return CombinedProvider
+    },
+    ({ children }) => children
+  )
 
 export const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
   typeof nft.name === 'string' &&
