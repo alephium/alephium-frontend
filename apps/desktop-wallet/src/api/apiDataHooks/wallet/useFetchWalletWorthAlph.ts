@@ -21,7 +21,7 @@ import { ALPH } from '@alephium/token-list'
 import { useMemo } from 'react'
 
 import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import { useFetchWalletBalancesAlphArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import useFetchWalletBalancesAlphArray from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphArray'
 
 const useFetchWalletWorthAlph = () => {
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphArray()
@@ -29,7 +29,7 @@ const useFetchWalletWorthAlph = () => {
 
   return {
     data: useMemo(
-      () => calculateAmountWorth(alphBalances?.totalBalance ?? BigInt(0), alphPrice ?? 0, ALPH.decimals),
+      () => calculateAmountWorth(BigInt(alphBalances?.totalBalance ?? 0), alphPrice ?? 0, ALPH.decimals),
       [alphBalances?.totalBalance, alphPrice]
     ),
     isLoading: isLoadingAlphBalances || isLoadingAlphPrice

@@ -22,7 +22,7 @@ import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import useFetchLatestTransactionOfEachAddress from '@/api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
-import { useFetchWalletBalancesAlphByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
 import { useAppSelector } from '@/hooks/redux'
 import { selectAllAddressHashes, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
@@ -92,7 +92,8 @@ export const useFetchAddressesHashesWithBalance = () => {
       isNetworkOffline
         ? allAddressHashes
         : allAddressHashes.filter(
-            (addressHash) => addressesAlphBalances[addressHash] && addressesAlphBalances[addressHash].totalBalance > 0
+            (addressHash) =>
+              addressesAlphBalances[addressHash] && addressesAlphBalances[addressHash].totalBalance !== '0'
           ),
     [addressesAlphBalances, allAddressHashes, isNetworkOffline]
   )

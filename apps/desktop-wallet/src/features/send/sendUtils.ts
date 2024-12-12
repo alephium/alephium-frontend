@@ -20,7 +20,7 @@ import { AssetAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { DUST_AMOUNT, MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 
-import { TokenDisplayBalances } from '@/types/tokens'
+import { TokenApiBalances } from '@/types/tokens'
 
 export const getTransactionAssetAmounts = (assetAmounts: AssetAmount[]) => {
   const alphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount ?? BigInt(0)
@@ -43,6 +43,10 @@ export const getOptionalTransactionAssetAmounts = (assetAmounts?: AssetAmount[])
 export const isAmountWithinRange = (amount: bigint, maxAmount: bigint): boolean =>
   amount >= MIN_UTXO_SET_AMOUNT && amount <= maxAmount
 
-export const shouldBuildSweepTransactions = (assetAmounts: AssetAmount[], tokensBalances: TokenDisplayBalances[]) =>
+export const shouldBuildSweepTransactions = (assetAmounts: AssetAmount[], tokensBalances: TokenApiBalances[]) =>
   assetAmounts.length === tokensBalances.length &&
-  tokensBalances.every(({ id, totalBalance }) => totalBalance === assetAmounts.find((asset) => asset.id === id)?.amount)
+  tokensBalances.every(({ id, totalBalance }) => {
+    const assetAmount = assetAmounts.find((asset) => asset.id === id)
+
+    return totalBalance === (assetAmount?.amount ?? 0).toString()
+  })

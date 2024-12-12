@@ -53,13 +53,11 @@ const FTAmounts = ({ tokenId }: TokenBalancesRowBaseProps) => {
     tokenId
   })
 
+  const totalBalance = walletTokenBalances?.totalBalance ? BigInt(walletTokenBalances.totalBalance) : undefined
+
   return (
     <WalletTokenBalancesRowAmounts tokenId={tokenId}>
-      <FTWorth
-        tokenId={tokenId}
-        totalBalance={walletTokenBalances?.totalBalance}
-        isLoadingBalance={isLoadingTokenBalances}
-      />
+      <FTWorth tokenId={tokenId} totalBalance={totalBalance} isLoadingBalance={isLoadingTokenBalances} />
     </WalletTokenBalancesRowAmounts>
   )
 }
@@ -69,11 +67,16 @@ const WalletTokenBalancesRowAmounts = ({ tokenId, children }: TokenBalancesRowAm
     tokenId
   })
 
+  const totalBalance = walletTokenBalances?.totalBalance ? BigInt(walletTokenBalances.totalBalance) : undefined
+  const availableBalance = walletTokenBalances?.availableBalance
+    ? BigInt(walletTokenBalances.availableBalance)
+    : undefined
+
   return (
     <AmountsColumn
       isLoading={isLoadingTokenBalances}
-      totalBalance={walletTokenBalances?.totalBalance}
-      availableBalance={walletTokenBalances?.availableBalance}
+      totalBalance={totalBalance}
+      availableBalance={availableBalance}
       tokenId={tokenId}
     >
       {children}

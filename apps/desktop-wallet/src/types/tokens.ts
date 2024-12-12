@@ -33,13 +33,13 @@ export type UnlistedToken = { id: string }
 // For stricter typings in our components that handle display of multiple token types
 export type TokenDisplay = ListedFTDisplay | UnlistedFTDisplay | NFTDisplay | NonStandardTokenDisplay
 
-export type ListedFTDisplay = DisplayBalances &
+export type ListedFTDisplay = ApiBalances &
   ListedFT & {
     type: 'listedFT'
     worth?: number
   }
 
-export type UnlistedFTDisplay = DisplayBalances &
+export type UnlistedFTDisplay = ApiBalances &
   UnlistedFT & {
     type: 'unlistedFT'
   }
@@ -48,18 +48,18 @@ export type NFTDisplay = NFT & {
   type: 'NFT'
 }
 
-export type NonStandardTokenDisplay = DisplayBalances &
+export type NonStandardTokenDisplay = ApiBalances &
   NonStandardToken & {
     type: 'nonStandardToken'
   }
 
-export type DisplayBalances = {
-  totalBalance: bigint
-  lockedBalance: bigint
-  availableBalance: bigint
+export type ApiBalances = {
+  totalBalance: string
+  lockedBalance: string
+  availableBalance: string
 }
 
-export type TokenDisplayBalances = DisplayBalances & {
+export type TokenApiBalances = ApiBalances & {
   id: e.Token['id']
 }
 

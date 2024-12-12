@@ -36,7 +36,9 @@ const AddressTokenBadge = ({ addressHash, tokenId, ...props }: AddressTokenBadge
     skip: isNFT(token) || isLoadingToken
   })
 
-  return <TokenBadge {...props} tokenId={tokenId} amount={data?.totalBalance} isLoadingAmount={isLoading} />
+  const amount = data?.totalBalance ? BigInt(data.totalBalance) : undefined
+
+  return <TokenBadge {...props} tokenId={tokenId} amount={amount} isLoadingAmount={isLoading} />
 }
 
 export default AddressTokenBadge

@@ -18,8 +18,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
 import useMergeAllTokensBalances from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
-import { useFetchWalletBalancesAlphArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { useFetchWalletBalancesTokensArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
+import useFetchWalletBalancesAlphArray from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphArray'
+import useFetchWalletBalancesTokensArray from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
 
 interface UseFetchWalletTokensByType {
   includeAlph: boolean
