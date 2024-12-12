@@ -192,6 +192,13 @@ const useAddressGeneration = () => {
 
       try {
         saveNewAddresses(newAddresses)
+        dispatch(
+          showToast({
+            text: t('Active address discovery completed. Addresses added: {{ count }}', { count: newAddresses.length }),
+            type: 'info',
+            duration: 'long'
+          })
+        )
       } catch {
         sendAnalytics({ type: 'error', message: 'Error while saving newly discovered address' })
       }

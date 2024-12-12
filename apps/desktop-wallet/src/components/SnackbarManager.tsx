@@ -20,6 +20,7 @@ import { memo, useEffect } from 'react'
 import styled from 'styled-components'
 
 import { fadeInBottom, fadeOut } from '@/animations'
+import LedgerAddressDiscoverySnackbar from '@/features/ledger/LedgerAddressDiscoverySnackbar'
 import SentTransactionSnackbarPopup from '@/features/send/sentTransactions/SentTransactionSnackbarPopup'
 import { selectAllSentTransactions } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import SnackbarBox from '@/features/snackbar/SnackbarBox'
@@ -32,10 +33,11 @@ import { SnackbarMessage } from '@/types/snackbar'
 const SnackbarManager = () => {
   const messages = useAppSelector((state) => state.snackbar.messages)
   const sentTxs = useAppSelector(selectAllSentTransactions)
+  const isNewLedgerDevice = useAppSelector((s) => s.ledger.isNewDevice)
 
   return (
     <ModalPortal>
-      {(messages.length > 0 || sentTxs.length > 0) && (
+      {(messages.length > 0 || sentTxs.length > 0 || isNewLedgerDevice) && (
         <SnackbarManagerContainer>
           {sentTxs.map((sentTxs) => (
             <SentTransactionSnackbarPopup key={sentTxs.hash} txHash={sentTxs.hash} />
@@ -43,6 +45,7 @@ const SnackbarManager = () => {
           {messages.map((message) => (
             <SnackbarPopup key={message.id} message={message} />
           ))}
+          {isNewLedgerDevice && <LedgerAddressDiscoverySnackbar />}
         </SnackbarManagerContainer>
       )}
     </ModalPortal>
