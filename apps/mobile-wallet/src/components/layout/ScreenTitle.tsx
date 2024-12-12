@@ -18,10 +18,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ReactNode } from 'react'
 import Animated, { Extrapolate, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components'
 
 import AppText from '~/components/AppText'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { headerOffsetTop } from '~/components/headers/BaseHeader'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ScreenTitleProps {
   title: string
@@ -32,6 +34,7 @@ export interface ScreenTitleProps {
 }
 
 const ScreenTitle = ({ title, scrollY, sideDefaultMargin, SideComponent, paddingTop }: ScreenTitleProps) => {
+  const insets = useSafeAreaInsets()
   const titleAnimatedStyle = useAnimatedStyle(() => ({
     opacity: interpolate(scrollY?.value || 0, [0, 40], [1, 0], Extrapolate.CLAMP)
   }))
@@ -42,7 +45,7 @@ const ScreenTitle = ({ title, scrollY, sideDefaultMargin, SideComponent, padding
         titleAnimatedStyle,
         {
           marginHorizontal: sideDefaultMargin ? DEFAULT_MARGIN : 0,
-          paddingTop: typeof paddingTop === 'boolean' ? 70 : paddingTop
+          paddingTop: typeof paddingTop === 'boolean' ? insets.top + headerOffsetTop + VERTICAL_GAP : paddingTop
         }
       ]}
     >
