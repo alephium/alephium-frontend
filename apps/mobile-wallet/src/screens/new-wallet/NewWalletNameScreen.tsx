@@ -116,6 +116,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           onSubmitEditing={() => !!name && handleButtonPress()}
           blurOnSubmit={false}
           maxLength={24}
+          textAlign="center"
         />
       </ContentContainer>
       <BottomButtons>
