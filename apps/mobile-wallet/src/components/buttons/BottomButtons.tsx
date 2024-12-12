@@ -73,7 +73,7 @@ const BottomButtons = ({
         pointerEvents="none"
       />
       <ButtonsOuterContainer onLayout={handleLayout}>
-        <ButtonsInnerContainer style={{ width: fullWidth ? '100%' : '90%' }}>{children}</ButtonsInnerContainer>
+        <ButtonsInnerContainer style={{ width: fullWidth ? '100%' : '80%' }}>{children}</ButtonsInnerContainer>
       </ButtonsOuterContainer>
     </BottomButtonsStyled>
   )

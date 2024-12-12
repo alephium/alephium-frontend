@@ -22,7 +22,6 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
-import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
@@ -104,6 +103,18 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
       headerOptions={{
         type: 'stack'
       }}
+      bottomButtonsRender={() => (
+        <>
+          <Button
+            title={t('Continue')}
+            type="primary"
+            variant="contrast"
+            disabled={!name}
+            onPress={handleButtonPress}
+          />
+          <Button title={t('Cancel')} type="secondary" onPress={() => navigation.goBack()} />
+        </>
+      )}
       {...props}
     >
       <ContentContainer>
@@ -119,16 +130,6 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           textAlign="center"
         />
       </ContentContainer>
-      <BottomButtons>
-        <Button
-          title={t("Let's go!")}
-          type="primary"
-          variant="highlight"
-          disabled={!name}
-          onPress={handleButtonPress}
-        />
-        <Button title={t('Cancel')} type="secondary" onPress={() => navigation.goBack()} />
-      </BottomButtons>
       <SpinnerModal isActive={loading} text={`${t('Creating wallet')}...`} />
     </ScrollScreen>
   )

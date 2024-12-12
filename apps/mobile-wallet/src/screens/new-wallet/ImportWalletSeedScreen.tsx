@@ -19,21 +19,19 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { bip39Words } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
-import { BlurView } from 'expo-blur'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Alert, ScrollView } from 'react-native'
+import { Alert, ScrollView, View } from 'react-native'
 import { FadeIn } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
-import { ContinueButton } from '~/components/buttons/Button'
+import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import SecretPhraseWordList, { SelectedWord, WordBox } from '~/components/SecretPhraseWordList'
-import SpinnerModal from '~/components/SpinnerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -141,69 +139,70 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const isImportButtonEnabled = selectedWords.length >= 12 || !!devMnemonicToRestore
 
   return (
-    <>
-      <ScrollScreenStyled
-        fill
-        headerOptions={{
-          type: 'stack',
-          headerRight: () => <ContinueButton onPress={importWallet} disabled={!isImportButtonEnabled} />
-        }}
-        keyboardShouldPersistTaps="always"
-        contentPaddingTop
-        screenTitle={t('Secret phrase')}
-        screenIntro={t('Enter the secret phrase for the "{{ walletName }}" wallet.', { walletName: name })}
-        {...props}
-      >
-        <SecretPhraseContainer>
-          {selectedWords.length > 0 && (
-            <SecretPhraseBox
-              style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}
-            >
-              <ScrollView>
-                <SecretPhraseWordList words={selectedWords} onWordPress={removeSelectedWord} />
-              </ScrollView>
-            </SecretPhraseBox>
-          )}
-        </SecretPhraseContainer>
-        {loading && <SpinnerModal isActive={loading} text={`${t('Importing wallet')}...`} />}
-      </ScrollScreenStyled>
+    <ScrollScreenStyled
+      fill
+      headerOptions={{
+        type: 'stack'
+      }}
+      keyboardShouldPersistTaps="always"
+      contentPaddingTop
+      screenTitle={t('Secret phrase')}
+      screenIntro={t('Enter the secret phrase for the "{{ walletName }}" wallet.', { walletName: name })}
+      customBottomRender={() => (
+        <BottomPart>
+          <View
+            style={{
+              flex: 1,
+              paddingTop: possibleMatches.length === 0 ? 10 : 0
+            }}
+          >
+            <PossibleMatches style={{ paddingBottom: possibleMatches.length > 0 ? 10 : 0 }}>
+              {possibleMatches.map((word, index) => (
+                <PossibleWordBox
+                  key={`${word}-${index}`}
+                  onPress={() => selectWord(word)}
+                  highlight={index === 0}
+                  entering={FadeIn.delay(index * 100)}
+                  style={{ marginBottom: 5 }}
+                >
+                  <Word highlight={index === 0} bold>
+                    {word}
+                  </Word>
+                </PossibleWordBox>
+              ))}
+            </PossibleMatches>
 
-      <BottomInputContainer
-        tint={theme.name}
-        intensity={80}
-        style={{
-          paddingTop: possibleMatches.length === 0 ? 10 : 0
-        }}
-      >
-        <PossibleMatches style={{ padding: possibleMatches.length > 0 ? 15 : 0 }}>
-          {possibleMatches.map((word, index) => (
-            <PossibleWordBox
-              key={`${word}-${index}`}
-              onPress={() => selectWord(word)}
-              highlight={index === 0}
-              entering={FadeIn.delay(index * 100)}
-              style={{ marginBottom: 5 }}
-            >
-              <Word highlight={index === 0} bold>
-                {word}
-              </Word>
-            </PossibleWordBox>
-          ))}
-        </PossibleMatches>
-
-        <WordInput
-          value={typedInput}
-          onChangeText={handleWordInputChange}
-          contextMenuHidden={true}
-          onSubmitEditing={handleEnterPress}
-          autoFocus
-          blurOnSubmit={false}
-          autoCorrect={false}
-          error={typedInput.split(' ').length > 1 ? t('Please, type the words one by one') : ''}
-          label={selectedWords.length === 0 ? t('Type the first word') : t('Type the next word')}
-        />
-      </BottomInputContainer>
-    </>
+            <InputZone>
+              <WordInput
+                value={typedInput}
+                onChangeText={handleWordInputChange}
+                contextMenuHidden={true}
+                onSubmitEditing={handleEnterPress}
+                autoFocus
+                blurOnSubmit={false}
+                autoCorrect={false}
+                error={typedInput.split(' ').length > 1 ? t('Please, type the words one by one') : ''}
+                label={selectedWords.length === 0 ? t('Type the first word') : t('Type the next word')}
+              />
+              {isImportButtonEnabled && (
+                <Button variant="highlight" onPress={importWallet} iconProps={{ name: 'arrow-right' }} squared />
+              )}
+            </InputZone>
+          </View>
+        </BottomPart>
+      )}
+      {...props}
+    >
+      <SecretPhraseContainer>
+        {selectedWords.length > 0 && (
+          <SecretPhraseBox style={{ backgroundColor: selectedWords.length === 0 ? theme.bg.back1 : theme.bg.primary }}>
+            <ScrollView>
+              <SecretPhraseWordList words={selectedWords} onWordPress={removeSelectedWord} />
+            </ScrollView>
+          </SecretPhraseBox>
+        )}
+      </SecretPhraseContainer>
+    </ScrollScreenStyled>
   )
 }
 
@@ -223,22 +222,19 @@ export const SecretPhraseBox = styled.View`
   border-radius: ${BORDER_RADIUS}px;
 `
 
-const BottomInputContainer = styled(BlurView)`
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  padding: 0 ${DEFAULT_MARGIN}px 10px;
-  border-top-color: ${({ theme }) => theme.border.primary};
-  flex: 0;
+const BottomPart = styled(View)`
+  padding: ${DEFAULT_MARGIN}px;
+  background-color: ${({ theme }) => theme.bg.back1};
 `
 
 const PossibleMatches = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
+  gap: 5px;
 `
 
 const WordInput = styled(Input)`
+  flex: 1;
   background-color: ${({ theme }) => theme.bg.highlight};
 `
 
@@ -250,4 +246,10 @@ export const Word = styled(AppText)<{ highlight?: boolean }>`
 export const PossibleWordBox = styled(WordBox)<{ highlight?: boolean }>`
   background-color: ${({ highlight, theme }) =>
     highlight ? theme.global.accent : colord(theme.global.accent).alpha(0.1).toHex()};
+`
+
+const InputZone = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
 `

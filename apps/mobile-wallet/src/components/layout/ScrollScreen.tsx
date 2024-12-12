@@ -50,6 +50,7 @@ export interface ScrollScreenBaseProps extends ScreenProps {
   headerScrollEffectOffset?: number
   TitleSideComponent?: ReactNode
   bottomButtonsRender?: () => ReactNode
+  customBottomRender?: () => ReactNode
 }
 
 export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {
@@ -76,6 +77,7 @@ const ScrollScreen = ({
   headerScrollEffectOffset,
   TitleSideComponent,
   bottomButtonsRender,
+  customBottomRender,
   ...props
 }: ScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
@@ -162,6 +164,11 @@ const ScrollScreen = ({
           </BottomButtons>
         </BottomButtonsContainer>
       )}
+      {customBottomRender && (
+        <View>
+          <CustomBottomRenderContainer>{customBottomRender()}</CustomBottomRenderContainer>
+        </View>
+      )}
     </>
   )
 }
@@ -175,4 +182,11 @@ const ScrollViewContainer = styled.View`
 
 const BottomButtonsContainer = styled.View`
   margin: 0 ${DEFAULT_MARGIN}px;
+`
+
+const CustomBottomRenderContainer = styled.View`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
 `
