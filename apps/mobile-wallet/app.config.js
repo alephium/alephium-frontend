@@ -122,9 +122,9 @@ export default {
         }
       ],
       [
-        "expo-font",
+        'expo-font',
         {
-          "fonts": ["./assets/fonts/Inter-Medium.ttf", "./assets/fonts/Inter-SemiBold.ttf", "./assets/fonts/Inter-Bold.ttf"]
+          'fonts': ['./assets/fonts/Inter18pt-Medium.ttf', './assets/fonts/Inter18pt-SemiBold.ttf', './assets/fonts/Inter18pt-Bold.ttf']
         }
       ],
       'expo-localization',

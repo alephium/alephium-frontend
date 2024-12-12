@@ -40,24 +40,24 @@ export default styled.Text<AppTextProps>`
     return color ? th.font[color as FontColor] || th.global[color as GlobalColor] || color : th.font.primary
   }};
 
-  font-family: 'Inter-Medium';
+  font-family: 'Inter18pt-Medium';
 
   ${({ bold }) =>
     bold &&
     css`
-      font-family: 'Inter-Bold';
+      font-family: 'Inter18pt-Bold';
     `}
 
   ${({ semiBold }) =>
     semiBold &&
     css`
-      font-family: 'Inter-SemiBold';
+      font-family: 'Inter18pt-SemiBold';
     `}
 
   ${({ medium }) =>
     medium &&
     css`
-      font-family: 'Inter-Medium';
+      font-family: 'Inter18pt-Medium';
     `}
 
   ${({ size = 15 }) =>

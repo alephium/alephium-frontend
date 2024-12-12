@@ -55,7 +55,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
             <Skeleton show colorMode={theme.name} width={200} height={38} />
           </View>
         ) : (
-          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={40} />
+          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold size={40} />
         )}
       </TextContainer>
     </BalanceSummaryContainer>

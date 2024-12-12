@@ -122,7 +122,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       headerScrollEffectOffset={30}
       headerOptions={{
         headerLeft: () => <CameraScanButton />,
-        headerTitle: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold />,
+        headerTitle: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold />,
         headerRight: () => <WalletSettingsButton />
       }}
       {...props}
