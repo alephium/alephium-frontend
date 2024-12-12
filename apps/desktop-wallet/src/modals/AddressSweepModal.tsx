@@ -35,8 +35,9 @@ import { closeModal } from '@/features/modals/modalActions'
 import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance, useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { selectAddressByHash, selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import {
   transactionBuildFailed,
   transactionSendFailed,
@@ -54,7 +55,7 @@ const AddressSweepModal = memo(
   ({ id, addressHash, onSuccessfulSweep, isUtxoConsolidation }: ModalBaseProp & AddressSweepModalProps) => {
     const { t } = useTranslation()
     const dispatch = useAppDispatch()
-    const addresses = useAppSelector(selectAllAddresses)
+    const addresses = useUnsortedAddresses()
     const { data: allAddressHashes } = useFetchSortedAddressesHashes()
     const { sendAnalytics } = useAnalytics()
     const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))

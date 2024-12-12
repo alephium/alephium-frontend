@@ -45,7 +45,7 @@ const WalletQRCodeExportModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
-  const addresses = useAppSelector(selectAllAddresses)
+  const addresses = useUnsortedAddresses()
   const contacts = useAppSelector(selectAllContacts)
 
   const [frames, setFrames] = useState<string[]>([])

@@ -33,8 +33,9 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { AddressModalProps } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { selectAddressByHash, selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { saveAddressSettings } from '@/storage/addresses/addressesStorageUtils'
 import { getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
@@ -45,7 +46,7 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { sendAnalytics } = useAnalytics()
   const isPassphraseUsed = useAppSelector((state) => state.activeWallet.isPassphraseUsed)
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const addresses = useAppSelector(selectAllAddresses)
+  const addresses = useUnsortedAddresses()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
   const dispatch = useAppDispatch()
