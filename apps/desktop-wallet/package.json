@@ -67,7 +67,6 @@
     "@alephium/web3": "1.5.1",
     "@alephium/web3-wallet": "1.5.1",
     "@electron/notarize": "^1.2.3",
-    "@json-rpc-tools/utils": "^1.7.6",
     "@ledgerhq/devices": "^8.4.4",
     "@ledgerhq/hw-transport-webhid": "^6.29.4",
     "@ledgerhq/hw-transport-webusb": "^6.29.4",
