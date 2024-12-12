@@ -32,7 +32,7 @@ import PasswordConfirmation from '@/components/PasswordConfirmation'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppSelector } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
-import { selectAllAddresses, selectAllContacts } from '@/storage/addresses/addressesSelectors'
+import { selectAllContacts } from '@/storage/addresses/addressesSelectors'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 
 // Inspired by:
