@@ -17,53 +17,25 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { UseQueryResult } from '@tanstack/react-query'
-import { createContext, ReactNode, useContext, useMemo } from 'react'
 
-import { DataHook } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineError, combineIsFetching, combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import useFetchWalletBalancesAlph from '@/api/apiDataHooks/utils/useFetchWalletBalancesAlph'
 import { ApiContextProps } from '@/api/apiTypes'
+import { createDataContext } from '@/api/context/createDataContext'
 import { AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { ApiBalances } from '@/types/tokens'
 
-const useFetchWalletBalancesAlphArray = () => useContext(UseFetchWalletBalancesAlphArrayContext)
-
-export default useFetchWalletBalancesAlphArray
-
-export const UseFetchWalletBalancesAlphArrayContextProvider = ({ children }: { children: ReactNode }) => {
-  const { data, isLoading, isFetching, error } = useFetchWalletBalancesAlph(combineBalances)
-
-  const value = useMemo(() => ({ data, isLoading, isFetching, error }), [data, isLoading, isFetching, error])
-
-  return (
-    <UseFetchWalletBalancesAlphArrayContext.Provider value={value}>
-      {children}
-    </UseFetchWalletBalancesAlphArrayContext.Provider>
-  )
-}
-
-const UseFetchWalletBalancesAlphArrayContext = createContext<ApiContextProps<ApiBalances>>({
-  data: {
-    totalBalance: '0',
-    lockedBalance: '0',
-    availableBalance: '0'
-  },
-  isLoading: false,
-  isFetching: false,
-  error: false
-})
-
-const combineBalances = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): DataHook<ApiBalances> => ({
+const combineBalances = (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]): ApiContextProps<ApiBalances> => ({
   data: results.reduce(
     (totalBalances, { data }) => {
       totalBalances.totalBalance = (
-        BigInt(totalBalances.totalBalance) + BigInt(data ? data.balances.totalBalance : '0')
+        BigInt(totalBalances.totalBalance) + BigInt(data?.balances.totalBalance ?? '0')
       ).toString()
       totalBalances.lockedBalance = (
-        BigInt(totalBalances.lockedBalance) + BigInt(data ? data.balances.lockedBalance : '0')
+        BigInt(totalBalances.lockedBalance) + BigInt(data?.balances.lockedBalance ?? '0')
       ).toString()
       totalBalances.availableBalance = (
-        BigInt(totalBalances.availableBalance) + BigInt(data ? data.balances.availableBalance : '0')
+        BigInt(totalBalances.availableBalance) + BigInt(data?.balances.availableBalance ?? '0')
       ).toString()
 
       return totalBalances
@@ -78,3 +50,19 @@ const combineBalances = (results: UseQueryResult<AddressAlphBalancesQueryFnData>
   ...combineIsFetching(results),
   ...combineError(results)
 })
+
+const {
+  useData: useFetchWalletBalancesAlphArray,
+  DataContextProvider: UseFetchWalletBalancesAlphArrayContextProvider
+} = createDataContext<AddressAlphBalancesQueryFnData, ApiBalances>({
+  useDataHook: useFetchWalletBalancesAlph,
+  combineFn: combineBalances,
+  defaultValue: {
+    totalBalance: '0',
+    lockedBalance: '0',
+    availableBalance: '0'
+  }
+})
+
+export default useFetchWalletBalancesAlphArray
+export { UseFetchWalletBalancesAlphArrayContextProvider }

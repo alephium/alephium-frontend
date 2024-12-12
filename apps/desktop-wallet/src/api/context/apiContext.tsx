@@ -22,7 +22,7 @@ import { UseFetchWalletBalancesAlphArrayContextProvider } from '@/api/apiDataHoo
 import { UseFetchWalletBalancesAlphByAddressContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
 import { UseFetchWalletBalancesTokensArrayContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
 import { UseFetchWalletBalancesTokensByAddressContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensByAddress'
-import { composeProviders } from '@/api/apiUtils'
+import { composeProviders } from '@/api/context/apiContextUtils'
 
 const Providers = composeProviders([
   UseFetchWalletBalancesTokensArrayContextProvider,
