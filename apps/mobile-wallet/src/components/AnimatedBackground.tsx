@@ -33,7 +33,7 @@ import Animated, {
   withSpring,
   withTiming
 } from 'react-native-reanimated'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 
@@ -61,6 +61,7 @@ const AnimatedBackground = ({
 }: AnimatedBackgroundProps) => {
   const gyroscope = useAnimatedSensor(SensorType.ROTATION)
   const { width: screenWidth, height: screenHeight } = useWindowDimensions()
+  const theme = useTheme()
 
   // Canvas size animation
   const canvasHeight = useSharedValue(isFullScreen ? screenHeight : height)
@@ -172,9 +173,9 @@ const AnimatedBackground = ({
     <AnimatedContainer style={parallaxAnimatedStyle}>
       <AnimatedCanvas style={animatedCanvasStyle}>
         <Group>
-          <Circle r={140} color="#86acff" cx={circle1X} cy={circle1Y} />
-          <Circle r={70} color="#2ac6ff" cx={circle2X} cy={circle2Y} />
-          <Circle r={100} color="#1856ff" cx={circle3X} cy={circle3Y} />
+          <Circle r={140} color={theme.name === 'dark' ? '#86acff' : '#ffa286'} cx={circle1X} cy={circle1Y} />
+          <Circle r={110} color={theme.name === 'dark' ? '#2ac6ff' : '#e39dff'} cx={circle2X} cy={circle2Y} />
+          <Circle r={100} color={theme.name === 'dark' ? '#1856ff' : '#ffc57e'} cx={circle3X} cy={circle3Y} />
         </Group>
         <Blur blur={50} />
       </AnimatedCanvas>
