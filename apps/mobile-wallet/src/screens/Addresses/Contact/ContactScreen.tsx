@@ -130,7 +130,7 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
             <TransactionsHeaderRow>
               <ScreenSection>
                 <AppText size={18} semiBold>
-                  Transactions
+                  {t('Transactions')}
                 </AppText>
               </ScreenSection>
             </TransactionsHeaderRow>
