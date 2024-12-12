@@ -35,6 +35,7 @@ import LinkToWeb from '~/components/text/LinkToWeb'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { getAutoLockLabel } from '~/features/auto-lock/utils'
+import FundPasswordSettingsRow from '~/features/fund-password/FundPasswordSettingsRow'
 import { languageOptions } from '~/features/localization/languages'
 import { openModal } from '~/features/modals/modalActions'
 import {
@@ -65,7 +66,6 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
-  const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
   const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
   const language = useAppSelector((s) => s.settings.language)
   const analytics = useAppSelector((s) => s.settings.analytics)
@@ -249,25 +249,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
               disabled={!deviceHasEnrolledBiometrics && Platform.OS === 'android'}
             />
           </Row>
-          <Row
-            onPress={() =>
-              isUsingFundPassword &&
-              navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: false })
-            }
-            title={t('Fund password')}
-            subtitle={t('Enhance your security')}
-          >
-            {isUsingFundPassword ? (
-              <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
-            ) : (
-              <Toggle
-                value={false}
-                onValueChange={() =>
-                  navigation.navigate('FundPasswordScreen', { origin: 'settings', newPassword: true })
-                }
-              />
-            )}
-          </Row>
+
+          <FundPasswordSettingsRow />
+
           <Row
             title={t('Auto-lock')}
             subtitle={t('Amount of time before app locks')}

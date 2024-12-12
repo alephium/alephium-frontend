@@ -27,7 +27,6 @@ import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
-import FundPasswordReminderModal from '~/features/fund-password/FundPasswordReminderModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import NftGridModal from '~/features/nftsDisplay/NftGridModal'
 import NftModal from '~/features/nftsDisplay/NftModal'
@@ -48,7 +47,6 @@ import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
 export const ModalComponents = {
   BuyModal,
-  FundPasswordReminderModal,
   BackupReminderModal,
   SwitchNetworkModal,
   TransactionModal,
