@@ -64,9 +64,6 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
           onChangeText={setSearchTerm}
           placeholderTextColor={theme.font.tertiary}
         />
-        {onNewContactPress && (
-          <Button iconProps={{ name: 'plus' }} type="transparent" variant="accent" onPress={onNewContactPress} />
-        )}
       </HeaderScreenSection>
       {contacts.length === 0 ? (
         <NoContactContainer>
