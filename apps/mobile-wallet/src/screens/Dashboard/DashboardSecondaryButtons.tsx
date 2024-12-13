@@ -55,7 +55,7 @@ const DashboardSecondaryButtons = ({ style }: DashboardSecondaryButtonsProps) =>
 
   return (
     <DashboardSecondaryButtonsStyled style={{ height: areAllButtonsVisible ? 30 : 20 }}>
-      <CenteredButtons>
+      <Buttons>
         {isWalletConnectEnabled && <WalletConnectButton />}
         {networkStatus === 'offline' && (
           <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-off' }} variant="alert" squared compact />
@@ -69,7 +69,7 @@ const DashboardSecondaryButtons = ({ style }: DashboardSecondaryButtonsProps) =>
             compact
           />
         )}
-      </CenteredButtons>
+      </Buttons>
     </DashboardSecondaryButtonsStyled>
   )
 }
@@ -79,11 +79,11 @@ export default memo(DashboardSecondaryButtons)
 const DashboardSecondaryButtonsStyled = styled.View`
   flex: 1;
   margin-top: -10px;
+  z-index: 1;
 `
 
-const CenteredButtons = styled.View`
+const Buttons = styled.View`
   flex-direction: row-reverse;
   justify-content: space-between;
   gap: 10px;
-  z-index: 1;
 `
