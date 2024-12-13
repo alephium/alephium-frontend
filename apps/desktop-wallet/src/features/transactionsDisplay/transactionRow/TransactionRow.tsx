@@ -79,6 +79,8 @@ const DirectionalAddresses = styled.div<{ stackVertically?: boolean }>`
   display: flex;
   align-items: center;
   min-width: 35%;
+  flex: 1;
+  justify-content: flex-end;
 
   ${({ stackVertically }) =>
     stackVertically &&

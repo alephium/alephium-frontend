@@ -42,7 +42,6 @@ const TokenBadgesListCell = ({ tx, refAddressHash, compact }: TransactionRowSect
 export default TokenBadgesListCell
 
 const TokenBadgesListCellStyled = styled.div<Pick<TransactionRowProps, 'compact'>>`
-  flex-grow: 1;
   flex-shrink: 0;
   width: ${({ compact }) => (compact ? '80px' : '180px')};
   margin-right: var(--spacing-4);
