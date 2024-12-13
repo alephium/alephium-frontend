@@ -38,7 +38,6 @@ interface NFTsGridProps extends Omit<Partial<FlashListProps<NFT>>, 'contentConta
   onScroll?: (e: NativeSyntheticEvent<NativeScrollEvent>) => void
 }
 
-const gap = DEFAULT_MARGIN / 2
 const containerHorizontalPadding = DEFAULT_MARGIN
 
 const NFTsGrid = forwardRef(
@@ -91,7 +90,6 @@ const NFTsGrid = forwardRef(
 export default NFTsGrid
 
 const NFTThumbnailContainer = styled.View`
-  //margin-bottom: ${gap}px;
   align-items: center;
   justify-content: center;
   border-radius: 9px;

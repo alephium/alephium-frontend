@@ -44,6 +44,7 @@ import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
+import DashboardSecondaryButtons from '~/screens/Dashboard/DashboardSecondaryButtons'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
@@ -128,7 +129,8 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       {...props}
     >
       <CardContainer style={{ marginTop: insets.top }}>
-        <RoundedCard>
+        <RoundedCardStyled>
+          <DashboardSecondaryButtons />
           <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
           <BalanceSummary dateLabel={t('VALUE TODAY')} />
           {totalBalance > BigInt(0) && (
@@ -154,7 +156,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
               </>
             </ButtonsRowContainer>
           )}
-        </RoundedCard>
+        </RoundedCardStyled>
       </CardContainer>
       <AddressesTokensList />
       {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
@@ -194,6 +196,10 @@ const DashboardScreenStyled = styled(BottomBarScrollScreen)`
 
 const CardContainer = styled.View`
   margin: 0 ${DEFAULT_MARGIN}px;
+`
+
+const RoundedCardStyled = styled(RoundedCard)`
+  padding-top: ${VERTICAL_GAP}px;
 `
 
 const ButtonsRowContainer = styled(Animated.View)`

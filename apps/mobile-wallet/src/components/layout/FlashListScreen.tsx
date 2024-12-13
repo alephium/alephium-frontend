@@ -22,12 +22,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import BottomButtons from '~/components/buttons/BottomButtons'
-import BaseHeader from '~/components/headers/BaseHeader'
+import BaseHeader, { headerOffsetTop } from '~/components/headers/BaseHeader'
 import Screen from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface FlashListScreenProps<T>
   extends FlashListProps<T>,
@@ -78,7 +78,10 @@ const FlashListScreen = <T,>({
         }
         contentContainerStyle={{
           paddingBottom: insets.bottom + paddingBottom,
-          paddingTop: typeof contentPaddingTop === 'boolean' ? 120 : contentPaddingTop,
+          paddingTop:
+            typeof contentPaddingTop === 'boolean'
+              ? insets.top + headerOffsetTop + VERTICAL_GAP * 2
+              : contentPaddingTop,
           ...contentContainerStyle
         }}
         {...props}
