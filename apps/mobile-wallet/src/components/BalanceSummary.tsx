@@ -45,7 +45,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
     <BalanceSummaryContainer style={style} {...props}>
       <TextContainer>
         <View>
-          <AppText color="secondary" semiBold>
+          <AppText color="tertiary" semiBold>
             {dateLabel}
           </AppText>
         </View>
@@ -55,7 +55,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
             <Skeleton show colorMode={theme.name} width={200} height={38} />
           </View>
         ) : (
-          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} bold size={40} />
+          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold size={40} />
         )}
       </TextContainer>
     </BalanceSummaryContainer>
@@ -67,7 +67,7 @@ export default BalanceSummary
 const BalanceSummaryContainer = styled.View`
   justify-content: center;
   align-items: center;
-  margin: 10px 0;
+  margin: 10px 0 16px 0;
 `
 
 const TextContainer = styled.View`

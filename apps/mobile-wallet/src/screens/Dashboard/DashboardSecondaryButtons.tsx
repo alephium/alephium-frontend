@@ -22,7 +22,6 @@ import { useTranslation } from 'react-i18next'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import Badge from '~/components/Badge'
 import Button from '~/components/buttons/Button'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -30,11 +29,11 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
 import { showToast } from '~/utils/layout'
 
-interface HeaderCenterContentProps {
+interface DashboardSecondaryButtonsProps {
   style?: StyleProp<ViewStyle>
 }
 
-const HeaderCenterContent = ({ style }: HeaderCenterContentProps) => {
+const DashboardSecondaryButtons = ({ style }: DashboardSecondaryButtonsProps) => {
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const networkStatus = useAppSelector((s) => s.network.status)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
@@ -49,11 +48,17 @@ const HeaderCenterContent = ({ style }: HeaderCenterContentProps) => {
       onPress: () => navigation.navigate('SettingsScreen')
     })
 
+  const areNoButtonsVisible = !isWalletConnectEnabled && isMnemonicBackedUp && networkStatus !== 'offline'
+  const areAllButtonsVisible = isWalletConnectEnabled && !isMnemonicBackedUp && networkStatus === 'offline'
+
+  if (areNoButtonsVisible) return null
+
   return (
-    <Badge style={style}>
-      <CenteredButtons>
+    <DashboardSecondaryButtonsStyled style={{ height: areAllButtonsVisible ? 30 : 20 }}>
+      <Buttons>
+        {isWalletConnectEnabled && <WalletConnectButton />}
         {networkStatus === 'offline' && (
-          <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-off' }} variant="alert" squared />
+          <Button onPress={showOfflineMessage} iconProps={{ name: 'cloud-off' }} variant="alert" squared compact />
         )}
         {!isMnemonicBackedUp && (
           <Button
@@ -61,23 +66,24 @@ const HeaderCenterContent = ({ style }: HeaderCenterContentProps) => {
             iconProps={{ name: 'alert-triangle' }}
             variant="alert"
             squared
+            compact
           />
         )}
-        {isWalletConnectEnabled && <WalletConnectButton />}
-      </CenteredButtons>
-    </Badge>
+      </Buttons>
+    </DashboardSecondaryButtonsStyled>
   )
 }
 
-export default memo(styled(HeaderCenterContent)`
-  flex-direction: row;
-  align-items: center;
-  gap: 15px;
-`)
+export default memo(DashboardSecondaryButtons)
 
-const CenteredButtons = styled.View`
+const DashboardSecondaryButtonsStyled = styled.View`
   flex: 1;
-  flex-direction: row;
-  justify-content: center;
+  margin-top: -10px;
+  z-index: 1;
+`
+
+const Buttons = styled.View`
+  flex-direction: row-reverse;
+  justify-content: space-between;
   gap: 10px;
 `

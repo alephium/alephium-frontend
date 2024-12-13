@@ -32,7 +32,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import BottomButtons from '~/components/buttons/BottomButtons'
-import BaseHeader from '~/components/headers/BaseHeader'
+import BaseHeader, { headerOffsetTop } from '~/components/headers/BaseHeader'
 import StackHeader from '~/components/headers/StackHeader'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
@@ -121,7 +121,10 @@ const ScrollScreen = ({
             contentContainerStyle={[
               {
                 flexGrow: fill ? 1 : undefined,
-                paddingTop: typeof contentPaddingTop === 'boolean' ? 120 : contentPaddingTop,
+                paddingTop:
+                  typeof contentPaddingTop === 'boolean'
+                    ? insets.top + headerOffsetTop + VERTICAL_GAP * 2
+                    : contentPaddingTop,
                 paddingBottom
               },
               contentContainerStyle
