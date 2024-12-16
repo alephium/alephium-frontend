@@ -25,7 +25,7 @@ import ActionLink from '@/components/ActionLink'
 import FooterButton from '@/components/Buttons/FooterButton'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import CenteredModal from '@/modals/CenteredModal'
-import { electron, openInWebBrowser } from '@/utils/misc'
+import { openInWebBrowser } from '@/utils/misc'
 
 export interface BuyModalProps {
   addressHash: AddressHash
@@ -49,7 +49,7 @@ const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
     `&secondaryColor=${theme.global.complementary.slice(1)}`
 
   const handleAcceptDisclaimer = () => {
-    electron?.app.openOnRampServiceWindow({ url: banxaURL, targetLocation: 'https://alephium.org' })
+    window.electron?.app.openOnRampServiceWindow({ url: banxaURL, targetLocation: 'https://alephium.org' })
     setDisclaimerAccepted(true)
   }
 

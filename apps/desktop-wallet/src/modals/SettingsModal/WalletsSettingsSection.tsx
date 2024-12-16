@@ -25,6 +25,7 @@ import Button from '@/components/Button'
 import CheckMark from '@/components/CheckMark'
 import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
+import { useLedger } from '@/features/ledger/useLedger'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
@@ -38,6 +39,7 @@ const WalletsSettingsSection = () => {
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const wallets = useAppSelector((s) => s.global.wallets)
   const { isWalletUnlocked, lockWallet } = useWalletLock()
+  const { isLedger } = useLedger()
 
   const openWalletRemoveModal = (walletId: string, walletName: string) => {
     dispatch(openModal({ name: 'WalletRemovalModal', props: { walletId, walletName } }))
@@ -70,16 +72,18 @@ const WalletsSettingsSection = () => {
           <InfoBox label={t('Wallet name')} short>
             <CurrentWalletBox>
               <WalletName>{activeWalletName}</WalletName>
-              <Button
-                aria-label={t('Delete')}
-                tabIndex={0}
-                squared
-                role="secondary"
-                transparent
-                onClick={openEditWalletNameModal}
-              >
-                <Pencil size={15} />
-              </Button>
+              {!isLedger && (
+                <Button
+                  aria-label={t('Delete')}
+                  tabIndex={0}
+                  squared
+                  role="secondary"
+                  transparent
+                  onClick={openEditWalletNameModal}
+                >
+                  <Pencil size={15} />
+                </Button>
+              )}
             </CurrentWalletBox>
           </InfoBox>
           <ActionButtons>
@@ -87,31 +91,35 @@ const WalletsSettingsSection = () => {
               {t('Lock current wallet')}
             </Button>
 
-            <ButtonTooltipWrapper
-              data-tooltip-id="default"
-              data-tooltip-content={isPassphraseUsed ? t('To export this wallet use it without a passphrase') : ''}
-            >
-              <Button role="secondary" onClick={openWalletQRCodeExportModal} disabled={isPassphraseUsed}>
-                {t('Export current wallet')}
-              </Button>
-            </ButtonTooltipWrapper>
+            {!isLedger && (
+              <>
+                <ButtonTooltipWrapper
+                  data-tooltip-id="default"
+                  data-tooltip-content={isPassphraseUsed ? t('To export this wallet use it without a passphrase') : ''}
+                >
+                  <Button role="secondary" onClick={openWalletQRCodeExportModal} disabled={isPassphraseUsed}>
+                    {t('Export current wallet')}
+                  </Button>
+                </ButtonTooltipWrapper>
 
-            <Button role="secondary" variant="alert" onClick={openSecretPhraseModal}>
-              {t('Show your secret recovery phrase')}
-            </Button>
+                <Button role="secondary" variant="alert" onClick={openSecretPhraseModal}>
+                  {t('Show your secret recovery phrase')}
+                </Button>
 
-            <ButtonTooltipWrapper
-              data-tooltip-id="default"
-              data-tooltip-content={isPassphraseUsed ? t('To delete this wallet use it without a passphrase') : ''}
-            >
-              <Button
-                variant="alert"
-                onClick={() => openWalletRemoveModal(activeWalletId, activeWalletName)}
-                disabled={isPassphraseUsed}
-              >
-                {t('Remove current wallet')}
-              </Button>
-            </ButtonTooltipWrapper>
+                <ButtonTooltipWrapper
+                  data-tooltip-id="default"
+                  data-tooltip-content={isPassphraseUsed ? t('To delete this wallet use it without a passphrase') : ''}
+                >
+                  <Button
+                    variant="alert"
+                    onClick={() => openWalletRemoveModal(activeWalletId, activeWalletName)}
+                    disabled={isPassphraseUsed}
+                  >
+                    {t('Remove current wallet')}
+                  </Button>
+                </ButtonTooltipWrapper>
+              </>
+            )}
           </ActionButtons>
         </CurrentWalletSection>
       )}

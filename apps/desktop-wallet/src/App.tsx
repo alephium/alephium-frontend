@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
 import { useInitializeThrottledClient } from '@alephium/shared-react'
-import { ReactNode, useCallback, useEffect } from 'react'
+import { memo, ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 import PersistedQueryCacheVersionStorage from '@/api/persistedCacheVersionStorage'
@@ -53,9 +53,8 @@ import {
 import { GlobalStyle } from '@/style/globalStyles'
 import { currentVersion } from '@/utils/app-data'
 import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } from '@/utils/migration'
-import { electron } from '@/utils/misc'
 
-const App = () => {
+const App = memo(() => {
   const theme = useAppSelector((s) => s.global.theme)
 
   useAutoLock()
@@ -91,7 +90,7 @@ const App = () => {
       <AppSpinner />
     </ThemeProvider>
   )
-}
+})
 
 export default App
 
@@ -127,15 +126,15 @@ const useSystemTheme = () => {
 
     if (!shouldListenToOSThemeChanges) return
 
-    const removeOSThemeChangeListener = electron?.theme.onShouldUseDarkColors((useDark: boolean) =>
+    const removeOSThemeChangeListener = window.electron?.theme.onShouldUseDarkColors((useDark: boolean) =>
       dispatch(osThemeChangeDetected(useDark ? 'dark' : 'light'))
     )
 
-    const removeGetNativeThemeListener = electron?.theme.onGetNativeTheme((nativeTheme) =>
+    const removeGetNativeThemeListener = window.electron?.theme.onGetNativeTheme((nativeTheme) =>
       dispatch(osThemeChangeDetected(nativeTheme.shouldUseDarkColors ? 'dark' : 'light'))
     )
 
-    electron?.theme.getNativeTheme()
+    window.electron?.theme.getNativeTheme()
 
     return () => {
       removeGetNativeThemeListener && removeGetNativeThemeListener()
@@ -170,7 +169,7 @@ const useSystemRegion = () => {
 
   useEffect(() => {
     if (region === undefined)
-      electron?.app.getSystemRegion().then((systemRegion) => {
+      window.electron?.app.getSystemRegion().then((systemRegion) => {
         if (!systemRegion) {
           dispatch(systemRegionMatchFailed())
           return
@@ -195,7 +194,7 @@ const useSystemLanguage = () => {
   const language = useAppSelector((s) => s.settings.language)
 
   const setSystemLanguage = useCallback(async () => {
-    const systemLanguage = await electron?.app.getSystemLanguage()
+    const systemLanguage = await window.electron?.app.getSystemLanguage()
 
     if (!systemLanguage) {
       dispatch(systemLanguageMatchFailed())
@@ -221,7 +220,7 @@ const useInitializeNetworkProxy = () => {
   const networkProxy = useAppSelector((s) => s.network.settings.proxy)
 
   useEffect(() => {
-    if (networkProxy) electron?.app.setProxySettings(networkProxy)
+    if (networkProxy) window.electron?.app.setProxySettings(networkProxy)
   }, [networkProxy])
 }
 

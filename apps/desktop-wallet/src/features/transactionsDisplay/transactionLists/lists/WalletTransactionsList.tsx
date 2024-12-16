@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash, Asset, calcTxAmountsDeltaForAddress, findTransactionReferenceAddress } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 import { uniqBy } from 'lodash'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -33,7 +33,7 @@ import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/Tab
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
 import { useAppDispatch } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { Direction } from '@/types/transactions'
 import { onEnterOrSpace } from '@/utils/misc'
 
@@ -59,7 +59,7 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
     isDataComplete
   } = useFetchWalletTransactionsInfinite()
 
-  const openTransactionDetailsModal = (txHash: Transaction['hash']) =>
+  const openTransactionDetailsModal = (txHash: e.Transaction['hash']) =>
     dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))
 
   const filteredConfirmedTxs = useMemo(
@@ -117,7 +117,7 @@ const applyFilters = ({
   directions,
   assetIds
 }: WalletTransactionListProps & {
-  txs: Transaction[]
+  txs: e.Transaction[]
   allAddressHashes: AddressHash[]
 }) => {
   const isDirectionsFilterEnabled = directions && directions.length > 0

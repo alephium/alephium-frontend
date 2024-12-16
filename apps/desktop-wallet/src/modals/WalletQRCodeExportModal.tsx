@@ -31,8 +31,9 @@ import { Section } from '@/components/PageComponents/PageContainers'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppSelector } from '@/hooks/redux'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import CenteredModal from '@/modals/CenteredModal'
-import { selectAllAddresses, selectAllContacts } from '@/storage/addresses/addressesSelectors'
+import { selectAllContacts } from '@/storage/addresses/addressesSelectors'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 
 // Inspired by:
@@ -45,7 +46,7 @@ const WalletQRCodeExportModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
-  const addresses = useAppSelector(selectAllAddresses)
+  const addresses = useUnsortedAddresses()
   const contacts = useAppSelector(selectAllContacts)
 
   const [frames, setFrames] = useState<string[]>([])

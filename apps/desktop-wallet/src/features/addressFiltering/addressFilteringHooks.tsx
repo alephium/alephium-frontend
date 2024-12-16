@@ -18,15 +18,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useMemo } from 'react'
 
-import { useFetchWalletBalancesAlphByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { useFetchWalletBalancesTokensByAddress } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
+import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
+import useFetchWalletBalancesTokensByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensByAddress'
 import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
-import { useAppSelector } from '@/hooks/redux'
 import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 
 export const useFilterAddressesByText = (text = '') => {
-  const allAddresses = useAppSelector(selectAllAddresses)
+  const allAddresses = useUnsortedAddresses()
   const { data: allAddressHashes } = useFetchSortedAddressesHashes()
   const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
   const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
@@ -48,7 +47,7 @@ export const useFilterAddressesByText = (text = '') => {
 
             // Step 3. Validate against token names
             const addressAlphBalances = addressesAlphBalances[addressHash]
-            const addressHasAlphBalances = (addressAlphBalances?.totalBalance ?? 0) > 0
+            const addressHasAlphBalances = BigInt(addressAlphBalances?.totalBalance ?? 0) > 0
 
             if (addressHasAlphBalances) {
               if ('alephium alph'.includes(text)) return true

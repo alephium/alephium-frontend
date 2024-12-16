@@ -348,8 +348,7 @@ export const deleteWallet = async () => {
 
   for (const address of wallet.addresses) {
     if (addressMetadataIncludesHash(address)) {
-      await deleteAddressPublicKey(address.hash)
-      await deleteAddressPrivateKey(address.hash)
+      await deleteAddressKeyPair(address.hash)
     }
   }
 
@@ -357,6 +356,26 @@ export const deleteWallet = async () => {
   await deleteFundPassword()
   await deleteWithReportableError(WALLET_METADATA_STORAGE_KEY)
   await deleteWithReportableError(IS_NEW_WALLET)
+}
+
+export const deleteAddress = async (addressHash: AddressHash) => {
+  const wallet = await getStoredWalletMetadata()
+
+  const addressIndex = wallet.addresses.findIndex(
+    (address) => addressMetadataIncludesHash(address) && address.hash === addressHash
+  )
+
+  if (addressIndex >= 0) {
+    wallet.addresses.splice(addressIndex, 1)
+    await deleteAddressKeyPair(addressHash)
+  }
+
+  await storeWalletMetadata(wallet)
+}
+
+const deleteAddressKeyPair = async (addressHash: AddressHash) => {
+  await deleteAddressPublicKey(addressHash)
+  await deleteAddressPrivateKey(addressHash)
 }
 
 export const persistAddressesMetadata = async (walletId: string, addressesMetadata: AddressMetadataWithHash[]) => {

@@ -27,8 +27,7 @@ import Button from '@/components/Button'
 import MultiSelect from '@/components/Inputs/MultiSelect'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import SelectOptionWalletToken from '@/components/Inputs/SelectOptionWalletToken'
-import { useAppSelector } from '@/hooks/redux'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import { Address } from '@/types/addresses'
 import { TokenId } from '@/types/tokens'
 import { directionOptions } from '@/utils/transactions'
@@ -53,7 +52,7 @@ const FiltersPanel = ({
   className
 }: FiltersPanelProps) => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAllAddresses)
+  const addresses = useUnsortedAddresses()
 
   const { listedFts, unlistedFts, isLoading: isLoadingFts } = useFetchWalletFts()
   const {

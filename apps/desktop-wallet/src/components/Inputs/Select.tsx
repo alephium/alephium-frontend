@@ -79,6 +79,7 @@ interface SelectProps<T extends OptionValue> {
   ListBottomComponent?: ReactNode
   allowReselectionOnClickWhenSingleOption?: boolean
   isSearchable?: boolean
+  allowCustomValue?: boolean
 }
 
 function Select<T extends OptionValue>({
@@ -100,7 +101,8 @@ function Select<T extends OptionValue>({
   renderCustomComponent,
   ListBottomComponent,
   allowReselectionOnClickWhenSingleOption,
-  isSearchable
+  isSearchable,
+  allowCustomValue
 }: SelectProps<T>) {
   const selectedValueRef = useRef<HTMLDivElement>(null)
 
@@ -173,10 +175,10 @@ function Select<T extends OptionValue>({
   }, [options, setInputValue, value])
 
   useEffect(() => {
-    if (value && !options.find((option) => option.value === value.value)) {
+    if (!allowCustomValue && value && !options.find((option) => option.value === value.value)) {
       setValue(undefined)
     }
-  }, [options, value])
+  }, [allowCustomValue, options, value])
 
   return (
     <>

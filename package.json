@@ -13,7 +13,7 @@
     "check": "turbo typecheck lint format",
     "check:deps": "manypkg check",
     "check:deps:fix": "manypkg fix",
-    "clean": "turbo clean",
+    "clean": "turbo clean && rm -rf .turbo",
     "clean:node-modules": "rm -rf node_modules && turbo clean:node-modules",
     "postinstall": "pnpm check:deps"
   },

@@ -22,12 +22,12 @@ import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { useFetchWalletBalancesAlphArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import useFetchWalletBalancesAlphArray from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphArray'
 import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-import { DisplayBalances, TokenId } from '@/types/tokens'
+import { ApiBalances, TokenId } from '@/types/tokens'
 
 interface UseFetchWalletSingleTokenBalancesProps extends SkipProp {
   tokenId: TokenId
@@ -39,7 +39,7 @@ const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSing
 
   const isALPH = tokenId === ALPH.id
 
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphArray({ skip })
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphArray()
 
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQueries({
     queries:
@@ -65,17 +65,23 @@ const combineTokenBalances = (tokenId: string, results: UseQueryResult<AddressTo
     (totalBalances, { data }) => {
       const balances = data?.balances.find(({ id }) => id === tokenId)
 
-      totalBalances.totalBalance += balances ? balances.totalBalance : BigInt(0)
-      totalBalances.lockedBalance += balances ? balances.lockedBalance : BigInt(0)
-      totalBalances.availableBalance += balances ? balances.availableBalance : BigInt(0)
+      totalBalances.totalBalance = (
+        BigInt(totalBalances.totalBalance) + BigInt(balances ? balances.totalBalance : 0)
+      ).toString()
+      totalBalances.lockedBalance = (
+        BigInt(totalBalances.lockedBalance) + BigInt(balances ? balances.lockedBalance : 0)
+      ).toString()
+      totalBalances.availableBalance = (
+        BigInt(totalBalances.availableBalance) + BigInt(balances ? balances.availableBalance : 0)
+      ).toString()
 
       return totalBalances
     },
     {
-      totalBalance: BigInt(0),
-      lockedBalance: BigInt(0),
-      availableBalance: BigInt(0)
-    } as DisplayBalances
+      totalBalance: '0',
+      lockedBalance: '0',
+      availableBalance: '0'
+    } as ApiBalances
   ),
   ...combineIsLoading(results)
 })

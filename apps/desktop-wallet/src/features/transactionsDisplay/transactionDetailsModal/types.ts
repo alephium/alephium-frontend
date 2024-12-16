@@ -17,9 +17,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { PendingTransaction, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 
 export interface TransactionDetailsModalTxProps {
-  tx: Transaction | PendingTransaction
+  tx: e.Transaction | e.PendingTransaction
   refAddressHash: AddressHash
 }

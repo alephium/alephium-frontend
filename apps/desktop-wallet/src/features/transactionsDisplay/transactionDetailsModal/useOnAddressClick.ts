@@ -20,7 +20,7 @@ import { AddressHash } from '@alephium/shared'
 
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { openInWebBrowser } from '@/utils/misc'
 
 const useOnAddressClick = () => {

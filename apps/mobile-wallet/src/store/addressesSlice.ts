@@ -54,6 +54,7 @@ import { chunk } from 'lodash'
 
 import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsNextPage } from '~/api/addresses'
 import { addressMetadataIncludesHash } from '~/persistent-storage/wallet'
+import { addressDeleted } from '~/store/addresses/addressesActions'
 import { RootState } from '~/store/store'
 import {
   appLaunchedWithLastUsedWallet,
@@ -317,6 +318,9 @@ const addressesSlice = createSlice({
       })
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
+      .addCase(addressDeleted, (state, { payload: addressHash }) => {
+        addressesAdapter.removeOne(state, addressHash)
+      })
       .addCase(appReset, () => initialState)
       .addCase(walletDeleted, () => initialState)
     builder.addMatcher(isAnyOf(walletUnlocked, appLaunchedWithLastUsedWallet), (state, { payload: { addresses } }) => {

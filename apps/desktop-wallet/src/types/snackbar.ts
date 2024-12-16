@@ -25,3 +25,7 @@ export interface SnackbarMessage {
   type?: 'info' | 'alert' | 'success'
   duration?: number
 }
+
+export interface ToastMessage extends Omit<SnackbarMessage, 'duration'> {
+  duration: 'short' | 'long'
+}

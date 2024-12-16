@@ -21,7 +21,7 @@ export default {
     name: 'Alephium',
     owner: 'alephium-dev',
     slug: 'alephium-mobile-wallet',
-    version: '1.1.11',
+    version: '1.1.12',
     orientation: 'portrait',
     icon: './assets/icon.png',
     scheme: ['wc', 'alephium'],
@@ -83,6 +83,8 @@ export default {
         'android.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND', // To potentially fix crash due to ForegroundServiceStartNotAllowedException
         'android.permission.WAKE_LOCK'
       ],
+      // See https://github.com/alephium/alephium-frontend/issues/1021
+      blockedPermissions: ['android.permission.READ_MEDIA_IMAGES', 'android.permission.READ_MEDIA_VIDEO'],
       package: 'org.alephium.wallet'
     },
     web: {

@@ -23,11 +23,10 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import WalletTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/WalletTransactionsList'
-import { useAppSelector } from '@/hooks/redux'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import FiltersPanel from '@/pages/UnlockedWallet/TransfersPage/FiltersPanel'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { TokenId } from '@/types/tokens'
 import { directionOptions } from '@/utils/transactions'
 
@@ -37,7 +36,7 @@ interface TransfersPageProps {
 
 const TransfersPage = ({ className }: TransfersPageProps) => {
   const { t } = useTranslation()
-  const addresses = useAppSelector(selectAllAddresses)
+  const addresses = useUnsortedAddresses()
 
   const [selectedAddresses, setSelectedAddresses] = useState(addresses)
   const [selectedDirections, setSelectedDirections] = useState(directionOptions)

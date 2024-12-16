@@ -29,6 +29,7 @@ import NetworkSwitch from '@/components/NetworkSwitch'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useScrollContext } from '@/contexts/scroll'
 import { openModal } from '@/features/modals/modalActions'
+import RefreshButton from '@/features/refreshData/RefreshButton'
 import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -95,6 +96,13 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
           {children && (
             <>
               {children}
+              <VerticalDivider />
+            </>
+          )}
+          {isWalletUnlocked && (
+            <>
+              <RefreshButton />
+
               <VerticalDivider />
             </>
           )}
