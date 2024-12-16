@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { useNavigation } from '@react-navigation/native'
 import { useRef } from 'react'
 import { FlatListProps } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
@@ -46,6 +47,7 @@ const FlatListScreen = <T,>({
   const insets = useSafeAreaInsets()
   const flatListRef = useRef<FlatList>(null)
   const scrollEndHandler = useAutoScrollOnDragEnd(flatListRef)
+  const navigation = useNavigation()
 
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
@@ -56,6 +58,7 @@ const FlatListScreen = <T,>({
           options={headerOptions}
           scrollY={screenScrollY}
           titleAlwaysVisible={props.headerTitleAlwaysVisible}
+          onBackPress={navigation.canGoBack() ? navigation.goBack : undefined}
         />
       )}
       <FlatList
