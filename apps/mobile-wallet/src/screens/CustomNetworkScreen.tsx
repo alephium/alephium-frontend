@@ -71,6 +71,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
     <>
       <ScrollScreen
         fill
+        contentPaddingTop
         headerOptions={{
           type: 'stack',
           headerTitle: t('Custom network'),
