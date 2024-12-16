@@ -1,5 +1,19 @@
 # alephium-desktop-wallet
 
+## 2.5.0
+
+### Minor Changes
+
+- c2a845a: Create addresses and sign transactions with Ledger
+
+### Patch Changes
+
+- 5a7bef0: Fix balances refresh after sending transactions
+- 5a7bef0: Add data refresh button
+- c21ea43: Improve performance
+- 39205ff: Fix default address selection in transaction modals
+- 0dfbaf5: Optimize transactions loading for wallets with only 1 address
+
 ## 2.4.4
 
 ### Patch Changes
