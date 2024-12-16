@@ -165,9 +165,9 @@ const Button = ({
     >
       {iconProps && !(compact || squared) && <EmptyPlaceholder />}
       {title && (
-        <AppText style={{ color: font, textAlign: 'center' }} medium size={compact ? 14 : 16}>
+        <ButtonText color={font} medium size={compact ? 14 : 16}>
           {title}
-        </AppText>
+        </ButtonText>
       )}
       {children}
       {loading ? (
@@ -257,4 +257,9 @@ const IconContainer = styled.View`
 
 const EmptyPlaceholder = styled.View`
   width: 22px;
+`
+
+const ButtonText = styled(AppText)`
+  text-align: center;
+  flex-shrink: 1;
 `
