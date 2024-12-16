@@ -29,11 +29,11 @@
     "@yornaath/batshit": "^0.10.1",
     "cross-fetch": "^3.1.5",
     "dayjs": "^1.10.7",
-    "dompurify": "^3.2.3",
     "fetch-retry": "^5.0.6",
     "lodash": "^4.17.21",
     "p-throttle": "^6.2.0",
-    "posthog-js": "^1.52.0"
+    "posthog-js": "^1.52.0",
+    "sanitize-html": "^2.13.1"
   },
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
