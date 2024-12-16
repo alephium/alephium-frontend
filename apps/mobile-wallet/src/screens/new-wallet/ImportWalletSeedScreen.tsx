@@ -246,7 +246,7 @@ const WordInput = styled(Input)`
 
 export const Word = styled(AppText)<{ highlight?: boolean }>`
   border-radius: 100px;
-  color: ${({ highlight, theme }) => (highlight ? theme.font.primary : theme.global.accent)};
+  color: ${({ highlight, theme }) => (highlight ? '#fff' : theme.global.accent)};
 `
 
 export const PossibleWordBox = styled(WordBox)<{ highlight?: boolean }>`
