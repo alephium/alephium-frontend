@@ -22,9 +22,7 @@ import { ArrowDownToLine, CreditCard, Send, Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchWalletWorth from '@/api/apiDataHooks/wallet/useFetchWalletWorth'
 import Button from '@/components/Button'
-import SkeletonLoader from '@/components/SkeletonLoader'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -45,23 +43,12 @@ interface ShortcutButtonsGroupWalletProps extends ShortcutButtonBaseProps {
 
 export const ShortcutButtonsGroupWallet = ({ ...buttonProps }: ShortcutButtonsGroupWalletProps) => {
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
-  const { isLoading } = useFetchWalletWorth()
 
   return (
     <ButtonsContainer>
-      {isLoading ? (
-        <>
-          <SkeletonLoader height="42px" width="100px" />
-          <SkeletonLoader height="42px" width="100px" />
-          <SkeletonLoader height="42px" width="100px" />
-        </>
-      ) : (
-        <>
-          <ReceiveButton addressHash={defaultAddressHash} {...buttonProps} />
-          <SendButton addressHash={defaultAddressHash} {...buttonProps} />
-          <BuyButton addressHash={defaultAddressHash} {...buttonProps} />
-        </>
-      )}
+      <ReceiveButton addressHash={defaultAddressHash} {...buttonProps} />
+      <SendButton addressHash={defaultAddressHash} {...buttonProps} />
+      <BuyButton addressHash={defaultAddressHash} {...buttonProps} />
     </ButtonsContainer>
   )
 }
