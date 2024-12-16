@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
 import Button from '@/components/Button'
 import { ReactComponent as LedgerLogo } from '@/images/ledger.svg'
@@ -32,10 +33,16 @@ const ConnectWithLedgerButton = () => {
 
   return (
     <Button onClick={handleLedgerConnectClick} role="secondary" transparent short>
-      <LedgerLogo style={{ width: '15px', marginRight: '10px' }} />
+      <LedgerLogoStyled style={{ width: '15px', marginRight: '10px' }} />
       {t('Connect with Ledger')}
     </Button>
   )
 }
 
 export default ConnectWithLedgerButton
+
+const LedgerLogoStyled = styled(LedgerLogo)`
+  path {
+    fill: ${({ theme }) => theme.font.primary};
+  }
+`

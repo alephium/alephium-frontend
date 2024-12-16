@@ -23,7 +23,6 @@ import { useNavigate } from 'react-router-dom'
 import Button from '@/components/Button'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
-import ConnectWithLedgerButton from '@/features/ledger/ConnectWithLedgerButton'
 
 interface NewWalletActionsProps {
   onExistingWalletLinkClick?: () => void
@@ -45,7 +44,6 @@ const NewWalletActions = ({ onExistingWalletLinkClick }: NewWalletActionsProps) 
         <Button onClick={() => navigate('/import/0')} tall>
           {t('Import wallet')}
         </Button>
-        <ConnectWithLedgerButton />
         {onExistingWalletLinkClick && (
           <Button onClick={onExistingWalletLinkClick} Icon={ArrowLeft} role="secondary">
             {t('Use an existing wallet')}
