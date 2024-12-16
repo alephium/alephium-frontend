@@ -22,6 +22,7 @@ import {
   KeyboardAvoidingView,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Platform,
   ScrollView,
   ScrollViewProps,
   StyleProp,
@@ -181,7 +182,7 @@ const ScrollViewContainer = styled.View`
 `
 
 const BottomButtonsContainer = styled.View`
-  margin: 0 ${DEFAULT_MARGIN}px;
+  margin: ${Platform.OS === 'ios' ? 0 : undefined} ${DEFAULT_MARGIN}px;
 `
 
 const CustomBottomRenderContainer = styled.View`
