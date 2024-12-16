@@ -25,9 +25,10 @@ import { useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme } from 'styled-components'
 
 import { fadeInSlowly } from '@/animations'
+import AlephiumLogo from '@/components/AlephiumLogo'
 import AppHeader from '@/components/AppHeader'
 import NavItem from '@/components/NavItem'
-import SideBar from '@/components/PageComponents/SideBar'
+import SideBar, { SIDEBAR_EXPAND_THRESHOLD_PX } from '@/components/PageComponents/SideBar'
 import ScrollbarCustom from '@/components/Scrollbar'
 import { useAppSelector } from '@/hooks/redux'
 
@@ -49,11 +50,19 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
     <motion.div {...fadeInSlowly} className={className}>
       <SideBar
         renderTopComponent={() => (
-          <SideNavigation>
-            <NavItem Icon={Layers} label={t('Overview')} to="/wallet/overview" />
-            <NavItem Icon={ArrowLeftRight} label={t('Transfers')} to="/wallet/transfers" />
-            <NavItem Icon={Album} label={t('Addresses')} to="/wallet/addresses" />
-          </SideNavigation>
+          <>
+            <BrandContainer>
+              <AlephiumLogoContainer>
+                <AlephiumLogo />
+              </AlephiumLogoContainer>
+              <AlephiumName>alephium</AlephiumName>
+            </BrandContainer>
+            <SideNavigation>
+              <NavItem Icon={Layers} label={t('Overview')} to="/wallet/overview" />
+              <NavItem Icon={ArrowLeftRight} label={t('Transfers')} to="/wallet/transfers" />
+              <NavItem Icon={Album} label={t('Addresses')} to="/wallet/addresses" />
+            </SideNavigation>
+          </>
         )}
       ></SideBar>
 
@@ -111,4 +120,32 @@ const SideNavigation = styled.nav`
   display: flex;
   flex-direction: column;
   gap: 15px;
+`
+
+const BrandContainer = styled.div`
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: var(--spacing-7);
+`
+
+const AlephiumLogoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 100px;
+  background-color: ${({ theme }) => theme.bg.contrast};
+`
+
+const AlephiumName = styled.div`
+  font-size: 18px;
+  font-weight: var(--fontWeight-semiBold);
+  display: none;
+
+  @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+    display: block;
+  }
 `

@@ -22,12 +22,12 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
+import AlephiumLogo from '@/components/AlephiumLogo'
 import Button from '@/components/Button'
 import Input from '@/components/Inputs/Input'
 import Select from '@/components/Inputs/Select'
 import WalletPassphrase from '@/components/Inputs/WalletPassphrase'
 import { FloatingPanel, Section } from '@/components/PageComponents/PageContainers'
-import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import ConnectWithLedgerButton from '@/features/ledger/ConnectWithLedgerButton'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
@@ -78,17 +78,11 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   return (
     <>
       <FloatingPanel verticalAlign="center" horizontalAlign="center" transparentBg>
-        <PanelTitle centerText>
-          {pendingDappConnectionUrl
-            ? t('Connect to dApp')
-            : isAwaitingSessionRequestApproval
-              ? t('Received dApp request')
-              : t('Welcome back.')}
-        </PanelTitle>
-        <ParagraphStyled centered secondary>
-          {pendingDappConnectionUrl ||
-            t(wallets.length === 1 ? 'Unlock your wallet to continue.' : 'Unlock a wallet to continue.')}
-        </ParagraphStyled>
+        <BrandContainer>
+          <AlephiumLogoContainer>
+            <AlephiumLogo />
+          </AlephiumLogoContainer>
+        </BrandContainer>
         <SectionStyled inList>
           <Select
             label={t('Wallet')}
@@ -159,4 +153,22 @@ const WalletPassphraseStyled = styled(WalletPassphrase)`
 const ParagraphStyled = styled(Paragraph)`
   font-weight: var(--fontWeight-semiBold);
   font-size: 16px;
+`
+
+const BrandContainer = styled.div`
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: var(--spacing-7);
+`
+
+const AlephiumLogoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  width: 90px;
+  height: 90px;
+  border-radius: 100px;
+  background-color: ${({ theme }) => theme.bg.contrast};
 `

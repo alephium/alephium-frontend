@@ -21,7 +21,6 @@ import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import AlephiumLogo from '@/components/AlephiumLogo'
 import Button from '@/components/Button'
 import ThemeSwitcher from '@/components/ThemeSwitcher'
 import WalletNameButton from '@/components/WalletNameButton'
@@ -46,12 +45,6 @@ const SideBar = ({ renderTopComponent, noExpansion = false, noBorder = false, cl
 
   return (
     <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion} noBorder={noBorder}>
-      <BrandContainer>
-        <AlephiumLogoContainer>
-          <AlephiumLogo />
-        </AlephiumLogoContainer>
-        {!noExpansion && <AlephiumName>alephium</AlephiumName>}
-      </BrandContainer>
       <TopContainer>{renderTopComponent?.()}</TopContainer>
       <BottomButtonsContainer>
         <BottomButtons>
@@ -100,34 +93,6 @@ const SideBarStyled = styled.div<{ noBorder: boolean; noExpansion: boolean }>`
           top: 0;
           z-index: 3;
         `}
-`
-
-const BrandContainer = styled.div`
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  margin-bottom: var(--spacing-7);
-`
-
-const AlephiumLogoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  width: 36px;
-  height: 36px;
-  border-radius: 100px;
-  background-color: ${({ theme }) => theme.bg.contrast};
-`
-
-const AlephiumName = styled.div`
-  font-size: 18px;
-  font-weight: var(--fontWeight-semiBold);
-  display: none;
-
-  @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
-    display: block;
-  }
 `
 
 const TopContainer = styled.div`
