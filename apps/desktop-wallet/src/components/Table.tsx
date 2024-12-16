@@ -83,6 +83,8 @@ export interface TableRowProps extends TableColumnsProps {
 }
 
 export const TableRow = styled(TableColumns)<TableRowProps>`
+  min-height: var(--inputHeight);
+
   ${({ onClick }) =>
     onClick &&
     css`

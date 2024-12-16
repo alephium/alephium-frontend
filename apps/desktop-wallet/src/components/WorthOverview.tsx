@@ -27,7 +27,7 @@ interface WorthOverviewProps extends AmountLoaderProps {
 }
 
 const WorthOverview = ({ overrideWorth, worth, ...props }: WorthOverviewProps) => (
-  <WorthOverviewStyled value={overrideWorth ?? worth} isFiat loaderHeight={32} tabIndex={0} {...props} />
+  <WorthOverviewStyled value={overrideWorth ?? worth} isFiat loaderHeight={32} tabIndex={0} semiBold {...props} />
 )
 
 export default WorthOverview

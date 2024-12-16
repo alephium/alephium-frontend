@@ -54,6 +54,7 @@ const WalletsSettingsSection = () => {
   return (
     <>
       <Section align="flex-start" role="table">
+        <h2>{t('Wallet list')}</h2>
         <BoxContainerStyled role="rowgroup">
           {wallets.map((wallet) => (
             <WalletItem
