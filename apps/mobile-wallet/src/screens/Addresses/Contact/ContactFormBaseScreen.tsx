@@ -50,9 +50,7 @@ const ContactForm = ({ initialValues, onSubmit, buttonText, headerOptions, ...pr
       contentPaddingTop
       headerOptions={{
         type: 'stack',
-        headerRight: () => (
-          <ContinueButton title={buttonText || t('Save')} onPress={handleSubmit(onSubmit)} iconProps={undefined} />
-        ),
+        headerRight: () => <ContinueButton title={buttonText || t('Save')} onPress={handleSubmit(onSubmit)} />,
         ...headerOptions
       }}
       {...props}

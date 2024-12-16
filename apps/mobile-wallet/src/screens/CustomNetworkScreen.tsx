@@ -75,9 +75,7 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
         headerOptions={{
           type: 'stack',
           headerTitle: t('Custom network'),
-          headerRight: () => (
-            <ContinueButton title={t('Save')} onPress={handleSubmit(saveCustomNetwork)} iconProps={undefined} />
-          )
+          headerRight: () => <ContinueButton title={t('Save')} onPress={handleSubmit(saveCustomNetwork)} />
         }}
       >
         <ScreenSection verticalGap>
