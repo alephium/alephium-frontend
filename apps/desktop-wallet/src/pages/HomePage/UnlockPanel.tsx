@@ -17,12 +17,14 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { maxBy } from 'lodash'
+import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import Button from '@/components/Button'
+import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import Input from '@/components/Inputs/Input'
 import Select from '@/components/Inputs/Select'
 import WalletPassphrase from '@/components/Inputs/WalletPassphrase'
@@ -116,10 +118,20 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
         >
           {t('Unlock')}
         </Button>
-        <Button onClick={onNewWalletLinkClick} role="secondary">
-          {t('Import or create a wallet')}
-        </Button>
-        <ConnectWithLedgerButton />
+        <HorizontalDivider style={{ width: '60%' }} />
+        <SecondaryButtonsSection>
+          <Button
+            onClick={onNewWalletLinkClick}
+            role="secondary"
+            variant="faded"
+            Icon={PlusIcon}
+            short
+            style={{ width: '80%' }}
+          >
+            {t('Import or create a wallet')}
+          </Button>
+          <ConnectWithLedgerButton />
+        </SecondaryButtonsSection>
       </ButtonsSection>
       <WalletPassphraseStyled
         onPassphraseConfirmed={setPassphrase}
@@ -138,6 +150,14 @@ const SectionStyled = styled(Section)`
 const ButtonsSection = styled(SectionStyled)`
   margin-top: 30px;
   gap: 20px;
+`
+
+const SecondaryButtonsSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  align-items: center;
 `
 
 const WalletPassphraseStyled = styled(WalletPassphrase)`

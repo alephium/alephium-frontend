@@ -16,26 +16,31 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { createSlice } from '@reduxjs/toolkit'
 
-import Button from '@/components/Button'
-import { ReactComponent as LedgerLogo } from '@/images/ledger.svg'
+import { newLedgerDeviceConnected, userWasAskedToDiscoverAddresses } from './ledgerActions'
 
-const ConnectWithLedgerButton = () => {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-
-  const handleLedgerConnectClick = () => {
-    navigate('/ledger')
-  }
-
-  return (
-    <Button onClick={handleLedgerConnectClick} role="secondary" variant="faded" short style={{ width: '80%' }}>
-      <LedgerLogo style={{ width: '15px', marginRight: '10px' }} />
-      {t('Connect with Ledger')}
-    </Button>
-  )
+interface LedgerState {
+  isNewDevice: boolean
 }
 
-export default ConnectWithLedgerButton
+const initialState: LedgerState = {
+  isNewDevice: false
+}
+
+const ledgerSlice = createSlice({
+  name: 'ledger',
+  initialState,
+  reducers: {},
+  extraReducers(builder) {
+    builder
+      .addCase(newLedgerDeviceConnected, (state) => {
+        state.isNewDevice = true
+      })
+      .addCase(userWasAskedToDiscoverAddresses, (state) => {
+        state.isNewDevice = false
+      })
+  }
+})
+
+export default ledgerSlice

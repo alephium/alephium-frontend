@@ -22,6 +22,7 @@ import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 import Button from '@/components/Button'
+import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
 import ConnectWithLedgerButton from '@/features/ledger/ConnectWithLedgerButton'
@@ -41,8 +42,11 @@ const NewWalletActions = ({ onExistingWalletLinkClick }: NewWalletActionsProps) 
       </Paragraph>
       <Section inList>
         <Button onClick={() => navigate('/create/0')}>{t('New wallet')}</Button>
+
         <Button onClick={() => navigate('/import/0')}>{t('Import wallet')}</Button>
+        <HorizontalDivider style={{ width: '60%', margin: '10px 0' }} />
         <ConnectWithLedgerButton />
+
         {onExistingWalletLinkClick && (
           <ActionLinkStyled onClick={onExistingWalletLinkClick}>{t('Use an existing wallet')}</ActionLinkStyled>
         )}
