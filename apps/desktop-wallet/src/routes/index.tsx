@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { Route, Routes } from 'react-router-dom'
 
+import ConnectLedgerInstructionsPage from '@/features/ledger/ConnectLedgerInstructionsPage'
 import HomePage from '@/pages/HomePage'
 import CheckWordsIntroPage from '@/pages/NewWallet/CheckWordsIntroPage'
 import CheckWordsPage from '@/pages/NewWallet/CheckWordsPage'
@@ -46,6 +47,7 @@ const Router = () => (
     <Route path="/create/:step" element={<NewWalletLayout baseUrl="create" steps={createWalletSteps} />} />
     <Route path="/import/:step" element={<NewWalletLayout baseUrl="import" steps={importWalletSteps} />} />
     <Route path="/wallet/*" element={<UnlockedWalletRoutes />} />
+    <Route path="/ledger" element={<ConnectLedgerInstructionsPage />} />
     <Route path="" element={<HomePage />} />
   </Routes>
 )

@@ -19,19 +19,24 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import { AddressMetadata } from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
+import { useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { discoverAndCacheActiveAddresses } from '@/api/addresses'
 import useAnalytics from '@/features/analytics/useAnalytics'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useLedger } from '@/features/ledger/useLedger'
+import { generateLedgerAddressesFromMetadata, LedgerAlephium } from '@/features/ledger/utils'
+import { useAppDispatch } from '@/hooks/redux'
+import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import {
   addressDiscoveryFinished,
   addressDiscoveryStarted,
   addressesRestoredFromMetadata,
   addressRestorationStarted
 } from '@/storage/addresses/addressesActions'
-import { selectAllAddresses } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
+import { showToast } from '@/storage/global/globalActions'
 import { AddressBase } from '@/types/addresses'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
@@ -55,15 +60,24 @@ interface GenerateOneAddressPerGroupProps {
 
 const useAddressGeneration = () => {
   const dispatch = useAppDispatch()
-  const addresses = useAppSelector(selectAllAddresses)
+  const addresses = useUnsortedAddresses()
   const { sendAnalytics } = useAnalytics()
+  const { isLedger, onLedgerError } = useLedger()
+  const { t } = useTranslation()
 
-  const currentAddressIndexes = addresses.map(({ index }) => index)
+  const currentAddressIndexes = useMemo(() => addresses.map(({ index }) => index), [addresses])
 
-  const generateAddress = (group?: GenerateAddressProps['group']): NonSensitiveAddressData =>
-    keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes })
+  const generateAddress = useCallback(
+    async (group?: GenerateAddressProps['group']): Promise<NonSensitiveAddressData | null> =>
+      isLedger
+        ? LedgerAlephium.create()
+            .catch(onLedgerError)
+            .then((app) => (app ? app.generateAddress({ group, skipAddressIndexes: currentAddressIndexes }) : null))
+        : keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes }),
+    [currentAddressIndexes, isLedger, onLedgerError]
+  )
 
-  const generateAndSaveOneAddressPerGroup = (
+  const generateAndSaveOneAddressPerGroup = async (
     { labelPrefix, labelColor, skipGroups = [] }: GenerateOneAddressPerGroupProps = { skipGroups: [] }
   ) => {
     const groups = Array.from({ length: TOTAL_NUMBER_OF_GROUPS }, (_, group) => group).filter(
@@ -72,24 +86,43 @@ const useAddressGeneration = () => {
     const randomLabelColor = getRandomLabelColor()
 
     try {
-      const addresses: AddressBase[] = groups.map((group) => ({
-        ...keyring.generateAndCacheAddress({ group, skipAddressIndexes: currentAddressIndexes }),
-        isDefault: false,
-        label: labelPrefix ? `${labelPrefix} ${group}` : '',
-        color: labelColor ?? randomLabelColor
-      }))
+      for (const group of groups) {
+        const address = await generateAddress(group)
+        if (!address) continue
+
+        addresses.push({
+          ...address,
+          group,
+          isDefault: false,
+          label: labelPrefix ? `${labelPrefix} ${group}` : '',
+          color: labelColor ?? randomLabelColor
+        })
+      }
 
       try {
         saveNewAddresses(addresses)
-      } catch {
-        sendAnalytics({ type: 'error', message: 'Error while saving new address' })
+      } catch (error) {
+        sendAnalytics({ type: 'error', message: 'Could not save new addresses' })
+        dispatch(
+          showToast({ text: `${t('could_not_save_new_address_other')}: ${error}`, type: 'alert', duration: 'long' })
+        )
       }
-    } catch {
-      sendAnalytics({ type: 'error', message: 'Could not generate one address per group' })
+    } catch (error) {
+      const message = 'Could not generate one address per group'
+      sendAnalytics({ type: 'error', message })
+      dispatch(showToast({ text: `${t(message)}: ${error}`, type: 'alert', duration: 'long' }))
     }
   }
 
-  const restoreAddressesFromMetadata = async (walletId: StoredEncryptedWallet['id'], isPassphraseUsed: boolean) => {
+  const restoreAddressesFromMetadata = async ({
+    walletId,
+    isPassphraseUsed,
+    isLedger
+  }: {
+    walletId: StoredEncryptedWallet['id']
+    isPassphraseUsed: boolean
+    isLedger: boolean
+  }) => {
     if (isPassphraseUsed) return
 
     const addressesMetadata: AddressMetadata[] = addressMetadataStorage.load(walletId)
@@ -104,10 +137,19 @@ const useAddressGeneration = () => {
     dispatch(addressRestorationStarted())
 
     try {
-      const addresses = addressesMetadata.map((metadata) => ({
-        ...keyring.generateAndCacheAddress({ addressIndex: metadata.index }),
-        ...metadata
-      })) as AddressBase[]
+      let addresses: AddressBase[] = []
+
+      if (isLedger) {
+        addresses = await generateLedgerAddressesFromMetadata({
+          addressesMetadata,
+          onError: onLedgerError
+        })
+      } else {
+        addresses = addressesMetadata.map((metadata) => ({
+          ...keyring.generateAndCacheAddress({ addressIndex: metadata.index }),
+          ...metadata
+        }))
+      }
 
       // Fix corrupted data if there is no default address in stored address metadata by making first address default
       if (!addresses.some((address) => address.isDefault)) {
@@ -123,7 +165,8 @@ const useAddressGeneration = () => {
       }
 
       dispatch(addressesRestoredFromMetadata(addresses))
-    } catch {
+    } catch (error) {
+      console.error(error)
       sendAnalytics({ type: 'error', message: 'Could not generate addresses from metadata' })
     }
   }
@@ -135,7 +178,12 @@ const useAddressGeneration = () => {
     dispatch(addressDiscoveryStarted(enableLoading))
 
     try {
-      const derivedAddresses = await discoverAndCacheActiveAddresses(skipIndexes)
+      const derivedAddresses = isLedger
+        ? await LedgerAlephium.create()
+            .catch(onLedgerError)
+            .then((app) => (app ? app.discoverActiveAddresses(skipIndexes) : []))
+        : await discoverAndCacheActiveAddresses(skipIndexes)
+
       const newAddresses = derivedAddresses.map((address) => ({
         ...address,
         isDefault: false,
@@ -144,12 +192,21 @@ const useAddressGeneration = () => {
 
       try {
         saveNewAddresses(newAddresses)
+        dispatch(
+          showToast({
+            text: t('Active address discovery completed. Addresses added: {{ count }}', { count: newAddresses.length }),
+            type: 'info',
+            duration: 'long'
+          })
+        )
       } catch {
         sendAnalytics({ type: 'error', message: 'Error while saving newly discovered address' })
       }
-      dispatch(addressDiscoveryFinished(enableLoading))
-    } catch {
+    } catch (error) {
+      console.error(error)
       sendAnalytics({ type: 'error', message: 'Could not discover addresses' })
+    } finally {
+      dispatch(addressDiscoveryFinished(enableLoading))
     }
   }
 

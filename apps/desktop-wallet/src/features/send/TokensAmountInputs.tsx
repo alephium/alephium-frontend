@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
+import { AddressHash, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
 import { MoreVertical, Plus } from 'lucide-react'
@@ -28,6 +28,7 @@ import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressB
 import useFetchAddressFts from '@/api/apiDataHooks/address/useFetchAddressFts'
 import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
 import useSortedTokenIds from '@/api/apiDataHooks/utils/useSortedTokenIds'
+import useFetchWalletNftsSearchStrings from '@/api/apiDataHooks/wallet/useFetchWalletNftsSearchStrings'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -70,20 +71,13 @@ const TokensAmountInputs = ({
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchAddressBalances({
     addressHash: address.hash
   })
+
   const { listedFts, unlistedFts } = useFetchAddressFts({ addressHash: address.hash })
   const {
-    data: { nftIds, nstIds }
+    data: { nftIds }
   } = useFetchAddressTokensByType({ addressHash: address.hash, includeAlph: true })
-  const sortedTokenIds = useSortedTokenIds({ listedFts, unlistedFts, nftIds, nstIds })
 
-  const allTokensOptions = useMemo(
-    () =>
-      sortedTokenIds.map((id) => ({
-        value: id,
-        label: id
-      })),
-    [sortedTokenIds]
-  )
+  const allTokensOptions = useAddressTokensSelectOptions(address.hash)
 
   const [isAssetSelectModalOpen, setIsTokenSelectModalOpen] = useState(false)
   const [selectedTokenRowIndex, setSelectedTokenRowIndex] = useState(0)
@@ -95,7 +89,7 @@ const TokensAmountInputs = ({
   const selectedAssetIds = assetAmounts.map(({ id }) => id)
   const remainingAvailableAssetsOptions = allTokensOptions.filter((option) => !selectedAssetIds.includes(option.value))
   const disabled = remainingAvailableAssetsOptions.length === 0
-  const canAddMultipleAssets = allowMultiple && assetAmounts.length < sortedTokenIds.length
+  const canAddMultipleAssets = allowMultiple && assetAmounts.length < allTokensOptions.length
 
   const handleOpenAddressTokensSelectModal = useCallback((tokenRowIndex: number) => {
     setSelectedTokenRowIndex(tokenRowIndex)
@@ -130,7 +124,7 @@ const TokensAmountInputs = ({
       const ft =
         listedFts.find(({ id }) => selectedTokenId === id) ?? unlistedFts.find(({ id }) => selectedTokenId === id)
       const availableAmount = toHumanReadableAmount(
-        selectedTokenBalances.availableBalance ?? BigInt(0),
+        BigInt(selectedTokenBalances.availableBalance ?? 0),
         ft?.decimals ?? 0
       )
 
@@ -197,118 +191,143 @@ const TokensAmountInputs = ({
   }
 
   return (
-    <InputsSection
-      title={t(assetAmounts.length < 2 ? 'Asset' : 'Assets')}
-      HeaderActions={
-        canAddMultipleAssets && (
-          <AddAssetSection>
-            <ActionLink Icon={Plus} onClick={handleAddAssetClick} withBackground iconPosition="left">
-              {t('Add asset')}
-            </ActionLink>
-          </AddAssetSection>
-        )
-      }
-      className={className}
-    >
-      <AssetAmounts ref={selectedValueRef}>
-        {assetAmounts.map(({ id, amountInput = '' }, index) => {
-          const tokenBalances = tokensBalances.find((token) => token.id === id)
+    <>
+      <InputsSection title={t(assetAmounts.length < 2 ? 'Asset' : 'Assets')} className={className}>
+        <AssetAmounts ref={selectedValueRef}>
+          {assetAmounts.map(({ id, amountInput = '' }, index) => {
+            const tokenBalances = tokensBalances.find((token) => token.id === id)
 
-          if (!tokenBalances) return
+            if (!tokenBalances) return
 
-          const ft = listedFts.find((token) => token.id === id) ?? unlistedFts.find((token) => token.id === id)
+            const ft = listedFts.find((token) => token.id === id) ?? unlistedFts.find((token) => token.id === id)
 
-          // TODO: If ALPH, subtract dust for each other token, possibly by querying the node `/addresses/{address}/utxos`
-          const availableHumanReadableAmount = toHumanReadableAmount(
-            tokenBalances.availableBalance ?? BigInt(0),
-            ft?.decimals ?? 0
-          )
+            // TODO: If ALPH, subtract dust for each other token, possibly by querying the node `/addresses/{address}/utxos`
+            const availableHumanReadableAmount = toHumanReadableAmount(
+              BigInt(tokenBalances.availableBalance ?? 0),
+              ft?.decimals ?? 0
+            )
 
-          return (
-            <BoxStyled key={id}>
-              <AssetSelect
-                onMouseDown={() => handleOpenAddressTokensSelectModal(index)}
-                onKeyDown={(e) => onEnterOrSpace(e, () => handleOpenAddressTokensSelectModal(index))}
-              >
-                <SelectInput
-                  className={className}
-                  disabled={disabled || !allowMultiple || !canAddMultipleAssets}
-                  id={id}
+            return (
+              <BoxStyled key={id}>
+                <AssetSelect
+                  onMouseDown={() => handleOpenAddressTokensSelectModal(index)}
+                  onKeyDown={(e) => onEnterOrSpace(e, () => handleOpenAddressTokensSelectModal(index))}
                 >
-                  <AssetLogo tokenId={id} size={20} />
-                  <AssetName>
-                    <Truncate>
-                      <SelectOptionTokenName tokenId={id} />
-                    </Truncate>
-                  </AssetName>
-                  {!disabled && (
-                    <SelectVerticalDots>
-                      <MoreVertical size={16} />
-                    </SelectVerticalDots>
-                  )}
-                </SelectInput>
-              </AssetSelect>
+                  <SelectInput
+                    className={className}
+                    disabled={disabled || !allowMultiple || !canAddMultipleAssets}
+                    id={id}
+                  >
+                    <AssetLogo tokenId={id} size={20} />
+                    <AssetName>
+                      <Truncate>
+                        <SelectOptionTokenName tokenId={id} />
+                      </Truncate>
+                    </AssetName>
+                    {!disabled && (
+                      <SelectVerticalDots>
+                        <MoreVertical size={16} />
+                      </SelectVerticalDots>
+                    )}
+                  </SelectInput>
+                </AssetSelect>
 
-              {!nftIds.includes(id) && (
-                <>
-                  <HorizontalDividerStyled />
+                {!nftIds.includes(id) && (
+                  <>
+                    <HorizontalDividerStyled />
 
-                  <AssetAmountRow>
-                    <AssetAmountInput
-                      value={amountInput}
-                      onChange={(e) => handleTokenAmountChange(index, e.target.value)}
-                      onClick={() => setSelectedTokenRowIndex(index)}
-                      onMouseDown={() => setSelectedTokenRowIndex(index)}
-                      onKeyDown={(e) => onEnterOrSpace(e, () => setSelectedTokenRowIndex(index))}
-                      type="number"
-                      min={id === ALPH.id ? minAmountInAlph : 0}
-                      max={availableHumanReadableAmount}
-                      aria-label={t('Amount')}
-                      label={`${t('Amount')} ${ft ? `(${ft.symbol})` : ''}`}
-                      error={errors[index]}
-                    />
+                    <AssetAmountRow>
+                      <AssetAmountInput
+                        value={amountInput}
+                        onChange={(e) => handleTokenAmountChange(index, e.target.value)}
+                        onClick={() => setSelectedTokenRowIndex(index)}
+                        onMouseDown={() => setSelectedTokenRowIndex(index)}
+                        onKeyDown={(e) => onEnterOrSpace(e, () => setSelectedTokenRowIndex(index))}
+                        type="number"
+                        min={id === ALPH.id ? minAmountInAlph : 0}
+                        max={availableHumanReadableAmount}
+                        aria-label={t('Amount')}
+                        label={`${t('Amount')} ${ft ? `(${ft.symbol})` : ''}`}
+                        error={errors[index]}
+                      />
 
-                    <AvailableAmountColumn>
-                      <AvailableAmount tabIndex={0}>
-                        <Amount
-                          tokenId={id}
-                          value={tokenBalances.availableBalance}
-                          nbOfDecimalsToShow={4}
-                          color={theme.font.secondary}
-                          isLoading={isLoadingTokensBalances}
-                        />
-                        <span> {t('Available').toLowerCase()}</span>
-                      </AvailableAmount>
-                      <ActionLink onClick={() => handleTokenAmountChange(index, availableHumanReadableAmount)}>
-                        {t('Use max amount')}
-                      </ActionLink>
-                    </AvailableAmountColumn>
-                  </AssetAmountRow>
-                </>
-              )}
-              {assetAmounts.length > 1 && <DeleteButton onClick={() => handleRemoveAssetClick(index)} />}
-            </BoxStyled>
-          )
-        })}
-      </AssetAmounts>
-      <ModalPortal>
-        {isAssetSelectModalOpen && selectedOption && remainingAvailableAssetsOptions.length > 0 && (
-          <SelectOptionsModal
-            title={t('Select an asset')}
-            options={remainingAvailableAssetsOptions}
-            selectedOption={selectedOption}
-            setValue={selectAsset}
-            onClose={handleAssetSelectModalClose}
-            parentSelectRef={selectedValueRef}
-            optionRender={renderOption}
-          />
-        )}
-      </ModalPortal>
-    </InputsSection>
+                      <AvailableAmountColumn>
+                        <AvailableAmount tabIndex={0}>
+                          <Amount
+                            tokenId={id}
+                            value={BigInt(tokenBalances.availableBalance)}
+                            nbOfDecimalsToShow={4}
+                            color={theme.font.secondary}
+                            isLoading={isLoadingTokensBalances}
+                          />
+                          <span> {t('Available').toLowerCase()}</span>
+                        </AvailableAmount>
+                        <ActionLink onClick={() => handleTokenAmountChange(index, availableHumanReadableAmount)}>
+                          {t('Use max amount')}
+                        </ActionLink>
+                      </AvailableAmountColumn>
+                    </AssetAmountRow>
+                  </>
+                )}
+                {assetAmounts.length > 1 && <DeleteButton onClick={() => handleRemoveAssetClick(index)} />}
+              </BoxStyled>
+            )
+          })}
+        </AssetAmounts>
+        <ModalPortal>
+          {isAssetSelectModalOpen && selectedOption && remainingAvailableAssetsOptions.length > 0 && (
+            <SelectOptionsModal
+              title={t('Select an asset')}
+              options={remainingAvailableAssetsOptions}
+              selectedOption={selectedOption}
+              setValue={selectAsset}
+              onClose={handleAssetSelectModalClose}
+              parentSelectRef={selectedValueRef}
+              optionRender={renderOption}
+              isSearchable
+            />
+          )}
+        </ModalPortal>
+      </InputsSection>
+      {canAddMultipleAssets && (
+        <AddAssetSection>
+          <ActionLink Icon={Plus} onClick={handleAddAssetClick} withBackground iconPosition="left">
+            {t('Add asset')}
+          </ActionLink>
+        </AddAssetSection>
+      )}
+    </>
   )
 }
 
 export default TokensAmountInputs
+
+const useAddressTokensSelectOptions = (addressHash: AddressHash) => {
+  const { listedFts, unlistedFts } = useFetchAddressFts({ addressHash })
+  const {
+    data: { nftIds, nstIds }
+  } = useFetchAddressTokensByType({ addressHash, includeAlph: true })
+  const sortedTokenIds = useSortedTokenIds({ listedFts, unlistedFts, nftIds, nstIds })
+  const { data: nftsSearchStringsByNftId } = useFetchWalletNftsSearchStrings()
+
+  const allTokensOptions = useMemo(() => {
+    const fts = [...listedFts, ...unlistedFts]
+
+    return sortedTokenIds.map((id) => {
+      const ft = fts.find((ft) => ft.id === id)
+
+      return {
+        value: id,
+        label: id,
+        searchString: `${id.toLowerCase()} ${ft?.name.toLowerCase()} ${ft?.symbol.toLowerCase()} ${
+          nftsSearchStringsByNftId[id]?.toLowerCase() ?? ''
+        }`
+      }
+    })
+  }, [sortedTokenIds, listedFts, unlistedFts, nftsSearchStringsByNftId])
+
+  return allTokensOptions
+}
 
 const AddAssetSection = styled.div`
   display: flex;

@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { colord } from 'colord'
-import { isEqual, partition } from 'lodash'
+import { isEqual } from 'lodash'
 import { MoreVertical, SearchIcon } from 'lucide-react'
 import {
   KeyboardEvent as ReactKeyboardEvent,
@@ -57,6 +57,7 @@ export type OptionValue = Writable<OptionHTMLAttributes<HTMLOptionElement>['valu
 export interface SelectOption<T extends OptionValue> {
   value: T
   label: string
+  searchString?: string
 }
 
 interface SelectProps<T extends OptionValue> {
@@ -79,6 +80,7 @@ interface SelectProps<T extends OptionValue> {
   ListBottomComponent?: ReactNode
   allowReselectionOnClickWhenSingleOption?: boolean
   isSearchable?: boolean
+  allowCustomValue?: boolean
 }
 
 function Select<T extends OptionValue>({
@@ -100,7 +102,8 @@ function Select<T extends OptionValue>({
   renderCustomComponent,
   ListBottomComponent,
   allowReselectionOnClickWhenSingleOption,
-  isSearchable
+  isSearchable,
+  allowCustomValue
 }: SelectProps<T>) {
   const selectedValueRef = useRef<HTMLDivElement>(null)
 
@@ -108,10 +111,6 @@ function Select<T extends OptionValue>({
   const [value, setValue] = useState(controlledValue)
   const [showPopup, setShowPopup] = useState(false)
   const [hookCoordinates, setHookCoordinates] = useState<Coordinates | undefined>(undefined)
-
-  const [searchInput, setSearchInput] = useState('')
-  const filteredOptions =
-    searchInput.length > 2 ? options.filter((o) => o.label.toLocaleLowerCase().includes(searchInput)) : options
 
   const multipleAvailableOptions = options.length > 1
 
@@ -160,7 +159,6 @@ function Select<T extends OptionValue>({
   const handlePopupClose = () => {
     setShowPopup(false)
     selectedValueRef.current?.focus()
-    setSearchInput('')
   }
 
   useEffect(() => {
@@ -178,10 +176,10 @@ function Select<T extends OptionValue>({
   }, [options, setInputValue, value])
 
   useEffect(() => {
-    if (value && !options.find((option) => option.value === value.value)) {
+    if (!allowCustomValue && value && !options.find((option) => option.value === value.value)) {
       setValue(undefined)
     }
-  }, [options, value])
+  }, [allowCustomValue, options, value])
 
   return (
     <>
@@ -241,8 +239,7 @@ function Select<T extends OptionValue>({
             onClose={handlePopupClose}
             parentSelectRef={selectedValueRef}
             ListBottomComponent={ListBottomComponent}
-            showOnly={searchInput.length > 2 ? filteredOptions.map((o) => o.value) : undefined}
-            onSearchInput={isSearchable ? (text) => setSearchInput(text.toLocaleLowerCase()) : undefined}
+            isSearchable={isSearchable}
           />
         )}
       </ModalPortal>
@@ -258,14 +255,13 @@ interface SelectOptionsModalProps<T extends OptionValue> {
   hookCoordinates?: Coordinates
   title?: string
   optionRender?: (option: SelectOption<T>, isSelected: boolean) => ReactNode
-  onSearchInput?: (input: string) => void
   searchPlaceholder?: string
-  showOnly?: T[]
   emptyListPlaceholder?: string
   parentSelectRef?: RefObject<HTMLDivElement | HTMLButtonElement>
   minWidth?: number
   ListBottomComponent?: ReactNode
   floatingOptions?: boolean
+  isSearchable?: boolean
 }
 
 export function SelectOptionsModal<T extends OptionValue>({
@@ -276,40 +272,40 @@ export function SelectOptionsModal<T extends OptionValue>({
   hookCoordinates,
   title,
   optionRender,
-  onSearchInput,
   searchPlaceholder,
-  showOnly,
   emptyListPlaceholder,
   parentSelectRef,
   minWidth,
   ListBottomComponent,
-  floatingOptions
+  floatingOptions,
+  isSearchable
 }: SelectOptionsModalProps<T>) {
   const { t } = useTranslation()
   const optionSelectRef = useRef<HTMLDivElement>(null)
   const theme = useTheme()
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  // We hide instead of simply not rendering filtered options to avoid changing the height/width of the modal when
-  // filtering. When the size of the modal depends on its contents, its size might change when filtering some options
-  // out, unless its size is fixed.
-  const [visibleOptions, invisibleOptions] = showOnly
-    ? partition(options, (option) => showOnly.includes(option.value))
-    : [options, []]
+  const [searchInput, setSearchInput] = useState('')
+  const filteredOptions =
+    searchInput.length > 2
+      ? options.filter((option) =>
+          option.searchString
+            ? option.searchString.includes(searchInput)
+            : option.label.toLocaleLowerCase().includes(searchInput)
+        )
+      : options
   const isEmpty = options.length === 0 && emptyListPlaceholder
-  const emptySearchResults = visibleOptions.length === 0 && onSearchInput
-  // To display the message without changing the height, remove one of the invisible options
-  if (emptySearchResults) invisibleOptions.pop()
+  const emptySearchResults = filteredOptions.length === 0 && isSearchable
 
   const handleOptionSelect = useCallback(
     (value: T) => {
-      const selectedValue = visibleOptions.find((o) => o.value === value)
+      const selectedValue = filteredOptions.find((o) => o.value === value)
       if (!selectedValue) return
 
       setValue(selectedValue)
       onClose()
     },
-    [onClose, visibleOptions, setValue]
+    [onClose, filteredOptions, setValue]
   )
 
   const parentSelectWidth = parentSelectRef?.current?.clientWidth
@@ -333,14 +329,14 @@ export function SelectOptionsModal<T extends OptionValue>({
       hookCoordinates={hookCoordinates}
       minWidth={width}
       extraHeaderContent={
-        onSearchInput &&
+        isSearchable &&
         !isEmpty && (
           <Searchbar
             name="search"
             inputFieldRef={searchInputRef}
             placeholder={searchPlaceholder ?? t('Search')}
             Icon={SearchIcon}
-            onChange={(e) => onSearchInput(e.target.value)}
+            onChange={(e) => setSearchInput(e.target.value.toLocaleLowerCase())}
             heightSize="small"
             noMargin
           />
@@ -358,7 +354,7 @@ export function SelectOptionsModal<T extends OptionValue>({
         ) : emptySearchResults ? (
           <OptionItem selected={false}>{t('No options match the search criteria.')}</OptionItem>
         ) : null}
-        {visibleOptions.map((option) => {
+        {filteredOptions.map((option) => {
           const isSelected = option.value === selectedOption?.value
           return (
             <OptionItem
@@ -384,14 +380,6 @@ export function SelectOptionsModal<T extends OptionValue>({
           )
         })}
         {ListBottomComponent && <div onClick={onClose}>{ListBottomComponent}</div>}
-        {invisibleOptions.map((option) => {
-          const isSelected = option.value === selectedOption?.value
-          return (
-            <OptionItem key={option.value} selected={isSelected} invisible>
-              {optionRender ? optionRender(option, isSelected) : option.label}
-            </OptionItem>
-          )
-        })}
       </OptionSelect>
     </Popup>
   )

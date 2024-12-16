@@ -42,7 +42,7 @@ const useFetchAddressSingleTokenBalances = ({
 
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
     addressHash,
-    skip: skip || !isALPH
+    skip
   })
 
   const { data: addressTokenBalances, isLoading: isLoadingTokenBalances } = useQuery({
@@ -52,7 +52,7 @@ const useFetchAddressSingleTokenBalances = ({
 
   return {
     data: isALPH ? alphBalances : addressTokenBalances,
-    isLoading: isLoadingTokenBalances || isLoadingAlphBalances
+    isLoading: isALPH ? isLoadingAlphBalances : isLoadingTokenBalances
   }
 }
 

@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import useMergeAllTokensBalances from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
-import { useFetchWalletBalancesAlphArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { useFetchWalletBalancesTokensArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokens'
+import useFetchWalletBalancesAlphArray from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphArray'
+import useFetchWalletBalancesTokensArray from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
 
 interface UseFetchWalletBalancesProps {
   includeAlph?: boolean
@@ -27,9 +27,7 @@ interface UseFetchWalletBalancesProps {
 const useFetchWalletBalances = (props?: UseFetchWalletBalancesProps) => {
   const includeAlph = props?.includeAlph ?? true
 
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphArray({
-    skip: !includeAlph
-  })
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphArray()
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchWalletBalancesTokensArray()
   const allTokensBalances = useMergeAllTokensBalances({
     includeAlph,
@@ -39,7 +37,7 @@ const useFetchWalletBalances = (props?: UseFetchWalletBalancesProps) => {
 
   return {
     data: allTokensBalances,
-    isLoading: isLoadingAlphBalances || isLoadingTokensBalances
+    isLoading: isLoadingTokensBalances || (includeAlph ? isLoadingAlphBalances : false)
   }
 }
 

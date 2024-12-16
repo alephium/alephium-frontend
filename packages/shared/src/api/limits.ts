@@ -16,9 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { MaxSizeAddresses, MaxSizeTokens } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 
-export const TOKENS_QUERY_LIMIT: MaxSizeTokens = 80
-export const ADDRESSES_QUERY_LIMIT: MaxSizeAddresses = 80
+export const TOKENS_QUERY_LIMIT: e.MaxSizeTokens = 80
+export const ADDRESSES_QUERY_LIMIT: e.MaxSizeAddresses = 80
 
 export const PAGINATION_PAGE_LIMIT = 100

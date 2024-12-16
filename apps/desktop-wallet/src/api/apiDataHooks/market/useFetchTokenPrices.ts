@@ -16,10 +16,11 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { PRICED_TOKENS } from '@alephium/shared'
 import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
+import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import { tokensPriceQuery } from '@/api/queries/priceQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
@@ -28,9 +29,11 @@ const useFetchTokenPrices = (props?: SkipProp) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const networkIsOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
 
+  const { data: symbols, isLoading: isLoadingFtSymbols } = useFetchWalletFtsSymbols()
+
   const { data, isLoading } = useQuery(
     tokensPriceQuery({
-      symbols: PRICED_TOKENS,
+      symbols,
       currency: fiatCurrency.toLowerCase(),
       skip: props?.skip || networkIsOffline
     })
@@ -38,7 +41,7 @@ const useFetchTokenPrices = (props?: SkipProp) => {
 
   return {
     data,
-    isLoading
+    isLoading: isLoading || isLoadingFtSymbols
   }
 }
 
@@ -48,13 +51,29 @@ export const useFetchTokenPrice = (symbol: string) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const networkIsOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
 
+  const { data: symbols, isLoading: isLoadingFtSymbols } = useFetchWalletFtsSymbols()
+
   const { data, isLoading } = useQuery({
-    ...tokensPriceQuery({ symbols: PRICED_TOKENS, currency: fiatCurrency.toLowerCase(), skip: networkIsOffline }),
+    ...tokensPriceQuery({ symbols, currency: fiatCurrency.toLowerCase(), skip: networkIsOffline }),
     select: (data) => data.find((tokenPrice) => tokenPrice.symbol === symbol)?.price
   })
 
   return {
     data,
-    isLoading
+    isLoading: isLoading || isLoadingFtSymbols
+  }
+}
+
+const useFetchWalletFtsSymbols = () => {
+  const {
+    data: { listedFts },
+    isLoading: isLoadingTokensByType
+  } = useFetchWalletTokensByType({ includeAlph: true })
+
+  const symbols = useMemo(() => listedFts.map((ft) => ft.symbol), [listedFts])
+
+  return {
+    data: symbols,
+    isLoading: isLoadingTokensByType
   }
 }

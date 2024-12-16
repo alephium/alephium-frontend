@@ -68,7 +68,7 @@
   "Transactions per hour": "每小时交易",
   "Hashrate per day": "每日哈希率",
   "Hashrate per hour": "每小时哈希率",
-  "Txn": "Txn",
+  "Txn": "交易数",
   "Unknown": "未知",
   "dApp operation": "dApp 操作",
   "from": "来自",

@@ -1,5 +1,35 @@
 # alephium-desktop-wallet
 
+## 2.5.0
+
+### Minor Changes
+
+- c2a845a: Create addresses and sign transactions with Ledger
+
+### Patch Changes
+
+- 5a7bef0: Fix balances refresh after sending transactions
+- 5a7bef0: Add data refresh button
+- c21ea43: Improve performance
+- 39205ff: Fix default address selection in transaction modals
+- 0dfbaf5: Optimize transactions loading for wallets with only 1 address
+
+## 2.4.4
+
+### Patch Changes
+
+- 535683b: Enable search in asset selection modal
+- 8d30364: Fix displayed ALPH amounts
+- 162e209: Fix closing of send modal after 2 seconds
+- e322396: Disable send button when wallet is empty
+- 3b9ff24: Display token prices
+- 10ddaab: Improve accessibility for "Add asset" button
+- 77cbdd6: Fix asset selection in send flow when default address is empty
+- 8386e47: Fix display of ALPH on devnet
+- bbe047d: Display data loading indicator next to wallet worth
+- f86c95f: Add ability to get faucet tokens on devnet
+- 5bfd88c: Add Chinese translations
+
 ## 2.4.3
 
 ### Patch Changes

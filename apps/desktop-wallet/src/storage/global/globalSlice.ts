@@ -39,7 +39,7 @@ import {
   modalClosed,
   modalOpened,
   osThemeChangeDetected,
-  receiveTestnetTokens,
+  receiveFaucetTokens,
   toggleAppLoading
 } from '@/storage/global/globalActions'
 import { RootState } from '@/storage/store'
@@ -104,7 +104,7 @@ const globalSlice = createSlice({
       .addCase(walletSaved, (state, action) => {
         const { id, name, encrypted, lastUsed } = action.payload.wallet
 
-        state.wallets.push({ id, name, encrypted, lastUsed })
+        state.wallets.push({ id, name, encrypted, lastUsed, isLedger: false })
       })
       .addCase(walletLocked, resetState)
       .addCase(activeWalletDeleted, resetState)
@@ -117,13 +117,13 @@ const globalSlice = createSlice({
       })
       .addCase(localStorageNetworkSettingsMigrated, refreshWalletList)
       .addCase(newWalletNameStored, refreshWalletList)
-      .addCase(receiveTestnetTokens.pending, (state) => {
+      .addCase(receiveFaucetTokens.pending, (state) => {
         state.faucetCallPending = true
       })
-      .addCase(receiveTestnetTokens.fulfilled, (state) => {
+      .addCase(receiveFaucetTokens.fulfilled, (state) => {
         state.faucetCallPending = false
       })
-      .addCase(receiveTestnetTokens.rejected, (state) => {
+      .addCase(receiveFaucetTokens.rejected, (state) => {
         state.faucetCallPending = false
       })
 

@@ -20,7 +20,7 @@ import 'dayjs/locale/fr'
 import 'dayjs/locale/el'
 import 'dayjs/locale/vi'
 import 'dayjs/locale/pt'
-import 'dayjs/locale/zh-cn'
+import 'dayjs/locale/zh'
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'

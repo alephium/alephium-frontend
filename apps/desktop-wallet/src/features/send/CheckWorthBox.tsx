@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AssetAmount, calculateAmountWorth } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
+import { isNumber } from 'lodash'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -45,7 +46,7 @@ const CheckWorthBox = ({ assetAmounts }: CheckWorthBoxProps) => {
     const tokenPrice = tokenPrices?.find(({ symbol }) => symbol === token.symbol)?.price
     const tokenAmount = assetAmounts.find((asset) => asset.id === token.id)?.amount
     const tokenWorth =
-      tokenPrice !== undefined && tokenAmount !== undefined
+      isNumber(tokenPrice) && tokenAmount !== undefined
         ? calculateAmountWorth(tokenAmount, tokenPrice, token.decimals)
         : 0
 

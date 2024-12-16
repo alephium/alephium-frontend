@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { FungibleTokenBasicMetadata, NFT, StringAlias } from '@alephium/shared'
 import { TokenInfo } from '@alephium/token-list'
-import { Token } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 
 // For better code readability
 export interface ListedFT extends TokenInfo {}
@@ -33,13 +33,13 @@ export type UnlistedToken = { id: string }
 // For stricter typings in our components that handle display of multiple token types
 export type TokenDisplay = ListedFTDisplay | UnlistedFTDisplay | NFTDisplay | NonStandardTokenDisplay
 
-export type ListedFTDisplay = DisplayBalances &
+export type ListedFTDisplay = ApiBalances &
   ListedFT & {
     type: 'listedFT'
     worth?: number
   }
 
-export type UnlistedFTDisplay = DisplayBalances &
+export type UnlistedFTDisplay = ApiBalances &
   UnlistedFT & {
     type: 'unlistedFT'
   }
@@ -48,19 +48,19 @@ export type NFTDisplay = NFT & {
   type: 'NFT'
 }
 
-export type NonStandardTokenDisplay = DisplayBalances &
+export type NonStandardTokenDisplay = ApiBalances &
   NonStandardToken & {
     type: 'nonStandardToken'
   }
 
-export type DisplayBalances = {
-  totalBalance: bigint
-  lockedBalance: bigint
-  availableBalance: bigint
+export type ApiBalances = {
+  totalBalance: string
+  lockedBalance: string
+  availableBalance: string
 }
 
-export type TokenDisplayBalances = DisplayBalances & {
-  id: Token['id']
+export type TokenApiBalances = ApiBalances & {
+  id: e.Token['id']
 }
 
-export type TokenId = Token['id'] & StringAlias
+export type TokenId = e.Token['id'] & StringAlias

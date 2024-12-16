@@ -36,7 +36,7 @@ const AlephiumLogo = ({ style, color = 'white' }: AlephiumLogoProps) => {
   const { width, height } = canvasDimensions
 
   return (
-    <Canvas style={[style, { flex: 1 }]} onLayout={handleLayout}>
+    <Canvas style={[{ flex: 1 }, style]} onLayout={handleLayout}>
       <FitBox src={rect(0, 0, 362, 618)} dst={rect(0, 0, width, height)}>
         <Path
           path="M120.692 406.665c0-7.938-6.272-13.284-14.021-11.918l-92.62 16.332C6.303 412.445.03 420.004.03 427.942v175.176c0 7.957 6.272 13.304 14.022 11.937l92.619-16.332c7.749-1.366 14.021-8.925 14.021-16.881V406.665Z"

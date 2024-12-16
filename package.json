@@ -13,7 +13,7 @@
     "check": "turbo typecheck lint format",
     "check:deps": "manypkg check",
     "check:deps:fix": "manypkg fix",
-    "clean": "turbo clean",
+    "clean": "turbo clean && rm -rf .turbo",
     "clean:node-modules": "rm -rf node_modules && turbo clean:node-modules",
     "postinstall": "pnpm check:deps"
   },
@@ -22,14 +22,6 @@
   },
   "engines": {
     "node": ">=20"
-  },
-  "dependencies": {
-    "@alephium/eslint-config": "workspace:*",
-    "@alephium/typescript-config": "workspace:*",
-    "@changesets/cli": "^2.26.2",
-    "@manypkg/cli": "latest",
-    "prettier": "^3.0.3",
-    "turbo": "1.13.4"
   },
   "pnpm": {
     "patchedDependencies": {
@@ -55,12 +47,21 @@
       "path-to-regexp@>=2.0.0 <3.3.0": ">=3.3.0",
       "rollup@>=4.0.0 <4.22.4": ">=4.22.4",
       "elliptic@<6.6.0": ">=6.6.0",
-      "@sentry/browser@<7.119.1": ">=7.119.1"
+      "@sentry/browser@<7.119.1": ">=7.119.1",
+      "cross-spawn@<7.0.5": ">=7.0.5"
     }
   },
   "manypkg": {
     "ignoredRules": [
       "INTERNAL_MISMATCH"
     ]
+  },
+  "devDependencies": {
+    "@alephium/eslint-config": "workspace:*",
+    "@alephium/typescript-config": "workspace:*",
+    "@changesets/cli": "^2.26.2",
+    "@manypkg/cli": "latest",
+    "prettier": "^3.0.3",
+    "turbo": "1.13.4"
   }
 }

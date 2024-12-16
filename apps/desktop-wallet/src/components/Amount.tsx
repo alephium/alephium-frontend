@@ -62,12 +62,20 @@ type AmountPropsWithOptionalAmount =
   | Optional<FiatAmountProps, 'value'>
   | Optional<CustomAmountProps, 'value'>
 
-interface LoaderProps {
+export interface AmountLoaderProps {
   isLoading?: boolean
+  isFetching?: boolean
+  error?: boolean
   loaderHeight?: number
 }
 
-const Amount = ({ isLoading, loaderHeight = 15, ...props }: AmountPropsWithOptionalAmount & LoaderProps) => {
+const Amount = ({
+  isLoading,
+  isFetching,
+  error,
+  loaderHeight = 15,
+  ...props
+}: AmountPropsWithOptionalAmount & AmountLoaderProps) => {
   const dispatch = useAppDispatch()
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const { t } = useTranslation()
@@ -91,6 +99,8 @@ const Amount = ({ isLoading, loaderHeight = 15, ...props }: AmountPropsWithOptio
       data-tooltip-delay-show={500}
       onClick={toggleDiscreetMode}
     >
+      <DataFetchIndicator isLoading={isLoading} isFetching={isFetching} error={error} />
+
       {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
 
       {isFiat(amountProps) ? (
@@ -187,6 +197,21 @@ const AmountPartitions = ({ amount, fadeDecimals, useTinyAmountShorthand }: Amou
   )
 }
 
+const DataFetchIndicator = ({ isLoading, isFetching, error }: AmountLoaderProps) => {
+  const { t } = useTranslation()
+
+  if (!isLoading && !isFetching && !error) return null
+
+  return (
+    <DataFetchIndicatorStyled
+      data-tooltip-id="default"
+      data-tooltip-content={t(error ? 'Could not get latest data' : 'Updating...')}
+    >
+      <DataFetchIndicatorDot status={error ? 'error' : 'isFetching'} />
+    </DataFetchIndicatorStyled>
+  )
+}
+
 const isFiat = (asset: AmountProps): asset is FiatAmountProps => (asset as FiatAmountProps).isFiat === true
 
 const isCustom = (asset: AmountProps): asset is CustomAmountProps => (asset as CustomAmountProps).suffix !== undefined
@@ -201,6 +226,7 @@ const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value
           : theme.global.valid
         : 'inherit'};
   display: inline-flex;
+  position: relative;
   white-space: pre;
   font-weight: var(--fontWeight-bold);
   font-feature-settings: 'tnum' on;
@@ -221,4 +247,36 @@ const Decimals = styled.span`
 const Suffix = styled.span<{ color?: string }>`
   color: ${({ color, theme }) => color ?? theme.font.primary};
   font-weight: var(--fontWeight-medium);
+`
+
+const DataFetchIndicatorStyled = styled.div`
+  position: absolute;
+  top: -5px;
+  left: -15px;
+  padding: 5px;
+`
+
+const DataFetchIndicatorDot = styled.div<{ status: 'isFetching' | 'error' }>`
+  width: 6px;
+  height: 6px;
+  background-color: ${({ theme, status }) => (status === 'isFetching' ? theme.font.secondary : theme.global.alert)};
+  border-radius: 50%;
+
+  ${({ status }) =>
+    status === 'isFetching' &&
+    css`
+      animation: pulse 1s infinite;
+    `}
+
+  @keyframes pulse {
+    0% {
+      opacity: 0.2;
+    }
+    50% {
+      opacity: 0.8;
+    }
+    100% {
+      opacity: 0.2;
+    }
+  }
 `

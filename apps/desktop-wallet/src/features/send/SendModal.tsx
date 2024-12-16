@@ -30,6 +30,7 @@ import { fadeIn } from '@/animations'
 import { buildSweepTransactions } from '@/api/transactions'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { useLedger } from '@/features/ledger/useLedger'
 import { closeModal, openModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import CallContractAddressesTxModalContent from '@/features/send/sendModals/callContract/AddressesTxModalContent'
@@ -103,10 +104,11 @@ function SendModal<PT extends { fromAddress: Address }>({
   const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
   const { sendUserRejectedResponse, sendSuccessResponse, sendFailureResponse } = useWalletConnectContext()
+  const { isLedger, onLedgerError } = useLedger()
 
   const [addressesData, setAddressesData] = useState<AddressesTxModalData>(txData ?? initialTxData)
   const [transactionData, setTransactionData] = useState(txData)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState<boolean | string>(false)
   const [step, setStep] = useState<Step>('addresses')
   const [consolidationRequired, setConsolidationRequired] = useState(false)
   const [isSweeping, setIsSweeping] = useState(false)
@@ -145,15 +147,27 @@ function SendModal<PT extends { fromAddress: Address }>({
   const handleSendExtended = useCallback(async () => {
     if (!transactionData) return
 
-    setIsLoading(true)
+    setIsLoading(isLedger ? t('Please, confirm the transaction on your Ledger.') : true)
 
     try {
       const signature =
         type === 'transfer'
-          ? await handleTransferSend(transactionData as TransferTxData, txContext, posthog)
+          ? await handleTransferSend(transactionData as TransferTxData, txContext, posthog, isLedger, onLedgerError)
           : type === 'call-contract'
-            ? await handleCallContractSend(transactionData as CallContractTxData, txContext, posthog)
-            : await handleDeployContractSend(transactionData as DeployContractTxData, txContext, posthog)
+            ? await handleCallContractSend(
+                transactionData as CallContractTxData,
+                txContext,
+                posthog,
+                isLedger,
+                onLedgerError
+              )
+            : await handleDeployContractSend(
+                transactionData as DeployContractTxData,
+                txContext,
+                posthog,
+                isLedger,
+                onLedgerError
+              )
 
       if (signature && triggeredByWalletConnect) {
         const result =
@@ -186,7 +200,9 @@ function SendModal<PT extends { fromAddress: Address }>({
     contractAddress,
     dispatch,
     id,
+    isLedger,
     isSweeping,
+    onLedgerError,
     posthog,
     sendAnalytics,
     sendFailureResponse,
@@ -292,9 +308,7 @@ function SendModal<PT extends { fromAddress: Address }>({
 
   useEffect(() => {
     if (step === 'tx-sent') {
-      const timeoutId = setTimeout(onClose, 2000)
-
-      return () => clearTimeout(timeoutId)
+      setTimeout(onClose, 2000)
     }
   }, [onClose, step])
 

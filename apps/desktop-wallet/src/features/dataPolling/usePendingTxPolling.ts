@@ -17,7 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { findTransactionInternalAddresses, isConfirmedTx } from '@alephium/shared'
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 import { useEffect } from 'react'
 
 import useFetchPendingTransaction from '@/api/apiDataHooks/transaction/useFetchPendingTransaction'
@@ -25,10 +25,10 @@ import queryClient from '@/api/queryClient'
 import { sentTransactionStatusChanged } from '@/features/send/sentTransactions/sentTransactionsActions'
 import { selectSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
-const usePendingTxPolling = (txHash: Transaction['hash']) => {
+const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
   const dispatch = useAppDispatch()
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))

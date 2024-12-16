@@ -20,7 +20,7 @@ import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { useFetchWalletBalancesAlphArray } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
+import useFetchWalletBalancesAlphArray from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphArray'
 import Amount from '@/components/Amount'
 
 interface TotalAlphBalanceProps {
@@ -46,23 +46,17 @@ const TotalAlphBalance = ({ className, type }: TotalAlphBalanceProps) => {
 const AvailableAlphAmount = () => {
   const { data, isLoading } = useFetchWalletBalancesAlphArray()
 
-  return (
-    <AmountStyled
-      tokenId={ALPH.id}
-      tabIndex={0}
-      value={data?.availableBalance}
-      isLoading={isLoading}
-      loaderHeight={30}
-    />
-  )
+  const value = data?.availableBalance ? BigInt(data.availableBalance) : undefined
+
+  return <AmountStyled tokenId={ALPH.id} tabIndex={0} value={value} isLoading={isLoading} loaderHeight={30} />
 }
 
 const LockedAlphAmount = () => {
   const { data, isLoading } = useFetchWalletBalancesAlphArray()
 
-  return (
-    <AmountStyled tokenId={ALPH.id} tabIndex={0} value={data?.lockedBalance} isLoading={isLoading} loaderHeight={30} />
-  )
+  const value = data?.lockedBalance ? BigInt(data.lockedBalance) : undefined
+
+  return <AmountStyled tokenId={ALPH.id} tabIndex={0} value={value} isLoading={isLoading} loaderHeight={30} />
 }
 
 export default TotalAlphBalance

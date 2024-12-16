@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion, MotionProps } from 'framer-motion'
 import { KeyboardEvent, ReactNode, useEffect, useRef } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { fadeInOutFast } from '@/animations'
 import { closeModal } from '@/features/modals/modalActions'
@@ -99,7 +99,7 @@ export default styled(ModalContainer)<{ hasPadding?: boolean }>`
   }
 `
 
-export const ModalBackdrop = styled(motion.div)<{ focusMode?: boolean; light?: boolean }>`
+export const ModalBackdrop = styled(motion.div)<{ focusMode?: boolean; light?: boolean; blur?: boolean }>`
   position: absolute;
   top: 0;
   right: 0;
@@ -115,6 +115,11 @@ export const ModalBackdrop = styled(motion.div)<{ focusMode?: boolean; light?: b
         : light
           ? 'rgba(0, 0, 0, 0.25)'
           : 'rgba(0, 0, 0, 0.6)'};
+  ${({ blur }) =>
+    blur &&
+    css`
+      backdrop-filter: blur(4px);
+    `}
 `
 
 export const useMoveFocusOnPreviousModal = () => {

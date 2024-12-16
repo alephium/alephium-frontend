@@ -16,12 +16,12 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Transaction } from '@alephium/web3/dist/src/api/api-explorer'
+import { explorer as e } from '@alephium/web3'
 
 import { useAppSelector } from '@/hooks/redux'
 import { openInWebBrowser } from '@/utils/misc'
 
-const useOpenTxInExplorer = (txHash: Transaction['hash']) => {
+const useOpenTxInExplorer = (txHash: e.Transaction['hash']) => {
   const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
 
   return () => openInWebBrowser(`${explorerUrl}/transactions/${txHash}`)

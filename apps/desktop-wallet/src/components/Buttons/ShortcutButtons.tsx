@@ -25,8 +25,10 @@ import Button from '@/components/Button'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import useWalletLock from '@/hooks/useWalletLock'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 interface ShortcutButtonBaseProps {
   analyticsOrigin: string
@@ -155,24 +157,39 @@ const SendButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }
   const { t } = useTranslation()
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
+  const { data: addressesHashesWithBalance } = useFetchAddressesHashesWithBalance()
+  const currentNetwork = useAppSelector(selectCurrentlyOnlineNetworkId)
 
   if (!fromAddress) return null
 
+  const isDisabled = addressesHashesWithBalance.length === 0
+  const isTestnetOrDevnet = currentNetwork === 1 || currentNetwork === 4
+  const tooltipContent = isDisabled
+    ? isTestnetOrDevnet
+      ? t('The wallet is empty. Use the faucet in the developer tools in the app settings.')
+      : t('To send funds you first need to load your wallet with some.')
+    : undefined
+
   const handleSendClick = () => {
+    if (isDisabled) return
+
     dispatch(openModal({ name: 'TransferSendModal', props: { initialTxData: { fromAddress } } }))
     sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
   }
 
   return (
     <ShortcutButton
+      data-tooltip-id="default"
+      data-tooltip-content={tooltipContent}
       transparent={!solidBackground}
       role="secondary"
       borderless
-      onClick={handleSendClick}
+      onClick={isDisabled ? undefined : handleSendClick}
       Icon={ArrowUp}
       iconColor={theme.global.highlight}
       iconBackground
       highlight={highlight}
+      style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
     >
       <ButtonText>{t('Send')}</ButtonText>
     </ShortcutButton>

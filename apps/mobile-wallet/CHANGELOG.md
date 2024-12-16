@@ -1,5 +1,23 @@
 # @alephium/mobile-wallet
 
+## 1.1.12
+
+### Patch Changes
+
+- 2ef3137: Update WalletConnect packages
+- d86c477: Forget/hide address
+- 0dfbaf5: Optimize transactions loading for wallets with only 1 address
+- 5b5db06: Fix WalletConnect connection removal
+
+## 1.1.11
+
+### Patch Changes
+
+- 259f96d: Hide bytecode field behind an expandable section
+- 162e209: Fix calculation of transaction amount deltas
+- 162e209: Fix wrapping of "Amount" label in transaction modal
+- 2143d0a: Add Chinese translations
+
 ## 1.1.10
 
 ### Patch Changes

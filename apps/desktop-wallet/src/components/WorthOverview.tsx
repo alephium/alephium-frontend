@@ -18,16 +18,15 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import styled from 'styled-components'
 
-import Amount from '@/components/Amount'
+import Amount, { AmountLoaderProps } from '@/components/Amount'
 
-interface WorthOverviewProps {
+interface WorthOverviewProps extends AmountLoaderProps {
   worth: number
-  isLoading: boolean
   overrideWorth?: number
 }
 
-const WorthOverview = ({ overrideWorth, isLoading, worth }: WorthOverviewProps) => (
-  <WorthOverviewStyled value={overrideWorth ?? worth} isFiat isLoading={isLoading} loaderHeight={32} tabIndex={0} />
+const WorthOverview = ({ overrideWorth, worth, ...props }: WorthOverviewProps) => (
+  <WorthOverviewStyled value={overrideWorth ?? worth} isFiat loaderHeight={32} tabIndex={0} {...props} />
 )
 
 export default WorthOverview

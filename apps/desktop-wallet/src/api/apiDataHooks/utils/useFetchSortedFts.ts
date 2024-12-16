@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { calculateAmountWorth } from '@alephium/shared'
 import { useQueries } from '@tanstack/react-query'
-import { orderBy } from 'lodash'
+import { isNumber, orderBy } from 'lodash'
 import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
@@ -27,10 +27,10 @@ import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-import { DisplayBalances, ListedFT, TokenId } from '@/types/tokens'
+import { ApiBalances, ListedFT, TokenId } from '@/types/tokens'
 
 interface UseSortFTsProps extends SkipProp {
-  listedFts: (ListedFT & DisplayBalances)[]
+  listedFts: (ListedFT & ApiBalances)[]
   unlistedFtIds: TokenId[]
 }
 
@@ -58,8 +58,8 @@ const useFetchSortedFts = ({ listedFts, unlistedFtIds, skip }: UseSortFTsProps) 
                 (token) => {
                   const tokenPrice = tokenPrices?.find((tokenPrice) => tokenPrice.symbol === token.symbol)?.price
 
-                  return tokenPrice !== undefined
-                    ? calculateAmountWorth(token.totalBalance, tokenPrice, token.decimals)
+                  return isNumber(tokenPrice)
+                    ? calculateAmountWorth(BigInt(token.totalBalance), tokenPrice, token.decimals)
                     : -1
                 },
                 'name',

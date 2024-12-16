@@ -39,7 +39,7 @@ const MnemonicModal = ({ onVerifyButtonPress, ...props }: MnemonicModalProps) =>
     try {
       dangerouslyExportWalletMnemonic().then(setMnemonic)
     } catch (e) {
-      console.error(e)
+      if (__DEV__) console.error(e)
     }
   }, [])
 
