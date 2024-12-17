@@ -103,10 +103,10 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
                   <TabTitleButton
                     key={tab.value}
                     role="secondary"
-                    variant="faded"
-                    wide
                     transparent={!isActive}
                     onClick={() => setCurrentTab(tab)}
+                    style={{ opacity: !isActive ? 0.5 : 1 }}
+                    wide
                   >
                     {tab.label}
                   </TabTitleButton>

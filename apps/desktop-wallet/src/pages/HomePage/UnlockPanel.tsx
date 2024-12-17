@@ -28,7 +28,6 @@ import Input from '@/components/Inputs/Input'
 import Select from '@/components/Inputs/Select'
 import WalletPassphrase from '@/components/Inputs/WalletPassphrase'
 import { FloatingPanel, Section } from '@/components/PageComponents/PageContainers'
-import Paragraph from '@/components/Paragraph'
 import ConnectWithLedgerButton from '@/features/ledger/ConnectWithLedgerButton'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppSelector } from '@/hooks/redux'
@@ -150,11 +149,6 @@ const WalletPassphraseStyled = styled(WalletPassphrase)`
   right: 20px;
 `
 
-const ParagraphStyled = styled(Paragraph)`
-  font-weight: var(--fontWeight-semiBold);
-  font-size: 16px;
-`
-
 const BrandContainer = styled.div`
   display: flex;
   gap: 14px;
@@ -166,9 +160,9 @@ const AlephiumLogoContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 30px;
-  width: 90px;
-  height: 90px;
+  padding: 34px;
+  width: 100px;
+  height: 100px;
   border-radius: 100px;
   background-color: ${({ theme }) => theme.bg.contrast};
 `

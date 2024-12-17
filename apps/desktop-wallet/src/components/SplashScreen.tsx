@@ -20,7 +20,7 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import styled from 'styled-components'
 
-import { slowTransition } from '@/animations'
+import { fastTransition } from '@/animations'
 import alephiumLogo from '@/images/alephium_logo_monochrome.svg'
 
 const SplashScreen = () => {
@@ -32,13 +32,13 @@ const SplashScreen = () => {
     <StyledSplashScreen
       initial={{ opacity: 1 }}
       animate={{ opacity: 0 }}
-      transition={{ duration: 0.3, delay: 1 }}
+      transition={{ duration: 0.5, delay: 0.5 }}
       onAnimationComplete={() => setSplashScreenVisible(false)}
     >
       <AlephiumLogoContainer
-        initial={{ opacity: 0, scale: 1.5 }}
+        initial={{ opacity: 0, scale: 1.2 }}
         animate={{ opacity: 1, scale: 1 }}
-        {...slowTransition}
+        {...fastTransition}
       >
         <AlephiumLogo />
       </AlephiumLogoContainer>

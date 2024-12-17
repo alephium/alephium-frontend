@@ -119,9 +119,9 @@ const AnimatedBackground = ({
           const circleAnimation = [circle1, circle2, circle3, circle4, circle5][index]
           const backgroundColors = [
             isDarkTheme ? '#120096' : '#c689ff',
-            '#ff8119',
-            '#ff6969',
-            isDarkTheme ? '#e484ff' : '#d579ff',
+            isDarkTheme ? '#ff8119' : '#ffd4b6',
+            isDarkTheme ? '#ff6969' : '#ffaaaa',
+            isDarkTheme ? '#e484ff' : '#ffb7ff',
             isDarkTheme ? '#1600da' : '#ff9bc8'
           ]
           return (

@@ -100,7 +100,6 @@ const TextContainer = styled.div<{ wordBreak?: boolean; ellipsis?: boolean }>`
   font-weight: var(--fontWeight-medium);
   word-break: ${({ wordBreak }) => (wordBreak ? 'break-all' : 'initial')};
   text-align: center;
-  font-size: 14px;
 
   ${({ ellipsis }) =>
     ellipsis

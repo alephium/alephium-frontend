@@ -86,7 +86,7 @@ export const UnlockedWalletPanel = styled.div<{
   padding-right: 40px;
 
   ${({ top, doubleTop }) => css`
-    padding-top: ${top ? 20 : doubleTop ? 40 : 0}px;
+    padding-top: ${top ? 10 : doubleTop ? 20 : 0}px;
   `}
 
   ${({ bottom }) =>
@@ -126,16 +126,22 @@ const BrandContainer = styled.div`
   display: flex;
   gap: 14px;
   align-items: center;
-  margin-bottom: var(--spacing-7);
+  margin-bottom: var(--spacing-6);
+  margin-left: 8px;
+
+  @media (max-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+    margin-left: auto;
+    margin-right: auto;
+  }
 `
 
 const AlephiumLogoContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
-  width: 36px;
-  height: 36px;
+  padding: 10px;
+  width: 32px;
+  height: 32px;
   border-radius: 100px;
   background-color: ${({ theme }) => theme.bg.contrast};
 `

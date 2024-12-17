@@ -55,7 +55,6 @@ const LabelTime = styled.div`
 
 const DirectionLabel = styled.span`
   color: ${({ theme }) => theme.font.primary};
-  font-weight: var(--fontWeight-semiBold);
   font-size: 14px;
 `
 

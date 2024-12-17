@@ -41,7 +41,7 @@ const WorthOverviewPanel = ({ className, addressHash, children }: WorthOverviewP
 
   return (
     <WorthOverviewPanelStyled className={className}>
-      <AnimatedBackground height={600} />
+      <AnimatedBackground height={700} />
       <Panel>
         <Balances>
           <BalancesRow>
@@ -99,6 +99,7 @@ const BalancesColumn = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   min-width: 200px;
+  gap: 4px;
 `
 
 const Surtitle = styled.div`
@@ -112,5 +113,5 @@ const Worth = styled.span`
   flex: 1;
   white-space: nowrap;
   color: ${({ theme }) => theme.font.tertiary};
-  font-size: 18px;
+  font-size: 16px;
 `

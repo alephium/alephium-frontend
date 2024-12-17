@@ -21,7 +21,6 @@ import styled, { css } from 'styled-components'
 const AddressCell = styled.div<{ alignRight?: boolean; hasMargins?: boolean }>`
   flex: 1;
   min-width: 0;
-  max-width: 130px;
   align-items: baseline;
   display: flex;
 

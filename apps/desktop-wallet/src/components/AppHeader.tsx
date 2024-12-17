@@ -163,7 +163,7 @@ const AppHeaderContainer = styled.div`
   align-items: center;
 
   height: ${appHeaderHeightPx}px;
-  padding: 0 var(--spacing-4) 0 40px;
+  padding: 0 var(--spacing-2) 0 40px;
   gap: var(--spacing-1);
 `
 
@@ -173,7 +173,7 @@ const GradientBackground = styled(motion.div)`
   left: 0;
   right: 0;
   height: 140px;
-  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 35%, transparent)`};
+  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background1).toHex()} 35%, transparent)`};
   pointer-events: none;
   z-index: 0;
 `

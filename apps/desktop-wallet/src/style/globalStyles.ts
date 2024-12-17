@@ -21,7 +21,7 @@ import { createGlobalStyle } from 'styled-components'
 
 import resets from '@/style/resets'
 
-export const appHeaderHeightPx = 72
+export const appHeaderHeightPx = 50
 export const walletSidebarWidthPx = 76
 export const messagesLeftMarginPx = 70
 
@@ -54,7 +54,7 @@ export const GlobalStyle = createGlobalStyle`
     --radius-full: 100%;
 
     --fontWeight-normal: 400;
-    --fontWeight-medium: 500;
+    --fontWeight-medium: 550;
     --fontWeight-semiBold: 600;
     --fontWeight-bold: 700;
 
@@ -70,6 +70,7 @@ export const GlobalStyle = createGlobalStyle`
   body {
     color: ${({ theme }) => theme.font.primary};
     background-color: ${({ theme }) => theme.bg.primary};
+    font-weight: var(--fontWeight-medium);
   }
 
   .skeleton-loader {

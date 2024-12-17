@@ -53,7 +53,7 @@ const TabContent: FC<TabContentProps> = ({
       />
       {HeaderMiddleComponent}
       <ButtonContainer {...fadeInOut}>
-        <HeaderButton wide onClick={onButtonClick}>
+        <HeaderButton wide onClick={onButtonClick} short>
           {buttonText}
         </HeaderButton>
       </ButtonContainer>
