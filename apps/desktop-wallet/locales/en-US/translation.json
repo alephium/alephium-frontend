@@ -520,5 +520,6 @@
   "Welcome to your Ledger!": "Welcome to your Ledger!",
   "Would you like to scan for active addresses?": "Would you like to scan for active addresses?",
   "Scan": "Scan",
-  "Active address discovery completed. Addresses added: {{ count }}": "Active address discovery completed. Addresses added: {{ count }}"
+  "Active address discovery completed. Addresses added: {{ count }}": "Active address discovery completed. Addresses added: {{ count }}",
+  "Purchase done!": "Purchase done!"
 }

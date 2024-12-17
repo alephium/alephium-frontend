@@ -51,6 +51,7 @@ declare global {
         getSystemRegion: () => Promise<string>
         setProxySettings: (proxySettings: ProxySettings) => Promise<void>
         openOnRampServiceWindow: ({ url, targetLocation }: { url: string; targetLocation: string }) => void
+        onOnRampTargetLocationReached: (callback: () => void) => () => Electron.IpcRenderer
         restart: () => void
       }
     }

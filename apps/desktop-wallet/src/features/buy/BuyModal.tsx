@@ -17,14 +17,18 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { memo, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 import FooterButton from '@/components/Buttons/FooterButton'
+import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal from '@/modals/CenteredModal'
+import { showToast } from '@/storage/global/globalActions'
 import { openInWebBrowser } from '@/utils/misc'
 
 export interface BuyModalProps {
@@ -36,22 +40,28 @@ export interface BuyModalProps {
 
 const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
   const { t } = useTranslation()
-  const theme = useTheme()
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false)
 
-  const banxaURL =
-    'https://alephium.banxa-sandbox.com/' +
-    `?walletAddress=${addressHash}` +
-    `&theme=${theme.name}` +
-    `&backgroundColor=${theme.bg.primary.slice(1)}` +
-    `&textColor=${theme.font.primary.slice(1)}` +
-    `&primaryColor=${theme.global.accent.slice(1)}` +
-    `&secondaryColor=${theme.global.complementary.slice(1)}`
+  const banxaURL = 'https://alephium.banxa-sandbox.com/' + `?walletAddress=${addressHash}`
 
   const handleAcceptDisclaimer = () => {
     window.electron?.app.openOnRampServiceWindow({ url: banxaURL, targetLocation: 'https://alephium.org' })
     setDisclaimerAccepted(true)
   }
+
+  useEffect(() => {
+    const listner = window.electron?.app.onOnRampTargetLocationReached(() => {
+      showToast({ text: t('Purchase done!'), type: 'success', duration: 'short' })
+      navigate('/wallet/transfers')
+      dispatch(closeModal({ id }))
+    })
+
+    return () => {
+      listner?.()
+    }
+  }, [dispatch, id, navigate, t])
 
   return (
     <CenteredModal id={id} title={!disclaimerAccepted ? t('Disclaimer') : t('Buy')} narrow dynamicContent>
