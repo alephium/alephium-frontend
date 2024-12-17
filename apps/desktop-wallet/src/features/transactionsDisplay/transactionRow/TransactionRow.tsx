@@ -41,12 +41,12 @@ const TransactionRow = memo(
     const commonProps = { tx, refAddressHash: referenceAddress, isInAddressDetailsModal }
 
     return (
-      <TableRowStyled role="row" tabIndex={0} {...props}>
+      <TableRow {...props}>
         <DirectionIconCell {...commonProps} />
 
         <TimestampCell {...commonProps} />
 
-        <DirectionalAddresses stackVertically={isInAddressDetailsModal}>
+        <DirectionalAddresses stackVertically={isInAddressDetailsModal} fixedWidth="30%">
           {!isInAddressDetailsModal && <FirstAddressColumnCell tx={tx} refAddressHash={referenceAddress} />}
           <DirectionCell {...commonProps} />
           <SecondAddressColumnCell {...commonProps} />
@@ -59,24 +59,16 @@ const TransactionRow = memo(
             <OtherAmounts type="nsts" {...commonProps} />
           </AmountsList>
         </TableCell>
-      </TableRowStyled>
+      </TableRow>
     )
   }
 )
 
 export default TransactionRow
 
-const TableRowStyled = styled(TableRow)`
-  display: flex;
-  text-align: center;
-  white-space: nowrap;
-  flex-grow: 1;
-  align-items: stretch;
-`
-
 const DirectionalAddresses = styled(TableCell)<{ stackVertically?: boolean }>`
-  display: flex;
-
+  flex: 1;
+  gap: 10px;
   ${({ stackVertically }) =>
     stackVertically &&
     css`

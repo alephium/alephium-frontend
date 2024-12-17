@@ -31,7 +31,7 @@ const FirstAddressColumnCell = ({ tx, refAddressHash }: TransactionRowSectionPro
   const direction = useTransactionDirection(tx, refAddressHash)
 
   return (
-    <AddressCell alignRight hasMargins>
+    <AddressCell alignRight>
       <HiddenLabel text={direction === 'swap' ? t('between') : t('from')} />
 
       {direction === 'in' ? (
@@ -53,6 +53,4 @@ const FirstAddressColumnCell = ({ tx, refAddressHash }: TransactionRowSectionPro
 
 export default FirstAddressColumnCell
 
-const AddressBadgeStyled = styled(AddressBadge)`
-  justify-content: flex-end;
-`
+const AddressBadgeStyled = styled(AddressBadge)``

@@ -44,7 +44,6 @@ export default TimestampCell
 const TimestampCellStyled = styled(TableCell)`
   display: flex;
   text-align: left;
-  width: 25%;
   gap: 20px;
 `
 

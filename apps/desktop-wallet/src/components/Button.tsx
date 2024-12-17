@@ -216,7 +216,7 @@ export default styled(Button)`
 
         ${ButtonIcon} {
           svg {
-            stroke: ${iconColor || hoverColor};
+            stroke: ${iconColor && !children ? iconColor : hoverColor};
           }
         }
       }

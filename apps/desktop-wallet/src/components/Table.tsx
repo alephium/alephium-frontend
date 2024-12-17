@@ -30,7 +30,7 @@ export interface TableProps {
 }
 
 interface TableCellProps {
-  fixedWidth?: number
+  fixedWidth?: number | string
   noBorder?: boolean
   align?: 'left' | 'center' | 'right'
 }
@@ -64,7 +64,8 @@ export const TableCell = styled.div<TableCellProps>`
   position: relative;
   border-bottom: ${({ theme, noBorder }) => `1px solid ${noBorder ? 'transparent' : theme.border.secondary}`};
   padding: 16px 0;
-  min-width: ${({ fixedWidth }) => (fixedWidth ? `${fixedWidth}px` : 'auto')};
+  min-width: ${({ fixedWidth }) =>
+    fixedWidth ? (typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth) : 'auto'};
   min-height: 60px;
   overflow: hidden;
   text-overflow: ellipsis;
