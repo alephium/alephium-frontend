@@ -27,6 +27,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
+import queryClient from '@/api/queryClient'
 import { buildSweepTransactions } from '@/api/transactions'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import useAnalytics from '@/features/analytics/useAnalytics'
@@ -311,6 +312,12 @@ function SendModal<PT extends { fromAddress: Address }>({
       setTimeout(onClose, 2000)
     }
   }, [onClose, step])
+
+  useEffect(() => {
+    if (step === 'build-tx') {
+      queryClient.invalidateQueries({ queryKey: ['address', addressesData.fromAddress.hash, 'balance'] })
+    }
+  }, [addressesData.fromAddress.hash, step])
 
   const confirmPassword = () => setStep('password-check')
 
