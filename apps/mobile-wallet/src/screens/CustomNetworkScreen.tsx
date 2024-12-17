@@ -23,7 +23,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import { ContinueButton } from '~/components/buttons/Button'
+import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -72,11 +72,10 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
       <ScrollScreen
         fill
         contentPaddingTop
-        headerOptions={{
-          type: 'stack',
-          headerTitle: t('Custom network'),
-          headerRight: () => <ContinueButton title={t('Save')} onPress={handleSubmit(saveCustomNetwork)} />
-        }}
+        headerOptions={{ type: 'stack', headerTitle: t('Custom network') }}
+        bottomButtonsRender={() => (
+          <Button title={t('Save')} variant="highlight" onPress={handleSubmit(saveCustomNetwork)} />
+        )}
       >
         <ScreenSection verticalGap>
           <Controller

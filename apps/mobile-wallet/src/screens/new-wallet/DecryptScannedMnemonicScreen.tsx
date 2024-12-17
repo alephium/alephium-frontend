@@ -25,7 +25,7 @@ import { Alert } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 
 import { sendAnalytics } from '~/analytics'
-import { ContinueButton } from '~/components/buttons/Button'
+import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -141,11 +141,15 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
       verticalGap
       fill
       keyboardShouldPersistTaps="always"
-      headerOptions={{
-        headerTitle: t('Password'),
-        type: 'stack',
-        headerRight: () => <ContinueButton onPress={decryptAndImportWallet} disabled={!password || !!error} />
-      }}
+      headerOptions={{ headerTitle: t('Password'), type: 'stack' }}
+      bottomButtonsRender={() => (
+        <Button
+          title={t('Decrypt')}
+          variant="highlight"
+          onPress={decryptAndImportWallet}
+          disabled={!password || !!error}
+        />
+      )}
       screenIntro={t('Enter your desktop wallet password to decrypt the secret recovery phrase.')}
     >
       <ScreenSection fill>

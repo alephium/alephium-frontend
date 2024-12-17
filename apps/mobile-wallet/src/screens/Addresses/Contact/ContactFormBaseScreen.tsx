@@ -20,7 +20,7 @@ import { ContactFormData } from '@alephium/shared'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
-import { ContinueButton } from '~/components/buttons/Button'
+import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -48,11 +48,10 @@ const ContactForm = ({ initialValues, onSubmit, buttonText, headerOptions, ...pr
     <ScrollScreen
       fill
       contentPaddingTop
-      headerOptions={{
-        type: 'stack',
-        headerRight: () => <ContinueButton title={buttonText || t('Save')} onPress={handleSubmit(onSubmit)} />,
-        ...headerOptions
-      }}
+      headerOptions={{ type: 'stack', ...headerOptions }}
+      bottomButtonsRender={() => (
+        <Button title={buttonText || t('Save')} variant="highlight" onPress={handleSubmit(onSubmit)} />
+      )}
       {...props}
     >
       <ScreenSection fill verticalGap>
