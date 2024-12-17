@@ -94,6 +94,7 @@ const Sidebar = styled(motion.div)<{ width: number }>`
   margin: 25px 20px 25px auto;
   border-radius: var(--radius-huge);
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
   overflow: hidden;
 `
 

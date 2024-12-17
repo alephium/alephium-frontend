@@ -70,7 +70,7 @@ export const inputDefaultStyle = (
   height: ${heightSize === 'small' ? '38px' : heightSize === 'big' ? '50px' : 'var(--inputHeight)'};
   width: 100%;
   border-radius: 100px;
-  border: 2px solid ${({ theme }) => theme.border.primary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 45px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
   font-weight: var(--fontWeight-medium);
@@ -89,7 +89,7 @@ export const inputDefaultStyle = (
 
   &:focus {
     background-color: ${({ theme }) => theme.bg.highlight};
-    border: 2px solid ${({ theme }) => theme.global.accent};
+    border: 1px solid ${({ theme }) => theme.global.accent};
   }
 
   &.error {

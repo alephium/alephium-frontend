@@ -49,6 +49,7 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
     <>
       <TooltipStyleOverride />
       <ButtonStyled
+        role="secondary"
         aria-label={label}
         onClick={handleClick}
         Icon={Icon}
@@ -56,7 +57,7 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
         isActive={isActive}
         data-tooltip-id="sidenav"
         data-tooltip-content={label}
-        iconColor={isActive ? theme.global.accent : theme.font.secondary}
+        iconColor={theme.font.primary}
         wide
       >
         <LabelContainer>{label}</LabelContainer>
@@ -69,14 +70,15 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   margin: 0;
   border-radius: var(--radius-big);
   text-align: left;
-  gap: 16px;
-  font-weight: ${({ isActive }) => (isActive ? 'var(--fontWeight-semiBold)' : 'var(--fontWeight-medium)')};
+  gap: 14px;
+  font-weight: var(--fontWeight-medium);
+  opacity: ${({ isActive }) => (isActive ? 1 : 0.5)};
 
   ${({ isActive, theme }) =>
     isActive &&
     css`
-      background-color: ${theme.bg.accent};
-      color: ${theme.global.accent};
+      background-color: ${theme.bg.highlight};
+      color: ${theme.font.primary};
     `}
 
   @media (max-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {

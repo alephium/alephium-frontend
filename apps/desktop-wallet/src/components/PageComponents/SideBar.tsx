@@ -29,7 +29,7 @@ interface SideBarProps {
   className?: string
 }
 
-export const SIDEBAR_EXPAND_THRESHOLD_PX = 1200
+export const SIDEBAR_EXPAND_THRESHOLD_PX = 1300
 
 const SideBar = ({ renderTopComponent, noExpansion = false, noBorder = false, className }: SideBarProps) => (
   <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion} noBorder={noBorder}>
@@ -53,6 +53,7 @@ const SideBarStyled = styled.div<{ noBorder: boolean; noExpansion: boolean }>`
   width: ${walletSidebarWidthPx}px;
   padding: ${appHeaderHeightPx - 20}px var(--spacing-3) var(--spacing-3) var(--spacing-3);
   border-right: ${({ theme, noBorder }) => (!noBorder ? `1px solid ${theme.border.secondary}` : 'none')};
+  background-color: ${({ theme }) => theme.bg.background2};
 
   ${({ noExpansion }) =>
     !noExpansion
@@ -68,7 +69,7 @@ const SideBarStyled = styled.div<{ noBorder: boolean; noExpansion: boolean }>`
           bottom: 0;
           top: 0;
           z-index: 3;
-        `}
+        `};
 `
 
 const TopContainer = styled.div`

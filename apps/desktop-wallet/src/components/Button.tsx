@@ -148,15 +148,15 @@ export default styled(Button)`
 
     const activeBgColor = transparent
       ? colord(theme.bg.primary).isDark()
-        ? colord(theme.global.accent).alpha(0.4).toRgbString()
-        : colord(theme.global.accent).lighten(0.1).alpha(0.15).toRgbString()
+        ? colord(theme.bg.primary).alpha(0.4).toRgbString()
+        : colord(theme.bg.primary).lighten(0.1).alpha(0.15).toRgbString()
       : {
           primary: {
             default: colord(theme.global.accent).lighten(0.03).toRgbString(),
             contrast: colord(theme.bg.contrast).alpha(0.8).toRgbString(),
             valid: colord(theme.global.valid).lighten(0.03).toRgbString(),
             alert: colord(theme.global.alert).lighten(0.03).toRgbString(),
-            faded: colord(theme.global.accent).lighten(0.03).toRgbString()
+            faded: colord(theme.bg.primary).lighten(0.03).toRgbString()
           }[variant],
           secondary: {
             default: colord(theme.bg.primary).darken(0.08).toRgbString(),
@@ -297,5 +297,4 @@ const ButtonIcon = styled.div`
 
 const ButtonContent = styled.div`
   flex: 1;
-  width: 100%;
 `

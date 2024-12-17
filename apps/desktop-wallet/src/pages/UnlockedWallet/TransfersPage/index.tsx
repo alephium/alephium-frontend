@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
 import { map } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -77,7 +76,6 @@ const FilterPanelContainer = styled.div`
   width: 100%;
   display: flex;
   z-index: 1;
-  background: ${({ theme }) => `linear-gradient(to top, ${colord(theme.bg.background2).toHex()} 25%, transparent)`};
 `
 
 const StyledUnlockedWalletPanel = styled(UnlockedWalletPanel)`

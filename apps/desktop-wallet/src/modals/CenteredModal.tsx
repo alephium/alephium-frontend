@@ -151,6 +151,7 @@ export const HeaderLogo = styled.div`
 const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>`
   display: flex;
   flex-direction: column;
+  border: 1px solid ${({ theme }) => theme.border.primary};
 
   position: relative;
 

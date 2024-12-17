@@ -119,7 +119,7 @@ const SideNavigation = styled.nav`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 10px;
 `
 
 const BrandContainer = styled.div`

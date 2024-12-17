@@ -22,7 +22,7 @@ import { createGlobalStyle } from 'styled-components'
 import resets from '@/style/resets'
 
 export const appHeaderHeightPx = 72
-export const walletSidebarWidthPx = 80
+export const walletSidebarWidthPx = 76
 export const messagesLeftMarginPx = 70
 
 const electronWindowDimensions = `
@@ -48,9 +48,9 @@ export const GlobalStyle = createGlobalStyle`
 
     --radius-tiny: 4px;
     --radius-small: 6px;
-    --radius-medium: 10px;
-    --radius-big: 12px;
-    --radius-huge: 22px;
+    --radius-medium: 8px;
+    --radius-big: 10px;
+    --radius-huge: 18px;
     --radius-full: 100%;
 
     --fontWeight-normal: 400;

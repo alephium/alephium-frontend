@@ -144,6 +144,7 @@ const Header = styled.div<{ hasExtraContent: boolean }>`
   height: ${({ hasExtraContent }) => (hasExtraContent ? 'auto' : `${headerHeight}px`)};
   padding: var(--spacing-2) var(--spacing-2) var(--spacing-2) var(--spacing-4);
   border-bottom: 1px solid ${({ theme }) => theme.border.primary};
+  background-color: ${({ theme }) => theme.bg.background2};
 
   display: flex;
   align-items: center;

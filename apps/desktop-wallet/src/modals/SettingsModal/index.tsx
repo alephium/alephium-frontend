@@ -102,7 +102,7 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
                 return (
                   <TabTitleButton
                     key={tab.value}
-                    role={isActive ? 'primary' : 'secondary'}
+                    role="secondary"
                     variant="faded"
                     wide
                     transparent={!isActive}
@@ -124,7 +124,7 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
           </TabTitlesColumnContent>
           <TabTitlesColumnHeader>
             <ColumnTitle>
-              <Settings color={theme.font.secondary} strokeWidth={1} />
+              <Settings color={theme.font.secondary} size={16} />
               {t('Settings')}
             </ColumnTitle>
           </TabTitlesColumnHeader>
@@ -168,6 +168,7 @@ const CenteredBox = styled(motion.div)`
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
   border-radius: var(--radius-huge);
   background-color: ${({ theme }) => theme.bg.background1};
+  border: 1px solid ${({ theme }) => theme.border.primary};
 `
 
 const Column = styled.div`
@@ -203,7 +204,7 @@ const ColumnTitle = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   font-size: 16px;
   font-weight: var(--fontWeight-semiBold);
   color: ${({ theme }) => theme.font.primary};
@@ -262,7 +263,11 @@ const TabTitlesColumnContent = styled(ColumnContent)`
   height: 100%;
 `
 
-const TabTitles = styled.div``
+const TabTitles = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+`
 
 const TabTitlesColumnHeader = styled(ColumnHeader)`
   padding-left: 22px;
@@ -270,9 +275,9 @@ const TabTitlesColumnHeader = styled(ColumnHeader)`
 `
 
 const TabTitleButton = styled(Button)`
-  height: 46px;
   text-align: left;
   border-radius: var(--radius-big);
+  margin: 0;
 
   &:first-child {
     margin-top: 0;
