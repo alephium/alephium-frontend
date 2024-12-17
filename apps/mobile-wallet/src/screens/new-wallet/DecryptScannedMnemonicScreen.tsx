@@ -151,6 +151,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
         />
       )}
       screenIntro={t('Enter your desktop wallet password to decrypt the secret recovery phrase.')}
+      contentPaddingTop
     >
       <ScreenSection fill>
         <Input
