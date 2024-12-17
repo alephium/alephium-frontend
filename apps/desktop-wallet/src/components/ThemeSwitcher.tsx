@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Moon, Sun } from 'lucide-react'
 import styled from 'styled-components'
@@ -30,10 +29,10 @@ interface ThemeSwitcherProps {
   className?: string
 }
 
-const switcherSize = 36
+const switcherSize = 34
 
-const lightColor = '#fab01e'
-const darkColor = '#422c08'
+const lightColor = '#ffc95c'
+const darkColor = '#ffb623'
 
 const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
   const theme = useAppSelector((state) => state.global.theme)
@@ -56,11 +55,11 @@ const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
       onKeyDown={(e) => onEnterOrSpace(e, handleThemeToggle)}
     >
       <ThemeRotatingContainer animate={{ rotate: isDark ? 0 : 180 }} initial={{ rotate: isDark ? 0 : 180 }}>
-        <ThemeIconContainer style={{ backgroundColor: colord(darkColor).alpha(0.4).toHex() }}>
-          <Moon size={20} stroke={lightColor} />
+        <ThemeIconContainer>
+          <Moon size={16} stroke={lightColor} />
         </ThemeIconContainer>
-        <ThemeIconContainer style={{ backgroundColor: colord(lightColor).alpha(0.1).toHex() }}>
-          <Sun size={20} stroke={lightColor} />
+        <ThemeIconContainer>
+          <Sun size={16} stroke={darkColor} />
         </ThemeIconContainer>
       </ThemeRotatingContainer>
     </div>

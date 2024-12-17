@@ -17,14 +17,12 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { NetworkName, NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
-import { upperFirst } from 'lodash'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Dot } from 'lucide-react'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
-import DotIcon from '@/components/DotIcon'
 import Select from '@/components/Inputs/Select'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
@@ -76,16 +74,19 @@ const NetworkSwitch = () => {
 
   const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: { initialTabValue: 'network' } }))
 
+  const currentNetwork = networkSelectOptions.find((n) => n.value === network.name)
+
   return (
     <Select
       options={networkSelectOptions}
       onSelect={handleNetworkPresetChange}
-      controlledValue={networkSelectOptions.find((n) => n.value === network.name)}
+      controlledValue={currentNetwork}
       title={t('Current network')}
       id="network"
       noMargin
       renderCustomComponent={SelectCustomComponent}
       skipEqualityCheck
+      heightSize="small"
       ListBottomComponent={
         <MoreOptionsItem onClick={openSettingsModal}>
           {t('More options')} <ArrowRight size={16} />
@@ -98,7 +99,6 @@ const NetworkSwitch = () => {
 export default NetworkSwitch
 
 const SelectCustomComponent = () => {
-  const { t } = useTranslation()
   const theme = useTheme()
   const network = useAppSelector((state) => state.network)
 
@@ -110,16 +110,18 @@ const SelectCustomComponent = () => {
   }[network.status]
 
   return (
-    <Button role="secondary" transparent short data-tooltip-id="default" data-tooltip-content={t('Current network')}>
-      <NetworkNameLabel>{upperFirst(network.name)}</NetworkNameLabel>
-      <DotIcon color={networkStatusColor} />
-    </Button>
+    <Button
+      role="secondary"
+      transparent
+      squared
+      data-tooltip-id="default"
+      data-tooltip-content={network.name}
+      Icon={Dot}
+      iconColor={networkStatusColor}
+      iconSize={40}
+    />
   )
 }
-
-const NetworkNameLabel = styled.span`
-  margin-right: 10px;
-`
 
 const MoreOptionsItem = styled.div`
   display: flex;

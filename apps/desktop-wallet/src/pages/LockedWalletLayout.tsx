@@ -21,7 +21,6 @@ import styled from 'styled-components'
 
 import AnimatedBackground from '@/components/AnimatedBackground'
 import AppHeader from '@/components/AppHeader'
-import SideBar from '@/components/PageComponents/SideBar'
 import ScrollbarCustom from '@/components/Scrollbar'
 
 interface LockedWalletLayoutProps extends MotionProps {
@@ -32,7 +31,6 @@ const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, ...props })
   <>
     <AnimatedBackgroundStyled offsetTop={360} />
     <motion.main {...props}>
-      <SideBar noExpansion noBorder />
       <ScrollbarCustom>
         <AppHeader position="fixed" />
         <CenteredContainer>{children}</CenteredContainer>

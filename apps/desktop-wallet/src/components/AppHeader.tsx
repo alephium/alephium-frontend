@@ -25,12 +25,12 @@ import styled, { useTheme } from 'styled-components'
 import Button from '@/components/Button'
 import DefaultAddressSwitch from '@/components/DefaultAddressSwitch'
 import CompactToggle from '@/components/Inputs/CompactToggle'
-import NetworkSwitch from '@/components/NetworkSwitch'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useScrollContext } from '@/contexts/scroll'
 import { openModal } from '@/features/modals/modalActions'
 import RefreshButton from '@/features/refreshData/RefreshButton'
 import { discreetModeToggled } from '@/features/settings/settingsActions'
+import SettingsButton from '@/features/settings/SettingsButton'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
@@ -139,7 +139,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
               <VerticalDivider />
             </>
           )}
-          <NetworkSwitch />
+          <SettingsButton />
         </HeaderButtons>
       </AppHeaderContainer>
     </AppHeaderStyled>
@@ -210,4 +210,8 @@ const HeaderButtons = styled.div`
 const WalletConnectLogoStyled = styled(WalletConnectLogo)`
   height: auto;
   width: 100%;
+
+  path {
+    fill: ${({ theme }) => theme.font.secondary};
+  }
 `

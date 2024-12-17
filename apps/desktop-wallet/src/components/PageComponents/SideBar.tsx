@@ -16,16 +16,10 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { Settings } from 'lucide-react'
 import { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import Button from '@/components/Button'
-import ThemeSwitcher from '@/components/ThemeSwitcher'
 import WalletNameButton from '@/components/WalletNameButton'
-import { openModal } from '@/features/modals/modalActions'
-import { useAppDispatch } from '@/hooks/redux'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
 
 interface SideBarProps {
@@ -37,34 +31,16 @@ interface SideBarProps {
 
 export const SIDEBAR_EXPAND_THRESHOLD_PX = 1200
 
-const SideBar = ({ renderTopComponent, noExpansion = false, noBorder = false, className }: SideBarProps) => {
-  const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-
-  const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: {} }))
-
-  return (
-    <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion} noBorder={noBorder}>
-      <TopContainer>{renderTopComponent?.()}</TopContainer>
-      <BottomButtonsContainer>
-        <BottomButtons>
-          <ThemeSwitcher />
-          <Button
-            squared
-            role="secondary"
-            onClick={openSettingsModal}
-            aria-label={t('Settings')}
-            Icon={Settings}
-            data-tooltip-id="sidenav"
-            rounded
-            data-tooltip-content={t('Settings')}
-          />
-          <WalletNameButton />
-        </BottomButtons>
-      </BottomButtonsContainer>
-    </SideBarStyled>
-  )
-}
+const SideBar = ({ renderTopComponent, noExpansion = false, noBorder = false, className }: SideBarProps) => (
+  <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion} noBorder={noBorder}>
+    <TopContainer>{renderTopComponent?.()}</TopContainer>
+    <BottomButtonsContainer>
+      <BottomButtons>
+        <WalletNameButton />
+      </BottomButtons>
+    </BottomButtonsContainer>
+  </SideBarStyled>
+)
 
 export default SideBar
 

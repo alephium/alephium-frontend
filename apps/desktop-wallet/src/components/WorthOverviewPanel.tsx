@@ -22,6 +22,7 @@ import styled from 'styled-components'
 
 import AnimatedBackground from '@/components/AnimatedBackground'
 import Box from '@/components/Box'
+import NetworkSwitch from '@/components/NetworkSwitch'
 import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
 import WalletWorth from '@/pages/UnlockedWallet/OverviewPage/WalletWorth'
 
@@ -45,7 +46,9 @@ const WorthOverviewPanel = ({ className, addressHash, children }: WorthOverviewP
         <Balances>
           <BalancesRow>
             <BalancesColumn>
-              <Today>{t('Value today')}</Today>
+              <Surtitle>
+                <Worth>{t('Value today')}</Worth> <NetworkSwitch />
+              </Surtitle>
               {singleAddress ? <AddressWorth addressHash={addressHash} /> : <WalletWorth />}
             </BalancesColumn>
           </BalancesRow>
@@ -97,9 +100,15 @@ const BalancesColumn = styled.div`
   min-width: 200px;
 `
 
-const Today = styled.div`
+const Surtitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`
+
+const Worth = styled.span`
+  flex: 1;
+  white-space: nowrap;
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 18px;
-  margin-bottom: 4px;
-  text-align: center;
 `

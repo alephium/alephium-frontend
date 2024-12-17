@@ -38,6 +38,7 @@ export interface ButtonProps extends HTMLMotionProps<'button'> {
   rounded?: boolean
   Icon?: LucideIcon
   iconColor?: string
+  iconSize?: number
   isHighlighted?: boolean
   disablePointer?: boolean
   loading?: boolean
@@ -49,6 +50,7 @@ const Button = ({
   disabled,
   submit,
   Icon,
+  iconSize = 16,
   className,
   isHighlighted,
   loading,
@@ -92,7 +94,7 @@ const Button = ({
         <>
           {Icon && (
             <ButtonIcon>
-              <Icon size={18} />
+              <Icon size={iconSize} />
             </ButtonIcon>
           )}
           <ButtonContent>{children as ReactNode}</ButtonContent>
@@ -214,7 +216,7 @@ export default styled(Button)`
 
         ${ButtonIcon} {
           svg {
-            stroke: ${hoverColor};
+            stroke: ${iconColor || hoverColor};
           }
         }
       }
@@ -239,17 +241,17 @@ export default styled(Button)`
   display: flex;
   align-items: center;
   justify-content: ${({ Icon }) => (Icon ? 'center' : 'flex-start')};
-  height: ${({ squared, short, tall }) => (short ? '32px' : squared ? '36px' : tall ? '48px' : '42px')};
-  width: ${({ squared, short, wide }) => (squared ? '36px' : short && !wide ? 'auto' : wide ? '100%' : '80%')};
+  height: ${({ squared, short, tall }) => (short ? '32px' : squared ? '34px' : tall ? '48px' : '42px')};
+  width: ${({ squared, short, wide }) => (squared ? '34px' : short && !wide ? 'auto' : wide ? '100%' : '80%')};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
   border-radius: 100px;
   font-weight: ${({ role, variant }) =>
     role === 'secondary' || variant === 'faded' ? 'var(--fontWeight-medium)' : 'var(--fontWeight-semiBold)'};
-  font-size: 14px;
+  font-size: ${({ short }) => (short ? 13 : 14)}px;
   font-family: inherit;
   margin: ${({ squared }) => (squared ? '0' : '10px 0')};
   padding: ${({ squared, Icon }) => (squared ? 'var(--spacing-2)' : Icon ? '0 28px 0 14px' : '0 14px')};
-  min-width: ${({ squared }) => (squared ? '36px' : '60px')};
+  min-width: ${({ squared }) => (squared ? '34px' : '60px')};
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};
   backdrop-filter: blur(10px)
