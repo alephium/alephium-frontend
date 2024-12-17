@@ -63,7 +63,7 @@ const TitleBadge = ({ addressHash }: AddressModalBaseProp) => {
         <AddressBadgeStyled addressHash={addressHash} hideColorIndication disableCopy={!!address.label} truncate />
         {address.label && <TitleAddressHash hash={addressHash} />}
       </Title>
-      <Badge short color={theme.font.tertiary} border>
+      <Badge short color={theme.font.tertiary}>
         {t('Group')} {address.group}
       </Badge>
     </>
@@ -88,8 +88,8 @@ const ExplorerButton = styled(Button)`
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
-  font-size: 21px;
-  max-width: 200px;
+  font-size: 16px;
+  max-width: 160px;
 `
 
 const Title = styled.div`

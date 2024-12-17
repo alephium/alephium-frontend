@@ -50,7 +50,7 @@ const AddressListRow = memo(({ addressHash, className }: AddressListRowProps) =>
       tabIndex={0}
     >
       <Cell>
-        <AddressColorIndicator addressHash={addressHash} size={16} />
+        <AddressColorIndicator addressHash={addressHash} size={14} />
       </Cell>
       <Cell>
         <Column>
@@ -83,7 +83,7 @@ const Column = styled.div`
 `
 
 const Label = styled.div`
-  font-size: 16px;
+  font-size: 15px;
   font-weight: var(--fontWeight-semiBold);
   display: flex;
   max-width: 150px;

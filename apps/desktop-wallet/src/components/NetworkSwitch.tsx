@@ -118,7 +118,7 @@ const SelectCustomComponent = () => {
       data-tooltip-content={network.name}
       tiny
       Icon={Dot}
-      iconSize={50}
+      iconSize={42}
       iconColor={networkStatusColor}
     />
   )

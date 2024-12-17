@@ -79,16 +79,18 @@ const FTAmountCell = ({ tokenId, isLoading, totalBalance, availableBalance }: FT
       {isLoading ? (
         <SkeletonLoader height="20px" width="30%" />
       ) : (
-        <>
-          {totalBalance && <Amount tokenId={tokenId} value={totalBalance} semiBold />}
+        <AmountsContainer>
+          <>
+            {totalBalance && <Amount tokenId={tokenId} value={totalBalance} semiBold />}
 
-          {availableBalance !== totalBalance && availableBalance !== undefined && (
-            <AmountSubtitle>
-              {`${t('Available')}: `}
-              <Amount tokenId={tokenId} value={availableBalance} color={theme.font.tertiary} overrideSuffixColor />
-            </AmountSubtitle>
-          )}
-        </>
+            {availableBalance !== totalBalance && availableBalance !== undefined && (
+              <AmountSubtitle>
+                {`${t('Available')}: `}
+                <Amount tokenId={tokenId} value={availableBalance} color={theme.font.tertiary} overrideSuffixColor />
+              </AmountSubtitle>
+            )}
+          </>
+        </AmountsContainer>
       )}
     </TableCell>
   )
@@ -103,4 +105,11 @@ export const RawAmountSubtitle = () => {
 const AmountSubtitle = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 10px;
+`
+
+const AmountsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
 `

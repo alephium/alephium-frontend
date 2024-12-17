@@ -73,7 +73,7 @@ const SideModal = ({
         {!hideHeader && (
           <ModalHeader>
             <HeaderColumn>{header ?? <Title>{title}</Title>}</HeaderColumn>
-            <CloseButton aria-label={t('Close')} circle role="secondary" onClick={_onClose} Icon={X} />
+            <CloseButton aria-label={t('Close')} circle role="secondary" onClick={_onClose} Icon={X} tiny />
           </ModalHeader>
         )}
       </Sidebar>
@@ -120,7 +120,7 @@ const CloseButton = styled(Button)`
 
 const Title = styled.div`
   font-weight: var(--fontWeight-semiBold);
-  font-size: 16px;
+  font-size: 15px;
 `
 
 const ContentContainer = styled.div`

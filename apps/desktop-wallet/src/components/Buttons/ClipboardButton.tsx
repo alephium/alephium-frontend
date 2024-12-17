@@ -155,6 +155,6 @@ const ClipboardButtonStyled = styled.div`
   }
 
   &:hover > ${ClipboardContent} {
-    -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) 10px, rgba(0, 0, 0, 1) 30px);
+    -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 0) 0px, rgba(0, 0, 0, 0) 20px, rgba(0, 0, 0, 1) 40px);
   }
 `

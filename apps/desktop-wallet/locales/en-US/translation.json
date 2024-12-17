@@ -367,7 +367,6 @@
   "Use max amount": "Use max amount",
   "Use optional passphrase": "Use optional passphrase",
   "Useful for miners or DeFi use.": "Useful for miners or DeFi use.",
-  "Value today": "Value today",
   "Version": "Version",
   "Version {{ newVersion }} is available": "Version {{ newVersion }} is available",
   "Please, download it and install it to avoid any issues with the wallet.": "Please, download it and install it to avoid any issues with the wallet.",
@@ -521,5 +520,6 @@
   "Would you like to scan for active addresses?": "Would you like to scan for active addresses?",
   "Scan": "Scan",
   "Active address discovery completed. Addresses added: {{ count }}": "Active address discovery completed. Addresses added: {{ count }}",
-  "Purchase done!": "Purchase done!"
+  "Purchase done!": "Purchase done!",
+  "Wallet worth": "Wallet worth"
 }

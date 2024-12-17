@@ -96,7 +96,14 @@ const CenteredModal: FC<CenteredModalProps> = ({
               </span>
               {subtitle && <ModalSubtitle>{subtitle}</ModalSubtitle>}
             </PanelTitle>
-            <CloseButton aria-label={t('Close')} circle role="secondary" onClick={rest.onClose ?? onClose} Icon={X} />
+            <CloseButton
+              aria-label={t('Close')}
+              circle
+              role="secondary"
+              onClick={rest.onClose ?? onClose}
+              Icon={X}
+              tiny
+            />
           </TitleRow>
           {header && <ModalHeaderContent>{header}</ModalHeaderContent>}
         </ModalHeader>

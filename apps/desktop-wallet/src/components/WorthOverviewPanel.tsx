@@ -47,7 +47,8 @@ const WorthOverviewPanel = ({ className, addressHash, children }: WorthOverviewP
           <BalancesRow>
             <BalancesColumn>
               <Surtitle>
-                <Worth>{t('Value today')}</Worth> <NetworkSwitch />
+                <Worth>{t('Wallet worth')}</Worth>
+                <NetworkSwitch />
               </Surtitle>
               {singleAddress ? <AddressWorth addressHash={addressHash} /> : <WalletWorth />}
             </BalancesColumn>
@@ -104,6 +105,7 @@ const Surtitle = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
+  height: 20px;
 `
 
 const Worth = styled.span`
