@@ -123,7 +123,7 @@ const AutoUpdateSnackbar = () => {
               {status === 'downloading' && <ProgressBar value={parseFloat(percent) / 100} />}
             </Texts>
             {error && (
-              <CloseButton aria-label={t('Close')} squared role="secondary" transparent onClick={closeSnackbar}>
+              <CloseButton aria-label={t('Close')} circle role="secondary" transparent onClick={closeSnackbar}>
                 <X />
               </CloseButton>
             )}

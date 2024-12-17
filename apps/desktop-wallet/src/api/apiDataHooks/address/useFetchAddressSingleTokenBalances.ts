@@ -51,7 +51,11 @@ const useFetchAddressSingleTokenBalances = ({
   })
 
   return {
-    data: isALPH ? alphBalances : addressTokenBalances,
+    data: (isALPH ? alphBalances : addressTokenBalances) || {
+      availableBalance: '0',
+      lockedBalance: '0',
+      totalBalance: '0'
+    },
     isLoading: isALPH ? isLoadingAlphBalances : isLoadingTokenBalances
   }
 }

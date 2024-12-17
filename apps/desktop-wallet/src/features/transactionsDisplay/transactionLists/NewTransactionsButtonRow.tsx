@@ -31,7 +31,7 @@ const NewTransactionsButtonRow = ({ onClick }: NewTransactionsButtonRowProps) =>
 
   return (
     <NewTransactionsButtonRowStyled role="row" onClick={onClick}>
-      <Button role="primary" short rounded>
+      <Button role="primary" short>
         {t('Click to display new transactions')}
       </Button>
     </NewTransactionsButtonRowStyled>

@@ -120,7 +120,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
             <>
               <Button
                 transparent
-                squared
+                circle
                 short
                 role="secondary"
                 onClick={openWalletConnectModal}

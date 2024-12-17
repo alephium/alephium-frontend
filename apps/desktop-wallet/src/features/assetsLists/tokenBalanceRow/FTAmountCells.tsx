@@ -41,8 +41,8 @@ export const FTAddressAmountCell = ({ tokenId, addressHash }: FTAddressAmountCel
   return (
     <FTAmountCell
       tokenId={tokenId}
-      totalBalance={balances?.totalBalance}
-      availableBalance={balances?.availableBalance}
+      totalBalance={BigInt(balances.totalBalance)}
+      availableBalance={BigInt(balances.availableBalance)}
       isLoading={isLoading}
     />
   )
@@ -56,8 +56,8 @@ export const FTWalletAmountCell = ({ tokenId }: Omit<FTAddressAmountCellProps, '
   return (
     <FTAmountCell
       tokenId={tokenId}
-      totalBalance={balances?.totalBalance}
-      availableBalance={balances?.availableBalance}
+      totalBalance={BigInt(balances.totalBalance)}
+      availableBalance={BigInt(balances.availableBalance)}
       isLoading={isLoading}
     />
   )

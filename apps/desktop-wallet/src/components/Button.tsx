@@ -30,12 +30,12 @@ export interface ButtonProps extends HTMLMotionProps<'button'> {
   variant?: 'default' | 'contrast' | 'valid' | 'alert' | 'faded'
   transparent?: boolean
   disabled?: boolean
-  squared?: boolean
+  circle?: boolean
   submit?: boolean
   short?: boolean
   tall?: boolean
+  tiny?: boolean
   wide?: boolean
-  rounded?: boolean
   Icon?: LucideIcon
   iconColor?: string
   iconSize?: number
@@ -57,7 +57,7 @@ const Button = ({
   animate,
   ...props
 }: ButtonProps) => {
-  const [canBeAnimated, setCanBeAnimated] = useState(props.squared ? true : false)
+  const [canBeAnimated, setCanBeAnimated] = useState(props.circle ? true : false)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -241,17 +241,19 @@ export default styled(Button)`
   display: flex;
   align-items: center;
   justify-content: ${({ Icon }) => (Icon ? 'center' : 'flex-start')};
-  height: ${({ squared, short, tall }) => (short ? '32px' : squared ? '34px' : tall ? '48px' : '42px')};
-  width: ${({ squared, short, wide }) => (squared ? '34px' : short && !wide ? 'auto' : wide ? '100%' : '80%')};
+  height: ${({ circle, short, tall, tiny }) =>
+    tiny ? '28px' : short ? '32px' : circle ? '34px' : tall ? '48px' : '42px'};
+  width: ${({ circle, short, wide, tiny }) =>
+    tiny ? '28px' : circle ? '34px' : short && !wide ? 'auto' : wide ? '100%' : '80%'};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
   border-radius: 100px;
   font-weight: ${({ role, variant }) =>
     role === 'secondary' || variant === 'faded' ? 'var(--fontWeight-medium)' : 'var(--fontWeight-semiBold)'};
   font-size: ${({ short }) => (short ? 13 : 14)}px;
   font-family: inherit;
-  margin: ${({ squared }) => (squared ? '0' : '10px 0')};
-  padding: ${({ squared, Icon }) => (squared ? 'var(--spacing-2)' : Icon ? '0 28px 0 14px' : '0 14px')};
-  min-width: ${({ squared }) => (squared ? '34px' : '60px')};
+  margin: ${({ circle }) => (circle ? '0' : '10px 0')};
+  padding: ${({ circle, Icon }) => (circle ? 'var(--spacing-2)' : Icon ? '0 28px 0 14px' : '0 14px')};
+  min-width: ${({ circle, tiny }) => (tiny ? '28px' : circle ? '34px' : '60px')};
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};
   backdrop-filter: blur(10px)

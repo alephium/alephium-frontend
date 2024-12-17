@@ -73,7 +73,7 @@ const SideModal = ({
         {!hideHeader && (
           <ModalHeader>
             <HeaderColumn>{header ?? <Title>{title}</Title>}</HeaderColumn>
-            <CloseButton aria-label={t('Close')} squared role="secondary" onClick={_onClose} Icon={X} />
+            <CloseButton aria-label={t('Close')} circle role="secondary" onClick={_onClose} Icon={X} />
           </ModalHeader>
         )}
       </Sidebar>

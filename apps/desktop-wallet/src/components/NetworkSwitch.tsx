@@ -113,12 +113,13 @@ const SelectCustomComponent = () => {
     <Button
       role="secondary"
       transparent
-      squared
+      circle
       data-tooltip-id="default"
       data-tooltip-content={network.name}
+      tiny
       Icon={Dot}
+      iconSize={50}
       iconColor={networkStatusColor}
-      iconSize={40}
     />
   )
 }

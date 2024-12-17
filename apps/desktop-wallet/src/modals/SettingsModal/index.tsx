@@ -144,7 +144,7 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
           </Scrollbar>
           <ColumnHeader>
             <ColumnTitle>{currentTab.label}</ColumnTitle>
-            <Button aria-label={t('Close')} squared rounded role="secondary" onClick={onClose} Icon={X} />
+            <Button aria-label={t('Close')} circle role="secondary" onClick={onClose} Icon={X} />
           </ColumnHeader>
         </TabContentsColumn>
       </CenteredBox>

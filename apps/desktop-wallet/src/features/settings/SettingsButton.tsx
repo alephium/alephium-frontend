@@ -29,13 +29,12 @@ const SettingsButton = () => {
   const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: {} }))
   return (
     <Button
-      squared
+      circle
       role="secondary"
       onClick={openSettingsModal}
       aria-label={t('Settings')}
       Icon={Settings}
       data-tooltip-id="sidenav"
-      rounded
       transparent
       data-tooltip-content={t('Settings')}
     />

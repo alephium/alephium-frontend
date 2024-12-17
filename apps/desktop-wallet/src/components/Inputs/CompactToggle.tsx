@@ -29,7 +29,7 @@ interface CompactToggleProps extends ButtonProps {
 
 const CompactToggle = ({ toggled, onToggle, IconOn, IconOff, ...props }: CompactToggleProps) => (
   <Button
-    squared
+    circle
     transparent
     role="secondary"
     onClick={() => onToggle(!toggled)}

@@ -75,7 +75,7 @@ const SentTransactionSnackbarPopup = memo(({ txHash }: SentTransactionSnackbarPo
             {sentTx.status !== 'sent' && <DetailsLink hash={txHash} />}
           </HashAndDetails>
         </Rows>
-        <Button aria-label={t('Close')} squared role="secondary" onClick={() => setHide(true)} transparent>
+        <Button aria-label={t('Close')} circle role="secondary" onClick={() => setHide(true)} transparent>
           <X />
         </Button>
       </Columns>

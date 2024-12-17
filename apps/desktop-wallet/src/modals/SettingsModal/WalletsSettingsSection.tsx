@@ -77,7 +77,7 @@ const WalletsSettingsSection = () => {
                 <Button
                   aria-label={t('Delete')}
                   tabIndex={0}
-                  squared
+                  circle
                   role="secondary"
                   transparent
                   onClick={openEditWalletNameModal}
@@ -157,7 +157,7 @@ const WalletItem = ({ wallet, isCurrent, onWalletDelete, isPassphraseUsed }: Wal
         <ButtonStyled
           aria-label={t('Delete')}
           tabIndex={0}
-          squared
+          circle
           role="secondary"
           transparent
           onClick={() => onWalletDelete(wallet)}

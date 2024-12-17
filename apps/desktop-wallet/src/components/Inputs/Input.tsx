@@ -105,7 +105,7 @@ const Input = ({
         )}
         {!!Icon && !!onIconPress && (
           <InputButtonContainer>
-            <Button onClick={onIconPress} Icon={Icon} transparent squared />
+            <Button onClick={onIconPress} Icon={Icon} transparent circle />
           </InputButtonContainer>
         )}
         {!disabled && isValid && (

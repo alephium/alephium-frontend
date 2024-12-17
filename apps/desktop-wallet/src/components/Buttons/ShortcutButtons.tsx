@@ -91,7 +91,6 @@ const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground }: Setti
       role="primary"
       onClick={addressHash ? () => handleAddressSettingsClick(addressHash) : handleWalletSettingsClick}
       Icon={Settings}
-      rounded
     >
       <ButtonText>{t('Settings')}</ButtonText>
     </ShortcutButton>
@@ -109,13 +108,7 @@ const ReceiveButton = ({ addressHash, analyticsOrigin, solidBackground }: Shortc
   }
 
   return (
-    <ShortcutButton
-      transparent={!solidBackground}
-      role="primary"
-      onClick={handleReceiveClick}
-      Icon={ArrowDownToLine}
-      rounded
-    >
+    <ShortcutButton transparent={!solidBackground} role="primary" onClick={handleReceiveClick} Icon={ArrowDownToLine}>
       <ButtonText>{t('Receive')}</ButtonText>
     </ShortcutButton>
   )
@@ -155,7 +148,6 @@ const SendButton = ({ addressHash, analyticsOrigin, solidBackground }: ShortcutB
       onClick={isDisabled ? undefined : handleSendClick}
       Icon={Send}
       style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
-      rounded
     >
       <ButtonText>{t('Send')}</ButtonText>
     </ShortcutButton>
@@ -176,7 +168,7 @@ const BuyButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }:
   }
 
   return (
-    <ShortcutButton transparent={!solidBackground} role="primary" onClick={handleBuyClick} Icon={CreditCard} rounded>
+    <ShortcutButton transparent={!solidBackground} role="primary" onClick={handleBuyClick} Icon={CreditCard}>
       <ButtonText>{t('Buy')}</ButtonText>
     </ShortcutButton>
   )

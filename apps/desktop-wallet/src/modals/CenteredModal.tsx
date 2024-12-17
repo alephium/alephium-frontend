@@ -81,7 +81,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
         <ModalHeader transparent={transparentHeader}>
           <TitleRow>
             {onBack && !disableBack && (
-              <BackButton aria-label={t('Back')} squared role="secondary" transparent onClick={onBack}>
+              <BackButton aria-label={t('Back')} circle role="secondary" transparent onClick={onBack}>
                 <ChevronLeft />
               </BackButton>
             )}
@@ -96,14 +96,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
               </span>
               {subtitle && <ModalSubtitle>{subtitle}</ModalSubtitle>}
             </PanelTitle>
-            <CloseButton
-              aria-label={t('Close')}
-              squared
-              role="secondary"
-              rounded
-              onClick={rest.onClose ?? onClose}
-              Icon={X}
-            />
+            <CloseButton aria-label={t('Close')} circle role="secondary" onClick={rest.onClose ?? onClose} Icon={X} />
           </TitleRow>
           {header && <ModalHeaderContent>{header}</ModalHeaderContent>}
         </ModalHeader>
