@@ -1,0 +1,15 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+deleted file mode 100644
+index 9209deb224e9dd49adb41697445ae11ae9c05cc8..0000000000000000000000000000000000000000
+diff --git a/android/src/main/AndroidManifest.xml b/android/src/main/AndroidManifest.xml
+index b67ef4d1837363489a1749acb852997a6c93c1b5..147f04a080e4faf47069c7628bb541aa439f644d 100644
+--- a/android/src/main/AndroidManifest.xml
++++ b/android/src/main/AndroidManifest.xml
+@@ -1,6 +1,6 @@
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.asterinet.react.bgactions">
+     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+     <application>
+-        <service android:name=".RNBackgroundActionsTask"/>
++        <service android:name=".RNBackgroundActionsTask" android:foregroundServiceType="dataSync" android:stopWithTask="true" />
+     </application>
+ </manifest>
