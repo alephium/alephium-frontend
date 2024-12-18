@@ -21,7 +21,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import styled, { createGlobalStyle, css, useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
-import { SIDEBAR_EXPAND_THRESHOLD_PX } from '@/components/PageComponents/SideBar'
+import { sidebarExpandThresholdPx } from '@/style/globalStyles'
 
 interface NavItemProps {
   Icon: LucideIcon
@@ -81,7 +81,7 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
       color: ${theme.font.primary};
     `}
 
-  @media (max-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+  @media (max-width: ${sidebarExpandThresholdPx}px) {
     gap: 0;
     width: 42px;
     min-width: 42px;
@@ -90,7 +90,7 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
 `
 
 const TooltipStyleOverride = createGlobalStyle`
-  @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+  @media (min-width: ${sidebarExpandThresholdPx}px) {
     #sidenav {
       display: none !important;
     }
@@ -102,7 +102,7 @@ const LabelContainer = styled.div`
   transition: width 0.4s ease-in-out;
   overflow: hidden;
 
-  @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+  @media (min-width: ${sidebarExpandThresholdPx}px) {
     width: auto;
   }
 `

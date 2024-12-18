@@ -20,7 +20,8 @@ import styled from 'styled-components'
 
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { onEnterOrSpace } from '@/utils/misc'
+import { sidebarExpandThresholdPx } from '@/style/globalStyles'
+import { getInitials, onEnterOrSpace } from '@/utils/misc'
 
 const WalletNameButton = () => {
   const dispatch = useAppDispatch()
@@ -38,7 +39,10 @@ const WalletNameButton = () => {
       role="button"
       tabIndex={0}
     >
-      <WalletNameContainer>{activeWalletName}</WalletNameContainer>
+      <WalletNameContainer>
+        <Initials>{getInitials(activeWalletName)}</Initials>
+        <Name>{activeWalletName}</Name>
+      </WalletNameContainer>
     </WalletNameButtonStyled>
   )
 }
@@ -49,10 +53,9 @@ const WalletNameButtonStyled = styled(motion.div)`
   flex: 1;
   height: var(--inputHeight);
   border-radius: var(--radius-big);
-  border: 1px solid ${({ theme }) => theme.border.primary};
   display: flex;
   align-items: center;
-  justify-content: center;
+  padding: 6px;
   font-weight: var(--fontWeight-semiBold);
   overflow: hidden;
   z-index: 1;
@@ -66,5 +69,24 @@ const WalletNameButtonStyled = styled(motion.div)`
 const WalletNameContainer = styled.div`
   display: flex;
   align-items: center;
+  gap: 10px;
+`
+
+const Name = styled.span`
+  flex: 1;
+  text-align: center;
+  @media (max-width: ${sidebarExpandThresholdPx}px) {
+    display: none;
+  }
+`
+
+const Initials = styled.div`
+  display: flex;
+  align-items: center;
   justify-content: center;
+  color: ${({ theme }) => theme.font.primary};
+  height: 36px;
+  width: 36px;
+  border-radius: 100px;
+  border: 1px solid ${({ theme }) => theme.border.primary};
 `

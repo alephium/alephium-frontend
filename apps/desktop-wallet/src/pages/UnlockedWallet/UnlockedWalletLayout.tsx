@@ -28,9 +28,10 @@ import { fadeInSlowly } from '@/animations'
 import AlephiumLogo from '@/components/AlephiumLogo'
 import AppHeader from '@/components/AppHeader'
 import NavItem from '@/components/NavItem'
-import SideBar, { SIDEBAR_EXPAND_THRESHOLD_PX } from '@/components/PageComponents/SideBar'
+import SideBar from '@/components/PageComponents/SideBar'
 import ScrollbarCustom from '@/components/Scrollbar'
 import { useAppSelector } from '@/hooks/redux'
+import { sidebarExpandThresholdPx } from '@/style/globalStyles'
 
 interface UnlockedWalletLayoutProps {
   title?: string
@@ -129,7 +130,7 @@ const BrandContainer = styled.div`
   margin-bottom: var(--spacing-6);
   margin-left: 8px;
 
-  @media (max-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+  @media (max-width: ${sidebarExpandThresholdPx}px) {
     margin-left: auto;
     margin-right: auto;
   }
@@ -151,7 +152,7 @@ const AlephiumName = styled.div`
   font-weight: var(--fontWeight-semiBold);
   display: none;
 
-  @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+  @media (min-width: ${sidebarExpandThresholdPx}px) {
     display: block;
   }
 `

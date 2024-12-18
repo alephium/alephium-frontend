@@ -20,7 +20,7 @@ import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 import WalletNameButton from '@/components/WalletNameButton'
-import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
+import { appHeaderHeightPx, sidebarExpandThresholdPx, walletSidebarWidthPx } from '@/style/globalStyles'
 
 interface SideBarProps {
   renderTopComponent?: () => ReactNode
@@ -28,8 +28,6 @@ interface SideBarProps {
   noBorder?: boolean
   className?: string
 }
-
-export const SIDEBAR_EXPAND_THRESHOLD_PX = 1300
 
 const SideBar = ({ renderTopComponent, noExpansion = false, noBorder = false, className }: SideBarProps) => (
   <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion} noBorder={noBorder}>
@@ -58,7 +56,7 @@ const SideBarStyled = styled.div<{ noBorder: boolean; noExpansion: boolean }>`
   ${({ noExpansion }) =>
     !noExpansion
       ? css`
-          @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+          @media (min-width: ${sidebarExpandThresholdPx}px) {
             width: ${walletSidebarWidthPx * 3}px;
             align-items: normal;
           }
@@ -83,7 +81,7 @@ const BottomButtonsContainer = styled.div`
   display: flex;
   justify-content: flex-start;
 
-  @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+  @media (min-width: ${sidebarExpandThresholdPx}px) {
     justify-content: space-around;
     width: 100%;
   }
@@ -96,7 +94,7 @@ const BottomButtons = styled.div`
   gap: 15px;
   app-region: no-drag;
 
-  @media (min-width: ${SIDEBAR_EXPAND_THRESHOLD_PX}px) {
+  @media (min-width: ${sidebarExpandThresholdPx}px) {
     flex: 1;
     flex-direction: row-reverse;
     justify-content: space-between;

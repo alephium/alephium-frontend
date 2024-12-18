@@ -88,8 +88,7 @@ const BackArrow = styled(ArrowLeft)`
 
 const H1 = styled(motion.h1)<PanelTitleProps>`
   flex: 1;
-  margin: 10px 0;
   color: ${({ theme, color }) => (color ? color : theme.font.primary)};
-  font-size: ${({ size }) => (size === 'small' ? '20px' : size === 'big' ? '32px' : '28px')};
+  font-size: ${({ size }) => (size === 'small' ? '16px' : size === 'big' ? '32px' : '28px')};
   font-weight: var(--fontWeight-semiBold);
 `

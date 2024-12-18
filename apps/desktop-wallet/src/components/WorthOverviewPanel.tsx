@@ -41,7 +41,7 @@ const WorthOverviewPanel = ({ className, addressHash, children }: WorthOverviewP
 
   return (
     <WorthOverviewPanelStyled className={className}>
-      <AnimatedBackground height={700} />
+      <AnimatedBackground height={600} />
       <Panel>
         <Balances>
           <BalancesRow>

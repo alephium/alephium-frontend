@@ -88,7 +88,7 @@ export const inputDefaultStyle = (
   `}
 
   &:focus {
-    background-color: ${({ theme }) => theme.bg.highlight};
+    background-color: ${({ theme }) => theme.bg.hover};
     border: 1px solid ${({ theme }) => theme.global.accent};
   }
 
@@ -102,7 +102,7 @@ export const inputDefaultStyle = (
   }
 
   &:hover {
-    background-color: ${({ theme }) => theme.bg.highlight};
+    background-color: ${({ theme }) => theme.bg.hover};
   }
 
   // Remove number arrows
