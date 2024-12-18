@@ -53,7 +53,6 @@ type RootStackParamList = {
   CustomNetworkScreen: undefined
   PublicKeysScreen: undefined
   FundPasswordScreen: {
-    origin: 'backup' | 'settings'
     newPassword?: boolean
   }
 }
