@@ -16,33 +16,37 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { VenetianMask } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import Button from '@/components/Button'
-import { ReactComponent as LedgerLogo } from '@/images/ledger.svg'
 
-const ConnectWithLedgerButton = () => {
+interface PrivateModeButtonProps {
+  className?: string
+}
+
+const PrivateModeButton = (props: PrivateModeButtonProps) => {
   const { t } = useTranslation()
   const navigate = useNavigate()
 
-  const handleLedgerConnectClick = () => {
-    navigate('/ledger')
-  }
-
   return (
-    <Button onClick={handleLedgerConnectClick} role="secondary" transparent short>
-      <LedgerLogoStyled style={{ width: '15px', marginRight: '10px' }} />
-      {t('Connect with Ledger')}
-    </Button>
+    <ButtonStyled
+      title={t('Private mode')}
+      role="secondary"
+      Icon={VenetianMask}
+      short
+      onClick={() => navigate('/private-mode')}
+      {...props}
+    >
+      {t('Private mode')}
+    </ButtonStyled>
   )
 }
 
-export default ConnectWithLedgerButton
+export default PrivateModeButton
 
-const LedgerLogoStyled = styled(LedgerLogo)`
-  path {
-    fill: ${({ theme }) => theme.font.primary};
-  }
+const ButtonStyled = styled(Button)`
+  border-radius: var(--radius-big);
 `

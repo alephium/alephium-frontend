@@ -521,5 +521,6 @@
   "Scan": "Scan",
   "Active address discovery completed. Addresses added: {{ count }}": "Active address discovery completed. Addresses added: {{ count }}",
   "Purchase done!": "Purchase done!",
-  "Wallet worth": "Wallet worth"
+  "Wallet worth": "Wallet worth",
+  "Private mode": "Private mode"
 }

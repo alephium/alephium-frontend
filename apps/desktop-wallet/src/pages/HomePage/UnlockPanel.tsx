@@ -28,7 +28,7 @@ import Input from '@/components/Inputs/Input'
 import Select from '@/components/Inputs/Select'
 import WalletPassphrase from '@/components/Inputs/WalletPassphrase'
 import { FloatingPanel, Section } from '@/components/PageComponents/PageContainers'
-import ConnectWithLedgerButton from '@/features/ledger/ConnectWithLedgerButton'
+import PrivateModeButton from '@/features/privateMode/PrivateModeButton'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
@@ -115,9 +115,9 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
           <ButtonStyled onClick={onNewWalletLinkClick} role="secondary" transparent short>
             {t('Import or create a wallet')}
           </ButtonStyled>
-          <ConnectWithLedgerButton />
         </ButtonsSection>
       </FloatingPanel>
+      <PrivateModeButtonStyled />
       <WalletPassphraseStyled
         onPassphraseConfirmed={setPassphrase}
         setIsPassphraseConfirmed={setIsPassphraseConfirmed}
@@ -165,4 +165,11 @@ const AlephiumLogoContainer = styled.div`
   height: 100px;
   border-radius: 100px;
   background-color: ${({ theme }) => theme.bg.contrast};
+`
+
+const PrivateModeButtonStyled = styled(PrivateModeButton)`
+  position: absolute;
+  margin: 0;
+  bottom: 20px;
+  left: 20px;
 `
