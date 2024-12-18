@@ -32,7 +32,9 @@ if (!__DEV__) {
         // See https://github.com/alephium/alephium-frontend/issues/927
         (event.contexts?.device?.model?.includes('iPad Pro') && event.contexts?.device?.model_id?.includes('Mac')) ||
         // See https://github.com/alephium/alephium-frontend/issues/972
-        (error && typeof error === 'object' && error?.code === -32600)
+        (error && typeof error === 'object' && error?.code === -32600) ||
+        // See https://github.com/alephium/alephium-frontend/issues/927
+        event?.exception?.values?.[0]?.type === 'AppHanging'
       ) {
         return null
       }
