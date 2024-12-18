@@ -37,7 +37,7 @@ import { useHeaderContext } from '~/contexts/HeaderContext'
 import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
 import { deleteFundPassword, storeFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import usePassword from '~/hooks/usePassword'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { showExceptionToast, showToast } from '~/utils/layout'
@@ -47,7 +47,7 @@ interface FundPasswordScreenProps
     ScrollScreenProps {}
 
 const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) => {
-  const isSettingNewPassword = props.route.params.newPassword
+  const isUsingFundPassword = useAppSelector((s) => s.fundPassword.isActive)
   const theme = useTheme()
   const { setHeaderOptions } = useHeaderContext()
   const dispatch = useAppDispatch()
@@ -156,7 +156,7 @@ const FundPasswordScreen = ({ navigation, ...props }: FundPasswordScreenProps) =
       headerOptions={{ type: 'stack' }}
       {...props}
     >
-      {isEditingPassword || isSettingNewPassword ? (
+      {isEditingPassword || !isUsingFundPassword ? (
         <>
           <ScreenSection fill verticalGap>
             <Input

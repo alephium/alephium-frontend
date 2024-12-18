@@ -41,7 +41,7 @@ const FundPasswordSettingsRow = memo(() => {
         !isMnemonicBackedUp
           ? navigation.navigate('BackupMnemonicNavigation')
           : isUsingFundPassword
-            ? navigation.navigate('FundPasswordScreen', { newPassword: false })
+            ? navigation.navigate('FundPasswordScreen')
             : undefined
       }
     >
@@ -68,7 +68,7 @@ const FundPasswordRowContent = memo(() => {
       onValueChange={() =>
         !isMnemonicBackedUp
           ? navigation.navigate('BackupMnemonicNavigation')
-          : navigation.navigate('FundPasswordScreen', { newPassword: true })
+          : navigation.navigate('FundPasswordScreen')
       }
     />
   )
