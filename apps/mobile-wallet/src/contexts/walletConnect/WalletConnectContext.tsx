@@ -23,7 +23,6 @@ import {
   AssetAmount,
   client,
   getHumanReadableError,
-  isNetworkValid,
   parseSessionProposalEvent,
   SessionProposalEvent,
   SessionRequestEvent,
@@ -36,7 +35,7 @@ import {
 } from '@alephium/shared'
 import { useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
-import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
+import { formatChain, RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
   SignDeployContractTxParams,
@@ -92,9 +91,7 @@ import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
 import { selectAddressIds } from '~/store/addressesSlice'
-import { Address } from '~/types/addresses'
 import {
   CallContractTxData,
   DeployContractTxData,
@@ -114,6 +111,8 @@ interface WalletConnectContextValue {
   pairWithDapp: (uri: string) => Promise<void>
   unpairFromDapp: (pairingTopic: string) => Promise<void>
   activeSessions: SessionTypes.Struct[]
+  refreshActiveSessions: () => void
+
   resetWalletConnectClientInitializationAttempts: () => void
   resetWalletConnectStorage: () => void
 }
@@ -123,6 +122,8 @@ const initialValues: WalletConnectContextValue = {
   pairWithDapp: () => Promise.resolve(),
   unpairFromDapp: () => Promise.resolve(),
   activeSessions: [],
+  refreshActiveSessions: () => null,
+
   resetWalletConnectClientInitializationAttempts: () => null,
   resetWalletConnectStorage: () => null
 }
@@ -136,8 +137,6 @@ const core = new Core({
 })
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
-  const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
-  const currentNetworkName = useAppSelector((s) => s.network.name)
   const addressIds = useAppSelector(selectAddressIds) as AddressHash[]
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
@@ -152,7 +151,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
-  const [sessionProposalEvent, setSessionProposalEvent] = useState<SessionProposalEvent>()
   const [sessionRequestEvent, setSessionRequestEvent] = useState<SessionRequestEvent>()
   const [sessionRequestData, setSessionRequestData] = useState<SessionRequestData>()
   const [loading, setLoading] = useState('')
@@ -162,9 +160,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const isWalletConnectClientReady =
     isWalletConnectEnabled && walletConnectClient && walletConnectClientStatus === 'initialized'
 
-  const updateActiveSessions = useCallback((client?: IWalletKit) => {
-    setActiveSessions(Object.values(client?.getActiveSessions() ?? {}))
-  }, [])
+  const refreshActiveSessions = useCallback(() => {
+    if (walletConnectClient) setActiveSessions(Object.values(walletConnectClient.getActiveSessions()))
+  }, [walletConnectClient])
 
   const initializeWalletConnectClient = useCallback(async () => {
     let client
@@ -211,9 +209,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       setWalletConnectClient(client)
       dispatch(walletConnectClientInitialized())
-      updateActiveSessions(client)
+      setActiveSessions(Object.values(client.getActiveSessions()))
     }
-  }, [dispatch, walletConnectClientInitializationAttempts, updateActiveSessions])
+  }, [dispatch, walletConnectClientInitializationAttempts])
 
   useEffect(() => {
     if (walletConnectClientStatus === 'initialized' && !walletConnectClient) {
@@ -308,10 +306,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       console.log('👉 ARGS:', args)
       console.log('🧹 CLEANING UP STATE.')
 
-      setSessionProposalEvent(undefined)
-      updateActiveSessions(walletConnectClient)
+      refreshActiveSessions()
     },
-    [updateActiveSessions, walletConnectClient]
+    [refreshActiveSessions]
   )
 
   const onProposalExpire = useCallback((args: SignClientTypes.EventArguments['proposal_expire']) => {
@@ -338,166 +335,12 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       } catch (e) {
         console.error('❌ COULD NOT DISCONNECT FROM DAPP', e)
       } finally {
-        updateActiveSessions(walletConnectClient)
+        refreshActiveSessions()
         setLoading('')
       }
     },
-    [updateActiveSessions, walletConnectClient]
+    [refreshActiveSessions, walletConnectClient]
   )
-
-  const approveProposal = useCallback(
-    async (signerAddress: Address) => {
-      console.log('👍 USER APPROVED PROPOSAL TO CONNECT TO THE DAPP.')
-      console.log('⏳ VERIFYING USER PROVIDED DATA...')
-
-      if (!walletConnectClient || !sessionProposalEvent) {
-        console.error('❌ Could not find WalletConnect client or session proposal event')
-        return
-      }
-
-      const { id, relayProtocol, requiredNamespace, requiredChains, requiredChainInfo, metadata } =
-        parseSessionProposalEvent(sessionProposalEvent)
-
-      if (!requiredChains) {
-        const message = 'The proposal does not include a list of required chains'
-
-        console.error(`❌ ${message}`)
-        return showToast({
-          text1: t('Could not approve'),
-          text2: t(message),
-          type: 'error',
-          autoHide: false
-        })
-      }
-
-      if (requiredChains.length !== 1) {
-        console.error(
-          `❌ Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains.length}`
-        )
-        return showToast({
-          text1: t('Could not approve'),
-          text2: t('Expected exactly 1 required chain in the WalletConnect proposal, got {{ numberOfChains }}', {
-            numberOfChains: requiredChains.length
-          }),
-          type: 'error',
-          autoHide: false
-        })
-      }
-
-      if (!requiredChainInfo) {
-        console.error('❌ Could not find chain requirements in WalletConnect proposal')
-        return showToast({
-          text1: t('Could not approve'),
-          text2: t('Could not find chain requirements in WalletConnect proposal'),
-          type: 'error',
-          autoHide: false
-        })
-      }
-
-      if (!isNetworkValid(requiredChainInfo.networkId, currentNetworkId)) {
-        console.error(
-          `❌ WalletConnect requested the ${requiredChainInfo.networkId} network, but the current network is ${currentNetworkName}.`
-        )
-        return showToast({
-          text1: t('Could not approve'),
-          text2: t(
-            'WalletConnect requested the {{ requestedNetwork }} network, but the current network is {{ currentNetwork }}.',
-            { requestedNetwork: requiredChainInfo.networkId, currentNetwork: currentNetworkName }
-          ),
-          type: 'error',
-          autoHide: false
-        })
-      }
-
-      if (!isCompatibleAddressGroup(signerAddress.group, requiredChainInfo.addressGroup)) {
-        console.error(
-          `❌ The group of the selected address (${signerAddress.group}) does not match the group required by WalletConnect (${requiredChainInfo.addressGroup})`
-        )
-        return showToast({
-          text1: t('Could not approve'),
-          text2: t(
-            'The group of the selected address ({{ selectedAddressGroup }}) does not match the group required by WalletConnect ({{ requiredGroup }})',
-            {
-              selectedAddressGroup: signerAddress.group,
-              requiredGroup: requiredChainInfo.addressGroup
-            }
-          ),
-          type: 'error',
-          autoHide: false
-        })
-      }
-
-      console.log('✅ VERIFIED USER PROVIDED DATA!')
-
-      try {
-        setLoading('Approving...')
-        console.log('⏳ APPROVING PROPOSAL...')
-
-        const existingSession = activeSessions.find((session) => session.peer.metadata.url === metadata.url)
-
-        if (existingSession) {
-          await walletConnectClient.disconnectSession({
-            topic: existingSession.topic,
-            reason: getSdkError('USER_DISCONNECTED')
-          })
-        }
-
-        const publicKey = await getAddressAsymetricKey(signerAddress.hash, 'public')
-
-        const namespaces: SessionTypes.Namespaces = {
-          alephium: {
-            methods: requiredNamespace.methods,
-            events: requiredNamespace.events,
-            accounts: [
-              `${formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)}:${publicKey}/default`
-            ]
-          }
-        }
-
-        const { topic, acknowledged } = await walletConnectClient.approveSession({ id, relayProtocol, namespaces })
-        console.log('👉 APPROVAL TOPIC RECEIVED:', topic)
-        console.log('✅ APPROVING: DONE!')
-        console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', acknowledged)
-
-        setSessionProposalEvent(undefined)
-        updateActiveSessions(walletConnectClient)
-
-        sendAnalytics({ event: 'WC: Approved connection' })
-      } catch (e) {
-        console.error('❌ WC: Error while approving and acknowledging', e)
-      } finally {
-        setLoading('')
-        showToast({ text1: t('dApp request approved'), text2: t('You can go back to your browser.') })
-      }
-    },
-    [
-      activeSessions,
-      currentNetworkId,
-      currentNetworkName,
-      sessionProposalEvent,
-      t,
-      updateActiveSessions,
-      walletConnectClient
-    ]
-  )
-
-  const rejectProposal = useCallback(async () => {
-    if (!walletConnectClient || sessionProposalEvent === undefined) return
-
-    try {
-      setLoading('Rejecting...')
-      console.log('👎 REJECTING SESSION PROPOSAL:', sessionProposalEvent.id)
-      await walletConnectClient.rejectSession({ id: sessionProposalEvent.id, reason: getSdkError('USER_REJECTED') })
-      console.log('✅ REJECTING: DONE!')
-
-      setSessionProposalEvent(undefined)
-    } catch (e) {
-      console.error('❌ WC: Error while rejecting', e)
-    } finally {
-      setLoading('')
-      showToast({ text1: t('dApp request rejected'), text2: t('You can go back to your browser.'), type: 'info' })
-    }
-  }, [sessionProposalEvent, t, walletConnectClient])
 
   const handleApprovePress = useCallback(
     async (
@@ -552,32 +395,78 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     ]
   )
 
-  const openWalletConnectSessionProposalModal = useCallback(
-    () =>
-      sessionProposalEvent &&
-      dispatch(
-        openModal({
-          name: 'WalletConnectSessionProposalModal',
-          props: {
-            approveProposal,
-            rejectProposal,
-            proposalEvent: sessionProposalEvent
-          }
-        })
-      ),
-    [approveProposal, dispatch, rejectProposal, sessionProposalEvent]
-  )
-
   const onSessionProposal = useCallback(
-    async (sessionProposalEvent: SessionProposalEvent) => {
+    async (proposalEvent: SessionProposalEvent) => {
       console.log('📣 RECEIVED EVENT PROPOSAL TO CONNECT TO A DAPP!')
-      console.log('👉 ARGS:', sessionProposalEvent)
+      console.log('👉 ARGS:', proposalEvent)
       console.log('⏳ WAITING FOR PROPOSAL APPROVAL OR REJECTION')
 
-      setSessionProposalEvent(sessionProposalEvent)
-      openWalletConnectSessionProposalModal()
+      try {
+        const { requiredChains, requiredChainInfo, requiredNamespace, metadata, relayProtocol } =
+          parseSessionProposalEvent(proposalEvent)
+
+        if (!requiredChains) {
+          const message = 'The proposal does not include a list of required chains'
+
+          console.error(`❌ ${message}`)
+          return showToast({
+            text1: t('Could not approve'),
+            text2: t(message),
+            type: 'error',
+            autoHide: false
+          })
+        }
+
+        if (requiredChains.length !== 1) {
+          console.error(
+            `❌ Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains.length}`
+          )
+          return showToast({
+            text1: t('Could not approve'),
+            text2: t('Expected exactly 1 required chain in the WalletConnect proposal, got {{ numberOfChains }}', {
+              numberOfChains: requiredChains.length
+            }),
+            type: 'error',
+            autoHide: false
+          })
+        }
+
+        if (!requiredChainInfo) {
+          console.error('❌ Could not find chain requirements in WalletConnect proposal')
+          return showToast({
+            text1: t('Could not approve'),
+            text2: t('Could not find chain requirements in WalletConnect proposal'),
+            type: 'error',
+            autoHide: false
+          })
+        }
+
+        const chain = formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)
+
+        dispatch(
+          openModal({
+            name: 'WalletConnectSessionProposalModal',
+            props: {
+              proposalEventId: proposalEvent.id,
+              chain,
+              chainInfo: requiredChainInfo,
+              requiredNamespaceMethods: requiredNamespace.methods,
+              requiredNamespaceEvents: requiredNamespace.events,
+              metadata,
+              relayProtocol
+            }
+          })
+        )
+      } catch (error) {
+        showToast({
+          text1: t('Could not approve'),
+          text2: t('There is something wrong in the received WalletConnect data.'),
+          type: 'error',
+          autoHide: false
+        })
+      }
     },
-    [openWalletConnectSessionProposalModal]
+    [dispatch, t]
   )
 
   const pairWithDapp = useCallback(
@@ -1109,7 +998,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           console.error(`Failed to disconnect topic ${topic}, error: ${error}`)
         }
       }
-      updateActiveSessions(walletConnectClient)
+      refreshActiveSessions()
 
       console.log('Clear walletconnect cache')
       const expirer = walletConnectClient.core.expirer as Expirer
@@ -1125,7 +1014,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } catch (error) {
       sendAnalytics({ type: 'error', error, message: 'Error at resetting WalletConnect storage' })
     }
-  }, [updateActiveSessions, walletConnectClient])
+  }, [refreshActiveSessions, walletConnectClient])
 
   return (
     <WalletConnectContext.Provider
@@ -1134,6 +1023,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         unpairFromDapp,
         walletConnectClient,
         activeSessions,
+        refreshActiveSessions,
         resetWalletConnectClientInitializationAttempts,
         resetWalletConnectStorage
       }}
