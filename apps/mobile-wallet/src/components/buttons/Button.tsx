@@ -20,19 +20,11 @@ import Ionicons from '@expo/vector-icons/Feather'
 import { colord } from 'colord'
 import { ComponentProps, ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
-import Animated, {
-  FadeIn,
-  FadeOut,
-  LinearTransition,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring
-} from 'react-native-reanimated'
+import Animated, { LinearTransition, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
 import AppText from '~/components/AppText'
-import { BORDER_RADIUS } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 export interface ButtonProps extends PressableProps {
@@ -46,7 +38,7 @@ export interface ButtonProps extends PressableProps {
   iconProps?: ComponentProps<typeof Ionicons>
   customIcon?: ReactNode
   color?: string
-  round?: boolean
+  squared?: boolean
   flex?: boolean
   children?: ReactNode
   compact?: boolean
@@ -55,7 +47,6 @@ export interface ButtonProps extends PressableProps {
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
-const AnimatedAppText = Animated.createAnimatedComponent(AppText)
 const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons)
 
 const Button = ({
@@ -67,7 +58,7 @@ const Button = ({
   iconProps,
   customIcon,
   children,
-  round,
+  squared,
   short,
   color,
   centered,
@@ -75,6 +66,7 @@ const Button = ({
   flex,
   animated,
   haptics,
+  wide,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
@@ -84,9 +76,9 @@ const Button = ({
 
   const bg = {
     default: theme.button.primary,
-    contrast: theme.font.primary,
+    contrast: theme.bg.contrast,
     accent: type === 'primary' ? theme.button.primary : theme.button.secondary,
-    valid: colord(theme.global.valid).alpha(0.1).toRgbString(),
+    valid: theme.global.valid,
     alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
     transparent: 'transparent',
     highlight: theme.global.accent,
@@ -99,7 +91,7 @@ const Button = ({
       default: theme.font.primary,
       contrast: theme.font.contrast,
       accent: theme.global.accent,
-      valid: theme.global.valid,
+      valid: theme.font.primary,
       alert: theme.global.alert,
       highlight: 'white',
       highlightedIcon: theme.font.primary
@@ -123,17 +115,17 @@ const Button = ({
         transparent: undefined,
         tint: undefined
       }[type],
-      height: short ? 45 : compact ? 30 : hasOnlyIcon ? 40 : 55,
-      width: round ? (compact ? 30 : 40) : props.wide ? '75%' : hasOnlyIcon ? 40 : 'auto',
-      justifyContent: round ? 'center' : undefined,
-      alignItems: round ? 'center' : undefined,
+      height: short ? 42 : compact ? 30 : hasOnlyIcon ? 40 : 54,
+      width: compact && squared ? 30 : wide ? '100%' : hasOnlyIcon ? 40 : null,
+      justifyContent: squared ? 'center' : undefined,
+      alignItems: squared ? 'center' : undefined,
       gap: compact ? 5 : 10,
       minWidth: centered ? 200 : undefined,
       marginVertical: centered ? 0 : undefined,
       marginHorizontal: centered ? 'auto' : undefined,
-      paddingVertical: round ? 0 : compact ? 5 : !hasOnlyIcon ? 0 : undefined,
-      paddingHorizontal: round ? 0 : compact ? 10 : !hasOnlyIcon ? 25 : undefined,
-      borderRadius: round || compact ? 100 : BORDER_RADIUS,
+      paddingVertical: squared ? 0 : compact ? 5 : !hasOnlyIcon ? 0 : undefined,
+      paddingHorizontal: compact ? 10 : !hasOnlyIcon ? 25 : undefined,
+      borderRadius: 100,
       backgroundColor: {
         primary: bg,
         secondary: bg,
@@ -166,18 +158,14 @@ const Button = ({
       disabled={disabled}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
+      hitSlop={compact ? 12 : 8} // That's great. Increase touchable area
       {...props}
     >
+      {iconProps && !(compact || squared) && <EmptyPlaceholder />}
       {title && (
-        <AnimatedAppText
-          style={{ flexGrow: 1, color: font, textAlign: 'center' }}
-          medium
-          size={compact ? 14 : 16}
-          exiting={FadeOut}
-          entering={FadeIn}
-        >
+        <AppText style={{ color: font, textAlign: 'center' }} medium size={compact ? 14 : 16}>
           {title}
-        </AnimatedAppText>
+        </AppText>
       )}
       {children}
       {iconProps ? (
@@ -213,7 +201,7 @@ const Button = ({
 }
 
 export const CloseButton = (props: ButtonProps) => (
-  <Button onPress={props.onPress} iconProps={{ name: 'x' }} round {...props} />
+  <Button onPress={props.onPress} iconProps={{ name: 'x' }} compact squared {...props} />
 )
 
 export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
@@ -245,7 +233,7 @@ export const ContinueButton = ({ style, color, ...props }: ButtonProps) => {
 }
 
 export const BackButton = (props: ButtonProps) => (
-  <Button onPress={props.onPress} iconProps={{ name: 'arrow-left' }} round {...props} />
+  <Button onPress={props.onPress} iconProps={{ name: 'arrow-left' }} squared compact {...props} />
 )
 
 export default styled(Button)`
@@ -258,4 +246,9 @@ export default styled(Button)`
 const IconContainer = styled.View`
   align-items: center;
   justify-content: center;
+  width: 22px;
+`
+
+const EmptyPlaceholder = styled.View`
+  width: 22px;
 `

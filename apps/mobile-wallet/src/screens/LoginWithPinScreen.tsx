@@ -24,6 +24,7 @@ import { sendAnalytics } from '~/analytics'
 import DeprecatedAuthenticationModal from '~/components/DeprecatedAuthenticationModal'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { Spinner } from '~/components/SpinnerModal'
+import { allBiometricsEnabled } from '~/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -32,7 +33,6 @@ import {
   isStoredWalletMetadataMigrated,
   migrateDeprecatedMnemonic
 } from '~/persistent-storage/wallet'
-import { allBiometricsEnabled } from '~/store/settings/settingsActions'
 import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast } from '~/utils/layout'
 import { resetNavigation } from '~/utils/navigation'
@@ -86,7 +86,7 @@ const LoginWithPinScreen = ({ navigation, ...props }: LoginWithPinScreenProps) =
   )
 
   return (
-    <Screen contrastedBg {...props}>
+    <Screen {...props}>
       <DeprecatedAuthenticationModal visible={isPinModalVisible} forcePinUsage onConfirm={handleSuccessfulLogin} />
       {!isPinModalVisible && <Spinner text={`${t('Unlocking')}...`} />}
     </Screen>

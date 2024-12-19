@@ -17,17 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { memo } from 'react'
-import { View } from 'react-native'
+import { DimensionValue, View } from 'react-native'
 import WebView from 'react-native-webview'
 
 import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
 interface NFTWebViewProps {
   imageUri: string
-  size: number
+  size?: DimensionValue
 }
 
-const NFTWebView = ({ imageUri, size }: NFTWebViewProps) => (
+const NFTWebView = ({ imageUri, size = '100%' }: NFTWebViewProps) => (
   <View style={{ width: size, height: size }}>
     <WebView
       source={{ html: `<img src="${imageUri}" />` }}

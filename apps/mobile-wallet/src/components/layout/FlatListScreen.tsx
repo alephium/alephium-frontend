@@ -21,7 +21,7 @@ import { FlatListProps } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import BaseHeader from '~/components/headers/BaseHeader'
+import StackHeader from '~/components/headers/StackHeader'
 import Screen from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import { ScrollScreenBaseProps } from '~/components/layout/ScrollScreen'
@@ -38,7 +38,6 @@ const FlatListScreen = <T,>({
   fill,
   contentContainerStyle,
   style,
-  contrastedBg,
   screenTitle,
   screenIntro,
   shouldUseGaps,
@@ -51,8 +50,14 @@ const FlatListScreen = <T,>({
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
 
   return (
-    <Screen contrastedBg={contrastedBg}>
-      {headerOptions && <BaseHeader options={headerOptions} scrollY={screenScrollY} />}
+    <Screen>
+      {headerOptions && (
+        <StackHeader
+          options={headerOptions}
+          scrollY={screenScrollY}
+          titleAlwaysVisible={props.headerTitleAlwaysVisible}
+        />
+      )}
       <FlatList
         ref={flatListRef}
         onScroll={screenScrollHandler}
@@ -72,7 +77,8 @@ const FlatListScreen = <T,>({
           {
             paddingBottom: insets.bottom,
             flex: fill ? 1 : undefined,
-            gap: shouldUseGaps ? VERTICAL_GAP : 0
+            gap: shouldUseGaps ? VERTICAL_GAP : 0,
+            paddingTop: 120
           },
           contentContainerStyle
         ]}

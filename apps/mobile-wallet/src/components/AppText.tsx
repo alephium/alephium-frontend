@@ -40,24 +40,24 @@ export default styled.Text<AppTextProps>`
     return color ? th.font[color as FontColor] || th.global[color as GlobalColor] || color : th.font.primary
   }};
 
-  font-weight: 400;
+  font-family: 'Inter18pt-Medium';
 
   ${({ bold }) =>
     bold &&
     css`
-      font-weight: 700;
+      font-family: 'Inter18pt-Bold';
     `}
 
   ${({ semiBold }) =>
     semiBold &&
     css`
-      font-weight: 600;
+      font-family: 'Inter18pt-SemiBold';
     `}
 
   ${({ medium }) =>
     medium &&
     css`
-      font-weight: 500;
+      font-family: 'Inter18pt-Medium';
     `}
 
   ${({ size = 15 }) =>

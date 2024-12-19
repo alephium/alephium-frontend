@@ -19,18 +19,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { appReset } from '@alephium/shared'
 import { createSlice } from '@reduxjs/toolkit'
 
-import { fundPasswordReminded, fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
-import { mnemonicMigrated, walletDeleted } from '~/store/wallet/walletActions'
+import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
+import { walletDeleted } from '~/store/wallet/walletActions'
 
 const sliceName = 'fundPassword'
 
 interface AppMetadataState {
-  needsReminder: boolean
   isActive: boolean
 }
 
 const initialState: AppMetadataState = {
-  needsReminder: false,
   isActive: false
 }
 
@@ -42,12 +40,6 @@ const appSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(mnemonicMigrated, (state) => {
-        state.needsReminder = true
-      })
-      .addCase(fundPasswordReminded, (state) => {
-        state.needsReminder = false
-      })
       .addCase(fundPasswordUseToggled, (state, { payload }) => {
         state.isActive = payload
       })

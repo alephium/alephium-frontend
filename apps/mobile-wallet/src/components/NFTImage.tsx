@@ -19,6 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { NFT, selectNFTById } from '@alephium/shared'
 import { Image } from 'expo-image'
 import { memo, useState } from 'react'
+import { DimensionValue } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import NFTPlaceholder from '~/components/NFTPlaceholder'
@@ -28,10 +29,10 @@ import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
 export interface NFTImageProps {
   nftId: NFT['id']
-  size: number
+  size?: DimensionValue
 }
 
-const NFTImage = ({ nftId, size }: NFTImageProps) => {
+const NFTImage = ({ nftId, size = '100%' }: NFTImageProps) => {
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
   const theme = useTheme()
 

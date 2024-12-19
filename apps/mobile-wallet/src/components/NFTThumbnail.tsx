@@ -16,30 +16,22 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { memo, useState } from 'react'
+import { memo } from 'react'
 import { TouchableOpacity } from 'react-native'
-import { Portal } from 'react-native-portalize'
 
-import BottomModal from '~/components/layout/BottomModal'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
-import NFTModal from '~/components/NFTModal'
+import { openModal } from '~/features/modals/modalActions'
+import { useAppDispatch } from '~/hooks/redux'
 
 const NFTThumbnail = (props: NFTImageProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const dispatch = useAppDispatch()
+
+  const openNftModal = () => dispatch(openModal({ name: 'NftModal', props: { nftId: props.nftId } }))
 
   return (
-    <>
-      <TouchableOpacity onPress={() => setIsModalOpen(true)} style={{ position: 'relative' }}>
-        <NFTImage {...props} />
-      </TouchableOpacity>
-      <Portal>
-        <BottomModal
-          Content={(_props) => <NFTModal nftId={props.nftId} {..._props} />}
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-        />
-      </Portal>
-    </>
+    <TouchableOpacity onPress={openNftModal}>
+      <NFTImage {...props} />
+    </TouchableOpacity>
   )
 }
 

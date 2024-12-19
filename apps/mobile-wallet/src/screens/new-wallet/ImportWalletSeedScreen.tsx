@@ -22,7 +22,7 @@ import { colord } from 'colord'
 import { BlurView } from 'expo-blur'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Alert, KeyboardAvoidingView, ScrollView } from 'react-native'
+import { Alert, ScrollView } from 'react-native'
 import { FadeIn } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -141,7 +141,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
   const isImportButtonEnabled = selectedWords.length >= 12 || !!devMnemonicToRestore
 
   return (
-    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+    <>
       <ScrollScreenStyled
         fill
         headerOptions={{
@@ -149,6 +149,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
           headerRight: () => <ContinueButton onPress={importWallet} disabled={!isImportButtonEnabled} />
         }}
         keyboardShouldPersistTaps="always"
+        contentPaddingTop
         screenTitle={t('Secret phrase')}
         screenIntro={t('Enter the secret phrase for the "{{ walletName }}" wallet.', { walletName: name })}
         {...props}
@@ -203,7 +204,7 @@ const ImportWalletSeedScreen = ({ navigation, ...props }: ImportWalletSeedScreen
           label={selectedWords.length === 0 ? t('Type the first word') : t('Type the next word')}
         />
       </BottomInputContainer>
-    </KeyboardAvoidingView>
+    </>
   )
 }
 

@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
-import { Clipboard, LucideProps, Share2Icon, Upload } from 'lucide-react-native'
+import { Clipboard, LucideIcon, Share2Icon, Upload } from 'lucide-react-native'
 import { useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PressableProps, Share } from 'react-native'
@@ -28,8 +28,8 @@ import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import StackHeader from '~/components/headers/StackHeader'
-import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
-import TransactionsFlatList from '~/components/layout/TransactionsFlatList'
+import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
+import TransactionsFlashList from '~/components/layout/TransactionsFlashList'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -87,9 +87,10 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
   const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 
   return (
-    <>
+    <Screen>
       <StackHeader
         options={{
+          headerTitle: contact.name,
           headerRight: () => (
             <Button
               title={t('Edit')}
@@ -99,19 +100,17 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
             />
           )
         }}
-        goBack={navigation.canGoBack() ? navigation.goBack : undefined}
+        onBackPress={navigation.canGoBack() ? navigation.goBack : undefined}
         scrollY={screenScrollY}
       />
-      <TransactionsFlatList
+      <TransactionsFlashList
         confirmedTransactions={confirmedTransactions}
         pendingTransactions={pendingTransactions}
-        initialNumToRender={8}
-        contentContainerStyle={{ flexGrow: 1 }}
         onScroll={screenScrollHandler}
         ref={listRef}
         ListHeaderComponent={
           <>
-            <CenteredSection>
+            <CenteredSection style={{ marginTop: 140 }}>
               <ContactIcon color={iconBgColor}>
                 <AppText semiBold size={32} color={textColor}>
                   {contact.name[0].toUpperCase()}
@@ -132,14 +131,14 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
             <TransactionsHeaderRow>
               <ScreenSection>
                 <AppText size={18} semiBold>
-                  Transactions
+                  {t('Transactions')}
                 </AppText>
               </ScreenSection>
             </TransactionsHeaderRow>
           </>
         }
       />
-    </>
+    </Screen>
   )
 }
 
@@ -147,7 +146,7 @@ export default ContactScreen
 
 interface ContactButtonProps extends PressableProps {
   title: string
-  Icon?: (props: LucideProps) => JSX.Element
+  Icon?: LucideIcon
 }
 
 const ContactButton = ({ Icon, title, children, ...props }: ContactButtonProps) => {

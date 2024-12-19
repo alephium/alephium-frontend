@@ -23,7 +23,7 @@ import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import animationSrc from '~/animations/lottie/wallet.json'
-import ActionButtonsStack from '~/components/buttons/ActionButtonsStack'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
@@ -55,12 +55,17 @@ const ImportWalletAddressDiscoveryScreen = ({ navigation, ...props }: ImportWall
   }
 
   return (
-    <ScrollScreen fill headerOptions={{ headerTitle: t('Active addresses'), type: 'stack' }} {...props}>
+    <ScrollScreen
+      fill
+      headerOptions={{ headerTitle: t('Active addresses'), type: 'stack' }}
+      contentPaddingTop
+      {...props}
+    >
       <AnimationContainer>
         <StyledAnimation source={animationSrc} autoPlay speed={1.2} style={{ width: '45%' }} />
       </AnimationContainer>
       <CenteredInstructions instructions={instructions} stretch />
-      <ActionButtonsStack>
+      <BottomButtons>
         <Button
           title={t('Scan')}
           type="primary"
@@ -68,7 +73,7 @@ const ImportWalletAddressDiscoveryScreen = ({ navigation, ...props }: ImportWall
           onPress={() => navigation.navigate('AddressDiscoveryScreen', { isImporting: true })}
         />
         <Button title={t('Later')} type="primary" variant="accent" onPress={handleLaterPress} />
-      </ActionButtonsStack>
+      </BottomButtons>
     </ScrollScreen>
   )
 }

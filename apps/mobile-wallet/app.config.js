@@ -121,6 +121,12 @@ export default {
             'The app requires access to your camera to scan QR codes for sending transactions, connecting to WalletConnect and importing a wallet.'
         }
       ],
+      [
+        'expo-font',
+        {
+          'fonts': ['./assets/fonts/Inter18pt-Medium.ttf', './assets/fonts/Inter18pt-SemiBold.ttf', './assets/fonts/Inter18pt-Bold.ttf']
+        }
+      ],
       'expo-localization',
       'expo-secure-store',
       [

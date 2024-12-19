@@ -26,8 +26,8 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection } from '~/components/layout/Screen'
+import Surface from '~/components/layout/Surface'
 import ListItem from '~/components/ListItem'
 import { useAppSelector } from '~/hooks/redux'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
@@ -64,9 +64,6 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
           onChangeText={setSearchTerm}
           placeholderTextColor={theme.font.tertiary}
         />
-        {onNewContactPress && (
-          <Button iconProps={{ name: 'plus' }} type="transparent" variant="accent" onPress={onNewContactPress} />
-        )}
       </HeaderScreenSection>
       {contacts.length === 0 ? (
         <NoContactContainer>
@@ -114,7 +111,9 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
 
 export default ContactListScreenBase
 
-const ContactList = styled.View``
+const ContactList = styled.View`
+  padding: 0 ${DEFAULT_MARGIN}px;
+`
 
 const ContactIcon = styled.View<{ color?: string }>`
   justify-content: center;
@@ -145,7 +144,7 @@ const NoContactContainer = styled.View`
   justify-content: center;
 `
 
-const NoContactMessageBox = styled(BoxSurface)`
+const NoContactMessageBox = styled(Surface)`
   padding: 25px;
   gap: ${VERTICAL_GAP}px;
   align-items: center;

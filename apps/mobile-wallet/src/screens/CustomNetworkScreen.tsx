@@ -28,9 +28,9 @@ import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
+import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { persistSettings } from '~/persistent-storage/settings'
 import { showExceptionToast } from '~/utils/layout'
 
 interface CustomNetworkScreenProps
@@ -70,7 +70,6 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
   return (
     <>
       <ScrollScreen
-        usesKeyboard
         fill
         headerOptions={{
           type: 'stack',

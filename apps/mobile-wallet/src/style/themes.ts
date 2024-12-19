@@ -24,19 +24,19 @@ export type ThemeType = 'light' | 'dark'
 export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
-    highlight: '#ffffff',
-    primary: '#fcfdff',
-    secondary: '#f1f4f9',
-    tertiary: '#eff1f6',
-    back1: '#f2f3f7',
-    back2: '#f0f1f5',
+    highlight: 'rgba(0, 0, 0, 0.06)',
+    primary: 'rgba(0, 0, 0, 0.05)',
+    secondary: 'rgba(0, 0, 0, 0.03)',
+    tertiary: 'rgba(0, 0, 0, 0.02)',
+    back1: '#fff',
+    back2: '#fff',
     accent: 'rgba(58, 111, 244, 0.12)',
-    contrast: '#212126'
+    contrast: '#111114'
   },
   font: {
-    primary: '#171717',
-    secondary: '#404040',
-    tertiary: '#ababab',
+    primary: '#000',
+    secondary: '#4d4d4d',
+    tertiary: '#999',
     contrast: '#ffffff',
     highlight: '#d4a10d'
   },
@@ -59,7 +59,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 20px; shadow-opacity: 0.02; shadow-radius: 50px; elevation: 40;'
   },
   global: {
-    accent: '#1575f9',
+    accent: '#155ef9',
     alert: '#ed4a34',
     warning: '#f48826',
     valid: '#2DA023',
@@ -85,16 +85,16 @@ export const darkTheme: DefaultTheme = {
     primary: '#1b1b1f',
     secondary: '#17171a',
     tertiary: '#141417',
-    back1: '#111114',
+    back1: '#121214',
     back2: '#0E0E10',
     accent: 'rgba(93, 108, 243, 0.08)',
-    contrast: '#ffffff'
+    contrast: '#E3E3E3'
   },
   font: {
     primary: '#E3E3E3',
     secondary: 'rgba(255, 255, 255, 0.75)',
-    tertiary: 'rgba(255, 255, 255, 0.40)',
-    contrast: '#171717',
+    tertiary: 'rgba(255, 255, 255, 0.45)',
+    contrast: '#000',
     highlight: '#f0d590'
   },
   button: {
@@ -116,10 +116,10 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 25px; shadow-opacity: 0.2; shadow-radius: 25px; elevation: 5;'
   },
   global: {
-    accent: '#2f8cef',
+    accent: '#155ef9',
     alert: '#ed4a34',
     warning: '#ed882d',
-    valid: '#3ed282',
+    valid: '#16a324',
     star: '#FFD66D',
     pale: '#f7d1b6',
     complementary: '#d488eb',
