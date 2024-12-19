@@ -30,8 +30,7 @@ import {
   walletConnectClientInitialized,
   walletConnectClientInitializeFailed,
   walletConnectClientInitializing,
-  walletConnectClientMaxRetriesReached,
-  WalletConnectError
+  walletConnectClientMaxRetriesReached
 } from '@alephium/shared'
 import { useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
@@ -39,17 +38,11 @@ import { formatChain, RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
   SignDeployContractTxParams,
-  SignDeployContractTxResult,
   SignExecuteScriptTxParams,
-  SignExecuteScriptTxResult,
   SignMessageParams,
-  SignMessageResult,
   SignTransferTxParams,
-  SignTransferTxResult,
-  SignUnsignedTxParams,
-  SignUnsignedTxResult
+  SignUnsignedTxParams
 } from '@alephium/web3'
-import { SignResult } from '@alephium/web3/dist/src/api/api-alephium'
 import { IWalletKit, WalletKit } from '@reown/walletkit'
 import {
   Core,
@@ -87,10 +80,8 @@ import {
   buildTransferTransaction
 } from '~/api/transactions'
 import SpinnerModal from '~/components/SpinnerModal'
-import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { selectAddressIds } from '~/store/addressesSlice'
 import {
   CallContractTxData,
@@ -99,7 +90,6 @@ import {
   SignUnsignedTxData,
   TransferTxData
 } from '~/types/transactions'
-import { SessionRequestData } from '~/types/walletConnect'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { sleep } from '~/utils/misc'
 
@@ -112,6 +102,11 @@ interface WalletConnectContextValue {
   unpairFromDapp: (pairingTopic: string) => Promise<void>
   activeSessions: SessionTypes.Struct[]
   refreshActiveSessions: () => void
+  respondToWalletConnect: (event: SessionRequestEvent, response: EngineTypes.RespondParams['response']) => Promise<void>
+  respondToWalletConnectWithError: (
+    sessionRequestEvent: SessionRequestEvent,
+    error: ReturnType<typeof getSdkError>
+  ) => Promise<void>
 
   resetWalletConnectClientInitializationAttempts: () => void
   resetWalletConnectStorage: () => void
@@ -123,6 +118,8 @@ const initialValues: WalletConnectContextValue = {
   unpairFromDapp: () => Promise.resolve(),
   activeSessions: [],
   refreshActiveSessions: () => null,
+  respondToWalletConnectWithError: () => Promise.resolve(),
+  respondToWalletConnect: () => Promise.resolve(),
 
   resetWalletConnectClientInitializationAttempts: () => null,
   resetWalletConnectStorage: () => null
@@ -145,18 +142,13 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const appState = useRef(AppState.currentState)
   const dispatch = useAppDispatch()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
-  const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const { t } = useTranslation()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
-  const [sessionRequestEvent, setSessionRequestEvent] = useState<SessionRequestEvent>()
-  const [sessionRequestData, setSessionRequestData] = useState<SessionRequestData>()
   const [loading, setLoading] = useState('')
   const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
 
-  const activeSessionMetadata = activeSessions.find((s) => s.topic === sessionRequestEvent?.topic)?.peer.metadata
   const isWalletConnectClientReady =
     isWalletConnectEnabled && walletConnectClient && walletConnectClientStatus === 'initialized'
 
@@ -265,13 +257,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     [walletConnectClient, cleanStorage]
   )
 
-  const respondToWalletConnectWithSuccess = useCallback(
-    async (event: SessionRequestEvent, result: SignResult) => {
-      await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
-    },
-    [respondToWalletConnect]
-  )
-
   const respondToWalletConnectWithError = useCallback(
     async (event: SessionRequestEvent, error: ReturnType<typeof getSdkError>) =>
       await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', error }),
@@ -340,59 +325,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       }
     },
     [refreshActiveSessions, walletConnectClient]
-  )
-
-  const handleApprovePress = useCallback(
-    async (
-      sendTransaction: () => Promise<
-        SignExecuteScriptTxResult | SignDeployContractTxResult | SignTransferTxResult | undefined
-      >
-    ) => {
-      if (!sessionRequestEvent) return
-
-      triggerBiometricsAuthGuard({
-        settingsToCheck: 'transactions',
-        successCallback: () =>
-          triggerFundPasswordAuthGuard({
-            successCallback: async () => {
-              setLoading('Approving...')
-
-              try {
-                const signResult = await sendTransaction()
-
-                if (!signResult) {
-                  console.log('⏳ DID NOT GET A SIGNATURE RESULT, INFORMING DAPP THAT SESSION REQUEST FAILED...')
-                  await respondToWalletConnectWithError(sessionRequestEvent, {
-                    message: 'Sending transaction failed',
-                    code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-                  })
-                  console.log('✅ INFORMING: DONE!')
-                } else {
-                  console.log('⏳ INFORMING DAPP THAT SESSION REQUEST SUCCEEDED...')
-                  await respondToWalletConnectWithSuccess(sessionRequestEvent, signResult)
-                  console.log('✅ INFORMING: DONE!')
-                }
-              } catch (e) {
-                console.error('❌ INFORMING: FAILED.')
-              } finally {
-                console.log('👉 RESETTING SESSION REQUEST EVENT.')
-                setSessionRequestEvent(undefined)
-                setSessionRequestData(undefined)
-                setLoading('')
-                showToast({ text1: t('dApp request approved'), text2: t('You can go back to your browser.') })
-              }
-            }
-          })
-      })
-    },
-    [
-      respondToWalletConnectWithError,
-      respondToWalletConnectWithSuccess,
-      sessionRequestEvent,
-      t,
-      triggerBiometricsAuthGuard,
-      triggerFundPasswordAuthGuard
-    ]
   )
 
   const onSessionProposal = useCallback(
@@ -571,89 +503,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     return subscription.remove
   }, [isWalletConnectEnabled])
 
-  const handleSignSuccess = useCallback(
-    async (result: SignMessageResult | SignUnsignedTxResult) => {
-      if (!sessionRequestEvent) return
-
-      console.log('⏳ INFORMING DAPP THAT SESSION REQUEST SUCCEEDED...')
-      await respondToWalletConnectWithSuccess(sessionRequestEvent, result)
-      console.log('✅ INFORMING: DONE!')
-
-      console.log('👉 RESETTING SESSION REQUEST EVENT.')
-      setSessionRequestEvent(undefined)
-      setSessionRequestData(undefined)
-      showToast({ text1: t('dApp request approved'), text2: t('You can go back to your browser.') })
-    },
-    [respondToWalletConnectWithSuccess, sessionRequestEvent, t]
-  )
-
-  const handleRejectPress = useCallback(async () => {
-    if (!sessionRequestEvent) return
-
-    try {
-      console.log('⏳ INFORMING DAPP THAT SESSION REQUEST FAILED...')
-      await respondToWalletConnectWithError(sessionRequestEvent, getSdkError('USER_REJECTED'))
-      console.log('✅ INFORMING: DONE!')
-    } catch (e) {
-      console.error('❌ INFORMING: FAILED.')
-    } finally {
-      console.log('👉 RESETTING SESSION REQUEST EVENT.')
-      setSessionRequestEvent(undefined)
-      setSessionRequestData(undefined)
-      showToast({ text1: t('dApp request rejected'), text2: t('You can go back to your browser.'), type: 'info' })
-    }
-  }, [respondToWalletConnectWithError, sessionRequestEvent, t])
-
-  const handleSendTxOrSignFail = useCallback(
-    async (error: WalletConnectError) => {
-      if (!sessionRequestEvent) return
-
-      try {
-        console.log('⏳ INFORMING DAPP THAT SESSION REQUEST FAILED...')
-        await respondToWalletConnectWithError(sessionRequestEvent, error)
-        console.log('✅ INFORMING: DONE!')
-      } catch (e) {
-        console.error('❌ INFORMING: FAILED.')
-      } finally {
-        console.log('👉 RESETTING SESSION REQUEST EVENT.')
-        setSessionRequestEvent(undefined)
-        setSessionRequestData(undefined)
-      }
-    },
-    [respondToWalletConnectWithError, sessionRequestEvent]
-  )
-
-  const openWalletConnectSessionRequestModal = useCallback(
-    () =>
-      sessionRequestData &&
-      walletConnectClient &&
-      dispatch(
-        openModal({
-          name: 'WalletConnectSessionRequestModal',
-          props: {
-            requestData: sessionRequestData,
-            onApprove: handleApprovePress,
-            onReject: handleRejectPress,
-            onSendTxOrSignFail: handleSendTxOrSignFail,
-            onSignSuccess: handleSignSuccess,
-            metadata: activeSessionMetadata,
-            sessionRequestEvent
-          }
-        })
-      ),
-    [
-      activeSessionMetadata,
-      dispatch,
-      handleApprovePress,
-      handleRejectPress,
-      handleSendTxOrSignFail,
-      handleSignSuccess,
-      sessionRequestData,
-      sessionRequestEvent,
-      walletConnectClient
-    ]
-  )
-
   const onSessionRequest = useCallback(
     async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
       if (!walletConnectClient) return
@@ -696,15 +545,21 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             console.log('✅ BUILDING TX: DONE!')
             setLoading('')
 
-            setSessionRequestData({
-              type: 'transfer',
-              wcData: wcTxData,
-              unsignedTxData: buildTransactionTxResult
-            })
-            setSessionRequestEvent(requestEvent)
-
             console.log('⏳ OPENING MODAL TO APPROVE TX...')
-            openWalletConnectSessionRequestModal()
+
+            dispatch(
+              openModal({
+                name: 'WalletConnectSessionRequestModal',
+                props: {
+                  requestEvent,
+                  requestData: {
+                    type: 'transfer',
+                    wcData: wcTxData,
+                    unsignedTxData: buildTransactionTxResult
+                  }
+                }
+              })
+            )
 
             break
           }
@@ -739,15 +594,21 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             console.log('✅ BUILDING TX: DONE!')
             setLoading('')
 
-            setSessionRequestData({
-              type: 'deploy-contract',
-              wcData: wcTxData,
-              unsignedTxData: buildDeployContractTxResult
-            })
-            setSessionRequestEvent(requestEvent)
-
             console.log('⏳ OPENING MODAL TO APPROVE TX...')
-            openWalletConnectSessionRequestModal()
+
+            dispatch(
+              openModal({
+                name: 'WalletConnectSessionRequestModal',
+                props: {
+                  requestEvent,
+                  requestData: {
+                    type: 'deploy-contract',
+                    wcData: wcTxData,
+                    unsignedTxData: buildDeployContractTxResult
+                  }
+                }
+              })
+            )
 
             break
           }
@@ -794,15 +655,21 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             console.log('✅ BUILDING TX: DONE!')
             setLoading('')
 
-            setSessionRequestData({
-              type: 'call-contract',
-              wcData: wcTxData,
-              unsignedTxData: buildCallContractTxResult
-            })
-            setSessionRequestEvent(requestEvent)
-
             console.log('⏳ OPENING MODAL TO APPROVE TX...')
-            openWalletConnectSessionRequestModal()
+
+            dispatch(
+              openModal({
+                name: 'WalletConnectSessionRequestModal',
+                props: {
+                  requestEvent,
+                  requestData: {
+                    type: 'call-contract',
+                    wcData: wcTxData,
+                    unsignedTxData: buildCallContractTxResult
+                  }
+                }
+              })
+            )
 
             break
           }
@@ -824,14 +691,20 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               messageHasher
             }
 
-            setSessionRequestData({
-              type: 'sign-message',
-              wcData: signData
-            })
-            setSessionRequestEvent(requestEvent)
-
             console.log('⏳ OPENING MODAL TO SIGN MESSAGE...')
-            openWalletConnectSessionRequestModal()
+
+            dispatch(
+              openModal({
+                name: 'WalletConnectSessionRequestModal',
+                props: {
+                  requestEvent,
+                  requestData: {
+                    type: 'sign-message',
+                    wcData: signData
+                  }
+                }
+              })
+            )
 
             break
           }
@@ -860,15 +733,21 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
             console.log('✅ DECODING TX: DONE!')
             setLoading('')
 
-            setSessionRequestData({
-              type: 'sign-unsigned-tx',
-              wcData: wcTxData,
-              unsignedTxData: decodedResult
-            })
-            setSessionRequestEvent(requestEvent)
-
             console.log('⏳ OPENING MODAL TO SIGN UNSIGNED TX...')
-            openWalletConnectSessionRequestModal()
+
+            dispatch(
+              openModal({
+                name: 'WalletConnectSessionRequestModal',
+                props: {
+                  requestEvent,
+                  requestData: {
+                    type: 'sign-unsigned-tx',
+                    wcData: wcTxData,
+                    unsignedTxData: decodedResult
+                  }
+                }
+              })
+            )
 
             break
           }
@@ -924,14 +803,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     // The `addresses` dependency causes re-rendering when any property of an Address changes, even though we only need
     // the `hash` and the `publicKey`. Creating a selector that extracts those 3 doesn't help.
     // Using addressIds fixes the problem, but now the api/transactions.ts file becomes dependant on the store file.
-    [
-      walletConnectClient,
-      respondToWalletConnectWithError,
-      addressIds,
-      openWalletConnectSessionRequestModal,
-      handleApiResponse,
-      t
-    ]
+    [addressIds, dispatch, handleApiResponse, respondToWalletConnectWithError, t, walletConnectClient]
   )
 
   useEffect(() => {
@@ -1025,7 +897,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         activeSessions,
         refreshActiveSessions,
         resetWalletConnectClientInitializationAttempts,
-        resetWalletConnectStorage
+        resetWalletConnectStorage,
+        respondToWalletConnectWithError,
+        respondToWalletConnect
       }}
     >
       {children}
