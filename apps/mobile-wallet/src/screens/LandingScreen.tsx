@@ -99,20 +99,22 @@ const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
           <ScreenSection fill verticalGap>
             <WelcomeCard />
           </ScreenSection>
-          <ButtonsContainer bottomInset>
-            <Button
-              title={t('New wallet')}
-              type="primary"
-              onPress={() => handleButtonPress('create')}
-              variant="highlight"
-              iconProps={{ name: 'sun' }}
-            />
-            <Button
-              title={t('Import wallet')}
-              onPress={() => handleButtonPress('import')}
-              iconProps={{ name: 'download' }}
-            />
-          </ButtonsContainer>
+          <ScreenSection>
+            <ButtonsContainer bottomInset fullWidth>
+              <Button
+                title={t('New wallet')}
+                type="primary"
+                onPress={() => handleButtonPress('create')}
+                variant="highlight"
+                iconProps={{ name: 'sun' }}
+              />
+              <Button
+                title={t('Import wallet')}
+                onPress={() => handleButtonPress('import')}
+                iconProps={{ name: 'download' }}
+              />
+            </ButtonsContainer>
+          </ScreenSection>
         </>
       )}
     </Screen>

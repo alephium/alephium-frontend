@@ -69,10 +69,10 @@ const ImportWalletAddressDiscoveryScreen = ({ navigation, ...props }: ImportWall
         <Button
           title={t('Scan')}
           type="primary"
-          variant="highlight"
+          variant="contrast"
           onPress={() => navigation.navigate('AddressDiscoveryScreen', { isImporting: true })}
         />
-        <Button title={t('Later')} type="primary" variant="accent" onPress={handleLaterPress} />
+        <Button title={t('Later')} type="primary" onPress={handleLaterPress} />
       </BottomButtons>
     </ScrollScreen>
   )

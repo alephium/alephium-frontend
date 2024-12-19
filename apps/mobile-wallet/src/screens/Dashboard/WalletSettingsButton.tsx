@@ -25,6 +25,8 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 const WalletSettingsButton = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList | SendNavigationParamList>>()
 
-  return <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings' }} squared />
+  return (
+    <Button onPress={() => navigation.navigate('SettingsScreen')} iconProps={{ name: 'settings' }} squared compact />
+  )
 }
 export default WalletSettingsButton

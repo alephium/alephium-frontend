@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { FlashList, FlashListProps } from '@shopify/flash-list'
 import { useRef, useState } from 'react'
+import { Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
@@ -100,5 +101,5 @@ const FlashListScreen = <T,>({
 export default FlashListScreen
 
 const BottomButtonsContainer = styled.View`
-  margin: 0 ${DEFAULT_MARGIN}px;
+  margin: ${Platform.OS === 'ios' ? 0 : undefined} ${DEFAULT_MARGIN}px;
 `

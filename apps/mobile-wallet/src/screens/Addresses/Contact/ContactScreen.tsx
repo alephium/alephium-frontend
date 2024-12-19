@@ -97,6 +97,7 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
               onPress={() => navigation.navigate('EditContactScreen', { contactId: params.contactId })}
               type="transparent"
               variant="accent"
+              compact
             />
           )
         }}

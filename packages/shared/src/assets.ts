@@ -17,8 +17,8 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { explorer, NFTTokenUriMetaData } from '@alephium/web3'
-import DOMPurify from 'dompurify'
 import { isArray, orderBy } from 'lodash'
+import sanitize from 'sanitize-html'
 
 import { calculateAmountWorth } from '@/numbers'
 import { Asset, FungibleToken, NFT, TokenDisplayBalances, TokenPriceEntity } from '@/types'
@@ -88,11 +88,11 @@ export const matchesNFTTokenUriMetaDataSchema = (nft: NFTTokenUriMetaData) =>
 
 export const sanitizeNft = (nft: NFT): NFT => ({
   ...nft,
-  name: DOMPurify.sanitize(nft.name),
-  description: nft.description ? DOMPurify.sanitize(nft.description) : nft.description,
-  image: DOMPurify.sanitize(nft.image),
+  name: sanitize(nft.name),
+  description: nft.description ? sanitize(nft.description) : nft.description,
+  image: sanitize(nft.image),
   attributes: nft.attributes?.map(({ trait_type, value }) => ({
-    trait_type: DOMPurify.sanitize(trait_type),
-    value: DOMPurify.sanitize(value.toString())
+    trait_type: sanitize(trait_type),
+    value: sanitize(value.toString())
   }))
 })
