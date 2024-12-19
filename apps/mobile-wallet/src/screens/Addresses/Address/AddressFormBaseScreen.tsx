@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import AppText from '~/components/AppText'
-import { ContinueButton } from '~/components/buttons/Button'
+import Button from '~/components/buttons/Button'
 import ExpandableRow from '~/components/ExpandableRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
@@ -80,18 +80,14 @@ const AddressForm = ({
       fill
       verticalGap
       screenTitle={screenTitle}
-      headerOptions={{
-        type: 'stack',
-        headerRight: () => (
-          <ContinueButton
-            title={buttonText || t('Generate')}
-            onPress={() => onSubmit({ isDefault, label, color, group })}
-            iconProps={undefined}
-          />
-        ),
-        headerTitle: screenTitle,
-        ...headerOptions
-      }}
+      headerOptions={{ type: 'stack', headerTitle: screenTitle, ...headerOptions }}
+      bottomButtonsRender={() => (
+        <Button
+          title={buttonText || t('Generate')}
+          variant="highlight"
+          onPress={() => onSubmit({ isDefault, label, color, group })}
+        />
+      )}
       {...props}
     >
       <View>{HeaderComponent}</View>
