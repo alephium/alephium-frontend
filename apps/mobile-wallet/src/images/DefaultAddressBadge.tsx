@@ -26,9 +26,9 @@ interface DefaultAddressBadgeProps {
   style?: StyleProp<ViewStyle>
 }
 
-const DefaultAddressBadge = ({ size = 24, color = 'blue', ...props }: DefaultAddressBadgeProps) => (
-  <DefaultAddressBadgeStyled size={size} color={color} {...props}>
-    <StarShape size={size - 4} color="white" />
+const DefaultAddressBadge = ({ size = 26, color = 'blue', ...props }: DefaultAddressBadgeProps) => (
+  <DefaultAddressBadgeStyled size={size} {...props}>
+    <StarShape size={size - 4} color={color} />
   </DefaultAddressBadgeStyled>
 )
 
@@ -50,7 +50,6 @@ const DefaultAddressBadgeStyled = styled.View<DefaultAddressBadgeProps>`
   justify-content: center;
   align-items: center;
   border-radius: ${({ size }) => size! / 2}px;
-  background-color: ${({ color }) => color};
   height: ${({ size }) => size}px;
   width: ${({ size }) => size}px;
 `

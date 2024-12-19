@@ -55,7 +55,7 @@ const WalletConnectButton = () => {
     <Button
       onPress={onpenWalletConnectPairingsModal}
       style={activeSessions.length ? { backgroundColor: '#3B99FC' } : undefined}
-      customIcon={<WalletConnectSVG width={18} color={activeSessions.length ? '#fff' : '#3B99FC'} />}
+      customIcon={<WalletConnectSVG width={18} color={theme.font.secondary} />}
       squared
       compact
     />

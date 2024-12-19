@@ -70,7 +70,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
           <NoContactMessageBox>
             <EmojiContainer size={60}>🤷‍♀️</EmojiContainer>
             <AppText>{t('No contact yet!')}</AppText>
-            <Button title={t('Add contact')} onPress={onNewContactPress} variant="highlight" />
+            <Button title={t('Add contact')} onPress={onNewContactPress} variant="contrast" short />
           </NoContactMessageBox>
         </NoContactContainer>
       ) : (
@@ -134,8 +134,8 @@ const HeaderScreenSection = styled(ScreenSection)`
 const SearchInput = styled(TextInput)`
   flex: 1;
   background-color: ${({ theme }) => theme.bg.highlight};
-  padding: 9px 12px;
-  border-radius: 9px;
+  padding: 12px;
+  border-radius: 100px;
   color: ${({ theme }) => theme.font.primary};
 `
 

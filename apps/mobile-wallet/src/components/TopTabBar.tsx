@@ -23,7 +23,6 @@ import Reanimated, { AnimatedRef, interpolate, SharedValue, useAnimatedStyle } f
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { BORDER_RADIUS } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 type TabsLayout = Record<number, LayoutRectangle>
@@ -103,9 +102,7 @@ interface TabBarItemProps extends PressableProps {
 
 const TabBarItem = ({ label, ...props }: TabBarItemProps) => (
   <TabBarItemStyled key={label} accessibilityRole="button" {...props}>
-    <AppText semiBold size={16}>
-      {label}
-    </AppText>
+    <AppText size={15}>{label}</AppText>
   </TabBarItemStyled>
 )
 
@@ -129,11 +126,12 @@ const HeaderContainer = styled(Reanimated.View)`
 const TabBarItemStyled = styled.Pressable`
   height: 100%;
   justify-content: center;
+  align-items: center;
 `
 
 const Indicator = styled(Reanimated.View)`
   position: absolute;
   height: 80%;
-  border-radius: ${BORDER_RADIUS}px;
+  border-radius: 100px;
   background-color: ${({ theme }) => theme.bg.highlight};
 `

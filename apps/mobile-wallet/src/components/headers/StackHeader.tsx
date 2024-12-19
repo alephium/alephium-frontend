@@ -26,7 +26,7 @@ export type StackHeaderCustomProps = BaseHeaderProps & {
 }
 
 const StackHeader = ({ onBackPress: goBack, options, ...props }: StackHeaderCustomProps) => {
-  const HeaderLeft = goBack ? <Button onPress={goBack} iconProps={{ name: 'arrow-left' }} squared /> : null
+  const HeaderLeft = goBack ? <Button onPress={goBack} iconProps={{ name: 'arrow-left' }} squared compact /> : null
 
   return <BaseHeader options={{ headerLeft: () => HeaderLeft, ...options }} {...props} />
 }
