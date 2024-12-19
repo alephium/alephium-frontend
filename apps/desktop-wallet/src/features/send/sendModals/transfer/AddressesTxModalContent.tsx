@@ -20,12 +20,12 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import FooterButton from '@/components/Buttons/FooterButton'
+import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import AddressInputs from '@/features/send/AddressInputs'
 import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
-import { ModalContent } from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { isAddressValid, requiredErrorMessage } from '@/utils/form-validation'
 
@@ -64,7 +64,8 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
   const isSubmitButtonActive = toAddress.value && !toAddress.error
 
   return (
-    <ModalContent>
+    <>
+      <InfoBox>{t('Start by selecting the origin and destination addresses.')}</InfoBox>
       <InputFieldsColumn>
         <AddressInputs
           defaultFromAddress={fromAddressHash}
@@ -86,7 +87,7 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
       >
         {t('Continue')}
       </FooterButton>
-    </ModalContent>
+    </>
   )
 }
 

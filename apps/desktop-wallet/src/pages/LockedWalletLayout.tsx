@@ -19,26 +19,24 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { motion, MotionProps } from 'framer-motion'
 import styled from 'styled-components'
 
-import SideBar from '@/components/PageComponents/SideBar'
-import Scrollbar from '@/components/Scrollbar'
-import { ReactComponent as AlephiumLogotype } from '@/images/logotype.svg'
+import AnimatedBackground from '@/components/AnimatedBackground'
+import AppHeader from '@/components/AppHeader'
+import ScrollbarCustom from '@/components/Scrollbar'
 
 interface LockedWalletLayoutProps extends MotionProps {
   className?: string
-  animateSideBar?: boolean
 }
 
-const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, animateSideBar, ...props }) => (
-  <motion.main {...props}>
-    <SideBar animateEntry={animateSideBar}>
-      <Logo>
-        <AlephiumLogotypeStyled />
-      </Logo>
-    </SideBar>
-    <Scrollbar>
-      <CenteredContainer>{children}</CenteredContainer>
-    </Scrollbar>
-  </motion.main>
+const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, ...props }) => (
+  <>
+    <AnimatedBackgroundStyled offsetTop={400} />
+    <motion.main {...props}>
+      <ScrollbarCustom>
+        <AppHeader position="fixed" />
+        <CenteredContainer>{children}</CenteredContainer>
+      </ScrollbarCustom>
+    </motion.main>
+  </>
 )
 
 export default styled(LockedWalletLayout)`
@@ -48,17 +46,18 @@ export default styled(LockedWalletLayout)`
   background-color: ${({ theme }) => theme.bg.background1};
 `
 
-const Logo = styled.div`
-  padding: 5px;
-`
-
-const AlephiumLogotypeStyled = styled(AlephiumLogotype)`
-  fill: ${({ theme }) => theme.font.primary};
-  color: ${({ theme }) => theme.font.primary};
-`
-
 const CenteredContainer = styled.div`
   display: flex;
   align-items: center;
   min-height: 100%;
+`
+
+const AnimatedBackgroundStyled = styled(AnimatedBackground)`
+  position: absolute;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
 `

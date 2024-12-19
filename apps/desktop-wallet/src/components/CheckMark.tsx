@@ -39,4 +39,5 @@ export default styled(CheckMark)`
   color: var(--color-white);
   border-radius: 40px;
   padding: 3px;
+  margin: 0 var(--spacing-2);
 `

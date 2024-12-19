@@ -27,7 +27,7 @@ export interface TokensTabsBaseProps {
 }
 
 export interface WalletTokensTabsProps extends TokensTabsBaseProps {
-  maxHeightInPx: number
+  maxHeightInPx?: number
 }
 
 export interface AddressTokensTabsProps extends TokensTabsBaseProps {

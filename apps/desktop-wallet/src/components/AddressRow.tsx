@@ -22,7 +22,7 @@ import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
-import { TableRow } from '@/components/Table'
+import { TableCell, TableRow } from '@/components/Table'
 
 interface AddressRowProps {
   addressHash: AddressHash
@@ -41,24 +41,18 @@ const AddressRow = ({ addressHash, onClick, children, className, subtitle }: Add
     onKeyDown={() => onClick && onClick(addressHash)}
     className={className}
   >
-    <Row>
+    <TableCell>
       <AddressColorIndicatorStyled addressHash={addressHash} />
       <Label>
         <AddressBadge addressHash={addressHash} hideColorIndication truncate appendHash displayHashUnder />
         <AddressSubtitle>{subtitle}</AddressSubtitle>
       </Label>
-      {children}
-    </Row>
+    </TableCell>
+    {children && <TableCell>{children}</TableCell>}
   </TableRow>
 )
 
 export default AddressRow
-
-const Row = styled.div`
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-`
 
 const AddressColorIndicatorStyled = styled(AddressColorIndicator)`
   margin-right: 15px;
@@ -66,8 +60,8 @@ const AddressColorIndicatorStyled = styled(AddressColorIndicator)`
 
 const Label = styled.div`
   font-size: 14px;
-  font-weight: var(--fontWeight-medium);
-  max-width: 120px;
+  font-weight: var(--fontWeight-semiBold);
+  max-width: 160px;
 `
 
 const AddressSubtitle = styled.span`

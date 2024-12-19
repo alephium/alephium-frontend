@@ -39,9 +39,9 @@ export const AddressTokensTabs = ({ addressHash }: AddressTokensTabsProps) => {
 
   const { tabs, isExpanded, toggleExpansion } = useTokensTabs({
     numberOfNSTs: nstIds.length,
-    ftsTabTitle: `💰 ${t('Address tokens')}`,
-    nstsTabTitle: `❔ ${t('Address unknown tokens')}`,
-    nftsTabTitle: `🖼️ ${t('Address NFTs')}`
+    ftsTabTitle: t('Address tokens'),
+    nstsTabTitle: t('Address unknown tokens'),
+    nftsTabTitle: t('Address NFTs')
   })
 
   const [currentTab, setCurrentTab] = useState<TabItem<TokensTabValue>>(tabs[0])
@@ -74,9 +74,9 @@ export const WalletTokensTabs = ({ maxHeightInPx, className }: WalletTokensTabsP
 
   const { tabs, isExpanded, toggleExpansion } = useTokensTabs({
     numberOfNSTs: nstIds.length,
-    ftsTabTitle: `💰 ${t('Tokens')}`,
-    nstsTabTitle: `❔ ${t('Unknown tokens')}`,
-    nftsTabTitle: `🖼️ ${t('NFTs')}`
+    ftsTabTitle: t('Tokens'),
+    nstsTabTitle: t('Unknown tokens'),
+    nftsTabTitle: t('NFTs')
   })
 
   const [currentTab, setCurrentTab] = useState<TabItem<TokensTabValue>>(tabs[0])
@@ -134,7 +134,6 @@ const TokensTabs = ({
     <FocusableContent className={className} isFocused={isExpanded} onClose={toggleExpansion}>
       <ExpandableTable isExpanded={isExpanded} maxHeightInPx={maxHeightInPx}>
         <TableTabBar items={tabs} onTabChange={setCurrentTab} activeTab={currentTab} />
-
         {children}
       </ExpandableTable>
     </FocusableContent>

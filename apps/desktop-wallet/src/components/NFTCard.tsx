@@ -66,14 +66,15 @@ export default NFTCard
 const NFTPictureContainer = styled(motion.div)`
   flex: 1;
   position: relative;
-  background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.06).toHex()};
+  background-color: ${({ theme }) => theme.bg.highlight};
   overflow: hidden;
 `
 
 const NFTCardStyled = styled.div`
   display: flex;
-  background-color: ${({ theme }) => theme.bg.background2};
-  border-radius: var(--radius-huge);
+  background-color: ${({ theme }) => theme.bg.highlight};
+  border-radius: var(--radius-big);
+  border: 1px solid ${({ theme }) => theme.border.secondary};
   overflow: hidden;
   transition: all cubic-bezier(0.2, 0.65, 0.5, 1) 0.1s;
   height: 200px;
@@ -81,6 +82,7 @@ const NFTCardStyled = styled.div`
   &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => colord(theme.bg.background2).lighten(0.02).toHex()};
+    border: 1px solid ${({ theme }) => theme.border.primary};
 
     ${NFTPictureContainer} {
       filter: brightness(1.05);

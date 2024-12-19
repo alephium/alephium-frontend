@@ -51,13 +51,13 @@ export interface TextAreaProps extends InputHTMLAttributes<HTMLTextAreaElement> 
 }
 
 export const inputPlaceHolderVariants: Variants = {
-  up: { y: '-25%', scale: 0.85 },
+  up: { y: '-10px', scale: 0.8 },
   down: { y: 0, scale: 1 }
 }
 
 export const inputStyling = {
-  paddingRight: '12px',
-  paddingLeftRight: '15px'
+  paddingRight: '20px',
+  paddingLeftRight: '20px'
 }
 
 export const inputDefaultStyle = (
@@ -65,42 +65,39 @@ export const inputDefaultStyle = (
   hasValue?: boolean,
   hasLabel?: boolean,
   heightSize?: InputHeight,
-  isContrasted?: boolean,
   largeText?: boolean
 ) => css`
-  background-image: none;
-  height: ${heightSize === 'small' ? '50px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
+  height: ${heightSize === 'small' ? '38px' : heightSize === 'big' ? '50px' : 'var(--inputHeight)'};
   width: 100%;
-  border-radius: var(--radius-big);
-  background-color: ${({ theme }) => (isContrasted && theme.name === 'dark' ? theme.bg.background2 : theme.bg.primary)};
+  border-radius: 100px;
   border: 1px solid ${({ theme }) => theme.border.primary};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 45px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
   font-weight: var(--fontWeight-medium);
-  font-size: ${largeText ? '1.12em' : '1em'};
+  font-size: ${largeText ? '15px' : '14px'};
   text-align: left;
   font-family: inherit;
+  backdrop-filter: blur(10px) brightness(${({ theme }) => (theme.name === 'light' ? '2' : '1.5')}) saturate(1.2);
+
+  transition: all 0.15s;
 
   ${hasValue &&
   hasLabel &&
   css`
-    padding-top: 15px;
+    padding-top: 13px;
   `}
 
   &:focus {
-    background-color: ${({ theme }) => theme.bg.primary};
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.global.accent};
+    background-color: ${({ theme }) => theme.bg.hover};
     border: 1px solid ${({ theme }) => theme.global.accent};
   }
 
   &.error {
-    border: 1px solid ${({ theme }) => theme.global.alert};
     background-color: ${({ theme }) => colord(theme.global.alert).alpha(0.1).toRgbString()};
   }
 
   &:disabled {
     background-color: ${({ theme }) => theme.bg.secondary};
-    border: 1px solid ${({ theme }) => theme.border.primary};
     cursor: not-allowed;
   }
 
@@ -124,16 +121,16 @@ export const inputDefaultStyle = (
 
 export const InputErrorMessage = styled(motion.label)<InputProps>`
   position: absolute;
-  bottom: -7px;
-  right: var(--spacing-2);
+  bottom: 0px;
+  right: 0;
   font-weight: var(--fontWeight-medium);
   opacity: 0;
   font-size: 0.8em;
   color: ${({ theme }) => theme.global.alert};
   border: 1px solid ${({ theme }) => theme.global.alert};
   border-radius: var(--radius-huge);
-  padding: 6px 12px;
-  background-color: ${({ theme }) => theme.bg.primary};
+  padding: 2px 8px;
+  background-color: ${({ theme }) => theme.bg.background1};
 `
 
 export const InputLabel: FC<HTMLMotionProps<'label'> & { isElevated: boolean }> = ({ isElevated, ...props }) => (
@@ -147,16 +144,16 @@ export const InputLabel: FC<HTMLMotionProps<'label'> & { isElevated: boolean }> 
 
 const StyledInputLabel = styled(motion.label)`
   position: absolute;
-
-  left: ${inputStyling.paddingLeftRight};
+  left: calc(${inputStyling.paddingLeftRight} + 2px);
   top: 0;
   height: 100%;
   display: flex;
   align-items: center;
-  font-weight: var(--fontWeight-semiBold);
-  color: ${({ theme }) => theme.font.secondary};
+  font-weight: var(--fontWeight-medium);
+  color: ${({ theme }) => theme.font.tertiary};
   pointer-events: none;
   transform-origin: left;
+  z-index: 1;
 `
 
 export const InputIconContainer = styled(motion.div)`

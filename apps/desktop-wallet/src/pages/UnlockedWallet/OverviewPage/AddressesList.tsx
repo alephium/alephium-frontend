@@ -31,7 +31,6 @@ import AddressRow from '@/components/AddressRow'
 import Amount from '@/components/Amount'
 import FocusableContent from '@/components/FocusableContent'
 import { ExpandableTable, ExpandRow, TableHeader } from '@/components/Table'
-import TableCellAmount from '@/components/TableCellAmount'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
 import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
@@ -85,9 +84,7 @@ const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: Addr
       <motion.div {...fadeIn} className={className}>
         {allAddressHashes.map((addressHash) => (
           <AddressRow addressHash={addressHash} onClick={handleRowClick} key={addressHash}>
-            <TableCellAmount>
-              <AddressWorth addressHash={addressHash} />
-            </TableCellAmount>
+            <AddressWorth addressHash={addressHash} />
           </AddressRow>
         ))}
       </motion.div>

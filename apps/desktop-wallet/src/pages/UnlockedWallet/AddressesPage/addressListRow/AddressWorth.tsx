@@ -28,7 +28,7 @@ interface AddressWorthProps {
 const AddressWorth = ({ addressHash }: AddressWorthProps) => {
   const { data: worth, isLoading } = useFetchAddressWorth(addressHash)
 
-  return <Amount value={worth} isFiat isLoading={isLoading} loaderHeight={18.5} />
+  return <Amount value={worth} isFiat isLoading={isLoading} loaderHeight={18.5} semiBold />
 }
 
 export default AddressWorth

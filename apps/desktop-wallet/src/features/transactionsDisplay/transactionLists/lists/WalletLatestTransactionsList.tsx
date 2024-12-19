@@ -46,7 +46,7 @@ const WalletLatestTransactionsList = () => {
   return (
     <Table minWidth="500px">
       <TableHeader title={t('Latest transactions')}>
-        <ActionLinkStyled onClick={() => navigate('/wallet/transfers')} Icon={ChevronRight} withBackground>
+        <ActionLinkStyled onClick={() => navigate('/wallet/transfers')} Icon={ChevronRight}>
           {t('See more')}
         </ActionLinkStyled>
       </TableHeader>

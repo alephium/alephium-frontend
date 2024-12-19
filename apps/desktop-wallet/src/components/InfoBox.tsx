@@ -36,7 +36,6 @@ export interface InfoBoxProps {
   small?: boolean
   short?: boolean
   contrast?: boolean
-  noBorders?: boolean
   className?: string
 }
 
@@ -51,21 +50,14 @@ const InfoBox: FC<InfoBoxProps> = ({
   onClick,
   short,
   children,
-  contrast,
-  noBorders
+  contrast
 }) => {
   const theme = useTheme()
 
   return (
     <div className={className} onClick={onClick}>
       {label && <Label variants={sectionChildrenVariants}>{label}</Label>}
-      <StyledBox
-        variants={sectionChildrenVariants}
-        importance={importance}
-        short={short}
-        contrast={contrast}
-        noBorders={noBorders}
-      >
+      <StyledBox variants={sectionChildrenVariants} importance={importance} short={short} contrast={contrast}>
         {Icon && (
           <IconContainer>
             <Icon color={getImportanceColor(theme, importance)} strokeWidth={1.5} />
@@ -82,7 +74,7 @@ const InfoBox: FC<InfoBoxProps> = ({
 const getImportanceColor = (theme: DefaultTheme, importance?: InfoBoxImportance) =>
   importance
     ? {
-        default: theme.font.secondary,
+        default: theme.bg.accent,
         alert: theme.global.alert,
         warning: theme.global.highlight,
         accent: theme.global.accent
@@ -107,7 +99,7 @@ const TextContainer = styled.div<{ wordBreak?: boolean; ellipsis?: boolean }>`
   flex: 2;
   font-weight: var(--fontWeight-medium);
   word-break: ${({ wordBreak }) => (wordBreak ? 'break-all' : 'initial')};
-  text-align: left;
+  text-align: center;
 
   ${({ ellipsis }) =>
     ellipsis
@@ -120,38 +112,31 @@ const TextContainer = styled.div<{ wordBreak?: boolean; ellipsis?: boolean }>`
         `}
 `
 
-const StyledBox = styled(motion.div)<{
-  importance?: InfoBoxImportance
-  short?: boolean
-  contrast?: boolean
-  noBorders?: boolean
-}>`
-  padding: var(--spacing-3);
-  height: ${({ short }) => (short ? 'var(--inputHeight)' : 'auto')};
-  background-color: ${({ theme, contrast, importance }) =>
-    contrast
-      ? theme.bg.secondary
-      : importance
-        ? colord(getImportanceColor(theme, importance)).alpha(0.05).toHex()
-        : theme.bg.primary};
-
-  display: flex;
-  border-radius: var(--radius-big);
-  align-items: center;
-  gap: 15px;
-
-  ${({ theme, importance, noBorders }) =>
-    !noBorders &&
-    css`
-      border: 1px solid ${colord(getImportanceColor(theme, importance)).alpha(0.2).toHex()};
-    `}
-`
-
 const Label = styled(motion.label)`
   display: block;
   width: 100%;
   margin-left: var(--spacing-3);
   margin-bottom: 7px;
   color: ${({ theme }) => theme.font.secondary};
-  font-weight: var(--fontWeight-medium);
+  font-weight: var(--fontWeight-semiBold);
+`
+
+const StyledBox = styled(motion.div)<{
+  importance?: InfoBoxImportance
+  short?: boolean
+  contrast?: boolean
+}>`
+  padding: var(--spacing-4) var(--spacing-3);
+  height: ${({ short }) => (short ? 'var(--inputHeight)' : 'auto')};
+  background-color: ${({ theme, contrast, importance }) =>
+    contrast
+      ? theme.bg.secondary
+      : importance
+        ? colord(getImportanceColor(theme, importance)).alpha(0.08).toHex()
+        : theme.bg.primary};
+
+  display: flex;
+  border-radius: var(--radius-big);
+  align-items: center;
+  gap: 15px;
 `

@@ -190,7 +190,6 @@ const Decimals = styled.span`
 
 const Suffix = styled.span`
   color: ${({ theme }) => theme.font.secondary};
-  font-weight: 500;
 `
 
 const RawAmount = styled.div`

@@ -20,14 +20,7 @@ import Ionicons from '@expo/vector-icons/Feather'
 import { colord } from 'colord'
 import { ComponentProps, ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
-import Animated, {
-  FadeIn,
-  FadeOut,
-  LinearTransition,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring
-} from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { fastestSpringConfiguration } from '~/animations/reanimated/reanimatedAnimations'
@@ -198,7 +191,6 @@ const Button = ({
           }
         >
           <AnimatedIonicons
-            layout={LinearTransition}
             color={variant === 'highlightedIcon' ? 'white' : font}
             size={compact ? 16 : hasOnlyIcon ? 22 : 20}
             style={compact ? { marginLeft: 1, marginTop: 1 } : undefined}

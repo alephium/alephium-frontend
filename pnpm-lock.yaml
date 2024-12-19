@@ -80,6 +80,9 @@ importers:
       electron-updater:
         specifier: ^6.3.9
         version: 6.3.9
+      react-custom-scroll:
+        specifier: ^7.0.0
+        version: 7.0.0
     devDependencies:
       '@actions/tool-cache':
         specifier: ^2.0.1
@@ -168,9 +171,6 @@ importers:
       '@types/semver-compare':
         specifier: ^1.0.1
         version: 1.0.3
-      '@types/yaireo__tagify':
-        specifier: ^4.18.0
-        version: 4.18.0
       '@types/zxcvbn':
         specifier: ^4.4.1
         version: 4.4.4
@@ -207,9 +207,6 @@ importers:
       '@walletconnect/utils':
         specifier: 2.17.2
         version: 2.17.2(@react-native-async-storage/async-storage@1.23.1)
-      '@yaireo/tagify':
-        specifier: ^4.18.3
-        version: 4.18.3(prop-types@15.8.1)
       '@yornaath/batshit':
         specifier: ^0.10.1
         version: 0.10.1
@@ -277,8 +274,8 @@ importers:
         specifier: ^3.3.0
         version: 3.3.0
       framer-motion:
-        specifier: ^11.2.12
-        version: 11.2.12(@emotion/is-prop-valid@1.2.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^11.12.0
+        version: 11.12.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       i18next:
         specifier: ^23.4.6
         version: 23.7.16
@@ -342,9 +339,6 @@ importers:
       react-router-dom:
         specifier: ^6.3.0
         version: 6.21.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      react-scrollbars-custom:
-        specifier: ^4.1.1
-        version: 4.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-tooltip:
         specifier: ^5.25.1
         version: 5.25.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -433,8 +427,8 @@ importers:
         specifier: ^1.10.7
         version: 1.11.10
       framer-motion:
-        specifier: ^11.2.12
-        version: 11.2.12(@emotion/is-prop-valid@1.2.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: ^11.12.0
+        version: 11.12.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       i18next:
         specifier: ^23.4.6
         version: 23.7.16
@@ -4191,9 +4185,6 @@ packages:
   '@types/verror@1.10.9':
     resolution: {integrity: sha512-MLx9Z+9lGzwEuW16ubGeNkpBDE84RpB/NyGgg6z2BTpWzKkGU451cAY3UkUzZEp72RHF585oJ3V8JVNqIplcAQ==}
 
-  '@types/yaireo__tagify@4.18.0':
-    resolution: {integrity: sha512-iT1it1OyTiuZl7G9Gh2mTBGQ2dssiWChJpmD41/+zLux1x1r2tSroIZ+mXFvdsoqG1yprjd2x+taV+0u9QF9zA==}
-
   '@types/yargs-parser@21.0.3':
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
 
@@ -4593,12 +4584,6 @@ packages:
 
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
-
-  '@yaireo/tagify@4.18.3':
-    resolution: {integrity: sha512-K6ksuPKZvVXQMyJXfh1k9TvX3FupqBLY4RUg+153TZQxtENsPxrRSu165va2uYtj2F76KdoY0laOlE5YO0Kqrg==}
-    engines: {node: '>=14.20.0', npm: '>=8.0.0'}
-    peerDependencies:
-      prop-types: ^15.7.2
 
   '@yornaath/batshit-devtools@1.7.1':
     resolution: {integrity: sha512-AyttV1Njj5ug+XqEWY1smV45dTWMlWKtj1B8jcFYgBKUFyUlF/qEhD+iP1E5UaRYW6hQRYD9T2WNDwFTrOMWzQ==}
@@ -5357,16 +5342,9 @@ packages:
     resolution: {integrity: sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==}
     engines: {node: '>=0.8'}
 
-  clsx@1.2.1:
-    resolution: {integrity: sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==}
-    engines: {node: '>=6'}
-
   cluster-key-slot@1.1.2:
     resolution: {integrity: sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==}
     engines: {node: '>=0.10.0'}
-
-  cnbuilder@3.1.0:
-    resolution: {integrity: sha512-9sxWwwprkPNTVQnx92WYPEWCmyZRqbf9VWUYABU4rl0mLL17VAV2MvvOApkMA6bQVXRLJ8jN//8Yp6drElpLWA==}
 
   co@4.6.0:
     resolution: {integrity: sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==}
@@ -6788,8 +6766,8 @@ packages:
     resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
     engines: {node: '>= 6'}
 
-  framer-motion@11.2.12:
-    resolution: {integrity: sha512-lCjkV4nA9rWOy2bhR4RZzkp2xpB++kFmUZ6D44V9VQaxk+JDmbDd5lq+u58DjJIIllE8AZEXp9OG/TyDN4FB/w==}
+  framer-motion@11.12.0:
+    resolution: {integrity: sha512-gZaZeqFM6pX9kMVti60hYAa75jGpSsGYWAHbBfIkuHN7DkVHVkxSxeNYnrGmHuM0zPkWTzQx10ZT+fDjn7N4SA==}
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: ^18.0.0
@@ -9129,6 +9107,9 @@ packages:
     peerDependencies:
       react: ^16.3.0 || ^17.0.1 || ^18.0.0
 
+  react-custom-scroll@7.0.0:
+    resolution: {integrity: sha512-Obxsr299+7cMItEL4hIF5/pDUJastpjzEGVM5+yetiDSZF6upIocZTu4sf+Z5QYp+O0hnXm+Z2kSLvtrlTeMPA==}
+
   react-detect-click-outside@1.1.7:
     resolution: {integrity: sha512-dMrBZD7JW0Eh/uYNmMLTNwFj6afGYxAnc80fDSGJdjXjxJddH8ZazyMg2emyb8CAx9Hilr+r1fY+tm7O7m9eJg==}
     peerDependencies:
@@ -9142,12 +9123,6 @@ packages:
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
     peerDependencies:
       react: ^18.2.0
-
-  react-draggable@4.4.6:
-    resolution: {integrity: sha512-LtY5Xw1zTPqHkVmtM3X8MUOxNDOUhv/khTgBgrUvwaS064bwVvxT+q5El0uUFNx5IEPKXuRejr7UqLwBIg5pdw==}
-    peerDependencies:
-      react: '>= 16.3.0'
-      react-dom: '>= 16.3.0'
 
   react-fast-compare@3.2.2:
     resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
@@ -9412,11 +9387,6 @@ packages:
     engines: {node: '>=14.0.0'}
     peerDependencies:
       react: '>=16.8'
-
-  react-scrollbars-custom@4.1.1:
-    resolution: {integrity: sha512-FOI1EMrdN5qziwvFAuH4saOo0+ggxeTuKLPpy6nezNdLUnDW1vCHGq0VSSfTSRstDgfXgwff5TMP9NeJ8NiFOQ==}
-    peerDependencies:
-      react: '>=16.0.0'
 
   react-shallow-renderer@16.15.0:
     resolution: {integrity: sha512-oScf2FqQ9LFVQgA73vr86xl2NaOIX73rh+YFqcOp68CWj56tSfgtGKrEbyhCj0rSijyG9M1CYprTh39fBi5hzA==}
@@ -11458,9 +11428,6 @@ packages:
 
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
-
-  zoom-level@2.5.0:
-    resolution: {integrity: sha512-7UlRWU4Q3uCMCeDVMOm7eBrIu145OqsIJ3p6zq58l8UsSYwKWxc6zEapC5YA9tIeh0oheb4cT9Kk2Wq353loFg==}
 
   zxcvbn@4.4.2:
     resolution: {integrity: sha512-Bq0B+ixT/DMyG8kgX2xWcI5jUvCwqrMxSFam7m0lAf78nf04hv6lNCsyLYdyYTrCVMqNDY/206K7eExYCeSyUQ==}
@@ -15472,10 +15439,6 @@ snapshots:
   '@types/verror@1.10.9':
     optional: true
 
-  '@types/yaireo__tagify@4.18.0':
-    dependencies:
-      '@types/react': 18.2.79
-
   '@types/yargs-parser@21.0.3': {}
 
   '@types/yargs@13.0.12':
@@ -16430,10 +16393,6 @@ snapshots:
   '@xtuc/ieee754@1.2.0': {}
 
   '@xtuc/long@4.2.2': {}
-
-  '@yaireo/tagify@4.18.3(prop-types@15.8.1)':
-    dependencies:
-      prop-types: 15.8.1
 
   '@yornaath/batshit-devtools@1.7.1': {}
 
@@ -17399,11 +17358,7 @@ snapshots:
 
   clone@2.1.2: {}
 
-  clsx@1.2.1: {}
-
   cluster-key-slot@1.1.2: {}
-
-  cnbuilder@3.1.0: {}
 
   co@4.6.0: {}
 
@@ -19154,7 +19109,7 @@ snapshots:
       combined-stream: 1.0.8
       mime-types: 2.1.35
 
-  framer-motion@11.2.12(@emotion/is-prop-valid@1.2.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  framer-motion@11.12.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       tslib: 2.6.2
     optionalDependencies:
@@ -21834,6 +21789,14 @@ snapshots:
       react: 18.2.0
       tween-functions: 1.2.0
 
+  react-custom-scroll@7.0.0:
+    dependencies:
+      '@types/lodash': 4.14.202
+      lodash: 4.17.21
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      styled-components: 6.1.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+
   react-detect-click-outside@1.1.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
     dependencies:
       react: 18.2.0
@@ -21852,13 +21815,6 @@ snapshots:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
-
-  react-draggable@4.4.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
-    dependencies:
-      clsx: 1.2.1
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
 
   react-fast-compare@3.2.2: {}
 
@@ -22216,15 +22172,6 @@ snapshots:
     dependencies:
       '@remix-run/router': 1.14.1
       react: 18.2.0
-
-  react-scrollbars-custom@4.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
-    dependencies:
-      cnbuilder: 3.1.0
-      react: 18.2.0
-      react-draggable: 4.4.6(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      zoom-level: 2.5.0
-    transitivePeerDependencies:
-      - react-dom
 
   react-shallow-renderer@16.15.0(react@18.2.0):
     dependencies:
@@ -24528,7 +24475,5 @@ snapshots:
       zod: 3.23.8
 
   zod@3.23.8: {}
-
-  zoom-level@2.5.0: {}
 
   zxcvbn@4.4.2: {}

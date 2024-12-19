@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import Amount from '@/components/Amount'
+import TokenBadge from '@/components/TokenBadge'
 import { TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useFetchTransactionTokens from '@/features/transactionsDisplay/useFetchTransactionTokens'
 import useTransactionInfoType from '@/features/transactionsDisplay/useTransactionInfoType'
@@ -28,7 +28,7 @@ const FTAmounts = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionR
   const infoType = useTransactionInfoType(tx, refAddressHash, isInAddressDetailsModal)
 
   return fungibleTokens.map(({ id, amount }) => (
-    <Amount key={id} tokenId={id} value={amount} highlight={infoType !== 'move'} showPlusMinus={infoType !== 'move'} />
+    <TokenBadge key={id} tokenId={id} amount={amount} showAmount displaySign={infoType !== 'move'} withBackground />
   ))
 }
 

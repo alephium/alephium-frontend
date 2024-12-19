@@ -80,6 +80,13 @@ contextBridge.exposeInMainWorld('electron', {
     show: () => ipcRenderer.invoke('app:show'),
     getSystemLanguage: () => ipcRenderer.invoke('app:getSystemLanguage'),
     getSystemRegion: () => ipcRenderer.invoke('app:getSystemRegion'),
+    openOnRampServiceWindow: ({ url, targetLocation }: { url: string; targetLocation: string }) =>
+      ipcRenderer.invoke('app:openOnRampServiceWindow', { url, targetLocation }),
+    onOnRampTargetLocationReached: (callback: () => void) => {
+      ipcRenderer.on('target-location-reached', callback)
+
+      return () => ipcRenderer.removeListener('target-location-reached', callback)
+    },
     setProxySettings: (proxySettings: ProxySettings) => ipcRenderer.invoke('app:setProxySettings', proxySettings),
     restart: () => ipcRenderer.invoke('app:restart')
   }

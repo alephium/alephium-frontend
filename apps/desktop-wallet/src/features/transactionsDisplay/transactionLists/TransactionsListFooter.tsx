@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next'
 import ActionLink from '@/components/ActionLink'
 import Spinner from '@/components/Spinner'
 import { TableCellPlaceholder, TableRow } from '@/components/Table'
+import PlaceholderText from '@/features/assetsLists/PlaceholderText'
 
 interface TransactionsListFooterBaseProps {
   isDisplayingTxs: boolean
@@ -47,7 +48,7 @@ const TransactionsListFooter = (props: InfiniteTransactionsListFooterProps | Sta
 
   return (
     <TableRow role="row" tabIndex={0}>
-      <TableCellPlaceholder align="center" role="gridcell">
+      <TableCellPlaceholder align="center">
         {props.isDisplayingTxs ? (
           props.showSpinner ? (
             <Spinner size="15px" />
@@ -57,7 +58,7 @@ const TransactionsListFooter = (props: InfiniteTransactionsListFooterProps | Sta
             props.allTxsLoadedMsg && <span>{props.allTxsLoadedMsg}</span>
           )
         ) : (
-          props.noTxsMsg
+          <PlaceholderText>{props.noTxsMsg}</PlaceholderText>
         )}
       </TableCellPlaceholder>
     </TableRow>

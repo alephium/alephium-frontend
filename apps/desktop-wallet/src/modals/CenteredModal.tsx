@@ -16,6 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { ChevronLeft, LucideIcon, X } from 'lucide-react'
 import { ReactNode } from 'react'
@@ -40,6 +41,7 @@ export interface CenteredModalProps extends ModalContainerProps {
   isLoading?: boolean | string
   header?: ReactNode
   transparentHeader?: boolean
+  fullScreen?: boolean
   narrow?: boolean
   dynamicContent?: boolean
   onBack?: () => void
@@ -56,6 +58,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
   isLoading,
   header,
   transparentHeader = false,
+  fullScreen = false,
   narrow = false,
   dynamicContent = false,
   onBack,
@@ -74,11 +77,11 @@ const CenteredModal: FC<CenteredModalProps> = ({
 
   return (
     <ModalContainer id={id} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
-      <CenteredBox role="dialog" {...fadeInOutScaleFast} narrow={narrow}>
+      <CenteredBox role="dialog" {...fadeInOutScaleFast} narrow={narrow} fullScreen={fullScreen}>
         <ModalHeader transparent={transparentHeader}>
           <TitleRow>
             {onBack && !disableBack && (
-              <BackButton aria-label={t('Back')} squared role="secondary" transparent onClick={onBack} borderless>
+              <BackButton aria-label={t('Back')} circle role="secondary" transparent onClick={onBack}>
                 <ChevronLeft />
               </BackButton>
             )}
@@ -87,7 +90,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
                 <Icon />
               </IconContainer>
             )}
-            <PanelTitle size="small" useLayoutId={false}>
+            <PanelTitle size="small">
               <span ref={elRef} tabIndex={0} role="heading">
                 {title}
               </span>
@@ -95,14 +98,12 @@ const CenteredModal: FC<CenteredModalProps> = ({
             </PanelTitle>
             <CloseButton
               aria-label={t('Close')}
-              squared
+              circle
               role="secondary"
-              transparent
               onClick={rest.onClose ?? onClose}
-              borderless
-            >
-              <X />
-            </CloseButton>
+              Icon={X}
+              tiny
+            />
           </TitleRow>
           {header && <ModalHeaderContent>{header}</ModalHeaderContent>}
         </ModalHeader>
@@ -113,7 +114,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
             <ModalContent>{children}</ModalContent>
           )
         ) : (
-          <ScrollableModalContent>{children}</ScrollableModalContent>
+          <Scrollbar>{children}</Scrollbar>
         )}
 
         {isLoading && (
@@ -134,15 +135,10 @@ const CenteredModal: FC<CenteredModalProps> = ({
 export default CenteredModal
 
 export const ScrollableModalContent = ({ children }: Pick<CenteredModalProps, 'children'>) => (
-  <Scrollbar translateContentSizeYToHolder>
-    <ModalContent>{children}</ModalContent>
-  </Scrollbar>
+  <Scrollbar>{children}</Scrollbar>
 )
 
-export const HeaderContent = styled(Section)`
-  flex: 0;
-  margin-bottom: var(--spacing-4);
-`
+export const HeaderContent = styled(Section)``
 
 export const HeaderLogo = styled.div`
   height: 10vh;
@@ -152,39 +148,47 @@ export const HeaderLogo = styled.div`
   width: 100%;
 `
 
-const CenteredBox = styled(motion.div)<{ narrow: boolean }>`
+const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>`
   display: flex;
   flex-direction: column;
+  border: 1px solid ${({ theme }) => theme.border.primary};
 
   position: relative;
 
   width: 100%;
   margin: auto;
-  max-width: ${({ narrow }) => (narrow ? '380px' : '600px')};
+  max-width: ${({ narrow }) => (narrow ? '380px' : '560px')};
   max-height: 90vh;
   overflow: hidden;
 
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
   border-radius: var(--radius-huge);
-  border: 1px solid ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.background1};
 
   ${TitleContainer} {
     flex: 1;
-    margin: var(--spacing-3) var(--spacing-4) var(--spacing-3) var(--spacing-4);
   }
+
+  ${({ fullScreen }) =>
+    fullScreen &&
+    css`
+      max-height: 90vw;
+      max-width: 90vw;
+      height: 90vh;
+      width: 90vw;
+    `}
 `
 
 export const ModalHeader = styled.header<{ transparent?: boolean }>`
-  position: sticky;
+  position: absolute;
   top: 0;
-  z-index: 1;
-  ${({ transparent }) =>
-    !transparent &&
-    css`
-      background-color: ${({ theme }) => theme.bg.background2};
-      border-bottom: 1px solid ${({ theme }) => theme.border.primary};
-    `}
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 6px 16px var(--spacing-6);
+  height: 80px;
+  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 55%, transparent)`};
 `
 
 const ModalHeaderContent = styled(motion.div)`
@@ -194,13 +198,14 @@ const ModalHeaderContent = styled(motion.div)`
 `
 
 const TitleRow = styled.div`
+  flex: 1;
   display: flex;
   align-items: center;
 `
 
 const CloseButton = styled(Button)`
   color: ${({ theme }) => theme.font.primary};
-  margin-right: var(--spacing-2);
+  margin-right: var(--spacing-1);
 `
 
 const BackButton = styled(Button)`
@@ -211,7 +216,7 @@ const BackButton = styled(Button)`
 export const ModalContent = styled.div<{ noBottomPadding?: boolean }>`
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-4) var(--spacing-6);
+  padding: 70px var(--spacing-6) var(--spacing-6) var(--spacing-6);
   width: 100%;
 
   ${({ noBottomPadding }) =>
@@ -228,7 +233,7 @@ export const ModalFooterButtons = styled.div`
   justify-content: space-between;
   gap: 20px;
   margin-top: var(--spacing-4);
-  background-color: ${({ theme }) => theme.bg.background1};
+  background: linear-gradient(to top, ${({ theme }) => theme.bg.background1}, transparent);
 `
 
 export const ModalFooterButton = ({ ...props }) => (

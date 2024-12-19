@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 
+import { BuyModalProps } from '@/features/buy/BuyModal'
 import { CallContractSendModalProps } from '@/features/send/sendModals/callContract/CallContractSendModal'
 import { DeployContractSendModalProps } from '@/features/send/sendModals/deployContract/DeployContractSendModal'
 import { ConfirmLockTimeModalProps } from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
@@ -67,7 +68,8 @@ const ModalNames = {
   DisablePasswordRequirementModal: 'DisablePasswordRequirementModal',
   AddressSweepModal: 'AddressSweepModal',
   WalletRemovalModal: 'WalletRemovalModal',
-  DeleteAddressesModal: 'DeleteAddressesModal'
+  DeleteAddressesModal: 'DeleteAddressesModal',
+  BuyModal: 'BuyModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -185,6 +187,10 @@ export type OpenModalParams =
     }
   | {
       name: typeof ModalNames.DeleteAddressesModal
+    }
+  | {
+      name: typeof ModalNames.BuyModal
+      props: BuyModalProps
     }
 
 export type ModalInstance = {

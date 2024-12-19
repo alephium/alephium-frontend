@@ -20,10 +20,9 @@ import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import AmountsOverviewPanel from '@/components/AmountsOverviewPanel'
-import Box from '@/components/Box'
 import { ShortcutButtonsGroupAddress } from '@/components/Buttons/ShortcutButtons'
 import QRCode from '@/components/QRCode'
+import WorthOverviewPanel from '@/components/WorthOverviewPanel'
 import { AddressTokensTabs } from '@/features/assetsLists/TokensTabs'
 import { AddressModalProps } from '@/features/modals/modalTypes'
 import AddressTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/AddressTransactionsList'
@@ -43,16 +42,13 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
       header={<AddressDetailsModalHeader addressHash={addressHash} />}
       onAnimationComplete={() => setShowChart(true)}
     >
-      <AmountsOverviewPanelStyled addressHash={addressHash} chartVisible={showChart} chartInitiallyHidden>
+      <WorthOverviewPanelStyled addressHash={addressHash} chartVisible={showChart}>
         <QRCode value={addressHash} size={130} />
-      </AmountsOverviewPanelStyled>
+      </WorthOverviewPanelStyled>
 
       <Content>
-        <Shortcuts>
-          <ButtonsGrid>
-            <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" solidBackground />
-          </ButtonsGrid>
-        </Shortcuts>
+        <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" solidBackground />
+
         <AddressTokensTabs addressHash={addressHash} />
         <AddressTransactionsList addressHash={addressHash} />
       </Content>
@@ -62,8 +58,9 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
 
 export default AddressDetailsModal
 
-const AmountsOverviewPanelStyled = styled(AmountsOverviewPanel)`
-  padding: 0;
+const WorthOverviewPanelStyled = styled(WorthOverviewPanel)`
+  margin: var(--spacing-4);
+  width: auto;
 `
 
 const Content = styled.div`
@@ -72,14 +69,6 @@ const Content = styled.div`
   gap: 45px;
   display: flex;
   flex-direction: column;
-`
-
-const Shortcuts = styled(Box)`
-  overflow: hidden;
-  background-color: ${({ theme }) => theme.bg.primary};
-  margin: 0 60px;
-  border-radius: 100px;
-  width: auto;
 `
 
 const ButtonsGrid = styled.div`

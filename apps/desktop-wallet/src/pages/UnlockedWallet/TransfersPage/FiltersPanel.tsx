@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -29,8 +28,6 @@ import MultiSelect from '@/components/Inputs/MultiSelect'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
 import SelectOptionWalletToken from '@/components/Inputs/SelectOptionWalletToken'
 import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
-import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import { appHeaderHeightPx } from '@/style/globalStyles'
 import { Address } from '@/types/addresses'
 import { TokenId } from '@/types/tokens'
 import { directionOptions } from '@/utils/transactions'
@@ -105,7 +102,7 @@ const FiltersPanel = ({
   }, [isLoadingFts, isLoadingTokensByType, selectedTokensIds, setSelectedTokensIds, sortedTokenIds])
 
   return (
-    <UnlockedWalletPanel className={className}>
+    <div className={className}>
       <FilterTiles>
         <Tile>
           <MultiSelect
@@ -152,40 +149,30 @@ const FiltersPanel = ({
         </Tile>
       </FilterTiles>
       <Buttons>
-        <Button role="secondary" short onClick={resetFilters}>
+        <Button role="secondary" wide onClick={resetFilters} short>
           {t('Reset filters')}
         </Button>
       </Buttons>
-    </UnlockedWalletPanel>
+    </div>
   )
 }
 
 export default styled(FiltersPanel)`
-  border-top: 1px solid;
-  border-bottom: 1px solid;
-  border-color: ${({ theme }) => theme.border.primary};
   display: flex;
-  position: sticky;
-  justify-content: space-between;
-  top: ${appHeaderHeightPx}px;
-  background-color: ${({ theme }) => colord(theme.bg.secondary).alpha(0.9).toHex()};
-  backdrop-filter: blur(10px);
-  z-index: 1;
+  align-items: center;
+  flex: 1;
+  gap: 20px;
 `
 
 const FilterTiles = styled.div`
   display: flex;
-  min-width: 0;
   flex: 1;
+  gap: 20px;
 `
 
-const FilterTile = styled.div`
-  padding: 10px;
-  border-right: 1px solid ${({ theme }) => theme.border.primary};
-`
+const FilterTile = styled.div``
 
 const Tile = styled(FilterTile)`
-  min-width: 200px;
   flex: 1;
 `
 

@@ -42,6 +42,7 @@ const RegionSettings = () => {
     <KeyValueInput
       label={t('Region')}
       description={t('Choose your region to update formats of dates, time, and currencies.')}
+      noHorizontalPadding
       InputComponent={
         <Select
           id="region"

@@ -91,7 +91,7 @@ const WalletWelcomePage = () => {
         <SubParagraph>{t('Welcome to Alephium.')}</SubParagraph>
       </Section>
       <FooterActionsContainer>
-        <Button onClick={onButtonClick} submit>
+        <Button onClick={onButtonClick} submit tall>
           {t("Let's go!")}
         </Button>
         <div>
@@ -119,7 +119,7 @@ const WalletWelcomePage = () => {
             sectionTitleOpen={t('Hide advanced options')}
             centered
           >
-            <InfoBox contrast noBorders>
+            <InfoBox contrast>
               <KeyValueInputStyled
                 label={t('Generate one address per group')}
                 description={t('For mining or DeFi use.')}
@@ -147,6 +147,7 @@ const Container = styled.main`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  z-index: 1;
 `
 
 const ConfettiWrapper = styled.div`
@@ -156,6 +157,7 @@ const ConfettiWrapper = styled.div`
   left: 0;
   bottom: 0;
   pointer-events: none;
+  z-index: 2;
 `
 
 const ReadyParagraph = styled(Paragraph)`

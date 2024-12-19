@@ -17,18 +17,20 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { HTMLMotionProps, motion, MotionStyle, Variants } from 'framer-motion'
-import styled, { css } from 'styled-components'
+import { ReactNode } from 'react'
+import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
 import Box from '@/components/Box'
 import { appHeaderHeightPx, deviceBreakPoints } from '@/style/globalStyles'
 
-interface MainPanelProps {
+interface MainPanelProps extends HTMLMotionProps<'div'> {
   verticalAlign?: 'center' | 'flex-start'
   horizontalAlign?: 'center' | 'stretch'
   enforceMinHeight?: boolean
   transparentBg?: boolean
-  borderless?: boolean
+  noMargin?: boolean
+  children?: ReactNode
 }
 
 type SectionContentAlignment = 'flex-start' | 'center' | 'stretch'
@@ -45,11 +47,7 @@ const sectionVariants: Variants = {
   shown: (apparitionDelay = 0) => ({
     opacity: 1,
     transition: {
-      duration: 0.1,
-      when: 'beforeChildren',
-      delay: apparitionDelay,
-      staggerChildren: 0.1,
-      delayChildren: 0.1
+      duration: 0.1
     }
   }),
   out: {
@@ -62,10 +60,10 @@ export const sectionChildrenVariants: Variants = {
   disabled: { y: 0, opacity: 0.5 }
 }
 
-export const FloatingPanel: FC<MainPanelProps> = ({ children, ...props }) => (
-  <StyledFloatingPanel {...fadeIn} {...props}>
+export const FloatingPanel = ({ children, ...props }: MainPanelProps) => (
+  <FloatingPanelStyled {...fadeIn} {...props}>
     {children}
-  </StyledFloatingPanel>
+  </FloatingPanelStyled>
 )
 
 export const Section = ({ children, apparitionDelay, inList, align = 'center', style, className }: SectionProps) => (
@@ -90,19 +88,17 @@ export const BoxContainer = ({ children, ...props }: HTMLMotionProps<'div'>) => 
   </StyledBoxContainer>
 )
 
-const StyledFloatingPanel = styled(motion.div)<MainPanelProps>`
+const FloatingPanelStyled = styled(motion.div)<MainPanelProps>`
   width: 100%;
-  margin: ${appHeaderHeightPx}px auto;
-  max-width: 600px;
+  margin: ${({ noMargin }) => (noMargin ? 0 : `${appHeaderHeightPx}px auto`)};
+  max-width: 500px;
   min-height: ${({ enforceMinHeight }) => (enforceMinHeight ? '600px' : 'initial')};
-  padding: var(--spacing-5);
+  padding: var(--spacing-7) var(--spacing-6);
   display: flex;
   flex-direction: column;
   justify-content: ${({ verticalAlign }) => verticalAlign || 'flex-start'};
   align-items: ${({ horizontalAlign }) => horizontalAlign || 'stretch'};
-  border-radius: var(--radius-huge);
-
-  ${({ borderless, theme }) => !borderless && css``}
+  z-index: 1;
 
   @media ${deviceBreakPoints.mobile} {
     box-shadow: none;
@@ -118,6 +114,7 @@ export const PanelContentContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  width: 100%;
 `
 
 export const SectionContainer = styled(motion.div)<{ align: SectionContentAlignment; inList?: boolean }>`
@@ -126,7 +123,7 @@ export const SectionContainer = styled(motion.div)<{ align: SectionContentAlignm
   flex-direction: column;
   min-width: 280px;
 
-  margin-top: ${({ inList }) => (inList ? 'var(--spacing-5)' : '0')};
+  margin-top: ${({ inList }) => (inList ? 'var(--spacing-3)' : '0')};
 `
 
 const StyledBoxContainer = styled(Box)`
@@ -137,7 +134,7 @@ const StyledBoxContainer = styled(Box)`
 
 export const FooterActionsContainer = styled(Section)`
   flex: 0;
-  margin-top: var(--spacing-5);
+  margin-top: var(--spacing-2);
   width: 100%;
 `
 

@@ -17,20 +17,17 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { maxBy } from 'lodash'
-import { PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
+import AlephiumLogo from '@/components/AlephiumLogo'
 import Button from '@/components/Button'
-import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import Input from '@/components/Inputs/Input'
 import Select from '@/components/Inputs/Select'
 import WalletPassphrase from '@/components/Inputs/WalletPassphrase'
-import { Section } from '@/components/PageComponents/PageContainers'
-import PanelTitle from '@/components/PageComponents/PanelTitle'
-import Paragraph from '@/components/Paragraph'
+import { FloatingPanel, Section } from '@/components/PageComponents/PageContainers'
 import ConnectWithLedgerButton from '@/features/ledger/ConnectWithLedgerButton'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppSelector } from '@/hooks/redux'
@@ -79,60 +76,48 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
 
   return (
     <>
-      <PanelTitle useLayoutId={false} size="big" centerText>
-        {pendingDappConnectionUrl
-          ? t('Connect to dApp')
-          : isAwaitingSessionRequestApproval
-            ? t('Received dApp request')
-            : t('Welcome back.')}
-      </PanelTitle>
-      <ParagraphStyled centered secondary>
-        {pendingDappConnectionUrl ||
-          t(wallets.length === 1 ? 'Unlock your wallet to continue.' : 'Unlock a wallet to continue.')}
-      </ParagraphStyled>
-      <SectionStyled inList>
-        <Select
-          label={t('Wallet')}
-          options={walletOptions}
-          controlledValue={walletOptions.find((w) => w.value === selectedWallet)}
-          onSelect={setSelectedWallet}
-          title={t('Select a wallet')}
-          id="wallet"
-        />
-        <Input
-          label={t('Password')}
-          type="password"
-          autoComplete="off"
-          onChange={(e) => setPassword(e.target.value)}
-          value={password}
-          id="password"
-          autoFocus
-        />
-      </SectionStyled>
-      <ButtonsSection>
-        <Button
-          onClick={handleUnlock}
-          submit
-          disabled={!selectedWalletOption || !password || !isPassphraseConfirmed}
-          tall
-        >
-          {t('Unlock')}
-        </Button>
-        <HorizontalDivider style={{ width: '60%' }} />
-        <SecondaryButtonsSection>
-          <Button
-            onClick={onNewWalletLinkClick}
-            role="secondary"
-            variant="faded"
-            Icon={PlusIcon}
-            short
-            style={{ width: '80%' }}
+      <FloatingPanel verticalAlign="center" horizontalAlign="center" transparentBg>
+        <BrandContainer>
+          <AlephiumLogoContainer>
+            <AlephiumLogo />
+          </AlephiumLogoContainer>
+        </BrandContainer>
+        <SectionStyled inList>
+          <Select
+            label={t('Wallet')}
+            options={walletOptions}
+            controlledValue={walletOptions.find((w) => w.value === selectedWallet)}
+            onSelect={setSelectedWallet}
+            title={t('Select a wallet')}
+            id="wallet"
+            heightSize="big"
+          />
+          <Input
+            label={t('Password')}
+            type="password"
+            autoComplete="off"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            id="password"
+            autoFocus
+            heightSize="big"
+          />
+        </SectionStyled>
+        <ButtonsSection>
+          <ButtonStyled
+            onClick={handleUnlock}
+            submit
+            disabled={!selectedWalletOption || !password || !isPassphraseConfirmed}
+            tall
           >
+            {t('Unlock')}
+          </ButtonStyled>
+          <ButtonStyled onClick={onNewWalletLinkClick} role="secondary" transparent short>
             {t('Import or create a wallet')}
-          </Button>
+          </ButtonStyled>
           <ConnectWithLedgerButton />
-        </SecondaryButtonsSection>
-      </ButtonsSection>
+        </ButtonsSection>
+      </FloatingPanel>
       <WalletPassphraseStyled
         onPassphraseConfirmed={setPassphrase}
         setIsPassphraseConfirmed={setIsPassphraseConfirmed}
@@ -152,23 +137,32 @@ const ButtonsSection = styled(SectionStyled)`
   gap: 20px;
 `
 
-const SecondaryButtonsSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  width: 100%;
-  align-items: center;
+const ButtonStyled = styled(Button)`
+  margin-top: 10px;
 `
 
 const WalletPassphraseStyled = styled(WalletPassphrase)`
-  margin: 16px 0;
+  margin: 10px 0;
   width: 100%;
   position: fixed;
   bottom: 5px;
   right: 20px;
 `
 
-const ParagraphStyled = styled(Paragraph)`
-  font-weight: var(--fontWeight-semiBold);
-  font-size: 16px;
+const BrandContainer = styled.div`
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: var(--spacing-7);
+`
+
+const AlephiumLogoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 34px;
+  width: 100px;
+  height: 100px;
+  border-radius: 100px;
+  background-color: ${({ theme }) => theme.bg.contrast};
 `

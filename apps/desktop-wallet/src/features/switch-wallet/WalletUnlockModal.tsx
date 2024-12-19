@@ -82,6 +82,6 @@ const WalletUnlockModal = memo(({ id, walletId }: ModalBaseProp & WalletUnlockMo
 export default WalletUnlockModal
 
 const WalletPassphraseStyled = styled(WalletPassphrase)`
-  margin: 16px 0;
+  margin: 10px 0;
   width: 100%;
 `

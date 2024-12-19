@@ -17,16 +17,16 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { AddressHash } from '@alephium/shared'
-import { ArrowDown, ArrowUp, Lock, Settings } from 'lucide-react'
+import { colord } from 'colord'
+import { ArrowDownToLine, CreditCard, Send, Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
 import Button from '@/components/Button'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
-import useWalletLock from '@/hooks/useWalletLock'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
@@ -41,16 +41,15 @@ interface ShortcutButtonsGroupWalletProps extends ShortcutButtonBaseProps {
   lock?: boolean
 }
 
-export const ShortcutButtonsGroupWallet = ({ lock, settings, ...buttonProps }: ShortcutButtonsGroupWalletProps) => {
+export const ShortcutButtonsGroupWallet = ({ ...buttonProps }: ShortcutButtonsGroupWalletProps) => {
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
 
   return (
-    <>
+    <ButtonsContainer>
       <ReceiveButton addressHash={defaultAddressHash} {...buttonProps} />
       <SendButton addressHash={defaultAddressHash} {...buttonProps} />
-      {settings && <SettingsButton {...buttonProps} />}
-      {lock && <LockButton {...buttonProps} />}
-    </>
+      <BuyButton addressHash={defaultAddressHash} {...buttonProps} />
+    </ButtonsContainer>
   )
 }
 
@@ -59,18 +58,19 @@ interface ShortcutButtonsGroupAddressProps extends ShortcutButtonBaseProps {
 }
 
 export const ShortcutButtonsGroupAddress = ({ addressHash, ...buttonProps }: ShortcutButtonsGroupAddressProps) => (
-  <>
+  <ButtonsContainer>
     <ReceiveButton addressHash={addressHash} {...buttonProps} />
     <SendButton addressHash={addressHash} {...buttonProps} />
+    <BuyButton addressHash={addressHash} {...buttonProps} />
     <SettingsButton addressHash={addressHash} {...buttonProps} />
-  </>
+  </ButtonsContainer>
 )
 
 interface SettingsButtonProps extends ShortcutButtonBaseProps {
   addressHash?: AddressHash
 }
 
-const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }: SettingsButtonProps) => {
+const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground }: SettingsButtonProps) => {
   const { sendAnalytics } = useAnalytics()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -88,45 +88,17 @@ const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground, highlig
   return (
     <ShortcutButton
       transparent={!solidBackground}
-      role="secondary"
-      borderless
+      role="primary"
       onClick={addressHash ? () => handleAddressSettingsClick(addressHash) : handleWalletSettingsClick}
       Icon={Settings}
-      iconBackground
-      highlight={highlight}
     >
       <ButtonText>{t('Settings')}</ButtonText>
     </ShortcutButton>
   )
 }
 
-const LockButton = ({ analyticsOrigin, solidBackground, highlight }: ShortcutButtonBaseProps) => {
-  const { t } = useTranslation()
-  const { lockWallet } = useWalletLock()
-
-  return (
-    <ShortcutButton
-      transparent={!solidBackground}
-      role="secondary"
-      borderless
-      onClick={() => lockWallet(analyticsOrigin)}
-      Icon={Lock}
-      highlight={highlight}
-      iconBackground
-    >
-      <ButtonText>{t('Lock wallet')}</ButtonText>
-    </ShortcutButton>
-  )
-}
-
-const ReceiveButton = ({
-  addressHash,
-  analyticsOrigin,
-  solidBackground,
-  highlight
-}: ShortcutButtonsGroupAddressProps) => {
+const ReceiveButton = ({ addressHash, analyticsOrigin, solidBackground }: ShortcutButtonsGroupAddressProps) => {
   const { sendAnalytics } = useAnalytics()
-  const theme = useTheme()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
@@ -136,24 +108,14 @@ const ReceiveButton = ({
   }
 
   return (
-    <ShortcutButton
-      transparent={!solidBackground}
-      role="secondary"
-      borderless
-      onClick={handleReceiveClick}
-      Icon={ArrowDown}
-      iconColor={theme.global.valid}
-      iconBackground
-      highlight={highlight}
-    >
+    <ShortcutButton transparent={!solidBackground} role="primary" onClick={handleReceiveClick} Icon={ArrowDownToLine}>
       <ButtonText>{t('Receive')}</ButtonText>
     </ShortcutButton>
   )
 }
 
-const SendButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }: ShortcutButtonsGroupAddressProps) => {
+const SendButton = ({ addressHash, analyticsOrigin, solidBackground }: ShortcutButtonsGroupAddressProps) => {
   const { sendAnalytics } = useAnalytics()
-  const theme = useTheme()
   const { t } = useTranslation()
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
@@ -182,13 +144,9 @@ const SendButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }
       data-tooltip-id="default"
       data-tooltip-content={tooltipContent}
       transparent={!solidBackground}
-      role="secondary"
-      borderless
+      role="primary"
       onClick={isDisabled ? undefined : handleSendClick}
-      Icon={ArrowUp}
-      iconColor={theme.global.highlight}
-      iconBackground
-      highlight={highlight}
+      Icon={Send}
       style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
     >
       <ButtonText>{t('Send')}</ButtonText>
@@ -196,22 +154,41 @@ const SendButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }
   )
 }
 
-const ShortcutButton = styled(Button)<Pick<ShortcutButtonBaseProps, 'highlight'>>`
-  border-radius: 0;
-  margin: 0;
-  width: auto;
-  height: 60px;
-  box-shadow: none;
-  max-width: initial;
+const BuyButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }: ShortcutButtonsGroupAddressProps) => {
+  const { sendAnalytics } = useAnalytics()
+  const { t } = useTranslation()
+  const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const dispatch = useAppDispatch()
 
-  color: ${({ theme }) => theme.font.secondary};
+  if (!fromAddress) return null
 
-  &:hover {
-    color: ${({ theme }) => theme.font.primary};
+  const handleBuyClick = () => {
+    dispatch(openModal({ name: 'BuyModal', props: { addressHash } }))
+    sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
   }
+
+  return (
+    <ShortcutButton transparent={!solidBackground} role="primary" onClick={handleBuyClick} Icon={CreditCard}>
+      <ButtonText>{t('Buy')}</ButtonText>
+    </ShortcutButton>
+  )
+}
+
+const ShortcutButton = styled(Button)`
+  margin: 0;
+  min-width: 120px;
+  background-color: ${({ theme }) => colord(theme.bg.contrast).alpha(0.8).toHex()};
+  filter: saturate(120%) contrast(120%);
+  backdrop-filter: blur(10px) brightness(0.7) saturate(10);
 `
 
 const ButtonText = styled.div`
-  font-weight: var(--fontWeight-medium);
-  text-align: left;
+  font-weight: var(--fontWeight-semiBold);
+`
+
+const ButtonsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 `

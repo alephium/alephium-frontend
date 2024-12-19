@@ -21,6 +21,7 @@ import { AnimatePresence } from 'framer-motion'
 import { Children, isValidElement, ReactNode, useEffect } from 'react'
 
 import DeleteAddressesModal from '@/features/addressDeletion/DeleteAddressesModal'
+import BuyModal from '@/features/buy/BuyModal'
 import { selectAllModals } from '@/features/modals/modalSelectors'
 import CallContractSendModal from '@/features/send/sendModals/callContract/CallContractSendModal'
 import DeployContractSendModal from '@/features/send/sendModals/deployContract/DeployContractSendModal'
@@ -127,6 +128,8 @@ const AppModals = () => {
               return <AddressSweepModal id={modal.id} key={modal.id} {...modal.params.props} />
             case 'DeleteAddressesModal':
               return <DeleteAddressesModal id={modal.id} key={modal.id} />
+            case 'BuyModal':
+              return <BuyModal id={modal.id} key={modal.id} {...modal.params.props} />
           }
         })}
     </AnimatePresenceModalWrapper>

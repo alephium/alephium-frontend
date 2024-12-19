@@ -16,19 +16,15 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
-export default styled.div<{ color?: string }>`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  flex-grow: 1;
-  gap: 6px;
-  font-weight: var(--fontWeight-semiBold);
+import { ReactComponent as AlephiumLogoSVG } from '@/images/alephium_logo_monochrome.svg'
 
-  ${({ color }) =>
-    color &&
-    css`
-      color: ${color};
-    `}
+export default styled(AlephiumLogoSVG)`
+  width: 38px;
+  height: auto;
+
+  path {
+    fill: ${({ theme }) => theme.font.contrastPrimary} !important;
+  }
 `

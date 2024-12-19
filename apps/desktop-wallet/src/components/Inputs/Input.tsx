@@ -17,7 +17,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import classNames from 'classnames'
-import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { useState, WheelEvent } from 'react'
@@ -106,7 +105,7 @@ const Input = ({
         )}
         {!!Icon && !!onIconPress && (
           <InputButtonContainer>
-            <Button onClick={onIconPress} Icon={Icon} transparent squared borderless />
+            <Button onClick={onIconPress} Icon={Icon} transparent circle />
           </InputButtonContainer>
         )}
         {!disabled && isValid && (
@@ -126,16 +125,14 @@ export default Input
 
 export const InputContainer = styled(motion.div)<Pick<InputProps, 'noMargin' | 'heightSize'>>`
   position: relative;
-  min-height: ${({ heightSize }) =>
-    heightSize === 'small' ? '50px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
   width: 100%;
-  margin: ${({ noMargin }) => (noMargin ? 0 : '16px 0')};
+  margin: ${({ noMargin }) => (noMargin ? 0 : '10px 0')};
 `
 
 export const InputBase = styled.input<InputProps>`
-  ${({ isValid, value, label, Icon, heightSize, contrast, largeText }) =>
-    inputDefaultStyle(isValid || !!Icon, !!value, !!label, heightSize, contrast, largeText)};
-  color-scheme: ${({ theme }) => (colord(theme.bg.primary).isDark() ? 'dark' : 'light')};
+  ${({ isValid, value, label, Icon, heightSize, largeText }) =>
+    inputDefaultStyle(isValid || !!Icon, !!value, !!label, heightSize, largeText)};
+  color-scheme: ${({ theme }) => theme.name};
 `
 
 const Hint = styled.div`

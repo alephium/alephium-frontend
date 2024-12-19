@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, LucideIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -25,6 +25,7 @@ import ActionLink from '@/components/ActionLink'
 export interface TabItem<T extends string> {
   value: T
   label: string
+  Icon?: LucideIcon
 }
 
 export interface TabBarProps<T extends string> {
@@ -63,7 +64,14 @@ const TabBar = <T extends string>({
             aria-selected={isActive}
             isActive={isActive}
           >
-            <TabLabel isActive={isActive}>{item.label}</TabLabel>
+            <TabLabel isActive={isActive}>
+              {item.Icon && (
+                <TabIcon>
+                  <item.Icon />
+                </TabIcon>
+              )}
+              {item.label}
+            </TabLabel>
           </TabComponent>
         )
       })}
@@ -80,48 +88,54 @@ export default TabBar
 
 const TabBarStyled = styled.div`
   display: flex;
-  height: 55px;
+  height: 48px;
+  gap: 10px;
 `
 
 export const Tab = styled.div<{ isActive: boolean }>`
-  flex: 1;
   display: flex;
   min-width: 50px;
   text-align: center;
   justify-content: center;
   align-items: center;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.background1 : 'transparent')};
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  border-bottom: none;
+  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.accent : theme.bg.primary)};
   cursor: pointer;
-  font-size: 14px;
-  font-weight: var(--fontWeight-semiBold);
-  margin-bottom: -1px;
+  font-size: 15px;
+  font-weight: var(--fontWeight-medium);
+  border-radius: 100px;
+  padding: 0 30px;
+  height: calc(var(--inputHeight) - 2px);
 
   ${({ isActive, theme }) =>
     isActive
       ? css`
-          color: ${theme.font.primary};
+          color: ${theme.global.accent};
         `
       : css`
           color: ${theme.font.tertiary};
         `}
 
-  &:not(:first-child) {
-    border-left: none;
-  }
-
   &:hover {
-    color: ${({ theme }) => theme.font.primary};
+    color: ${({ isActive, theme }) => (isActive ? theme.font.contrastPrimary : theme.font.primary)};
+    background-color: ${({ isActive, theme }) => (isActive ? theme.global.accent : theme.bg.highlight)};
   }
 `
 
 const TabLabel = styled.span<{ isActive: boolean }>`
+  display: flex;
+  align-items: center;
+
   ${({ isActive }) =>
     !isActive &&
     css`
       filter: saturate(10%);
     `}
+`
+
+const TabIcon = styled.div`
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
 `
 
 const ActionLinkStyled = styled(ActionLink)`

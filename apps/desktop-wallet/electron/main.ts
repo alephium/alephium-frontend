@@ -64,6 +64,8 @@ contextMenu()
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: BrowserWindow | null
+// Window for on-ramp services
+let onRampWindow: BrowserWindow | null
 
 let deepLinkUri: string | null = null
 
@@ -72,7 +74,7 @@ function createWindow() {
     icon: ICON_PATH,
     width: 1200,
     height: 800,
-    minWidth: 1200,
+    minWidth: 1000,
     minHeight: 700,
     titleBarStyle: isWindows ? 'default' : 'hidden',
     webPreferences: {
@@ -231,6 +233,39 @@ app.on('ready', async function () {
     if (!isIpcSenderValid(senderFrame)) return null
 
     deepLinkUri = null
+  })
+
+  ipcMain.handle('app:openOnRampServiceWindow', (event, { url, targetLocation }) => {
+    if (onRampWindow) {
+      onRampWindow.show()
+      return
+    }
+
+    onRampWindow = new BrowserWindow({
+      width: 1000,
+      height: 800,
+      webPreferences: {
+        contextIsolation: true,
+        webSecurity: true
+      }
+    })
+
+    onRampWindow.loadURL(url)
+
+    onRampWindow.webContents.on('did-navigate', (event, currentUrl) => {
+      console.log(`Navigated to: ${currentUrl}`)
+      if (currentUrl.includes(targetLocation)) {
+        onRampWindow?.close()
+        onRampWindow = null
+
+        mainWindow?.webContents.send('target-location-reached')
+      }
+    })
+
+    // Ensure window reference is cleaned up
+    onRampWindow.on('closed', () => {
+      onRampWindow = null
+    })
   })
 
   createWindow()

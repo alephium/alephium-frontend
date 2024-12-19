@@ -32,7 +32,7 @@ import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { SignMessageData } from '@/features/walletConnect/walletConnectTypes'
 import { useAppDispatch } from '@/hooks/redux'
-import CenteredModal, { ModalContent, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
+import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { messageSignFailed, messageSignSucceeded } from '@/storage/transactions/transactionsActions'
 
 export interface SignMessageModalProps {
@@ -77,7 +77,7 @@ const SignMessageModal = memo(({ id, txData }: ModalBaseProp & SignMessageModalP
 
   return (
     <CenteredModal id={id} title={t('Sign Message')} onClose={rejectAndClose} dynamicContent focusMode noPadding>
-      <ModalContent>
+      <>
         <InputFieldsColumn>
           <InfoBox label={t('Message')} text={txData.message} />
         </InputFieldsColumn>
@@ -96,7 +96,7 @@ const SignMessageModal = memo(({ id, txData }: ModalBaseProp & SignMessageModalP
           </ModalFooterButton>
           {!isLedger && <ModalFooterButton onClick={handleSign}>{t('Sign')}</ModalFooterButton>}
         </ModalFooterButtons>
-      </ModalContent>
+      </>
     </CenteredModal>
   )
 })

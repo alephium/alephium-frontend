@@ -25,7 +25,6 @@ import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddr
 import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { TableRow } from '@/components/Table'
 import ExpandRowButton from '@/features/assetsLists/ExpandRowButton'
 import PlaceholderText from '@/features/assetsLists/PlaceholderText'
 import { AddressTokensTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
@@ -60,7 +59,7 @@ export const WalletNFTsGrid = (props: TokensTabsBaseProps) => {
   return (
     <NFTsGrid
       {...props}
-      columns={4}
+      columns={6}
       nftIds={nftIds}
       isLoading={isLoading}
       placeholderText={t("The wallet doesn't have any NFTs. NFTs of all your addresses will appear here.")}
@@ -82,7 +81,7 @@ const NFTsGrid = ({ className, isExpanded, onExpand, columns, nftIds, isLoading,
 
       {isLoading ||
         (nftIds.length > 0 && (
-          <Grid role="row" tabIndex={isExpanded ? 0 : -1} columns={columns}>
+          <Grid tabIndex={isExpanded ? 0 : -1} columns={columns}>
             {isLoading ? <NFTsLoader /> : nftIds.map((nftId) => <NFTCard key={nftId} nftId={nftId} />)}
           </Grid>
         ))}
@@ -103,12 +102,11 @@ const NFTsLoader = () => (
   </>
 )
 
-const Grid = styled(TableRow)<{ columns: number }>`
+const Grid = styled.div<{ columns: number }>`
   display: grid;
   grid-template-columns: repeat(${({ columns }) => columns}, minmax(0, 1fr));
   grid-auto-flow: initial;
   gap: 15px;
-  padding: 15px;
   border-radius: 0 0 12px 12px;
 
   > * {

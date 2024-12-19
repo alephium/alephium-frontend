@@ -51,7 +51,7 @@ const LedgerAddressDiscoverySnackbar = () => {
         <Button short borderless role="secondary" onClick={handleScanClick}>
           {t('Scan')}
         </Button>
-        <Button aria-label={t('Close')} squared role="secondary" onClick={handleCloseClick} borderless transparent>
+        <Button aria-label={t('Close')} circle role="secondary" onClick={handleCloseClick} borderless transparent>
           <X />
         </Button>
       </Columns>

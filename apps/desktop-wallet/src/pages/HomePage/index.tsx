@@ -19,8 +19,6 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { fadeInSlowly } from '@/animations'
-import AppHeader from '@/components/AppHeader'
 import { FloatingPanel } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
 import { useAppSelector } from '@/hooks/redux'
@@ -35,28 +33,22 @@ const HomePage = () => {
   const [showNewWalletActions, setShowNewWalletActions] = useState(false)
 
   return (
-    <LockedWalletLayout {...fadeInSlowly} animateSideBar>
-      <FloatingPanel verticalAlign="center" horizontalAlign="center" transparentBg borderless>
-        {showNewWalletActions ? (
-          <>
-            <PanelTitle useLayoutId={false} size="big" centerText>
-              {t('New wallet')}
-            </PanelTitle>
-            <NewWalletActions onExistingWalletLinkClick={() => setShowNewWalletActions(false)} />
-          </>
-        ) : hasAtLeastOneWallet ? (
-          <UnlockPanel onNewWalletLinkClick={() => setShowNewWalletActions(true)} />
-        ) : (
-          <>
-            <PanelTitle useLayoutId={false} size="big" centerText>
-              {t('Welcome.')}
-            </PanelTitle>
-            <NewWalletActions />
-          </>
-        )}
-      </FloatingPanel>
-
-      <AppHeader />
+    <LockedWalletLayout>
+      {showNewWalletActions ? (
+        <FloatingPanel>
+          <PanelTitle centerText>{t('New wallet')}</PanelTitle>
+          <NewWalletActions onExistingWalletLinkClick={() => setShowNewWalletActions(false)} />
+        </FloatingPanel>
+      ) : hasAtLeastOneWallet ? (
+        <UnlockPanel onNewWalletLinkClick={() => setShowNewWalletActions(true)} />
+      ) : (
+        <FloatingPanel>
+          <PanelTitle size="big" centerText>
+            {t('Welcome.')}
+          </PanelTitle>
+          <NewWalletActions />
+        </FloatingPanel>
+      )}
     </LockedWalletLayout>
   )
 }

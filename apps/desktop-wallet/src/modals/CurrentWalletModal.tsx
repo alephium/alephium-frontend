@@ -30,7 +30,7 @@ import WalletSelect from '@/features/switch-wallet/WalletSelect'
 import { useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import ModalContainer from '@/modals/ModalContainer'
-import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
+import { walletSidebarWidthPx } from '@/style/globalStyles'
 
 const CurrentWalletModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
@@ -45,7 +45,7 @@ const CurrentWalletModal = memo(({ id }: ModalBaseProp) => {
 
         {numberOfWallets === 1 ? <InfoBox text={activeWalletName} /> : <WalletSelect />}
 
-        <Button onClick={() => lockWallet('notifications')} wide transparent Icon={Lock}>
+        <Button onClick={() => lockWallet('notifications')} wide Icon={Lock}>
           {t('Lock wallet')}
         </Button>
       </NotificationsBox>
@@ -57,15 +57,15 @@ export default CurrentWalletModal
 
 const NotificationsBox = styled(motion.div)`
   display: flex;
-  gap: 25px;
+  gap: 20px;
   flex-direction: column;
 
   position: absolute;
   left: ${walletSidebarWidthPx}px;
-  top: ${appHeaderHeightPx}px;
+  bottom: 20px;
   overflow: hidden;
 
-  padding: 27px 19px;
+  padding: 20px 19px;
   width: 304px;
   max-height: 95vh;
 

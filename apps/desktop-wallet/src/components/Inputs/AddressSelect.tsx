@@ -131,6 +131,10 @@ function AddressSelect({
 export default AddressSelect
 
 const AddressSelectContainer = styled(SelectContainer)<Pick<AddressSelectProps, 'disabled' | 'simpleMode'>>`
+  border: 2px solid ${({ theme }) => theme.border.primary};
+  border-radius: 100px;
+  height: 50px;
+
   ${({ disabled }) =>
     disabled &&
     css`
@@ -148,7 +152,7 @@ const AddressSelectContainer = styled(SelectContainer)<Pick<AddressSelectProps, 
 
 const ClickableInput = styled.div<InputProps & Pick<AddressSelectProps, 'simpleMode'>>`
   ${({ isValid, Icon, simpleMode, value, label }) =>
-    inputDefaultStyle(isValid || !!Icon, !!value, !!label, simpleMode ? 'normal' : 'big', false, true)};
+    inputDefaultStyle(isValid || !!Icon, !!value, !!label, simpleMode ? 'normal' : 'big', true)};
   display: flex;
   align-items: center;
   padding-right: 50px;

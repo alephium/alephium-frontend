@@ -34,7 +34,7 @@ interface AddressColorIndicatorProps {
 const AddressColorIndicator = ({
   addressHash,
   hideMainAddressBadge,
-  size = 12,
+  size = 10,
   className
 }: AddressColorIndicatorProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))

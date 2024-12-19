@@ -78,7 +78,7 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
     <Content
       role="dialog"
       ref={contentRef}
-      style={hookOffset && { x: hookOffset.x, y: hookOffset.y - 15 }}
+      style={hookOffset && { x: hookOffset.x }}
       animate={hookOffset && { ...fadeInOutScaleFast.animate, ...hookOffset }}
       exit={fadeInOutScaleFast.exit}
       minWidth={minWidth}
@@ -90,7 +90,7 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
           {extraHeaderContent}
         </Header>
       )}
-      <Scrollbar translateContentSizeYToHolder>{children}</Scrollbar>
+      <Scrollbar>{children}</Scrollbar>
     </Content>
   )
 
@@ -136,15 +136,15 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
 
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
   border: 1px solid ${({ theme }) => theme.border.primary};
-  border-radius: var(--radius-big);
-  background-color: ${({ theme }) => theme.bg.primary};
+  border-radius: var(--radius-huge);
+  background-color: ${({ theme }) => theme.bg.background1};
 `
 
 const Header = styled.div<{ hasExtraContent: boolean }>`
   height: ${({ hasExtraContent }) => (hasExtraContent ? 'auto' : `${headerHeight}px`)};
   padding: var(--spacing-2) var(--spacing-2) var(--spacing-2) var(--spacing-4);
   border-bottom: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.tertiary};
+  background-color: ${({ theme }) => theme.bg.background2};
 
   display: flex;
   align-items: center;

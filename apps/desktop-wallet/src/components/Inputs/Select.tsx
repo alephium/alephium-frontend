@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { colord } from 'colord'
 import { isEqual } from 'lodash'
 import { MoreVertical, SearchIcon } from 'lucide-react'
 import {
@@ -388,9 +387,8 @@ export function SelectOptionsModal<T extends OptionValue>({
 export default Select
 
 const InputContainer = styled(InputArea)`
-  margin: 16px 0;
+  margin: 10px 0;
   padding: 0;
-
   outline: none;
 `
 
@@ -401,6 +399,7 @@ export const MoreIcon = styled.div`
   display: flex;
   align-items: center;
   color: ${({ theme }) => theme.font.secondary};
+  z-index: 1;
 `
 
 const SelectedValue = styled.div<InputProps>`
@@ -414,7 +413,6 @@ const SelectedValue = styled.div<InputProps>`
   display: flex;
   align-items: center;
   min-width: 0;
-  box-shadow: ${({ theme }) => theme.shadow.primary};
 
   ${({ simpleMode }) =>
     simpleMode &&
@@ -431,9 +429,9 @@ export const SelectContainer = styled(InputContainer)<
   Pick<InputProps, 'noMargin' | 'heightSize' | 'simpleMode' | 'showPointer'>
 >`
   cursor: ${({ showPointer }) => showPointer && 'pointer'};
-  margin: ${({ noMargin, simpleMode }) => (noMargin || simpleMode ? 0 : '16px 0')};
+  margin: ${({ noMargin, simpleMode }) => (noMargin || simpleMode ? 0 : '10px 0')};
   height: ${({ heightSize }) =>
-    heightSize === 'small' ? '50px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
+    heightSize === 'small' ? '38px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
 
   &:focus {
     ${SelectedValue} {
@@ -448,7 +446,6 @@ export const OptionSelect = styled.div`
   overflow-y: auto;
   border: 0;
   color: inherit;
-  background: transparent;
   display: flex;
   flex-direction: column;
 `
@@ -467,12 +464,12 @@ export const OptionItem = styled.button<{
   color: ${({ theme }) => theme.font.primary};
   user-select: none;
   text-align: left;
-  background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.4).toHex()};
   visibility: ${({ invisible }) => invisible && 'hidden'};
   font-weight: ${({ selected }) => selected && 'var(--fontWeight-semiBold)'};
 
   ${({ hasCustomOptionRender }) => css`
-    padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-4)'};
+    padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-4) 0'};
+    margin: ${hasCustomOptionRender ? '0px' : '0 var(--spacing-4)'};
   `};
 
   ${({ isFloating, selected, theme }) =>
@@ -480,13 +477,11 @@ export const OptionItem = styled.button<{
       ? css`
           margin: var(--spacing-2) var(--spacing-4);
           border-radius: var(--radius-medium);
-          border: ${selected ? `2px solid ${theme.global.accent}` : `1px solid ${theme.border.primary}`};
-          background-color: ${theme.bg.primary};
           overflow: hidden;
         `
       : css`
           &:not(:last-child) {
-            border-bottom: 1px solid ${({ theme }) => theme.border.primary};
+            border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
           }
         `}
 

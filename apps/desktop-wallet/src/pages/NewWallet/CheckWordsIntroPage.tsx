@@ -27,7 +27,6 @@ import {
   PanelContentContainer,
   Section
 } from '@/components/PageComponents/PageContainers'
-import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
 import useAnalytics from '@/features/analytics/useAnalytics'
@@ -51,9 +50,6 @@ const CheckWordsIntroPage = () => {
 
   return (
     <FloatingPanel enforceMinHeight>
-      <PanelTitle color="primary" onBackButtonClick={handleBackPress}>
-        {t('Security Check')}
-      </PanelTitle>
       <PanelContentContainer>
         <Section>
           <LockContainer>
@@ -70,14 +66,19 @@ const CheckWordsIntroPage = () => {
               </LockBodyContainer>
             </Lock>
           </LockContainer>
-          <Paragraph centered>{t('Alright! Time to check if you got your words right!')}</Paragraph>
-          <Paragraph secondary centered>
-            {t('Select the words in the right order.')} {t('Ready?')}
+          <Paragraph centered>
+            {t('Alright! Time to check if you got your words right!')} {t('Select the words in the right order.')}{' '}
+            {t('Ready?')}
           </Paragraph>
         </Section>
       </PanelContentContainer>
       <FooterActionsContainer>
-        <Button onClick={handleNextPress}>{t('Ready!')}</Button>
+        <Button onClick={handleBackPress} tall role="secondary">
+          {t('Back')}
+        </Button>
+        <Button onClick={handleNextPress} tall>
+          {t('Ready!')}
+        </Button>
       </FooterActionsContainer>
     </FloatingPanel>
   )
@@ -93,7 +94,7 @@ const LockContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding-bottom: 60px;
+  padding-bottom: 30px;
 `
 
 const Lock = styled(motion.div)`

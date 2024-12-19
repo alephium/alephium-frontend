@@ -44,7 +44,7 @@ const RefreshBtn = memo(({ onClick, isLoading }: RefreshBtnProps) => {
     <RefreshBtnStyled
       Icon={RefreshCw}
       transparent
-      squared
+      circle
       short
       role="secondary"
       onClick={onClick}

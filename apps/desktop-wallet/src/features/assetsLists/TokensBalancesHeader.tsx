@@ -16,28 +16,33 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { createSlice } from '@reduxjs/toolkit'
+import { useTranslation } from 'react-i18next'
 
-import { ChartLength } from '@/features/historicChart/historicChartTypes'
-import { chartLengthChanged } from '@/features/historicChart/historicWorthChartActions'
+import { TableCell, TableHeader } from '@/components/Table'
 
-interface HistoricWorthChartState {
-  chartLength: ChartLength
+const TokensBalancesHeader = () => {
+  const { t } = useTranslation()
+
+  return (
+    <TableHeader>
+      <TableCell fixedWidth={50} noBorder />
+      <TableCell>
+        <span>{t('Token')}</span>
+      </TableCell>
+      <TableCell>
+        <span>{t('Price')}</span>
+      </TableCell>
+      <TableCell fixedWidth={140}>
+        <span>{t('Allocation')}</span>
+      </TableCell>
+      <TableCell align="right">
+        <span>{t('Amount')}</span>
+      </TableCell>
+      <TableCell align="right">
+        <span>{t('Value')}</span>
+      </TableCell>
+    </TableHeader>
+  )
 }
 
-const initialState: HistoricWorthChartState = {
-  chartLength: '1m'
-}
-
-const historicWorthChartSlice = createSlice({
-  name: 'historicWorthChart',
-  initialState,
-  reducers: {},
-  extraReducers(builder) {
-    builder.addCase(chartLengthChanged, (state, { payload: chartLength }) => {
-      state.chartLength = chartLength
-    })
-  }
-})
-
-export default historicWorthChartSlice
+export default TokensBalancesHeader

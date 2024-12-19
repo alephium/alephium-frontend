@@ -18,32 +18,32 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 interface PanelTitleProps {
   color?: string
   onBackButtonClick?: () => void
   size?: 'small' | 'big'
-  useLayoutId?: boolean
   isSticky?: boolean
   centerText?: boolean
+  children?: ReactNode
 }
 
-const PanelTitle: FC<PanelTitleProps> = ({
+const PanelTitle = ({
   color,
   children,
   onBackButtonClick,
   size,
-  useLayoutId = true,
   isSticky = false,
   centerText = false
-}) => {
+}: PanelTitleProps) => {
   const { scrollY } = useScroll()
 
   const titleScale = useTransform(scrollY, [0, 50], [1, 0.6])
 
   return (
-    <TitleContainer layoutId={useLayoutId ? 'sectionTitle' : ''} isSticky={isSticky} centerText={centerText}>
+    <TitleContainer isSticky={isSticky} centerText={centerText}>
       {onBackButtonClick && (
         <BackArrow
           onClick={onBackButtonClick}
@@ -88,8 +88,7 @@ const BackArrow = styled(ArrowLeft)`
 
 const H1 = styled(motion.h1)<PanelTitleProps>`
   flex: 1;
-  margin: 0;
   color: ${({ theme, color }) => (color ? color : theme.font.primary)};
-  font-size: ${({ size }) => (size === 'small' ? '21px' : size === 'big' ? '42px' : 'revert')};
-  font-weight: ${({ size }) => (size === 'big' ? 'var(--fontWeight-bold)' : 'var(--fontWeight-semiBold)')};
+  font-size: ${({ size }) => (size === 'small' ? '16px' : size === 'big' ? '32px' : '28px')};
+  font-weight: var(--fontWeight-semiBold);
 `

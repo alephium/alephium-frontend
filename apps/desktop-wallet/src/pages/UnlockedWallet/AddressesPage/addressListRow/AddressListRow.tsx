@@ -49,15 +49,17 @@ const AddressListRow = memo(({ addressHash, className }: AddressListRowProps) =>
       role="row"
       tabIndex={0}
     >
-      <AddressNameCell>
-        <AddressColorIndicator addressHash={addressHash} size={16} />
+      <Cell>
+        <AddressColorIndicator addressHash={addressHash} size={14} />
+      </Cell>
+      <Cell>
         <Column>
           <Label>
             <AddressBadge addressHash={addressHash} hideColorIndication truncate disableA11y />
           </Label>
           <AddressLastActivity addressHash={addressHash} />
         </Column>
-      </AddressNameCell>
+      </Cell>
       <Cell>
         <AddressGroup addressHash={addressHash} />
       </Cell>
@@ -81,28 +83,31 @@ const Column = styled.div`
 `
 
 const Label = styled.div`
-  font-size: 16px;
+  font-size: 15px;
   font-weight: var(--fontWeight-semiBold);
   display: flex;
   max-width: 150px;
 `
 
 const Cell = styled.div`
-  padding: 20px 20px;
+  padding: 14px 0;
   align-items: center;
   display: flex;
-  background-color: ${({ theme }) => theme.bg.primary};
 `
 
 const GridRow = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: 40px 1fr 1fr 1fr 1fr;
 
   &:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+    ${Cell} {
+      &:not(:first-child) {
+        border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+      }
+    }
   }
 
-  &:hover ${Cell} {
+  &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.bg.hover};
   }
@@ -110,19 +115,14 @@ const GridRow = styled.div`
 
 const AmountCell = styled(Cell)`
   text-align: right;
-  font-size: 15px;
+  font-size: 14px;
   color: ${({ theme }) => theme.font.secondary};
   justify-content: flex-end;
 `
 
 const FiatAmountCell = styled(AmountCell)`
   color: ${({ theme }) => theme.font.primary};
-  font-size: 15px;
-`
-
-const AddressNameCell = styled(Cell)`
-  gap: 20px;
-  cursor: pointer;
+  font-size: 14px;
 `
 
 const AddressTokensBadgesListStyled = styled(AddressTokensBadgesList)`

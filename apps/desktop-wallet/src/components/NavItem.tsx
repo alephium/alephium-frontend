@@ -18,9 +18,10 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { LucideIcon } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import styled, { useTheme } from 'styled-components'
+import styled, { createGlobalStyle, css, useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
+import { sidebarExpandThresholdPx } from '@/style/globalStyles'
 
 interface NavItemProps {
   Icon: LucideIcon
@@ -45,29 +46,64 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
   }
 
   return (
-    <ButtonStyled
-      aria-label={label}
-      onClick={handleClick}
-      Icon={Icon}
-      borderless={!isActive}
-      squared
-      role="secondary"
-      transparent={!isActive}
-      isActive={isActive}
-      data-tooltip-id="sidenav"
-      data-tooltip-content={label}
-      iconColor={theme.font.primary}
-    />
+    <>
+      <TooltipStyleOverride />
+      <ButtonStyled
+        role="secondary"
+        aria-label={label}
+        onClick={handleClick}
+        Icon={Icon}
+        transparent={!isActive}
+        isActive={isActive}
+        data-tooltip-id="sidenav"
+        data-tooltip-content={label}
+        iconColor={theme.font.primary}
+        wide
+      >
+        <LabelContainer>{label}</LabelContainer>
+      </ButtonStyled>
+    </>
   )
 }
 
 const ButtonStyled = styled(Button)<{ isActive: boolean }>`
-  &:not(:hover) {
-    opacity: ${({ isActive }) => (isActive ? 1 : 0.5)} !important;
-  }
+  margin: 0;
+  border-radius: var(--radius-big);
+  text-align: left;
+  gap: 14px;
+  font-weight: var(--fontWeight-medium);
+  opacity: ${({ isActive }) => (isActive ? 1 : 0.5)};
 
-  &:hover {
-    border-color: ${({ theme }) => theme.border.primary};
+  ${({ isActive, theme }) =>
+    isActive &&
+    css`
+      background-color: ${theme.bg.highlight};
+      color: ${theme.font.primary};
+    `}
+
+  @media (max-width: ${sidebarExpandThresholdPx}px) {
+    gap: 0;
+    width: 42px;
+    min-width: 42px;
+    padding: 11px;
+  }
+`
+
+const TooltipStyleOverride = createGlobalStyle`
+  @media (min-width: ${sidebarExpandThresholdPx}px) {
+    #sidenav {
+      display: none !important;
+    }
+  }
+`
+
+const LabelContainer = styled.div`
+  width: 0;
+  transition: width 0.4s ease-in-out;
+  overflow: hidden;
+
+  @media (min-width: ${sidebarExpandThresholdPx}px) {
+    width: auto;
   }
 `
 

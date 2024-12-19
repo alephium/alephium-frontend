@@ -27,17 +27,21 @@ interface InputsSectionProps {
 }
 
 const InputsSection: FC<InputsSectionProps> = ({ title, className, HeaderActions, subtitle, children }) => (
-  <div className={className}>
+  <InputsSectionStyled className={className}>
     <Header>
       <Title>{title}</Title>
       {HeaderActions}
     </Header>
     {subtitle && <Subtitle>{subtitle}</Subtitle>}
     {children}
-  </div>
+  </InputsSectionStyled>
 )
 
 export default InputsSection
+
+const InputsSectionStyled = styled.div`
+  gap: 10px;
+`
 
 const Title = styled.div`
   font-size: 16px;

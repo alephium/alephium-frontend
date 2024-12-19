@@ -19,10 +19,9 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
-const Box = styled(motion.div)`
-  background-color: ${({ theme }) => theme.bg.primary};
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  border-radius: var(--radius-big);
+const Box = styled(motion.div)<{ secondary?: boolean }>`
+  border: 1px solid ${({ theme }) => theme.border.secondary};
+  border-radius: var(--radius-huge);
   width: 100%;
 `
 

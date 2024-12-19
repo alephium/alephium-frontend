@@ -187,7 +187,7 @@ const AddressSweepModal = memo(
             </InfoBox>
           ) : (
             <>
-              <InfoBox Icon={Info} contrast noBorders>
+              <InfoBox Icon={Info} contrast>
                 <Trans
                   t={t}
                   i18nKey="sweepOperationFromTo"

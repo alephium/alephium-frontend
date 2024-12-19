@@ -15,25 +15,30 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
+import { Settings } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
-import styled from 'styled-components'
+import Button from '@/components/Button'
+import { openModal } from '@/features/modals/modalActions'
+import { useAppDispatch } from '@/hooks/redux'
 
-import { ReactComponent as AlephiumLogoSVG } from '@/images/alephium_logo_monochrome.svg'
-import { deviceBreakPoints } from '@/style/globalStyles'
+const SettingsButton = () => {
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
-export default styled(AlephiumLogoSVG)<{ position?: 'top' | 'bottom' }>`
-  position: fixed;
-  left: var(--spacing-5);
-  width: 35px;
-  height: auto;
-  ${({ position }) => (position === 'bottom' ? 'bottom: var(--spacing-5)' : 'top: 50px')};
+  const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: {} }))
+  return (
+    <Button
+      circle
+      role="secondary"
+      onClick={openSettingsModal}
+      aria-label={t('Settings')}
+      Icon={Settings}
+      data-tooltip-id="sidenav"
+      transparent
+      data-tooltip-content={t('Settings')}
+    />
+  )
+}
 
-  path {
-    fill: ${({ theme }) =>
-      (theme.name === 'light' ? 'rgba(0, 0, 0, 0.04)' : 'rgba(255, 255, 255, 0.03)') + ' !important'};
-  }
-
-  @media ${deviceBreakPoints.mobile} {
-    display: none;
-  }
-`
+export default SettingsButton
