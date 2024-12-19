@@ -155,10 +155,11 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 
             <Button
               onPress={handleDefaultAddressToggle}
-              customIcon={<DefaultAddressBadge size={18} />}
+              customIcon={<DefaultAddressBadge size={22} color={isDefaultAddress ? bgColor : theme.font.primary} />}
               squared
               variant={isDefaultAddress ? 'contrast' : 'default'}
-              type="transparent"
+              type={isDefaultAddress ? 'primary' : 'transparent'}
+              compact
             />
             <Button
               iconProps={{ name: 'settings' }}
@@ -166,6 +167,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
               onPress={onSettingsPress}
               squared
               type="transparent"
+              compact
             />
           </HeaderButtons>
         </Header>

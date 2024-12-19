@@ -26,7 +26,7 @@ interface DefaultAddressBadgeProps {
   style?: StyleProp<ViewStyle>
 }
 
-const DefaultAddressBadge = ({ size = 26, color = 'blue', ...props }: DefaultAddressBadgeProps) => (
+const DefaultAddressBadge = ({ size = 26, color = 'white', ...props }: DefaultAddressBadgeProps) => (
   <DefaultAddressBadgeStyled size={size} {...props}>
     <StarShape size={size - 4} color={color} />
   </DefaultAddressBadgeStyled>

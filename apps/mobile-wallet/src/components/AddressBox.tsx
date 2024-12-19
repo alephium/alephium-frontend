@@ -37,13 +37,14 @@ import {
   makeSelectAddressesNFTs,
   selectAddressByHash
 } from '~/store/addressesSlice'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface AddressBoxProps extends PressableProps {
   addressHash: AddressHash
   isSelected?: boolean
   isLast?: boolean
+  rounded?: boolean
 }
 
 const maxNbOfTokenLogos = 5
@@ -53,7 +54,7 @@ const AnimatedSelectedLinearGradient = Animated.createAnimatedComponent(LinearGr
 
 // TODO: Use ListItem
 
-const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, ...props }: AddressBoxProps) => {
+const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, ...props }: AddressBoxProps) => {
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const currency = useAppSelector((s) => s.settings.currency)
@@ -72,7 +73,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, ...props 
   }
 
   return (
-    <AddressBoxStyled {...props} onPress={handlePress} style={style}>
+    <AddressBoxStyled {...props} onPress={handlePress} style={[style, { borderRadius: rounded ? BORDER_RADIUS : 0 }]}>
       {isSelected && (
         <SelectedLinearGradient
           pointerEvents="none"
@@ -146,6 +147,7 @@ export default AddressBox
 const AddressBoxStyled = styled(AnimatedPressable)`
   flex-direction: row;
   align-items: center;
+  overflow: hidden;
 `
 
 const BadgeContainer = styled.View`

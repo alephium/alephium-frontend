@@ -34,10 +34,11 @@ import styled from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import AddressBox from '~/components/AddressBox'
 import AppText from '~/components/AppText'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import InfoBox from '~/components/InfoBox'
-import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
+import { ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
@@ -49,6 +50,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
 import { selectAddressesInGroup } from '~/store/addresses/addressesSelectors'
 import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 import { Address } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
 
@@ -132,23 +134,27 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
     }
 
     return (
-      <BottomModal modalId={id}>
+      <BottomModal modalId={id} title={t('Connect to dApp')}>
         <ModalContent verticalGap>
           <ScreenSection>
-            {metadata?.icons && metadata.icons.length > 0 && metadata.icons[0] && (
-              <DAppIcon source={{ uri: metadata.icons[0] }} />
-            )}
-            <ModalScreenTitle>{t('Connect to dApp')}</ModalScreenTitle>
-            {metadata?.description && (
-              <AppText color="secondary" size={16}>
-                {metadata.description}
-              </AppText>
-            )}
-            {metadata?.url && (
-              <AppText color="tertiary" size={13}>
-                {metadata.url}
-              </AppText>
-            )}
+            <DAppInfo>
+              {metadata?.icons && metadata.icons.length > 0 && metadata.icons[0] && (
+                <DAppIcon source={{ uri: metadata.icons[0] }} />
+              )}
+
+              <DAppName>
+                {metadata?.description && (
+                  <AppText color="secondary" size={16}>
+                    {metadata.description}
+                  </AppText>
+                )}
+                {metadata?.url && (
+                  <AppText color="tertiary" size={13}>
+                    {metadata.url}
+                  </AppText>
+                )}
+              </DAppName>
+            </DAppInfo>
           </ScreenSection>
           {showNetworkWarning ? (
             <>
@@ -217,7 +223,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
                   </SectionTitle>
                   <SectionSubtitle color="secondary">{t('Tap to select another one')}</SectionSubtitle>
                   <AddressList>
-                    {addressesInGroup.map((address) => (
+                    {addressesInGroup.map((address, i) => (
                       <AddressBox
                         key={address.hash}
                         addressHash={address.hash}
@@ -227,6 +233,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
                           setShowAlternativeSignerAddresses(false)
                           sendAnalytics({ event: 'WC: Switched signer address' })
                         }}
+                        isLast={i === addressesInGroup.length - 1}
                       />
                     ))}
                     <PlaceholderBox>
@@ -241,26 +248,28 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
                 <ScreenSection>
                   <SectionTitle semiBold>{t('Connect with address')}</SectionTitle>
                   <SectionSubtitle color="secondary">{t('Tap to change the address to connect with.')}</SectionSubtitle>
-                  <AddressBox
-                    addressHash={signerAddress.hash}
-                    onPress={() => setShowAlternativeSignerAddresses(true)}
-                    isSelected
-                  />
+                  <AddressList>
+                    <AddressBox
+                      addressHash={signerAddress.hash}
+                      onPress={() => setShowAlternativeSignerAddresses(true)}
+                      isSelected
+                      isLast
+                      rounded
+                    />
+                  </AddressList>
                 </ScreenSection>
               )}
 
-              <ScreenSection centered>
-                <ButtonsRow>
-                  <Button title={t('Decline')} variant="alert" onPress={handleRejectProposal} flex />
-                  <Button
-                    title={t('Accept')}
-                    variant="valid"
-                    onPress={handleApproveProposal}
-                    disabled={!signerAddress}
-                    flex
-                  />
-                </ButtonsRow>
-              </ScreenSection>
+              <BottomButtons backgroundColor="back1">
+                <Button title={t('Decline')} variant="alert" onPress={handleRejectProposal} flex wide />
+                <Button
+                  title={t('Accept')}
+                  variant="valid"
+                  onPress={handleApproveProposal}
+                  disabled={!signerAddress}
+                  flex
+                />
+              </BottomButtons>
             </>
           )}
 
@@ -287,6 +296,7 @@ const SectionSubtitle = styled(AppText)`
 
 const AddressList = styled.View`
   gap: 10px;
+  margin-top: ${VERTICAL_GAP}px;
 `
 
 const PlaceholderBox = styled.View`
@@ -294,3 +304,11 @@ const PlaceholderBox = styled.View`
   border-radius: 9px;
   padding: 15px;
 `
+
+const DAppInfo = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+`
+
+const DAppName = styled.View``
