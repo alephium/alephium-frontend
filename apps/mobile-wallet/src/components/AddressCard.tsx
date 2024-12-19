@@ -70,8 +70,6 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   const isDark = colord(bgColor).isDark()
   const textColor = isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.8)'
   const outterBorderColor = colord(bgColor).lighten(0.3).toHex()
-  const innerBorderColor = isDark ? colord(bgColor).lighten(0.1).toHex() : colord(bgColor).darken(0.05).toHex()
-  const buttonsBackground = isDark ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.1)'
 
   const handleSendPress = () => {
     sendAnalytics({ event: 'Address card: Selected address to send funds from' })
@@ -139,8 +137,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
                 hideSymbol
                 color={textColor}
                 textStyle={{
-                  fontSize: 23,
-                  fontWeight: '700'
+                  fontSize: 18
                 }}
                 canCopy={false}
               />
@@ -156,10 +153,11 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 
             <Button
               onPress={handleDefaultAddressToggle}
-              customIcon={<DefaultAddressBadge size={18} color={isDefaultAddress ? theme.global.accent : textColor} />}
-              style={{ backgroundColor: isDefaultAddress ? 'rgba(255, 255, 255, 0.2)' : buttonsBackground }}
+              customIcon={<DefaultAddressBadge size={22} color={isDefaultAddress ? bgColor : theme.font.primary} />}
               squared
-              type="transparent"
+              variant={isDefaultAddress ? 'contrast' : 'default'}
+              type={isDefaultAddress ? 'primary' : 'transparent'}
+              compact
             />
             <Button
               iconProps={{ name: 'settings' }}
@@ -167,6 +165,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
               onPress={onSettingsPress}
               squared
               type="transparent"
+              compact
             />
           </HeaderButtons>
         </Header>
@@ -185,29 +184,10 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
             </AppText>
           </AddressGroup>
         </Amounts>
-        <BottomRow
-          style={{
-            borderTopColor: innerBorderColor,
-            backgroundColor: buttonsBackground
-          }}
-        >
-          <ButtonsRow sticked hasDivider dividerColor={innerBorderColor}>
-            <Button
-              title="Send"
-              onPress={handleSendPress}
-              iconProps={{ name: 'send' }}
-              flex
-              type="transparent"
-              color={textColor}
-            />
-            <Button
-              title="Receive"
-              onPress={handleReceivePress}
-              iconProps={{ name: 'download' }}
-              flex
-              type="transparent"
-              color={textColor}
-            />
+        <BottomRow>
+          <ButtonsRow>
+            <Button onPress={handleSendPress} iconProps={{ name: 'send' }} flex variant="contrast" short />
+            <Button onPress={handleReceivePress} iconProps={{ name: 'download' }} flex variant="contrast" short />
           </ButtonsRow>
         </BottomRow>
       </CardGradientContainer>
@@ -217,9 +197,8 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 }
 
 export default styled(AddressCard)`
-  border-radius: 24px;
+  border-radius: 28px;
   height: 220px;
-  border-width: 1px;
   background-color: white;
 `
 
@@ -273,7 +252,7 @@ const BottomRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border-top-width: 1px;
+  padding: 10px;
 `
 
 const HashEllipsed = styled(AppText)`

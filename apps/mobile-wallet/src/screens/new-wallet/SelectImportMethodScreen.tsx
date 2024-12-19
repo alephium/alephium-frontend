@@ -26,13 +26,12 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import Surface from '~/components/layout/Surface'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { cameraToggled } from '~/store/appSlice'
 import { qrCodeFromDesktopWalletScanned } from '~/store/walletGenerationSlice'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface SelectImportMethodScreenProps
   extends StackScreenProps<RootStackParamList, 'SelectImportMethodScreen'>,
@@ -69,38 +68,39 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
       screenIntro={t('Choose how you want to import your wallet.')}
       {...props}
     >
-      <ScreenSection fill>
-        <SurfaceStyled type="primary">
+      <ScreenSectionStyled centered>
+        <IconAndTitle>
           <IconBox style={{ backgroundColor: 'rgba(61, 149, 190, 0.1)' }}>
-            <Ionicons size={35} name="desktop" color="rgb(86, 201, 254)" />
+            <Ionicons size={34} name="desktop" color="rgb(86, 201, 254)" />
           </IconBox>
-          <Title size={28} medium>
+          <Title size={24} medium>
             {t('Desktop wallet')}
           </Title>
-          <Subtitle size={16} medium color="secondary">
-            {t('Export your wallet directly from the Desktop app! Convenient, quick and secure.')}
-          </Subtitle>
-          <Button variant="highlight" title={t('Scan the QR code')} onPress={openQRCodeScannerModal} />
-        </SurfaceStyled>
-      </ScreenSection>
-      <ScreenSection fill>
-        <SurfaceStyled type="primary">
+        </IconAndTitle>
+        <Subtitle size={16} medium color="secondary">
+          {t('Export your wallet directly from the Desktop app! Convenient, quick and secure.')}
+        </Subtitle>
+        <Button variant="contrast" title={t('Scan the QR code')} onPress={openQRCodeScannerModal} centered />
+      </ScreenSectionStyled>
+      <ScreenSectionStyled centered>
+        <IconAndTitle>
           <IconBox style={{ backgroundColor: 'rgba(185, 111, 26, 0.1)' }}>
-            <Ionicons size={35} name="list-outline" color="rgb(255, 147, 21)" />
+            <Ionicons size={34} name="list-outline" color="rgb(255, 147, 21)" />
           </IconBox>
-          <Title size={28} medium>
+          <Title size={24} medium>
             {t('Secret recovery phrase')}
           </Title>
-          <Subtitle size={16} medium color="secondary">
-            {t('Enter the 24 words of your secret recovery phrase one-by-one.')}
-          </Subtitle>
-          <Button
-            variant="highlight"
-            title={t('Type your secret phrase')}
-            onPress={() => navigation.navigate('ImportWalletSeedScreen')}
-          />
-        </SurfaceStyled>
-      </ScreenSection>
+        </IconAndTitle>
+        <Subtitle size={16} medium color="secondary">
+          {t('Enter the 24 words of your secret recovery phrase one-by-one.')}
+        </Subtitle>
+        <Button
+          variant="contrast"
+          title={t('Type your secret phrase')}
+          onPress={() => navigation.navigate('ImportWalletSeedScreen')}
+          centered
+        />
+      </ScreenSectionStyled>
       {isCameraOpen && (
         <QRCodeScannerModal
           onClose={closeQRCodeScannerModal}
@@ -115,21 +115,28 @@ const SelectImportMethodScreen = ({ navigation, ...props }: SelectImportMethodSc
 
 export default SelectImportMethodScreen
 
-const SurfaceStyled = styled(Surface)`
-  padding: ${DEFAULT_MARGIN}px;
+const ScreenSectionStyled = styled(ScreenSection)`
+  padding: 20px 20px 30px;
+  border-radius: 28px;
+  border: 1px solid ${({ theme }) => theme.border.primary};
 `
 
-const Title = styled(AppText)`
-  margin: 13px 0;
+const IconAndTitle = styled.View`
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: ${VERTICAL_GAP / 2}px;
 `
+
+const Title = styled(AppText)``
 
 const Subtitle = styled(AppText)`
-  margin-bottom: 35px;
+  margin-bottom: ${VERTICAL_GAP}px;
+  text-align: center;
 `
 
-const IconBox = styled(Surface)`
-  background-color: ${({ theme }) => theme.bg.back2};
+const IconBox = styled.View`
   width: auto;
-  align-self: flex-start;
-  padding: ${DEFAULT_MARGIN}px;
+  padding: 16px;
+  border-radius: 100px;
 `

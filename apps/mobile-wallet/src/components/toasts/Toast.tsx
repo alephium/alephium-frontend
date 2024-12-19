@@ -43,7 +43,7 @@ const Toast = ({
     },
     info: {
       Icon: InfoIcon,
-      color: theme.bg.primary
+      color: theme.header.visible
     }
   }
 

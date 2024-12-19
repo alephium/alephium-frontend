@@ -25,7 +25,6 @@ import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
-import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal from '~/features/modals/BottomModal'
@@ -54,12 +53,8 @@ const WalletConnectPairingsModal = withModal<WalletConnectPairingsModalProps>(
     }
 
     return (
-      <BottomModal modalId={id}>
+      <BottomModal modalId={id} title={t('Current connections')}>
         <ModalContent verticalGap>
-          <ScreenSection>
-            <ModalScreenTitle>{t('Current connections')}</ModalScreenTitle>
-          </ScreenSection>
-
           {activeSessions.map(({ topic, peer: { metadata } }, index) => (
             <ListItem
               key={topic}
@@ -76,19 +71,9 @@ const WalletConnectPairingsModal = withModal<WalletConnectPairingsModalProps>(
               <AppText>{t('There are no connections yet.')} 🔌</AppText>
             </EmptyPlaceholder>
           )}
-          <BottomButtons>
-            <Button
-              title={t('Paste a WalletConnect URI')}
-              variant="accent"
-              onPress={onPasteWcUrlPress}
-              iconProps={{ name: 'copy' }}
-            />
-            <Button
-              title={t('Scan QR code')}
-              variant="accent"
-              onPress={onScanQRCodePress}
-              iconProps={{ name: 'maximize' }}
-            />
+          <BottomButtons fullWidth backgroundColor="back1">
+            <Button title={t('Paste a WalletConnect URI')} onPress={onPasteWcUrlPress} iconProps={{ name: 'copy' }} />
+            <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'maximize' }} />
           </BottomButtons>
         </ModalContent>
       </BottomModal>

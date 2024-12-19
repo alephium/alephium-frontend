@@ -275,7 +275,7 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
         onPress={unlockApp}
         style={{ backgroundColor: 'black', flex: 1, alignItems: 'center', justifyContent: 'center' }}
       >
-        <AlephiumLogo style={{ width: '25%' }} />
+        <AlephiumLogo style={{ width: '15%' }} />
       </Pressable>
       <ToastAnchor />
     </Modal>
