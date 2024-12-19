@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressBalancesSyncResult, AddressHash, AddressTokensSyncResult, client } from '@alephium/shared'
+import { AddressBalancesSyncResult, AddressHash, AddressTokensSyncResult, throttledClient } from '@alephium/shared'
 import { AddressTokenBalance, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
 import { Address, AddressTransactionsSyncResult } from '~/types/addresses'
@@ -32,7 +32,7 @@ export const fetchAddressesTokens = async (addressHashes: AddressHash[]): Promis
     let page = 1
 
     while (page === 1 || addressTokensPageResults.length === PAGE_LIMIT) {
-      addressTokensPageResults = await client.explorer.addresses.getAddressesAddressTokensBalance(hash, {
+      addressTokensPageResults = await throttledClient.explorer.addresses.getAddressesAddressTokensBalance(hash, {
         limit: PAGE_LIMIT,
         page
       })
@@ -57,8 +57,11 @@ export const fetchAddressesTransactions = async (
   const results = []
 
   for (const addressHash of addressHashes) {
-    const transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: 1 })
-    const mempoolTransactions = await client.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash)
+    const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
+      page: 1
+    })
+    const mempoolTransactions =
+      await throttledClient.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash)
 
     results.push({
       hash: addressHash,
@@ -74,7 +77,7 @@ export const fetchAddressesBalances = async (addressHashes: AddressHash[]): Prom
   const results = []
 
   for (const addressHash of addressHashes) {
-    const balances = await client.explorer.addresses.getAddressesAddressBalance(addressHash)
+    const balances = await throttledClient.explorer.addresses.getAddressesAddressBalance(addressHash)
 
     results.push({
       hash: addressHash,
@@ -91,9 +94,9 @@ export const fetchAddressesTransactionsNextPage = async (addresses: Address[], n
   const addressHashes = addresses.map((address) => address.hash)
 
   if (addressHashes.length === 1) {
-    transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHashes[0], args)
+    transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHashes[0], args)
   } else if (addressHashes.length > 1) {
-    transactions = await client.explorer.addresses.postAddressesTransactions(args, addressHashes)
+    transactions = await throttledClient.explorer.addresses.postAddressesTransactions(args, addressHashes)
   }
 
   return transactions
