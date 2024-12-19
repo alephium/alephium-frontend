@@ -70,8 +70,6 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   const isDark = colord(bgColor).isDark()
   const textColor = isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.8)'
   const outterBorderColor = colord(bgColor).lighten(0.3).toHex()
-  const innerBorderColor = isDark ? colord(bgColor).lighten(0.1).toHex() : colord(bgColor).darken(0.05).toHex()
-  const buttonsBackground = isDark ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.1)'
 
   const handleSendPress = () => {
     sendAnalytics({ event: 'Address card: Selected address to send funds from' })

@@ -19,10 +19,13 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressHash, Asset } from '@alephium/shared'
 import { Skeleton } from 'moti/skeleton'
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, StyleProp, ViewStyle } from 'react-native'
 import Animated, { CurvedTransition } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import AppText from '~/components/AppText'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import UnknownTokensListItem, { UnknownTokensEntry } from '~/components/UnknownTokensListItem'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesCheckedUnknownTokens, makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
@@ -52,6 +55,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
   const isLoadingVerified = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
   const theme = useTheme()
+  const { t } = useTranslation()
 
   const showTokensSkeleton = isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes
 
@@ -74,8 +78,6 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
     setTokenRows(entries)
   }, [addressHash, showTokensSkeleton, knownFungibleTokens, unknownTokens.length])
 
-  if (tokenRows.length === 0 && !isRefreshing) return null
-
   return (
     <ListContainer style={style} layout={CurvedTransition}>
       {tokenRows.map((entry, index) =>
@@ -93,6 +95,12 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
             <Skeleton show colorMode={theme.name} width={200} height={36} />
           </LoadingRow>
         )
+      )}
+      {!isRefreshing && tokenRows.length === 0 && (
+        <EmptyPlaceholder>
+          <AppText size={28}>👀</AppText>
+          <AppText>{t('No assets there, yet.')}</AppText>
+        </EmptyPlaceholder>
       )}
       {isRefreshing && (
         <>
