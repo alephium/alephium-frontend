@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, WalletConnectSessionProposalModalProps } from '@alephium/shared'
 
 import { CallContractSendModalProps } from '@/features/send/sendModals/callContract/CallContractSendModal'
 import { DeployContractSendModalProps } from '@/features/send/sendModals/deployContract/DeployContractSendModal'
@@ -26,7 +26,6 @@ import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockMod
 import { TransactionDetailsModalProps } from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
 import { SignMessageModalProps } from '@/features/walletConnect/SignMessageModal'
 import { SignUnsignedTxModalProps } from '@/features/walletConnect/SignUnsignedTxModal'
-import { WalletConnectSessionProposalModalProps } from '@/features/walletConnect/WalletConnectSessionProposalModal'
 import { AddressSweepModalProps } from '@/modals/AddressSweepModal'
 import { ConfirmModalProps } from '@/modals/ConfirmModal'
 import { ConsolidateUTXOsModalProps } from '@/modals/ConsolidateUTXOsModal'
