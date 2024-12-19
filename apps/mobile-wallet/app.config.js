@@ -37,7 +37,7 @@ export default {
       supportsTablet: true,
       bundleIdentifier: 'org.alephium.mobilewallet',
       infoPlist: {
-        BGTaskSchedulerPermittedIdentifiers: ['$(PRODUCT_BUNDLE_PACKAGE_TYPE)'],
+        BGTaskSchedulerPermittedIdentifiers: ['$(PRODUCT_BUNDLE_IDENTIFIER)'],
         LSMinimumSystemVersion: '12.0'
       },
       config: {

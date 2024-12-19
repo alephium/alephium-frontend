@@ -33,9 +33,9 @@ patchedDependencies:
   react-native-aes-crypto@2.1.1:
     hash: sm7rpv6bikakdvmsl6ekayqewu
     path: patches/react-native-aes-crypto@2.1.1.patch
-  react-native-background-actions@3.0.1:
-    hash: bczt4hbkdy2a6n4hvzyilx3qg4
-    path: patches/react-native-background-actions@3.0.1.patch
+  react-native-background-actions@4.0.1:
+    hash: yqgwosurvocvelskspkclvkkhe
+    path: patches/react-native-background-actions@4.0.1.patch
 
 importers:
 
@@ -785,8 +785,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.1(patch_hash=sm7rpv6bikakdvmsl6ekayqewu)
       react-native-background-actions:
-        specifier: ^3.0.1
-        version: 3.0.1(patch_hash=bczt4hbkdy2a6n4hvzyilx3qg4)(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
+        specifier: ^4.0.1
+        version: 4.0.1(patch_hash=yqgwosurvocvelskspkclvkkhe)(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
       react-native-background-timer:
         specifier: ^2.4.1
         version: 2.4.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
@@ -9216,8 +9216,8 @@ packages:
   react-native-aes-crypto@2.1.1:
     resolution: {integrity: sha512-huAt7k43myFiY0bPnvoaCP0oBjTMw4VsL2mjkmCPzzDA56Sm3ps5xXIejPo5Z9qfnei9iijHzATV8eRNMEPtbQ==}
 
-  react-native-background-actions@3.0.1:
-    resolution: {integrity: sha512-xlEjUM2PP+OEQQkr9Z4c4+dRIzhbCh1xAeakL8FKGDib2a3dki2kMR4ZTw+9oHspHn9VF1Fuu78mWXR5zqkVaA==}
+  react-native-background-actions@4.0.1:
+    resolution: {integrity: sha512-LADhnb4ag1oH5Lotq0j8K9e2cFmrafFyg2PCME88VkTjqDUgNcJonkNdMCTHN0N3fh+hwAA7nDR4Cxkj9Q8eCw==}
     peerDependencies:
       react-native: '>=0.47.0'
 
@@ -10196,12 +10196,15 @@ packages:
 
   sudo-prompt@8.2.5:
     resolution: {integrity: sha512-rlBo3HU/1zAJUrkY6jNxDOC9eVYliG6nS4JA8u8KAshITd07tafMc/Br7xQwCSseXwJ2iCcHCE8SNWX3q8Z+kw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   sudo-prompt@9.1.1:
     resolution: {integrity: sha512-es33J1g2HjMpyAhz8lOR+ICmXXAqTuKbuXuUWLhOLew20oN9oUCgCJx615U/v7aioZg7IX5lIh9x34vwneu4pA==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   sudo-prompt@9.2.1:
     resolution: {integrity: sha512-Mu7R0g4ig9TUuGSxJavny5Rv0egCEtpZRNMrZaYS1vxkiIxGiGUwoezU3LazIQ+KE04hTrTfNPgxU5gzi7F5Pw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   sumchecker@3.0.1:
     resolution: {integrity: sha512-MvjXzkz/BOfyVDkG0oFOtBxHX2u3gKbMHIF/dXblZsgD3BWOFLmHovIpZY7BykJdAjcqRCBi1WYBNdEC9yI7vg==}
@@ -21905,7 +21908,7 @@ snapshots:
 
   react-native-aes-crypto@2.1.1(patch_hash=sm7rpv6bikakdvmsl6ekayqewu): {}
 
-  react-native-background-actions@3.0.1(patch_hash=bczt4hbkdy2a6n4hvzyilx3qg4)(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)):
+  react-native-background-actions@4.0.1(patch_hash=yqgwosurvocvelskspkclvkkhe)(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)):
     dependencies:
       eventemitter3: 4.0.7
       react-native: 0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)
