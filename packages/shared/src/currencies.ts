@@ -56,5 +56,10 @@ export const CURRENCIES: Record<Currency, CurrencyData> = {
     name: 'Australian Dollar',
     ticker: 'AUD',
     symbol: 'A$'
+  },
+  THB: {
+    name: 'Thai Baht',
+    ticker: 'THB',
+    symbol: '฿'
   }
 }
