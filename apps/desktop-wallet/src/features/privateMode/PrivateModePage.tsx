@@ -16,8 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { FileLock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
 import { FloatingPanel } from '@/components/PageComponents/PageContainers'
@@ -26,6 +27,7 @@ import LockedWalletLayout from '@/pages/LockedWalletLayout'
 
 const PrivateModePage = () => {
   const navigate = useNavigate()
+  const theme = useTheme()
 
   return (
     <LockedWalletLayout>
@@ -41,7 +43,9 @@ const PrivateModePage = () => {
             <Button onClick={() => navigate('/ledger')}>Connect your Ledger</Button>
           </Box>
           <Box>
-            <Icon></Icon>
+            <Icon>
+              <FileLock size={50} color={theme.font.contrastPrimary} strokeWidth={1} />
+            </Icon>
             <BoxText>Unlock a wallet with a passphrase (25th word). Passphrase wallets leave less traces.</BoxText>
             <Button>Use passphrase</Button>
           </Box>
@@ -101,6 +105,7 @@ const LedgerLogoStyled = styled(LedgerLogo)`
   path {
     fill: ${({ theme }) => theme.font.contrastPrimary};
   }
+  width: 80%;
 `
 
 const BottomButtonContainer = styled.div`

@@ -33,14 +33,14 @@ const PrivateModeButton = (props: PrivateModeButtonProps) => {
 
   return (
     <ButtonStyled
-      title={t('Private mode')}
+      title={t('Private modes')}
       role="secondary"
       Icon={VenetianMask}
       short
       onClick={() => navigate('/private-mode')}
       {...props}
     >
-      {t('Private mode')}
+      {t('Private modes')}
     </ButtonStyled>
   )
 }

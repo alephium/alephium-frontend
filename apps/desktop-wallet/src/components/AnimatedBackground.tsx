@@ -112,16 +112,16 @@ const AnimatedBackground = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          opacity: isDarkTheme ? 0.5 : 0.8
+          opacity: isDarkTheme ? 0.6 : 1
         }}
       >
         {circlesDimensions.map((dim, index) => {
           const circleAnimation = [circle1, circle2, circle3, circle4, circle5][index]
           const backgroundColors = [
             isDarkTheme ? '#120096' : '#c689ff',
-            isDarkTheme ? '#ff8119' : '#ffd4b6',
+            isDarkTheme ? '#ab2cdd' : '#ffd4b6',
             isDarkTheme ? '#ff6969' : '#ffaaaa',
-            isDarkTheme ? '#e484ff' : '#ffb7ff',
+            isDarkTheme ? '#8f2cdb' : '#ffb7ff',
             isDarkTheme ? '#1600da' : '#ff9bc8'
           ]
           return (
