@@ -49,6 +49,7 @@ import { walletConnectPairingFailed, walletConnectProposalValidationFailed } fro
 import { isRcVersion } from '@/utils/app-data'
 
 export interface WalletConnectContextProps {
+  walletConnectClient?: SignClient
   pairWithDapp: (uri: string) => void
   unpairFromDapp: (pairingTopic: string) => Promise<void>
   activeSessions: SessionTypes.Struct[]
@@ -67,7 +68,6 @@ export interface WalletConnectContextProps {
     sessionRequestEvent: SessionRequestEvent,
     error: ReturnType<typeof getSdkError>
   ) => Promise<void>
-  walletConnectClient?: SignClient
   pendingDappConnectionUrl?: string
 }
 

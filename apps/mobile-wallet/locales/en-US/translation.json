@@ -398,5 +398,6 @@
   "Save fund password": "Save fund password",
   "Decrypt": "Decrypt",
   "Warning": "Warning",
-  "No assets there, yet.": "No assets there, yet."
+  "No assets there, yet.": "No assets there, yet.",
+  "There is something wrong in the received WalletConnect data.": "There is something wrong in the received WalletConnect data."
 }
