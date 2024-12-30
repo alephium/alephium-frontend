@@ -41,7 +41,11 @@ const FTWorthCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
       {isLoadingBalance || isLoadingTokenPrices ? (
         <SkeletonLoader height="20px" width="30%" />
       ) : (
-        <FTWorthAmount symbol={token.symbol} decimals={token.decimals} totalBalance={totalBalance?.totalBalance} />
+        <FTWorthAmount
+          symbol={token.symbol}
+          decimals={token.decimals}
+          totalBalance={BigInt(totalBalance?.totalBalance)}
+        />
       )}
     </TableCell>
   )

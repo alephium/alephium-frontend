@@ -54,7 +54,7 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
           <>
             <BrandContainer>
               <AlephiumLogoContainer>
-                <AlephiumLogo />
+                <AlephiumLogo contrasted />
               </AlephiumLogoContainer>
               <AlephiumName>alephium</AlephiumName>
             </BrandContainer>

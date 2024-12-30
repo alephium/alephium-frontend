@@ -41,7 +41,7 @@ const FTAllocationCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
     <TableCell fixedWidth={140}>
       <FTAllocationBar
         token={token}
-        tokenAmount={tokenBalance?.totalBalance}
+        tokenAmount={BigInt(tokenBalance?.totalBalance)}
         walletWorth={walletWorth}
         isLoading={isLoadingToken || isLoadingBalance || isLoadingWalletWorth}
       />
