@@ -20,11 +20,23 @@ import styled from 'styled-components'
 
 import { ReactComponent as AlephiumLogoSVG } from '@/images/alephium_logo_monochrome.svg'
 
-export default styled(AlephiumLogoSVG)<{ contrasted?: boolean }>`
-  width: 38px;
-  height: auto;
+const AlephiumLogo = ({ contrasted }: { contrasted?: boolean }) => (
+  <AlephiumLogoStyled contrasted={contrasted}>
+    <AlephiumLogoSVG />
+  </AlephiumLogoStyled>
+)
 
-  path {
-    fill: ${({ theme, contrasted }) => (contrasted ? theme.font.contrastPrimary : theme.font.primary)} !important;
+export default AlephiumLogo
+
+const AlephiumLogoStyled = styled.div<{ contrasted?: boolean }>`
+  display: flex;
+
+  svg {
+    width: 100%;
+    height: 100%;
+
+    path {
+      fill: ${({ theme, contrasted }) => (contrasted ? theme.font.contrastPrimary : theme.font.primary)} !important;
+    }
   }
 `
