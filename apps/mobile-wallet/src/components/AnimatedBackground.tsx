@@ -83,12 +83,12 @@ const AnimatedBackground = ({
   }, [angle, isAnimated])
 
   const canvasCenterY = useDerivedValue(() => canvasHeight.value / 2)
-  const danceXAmplitude = 20 + Math.random() * 5
-  const danceYAmplitude = 40 + Math.random() * 5
+  const danceXAmplitude = 20 + Math.random() * 10
+  const danceYAmplitude = 40 + Math.random() * 10
 
-  const randomOffset1 = Math.random() * 0.5
-  const randomOffset2 = Math.random() * 0.5
-  const randomOffset3 = Math.random() * 0.5
+  const randomOffset1 = Math.random() * 0.7
+  const randomOffset2 = Math.random() * 0.7
+  const randomOffset3 = Math.random() * 0.7
 
   const circle1X = useDerivedValue(() =>
     isAnimated
@@ -155,11 +155,11 @@ const AnimatedBackground = ({
     <AnimatedContainer style={parallaxAnimatedStyle}>
       <AnimatedCanvas style={animatedCanvasStyle}>
         <Group>
-          <Circle r={140} color={theme.name === 'dark' ? '#86acff' : '#ffa286'} cx={circle1X} cy={circle1Y} />
-          <Circle r={110} color={theme.name === 'dark' ? '#2ac6ff' : '#e39dff'} cx={circle2X} cy={circle2Y} />
-          <Circle r={100} color={theme.name === 'dark' ? '#1856ff' : '#ffc57e'} cx={circle3X} cy={circle3Y} />
+          <Circle r={120} color={theme.name === 'dark' ? '#86acff' : '#ffa286'} cx={circle1X} cy={circle1Y} />
+          <Circle r={150} color={theme.name === 'dark' ? '#2ac6ff' : '#e39dff'} cx={circle2X} cy={circle2Y} />
+          <Circle r={130} color={theme.name === 'dark' ? '#1856ff' : '#ffc57e'} cx={circle3X} cy={circle3Y} />
         </Group>
-        <Blur blur={50} />
+        <Blur blur={70} />
       </AnimatedCanvas>
       {showAlephiumLogo && (
         <AlephiumLogoContainer>
