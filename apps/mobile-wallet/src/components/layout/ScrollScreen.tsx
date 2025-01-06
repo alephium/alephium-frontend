@@ -142,7 +142,7 @@ const ScrollScreen = ({
       </KeyboardAvoidingView>
       {bottomButtonsRender && (
         <BottomButtonsContainer>
-          <BottomButtons float bottomInset onHeightChange={handleBottomButtonsHeightChange}>
+          <BottomButtons float bottomInset fullWidth onHeightChange={handleBottomButtonsHeightChange}>
             {bottomButtonsRender()}
           </BottomButtons>
         </BottomButtonsContainer>

@@ -94,7 +94,7 @@ const BuyModal = withModal(({ id }) => {
               </Trans>
             </AppText>
           </TextContainer>
-          <BottomButtons>
+          <BottomButtons fullWidth>
             <Button
               title={t("Alright, let's get to it.")}
               onPress={() => setIsDisclaimerAccepted(true)}

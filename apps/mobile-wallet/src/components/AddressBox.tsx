@@ -1,10 +1,9 @@
 import { AddressHash, CURRENCIES } from '@alephium/shared'
-import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Check } from 'lucide-react-native'
 import { useMemo } from 'react'
 import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+import Animated from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressColorSymbol from '~/components/AddressColorSymbol'
@@ -56,25 +55,13 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
 
   return (
     <AddressBoxStyled {...props} onPress={handlePress} style={[style, { borderRadius: rounded ? BORDER_RADIUS : 0 }]}>
-      {isSelected && (
-        <SelectedLinearGradient
-          pointerEvents="none"
-          style={{ width: 100, height: '100%' }}
-          start={{ x: 0, y: 0.5 }}
-          end={{ x: 1, y: 0.5 }}
-          locations={[0, 1]}
-          colors={[colord(theme.global.accent).alpha(0.4).toHex(), colord(theme.global.accent).alpha(0).toHex()]}
-          entering={FadeIn}
-          exiting={FadeOut}
-        />
-      )}
       <BadgeContainer>
         {isSelected ? (
-          <SelectedBadge entering={FadeIn} exiting={FadeOut}>
+          <SelectedBadge>
             <Check color="white" size={18} />
           </SelectedBadge>
         ) : (
-          <Animated.View entering={FadeIn} exiting={FadeOut}>
+          <Animated.View>
             <AddressColorSymbol addressHash={addressHash} size={18} />
           </Animated.View>
         )}
@@ -82,7 +69,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
       <TextualContent style={{ borderBottomWidth: !isLast ? 1 : 0 }}>
         <AddressBoxColumn>
           {address.settings.label && (
-            <AppText numberOfLines={1} semiBold size={16}>
+            <AppText numberOfLines={1} semiBold size={16} color={isSelected ? theme.global.accent : theme.font.primary}>
               {address.settings.label}
             </AppText>
           )}
@@ -90,7 +77,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
             numberOfLines={1}
             ellipsizeMode="middle"
             semiBold={!address?.settings.label}
-            color={address.settings.label && theme.font.tertiary}
+            color={isSelected ? theme.global.accent : address.settings.label ? theme.font.tertiary : theme.font.primary}
           >
             {address.hash}
           </AppText>
@@ -130,6 +117,8 @@ const AddressBoxStyled = styled(AnimatedPressable)`
 
 const BadgeContainer = styled.View`
   justify-content: center;
+  align-items: center;
+  width: 26px;
 `
 
 const SelectedBadge = styled(Animated.View)`
@@ -139,11 +128,6 @@ const SelectedBadge = styled(Animated.View)`
   border-radius: 26px;
   align-items: center;
   justify-content: center;
-`
-
-const SelectedLinearGradient = styled(AnimatedSelectedLinearGradient)`
-  position: absolute;
-  left: -${DEFAULT_MARGIN}px;
 `
 
 const TextualContent = styled.View`
