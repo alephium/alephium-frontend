@@ -1,8 +1,9 @@
 import { Currency, getNetworkName, networkSettingsPresets } from '@alephium/shared'
 
+import { Language } from '@/features/localization/languages'
 import { defaultSettings } from '@/features/settings/settingsConstants'
 import SettingsStorage from '@/features/settings/settingsPersistentStorage'
-import { Language, Settings } from '@/features/settings/settingsTypes'
+import { Settings } from '@/features/settings/settingsTypes'
 import { ThemeSettings } from '@/features/theme/themeTypes'
 
 const mockSettings: Settings = {

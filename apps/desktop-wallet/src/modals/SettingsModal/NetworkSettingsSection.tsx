@@ -21,8 +21,8 @@ import Select from '@/components/Inputs/Select'
 import { Section } from '@/components/PageComponents/PageContainers'
 import ToggleSection from '@/components/ToggleSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import i18next from '@/features/localization/i18n'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import i18next from '@/i18n'
 import { useMountEffect } from '@/utils/hooks'
 
 interface NetworkSelectOption {

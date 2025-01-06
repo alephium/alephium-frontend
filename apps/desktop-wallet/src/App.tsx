@@ -12,14 +12,13 @@ import SplashScreen from '@/components/SplashScreen'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
+import { languageOptions } from '@/features/localization/languages'
+import { systemLanguageMatchFailed, systemLanguageMatchSucceeded } from '@/features/localization/localizationActions'
 import {
   localStorageGeneralSettingsMigrated,
-  systemLanguageMatchFailed,
-  systemLanguageMatchSucceeded,
   systemRegionMatchFailed,
   systemRegionMatchSucceeded
 } from '@/features/settings/settingsActions'
-import { languageOptions } from '@/features/settings/settingsConstants'
 import useRegionOptions from '@/features/settings/useRegionOptions'
 import { darkTheme, lightTheme } from '@/features/theme/themes'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'

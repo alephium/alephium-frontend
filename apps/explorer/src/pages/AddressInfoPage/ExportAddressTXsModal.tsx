@@ -11,8 +11,8 @@ import HighlightedHash from '@/components/HighlightedHash'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import Modal, { ModalProps } from '@/components/Modal/Modal'
 import Select, { SelectListItem } from '@/components/Select'
+import i18n from '@/features/localization/i18n'
 import { useSnackbar } from '@/hooks/useSnackbar'
-import i18n from '@/i18n'
 import { SIMPLE_DATE_FORMAT } from '@/utils/strings'
 
 type TimePeriodValue =

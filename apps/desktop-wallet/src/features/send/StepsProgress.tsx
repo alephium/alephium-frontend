@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import DotIcon from '@/components/DotIcon'
+import { TranslationKey } from '@/features/localization/i18next'
 import { useAppSelector } from '@/hooks/redux'
-import { TranslationKey } from '@/types/i18next'
 
 interface StepsProgressProps {
   currentStep: Step

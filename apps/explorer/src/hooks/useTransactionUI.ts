@@ -4,7 +4,7 @@ import { RiArrowDownLine, RiArrowLeftRightLine, RiArrowUpLine, RiRepeat2Line } f
 import { DefaultTheme } from 'styled-components'
 
 import LoadingSpinner from '@/components/LoadingSpinner'
-import i18next from '@/i18n'
+import i18next from '@/features/localization/i18n'
 
 interface TransactionUIProps {
   infoType: TransactionInfoType

@@ -15,7 +15,7 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import '@/i18n'
+import '@/features/localization/i18n'
 
 // import { act, fireEvent, screen, waitFor } from '@testing-library/react'
 // import { HashRouter as Router } from 'react-router-dom'

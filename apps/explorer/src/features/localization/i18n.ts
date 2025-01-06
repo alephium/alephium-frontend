@@ -2,14 +2,14 @@ import i18next from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
 
-import de from '../locales/de-DE/translation.json'
-import el from '../locales/el-GR/translation.json'
-import en from '../locales/en-US/translation.json'
-import fr from '../locales/fr-FR/translation.json'
-import id from '../locales/id-ID/translation.json'
-import it from '../locales/it-IT/translation.json'
-import vi from '../locales/vi-VN/translation.json'
-import zh from '../locales/zh-CN/translation.json'
+import de from '../../../locales/de-DE/translation.json'
+import el from '../../../locales/el-GR/translation.json'
+import en from '../../../locales/en-US/translation.json'
+import fr from '../../../locales/fr-FR/translation.json'
+import id from '../../../locales/id-ID/translation.json'
+import it from '../../../locales/it-IT/translation.json'
+import vi from '../../../locales/vi-VN/translation.json'
+import zh from '../../../locales/zh-CN/translation.json'
 
 i18next
   .use(initReactI18next)

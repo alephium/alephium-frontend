@@ -3,7 +3,7 @@ import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 import posthog from 'posthog-js'
 
 import { fetchCsv } from '@/api/transactions'
-import i18n from '@/i18n'
+import i18n from '@/features/localization/i18n'
 import { Message, SnackbarMessage } from '@/types/snackbar'
 import { CsvExportQueryParams, SentTransaction } from '@/types/transactions'
 

@@ -1,15 +1,7 @@
 import { createAction } from '@reduxjs/toolkit'
 
-import { Language, Settings } from '@/features/settings/settingsTypes'
+import { Settings } from '@/features/settings/settingsTypes'
 import { ThemeType } from '@/features/theme/themeTypes'
-
-export const languageChangeStarted = createAction('settings/languageChangeStarted')
-
-export const languageChangeFinished = createAction('settings/languageChangeFinished')
-
-export const systemLanguageMatchSucceeded = createAction<Language>('settings/systemLanguageMatchSucceeded')
-
-export const systemLanguageMatchFailed = createAction('settings/systemLanguageMatchFailed')
 
 export const systemRegionMatchSucceeded = createAction<string>('settings/systemRegionMatchSucceeded')
 
@@ -24,8 +16,6 @@ export const discreetModeToggled = createAction('settings/discreetModeToggled')
 export const passwordRequirementToggled = createAction('settings/passwordRequirementToggled')
 
 export const devToolsToggled = createAction('settings/devToolsToggled')
-
-export const languageChanged = createAction<Settings['general']['language']>('settings/languageChanged')
 
 export const numberFormatRegionChanged = createAction<Settings['general']['region']>(
   'settings/numberFormatRegionChanged'

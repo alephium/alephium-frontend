@@ -1,6 +1,6 @@
 export type Language = 'en-US' | 'fr-FR' | 'el-GR' | 'vi-VN' | 'pt-PT' | 'zh-CN'
 
-export const languageOptions: { label: string; value: Language }[] = [
+export const languageOptions: Array<{ label: string; value: Language }> = [
   { label: 'English', value: 'en-US' },
   { label: 'Français', value: 'fr-FR' },
   { label: 'Ελληνικά', value: 'el-GR' },

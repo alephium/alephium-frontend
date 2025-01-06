@@ -7,12 +7,8 @@ import {
 } from '@alephium/shared'
 import { createSelector, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
-import {
-  languageChangeFinished,
-  languageChangeStarted,
-  themeSettingsChanged,
-  themeToggled
-} from '@/features/settings/settingsActions'
+import { languageChangeFinished, languageChangeStarted } from '@/features/localization/localizationActions'
+import { themeSettingsChanged, themeToggled } from '@/features/settings/settingsActions'
 import { ThemeType } from '@/features/theme/themeTypes'
 import { getThemeType } from '@/features/theme/themeUtils'
 import { addressDiscoveryFinished, addressDiscoveryStarted } from '@/storage/addresses/addressesActions'
