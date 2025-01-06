@@ -178,7 +178,6 @@ const TextualContent = styled.View`
 const AddressBoxLeft = styled.View`
   flex: 1;
   gap: ${VERTICAL_GAP / 4}px;
-  overflow: hidden;
 `
 
 const AddressBoxRight = styled.View`
@@ -196,9 +195,7 @@ const AddressHashLabel = styled(AppText)`
 `
 
 const AssetsRow = styled.View`
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
+  align-items: flex-end;
   gap: 4px;
 `
 
