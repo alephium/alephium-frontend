@@ -64,13 +64,13 @@ const Amount = ({
   let isNegative = false
 
   if (value !== undefined) {
+    isNegative = value < 0
+
     if (isFiat && typeof value === 'number') {
-      isNegative = value < 0
       amount = formatFiatAmountForDisplay(isNegative ? value * -1 : value)
     } else if (isUnknownToken) {
-      amount = value.toString()
+      amount = convertToPositive(value as bigint).toString()
     } else {
-      isNegative = value < 0
       amount = formatAmountForDisplay({
         amount: convertToPositive(value as bigint),
         amountDecimals: decimals,
