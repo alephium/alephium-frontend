@@ -88,17 +88,13 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
       )}
       <BadgeContainer>
         {isSelected ? (
-          <BadgeAbsoluteInnerContainer>
-            <SelectedBadge entering={FadeIn} exiting={FadeOut}>
-              <Check color="white" size={18} />
-            </SelectedBadge>
-          </BadgeAbsoluteInnerContainer>
+          <SelectedBadge entering={FadeIn} exiting={FadeOut}>
+            <Check color="white" size={18} />
+          </SelectedBadge>
         ) : (
-          <BadgeAbsoluteInnerContainer>
-            <Animated.View entering={FadeIn} exiting={FadeOut}>
-              <AddressColorSymbol addressHash={addressHash} size={18} />
-            </Animated.View>
-          </BadgeAbsoluteInnerContainer>
+          <Animated.View entering={FadeIn} exiting={FadeOut}>
+            <AddressColorSymbol addressHash={addressHash} size={18} />
+          </Animated.View>
         )}
       </BadgeContainer>
       <TextualContent style={{ borderBottomWidth: !isLast ? 1 : 0 }}>
@@ -151,15 +147,6 @@ const AddressBoxStyled = styled(AnimatedPressable)`
 `
 
 const BadgeContainer = styled.View`
-  width: 6%;
-  height: 100%;
-`
-
-const BadgeAbsoluteInnerContainer = styled.View`
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  align-items: center;
   justify-content: center;
 `
 
