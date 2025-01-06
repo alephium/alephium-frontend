@@ -5,9 +5,10 @@ import styled from 'styled-components/native'
 import AnimatedBackground from '~/components/AnimatedBackground'
 import Button from '~/components/buttons/Button'
 import BottomBarScrollScreen from '~/components/layout/BottomBarScrollScreen'
+import { ScreenSection } from '~/components/layout/Screen'
 import DAppCard from '~/features/ecosystem/DAppCard'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 const EcosystemScreen = () => {
   const { t } = useTranslation()
@@ -57,4 +58,7 @@ const DAppFilters = styled.ScrollView`
   padding: 0 ${DEFAULT_MARGIN}px;
 `
 
-const DAppList = styled.View``
+const DAppList = styled(ScreenSection)`
+  gap: ${VERTICAL_GAP}px;
+  margin-top: ${VERTICAL_GAP}px;
+`
