@@ -1,4 +1,5 @@
 import { AddressHash, CURRENCIES } from '@alephium/shared'
+import { colord } from 'colord'
 import { useMemo } from 'react'
 import { ActivityIndicator, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -26,15 +27,13 @@ const BalanceSummary = ({ dateLabel }: BalanceSummaryProps) => {
     <BalanceSummaryStyled>
       <TextContainer>
         <View>
-          <AppText color="tertiary" semiBold>
-            {dateLabel}
-          </AppText>
+          <AppText color={colord(theme.font.primary).alpha(0.6).toHex()}>{dateLabel}</AppText>
         </View>
 
         {addressesBalancesStatus === 'uninitialized' ? (
           <ActivityIndicator size="large" color={theme.font.primary} style={{ marginTop: 10 }} />
         ) : (
-          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold size={40} />
+          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold size={42} />
         )}
       </TextContainer>
     </BalanceSummaryStyled>

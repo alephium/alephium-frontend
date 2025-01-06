@@ -400,5 +400,6 @@
   "Warning": "Warning",
   "No assets here, yet.": "No assets here, yet.",
   "There is something wrong in the received WalletConnect data.": "There is something wrong in the received WalletConnect data.",
-  "Loading your balances...": "Loading your balances..."
+  "Loading your balances...": "Loading your balances...",
+  "Wallet worth": "Wallet worth"
 }
