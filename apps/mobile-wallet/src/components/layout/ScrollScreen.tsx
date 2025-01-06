@@ -81,6 +81,8 @@ const ScrollScreen = ({
 
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
+  const hasHeaderButtons = headerOptions?.headerLeft || headerOptions?.headerRight || headerOptions?.type === 'stack'
+
   return (
     <>
       <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
@@ -108,7 +110,7 @@ const ScrollScreen = ({
                 flexGrow: fill ? 1 : undefined,
                 paddingTop:
                   typeof contentPaddingTop === 'boolean'
-                    ? insets.top + HEADER_OFFSET_TOP + VERTICAL_GAP * 2
+                    ? insets.top + HEADER_OFFSET_TOP + VERTICAL_GAP * (hasHeaderButtons ? 2 : 1)
                     : contentPaddingTop,
                 paddingBottom
               },
@@ -160,7 +162,6 @@ export default ScrollScreen
 
 const ScrollViewContainer = styled.View`
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.back2};
 `
 
 const BottomButtonsContainer = styled.View`

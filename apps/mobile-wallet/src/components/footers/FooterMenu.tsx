@@ -66,7 +66,6 @@ const footerMenuStyles = css`
   width: 100%;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
   height: 100%;
   padding-top: 5px;
 `

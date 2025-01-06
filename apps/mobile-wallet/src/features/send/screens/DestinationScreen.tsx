@@ -5,11 +5,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Linking } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 import { isAddress as isEthereumAddress } from 'web3-validator'
 
 import { sendAnalytics } from '~/analytics'
 import Button from '~/components/buttons/Button'
+import { headerOffsetTop } from '~/components/headers/BaseHeader'
 import Input from '~/components/inputs/Input'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
@@ -21,6 +23,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { PossibleNextScreenAfterDestination, SendNavigationParamList } from '~/navigation/SendNavigation'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { cameraToggled } from '~/store/appSlice'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 import { validateIsAddressValid } from '~/utils/forms'
 import { showToast } from '~/utils/layout'
 
@@ -45,6 +48,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   const { screenScrollHandler } = useHeaderContext()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const insets = useSafeAreaInsets()
 
   const openQRCodeScannerModal = () => dispatch(cameraToggled(true))
   const closeQRCodeScannerModal = () => dispatch(cameraToggled(false))
@@ -132,7 +136,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
   return (
     <ScrollScreen
       verticalGap
-      contentPaddingTop
+      contentPaddingTop={insets.top + headerOffsetTop + VERTICAL_GAP * 2} // TODO: avoid manual override by simplifying setting screens padding top
       screenTitle={t('Destination')}
       screenIntro={t('Send to an address, a contact, or one of your other addresses.')}
       onScroll={screenScrollHandler}
