@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { bip39Words } from '@alephium/shared'
 import { hashMessage } from '@alephium/web3'
 import { bytesToHex } from 'ethereum-cryptography/utils'
