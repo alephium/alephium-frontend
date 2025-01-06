@@ -307,6 +307,7 @@
   "Assets": "Ativos",
   "With Alephium, you can send multiple assets in one transaction.": "Com Alephium, você pode enviar vários ativos em uma transação.",
   "This is not a valid Alephium address.": "Esse não é um endereço Alephium válido.",
+  "Make sure you are not scanning an address of a different chain.": "Certifique-se de que você não está escaneando um endereço de uma cadeia diferente.",
   "Please, double check that everything is correct before sending.": "Por favor, verifique se tudo está correto antes de enviar.",
   "Settings": "Definições",
   "General": "Geral",
@@ -375,5 +376,13 @@
   "No": "Não",
   "Welcome back to Alephium!": "Bem-vindo de volta a Alephium!",
   "Enjoy your restored wallet!": "Aproveite a sua carteira restaurada!",
-  "Lost connection to WalletConnect": "Conexão perdida ao WalletConnect"
+  "Lost connection to WalletConnect": "Conexão perdida ao WalletConnect",
+  "You scanned an Ethereum address": "Você escaneou um endereço Ethereum",
+  "To move funds to Ethereum use the bridge at {{ url }}": "Para mover fundos para a Ethereum use a ponte em {{ url }}",
+  "Invalid scanned data": "Dados digitalizados inválidos",
+  "Did not detect a valid Alephium address or a WalletConnect QR code in scanned data: {{ data }}": "Não detectou um endereço Alephium válido ou um código QR do WalletConnect nos dados escaneados: {{ data }}",
+  "Forget": "Esquecer",
+  "forgetAddress_one": "Esquecer endereço",
+  "You can always re-add it to your wallet.": "Você sempre pode adicioná-lo novamente à sua carteira.",
+  "Could not forget address": "Não foi possível esquecer o endereço"
 }
