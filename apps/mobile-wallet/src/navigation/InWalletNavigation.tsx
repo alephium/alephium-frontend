@@ -8,6 +8,7 @@ import FooterMenu from '~/components/footers/FooterMenu'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import ActivityScreen from '~/screens/ActivityScreen'
 import DashboardScreen from '~/screens/Dashboard/DashboardScreen'
+import EcosystemScreen from '~/screens/Ecosystem/EcosystemScreen'
 import NFTListScreen from '~/screens/NFTs/NFTListScreen'
 
 export type InWalletTabsParamList = {
@@ -15,6 +16,7 @@ export type InWalletTabsParamList = {
   NFTListScreen: undefined
   AddressesTabNavigation: undefined
   ActivityScreen: undefined
+  EcosystemScreen: undefined
 }
 
 const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
@@ -59,6 +61,16 @@ const InWalletTabsNavigation = () => {
             title: t('Activity'),
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'list' : 'list-outline'} color={color} size={size} />
+            )
+          }}
+        />
+        <InWalletTabs.Screen
+          name="EcosystemScreen"
+          component={EcosystemScreen}
+          options={{
+            title: t('Addresses'),
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'planet' : 'planet-outline'} color={color} size={size} />
             )
           }}
         />
