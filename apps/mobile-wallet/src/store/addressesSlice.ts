@@ -170,7 +170,6 @@ export const syncAddressesTokens = createAsyncThunk(
   async (addresses: AddressHash[]) => await fetchAddressesTokens(addresses)
 )
 
-// Same as in desktop wallet, share state?
 export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   'addresses/syncAllAddressesTransactionsNextPage',
   async (

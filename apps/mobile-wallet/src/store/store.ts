@@ -18,6 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { sharedReducer } from '@alephium/shared'
 import { configureStore } from '@reduxjs/toolkit'
+import devToolsEnhancer from 'redux-devtools-expo-dev-plugin'
 
 import backupSlice from '~/features/backup/backupSlice'
 import fundPasswordSlice from '~/features/fund-password/fundPasswordSlice'
@@ -50,6 +51,8 @@ export const store = configureStore({
     [loadersSlice.name]: loadersSlice.reducer,
     [modalSlice.name]: modalSlice.reducer
   },
+  devTools: false,
+  enhancers: (enhancers) => [...enhancers, devToolsEnhancer()],
   middleware: (getDefaultMiddleware) => {
     const middlewares = getDefaultMiddleware({
       serializableCheck: false

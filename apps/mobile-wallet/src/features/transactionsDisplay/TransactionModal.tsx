@@ -138,7 +138,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
         </Row>
       )}
       {unknownTokens.length > 0 && (
-        <Row title={t('Unknown tokens')} transparent isVertical>
+        <Row title={t('Unknown tokens')} transparent>
           {unknownTokens.map(({ id, amount, decimals, symbol }) => (
             <UnknownTokenAmount key={id}>
               <Amount
@@ -148,7 +148,6 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
                 isUnknownToken={!symbol}
                 highlight={!isMoved}
                 showPlusMinus={!isMoved}
-                fadeSuffix
                 fullPrecision
                 semiBold
               />
@@ -178,7 +177,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
 export default TransactionModal
 
 const TokenId = styled.View`
-  max-width: 60px;
+  max-width: 120px;
 `
 
 const UnknownTokenAmount = styled.View`
