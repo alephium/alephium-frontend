@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { decryptAsync } from '@alephium/shared-crypto'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -25,7 +7,7 @@ import { Alert } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 
 import { sendAnalytics } from '~/analytics'
-import { ContinueButton } from '~/components/buttons/Button'
+import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
@@ -141,12 +123,17 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
       verticalGap
       fill
       keyboardShouldPersistTaps="always"
-      headerOptions={{
-        headerTitle: t('Password'),
-        type: 'stack',
-        headerRight: () => <ContinueButton onPress={decryptAndImportWallet} disabled={!password || !!error} />
-      }}
+      headerOptions={{ headerTitle: t('Password'), type: 'stack' }}
+      bottomButtonsRender={() => (
+        <Button
+          title={t('Decrypt')}
+          variant="highlight"
+          onPress={decryptAndImportWallet}
+          disabled={!password || !!error}
+        />
+      )}
       screenIntro={t('Enter your desktop wallet password to decrypt the secret recovery phrase.')}
+      contentPaddingTop
     >
       <ScreenSection fill>
         <Input

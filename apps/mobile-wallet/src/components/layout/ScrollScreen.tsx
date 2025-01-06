@@ -1,27 +1,10 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { useNavigation } from '@react-navigation/native'
 import { ReactNode, RefObject, useRef, useState } from 'react'
 import {
   KeyboardAvoidingView,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Platform,
   ScrollView,
   ScrollViewProps,
   StyleProp,
@@ -50,6 +33,7 @@ export interface ScrollScreenBaseProps extends ScreenProps {
   headerScrollEffectOffset?: number
   TitleSideComponent?: ReactNode
   bottomButtonsRender?: () => ReactNode
+  customBottomRender?: () => ReactNode
 }
 
 export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {
@@ -76,6 +60,7 @@ const ScrollScreen = ({
   headerScrollEffectOffset,
   TitleSideComponent,
   bottomButtonsRender,
+  customBottomRender,
   ...props
 }: ScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
@@ -162,6 +147,11 @@ const ScrollScreen = ({
           </BottomButtons>
         </BottomButtonsContainer>
       )}
+      {customBottomRender && (
+        <View>
+          <CustomBottomRenderContainer>{customBottomRender()}</CustomBottomRenderContainer>
+        </View>
+      )}
     </>
   )
 }
@@ -174,5 +164,12 @@ const ScrollViewContainer = styled.View`
 `
 
 const BottomButtonsContainer = styled.View`
-  margin: 0 ${DEFAULT_MARGIN}px;
+  margin: ${Platform.OS === 'ios' ? 0 : undefined} ${DEFAULT_MARGIN}px;
+`
+
+const CustomBottomRenderContainer = styled.View`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
 `

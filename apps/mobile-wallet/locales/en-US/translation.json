@@ -395,5 +395,9 @@
   "I confirm that I have saved my secret recovery phrase securely.": "I confirm that I have saved my secret recovery phrase securely.",
   "If you lose access to your fund password, the only way to recover your funds is by using your secret recovery phrase.": "If you lose access to your fund password, the only way to recover your funds is by using your secret recovery phrase.",
   "I'll do it later": "I'll do it later",
-  "Save fund password": "Save fund password"
+  "Save fund password": "Save fund password",
+  "Decrypt": "Decrypt",
+  "Warning": "Warning",
+  "No assets there, yet.": "No assets there, yet.",
+  "There is something wrong in the received WalletConnect data.": "There is something wrong in the received WalletConnect data."
 }

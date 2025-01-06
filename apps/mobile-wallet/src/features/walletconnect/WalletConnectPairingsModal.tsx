@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
@@ -25,7 +7,6 @@ import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
-import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import ListItem from '~/components/ListItem'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import BottomModal from '~/features/modals/BottomModal'
@@ -54,12 +35,8 @@ const WalletConnectPairingsModal = withModal<WalletConnectPairingsModalProps>(
     }
 
     return (
-      <BottomModal modalId={id}>
+      <BottomModal modalId={id} title={t('Current connections')}>
         <ModalContent verticalGap>
-          <ScreenSection>
-            <ModalScreenTitle>{t('Current connections')}</ModalScreenTitle>
-          </ScreenSection>
-
           {activeSessions.map(({ topic, peer: { metadata } }, index) => (
             <ListItem
               key={topic}
@@ -76,19 +53,9 @@ const WalletConnectPairingsModal = withModal<WalletConnectPairingsModalProps>(
               <AppText>{t('There are no connections yet.')} 🔌</AppText>
             </EmptyPlaceholder>
           )}
-          <BottomButtons>
-            <Button
-              title={t('Paste a WalletConnect URI')}
-              variant="accent"
-              onPress={onPasteWcUrlPress}
-              iconProps={{ name: 'copy' }}
-            />
-            <Button
-              title={t('Scan QR code')}
-              variant="accent"
-              onPress={onScanQRCodePress}
-              iconProps={{ name: 'maximize' }}
-            />
+          <BottomButtons fullWidth backgroundColor="back1">
+            <Button title={t('Paste a WalletConnect URI')} onPress={onPasteWcUrlPress} iconProps={{ name: 'copy' }} />
+            <Button title={t('Scan QR code')} onPress={onScanQRCodePress} iconProps={{ name: 'maximize' }} />
           </BottomButtons>
         </ModalContent>
       </BottomModal>

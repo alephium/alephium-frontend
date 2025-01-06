@@ -1,25 +1,7 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import Ionicons from '@expo/vector-icons/Feather'
 import { colord } from 'colord'
 import { ComponentProps, ReactNode } from 'react'
-import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import { ActivityIndicator, Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import Animated, { LinearTransition, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -30,7 +12,7 @@ import { ImpactStyle, vibrate } from '~/utils/haptics'
 export interface ButtonProps extends PressableProps {
   title?: string
   type?: 'primary' | 'secondary' | 'transparent' | 'tint'
-  variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert' | 'highlight' | 'highlightedIcon'
+  variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert' | 'highlight'
   style?: StyleProp<TextStyle & ViewStyle>
   wide?: boolean
   short?: boolean
@@ -44,6 +26,7 @@ export interface ButtonProps extends PressableProps {
   compact?: boolean
   animated?: boolean
   haptics?: boolean
+  loading?: boolean
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
@@ -67,6 +50,7 @@ const Button = ({
   animated,
   haptics,
   wide,
+  loading = false,
   ...props
 }: ButtonProps) => {
   const theme = useTheme()
@@ -81,8 +65,7 @@ const Button = ({
     valid: theme.global.valid,
     alert: colord(theme.global.alert).alpha(0.1).toRgbString(),
     transparent: 'transparent',
-    highlight: theme.global.accent,
-    highlightedIcon: theme.button.primary
+    highlight: theme.global.accent
   }[variant]
 
   const font =
@@ -93,8 +76,7 @@ const Button = ({
       accent: theme.global.accent,
       valid: theme.font.primary,
       alert: theme.global.alert,
-      highlight: 'white',
-      highlightedIcon: theme.font.primary
+      highlight: 'white'
     }[variant]
 
   const buttonAnimatedStyle = useAnimatedStyle(() => ({
@@ -115,16 +97,16 @@ const Button = ({
         transparent: undefined,
         tint: undefined
       }[type],
-      height: short ? 42 : compact ? 30 : hasOnlyIcon ? 40 : 54,
-      width: compact && squared ? 30 : wide ? '100%' : hasOnlyIcon ? 40 : null,
+      height: short ? 42 : compact ? 33 : hasOnlyIcon ? 40 : 54,
+      width: compact && squared ? 33 : wide ? '100%' : hasOnlyIcon ? 40 : null,
       justifyContent: squared ? 'center' : undefined,
       alignItems: squared ? 'center' : undefined,
       gap: compact ? 5 : 10,
       minWidth: centered ? 200 : undefined,
       marginVertical: centered ? 0 : undefined,
       marginHorizontal: centered ? 'auto' : undefined,
-      paddingVertical: squared ? 0 : compact ? 5 : !hasOnlyIcon ? 0 : undefined,
-      paddingHorizontal: compact ? 10 : !hasOnlyIcon ? 25 : undefined,
+      paddingVertical: squared ? 0 : !hasOnlyIcon ? 0 : undefined,
+      paddingHorizontal: squared ? 0 : compact ? 10 : !hasOnlyIcon ? 25 : undefined,
       borderRadius: 100,
       backgroundColor: {
         primary: bg,
@@ -155,41 +137,29 @@ const Button = ({
   return (
     <AnimatedPressable
       style={[buttonAnimatedStyle, buttonStyle]}
-      disabled={disabled}
+      disabled={disabled || loading}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      hitSlop={compact ? 12 : 8} // That's great. Increase touchable area
+      hitSlop={compact ? 12 : 8}
       {...props}
     >
-      {iconProps && !(compact || squared) && <EmptyPlaceholder />}
+      {iconProps && !(compact || squared) && !hasOnlyIcon && <EmptyPlaceholder />}
       {title && (
-        <AppText style={{ color: font, textAlign: 'center' }} medium size={compact ? 14 : 16}>
+        <ButtonText color={font} medium size={compact ? 14 : 16}>
           {title}
-        </AppText>
+        </ButtonText>
       )}
       {children}
-      {iconProps ? (
-        <IconContainer
-          style={
-            variant === 'highlightedIcon'
-              ? {
-                  backgroundColor: theme.global.accent,
-                  borderRadius: 100,
-                  padding: compact ? 0 : 6,
-                  marginVertical: compact ? 0 : 6,
-                  marginRight: compact ? -4 : 6,
-                  height: compact ? 20 : undefined,
-                  width: compact ? 20 : undefined,
-                  overflow: 'hidden'
-                }
-              : undefined
-          }
-        >
+      {loading ? (
+        <IconContainer>
+          <ActivityIndicator color={font} size="small" />
+        </IconContainer>
+      ) : iconProps ? (
+        <IconContainer>
           <AnimatedIonicons
             layout={LinearTransition}
-            color={variant === 'highlightedIcon' ? 'white' : font}
+            color={font}
             size={compact ? 16 : hasOnlyIcon ? 22 : 20}
-            style={compact ? { marginLeft: 1, marginTop: 1 } : undefined}
             {...iconProps}
           />
         </IconContainer>
@@ -246,9 +216,13 @@ export default styled(Button)`
 const IconContainer = styled.View`
   align-items: center;
   justify-content: center;
-  width: 22px;
 `
 
 const EmptyPlaceholder = styled.View`
   width: 22px;
+`
+
+const ButtonText = styled(AppText)`
+  text-align: center;
+  flex-shrink: 1;
 `
