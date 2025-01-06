@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import {
   PRICES_REFRESH_INTERVAL,
   selectDoVerifiedFungibleTokensNeedInitialization,
@@ -26,27 +8,28 @@ import {
   TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
 import { useInitializeClient, useInterval } from '@alephium/shared-react'
+import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ViewProps } from 'react-native'
+import { Platform, View, ViewProps } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { useLocalization } from '~/features/localization/useLocalization'
-import SplashScreen from '~/features/splash-screen/SplashScreen'
+import useLoadStoredSettings from '~/features/settings/useLoadStoredSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
-import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
 import {
   getStoredWalletMetadataWithoutThrowingError,
   validateAndRepareStoredWalletData
 } from '~/persistent-storage/wallet'
 import {
-  makeSelectAddressesUnknownTokens,
+  makeSelectAddressesUnknownTokensIds,
   selectAllAddressVerifiedFungibleTokenSymbols,
   syncLatestTransactions
 } from '~/store/addressesSlice'
@@ -63,7 +46,13 @@ const App = () => {
   useEffect(
     () =>
       store.subscribe(() => {
-        setTheme(themes[store.getState().settings.theme])
+        const currentTheme = themes[store.getState().settings.theme]
+        setTheme(currentTheme)
+        if (Platform.OS === 'android') {
+          NavigationBar.setBackgroundColorAsync(
+            currentTheme.name === 'light' ? currentTheme.bg.highlight : currentTheme.bg.back2
+          )
+        }
       }),
     []
   )
@@ -80,7 +69,9 @@ const App = () => {
           ) : (
             // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
             // splash screen to be show after the default one gets hidden, before we can show app content.
-            <SplashScreen />
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <AlephiumLogo style={{ width: '15%' }} />
+            </View>
           )}
           <ToastAnchor />
         </ThemeProvider>
@@ -123,7 +114,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const appJustLaunched = useAppSelector((s) => s.app.wasJustLaunched)
   const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
 
-  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
+  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokensIds, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
   const txUnknownTokenIds = useAppSelector(selectTransactionUnknownTokenIds)
   const checkedUnknownTokenIds = useAppSelector((s) => s.app.checkedUnknownTokenIds)

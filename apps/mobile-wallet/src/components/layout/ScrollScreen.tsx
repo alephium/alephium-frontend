@@ -1,28 +1,21 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { useNavigation } from '@react-navigation/native'
-import { ReactNode, RefObject, useRef } from 'react'
-import { KeyboardAvoidingView, ScrollView, ScrollViewProps, StyleProp, View, ViewStyle } from 'react-native'
+import { ReactNode, RefObject, useRef, useState } from 'react'
+import {
+  KeyboardAvoidingView,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Platform,
+  ScrollView,
+  ScrollViewProps,
+  StyleProp,
+  View,
+  ViewStyle
+} from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
-import BaseHeader from '~/components/headers/BaseHeader'
+import BottomButtons from '~/components/buttons/BottomButtons'
+import BaseHeader, { headerOffsetTop } from '~/components/headers/BaseHeader'
 import StackHeader from '~/components/headers/StackHeader'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
@@ -35,7 +28,12 @@ export interface ScrollScreenBaseProps extends ScreenProps {
   fill?: boolean
   screenTitle?: string
   screenIntro?: string
+  headerTitleAlwaysVisible?: boolean
+  floatingHeader?: boolean
+  headerScrollEffectOffset?: number
   TitleSideComponent?: ReactNode
+  bottomButtonsRender?: () => ReactNode
+  customBottomRender?: () => ReactNode
 }
 
 export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProps {
@@ -43,98 +41,135 @@ export interface ScrollScreenProps extends ScrollScreenBaseProps, ScrollViewProp
   scrollViewRef?: RefObject<ScrollView>
   verticalGap?: number | boolean
   contentPaddingTop?: number | boolean
-  usesKeyboard?: boolean
 }
 
 const ScrollScreen = ({
   children,
   style,
+  onScroll,
   containerStyle,
   contentContainerStyle,
   contentPaddingTop,
   verticalGap,
-  contrastedBg,
   fill,
   headerOptions,
-  usesKeyboard,
   screenTitle,
   screenIntro,
+  headerTitleAlwaysVisible,
+  floatingHeader,
+  headerScrollEffectOffset,
   TitleSideComponent,
+  bottomButtonsRender,
+  customBottomRender,
   ...props
 }: ScrollScreenProps) => {
   const viewRef = useRef<ScrollView>(null)
   const navigation = useNavigation()
-
   const scrollEndHandler = useAutoScrollOnDragEnd(viewRef)
   const insets = useSafeAreaInsets()
-
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
+  const [paddingBottom, setPaddingBottom] = useState(0)
+
+  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    onScroll && onScroll(e)
+    screenScrollHandler(e)
+  }
+
+  const handleBottomButtonsHeightChange = (newHeight: number) => {
+    setPaddingBottom(newHeight)
+  }
 
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
-  const screen = (
-    <ScrollViewContainer style={containerStyle} contrastedBg={contrastedBg}>
-      {headerOptions && (
-        <HeaderComponent
-          goBack={navigation.canGoBack() ? navigation.goBack : undefined}
-          options={{ headerTitle: screenTitle, ...headerOptions }}
-          scrollY={screenScrollY}
-        />
+  return (
+    <>
+      <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+        <ScrollViewContainer style={containerStyle}>
+          {headerOptions && (
+            <HeaderComponent
+              onBackPress={navigation.canGoBack() ? navigation.goBack : undefined}
+              options={{ headerTitle: screenTitle, ...headerOptions }}
+              scrollY={screenScrollY}
+              scrollEffectOffset={headerScrollEffectOffset}
+              titleAlwaysVisible={headerTitleAlwaysVisible}
+              style={floatingHeader ? { position: 'absolute', top: 0, left: 0, right: 0 } : undefined}
+            />
+          )}
+          <ScrollView
+            ref={viewRef}
+            scrollEventThrottle={16}
+            alwaysBounceVertical={true}
+            onScroll={handleScroll}
+            onScrollEndDrag={scrollEndHandler}
+            style={{ overflow: SCREEN_OVERFLOW }}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={[
+              {
+                flexGrow: fill ? 1 : undefined,
+                paddingTop:
+                  typeof contentPaddingTop === 'boolean'
+                    ? insets.top + headerOffsetTop + VERTICAL_GAP * 2
+                    : contentPaddingTop,
+                paddingBottom
+              },
+              contentContainerStyle
+            ]}
+            {...props}
+          >
+            {screenTitle && (
+              <ScreenIntro
+                title={screenTitle}
+                subtitle={screenIntro}
+                TitleSideComponent={TitleSideComponent}
+                scrollY={screenScrollY}
+                paddingBottom={!!screenIntro}
+              />
+            )}
+            <View
+              style={[
+                {
+                  gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
+                  paddingBottom: insets.bottom + DEFAULT_MARGIN,
+                  flex: fill ? 1 : undefined
+                },
+                style
+              ]}
+            >
+              {children}
+            </View>
+          </ScrollView>
+        </ScrollViewContainer>
+      </KeyboardAvoidingView>
+      {bottomButtonsRender && (
+        <BottomButtonsContainer>
+          <BottomButtons float bottomInset onHeightChange={handleBottomButtonsHeightChange}>
+            {bottomButtonsRender()}
+          </BottomButtons>
+        </BottomButtonsContainer>
       )}
-      <ScrollView
-        ref={viewRef}
-        scrollEventThrottle={16}
-        alwaysBounceVertical={true}
-        onScroll={screenScrollHandler}
-        onScrollEndDrag={scrollEndHandler}
-        style={{ overflow: SCREEN_OVERFLOW }}
-        contentContainerStyle={[
-          {
-            flexGrow: fill ? 1 : undefined,
-            paddingTop: typeof contentPaddingTop === 'boolean' ? 15 : contentPaddingTop
-          },
-          contentContainerStyle
-        ]}
-        {...props}
-      >
-        {screenTitle && (
-          <ScreenIntro
-            title={screenTitle}
-            subtitle={screenIntro}
-            TitleSideComponent={TitleSideComponent}
-            scrollY={screenScrollY}
-            paddingBottom={!!screenIntro}
-          />
-        )}
-        <View
-          style={[
-            {
-              gap: verticalGap ? (typeof verticalGap === 'number' ? verticalGap || 0 : VERTICAL_GAP) : 0,
-              paddingBottom: insets.bottom + DEFAULT_MARGIN,
-              flex: fill ? 1 : undefined
-            },
-            style
-          ]}
-        >
-          {children}
+      {customBottomRender && (
+        <View>
+          <CustomBottomRenderContainer>{customBottomRender()}</CustomBottomRenderContainer>
         </View>
-      </ScrollView>
-    </ScrollViewContainer>
-  )
-
-  return usesKeyboard ? (
-    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
-      {screen}
-    </KeyboardAvoidingView>
-  ) : (
-    screen
+      )}
+    </>
   )
 }
 
 export default ScrollScreen
 
-const ScrollViewContainer = styled.View<{ contrastedBg?: boolean }>`
+const ScrollViewContainer = styled.View`
   flex: 1;
-  background-color: ${({ theme, contrastedBg }) =>
-    contrastedBg ? (theme.name === 'light' ? theme.bg.highlight : theme.bg.back2) : theme.bg.back1};
+  background-color: ${({ theme }) => theme.bg.back2};
+`
+
+const BottomButtonsContainer = styled.View`
+  margin: ${Platform.OS === 'ios' ? 0 : undefined} ${DEFAULT_MARGIN}px;
+`
+
+const CustomBottomRenderContainer = styled.View`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
 `

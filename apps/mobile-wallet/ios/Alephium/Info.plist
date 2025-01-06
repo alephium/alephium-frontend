@@ -66,6 +66,12 @@
     <string>Allow $(PRODUCT_NAME) to access your microphone</string>
     <key>NSMotionUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your device motion</string>
+    <key>UIAppFonts</key>
+    <array>
+      <string>Inter18pt-Medium.ttf</string>
+      <string>Inter18pt-SemiBold.ttf</string>
+      <string>Inter18pt-Bold.ttf</string>
+    </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

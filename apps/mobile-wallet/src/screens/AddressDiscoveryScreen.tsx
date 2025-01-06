@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import Checkbox from 'expo-checkbox'
@@ -28,10 +10,11 @@ import styled, { useTheme } from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
-import BoxSurface from '~/components/layout/BoxSurface'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
@@ -134,6 +117,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
     <ScrollScreen
       verticalGap
       fill
+      contentPaddingTop
       screenTitle={t('Active addresses')}
       screenIntro={t(
         'Scan the blockchain to find your active addresses on the {{ networkName }} network. This process might take a while.',
@@ -144,7 +128,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
     >
       <ScreenSection fill>
         <ScreenSectionTitle>{t('Current addresses')}</ScreenSectionTitle>
-        <BoxSurface>
+        <Surface>
           {addresses.map((address, index) => (
             <Row
               key={address.hash}
@@ -156,7 +140,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
               <Amount value={BigInt(address.balance)} fadeDecimals bold />
             </Row>
           ))}
-        </BoxSurface>
+        </Surface>
         {(loading || status === 'finished' || discoveredAddresses.length > 0) && !importLoading && (
           <>
             <ScreenSectionTitle style={{ marginTop: VERTICAL_GAP }}>
@@ -173,7 +157,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             )}
 
             {discoveredAddresses.length > 0 && (
-              <BoxSurface>
+              <Surface>
                 {discoveredAddresses.map(({ hash, balance }, index) => (
                   <Row
                     key={hash}
@@ -188,11 +172,12 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
                         value={addressSelections[hash]}
                         disabled={loading}
                         onValueChange={() => toggleAddressSelection(hash)}
+                        style={{ borderRadius: 5 }}
                       />
                     </AmountContent>
                   </Row>
                 ))}
-              </BoxSurface>
+              </Surface>
             )}
             {discoveredAddresses.length === 0 && status === 'finished' && (
               <AppText>{t('Did not find any new addresses, please continue.')}</AppText>
@@ -200,13 +185,13 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
           </>
         )}
       </ScreenSection>
-      <ScreenSection centered>
+      <BottomButtons>
         {status === 'idle' && (
           <ButtonStyled
             iconProps={{ name: 'search' }}
             title={t('Start scanning')}
             onPress={handleStartScanPress}
-            variant="highlight"
+            variant="contrast"
           />
         )}
         {status === 'started' && (
@@ -214,7 +199,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             iconProps={{ name: 'x' }}
             title={t('Stop scanning')}
             onPress={handleStopScanPress}
-            variant="highlight"
+            variant="contrast"
           />
         )}
         {status === 'stopped' && (
@@ -222,7 +207,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             iconProps={{ name: 'search' }}
             title={t('Continue scanning')}
             onPress={handleContinueScanPress}
-            variant="highlight"
+            variant="contrast"
           />
         )}
         {discoveredAddresses.length > 0 && (status === 'stopped' || status === 'finished') && (
@@ -231,7 +216,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             title={t('Import selected addresses')}
             onPress={importAddresses}
             disabled={selectedAddressesToImport.length === 0}
-            variant="highlight"
+            variant="contrast"
           />
         )}
         {discoveredAddresses.length === 0 && status === 'finished' && !importLoading && (
@@ -239,10 +224,10 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
             iconProps={{ name: isImporting ? 'arrow-right' : 'arrow-left' }}
             title={isImporting ? t('Continue') : t('Go back')}
             onPress={continueToNextScreen}
-            variant={isImporting ? 'highlight' : 'accent'}
+            variant={isImporting ? 'contrast' : 'accent'}
           />
         )}
-      </ScreenSection>
+      </BottomButtons>
       <SpinnerModal isActive={importLoading} text={`${t('Importing addresses')}...`} blur={false} />
     </ScrollScreen>
   )

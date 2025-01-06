@@ -1,25 +1,7 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
+import { FlashList } from '@shopify/flash-list'
 import { RefObject } from 'react'
 import { FlatList, NativeScrollEvent, NativeSyntheticEvent, ScrollView } from 'react-native'
 
-import { scrollEndThreshold } from '~/components/headers/BaseHeader'
 import { scrollScreenTo } from '~/utils/layout'
 
 type UseAutoScrollReturnedHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => void
@@ -27,6 +9,8 @@ type UseAutoScrollReturnedHandler = (e: NativeSyntheticEvent<NativeScrollEvent>)
 type UseAutoScrollOnDragEnd = {
   (scrollViewRef?: RefObject<ScrollView>): UseAutoScrollReturnedHandler
   (flatListRef?: RefObject<FlatList>): UseAutoScrollReturnedHandler
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (flashListRef?: RefObject<FlashList<any>>): UseAutoScrollReturnedHandler
 }
 
 const useAutoScrollOnDragEnd: UseAutoScrollOnDragEnd = (viewRef) => {
@@ -38,8 +22,8 @@ const useAutoScrollOnDragEnd: UseAutoScrollOnDragEnd = (viewRef) => {
 
     if (contentOffset.y < 60) {
       scrollScreenTo(0, viewRef, true)
-    } else if (contentOffset.y < scrollEndThreshold) {
-      scrollScreenTo(scrollEndThreshold, viewRef, true)
+    } else if (contentOffset.y < 80) {
+      scrollScreenTo(50, viewRef, true)
     }
   }
 

@@ -1,26 +1,8 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { DefaultTheme, NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native'
-import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, Pressable } from 'react-native'
+import { Modal, Platform, Pressable } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
@@ -31,6 +13,9 @@ import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletCon
 import useAutoLock from '~/features/auto-lock/useAutoLock'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
+import AppModals from '~/features/modals/AppModals'
+import { loadBiometricsSettings } from '~/features/settings/settingsPersistentStorage'
+import SettingsScreen from '~/features/settings/SettingsScreen'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
@@ -40,7 +25,6 @@ import ReceiveNavigation from '~/navigation/ReceiveNavigation'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import SendNavigation from '~/navigation/SendNavigation'
 import { appInstallationTimestampMissing, rememberAppInstallation, wasAppUninstalled } from '~/persistent-storage/app'
-import { loadBiometricsSettings } from '~/persistent-storage/settings'
 import {
   deleteDeprecatedWallet,
   getDeprecatedStoredWallet,
@@ -68,13 +52,11 @@ import NewWalletNameScreen from '~/screens/new-wallet/NewWalletNameScreen'
 import NewWalletSuccessScreen from '~/screens/new-wallet/NewWalletSuccessScreen'
 import SelectImportMethodScreen from '~/screens/new-wallet/SelectImportMethodScreen'
 import PublicKeysScreen from '~/screens/PublicKeysScreen'
-import EditWalletNameScreen from '~/screens/Settings/EditWalletName'
-import SettingsScreen from '~/screens/Settings/SettingsScreen'
 import { mnemonicMigrated, walletUnlocked } from '~/store/wallet/walletActions'
 import { showExceptionToast, showToast } from '~/utils/layout'
 import { resetNavigation, rootStackNavigationRef } from '~/utils/navigation'
 
-const RootStack = createStackNavigator<RootStackParamList>()
+const RootStack = createNativeStackNavigator<RootStackParamList>()
 
 interface RootStackNavigationProps {
   initialRouteName?: keyof RootStackParamList
@@ -104,9 +86,12 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
             <WalletConnectContextProvider>
               <RootStack.Navigator
                 initialRouteName={initialRouteName || 'LandingScreen'}
-                screenOptions={{ headerShown: false }}
+                screenOptions={{
+                  headerShown: false,
+                  presentation: Platform.OS === 'android' ? 'transparentModal' : undefined
+                }}
               >
-                <RootStack.Group screenOptions={{ cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter }}>
+                <RootStack.Group screenOptions={{ animation: 'fade' }}>
                   <RootStack.Screen name="LandingScreen" component={LandingScreen} />
                   <RootStack.Screen name="LoginWithPinScreen" component={LoginWithPinScreen} />
                   <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
@@ -128,7 +113,6 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                 <RootStack.Screen name="DecryptScannedMnemonicScreen" component={DecryptScannedMnemonicScreen} />
                 <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
                 <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
-                <RootStack.Screen name="EditWalletNameScreen" component={EditWalletNameScreen} />
                 <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
                 <RootStack.Screen name="PublicKeysScreen" component={PublicKeysScreen} />
                 <RootStack.Screen name="FundPasswordScreen" component={FundPasswordScreen} />
@@ -137,6 +121,7 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
                   component={ImportWalletAddressDiscoveryScreen}
                 />
               </RootStack.Navigator>
+              <AppModals />
             </WalletConnectContextProvider>
           </Analytics>
           <AppUnlockModal initialRouteName={initialRouteName || 'InWalletTabsNavigation'} />
@@ -272,7 +257,7 @@ const AppUnlockModal = ({ initialRouteName }: Required<RootStackNavigationProps>
         onPress={unlockApp}
         style={{ backgroundColor: 'black', flex: 1, alignItems: 'center', justifyContent: 'center' }}
       >
-        <AlephiumLogo style={{ width: '25%' }} />
+        <AlephiumLogo style={{ width: '15%' }} />
       </Pressable>
       <ToastAnchor />
     </Modal>

@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import {
   ADDRESSES_QUERY_LIMIT,
   AddressFungibleToken,
@@ -170,7 +152,6 @@ export const syncAddressesTokens = createAsyncThunk(
   async (addresses: AddressHash[]) => await fetchAddressesTokens(addresses)
 )
 
-// Same as in desktop wallet, share state?
 export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   'addresses/syncAllAddressesTransactionsNextPage',
   async (
@@ -374,7 +355,10 @@ export const makeSelectAddressesTokens = () =>
     [selectAllFungibleTokens, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses(), selectAllPrices],
     (fungibleTokens, nfts, alphAsset, addresses, tokenPrices): Asset[] => {
       const tokenBalances = getAddressesTokenBalances(addresses)
-      const tokens = calculateAssetsData([alphAsset, ...tokenBalances], fungibleTokens, nfts, tokenPrices)
+
+      if (alphAsset.balance > BigInt(0)) tokenBalances.push(alphAsset)
+
+      const tokens = calculateAssetsData(tokenBalances, fungibleTokens, nfts, tokenPrices)
 
       return sortAssets(tokens)
     }
@@ -386,8 +370,13 @@ export const makeSelectAddressesKnownFungibleTokens = () =>
     tokens.filter((token): token is AddressFungibleToken => !!token.symbol)
   )
 
-// Same as in desktop wallet
 export const makeSelectAddressesUnknownTokens = () =>
+  createSelector([makeSelectAddressesTokens()], (tokens): Asset[] =>
+    tokens.filter((token): token is Asset => !token.name && !token.symbol && !token.verified && !token.logoURI)
+  )
+
+// Same as in desktop wallet
+export const makeSelectAddressesUnknownTokensIds = () =>
   createSelector(
     [selectAllFungibleTokens, selectNFTIds, makeSelectAddresses()],
     (fungibleTokens, nftIds, addresses): Asset['id'][] => {
@@ -412,7 +401,7 @@ export const makeSelectAddressesUnknownTokens = () =>
 // Same as in desktop wallet
 export const makeSelectAddressesCheckedUnknownTokens = () =>
   createSelector(
-    [makeSelectAddressesUnknownTokens(), (state: RootState) => state.app.checkedUnknownTokenIds],
+    [makeSelectAddressesUnknownTokensIds(), (state: RootState) => state.app.checkedUnknownTokenIds],
     (tokensWithoutMetadata, checkedUnknownTokenIds) =>
       tokensWithoutMetadata.filter((tokenId) => checkedUnknownTokenIds.includes(tokenId))
   )

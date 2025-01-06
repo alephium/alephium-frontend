@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
@@ -70,8 +52,6 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   const isDark = colord(bgColor).isDark()
   const textColor = isDark ? 'rgba(255, 255, 255, 0.85)' : 'rgba(0, 0, 0, 0.8)'
   const outterBorderColor = colord(bgColor).lighten(0.3).toHex()
-  const innerBorderColor = isDark ? colord(bgColor).lighten(0.1).toHex() : colord(bgColor).darken(0.05).toHex()
-  const buttonsBackground = isDark ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.1)'
 
   const handleSendPress = () => {
     sendAnalytics({ event: 'Address card: Selected address to send funds from' })
@@ -139,8 +119,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
                 hideSymbol
                 color={textColor}
                 textStyle={{
-                  fontSize: 23,
-                  fontWeight: '700'
+                  fontSize: 18
                 }}
                 canCopy={false}
               />
@@ -156,22 +135,19 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 
             <Button
               onPress={handleDefaultAddressToggle}
-              customIcon={
-                <DefaultAddressBadge
-                  strokeOnly={!isDefaultAddress}
-                  size={18}
-                  color={isDefaultAddress ? theme.global.accent : textColor}
-                />
-              }
-              round
-              type="transparent"
+              customIcon={<DefaultAddressBadge size={22} color={isDefaultAddress ? bgColor : theme.font.primary} />}
+              squared
+              variant={isDefaultAddress ? 'contrast' : 'default'}
+              type={isDefaultAddress ? 'primary' : 'transparent'}
+              compact
             />
             <Button
               iconProps={{ name: 'settings' }}
               color={textColor}
               onPress={onSettingsPress}
-              round
+              squared
               type="transparent"
+              compact
             />
           </HeaderButtons>
         </Header>
@@ -190,29 +166,10 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
             </AppText>
           </AddressGroup>
         </Amounts>
-        <BottomRow
-          style={{
-            borderTopColor: innerBorderColor,
-            backgroundColor: buttonsBackground
-          }}
-        >
-          <ButtonsRow sticked hasDivider dividerColor={innerBorderColor}>
-            <Button
-              title="Send"
-              onPress={handleSendPress}
-              iconProps={{ name: 'send' }}
-              flex
-              type="transparent"
-              color={textColor}
-            />
-            <Button
-              title="Receive"
-              onPress={handleReceivePress}
-              iconProps={{ name: 'download' }}
-              flex
-              type="transparent"
-              color={textColor}
-            />
+        <BottomRow>
+          <ButtonsRow>
+            <Button onPress={handleSendPress} iconProps={{ name: 'send' }} flex variant="contrast" short />
+            <Button onPress={handleReceivePress} iconProps={{ name: 'download' }} flex variant="contrast" short />
           </ButtonsRow>
         </BottomRow>
       </CardGradientContainer>
@@ -222,9 +179,8 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
 }
 
 export default styled(AddressCard)`
-  border-radius: 24px;
+  border-radius: 28px;
   height: 220px;
-  border-width: 1px;
   background-color: white;
 `
 
@@ -278,7 +234,7 @@ const BottomRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  border-top-width: 1px;
+  padding: 10px;
 `
 
 const HashEllipsed = styled(AppText)`

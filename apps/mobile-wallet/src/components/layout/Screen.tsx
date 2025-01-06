@@ -1,23 +1,6 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { useNavigation } from '@react-navigation/native'
-import { KeyboardAvoidingView, ViewProps } from 'react-native'
+import { KeyboardAvoidingView, StyleProp, ViewProps, ViewStyle } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { css } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -26,36 +9,43 @@ import StackHeader from '~/components/headers/StackHeader'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ScreenProps extends ViewProps {
-  contrastedBg?: boolean
   headerOptions?: BaseHeaderOptions & {
     type?: 'default' | 'stack'
   }
+  safeAreaPadding?: boolean
 }
 
-const Screen = ({ children, headerOptions, ...props }: ScreenProps) => {
+const Screen = ({ children, headerOptions, safeAreaPadding, ...props }: ScreenProps) => {
   const navigation = useNavigation()
+  const insets = useSafeAreaInsets()
 
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
+  const paddingStyle: StyleProp<ViewStyle> = safeAreaPadding
+    ? { paddingTop: insets.top, paddingBottom: insets.bottom || 20 }
+    : {}
+
   return (
-    <ScreenStyled {...props}>
-      <KeyboardAvoidingView behavior="height" style={{ flex: 1 }} keyboardVerticalOffset={100}>
+    <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+      <ScreenStyled {...props} style={[props.style, paddingStyle]}>
         {headerOptions && (
-          <HeaderComponent goBack={navigation.canGoBack() ? navigation.goBack : undefined} options={headerOptions} />
+          <HeaderComponent
+            onBackPress={navigation.canGoBack() ? navigation.goBack : undefined}
+            options={headerOptions}
+          />
         )}
         {children}
-      </KeyboardAvoidingView>
-    </ScreenStyled>
+      </ScreenStyled>
+    </KeyboardAvoidingView>
   )
 }
 
+export default Screen
+
 const ScreenStyled = styled.View<ScreenProps>`
   flex: 1;
-  background-color: ${({ theme, contrastedBg }) =>
-    contrastedBg ? (theme.name === 'light' ? theme.bg.highlight : theme.bg.back2) : theme.bg.back1};
+  background-color: ${({ theme }) => theme.bg.back2};
 `
-
-export default Screen
 
 export interface ScreenSectionProps extends ViewProps {
   fill?: boolean
@@ -91,14 +81,16 @@ export const ScreenSection = styled.View<ScreenSectionProps>`
     `}
 `
 
-export const BottomModalScreenTitle = styled(AppText)`
+export const ModalScreenTitle = styled(AppText)`
   font-weight: 600;
   font-size: 28px;
 `
 
 export const ScreenSectionTitle = styled(AppText)`
-  font-size: 17px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.font.primary};
-  margin-bottom: 15px;
+  font-size: 13px;
+  font-weight: 700;
+  color: ${({ theme }) => theme.font.tertiary};
+  margin-bottom: 16px;
+  margin-top: 16px;
+  text-transform: uppercase;
 `
