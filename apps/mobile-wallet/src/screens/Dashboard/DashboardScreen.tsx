@@ -4,7 +4,7 @@ import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import Animated from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Amount from '~/components/Amount'
@@ -21,6 +21,7 @@ import { openModal } from '~/features/modals/modalActions'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
@@ -42,6 +43,7 @@ interface ScreenProps
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const insets = useSafeAreaInsets()
   const { t } = useTranslation()
+  const theme = useTheme()
   const dispatch = useAppDispatch()
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const currency = useAppSelector((s) => s.settings.currency)
@@ -105,8 +107,11 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       headerScrollEffectOffset={30}
       headerOptions={{
         headerLeft: () => <CameraScanButton />,
-        headerTitle: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold />,
-        headerRight: () => <WalletSettingsButton />
+        headerTitle: () => <AlephiumLogo color={theme.font.primary} style={{ width: 50, height: 20 }} />,
+        headerRight: () => <WalletSettingsButton />,
+        afterScrollTitleComponent: () => (
+          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold />
+        )
       }}
       {...props}
     >

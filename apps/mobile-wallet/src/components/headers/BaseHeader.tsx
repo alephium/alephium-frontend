@@ -20,6 +20,7 @@ import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export type BaseHeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'> & {
   headerTitleRight?: () => ReactNode
+  afterScrollTitleComponent?: () => ReactNode
 }
 
 export interface BaseHeaderProps extends ViewProps {
@@ -39,7 +40,7 @@ export const headerOffsetTop = Platform.OS === 'ios' ? 0 : 16
 const AnimatedHeaderGradient = Animated.createAnimatedComponent(LinearGradient)
 
 const BaseHeader = ({
-  options: { headerRight, headerLeft, headerTitle, headerTitleRight },
+  options: { headerRight, headerLeft, headerTitle, headerTitleRight, afterScrollTitleComponent },
   headerRef,
   titleAlwaysVisible,
   scrollY,
@@ -57,10 +58,8 @@ const BaseHeader = ({
 
   const gradientHeight = headerHeight + 42
   const defaultScrollRange = [0 + scrollEffectOffset, 80 + scrollEffectOffset]
-  const paddingTop = insets.top + headerOffsetTop
+  const marginTop = insets.top + headerOffsetTop
 
-  const HeaderRight = (headerRight && headerRight({})) || <HeaderSidePlaceholder />
-  const HeaderLeft = (headerLeft && headerLeft({})) || <HeaderSidePlaceholder />
   const headerTitleString = headerTitle && typeof headerTitle === 'string' ? headerTitle : undefined
   const HeaderTitleComponent =
     headerTitle && typeof headerTitle === 'function' ? headerTitle({ children: '' }) : undefined
@@ -72,7 +71,7 @@ const BaseHeader = ({
   const animatedGradientOpacity = useDerivedValue(() => interpolate(scrollY?.value || 0, defaultScrollRange, [0, 1]))
 
   const headerTitleContainerAnimatedStyle = useAnimatedStyle(() =>
-    headerTitle && !titleAlwaysVisible
+    headerTitle && !afterScrollTitleComponent && !titleAlwaysVisible
       ? {
           opacity: interpolate(
             scrollY?.value || 0,
@@ -81,7 +80,29 @@ const BaseHeader = ({
             Extrapolation.CLAMP
           )
         }
-      : { opacity: 1 }
+      : headerTitle && afterScrollTitleComponent
+        ? {
+            opacity: interpolate(
+              scrollY?.value || 0,
+              [30 + scrollEffectOffset, 50 + scrollEffectOffset],
+              [1, 0],
+              Extrapolation.CLAMP
+            )
+          }
+        : { opacity: 1 }
+  )
+
+  const afterScrollHeaderTitleContainerAnimatedStyle = useAnimatedStyle(() =>
+    afterScrollTitleComponent
+      ? {
+          opacity: interpolate(
+            scrollY?.value || 0,
+            [40 + scrollEffectOffset, 60 + scrollEffectOffset],
+            [0, 1],
+            Extrapolation.CLAMP
+          )
+        }
+      : { opacity: 0 }
   )
 
   const handleHeaderLayout = (e: LayoutChangeEvent) => {
@@ -106,10 +127,10 @@ const BaseHeader = ({
         />
       </View>
       <HeaderContainer>
-        <Header style={{ paddingTop }}>
+        <Header style={{ marginTop }}>
           {!CustomContent ? (
             <>
-              {HeaderLeft}
+              <HeaderSideContainer side="left">{headerLeft?.({})}</HeaderSideContainer>
               {(headerTitleString || HeaderTitleComponent) && (
                 <HeaderTitleContainer style={headerTitleContainerAnimatedStyle} isCentered={isCentered}>
                   {headerTitleString ? (
@@ -122,10 +143,18 @@ const BaseHeader = ({
                   {HeaderTitleRight}
                 </HeaderTitleContainer>
               )}
-              {HeaderRight}
+              <HeaderSideContainer side="right">{headerRight?.({})}</HeaderSideContainer>
             </>
           ) : (
             <HeaderTitleContainer isCentered={isCentered}>{CustomContent}</HeaderTitleContainer>
+          )}
+          {afterScrollTitleComponent && (
+            <HeaderAfterScrollTitleContainer
+              style={[afterScrollHeaderTitleContainerAnimatedStyle]}
+              pointerEvents="none"
+            >
+              {afterScrollTitleComponent()}
+            </HeaderAfterScrollTitleContainer>
           )}
         </Header>
       </HeaderContainer>
@@ -161,13 +190,27 @@ const HeaderTitleContainer = styled(Animated.View)<{ isCentered?: boolean }>`
   opacity: 1;
 `
 
+const HeaderAfterScrollTitleContainer = styled(Animated.View)`
+  position: absolute;
+  flex-direction: row;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  top: 0;
+  align-items: center;
+  justify-content: center;
+`
+
 const Header = styled(Animated.View)`
+  position: relative;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 ${DEFAULT_MARGIN - 4}px 12px;
+  padding: 0 ${DEFAULT_MARGIN}px;
 `
 
-const HeaderSidePlaceholder = styled.View`
-  width: 40px;
+const HeaderSideContainer = styled.View<{ side: 'left' | 'right' }>`
+  min-width: 50px;
+  flex-direction: row;
+  justify-content: ${({ side }) => (side === 'left' ? 'flex-start' : 'flex-end')};
 `
