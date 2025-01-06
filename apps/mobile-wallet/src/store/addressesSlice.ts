@@ -24,6 +24,7 @@ import {
   Asset,
   balanceHistoryAdapter,
   calculateAssetsData,
+  client,
   customNetworkSettingsSaved,
   extractNewTransactions,
   getTransactionsOfAddress,
@@ -35,7 +36,6 @@ import {
   selectAllPricesHistories,
   selectNFTIds,
   sortAssets,
-  throttledClient,
   TokenDisplayBalances
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
@@ -111,11 +111,11 @@ export const syncLatestTransactions = createAsyncThunk(
     const args = { page: 1 }
 
     if (addresses.length === 1) {
-      latestTransactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addresses[0], args)
+      latestTransactions = await client.explorer.addresses.getAddressesAddressTransactions(addresses[0], args)
     } else if (addresses.length > 1) {
       const results = await Promise.all(
         chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
-          throttledClient.explorer.addresses.postAddressesTransactions(args, addressesChunk)
+          client.explorer.addresses.postAddressesTransactions(args, addressesChunk)
         )
       )
 

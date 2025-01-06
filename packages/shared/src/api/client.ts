@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { ExplorerProvider, NodeProvider } from '@alephium/web3'
 
-import { exponentialBackoffFetchRetry } from '@/api/fetchRetry'
+import { throttledExponentialBackoffFetchRetry } from '@/api/fetchRetry'
 import { defaultNetworkSettings } from '@/network'
 import { NetworkSettings } from '@/types/network'
 
@@ -43,8 +43,8 @@ export class Client {
 
   private getClients(nodeHost: NetworkSettings['nodeHost'], explorerApiHost: NetworkSettings['explorerApiHost']) {
     return {
-      explorer: new ExplorerProvider(explorerApiHost, undefined, exponentialBackoffFetchRetry),
-      node: new NodeProvider(nodeHost, undefined, exponentialBackoffFetchRetry)
+      explorer: new ExplorerProvider(explorerApiHost, undefined, throttledExponentialBackoffFetchRetry),
+      node: new NodeProvider(nodeHost, undefined, throttledExponentialBackoffFetchRetry)
     }
   }
 }
