@@ -17,13 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
-import {
-  AddressIndex,
-  appReset,
-  customNetworkSettingsSaved,
-  networkPresetSwitched,
-  throttledClient
-} from '@alephium/shared'
+import { AddressIndex, appReset, client, customNetworkSettingsSaved, networkPresetSwitched } from '@alephium/shared'
 import { explorer, groupOfAddress, TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import {
   createAsyncThunk,
@@ -121,11 +115,11 @@ export const discoverAddresses = createAsyncThunk(
 
         groupData.highestIndex = newAddressData.index
 
-        const data = await throttledClient.explorer.addresses.postAddressesUsed([newAddressData.hash])
+        const data = await client.explorer.addresses.postAddressesUsed([newAddressData.hash])
         const addressIsActive = data.length > 0 && data[0]
 
         if (addressIsActive) {
-          const { balance } = await throttledClient.explorer.addresses.getAddressesAddressBalance(newAddressData.hash)
+          const { balance } = await client.explorer.addresses.getAddressesAddressBalance(newAddressData.hash)
           dispatch(addressDiscovered({ ...newAddressData, balance }))
 
           groupData.gap = 0

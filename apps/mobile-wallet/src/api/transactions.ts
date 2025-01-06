@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { AddressHash, AssetAmount, throttledClient } from '@alephium/shared'
+import { AddressHash, AssetAmount, client } from '@alephium/shared'
 import { transactionSign } from '@alephium/web3'
 
 import i18n from '~/features/localization/i18n'
@@ -28,7 +28,7 @@ import { getAddressAssetsAvailableBalance } from '~/utils/addresses'
 import { getOptionalTransactionAssetAmounts, getTransactionAssetAmounts } from '~/utils/transactions'
 
 export const buildSweepTransactions = async (fromAddress: Address, toAddressHash: AddressHash) => {
-  const { unsignedTxs } = await throttledClient.node.transactions.postTransactionsSweepAddressBuild({
+  const { unsignedTxs } = await client.node.transactions.postTransactionsSweepAddressBuild({
     fromPublicKey: await getAddressAsymetricKey(fromAddress.hash, 'public'),
     toAddress: toAddressHash
   })
@@ -81,7 +81,7 @@ export const buildTransferTransaction = async ({
 }: TransferTxData) => {
   const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)
 
-  return await throttledClient.node.transactions.postTransactionsBuild({
+  return await client.node.transactions.postTransactionsBuild({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
     destinations: [
       {
@@ -104,7 +104,7 @@ export const buildCallContractTransaction = async ({
 }: CallContractTxData) => {
   const { attoAlphAmount, tokens } = getOptionalTransactionAssetAmounts(assetAmounts)
 
-  return await throttledClient.node.contracts.postContractsUnsignedTxExecuteScript({
+  return await client.node.contracts.postContractsUnsignedTxExecuteScript({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
     bytecode,
     attoAlphAmount,
@@ -122,7 +122,7 @@ export const buildDeployContractTransaction = async ({
   gasAmount,
   gasPrice
 }: DeployContractTxData) =>
-  await throttledClient.node.contracts.postContractsUnsignedTxDeployContract({
+  await client.node.contracts.postContractsUnsignedTxDeployContract({
     fromPublicKey: await getAddressAsymetricKey(fromAddress, 'public'),
     bytecode: bytecode,
     initialAttoAlphAmount: initialAlphAmount?.amount?.toString(),
@@ -137,7 +137,7 @@ export const signAndSendTransaction = async (fromAddress: AddressHash, txId: str
   if (!address) throw new Error(`${i18n.t('Could not find address in store')}: ${fromAddress}`)
 
   const signature = transactionSign(txId, await getAddressAsymetricKey(address.hash, 'private'))
-  const data = await throttledClient.node.transactions.postTransactionsSubmit({ unsignedTx, signature })
+  const data = await client.node.transactions.postTransactionsSubmit({ unsignedTx, signature })
 
   return { ...data, signature }
 }

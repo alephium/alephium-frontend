@@ -21,12 +21,12 @@ import '@walletconnect/react-native-compat'
 import {
   AddressHash,
   AssetAmount,
+  client,
   getHumanReadableError,
   isNetworkValid,
   parseSessionProposalEvent,
   SessionProposalEvent,
   SessionRequestEvent,
-  throttledClient,
   WALLETCONNECT_ERRORS,
   walletConnectClientInitialized,
   walletConnectClientInitializeFailed,
@@ -506,9 +506,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
             setLoading('Responding to WalletConnect')
             console.log('⏳ DECODING TX WITH DATA:', wcTxData)
-            const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
-              unsignedTx
-            })
+            const decodedResult = await client.node.transactions.postTransactionsDecodeUnsignedTx({ unsignedTx })
             console.log('✅ DECODING TX: DONE!')
             setLoading('')
 
@@ -527,7 +525,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           case 'alph_requestNodeApi': {
             walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
             const p = requestEvent.params.request.params as ApiRequestArguments
-            const result = await throttledClient.node.request(p)
+            const result = await client.node.request(p)
 
             console.log('👉 WALLETCONNECT ASKED FOR THE NODE API')
 
@@ -538,7 +536,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           case 'alph_requestExplorerApi': {
             walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
             const p = requestEvent.params.request.params as ApiRequestArguments
-            const result = await throttledClient.explorer.request(p)
+            const result = await client.explorer.request(p)
 
             console.log('👉 WALLETCONNECT ASKED FOR THE EXPLORER API')
 
