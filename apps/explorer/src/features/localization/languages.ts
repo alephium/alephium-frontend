@@ -16,7 +16,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-export type Language = 'en' | 'fr' | 'id' | 'el' | 'de' | 'vi' | 'zh' | 'it'
+export type Language = 'en' | 'fr' | 'id' | 'el' | 'de' | 'vi' | 'zh' | 'it' | 'pt'
 
 export const languageOptions: Array<{ label: string; value: Language }> = [
   { label: 'English', value: 'en' },
@@ -25,6 +25,7 @@ export const languageOptions: Array<{ label: string; value: Language }> = [
   { label: 'Ελληνικά', value: 'el' },
   { label: 'Français', value: 'fr' },
   { label: 'Italiano', value: 'it' },
+  { label: 'Português', value: 'pt' },
   { label: 'Tiếng Việt', value: 'vi' },
   { label: '简体中文', value: 'zh' }
 ]
