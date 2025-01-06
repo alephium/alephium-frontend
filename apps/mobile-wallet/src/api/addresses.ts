@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import { AddressBalancesSyncResult, AddressHash, AddressTokensSyncResult, client } from '@alephium/shared'
 import { AddressTokenBalance, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
 
-import { Address, AddressTransactionsSyncResult } from '~/types/addresses'
+import { Address } from '~/types/addresses'
 
 const PAGE_LIMIT = 100
 
@@ -45,25 +45,6 @@ export const fetchAddressesTokens = async (addressHashes: AddressHash[]): Promis
     results.push({
       hash,
       tokenBalances: addressTotalTokenBalances
-    })
-  }
-
-  return results
-}
-
-export const fetchAddressesTransactions = async (
-  addressHashes: AddressHash[]
-): Promise<AddressTransactionsSyncResult[]> => {
-  const results = []
-
-  for (const addressHash of addressHashes) {
-    const transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: 1 })
-    const mempoolTransactions = await client.explorer.addresses.getAddressesAddressMempoolTransactions(addressHash)
-
-    results.push({
-      hash: addressHash,
-      transactions,
-      mempoolTransactions
     })
   }
 
