@@ -57,11 +57,12 @@ export const ModalComponents = {
 
 type ModalName = keyof typeof ModalComponents
 
-type ModalParams<K extends ModalName> = HasRequiredProps<ModalPropsMap[K]> extends true
-  ? { name: K; props: ModalPropsMap[K] } // Modals with required props
-  : HasOptionalProps<ModalPropsMap[K]> extends true
-    ? { name: K; props?: ModalPropsMap[K] } // Modals with only optional props
-    : { name: K } // Modals with no props
+type ModalParams<K extends ModalName> =
+  HasRequiredProps<ModalPropsMap[K]> extends true
+    ? { name: K; props: ModalPropsMap[K] } // Modals with required props
+    : HasOptionalProps<ModalPropsMap[K]> extends true
+      ? { name: K; props?: ModalPropsMap[K] } // Modals with only optional props
+      : { name: K } // Modals with no props
 
 type ModalPropsMap = {
   [K in ModalName]: Omit<ComponentProps<(typeof ModalComponents)[K]>, 'id'>
