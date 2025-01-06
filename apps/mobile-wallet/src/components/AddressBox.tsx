@@ -98,22 +98,22 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
         )}
       </BadgeContainer>
       <TextualContent style={{ borderBottomWidth: !isLast ? 1 : 0 }}>
-        <AddressBoxLeft>
+        <AddressBoxColumn>
           {address.settings.label && (
-            <AddressName numberOfLines={1} ellipsizeMode="middle" semiBold size={16}>
+            <AppText numberOfLines={1} semiBold size={16}>
               {address.settings.label}
-            </AddressName>
+            </AppText>
           )}
-          <AddressHashLabel
+          <AppText
             numberOfLines={1}
             ellipsizeMode="middle"
             semiBold={!address?.settings.label}
             color={address.settings.label && theme.font.tertiary}
           >
-            {address?.hash}
-          </AddressHashLabel>
-        </AddressBoxLeft>
-        <AddressBoxRight>
+            {address.hash}
+          </AppText>
+        </AddressBoxColumn>
+        <AddressBoxColumnRight>
           <Amount isFiat value={balanceInFiat} suffix={CURRENCIES[currency].symbol} semiBold size={16} />
           {(knownFungibleTokens.length > 0 || nfts.length > 0) && (
             <AssetsRow>
@@ -132,7 +132,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
               )}
             </AssetsRow>
           )}
-        </AddressBoxRight>
+        </AddressBoxColumnRight>
       </TextualContent>
     </AddressBoxStyled>
   )
@@ -175,23 +175,13 @@ const TextualContent = styled.View`
   margin-left: ${DEFAULT_MARGIN}px;
 `
 
-const AddressBoxLeft = styled.View`
+const AddressBoxColumn = styled.View`
   flex: 1;
   gap: ${VERTICAL_GAP / 4}px;
 `
 
-const AddressBoxRight = styled.View`
-  flex: 1;
+const AddressBoxColumnRight = styled(AddressBoxColumn)`
   align-items: flex-end;
-  gap: ${VERTICAL_GAP / 4}px;
-`
-
-const AddressName = styled(AppText)`
-  max-width: 120px;
-`
-
-const AddressHashLabel = styled(AppText)`
-  max-width: 120px;
 `
 
 const AssetsRow = styled.View`
