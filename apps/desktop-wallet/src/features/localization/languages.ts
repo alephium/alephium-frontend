@@ -35,11 +35,11 @@ export type Language =
 
 export const languageOptions: SelectOption<Language>[] = [
   { label: 'English', value: 'en-US' },
+  { label: 'Bahasa Indonesia', value: 'id-ID' },
   { label: 'Български', value: 'bg-BG' },
   { label: 'Deutsch', value: 'de-DE' },
   { label: 'Español', value: 'es-ES' },
   { label: 'Français', value: 'fr-FR' },
-  { label: 'Bahasa Indonesia', value: 'id-ID' },
   { label: 'Italiano', value: 'it-IT' },
   { label: 'Português', value: 'pt-PT' },
   { label: 'Русский', value: 'ru-RU' },
