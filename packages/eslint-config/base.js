@@ -25,7 +25,7 @@ module.exports = {
     'plugin:prettier/recommended',
     'turbo'
   ],
-  plugins: ['@typescript-eslint', 'prettier', 'unused-imports', 'simple-import-sort', 'header'],
+  plugins: ['@typescript-eslint', 'prettier', 'unused-imports', 'simple-import-sort'],
   rules: {
     'arrow-body-style': [2, 'as-needed'],
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -37,7 +37,6 @@ module.exports = {
     'unused-imports/no-unused-imports-ts': 'warn',
     'simple-import-sort/imports': 'warn',
     'no-duplicate-imports': 'warn',
-    'header/header': [2, '../../license-header.js'],
     quotes: [1, 'single', { avoidEscape: true }],
     '@typescript-eslint/member-delimiter-style': [
       'error',
