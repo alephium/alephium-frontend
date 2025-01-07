@@ -1,5 +1,4 @@
 import {
-  ADDRESSES_QUERY_LIMIT,
   AddressFungibleToken,
   AddressHash,
   appReset,
@@ -32,7 +31,6 @@ import {
   isAnyOf,
   PayloadAction
 } from '@reduxjs/toolkit'
-import { chunk } from 'lodash'
 
 import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsNextPage } from '~/api/addresses'
 import { addressMetadataIncludesHash } from '~/persistent-storage/wallet'
@@ -160,13 +158,7 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
     let newTransactions: explorer.Transaction[] = []
 
     while (!enoughNewTransactionsFound) {
-      const results = await Promise.all(
-        chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
-          fetchAddressesTransactionsNextPage(addressesChunk, nextPageToLoad)
-        )
-      )
-
-      const nextPageTransactions = results.flat()
+      const nextPageTransactions = await fetchAddressesTransactionsNextPage(addresses, nextPageToLoad)
 
       if (nextPageTransactions.length === 0) break
 

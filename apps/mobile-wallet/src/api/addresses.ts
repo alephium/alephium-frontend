@@ -48,16 +48,12 @@ export const fetchAddressesBalances = async (addressHashes: AddressHash[]): Prom
   return results
 }
 
-export const fetchAddressesTransactionsNextPage = async (addresses: Address[], nextPage: number) => {
-  let transactions: Transaction[] = []
-  const args = { page: nextPage }
-  const addressHashes = addresses.map((address) => address.hash)
-
-  if (addressHashes.length === 1) {
-    transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHashes[0], args)
-  } else if (addressHashes.length > 1) {
-    transactions = await client.explorer.addresses.postAddressesTransactions(args, addressHashes)
-  }
-
-  return transactions
-}
+export const fetchAddressesTransactionsNextPage = async (
+  addresses: Address[],
+  nextPage: number
+): Promise<Transaction[]> =>
+  (
+    await Promise.all(
+      addresses.map(({ hash }) => client.explorer.addresses.getAddressesAddressTransactions(hash, { page: nextPage }))
+    )
+  ).flat()

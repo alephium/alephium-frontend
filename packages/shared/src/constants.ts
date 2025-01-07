@@ -31,3 +31,5 @@ export const FIVE_MINUTES_MS = 5 * ONE_MINUTE_MS
 export const ONE_HOUR_MS = 60 * ONE_MINUTE_MS
 
 export const ONE_DAY_MS = 24 * ONE_HOUR_MS
+
+export const TRANSACTIONS_PAGE_DEFAULT_LIMIT = 20

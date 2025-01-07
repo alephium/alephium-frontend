@@ -1,5 +1,6 @@
+import { TRANSACTIONS_PAGE_DEFAULT_LIMIT } from '@alephium/shared'
 import { FlashList, FlashListProps } from '@shopify/flash-list'
-import { ForwardedRef, forwardRef, useCallback } from 'react'
+import { ForwardedRef, forwardRef, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -49,9 +50,14 @@ const TransactionsFlashList = forwardRef(
 
     const isLoading = useAppSelector((s) => s.loaders.loadingTransactionsNextPage)
     const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
+    const pageLoaded = useAppSelector((s) => s.confirmedTransactions.pageLoaded)
+    const displayedConfirmedTransactions = useMemo(
+      () => confirmedTransactions.slice(0, pageLoaded * TRANSACTIONS_PAGE_DEFAULT_LIMIT),
+      [confirmedTransactions, pageLoaded]
+    )
 
     const renderConfirmedTransactionItem = ({ item, index }: TransactionItem) =>
-      renderTransactionItem({ item, index, isLast: index === confirmedTransactions.length - 1 })
+      renderTransactionItem({ item, index, isLast: index === displayedConfirmedTransactions.length - 1 })
 
     const renderTransactionItem = ({ item: tx, isLast }: TransactionItem) => (
       <TransactionListItem
@@ -77,13 +83,13 @@ const TransactionsFlashList = forwardRef(
         {...props}
         ref={ref}
         scrollEventThrottle={16}
-        data={confirmedTransactions}
+        data={displayedConfirmedTransactions}
         renderItem={renderConfirmedTransactionItem}
         keyExtractor={transactionKeyExtractor}
         onEndReached={loadNextTransactionsPage}
         refreshControl={<RefreshSpinner />}
         refreshing={pendingTransactions.length > 0}
-        extraData={confirmedTransactions.length > 0 ? confirmedTransactions[0].hash : ''}
+        extraData={displayedConfirmedTransactions.length > 0 ? displayedConfirmedTransactions[0].hash : ''}
         estimatedItemSize={64}
         contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN }}
         ListEmptyComponent={
@@ -116,7 +122,7 @@ const TransactionsFlashList = forwardRef(
         ListFooterComponent={
           <Footer>
             <InfiniteLoadingIndicator>
-              {allConfirmedTransactionsLoaded && confirmedTransactions.length > 0 && (
+              {allConfirmedTransactionsLoaded && displayedConfirmedTransactions.length > 0 && (
                 <AppText color="tertiary" semiBold style={{ maxWidth: '75%', textAlign: 'center' }}>
                   👏 {t('You reached the end of the transactions history.')}
                 </AppText>
