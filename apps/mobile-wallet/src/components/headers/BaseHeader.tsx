@@ -149,10 +149,7 @@ const BaseHeader = ({
             <HeaderTitleContainer isCentered={isCentered}>{CustomContent}</HeaderTitleContainer>
           )}
           {afterScrollTitleComponent && (
-            <HeaderAfterScrollTitleContainer
-              style={[afterScrollHeaderTitleContainerAnimatedStyle]}
-              pointerEvents="none"
-            >
+            <HeaderAfterScrollTitleContainer style={afterScrollHeaderTitleContainerAnimatedStyle} pointerEvents="none">
               {afterScrollTitleComponent()}
             </HeaderAfterScrollTitleContainer>
           )}
