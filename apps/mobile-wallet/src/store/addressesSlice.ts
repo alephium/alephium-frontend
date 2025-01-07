@@ -89,19 +89,14 @@ export const syncLatestTransactions = createAsyncThunk(
       Promise.all([dispatch(syncAddressesBalances(addresses)), dispatch(syncAddressesTokens(addresses))])
 
     let latestTransactions: Transaction[] = []
-    const args = { page: 1 }
 
-    if (addresses.length === 1) {
-      latestTransactions = await client.explorer.addresses.getAddressesAddressTransactions(addresses[0], args)
-    } else if (addresses.length > 1) {
-      const results = await Promise.all(
-        chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
-          client.explorer.addresses.postAddressesTransactions(args, addressesChunk)
-        )
+    const results = await Promise.all(
+      addresses.map((addressHash) =>
+        client.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: 1 })
       )
+    )
 
-      latestTransactions = results.flat()
-    }
+    latestTransactions = results.flat()
 
     const newTransactionsResults = addresses.reduce(
       (acc, addressHash) => {
