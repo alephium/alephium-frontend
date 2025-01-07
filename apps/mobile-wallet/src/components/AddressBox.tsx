@@ -1,5 +1,4 @@
 import { AddressHash, CURRENCIES } from '@alephium/shared'
-import { LinearGradient } from 'expo-linear-gradient'
 import { Check } from 'lucide-react-native'
 import { useMemo } from 'react'
 import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
@@ -31,7 +30,6 @@ interface AddressBoxProps extends PressableProps {
 const maxNbOfTokenLogos = 5
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
-const AnimatedSelectedLinearGradient = Animated.createAnimatedComponent(LinearGradient)
 
 // TODO: Use ListItem
 
