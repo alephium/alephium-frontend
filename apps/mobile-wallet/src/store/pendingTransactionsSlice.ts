@@ -47,16 +47,11 @@ export const { selectAll: selectAllPendingTransactions } = pendingTransactionsAd
   (state) => state[sliceName]
 )
 
-export const makeSelectAddressesPendingTransactions = () =>
-  createSelector(
-    [
-      selectAllAddresses,
-      selectAllPendingTransactions,
-      (_, addressHashes?: AddressHash | AddressHash[]) => addressHashes
-    ],
-    (allAddresses, pendingTransactions, addressHashes): AddressPendingTransaction[] =>
-      selectAddressPendingTransactions(allAddresses, pendingTransactions, addressHashes) as AddressPendingTransaction[]
-  )
+export const selectAddressesPendingTransactions = createSelector(
+  [selectAllAddresses, selectAllPendingTransactions, (_, addressHashes?: AddressHash | AddressHash[]) => addressHashes],
+  (allAddresses, pendingTransactions, addressHashes): AddressPendingTransaction[] =>
+    selectAddressPendingTransactions(allAddresses, pendingTransactions, addressHashes) as AddressPendingTransaction[]
+)
 
 export const makeSelectContactPendingTransactions = () =>
   createSelector(

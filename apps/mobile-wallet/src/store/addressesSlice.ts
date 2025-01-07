@@ -1,12 +1,10 @@
 import {
-  ADDRESSES_QUERY_LIMIT,
   AddressFungibleToken,
   AddressHash,
   appReset,
   Asset,
   balanceHistoryAdapter,
   calculateAssetsData,
-  client,
   customNetworkSettingsSaved,
   extractNewTransactions,
   getTransactionsOfAddress,
@@ -32,9 +30,8 @@ import {
   isAnyOf,
   PayloadAction
 } from '@reduxjs/toolkit'
-import { chunk } from 'lodash'
 
-import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsNextPage } from '~/api/addresses'
+import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsPage } from '~/api/addresses'
 import { addressMetadataIncludesHash } from '~/persistent-storage/wallet'
 import { addressDeleted } from '~/store/addresses/addressesActions'
 import { RootState } from '~/store/store'
@@ -85,24 +82,10 @@ export const syncLatestTransactions = createAsyncThunk(
           ? _addresses
           : [_addresses]
 
-    if (areAddressesNew) {
-      await Promise.all([dispatch(syncAddressesBalances(addresses)), dispatch(syncAddressesTokens(addresses))])
-    }
+    if (areAddressesNew)
+      Promise.all([dispatch(syncAddressesBalances(addresses)), dispatch(syncAddressesTokens(addresses))])
 
-    let latestTransactions: Transaction[] = []
-    const args = { page: 1 }
-
-    if (addresses.length === 1) {
-      latestTransactions = await client.explorer.addresses.getAddressesAddressTransactions(addresses[0], args)
-    } else if (addresses.length > 1) {
-      const results = await Promise.all(
-        chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
-          client.explorer.addresses.postAddressesTransactions(args, addressesChunk)
-        )
-      )
-
-      latestTransactions = results.flat()
-    }
+    const latestTransactions = await fetchAddressesTransactionsPage(addresses, 1)
 
     const newTransactionsResults = addresses.reduce(
       (acc, addressHash) => {
@@ -131,12 +114,11 @@ export const syncLatestTransactions = createAsyncThunk(
     const addressesToFetchData =
       state.addresses.status === 'uninitialized' ? (state.addresses.ids as AddressHash[]) : addressesWithNewTransactions
 
-    if (!areAddressesNew && addressesToFetchData.length > 0) {
-      await Promise.all([
+    if (!areAddressesNew && addressesToFetchData.length > 0)
+      Promise.all([
         dispatch(syncAddressesBalances(addressesToFetchData)),
         dispatch(syncAddressesTokens(addressesToFetchData))
       ])
-    }
 
     return newTransactionsResults
   }
@@ -160,6 +142,7 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   ): Promise<{ pageLoaded: number; transactions: explorer.Transaction[] }> => {
     const state = getState() as RootState
     const addresses = selectAllAddresses(state)
+    const addressesHashes = addresses.map(({ hash }) => hash)
     const minimumNewTransactionsNeeded = payload?.minTxs ?? 1
 
     let nextPageToLoad = state.confirmedTransactions.pageLoaded + 1
@@ -167,13 +150,7 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
     let newTransactions: explorer.Transaction[] = []
 
     while (!enoughNewTransactionsFound) {
-      const results = await Promise.all(
-        chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
-          fetchAddressesTransactionsNextPage(addressesChunk, nextPageToLoad)
-        )
-      )
-
-      const nextPageTransactions = results.flat()
+      const nextPageTransactions = await fetchAddressesTransactionsPage(addressesHashes, nextPageToLoad)
 
       if (nextPageTransactions.length === 0) break
 

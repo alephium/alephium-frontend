@@ -1,7 +1,11 @@
-import { AddressBalancesSyncResult, AddressHash, AddressTokensSyncResult, client } from '@alephium/shared'
+import {
+  AddressBalancesSyncResult,
+  AddressHash,
+  AddressTokensSyncResult,
+  client,
+  TRANSACTIONS_PAGE_DEFAULT_LIMIT
+} from '@alephium/shared'
 import { AddressTokenBalance, Transaction } from '@alephium/web3/dist/src/api/api-explorer'
-
-import { Address } from '~/types/addresses'
 
 const PAGE_LIMIT = 100
 
@@ -48,16 +52,17 @@ export const fetchAddressesBalances = async (addressHashes: AddressHash[]): Prom
   return results
 }
 
-export const fetchAddressesTransactionsNextPage = async (addresses: Address[], nextPage: number) => {
-  let transactions: Transaction[] = []
-  const args = { page: nextPage }
-  const addressHashes = addresses.map((address) => address.hash)
-
-  if (addressHashes.length === 1) {
-    transactions = await client.explorer.addresses.getAddressesAddressTransactions(addressHashes[0], args)
-  } else if (addressHashes.length > 1) {
-    transactions = await client.explorer.addresses.postAddressesTransactions(args, addressHashes)
-  }
-
-  return transactions
-}
+export const fetchAddressesTransactionsPage = async (
+  addressesHashes: AddressHash[],
+  page: number
+): Promise<Transaction[]> =>
+  (
+    await Promise.all(
+      addressesHashes.map((hash) =>
+        client.explorer.addresses.getAddressesAddressTransactions(hash, {
+          page,
+          limit: TRANSACTIONS_PAGE_DEFAULT_LIMIT
+        })
+      )
+    )
+  ).flat()
