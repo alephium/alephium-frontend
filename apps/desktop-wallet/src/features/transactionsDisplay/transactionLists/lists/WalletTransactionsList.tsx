@@ -1,7 +1,13 @@
-import { AddressHash, Asset, calcTxAmountsDeltaForAddress, findTransactionReferenceAddress } from '@alephium/shared'
+import {
+  AddressHash,
+  Asset,
+  calcTxAmountsDeltaForAddress,
+  findTransactionReferenceAddress,
+  TRANSACTIONS_PAGE_DEFAULT_LIMIT
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
-import { uniqBy } from 'lodash'
+import { orderBy, uniqBy } from 'lodash'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -9,7 +15,6 @@ import useFetchWalletTransactionsInfinite from '@/api/apiDataHooks/wallet/useFet
 import Table from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
 import { getTransactionInfoType } from '@/features/transactionsDisplay/transactionDisplayUtils'
-import AddressLimitWarning from '@/features/transactionsDisplay/transactionLists/AddressLimitWarning'
 import NewTransactionsButtonRow from '@/features/transactionsDisplay/transactionLists/NewTransactionsButtonRow'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
@@ -38,7 +43,7 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
     fetchNextPage,
     isFetchingNextPage,
     showNewTxsMessage,
-    isDataComplete
+    pagesLoaded
   } = useFetchWalletTransactionsInfinite()
 
   const openTransactionDetailsModal = (txHash: e.Transaction['hash']) =>
@@ -46,47 +51,49 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
 
   const filteredConfirmedTxs = useMemo(
     () =>
-      applyFilters({
-        txs: fetchedConfirmedTxs,
-        addressHashes,
-        allAddressHashes,
-        directions,
-        assetIds
-      }),
-    [addressHashes, allAddressHashes, assetIds, directions, fetchedConfirmedTxs]
+      uniqBy(
+        orderBy(
+          applyFilters({
+            txs: fetchedConfirmedTxs,
+            addressHashes,
+            allAddressHashes,
+            directions,
+            assetIds
+          }),
+          'timestamp',
+          'desc'
+        ),
+        'hash'
+      ).slice(0, (pagesLoaded || 1) * TRANSACTIONS_PAGE_DEFAULT_LIMIT),
+    [addressHashes, allAddressHashes, assetIds, directions, fetchedConfirmedTxs, pagesLoaded]
   )
 
   return (
-    <>
-      {!isDataComplete && <AddressLimitWarning />}
+    <Table minWidth="500px">
+      {isLoading && <TableRowsLoader />}
 
-      <Table minWidth="500px">
-        {isLoading && <TableRowsLoader />}
+      {showNewTxsMessage && <NewTransactionsButtonRow onClick={refresh} />}
 
-        {showNewTxsMessage && <NewTransactionsButtonRow onClick={refresh} />}
+      {filteredConfirmedTxs.map((tx) => (
+        <TransactionRow
+          key={tx.hash}
+          tx={tx}
+          onClick={() => openTransactionDetailsModal(tx.hash)}
+          onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash))}
+        />
+      ))}
 
-        {/* TODO: Remove uniqBy once backend removes duplicates from its results */}
-        {uniqBy(filteredConfirmedTxs, 'hash').map((tx) => (
-          <TransactionRow
-            key={tx.hash}
-            tx={tx}
-            onClick={() => openTransactionDetailsModal(tx.hash)}
-            onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash))}
-          />
-        ))}
-
-        {!isLoading && (
-          <TransactionsListFooter
-            isDisplayingTxs={filteredConfirmedTxs && filteredConfirmedTxs?.length > 0}
-            showLoadMoreBtn={hasNextPage}
-            showSpinner={isFetchingNextPage}
-            onShowMoreClick={fetchNextPage}
-            noTxsMsg={t('No transactions to display')}
-            allTxsLoadedMsg={t('All the transactions that match the filtering criteria were loaded!')}
-          />
-        )}
-      </Table>
-    </>
+      {!isLoading && (
+        <TransactionsListFooter
+          isDisplayingTxs={filteredConfirmedTxs && filteredConfirmedTxs?.length > 0}
+          showLoadMoreBtn={hasNextPage}
+          showSpinner={isFetchingNextPage}
+          onShowMoreClick={fetchNextPage}
+          noTxsMsg={t('No transactions to display')}
+          allTxsLoadedMsg={t('All the transactions that match the filtering criteria were loaded!')}
+        />
+      )}
+    </Table>
   )
 }
 

@@ -5,12 +5,12 @@ import useFetchWalletLatestTransaction from '@/api/apiDataHooks/wallet/useFetchW
 import { walletTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
 import queryClient from '@/api/queryClient'
 import { useAppSelector } from '@/hooks/redux'
-import { useCappedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const useFetchWalletTransactionsInfinite = () => {
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
-  const { addressHashes, isCapped } = useCappedAddressesHashes()
+  const addressHashes = useUnsortedAddressesHashes()
 
   const { data: latestTx, isLoading: isLoadingLatestTx } = useFetchWalletLatestTransaction()
 
@@ -20,10 +20,14 @@ const useFetchWalletTransactionsInfinite = () => {
 
   const refresh = useCallback(() => queryClient.refetchQueries({ queryKey: query.queryKey }), [query.queryKey])
 
-  const fetchedConfirmedTxs = useMemo(() => data?.pages.flat() ?? [], [data?.pages])
+  const fetchedConfirmedTxs = useMemo(
+    () => data?.pages.flatMap(({ pageTransactions }) => pageTransactions) ?? [],
+    [data?.pages]
+  )
   const latestFetchedTxHash = fetchedConfirmedTxs[0]?.hash
   const latestUnfetchedTxHash = latestTx?.hash
   const showNewTxsMessage = !isLoading && latestUnfetchedTxHash && latestFetchedTxHash !== latestUnfetchedTxHash
+  const pagesLoaded = data?.pageParams.length
 
   return {
     data: fetchedConfirmedTxs,
@@ -33,7 +37,7 @@ const useFetchWalletTransactionsInfinite = () => {
     isFetchingNextPage,
     refresh,
     showNewTxsMessage,
-    isDataComplete: !isCapped
+    pagesLoaded
   }
 }
 

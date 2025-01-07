@@ -95,6 +95,11 @@ interface WalletTransactionsInfiniteQueryProps extends TransactionsInfiniteQuery
   addressHashes: AddressHash[]
 }
 
+type PageParam = {
+  page: number
+  addressesWithMoreTxPages: AddressHash[]
+}
+
 export const walletTransactionsInfiniteQuery = ({
   addressHashes,
   networkId,
@@ -108,20 +113,40 @@ export const walletTransactionsInfiniteQuery = ({
     queryFn:
       !skip && networkId !== undefined
         ? async ({ pageParam }) => {
-            let results: e.Transaction[] = []
-            const args = { page: pageParam, limit: TRANSACTIONS_PAGE_DEFAULT_LIMIT }
+            const addresses = pageParam.page === 1 ? addressHashes : pageParam.addressesWithMoreTxPages
+            const pageResults = await Promise.all(
+              addresses.map(async (addressHash) => ({
+                addressHash,
+                transactions: await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
+                  page: pageParam.page,
+                  limit: TRANSACTIONS_PAGE_DEFAULT_LIMIT
+                })
+              }))
+            )
 
-            if (addressHashes.length === 1) {
-              results = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHashes[0], args)
-            } else if (addressHashes.length > 1) {
-              results = await throttledClient.explorer.addresses.postAddressesTransactions(args, addressHashes)
+            const addressesWithMoreTxPages = addresses.filter((hash) => {
+              const txs = pageResults.find(({ addressHash }) => addressHash === hash)?.transactions
+
+              return txs && txs.length > 0
+            })
+
+            return {
+              pageTransactions: pageResults.flatMap(({ transactions }) => transactions),
+              addressesWithMoreTxPages
             }
-
-            return results
           }
         : skipToken,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null)
+    initialPageParam: {
+      page: 1,
+      addressesWithMoreTxPages: []
+    } as PageParam,
+    getNextPageParam: ({ addressesWithMoreTxPages }, _, lastPageParam) =>
+      lastPageParam.page !== 1 && lastPageParam.addressesWithMoreTxPages.length === 0
+        ? null
+        : ({
+            page: lastPageParam.page + 1,
+            addressesWithMoreTxPages
+          } as PageParam)
   })
 
 interface TransactionQueryProps extends SkipProp {
