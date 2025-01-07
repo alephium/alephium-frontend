@@ -61,20 +61,19 @@ const confirmedTransactionsSlice = createSlice({
 export const { selectAll: selectAllConfirmedTransactions, selectById: selectConfirmedTransactionByHash } =
   confirmedTransactionsAdapter.getSelectors<RootState>((state) => state[sliceName])
 
-export const makeSelectAddressesConfirmedTransactions = () =>
-  createSelector(
-    [
-      selectAllAddresses,
-      selectAllConfirmedTransactions,
-      (_, addressHashes?: AddressHash | AddressHash[]) => addressHashes
-    ],
-    (allAddresses, confirmedTransactions, addressHashes): AddressConfirmedTransaction[] =>
-      selectAddressConfirmedTransactions(
-        allAddresses,
-        confirmedTransactions,
-        addressHashes
-      ) as AddressConfirmedTransaction[]
-  )
+export const selectAddressesConfirmedTransactions = createSelector(
+  [
+    selectAllAddresses,
+    selectAllConfirmedTransactions,
+    (_, addressHashes?: AddressHash | AddressHash[]) => addressHashes
+  ],
+  (allAddresses, confirmedTransactions, addressHashes): AddressConfirmedTransaction[] =>
+    selectAddressConfirmedTransactions(
+      allAddresses,
+      confirmedTransactions,
+      addressHashes
+    ) as AddressConfirmedTransaction[]
+)
 
 export const makeSelectContactConfirmedTransactions = () =>
   createSelector(

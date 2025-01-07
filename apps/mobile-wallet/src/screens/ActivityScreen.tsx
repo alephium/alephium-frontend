@@ -1,6 +1,5 @@
-import { StackScreenProps } from '@react-navigation/stack'
 import { FlashList } from '@shopify/flash-list'
-import { useMemo, useRef } from 'react'
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import BaseHeader from '~/components/headers/BaseHeader'
@@ -10,20 +9,14 @@ import TransactionsFlashList from '~/components/layout/TransactionsFlashList'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
-import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
-import RootStackParamList from '~/navigation/rootStackRoutes'
-import { makeSelectAddressesConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
-import { makeSelectAddressesPendingTransactions } from '~/store/pendingTransactionsSlice'
+import { selectAddressesConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
+import { selectAddressesPendingTransactions } from '~/store/pendingTransactionsSlice'
 import { AddressTransaction } from '~/types/transactions'
 
-type ScreenProps = StackScreenProps<InWalletTabsParamList & RootStackParamList, 'ActivityScreen'>
-
-const ActivityScreen = ({ navigation }: ScreenProps) => {
+const ActivityScreen = () => {
   const listRef = useRef<FlashList<AddressTransaction>>(null)
   const { t } = useTranslation()
 
-  const selectAddressesConfirmedTransactions = useMemo(makeSelectAddressesConfirmedTransactions, [])
-  const selectAddressesPendingTransactions = useMemo(makeSelectAddressesPendingTransactions, [])
   const confirmedTransactions = useAppSelector(selectAddressesConfirmedTransactions)
   const pendingTransactions = useAppSelector(selectAddressesPendingTransactions)
 
