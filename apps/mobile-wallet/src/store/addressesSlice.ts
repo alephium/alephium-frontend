@@ -85,9 +85,8 @@ export const syncLatestTransactions = createAsyncThunk(
           ? _addresses
           : [_addresses]
 
-    if (areAddressesNew) {
-      await Promise.all([dispatch(syncAddressesBalances(addresses)), dispatch(syncAddressesTokens(addresses))])
-    }
+    if (areAddressesNew)
+      Promise.all([dispatch(syncAddressesBalances(addresses)), dispatch(syncAddressesTokens(addresses))])
 
     let latestTransactions: Transaction[] = []
     const args = { page: 1 }
@@ -131,12 +130,11 @@ export const syncLatestTransactions = createAsyncThunk(
     const addressesToFetchData =
       state.addresses.status === 'uninitialized' ? (state.addresses.ids as AddressHash[]) : addressesWithNewTransactions
 
-    if (!areAddressesNew && addressesToFetchData.length > 0) {
-      await Promise.all([
+    if (!areAddressesNew && addressesToFetchData.length > 0)
+      Promise.all([
         dispatch(syncAddressesBalances(addressesToFetchData)),
         dispatch(syncAddressesTokens(addressesToFetchData))
       ])
-    }
 
     return newTransactionsResults
   }
