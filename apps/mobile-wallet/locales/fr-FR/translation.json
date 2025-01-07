@@ -8,7 +8,6 @@
   "No transactions yet": "Aucune transaction pour l'instant",
   "group {{ groupNumber }}": "groupe {{ groupNumber }}",
   "Group {{ groupNumber }}": "Groupe {{ groupNumber }}",
-  "numberOfNFTsInCollections": "+<1>{{ nftsNumber }}</1> NFTs dans <1>{{ nftsCollectionsNumber }}</1> collections",
   "Updating default address": "Mise à jour de l'adresse par défaut",
   "Tokens": "Jetons",
   "See NFTs": "Voir les NFTs",

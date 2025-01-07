@@ -10,7 +10,6 @@
   "No transactions yet": "Δεν υπάρχουν συναλλαγές ακόμα",
   "group {{ groupNumber }}": "ομάδα {{ groupNumber }}",
   "Group {{ groupNumber }}": "Ομάδα {{ groupNumber }}",
-  "numberOfNFTsInCollections": "+<1>{{ nftsNumber }}</1> NFTs σε <1>{{ nftsCollectionsNumber }}</1> συλλογές",
   "Updating default address": "Ενημέρωση προκαθορισμένης διεύθυνσης",
   "Tokens": "Νομίσματα",
   "NFT": "NFT",
