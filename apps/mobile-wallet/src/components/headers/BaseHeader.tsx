@@ -20,7 +20,7 @@ import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export type BaseHeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'> & {
   headerTitleRight?: () => ReactNode
-  afterScrollTitleComponent?: () => ReactNode
+  headerTitleScrolled?: () => ReactNode
 }
 
 export interface BaseHeaderProps extends ViewProps {
@@ -40,7 +40,7 @@ export const headerOffsetTop = Platform.OS === 'ios' ? 0 : 16
 const AnimatedHeaderGradient = Animated.createAnimatedComponent(LinearGradient)
 
 const BaseHeader = ({
-  options: { headerRight, headerLeft, headerTitle, headerTitleRight, afterScrollTitleComponent },
+  options: { headerRight, headerLeft, headerTitle, headerTitleRight, headerTitleScrolled },
   headerRef,
   titleAlwaysVisible,
   scrollY,
@@ -71,7 +71,7 @@ const BaseHeader = ({
   const animatedGradientOpacity = useDerivedValue(() => interpolate(scrollY?.value || 0, defaultScrollRange, [0, 1]))
 
   const headerTitleContainerAnimatedStyle = useAnimatedStyle(() =>
-    headerTitle && !afterScrollTitleComponent && !titleAlwaysVisible
+    headerTitle && !headerTitleScrolled && !titleAlwaysVisible
       ? {
           opacity: interpolate(
             scrollY?.value || 0,
@@ -80,7 +80,7 @@ const BaseHeader = ({
             Extrapolation.CLAMP
           )
         }
-      : headerTitle && afterScrollTitleComponent
+      : headerTitle && headerTitleScrolled
         ? {
             opacity: interpolate(
               scrollY?.value || 0,
@@ -92,8 +92,8 @@ const BaseHeader = ({
         : { opacity: 1 }
   )
 
-  const afterScrollHeaderTitleContainerAnimatedStyle = useAnimatedStyle(() =>
-    afterScrollTitleComponent
+  const headerTitleScrolledContainerAnimatedStyle = useAnimatedStyle(() =>
+    headerTitleScrolled
       ? {
           opacity: interpolate(
             scrollY?.value || 0,
@@ -148,13 +148,10 @@ const BaseHeader = ({
           ) : (
             <HeaderTitleContainer isCentered={isCentered}>{CustomContent}</HeaderTitleContainer>
           )}
-          {afterScrollTitleComponent && (
-            <HeaderAfterScrollTitleContainer
-              style={[afterScrollHeaderTitleContainerAnimatedStyle]}
-              pointerEvents="none"
-            >
-              {afterScrollTitleComponent()}
-            </HeaderAfterScrollTitleContainer>
+          {headerTitleScrolled && (
+            <HeaderTitleScrolledContainer style={headerTitleScrolledContainerAnimatedStyle} pointerEvents="none">
+              {headerTitleScrolled()}
+            </HeaderTitleScrolledContainer>
           )}
         </Header>
       </HeaderContainer>
@@ -190,7 +187,7 @@ const HeaderTitleContainer = styled(Animated.View)<{ isCentered?: boolean }>`
   opacity: 1;
 `
 
-const HeaderAfterScrollTitleContainer = styled(Animated.View)`
+const HeaderTitleScrolledContainer = styled(Animated.View)`
   position: absolute;
   flex-direction: row;
   right: 0;
