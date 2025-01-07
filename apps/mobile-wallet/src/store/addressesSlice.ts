@@ -5,7 +5,6 @@ import {
   Asset,
   balanceHistoryAdapter,
   calculateAssetsData,
-  client,
   customNetworkSettingsSaved,
   extractNewTransactions,
   getTransactionsOfAddress,
@@ -32,7 +31,7 @@ import {
   PayloadAction
 } from '@reduxjs/toolkit'
 
-import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsNextPage } from '~/api/addresses'
+import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsPage } from '~/api/addresses'
 import { addressMetadataIncludesHash } from '~/persistent-storage/wallet'
 import { addressDeleted } from '~/store/addresses/addressesActions'
 import { RootState } from '~/store/store'
@@ -86,15 +85,7 @@ export const syncLatestTransactions = createAsyncThunk(
     if (areAddressesNew)
       Promise.all([dispatch(syncAddressesBalances(addresses)), dispatch(syncAddressesTokens(addresses))])
 
-    let latestTransactions: Transaction[] = []
-
-    const results = await Promise.all(
-      addresses.map((addressHash) =>
-        client.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: 1 })
-      )
-    )
-
-    latestTransactions = results.flat()
+    const latestTransactions = await fetchAddressesTransactionsPage(addresses, 1)
 
     const newTransactionsResults = addresses.reduce(
       (acc, addressHash) => {
@@ -151,6 +142,7 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   ): Promise<{ pageLoaded: number; transactions: explorer.Transaction[] }> => {
     const state = getState() as RootState
     const addresses = selectAllAddresses(state)
+    const addressesHashes = addresses.map(({ hash }) => hash)
     const minimumNewTransactionsNeeded = payload?.minTxs ?? 1
 
     let nextPageToLoad = state.confirmedTransactions.pageLoaded + 1
@@ -158,7 +150,7 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
     let newTransactions: explorer.Transaction[] = []
 
     while (!enoughNewTransactionsFound) {
-      const nextPageTransactions = await fetchAddressesTransactionsNextPage(addresses, nextPageToLoad)
+      const nextPageTransactions = await fetchAddressesTransactionsPage(addressesHashes, nextPageToLoad)
 
       if (nextPageTransactions.length === 0) break
 
