@@ -31,12 +31,11 @@ const DashboardSecondaryButtons = ({ style }: DashboardSecondaryButtonsProps) =>
     })
 
   const areNoButtonsVisible = !isWalletConnectEnabled && isMnemonicBackedUp && networkStatus !== 'offline'
-  const areAllButtonsVisible = isWalletConnectEnabled && !isMnemonicBackedUp && networkStatus === 'offline'
 
   if (areNoButtonsVisible) return null
 
   return (
-    <DashboardSecondaryButtonsStyled style={{ height: areAllButtonsVisible ? 30 : 20 }}>
+    <DashboardSecondaryButtonsStyled style={{ height: areNoButtonsVisible ? 20 : 30 }}>
       <Buttons>
         {isWalletConnectEnabled && <WalletConnectButton />}
         {networkStatus === 'offline' && (

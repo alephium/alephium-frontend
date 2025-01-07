@@ -81,7 +81,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
       {!isRefreshing && tokenRows.length === 0 && (
         <EmptyPlaceholder>
           <AppText size={28}>👀</AppText>
-          <AppText>{t('No assets there, yet.')}</AppText>
+          <AppText>{t('No assets here, yet.')}</AppText>
         </EmptyPlaceholder>
       )}
       {isRefreshing && (

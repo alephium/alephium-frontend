@@ -1289,7 +1289,7 @@ PODS:
     - React-debug
   - react-native-aes (2.0.0):
     - React-Core
-  - react-native-background-actions (3.0.1):
+  - react-native-background-actions (4.0.1):
     - React-Core
   - react-native-background-timer (2.4.1):
     - React-Core
@@ -2130,7 +2130,7 @@ SPEC CHECKSUMS:
   React-logger: 257858bd55f3a4e1bc0cf07ddc8fb9faba6f8c7c
   React-Mapbuffer: 6c1cacdbf40b531f549eba249e531a7d0bfd8e7f
   react-native-aes: c75c46aa744bef7c2415fdf7f5b2dcb75ca4364d
-  react-native-background-actions: ecffd3f0864140ef6cf21c29be6819a02b531a52
+  react-native-background-actions: ea5bab231a28710eea614acb9ca595594415a5ec
   react-native-background-timer: 17ea5e06803401a379ebf1f20505b793ac44d0fe
   react-native-compat: 425ce849bdeb6dceeb1c003b254c3c2623a37ba1
   react-native-get-random-values: 21325b2244dfa6b58878f51f9aa42821e7ba3d06
