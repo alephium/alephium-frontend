@@ -107,11 +107,9 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       headerScrollEffectOffset={30}
       headerOptions={{
         headerLeft: () => <CameraScanButton />,
-        headerTitle: () => <AlephiumLogo color={theme.font.primary} style={{ width: 50, height: 20 }} />,
         headerRight: () => <WalletSettingsButton />,
-        afterScrollTitleComponent: () => (
-          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold />
-        )
+        headerTitle: () => <AlephiumLogo color={theme.font.primary} style={{ width: 50, height: 20 }} />,
+        headerTitleScrolled: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold />
       }}
       {...props}
     >
