@@ -37,6 +37,7 @@ import useWalletLock from '@/hooks/useWalletLock'
 import { ReactComponent as WalletConnectLogo } from '@/images/wallet-connect-logo.svg'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
+import TitleBar from '@/components/TitleBar.tsx'
 
 interface AppHeader {
   title?: string
@@ -97,14 +98,12 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
             <VerticalDivider />
           </>
         )}
-
         {children && (
           <>
             {children}
             <VerticalDivider />
           </>
         )}
-
         {isWalletUnlocked && (
           <>
             <RefreshButton />
@@ -112,7 +111,6 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
             <VerticalDivider />
           </>
         )}
-
         <CompactToggle
           toggled={discreetMode}
           onToggle={toggleDiscreetMode}
@@ -123,7 +121,6 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
           short
         />
         <VerticalDivider />
-
         {isWalletUnlocked && (
           <>
             <Button
@@ -142,16 +139,15 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
             <VerticalDivider />
           </>
         )}
-
         {defaultAddress && !isPassphraseUsed && (
           <>
             <DefaultAddressSwitch />
             <VerticalDivider />
           </>
         )}
-
         <NetworkSwitch />
       </HeaderButtons>
+      <TitleBar />
     </AppHeaderStyled>
   )
 }
