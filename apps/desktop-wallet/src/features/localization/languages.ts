@@ -14,6 +14,7 @@ export type Language =
   | 'it-IT'
   | 'el-GR'
   | 'zh-CN'
+  | 'th-TH'
 
 export const languageOptions: SelectOption<Language>[] = [
   { label: 'English', value: 'en-US' },
@@ -28,5 +29,6 @@ export const languageOptions: SelectOption<Language>[] = [
   { label: 'Türkçe', value: 'tr-TR' },
   { label: 'Tiếng Việt', value: 'vi-VN' },
   { label: 'Ελληνικά', value: 'el-GR' },
+  { label: 'ไทย', value: 'th-TH' },
   { label: '简体中文', value: 'zh-CN' }
 ]

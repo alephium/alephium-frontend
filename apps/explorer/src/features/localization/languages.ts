@@ -1,4 +1,4 @@
-export type Language = 'en' | 'fr' | 'id' | 'el' | 'de' | 'vi' | 'zh' | 'it' | 'pt'
+export type Language = 'en' | 'fr' | 'id' | 'el' | 'de' | 'vi' | 'zh' | 'it' | 'pt' | 'th'
 
 export const languageOptions: Array<{ label: string; value: Language }> = [
   { label: 'English', value: 'en' },
@@ -9,5 +9,6 @@ export const languageOptions: Array<{ label: string; value: Language }> = [
   { label: 'Italiano', value: 'it' },
   { label: 'Português', value: 'pt' },
   { label: 'Tiếng Việt', value: 'vi' },
+  { label: 'ไทย', value: 'th' },
   { label: '简体中文', value: 'zh' }
 ]
