@@ -91,7 +91,7 @@ const WalletWelcomePage = () => {
           <AdvancedUserMessage>
             <span>
               <Trans t={t} i18nKey="welcomeScreenOneAddressPerGroupMessage">
-                Advanced user: want to start with <b>one address per group for mining or DeFi?</b>
+                Advanced user: do you want to start with <b>one address per group for mining or DeFi?</b>
               </Trans>
             </span>
             <InfoIcon size="16px" onClick={() => openInWebBrowser(links.miningWallet)} />

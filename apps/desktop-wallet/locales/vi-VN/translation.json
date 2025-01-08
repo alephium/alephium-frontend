@@ -389,7 +389,7 @@
   "You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet or devnet network to see your tokens.": "Bạn hiện đang kết nối vào mạng {{ currentNetwork }}. Hãy chắc chắn rằng bạn đã kết nối vào mạng testnet hoặc devnet để nhìn thấy các token.",
   "You can disable this confirmation step from the wallet settings.": "Bạn có thể tắt bước xác nhận này trong cài đặt ví.",
   "You can download the address transaction history for a selected time period. This can be useful for tax reporting.": "Bạn có thể tải về lịch sử các giao dịch của địa chỉ ví trong một khoảng thời gian đã chọn. Tính năng này có thể hữu ích trong báo cáo thuế.",
-  "You have great ideas you want to share?": "Bạn muốn đóng góp ý tưởng cho chúng tôi?",
+  "Do you have great ideas you want to share?": "Bạn muốn đóng góp ý tưởng cho chúng tôi?",
   "You have reached the maximum calls limit. Please try again in a few minutes.": "Bạn đã đạt giới hạn call tối đa. Xin vui lòng thử lại sau ít phút.",
   "You will not be able to recover your account with the private key!": "Bạn không thể khôi phục tài khoản với khoá cá nhân!",
   "Your address": "Địa chỉ của bạn",

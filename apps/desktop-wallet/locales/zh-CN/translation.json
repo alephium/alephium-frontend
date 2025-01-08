@@ -389,7 +389,7 @@
   "You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet or devnet network to see your tokens.": "您当前连接的是 {{ currentNetwork }} 网络。请确保连接到 testnet 或 devnet 网络，以查看您的代币。",
   "You can disable this confirmation step from the wallet settings.": "您可以从钱包设置中禁用此确认步骤。",
   "You can download the address transaction history for a selected time period. This can be useful for tax reporting.": "您可以在选定的时间段下载地址交易历史记录。这可以用于税务报告。",
-  "You have great ideas you want to share?": "您有很好的想法要分享吗？",
+  "Do you have great ideas you want to share?": "您有很好的想法要分享吗？",
   "You have reached the maximum calls limit. Please try again in a few minutes.": "您已达到最大API服务请求限制。请几分钟后再试。",
   "You will not be able to recover your account with the private key!": "您将无法用私钥恢复您的帐户！",
   "Your address": "您的地址",

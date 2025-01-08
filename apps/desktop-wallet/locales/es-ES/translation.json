@@ -201,7 +201,7 @@
   "Welcome to Alephium.": "Bienvenido a Alephium.",
   "welcomeScreenOneAddressPerGroupMessage": "Usuario avanzado: ¿desea empezar con <1> una dirección por grupo para minería o DeFi?</1>",
   "welcomeScreenPassphraseMessage": "Si desea utilizar una <1>frase</1>, cierre la billetera recién creada.",
-  "You have great ideas you want to share?": "¿Tienes buenas ideas que quieres compartir?",
+  "Do you have great ideas you want to share?": "¿Tienes buenas ideas que quieres compartir?",
   "Your address": "Su dirección",
   "Your Wallet": "Su billetera",
   "{{ amount }} words entered": "{{ amount }} palabras introducidas"

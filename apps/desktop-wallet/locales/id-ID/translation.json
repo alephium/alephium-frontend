@@ -389,7 +389,7 @@
   "You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet or devnet network to see your tokens.": "Anda saat ini terhubung ke jaringan {{ currentNetwork }}. Pastikan untuk terhubung ke jaringan testnet atau devnet untuk melihat token Anda.",
   "You can disable this confirmation step from the wallet settings.": "Anda dapat menonaktifkan langkah konfirmasi ini dari pengaturan dompet anda.",
   "You can download the address transaction history for a selected time period. This can be useful for tax reporting.": "Anda dapat mengunduh alamat pada riwayat transaksi untuk jangka waktu yang dipilih. Ini akan berguna untuk pelaporan pajak.",
-  "You have great ideas you want to share?": "Anda memiliki ide hebat yang ingin Anda bagikan?",
+  "Do you have great ideas you want to share?": "Anda memiliki ide hebat yang ingin Anda bagikan?",
   "You have reached the maximum calls limit. Please try again in a few minutes.": "Anda telah mencapai batas panggilan maksimum. Silakan coba lagi dalam beberapa menit nanti.",
   "You will not be able to recover your account with the private key!": "Anda tidak akan dapat memulihkan akun Anda dengan kunci pribadi!",
   "Your address": "Alamat Anda",

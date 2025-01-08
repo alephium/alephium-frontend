@@ -204,7 +204,7 @@
   "Welcome to Alephium.": "Alephium'a hoş geldiniz.",
   "welcomeScreenOneAddressPerGroupMessage": "Gelişmiş kullanıcı: <1>her bir gruba madencilik ya da defi için bir adres</1> ile başlamak ister misiniz?",
   "welcomeScreenPassphraseMessage": "Eğer <1>kurtarma sözcüklerini</1> kullanmak istiyorsanız, yeni oluşturduğunuz cüzdanı kilitleyin.",
-  "You have great ideas you want to share?": "Harika fikirleriniz mi var, paylaşmak ister misiniz?",
+  "Do you have great ideas you want to share?": "Harika fikirleriniz mi var, paylaşmak ister misiniz?",
   "Your address": "Adresiniz",
   "Your Wallet": "Cüzdanınız",
   "{{ amount }} words entered": "{{ amount }} kelimeler girildi"

@@ -98,7 +98,7 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
           placeholder
           title={t('More to come...')}
           Icon={<Lightbulb color={theme.font.secondary} strokeWidth={1} size={28} />}
-          description={t('You have great ideas you want to share?')}
+          description={t('Do you have great ideas you want to share?')}
           buttonText={t('Tell us!')}
           onButtonClick={handleTellUsIdeasClick}
         />
