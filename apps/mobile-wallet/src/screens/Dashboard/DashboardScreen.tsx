@@ -120,13 +120,14 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           <DashboardSecondaryButtons />
           <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
           <BalanceSummary dateLabel={t('VALUE TODAY')} />
-          {totalBalance > BigInt(0) && (
-            <ButtonsRowContainer>
+
+          <ButtonsRowContainer>
+            {totalBalance > BigInt(0) && (
               <DashboardCardButton title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />
-              <DashboardCardButton title={t('Receive')} onPress={handleReceivePress} iconProps={{ name: 'download' }} />
-              <DashboardCardButton title={t('Buy')} onPress={openBuyModal} iconProps={{ name: 'credit-card' }} />
-            </ButtonsRowContainer>
-          )}
+            )}
+            <DashboardCardButton title={t('Receive')} onPress={handleReceivePress} iconProps={{ name: 'download' }} />
+            <DashboardCardButton title={t('Buy')} onPress={openBuyModal} iconProps={{ name: 'credit-card' }} />
+          </ButtonsRowContainer>
         </RoundedCardStyled>
       </CardContainer>
 
@@ -163,9 +164,4 @@ const ButtonsRowContainer = styled(Animated.View)`
   align-items: center;
   justify-content: center;
   gap: 10px;
-`
-
-const EmptyWalletActionButtons = styled.View`
-  gap: ${VERTICAL_GAP / 2}px;
-  margin-top: ${VERTICAL_GAP}px;
 `

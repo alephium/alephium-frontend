@@ -1,7 +1,6 @@
 import { AddressHash, CURRENCIES } from '@alephium/shared'
-import { Skeleton } from 'moti/skeleton'
 import { useMemo } from 'react'
-import { View, ViewProps } from 'react-native'
+import { ActivityIndicator, View, ViewProps } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
@@ -33,9 +32,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
         </View>
 
         {addressesBalancesStatus === 'uninitialized' ? (
-          <View style={{ marginTop: 13 }}>
-            <Skeleton show colorMode={theme.name} width={200} height={38} />
-          </View>
+          <ActivityIndicator size="large" color={theme.font.primary} style={{ marginTop: 10 }} />
         ) : (
           <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold size={40} />
         )}

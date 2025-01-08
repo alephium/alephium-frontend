@@ -36,10 +36,13 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
   const isLoadingUnverified = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
   const isLoadingVerified = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
+  const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const theme = useTheme()
   const { t } = useTranslation()
 
-  const showTokensSkeleton = isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes
+  const showTokensSkeleton =
+    (isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes) &&
+    addressesBalancesStatus === 'initialized'
 
   const [tokenRows, setTokenRows] = useState<TokensRow[]>([])
 
@@ -78,12 +81,21 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
           </LoadingRow>
         )
       )}
-      {!isRefreshing && tokenRows.length === 0 && (
+      {addressesBalancesStatus === 'uninitialized' ? (
         <EmptyPlaceholder>
-          <AppText size={28}>👀</AppText>
-          <AppText>{t('No assets here, yet.')}</AppText>
+          <AppText size={28}>⏳</AppText>
+          <AppText>{t('Loading your balances...')}</AppText>
         </EmptyPlaceholder>
+      ) : (
+        !isRefreshing &&
+        tokenRows.length === 0 && (
+          <EmptyPlaceholder>
+            <AppText size={28}>👀</AppText>
+            <AppText>{t('No assets here, yet.')}</AppText>
+          </EmptyPlaceholder>
+        )
       )}
+
       {isRefreshing && (
         <>
           <LoadingOverlay />
