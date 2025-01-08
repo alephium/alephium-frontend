@@ -15,6 +15,7 @@ import { selectAllModals } from '~/features/modals/modalSelectors'
 import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
 import NftGridModal from '~/features/nftsDisplay/NftGridModal'
 import NftModal from '~/features/nftsDisplay/NftModal'
+import ReceiveQRCodeModal from '~/features/receive/ReceiveQRCodeModal'
 import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
 import TokenAmountModal from '~/features/send/modals/TokenAmountModal'
@@ -97,6 +98,8 @@ const AppModals = () => {
             return <TokenAmountModal key={id} id={id} {...params.props} />
           case 'AddressDetailsModal':
             return <AddressDetailsModal key={id} id={id} {...params.props} />
+          case 'ReceiveQRCodeModal':
+            return <ReceiveQRCodeModal key={id} id={id} {...params.props} />
           default:
             return null
         }

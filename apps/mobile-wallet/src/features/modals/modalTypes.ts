@@ -13,6 +13,7 @@ import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import NftGridModal from '~/features/nftsDisplay/NftGridModal'
 import NftModal from '~/features/nftsDisplay/NftModal'
+import ReceiveQRCodeModal from '~/features/receive/ReceiveQRCodeModal'
 import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
 import TokenAmountModal from '~/features/send/modals/TokenAmountModal'
@@ -54,7 +55,8 @@ export const ModalComponents = {
   WalletConnectSessionRequestModal,
   GroupSelectModal,
   TokenAmountModal,
-  AddressDetailsModal
+  AddressDetailsModal,
+  ReceiveQRCodeModal
 }
 
 type ModalName = keyof typeof ModalComponents

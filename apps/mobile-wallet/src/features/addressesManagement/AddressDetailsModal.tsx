@@ -11,7 +11,7 @@ import BalanceSummary from '~/components/BalanceSummary'
 import ActionCardButton from '~/components/buttons/ActionCardButton'
 import RoundedCard from '~/components/RoundedCard'
 import BottomModal from '~/features/modals/BottomModal'
-import { closeModal } from '~/features/modals/modalActions'
+import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -52,12 +52,7 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
   const handleReceivePress = () => {
     sendAnalytics({ event: 'Address modal: Pressed btn to receive funds to' })
 
-    navigation.navigate('ReceiveNavigation', {
-      screen: 'QRCodeScreen',
-      params: { addressHash }
-    })
-
-    dispatch(closeModal({ id }))
+    dispatch(openModal({ name: 'ReceiveQRCodeModal', props: { addressHash } }))
   }
 
   const handleSettingsPress = () => {
@@ -105,7 +100,7 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
             onPress={handleDefaultPress}
             iconProps={{ name: 'star' }}
             loading={defaultAddressIsChanging}
-            color={address.settings.isDefault ? address.settings.color : 'primary'}
+            color={address.settings.isDefault ? address.settings.color : undefined}
           />
         </ActionButtons>
       </Content>
