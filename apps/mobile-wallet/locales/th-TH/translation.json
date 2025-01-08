@@ -305,6 +305,7 @@
   "To move funds to Ethereum use the bridge at {{ url }}": "หากต้องการย้ายเงินไปยัง Ethereum ให้ใช้บริดจ์ที่ {{ url }}",
   "Forget": "ลืม",
   "forgetAddress_one": "ลืมที่อยู่",
-  "You can always re-add it to your wallet.": "คุณสามารถเพิ่มมันกลับเข้าไปในกระเป๋าเงินได้เสมอ",
-  "Could not forget address": "ลืมที่อยู่ไม่ได้"
+  "You can always re-add it to your wallet.": "คุณสามารถเพิ่มกลับเข้าไปในกระเป๋าเงินได้เสมอ",
+  "Could not forget address": "ลืมที่อยู่ไม่ได้",
+  "Address book": "สมุดบันทึกที่อยู่"
 }
