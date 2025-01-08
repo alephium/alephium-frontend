@@ -15,6 +15,7 @@ import DashboardCardButton from '~/components/buttons/ActionCardButton'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { headerOffsetTop } from '~/components/headers/BaseHeader'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
+import { ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import RoundedCard from '~/components/RoundedCard'
 import { openModal } from '~/features/modals/modalActions'
@@ -130,7 +131,9 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         <DashboardCardButton title={t('Buy')} onPress={openBuyModal} iconProps={{ name: 'credit-card' }} />
       </ButtonsRowContainer>
 
-      <AddressesTokensList />
+      <ScreenSection>
+        <AddressesTokensList />
+      </ScreenSection>
 
       {totalBalance === BigInt(0) && addressesBalancesStatus === 'initialized' && (
         <EmptyPlaceholder style={{ marginHorizontal: DEFAULT_MARGIN }}>

@@ -6,6 +6,7 @@ import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
+import AddressesTokensList from '~/components/AddressesTokensList'
 import AnimatedBackground from '~/components/AnimatedBackground'
 import BalanceSummary from '~/components/BalanceSummary'
 import ActionCardButton from '~/components/buttons/ActionCardButton'
@@ -104,6 +105,7 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
           />
         </ActionButtons>
       </Content>
+      <AddressesTokensList addressHash={addressHash} />
     </BottomModal>
   )
 })
