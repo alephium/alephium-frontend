@@ -74,7 +74,7 @@ const Button = ({
       default: theme.font.primary,
       contrast: theme.font.contrast,
       accent: theme.global.accent,
-      valid: theme.font.primary,
+      valid: theme.font.contrast,
       alert: theme.global.alert,
       highlight: 'white'
     }[variant]

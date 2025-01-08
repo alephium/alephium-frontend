@@ -44,7 +44,7 @@ export const lightTheme: DefaultTheme = {
     accent: '#155ef9',
     alert: '#ed4a34',
     warning: '#f48826',
-    valid: '#2DA023',
+    valid: '#32b227',
     star: '#FFD66D',
     pale: '#f7d1b6',
     complementary: '#b07dcb',
