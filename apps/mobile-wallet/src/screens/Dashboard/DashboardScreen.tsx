@@ -11,7 +11,6 @@ import Amount from '~/components/Amount'
 import AnimatedBackground from '~/components/AnimatedBackground'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
-import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { headerOffsetTop } from '~/components/headers/BaseHeader'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
@@ -52,7 +51,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector(selectAddessesTokensWorth)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const addressesStatus = useAppSelector((s) => s.addresses.status)
+  const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
   const defaultAddressHash = useAppSelector(selectDefaultAddress).hash
@@ -130,30 +129,14 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           )}
         </RoundedCardStyled>
       </CardContainer>
+
       <AddressesTokensList />
-      {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
+
+      {totalBalance === BigInt(0) && addressesBalancesStatus === 'initialized' && (
         <EmptyPlaceholder style={{ marginHorizontal: DEFAULT_MARGIN }}>
           <AppText size={28}>🌈</AppText>
           <AppText color="secondary">{t('There is so much left to discover!')}</AppText>
           <AppText color="tertiary">{t('Start by adding funds to your wallet.')}</AppText>
-          <EmptyWalletActionButtons>
-            <Button
-              title={t('Receive')}
-              onPress={handleReceivePress}
-              iconProps={{ name: 'download' }}
-              variant="contrast"
-              squared
-              short
-            />
-            <Button
-              title={t('Buy')}
-              onPress={openBuyModal}
-              iconProps={{ name: 'credit-card' }}
-              variant="contrast"
-              squared
-              short
-            />
-          </EmptyWalletActionButtons>
         </EmptyPlaceholder>
       )}
     </DashboardScreenStyled>
