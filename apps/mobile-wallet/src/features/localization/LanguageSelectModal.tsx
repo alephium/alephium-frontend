@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next'
-
 import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import { Language, languageOptions } from '~/features/localization/languages'
@@ -11,7 +9,6 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 const LanguageSelectModal = withModal(({ id }) => {
   const dispatch = useAppDispatch()
-  const { t } = useTranslation()
   const currentLanguage = useAppSelector((s) => s.settings.language)
 
   const handleLanguageChange = (language: Language) => {
@@ -20,7 +17,7 @@ const LanguageSelectModal = withModal(({ id }) => {
   }
 
   return (
-    <BottomModal modalId={id} title={t('Language')}>
+    <BottomModal modalId={id} title="Language">
       <Surface>
         {languageOptions.map((languageOption, index) => (
           <RadioButtonRow
