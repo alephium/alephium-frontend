@@ -1,6 +1,7 @@
 import { AddressHash } from '@alephium/shared'
 import { openBrowserAsync } from 'expo-web-browser'
 import { Trans, useTranslation } from 'react-i18next'
+import { Linking } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -9,6 +10,8 @@ import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import ScreenTitle from '~/components/layout/ScreenTitle'
 import LinkToWeb from '~/components/text/LinkToWeb'
+import { closeBanxaTabOnDeepLink } from '~/features/buy/buyUtils'
+import useBanxaUrl from '~/features/buy/useBanxaUrl'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
@@ -26,23 +29,20 @@ const BuyModal = withModal<BuyModalProps>(({ id, receiveAddressHash }) => {
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
   const receiveAddress = useAppSelector((s) => selectAddressByHash(s, receiveAddressHash))
+  const banxaUrl = useBanxaUrl(receiveAddressHash)
 
-  const handleDisclaimerAcceptPress = () => {
-    receiveAddress &&
-      openBrowserAsync(
-        'https://alephium.banxa.com/' +
-          `?walletAddress=${receiveAddressHash}` +
-          `&theme=${theme.name}` +
-          `&backgroundColor=${theme.bg.primary.slice(1)}` + // TODO: In light theme it's rgba, removing the first char is problematic
-          `&textColor=${theme.font.primary.slice(1)}` +
-          `&primaryColor=${theme.global.accent.slice(1)}` +
-          `&secondaryColor=${theme.global.complementary.slice(1)}`,
-        {
-          createTask: false, // Android: the browser opens within our app without a new task in the task manager
-          toolbarColor: theme.bg.back1, // TODO: Wanted to use theme.bg.primary, but in light theme it's rgba and it looks black, not white
-          controlsColor: theme.global.accent // iOS: color of button texts
-        }
-      )
+  const openBanxaUrl = async () => {
+    if (receiveAddress) {
+      Linking.addEventListener('url', closeBanxaTabOnDeepLink)
+
+      openBrowserAsync(banxaUrl, {
+        createTask: false, // Android: the browser opens within our app without a new task in the task manager
+        toolbarColor: theme.bg.back1, // TODO: Wanted to use theme.bg.primary, but in light theme it's rgba and it looks black, not white
+        controlsColor: theme.global.accent // iOS: color of button texts
+      }).finally(() => {
+        Linking.removeAllListeners('url')
+      })
+    }
 
     dispatch(closeModal({ id }))
   }
@@ -68,8 +68,8 @@ const BuyModal = withModal<BuyModalProps>(({ id, receiveAddressHash }) => {
         </TextContainer>
         <BottomButtons fullWidth>
           <Button
-            title={t("Alright, let's get to it.")}
-            onPress={handleDisclaimerAcceptPress}
+            title={t('I understand')}
+            onPress={openBanxaUrl}
             variant="highlight"
             style={{ marginBottom: insets.bottom }}
           />
