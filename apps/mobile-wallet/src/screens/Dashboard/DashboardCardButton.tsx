@@ -13,9 +13,9 @@ const DashboardCardButton = ({ title, iconProps, ...props }: DashboardCardButton
   const theme = useTheme()
 
   return (
-    <ButtonStyled variant="contrast" squared flex {...props}>
-      {iconProps && <AnimatedIonicons layout={LinearTransition} color={theme.font.contrast} size={22} {...iconProps} />}
-      <AppText color="contrast" semiBold size={12}>
+    <ButtonStyled flex {...props}>
+      {iconProps && <AnimatedIonicons layout={LinearTransition} color={theme.font.primary} size={22} {...iconProps} />}
+      <AppText semiBold size={12}>
         {title}
       </AppText>
     </ButtonStyled>
@@ -27,4 +27,5 @@ export default DashboardCardButton
 const ButtonStyled = styled(Button)`
   flex-direction: column;
   gap: 2px;
+  border-radius: 20px;
 `
