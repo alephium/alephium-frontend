@@ -4,18 +4,18 @@ import { Alert } from 'react-native'
 
 import { sendAnalytics } from '~/analytics'
 import Button from '~/components/buttons/Button'
-import useCanDeleteAddress from '~/features/address-deletion/useCanDeleteAddress'
+import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import { useAppDispatch } from '~/hooks/redux'
 import { deleteAddress } from '~/persistent-storage/wallet'
 import { addressDeleted } from '~/store/addresses/addressesActions'
 import { showToast } from '~/utils/layout'
 
-interface AddressCardDeleteButtonProps {
+interface AddressDeleteButtonProps {
   addressHash: AddressHash
   color: string
 }
 
-const AddressCardDeleteButton = ({ addressHash, color }: AddressCardDeleteButtonProps) => {
+const AddressDeleteButton = ({ addressHash, color }: AddressDeleteButtonProps) => {
   const canDeleteAddress = useCanDeleteAddress(addressHash)
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -51,16 +51,7 @@ const AddressCardDeleteButton = ({ addressHash, color }: AddressCardDeleteButton
     ])
   }
 
-  return (
-    <Button
-      iconProps={{ name: 'trash-2' }}
-      color={color}
-      onPress={handleDeletePress}
-      squared
-      compact
-      type="transparent"
-    />
-  )
+  return <Button iconProps={{ name: 'trash-2' }} color={color} onPress={handleDeletePress} squared compact />
 }
 
-export default AddressCardDeleteButton
+export default AddressDeleteButton
