@@ -3,7 +3,7 @@ export default {
     name: 'Alephium',
     owner: 'alephium-dev',
     slug: 'alephium-mobile-wallet',
-    version: '1.1.12',
+    version: '2.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
     scheme: ['wc', 'alephium'],
