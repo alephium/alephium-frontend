@@ -1,7 +1,8 @@
 import { AddressHash } from '@alephium/shared'
-import { openBrowserAsync } from 'expo-web-browser'
+import { useURL } from 'expo-linking'
+import { dismissBrowser, openBrowserAsync } from 'expo-web-browser'
+import { useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { Linking } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -10,7 +11,6 @@ import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import ScreenTitle from '~/components/layout/ScreenTitle'
 import LinkToWeb from '~/components/text/LinkToWeb'
-import { closeBanxaTabOnDeepLink } from '~/features/buy/buyUtils'
 import useBanxaUrl from '~/features/buy/useBanxaUrl'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
@@ -23,6 +23,8 @@ export interface BuyModalProps {
   receiveAddressHash: AddressHash
 }
 
+const CLOSE_BANXA_TAB_DEEP_LINK = 'alephium://close-banxa-tab'
+
 const BuyModal = withModal<BuyModalProps>(({ id, receiveAddressHash }) => {
   const { t } = useTranslation()
   const theme = useTheme()
@@ -30,21 +32,22 @@ const BuyModal = withModal<BuyModalProps>(({ id, receiveAddressHash }) => {
   const dispatch = useAppDispatch()
   const receiveAddress = useAppSelector((s) => selectAddressByHash(s, receiveAddressHash))
   const banxaUrl = useBanxaUrl(receiveAddressHash)
+  const deeplink = useURL()
+
+  useEffect(() => {
+    if (deeplink?.includes(CLOSE_BANXA_TAB_DEEP_LINK)) {
+      dispatch(closeModal({ id }))
+      dismissBrowser()
+    }
+  }, [deeplink, dispatch, id])
 
   const openBanxaUrl = async () => {
-    if (receiveAddress) {
-      Linking.addEventListener('url', closeBanxaTabOnDeepLink)
-
+    receiveAddress &&
       openBrowserAsync(banxaUrl, {
         createTask: false, // Android: the browser opens within our app without a new task in the task manager
         toolbarColor: theme.bg.back1, // TODO: Wanted to use theme.bg.primary, but in light theme it's rgba and it looks black, not white
         controlsColor: theme.global.accent // iOS: color of button texts
-      }).finally(() => {
-        Linking.removeAllListeners('url')
       })
-    }
-
-    dispatch(closeModal({ id }))
   }
 
   return (
