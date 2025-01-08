@@ -156,6 +156,7 @@ const AppHeaderStyled = styled(motion.header)<Pick<AppHeader, 'invisible'>>`
 
   backdrop-filter: ${({ invisible }) => (!invisible ? 'blur(10px)' : 'none')};
   z-index: 1;
+  app-region: no-drag;
 `
 
 const OfflineIcon = styled.div`
@@ -180,7 +181,6 @@ const HeaderButtons = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: var(--spacing-1);
-  app-region: no-drag;
 
   > *:not(:last-child) {
     margin-right: var(--spacing-1);
