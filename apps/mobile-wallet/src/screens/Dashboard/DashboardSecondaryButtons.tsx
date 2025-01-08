@@ -1,7 +1,5 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button from '~/components/buttons/Button'
@@ -11,11 +9,7 @@ import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
 import { showToast } from '~/utils/layout'
 
-interface DashboardSecondaryButtonsProps {
-  style?: StyleProp<ViewStyle>
-}
-
-const DashboardSecondaryButtons = ({ style }: DashboardSecondaryButtonsProps) => {
+const DashboardSecondaryButtons = () => {
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const networkStatus = useAppSelector((s) => s.network.status)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
@@ -55,12 +49,11 @@ const DashboardSecondaryButtons = ({ style }: DashboardSecondaryButtonsProps) =>
   )
 }
 
-export default memo(DashboardSecondaryButtons)
+export default DashboardSecondaryButtons
 
 const DashboardSecondaryButtonsStyled = styled.View`
   flex: 1;
   margin-top: -10px;
-  z-index: 1;
 `
 
 const Buttons = styled.View`

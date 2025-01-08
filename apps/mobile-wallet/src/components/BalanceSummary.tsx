@@ -1,7 +1,6 @@
 import { AddressHash, CURRENCIES } from '@alephium/shared'
-import { Skeleton } from 'moti/skeleton'
 import { useMemo } from 'react'
-import { View, ViewProps } from 'react-native'
+import { ActivityIndicator, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
@@ -11,11 +10,11 @@ import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelec
 import { selectAddressIds } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-interface BalanceSummaryProps extends ViewProps {
+interface BalanceSummaryProps {
   dateLabel: string
 }
 
-const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => {
+const BalanceSummary = ({ dateLabel }: BalanceSummaryProps) => {
   const theme = useTheme()
   const currency = useAppSelector((s) => s.settings.currency)
   const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
@@ -24,7 +23,7 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
 
   return (
-    <BalanceSummaryContainer style={style} {...props}>
+    <BalanceSummaryStyled>
       <TextContainer>
         <View>
           <AppText color="tertiary" semiBold>
@@ -33,20 +32,18 @@ const BalanceSummary = ({ dateLabel, style, ...props }: BalanceSummaryProps) => 
         </View>
 
         {addressesBalancesStatus === 'uninitialized' ? (
-          <View style={{ marginTop: 13 }}>
-            <Skeleton show colorMode={theme.name} width={200} height={38} />
-          </View>
+          <ActivityIndicator size="large" color={theme.font.primary} style={{ marginTop: 10 }} />
         ) : (
           <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold size={40} />
         )}
       </TextContainer>
-    </BalanceSummaryContainer>
+    </BalanceSummaryStyled>
   )
 }
 
 export default BalanceSummary
 
-const BalanceSummaryContainer = styled.View`
+const BalanceSummaryStyled = styled.View`
   justify-content: center;
   align-items: center;
   margin: 10px 0 16px 0;

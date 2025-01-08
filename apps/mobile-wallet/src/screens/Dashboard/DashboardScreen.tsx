@@ -11,7 +11,6 @@ import Amount from '~/components/Amount'
 import AnimatedBackground from '~/components/AnimatedBackground'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
-import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { headerOffsetTop } from '~/components/headers/BaseHeader'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
@@ -27,10 +26,11 @@ import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
+import DashboardCardButton from '~/screens/Dashboard/DashboardCardButton'
 import DashboardSecondaryButtons from '~/screens/Dashboard/DashboardSecondaryButtons'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
-import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
+import { selectAddressIds, selectDefaultAddress, selectTotalBalance } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 interface ScreenProps
@@ -51,9 +51,10 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector(selectAddessesTokensWorth)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const addressesStatus = useAppSelector((s) => s.addresses.status)
+  const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
+  const defaultAddressHash = useAppSelector(selectDefaultAddress).hash
 
   const { data: isNewWallet } = useAsyncData(getIsNewWallet)
 
@@ -95,7 +96,8 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     }
   }
 
-  const openBuyModal = () => dispatch(openModal({ name: 'BuyModal' }))
+  const openBuyModal = () =>
+    dispatch(openModal({ name: 'BuyModal', props: { receiveAddressHash: defaultAddressHash } }))
 
   return (
     <DashboardScreenStyled
@@ -115,58 +117,27 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     >
       <CardContainer style={{ marginTop: insets.top }}>
         <RoundedCardStyled>
-          <DashboardSecondaryButtons />
           <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
+          <DashboardSecondaryButtons />
           <BalanceSummary dateLabel={t('VALUE TODAY')} />
-          {totalBalance > BigInt(0) && (
-            <ButtonsRowContainer>
-              <>
-                <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" squared flex short />
-                <Button
-                  onPress={handleReceivePress}
-                  iconProps={{ name: 'download' }}
-                  variant="contrast"
-                  squared
-                  flex
-                  short
-                />
-                <Button
-                  onPress={openBuyModal}
-                  iconProps={{ name: 'credit-card' }}
-                  variant="contrast"
-                  squared
-                  flex
-                  short
-                />
-              </>
-            </ButtonsRowContainer>
-          )}
+
+          <ButtonsRowContainer>
+            {totalBalance > BigInt(0) && (
+              <DashboardCardButton title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />
+            )}
+            <DashboardCardButton title={t('Receive')} onPress={handleReceivePress} iconProps={{ name: 'download' }} />
+            <DashboardCardButton title={t('Buy')} onPress={openBuyModal} iconProps={{ name: 'credit-card' }} />
+          </ButtonsRowContainer>
         </RoundedCardStyled>
       </CardContainer>
+
       <AddressesTokensList />
-      {totalBalance === BigInt(0) && addressesStatus === 'initialized' && (
+
+      {totalBalance === BigInt(0) && addressesBalancesStatus === 'initialized' && (
         <EmptyPlaceholder style={{ marginHorizontal: DEFAULT_MARGIN }}>
           <AppText size={28}>🌈</AppText>
           <AppText color="secondary">{t('There is so much left to discover!')}</AppText>
           <AppText color="tertiary">{t('Start by adding funds to your wallet.')}</AppText>
-          <EmptyWalletActionButtons>
-            <Button
-              title={t('Receive')}
-              onPress={handleReceivePress}
-              iconProps={{ name: 'download' }}
-              variant="contrast"
-              squared
-              short
-            />
-            <Button
-              title={t('Buy')}
-              onPress={openBuyModal}
-              iconProps={{ name: 'credit-card' }}
-              variant="contrast"
-              squared
-              short
-            />
-          </EmptyWalletActionButtons>
         </EmptyPlaceholder>
       )}
     </DashboardScreenStyled>
@@ -181,6 +152,7 @@ const DashboardScreenStyled = styled(BottomBarScrollScreen)`
 
 const CardContainer = styled.View`
   margin: 0 ${DEFAULT_MARGIN}px;
+  flex: 1;
 `
 
 const RoundedCardStyled = styled(RoundedCard)`
@@ -193,9 +165,4 @@ const ButtonsRowContainer = styled(Animated.View)`
   align-items: center;
   justify-content: center;
   gap: 10px;
-`
-
-const EmptyWalletActionButtons = styled.View`
-  gap: ${VERTICAL_GAP / 2}px;
-  margin-top: ${VERTICAL_GAP}px;
 `

@@ -2,8 +2,7 @@ import { AddressHash, Asset } from '@alephium/shared'
 import { Skeleton } from 'moti/skeleton'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ActivityIndicator, StyleProp, ViewStyle } from 'react-native'
-import Animated, { CurvedTransition } from 'react-native-reanimated'
+import { ActivityIndicator } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -18,7 +17,6 @@ import TokenListItem from './TokenListItem'
 interface AddressesTokensListProps {
   addressHash?: AddressHash
   isRefreshing?: boolean
-  style?: StyleProp<ViewStyle>
 }
 
 type LoadingIndicator = {
@@ -27,7 +25,7 @@ type LoadingIndicator = {
 
 type TokensRow = Asset | UnknownTokensEntry | LoadingIndicator
 
-const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesTokensListProps) => {
+const AddressesTokensList = ({ addressHash, isRefreshing }: AddressesTokensListProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
@@ -36,10 +34,13 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
   const isLoadingUnverified = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
   const isLoadingVerified = useAppSelector((s) => s.fungibleTokens.loadingVerified)
   const isLoadingTokenTypes = useAppSelector((s) => s.fungibleTokens.loadingTokenTypes)
+  const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const theme = useTheme()
   const { t } = useTranslation()
 
-  const showTokensSkeleton = isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes
+  const showTokensSkeleton =
+    (isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes) &&
+    addressesBalancesStatus === 'initialized'
 
   const [tokenRows, setTokenRows] = useState<TokensRow[]>([])
 
@@ -60,8 +61,24 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
     setTokenRows(entries)
   }, [addressHash, showTokensSkeleton, knownFungibleTokens, unknownTokens.length])
 
+  if (addressesBalancesStatus === 'uninitialized')
+    return (
+      <EmptyPlaceholderStyled>
+        <AppText size={28}>⏳</AppText>
+        <AppText>{t('Loading your balances...')}</AppText>
+      </EmptyPlaceholderStyled>
+    )
+
+  if (!isRefreshing && tokenRows.length === 0)
+    return (
+      <EmptyPlaceholderStyled>
+        <AppText size={28}>👀</AppText>
+        <AppText>{t('No assets here, yet.')}</AppText>
+      </EmptyPlaceholderStyled>
+    )
+
   return (
-    <ListContainer style={style} layout={CurvedTransition}>
+    <ListContainer>
       {tokenRows.map((entry, index) =>
         isAsset(entry) ? (
           <TokenListItem
@@ -78,12 +95,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, style }: AddressesToke
           </LoadingRow>
         )
       )}
-      {!isRefreshing && tokenRows.length === 0 && (
-        <EmptyPlaceholder>
-          <AppText size={28}>👀</AppText>
-          <AppText>{t('No assets here, yet.')}</AppText>
-        </EmptyPlaceholder>
-      )}
+
       {isRefreshing && (
         <>
           <LoadingOverlay />
@@ -108,10 +120,14 @@ const LoadingRow = styled.View`
   margin: 0 ${DEFAULT_MARGIN}px;
 `
 
-const ListContainer = styled(Animated.View)`
+const ListContainer = styled.View`
   border-radius: ${BORDER_RADIUS_BIG}px;
   overflow: hidden;
   position: relative;
+  margin: 0 ${DEFAULT_MARGIN}px;
+`
+
+const EmptyPlaceholderStyled = styled(EmptyPlaceholder)`
   margin: 0 ${DEFAULT_MARGIN}px;
 `
 

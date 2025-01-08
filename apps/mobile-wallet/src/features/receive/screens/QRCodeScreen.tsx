@@ -12,8 +12,9 @@ import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScree
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import { useHeaderContext } from '~/contexts/HeaderContext'
+import { openModal } from '~/features/modals/modalActions'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
-import { useAppSelector } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { selectAddressByHash } from '~/store/addressesSlice'
 import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
@@ -25,6 +26,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const { screenScrollHandler, screenScrollY } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, params.addressHash))
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
   useScrollToTopOnFocus(screenScrollY)
 
@@ -33,6 +35,9 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
 
     copyAddressToClipboard(params.addressHash)
   }
+
+  const openBuyModal = () =>
+    dispatch(openModal({ name: 'BuyModal', props: { receiveAddressHash: params.addressHash } }))
 
   return (
     <ScrollScreen
@@ -51,8 +56,9 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
           <QRCode size={200} value={params.addressHash} />
         </QRCodeContainer>
       </ScreenSection>
-      <ScreenSection centered>
+      <ScreenSection centered verticalGap>
         <Button short title={t('Copy address')} onPress={handleCopyAddressPress} iconProps={{ name: 'copy' }} />
+        <Button short title={t('Buy')} onPress={openBuyModal} iconProps={{ name: 'credit-card' }} />
       </ScreenSection>
       <ScreenSection>
         <Surface>
