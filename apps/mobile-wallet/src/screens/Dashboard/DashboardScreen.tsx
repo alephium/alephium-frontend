@@ -152,6 +152,7 @@ const DashboardScreenStyled = styled(BottomBarScrollScreen)`
 
 const CardContainer = styled.View`
   margin: 0 ${DEFAULT_MARGIN}px;
+  flex: 1;
 `
 
 const RoundedCardStyled = styled(RoundedCard)`
