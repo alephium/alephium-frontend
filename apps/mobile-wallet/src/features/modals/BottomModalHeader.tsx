@@ -15,14 +15,18 @@ interface BottomModalHeaderProps {
 const BottomModalHeader = ({ height, onClose, title }: BottomModalHeaderProps) => (
   <HeaderContainer style={{ height }}>
     <HeaderSideContainer align="left" />
-    {title &&
-      (typeof title === 'string' ? (
-        <Title semiBold size={16}>
-          {title}
-        </Title>
-      ) : (
-        title
-      ))}
+    <HeaderTitleOutterContainer>
+      <TitleContainer>
+        {title &&
+          (typeof title === 'string' ? (
+            <Title semiBold size={16}>
+              {title}
+            </Title>
+          ) : (
+            title
+          ))}
+      </TitleContainer>
+    </HeaderTitleOutterContainer>
     <HeaderSideContainer align="right">
       <CloseButton onPress={onClose} />
     </HeaderSideContainer>
@@ -44,7 +48,18 @@ const HeaderSideContainer = styled.View<{ align: 'right' | 'left' }>`
   justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : 'flex-start')};
 `
 
-const Title = styled(AppText)`
+const HeaderTitleOutterContainer = styled.View`
   flex: 1;
+  align-items: center;
+  justify-content: center;
+`
+
+const TitleContainer = styled.View`
+  max-width: 150px;
+  align-items: center;
+  justify-content: center;
+`
+
+const Title = styled(AppText)`
   text-align: center;
 `

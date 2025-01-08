@@ -12,7 +12,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'rgba(0, 0, 0, 0.02)',
     back1: '#fff',
     back2: '#fff',
-    accent: 'rgba(58, 111, 244, 0.12)',
+    accent: colord('#155ef9').alpha(0.1).toHex(),
     contrast: '#111114'
   },
   font: {
@@ -69,7 +69,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: '#141417',
     back1: '#0b0b0d',
     back2: '#000',
-    accent: 'rgba(93, 108, 243, 0.08)',
+    accent: colord('#5086f9').alpha(0.2).toHex(),
     contrast: '#E3E3E3'
   },
   font: {
@@ -98,7 +98,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 25px; shadow-opacity: 0.2; shadow-radius: 25px; elevation: 5;'
   },
   global: {
-    accent: '#155ef9',
+    accent: '#5086f9',
     alert: '#ed4a34',
     warning: '#ed882d',
     valid: '#16a324',

@@ -1,4 +1,6 @@
 import { Blur, Canvas, Circle, Group } from '@shopify/react-native-skia'
+// 1) Import colord (and extend if needed)
+import { colord } from 'colord'
 import { useEffect } from 'react'
 import { useWindowDimensions } from 'react-native'
 import Animated, {
@@ -17,6 +19,9 @@ import Animated, {
 } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+// If you need plugins (like `colord` plugins), you can import and `extend` them here
+// import { extend } from 'colord'
+// extend([/* plugins */])
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 
 interface AnimatedBackgroundProps {
@@ -26,6 +31,7 @@ interface AnimatedBackgroundProps {
   isAnimated?: boolean
   isFullScreen?: boolean
   showAlephiumLogo?: boolean
+  shade?: string
 }
 
 const GYRO_MULTIPLIER_X = 100
@@ -33,25 +39,46 @@ const GYRO_MULTIPLIER_Y = 100
 
 const AnimatedCanvas = Animated.createAnimatedComponent(Canvas)
 
+function getCircleColors({ shade, isDark }: { shade?: string; isDark: boolean }) {
+  if (!shade) {
+    return isDark ? ['#86acff', '#2ac6ff', '#1856ff'] : ['#ffa286', '#e39dff', '#ffc57e']
+  }
+
+  const base = colord(shade)
+  const color1 = base.rotate(-15).toHex()
+  const color2 = base.rotate(15).toHex()
+  const color3 = base.rotate(35).toHex()
+
+  return [color1, color2, color3]
+}
+
 const AnimatedBackground = ({
   height = 400,
   width = 400,
   scrollY,
   isAnimated,
   isFullScreen,
-  showAlephiumLogo
+  showAlephiumLogo,
+  shade
 }: AnimatedBackgroundProps) => {
   const gyroscope = useAnimatedSensor(SensorType.ROTATION)
   const { width: screenWidth, height: screenHeight } = useWindowDimensions()
   const theme = useTheme()
 
-  // Canvas size animation
+  const [circleColor1, circleColor2, circleColor3] = getCircleColors({ shade, isDark: theme.name === 'dark' })
+
   const canvasHeight = useSharedValue(isFullScreen ? screenHeight : height)
   const canvasWidth = useSharedValue(isFullScreen ? screenWidth : width)
 
   useEffect(() => {
-    canvasHeight.value = withSpring(isFullScreen ? screenHeight : height, { mass: 5, damping: 60 })
-    canvasWidth.value = withSpring(isFullScreen ? screenWidth : width, { mass: 5, damping: 60 })
+    canvasHeight.value = withSpring(isFullScreen ? screenHeight : height, {
+      mass: 5,
+      damping: 60
+    })
+    canvasWidth.value = withSpring(isFullScreen ? screenWidth : width, {
+      mass: 5,
+      damping: 60
+    })
   }, [isFullScreen, screenWidth, canvasHeight, canvasWidth, screenHeight, height, width])
 
   const animatedCanvasStyle = useAnimatedStyle(() => ({
@@ -60,13 +87,16 @@ const AnimatedBackground = ({
   }))
 
   const parallaxAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: interpolate(scrollY?.value || 0, [-200, 200], [-30, 30], Extrapolation.CLAMP) }]
+    transform: [
+      {
+        translateY: interpolate(scrollY?.value || 0, [-200, 200], [-30, 30], Extrapolation.CLAMP)
+      }
+    ]
   }))
 
   // Circle animations
   const angle = useSharedValue(0)
 
-  // Using sin allows to smoothen movements (espacially when phon is upside down)
   const sinRoll = useDerivedValue(() => Math.sin(gyroscope.sensor.value.roll))
   const sinPitch = useDerivedValue(() => Math.sin(gyroscope.sensor.value.pitch))
 
@@ -83,6 +113,7 @@ const AnimatedBackground = ({
   }, [angle, isAnimated])
 
   const canvasCenterY = useDerivedValue(() => canvasHeight.value / 2)
+
   const danceXAmplitude = 20 + Math.random() * 10
   const danceYAmplitude = 40 + Math.random() * 10
 
@@ -110,7 +141,6 @@ const AnimatedBackground = ({
       : withSpring(canvasCenterY.value + sinPitch.value * GYRO_MULTIPLIER_Y, { mass: 10, damping: 10 })
   )
 
-  // Repeat similar changes for circle2 and circle3
   const circle2X = useDerivedValue(() =>
     isAnimated
       ? withSpring(
@@ -155,9 +185,9 @@ const AnimatedBackground = ({
     <AnimatedContainer style={parallaxAnimatedStyle}>
       <AnimatedCanvas style={animatedCanvasStyle}>
         <Group>
-          <Circle r={120} color={theme.name === 'dark' ? '#86acff' : '#ffa286'} cx={circle1X} cy={circle1Y} />
-          <Circle r={150} color={theme.name === 'dark' ? '#2ac6ff' : '#e39dff'} cx={circle2X} cy={circle2Y} />
-          <Circle r={130} color={theme.name === 'dark' ? '#1856ff' : '#ffc57e'} cx={circle3X} cy={circle3Y} />
+          <Circle r={120} color={circleColor1} cx={circle1X} cy={circle1Y} />
+          <Circle r={150} color={circleColor2} cx={circle2X} cy={circle2Y} />
+          <Circle r={130} color={circleColor3} cx={circle3X} cy={circle3Y} />
         </Group>
         <Blur blur={70} />
       </AnimatedCanvas>
@@ -178,6 +208,7 @@ const AnimatedContainer = styled(Animated.View)`
   right: 0;
   left: 0;
 `
+
 const AlephiumLogoContainer = styled.View`
   position: absolute;
   top: 0;

@@ -1,7 +1,6 @@
 import { CURRENCIES, Currency, fiatCurrencyChanged } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 
-import Surface from '~/components/layout/Surface'
 import RadioButtonRow from '~/components/RadioButtonRow'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
@@ -25,17 +24,15 @@ const CurrencySelectModal = withModal(({ id }) => {
 
   return (
     <BottomModal modalId={id} title={t('Currency')}>
-      <Surface>
-        {currencyOptions.map((currencyOption, index) => (
-          <RadioButtonRow
-            key={currencyOption.label}
-            title={currencyOption.label}
-            onPress={() => handleCurrencyChange(currencyOption.value)}
-            isActive={currentCurrency === currencyOption.value}
-            isLast={index === currencyOptions.length - 1}
-          />
-        ))}
-      </Surface>
+      {currencyOptions.map((currencyOption, index) => (
+        <RadioButtonRow
+          key={currencyOption.label}
+          title={currencyOption.label}
+          onPress={() => handleCurrencyChange(currencyOption.value)}
+          isActive={currentCurrency === currencyOption.value}
+          isLast={index === currencyOptions.length - 1}
+        />
+      ))}
     </BottomModal>
   )
 })

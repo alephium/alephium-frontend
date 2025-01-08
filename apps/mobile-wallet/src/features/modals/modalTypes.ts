@@ -5,6 +5,7 @@ import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
+import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
@@ -52,7 +53,8 @@ export const ModalComponents = {
   WalletConnectSessionProposalModal,
   WalletConnectSessionRequestModal,
   GroupSelectModal,
-  TokenAmountModal
+  TokenAmountModal,
+  AddressDetailsModal
 }
 
 type ModalName = keyof typeof ModalComponents

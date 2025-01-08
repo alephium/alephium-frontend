@@ -119,7 +119,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         <RoundedCardStyled>
           <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
           <DashboardSecondaryButtons />
-          <BalanceSummary dateLabel={t('Wallet worth')} />
+          <BalanceSummary />
         </RoundedCardStyled>
       </CardContainer>
       <ButtonsRowContainer>

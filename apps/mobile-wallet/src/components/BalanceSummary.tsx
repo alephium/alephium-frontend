@@ -1,6 +1,7 @@
 import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { colord } from 'colord'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -12,22 +13,25 @@ import { selectAddressIds } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface BalanceSummaryProps {
-  dateLabel: string
+  addressHash?: AddressHash
 }
 
-const BalanceSummary = ({ dateLabel }: BalanceSummaryProps) => {
+const BalanceSummary = ({ addressHash }: BalanceSummaryProps) => {
   const theme = useTheme()
+  const { t } = useTranslation()
   const currency = useAppSelector((s) => s.settings.currency)
   const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
-  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHashes))
+  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash || addressHashes))
+
+  const label = addressHash ? t('Address worth') : t('Wallet worth')
 
   return (
     <BalanceSummaryStyled>
       <TextContainer>
         <View>
-          <AppText color={colord(theme.font.primary).alpha(0.6).toHex()}>{dateLabel}</AppText>
+          <AppText color={colord(theme.font.primary).alpha(0.6).toHex()}>{label}</AppText>
         </View>
 
         {addressesBalancesStatus === 'uninitialized' ? (

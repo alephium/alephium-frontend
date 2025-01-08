@@ -15,6 +15,7 @@ interface AddressBadgeProps extends PressableProps {
   hideSymbol?: boolean
   textStyle?: StyleProp<TextStyle>
   color?: string
+  fontSize?: number
   canCopy?: boolean
   showCopyBtn?: boolean
   alwaysShowHash?: boolean
@@ -27,6 +28,7 @@ const AddressBadge = ({
   textStyle,
   color,
   canCopy = true,
+  fontSize,
   showCopyBtn,
   ...props
 }: AddressBadgeProps) => {
@@ -46,11 +48,11 @@ const AddressBadge = ({
         <AddressBadgeContainer>
           {!hideSymbol && <AddressColorSymbol addressHash={addressHash} size={16} />}
           {address.settings.label ? (
-            <Label numberOfLines={1} style={[textStyle]} color={textColor}>
+            <Label numberOfLines={1} style={[textStyle]} color={textColor} size={fontSize}>
               {address.settings.label}
             </Label>
           ) : (
-            <Label numberOfLines={1} ellipsizeMode="middle" style={[textStyle]} color={textColor}>
+            <Label numberOfLines={1} ellipsizeMode="middle" style={[textStyle]} color={textColor} size={fontSize}>
               {address.hash}
             </Label>
           )}
@@ -58,12 +60,12 @@ const AddressBadge = ({
       ) : contact ? (
         <AddressBadgeContainer>
           {!hideSymbol && <AddressColorSymbol addressHash={contact.address} size={16} />}
-          <Label numberOfLines={1} style={[textStyle]} color={textColor}>
+          <Label numberOfLines={1} style={[textStyle]} color={textColor} size={fontSize}>
             {contact.name}
           </Label>
         </AddressBadgeContainer>
       ) : (
-        <Label numberOfLines={1} ellipsizeMode="middle" style={[textStyle]} color={textColor}>
+        <Label numberOfLines={1} ellipsizeMode="middle" style={[textStyle]} color={textColor} size={fontSize}>
           {addressHash}
         </Label>
       )}
