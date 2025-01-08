@@ -33,7 +33,7 @@ const BalanceSummary = ({ dateLabel }: BalanceSummaryProps) => {
         {addressesBalancesStatus === 'uninitialized' ? (
           <ActivityIndicator size="large" color={theme.font.primary} style={{ marginTop: 10 }} />
         ) : (
-          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold size={42} />
+          <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold size={44} />
         )}
       </TextContainer>
     </BalanceSummaryStyled>

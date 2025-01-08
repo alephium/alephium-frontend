@@ -105,7 +105,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       hasBottomBar
       verticalGap
       onScroll={screenScrollHandler}
-      contentPaddingTop={50 + headerOffsetTop}
+      contentPaddingTop={60 + headerOffsetTop}
       headerScrollEffectOffset={30}
       headerOptions={{
         headerLeft: () => <CameraScanButton />,
