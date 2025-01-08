@@ -233,7 +233,6 @@
   "Select the words of your secret recovery phrase in the right order.": "Sélectionnez les mots de votre phrase de récupération secrète dans le bon ordre.",
   "This is not the word in position {{ positionIndex }}": "Ce n'est pas le mot en position {{ positionIndex }}",
   "Word {{ wordIndex }} is:": "Le mot {{ wordIndex }} est :",
-  "VALUE TODAY": "VALEUR AUJOURD'HUI",
   "There is so much left to discover!": "Il reste tant à découvrir!",
   "Hello there!": "Bonjour!",
   "Let's verify!": "Vérifions!",
