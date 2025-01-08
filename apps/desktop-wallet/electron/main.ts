@@ -158,8 +158,12 @@ app.on('ready', async function () {
       REACT_DEVELOPER_TOOLS,
       REDUX_DEVTOOLS
     } = await import('electron-devtools-installer')
-    await installExtension(REACT_DEVELOPER_TOOLS)
-    await installExtension(REDUX_DEVTOOLS)
+
+    try {
+      await installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
+    } catch (e) {
+      console.error('Failed to install devtools:', e)
+    }
   }
 
   handleNativeThemeUserActions()
