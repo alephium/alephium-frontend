@@ -3,21 +3,20 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import * as Haptics from 'expo-haptics'
 import { useEffect, useState } from 'react'
 import { View } from 'react-native'
-import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
+import AddressBox from '~/components/AddressBox'
 import AddressCard from '~/components/AddressCard'
-import AddressesTokensList from '~/components/AddressesTokensList'
-import Button from '~/components/buttons/Button'
-import Carousel from '~/components/Carousel'
 import BottomBarScrollScreen from '~/components/layout/BottomBarScrollScreen'
+import { ScreenSection } from '~/components/layout/Screen'
 import { TabBarPageScreenProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAddressByHash, selectAddressIds, selectAllAddresses, selectDefaultAddress } from '~/store/addressesSlice'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 
 const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   const dispatch = useAppDispatch()
@@ -77,23 +76,10 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
       contentPaddingTop
       {...props}
     >
-      <Content style={contentStyle}>
-        <Carousel
-          data={addressHashes}
-          renderItem={renderAddressCard}
-          onSwipingStart={() => setIsSwiping(true)}
-          onScrollEnd={onAddressCardsScrollEnd}
-          padding={20}
-          distance={10}
-          height={heightCarouselItem}
-          scrollTo={scrollToCarouselPage}
-          FooterComponent={
-            addresses.length > 2 && (
-              <Button onPress={openAddressSelectModal} iconProps={{ name: 'list' }} squared compact />
-            )
-          }
-        />
-        {selectedAddress && <AddressesTokensList addressHash={selectedAddress.hash} isRefreshing={isSwiping} />}
+      <Content>
+        {addresses.map((address) => (
+          <AddressBox key={address.hash} addressHash={address.hash} />
+        ))}
       </Content>
     </BottomBarScrollScreen>
   )
@@ -101,7 +87,6 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
 
 export default AddressesScreen
 
-const Content = styled(Animated.View)`
-  flex: 1;
-  gap: 10px;
+const Content = styled(ScreenSection)`
+  margin-top: ${VERTICAL_GAP * 2}px;
 `
