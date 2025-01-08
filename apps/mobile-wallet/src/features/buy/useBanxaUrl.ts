@@ -8,7 +8,7 @@ const useBanxaUrl = (receiveAddressHash: AddressHash) => {
     'https://alephium.banxa.com/' +
     `?walletAddress=${receiveAddressHash}` +
     `&theme=${theme.name}` +
-    `&backgroundColor=${theme.bg.primary.slice(1)}` + // TODO: In light theme it's rgba, removing the first char is problematic
+    `&backgroundColor=${theme.bg.back1.slice(1)}` +
     `&textColor=${theme.font.primary.slice(1)}` +
     `&primaryColor=${theme.global.accent.slice(1)}` +
     `&secondaryColor=${theme.global.complementary.slice(1)}`
