@@ -243,7 +243,6 @@
   "Select the words of your secret recovery phrase in the right order.": "按正确顺序选择您的助记词。",
   "This is not the word in position {{ positionIndex }}": "这不是第 {{ positionIndex }} 个的助记词",
   "Word {{ wordIndex }} is:": "第 {{ wordIndex }} 个助记词是：",
-  "VALUE TODAY": "当前价格",
   "There is so much left to discover!": "还有许多东西等您发现！",
   "Hello there!": "您好！",
   "Let's verify!": "让我们来验证吧！",
