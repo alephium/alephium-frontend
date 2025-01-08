@@ -58,7 +58,6 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       </ScreenSection>
       <ScreenSection centered verticalGap>
         <Button short title={t('Copy address')} onPress={handleCopyAddressPress} iconProps={{ name: 'copy' }} />
-        <Button short title={t('Buy')} onPress={openBuyModal} iconProps={{ name: 'credit-card' }} />
       </ScreenSection>
       <ScreenSection>
         <Surface>

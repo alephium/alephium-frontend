@@ -11,6 +11,7 @@ import BalanceSummary from '~/components/BalanceSummary'
 import ActionCardButton from '~/components/buttons/ActionCardButton'
 import RoundedCard from '~/components/RoundedCard'
 import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -44,6 +45,8 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
       screen: 'DestinationScreen',
       params: { fromAddressHash: addressHash }
     })
+
+    dispatch(closeModal({ id }))
   }
 
   const handleReceivePress = () => {
@@ -53,10 +56,13 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
       screen: 'QRCodeScreen',
       params: { addressHash }
     })
+
+    dispatch(closeModal({ id }))
   }
 
   const handleSettingsPress = () => {
     navigation.navigate('EditAddressScreen', { addressHash })
+    dispatch(closeModal({ id }))
   }
 
   const handleDefaultPress = async () => {
