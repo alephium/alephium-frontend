@@ -56,7 +56,7 @@ const BaseHeader = ({
   const [headerHeight, setHeaderHeight] = useState(80)
   const { currentProgress, nextProgress } = useSceneProgressSharedValues(progress)
 
-  const gradientHeight = headerHeight + 42
+  const gradientHeight = headerHeight + 50
   const defaultScrollRange = [0 + scrollEffectOffset, 80 + scrollEffectOffset]
   const marginTop = insets.top + headerOffsetTop
 
@@ -122,7 +122,7 @@ const BaseHeader = ({
           style={{ opacity: animatedGradientOpacity, width: screenWidth, height: gradientHeight }}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
-          locations={[0.6, 1]}
+          locations={[0.7, 1]}
           colors={[theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]}
         />
       </View>

@@ -34,6 +34,5 @@ export default RoundedCard
 const RoundedCardStyled = styled.View`
   border-radius: 38px;
   overflow: hidden;
-  background-color: ${({ theme }) => theme.bg.primary};
   padding: ${DEFAULT_MARGIN}px;
 `

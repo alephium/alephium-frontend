@@ -105,12 +105,12 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       hasBottomBar
       verticalGap
       onScroll={screenScrollHandler}
-      contentPaddingTop={50 + headerOffsetTop}
+      contentPaddingTop={60 + headerOffsetTop}
       headerScrollEffectOffset={30}
       headerOptions={{
         headerLeft: () => <CameraScanButton />,
         headerRight: () => <WalletSettingsButton />,
-        headerTitle: () => <AlephiumLogo color={theme.font.primary} style={{ width: 50, height: 20 }} />,
+        headerTitle: () => <AlephiumLogo color={theme.font.primary} style={{ width: 50, height: 24 }} />,
         headerTitleScrolled: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold />
       }}
       {...props}
@@ -119,17 +119,16 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         <RoundedCardStyled>
           <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
           <DashboardSecondaryButtons />
-          <BalanceSummary dateLabel={t('VALUE TODAY')} />
-
-          <ButtonsRowContainer>
-            {totalBalance > BigInt(0) && (
-              <DashboardCardButton title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />
-            )}
-            <DashboardCardButton title={t('Receive')} onPress={handleReceivePress} iconProps={{ name: 'download' }} />
-            <DashboardCardButton title={t('Buy')} onPress={openBuyModal} iconProps={{ name: 'credit-card' }} />
-          </ButtonsRowContainer>
+          <BalanceSummary dateLabel={t('Wallet worth')} />
         </RoundedCardStyled>
       </CardContainer>
+      <ButtonsRowContainer>
+        {totalBalance > BigInt(0) && (
+          <DashboardCardButton title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />
+        )}
+        <DashboardCardButton title={t('Receive')} onPress={handleReceivePress} iconProps={{ name: 'download' }} />
+        <DashboardCardButton title={t('Buy')} onPress={openBuyModal} iconProps={{ name: 'credit-card' }} />
+      </ButtonsRowContainer>
 
       <AddressesTokensList />
 
@@ -165,4 +164,5 @@ const ButtonsRowContainer = styled(Animated.View)`
   align-items: center;
   justify-content: center;
   gap: 10px;
+  margin: 0 ${DEFAULT_MARGIN}px;
 `

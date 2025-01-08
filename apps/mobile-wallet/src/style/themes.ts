@@ -33,7 +33,7 @@ export const lightTheme: DefaultTheme = {
   },
   border: {
     primary: 'rgba(36, 34, 32, 0.12)',
-    secondary: 'rgba(36, 34, 32, 0.06)'
+    secondary: 'rgba(36, 34, 32, 0.08)'
   },
   shadow: {
     primary: 'shadow-color: black; shadow-offset: 0px 2px; shadow-opacity: 0.03; shadow-radius: 2px; elevation: 2;',
@@ -89,8 +89,8 @@ export const darkTheme: DefaultTheme = {
     visible: '#242426'
   },
   border: {
-    primary: 'rgba(255, 255, 255, 0.12)',
-    secondary: 'rgba(255, 255, 255, 0.06)'
+    primary: 'rgba(255, 255, 255, 0.13)',
+    secondary: 'rgba(255, 255, 255, 0.09)'
   },
   shadow: {
     primary: 'shadow-color: black; shadow-offset: 0px 2px; shadow-opacity: 0.25; shadow-radius: 2px; elevation: 5;',
