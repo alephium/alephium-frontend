@@ -117,8 +117,8 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     >
       <CardContainer style={{ marginTop: insets.top }}>
         <RoundedCardStyled>
-          <DashboardSecondaryButtons />
           <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
+          <DashboardSecondaryButtons />
           <BalanceSummary dateLabel={t('VALUE TODAY')} />
 
           <ButtonsRowContainer>
