@@ -27,6 +27,7 @@ import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
+import DashboardCardButton from '~/screens/Dashboard/DashboardCardButton'
 import DashboardSecondaryButtons from '~/screens/Dashboard/DashboardSecondaryButtons'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
@@ -122,25 +123,9 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
           <BalanceSummary dateLabel={t('VALUE TODAY')} />
           {totalBalance > BigInt(0) && (
             <ButtonsRowContainer>
-              <>
-                <Button onPress={handleSendPress} iconProps={{ name: 'send' }} variant="contrast" squared flex short />
-                <Button
-                  onPress={handleReceivePress}
-                  iconProps={{ name: 'download' }}
-                  variant="contrast"
-                  squared
-                  flex
-                  short
-                />
-                <Button
-                  onPress={openBuyModal}
-                  iconProps={{ name: 'credit-card' }}
-                  variant="contrast"
-                  squared
-                  flex
-                  short
-                />
-              </>
+              <DashboardCardButton title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />
+              <DashboardCardButton title={t('Receive')} onPress={handleReceivePress} iconProps={{ name: 'download' }} />
+              <DashboardCardButton title={t('Buy')} onPress={openBuyModal} iconProps={{ name: 'credit-card' }} />
             </ButtonsRowContainer>
           )}
         </RoundedCardStyled>
