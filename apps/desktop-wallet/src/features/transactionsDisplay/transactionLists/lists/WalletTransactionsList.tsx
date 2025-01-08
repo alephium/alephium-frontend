@@ -10,12 +10,13 @@ import { explorer as e } from '@alephium/web3'
 import { orderBy, uniqBy } from 'lodash'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 import useFetchWalletTransactionsInfinite from '@/api/apiDataHooks/wallet/useFetchWalletTransactionsInfinite'
-import Table from '@/components/Table'
+import Spinner from '@/components/Spinner'
+import Table, { TableCell, TableRow } from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
 import { getTransactionInfoType } from '@/features/transactionsDisplay/transactionDisplayUtils'
-import NewTransactionsButtonRow from '@/features/transactionsDisplay/transactionLists/NewTransactionsButtonRow'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
@@ -38,42 +39,45 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
   const {
     data: fetchedConfirmedTxs,
     isLoading,
-    refresh,
+    isFetching,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-    showNewTxsMessage,
     pagesLoaded
   } = useFetchWalletTransactionsInfinite()
 
   const openTransactionDetailsModal = (txHash: e.Transaction['hash']) =>
     dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))
 
-  const filteredConfirmedTxs = useMemo(
-    () =>
-      uniqBy(
-        orderBy(
-          applyFilters({
-            txs: fetchedConfirmedTxs,
-            addressHashes,
-            allAddressHashes,
-            directions,
-            assetIds
-          }),
-          'timestamp',
-          'desc'
-        ),
-        'hash'
-      ).slice(0, (pagesLoaded || 1) * TRANSACTIONS_PAGE_DEFAULT_LIMIT),
-    [addressHashes, allAddressHashes, assetIds, directions, fetchedConfirmedTxs, pagesLoaded]
-  )
+  const filteredConfirmedTxs = useMemo(() => {
+    const txs = uniqBy(
+      orderBy(
+        applyFilters({
+          txs: fetchedConfirmedTxs,
+          addressHashes,
+          allAddressHashes,
+          directions,
+          assetIds
+        }),
+        'timestamp',
+        'desc'
+      ),
+      'hash'
+    )
+
+    return !hasNextPage ? txs : txs.slice(0, (pagesLoaded || 1) * TRANSACTIONS_PAGE_DEFAULT_LIMIT)
+  }, [addressHashes, allAddressHashes, assetIds, directions, fetchedConfirmedTxs, hasNextPage, pagesLoaded])
 
   return (
     <Table minWidth="500px">
       {isLoading && <TableRowsLoader />}
-
-      {showNewTxsMessage && <NewTransactionsButtonRow onClick={refresh} />}
-
+      {isFetching && !isLoading && (
+        <TableRow role="row">
+          <LoadingNewTransactionsPlaceholderRow align="center" role="gridcell">
+            <Spinner size="18px" /> {t('Loading new transactions...')}
+          </LoadingNewTransactionsPlaceholderRow>
+        </TableRow>
+      )}
       {filteredConfirmedTxs.map((tx) => (
         <TransactionRow
           key={tx.hash}
@@ -135,3 +139,8 @@ const applyFilters = ({
       })
     : txs
 }
+
+const LoadingNewTransactionsPlaceholderRow = styled(TableCell)`
+  gap: 10px;
+  align-items: center;
+`

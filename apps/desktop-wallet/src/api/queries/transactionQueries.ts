@@ -41,6 +41,7 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
               await sleep(2000)
               queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
               queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'transactions', 'latest'] })
+              queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions'] })
             }
 
             return {
