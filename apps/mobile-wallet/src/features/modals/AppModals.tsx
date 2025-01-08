@@ -45,7 +45,7 @@ const AppModals = () => {
 
         switch (params.name) {
           case 'BuyModal':
-            return <BuyModal key={id} id={id} />
+            return <BuyModal key={id} id={id} {...params.props} />
           case 'BackupReminderModal':
             return <BackupReminderModal key={id} id={id} {...params.props} />
           case 'SwitchNetworkModal':

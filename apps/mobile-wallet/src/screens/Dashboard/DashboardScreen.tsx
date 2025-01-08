@@ -30,7 +30,7 @@ import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
 import DashboardSecondaryButtons from '~/screens/Dashboard/DashboardSecondaryButtons'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
-import { selectAddressIds, selectTotalBalance } from '~/store/addressesSlice'
+import { selectAddressIds, selectDefaultAddress, selectTotalBalance } from '~/store/addressesSlice'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 interface ScreenProps
@@ -54,6 +54,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const addressesStatus = useAppSelector((s) => s.addresses.status)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
+  const defaultAddressHash = useAppSelector(selectDefaultAddress).hash
 
   const { data: isNewWallet } = useAsyncData(getIsNewWallet)
 
@@ -95,7 +96,8 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     }
   }
 
-  const openBuyModal = () => dispatch(openModal({ name: 'BuyModal' }))
+  const openBuyModal = () =>
+    dispatch(openModal({ name: 'BuyModal', props: { receiveAddressHash: defaultAddressHash } }))
 
   return (
     <DashboardScreenStyled
