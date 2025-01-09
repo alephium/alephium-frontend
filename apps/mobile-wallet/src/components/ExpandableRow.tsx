@@ -64,6 +64,8 @@ const ChevronDownStyled = styled(ChevronDown)`
 const Header = styled.TouchableOpacity`
   flex-direction: row;
   width: 100%;
-  padding: 25px 20px 25px 6px;
+  padding: 25px 20px 25px 20px;
   justify-content: space-between;
+  background-color: ${({ theme }) => theme.bg.tertiary};
+  border-radius: 16px;
 `

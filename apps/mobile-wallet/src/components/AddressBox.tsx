@@ -116,7 +116,7 @@ const BadgeContainer = styled.View`
   justify-content: flex-start;
   align-items: center;
   width: 26px;
-  padding: ${VERTICAL_GAP / 2}px 0;
+  padding: ${VERTICAL_GAP}px 0;
 `
 
 const SelectedBadge = styled(Animated.View)`
@@ -134,7 +134,7 @@ const TextualContent = styled.View`
   flex-direction: row;
   gap: ${DEFAULT_MARGIN}px;
   border-color: ${({ theme }) => theme.border.secondary};
-  padding: ${VERTICAL_GAP / 2}px 0;
+  padding: ${VERTICAL_GAP}px 0;
   margin-left: ${DEFAULT_MARGIN}px;
 `
 

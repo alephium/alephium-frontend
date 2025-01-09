@@ -4,13 +4,13 @@ import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
-import AddressFormBaseScreen, { AddressFormData } from '~/screens/Addresses/Address/AddressFormBaseScreen'
+import AddressForm from '~/screens/Addresses/Address/AddressForm'
 import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showExceptionToast } from '~/utils/layout'
@@ -67,16 +67,21 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   }
 
   return (
-    <>
-      <AddressFormBaseScreen
+    <ScrollScreen
+      fill
+      headerTitleAlwaysVisible
+      headerOptions={{ headerTitle: t('New address'), type: 'stack' }}
+      contentPaddingTop
+      {...props}
+    >
+      <AddressForm
         screenTitle={t('New address')}
         initialValues={initialValues}
         onSubmit={handleGeneratePress}
         allowGroupSelection
-        contentPaddingTop
       />
       <SpinnerModal isActive={loading} text={`${t('Generating new address')}...`} />
-    </>
+    </ScrollScreen>
   )
 }
 

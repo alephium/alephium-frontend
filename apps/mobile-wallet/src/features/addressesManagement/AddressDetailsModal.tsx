@@ -57,7 +57,7 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
   }
 
   const handleSettingsPress = () => {
-    navigation.navigate('EditAddressScreen', { addressHash })
+    dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash } }))
     dispatch(closeModal({ id }))
   }
 

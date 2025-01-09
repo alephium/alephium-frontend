@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import AppText from '~/components/AppText'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import ExpandableRow from '~/components/ExpandableRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
-import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
@@ -58,54 +59,52 @@ const AddressForm = ({
   const openGroupSelectModal = () => dispatch(openModal({ name: 'GroupSelectModal', props: { onSelect: setGroup } }))
 
   return (
-    <ScrollScreen
-      fill
-      verticalGap
-      screenTitle={screenTitle}
-      headerOptions={{ type: 'stack', headerTitle: screenTitle, ...headerOptions }}
-      bottomButtonsRender={() => (
-        <Button
-          title={buttonText || t('Generate')}
-          variant="highlight"
-          onPress={() => onSubmit({ isDefault, label, color, group })}
-        />
-      )}
-      {...props}
-    >
-      <View>{HeaderComponent}</View>
-      <ScreenSection verticalGap fill>
-        <Input value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} />
-        <ColorPicker value={color} onChange={setColor} />
-        <Surface>
-          <Row
-            title={t('Default address')}
-            subtitle={`${t('Default address for operations')}${
-              disableIsMainToggle
-                ? `. ${t(
-                    'To remove this address from being the default address, you must set another one as main first.'
-                  )}`
-                : ''
-            }`}
-            onPress={toggleIsMain}
-            isLast
-          >
-            <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
-          </Row>
-        </Surface>
+    <>
+      <View style={{ flex: 1 }}>
+        <ScreenSection verticalGap fill>
+          <View>{HeaderComponent}</View>
+          <Input value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} />
 
-        {allowGroupSelection && (
-          <ExpandableRow>
-            <Surface>
-              <Row title={t('Address group')} onPress={openGroupSelectModal}>
-                <AppText>
-                  {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Default')}
-                </AppText>
-              </Row>
-            </Surface>
-          </ExpandableRow>
-        )}
+          <ColorPicker value={color} onChange={setColor} />
+          <Surface>
+            <Row
+              title={t('Default address')}
+              subtitle={`${t('Default address for operations')}${
+                disableIsMainToggle
+                  ? `. ${t(
+                      'To remove this address from being the default address, you must set another one as main first.'
+                    )}`
+                  : ''
+              }`}
+              onPress={toggleIsMain}
+              isLast
+            >
+              <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
+            </Row>
+          </Surface>
+          {allowGroupSelection && (
+            <ExpandableRow>
+              <Surface>
+                <Row title={t('Address group')} onPress={openGroupSelectModal}>
+                  <AppText>
+                    {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Default')}
+                  </AppText>
+                </Row>
+              </Surface>
+            </ExpandableRow>
+          )}
+        </ScreenSection>
+      </View>
+      <ScreenSection>
+        <BottomButtons fullWidth backgroundColor="back1">
+          <Button
+            title={buttonText || t('Generate')}
+            variant="highlight"
+            onPress={() => onSubmit({ isDefault, label, color, group })}
+          />
+        </BottomButtons>
       </ScreenSection>
-    </ScrollScreen>
+    </>
   )
 }
 

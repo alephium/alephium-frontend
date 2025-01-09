@@ -1,5 +1,4 @@
-import { AddressSettings } from '@alephium/shared'
-import { StackScreenProps } from '@react-navigation/stack'
+import { AddressHash, AddressSettings } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
@@ -7,22 +6,24 @@ import styled, { useTheme } from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import { ScreenSection } from '~/components/layout/Screen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import AddressDeleteButton from '~/features/addressesManagement/AddressDeleteButton'
+import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
+import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
-import AddressFormBaseScreen from '~/screens/Addresses/Address/AddressFormBaseScreen'
+import AddressForm from '~/screens/Addresses/Address/AddressForm'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
 import { showExceptionToast } from '~/utils/layout'
 
-interface EditAddressScreenProps extends StackScreenProps<RootStackParamList, 'EditAddressScreen'>, ScrollScreenProps {}
+interface AddressSettingsModalProps {
+  addressHash: AddressHash
+}
 
-const EditAddressScreen = ({ navigation, route: { params } }: EditAddressScreenProps) => {
+const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, addressHash }) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
-  const addressHash = params.addressHash
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
@@ -49,12 +50,12 @@ const EditAddressScreen = ({ navigation, route: { params } }: EditAddressScreenP
     }
 
     setLoading(false)
-    navigation.goBack()
+    dispatch(closeModal({ id }))
   }
 
   return (
-    <>
-      <AddressFormBaseScreen
+    <BottomModal modalId={id} title={t('Address settings')}>
+      <AddressForm
         contentPaddingTop
         initialValues={address.settings}
         onSubmit={handleSavePress}
@@ -73,11 +74,11 @@ const EditAddressScreen = ({ navigation, route: { params } }: EditAddressScreenP
         }
       />
       <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
-    </>
+    </BottomModal>
   )
-}
+})
 
-export default EditAddressScreen
+export default AddressSettingsModal
 
 const HashEllipsed = styled(AppText)`
   max-width: 50%;

@@ -44,5 +44,5 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
 export default AddressesScreen
 
 const Content = styled(ScreenSection)`
-  margin-top: ${VERTICAL_GAP * 2.5}px;
+  margin-top: ${VERTICAL_GAP * 2}px;
 `
