@@ -1,6 +1,8 @@
 import { ViewProps } from 'react-native'
 import styled from 'styled-components/native'
 
+import { VERTICAL_GAP } from '~/style/globalStyle'
+
 const EmptyPlaceholder = ({ children, ...props }: ViewProps) => (
   <EmptyPlaceholderStyled {...props}>
     <Content>{children}</Content>
@@ -10,6 +12,7 @@ const EmptyPlaceholder = ({ children, ...props }: ViewProps) => (
 const EmptyPlaceholderStyled = styled.View`
   flex: 1;
   justify-content: center;
+  margin: ${VERTICAL_GAP}px 0;
 `
 
 const Content = styled.View`

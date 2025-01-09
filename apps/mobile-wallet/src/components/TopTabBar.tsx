@@ -131,7 +131,7 @@ const HeaderContainer = styled(Reanimated.View)`
   align-items: center;
   justify-content: flex-start;
   height: 44px;
-  padding-left: ${indicatorXPadding * 2}px;
+  padding-left: ${indicatorXPadding}px;
 `
 
 const TabBarItemStyled = styled.Pressable`

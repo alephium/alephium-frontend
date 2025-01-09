@@ -10,7 +10,7 @@ interface DefaultAddressBadgeProps {
 
 const DefaultAddressBadge = ({ size = 26, color = 'white', ...props }: DefaultAddressBadgeProps) => (
   <DefaultAddressBadgeStyled size={size} {...props}>
-    <StarShape size={size - 4} color={color} />
+    <StarShape size={size + 4} color={color} />
   </DefaultAddressBadgeStyled>
 )
 
