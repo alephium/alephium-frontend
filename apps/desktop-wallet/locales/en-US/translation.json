@@ -511,5 +511,7 @@
   "Would you like to scan for active addresses?": "Would you like to scan for active addresses?",
   "Scan": "Scan",
   "Active address discovery completed. Addresses added: {{ count }}": "Active address discovery completed. Addresses added: {{ count }}",
-  "Loading new transactions...": "Loading new transactions..."
+  "Loading new transactions...": "Loading new transactions...",
+  "Sign and Send Unsigned Transaction": "Sign and Send Unsigned Transaction",
+  "Sign and Send": "Sign and Send"
 }
