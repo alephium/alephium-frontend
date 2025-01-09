@@ -1,4 +1,10 @@
-import { getHumanReadableError, SessionRequestEvent, WALLETCONNECT_ERRORS, WalletConnectError } from '@alephium/shared'
+import {
+  client,
+  getHumanReadableError,
+  SessionRequestEvent,
+  WALLETCONNECT_ERRORS,
+  WalletConnectError
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import {
   binToHex,
@@ -211,6 +217,13 @@ const WalletConnectSessionRequestModal = withModal(
             requestData.unsignedTxData.unsignedTx.txId,
             await getAddressAsymetricKey(signAddress.hash, 'private')
           )
+
+          if (requestData.submit) {
+            await client.node.transactions.postTransactionsSubmit({
+              unsignedTx: requestData.wcData.unsignedTx,
+              signature
+            })
+          }
 
           signResult = {
             ...requestData.unsignedTxData,
