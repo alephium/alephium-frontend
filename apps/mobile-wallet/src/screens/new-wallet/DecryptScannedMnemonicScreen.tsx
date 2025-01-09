@@ -123,6 +123,8 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
       verticalGap
       fill
       keyboardShouldPersistTaps="always"
+      screenTitle={t('Password')}
+      screenIntro={t('Enter your desktop wallet password to decrypt the secret recovery phrase.')}
       headerOptions={{ headerTitle: t('Password'), type: 'stack' }}
       bottomButtonsRender={() => (
         <Button
@@ -132,7 +134,6 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
           disabled={!password || !!error}
         />
       )}
-      screenIntro={t('Enter your desktop wallet password to decrypt the secret recovery phrase.')}
       contentPaddingTop
     >
       <ScreenSection fill>
