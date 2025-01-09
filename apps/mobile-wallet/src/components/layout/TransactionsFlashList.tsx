@@ -52,8 +52,11 @@ const TransactionsFlashList = forwardRef(
     const allConfirmedTransactionsLoaded = useAppSelector((s) => s.confirmedTransactions.allLoaded)
     const pageLoaded = useAppSelector((s) => s.confirmedTransactions.pageLoaded)
     const displayedConfirmedTransactions = useMemo(
-      () => confirmedTransactions.slice(0, pageLoaded * TRANSACTIONS_PAGE_DEFAULT_LIMIT),
-      [confirmedTransactions, pageLoaded]
+      () =>
+        allConfirmedTransactionsLoaded
+          ? confirmedTransactions
+          : confirmedTransactions.slice(0, pageLoaded * TRANSACTIONS_PAGE_DEFAULT_LIMIT),
+      [confirmedTransactions, pageLoaded, allConfirmedTransactionsLoaded]
     )
 
     const renderConfirmedTransactionItem = ({ item, index }: TransactionItem) =>
