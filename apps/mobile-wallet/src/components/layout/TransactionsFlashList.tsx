@@ -88,15 +88,17 @@ const TransactionsFlashList = forwardRef(
         keyExtractor={transactionKeyExtractor}
         onEndReached={loadNextTransactionsPage}
         refreshControl={<RefreshSpinner />}
-        refreshing={pendingTransactions.length > 0}
+        refreshing={pendingTransactions.length > 0 || isLoading}
         extraData={displayedConfirmedTransactions.length > 0 ? displayedConfirmedTransactions[0].hash : ''}
         estimatedItemSize={64}
         contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN }}
         ListEmptyComponent={
-          <EmptyPlaceholder>
-            <AppText size={28}>🤷‍♂️</AppText>
-            <AppText color="secondary">{t('No transactions yet')}</AppText>
-          </EmptyPlaceholder>
+          !isLoading ? (
+            <EmptyPlaceholder>
+              <AppText size={28}>🤷‍♂️</AppText>
+              <AppText color="secondary">{t('No transactions yet')}</AppText>
+            </EmptyPlaceholder>
+          ) : null
         }
         ListHeaderComponent={
           <>
