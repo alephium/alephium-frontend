@@ -16,11 +16,9 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import { Minus, Square, X } from 'lucide-react'
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
 const TitleBar = () => {
-  const theme = useTheme()
-
   const handleMinimize = () => {
     window.electron?.window.minimize()
   }
