@@ -690,7 +690,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
             break
           }
-          case 'alph_signUnsignedTx': {
+          case 'alph_signUnsignedTx':
+          case 'alph_signAndSubmitUnsignedTx': {
             const { signerAddress, signerKeyType, unsignedTx } = requestEvent.params.request
               .params as SignUnsignedTxParams
 
@@ -725,7 +726,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
                   requestData: {
                     type: 'sign-unsigned-tx',
                     wcData: wcTxData,
-                    unsignedTxData: decodedResult
+                    unsignedTxData: decodedResult,
+                    submit: requestEvent.params.request.method === 'alph_signAndSubmitUnsignedTx'
                   }
                 }
               })
