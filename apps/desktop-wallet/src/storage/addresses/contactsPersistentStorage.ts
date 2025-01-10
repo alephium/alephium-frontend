@@ -1,7 +1,7 @@
 import { Contact, ContactFormData } from '@alephium/shared'
 import { nanoid } from 'nanoid'
 
-import i18n from '@/i18n'
+import i18n from '@/features/localization/i18n'
 import { PersistentArrayStorage } from '@/storage/persistentArrayStorage'
 import { StoredEncryptedWallet } from '@/types/wallet'
 

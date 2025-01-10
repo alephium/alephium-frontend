@@ -12,29 +12,12 @@ import { useEffect } from 'react'
 import styled from 'styled-components'
 
 import Menu from '@/components/Menu'
+import { Language, languageOptions } from '@/features/localization/languages'
 import useStateWithLocalStorage from '@/hooks/useStateWithLocalStorage'
 
 interface LanguageSwitchProps {
   className?: string
 }
-
-type Language = 'en' | 'fr' | 'id' | 'el' | 'de' | 'vi' | 'zh' | 'it'
-
-interface LangItem {
-  label: string
-  value: Language
-}
-
-const languageOptions: LangItem[] = [
-  { label: 'English', value: 'en' },
-  { label: 'Bahasa Indonesia', value: 'id' },
-  { label: 'Deutsch', value: 'de' },
-  { label: 'Ελληνικά', value: 'el' },
-  { label: 'Français', value: 'fr' },
-  { label: 'Italiano', value: 'it' },
-  { label: 'Tiếng Việt', value: 'vi' },
-  { label: '简体中文', value: 'zh' }
-]
 
 const LanguageSwitch: React.FC<LanguageSwitchProps> = ({ className }) => {
   const [langValue, setLangValue] = useStateWithLocalStorage<Language>('language', 'en')

@@ -8,7 +8,7 @@ import {
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { nanoid } from 'nanoid'
 
-import i18n from '@/i18n'
+import i18n from '@/features/localization/i18n'
 import { contactDeletionFailed, contactStorageFailed } from '@/storage/addresses/addressesActions'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import {

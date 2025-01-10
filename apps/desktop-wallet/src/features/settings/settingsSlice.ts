@@ -16,18 +16,21 @@ import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit
 import dayjs from 'dayjs'
 import posthog from 'posthog-js'
 
+import i18next from '@/features/localization/i18n'
+import {
+  languageChanged,
+  languageChangeFinished,
+  languageChangeStarted,
+  systemLanguageMatchFailed,
+  systemLanguageMatchSucceeded
+} from '@/features/localization/localizationActions'
 import {
   analyticsToggled,
   devToolsToggled,
   discreetModeToggled,
-  languageChanged,
-  languageChangeFinished,
-  languageChangeStarted,
   localStorageGeneralSettingsMigrated,
   numberFormatRegionChanged,
   passwordRequirementToggled,
-  systemLanguageMatchFailed,
-  systemLanguageMatchSucceeded,
   systemRegionMatchFailed,
   systemRegionMatchSucceeded,
   themeSettingsChanged,
@@ -36,7 +39,6 @@ import {
 } from '@/features/settings/settingsActions'
 import SettingsStorage from '@/features/settings/settingsPersistentStorage'
 import { GeneralSettings } from '@/features/settings/settingsTypes'
-import i18next from '@/i18n'
 import { RootState } from '@/storage/store'
 
 const initialState = SettingsStorage.load('general') as GeneralSettings
