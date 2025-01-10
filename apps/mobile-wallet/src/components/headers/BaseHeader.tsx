@@ -3,7 +3,7 @@ import { SceneProgress } from '@react-navigation/stack/lib/typescript/src/types'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { ReactNode, RefObject, useState } from 'react'
-import { LayoutChangeEvent, Platform, useWindowDimensions, View, ViewProps } from 'react-native'
+import { LayoutChangeEvent, useWindowDimensions, View, ViewProps } from 'react-native'
 import Animated, {
   Extrapolation,
   interpolate,
@@ -16,7 +16,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import useSceneProgressSharedValues from '~/hooks/layout/useSceneProgressSharedValues'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, HEADER_OFFSET_TOP } from '~/style/globalStyle'
 
 export type BaseHeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'> & {
   headerTitleRight?: () => ReactNode
@@ -34,8 +34,6 @@ export interface BaseHeaderProps extends ViewProps {
   progress?: SceneProgress
   isCentered?: boolean
 }
-
-export const headerOffsetTop = Platform.OS === 'ios' ? 0 : 16
 
 const AnimatedHeaderGradient = Animated.createAnimatedComponent(LinearGradient)
 
@@ -58,7 +56,7 @@ const BaseHeader = ({
 
   const gradientHeight = headerHeight + 50
   const defaultScrollRange = [0 + scrollEffectOffset, 80 + scrollEffectOffset]
-  const marginTop = insets.top + headerOffsetTop
+  const marginTop = insets.top + HEADER_OFFSET_TOP
 
   const headerTitleString = headerTitle && typeof headerTitle === 'string' ? headerTitle : undefined
   const HeaderTitleComponent =

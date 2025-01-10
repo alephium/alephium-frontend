@@ -15,13 +15,13 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import BottomButtons from '~/components/buttons/BottomButtons'
-import BaseHeader, { headerOffsetTop } from '~/components/headers/BaseHeader'
+import BaseHeader from '~/components/headers/BaseHeader'
 import StackHeader from '~/components/headers/StackHeader'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScreenIntro from '~/components/layout/ScreenIntro'
 import useAutoScrollOnDragEnd from '~/hooks/layout/useAutoScrollOnDragEnd'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
-import { DEFAULT_MARGIN, SCREEN_OVERFLOW, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, SCREEN_OVERFLOW, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ScrollScreenBaseProps extends ScreenProps {
   contentContainerStyle?: StyleProp<ViewStyle>
@@ -108,7 +108,7 @@ const ScrollScreen = ({
                 flexGrow: fill ? 1 : undefined,
                 paddingTop:
                   typeof contentPaddingTop === 'boolean'
-                    ? insets.top + headerOffsetTop + VERTICAL_GAP * 2
+                    ? insets.top + HEADER_OFFSET_TOP + VERTICAL_GAP * 2
                     : contentPaddingTop,
                 paddingBottom
               },

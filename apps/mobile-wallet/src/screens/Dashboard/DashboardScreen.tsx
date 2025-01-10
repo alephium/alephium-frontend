@@ -13,7 +13,6 @@ import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import DashboardCardButton from '~/components/buttons/ActionCardButton'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
-import { headerOffsetTop } from '~/components/headers/BaseHeader'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import { ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
@@ -32,7 +31,7 @@ import DashboardSecondaryButtons from '~/screens/Dashboard/DashboardSecondaryBut
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { selectAddressIds, selectDefaultAddress, selectTotalBalance } from '~/store/addressesSlice'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
 
 interface ScreenProps
   extends StackScreenProps<
@@ -106,7 +105,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       hasBottomBar
       verticalGap
       onScroll={screenScrollHandler}
-      contentPaddingTop={60 + headerOffsetTop}
+      contentPaddingTop={60 + HEADER_OFFSET_TOP}
       headerScrollEffectOffset={30}
       headerOptions={{
         headerLeft: () => <CameraScanButton />,
