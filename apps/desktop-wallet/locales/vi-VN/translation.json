@@ -473,7 +473,6 @@
   "Transaction was sent...": "Giao dịch đã được gửi...",
   "Transaction is about to be included in the blockchain...": "Giao dịch sắp được đưa vào trong blockchain...",
   "Transaction is now part of the blockchain": "Giao dịch đã được thêm vào trong blockchain",
-  "Your wallet has too many addresses. These are the transactions of the {{ maxNumber }} most frequently used addresses. Please, consider removing some of them.": "Ví của bạn có quá nhiều địa chỉ. Đây là các giao dịch của {{ maxNumber }} địa chỉ được sử dụng thường xuyên nhất. Vui lòng xem xét xóa bớt một vài địa chỉ.",
   "Forget": "Quên",
   "forgetAddress_one": "Quên địa chỉ",
   "forgetAddress_other": "Quên các địa chỉ",
