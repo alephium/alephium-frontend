@@ -1,5 +1,5 @@
 import { AddressHash, getHumanReadableError } from '@alephium/shared'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
 import styled from 'styled-components/native'
@@ -21,6 +21,7 @@ import { deleteAddress } from '~/persistent-storage/wallet'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
 import { addressDeleted } from '~/store/addresses/addressesActions'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
+import { copyAddressToClipboard } from '~/utils/addresses'
 import { showExceptionToast, showToast } from '~/utils/layout'
 
 interface AddressSettingsModalProps {
@@ -38,7 +39,11 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
 
   const [settings, setSettings] = useState<AddressFormData | undefined>(address?.settings)
 
-  if (!address) return null
+  useEffect(() => {
+    if (!address) {
+      dispatch(closeModal({ id }))
+    }
+  }, [address, dispatch, id])
 
   const handleForgetPress = async () => {
     if (!canDeleteAddress) return null
@@ -79,7 +84,8 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
   }
 
   const handleSavePress = async () => {
-    if (!settings) return
+    if (!settings || !address) return
+
     if (address.settings.isDefault && !settings.isDefault) return
 
     setLoading(true)
@@ -104,16 +110,21 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
     <BottomModal modalId={id} title={t('Address settings')} noPadding>
       <ScreenSection>
         <Row title={t('Address hash')}>
-          <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
+          <HashEllipsed
+            numberOfLines={1}
+            ellipsizeMode="middle"
+            color="secondary"
+            onLongPress={() => copyAddressToClipboard(addressHash)}
+          >
             {addressHash}
           </HashEllipsed>
         </Row>
       </ScreenSection>
       <AddressForm
-        initialValues={address.settings}
+        initialValues={address?.settings}
         onValuesChange={setSettings}
         buttonText="Save"
-        disableIsMainToggle={address.settings.isDefault}
+        disableIsMainToggle={address?.settings.isDefault}
         screenTitle={t('Address settings')}
       />
       {canDeleteAddress && (

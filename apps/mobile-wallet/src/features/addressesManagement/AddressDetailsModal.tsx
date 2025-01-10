@@ -1,6 +1,6 @@
 import { AddressHash } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -37,7 +37,11 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
   const selectAddressTokens = useMemo(makeSelectAddressesTokens, [])
   const addressTokens = useAppSelector((s) => selectAddressTokens(s, addressHash))
 
-  if (!address) return null
+  useEffect(() => {
+    if (!address) {
+      dispatch(closeModal({ id }))
+    }
+  }, [address, dispatch, id])
 
   const handleSendPress = () => {
     sendAnalytics({ event: 'Address modal: Pressed btn to send funds from' })
@@ -61,7 +65,7 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
   }
 
   const handleDefaultPress = async () => {
-    if (address.settings.isDefault) return
+    if (!address || address.settings.isDefault) return
 
     setDefaultAddressIsChanging(true)
 
@@ -85,7 +89,7 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
     <BottomModal modalId={id} title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <Content>
         <RoundedCard>
-          <AnimatedBackground shade={address.settings.color} isAnimated />
+          <AnimatedBackground shade={address?.settings.color} isAnimated />
           <BalanceSummary addressHash={addressHash} />
         </RoundedCard>
 
@@ -100,7 +104,7 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
             onPress={handleDefaultPress}
             iconProps={{ name: 'star' }}
             loading={defaultAddressIsChanging}
-            color={address.settings.isDefault ? address.settings.color : undefined}
+            color={address?.settings.isDefault ? address.settings.color : undefined}
           />
         </ActionButtons>
       </Content>

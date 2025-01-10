@@ -21,9 +21,9 @@ export type AddressFormData = AddressSettings & {
 }
 
 interface AddressFormProps {
-  initialValues: AddressFormData
   onValuesChange: (data: AddressFormData) => void
   screenTitle: string
+  initialValues?: AddressFormData
   allowGroupSelection?: boolean
   buttonText?: string
   disableIsMainToggle?: boolean
@@ -38,9 +38,9 @@ const AddressForm = ({
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
-  const [label, setLabel] = useState(initialValues.label)
-  const [color, setColor] = useState(initialValues.color)
-  const [isDefault, setIsDefault] = useState(initialValues.isDefault)
+  const [label, setLabel] = useState(initialValues?.label || '')
+  const [color, setColor] = useState(initialValues?.color || '')
+  const [isDefault, setIsDefault] = useState(initialValues?.isDefault || false)
   const [group, setGroup] = useState<number>()
 
   useEffect(() => {
