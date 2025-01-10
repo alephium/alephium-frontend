@@ -1,6 +1,6 @@
 import { explorer as e } from '@alephium/web3'
-import { uniqBy } from 'lodash'
 import { ChevronRight } from 'lucide-react'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -15,7 +15,7 @@ import TransactionRow from '@/features/transactionsDisplay/transactionRow/Transa
 import { useAppDispatch } from '@/hooks/redux'
 import { onEnterOrSpace } from '@/utils/misc'
 
-const WalletLatestTransactionsList = () => {
+const WalletLatestTransactionsList = memo(() => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -35,8 +35,7 @@ const WalletLatestTransactionsList = () => {
 
       {isLoading && <TableRowsLoader />}
 
-      {/* TODO: Remove uniqBy once backend removes duplicates from its results */}
-      {uniqBy(confirmedTxs, 'hash').map((tx) => (
+      {confirmedTxs.map((tx) => (
         <TransactionRow
           key={tx.hash}
           tx={tx}
@@ -55,7 +54,7 @@ const WalletLatestTransactionsList = () => {
       )}
     </Table>
   )
-}
+})
 
 export default WalletLatestTransactionsList
 
