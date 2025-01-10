@@ -101,7 +101,6 @@ const ControlButton = styled.button`
 const CloseButton = styled(ControlButton)`
   &:hover {
     background-color: ${({ theme }) => theme.global.alert};
-
     ${IconStyled} {
       color: ${({ theme }) => theme.font.primary};
     }

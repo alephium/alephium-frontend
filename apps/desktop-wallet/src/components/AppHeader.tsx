@@ -82,6 +82,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
 
   return (
     <AppHeaderStyled id="app-header" style={headerStyles} className={className} invisible={invisible}>
+      <TitleBar />
       <Title style={titleStyles}>{title}</Title>
       <HeaderButtons>
         {networkStatus === 'offline' && (
@@ -147,7 +148,6 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
         )}
         <NetworkSwitch />
       </HeaderButtons>
-      <TitleBar />
     </AppHeaderStyled>
   )
 }
