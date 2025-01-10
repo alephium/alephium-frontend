@@ -52,10 +52,16 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
         text: t('Forget'),
         style: 'destructive',
         onPress: async () => {
-          closeModal({ id })
+          dispatch(closeModal({ name: 'AddressDetailsModal' }))
+          dispatch(closeModal({ id }))
+
           try {
             await deleteAddress(addressHash)
             dispatch(addressDeleted(addressHash))
+            showToast({
+              type: 'info',
+              text1: t('Address forgotten')
+            })
           } catch (error) {
             const message = t('Could not forget address')
             sendAnalytics({ type: 'error', message, error })
@@ -110,11 +116,13 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
         disableIsMainToggle={address.settings.isDefault}
         screenTitle={t('Address settings')}
       />
-      <ScreenSection>
-        <Row title={t('Forget address')} subtitle={t('You can always re-add it to your wallet.')} isLast>
-          <Button title={t('Forget')} short variant="alert" onPress={handleForgetPress} />
-        </Row>
-      </ScreenSection>
+      {canDeleteAddress && (
+        <ScreenSection>
+          <Row title={t('Forget address')} subtitle={t('You can always re-add it to your wallet.')} isLast>
+            <Button title={t('Forget')} short variant="alert" onPress={handleForgetPress} />
+          </Row>
+        </ScreenSection>
+      )}
       <ScreenSection>
         <BottomButtons fullWidth backgroundColor="back1" bottomInset>
           <Button title={t('Save')} variant="highlight" onPress={handleSavePress} />

@@ -4,6 +4,7 @@ import { closeModal, openModal, removeModal } from '~/features/modals/modalActio
 import { modalAdapter } from '~/features/modals/modalAdapters'
 
 const initialState = modalAdapter.getInitialState()
+const { selectAll } = modalAdapter.getSelectors()
 
 const modalSlice = createSlice({
   name: 'modals',
@@ -18,13 +19,25 @@ const modalSlice = createSlice({
           isClosing: false
         })
       })
-      .addCase(closeModal, (state, { payload: { id } }) => {
-        modalAdapter.updateOne(state, {
-          id,
-          changes: {
-            isClosing: true
+      .addCase(closeModal, (state, { payload: { id, name } }) => {
+        let modalId = id
+
+        if (!modalId && name) {
+          const allModals = selectAll(state)
+          const modalWithName = allModals.find((modal) => modal.params.name === name)
+          if (modalWithName) {
+            modalId = modalWithName.id
           }
-        })
+        }
+
+        if (modalId) {
+          modalAdapter.updateOne(state, {
+            id: modalId,
+            changes: {
+              isClosing: true
+            }
+          })
+        }
       })
       .addCase(removeModal, (state, { payload: { id } }) => {
         modalAdapter.removeOne(state, id)

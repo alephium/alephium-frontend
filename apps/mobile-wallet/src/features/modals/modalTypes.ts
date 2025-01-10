@@ -61,7 +61,7 @@ export const ModalComponents = {
   AddressSettingsModal
 }
 
-type ModalName = keyof typeof ModalComponents
+export type ModalName = keyof typeof ModalComponents
 
 type ModalParams<K extends ModalName> =
   HasRequiredProps<ModalPropsMap[K]> extends true
