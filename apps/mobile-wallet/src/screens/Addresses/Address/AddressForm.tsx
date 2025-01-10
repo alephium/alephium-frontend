@@ -1,11 +1,10 @@
 import { AddressSettings } from '@alephium/shared'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
+import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import BottomButtons from '~/components/buttons/BottomButtons'
-import Button from '~/components/buttons/Button'
 import ExpandableRow from '~/components/ExpandableRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
@@ -16,6 +15,7 @@ import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 
 export type AddressFormData = AddressSettings & {
   group?: number
@@ -23,7 +23,7 @@ export type AddressFormData = AddressSettings & {
 
 interface AddressFormProps extends ScrollScreenProps {
   initialValues: AddressFormData
-  onSubmit: (data: AddressFormData) => void
+  onValuesChange: (data: AddressFormData) => void
   screenTitle: string
   allowGroupSelection?: boolean
   buttonText?: string
@@ -33,14 +33,10 @@ interface AddressFormProps extends ScrollScreenProps {
 
 const AddressForm = ({
   initialValues,
-  onSubmit,
-  screenTitle,
+  onValuesChange,
   allowGroupSelection,
-  buttonText,
   disableIsMainToggle = false,
-  HeaderComponent,
-  headerOptions,
-  ...props
+  HeaderComponent
 }: AddressFormProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -49,6 +45,10 @@ const AddressForm = ({
   const [color, setColor] = useState(initialValues.color)
   const [isDefault, setIsDefault] = useState(initialValues.isDefault)
   const [group, setGroup] = useState<number>()
+
+  useEffect(() => {
+    onValuesChange({ label, color, isDefault, group })
+  }, [color, group, isDefault, label, onValuesChange])
 
   const toggleIsMain = () => {
     if (!disableIsMainToggle) {
@@ -59,53 +59,45 @@ const AddressForm = ({
   const openGroupSelectModal = () => dispatch(openModal({ name: 'GroupSelectModal', props: { onSelect: setGroup } }))
 
   return (
-    <>
-      <View style={{ flex: 1 }}>
-        <ScreenSection verticalGap fill>
-          <View>{HeaderComponent}</View>
-          <Input value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} />
-
-          <ColorPicker value={color} onChange={setColor} />
-          <Surface>
-            <Row
-              title={t('Default address')}
-              subtitle={`${t('Default address for operations')}${
-                disableIsMainToggle
-                  ? `. ${t(
-                      'To remove this address from being the default address, you must set another one as main first.'
-                    )}`
-                  : ''
-              }`}
-              onPress={toggleIsMain}
-              isLast
-            >
-              <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
-            </Row>
-          </Surface>
-          {allowGroupSelection && (
-            <ExpandableRow>
-              <Surface>
-                <Row title={t('Address group')} onPress={openGroupSelectModal}>
-                  <AppText>
-                    {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Default')}
-                  </AppText>
-                </Row>
-              </Surface>
-            </ExpandableRow>
-          )}
-        </ScreenSection>
-      </View>
-      <ScreenSection>
-        <BottomButtons fullWidth backgroundColor="back1">
-          <Button
-            title={buttonText || t('Generate')}
-            variant="highlight"
-            onPress={() => onSubmit({ isDefault, label, color, group })}
-          />
-        </BottomButtons>
+    <View style={{ flex: 1 }}>
+      <ScreenSection fill>
+        <View>{HeaderComponent}</View>
+        <Row title={t('Label')}>
+          <Input value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} short />
+        </Row>
+        <ColorPicker value={color} onChange={setColor} />
+        <Row
+          title={t('Default address')}
+          subtitle={`${t('Default address for operations')}${
+            disableIsMainToggle
+              ? `. ${t(
+                  'To remove this address from being the default address, you must set another one as main first.'
+                )}`
+              : ''
+          }`}
+          onPress={toggleIsMain}
+          isLast
+        >
+          <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
+        </Row>
+        {allowGroupSelection && (
+          <AdvancedOptionSection>
+            <Surface>
+              <Row title={t('Address group')} onPress={openGroupSelectModal}>
+                <AppText>
+                  {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Default')}
+                </AppText>
+              </Row>
+            </Surface>
+          </AdvancedOptionSection>
+        )}
       </ScreenSection>
-    </>
+    </View>
   )
 }
 
 export default AddressForm
+
+const AdvancedOptionSection = styled(ExpandableRow)`
+  margin-top: ${VERTICAL_GAP}px;
+`

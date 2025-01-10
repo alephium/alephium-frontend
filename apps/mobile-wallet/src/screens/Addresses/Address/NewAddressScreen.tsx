@@ -4,13 +4,14 @@ import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
+import Button from '~/components/buttons/Button'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import SpinnerModal from '~/components/SpinnerModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
-import AddressForm from '~/screens/Addresses/Address/AddressForm'
+import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
 import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showExceptionToast } from '~/utils/layout'
@@ -32,7 +33,11 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
     isDefault: false
   }
 
-  const handleGeneratePress = async ({ isDefault, label, color, group }: AddressFormData) => {
+  const [values, setValues] = useState<AddressFormData>(initialValues)
+
+  const handleGeneratePress = async () => {
+    const { isDefault, label, color, group } = values
+
     setLoading(true)
 
     try {
@@ -72,12 +77,13 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       headerTitleAlwaysVisible
       headerOptions={{ headerTitle: t('New address'), type: 'stack' }}
       contentPaddingTop
+      bottomButtonsRender={() => <Button title={t('Generate')} variant="highlight" onPress={handleGeneratePress} />}
       {...props}
     >
       <AddressForm
         screenTitle={t('New address')}
         initialValues={initialValues}
-        onSubmit={handleGeneratePress}
+        onValuesChange={setValues}
         allowGroupSelection
       />
       <SpinnerModal isActive={loading} text={`${t('Generating new address')}...`} />

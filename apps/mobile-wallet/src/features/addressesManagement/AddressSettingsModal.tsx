@@ -1,10 +1,12 @@
-import { AddressHash, AddressSettings } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
+import BottomButtons from '~/components/buttons/BottomButtons'
+import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import SpinnerModal from '~/components/SpinnerModal'
 import AddressDeleteButton from '~/features/addressesManagement/AddressDeleteButton'
@@ -13,7 +15,7 @@ import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import AddressForm from '~/screens/Addresses/Address/AddressForm'
+import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
 import { showExceptionToast } from '~/utils/layout'
 
@@ -30,9 +32,12 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
 
   const [loading, setLoading] = useState(false)
 
+  const [settings, setSettings] = useState<AddressFormData | undefined>(address?.settings)
+
   if (!address) return null
 
-  const handleSavePress = async (settings: AddressSettings) => {
+  const handleSavePress = async () => {
+    if (!settings) return
     if (address.settings.isDefault && !settings.isDefault) return
 
     setLoading(true)
@@ -54,11 +59,11 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
   }
 
   return (
-    <BottomModal modalId={id} title={t('Address settings')}>
+    <BottomModal modalId={id} title={t('Address settings')} noPadding>
       <AddressForm
         contentPaddingTop
         initialValues={address.settings}
-        onSubmit={handleSavePress}
+        onValuesChange={setSettings}
         buttonText="Save"
         disableIsMainToggle={address.settings.isDefault}
         screenTitle={t('Address settings')}
@@ -73,6 +78,11 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
           </ScreenSection>
         }
       />
+      <ScreenSection>
+        <BottomButtons fullWidth backgroundColor="back1" bottomInset>
+          <Button title={t('Save')} variant="highlight" onPress={handleSavePress} />
+        </BottomButtons>
+      </ScreenSection>
       <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
     </BottomModal>
   )

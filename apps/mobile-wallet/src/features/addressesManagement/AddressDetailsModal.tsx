@@ -58,7 +58,6 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
 
   const handleSettingsPress = () => {
     dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash } }))
-    dispatch(closeModal({ id }))
   }
 
   const handleDefaultPress = async () => {
@@ -117,7 +116,7 @@ const Content = styled.View`
 `
 
 const ActionButtons = styled.View`
-  margin-top: ${VERTICAL_GAP / 2}px;
+  margin-top: ${VERTICAL_GAP}px;
   flex-direction: row;
   gap: 10px;
 `
