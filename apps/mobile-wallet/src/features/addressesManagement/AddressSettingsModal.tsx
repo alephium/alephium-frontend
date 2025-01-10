@@ -1,23 +1,27 @@
-import { AddressHash } from '@alephium/shared'
+import { AddressHash, getHumanReadableError } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components/native'
+import { Alert } from 'react-native'
+import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
+import Row from '~/components/Row'
 import SpinnerModal from '~/components/SpinnerModal'
-import AddressDeleteButton from '~/features/addressesManagement/AddressDeleteButton'
+import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { deleteAddress } from '~/persistent-storage/wallet'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
+import { addressDeleted } from '~/store/addresses/addressesActions'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
-import { showExceptionToast } from '~/utils/layout'
+import { showExceptionToast, showToast } from '~/utils/layout'
 
 interface AddressSettingsModalProps {
   addressHash: AddressHash
@@ -25,16 +29,48 @@ interface AddressSettingsModalProps {
 
 const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, addressHash }) => {
   const dispatch = useAppDispatch()
-  const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
+  const canDeleteAddress = useCanDeleteAddress(addressHash)
 
   const [loading, setLoading] = useState(false)
 
   const [settings, setSettings] = useState<AddressFormData | undefined>(address?.settings)
 
   if (!address) return null
+
+  const handleForgetPress = async () => {
+    if (!canDeleteAddress) return null
+
+    Alert.alert(t('forgetAddress_one'), t('You can always re-add it to your wallet.'), [
+      {
+        text: t('Cancel'),
+        style: 'cancel'
+      },
+      {
+        text: t('Forget'),
+        style: 'destructive',
+        onPress: async () => {
+          closeModal({ id })
+          try {
+            await deleteAddress(addressHash)
+            dispatch(addressDeleted(addressHash))
+          } catch (error) {
+            const message = t('Could not forget address')
+            sendAnalytics({ type: 'error', message, error })
+            showToast({
+              type: 'error',
+              text1: t('Could not forget address'),
+              text2: getHumanReadableError(error, '')
+            })
+          }
+
+          sendAnalytics({ event: 'Deleted address', props: { origin: 'Address card' } })
+        }
+      }
+    ])
+  }
 
   const handleSavePress = async () => {
     if (!settings) return
@@ -60,24 +96,25 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
 
   return (
     <BottomModal modalId={id} title={t('Address settings')} noPadding>
+      <ScreenSection>
+        <Row title={t('Address hash')}>
+          <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
+            {addressHash}
+          </HashEllipsed>
+        </Row>
+      </ScreenSection>
       <AddressForm
-        contentPaddingTop
         initialValues={address.settings}
         onValuesChange={setSettings}
         buttonText="Save"
         disableIsMainToggle={address.settings.isDefault}
         screenTitle={t('Address settings')}
-        headerOptions={{
-          headerRight: () => <AddressDeleteButton addressHash={addressHash} color={theme.global.warning} />
-        }}
-        HeaderComponent={
-          <ScreenSection>
-            <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
-              {addressHash}
-            </HashEllipsed>
-          </ScreenSection>
-        }
       />
+      <ScreenSection>
+        <Row title={t('Forget address')} subtitle={t('You can always re-add it to your wallet.')} isLast>
+          <Button title={t('Forget')} short variant="alert" onPress={handleForgetPress} />
+        </Row>
+      </ScreenSection>
       <ScreenSection>
         <BottomButtons fullWidth backgroundColor="back1" bottomInset>
           <Button title={t('Save')} variant="highlight" onPress={handleSavePress} />
@@ -91,6 +128,7 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
 export default AddressSettingsModal
 
 const HashEllipsed = styled(AppText)`
+  min-width: 100px;
   max-width: 50%;
   margin-top: 8px;
 `

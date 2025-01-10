@@ -401,5 +401,7 @@
   "There is something wrong in the received WalletConnect data.": "There is something wrong in the received WalletConnect data.",
   "Loading your balances...": "Loading your balances...",
   "Wallet worth": "Wallet worth",
-  "Address worth": "Address worth"
+  "Address worth": "Address worth",
+  "Address hash": "Address hash",
+  "Forget address": "Forget address"
 }

@@ -1,5 +1,5 @@
 import { AddressSettings } from '@alephium/shared'
-import { ReactNode, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 import styled from 'styled-components/native'
@@ -9,7 +9,6 @@ import ExpandableRow from '~/components/ExpandableRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
@@ -21,22 +20,20 @@ export type AddressFormData = AddressSettings & {
   group?: number
 }
 
-interface AddressFormProps extends ScrollScreenProps {
+interface AddressFormProps {
   initialValues: AddressFormData
   onValuesChange: (data: AddressFormData) => void
   screenTitle: string
   allowGroupSelection?: boolean
   buttonText?: string
   disableIsMainToggle?: boolean
-  HeaderComponent?: ReactNode
 }
 
 const AddressForm = ({
   initialValues,
   onValuesChange,
   allowGroupSelection,
-  disableIsMainToggle = false,
-  HeaderComponent
+  disableIsMainToggle = false
 }: AddressFormProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -61,7 +58,6 @@ const AddressForm = ({
   return (
     <View style={{ flex: 1 }}>
       <ScreenSection fill>
-        <View>{HeaderComponent}</View>
         <Row title={t('Label')}>
           <Input value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} short />
         </Row>
@@ -76,7 +72,6 @@ const AddressForm = ({
               : ''
           }`}
           onPress={toggleIsMain}
-          isLast
         >
           <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
         </Row>
