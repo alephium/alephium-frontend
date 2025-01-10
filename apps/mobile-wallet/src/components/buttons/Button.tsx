@@ -149,9 +149,8 @@ const Button = ({
         </IconContainer>
       ) : (
         <>
-          {iconProps && !(compact || squared) && !hasOnlyIcon && <EmptyPlaceholder />}
           {title && (
-            <ButtonText color={font} medium size={compact ? 14 : 16}>
+            <ButtonText color={font} medium size={compact || short ? 14 : 16}>
               {title}
             </ButtonText>
           )}
@@ -161,7 +160,7 @@ const Button = ({
               <AnimatedIonicons
                 layout={LinearTransition}
                 color={font}
-                size={compact ? 16 : hasOnlyIcon ? 22 : 20}
+                size={compact || short ? 16 : hasOnlyIcon ? 22 : 20}
                 {...iconProps}
               />
             </IconContainer>
@@ -220,10 +219,6 @@ export default styled(Button)`
 const IconContainer = styled.View`
   align-items: center;
   justify-content: center;
-`
-
-const EmptyPlaceholder = styled.View`
-  width: 22px;
 `
 
 const ButtonText = styled(AppText)`

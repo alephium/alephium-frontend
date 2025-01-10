@@ -21,6 +21,7 @@ const BottomModal = ({
   maximisedContent,
   minHeight,
   navHeight = 50,
+  paddingTop,
   noPadding,
   contentVerticalGap,
   contentContainerStyle
@@ -45,7 +46,7 @@ const BottomModal = ({
           {
             gap: contentVerticalGap ? VERTICAL_GAP : undefined,
             padding: noPadding ? 0 : DEFAULT_MARGIN,
-            paddingTop: 0
+            paddingTop: paddingTop ? VERTICAL_GAP : 0
           }
         ]}
         {...modalState.contentScrollHandlers}

@@ -119,7 +119,13 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
       {canDeleteAddress && (
         <ScreenSection>
           <Row title={t('Forget address')} subtitle={t('You can always re-add it to your wallet.')} isLast>
-            <Button title={t('Forget')} short variant="alert" onPress={handleForgetPress} />
+            <Button
+              title={t('Forget')}
+              iconProps={{ name: 'trash-2' }}
+              short
+              variant="alert"
+              onPress={handleForgetPress}
+            />
           </Row>
         </ScreenSection>
       )}
