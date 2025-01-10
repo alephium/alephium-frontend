@@ -1,5 +1,12 @@
 # @alephium/explorer
 
+## 1.10.11
+
+### Patch Changes
+
+- 49b18da: Enable Portuguese translations
+- 8c8caaf: Enable Thai translations
+
 ## 1.10.10
 
 ### Patch Changes
