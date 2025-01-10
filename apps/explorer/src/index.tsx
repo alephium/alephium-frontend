@@ -1,5 +1,5 @@
 import './fonts/index.css'
-import '@/i18n'
+import '@/features/localization/i18n'
 
 import isPropValid from '@emotion/is-prop-valid'
 import { StrictMode } from 'react'
