@@ -36,7 +36,7 @@ const useDataHook = () => {
 
 const {
   useData: useFetchWalletTransactionsLimited,
-  DataContextProvider: UseFetchWalletTransactionsLimittedContextProvider
+  DataContextProvider: UseFetchWalletTransactionsLimitedContextProvider
 } = createDataContext<e.Transaction[], e.Transaction[]>({
   useDataHook,
   combineFn,
@@ -44,4 +44,4 @@ const {
 })
 
 export default useFetchWalletTransactionsLimited
-export { UseFetchWalletTransactionsLimittedContextProvider }
+export { UseFetchWalletTransactionsLimitedContextProvider }
