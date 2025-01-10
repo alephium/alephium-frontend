@@ -65,22 +65,22 @@ const InWalletTabsNavigation = () => {
           }}
         />
         <InWalletTabs.Screen
-          name="EcosystemScreen"
-          component={EcosystemScreen}
-          options={{
-            title: t('Addresses'),
-            tabBarIcon: ({ color, size, focused }) => (
-              <Ionicons name={focused ? 'planet' : 'planet-outline'} color={color} size={size} />
-            )
-          }}
-        />
-        <InWalletTabs.Screen
           name="AddressesTabNavigation"
           component={AddressesTabNavigation}
           options={{
             title: t('Addresses'),
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
+            )
+          }}
+        />
+        <InWalletTabs.Screen
+          name="EcosystemScreen"
+          component={EcosystemScreen}
+          options={{
+            title: t('Addresses'),
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'planet' : 'planet-outline'} color={color} size={size} />
             )
           }}
         />
