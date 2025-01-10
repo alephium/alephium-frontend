@@ -1,4 +1,6 @@
-export type Language = 'en' | 'fr' | 'id' | 'el' | 'de' | 'vi' | 'zh' | 'it' | 'pt' | 'th'
+export const supportedLanguages = ['en', 'fr', 'id', 'el', 'de', 'vi', 'zh', 'it', 'pt', 'th']
+
+export type Language = (typeof supportedLanguages)[number]
 
 export const languageOptions: Array<{ label: string; value: Language }> = [
   { label: 'English', value: 'en' },

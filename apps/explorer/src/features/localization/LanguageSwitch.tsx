@@ -47,4 +47,5 @@ export default styled(LanguageSwitch)`
   border-radius: 8px;
   background-color: ${({ theme }) => theme.bg.primary};
   border: 1px solid ${({ theme }) => theme.border.primary};
+  min-width: 150px;
 `
