@@ -473,7 +473,6 @@
   "Transaction was sent...": "Transação enviada...",
   "Transaction is about to be included in the blockchain...": "A transação está prestes a ser incluída na blockchain...",
   "Transaction is now part of the blockchain": "A transação agora faz parte da blockchain",
-  "Your wallet has too many addresses. These are the transactions of the {{ maxNumber }} most frequently used addresses. Please, consider removing some of them.": "Sua carteira tem muitos endereços. Estas são as transações de endereços {{ maxNumber }} usadas com mais frequência. Por favor, considere remover alguns deles.",
   "Forget": "Esquecer",
   "forgetAddress_one": "Esquecer endereço",
   "forgetAddress_other": "Esquecer endereços",

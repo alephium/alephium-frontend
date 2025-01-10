@@ -473,7 +473,6 @@
   "Transaction was sent...": "交易已发送...",
   "Transaction is about to be included in the blockchain...": "交易将被包含在区块链中...",
   "Transaction is now part of the blockchain": "交易现在是区块链的一部分",
-  "Your wallet has too many addresses. These are the transactions of the {{ maxNumber }} most frequently used addresses. Please, consider removing some of them.": "您的钱包有太多地址。这些是 {{ maxNumber }} 个最常用地址的交易。请考虑删除其中一些。",
   "Forget": "忘记",
   "forgetAddress_one": "忘记地址",
   "forgetAddress_other": "忘记地址",
