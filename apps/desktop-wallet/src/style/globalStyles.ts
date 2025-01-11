@@ -3,7 +3,7 @@ import { createGlobalStyle } from 'styled-components'
 import resets from '@/style/resets'
 import tags from '@/style/tags'
 
-export const appHeaderHeightPx = 60
+export const appHeaderHeightPx = 112
 export const walletSidebarWidthPx = 75
 export const messagesLeftMarginPx = 70
 
