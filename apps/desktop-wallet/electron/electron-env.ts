@@ -52,6 +52,12 @@ declare global {
         setProxySettings: (proxySettings: ProxySettings) => Promise<void>
         restart: () => void
       }
+      window: {
+        minimize: () => Promise<void>
+        maximize: () => Promise<void>
+        close: () => Promise<void>
+        onMaximizedChange: (callback: (maximized: boolean) => void) => () => void
+      }
     }
   }
 }

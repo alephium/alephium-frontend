@@ -75,6 +75,16 @@ contextBridge.exposeInMainWorld('electron', {
     resetDeepLinkUri: () => ipcRenderer.invoke('wc:resetDeepLinkUri'),
     getDeepLinkUri: () => ipcRenderer.invoke('wc:getDeepLinkUri')
   },
+  window: {
+    minimize: () => ipcRenderer.invoke('window:minimize'),
+    maximize: () => ipcRenderer.invoke('window:maximize'),
+    close: () => ipcRenderer.invoke('window:close'),
+    onMaximizedChange: (callback: (maximized: boolean) => void) => {
+      const subscription = (_event: IpcRendererEvent, maximized: boolean) => callback(maximized)
+      ipcRenderer.on('window:maximized', subscription)
+      return () => ipcRenderer.removeListener('window:maximized', subscription)
+    }
+  },
   app: {
     hide: () => ipcRenderer.invoke('app:hide'),
     show: () => ipcRenderer.invoke('app:show'),

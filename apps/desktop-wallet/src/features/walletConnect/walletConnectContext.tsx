@@ -457,11 +457,11 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         await walletConnectClient.disconnect({ topic, reason: getSdkError('USER_DISCONNECTED') })
         console.log('✅ DISCONNECTING: DONE!')
 
-        refreshActiveSessions()
-
         sendAnalytics({ event: 'WC: Disconnected from dApp' })
       } catch (e) {
         console.error('❌ COULD NOT DISCONNECT FROM DAPP')
+      } finally {
+        refreshActiveSessions()
       }
     },
     [refreshActiveSessions, sendAnalytics, walletConnectClient]
