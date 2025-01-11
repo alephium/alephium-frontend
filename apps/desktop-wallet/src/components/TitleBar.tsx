@@ -15,7 +15,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-
 import { Minus, Square, X } from 'lucide-react'
 import styled from 'styled-components'
 
@@ -33,30 +32,30 @@ const TitleBar = () => {
   }
 
   return (
-    <Container>
+    <TitleBarContainer>
       <DragRegion />
-      <Controls>
-        <Button onClick={handleMinimize}>
-          <Icon>
+      <WindowControls>
+        <ControlButton onClick={handleMinimize}>
+          <IconStyled>
             <Minus size={16} />
-          </Icon>
-        </Button>
-        <Button onClick={handleMaximize}>
-          <Icon>
+          </IconStyled>
+        </ControlButton>
+        <ControlButton onClick={handleMaximize}>
+          <IconStyled>
             <Square size={16} />
-          </Icon>
-        </Button>
+          </IconStyled>
+        </ControlButton>
         <CloseButton onClick={handleClose}>
-          <Icon>
+          <IconStyled>
             <X size={16} />
-          </Icon>
+          </IconStyled>
         </CloseButton>
-      </Controls>
-    </Container>
+      </WindowControls>
+    </TitleBarContainer>
   )
 }
 
-const Icon = styled.div`
+const IconStyled = styled.div`
   color: ${({ theme }) => theme.font.secondary};
 `
 
@@ -64,12 +63,12 @@ const DragRegion = styled.div`
   flex: 1;
 `
 
-const Controls = styled.div`
+const WindowControls = styled.div`
   display: flex;
   -webkit-app-region: no-drag;
 `
 
-const Container = styled.div`
+const TitleBarContainer = styled.div`
   position: fixed;
   top: 0;
   right: 0;
@@ -80,7 +79,7 @@ const Container = styled.div`
   background-color: ${({ theme }) => theme.bg.secondary};
 `
 
-const Button = styled.button`
+const ControlButton = styled.button`
   width: 46px;
   height: 32px;
   border: none;
@@ -93,15 +92,18 @@ const Button = styled.button`
     cursor: pointer;
     background-color: ${({ theme }) => theme.bg.highlight};
 
-    ${Icon} {
+    ${IconStyled} {
       color: ${({ theme }) => theme.font.primary};
     }
   }
 `
 
-const CloseButton = styled(Button)`
+const CloseButton = styled(ControlButton)`
   &:hover {
     background-color: ${({ theme }) => theme.global.alert};
+    ${IconStyled} {
+      color: ${({ theme }) => theme.font.primary};
+    }
   }
 `
 
