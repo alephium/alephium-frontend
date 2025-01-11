@@ -16,6 +16,3 @@ node_modules
 
 # turbo
 .turbo
-
-# Jetbrains IDE Webstorm
-*.idea
