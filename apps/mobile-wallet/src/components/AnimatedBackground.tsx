@@ -54,7 +54,7 @@ function getCircleColors({ shade, isDark }: { shade?: string; isDark: boolean })
 
 const AnimatedBackground = ({
   height = 400,
-  width = 400,
+  width,
   scrollY,
   isAnimated,
   isFullScreen,
@@ -68,14 +68,14 @@ const AnimatedBackground = ({
   const [circleColor1, circleColor2, circleColor3] = getCircleColors({ shade, isDark: theme.name === 'dark' })
 
   const canvasHeight = useSharedValue(isFullScreen ? screenHeight : height)
-  const canvasWidth = useSharedValue(isFullScreen ? screenWidth : width)
+  const canvasWidth = useSharedValue(width || screenWidth)
 
   useEffect(() => {
     canvasHeight.value = withSpring(isFullScreen ? screenHeight : height, {
       mass: 5,
       damping: 60
     })
-    canvasWidth.value = withSpring(isFullScreen ? screenWidth : width, {
+    canvasWidth.value = withSpring(width || screenWidth, {
       mass: 5,
       damping: 60
     })

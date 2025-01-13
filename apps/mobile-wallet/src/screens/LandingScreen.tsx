@@ -113,7 +113,7 @@ const WelcomeCard = () => {
 
   return (
     <WelcomeCardStyled onLayout={(e) => setHeight(e.nativeEvent.layout.height)}>
-      <AnimatedBackground isAnimated height={height} width={400} />
+      <AnimatedBackground isAnimated height={height} />
       <AlephiumLogo color="white" style={{ width: '20%' }} />
       <ScreenTitle title={t('Welcome to Alephium!')} />
     </WelcomeCardStyled>
