@@ -4,8 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components'
 
 import AppText from '~/components/AppText'
-import { headerOffsetTop } from '~/components/headers/BaseHeader'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface ScreenTitleProps {
   title: string
@@ -27,7 +26,7 @@ const ScreenTitle = ({ title, scrollY, sideDefaultMargin, SideComponent, padding
         titleAnimatedStyle,
         {
           marginHorizontal: sideDefaultMargin ? DEFAULT_MARGIN : 0,
-          paddingTop: typeof paddingTop === 'boolean' ? insets.top + headerOffsetTop + VERTICAL_GAP : paddingTop
+          paddingTop: typeof paddingTop === 'boolean' ? insets.top + HEADER_OFFSET_TOP + VERTICAL_GAP : paddingTop
         }
       ]}
     >

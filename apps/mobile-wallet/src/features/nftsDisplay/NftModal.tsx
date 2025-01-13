@@ -51,7 +51,7 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
       )}
 
       {!nft.image.startsWith('data:image/') && (
-        <BottomButtons bottomInset backgroundColor="back1">
+        <BottomButtons backgroundColor="back1" bottomInset>
           <Button title={t('View full size')} onPress={() => openBrowserAsync(nft.image)} />
         </BottomButtons>
       )}

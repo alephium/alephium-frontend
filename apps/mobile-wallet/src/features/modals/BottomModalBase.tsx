@@ -14,6 +14,7 @@ export interface BottomModalBaseProps {
   title?: string | ReactNode
   maximisedContent?: boolean
   minHeight?: number
+  paddingTop?: boolean
   noPadding?: boolean
   contentVerticalGap?: boolean
   navHeight?: number

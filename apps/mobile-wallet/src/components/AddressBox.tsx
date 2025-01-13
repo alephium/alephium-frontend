@@ -109,21 +109,21 @@ export default AddressBox
 
 const AddressBoxStyled = styled(AnimatedPressable)`
   flex-direction: row;
-  align-items: center;
   overflow: hidden;
 `
 
 const BadgeContainer = styled.View`
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   width: 26px;
+  padding: ${VERTICAL_GAP}px 0;
 `
 
 const SelectedBadge = styled(Animated.View)`
-  height: 26px;
-  width: 26px;
+  height: 22px;
+  width: 22px;
   background-color: ${({ theme }) => theme.global.accent};
-  border-radius: 26px;
+  border-radius: 22px;
   align-items: center;
   justify-content: center;
 `
@@ -133,9 +133,8 @@ const TextualContent = styled.View`
   min-height: 60px;
   flex-direction: row;
   gap: ${DEFAULT_MARGIN}px;
-  align-items: center;
   border-color: ${({ theme }) => theme.border.secondary};
-  padding: ${VERTICAL_GAP / 2}px 0;
+  padding: ${VERTICAL_GAP}px 0;
   margin-left: ${DEFAULT_MARGIN}px;
 `
 

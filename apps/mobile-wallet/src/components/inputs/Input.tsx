@@ -20,6 +20,7 @@ export interface InputProps<T extends InputValue> extends Omit<TextInputProps, '
   RightContent?: ReactNode
   renderValue?: RenderValueFunc<T>
   showPasteButton?: boolean
+  short?: boolean
   error?: string
   style?: StyleProp<ViewStyle>
   layout?: AnimatedProps<ViewProps>['layout']
@@ -37,6 +38,7 @@ const Input = <T extends InputValue>({
   RightContent,
   renderValue,
   showPasteButton,
+  short,
   error,
   layout,
   inputRef,
@@ -64,7 +66,7 @@ const Input = <T extends InputValue>({
   const isShowingPasteButton = copiedText && showPasteButton
 
   return (
-    <InputStyled onPress={onPress} style={style}>
+    <InputStyled onPress={onPress} style={style} short={short}>
       <InputContainer>
         {showCustomValueRendering && <CustomRenderedValue>{renderedValue}</CustomRenderedValue>}
         <TextInputStyled
@@ -99,11 +101,12 @@ const Input = <T extends InputValue>({
 
 export default Input
 
-const InputStyled = styled.Pressable`
+const InputStyled = styled.Pressable<{ short?: boolean }>`
+  min-width: 150px;
   background-color: ${({ theme }) => theme.bg.highlight};
   border-radius: 100px;
   padding: 0 18px;
-  height: ${INPUTS_HEIGHT}px;
+  height: ${({ short }) => INPUTS_HEIGHT / (short ? 1.2 : 1)}px;
 `
 
 const InputContainer = styled.View`

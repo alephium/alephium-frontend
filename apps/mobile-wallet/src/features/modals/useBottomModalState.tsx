@@ -104,7 +104,7 @@ export const useBottomModalState = ({
         runOnUI(() => {
           contentHeight.value = newContentHeight
           canMaximize.value = contentHeight.value > maxHeight
-          const contentIsScrollable = contentHeight.value > dimensions.height * 0.9
+          const contentIsScrollable = contentHeight.value > dimensions.height * 0.8
 
           shouldMaximizeOnOpen.value = maximisedContent || contentIsScrollable
 

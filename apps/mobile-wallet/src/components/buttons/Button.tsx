@@ -74,7 +74,7 @@ const Button = ({
       default: theme.font.primary,
       contrast: theme.font.contrast,
       accent: theme.global.accent,
-      valid: theme.font.primary,
+      valid: theme.font.contrast,
       alert: theme.global.alert,
       highlight: 'white'
     }[variant]
@@ -123,7 +123,6 @@ const Button = ({
     if (haptics || ['highlight', 'highlightedIcon'].includes(variant)) {
       vibrate(ImpactStyle.Light)
     }
-
     pressed.value = true
   }
 
@@ -131,8 +130,9 @@ const Button = ({
     pressed.value = false
   }
 
-  if (!iconProps && !customIcon && !title && !children)
+  if (!iconProps && !customIcon && !title && !children) {
     throw new Error('At least one of the following properties is required: icon, title, or children')
+  }
 
   return (
     <AnimatedPressable
@@ -143,29 +143,32 @@ const Button = ({
       hitSlop={compact ? 12 : 8}
       {...props}
     >
-      {iconProps && !(compact || squared) && !hasOnlyIcon && <EmptyPlaceholder />}
-      {title && (
-        <ButtonText color={font} medium size={compact ? 14 : 16}>
-          {title}
-        </ButtonText>
-      )}
-      {children}
       {loading ? (
         <IconContainer>
           <ActivityIndicator color={font} size="small" />
         </IconContainer>
-      ) : iconProps ? (
-        <IconContainer>
-          <AnimatedIonicons
-            layout={LinearTransition}
-            color={font}
-            size={compact ? 16 : hasOnlyIcon ? 22 : 20}
-            {...iconProps}
-          />
-        </IconContainer>
-      ) : customIcon ? (
-        customIcon
-      ) : null}
+      ) : (
+        <>
+          {title && (
+            <ButtonText color={font} medium size={compact || short ? 14 : 16}>
+              {title}
+            </ButtonText>
+          )}
+          {children}
+          {iconProps ? (
+            <IconContainer>
+              <AnimatedIonicons
+                layout={LinearTransition}
+                color={font}
+                size={compact || short ? 16 : hasOnlyIcon ? 22 : 20}
+                {...iconProps}
+              />
+            </IconContainer>
+          ) : customIcon ? (
+            customIcon
+          ) : null}
+        </>
+      )}
     </AnimatedPressable>
   )
 }
@@ -216,10 +219,6 @@ export default styled(Button)`
 const IconContainer = styled.View`
   align-items: center;
   justify-content: center;
-`
-
-const EmptyPlaceholder = styled.View`
-  width: 22px;
 `
 
 const ButtonText = styled(AppText)`

@@ -90,7 +90,7 @@ const Row = ({
 
 export default styled(Row)`
   ${({ theme, isLast, isVertical }) => css`
-    min-height: ${INPUTS_HEIGHT}px;
+    min-height: ${INPUTS_HEIGHT * 1.2}px;
     padding: 16px 0;
     border-bottom-width: ${isLast ? 0 : 1}px;
     border-bottom-color: ${theme.border.secondary};
@@ -123,7 +123,6 @@ const LeftContent = styled.View<Pick<RowProps, 'isVertical'>>`
     !isVertical &&
     css`
       flex: 1;
-      align-self: flex-start;
     `}
 `
 

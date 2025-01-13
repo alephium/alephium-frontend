@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
-import HighlightRow from '~/components/Row'
-import { BORDER_RADIUS, INPUTS_HEIGHT } from '~/style/globalStyle'
+import Row from '~/components/Row'
+import { INPUTS_HEIGHT } from '~/style/globalStyle'
 import { labelColorPalette } from '~/utils/colors'
 
 interface ColorPickerProps {
@@ -26,10 +25,9 @@ const ColorPicker = ({ value, onChange, style }: ColorPickerProps) => {
 
   return (
     <>
-      <HighlightRow style={style} onPress={() => setIsModalVisible(!isModalVisible)}>
-        <AppText>{t('Color')}</AppText>
+      <Row style={style} title={t('Color')} onPress={() => setIsModalVisible(!isModalVisible)}>
         <Dot color={value} />
-      </HighlightRow>
+      </Row>
       <ModalWithBackdrop
         animationType="fade"
         visible={isModalVisible}
@@ -46,12 +44,7 @@ const ColorPicker = ({ value, onChange, style }: ColorPickerProps) => {
   )
 }
 
-export default styled(ColorPicker)`
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: ${BORDER_RADIUS}px;
-`
+export default ColorPicker
 
 const Dot = styled.View<{ color?: string }>`
   height: 15px;

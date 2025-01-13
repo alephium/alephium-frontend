@@ -124,7 +124,6 @@ const ListContainer = styled.View`
   border-radius: ${BORDER_RADIUS_BIG}px;
   overflow: hidden;
   position: relative;
-  margin: 0 ${DEFAULT_MARGIN}px;
 `
 
 const EmptyPlaceholderStyled = styled(EmptyPlaceholder)`

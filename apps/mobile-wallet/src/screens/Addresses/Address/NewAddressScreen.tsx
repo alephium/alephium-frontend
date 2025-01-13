@@ -1,16 +1,17 @@
 import { keyring } from '@alephium/keyring'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import Button from '~/components/buttons/Button'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
-import AddressFormBaseScreen, { AddressFormData } from '~/screens/Addresses/Address/AddressFormBaseScreen'
+import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
 import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showExceptionToast } from '~/utils/layout'
@@ -30,7 +31,11 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
     isDefault: false
   }
 
-  const handleGeneratePress = async ({ isDefault, label, color, group }: AddressFormData) => {
+  const [values, setValues] = useState<AddressFormData>(initialValues)
+
+  const handleGeneratePress = async () => {
+    const { isDefault, label, color, group } = values
+
     dispatch(activateAppLoading(t('Generating new address')))
 
     try {
@@ -65,13 +70,21 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   }
 
   return (
-    <AddressFormBaseScreen
-      screenTitle={t('New address')}
-      initialValues={initialValues}
-      onSubmit={handleGeneratePress}
-      allowGroupSelection
+    <ScrollScreen
+      fill
+      headerTitleAlwaysVisible
+      headerOptions={{ headerTitle: t('New address'), type: 'stack' }}
       contentPaddingTop
-    />
+      bottomButtonsRender={() => <Button title={t('Generate')} variant="highlight" onPress={handleGeneratePress} />}
+      {...props}
+    >
+      <AddressForm
+        screenTitle={t('New address')}
+        initialValues={initialValues}
+        onValuesChange={setValues}
+        allowGroupSelection
+      />
+    </ScrollScreen>
   )
 }
 

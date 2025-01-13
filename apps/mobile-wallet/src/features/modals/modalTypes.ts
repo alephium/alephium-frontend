@@ -5,6 +5,8 @@ import BiometricsWarningModal from '~/components/BiometricsWarningModal'
 import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
+import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
+import AddressSettingsModal from '~/features/addressesManagement/AddressSettingsModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
@@ -12,6 +14,7 @@ import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import NftGridModal from '~/features/nftsDisplay/NftGridModal'
 import NftModal from '~/features/nftsDisplay/NftModal'
+import ReceiveQRCodeModal from '~/features/receive/ReceiveQRCodeModal'
 import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
 import TokenAmountModal from '~/features/send/modals/TokenAmountModal'
@@ -52,10 +55,13 @@ export const ModalComponents = {
   WalletConnectSessionProposalModal,
   WalletConnectSessionRequestModal,
   GroupSelectModal,
-  TokenAmountModal
+  TokenAmountModal,
+  AddressDetailsModal,
+  ReceiveQRCodeModal,
+  AddressSettingsModal
 }
 
-type ModalName = keyof typeof ModalComponents
+export type ModalName = keyof typeof ModalComponents
 
 type ModalParams<K extends ModalName> =
   HasRequiredProps<ModalPropsMap[K]> extends true

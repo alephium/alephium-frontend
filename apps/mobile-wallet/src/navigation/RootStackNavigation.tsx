@@ -34,7 +34,6 @@ import {
   storedMnemonicV2Exists
 } from '~/persistent-storage/wallet'
 import AddressDiscoveryScreen from '~/screens/AddressDiscoveryScreen'
-import EditAddressScreen from '~/screens/Addresses/Address/EditAddressScreen'
 import NewAddressScreen from '~/screens/Addresses/Address/NewAddressScreen'
 import ContactScreen from '~/screens/Addresses/Contact/ContactScreen'
 import EditContactScreen from '~/screens/Addresses/Contact/EditContactScreen'
@@ -103,7 +102,6 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
               <RootStack.Screen name="ContactScreen" component={ContactScreen} />
               <RootStack.Screen name="NewAddressScreen" component={NewAddressScreen} />
               <RootStack.Screen name="EditContactScreen" component={EditContactScreen} />
-              <RootStack.Screen name="EditAddressScreen" component={EditAddressScreen} />
               <RootStack.Screen name="AddressDiscoveryScreen" component={AddressDiscoveryScreen} />
               <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
               <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />

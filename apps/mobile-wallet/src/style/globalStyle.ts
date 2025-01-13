@@ -14,3 +14,4 @@ export const DEFAULT_MARGIN = 18
 export const VERTICAL_GAP = 25
 
 export const SCREEN_OVERFLOW = Platform.OS === 'ios' ? 'visible' : 'scroll'
+export const HEADER_OFFSET_TOP = Platform.OS === 'ios' ? 0 : 16

@@ -1,8 +1,15 @@
 import { ReactNode, useState } from 'react'
 import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
 import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
-import Reanimated, { AnimatedRef, interpolate, SharedValue, useAnimatedStyle } from 'react-native-reanimated'
-import styled from 'styled-components/native'
+import Reanimated, {
+  AnimatedRef,
+  interpolate,
+  interpolateColor,
+  SharedValue,
+  useAnimatedStyle,
+  useDerivedValue
+} from 'react-native-reanimated'
+import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
@@ -22,22 +29,26 @@ const indicatorXPadding = 10
 const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customContent }: TopTabBarProps) => {
   const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
 
+  const position = useDerivedValue(
+    () => pagerScrollEvent.value.position + pagerScrollEvent.value.offset,
+    [pagerScrollEvent.value]
+  )
+
   const indicatorStyle = useAnimatedStyle(() => {
     const positionsArray = [...Array(tabLabels.length).keys()]
     const tabLayoutValues = Object.values(tabLayouts)
-
     if (tabLayoutValues.length !== positionsArray.length) return {}
 
     const x = interpolate(
-      pagerScrollEvent.value.offset + pagerScrollEvent.value.position,
+      position.value,
       positionsArray,
-      Object.values(tabLayouts).map((l) => l.x)
+      tabLayoutValues.map((l) => l.x)
     )
 
     const width = interpolate(
-      pagerScrollEvent.value.offset + pagerScrollEvent.value.position,
+      position.value,
       positionsArray,
-      Object.values(tabLayouts).map((l) => l.width)
+      tabLayoutValues.map((l) => l.width)
     )
 
     return {
@@ -53,10 +64,9 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customC
 
   const handleTabLayoutEvent = (tabIndex: number, e: LayoutChangeEvent) => {
     e.persist()
-
-    setTabLayouts((s) => ({
-      [tabIndex]: e.nativeEvent.layout,
-      ...s
+    setTabLayouts((prevLayouts) => ({
+      ...prevLayouts,
+      [tabIndex]: e.nativeEvent.layout
     }))
   }
 
@@ -68,7 +78,9 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customC
         {tabLabels.map((label, i) => (
           <TabBarItem
             key={label}
+            index={i}
             label={label}
+            position={position}
             onPress={() => handleOnTabPress(i)}
             onLayout={(e) => handleTabLayoutEvent(i, e)}
           />
@@ -78,15 +90,32 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customC
   )
 }
 
+const AnimatedAppText = Reanimated.createAnimatedComponent(AppText)
+
 interface TabBarItemProps extends PressableProps {
   label: string
+  index: number
+  position: SharedValue<number>
 }
 
-const TabBarItem = ({ label, ...props }: TabBarItemProps) => (
-  <TabBarItemStyled key={label} accessibilityRole="button" {...props}>
-    <AppText size={15}>{label}</AppText>
-  </TabBarItemStyled>
-)
+const TabBarItem = ({ label, index, position, ...props }: TabBarItemProps) => {
+  const theme = useTheme()
+
+  const animatedTextStyle = useAnimatedStyle(() => {
+    const diff = position.value - index
+    return {
+      color: interpolateColor(diff, [-1, 0, 1], [theme.font.primary, theme.global.accent, theme.font.primary])
+    }
+  })
+
+  return (
+    <TabBarItemStyled {...props}>
+      <AnimatedAppText style={animatedTextStyle} size={15}>
+        {label}
+      </AnimatedAppText>
+    </TabBarItemStyled>
+  )
+}
 
 export default TopTabBar
 
@@ -102,7 +131,7 @@ const HeaderContainer = styled(Reanimated.View)`
   align-items: center;
   justify-content: flex-start;
   height: 44px;
-  padding-left: ${indicatorXPadding * 2}px;
+  padding-left: ${indicatorXPadding}px;
 `
 
 const TabBarItemStyled = styled.Pressable`
@@ -115,5 +144,5 @@ const Indicator = styled(Reanimated.View)`
   position: absolute;
   height: 80%;
   border-radius: 100px;
-  background-color: ${({ theme }) => theme.bg.highlight};
+  background-color: ${({ theme }) => theme.bg.accent};
 `

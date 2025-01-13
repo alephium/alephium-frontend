@@ -11,9 +11,10 @@ import Amount from '~/components/Amount'
 import AnimatedBackground from '~/components/AnimatedBackground'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
+import DashboardCardButton from '~/components/buttons/ActionCardButton'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
-import { headerOffsetTop } from '~/components/headers/BaseHeader'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
+import { ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import RoundedCard from '~/components/RoundedCard'
 import { openModal } from '~/features/modals/modalActions'
@@ -26,12 +27,11 @@ import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
-import DashboardCardButton from '~/screens/Dashboard/DashboardCardButton'
 import DashboardSecondaryButtons from '~/screens/Dashboard/DashboardSecondaryButtons'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import { selectAddressIds, selectDefaultAddress, selectTotalBalance } from '~/store/addressesSlice'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
 
 interface ScreenProps
   extends StackScreenProps<
@@ -105,7 +105,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       hasBottomBar
       verticalGap
       onScroll={screenScrollHandler}
-      contentPaddingTop={60 + headerOffsetTop}
+      contentPaddingTop={60 + HEADER_OFFSET_TOP}
       headerScrollEffectOffset={30}
       headerOptions={{
         headerLeft: () => <CameraScanButton />,
@@ -119,7 +119,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         <RoundedCardStyled>
           <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
           <DashboardSecondaryButtons />
-          <BalanceSummary dateLabel={t('Wallet worth')} />
+          <BalanceSummary />
         </RoundedCardStyled>
       </CardContainer>
       <ButtonsRowContainer>
@@ -130,7 +130,9 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         <DashboardCardButton title={t('Buy')} onPress={openBuyModal} iconProps={{ name: 'credit-card' }} />
       </ButtonsRowContainer>
 
-      <AddressesTokensList />
+      <ScreenSection>
+        <AddressesTokensList />
+      </ScreenSection>
 
       {totalBalance === BigInt(0) && addressesBalancesStatus === 'initialized' && (
         <EmptyPlaceholder style={{ marginHorizontal: DEFAULT_MARGIN }}>

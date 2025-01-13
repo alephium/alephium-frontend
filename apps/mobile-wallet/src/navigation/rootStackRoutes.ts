@@ -26,9 +26,6 @@ type RootStackParamList = {
   EditContactScreen: {
     contactId: string
   }
-  EditAddressScreen: {
-    addressHash: string
-  }
   SelectImportMethodScreen: undefined
   DecryptScannedMnemonicScreen: undefined
   EditWalletNameScreen: undefined
