@@ -13,7 +13,6 @@ import {
   selectAllFungibleTokens,
   selectAllNFTs,
   selectAllPrices,
-  selectAllPricesHistories,
   selectNFTIds,
   sortAssets,
   TokenDisplayBalances
@@ -483,25 +482,6 @@ export const makeSelectAddressesVerifiedFungibleTokens = () =>
   )
 
 export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
-  [makeSelectAddressesVerifiedFungibleTokens(), selectAllPricesHistories],
-  (verifiedFungibleTokens, histories) =>
-    verifiedFungibleTokens
-      .map((token) => token.symbol)
-      .reduce(
-        (acc, tokenSymbol) => {
-          const tokenHistory = histories.find(({ symbol }) => symbol === tokenSymbol)
-
-          if (!tokenHistory || tokenHistory.status === 'uninitialized') {
-            acc.uninitialized.push(tokenSymbol)
-          } else if (tokenHistory && tokenHistory.history.length > 0) {
-            acc.withPriceHistory.push(tokenSymbol)
-          }
-
-          return acc
-        },
-        {
-          uninitialized: [] as string[],
-          withPriceHistory: [] as string[]
-        }
-      )
+  makeSelectAddressesVerifiedFungibleTokens(),
+  (verifiedFungibleTokens) => verifiedFungibleTokens.map((token) => token.symbol)
 )
