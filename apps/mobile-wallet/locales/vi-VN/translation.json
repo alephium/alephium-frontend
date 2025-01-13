@@ -399,5 +399,11 @@
   "No assets here, yet.": "Chưa có tài sản nào ở đây.",
   "There is something wrong in the received WalletConnect data.": "Đã xảy ra lỗi khi nhận dữ liệu WalletConnect.",
   "Loading your balances...": "Đang tải số dư của bạn...",
-  "Wallet worth": "Giá trị ví"
+  "Wallet worth": "Giá trị ví",
+  "Disconnecting": "Đang ngắt kết nối",
+  "Processing WalletConnect request": "Đang xử lý yêu cầu WalletConnect",
+  "Approving": "Đang phê duyệt",
+  "Rejecting": "Đang từ chối",
+  "Building transaction": "Đang tạo giao dịch",
+  "Connecting": "Đang kết nối"
 }
