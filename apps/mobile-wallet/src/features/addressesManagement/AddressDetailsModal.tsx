@@ -1,6 +1,6 @@
 import { AddressHash } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -36,12 +36,6 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const selectAddressTokens = useMemo(makeSelectAddressesTokens, [])
   const addressTokens = useAppSelector((s) => selectAddressTokens(s, addressHash))
-
-  useEffect(() => {
-    if (!address) {
-      dispatch(closeModal({ id }))
-    }
-  }, [address, dispatch, id])
 
   const handleSendPress = () => {
     sendAnalytics({ event: 'Address modal: Pressed btn to send funds from' })

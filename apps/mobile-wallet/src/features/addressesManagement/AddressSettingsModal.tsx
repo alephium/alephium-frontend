@@ -1,5 +1,5 @@
 import { AddressHash, getHumanReadableError } from '@alephium/shared'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
 import styled from 'styled-components/native'
@@ -38,12 +38,6 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
   const [loading, setLoading] = useState(false)
 
   const [settings, setSettings] = useState<AddressFormData | undefined>(address?.settings)
-
-  useEffect(() => {
-    if (!address) {
-      dispatch(closeModal({ id }))
-    }
-  }, [address, dispatch, id])
 
   const handleForgetPress = async () => {
     if (!canDeleteAddress) return null
