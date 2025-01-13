@@ -8,11 +8,20 @@ import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
 import { openModal } from '@/features/modals/modalActions'
-import { useAppDispatch } from '@/hooks/redux'
+import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import AddressListRow from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressListRow'
 import AdvancedOperationsButton from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsButton'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
+import { AddressOrder } from '@/types/addresses.ts'
+import Select from '@/components/Inputs/Select.tsx'
+import { selectSortedAddresses } from '@/storage/addresses/addressesSelectors.ts'
+import { setAddressOrder } from '@/storage/addresses/addressesSlice.ts'
+
+interface OrderOption {
+  value: AddressOrder
+  label: string
+}
 
 const AddressesTabContent = memo(() => {
   const { t } = useTranslation()
@@ -23,11 +32,27 @@ const AddressesTabContent = memo(() => {
   const filteredByText = useFilterAddressesByText(searchInput.toLowerCase())
   const { data: filteredByToggle } = useFetchAddressesHashesWithBalance()
 
-  const visibleAddresses = hideEmptyAddresses ? intersection(filteredByText, filteredByToggle) : filteredByText
+  const walletId = useAppSelector((state) => state.activeWallet.id)
+
+  const visibleAddresses = useAppSelector((state) =>
+    selectSortedAddresses(state, hideEmptyAddresses ? intersection(filteredByText, filteredByToggle) : filteredByText)
+  )
 
   const openNewAddressModal = () =>
     dispatch(openModal({ name: 'NewAddressModal', props: { title: t('New address'), singleAddress: true } }))
 
+  const currentOrder = useAppSelector((state) =>
+    walletId ? state.addresses.orderPreference?.[walletId] ?? AddressOrder.LastUse : AddressOrder.LastUse
+  )
+  const orderOptions: OrderOption[] = [
+    { value: AddressOrder.LastUse, label: t('Last used') },
+    { value: AddressOrder.TotalValue, label: t('Total value') },
+    { value: AddressOrder.Alphabetical, label: t('Alphabetical') }
+  ]
+
+  const onSelect = (value: AddressOrder) => {
+    walletId && dispatch(setAddressOrder({ walletId, order: value }))
+  }
   return (
     <TabContent
       searchPlaceholder={t('Search for label, a hash or an asset...')}
@@ -36,6 +61,16 @@ const AddressesTabContent = memo(() => {
       onButtonClick={openNewAddressModal}
       HeaderMiddleComponent={
         <HeaderMiddle>
+          <SelectWrapper>
+            <Select<AddressOrder>
+              id="address-order"
+              options={orderOptions}
+              controlledValue={orderOptions.find((opt) => opt.value === currentOrder)}
+              onSelect={onSelect}
+              noMargin
+              heightSize="small"
+            />
+          </SelectWrapper>
           <HideEmptyAddressesToggle>
             <ToggleText>{t('Hide empty')}</ToggleText>
             <VerticalDivider />
@@ -100,4 +135,8 @@ const TableGridContent = styled.div`
   > :only-child {
     display: block;
   }
+`
+
+const SelectWrapper = styled.div`
+  width: 180px;
 `

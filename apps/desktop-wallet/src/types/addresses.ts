@@ -3,6 +3,12 @@ import { AddressBalancesSyncResult, AddressHash, AddressSettings, AddressTokensS
 import { explorer as e } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
 
+export enum AddressOrder {
+  LastUse = 'lastUse',
+  TotalValue = 'totalValue',
+  Alphabetical = 'alphabetical'
+}
+
 export type DeprecatedAddressSettings = {
   isMain: boolean
   label?: string
@@ -24,6 +30,7 @@ export type LoadingEnabled = boolean | undefined
 export type AddressDataSyncResult = AddressBalancesSyncResult & AddressTokensSyncResult & AddressTransactionsSyncResult
 
 export interface AddressesState extends EntityState<Address> {
+  orderPreference: Record<string, AddressOrder>
   isRestoringAddressesFromMetadata: boolean
 }
 
