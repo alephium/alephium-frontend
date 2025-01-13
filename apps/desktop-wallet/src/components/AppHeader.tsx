@@ -9,6 +9,7 @@ import DefaultAddressSwitch from '@/components/DefaultAddressSwitch'
 import CompactToggle from '@/components/Inputs/CompactToggle'
 import NetworkSwitch from '@/components/NetworkSwitch'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
+import TitleBar from '@/components/TitleBar.tsx'
 import { useScrollContext } from '@/contexts/scroll'
 import { openModal } from '@/features/modals/modalActions'
 import RefreshButton from '@/features/refreshData/RefreshButton'
@@ -19,8 +20,8 @@ import useWalletLock from '@/hooks/useWalletLock'
 import { ReactComponent as WalletConnectLogo } from '@/images/wallet-connect-logo.svg'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
-import TitleBar from '@/components/TitleBar.tsx'
 import { platform } from '@/utils/platform.ts'
+
 interface AppHeader {
   title?: string
   invisible?: boolean
@@ -58,7 +59,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
     transition: 'opacity 0.2s ease-out'
   }
 
-  if (invisible) return <motion.header id="app-header" className={className} />
+  if (invisible) return <InvisibleAppHeader id="app-header" className={className} />
 
   const openWalletConnectModal = () => dispatch(openModal({ name: 'WalletConnectModal' }))
 
@@ -158,7 +159,11 @@ const AppHeaderStyled = styled(motion.header)<Pick<AppHeader, 'invisible'>>`
 
   backdrop-filter: ${({ invisible }) => (!invisible ? 'blur(10px)' : 'none')};
   z-index: 1;
-  app-region: no-drag;
+  -webkit-app-region: drag;
+`
+
+const InvisibleAppHeader = styled(motion.header)`
+  -webkit-app-region: drag;
 `
 
 const OfflineIcon = styled.div`
@@ -183,6 +188,7 @@ const HeaderButtons = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: var(--spacing-1);
+  -webkit-app-region: no-drag;
 
   > *:not(:last-child) {
     margin-right: var(--spacing-1);

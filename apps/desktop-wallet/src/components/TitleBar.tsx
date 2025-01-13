@@ -38,6 +38,8 @@ const TitleBar = () => {
   )
 }
 
+export default TitleBar
+
 const IconStyled = styled.div`
   color: ${({ theme }) => theme.font.secondary};
 `
@@ -70,9 +72,11 @@ const ControlButton = styled.button`
   align-items: center;
   justify-content: center;
   background: transparent;
+
   &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.bg.highlight};
+
     ${IconStyled} {
       color: ${({ theme }) => theme.font.primary};
     }
@@ -82,10 +86,9 @@ const ControlButton = styled.button`
 const CloseButton = styled(ControlButton)`
   &:hover {
     background-color: ${({ theme }) => theme.global.alert};
+
     ${IconStyled} {
       color: ${({ theme }) => theme.font.primary};
     }
   }
 `
-
-export default TitleBar
