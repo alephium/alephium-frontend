@@ -115,6 +115,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const appJustLaunched = useAppSelector((s) => s.app.wasJustLaunched)
   const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
   const addressesListedFungibleTokensSymbols = useRef<Array<string>>([])
+  const currency = useRef(settings.currency)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokensIds, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
@@ -151,7 +152,10 @@ const Main = ({ children, ...props }: ViewProps) => {
   }, [dispatch, isLoadingVerifiedFungibleTokens, network.status, verifiedFungibleTokensNeedInitialization])
 
   useEffect(() => {
-    if (verifiedFungibleTokenSymbols.some((symbol) => !addressesListedFungibleTokensSymbols.current.includes(symbol))) {
+    if (
+      verifiedFungibleTokenSymbols.some((symbol) => !addressesListedFungibleTokensSymbols.current.includes(symbol)) ||
+      currency.current !== settings.currency
+    ) {
       dispatch(
         syncTokenCurrentPrices({
           verifiedFungibleTokenSymbols,
@@ -160,6 +164,7 @@ const Main = ({ children, ...props }: ViewProps) => {
       )
 
       addressesListedFungibleTokensSymbols.current = verifiedFungibleTokenSymbols
+      currency.current = settings.currency
     }
   }, [dispatch, settings.currency, verifiedFungibleTokenSymbols])
 
