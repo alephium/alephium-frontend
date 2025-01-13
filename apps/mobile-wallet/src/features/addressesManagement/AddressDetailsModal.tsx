@@ -20,7 +20,6 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { addressSettingsSaved, makeSelectAddressesTokens, selectAddressByHash } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
-import { Address } from '~/types/addresses'
 import { showToast, ToastDuration } from '~/utils/layout'
 
 export interface AddressDetailsModalProps {
@@ -32,9 +31,8 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
   const navigation = useNavigation<NavigationProp<SendNavigationParamList | RootStackParamList>>()
   const dispatch = useAppDispatch()
 
-  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const selectAddressTokens = useMemo(makeSelectAddressesTokens, [])
-  const addressTokens = useAppSelector((s) => selectAddressTokens(s, addressHash))
+  const hasTokens = useAppSelector((s) => selectAddressTokens(s, addressHash)).length > 0
 
   const handleSendPress = () => {
     sendAnalytics({ event: 'Address modal: Pressed btn to send funds from' })
@@ -61,17 +59,15 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
     <BottomModal modalId={id} title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <Content>
         <RoundedCard>
-          <AnimatedBackground shade={address?.settings.color} isAnimated />
+          <AddressAnimatedBackground addressHash={addressHash} />
           <BalanceSummary addressHash={addressHash} />
         </RoundedCard>
 
         <ActionButtons>
-          {addressTokens.length > 0 && (
-            <ActionCardButton title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />
-          )}
+          {hasTokens && <ActionCardButton title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />}
           <ActionCardButton title={t('Receive')} onPress={handleReceivePress} iconProps={{ name: 'download' }} />
           <ActionCardButton title={t('Settings')} onPress={handleSettingsPress} iconProps={{ name: 'settings' }} />
-          <SetDefaultAddressCardButton address={address} />
+          <SetDefaultAddressCardButton addressHash={addressHash} />
         </ActionButtons>
       </Content>
       <AddressesTokensList addressHash={addressHash} />
@@ -79,15 +75,15 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
   )
 })
 
-interface SetDefaultAddressCardButtonProps {
-  address?: Address
-}
+export default AddressDetailsModal
 
-const SetDefaultAddressCardButton = ({ address }: SetDefaultAddressCardButtonProps) => {
+const SetDefaultAddressCardButton = ({ addressHash }: AddressDetailsModalProps) => {
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
-  const [defaultAddressIsChanging, setDefaultAddressIsChanging] = useState(false)
   const persistAddressSettings = usePersistAddressSettings()
+
+  const [defaultAddressIsChanging, setDefaultAddressIsChanging] = useState(false)
 
   if (!address) return
 
@@ -123,7 +119,13 @@ const SetDefaultAddressCardButton = ({ address }: SetDefaultAddressCardButtonPro
   )
 }
 
-export default AddressDetailsModal
+const AddressAnimatedBackground = ({ addressHash }: AddressDetailsModalProps) => {
+  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+
+  if (!address) return null
+
+  return <AnimatedBackground shade={address.settings.color} isAnimated />
+}
 
 const Content = styled.View`
   padding: ${VERTICAL_GAP}px 0;
