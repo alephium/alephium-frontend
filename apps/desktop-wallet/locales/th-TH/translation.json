@@ -258,7 +258,7 @@
   "Require password confirmation before sending each transaction.": "ต้องมีการยืนยันรหัสผ่านก่อนส่งธุรกรรมแต่ละครั้ง",
   "Reset filters": "รีเซ็ตตัวกรอง",
   "Restart": "เริ่มใหม่",
-  "Restart the application to install the new update.": "รีสตาร์ทแอปพลิเคชันเพื่อติดตั้งการอัปเดตใหม่",
+  "Restart the application to install the new update.": "รีสตาร์ทแอปเพื่อติดตั้งการอัปเดตใหม่",
   "Retype password": "พิมพ์รหัสผ่านอีกครั้ง",
   "Review": "ตรวจสอบ",
   "Save": "บันทึก",
@@ -289,12 +289,12 @@
   "Send": "ส่ง",
   "Send locked assets": "ส่งทรัพย์สินที่ถูกล็อค",
   "Sent": "ส่งแล้ว",
-  "Set custom network URLs": "ตั้งค่าเครือข่ายเริ่มต้น URLs เอง",
+  "Set custom network URLs": "ตั้งค่าเครือข่าย URLs เอง",
   "Set gas and lock time": "ตั้งค่าแก๊สและเวลาล็อค",
   "Set gas settings": "ตั้งค่าแก๊ส",
   "Settings": "การตั้งค่า",
   "Shortcuts": "ทางลัด",
-  "Show": "ให้ดู",
+  "Show": "แสดง",
   "Show advanced options": "แสดงตัวเลือกขั้นสูง",
   "Show in explorer": "ดูในการสำรวจ (Explorer)",
   "Show more": "ดูเพิ่มเติม",
@@ -498,5 +498,7 @@
   "Welcome to your Ledger!": "ยินดีต้อนรับสู่บัญชีแยกประเภทของคุณ",
   "Would you like to scan for active addresses?": "คุณต้องการสแกนหาที่อยู่จริงหรือไม่",
   "Scan": "ค้นหา",
-  "Active address discovery completed. Addresses added: {{ count }}": "การค้นหาที่อยู่ใช้งานเสร็จสมบูรณ์แล้ว เพิ่มที่อยู่: {{ count }}"
+  "Active address discovery completed. Addresses added: {{ count }}": "การค้นหาที่อยู่ใช้งานเสร็จสมบูรณ์แล้ว เพิ่มที่อยู่: {{ count }}",
+  "Loading new transactions...": "กำลังโหลดธุรกรรมใหม่",
+  "Sign and Send": "ลงชื่อและส่ง"
 }
