@@ -56,8 +56,8 @@ function createWindow() {
     height: 800,
     minWidth: 1200,
     minHeight: 700,
-    frame: !isWindows,
-    titleBarStyle: isWindows ? 'hidden' : 'default',
+    frame: isMac,
+    titleBarStyle: 'hidden',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       spellcheck: true

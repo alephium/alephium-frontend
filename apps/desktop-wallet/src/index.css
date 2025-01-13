@@ -52,6 +52,9 @@ a {
   color: inherit;
 }
 
+#app-header {
+  -webkit-app-region: drag;
+}
 
 /* FONTS */
 

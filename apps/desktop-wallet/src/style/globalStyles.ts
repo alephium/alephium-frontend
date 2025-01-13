@@ -4,7 +4,7 @@ import resets from '@/style/resets'
 import tags from '@/style/tags'
 import { platform } from '@/utils/platform.ts'
 
-export const appHeaderHeightPx = platform.isWindows ? 112 : 60
+export const appHeaderHeightPx = platform.isMac ? 60 : 112
 export const walletSidebarWidthPx = 75
 export const messagesLeftMarginPx = 70
 
