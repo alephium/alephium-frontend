@@ -19,7 +19,8 @@ import useWalletLock from '@/hooks/useWalletLock'
 import { ReactComponent as WalletConnectLogo } from '@/images/wallet-connect-logo.svg'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
-
+import TitleBar from '@/components/TitleBar.tsx'
+import { platform } from '@/utils/platform.ts'
 interface AppHeader {
   title?: string
   invisible?: boolean
@@ -63,6 +64,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => 
 
   return (
     <AppHeaderStyled id="app-header" style={headerStyles} className={className} invisible={invisible}>
+      {!platform.isMac && <TitleBar />}
       <Title style={titleStyles}>{title}</Title>
       <HeaderButtons>
         {networkStatus === 'offline' && (
