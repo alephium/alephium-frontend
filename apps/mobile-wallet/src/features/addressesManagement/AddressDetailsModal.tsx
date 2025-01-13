@@ -20,6 +20,7 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { addressSettingsSaved, makeSelectAddressesTokens, selectAddressByHash } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
+import { Address } from '~/types/addresses'
 import { showToast, ToastDuration } from '~/utils/layout'
 
 export interface AddressDetailsModalProps {
@@ -29,8 +30,6 @@ export interface AddressDetailsModalProps {
 const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHash }) => {
   const { t } = useTranslation()
   const navigation = useNavigation<NavigationProp<SendNavigationParamList | RootStackParamList>>()
-  const [defaultAddressIsChanging, setDefaultAddressIsChanging] = useState(false)
-  const persistAddressSettings = usePersistAddressSettings()
   const dispatch = useAppDispatch()
 
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
@@ -58,6 +57,40 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
     dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash } }))
   }
 
+  return (
+    <BottomModal modalId={id} title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+      <Content>
+        <RoundedCard>
+          <AnimatedBackground shade={address?.settings.color} isAnimated />
+          <BalanceSummary addressHash={addressHash} />
+        </RoundedCard>
+
+        <ActionButtons>
+          {addressTokens.length > 0 && (
+            <ActionCardButton title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />
+          )}
+          <ActionCardButton title={t('Receive')} onPress={handleReceivePress} iconProps={{ name: 'download' }} />
+          <ActionCardButton title={t('Settings')} onPress={handleSettingsPress} iconProps={{ name: 'settings' }} />
+          <SetDefaultAddressCardButton address={address} />
+        </ActionButtons>
+      </Content>
+      <AddressesTokensList addressHash={addressHash} />
+    </BottomModal>
+  )
+})
+
+interface SetDefaultAddressCardButtonProps {
+  address?: Address
+}
+
+const SetDefaultAddressCardButton = ({ address }: SetDefaultAddressCardButtonProps) => {
+  const dispatch = useAppDispatch()
+  const { t } = useTranslation()
+  const [defaultAddressIsChanging, setDefaultAddressIsChanging] = useState(false)
+  const persistAddressSettings = usePersistAddressSettings()
+
+  if (!address) return
+
   const handleDefaultPress = async () => {
     if (!address || address.settings.isDefault) return
 
@@ -80,32 +113,15 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
   }
 
   return (
-    <BottomModal modalId={id} title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
-      <Content>
-        <RoundedCard>
-          <AnimatedBackground shade={address?.settings.color} isAnimated />
-          <BalanceSummary addressHash={addressHash} />
-        </RoundedCard>
-
-        <ActionButtons>
-          {addressTokens.length > 0 && (
-            <ActionCardButton title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />
-          )}
-          <ActionCardButton title={t('Receive')} onPress={handleReceivePress} iconProps={{ name: 'download' }} />
-          <ActionCardButton title={t('Settings')} onPress={handleSettingsPress} iconProps={{ name: 'settings' }} />
-          <ActionCardButton
-            title={t('Default')}
-            onPress={handleDefaultPress}
-            iconProps={{ name: 'star' }}
-            loading={defaultAddressIsChanging}
-            color={address?.settings.isDefault ? address.settings.color : undefined}
-          />
-        </ActionButtons>
-      </Content>
-      <AddressesTokensList addressHash={addressHash} />
-    </BottomModal>
+    <ActionCardButton
+      title={t('Default')}
+      onPress={handleDefaultPress}
+      iconProps={{ name: 'star' }}
+      loading={defaultAddressIsChanging}
+      color={address?.settings.isDefault ? address.settings.color : undefined}
+    />
   )
-})
+}
 
 export default AddressDetailsModal
 
