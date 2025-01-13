@@ -1,17 +1,17 @@
 import { StackScreenProps } from '@react-navigation/stack'
 import { orderBy } from 'lodash'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '~/components/buttons/Button'
 import FlashListScreen from '~/components/layout/FlashListScreen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import AssetRow from '~/features/send/screens/AssetsScreen/AssetRow'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
-import { useAppSelector } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import {
   makeSelectAddressesKnownFungibleTokens,
@@ -36,20 +36,19 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, address?.hash))
   const { t } = useTranslation()
-
-  const [isLoading, setIsLoading] = useState(false)
+  const dispatch = useAppDispatch()
 
   useScrollToTopOnFocus(screenScrollY)
 
   const isContinueButtonDisabled = assetAmounts.length < 1
 
   const handleContinueButtonPress = async () => {
-    setIsLoading(true)
+    dispatch(activateAppLoading(t('Building transaction')))
     await buildTransaction({
       onBuildSuccess: () => navigation.navigate('VerifyScreen'),
       onConsolidationSuccess: () => navigation.navigate('ActivityScreen')
     })
-    setIsLoading(false)
+    dispatch(deactivateAppLoading())
   }
 
   useEffect(() => {
@@ -62,38 +61,34 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const orderedAssets = orderBy(assets, (a) => assetAmounts.find((assetWithAmount) => a.id === assetWithAmount.id))
 
   return (
-    <>
-      <FlashListScreen
-        data={orderedAssets}
-        keyExtractor={({ id }) => id}
-        extraData={{ assetAmounts }}
-        renderItem={({ item: asset, index }) => (
-          <AssetRow
-            key={asset.id}
-            asset={asset}
-            isLast={index === orderedAssets.length - 1}
-            style={{ marginHorizontal: DEFAULT_MARGIN }}
-          />
-        )}
-        verticalGap
-        contentPaddingTop
-        screenTitle={t('Assets')}
-        screenIntro={t('With Alephium, you can send multiple assets in one transaction.')}
-        estimatedItemSize={64}
-        onScroll={screenScrollHandler}
-        bottomButtonsRender={() => (
-          <Button
-            title={t('Continue')}
-            variant="highlight"
-            onPress={handleContinueButtonPress}
-            disabled={isContinueButtonDisabled}
-          />
-        )}
-        {...props}
-      />
-
-      <SpinnerModal isActive={isLoading} />
-    </>
+    <FlashListScreen
+      data={orderedAssets}
+      keyExtractor={({ id }) => id}
+      extraData={{ assetAmounts }}
+      renderItem={({ item: asset, index }) => (
+        <AssetRow
+          key={asset.id}
+          asset={asset}
+          isLast={index === orderedAssets.length - 1}
+          style={{ marginHorizontal: DEFAULT_MARGIN }}
+        />
+      )}
+      verticalGap
+      contentPaddingTop
+      screenTitle={t('Assets')}
+      screenIntro={t('With Alephium, you can send multiple assets in one transaction.')}
+      estimatedItemSize={64}
+      onScroll={screenScrollHandler}
+      bottomButtonsRender={() => (
+        <Button
+          title={t('Continue')}
+          variant="highlight"
+          onPress={handleContinueButtonPress}
+          disabled={isContinueButtonDisabled}
+        />
+      )}
+      {...props}
+    />
   )
 }
 

@@ -61,7 +61,7 @@ import {
   buildDeployContractTransaction,
   buildTransferTransaction
 } from '~/api/transactions'
-import SpinnerModal from '~/components/SpinnerModal'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressIds } from '~/store/addressesSlice'
@@ -128,7 +128,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
-  const [loading, setLoading] = useState('')
   const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
 
   const isWalletConnectClientReady =
@@ -288,7 +287,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       if (!walletConnectClient) return
 
       try {
-        setLoading('Disconnecting...')
+        dispatch(activateAppLoading(t('Disconnecting')))
 
         console.log('⏳ DISCONNECTING FROM:', topic)
 
@@ -303,10 +302,10 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         console.error('❌ COULD NOT DISCONNECT FROM DAPP', e)
       } finally {
         refreshActiveSessions()
-        setLoading('')
+        dispatch(deactivateAppLoading())
       }
     },
-    [refreshActiveSessions, walletConnectClient]
+    [dispatch, refreshActiveSessions, t, walletConnectClient]
   )
 
   const onSessionProposal = useCallback(
@@ -521,11 +520,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               lockTime: lockTime ? new Date(lockTime) : undefined
             }
 
-            setLoading('Responding to WalletConnect')
+            dispatch(activateAppLoading(t('Processing WalletConnect request')))
             console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
             const buildTransactionTxResult = await buildTransferTransaction(wcTxData)
             console.log('✅ BUILDING TX: DONE!')
-            setLoading('')
+            dispatch(deactivateAppLoading())
 
             console.log('⏳ OPENING MODAL TO APPROVE TX...')
 
@@ -570,11 +569,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               gasPrice: gasPrice?.toString()
             }
 
-            setLoading('Responding to WalletConnect')
+            dispatch(activateAppLoading(t('Processing WalletConnect request')))
             console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
             const buildDeployContractTxResult = await buildDeployContractTransaction(wcTxData)
             console.log('✅ BUILDING TX: DONE!')
-            setLoading('')
+            dispatch(deactivateAppLoading())
 
             console.log('⏳ OPENING MODAL TO APPROVE TX...')
 
@@ -631,11 +630,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               gasPrice: gasPrice?.toString()
             }
 
-            setLoading('Responding to WalletConnect')
+            dispatch(activateAppLoading(t('Processing WalletConnect request')))
             console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
             const buildCallContractTxResult = await buildCallContractTransaction(wcTxData)
             console.log('✅ BUILDING TX: DONE!')
-            setLoading('')
+            dispatch(deactivateAppLoading())
 
             console.log('⏳ OPENING MODAL TO APPROVE TX...')
 
@@ -710,11 +709,11 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
               unsignedTx
             }
 
-            setLoading('Responding to WalletConnect')
+            dispatch(activateAppLoading(t('Processing WalletConnect request')))
             console.log('⏳ DECODING TX WITH DATA:', wcTxData)
             const decodedResult = await client.node.transactions.postTransactionsDecodeUnsignedTx({ unsignedTx })
             console.log('✅ DECODING TX: DONE!')
-            setLoading('')
+            dispatch(deactivateAppLoading())
 
             console.log('⏳ OPENING MODAL TO SIGN UNSIGNED TX...')
 
@@ -763,7 +762,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       } catch (e: unknown) {
         const error = e as { message?: string }
 
-        setLoading('')
+        dispatch(deactivateAppLoading())
 
         if (error.message?.includes('NotEnoughApprovedBalance')) {
           showToast({
@@ -887,7 +886,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
       }}
     >
       {children}
-      <SpinnerModal isActive={!!loading} text={loading} />
     </WalletConnectContext.Provider>
   )
 }

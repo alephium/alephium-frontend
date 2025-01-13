@@ -18,6 +18,7 @@ import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import ToastAnchor from '~/components/toasts/ToastAnchor'
+import LoadingManager from '~/features/loader/LoadingManager'
 import { useLocalization } from '~/features/localization/useLocalization'
 import useLoadStoredSettings from '~/features/settings/useLoadStoredSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -74,6 +75,7 @@ const App = () => {
             </View>
           )}
           <ToastAnchor />
+          <LoadingManager />
         </ThemeProvider>
       </Main>
     </Provider>

@@ -16,7 +16,7 @@ import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
-import SpinnerModal from '~/components/SpinnerModal'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -53,6 +53,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
 
   const importAddresses = async () => {
     setImportLoading(true)
+    dispatch(activateAppLoading(t('Importing addresses')))
 
     const newAddressHashes = selectedAddressesToImport.map((address) => address.hash)
     const newAddresses = selectedAddressesToImport.map(({ balance, ...address }) => ({
@@ -73,6 +74,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
 
     continueToNextScreen()
 
+    dispatch(deactivateAppLoading())
     setImportLoading(false)
   }
 
@@ -228,7 +230,6 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
           />
         )}
       </BottomButtons>
-      <SpinnerModal isActive={importLoading} text={`${t('Importing addresses')}...`} blur={false} />
     </ScrollScreen>
   )
 }

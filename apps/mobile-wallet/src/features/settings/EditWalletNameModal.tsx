@@ -5,7 +5,7 @@ import { sendAnalytics } from '~/analytics'
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
-import SpinnerModal from '~/components/SpinnerModal'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
@@ -20,10 +20,9 @@ const EditWalletNameModal = withModal(({ id }) => {
   const { t } = useTranslation()
 
   const [name, setName] = useState(walletName)
-  const [loading, setLoading] = useState(false)
 
   const handleSavePress = async () => {
-    setLoading(true)
+    dispatch(activateAppLoading(t('Saving')))
 
     try {
       await updateStoredWalletMetadata({ name })
@@ -37,7 +36,7 @@ const EditWalletNameModal = withModal(({ id }) => {
       sendAnalytics({ type: 'error', message })
     }
 
-    setLoading(false)
+    dispatch(deactivateAppLoading())
     dispatch(closeModal({ id }))
   }
 
@@ -47,7 +46,6 @@ const EditWalletNameModal = withModal(({ id }) => {
         <Input value={name} onChangeText={setName} label={t('New name')} maxLength={24} autoFocus />
         <Button title={t('Save')} onPress={handleSavePress} variant="highlight" />
       </ScreenSection>
-      <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
     </BottomModal>
   )
 })
