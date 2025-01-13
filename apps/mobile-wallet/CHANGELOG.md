@@ -16,6 +16,7 @@
 - 047dd9a: Fix data loading
 - c17e4cb: Add confirmation messages when saving fund password and remove reminders
 - dda710a: Fix iOS crash on wallet creation
+- b0b4b13: Fix price fetching
 
 ## 1.1.12
 

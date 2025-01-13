@@ -2,7 +2,6 @@ import {
   PRICES_REFRESH_INTERVAL,
   selectDoVerifiedFungibleTokensNeedInitialization,
   syncTokenCurrentPrices,
-  syncTokenPriceHistories,
   syncUnknownTokensInfo,
   syncVerifiedFungibleTokens,
   TRANSACTIONS_REFRESH_INTERVAL
@@ -11,7 +10,7 @@ import { useInitializeClient, useInterval } from '@alephium/shared-react'
 import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Platform, View, ViewProps } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
@@ -115,6 +114,8 @@ const Main = ({ children, ...props }: ViewProps) => {
   const settings = useAppSelector((s) => s.settings)
   const appJustLaunched = useAppSelector((s) => s.app.wasJustLaunched)
   const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
+  const addressesListedFungibleTokensSymbols = useRef<Array<string>>([])
+  const currency = useRef(settings.currency)
 
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokensIds, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
@@ -141,42 +142,37 @@ const Main = ({ children, ...props }: ViewProps) => {
     }
   }, [dispatch, isLoadingTokenTypes, network.status, newUnknownTokens, verifiedFungibleTokensNeedInitialization])
 
-  // Fetch verified tokens from GitHub token-list and sync current and historical prices for each verified fungible
-  // token found in each address
+  // Fetch verified tokens from GitHub token-list
   useEffect(() => {
     if (network.status === 'online' && !isLoadingVerifiedFungibleTokens) {
       if (verifiedFungibleTokensNeedInitialization) {
         dispatch(syncVerifiedFungibleTokens())
-      } else if (verifiedFungibleTokenSymbols.uninitialized.length > 0) {
-        const symbols = verifiedFungibleTokenSymbols.uninitialized
-
-        dispatch(syncTokenCurrentPrices({ verifiedFungibleTokenSymbols: symbols, currency: settings.currency }))
-        dispatch(syncTokenPriceHistories({ verifiedFungibleTokenSymbols: symbols, currency: settings.currency }))
       }
     }
-  }, [
-    dispatch,
-    isLoadingVerifiedFungibleTokens,
-    network.status,
-    settings.currency,
-    verifiedFungibleTokenSymbols.uninitialized,
-    verifiedFungibleTokensNeedInitialization
-  ])
+  }, [dispatch, isLoadingVerifiedFungibleTokens, network.status, verifiedFungibleTokensNeedInitialization])
+
+  useEffect(() => {
+    if (
+      verifiedFungibleTokenSymbols.some((symbol) => !addressesListedFungibleTokensSymbols.current.includes(symbol)) ||
+      currency.current !== settings.currency
+    ) {
+      dispatch(
+        syncTokenCurrentPrices({
+          verifiedFungibleTokenSymbols,
+          currency: settings.currency
+        })
+      )
+
+      addressesListedFungibleTokensSymbols.current = verifiedFungibleTokenSymbols
+      currency.current = settings.currency
+    }
+  }, [dispatch, settings.currency, verifiedFungibleTokenSymbols])
 
   const refreshTokensLatestPrice = useCallback(() => {
-    dispatch(
-      syncTokenCurrentPrices({
-        verifiedFungibleTokenSymbols: verifiedFungibleTokenSymbols.withPriceHistory,
-        currency: settings.currency
-      })
-    )
-  }, [dispatch, settings.currency, verifiedFungibleTokenSymbols.withPriceHistory])
+    dispatch(syncTokenCurrentPrices({ verifiedFungibleTokenSymbols, currency: settings.currency }))
+  }, [dispatch, settings.currency, verifiedFungibleTokenSymbols])
 
-  useInterval(
-    refreshTokensLatestPrice,
-    PRICES_REFRESH_INTERVAL,
-    network.status !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
-  )
+  useInterval(refreshTokensLatestPrice, PRICES_REFRESH_INTERVAL, network.status !== 'online')
 
   const checkForNewTransactions = useCallback(() => {
     dispatch(syncLatestTransactions({ addresses: 'all', areAddressesNew: false }))
