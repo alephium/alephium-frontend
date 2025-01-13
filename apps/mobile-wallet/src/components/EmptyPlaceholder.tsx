@@ -12,7 +12,7 @@ const EmptyPlaceholder = ({ children, ...props }: ViewProps) => (
 const EmptyPlaceholderStyled = styled.View`
   flex: 1;
   justify-content: center;
-  margin: ${VERTICAL_GAP}px 0;
+  margin: ${VERTICAL_GAP / 2}px 0;
 `
 
 const Content = styled.View`
@@ -20,7 +20,7 @@ const Content = styled.View`
   gap: 10px;
   padding: 20px;
   border-radius: 22px;
-  background-color: ${({ theme }) => theme.bg.primary};
+  border: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
 export default EmptyPlaceholder

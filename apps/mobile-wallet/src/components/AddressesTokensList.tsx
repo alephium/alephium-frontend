@@ -63,18 +63,18 @@ const AddressesTokensList = ({ addressHash, isRefreshing }: AddressesTokensListP
 
   if (addressesBalancesStatus === 'uninitialized')
     return (
-      <EmptyPlaceholderStyled>
+      <EmptyPlaceholder>
         <AppText size={28}>⏳</AppText>
         <AppText>{t('Loading your balances...')}</AppText>
-      </EmptyPlaceholderStyled>
+      </EmptyPlaceholder>
     )
 
   if (!isRefreshing && tokenRows.length === 0)
     return (
-      <EmptyPlaceholderStyled>
+      <EmptyPlaceholder>
         <AppText size={28}>👀</AppText>
         <AppText>{t('No assets here, yet.')}</AppText>
-      </EmptyPlaceholderStyled>
+      </EmptyPlaceholder>
     )
 
   return (
@@ -124,10 +124,6 @@ const ListContainer = styled.View`
   border-radius: ${BORDER_RADIUS_BIG}px;
   overflow: hidden;
   position: relative;
-`
-
-const EmptyPlaceholderStyled = styled(EmptyPlaceholder)`
-  margin: 0 ${DEFAULT_MARGIN}px;
 `
 
 const LoadingOverlay = styled.View`
