@@ -4,6 +4,7 @@ import devToolsEnhancer from 'redux-devtools-expo-dev-plugin'
 
 import backupSlice from '~/features/backup/backupSlice'
 import fundPasswordSlice from '~/features/fund-password/fundPasswordSlice'
+import loaderSlice from '~/features/loader/loaderSlice'
 import modalSlice from '~/features/modals/modalSlice'
 import settingsSlice, { settingsListenerMiddleware } from '~/features/settings/settingsSlice'
 import addressDiscoverySlice from '~/store/addressDiscoverySlice'
@@ -24,6 +25,7 @@ export const store = configureStore({
     [walletSlice.name]: walletSlice.reducer,
     [addressesSlice.name]: addressesSlice.reducer,
     [appSlice.name]: appSlice.reducer,
+    [loaderSlice.name]: loaderSlice.reducer,
     [addressDiscoverySlice.name]: addressDiscoverySlice.reducer,
     [confirmedTransactionsSlice.name]: confirmedTransactionsSlice.reducer,
     [pendingTransactionsSlice.name]: pendingTransactionsSlice.reducer,

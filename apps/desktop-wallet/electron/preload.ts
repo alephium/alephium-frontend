@@ -64,5 +64,15 @@ contextBridge.exposeInMainWorld('electron', {
     getSystemRegion: () => ipcRenderer.invoke('app:getSystemRegion'),
     setProxySettings: (proxySettings: ProxySettings) => ipcRenderer.invoke('app:setProxySettings', proxySettings),
     restart: () => ipcRenderer.invoke('app:restart')
+  },
+  window: {
+    minimize: () => ipcRenderer.invoke('window:minimize'),
+    maximize: () => ipcRenderer.invoke('window:maximize'),
+    close: () => ipcRenderer.invoke('window:close'),
+    onMaximizedChange: (callback: (maximized: boolean) => void) => {
+      const subscription = (_event: IpcRendererEvent, maximized: boolean) => callback(maximized)
+      ipcRenderer.on('window:maximized', subscription)
+      return () => ipcRenderer.removeListener('window:maximized', subscription)
+    }
   }
 })

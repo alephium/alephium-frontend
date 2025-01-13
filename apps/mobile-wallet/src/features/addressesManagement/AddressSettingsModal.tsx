@@ -10,8 +10,8 @@ import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import Row from '~/components/Row'
-import SpinnerModal from '~/components/SpinnerModal'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
@@ -35,8 +35,6 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
   const canDeleteAddress = useCanDeleteAddress(addressHash)
-
-  const [loading, setLoading] = useState(false)
 
   const [settings, setSettings] = useState<AddressFormData | undefined>(address?.settings)
 
@@ -83,7 +81,7 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
 
     if (address.settings.isDefault && !settings.isDefault) return
 
-    setLoading(true)
+    dispatch(activateAppLoading(t('Saving')))
 
     try {
       await persistAddressSettings({ ...address, settings })
@@ -97,7 +95,7 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
       sendAnalytics({ type: 'error', message })
     }
 
-    setLoading(false)
+    dispatch(deactivateAppLoading())
     dispatch(closeModal({ id }))
   }
 
@@ -140,7 +138,6 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
           <Button title={t('Save')} variant="highlight" onPress={handleSavePress} />
         </BottomButtons>
       </ScreenSection>
-      <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
     </BottomModal>
   )
 })

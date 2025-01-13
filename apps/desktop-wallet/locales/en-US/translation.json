@@ -473,7 +473,6 @@
   "Transaction was sent...": "Transaction was sent...",
   "Transaction is about to be included in the blockchain...": "Transaction is about to be included in the blockchain...",
   "Transaction is now part of the blockchain": "Transaction is now part of the blockchain",
-  "Your wallet has too many addresses. These are the transactions of the {{ maxNumber }} most frequently used addresses. Please, consider removing some of them.": "Your wallet has too many addresses. These are the transactions of the {{ maxNumber }} most frequently used addresses. Please, consider removing some of them.",
   "Forget": "Forget",
   "forgetAddress_one": "Forget address",
   "forgetAddress_other": "Forget addresses",
@@ -511,5 +510,8 @@
   "Welcome to your Ledger!": "Welcome to your Ledger!",
   "Would you like to scan for active addresses?": "Would you like to scan for active addresses?",
   "Scan": "Scan",
-  "Active address discovery completed. Addresses added: {{ count }}": "Active address discovery completed. Addresses added: {{ count }}"
+  "Active address discovery completed. Addresses added: {{ count }}": "Active address discovery completed. Addresses added: {{ count }}",
+  "Loading new transactions...": "Loading new transactions...",
+  "Sign and Send Unsigned Transaction": "Sign and Send Unsigned Transaction",
+  "Sign and Send": "Sign and Send"
 }

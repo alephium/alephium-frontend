@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
 import TabBar, { TabItem } from '@/components/TabBar'
-import i18next from '@/i18n'
+import i18next from '@/features/localization/i18n'
 import AddressesTabContent from '@/pages/UnlockedWallet/AddressesPage/AddressesTabContent'
 import ContactsTabContent from '@/pages/UnlockedWallet/AddressesPage/ContactsTabContent'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'

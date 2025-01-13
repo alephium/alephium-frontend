@@ -56,7 +56,8 @@ function createWindow() {
     height: 800,
     minWidth: 1200,
     minHeight: 700,
-    titleBarStyle: isWindows ? 'default' : 'hidden',
+    frame: isMac,
+    titleBarStyle: 'hidden',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       spellcheck: true
@@ -140,8 +141,12 @@ app.on('ready', async function () {
       REACT_DEVELOPER_TOOLS,
       REDUX_DEVTOOLS
     } = await import('electron-devtools-installer')
-    await installExtension(REACT_DEVELOPER_TOOLS)
-    await installExtension(REDUX_DEVTOOLS)
+
+    try {
+      await installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
+    } catch (e) {
+      console.error('Failed to install devtools:', e)
+    }
   }
 
   handleNativeThemeUserActions()
@@ -215,6 +220,29 @@ app.on('ready', async function () {
     deepLinkUri = null
   })
 
+  ipcMain.handle('window:minimize', () => {
+    mainWindow?.minimize()
+  })
+
+  ipcMain.handle('window:maximize', () => {
+    if (mainWindow?.isMaximized()) {
+      mainWindow.unmaximize()
+    } else {
+      mainWindow?.maximize()
+    }
+  })
+
+  ipcMain.handle('window:close', () => {
+    mainWindow?.close()
+  })
+
+  mainWindow?.on('maximize', () => {
+    mainWindow?.webContents.send('window:maximized', true)
+  })
+
+  mainWindow?.on('unmaximize', () => {
+    mainWindow?.webContents.send('window:maximized', false)
+  })
   createWindow()
 })
 

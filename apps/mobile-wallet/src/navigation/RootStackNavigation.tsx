@@ -4,7 +4,6 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Modal, Platform, Pressable } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components/native'
 
 import { Analytics, sendAnalytics } from '~/analytics'
@@ -79,52 +78,50 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Host>
-        <NavigationContainer ref={rootStackNavigationRef} theme={themeNavigator}>
-          <Analytics>
-            <WalletConnectContextProvider>
-              <RootStack.Navigator
-                initialRouteName={initialRouteName || 'LandingScreen'}
-                screenOptions={{
-                  headerShown: false,
-                  presentation: Platform.OS === 'android' ? 'transparentModal' : undefined
-                }}
-              >
-                <RootStack.Group screenOptions={{ animation: 'fade' }}>
-                  <RootStack.Screen name="LandingScreen" component={LandingScreen} />
-                  <RootStack.Screen name="LoginWithPinScreen" component={LoginWithPinScreen} />
-                  <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
-                  <RootStack.Screen name="InWalletTabsNavigation" component={InWalletTabsNavigation} />
-                </RootStack.Group>
-                <RootStack.Screen name="SendNavigation" component={SendNavigation} />
-                <RootStack.Screen name="ReceiveNavigation" component={ReceiveNavigation} />
-                <RootStack.Screen name="BackupMnemonicNavigation" component={BackupMnemonicNavigation} />
-                <RootStack.Screen name="SettingsScreen" component={SettingsScreen} />
-                <RootStack.Screen name="NewContactScreen" component={NewContactScreen} />
-                <RootStack.Screen name="ContactScreen" component={ContactScreen} />
-                <RootStack.Screen name="NewAddressScreen" component={NewAddressScreen} />
-                <RootStack.Screen name="EditContactScreen" component={EditContactScreen} />
-                <RootStack.Screen name="AddressDiscoveryScreen" component={AddressDiscoveryScreen} />
-                <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
-                <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
-                <RootStack.Screen name="SelectImportMethodScreen" component={SelectImportMethodScreen} />
-                <RootStack.Screen name="DecryptScannedMnemonicScreen" component={DecryptScannedMnemonicScreen} />
-                <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
-                <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
-                <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
-                <RootStack.Screen name="PublicKeysScreen" component={PublicKeysScreen} />
-                <RootStack.Screen name="FundPasswordScreen" component={FundPasswordScreen} />
-                <RootStack.Screen
-                  name="ImportWalletAddressDiscoveryScreen"
-                  component={ImportWalletAddressDiscoveryScreen}
-                />
-              </RootStack.Navigator>
-              <AppModals />
-            </WalletConnectContextProvider>
-          </Analytics>
-          <AppUnlockModal initialRouteName={initialRouteName || 'InWalletTabsNavigation'} />
-        </NavigationContainer>
-      </Host>
+      <NavigationContainer ref={rootStackNavigationRef} theme={themeNavigator}>
+        <Analytics>
+          <WalletConnectContextProvider>
+            <RootStack.Navigator
+              initialRouteName={initialRouteName || 'LandingScreen'}
+              screenOptions={{
+                headerShown: false,
+                presentation: Platform.OS === 'android' ? 'transparentModal' : undefined
+              }}
+            >
+              <RootStack.Group screenOptions={{ animation: 'fade' }}>
+                <RootStack.Screen name="LandingScreen" component={LandingScreen} />
+                <RootStack.Screen name="LoginWithPinScreen" component={LoginWithPinScreen} />
+                <RootStack.Screen name="NewWalletSuccessScreen" component={NewWalletSuccessScreen} />
+                <RootStack.Screen name="InWalletTabsNavigation" component={InWalletTabsNavigation} />
+              </RootStack.Group>
+              <RootStack.Screen name="SendNavigation" component={SendNavigation} />
+              <RootStack.Screen name="ReceiveNavigation" component={ReceiveNavigation} />
+              <RootStack.Screen name="BackupMnemonicNavigation" component={BackupMnemonicNavigation} />
+              <RootStack.Screen name="SettingsScreen" component={SettingsScreen} />
+              <RootStack.Screen name="NewContactScreen" component={NewContactScreen} />
+              <RootStack.Screen name="ContactScreen" component={ContactScreen} />
+              <RootStack.Screen name="NewAddressScreen" component={NewAddressScreen} />
+              <RootStack.Screen name="EditContactScreen" component={EditContactScreen} />
+              <RootStack.Screen name="AddressDiscoveryScreen" component={AddressDiscoveryScreen} />
+              <RootStack.Screen name="NewWalletNameScreen" component={NewWalletNameScreen} />
+              <RootStack.Screen name="NewWalletIntroScreen" component={NewWalletIntroScreen} />
+              <RootStack.Screen name="SelectImportMethodScreen" component={SelectImportMethodScreen} />
+              <RootStack.Screen name="DecryptScannedMnemonicScreen" component={DecryptScannedMnemonicScreen} />
+              <RootStack.Screen name="ImportWalletSeedScreen" component={ImportWalletSeedScreen} />
+              <RootStack.Screen name="AddBiometricsScreen" component={AddBiometricsScreen} />
+              <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
+              <RootStack.Screen name="PublicKeysScreen" component={PublicKeysScreen} />
+              <RootStack.Screen name="FundPasswordScreen" component={FundPasswordScreen} />
+              <RootStack.Screen
+                name="ImportWalletAddressDiscoveryScreen"
+                component={ImportWalletAddressDiscoveryScreen}
+              />
+            </RootStack.Navigator>
+            <AppModals />
+          </WalletConnectContextProvider>
+        </Analytics>
+        <AppUnlockModal initialRouteName={initialRouteName || 'InWalletTabsNavigation'} />
+      </NavigationContainer>
     </GestureHandlerRootView>
   )
 }

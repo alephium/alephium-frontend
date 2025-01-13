@@ -1,4 +1,3 @@
-import { ADDRESSES_QUERY_LIMIT } from '@alephium/shared'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
@@ -38,28 +37,6 @@ export const useFetchSortedAddressesHashesWithLatestTx = (props?: SkipProp) => {
       [latestTxs, defaultAddressHash]
     ),
     isLoading: isLoadingLatestTxs
-  }
-}
-
-export const useCappedAddressesHashes = () => {
-  const allAddressHashes = useUnsortedAddressesHashes()
-
-  const exceedsAddressLimit = allAddressHashes.length > ADDRESSES_QUERY_LIMIT
-  const { data: allAddressHashesSorted, isLoading: isLoadingSortedAddresses } = useFetchSortedAddressesHashes({
-    skip: !exceedsAddressLimit
-  })
-
-  return {
-    isCapped: exceedsAddressLimit,
-    addressHashes: useMemo(
-      () =>
-        exceedsAddressLimit
-          ? !isLoadingSortedAddresses
-            ? allAddressHashesSorted.slice(0, ADDRESSES_QUERY_LIMIT)
-            : []
-          : allAddressHashes,
-      [allAddressHashes, allAddressHashesSorted, exceedsAddressLimit, isLoadingSortedAddresses]
-    )
   }
 }
 

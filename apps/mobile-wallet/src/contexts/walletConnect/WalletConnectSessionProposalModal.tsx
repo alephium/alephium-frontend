@@ -18,8 +18,8 @@ import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import InfoBox from '~/components/InfoBox'
 import { ScreenSection } from '~/components/layout/Screen'
-import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
@@ -57,7 +57,6 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
     const { t } = useTranslation()
     const { walletConnectClient, activeSessions, refreshActiveSessions } = useWalletConnectContext()
 
-    const [loading, setLoading] = useState('')
     const [signerAddress, setSignerAddress] = useState<Address>()
     const [showAlternativeSignerAddresses, setShowAlternativeSignerAddresses] = useState(false)
 
@@ -74,7 +73,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
     }, [addressesInGroup])
 
     const handleAddressGeneratePress = async () => {
-      setLoading(`${t('Generating new address')}...`)
+      dispatch(activateAppLoading(t('Generating new address')))
 
       try {
         await initializeKeyringWithStoredWallet()
@@ -94,7 +93,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
         keyring.clear()
       }
 
-      setLoading('')
+      dispatch(deactivateAppLoading())
     }
 
     const handleApproveProposal = async (signerAddress: Address) => {
@@ -142,7 +141,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
       console.log('✅ VERIFIED USER PROVIDED DATA!')
 
       try {
-        setLoading('Approving...')
+        dispatch(activateAppLoading(t('Approving')))
         console.log('⏳ APPROVING PROPOSAL...')
 
         const existingSession = activeSessions.find((session) => session.peer.metadata.url === metadata.url)
@@ -178,7 +177,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
         console.error('❌ WC: Error while approving and acknowledging', e)
       } finally {
         refreshActiveSessions()
-        setLoading('')
+        dispatch(deactivateAppLoading())
         showToast({ text1: t('dApp request approved'), text2: t('You can go back to your browser.') })
         dispatch(closeModal({ id: modalId }))
       }
@@ -188,7 +187,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
       if (!walletConnectClient) return
 
       try {
-        setLoading('Rejecting...')
+        dispatch(activateAppLoading(t('Rejecting')))
         console.log('👎 REJECTING SESSION PROPOSAL:', proposalEventId)
         await walletConnectClient.rejectSession({ id: proposalEventId, reason: getSdkError('USER_REJECTED') })
         console.log('✅ REJECTING: DONE!')
@@ -196,7 +195,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
         console.error('❌ WC: Error while rejecting', e)
       } finally {
         refreshActiveSessions()
-        setLoading('')
+        dispatch(deactivateAppLoading())
         showToast({ text1: t('dApp request rejected'), text2: t('You can go back to your browser.'), type: 'info' })
         dispatch(closeModal({ id: modalId }))
       }
@@ -341,8 +340,6 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
               </BottomButtons>
             </>
           )}
-
-          <SpinnerModal isActive={!!loading} text={loading} />
         </ModalContent>
       </BottomModal>
     )

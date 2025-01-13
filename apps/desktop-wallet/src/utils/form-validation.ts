@@ -1,7 +1,7 @@
 import { Contact } from '@alephium/shared'
 import { isValidAddress, Optional } from '@alephium/web3'
 
-import i18n from '@/i18n'
+import i18n from '@/features/localization/i18n'
 import { store } from '@/storage/store'
 
 export const requiredErrorMessage = i18n.t('This field is required')

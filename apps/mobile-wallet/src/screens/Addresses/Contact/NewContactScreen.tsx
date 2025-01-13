@@ -1,11 +1,11 @@
 import { ContactFormData } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
+import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { persistContact } from '~/persistent-storage/contacts'
 import ContactFormBaseScreen from '~/screens/Addresses/Contact/ContactFormBaseScreen'
@@ -14,8 +14,8 @@ import { showExceptionToast } from '~/utils/layout'
 interface NewContactScreenProps extends StackScreenProps<RootStackParamList, 'NewContactScreen'>, ScrollScreenProps {}
 
 const NewContactScreen = ({ navigation }: NewContactScreenProps) => {
-  const [loading, setLoading] = useState(false)
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
   const initialValues = {
     id: undefined,
@@ -24,7 +24,7 @@ const NewContactScreen = ({ navigation }: NewContactScreenProps) => {
   }
 
   const handleSavePress = async (formData: ContactFormData) => {
-    setLoading(true)
+    dispatch(activateAppLoading(t('Saving')))
 
     try {
       await persistContact(formData)
@@ -37,21 +37,18 @@ const NewContactScreen = ({ navigation }: NewContactScreenProps) => {
       sendAnalytics({ type: 'error', error, message })
     }
 
-    setLoading(false)
+    dispatch(deactivateAppLoading())
 
     navigation.goBack()
   }
 
   return (
-    <>
-      <ContactFormBaseScreen
-        initialValues={initialValues}
-        onSubmit={handleSavePress}
-        screenTitle={t('New contact')}
-        contentPaddingTop
-      />
-      <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
-    </>
+    <ContactFormBaseScreen
+      initialValues={initialValues}
+      onSubmit={handleSavePress}
+      screenTitle={t('New contact')}
+      contentPaddingTop
+    />
   )
 }
 

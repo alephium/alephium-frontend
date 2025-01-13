@@ -14,7 +14,7 @@ import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/bat
 import axios from 'axios'
 
 import client from '@/api/client'
-import i18n from '@/i18n'
+import i18n from '@/features/localization/i18n'
 import {
   AssetBase,
   AssetType,

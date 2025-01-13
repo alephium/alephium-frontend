@@ -2,8 +2,8 @@ import { AddressHash, exponentialBackoffFetchRetry, throttledClient } from '@ale
 import { transactionSign } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 
+import i18n from '@/features/localization/i18n'
 import { ThemeType } from '@/features/theme/themeTypes'
-import i18n from '@/i18n'
 import { RootState } from '@/storage/store'
 import { OptionalMessage, SnackbarMessage, ToastMessage } from '@/types/snackbar'
 import { SentTransaction } from '@/types/transactions'

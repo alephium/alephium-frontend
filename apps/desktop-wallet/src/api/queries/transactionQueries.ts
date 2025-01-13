@@ -1,4 +1,4 @@
-import { AddressHash, FIVE_MINUTES_MS, throttledClient } from '@alephium/shared'
+import { AddressHash, FIVE_MINUTES_MS, throttledClient, TRANSACTIONS_PAGE_DEFAULT_LIMIT } from '@alephium/shared'
 import { explorer as e, sleep } from '@alephium/web3'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
 
@@ -40,7 +40,8 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
               // See https://github.com/alephium/alephium-frontend/issues/981#issuecomment-2535493157
               await sleep(2000)
               queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'balance'] })
-              queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions', 'latest'] })
+              queryClient.invalidateQueries({ queryKey: ['address', addressHash, 'transactions', 'latest'] })
+              queryClient.invalidateQueries({ queryKey: ['wallet', 'transactions'] })
             }
 
             return {
@@ -49,6 +50,16 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
             }
           }
         : skipToken
+  })
+
+export const addressLatestTransactionsQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'transactions', 'latest', { networkId }],
+    // When the user navigates away from the Overview page for 5 minutes or when addresses are generated/removed
+    // the cached data will be deleted.
+    ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
+    queryFn: () =>
+      throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: 1, limit: 5 })
   })
 
 interface TransactionsInfiniteQueryBaseProps {
@@ -66,13 +77,16 @@ export const addressTransactionsInfiniteQuery = ({
   skip
 }: AddressTransactionsInfiniteQueryProps) =>
   infiniteQueryOptions({
-    queryKey: ['address', addressHash, 'transactions', { networkId }],
+    queryKey: ['address', addressHash, 'transactions', 'infinite', { networkId }],
     // 5 minutes after the user navigates away from the address details modal, the cached data will be deleted.
     ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       !skip && networkId !== undefined
         ? ({ pageParam }) =>
-            throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, { page: pageParam })
+            throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
+              page: pageParam,
+              limit: TRANSACTIONS_PAGE_DEFAULT_LIMIT
+            })
         : skipToken,
     initialPageParam: 1,
     getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null)
@@ -80,6 +94,11 @@ export const addressTransactionsInfiniteQuery = ({
 
 interface WalletTransactionsInfiniteQueryProps extends TransactionsInfiniteQueryBaseProps {
   addressHashes: AddressHash[]
+}
+
+type PageParam = {
+  page: number
+  addressesWithMoreTxPages: AddressHash[]
 }
 
 export const walletTransactionsInfiniteQuery = ({
@@ -95,48 +114,40 @@ export const walletTransactionsInfiniteQuery = ({
     queryFn:
       !skip && networkId !== undefined
         ? async ({ pageParam }) => {
-            let results: e.Transaction[] = []
-            const args = { page: pageParam }
+            const addresses = pageParam.page === 1 ? addressHashes : pageParam.addressesWithMoreTxPages
+            const pageResults = await Promise.all(
+              addresses.map(async (addressHash) => ({
+                addressHash,
+                transactions: await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
+                  page: pageParam.page,
+                  limit: TRANSACTIONS_PAGE_DEFAULT_LIMIT
+                })
+              }))
+            )
 
-            if (addressHashes.length === 1) {
-              results = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHashes[0], args)
-            } else if (addressHashes.length > 1) {
-              results = await throttledClient.explorer.addresses.postAddressesTransactions(args, addressHashes)
+            const addressesWithMoreTxPages = addresses.filter((hash) => {
+              const txs = pageResults.find(({ addressHash }) => addressHash === hash)?.transactions
+
+              return txs && txs.length > 0
+            })
+
+            return {
+              pageTransactions: pageResults.flatMap(({ transactions }) => transactions),
+              addressesWithMoreTxPages
             }
-
-            return results
           }
         : skipToken,
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, _, lastPageParam) => (lastPage.length > 0 ? (lastPageParam += 1) : null)
-  })
-
-interface WalletLatestTransactionsQueryProps {
-  networkId?: number
-  addressHashes: AddressHash[]
-}
-
-export const walletLatestTransactionsQuery = ({ addressHashes, networkId }: WalletLatestTransactionsQueryProps) =>
-  queryOptions({
-    queryKey: ['wallet', 'transactions', 'latest', { networkId, addressHashes }],
-    // When the user navigates away from the Overview page for 5 minutes or when addresses are generated/removed the
-    // cached data will be deleted.
-    ...getQueryConfig({ staleTime: Infinity, gcTime: FIVE_MINUTES_MS, networkId }),
-    queryFn:
-      networkId !== undefined
-        ? async () => {
-            let results: e.Transaction[] = []
-            const args = { page: 1, limit: 5 }
-
-            if (addressHashes.length === 1) {
-              results = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHashes[0], args)
-            } else if (addressHashes.length > 1) {
-              results = await throttledClient.explorer.addresses.postAddressesTransactions(args, addressHashes)
-            }
-
-            return results
-          }
-        : skipToken
+    initialPageParam: {
+      page: 1,
+      addressesWithMoreTxPages: []
+    } as PageParam,
+    getNextPageParam: ({ addressesWithMoreTxPages }, _, lastPageParam) =>
+      lastPageParam.page !== 1 && lastPageParam.addressesWithMoreTxPages.length === 0
+        ? null
+        : ({
+            page: lastPageParam.page + 1,
+            addressesWithMoreTxPages
+          } as PageParam)
   })
 
 interface TransactionQueryProps extends SkipProp {

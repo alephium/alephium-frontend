@@ -15,17 +15,17 @@ import Select from '@/components/Inputs/Select'
 import Toggle from '@/components/Inputs/Toggle'
 import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { Language, languageOptions } from '@/features/localization/languages'
+import { languageChanged } from '@/features/localization/localizationActions'
 import { openModal } from '@/features/modals/modalActions'
 import RegionSettings from '@/features/settings/RegionSettings'
 import {
   analyticsToggled,
   discreetModeToggled,
-  languageChanged,
   passwordRequirementToggled,
   walletLockTimeChanged
 } from '@/features/settings/settingsActions'
-import { fiatCurrencyOptions, languageOptions, locktimeInMinutes } from '@/features/settings/settingsConstants'
-import { Language } from '@/features/settings/settingsTypes'
+import { fiatCurrencyOptions, locktimeInMinutes } from '@/features/settings/settingsConstants'
 import { ThemeSettings } from '@/features/theme/themeTypes'
 import { switchTheme } from '@/features/theme/themeUtils'
 import { deleteThumbnailsDB } from '@/features/thumbnails/thumbnailStorage'

@@ -196,13 +196,19 @@ const WalletConnectSessionRequestEventHandler = ({
             dispatch(openModal({ name: 'SignMessageModal', props: { txData } }))
             break
           }
-          case 'alph_signUnsignedTx': {
+          case 'alph_signUnsignedTx':
+          case 'alph_signAndSubmitUnsignedTx': {
             const { unsignedTx, signerAddress } = request.params as SignUnsignedTxParams
             const txData: SignUnsignedTxData = {
               fromAddress: getSignerAddressByHash(signerAddress),
               unsignedTx
             }
-            dispatch(openModal({ name: 'SignUnsignedTxModal', props: { txData } }))
+            dispatch(
+              openModal({
+                name: 'SignUnsignedTxModal',
+                props: { txData, submit: request.method === 'alph_signAndSubmitUnsignedTx' }
+              })
+            )
             break
           }
           case 'alph_requestNodeApi': {

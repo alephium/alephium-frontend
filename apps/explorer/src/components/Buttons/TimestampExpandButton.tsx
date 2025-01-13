@@ -3,7 +3,7 @@ import { RiContractLeftRightLine, RiExpandLeftRightLine } from 'react-icons/ri'
 import styled from 'styled-components'
 
 import { useSettings } from '@/contexts/settingsContext'
-import i18n from '@/i18n'
+import i18n from '@/features/localization/i18n'
 import { OnOff } from '@/types/generics'
 
 interface TimestampExpandButtonProps {

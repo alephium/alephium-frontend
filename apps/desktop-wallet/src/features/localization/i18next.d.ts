@@ -1,6 +1,6 @@
 import 'i18next'
 
-import en from '../../locales/en-US/translation.json'
+import en from '../../../locales/en-US/translation.json'
 
 type EnglishTranslationKeys = typeof en
 

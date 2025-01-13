@@ -1,7 +1,7 @@
 import { upperFirst } from 'lodash'
 import { useMemo } from 'react'
 
-import { Language } from '@/features/settings/settingsTypes'
+import { Language } from '@/features/localization/languages'
 import { useAppSelector } from '@/hooks/redux'
 
 import regionsLocales from './regions.json'

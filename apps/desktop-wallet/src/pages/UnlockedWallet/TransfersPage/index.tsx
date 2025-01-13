@@ -36,6 +36,10 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
     return () => scrollDirection?.destroy()
   }, [scrollDirection])
 
+  // TODO: The props of WalletTransactionsList change on every render due to the map function.
+  // This needs to be improved because we perform heavy computations to transform Tanstack data to display transactions.
+  // We could try storing the filtering criteria in Redux instead of prop drilling.
+
   return (
     <UnlockedWalletPage
       title={t('Transfers')}

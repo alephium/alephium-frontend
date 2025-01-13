@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { sendAnalytics } from '~/analytics'
 import Button from '~/components/buttons/Button'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -25,8 +25,6 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
 
-  const [loading, setLoading] = useState(false)
-
   const initialValues = {
     label: '',
     color: getRandomLabelColor(),
@@ -38,7 +36,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const handleGeneratePress = async () => {
     const { isDefault, label, color, group } = values
 
-    setLoading(true)
+    dispatch(activateAppLoading(t('Generating new address')))
 
     try {
       await initializeKeyringWithStoredWallet()
@@ -66,7 +64,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       keyring.clear()
     }
 
-    setLoading(false)
+    dispatch(deactivateAppLoading())
 
     navigation.goBack()
   }
@@ -86,7 +84,6 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
         onValuesChange={setValues}
         allowGroupSelection
       />
-      <SpinnerModal isActive={loading} text={`${t('Generating new address')}...`} />
     </ScrollScreen>
   )
 }

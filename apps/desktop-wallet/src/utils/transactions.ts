@@ -1,8 +1,8 @@
 import dayjs from 'dayjs'
 
 import { SelectOption } from '@/components/Inputs/Select'
-import i18n from '@/i18n'
-import { TranslationKey } from '@/types/i18next'
+import i18n from '@/features/localization/i18n'
+import { TranslationKey } from '@/features/localization/i18next'
 import { Direction, TransactionTimePeriod } from '@/types/transactions'
 
 const now = dayjs()

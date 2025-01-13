@@ -38,4 +38,5 @@ export type SessionRequestData =
       type: 'sign-unsigned-tx'
       wcData: SignUnsignedTxData
       unsignedTxData: DecodeUnsignedTxResult
+      submit: boolean
     }

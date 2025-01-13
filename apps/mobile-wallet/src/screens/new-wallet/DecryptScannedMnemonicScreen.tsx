@@ -11,7 +11,7 @@ import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -39,7 +39,6 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
 
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
 
   useFocusEffect(
     useCallback(() => {
@@ -65,7 +64,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
     }
 
     try {
-      setLoading(true)
+      dispatch(activateAppLoading(t('Importing wallet')))
 
       const decryptedData = await decryptAsync(password, qrCodeImportedEncryptedMnemonic, pbkdf2)
       const { mnemonic, addresses, contacts } = JSON.parse(decryptedData) as WalletImportData
@@ -103,7 +102,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
     } catch (e) {
       setError(t('Could not decrypt wallet with the given password.'))
     } finally {
-      setLoading(false)
+      dispatch(deactivateAppLoading())
     }
   }
 
@@ -123,6 +122,8 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
       verticalGap
       fill
       keyboardShouldPersistTaps="always"
+      screenTitle={t('Password')}
+      screenIntro={t('Enter your desktop wallet password to decrypt the secret recovery phrase.')}
       headerOptions={{ headerTitle: t('Password'), type: 'stack' }}
       bottomButtonsRender={() => (
         <Button
@@ -132,7 +133,6 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
           disabled={!password || !!error}
         />
       )}
-      screenIntro={t('Enter your desktop wallet password to decrypt the secret recovery phrase.')}
       contentPaddingTop
     >
       <ScreenSection fill>
@@ -149,7 +149,6 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
           onSubmitEditing={decryptAndImportWallet}
         />
       </ScreenSection>
-      {loading && <SpinnerModal isActive={loading} text={`${t('Importing wallet')}...`} />}
     </ScrollScreen>
   )
 }

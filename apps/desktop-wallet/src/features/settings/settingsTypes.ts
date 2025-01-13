@@ -1,5 +1,6 @@
 import { Currency, NetworkSettings } from '@alephium/shared'
 
+import { Language } from '@/features/localization/languages'
 import { ThemeSettings } from '@/features/theme/themeTypes'
 
 export interface GeneralSettings {
@@ -18,18 +19,3 @@ export interface Settings {
   general: GeneralSettings
   network: NetworkSettings
 }
-
-export type Language =
-  | 'en-US'
-  | 'fr-FR'
-  | 'de-DE'
-  | 'vi-VN'
-  | 'pt-PT'
-  | 'ru-RU'
-  | 'bg-BG'
-  | 'es-ES'
-  | 'id-ID'
-  | 'tr-TR'
-  | 'it-IT'
-  | 'el-GR'
-  | 'zh-CN'

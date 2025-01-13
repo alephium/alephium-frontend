@@ -473,7 +473,6 @@
   "Transaction was sent...": "Giao dịch đã được gửi...",
   "Transaction is about to be included in the blockchain...": "Giao dịch sắp được đưa vào trong blockchain...",
   "Transaction is now part of the blockchain": "Giao dịch đã được thêm vào trong blockchain",
-  "Your wallet has too many addresses. These are the transactions of the {{ maxNumber }} most frequently used addresses. Please, consider removing some of them.": "Ví của bạn có quá nhiều địa chỉ. Đây là các giao dịch của {{ maxNumber }} địa chỉ được sử dụng thường xuyên nhất. Vui lòng xem xét xóa bớt một vài địa chỉ.",
   "Forget": "Quên",
   "forgetAddress_one": "Quên địa chỉ",
   "forgetAddress_other": "Quên các địa chỉ",
@@ -511,5 +510,8 @@
   "Welcome to your Ledger!": "Chào mừng đến với Ledger của bạn!",
   "Would you like to scan for active addresses?": "Bạn có muốn quét để tìm các địa chỉ đang hoạt động không?",
   "Scan": "Quét",
-  "Active address discovery completed. Addresses added: {{ count }}": "Quá trình tìm kiếm các địa chỉ đang hoạt động đã hoàn tất. Các địa chỉ được thêm vào: {{ count }}"
+  "Active address discovery completed. Addresses added: {{ count }}": "Quá trình tìm kiếm các địa chỉ đang hoạt động đã hoàn tất. Các địa chỉ được thêm vào: {{ count }}",
+  "Loading new transactions...": "Đang tải giao dịch mới...",
+  "Sign and Send Unsigned Transaction": "Ký và Gửi Giao Dịch Chưa Thực Thi",
+  "Sign and Send": "Ký và Gửi"
 }
