@@ -41,8 +41,6 @@ const AppModals = () => {
     return null
   }
 
-  console.log(openedModals)
-
   return (
     <ModalsContainer>
       {openedModals.map((modal) => {

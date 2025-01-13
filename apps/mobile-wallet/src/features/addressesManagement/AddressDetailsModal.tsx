@@ -54,7 +54,7 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
   }
 
   const handleSettingsPress = () => {
-    dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash } }))
+    dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash, parentModalId: id } }))
   }
 
   return (

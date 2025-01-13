@@ -26,9 +26,10 @@ import { showExceptionToast, showToast } from '~/utils/layout'
 
 interface AddressSettingsModalProps {
   addressHash: AddressHash
+  parentModalId?: number
 }
 
-const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, addressHash }) => {
+const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, addressHash, parentModalId }) => {
   const dispatch = useAppDispatch()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
@@ -51,7 +52,7 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
         text: t('Forget'),
         style: 'destructive',
         onPress: async () => {
-          dispatch(closeModal({ name: 'AddressDetailsModal' }))
+          if (parentModalId) dispatch(closeModal({ id: parentModalId }))
           dispatch(closeModal({ id }))
 
           try {
