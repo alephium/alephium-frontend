@@ -2,7 +2,6 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { StatusBar } from 'expo-status-bar'
 import { useTranslation } from 'react-i18next'
-import { Host } from 'react-native-portalize'
 import { useTheme } from 'styled-components'
 
 import FooterMenu from '~/components/footers/FooterMenu'
@@ -25,7 +24,7 @@ const InWalletTabsNavigation = () => {
   const { t } = useTranslation()
 
   return (
-    <Host>
+    <>
       <StatusBar style={theme.name === 'light' ? 'dark' : 'light'} />
       <InWalletTabs.Navigator
         tabBar={(props) => <FooterMenu {...props} />}
@@ -74,7 +73,7 @@ const InWalletTabsNavigation = () => {
           }}
         />
       </InWalletTabs.Navigator>
-    </Host>
+    </>
   )
 }
 
