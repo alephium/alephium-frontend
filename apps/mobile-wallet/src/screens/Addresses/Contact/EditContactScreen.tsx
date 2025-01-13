@@ -1,13 +1,13 @@
 import { ContactFormData } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
 
 import { sendAnalytics } from '~/analytics'
 import Button from '~/components/buttons/Button'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { deleteContact, persistContact } from '~/persistent-storage/contacts'
@@ -22,9 +22,6 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
-  const [loading, setLoading] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -38,7 +35,7 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
               {
                 text: t('Delete'),
                 onPress: async () => {
-                  setIsDeleting(true)
+                  dispatch(activateAppLoading(t('Deleting')))
 
                   try {
                     await deleteContact(params.contactId)
@@ -50,7 +47,7 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
                     showExceptionToast(error, t(message))
                     sendAnalytics({ type: 'error', error, message })
                   } finally {
-                    setIsDeleting(false)
+                    dispatch(deactivateAppLoading())
                   }
 
                   navigation.pop(3)
@@ -66,7 +63,7 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
   if (!contact) return null
 
   const handleSavePress = async (formData: ContactFormData) => {
-    setLoading(true)
+    dispatch(activateAppLoading(t('Saving')))
 
     try {
       await persistContact(formData)
@@ -79,23 +76,17 @@ const EditContactScreen = ({ navigation, route: { params } }: EditContactScreenP
       sendAnalytics({ type: 'error', error, message })
     }
 
-    setLoading(false)
+    dispatch(deactivateAppLoading())
 
     navigation.goBack()
   }
 
   return (
-    <>
-      <ContactFormBaseScreen
-        headerOptions={{ headerTitle: t('Edit contact') }}
-        initialValues={contact}
-        onSubmit={handleSavePress}
-      />
-      <SpinnerModal
-        isActive={loading || isDeleting}
-        text={loading ? `${t('Saving')}...` : isDeleting ? `${t('Deleting')}...` : ''}
-      />
-    </>
+    <ContactFormBaseScreen
+      headerOptions={{ headerTitle: t('Edit contact') }}
+      initialValues={contact}
+      onSubmit={handleSavePress}
+    />
   )
 }
 

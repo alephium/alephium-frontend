@@ -2,7 +2,7 @@ import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -13,8 +13,8 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import SpinnerModal from '~/components/SpinnerModal'
 import AddressCardDeleteButton from '~/features/address-deletion/AddressCardDeleteButton'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
@@ -41,8 +41,6 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
-
-  const [loading, setLoading] = useState(false)
 
   const isDefaultAddress = address?.settings.isDefault
 
@@ -74,7 +72,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
   const handleDefaultAddressToggle = async () => {
     if (address.settings.isDefault) return
 
-    setLoading(true)
+    dispatch(activateAppLoading(t('Updating default address')))
 
     try {
       const newSettings = { ...address.settings, isDefault: true }
@@ -88,7 +86,7 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
     } catch (error) {
       sendAnalytics({ type: 'error', error, message: 'Could not use address card default toggle' })
     } finally {
-      setLoading(false)
+      dispatch(deactivateAppLoading())
     }
   }
 
@@ -173,7 +171,6 @@ const AddressCard = ({ style, addressHash, onSettingsPress }: AddressCardProps) 
           </ButtonsRow>
         </BottomRow>
       </CardGradientContainer>
-      <SpinnerModal isActive={loading} text={`${t('Updating default address')}...`} />
     </View>
   )
 }

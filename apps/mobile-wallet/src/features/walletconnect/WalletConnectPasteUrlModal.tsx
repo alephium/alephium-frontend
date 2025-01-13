@@ -6,8 +6,8 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
-import SpinnerModal from '~/components/SpinnerModal'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
@@ -26,7 +26,6 @@ const WalletConnectPasteUrlModal = withModal<WalletConnectPasteUrlModalProps>(({
 
   const [inputWcUrl, setInputWcUrl] = useState('')
   const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
 
   const handleInputChange = (url: string) => {
     setError(!url.startsWith('wc:') ? t('This is not a valid WalletConnect URI') : '')
@@ -35,11 +34,11 @@ const WalletConnectPasteUrlModal = withModal<WalletConnectPasteUrlModalProps>(({
 
   const handleConnect = async () => {
     if (inputWcUrl.startsWith('wc:')) {
-      setIsLoading(true)
+      dispatch(activateAppLoading(t('Connecting')))
 
       await pairWithDapp(inputWcUrl)
 
-      setIsLoading(false)
+      dispatch(deactivateAppLoading())
 
       onClose && onClose()
       sendAnalytics({ event: 'WC: Connected by manually pasting URI' })
@@ -75,7 +74,6 @@ const WalletConnectPasteUrlModal = withModal<WalletConnectPasteUrlModalProps>(({
           <Button title={t('Connect')} variant="highlight" onPress={handleConnect} disabled={!inputWcUrl || !!error} />
         </ScreenSection>
       </ModalContent>
-      <SpinnerModal isActive={isLoading} />
     </BottomModal>
   )
 })

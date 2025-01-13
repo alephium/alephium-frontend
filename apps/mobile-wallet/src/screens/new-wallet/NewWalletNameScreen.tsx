@@ -8,8 +8,8 @@ import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import i18n from '~/features/localization/i18n'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
@@ -40,7 +40,6 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
   const { t } = useTranslation()
 
   const [name, setName] = useState('')
-  const [loading, setLoading] = useState(false)
 
   const handleButtonPress = async () => {
     if (!name) return
@@ -49,7 +48,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
       dispatch(newWalletNameEntered(name))
       navigation.navigate('SelectImportMethodScreen')
     } else if (method === 'create') {
-      setLoading(true)
+      dispatch(activateAppLoading(t('Creating wallet')))
 
       try {
         await sleep(0) // Allow react state to update to display loader before heavy operation
@@ -71,7 +70,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
         showExceptionToast(error, t(message))
         sendAnalytics({ type: 'error', error, message, isSensitive: true })
       } finally {
-        setLoading(false)
+        dispatch(deactivateAppLoading())
       }
     }
   }
@@ -112,7 +111,6 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           textAlign="center"
         />
       </ContentContainer>
-      <SpinnerModal isActive={loading} text={`${t('Creating wallet')}...`} />
     </ScrollScreen>
   )
 }

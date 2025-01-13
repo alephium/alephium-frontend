@@ -1,6 +1,5 @@
 import { AddressSettings } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -8,7 +7,7 @@ import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import { ScreenSection } from '~/components/layout/Screen'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -25,14 +24,12 @@ const EditAddressScreen = ({ navigation, route: { params } }: EditAddressScreenP
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
 
-  const [loading, setLoading] = useState(false)
-
   if (!address) return null
 
   const handleSavePress = async (settings: AddressSettings) => {
     if (address.settings.isDefault && !settings.isDefault) return
 
-    setLoading(true)
+    dispatch(activateAppLoading(t('Saving')))
 
     try {
       await persistAddressSettings({ ...address, settings })
@@ -46,29 +43,26 @@ const EditAddressScreen = ({ navigation, route: { params } }: EditAddressScreenP
       sendAnalytics({ type: 'error', message })
     }
 
-    setLoading(false)
+    dispatch(deactivateAppLoading())
     navigation.goBack()
   }
 
   return (
-    <>
-      <AddressFormBaseScreen
-        contentPaddingTop
-        initialValues={address.settings}
-        onSubmit={handleSavePress}
-        buttonText="Save"
-        disableIsMainToggle={address.settings.isDefault}
-        screenTitle={t('Address settings')}
-        HeaderComponent={
-          <ScreenSection>
-            <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
-              {addressHash}
-            </HashEllipsed>
-          </ScreenSection>
-        }
-      />
-      <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
-    </>
+    <AddressFormBaseScreen
+      contentPaddingTop
+      initialValues={address.settings}
+      onSubmit={handleSavePress}
+      buttonText="Save"
+      disableIsMainToggle={address.settings.isDefault}
+      screenTitle={t('Address settings')}
+      HeaderComponent={
+        <ScreenSection>
+          <HashEllipsed numberOfLines={1} ellipsizeMode="middle" color="secondary">
+            {addressHash}
+          </HashEllipsed>
+        </ScreenSection>
+      }
+    />
   )
 }
 

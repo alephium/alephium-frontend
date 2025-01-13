@@ -1,11 +1,11 @@
 import { keyring } from '@alephium/keyring'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -24,8 +24,6 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
 
-  const [loading, setLoading] = useState(false)
-
   const initialValues = {
     label: '',
     color: getRandomLabelColor(),
@@ -33,7 +31,7 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   }
 
   const handleGeneratePress = async ({ isDefault, label, color, group }: AddressFormData) => {
-    setLoading(true)
+    dispatch(activateAppLoading(t('Generating new address')))
 
     try {
       await initializeKeyringWithStoredWallet()
@@ -61,22 +59,19 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       keyring.clear()
     }
 
-    setLoading(false)
+    dispatch(deactivateAppLoading())
 
     navigation.goBack()
   }
 
   return (
-    <>
-      <AddressFormBaseScreen
-        screenTitle={t('New address')}
-        initialValues={initialValues}
-        onSubmit={handleGeneratePress}
-        allowGroupSelection
-        contentPaddingTop
-      />
-      <SpinnerModal isActive={loading} text={`${t('Generating new address')}...`} />
-    </>
+    <AddressFormBaseScreen
+      screenTitle={t('New address')}
+      initialValues={initialValues}
+      onSubmit={handleGeneratePress}
+      allowGroupSelection
+      contentPaddingTop
+    />
   )
 }
 
