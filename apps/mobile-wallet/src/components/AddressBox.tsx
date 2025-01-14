@@ -63,7 +63,13 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
       {...props}
       onPress={handlePress}
       onLongPress={handleLongPress}
-      style={[style, { borderRadius: rounded ? BORDER_RADIUS : 0 }]}
+      style={[
+        style,
+        {
+          borderRadius: rounded ? BORDER_RADIUS : 0,
+          backgroundColor: isSelected ? theme.bg.accent : theme.bg.secondary
+        }
+      ]}
     >
       <BadgeContainer>
         {isSelected ? (
@@ -76,7 +82,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
           </Animated.View>
         )}
       </BadgeContainer>
-      <TextualContent style={{ borderBottomWidth: !isLast ? 1 : 0 }}>
+      <TextualContent>
         <AddressBoxColumn>
           {address.settings.label && (
             <AppText numberOfLines={1} semiBold size={16} color={isSelected ? theme.global.accent : theme.font.primary}>
@@ -122,13 +128,16 @@ export default AddressBox
 const AddressBoxStyled = styled(AnimatedPressable)`
   flex-direction: row;
   overflow: hidden;
+  border-radius: 22px;
+  padding: 0 15px;
+  margin-bottom: ${VERTICAL_GAP / 2}px;
 `
 
 const BadgeContainer = styled.View`
   justify-content: flex-start;
   align-items: center;
   width: 26px;
-  padding: ${VERTICAL_GAP}px 0;
+  padding: 15px 0;
 `
 
 const SelectedBadge = styled(Animated.View)`
@@ -145,8 +154,7 @@ const TextualContent = styled.View`
   min-height: 60px;
   flex-direction: row;
   gap: ${DEFAULT_MARGIN}px;
-  border-color: ${({ theme }) => theme.border.secondary};
-  padding: ${VERTICAL_GAP}px 0;
+  padding: 15px 0;
   margin-left: ${DEFAULT_MARGIN}px;
 `
 
