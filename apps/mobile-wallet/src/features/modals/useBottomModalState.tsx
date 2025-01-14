@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { NativeScrollEvent, NativeSyntheticEvent, Platform, useWindowDimensions } from 'react-native'
+import { Platform, useWindowDimensions } from 'react-native'
 import { Gesture } from 'react-native-gesture-handler'
 import { interpolate, runOnJS, runOnUI, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -16,12 +16,6 @@ export interface UseBottomModalStateParams {
   maximisedContent?: boolean
   minHeight?: number
   onClose?: () => void
-}
-
-export interface ContentScrollHandlers {
-  onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void
-  onScrollBeginDrag: () => void
-  onScrollEndDrag: () => void
 }
 
 const springConfig = {
@@ -56,11 +50,6 @@ export const useBottomModalState = ({
   const shouldMaximizeOnOpen = useSharedValue(!!maximisedContent)
   const contentHeight = useSharedValue(0)
   const canMaximize = useSharedValue(false)
-
-  const contentScrollY = useSharedValue(0)
-  const previousContentScrollY = useSharedValue(0)
-  const isContentDragged = useSharedValue(false)
-  const modalHeightDelta = useSharedValue(0)
 
   const offsetY = useSharedValue(0)
 
@@ -138,37 +127,6 @@ export const useBottomModalState = ({
     ]
   )
 
-  // Content scroll handlers
-  const contentScrollHandlers: ContentScrollHandlers = {
-    onScroll: (e) => {
-      contentScrollY.value = e.nativeEvent.contentOffset.y
-
-      if (!isContentDragged.value) return
-
-      if (contentScrollY.value <= 5) {
-        // Move the modal
-        if (contentScrollY.value < previousContentScrollY.value) {
-          const newModalHeightValue = modalHeight.value - contentScrollY.value
-          modalHeightDelta.value = modalHeight.value - newModalHeightValue
-          modalHeight.value = newModalHeightValue
-        }
-      } else if (-modalHeight.value < maxHeight) {
-        handleMaximize()
-      }
-      previousContentScrollY.value = contentScrollY.value
-    },
-    onScrollBeginDrag: () => {
-      isContentDragged.value = true
-    },
-    onScrollEndDrag: () => {
-      isContentDragged.value = false
-
-      if (modalHeightDelta.value < -1) {
-        handleClose()
-      }
-    }
-  }
-
   // Animated Styles
   // ----------------------------
   const modalAnimatedStyle = useAnimatedStyle(() => ({
@@ -235,7 +193,6 @@ export const useBottomModalState = ({
     handleContentSizeChange,
     panGesture,
     handleClose,
-    contentScrollHandlers,
     isContentScrollable
   }
 }
