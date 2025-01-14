@@ -47,7 +47,9 @@ const TokenDetailsModalBalanceSummary = ({
         color={fontColor}
       />
       <AmountAndAddresses>
-        <Amount isFiat value={token.worth} suffix={CURRENCIES[currency].symbol} size={22} color={fontColor} />
+        {token.worth && (
+          <Amount isFiat value={token.worth} suffix={CURRENCIES[currency].symbol} size={22} color={fontColor} />
+        )}
         <AddressesWithTokenBadge tokenId={tokenId} onPress={onPress} fontColor={fontColor} />
       </AmountAndAddresses>
     </BalanceSummaryBox>

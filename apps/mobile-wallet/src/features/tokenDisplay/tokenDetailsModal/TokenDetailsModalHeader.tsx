@@ -5,6 +5,7 @@ import styled from 'styled-components/native'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
+import Badge from '~/components/Badge'
 import { TokenDetailsModalCommonProps } from '~/features/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
@@ -19,8 +20,7 @@ const TokenDetailsModalHeader = ({ tokenId, addressHash }: TokenDetailsModalComm
   return (
     <TokenDetailsModalHeaderStyled>
       <LeftColumn>
-        <AssetLogo assetId={tokenId} size={38} />
-
+        <AssetLogo assetId={tokenId} size={32} />
         <TokenName bold numberOfLines={1} size={18}>
           {token.name}
         </TokenName>
@@ -40,7 +40,11 @@ const TokenPrice = ({ tokenSymbol }: { tokenSymbol: string }) => {
 
   if (price === undefined || price === null) return null
 
-  return <Amount semiBold isFiat value={price} suffix={CURRENCIES[currency].symbol} fadeSuffix />
+  return (
+    <Badge>
+      <Amount semiBold isFiat value={price} suffix={CURRENCIES[currency].symbol} fadeSuffix size={13} />
+    </Badge>
+  )
 }
 
 const TokenDetailsModalHeaderStyled = styled.View`
