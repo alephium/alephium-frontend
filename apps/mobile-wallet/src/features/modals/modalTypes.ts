@@ -6,6 +6,7 @@ import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
+import AddressQuickActionsModal from '~/features/addressesManagement/AddressQuickActionsModal'
 import AddressSettingsModal from '~/features/addressesManagement/AddressSettingsModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
@@ -60,7 +61,8 @@ export const ModalComponents = {
   AddressDetailsModal,
   ReceiveQRCodeModal,
   AddressSettingsModal,
-  TokenDetailsModal
+  TokenDetailsModal,
+  AddressQuickActionsModal
 }
 
 export type ModalName = keyof typeof ModalComponents

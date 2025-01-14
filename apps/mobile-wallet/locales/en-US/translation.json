@@ -386,6 +386,7 @@
   "forgetAddress_one": "Forget address",
   "You can always re-add it to your wallet.": "You can always re-add it to your wallet.",
   "Could not forget address": "Could not forget address",
+  "You cannot forget your default address. Set another one as default first.": "You cannot forget your default address. Set another one as default first.",
   "clear_amount": "Clear",
   "Added {{ tokenName }}": "Added {{ tokenName }}",
   "Removed {{ tokenName }}": "Removed {{ tokenName }}",
@@ -412,5 +413,6 @@
   "Connecting": "Connecting",
   "Address balance": "Address balance",
   "Wallet balance": "Wallet balance",
-  "Addresses with this token": "Addresses with this token"
+  "Addresses with this token": "Addresses with this token",
+  "Set as default": "Set as default"
 }
