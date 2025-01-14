@@ -8,6 +8,7 @@ import { openModal } from '~/features/modals/modalActions'
 import { TokenDetailsModalCommonProps } from '~/features/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressesWithToken } from '~/store/addresses/addressesSelectors'
+import { selectAllAddresses } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface TokenDetailsModalAddressesProps extends TokenDetailsModalCommonProps {
@@ -16,10 +17,11 @@ interface TokenDetailsModalAddressesProps extends TokenDetailsModalCommonProps {
 
 const TokenDetailsModalAddresses = ({ tokenId, onAddressPress }: TokenDetailsModalAddressesProps) => {
   const addresses = useAppSelector((s) => selectAddressesWithToken(s, tokenId))
+  const totalNumberOfAddresses = useAppSelector(selectAllAddresses).length
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
-  if (addresses.length === 0) return null
+  if (addresses.length === 0 || totalNumberOfAddresses === 1) return null
 
   const handleAddressPress = (addressHash: AddressHash) => {
     dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
