@@ -1,12 +1,13 @@
 import { Blur, Canvas, Circle, Group } from '@shopify/react-native-skia'
 // 1) Import colord (and extend if needed)
 import { colord } from 'colord'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useWindowDimensions } from 'react-native'
 import Animated, {
   Easing,
   Extrapolation,
   interpolate,
+  interpolateColor,
   SensorType,
   SharedValue,
   useAnimatedSensor,
@@ -65,13 +66,41 @@ const AnimatedBackground = ({
   const { width: screenWidth, height: screenHeight } = useWindowDimensions()
   const theme = useTheme()
 
-  const [circleColor1, circleColor2, circleColor3] = getCircleColors({ shade, isDark: theme.name === 'dark' })
+  const previousShadeRef = useRef(shade)
+  const shadeTransition = useSharedValue(1)
 
   const defaultCanvasHeight = isFullScreen ? screenHeight : height
   const defaultCanvasWidth = width || screenWidth
 
   const canvasHeight = useSharedValue(defaultCanvasHeight)
   const canvasWidth = useSharedValue(defaultCanvasWidth)
+
+  useEffect(() => {
+    if (shade !== previousShadeRef.current) {
+      shadeTransition.value = 0
+      shadeTransition.value = withTiming(1, { duration: 600 }, () => {
+        previousShadeRef.current = shade
+      })
+    }
+  }, [shade, shadeTransition])
+
+  const oldShadeColors = getCircleColors({
+    shade: previousShadeRef.current,
+    isDark: theme.name === 'dark'
+  })
+  const newShadeColors = getCircleColors({
+    shade,
+    isDark: theme.name === 'dark'
+  })
+
+  const [oldColor1, oldColor2, oldColor3] = oldShadeColors
+  const [newColor1, newColor2, newColor3] = newShadeColors
+
+  const circleColor1 = useDerivedValue(() => interpolateColor(shadeTransition.value, [0, 1], [oldColor1, newColor1]))
+
+  const circleColor2 = useDerivedValue(() => interpolateColor(shadeTransition.value, [0, 1], [oldColor2, newColor2]))
+
+  const circleColor3 = useDerivedValue(() => interpolateColor(shadeTransition.value, [0, 1], [oldColor3, newColor3]))
 
   useEffect(() => {
     canvasHeight.value = withSpring(defaultCanvasHeight, {
