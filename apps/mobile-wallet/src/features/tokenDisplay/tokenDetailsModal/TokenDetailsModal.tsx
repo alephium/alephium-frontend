@@ -105,7 +105,7 @@ export default TokenDetailsModal
 
 // TODO: DRY
 const Content = styled.View`
-  padding: ${VERTICAL_GAP}px 0;
+  padding-top: ${VERTICAL_GAP / 2}px;
 `
 
 // TODO: DRY

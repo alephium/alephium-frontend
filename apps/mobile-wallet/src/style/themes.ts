@@ -69,7 +69,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: '#141417',
     back1: '#0d0d0f',
     back2: '#000',
-    accent: colord('#5086f9').alpha(0.2).toHex(),
+    accent: colord('#5086f9').alpha(0.15).toHex(),
     contrast: '#E3E3E3'
   },
   font: {
@@ -80,7 +80,7 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f0d590'
   },
   button: {
-    primary: 'rgba(255, 255, 255, 0.075)',
+    primary: 'rgba(255, 255, 255, 0.09)',
     secondary: 'rgba(255, 255, 255, 0.04)',
     tertiary: '#28282b'
   },

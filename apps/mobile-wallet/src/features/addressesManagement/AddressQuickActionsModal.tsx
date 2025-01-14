@@ -59,7 +59,7 @@ const DeleteAddressButton = ({ addressHash, onPress }: ActionButtonProps) => {
     else forgetAddress()
   }
 
-  return <ActionCardButton title={t('Forget')} onPress={handlePress} iconProps={{ name: 'trash-2' }} />
+  return <ActionCardButton title={t('Forget')} onPress={handlePress} iconProps={{ name: 'trash-2' }} variant="alert" />
 }
 
 const SetDefaultAddressButton = ({ addressHash, onPress }: ActionButtonProps) => {
@@ -109,7 +109,7 @@ const SetDefaultAddressButton = ({ addressHash, onPress }: ActionButtonProps) =>
 
 // TODO: DRY
 const ActionButtons = styled.View`
-  margin-top: ${VERTICAL_GAP}px;
+  margin: ${VERTICAL_GAP / 2}px 0;
   flex-direction: row;
   gap: 10px;
 `
