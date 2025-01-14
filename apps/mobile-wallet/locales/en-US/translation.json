@@ -413,6 +413,8 @@
   "Connecting": "Connecting",
   "Address balance": "Address balance",
   "Wallet balance": "Wallet balance",
-  "Addresses with this token": "Addresses with this token",
-  "Set as default": "Set as default"
+  "The {{ tokenSymbol }} token can be found in these addresses:": "The {{ tokenSymbol }} token can be found in these addresses:",
+  "Set as default": "Set as default",
+  "token_in_addresses_one": "in {{ count }} address",
+  "token_in_addresses_other": "in {{ count }} addresses"
 }
