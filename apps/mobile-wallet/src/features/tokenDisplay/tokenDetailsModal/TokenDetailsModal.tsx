@@ -1,5 +1,10 @@
+import { selectFungibleTokenById } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
-import styled, { useTheme } from 'styled-components/native'
+import { Token } from '@alephium/web3'
+import { colord } from 'colord'
+import { useEffect, useState } from 'react'
+import { getColors } from 'react-native-image-colors'
+import styled from 'styled-components/native'
 
 import AnimatedBackground from '~/components/AnimatedBackground'
 import RoundedCard from '~/components/RoundedCard'
@@ -20,7 +25,6 @@ import { VERTICAL_GAP } from '~/style/globalStyle'
 const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addressHash, parentModalId }) => {
   const dispatch = useAppDispatch()
   const defaultAddressHash = useAppSelector(selectDefaultAddress).hash
-  const theme = useTheme()
 
   const handleClose = () => {
     dispatch(closeModal({ id }))
@@ -33,8 +37,8 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
       <TokenDetailsModalHeader tokenId={tokenId} addressHash={addressHash} />
       <Content>
         <RoundedCard>
-          <AnimatedBackground shade={theme.bg.contrast} isAnimated />
-          <TokenDetailsModalBalanceSummary tokenId={tokenId} addressHash={addressHash} onPress={handleClose} />
+          <TokenAnimatedBackground tokenId={tokenId} />
+          <TokenDetailsModalBalanceSummary tokenId={tokenId} addressHash={addressHash} />
         </RoundedCard>
 
         <ActionButtons>
@@ -49,6 +53,33 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
     </BottomModal>
   )
 })
+
+interface TokenAnimatedBackgroundProps {
+  tokenId: Token['id']
+}
+
+const TokenAnimatedBackground = ({ tokenId }: TokenAnimatedBackgroundProps) => {
+  const [dominantColor, setDominantColor] = useState<string>()
+  const token = useAppSelector((state) => selectFungibleTokenById(state, tokenId))
+
+  useEffect(() => {
+    const logoURI = token?.logoURI
+
+    if (!logoURI) return
+
+    getColors(logoURI, {
+      fallback: '#228B22',
+      cache: true,
+      key: logoURI
+    }).then((r) =>
+      setDominantColor(
+        r.platform === 'ios' ? (colord(r.background).brightness() < 0.9 ? r.background : r.secondary) : r.vibrant
+      )
+    )
+  })
+
+  return <AnimatedBackground shade={dominantColor} isAnimated />
+}
 
 export default TokenDetailsModal
 

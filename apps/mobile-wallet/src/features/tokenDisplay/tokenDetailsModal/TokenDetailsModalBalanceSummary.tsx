@@ -16,7 +16,7 @@ import { makeSelectAddressesKnownFungibleTokens, selectAllAddresses } from '~/st
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface TokenDetailsModalBalanceSummaryProps extends TokenDetailsModalCommonProps {
-  onPress: () => void
+  onPress?: () => void
 }
 
 const TokenDetailsModalBalanceSummary = ({ tokenId, addressHash, onPress }: TokenDetailsModalBalanceSummaryProps) => {
@@ -51,7 +51,7 @@ const AddressesWithTokenBadge = ({ tokenId, onPress }: TokenDetailsModalBalanceS
   if (addresses.length === 0 || totalNumberOfAddresses === 1) return null
 
   const handlePress = () => {
-    onPress()
+    onPress?.()
     dispatch(openModal({ name: 'AddressesWithTokenModal', props: { tokenId } }))
   }
 
