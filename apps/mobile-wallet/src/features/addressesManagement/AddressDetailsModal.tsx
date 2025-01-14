@@ -1,5 +1,4 @@
 import { AddressHash } from '@alephium/shared'
-import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
@@ -14,10 +13,10 @@ import RoundedCard from '~/components/RoundedCard'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
+import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
+import ActionCardSendButton from '~/features/send/ActionCardSendButton'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import RootStackParamList from '~/navigation/rootStackRoutes'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { addressSettingsSaved, makeSelectAddressesTokens, selectAddressByHash } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { showToast, ToastDuration } from '~/utils/layout'
@@ -28,32 +27,16 @@ export interface AddressDetailsModalProps {
 
 const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHash }) => {
   const { t } = useTranslation()
-  const navigation = useNavigation<NavigationProp<SendNavigationParamList | RootStackParamList>>()
   const dispatch = useAppDispatch()
 
   const selectAddressTokens = useMemo(makeSelectAddressesTokens, [])
   const hasTokens = useAppSelector((s) => selectAddressTokens(s, addressHash)).length > 0
 
-  const handleSendPress = () => {
-    sendAnalytics({ event: 'Address modal: Pressed btn to send funds from' })
-
-    navigation.navigate('SendNavigation', {
-      screen: 'DestinationScreen',
-      params: { fromAddressHash: addressHash }
-    })
-
-    dispatch(closeModal({ id }))
-  }
-
-  const handleReceivePress = () => {
-    sendAnalytics({ event: 'Address modal: Pressed btn to receive funds to' })
-
-    dispatch(openModal({ name: 'ReceiveQRCodeModal', props: { addressHash } }))
-  }
-
   const handleSettingsPress = () => {
     dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash, parentModalId: id } }))
   }
+
+  const handleClose = () => dispatch(closeModal({ id }))
 
   return (
     <BottomModal modalId={id} title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
@@ -64,13 +47,15 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
         </RoundedCard>
 
         <ActionButtons>
-          {hasTokens && <ActionCardButton title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />}
-          <ActionCardButton title={t('Receive')} onPress={handleReceivePress} iconProps={{ name: 'download' }} />
+          {hasTokens && (
+            <ActionCardSendButton origin="addressDetails" addressHash={addressHash} onPress={handleClose} />
+          )}
+          <ActionCardReceiveButton origin="addressDetails" addressHash={addressHash} />
           <ActionCardButton title={t('Settings')} onPress={handleSettingsPress} iconProps={{ name: 'settings' }} />
           <SetDefaultAddressCardButton addressHash={addressHash} />
         </ActionButtons>
       </Content>
-      <AddressesTokensList addressHash={addressHash} />
+      <AddressesTokensList addressHash={addressHash} parentModalId={id} />
     </BottomModal>
   )
 })

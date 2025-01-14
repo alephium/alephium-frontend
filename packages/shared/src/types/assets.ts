@@ -25,9 +25,9 @@ export type Asset = TokenDisplayBalances &
     worth?: number
   }
 
-export type AddressFungibleToken = FungibleToken & TokenDisplayBalances
+export type AddressFungibleToken = Asset & FungibleToken & TokenDisplayBalances
 
-export type VerifiedAddressFungibleToken = AddressFungibleToken & { verified: true }
+export type VerifiedAddressFungibleToken = Asset & AddressFungibleToken & { verified: true }
 
 export type AssetAmount = { id: Asset['id']; amount?: bigint }
 

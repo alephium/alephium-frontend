@@ -410,5 +410,7 @@
   "Approving": "Approving",
   "Rejecting": "Rejecting",
   "Building transaction": "Building transaction",
-  "Connecting": "Connecting"
+  "Connecting": "Connecting",
+  "Address balance": "Address balance",
+  "Wallet balance": "Wallet balance"
 }
