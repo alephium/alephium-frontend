@@ -214,9 +214,9 @@ const AnimatedBackground = ({
     <AnimatedContainer style={parallaxAnimatedStyle}>
       <AnimatedCanvas style={animatedCanvasStyle}>
         <Group>
-          <Circle r={120} color={circleColor1} cx={circle1X} cy={circle1Y} />
-          <Circle r={150} color={circleColor2} cx={circle2X} cy={circle2Y} />
-          <Circle r={130} color={circleColor3} cx={circle3X} cy={circle3Y} />
+          <Circle r={140} color={circleColor1} cx={circle1X} cy={circle1Y} />
+          <Circle r={170} color={circleColor2} cx={circle2X} cy={circle2Y} />
+          <Circle r={150} color={circleColor3} cx={circle3X} cy={circle3Y} />
         </Group>
         <Blur blur={70} />
       </AnimatedCanvas>

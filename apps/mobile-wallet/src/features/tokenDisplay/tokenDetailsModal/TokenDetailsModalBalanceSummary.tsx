@@ -39,7 +39,7 @@ const TokenDetailsModalBalanceSummary = ({
     <BalanceSummaryBox>
       <AppText color={fontColor}>{addressHash ? t('Address balance') : t('Wallet balance')}</AppText>
       <Amount
-        size={44}
+        size={34}
         semiBold
         value={token.balance}
         suffix={token.symbol}
@@ -48,7 +48,7 @@ const TokenDetailsModalBalanceSummary = ({
       />
       <AmountAndAddresses>
         {token.worth && (
-          <Amount isFiat value={token.worth} suffix={CURRENCIES[currency].symbol} size={22} color={fontColor} />
+          <Amount isFiat value={token.worth} suffix={CURRENCIES[currency].symbol} size={20} color={fontColor} />
         )}
         <AddressesWithTokenBadge tokenId={tokenId} onPress={onPress} fontColor={fontColor} />
       </AmountAndAddresses>

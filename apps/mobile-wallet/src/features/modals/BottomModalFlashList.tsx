@@ -19,6 +19,7 @@ const BottomModalFlashList = ({
   modalId,
   onClose,
   title,
+  titleAlign,
   maximisedContent,
   minHeight,
   navHeight = 50,
@@ -34,7 +35,7 @@ const BottomModalFlashList = ({
   })
 
   return (
-    <BottomModalBase title={title} modalId={modalId} navHeight={navHeight} {...modalState}>
+    <BottomModalBase title={title} modalId={modalId} navHeight={navHeight} titleAlign={titleAlign} {...modalState}>
       {flashListRender({
         ...modalState.contentScrollHandlers,
         onContentSizeChange: modalState.handleContentSizeChange,

@@ -4,7 +4,7 @@ import { Token } from '@alephium/web3'
 import { colord } from 'colord'
 import { useEffect, useState } from 'react'
 import { getColors } from 'react-native-image-colors'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import AnimatedBackground from '~/components/AnimatedBackground'
 import RoundedCard from '~/components/RoundedCard'
@@ -34,8 +34,11 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
   }
 
   return (
-    <BottomModal modalId={id}>
-      <TokenDetailsModalHeader tokenId={tokenId} addressHash={addressHash} />
+    <BottomModal
+      modalId={id}
+      title={<TokenDetailsModalHeader tokenId={tokenId} addressHash={addressHash} />}
+      titleAlign="left"
+    >
       <Content>
         <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
         <ActionButtons>
@@ -57,10 +60,19 @@ interface TokenAnimatedBackgroundProps {
 }
 
 const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps) => {
+  const theme = useTheme()
   const [dominantColor, setDominantColor] = useState<string>()
   const token = useAppSelector((state) => selectFungibleTokenById(state, tokenId))
+
   const fontColor =
-    dominantColor && colord(dominantColor).brightness() < 0.3 ? darkTheme.font.primary : lightTheme.font.primary
+    dominantColor &&
+    (theme.name === 'light'
+      ? colord(dominantColor).brightness() < 0.3
+        ? darkTheme.font.primary
+        : lightTheme.font.primary
+      : colord(dominantColor).brightness() > 0.6
+        ? lightTheme.font.primary
+        : darkTheme.font.primary)
 
   useEffect(() => {
     const logoURI = token?.logoURI
@@ -74,9 +86,10 @@ const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps
     }).then((r) =>
       setDominantColor(
         colord(
-          r.platform === 'ios' ? (colord(r.background).brightness() < 0.9 ? r.background : r.secondary) : r.vibrant
+          r.platform === 'ios' ? (colord(r.background).brightness() < 0.9 ? r.background : r.secondary) : r.darkVibrant
         )
           .saturate(1.5)
+          .lighten(theme.name === 'light' ? 0.4 : 0.2)
           .toHex()
       )
     )
