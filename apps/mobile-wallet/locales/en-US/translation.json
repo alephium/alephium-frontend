@@ -411,5 +411,6 @@
   "Building transaction": "Building transaction",
   "Connecting": "Connecting",
   "Address balance": "Address balance",
-  "Wallet balance": "Wallet balance"
+  "Wallet balance": "Wallet balance",
+  "Addresses with this token": "Addresses with this token"
 }

@@ -10,6 +10,7 @@ import { ModalInstance } from '~/features/modals/modalTypes'
 import withModal from '~/features/modals/withModal'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import ActionCardSendButton from '~/features/send/ActionCardSendButton'
+import TokenDetailsModalAddresses from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModalAddresses'
 import TokenDetailsModalBalanceSummary from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModalBalanceSummary'
 import TokenDetailsModalDescription from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModalDescription'
 import TokenDetailsModalHeader from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModalHeader'
@@ -29,6 +30,7 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
 
   const handleClose = () => {
     dispatch(closeModal({ id }))
+
     if (parentModalId) dispatch(closeModal({ id: parentModalId }))
   }
 
@@ -49,6 +51,7 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
           )}
         </ActionButtons>
         <TokenDetailsModalDescription tokenId={tokenId} addressHash={addressHash} />
+        <TokenDetailsModalAddresses tokenId={tokenId} addressHash={addressHash} onAddressPress={handleClose} />
       </Content>
     </BottomModal>
   )
