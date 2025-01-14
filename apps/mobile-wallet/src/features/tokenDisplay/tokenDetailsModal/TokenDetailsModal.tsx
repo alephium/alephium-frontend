@@ -110,7 +110,7 @@ const Content = styled.View`
 
 // TODO: DRY
 const ActionButtons = styled.View`
-  margin-top: ${VERTICAL_GAP}px;
+  margin-top: ${VERTICAL_GAP / 2}px;
   flex-direction: row;
   gap: 10px;
 `
