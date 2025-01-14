@@ -102,7 +102,7 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
   return (
     <BottomModal modalId={id} title={t('Address settings')} noPadding>
       <ScreenSection>
-        <Row title={t('Address hash')}>
+        <Row title={t('Address')}>
           <HashEllipsed
             numberOfLines={1}
             ellipsizeMode="middle"
