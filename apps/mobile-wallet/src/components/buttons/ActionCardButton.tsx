@@ -1,4 +1,5 @@
 import Ionicons from '@expo/vector-icons/Feather'
+import { colord } from 'colord'
 import Animated, { LinearTransition } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
@@ -9,15 +10,20 @@ interface ActionCardButtonCardButtonProps extends ButtonProps {}
 
 const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons)
 
-const ActionCardButton = ({ title, iconProps, color, ...props }: ActionCardButtonCardButtonProps) => {
+const ActionCardButton = ({ title, iconProps, color, variant, ...props }: ActionCardButtonCardButtonProps) => {
   const theme = useTheme()
+  const usedColor = variant === 'alert' ? theme.global.alert : color || theme.global.accent
 
   return (
-    <ButtonStyled flex {...props}>
-      {iconProps && (
-        <AnimatedIonicons layout={LinearTransition} color={color || theme.font.primary} size={22} {...iconProps} />
-      )}
-      <AppText semiBold size={13} color={color} style={{ textAlign: 'center' }}>
+    <ButtonStyled
+      flex
+      {...props}
+      style={{
+        backgroundColor: !props.disabled ? colord(usedColor).alpha(0.1).toHex() : undefined
+      }}
+    >
+      {iconProps && <AnimatedIonicons layout={LinearTransition} color={usedColor} size={22} {...iconProps} />}
+      <AppText semiBold size={13} color={usedColor} style={{ textAlign: 'center' }}>
         {title}
       </AppText>
     </ButtonStyled>
@@ -32,6 +38,7 @@ const ButtonStyled = styled(Button)`
   border-radius: 20px;
   height: 60px;
   padding: 0;
+  background-color: ${({ theme }) => theme.bg.accent};
 
   ${({ disabled, theme }) =>
     disabled &&
