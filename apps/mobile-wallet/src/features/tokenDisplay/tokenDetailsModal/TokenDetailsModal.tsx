@@ -1,4 +1,4 @@
-import { selectFungibleTokenById } from '@alephium/shared'
+import { AddressHash, selectFungibleTokenById } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
 import { colord } from 'colord'
@@ -21,6 +21,7 @@ import { TokenDetailsModalProps } from '~/features/tokenDisplay/tokenDetailsModa
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectDefaultAddress } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
+import { darkTheme, lightTheme } from '~/style/themes'
 
 const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addressHash, parentModalId }) => {
   const dispatch = useAppDispatch()
@@ -36,11 +37,7 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
     <BottomModal modalId={id}>
       <TokenDetailsModalHeader tokenId={tokenId} addressHash={addressHash} />
       <Content>
-        <RoundedCard>
-          <TokenAnimatedBackground tokenId={tokenId} />
-          <TokenDetailsModalBalanceSummary tokenId={tokenId} addressHash={addressHash} />
-        </RoundedCard>
-
+        <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
         <ActionButtons>
           <ActionCardSendButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
           <ActionCardReceiveButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
@@ -56,11 +53,14 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
 
 interface TokenAnimatedBackgroundProps {
   tokenId: Token['id']
+  addressHash?: AddressHash
 }
 
-const TokenAnimatedBackground = ({ tokenId }: TokenAnimatedBackgroundProps) => {
+const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps) => {
   const [dominantColor, setDominantColor] = useState<string>()
   const token = useAppSelector((state) => selectFungibleTokenById(state, tokenId))
+  const fontColor =
+    dominantColor && colord(dominantColor).brightness() < 0.3 ? darkTheme.font.primary : lightTheme.font.primary
 
   useEffect(() => {
     const logoURI = token?.logoURI
@@ -73,12 +73,21 @@ const TokenAnimatedBackground = ({ tokenId }: TokenAnimatedBackgroundProps) => {
       key: logoURI
     }).then((r) =>
       setDominantColor(
-        r.platform === 'ios' ? (colord(r.background).brightness() < 0.9 ? r.background : r.secondary) : r.vibrant
+        colord(
+          r.platform === 'ios' ? (colord(r.background).brightness() < 0.9 ? r.background : r.secondary) : r.vibrant
+        )
+          .saturate(1.5)
+          .toHex()
       )
     )
   })
 
-  return <AnimatedBackground shade={dominantColor} isAnimated />
+  return (
+    <RoundedCard>
+      <AnimatedBackground shade={dominantColor} isAnimated />
+      <TokenDetailsModalBalanceSummary tokenId={tokenId} addressHash={addressHash} fontColor={fontColor} />
+    </RoundedCard>
+  )
 }
 
 export default TokenDetailsModal
