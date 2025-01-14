@@ -6,6 +6,7 @@ import ConsolidationModal from '~/components/ConsolidationModal'
 import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
 import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
+import AddressQuickActionsModal from '~/features/addressesManagement/AddressQuickActionsModal'
 import AddressSettingsModal from '~/features/addressesManagement/AddressSettingsModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
@@ -106,6 +107,8 @@ const AppModals = () => {
             return <AddressSettingsModal key={id} id={id} {...params.props} />
           case 'TokenDetailsModal':
             return <TokenDetailsModal key={id} id={id} {...params.props} />
+          case 'AddressQuickActionsModal':
+            return <AddressQuickActionsModal key={id} id={id} {...params.props} />
           default:
             return null
         }
