@@ -6,22 +6,16 @@ import RoundedCard from '~/components/RoundedCard'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
-import { ModalInstance } from '~/features/modals/modalTypes'
 import withModal from '~/features/modals/withModal'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import ActionCardSendButton from '~/features/send/ActionCardSendButton'
-import TokenDetailsModalAddresses from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModalAddresses'
 import TokenDetailsModalBalanceSummary from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModalBalanceSummary'
 import TokenDetailsModalDescription from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModalDescription'
 import TokenDetailsModalHeader from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModalHeader'
-import { TokenDetailsModalCommonProps } from '~/features/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
+import { TokenDetailsModalProps } from '~/features/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectDefaultAddress } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
-
-type TokenDetailsModalProps = TokenDetailsModalCommonProps & {
-  parentModalId?: ModalInstance['id']
-}
 
 const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addressHash, parentModalId }) => {
   const dispatch = useAppDispatch()
@@ -40,7 +34,7 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
       <Content>
         <RoundedCard>
           <AnimatedBackground shade={theme.bg.contrast} isAnimated />
-          <TokenDetailsModalBalanceSummary tokenId={tokenId} addressHash={addressHash} />
+          <TokenDetailsModalBalanceSummary tokenId={tokenId} addressHash={addressHash} onPress={handleClose} />
         </RoundedCard>
 
         <ActionButtons>
@@ -51,7 +45,6 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
           )}
         </ActionButtons>
         <TokenDetailsModalDescription tokenId={tokenId} addressHash={addressHash} />
-        <TokenDetailsModalAddresses tokenId={tokenId} addressHash={addressHash} onAddressPress={handleClose} />
       </Content>
     </BottomModal>
   )

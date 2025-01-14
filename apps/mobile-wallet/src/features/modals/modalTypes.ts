@@ -24,6 +24,7 @@ import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
 import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
+import AddressesWithTokenModal from '~/features/tokenDisplay/tokenDetailsModal/AddressesWithTokenModal'
 import TokenDetailsModal from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectErrorModal'
@@ -62,7 +63,8 @@ export const ModalComponents = {
   ReceiveQRCodeModal,
   AddressSettingsModal,
   TokenDetailsModal,
-  AddressQuickActionsModal
+  AddressQuickActionsModal,
+  AddressesWithTokenModal
 }
 
 export type ModalName = keyof typeof ModalComponents

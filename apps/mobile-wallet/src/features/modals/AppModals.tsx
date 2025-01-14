@@ -26,6 +26,7 @@ import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
 import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
+import AddressesWithTokenModal from '~/features/tokenDisplay/tokenDetailsModal/AddressesWithTokenModal'
 import TokenDetailsModal from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectErrorModal'
@@ -109,6 +110,8 @@ const AppModals = () => {
             return <TokenDetailsModal key={id} id={id} {...params.props} />
           case 'AddressQuickActionsModal':
             return <AddressQuickActionsModal key={id} id={id} {...params.props} />
+          case 'AddressesWithTokenModal':
+            return <AddressesWithTokenModal key={id} id={id} {...params.props} />
           default:
             return null
         }
