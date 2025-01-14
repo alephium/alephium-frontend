@@ -1,31 +1,34 @@
-import { Asset, CURRENCIES } from '@alephium/shared'
+import { AddressHash, Asset, CURRENCIES } from '@alephium/shared'
+import { Optional } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
-import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
-import ListItem from '~/components/ListItem'
-import { useAppSelector } from '~/hooks/redux'
+import ListItem, { ListItemProps } from '~/components/ListItem'
+import { openModal } from '~/features/modals/modalActions'
+import { ModalInstance } from '~/features/modals/modalTypes'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-interface TokenListItemProps {
+interface TokenListItemProps extends Optional<ListItemProps, 'title' | 'icon'> {
   asset: Asset
-  isLast?: boolean
-  style?: StyleProp<ViewStyle>
-  hideSeparator?: boolean
+  addressHash?: AddressHash
+  parentModalId?: ModalInstance['id']
 }
 
-const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemProps) => {
+const TokenListItem = ({ asset, addressHash, parentModalId, ...props }: TokenListItemProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
   const balance = BigInt(asset.balance)
 
+  const openTokenDetailsModal = () =>
+    dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId: asset.id, addressHash, parentModalId } }))
+
   return (
     <ListItem
-      style={style}
-      isLast={isLast}
       title={asset.name || asset.id}
       subtitle={
         !asset.verified && (
@@ -53,7 +56,8 @@ const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemPro
           )}
         </Amounts>
       }
-      hideSeparator={hideSeparator}
+      onPress={openTokenDetailsModal}
+      {...props}
     />
   )
 }

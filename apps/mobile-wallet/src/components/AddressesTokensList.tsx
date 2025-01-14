@@ -8,6 +8,7 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import UnknownTokensListItem, { UnknownTokensEntry } from '~/components/UnknownTokensListItem'
+import { ModalInstance } from '~/features/modals/modalTypes'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesCheckedUnknownTokens, makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
 import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -17,6 +18,7 @@ import TokenListItem from './TokenListItem'
 interface AddressesTokensListProps {
   addressHash?: AddressHash
   isRefreshing?: boolean
+  parentModalId?: ModalInstance['id']
 }
 
 type LoadingIndicator = {
@@ -25,7 +27,7 @@ type LoadingIndicator = {
 
 type TokensRow = Asset | UnknownTokensEntry | LoadingIndicator
 
-const AddressesTokensList = ({ addressHash, isRefreshing }: AddressesTokensListProps) => {
+const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: AddressesTokensListProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
@@ -78,13 +80,15 @@ const AddressesTokensList = ({ addressHash, isRefreshing }: AddressesTokensListP
     )
 
   return (
-    <ListContainer>
+    <AddressesTokensListStyled>
       {tokenRows.map((entry, index) =>
         isAsset(entry) ? (
           <TokenListItem
             key={entry.id}
             asset={entry}
             hideSeparator={index === knownFungibleTokens.length - 1 && unknownTokens.length === 0}
+            addressHash={addressHash}
+            parentModalId={parentModalId}
           />
         ) : isUnknownTokens(entry) ? (
           <UnknownTokensListItem entry={entry} key="unknown-tokens" />
@@ -104,12 +108,17 @@ const AddressesTokensList = ({ addressHash, isRefreshing }: AddressesTokensListP
           </Loader>
         </>
       )}
-    </ListContainer>
+    </AddressesTokensListStyled>
   )
 }
 
-export default styled(AddressesTokensList)`
+export default AddressesTokensList
+
+const AddressesTokensListStyled = styled.View`
   padding: 10px 0;
+  border-radius: ${BORDER_RADIUS_BIG}px;
+  overflow: hidden;
+  position: relative;
 `
 
 const LoadingRow = styled.View`
@@ -118,12 +127,6 @@ const LoadingRow = styled.View`
   align-items: flex-start;
   padding-top: 15px;
   margin: 0 ${DEFAULT_MARGIN}px;
-`
-
-const ListContainer = styled.View`
-  border-radius: ${BORDER_RADIUS_BIG}px;
-  overflow: hidden;
-  position: relative;
 `
 
 const LoadingOverlay = styled.View`

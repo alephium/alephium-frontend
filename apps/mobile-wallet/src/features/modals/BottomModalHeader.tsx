@@ -55,7 +55,7 @@ const HeaderTitleOutterContainer = styled.View`
 `
 
 const TitleContainer = styled.View`
-  max-width: 150px;
+  padding: 0 20px;
   align-items: center;
   justify-content: center;
 `

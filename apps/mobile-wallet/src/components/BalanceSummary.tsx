@@ -28,7 +28,7 @@ const BalanceSummary = ({ addressHash }: BalanceSummaryProps) => {
   const label = addressHash ? t('Address worth') : t('Wallet worth')
 
   return (
-    <BalanceSummaryStyled>
+    <BalanceSummaryBox>
       <TextContainer>
         <View>
           <AppText color={colord(theme.font.primary).alpha(0.6).toHex()}>{label}</AppText>
@@ -40,13 +40,13 @@ const BalanceSummary = ({ addressHash }: BalanceSummaryProps) => {
           <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold size={44} />
         )}
       </TextContainer>
-    </BalanceSummaryStyled>
+    </BalanceSummaryBox>
   )
 }
 
 export default BalanceSummary
 
-const BalanceSummaryStyled = styled.View`
+export const BalanceSummaryBox = styled.View`
   justify-content: center;
   align-items: center;
   margin: 10px 0 16px 0;
