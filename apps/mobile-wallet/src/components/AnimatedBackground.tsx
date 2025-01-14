@@ -1,4 +1,4 @@
-import { Blur, Canvas, Circle, Group } from '@shopify/react-native-skia'
+import { Blur, Canvas, Circle, Group, interpolateColors } from '@shopify/react-native-skia'
 // 1) Import colord (and extend if needed)
 import { colord } from 'colord'
 import { useEffect, useRef } from 'react'
@@ -7,7 +7,6 @@ import Animated, {
   Easing,
   Extrapolation,
   interpolate,
-  interpolateColor,
   SensorType,
   SharedValue,
   useAnimatedSensor,
@@ -96,11 +95,9 @@ const AnimatedBackground = ({
   const [oldColor1, oldColor2, oldColor3] = oldShadeColors
   const [newColor1, newColor2, newColor3] = newShadeColors
 
-  const circleColor1 = useDerivedValue(() => interpolateColor(shadeTransition.value, [0, 1], [oldColor1, newColor1]))
-
-  const circleColor2 = useDerivedValue(() => interpolateColor(shadeTransition.value, [0, 1], [oldColor2, newColor2]))
-
-  const circleColor3 = useDerivedValue(() => interpolateColor(shadeTransition.value, [0, 1], [oldColor3, newColor3]))
+  const circleColor1 = useDerivedValue(() => interpolateColors(shadeTransition.value, [0, 1], [oldColor1, newColor1]))
+  const circleColor2 = useDerivedValue(() => interpolateColors(shadeTransition.value, [0, 1], [oldColor2, newColor2]))
+  const circleColor3 = useDerivedValue(() => interpolateColors(shadeTransition.value, [0, 1], [oldColor3, newColor3]))
 
   useEffect(() => {
     canvasHeight.value = withSpring(defaultCanvasHeight, {
