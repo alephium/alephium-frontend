@@ -2,7 +2,7 @@ import { CURRENCIES } from '@alephium/shared'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Pressable } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
@@ -45,6 +45,7 @@ const AddressesWithTokenBadge = ({ tokenId, onPress }: TokenDetailsModalBalanceS
   const addresses = useAppSelector((s) => selectAddressesWithToken(s, tokenId))
   const totalNumberOfAddresses = useAppSelector(selectAllAddresses).length
   const { t } = useTranslation()
+  const theme = useTheme()
   const dispatch = useAppDispatch()
 
   if (addresses.length === 0 || totalNumberOfAddresses === 1) return null
@@ -56,7 +57,7 @@ const AddressesWithTokenBadge = ({ tokenId, onPress }: TokenDetailsModalBalanceS
 
   return (
     <AddressesWithTokenBadgeStyled onPress={handlePress}>
-      <Badge solid>
+      <Badge color={theme.font.contrast}>
         {t(addresses.length === 1 ? 'token_in_addresses_one' : 'token_in_addresses_other', { count: addresses.length })}
       </Badge>
     </AddressesWithTokenBadgeStyled>
