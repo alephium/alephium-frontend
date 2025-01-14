@@ -4,19 +4,21 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { CloseButton } from '~/components/buttons/Button'
+import { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface BottomModalHeaderProps {
   onClose: () => void
   height?: number
   title?: string | ReactNode
+  titleAlign?: BottomModalBaseProps['titleAlign']
 }
 
-const BottomModalHeader = ({ height, onClose, title }: BottomModalHeaderProps) => (
+const BottomModalHeader = ({ height, onClose, title, titleAlign = 'center' }: BottomModalHeaderProps) => (
   <HeaderContainer style={{ height }}>
-    <HeaderSideContainer align="left" />
+    {titleAlign !== 'left' && <HeaderSideContainer align="left" />}
     <HeaderTitleOutterContainer>
-      <TitleContainer>
+      <TitleContainer titleAlign={titleAlign}>
         {title &&
           (typeof title === 'string' ? (
             <Title semiBold size={16}>
@@ -54,10 +56,10 @@ const HeaderTitleOutterContainer = styled.View`
   justify-content: center;
 `
 
-const TitleContainer = styled.View`
-  padding: 0 20px;
+const TitleContainer = styled.View<{ titleAlign: BottomModalHeaderProps['titleAlign'] }>`
+  padding: ${({ titleAlign }) => (titleAlign === 'center' ? '0 20px' : '0 20px 0 0')};
   align-items: center;
-  justify-content: center;
+  justify-content: ${({ titleAlign }) => (titleAlign === 'center' ? 'center' : 'flex-start')};
 `
 
 const Title = styled(AppText)`

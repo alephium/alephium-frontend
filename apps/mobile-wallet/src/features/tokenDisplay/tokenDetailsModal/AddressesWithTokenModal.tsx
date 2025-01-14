@@ -57,8 +57,8 @@ const Header = ({ tokenId }: AddressesWithTokenModalProps) => {
 
   return (
     <HeaderStyled>
-      <AssetLogo assetId={token.id} size={38} />
-      <AppText size={18} semiBold numberOfLines={1} style={{ flexShrink: 1 }}>
+      <AssetLogo assetId={token.id} size={26} />
+      <AppText size={16} semiBold numberOfLines={1} style={{ flexShrink: 1 }}>
         {token.name}
       </AppText>
     </HeaderStyled>

@@ -32,8 +32,8 @@ export const lightTheme: DefaultTheme = {
     visible: '#e6e7eb'
   },
   border: {
-    primary: 'rgba(36, 34, 32, 0.12)',
-    secondary: 'rgba(36, 34, 32, 0.08)'
+    primary: 'rgba(36, 34, 32, 0.1)',
+    secondary: 'rgba(36, 34, 32, 0.06)'
   },
   shadow: {
     primary: 'shadow-color: black; shadow-offset: 0px 2px; shadow-opacity: 0.03; shadow-radius: 2px; elevation: 2;',

@@ -12,6 +12,7 @@ export interface BottomModalBaseProps {
   children: ReactNode
   onClose?: () => void
   title?: string | ReactNode
+  titleAlign?: 'left' | 'center'
   maximisedContent?: boolean
   minHeight?: number
   paddingTop?: boolean
@@ -31,6 +32,7 @@ const BottomModalBase = ({
   panGesture,
   navHeight,
   title,
+  titleAlign,
   isContentScrollable,
   children
 }: BottomModalBaseProps & ReturnType<typeof useBottomModalState>) => (
@@ -43,7 +45,7 @@ const BottomModalBase = ({
         </HandleContainer>
         <GestureDetector gesture={panGesture}>
           <View style={{ flex: !isContentScrollable ? 1 : 0 }}>
-            <BottomModalHeader title={title} height={navHeight} onClose={handleClose} />
+            <BottomModalHeader title={title} height={navHeight} onClose={handleClose} titleAlign={titleAlign} />
             {!isContentScrollable && children}
           </View>
         </GestureDetector>

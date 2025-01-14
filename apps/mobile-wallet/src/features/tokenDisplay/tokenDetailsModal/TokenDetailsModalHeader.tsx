@@ -19,15 +19,11 @@ const TokenDetailsModalHeader = ({ tokenId, addressHash }: TokenDetailsModalComm
 
   return (
     <TokenDetailsModalHeaderStyled>
-      <LeftColumn>
-        <AssetLogo assetId={tokenId} size={32} />
-        <TokenName bold numberOfLines={1} size={18}>
-          {token.name}
-        </TokenName>
-      </LeftColumn>
-      <RightColumn>
-        <TokenPrice tokenSymbol={token.symbol} />
-      </RightColumn>
+      <AssetLogo assetId={tokenId} size={26} />
+      <TokenName bold numberOfLines={1} size={16}>
+        {token.name}
+      </TokenName>
+      <TokenPrice tokenSymbol={token.symbol} />
     </TokenDetailsModalHeaderStyled>
   )
 }
@@ -43,6 +39,7 @@ const TokenPrice = ({ tokenSymbol }: { tokenSymbol: string }) => {
   return (
     <Badge>
       <Amount semiBold isFiat value={price} suffix={CURRENCIES[currency].symbol} fadeSuffix size={13} />
+      <AppText size={13}> / {tokenSymbol}</AppText>
     </Badge>
   )
 }
@@ -50,26 +47,11 @@ const TokenPrice = ({ tokenSymbol }: { tokenSymbol: string }) => {
 const TokenDetailsModalHeaderStyled = styled.View`
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 10px;
-`
-
-const Column = styled.View`
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-`
-
-const LeftColumn = styled(Column)`
-  flex-shrink: 1;
-`
-
-const RightColumn = styled(Column)`
-  flex-grow: 1;
-  justify-content: flex-end;
 `
 
 const TokenName = styled(AppText)`
-  flex-shrink: 1;
+  flex: 1;
   overflow: hidden;
 `
