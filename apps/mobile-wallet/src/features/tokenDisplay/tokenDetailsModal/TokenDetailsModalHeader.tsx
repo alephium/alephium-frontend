@@ -21,7 +21,7 @@ const TokenDetailsModalHeader = ({ tokenId, addressHash }: TokenDetailsModalComm
       <LeftColumn>
         <AssetLogo assetId={tokenId} size={38} />
 
-        <TokenName bold numberOfLines={1} ellipsizeMode="tail">
+        <TokenName bold numberOfLines={1} size={18}>
           {token.name}
         </TokenName>
       </LeftColumn>

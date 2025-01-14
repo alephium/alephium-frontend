@@ -17,7 +17,8 @@ const TokenDetailsModalDescription = ({ tokenId, addressHash }: TokenDetailsModa
 
   return (
     <TokenDetailsModalDescriptionStyled>
-      <AppText>{token.description}</AppText>
+      <LeftAlignedText bold>{token.name}</LeftAlignedText>
+      <LeftAlignedText>{token.description}</LeftAlignedText>
     </TokenDetailsModalDescriptionStyled>
   )
 }
@@ -26,4 +27,9 @@ export default TokenDetailsModalDescription
 
 const TokenDetailsModalDescriptionStyled = styled(EmptyPlaceholder)`
   margin-top: ${VERTICAL_GAP}px;
+  justify-content: flex-start;
+`
+
+const LeftAlignedText = styled(AppText)`
+  align-self: flex-start;
 `
