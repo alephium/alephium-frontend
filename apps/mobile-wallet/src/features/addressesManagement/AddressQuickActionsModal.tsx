@@ -72,6 +72,8 @@ const SetDefaultAddressButton = ({ addressHash, onPress }: ActionButtonProps) =>
 
   if (!address) return
 
+  const isDefaultAddress = address.settings.isDefault
+
   const handleDefaultPress = async () => {
     if (!address || address.settings.isDefault) return
 
@@ -95,11 +97,12 @@ const SetDefaultAddressButton = ({ addressHash, onPress }: ActionButtonProps) =>
 
   return (
     <ActionCardButton
-      title={t('Set as default')}
+      title={t(isDefaultAddress ? 'Default address' : 'Set as default')}
       onPress={handleDefaultPress}
       iconProps={{ name: 'star' }}
       loading={defaultAddressIsChanging}
       color={address?.settings.isDefault ? address.settings.color : undefined}
+      disabled={isDefaultAddress}
     />
   )
 }
