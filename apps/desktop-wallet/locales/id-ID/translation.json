@@ -510,5 +510,8 @@
   "Welcome to your Ledger!": "Selamat datang di Ledger Anda!",
   "Would you like to scan for active addresses?": "Apakah Anda ingin memindai alamat yang aktif?",
   "Scan": "Memindai",
-  "Active address discovery completed. Addresses added: {{ count }}": "Penemuan alamat aktif selesai. Alamat yang ditambahkan: {{ count }}"
+  "Active address discovery completed. Addresses added: {{ count }}": "Penemuan alamat aktif selesai. Alamat yang ditambahkan: {{ count }}",
+  "Loading new transactions...": "Memuat transaksi baru...",
+  "Sign and Send Unsigned Transaction": "Tandatangani dan Kirim Transaksi yang Belum Ditandatangani",
+  "Sign and Send": "Tanda tangani dan Kirim"
 }
