@@ -50,7 +50,6 @@ const BottomModal = ({
             paddingTop: paddingTop ? VERTICAL_GAP : 0
           }
         ]}
-        {...modalState.contentScrollHandlers}
       >
         {children}
       </AnimatedScrollView>
