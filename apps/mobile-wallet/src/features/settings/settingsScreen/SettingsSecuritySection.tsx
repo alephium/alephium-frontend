@@ -57,48 +57,27 @@ const BiometricsSettingsRows = () => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
-  const [lastToggledBiometricsSetting, setLastToggledBiometricsSetting] = useState<
-    'appAccess' | 'transactions' | undefined
-  >()
+  const handleBiometricsAppAccessChange = (value: boolean) =>
+    value || biometricsRequiredForTransactions
+      ? toggleBiometricsAppAccess()
+      : dispatch(openModal({ name: 'BiometricsWarningModal', props: { onConfirm: toggleBiometricsAppAccess } }))
 
-  const openBiometricsWarningModal = () =>
-    dispatch(openModal({ name: 'BiometricsWarningModal', props: { onConfirm: handleDisableBiometricsPress } }))
+  const handleBiometricsTransactionsChange = (value: boolean) =>
+    value || biometricsRequiredForAppAccess
+      ? toggleBiometricsTransactions()
+      : dispatch(openModal({ name: 'BiometricsWarningModal', props: { onConfirm: toggleBiometricsTransactions } }))
 
-  const handleBiometricsAppAccessChange = (value: boolean) => {
-    if (value || biometricsRequiredForTransactions) {
-      toggleBiometricsAppAccess()
-    } else {
-      setLastToggledBiometricsSetting('appAccess')
-      openBiometricsWarningModal()
-    }
-  }
-
-  const handleBiometricsTransactionsChange = (value: boolean) => {
-    if (value || biometricsRequiredForAppAccess) {
-      toggleBiometricsTransactions()
-    } else {
-      setLastToggledBiometricsSetting('transactions')
-      openBiometricsWarningModal()
-    }
-  }
-
-  const toggleBiometricsAppAccess = async () => {
+  const toggleBiometricsAppAccess = () =>
     triggerBiometricsAuthGuard({
       settingsToCheck: 'appAccess',
       successCallback: () => dispatch(biometricsToggled())
     })
-  }
 
-  const toggleBiometricsTransactions = () => {
+  const toggleBiometricsTransactions = () =>
     triggerBiometricsAuthGuard({
       settingsToCheck: 'transactions',
       successCallback: () => dispatch(passwordRequirementToggled())
     })
-  }
-
-  const handleDisableBiometricsPress = () => {
-    lastToggledBiometricsSetting === 'appAccess' ? toggleBiometricsAppAccess() : toggleBiometricsTransactions()
-  }
 
   return (
     <>
