@@ -138,6 +138,7 @@ const BadgeContainer = styled.View`
   align-items: center;
   width: 26px;
   padding: 15px 0;
+  justify-content: center;
 `
 
 const SelectedBadge = styled(Animated.View)`
@@ -161,6 +162,7 @@ const TextualContent = styled.View`
 const AddressBoxColumn = styled.View`
   flex: 1;
   gap: ${VERTICAL_GAP / 4}px;
+  justify-content: center;
 `
 
 const AddressBoxColumnRight = styled(AddressBoxColumn)`
