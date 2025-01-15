@@ -148,11 +148,5 @@
     "setupFiles": [
       "./jestSetupFile.ts"
     ]
-  },
-  "pnpm": {
-    "overrides": {
-      "phin@<3.7.1": ">=3.7.1",
-      "undici@>=6.0.0 <6.11.1": ">=6.11.1"
-    }
   }
 }
