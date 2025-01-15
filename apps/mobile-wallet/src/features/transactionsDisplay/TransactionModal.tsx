@@ -135,7 +135,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
               />
               {!symbol && (
                 <TokenId>
-                  <AppText numberOfLines={1} ellipsizeMode="middle">
+                  <AppText truncate ellipsizeMode="middle">
                     {id}
                   </AppText>
                 </TokenId>

@@ -46,7 +46,7 @@ const ReceiveQRCodeSection = ({ addressHash }: ReceiveQRCodeSectionProps) => {
 
           {address?.settings.label && (
             <Row isLast>
-              <AppText numberOfLines={1} ellipsizeMode="middle">
+              <AppText truncate ellipsizeMode="middle">
                 {addressHash}
               </AppText>
             </Row>

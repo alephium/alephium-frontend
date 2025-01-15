@@ -104,7 +104,7 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
       <ScreenSection>
         <Row title={t('Address hash')}>
           <HashEllipsed
-            numberOfLines={1}
+            truncate
             ellipsizeMode="middle"
             color="secondary"
             onLongPress={() => copyAddressToClipboard(addressHash)}

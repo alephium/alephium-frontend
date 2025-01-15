@@ -102,7 +102,7 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
               <ContactName semiBold size={28}>
                 {contact.name}
               </ContactName>
-              <ContactAddress medium size={16} color="secondary" numberOfLines={1} ellipsizeMode="middle">
+              <ContactAddress truncate medium size={16} color="secondary" ellipsizeMode="middle">
                 {contact.address}
               </ContactAddress>
               <ButtonsRow>

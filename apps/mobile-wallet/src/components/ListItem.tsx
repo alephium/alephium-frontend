@@ -61,11 +61,11 @@ const ListItem = ({
           <Icon>{icon}</Icon>
           <RowContent showSeparator={!isLast && !hideSeparator}>
             <LeftSideContent>
-              <Title semiBold size={16} numberOfLines={1}>
+              <Title semiBold size={16} truncate>
                 {title}
               </Title>
               {typeof subtitle === 'string' ? (
-                <Subtitle color="tertiary" numberOfLines={expandedSubtitle ? undefined : 1} ellipsizeMode="middle">
+                <Subtitle color="tertiary" ellipsizeMode="middle" truncate={!expandedSubtitle}>
                   {subtitle}
                 </Subtitle>
               ) : (
