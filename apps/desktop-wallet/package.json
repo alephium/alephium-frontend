@@ -14,7 +14,7 @@
     "build": "tsc && cross-env INLINE_RUNTIME_CHUNK=false VITE_VERSION=$npm_package_version vite build",
     "start": "turbo start:electron",
     "start:electron": "cross-env VITE_VERSION=$npm_package_version vite",
-    "start:debug": "concurrently \"pnpm start:web\" \"npx react-scan@latest localhost:3000\"",
+    "start:debug": "concurrently \"pnpm start\" \"npx react-scan@0.0.47 localhost:3000\"",
     "build:electron:windows": "electron-builder -w",
     "build:electron:macos": "electron-builder --mac --universal",
     "build:electron:ubuntu": "electron-builder -l",
