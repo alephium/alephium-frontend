@@ -22,7 +22,7 @@ interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyS
 
 const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
-  const { screenScrollHandler, screenScrollY } = useHeaderContext()
+  const { screenScrollHandler, screenScrollY, parentNavigation } = useHeaderContext()
   const { t } = useTranslation()
 
   useScrollToTopOnFocus(screenScrollY)
@@ -43,7 +43,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
         <Button
           title={t('Send')}
           variant="valid"
-          onPress={() => sendTransaction(() => navigation.navigate('ActivityScreen'))}
+          onPress={() => sendTransaction(() => parentNavigation?.navigate('ActivityScreen'))}
         />
       )}
       {...props}
