@@ -4,32 +4,27 @@ import * as Application from 'expo-application'
 import { capitalize } from 'lodash'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Alert, Platform } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { Alert } from 'react-native'
+import { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import Surface from '~/components/layout/Surface'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import LinkToWeb from '~/components/text/LinkToWeb'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
-import { getAutoLockLabel } from '~/features/auto-lock/utils'
-import FundPasswordSettingsRow from '~/features/fund-password/FundPasswordSettingsRow'
 import { languageOptions } from '~/features/localization/languages'
 import { openModal } from '~/features/modals/modalActions'
+import SettingsSecuritySection from '~/features/settings/settingsScreen/SettingsSecuritySection'
 import {
   analyticsToggled,
-  biometricsToggled,
   discreetModeToggled,
-  passwordRequirementToggled,
   themeChanged,
   walletConnectToggled
 } from '~/features/settings/settingsSlice'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { resetNavigation } from '~/utils/navigation'
 
@@ -39,25 +34,16 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const dispatch = useAppDispatch()
   const theme = useTheme()
   const { t } = useTranslation()
-  const { deviceSupportsBiometrics, deviceHasEnrolledBiometrics } = useBiometrics()
   const discreetMode = useAppSelector((s) => s.settings.discreetMode)
-  const biometricsRequiredForAppAccess = useAppSelector((s) => s.settings.usesBiometrics)
-  const biometricsRequiredForTransactions = useAppSelector((s) => s.settings.requireAuth)
   const currentTheme = useAppSelector((s) => s.settings.theme)
   const currentCurrency = useAppSelector((s) => s.settings.currency)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const currentNetworkName = useAppSelector((s) => s.network.name)
-  const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
-  const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
   const language = useAppSelector((s) => s.settings.language)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletName = useAppSelector((s) => s.wallet.name)
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
-  const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
-  const [lastToggledBiometricsSetting, setLastToggledBiometricsSetting] = useState<
-    'appAccess' | 'transactions' | undefined
-  >()
 
   const openLanguageSelectModal = () => dispatch(openModal({ name: 'LanguageSelectModal' }))
 
@@ -71,50 +57,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
       })
     )
 
-  const openBiometricsWarningModal = () =>
-    dispatch(openModal({ name: 'BiometricsWarningModal', props: { onConfirm: handleDisableBiometricsPress } }))
-
-  const openAutoLockOptionsModal = () => dispatch(openModal({ name: 'AutoLockOptionsModal' }))
-
   const openEditWalletNameModal = () => dispatch(openModal({ name: 'EditWalletNameModal' }))
 
   const openSafePlaceWarningModal = () => dispatch(openModal({ name: 'SafePlaceWarningModal' }))
-
-  const handleBiometricsAppAccessChange = (value: boolean) => {
-    if (value || biometricsRequiredForTransactions) {
-      toggleBiometricsAppAccess()
-    } else {
-      setLastToggledBiometricsSetting('appAccess')
-      openBiometricsWarningModal()
-    }
-  }
-
-  const handleBiometricsTransactionsChange = (value: boolean) => {
-    if (value || biometricsRequiredForAppAccess) {
-      toggleBiometricsTransactions()
-    } else {
-      setLastToggledBiometricsSetting('transactions')
-      openBiometricsWarningModal()
-    }
-  }
-
-  const toggleBiometricsAppAccess = async () => {
-    triggerBiometricsAuthGuard({
-      settingsToCheck: 'appAccess',
-      successCallback: () => dispatch(biometricsToggled())
-    })
-  }
-
-  const toggleBiometricsTransactions = () => {
-    triggerBiometricsAuthGuard({
-      settingsToCheck: 'transactions',
-      successCallback: () => dispatch(passwordRequirementToggled())
-    })
-  }
-
-  const handleDisableBiometricsPress = () => {
-    lastToggledBiometricsSetting === 'appAccess' ? toggleBiometricsAppAccess() : toggleBiometricsTransactions()
-  }
 
   const toggleDiscreetMode = () => dispatch(discreetModeToggled())
 
@@ -191,58 +136,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
             <Toggle value={analytics} onValueChange={toggleAnalytics} />
           </Row>
         </ScreenSection>
-        <ScreenSection>
-          <ScreenSectionTitle>{t('Security')}</ScreenSectionTitle>
-          {deviceSupportsBiometrics && !deviceHasEnrolledBiometrics && (
-            <BiometricsRecommendationBox type="accent">
-              <AppText color="accent">
-                {t(
-                  "Your device supports biometrics but none is enrolled. Enable them by adding a fingerprint or Face ID in your device's settings."
-                )}
-              </AppText>
-            </BiometricsRecommendationBox>
-          )}
 
-          <Row
-            title={t('App access')}
-            subtitle={t(
-              !deviceHasEnrolledBiometrics && Platform.OS === 'ios'
-                ? 'Require device passcode to open app'
-                : 'Require biometrics to open app'
-            )}
-          >
-            <Toggle
-              value={isBiometricsEnabled}
-              onValueChange={handleBiometricsAppAccessChange}
-              disabled={!deviceHasEnrolledBiometrics && Platform.OS === 'android'}
-            />
-          </Row>
-          <Row
-            title={t('Transactions')}
-            subtitle={t(
-              !deviceHasEnrolledBiometrics && Platform.OS === 'ios'
-                ? 'Require device passcode to transact'
-                : 'Require biometrics to transact'
-            )}
-          >
-            <Toggle
-              value={biometricsRequiredForTransactions}
-              onValueChange={handleBiometricsTransactionsChange}
-              disabled={!deviceHasEnrolledBiometrics && Platform.OS === 'android'}
-            />
-          </Row>
-
-          <FundPasswordSettingsRow />
-
-          <Row
-            title={t('Auto-lock')}
-            subtitle={t('Amount of time before app locks')}
-            isLast
-            onPress={openAutoLockOptionsModal}
-          >
-            <AppText bold>{getAutoLockLabel(autoLockSeconds)}</AppText>
-          </Row>
-        </ScreenSection>
+        <SettingsSecuritySection />
 
         <ScreenSection>
           <ScreenSectionTitle>{t('Experimental features')}</ScreenSectionTitle>
@@ -295,7 +190,3 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 }
 
 export default SettingsScreen
-
-const BiometricsRecommendationBox = styled(Surface)`
-  padding: 20px;
-`
