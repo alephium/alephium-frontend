@@ -48,7 +48,7 @@ const AddressBadge = ({
         <AddressBadgeContainer>
           {!hideSymbol && <AddressColorSymbol addressHash={addressHash} size={16} />}
           {address.settings.label ? (
-            <Label numberOfLines={1} style={[textStyle]} color={textColor} size={fontSize}>
+            <Label numberOfLines={1} style={textStyle} color={textColor} size={fontSize}>
               {address.settings.label}
             </Label>
           ) : (
@@ -60,18 +60,18 @@ const AddressBadge = ({
       ) : contact ? (
         <AddressBadgeContainer>
           {!hideSymbol && <AddressColorSymbol addressHash={contact.address} size={16} />}
-          <Label numberOfLines={1} style={[textStyle]} color={textColor} size={fontSize}>
+          <Label numberOfLines={1} style={textStyle} color={textColor} size={fontSize}>
             {contact.name}
           </Label>
         </AddressBadgeContainer>
       ) : (
-        <Label numberOfLines={1} ellipsizeMode="middle" style={[textStyle]} color={textColor} size={fontSize}>
+        <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor} size={fontSize}>
           {addressHash}
         </Label>
       )}
       {showCopyBtn && address?.hash && (
         <CopyAddressButton
-          onPress={() => copyAddressToClipboard(address?.hash)}
+          onPress={() => copyAddressToClipboard(address.hash)}
           iconProps={{ name: 'clipboard' }}
           type="transparent"
           color={color}
