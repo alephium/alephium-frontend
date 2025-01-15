@@ -93,7 +93,7 @@ const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps
           .toHex()
       )
     )
-  })
+  }, [theme.name, token?.logoURI])
 
   return (
     <RoundedCard>
