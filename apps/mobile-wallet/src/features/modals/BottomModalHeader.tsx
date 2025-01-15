@@ -17,7 +17,7 @@ interface BottomModalHeaderProps {
 const BottomModalHeader = ({ height, onClose, title, titleAlign = 'center' }: BottomModalHeaderProps) => (
   <HeaderContainer style={{ height }}>
     {titleAlign !== 'left' && <HeaderSideContainer align="left" />}
-    <HeaderTitleOutterContainer>
+    <HeaderTitleOutterContainer style={{ justifyContent: titleAlign === 'left' ? 'flex-start' : 'center' }}>
       <TitleContainer titleAlign={titleAlign}>
         {title &&
           (typeof title === 'string' ? (
@@ -52,14 +52,12 @@ const HeaderSideContainer = styled.View<{ align: 'right' | 'left' }>`
 
 const HeaderTitleOutterContainer = styled.View`
   flex: 1;
-  align-items: center;
-  justify-content: center;
 `
 
 const TitleContainer = styled.View<{ titleAlign: BottomModalHeaderProps['titleAlign'] }>`
   padding: ${({ titleAlign }) => (titleAlign === 'center' ? '0 20px' : '0 20px 0 0')};
-  align-items: center;
-  justify-content: ${({ titleAlign }) => (titleAlign === 'center' ? 'center' : 'flex-start')};
+  align-items: ${({ titleAlign }) => (titleAlign === 'center' ? 'center' : 'flex-start')};
+  justify-content: center;
 `
 
 const Title = styled(AppText)`
