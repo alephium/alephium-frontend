@@ -42,7 +42,7 @@ const NewWalletSuccessScreen = ({ navigation, ...props }: NewWalletSuccessScreen
       <CenteredInstructions
         instructions={[
           {
-            text: `${t(wasWalletMetadataRestored ? 'Welcome back to Alephium!' : 'Welcome to Alephium!')} 🎉`,
+            text: `${t(wasWalletMetadataRestored ? 'Welcome back to Alephium!' : 'Welcome to Alephium')} 🎉`,
             type: 'primary'
           },
           {
