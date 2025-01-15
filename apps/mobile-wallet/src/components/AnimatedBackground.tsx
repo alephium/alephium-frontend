@@ -41,7 +41,7 @@ const AnimatedCanvas = Animated.createAnimatedComponent(Canvas)
 
 function getCircleColors({ shade, isDark }: { shade?: string; isDark: boolean }) {
   if (!shade) {
-    return isDark ? ['#86acff', '#2ac6ff', '#1856ff'] : ['#ffa286', '#e39dff', '#ffc57e']
+    return isDark ? ['#ffbe86', '#241db6', '#6618ff'] : ['#ffa286', '#e39dff', '#ffc57e']
   }
 
   const base = colord(shade)

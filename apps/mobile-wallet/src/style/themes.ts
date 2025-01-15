@@ -98,7 +98,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 25px; shadow-opacity: 0.2; shadow-radius: 25px; elevation: 5;'
   },
   global: {
-    accent: '#5086f9',
+    accent: '#416df9',
     alert: '#ed4a34',
     warning: '#ed882d',
     valid: '#16a324',
