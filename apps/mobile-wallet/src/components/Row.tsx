@@ -49,17 +49,11 @@ const Row = ({
   const componentContent = title ? (
     <>
       <LeftContent isVertical={isVertical}>
-        <Title
-          medium
-          numberOfLines={truncate ? 1 : undefined}
-          ellipsizeMode="middle"
-          color={titleColor}
-          isVertical={isVertical}
-        >
+        <Title medium truncate={truncate} ellipsizeMode="middle" color={titleColor} isVertical={isVertical}>
           {title}
         </Title>
         {subtitle && (
-          <Subtitle numberOfLines={truncate ? 1 : undefined} ellipsizeMode="middle">
+          <Subtitle ellipsizeMode="middle" truncate={truncate}>
             {subtitle}
           </Subtitle>
         )}

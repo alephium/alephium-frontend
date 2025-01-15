@@ -79,12 +79,12 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
       <TextualContent style={{ borderBottomWidth: !isLast ? 1 : 0 }}>
         <AddressBoxColumn>
           {address.settings.label && (
-            <AppText numberOfLines={1} semiBold size={16} color={isSelected ? theme.global.accent : theme.font.primary}>
+            <AppText truncate semiBold size={16} color={isSelected ? theme.global.accent : theme.font.primary}>
               {address.settings.label}
             </AppText>
           )}
           <AppText
-            numberOfLines={1}
+            truncate
             ellipsizeMode="middle"
             semiBold={!address?.settings.label}
             color={isSelected ? theme.global.accent : address.settings.label ? theme.font.tertiary : theme.font.primary}
