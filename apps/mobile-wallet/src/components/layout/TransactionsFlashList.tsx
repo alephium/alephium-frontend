@@ -146,7 +146,6 @@ const TransactionsFlashList = forwardRef(
 export default TransactionsFlashList
 
 const ScreenSectionTitleStyled = styled(ScreenSectionTitle)`
-  margin-left: ${DEFAULT_MARGIN}px;
   margin-top: 22px;
 `
 

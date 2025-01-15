@@ -13,14 +13,14 @@ const EmptyPlaceholderStyled = styled.View`
   flex: 1;
   justify-content: center;
   margin: ${VERTICAL_GAP / 2}px 0;
+  border-radius: 22px;
+  border: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
 const Content = styled.View`
   align-items: center;
   gap: 10px;
   padding: 20px;
-  border-radius: 22px;
-  border: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
 export default EmptyPlaceholder

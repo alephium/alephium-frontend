@@ -16,6 +16,7 @@ import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import { showToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'VerifyScreen'>, ScrollScreenProps {}
@@ -32,6 +33,11 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
 
   if (!fromAddress || !toAddress || assetAmounts.length < 1) return null
 
+  const onSendSuccess = () => {
+    showToast({ type: 'success', text1: t('Transaction sent') })
+    parentNavigation?.navigate('ActivityScreen')
+  }
+
   return (
     <ScrollScreen
       verticalGap
@@ -40,11 +46,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
       screenIntro={t('Please, double check that everything is correct before sending.')}
       onScroll={screenScrollHandler}
       bottomButtonsRender={() => (
-        <Button
-          title={t('Send')}
-          variant="valid"
-          onPress={() => sendTransaction(() => parentNavigation?.navigate('ActivityScreen'))}
-        />
+        <Button title={t('Send')} variant="valid" onPress={() => sendTransaction(onSendSuccess)} />
       )}
       {...props}
     >
