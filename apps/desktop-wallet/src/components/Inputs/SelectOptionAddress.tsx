@@ -1,5 +1,6 @@
 import { AddressHash } from '@alephium/shared'
-import { ReactNode } from 'react'
+import { useInView } from 'framer-motion'
+import { ReactNode, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -20,8 +21,12 @@ const SelectOptionAddress = ({ addressHash, isSelected, className, subtitle }: S
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true })
+
   return (
     <SelectOptionItemContent
+      ref={ref}
       className={className}
       displaysCheckMarkWhenSelected
       isSelected={isSelected}
@@ -37,7 +42,9 @@ const SelectOptionAddress = ({ addressHash, isSelected, className, subtitle }: S
           </Group>
         </Header>
       }
-      SecondaryContent={<AddressTokensBadgesList addressHash={addressHash} withBackground showAmount />}
+      SecondaryContent={
+        isInView ? <AddressTokensBadgesList addressHash={addressHash} withBackground showAmount /> : null
+      }
     />
   )
 }

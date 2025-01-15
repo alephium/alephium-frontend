@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { forwardRef, ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 import CheckMark from '@/components/CheckMark'
@@ -12,24 +12,29 @@ interface SelectOptionItemContentProps {
   displaysCheckMarkWhenSelected?: boolean
 }
 
-const SelectOptionItemContent = ({
-  MainContent: ContentTop,
-  SecondaryContent: ContentBottom,
-  isSelected,
-  contentDirection = 'row',
-  className
-}: SelectOptionItemContentProps) => (
-  <OptionContentWrapper className={className} contentDirection={contentDirection}>
-    <OptionMainContent>
-      {ContentTop}
-      {isSelected && (
-        <CheckMarkContainer>
-          <CheckMark />
-        </CheckMarkContainer>
-      )}
-    </OptionMainContent>
-    {ContentBottom && <OptionSecondaryContent>{ContentBottom}</OptionSecondaryContent>}
-  </OptionContentWrapper>
+const SelectOptionItemContent = forwardRef<HTMLDivElement, SelectOptionItemContentProps>(
+  (
+    {
+      MainContent: ContentTop,
+      SecondaryContent: ContentBottom,
+      isSelected,
+      contentDirection = 'row',
+      className
+    }: SelectOptionItemContentProps,
+    ref
+  ) => (
+    <OptionContentWrapper className={className} contentDirection={contentDirection} ref={ref}>
+      <OptionMainContent>
+        {ContentTop}
+        {isSelected && (
+          <CheckMarkContainer>
+            <CheckMark />
+          </CheckMarkContainer>
+        )}
+      </OptionMainContent>
+      {ContentBottom && <OptionSecondaryContent>{ContentBottom}</OptionSecondaryContent>}
+    </OptionContentWrapper>
+  )
 )
 
 export default SelectOptionItemContent
