@@ -1,5 +1,5 @@
 import { intersection } from 'lodash'
-import { memo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -9,7 +9,12 @@ import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
+import {
+  useFetchAddressesHashesSortedByAddressesLabel,
+  useFetchAddressesHashesWithBalance,
+  useFetchAddressesHashesWithBalanceSortedByAlphWorth,
+  useFetchSortedAddressesHashesWithLatestTx
+} from '@/hooks/useAddresses'
 import AddressListRow from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressListRow'
 import AdvancedOperationsButton from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsButton'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
@@ -17,6 +22,7 @@ import { AddressOrder } from '@/types/addresses.ts'
 import Select from '@/components/Inputs/Select.tsx'
 import { selectSortedAddresses } from '@/storage/addresses/addressesSelectors.ts'
 import { setAddressOrder } from '@/storage/addresses/addressesSlice.ts'
+import useFetchAddressWorth from '@/api/apiDataHooks/address/useFetchAddressWorth.ts'
 
 interface OrderOption {
   value: AddressOrder
@@ -31,19 +37,44 @@ const AddressesTabContent = memo(() => {
   const [hideEmptyAddresses, setHideEmptyAddresses] = useState(false)
   const filteredByText = useFilterAddressesByText(searchInput.toLowerCase())
   const { data: filteredByToggle } = useFetchAddressesHashesWithBalance()
+  const { data: sortedWorthAlph } = useFetchAddressesHashesWithBalanceSortedByAlphWorth()
+  // const { data: sortedTotalWorth } = useFetchAddressesHashesWithBalanceSortedByTotalWorth()
 
+  const { data: sortedAlphabetical } = useFetchAddressesHashesSortedByAddressesLabel()
   const walletId = useAppSelector((state) => state.activeWallet.id)
-
-  const visibleAddresses = useAppSelector((state) =>
-    selectSortedAddresses(state, hideEmptyAddresses ? intersection(filteredByText, filteredByToggle) : filteredByText)
-  )
-
-  const openNewAddressModal = () =>
-    dispatch(openModal({ name: 'NewAddressModal', props: { title: t('New address'), singleAddress: true } }))
-
   const currentOrder = useAppSelector((state) =>
     walletId ? state.addresses.orderPreference?.[walletId] ?? AddressOrder.LastUse : AddressOrder.LastUse
   )
+
+  const visibleAddresses = useMemo(() => {
+    // First get the correctly sorted list
+    let addresses
+    switch (currentOrder) {
+      case AddressOrder.TotalValue:
+        addresses = sortedWorthAlph
+        break
+      case AddressOrder.Alphabetical:
+        addresses = sortedAlphabetical
+        break
+      default:
+        addresses = filteredByText
+    }
+
+    // Then apply text filter
+    const textFiltered = searchInput ? intersection(addresses, filteredByText) : addresses
+
+    // Finally apply empty addresses filter if needed
+    return hideEmptyAddresses ? intersection(textFiltered, filteredByToggle) : textFiltered
+  }, [
+    currentOrder,
+    sortedWorthAlph,
+    sortedAlphabetical,
+    filteredByText,
+    filteredByToggle,
+    hideEmptyAddresses,
+    searchInput
+  ])
+
   const orderOptions: OrderOption[] = [
     { value: AddressOrder.LastUse, label: t('Last used') },
     { value: AddressOrder.TotalValue, label: t('Total value') },
@@ -53,6 +84,10 @@ const AddressesTabContent = memo(() => {
   const onSelect = (value: AddressOrder) => {
     walletId && dispatch(setAddressOrder({ walletId, order: value }))
   }
+
+  const openNewAddressModal = () =>
+    dispatch(openModal({ name: 'NewAddressModal', props: { title: t('New address'), singleAddress: true } }))
+
   return (
     <TabContent
       searchPlaceholder={t('Search for label, a hash or an asset...')}
@@ -64,9 +99,9 @@ const AddressesTabContent = memo(() => {
           <SelectWrapper>
             <Select<AddressOrder>
               id="address-order"
+              onSelect={onSelect}
               options={orderOptions}
               controlledValue={orderOptions.find((opt) => opt.value === currentOrder)}
-              onSelect={onSelect}
               noMargin
               heightSize="small"
             />

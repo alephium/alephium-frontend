@@ -65,11 +65,15 @@ export const selectSortedAddresses = createSelector(
 
       switch (currentOrder) {
         case AddressOrder.Alphabetical: {
-          // If one has a label and the other doesn't, the labeled one comes first
+          // Default address always comes first
+          if (addressA.isDefault && !addressB.isDefault) return -1
+          if (!addressA.isDefault && addressB.isDefault) return 1
+
+          // Then check for labels
           if (addressA.label && !addressB.label) return -1
           if (!addressA.label && addressB.label) return 1
 
-          // If both have labels or both don't have labels, sort alphabetically
+          // Finally sort alphabetically
           const labelA = (addressA.label || addressA.hash).toLowerCase()
           const labelB = (addressB.label || addressB.hash).toLowerCase()
           return labelA.localeCompare(labelB)
@@ -77,8 +81,16 @@ export const selectSortedAddresses = createSelector(
         case AddressOrder.LastUse:
           return 0 // Keep original order since it's already sorted by last used
 
-        case AddressOrder.TotalValue:
-          return 0 // TODO
+        case AddressOrder.TotalValue: {
+          // // Default address always comes first
+          // if (addressA.isDefault && !addressB.isDefault) return -1
+          // if (!addressA.isDefault && addressB.isDefault) return 1
+          // // Finally sort by address worth
+          // const worthA = addressWorthMap[addressA.hash] || 0
+          // const worthB = addressWorthMap[addressB.hash] || 0
+          // return worthB - worthA
+          return 0
+        }
         default:
           return 0
       }
