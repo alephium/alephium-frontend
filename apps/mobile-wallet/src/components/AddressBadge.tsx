@@ -52,7 +52,7 @@ const AddressBadge = ({
               {address.settings.label}
             </Label>
           ) : (
-            <Label numberOfLines={1} ellipsizeMode="middle" style={[textStyle]} color={textColor} size={fontSize}>
+            <Label numberOfLines={1} ellipsizeMode="middle" style={textStyle} color={textColor} size={fontSize}>
               {address.hash}
             </Label>
           )}
