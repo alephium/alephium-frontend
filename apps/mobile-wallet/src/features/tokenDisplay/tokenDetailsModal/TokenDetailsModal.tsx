@@ -62,7 +62,7 @@ interface TokenAnimatedBackgroundProps {
 const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps) => {
   const theme = useTheme()
   const [dominantColor, setDominantColor] = useState<string>()
-  const token = useAppSelector((state) => selectFungibleTokenById(state, tokenId))
+  const tokenLogoUri = useAppSelector((s) => selectFungibleTokenById(s, tokenId)?.logoURI)
 
   const fontColor =
     dominantColor &&
@@ -75,14 +75,12 @@ const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps
         : darkTheme.font.primary)
 
   useEffect(() => {
-    const logoURI = token?.logoURI
+    if (!tokenLogoUri) return
 
-    if (!logoURI) return
-
-    getColors(logoURI, {
+    getColors(tokenLogoUri, {
       fallback: '#228B22',
       cache: true,
-      key: logoURI
+      key: tokenLogoUri
     }).then((r) =>
       setDominantColor(
         colord(
@@ -93,7 +91,7 @@ const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps
           .toHex()
       )
     )
-  }, [theme.name, token?.logoURI])
+  }, [theme.name, tokenLogoUri])
 
   return (
     <RoundedCard>
