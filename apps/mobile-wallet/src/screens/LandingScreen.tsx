@@ -115,7 +115,7 @@ const WelcomeCard = () => {
       <AnimatedBackground isAnimated isFullScreen />
       <AlephiumLogo color={theme.font.primary} style={{ width: '20%', height: 200, flex: 0 }} />
       <Title size={32} semiBold>
-        {t('Welcome to Alephium!')}
+        {t('Welcome to Alephium')}
       </Title>
     </WelcomeCardStyled>
   )
