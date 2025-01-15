@@ -1,5 +1,5 @@
 import { AddressHash } from '@alephium/shared'
-import { NavigationContainer, ParamListBase, useNavigation, useNavigationContainerRef } from '@react-navigation/native'
+import { NavigationContainer, ParamListBase, useNavigationContainerRef } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
@@ -17,8 +17,9 @@ export interface ReceiveNavigationParamList extends ParamListBase {
 
 const ReceiveStack = createStackNavigator<ReceiveNavigationParamList>()
 
-const ReceiveNavigation = ({ navigation }: StackScreenProps<RootStackParamList, 'ReceiveNavigation'>) => {
-  const parentNavigation = useNavigation()
+const ReceiveNavigation = ({
+  navigation: parentNavigation
+}: StackScreenProps<RootStackParamList, 'ReceiveNavigation'>) => {
   const navigationRef = useNavigationContainerRef()
 
   const handleGoBack = () => {
