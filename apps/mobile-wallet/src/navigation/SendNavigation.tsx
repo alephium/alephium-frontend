@@ -1,8 +1,8 @@
 import { AddressHash } from '@alephium/shared'
-import { ParamListBase, useNavigation } from '@react-navigation/native'
+import { NavigationContainer, ParamListBase, useNavigation, useNavigationContainerRef } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import { SceneProgress } from '@react-navigation/stack/lib/typescript/src/types'
 import { useTranslation } from 'react-i18next'
+import { View } from 'react-native'
 
 import StackHeader from '~/components/headers/StackHeader'
 import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
@@ -23,28 +23,48 @@ export type PossibleNextScreenAfterDestination = 'OriginScreen' | 'AssetsScreen'
 
 const SendStack = createStackNavigator<SendNavigationParamList>()
 
-const SendNavigation = () => (
-  <SendContextProvider>
-    <HeaderContextProvider>
-      <SendStack.Navigator
-        screenOptions={{
-          header: ({ progress }) => <SendNavigationHeader progress={progress} />,
-          headerMode: 'float'
-        }}
-        initialRouteName="DestinationScreen"
-      >
-        <SendStack.Screen name="DestinationScreen" component={DestinationScreen} />
-        <SendStack.Screen name="OriginScreen" component={OriginScreen} />
-        <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />
-        <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
-      </SendStack.Navigator>
-    </HeaderContextProvider>
-  </SendContextProvider>
-)
+const SendNavigation = () => {
+  const parentNavigation = useNavigation()
+  const navigationRef = useNavigationContainerRef()
 
-const SendNavigationHeader = ({ progress }: { progress: SceneProgress }) => {
+  const handleGoBack = () => {
+    if (!navigationRef.current?.canGoBack()) {
+      parentNavigation.goBack()
+    } else {
+      navigationRef.current?.goBack()
+    }
+  }
+
+  return (
+    <SendContextProvider>
+      <HeaderContextProvider>
+        <View style={{ flex: 1 }}>
+          <SendNavigationHeader onBackPress={handleGoBack} />
+          <NavigationContainer ref={navigationRef} independent>
+            <SendStack.Navigator
+              screenOptions={{
+                headerShown: false
+              }}
+              initialRouteName="DestinationScreen"
+            >
+              <SendStack.Screen name="DestinationScreen" component={DestinationScreen} />
+              <SendStack.Screen name="OriginScreen" component={OriginScreen} />
+              <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />
+              <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
+            </SendStack.Navigator>
+          </NavigationContainer>
+        </View>
+      </HeaderContextProvider>
+    </SendContextProvider>
+  )
+}
+
+interface SendNavigationHeaderProps {
+  onBackPress: () => void
+}
+
+const SendNavigationHeader = ({ onBackPress }: SendNavigationHeaderProps) => {
   const { headerOptions, screenScrollY } = useHeaderContext()
-  const navigation = useNavigation()
   const { t } = useTranslation()
 
   return (
@@ -52,8 +72,7 @@ const SendNavigationHeader = ({ progress }: { progress: SceneProgress }) => {
       options={{ headerTitle: t('Send'), ...headerOptions }}
       titleAlwaysVisible
       scrollY={screenScrollY}
-      onBackPress={() => navigation.goBack()}
-      progress={progress}
+      onBackPress={onBackPress}
     />
   )
 }

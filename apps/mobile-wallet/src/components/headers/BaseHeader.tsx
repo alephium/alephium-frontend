@@ -15,7 +15,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import useSceneProgressSharedValues from '~/hooks/layout/useSceneProgressSharedValues'
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP } from '~/style/globalStyle'
 
 export type BaseHeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'> & {
@@ -52,7 +51,6 @@ const BaseHeader = ({
   const theme = useTheme()
   const { width: screenWidth } = useWindowDimensions()
   const [headerHeight, setHeaderHeight] = useState(80)
-  const { currentProgress, nextProgress } = useSceneProgressSharedValues(progress)
 
   const gradientHeight = headerHeight + 50
   const defaultScrollRange = [0 + scrollEffectOffset, 80 + scrollEffectOffset]
@@ -63,9 +61,6 @@ const BaseHeader = ({
     headerTitle && typeof headerTitle === 'function' ? headerTitle({ children: '' }) : undefined
   const HeaderTitleRight = headerTitleRight && headerTitleRight()
 
-  const animatedHeaderOpacity = progress
-    ? interpolate(currentProgress.value + (nextProgress.value || 0), [0, 1, 2], [0, 1, 0])
-    : 1
   const animatedGradientOpacity = useDerivedValue(() => interpolate(scrollY?.value || 0, defaultScrollRange, [0, 1]))
 
   const headerTitleContainerAnimatedStyle = useAnimatedStyle(() =>
@@ -108,12 +103,7 @@ const BaseHeader = ({
   }
 
   return (
-    <BaseHeaderStyled
-      ref={headerRef}
-      onLayout={handleHeaderLayout}
-      style={{ opacity: animatedHeaderOpacity }}
-      {...props}
-    >
+    <BaseHeaderStyled ref={headerRef} onLayout={handleHeaderLayout} {...props}>
       <View pointerEvents="none">
         <HeaderGradient
           pointerEvents="none"
