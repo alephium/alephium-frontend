@@ -4,12 +4,13 @@
 
 ### Patch Changes
 
-- e8282ba: Fix removal of active WalletConnect sessions
-- 4a8706f: Frameless window on Windows
-- 76eb42d: Optimize transactions loading
-- 4a8706f: Fix Linux app title bar
-- 8c8caaf: Enable Thai translations
-- dd42b45: Support alph_signAndSubmitUnsignedTx WalletConnect method
+- 8abda40: Fix removal of active WalletConnect sessions
+- 8abda40: Frameless window on Windows
+- 8abda40: Optimize transactions loading
+- 8abda40: Fix Linux app title bar
+- 8abda40: Enable Thai translations
+- 8abda40: Support alph_signAndSubmitUnsignedTx WalletConnect method
+- 1c6dcd7: Improve performance of address picker
 
 ## 2.5.0
 
