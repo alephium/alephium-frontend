@@ -1,5 +1,7 @@
 import { AddressHash, calculateAmountWorth, contactsAdapter, selectAllPrices } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { AddressGroup } from '@alephium/walletconnect-provider'
+import { Token } from '@alephium/web3'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { makeSelectAddressesKnownFungibleTokens, selectAllAddresses } from '~/store/addressesSlice'
@@ -31,3 +33,11 @@ export const makeSelectAddressesTokensWorth = () =>
         : totalWorth
     }, 0)
   )
+
+export const selectAddressesWithToken = createSelector(
+  [selectAllAddresses, (_, tokenId: Token['id']) => tokenId],
+  (addresses, tokenId) =>
+    tokenId === ALPH.id
+      ? addresses.filter((address) => BigInt(address.balance) > 0)
+      : addresses.filter((address) => address.tokens.find((token) => token.tokenId === tokenId))
+)

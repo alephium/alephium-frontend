@@ -1,7 +1,6 @@
-import { AddressHash, getHumanReadableError } from '@alephium/shared'
+import { AddressHash } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Alert } from 'react-native'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
@@ -11,18 +10,17 @@ import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
 import Row from '~/components/Row'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
+import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { deleteAddress } from '~/persistent-storage/wallet'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
-import { addressDeleted } from '~/store/addresses/addressesActions'
 import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
 import { copyAddressToClipboard } from '~/utils/addresses'
-import { showExceptionToast, showToast } from '~/utils/layout'
+import { showExceptionToast } from '~/utils/layout'
 
 interface AddressSettingsModalProps {
   addressHash: AddressHash
@@ -36,45 +34,16 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
   const { t } = useTranslation()
   const canDeleteAddress = useCanDeleteAddress(addressHash)
 
+  const forgetAddress = useForgetAddress({
+    addressHash,
+    origin: 'addressSettings',
+    onConfirm: () => {
+      if (parentModalId) dispatch(closeModal({ id: parentModalId }))
+      dispatch(closeModal({ id }))
+    }
+  })
+
   const [settings, setSettings] = useState<AddressFormData | undefined>(address?.settings)
-
-  const handleForgetPress = async () => {
-    if (!canDeleteAddress) return null
-
-    Alert.alert(t('forgetAddress_one'), t('You can always re-add it to your wallet.'), [
-      {
-        text: t('Cancel'),
-        style: 'cancel'
-      },
-      {
-        text: t('Forget'),
-        style: 'destructive',
-        onPress: async () => {
-          if (parentModalId) dispatch(closeModal({ id: parentModalId }))
-          dispatch(closeModal({ id }))
-
-          try {
-            await deleteAddress(addressHash)
-            dispatch(addressDeleted(addressHash))
-            showToast({
-              type: 'info',
-              text1: t('Address forgotten')
-            })
-          } catch (error) {
-            const message = t('Could not forget address')
-            sendAnalytics({ type: 'error', message, error })
-            showToast({
-              type: 'error',
-              text1: t('Could not forget address'),
-              text2: getHumanReadableError(error, '')
-            })
-          }
-
-          sendAnalytics({ event: 'Deleted address', props: { origin: 'Address card' } })
-        }
-      }
-    ])
-  }
 
   const handleSavePress = async () => {
     if (!settings || !address) return
@@ -102,7 +71,7 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
   return (
     <BottomModal modalId={id} title={t('Address settings')} noPadding>
       <ScreenSection>
-        <Row title={t('Address hash')}>
+        <Row title={t('Address')}>
           <HashEllipsed
             numberOfLines={1}
             ellipsizeMode="middle"
@@ -123,13 +92,7 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
       {canDeleteAddress && (
         <ScreenSection>
           <Row title={t('Forget address')} subtitle={t('You can always re-add it to your wallet.')} isLast>
-            <Button
-              title={t('Forget')}
-              iconProps={{ name: 'trash-2' }}
-              short
-              variant="alert"
-              onPress={handleForgetPress}
-            />
+            <Button title={t('Forget')} iconProps={{ name: 'trash-2' }} short variant="alert" onPress={forgetAddress} />
           </Row>
         </ScreenSection>
       )}

@@ -11,13 +11,15 @@ import Amount from '~/components/Amount'
 import AnimatedBackground from '~/components/AnimatedBackground'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
-import DashboardCardButton from '~/components/buttons/ActionCardButton'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen, { BottomBarScrollScreenProps } from '~/components/layout/BottomBarScrollScreen'
 import { ScreenSection } from '~/components/layout/Screen'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import RoundedCard from '~/components/RoundedCard'
+import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import { openModal } from '~/features/modals/modalActions'
+import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
+import ActionCardSendButton from '~/features/send/ActionCardSendButton'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
@@ -74,30 +76,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     }
   }, [isNewWallet])
 
-  const handleReceivePress = () => {
-    if (addressHashes.length === 1) {
-      navigation.navigate('ReceiveNavigation', {
-        screen: 'QRCodeScreen',
-        params: { addressHash: addressHashes[0] }
-      })
-    } else {
-      navigation.navigate('ReceiveNavigation')
-    }
-  }
-
-  const handleSendPress = () => {
-    if (addressHashes.length === 1) {
-      navigation.navigate('SendNavigation', {
-        screen: 'DestinationScreen',
-        params: { fromAddressHash: addressHashes[0] }
-      })
-    } else {
-      navigation.navigate('SendNavigation')
-    }
-  }
-
-  const openBuyModal = () =>
-    dispatch(openModal({ name: 'BuyModal', props: { receiveAddressHash: defaultAddressHash } }))
+  const addressHash = addressHashes.length === 1 ? addressHashes[0] : undefined
 
   return (
     <DashboardScreenStyled
@@ -123,11 +102,9 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         </RoundedCardStyled>
       </CardContainer>
       <ButtonsRowContainer>
-        {totalBalance > BigInt(0) && (
-          <DashboardCardButton title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />
-        )}
-        <DashboardCardButton title={t('Receive')} onPress={handleReceivePress} iconProps={{ name: 'download' }} />
-        <DashboardCardButton title={t('Buy')} onPress={openBuyModal} iconProps={{ name: 'credit-card' }} />
+        {totalBalance > BigInt(0) && <ActionCardSendButton origin="dashboard" addressHash={addressHash} />}
+        <ActionCardReceiveButton origin="dashboard" addressHash={addressHash} />
+        <ActionCardBuyButton origin="dashboard" receiveAddressHash={defaultAddressHash} />
       </ButtonsRowContainer>
 
       <ScreenSection>

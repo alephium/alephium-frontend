@@ -10,7 +10,8 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import Badge from '~/components/Badge'
-import { useAppSelector } from '~/hooks/redux'
+import { openModal } from '~/features/modals/modalActions'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import {
   makeSelectAddressesKnownFungibleTokens,
@@ -43,16 +44,27 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
+  const dispatch = useAppDispatch()
 
   if (!address) return
 
   const handlePress = (e: GestureResponderEvent) => {
     vibrate(ImpactStyle.Heavy)
-    onPress && onPress(e)
+    onPress?.(e)
+  }
+
+  const handleLongPress = () => {
+    vibrate(ImpactStyle.Heavy)
+    dispatch(openModal({ name: 'AddressQuickActionsModal', props: { addressHash } }))
   }
 
   return (
-    <AddressBoxStyled {...props} onPress={handlePress} style={[style, { borderRadius: rounded ? BORDER_RADIUS : 0 }]}>
+    <AddressBoxStyled
+      {...props}
+      onPress={handlePress}
+      onLongPress={handleLongPress}
+      style={[style, { borderRadius: rounded ? BORDER_RADIUS : 0 }]}
+    >
       <BadgeContainer>
         {isSelected ? (
           <SelectedBadge>
