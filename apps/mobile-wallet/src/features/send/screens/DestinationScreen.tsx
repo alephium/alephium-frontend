@@ -170,7 +170,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             title={t('Scan')}
             onPress={openQRCodeScannerModal}
             variant="accent"
-            type="secondary"
           />
           <Button
             compact
@@ -178,7 +177,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             title={t('Contacts')}
             onPress={openSelectContactModal}
             variant="accent"
-            type="secondary"
           />
           <Button
             compact
@@ -186,7 +184,6 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
             title={t('Addresses')}
             onPress={openAddressSelectModal}
             variant="accent"
-            type="secondary"
           />
         </ButtonsRow>
       </ScreenSection>
