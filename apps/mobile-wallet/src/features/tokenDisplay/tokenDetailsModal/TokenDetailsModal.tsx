@@ -81,16 +81,22 @@ const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps
       fallback: '#228B22',
       cache: true,
       key: tokenLogoUri
-    }).then((r) =>
+    }).then((r) => {
+      const color = colord(
+        r.platform === 'ios' ? (colord(r.background).brightness() < 0.9 ? r.background : r.secondary) : r.darkVibrant
+      )
+
+      const isBright = color.brightness() > 0.7
+
       setDominantColor(
         colord(
           r.platform === 'ios' ? (colord(r.background).brightness() < 0.9 ? r.background : r.secondary) : r.darkVibrant
         )
           .saturate(1.5)
-          .lighten(theme.name === 'light' ? 0.4 : 0.2)
+          .lighten(!isBright ? (theme.name === 'light' ? 0.3 : 0.2) : 0)
           .toHex()
       )
-    )
+    })
   }, [theme.name, tokenLogoUri])
 
   return (
