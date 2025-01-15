@@ -25,12 +25,12 @@ const DashboardSecondaryButtons = () => {
     })
 
   const areNoButtonsVisible = !isWalletConnectEnabled && isMnemonicBackedUp && networkStatus !== 'offline'
-  const onlyLeftButtonVisible = isWalletConnectEnabled && isMnemonicBackedUp && networkStatus !== 'offline'
+  const onlySideButtonVisible = isWalletConnectEnabled && isMnemonicBackedUp && networkStatus !== 'offline'
 
   if (areNoButtonsVisible) return null
 
   return (
-    <DashboardSecondaryButtonsStyled style={{ height: onlyLeftButtonVisible ? 15 : 30 }}>
+    <DashboardSecondaryButtonsStyled style={{ height: onlySideButtonVisible ? 15 : 30 }}>
       <Buttons>
         {isWalletConnectEnabled && <WalletConnectButton />}
         {networkStatus === 'offline' && (
