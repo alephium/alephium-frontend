@@ -16,8 +16,8 @@ const useMergeAllTokensBalances = ({
 }: UseMergeAllTokensBalancesProps) =>
   useMemo(
     () =>
-      includeAlph && alphBalances?.totalBalance
-        ? [{ id: ALPH.id, ...alphBalances }, ...tokensBalances]
+      includeAlph && alphBalances?.totalBalance !== '0'
+        ? [{ id: ALPH.id, ...alphBalances } as TokenApiBalances, ...tokensBalances]
         : tokensBalances,
     [includeAlph, alphBalances, tokensBalances]
   )
