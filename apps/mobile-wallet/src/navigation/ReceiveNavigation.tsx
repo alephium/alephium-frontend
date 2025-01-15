@@ -1,14 +1,14 @@
 import { AddressHash } from '@alephium/shared'
-import { ParamListBase, useNavigation } from '@react-navigation/native'
+import { NavigationContainer, ParamListBase, useNavigation, useNavigationContainerRef } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
+import { View } from 'react-native'
 
 import StackHeader from '~/components/headers/StackHeader'
 import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContext'
 import AddressScreen from '~/features/receive/screens/AddressScreen'
 import QRCodeScreen from '~/features/receive/screens/QRCodeScreen'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { SCREEN_OVERFLOW } from '~/style/globalStyle'
 
 export interface ReceiveNavigationParamList extends ParamListBase {
   AddressScreen: undefined
@@ -17,25 +17,44 @@ export interface ReceiveNavigationParamList extends ParamListBase {
 
 const ReceiveStack = createStackNavigator<ReceiveNavigationParamList>()
 
-const ReceiveNavigation = ({ navigation }: StackScreenProps<RootStackParamList, 'ReceiveNavigation'>) => (
-  <HeaderContextProvider>
-    <ReceiveStack.Navigator
-      screenOptions={{
-        header: () => <ReceiveNavigationHeader />,
-        cardStyle: { overflow: SCREEN_OVERFLOW },
-        headerMode: 'float'
-      }}
-      initialRouteName="AddressScreen"
-    >
-      <ReceiveStack.Screen name="AddressScreen" component={AddressScreen} />
-      <ReceiveStack.Screen name="QRCodeScreen" component={QRCodeScreen} />
-    </ReceiveStack.Navigator>
-  </HeaderContextProvider>
-)
+const ReceiveNavigation = ({ navigation }: StackScreenProps<RootStackParamList, 'ReceiveNavigation'>) => {
+  const parentNavigation = useNavigation()
+  const navigationRef = useNavigationContainerRef()
 
-const ReceiveNavigationHeader = () => {
+  const handleGoBack = () => {
+    if (!navigationRef.current?.canGoBack()) {
+      parentNavigation.goBack()
+    } else {
+      navigationRef.current?.goBack()
+    }
+  }
+
+  return (
+    <HeaderContextProvider>
+      <View style={{ flex: 1 }}>
+        <ReceiveNavigationHeader onBackPress={handleGoBack} />
+        <NavigationContainer ref={navigationRef} independent>
+          <ReceiveStack.Navigator
+            screenOptions={{
+              headerShown: false
+            }}
+            initialRouteName="AddressScreen"
+          >
+            <ReceiveStack.Screen name="AddressScreen" component={AddressScreen} />
+            <ReceiveStack.Screen name="QRCodeScreen" component={QRCodeScreen} />
+          </ReceiveStack.Navigator>
+        </NavigationContainer>
+      </View>
+    </HeaderContextProvider>
+  )
+}
+
+interface ReceiveNavigationHeaderProps {
+  onBackPress: () => void
+}
+
+const ReceiveNavigationHeader = ({ onBackPress }: ReceiveNavigationHeaderProps) => {
   const { headerOptions, screenScrollY } = useHeaderContext()
-  const navigation = useNavigation()
   const { t } = useTranslation()
 
   return (
@@ -43,7 +62,7 @@ const ReceiveNavigationHeader = () => {
       options={{ headerTitle: t('Receive'), ...headerOptions }}
       titleAlwaysVisible
       scrollY={screenScrollY}
-      onBackPress={() => navigation.goBack()}
+      onBackPress={onBackPress}
     />
   )
 }
