@@ -50,7 +50,7 @@ const AddressesTabContent = memo(() => {
     // First get the correctly sorted list
     let addresses
     switch (currentOrder) {
-      case AddressOrder.TotalValue:
+      case AddressOrder.AlphValue:
         addresses = sortedWorthAlph
         break
       case AddressOrder.Alphabetical:
@@ -77,7 +77,7 @@ const AddressesTabContent = memo(() => {
 
   const orderOptions: OrderOption[] = [
     { value: AddressOrder.LastUse, label: t('Last used') },
-    { value: AddressOrder.TotalValue, label: t('Total value') },
+    { value: AddressOrder.AlphValue, label: t('ALPH value') },
     { value: AddressOrder.Alphabetical, label: t('Alphabetical') }
   ]
 

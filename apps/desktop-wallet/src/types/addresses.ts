@@ -5,7 +5,7 @@ import { EntityState } from '@reduxjs/toolkit'
 
 export enum AddressOrder {
   LastUse = 'lastUse',
-  TotalValue = 'totalValue',
+  AlphValue = 'alphValue',
   Alphabetical = 'alphabetical'
 }
 

@@ -1,16 +1,13 @@
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
-import { AddressHash } from '@alephium/shared'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import useFetchLatestTransactionOfEachAddress from '@/api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
 import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
 import { useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddresses, useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-import useFetchWalletBalancesTokensByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensByAddress.ts'
-import { Address } from '@/types/addresses.ts'
 
 export const useFetchSortedAddressesHashes = (props?: SkipProp) => {
   const isNetworkOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
@@ -68,32 +65,31 @@ export const useFetchAddressesHashesWithBalance = () => {
 export const useFetchAddressesHashesWithBalanceSortedByAlphWorth = () => {
   const isNetworkOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
   const allAddressHashes = useUnsortedAddressesHashes()
-  const addressEntities = useAppSelector((s) => s.addresses.entities)
-  const { data: tokenBalances, isLoading } = useFetchWalletBalancesTokensByAddress()
-  console.warn(tokenBalances)
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+  const { data: alphBalances, isLoading } = useFetchWalletBalancesAlphByAddress()
+
   const sortedAddresses = useMemo(() => {
-    if (isNetworkOffline || !tokenBalances) return allAddressHashes
+    if (isNetworkOffline || !alphBalances) return allAddressHashes
 
-    return [...allAddressHashes].sort((a: AddressHash, b: AddressHash) => {
-      const hashA = String(a)
-      const hashB = String(b)
-
-      // Default addresses first
-      const entityA = Object.values(addressEntities).find((entity) => entity?.hash === hashA)
-      const entityB = Object.values(addressEntities).find((entity) => entity?.hash === hashB)
-
-      if (entityA?.isDefault) return -1
-      if (entityB?.isDefault) return 1
-
-      const balancesA = tokenBalances[hashA] || []
-      const balancesB = tokenBalances[hashB] || []
-
-      const worthA = balancesA.reduce((sum, token) => sum + (Number(token.totalBalance) || 0), 0)
-      const worthB = balancesB.reduce((sum, token) => sum + (Number(token.totalBalance) || 0), 0)
-
-      return worthB - worthA
+    // First sort by balance
+    const sorted = [...allAddressHashes].sort((a, b) => {
+      const balanceA = BigInt(alphBalances[a]?.totalBalance ?? 0)
+      const balanceB = BigInt(alphBalances[b]?.totalBalance ?? 0)
+      if (balanceA > balanceB) return -1
+      if (balanceA < balanceB) return 1
+      return 0
     })
-  }, [allAddressHashes, tokenBalances, addressEntities, isNetworkOffline])
+
+    // Then move default address to front if it exists
+    if (defaultAddress) {
+      const defaultIndex = sorted.indexOf(defaultAddress.hash)
+      if (defaultIndex > 0) {
+        sorted.unshift(sorted.splice(defaultIndex, 1)[0])
+      }
+    }
+
+    return sorted
+  }, [allAddressHashes, alphBalances, defaultAddress, isNetworkOffline])
 
   return {
     data: sortedAddresses,
@@ -103,29 +99,35 @@ export const useFetchAddressesHashesWithBalanceSortedByAlphWorth = () => {
 
 export const useFetchAddressesHashesSortedByAddressesLabel = () => {
   const allAddressHashes = useUnsortedAddressesHashes()
+  const defaultAddress = useAppSelector(selectDefaultAddress)
   const addressEntities = useAppSelector((s) => s.addresses.entities)
 
-  const sortedAddresses = useMemo(
-    () =>
-      [...allAddressHashes].sort((a: AddressHash, b: AddressHash) => {
-        // Direct access to entities using the hash
-        const entityA = addressEntities[a]
-        const entityB = addressEntities[b]
+  const sortedAddresses = useMemo(() => {
+    // First sort by label
+    const sorted = [...allAddressHashes].sort((a, b) => {
+      const entityA = addressEntities[a]
+      const entityB = addressEntities[b]
 
-        if (entityA?.isDefault) return -1
-        if (entityB?.isDefault) return 1
+      if (entityA?.label && !entityB?.label) return -1
+      if (!entityA?.label && entityB?.label) return 1
 
-        if (entityA?.label && !entityB?.label) return -1
-        if (!entityA?.label && entityB?.label) return 1
+      if (entityA?.label && entityB?.label) {
+        return entityA.label.localeCompare(entityB.label)
+      }
 
-        if (entityA?.label && entityB?.label) {
-          return entityA.label.localeCompare(entityB.label)
-        }
+      return a.localeCompare(b)
+    })
 
-        return a.localeCompare(b)
-      }),
-    [allAddressHashes, addressEntities]
-  )
+    // Then move default address to front if it exists
+    if (defaultAddress) {
+      const defaultIndex = sorted.indexOf(defaultAddress.hash)
+      if (defaultIndex > 0) {
+        sorted.unshift(sorted.splice(defaultIndex, 1)[0])
+      }
+    }
+
+    return sorted
+  }, [allAddressHashes, addressEntities, defaultAddress])
 
   return {
     data: sortedAddresses
