@@ -1,10 +1,8 @@
 import { AddressHash } from '@alephium/shared'
-import { colord } from 'colord'
 import { ArrowDownToLine, CreditCard, Send, Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import Button from '@/components/Button'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -69,11 +67,10 @@ const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground }: Setti
 
   return (
     <ShortcutButton
-      transparent={!solidBackground}
       role="primary"
       onClick={addressHash ? () => handleAddressSettingsClick(addressHash) : handleWalletSettingsClick}
-      Icon={Settings}
     >
+      <Settings />
       <ButtonText>{t('Settings')}</ButtonText>
     </ShortcutButton>
   )
@@ -90,13 +87,14 @@ const ReceiveButton = ({ addressHash, analyticsOrigin, solidBackground }: Shortc
   }
 
   return (
-    <ShortcutButton transparent={!solidBackground} role="primary" onClick={handleReceiveClick} Icon={ArrowDownToLine}>
+    <ShortcutButton role="primary" onClick={handleReceiveClick}>
+      <ArrowDownToLine />
       <ButtonText>{t('Receive')}</ButtonText>
     </ShortcutButton>
   )
 }
 
-const SendButton = ({ addressHash, analyticsOrigin, solidBackground }: ShortcutButtonsGroupAddressProps) => {
+const SendButton = ({ addressHash, analyticsOrigin }: ShortcutButtonsGroupAddressProps) => {
   const { sendAnalytics } = useAnalytics()
   const { t } = useTranslation()
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
@@ -125,12 +123,11 @@ const SendButton = ({ addressHash, analyticsOrigin, solidBackground }: ShortcutB
     <ShortcutButton
       data-tooltip-id="default"
       data-tooltip-content={tooltipContent}
-      transparent={!solidBackground}
       role="primary"
       onClick={isDisabled ? undefined : handleSendClick}
-      Icon={Send}
       style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
     >
+      <Send />
       <ButtonText>{t('Send')}</ButtonText>
     </ShortcutButton>
   )
@@ -150,22 +147,28 @@ const BuyButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }:
   }
 
   return (
-    <ShortcutButton transparent={!solidBackground} role="primary" onClick={handleBuyClick} Icon={CreditCard}>
+    <ShortcutButton role="primary" onClick={handleBuyClick}>
+      <CreditCard />
       <ButtonText>{t('Buy')}</ButtonText>
     </ShortcutButton>
   )
 }
 
-const ShortcutButton = styled(Button)`
+const ShortcutButton = styled.button`
   margin: 0;
   min-width: 120px;
-  background-color: ${({ theme }) => colord(theme.bg.contrast).alpha(0.8).toHex()};
-  filter: saturate(120%) contrast(120%);
-  backdrop-filter: blur(10px) brightness(0.7) saturate(10);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 22px;
+  height: 100px;
+  background-color: ${({ theme }) => theme.bg.highlight};
+  gap: 20px;
 `
 
 const ButtonText = styled.div`
   font-weight: var(--fontWeight-semiBold);
+  text-align: center;
 `
 
 const ButtonsContainer = styled.div`

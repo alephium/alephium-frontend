@@ -13,11 +13,12 @@ interface OverviewPageProps {
 const OverviewPage = ({ className }: OverviewPageProps) => (
   <UnlockedWalletPage className={className}>
     <UnlockedWalletPanel bottom top>
-      <WorthOverviewPanel>
+      <TopPanelContainer>
+        <WorthOverviewPanel />
         <Shortcuts>
           <ShortcutButtonsGroupWallet analyticsOrigin="overview_page" solidBackground />
         </Shortcuts>
-      </WorthOverviewPanel>
+      </TopPanelContainer>
     </UnlockedWalletPanel>
     <UnlockedWalletPanel bottom>
       <WalletTokensTabsStyled />
@@ -27,6 +28,11 @@ const OverviewPage = ({ className }: OverviewPageProps) => (
 
 export default styled(OverviewPage)`
   background-color: ${({ theme }) => theme.bg.background1};
+`
+
+const TopPanelContainer = styled.div`
+  display: flex;
+  gap: 20px;
 `
 
 const WalletTokensTabsStyled = styled(WalletTokensTabs)`

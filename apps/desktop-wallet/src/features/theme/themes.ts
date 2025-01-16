@@ -48,8 +48,8 @@ export const darkTheme: DefaultTheme = {
     secondary: 'rgba(255, 255, 255, 0.03)',
     tertiary: 'rgba(255, 255, 255, 0.02)',
     contrast: 'rgba(255, 255, 255, 1)',
-    background1: '#0d0d0f',
-    background2: '#070708',
+    background1: '#0c0c0d',
+    background2: '#0a0a0a',
     hover: 'rgba(255, 255, 255, 0.015)',
     highlight: 'rgba(255, 255, 255, 0.06)',
     accent: colord('#3b62f0').alpha(0.1).toHex()

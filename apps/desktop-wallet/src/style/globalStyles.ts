@@ -5,7 +5,7 @@ import resets from '@/style/resets'
 import { platform } from '@/utils/platform.ts'
 
 export const appHeaderHeightPx = platform.isMac ? 50 : 102
-export const walletSidebarWidthPx = 76
+export const walletSidebarWidthPx = 69
 export const messagesLeftMarginPx = 70
 export const sidebarExpandThresholdPx = 1300
 

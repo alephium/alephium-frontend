@@ -178,7 +178,7 @@ const ColumnHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   min-height: 58px;
-  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 55%, transparent)`};
+  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background1).toHex()} 55%, transparent)`};
   z-index: 1;
 `
 
@@ -254,6 +254,7 @@ const TabTitles = styled.div`
 const TabTitlesColumnHeader = styled(ColumnHeader)`
   padding-left: 22px;
   padding-right: 22px;
+  background: transparent;
 `
 
 const TabTitleButton = styled(Button)`

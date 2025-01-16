@@ -51,7 +51,7 @@ export const inputDefaultStyle = (
 ) => css`
   height: ${heightSize === 'small' ? '38px' : heightSize === 'big' ? '50px' : 'var(--inputHeight)'};
   width: 100%;
-  border-radius: 100px;
+  border-radius: 200px;
   border: 1px solid ${({ theme }) => theme.border.primary};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 45px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
@@ -61,7 +61,7 @@ export const inputDefaultStyle = (
   font-family: inherit;
   backdrop-filter: blur(10px) brightness(${({ theme }) => (theme.name === 'light' ? '2' : '1.5')}) saturate(1.2);
 
-  transition: all 0.15s;
+  transition: all 0.1s;
 
   ${hasValue &&
   hasLabel &&
@@ -72,6 +72,7 @@ export const inputDefaultStyle = (
   &:focus {
     background-color: ${({ theme }) => theme.bg.hover};
     border: 1px solid ${({ theme }) => theme.global.accent};
+    box-shadow: inset 0 0 0 1px ${({ theme }) => theme.global.accent};
   }
 
   &.error {

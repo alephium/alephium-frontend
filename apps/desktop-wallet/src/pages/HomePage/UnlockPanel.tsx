@@ -61,7 +61,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
       <FloatingPanel verticalAlign="center" horizontalAlign="center" transparentBg>
         <BrandContainer>
           <AlephiumLogoContainer>
-            <AlephiumLogo />
+            <AlephiumLogo contrasted />
           </AlephiumLogoContainer>
         </BrandContainer>
         <SectionStyled inList>
@@ -146,7 +146,5 @@ const AlephiumLogoContainer = styled.div`
   width: 100px;
   height: 100px;
   border-radius: 100px;
-  background-color: ${({ theme }) => theme.bg.background1};
-  border: 1px solid ${({ theme }) => theme.border.secondary};
-  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.05);
+  background-color: ${({ theme }) => theme.bg.contrast};
 `
