@@ -35,10 +35,7 @@ const Toast = ({
   const Icon = Icons[type].Icon
   const color = Icons[type].color
 
-  const handleSubtitleLayout = (e: LayoutChangeEvent) => {
-    const height = e.nativeEvent.layout.height
-    setSubtitleHeight(height)
-  }
+  const handleSubtitleLayout = (e: LayoutChangeEvent) => setSubtitleHeight(e.nativeEvent.layout.height)
 
   return (
     <ToastContainer onPress={onPress}>

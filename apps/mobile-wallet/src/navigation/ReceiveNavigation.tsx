@@ -9,6 +9,7 @@ import { HeaderContextProvider, useHeaderContext } from '~/contexts/HeaderContex
 import AddressScreen from '~/features/receive/screens/AddressScreen'
 import QRCodeScreen from '~/features/receive/screens/QRCodeScreen'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { useOnChildNavigationGoBack } from '~/navigation/useOnChildNavigationGoBack'
 
 export interface ReceiveNavigationParamList extends ParamListBase {
   AddressScreen: undefined
@@ -22,13 +23,7 @@ const ReceiveNavigation = ({
 }: StackScreenProps<RootStackParamList, 'ReceiveNavigation'>) => {
   const navigationRef = useNavigationContainerRef()
 
-  const handleGoBack = () => {
-    if (!navigationRef.current?.canGoBack()) {
-      parentNavigation.goBack()
-    } else {
-      navigationRef.current?.goBack()
-    }
-  }
+  const handleGoBack = useOnChildNavigationGoBack({ childNavigationRef: navigationRef, parentNavigation })
 
   return (
     <HeaderContextProvider>

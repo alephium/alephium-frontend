@@ -1,6 +1,6 @@
 import { AddressHash } from '@alephium/shared'
-import { NavigationContainer, ParamListBase, useNavigation, useNavigationContainerRef } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
+import { NavigationContainer, ParamListBase, useNavigationContainerRef } from '@react-navigation/native'
+import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
@@ -11,6 +11,8 @@ import AssetsScreen from '~/features/send/screens/AssetsScreen'
 import DestinationScreen from '~/features/send/screens/DestinationScreen'
 import OriginScreen from '~/features/send/screens/OriginScreen'
 import VerifyScreen from '~/features/send/screens/VerifyScreen'
+import RootStackParamList from '~/navigation/rootStackRoutes'
+import { useOnChildNavigationGoBack } from '~/navigation/useOnChildNavigationGoBack'
 
 export interface SendNavigationParamList extends ParamListBase {
   DestinationScreen: { fromAddressHash?: AddressHash }
@@ -23,17 +25,10 @@ export type PossibleNextScreenAfterDestination = 'OriginScreen' | 'AssetsScreen'
 
 const SendStack = createStackNavigator<SendNavigationParamList>()
 
-const SendNavigation = () => {
-  const parentNavigation = useNavigation()
+const SendNavigation = ({ navigation: parentNavigation }: StackScreenProps<RootStackParamList, 'SendNavigation'>) => {
   const navigationRef = useNavigationContainerRef()
 
-  const handleGoBack = () => {
-    if (!navigationRef.current?.canGoBack()) {
-      parentNavigation.goBack()
-    } else {
-      navigationRef.current?.goBack()
-    }
-  }
+  const handleGoBack = useOnChildNavigationGoBack({ childNavigationRef: navigationRef, parentNavigation })
 
   return (
     <SendContextProvider>
