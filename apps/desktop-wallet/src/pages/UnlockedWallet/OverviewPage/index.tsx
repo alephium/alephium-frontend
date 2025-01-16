@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 
+import AnimatedBackground from '@/components/AnimatedBackground'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import WorthOverviewPanel from '@/components/WorthOverviewPanel'
 import { WalletTokensTabs } from '@/features/assetsLists/TokensTabs'
@@ -12,6 +13,7 @@ interface OverviewPageProps {
 
 const OverviewPage = ({ className }: OverviewPageProps) => (
   <UnlockedWalletPage className={className}>
+    <AnimatedBackground />
     <UnlockedWalletPanel bottom top>
       <TopPanelContainer>
         <WorthOverviewPanel />

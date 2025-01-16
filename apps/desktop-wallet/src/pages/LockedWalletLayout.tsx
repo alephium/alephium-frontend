@@ -11,7 +11,7 @@ interface LockedWalletLayoutProps extends MotionProps {
 
 const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, ...props }) => (
   <>
-    <AnimatedBackgroundStyled offsetTop={400} />
+    <AnimatedBackgroundStyled />
     <motion.main {...props}>
       <ScrollbarCustom>
         <AppHeader position="fixed" />

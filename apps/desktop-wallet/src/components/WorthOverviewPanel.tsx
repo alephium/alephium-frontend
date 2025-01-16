@@ -20,7 +20,6 @@ import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import AnimatedBackground from '@/components/AnimatedBackground'
 import Box from '@/components/Box'
 import NetworkSwitch from '@/components/NetworkSwitch'
 import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
@@ -41,7 +40,6 @@ const WorthOverviewPanel = ({ className, addressHash, children }: WorthOverviewP
 
   return (
     <WorthOverviewPanelStyled className={className}>
-      <AnimatedBackground height={600} />
       <Panel>
         <Balances>
           <BalancesRow>
