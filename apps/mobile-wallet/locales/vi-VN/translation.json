@@ -279,7 +279,7 @@
   "How should we name this wallet?": "Bạn muốn đặt tên cho ví này là gì?",
   "Wallet name": "Tên ví",
   "Creating wallet": "Đang tạo ví",
-  "Welcome to Alephium": "Chào mừng bạn đến với Alephium",
+  "Welcome to Alephium": "Chào mừng bạn đến với Alephium!",
   "Enjoy your new wallet!": "Tận hưởng ví mới của bạn!",
   "Choose how you want to import your wallet.": "Chọn cách mà bạn muốn thêm ví.",
   "Import method": "Thêm phương pháp",
@@ -386,6 +386,7 @@
   "forgetAddress_one": "Quên đi địa chỉ",
   "You can always re-add it to your wallet.": "Bạn luôn có thể thêm lại nó vào ví của mình.",
   "Could not forget address": "Không thể quên đi địa chỉ",
+  "You cannot forget your default address. Set another one as default first.": "Bạn không thể quên địa chỉ mặc định. Hãy chọn một địa chỉ khác làm mặc định trước.",
   "clear_amount": "Xóa",
   "Added {{ tokenName }}": "Đã thêm {{ tokenName }}",
   "Removed {{ tokenName }}": "Đã xóa {{ tokenName }}",
@@ -409,5 +410,11 @@
   "Approving": "Đang phê duyệt",
   "Rejecting": "Đang từ chối",
   "Building transaction": "Đang tạo giao dịch",
-  "Connecting": "Đang kết nối"
+  "Connecting": "Đang kết nối",
+  "Address balance": "Số dư địa chỉ",
+  "Wallet balance": "Số dư ví",
+  "The {{ tokenSymbol }} token can be found in these addresses:": "Token {{ tokenSymbol }} có thể được tìm thấy tại các địa chỉ sau:",
+  "Set as default": "Đặt làm mặc định",
+  "token_in_addresses_one": "trong {{ count }} địa chỉ",
+  "token_in_addresses_other": "trong {{ count }} địa chỉ"
 }

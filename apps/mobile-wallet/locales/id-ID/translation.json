@@ -207,6 +207,7 @@
   "Scan for active addresses": "Pindai untuk alamat - alamat aktif",
   "Scan QR code": "Pindai kode QR",
   "Scan an Alephium address QR code": "Pindai kode QR alamat Alephium",
+  "Welcome to Alephium": "Selamat datang di Alephium",
   "unknownTokensKey_one": "{{ count }} Token tidak dikenal",
   "unknownTokensKey_other": "{{ count }} Token - token yang tidak dikenal",
   "Activity": "Aktivitas",
