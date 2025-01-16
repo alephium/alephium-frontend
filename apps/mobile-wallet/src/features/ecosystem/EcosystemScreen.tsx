@@ -15,6 +15,8 @@ import DAppCard from '~/features/ecosystem/DAppCard'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
+const showComingSoon = true
+
 const EcosystemScreen = () => {
   const { t } = useTranslation()
 
@@ -28,9 +30,15 @@ const EcosystemScreen = () => {
       contentPaddingTop
       hasBottomBar
     >
-      <AnimatedBackground isFullScreen isAnimated />
-      <DAppsFilters selectedTag={selectedTag} onTagPress={setSelectedTag} />
-      <DAppsList selectedTag={selectedTag} />
+      {showComingSoon ? (
+        <ComingSoonBanner />
+      ) : (
+        <>
+          <AnimatedBackground isFullScreen isAnimated />
+          <DAppsFilters selectedTag={selectedTag} onTagPress={setSelectedTag} />
+          <DAppsList selectedTag={selectedTag} />
+        </>
+      )}
     </BottomBarScrollScreen>
   )
 }
@@ -125,3 +133,16 @@ const extractDAppTags = (dApps: DApp[]) =>
       return acc
     }, [] as string[])
     .sort()
+
+const ComingSoonBanner = () => {
+  const { t } = useTranslation()
+
+  return (
+    <ScreenSection>
+      <EmptyPlaceholder>
+        <AppText size={28}>📣👀</AppText>
+        <AppText>{t('Coming soon!')}</AppText>
+      </EmptyPlaceholder>
+    </ScreenSection>
+  )
+}
