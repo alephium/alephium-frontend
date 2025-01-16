@@ -1,13 +1,17 @@
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Image } from 'expo-image'
-import * as WebBrowser from 'expo-web-browser'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 
 const DAppCard = ({ name, media, links }: DApp) => {
-  const handleCardPress = async () => {
-    await WebBrowser.openBrowserAsync(links.website)
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+
+  const handleCardPress = () => {
+    navigation.navigate('DAppWebViewScreen', { dAppUrl: links.website })
   }
 
   return (

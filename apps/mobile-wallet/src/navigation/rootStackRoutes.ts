@@ -32,6 +32,9 @@ type RootStackParamList = {
   CustomNetworkScreen: undefined
   PublicKeysScreen: undefined
   FundPasswordScreen: undefined
+  DAppWebViewScreen: {
+    dAppUrl: string
+  }
 }
 
 export default RootStackParamList
