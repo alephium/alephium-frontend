@@ -19,6 +19,7 @@
 - b0b4b13: Fix price fetching
 - 74054f6: Simplify addresses display and management
 - ed58a1b: Enable German translations
+- 1c924ba: Enable Thai translations
 - a9468cf: Display token information when tapping on token row
 - 1fb8dd9: Fix toggling of biometrics settings
 - 248b947: Support alph_signAndSubmitUnsignedTx WalletConnect method
