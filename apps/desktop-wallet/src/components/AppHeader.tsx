@@ -150,6 +150,8 @@ const AppHeaderContainer = styled.div`
   height: ${appHeaderHeightPx}px;
   padding: 0 var(--spacing-2) 0 40px;
   gap: var(--spacing-1);
+  -webkit-app-region: drag;
+  -webkit-app-region: drag;
 `
 
 const GradientBackground = styled(motion.div)`
@@ -160,8 +162,6 @@ const GradientBackground = styled(motion.div)`
   height: 140px;
   background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background1).toHex()} 35%, transparent)`};
   pointer-events: none;
-  z-index: 0;
-  -webkit-app-region: drag;
 `
 
 const OfflineIcon = styled.div`
