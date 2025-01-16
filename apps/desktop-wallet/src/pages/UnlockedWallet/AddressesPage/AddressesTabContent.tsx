@@ -12,17 +12,14 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
   useFetchAddressesHashesSortedByAddressesLabel,
   useFetchAddressesHashesWithBalance,
-  useFetchAddressesHashesWithBalanceSortedByAlphWorth,
-  useFetchSortedAddressesHashesWithLatestTx
+  useFetchAddressesHashesWithBalanceSortedByAlphWorth
 } from '@/hooks/useAddresses'
 import AddressListRow from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressListRow'
 import AdvancedOperationsButton from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsButton'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
 import { AddressOrder } from '@/types/addresses.ts'
 import Select from '@/components/Inputs/Select.tsx'
-import { selectSortedAddresses } from '@/storage/addresses/addressesSelectors.ts'
 import { setAddressOrder } from '@/storage/addresses/addressesSlice.ts'
-import useFetchAddressWorth from '@/api/apiDataHooks/address/useFetchAddressWorth.ts'
 
 interface OrderOption {
   value: AddressOrder
