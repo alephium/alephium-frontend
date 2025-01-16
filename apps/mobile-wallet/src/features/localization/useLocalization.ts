@@ -3,6 +3,7 @@ import 'dayjs/locale/el'
 import 'dayjs/locale/vi'
 import 'dayjs/locale/pt'
 import 'dayjs/locale/zh'
+import 'dayjs/locale/th'
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
