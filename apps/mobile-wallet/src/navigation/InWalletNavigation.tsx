@@ -78,7 +78,7 @@ const InWalletTabsNavigation = () => {
           name="EcosystemScreen"
           component={EcosystemScreen}
           options={{
-            title: t('Addresses'),
+            title: t('Ecosystem'),
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'planet' : 'planet-outline'} color={color} size={size} />
             )
