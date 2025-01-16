@@ -18,7 +18,7 @@ type UpdateStatus = 'download-available' | 'downloading' | 'download-finished' |
 
 const AutoUpdateSnackbar = () => {
   const { t } = useTranslation()
-  const { newVersion, requiresManualDownload } = useLatestGitHubRelease()
+  const { newAutoUpdateVersion, newManualUpdateVersion } = useLatestGitHubRelease()
   const { sendAnalytics } = useAnalytics()
 
   const [isUpdateSnackbarVisible, setIsUpdateSnackbarVisible] = useState(true)
@@ -27,12 +27,11 @@ const AutoUpdateSnackbar = () => {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (!newVersion || requiresManualDownload) return
+    if (!newAutoUpdateVersion) return
 
     let timer: ReturnType<typeof setTimeout>
 
     setStatus('downloading')
-    window.electron?.updater.startUpdateDownload()
 
     const removeUpdateDownloadProgressListener = window.electron?.updater.onUpdateDownloadProgress((info) =>
       setPercent(info.percent.toFixed(2))
@@ -47,13 +46,17 @@ const AutoUpdateSnackbar = () => {
       sendAnalytics({ type: 'error', error, message: 'Auto-update download failed' })
     })
 
+    window.electron?.updater.startUpdateDownload()
+
     return () => {
       removeUpdateDownloadProgressListener && removeUpdateDownloadProgressListener()
       removeUpdateDownloadedListener && removeUpdateDownloadedListener()
       removeonErrorListener && removeonErrorListener()
       if (timer) clearTimeout(timer)
     }
-  }, [newVersion, requiresManualDownload, sendAnalytics])
+  }, [newAutoUpdateVersion, sendAnalytics])
+
+  const newVersion = newAutoUpdateVersion || newManualUpdateVersion
 
   if (!newVersion) return null
 
@@ -62,7 +65,7 @@ const AutoUpdateSnackbar = () => {
     closeSnackbar()
     sendAnalytics({
       event: 'Auto-update modal: Clicked "Download"',
-      props: { fromVersion: currentVersion, toVersion: newVersion }
+      props: { fromVersion: currentVersion, toVersion: newManualUpdateVersion }
     })
   }
 
@@ -116,7 +119,7 @@ const AutoUpdateSnackbar = () => {
                 <X />
               </CloseButton>
             )}
-            {status === 'download-available' && requiresManualDownload && (
+            {status === 'download-available' && newManualUpdateVersion && (
               <Button short borderless onClick={handleManualDownloadClick}>
                 {t('Download')}
               </Button>

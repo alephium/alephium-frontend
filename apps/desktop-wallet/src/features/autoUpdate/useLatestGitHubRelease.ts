@@ -12,8 +12,8 @@ const semverRegex = isRcVersion ? /^(\d+\.\d+\.\d+)(?:-rc(\.\d+)?)?$/ : /^(\d+\.
 const useLatestGitHubRelease = () => {
   const { sendAnalytics } = useAnalytics()
 
-  const [newVersion, setNewVersion] = useState('')
-  const [requiresManualDownload, setRequiresManualDownload] = useState(false)
+  const [newAutoUpdateVersion, setNewAutoUpdateVersion] = useState('')
+  const [newManualUpdateVersion, setNewManualUpdateVersion] = useState('')
 
   const checkForManualDownload = async () => {
     try {
@@ -22,8 +22,7 @@ const useLatestGitHubRelease = () => {
       const version = data?.tag_name?.replace('alephium-desktop-wallet@', '')
 
       if (version && isVersionNewer(version)) {
-        setNewVersion(version)
-        setRequiresManualDownload(true)
+        setNewManualUpdateVersion(version)
       }
     } catch (error) {
       sendAnalytics({ type: 'error', error, message: 'Checking for latest release version for manual download' })
@@ -38,12 +37,15 @@ const useLatestGitHubRelease = () => {
       if (!version) {
         await checkForManualDownload()
       } else if (isVersionNewer(version)) {
-        setNewVersion(version)
+        setNewAutoUpdateVersion(version)
       }
     }
   })
 
-  return { newVersion, requiresManualDownload }
+  return {
+    newAutoUpdateVersion,
+    newManualUpdateVersion
+  }
 }
 
 export default useLatestGitHubRelease
