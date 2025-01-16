@@ -12,10 +12,11 @@ export interface ScreenProps extends ViewProps {
   headerOptions?: BaseHeaderOptions & {
     type?: 'default' | 'stack'
   }
+  titleAlwaysVisible?: boolean
   safeAreaPadding?: boolean
 }
 
-const Screen = ({ children, headerOptions, safeAreaPadding, ...props }: ScreenProps) => {
+const Screen = ({ children, headerOptions, safeAreaPadding, titleAlwaysVisible, ...props }: ScreenProps) => {
   const navigation = useNavigation()
   const insets = useSafeAreaInsets()
 
@@ -32,6 +33,7 @@ const Screen = ({ children, headerOptions, safeAreaPadding, ...props }: ScreenPr
           <HeaderComponent
             onBackPress={navigation.canGoBack() ? navigation.goBack : undefined}
             options={headerOptions}
+            titleAlwaysVisible={titleAlwaysVisible}
           />
         )}
         {children}

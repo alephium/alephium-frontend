@@ -1,17 +1,16 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Clipboard from 'expo-clipboard'
-import Constants from 'expo-constants'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import WebView from 'react-native-webview'
 import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { HEADER_OFFSET_TOP } from '~/style/globalStyle'
 
 interface DAppWebViewScreenProps extends NativeStackScreenProps<RootStackParamList, 'DAppWebViewScreen'>, ScreenProps {}
 
@@ -23,8 +22,8 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
   if (!dAppUrl) return null
 
   return (
-    <Screen safeAreaPadding headerOptions={{ type: 'stack', headerRight: () => <AppText>{dAppUrl}</AppText> }}>
-      <WebViewStyled source={{ uri: dAppUrl }} allowsBackForwardNavigationGestures />
+    <Screen titleAlwaysVisible headerOptions={{ type: 'stack', headerTitle: dAppUrl }} {...props}>
+      <WebViewStyled source={{ uri: dAppUrl }} allowsBackForwardNavigationGestures pullToRefreshEnabled />
     </Screen>
   )
 }
@@ -61,5 +60,5 @@ const useDetectWCUrlInClipboardAndPair = () => {
 
 const WebViewStyled = styled(WebView)`
   flex: 1;
-  margin-top: ${Constants.statusBarHeight}px;
+  margin-top: ${90 + HEADER_OFFSET_TOP}px;
 `
