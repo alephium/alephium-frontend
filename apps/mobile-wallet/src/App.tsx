@@ -6,7 +6,8 @@ import {
   syncVerifiedFungibleTokens,
   TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
-import { useInitializeClient, useInterval } from '@alephium/shared-react'
+import { queryClient, useInitializeClient, useInterval } from '@alephium/shared-react'
+import { QueryClientProvider } from '@tanstack/react-query'
 import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
@@ -59,24 +60,26 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <Main>
-        <ThemeProvider theme={theme}>
-          <StatusBar animated translucent style="light" />
-          {showAppContent ? (
-            <RootStackNavigation
-              initialRouteName={wasMetadataRestored ? 'ImportWalletAddressDiscoveryScreen' : undefined}
-            />
-          ) : (
-            // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
-            // splash screen to be show after the default one gets hidden, before we can show app content.
-            <View style={{ flex: 1, alignItems: 'center' }}>
-              <AlephiumLogo style={{ width: '15%' }} />
-            </View>
-          )}
-          <ToastAnchor />
-          <LoadingManager />
-        </ThemeProvider>
-      </Main>
+      <QueryClientProvider client={queryClient}>
+        <Main>
+          <ThemeProvider theme={theme}>
+            <StatusBar animated translucent style="light" />
+            {showAppContent ? (
+              <RootStackNavigation
+                initialRouteName={wasMetadataRestored ? 'ImportWalletAddressDiscoveryScreen' : undefined}
+              />
+            ) : (
+              // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
+              // splash screen to be show after the default one gets hidden, before we can show app content.
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <AlephiumLogo style={{ width: '15%' }} />
+              </View>
+            )}
+            <ToastAnchor />
+            <LoadingManager />
+          </ThemeProvider>
+        </Main>
+      </QueryClientProvider>
     </Provider>
   )
 }

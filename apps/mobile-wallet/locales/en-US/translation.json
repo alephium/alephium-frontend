@@ -418,5 +418,7 @@
   "token_in_addresses_one": "in {{ count }} address",
   "token_in_addresses_other": "in {{ count }} addresses",
   "Transaction sent": "Transaction sent",
-  "Ecosystem": "Ecosystem"
+  "Ecosystem": "Ecosystem",
+  "Loading dApps...": "Loading dApps...",
+  "Could not load dApps": "Could not load dApps"
 }

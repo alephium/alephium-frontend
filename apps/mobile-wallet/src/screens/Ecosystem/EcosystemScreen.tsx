@@ -1,9 +1,14 @@
-import { useEffect, useState } from 'react'
+import { getHumanReadableError } from '@alephium/shared'
+import { useQuery } from '@tanstack/react-query'
+import axios from 'axios'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import AnimatedBackground from '~/components/AnimatedBackground'
+import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen from '~/components/layout/BottomBarScrollScreen'
 import { ScreenSection } from '~/components/layout/Screen'
 import DAppCard from '~/features/ecosystem/DAppCard'
@@ -12,22 +17,8 @@ import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 const EcosystemScreen = () => {
   const { t } = useTranslation()
-  const [dApps, setDApps] = useState<DApp[]>([])
 
-  useEffect(() => {
-    fetch('https://publicapi.alph.land/api/dapps').then((res) => res.json().then((data) => setDApps(data)))
-  }, [])
-
-  const dAppTags = dApps
-    .reduce((acc, dApp) => {
-      dApp.tags.forEach((tag) => {
-        if (!acc.includes(tag)) {
-          acc.push(tag)
-        }
-      })
-      return acc
-    }, [] as string[])
-    .sort()
+  const [selectedTag, setSelectedTag] = useState<string | null>(null)
 
   return (
     <BottomBarScrollScreen
@@ -38,27 +29,99 @@ const EcosystemScreen = () => {
       hasBottomBar
     >
       <AnimatedBackground isFullScreen isAnimated />
-      <DAppFilters horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
-        {dAppTags.map((tag) => (
-          <Button title={tag} compact key={tag} />
-        ))}
-      </DAppFilters>
-      <DAppList>
-        {dApps.map((dApp) => (
-          <DAppCard key={dApp.name} {...dApp} />
-        ))}
-      </DAppList>
+      <DAppsFilters selectedTag={selectedTag} onTagPress={setSelectedTag} />
+      <DAppsList selectedTag={selectedTag} />
     </BottomBarScrollScreen>
   )
 }
 
 export default EcosystemScreen
 
-const DAppFilters = styled.ScrollView`
+interface DAppsListProps {
+  selectedTag: string | null
+}
+
+const DAppsList = ({ selectedTag }: DAppsListProps) => {
+  const { t } = useTranslation()
+
+  const {
+    data: dApps,
+    isLoading,
+    isError,
+    error
+  } = useQuery({
+    queryKey: ['dApps'],
+    queryFn: () => axios.get('https://publicapi.alph.land/api/dapps').then((res) => res.data as DApp[]), // TODO: Validate received data
+    select: (dApps) => (selectedTag ? dApps.filter((dApp) => dApp.tags.includes(selectedTag)) : dApps)
+  })
+
+  if (isLoading)
+    return (
+      <EmptyPlaceholder>
+        <AppText size={28}>⏳</AppText>
+        <AppText>{t('Loading dApps...')}</AppText>
+      </EmptyPlaceholder>
+    )
+
+  if (isError || !dApps)
+    return (
+      <EmptyPlaceholder>
+        <AppText size={28}>🥺</AppText>
+        <AppText>{t('Could not load dApps')}</AppText>
+        <AppText>{getHumanReadableError(error, '')}</AppText>
+      </EmptyPlaceholder>
+    )
+
+  return (
+    <DAppsListStyled>
+      {dApps.map((dApp) => (
+        <DAppCard key={dApp.name} {...dApp} />
+      ))}
+    </DAppsListStyled>
+  )
+}
+
+interface DAppsFiltersProps extends DAppsListProps {
+  onTagPress: (tag: string | null) => void
+}
+
+const DAppsFilters = ({ selectedTag, onTagPress }: DAppsFiltersProps) => {
+  const { data: dAppTags } = useQuery({
+    queryKey: ['dApps'],
+    queryFn: () => axios.get('https://publicapi.alph.land/api/dapps').then((res) => res.data as DApp[]), // TODO: Validate received data
+    select: extractDAppTags
+  })
+
+  if (!dAppTags) return null
+
+  return (
+    <DAppsFiltersStyled horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
+      {dAppTags.map((tag) => (
+        <Button
+          title={tag}
+          compact
+          key={tag}
+          onPress={() => onTagPress(selectedTag === tag ? null : tag)}
+          variant={selectedTag === tag ? 'highlight' : undefined}
+        />
+      ))}
+    </DAppsFiltersStyled>
+  )
+}
+
+const DAppsFiltersStyled = styled.ScrollView`
   padding: 0 ${DEFAULT_MARGIN}px;
 `
 
-const DAppList = styled(ScreenSection)`
+const DAppsListStyled = styled(ScreenSection)`
   gap: ${VERTICAL_GAP}px;
   margin-top: ${VERTICAL_GAP}px;
 `
+
+const extractDAppTags = (dApps: DApp[]) =>
+  dApps
+    .reduce((acc, dApp) => {
+      dApp.tags.forEach((tag) => !acc.includes(tag) && acc.push(tag))
+      return acc
+    }, [] as string[])
+    .sort()
