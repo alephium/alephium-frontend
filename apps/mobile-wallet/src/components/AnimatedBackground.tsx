@@ -1,7 +1,7 @@
-import { Blur, Canvas, Circle, Group } from '@shopify/react-native-skia'
+import { Blur, Canvas, Circle, Group, interpolateColors } from '@shopify/react-native-skia'
 // 1) Import colord (and extend if needed)
 import { colord } from 'colord'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useWindowDimensions } from 'react-native'
 import Animated, {
   Easing,
@@ -41,7 +41,7 @@ const AnimatedCanvas = Animated.createAnimatedComponent(Canvas)
 
 function getCircleColors({ shade, isDark }: { shade?: string; isDark: boolean }) {
   if (!shade) {
-    return isDark ? ['#86acff', '#2ac6ff', '#1856ff'] : ['#ffa286', '#e39dff', '#ffc57e']
+    return isDark ? ['#ffb473', '#d485df', '#957dff'] : ['#ffbca8', '#d774ff', '#ffcb67']
   }
 
   const base = colord(shade)
@@ -65,13 +65,39 @@ const AnimatedBackground = ({
   const { width: screenWidth, height: screenHeight } = useWindowDimensions()
   const theme = useTheme()
 
-  const [circleColor1, circleColor2, circleColor3] = getCircleColors({ shade, isDark: theme.name === 'dark' })
+  const previousShadeRef = useRef(shade)
+  const shadeTransition = useSharedValue(1)
 
   const defaultCanvasHeight = isFullScreen ? screenHeight : height
   const defaultCanvasWidth = width || screenWidth
 
   const canvasHeight = useSharedValue(defaultCanvasHeight)
   const canvasWidth = useSharedValue(defaultCanvasWidth)
+
+  useEffect(() => {
+    if (shade !== previousShadeRef.current) {
+      shadeTransition.value = 0
+      shadeTransition.value = withTiming(1, { duration: 600 }, () => {
+        previousShadeRef.current = shade
+      })
+    }
+  }, [shade, shadeTransition])
+
+  const oldShadeColors = getCircleColors({
+    shade: previousShadeRef.current,
+    isDark: theme.name === 'dark'
+  })
+  const newShadeColors = getCircleColors({
+    shade,
+    isDark: theme.name === 'dark'
+  })
+
+  const [oldColor1, oldColor2, oldColor3] = oldShadeColors
+  const [newColor1, newColor2, newColor3] = newShadeColors
+
+  const circleColor1 = useDerivedValue(() => interpolateColors(shadeTransition.value, [0, 1], [oldColor1, newColor1]))
+  const circleColor2 = useDerivedValue(() => interpolateColors(shadeTransition.value, [0, 1], [oldColor2, newColor2]))
+  const circleColor3 = useDerivedValue(() => interpolateColors(shadeTransition.value, [0, 1], [oldColor3, newColor3]))
 
   useEffect(() => {
     canvasHeight.value = withSpring(defaultCanvasHeight, {
@@ -188,9 +214,9 @@ const AnimatedBackground = ({
     <AnimatedContainer style={parallaxAnimatedStyle}>
       <AnimatedCanvas style={animatedCanvasStyle}>
         <Group>
-          <Circle r={120} color={circleColor1} cx={circle1X} cy={circle1Y} />
-          <Circle r={150} color={circleColor2} cx={circle2X} cy={circle2Y} />
-          <Circle r={130} color={circleColor3} cx={circle3X} cy={circle3Y} />
+          <Circle r={140} color={circleColor1} cx={circle1X} cy={circle1Y} blendMode="colorBurn" />
+          <Circle r={170} color={circleColor2} cx={circle2X} cy={circle2Y} blendMode="colorBurn" />
+          <Circle r={150} color={circleColor3} cx={circle3X} cy={circle3Y} blendMode="colorBurn" />
         </Group>
         <Blur blur={70} />
       </AnimatedCanvas>

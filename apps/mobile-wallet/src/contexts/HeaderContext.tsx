@@ -1,21 +1,25 @@
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { createContext, ReactNode, useContext, useState } from 'react'
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import { SharedValue, useSharedValue } from 'react-native-reanimated'
 
 import { BaseHeaderOptions } from '~/components/headers/BaseHeader'
+import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 
 interface HeaderContextValue {
   headerOptions: BaseHeaderOptions
   setHeaderOptions: (options: BaseHeaderOptions) => void
-  screenScrollY?: SharedValue<number>
   screenScrollHandler: (e: NativeSyntheticEvent<NativeScrollEvent>) => void
+  screenScrollY?: SharedValue<number>
+  parentNavigation?: NavigationProp<InWalletTabsParamList>
 }
 
 const initialValues: HeaderContextValue = {
   headerOptions: {},
   setHeaderOptions: () => null,
+  screenScrollHandler: () => null,
   screenScrollY: undefined,
-  screenScrollHandler: () => null
+  parentNavigation: undefined
 }
 
 const HeaderContext = createContext(initialValues)
@@ -23,6 +27,7 @@ const HeaderContext = createContext(initialValues)
 export const HeaderContextProvider = ({ children }: { children: ReactNode }) => {
   const [headerOptions, setHeaderOptions] = useState<HeaderContextValue['headerOptions']>(initialValues.headerOptions)
   const screenScrollY = useSharedValue(0)
+  const parentNavigation = useNavigation<NavigationProp<InWalletTabsParamList>>()
 
   const screenScrollHandler = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     screenScrollY.value = e.nativeEvent.contentOffset.y
@@ -34,7 +39,8 @@ export const HeaderContextProvider = ({ children }: { children: ReactNode }) => 
         headerOptions,
         setHeaderOptions,
         screenScrollY,
-        screenScrollHandler
+        screenScrollHandler,
+        parentNavigation
       }}
     >
       {children}

@@ -59,7 +59,7 @@ const DeleteAddressButton = ({ addressHash, onPress }: ActionButtonProps) => {
     else forgetAddress()
   }
 
-  return <ActionCardButton title={t('Forget')} onPress={handlePress} iconProps={{ name: 'trash-2' }} />
+  return <ActionCardButton title={t('Forget')} onPress={handlePress} iconProps={{ name: 'trash-2' }} variant="alert" />
 }
 
 const SetDefaultAddressButton = ({ addressHash, onPress }: ActionButtonProps) => {
@@ -71,6 +71,8 @@ const SetDefaultAddressButton = ({ addressHash, onPress }: ActionButtonProps) =>
   const [defaultAddressIsChanging, setDefaultAddressIsChanging] = useState(false)
 
   if (!address) return
+
+  const isDefaultAddress = address.settings.isDefault
 
   const handleDefaultPress = async () => {
     if (!address || address.settings.isDefault) return
@@ -95,18 +97,19 @@ const SetDefaultAddressButton = ({ addressHash, onPress }: ActionButtonProps) =>
 
   return (
     <ActionCardButton
-      title={t('Set as default')}
+      title={t(isDefaultAddress ? 'Default address' : 'Set as default')}
       onPress={handleDefaultPress}
       iconProps={{ name: 'star' }}
       loading={defaultAddressIsChanging}
       color={address?.settings.isDefault ? address.settings.color : undefined}
+      disabled={isDefaultAddress}
     />
   )
 }
 
 // TODO: DRY
 const ActionButtons = styled.View`
-  margin-top: ${VERTICAL_GAP}px;
+  margin: ${VERTICAL_GAP / 2}px 0;
   flex-direction: row;
   gap: 10px;
 `

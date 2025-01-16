@@ -91,6 +91,7 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
     return (
       <BottomModal
         modalId={id}
+        titleAlign="left"
         title={
           <ModalHeader>
             <AssetLogo size={18} assetId={token?.id} />
@@ -142,10 +143,8 @@ const getFontSize = (text: string) => {
 export default TokenAmountModal
 
 const ModalHeader = styled.View`
-  flex: 1;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
   gap: 10px;
 `
 

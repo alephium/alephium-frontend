@@ -1,6 +1,8 @@
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { AlertCircle, CheckCircle, InfoIcon, LucideIcon } from 'lucide-react-native'
+import { useState } from 'react'
+import { LayoutChangeEvent } from 'react-native'
 import { ToastConfigParams, ToastType } from 'react-native-toast-message'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -13,6 +15,7 @@ const Toast = ({
   onPress
 }: Pick<ToastConfigParams<unknown>, 'text1' | 'text2' | 'onPress' | 'type'>) => {
   const theme = useTheme()
+  const [subtitleHeight, setSubtitleHeight] = useState(0)
 
   const Icons: Record<ToastType, { color: string; Icon: LucideIcon }> = {
     success: {
@@ -32,14 +35,16 @@ const Toast = ({
   const Icon = Icons[type].Icon
   const color = Icons[type].color
 
+  const handleSubtitleLayout = (e: LayoutChangeEvent) => setSubtitleHeight(e.nativeEvent.layout.height)
+
   return (
     <ToastContainer onPress={onPress}>
       <Gradient
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 1 }}
-        locations={[0.6, 1]}
+        locations={[0.7, 1]}
         colors={[color, colord(color).alpha(0).toHex()]}
-        style={{ height: 160 }}
+        style={{ height: 160 + (text2 ? subtitleHeight : 0) }}
         pointerEvents="none"
       />
       <ToastContent>
@@ -48,7 +53,7 @@ const Toast = ({
         </IconContainer>
         <TextContainer>
           <Title>{text1}</Title>
-          {text2 && <Subtitle>{text2}</Subtitle>}
+          {text2 && <Subtitle onLayout={handleSubtitleLayout}>{text2}</Subtitle>}
         </TextContainer>
       </ToastContent>
     </ToastContainer>

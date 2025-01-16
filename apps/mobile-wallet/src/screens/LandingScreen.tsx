@@ -7,10 +7,10 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AnimatedBackground from '~/components/AnimatedBackground'
+import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
-import ScreenTitle from '~/components/layout/ScreenTitle'
 import RoundedCard from '~/components/RoundedCard'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
@@ -108,14 +108,15 @@ export default LandingScreen
 
 const WelcomeCard = () => {
   const { t } = useTranslation()
-
-  const [height, setHeight] = useState(600)
+  const theme = useTheme()
 
   return (
-    <WelcomeCardStyled onLayout={(e) => setHeight(e.nativeEvent.layout.height)}>
-      <AnimatedBackground isAnimated height={height} />
-      <AlephiumLogo color="white" style={{ width: '20%' }} />
-      <ScreenTitle title={t('Welcome to Alephium!')} />
+    <WelcomeCardStyled>
+      <AnimatedBackground isAnimated isFullScreen />
+      <AlephiumLogo color={theme.font.primary} style={{ width: '20%', height: 200, flex: 0 }} />
+      <Title size={32} semiBold>
+        {t('Welcome to Alephium')}
+      </Title>
     </WelcomeCardStyled>
   )
 }
@@ -123,6 +124,12 @@ const WelcomeCard = () => {
 const WelcomeCardStyled = styled(RoundedCard)`
   flex: 1;
   padding: ${DEFAULT_MARGIN * 2}px;
+  justify-content: center;
+  align-items: center;
+`
+
+const Title = styled(AppText)`
+  text-align: center;
 `
 
 const ButtonsContainer = styled(BottomButtons)`

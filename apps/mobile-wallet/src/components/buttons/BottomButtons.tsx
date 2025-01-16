@@ -35,7 +35,7 @@ const BottomButtons = ({
   const handleLayout = (e: LayoutChangeEvent) => {
     const buttonsContainerHeight = e.nativeEvent.layout.height
     onHeightChange?.(buttonsContainerHeight)
-    setGradientHeight(buttonsContainerHeight + bottomInsetValue + 50)
+    setGradientHeight(buttonsContainerHeight + bottomInsetValue + 20)
   }
 
   return (
@@ -50,7 +50,7 @@ const BottomButtons = ({
       <Gradient
         start={{ x: 0.5, y: 1 }}
         end={{ x: 0.5, y: 0 }}
-        locations={[0.6, 1]}
+        locations={[0.5, 1]}
         colors={[theme.bg[backgroundColor], colord(theme.bg.back2).alpha(0).toHex()]}
         style={{ height: gradientHeight }}
         pointerEvents="none"

@@ -16,10 +16,16 @@ import { makeSelectAddressesKnownFungibleTokens, selectAllAddresses } from '~/st
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface TokenDetailsModalBalanceSummaryProps extends TokenDetailsModalCommonProps {
-  onPress: () => void
+  fontColor?: string
+  onPress?: () => void
 }
 
-const TokenDetailsModalBalanceSummary = ({ tokenId, addressHash, onPress }: TokenDetailsModalBalanceSummaryProps) => {
+const TokenDetailsModalBalanceSummary = ({
+  tokenId,
+  addressHash,
+  onPress,
+  fontColor
+}: TokenDetailsModalBalanceSummaryProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const currency = useAppSelector((s) => s.settings.currency)
@@ -31,17 +37,28 @@ const TokenDetailsModalBalanceSummary = ({ tokenId, addressHash, onPress }: Toke
 
   return (
     <BalanceSummaryBox>
-      <AppText>{addressHash ? t('Address balance') : t('Wallet balance')}</AppText>
-      <Amount size={44} semiBold value={token.balance} suffix={token.symbol} decimals={token.decimals} />
-      <Amount isFiat value={token.worth} suffix={CURRENCIES[currency].symbol} size={24} semiBold />
-      <AddressesWithTokenBadge tokenId={tokenId} onPress={onPress} />
+      <AppText color={fontColor}>{addressHash ? t('Address balance') : t('Wallet balance')}</AppText>
+      <Amount
+        size={34}
+        semiBold
+        value={token.balance}
+        suffix={token.symbol}
+        decimals={token.decimals}
+        color={fontColor}
+      />
+      <AmountAndAddresses>
+        {token.worth && (
+          <Amount isFiat value={token.worth} suffix={CURRENCIES[currency].symbol} size={20} color={fontColor} />
+        )}
+        <AddressesWithTokenBadge tokenId={tokenId} onPress={onPress} fontColor={fontColor} />
+      </AmountAndAddresses>
     </BalanceSummaryBox>
   )
 }
 
 export default TokenDetailsModalBalanceSummary
 
-const AddressesWithTokenBadge = ({ tokenId, onPress }: TokenDetailsModalBalanceSummaryProps) => {
+const AddressesWithTokenBadge = ({ tokenId, onPress, fontColor }: TokenDetailsModalBalanceSummaryProps) => {
   const addresses = useAppSelector((s) => selectAddressesWithToken(s, tokenId))
   const totalNumberOfAddresses = useAppSelector(selectAllAddresses).length
   const { t } = useTranslation()
@@ -50,19 +67,22 @@ const AddressesWithTokenBadge = ({ tokenId, onPress }: TokenDetailsModalBalanceS
   if (addresses.length === 0 || totalNumberOfAddresses === 1) return null
 
   const handlePress = () => {
-    onPress()
+    onPress?.()
     dispatch(openModal({ name: 'AddressesWithTokenModal', props: { tokenId } }))
   }
 
   return (
-    <AddressesWithTokenBadgeStyled onPress={handlePress}>
-      <Badge solid>
+    <Pressable onPress={handlePress}>
+      <Badge color={fontColor}>
         {t(addresses.length === 1 ? 'token_in_addresses_one' : 'token_in_addresses_other', { count: addresses.length })}
       </Badge>
-    </AddressesWithTokenBadgeStyled>
+    </Pressable>
   )
 }
 
-const AddressesWithTokenBadgeStyled = styled(Pressable)`
-  margin-top: ${VERTICAL_GAP}px;
+const AmountAndAddresses = styled.View`
+  margin-top: ${VERTICAL_GAP / 2}px;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 `

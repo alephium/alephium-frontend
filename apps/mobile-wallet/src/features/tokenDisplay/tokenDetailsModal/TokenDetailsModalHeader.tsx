@@ -5,6 +5,7 @@ import styled from 'styled-components/native'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
+import Badge from '~/components/Badge'
 import { TokenDetailsModalCommonProps } from '~/features/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
@@ -18,16 +19,11 @@ const TokenDetailsModalHeader = ({ tokenId, addressHash }: TokenDetailsModalComm
 
   return (
     <TokenDetailsModalHeaderStyled>
-      <LeftColumn>
-        <AssetLogo assetId={tokenId} size={38} />
-
-        <TokenName bold numberOfLines={1} size={18}>
-          {token.name}
-        </TokenName>
-      </LeftColumn>
-      <RightColumn>
-        <TokenPrice tokenSymbol={token.symbol} />
-      </RightColumn>
+      <AssetLogo assetId={tokenId} size={26} />
+      <TokenName bold numberOfLines={1} size={16}>
+        {token.name}
+      </TokenName>
+      <TokenPrice tokenSymbol={token.symbol} />
     </TokenDetailsModalHeaderStyled>
   )
 }
@@ -40,32 +36,22 @@ const TokenPrice = ({ tokenSymbol }: { tokenSymbol: string }) => {
 
   if (price === undefined || price === null) return null
 
-  return <Amount semiBold isFiat value={price} suffix={CURRENCIES[currency].symbol} fadeSuffix />
+  return (
+    <Badge>
+      <Amount semiBold isFiat value={price} suffix={CURRENCIES[currency].symbol} fadeSuffix size={13} />
+      <AppText size={13}> / {tokenSymbol}</AppText>
+    </Badge>
+  )
 }
 
 const TokenDetailsModalHeaderStyled = styled.View`
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 10px;
-`
-
-const Column = styled.View`
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-`
-
-const LeftColumn = styled(Column)`
-  flex-shrink: 1;
-`
-
-const RightColumn = styled(Column)`
-  flex-grow: 1;
-  justify-content: flex-end;
 `
 
 const TokenName = styled(AppText)`
-  flex-shrink: 1;
+  flex: 1;
   overflow: hidden;
 `

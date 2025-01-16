@@ -69,11 +69,11 @@ const AddressAnimatedBackground = ({ addressHash }: AddressDetailsModalProps) =>
 }
 
 const Content = styled.View`
-  padding: ${VERTICAL_GAP}px 0;
+  padding: ${VERTICAL_GAP / 2}px 0 ${VERTICAL_GAP}px 0;
 `
 
 const ActionButtons = styled.View`
-  margin-top: ${VERTICAL_GAP}px;
+  margin-top: ${VERTICAL_GAP / 2}px;
   flex-direction: row;
   gap: 10px;
 `

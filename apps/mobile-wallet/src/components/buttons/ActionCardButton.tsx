@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Feather'
 import Animated, { LinearTransition } from 'react-native-reanimated'
-import styled, { useTheme } from 'styled-components/native'
+import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button, { ButtonProps } from '~/components/buttons/Button'
@@ -32,4 +32,11 @@ const ButtonStyled = styled(Button)`
   border-radius: 20px;
   height: 60px;
   padding: 0;
+
+  ${({ disabled, theme }) =>
+    disabled &&
+    css`
+      border: 1px solid ${theme.border.primary};
+      background-color: transparent;
+    `}
 `

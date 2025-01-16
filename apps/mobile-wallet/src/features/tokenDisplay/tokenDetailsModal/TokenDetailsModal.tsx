@@ -1,4 +1,9 @@
+import { AddressHash, selectFungibleTokenById } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
+import { Token } from '@alephium/web3'
+import { colord } from 'colord'
+import { useEffect, useState } from 'react'
+import { getColors } from 'react-native-image-colors'
 import styled, { useTheme } from 'styled-components/native'
 
 import AnimatedBackground from '~/components/AnimatedBackground'
@@ -16,11 +21,11 @@ import { TokenDetailsModalProps } from '~/features/tokenDisplay/tokenDetailsModa
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectDefaultAddress } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
+import { darkTheme, lightTheme } from '~/style/themes'
 
 const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addressHash, parentModalId }) => {
   const dispatch = useAppDispatch()
   const defaultAddressHash = useAppSelector(selectDefaultAddress).hash
-  const theme = useTheme()
 
   const handleClose = () => {
     dispatch(closeModal({ id }))
@@ -29,14 +34,13 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
   }
 
   return (
-    <BottomModal modalId={id}>
-      <TokenDetailsModalHeader tokenId={tokenId} addressHash={addressHash} />
+    <BottomModal
+      modalId={id}
+      title={<TokenDetailsModalHeader tokenId={tokenId} addressHash={addressHash} />}
+      titleAlign="left"
+    >
       <Content>
-        <RoundedCard>
-          <AnimatedBackground shade={theme.bg.contrast} isAnimated />
-          <TokenDetailsModalBalanceSummary tokenId={tokenId} addressHash={addressHash} onPress={handleClose} />
-        </RoundedCard>
-
+        <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
         <ActionButtons>
           <ActionCardSendButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
           <ActionCardReceiveButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
@@ -50,16 +54,69 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
   )
 })
 
+interface TokenAnimatedBackgroundProps {
+  tokenId: Token['id']
+  addressHash?: AddressHash
+}
+
+const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps) => {
+  const theme = useTheme()
+  const [dominantColor, setDominantColor] = useState<string>()
+  const tokenLogoUri = useAppSelector((s) => selectFungibleTokenById(s, tokenId)?.logoURI)
+
+  const fontColor =
+    dominantColor &&
+    (theme.name === 'light'
+      ? colord(dominantColor).brightness() < 0.3
+        ? darkTheme.font.primary
+        : lightTheme.font.primary
+      : colord(dominantColor).brightness() > 0.6
+        ? lightTheme.font.primary
+        : darkTheme.font.primary)
+
+  useEffect(() => {
+    if (!tokenLogoUri) return
+
+    getColors(tokenLogoUri, {
+      fallback: '#228B22',
+      cache: true,
+      key: tokenLogoUri
+    }).then((r) => {
+      const color = colord(
+        r.platform === 'ios' ? (colord(r.background).brightness() < 0.9 ? r.background : r.secondary) : r.darkVibrant
+      )
+
+      const isBright = color.brightness() > 0.7
+
+      setDominantColor(
+        colord(
+          r.platform === 'ios' ? (colord(r.background).brightness() < 0.9 ? r.background : r.secondary) : r.darkVibrant
+        )
+          .saturate(1.5)
+          .lighten(!isBright ? (theme.name === 'light' ? 0.3 : 0.2) : 0)
+          .toHex()
+      )
+    })
+  }, [theme.name, tokenLogoUri])
+
+  return (
+    <RoundedCard>
+      <AnimatedBackground shade={dominantColor} isAnimated />
+      <TokenDetailsModalBalanceSummary tokenId={tokenId} addressHash={addressHash} fontColor={fontColor} />
+    </RoundedCard>
+  )
+}
+
 export default TokenDetailsModal
 
 // TODO: DRY
 const Content = styled.View`
-  padding: ${VERTICAL_GAP}px 0;
+  padding-top: ${VERTICAL_GAP / 2}px;
 `
 
 // TODO: DRY
 const ActionButtons = styled.View`
-  margin-top: ${VERTICAL_GAP}px;
+  margin-top: ${VERTICAL_GAP / 2}px;
   flex-direction: row;
   gap: 10px;
 `

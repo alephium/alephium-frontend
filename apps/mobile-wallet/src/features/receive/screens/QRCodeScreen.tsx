@@ -11,7 +11,7 @@ import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
 interface ScreenProps extends StackScreenProps<ReceiveNavigationParamList, 'QRCodeScreen'>, ScrollScreenProps {}
 
 const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
-  const { screenScrollHandler, screenScrollY } = useHeaderContext()
+  const { screenScrollHandler, screenScrollY, parentNavigation } = useHeaderContext()
   const { t } = useTranslation()
 
   useScrollToTopOnFocus(screenScrollY)
@@ -24,7 +24,7 @@ const QRCodeScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
       screenTitle={t('Receive assets')}
       screenIntro={t('Scan the QR code to send funds to this address.')}
       bottomButtonsRender={() => (
-        <Button title={t('Done')} variant="highlight" onPress={() => navigation.getParent()?.goBack()} />
+        <Button title={t('Done')} variant="highlight" onPress={() => parentNavigation?.goBack()} />
       )}
       {...props}
     >
