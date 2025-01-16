@@ -1,43 +1,27 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { FIVE_MINUTES_MS, ONE_MINUTE_MS } from '@alephium/shared'
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, QueryClientConfig } from '@tanstack/react-query'
 import { AxiosError } from 'axios'
 
-const queryClient = new QueryClient({
+const MAX_RETRIES = 3
+const RETRY_ERROR_CODE = 429
+
+// Unfortunately, Tanstack's retry callback does not include an argument for the status code. The web3 package returns
+// a string message that includes the status code (see convertHttpResponse).
+const shouldRetryAlephiumApi = (error: Error) => error?.message?.includes(`Status code: ${RETRY_ERROR_CODE}`)
+const shouldRetryAxios = (error: AxiosError) => error?.response?.status === RETRY_ERROR_CODE
+
+export const queryClientConfig: QueryClientConfig = {
   defaultOptions: {
     queries: {
       staleTime: ONE_MINUTE_MS,
       gcTime: FIVE_MINUTES_MS,
-      retry: (failureCount, error) => {
-        if (
-          (error instanceof AxiosError && error.response?.status !== 429) ||
-          (error instanceof String && !error?.message?.includes('Status code: 429'))
-        ) {
-          return false
-        }
-
-        return true
-      }
+      retry: (failureCount, error) =>
+        failureCount < MAX_RETRIES && (shouldRetryAlephiumApi(error) || shouldRetryAxios(error as AxiosError))
     }
   }
-})
+}
+
+const queryClient = new QueryClient(queryClientConfig)
 
 // Useful for debugging
 // queryClient.getQueryCache().subscribe((event) => {

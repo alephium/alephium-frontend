@@ -381,13 +381,13 @@
   "Welcome back.": "Welcome back.",
   "Welcome to Alephium.": "Welcome to Alephium.",
   "Welcome.": "Welcome.",
-  "welcomeScreenOneAddressPerGroupMessage": "Advanced user: want to start with <1>one address per group for mining or DeFi?</1>",
+  "welcomeScreenOneAddressPerGroupMessage": "Advanced user: do you want to start with <1>one address per group for mining or DeFi?</1>",
   "welcomeScreenPassphraseMessage": "If you want to use a <1>passphrase</1>, lock your newly created wallet.",
   "with": "with",
   "You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet or devnet network to see your tokens.": "You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet or devnet network to see your tokens.",
   "You can disable this confirmation step from the wallet settings.": "You can disable this confirmation step from the wallet settings.",
   "You can download the address transaction history for a selected time period. This can be useful for tax reporting.": "You can download the address transaction history for a selected time period. This can be useful for tax reporting.",
-  "You have great ideas you want to share?": "You have great ideas you want to share?",
+  "Do you have great ideas you want to share?": "Do you have great ideas you want to share?",
   "You have reached the maximum calls limit. Please try again in a few minutes.": "You have reached the maximum calls limit. Please try again in a few minutes.",
   "You will not be able to recover your account with the private key!": "You will not be able to recover your account with the private key!",
   "Your address": "Your address",
@@ -470,7 +470,6 @@
   "Transaction was sent...": "Transaction was sent...",
   "Transaction is about to be included in the blockchain...": "Transaction is about to be included in the blockchain...",
   "Transaction is now part of the blockchain": "Transaction is now part of the blockchain",
-  "Your wallet has too many addresses. These are the transactions of the {{ maxNumber }} most frequently used addresses. Please, consider removing some of them.": "Your wallet has too many addresses. These are the transactions of the {{ maxNumber }} most frequently used addresses. Please, consider removing some of them.",
   "Forget": "Forget",
   "forgetAddress_one": "Forget address",
   "forgetAddress_other": "Forget addresses",
@@ -521,5 +520,8 @@
   "Scan": "Scan",
   "Active address discovery completed. Addresses added: {{ count }}": "Active address discovery completed. Addresses added: {{ count }}",
   "Purchase done!": "Purchase done!",
-  "Wallet worth": "Wallet worth"
+  "Wallet worth": "Wallet worth",
+  "Loading new transactions...": "Loading new transactions...",
+  "Sign and Send Unsigned Transaction": "Sign and Send Unsigned Transaction",
+  "Sign and Send": "Sign and Send"
 }

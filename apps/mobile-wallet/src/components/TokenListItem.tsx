@@ -1,48 +1,34 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-import { Asset, CURRENCIES } from '@alephium/shared'
+import { AddressHash, Asset, CURRENCIES } from '@alephium/shared'
+import { Optional } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
-import { StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
-import ListItem from '~/components/ListItem'
-import { useAppSelector } from '~/hooks/redux'
+import ListItem, { ListItemProps } from '~/components/ListItem'
+import { openModal } from '~/features/modals/modalActions'
+import { ModalInstance } from '~/features/modals/modalTypes'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
-interface TokenListItemProps {
+interface TokenListItemProps extends Optional<ListItemProps, 'title' | 'icon'> {
   asset: Asset
-  isLast?: boolean
-  style?: StyleProp<ViewStyle>
-  hideSeparator?: boolean
+  addressHash?: AddressHash
+  parentModalId?: ModalInstance['id']
 }
 
-const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemProps) => {
+const TokenListItem = ({ asset, addressHash, parentModalId, ...props }: TokenListItemProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
   const balance = BigInt(asset.balance)
 
+  const openTokenDetailsModal = () =>
+    dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId: asset.id, addressHash, parentModalId } }))
+
   return (
     <ListItem
-      style={style}
-      isLast={isLast}
       title={asset.name || asset.id}
       subtitle={
         !asset.verified && (
@@ -70,7 +56,8 @@ const TokenListItem = ({ asset, isLast, style, hideSeparator }: TokenListItemPro
           )}
         </Amounts>
       }
-      hideSeparator={hideSeparator}
+      onPress={openTokenDetailsModal}
+      {...props}
     />
   )
 }

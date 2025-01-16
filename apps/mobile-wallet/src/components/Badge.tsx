@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { colord } from 'colord'
 import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
@@ -27,22 +9,32 @@ interface BadgeProps {
   rounded?: boolean
   border?: boolean
   light?: boolean
+  solid?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const Badge = ({ style, color, children }: BadgeProps) => (
+const Badge = ({ style, color, solid, children }: BadgeProps) => (
   <View style={style}>
-    {['string', 'number'].includes(typeof children) ? <BadgeText color={color}>{children}</BadgeText> : children}
+    {['string', 'number'].includes(typeof children) ? (
+      <BadgeText color={color} solid={solid}>
+        {children}
+      </BadgeText>
+    ) : (
+      children
+    )}
   </View>
 )
 
 export default styled(Badge)`
-  ${({ color, theme, rounded, border, light }) => {
+  flex-direction: row;
+  gap: 4px;
+
+  ${({ color, theme, rounded, border, light, solid }) => {
     const usedColor = color || theme.font.primary
 
     return css`
       min-width: 25px;
-      padding: 2px 5px;
+      padding: 4px 8px;
       align-items: center;
       justify-content: center;
       border-radius: ${rounded ? '30px' : '7px'};
@@ -68,12 +60,17 @@ export default styled(Badge)`
       css`
         background-color: ${({ theme }) => theme.bg.secondary};
       `}
+
+      ${solid &&
+      css`
+        background-color: ${usedColor};
+      `}
     `
   }}
 `
 
-const BadgeText = styled.Text<{ color?: string }>`
-  ${({ color, theme }) => css`
-    color: ${color || theme.font.primary};
+const BadgeText = styled.Text<{ color?: string; solid?: boolean }>`
+  ${({ color, solid, theme }) => css`
+    color: ${solid ? 'white' : color || theme.font.primary};
   `}
 `

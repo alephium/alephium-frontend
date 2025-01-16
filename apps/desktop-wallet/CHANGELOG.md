@@ -1,5 +1,17 @@
 # alephium-desktop-wallet
 
+## 2.5.1
+
+### Patch Changes
+
+- 8abda40: Fix removal of active WalletConnect sessions
+- 8abda40: Frameless window on Windows
+- 8abda40: Optimize transactions loading
+- 8abda40: Fix Linux app title bar
+- 8abda40: Enable Thai translations
+- 8abda40: Support alph_signAndSubmitUnsignedTx WalletConnect method
+- 1c6dcd7: Improve performance of address picker
+
 ## 2.5.0
 
 ### Minor Changes

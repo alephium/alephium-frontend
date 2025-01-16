@@ -1,27 +1,10 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { colord } from 'colord'
 import { createGlobalStyle } from 'styled-components'
 
 import resets from '@/style/resets'
+import { platform } from '@/utils/platform.ts'
 
-export const appHeaderHeightPx = 50
+export const appHeaderHeightPx = platform.isMac ? 50 : 102
 export const walletSidebarWidthPx = 76
 export const messagesLeftMarginPx = 70
 export const sidebarExpandThresholdPx = 1300

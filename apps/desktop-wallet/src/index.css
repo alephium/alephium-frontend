@@ -53,10 +53,6 @@ a {
   color: inherit;
 }
 
-#app-drag-region {
-  -webkit-app-region: drag;
-}
-
 /* FONTS */
 
 @font-face {

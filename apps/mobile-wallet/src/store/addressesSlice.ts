@@ -1,30 +1,10 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import {
-  ADDRESSES_QUERY_LIMIT,
   AddressFungibleToken,
   AddressHash,
   appReset,
   Asset,
   balanceHistoryAdapter,
   calculateAssetsData,
-  client,
   customNetworkSettingsSaved,
   extractNewTransactions,
   getTransactionsOfAddress,
@@ -33,7 +13,6 @@ import {
   selectAllFungibleTokens,
   selectAllNFTs,
   selectAllPrices,
-  selectAllPricesHistories,
   selectNFTIds,
   sortAssets,
   TokenDisplayBalances
@@ -50,9 +29,8 @@ import {
   isAnyOf,
   PayloadAction
 } from '@reduxjs/toolkit'
-import { chunk } from 'lodash'
 
-import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsNextPage } from '~/api/addresses'
+import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsPage } from '~/api/addresses'
 import { addressMetadataIncludesHash } from '~/persistent-storage/wallet'
 import { addressDeleted } from '~/store/addresses/addressesActions'
 import { RootState } from '~/store/store'
@@ -103,24 +81,10 @@ export const syncLatestTransactions = createAsyncThunk(
           ? _addresses
           : [_addresses]
 
-    if (areAddressesNew) {
-      await Promise.all([dispatch(syncAddressesBalances(addresses)), dispatch(syncAddressesTokens(addresses))])
-    }
+    if (areAddressesNew)
+      Promise.all([dispatch(syncAddressesBalances(addresses)), dispatch(syncAddressesTokens(addresses))])
 
-    let latestTransactions: Transaction[] = []
-    const args = { page: 1 }
-
-    if (addresses.length === 1) {
-      latestTransactions = await client.explorer.addresses.getAddressesAddressTransactions(addresses[0], args)
-    } else if (addresses.length > 1) {
-      const results = await Promise.all(
-        chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
-          client.explorer.addresses.postAddressesTransactions(args, addressesChunk)
-        )
-      )
-
-      latestTransactions = results.flat()
-    }
+    const latestTransactions = await fetchAddressesTransactionsPage(addresses, 1)
 
     const newTransactionsResults = addresses.reduce(
       (acc, addressHash) => {
@@ -149,12 +113,11 @@ export const syncLatestTransactions = createAsyncThunk(
     const addressesToFetchData =
       state.addresses.status === 'uninitialized' ? (state.addresses.ids as AddressHash[]) : addressesWithNewTransactions
 
-    if (!areAddressesNew && addressesToFetchData.length > 0) {
-      await Promise.all([
+    if (!areAddressesNew && addressesToFetchData.length > 0)
+      Promise.all([
         dispatch(syncAddressesBalances(addressesToFetchData)),
         dispatch(syncAddressesTokens(addressesToFetchData))
       ])
-    }
 
     return newTransactionsResults
   }
@@ -170,7 +133,6 @@ export const syncAddressesTokens = createAsyncThunk(
   async (addresses: AddressHash[]) => await fetchAddressesTokens(addresses)
 )
 
-// Same as in desktop wallet, share state?
 export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   'addresses/syncAllAddressesTransactionsNextPage',
   async (
@@ -179,6 +141,7 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
   ): Promise<{ pageLoaded: number; transactions: explorer.Transaction[] }> => {
     const state = getState() as RootState
     const addresses = selectAllAddresses(state)
+    const addressesHashes = addresses.map(({ hash }) => hash)
     const minimumNewTransactionsNeeded = payload?.minTxs ?? 1
 
     let nextPageToLoad = state.confirmedTransactions.pageLoaded + 1
@@ -186,13 +149,7 @@ export const syncAllAddressesTransactionsNextPage = createAsyncThunk(
     let newTransactions: explorer.Transaction[] = []
 
     while (!enoughNewTransactionsFound) {
-      const results = await Promise.all(
-        chunk(addresses, ADDRESSES_QUERY_LIMIT).map((addressesChunk) =>
-          fetchAddressesTransactionsNextPage(addressesChunk, nextPageToLoad)
-        )
-      )
-
-      const nextPageTransactions = results.flat()
+      const nextPageTransactions = await fetchAddressesTransactionsPage(addressesHashes, nextPageToLoad)
 
       if (nextPageTransactions.length === 0) break
 
@@ -374,7 +331,10 @@ export const makeSelectAddressesTokens = () =>
     [selectAllFungibleTokens, selectAllNFTs, makeSelectAddressesAlphAsset(), makeSelectAddresses(), selectAllPrices],
     (fungibleTokens, nfts, alphAsset, addresses, tokenPrices): Asset[] => {
       const tokenBalances = getAddressesTokenBalances(addresses)
-      const tokens = calculateAssetsData([alphAsset, ...tokenBalances], fungibleTokens, nfts, tokenPrices)
+
+      if (alphAsset.balance > BigInt(0)) tokenBalances.push(alphAsset)
+
+      const tokens = calculateAssetsData(tokenBalances, fungibleTokens, nfts, tokenPrices)
 
       return sortAssets(tokens)
     }
@@ -386,8 +346,13 @@ export const makeSelectAddressesKnownFungibleTokens = () =>
     tokens.filter((token): token is AddressFungibleToken => !!token.symbol)
   )
 
-// Same as in desktop wallet
 export const makeSelectAddressesUnknownTokens = () =>
+  createSelector([makeSelectAddressesTokens()], (tokens): Asset[] =>
+    tokens.filter((token): token is Asset => !token.name && !token.symbol && !token.verified && !token.logoURI)
+  )
+
+// Same as in desktop wallet
+export const makeSelectAddressesUnknownTokensIds = () =>
   createSelector(
     [selectAllFungibleTokens, selectNFTIds, makeSelectAddresses()],
     (fungibleTokens, nftIds, addresses): Asset['id'][] => {
@@ -412,7 +377,7 @@ export const makeSelectAddressesUnknownTokens = () =>
 // Same as in desktop wallet
 export const makeSelectAddressesCheckedUnknownTokens = () =>
   createSelector(
-    [makeSelectAddressesUnknownTokens(), (state: RootState) => state.app.checkedUnknownTokenIds],
+    [makeSelectAddressesUnknownTokensIds(), (state: RootState) => state.app.checkedUnknownTokenIds],
     (tokensWithoutMetadata, checkedUnknownTokenIds) =>
       tokensWithoutMetadata.filter((tokenId) => checkedUnknownTokenIds.includes(tokenId))
   )
@@ -517,25 +482,6 @@ export const makeSelectAddressesVerifiedFungibleTokens = () =>
   )
 
 export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
-  [makeSelectAddressesVerifiedFungibleTokens(), selectAllPricesHistories],
-  (verifiedFungibleTokens, histories) =>
-    verifiedFungibleTokens
-      .map((token) => token.symbol)
-      .reduce(
-        (acc, tokenSymbol) => {
-          const tokenHistory = histories.find(({ symbol }) => symbol === tokenSymbol)
-
-          if (!tokenHistory || tokenHistory.status === 'uninitialized') {
-            acc.uninitialized.push(tokenSymbol)
-          } else if (tokenHistory && tokenHistory.history.length > 0) {
-            acc.withPriceHistory.push(tokenSymbol)
-          }
-
-          return acc
-        },
-        {
-          uninitialized: [] as string[],
-          withPriceHistory: [] as string[]
-        }
-      )
+  makeSelectAddressesVerifiedFungibleTokens(),
+  (verifiedFungibleTokens) => verifiedFungibleTokens.map((token) => token.symbol)
 )

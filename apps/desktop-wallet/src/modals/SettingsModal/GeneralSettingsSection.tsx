@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { Currency, fiatCurrencyChanged } from '@alephium/shared'
 import { AlertTriangle, Eraser, Info } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
@@ -32,17 +14,17 @@ import Select from '@/components/Inputs/Select'
 import Toggle from '@/components/Inputs/Toggle'
 import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { Language, languageOptions } from '@/features/localization/languages'
+import { languageChanged } from '@/features/localization/localizationActions'
 import { openModal } from '@/features/modals/modalActions'
 import RegionSettings from '@/features/settings/RegionSettings'
 import {
   analyticsToggled,
   discreetModeToggled,
-  languageChanged,
   passwordRequirementToggled,
   walletLockTimeChanged
 } from '@/features/settings/settingsActions'
-import { fiatCurrencyOptions, languageOptions, locktimeInMinutes } from '@/features/settings/settingsConstants'
-import { Language } from '@/features/settings/settingsTypes'
+import { fiatCurrencyOptions, locktimeInMinutes } from '@/features/settings/settingsConstants'
 import { ThemeSettings } from '@/features/theme/themeTypes'
 import { switchTheme } from '@/features/theme/themeUtils'
 import { deleteThumbnailsDB } from '@/features/thumbnails/thumbnailStorage'

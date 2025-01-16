@@ -361,7 +361,7 @@
   "You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet or devnet network to see your tokens.": "В настоящее время вы подключены к сети {{ currentNetwork }}. Обязательно подключитесь к тестовой или devnet сети, чтобы увидеть свои токены.",
   "You can disable this confirmation step from the wallet settings.": "Вы можете отключить этот этап подтверждения в настройках кошелька.",
   "You can download the address transaction history for a selected time period. This can be useful for tax reporting.": "Вы можете загрузить историю транзакций по адресу за выбранный период времени. Это может быть полезно для налоговой отчетности.",
-  "You have great ideas you want to share?": "У вас есть отличные идеи, которыми вы хотите поделиться?",
+  "Do you have great ideas you want to share?": "У вас есть отличные идеи, которыми вы хотите поделиться?",
   "You have reached the maximum calls limit. Please try again in a few minutes.": "Вы достигли максимального лимита вызовов. Пожалуйста, повторите попытку через несколько минут.",
   "You will not be able to recover your account with the private key!": "Вы не сможете восстановить свою учетную запись с помощью закрытого ключа!",
   "Your address": "Ваш адрес",

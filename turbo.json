@@ -12,7 +12,7 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**", "dist-electron/**"]
     },
     "watch-dev": {
       "dependsOn": ["^build"],

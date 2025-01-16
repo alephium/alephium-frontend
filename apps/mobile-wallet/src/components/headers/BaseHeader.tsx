@@ -1,151 +1,148 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { StackHeaderProps } from '@react-navigation/stack'
-import { BlurView } from 'expo-blur'
-import { ReactNode, RefObject } from 'react'
-import { Platform, Pressable, ViewProps } from 'react-native'
+import { SceneProgress } from '@react-navigation/stack/lib/typescript/src/types'
+import { colord } from 'colord'
+import { LinearGradient } from 'expo-linear-gradient'
+import { ReactNode, RefObject, useState } from 'react'
+import { LayoutChangeEvent, useWindowDimensions, View, ViewProps } from 'react-native'
 import Animated, {
-  Extrapolate,
+  Extrapolation,
   interpolate,
-  interpolateColor,
   SharedValue,
-  useAnimatedProps,
-  useAnimatedStyle
+  useAnimatedStyle,
+  useDerivedValue
 } from 'react-native-reanimated'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, HEADER_OFFSET_TOP } from '~/style/globalStyle'
 
 export type BaseHeaderOptions = Pick<StackHeaderProps['options'], 'headerRight' | 'headerLeft' | 'headerTitle'> & {
   headerTitleRight?: () => ReactNode
+  headerTitleScrolled?: () => ReactNode
 }
 
 export interface BaseHeaderProps extends ViewProps {
   options: BaseHeaderOptions
   headerRef?: RefObject<Animated.View>
-  showBorderBottom?: boolean
   titleAlwaysVisible?: boolean
-  goBack?: () => void
+  onBackPress?: () => void
   scrollY?: SharedValue<number>
+  scrollEffectOffset?: number
   CustomContent?: ReactNode
+  progress?: SceneProgress
+  isCentered?: boolean
 }
 
-export const scrollEndThreshold = 80
-const defaultScrollRange = [0, scrollEndThreshold]
-
-const isIos = Platform.OS === 'ios'
-
-const AnimatedHeader = isIos ? Animated.createAnimatedComponent(BlurView) : Animated.View
+const AnimatedHeaderGradient = Animated.createAnimatedComponent(LinearGradient)
 
 const BaseHeader = ({
-  options: { headerRight, headerLeft, headerTitle, headerTitleRight },
-  showBorderBottom,
+  options: { headerRight, headerLeft, headerTitle, headerTitleRight, headerTitleScrolled },
   headerRef,
   titleAlwaysVisible,
   scrollY,
+  scrollEffectOffset = 0,
   CustomContent,
+  progress,
+  isCentered = true,
   ...props
 }: BaseHeaderProps) => {
-  const theme = useTheme()
   const insets = useSafeAreaInsets()
+  const theme = useTheme()
+  const { width: screenWidth } = useWindowDimensions()
+  const [headerHeight, setHeaderHeight] = useState(80)
 
-  const borderColorRange = [showBorderBottom ? theme.border.secondary : 'transparent', theme.border.secondary]
-  const backgroundColorRange = [theme.header.hidden, theme.header.visible]
+  const gradientHeight = headerHeight + 50
+  const defaultScrollRange = [0 + scrollEffectOffset, 80 + scrollEffectOffset]
+  const marginTop = insets.top + HEADER_OFFSET_TOP
 
-  const paddingTop = isIos ? insets.top : insets.top + 7
-
-  const HeaderRight = (headerRight && headerRight({})) || <HeaderSidePlaceholder />
-  const HeaderLeft = (headerLeft && headerLeft({})) || <HeaderSidePlaceholder />
-  const HeaderTitle = headerTitle && (typeof headerTitle === 'string' ? headerTitle : headerTitle.arguments['children'])
+  const headerTitleString = headerTitle && typeof headerTitle === 'string' ? headerTitle : undefined
+  const HeaderTitleComponent =
+    headerTitle && typeof headerTitle === 'function' ? headerTitle({ children: '' }) : undefined
   const HeaderTitleRight = headerTitleRight && headerTitleRight()
 
-  const animatedHeaderProps = useAnimatedProps(() =>
-    isIos
+  const animatedGradientOpacity = useDerivedValue(() => interpolate(scrollY?.value || 0, defaultScrollRange, [0, 1]))
+
+  const headerTitleContainerAnimatedStyle = useAnimatedStyle(() =>
+    headerTitle && !headerTitleScrolled && !titleAlwaysVisible
       ? {
-          intensity: interpolate(scrollY?.value || 0, defaultScrollRange, [0, 80], Extrapolate.CLAMP)
+          opacity: interpolate(
+            scrollY?.value || 0,
+            [30 + scrollEffectOffset, 50 + scrollEffectOffset],
+            [0, 1],
+            Extrapolation.CLAMP
+          )
         }
-      : {}
+      : headerTitle && headerTitleScrolled
+        ? {
+            opacity: interpolate(
+              scrollY?.value || 0,
+              [30 + scrollEffectOffset, 50 + scrollEffectOffset],
+              [1, 0],
+              Extrapolation.CLAMP
+            )
+          }
+        : { opacity: 1 }
   )
 
-  const animatedHeaderStyle = useAnimatedStyle(() =>
-    isIos
-      ? {}
-      : {
-          backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, backgroundColorRange)
-        }
-  )
-
-  const bottomBorderAnimatedStyle = useAnimatedStyle(() =>
-    showBorderBottom
+  const headerTitleScrolledContainerAnimatedStyle = useAnimatedStyle(() =>
+    headerTitleScrolled
       ? {
-          opacity: interpolate(scrollY?.value || 0, [0, 20], [0, 1], Extrapolate.CLAMP),
-          backgroundColor: interpolateColor(scrollY?.value || 0, defaultScrollRange, borderColorRange)
+          opacity: interpolate(
+            scrollY?.value || 0,
+            [40 + scrollEffectOffset, 60 + scrollEffectOffset],
+            [0, 1],
+            Extrapolation.CLAMP
+          )
         }
-      : {}
+      : { opacity: 0 }
   )
 
-  const centerContainerAnimatedStyle = useAnimatedStyle(() =>
-    headerTitle && !titleAlwaysVisible
-      ? {
-          opacity: interpolate(scrollY?.value || 0, [40, 60], [0, 1], Extrapolate.CLAMP)
-        }
-      : {}
-  )
-
-  const handleCompactHeaderPress = () => {
-    console.log('TODO: Reimplement scroll to top')
-
-    /*
-    if (activeScreenRef?.current) {
-      scrollScreenTo(0, activeScreenRef, true)
-    }
-    */
+  const handleHeaderLayout = (e: LayoutChangeEvent) => {
+    setHeaderHeight(e.nativeEvent.layout.height)
   }
 
   return (
-    <BaseHeaderStyled ref={headerRef} {...props}>
-      <Pressable onPress={handleCompactHeaderPress}>
-        <HeaderContainer>
-          <Header style={[{ paddingTop }, animatedHeaderStyle]} tint={theme.name} animatedProps={animatedHeaderProps}>
-            {!CustomContent ? (
-              <>
-                {HeaderLeft}
-                {headerTitle && (
-                  <CenterContainer style={centerContainerAnimatedStyle}>
+    <BaseHeaderStyled ref={headerRef} onLayout={handleHeaderLayout} {...props}>
+      <View pointerEvents="none">
+        <HeaderGradient
+          pointerEvents="none"
+          style={{ opacity: animatedGradientOpacity, width: screenWidth, height: gradientHeight }}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          locations={[0.7, 1]}
+          colors={[theme.bg.back2, colord(theme.bg.back2).alpha(0).toHex()]}
+        />
+      </View>
+      <HeaderContainer>
+        <Header style={{ marginTop }}>
+          {!CustomContent ? (
+            <>
+              <HeaderSideContainer side="left">{headerLeft?.({})}</HeaderSideContainer>
+              {(headerTitleString || HeaderTitleComponent) && (
+                <HeaderTitleContainer style={headerTitleContainerAnimatedStyle} isCentered={isCentered}>
+                  {headerTitleString ? (
                     <AppText semiBold size={17}>
-                      {HeaderTitle}
+                      {headerTitleString}
                     </AppText>
-                    {HeaderTitleRight}
-                  </CenterContainer>
-                )}
-                {HeaderRight}
-              </>
-            ) : (
-              <CenterContainer>{CustomContent}</CenterContainer>
-            )}
-          </Header>
-
-          {showBorderBottom && <BottomBorder style={bottomBorderAnimatedStyle} />}
-        </HeaderContainer>
-      </Pressable>
+                  ) : HeaderTitleComponent ? (
+                    HeaderTitleComponent
+                  ) : null}
+                  {HeaderTitleRight}
+                </HeaderTitleContainer>
+              )}
+              <HeaderSideContainer side="right">{headerRight?.({})}</HeaderSideContainer>
+            </>
+          ) : (
+            <HeaderTitleContainer isCentered={isCentered}>{CustomContent}</HeaderTitleContainer>
+          )}
+          {headerTitleScrolled && (
+            <HeaderTitleScrolledContainer style={headerTitleScrolledContainerAnimatedStyle} pointerEvents="none">
+              {headerTitleScrolled()}
+            </HeaderTitleScrolledContainer>
+          )}
+        </Header>
+      </HeaderContainer>
     </BaseHeaderStyled>
   )
 }
@@ -155,36 +152,50 @@ export default BaseHeader
 const BaseHeaderStyled = styled(Animated.View)`
   width: 100%;
   z-index: 1;
+  position: absolute;
+`
+
+const HeaderGradient = styled(AnimatedHeaderGradient)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 `
 
 const HeaderContainer = styled(Animated.View)`
   flex-direction: column;
 `
 
-const CenterContainer = styled(Animated.View)`
+const HeaderTitleContainer = styled(Animated.View)<{ isCentered?: boolean }>`
   flex: 1;
   flex-direction: row;
   gap: 15px;
   align-items: center;
-  justify-content: center;
+  justify-content: ${({ isCentered }) => (isCentered ? 'center' : 'flex-start')};
   opacity: 1;
 `
 
-const Header = styled(AnimatedHeader)`
+const HeaderTitleScrolledContainer = styled(Animated.View)`
+  position: absolute;
+  flex-direction: row;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  top: 0;
+  align-items: center;
+  justify-content: center;
+`
+
+const Header = styled(Animated.View)`
+  position: relative;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 ${DEFAULT_MARGIN - 4}px 12px;
+  padding: 0 ${DEFAULT_MARGIN}px;
 `
 
-const BottomBorder = styled(Animated.View)`
-  position: absolute;
-  bottom: -1px;
-  right: 0;
-  left: 0;
-  height: 1px;
-`
-
-const HeaderSidePlaceholder = styled.View`
-  width: 40px;
+const HeaderSideContainer = styled.View<{ side: 'left' | 'right' }>`
+  min-width: 50px;
+  flex-direction: row;
+  justify-content: ${({ side }) => (side === 'left' ? 'flex-start' : 'flex-end')};
 `

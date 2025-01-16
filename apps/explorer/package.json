@@ -1,7 +1,7 @@
 {
   "name": "@alephium/explorer",
   "description": "The Alephium explorer frontend",
-  "version": "1.10.10",
+  "version": "1.10.11",
   "private": true,
   "scripts": {
     "start": "turbo start:app",
@@ -84,7 +84,6 @@
     "esbuild": "^0.17.11",
     "eslint": "^8.48.0",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-header": "^3.1.1",
     "eslint-plugin-prettier": "^5.0.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",

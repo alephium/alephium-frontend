@@ -373,7 +373,7 @@
   "You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet or devnet network to see your tokens.": "Sei attualmente connesso alla rete {{ currentNetwork }}. Assicurati di connetterti alla rete testnet o devnet per vedere i tuoi token.",
   "You can disable this confirmation step from the wallet settings.": "Puoi disabilitare questo passaggio di conferma dalle impostazioni del portafoglio.",
   "You can download the address transaction history for a selected time period. This can be useful for tax reporting.": "È possibile scaricare la cronologia delle transazioni degli indirizzi per un periodo di tempo selezionato. Questo può essere utile per la dichiarazione dei redditi.",
-  "You have great ideas you want to share?": "Hai grandi idee che vuoi condividere?",
+  "Do you have great ideas you want to share?": "Hai grandi idee che vuoi condividere?",
   "You have reached the maximum calls limit. Please try again in a few minutes.": "Hai raggiunto il limite massimo di chiamate. Riprova tra qualche minuto.",
   "You will not be able to recover your account with the private key!": "Non sarai in grado di recuperare il tuo account con la chiave privata!",
   "Your address": "Il tuo indirizzo",

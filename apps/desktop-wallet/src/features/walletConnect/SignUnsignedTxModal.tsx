@@ -1,24 +1,7 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { keyring } from '@alephium/keyring'
 import { getHumanReadableError, throttledClient, WALLETCONNECT_ERRORS } from '@alephium/shared'
 import { SignUnsignedTxResult } from '@alephium/web3'
+import { usePostHog } from 'posthog-js/react'
 import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -34,6 +17,7 @@ import { SignUnsignedTxData } from '@/features/walletConnect/walletConnectTypes'
 import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import {
+  transactionSent,
   unsignedTransactionDecodingFailed,
   unsignedTransactionSignFailed,
   unsignedTransactionSignSucceeded
@@ -41,14 +25,16 @@ import {
 
 export interface SignUnsignedTxModalProps {
   txData: SignUnsignedTxData
+  submit?: boolean
 }
 
-const SignUnsignedTxModal = memo(({ id, txData }: ModalBaseProp & SignUnsignedTxModalProps) => {
+const SignUnsignedTxModal = memo(({ id, txData, submit = false }: ModalBaseProp & SignUnsignedTxModalProps) => {
   const { t } = useTranslation()
   const { sendAnalytics } = useAnalytics()
   const dispatch = useAppDispatch()
   const { sendUserRejectedResponse, sendSuccessResponse, sendFailureResponse } = useWalletConnectContext()
   const { isLedger, onLedgerError } = useLedger()
+  const posthog = usePostHog()
 
   const [isLoading, setIsLoading] = useState(false)
   const [decodedUnsignedTx, setDecodedUnsignedTx] = useState<Omit<SignUnsignedTxResult, 'signature'> | undefined>(
@@ -107,6 +93,27 @@ const SignUnsignedTxModal = memo(({ id, txData }: ModalBaseProp & SignUnsignedTx
       }
 
       const signResult: SignUnsignedTxResult = { signature, ...decodedUnsignedTx }
+
+      if (submit) {
+        const data = await throttledClient.node.transactions.postTransactionsSubmit({
+          unsignedTx: decodedUnsignedTx.unsignedTx,
+          signature
+        })
+
+        dispatch(
+          transactionSent({
+            hash: data.txId,
+            fromAddress: txData.fromAddress.hash,
+            toAddress: '',
+            timestamp: new Date().getTime(),
+            type: 'transfer',
+            status: 'sent'
+          })
+        )
+
+        posthog.capture('Signed and submitted unsigned transaction')
+      }
+
       await sendSuccessResponse(signResult, true)
 
       dispatch(unsignedTransactionSignSucceeded())
@@ -134,7 +141,7 @@ const SignUnsignedTxModal = memo(({ id, txData }: ModalBaseProp & SignUnsignedTx
   return (
     <CenteredModal
       id={id}
-      title={t('Sign Unsigned Transaction')}
+      title={t(submit ? 'Sign and Send Unsigned Transaction' : 'Sign Unsigned Transaction')}
       onClose={rejectAndClose}
       isLoading={isLoading}
       dynamicContent
@@ -152,7 +159,7 @@ const SignUnsignedTxModal = memo(({ id, txData }: ModalBaseProp & SignUnsignedTx
               {t('Reject')}
             </ModalFooterButton>
             <ModalFooterButton onClick={handleSign} disabled={isLoading || !decodedUnsignedTx}>
-              {t('Sign')}
+              {submit ? t('Sign and Send') : t('Sign')}
             </ModalFooterButton>
           </ModalFooterButtons>
         </>

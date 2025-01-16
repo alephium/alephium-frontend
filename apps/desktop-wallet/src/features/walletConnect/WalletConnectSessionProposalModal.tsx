@@ -1,27 +1,9 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import { AddressHash, isNetworkValid, networkPresetSwitched, SessionProposalEvent } from '@alephium/shared'
-import { ChainInfo, isCompatibleAddressGroup } from '@alephium/walletconnect-provider'
-import { CoreTypes, ProposalTypes, SessionTypes } from '@walletconnect/types'
+import { isNetworkValid, WalletConnectSessionProposalModalProps } from '@alephium/shared'
+import { useWalletConnectNetwork } from '@alephium/shared-react'
+import { SessionTypes } from '@walletconnect/types'
 import { getSdkError } from '@walletconnect/utils'
 import { AlertTriangle, PlusSquare } from 'lucide-react'
-import { memo, useEffect, useState } from 'react'
+import { memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -33,31 +15,16 @@ import Paragraph from '@/components/Paragraph'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import useSignerAddress from '@/features/walletConnect/useSignerAddress'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import {
-  selectAddressByHash,
-  selectAddressesInGroup,
-  selectDefaultAddress
-} from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
 import { showToast, toggleAppLoading } from '@/storage/global/globalActions'
-import { Address } from '@/types/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 import { cleanUrl } from '@/utils/misc'
-
-export interface WalletConnectSessionProposalModalProps {
-  chain: string
-  proposalEventId: SessionProposalEvent['id']
-  requiredNamespaceMethods: ProposalTypes.BaseRequiredNamespace['methods']
-  requiredNamespaceEvents: ProposalTypes.BaseRequiredNamespace['events']
-  metadata: CoreTypes.Metadata
-  chainInfo: ChainInfo
-  relayProtocol?: string
-}
 
 const WalletConnectSessionProposalModal = memo(
   ({
@@ -77,26 +44,14 @@ const WalletConnectSessionProposalModal = memo(
     const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
     const currentNetworkName = useAppSelector((s) => s.network.name)
     const dispatch = useAppDispatch()
-    const addressesInGroup = useAppSelector((s) => selectAddressesInGroup(s, chainInfo.addressGroup))
     const { generateAddress } = useAddressGeneration()
-    const defaultAddress = useAppSelector(selectDefaultAddress)
-
-    const [signerAddressHash, setSignerAddressHash] = useState<AddressHash | undefined>(addressesInGroup[0])
-    const signerAddress = useAppSelector((s) => selectAddressByHash(s, signerAddressHash ?? ''))
 
     const group = chainInfo.addressGroup
 
-    const showNetworkWarning = chainInfo.networkId && !isNetworkValid(chainInfo.networkId, currentNetworkId)
+    const { signerAddressHash, signerAddressPublicKey, setSignerAddressHash, addressesInGroup } =
+      useSignerAddress(group)
 
-    useEffect(() => {
-      setSignerAddressHash(addressesInGroup.find((a) => a === defaultAddress.hash) ?? addressesInGroup[0])
-    }, [addressesInGroup, defaultAddress.hash])
-
-    const handleSwitchNetworkPress = () => {
-      if (chainInfo.networkId === 'mainnet' || chainInfo.networkId === 'testnet' || chainInfo.networkId === 'devnet') {
-        dispatch(networkPresetSwitched(chainInfo.networkId))
-      }
-    }
+    const { handleSwitchNetworkPress, showNetworkWarning } = useWalletConnectNetwork(chainInfo.networkId)
 
     const generateAddressInGroup = async () => {
       try {
@@ -125,27 +80,12 @@ const WalletConnectSessionProposalModal = memo(
       })
     }
 
-    const approveProposal = async (signerAddress: Address) => {
+    const approveProposal = async () => {
       console.log('👍 USER APPROVED PROPOSAL TO CONNECT TO THE DAPP.')
       console.log('⏳ VERIFYING USER PROVIDED DATA...')
 
       if (!walletConnectClient) {
         console.error('❌ Could not find WalletConnect client')
-        return
-      }
-
-      if (!isCompatibleAddressGroup(signerAddress.group, chainInfo.addressGroup)) {
-        dispatch(
-          walletConnectProposalApprovalFailed(
-            t(
-              'The group of the selected address ({{ addressGroup }}) does not match the group required by WalletConnect ({{ walletConnectGroup }})',
-              {
-                addressGroup: signerAddress.group,
-                walletConnectGroup: chainInfo.addressGroup
-              }
-            )
-          )
-        )
         return
       }
 
@@ -168,7 +108,7 @@ const WalletConnectSessionProposalModal = memo(
         alephium: {
           methods: requiredNamespaceMethods,
           events: requiredNamespaceEvents,
-          accounts: [`${chain}:${signerAddress.publicKey}/default`]
+          accounts: [`${chain}:${signerAddressPublicKey}/default`]
         }
       }
 
@@ -270,7 +210,7 @@ const WalletConnectSessionProposalModal = memo(
               <ModalFooterButton onClick={handleSwitchNetworkPress}>{t('Switch network')}</ModalFooterButton>
             </ModalFooterButtons>
           </>
-        ) : !signerAddress ? (
+        ) : !signerAddressPublicKey ? (
           <>
             <Section>
               <InfoBox label="New address needed" Icon={PlusSquare}>
@@ -328,11 +268,7 @@ const WalletConnectSessionProposalModal = memo(
               <ModalFooterButton role="secondary" onClick={() => rejectAndCloseModal(true)}>
                 {t('Decline')}
               </ModalFooterButton>
-              <ModalFooterButton
-                variant="valid"
-                onClick={() => approveProposal(signerAddress)}
-                disabled={!signerAddress}
-              >
+              <ModalFooterButton variant="valid" onClick={approveProposal} disabled={!signerAddressPublicKey}>
                 {t('Accept')}
               </ModalFooterButton>
             </ModalFooterButtons>

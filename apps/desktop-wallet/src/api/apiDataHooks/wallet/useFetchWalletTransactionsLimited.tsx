@@ -1,39 +1,47 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
+import { explorer as e } from '@alephium/web3'
+import { useQueries, UseQueryResult } from '@tanstack/react-query'
+import { orderBy, uniqBy } from 'lodash'
 
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import { useQuery } from '@tanstack/react-query'
-
-import { walletLatestTransactionsQuery } from '@/api/queries/transactionQueries'
+import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
+import { ApiContextProps } from '@/api/apiTypes'
+import { createDataContext } from '@/api/context/createDataContext'
+import { addressLatestTransactionsQuery } from '@/api/queries/transactionQueries'
 import { useAppSelector } from '@/hooks/redux'
-import { useCappedAddressesHashes } from '@/hooks/useAddresses'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
+import { isDefined } from '@/utils/misc'
 
-const useFetchWalletTransactionsLimited = () => {
+const combineFn = (results: UseQueryResult<e.Transaction[]>[]): ApiContextProps<e.Transaction[]> => ({
+  data: uniqBy(orderBy(results.flatMap(({ data }) => data).filter(isDefined), 'timestamp', 'desc'), 'hash').slice(0, 5),
+  ...combineIsLoading(results)
+})
+
+const useDataHook = () => {
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
-  const { addressHashes, isCapped } = useCappedAddressesHashes()
+  const addressHashes = useUnsortedAddressesHashes()
 
-  const { data: confirmedTxs, isLoading } = useQuery(walletLatestTransactionsQuery({ addressHashes, networkId }))
+  const { data: confirmedTxs, isLoading } = useQueries({
+    queries:
+      networkId !== undefined
+        ? addressHashes.map((addressHash) => addressLatestTransactionsQuery({ addressHash, networkId }))
+        : [],
+    combine: combineFn
+  })
 
   return {
     data: confirmedTxs,
-    isLoading,
-    isDataComplete: !isCapped
+    isLoading
   }
 }
 
+const {
+  useData: useFetchWalletTransactionsLimited,
+  DataContextProvider: UseFetchWalletTransactionsLimitedContextProvider
+} = createDataContext<e.Transaction[], e.Transaction[]>({
+  useDataHook,
+  combineFn,
+  defaultValue: []
+})
+
 export default useFetchWalletTransactionsLimited
+export { UseFetchWalletTransactionsLimitedContextProvider }

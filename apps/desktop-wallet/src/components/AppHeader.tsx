@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { colord } from 'colord'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
 import { Eye, EyeOff, WifiOff } from 'lucide-react'
@@ -26,6 +8,7 @@ import Button from '@/components/Button'
 import DefaultAddressSwitch from '@/components/DefaultAddressSwitch'
 import CompactToggle from '@/components/Inputs/CompactToggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
+import TitleBar from '@/components/TitleBar.tsx'
 import { useScrollContext } from '@/contexts/scroll'
 import { openModal } from '@/features/modals/modalActions'
 import RefreshButton from '@/features/refreshData/RefreshButton'
@@ -37,6 +20,7 @@ import useWalletLock from '@/hooks/useWalletLock'
 import { ReactComponent as WalletConnectLogo } from '@/images/wallet-connect-logo.svg'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { appHeaderHeightPx } from '@/style/globalStyles'
+import { platform } from '@/utils/platform.ts'
 
 interface AppHeader {
   title?: string
@@ -70,14 +54,15 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
     transition: 'opacity 0.2s ease-out'
   }
 
-  if (invisible) return <motion.header id="app-drag-region" className={className} />
+  if (invisible) return <InvisibleAppHeader id="app-header" className={className} />
 
   const openWalletConnectModal = () => dispatch(openModal({ name: 'WalletConnectModal' }))
 
   return (
-    <AppHeaderStyled style={{ position }}>
+    <AppHeaderStyled id="app-header" style={{ position }} className={className}>
       <GradientBackground style={{ opacity: gradientOpacity }} />
       <AppHeaderContainer id="app-drag-region" className={className}>
+      {!platform.isMac && <TitleBar />}
         <Title style={titleStyles}>{title}</Title>
         <HeaderButtons>
           {networkStatus === 'offline' && (
@@ -176,6 +161,7 @@ const GradientBackground = styled(motion.div)`
   background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background1).toHex()} 35%, transparent)`};
   pointer-events: none;
   z-index: 0;
+  -webkit-app-region: drag;
 `
 
 const OfflineIcon = styled.div`
@@ -189,6 +175,10 @@ const OfflineIcon = styled.div`
   background-color: ${({ theme }) => colord(theme.global.alert).alpha(0.2).toHex()};
 `
 
+ const InvisibleAppHeader = styled(motion.header)`
+  -webkit-app-region: drag;
+`
+
 const Title = styled(motion.div)`
   font-size: 16px;
   font-weight: var(--fontWeight-semiBold);
@@ -200,7 +190,7 @@ const HeaderButtons = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: var(--spacing-1);
-  app-region: no-drag;
+  -webkit-app-region: no-drag;
 
   > *:not(:last-child) {
     margin-right: var(--spacing-1);

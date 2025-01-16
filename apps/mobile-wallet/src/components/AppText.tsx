@@ -1,22 +1,5 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import { TextProps } from 'react-native'
+import { forwardRef } from 'react'
+import { Platform, Text, TextProps } from 'react-native'
 import styled, { css, DefaultTheme } from 'styled-components/native'
 
 import { themes, ThemeType } from '~/style/themes'
@@ -31,33 +14,44 @@ export interface AppTextProps extends TextProps {
   color?: FontColor | GlobalColor | string
   colorTheme?: ThemeType
   size?: number
+  truncate?: boolean
 }
 
-export default styled.Text<AppTextProps>`
+const AppText = forwardRef<Text, AppTextProps>(({ children, truncate, ...props }, ref) => (
+  <TextStyled ref={ref} numberOfLines={truncate ? 1 : undefined} {...props}>
+    {children}
+    {/* Hack to fix Android text truncation. See https://github.com/alephium/alephium-frontend/issues/1118 */}
+    {truncate && Platform.OS === 'android' && ' '}
+  </TextStyled>
+))
+
+export default AppText
+
+export const TextStyled = styled(Text)<AppTextProps>`
   color: ${({ color, theme, colorTheme }) => {
     const th = colorTheme ? themes[colorTheme] : theme
 
     return color ? th.font[color as FontColor] || th.global[color as GlobalColor] || color : th.font.primary
   }};
 
-  font-weight: 400;
+  font-family: 'Inter18pt-Medium';
 
   ${({ bold }) =>
     bold &&
     css`
-      font-weight: 700;
+      font-family: 'Inter18pt-Bold';
     `}
 
   ${({ semiBold }) =>
     semiBold &&
     css`
-      font-weight: 600;
+      font-family: 'Inter18pt-SemiBold';
     `}
 
   ${({ medium }) =>
     medium &&
     css`
-      font-weight: 500;
+      font-family: 'Inter18pt-Medium';
     `}
 
   ${({ size = 15 }) =>

@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -36,7 +18,7 @@ type UpdateStatus = 'download-available' | 'downloading' | 'download-finished' |
 
 const AutoUpdateSnackbar = () => {
   const { t } = useTranslation()
-  const { newVersion, requiresManualDownload } = useLatestGitHubRelease()
+  const { newAutoUpdateVersion, newManualUpdateVersion } = useLatestGitHubRelease()
   const { sendAnalytics } = useAnalytics()
 
   const [isUpdateSnackbarVisible, setIsUpdateSnackbarVisible] = useState(true)
@@ -45,12 +27,11 @@ const AutoUpdateSnackbar = () => {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (!newVersion || requiresManualDownload) return
+    if (!newAutoUpdateVersion) return
 
     let timer: ReturnType<typeof setTimeout>
 
     setStatus('downloading')
-    window.electron?.updater.startUpdateDownload()
 
     const removeUpdateDownloadProgressListener = window.electron?.updater.onUpdateDownloadProgress((info) =>
       setPercent(info.percent.toFixed(2))
@@ -65,13 +46,17 @@ const AutoUpdateSnackbar = () => {
       sendAnalytics({ type: 'error', error, message: 'Auto-update download failed' })
     })
 
+    window.electron?.updater.startUpdateDownload()
+
     return () => {
       removeUpdateDownloadProgressListener && removeUpdateDownloadProgressListener()
       removeUpdateDownloadedListener && removeUpdateDownloadedListener()
       removeonErrorListener && removeonErrorListener()
       if (timer) clearTimeout(timer)
     }
-  }, [newVersion, requiresManualDownload, sendAnalytics])
+  }, [newAutoUpdateVersion, sendAnalytics])
+
+  const newVersion = newAutoUpdateVersion || newManualUpdateVersion
 
   if (!newVersion) return null
 
@@ -80,7 +65,7 @@ const AutoUpdateSnackbar = () => {
     closeSnackbar()
     sendAnalytics({
       event: 'Auto-update modal: Clicked "Download"',
-      props: { fromVersion: currentVersion, toVersion: newVersion }
+      props: { fromVersion: currentVersion, toVersion: newManualUpdateVersion }
     })
   }
 
@@ -127,7 +112,7 @@ const AutoUpdateSnackbar = () => {
                 <X />
               </CloseButton>
             )}
-            {status === 'download-available' && requiresManualDownload && (
+            {status === 'download-available' && newManualUpdateVersion && (
               <Button short onClick={handleManualDownloadClick}>
                 {t('Download')}
               </Button>

@@ -1,5 +1,31 @@
 # @alephium/mobile-wallet
 
+## 2.0.0
+
+### Major Changes
+
+- Redesign
+
+### Minor Changes
+
+- 4939fbf: New dedicated NFT screen
+- 4939fbf: Dashboard and lists redesign
+
+### Patch Changes
+
+- 047dd9a: Fix data loading
+- c17e4cb: Add confirmation messages when saving fund password and remove reminders
+- dda710a: Fix iOS crash on wallet creation
+- b0b4b13: Fix price fetching
+- 74054f6: Simplify addresses display and management
+- ed58a1b: Enable German translations
+- 1c924ba: Enable Thai translations
+- a9468cf: Display token information when tapping on token row
+- 1fb8dd9: Fix toggling of biometrics settings
+- 248b947: Support alph_signAndSubmitUnsignedTx WalletConnect method
+- 6c5aa06: Display addresses containing specific token
+- 8d4bd21: Fix text truncation on Android
+
 ## 1.1.12
 
 ### Patch Changes

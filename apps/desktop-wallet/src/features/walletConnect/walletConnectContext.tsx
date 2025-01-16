@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import {
   getActiveWalletConnectSessions,
   getHumanReadableError,
@@ -49,6 +31,7 @@ import { walletConnectPairingFailed, walletConnectProposalValidationFailed } fro
 import { isRcVersion } from '@/utils/app-data'
 
 export interface WalletConnectContextProps {
+  walletConnectClient?: SignClient
   pairWithDapp: (uri: string) => void
   unpairFromDapp: (pairingTopic: string) => Promise<void>
   activeSessions: SessionTypes.Struct[]
@@ -67,7 +50,6 @@ export interface WalletConnectContextProps {
     sessionRequestEvent: SessionRequestEvent,
     error: ReturnType<typeof getSdkError>
   ) => Promise<void>
-  walletConnectClient?: SignClient
   pendingDappConnectionUrl?: string
 }
 
@@ -457,11 +439,11 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         await walletConnectClient.disconnect({ topic, reason: getSdkError('USER_DISCONNECTED') })
         console.log('✅ DISCONNECTING: DONE!')
 
-        refreshActiveSessions()
-
         sendAnalytics({ event: 'WC: Disconnected from dApp' })
       } catch (e) {
         console.error('❌ COULD NOT DISCONNECT FROM DAPP')
+      } finally {
+        refreshActiveSessions()
       }
     },
     [refreshActiveSessions, sendAnalytics, walletConnectClient]

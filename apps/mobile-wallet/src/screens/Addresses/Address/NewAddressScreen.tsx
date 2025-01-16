@@ -1,34 +1,17 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { keyring } from '@alephium/keyring'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
+import Button from '~/components/buttons/Button'
+import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
-import AddressFormBaseScreen, { AddressFormData } from '~/screens/Addresses/Address/AddressFormBaseScreen'
+import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
 import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
 import { getRandomLabelColor } from '~/utils/colors'
 import { showExceptionToast } from '~/utils/layout'
@@ -42,16 +25,18 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
   const persistAddressSettings = usePersistAddressSettings()
   const { t } = useTranslation()
 
-  const [loading, setLoading] = useState(false)
-
   const initialValues = {
     label: '',
     color: getRandomLabelColor(),
     isDefault: false
   }
 
-  const handleGeneratePress = async ({ isDefault, label, color, group }: AddressFormData) => {
-    setLoading(true)
+  const [values, setValues] = useState<AddressFormData>(initialValues)
+
+  const handleGeneratePress = async () => {
+    const { isDefault, label, color, group } = values
+
+    dispatch(activateAppLoading(t('Generating new address')))
 
     try {
       await initializeKeyringWithStoredWallet()
@@ -79,21 +64,27 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       keyring.clear()
     }
 
-    setLoading(false)
+    dispatch(deactivateAppLoading())
 
     navigation.goBack()
   }
 
   return (
-    <>
-      <AddressFormBaseScreen
+    <ScrollScreen
+      fill
+      headerTitleAlwaysVisible
+      headerOptions={{ headerTitle: t('New address'), type: 'stack' }}
+      contentPaddingTop
+      bottomButtonsRender={() => <Button title={t('Generate')} variant="highlight" onPress={handleGeneratePress} />}
+      {...props}
+    >
+      <AddressForm
         screenTitle={t('New address')}
         initialValues={initialValues}
-        onSubmit={handleGeneratePress}
+        onValuesChange={setValues}
         allowGroupSelection
       />
-      <SpinnerModal isActive={loading} text={`${t('Generating new address')}...`} />
-    </>
+    </ScrollScreen>
   )
 }
 

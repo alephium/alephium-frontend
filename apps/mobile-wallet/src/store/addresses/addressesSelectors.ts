@@ -1,23 +1,7 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash, calculateAmountWorth, contactsAdapter, selectAllPrices } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { AddressGroup } from '@alephium/walletconnect-provider'
+import { Token } from '@alephium/web3'
 import { createSelector } from '@reduxjs/toolkit'
 
 import { makeSelectAddressesKnownFungibleTokens, selectAllAddresses } from '~/store/addressesSlice'
@@ -49,3 +33,11 @@ export const makeSelectAddressesTokensWorth = () =>
         : totalWorth
     }, 0)
   )
+
+export const selectAddressesWithToken = createSelector(
+  [selectAllAddresses, (_, tokenId: Token['id']) => tokenId],
+  (addresses, tokenId) =>
+    tokenId === ALPH.id
+      ? addresses.filter((address) => BigInt(address.balance) > 0)
+      : addresses.filter((address) => address.tokens.find((token) => token.tokenId === tokenId))
+)

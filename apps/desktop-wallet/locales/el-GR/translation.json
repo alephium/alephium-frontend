@@ -381,7 +381,7 @@
   "You are currently connected to the {{ currentNetwork }} network. Make sure to connect to the testnet or devnet network to see your tokens.": "Αυτή τη στιγμή είστε συνδεδεμένοι στο δίκτυο {{ currentNetwork }}. Φροντίστε να συνδεθείτε στο δίκτυο δοκιμής ή ανάπτυξης για να δείτε τα νομίσματα σας.",
   "You can disable this confirmation step from the wallet settings.": "Μπορείτε να απενεργοποιήσετε αυτό το βήμα επιβεβαίωσης από τις ρυθμίσεις του πορτοφολιού.",
   "You can download the address transaction history for a selected time period. This can be useful for tax reporting.": "Μπορείτε να κατεβάσετε το ιστορικό των συναλλαγών διευθύνσεων για μια επιλεγμένη χρονική περίοδο. Αυτό μπορεί να είναι χρήσιμο για τη φορολογική αναφορά.",
-  "You have great ideas you want to share?": "Έχετε υπέροχες ιδέες που θα θέλατε να μοιραστείτε;",
+  "Do you have great ideas you want to share?": "Έχετε υπέροχες ιδέες που θα θέλατε να μοιραστείτε;",
   "You have reached the maximum calls limit. Please try again in a few minutes.": "Έχετε φτάσει το μέγιστο όριο κλήσεων. Παρακαλώ δοκιμάστε ξανά σε λίγα λεπτά.",
   "You will not be able to recover your account with the private key!": "Δε θα είστε σε θέση να ανακτήσετε τον λογαριασμό σας με το ιδιωτικό κλειδί!",
   "Your address": "Η διεύθυνση σας",
