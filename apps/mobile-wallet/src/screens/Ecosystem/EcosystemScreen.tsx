@@ -40,7 +40,7 @@ const EcosystemScreen = () => {
       <AnimatedBackground isFullScreen isAnimated />
       <DAppFilters horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
         {dAppTags.map((tag) => (
-          <Button title={tag} compact />
+          <Button title={tag} compact key={tag} />
         ))}
       </DAppFilters>
       <DAppList>
