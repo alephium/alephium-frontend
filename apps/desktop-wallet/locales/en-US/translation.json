@@ -521,6 +521,7 @@
   "Active address discovery completed. Addresses added: {{ count }}": "Active address discovery completed. Addresses added: {{ count }}",
   "Purchase done!": "Purchase done!",
   "Wallet worth": "Wallet worth",
+  "Address worth": "Address worth",
   "Loading new transactions...": "Loading new transactions...",
   "Sign and Send Unsigned Transaction": "Sign and Send Unsigned Transaction",
   "Sign and Send": "Sign and Send"

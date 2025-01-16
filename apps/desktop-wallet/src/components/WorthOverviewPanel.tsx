@@ -20,6 +20,7 @@ import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import AnimatedBackground from '@/components/AnimatedBackground'
 import Box from '@/components/Box'
 import NetworkSwitch from '@/components/NetworkSwitch'
 import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
@@ -40,12 +41,13 @@ const WorthOverviewPanel = ({ className, addressHash, children }: WorthOverviewP
 
   return (
     <WorthOverviewPanelStyled className={className}>
+      <AnimatedBackground />
       <Panel>
         <Balances>
           <BalancesRow>
             <BalancesColumn>
               <Surtitle>
-                <Worth>{t('Wallet worth')}</Worth>
+                <Worth>{t(singleAddress ? 'Address worth' : 'Wallet worth')}</Worth>
                 <NetworkSwitch />
               </Surtitle>
               {singleAddress ? <AddressWorth addressHash={addressHash} /> : <WalletWorth />}
@@ -63,6 +65,7 @@ export default WorthOverviewPanel
 const WorthOverviewPanelStyled = styled(Box)`
   position: relative;
   overflow: hidden;
+  background-color: ${({ theme }) => theme.bg.contrast};
 `
 
 const Panel = styled.div`
@@ -70,7 +73,7 @@ const Panel = styled.div`
   display: flex;
   gap: 40px;
   align-items: center;
-  padding: 50px;
+  padding: 20px 20px 20px 50px;
   overflow: visible;
 `
 
@@ -110,6 +113,6 @@ const Surtitle = styled.div`
 const Worth = styled.span`
   flex: 1;
   white-space: nowrap;
-  color: ${({ theme }) => theme.font.tertiary};
-  font-size: 16px;
+  color: ${({ theme }) => theme.font.secondary};
+  font-size: 18px;
 `
