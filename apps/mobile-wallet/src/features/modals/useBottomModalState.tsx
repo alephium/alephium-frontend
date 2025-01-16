@@ -71,33 +71,21 @@ export const useBottomModalState = ({
   const handleClose = useCallback(() => {
     'worklet'
     navHeight.value = withSpring(0, springConfig)
-    modalHeight.value = withSpring(0, springConfig, (finished) => {
-      if (finished) {
-        runOnJS(handleCloseOnJS)()
-      }
-    })
+    modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(handleCloseOnJS)())
     position.value = 'closing'
   }, [handleCloseOnJS, modalHeight, navHeight, position])
 
   const handleMaximize = useCallback(() => {
     'worklet'
     navHeight.value = withSpring(customNavHeight, springConfig)
-    modalHeight.value = withSpring(-maxHeight, springConfig, (finished) => {
-      if (finished) {
-        runOnJS(setStateToIdle)()
-      }
-    })
+    modalHeight.value = withSpring(-maxHeight, springConfig, (finished) => finished && runOnJS(setStateToIdle)())
     position.value = 'maximised'
   }, [navHeight, customNavHeight, modalHeight, maxHeight, position, setStateToIdle])
 
   const handleMinimize = useCallback(() => {
     'worklet'
     navHeight.value = withSpring(0, springConfig)
-    modalHeight.value = withSpring(-minHeight.value, springConfig, (finished) => {
-      if (finished) {
-        runOnJS(setStateToIdle)()
-      }
-    })
+    modalHeight.value = withSpring(-minHeight.value, springConfig, (finished) => finished && runOnJS(setStateToIdle)())
     position.value = 'minimised'
   }, [navHeight, modalHeight, minHeight, position, setStateToIdle])
 
