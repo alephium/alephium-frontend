@@ -5,10 +5,10 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components'
 
 import FooterMenu from '~/components/footers/FooterMenu'
+import EcosystemScreen from '~/features/ecosystem/EcosystemScreen'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import ActivityScreen from '~/screens/ActivityScreen'
 import DashboardScreen from '~/screens/Dashboard/DashboardScreen'
-import EcosystemScreen from '~/screens/Ecosystem/EcosystemScreen'
 import NFTListScreen from '~/screens/NFTs/NFTListScreen'
 
 export type InWalletTabsParamList = {
