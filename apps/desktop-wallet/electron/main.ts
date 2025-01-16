@@ -1,29 +1,24 @@
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 
-import { app, BrowserWindow, ipcMain, nativeImage, protocol, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, nativeImage, shell } from 'electron'
 import contextMenu from 'electron-context-menu'
 import isDev from 'electron-is-dev'
 
+import { APP_PROTOCOL, handleAppProtocolRequests, registerAppProtocol } from './appProtocol'
 import { configureAutoUpdater, handleAutoUpdaterUserActions, setupAutoUpdaterListeners } from './autoUpdater'
 import { setupLedgerDevicePermissions } from './ledger'
 import { setupAppMenu } from './menu'
 import { handleNativeThemeUserActions, setupNativeThemeListeners } from './nativeTheme'
+import { ICON_PATH, RENDERER_PATH } from './paths'
 import { IS_RC, isIpcSenderValid, isMac, isWindows } from './utils'
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
-const APP_ROOT = path.join(__dirname, '..')
-const RENDERER_DIST = path.join(APP_ROOT, 'build')
-const VITE_PUBLIC = isDev ? path.join(APP_ROOT, 'public') : RENDERER_DIST
-const ICON_PATH = path.join(VITE_PUBLIC, 'icons', 'logo-48.png')
+import {
+  handleWalletConnectDeepLink,
+  handleWindowsWalletConnectDeepLink,
+  initializeWalletConnectDeepLinkUri,
+  setupWalletConnectDeepLinkIPCHandlers
+} from './walletConnect'
 
 configureAutoUpdater()
-
-// Handle deep linking for alephium://
-const ALEPHIUM = 'alephium'
-const ALEPHIUM_WALLET_CONNECT_DEEP_LINK_PREFIX = `${ALEPHIUM}://wc`
-const ALEPHIUM_WALLET_CONNECT_URI_PREFIX = '?uri='
 
 // See https://github.com/alephium/alephium-frontend/issues/176
 const OLD_APP_NAME = 'alephium-wallet'
@@ -32,22 +27,13 @@ app.setName(OLD_APP_NAME)
 // Expose Garbage Collector flag for manual trigger
 app.commandLine.appendSwitch('js-flags', '--expose-gc')
 
-protocol.registerSchemesAsPrivileged([{ scheme: ALEPHIUM, privileges: { secure: true, standard: true } }])
-if (process.defaultApp) {
-  if (process.argv.length >= 2) {
-    app.setAsDefaultProtocolClient(ALEPHIUM, process.execPath, [path.resolve(process.argv[1])])
-  }
-} else {
-  app.setAsDefaultProtocolClient(ALEPHIUM)
-}
+registerAppProtocol()
 
 contextMenu()
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: BrowserWindow | null
-
-let deepLinkUri: string | null = null
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -70,10 +56,10 @@ function createWindow() {
     mainWindow.setIcon(nativeImage.createFromPath(ICON_PATH))
   }
 
-  if (VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(VITE_DEV_SERVER_URL)
+  if (process.env['VITE_DEV_SERVER_URL']) {
+    mainWindow.loadURL(process.env['VITE_DEV_SERVER_URL'])
   } else {
-    mainWindow.loadFile(path.join(RENDERER_DIST, 'index.html'))
+    mainWindow.loadURL(`${APP_PROTOCOL}://${RENDERER_PATH}/index.html`)
   }
 
   if (isDev || IS_RC) {
@@ -97,15 +83,7 @@ function createWindow() {
 
   setupLedgerDevicePermissions(mainWindow)
 
-  if (!isMac) {
-    if (process.argv.length > 1) {
-      const url = process.argv.find((arg) => arg.startsWith(ALEPHIUM_WALLET_CONNECT_DEEP_LINK_PREFIX))
-
-      if (url) {
-        deepLinkUri = extractWalletConnectUri(url)
-      }
-    }
-  }
+  initializeWalletConnectDeepLinkUri()
 }
 
 if (!app.requestSingleInstanceLock()) {
@@ -119,15 +97,7 @@ app.on('second-instance', (_event, args) => {
     if (mainWindow.isMinimized()) mainWindow.restore()
     mainWindow.focus()
 
-    // Handle deep-link for Windows
-    if (args.length > 1) {
-      const url = args.find((arg) => arg.startsWith(ALEPHIUM_WALLET_CONNECT_DEEP_LINK_PREFIX))
-
-      if (url) {
-        deepLinkUri = extractWalletConnectUri(url)
-        mainWindow?.webContents.send('wc:connect', deepLinkUri)
-      }
-    }
+    handleWindowsWalletConnectDeepLink(mainWindow, args)
   }
 })
 
@@ -148,6 +118,8 @@ app.on('ready', async function () {
       console.error('Failed to install devtools:', e)
     }
   }
+
+  handleAppProtocolRequests()
 
   handleNativeThemeUserActions()
 
@@ -208,17 +180,7 @@ app.on('ready', async function () {
     app.exit()
   })
 
-  ipcMain.handle('wc:getDeepLinkUri', ({ senderFrame }) => {
-    if (!isIpcSenderValid(senderFrame)) return null
-
-    return deepLinkUri
-  })
-
-  ipcMain.handle('wc:resetDeepLinkUri', ({ senderFrame }) => {
-    if (!isIpcSenderValid(senderFrame)) return null
-
-    deepLinkUri = null
-  })
+  setupWalletConnectDeepLinkIPCHandlers()
 
   ipcMain.handle('window:minimize', () => {
     mainWindow?.minimize()
@@ -243,6 +205,7 @@ app.on('ready', async function () {
   mainWindow?.on('unmaximize', () => {
     mainWindow?.webContents.send('window:maximized', false)
   })
+
   createWindow()
 })
 
@@ -259,15 +222,7 @@ app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
 
-app.on('open-url', (_, url) => {
-  if (url.startsWith(ALEPHIUM_WALLET_CONNECT_DEEP_LINK_PREFIX)) {
-    deepLinkUri = extractWalletConnectUri(url)
-    if (mainWindow) mainWindow?.webContents.send('wc:connect', deepLinkUri)
-  }
-})
-
-const extractWalletConnectUri = (url: string) =>
-  url.substring(url.indexOf(ALEPHIUM_WALLET_CONNECT_URI_PREFIX) + ALEPHIUM_WALLET_CONNECT_URI_PREFIX.length)
+app.on('open-url', (_, url) => handleWalletConnectDeepLink(url, mainWindow))
 
 // Handle window controls via IPC
 ipcMain.on('shell:open', () => {
