@@ -1,8 +1,7 @@
 import { AddressHash, Asset } from '@alephium/shared'
-import { Skeleton } from 'moti/skeleton'
-import { useEffect, useMemo, useState } from 'react'
+import { ComponentProps, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ActivityIndicator } from 'react-native'
+import { ActivityIndicator, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -11,7 +10,7 @@ import UnknownTokensListItem, { UnknownTokensEntry } from '~/components/UnknownT
 import { ModalInstance } from '~/features/modals/modalTypes'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesCheckedUnknownTokens, makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
-import { BORDER_RADIUS_BIG, DEFAULT_MARGIN } from '~/style/globalStyle'
+import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 
 import TokenListItem from './TokenListItem'
 
@@ -41,8 +40,9 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
   const { t } = useTranslation()
 
   const showTokensSkeleton =
-    (isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes) &&
-    addressesBalancesStatus === 'initialized'
+    isRefreshing ||
+    ((isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes) &&
+      addressesBalancesStatus === 'initialized')
 
   const [tokenRows, setTokenRows] = useState<TokensRow[]>([])
 
@@ -56,8 +56,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
               addressHash
             }
           ]
-        : []),
-      ...(showTokensSkeleton ? [{ isLoadingTokens: true }] : [])
+        : [])
     ]
 
     setTokenRows(entries)
@@ -79,34 +78,30 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
       </EmptyPlaceholder>
     )
 
+  const LoadingSection = (props: ComponentProps<typeof View>) => (
+    <LoadingSectionContainer {...props}>
+      <ActivityIndicator size={72} color={theme.font.primary} />
+    </LoadingSectionContainer>
+  )
+
   return (
     <AddressesTokensListStyled>
-      {tokenRows.map((entry, index) =>
-        isAsset(entry) ? (
-          <TokenListItem
-            key={entry.id}
-            asset={entry}
-            hideSeparator={index === knownFungibleTokens.length - 1 && unknownTokens.length === 0}
-            addressHash={addressHash}
-            parentModalId={parentModalId}
-          />
-        ) : isUnknownTokens(entry) ? (
-          <UnknownTokensListItem entry={entry} key="unknown-tokens" />
-        ) : (
-          <LoadingRow key="loading">
-            <Skeleton show colorMode={theme.name} width={36} height={36} radius="round" />
-            <Skeleton show colorMode={theme.name} width={200} height={36} />
-          </LoadingRow>
+      {showTokensSkeleton ? (
+        <LoadingSection style={{ height: 60 * tokenRows.length }} />
+      ) : (
+        tokenRows.map((entry, index) =>
+          isAsset(entry) ? (
+            <TokenListItem
+              key={entry.id}
+              asset={entry}
+              hideSeparator={index === knownFungibleTokens.length - 1 && unknownTokens.length === 0}
+              addressHash={addressHash}
+              parentModalId={parentModalId}
+            />
+          ) : (
+            isUnknownTokens(entry) && <UnknownTokensListItem entry={entry} key="unknown-tokens" />
+          )
         )
-      )}
-
-      {isRefreshing && (
-        <>
-          <LoadingOverlay />
-          <Loader>
-            <ActivityIndicator size={72} color={theme.font.tertiary} />
-          </Loader>
-        </>
       )}
     </AddressesTokensListStyled>
   )
@@ -121,30 +116,10 @@ const AddressesTokensListStyled = styled.View`
   position: relative;
 `
 
-const LoadingRow = styled.View`
-  flex-direction: row;
-  gap: 15px;
-  align-items: flex-start;
-  padding-top: 15px;
-  margin: 0 ${DEFAULT_MARGIN}px;
-`
-
-const LoadingOverlay = styled.View`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: ${({ theme }) => theme.bg.back1};
-  opacity: 0.8;
-`
-
-const Loader = styled.View`
-  position: absolute;
-  top: 30px;
-  left: 0;
-  right: 0;
+const LoadingSectionContainer = styled.View`
+  width: 100%;
   align-items: center;
+  padding-top: 100px;
 `
 
 const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined

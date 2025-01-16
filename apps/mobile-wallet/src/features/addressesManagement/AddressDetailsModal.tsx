@@ -1,5 +1,5 @@
 import { AddressHash } from '@alephium/shared'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -12,6 +12,7 @@ import RoundedCard from '~/components/RoundedCard'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal, openModal } from '~/features/modals/modalActions'
+import { BottomModalAnimationStates } from '~/features/modals/useBottomModalState'
 import withModal from '~/features/modals/withModal'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import ActionCardSendButton from '~/features/send/ActionCardSendButton'
@@ -26,6 +27,7 @@ export interface AddressDetailsModalProps {
 const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHash }) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const [modalAnimationState, setModalAnimationState] = useState<BottomModalAnimationStates>()
 
   const selectAddressTokens = useMemo(makeSelectAddressesTokens, [])
   const hasTokens = useAppSelector((s) => selectAddressTokens(s, addressHash)).length > 0
@@ -37,7 +39,11 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
   const handleClose = () => dispatch(closeModal({ id }))
 
   return (
-    <BottomModal modalId={id} title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
+    <BottomModal
+      modalId={id}
+      title={<AddressBadge addressHash={addressHash} fontSize={16} />}
+      onModalAnimationStateChange={setModalAnimationState}
+    >
       <Content>
         <RoundedCard>
           <AddressAnimatedBackground addressHash={addressHash} />
@@ -53,7 +59,11 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
           <ActionCardButton title={t('Settings')} onPress={handleSettingsPress} iconProps={{ name: 'settings' }} />
         </ActionButtons>
       </Content>
-      <AddressesTokensList addressHash={addressHash} parentModalId={id} />
+      <AddressesTokensList
+        addressHash={addressHash}
+        parentModalId={id}
+        isRefreshing={modalAnimationState === 'animating'}
+      />
     </BottomModal>
   )
 })
