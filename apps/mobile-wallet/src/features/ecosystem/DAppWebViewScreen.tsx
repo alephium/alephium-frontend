@@ -42,6 +42,7 @@ const useDetectWCUrlInClipboardAndPair = () => {
       if (content.startsWith('wc:')) {
         Clipboard.setStringAsync('')
 
+        // TODO: Check if the feature is enabled and warn the user? Or do we just drop the experimental warning finally?
         dispatch(activateAppLoading(t('Connecting')))
 
         await pairWithDapp(content)
