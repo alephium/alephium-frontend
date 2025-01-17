@@ -8,8 +8,8 @@ export const lightTheme: DefaultTheme = {
   bg: {
     highlight: 'rgba(0, 0, 0, 0.06)',
     primary: 'rgba(0, 0, 0, 0.05)',
-    secondary: 'rgba(0, 0, 0, 0.03)',
-    tertiary: 'rgba(0, 0, 0, 0.02)',
+    secondary: 'rgba(0, 0, 0, 0.04)',
+    tertiary: 'rgba(0, 0, 0, 0.03)',
     back1: '#fff',
     back2: '#fff',
     accent: colord('#155ef9').alpha(0.1).toHex(),
@@ -41,10 +41,10 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 20px; shadow-opacity: 0.02; shadow-radius: 50px; elevation: 40;'
   },
   global: {
-    accent: '#155ef9',
+    accent: '#1355e2',
     alert: '#ed4a34',
     warning: '#f48826',
-    valid: '#32b227',
+    valid: '#20942d',
     star: '#FFD66D',
     pale: '#f7d1b6',
     complementary: '#b07dcb',
@@ -66,7 +66,7 @@ export const darkTheme: DefaultTheme = {
     highlight: '#353539',
     primary: '#1b1b1f',
     secondary: '#17171a',
-    tertiary: '#141417',
+    tertiary: '#101012',
     back1: '#0d0d0f',
     back2: '#000',
     accent: colord('#5086f9').alpha(0.15).toHex(),
