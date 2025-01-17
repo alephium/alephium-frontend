@@ -5,6 +5,7 @@ import styled from 'styled-components/native'
 import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
 import { selectAddressByHash, selectContactByHash } from '~/store/addresses/addressesSelectors'
+import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 import { stringToColour } from '~/utils/colors'
 
 interface AddressColorSymbolProps {
@@ -34,6 +35,6 @@ export default AddressColorSymbol
 const Dot = styled.View<{ color?: string; size?: number }>`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
-  border-radius: ${({ size }) => size}px;
+  border-radius: ${BORDER_RADIUS_SMALL}px;
   background-color: ${({ color, theme }) => color || theme.font.primary};
 `

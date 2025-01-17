@@ -102,7 +102,9 @@ const AddressBox = ({
         style,
         {
           borderRadius: rounded ? BORDER_RADIUS : 0,
-          backgroundColor: isSelected ? theme.bg.accent : theme.bg.secondary
+          backgroundColor: isSelected ? theme.bg.accent : theme.bg.tertiary,
+          borderColor: isSelected ? theme.global.accent : theme.border.secondary,
+          borderWidth: 1
         },
         animatedStyle
       ]}
@@ -110,36 +112,43 @@ const AddressBox = ({
       <BadgeContainer>
         {isSelected ? (
           <SelectedBadge>
-            <Check color="white" size={18} />
+            <Check color="white" size={16} />
           </SelectedBadge>
         ) : (
           <Animated.View>
-            <AddressColorSymbol addressHash={addressHash} size={18} />
+            <AddressColorSymbol addressHash={addressHash} size={16} />
           </Animated.View>
         )}
       </BadgeContainer>
       <TextualContent>
-        <AddressBoxColumn>
-          {address.settings.label && (
-            <AppText truncate semiBold size={16} color={isSelected ? theme.global.accent : theme.font.primary}>
-              {address.settings.label}
+        <AddressBoxColumnLeft>
+          <AddressTitle>
+            {address.settings.label && (
+              <AppText truncate semiBold size={17} color={isSelected ? theme.global.accent : theme.font.primary}>
+                {address.settings.label}
+              </AppText>
+            )}
+            <AppText
+              truncate
+              ellipsizeMode="middle"
+              size={17}
+              semiBold={!address?.settings.label}
+              style={{ maxWidth: 100 }}
+              color={
+                isSelected ? theme.global.accent : address.settings.label ? theme.font.tertiary : theme.font.primary
+              }
+            >
+              {address.hash}
             </AppText>
-          )}
-          <AppText
-            truncate
-            ellipsizeMode="middle"
-            semiBold={!address?.settings.label}
-            color={isSelected ? theme.global.accent : address.settings.label ? theme.font.tertiary : theme.font.primary}
-          >
-            {address.hash}
-          </AppText>
-        </AddressBoxColumn>
-        <AddressBoxColumnRight>
+          </AddressTitle>
           {tokenId ? (
-            <AddressTokenDetails addressHash={addressHash} tokenId={tokenId} />
+            <AddressTokenDetails tokenId={tokenId} addressHash={addressHash} />
           ) : (
             <AddressAllTokensDetails addressHash={addressHash} />
           )}
+        </AddressBoxColumnLeft>
+        <AddressBoxColumnRight>
+          <AddressAmount addressHash={addressHash} tokenId={tokenId} />
         </AddressBoxColumnRight>
       </TextualContent>
     </AddressBoxStyled>
@@ -148,36 +157,50 @@ const AddressBox = ({
 
 export default AddressBox
 
-const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
-  const currency = useAppSelector((s) => s.settings.currency)
+const AddressAmount = ({
+  addressHash,
+  tokenId
+}: Pick<AddressBoxProps, 'addressHash'> & Pick<AddressBoxProps, 'tokenId'>) => {
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
+  const currency = useAppSelector((s) => s.settings.currency)
+
+  // Suboptimal way to fetch token, will be fixed when migrated to Tanstack
+  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
+  const token = knownFungibleTokens.find((t) => t.id === tokenId)
+
+  return token ? (
+    <Amount isFiat value={token.worth} suffix={CURRENCIES[currency].symbol} semiBold size={17} />
+  ) : (
+    <Amount isFiat value={balanceInFiat} suffix={CURRENCIES[currency].symbol} semiBold size={17} />
+  )
+}
+
+const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
 
   return (
-    <>
-      <Amount isFiat value={balanceInFiat} suffix={CURRENCIES[currency].symbol} semiBold size={16} />
-      {(knownFungibleTokens.length > 0 || nfts.length > 0) && (
-        <AssetsRow>
-          <Badge rounded>
-            {knownFungibleTokens.map(
-              (asset, i) => i < maxNbOfTokenLogos && <AssetLogo key={asset.id} assetId={asset.id} size={15} />
-            )}
-            {knownFungibleTokens.length > 5 && (
-              <NbOfAssetsText>+{knownFungibleTokens.length - maxNbOfTokenLogos}</NbOfAssetsText>
-            )}
-          </Badge>
-          {nfts.length > 0 && (
-            <Badge>
-              <NbOfAssetsText>{nfts.length} NFTs</NbOfAssetsText>
-            </Badge>
+    (knownFungibleTokens.length > 0 || nfts.length > 0) && (
+      <AssetsRow>
+        <AssetListContainer rounded>
+          {knownFungibleTokens.map(
+            (asset, i) => i < maxNbOfTokenLogos && <AssetLogo key={asset.id} assetId={asset.id} size={15} />
           )}
-        </AssetsRow>
-      )}
-    </>
+          {knownFungibleTokens.length > 5 && (
+            <NbOfAssetsText>+{knownFungibleTokens.length - maxNbOfTokenLogos}</NbOfAssetsText>
+          )}
+        </AssetListContainer>
+        {nfts.length > 0 && (
+          <Badge>
+            <NbOfAssetsText>{nfts.length} NFTs</NbOfAssetsText>
+          </Badge>
+        )}
+      </AssetsRow>
+    )
   )
 }
 
@@ -185,8 +208,6 @@ const AddressTokenDetails = ({
   addressHash,
   tokenId
 }: Pick<AddressBoxProps, 'addressHash'> & Required<Pick<AddressBoxProps, 'tokenId'>>) => {
-  const currency = useAppSelector((s) => s.settings.currency)
-
   // Suboptimal way to fetch token, will be fixed when migrated to Tanstack
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
@@ -195,19 +216,16 @@ const AddressTokenDetails = ({
   if (!token) return null
 
   return (
-    <>
-      <Amount isFiat value={token.worth} suffix={CURRENCIES[currency].symbol} semiBold size={16} />
-      <AssetsRow>
-        <AssetAmountWithLogo assetId={tokenId} amount={token.balance} />
+    <AssetsRow>
+      <AssetAmountWithLogo assetId={tokenId} amount={token.balance} />
 
-        {token.lockedBalance > 0 && (
-          <LockedAmount>
-            <Lock size={16} />
-            <AssetAmountWithLogo assetId={tokenId} amount={token.lockedBalance} />
-          </LockedAmount>
-        )}
-      </AssetsRow>
-    </>
+      {token.lockedBalance > 0 && (
+        <LockedAmount>
+          <Lock size={16} />
+          <AssetAmountWithLogo assetId={tokenId} amount={token.lockedBalance} />
+        </LockedAmount>
+      )}
+    </AssetsRow>
   )
 }
 
@@ -215,54 +233,64 @@ const AddressBoxStyled = styled(AnimatedPressable)`
   flex-direction: row;
   overflow: hidden;
   border-radius: ${BORDER_RADIUS_BIG}px;
-  padding: 0 15px;
+  padding: 0 10px;
   margin-bottom: ${VERTICAL_GAP / 2}px;
 `
 
 const BadgeContainer = styled.View`
-  justify-content: flex-start;
   align-items: center;
   width: 26px;
-  padding: 15px 0;
-  justify-content: center;
+  padding: 16px 0;
 `
 
 const SelectedBadge = styled(Animated.View)`
-  height: 22px;
-  width: 22px;
+  height: 20px;
+  width: 20px;
   background-color: ${({ theme }) => theme.global.accent};
-  border-radius: 22px;
+  border-radius: 20px;
   align-items: center;
   justify-content: center;
 `
 
+const AddressTitle = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+`
+
 const TextualContent = styled.View`
-  flex: 1;
+  flex: 3;
   min-height: 60px;
   flex-direction: row;
-  gap: ${DEFAULT_MARGIN}px;
-  padding: 15px 0;
-  margin-left: ${DEFAULT_MARGIN}px;
+  gap: ${DEFAULT_MARGIN / 2}px;
+  padding: 14px 0;
+  margin-left: ${DEFAULT_MARGIN / 2}px;
 `
 
-const AddressBoxColumn = styled.View`
+const AddressBoxColumnLeft = styled.View`
+  flex: 1.5;
+  gap: ${VERTICAL_GAP / 2}px;
+`
+
+const AddressBoxColumnRight = styled.View`
   flex: 1;
-  gap: ${VERTICAL_GAP / 4}px;
-  justify-content: center;
-`
-
-const AddressBoxColumnRight = styled(AddressBoxColumn)`
   align-items: flex-end;
+  padding-right: 4px;
 `
 
 const AssetsRow = styled.View`
-  align-items: flex-end;
-  gap: 4px;
+  flex-direction: row;
+  gap: 5px;
+`
+
+const AssetListContainer = styled(Badge)`
+  padding: 0 4px;
 `
 
 const NbOfAssetsText = styled(AppText)`
-  text-align: right;
   font-size: 12px;
+  padding-right: 4px;
 `
 
 const LockedAmount = styled.View`

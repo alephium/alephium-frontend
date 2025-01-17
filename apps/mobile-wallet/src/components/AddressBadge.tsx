@@ -1,5 +1,5 @@
 import { AddressHash } from '@alephium/shared'
-import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import { Pressable, PressableProps, StyleProp, TextStyle, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressColorSymbol from '~/components/AddressColorSymbol'
@@ -17,7 +17,7 @@ interface AddressBadgeProps extends PressableProps {
   fontSize?: number
   canCopy?: boolean
   showCopyBtn?: boolean
-  alwaysShowHash?: boolean
+  showHash?: boolean
   style?: StyleProp<ViewStyle>
 }
 
@@ -29,6 +29,7 @@ const AddressBadge = ({
   canCopy = true,
   fontSize,
   showCopyBtn,
+  showHash,
   ...props
 }: AddressBadgeProps) => {
   const theme = useTheme()
@@ -36,6 +37,12 @@ const AddressBadge = ({
   const contact = useAppSelector((s) => selectContactByHash(s, addressHash))
 
   const textColor = color || theme.font.primary
+
+  const Hash = (
+    <Label truncate ellipsizeMode="middle" style={[textStyle, { maxWidth: 110 }]} color={textColor} size={fontSize}>
+      {address?.hash}
+    </Label>
+  )
 
   return (
     <Pressable
@@ -47,13 +54,14 @@ const AddressBadge = ({
         <AddressBadgeContainer>
           {!hideSymbol && <AddressColorSymbol addressHash={addressHash} size={16} />}
           {address.settings.label ? (
-            <Label truncate style={textStyle} color={textColor} size={fontSize}>
-              {address.settings.label}
-            </Label>
+            <>
+              <Label truncate style={textStyle} color={textColor} size={fontSize}>
+                {address.settings.label}
+              </Label>
+              {showHash && <View style={{ opacity: 0.5 }}>{Hash}</View>}
+            </>
           ) : (
-            <Label truncate ellipsizeMode="middle" style={textStyle} color={textColor} size={fontSize}>
-              {address.hash}
-            </Label>
+            Hash
           )}
         </AddressBadgeContainer>
       ) : contact ? (
@@ -64,9 +72,7 @@ const AddressBadge = ({
           </Label>
         </AddressBadgeContainer>
       ) : (
-        <Label truncate ellipsizeMode="middle" style={textStyle} color={textColor} size={fontSize}>
-          {addressHash}
-        </Label>
+        Hash
       )}
       {showCopyBtn && address?.hash && (
         <CopyAddressButton
@@ -89,7 +95,7 @@ export default styled(AddressBadge)`
 
 const AddressBadgeContainer = styled.View`
   flex-direction: row;
-  gap: 5px;
+  gap: 10px;
   align-items: center;
 `
 
