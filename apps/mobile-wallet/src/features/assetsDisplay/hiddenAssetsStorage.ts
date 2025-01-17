@@ -3,7 +3,7 @@ import { Token } from '@alephium/web3'
 import { sendAnalytics } from '~/analytics'
 import { getWithReportableError, storeWithReportableError } from '~/persistent-storage/utils'
 
-const HIDDEN_ASSETS_KEY = 'alephium_favorite_dapps'
+const HIDDEN_ASSETS_KEY = 'alephium_hidden_assets_ids'
 
 export const getHiddenAssetsIds = async (): Promise<Token['id'][]> => {
   let hiddenAssetsIds = null
