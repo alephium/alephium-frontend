@@ -1,5 +1,5 @@
-import { ReactNode, useState } from 'react'
-import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
+import { ReactNode } from 'react'
+import { PressableProps } from 'react-native'
 import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
 import Reanimated, {
   AnimatedRef,
@@ -14,8 +14,6 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
-type TabsLayout = Record<number, LayoutRectangle>
-
 interface TopTabBarProps {
   tabLabels: string[]
   pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
@@ -25,47 +23,14 @@ interface TopTabBarProps {
 }
 
 const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customContent }: TopTabBarProps) => {
-  const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
-
   const position = useDerivedValue(
     () => pagerScrollEvent.value.position + pagerScrollEvent.value.offset,
     [pagerScrollEvent.value]
   )
 
-  const indicatorStyle = useAnimatedStyle(() => {
-    const positionsArray = [...Array(tabLabels.length).keys()]
-    const tabLayoutValues = Object.values(tabLayouts)
-    if (tabLayoutValues.length !== positionsArray.length) return {}
-
-    const x = interpolate(
-      position.value,
-      positionsArray,
-      tabLayoutValues.map((l) => l.x)
-    )
-
-    const width = interpolate(
-      position.value,
-      positionsArray,
-      tabLayoutValues.map((l) => 5 + l.width * 0.2)
-    )
-
-    return {
-      left: x,
-      width
-    }
-  }, [tabLayouts, tabLabels.length])
-
   const handleOnTabPress = (tabIndex: number) => {
     vibrate(ImpactStyle.Medium)
     onTabPress(tabIndex)
-  }
-
-  const handleTabLayoutEvent = (tabIndex: number, e: LayoutChangeEvent) => {
-    e.persist()
-    setTabLayouts((prevLayouts) => ({
-      ...prevLayouts,
-      [tabIndex]: e.nativeEvent.layout
-    }))
   }
 
   return (
@@ -73,14 +38,7 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customC
       {customContent}
       <HeaderContainer ref={tabBarRef}>
         {tabLabels.map((label, i) => (
-          <TabBarItem
-            key={label}
-            index={i}
-            label={label}
-            position={position}
-            onPress={() => handleOnTabPress(i)}
-            onLayout={(e) => handleTabLayoutEvent(i, e)}
-          />
+          <TabBarItem key={label} index={i} label={label} position={position} onPress={() => handleOnTabPress(i)} />
         ))}
       </HeaderContainer>
     </TopTabBarStyled>
@@ -101,13 +59,14 @@ const TabBarItem = ({ label, index, position, ...props }: TabBarItemProps) => {
   const animatedTextStyle = useAnimatedStyle(() => {
     const diff = position.value - index
     return {
-      color: interpolateColor(diff, [-1, 0, 1], [theme.font.tertiary, theme.font.primary, theme.font.tertiary])
+      color: interpolateColor(diff, [-1, 0, 1], [theme.font.tertiary, theme.font.primary, theme.font.tertiary]),
+      transform: [{ scale: interpolate(diff, [-1, 0, 1], [1, 1.05, 1]) }]
     }
   })
 
   return (
     <TabBarItemStyled {...props}>
-      <AnimatedAppText style={animatedTextStyle} size={19} semiBold>
+      <AnimatedAppText style={[animatedTextStyle, { transformOrigin: '0% 50%' }]} size={19} semiBold>
         {label}
       </AnimatedAppText>
     </TabBarItemStyled>
@@ -124,7 +83,7 @@ const TopTabBarStyled = styled.View`
 
 const HeaderContainer = styled(Reanimated.View)`
   flex-direction: row;
-  gap: 25px;
+  gap: 30px;
   align-items: center;
   justify-content: flex-start;
   height: 40px;
@@ -134,4 +93,5 @@ const TabBarItemStyled = styled.Pressable`
   height: 100%;
   justify-content: center;
   align-items: center;
+  transform-origin: left;
 `
