@@ -80,7 +80,7 @@ export const Tab = styled.div<{ isActive: boolean }>`
   text-align: center;
   justify-content: center;
   align-items: center;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.accent : theme.bg.primary)};
+  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.contrast : theme.bg.primary)};
   cursor: pointer;
   font-size: 15px;
   font-weight: var(--fontWeight-medium);
@@ -91,7 +91,7 @@ export const Tab = styled.div<{ isActive: boolean }>`
   ${({ isActive, theme }) =>
     isActive
       ? css`
-          color: ${theme.global.accent};
+          color: ${theme.font.contrastPrimary};
         `
       : css`
           color: ${theme.font.tertiary};
@@ -99,7 +99,7 @@ export const Tab = styled.div<{ isActive: boolean }>`
 
   &:hover {
     color: ${({ isActive, theme }) => (isActive ? theme.font.contrastPrimary : theme.font.primary)};
-    background-color: ${({ isActive, theme }) => (isActive ? theme.global.accent : theme.bg.highlight)};
+    background-color: ${({ isActive, theme }) => (isActive ? theme.font.secondary : theme.bg.highlight)};
   }
 `
 
