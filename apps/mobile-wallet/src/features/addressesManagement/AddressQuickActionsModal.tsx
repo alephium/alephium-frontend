@@ -104,7 +104,6 @@ const SetDefaultAddressButton = ({ addressHash }: ActionButtonProps) => {
       loading={defaultAddressIsChanging}
       color={address?.settings.isDefault ? address.settings.color : undefined}
       disabled={isDefaultAddress}
-      isLast
     />
   )
 }

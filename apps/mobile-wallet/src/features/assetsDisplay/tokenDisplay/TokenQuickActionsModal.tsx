@@ -59,7 +59,6 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
         title={t('Show details')}
         onPress={openTokenDetailsModal}
         iconProps={{ name: 'more-horizontal' }}
-        isLast
       />
     </BottomModal>
   )
