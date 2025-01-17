@@ -12,7 +12,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'rgba(0, 0, 0, 0.03)',
     back1: '#fff',
     back2: '#fff',
-    accent: colord('#155ef9').alpha(0.1).toHex(),
+    accent: colord('#133de2').alpha(0.1).toHex(),
     contrast: '#111114'
   },
   font: {
@@ -41,7 +41,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 20px; shadow-opacity: 0.02; shadow-radius: 50px; elevation: 40;'
   },
   global: {
-    accent: '#1355e2',
+    accent: '#133de2',
     alert: '#ed4a34',
     warning: '#f48826',
     valid: '#20942d',
