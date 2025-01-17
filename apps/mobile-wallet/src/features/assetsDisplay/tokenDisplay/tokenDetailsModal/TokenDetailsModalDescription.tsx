@@ -3,7 +3,7 @@ import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
-import { TokenDetailsModalCommonProps } from '~/features/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
+import { TokenDetailsModalCommonProps } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import { useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesTokens } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
