@@ -154,7 +154,7 @@ const Button = ({
               <AnimatedIonicons
                 layout={LinearTransition}
                 color={font}
-                size={compact || short ? 16 : hasOnlyIcon ? 22 : 18}
+                size={compact || short ? 16 : hasOnlyIcon ? 20 : 18}
                 {...iconProps}
               />
             </IconContainer>

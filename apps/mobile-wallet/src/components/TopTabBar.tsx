@@ -72,7 +72,6 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customC
     <TopTabBarStyled>
       {customContent}
       <HeaderContainer ref={tabBarRef}>
-        <Indicator style={indicatorStyle} />
         {tabLabels.map((label, i) => (
           <TabBarItem
             key={label}
@@ -108,7 +107,7 @@ const TabBarItem = ({ label, index, position, ...props }: TabBarItemProps) => {
 
   return (
     <TabBarItemStyled {...props}>
-      <AnimatedAppText style={animatedTextStyle} size={16}>
+      <AnimatedAppText style={animatedTextStyle} size={19} semiBold>
         {label}
       </AnimatedAppText>
     </TabBarItemStyled>
@@ -121,8 +120,6 @@ const TopTabBarStyled = styled.View`
   width: 100%;
   flex-direction: column;
   gap: 10px;
-  border-bottom-width: 1px;
-  border-color: ${({ theme }) => theme.border.secondary};
 `
 
 const HeaderContainer = styled(Reanimated.View)`
@@ -137,11 +134,4 @@ const TabBarItemStyled = styled.Pressable`
   height: 100%;
   justify-content: center;
   align-items: center;
-`
-
-const Indicator = styled(Reanimated.View)`
-  position: absolute;
-  bottom: -1px;
-  height: 1px;
-  background-color: ${({ theme }) => theme.bg.contrast};
 `

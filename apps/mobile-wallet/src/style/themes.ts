@@ -17,8 +17,8 @@ export const lightTheme: DefaultTheme = {
   },
   font: {
     primary: '#000',
-    secondary: '#4d4d4d',
-    tertiary: '#999',
+    secondary: 'rgba(0, 0, 0, 0.75)',
+    tertiary: 'rgba(0, 0, 0, 0.4)',
     contrast: '#ffffff',
     highlight: '#d4a10d'
   },
@@ -75,7 +75,7 @@ export const darkTheme: DefaultTheme = {
   font: {
     primary: '#E3E3E3',
     secondary: 'rgba(255, 255, 255, 0.75)',
-    tertiary: 'rgba(255, 255, 255, 0.45)',
+    tertiary: 'rgba(255, 255, 255, 0.4)',
     contrast: '#000',
     highlight: '#f0d590'
   },

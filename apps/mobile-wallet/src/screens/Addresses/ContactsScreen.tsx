@@ -10,7 +10,7 @@ const ContactsScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   return (
-    <BottomBarScrollScreen contentPaddingTop={120} hasBottomBar {...props}>
+    <BottomBarScrollScreen contentPaddingTop={110} hasBottomBar {...props}>
       <ContactListScreenBase
         onContactPress={(contactId: Contact['id']) => navigation.navigate('ContactScreen', { contactId })}
         onNewContactPress={() => navigation.navigate('NewContactScreen')}
