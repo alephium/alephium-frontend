@@ -27,7 +27,7 @@ const EcosystemScreen = () => {
       {showComingSoon ? (
         <ScreenSection>
           <EmptyPlaceholder>
-            <AppText size={28}>📣👀</AppText>
+            <AppText size={32}>📣👀</AppText>
             <AppText>{t('Coming soon!')}</AppText>
           </EmptyPlaceholder>
         </ScreenSection>

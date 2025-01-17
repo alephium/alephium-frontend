@@ -29,7 +29,7 @@ const DAppsList = ({ selectedTag }: DAppsListProps) => {
     return (
       <ScreenSection>
         <EmptyPlaceholder>
-          <AppText size={28}>⏳</AppText>
+          <AppText size={32}>⏳</AppText>
           <AppText>{t('Loading dApps...')}</AppText>
         </EmptyPlaceholder>
       </ScreenSection>
@@ -39,7 +39,7 @@ const DAppsList = ({ selectedTag }: DAppsListProps) => {
     return (
       <ScreenSection>
         <EmptyPlaceholder>
-          <AppText size={28}>🥺</AppText>
+          <AppText size={32}>🥺</AppText>
           <AppText>{t('Could not load dApps')}</AppText>
           <AppText>{getHumanReadableError(error, '')}</AppText>
         </EmptyPlaceholder>
@@ -50,7 +50,7 @@ const DAppsList = ({ selectedTag }: DAppsListProps) => {
     return (
       <ScreenSection>
         <EmptyPlaceholder>
-          <AppText size={28}>⭐️</AppText>
+          <AppText size={32}>⭐️</AppText>
           <AppText>{t('No dApps added to your favorites yet')}</AppText>
         </EmptyPlaceholder>
       </ScreenSection>

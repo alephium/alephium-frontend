@@ -29,7 +29,7 @@ const SelectAssetToHideModal = withModal(({ id }) => {
             <ListItem
               key={id}
               title={name}
-              icon={<AssetLogo assetId={id} size={38} />}
+              icon={<AssetLogo assetId={id} size={32} />}
               onPress={() => handleAssetSelection(id)}
             />
           )}

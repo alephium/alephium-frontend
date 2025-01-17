@@ -100,7 +100,7 @@ const TransactionsFlashList = forwardRef(
         ListEmptyComponent={
           !isLoading ? (
             <EmptyPlaceholder>
-              <AppText size={28}>🤷‍♂️</AppText>
+              <AppText size={32}>🤷‍♂️</AppText>
               <AppText color="secondary">{t('No transactions yet')}</AppText>
             </EmptyPlaceholder>
           ) : null

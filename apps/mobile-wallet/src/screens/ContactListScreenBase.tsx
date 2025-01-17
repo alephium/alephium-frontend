@@ -9,6 +9,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import ListItem from '~/components/ListItem'
@@ -48,25 +49,25 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
 
   return (
     <Animated.View {...props}>
-      <HeaderScreenSection>
-        <SearchInput
-          placeholder={t('Search')}
-          value={searchTerm}
-          onChangeText={setSearchTerm}
-          placeholderTextColor={theme.font.tertiary}
-        />
-      </HeaderScreenSection>
+      {contacts.length > 4 && (
+        <HeaderScreenSection>
+          <SearchInput
+            placeholder={t('Search')}
+            value={searchTerm}
+            onChangeText={setSearchTerm}
+            placeholderTextColor={theme.font.tertiary}
+          />
+        </HeaderScreenSection>
+      )}
       {contacts.length === 0 ? (
-        <NoContactContainer>
-          <NoContactMessageBox>
-            <EmojiContainer size={60}>🤷‍♀️</EmojiContainer>
-            <AppText>{t('No contact yet!')}</AppText>
-            <Button title={t('Add contact')} onPress={handleNewContactPress} variant="contrast" short />
-          </NoContactMessageBox>
-        </NoContactContainer>
+        <EmptyPlaceholder>
+          <EmojiContainer size={32}>🤷‍♀️</EmojiContainer>
+          <AppText>{t('No contact yet!')}</AppText>
+          <Button title={t('Add contact')} onPress={handleNewContactPress} variant="contrast" short />
+        </EmptyPlaceholder>
       ) : (
         <ContactList>
-          {filteredContacts.map((contact) => {
+          {filteredContacts.map((contact, i) => {
             const iconBgColor = stringToColour(contact.address)
             const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 
@@ -76,6 +77,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
                 onPress={() => onContactPress(contact.id)}
                 title={contact.name}
                 subtitle={contact.address}
+                isLast={i === filteredContacts.length - 1}
                 icon={
                   <ContactIcon color={iconBgColor}>
                     <AppText color={textColor} semiBold size={21}>

@@ -36,7 +36,7 @@ const AddressesTokensList = () => {
   if (addressesBalancesStatus === 'uninitialized')
     return (
       <EmptyPlaceholder>
-        <AppText size={28}>⏳</AppText>
+        <AppText size={32}>⏳</AppText>
         <AppText>{t('Loading your balances...')}</AppText>
       </EmptyPlaceholder>
     )
@@ -44,7 +44,7 @@ const AddressesTokensList = () => {
   if (knownFungibleTokens.length === 0 && !hasUnknownTokens && !hasHiddenTokens)
     return (
       <EmptyPlaceholder>
-        <AppText size={28}>👀</AppText>
+        <AppText size={32}>👀</AppText>
         <AppText>{t('No assets here, yet.')}</AppText>
       </EmptyPlaceholder>
     )
