@@ -22,8 +22,8 @@ const BalanceSummary = ({ addressHash }: BalanceSummaryProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
-  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash || addressHashes))
+  const selectAddressesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
+  const balanceInFiat = useAppSelector((s) => selectAddressesTokensWorth(s, addressHash || addressHashes))
 
   const label = addressHash ? t('Address worth') : t('Wallet worth')
 
