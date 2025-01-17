@@ -4,7 +4,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
 import useAddressesDataPolling from '@/features/dataPolling/useAddressesDataPolling'
 import { useAppSelector } from '@/hooks/redux'
-import ActivityPage from '@/pages/UnlockedWallet/activityPage'
+import ActivityPage from '@/pages/UnlockedWallet/ActivityPage'
 import AddressesPage from '@/pages/UnlockedWallet/AddressesPage'
 import OverviewPage from '@/pages/UnlockedWallet/OverviewPage'
 import UnlockedWalletLayout from '@/pages/UnlockedWallet/UnlockedWalletLayout'

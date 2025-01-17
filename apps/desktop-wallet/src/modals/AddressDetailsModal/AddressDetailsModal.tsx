@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { ShortcutButtonsGroupAddress } from '@/components/Buttons/ShortcutButtons'
-import QRCode from '@/components/QRCode'
 import WorthOverviewPanel from '@/components/WorthOverviewPanel'
 import { AddressTokensTabs } from '@/features/assetsLists/TokensTabs'
 import { AddressModalProps } from '@/features/modals/modalTypes'
@@ -24,13 +23,9 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
       header={<AddressDetailsModalHeader addressHash={addressHash} />}
       onAnimationComplete={() => setShowChart(true)}
     >
-      <WorthOverviewPanelStyled addressHash={addressHash} chartVisible={showChart}>
-        <QRCode value={addressHash} size={130} />
-      </WorthOverviewPanelStyled>
-
+      <WorthOverviewPanel addressHash={addressHash} chartVisible={showChart} />
       <Content>
-        <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" solidBackground />
-
+        <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" />
         <AddressTokensTabs addressHash={addressHash} />
         <AddressTransactionsList addressHash={addressHash} />
       </Content>
@@ -39,11 +34,6 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
 })
 
 export default AddressDetailsModal
-
-const WorthOverviewPanelStyled = styled(WorthOverviewPanel)`
-  margin: var(--spacing-4);
-  width: auto;
-`
 
 const Content = styled.div`
   padding: var(--spacing-4) var(--spacing-4) var(--spacing-4);

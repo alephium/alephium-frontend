@@ -25,6 +25,7 @@ declare module 'styled-components' {
       contrastPrimary: string
       contrastSecondary: string
       highlight: string
+      accent: string
     }
     shadow: {
       primary: string

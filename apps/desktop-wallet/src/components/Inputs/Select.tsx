@@ -440,7 +440,7 @@ export const OptionItem = styled.button<{
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  color: ${({ theme, selected }) => (selected ? theme.global.accent : theme.font.primary)};
+  color: ${({ theme, selected }) => (selected ? theme.font.accent : theme.font.primary)};
   user-select: none;
   text-align: left;
   visibility: ${({ invisible }) => invisible && 'hidden'};

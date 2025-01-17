@@ -11,6 +11,7 @@ interface AnimatedBackgroundProps {
   shade?: 'dark' | 'light' | string
   anchorPosition?: AnchorPosition
   reactToPointer?: boolean
+  hiddenOverflow?: boolean
   verticalOffset?: number
 }
 
@@ -27,6 +28,7 @@ const AnimatedBackground = ({
   shade,
   reactToPointer = true,
   anchorPosition = 'top',
+  hiddenOverflow,
   verticalOffset = 0
 }: AnimatedBackgroundProps) => {
   const theme = useTheme()
@@ -133,7 +135,10 @@ const AnimatedBackground = ({
   ]
 
   return (
-    <AnimatedContainer style={{ width, height, opacity }} className={className}>
+    <AnimatedContainer
+      style={{ width, height, opacity, overflow: hiddenOverflow ? 'hidden' : 'visible' }}
+      className={className}
+    >
       <motion.div
         style={{
           position: 'relative',
@@ -258,7 +263,6 @@ const AnimatedContainer = styled.div`
   position: absolute;
   right: 0;
   left: 0;
-  overflow: hidden;
 `
 
 const Circle = styled(motion.div)`

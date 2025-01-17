@@ -27,7 +27,7 @@ const NewWalletActions = ({ onExistingWalletLinkClick }: NewWalletActionsProps) 
           {t('Import wallet')}
         </Button>
         {onExistingWalletLinkClick && (
-          <Button onClick={onExistingWalletLinkClick} Icon={ArrowLeft} role="secondary">
+          <Button onClick={onExistingWalletLinkClick} Icon={ArrowLeft} role="secondary" justifyContent="center">
             {t('Use an existing wallet')}
           </Button>
         )}

@@ -66,6 +66,7 @@ const App = memo(() => {
                 anchorPosition="bottom"
                 opacity={theme === 'dark' ? 0.4 : 0.6}
                 verticalOffset={-200}
+                hiddenOverflow
               />
             )}
             <Router />

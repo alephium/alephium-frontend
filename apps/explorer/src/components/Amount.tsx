@@ -162,6 +162,7 @@ export default styled(Amount)`
         : 'inherit'};
   white-space: nowrap;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 `
 
 const NumberContainer = styled.span``

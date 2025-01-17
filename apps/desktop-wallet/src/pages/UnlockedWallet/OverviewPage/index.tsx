@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 
+import AnimatedBackground from '@/components/AnimatedBackground'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import WorthOverviewPanel from '@/components/WorthOverviewPanel'
 import { WalletTokensTabs } from '@/features/assetsLists/TokensTabs'
@@ -12,12 +13,12 @@ interface OverviewPageProps {
 
 const OverviewPage = ({ className }: OverviewPageProps) => (
   <UnlockedWalletPage className={className}>
+    <AnimatedBackground anchorPosition="top" opacity={0.4} verticalOffset={-150} />
     <UnlockedWalletPanel bottom top>
-      <WorthOverviewPanel>
-        <Shortcuts>
-          <ShortcutButtonsGroupWallet analyticsOrigin="overview_page" solidBackground />
-        </Shortcuts>
-      </WorthOverviewPanel>
+      <WorthOverviewPanel />
+      <Shortcuts>
+        <ShortcutButtonsGroupWallet analyticsOrigin="overview_page" />
+      </Shortcuts>
     </UnlockedWalletPanel>
     <UnlockedWalletPanel bottom>
       <WalletTokensTabsStyled />

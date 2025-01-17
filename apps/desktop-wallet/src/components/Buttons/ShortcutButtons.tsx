@@ -13,7 +13,6 @@ import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelecto
 interface ShortcutButtonBaseProps {
   analyticsOrigin: string
   highlight?: boolean
-  solidBackground?: boolean
 }
 
 interface ShortcutButtonsGroupWalletProps extends ShortcutButtonBaseProps {
@@ -50,7 +49,7 @@ interface SettingsButtonProps extends ShortcutButtonBaseProps {
   addressHash?: AddressHash
 }
 
-const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground }: SettingsButtonProps) => {
+const SettingsButton = ({ addressHash, analyticsOrigin }: SettingsButtonProps) => {
   const { sendAnalytics } = useAnalytics()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -76,7 +75,7 @@ const SettingsButton = ({ addressHash, analyticsOrigin, solidBackground }: Setti
   )
 }
 
-const ReceiveButton = ({ addressHash, analyticsOrigin, solidBackground }: ShortcutButtonsGroupAddressProps) => {
+const ReceiveButton = ({ addressHash, analyticsOrigin }: ShortcutButtonsGroupAddressProps) => {
   const { sendAnalytics } = useAnalytics()
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -133,7 +132,7 @@ const SendButton = ({ addressHash, analyticsOrigin }: ShortcutButtonsGroupAddres
   )
 }
 
-const BuyButton = ({ addressHash, analyticsOrigin, solidBackground, highlight }: ShortcutButtonsGroupAddressProps) => {
+const BuyButton = ({ addressHash, analyticsOrigin, highlight }: ShortcutButtonsGroupAddressProps) => {
   const { sendAnalytics } = useAnalytics()
   const { t } = useTranslation()
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
@@ -161,8 +160,10 @@ const ShortcutButton = styled.button`
   align-items: center;
   justify-content: center;
   border-radius: 22px;
-  height: 100px;
+  height: 70px;
   background-color: ${({ theme }) => theme.bg.highlight};
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  color: ${({ theme }) => theme.font.primary};
   gap: 20px;
 `
 

@@ -20,8 +20,6 @@ import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import AnimatedBackground from '@/components/AnimatedBackground'
-import Box from '@/components/Box'
 import NetworkSwitch from '@/components/NetworkSwitch'
 import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
 import WalletWorth from '@/pages/UnlockedWallet/OverviewPage/WalletWorth'
@@ -41,66 +39,24 @@ const WorthOverviewPanel = ({ className, addressHash, children }: WorthOverviewP
 
   return (
     <WorthOverviewPanelStyled className={className}>
-      <AnimatedBackground />
-      <Panel>
-        <Balances>
-          <BalancesRow>
-            <BalancesColumn>
-              <Surtitle>
-                <Worth>{t(singleAddress ? 'Address worth' : 'Wallet worth')}</Worth>
-                <NetworkSwitch />
-              </Surtitle>
-              {singleAddress ? <AddressWorth addressHash={addressHash} /> : <WalletWorth />}
-            </BalancesColumn>
-          </BalancesRow>
-        </Balances>
-        {children && <ChildrenContainer>{children}</ChildrenContainer>}
-      </Panel>
+      <Surtitle>
+        <Worth>{t(singleAddress ? 'Address worth' : 'Wallet worth')}</Worth>
+        <NetworkSwitch />
+      </Surtitle>
+      {singleAddress ? <AddressWorth addressHash={addressHash} /> : <WalletWorth />}
     </WorthOverviewPanelStyled>
   )
 }
 
 export default WorthOverviewPanel
 
-const WorthOverviewPanelStyled = styled(Box)`
-  position: relative;
-  overflow: hidden;
-  border: 1px solid ${({ theme }) => theme.border.secondary};
-`
-
-const Panel = styled.div`
-  position: relative;
-  display: flex;
-  gap: 40px;
-  align-items: center;
-  padding: 20px 20px 20px 50px;
-  overflow: visible;
-`
-
-const Balances = styled.div`
-  flex: 2;
-  display: flex;
-  align-items: center;
-`
-
-const BalancesRow = styled.div`
-  display: flex;
-`
-
-const ChildrenContainer = styled.div`
+const WorthOverviewPanelStyled = styled.div`
   display: flex;
   flex-direction: column;
-  flex: 1;
-`
-
-const BalancesColumn = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  min-width: 200px;
-  gap: 4px;
+  align-items: center;
+  position: relative;
+  margin: var(--spacing-6);
+  gap: var(--spacing-2);
 `
 
 const Surtitle = styled.div`
@@ -115,4 +71,5 @@ const Worth = styled.span`
   white-space: nowrap;
   color: ${({ theme }) => theme.font.secondary};
   font-size: 18px;
+  padding-left: 5px;
 `

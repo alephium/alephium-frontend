@@ -33,7 +33,7 @@ const Button = ({
   disabled,
   submit,
   Icon,
-  iconSize = 14,
+  iconSize,
   className,
   isHighlighted,
   loading,
@@ -78,7 +78,7 @@ const Button = ({
         <>
           {Icon && (
             <ButtonIcon>
-              <Icon size={!children ? 16 : iconSize} />
+              <Icon size={iconSize ?? (!children ? 16 : 15)} />
             </ButtonIcon>
           )}
           {children as ReactNode}
@@ -240,7 +240,7 @@ export default styled(Button)`
   min-width: ${({ circle, tiny }) => (tiny ? '28px' : circle ? '34px' : '60px')};
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};
-  backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: ${({ transparent }) => !transparent && 'saturate(180%) blur(20px)'};
 
   &:disabled {
     opacity: 0.5;
