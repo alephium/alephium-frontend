@@ -144,7 +144,12 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         <ScreenSection>
           <ScreenSectionTitle>{t('Assets')}</ScreenSectionTitle>
 
-          <Row title="Hidden assets" subtitle={t('Hide assets your are not interested in')} isLast>
+          <Row
+            title="Hidden assets"
+            subtitle={t('Hide assets your are not interested in')}
+            onPress={() => navigation.navigate('HiddenAssetsScreen')}
+            isLast
+          >
             <Badge>{numberOfHiddenAssets}</Badge>
             <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
           </Row>

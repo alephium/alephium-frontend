@@ -36,6 +36,7 @@ type RootStackParamList = {
     dAppUrl: string
     dAppName: string
   }
+  HiddenAssetsScreen: undefined
 }
 
 export default RootStackParamList

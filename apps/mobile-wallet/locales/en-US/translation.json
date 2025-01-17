@@ -426,5 +426,9 @@
   "Removed from favorites": "Removed from favorites",
   "Favorites": "Favorites",
   "No dApps added to your favorites yet": "No dApps added to your favorites yet",
-  "Hide assets your are not interested in": "Hide assets your are not interested in"
+  "Hide assets your are not interested in": "Hide assets your are not interested in",
+  "Hidden assets": "Hidden assets",
+  "Here is the list of assets you are hiding": "Here is the list of assets you are hiding",
+  "Add an asset to hide": "Add an asset to hide",
+  "No assets are hidden": "No assets are hidden"
 }
