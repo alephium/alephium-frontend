@@ -24,7 +24,7 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
     <BottomBarScrollScreen
       refreshControl={<RefreshSpinner progressViewOffset={190} />}
       hasBottomBar
-      contentPaddingTop={110}
+      contentPaddingTop={120}
       {...props}
     >
       <Content>

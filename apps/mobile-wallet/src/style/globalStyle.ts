@@ -2,8 +2,8 @@ import { Platform } from 'react-native'
 
 // ALL VALUES IN PIXELS
 
-export const BORDER_RADIUS_HUGE = 28
-export const BORDER_RADIUS_BIG = 21
+export const BORDER_RADIUS_HUGE = 36
+export const BORDER_RADIUS_BIG = 20
 export const BORDER_RADIUS = 16
 export const BORDER_RADIUS_SMALL = 6
 

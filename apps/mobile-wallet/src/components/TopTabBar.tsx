@@ -24,8 +24,6 @@ interface TopTabBarProps {
   customContent?: ReactNode
 }
 
-const indicatorXPadding = 10
-
 const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customContent }: TopTabBarProps) => {
   const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
 
@@ -48,12 +46,12 @@ const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customC
     const width = interpolate(
       position.value,
       positionsArray,
-      tabLayoutValues.map((l) => l.width)
+      tabLayoutValues.map((l) => 5 + l.width * 0.2)
     )
 
     return {
-      left: x - indicatorXPadding,
-      width: width + 2 * indicatorXPadding
+      left: x,
+      width
     }
   }, [tabLayouts, tabLabels.length])
 
@@ -104,13 +102,13 @@ const TabBarItem = ({ label, index, position, ...props }: TabBarItemProps) => {
   const animatedTextStyle = useAnimatedStyle(() => {
     const diff = position.value - index
     return {
-      color: interpolateColor(diff, [-1, 0, 1], [theme.font.primary, theme.global.accent, theme.font.primary])
+      color: interpolateColor(diff, [-1, 0, 1], [theme.font.tertiary, theme.font.primary, theme.font.tertiary])
     }
   })
 
   return (
     <TabBarItemStyled {...props}>
-      <AnimatedAppText style={animatedTextStyle} size={15}>
+      <AnimatedAppText style={animatedTextStyle} size={16}>
         {label}
       </AnimatedAppText>
     </TabBarItemStyled>
@@ -123,6 +121,8 @@ const TopTabBarStyled = styled.View`
   width: 100%;
   flex-direction: column;
   gap: 10px;
+  border-bottom-width: 1px;
+  border-color: ${({ theme }) => theme.border.secondary};
 `
 
 const HeaderContainer = styled(Reanimated.View)`
@@ -130,8 +130,7 @@ const HeaderContainer = styled(Reanimated.View)`
   gap: 25px;
   align-items: center;
   justify-content: flex-start;
-  height: 44px;
-  padding-left: ${indicatorXPadding}px;
+  height: 40px;
 `
 
 const TabBarItemStyled = styled.Pressable`
@@ -142,7 +141,7 @@ const TabBarItemStyled = styled.Pressable`
 
 const Indicator = styled(Reanimated.View)`
   position: absolute;
-  height: 80%;
-  border-radius: 100px;
-  background-color: ${({ theme }) => theme.bg.accent};
+  bottom: -1px;
+  height: 1px;
+  background-color: ${({ theme }) => theme.bg.contrast};
 `

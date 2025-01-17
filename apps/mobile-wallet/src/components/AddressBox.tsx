@@ -21,7 +21,7 @@ import {
   makeSelectAddressesTokensWorth,
   selectAddressByHash
 } from '~/store/addresses/addressesSelectors'
-import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { BORDER_RADIUS, BORDER_RADIUS_BIG, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface AddressBoxProps extends PressableProps {
@@ -185,7 +185,7 @@ const AddressTokenDetails = ({
 const AddressBoxStyled = styled(AnimatedPressable)`
   flex-direction: row;
   overflow: hidden;
-  border-radius: 22px;
+  border-radius: ${BORDER_RADIUS_BIG}px;
   padding: 0 15px;
   margin-bottom: ${VERTICAL_GAP / 2}px;
 `
