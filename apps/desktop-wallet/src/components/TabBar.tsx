@@ -92,6 +92,7 @@ export const Tab = styled.div<{ isActive: boolean }>`
   align-items: center;
   background-color: ${({ isActive, theme }) => (isActive ? theme.bg.highlight : 'transparent')};
   border: 1px solid ${({ theme, isActive }) => (isActive ? theme.border.primary : 'transparent')};
+  box-shadow: ${({ theme, isActive }) => (isActive ? theme.shadow.primary : undefined)};
   cursor: pointer;
   font-size: 15px;
   font-weight: var(--fontWeight-medium);
@@ -110,7 +111,7 @@ export const Tab = styled.div<{ isActive: boolean }>`
 
   &:hover {
     color: ${({ isActive, theme }) => (isActive ? theme.font.primary : theme.font.primary)};
-    background-color: ${({ isActive, theme }) => (isActive ? theme.bg.primary : theme.bg.primary)};
+    background-color: ${({ isActive, theme }) => (isActive ? theme.bg.primary : theme.bg.secondary)};
   }
 `
 

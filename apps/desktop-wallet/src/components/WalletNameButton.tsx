@@ -59,7 +59,8 @@ const WalletNameButtonStyled = styled(motion.div)`
   overflow: hidden;
   z-index: 1;
   background-color: ${({ theme }) => theme.bg.highlight};
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  border: 1px solid ${({ theme }) => theme.border.secondary};
+  box-shadow: ${({ theme }) => theme.shadow.primary};
 
   &:hover {
     cursor: pointer;

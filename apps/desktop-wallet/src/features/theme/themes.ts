@@ -12,7 +12,7 @@ export const lightTheme: DefaultTheme = {
     background2: '#fafafa',
     hover: 'rgba(0, 0, 0, 0.01)',
     highlight: '#ffffff',
-    accent: colord('#0f22e3').alpha(0.05).toHex()
+    accent: colord('#400fe3').alpha(0.05).toHex()
   },
   font: {
     primary: '#000',
@@ -21,19 +21,19 @@ export const lightTheme: DefaultTheme = {
     contrastPrimary: 'rgba(255, 255, 255, 1)',
     contrastSecondary: 'rgba(255, 255, 255, 0.8)',
     highlight: '#ef6c5c',
-    accent: colord('#3b62f0').darken(0.2).toHex()
+    accent: colord('#400fe3').darken(0.2).toHex()
   },
   border: {
     primary: 'rgba(0, 0, 0, 0.08)',
     secondary: 'rgba(0, 0, 0, 0.04)'
   },
   shadow: {
-    primary: '0 1px 1px rgba(0, 0, 0, 0.03)',
+    primary: '0 2px 3px rgba(0, 0, 0, 0.03)',
     secondary: '0 8px 20px rgba(0, 0, 0, 0.1)',
     tertiary: '0 0 80px rgba(0, 0, 0, 0.2)'
   },
   global: {
-    accent: '#0f22e3',
+    accent: '#400fe3',
     complementary: '#f174b3',
     alert: '#e52437',
     valid: '#189b3c',

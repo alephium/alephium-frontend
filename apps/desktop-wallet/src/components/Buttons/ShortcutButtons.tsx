@@ -159,12 +159,18 @@ const ShortcutButton = styled.button`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 22px;
-  height: 70px;
+  border-radius: 20px;
+  height: 60px;
   background-color: ${({ theme }) => theme.bg.highlight};
   border: 1px solid ${({ theme }) => theme.border.primary};
+  box-shadow: ${({ theme }) => theme.shadow.primary};
   color: ${({ theme }) => theme.font.primary};
   gap: 20px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.bg.primary};
+  }
 `
 
 const ButtonText = styled.div`

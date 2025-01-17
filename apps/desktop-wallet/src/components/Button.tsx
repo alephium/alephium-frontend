@@ -162,7 +162,7 @@ export default styled(Button)`
             faded: theme.global.accent
           }[variant],
           secondary: {
-            default: theme.font.secondary,
+            default: theme.font.primary,
             contrast: theme.font.contrastSecondary,
             valid: theme.font.contrastPrimary,
             alert: theme.global.alert,
@@ -241,7 +241,7 @@ export default styled(Button)`
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};
   backdrop-filter: ${({ transparent, theme }) =>
-    !transparent && `blur(20px) ${theme.name === 'dark' ? 'saturate(180%)' : 'saturate(130%) brightness(110%)'}`};
+    !transparent && `blur(20px) ${theme.name === 'dark' ? 'saturate(180%)' : 'saturate(130%) brightness(120%)'}`};
 
   &:disabled {
     opacity: 0.5;

@@ -253,7 +253,7 @@ const TabTitlesColumnContent = styled(ColumnContent)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 60px 15px 10px 15px;
+  padding: 60px 10px 10px 10px;
   height: 100%;
 `
 
@@ -264,8 +264,8 @@ const TabTitles = styled.div`
 `
 
 const TabTitlesColumnHeader = styled(ColumnHeader)`
-  padding-left: 22px;
-  padding-right: 22px;
+  padding-left: 20px;
+  padding-right: 20px;
   background: transparent;
 `
 

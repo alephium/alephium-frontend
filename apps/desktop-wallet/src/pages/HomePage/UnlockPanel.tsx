@@ -75,7 +75,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
         verticalAlign="center"
         horizontalAlign="center"
         transparentBg
-        style={{ transform: 'translateY(-10px)' }}
+        style={{ transform: 'translateY(-50px)' }}
       >
         <BrandContainer>
           <AlephiumLogoContainer>

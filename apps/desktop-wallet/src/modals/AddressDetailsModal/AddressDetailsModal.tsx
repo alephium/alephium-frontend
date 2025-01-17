@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { ShortcutButtonsGroupAddress } from '@/components/Buttons/ShortcutButtons'
-import WorthOverviewPanel from '@/components/WorthOverviewPanel'
+import WorthOverviewPanel from '@/components/LabeledWorthOverview'
 import { AddressTokensTabs } from '@/features/assetsLists/TokensTabs'
 import { AddressModalProps } from '@/features/modals/modalTypes'
 import AddressTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/AddressTransactionsList'

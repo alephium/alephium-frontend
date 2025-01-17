@@ -17,7 +17,7 @@ interface AnimatedBackgroundProps {
 
 type AnchorPosition = 'top' | 'bottom'
 
-const DARK_COLORS = ['#5a28cf', '#8a58ff', '#fb89ab', '#eb6cff', '#c94aff']
+const DARK_COLORS = ['#58a0ff', '#7057ff', '#ff709b', '#ff9b2f', '#1e71ff']
 const LIGHT_COLORS = ['#ad6eff', '#ffb47f', '#ffaaaa', '#ffc089', '#ff9bc8']
 
 const AnimatedBackground = ({
@@ -127,11 +127,11 @@ const AnimatedBackground = ({
   )
 
   const circlesDimensions = [
-    { width: 600, height: 140 },
-    { width: 800, height: 130 },
-    { width: 750, height: 130 },
-    { width: 1050, height: 140 },
-    { width: 920, height: 180 }
+    { width: 500, height: 140 },
+    { width: 600, height: 130 },
+    { width: 650, height: 130 },
+    { width: 850, height: 140 },
+    { width: 720, height: 180 }
   ]
 
   return (
