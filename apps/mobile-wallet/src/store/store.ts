@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import devToolsEnhancer from 'redux-devtools-expo-dev-plugin'
 
 import backupSlice from '~/features/backup/backupSlice'
+import favoriteDAppsSlice, { favoriteDAppsListenerMiddleware } from '~/features/ecosystem/favoriteDAppsSlice'
 import fundPasswordSlice from '~/features/fund-password/fundPasswordSlice'
 import loaderSlice from '~/features/loader/loaderSlice'
 import modalSlice from '~/features/modals/modalSlice'
@@ -33,14 +34,17 @@ export const store = configureStore({
     [fundPasswordSlice.name]: fundPasswordSlice.reducer,
     [contactsSlice.name]: contactsSlice.reducer,
     [loadersSlice.name]: loadersSlice.reducer,
-    [modalSlice.name]: modalSlice.reducer
+    [modalSlice.name]: modalSlice.reducer,
+    [favoriteDAppsSlice.name]: favoriteDAppsSlice.reducer
   },
   devTools: false,
   enhancers: (enhancers) => [...enhancers, devToolsEnhancer()],
   middleware: (getDefaultMiddleware) => {
     const middlewares = getDefaultMiddleware({
       serializableCheck: false
-    }).prepend(settingsListenerMiddleware.middleware)
+    })
+      .prepend(settingsListenerMiddleware.middleware)
+      .prepend(favoriteDAppsListenerMiddleware.middleware)
 
     return middlewares
   }

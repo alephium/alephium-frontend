@@ -10,6 +10,7 @@ import { Analytics, sendAnalytics } from '~/analytics'
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import { WalletConnectContextProvider } from '~/contexts/walletConnect/WalletConnectContext'
 import useAutoLock from '~/features/auto-lock/useAutoLock'
+import DAppWebViewScreen from '~/features/ecosystem/DAppWebViewScreen'
 import FundPasswordScreen from '~/features/fund-password/FundPasswordScreen'
 import { deleteFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import AppModals from '~/features/modals/AppModals'
@@ -112,6 +113,7 @@ const RootStackNavigation = ({ initialRouteName }: RootStackNavigationProps) => 
               <RootStack.Screen name="CustomNetworkScreen" component={CustomNetworkScreen} />
               <RootStack.Screen name="PublicKeysScreen" component={PublicKeysScreen} />
               <RootStack.Screen name="FundPasswordScreen" component={FundPasswordScreen} />
+              <RootStack.Screen name="DAppWebViewScreen" component={DAppWebViewScreen} />
               <RootStack.Screen
                 name="ImportWalletAddressDiscoveryScreen"
                 component={ImportWalletAddressDiscoveryScreen}

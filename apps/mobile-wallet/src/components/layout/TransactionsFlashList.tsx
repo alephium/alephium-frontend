@@ -28,6 +28,7 @@ type TransactionItem = {
   item: AddressTransaction
   index: number
   isLast?: boolean
+  skipTimestamp?: boolean
 }
 
 const transactionKeyExtractor = (tx: AddressTransaction) => `${tx.hash}-${tx.address.hash}`
@@ -62,11 +63,12 @@ const TransactionsFlashList = forwardRef(
     const renderConfirmedTransactionItem = ({ item, index }: TransactionItem) =>
       renderTransactionItem({ item, index, isLast: index === displayedConfirmedTransactions.length - 1 })
 
-    const renderTransactionItem = ({ item: tx, isLast }: TransactionItem) => (
+    const renderTransactionItem = ({ item: tx, isLast, skipTimestamp }: TransactionItem) => (
       <TransactionListItem
         key={transactionKeyExtractor(tx)}
         tx={tx}
         isLast={isLast}
+        skipTimestamp={skipTimestamp}
         onPress={() => {
           if (!isPendingTx(tx)) {
             dispatch(openModal({ name: 'TransactionModal', props: { tx } }))
@@ -116,7 +118,8 @@ const TransactionsFlashList = forwardRef(
                   renderTransactionItem({
                     item: pendingTransaction,
                     index,
-                    isLast: index === pendingTransactions.length - 1
+                    isLast: index === pendingTransactions.length - 1,
+                    skipTimestamp: true
                   })
                 )}
                 <ScreenSectionTitleStyled>{t('Confirmed transactions')}</ScreenSectionTitleStyled>
