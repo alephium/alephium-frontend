@@ -49,6 +49,7 @@ import {
   UnsignedTx
 } from '@/features/send/sendTypes'
 import StepsProgress, { Step } from '@/features/send/StepsProgress'
+import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import CenteredModal, { ScrollableModalContent } from '@/modals/CenteredModal'
@@ -82,7 +83,7 @@ function SendModal<PT extends { fromAddress: Address }>({
 }: ModalBaseProp & SendModalProps<PT>) {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const settings = useAppSelector((s) => s.settings)
+  const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
   const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
   const { sendUserRejectedResponse, sendSuccessResponse, sendFailureResponse } = useWalletConnectContext()
@@ -232,7 +233,7 @@ function SendModal<PT extends { fromAddress: Address }>({
               name: 'ConsolidateUTXOsModal',
               props: {
                 fee: fees,
-                onConsolidateClick: settings.passwordRequirement ? confirmPassword : handleSendExtended
+                onConsolidateClick: passwordRequirement ? confirmPassword : handleSendExtended
               }
             })
           )
@@ -265,7 +266,7 @@ function SendModal<PT extends { fromAddress: Address }>({
       type,
       txContext,
       dispatch,
-      settings.passwordRequirement,
+      passwordRequirement,
       handleSendExtended,
       sendAnalytics,
       t,
@@ -353,24 +354,24 @@ function SendModal<PT extends { fromAddress: Address }>({
             <TransferCheckTxModalContent
               data={transactionData as TransferTxData}
               fees={fees}
-              onSubmit={settings.passwordRequirement ? confirmPassword : handleSendExtended}
+              onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
             />
           ) : type === 'call-contract' ? (
             <CallContractCheckTxModalContent
               data={transactionData as CallContractTxData}
               fees={fees}
-              onSubmit={settings.passwordRequirement ? confirmPassword : handleSendExtended}
+              onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
             />
           ) : (
             <DeployContractCheckTxModalContent
               data={transactionData as DeployContractTxData}
               fees={fees}
-              onSubmit={settings.passwordRequirement ? confirmPassword : handleSendExtended}
+              onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
             />
           )}
         </ScrollableModalContent>
       )}
-      {step === 'password-check' && settings.passwordRequirement && (
+      {step === 'password-check' && passwordRequirement && (
         <ScrollableModalContent>
           <PasswordConfirmation
             text={t('Enter your password to send the transaction.')}

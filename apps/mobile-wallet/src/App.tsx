@@ -29,11 +29,11 @@ import {
   getStoredWalletMetadataWithoutThrowingError,
   validateAndRepareStoredWalletData
 } from '~/persistent-storage/wallet'
+import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import {
   makeSelectAddressesUnknownTokensIds,
-  selectAllAddressVerifiedFungibleTokenSymbols,
-  syncLatestTransactions
-} from '~/store/addressesSlice'
+  selectAllAddressVerifiedFungibleTokenSymbols
+} from '~/store/addresses/addressesSelectors'
 import { store } from '~/store/store'
 import { selectTransactionUnknownTokenIds } from '~/store/transactions/transactionSelectors'
 import { appLaunchedWithLastUsedWallet } from '~/store/wallet/walletActions'

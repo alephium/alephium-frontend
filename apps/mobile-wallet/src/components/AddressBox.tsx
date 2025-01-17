@@ -6,6 +6,7 @@ import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
 import Animated from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AddressColorSymbol from '~/components/AddressColorSymbol'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
@@ -14,12 +15,12 @@ import AssetLogo from '~/components/AssetLogo'
 import Badge from '~/components/Badge'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
+  makeSelectAddressesTokensWorth,
   selectAddressByHash
-} from '~/store/addressesSlice'
+} from '~/store/addresses/addressesSelectors'
 import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
@@ -61,6 +62,7 @@ const AddressBox = ({
   const handleLongPress = () => {
     vibrate(ImpactStyle.Heavy)
     dispatch(openModal({ name: 'AddressQuickActionsModal', props: { addressHash } }))
+    sendAnalytics({ event: 'Opened address quick actions modal' })
   }
 
   return (

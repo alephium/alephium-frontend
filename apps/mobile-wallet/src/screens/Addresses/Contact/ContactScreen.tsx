@@ -1,13 +1,13 @@
 import { StackScreenProps } from '@react-navigation/stack'
 import { colord } from 'colord'
-import { Clipboard, LucideIcon, Share2Icon, Upload } from 'lucide-react-native'
 import { useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { PressableProps, Share } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import { Share } from 'react-native'
+import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
+import ActionCardButton from '~/components/buttons/ActionCardButton'
 import Button from '~/components/buttons/Button'
 import StackHeader from '~/components/headers/StackHeader'
 import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
@@ -18,6 +18,7 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectContactById } from '~/store/addresses/addressesSelectors'
 import { makeSelectContactConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
 import { makeSelectContactPendingTransactions } from '~/store/pendingTransactionsSlice'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 import { themes } from '~/style/themes'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { stringToColour } from '~/utils/colors'
@@ -99,18 +100,20 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
               <ContactAddress truncate medium size={16} color="secondary" ellipsizeMode="middle">
                 {contact.address}
               </ContactAddress>
-              <ButtonsRow>
-                <ContactButton Icon={Upload} title={t('Send funds')} onPress={handleSendFundsPress} />
-                <ContactButton Icon={Clipboard} title={t('Copy address')} onPress={handleCopyAddressPress} />
-                <ContactButton Icon={Share2Icon} title={t('Share')} onPress={handleShareContactPress} />
-              </ButtonsRow>
             </CenteredSection>
+            <ButtonsRow>
+              <ActionCardButton iconProps={{ name: 'upload' }} title={t('Send funds')} onPress={handleSendFundsPress} />
+              <ActionCardButton
+                iconProps={{ name: 'clipboard' }}
+                title={t('Copy address')}
+                onPress={handleCopyAddressPress}
+              />
+              <ActionCardButton iconProps={{ name: 'share-2' }} title={t('Share')} onPress={handleShareContactPress} />
+            </ButtonsRow>
             <TransactionsHeaderRow>
-              <ScreenSection>
-                <AppText size={18} semiBold>
-                  {t('Transactions')}
-                </AppText>
-              </ScreenSection>
+              <AppText size={18} semiBold>
+                {t('Transactions')}
+              </AppText>
             </TransactionsHeaderRow>
           </>
         }
@@ -121,27 +124,8 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
 
 export default ContactScreen
 
-interface ContactButtonProps extends PressableProps {
-  title: string
-  Icon?: LucideIcon
-}
-
-const ContactButton = ({ Icon, title, children, ...props }: ContactButtonProps) => {
-  const theme = useTheme()
-
-  return (
-    <ButtonStyled {...props}>
-      {Icon && <Icon size={20} color={theme.global.accent} />}
-      <ButtonText medium color="accent">
-        {title}
-      </ButtonText>
-    </ButtonStyled>
-  )
-}
-
 const CenteredSection = styled(ScreenSection)`
   align-items: center;
-  margin-bottom: 25px;
 `
 
 const ContactIcon = styled.View<{ color?: string }>`
@@ -167,21 +151,7 @@ const ButtonsRow = styled.View`
   gap: 16px;
   justify-content: space-between;
   width: 100%;
-  margin-top: 40px;
-`
-
-const ButtonStyled = styled.Pressable`
-  padding: 12px 6px;
-  background-color: ${({ theme }) => theme.button.primary};
-  border-radius: 9px;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  flex: 1;
-`
-
-const ButtonText = styled(AppText)`
-  text-align: center;
+  margin: ${VERTICAL_GAP}px 0;
 `
 
 const TransactionsHeaderRow = styled.View`

@@ -78,11 +78,7 @@ const TransactionListItem = memo(
             )}
             {unknownTokens.length > 0 && (
               <Badge>
-                <AppText>
-                  {t(unknownTokens.length === 1 ? 'unknownTokensKey_one' : 'unknownTokensKey_other', {
-                    count: unknownTokens.length
-                  })}
-                </AppText>
+                <AppText>{t('unknownTokensKey', { count: unknownTokens.length })}</AppText>
               </Badge>
             )}
           </AmountColumn>

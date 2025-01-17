@@ -8,7 +8,7 @@ import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useAppSelector } from '~/hooks/redux'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
-import { selectDefaultAddress } from '~/store/addressesSlice'
+import { selectDefaultAddress } from '~/store/addresses/addressesSelectors'
 
 interface ScreenProps extends StackScreenProps<ReceiveNavigationParamList, 'AddressScreen'>, ScrollScreenProps {}
 

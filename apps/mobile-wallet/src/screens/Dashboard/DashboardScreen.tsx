@@ -30,8 +30,12 @@ import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
 import DashboardSecondaryButtons from '~/screens/Dashboard/DashboardSecondaryButtons'
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
-import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
-import { selectAddressIds, selectDefaultAddress, selectTotalBalance } from '~/store/addressesSlice'
+import {
+  makeSelectAddressesTokensWorth,
+  selectAddressIds,
+  selectDefaultAddress,
+  selectTotalBalance
+} from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
 
 interface ScreenProps

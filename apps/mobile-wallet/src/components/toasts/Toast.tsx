@@ -28,7 +28,7 @@ const Toast = ({
     },
     info: {
       Icon: InfoIcon,
-      color: theme.header.visible
+      color: theme.global.accent
     }
   }
 

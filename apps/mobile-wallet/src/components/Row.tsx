@@ -121,6 +121,10 @@ const LeftContent = styled.View<Pick<RowProps, 'isVertical'>>`
 `
 
 const RightContent = styled.View<Pick<RowProps, 'isVertical' | 'noMaxWidth'>>`
+  flex-direction: row;
+  align-items: center;
+
+  gap: 4px;
   ${({ isVertical }) =>
     isVertical
       ? css`

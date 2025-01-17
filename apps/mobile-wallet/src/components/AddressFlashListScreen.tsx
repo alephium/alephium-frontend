@@ -5,7 +5,7 @@ import { Token } from '@alephium/web3'
 import AddressBox from '~/components/AddressBox'
 import FlashListScreen, { FlashListScreenProps } from '~/components/layout/FlashListScreen'
 import { useAppSelector } from '~/hooks/redux'
-import { selectAllAddresses } from '~/store/addressesSlice'
+import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { Address } from '~/types/addresses'
 

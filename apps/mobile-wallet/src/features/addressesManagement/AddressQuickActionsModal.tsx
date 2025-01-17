@@ -6,7 +6,7 @@ import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
-import ActionCardButton from '~/components/buttons/ActionCardButton'
+import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { ScreenSection } from '~/components/layout/Screen'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
@@ -15,7 +15,8 @@ import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
+import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
+import { addressSettingsSaved } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { showToast, ToastDuration } from '~/utils/layout'
 
@@ -32,8 +33,8 @@ const AddressQuickActionsModal = withModal<AddressQuickActionsModalProps>(({ id,
     <BottomModal modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <ActionButtons>
-          <SetDefaultAddressButton addressHash={addressHash} onPress={handleClose} />
           <DeleteAddressButton addressHash={addressHash} onPress={handleClose} />
+          <SetDefaultAddressButton addressHash={addressHash} onPress={handleClose} />
         </ActionButtons>
       </ScreenSection>
     </BottomModal>
@@ -59,10 +60,10 @@ const DeleteAddressButton = ({ addressHash, onPress }: ActionButtonProps) => {
     else forgetAddress()
   }
 
-  return <ActionCardButton title={t('Forget')} onPress={handlePress} iconProps={{ name: 'trash-2' }} variant="alert" />
+  return <QuickActionButton title={t('Forget')} onPress={handlePress} iconProps={{ name: 'trash-2' }} variant="alert" />
 }
 
-const SetDefaultAddressButton = ({ addressHash, onPress }: ActionButtonProps) => {
+const SetDefaultAddressButton = ({ addressHash }: ActionButtonProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -96,13 +97,14 @@ const SetDefaultAddressButton = ({ addressHash, onPress }: ActionButtonProps) =>
   }
 
   return (
-    <ActionCardButton
+    <QuickActionButton
       title={t(isDefaultAddress ? 'Default address' : 'Set as default')}
       onPress={handleDefaultPress}
       iconProps={{ name: 'star' }}
       loading={defaultAddressIsChanging}
       color={address?.settings.isDefault ? address.settings.color : undefined}
       disabled={isDefaultAddress}
+      isLast
     />
   )
 }
@@ -110,6 +112,5 @@ const SetDefaultAddressButton = ({ addressHash, onPress }: ActionButtonProps) =>
 // TODO: DRY
 const ActionButtons = styled.View`
   margin: ${VERTICAL_GAP / 2}px 0;
-  flex-direction: row;
   gap: 10px;
 `

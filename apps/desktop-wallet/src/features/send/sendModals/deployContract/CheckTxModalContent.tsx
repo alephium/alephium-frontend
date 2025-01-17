@@ -10,11 +10,12 @@ import CheckModalContent from '@/features/send/CheckModalContent'
 import CheckWorthBox from '@/features/send/CheckWorthBox'
 import InfoRow from '@/features/send/InfoRow'
 import { CheckTxProps, DeployContractTxData } from '@/features/send/sendTypes'
+import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useAppSelector } from '@/hooks/redux'
 
 const DeployContractCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProps<DeployContractTxData>) => {
   const { t } = useTranslation()
-  const settings = useAppSelector((s) => s.settings)
+  const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
 
   return (
     <>
@@ -34,8 +35,8 @@ const DeployContractCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProp
         <CheckFeeLockTimeBox fee={fees} />
         <InfoBox label={t('Bytecode')} text={data.bytecode} wordBreak />
       </CheckModalContent>
-      <FooterButton onClick={onSubmit} variant={settings.passwordRequirement ? 'default' : 'valid'}>
-        {t(settings.passwordRequirement ? 'Confirm' : 'Send')}
+      <FooterButton onClick={onSubmit} variant={passwordRequirement ? 'default' : 'valid'}>
+        {t(passwordRequirement ? 'Confirm' : 'Send')}
       </FooterButton>
     </>
   )

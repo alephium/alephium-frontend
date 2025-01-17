@@ -17,6 +17,7 @@ import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { languageOptions } from '~/features/localization/languages'
 import { openModal } from '~/features/modals/modalActions'
+import SettingsAssetsSection from '~/features/settings/settingsScreen/SettingsAssetsSection'
 import SettingsSecuritySection from '~/features/settings/settingsScreen/SettingsSecuritySection'
 import {
   analyticsToggled,
@@ -42,6 +43,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const language = useAppSelector((s) => s.settings.language)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletName = useAppSelector((s) => s.wallet.name)
+
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
   const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
 
@@ -138,6 +140,8 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
         </ScreenSection>
 
         <SettingsSecuritySection />
+
+        <SettingsAssetsSection />
 
         <ScreenSection>
           <ScreenSectionTitle>{t('Experimental features')}</ScreenSectionTitle>

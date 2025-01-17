@@ -6,9 +6,9 @@ import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import Badge from '~/components/Badge'
-import { TokenDetailsModalCommonProps } from '~/features/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
+import { TokenDetailsModalCommonProps } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
+import { makeSelectAddressesKnownFungibleTokens } from '~/store/addresses/addressesSelectors'
 
 const TokenDetailsModalHeader = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
