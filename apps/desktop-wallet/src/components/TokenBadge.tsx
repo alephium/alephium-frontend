@@ -39,12 +39,12 @@ const TokenBadge = memo(({ tokenId, className, displaySign, withBackground, amou
       style={{
         backgroundColor: displaySign
           ? amount && amount > 0
-            ? colord(theme.global.valid).alpha(0.05).toHex()
-            : colord(theme.font.highlight).alpha(0.05).toHex()
-          : theme.bg.highlight
+            ? colord(theme.global.valid).alpha(0.02).toHex()
+            : colord(theme.font.highlight).alpha(0.02).toHex()
+          : colord(theme.bg.highlight).alpha(0.02).toHex()
       }}
     >
-      <AssetLogo tokenId={tokenId} size={20} />
+      <AssetLogo tokenId={tokenId} size={16} />
 
       {(props.showNftName || props.showAmount) && (
         <TokenBadgeText tokenId={tokenId} amount={amount} displaySign={displaySign} {...props} />

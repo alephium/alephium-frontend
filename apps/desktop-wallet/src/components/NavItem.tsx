@@ -35,7 +35,6 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
         aria-label={label}
         onClick={handleClick}
         Icon={Icon}
-        transparent={!isActive}
         isActive={isActive}
         data-tooltip-id="sidenav"
         data-tooltip-content={label}
@@ -51,10 +50,10 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
 const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   margin: 0;
   text-align: left;
-  opacity: ${({ isActive }) => (isActive ? 1 : 0.4)};
-  font-weight: ${({ isActive }) => (isActive ? 'var(--fontWeight-semiBold)' : 'var(--fontWeight-medium)')};
+  opacity: ${({ isActive }) => (isActive ? 1 : 0.5)};
+  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.tertiary : 'transparent')};
   border-radius: var(--radius-medium);
-  font-size: 14px;
+  font-size: 13px;
 
   @media (max-width: ${sidebarExpandThresholdPx}px) {
     gap: 0;

@@ -94,7 +94,7 @@ export const Tab = styled.div<{ isActive: boolean }>`
   border: 1px solid ${({ theme, isActive }) => (isActive ? theme.border.primary : 'transparent')};
   box-shadow: ${({ theme, isActive }) => (isActive ? theme.shadow.primary : undefined)};
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: var(--fontWeight-medium);
   border-radius: 100px;
   padding: 0 30px;

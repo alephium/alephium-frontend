@@ -16,7 +16,7 @@ export const lightTheme: DefaultTheme = {
   },
   font: {
     primary: '#000',
-    secondary: '#000026',
+    secondary: 'rgba(0, 0, 0, 0.6)',
     tertiary: 'rgba(0, 0, 0, 0.4)',
     contrastPrimary: 'rgba(255, 255, 255, 1)',
     contrastSecondary: 'rgba(255, 255, 255, 0.8)',

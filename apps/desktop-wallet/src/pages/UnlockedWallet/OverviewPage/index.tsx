@@ -17,7 +17,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
   return (
     <UnlockedWalletPage className={className}>
       <AnimatedBackground anchorPosition="top" opacity={theme.name === 'dark' ? 0.3 : 0.5} verticalOffset={-100} />
-      <WorthUnlockedWalletPanel bottom top>
+      <WorthUnlockedWalletPanel bottom>
         <WorthOverviewPanel>
           <LabeledWorthOverview />
           <Shortcuts>

@@ -87,7 +87,7 @@ const ReceiveButton = ({ addressHash, analyticsOrigin }: ShortcutButtonsGroupAdd
 
   return (
     <ShortcutButton role="primary" onClick={handleReceiveClick}>
-      <ArrowDownToLine />
+      <ArrowDownToLine size={22} strokeWidth={1.5} />
       <ButtonText>{t('Receive')}</ButtonText>
     </ShortcutButton>
   )
@@ -126,7 +126,7 @@ const SendButton = ({ addressHash, analyticsOrigin }: ShortcutButtonsGroupAddres
       onClick={isDisabled ? undefined : handleSendClick}
       style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
     >
-      <Send />
+      <Send size={22} strokeWidth={1.5} />
       <ButtonText>{t('Send')}</ButtonText>
     </ShortcutButton>
   )
@@ -147,25 +147,27 @@ const BuyButton = ({ addressHash, analyticsOrigin, highlight }: ShortcutButtonsG
 
   return (
     <ShortcutButton role="primary" onClick={handleBuyClick}>
-      <CreditCard />
+      <CreditCard size={22} strokeWidth={1.5} />
       <ButtonText>{t('Buy')}</ButtonText>
     </ShortcutButton>
   )
 }
 
 const ShortcutButton = styled.button`
+  display: flex;
   margin: 0;
   min-width: 120px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   border-radius: 20px;
-  height: 60px;
   background-color: ${({ theme }) => theme.bg.highlight};
   border: 1px solid ${({ theme }) => theme.border.primary};
   box-shadow: ${({ theme }) => theme.shadow.primary};
   color: ${({ theme }) => theme.font.primary};
-  gap: 20px;
+  gap: 5px;
+  font-weight: var(--fontWeight-medium);
+  padding: 8px;
   cursor: pointer;
 
   &:hover {
@@ -174,7 +176,6 @@ const ShortcutButton = styled.button`
 `
 
 const ButtonText = styled.div`
-  font-weight: var(--fontWeight-semiBold);
   text-align: center;
 `
 

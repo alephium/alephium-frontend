@@ -29,7 +29,6 @@ export default Table
 
 const TableWrapper = styled(motion.div)<Pick<TableProps, 'minWidth'>>`
   width: 100%;
-  overflow: auto;
 
   ${({ minWidth }) =>
     minWidth &&
@@ -45,7 +44,7 @@ export const TableCell = styled.div<TableCellProps>`
   justify-content: ${({ align }) => (align === 'right' ? 'flex-end' : align === 'center' ? 'center' : 'flex-start')};
   position: relative;
   border-bottom: ${({ theme, noBorder }) => `1px solid ${noBorder ? 'transparent' : theme.border.secondary}`};
-  padding: 16px 0;
+  padding: 10px 0;
   min-width: ${({ fixedWidth }) =>
     fixedWidth ? (typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth) : 'auto'};
   min-height: 60px;
@@ -66,14 +65,29 @@ export interface TableRowProps extends TableColumnsProps {
 }
 
 export const TableRow = styled(TableColumns)<TableRowProps>`
+  position: relative;
+  z-index: 0;
+
   min-height: var(--inputHeight);
 
-  ${({ onClick }) =>
+  ${({ onClick, theme }) =>
     onClick &&
     css`
       &:hover {
         cursor: pointer;
-        background-color: ${({ theme }) => theme.bg.hover};
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: -8px;
+          right: -8px;
+
+          border-radius: var(--radius-big);
+          background-color: ${theme.bg.hover};
+          z-index: -1;
+        }
       }
     `}
 
@@ -81,7 +95,6 @@ export const TableRow = styled(TableColumns)<TableRowProps>`
     blinking &&
     css`
       opacity: 0.5;
-
       background: linear-gradient(90deg, rgba(200, 200, 200, 0.4), rgba(200, 200, 200, 0.05));
       background-size: 400% 400%;
       animation: gradient 2s ease infinite;

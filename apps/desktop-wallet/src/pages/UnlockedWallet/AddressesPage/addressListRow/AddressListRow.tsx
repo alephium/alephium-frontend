@@ -80,14 +80,10 @@ const Cell = styled.div`
 const GridRow = styled.div`
   display: grid;
   grid-template-columns: 40px 1fr 1fr 1fr 1fr;
-
-  &:not(:last-child) {
-    ${Cell} {
-      &:not(:first-child) {
-        border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-      }
-    }
-  }
+  margin: 5px 0;
+  padding: 0 15px;
+  background-color: ${({ theme }) => theme.bg.tertiary};
+  border-radius: var(--radius-big);
 
   &:hover {
     cursor: pointer;

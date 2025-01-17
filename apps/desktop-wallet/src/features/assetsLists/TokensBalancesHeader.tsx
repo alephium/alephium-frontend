@@ -7,7 +7,7 @@ const TokensBalancesHeader = () => {
 
   return (
     <TableHeader>
-      <TableCell fixedWidth={50} noBorder />
+      <TableCell fixedWidth={50} />
       <TableCell>
         <span>{t('Token')}</span>
       </TableCell>
