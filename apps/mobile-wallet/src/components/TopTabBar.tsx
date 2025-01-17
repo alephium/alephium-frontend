@@ -1,5 +1,5 @@
-import { ReactNode } from 'react'
-import { PressableProps } from 'react-native'
+import { ReactNode, useState } from 'react'
+import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
 import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
 import Reanimated, {
   AnimatedRef,
@@ -12,7 +12,10 @@ import Reanimated, {
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
+
+type TabsLayout = Record<number, LayoutRectangle>
 
 interface TopTabBarProps {
   tabLabels: string[]
@@ -22,24 +25,69 @@ interface TopTabBarProps {
   customContent?: ReactNode
 }
 
+const indicatorXPadding = DEFAULT_MARGIN
+
 const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customContent }: TopTabBarProps) => {
+  const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
+
   const position = useDerivedValue(
     () => pagerScrollEvent.value.position + pagerScrollEvent.value.offset,
     [pagerScrollEvent.value]
   )
+
+  const indicatorStyle = useAnimatedStyle(() => {
+    const positionsArray = [...Array(tabLabels.length).keys()]
+    const tabLayoutValues = Object.values(tabLayouts)
+    if (tabLayoutValues.length !== positionsArray.length) return {}
+
+    const x = interpolate(
+      position.value,
+      positionsArray,
+      tabLayoutValues.map((l) => l.x)
+    )
+
+    const width = interpolate(
+      position.value,
+      positionsArray,
+      tabLayoutValues.map((l) => l.width)
+    )
+
+    return {
+      left: x - indicatorXPadding,
+      width: width + 2 * indicatorXPadding
+    }
+  }, [tabLayouts, tabLabels.length])
 
   const handleOnTabPress = (tabIndex: number) => {
     vibrate(ImpactStyle.Medium)
     onTabPress(tabIndex)
   }
 
+  const handleTabLayoutEvent = (tabIndex: number, e: LayoutChangeEvent) => {
+    e.persist()
+    setTabLayouts((prevLayouts) => ({
+      ...prevLayouts,
+      [tabIndex]: e.nativeEvent.layout
+    }))
+  }
+
   return (
     <TopTabBarStyled>
       {customContent}
       <HeaderContainer ref={tabBarRef}>
-        {tabLabels.map((label, i) => (
-          <TabBarItem key={label} index={i} label={label} position={position} onPress={() => handleOnTabPress(i)} />
-        ))}
+        <TabsContainer>
+          <Indicator style={indicatorStyle} />
+          {tabLabels.map((label, i) => (
+            <TabBarItem
+              key={label}
+              index={i}
+              label={label}
+              position={position}
+              onPress={() => handleOnTabPress(i)}
+              onLayout={(e) => handleTabLayoutEvent(i, e)}
+            />
+          ))}
+        </TabsContainer>
       </HeaderContainer>
     </TopTabBarStyled>
   )
@@ -59,14 +107,13 @@ const TabBarItem = ({ label, index, position, ...props }: TabBarItemProps) => {
   const animatedTextStyle = useAnimatedStyle(() => {
     const diff = position.value - index
     return {
-      color: interpolateColor(diff, [-1, 0, 1], [theme.font.tertiary, theme.font.primary, theme.font.tertiary]),
-      transform: [{ scale: interpolate(diff, [-1, 0, 1], [1, 1.05, 1]) }]
+      color: interpolateColor(diff, [-1, 0, 1], [theme.font.tertiary, theme.font.primary, theme.font.tertiary])
     }
   })
 
   return (
     <TabBarItemStyled {...props}>
-      <AnimatedAppText style={[animatedTextStyle, { transformOrigin: '0% 50%' }]} size={19} semiBold>
+      <AnimatedAppText style={animatedTextStyle} size={16} semiBold>
         {label}
       </AnimatedAppText>
     </TabBarItemStyled>
@@ -83,15 +130,28 @@ const TopTabBarStyled = styled.View`
 
 const HeaderContainer = styled(Reanimated.View)`
   flex-direction: row;
-  gap: 30px;
+`
+
+const TabsContainer = styled.View`
+  padding: 2px ${indicatorXPadding + 2}px;
+  height: 40px;
+  flex-direction: row;
+  gap: 25px;
   align-items: center;
   justify-content: flex-start;
-  height: 40px;
+  border-radius: 100px;
+  background-color: ${({ theme }) => theme.bg.secondary};
 `
 
 const TabBarItemStyled = styled.Pressable`
   height: 100%;
   justify-content: center;
   align-items: center;
-  transform-origin: left;
+`
+
+const Indicator = styled(Reanimated.View)`
+  position: absolute;
+  height: 100%;
+  border-radius: 100px;
+  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.back1 : theme.bg.highlight)};
 `
