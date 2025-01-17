@@ -1,5 +1,5 @@
 import { isEqual } from 'lodash'
-import { MoreVertical, SearchIcon } from 'lucide-react'
+import { SearchIcon } from 'lucide-react'
 import {
   KeyboardEvent as ReactKeyboardEvent,
   OptionHTMLAttributes,
@@ -17,6 +17,7 @@ import CheckMark from '@/components/CheckMark'
 import { inputDefaultStyle, InputHeight, InputProps, inputStyling, SelectLabel } from '@/components/Inputs'
 import Input from '@/components/Inputs/Input'
 import InputArea from '@/components/Inputs/InputArea'
+import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
 import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
 import Popup from '@/components/Popup'
 import Truncate from '@/components/Truncate'
@@ -87,6 +88,7 @@ function Select<T extends OptionValue>({
   allowCustomValue
 }: SelectProps<T>) {
   const selectedValueRef = useRef<HTMLDivElement>(null)
+  const theme = useTheme()
 
   const [canBeAnimated, setCanBeAnimated] = useState(false)
   const [value, setValue] = useState(controlledValue)
@@ -184,11 +186,7 @@ function Select<T extends OptionValue>({
           </CustomComponentContainer>
         ) : (
           <>
-            {multipleAvailableOptions && !simpleMode && (
-              <MoreIcon>
-                <MoreVertical size={16} />
-              </MoreIcon>
-            )}
+            {multipleAvailableOptions && !simpleMode && <SelectMoreIcon />}
             <SelectContainer
               tabIndex={-1}
               className={className}

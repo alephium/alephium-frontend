@@ -7,6 +7,7 @@ import CheckMark from '@/components/CheckMark'
 import { inputDefaultStyle, SelectLabel } from '@/components/Inputs'
 import InputArea from '@/components/Inputs/InputArea'
 import { OptionItem, OptionSelect } from '@/components/Inputs/Select'
+import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
 import Popup from '@/components/Popup'
 import Truncate from '@/components/Truncate'
 import ModalPortal from '@/modals/ModalPortal'
@@ -49,6 +50,7 @@ function MultiSelect<T>({ selectedOptions, label, renderSelectedValue, className
         <SelectedValue>
           <Truncate>{renderSelectedValue()}</Truncate>
         </SelectedValue>
+        <SelectMoreIcon />
       </MultiSelectInputArea>
       <ModalPortal>
         {isOptionsModalOpen && (

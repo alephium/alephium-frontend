@@ -271,6 +271,7 @@ const TabTitlesColumnHeader = styled(ColumnHeader)`
 
 const TabTitleButton = styled(Button)`
   border-radius: var(--radius-medium);
+  font-size: 14px;
   margin: 0;
 
   &:first-child {
