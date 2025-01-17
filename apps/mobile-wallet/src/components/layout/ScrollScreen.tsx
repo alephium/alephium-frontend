@@ -143,11 +143,13 @@ const ScrollScreen = ({
         </ScrollViewContainer>
       </KeyboardAvoidingView>
       {bottomButtonsRender && (
-        <BottomButtonsContainer>
-          <BottomButtons float bottomInset fullWidth onHeightChange={handleBottomButtonsHeightChange}>
-            {bottomButtonsRender()}
-          </BottomButtons>
-        </BottomButtonsContainer>
+        <ColoredBackground>
+          <BottomButtonsInnerContainer>
+            <BottomButtons float bottomInset fullWidth onHeightChange={handleBottomButtonsHeightChange}>
+              {bottomButtonsRender()}
+            </BottomButtons>
+          </BottomButtonsInnerContainer>
+        </ColoredBackground>
       )}
       {customBottomRender && (
         <View>
@@ -160,11 +162,15 @@ const ScrollScreen = ({
 
 export default ScrollScreen
 
-const ScrollViewContainer = styled.View`
+const ColoredBackground = styled.View`
+  background-color: ${({ theme }) => theme.bg.back2};
+`
+
+const ScrollViewContainer = styled(ColoredBackground)`
   flex: 1;
 `
 
-const BottomButtonsContainer = styled.View`
+const BottomButtonsInnerContainer = styled.View`
   margin: ${Platform.OS === 'ios' ? 0 : undefined} ${DEFAULT_MARGIN}px;
 `
 
