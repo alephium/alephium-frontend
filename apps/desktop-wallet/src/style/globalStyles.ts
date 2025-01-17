@@ -31,7 +31,7 @@ export const GlobalStyle = createGlobalStyle`
     --spacing-8: 40px;
 
     --radius-tiny: 4px;
-    --radius-small: 6px;
+    --radius-small: 7px;
     --radius-medium: 9px;
     --radius-big: 12px;
     --radius-huge: 22px;
@@ -42,7 +42,7 @@ export const GlobalStyle = createGlobalStyle`
     --fontWeight-semiBold: 600;
     --fontWeight-bold: 700;
 
-    --inputHeight: 40px;
+    --inputHeight: 38px;
     --tableCellHeight: 46px;
     --toggleWidth: 52px;
   }

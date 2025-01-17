@@ -60,7 +60,7 @@ export const inputDefaultStyle = (
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 40px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
   font-weight: var(--fontWeight-medium);
-  font-size: ${largeText ? '15px' : '14px'};
+  font-size: ${largeText ? '14px' : '13px'};
   text-align: left;
   font-family: inherit;
   background-color: ${({ theme }) => theme.bg.primary};

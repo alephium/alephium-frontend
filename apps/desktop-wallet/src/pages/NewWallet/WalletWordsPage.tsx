@@ -143,7 +143,7 @@ const MnemonicWordContainer = styled.div`
 `
 
 const MnemonicNumber = styled.div`
-  font-size: 14px;
+  font-size: 13px;
   color: ${({ theme }) => theme.font.contrastSecondary};
   padding: 8px 6px;
 `
@@ -151,5 +151,5 @@ const MnemonicNumber = styled.div`
 const MnemonicWord = styled.div`
   flex: 1;
   color: ${({ theme }) => theme.font.contrastPrimary};
-  font-size: 14px;
+  font-size: 13px;
 `

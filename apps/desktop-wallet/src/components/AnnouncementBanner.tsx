@@ -156,7 +156,7 @@ const Texts = styled.div`
 `
 
 const Title = styled.div`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: var(--fontWeight-medium);
   color: ${({ theme }) => theme.font.primary};
 `

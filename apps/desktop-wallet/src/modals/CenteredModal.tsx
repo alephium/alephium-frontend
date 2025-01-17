@@ -229,7 +229,7 @@ const ModalFooterButtonStyled = styled(Button)`
 
 const ModalSubtitle = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
-  font-size: 14px;
+  font-size: 13px;
   margin-top: var(--spacing-1);
 `
 
@@ -248,6 +248,6 @@ const IconContainer = styled.div`
 `
 
 const ModalLoadingText = styled.div`
-  font-size: 14px;
+  font-size: 13px;
   margin-top: var(--spacing-3);
 `

@@ -1,4 +1,5 @@
 import { maxBy } from 'lodash'
+import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -106,7 +107,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
           >
             {t('Unlock')}
           </ButtonStyled>
-          <ButtonStyled onClick={onNewWalletLinkClick} role="secondary" transparent short>
+          <ButtonStyled onClick={onNewWalletLinkClick} Icon={Plus} role="secondary" transparent short>
             {t('Import or create a wallet')}
           </ButtonStyled>
           <ConnectWithLedgerButton />
@@ -128,7 +129,7 @@ const SectionStyled = styled(Section)`
 
 const ButtonsSection = styled(SectionStyled)`
   margin-top: 30px;
-  gap: 20px;
+  gap: 10px;
 `
 
 const ButtonStyled = styled(Button)`

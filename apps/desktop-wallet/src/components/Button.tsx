@@ -18,6 +18,7 @@ export interface ButtonProps extends HTMLMotionProps<'button'> {
   tall?: boolean
   tiny?: boolean
   wide?: boolean
+  justifyContent?: 'center' | 'flex-start'
   Icon?: LucideIcon
   iconColor?: string
   iconSize?: number
@@ -37,6 +38,7 @@ const Button = ({
   isHighlighted,
   loading,
   animate,
+  justifyContent,
   ...props
 }: ButtonProps) => {
   const [canBeAnimated, setCanBeAnimated] = useState(props.circle ? true : false)
@@ -79,7 +81,7 @@ const Button = ({
               <Icon size={!children ? 16 : iconSize} />
             </ButtonIcon>
           )}
-          <ButtonContent>{children as ReactNode}</ButtonContent>
+          {children as ReactNode}
         </>
       )}
     </motion.button>
@@ -222,22 +224,23 @@ export default styled(Button)`
 
   display: flex;
   align-items: center;
-  justify-content: ${({ Icon }) => (Icon ? 'center' : 'flex-start')};
+  justify-content: ${({ Icon, justifyContent, children }) =>
+    justifyContent ?? (!Icon || !children ? 'center' : 'flex-start')};
   height: ${({ circle, short, tall, tiny }) =>
     tiny ? '28px' : short ? '34px' : circle ? '34px' : tall ? '46px' : 'var(--inputHeight)'};
   width: ${({ circle, short, wide, tiny }) =>
     tiny ? '28px' : circle ? '34px' : short && !wide ? 'auto' : wide ? '100%' : '80%'};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
   border-radius: 100px;
-  font-weight: ${({ role, variant }) =>
-    role === 'secondary' || variant === 'faded' ? 'var(--fontWeight-medium)' : 'var(--fontWeight-medium)'};
-  font-size: ${({ short }) => (short ? 13 : 14)}px;
+  font-weight: ${({ tall }) => (tall ? 'var(--fontWeight-semiBold)' : 'var(--fontWeight-medium)')};
+  font-size: ${({ tall }) => (tall ? 14 : 13)}px;
   font-family: inherit;
   margin: ${({ circle }) => (circle ? '0' : '10px 0')};
   padding: ${({ circle, Icon }) => (circle ? 'var(--spacing-2)' : Icon ? '0 28px 0 14px' : '0 14px')};
   min-width: ${({ circle, tiny }) => (tiny ? '28px' : circle ? '34px' : '60px')};
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};
+  backdrop-filter: saturate(180%) blur(20px);
 
   &:disabled {
     opacity: 0.5;
@@ -273,8 +276,4 @@ export default styled(Button)`
 
 const ButtonIcon = styled.div`
   display: flex;
-`
-
-const ButtonContent = styled.div`
-  flex: 1;
 `

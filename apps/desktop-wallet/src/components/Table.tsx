@@ -141,7 +141,7 @@ const TableHeaderRow = styled(TableRow)`
 `
 
 const TableTitle = styled.div`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: var(--fontWeight-semiBold);
 `
 

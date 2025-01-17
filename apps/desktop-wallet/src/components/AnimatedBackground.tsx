@@ -17,7 +17,7 @@ interface AnimatedBackgroundProps {
 type AnchorPosition = 'top' | 'bottom'
 
 const DARK_COLORS = ['#5a28cf', '#8a58ff', '#fb89ab', '#eb6cff', '#c94aff']
-const LIGHT_COLORS = ['#c689ff', '#ffd4b6', '#ffaaaa', '#86c8ff', '#ff9bc8']
+const LIGHT_COLORS = ['#ad6eff', '#ffb47f', '#ffaaaa', '#ffc089', '#ff9bc8']
 
 const AnimatedBackground = ({
   height = '100%',
@@ -125,11 +125,11 @@ const AnimatedBackground = ({
   )
 
   const circlesDimensions = [
-    { width: 1200, height: 190 },
-    { width: 600, height: 290 },
-    { width: 750, height: 220 },
-    { width: 950, height: 110 },
-    { width: 820, height: 110 }
+    { width: 600, height: 170 },
+    { width: 800, height: 190 },
+    { width: 750, height: 170 },
+    { width: 1050, height: 140 },
+    { width: 920, height: 210 }
   ]
 
   return (
@@ -264,4 +264,5 @@ const AnimatedContainer = styled.div`
 const Circle = styled(motion.div)`
   position: absolute;
   border-radius: 50%;
+  mix-blend-mode: color-burn;
 `

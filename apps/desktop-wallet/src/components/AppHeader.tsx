@@ -148,7 +148,7 @@ const AppHeaderContainer = styled.div`
   align-items: center;
 
   height: ${appHeaderHeightPx}px;
-  padding: 0 var(--spacing-2) 0 40px;
+  padding: 0 var(--spacing-3) 0 40px;
   gap: var(--spacing-1);
   -webkit-app-region: drag;
   -webkit-app-region: drag;

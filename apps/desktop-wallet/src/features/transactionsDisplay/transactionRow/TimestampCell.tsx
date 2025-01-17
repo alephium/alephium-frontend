@@ -55,7 +55,7 @@ const LabelTime = styled.div`
 
 const DirectionLabel = styled.span`
   color: ${({ theme }) => theme.font.primary};
-  font-size: 14px;
+  font-size: 13px;
 `
 
 const AssetTime = styled.div`

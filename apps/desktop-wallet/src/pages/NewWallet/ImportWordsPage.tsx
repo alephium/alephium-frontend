@@ -176,7 +176,7 @@ const TextAreaContainer = styled.div`
 const TextArea = styled.textarea`
   width: 100%;
   padding: 10px;
-  font-size: 14px;
+  font-size: 13px;
   border-radius: var(--radius-medium);
   border: 1px solid ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.primary};

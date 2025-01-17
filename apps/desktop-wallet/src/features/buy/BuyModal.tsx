@@ -93,6 +93,6 @@ const ActionLinkStyled = styled(ActionLink)`
 `
 
 const TextContainer = styled.span`
-  font-size: 14px;
+  font-size: 13px;
   text-align: center;
 `

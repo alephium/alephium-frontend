@@ -16,7 +16,7 @@ const SnackbarBox = ({ children, ...props }: SnackbarBoxProps) => (
 )
 
 const SnackbarBoxContent = styled(motion.div)`
-  font-size: 14px;
+  font-size: 13px;
   color: ${({ theme }) => theme.font.primary};
   word-wrap: break-word;
   overflow-y: auto;

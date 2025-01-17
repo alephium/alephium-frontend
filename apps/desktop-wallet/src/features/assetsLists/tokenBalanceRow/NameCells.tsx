@@ -41,7 +41,7 @@ export const NSTNameCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
 }
 
 const TokenName = styled(Truncate)`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: var(--fontWeight-semiBold);
   padding-right: 10px;
 `

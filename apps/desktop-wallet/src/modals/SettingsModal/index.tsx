@@ -88,6 +88,7 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
                     transparent={!isActive}
                     onClick={() => setCurrentTab(tab)}
                     style={{ opacity: !isActive ? 0.5 : 1 }}
+                    justifyContent="flex-start"
                     wide
                   >
                     {tab.label}
@@ -205,7 +206,7 @@ const ColumnTitle = styled.div`
 
 const ColumnContent = styled.div`
   padding: 20px;
-  padding-top: 70px;
+  padding-top: 60px;
 
   h2 {
     width: 100%;
@@ -252,7 +253,7 @@ const TabTitlesColumnContent = styled(ColumnContent)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 70px 15px 10px 15px;
+  padding: 60px 15px 10px 15px;
   height: 100%;
 `
 
@@ -269,7 +270,6 @@ const TabTitlesColumnHeader = styled(ColumnHeader)`
 `
 
 const TabTitleButton = styled(Button)`
-  text-align: left;
   border-radius: var(--radius-medium);
   margin: 0;
 

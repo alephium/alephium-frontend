@@ -57,17 +57,20 @@ const App = memo(() => {
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <GlobalStyle />
-
       <SplashScreen />
-
       <WalletConnectContextProvider>
         <AppContainer>
           <CenteredSection>
-            {!isWalletUnlocked && <AnimatedBackground opacity={theme === 'dark' ? 0.4 : 0.6} />}
+            {!isWalletUnlocked && (
+              <AnimatedBackground
+                anchorPosition="bottom"
+                opacity={theme === 'dark' ? 0.4 : 0.6}
+                verticalOffset={-200}
+              />
+            )}
             <Router />
           </CenteredSection>
         </AppContainer>
-
         <AppModals />
       </WalletConnectContextProvider>
       <SnackbarManager />

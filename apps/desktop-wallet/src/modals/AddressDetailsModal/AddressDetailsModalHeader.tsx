@@ -84,5 +84,5 @@ const Title = styled.div`
 const TitleAddressHash = styled(HashEllipsed)`
   max-width: 100px;
   color: ${({ theme }) => theme.font.tertiary};
-  font-size: 14px;
+  font-size: 13px;
 `

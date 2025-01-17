@@ -119,7 +119,7 @@ const AssetAmountRowStyled = styled.div`
 `
 
 const TokenName = styled.span`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: var(--fontWeight-medium);
 `
 

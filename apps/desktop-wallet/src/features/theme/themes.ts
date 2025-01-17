@@ -11,7 +11,7 @@ export const lightTheme: DefaultTheme = {
     background1: '#fff',
     background2: '#fafafa',
     hover: 'rgba(0, 0, 0, 0.01)',
-    highlight: 'rgba(0, 0, 0, 0.05)',
+    highlight: '#ffffff',
     accent: colord('#0f22e3').alpha(0.05).toHex()
   },
   font: {
@@ -23,8 +23,8 @@ export const lightTheme: DefaultTheme = {
     highlight: '#ef6c5c'
   },
   border: {
-    primary: 'rgba(0, 0, 0, 0.09)',
-    secondary: 'rgba(0, 0, 0, 0.06)'
+    primary: 'rgba(0, 0, 0, 0.07)',
+    secondary: 'rgba(0, 0, 0, 0.05)'
   },
   shadow: {
     primary: '0 1px 1px rgba(0, 0, 0, 0.03)',
@@ -33,7 +33,7 @@ export const lightTheme: DefaultTheme = {
   },
   global: {
     accent: '#0f22e3',
-    complementary: '#b07dcb',
+    complementary: '#f174b3',
     alert: '#e52437',
     valid: '#189b3c',
     highlight: '#e5ae0e',
@@ -48,8 +48,8 @@ export const darkTheme: DefaultTheme = {
     secondary: 'rgba(255, 255, 255, 0.03)',
     tertiary: 'rgba(255, 255, 255, 0.02)',
     contrast: 'rgba(255, 255, 255, 1)',
-    background1: '#0c0c0d',
-    background2: '#0a0a0a',
+    background1: '#121214',
+    background2: '#0d0d0f',
     hover: 'rgba(255, 255, 255, 0.015)',
     highlight: 'rgba(255, 255, 255, 0.06)',
     accent: colord('#3b62f0').alpha(0.1).toHex()

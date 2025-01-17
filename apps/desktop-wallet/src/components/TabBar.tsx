@@ -33,30 +33,32 @@ const TabBar = <T extends string>({
 
   return (
     <TabBarStyled className={className} role="tablist" aria-label={t('Tab navigation')}>
-      {items.map((item) => {
-        const isActive = activeTab.value === item.value
+      <TabsContainer>
+        {items.map((item) => {
+          const isActive = activeTab.value === item.value
 
-        return (
-          <TabComponent
-            key={item.value}
-            onClick={() => onTabChange(item)}
-            onKeyDown={() => onTabChange(item)}
-            role="tab"
-            tabIndex={0}
-            aria-selected={isActive}
-            isActive={isActive}
-          >
-            <TabLabel isActive={isActive}>
-              {item.Icon && (
-                <TabIcon>
-                  <item.Icon />
-                </TabIcon>
-              )}
-              {item.label}
-            </TabLabel>
-          </TabComponent>
-        )
-      })}
+          return (
+            <TabComponent
+              key={item.value}
+              onClick={() => onTabChange(item)}
+              onKeyDown={() => onTabChange(item)}
+              role="tab"
+              tabIndex={0}
+              aria-selected={isActive}
+              isActive={isActive}
+            >
+              <TabLabel isActive={isActive}>
+                {item.Icon && (
+                  <TabIcon>
+                    <item.Icon />
+                  </TabIcon>
+                )}
+                {item.label}
+              </TabLabel>
+            </TabComponent>
+          )
+        })}
+      </TabsContainer>
       {linkText && onLinkClick && (
         <ActionLinkStyled onClick={onLinkClick} Icon={ChevronRight}>
           {linkText}
@@ -71,7 +73,15 @@ export default TabBar
 const TabBarStyled = styled.div`
   display: flex;
   height: 46px;
+  align-items: center;
+`
+
+const TabsContainer = styled.div`
+  display: flex;
+  background-color: ${({ theme }) => theme.bg.tertiary};
   gap: 10px;
+  padding: 4px;
+  border-radius: 100px;
 `
 
 export const Tab = styled.div<{ isActive: boolean }>`
@@ -80,7 +90,8 @@ export const Tab = styled.div<{ isActive: boolean }>`
   text-align: center;
   justify-content: center;
   align-items: center;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.contrast : theme.bg.primary)};
+  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.highlight : 'transparent')};
+  border: 1px solid ${({ theme, isActive }) => (isActive ? theme.border.primary : 'transparent')};
   cursor: pointer;
   font-size: 15px;
   font-weight: var(--fontWeight-medium);
@@ -91,15 +102,15 @@ export const Tab = styled.div<{ isActive: boolean }>`
   ${({ isActive, theme }) =>
     isActive
       ? css`
-          color: ${theme.font.contrastPrimary};
+          color: ${theme.font.primary};
         `
       : css`
           color: ${theme.font.tertiary};
         `}
 
   &:hover {
-    color: ${({ isActive, theme }) => (isActive ? theme.font.contrastPrimary : theme.font.primary)};
-    background-color: ${({ isActive, theme }) => (isActive ? theme.font.secondary : theme.bg.highlight)};
+    color: ${({ isActive, theme }) => (isActive ? theme.font.primary : theme.font.primary)};
+    background-color: ${({ isActive, theme }) => (isActive ? theme.bg.primary : theme.bg.primary)};
   }
 `
 

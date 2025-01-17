@@ -59,7 +59,7 @@ const KeyContainer = styled.div`
 `
 
 const Label = styled.label`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: var(--fontWeight-semiBold);
 `
 

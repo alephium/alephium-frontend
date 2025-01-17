@@ -55,5 +55,5 @@ const PageTitle = styled.h1`
 const PageSubtitle = styled.div`
   max-width: 400px;
   color: ${({ theme }) => theme.font.tertiary};
-  font-size: 14px;
+  font-size: 13px;
 `

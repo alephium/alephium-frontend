@@ -171,7 +171,7 @@ const WalletName = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
-  font-size: 14px;
+  font-size: 13px;
 `
 
 const ActionButtons = styled.div`
