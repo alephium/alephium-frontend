@@ -1,3 +1,4 @@
+import { colord } from 'colord'
 import { animate, motion, MotionValue, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
@@ -6,6 +7,7 @@ interface AnimatedBackgroundProps {
   height?: number | string
   width?: number | string
   className?: string
+  shade?: 'dark' | 'light' | string
   anchorPosition?: AnchorPosition
   reactToPointer?: boolean
   verticalOffset?: number
@@ -13,20 +15,22 @@ interface AnimatedBackgroundProps {
 
 type AnchorPosition = 'top' | 'bottom'
 
+const DARK_COLORS = ['#120096', '#ab2cdd', '#ff6969', '#8f2cdb', '#1600da']
+const LIGHT_COLORS = ['#c689ff', '#ffd4b6', '#ffaaaa', '#ffb7ff', '#ff9bc8']
+
 const AnimatedBackground = ({
   height = '100%',
   width = '100%',
   className,
+  shade,
   reactToPointer = true,
   anchorPosition = 'top',
   verticalOffset = 0
 }: AnimatedBackgroundProps) => {
   const theme = useTheme()
   const isDarkTheme = theme.name === 'dark'
-
+  const backgroundColors = getBackgroundColors(shade, isDarkTheme)
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
-
-  // Motion values for mouse position
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
 
@@ -118,7 +122,6 @@ const AnimatedBackground = ({
     anchorPosition
   )
 
-  // Original hardcoded dimensions
   const circlesDimensions = [
     { width: 1600, height: 290 },
     { width: 800, height: 380 },
@@ -143,13 +146,6 @@ const AnimatedBackground = ({
       >
         {circlesDimensions.map((dim, index) => {
           const circleAnimation = [circle1, circle2, circle3, circle4, circle5][index]
-          const backgroundColors = [
-            isDarkTheme ? '#120096' : '#c689ff',
-            isDarkTheme ? '#ab2cdd' : '#ffd4b6',
-            isDarkTheme ? '#ff6969' : '#ffaaaa',
-            isDarkTheme ? '#8f2cdb' : '#ffb7ff',
-            isDarkTheme ? '#1600da' : '#ff9bc8'
-          ]
           return (
             <Circle
               key={index}
@@ -210,14 +206,11 @@ const useCircleAnimation = (
     stiffness: 90,
     damping: 100
   })
-
   const ySpring = useSpring(useTransform(mouseY, [0, windowSize.height * 2], [-offset, offset]), {
     stiffness: 90,
     damping: 100
   })
 
-  // Combine the circle's own "wobble" with pointer movement
-  // Combine animations with pointer movement
   const xTotal = useTransform([xAnim, xSpring], (inputs) => {
     const [xA, xP] = inputs as [number, number]
     return xA + xP
@@ -236,6 +229,17 @@ const useCircleAnimation = (
   )
 
   return { x, y: yWithOffset }
+}
+
+const getBackgroundColors = (shade: AnimatedBackgroundProps['shade'], isDarkTheme: boolean): string[] => {
+  if (shade === 'dark') return DARK_COLORS
+  if (shade === 'light') return LIGHT_COLORS
+  if (typeof shade === 'string') {
+    const base = colord(shade)
+    const offsets = [-40, -20, 0, 20, 40]
+    return offsets.map((offset) => base.rotate(offset).toHex())
+  }
+  return isDarkTheme ? DARK_COLORS : LIGHT_COLORS
 }
 
 const SvgFilters = () => (
