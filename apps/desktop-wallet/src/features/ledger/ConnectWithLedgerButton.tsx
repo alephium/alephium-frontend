@@ -14,7 +14,7 @@ const ConnectWithLedgerButton = () => {
   }
 
   return (
-    <Button onClick={handleLedgerConnectClick} role="secondary" transparent short>
+    <Button onClick={handleLedgerConnectClick} role="secondary" short>
       <LedgerLogoStyled style={{ width: '15px' }} />
       {t('Connect with Ledger')}
     </Button>

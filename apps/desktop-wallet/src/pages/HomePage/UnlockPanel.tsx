@@ -71,7 +71,12 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
 
   return (
     <>
-      <FloatingPanel verticalAlign="center" horizontalAlign="center" transparentBg>
+      <FloatingPanel
+        verticalAlign="center"
+        horizontalAlign="center"
+        transparentBg
+        style={{ transform: 'translateY(-10px)' }}
+      >
         <BrandContainer>
           <AlephiumLogoContainer>
             <AlephiumLogo contrasted />
@@ -98,7 +103,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
             heightSize="big"
           />
         </SectionStyled>
-        <ButtonsSection>
+        <MainAction>
           <ButtonStyled
             onClick={handleUnlock}
             submit
@@ -107,12 +112,14 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
           >
             {t('Unlock')}
           </ButtonStyled>
-          <ButtonStyled onClick={onNewWalletLinkClick} Icon={Plus} role="secondary" transparent short>
-            {t('Import or create a wallet')}
-          </ButtonStyled>
-          <ConnectWithLedgerButton />
-        </ButtonsSection>
+        </MainAction>
       </FloatingPanel>
+      <BottomActions>
+        <ButtonStyled onClick={onNewWalletLinkClick} Icon={Plus} role="secondary" short>
+          {t('Import or create a wallet')}
+        </ButtonStyled>
+        <ConnectWithLedgerButton />
+      </BottomActions>
       <WalletPassphraseStyled
         onPassphraseConfirmed={setPassphrase}
         setIsPassphraseConfirmed={setIsPassphraseConfirmed}
@@ -127,8 +134,18 @@ const SectionStyled = styled(Section)`
   min-width: 328px;
 `
 
-const ButtonsSection = styled(SectionStyled)`
+const MainAction = styled(SectionStyled)`
   margin-top: 30px;
+  gap: 10px;
+`
+
+const BottomActions = styled.div`
+  position: absolute;
+  bottom: 20px;
+  right: 0;
+  left: 0;
+  justify-content: center;
+  display: flex;
   gap: 10px;
 `
 

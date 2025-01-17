@@ -66,7 +66,6 @@ const Input = ({
           </InputLabel>
         )}
         <InputBase
-          {...props}
           style={inputFieldStyle}
           label={label}
           value={value}
@@ -79,6 +78,7 @@ const Input = ({
           heightSize={heightSize}
           contrast={contrast}
           largeText={largeText}
+          {...props}
         />
         {!!Icon && !onIconPress && !isValid && (
           <InputIconContainer>

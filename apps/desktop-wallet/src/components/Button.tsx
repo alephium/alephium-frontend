@@ -240,7 +240,8 @@ export default styled(Button)`
   min-width: ${({ circle, tiny }) => (tiny ? '28px' : circle ? '34px' : '60px')};
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};
-  backdrop-filter: ${({ transparent }) => !transparent && 'saturate(180%) blur(20px)'};
+  backdrop-filter: ${({ transparent, theme }) =>
+    !transparent && `blur(20px) ${theme.name === 'dark' ? 'saturate(180%)' : 'saturate(130%) brightness(110%)'}`};
 
   &:disabled {
     opacity: 0.5;

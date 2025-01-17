@@ -13,7 +13,7 @@ interface OverviewPageProps {
 
 const OverviewPage = ({ className }: OverviewPageProps) => (
   <UnlockedWalletPage className={className}>
-    <AnimatedBackground anchorPosition="top" opacity={0.4} verticalOffset={-150} />
+    <AnimatedBackground anchorPosition="top" opacity={0.6} verticalOffset={-150} />
     <UnlockedWalletPanel bottom top>
       <WorthOverviewPanel />
       <Shortcuts>

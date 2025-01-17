@@ -127,11 +127,11 @@ const AnimatedBackground = ({
   )
 
   const circlesDimensions = [
-    { width: 600, height: 170 },
-    { width: 800, height: 190 },
-    { width: 750, height: 170 },
+    { width: 600, height: 140 },
+    { width: 800, height: 130 },
+    { width: 750, height: 130 },
     { width: 1050, height: 140 },
-    { width: 920, height: 210 }
+    { width: 920, height: 180 }
   ]
 
   return (
