@@ -38,8 +38,8 @@ export const inputPlaceHolderVariants: Variants = {
 }
 
 export const inputStyling = {
-  paddingRight: '20px',
-  paddingLeftRight: '20px'
+  paddingRight: '10px',
+  paddingLeftRight: '10px'
 }
 
 export const inputDefaultStyle = (
@@ -49,17 +49,21 @@ export const inputDefaultStyle = (
   heightSize?: InputHeight,
   largeText?: boolean
 ) => css`
-  height: ${heightSize === 'small' ? '38px' : heightSize === 'big' ? '50px' : 'var(--inputHeight)'};
+  height: ${heightSize === 'small' ? '34px' : heightSize === 'big' ? '46px' : 'var(--inputHeight)'};
   width: 100%;
-  border-radius: 200px;
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  border-radius: ${heightSize === 'small'
+    ? 'var(--radius-small)'
+    : heightSize === 'big'
+      ? 'var(--radius-big)'
+      : 'var(--radius-medium)'};
+  border: 1px solid ${({ theme }) => theme.border.secondary};
   color: ${({ theme }) => theme.font.primary};
-  padding: ${hasIcon ? `0 45px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
+  padding: ${hasIcon ? `0 40px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
   font-weight: var(--fontWeight-medium);
   font-size: ${largeText ? '15px' : '14px'};
   text-align: left;
   font-family: inherit;
-  backdrop-filter: blur(10px) brightness(${({ theme }) => (theme.name === 'light' ? '2' : '1.5')}) saturate(1.2);
+  background-color: ${({ theme }) => theme.bg.primary};
 
   transition: all 0.1s;
 

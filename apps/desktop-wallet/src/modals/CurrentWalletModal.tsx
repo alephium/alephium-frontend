@@ -4,7 +4,7 @@ import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { fadeInOutScaleFast } from '@/animations'
+import { fadeInOutBottomFast } from '@/animations'
 import Button from '@/components/Button'
 import InfoBox from '@/components/InfoBox'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
@@ -22,7 +22,7 @@ const CurrentWalletModal = memo(({ id }: ModalBaseProp) => {
 
   return (
     <ModalContainer id={id}>
-      <NotificationsBox role="dialog" {...fadeInOutScaleFast}>
+      <NotificationsBox role="dialog" {...fadeInOutBottomFast}>
         <h2>{t('Current wallet')}</h2>
 
         {numberOfWallets === 1 ? <InfoBox text={activeWalletName} /> : <WalletSelect />}

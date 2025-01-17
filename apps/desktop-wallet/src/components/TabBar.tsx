@@ -70,7 +70,7 @@ export default TabBar
 
 const TabBarStyled = styled.div`
   display: flex;
-  height: 48px;
+  height: 46px;
   gap: 10px;
 `
 

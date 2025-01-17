@@ -388,7 +388,7 @@ const SelectedValue = styled.div<InputProps>`
   ${({ heightSize, label, contrast }) => inputDefaultStyle(true, true, !!label, heightSize, contrast)};
 
   padding-right: 35px;
-  font-weight: var(--fontWeight-semiBold);
+  font-weight: var(--fontWeight-medium);
 
   cursor: ${({ showPointer }) => showPointer && 'pointer'};
 

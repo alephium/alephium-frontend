@@ -38,11 +38,11 @@ export const GlobalStyle = createGlobalStyle`
     --radius-full: 100%;
 
     --fontWeight-normal: 400;
-    --fontWeight-medium: 550;
+    --fontWeight-medium: 500;
     --fontWeight-semiBold: 600;
     --fontWeight-bold: 700;
 
-    --inputHeight: 42px;
+    --inputHeight: 40px;
     --tableCellHeight: 46px;
     --toggleWidth: 52px;
   }

@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { fadeInOutScaleFast, fastTransition } from '@/animations'
+import { fadeInOutBottomFast, fastTransition } from '@/animations'
 import Scrollbar from '@/components/Scrollbar'
 import ModalContainer from '@/modals/ModalContainer'
 import { Coordinates } from '@/types/numbers'
@@ -61,8 +61,8 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
       role="dialog"
       ref={contentRef}
       style={hookOffset && { x: hookOffset.x }}
-      animate={hookOffset && { ...fadeInOutScaleFast.animate, ...hookOffset }}
-      exit={fadeInOutScaleFast.exit}
+      animate={hookOffset && { ...fadeInOutBottomFast.animate, ...hookOffset }}
+      exit={fadeInOutBottomFast.exit}
       minWidth={minWidth}
       {...fastTransition}
     >

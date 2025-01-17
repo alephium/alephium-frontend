@@ -51,10 +51,8 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
 const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   margin: 0;
   text-align: left;
-  gap: 14px;
-  font-weight: var(--fontWeight-medium);
   opacity: ${({ isActive }) => (isActive ? 1 : 0.5)};
-  padding: 0 18px;
+  border-radius: var(--radius-medium);
 
   @media (max-width: ${sidebarExpandThresholdPx}px) {
     gap: 0;

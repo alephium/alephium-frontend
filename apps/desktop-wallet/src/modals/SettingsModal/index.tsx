@@ -5,7 +5,7 @@ import { memo, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
-import { fadeInOutScaleFast } from '@/animations'
+import { fadeInOutBottomFast } from '@/animations'
 import Button from '@/components/Button'
 import Scrollbar from '@/components/Scrollbar'
 import { TabItem } from '@/components/TabBar'
@@ -75,7 +75,7 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
 
   return (
     <ModalContainer id={id}>
-      <CenteredBox role="dialog" {...fadeInOutScaleFast}>
+      <CenteredBox role="dialog" {...fadeInOutBottomFast}>
         <TabTitlesColumn>
           <TabTitlesColumnContent>
             <TabTitles>
@@ -125,6 +125,7 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
             </ColumnContent>
           </Scrollbar>
           <ColumnHeader>
+            <ColumnHeaderBackground />
             <ColumnTitle>{currentTab.label}</ColumnTitle>
             <Button aria-label={t('Close')} circle role="secondary" onClick={onClose} Icon={X} tiny />
           </ColumnHeader>
@@ -177,9 +178,18 @@ const ColumnHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 58px;
-  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background1).toHex()} 55%, transparent)`};
+  min-height: 50px;
   z-index: 1;
+`
+
+const ColumnHeaderBackground = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: -10px;
+  right: 0;
+  left: 0;
+  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background1).toHex()} 55%, transparent)`};
+  z-index: 0;
 `
 
 const ColumnTitle = styled.div`
@@ -190,6 +200,7 @@ const ColumnTitle = styled.div`
   font-size: 16px;
   font-weight: var(--fontWeight-semiBold);
   color: ${({ theme }) => theme.font.primary};
+  z-index: 1;
 `
 
 const ColumnContent = styled.div`
@@ -259,7 +270,7 @@ const TabTitlesColumnHeader = styled(ColumnHeader)`
 
 const TabTitleButton = styled(Button)`
   text-align: left;
-  border-radius: var(--radius-big);
+  border-radius: var(--radius-medium);
   margin: 0;
 
   &:first-child {

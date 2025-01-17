@@ -63,8 +63,8 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f0a990'
   },
   border: {
-    primary: 'rgba(255, 255, 255, 0.08)',
-    secondary: 'rgba(255, 255, 255, 0.06)'
+    primary: 'rgba(255, 255, 255, 0.05)',
+    secondary: 'rgba(255, 255, 255, 0.02)'
   },
   shadow: {
     primary: '0 2px 3px rgba(0, 0, 0, 0.3)',

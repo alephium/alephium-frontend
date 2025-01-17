@@ -32,7 +32,7 @@ const Button = ({
   disabled,
   submit,
   Icon,
-  iconSize = 16,
+  iconSize = 14,
   className,
   isHighlighted,
   loading,
@@ -76,7 +76,7 @@ const Button = ({
         <>
           {Icon && (
             <ButtonIcon>
-              <Icon size={iconSize} />
+              <Icon size={!children ? 16 : iconSize} />
             </ButtonIcon>
           )}
           <ButtonContent>{children as ReactNode}</ButtonContent>
@@ -224,13 +224,13 @@ export default styled(Button)`
   align-items: center;
   justify-content: ${({ Icon }) => (Icon ? 'center' : 'flex-start')};
   height: ${({ circle, short, tall, tiny }) =>
-    tiny ? '28px' : short ? '32px' : circle ? '34px' : tall ? '48px' : '42px'};
+    tiny ? '28px' : short ? '34px' : circle ? '34px' : tall ? '46px' : 'var(--inputHeight)'};
   width: ${({ circle, short, wide, tiny }) =>
     tiny ? '28px' : circle ? '34px' : short && !wide ? 'auto' : wide ? '100%' : '80%'};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
   border-radius: 100px;
   font-weight: ${({ role, variant }) =>
-    role === 'secondary' || variant === 'faded' ? 'var(--fontWeight-medium)' : 'var(--fontWeight-semiBold)'};
+    role === 'secondary' || variant === 'faded' ? 'var(--fontWeight-medium)' : 'var(--fontWeight-medium)'};
   font-size: ${({ short }) => (short ? 13 : 14)}px;
   font-family: inherit;
   margin: ${({ circle }) => (circle ? '0' : '10px 0')};
@@ -238,8 +238,6 @@ export default styled(Button)`
   min-width: ${({ circle, tiny }) => (tiny ? '28px' : circle ? '34px' : '60px')};
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};
-  backdrop-filter: blur(10px)
-    brightness(${({ theme, transparent }) => !transparent && (theme.name === 'dark' ? '1.5' : '2')}) saturate(1.2);
 
   &:disabled {
     opacity: 0.5;

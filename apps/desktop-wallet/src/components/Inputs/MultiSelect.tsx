@@ -136,7 +136,7 @@ export function MultiSelectOptionsModal<T>({
 export default MultiSelect
 
 const MultiSelectInputArea = styled(InputArea)`
-  ${inputDefaultStyle(true, true, true)};
+  ${inputDefaultStyle(true, true, true, 'big')};
 `
 
 const SelectedValue = styled.div`

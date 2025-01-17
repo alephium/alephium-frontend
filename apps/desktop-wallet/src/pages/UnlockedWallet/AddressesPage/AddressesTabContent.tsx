@@ -60,9 +60,9 @@ const HideEmptyAddressesToggle = styled.div`
   display: flex;
   align-items: center;
   gap: 20px;
-  height: 42px;
+  height: var(--inputHeight);
   padding: 12px 16px;
-  border-radius: var(--radius-big);
+  border-radius: var(--radius-medium);
   background-color: ${({ theme }) => theme.bg.tertiary};
 `
 

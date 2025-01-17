@@ -36,7 +36,7 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
           <>
             <BrandContainer>
               <AlephiumLogoContainer>
-                <AlephiumLogo contrasted />
+                <AlephiumLogo />
               </AlephiumLogoContainer>
               <AlephiumName>alephium</AlephiumName>
             </BrandContainer>
@@ -102,31 +102,23 @@ const SideNavigation = styled.nav`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
 `
 
 const BrandContainer = styled.div`
   display: flex;
-  gap: 14px;
+  gap: 10px;
   align-items: center;
   margin-bottom: var(--spacing-6);
-  margin-left: 8px;
-
-  @media (max-width: ${sidebarExpandThresholdPx}px) {
-    margin-left: auto;
-    margin-right: auto;
-  }
+  margin-left: var(--spacing-3);
 `
 
 const AlephiumLogoContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 13px;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background-color: ${({ theme }) => theme.bg.contrast};
+  width: 13px;
+  height: 13px;
 `
 
 const AlephiumName = styled.div`
