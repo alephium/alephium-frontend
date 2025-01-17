@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import styled, { useTheme } from 'styled-components/native'
 
-import { dAppsQuery } from '~/api/queries/dAppQueries'
+import { dAppsTagsQuery } from '~/api/queries/dAppQueries'
 import Button from '~/components/buttons/Button'
-import { DApp } from '~/features/ecosystem/ecosystemTypes'
 import { selectFavoriteDApps } from '~/features/ecosystem/favoriteDAppsSelectors'
 import { useAppSelector } from '~/hooks/redux'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -15,7 +14,7 @@ interface DAppsCategoriesProps {
 
 const DAppsTags = ({ selectedTag, onTagPress }: DAppsCategoriesProps) => {
   const hasFavoriteDApps = useAppSelector((s) => selectFavoriteDApps(s).length > 0)
-  const { data: dAppTags } = useQuery(dAppsQuery({ select: extractDAppTags }))
+  const { data: dAppTags } = useQuery(dAppsTagsQuery)
   const theme = useTheme()
 
   if (!dAppTags) return null
@@ -49,11 +48,3 @@ export default DAppsTags
 const DAppsCategoriesStyled = styled.ScrollView`
   padding: 0 ${DEFAULT_MARGIN}px;
 `
-
-const extractDAppTags = (dApps: DApp[]) =>
-  dApps
-    .reduce((acc, dApp) => {
-      dApp.tags.forEach((tag) => !acc.includes(tag) && acc.push(tag))
-      return acc
-    }, [] as string[])
-    .sort()
