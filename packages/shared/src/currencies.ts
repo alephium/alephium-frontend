@@ -8,9 +8,9 @@ type CurrencyData = {
 
 export const CURRENCIES: Record<Currency, CurrencyData> = {
   CHF: {
-    name: 'Swiss francs',
+    name: 'Swiss Franc',
     ticker: 'CHF',
-    symbol: 'CHF'
+    symbol: 'Fr.'
   },
   EUR: {
     name: 'Euro',
