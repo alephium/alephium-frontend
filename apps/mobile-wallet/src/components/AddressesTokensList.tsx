@@ -33,7 +33,7 @@ type TokensRow = Asset | UnknownTokensEntry | LoadingIndicator
 
 const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: AddressesTokensListProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash, true))
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
   const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
   const hiddenAssetIds = useAppSelector(selectHiddenAssetsIds)
@@ -55,7 +55,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
 
   useEffect(() => {
     const entries: TokensRow[] = [
-      ...knownFungibleTokens.filter((t) => !hiddenAssetIds.includes(t.id)),
+      ...knownFungibleTokens,
       ...(unknownTokens.length > 0
         ? [
             {
@@ -67,7 +67,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
     ]
 
     setTokenRows(entries)
-  }, [addressHash, showTokensSkeleton, knownFungibleTokens, unknownTokens.length, hiddenAssetIds])
+  }, [addressHash, showTokensSkeleton, knownFungibleTokens, unknownTokens.length])
 
   if (addressesBalancesStatus === 'uninitialized')
     return (
