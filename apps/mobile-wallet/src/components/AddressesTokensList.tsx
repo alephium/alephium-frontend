@@ -119,7 +119,7 @@ const AddressesTokensListStyled = styled.View`
 const LoadingSectionContainer = styled.View`
   width: 100%;
   align-items: center;
-  padding-top: 100px;
+  padding: 60px 0 40px;
 `
 
 const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined

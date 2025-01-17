@@ -25,8 +25,8 @@ const springConfig = {
   mass: 0.3,
   stiffness: 120,
   overshootClamping: true,
-  restSpeedThreshold: 0.3,
-  restDisplacementThreshold: 0.3
+  restSpeedThreshold: 1,
+  restDisplacementThreshold: 1
 }
 
 const DRAG_BUFFER = 40
