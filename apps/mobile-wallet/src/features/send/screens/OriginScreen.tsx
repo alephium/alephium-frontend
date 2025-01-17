@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AddressFlashListScreen from '~/components/AddressFlashListScreen'
@@ -10,19 +10,15 @@ import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { selectDefaultAddress } from '~/store/addressesSlice'
+import { selectDefaultAddress } from '~/store/addresses/addressesSelectors'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'>, ScrollScreenProps {}
 
 const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
-  const { fromAddress, setFromAddress, setToAddress } = useSendContext()
+  const { fromAddress, setFromAddress } = useSendContext()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const { screenScrollHandler } = useHeaderContext()
   const { t } = useTranslation()
-
-  useEffect(() => {
-    if (params?.toAddressHash) setToAddress(params.toAddressHash)
-  }, [params?.toAddressHash, setToAddress])
 
   useFocusEffect(
     useCallback(() => {
@@ -41,8 +37,14 @@ const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
       onScroll={screenScrollHandler}
       hideEmptyAddresses
       bottomButtonsRender={() => (
-        <Button title={t('Continue')} variant="highlight" onPress={() => navigation.navigate('AssetsScreen')} />
+        <Button
+          title={t('Continue')}
+          variant="highlight"
+          onPress={() => navigation.navigate('AssetsScreen', { tokenId: params?.tokenId })}
+        />
       )}
+      tokenId={params?.tokenId}
+      origin="originAddress"
     />
   )
 }

@@ -1,6 +1,7 @@
 import { usePostHog } from 'posthog-js/react'
 import { useEffect } from 'react'
 
+import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useAppSelector } from '@/hooks/redux'
 import { currentVersion } from '@/utils/app-data'
 
@@ -11,7 +12,7 @@ const useTrackUserSettings = () => {
   const devTools = useAppSelector((s) => s.settings.devTools)
   const walletLockTimeInMinutes = useAppSelector((s) => s.settings.walletLockTimeInMinutes)
   const language = useAppSelector((s) => s.settings.language)
-  const passwordRequirement = useAppSelector((s) => s.settings.passwordRequirement)
+  const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const network = useAppSelector((s) => s.network.name)
 

@@ -8,6 +8,12 @@ import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletCon
 import AddressDetailsModal from '~/features/addressesManagement/AddressDetailsModal'
 import AddressQuickActionsModal from '~/features/addressesManagement/AddressQuickActionsModal'
 import AddressSettingsModal from '~/features/addressesManagement/AddressSettingsModal'
+import SelectAssetToHideModal from '~/features/assetsDisplay/hideAssets/SelectAssetToHideModal'
+import NftGridModal from '~/features/assetsDisplay/nftsDisplay/NftGridModal'
+import NftModal from '~/features/assetsDisplay/nftsDisplay/NftModal'
+import AddressesWithTokenModal from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/AddressesWithTokenModal'
+import TokenDetailsModal from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModal'
+import TokenQuickActionsModal from '~/features/assetsDisplay/tokenDisplay/TokenQuickActionsModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
@@ -15,8 +21,7 @@ import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import { selectAllModals } from '~/features/modals/modalSelectors'
 import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
-import NftGridModal from '~/features/nftsDisplay/NftGridModal'
-import NftModal from '~/features/nftsDisplay/NftModal'
+import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
 import ReceiveQRCodeModal from '~/features/receive/ReceiveQRCodeModal'
 import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
@@ -26,13 +31,12 @@ import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
 import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
-import AddressesWithTokenModal from '~/features/tokenDisplay/tokenDetailsModal/AddressesWithTokenModal'
-import TokenDetailsModal from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectErrorModal'
 import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPairingsModal'
 import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPasteUrlModal'
 import { useAppSelector } from '~/hooks/redux'
+import AddressPickerQuickActionsModal from '~/modals/AddressPickerQuickActionsModal'
 import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
@@ -112,6 +116,14 @@ const AppModals = () => {
             return <AddressQuickActionsModal key={id} id={id} {...params.props} />
           case 'AddressesWithTokenModal':
             return <AddressesWithTokenModal key={id} id={id} {...params.props} />
+          case 'SelectAssetToHideModal':
+            return <SelectAssetToHideModal key={id} id={id} />
+          case 'TokenQuickActionsModal':
+            return <TokenQuickActionsModal key={id} id={id} {...params.props} />
+          case 'AddressQRCodeScanActionsModal':
+            return <AddressQRCodeScanActionsModal key={id} id={id} {...params.props} />
+          case 'AddressPickerQuickActionsModal':
+            return <AddressPickerQuickActionsModal key={id} id={id} {...params.props} />
           default:
             return null
         }

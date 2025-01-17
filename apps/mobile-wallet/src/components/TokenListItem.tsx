@@ -3,6 +3,7 @@ import { Optional } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
@@ -10,6 +11,7 @@ import ListItem, { ListItemProps } from '~/components/ListItem'
 import { openModal } from '~/features/modals/modalActions'
 import { ModalInstance } from '~/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { ImpactStyle, vibrate } from '~/utils/haptics'
 
 interface TokenListItemProps extends Optional<ListItemProps, 'title' | 'icon'> {
   asset: Asset
@@ -24,8 +26,16 @@ const TokenListItem = ({ asset, addressHash, parentModalId, ...props }: TokenLis
 
   const balance = BigInt(asset.balance)
 
-  const openTokenDetailsModal = () =>
+  const openTokenDetailsModal = () => {
     dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId: asset.id, addressHash, parentModalId } }))
+    sendAnalytics({ event: 'Opened token details modal', props: { origin: 'token_list_item' } })
+  }
+
+  const openTokenQuickActionsModal = () => {
+    vibrate(ImpactStyle.Heavy)
+    dispatch(openModal({ name: 'TokenQuickActionsModal', props: { tokenId: asset.id } }))
+    sendAnalytics({ event: 'Opened token quick actions modal' })
+  }
 
   return (
     <ListItem
@@ -57,6 +67,7 @@ const TokenListItem = ({ asset, addressHash, parentModalId, ...props }: TokenLis
         </Amounts>
       }
       onPress={openTokenDetailsModal}
+      onLongPress={openTokenQuickActionsModal}
       {...props}
     />
   )

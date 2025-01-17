@@ -28,8 +28,9 @@ import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { getAddressAsymetricKey, initializeKeyringWithStoredWallet } from '~/persistent-storage/wallet'
-import { selectAddressesInGroup } from '~/store/addresses/addressesSelectors'
-import { newAddressGenerated, selectAllAddresses, syncLatestTransactions } from '~/store/addressesSlice'
+import { syncLatestTransactions } from '~/store/addresses/addressesActions'
+import { selectAddressesInGroup, selectAllAddresses } from '~/store/addresses/addressesSelectors'
+import { newAddressGenerated } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { Address } from '~/types/addresses'
 import { getRandomLabelColor } from '~/utils/colors'
@@ -302,6 +303,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
                           sendAnalytics({ event: 'WC: Switched signer address' })
                         }}
                         isLast={i === addressesInGroup.length - 1}
+                        origin="walletConnectPairing"
                       />
                     ))}
                     <PlaceholderBox>
@@ -323,6 +325,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
                       isSelected
                       isLast
                       rounded
+                      origin="walletConnectPairing"
                     />
                   </AddressList>
                 </ScreenSection>

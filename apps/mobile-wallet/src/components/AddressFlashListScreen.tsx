@@ -1,28 +1,38 @@
 import { AddressHash } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
+import { Token } from '@alephium/web3'
 
-import AddressBox from '~/components/AddressBox'
+import AddressBox, { AddressBoxProps } from '~/components/AddressBox'
 import FlashListScreen, { FlashListScreenProps } from '~/components/layout/FlashListScreen'
 import { useAppSelector } from '~/hooks/redux'
-import { selectAllAddresses } from '~/store/addressesSlice'
+import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { Address } from '~/types/addresses'
 
 export interface AddressFlashListScreenProps extends Partial<FlashListScreenProps<Address>> {
   onAddressPress: (addressHash: AddressHash) => void
+  origin: AddressBoxProps['origin']
   selectedAddress?: AddressHash
   contentPaddingTop?: boolean | number
   hideEmptyAddresses?: boolean
+  tokenId?: Token['id']
 }
 
 const AddressFlashListScreen = ({
   onAddressPress,
   selectedAddress,
   hideEmptyAddresses,
+  tokenId,
+  origin,
   ...props
 }: AddressFlashListScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
 
-  const data = hideEmptyAddresses ? addresses.filter((a) => a.tokens.length !== 0 && a.balance !== '0') : addresses
+  const filteredAddresses =
+    tokenId && tokenId !== ALPH.id ? addresses.filter((a) => a.tokens.some((t) => t.tokenId === tokenId)) : addresses
+  const data = hideEmptyAddresses
+    ? filteredAddresses.filter((a) => a.tokens.length !== 0 && a.balance !== '0')
+    : filteredAddresses
 
   return (
     <FlashListScreen
@@ -41,6 +51,8 @@ const AddressFlashListScreen = ({
             marginRight: DEFAULT_MARGIN
           }}
           onPress={() => onAddressPress(address.hash)}
+          tokenId={tokenId}
+          origin={origin}
         />
       )}
       shouldUseGaps

@@ -16,10 +16,10 @@ import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import { BackupMnemonicNavigationParamList } from '~/navigation/BackupMnemonicNavigation'
 
 interface BackupIntroScreenProps
-  extends StackScreenProps<SendNavigationParamList, 'BackupIntroScreen'>,
+  extends StackScreenProps<BackupMnemonicNavigationParamList, 'BackupIntroScreen'>,
     ScrollScreenProps {}
 
 const BackupIntroScreen = ({ navigation, ...props }: BackupIntroScreenProps) => {

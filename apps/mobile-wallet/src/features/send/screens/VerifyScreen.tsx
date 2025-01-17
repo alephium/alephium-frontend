@@ -1,6 +1,7 @@
 import { ALPH } from '@alephium/token-list'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
@@ -16,6 +17,7 @@ import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 import { showToast } from '~/utils/layout'
 import { getTransactionAssetAmounts } from '~/utils/transactions'
 
@@ -25,6 +27,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   const { fromAddress, toAddress, assetAmounts, fees, sendTransaction } = useSendContext()
   const { screenScrollHandler, screenScrollY, parentNavigation } = useHeaderContext()
   const { t } = useTranslation()
+  const insets = useSafeAreaInsets()
 
   useScrollToTopOnFocus(screenScrollY)
 
@@ -41,7 +44,7 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
   return (
     <ScrollScreen
       verticalGap
-      contentPaddingTop
+      contentPaddingTop={insets.top + VERTICAL_GAP * 2} // TODO: avoid manual override (see TODO in DestinationScreen)
       screenTitle={t('Verify')}
       screenIntro={t('Please, double check that everything is correct before sending.')}
       onScroll={screenScrollHandler}

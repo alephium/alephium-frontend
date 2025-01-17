@@ -77,12 +77,8 @@ const TransactionListItem = memo(
               </Badge>
             )}
             {unknownTokens.length > 0 && (
-              <Badge>
-                <AppText>
-                  {t(unknownTokens.length === 1 ? 'unknownTokensKey_one' : 'unknownTokensKey_other', {
-                    count: unknownTokens.length
-                  })}
-                </AppText>
+              <Badge light>
+                <AppText color="tertiary">{t('unknownTokensKey', { count: unknownTokens.length })}</AppText>
               </Badge>
             )}
           </AmountColumn>
@@ -108,7 +104,7 @@ const AmountColumn = styled.View`
   flex: 1;
   align-items: flex-end;
   flex-shrink: 0;
-  gap: 4px;
+  gap: 6px;
 `
 
 const FailedTXBubble = styled.View`

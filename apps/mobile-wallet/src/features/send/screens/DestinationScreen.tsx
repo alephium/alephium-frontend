@@ -108,23 +108,18 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     dispatch(
       openModal({
         name: 'SelectContactModal',
-        props: {
-          onContactPress: handleContactPress,
-          onNewContactPress: () => {
-            navigation.navigate('NewContactScreen')
-          }
-        }
+        props: { onContactPress: handleContactPress }
       })
     )
 
   useEffect(() => {
-    if (params?.fromAddressHash) {
-      setFromAddress(params.fromAddressHash)
+    if (params?.originAddressHash) {
+      setFromAddress(params.originAddressHash)
       setNextScreen('AssetsScreen')
     } else {
       setNextScreen('OriginScreen')
     }
-  }, [params?.fromAddressHash, setFromAddress, setToAddress])
+  }, [params?.originAddressHash, setFromAddress, setToAddress])
 
   useEffect(() => {
     if (toAddress) {

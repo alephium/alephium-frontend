@@ -149,24 +149,24 @@ const Button = ({
         </IconContainer>
       ) : (
         <>
-          {title && (
-            <ButtonText color={font} medium size={compact || short ? 14 : 16}>
-              {title}
-            </ButtonText>
-          )}
-          {children}
           {iconProps ? (
             <IconContainer>
               <AnimatedIonicons
                 layout={LinearTransition}
                 color={font}
-                size={compact || short ? 16 : hasOnlyIcon ? 22 : 20}
+                size={compact || short ? 16 : hasOnlyIcon ? 20 : 18}
                 {...iconProps}
               />
             </IconContainer>
           ) : customIcon ? (
             customIcon
           ) : null}
+          {title && (
+            <ButtonText color={font} medium size={compact || short ? 14 : 16}>
+              {title}
+            </ButtonText>
+          )}
+          {children}
         </>
       )}
     </AnimatedPressable>

@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 
 import BottomModalBase, { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
 import { useBottomModalState } from '~/features/modals/useBottomModalState'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface BottomModalFlashListProps extends Omit<BottomModalBaseProps, 'children'> {
   flashListRender: (flashListProps: {
@@ -36,7 +36,9 @@ const BottomModalFlashList = ({
       {flashListRender({
         onContentSizeChange: modalState.handleContentSizeChange,
         contentContainerStyle: {
-          padding: noPadding ? 0 : DEFAULT_MARGIN
+          paddingHorizontal: noPadding ? 0 : DEFAULT_MARGIN,
+          paddingTop: 0,
+          paddingBottom: noPadding ? 0 : VERTICAL_GAP
         }
       })}
     </BottomModalBase>

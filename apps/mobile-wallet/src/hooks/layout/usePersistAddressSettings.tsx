@@ -1,5 +1,5 @@
 import { useAppSelector } from '~/hooks/redux'
-import { selectDefaultAddress } from '~/store/addressesSlice'
+import { selectDefaultAddress } from '~/store/addresses/addressesSelectors'
 import { AddressPartial } from '~/types/addresses'
 import { persistAddressesSettings } from '~/utils/addresses'
 

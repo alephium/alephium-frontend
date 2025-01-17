@@ -14,6 +14,7 @@ import Select from '@/components/Inputs/Select'
 import Toggle from '@/components/Inputs/Toggle'
 import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { useLedger } from '@/features/ledger/useLedger'
 import { Language, languageOptions } from '@/features/localization/languages'
 import { languageChanged } from '@/features/localization/localizationActions'
 import { openModal } from '@/features/modals/modalActions'
@@ -25,6 +26,7 @@ import {
   walletLockTimeChanged
 } from '@/features/settings/settingsActions'
 import { fiatCurrencyOptions, locktimeInMinutes } from '@/features/settings/settingsConstants'
+import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { ThemeSettings } from '@/features/theme/themeTypes'
 import { switchTheme } from '@/features/theme/themeUtils'
 import { deleteThumbnailsDB } from '@/features/thumbnails/thumbnailStorage'
@@ -48,11 +50,17 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { isWalletUnlocked } = useWalletLock()
-  const { walletLockTimeInMinutes, discreetMode, passwordRequirement, language, theme, analytics, fiatCurrency } =
-    useAppSelector((s) => s.settings)
+  const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
+  const walletLockTimeInMinutes = useAppSelector((s) => s.settings.walletLockTimeInMinutes)
+  const discreetMode = useAppSelector((s) => s.settings.discreetMode)
+  const language = useAppSelector((s) => s.settings.language)
+  const theme = useAppSelector((s) => s.settings.theme)
+  const analytics = useAppSelector((s) => s.settings.analytics)
+  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
   const { reset } = useWalletConnectContext()
+  const { isLedger } = useLedger()
 
   const onPasswordRequirementChange = useCallback(() => {
     if (passwordRequirement) {
@@ -194,8 +202,8 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
         noHorizontalPadding
         InputComponent={<Toggle label={discreetModeText} toggled={discreetMode} onToggle={handleDiscreetModeToggle} />}
       />
-      <HorizontalDivider secondary />
-      {isWalletUnlocked && (
+      <HorizontalDivider />
+      {isWalletUnlocked && !isLedger && (
         <>
           <KeyValueInput
             label={t('Password requirement')}

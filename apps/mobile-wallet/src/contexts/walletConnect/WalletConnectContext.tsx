@@ -64,7 +64,7 @@ import {
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressIds } from '~/store/addressesSlice'
+import { selectAddressIds } from '~/store/addresses/addressesSelectors'
 import {
   CallContractTxData,
   DeployContractTxData,

@@ -8,18 +8,18 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AnimatedBackground from '~/components/AnimatedBackground'
 import RoundedCard from '~/components/RoundedCard'
+import TokenDetailsModalBalanceSummary from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModalBalanceSummary'
+import TokenDetailsModalDescription from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModalDescription'
+import TokenDetailsModalHeader from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModalHeader'
+import { TokenDetailsModalProps } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
-import ActionCardSendButton from '~/features/send/ActionCardSendButton'
-import TokenDetailsModalBalanceSummary from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModalBalanceSummary'
-import TokenDetailsModalDescription from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModalDescription'
-import TokenDetailsModalHeader from '~/features/tokenDisplay/tokenDetailsModal/TokenDetailsModalHeader'
-import { TokenDetailsModalProps } from '~/features/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
+import SendButton from '~/features/send/SendButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectDefaultAddress } from '~/store/addressesSlice'
+import { selectDefaultAddress } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { darkTheme, lightTheme } from '~/style/themes'
 
@@ -42,7 +42,7 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
       <Content>
         <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
         <ActionButtons>
-          <ActionCardSendButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
+          <SendButton origin="tokenDetails" originAddressHash={addressHash} tokenId={tokenId} onPress={handleClose} />
           <ActionCardReceiveButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
           {tokenId === ALPH.id && (
             <ActionCardBuyButton origin="tokenDetails" receiveAddressHash={addressHash || defaultAddressHash} />

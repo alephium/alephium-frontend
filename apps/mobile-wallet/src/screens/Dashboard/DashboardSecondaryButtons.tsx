@@ -5,7 +5,6 @@ import styled from 'styled-components/native'
 import Button from '~/components/buttons/Button'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import WalletConnectButton from '~/screens/Dashboard/WalletConnectButton'
 import { showToast } from '~/utils/layout'
 
@@ -13,7 +12,7 @@ const DashboardSecondaryButtons = () => {
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const networkStatus = useAppSelector((s) => s.network.status)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
-  const navigation = useNavigation<NavigationProp<RootStackParamList | SendNavigationParamList>>()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
 
   const showOfflineMessage = () =>

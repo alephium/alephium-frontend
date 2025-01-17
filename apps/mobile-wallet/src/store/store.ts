@@ -2,6 +2,9 @@ import { sharedReducer } from '@alephium/shared'
 import { configureStore } from '@reduxjs/toolkit'
 import devToolsEnhancer from 'redux-devtools-expo-dev-plugin'
 
+import hiddenAssetsSlice, {
+  hiddenAssetsListenerMiddleware
+} from '~/features/assetsDisplay/hideAssets/hiddenAssetsSlice'
 import backupSlice from '~/features/backup/backupSlice'
 import favoriteDAppsSlice, { favoriteDAppsListenerMiddleware } from '~/features/ecosystem/favoriteDAppsSlice'
 import fundPasswordSlice from '~/features/fund-password/fundPasswordSlice'
@@ -35,7 +38,8 @@ export const store = configureStore({
     [contactsSlice.name]: contactsSlice.reducer,
     [loadersSlice.name]: loadersSlice.reducer,
     [modalSlice.name]: modalSlice.reducer,
-    [favoriteDAppsSlice.name]: favoriteDAppsSlice.reducer
+    [favoriteDAppsSlice.name]: favoriteDAppsSlice.reducer,
+    [hiddenAssetsSlice.name]: hiddenAssetsSlice.reducer
   },
   devTools: false,
   enhancers: (enhancers) => [...enhancers, devToolsEnhancer()],
@@ -45,6 +49,7 @@ export const store = configureStore({
     })
       .prepend(settingsListenerMiddleware.middleware)
       .prepend(favoriteDAppsListenerMiddleware.middleware)
+      .prepend(hiddenAssetsListenerMiddleware.middleware)
 
     return middlewares
   }

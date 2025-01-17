@@ -1,5 +1,5 @@
-import { ReactNode, useState } from 'react'
-import { LayoutChangeEvent, LayoutRectangle, PressableProps } from 'react-native'
+import { ReactNode } from 'react'
+import { PressableProps } from 'react-native'
 import { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
 import Reanimated, {
   AnimatedRef,
@@ -14,8 +14,6 @@ import styled, { useTheme } from 'styled-components/native'
 import AppText from '~/components/AppText'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
-type TabsLayout = Record<number, LayoutRectangle>
-
 interface TopTabBarProps {
   tabLabels: string[]
   pagerScrollEvent: SharedValue<PagerViewOnPageScrollEventData>
@@ -24,66 +22,23 @@ interface TopTabBarProps {
   customContent?: ReactNode
 }
 
-const indicatorXPadding = 10
-
 const TopTabBar = ({ tabLabels, pagerScrollEvent, onTabPress, tabBarRef, customContent }: TopTabBarProps) => {
-  const [tabLayouts, setTabLayouts] = useState<TabsLayout>({})
-
   const position = useDerivedValue(
     () => pagerScrollEvent.value.position + pagerScrollEvent.value.offset,
     [pagerScrollEvent.value]
   )
-
-  const indicatorStyle = useAnimatedStyle(() => {
-    const positionsArray = [...Array(tabLabels.length).keys()]
-    const tabLayoutValues = Object.values(tabLayouts)
-    if (tabLayoutValues.length !== positionsArray.length) return {}
-
-    const x = interpolate(
-      position.value,
-      positionsArray,
-      tabLayoutValues.map((l) => l.x)
-    )
-
-    const width = interpolate(
-      position.value,
-      positionsArray,
-      tabLayoutValues.map((l) => l.width)
-    )
-
-    return {
-      left: x - indicatorXPadding,
-      width: width + 2 * indicatorXPadding
-    }
-  }, [tabLayouts, tabLabels.length])
 
   const handleOnTabPress = (tabIndex: number) => {
     vibrate(ImpactStyle.Medium)
     onTabPress(tabIndex)
   }
 
-  const handleTabLayoutEvent = (tabIndex: number, e: LayoutChangeEvent) => {
-    e.persist()
-    setTabLayouts((prevLayouts) => ({
-      ...prevLayouts,
-      [tabIndex]: e.nativeEvent.layout
-    }))
-  }
-
   return (
     <TopTabBarStyled>
       {customContent}
       <HeaderContainer ref={tabBarRef}>
-        <Indicator style={indicatorStyle} />
         {tabLabels.map((label, i) => (
-          <TabBarItem
-            key={label}
-            index={i}
-            label={label}
-            position={position}
-            onPress={() => handleOnTabPress(i)}
-            onLayout={(e) => handleTabLayoutEvent(i, e)}
-          />
+          <TabBarItem key={label} index={i} label={label} position={position} onPress={() => handleOnTabPress(i)} />
         ))}
       </HeaderContainer>
     </TopTabBarStyled>
@@ -104,13 +59,14 @@ const TabBarItem = ({ label, index, position, ...props }: TabBarItemProps) => {
   const animatedTextStyle = useAnimatedStyle(() => {
     const diff = position.value - index
     return {
-      color: interpolateColor(diff, [-1, 0, 1], [theme.font.primary, theme.global.accent, theme.font.primary])
+      color: interpolateColor(diff, [-1, 0, 1], [theme.font.tertiary, theme.font.primary, theme.font.tertiary]),
+      transform: [{ scale: interpolate(diff, [-1, 0, 1], [1, 1.05, 1]) }]
     }
   })
 
   return (
     <TabBarItemStyled {...props}>
-      <AnimatedAppText style={animatedTextStyle} size={15}>
+      <AnimatedAppText style={[animatedTextStyle, { transformOrigin: '0% 50%' }]} size={19} semiBold>
         {label}
       </AnimatedAppText>
     </TabBarItemStyled>
@@ -127,22 +83,15 @@ const TopTabBarStyled = styled.View`
 
 const HeaderContainer = styled(Reanimated.View)`
   flex-direction: row;
-  gap: 25px;
+  gap: 30px;
   align-items: center;
   justify-content: flex-start;
-  height: 44px;
-  padding-left: ${indicatorXPadding}px;
+  height: 40px;
 `
 
 const TabBarItemStyled = styled.Pressable`
   height: 100%;
   justify-content: center;
   align-items: center;
-`
-
-const Indicator = styled(Reanimated.View)`
-  position: absolute;
-  height: 80%;
-  border-radius: 100px;
-  background-color: ${({ theme }) => theme.bg.accent};
+  transform-origin: left;
 `

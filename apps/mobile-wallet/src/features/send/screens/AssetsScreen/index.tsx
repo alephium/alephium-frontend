@@ -1,6 +1,6 @@
 import { StackScreenProps } from '@react-navigation/stack'
 import { orderBy } from 'lodash'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '~/components/buttons/Button'
@@ -9,6 +9,7 @@ import { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
+import { openModal } from '~/features/modals/modalActions'
 import AssetRow from '~/features/send/screens/AssetsScreen/AssetRow'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
@@ -18,25 +19,28 @@ import {
   makeSelectAddressesNFTs,
   makeSelectAddressesUnknownTokens,
   selectAddressByHash
-} from '~/store/addressesSlice'
+} from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { showToast, ToastDuration } from '~/utils/layout'
 
 interface ScreenProps
   extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'>,
     Omit<ScrollScreenProps, 'contentContainerStyle'> {}
 
 const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
-  const { fromAddress, assetAmounts, buildTransaction, setToAddress } = useSendContext()
+  const { fromAddress, assetAmounts, buildTransaction, setAssetAmount } = useSendContext()
   const { screenScrollY, screenScrollHandler } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash, true))
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const unknownTokens = useAppSelector((s) => selectAddressesUnknownTokens(s, address?.hash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, address?.hash))
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
+
+  const [shouldOpenAmountModal, setShouldOpenAmountModal] = useState(!!params?.tokenId)
 
   useScrollToTopOnFocus(screenScrollY)
 
@@ -51,14 +55,38 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     dispatch(deactivateAppLoading())
   }
 
-  useEffect(() => {
-    if (params?.toAddressHash) setToAddress(params.toAddressHash)
-  }, [params?.toAddressHash, setToAddress])
-
-  if (!address) return null
-
   const assets = [...knownFungibleTokens, ...nfts, ...unknownTokens]
   const orderedAssets = orderBy(assets, (a) => assetAmounts.find((assetWithAmount) => a.id === assetWithAmount.id))
+
+  const tokenName = params?.tokenId ? orderedAssets.find((t) => t.id === params.tokenId) : undefined
+
+  useEffect(() => {
+    const tokenId = params?.tokenId
+
+    if (!tokenId || !shouldOpenAmountModal) return
+
+    dispatch(
+      openModal({
+        name: 'TokenAmountModal',
+        props: {
+          tokenId,
+          addressHash: fromAddress,
+          onAmountValidate: (amount) => {
+            setAssetAmount(tokenId, amount)
+            showToast({
+              text1: t('Added {{ tokenName }}', { tokenName: tokenName ?? tokenId }),
+              type: 'info',
+              visibilityTime: ToastDuration.SHORT
+            })
+          }
+        }
+      })
+    )
+
+    setShouldOpenAmountModal(false)
+  }, [dispatch, fromAddress, params?.tokenId, setAssetAmount, shouldOpenAmountModal, t, tokenName])
+
+  if (!address) return null
 
   return (
     <FlashListScreen

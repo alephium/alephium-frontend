@@ -2,11 +2,8 @@ import { AddressHash } from '@alephium/shared'
 import { explorer } from '@alephium/web3'
 import { createEntityAdapter, createSelector, createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
-import {
-  selectAllAddresses,
-  syncAllAddressesTransactionsNextPage,
-  syncLatestTransactions
-} from '~/store/addressesSlice'
+import { syncAllAddressesTransactionsNextPage, syncLatestTransactions } from '~/store/addresses/addressesActions'
+import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
 import { RootState } from '~/store/store'
 import { transactionSent } from '~/store/transactions/transactionsActions'
 import { walletDeleted } from '~/store/wallet/walletActions'

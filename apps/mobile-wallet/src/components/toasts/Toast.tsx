@@ -28,7 +28,7 @@ const Toast = ({
     },
     info: {
       Icon: InfoIcon,
-      color: theme.header.visible
+      color: theme.global.accent
     }
   }
 
@@ -82,7 +82,7 @@ const IconContainer = styled.View`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bg.contrast};
+  background-color: rgba(255, 255, 255, 0.9);
 `
 
 const TextContainer = styled.View`
@@ -92,13 +92,13 @@ const TextContainer = styled.View`
 `
 
 const Title = styled(AppText)`
-  color: ${({ theme }) => theme.font.primary};
+  color: rgba(255, 255, 255, 0.9);
   font-size: 16px;
   font-weight: 600;
 `
 
 const Subtitle = styled(AppText)`
-  color: ${({ theme }) => theme.font.secondary};
+  color: rgba(255, 255, 255, 0.8);
 `
 
 const Gradient = styled(LinearGradient)`

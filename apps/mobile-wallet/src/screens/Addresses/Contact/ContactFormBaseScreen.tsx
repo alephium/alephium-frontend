@@ -1,4 +1,4 @@
-import { ContactFormData } from '@alephium/shared'
+import { AddressHash, ContactFormData } from '@alephium/shared'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
@@ -7,6 +7,7 @@ import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import i18n from '~/features/localization/i18n'
+import NewContactCameraScanButton from '~/features/qrCodeScan/NewContactCameraScanButton'
 import { isContactAddressValid, isContactNameValid } from '~/utils/form-validation'
 import { validateIsAddressValid } from '~/utils/forms'
 
@@ -22,15 +23,22 @@ const ContactForm = ({ initialValues, onSubmit, buttonText, headerOptions, ...pr
   const {
     control,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    setValue
   } = useForm<ContactFormData>({ defaultValues: initialValues })
   const { t } = useTranslation()
+
+  const handleQRCodeScan = (addressHash: AddressHash) => setValue('address', addressHash)
 
   return (
     <ScrollScreen
       fill
       contentPaddingTop
-      headerOptions={{ type: 'stack', ...headerOptions }}
+      headerOptions={{
+        type: 'stack',
+        headerRight: () => <NewContactCameraScanButton onNewContactHashDetected={handleQRCodeScan} />,
+        ...headerOptions
+      }}
       bottomButtonsRender={() => (
         <Button title={buttonText || t('Save')} variant="highlight" onPress={handleSubmit(onSubmit)} />
       )}

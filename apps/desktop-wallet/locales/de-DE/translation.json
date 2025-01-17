@@ -510,5 +510,8 @@
   "Welcome to your Ledger!": "Willkommen bei Ihrem Ledger!",
   "Would you like to scan for active addresses?": "Möchten Sie nach aktiven Adressen suchen?",
   "Scan": "Scannen",
-  "Active address discovery completed. Addresses added: {{ count }}": "Suche nach aktiven Adressen abgeschlossen. Hinzugefügte Adressen: {{ count }}"
+  "Active address discovery completed. Addresses added: {{ count }}": "Suche nach aktiven Adressen abgeschlossen. Hinzugefügte Adressen: {{ count }}",
+  "Loading new transactions...": "Lade neue Transaktionen...",
+  "Sign and Send Unsigned Transaction": "Unterschreiben und unsignierte Transaktion senden",
+  "Sign and Send": "Unterschreiben und senden"
 }
