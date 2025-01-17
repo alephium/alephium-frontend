@@ -37,7 +37,6 @@ const AnimatedBackground = ({
           width: window.innerWidth,
           height: window.innerHeight
         })
-        // Anchor horizontally at the middle, vertically at top or bottom.
         mouseX.set(window.innerWidth / 2)
         mouseY.set(anchorPosition === 'top' ? 0 : window.innerHeight)
       }

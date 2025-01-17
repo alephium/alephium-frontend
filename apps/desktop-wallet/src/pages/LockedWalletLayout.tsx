@@ -10,15 +10,12 @@ interface LockedWalletLayoutProps extends MotionProps {
 }
 
 const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, ...props }) => (
-  <>
-    <AnimatedBackgroundStyled />
-    <motion.main {...props}>
-      <ScrollbarCustom>
-        <AppHeader position="fixed" />
-        <CenteredContainer>{children}</CenteredContainer>
-      </ScrollbarCustom>
-    </motion.main>
-  </>
+  <motion.main {...props}>
+    <ScrollbarCustom>
+      <AppHeader position="fixed" />
+      <CenteredContainer>{children}</CenteredContainer>
+    </ScrollbarCustom>
+  </motion.main>
 )
 
 export default styled(LockedWalletLayout)`

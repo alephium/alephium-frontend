@@ -5,6 +5,7 @@ import styled, { css, ThemeProvider } from 'styled-components'
 
 import PersistedQueryCacheVersionStorage from '@/api/persistedCacheVersionStorage'
 import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
+import AnimatedBackground from '@/components/AnimatedBackground'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
@@ -24,6 +25,7 @@ import { darkTheme, lightTheme } from '@/features/theme/themes'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
+import useWalletLock from '@/hooks/useWalletLock'
 import AppModals from '@/modals/AppModals'
 import Router from '@/routes'
 import {
@@ -37,6 +39,7 @@ import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } fro
 
 const App = memo(() => {
   const theme = useAppSelector((s) => s.global.theme)
+  const { isWalletUnlocked } = useWalletLock()
 
   useAutoLock()
 
@@ -60,6 +63,7 @@ const App = memo(() => {
       <WalletConnectContextProvider>
         <AppContainer>
           <CenteredSection>
+            {!isWalletUnlocked && <AnimatedBackground />}
             <Router />
           </CenteredSection>
         </AppContainer>
