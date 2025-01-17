@@ -54,6 +54,7 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   opacity: ${({ isActive }) => (isActive ? 1 : 0.4)};
   font-weight: ${({ isActive }) => (isActive ? 'var(--fontWeight-semiBold)' : 'var(--fontWeight-medium)')};
   border-radius: var(--radius-medium);
+  font-size: 14px;
 
   @media (max-width: ${sidebarExpandThresholdPx}px) {
     gap: 0;

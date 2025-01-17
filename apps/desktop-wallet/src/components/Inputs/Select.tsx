@@ -387,7 +387,7 @@ const SelectContainer = styled.div<InputProps>`
 
   padding-right: 35px;
   font-weight: var(--fontWeight-medium);
-  gap: 20px;
+  gap: 10px;
 
   cursor: ${({ showPointer }) => showPointer && 'pointer'};
 

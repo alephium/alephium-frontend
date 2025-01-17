@@ -4,7 +4,7 @@ import styled, { useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
 import CheckMark from '@/components/CheckMark'
-import { inputDefaultStyle, InputLabel } from '@/components/Inputs'
+import { inputDefaultStyle, SelectLabel } from '@/components/Inputs'
 import InputArea from '@/components/Inputs/InputArea'
 import { OptionItem, OptionSelect } from '@/components/Inputs/Select'
 import Popup from '@/components/Popup'
@@ -45,7 +45,7 @@ function MultiSelect<T>({ selectedOptions, label, renderSelectedValue, className
         onMouseDown={openOptionsModal}
         onKeyDown={(e) => onEnterOrSpace(e, openOptionsModal)}
       >
-        <InputLabel isElevated={selectedOptions.length > 0}>{label}</InputLabel>
+        <SelectLabel>{label}</SelectLabel>
         <SelectedValue>
           <Truncate>{renderSelectedValue()}</Truncate>
         </SelectedValue>
@@ -136,13 +136,15 @@ export function MultiSelectOptionsModal<T>({
 export default MultiSelect
 
 const MultiSelectInputArea = styled(InputArea)`
-  ${inputDefaultStyle(true, true, true, 'big')};
+  ${inputDefaultStyle(true, true, false)};
+  gap: 10px;
 `
 
 const SelectedValue = styled.div`
   display: flex;
   align-items: center;
   min-width: 0;
+  max-width: 200px;
 `
 
 const AllButton = styled(Button)`

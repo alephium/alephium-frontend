@@ -44,7 +44,7 @@ export const inputStyling = {
 
 export const inputDefaultStyle = (
   hasIcon?: boolean,
-  hasValue?: boolean,
+  topPadding?: boolean,
   hasLabel?: boolean,
   heightSize?: InputHeight,
   largeText?: boolean
@@ -67,7 +67,7 @@ export const inputDefaultStyle = (
 
   transition: all 0.1s;
 
-  ${hasValue &&
+  ${topPadding &&
   hasLabel &&
   css`
     padding-top: 13px;
