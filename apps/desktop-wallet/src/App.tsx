@@ -63,7 +63,7 @@ const App = memo(() => {
       <WalletConnectContextProvider>
         <AppContainer>
           <CenteredSection>
-            {!isWalletUnlocked && <AnimatedBackground />}
+            {!isWalletUnlocked && <AnimatedBackground opacity={theme === 'dark' ? 0.4 : 0.6} />}
             <Router />
           </CenteredSection>
         </AppContainer>

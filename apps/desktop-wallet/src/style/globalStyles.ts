@@ -32,8 +32,8 @@ export const GlobalStyle = createGlobalStyle`
 
     --radius-tiny: 4px;
     --radius-small: 6px;
-    --radius-medium: 8px;
-    --radius-big: 10px;
+    --radius-medium: 9px;
+    --radius-big: 12px;
     --radius-huge: 22px;
     --radius-full: 100%;
 

@@ -1,7 +1,6 @@
 import { motion, MotionProps } from 'framer-motion'
 import styled from 'styled-components'
 
-import AnimatedBackground from '@/components/AnimatedBackground'
 import AppHeader from '@/components/AppHeader'
 import ScrollbarCustom from '@/components/Scrollbar'
 
@@ -29,14 +28,4 @@ const CenteredContainer = styled.div`
   display: flex;
   align-items: center;
   min-height: 100%;
-`
-
-const AnimatedBackgroundStyled = styled(AnimatedBackground)`
-  position: absolute;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  top: 0;
-  bottom: 0;
-  pointer-events: none;
 `

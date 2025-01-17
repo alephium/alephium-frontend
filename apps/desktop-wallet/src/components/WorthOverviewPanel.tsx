@@ -65,7 +65,7 @@ export default WorthOverviewPanel
 const WorthOverviewPanelStyled = styled(Box)`
   position: relative;
   overflow: hidden;
-  background-color: ${({ theme }) => theme.bg.contrast};
+  border: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
 const Panel = styled.div`

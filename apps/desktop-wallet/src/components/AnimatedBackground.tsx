@@ -6,6 +6,7 @@ import styled, { useTheme } from 'styled-components'
 interface AnimatedBackgroundProps {
   height?: number | string
   width?: number | string
+  opacity?: number
   className?: string
   shade?: 'dark' | 'light' | string
   anchorPosition?: AnchorPosition
@@ -15,12 +16,13 @@ interface AnimatedBackgroundProps {
 
 type AnchorPosition = 'top' | 'bottom'
 
-const DARK_COLORS = ['#120096', '#ab2cdd', '#ff6969', '#8f2cdb', '#1600da']
-const LIGHT_COLORS = ['#c689ff', '#ffd4b6', '#ffaaaa', '#ffb7ff', '#ff9bc8']
+const DARK_COLORS = ['#5a28cf', '#8a58ff', '#fb89ab', '#eb6cff', '#c94aff']
+const LIGHT_COLORS = ['#c689ff', '#ffd4b6', '#ffaaaa', '#86c8ff', '#ff9bc8']
 
 const AnimatedBackground = ({
   height = '100%',
   width = '100%',
+  opacity = 1,
   className,
   shade,
   reactToPointer = true,
@@ -123,15 +125,15 @@ const AnimatedBackground = ({
   )
 
   const circlesDimensions = [
-    { width: 1600, height: 290 },
-    { width: 800, height: 380 },
-    { width: 960, height: 310 },
-    { width: 1300, height: 200 },
-    { width: 1240, height: 140 }
+    { width: 1200, height: 190 },
+    { width: 600, height: 290 },
+    { width: 750, height: 220 },
+    { width: 950, height: 110 },
+    { width: 820, height: 110 }
   ]
 
   return (
-    <AnimatedContainer style={{ width, height }} className={className}>
+    <AnimatedContainer style={{ width, height, opacity }} className={className}>
       <motion.div
         style={{
           position: 'relative',

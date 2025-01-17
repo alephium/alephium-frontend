@@ -40,7 +40,6 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
 
   console.log(pendingDappConnectionUrl)
   console.log(isAwaitingSessionRequestApproval)
-  console.log('YOOO')
 
   if (pendingDappConnectionUrl) {
     showToast({ type: 'info', text: t('Unlock a wallet to connect to the dApp.'), duration: 'long' })
