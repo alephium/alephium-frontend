@@ -67,8 +67,8 @@ export const darkTheme: DefaultTheme = {
     primary: '#1b1b1f',
     secondary: '#17171a',
     tertiary: '#101012',
-    back1: '#0d0d0f',
-    back2: '#000',
+    back1: '#0f0f12',
+    back2: '#0a0a0d',
     accent: colord('#5086f9').alpha(0.15).toHex(),
     contrast: '#E3E3E3'
   },
@@ -80,7 +80,7 @@ export const darkTheme: DefaultTheme = {
     highlight: '#f0d590'
   },
   button: {
-    primary: 'rgba(255, 255, 255, 0.09)',
+    primary: 'rgba(255, 255, 255, 0.07)',
     secondary: 'rgba(255, 255, 255, 0.04)',
     tertiary: '#28282b'
   },
@@ -89,8 +89,8 @@ export const darkTheme: DefaultTheme = {
     visible: '#242426'
   },
   border: {
-    primary: 'rgba(255, 255, 255, 0.13)',
-    secondary: 'rgba(255, 255, 255, 0.09)'
+    primary: 'rgba(255, 255, 255, 0.1)',
+    secondary: 'rgba(255, 255, 255, 0.05)'
   },
   shadow: {
     primary: 'shadow-color: black; shadow-offset: 0px 2px; shadow-opacity: 0.25; shadow-radius: 2px; elevation: 5;',

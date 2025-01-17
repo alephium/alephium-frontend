@@ -85,7 +85,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       headerOptions={{
         headerLeft: () => <CameraScanButton />,
         headerRight: () => <WalletSettingsButton />,
-        headerTitle: () => <AlephiumLogo color={theme.font.primary} style={{ width: 50, height: 24 }} />,
+        headerTitle: () => <AlephiumLogo color={theme.font.primary} style={{ width: 40, height: 20 }} />,
         headerTitleScrolled: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold />
       }}
       {...props}
