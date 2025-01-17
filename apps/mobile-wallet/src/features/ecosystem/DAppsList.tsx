@@ -27,19 +27,33 @@ const DAppsList = ({ selectedTag }: DAppsListProps) => {
 
   if (isLoading)
     return (
-      <EmptyPlaceholder>
-        <AppText size={28}>⏳</AppText>
-        <AppText>{t('Loading dApps...')}</AppText>
-      </EmptyPlaceholder>
+      <ScreenSection>
+        <EmptyPlaceholder>
+          <AppText size={28}>⏳</AppText>
+          <AppText>{t('Loading dApps...')}</AppText>
+        </EmptyPlaceholder>
+      </ScreenSection>
     )
 
   if (isError || !filteredDApps)
     return (
-      <EmptyPlaceholder>
-        <AppText size={28}>🥺</AppText>
-        <AppText>{t('Could not load dApps')}</AppText>
-        <AppText>{getHumanReadableError(error, '')}</AppText>
-      </EmptyPlaceholder>
+      <ScreenSection>
+        <EmptyPlaceholder>
+          <AppText size={28}>🥺</AppText>
+          <AppText>{t('Could not load dApps')}</AppText>
+          <AppText>{getHumanReadableError(error, '')}</AppText>
+        </EmptyPlaceholder>
+      </ScreenSection>
+    )
+
+  if (selectedTag === 'fav' && !filteredDApps.length)
+    return (
+      <ScreenSection>
+        <EmptyPlaceholder>
+          <AppText size={28}>⭐️</AppText>
+          <AppText>{t('No dApps added to your favorites yet')}</AppText>
+        </EmptyPlaceholder>
+      </ScreenSection>
     )
 
   return (

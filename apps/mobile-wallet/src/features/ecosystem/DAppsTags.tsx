@@ -3,8 +3,6 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { dAppsTagsQuery } from '~/api/queries/dAppQueries'
 import Button from '~/components/buttons/Button'
-import { selectFavoriteDApps } from '~/features/ecosystem/favoriteDAppsSelectors'
-import { useAppSelector } from '~/hooks/redux'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface DAppsCategoriesProps {
@@ -13,7 +11,6 @@ interface DAppsCategoriesProps {
 }
 
 const DAppsTags = ({ selectedTag, onTagPress }: DAppsCategoriesProps) => {
-  const hasFavoriteDApps = useAppSelector((s) => selectFavoriteDApps(s).length > 0)
   const { data: dAppTags } = useQuery(dAppsTagsQuery)
   const theme = useTheme()
 
@@ -21,15 +18,14 @@ const DAppsTags = ({ selectedTag, onTagPress }: DAppsCategoriesProps) => {
 
   return (
     <DAppsCategoriesStyled horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
-      {hasFavoriteDApps && (
-        <Button
-          compact
-          onPress={() => onTagPress(selectedTag === 'fav' ? null : 'fav')}
-          variant={selectedTag === 'fav' ? 'highlight' : undefined}
-          color={selectedTag === 'fav' ? undefined : theme.font.highlight}
-          iconProps={{ name: 'star' }}
-        />
-      )}
+      <Button
+        compact
+        onPress={() => onTagPress(selectedTag === 'fav' ? null : 'fav')}
+        variant={selectedTag === 'fav' ? 'highlight' : undefined}
+        color={selectedTag === 'fav' ? undefined : theme.font.highlight}
+        iconProps={{ name: 'star' }}
+      />
+
       {dAppTags.map((tag) => (
         <Button
           title={tag}
