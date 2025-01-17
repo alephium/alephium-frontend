@@ -28,7 +28,7 @@ export const lightTheme: DefaultTheme = {
   },
   shadow: {
     primary: '0 1px 1px rgba(0, 0, 0, 0.03)',
-    secondary: '0 8px 10px rgba(0, 0, 0, 0.1)',
+    secondary: '0 8px 20px rgba(0, 0, 0, 0.1)',
     tertiary: '0 0 80px rgba(0, 0, 0, 0.2)'
   },
   global: {
@@ -68,11 +68,11 @@ export const darkTheme: DefaultTheme = {
   },
   shadow: {
     primary: '0 2px 3px rgba(0, 0, 0, 0.3)',
-    secondary: '0 10px 10px rgba(0, 0, 0, 0.25  )',
+    secondary: '0 10px 20px rgba(0, 0, 0, 0.2)',
     tertiary: '0 0 80px 30px rgb(0, 0, 0)'
   },
   global: {
-    accent: '#3b62f0',
+    accent: '#3b46f0',
     complementary: '#d488eb',
     alert: '#ed4a34',
     valid: '#3ed282',

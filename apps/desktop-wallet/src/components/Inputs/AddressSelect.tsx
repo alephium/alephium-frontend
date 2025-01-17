@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import { inputDefaultStyle, InputLabel, InputProps } from '@/components/Inputs'
-import { MoreIcon, SelectContainer } from '@/components/Inputs/Select'
+import { MoreIcon, SelectOutterContainer } from '@/components/Inputs/Select'
 import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
 import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
@@ -112,7 +112,7 @@ function AddressSelect({
 
 export default AddressSelect
 
-const AddressSelectContainer = styled(SelectContainer)<Pick<AddressSelectProps, 'disabled' | 'simpleMode'>>`
+const AddressSelectContainer = styled(SelectOutterContainer)<Pick<AddressSelectProps, 'disabled' | 'simpleMode'>>`
   border: 2px solid ${({ theme }) => theme.border.primary};
   border-radius: 100px;
   height: 50px;

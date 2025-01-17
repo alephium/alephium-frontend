@@ -19,7 +19,7 @@ import DeleteButton from '@/components/Buttons/DeleteButton'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { inputDefaultStyle, InputProps } from '@/components/Inputs'
 import Input from '@/components/Inputs/Input'
-import { SelectContainer, SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
+import { SelectOption, SelectOptionsModal, SelectOutterContainer } from '@/components/Inputs/Select'
 import SelectOptionTokenName from '@/components/Inputs/SelectOptionTokenName'
 import Truncate from '@/components/Truncate'
 import InputsSection from '@/features/send/InputsSection'
@@ -334,7 +334,7 @@ const BoxStyled = styled(Box)`
   }
 `
 
-const AssetSelect = styled(SelectContainer)`
+const AssetSelect = styled(SelectOutterContainer)`
   margin: 0;
 `
 

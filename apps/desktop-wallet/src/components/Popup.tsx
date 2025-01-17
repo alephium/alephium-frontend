@@ -68,7 +68,7 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
     >
       {title && (
         <Header hasExtraContent={!!extraHeaderContent}>
-          <h2>{title}</h2>
+          <Title>{title}</Title>
           {extraHeaderContent}
         </Header>
       )}
@@ -116,8 +116,8 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
   max-height: 660px;
   margin: auto;
 
-  box-shadow: ${({ theme }) => theme.shadow.tertiary};
-  border: 1px solid ${({ theme }) => theme.border.secondary};
+  box-shadow: ${({ theme }) => theme.shadow.secondary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-big);
   background-color: ${({ theme }) => theme.bg.background1};
 `
@@ -132,4 +132,8 @@ const Header = styled.div<{ hasExtraContent: boolean }>`
   align-items: center;
   z-index: 1;
   gap: var(--spacing-3);
+`
+
+const Title = styled.span`
+  font-size: 14px;
 `

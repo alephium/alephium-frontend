@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
 import CheckMark from '@/components/CheckMark'
-import { inputDefaultStyle, InputHeight, InputLabel, InputProps, inputStyling } from '@/components/Inputs'
+import { inputDefaultStyle, InputHeight, InputProps, inputStyling, SelectLabel } from '@/components/Inputs'
 import Input from '@/components/Inputs/Input'
 import InputArea from '@/components/Inputs/InputArea'
 import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
@@ -164,7 +164,7 @@ function Select<T extends OptionValue>({
 
   return (
     <>
-      <SelectContainer
+      <SelectOutterContainer
         variants={sectionChildrenVariants}
         animate={canBeAnimated ? (!disabled ? 'shown' : 'disabled') : false}
         onAnimationComplete={() => setCanBeAnimated(true)}
@@ -184,15 +184,12 @@ function Select<T extends OptionValue>({
           </CustomComponentContainer>
         ) : (
           <>
-            <InputLabel isElevated={!!value} htmlFor={id}>
-              {label}
-            </InputLabel>
             {multipleAvailableOptions && !simpleMode && (
               <MoreIcon>
                 <MoreVertical size={16} />
               </MoreIcon>
             )}
-            <SelectedValue
+            <SelectContainer
               tabIndex={-1}
               className={className}
               ref={selectedValueRef}
@@ -203,11 +200,12 @@ function Select<T extends OptionValue>({
               contrast={contrast}
               showPointer={multipleAvailableOptions}
             >
+              {label && <SelectLabel htmlFor={id}>{label}</SelectLabel>}
               <Truncate>{value?.label}</Truncate>
-            </SelectedValue>
+            </SelectContainer>
           </>
         )}
-      </SelectContainer>
+      </SelectOutterContainer>
       <ModalPortal>
         {showPopup && (
           <SelectOptionsModal
@@ -328,7 +326,7 @@ export function SelectOptionsModal<T extends OptionValue>({
         title={title}
         aria-label={title}
         ref={optionSelectRef}
-        style={floatingOptions ? { backgroundColor: theme.bg.background2, paddingTop: 10 } : undefined}
+        style={floatingOptions ? { backgroundColor: theme.bg.background2, paddingTop: 5 } : undefined}
       >
         {isEmpty ? (
           <OptionItem selected={false}>{emptyListPlaceholder}</OptionItem>
@@ -384,11 +382,12 @@ export const MoreIcon = styled.div`
   z-index: 1;
 `
 
-const SelectedValue = styled.div<InputProps>`
-  ${({ heightSize, label, contrast }) => inputDefaultStyle(true, true, !!label, heightSize, contrast)};
+const SelectContainer = styled.div<InputProps>`
+  ${({ heightSize, label, contrast }) => inputDefaultStyle(true, false, !!label, heightSize, contrast)};
 
   padding-right: 35px;
   font-weight: var(--fontWeight-medium);
+  gap: 20px;
 
   cursor: ${({ showPointer }) => showPointer && 'pointer'};
 
@@ -407,7 +406,7 @@ const SelectedValue = styled.div<InputProps>`
     `}
 `
 
-export const SelectContainer = styled(InputContainer)<
+export const SelectOutterContainer = styled(InputContainer)<
   Pick<InputProps, 'noMargin' | 'heightSize' | 'simpleMode' | 'showPointer'>
 >`
   cursor: ${({ showPointer }) => showPointer && 'pointer'};
@@ -416,7 +415,7 @@ export const SelectContainer = styled(InputContainer)<
     heightSize === 'small' ? '38px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
 
   &:focus {
-    ${SelectedValue} {
+    ${SelectContainer} {
       box-shadow: 0 0 0 1px ${({ theme }) => theme.global.accent};
       border-color: ${({ theme }) => theme.global.accent};
     }
@@ -443,18 +442,19 @@ export const OptionItem = styled.button<{
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  color: ${({ theme }) => theme.font.primary};
+  color: ${({ theme, selected }) => (selected ? theme.global.accent : theme.font.primary)};
   user-select: none;
   text-align: left;
   visibility: ${({ invisible }) => invisible && 'hidden'};
   font-weight: ${({ selected }) => selected && 'var(--fontWeight-semiBold)'};
+  font-size: 13px;
 
   ${({ hasCustomOptionRender }) => css`
-    padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-4) 0'};
+    padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-3) 0'};
     margin: ${hasCustomOptionRender ? '0px' : '0 var(--spacing-4)'};
   `};
 
-  ${({ isFloating, selected, theme }) =>
+  ${({ isFloating }) =>
     isFloating
       ? css`
           margin: var(--spacing-2) var(--spacing-4);

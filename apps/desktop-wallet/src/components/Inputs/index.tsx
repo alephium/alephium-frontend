@@ -143,6 +143,18 @@ const StyledInputLabel = styled(motion.label)`
   z-index: 1;
 `
 
+export const SelectLabel = styled.label`
+  display: flex;
+  align-items: center;
+  font-weight: var(--fontWeight-medium);
+  color: ${({ theme }) => theme.font.tertiary};
+  pointer-events: none;
+  transform-origin: left;
+  z-index: 1;
+  padding-right: 10px;
+  border-right: 1px solid ${({ theme }) => theme.border.primary};
+`
+
 export const InputIconContainer = styled(motion.div)`
   position: absolute;
   top: 0;

@@ -202,7 +202,7 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
         noHorizontalPadding
         InputComponent={<Toggle label={discreetModeText} toggled={discreetMode} onToggle={handleDiscreetModeToggle} />}
       />
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       {isWalletUnlocked && !isLedger && (
         <>
           <KeyValueInput
