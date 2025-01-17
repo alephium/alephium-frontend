@@ -416,5 +416,6 @@
   "The {{ tokenSymbol }} token can be found in these addresses:": "Token {{ tokenSymbol }} có thể được tìm thấy tại các địa chỉ sau:",
   "Set as default": "Đặt làm mặc định",
   "token_in_addresses_one": "trong {{ count }} địa chỉ",
-  "token_in_addresses_other": "trong {{ count }} địa chỉ"
+  "token_in_addresses_other": "trong {{ count }} địa chỉ",
+  "Transaction sent": "Giao dịch đã gửi"
 }
