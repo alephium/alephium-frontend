@@ -85,8 +85,8 @@ const Initials = styled.div`
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.font.primary};
-  height: 36px;
-  width: 36px;
+  height: 42px;
+  width: 42px;
   border-radius: 100px;
   border: 1px solid ${({ theme }) => theme.border.primary};
 `

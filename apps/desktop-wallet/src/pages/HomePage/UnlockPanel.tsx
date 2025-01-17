@@ -14,6 +14,7 @@ import ConnectWithLedgerButton from '@/features/ledger/ConnectWithLedgerButton'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
+import { showToast } from '@/storage/global/globalActions'
 import { StoredEncryptedWallet } from '@/types/wallet'
 
 interface UnlockPanelProps {
@@ -36,6 +37,18 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   const [password, setPassword] = useState('')
   const [passphrase, setPassphrase] = useState('')
   const [isPassphraseConfirmed, setIsPassphraseConfirmed] = useState(false)
+
+  console.log(pendingDappConnectionUrl)
+  console.log(isAwaitingSessionRequestApproval)
+  console.log('YOOO')
+
+  if (pendingDappConnectionUrl) {
+    showToast({ type: 'info', text: t('Unlock a wallet to connect to the dApp.'), duration: 'long' })
+  }
+
+  if (isAwaitingSessionRequestApproval) {
+    showToast({ type: 'info', text: t('Received dApp request'), duration: 'long' })
+  }
 
   if (walletOptions.length === 0) return null
 

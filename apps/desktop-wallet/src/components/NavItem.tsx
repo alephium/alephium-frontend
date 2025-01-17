@@ -1,6 +1,6 @@
 import { LucideIcon } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import styled, { createGlobalStyle, css, useTheme } from 'styled-components'
+import styled, { createGlobalStyle, useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
 import { sidebarExpandThresholdPx } from '@/style/globalStyles'
@@ -50,24 +50,17 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
 
 const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   margin: 0;
-  border-radius: var(--radius-big);
   text-align: left;
   gap: 14px;
   font-weight: var(--fontWeight-medium);
   opacity: ${({ isActive }) => (isActive ? 1 : 0.5)};
-
-  ${({ isActive, theme }) =>
-    isActive &&
-    css`
-      background-color: ${theme.bg.highlight};
-      color: ${theme.font.primary};
-    `}
+  padding: 0 18px;
 
   @media (max-width: ${sidebarExpandThresholdPx}px) {
     gap: 0;
     width: 42px;
     min-width: 42px;
-    padding: 11px;
+    padding: 14px;
   }
 `
 

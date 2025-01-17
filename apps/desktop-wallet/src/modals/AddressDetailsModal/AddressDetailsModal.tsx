@@ -52,10 +52,3 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
 `
-
-const ButtonsGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 1px;
-  background-color: ${({ theme }) => theme.border.secondary};
-`

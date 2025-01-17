@@ -122,10 +122,10 @@ const AlephiumLogoContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
-  width: 32px;
-  height: 32px;
-  border-radius: 100px;
+  padding: 13px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
   background-color: ${({ theme }) => theme.bg.contrast};
 `
 

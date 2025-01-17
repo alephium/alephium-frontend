@@ -62,7 +62,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
     <AppHeaderStyled id="app-header" style={{ position }} className={className}>
       <GradientBackground style={{ opacity: gradientOpacity }} />
       <AppHeaderContainer id="app-drag-region" className={className}>
-      {!platform.isMac && <TitleBar />}
+        {!platform.isMac && <TitleBar />}
         <Title style={titleStyles}>{title}</Title>
         <HeaderButtons>
           {networkStatus === 'offline' && (
@@ -175,7 +175,7 @@ const OfflineIcon = styled.div`
   background-color: ${({ theme }) => colord(theme.global.alert).alpha(0.2).toHex()};
 `
 
- const InvisibleAppHeader = styled(motion.header)`
+const InvisibleAppHeader = styled(motion.header)`
   -webkit-app-region: drag;
 `
 

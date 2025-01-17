@@ -524,5 +524,6 @@
   "Address worth": "Address worth",
   "Loading new transactions...": "Loading new transactions...",
   "Sign and Send Unsigned Transaction": "Sign and Send Unsigned Transaction",
-  "Sign and Send": "Sign and Send"
+  "Sign and Send": "Sign and Send",
+  "Unlock a wallet to connect to the dApp.": "Unlock a wallet to connect to the dApp."
 }
