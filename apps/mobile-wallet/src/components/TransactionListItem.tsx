@@ -3,7 +3,7 @@ import localizedFormat from 'dayjs/plugin/localizedFormat' // ES 2015
 import { partition } from 'lodash'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
@@ -25,7 +25,6 @@ interface TransactionListItemProps extends Partial<ListItemProps> {
 const TransactionListItem = memo(
   ({ tx, showInternalInflows = false, skipTimestamp = false, ...props }: TransactionListItemProps) => {
     const { t } = useTranslation()
-    const theme = useTheme()
     const { assets, infoType } = getTransactionInfo(tx, showInternalInflows)
     const isFailedScriptTx = !isPendingTx(tx) && !tx.scriptExecutionOk
     const { Icon, iconColor, iconBgColor, label } = useTransactionUI({ infoType, isFailedScriptTx })
