@@ -4,9 +4,9 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
 import useAddressesDataPolling from '@/features/dataPolling/useAddressesDataPolling'
 import { useAppSelector } from '@/hooks/redux'
+import ActivityPage from '@/pages/UnlockedWallet/activityPage'
 import AddressesPage from '@/pages/UnlockedWallet/AddressesPage'
 import OverviewPage from '@/pages/UnlockedWallet/OverviewPage'
-import TransfersPage from '@/pages/UnlockedWallet/TransfersPage'
 import UnlockedWalletLayout from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import { loadContacts } from '@/utils/contacts'
 
@@ -20,7 +20,7 @@ const WalletRoutes = () => {
 
   const headerTitles: { [key: string]: string } = {
     '/wallet/overview': t('Overview'),
-    '/wallet/transfers': t('Transfers'),
+    '/wallet/activity': t('Activity'),
     '/wallet/addresses': t('Addresses & contacts')
   }
 
@@ -36,7 +36,7 @@ const WalletRoutes = () => {
     <UnlockedWalletLayout title={headerTitles[location.pathname]}>
       <Routes location={location} key={location.pathname}>
         <Route path="overview" key="overview" element={<OverviewPage />} />
-        <Route path="transfers" key="transfers" element={<TransfersPage />} />
+        <Route path="activity" key="activity" element={<ActivityPage />} />
         <Route path="addresses" key="addresses" element={<AddressesPage />} />
       </Routes>
     </UnlockedWalletLayout>

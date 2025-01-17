@@ -56,14 +56,14 @@ export const inputDefaultStyle = (
     : heightSize === 'big'
       ? 'var(--radius-big)'
       : 'var(--radius-medium)'};
-  border: 1px solid ${({ theme }) => theme.border.secondary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 40px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
   font-weight: var(--fontWeight-medium);
   font-size: ${largeText ? '14px' : '13px'};
   text-align: left;
   font-family: inherit;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.highlight};
 
   transition: all 0.1s;
 

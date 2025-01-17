@@ -23,8 +23,8 @@ export const lightTheme: DefaultTheme = {
     highlight: '#ef6c5c'
   },
   border: {
-    primary: 'rgba(0, 0, 0, 0.07)',
-    secondary: 'rgba(0, 0, 0, 0.05)'
+    primary: 'rgba(0, 0, 0, 0.08)',
+    secondary: 'rgba(0, 0, 0, 0.04)'
   },
   shadow: {
     primary: '0 1px 1px rgba(0, 0, 0, 0.03)',

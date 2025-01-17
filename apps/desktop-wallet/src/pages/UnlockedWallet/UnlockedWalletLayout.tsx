@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { motion } from 'framer-motion'
-import { Album, ArrowLeftRight, Layers } from 'lucide-react'
+import { Bookmark, Clock, Home } from 'lucide-react'
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme } from 'styled-components'
@@ -41,9 +41,9 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
               <AlephiumName>alephium</AlephiumName>
             </BrandContainer>
             <SideNavigation>
-              <NavItem Icon={Layers} label={t('Overview')} to="/wallet/overview" />
-              <NavItem Icon={ArrowLeftRight} label={t('Transfers')} to="/wallet/transfers" />
-              <NavItem Icon={Album} label={t('Addresses')} to="/wallet/addresses" />
+              <NavItem Icon={Home} label={t('Overview')} to="/wallet/overview" />
+              <NavItem Icon={Clock} label={t('Activity')} to="/wallet/activity" />
+              <NavItem Icon={Bookmark} label={t('Addresses')} to="/wallet/addresses" />
             </SideNavigation>
           </>
         )}

@@ -28,7 +28,7 @@ const WalletLatestTransactionsList = memo(() => {
   return (
     <Table minWidth="500px">
       <TableHeader title={t('Latest transactions')}>
-        <ActionLinkStyled onClick={() => navigate('/wallet/transfers')} Icon={ChevronRight}>
+        <ActionLinkStyled onClick={() => navigate('/wallet/activity')} Icon={ChevronRight}>
           {t('See more')}
         </ActionLinkStyled>
       </TableHeader>

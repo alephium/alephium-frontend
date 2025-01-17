@@ -345,7 +345,6 @@
   "Transaction sent!": "Transaction sent!",
   "Transactions": "Transactions",
   "Transactions sent!": "Transactions sent!",
-  "Transfers": "Transfers",
   "Type your password to change this setting.": "Type your password to change this setting.",
   "Type your password to export your wallet.": "Type your password to export your wallet.",
   "Type your password to show the phrase.": "Type your password to show the phrase.",
@@ -525,5 +524,6 @@
   "Loading new transactions...": "Loading new transactions...",
   "Sign and Send Unsigned Transaction": "Sign and Send Unsigned Transaction",
   "Sign and Send": "Sign and Send",
-  "Unlock a wallet to connect to the dApp.": "Unlock a wallet to connect to the dApp."
+  "Unlock a wallet to connect to the dApp.": "Unlock a wallet to connect to the dApp.",
+  "Activity": "Activity"
 }

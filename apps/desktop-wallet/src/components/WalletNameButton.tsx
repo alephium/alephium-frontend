@@ -55,10 +55,11 @@ const WalletNameButtonStyled = styled(motion.div)`
   display: flex;
   align-items: center;
   padding: 6px;
-  font-weight: var(--fontWeight-semiBold);
+
   overflow: hidden;
   z-index: 1;
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.highlight};
+  border: 1px solid ${({ theme }) => theme.border.primary};
 
   &:hover {
     cursor: pointer;
@@ -85,8 +86,8 @@ const Initials = styled.div`
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.font.contrastPrimary};
-  height: 34px;
-  width: 34px;
+  height: 30px;
+  width: 30px;
   border-radius: 100px;
   background-color: ${({ theme }) => theme.global.complementary};
 `

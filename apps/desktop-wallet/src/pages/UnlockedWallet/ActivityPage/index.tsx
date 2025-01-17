@@ -5,17 +5,17 @@ import styled from 'styled-components'
 
 import WalletTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/WalletTransactionsList'
 import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
-import FiltersPanel from '@/pages/UnlockedWallet/TransfersPage/FiltersPanel'
+import FiltersPanel from '@/pages/UnlockedWallet/activityPage/FiltersPanel'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
 import { TokenId } from '@/types/tokens'
 import { directionOptions } from '@/utils/transactions'
 
-interface TransfersPageProps {
+interface ActivityPageProps {
   className?: string
 }
 
-const TransfersPage = ({ className }: TransfersPageProps) => {
+const ActivityPage = ({ className }: ActivityPageProps) => {
   const { t } = useTranslation()
   const addresses = useUnsortedAddresses()
 
@@ -29,7 +29,7 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
 
   return (
     <UnlockedWalletPage
-      title={t('Transfers')}
+      title={t('Activity')}
       subtitle={t('Browse your transaction history. Execute new transfers easily.')}
       className={className}
       BottomComponent={
@@ -56,7 +56,7 @@ const TransfersPage = ({ className }: TransfersPageProps) => {
   )
 }
 
-export default TransfersPage
+export default ActivityPage
 
 const FilterPanelContainer = styled.div`
   width: 100%;

@@ -32,7 +32,7 @@ const SideBarStyled = styled.div<{ noBorder: boolean; noExpansion: boolean }>`
   z-index: 1;
   width: ${walletSidebarWidthPx}px;
   padding: ${appHeaderHeightPx}px var(--spacing-2) var(--spacing-2) var(--spacing-2);
-  border-right: ${({ theme, noBorder }) => (!noBorder ? `1px solid ${theme.border.secondary}` : 'none')};
+  border-right: ${({ theme, noBorder }) => (!noBorder ? `1px solid ${theme.border.primary}` : 'none')};
   background-color: ${({ theme }) => theme.bg.background2};
 
   ${({ noExpansion }) =>

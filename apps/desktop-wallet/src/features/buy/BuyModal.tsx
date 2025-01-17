@@ -54,7 +54,7 @@ const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
   useEffect(() => {
     const listner = window.electron?.app.onOnRampTargetLocationReached(() => {
       showToast({ text: t('Purchase done!'), type: 'success', duration: 'short' })
-      navigate('/wallet/transfers')
+      navigate('/wallet/activity')
       dispatch(closeModal({ id }))
     })
 
