@@ -7,6 +7,7 @@ import styled from 'styled-components/native'
 
 import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import AddToFavoritesButton from '~/features/ecosystem/AddToFavoritesButton'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -15,14 +16,22 @@ import { HEADER_OFFSET_TOP } from '~/style/globalStyle'
 interface DAppWebViewScreenProps extends NativeStackScreenProps<RootStackParamList, 'DAppWebViewScreen'>, ScreenProps {}
 
 const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenProps) => {
-  const { dAppUrl } = route.params
+  const { dAppUrl, dAppName } = route.params
 
   useDetectWCUrlInClipboardAndPair()
 
   if (!dAppUrl) return null
 
   return (
-    <Screen titleAlwaysVisible headerOptions={{ type: 'stack', headerTitle: dAppUrl }} {...props}>
+    <Screen
+      titleAlwaysVisible
+      headerOptions={{
+        type: 'stack',
+        headerTitle: dAppUrl,
+        headerRight: () => <AddToFavoritesButton dAppName={dAppName} />
+      }}
+      {...props}
+    >
       <WebViewStyled source={{ uri: dAppUrl }} allowsBackForwardNavigationGestures pullToRefreshEnabled />
     </Screen>
   )

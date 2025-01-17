@@ -421,5 +421,8 @@
   "Ecosystem": "Ecosystem",
   "Loading dApps...": "Loading dApps...",
   "Could not load dApps": "Could not load dApps",
-  "Coming soon!": "Coming soon!"
+  "Coming soon!": "Coming soon!",
+  "Added to favorites": "Added to favorites",
+  "Removed from favorites": "Removed from favorites",
+  "Favorites": "Favorites"
 }

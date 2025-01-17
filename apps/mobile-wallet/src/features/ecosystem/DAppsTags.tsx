@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 
 import { dAppQueries } from '~/api/queries/dAppQueries'
 import Button from '~/components/buttons/Button'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
+import { selectFavoriteDApps } from '~/features/ecosystem/favoriteDAppsSelectors'
+import { useAppSelector } from '~/hooks/redux'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface DAppsCategoriesProps {
@@ -12,12 +14,23 @@ interface DAppsCategoriesProps {
 }
 
 const DAppsTags = ({ selectedTag, onTagPress }: DAppsCategoriesProps) => {
+  const hasFavoriteDApps = useAppSelector((s) => selectFavoriteDApps(s).length > 0)
   const { data: dAppTags } = useQuery(dAppQueries({ select: extractDAppTags }))
+  const theme = useTheme()
 
   if (!dAppTags) return null
 
   return (
     <DAppsCategoriesStyled horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
+      {hasFavoriteDApps && (
+        <Button
+          compact
+          onPress={() => onTagPress(selectedTag === 'fav' ? null : 'fav')}
+          variant={selectedTag === 'fav' ? 'highlight' : undefined}
+          color={selectedTag === 'fav' ? undefined : theme.font.highlight}
+          iconProps={{ name: 'star' }}
+        />
+      )}
       {dAppTags.map((tag) => (
         <Button
           title={tag}

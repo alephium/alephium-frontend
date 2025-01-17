@@ -1,35 +1,47 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { useQuery } from '@tanstack/react-query'
 import { Image } from 'expo-image'
 import { Pressable } from 'react-native'
 import styled from 'styled-components/native'
 
+import { dAppQueries } from '~/api/queries/dAppQueries'
 import AppText from '~/components/AppText'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { BORDER_RADIUS } from '~/style/globalStyle'
 
-const DAppCard = ({ name, media, links, short_description }: DApp) => {
+interface DAppCardProps {
+  dAppName: string
+}
+
+const DAppCard = ({ dAppName }: DAppCardProps) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
+  const { data: dApp } = useQuery(dAppQueries({ select: selectDAppByName(dAppName) }))
+
+  if (!dApp) return null
+
   const handleCardPress = () => {
-    navigation.navigate('DAppWebViewScreen', { dAppUrl: links.website })
+    navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links.website, dAppName: dApp.name })
   }
 
   return (
-    <CardContainer onPress={handleCardPress}>
-      <DappIcon source={{ uri: media.logoUrl }} contentFit="cover" />
+    <DappCardStyled onPress={handleCardPress}>
+      <DappIcon source={{ uri: dApp.media.logoUrl }} contentFit="cover" />
       <TextContent>
-        <AppText bold>{name}</AppText>
-        <AppText>{short_description}</AppText>
+        <AppText bold>{dApp.name}</AppText>
+        <AppText>{dApp.short_description}</AppText>
       </TextContent>
-    </CardContainer>
+    </DappCardStyled>
   )
 }
 
 export default DAppCard
 
-const CardContainer = styled(Pressable)`
+const selectDAppByName = (dAppName: string) => (dApps: DApp[]) => dApps.find((dApp) => dApp.name === dAppName)
+
+const DappCardStyled = styled(Pressable)`
   flex-direction: row;
   overflow: hidden;
   padding: 15px;

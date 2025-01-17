@@ -34,6 +34,7 @@ type RootStackParamList = {
   FundPasswordScreen: undefined
   DAppWebViewScreen: {
     dAppUrl: string
+    dAppName: string
   }
 }
 

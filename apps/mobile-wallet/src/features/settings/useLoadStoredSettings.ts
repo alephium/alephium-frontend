@@ -1,6 +1,8 @@
 import { localStorageNetworkSettingsLoaded, NetworkSettings } from '@alephium/shared'
 import { useEffect } from 'react'
 
+import { favoriteDAppsLoadedFromStorage } from '~/features/ecosystem/favoriteDAppsActions'
+import { getFavoriteDApps } from '~/features/ecosystem/favoriteDAppsStorage'
 import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'
 import { hasStoredFundPassword } from '~/features/fund-password/fundPasswordStorage'
 import { loadSettings } from '~/features/settings/settingsPersistentStorage'
@@ -23,6 +25,9 @@ const useLoadStoredSettings = () => {
 
       const isUsingFundPassword = await hasStoredFundPassword()
       dispatch(fundPasswordUseToggled(isUsingFundPassword))
+
+      const favoriteDApps = await getFavoriteDApps()
+      dispatch(favoriteDAppsLoadedFromStorage(favoriteDApps))
     }
 
     loadStoredSettingsIntoState()

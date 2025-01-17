@@ -9,6 +9,8 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
 import DAppCard from '~/features/ecosystem/DAppCard'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
+import { selectFavoriteDApps } from '~/features/ecosystem/favoriteDAppsSelectors'
+import { useAppSelector } from '~/hooks/redux'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface DAppsListProps {
@@ -17,8 +19,11 @@ interface DAppsListProps {
 
 const DAppsList = ({ selectedTag }: DAppsListProps) => {
   const { t } = useTranslation()
+  const favoriteDApps = useAppSelector(selectFavoriteDApps)
 
   const { data: dApps, isLoading, isError, error } = useQuery(dAppQueries({ select: filterDAppsByTag(selectedTag) }))
+
+  const filteredDApps = selectedTag === 'fav' ? favoriteDApps : dApps
 
   if (isLoading)
     return (
@@ -28,7 +33,7 @@ const DAppsList = ({ selectedTag }: DAppsListProps) => {
       </EmptyPlaceholder>
     )
 
-  if (isError || !dApps)
+  if (isError || !filteredDApps)
     return (
       <EmptyPlaceholder>
         <AppText size={28}>🥺</AppText>
@@ -39,8 +44,8 @@ const DAppsList = ({ selectedTag }: DAppsListProps) => {
 
   return (
     <DAppsListStyled>
-      {dApps.map((dApp) => (
-        <DAppCard key={dApp.name} {...dApp} />
+      {filteredDApps.map((dAppName) => (
+        <DAppCard key={dAppName} dAppName={dAppName} />
       ))}
     </DAppsListStyled>
   )
@@ -49,7 +54,7 @@ const DAppsList = ({ selectedTag }: DAppsListProps) => {
 export default DAppsList
 
 const filterDAppsByTag = (selectedTag: string | null) => (dApps: DApp[]) =>
-  selectedTag ? dApps.filter((dApp) => dApp.tags.includes(selectedTag)) : dApps
+  (selectedTag ? dApps.filter((dApp) => dApp.tags.includes(selectedTag)) : dApps).map(({ name }) => name)
 
 const DAppsListStyled = styled(ScreenSection)`
   gap: ${VERTICAL_GAP}px;
