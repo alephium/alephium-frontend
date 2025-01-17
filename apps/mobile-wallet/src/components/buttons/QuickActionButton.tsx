@@ -6,11 +6,7 @@ interface QuickActionButtonProps extends ButtonProps {
   isLast?: boolean
 }
 
-const QuickActionButton = (props: QuickActionButtonProps) => <ButtonStyled {...props} />
-
-export default QuickActionButton
-
-const ButtonStyled = styled(Button)<QuickActionButtonProps>`
+export default styled(Button)<QuickActionButtonProps>`
   background-color: transparent;
   border-bottom-width: ${({ isLast }) => (!isLast ? '1px' : 0)};
   border-color: ${({ theme }) => theme.border.secondary};

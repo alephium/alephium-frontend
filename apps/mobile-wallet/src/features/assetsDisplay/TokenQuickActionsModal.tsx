@@ -3,6 +3,7 @@ import { Token } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
@@ -28,11 +29,13 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
     dispatch(hideAsset(tokenId))
     showToast({ text1: t('Asset hidden'), type: 'info' })
     dispatch(closeModal({ id }))
+    sendAnalytics({ event: 'Asset hidden', props: { origin: 'TokenQuickActionsModal', assetId: tokenId } })
   }
 
   const openTokenDetailsModal = () => {
     dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
     dispatch(closeModal({ id }))
+    sendAnalytics({ event: 'Opened token details modal', props: { origin: 'TokenQuickActionsModal' } })
   }
 
   return (
