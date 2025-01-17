@@ -1,5 +1,6 @@
+import { selectFungibleTokenById } from '@alephium/shared'
+import { Token } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -16,7 +17,6 @@ import { selectHiddenAssetsIds } from '~/features/assetsDisplay/hiddenAssetsSele
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { showToast } from '~/utils/layout'
 
@@ -26,16 +26,9 @@ const HiddenAssetsScreen = ({ navigation, ...props }: HiddenAssetsScreenProps) =
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const hiddenAssetsIds = useAppSelector(selectHiddenAssetsIds)
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector(selectAddressesKnownFungibleTokens)
 
   const handleAddAssetPress = () => {
     dispatch(openModal({ name: 'SelectAssetToHideModal' }))
-  }
-
-  const handleAssetUnhide = (assetId: string) => {
-    dispatch(unhideAsset(assetId))
-    showToast({ text1: t('Asset unhidden'), type: 'success' })
   }
 
   return (
@@ -55,22 +48,9 @@ const HiddenAssetsScreen = ({ navigation, ...props }: HiddenAssetsScreenProps) =
           </EmptyPlaceholder>
         ) : (
           <FungibleTokensList>
-            {hiddenAssetsIds.map((id, i) => {
-              const token = knownFungibleTokens.find((t) => t.id === id)
-              return (
-                token && (
-                  <ListItem
-                    key={id}
-                    icon={<AssetLogo assetId={token.id} size={38} />}
-                    title={token.name}
-                    rightSideContent={
-                      <Button iconProps={{ name: 'x' }} squared compact onPress={() => handleAssetUnhide(id)} />
-                    }
-                    isLast={i === hiddenAssetsIds.length - 1}
-                  />
-                )
-              )
-            })}
+            {hiddenAssetsIds.map((id, i) => (
+              <FungibleTokensListItem key={id} tokenId={id} isLast={i === hiddenAssetsIds.length - 1} />
+            ))}
           </FungibleTokensList>
         )}
       </ScreenSection>
@@ -83,6 +63,33 @@ const HiddenAssetsScreen = ({ navigation, ...props }: HiddenAssetsScreenProps) =
         />
       </BottomButtons>
     </ScrollScreen>
+  )
+}
+
+interface FungibleTokensListItemProps {
+  tokenId: Token['id']
+  isLast: boolean
+}
+
+const FungibleTokensListItem = ({ tokenId, isLast }: FungibleTokensListItemProps) => {
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+  const token = useAppSelector((s) => selectFungibleTokenById(s, tokenId))
+
+  if (!token) return
+
+  const handleAssetUnhide = () => {
+    dispatch(unhideAsset(tokenId))
+    showToast({ text1: t('Asset unhidden'), type: 'success' })
+  }
+
+  return (
+    <ListItem
+      icon={<AssetLogo assetId={token.id} size={38} />}
+      title={token.name}
+      rightSideContent={<Button iconProps={{ name: 'x' }} squared compact onPress={handleAssetUnhide} />}
+      isLast={isLast}
+    />
   )
 }
 
