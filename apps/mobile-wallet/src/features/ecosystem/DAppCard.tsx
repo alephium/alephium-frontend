@@ -5,7 +5,7 @@ import { Image } from 'expo-image'
 import { Pressable } from 'react-native'
 import styled from 'styled-components/native'
 
-import { dAppQueries } from '~/api/queries/dAppQueries'
+import { dAppsQuery } from '~/api/queries/dAppQueries'
 import AppText from '~/components/AppText'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -18,7 +18,7 @@ interface DAppCardProps {
 const DAppCard = ({ dAppName }: DAppCardProps) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
-  const { data: dApp } = useQuery(dAppQueries({ select: selectDAppByName(dAppName) }))
+  const { data: dApp } = useQuery(dAppsQuery({ select: selectDAppByName(dAppName) }))
 
   if (!dApp) return null
 

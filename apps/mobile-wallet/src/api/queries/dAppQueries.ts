@@ -7,7 +7,7 @@ interface DAppsQueryOptions<T> {
   select: (dApps: DApp[]) => T
 }
 
-export const dAppQueries = <T>({ select }: DAppsQueryOptions<T>) =>
+export const dAppsQuery = <T>({ select }: DAppsQueryOptions<T>) =>
   queryOptions({
     queryKey: ['dApps'],
     queryFn: () => axios.get('https://publicapi.alph.land/api/dapps').then((res) => res.data),

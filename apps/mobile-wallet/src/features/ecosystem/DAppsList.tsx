@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
-import { dAppQueries } from '~/api/queries/dAppQueries'
+import { dAppsQuery } from '~/api/queries/dAppQueries'
 import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
@@ -21,7 +21,7 @@ const DAppsList = ({ selectedTag }: DAppsListProps) => {
   const { t } = useTranslation()
   const favoriteDApps = useAppSelector(selectFavoriteDApps)
 
-  const { data: dApps, isLoading, isError, error } = useQuery(dAppQueries({ select: filterDAppsByTag(selectedTag) }))
+  const { data: dApps, isLoading, isError, error } = useQuery(dAppsQuery({ select: filterDAppsByTag(selectedTag) }))
 
   const filteredDApps = selectedTag === 'fav' ? favoriteDApps : dApps
 

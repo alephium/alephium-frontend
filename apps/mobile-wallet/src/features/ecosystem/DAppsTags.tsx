@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import styled, { useTheme } from 'styled-components/native'
 
-import { dAppQueries } from '~/api/queries/dAppQueries'
+import { dAppsQuery } from '~/api/queries/dAppQueries'
 import Button from '~/components/buttons/Button'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 import { selectFavoriteDApps } from '~/features/ecosystem/favoriteDAppsSelectors'
@@ -15,7 +15,7 @@ interface DAppsCategoriesProps {
 
 const DAppsTags = ({ selectedTag, onTagPress }: DAppsCategoriesProps) => {
   const hasFavoriteDApps = useAppSelector((s) => selectFavoriteDApps(s).length > 0)
-  const { data: dAppTags } = useQuery(dAppQueries({ select: extractDAppTags }))
+  const { data: dAppTags } = useQuery(dAppsQuery({ select: extractDAppTags }))
   const theme = useTheme()
 
   if (!dAppTags) return null
