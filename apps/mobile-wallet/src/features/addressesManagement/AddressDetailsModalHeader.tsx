@@ -1,3 +1,4 @@
+import { colord } from 'colord'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Pressable } from 'react-native'
@@ -21,7 +22,7 @@ import {
   makeSelectAddressesTokens,
   selectAddressByHash
 } from '~/store/addresses/addressesSelectors'
-import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface AddressDetailsModalHeaderProps {
   addressHash: string
@@ -72,24 +73,50 @@ export default AddressDetailsModalHeader
 
 const FungibleTokensBadge = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {
   const { t } = useTranslation()
+  const theme = useTheme()
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash, true))
-  const theme = useTheme()
+  const color = useAppSelector((s) => selectAddressByHash(s, addressHash)?.settings.color)
+
+  const editableColor = colord(color || theme.bg.contrast)
+  const isLightTheme = theme.name === 'light'
 
   return (
-    <BadgeStyled rounded solid>
-      <AppText color={theme.font.contrast} semiBold>
+    <BadgeStyled
+      rounded
+      solid
+      color={editableColor
+        .desaturate(isLightTheme ? 0.1 : 0.3)
+        .alpha(isLightTheme ? 0.15 : 0.25)
+        .toHex()}
+    >
+      <AppText
+        color={editableColor
+          .desaturate(isLightTheme ? 0.4 : 0.3)
+          .lighten(isLightTheme ? -0.3 : 0.1)
+          .toHex()}
+        semiBold
+      >
         {t('Tokens')}
       </AppText>
-      <AppText color={theme.font.contrast} semiBold>
+
+      <AssetNumberText
+        color={editableColor
+          .desaturate(isLightTheme ? 0.4 : 0.3)
+          .lighten(isLightTheme ? -0.3 : 0.1)
+          .alpha(0.5)
+          .toHex()}
+        size={12}
+      >
         {knownFungibleTokens.length}
-      </AppText>
+      </AssetNumberText>
     </BadgeStyled>
   )
 }
 
 const AddressNftsBadge = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {
   const { t } = useTranslation()
+  const theme = useTheme()
   const dispatch = useAppDispatch()
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
@@ -98,9 +125,14 @@ const AddressNftsBadge = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 
 
   return (
     <Pressable onPress={handlePress}>
-      <BadgeStyled rounded>
-        <AppText semiBold>{t('NFTs')}</AppText>
-        <AppText semiBold>{nfts.length}</AppText>
+      <BadgeStyled rounded color={theme.bg.secondary} solid>
+        <AppText semiBold color="secondary">
+          {t('NFTs')}
+        </AppText>
+
+        <AssetNumberText size={12} color="tertiary">
+          {nfts.length}
+        </AssetNumberText>
       </BadgeStyled>
     </Pressable>
   )
@@ -119,7 +151,7 @@ const AddressDetailsModalHeaderStyled = styled.View`
 `
 
 const ActionButtons = styled.View`
-  margin-top: ${VERTICAL_GAP / 2}px;
+  margin-top: ${VERTICAL_GAP}px;
   flex-direction: row;
   gap: 10px;
 `
@@ -127,16 +159,20 @@ const ActionButtons = styled.View`
 const HorizontalSeparator = styled.View`
   height: 1px;
   background-color: ${({ theme }) => theme.border.secondary};
-  margin-top: ${DEFAULT_MARGIN}px;
+  margin-top: ${VERTICAL_GAP}px;
 `
 
 const TokensBadges = styled.View`
   flex-direction: row;
   gap: 10px;
-  padding-top: ${DEFAULT_MARGIN * 2}px;
+  padding-top: ${VERTICAL_GAP}px;
+`
+
+const AssetNumberText = styled(AppText)`
+  padding: 4px 10px 4px 0px;
 `
 
 const BadgeStyled = styled(Badge)`
-  padding: 8px 12px;
+  padding: 7px 6px 7px 14px;
   gap: 10px;
 `
