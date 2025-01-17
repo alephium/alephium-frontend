@@ -81,6 +81,8 @@ const ScrollScreen = ({
 
   const HeaderComponent = headerOptions?.type === 'stack' ? StackHeader : BaseHeader
 
+  const hasHeaderButtons = headerOptions?.headerLeft || headerOptions?.headerRight || headerOptions?.type === 'stack'
+
   return (
     <>
       <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
@@ -108,7 +110,7 @@ const ScrollScreen = ({
                 flexGrow: fill ? 1 : undefined,
                 paddingTop:
                   typeof contentPaddingTop === 'boolean'
-                    ? insets.top + HEADER_OFFSET_TOP + VERTICAL_GAP * 2
+                    ? insets.top + HEADER_OFFSET_TOP + VERTICAL_GAP * (hasHeaderButtons ? 2 : 1)
                     : contentPaddingTop,
                 paddingBottom
               },
@@ -141,11 +143,13 @@ const ScrollScreen = ({
         </ScrollViewContainer>
       </KeyboardAvoidingView>
       {bottomButtonsRender && (
-        <BottomButtonsContainer>
-          <BottomButtons float bottomInset fullWidth onHeightChange={handleBottomButtonsHeightChange}>
-            {bottomButtonsRender()}
-          </BottomButtons>
-        </BottomButtonsContainer>
+        <ColoredBackground>
+          <BottomButtonsInnerContainer>
+            <BottomButtons float bottomInset fullWidth onHeightChange={handleBottomButtonsHeightChange}>
+              {bottomButtonsRender()}
+            </BottomButtons>
+          </BottomButtonsInnerContainer>
+        </ColoredBackground>
       )}
       {customBottomRender && (
         <View>
@@ -158,12 +162,15 @@ const ScrollScreen = ({
 
 export default ScrollScreen
 
-const ScrollViewContainer = styled.View`
-  flex: 1;
+const ColoredBackground = styled.View`
   background-color: ${({ theme }) => theme.bg.back2};
 `
 
-const BottomButtonsContainer = styled.View`
+const ScrollViewContainer = styled(ColoredBackground)`
+  flex: 1;
+`
+
+const BottomButtonsInnerContainer = styled.View`
   margin: ${Platform.OS === 'ios' ? 0 : undefined} ${DEFAULT_MARGIN}px;
 `
 

@@ -1,5 +1,5 @@
-import { ReactNode } from 'react'
-import { KeyboardAvoidingView, Pressable, View } from 'react-native'
+import { ReactNode, useEffect } from 'react'
+import { BackHandler, KeyboardAvoidingView, Pressable, View } from 'react-native'
 import { GestureDetector } from 'react-native-gesture-handler'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
@@ -35,25 +35,37 @@ const BottomModalBase = ({
   titleAlign,
   isContentScrollable,
   children
-}: BottomModalBaseProps & ReturnType<typeof useBottomModalState>) => (
-  <KeyboardAvoidingViewStyled behavior="height" enabled={!maximisedContent}>
-    <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
-    <Container>
-      <ModalStyled style={modalAnimatedStyle}>
-        <HandleContainer>
-          <Handle style={handleAnimatedStyle} />
-        </HandleContainer>
-        <GestureDetector gesture={panGesture}>
-          <View style={{ flex: !isContentScrollable ? 1 : 0 }}>
-            <BottomModalHeader title={title} height={navHeight} onClose={handleClose} titleAlign={titleAlign} />
-            {!isContentScrollable && children}
-          </View>
-        </GestureDetector>
-        {isContentScrollable && children}
-      </ModalStyled>
-    </Container>
-  </KeyboardAvoidingViewStyled>
-)
+}: BottomModalBaseProps & ReturnType<typeof useBottomModalState>) => {
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      handleClose()
+
+      return true
+    })
+
+    return () => backHandler.remove()
+  }, [handleClose])
+
+  return (
+    <KeyboardAvoidingViewStyled behavior="height" enabled={!maximisedContent}>
+      <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
+      <Container>
+        <ModalStyled style={modalAnimatedStyle}>
+          <HandleContainer>
+            <Handle style={handleAnimatedStyle} />
+          </HandleContainer>
+          <GestureDetector gesture={panGesture}>
+            <View style={{ flex: !isContentScrollable ? 1 : 0 }}>
+              <BottomModalHeader title={title} height={navHeight} onClose={handleClose} titleAlign={titleAlign} />
+              {!isContentScrollable && children}
+            </View>
+          </GestureDetector>
+          {isContentScrollable && children}
+        </ModalStyled>
+      </Container>
+    </KeyboardAvoidingViewStyled>
+  )
+}
 
 export default BottomModalBase
 

@@ -122,7 +122,7 @@ const BaseHeader = ({
               {(headerTitleString || HeaderTitleComponent) && (
                 <HeaderTitleContainer style={headerTitleContainerAnimatedStyle} isCentered={isCentered}>
                   {headerTitleString ? (
-                    <AppText semiBold size={17}>
+                    <AppText truncate semiBold size={17}>
                       {headerTitleString}
                     </AppText>
                   ) : HeaderTitleComponent ? (

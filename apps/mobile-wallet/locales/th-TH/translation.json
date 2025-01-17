@@ -416,5 +416,6 @@
   "The {{ tokenSymbol }} token can be found in these addresses:": "สามารถพบโทเค็น {{ tokenSymbol }} ได้ในที่อยู่เหล่านี้:",
   "Set as default": "ตั้งค่าเป็นค่าเริ่มต้น",
   "token_in_addresses_one": "ในที่อยู่ {{ count }}",
-  "token_in_addresses_other": "ในที่อยู่ {{ count }}"
+  "token_in_addresses_other": "ในที่อยู่ {{ count }}",
+  "Transaction sent": "ส่งรายการแล้ว"
 }

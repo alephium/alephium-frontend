@@ -4,6 +4,7 @@
 
 ### Patch Changes
 
+- b3124a0: Fix auto update
 - 8abda40: Fix removal of active WalletConnect sessions
 - 8abda40: Frameless window on Windows
 - 8abda40: Optimize transactions loading

@@ -49,9 +49,9 @@ const FooterMenuItem = ({ options, isFocused, routeName, target, navigation }: F
 export default FooterMenuItem
 
 const Tab = styled.View<{ active: boolean }>`
+  flex: 1;
   align-items: center;
   justify-content: center;
   border-radius: ${BORDER_RADIUS * 0.7}px;
-  width: 90px;
   padding: 4px 8px;
 `

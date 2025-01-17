@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components'
 
 import FooterMenu from '~/components/footers/FooterMenu'
+import EcosystemScreen from '~/features/ecosystem/EcosystemScreen'
 import AddressesTabNavigation from '~/navigation/AddressesTabNavigation'
 import ActivityScreen from '~/screens/ActivityScreen'
 import DashboardScreen from '~/screens/Dashboard/DashboardScreen'
@@ -15,6 +16,7 @@ export type InWalletTabsParamList = {
   NFTListScreen: undefined
   AddressesTabNavigation: undefined
   ActivityScreen: undefined
+  EcosystemScreen: undefined
 }
 
 const InWalletTabs = createBottomTabNavigator<InWalletTabsParamList>()
@@ -69,6 +71,16 @@ const InWalletTabsNavigation = () => {
             title: t('Addresses'),
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'bookmark' : 'bookmark-outline'} color={color} size={size} />
+            )
+          }}
+        />
+        <InWalletTabs.Screen
+          name="EcosystemScreen"
+          component={EcosystemScreen}
+          options={{
+            title: t('Ecosystem'),
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'planet' : 'planet-outline'} color={color} size={size} />
             )
           }}
         />

@@ -11,6 +11,7 @@ import id from '../../../locales/id-ID/translation.json'
 import it from '../../../locales/it-IT/translation.json'
 import pt from '../../../locales/pt-PT/translation.json'
 import ru from '../../../locales/ru-RU/translation.json'
+import th from '../../../locales/th-TH/translation.json'
 import tr from '../../../locales/tr-TR/translation.json'
 import vi from '../../../locales/vi-VN/translation.json'
 import zh from '../../../locales/zh-CN/translation.json'
@@ -29,7 +30,8 @@ i18next.use(initReactI18next).init({
     'tr-TR': { translation: tr },
     'vi-VN': { translation: vi },
     'el-GR': { translation: el },
-    'zh-CN': { translation: zh }
+    'zh-CN': { translation: zh },
+    'th-TH': { translation: th }
   },
   lng: 'en-US',
   fallbackLng: 'en-US',

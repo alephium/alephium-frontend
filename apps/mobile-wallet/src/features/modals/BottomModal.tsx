@@ -1,14 +1,14 @@
-// HUGE THANKS TO JAI-ADAPPTOR @ https://gist.github.com/jai-adapptor/bc3650ab20232d8ab076fa73829caebb
-
+import { useEffect } from 'react'
 import { ScrollView, StyleProp, ViewStyle } from 'react-native'
 import Animated from 'react-native-reanimated'
 
 import BottomModalBase, { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
-import { useBottomModalState } from '~/features/modals/useBottomModalState'
+import { BottomModalAnimationStates, useBottomModalState } from '~/features/modals/useBottomModalState'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface BottomModalProps extends BottomModalBaseProps {
   contentContainerStyle?: StyleProp<ViewStyle>
+  onModalAnimationStateChange?: (state: BottomModalAnimationStates) => void
 }
 
 const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView)
@@ -25,7 +25,8 @@ const BottomModal = ({
   paddingTop,
   noPadding,
   contentVerticalGap,
-  contentContainerStyle
+  contentContainerStyle,
+  onModalAnimationStateChange
 }: BottomModalProps) => {
   const modalState = useBottomModalState({
     modalId,
@@ -34,6 +35,10 @@ const BottomModal = ({
     navHeight,
     onClose
   })
+
+  useEffect(() => {
+    onModalAnimationStateChange?.(modalState.modalAnimationState)
+  }, [modalState.modalAnimationState, onModalAnimationStateChange])
 
   return (
     <BottomModalBase modalId={modalId} title={title} navHeight={navHeight} titleAlign={titleAlign} {...modalState}>

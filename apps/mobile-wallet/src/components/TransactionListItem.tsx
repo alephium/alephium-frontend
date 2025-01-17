@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import localizedFormat from 'dayjs/plugin/localizedFormat' // ES 2015
 import { partition } from 'lodash'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -13,66 +14,83 @@ import { useAppSelector } from '~/hooks/redux'
 import { AddressTransaction } from '~/types/transactions'
 import { getTransactionInfo, isPendingTx } from '~/utils/transactions'
 
+dayjs.extend(localizedFormat)
+
 interface TransactionListItemProps extends Partial<ListItemProps> {
   tx: AddressTransaction
   showInternalInflows?: boolean
+  skipTimestamp?: boolean
 }
 
-const TransactionListItem = memo(({ tx, showInternalInflows = false, ...props }: TransactionListItemProps) => {
-  const { t } = useTranslation()
-  const { assets, infoType } = getTransactionInfo(tx, showInternalInflows)
-  const isFailedScriptTx = !isPendingTx(tx) && !tx.scriptExecutionOk
-  const { Icon, iconColor, iconBgColor, label } = useTransactionUI({ infoType, isFailedScriptTx })
-  const allNFTs = useAppSelector((s) => s.nfts.entities)
+const TransactionListItem = memo(
+  ({ tx, showInternalInflows = false, skipTimestamp = false, ...props }: TransactionListItemProps) => {
+    const { t } = useTranslation()
+    const { assets, infoType } = getTransactionInfo(tx, showInternalInflows)
+    const isFailedScriptTx = !isPendingTx(tx) && !tx.scriptExecutionOk
+    const { Icon, iconColor, iconBgColor, label } = useTransactionUI({ infoType, isFailedScriptTx })
+    const allNFTs = useAppSelector((s) => s.nfts.entities)
 
-  const isMoved = infoType === 'move'
+    const isMoved = infoType === 'move'
 
-  // TODO: Implement type guard like in DW
-  const [tokensWithSymbol, tokensWithoutSymbol] = partition(assets, (asset) => !!asset.symbol)
-  const [nfts, unknownTokens] = partition(tokensWithoutSymbol, (token) => !!allNFTs[token.id])
+    // TODO: Implement type guard like in DW
+    const [tokensWithSymbol, tokensWithoutSymbol] = partition(assets, (asset) => !!asset.symbol)
+    const [nfts, unknownTokens] = partition(tokensWithoutSymbol, (token) => !!allNFTs[token.id])
 
-  return (
-    <ListItem
-      {...props}
-      title={label}
-      subtitle={dayjs(tx.timestamp).fromNow()}
-      expandedSubtitle
-      icon={
-        <TransactionIcon color={iconBgColor}>
-          <Icon size={16} strokeWidth={3} color={iconColor} />
-          {isFailedScriptTx && (
-            <FailedTXBubble>
-              <FailedTXBubbleText>!</FailedTXBubbleText>
-            </FailedTXBubble>
-          )}
-        </TransactionIcon>
-      }
-      rightSideContent={
-        <AmountColumn>
-          {tokensWithSymbol.map(({ id, amount }) => (
-            <AssetAmountWithLogo key={id} assetId={id} amount={amount} showPlusMinus={!isMoved} logoPosition="right" />
-          ))}
-          {nfts.length > 0 && (
-            <Badge>
-              <AppText>
-                {nfts.length} {t('NFTs')}
-              </AppText>
-            </Badge>
-          )}
-          {unknownTokens.length > 0 && (
-            <Badge>
-              <AppText>
-                {t(unknownTokens.length === 1 ? 'unknownTokensKey_one' : 'unknownTokensKey_other', {
-                  count: unknownTokens.length
-                })}
-              </AppText>
-            </Badge>
-          )}
-        </AmountColumn>
-      }
-    />
-  )
-})
+    return (
+      <ListItem
+        {...props}
+        title={label}
+        subtitle={
+          skipTimestamp ? undefined : (
+            <AppText color="tertiary" size={12} style={{ marginTop: 5 }}>
+              {dayjs(tx.timestamp).format('lll')}
+            </AppText>
+          )
+        }
+        expandedSubtitle
+        icon={
+          <TransactionIcon color={iconBgColor}>
+            <Icon size={16} strokeWidth={3} color={iconColor} />
+            {isFailedScriptTx && (
+              <FailedTXBubble>
+                <FailedTXBubbleText>!</FailedTXBubbleText>
+              </FailedTXBubble>
+            )}
+          </TransactionIcon>
+        }
+        rightSideContent={
+          <AmountColumn>
+            {tokensWithSymbol.map(({ id, amount }) => (
+              <AssetAmountWithLogo
+                key={id}
+                assetId={id}
+                amount={amount}
+                showPlusMinus={!isMoved}
+                logoPosition="right"
+              />
+            ))}
+            {nfts.length > 0 && (
+              <Badge>
+                <AppText>
+                  {nfts.length} {t('NFTs')}
+                </AppText>
+              </Badge>
+            )}
+            {unknownTokens.length > 0 && (
+              <Badge>
+                <AppText>
+                  {t(unknownTokens.length === 1 ? 'unknownTokensKey_one' : 'unknownTokensKey_other', {
+                    count: unknownTokens.length
+                  })}
+                </AppText>
+              </Badge>
+            )}
+          </AmountColumn>
+        }
+      />
+    )
+  }
+)
 
 export default TransactionListItem
 

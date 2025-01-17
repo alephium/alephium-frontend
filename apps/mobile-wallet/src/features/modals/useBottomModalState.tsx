@@ -10,6 +10,8 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 
 type BottomModalPositions = 'minimised' | 'maximised' | 'closing'
 
+export type BottomModalAnimationStates = 'idle' | 'animating'
+
 export interface UseBottomModalStateParams {
   modalId: number
   navHeight: number
@@ -23,8 +25,8 @@ const springConfig = {
   mass: 0.3,
   stiffness: 120,
   overshootClamping: true,
-  restSpeedThreshold: 0.3,
-  restDisplacementThreshold: 0.3
+  restSpeedThreshold: 1,
+  restDisplacementThreshold: 1
 }
 
 const DRAG_BUFFER = 40
@@ -50,24 +52,24 @@ export const useBottomModalState = ({
   const shouldMaximizeOnOpen = useSharedValue(!!maximisedContent)
   const contentHeight = useSharedValue(0)
   const canMaximize = useSharedValue(false)
-
   const offsetY = useSharedValue(0)
-
   const [isContentScrollable, setIsContentScrollable] = useState(false)
-
   const isModalClosing = useAppSelector((s) => selectModalById(s, modalId)?.isClosing)
+  const [modalAnimationState, setModalAnimationState] = useState<BottomModalAnimationStates>('animating')
 
   // Handlers
   // ----------------------------
   const handleCloseOnJS = useCallback(() => {
     if (onClose) onClose()
-
-    dispatch(removeModal({ id: modalId })) // Remove modal from stack after animation is done
+    dispatch(removeModal({ id: modalId }))
   }, [dispatch, modalId, onClose])
+
+  const setStateToIdle = useCallback(() => {
+    setModalAnimationState('idle')
+  }, [])
 
   const handleClose = useCallback(() => {
     'worklet'
-
     navHeight.value = withSpring(0, springConfig)
     modalHeight.value = withSpring(0, springConfig, (finished) => finished && runOnJS(handleCloseOnJS)())
     position.value = 'closing'
@@ -76,16 +78,16 @@ export const useBottomModalState = ({
   const handleMaximize = useCallback(() => {
     'worklet'
     navHeight.value = withSpring(customNavHeight, springConfig)
-    modalHeight.value = withSpring(-maxHeight, springConfig)
+    modalHeight.value = withSpring(-maxHeight, springConfig, (finished) => finished && runOnJS(setStateToIdle)())
     position.value = 'maximised'
-  }, [navHeight, customNavHeight, modalHeight, maxHeight, position])
+  }, [navHeight, customNavHeight, modalHeight, maxHeight, position, setStateToIdle])
 
   const handleMinimize = useCallback(() => {
     'worklet'
     navHeight.value = withSpring(0, springConfig)
-    modalHeight.value = withSpring(-minHeight.value, springConfig)
+    modalHeight.value = withSpring(-minHeight.value, springConfig, (finished) => finished && runOnJS(setStateToIdle)())
     position.value = 'minimised'
-  }, [navHeight, modalHeight, minHeight, position])
+  }, [navHeight, modalHeight, minHeight, position, setStateToIdle])
 
   const handleContentSizeChange = useCallback(
     (_w: number, newContentHeight: number) => {
@@ -94,18 +96,14 @@ export const useBottomModalState = ({
           contentHeight.value = newContentHeight
           canMaximize.value = contentHeight.value > maxHeight
           const contentIsScrollable = contentHeight.value > dimensions.height * 0.8
-
           shouldMaximizeOnOpen.value = maximisedContent || contentIsScrollable
-
           // Determine if scrolling is needed
           runOnJS(setIsContentScrollable)(contentIsScrollable)
-
           minHeight.value = customMinHeight
             ? customMinHeight
             : shouldMaximizeOnOpen.value
               ? maxHeight
               : contentHeight.value + customNavHeight + (Platform.OS === 'ios' ? insets.bottom : insets.bottom + 18)
-
           shouldMaximizeOnOpen.value ? handleMaximize() : handleMinimize()
         })()
       }
@@ -155,15 +153,11 @@ export const useBottomModalState = ({
     })
     .onEnd(() => {
       'worklet'
-
       const shouldMinimise = position.value === 'maximised' && -modalHeight.value < maxHeight - DRAG_BUFFER
-
       const shouldMaximise =
         canMaximize.value && position.value === 'minimised' && -modalHeight.value > minHeight.value + DRAG_BUFFER
-
       const shouldClose =
         ['minimised', 'closing'].includes(position.value) && -modalHeight.value < minHeight.value - DRAG_BUFFER
-
       if (shouldMaximise) {
         handleMaximize()
       } else if (shouldMinimise) {
@@ -178,8 +172,6 @@ export const useBottomModalState = ({
       }
     })
 
-  // Effect to Handle Modal Closure
-  // ----------------------------
   useEffect(() => {
     if (position.value !== 'closing' && isModalClosing) {
       handleClose()
@@ -193,6 +185,7 @@ export const useBottomModalState = ({
     handleContentSizeChange,
     panGesture,
     handleClose,
-    isContentScrollable
+    isContentScrollable,
+    modalAnimationState
   }
 }
