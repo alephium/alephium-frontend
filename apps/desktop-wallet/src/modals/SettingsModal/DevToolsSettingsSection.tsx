@@ -110,10 +110,10 @@ const DevToolsSettingsSection = () => {
               {t('Smart contracts')}
             </h2>
             <ButtonsRow>
-              <Button Icon={FileCode} onClick={openDeployContractModal} role="secondary">
+              <Button Icon={FileCode} onClick={openDeployContractModal} role="secondary" justifyContent="center">
                 {t('Deploy contract')}
               </Button>
-              <Button Icon={TerminalSquare} onClick={openCallContractModal} role="secondary">
+              <Button Icon={TerminalSquare} onClick={openCallContractModal} role="secondary" justifyContent="center">
                 {t('Call contract')}
               </Button>
             </ButtonsRow>

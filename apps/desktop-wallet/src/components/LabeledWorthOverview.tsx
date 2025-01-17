@@ -24,7 +24,7 @@ import NetworkSwitch from '@/components/NetworkSwitch'
 import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
 import WalletWorth from '@/pages/UnlockedWallet/OverviewPage/WalletWorth'
 
-interface WorthOverviewPanelProps {
+interface LabeledWorthOverviewProps {
   addressHash?: string
   isLoading?: boolean
   className?: string
@@ -32,25 +32,25 @@ interface WorthOverviewPanelProps {
   children?: ReactNode
 }
 
-const WorthOverviewPanel = ({ className, addressHash, children }: WorthOverviewPanelProps) => {
+const LabeledWorthOverview = ({ className, addressHash, children }: LabeledWorthOverviewProps) => {
   const { t } = useTranslation()
 
   const singleAddress = !!addressHash
 
   return (
-    <WorthOverviewPanelStyled className={className}>
+    <LabeledWorthOverviewStyled className={className}>
       <Surtitle>
         <Worth>{t(singleAddress ? 'Address worth' : 'Wallet worth')}</Worth>
         <NetworkSwitch />
       </Surtitle>
       {singleAddress ? <AddressWorth addressHash={addressHash} /> : <WalletWorth />}
-    </WorthOverviewPanelStyled>
+    </LabeledWorthOverviewStyled>
   )
 }
 
-export default WorthOverviewPanel
+export default LabeledWorthOverview
 
-const WorthOverviewPanelStyled = styled.div`
+const LabeledWorthOverviewStyled = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;

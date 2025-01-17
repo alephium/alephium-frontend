@@ -184,4 +184,5 @@ const ButtonsContainer = styled.div`
   align-items: center;
   justify-content: center;
   gap: 12px;
+  z-index: 1;
 `

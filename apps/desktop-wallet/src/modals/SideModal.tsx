@@ -1,13 +1,13 @@
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { X } from 'lucide-react'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { normalTransition } from '@/animations'
 import Button from '@/components/Button'
-import Scrollbar from '@/components/Scrollbar'
+import ScrollbarCustom from '@/components/Scrollbar'
 import { closeModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
 import useFocusOnMount from '@/hooks/useFocusOnMount'
@@ -36,6 +36,14 @@ const SideModal = ({
 
   const _onClose = id ? () => dispatch(closeModal({ id })) : onClose
 
+  const [headerBgOpacity, setHeaderBgOpacity] = useState(0)
+
+  const handleScroll = (scrollTop: number) => {
+    const maxScroll = 100
+    const newOpacity = Math.min(scrollTop / maxScroll, 1)
+    setHeaderBgOpacity(newOpacity)
+  }
+
   return (
     <ModalContainer id={id} onClose={_onClose}>
       <Sidebar
@@ -47,15 +55,19 @@ const SideModal = ({
         width={width}
         onAnimationComplete={onAnimationComplete}
       >
-        <Scrollbar>
+        <ScrollbarCustom onScroll={handleScroll}>
           <ContentContainer ref={elRef} tabIndex={0} aria-label={title}>
             {children}
           </ContentContainer>
-        </Scrollbar>
+        </ScrollbarCustom>
+
         {!hideHeader && (
           <ModalHeader>
-            <HeaderColumn>{header ?? <Title>{title}</Title>}</HeaderColumn>
-            <CloseButton aria-label={t('Close')} circle role="secondary" onClick={_onClose} Icon={X} tiny />
+            <ModalHeaderBackground style={{ opacity: headerBgOpacity }} />
+            <ModalHeaderContent>
+              <HeaderColumn>{header ?? <Title>{title}</Title>}</HeaderColumn>
+              <CloseButton aria-label={t('Close')} circle role="secondary" onClick={_onClose} Icon={X} tiny />
+            </ModalHeaderContent>
           </ModalHeader>
         )}
       </Sidebar>
@@ -83,13 +95,28 @@ const Sidebar = styled(motion.div)<{ width: number }>`
 const ModalHeader = styled.div`
   position: absolute;
   top: 0;
-  right: 0;
   left: 0;
+  right: 0;
+  height: 70px;
+  z-index: 1;
+`
+
+const ModalHeaderBackground = styled.div`
+  position: absolute;
+  inset: 0; // Awesome shortcut! Top, right, bottom, left = 0
+  pointer-events: none;
+  z-index: 0;
+
+  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 55%, transparent)`};
+`
+
+const ModalHeaderContent = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   padding: 0 10px 16px 20px;
   height: 70px;
-  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 55%, transparent)`};
+  z-index: 1;
 `
 
 const HeaderColumn = styled.div`
@@ -107,5 +134,5 @@ const Title = styled.div`
 `
 
 const ContentContainer = styled.div`
-  padding-top: 50px;
+  padding-top: 70px;
 `

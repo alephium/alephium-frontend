@@ -22,8 +22,8 @@ export const AddressTokensTabs = ({ addressHash }: AddressTokensTabsProps) => {
   const { tabs, isExpanded, toggleExpansion } = useTokensTabs({
     numberOfNSTs: nstIds.length,
     ftsTabTitle: t('Address tokens'),
-    nstsTabTitle: t('Address unknown tokens'),
-    nftsTabTitle: t('Address NFTs')
+    nftsTabTitle: t('Address NFTs'),
+    nstsTabTitle: t('Address unknown tokens')
   })
 
   const [currentTab, setCurrentTab] = useState<TabItem<TokensTabValue>>(tabs[0])

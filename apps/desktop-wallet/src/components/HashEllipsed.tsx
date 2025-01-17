@@ -25,26 +25,28 @@ const HashEllipsed = ({
 }: HashEllipsedProps) => {
   const { t } = useTranslation()
 
-  return disableCopy ? (
+  return (
     <Container className={className}>
-      <Ellipsed text={hash} {...props} />
+      {disableCopy ? (
+        <Ellipsed text={hash} {...props} />
+      ) : (
+        <ClipboardButtonStyled
+          textToCopy={hash}
+          tooltip={tooltipText ?? t('Copy address')}
+          disableA11y={disableA11y}
+          showSnackbarOnCopied={showSnackbarOnCopied}
+        >
+          <Ellipsed className={className} text={hash} {...props} />
+        </ClipboardButtonStyled>
+      )}
     </Container>
-  ) : (
-    <ClipboardButtonStyled
-      textToCopy={hash}
-      tooltip={tooltipText ?? t('Copy address')}
-      disableA11y={disableA11y}
-      className={className}
-      showSnackbarOnCopied={showSnackbarOnCopied}
-    >
-      <Ellipsed text={hash} {...props} />
-    </ClipboardButtonStyled>
   )
 }
 
 export default HashEllipsed
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   overflow: hidden;
