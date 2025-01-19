@@ -10,6 +10,7 @@ import AddressQuickActionsModal from '~/features/addressesManagement/AddressQuic
 import AddressSettingsModal from '~/features/addressesManagement/AddressSettingsModal'
 import NftGridModal from '~/features/assetsDisplay/nftsDisplay/NftGridModal'
 import NftModal from '~/features/assetsDisplay/nftsDisplay/NftModal'
+import SelectAssetToHideModal from '~/features/assetsDisplay/SelectAssetToHideModal'
 import AddressesWithTokenModal from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/AddressesWithTokenModal'
 import TokenDetailsModal from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
@@ -64,7 +65,8 @@ export const ModalComponents = {
   AddressSettingsModal,
   TokenDetailsModal,
   AddressQuickActionsModal,
-  AddressesWithTokenModal
+  AddressesWithTokenModal,
+  SelectAssetToHideModal
 }
 
 export type ModalName = keyof typeof ModalComponents

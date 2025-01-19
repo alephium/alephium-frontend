@@ -10,6 +10,7 @@ import AddressQuickActionsModal from '~/features/addressesManagement/AddressQuic
 import AddressSettingsModal from '~/features/addressesManagement/AddressSettingsModal'
 import NftGridModal from '~/features/assetsDisplay/nftsDisplay/NftGridModal'
 import NftModal from '~/features/assetsDisplay/nftsDisplay/NftModal'
+import SelectAssetToHideModal from '~/features/assetsDisplay/SelectAssetToHideModal'
 import AddressesWithTokenModal from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/AddressesWithTokenModal'
 import TokenDetailsModal from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
@@ -112,6 +113,8 @@ const AppModals = () => {
             return <AddressQuickActionsModal key={id} id={id} {...params.props} />
           case 'AddressesWithTokenModal':
             return <AddressesWithTokenModal key={id} id={id} {...params.props} />
+          case 'SelectAssetToHideModal':
+            return <SelectAssetToHideModal key={id} id={id} />
           default:
             return null
         }
