@@ -31,6 +31,7 @@ import {
 } from '@reduxjs/toolkit'
 
 import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsPage } from '~/api/addresses'
+import { selectHiddenAssetsIds } from '~/features/assetsDisplay/hiddenAssetsSelectors'
 import { addressMetadataIncludesHash } from '~/persistent-storage/wallet'
 import { addressDeleted } from '~/store/addresses/addressesActions'
 import { RootState } from '~/store/store'
@@ -342,7 +343,7 @@ export const makeSelectAddressesTokens = () =>
 
 // Same as in desktop wallet
 export const makeSelectAddressesKnownFungibleTokens = () =>
-  createSelector([makeSelectAddressesTokens()], (tokens): AddressFungibleToken[] =>
+  createSelector([makeSelectAddressesTokens(), selectHiddenAssetsIds], (tokens): AddressFungibleToken[] =>
     tokens.filter((token): token is AddressFungibleToken => !!token.symbol)
   )
 

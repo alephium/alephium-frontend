@@ -1,16 +1,21 @@
 import { AddressHash, Asset } from '@alephium/shared'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { ComponentProps, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import UnknownTokensListItem, { UnknownTokensEntry } from '~/components/UnknownTokensListItem'
+import { selectHiddenAssetsIds } from '~/features/assetsDisplay/hiddenAssetsSelectors'
 import { ModalInstance } from '~/features/modals/modalTypes'
 import { useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { makeSelectAddressesCheckedUnknownTokens, makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
-import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
+import { BORDER_RADIUS_BIG, VERTICAL_GAP } from '~/style/globalStyle'
 
 import TokenListItem from './TokenListItem'
 
@@ -31,6 +36,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
   const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
+  const hiddenAssetIds = useAppSelector(selectHiddenAssetsIds)
   const isLoadingTokenBalances = useAppSelector((s) => s.loaders.loadingTokens)
   const isLoadingUnverified = useAppSelector((s) => s.fungibleTokens.loadingUnverified)
   const isLoadingVerified = useAppSelector((s) => s.fungibleTokens.loadingVerified)
@@ -38,6 +44,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
   const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const theme = useTheme()
   const { t } = useTranslation()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
   const showTokensSkeleton =
     isRefreshing ||
@@ -48,7 +55,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
 
   useEffect(() => {
     const entries: TokensRow[] = [
-      ...knownFungibleTokens,
+      ...knownFungibleTokens.filter((t) => !hiddenAssetIds.includes(t.id)),
       ...(unknownTokens.length > 0
         ? [
             {
@@ -60,7 +67,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
     ]
 
     setTokenRows(entries)
-  }, [addressHash, showTokensSkeleton, knownFungibleTokens, unknownTokens.length])
+  }, [addressHash, showTokensSkeleton, knownFungibleTokens, unknownTokens.length, hiddenAssetIds])
 
   if (addressesBalancesStatus === 'uninitialized')
     return (
@@ -103,6 +110,18 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
           )
         )
       )}
+      {hiddenAssetIds.length > 0 && (
+        <HiddenAssetBtnContainer>
+          <Button
+            title={t(hiddenAssetIds.length === 1 ? 'nb_of_hidden_assets_one' : 'nb_of_hidden_assets_other', {
+              count: hiddenAssetIds.length
+            })}
+            onPress={() => navigation.navigate('HiddenAssetsScreen')}
+            iconProps={{ name: 'plus' }}
+            compact
+          />
+        </HiddenAssetBtnContainer>
+      )}
     </AddressesTokensListStyled>
   )
 }
@@ -120,6 +139,11 @@ const LoadingSectionContainer = styled.View`
   width: 100%;
   align-items: center;
   padding: 60px 0 40px;
+`
+
+const HiddenAssetBtnContainer = styled.View`
+  flex-grow: 0;
+  margin: ${VERTICAL_GAP}px auto;
 `
 
 const isAsset = (item: TokensRow): item is Asset => (item as Asset).id !== undefined
