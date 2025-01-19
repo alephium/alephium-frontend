@@ -15,7 +15,7 @@ import { selectAddressesWithToken } from '~/store/addresses/addressesSelectors'
 import { selectAllAddresses } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
-type AddressesWithTokenModalProps = {
+interface AddressesWithTokenModalProps {
   tokenId: Token['id']
 }
 
