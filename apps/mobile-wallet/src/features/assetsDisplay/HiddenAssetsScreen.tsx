@@ -25,15 +25,15 @@ interface HiddenAssetsScreenProps extends StackScreenProps<RootStackParamList, '
 const HiddenAssetsScreen = ({ navigation, ...props }: HiddenAssetsScreenProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const hiddenAssetsIds = useAppSelector((s) => selectHiddenAssetsIds(s))
+  const hiddenAssetsIds = useAppSelector(selectHiddenAssetsIds)
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s))
+  const knownFungibleTokens = useAppSelector(selectAddressesKnownFungibleTokens)
 
   const handleAddAssetPress = () => {
     dispatch(openModal({ name: 'SelectAssetToHideModal' }))
   }
 
-  const handleAssetUnHide = (assetId: string) => {
+  const handleAssetUnhide = (assetId: string) => {
     dispatch(unhideAsset(assetId))
     showToast({ text1: t('Asset unhidden'), type: 'success' })
   }
@@ -64,7 +64,7 @@ const HiddenAssetsScreen = ({ navigation, ...props }: HiddenAssetsScreenProps) =
                     icon={<AssetLogo assetId={token.id} size={38} />}
                     title={token.name}
                     rightSideContent={
-                      <Button iconProps={{ name: 'x' }} squared compact onPress={() => handleAssetUnHide(id)} />
+                      <Button iconProps={{ name: 'x' }} squared compact onPress={() => handleAssetUnhide(id)} />
                     }
                     isLast={i === hiddenAssetsIds.length - 1}
                   />

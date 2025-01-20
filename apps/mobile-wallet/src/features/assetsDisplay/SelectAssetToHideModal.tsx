@@ -18,7 +18,7 @@ const SelectAssetToHideModal = withModal(({ id }) => {
   const dispatch = useAppDispatch()
   const hiddenAssetsIds = useAppSelector(selectHiddenAssetsIds)
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s))
+  const knownFungibleTokens = useAppSelector(selectAddressesKnownFungibleTokens)
 
   const handleAssetSelection = (assetId: string) => {
     dispatch(hideAsset(assetId))
@@ -33,7 +33,6 @@ const SelectAssetToHideModal = withModal(({ id }) => {
       flashListRender={(props) => (
         <FlashList
           data={knownFungibleTokens.filter((t) => !hiddenAssetsIds.includes(t.id))}
-          keyExtractor={(item) => item.id}
           estimatedItemSize={70}
           renderItem={({ item, index }) => (
             <ListItem

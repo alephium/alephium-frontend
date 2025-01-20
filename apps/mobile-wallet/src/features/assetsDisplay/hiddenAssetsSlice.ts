@@ -1,4 +1,5 @@
-import { appReset, FungibleToken, NFT } from '@alephium/shared'
+import { appReset } from '@alephium/shared'
+import { Token } from '@alephium/web3'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
 
 import {
@@ -14,7 +15,7 @@ import { walletDeleted } from '~/store/wallet/walletActions'
 const sliceName = 'hiddenAssets'
 
 export interface hiddenAssetsState {
-  hiddenAssetsIds: (FungibleToken['id'] | NFT['id'])[]
+  hiddenAssetsIds: Token['id'][]
   loadedFromStorage: boolean
 }
 

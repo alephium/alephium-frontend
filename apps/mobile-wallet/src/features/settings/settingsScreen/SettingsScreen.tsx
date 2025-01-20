@@ -146,7 +146,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
           <Row
             title="Hidden assets"
-            subtitle={t('Hide assets your are not interested in')}
+            subtitle={t("Hide assets you're not interested in")}
             onPress={() => navigation.navigate('HiddenAssetsScreen')}
             isLast
           >
