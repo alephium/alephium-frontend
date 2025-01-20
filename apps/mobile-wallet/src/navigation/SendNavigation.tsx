@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { Token } from '@alephium/web3'
 import { NavigationContainer, ParamListBase, useNavigationContainerRef } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
@@ -16,8 +17,8 @@ import { useOnChildNavigationGoBack } from '~/navigation/useOnChildNavigationGoB
 
 export interface SendNavigationParamList extends ParamListBase {
   DestinationScreen: { originAddressHash?: AddressHash }
-  OriginScreen: undefined
-  AssetsScreen: undefined
+  OriginScreen?: { tokenId?: Token['id'] }
+  AssetsScreen?: { tokenId?: Token['id'] }
   VerifyScreen: undefined
 }
 
@@ -37,6 +38,7 @@ const SendNavigation = ({
     <SendContextProvider
       originAddressHash={params?.originAddressHash}
       destinationAddressHash={params?.destinationAddressHash}
+      tokenId={params?.tokenId}
     >
       <HeaderContextProvider>
         <View style={{ flex: 1 }}>
@@ -53,8 +55,16 @@ const SendNavigation = ({
                 component={DestinationScreen}
                 initialParams={{ originAddressHash: params?.originAddressHash }}
               />
-              <SendStack.Screen name="OriginScreen" component={OriginScreen} />
-              <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />
+              <SendStack.Screen
+                name="OriginScreen"
+                component={OriginScreen}
+                initialParams={{ tokenId: params?.tokenId }}
+              />
+              <SendStack.Screen
+                name="AssetsScreen"
+                component={AssetsScreen}
+                initialParams={{ tokenId: params?.tokenId }}
+              />
               <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
             </SendStack.Navigator>
           </NavigationContainer>

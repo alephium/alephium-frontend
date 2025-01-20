@@ -42,7 +42,12 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
       <Content>
         <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
         <ActionButtons>
-          <ActionCardSendButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
+          <ActionCardSendButton
+            origin="tokenDetails"
+            addressHash={addressHash}
+            tokenId={tokenId}
+            onPress={handleClose}
+          />
           <ActionCardReceiveButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
           {tokenId === ALPH.id && (
             <ActionCardBuyButton origin="tokenDetails" receiveAddressHash={addressHash || defaultAddressHash} />

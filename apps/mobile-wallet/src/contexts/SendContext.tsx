@@ -1,5 +1,5 @@
 import { AddressHash, AssetAmount } from '@alephium/shared'
-import { node } from '@alephium/web3'
+import { node, Token } from '@alephium/web3'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -57,6 +57,7 @@ interface SendContextProviderProps {
   children: ReactNode
   originAddressHash?: AddressHash
   destinationAddressHash?: AddressHash
+  tokenId?: Token['id']
 }
 
 export const SendContextProvider = ({
@@ -79,20 +80,23 @@ export const SendContextProvider = ({
 
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
 
-  const setAssetAmount = (assetId: string, amount?: bigint) => {
-    const existingAmountIndex = assetAmounts.findIndex(({ id }) => id === assetId)
-    const newAssetAmounts = [...assetAmounts]
+  const setAssetAmount = useCallback(
+    (assetId: string, amount?: bigint) => {
+      const existingAmountIndex = assetAmounts.findIndex(({ id }) => id === assetId)
+      const newAssetAmounts = [...assetAmounts]
 
-    if (existingAmountIndex !== -1) {
-      amount
-        ? newAssetAmounts.splice(existingAmountIndex, 1, { id: assetId, amount })
-        : newAssetAmounts.splice(existingAmountIndex, 1)
-    } else if (amount) {
-      newAssetAmounts.push({ id: assetId, amount })
-    }
+      if (existingAmountIndex !== -1) {
+        amount
+          ? newAssetAmounts.splice(existingAmountIndex, 1, { id: assetId, amount })
+          : newAssetAmounts.splice(existingAmountIndex, 1)
+      } else if (amount) {
+        newAssetAmounts.push({ id: assetId, amount })
+      }
 
-    setAssetAmounts(newAssetAmounts)
-  }
+      setAssetAmounts(newAssetAmounts)
+    },
+    [assetAmounts]
+  )
 
   const buildConsolidationTransactions = useCallback(async () => {
     if (!address) return

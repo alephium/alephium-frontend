@@ -14,7 +14,7 @@ import { selectDefaultAddress } from '~/store/addressesSlice'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'>, ScrollScreenProps {}
 
-const OriginScreen = ({ navigation }: ScreenProps) => {
+const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
   const { fromAddress, setFromAddress } = useSendContext()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const { screenScrollHandler } = useHeaderContext()
@@ -37,8 +37,13 @@ const OriginScreen = ({ navigation }: ScreenProps) => {
       onScroll={screenScrollHandler}
       hideEmptyAddresses
       bottomButtonsRender={() => (
-        <Button title={t('Continue')} variant="highlight" onPress={() => navigation.navigate('AssetsScreen')} />
+        <Button
+          title={t('Continue')}
+          variant="highlight"
+          onPress={() => navigation.navigate('AssetsScreen', { tokenId: params?.tokenId })}
+        />
       )}
+      tokenId={params?.tokenId}
     />
   )
 }
