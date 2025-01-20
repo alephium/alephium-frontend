@@ -53,14 +53,24 @@ const initialValues: SendContextValue = {
 
 const SendContext = createContext(initialValues)
 
-export const SendContextProvider = ({ children }: { children: ReactNode }) => {
+interface SendContextProviderProps {
+  children: ReactNode
+  originAddressHash?: AddressHash
+  destinationAddressHash?: AddressHash
+}
+
+export const SendContextProvider = ({
+  children,
+  originAddressHash,
+  destinationAddressHash
+}: SendContextProviderProps) => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
-  const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(initialValues.toAddress)
-  const [fromAddress, setFromAddress] = useState<SendContextValue['fromAddress']>(initialValues.fromAddress)
+  const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(destinationAddressHash)
+  const [fromAddress, setFromAddress] = useState<SendContextValue['fromAddress']>(originAddressHash)
   const [assetAmounts, setAssetAmounts] = useState<SendContextValue['assetAmounts']>(initialValues.assetAmounts)
   const [unsignedTxData, setUnsignedTxData] = useState<UnsignedTxData>({ unsignedTxs: [], fees: initialValues.fees })
 

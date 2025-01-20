@@ -10,7 +10,6 @@ import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { cameraToggled } from '~/store/appSlice'
 import { showToast } from '~/utils/layout'
 
@@ -19,7 +18,7 @@ const CameraScanButton = () => {
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
-  const navigation = useNavigation<NavigationProp<RootStackParamList | SendNavigationParamList>>()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { pairWithDapp } = useWalletConnectContext()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -29,7 +28,7 @@ const CameraScanButton = () => {
 
   const handleQRCodeScan = async (text: string) => {
     if (isValidAddress(text)) {
-      navigation.navigate('SendNavigation', { screen: 'OriginScreen', params: { toAddressHash: text } })
+      navigation.navigate('SendNavigation', { destinationAddressHash: text })
       sendAnalytics({ event: 'Send: Captured destination address by scanning QR code from Dashboard' })
     } else if (text.startsWith('wc:')) {
       sendAnalytics({ event: 'WC: Scanned WC QR code' })

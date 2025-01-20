@@ -1,6 +1,6 @@
 import { StackScreenProps } from '@react-navigation/stack'
 import { orderBy } from 'lodash'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import Button from '~/components/buttons/Button'
@@ -25,8 +25,8 @@ interface ScreenProps
   extends StackScreenProps<SendNavigationParamList, 'AssetsScreen'>,
     Omit<ScrollScreenProps, 'contentContainerStyle'> {}
 
-const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
-  const { fromAddress, assetAmounts, buildTransaction, setToAddress } = useSendContext()
+const AssetsScreen = ({ navigation, ...props }: ScreenProps) => {
+  const { fromAddress, assetAmounts, buildTransaction } = useSendContext()
   const { screenScrollY, screenScrollHandler } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
@@ -50,10 +50,6 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     })
     dispatch(deactivateAppLoading())
   }
-
-  useEffect(() => {
-    if (params?.toAddressHash) setToAddress(params.toAddressHash)
-  }, [params?.toAddressHash, setToAddress])
 
   if (!address) return null
 

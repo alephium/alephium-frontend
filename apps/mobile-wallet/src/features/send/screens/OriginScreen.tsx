@@ -1,6 +1,6 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import AddressFlashListScreen from '~/components/AddressFlashListScreen'
@@ -14,15 +14,11 @@ import { selectDefaultAddress } from '~/store/addressesSlice'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'>, ScrollScreenProps {}
 
-const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
-  const { fromAddress, setFromAddress, setToAddress } = useSendContext()
+const OriginScreen = ({ navigation }: ScreenProps) => {
+  const { fromAddress, setFromAddress } = useSendContext()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const { screenScrollHandler } = useHeaderContext()
   const { t } = useTranslation()
-
-  useEffect(() => {
-    if (params?.toAddressHash) setToAddress(params.toAddressHash)
-  }, [params?.toAddressHash, setToAddress])
 
   useFocusEffect(
     useCallback(() => {

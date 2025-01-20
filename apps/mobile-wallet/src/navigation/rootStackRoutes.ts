@@ -1,3 +1,5 @@
+import { AddressHash } from '@alephium/shared'
+
 type RootStackParamList = {
   LandingScreen: undefined
   NewWalletIntroScreen: undefined
@@ -13,7 +15,10 @@ type RootStackParamList = {
   }
   NewAddressScreen: undefined
   SettingsScreen: undefined
-  SendNavigation: undefined
+  SendNavigation?: {
+    originAddressHash?: AddressHash
+    destinationAddressHash?: AddressHash
+  }
   ReceiveNavigation: undefined
   ContactScreen: {
     contactId: string

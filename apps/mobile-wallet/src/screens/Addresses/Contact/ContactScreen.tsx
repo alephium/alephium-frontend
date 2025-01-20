@@ -15,7 +15,6 @@ import TransactionsFlashList from '~/components/layout/TransactionsFlashList'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { selectContactById } from '~/store/addresses/addressesSelectors'
 import { makeSelectContactConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
 import { makeSelectContactPendingTransactions } from '~/store/pendingTransactionsSlice'
@@ -23,9 +22,7 @@ import { themes } from '~/style/themes'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { stringToColour } from '~/utils/colors'
 
-type ContactScreenProps = StackScreenProps<SendNavigationParamList, 'ContactScreen'> &
-  StackScreenProps<RootStackParamList, 'ContactScreen'> &
-  ScreenProps
+type ContactScreenProps = StackScreenProps<RootStackParamList, 'ContactScreen'> & ScreenProps
 
 const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) => {
   const listRef = useRef(null)
@@ -53,10 +50,7 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
   const handleSendFundsPress = () => {
     sendAnalytics({ event: 'Contact: Pressed send funds' })
 
-    navigation.navigate('SendNavigation', {
-      screen: 'OriginScreen',
-      params: { toAddressHash: contact.address }
-    })
+    navigation.navigate('SendNavigation', { destinationAddressHash: contact.address })
   }
 
   const handleCopyAddressPress = () => {

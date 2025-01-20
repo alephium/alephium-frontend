@@ -7,7 +7,6 @@ import ActionCardButton from '~/components/buttons/ActionCardButton'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
 
 interface ActionCardReceiveButtonProps {
   origin: 'dashboard' | 'addressDetails' | 'tokenDetails'
@@ -16,7 +15,7 @@ interface ActionCardReceiveButtonProps {
 }
 
 const ActionCardReceiveButton = ({ origin, addressHash, onPress }: ActionCardReceiveButtonProps) => {
-  const navigation = useNavigation<NavigationProp<SendNavigationParamList | RootStackParamList>>()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 

@@ -26,7 +26,6 @@ import { useAsyncData } from '~/hooks/useAsyncData'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import { InWalletTabsParamList } from '~/navigation/InWalletNavigation'
 import { ReceiveNavigationParamList } from '~/navigation/ReceiveNavigation'
-import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { getIsNewWallet, storeIsNewWallet } from '~/persistent-storage/wallet'
 import CameraScanButton from '~/screens/Dashboard/CameraScanButton'
 import DashboardSecondaryButtons from '~/screens/Dashboard/DashboardSecondaryButtons'
@@ -36,10 +35,7 @@ import { selectAddressIds, selectDefaultAddress, selectTotalBalance } from '~/st
 import { DEFAULT_MARGIN, HEADER_OFFSET_TOP, VERTICAL_GAP } from '~/style/globalStyle'
 
 interface ScreenProps
-  extends StackScreenProps<
-      InWalletTabsParamList & ReceiveNavigationParamList & SendNavigationParamList,
-      'DashboardScreen'
-    >,
+  extends StackScreenProps<InWalletTabsParamList & ReceiveNavigationParamList, 'DashboardScreen'>,
     BottomBarScrollScreenProps {}
 
 const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
