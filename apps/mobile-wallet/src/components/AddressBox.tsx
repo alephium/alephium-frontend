@@ -1,5 +1,6 @@
 import { AddressHash, CURRENCIES } from '@alephium/shared'
-import { Check } from 'lucide-react-native'
+import { Token } from '@alephium/web3'
+import { Check, Lock } from 'lucide-react-native'
 import { useMemo } from 'react'
 import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
 import Animated from 'react-native-reanimated'
@@ -8,6 +9,7 @@ import styled, { useTheme } from 'styled-components/native'
 import AddressColorSymbol from '~/components/AddressColorSymbol'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
+import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import AssetLogo from '~/components/AssetLogo'
 import Badge from '~/components/Badge'
 import { openModal } from '~/features/modals/modalActions'
@@ -26,6 +28,7 @@ interface AddressBoxProps extends PressableProps {
   isSelected?: boolean
   isLast?: boolean
   rounded?: boolean
+  tokenId?: Token['id']
 }
 
 const maxNbOfTokenLogos = 5
@@ -34,16 +37,18 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 // TODO: Use ListItem
 
-const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, ...props }: AddressBoxProps) => {
+const AddressBox = ({
+  addressHash,
+  isSelected,
+  onPress,
+  isLast,
+  style,
+  rounded,
+  tokenId,
+  ...props
+}: AddressBoxProps) => {
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-  const currency = useAppSelector((s) => s.settings.currency)
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
-  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
-  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
-  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const dispatch = useAppDispatch()
 
   if (!address) return
@@ -99,23 +104,10 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
           </AppText>
         </AddressBoxColumn>
         <AddressBoxColumnRight>
-          <Amount isFiat value={balanceInFiat} suffix={CURRENCIES[currency].symbol} semiBold size={16} />
-          {(knownFungibleTokens.length > 0 || nfts.length > 0) && (
-            <AssetsRow>
-              <Badge rounded>
-                {knownFungibleTokens.map(
-                  (asset, i) => i < maxNbOfTokenLogos && <AssetLogo key={asset.id} assetId={asset.id} size={15} />
-                )}
-                {knownFungibleTokens.length > 5 && (
-                  <NbOfAssetsText>+{knownFungibleTokens.length - maxNbOfTokenLogos}</NbOfAssetsText>
-                )}
-              </Badge>
-              {nfts.length > 0 && (
-                <Badge>
-                  <NbOfAssetsText>{nfts.length} NFTs</NbOfAssetsText>
-                </Badge>
-              )}
-            </AssetsRow>
+          {tokenId ? (
+            <AddressTokenDetails addressHash={addressHash} tokenId={tokenId} />
+          ) : (
+            <AddressAllTokensDetails addressHash={addressHash} />
           )}
         </AddressBoxColumnRight>
       </TextualContent>
@@ -124,6 +116,69 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
 }
 
 export default AddressBox
+
+const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
+  const currency = useAppSelector((s) => s.settings.currency)
+  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
+  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
+  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
+  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
+  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
+
+  return (
+    <>
+      <Amount isFiat value={balanceInFiat} suffix={CURRENCIES[currency].symbol} semiBold size={16} />
+      {(knownFungibleTokens.length > 0 || nfts.length > 0) && (
+        <AssetsRow>
+          <Badge rounded>
+            {knownFungibleTokens.map(
+              (asset, i) => i < maxNbOfTokenLogos && <AssetLogo key={asset.id} assetId={asset.id} size={15} />
+            )}
+            {knownFungibleTokens.length > 5 && (
+              <NbOfAssetsText>+{knownFungibleTokens.length - maxNbOfTokenLogos}</NbOfAssetsText>
+            )}
+          </Badge>
+          {nfts.length > 0 && (
+            <Badge>
+              <NbOfAssetsText>{nfts.length} NFTs</NbOfAssetsText>
+            </Badge>
+          )}
+        </AssetsRow>
+      )}
+    </>
+  )
+}
+
+const AddressTokenDetails = ({
+  addressHash,
+  tokenId
+}: Pick<AddressBoxProps, 'addressHash'> & Required<Pick<AddressBoxProps, 'tokenId'>>) => {
+  const currency = useAppSelector((s) => s.settings.currency)
+
+  // Suboptimal way to fetch token, will be fixed when migrated to Tanstack
+  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
+  const token = knownFungibleTokens.find((t) => t.id === tokenId)
+
+  if (!token) return null
+
+  return (
+    <>
+      <Amount isFiat value={token.worth} suffix={CURRENCIES[currency].symbol} semiBold size={16} />
+      <AssetsRow>
+        <AssetAmountWithLogo assetId={tokenId} amount={token.balance} />
+
+        {token.lockedBalance > 0 && (
+          <LockedAmount>
+            <Lock size={16} />
+            <AssetAmountWithLogo assetId={tokenId} amount={token.lockedBalance} />
+          </LockedAmount>
+        )}
+      </AssetsRow>
+    </>
+  )
+}
 
 const AddressBoxStyled = styled(AnimatedPressable)`
   flex-direction: row;
@@ -177,4 +232,10 @@ const AssetsRow = styled.View`
 const NbOfAssetsText = styled(AppText)`
   text-align: right;
   font-size: 12px;
+`
+
+const LockedAmount = styled.View`
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
 `
