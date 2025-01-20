@@ -5,6 +5,7 @@ import styled, { useTheme } from 'styled-components'
 
 import DotIcon from '@/components/DotIcon'
 import { TranslationKey } from '@/features/localization/i18next'
+import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useAppSelector } from '@/hooks/redux'
 
 interface StepsProgressProps {
@@ -54,11 +55,11 @@ const StepsProgress = ({ currentStep, isContract, className }: StepsProgressProp
 
 const useStepsUI = (currentStep: Step) => {
   const theme = useTheme()
-  const settings = useAppSelector((s) => s.settings)
+  const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
 
   const nextColor = colord(theme.font.tertiary).alpha(0.3).toHex()
 
-  const steps: Step[] = !settings.passwordRequirement
+  const steps: Step[] = !passwordRequirement
     ? ['addresses', 'build-tx', 'info-check', 'tx-sent']
     : ['addresses', 'build-tx', 'info-check', 'password-check', 'tx-sent']
 
