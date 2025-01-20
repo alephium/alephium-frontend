@@ -13,6 +13,7 @@ import NftModal from '~/features/assetsDisplay/nftsDisplay/NftModal'
 import SelectAssetToHideModal from '~/features/assetsDisplay/SelectAssetToHideModal'
 import AddressesWithTokenModal from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/AddressesWithTokenModal'
 import TokenDetailsModal from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModal'
+import TokenQuickActionsModal from '~/features/assetsDisplay/TokenQuickActionsModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
@@ -115,6 +116,8 @@ const AppModals = () => {
             return <AddressesWithTokenModal key={id} id={id} {...params.props} />
           case 'SelectAssetToHideModal':
             return <SelectAssetToHideModal key={id} id={id} />
+          case 'TokenQuickActionsModal':
+            return <TokenQuickActionsModal key={id} id={id} {...params.props} />
           default:
             return null
         }

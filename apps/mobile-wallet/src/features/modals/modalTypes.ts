@@ -13,6 +13,7 @@ import NftModal from '~/features/assetsDisplay/nftsDisplay/NftModal'
 import SelectAssetToHideModal from '~/features/assetsDisplay/SelectAssetToHideModal'
 import AddressesWithTokenModal from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/AddressesWithTokenModal'
 import TokenDetailsModal from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModal'
+import TokenQuickActionsModal from '~/features/assetsDisplay/TokenQuickActionsModal'
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
@@ -66,7 +67,8 @@ export const ModalComponents = {
   TokenDetailsModal,
   AddressQuickActionsModal,
   AddressesWithTokenModal,
-  SelectAssetToHideModal
+  SelectAssetToHideModal,
+  TokenQuickActionsModal
 }
 
 export type ModalName = keyof typeof ModalComponents

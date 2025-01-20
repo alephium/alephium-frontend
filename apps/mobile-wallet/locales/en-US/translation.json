@@ -435,5 +435,7 @@
   "Asset hidden": "Asset hidden",
   "Asset unhidden": "Asset unhidden",
   "nb_of_hidden_assets_one": "{{ count }} hidden asset",
-  "nb_of_hidden_assets_other": "{{ count }} hidden assets"
+  "nb_of_hidden_assets_other": "{{ count }} hidden assets",
+  "Hide asset": "Hide asset",
+  "Show details": "Show details"
 }

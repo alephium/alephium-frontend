@@ -27,6 +27,9 @@ const TokenListItem = ({ asset, addressHash, parentModalId, ...props }: TokenLis
   const openTokenDetailsModal = () =>
     dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId: asset.id, addressHash, parentModalId } }))
 
+  const openTokenQuickActionsModal = () =>
+    dispatch(openModal({ name: 'TokenQuickActionsModal', props: { tokenId: asset.id } }))
+
   return (
     <ListItem
       title={asset.name || asset.id}
@@ -57,6 +60,7 @@ const TokenListItem = ({ asset, addressHash, parentModalId, ...props }: TokenLis
         </Amounts>
       }
       onPress={openTokenDetailsModal}
+      onLongPress={openTokenQuickActionsModal}
       {...props}
     />
   )

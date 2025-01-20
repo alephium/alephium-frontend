@@ -2,7 +2,7 @@ import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { ReactNode } from 'react'
 import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native'
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeOut, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -42,9 +42,23 @@ const ListItem = ({
 }: ListItemProps) => {
   const theme = useTheme()
 
+  const fade = useSharedValue(1)
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: fade.value
+  }))
+
   return (
-    <Pressable {...props}>
-      <ListItemStyled style={style}>
+    <Pressable
+      onPressIn={() => {
+        fade.value = withTiming(0.5, { duration: 150 })
+      }}
+      onPressOut={() => {
+        fade.value = withTiming(1, { duration: 150 })
+      }}
+      {...props}
+    >
+      <ListItemStyled style={[style, animatedStyle]}>
         {isSelected && (
           <SelectedLinearGradient
             pointerEvents="none"

@@ -59,7 +59,7 @@ const HiddenAssetsScreen = ({ navigation, ...props }: HiddenAssetsScreenProps) =
           title={t('Add an asset to hide')}
           type="primary"
           onPress={handleAddAssetPress}
-          iconProps={{ name: 'eye-off' }}
+          iconProps={{ name: 'plus' }}
         />
       </BottomButtons>
     </ScrollScreen>
