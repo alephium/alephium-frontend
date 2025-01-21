@@ -53,6 +53,13 @@ const AddressBox = ({
 }: AddressBoxProps) => {
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
+  const currency = useAppSelector((s) => s.settings.currency)
+  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
+  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
+  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
+  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
+  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const dispatch = useAppDispatch()
 
   const fade = useSharedValue(1)
