@@ -28,7 +28,7 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
           data={knownFungibleTokens}
           estimatedItemSize={70}
           ListHeaderComponent={() => <AddressDetailsModalHeader addressHash={addressHash} parentModalId={id} />}
-          ListFooterComponent={() => <AddressesTokensListFooter addressHash={addressHash} />}
+          ListFooterComponent={() => <AddressesTokensListFooter addressHash={addressHash} parentModalId={id} />}
           renderItem={({ item: entry, index }) => (
             <TokenListItem
               key={entry.id}

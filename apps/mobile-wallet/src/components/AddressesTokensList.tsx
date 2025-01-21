@@ -1,4 +1,3 @@
-import { AddressHash } from '@alephium/shared'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { openBrowserAsync } from 'expo-web-browser'
@@ -14,7 +13,9 @@ import {
   selectAddressHiddenAssetIds,
   selectHiddenAssetsIds
 } from '~/features/assetsDisplay/hideAssets/hiddenAssetsSelectors'
-import { useAppSelector } from '~/hooks/redux'
+import { closeModal } from '~/features/modals/modalActions'
+import { ModalInstance } from '~/features/modals/modalTypes'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { makeSelectAddressesCheckedUnknownTokens, makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
 import { BORDER_RADIUS_BIG, VERTICAL_GAP } from '~/style/globalStyle'
@@ -64,7 +65,12 @@ const AddressesTokensList = () => {
 
 export default AddressesTokensList
 
-export const AddressesTokensListFooter = ({ addressHash }: { addressHash?: AddressHash }) => {
+interface AddressesTokensListFooterProps {
+  addressHash?: string
+  parentModalId?: ModalInstance['id']
+}
+
+export const AddressesTokensListFooter = ({ addressHash, parentModalId }: AddressesTokensListFooterProps) => {
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
   const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
   const hiddenAssetIds = useAppSelector((s) =>
@@ -73,9 +79,16 @@ export const AddressesTokensListFooter = ({ addressHash }: { addressHash?: Addre
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
   const hasHiddenTokens = hiddenAssetIds.length > 0
   const hasUnknownTokens = unknownTokens.length > 0
+
+  const handleHiddenAssetsPress = () => {
+    navigation.navigate('HiddenAssetsScreen')
+
+    parentModalId && dispatch(closeModal({ id: parentModalId }))
+  }
 
   return (
     <>
@@ -94,7 +107,7 @@ export const AddressesTokensListFooter = ({ addressHash }: { addressHash?: Addre
         <HiddenAssetBtnContainer>
           <Button
             title={t('nb_of_hidden_assets', { count: hiddenAssetIds.length })}
-            onPress={() => navigation.navigate('HiddenAssetsScreen')}
+            onPress={handleHiddenAssetsPress}
             iconProps={{ name: 'plus' }}
             compact
           />
