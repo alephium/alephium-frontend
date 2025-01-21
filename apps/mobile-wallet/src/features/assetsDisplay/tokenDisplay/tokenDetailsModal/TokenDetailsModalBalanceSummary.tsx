@@ -73,9 +73,7 @@ const AddressesWithTokenBadge = ({ tokenId, onPress, fontColor }: TokenDetailsMo
 
   return (
     <Pressable onPress={handlePress}>
-      <Badge color={fontColor}>
-        {t(addresses.length === 1 ? 'token_in_addresses_one' : 'token_in_addresses_other', { count: addresses.length })}
-      </Badge>
+      <Badge color={fontColor}>{t('token_in_addresses', { count: addresses.length })}</Badge>
     </Pressable>
   )
 }

@@ -113,9 +113,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
       {hiddenAssetIds.length > 0 && (
         <HiddenAssetBtnContainer>
           <Button
-            title={t(hiddenAssetIds.length === 1 ? 'nb_of_hidden_assets_one' : 'nb_of_hidden_assets_other', {
-              count: hiddenAssetIds.length
-            })}
+            title={t('nb_of_hidden_assets', { count: hiddenAssetIds.length })}
             onPress={() => navigation.navigate('HiddenAssetsScreen')}
             iconProps={{ name: 'plus' }}
             compact
