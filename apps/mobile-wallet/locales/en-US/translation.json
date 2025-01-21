@@ -437,6 +437,5 @@
   "nb_of_hidden_assets_one": "{{ count }} hidden asset",
   "nb_of_hidden_assets_other": "{{ count }} hidden assets",
   "Hide asset": "Hide asset",
-  "Show details": "Show details",
-  "Hiding ALPH is not allowed": "Hiding ALPH is not allowed"
+  "Show details": "Show details"
 }

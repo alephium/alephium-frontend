@@ -13,10 +13,7 @@ const useHideAsset = (origin: 'quick_actions' | 'app_settings', modalId?: number
   const { t } = useTranslation()
 
   return (tokenId: Token['id']) => {
-    if (tokenId === ALPH.id) {
-      showToast({ text1: t('Hiding ALPH is not allowed'), type: 'error' })
-      sendAnalytics({ event: 'Tried to hide ALPH', props: { origin } })
-    } else {
+    if (tokenId !== ALPH.id) {
       dispatch(hideAsset(tokenId))
       showToast({ text1: t('Asset hidden'), type: 'info' })
       sendAnalytics({ event: 'Hid asset', props: { origin, tokenId } })

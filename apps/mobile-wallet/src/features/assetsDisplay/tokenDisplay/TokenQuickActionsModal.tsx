@@ -1,4 +1,5 @@
 import { selectFungibleTokenById } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
@@ -46,12 +47,14 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
       }
       titleAlign="left"
     >
-      <QuickActionButton
-        title={t('Hide asset')}
-        onPress={handleAssetHide}
-        iconProps={{ name: 'eye-off' }}
-        variant="alert"
-      />
+      {tokenId !== ALPH.id && (
+        <QuickActionButton
+          title={t('Hide asset')}
+          onPress={handleAssetHide}
+          iconProps={{ name: 'eye-off' }}
+          variant="alert"
+        />
+      )}
       <QuickActionButton
         title={t('Show details')}
         onPress={openTokenDetailsModal}
