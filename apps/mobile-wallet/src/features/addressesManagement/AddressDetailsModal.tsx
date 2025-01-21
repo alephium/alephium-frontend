@@ -1,89 +1,48 @@
 import { AddressHash } from '@alephium/shared'
-import { useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled from 'styled-components/native'
+import { FlashList } from '@shopify/flash-list'
+import { useMemo } from 'react'
 
 import AddressBadge from '~/components/AddressBadge'
-import AddressesTokensList from '~/components/AddressesTokensList'
-import AnimatedBackground from '~/components/AnimatedBackground'
-import BalanceSummary from '~/components/BalanceSummary'
-import ActionCardButton from '~/components/buttons/ActionCardButton'
-import RoundedCard from '~/components/RoundedCard'
-import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
-import BottomModal from '~/features/modals/BottomModal'
-import { closeModal, openModal } from '~/features/modals/modalActions'
-import { BottomModalAnimationStates } from '~/features/modals/useBottomModalState'
+import { AddressesTokensListFooter } from '~/components/AddressesTokensList'
+import TokenListItem from '~/components/TokenListItem'
+import AddressDetailsModalHeader from '~/features/addressesManagement/AddressDetailsModalHeader'
+import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
 import withModal from '~/features/modals/withModal'
-import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
-import ActionCardSendButton from '~/features/send/ActionCardSendButton'
-import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesTokens, selectAddressByHash } from '~/store/addressesSlice'
-import { VERTICAL_GAP } from '~/style/globalStyle'
+import { useAppSelector } from '~/hooks/redux'
+import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
 
 export interface AddressDetailsModalProps {
   addressHash: AddressHash
 }
 
 const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHash }) => {
-  const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-  const [modalAnimationState, setModalAnimationState] = useState<BottomModalAnimationStates>()
-
-  const selectAddressTokens = useMemo(makeSelectAddressesTokens, [])
-  const hasTokens = useAppSelector((s) => selectAddressTokens(s, addressHash)).length > 0
-
-  const handleSettingsPress = () => {
-    dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash, parentModalId: id } }))
-  }
-
-  const handleClose = () => dispatch(closeModal({ id }))
+  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash, true))
 
   return (
-    <BottomModal
+    <BottomModalFlashList
       modalId={id}
       title={<AddressBadge addressHash={addressHash} fontSize={16} />}
-      onModalAnimationStateChange={setModalAnimationState}
-    >
-      <Content>
-        <RoundedCard>
-          <AddressAnimatedBackground addressHash={addressHash} />
-          <BalanceSummary addressHash={addressHash} />
-        </RoundedCard>
-
-        <ActionButtons>
-          {hasTokens && (
-            <ActionCardSendButton origin="addressDetails" addressHash={addressHash} onPress={handleClose} />
+      flashListRender={(props) => (
+        <FlashList
+          data={knownFungibleTokens}
+          estimatedItemSize={70}
+          ListHeaderComponent={() => <AddressDetailsModalHeader addressHash={addressHash} parentModalId={id} />}
+          ListFooterComponent={() => <AddressesTokensListFooter addressHash={addressHash} />}
+          renderItem={({ item: entry, index }) => (
+            <TokenListItem
+              key={entry.id}
+              asset={entry}
+              hideSeparator={index === knownFungibleTokens.length - 1}
+              addressHash={addressHash}
+              parentModalId={id}
+            />
           )}
-          <ActionCardReceiveButton origin="addressDetails" addressHash={addressHash} />
-          <ActionCardBuyButton origin="addressDetails" receiveAddressHash={addressHash} />
-          <ActionCardButton title={t('Settings')} onPress={handleSettingsPress} iconProps={{ name: 'settings' }} />
-        </ActionButtons>
-      </Content>
-      <AddressesTokensList
-        addressHash={addressHash}
-        parentModalId={id}
-        isLoading={modalAnimationState === 'animating'}
-      />
-    </BottomModal>
+          {...props}
+        />
+      )}
+    />
   )
 })
 
 export default AddressDetailsModal
-
-const AddressAnimatedBackground = ({ addressHash }: AddressDetailsModalProps) => {
-  const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-
-  if (!address) return null
-
-  return <AnimatedBackground shade={address.settings.color} isAnimated />
-}
-
-const Content = styled.View`
-  padding: ${VERTICAL_GAP / 2}px 0 ${VERTICAL_GAP}px 0;
-`
-
-const ActionButtons = styled.View`
-  margin-top: ${VERTICAL_GAP / 2}px;
-  flex-direction: row;
-  gap: 10px;
-`
