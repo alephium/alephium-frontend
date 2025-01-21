@@ -7,8 +7,8 @@ import {
   hideAsset,
   loadHiddenAssets,
   unhideAsset
-} from '~/features/assetsDisplay/hiddenAssetsActions'
-import { storeHiddenAssetsIds } from '~/features/assetsDisplay/hiddenAssetsStorage'
+} from '~/features/assetsDisplay/hideAssets/hiddenAssetsActions'
+import { storeHiddenAssetsIds } from '~/features/assetsDisplay/hideAssets/hiddenAssetsStorage'
 import { RootState } from '~/store/store'
 import { walletDeleted } from '~/store/wallet/walletActions'
 

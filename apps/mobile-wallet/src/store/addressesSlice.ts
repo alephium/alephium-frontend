@@ -31,7 +31,7 @@ import {
 } from '@reduxjs/toolkit'
 
 import { fetchAddressesBalances, fetchAddressesTokens, fetchAddressesTransactionsPage } from '~/api/addresses'
-import { selectHiddenAssetsIds } from '~/features/assetsDisplay/hiddenAssetsSelectors'
+import { selectHiddenAssetsIds } from '~/features/assetsDisplay/hideAssets/hiddenAssetsSelectors'
 import { addressMetadataIncludesHash } from '~/persistent-storage/wallet'
 import { addressDeleted } from '~/store/addresses/addressesActions'
 import { RootState } from '~/store/store'
