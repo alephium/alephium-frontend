@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next'
 
 import AssetLogo from '~/components/AssetLogo'
 import ListItem from '~/components/ListItem'
-import { selectHiddenAssetsIds } from '~/features/assetsDisplay/hideAssets/hiddenAssetsSelectors'
 import useHideAsset from '~/features/assetsDisplay/hideAssets/useHideAsset'
 import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
 import withModal from '~/features/modals/withModal'
@@ -14,9 +13,8 @@ import { makeSelectAddressesKnownFungibleTokens } from '~/store/addresses/addres
 
 const SelectAssetToHideModal = withModal(({ id }) => {
   const { t } = useTranslation()
-  const hiddenAssetsIds = useAppSelector(selectHiddenAssetsIds)
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector(selectAddressesKnownFungibleTokens)
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, undefined, true))
   const handleAssetSelection = useHideAsset('app_settings', id)
 
   return (
@@ -25,7 +23,7 @@ const SelectAssetToHideModal = withModal(({ id }) => {
       title={t('Asset to hide')}
       flashListRender={(props) => (
         <FlashList
-          data={knownFungibleTokens.filter(({ id }) => !hiddenAssetsIds.includes(id) && id !== ALPH.id)}
+          data={knownFungibleTokens.filter(({ id }) => id !== ALPH.id)}
           estimatedItemSize={70}
           renderItem={({ item: { id, name } }) => (
             <ListItem

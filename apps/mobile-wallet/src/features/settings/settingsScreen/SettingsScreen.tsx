@@ -8,7 +8,6 @@ import { Alert } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import Badge from '~/components/Badge'
 import { ScreenSection, ScreenSectionTitle } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
@@ -18,6 +17,7 @@ import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { languageOptions } from '~/features/localization/languages'
 import { openModal } from '~/features/modals/modalActions'
+import SettingsAssetsSection from '~/features/settings/settingsScreen/SettingsAssetsSection'
 import SettingsSecuritySection from '~/features/settings/settingsScreen/SettingsSecuritySection'
 import {
   analyticsToggled,
@@ -43,7 +43,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const language = useAppSelector((s) => s.settings.language)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletName = useAppSelector((s) => s.wallet.name)
-  const numberOfHiddenAssets = useAppSelector((s) => s.hiddenAssets.hiddenAssetsIds.length)
+
   const { resetWalletConnectClientInitializationAttempts, resetWalletConnectStorage } = useWalletConnectContext()
   const [isThemeSwitchOverlayVisible, setIsThemeSwitchOverlayVisible] = useState(false)
 
@@ -141,19 +141,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
 
         <SettingsSecuritySection />
 
-        <ScreenSection>
-          <ScreenSectionTitle>{t('Assets')}</ScreenSectionTitle>
-
-          <Row
-            title="Hidden assets"
-            subtitle={t("Hide assets you're not interested in")}
-            onPress={() => navigation.navigate('HiddenAssetsScreen')}
-            isLast
-          >
-            <Badge>{numberOfHiddenAssets}</Badge>
-            <Ionicons name="chevron-forward-outline" size={16} color={theme.font.primary} />
-          </Row>
-        </ScreenSection>
+        <SettingsAssetsSection />
 
         <ScreenSection>
           <ScreenSectionTitle>{t('Experimental features')}</ScreenSectionTitle>

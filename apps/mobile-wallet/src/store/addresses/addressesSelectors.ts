@@ -18,7 +18,6 @@ import { AddressGroup } from '@alephium/walletconnect-provider'
 import { Token } from '@alephium/web3'
 import { createSelector } from '@reduxjs/toolkit'
 
-import { selectHiddenAssetsIds } from '~/features/assetsDisplay/hideAssets/hiddenAssetsSelectors'
 import { addressesAdapter } from '~/store/addresses/addressesAdaptor'
 import { RootState } from '~/store/store'
 import { Address } from '~/types/addresses'
@@ -62,7 +61,7 @@ export const makeSelectAddressesTokens = () =>
       selectAllPrices,
       (_state: RootState, _addressHash?: AddressHash | AddressHash[], filterHiddenTokens?: boolean) =>
         filterHiddenTokens ?? false,
-      selectHiddenAssetsIds
+      (state: RootState) => state.hiddenAssets.hiddenAssetsIds
     ],
     (fungibleTokens, nfts, alphAsset, addresses, tokenPrices, filterHiddenTokens, hiddenAssetIds): Asset[] => {
       const tokenBalances = getAddressesTokenBalances(addresses)
@@ -79,13 +78,20 @@ export const makeSelectAddressesTokens = () =>
 
 // Same as in desktop wallet
 export const makeSelectAddressesKnownFungibleTokens = () =>
-  createSelector([makeSelectAddressesTokens(), selectHiddenAssetsIds], (tokens): AddressFungibleToken[] =>
+  createSelector(makeSelectAddressesTokens(), (tokens): AddressFungibleToken[] =>
     tokens.filter((token): token is AddressFungibleToken => !!token.symbol)
   )
 
 export const makeSelectAddressesUnknownTokens = () =>
   createSelector([makeSelectAddressesTokens()], (tokens): Asset[] =>
     tokens.filter((token): token is Asset => !token.name && !token.symbol && !token.verified && !token.logoURI)
+  )
+
+export const makeSelectAddressesHiddenFungibleTokens = () =>
+  createSelector(
+    [makeSelectAddressesTokens(), (state: RootState) => state.hiddenAssets.hiddenAssetsIds],
+    (tokens, hiddenAssetIds): Asset[] =>
+      tokens.filter((token): token is AddressFungibleToken => hiddenAssetIds.includes(token.id))
   )
 
 // Same as in desktop wallet
@@ -159,7 +165,11 @@ export const selectAllAddressVerifiedFungibleTokenSymbols = createSelector(
 )
 
 export const selectAddressHiddenAssetIds = createSelector(
-  [selectHiddenAssetsIds, (_, addressHash: AddressHash) => addressHash, (state: RootState) => state],
+  [
+    (state: RootState) => state.hiddenAssets.hiddenAssetsIds,
+    (_, addressHash: AddressHash) => addressHash,
+    (state: RootState) => state
+  ],
   (hiddenAssetsIds, addressHash, state) => {
     const address = selectAddressByHash(state, addressHash)
 

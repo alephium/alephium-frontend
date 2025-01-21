@@ -9,15 +9,14 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import TokenListItem from '~/components/TokenListItem'
-import { selectHiddenAssetsIds } from '~/features/assetsDisplay/hideAssets/hiddenAssetsSelectors'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalInstance } from '~/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import {
   makeSelectAddressesCheckedUnknownTokens,
-  makeSelectAddressesKnownFungibleTokens,
-  selectAddressHiddenAssetIds
+  makeSelectAddressesHiddenFungibleTokens,
+  makeSelectAddressesKnownFungibleTokens
 } from '~/store/addresses/addressesSelectors'
 import { BORDER_RADIUS_BIG, VERTICAL_GAP } from '~/style/globalStyle'
 
@@ -26,11 +25,12 @@ const AddressesTokensList = () => {
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, undefined, true))
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
   const unknownTokens = useAppSelector(selectAddressesCheckedUnknownTokens)
-  const hiddenAssetIds = useAppSelector(selectHiddenAssetsIds)
+  const selectAddressesHiddenFungibleTokens = useMemo(makeSelectAddressesHiddenFungibleTokens, [])
+  const hiddenFungibleTokens = useAppSelector(selectAddressesHiddenFungibleTokens)
   const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const { t } = useTranslation()
 
-  const hasHiddenTokens = hiddenAssetIds.length > 0
+  const hasHiddenTokens = hiddenFungibleTokens.length > 0
   const hasUnknownTokens = unknownTokens.length > 0
 
   if (addressesBalancesStatus === 'uninitialized')
@@ -74,15 +74,14 @@ interface AddressesTokensListFooterProps {
 export const AddressesTokensListFooter = ({ addressHash, parentModalId }: AddressesTokensListFooterProps) => {
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
   const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
-  const hiddenAssetIds = useAppSelector((s) =>
-    addressHash ? selectAddressHiddenAssetIds(s, addressHash) : selectHiddenAssetsIds(s)
-  )
+  const selectAddressesHiddenFungibleTokens = useMemo(makeSelectAddressesHiddenFungibleTokens, [])
+  const hiddenFungibleTokens = useAppSelector((s) => selectAddressesHiddenFungibleTokens(s, addressHash))
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
-  const hasHiddenTokens = hiddenAssetIds.length > 0
+  const hasHiddenTokens = hiddenFungibleTokens.length > 0
   const hasUnknownTokens = unknownTokens.length > 0
 
   const handleHiddenAssetsPress = () => {
@@ -107,7 +106,7 @@ export const AddressesTokensListFooter = ({ addressHash, parentModalId }: Addres
       {hasHiddenTokens && (
         <HiddenAssetBtnContainer>
           <Button
-            title={t('nb_of_hidden_assets', { count: hiddenAssetIds.length })}
+            title={t('nb_of_hidden_assets', { count: hiddenFungibleTokens.length })}
             onPress={handleHiddenAssetsPress}
             iconProps={{ name: 'plus' }}
             compact
