@@ -9,7 +9,7 @@ import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesNFTs } from '~/store/addressesSlice'
+import { makeSelectAddressesNFTs } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface NFTsGridProps extends Omit<Partial<FlashListProps<NFT>>, 'contentContainerStyle'> {

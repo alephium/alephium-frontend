@@ -425,5 +425,17 @@
   "Added to favorites": "Added to favorites",
   "Removed from favorites": "Removed from favorites",
   "Favorites": "Favorites",
-  "No dApps added to your favorites yet": "No dApps added to your favorites yet"
+  "No dApps added to your favorites yet": "No dApps added to your favorites yet",
+  "Hide assets you're not interested in": "Hide assets you're not interested in",
+  "Hidden assets": "Hidden assets",
+  "Here is the list of assets you are hiding": "Here is the list of assets you are hiding",
+  "Hide an asset": "Hide an asset",
+  "No assets are hidden": "No assets are hidden",
+  "Asset to hide": "Asset to hide",
+  "Asset hidden": "Asset hidden",
+  "Asset unhidden": "Asset unhidden",
+  "nb_of_hidden_assets_one": "{{ count }} hidden asset",
+  "nb_of_hidden_assets_other": "{{ count }} hidden assets",
+  "Hide asset": "Hide asset",
+  "Show details": "Show details"
 }

@@ -11,11 +11,10 @@ import BottomModal from '~/features/modals/BottomModal'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressesWithToken } from '~/store/addresses/addressesSelectors'
-import { selectAllAddresses } from '~/store/addressesSlice'
+import { selectAddressesWithToken, selectAllAddresses } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
-type AddressesWithTokenModalProps = {
+interface AddressesWithTokenModalProps {
   tokenId: Token['id']
 }
 

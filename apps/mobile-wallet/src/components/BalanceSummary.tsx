@@ -8,8 +8,7 @@ import styled, { useTheme } from 'styled-components/native'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
-import { selectAddressIds } from '~/store/addressesSlice'
+import { makeSelectAddressesTokensWorth, selectAddressIds } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface BalanceSummaryProps {
@@ -22,8 +21,8 @@ const BalanceSummary = ({ addressHash }: BalanceSummaryProps) => {
   const currency = useAppSelector((s) => s.settings.currency)
   const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
-  const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash || addressHashes))
+  const selectAddressesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
+  const balanceInFiat = useAppSelector((s) => selectAddressesTokensWorth(s, addressHash || addressHashes))
 
   const label = addressHash ? t('Address worth') : t('Wallet worth')
 

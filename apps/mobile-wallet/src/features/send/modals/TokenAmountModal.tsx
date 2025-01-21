@@ -18,7 +18,10 @@ import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesKnownFungibleTokens, makeSelectAddressesUnknownTokens } from '~/store/addressesSlice'
+import {
+  makeSelectAddressesKnownFungibleTokens,
+  makeSelectAddressesUnknownTokens
+} from '~/store/addresses/addressesSelectors'
 import { isNumericStringValid } from '~/utils/numbers'
 
 interface TokenAmountModalProps {

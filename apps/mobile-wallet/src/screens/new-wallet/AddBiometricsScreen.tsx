@@ -15,7 +15,7 @@ import { openModal } from '~/features/modals/modalActions'
 import { allBiometricsEnabled } from '~/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { selectAddressIds } from '~/store/addressesSlice'
+import { selectAddressIds } from '~/store/addresses/addressesSelectors'
 import { resetNavigation } from '~/utils/navigation'
 
 interface AddBiometricsScreenProps extends StackScreenProps<RootStackParamList, 'AddBiometricsScreen'>, ScreenProps {}

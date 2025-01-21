@@ -5,7 +5,7 @@ import {
   syncAddressesTokens,
   syncAllAddressesTransactionsNextPage,
   syncLatestTransactions
-} from '~/store/addressesSlice'
+} from '~/store/addresses/addressesActions'
 
 const sliceName = 'loaders'
 

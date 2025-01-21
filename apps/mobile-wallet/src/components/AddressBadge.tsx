@@ -6,8 +6,7 @@ import AddressColorSymbol from '~/components/AddressColorSymbol'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { useAppSelector } from '~/hooks/redux'
-import { selectContactByHash } from '~/store/addresses/addressesSelectors'
-import { selectAddressByHash } from '~/store/addressesSlice'
+import { selectAddressByHash, selectContactByHash } from '~/store/addresses/addressesSelectors'
 import { copyAddressToClipboard } from '~/utils/addresses'
 
 interface AddressBadgeProps extends PressableProps {

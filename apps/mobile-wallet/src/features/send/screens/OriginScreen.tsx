@@ -10,7 +10,7 @@ import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
 import { useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
-import { selectDefaultAddress } from '~/store/addressesSlice'
+import { selectDefaultAddress } from '~/store/addresses/addressesSelectors'
 
 interface ScreenProps extends StackScreenProps<SendNavigationParamList, 'OriginScreen'>, ScrollScreenProps {}
 

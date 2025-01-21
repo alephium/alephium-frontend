@@ -18,7 +18,7 @@ import {
   makeSelectAddressesNFTs,
   makeSelectAddressesUnknownTokens,
   selectAddressByHash
-} from '~/store/addressesSlice'
+} from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface ScreenProps
@@ -30,7 +30,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const { screenScrollY, screenScrollHandler } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash))
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash, true))
   const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
   const unknownTokens = useAppSelector((s) => selectAddressesUnknownTokens(s, address?.hash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
