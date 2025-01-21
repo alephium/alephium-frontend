@@ -5,6 +5,7 @@ import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
 import Animated from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AddressColorSymbol from '~/components/AddressColorSymbol'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
@@ -56,6 +57,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
   const handleLongPress = () => {
     vibrate(ImpactStyle.Heavy)
     dispatch(openModal({ name: 'AddressQuickActionsModal', props: { addressHash } }))
+    sendAnalytics({ event: 'Opened address quick actions modal' })
   }
 
   return (

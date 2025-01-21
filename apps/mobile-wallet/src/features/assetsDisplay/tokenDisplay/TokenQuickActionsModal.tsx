@@ -30,7 +30,7 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
   const openTokenDetailsModal = () => {
     dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
     dispatch(closeModal({ id }))
-    sendAnalytics({ event: 'Opened token details modal', props: { origin: 'TokenQuickActionsModal' } })
+    sendAnalytics({ event: 'Opened token details modal', props: { origin: 'quick_actions' } })
   }
 
   return (

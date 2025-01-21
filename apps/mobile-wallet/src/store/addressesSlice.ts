@@ -339,7 +339,6 @@ export const makeSelectAddressesTokens = () =>
       selectHiddenAssetsIds
     ],
     (fungibleTokens, nfts, alphAsset, addresses, tokenPrices, filterHiddenTokens, hiddenAssetIds): Asset[] => {
-      // Your existing logic
       const tokenBalances = getAddressesTokenBalances(addresses)
 
       if (alphAsset.balance > BigInt(0)) {
@@ -351,6 +350,7 @@ export const makeSelectAddressesTokens = () =>
       return sortAssets(filterHiddenTokens ? tokens.filter((t) => !hiddenAssetIds.includes(t.id)) : tokens)
     }
   )
+
 // Same as in desktop wallet
 export const makeSelectAddressesKnownFungibleTokens = () =>
   createSelector([makeSelectAddressesTokens(), selectHiddenAssetsIds], (tokens): AddressFungibleToken[] =>
