@@ -81,12 +81,18 @@ const FungibleTokensListItem = ({ tokenId, isLast }: FungibleTokensListItemProps
     sendAnalytics({ event: 'Clicked on button to unhide an asset' })
   }
 
+  const openTokenDetailsModal = () => {
+    dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
+    sendAnalytics({ event: 'Opened token details modal', props: { origin: 'hidden_assets_list_item' } })
+  }
+
   return (
     <ListItem
       icon={<AssetLogo assetId={token.id} size={38} />}
       title={token.name}
       rightSideContent={<Button iconProps={{ name: 'x' }} squared compact onPress={handleAssetUnhide} />}
       isLast={isLast}
+      onPress={openTokenDetailsModal}
     />
   )
 }
