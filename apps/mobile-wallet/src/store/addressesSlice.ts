@@ -346,11 +346,9 @@ export const makeSelectAddressesTokens = () =>
         tokenBalances.push(alphAsset)
       }
 
-      const tokens = calculateAssetsData(tokenBalances, fungibleTokens, nfts, tokenPrices).filter((t) =>
-        filterHiddenTokens ? !hiddenAssetIds.includes(t.id) : true
-      )
+      const tokens = calculateAssetsData(tokenBalances, fungibleTokens, nfts, tokenPrices)
 
-      return sortAssets(tokens)
+      return sortAssets(filterHiddenTokens ? tokens.filter((t) => !hiddenAssetIds.includes(t.id)) : tokens)
     }
   )
 // Same as in desktop wallet
