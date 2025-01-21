@@ -62,7 +62,7 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
       <AddressesTokensList
         addressHash={addressHash}
         parentModalId={id}
-        isRefreshing={modalAnimationState === 'animating'}
+        isLoading={modalAnimationState === 'animating'}
       />
     </BottomModal>
   )

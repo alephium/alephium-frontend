@@ -1,9 +1,9 @@
 import { AddressHash, Asset } from '@alephium/shared'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { ComponentProps, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ActivityIndicator, View } from 'react-native'
+import { ActivityIndicator } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -21,7 +21,7 @@ import TokenListItem from './TokenListItem'
 
 interface AddressesTokensListProps {
   addressHash?: AddressHash
-  isRefreshing?: boolean
+  isLoading?: boolean
   parentModalId?: ModalInstance['id']
 }
 
@@ -31,7 +31,7 @@ type LoadingIndicator = {
 
 type TokensRow = Asset | UnknownTokensEntry | LoadingIndicator
 
-const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: AddressesTokensListProps) => {
+const AddressesTokensList = ({ addressHash, isLoading, parentModalId }: AddressesTokensListProps) => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash, true))
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
@@ -46,8 +46,11 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
   const { t } = useTranslation()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
+  const hasHiddenTokens = hiddenAssetIds.length > 0
+  const showLoader = knownFungibleTokens.length > 4 ? isLoading : false
+
   const showTokensSkeleton =
-    isRefreshing ||
+    showLoader ||
     ((isLoadingTokenBalances || isLoadingUnverified || isLoadingVerified || isLoadingTokenTypes) &&
       addressesBalancesStatus === 'initialized')
 
@@ -77,7 +80,7 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
       </EmptyPlaceholder>
     )
 
-  if (!isRefreshing && tokenRows.length === 0)
+  if (!showTokensSkeleton && tokenRows.length === 0)
     return (
       <EmptyPlaceholder>
         <AppText size={28}>👀</AppText>
@@ -85,32 +88,35 @@ const AddressesTokensList = ({ addressHash, isRefreshing, parentModalId }: Addre
       </EmptyPlaceholder>
     )
 
-  const LoadingSection = (props: ComponentProps<typeof View>) => (
-    <LoadingSectionContainer {...props}>
-      <ActivityIndicator size={72} color={theme.font.primary} />
-    </LoadingSectionContainer>
-  )
+  if (showLoader) {
+    const loaderSectionEstimatedHeight = 60 * tokenRows.length + (hasHiddenTokens ? 33 + VERTICAL_GAP * 2 : 0)
+
+    return (
+      <AddressesTokensListStyled>
+        <LoadingSectionContainer style={{ height: loaderSectionEstimatedHeight }}>
+          <ActivityIndicator size={72} color={theme.font.primary} />
+        </LoadingSectionContainer>
+      </AddressesTokensListStyled>
+    )
+  }
 
   return (
     <AddressesTokensListStyled>
-      {showTokensSkeleton ? (
-        <LoadingSection style={{ height: 60 * tokenRows.length }} />
-      ) : (
-        tokenRows.map((entry, index) =>
-          isAsset(entry) ? (
-            <TokenListItem
-              key={entry.id}
-              asset={entry}
-              hideSeparator={index === knownFungibleTokens.length - 1 && unknownTokens.length === 0}
-              addressHash={addressHash}
-              parentModalId={parentModalId}
-            />
-          ) : (
-            isUnknownTokens(entry) && <UnknownTokensListItem entry={entry} key="unknown-tokens" />
-          )
+      {tokenRows.map((entry, index) =>
+        isAsset(entry) ? (
+          <TokenListItem
+            key={entry.id}
+            asset={entry}
+            hideSeparator={index === knownFungibleTokens.length - 1 && unknownTokens.length === 0}
+            addressHash={addressHash}
+            parentModalId={parentModalId}
+          />
+        ) : (
+          isUnknownTokens(entry) && <UnknownTokensListItem entry={entry} key="unknown-tokens" />
         )
       )}
-      {hiddenAssetIds.length > 0 && (
+
+      {hasHiddenTokens && (
         <HiddenAssetBtnContainer>
           <Button
             title={t('nb_of_hidden_assets', { count: hiddenAssetIds.length })}
