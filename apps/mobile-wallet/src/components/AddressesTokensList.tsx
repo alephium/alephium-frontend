@@ -92,17 +92,6 @@ export const AddressesTokensListFooter = ({ addressHash, parentModalId }: Addres
 
   return (
     <AddressesTokensListFooterStyled>
-      {hasUnknownTokens && (
-        <HiddenAssetBtnContainer>
-          <Button
-            title={t('unknownTokensKey', { count: unknownTokens.length })}
-            onPress={addressHash ? () => openBrowserAsync(`${explorerBaseUrl}/addresses/${addressHash}`) : undefined}
-            iconProps={{ name: 'plus' }}
-            compact
-          />
-        </HiddenAssetBtnContainer>
-      )}
-
       {hasHiddenTokens && (
         <HiddenAssetBtnContainer>
           <Button
@@ -111,6 +100,21 @@ export const AddressesTokensListFooter = ({ addressHash, parentModalId }: Addres
             iconProps={{ name: 'plus' }}
             compact
           />
+        </HiddenAssetBtnContainer>
+      )}
+
+      {hasUnknownTokens && (
+        <HiddenAssetBtnContainer>
+          {addressHash ? (
+            <Button
+              title={t('unknownTokensKey', { count: unknownTokens.length })}
+              onPress={() => openBrowserAsync(`${explorerBaseUrl}/addresses/${addressHash}`)}
+              iconProps={{ name: 'plus' }}
+              compact
+            />
+          ) : (
+            <AppText color="tetriary">+ {t('unknownTokensKey', { count: unknownTokens.length })}</AppText>
+          )}
         </HiddenAssetBtnContainer>
       )}
     </AddressesTokensListFooterStyled>
