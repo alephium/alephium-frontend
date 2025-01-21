@@ -10,21 +10,20 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import TokenListItem from '~/components/TokenListItem'
-import { selectHiddenAssetsIds } from '~/features/assetsDisplay/hideAssets/hiddenAssetsSelectors'
+import {
+  selectAddressHiddenAssetIds,
+  selectHiddenAssetsIds
+} from '~/features/assetsDisplay/hideAssets/hiddenAssetsSelectors'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { makeSelectAddressesCheckedUnknownTokens, makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
 import { BORDER_RADIUS_BIG, VERTICAL_GAP } from '~/style/globalStyle'
 
-interface AddressesTokensListProps {
-  addressHash?: AddressHash
-}
-
-const AddressesTokensList = ({ addressHash }: AddressesTokensListProps) => {
+const AddressesTokensList = () => {
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash, true))
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, undefined, true))
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
-  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
+  const unknownTokens = useAppSelector(selectAddressesCheckedUnknownTokens)
   const hiddenAssetIds = useAppSelector(selectHiddenAssetsIds)
   const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const { t } = useTranslation()
@@ -55,21 +54,22 @@ const AddressesTokensList = ({ addressHash }: AddressesTokensListProps) => {
           key={entry.id}
           asset={entry}
           hideSeparator={index === knownFungibleTokens.length - 1 && unknownTokens.length === 0}
-          addressHash={addressHash}
         />
       ))}
 
-      <AddressesTokensListFooter addressHash={addressHash} />
+      <AddressesTokensListFooter />
     </AddressesTokensListStyled>
   )
 }
 
 export default AddressesTokensList
 
-export const AddressesTokensListFooter = ({ addressHash }: AddressesTokensListProps) => {
+export const AddressesTokensListFooter = ({ addressHash }: { addressHash?: AddressHash }) => {
   const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
   const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
-  const hiddenAssetIds = useAppSelector(selectHiddenAssetsIds)
+  const hiddenAssetIds = useAppSelector((s) =>
+    addressHash ? selectAddressHiddenAssetIds(s, addressHash) : selectHiddenAssetsIds(s)
+  )
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
   const { t } = useTranslation()
