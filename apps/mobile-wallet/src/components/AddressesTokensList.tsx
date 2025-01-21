@@ -92,7 +92,7 @@ export const AddressesTokensListFooter = ({ addressHash, parentModalId }: Addres
   }
 
   return (
-    <>
+    <AddressesTokensListFooterStyled>
       {hasUnknownTokens && (
         <HiddenAssetBtnContainer>
           <Button
@@ -114,7 +114,7 @@ export const AddressesTokensListFooter = ({ addressHash, parentModalId }: Addres
           />
         </HiddenAssetBtnContainer>
       )}
-    </>
+    </AddressesTokensListFooterStyled>
   )
 }
 
@@ -128,4 +128,8 @@ const AddressesTokensListStyled = styled.View`
 const HiddenAssetBtnContainer = styled.View`
   flex-grow: 0;
   margin: ${VERTICAL_GAP}px auto 0;
+`
+
+const AddressesTokensListFooterStyled = styled.View`
+  margin-bottom: ${VERTICAL_GAP}px;
 `
