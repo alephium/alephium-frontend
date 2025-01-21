@@ -1,6 +1,7 @@
 import { selectFungibleTokenById } from '@alephium/shared'
 import { Token } from '@alephium/web3'
 import { StackScreenProps } from '@react-navigation/stack'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
@@ -14,10 +15,10 @@ import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import ListItem from '~/components/ListItem'
 import { unhideAsset } from '~/features/assetsDisplay/hideAssets/hiddenAssetsActions'
-import { selectHiddenAssetsIds } from '~/features/assetsDisplay/hideAssets/hiddenAssetsSelectors'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
+import { makeSelectAddressesHiddenFungibleTokens } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { showToast } from '~/utils/layout'
 
@@ -26,7 +27,8 @@ interface HiddenAssetsScreenProps extends StackScreenProps<RootStackParamList, '
 const HiddenAssetsScreen = ({ navigation, ...props }: HiddenAssetsScreenProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const hiddenAssetsIds = useAppSelector(selectHiddenAssetsIds)
+  const selectAddressesHiddenFungibleTokens = useMemo(makeSelectAddressesHiddenFungibleTokens, [])
+  const hiddenFungibleTokens = useAppSelector(selectAddressesHiddenFungibleTokens)
 
   const handleAddAssetPress = () => {
     dispatch(openModal({ name: 'SelectAssetToHideModal' }))
@@ -43,15 +45,15 @@ const HiddenAssetsScreen = ({ navigation, ...props }: HiddenAssetsScreenProps) =
       {...props}
     >
       <ScreenSection fill>
-        {hiddenAssetsIds.length === 0 ? (
+        {hiddenFungibleTokens.length === 0 ? (
           <EmptyPlaceholder style={{ flexGrow: 0 }}>
             <AppText size={28}>✨</AppText>
             <AppText>{t('No assets are hidden')}</AppText>
           </EmptyPlaceholder>
         ) : (
           <FungibleTokensList>
-            {hiddenAssetsIds.map((id, i) => (
-              <FungibleTokensListItem key={id} tokenId={id} isLast={i === hiddenAssetsIds.length - 1} />
+            {hiddenFungibleTokens.map(({ id }, i) => (
+              <FungibleTokensListItem key={id} tokenId={id} isLast={i === hiddenFungibleTokens.length - 1} />
             ))}
           </FungibleTokensList>
         )}
