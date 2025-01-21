@@ -12,7 +12,7 @@ import { ModalInstance } from '~/features/modals/modalTypes'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import ActionCardSendButton from '~/features/send/ActionCardSendButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesTokens, selectAddressByHash } from '~/store/addressesSlice'
+import { makeSelectAddressesTokens, selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface AddressDetailsModalHeaderProps {

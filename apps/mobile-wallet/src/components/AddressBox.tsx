@@ -13,12 +13,12 @@ import AssetLogo from '~/components/AssetLogo'
 import Badge from '~/components/Badge'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
+  makeSelectAddressesTokensWorth,
   selectAddressByHash
-} from '~/store/addressesSlice'
+} from '~/store/addresses/addressesSelectors'
 import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 

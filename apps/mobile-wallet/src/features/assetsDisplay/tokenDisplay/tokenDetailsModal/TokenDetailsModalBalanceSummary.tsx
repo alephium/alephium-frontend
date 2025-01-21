@@ -11,8 +11,11 @@ import { BalanceSummaryBox } from '~/components/BalanceSummary'
 import { TokenDetailsModalCommonProps } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAddressesWithToken } from '~/store/addresses/addressesSelectors'
-import { makeSelectAddressesKnownFungibleTokens, selectAllAddresses } from '~/store/addressesSlice'
+import {
+  makeSelectAddressesKnownFungibleTokens,
+  selectAddressesWithToken,
+  selectAllAddresses
+} from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface TokenDetailsModalBalanceSummaryProps extends TokenDetailsModalCommonProps {

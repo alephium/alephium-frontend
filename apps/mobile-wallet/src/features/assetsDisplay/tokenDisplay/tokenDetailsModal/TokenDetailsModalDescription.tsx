@@ -5,7 +5,7 @@ import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { TokenDetailsModalCommonProps } from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/tokenDetailsModalTypes'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesTokens } from '~/store/addressesSlice'
+import { makeSelectAddressesTokens } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 const TokenDetailsModalDescription = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) => {

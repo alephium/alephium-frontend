@@ -9,15 +9,16 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import TokenListItem from '~/components/TokenListItem'
-import {
-  selectAddressHiddenAssetIds,
-  selectHiddenAssetsIds
-} from '~/features/assetsDisplay/hideAssets/hiddenAssetsSelectors'
+import { selectHiddenAssetsIds } from '~/features/assetsDisplay/hideAssets/hiddenAssetsSelectors'
 import { closeModal } from '~/features/modals/modalActions'
 import { ModalInstance } from '~/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { makeSelectAddressesCheckedUnknownTokens, makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
+import {
+  makeSelectAddressesCheckedUnknownTokens,
+  makeSelectAddressesKnownFungibleTokens,
+  selectAddressHiddenAssetIds
+} from '~/store/addresses/addressesSelectors'
 import { BORDER_RADIUS_BIG, VERTICAL_GAP } from '~/style/globalStyle'
 
 const AddressesTokensList = () => {

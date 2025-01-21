@@ -15,7 +15,8 @@ import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { addressSettingsSaved, selectAddressByHash } from '~/store/addressesSlice'
+import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
+import { addressSettingsSaved } from '~/store/addressesSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { showToast, ToastDuration } from '~/utils/layout'
 
@@ -62,7 +63,7 @@ const DeleteAddressButton = ({ addressHash, onPress }: ActionButtonProps) => {
   return <QuickActionButton title={t('Forget')} onPress={handlePress} iconProps={{ name: 'trash-2' }} variant="alert" />
 }
 
-const SetDefaultAddressButton = ({ addressHash, onPress }: ActionButtonProps) => {
+const SetDefaultAddressButton = ({ addressHash }: ActionButtonProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
   const { t } = useTranslation()

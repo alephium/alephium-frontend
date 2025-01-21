@@ -9,7 +9,7 @@ import useHideAsset from '~/features/assetsDisplay/hideAssets/useHideAsset'
 import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
 import withModal from '~/features/modals/withModal'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
+import { makeSelectAddressesKnownFungibleTokens } from '~/store/addresses/addressesSelectors'
 
 const SelectAssetToHideModal = withModal(({ id }) => {
   const { t } = useTranslation()

@@ -9,7 +9,7 @@ import AddressDetailsModalHeader from '~/features/addressesManagement/AddressDet
 import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
 import withModal from '~/features/modals/withModal'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
+import { makeSelectAddressesKnownFungibleTokens } from '~/store/addresses/addressesSelectors'
 
 export interface AddressDetailsModalProps {
   addressHash: AddressHash
