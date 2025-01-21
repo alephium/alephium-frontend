@@ -1,3 +1,6 @@
+import { AddressHash } from '@alephium/shared'
+import { Token } from '@alephium/web3'
+
 type RootStackParamList = {
   LandingScreen: undefined
   NewWalletIntroScreen: undefined
@@ -13,7 +16,11 @@ type RootStackParamList = {
   }
   NewAddressScreen: undefined
   SettingsScreen: undefined
-  SendNavigation: undefined
+  SendNavigation?: {
+    originAddressHash?: AddressHash
+    destinationAddressHash?: AddressHash
+    tokenId?: Token['id']
+  }
   ReceiveNavigation: undefined
   ContactScreen: {
     contactId: string

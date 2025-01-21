@@ -40,6 +40,7 @@ const AddressesWithTokenModal = withModal<AddressesWithTokenModalProps>(({ id, t
             addressHash={address.hash}
             isLast={i === addresses.length - 1}
             onPress={() => handleAddressPress(address.hash)}
+            tokenId={tokenId}
           />
         ))}
       </Content>

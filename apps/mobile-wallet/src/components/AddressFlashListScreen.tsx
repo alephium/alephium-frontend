@@ -1,4 +1,6 @@
 import { AddressHash } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
+import { Token } from '@alephium/web3'
 
 import AddressBox from '~/components/AddressBox'
 import FlashListScreen, { FlashListScreenProps } from '~/components/layout/FlashListScreen'
@@ -12,17 +14,23 @@ export interface AddressFlashListScreenProps extends Partial<FlashListScreenProp
   selectedAddress?: AddressHash
   contentPaddingTop?: boolean | number
   hideEmptyAddresses?: boolean
+  tokenId?: Token['id']
 }
 
 const AddressFlashListScreen = ({
   onAddressPress,
   selectedAddress,
   hideEmptyAddresses,
+  tokenId,
   ...props
 }: AddressFlashListScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
 
-  const data = hideEmptyAddresses ? addresses.filter((a) => a.tokens.length !== 0 && a.balance !== '0') : addresses
+  const filteredAddresses =
+    tokenId && tokenId !== ALPH.id ? addresses.filter((a) => a.tokens.some((t) => t.tokenId === tokenId)) : addresses
+  const data = hideEmptyAddresses
+    ? filteredAddresses.filter((a) => a.tokens.length !== 0 && a.balance !== '0')
+    : filteredAddresses
 
   return (
     <FlashListScreen
@@ -41,6 +49,7 @@ const AddressFlashListScreen = ({
             marginRight: DEFAULT_MARGIN
           }}
           onPress={() => onAddressPress(address.hash)}
+          tokenId={tokenId}
         />
       )}
       shouldUseGaps

@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { Token } from '@alephium/web3'
 import { NavigationContainer, ParamListBase, useNavigationContainerRef } from '@react-navigation/native'
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
@@ -15,9 +16,9 @@ import RootStackParamList from '~/navigation/rootStackRoutes'
 import { useOnChildNavigationGoBack } from '~/navigation/useOnChildNavigationGoBack'
 
 export interface SendNavigationParamList extends ParamListBase {
-  DestinationScreen: { fromAddressHash?: AddressHash }
-  OriginScreen?: { toAddressHash?: AddressHash }
-  AssetsScreen?: { toAddressHash?: AddressHash }
+  DestinationScreen: { originAddressHash?: AddressHash }
+  OriginScreen?: { tokenId?: Token['id'] }
+  AssetsScreen?: { tokenId?: Token['id'] }
   VerifyScreen: undefined
 }
 
@@ -25,13 +26,20 @@ export type PossibleNextScreenAfterDestination = 'OriginScreen' | 'AssetsScreen'
 
 const SendStack = createStackNavigator<SendNavigationParamList>()
 
-const SendNavigation = ({ navigation: parentNavigation }: StackScreenProps<RootStackParamList, 'SendNavigation'>) => {
+const SendNavigation = ({
+  navigation: parentNavigation,
+  route: { params }
+}: StackScreenProps<RootStackParamList, 'SendNavigation'>) => {
   const navigationRef = useNavigationContainerRef()
 
   const handleGoBack = useOnChildNavigationGoBack({ childNavigationRef: navigationRef, parentNavigation })
 
   return (
-    <SendContextProvider>
+    <SendContextProvider
+      originAddressHash={params?.originAddressHash}
+      destinationAddressHash={params?.destinationAddressHash}
+      tokenId={params?.tokenId}
+    >
       <HeaderContextProvider>
         <View style={{ flex: 1 }}>
           <SendNavigationHeader onBackPress={handleGoBack} />
@@ -40,11 +48,23 @@ const SendNavigation = ({ navigation: parentNavigation }: StackScreenProps<RootS
               screenOptions={{
                 headerShown: false
               }}
-              initialRouteName="DestinationScreen"
+              initialRouteName={params?.destinationAddressHash ? 'OriginScreen' : 'DestinationScreen'}
             >
-              <SendStack.Screen name="DestinationScreen" component={DestinationScreen} />
-              <SendStack.Screen name="OriginScreen" component={OriginScreen} />
-              <SendStack.Screen name="AssetsScreen" component={AssetsScreen} />
+              <SendStack.Screen
+                name="DestinationScreen"
+                component={DestinationScreen}
+                initialParams={{ originAddressHash: params?.originAddressHash }}
+              />
+              <SendStack.Screen
+                name="OriginScreen"
+                component={OriginScreen}
+                initialParams={{ tokenId: params?.tokenId }}
+              />
+              <SendStack.Screen
+                name="AssetsScreen"
+                component={AssetsScreen}
+                initialParams={{ tokenId: params?.tokenId }}
+              />
               <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
             </SendStack.Navigator>
           </NavigationContainer>
