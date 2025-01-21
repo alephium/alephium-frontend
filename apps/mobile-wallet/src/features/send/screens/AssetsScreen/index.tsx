@@ -18,7 +18,7 @@ import {
   makeSelectAddressesNFTs,
   makeSelectAddressesUnknownTokens,
   selectAddressByHash
-} from '~/store/addressesSlice'
+} from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface ScreenProps

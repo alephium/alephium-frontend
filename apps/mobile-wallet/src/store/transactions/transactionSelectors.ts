@@ -1,7 +1,7 @@
 import { Asset, extractTokenIds, selectAllFungibleTokens, selectNFTIds } from '@alephium/shared'
 import { createSelector } from '@reduxjs/toolkit'
 
-import { makeSelectAddresses } from '~/store/addressesSlice'
+import { makeSelectAddresses } from '~/store/addresses/addressesSelectors'
 import { selectAllConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
 import { selectAllPendingTransactions } from '~/store/pendingTransactionsSlice'
 

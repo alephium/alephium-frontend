@@ -1,3 +1,4 @@
+import { ALPH } from '@alephium/token-list'
 import { FlashList } from '@shopify/flash-list'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -9,7 +10,7 @@ import useHideAsset from '~/features/assetsDisplay/hideAssets/useHideAsset'
 import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
 import withModal from '~/features/modals/withModal'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesKnownFungibleTokens } from '~/store/addressesSlice'
+import { makeSelectAddressesKnownFungibleTokens } from '~/store/addresses/addressesSelectors'
 
 const SelectAssetToHideModal = withModal(({ id }) => {
   const { t } = useTranslation()
@@ -24,7 +25,7 @@ const SelectAssetToHideModal = withModal(({ id }) => {
       title={t('Asset to hide')}
       flashListRender={(props) => (
         <FlashList
-          data={knownFungibleTokens.filter(({ id }) => !hiddenAssetsIds.includes(id))}
+          data={knownFungibleTokens.filter(({ id }) => !hiddenAssetsIds.includes(id) && id !== ALPH.id)}
           estimatedItemSize={70}
           renderItem={({ item: { id, name } }) => (
             <ListItem

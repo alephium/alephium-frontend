@@ -8,7 +8,7 @@ import { TabBarPageScreenProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAllAddresses } from '~/store/addressesSlice'
+import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
