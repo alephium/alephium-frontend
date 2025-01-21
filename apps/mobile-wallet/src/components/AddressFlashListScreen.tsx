@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
 
 import AddressBox from '~/components/AddressBox'
@@ -25,7 +26,8 @@ const AddressFlashListScreen = ({
 }: AddressFlashListScreenProps) => {
   const addresses = useAppSelector(selectAllAddresses)
 
-  const filteredAddresses = tokenId ? addresses.filter((a) => a.tokens.some((t) => t.tokenId === tokenId)) : addresses
+  const filteredAddresses =
+    tokenId && tokenId !== ALPH.id ? addresses.filter((a) => a.tokens.some((t) => t.tokenId === tokenId)) : addresses
   const data = hideEmptyAddresses
     ? filteredAddresses.filter((a) => a.tokens.length !== 0 && a.balance !== '0')
     : filteredAddresses
