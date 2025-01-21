@@ -1,8 +1,8 @@
 import { localStorageNetworkSettingsLoaded, NetworkSettings } from '@alephium/shared'
 import { useEffect } from 'react'
 
-import { hiddenAssetsLoadedFromStorage } from '~/features/assetsDisplay/hiddenAssetsActions'
-import { getHiddenAssetsIds } from '~/features/assetsDisplay/hiddenAssetsStorage'
+import { hiddenAssetsLoadedFromStorage } from '~/features/assetsDisplay/hideAssets/hiddenAssetsActions'
+import { getHiddenAssetsIds } from '~/features/assetsDisplay/hideAssets/hiddenAssetsStorage'
 import { favoriteDAppsLoadedFromStorage } from '~/features/ecosystem/favoriteDAppsActions'
 import { getFavoriteDApps } from '~/features/ecosystem/favoriteDAppsStorage'
 import { fundPasswordUseToggled } from '~/features/fund-password/fundPasswordActions'

@@ -10,7 +10,6 @@ import vi from '../../../locales/vi-VN/translation.json'
 import zh from '../../../locales/zh-CN/translation.json'
 
 i18next.use(initReactI18next).init({
-  compatibilityJSON: 'v3',
   resources: {
     'en-US': { translation: en },
     'fr-FR': { translation: fr },

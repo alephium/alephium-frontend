@@ -10,7 +10,7 @@ import Row from '~/components/Row'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { selectAllAddresses } from '~/store/addressesSlice'
+import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { showExceptionToast, showToast, ToastDuration } from '~/utils/layout'
 

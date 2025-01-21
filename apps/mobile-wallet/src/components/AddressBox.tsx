@@ -5,6 +5,7 @@ import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
 import Animated from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AddressColorSymbol from '~/components/AddressColorSymbol'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
@@ -12,12 +13,12 @@ import AssetLogo from '~/components/AssetLogo'
 import Badge from '~/components/Badge'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesTokensWorth } from '~/store/addresses/addressesSelectors'
 import {
   makeSelectAddressesKnownFungibleTokens,
   makeSelectAddressesNFTs,
+  makeSelectAddressesTokensWorth,
   selectAddressByHash
-} from '~/store/addressesSlice'
+} from '~/store/addresses/addressesSelectors'
 import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
@@ -41,7 +42,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash, true))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const dispatch = useAppDispatch()
@@ -56,6 +57,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
   const handleLongPress = () => {
     vibrate(ImpactStyle.Heavy)
     dispatch(openModal({ name: 'AddressQuickActionsModal', props: { addressHash } }))
+    sendAnalytics({ event: 'Opened address quick actions modal' })
   }
 
   return (

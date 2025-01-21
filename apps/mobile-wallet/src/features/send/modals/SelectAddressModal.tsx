@@ -7,7 +7,7 @@ import BottomModalFlashList from '~/features/modals/BottomModalFlashList'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectAllAddresses } from '~/store/addressesSlice'
+import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
 
 interface SelectAddressModalProps {
   onAddressPress: (addressHash: AddressHash) => void

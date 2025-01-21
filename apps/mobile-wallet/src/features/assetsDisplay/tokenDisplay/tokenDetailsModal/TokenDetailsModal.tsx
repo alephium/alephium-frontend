@@ -19,7 +19,7 @@ import withModal from '~/features/modals/withModal'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
 import ActionCardSendButton from '~/features/send/ActionCardSendButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { selectDefaultAddress } from '~/store/addressesSlice'
+import { selectDefaultAddress } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 import { darkTheme, lightTheme } from '~/style/themes'
 

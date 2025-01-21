@@ -1,4 +1,5 @@
 import { selectFungibleTokenById } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { Token } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
@@ -7,12 +8,11 @@ import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
-import { hideAsset } from '~/features/assetsDisplay/hiddenAssetsActions'
+import useHideAsset from '~/features/assetsDisplay/hideAssets/useHideAsset'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { showToast } from '~/utils/layout'
 
 interface TokenQuickActionsModalProps {
   tokenId: Token['id']
@@ -22,20 +22,16 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const token = useAppSelector((s) => selectFungibleTokenById(s, tokenId))
+  const hideAsset = useHideAsset('quick_actions', id)
 
   if (!token) return
 
-  const handleAssetHide = () => {
-    dispatch(hideAsset(tokenId))
-    showToast({ text1: t('Asset hidden'), type: 'info' })
-    dispatch(closeModal({ id }))
-    sendAnalytics({ event: 'Asset hidden', props: { origin: 'TokenQuickActionsModal', assetId: tokenId } })
-  }
+  const handleAssetHide = () => hideAsset(tokenId)
 
   const openTokenDetailsModal = () => {
     dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
     dispatch(closeModal({ id }))
-    sendAnalytics({ event: 'Opened token details modal', props: { origin: 'TokenQuickActionsModal' } })
+    sendAnalytics({ event: 'Opened token details modal', props: { origin: 'quick_actions' } })
   }
 
   return (
@@ -51,12 +47,14 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
       }
       titleAlign="left"
     >
-      <QuickActionButton
-        title={t('Hide asset')}
-        onPress={handleAssetHide}
-        iconProps={{ name: 'eye-off' }}
-        variant="alert"
-      />
+      {tokenId !== ALPH.id && (
+        <QuickActionButton
+          title={t('Hide asset')}
+          onPress={handleAssetHide}
+          iconProps={{ name: 'eye-off' }}
+          variant="alert"
+        />
+      )}
       <QuickActionButton
         title={t('Show details')}
         onPress={openTokenDetailsModal}

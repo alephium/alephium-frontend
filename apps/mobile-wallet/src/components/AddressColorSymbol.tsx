@@ -4,8 +4,7 @@ import styled from 'styled-components/native'
 
 import { useAppSelector } from '~/hooks/redux'
 import DefaultAddressBadge from '~/images/DefaultAddressBadge'
-import { selectContactByHash } from '~/store/addresses/addressesSelectors'
-import { selectAddressByHash } from '~/store/addressesSlice'
+import { selectAddressByHash, selectContactByHash } from '~/store/addresses/addressesSelectors'
 import { stringToColour } from '~/utils/colors'
 
 interface AddressColorSymbolProps {

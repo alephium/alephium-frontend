@@ -4,6 +4,7 @@ import { StackScreenProps } from '@react-navigation/stack'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
+import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import BottomButtons from '~/components/buttons/BottomButtons'
@@ -12,8 +13,8 @@ import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
 import ListItem from '~/components/ListItem'
-import { unhideAsset } from '~/features/assetsDisplay/hiddenAssetsActions'
-import { selectHiddenAssetsIds } from '~/features/assetsDisplay/hiddenAssetsSelectors'
+import { unhideAsset } from '~/features/assetsDisplay/hideAssets/hiddenAssetsActions'
+import { selectHiddenAssetsIds } from '~/features/assetsDisplay/hideAssets/hiddenAssetsSelectors'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -29,6 +30,7 @@ const HiddenAssetsScreen = ({ navigation, ...props }: HiddenAssetsScreenProps) =
 
   const handleAddAssetPress = () => {
     dispatch(openModal({ name: 'SelectAssetToHideModal' }))
+    sendAnalytics({ event: 'Clicked on button to add an asset to hidden list' })
   }
 
   return (
@@ -76,6 +78,12 @@ const FungibleTokensListItem = ({ tokenId, isLast }: FungibleTokensListItemProps
   const handleAssetUnhide = () => {
     dispatch(unhideAsset(tokenId))
     showToast({ text1: t('Asset unhidden'), type: 'success' })
+    sendAnalytics({ event: 'Clicked on button to unhide an asset' })
+  }
+
+  const openTokenDetailsModal = () => {
+    dispatch(openModal({ name: 'TokenDetailsModal', props: { tokenId } }))
+    sendAnalytics({ event: 'Opened token details modal', props: { origin: 'hidden_assets_list_item' } })
   }
 
   return (
@@ -84,6 +92,7 @@ const FungibleTokensListItem = ({ tokenId, isLast }: FungibleTokensListItemProps
       title={token.name}
       rightSideContent={<Button iconProps={{ name: 'x' }} squared compact onPress={handleAssetUnhide} />}
       isLast={isLast}
+      onPress={openTokenDetailsModal}
     />
   )
 }
