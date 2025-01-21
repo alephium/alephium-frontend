@@ -42,7 +42,7 @@ const AddressBox = ({ addressHash, isSelected, onPress, isLast, style, rounded, 
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
-  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
+  const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash, true))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const dispatch = useAppDispatch()
