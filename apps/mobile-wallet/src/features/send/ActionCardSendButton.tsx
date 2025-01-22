@@ -5,30 +5,40 @@ import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import ActionCardButton from '~/components/buttons/ActionCardButton'
-import useWalletSingleAddress from '~/hooks/addresses/useWalletSingleAddress'
+import QuickActionButton from '~/components/buttons/QuickActionButton'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface ActionCardSendButtonProps {
-  origin: 'dashboard' | 'addressDetails' | 'tokenDetails'
-  addressHash?: AddressHash
+  origin: 'dashboard' | 'addressDetails' | 'tokenDetails' | 'qrCodeScan' | 'contact'
+  buttonType?: 'action-card' | 'quick-action'
+  originAddressHash?: AddressHash
+  destinationAddressHash?: AddressHash
   tokenId?: Token['id']
   onPress?: () => void
 }
 
-const ActionCardSendButton = ({ origin, addressHash, tokenId, onPress }: ActionCardSendButtonProps) => {
+const ActionCardSendButton = ({
+  origin,
+  originAddressHash,
+  destinationAddressHash,
+  tokenId,
+  onPress,
+  buttonType = 'action-card'
+}: ActionCardSendButtonProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const walletSingleAddressHash = useWalletSingleAddress()
   const { t } = useTranslation()
 
   const handleSendPress = () => {
-    sendAnalytics({ event: 'Action card: Pressed btn to send funds from', props: { origin } })
+    sendAnalytics({ event: 'Send button pressed', props: { origin } })
 
-    navigation.navigate('SendNavigation', { originAddressHash: addressHash || walletSingleAddressHash, tokenId })
+    navigation.navigate('SendNavigation', { originAddressHash, destinationAddressHash, tokenId })
 
     onPress?.()
   }
 
-  return <ActionCardButton title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />
+  const ButtonComponent = buttonType === 'action-card' ? ActionCardButton : QuickActionButton
+
+  return <ButtonComponent title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />
 }
 
 export default ActionCardSendButton

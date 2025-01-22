@@ -12,6 +12,7 @@ import AssetsScreen from '~/features/send/screens/AssetsScreen'
 import DestinationScreen from '~/features/send/screens/DestinationScreen'
 import OriginScreen from '~/features/send/screens/OriginScreen'
 import VerifyScreen from '~/features/send/screens/VerifyScreen'
+import useWalletSingleAddress from '~/hooks/addresses/useWalletSingleAddress'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { useOnChildNavigationGoBack } from '~/navigation/useOnChildNavigationGoBack'
 
@@ -31,12 +32,21 @@ const SendNavigation = ({
   route: { params }
 }: StackScreenProps<RootStackParamList, 'SendNavigation'>) => {
   const navigationRef = useNavigationContainerRef()
+  const walletSingleAddress = useWalletSingleAddress()
+  const originAddressHash = params?.originAddressHash || walletSingleAddress
 
   const handleGoBack = useOnChildNavigationGoBack({ childNavigationRef: navigationRef, parentNavigation })
 
+  const initialRouteName =
+    params?.destinationAddressHash && originAddressHash
+      ? 'AssetsScreen'
+      : params?.destinationAddressHash
+        ? 'OriginScreen'
+        : 'DestinationScreen'
+
   return (
     <SendContextProvider
-      originAddressHash={params?.originAddressHash}
+      originAddressHash={originAddressHash}
       destinationAddressHash={params?.destinationAddressHash}
       tokenId={params?.tokenId}
     >
@@ -48,12 +58,12 @@ const SendNavigation = ({
               screenOptions={{
                 headerShown: false
               }}
-              initialRouteName={params?.destinationAddressHash ? 'OriginScreen' : 'DestinationScreen'}
+              initialRouteName={initialRouteName}
             >
               <SendStack.Screen
                 name="DestinationScreen"
                 component={DestinationScreen}
-                initialParams={{ originAddressHash: params?.originAddressHash }}
+                initialParams={{ originAddressHash }}
               />
               <SendStack.Screen
                 name="OriginScreen"

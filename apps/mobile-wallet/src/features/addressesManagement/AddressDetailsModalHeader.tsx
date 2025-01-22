@@ -40,7 +40,9 @@ const AddressDetailsModalHeader = ({ addressHash, parentModalId }: AddressDetail
       </RoundedCard>
 
       <ActionButtons>
-        {hasTokens && <ActionCardSendButton origin="addressDetails" addressHash={addressHash} onPress={handleClose} />}
+        {hasTokens && (
+          <ActionCardSendButton origin="addressDetails" originAddressHash={addressHash} onPress={handleClose} />
+        )}
         <ActionCardReceiveButton origin="addressDetails" addressHash={addressHash} />
         <ActionCardBuyButton origin="addressDetails" receiveAddressHash={addressHash} />
         <ActionCardButton title={t('Settings')} onPress={handleSettingsPress} iconProps={{ name: 'settings' }} />

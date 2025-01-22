@@ -44,7 +44,7 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
         <ActionButtons>
           <ActionCardSendButton
             origin="tokenDetails"
-            addressHash={addressHash}
+            originAddressHash={addressHash}
             tokenId={tokenId}
             onPress={handleClose}
           />

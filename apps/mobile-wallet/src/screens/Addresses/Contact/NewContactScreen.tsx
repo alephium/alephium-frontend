@@ -13,14 +13,14 @@ import { showExceptionToast } from '~/utils/layout'
 
 interface NewContactScreenProps extends StackScreenProps<RootStackParamList, 'NewContactScreen'>, ScrollScreenProps {}
 
-const NewContactScreen = ({ navigation }: NewContactScreenProps) => {
+const NewContactScreen = ({ navigation, route: { params } }: NewContactScreenProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
   const initialValues = {
     id: undefined,
     name: '',
-    address: ''
+    address: params?.addressHash ?? ''
   }
 
   const handleSavePress = async (formData: ContactFormData) => {

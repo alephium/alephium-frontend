@@ -19,6 +19,7 @@ import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
+import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
 import ReceiveQRCodeModal from '~/features/receive/ReceiveQRCodeModal'
 import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
@@ -68,7 +69,8 @@ export const ModalComponents = {
   AddressQuickActionsModal,
   AddressesWithTokenModal,
   SelectAssetToHideModal,
-  TokenQuickActionsModal
+  TokenQuickActionsModal,
+  AddressQRCodeScanActionsModal
 }
 
 export type ModalName = keyof typeof ModalComponents
