@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Clipboard from 'expo-clipboard'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,9 +14,10 @@ import Screen, { ScreenProps } from '~/components/layout/Screen'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import AddToFavoritesButton from '~/features/ecosystem/AddToFavoritesButton'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
-import { useAppDispatch } from '~/hooks/redux'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { showToast, ToastDuration } from '~/utils/layout'
 
 interface DAppWebViewScreenProps extends NativeStackScreenProps<RootStackParamList, 'DAppWebViewScreen'>, ScreenProps {}
 
@@ -149,6 +150,8 @@ const useDetectWCUrlInClipboardAndPair = () => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const { pairWithDapp } = useWalletConnectContext()
+  const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
   useEffect(() => {
     const checkClipboard = async () => {
@@ -157,12 +160,21 @@ const useDetectWCUrlInClipboardAndPair = () => {
       if (content.startsWith('wc:')) {
         Clipboard.setStringAsync('')
 
-        // TODO: Check if the feature is enabled and warn the user? Or do we just drop the experimental warning finally?
-        dispatch(activateAppLoading(t('Connecting')))
+        if (!isWalletConnectEnabled) {
+          showToast({
+            text1: t('Experimental feature'),
+            text2: t('WalletConnect is an experimental feature. You can enable it in the settings.'),
+            type: 'info',
+            visibilityTime: ToastDuration.LONG,
+            onPress: () => navigation.navigate('SettingsScreen')
+          })
+        } else {
+          dispatch(activateAppLoading(t('Connecting')))
 
-        await pairWithDapp(content)
+          await pairWithDapp(content)
 
-        dispatch(deactivateAppLoading())
+          dispatch(deactivateAppLoading())
+        }
       }
     }
 
@@ -171,7 +183,7 @@ const useDetectWCUrlInClipboardAndPair = () => {
     const intervalId = setInterval(checkClipboard, 1000)
 
     return () => clearInterval(intervalId)
-  }, [dispatch, pairWithDapp, t])
+  }, [dispatch, isWalletConnectEnabled, navigation, pairWithDapp, t])
 }
 
 const WebViewStyled = styled(WebView)`
