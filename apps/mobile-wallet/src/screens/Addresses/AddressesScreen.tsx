@@ -34,6 +34,7 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
             addressHash={address.hash}
             isLast={i === addresses.length - 1}
             onPress={() => handleAddressPress(address.hash)}
+            origin="addressesScreen"
           />
         ))}
       </Content>

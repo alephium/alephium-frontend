@@ -19,6 +19,7 @@ import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
+import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
 import ReceiveQRCodeModal from '~/features/receive/ReceiveQRCodeModal'
 import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
@@ -32,6 +33,7 @@ import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectErrorModal'
 import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPairingsModal'
 import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPasteUrlModal'
+import AddressPickerQuickActionsModal from '~/modals/AddressPickerQuickActionsModal'
 import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
@@ -68,7 +70,9 @@ export const ModalComponents = {
   AddressQuickActionsModal,
   AddressesWithTokenModal,
   SelectAssetToHideModal,
-  TokenQuickActionsModal
+  TokenQuickActionsModal,
+  AddressQRCodeScanActionsModal,
+  AddressPickerQuickActionsModal
 }
 
 export type ModalName = keyof typeof ModalComponents

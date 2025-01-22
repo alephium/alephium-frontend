@@ -87,6 +87,7 @@
   "Contacts": "Contacts",
   "No contact yet!": "No contact yet!",
   "Add contact": "Add contact",
+  "Add to contacts": "Add to contacts",
   "No contacts found with these filtering criteria.": "No contacts found with these filtering criteria.",
   "Connect to dApp": "Connect to dApp",
   "Connect to dApps": "Connect to dApps",
@@ -257,6 +258,7 @@
   "Scan for active addresses": "Scan for active addresses",
   "Scan QR code": "Scan QR code",
   "Scan an Alephium address QR code": "Scan an Alephium address QR code",
+  "Scan an Alephium address QR code to add to your contacts list.": "Scan an Alephium address QR code to add to your contacts list.",
   "Scan an Alephium address QR code to send funds to.": "Scan an Alephium address QR code to send funds to.",
   "Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.": "Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.",
   "Could not connect to WalletConnect": "Could not connect to WalletConnect",
@@ -381,6 +383,7 @@
   "You scanned an Ethereum address": "You scanned an Ethereum address",
   "To move funds to Ethereum use the bridge at {{ url }}": "To move funds to Ethereum use the bridge at {{ url }}",
   "Invalid scanned data": "Invalid scanned data",
+  "Did not detect a valid Alephium address in scanned data: {{ data }}": "Did not detect a valid Alephium address in scanned data: {{ data }}",
   "Did not detect a valid Alephium address or a WalletConnect QR code in scanned data: {{ data }}": "Did not detect a valid Alephium address or a WalletConnect QR code in scanned data: {{ data }}",
   "Forget": "Forget",
   "forgetAddress_one": "Forget address",
@@ -437,5 +440,10 @@
   "nb_of_hidden_assets_one": "{{ count }} hidden asset",
   "nb_of_hidden_assets_other": "{{ count }} hidden assets",
   "Hide asset": "Hide asset",
-  "Show details": "Show details"
+  "Show details": "Show details",
+  "Scanned address": "Scanned address",
+  "You already have a contact with this address": "You already have a contact with this address",
+  "See address details": "See address details",
+  "Select address": "Select address",
+  "Creating contacts helps you avoid making mistakes and manage your funds with ease.": "Creating contacts helps you avoid making mistakes and manage your funds with ease."
 }

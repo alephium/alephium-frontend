@@ -9,10 +9,9 @@ import ContactListScreenBase from '~/screens/ContactListScreenBase'
 
 interface SelectContactModalProps {
   onContactPress: (contactId: Contact['id']) => void
-  onNewContactPress?: () => void
 }
 
-const SelectContactModal = withModal<SelectContactModalProps>(({ id, onContactPress, onNewContactPress }) => {
+const SelectContactModal = withModal<SelectContactModalProps>(({ id, onContactPress }) => {
   const dispatch = useAppDispatch()
 
   const handleContactPress = (contactId: string) => {
@@ -21,7 +20,6 @@ const SelectContactModal = withModal<SelectContactModalProps>(({ id, onContactPr
   }
 
   const handleNewContactPress = () => {
-    onNewContactPress && onNewContactPress()
     dispatch(closeModal({ id }))
   }
 

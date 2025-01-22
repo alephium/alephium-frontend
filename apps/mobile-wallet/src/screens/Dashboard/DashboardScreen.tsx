@@ -1,4 +1,4 @@
-import { AddressHash, CURRENCIES } from '@alephium/shared'
+import { CURRENCIES } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -19,7 +19,7 @@ import RoundedCard from '~/components/RoundedCard'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import { openModal } from '~/features/modals/modalActions'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
-import ActionCardSendButton from '~/features/send/ActionCardSendButton'
+import SendButton from '~/features/send/SendButton'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
@@ -32,7 +32,6 @@ import DashboardSecondaryButtons from '~/screens/Dashboard/DashboardSecondaryBut
 import WalletSettingsButton from '~/screens/Dashboard/WalletSettingsButton'
 import {
   makeSelectAddressesTokensWorth,
-  selectAddressIds,
   selectDefaultAddress,
   selectTotalBalance
 } from '~/store/addresses/addressesSelectors'
@@ -52,7 +51,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const totalBalance = useAppSelector(selectTotalBalance)
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector(selectAddessesTokensWorth)
-  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
   const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)
   const needsBackupReminder = useAppSelector((s) => s.backup.needsReminder)
@@ -75,8 +73,6 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       console.error(e)
     }
   }, [isNewWallet])
-
-  const addressHash = addressHashes.length === 1 ? addressHashes[0] : undefined
 
   return (
     <DashboardScreenStyled
@@ -102,8 +98,8 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         </RoundedCardStyled>
       </CardContainer>
       <ButtonsRowContainer>
-        {totalBalance > BigInt(0) && <ActionCardSendButton origin="dashboard" addressHash={addressHash} />}
-        <ActionCardReceiveButton origin="dashboard" addressHash={addressHash} />
+        {totalBalance > BigInt(0) && <SendButton origin="dashboard" />}
+        <ActionCardReceiveButton origin="dashboard" />
         <ActionCardBuyButton origin="dashboard" receiveAddressHash={defaultAddressHash} />
       </ButtonsRowContainer>
 

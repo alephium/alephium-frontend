@@ -303,6 +303,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
                           sendAnalytics({ event: 'WC: Switched signer address' })
                         }}
                         isLast={i === addressesInGroup.length - 1}
+                        origin="walletConnectPairing"
                       />
                     ))}
                     <PlaceholderBox>
@@ -324,6 +325,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
                       isSelected
                       isLast
                       rounded
+                      origin="walletConnectPairing"
                     />
                   </AddressList>
                 </ScreenSection>

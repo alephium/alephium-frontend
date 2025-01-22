@@ -29,7 +29,9 @@ type RootStackParamList = {
   AddressDiscoveryScreen?: {
     isImporting?: boolean
   }
-  NewContactScreen: undefined
+  NewContactScreen?: {
+    addressHash: AddressHash
+  }
   EditContactScreen: {
     contactId: string
   }

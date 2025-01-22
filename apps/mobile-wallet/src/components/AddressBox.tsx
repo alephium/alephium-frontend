@@ -3,7 +3,7 @@ import { Token } from '@alephium/web3'
 import { Check, Lock } from 'lucide-react-native'
 import { useMemo } from 'react'
 import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
-import Animated from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
@@ -24,8 +24,9 @@ import {
 import { BORDER_RADIUS, BORDER_RADIUS_BIG, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
-interface AddressBoxProps extends PressableProps {
+export interface AddressBoxProps extends PressableProps {
   addressHash: AddressHash
+  origin: 'addressesScreen' | 'originAddress' | 'destinationAddress' | 'walletConnectPairing' | 'selectAddressModal'
   isSelected?: boolean
   isLast?: boolean
   rounded?: boolean
@@ -46,11 +47,18 @@ const AddressBox = ({
   style,
   rounded,
   tokenId,
+  origin,
   ...props
 }: AddressBoxProps) => {
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
+
+  const fade = useSharedValue(1)
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: fade.value
+  }))
 
   if (!address) return
 
@@ -61,13 +69,33 @@ const AddressBox = ({
 
   const handleLongPress = () => {
     vibrate(ImpactStyle.Heavy)
-    dispatch(openModal({ name: 'AddressQuickActionsModal', props: { addressHash } }))
-    sendAnalytics({ event: 'Opened address quick actions modal' })
+    if (origin === 'addressesScreen') {
+      dispatch(openModal({ name: 'AddressQuickActionsModal', props: { addressHash } }))
+    } else if (
+      origin === 'originAddress' ||
+      origin === 'destinationAddress' ||
+      origin === 'walletConnectPairing' ||
+      origin === 'selectAddressModal'
+    ) {
+      dispatch(
+        openModal({
+          name: 'AddressPickerQuickActionsModal',
+          props: { addressHash, onSelectAddress: handlePress }
+        })
+      )
+    }
+    sendAnalytics({ event: 'Opened address quick actions modal', props: { origin } })
   }
 
   return (
     <AddressBoxStyled
       {...props}
+      onPressIn={() => {
+        fade.value = withTiming(0.5, { duration: 150 })
+      }}
+      onPressOut={() => {
+        fade.value = withTiming(1, { duration: 150 })
+      }}
       onPress={handlePress}
       onLongPress={handleLongPress}
       style={[
@@ -75,7 +103,8 @@ const AddressBox = ({
         {
           borderRadius: rounded ? BORDER_RADIUS : 0,
           backgroundColor: isSelected ? theme.bg.accent : theme.bg.secondary
-        }
+        },
+        animatedStyle
       ]}
     >
       <BadgeContainer>

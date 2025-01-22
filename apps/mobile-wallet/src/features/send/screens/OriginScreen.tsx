@@ -44,6 +44,7 @@ const OriginScreen = ({ navigation, route: { params } }: ScreenProps) => {
         />
       )}
       tokenId={params?.tokenId}
+      origin="originAddress"
     />
   )
 }

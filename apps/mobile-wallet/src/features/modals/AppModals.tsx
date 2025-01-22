@@ -21,6 +21,7 @@ import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import { selectAllModals } from '~/features/modals/modalSelectors'
 import { getElementName, isModalWrapped } from '~/features/modals/modalUtils'
+import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
 import ReceiveQRCodeModal from '~/features/receive/ReceiveQRCodeModal'
 import SelectAddressModal from '~/features/send/modals/SelectAddressModal'
 import SelectContactModal from '~/features/send/modals/SelectContactModal'
@@ -35,6 +36,7 @@ import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectError
 import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPairingsModal'
 import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPasteUrlModal'
 import { useAppSelector } from '~/hooks/redux'
+import AddressPickerQuickActionsModal from '~/modals/AddressPickerQuickActionsModal'
 import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
@@ -118,6 +120,10 @@ const AppModals = () => {
             return <SelectAssetToHideModal key={id} id={id} />
           case 'TokenQuickActionsModal':
             return <TokenQuickActionsModal key={id} id={id} {...params.props} />
+          case 'AddressQRCodeScanActionsModal':
+            return <AddressQRCodeScanActionsModal key={id} id={id} {...params.props} />
+          case 'AddressPickerQuickActionsModal':
+            return <AddressPickerQuickActionsModal key={id} id={id} {...params.props} />
           default:
             return null
         }

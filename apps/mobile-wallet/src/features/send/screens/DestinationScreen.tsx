@@ -108,12 +108,7 @@ const DestinationScreen = ({ navigation, route: { params }, ...props }: Destinat
     dispatch(
       openModal({
         name: 'SelectContactModal',
-        props: {
-          onContactPress: handleContactPress,
-          onNewContactPress: () => {
-            navigation.navigate('NewContactScreen')
-          }
-        }
+        props: { onContactPress: handleContactPress }
       })
     )
 
