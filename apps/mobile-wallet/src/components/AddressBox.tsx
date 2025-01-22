@@ -3,7 +3,7 @@ import { Token } from '@alephium/web3'
 import { Check, Lock } from 'lucide-react-native'
 import { useMemo } from 'react'
 import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
-import Animated from 'react-native-reanimated'
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
@@ -54,6 +54,12 @@ const AddressBox = ({
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
 
+  const fade = useSharedValue(1)
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: fade.value
+  }))
+
   if (!address) return
 
   const handlePress = (e: GestureResponderEvent) => {
@@ -84,6 +90,12 @@ const AddressBox = ({
   return (
     <AddressBoxStyled
       {...props}
+      onPressIn={() => {
+        fade.value = withTiming(0.5, { duration: 150 })
+      }}
+      onPressOut={() => {
+        fade.value = withTiming(1, { duration: 150 })
+      }}
       onPress={handlePress}
       onLongPress={handleLongPress}
       style={[
@@ -91,7 +103,8 @@ const AddressBox = ({
         {
           borderRadius: rounded ? BORDER_RADIUS : 0,
           backgroundColor: isSelected ? theme.bg.accent : theme.bg.secondary
-        }
+        },
+        animatedStyle
       ]}
     >
       <BadgeContainer>
