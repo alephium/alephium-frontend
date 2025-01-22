@@ -425,5 +425,12 @@
   "Added to favorites": "Ditambahkan ke favorit",
   "Removed from favorites": "Dihapus dari favorit",
   "Favorites": "Favorit",
-  "No dApps added to your favorites yet": "Belum ada dApps yang ditambahkan ke favorit anda"
+  "No dApps added to your favorites yet": "Belum ada dApps yang ditambahkan ke favorit anda",
+  "Hide assets you're not interested in": "Sembunyikan aset - aset anda yang tidak berkepentingan",
+  "Hidden assets": "Aset - aset yang disembunyikan",
+  "Here is the list of assets you are hiding": "Berikut ini adalah daftar aset - aset yang anda sembunyikan",
+  "Hide an asset": "Sembunyikan sebuah aset",
+  "No assets are hidden": "Tidak ada aset - aset yang disembunyikan",
+  "Asset to hide": "Aset untuk disembunyikan",
+  "Asset hidden": "Aset tersembunyi"
 }
