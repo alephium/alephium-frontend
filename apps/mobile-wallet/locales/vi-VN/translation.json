@@ -417,5 +417,13 @@
   "Set as default": "Đặt làm mặc định",
   "token_in_addresses_one": "trong {{ count }} địa chỉ",
   "token_in_addresses_other": "trong {{ count }} địa chỉ",
-  "Transaction sent": "Giao dịch đã gửi"
+  "Transaction sent": "Giao dịch đã gửi",
+  "Ecosystem": "Hệ sinh thái",
+  "Loading dApps...": "Đang tải các dApp...",
+  "Could not load dApps": "Không thể tải các dApp",
+  "Coming soon!": "Sắp ra mắt!",
+  "Added to favorites": "Đã thêm vào mục yêu thích",
+  "Removed from favorites": "Đã xóa khỏi mục yêu thích",
+  "Favorites": "Yêu thích",
+  "No dApps added to your favorites yet": "Chưa có dApp nào được thêm vào mục yêu thích"
 }
