@@ -432,5 +432,10 @@
   "Hide an asset": "Sembunyikan sebuah aset",
   "No assets are hidden": "Tidak ada aset - aset yang disembunyikan",
   "Asset to hide": "Aset untuk disembunyikan",
-  "Asset hidden": "Aset tersembunyi"
+  "Asset hidden": "Aset tersembunyi",
+  "Asset unhidden": "Aset tidak disembunyikan",
+  "nb_of_hidden_assets_one": "{{ count }} aset tersembunyi",
+  "nb_of_hidden_assets_other": "{{ count }} aset - aset tersembunyi",
+  "Hide asset": "Sembunyikan aset",
+  "Show details": "Tampilkan rincian"
 }
