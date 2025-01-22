@@ -3,7 +3,6 @@ import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-naviga
 import * as Clipboard from 'expo-clipboard'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView, { WebViewNavigation } from 'react-native-webview'
 import styled from 'styled-components/native'
@@ -46,15 +45,7 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
 
   return (
     <Screen {...props}>
-      <BrowserHeader
-        dAppName={dAppName}
-        currentUrl={currentUrl}
-        onGoBack={handleGoBack}
-        onGoForward={handleGoForward}
-        onReload={handleReload}
-        canGoBack={canGoBack}
-        canGoForward={canGoForward}
-      />
+      <BrowserHeader dAppName={dAppName} currentUrl={currentUrl} />
       <WebViewStyled
         ref={webViewRef}
         source={{ uri: dAppUrl }}
@@ -62,6 +53,13 @@ const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenPro
         pullToRefreshEnabled
         onLoad={(e) => setCurrentUrl(e.nativeEvent.url)}
         onNavigationStateChange={handleNavigationStateChange}
+      />
+      <BrowserFooter
+        onGoBack={handleGoBack}
+        onGoForward={handleGoForward}
+        onReload={handleReload}
+        canGoBack={canGoBack}
+        canGoForward={canGoForward}
       />
     </Screen>
   )
@@ -72,22 +70,9 @@ export default DAppWebViewScreen
 interface BrowserHeaderProps {
   dAppName: string
   currentUrl: string
-  onGoBack: () => void
-  onGoForward: () => void
-  onReload: () => void
-  canGoBack: boolean
-  canGoForward: boolean
 }
 
-const BrowserHeader = ({
-  dAppName,
-  currentUrl,
-  onGoBack,
-  onGoForward,
-  onReload,
-  canGoBack,
-  canGoForward
-}: BrowserHeaderProps) => {
+const BrowserHeader = ({ dAppName, currentUrl }: BrowserHeaderProps) => {
   const navigation = useNavigation()
   const insets = useSafeAreaInsets()
 
@@ -97,36 +82,46 @@ const BrowserHeader = ({
       <Url truncate color="secondary">
         {currentUrl}
       </Url>
-      <ButtonsList>
-        <AddToFavoritesButton dAppName={dAppName} />
-
-        {Platform.OS === 'android' && (
-          <>
-            <Button
-              onPress={onGoBack}
-              iconProps={{ name: 'arrow-left' }}
-              squared
-              type="transparent"
-              compact
-              disabled={!canGoBack}
-            />
-            <Button
-              onPress={onGoForward}
-              iconProps={{ name: 'arrow-right' }}
-              squared
-              type="transparent"
-              compact
-              disabled={!canGoForward}
-            />
-            <Button onPress={onReload} iconProps={{ name: 'refresh-cw' }} squared type="transparent" compact />
-          </>
-        )}
-      </ButtonsList>
+      <AddToFavoritesButton dAppName={dAppName} />
     </BrowserHeaderStyled>
   )
 }
 
+interface BrowserFooterProps {
+  onGoBack: () => void
+  onGoForward: () => void
+  onReload: () => void
+  canGoBack: boolean
+  canGoForward: boolean
+}
+
+const BrowserFooter = ({ onGoBack, onGoForward, onReload, canGoBack, canGoForward }: BrowserFooterProps) => (
+  <BrowserBottomStyled>
+    <ButtonsList>
+      <Button onPress={onGoBack} iconProps={{ name: 'arrow-left' }} squared type="transparent" disabled={!canGoBack} />
+      <Button
+        onPress={onGoForward}
+        iconProps={{ name: 'arrow-right' }}
+        squared
+        type="transparent"
+        disabled={!canGoForward}
+      />
+    </ButtonsList>
+    <Button onPress={onReload} iconProps={{ name: 'refresh-cw' }} squared type="transparent" />
+  </BrowserBottomStyled>
+)
+
 const BrowserHeaderStyled = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: ${DEFAULT_MARGIN}px;
+  padding-right: ${DEFAULT_MARGIN}px;
+  padding-bottom: 5px;
+  gap: ${DEFAULT_MARGIN}px;
+`
+
+const BrowserBottomStyled = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
