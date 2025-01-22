@@ -33,6 +33,7 @@ import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
 import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectErrorModal'
 import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPairingsModal'
 import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPasteUrlModal'
+import AddressPickerQuickActionsModal from '~/modals/AddressPickerQuickActionsModal'
 import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
@@ -70,7 +71,8 @@ export const ModalComponents = {
   AddressesWithTokenModal,
   SelectAssetToHideModal,
   TokenQuickActionsModal,
-  AddressQRCodeScanActionsModal
+  AddressQRCodeScanActionsModal,
+  AddressPickerQuickActionsModal
 }
 
 export type ModalName = keyof typeof ModalComponents

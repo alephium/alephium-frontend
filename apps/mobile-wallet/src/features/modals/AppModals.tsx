@@ -36,6 +36,7 @@ import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectError
 import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPairingsModal'
 import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPasteUrlModal'
 import { useAppSelector } from '~/hooks/redux'
+import AddressPickerQuickActionsModal from '~/modals/AddressPickerQuickActionsModal'
 import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
@@ -121,6 +122,8 @@ const AppModals = () => {
             return <TokenQuickActionsModal key={id} id={id} {...params.props} />
           case 'AddressQRCodeScanActionsModal':
             return <AddressQRCodeScanActionsModal key={id} id={id} {...params.props} />
+          case 'AddressPickerQuickActionsModal':
+            return <AddressPickerQuickActionsModal key={id} id={id} {...params.props} />
           default:
             return null
         }

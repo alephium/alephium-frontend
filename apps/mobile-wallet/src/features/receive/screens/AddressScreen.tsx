@@ -26,6 +26,7 @@ const AddressScreen = ({ navigation }: ScreenProps) => {
       screenIntro={t('Select the address which you want to receive funds to.')}
       contentPaddingTop
       onScroll={screenScrollHandler}
+      origin="destinationAddress"
       bottomButtonsRender={() => (
         <Button
           title={t('Continue')}

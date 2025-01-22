@@ -41,6 +41,7 @@ const AddressesWithTokenModal = withModal<AddressesWithTokenModalProps>(({ id, t
             isLast={i === addresses.length - 1}
             onPress={() => handleAddressPress(address.hash)}
             tokenId={tokenId}
+            origin="selectAddressModal"
           />
         ))}
       </Content>

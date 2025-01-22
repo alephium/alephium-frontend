@@ -24,8 +24,9 @@ import {
 import { BORDER_RADIUS, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { ImpactStyle, vibrate } from '~/utils/haptics'
 
-interface AddressBoxProps extends PressableProps {
+export interface AddressBoxProps extends PressableProps {
   addressHash: AddressHash
+  origin: 'addressesScreen' | 'originAddress' | 'destinationAddress' | 'walletConnectPairing' | 'selectAddressModal'
   isSelected?: boolean
   isLast?: boolean
   rounded?: boolean
@@ -46,6 +47,7 @@ const AddressBox = ({
   style,
   rounded,
   tokenId,
+  origin,
   ...props
 }: AddressBoxProps) => {
   const theme = useTheme()
@@ -61,8 +63,22 @@ const AddressBox = ({
 
   const handleLongPress = () => {
     vibrate(ImpactStyle.Heavy)
-    dispatch(openModal({ name: 'AddressQuickActionsModal', props: { addressHash } }))
-    sendAnalytics({ event: 'Opened address quick actions modal' })
+    if (origin === 'addressesScreen') {
+      dispatch(openModal({ name: 'AddressQuickActionsModal', props: { addressHash } }))
+    } else if (
+      origin === 'originAddress' ||
+      origin === 'destinationAddress' ||
+      origin === 'walletConnectPairing' ||
+      origin === 'selectAddressModal'
+    ) {
+      dispatch(
+        openModal({
+          name: 'AddressPickerQuickActionsModal',
+          props: { addressHash, onSelectAddress: handlePress }
+        })
+      )
+    }
+    sendAnalytics({ event: 'Opened address quick actions modal', props: { origin } })
   }
 
   return (
