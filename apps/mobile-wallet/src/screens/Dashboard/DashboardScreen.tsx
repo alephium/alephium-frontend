@@ -19,7 +19,7 @@ import RoundedCard from '~/components/RoundedCard'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import { openModal } from '~/features/modals/modalActions'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
-import ActionCardSendButton from '~/features/send/ActionCardSendButton'
+import SendButton from '~/features/send/SendButton'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
@@ -98,7 +98,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
         </RoundedCardStyled>
       </CardContainer>
       <ButtonsRowContainer>
-        {totalBalance > BigInt(0) && <ActionCardSendButton origin="dashboard" />}
+        {totalBalance > BigInt(0) && <SendButton origin="dashboard" />}
         <ActionCardReceiveButton origin="dashboard" />
         <ActionCardBuyButton origin="dashboard" receiveAddressHash={defaultAddressHash} />
       </ButtonsRowContainer>

@@ -10,7 +10,7 @@ import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import { ModalInstance } from '~/features/modals/modalTypes'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
-import ActionCardSendButton from '~/features/send/ActionCardSendButton'
+import SendButton from '~/features/send/SendButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { makeSelectAddressesTokens, selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
@@ -40,9 +40,7 @@ const AddressDetailsModalHeader = ({ addressHash, parentModalId }: AddressDetail
       </RoundedCard>
 
       <ActionButtons>
-        {hasTokens && (
-          <ActionCardSendButton origin="addressDetails" originAddressHash={addressHash} onPress={handleClose} />
-        )}
+        {hasTokens && <SendButton origin="addressDetails" originAddressHash={addressHash} onPress={handleClose} />}
         <ActionCardReceiveButton origin="addressDetails" addressHash={addressHash} />
         <ActionCardBuyButton origin="addressDetails" receiveAddressHash={addressHash} />
         <ActionCardButton title={t('Settings')} onPress={handleSettingsPress} iconProps={{ name: 'settings' }} />

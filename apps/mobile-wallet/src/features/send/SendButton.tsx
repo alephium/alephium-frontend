@@ -8,7 +8,7 @@ import ActionCardButton from '~/components/buttons/ActionCardButton'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
-interface ActionCardSendButtonProps {
+interface SendButtonProps {
   origin: 'dashboard' | 'addressDetails' | 'tokenDetails' | 'qrCodeScan' | 'contact'
   buttonType?: 'action-card' | 'quick-action'
   originAddressHash?: AddressHash
@@ -17,14 +17,14 @@ interface ActionCardSendButtonProps {
   onPress?: () => void
 }
 
-const ActionCardSendButton = ({
+const SendButton = ({
   origin,
   originAddressHash,
   destinationAddressHash,
   tokenId,
   onPress,
   buttonType = 'action-card'
-}: ActionCardSendButtonProps) => {
+}: SendButtonProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
 
@@ -41,4 +41,4 @@ const ActionCardSendButton = ({
   return <ButtonComponent title={t('Send')} onPress={handleSendPress} iconProps={{ name: 'send' }} />
 }
 
-export default ActionCardSendButton
+export default SendButton

@@ -17,7 +17,7 @@ import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import ActionCardReceiveButton from '~/features/receive/ActionCardReceiveButton'
-import ActionCardSendButton from '~/features/send/ActionCardSendButton'
+import SendButton from '~/features/send/SendButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectDefaultAddress } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
@@ -42,12 +42,7 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId, addr
       <Content>
         <TokenRoundedCard addressHash={addressHash} tokenId={tokenId} />
         <ActionButtons>
-          <ActionCardSendButton
-            origin="tokenDetails"
-            originAddressHash={addressHash}
-            tokenId={tokenId}
-            onPress={handleClose}
-          />
+          <SendButton origin="tokenDetails" originAddressHash={addressHash} tokenId={tokenId} onPress={handleClose} />
           <ActionCardReceiveButton origin="tokenDetails" addressHash={addressHash} onPress={handleClose} />
           {tokenId === ALPH.id && (
             <ActionCardBuyButton origin="tokenDetails" receiveAddressHash={addressHash || defaultAddressHash} />

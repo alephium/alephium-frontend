@@ -12,7 +12,7 @@ import Button from '~/components/buttons/Button'
 import StackHeader from '~/components/headers/StackHeader'
 import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
 import TransactionsFlashList from '~/components/layout/TransactionsFlashList'
-import ActionCardSendButton from '~/features/send/ActionCardSendButton'
+import SendButton from '~/features/send/SendButton'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -97,7 +97,7 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
               </ContactAddress>
             </CenteredSection>
             <ButtonsRow>
-              <ActionCardSendButton origin="contact" destinationAddressHash={contact.address} />
+              <SendButton origin="contact" destinationAddressHash={contact.address} />
               <ActionCardButton
                 iconProps={{ name: 'clipboard' }}
                 title={t('Copy address')}

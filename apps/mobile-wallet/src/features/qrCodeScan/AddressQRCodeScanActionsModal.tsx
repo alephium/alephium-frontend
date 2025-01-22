@@ -9,7 +9,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import ActionCardSendButton from '~/features/send/ActionCardSendButton'
+import SendButton from '~/features/send/SendButton'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectContactByHash } from '~/store/addresses/addressesSelectors'
@@ -29,7 +29,7 @@ const AddressQRCodeScanActionsModal = withModal<AddressQRCodeScanActionsModalPro
     <BottomModal modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <ActionButtons>
-          <ActionCardSendButton
+          <SendButton
             origin="qrCodeScan"
             destinationAddressHash={addressHash}
             onPress={handleClose}
