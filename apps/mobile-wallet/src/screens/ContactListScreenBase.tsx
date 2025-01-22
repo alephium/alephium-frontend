@@ -1,4 +1,5 @@
 import { Contact } from '@alephium/shared'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -12,6 +13,7 @@ import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import ListItem from '~/components/ListItem'
 import { useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { themes } from '~/style/themes'
@@ -20,18 +22,25 @@ import { filterContacts } from '~/utils/contacts'
 
 export interface ContactListScreenBaseProps {
   onContactPress: (contactId: Contact['id']) => void
-  onNewContactPress?: () => void
+  onNewContactPress: () => void
   style?: AnimatedProps<ViewProps>['style']
 }
 
 const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: ContactListScreenBaseProps) => {
   const theme = useTheme()
   const { t } = useTranslation()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const contacts = useAppSelector(selectAllContacts)
 
   const [filteredContacts, setFilteredContacts] = useState(contacts)
   const [searchTerm, setSearchTerm] = useState('')
+
+  const handleNewContactPress = () => {
+    navigation.navigate('NewContactScreen')
+
+    onNewContactPress()
+  }
 
   useEffect(() => {
     setFilteredContacts(filterContacts(contacts, searchTerm.toLowerCase()))
@@ -52,7 +61,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
           <NoContactMessageBox>
             <EmojiContainer size={60}>🤷‍♀️</EmojiContainer>
             <AppText>{t('No contact yet!')}</AppText>
-            <Button title={t('Add contact')} onPress={onNewContactPress} variant="contrast" short />
+            <Button title={t('Add contact')} onPress={handleNewContactPress} variant="contrast" short />
           </NoContactMessageBox>
         </NoContactContainer>
       ) : (
