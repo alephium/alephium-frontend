@@ -18,6 +18,7 @@ const EcosystemScreen = () => {
       headerOptions={{ headerTitle: t('Ecosystem') }}
       contentPaddingTop
       hasBottomBar
+      fill
     >
       <AnimatedBackground isFullScreen isAnimated />
       <DAppsTags selectedTag={selectedTag} onTagPress={setSelectedTag} />

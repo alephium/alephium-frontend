@@ -43,4 +43,5 @@ export default DAppsTags
 
 const DAppsCategoriesStyled = styled.ScrollView`
   padding: 0 ${DEFAULT_MARGIN}px;
+  flex-grow: 0;
 `
