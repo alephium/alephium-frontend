@@ -1,13 +1,19 @@
 import { AddressHash } from '@alephium/shared'
 
 import { useAppSelector } from '~/hooks/redux'
-import { selectAddressIds } from '~/store/addresses/addressesSelectors'
+import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
 
-const useWalletSingleAddress = (): AddressHash | undefined => {
-  const addressHashes = useAppSelector(selectAddressIds) as AddressHash[]
-  const addressHash = addressHashes.length === 1 ? addressHashes[0] : undefined
+interface UseWalletSingleAddressProps {
+  checkBalance?: boolean
+}
 
-  return addressHash
+const useWalletSingleAddress = (props?: UseWalletSingleAddressProps): AddressHash | undefined => {
+  const addresses = useAppSelector(selectAllAddresses)
+  const checkBalance = props?.checkBalance ?? true
+  const filteredAddresses = checkBalance ? addresses.filter((a) => a.balance !== '0') : addresses
+  const address = filteredAddresses.length === 1 ? filteredAddresses[0] : undefined
+
+  return address?.hash
 }
 
 export default useWalletSingleAddress

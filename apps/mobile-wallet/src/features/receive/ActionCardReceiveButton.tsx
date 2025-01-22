@@ -17,7 +17,7 @@ interface ActionCardReceiveButtonProps {
 
 const ActionCardReceiveButton = ({ origin, addressHash, onPress }: ActionCardReceiveButtonProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
-  const walletSingleAddressHash = useWalletSingleAddress()
+  const walletSingleAddressHash = useWalletSingleAddress({ checkBalance: false })
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
