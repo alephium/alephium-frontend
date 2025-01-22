@@ -30,7 +30,7 @@ const BottomButtons = ({
   const insets = useSafeAreaInsets()
   const [gradientHeight, setGradientHeight] = useState(0)
 
-  const bottomInsetValue = bottomInset ? insets.bottom : 0
+  const bottomInsetValue = bottomInset ? insets.bottom + 10 : 0
 
   const handleLayout = (e: LayoutChangeEvent) => {
     const buttonsContainerHeight = e.nativeEvent.layout.height

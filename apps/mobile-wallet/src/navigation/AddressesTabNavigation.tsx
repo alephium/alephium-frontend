@@ -1,7 +1,6 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -40,8 +39,7 @@ const CustomHeaderContent = ({ focusedTabIndex }: { focusedTabIndex: number }) =
 
   return (
     <CustomHeaderContentStyled>
-      <View style={{ width: 40 }} />
-      <AppText semiBold size={17}>
+      <AppText semiBold size={17} color="tertiary">
         {t('Address book')}
       </AppText>
       <Button iconProps={{ name: 'plus' }} squared onPress={handleButtonPress} compact />
