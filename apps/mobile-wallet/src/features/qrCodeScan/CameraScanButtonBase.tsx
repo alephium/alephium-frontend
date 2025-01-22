@@ -6,13 +6,13 @@ import { Linking } from 'react-native'
 import { isAddress as isEthereumAddress } from 'web3-validator'
 
 import { sendAnalytics } from '~/analytics'
-import Button from '~/components/buttons/Button'
+import Button, { ButtonProps } from '~/components/buttons/Button'
 import QRCodeScannerModal from '~/components/QRCodeScannerModal'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { cameraToggled } from '~/store/appSlice'
 import { showToast } from '~/utils/layout'
 
-interface CameraScanButtonBaseProps {
+interface CameraScanButtonBaseProps extends ButtonProps {
   onValidAddressScanned: (addressHash: AddressHash) => void
   origin: 'dashboard' | 'contact'
   text: string
@@ -25,7 +25,8 @@ const CameraScanButtonBase = ({
   onWalletConnectUriScanned,
   text,
   origin,
-  generateInvalidDataText
+  generateInvalidDataText,
+  ...props
 }: CameraScanButtonBaseProps) => {
   const isFocused = useIsFocused()
   const isCameraOpen = useAppSelector((s) => s.app.isCameraOpen)
@@ -64,7 +65,7 @@ const CameraScanButtonBase = ({
 
   return (
     <>
-      <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'maximize' }} squared />
+      <Button onPress={openQRCodeScannerModal} iconProps={{ name: 'maximize' }} squared {...props} />
       {isCameraOpen && isFocused && (
         <QRCodeScannerModal onClose={closeQRCodeScannerModal} onQRCodeScan={handleQRCodeScan} text={text} />
       )}

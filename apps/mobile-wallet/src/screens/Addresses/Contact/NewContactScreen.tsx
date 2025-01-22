@@ -47,6 +47,7 @@ const NewContactScreen = ({ navigation, route: { params } }: NewContactScreenPro
       initialValues={initialValues}
       onSubmit={handleSavePress}
       screenTitle={t('New contact')}
+      screenIntro={t('Creating contacts helps you avoid making mistakes and manage your funds with ease.')}
       contentPaddingTop
     />
   )

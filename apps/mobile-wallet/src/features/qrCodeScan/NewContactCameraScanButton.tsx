@@ -40,6 +40,7 @@ const NewContactCameraScanButton = ({ onNewContactHashDetected }: NewContactCame
       text={t('Scan an Alephium address QR code to add to your contacts list.')}
       origin="contact"
       onValidAddressScanned={handleValidAddressScanned}
+      compact
     />
   )
 }
