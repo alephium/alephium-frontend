@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import ActionCardButton from '~/components/buttons/ActionCardButton'
+import useWalletSingleAddress from '~/hooks/addresses/useWalletSingleAddress'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface ActionCardSendButtonProps {
@@ -16,12 +17,13 @@ interface ActionCardSendButtonProps {
 
 const ActionCardSendButton = ({ origin, addressHash, tokenId, onPress }: ActionCardSendButtonProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const walletSingleAddressHash = useWalletSingleAddress()
   const { t } = useTranslation()
 
   const handleSendPress = () => {
     sendAnalytics({ event: 'Action card: Pressed btn to send funds from', props: { origin } })
 
-    navigation.navigate('SendNavigation', { originAddressHash: addressHash, tokenId })
+    navigation.navigate('SendNavigation', { originAddressHash: addressHash || walletSingleAddressHash, tokenId })
 
     onPress?.()
   }

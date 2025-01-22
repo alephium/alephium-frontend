@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { sendAnalytics } from '~/analytics'
 import ActionCardButton from '~/components/buttons/ActionCardButton'
 import { openModal } from '~/features/modals/modalActions'
+import useWalletSingleAddress from '~/hooks/addresses/useWalletSingleAddress'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
@@ -16,14 +17,17 @@ interface ActionCardReceiveButtonProps {
 
 const ActionCardReceiveButton = ({ origin, addressHash, onPress }: ActionCardReceiveButtonProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
+  const walletSingleAddressHash = useWalletSingleAddress()
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+
+  const receiveAddressHash = addressHash || walletSingleAddressHash
 
   const handleReceivePress = () => {
     sendAnalytics({ event: 'Action card: Pressed btn to receive funds to', props: { origin } })
 
-    if (addressHash) {
-      dispatch(openModal({ name: 'ReceiveQRCodeModal', props: { addressHash } }))
+    if (receiveAddressHash) {
+      dispatch(openModal({ name: 'ReceiveQRCodeModal', props: { addressHash: receiveAddressHash } }))
     } else {
       navigation.navigate('ReceiveNavigation')
     }
