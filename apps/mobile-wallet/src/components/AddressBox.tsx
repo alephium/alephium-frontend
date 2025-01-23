@@ -188,14 +188,17 @@ const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'address
   return (
     (knownFungibleTokens.length > 0 || nfts.length > 0) && (
       <AssetsRow>
-        <AssetListContainer rounded>
-          {knownFungibleTokens.map(
-            (asset, i) => i < maxNbOfTokenLogos && <AssetLogo key={asset.id} assetId={asset.id} size={15} />
-          )}
-          {knownFungibleTokens.length > 5 && (
-            <NbOfAssetsText>+{knownFungibleTokens.length - maxNbOfTokenLogos}</NbOfAssetsText>
-          )}
-        </AssetListContainer>
+        {knownFungibleTokens.length > 0 && (
+          <AssetListContainer rounded>
+            {knownFungibleTokens.slice(0, maxNbOfTokenLogos).map(({ id }) => (
+              <AssetLogo key={id} assetId={id} size={15} />
+            ))}
+            {knownFungibleTokens.length > 5 && (
+              <NbOfAssetsText>+{knownFungibleTokens.length - maxNbOfTokenLogos}</NbOfAssetsText>
+            )}
+          </AssetListContainer>
+        )}
+
         {nfts.length > 0 && (
           <Badge>
             <NbOfAssetsText>{t('nfts_in_addresses', { count: nfts.length })}</NbOfAssetsText>
