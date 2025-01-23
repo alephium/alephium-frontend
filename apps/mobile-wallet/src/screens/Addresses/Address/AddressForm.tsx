@@ -1,7 +1,7 @@
 import { AddressSettings } from '@alephium/shared'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
+import { Keyboard, View } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
@@ -51,9 +51,15 @@ const AddressForm = ({
     if (!disableIsMainToggle) {
       setIsDefault(!isDefault)
     }
+
+    Keyboard.dismiss()
   }
 
-  const openGroupSelectModal = () => dispatch(openModal({ name: 'GroupSelectModal', props: { onSelect: setGroup } }))
+  const openGroupSelectModal = () => {
+    dispatch(openModal({ name: 'GroupSelectModal', props: { onSelect: setGroup } }))
+
+    Keyboard.dismiss()
+  }
 
   return (
     <View style={{ flex: 1 }}>
