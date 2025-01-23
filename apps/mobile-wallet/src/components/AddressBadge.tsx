@@ -40,7 +40,7 @@ const AddressBadge = ({
 
   const Hash = (
     <Label truncate ellipsizeMode="middle" style={[textStyle, { maxWidth: 110 }]} color={textColor} size={fontSize}>
-      {address?.hash}
+      {addressHash}
     </Label>
   )
 
