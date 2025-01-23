@@ -125,9 +125,7 @@ const BrowserBottomStyled = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding-left: ${DEFAULT_MARGIN}px;
-  padding-right: ${DEFAULT_MARGIN}px;
-  padding-bottom: 5px;
+  padding: 10px ${DEFAULT_MARGIN}px;
   gap: ${DEFAULT_MARGIN}px;
 `
 
