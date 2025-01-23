@@ -33,7 +33,7 @@ const AssetAmountWithLogo = ({
   ) : (
     <AssetStyled key={assetId}>
       {logoPosition === 'left' && Logo}
-      <Amount
+      <AmountStyled
         value={amount}
         isUnknownToken={!asset?.symbol}
         suffix={asset?.symbol}
@@ -58,4 +58,9 @@ const AssetStyled = styled.View`
   padding: 3px 0;
   border-radius: 24px;
   align-items: center;
+`
+
+const AmountStyled = styled(Amount)`
+  flex-shrink: 1;
+  text-align: right;
 `

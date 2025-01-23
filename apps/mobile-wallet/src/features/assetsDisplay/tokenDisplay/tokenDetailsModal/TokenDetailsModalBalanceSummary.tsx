@@ -48,6 +48,7 @@ const TokenDetailsModalBalanceSummary = ({
         suffix={token.symbol}
         decimals={token.decimals}
         color={fontColor}
+        fit
       />
       <AmountAndAddresses>
         {token.worth && (
