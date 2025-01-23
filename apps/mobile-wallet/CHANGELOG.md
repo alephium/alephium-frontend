@@ -1,5 +1,16 @@
 # @alephium/mobile-wallet
 
+## 2.0.1
+
+### Patch Changes
+
+- 7eb11a9: Add ability to hide tokens
+- f7da1e9: Close modals on back button/gesture on Android
+- 7ad0e86: Add contact by scanning QR code
+- 8f165c2: Simplify send flow
+- a976ad9: Enable Indonesian translations
+- 2f8b4fe: Display address-specific NFTs
+
 ## 2.0.0
 
 ### Major Changes
