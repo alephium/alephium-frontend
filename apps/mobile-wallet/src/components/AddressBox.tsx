@@ -2,6 +2,7 @@ import { AddressHash, CURRENCIES } from '@alephium/shared'
 import { Token } from '@alephium/web3'
 import { Check, Lock } from 'lucide-react-native'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
@@ -156,6 +157,7 @@ const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'address
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
+  const { t } = useTranslation()
 
   return (
     <>
@@ -172,7 +174,7 @@ const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'address
           </Badge>
           {nfts.length > 0 && (
             <Badge>
-              <NbOfAssetsText>{nfts.length} NFTs</NbOfAssetsText>
+              <NbOfAssetsText>{t('nfts_in_addresses', { count: nfts.length })}</NbOfAssetsText>
             </Badge>
           )}
         </AssetsRow>

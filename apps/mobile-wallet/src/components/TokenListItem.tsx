@@ -56,7 +56,6 @@ const TokenListItem = ({ asset, addressHash, parentModalId, ...props }: TokenLis
             value={balance}
             decimals={asset.decimals}
             isUnknownToken={!asset.symbol}
-            fadeDecimals
             suffix={asset.symbol}
             bold
             useTinyAmountShorthand

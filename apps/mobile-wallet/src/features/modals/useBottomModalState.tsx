@@ -41,7 +41,7 @@ export const useBottomModalState = ({
   const insets = useSafeAreaInsets()
   const dimensions = useWindowDimensions()
   const dispatch = useAppDispatch()
-  const maxHeight = dimensions.height - (Platform.OS === 'ios' ? insets.top : insets.top * 2)
+  const maxHeight = dimensions.height - (Platform.OS === 'ios' ? insets.top : insets.top * 1.5)
 
   // Initialize shared values
   // ----------------------------
