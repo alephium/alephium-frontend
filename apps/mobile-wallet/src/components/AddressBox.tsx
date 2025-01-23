@@ -112,47 +112,54 @@ const AddressBox = ({
         animatedStyle
       ]}
     >
-      <BadgeContainer>
-        {isSelected ? (
-          <SelectedBadge>
-            <Check color="white" size={16} />
-          </SelectedBadge>
-        ) : (
-          <Animated.View>
-            <AddressColorSymbol addressHash={addressHash} size={16} />
-          </Animated.View>
-        )}
-      </BadgeContainer>
       <TextualContent>
         <AddressBoxColumnLeft>
           <TopRow>
-            <AppText
-              truncate
-              ellipsizeMode={hasLabel ? 'tail' : 'middle'}
-              size={17}
-              semiBold
-              color={isSelected ? theme.global.accent : theme.font.primary}
-              style={{ maxWidth: !hasLabel ? 100 : undefined, flexShrink: 1 }}
-            >
-              {address?.settings.label || addressHash}
-            </AppText>
+            <AddressLabel>
+              {isSelected ? (
+                <SelectedBadge>
+                  <Check color="white" size={16} />
+                </SelectedBadge>
+              ) : (
+                <Animated.View>
+                  <AddressColorSymbol addressHash={addressHash} size={16} />
+                </Animated.View>
+              )}
+
+              <AppText
+                truncate
+                ellipsizeMode={hasLabel ? 'tail' : 'middle'}
+                size={17}
+                semiBold
+                color={isSelected ? theme.global.accent : theme.font.primary}
+                style={{
+                  maxWidth: !hasLabel ? 100 : undefined,
+                  flexShrink: 1,
+                  padding: 0,
+                  includeFontPadding: false
+                }}
+              >
+                {address?.settings.label || addressHash}
+              </AppText>
+            </AddressLabel>
             <AddressAmount addressHash={addressHash} tokenId={tokenId} />
           </TopRow>
 
           {hasLabel && (
-            <AppText
-              truncate
-              ellipsizeMode="middle"
-              size={12}
-              style={{ maxWidth: 100 }}
-              color={
-                isSelected ? theme.global.accent : address.settings.label ? theme.font.tertiary : theme.font.primary
-              }
-            >
-              {address.hash}
-            </AppText>
+            <AddressHashRow>
+              <AppText
+                truncate
+                ellipsizeMode="middle"
+                size={12}
+                style={{ maxWidth: 100 }}
+                color={
+                  isSelected ? theme.global.accent : address.settings.label ? theme.font.tertiary : theme.font.primary
+                }
+              >
+                {address.hash}
+              </AppText>
+            </AddressHashRow>
           )}
-
           <TokensRow>
             {tokenId ? (
               <AddressTokenDetails tokenId={tokenId} addressHash={addressHash} />
@@ -252,10 +259,11 @@ const AddressBoxStyled = styled(AnimatedPressable)`
   margin-bottom: ${VERTICAL_GAP / 2}px;
 `
 
-const BadgeContainer = styled.View`
+const AddressLabel = styled.View`
+  flex-direction: row;
   align-items: center;
-  width: 26px;
-  padding: 16px 0;
+  gap: 10px;
+  flex-shrink: 1;
 `
 
 const SelectedBadge = styled(Animated.View)`
@@ -278,6 +286,11 @@ const TokensRow = styled.View`
   flex-direction: row;
   align-items: center;
   gap: 10px;
+  margin-left: 26px;
+`
+
+const AddressHashRow = styled.View`
+  margin-left: 26px;
 `
 
 const TextualContent = styled.View`
