@@ -11,6 +11,7 @@
 - a976ad9: Enable Indonesian translations
 - 2f8b4fe: Display address-specific NFTs
 - ae006fb: Scale balances font-size to fit in one row
+- 863feb7: Simplify NFT sending flow
 
 ## 2.0.0
 
