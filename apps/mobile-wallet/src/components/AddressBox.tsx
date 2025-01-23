@@ -88,6 +88,8 @@ const AddressBox = ({
     sendAnalytics({ event: 'Opened address quick actions modal', props: { origin } })
   }
 
+  const hasLabel = !!address?.settings.label
+
   return (
     <AddressBoxStyled
       {...props}
@@ -123,17 +125,25 @@ const AddressBox = ({
       </BadgeContainer>
       <TextualContent>
         <AddressBoxColumnLeft>
-          <AddressTitle>
-            {address.settings.label && (
-              <AppText truncate semiBold size={17} color={isSelected ? theme.global.accent : theme.font.primary}>
-                {address.settings.label}
-              </AppText>
-            )}
+          <TopRow>
+            <AppText
+              truncate
+              ellipsizeMode={hasLabel ? 'tail' : 'middle'}
+              size={17}
+              semiBold
+              color={isSelected ? theme.global.accent : theme.font.primary}
+              style={{ maxWidth: !hasLabel ? 100 : undefined, flexShrink: 1 }}
+            >
+              {address?.settings.label || addressHash}
+            </AppText>
+            <AddressAmount addressHash={addressHash} tokenId={tokenId} />
+          </TopRow>
+
+          {hasLabel && (
             <AppText
               truncate
               ellipsizeMode="middle"
-              size={17}
-              semiBold={!address?.settings.label}
+              size={12}
               style={{ maxWidth: 100 }}
               color={
                 isSelected ? theme.global.accent : address.settings.label ? theme.font.tertiary : theme.font.primary
@@ -141,16 +151,16 @@ const AddressBox = ({
             >
               {address.hash}
             </AppText>
-          </AddressTitle>
-          {tokenId ? (
-            <AddressTokenDetails tokenId={tokenId} addressHash={addressHash} />
-          ) : (
-            <AddressAllTokensDetails addressHash={addressHash} />
           )}
+
+          <TokensRow>
+            {tokenId ? (
+              <AddressTokenDetails tokenId={tokenId} addressHash={addressHash} />
+            ) : (
+              <AddressAllTokensDetails addressHash={addressHash} />
+            )}
+          </TokensRow>
         </AddressBoxColumnLeft>
-        <AddressBoxColumnRight>
-          <AddressAmount addressHash={addressHash} tokenId={tokenId} />
-        </AddressBoxColumnRight>
       </TextualContent>
     </AddressBoxStyled>
   )
@@ -257,11 +267,17 @@ const SelectedBadge = styled(Animated.View)`
   justify-content: center;
 `
 
-const AddressTitle = styled.View`
+const TopRow = styled.View`
   flex-direction: row;
   align-items: center;
   gap: 10px;
-  overflow: hidden;
+  justify-content: space-between;
+`
+
+const TokensRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 `
 
 const TextualContent = styled.View`
@@ -275,13 +291,7 @@ const TextualContent = styled.View`
 
 const AddressBoxColumnLeft = styled.View`
   flex: 1.5;
-  gap: ${VERTICAL_GAP / 2}px;
-`
-
-const AddressBoxColumnRight = styled.View`
-  flex: 1;
-  align-items: flex-end;
-  padding-right: 4px;
+  gap: ${VERTICAL_GAP / 4}px;
 `
 
 const AssetsRow = styled.View`
@@ -290,7 +300,8 @@ const AssetsRow = styled.View`
 `
 
 const AssetListContainer = styled(Badge)`
-  padding: 0 4px;
+  padding-left: 4px;
+  padding-right: 4px;
 `
 
 const NbOfAssetsText = styled(AppText)`
