@@ -63,7 +63,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   useEffect(() => {
     const tokenId = params?.tokenId
 
-    if (!tokenId || !shouldOpenAmountModal) return
+    if (!tokenId || (tokenId && params.isNft) || !shouldOpenAmountModal) return
 
     dispatch(
       openModal({
@@ -84,7 +84,7 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
     )
 
     setShouldOpenAmountModal(false)
-  }, [dispatch, fromAddress, params?.tokenId, setAssetAmount, shouldOpenAmountModal, t, tokenName])
+  }, [dispatch, fromAddress, params?.isNft, params?.tokenId, setAssetAmount, shouldOpenAmountModal, t, tokenName])
 
   if (!address) return null
 

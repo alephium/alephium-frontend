@@ -58,12 +58,15 @@ interface SendContextProviderProps {
   originAddressHash?: AddressHash
   destinationAddressHash?: AddressHash
   tokenId?: Token['id']
+  isNft?: boolean
 }
 
 export const SendContextProvider = ({
   children,
   originAddressHash,
-  destinationAddressHash
+  destinationAddressHash,
+  tokenId,
+  isNft
 }: SendContextProviderProps) => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
@@ -72,7 +75,9 @@ export const SendContextProvider = ({
 
   const [toAddress, setToAddress] = useState<SendContextValue['toAddress']>(destinationAddressHash)
   const [fromAddress, setFromAddress] = useState<SendContextValue['fromAddress']>(originAddressHash)
-  const [assetAmounts, setAssetAmounts] = useState<SendContextValue['assetAmounts']>(initialValues.assetAmounts)
+  const [assetAmounts, setAssetAmounts] = useState<SendContextValue['assetAmounts']>(
+    tokenId && isNft ? [{ id: tokenId, amount: BigInt(1) }] : []
+  )
   const [unsignedTxData, setUnsignedTxData] = useState<UnsignedTxData>({ unsignedTxs: [], fees: initialValues.fees })
 
   const [consolidationRequired, setConsolidationRequired] = useState(false)

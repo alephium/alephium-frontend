@@ -20,6 +20,7 @@ type RootStackParamList = {
     originAddressHash?: AddressHash
     destinationAddressHash?: AddressHash
     tokenId?: Token['id']
+    isNft?: boolean
   }
   ReceiveNavigation: undefined
   ContactScreen: {

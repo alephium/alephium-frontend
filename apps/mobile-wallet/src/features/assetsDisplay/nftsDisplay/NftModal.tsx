@@ -5,13 +5,15 @@ import { Dimensions } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import BottomButtons from '~/components/buttons/BottomButtons'
-import Button from '~/components/buttons/Button'
+import ActionCardButton from '~/components/buttons/ActionCardButton'
 import NFTImage, { NFTImageProps } from '~/components/NFTImage'
 import Row from '~/components/Row'
 import BottomModal from '~/features/modals/BottomModal'
+import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
-import { useAppSelector } from '~/hooks/redux'
+import SendButton from '~/features/send/SendButton'
+import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import { selectAddressesWithToken } from '~/store/addresses/addressesSelectors'
 import { BORDER_RADIUS_SMALL, DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 type NftModalProps = Pick<NFTImageProps, 'nftId'>
@@ -21,17 +23,39 @@ const nftFullSize = windowWidth - DEFAULT_MARGIN * 4
 
 const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
+  const originAddressHash = useAppSelector((s) => selectAddressesWithToken(s, nftId)[0]?.hash)
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
   if (!nft) return null
 
+  const handleClose = () => dispatch(closeModal({ id }))
+
   const attributes = nft.attributes
+  const canViewFullSize = !nft.image.startsWith('data:image/')
 
   return (
     <BottomModal modalId={id} title={nft.name}>
       <NftImageContainer>
         <NFTImage nftId={nftId} size={nftFullSize} />
       </NftImageContainer>
+
+      <ActionButtons>
+        <SendButton
+          origin="addressDetails"
+          onPress={handleClose}
+          tokenId={nftId}
+          isNft
+          originAddressHash={originAddressHash}
+        />
+        {canViewFullSize && (
+          <ActionCardButton
+            title={t('View full size')}
+            onPress={() => openBrowserAsync(nft.image)}
+            iconProps={{ name: 'external-link' }}
+          />
+        )}
+      </ActionButtons>
 
       {nft.description && (
         <NFTDescriptionContainer>
@@ -48,12 +72,6 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
             </Row>
           ))}
         </>
-      )}
-
-      {!nft.image.startsWith('data:image/') && (
-        <BottomButtons backgroundColor="back1" bottomInset>
-          <Button title={t('View full size')} onPress={() => openBrowserAsync(nft.image)} />
-        </BottomButtons>
       )}
     </BottomModal>
   )
@@ -78,4 +96,9 @@ const NFTDescriptionContainer = styled.View`
 
 const AttributeValue = styled(AppText)`
   margin-top: 2px;
+`
+
+const ActionButtons = styled.View`
+  flex-direction: row;
+  gap: 10px;
 `
