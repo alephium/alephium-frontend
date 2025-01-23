@@ -172,9 +172,9 @@ const AddressAmount = ({
   const token = knownFungibleTokens.find((t) => t.id === tokenId)
 
   return token ? (
-    <Amount isFiat value={token.worth} suffix={CURRENCIES[currency].symbol} semiBold size={17} fit />
+    <Amount isFiat value={token.worth} suffix={CURRENCIES[currency].symbol} semiBold size={17} adjustsFontSizeToFit />
   ) : (
-    <Amount isFiat value={balanceInFiat} suffix={CURRENCIES[currency].symbol} semiBold size={17} fit />
+    <Amount isFiat value={balanceInFiat} suffix={CURRENCIES[currency].symbol} semiBold size={17} adjustsFontSizeToFit />
   )
 }
 

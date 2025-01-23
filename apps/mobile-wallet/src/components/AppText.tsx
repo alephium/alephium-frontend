@@ -15,11 +15,10 @@ export interface AppTextProps extends TextProps {
   colorTheme?: ThemeType
   size?: number
   truncate?: boolean
-  fit?: boolean
 }
 
-const AppText = forwardRef<Text, AppTextProps>(({ children, truncate, fit, ...props }, ref) => (
-  <TextStyled ref={ref} numberOfLines={truncate || fit ? 1 : undefined} adjustsFontSizeToFit={fit} {...props}>
+const AppText = forwardRef<Text, AppTextProps>(({ children, truncate, ...props }, ref) => (
+  <TextStyled ref={ref} numberOfLines={truncate || props.adjustsFontSizeToFit ? 1 : undefined} {...props}>
     {children}
     {/* Hack to fix Android text truncation. See https://github.com/alephium/alephium-frontend/issues/1118 */}
     {truncate && Platform.OS === 'android' && ' '}
