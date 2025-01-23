@@ -29,7 +29,7 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
   return (
     <BottomModalFlashList
       modalId={id}
-      title={<AddressBadge addressHash={addressHash} fontSize={16} />}
+      title={<AddressBadge addressHash={addressHash} fontSize={17} showHash />}
       flashListRender={(props) => (
         <FlashList
           data={knownFungibleTokens}
