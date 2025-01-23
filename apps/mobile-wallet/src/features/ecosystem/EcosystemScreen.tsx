@@ -23,6 +23,7 @@ const EcosystemScreen = () => {
       headerOptions={{ headerTitle: t('Ecosystem') }}
       contentPaddingTop
       hasBottomBar
+      fill
     >
       {showComingSoon ? (
         <ScreenSection>
