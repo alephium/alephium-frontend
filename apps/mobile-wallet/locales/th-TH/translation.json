@@ -87,6 +87,7 @@
   "Contacts": "ผู้ติดต่อ",
   "No contact yet!": "ยังไม่มีรายชื่อ",
   "Add contact": "เพิ่มผู้ติดต่อ",
+  "Add to contacts": "เพิ่มผู้ติดต่อ",
   "No contacts found with these filtering criteria.": "ไม่พบรายชื่อติดต่อที่มีเกณฑ์การกรองเหล่านี้",
   "Connect to dApp": "เชื่อมต่อกับ dApp",
   "Connect to dApps": "เชื่อมต่อกับ dApp",
@@ -257,6 +258,7 @@
   "Scan for active addresses": "สแกนที่อยู่ที่ใช้งาน",
   "Scan QR code": "สแกนรหัส QR",
   "Scan an Alephium address QR code": "สแกนรหัส QR ที่อยู่ Alephium",
+  "Scan an Alephium address QR code to add to your contacts list.": "สแกนรหัส QR  ของ Alephium เพื่อเพิ่มที่อยู่ในรายชื่อผู้ติดต่อ",
   "Scan an Alephium address QR code to send funds to.": "สแกนรหัส QR ที่อยู่ Alephium เพื่อส่งเงินไปที่",
   "Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.": "สแกนรหัส QR ของที่อยู่ Alephium เพื่อส่งเงินหรือรหัส QR ของ WalletConnect เพื่อเชื่อมต่อกับ dApp",
   "Could not connect to WalletConnect": "ไม่สามารถเชื่อมต่อ WalletConnect ได้",
@@ -381,6 +383,7 @@
   "You scanned an Ethereum address": "คุณสแกนที่อยู่อีทีเรียม (Ethereum)",
   "To move funds to Ethereum use the bridge at {{ url }}": "หากต้องการย้ายเงินไปยัง Ethereum ให้ใช้บริดจ์ที่ {{ url }}",
   "Invalid scanned data": "ข้อมูลที่สแกนไม่ถูกต้อง",
+  "Did not detect a valid Alephium address in scanned data: {{ data }}": "ไม่ตรวจพบที่อยู่ Alephium ที่ถูกต้องในข้อมูลที่สแกน: {{ data }}",
   "Did not detect a valid Alephium address or a WalletConnect QR code in scanned data: {{ data }}": "ไม่ตรวจพบที่อยู่ Alephium ที่ถูกต้อง หรือรหัส QR ของ WalletConnect ในข้อมูลที่สแกน: {{ data }}",
   "Forget": "ลืม",
   "forgetAddress_one": "ลืมที่อยู่",
@@ -437,5 +440,10 @@
   "nb_of_hidden_assets_one": "สินทรัพย์ที่ซ่อนอยู่ {{ count }}",
   "nb_of_hidden_assets_other": "สินทรัพย์ที่ซ่อนอยู่ {{ count }}",
   "Hide asset": "ซ่อนสินทรัพย์",
-  "Show details": "แสดงรายละเอียด"
+  "Show details": "แสดงรายละเอียด",
+  "Scanned address": "ที่อยู่ที่สแกนแล้ว",
+  "You already have a contact with this address": "มีผู้ติดต่อที่ใช้ที่อยู่นี้แล้ว",
+  "See address details": "ดูรายละเอียดที่อยู่",
+  "Select address": "เลือกที่อยู่",
+  "Creating contacts helps you avoid making mistakes and manage your funds with ease.": "สร้างผู้ติดต่อเพื่อช่วยหลีกเลี่ยงข้อผิดพลาดและจัดการเงินทุนง่ายๆ"
 }

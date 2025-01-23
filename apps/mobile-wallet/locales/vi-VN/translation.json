@@ -87,6 +87,7 @@
   "Contacts": "Danh bạ",
   "No contact yet!": "Chưa có danh bạ nào!",
   "Add contact": "Thêm danh bạ",
+  "Add to contacts": "Thêm vào danh bạ",
   "No contacts found with these filtering criteria.": "Không có danh bạ nào được tìm thấy với bộ lọc này.",
   "Connect to dApp": "Kết nối đến dApp",
   "Connect to dApps": "Kết nối đến các dApp",
@@ -257,6 +258,7 @@
   "Scan for active addresses": "Quét các địa chỉ ví đang hoạt động",
   "Scan QR code": "Quét mã QR",
   "Scan an Alephium address QR code": "Quét mã QR địa chỉ ví Alephium",
+  "Scan an Alephium address QR code to add to your contacts list.": "Quét mã QR địa chỉ Alephium để thêm vào danh sách liên hệ của bạn.",
   "Scan an Alephium address QR code to send funds to.": "Quét mã QR của địa chỉ ví Alephium để gửi tiền đến.",
   "Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.": "Quét mã QR của địa chỉ Alephium để gửi tiền đến hoặc mã QR WalletConnect để kết nối với dApp.",
   "Could not connect to WalletConnect": "Không thể kết nối đến WalletConnect",
@@ -381,6 +383,7 @@
   "You scanned an Ethereum address": "Bạn đã quét một địa chỉ Ethereum",
   "To move funds to Ethereum use the bridge at {{ url }}": "Để di chuyển tài sản đến Ethereum, sử dụng cầu nối tại {{ url }}",
   "Invalid scanned data": "Dữ liệu đã quét không hợp lệ",
+  "Did not detect a valid Alephium address in scanned data: {{ data }}": "Không phát hiện địa chỉ Alephium hợp lệ trong dữ liệu đã quét: {{ data }}",
   "Did not detect a valid Alephium address or a WalletConnect QR code in scanned data: {{ data }}": "Không phát hiện được địa chỉ Alephium hợp lệ hoặc mã QR WalletConnect trong dữ liệu đã quét: {{ data }}",
   "Forget": "Quên",
   "forgetAddress_one": "Quên đi địa chỉ",
@@ -437,5 +440,10 @@
   "nb_of_hidden_assets_one": "{{ count }} tài sản đã ẩn",
   "nb_of_hidden_assets_other": "{{ count }} tài sản đã ẩn",
   "Hide asset": "Ẩn tài sản",
-  "Show details": "Hiện chi tiết"
+  "Show details": "Hiện chi tiết",
+  "Scanned address": "Địa chỉ đã quét",
+  "You already have a contact with this address": "Bạn đã từng thêm địa chỉ này vào danh bạ",
+  "See address details": "Xem chi tiết địa chỉ",
+  "Select address": "Chọn địa chỉ",
+  "Creating contacts helps you avoid making mistakes and manage your funds with ease.": "Tạo các danh bạ giúp bạn tránh sai sót và quản lý tài sản một cách dễ dàng."
 }

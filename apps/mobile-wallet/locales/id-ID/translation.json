@@ -87,6 +87,7 @@
   "Contacts": "Kontak",
   "No contact yet!": "Belum ada kontak!",
   "Add contact": "Tambahkan kontak",
+  "Add to contacts": "Tambahkan ke dalam kontak",
   "No contacts found with these filtering criteria.": "Tidak ada kontak-kontak yang ditemukan dengan kriteria penyaringan ini.",
   "Connect to dApp": "Hubungkan ke dApp",
   "Connect to dApps": "Hubungkan ke dApps",
@@ -257,6 +258,7 @@
   "Scan for active addresses": "Pindai untuk alamat - alamat aktif",
   "Scan QR code": "Pindai kode QR",
   "Scan an Alephium address QR code": "Pindai kode QR alamat Alephium",
+  "Scan an Alephium address QR code to add to your contacts list.": "Pindai kode QR alamat Alephium untuk ditambahkan ke daftar kontak anda.",
   "Scan an Alephium address QR code to send funds to.": "Pindai alamat Alephium kode QR untuk mengirim dana.",
   "Scan an Alephium address QR code to send funds to or a WalletConnect QR code to connect to a dApp.": "Pindai alamat Alephium kode QR untuk mengirim dana atau WalletConnect kode QR untuk terhubung ke dApp.",
   "Could not connect to WalletConnect": "Tidak dapat terhubung ke WalletConnect",
@@ -381,6 +383,7 @@
   "You scanned an Ethereum address": "Anda telah memindai alamat Ethereum",
   "To move funds to Ethereum use the bridge at {{ url }}": "Untuk memindahkan dana ke Ethereum, gunakan jembatan di {{ url }}",
   "Invalid scanned data": "Data yang dipindai tidak valid",
+  "Did not detect a valid Alephium address in scanned data: {{ data }}": "Tidak mendeteksi adanya alamat Alephium yang valid dalam data yang dipindai: {{ data }}",
   "Did not detect a valid Alephium address or a WalletConnect QR code in scanned data: {{ data }}": "Tidak terdeteksi alamat Alephium yang valid atau kode QR WalletConnect dalam data yang dipindai: {{ data }}",
   "Forget": "Lupakan",
   "forgetAddress_one": "Lupakan alamat",
@@ -437,5 +440,10 @@
   "nb_of_hidden_assets_one": "{{ count }} aset tersembunyi",
   "nb_of_hidden_assets_other": "{{ count }} aset - aset tersembunyi",
   "Hide asset": "Sembunyikan aset",
-  "Show details": "Tampilkan rincian"
+  "Show details": "Tampilkan rincian",
+  "Scanned address": "Alamat yang dipindai",
+  "You already have a contact with this address": "Anda sudah memiliki sebuah kontak dengan alamat ini",
+  "See address details": "Tampilkan rincian alamat",
+  "Select address": "Pilihan alamat",
+  "Creating contacts helps you avoid making mistakes and manage your funds with ease.": "Membuat kontak membantu anda menghindari kesalahan - kesalahan dan mengelola dana anda dengan mudah."
 }
