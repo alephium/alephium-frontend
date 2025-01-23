@@ -19,7 +19,7 @@ import { useOnChildNavigationGoBack } from '~/navigation/useOnChildNavigationGoB
 export interface SendNavigationParamList extends ParamListBase {
   DestinationScreen: { originAddressHash?: AddressHash }
   OriginScreen?: { tokenId?: Token['id'] }
-  AssetsScreen?: { tokenId?: Token['id'] }
+  AssetsScreen?: { tokenId?: Token['id']; isNft?: boolean }
   VerifyScreen: undefined
 }
 
@@ -49,6 +49,7 @@ const SendNavigation = ({
       originAddressHash={originAddressHash}
       destinationAddressHash={params?.destinationAddressHash}
       tokenId={params?.tokenId}
+      isNft={params?.isNft}
     >
       <HeaderContextProvider>
         <View style={{ flex: 1 }}>
@@ -73,7 +74,7 @@ const SendNavigation = ({
               <SendStack.Screen
                 name="AssetsScreen"
                 component={AssetsScreen}
-                initialParams={{ tokenId: params?.tokenId }}
+                initialParams={{ tokenId: params?.tokenId, isNft: params?.isNft }}
               />
               <SendStack.Screen name="VerifyScreen" component={VerifyScreen} />
             </SendStack.Navigator>

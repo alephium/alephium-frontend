@@ -150,6 +150,7 @@ const AddressDetailsModalHeaderStyled = styled.View`
   padding: ${VERTICAL_GAP / 2}px 0 ${VERTICAL_GAP}px 0;
 `
 
+// TODO: DRY
 const ActionButtons = styled.View`
   margin-top: ${VERTICAL_GAP}px;
   flex-direction: row;

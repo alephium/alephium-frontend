@@ -15,6 +15,7 @@ interface SendButtonProps {
   destinationAddressHash?: AddressHash
   tokenId?: Token['id']
   onPress?: () => void
+  isNft?: boolean
 }
 
 const SendButton = ({
@@ -23,6 +24,7 @@ const SendButton = ({
   destinationAddressHash,
   tokenId,
   onPress,
+  isNft,
   buttonType = 'action-card'
 }: SendButtonProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
@@ -31,7 +33,7 @@ const SendButton = ({
   const handleSendPress = () => {
     sendAnalytics({ event: 'Send button pressed', props: { origin } })
 
-    navigation.navigate('SendNavigation', { originAddressHash, destinationAddressHash, tokenId })
+    navigation.navigate('SendNavigation', { originAddressHash, destinationAddressHash, tokenId, isNft })
 
     onPress?.()
   }
