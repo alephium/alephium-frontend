@@ -97,7 +97,7 @@ export const useFetchAddressesHashesWithBalanceSortedByAlphWorth = () => {
   }
 }
 
-export const useFetchAddressesHashesSortedByAddressesLabel = () => {
+export const useFetchAddressesHashesSortedByAddressesLabelAlphabetical = () => {
   const allAddressHashes = useUnsortedAddressesHashes()
   const defaultAddress = useAppSelector(selectDefaultAddress)
   const addressEntities = useAppSelector((s) => s.addresses.entities)

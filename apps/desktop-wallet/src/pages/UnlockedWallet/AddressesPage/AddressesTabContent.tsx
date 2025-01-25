@@ -4,27 +4,29 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Box from '@/components/Box'
+import Select from '@/components/Inputs/Select.tsx'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
-  useFetchAddressesHashesSortedByAddressesLabel,
+  useFetchAddressesHashesSortedByAddressesLabelAlphabetical,
   useFetchAddressesHashesWithBalance,
   useFetchAddressesHashesWithBalanceSortedByAlphWorth
 } from '@/hooks/useAddresses'
 import AddressListRow from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressListRow'
 import AdvancedOperationsButton from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsButton'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
-import { AddressOrder } from '@/types/addresses.ts'
-import Select from '@/components/Inputs/Select.tsx'
 import { setAddressOrder } from '@/storage/addresses/addressesSlice.ts'
+import { AddressOrder } from '@/types/addresses.ts'
 
 interface OrderOption {
   value: AddressOrder
   label: string
 }
+
+const STORAGE_KEY = 'address-order-preferences'
 
 const AddressesTabContent = memo(() => {
   const { t } = useTranslation()
@@ -37,7 +39,7 @@ const AddressesTabContent = memo(() => {
   const { data: sortedWorthAlph } = useFetchAddressesHashesWithBalanceSortedByAlphWorth()
   // const { data: sortedTotalWorth } = useFetchAddressesHashesWithBalanceSortedByTotalWorth()
 
-  const { data: sortedAlphabetical } = useFetchAddressesHashesSortedByAddressesLabel()
+  const { data: sortedAlphabetical } = useFetchAddressesHashesSortedByAddressesLabelAlphabetical()
   const walletId = useAppSelector((state) => state.activeWallet.id)
   const currentOrder = useAppSelector((state) =>
     walletId ? state.addresses.orderPreference?.[walletId] ?? AddressOrder.LastUse : AddressOrder.LastUse
@@ -57,10 +59,10 @@ const AddressesTabContent = memo(() => {
         addresses = filteredByText
     }
 
-    // Then apply text filter
+    // Apply text filter
     const textFiltered = searchInput ? intersection(addresses, filteredByText) : addresses
 
-    // Finally apply empty addresses filter if needed
+    // Apply empty addresses filter
     return hideEmptyAddresses ? intersection(textFiltered, filteredByToggle) : textFiltered
   }, [
     currentOrder,
@@ -72,6 +74,24 @@ const AddressesTabContent = memo(() => {
     searchInput
   ])
 
+  // Load order pref from localStorage
+  useEffect(() => {
+    if (walletId) {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY)
+        if (stored) {
+          const preferences = JSON.parse(stored)
+          const savedOrder = preferences[walletId]
+          if (savedOrder) {
+            dispatch(setAddressOrder({ walletId, order: savedOrder }))
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load address order preferences:', error)
+      }
+    }
+  }, [dispatch, walletId])
+
   const orderOptions: OrderOption[] = [
     { value: AddressOrder.LastUse, label: t('Last used') },
     { value: AddressOrder.AlphValue, label: t('ALPH value') },
@@ -79,7 +99,17 @@ const AddressesTabContent = memo(() => {
   ]
 
   const onSelect = (value: AddressOrder) => {
-    walletId && dispatch(setAddressOrder({ walletId, order: value }))
+    if (walletId) {
+      dispatch(setAddressOrder({ walletId, order: value }))
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY)
+        const preferences = stored ? JSON.parse(stored) : {}
+        preferences[walletId] = value
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences))
+      } catch (error) {
+        console.error('Failed to save address order preferences:', error)
+      }
+    }
   }
 
   const openNewAddressModal = () =>
