@@ -3,7 +3,7 @@ import styled, { useTheme } from 'styled-components'
 import AnimatedBackground from '@/components/AnimatedBackground'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import LabeledWorthOverview from '@/components/LabeledWorthOverview'
-import { WalletTokensTabs } from '@/features/assetsLists/TokensTabs'
+import { WalletTokensTabs } from '@/features/assetsLists/AddressDetailsTabs'
 import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
 

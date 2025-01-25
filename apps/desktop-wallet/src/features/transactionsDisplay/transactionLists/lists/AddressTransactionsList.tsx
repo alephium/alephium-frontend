@@ -38,7 +38,7 @@ const AddressTransactionsList = ({ addressHash }: AddressTransactionListProps) =
 
   return (
     <Table minWidth="500px">
-      <TableHeader title={t('Address transactions')}>
+      <TableHeader>
         <AddressTransactionsCSVExportButton addressHash={addressHash} />
       </TableHeader>
 

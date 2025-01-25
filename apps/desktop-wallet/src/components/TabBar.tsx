@@ -74,6 +74,7 @@ const TabBarStyled = styled.div`
   display: flex;
   height: 46px;
   align-items: center;
+  justify-content: center;
 `
 
 const TabsContainer = styled.div`

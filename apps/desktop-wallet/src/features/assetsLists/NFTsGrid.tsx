@@ -9,11 +9,11 @@ import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import ExpandRowButton from '@/features/assetsLists/ExpandRowButton'
 import PlaceholderText from '@/features/assetsLists/PlaceholderText'
-import { AddressTokensTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
+import { AddressDetailsTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
 import { deviceBreakPoints } from '@/style/globalStyles'
 import { TokenId } from '@/types/tokens'
 
-export const AddressNFTsGrid = ({ addressHash, ...props }: AddressTokensTabsProps) => {
+export const AddressNFTsGrid = ({ addressHash, ...props }: AddressDetailsTabsProps) => {
   const { t } = useTranslation()
   const {
     data: { nftIds },
@@ -90,10 +90,7 @@ const Grid = styled.div<{ columns: number }>`
   grid-auto-flow: initial;
   gap: 15px;
   border-radius: 0 0 12px 12px;
-
-  > * {
-    width: 100%;
-  }
+  margin-top: var(--spacing-4);
 
   ${({ columns }) =>
     !columns &&

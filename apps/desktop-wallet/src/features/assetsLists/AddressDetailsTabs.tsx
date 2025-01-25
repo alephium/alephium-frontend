@@ -10,27 +10,39 @@ import TableTabBar from '@/components/TableTabBar'
 import { AddressFTsBalancesList, WalletFTsBalancesList } from '@/features/assetsLists/FTsBalancesList'
 import { AddressNFTsGrid, WalletNFTsGrid } from '@/features/assetsLists/NFTsGrid'
 import { AddressNSTsBalancesList, WalletNSTsBalancesList } from '@/features/assetsLists/NSTsBalancesList'
-import { AddressTokensTabsProps, TokensTabValue, WalletTokensTabsProps } from '@/features/assetsLists/types'
+import {
+  AddressDetailsTabsProps,
+  TokensAndActivityTabValue,
+  TokensTabValue,
+  WalletTokensTabsProps
+} from '@/features/assetsLists/types'
 import useTokensTabs from '@/features/assetsLists/useTokensTabs'
+import AddressTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/AddressTransactionsList'
 
-export const AddressTokensTabs = ({ addressHash }: AddressTokensTabsProps) => {
+export const AddressDetailsTabs = ({ addressHash }: AddressDetailsTabsProps) => {
   const { t } = useTranslation()
   const {
     data: { nstIds }
   } = useFetchAddressTokensByType({ addressHash, includeAlph: false })
 
-  const { tabs, isExpanded, toggleExpansion } = useTokensTabs({
+  const {
+    tabs: tokenTabs,
+    isExpanded,
+    toggleExpansion
+  } = useTokensTabs({
     numberOfNSTs: nstIds.length,
     ftsTabTitle: t('Address tokens'),
     nftsTabTitle: t('Address NFTs'),
     nstsTabTitle: t('Address unknown tokens')
   })
 
-  const [currentTab, setCurrentTab] = useState<TabItem<TokensTabValue>>(tabs[0])
+  const tabs = [...tokenTabs, { value: 'activity' as TokensAndActivityTabValue, label: t('Activity') }]
+
+  const [currentTab, setCurrentTab] = useState<TabItem<TokensAndActivityTabValue>>(tabs[0])
 
   const props = { addressHash, isExpanded, onExpand: toggleExpansion }
 
-  const renderTab = (tabValue: TokensTabValue) => {
+  const renderTab = <T extends string>(tabValue: T) => {
     switch (tabValue) {
       case 'fts':
         return <AddressFTsBalancesList {...props} />
@@ -38,13 +50,15 @@ export const AddressTokensTabs = ({ addressHash }: AddressTokensTabsProps) => {
         return <AddressNFTsGrid {...props} />
       case 'nsts':
         return <AddressNSTsBalancesList {...props} />
+      case 'activity':
+        return <AddressTransactionsList addressHash={addressHash} />
     }
   }
 
   return (
-    <TokensTabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab}>
+    <Tabs tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab}>
       {renderTab(currentTab.value)}
-    </TokensTabs>
+    </Tabs>
   )
 }
 
@@ -77,7 +91,7 @@ export const WalletTokensTabs = ({ maxHeightInPx, className }: WalletTokensTabsP
   }
 
   return (
-    <TokensTabs
+    <Tabs
       className={className}
       tabs={tabs}
       currentTab={currentTab}
@@ -87,22 +101,22 @@ export const WalletTokensTabs = ({ maxHeightInPx, className }: WalletTokensTabsP
       maxHeightInPx={maxHeightInPx}
     >
       {renderTab(currentTab.value)}
-    </TokensTabs>
+    </Tabs>
   )
 }
 
-interface TokensTabsProps {
-  tabs: TabItem<TokensTabValue>[]
+interface TabsProps<T extends string> {
+  tabs: TabItem<T>[]
   children: ReactNode
-  currentTab: TabItem<TokensTabValue>
-  setCurrentTab: (tab: TabItem<TokensTabValue>) => void
+  currentTab: TabItem<T>
+  setCurrentTab: (tab: TabItem<T>) => void
   isExpanded?: boolean
   toggleExpansion?: () => void
   className?: string
   maxHeightInPx?: number
 }
 
-const TokensTabs = ({
+const Tabs = <T extends string>({
   tabs,
   currentTab,
   setCurrentTab,
@@ -111,7 +125,7 @@ const TokensTabs = ({
   maxHeightInPx,
   className,
   children
-}: TokensTabsProps) =>
+}: TabsProps<T>) =>
   isExpanded !== undefined && toggleExpansion ? (
     <FocusableContent className={className} isFocused={isExpanded} onClose={toggleExpansion}>
       <ExpandableTable isExpanded={isExpanded} maxHeightInPx={maxHeightInPx}>
