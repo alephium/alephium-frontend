@@ -53,7 +53,6 @@ const AddressBox = ({
 }: AddressBoxProps) => {
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-  const currency = useAppSelector((s) => s.settings.currency)
   const dispatch = useAppDispatch()
 
   const fade = useSharedValue(1)
@@ -175,6 +174,7 @@ const AddressAmount = ({
 }: Pick<AddressBoxProps, 'addressHash'> & Pick<AddressBoxProps, 'tokenId'>) => {
   const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
+  const currency = useAppSelector((s) => s.settings.currency)
 
   // Suboptimal way to fetch token, will be fixed when migrated to Tanstack
   const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
