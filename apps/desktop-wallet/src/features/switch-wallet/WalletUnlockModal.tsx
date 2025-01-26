@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
-import WalletPassphrase from '@/components/Inputs/WalletPassphrase'
+import WalletPassphrase from '@/features/passphrase/WalletPassphraseForm'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'

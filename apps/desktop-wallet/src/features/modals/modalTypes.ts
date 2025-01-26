@@ -1,10 +1,11 @@
 import { AddressHash, WalletConnectSessionProposalModalProps } from '@alephium/shared'
 
 import { BuyModalProps } from '@/features/buy/BuyModal'
+import { WalletPassphraseDisclaimerModalProps } from '@/features/passphrase/WalletPassphraseDisclaimerModal'
 import { CallContractSendModalProps } from '@/features/send/sendModals/callContract/CallContractSendModal'
 import { DeployContractSendModalProps } from '@/features/send/sendModals/deployContract/DeployContractSendModal'
 import { ConfirmLockTimeModalProps } from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
-import { TransferSendModalProps } from '@/features/send/sendModals/transfer/activityendModal'
+import { TransferSendModalProps } from '@/features/send/sendModals/transfer/TransferSendModal'
 import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockModal'
 import { TransactionDetailsModalProps } from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
 import { SignMessageModalProps } from '@/features/walletConnect/SignMessageModal'
@@ -50,7 +51,8 @@ const ModalNames = {
   AddressSweepModal: 'AddressSweepModal',
   WalletRemovalModal: 'WalletRemovalModal',
   DeleteAddressesModal: 'DeleteAddressesModal',
-  BuyModal: 'BuyModal'
+  BuyModal: 'BuyModal',
+  WalletPassphraseDisclaimerModal: 'WalletPassphraseDisclaimerModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -172,6 +174,10 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.BuyModal
       props: BuyModalProps
+    }
+  | {
+      name: typeof ModalNames.WalletPassphraseDisclaimerModal
+      props: WalletPassphraseDisclaimerModalProps
     }
 
 export type ModalInstance = {

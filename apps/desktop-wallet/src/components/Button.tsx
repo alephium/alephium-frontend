@@ -122,7 +122,10 @@ export default styled(Button)`
             faded: colord(theme.global.accent).darken(0.04).toRgbString()
           }[variant],
           secondary: {
-            default: colord(theme.bg.primary).lighten(0.04).toRgbString(),
+            default:
+              theme.name === 'light'
+                ? colord(theme.bg.primary).lighten(0.5).toRgbString()
+                : colord(theme.bg.primary).darken(0.7).toRgbString(),
             contrast: colord(theme.bg.background2).lighten(0.04).toRgbString(),
             valid: colord(theme.global.valid).darken(0.04).toRgbString(),
             alert: colord(theme.global.alert).alpha(0.2).toRgbString(),
@@ -236,7 +239,7 @@ export default styled(Button)`
   font-size: ${({ tall }) => (tall ? 14 : 13)}px;
   font-family: inherit;
   margin: ${({ circle }) => (circle ? '0' : '10px 0')};
-  padding: ${({ circle, Icon }) => (circle ? 'var(--spacing-2)' : Icon ? '0 28px 0 14px' : '0 14px')};
+  padding: ${({ circle, Icon }) => (circle ? 'var(--spacing-2)' : '0 14px')};
   min-width: ${({ circle, tiny }) => (tiny ? '28px' : circle ? '34px' : '60px')};
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};

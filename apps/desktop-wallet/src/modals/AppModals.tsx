@@ -5,6 +5,7 @@ import { Children, isValidElement, ReactNode, useEffect } from 'react'
 import DeleteAddressesModal from '@/features/addressDeletion/DeleteAddressesModal'
 import BuyModal from '@/features/buy/BuyModal'
 import { selectAllModals } from '@/features/modals/modalSelectors'
+import WalletPassphraseDisclaimerModal from '@/features/passphrase/WalletPassphraseDisclaimerModal'
 import CallContractSendModal from '@/features/send/sendModals/callContract/CallContractSendModal'
 import DeployContractSendModal from '@/features/send/sendModals/deployContract/DeployContractSendModal'
 import ConfirmLockTimeModal from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
@@ -48,6 +49,8 @@ const AppModals = () => {
             return <SettingsModal id={modal.id} key={modal.id} {...modal.params.props} />
           case 'WalletRemovalModal':
             return <WalletRemovalModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'WalletPassphraseDisclaimerModal':
+            return <WalletPassphraseDisclaimerModal id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
 

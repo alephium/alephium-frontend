@@ -525,5 +525,7 @@
   "Sign and Send Unsigned Transaction": "Sign and Send Unsigned Transaction",
   "Sign and Send": "Sign and Send",
   "Unlock a wallet to connect to the dApp.": "Unlock a wallet to connect to the dApp.",
-  "Activity": "Activity"
+  "Activity": "Activity",
+  "Passphrase warning": "Passphrase warning",
+  "Don't use passphrase": "Don't use passphrase"
 }

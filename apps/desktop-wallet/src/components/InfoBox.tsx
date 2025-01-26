@@ -108,7 +108,7 @@ const StyledBox = styled(motion.div)<{
   short?: boolean
   contrast?: boolean
 }>`
-  padding: var(--spacing-4) var(--spacing-3);
+  padding: var(--spacing-2) var(--spacing-3);
   height: ${({ short }) => (short ? 'var(--inputHeight)' : 'auto')};
   background-color: ${({ theme, contrast, importance }) =>
     contrast

@@ -84,6 +84,7 @@ const GridRow = styled.div`
   padding: 0 15px;
   background-color: ${({ theme }) => theme.bg.tertiary};
   border-radius: var(--radius-big);
+  border: 1px solid ${({ theme }) => theme.border.secondary};
 
   &:hover {
     cursor: pointer;

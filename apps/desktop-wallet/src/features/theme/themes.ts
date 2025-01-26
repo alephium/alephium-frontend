@@ -5,8 +5,8 @@ export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
     primary: 'rgba(0, 0, 0, 0.04)',
-    secondary: 'rgba(0, 0, 0, 0.03)',
-    tertiary: 'rgba(0, 0, 0, 0.02)',
+    secondary: 'rgba(0, 0, 0, 0.02)',
+    tertiary: 'rgba(0, 0, 0, 0.01)',
     contrast: '#000',
     background1: '#fff',
     background2: '#fafafa',
@@ -45,9 +45,9 @@ export const lightTheme: DefaultTheme = {
 export const darkTheme: DefaultTheme = {
   name: 'dark',
   bg: {
-    primary: 'rgba(255, 255, 255, 0.04)',
-    secondary: 'rgba(255, 255, 255, 0.03)',
-    tertiary: 'rgba(255, 255, 255, 0.02)',
+    primary: 'rgba(255, 255, 255, 0.03)',
+    secondary: 'rgba(255, 255, 255, 0.02)',
+    tertiary: 'rgba(255, 255, 255, 0.01)',
     contrast: 'rgba(255, 255, 255, 1)',
     background1: '#121214',
     background2: '#0d0d0f',

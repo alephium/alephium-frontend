@@ -55,7 +55,7 @@ const LabeledWorthOverviewStyled = styled.div`
   flex-direction: column;
   align-items: center;
   position: relative;
-  margin: var(--spacing-6);
+  margin: var(--spacing-4);
   gap: var(--spacing-2);
 `
 

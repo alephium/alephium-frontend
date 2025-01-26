@@ -83,12 +83,7 @@ const FloatingPanelStyled = styled(motion.div)<MainPanelProps>`
   z-index: 1;
 
   @media ${deviceBreakPoints.mobile} {
-    box-shadow: none;
     max-width: initial;
-  }
-
-  @media ${deviceBreakPoints.short} {
-    box-shadow: none;
   }
 `
 
