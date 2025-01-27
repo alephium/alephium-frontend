@@ -17,7 +17,11 @@ const DAppsTags = ({ selectedTag, onTagPress }: DAppsCategoriesProps) => {
   if (!dAppTags) return null
 
   return (
-    <DAppsCategoriesStyled horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
+    <DAppsCategoriesStyled
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ gap: 10, paddingRight: DEFAULT_MARGIN * 2 }}
+    >
       <Button
         compact
         onPress={() => onTagPress(selectedTag === 'fav' ? null : 'fav')}
