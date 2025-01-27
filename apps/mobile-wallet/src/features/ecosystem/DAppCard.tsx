@@ -1,12 +1,12 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useQuery } from '@tanstack/react-query'
-import { Pressable } from 'react-native'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import { dAppQuery } from '~/api/queries/dAppQueries'
 import AppText from '~/components/AppText'
+import AnimatedPressable from '~/components/layout/AnimatedPressable'
 import DAppIcon from '~/features/ecosystem/DAppIcon'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
@@ -48,7 +48,7 @@ const DAppCard = ({ dAppName }: DAppCardProps) => {
 
 export default DAppCard
 
-const DappCardStyled = styled(Pressable)`
+const DappCardStyled = styled(AnimatedPressable)`
   flex-direction: row;
   overflow: hidden;
   padding: 15px;
