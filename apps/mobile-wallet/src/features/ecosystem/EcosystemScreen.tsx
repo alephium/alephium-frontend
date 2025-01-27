@@ -1,8 +1,10 @@
+import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TextInputProps } from 'react-native'
 import styled from 'styled-components/native'
 
+import { dAppsQuery } from '~/api/queries/dAppQueries'
 import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen from '~/components/layout/BottomBarScrollScreen'
@@ -49,11 +51,17 @@ const EcosystemScreen = () => {
 
 export default EcosystemScreen
 
-const SearchBar = (props: TextInputProps) => (
-  <SearchBarStyled>
-    <SearchInput {...props} />
-  </SearchBarStyled>
-)
+const SearchBar = (props: TextInputProps) => {
+  const { data: dApps } = useQuery(dAppsQuery({ select: (dApps) => dApps }))
+
+  if (!dApps || dApps.length < 5) return null
+
+  return (
+    <SearchBarStyled>
+      <SearchInput {...props} />
+    </SearchBarStyled>
+  )
+}
 
 const SearchBarStyled = styled(ScreenSection)`
   margin-bottom: ${DEFAULT_MARGIN}px;
