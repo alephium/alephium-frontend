@@ -61,7 +61,11 @@ const DeleteAddressButton = ({ addressHash, onActionCompleted }: ActionButtonPro
   if (!address) return
 
   const handlePress = () => {
-    if (!canDeleteAddress) Alert.alert(t('You cannot forget your default address. Set another one as default first.'))
+    if (!canDeleteAddress)
+      Alert.alert(
+        t('forgetAddress_one'),
+        t('You cannot forget your default address. Set another one as default first.')
+      )
     else forgetAddress()
   }
 
