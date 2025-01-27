@@ -93,6 +93,6 @@ const filterDAppsByText = (searchText: string, dAppsNames: DApp['name'][]): DApp
   searchText ? dAppsNames.filter((dAppName) => dAppName.toLowerCase().includes(searchText.toLowerCase())) : dAppsNames
 
 const DAppsListStyled = styled(ScreenSection)`
-  gap: ${VERTICAL_GAP}px;
+  gap: ${VERTICAL_GAP / 2}px;
   margin-top: ${VERTICAL_GAP}px;
 `

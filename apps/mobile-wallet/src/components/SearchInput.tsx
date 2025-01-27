@@ -18,7 +18,7 @@ const SearchInput = (props: TextInputProps) => {
 
       {props.value && (
         <ClearButtonContainer>
-          <Button iconProps={{ name: 'x' }} onPress={handleClearPress} />
+          <Button iconProps={{ name: 'x' }} onPress={handleClearPress} squared compact />
         </ClearButtonContainer>
       )}
     </SearchInputStyled>
@@ -35,7 +35,7 @@ const SearchInputStyled = styled.View`
 
 const ClearButtonContainer = styled.View`
   position: absolute;
-  right: 6px;
+  right: 4px;
   height: 100%;
   align-items: center;
   justify-content: center;
