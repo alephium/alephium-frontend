@@ -1,6 +1,6 @@
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleProp, ViewStyle } from 'react-native'
+import { Keyboard, StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
@@ -23,9 +23,14 @@ const ColorPicker = ({ value, onChange, style }: ColorPickerProps) => {
     setIsModalVisible(false)
   }
 
+  const handleRowPress = () => {
+    setIsModalVisible(!isModalVisible)
+    Keyboard.dismiss()
+  }
+
   return (
     <>
-      <Row style={style} title={t('Color')} onPress={() => setIsModalVisible(!isModalVisible)}>
+      <Row style={style} title={t('Color')} onPress={handleRowPress}>
         <Dot color={value} />
       </Row>
       <ModalWithBackdrop

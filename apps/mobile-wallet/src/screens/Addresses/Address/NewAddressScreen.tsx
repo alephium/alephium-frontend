@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import Button from '~/components/buttons/Button'
+import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
@@ -80,12 +81,14 @@ const NewAddressScreen = ({ navigation, ...props }: NewAddressScreenProps) => {
       bottomButtonsRender={() => <Button title={t('Generate')} variant="highlight" onPress={handleGeneratePress} />}
       {...props}
     >
-      <AddressForm
-        screenTitle={t('New address')}
-        initialValues={initialValues}
-        onValuesChange={setValues}
-        allowGroupSelection
-      />
+      <ScreenSection>
+        <AddressForm
+          screenTitle={t('New address')}
+          initialValues={initialValues}
+          onValuesChange={setValues}
+          allowGroupSelection
+        />
+      </ScreenSection>
     </ScrollScreen>
   )
 }

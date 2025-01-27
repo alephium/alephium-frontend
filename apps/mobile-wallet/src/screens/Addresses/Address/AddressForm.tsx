@@ -1,14 +1,13 @@
 import { AddressSettings } from '@alephium/shared'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
+import { Keyboard, View } from 'react-native'
 import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import ExpandableRow from '~/components/ExpandableRow'
 import ColorPicker from '~/components/inputs/ColorPicker'
 import Input from '~/components/inputs/Input'
-import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
@@ -51,42 +50,44 @@ const AddressForm = ({
     if (!disableIsMainToggle) {
       setIsDefault(!isDefault)
     }
+
+    Keyboard.dismiss()
   }
 
-  const openGroupSelectModal = () => dispatch(openModal({ name: 'GroupSelectModal', props: { onSelect: setGroup } }))
+  const openGroupSelectModal = () => {
+    dispatch(openModal({ name: 'GroupSelectModal', props: { onSelect: setGroup } }))
+
+    Keyboard.dismiss()
+  }
 
   return (
     <View style={{ flex: 1 }}>
-      <ScreenSection fill>
-        <Row title={t('Label')}>
-          <Input value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} short />
-        </Row>
-        <ColorPicker value={color} onChange={setColor} />
-        <Row
-          title={t('Default address')}
-          subtitle={`${t('Default address for operations')}${
-            disableIsMainToggle
-              ? `. ${t(
-                  'To remove this address from being the default address, you must set another one as main first.'
-                )}`
-              : ''
-          }`}
-          onPress={toggleIsMain}
-        >
-          <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
-        </Row>
-        {allowGroupSelection && (
-          <AdvancedOptionSection>
-            <Surface>
-              <Row title={t('Address group')} onPress={openGroupSelectModal}>
-                <AppText>
-                  {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Default')}
-                </AppText>
-              </Row>
-            </Surface>
-          </AdvancedOptionSection>
-        )}
-      </ScreenSection>
+      <Row title={t('Label')}>
+        <Input value={label} onChangeText={setLabel} label={t('Label')} maxLength={50} short />
+      </Row>
+      <ColorPicker value={color} onChange={setColor} />
+      <Row
+        title={t('Default address')}
+        subtitle={`${t('Default address for operations')}${
+          disableIsMainToggle
+            ? `. ${t('To remove this address from being the default address, you must set another one as main first.')}`
+            : ''
+        }`}
+        onPress={toggleIsMain}
+      >
+        <Toggle onValueChange={toggleIsMain} value={isDefault} disabled={disableIsMainToggle} />
+      </Row>
+      {allowGroupSelection && (
+        <AdvancedOptionSection>
+          <Surface>
+            <Row title={t('Address group')} onPress={openGroupSelectModal}>
+              <AppText>
+                {group !== undefined ? t('Group {{ groupNumber }}', { groupNumber: group }) : t('Default')}
+              </AppText>
+            </Row>
+          </Surface>
+        </AdvancedOptionSection>
+      )}
     </View>
   )
 }
