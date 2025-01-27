@@ -118,7 +118,7 @@ const AddressBox = ({
             <AddressLabel>
               {isSelected ? (
                 <SelectedBadge>
-                  <Check color="white" size={16} />
+                  <Check color="white" size={14} />
                 </SelectedBadge>
               ) : (
                 <Animated.View>
@@ -267,10 +267,10 @@ const AddressLabel = styled.View`
 `
 
 const SelectedBadge = styled(Animated.View)`
-  height: 20px;
-  width: 20px;
+  height: 16px;
+  width: 16px;
   background-color: ${({ theme }) => theme.global.accent};
-  border-radius: 20px;
+  border-radius: 16px;
   align-items: center;
   justify-content: center;
 `
