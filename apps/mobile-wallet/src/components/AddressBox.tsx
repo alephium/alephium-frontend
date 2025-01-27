@@ -3,8 +3,8 @@ import { Token } from '@alephium/web3'
 import { Check, Lock } from 'lucide-react-native'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { GestureResponderEvent, Pressable, PressableProps } from 'react-native'
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import { GestureResponderEvent, PressableProps } from 'react-native'
+import Animated from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
@@ -14,6 +14,7 @@ import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import AssetLogo from '~/components/AssetLogo'
 import Badge from '~/components/Badge'
+import AnimatedPressable from '~/components/layout/AnimatedPressable'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import {
@@ -36,8 +37,6 @@ export interface AddressBoxProps extends PressableProps {
 
 const maxNbOfTokenLogos = 5
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
-
 // TODO: Use ListItem
 
 const AddressBox = ({
@@ -54,12 +53,6 @@ const AddressBox = ({
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
-
-  const fade = useSharedValue(1)
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: fade.value
-  }))
 
   if (!address) return
 
@@ -93,12 +86,6 @@ const AddressBox = ({
   return (
     <AddressBoxStyled
       {...props}
-      onPressIn={() => {
-        fade.value = withTiming(0.5, { duration: 150 })
-      }}
-      onPressOut={() => {
-        fade.value = withTiming(1, { duration: 150 })
-      }}
       onPress={handlePress}
       onLongPress={handleLongPress}
       style={[
@@ -108,8 +95,7 @@ const AddressBox = ({
           backgroundColor: isSelected ? theme.bg.accent : theme.bg.tertiary,
           borderColor: isSelected ? theme.global.accent : theme.border.secondary,
           borderWidth: 1
-        },
-        animatedStyle
+        }
       ]}
     >
       <BadgeContainer>
