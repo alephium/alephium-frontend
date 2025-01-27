@@ -445,5 +445,7 @@
   "You already have a contact with this address": "มีผู้ติดต่อที่ใช้ที่อยู่นี้แล้ว",
   "See address details": "ดูรายละเอียดที่อยู่",
   "Select address": "เลือกที่อยู่",
-  "Creating contacts helps you avoid making mistakes and manage your funds with ease.": "สร้างผู้ติดต่อเพื่อช่วยหลีกเลี่ยงข้อผิดพลาดและจัดการเงินทุนง่ายๆ"
+  "Creating contacts helps you avoid making mistakes and manage your funds with ease.": "สร้างผู้ติดต่อเพื่อช่วยหลีกเลี่ยงข้อผิดพลาดและจัดการเงินทุนง่ายๆ",
+  "nfts_in_addresses_one": "{{ count }} NFT",
+  "nfts_in_addresses_other": "{{ count }} NFTs"
 }

@@ -11,7 +11,7 @@
   "group {{ groupNumber }}": "nhóm {{ groupNumber }}",
   "Group {{ groupNumber }}": "Nhóm {{ groupNumber }}",
   "Updating default address": "Đang cập nhật địa chỉ mặc định",
-  "Tokens": "Các token",
+  "Tokens": "Token",
   "NFT": "NFT",
   "NFTs": "NFT",
   "See NFTs": "Xem các NFT",
@@ -445,5 +445,7 @@
   "You already have a contact with this address": "Bạn đã từng thêm địa chỉ này vào danh bạ",
   "See address details": "Xem chi tiết địa chỉ",
   "Select address": "Chọn địa chỉ",
-  "Creating contacts helps you avoid making mistakes and manage your funds with ease.": "Tạo các danh bạ giúp bạn tránh sai sót và quản lý tài sản một cách dễ dàng."
+  "Creating contacts helps you avoid making mistakes and manage your funds with ease.": "Tạo các danh bạ giúp bạn tránh sai sót và quản lý tài sản một cách dễ dàng.",
+  "nfts_in_addresses_one": "{{ count }} NFT",
+  "nfts_in_addresses_other": "{{ count }} NFT"
 }

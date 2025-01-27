@@ -445,5 +445,7 @@
   "You already have a contact with this address": "Anda sudah memiliki sebuah kontak dengan alamat ini",
   "See address details": "Tampilkan rincian alamat",
   "Select address": "Pilihan alamat",
-  "Creating contacts helps you avoid making mistakes and manage your funds with ease.": "Membuat kontak membantu anda menghindari kesalahan - kesalahan dan mengelola dana anda dengan mudah."
+  "Creating contacts helps you avoid making mistakes and manage your funds with ease.": "Membuat kontak membantu anda menghindari kesalahan - kesalahan dan mengelola dana anda dengan mudah.",
+  "nfts_in_addresses_one": "{{ count }} NFT",
+  "nfts_in_addresses_other": "{{ count }} NFTs"
 }
