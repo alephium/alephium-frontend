@@ -36,10 +36,10 @@ const AddressQuickActionsModal = withModal<AddressQuickActionsModalProps>(({ id,
     <BottomModal modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
         <ActionButtons>
-          <SetDefaultAddressButton addressHash={addressHash} onPress={handleClose} />
+          <SetDefaultAddressButton addressHash={addressHash} />
           <CopyAddressHashButton addressHash={addressHash} />
-          <AddressSettingsButton addressHash={addressHash} onPress={handleClose} />
-          <DeleteAddressButton addressHash={addressHash} onPress={handleClose} />
+          <AddressSettingsButton addressHash={addressHash} onActionCompleted={handleClose} />
+          <DeleteAddressButton addressHash={addressHash} onActionCompleted={handleClose} />
         </ActionButtons>
       </ScreenSection>
     </BottomModal>
@@ -49,13 +49,13 @@ const AddressQuickActionsModal = withModal<AddressQuickActionsModalProps>(({ id,
 export default AddressQuickActionsModal
 
 interface ActionButtonProps extends AddressQuickActionsModalProps {
-  onPress: () => void
+  onActionCompleted: () => void
 }
 
-const DeleteAddressButton = ({ addressHash, onPress }: ActionButtonProps) => {
+const DeleteAddressButton = ({ addressHash, onActionCompleted }: ActionButtonProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const { t } = useTranslation()
-  const forgetAddress = useForgetAddress({ addressHash, origin: 'quickActions', onConfirm: onPress })
+  const forgetAddress = useForgetAddress({ addressHash, origin: 'quickActions', onConfirm: onActionCompleted })
   const canDeleteAddress = useCanDeleteAddress(addressHash)
 
   if (!address) return
@@ -68,28 +68,27 @@ const DeleteAddressButton = ({ addressHash, onPress }: ActionButtonProps) => {
   return <QuickActionButton title={t('Forget')} onPress={handlePress} iconProps={{ name: 'trash-2' }} variant="alert" />
 }
 
-const AddressSettingsButton = ({ addressHash }: ActionButtonProps) => {
+const AddressSettingsButton = ({ addressHash, onActionCompleted }: ActionButtonProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
 
   const handlePress = () => {
     dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash } }))
+    onActionCompleted()
   }
 
   return <QuickActionButton title={t('Address settings')} onPress={handlePress} iconProps={{ name: 'settings' }} />
 }
 
-const CopyAddressHashButton = ({ addressHash }: Omit<ActionButtonProps, 'onPress'>) => {
+const CopyAddressHashButton = ({ addressHash }: Omit<ActionButtonProps, 'onActionCompleted'>) => {
   const { t } = useTranslation()
 
-  const handlePress = () => {
-    copyAddressToClipboard(addressHash)
-  }
+  const handlePress = () => copyAddressToClipboard(addressHash)
 
   return <QuickActionButton title={t('Copy address')} onPress={handlePress} iconProps={{ name: 'copy' }} />
 }
 
-const SetDefaultAddressButton = ({ addressHash }: ActionButtonProps) => {
+const SetDefaultAddressButton = ({ addressHash }: Omit<ActionButtonProps, 'onActionCompleted'>) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
