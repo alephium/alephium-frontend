@@ -12,7 +12,7 @@ import DAppsList from '~/features/ecosystem/DAppsList'
 import DAppsTags from '~/features/ecosystem/DAppsTags'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-const showComingSoon = false
+const showComingSoon = true
 
 const EcosystemScreen = () => {
   const { t } = useTranslation()
