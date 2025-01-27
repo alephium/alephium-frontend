@@ -49,7 +49,7 @@ const TokenListItem = ({ asset, addressHash, parentModalId, ...props }: TokenLis
           </UnverifiedBadge>
         )
       }
-      icon={<AssetLogo assetId={asset.id} size={38} />}
+      icon={<AssetLogo assetId={asset.id} size={32} />}
       rightSideContent={
         <Amounts>
           <AmountStyled

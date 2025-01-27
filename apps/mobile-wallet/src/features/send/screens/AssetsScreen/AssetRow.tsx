@@ -107,7 +107,7 @@ const AssetRow = ({ asset, ...props }: AssetRowProps) => {
           />
         ) : undefined
       }
-      icon={assetIsNft ? <NFTThumbnail nftId={asset.id} size={38} /> : <AssetLogo assetId={asset.id} size={38} />}
+      icon={assetIsNft ? <NFTThumbnail nftId={asset.id} size={32} /> : <AssetLogo assetId={asset.id} size={32} />}
     />
   )
 }

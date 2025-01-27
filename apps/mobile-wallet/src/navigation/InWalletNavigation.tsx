@@ -40,7 +40,7 @@ const InWalletTabsNavigation = () => {
           options={{
             title: t('Overview'),
             tabBarIcon: ({ color, size, focused }) => (
-              <Ionicons name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} size={size} />
+              <Ionicons name={focused ? 'home' : 'home-outline'} color={color} size={size} />
             )
           }}
         />
@@ -60,7 +60,7 @@ const InWalletTabsNavigation = () => {
           options={{
             title: t('Activity'),
             tabBarIcon: ({ color, size, focused }) => (
-              <Ionicons name={focused ? 'list' : 'list-outline'} color={color} size={size} />
+              <Ionicons name={focused ? 'time' : 'time-outline'} color={color} size={size} />
             )
           }}
         />

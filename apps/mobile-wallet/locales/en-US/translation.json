@@ -447,5 +447,7 @@
   "Select address": "Select address",
   "Creating contacts helps you avoid making mistakes and manage your funds with ease.": "Creating contacts helps you avoid making mistakes and manage your funds with ease.",
   "nfts_in_addresses_one": "{{ count }} NFT",
-  "nfts_in_addresses_other": "{{ count }} NFTs"
+  "nfts_in_addresses_other": "{{ count }} NFTs",
+  "Did you know?": "Did you know?",
+  "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "Splitting your funds into multiple addresses can help you stay organized and increase privacy."
 }

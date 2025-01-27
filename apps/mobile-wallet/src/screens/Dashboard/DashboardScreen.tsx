@@ -85,7 +85,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       headerOptions={{
         headerLeft: () => <CameraScanButton />,
         headerRight: () => <WalletSettingsButton />,
-        headerTitle: () => <AlephiumLogo color={theme.font.primary} style={{ width: 50, height: 24 }} />,
+        headerTitle: () => <AlephiumLogo color={theme.font.primary} style={{ width: 40, height: 20 }} />,
         headerTitleScrolled: () => <Amount value={balanceInFiat} isFiat suffix={CURRENCIES[currency].symbol} semiBold />
       }}
       {...props}
@@ -109,7 +109,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
 
       {totalBalance === BigInt(0) && addressesBalancesStatus === 'initialized' && (
         <EmptyPlaceholder style={{ paddingHorizontal: DEFAULT_MARGIN, borderWidth: 0 }}>
-          <AppText size={28}>🌈</AppText>
+          <AppText size={32}>🌈</AppText>
           <AppText color="secondary">{t('There is so much left to discover!')}</AppText>
           <AppText color="tertiary">{t('Start by adding funds to your wallet.')}</AppText>
         </EmptyPlaceholder>
