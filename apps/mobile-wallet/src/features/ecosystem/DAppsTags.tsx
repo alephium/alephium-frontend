@@ -17,13 +17,18 @@ const DAppsTags = ({ selectedTag, onTagPress }: DAppsCategoriesProps) => {
   if (!dAppTags) return null
 
   return (
-    <DAppsCategoriesStyled horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10 }}>
+    <DAppsCategoriesStyled
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ gap: 10, paddingRight: DEFAULT_MARGIN * 2 }}
+    >
       <Button
         compact
         onPress={() => onTagPress(selectedTag === 'fav' ? null : 'fav')}
-        variant={selectedTag === 'fav' ? 'highlight' : undefined}
+        variant={selectedTag === 'fav' ? 'contrast' : undefined}
         color={selectedTag === 'fav' ? undefined : theme.font.highlight}
         iconProps={{ name: 'star' }}
+        style={{ backgroundColor: selectedTag === 'fav' ? theme.font.highlight : theme.bg.primary }}
       />
 
       {dAppTags.map((tag) => (
@@ -32,7 +37,7 @@ const DAppsTags = ({ selectedTag, onTagPress }: DAppsCategoriesProps) => {
           compact
           key={tag}
           onPress={() => onTagPress(selectedTag === tag ? null : tag)}
-          variant={selectedTag === tag ? 'highlight' : undefined}
+          variant={selectedTag === tag ? 'contrast' : undefined}
         />
       ))}
     </DAppsCategoriesStyled>

@@ -9,7 +9,7 @@ import { dAppsQuery } from '~/api/queries/dAppQueries'
 import AppText from '~/components/AppText'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { BORDER_RADIUS } from '~/style/globalStyle'
+import { BORDER_RADIUS, BORDER_RADIUS_BIG } from '~/style/globalStyle'
 
 interface DAppCardProps {
   dAppName: string
@@ -46,8 +46,10 @@ const DappCardStyled = styled(Pressable)`
   overflow: hidden;
   padding: 15px;
   gap: 15px;
-  border-radius: ${BORDER_RADIUS}px;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  border-radius: ${BORDER_RADIUS_BIG}px;
+  background-color: ${({ theme }) => theme.bg.tertiary};
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.border.secondary};
 `
 
 const DappIcon = styled(Image)`
