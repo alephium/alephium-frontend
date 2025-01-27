@@ -447,5 +447,7 @@
   "Select address": "Chọn địa chỉ",
   "Creating contacts helps you avoid making mistakes and manage your funds with ease.": "Tạo các danh bạ giúp bạn tránh sai sót và quản lý tài sản một cách dễ dàng.",
   "nfts_in_addresses_one": "{{ count }} NFT",
-  "nfts_in_addresses_other": "{{ count }} NFT"
+  "nfts_in_addresses_other": "{{ count }} NFT",
+  "Did you know?": "Bạn có biết?",
+  "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "Việc chia nhỏ số tiền của bạn vào nhiều địa chỉ khác nhau có thể giúp bạn quản lý tốt hơn và tăng cường sự riêng tư."
 }
