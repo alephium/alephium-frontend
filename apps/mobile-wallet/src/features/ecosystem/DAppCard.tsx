@@ -11,7 +11,7 @@ import DAppIcon from '~/features/ecosystem/DAppIcon'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { BORDER_RADIUS, BORDER_RADIUS_BIG } from '~/style/globalStyle'
+import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 
 interface DAppCardProps {
   dAppName: string
