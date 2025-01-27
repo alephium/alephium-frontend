@@ -7,7 +7,6 @@ import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
-import { ScreenSection } from '~/components/layout/Screen'
 import Row from '~/components/Row'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
@@ -70,19 +69,18 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
   }
 
   return (
-    <BottomModal modalId={id} title={t('Address settings')} noPadding>
-      <ScreenSection>
-        <Row title={t('Address')}>
-          <HashEllipsed
-            truncate
-            ellipsizeMode="middle"
-            color="secondary"
-            onLongPress={() => copyAddressToClipboard(addressHash)}
-          >
-            {addressHash}
-          </HashEllipsed>
-        </Row>
-      </ScreenSection>
+    <BottomModal modalId={id} title={t('Address settings')}>
+      <Row title={t('Address')}>
+        <HashEllipsed
+          truncate
+          ellipsizeMode="middle"
+          color="secondary"
+          onLongPress={() => copyAddressToClipboard(addressHash)}
+        >
+          {addressHash}
+        </HashEllipsed>
+      </Row>
+
       <AddressForm
         initialValues={address?.settings}
         onValuesChange={setSettings}
@@ -91,17 +89,14 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
         screenTitle={t('Address settings')}
       />
       {canDeleteAddress && (
-        <ScreenSection>
-          <Row title={t('Forget address')} subtitle={t('You can always re-add it to your wallet.')} isLast>
-            <Button title={t('Forget')} iconProps={{ name: 'trash-2' }} short variant="alert" onPress={forgetAddress} />
-          </Row>
-        </ScreenSection>
+        <Row title={t('Forget address')} subtitle={t('You can always re-add it to your wallet.')} isLast>
+          <Button title={t('Forget')} iconProps={{ name: 'trash-2' }} short variant="alert" onPress={forgetAddress} />
+        </Row>
       )}
-      <ScreenSection>
-        <BottomButtons fullWidth backgroundColor="back1" bottomInset>
-          <Button title={t('Save')} variant="highlight" onPress={handleSavePress} />
-        </BottomButtons>
-      </ScreenSection>
+
+      <BottomButtons fullWidth backgroundColor="back1">
+        <Button title={t('Save')} variant="highlight" onPress={handleSavePress} />
+      </BottomButtons>
     </BottomModal>
   )
 })
