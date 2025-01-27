@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { TextInputProps } from 'react-native'
 import styled from 'styled-components/native'
 
-import AnimatedBackground from '~/components/AnimatedBackground'
 import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import BottomBarScrollScreen from '~/components/layout/BottomBarScrollScreen'
@@ -13,7 +12,7 @@ import DAppsList from '~/features/ecosystem/DAppsList'
 import DAppsTags from '~/features/ecosystem/DAppsTags'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-const showComingSoon = true
+const showComingSoon = false
 
 const EcosystemScreen = () => {
   const { t } = useTranslation()
@@ -39,7 +38,6 @@ const EcosystemScreen = () => {
         </ScreenSection>
       ) : (
         <>
-          <AnimatedBackground isFullScreen isAnimated />
           <SearchBar value={searchText} onChangeText={setSearchText} />
           <DAppsTags selectedTag={selectedTag} onTagPress={setSelectedTag} />
           <DAppsList selectedTag={selectedTag} searchText={searchText} />
