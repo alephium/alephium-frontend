@@ -17,6 +17,8 @@ import TokenQuickActionsModal from '~/features/assetsDisplay/tokenDisplay/TokenQ
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
+import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
+import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import { selectAllModals } from '~/features/modals/modalSelectors'
@@ -124,6 +126,10 @@ const AppModals = () => {
             return <AddressQRCodeScanActionsModal key={id} id={id} {...params.props} />
           case 'AddressPickerQuickActionsModal':
             return <AddressPickerQuickActionsModal key={id} id={id} {...params.props} />
+          case 'DAppQuickActionsModal':
+            return <DAppQuickActionsModal key={id} id={id} {...params.props} />
+          case 'DAppDetailsModal':
+            return <DAppDetailsModal key={id} id={id} {...params.props} />
           default:
             return null
         }

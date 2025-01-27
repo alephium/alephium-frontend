@@ -1,13 +1,15 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useQuery } from '@tanstack/react-query'
-import { Image } from 'expo-image'
 import { Pressable } from 'react-native'
 import styled from 'styled-components/native'
 
-import { dAppsQuery } from '~/api/queries/dAppQueries'
+import { sendAnalytics } from '~/analytics'
+import { dAppQuery } from '~/api/queries/dAppQueries'
 import AppText from '~/components/AppText'
-import { DApp } from '~/features/ecosystem/ecosystemTypes'
+import DAppIcon from '~/features/ecosystem/DAppIcon'
+import { openModal } from '~/features/modals/modalActions'
+import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { BORDER_RADIUS, BORDER_RADIUS_BIG } from '~/style/globalStyle'
 
@@ -17,18 +19,25 @@ interface DAppCardProps {
 
 const DAppCard = ({ dAppName }: DAppCardProps) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+  const dispatch = useAppDispatch()
 
-  const { data: dApp } = useQuery(dAppsQuery({ select: selectDAppByName(dAppName) }))
+  const { data: dApp } = useQuery(dAppQuery(dAppName))
 
   if (!dApp) return null
 
   const handleCardPress = () => {
     navigation.navigate('DAppWebViewScreen', { dAppUrl: dApp.links.website, dAppName: dApp.name })
+    sendAnalytics({ event: 'Opened dApp', props: { origin: 'dapp_card', dAppName } })
+  }
+
+  const handleLongPress = () => {
+    dispatch(openModal({ name: 'DAppQuickActionsModal', props: { dAppName } }))
+    // TODO: send analytics
   }
 
   return (
-    <DappCardStyled onPress={handleCardPress}>
-      <DappIcon source={{ uri: dApp.media.logoUrl }} contentFit="cover" />
+    <DappCardStyled onPress={handleCardPress} onLongPress={handleLongPress}>
+      <DAppIcon dAppName={dAppName} />
       <TextContent>
         <AppText bold>{dApp.name}</AppText>
         <AppText>{dApp.short_description}</AppText>
@@ -39,8 +48,6 @@ const DAppCard = ({ dAppName }: DAppCardProps) => {
 
 export default DAppCard
 
-const selectDAppByName = (dAppName: string) => (dApps: DApp[]) => dApps.find((dApp) => dApp.name === dAppName)
-
 const DappCardStyled = styled(Pressable)`
   flex-direction: row;
   overflow: hidden;
@@ -50,12 +57,6 @@ const DappCardStyled = styled(Pressable)`
   background-color: ${({ theme }) => theme.bg.tertiary};
   border-width: 1px;
   border-color: ${({ theme }) => theme.border.secondary};
-`
-
-const DappIcon = styled(Image)`
-  height: 70px;
-  width: 70px;
-  border-radius: ${BORDER_RADIUS}px;
 `
 
 const TextContent = styled.View`

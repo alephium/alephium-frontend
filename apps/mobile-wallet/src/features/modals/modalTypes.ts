@@ -17,6 +17,8 @@ import TokenQuickActionsModal from '~/features/assetsDisplay/tokenDisplay/TokenQ
 import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
 import BackupReminderModal from '~/features/backup/BackupReminderModal'
 import BuyModal from '~/features/buy/BuyModal'
+import DAppDetailsModal from '~/features/ecosystem/DAppDetailsModal'
+import DAppQuickActionsModal from '~/features/ecosystem/DAppQuickActionsModal'
 import FundPasswordModal from '~/features/fund-password/FundPasswordModal'
 import LanguageSelectModal from '~/features/localization/LanguageSelectModal'
 import AddressQRCodeScanActionsModal from '~/features/qrCodeScan/AddressQRCodeScanActionsModal'
@@ -72,7 +74,9 @@ export const ModalComponents = {
   SelectAssetToHideModal,
   TokenQuickActionsModal,
   AddressQRCodeScanActionsModal,
-  AddressPickerQuickActionsModal
+  AddressPickerQuickActionsModal,
+  DAppQuickActionsModal,
+  DAppDetailsModal
 }
 
 export type ModalName = keyof typeof ModalComponents

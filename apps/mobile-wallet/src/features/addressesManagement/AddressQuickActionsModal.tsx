@@ -2,12 +2,12 @@ import { AddressHash } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
-import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
 import AppText from '~/components/AppText'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
+import QuickActionButtons from '~/components/buttons/QuickActionButtons'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
@@ -19,7 +19,6 @@ import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { addressSettingsSaved } from '~/store/addressesSlice'
-import { VERTICAL_GAP } from '~/style/globalStyle'
 import { copyAddressToClipboard } from '~/utils/addresses'
 import { showToast, ToastDuration } from '~/utils/layout'
 
@@ -35,12 +34,12 @@ const AddressQuickActionsModal = withModal<AddressQuickActionsModalProps>(({ id,
   return (
     <BottomModal modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
-        <ActionButtons>
+        <QuickActionButtons>
           <SetDefaultAddressButton addressHash={addressHash} />
           <CopyAddressHashButton addressHash={addressHash} />
           <AddressSettingsButton addressHash={addressHash} onActionCompleted={handleClose} />
           <DeleteAddressButton addressHash={addressHash} onActionCompleted={handleClose} />
-        </ActionButtons>
+        </QuickActionButtons>
       </ScreenSection>
     </BottomModal>
   )
@@ -140,9 +139,3 @@ const SetDefaultAddressButton = ({ addressHash }: Omit<ActionButtonProps, 'onAct
     />
   )
 }
-
-// TODO: DRY
-const ActionButtons = styled.View`
-  margin: ${VERTICAL_GAP / 2}px 0;
-  gap: 10px;
-`

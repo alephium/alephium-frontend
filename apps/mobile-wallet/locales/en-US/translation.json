@@ -425,7 +425,9 @@
   "Loading dApps...": "Loading dApps...",
   "Could not load dApps": "Could not load dApps",
   "Coming soon!": "Coming soon!",
+  "Add to favorites": "Add to favorites",
   "Added to favorites": "Added to favorites",
+  "Remove from favorites": "Remove from favorites",
   "Removed from favorites": "Removed from favorites",
   "Favorites": "Favorites",
   "No dApps added to your favorites yet": "No dApps added to your favorites yet",
@@ -450,5 +452,6 @@
   "nfts_in_addresses_other": "{{ count }} NFTs",
   "Did you know?": "Did you know?",
   "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "Splitting your funds into multiple addresses can help you stay organized and increase privacy.",
-  "No dApps match your search: \"{{ searchText }}\"": "No dApps match your search: \"{{ searchText }}\""
+  "No dApps match your search: \"{{ searchText }}\"": "No dApps match your search: \"{{ searchText }}\"",
+  "Visit dApp": "Visit dApp"
 }
