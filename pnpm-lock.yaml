@@ -603,6 +603,9 @@ importers:
       '@expo/vector-icons':
         specifier: ^14.0.4
         version: 14.0.4
+      '@fugashu/alphland-api-client':
+        specifier: ^1.0.4
+        version: 1.0.4
       '@json-rpc-tools/utils':
         specifier: ^1.7.6
         version: 1.7.6
@@ -2988,6 +2991,9 @@ packages:
 
   '@floating-ui/utils@0.2.1':
     resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
+
+  '@fugashu/alphland-api-client@1.0.4':
+    resolution: {integrity: sha512-mHar67evpvMhkaqLacgtMA8Er8KO241ZE6x8Mj7kYi5NotQd9MCevk1/A2/MBniM2sM7jmkScVgqdGoFw2C3og==}
 
   '@graphql-typed-document-node/core@3.2.0':
     resolution: {integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==}
@@ -14166,6 +14172,12 @@ snapshots:
       '@floating-ui/utils': 0.2.1
 
   '@floating-ui/utils@0.2.1': {}
+
+  '@fugashu/alphland-api-client@1.0.4':
+    dependencies:
+      axios: 1.7.4
+    transitivePeerDependencies:
+      - debug
 
   '@graphql-typed-document-node/core@3.2.0(graphql@15.8.0)':
     dependencies:

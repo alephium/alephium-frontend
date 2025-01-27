@@ -14,6 +14,10 @@ export const dAppsQuery = <T>({ select }: DAppsQueryOptions<T>) =>
     select
   })
 
+export const dAppQuery = (dAppName: string) => ({
+  ...dAppsQuery({ select: (dApps) => dApps.find((dApp) => dApp.name === dAppName) })
+})
+
 // If these tags are found in the API results, move them to the front
 const defaultSortedTags = ['DeFi', 'NFTs', 'Gaming', 'Social', 'Onramps', 'Wallets']
 

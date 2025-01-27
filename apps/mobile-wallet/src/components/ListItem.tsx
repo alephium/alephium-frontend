@@ -1,11 +1,12 @@
 import { colord } from 'colord'
 import { LinearGradient } from 'expo-linear-gradient'
 import { ReactNode } from 'react'
-import { Pressable, PressableProps, StyleProp, ViewStyle } from 'react-native'
-import Animated, { FadeIn, FadeOut, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import { PressableProps, StyleProp, ViewStyle } from 'react-native'
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated'
 import styled, { css, useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
+import AnimatedPressable from '~/components/layout/AnimatedPressable'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 export interface ListItemProps extends PressableProps {
@@ -42,23 +43,9 @@ const ListItem = ({
 }: ListItemProps) => {
   const theme = useTheme()
 
-  const fade = useSharedValue(1)
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: fade.value
-  }))
-
   return (
-    <Pressable
-      onPressIn={() => {
-        fade.value = withTiming(0.5, { duration: 150 })
-      }}
-      onPressOut={() => {
-        fade.value = withTiming(1, { duration: 150 })
-      }}
-      {...props}
-    >
-      <ListItemStyled style={[style, animatedStyle]}>
+    <AnimatedPressable {...props}>
+      <ListItemStyled style={style}>
         {isSelected && (
           <SelectedLinearGradient
             pointerEvents="none"
@@ -91,7 +78,7 @@ const ListItem = ({
         </Row>
         {children}
       </ListItemStyled>
-    </Pressable>
+    </AnimatedPressable>
   )
 }
 
