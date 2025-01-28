@@ -1,4 +1,5 @@
 import { convertToPositive, formatAmountForDisplay } from '@alephium/shared'
+import { useState } from 'react'
 import { StyleProp, TextStyle } from 'react-native'
 
 import { useAppSelector } from '~/hooks/redux'
@@ -43,6 +44,12 @@ const Amount = ({
   const region = useAppSelector((state) => state.settings.region)
   const fiatCurrency = useAppSelector((state) => state.settings.currency)
 
+  const [tappedToDisableDiscreetMode, setTappedToDisableDiscreetMode] = useState(false)
+
+  const hideAmount = discreetMode && !showOnDiscreetMode && !tappedToDisableDiscreetMode
+
+  const handleTappedToDisableDiscreetMode = () => setTappedToDisableDiscreetMode(!tappedToDisableDiscreetMode)
+
   let quantitySymbol = ''
   let amount = ''
   let isNegative = false
@@ -56,8 +63,8 @@ const Amount = ({
       amount = new Intl.NumberFormat(region, { style: 'currency', currency: fiatCurrency }).format(value)
 
       return (
-        <AppText {...props} {...{ color, style }}>
-          {discreetMode && !showOnDiscreetMode ? '•••' : amount}
+        <AppText {...props} {...{ color, style }} onPress={handleTappedToDisableDiscreetMode}>
+          {hideAmount ? '•••' : amount}
         </AppText>
       )
     } else if (isUnknownToken) {
@@ -85,8 +92,8 @@ const Amount = ({
   }
 
   return (
-    <AppText {...props} {...{ color, style }}>
-      {discreetMode && !showOnDiscreetMode ? (
+    <AppText {...props} {...{ color, style }} onPress={handleTappedToDisableDiscreetMode}>
+      {hideAmount ? (
         '•••'
       ) : integralPart ? (
         <>
