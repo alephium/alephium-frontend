@@ -57,7 +57,7 @@ const AddToFavoritesButton = ({ dAppName }: QuickActionButtonProps) => {
     <QuickActionButton
       title={isFavorite ? t('Remove from favorites') : t('Add to favorites')}
       onPress={toggleFavorite}
-      iconProps={{ name: 'star', color: isFavorite ? theme.font.highlight : undefined }}
+      iconProps={{ name: 'star', color: isFavorite ? theme.font.highlight : theme.font.primary }}
     />
   )
 }
