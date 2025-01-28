@@ -18,6 +18,7 @@ export const defaultGeneralSettings: GeneralSettings = {
   walletConnect: false,
   usesBiometrics: false,
   language: undefined,
+  region: undefined,
   autoLockSeconds: 0
 }
 

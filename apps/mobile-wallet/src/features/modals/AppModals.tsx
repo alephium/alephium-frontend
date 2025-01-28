@@ -31,6 +31,7 @@ import TokenAmountModal from '~/features/send/modals/TokenAmountModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
+import RegionSelectModal from '~/features/settings/regionSettings/RegionSelectModal'
 import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
@@ -130,6 +131,8 @@ const AppModals = () => {
             return <DAppQuickActionsModal key={id} id={id} {...params.props} />
           case 'DAppDetailsModal':
             return <DAppDetailsModal key={id} id={id} {...params.props} />
+          case 'RegionSelectModal':
+            return <RegionSelectModal key={id} id={id} />
           default:
             return null
         }

@@ -20,6 +20,7 @@ import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 import ToastAnchor from '~/components/toasts/ToastAnchor'
 import LoadingManager from '~/features/loader/LoadingManager'
 import { useLocalization } from '~/features/localization/useLocalization'
+import { useSystemRegion } from '~/features/settings/regionSettings/useSystemRegion'
 import useLoadStoredSettings from '~/features/settings/useLoadStoredSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
@@ -129,6 +130,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   useLoadStoredSettings()
   useInitializeClient()
   useLocalization()
+  useSystemRegion()
 
   useEffect(() => {
     if (walletMetadata) dispatch(appLaunchedWithLastUsedWallet(walletMetadata))

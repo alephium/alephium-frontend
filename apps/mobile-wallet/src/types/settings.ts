@@ -14,6 +14,7 @@ export interface GeneralSettings {
   usesBiometrics: boolean
   autoLockSeconds: number
   language?: Language
+  region: string | undefined
 }
 
 export interface Settings {

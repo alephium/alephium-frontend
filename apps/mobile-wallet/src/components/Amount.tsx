@@ -1,4 +1,4 @@
-import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/shared'
+import { convertToPositive, formatAmountForDisplay } from '@alephium/shared'
 import { StyleProp, TextStyle } from 'react-native'
 
 import { useAppSelector } from '~/hooks/redux'
@@ -40,16 +40,26 @@ const Amount = ({
   ...props
 }: AmountProps) => {
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
+  const region = useAppSelector((state) => state.settings.region)
+  const fiatCurrency = useAppSelector((state) => state.settings.currency)
 
   let quantitySymbol = ''
   let amount = ''
   let isNegative = false
+  const color = props.color ?? (highlight && value !== undefined ? (value < 0 ? 'send' : 'receive') : 'primary')
+  const fadedColor = fadeDecimals ? 'secondary' : color
 
   if (value !== undefined) {
     isNegative = value < 0
 
     if (isFiat && typeof value === 'number') {
-      amount = formatFiatAmountForDisplay(isNegative ? value * -1 : value)
+      amount = new Intl.NumberFormat(region, { style: 'currency', currency: fiatCurrency }).format(value)
+
+      return (
+        <AppText {...props} {...{ color, style }}>
+          {discreetMode && !showOnDiscreetMode ? '•••' : amount}
+        </AppText>
+      )
     } else if (isUnknownToken) {
       amount = convertToPositive(value as bigint).toString()
     } else {
@@ -73,9 +83,6 @@ const Amount = ({
     integralPart = '< 0'
     fractionalPart = '0001'
   }
-
-  const color = props.color ?? (highlight && value !== undefined ? (value < 0 ? 'send' : 'receive') : 'primary')
-  const fadedColor = fadeDecimals ? 'secondary' : color
 
   return (
     <AppText {...props} {...{ color, style }}>

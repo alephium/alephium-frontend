@@ -6,6 +6,11 @@ import {
   systemLanguageMatchFailed,
   systemLanguageMatchSucceeded
 } from '~/features/localization/localizationActions'
+import {
+  numberFormatRegionChanged,
+  systemRegionMatchFailed,
+  systemRegionMatchSucceeded
+} from '~/features/settings/regionSettings/regionSettingsActions'
 import { allBiometricsEnabled, analyticsIdGenerated } from '~/features/settings/settingsActions'
 import { defaultGeneralSettings, persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { RootState } from '~/store/store'
@@ -72,6 +77,12 @@ const settingsSlice = createSlice({
       .addCase(languageChanged, (state, action) => {
         state.language = action.payload
       })
+      .addCase(systemRegionMatchFailed, (state) => {
+        state.region = 'en-US'
+      })
+      .addMatcher(isAnyOf(numberFormatRegionChanged, systemRegionMatchSucceeded), (state, action) => {
+        state.region = action.payload
+      })
   }
 })
 
@@ -102,6 +113,8 @@ settingsListenerMiddleware.startListening({
     autoLockSecondsChanged,
     allBiometricsEnabled,
     languageChanged,
+    systemRegionMatchSucceeded,
+    systemRegionMatchFailed,
     appReset
   ),
   effect: async (_, { getState }) => {
