@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Box from '@/components/Box'
-import Select from '@/components/Inputs/Select.tsx'
+import Select, { SelectOption } from '@/components/Inputs/Select.tsx'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
@@ -20,11 +20,6 @@ import AdvancedOperationsButton from '@/pages/UnlockedWallet/AddressesPage/Advan
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
 import { setAddressOrder } from '@/storage/addresses/addressesSlice.ts'
 import { AddressOrder } from '@/types/addresses.ts'
-
-interface OrderOption {
-  value: AddressOrder
-  label: string
-}
 
 const STORAGE_KEY = 'address-order-preferences'
 
@@ -92,7 +87,7 @@ const AddressesTabContent = memo(() => {
     }
   }, [dispatch, walletId])
 
-  const orderOptions: OrderOption[] = [
+  const orderOptions: SelectOption<AddressOrder>[] = [
     { value: AddressOrder.LastUse, label: t('Last used') },
     { value: AddressOrder.AlphValue, label: t('ALPH value') },
     { value: AddressOrder.Alphabetical, label: t('Alphabetical') }
