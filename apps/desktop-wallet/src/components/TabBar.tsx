@@ -16,6 +16,7 @@ export interface TabBarProps<T extends string> {
   activeTab: TabItem<T>
   linkText?: string
   onLinkClick?: () => void
+  justifyTabs?: 'left' | 'center'
   TabComponent?: typeof Tab
   className?: string
 }
@@ -27,12 +28,18 @@ const TabBar = <T extends string>({
   linkText,
   onLinkClick,
   TabComponent = Tab,
+  justifyTabs = 'center',
   className
 }: TabBarProps<T>) => {
   const { t } = useTranslation()
 
   return (
-    <TabBarStyled className={className} role="tablist" aria-label={t('Tab navigation')}>
+    <TabBarStyled
+      className={className}
+      role="tablist"
+      aria-label={t('Tab navigation')}
+      style={{ justifyContent: justifyTabs }}
+    >
       <TabsContainer>
         {items.map((item) => {
           const isActive = activeTab.value === item.value
@@ -74,7 +81,6 @@ const TabBarStyled = styled.div`
   display: flex;
   height: 46px;
   align-items: center;
-  justify-content: center;
 `
 
 const TabsContainer = styled.div`
