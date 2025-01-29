@@ -1,6 +1,7 @@
 import { AddressHash, AddressSettings, Contact } from '@alephium/shared'
 import { createAction } from '@reduxjs/toolkit'
 
+import { AddressOrder } from '@/features/settings/settingsConstants.ts'
 import { Address, AddressBase, LoadingEnabled } from '@/types/addresses'
 import { Message } from '@/types/snackbar'
 
@@ -21,6 +22,11 @@ export const addressDiscoveryFinished = createAction<LoadingEnabled>('addresses/
 export const addressSettingsSaved = createAction<{ addressHash: AddressHash; settings: AddressSettings }>(
   'addresses/addressSettingsSaved'
 )
+
+export const setAddressOrder = createAction<{
+  walletId: string
+  order: AddressOrder
+}>('addresses/setAddressOrder')
 
 export const contactsLoadedFromPersistentStorage = createAction<Contact[]>(
   'contacts/contactsLoadedFromPersistentStorage'
