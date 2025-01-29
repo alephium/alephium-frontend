@@ -3,9 +3,8 @@ import { motion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 
-import { normalTransition } from '@/animations'
 import Button from '@/components/Button'
 import ScrollbarCustom from '@/components/Scrollbar'
 import { closeModal } from '@/features/modals/modalActions'
@@ -13,30 +12,21 @@ import { useAppDispatch } from '@/hooks/redux'
 import useFocusOnMount from '@/hooks/useFocusOnMount'
 import ModalContainer, { ModalContainerProps } from '@/modals/ModalContainer'
 
-export interface SideModalProps extends ModalContainerProps {
+interface SideModalProps extends ModalContainerProps {
   title: string
   header?: ReactNode
   width?: number
   hideHeader?: boolean
 }
 
-const SideModal = ({
-  id,
-  onClose,
-  children,
-  title,
-  header,
-  width = 500,
-  hideHeader,
-  onAnimationComplete
-}: SideModalProps) => {
+const SideModal = ({ id, onClose, children, title, header, width = 500, hideHeader }: SideModalProps) => {
   const { t } = useTranslation()
-  const elRef = useFocusOnMount<HTMLDivElement>()
   const dispatch = useAppDispatch()
 
-  const _onClose = id ? () => dispatch(closeModal({ id })) : onClose
-
+  const elRef = useFocusOnMount<HTMLDivElement>()
   const [headerBgOpacity, setHeaderBgOpacity] = useState(0)
+
+  const _onClose = id ? () => dispatch(closeModal({ id })) : onClose
 
   const handleScroll = (scrollTop: number) => {
     const maxScroll = 100
@@ -46,17 +36,9 @@ const SideModal = ({
 
   return (
     <ModalContainer id={id} onClose={_onClose}>
-      <Sidebar
-        role="dialog"
-        initial={{ x: 10, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        exit={{ x: 10, opacity: 0 }}
-        {...normalTransition}
-        width={width}
-        onAnimationComplete={onAnimationComplete}
-      >
+      <Sidebar width={width} className="open" role="dialog" aria-label={title} exit={{ x: 10, opacity: 0 }}>
         <ScrollbarCustom onScroll={handleScroll}>
-          <ContentContainer ref={elRef} tabIndex={0} aria-label={title}>
+          <ContentContainer ref={elRef} tabIndex={0}>
             {children}
           </ContentContainer>
         </ScrollbarCustom>
@@ -77,6 +59,17 @@ const SideModal = ({
 
 export default SideModal
 
+const sideModalEnterAnimation = keyframes`
+  0% {
+    transform: translateX(10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+`
+
 const Sidebar = styled(motion.div)<{ width: number }>`
   display: flex;
   flex-direction: column;
@@ -90,6 +83,10 @@ const Sidebar = styled(motion.div)<{ width: number }>`
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
   border: 1px solid ${({ theme }) => theme.border.primary};
   overflow: hidden;
+
+  &.open {
+    animation: ${sideModalEnterAnimation} 0.2s ease;
+  }
 `
 
 const ModalHeader = styled.div`
@@ -103,11 +100,14 @@ const ModalHeader = styled.div`
 
 const ModalHeaderBackground = styled.div`
   position: absolute;
-  inset: 0; // Awesome shortcut! Top, right, bottom, left = 0
+  inset: 0;
   pointer-events: none;
   z-index: 0;
-
-  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 55%, transparent)`};
+  background: ${({ theme }) => `linear-gradient(
+    to bottom,
+    ${colord(theme.bg.background2).toHex()} 55%,
+    transparent
+  )`};
 `
 
 const ModalHeaderContent = styled.div`

@@ -88,7 +88,6 @@ function Select<T extends OptionValue>({
   allowCustomValue
 }: SelectProps<T>) {
   const selectedValueRef = useRef<HTMLDivElement>(null)
-  const theme = useTheme()
 
   const [canBeAnimated, setCanBeAnimated] = useState(false)
   const [value, setValue] = useState(controlledValue)

@@ -65,12 +65,6 @@ const WarningEmphasis = styled.strong`
   color: ${({ theme }) => theme.global.alert};
 `
 
-const CenteredContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`
-
 const ConsentCheckbox = styled.div`
   display: flex;
   align-items: center;
