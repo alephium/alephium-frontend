@@ -16,7 +16,6 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -28,11 +27,9 @@ interface LabeledWorthOverviewProps {
   addressHash?: string
   isLoading?: boolean
   className?: string
-  chartVisible?: boolean
-  children?: ReactNode
 }
 
-const LabeledWorthOverview = ({ className, addressHash, children }: LabeledWorthOverviewProps) => {
+const LabeledWorthOverview = ({ className, addressHash }: LabeledWorthOverviewProps) => {
   const { t } = useTranslation()
 
   const singleAddress = !!addressHash

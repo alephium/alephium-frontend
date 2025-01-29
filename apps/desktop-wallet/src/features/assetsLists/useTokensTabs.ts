@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { TabItem } from '@/components/TabBar'
@@ -14,8 +14,6 @@ interface TokenTabsProps extends TokensTabsBaseProps {
 const useTokensTabs = ({ numberOfNSTs, ftsTabTitle, nftsTabTitle, nstsTabTitle }: TokenTabsProps) => {
   const { t } = useTranslation()
 
-  const [isExpanded, setIsExpanded] = useState(false)
-
   const [tabs, setTabs] = useState<TabItem<TokensTabValue>[]>([
     { value: 'fts', label: ftsTabTitle },
     { value: 'nfts', label: nftsTabTitle }
@@ -27,12 +25,8 @@ const useTokensTabs = ({ numberOfNSTs, ftsTabTitle, nftsTabTitle, nstsTabTitle }
     }
   }, [t, tabs, numberOfNSTs, nstsTabTitle])
 
-  const toggleExpansion = useCallback(() => setIsExpanded(!isExpanded), [isExpanded])
-
   return {
-    tabs,
-    isExpanded,
-    toggleExpansion
+    tabs
   }
 }
 

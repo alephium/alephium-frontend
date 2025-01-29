@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -16,17 +16,14 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
   const addressColor = useAppSelector((s) => selectAddressByHash(s, addressHash)?.color)
 
-  const [showChart, setShowChart] = useState(false)
-
   return (
     <SideModal
       id={id}
       title={t('Address details')}
       width={800}
       header={<AddressDetailsModalHeader addressHash={addressHash} />}
-      onAnimationComplete={() => setShowChart(true)}
     >
-      <LabeledWorthOverview addressHash={addressHash} chartVisible={showChart} />
+      <LabeledWorthOverview addressHash={addressHash} />
       <Content>
         <AnimatedBackground shade={addressColor} anchorPosition="top" verticalOffset={-300} opacity={0.5} />
         <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" />

@@ -193,23 +193,3 @@ const ExpandRowStyled = styled.div`
     `
   }}
 `
-
-export const ExpandableTable = styled(Table)<{ isExpanded: boolean; maxHeightInPx?: number }>`
-  max-height: ${({ maxHeightInPx }) => maxHeightInPx && maxHeightInPx}px;
-  overflow: hidden;
-  position: relative;
-  height: 100%;
-
-  ${({ isExpanded }) =>
-    isExpanded &&
-    css`
-      max-height: none;
-    `}
-
-  &:hover {
-    ${ExpandRowStyled} {
-      opacity: 1;
-      z-index: 3; // Make sure it is displayed above copy btns
-    }
-  }
-`

@@ -3,9 +3,8 @@ import { useTranslation } from 'react-i18next'
 
 import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
 import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
-import FocusableContent from '@/components/FocusableContent'
 import { TabItem } from '@/components/TabBar'
-import Table, { ExpandableTable } from '@/components/Table'
+import Table from '@/components/Table'
 import TableTabBar from '@/components/TableTabBar'
 import { AddressFTsBalancesList, WalletFTsBalancesList } from '@/features/assetsLists/FTsBalancesList'
 import { AddressNFTsGrid, WalletNFTsGrid } from '@/features/assetsLists/NFTsGrid'
@@ -25,11 +24,7 @@ export const AddressDetailsTabs = ({ addressHash }: AddressDetailsTabsProps) => 
     data: { nstIds }
   } = useFetchAddressTokensByType({ addressHash, includeAlph: false })
 
-  const {
-    tabs: tokenTabs,
-    isExpanded,
-    toggleExpansion
-  } = useTokensTabs({
+  const { tabs: tokenTabs } = useTokensTabs({
     numberOfNSTs: nstIds.length,
     ftsTabTitle: t('Address tokens'),
     nftsTabTitle: t('Address NFTs'),
@@ -40,7 +35,7 @@ export const AddressDetailsTabs = ({ addressHash }: AddressDetailsTabsProps) => 
 
   const [currentTab, setCurrentTab] = useState<TabItem<TokensAndActivityTabValue>>(tabs[0])
 
-  const props = { addressHash, isExpanded, onExpand: toggleExpansion }
+  const props = { addressHash }
 
   const renderTab = <T extends string>(tabValue: T) => {
     switch (tabValue) {
@@ -62,13 +57,13 @@ export const AddressDetailsTabs = ({ addressHash }: AddressDetailsTabsProps) => 
   )
 }
 
-export const WalletTokensTabs = ({ maxHeightInPx, className }: WalletTokensTabsProps) => {
+export const WalletTokensTabs = ({ className }: WalletTokensTabsProps) => {
   const { t } = useTranslation()
   const {
     data: { nstIds }
   } = useFetchWalletTokensByType({ includeAlph: false })
 
-  const { tabs, isExpanded, toggleExpansion } = useTokensTabs({
+  const { tabs } = useTokensTabs({
     numberOfNSTs: nstIds.length,
     ftsTabTitle: t('Tokens'),
     nstsTabTitle: t('Unknown tokens'),
@@ -77,29 +72,19 @@ export const WalletTokensTabs = ({ maxHeightInPx, className }: WalletTokensTabsP
 
   const [currentTab, setCurrentTab] = useState<TabItem<TokensTabValue>>(tabs[0])
 
-  const props = { isExpanded: isExpanded || !maxHeightInPx, onExpand: toggleExpansion }
-
   const renderTab = (tabValue: TokensTabValue) => {
     switch (tabValue) {
       case 'fts':
-        return <WalletFTsBalancesList {...props} />
+        return <WalletFTsBalancesList />
       case 'nfts':
-        return <WalletNFTsGrid {...props} />
+        return <WalletNFTsGrid />
       case 'nsts':
-        return <WalletNSTsBalancesList {...props} />
+        return <WalletNSTsBalancesList />
     }
   }
 
   return (
-    <Tabs
-      className={className}
-      tabs={tabs}
-      currentTab={currentTab}
-      setCurrentTab={setCurrentTab}
-      isExpanded={isExpanded}
-      toggleExpansion={toggleExpansion}
-      maxHeightInPx={maxHeightInPx}
-    >
+    <Tabs className={className} tabs={tabs} currentTab={currentTab} setCurrentTab={setCurrentTab}>
       {renderTab(currentTab.value)}
     </Tabs>
   )
@@ -110,33 +95,12 @@ interface TabsProps<T extends string> {
   children: ReactNode
   currentTab: TabItem<T>
   setCurrentTab: (tab: TabItem<T>) => void
-  isExpanded?: boolean
-  toggleExpansion?: () => void
   className?: string
-  maxHeightInPx?: number
 }
 
-const Tabs = <T extends string>({
-  tabs,
-  currentTab,
-  setCurrentTab,
-  isExpanded,
-  toggleExpansion,
-  maxHeightInPx,
-  className,
-  children
-}: TabsProps<T>) =>
-  isExpanded !== undefined && toggleExpansion ? (
-    <FocusableContent className={className} isFocused={isExpanded} onClose={toggleExpansion}>
-      <ExpandableTable isExpanded={isExpanded} maxHeightInPx={maxHeightInPx}>
-        <TableTabBar items={tabs} onTabChange={setCurrentTab} activeTab={currentTab} />
-        {children}
-      </ExpandableTable>
-    </FocusableContent>
-  ) : (
-    <Table className={className}>
-      <TableTabBar items={tabs} onTabChange={setCurrentTab} activeTab={currentTab} />
-
-      {children}
-    </Table>
-  )
+const Tabs = <T extends string>({ tabs, currentTab, setCurrentTab, className, children }: TabsProps<T>) => (
+  <Table className={className}>
+    <TableTabBar items={tabs} onTabChange={setCurrentTab} activeTab={currentTab} />
+    {children}
+  </Table>
+)

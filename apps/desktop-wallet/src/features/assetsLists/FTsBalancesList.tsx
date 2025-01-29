@@ -3,20 +3,21 @@ import { useTranslation } from 'react-i18next'
 import useFetchAddressFts from '@/api/apiDataHooks/address/useFetchAddressFts'
 import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { TableRow } from '@/components/Table'
-import ExpandableTokensBalancesList from '@/features/assetsLists/ExpandableTokensBalancesList'
+import Table, { TableRow } from '@/components/Table'
 import PlaceholderText from '@/features/assetsLists/PlaceholderText'
 import { AddressFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/AddressTokenBalancesRow'
 import { WalletFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
 import TokensBalancesHeader from '@/features/assetsLists/TokensBalancesHeader'
-import { AddressTokensTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
+import { AddressDetailsTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
 
-export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressTokensTabsProps) => {
+export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressDetailsTabsProps) => {
   const { t } = useTranslation()
   const { listedFts, unlistedFts, isLoading } = useFetchAddressFts({ addressHash })
+  const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
 
   return (
-    <ExpandableTokensBalancesList {...props}>
+    <Table {...props}>
+      {!isEmpty && <TokensBalancesHeader />}
       {listedFts.map(({ id }) => (
         <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
       ))}
@@ -27,7 +28,7 @@ export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressTokensT
         <PlaceholderText>{t("This address doesn't have any tokens yet.")}</PlaceholderText>
       )}
       {isLoading && <TokensSkeletonLoader />}
-    </ExpandableTokensBalancesList>
+    </Table>
   )
 }
 
@@ -37,7 +38,7 @@ export const WalletFTsBalancesList = (props: TokensTabsBaseProps) => {
   const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
 
   return (
-    <ExpandableTokensBalancesList {...props} nbOfItems={listedFts.length + unlistedFts.length}>
+    <Table {...props}>
       {!isEmpty && <TokensBalancesHeader />}
       {listedFts.map(({ id }) => (
         <WalletFTBalancesRow tokenId={id} key={id} />
@@ -51,7 +52,7 @@ export const WalletFTsBalancesList = (props: TokensTabsBaseProps) => {
         </PlaceholderText>
       )}
       {isLoading && <TokensSkeletonLoader />}
-    </ExpandableTokensBalancesList>
+    </Table>
   )
 }
 

@@ -7,7 +7,6 @@ import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddr
 import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import ExpandRowButton from '@/features/assetsLists/ExpandRowButton'
 import PlaceholderText from '@/features/assetsLists/PlaceholderText'
 import { AddressDetailsTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
 import { deviceBreakPoints } from '@/style/globalStyles'
@@ -56,23 +55,17 @@ interface NFTsGridProps extends TokensTabsBaseProps {
   placeholderText: string
 }
 
-const NFTsGrid = ({ className, isExpanded, onExpand, columns, nftIds, isLoading, placeholderText }: NFTsGridProps) => (
-  <>
-    <motion.div {...fadeIn} className={className}>
-      {!isLoading && nftIds.length === 0 && <PlaceholderText>{placeholderText}</PlaceholderText>}
+const NFTsGrid = ({ className, columns, nftIds, isLoading, placeholderText }: NFTsGridProps) => (
+  <motion.div {...fadeIn} className={className}>
+    {!isLoading && nftIds.length === 0 && <PlaceholderText>{placeholderText}</PlaceholderText>}
 
-      {isLoading ||
-        (nftIds.length > 0 && (
-          <Grid tabIndex={isExpanded ? 0 : -1} columns={columns}>
-            {isLoading ? <NFTsLoader /> : nftIds.map((nftId) => <NFTCard key={nftId} nftId={nftId} />)}
-          </Grid>
-        ))}
-    </motion.div>
-
-    {isExpanded !== undefined && onExpand && (
-      <ExpandRowButton isExpanded={isExpanded} onExpand={onExpand} isEnabled={nftIds.length > 4} />
-    )}
-  </>
+    {isLoading ||
+      (nftIds.length > 0 && (
+        <Grid columns={columns}>
+          {isLoading ? <NFTsLoader /> : nftIds.map((nftId) => <NFTCard key={nftId} nftId={nftId} />)}
+        </Grid>
+      ))}
+  </motion.div>
 )
 
 const NFTsLoader = () => (

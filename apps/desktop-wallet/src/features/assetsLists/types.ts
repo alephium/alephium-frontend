@@ -5,8 +5,6 @@ export type TokensAndActivityTabValue = 'fts' | 'nfts' | 'nsts' | 'activity'
 
 export interface TokensTabsBaseProps {
   className?: string
-  isExpanded?: boolean
-  onExpand?: () => void
 }
 
 export interface WalletTokensTabsProps extends TokensTabsBaseProps {
