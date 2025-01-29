@@ -41,10 +41,6 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   const [passphrase, setPassphrase] = useState('')
   const [passphraseConsent, setPassphraseConsent] = useState(false)
 
-  // TODO: Implement dapp request visual cues! (snackbar?)
-  console.log(pendingDappConnectionUrl)
-  console.log(isAwaitingSessionRequestApproval)
-
   if (pendingDappConnectionUrl) {
     showToast({ type: 'info', text: t('Unlock a wallet to connect to the dApp.'), duration: 'long' })
   }
@@ -94,6 +90,15 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
             <AlephiumLogo contrasted />
           </AlephiumLogoContainer>
         </BrandContainer>
+
+        <Title>
+          {pendingDappConnectionUrl
+            ? t('Connect to dApp')
+            : isAwaitingSessionRequestApproval
+              ? t('Received dApp request')
+              : t('Welcome back.')}
+        </Title>
+
         <SectionStyled inList>
           <Select
             label={t('Wallet')}
@@ -176,9 +181,14 @@ const AlephiumLogoContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 33px;
-  width: 96px;
-  height: 96px;
-  border-radius: 96px;
+  padding: 26px;
+  width: 80px;
+  height: 80px;
+  border-radius: 80px;
   background-color: ${({ theme }) => theme.bg.contrast};
+`
+
+const Title = styled.div`
+  font-size: 20px;
+  margin: var(--spacing-2);
 `
