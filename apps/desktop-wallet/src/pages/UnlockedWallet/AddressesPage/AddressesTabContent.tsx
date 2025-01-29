@@ -19,7 +19,7 @@ import AddressListRow from '@/pages/UnlockedWallet/AddressesPage/addressListRow/
 import AdvancedOperationsButton from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsButton'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
 import { setAddressOrder } from '@/storage/addresses/addressesSlice.ts'
-import { AddressOrder } from '@/types/addresses.ts'
+import { AddressOrder } from '@/features/settings/settingsConstants.ts'
 
 const STORAGE_KEY = 'address-order-preferences'
 

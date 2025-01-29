@@ -34,3 +34,9 @@ export const defaultSettings: Settings = {
   },
   network: defaultNetworkSettings
 }
+
+export enum AddressOrder {
+  LastUse = 'lastUse',
+  AlphValue = 'alphValue',
+  Alphabetical = 'alphabetical'
+}

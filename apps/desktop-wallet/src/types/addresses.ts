@@ -2,12 +2,7 @@ import { NonSensitiveAddressData } from '@alephium/keyring'
 import { AddressBalancesSyncResult, AddressHash, AddressSettings, AddressTokensSyncResult } from '@alephium/shared'
 import { explorer as e } from '@alephium/web3'
 import { EntityState } from '@reduxjs/toolkit'
-
-export enum AddressOrder {
-  LastUse = 'lastUse',
-  AlphValue = 'alphValue',
-  Alphabetical = 'alphabetical'
-}
+import { AddressOrder } from '@/features/settings/settingsConstants.ts'
 
 export type DeprecatedAddressSettings = {
   isMain: boolean
