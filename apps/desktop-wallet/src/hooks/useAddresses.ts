@@ -8,6 +8,7 @@ import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
+import { moveToFront } from '@/utils/addresses.ts'
 
 export const useFetchSortedAddressesHashes = (props?: SkipProp) => {
   const isNetworkOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
@@ -72,22 +73,17 @@ export const useFetchAddressesHashesWithBalanceSortedByAlphWorth = () => {
     if (isNetworkOffline || !alphBalances) return allAddressHashes
 
     // First sort by balance
-    const sorted = [...allAddressHashes].sort((a, b) => {
+    let sorted = [...allAddressHashes].sort((a, b) => {
       const balanceA = BigInt(alphBalances[a]?.totalBalance ?? 0)
       const balanceB = BigInt(alphBalances[b]?.totalBalance ?? 0)
       if (balanceA > balanceB) return -1
       if (balanceA < balanceB) return 1
       return 0
     })
-
     // Then move default address to front if it exists
     if (defaultAddress) {
-      const defaultIndex = sorted.indexOf(defaultAddress.hash)
-      if (defaultIndex > 0) {
-        sorted.unshift(sorted.splice(defaultIndex, 1)[0])
-      }
+      sorted = moveToFront(sorted, defaultAddress.hash)
     }
-
     return sorted
   }, [allAddressHashes, alphBalances, defaultAddress, isNetworkOffline])
 
@@ -104,7 +100,7 @@ export const useFetchAddressesHashesSortedByAddressesLabelAlphabetical = () => {
 
   const sortedAddresses = useMemo(() => {
     // First sort by label
-    const sorted = [...allAddressHashes].sort((a, b) => {
+    let sorted = [...allAddressHashes].sort((a, b) => {
       const entityA = addressEntities[a]
       const entityB = addressEntities[b]
 
@@ -120,10 +116,7 @@ export const useFetchAddressesHashesSortedByAddressesLabelAlphabetical = () => {
 
     // Then move default address to front if it exists
     if (defaultAddress) {
-      const defaultIndex = sorted.indexOf(defaultAddress.hash)
-      if (defaultIndex > 0) {
-        sorted.unshift(sorted.splice(defaultIndex, 1)[0])
-      }
+      sorted = moveToFront(sorted, defaultAddress.hash)
     }
 
     return sorted

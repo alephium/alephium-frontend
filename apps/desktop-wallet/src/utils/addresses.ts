@@ -65,3 +65,13 @@ export const getGapFromLastActiveAddress = (
     activeAddresses
   }
 }
+
+export function moveToFront<T>(array: T[], item: T): T[] {
+  const index = array.indexOf(item)
+  if (index > 0) {
+    const newArray = [...array]
+    newArray.unshift(newArray.splice(index, 1)[0])
+    return newArray
+  }
+  return array
+}
