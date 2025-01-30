@@ -1,8 +1,8 @@
 import { Currency, NetworkSettings } from '@alephium/shared'
 
 import { Language } from '@/features/localization/languages'
-import { ThemeSettings } from '@/features/theme/themeTypes'
 import { AddressOrder } from '@/features/settings/settingsConstants.ts'
+import { ThemeSettings } from '@/features/theme/themeTypes'
 
 export interface GeneralSettings {
   theme: ThemeSettings

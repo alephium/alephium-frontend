@@ -4,7 +4,6 @@ import { createSelector } from '@reduxjs/toolkit'
 
 import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
 import { RootState } from '@/storage/store'
-import { AddressOrder } from '@/types/addresses.ts'
 
 export const {
   selectById: selectAddressByHash,
