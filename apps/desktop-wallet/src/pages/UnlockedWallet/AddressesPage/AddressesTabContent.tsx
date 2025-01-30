@@ -140,7 +140,7 @@ const HeaderMiddle = styled.div`
 `
 
 const TableGrid = styled(Box)`
-  contain: paint;
+  contain: paint; // This is amazing. It replaces "overflow: hidden". Using "overflow" on this prevents us from having a sticky table header.
   display: flex;
   flex-direction: column;
 `
