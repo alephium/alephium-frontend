@@ -25,7 +25,6 @@ export type LoadingEnabled = boolean | undefined
 export type AddressDataSyncResult = AddressBalancesSyncResult & AddressTokensSyncResult & AddressTransactionsSyncResult
 
 export interface AddressesState extends EntityState<Address> {
-  orderPreference: Record<string, AddressOrder>
   isRestoringAddressesFromMetadata: boolean
 }
 

@@ -2,6 +2,7 @@ import { Currency, NetworkSettings } from '@alephium/shared'
 
 import { Language } from '@/features/localization/languages'
 import { ThemeSettings } from '@/features/theme/themeTypes'
+import { AddressOrder } from '@/features/settings/settingsConstants.ts'
 
 export interface GeneralSettings {
   theme: ThemeSettings
@@ -13,6 +14,7 @@ export interface GeneralSettings {
   analytics: boolean
   fiatCurrency: Currency
   region: string | undefined
+  addressOrderPreference: AddressOrder
 }
 
 export interface Settings {

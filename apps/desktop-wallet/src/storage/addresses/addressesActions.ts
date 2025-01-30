@@ -23,11 +23,6 @@ export const addressSettingsSaved = createAction<{ addressHash: AddressHash; set
   'addresses/addressSettingsSaved'
 )
 
-export const setAddressOrder = createAction<{
-  walletId: string
-  order: AddressOrder
-}>('addresses/setAddressOrder')
-
 export const contactsLoadedFromPersistentStorage = createAction<Contact[]>(
   'contacts/contactsLoadedFromPersistentStorage'
 )

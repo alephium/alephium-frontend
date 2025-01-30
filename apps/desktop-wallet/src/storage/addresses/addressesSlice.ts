@@ -8,8 +8,7 @@ import {
   addressRestorationStarted,
   addressSettingsSaved,
   defaultAddressChanged,
-  newAddressesSaved,
-  setAddressOrder
+  newAddressesSaved
 } from '@/storage/addresses/addressesActions'
 import { addressesAdapter } from '@/storage/addresses/addressesAdapters'
 import {
@@ -24,7 +23,6 @@ import { UnlockedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
-  orderPreference: {},
   isRestoringAddressesFromMetadata: false
 })
 
@@ -34,10 +32,6 @@ const addressesSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(setAddressOrder, (state, action) => {
-        const { walletId, order } = action.payload
-        state.orderPreference[walletId] = order
-      })
       .addCase(addressSettingsSaved, (state, action) => {
         const { addressHash, settings } = action.payload
 

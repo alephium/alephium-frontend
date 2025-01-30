@@ -1,14 +1,15 @@
 import { intersection } from 'lodash'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Box from '@/components/Box'
-import Select, { SelectOption } from '@/components/Inputs/Select.tsx'
+import Select, { SelectOption } from '@/components/Inputs/Select'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
 import { openModal } from '@/features/modals/modalActions'
+import { AddressOrder } from '@/features/settings/settingsConstants'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
   useFetchAddressesHashesSortedByAddressesLabelAlphabetical,
@@ -18,10 +19,7 @@ import {
 import AddressListRow from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressListRow'
 import AdvancedOperationsButton from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsButton'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
-import { AddressOrder } from '@/features/settings/settingsConstants.ts'
-import { setAddressOrder } from '@/storage/addresses/addressesActions.ts'
-
-const STORAGE_KEY = 'address-order-preferences'
+import { addressOrderPreferenceChanged } from '@/features/settings/settingsActions.ts'
 
 const AddressesTabContent = memo(() => {
   const { t } = useTranslation()
@@ -32,13 +30,9 @@ const AddressesTabContent = memo(() => {
   const filteredByText = useFilterAddressesByText(searchInput.toLowerCase())
   const { data: filteredByToggle } = useFetchAddressesHashesWithBalance()
   const { data: sortedWorthAlph } = useFetchAddressesHashesWithBalanceSortedByAlphWorth()
-  // const { data: sortedTotalWorth } = useFetchAddressesHashesWithBalanceSortedByTotalWorth()
-
   const { data: sortedAlphabetical } = useFetchAddressesHashesSortedByAddressesLabelAlphabetical()
-  const walletId = useAppSelector((state) => state.activeWallet.id)
-  const currentOrder = useAppSelector((state) =>
-    walletId ? state.addresses.orderPreference?.[walletId] ?? AddressOrder.LastUse : AddressOrder.LastUse
-  )
+
+  const currentOrder = useAppSelector((state) => state.settings.addressOrderPreference ?? AddressOrder.LastUse)
 
   const visibleAddresses = useMemo(() => {
     // First get the correctly sorted list
@@ -69,24 +63,6 @@ const AddressesTabContent = memo(() => {
     searchInput
   ])
 
-  // Load order pref from localStorage
-  useEffect(() => {
-    if (walletId) {
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY)
-        if (stored) {
-          const preferences = JSON.parse(stored)
-          const savedOrder = preferences[walletId]
-          if (savedOrder) {
-            dispatch(setAddressOrder({ walletId, order: savedOrder }))
-          }
-        }
-      } catch (error) {
-        console.error('Failed to load address order preferences:', error)
-      }
-    }
-  }, [dispatch, walletId])
-
   const orderOptions: SelectOption<AddressOrder>[] = [
     { value: AddressOrder.LastUse, label: t('Last used') },
     { value: AddressOrder.AlphValue, label: t('ALPH value') },
@@ -94,17 +70,7 @@ const AddressesTabContent = memo(() => {
   ]
 
   const onSelect = (value: AddressOrder) => {
-    if (walletId) {
-      dispatch(setAddressOrder({ walletId, order: value }))
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY)
-        const preferences = stored ? JSON.parse(stored) : {}
-        preferences[walletId] = value
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences))
-      } catch (error) {
-        console.error('Failed to save address order preferences:', error)
-      }
-    }
+    dispatch(addressOrderPreferenceChanged(value))
   }
 
   const openNewAddressModal = () =>
@@ -119,7 +85,7 @@ const AddressesTabContent = memo(() => {
       HeaderMiddleComponent={
         <HeaderMiddle>
           <SelectWrapper>
-            <Select<AddressOrder>
+            <Select
               id="address-order"
               onSelect={onSelect}
               options={orderOptions}
@@ -174,7 +140,7 @@ const HeaderMiddle = styled.div`
 `
 
 const TableGrid = styled(Box)`
-  contain: paint; // This is amazing. It replaces "overflow: hidden". Using "overflow" on this prevents us from having a sticky table header.
+  contain: paint;
   display: flex;
   flex-direction: column;
 `
