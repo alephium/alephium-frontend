@@ -4,7 +4,6 @@ import { LucideIcon } from 'lucide-react'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
 import Spinner from '@/components/Spinner'
 
 export interface ButtonProps extends HTMLMotionProps<'button'> {
@@ -64,7 +63,6 @@ const Button = ({
     <motion.button
       {...props}
       className={className}
-      variants={sectionChildrenVariants}
       custom={disabled}
       disabled={disabled || loading}
       animate={canBeAnimated ? (!disabled ? 'shown' : 'disabled') : false}

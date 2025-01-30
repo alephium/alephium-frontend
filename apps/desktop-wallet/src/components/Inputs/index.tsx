@@ -1,5 +1,5 @@
 import { colord } from 'colord'
-import { HTMLMotionProps, motion, Variants } from 'framer-motion'
+import { motion, MotionProps, Variants } from 'framer-motion'
 import { LucideIcon } from 'lucide-react'
 import { InputHTMLAttributes, ReactNode, RefObject } from 'react'
 import styled, { css, CSSProperties } from 'styled-components'
@@ -120,7 +120,7 @@ export const InputErrorMessage = styled(motion.label)<InputProps>`
   background-color: ${({ theme }) => theme.bg.background1};
 `
 
-export const InputLabel: FC<HTMLMotionProps<'label'> & { isElevated: boolean }> = ({ isElevated, ...props }) => (
+export const InputLabel: FC<MotionProps & { isElevated: boolean }> = ({ isElevated, ...props }) => (
   <StyledInputLabel
     {...props}
     variants={inputPlaceHolderVariants}

@@ -6,7 +6,6 @@ import styled, { css } from 'styled-components'
 import AddressBadge from '@/components/AddressBadge'
 import { inputDefaultStyle, InputLabel, InputProps } from '@/components/Inputs'
 import { MoreIcon, SelectOutterContainer } from '@/components/Inputs/Select'
-import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
 import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
@@ -61,7 +60,6 @@ function AddressSelect({
   return (
     <>
       <AddressSelectContainer
-        variants={sectionChildrenVariants}
         animate={canBeAnimated ? (!disabled ? 'shown' : 'disabled') : false}
         onAnimationComplete={() => setCanBeAnimated(true)}
         custom={disabled}

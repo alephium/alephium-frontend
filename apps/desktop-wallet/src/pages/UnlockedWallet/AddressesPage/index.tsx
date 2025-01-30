@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 
+import { fastTransition } from '@/animations'
 import TabBar, { TabItem } from '@/components/TabBar'
 import i18next from '@/features/localization/i18n'
 import AddressesTabContent from '@/pages/UnlockedWallet/AddressesPage/AddressesTabContent'
@@ -41,6 +42,7 @@ const AddressesPage = () => {
               opacity: currentTab.value === 'addresses' ? 1 : 0,
               zIndex: currentTab.value === 'addresses' ? 1 : 0
             }}
+            {...fastTransition}
           >
             <AddressesTabContent />
           </TabAnimation>
@@ -49,6 +51,7 @@ const AddressesPage = () => {
               opacity: currentTab.value === 'contacts' ? 1 : 0,
               zIndex: currentTab.value === 'contacts' ? 1 : 0
             }}
+            {...fastTransition}
           >
             <ContactsTabContent />
           </TabAnimation>

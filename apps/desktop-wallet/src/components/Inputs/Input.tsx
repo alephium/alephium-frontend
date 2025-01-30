@@ -14,7 +14,6 @@ import {
   InputProps,
   inputStyling
 } from '@/components/Inputs'
-import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
 
 const Input = ({
   label,
@@ -51,7 +50,6 @@ const Input = ({
 
   return (
     <InputContainer
-      variants={sectionChildrenVariants}
       animate={canBeAnimated ? (!disabled ? 'shown' : 'disabled') : false}
       onAnimationComplete={() => setCanBeAnimated(true)}
       custom={disabled}

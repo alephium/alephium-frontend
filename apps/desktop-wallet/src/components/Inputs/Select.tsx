@@ -18,7 +18,6 @@ import { inputDefaultStyle, InputHeight, InputProps, inputStyling, SelectLabel }
 import Input from '@/components/Inputs/Input'
 import InputArea from '@/components/Inputs/InputArea'
 import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
-import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
 import Popup from '@/components/Popup'
 import Truncate from '@/components/Truncate'
 import ModalPortal from '@/modals/ModalPortal'
@@ -89,7 +88,6 @@ function Select<T extends OptionValue>({
 }: SelectProps<T>) {
   const selectedValueRef = useRef<HTMLDivElement>(null)
 
-  const [canBeAnimated, setCanBeAnimated] = useState(false)
   const [value, setValue] = useState(controlledValue)
   const [showPopup, setShowPopup] = useState(false)
   const [hookCoordinates, setHookCoordinates] = useState<Coordinates | undefined>(undefined)
@@ -166,9 +164,6 @@ function Select<T extends OptionValue>({
   return (
     <>
       <SelectOutterContainer
-        variants={sectionChildrenVariants}
-        animate={canBeAnimated ? (!disabled ? 'shown' : 'disabled') : false}
-        onAnimationComplete={() => setCanBeAnimated(true)}
         custom={disabled}
         noMargin={noMargin}
         onMouseDown={handleClick}

@@ -1,9 +1,6 @@
 import { colord } from 'colord'
-import { motion } from 'framer-motion'
 import { LucideIcon } from 'lucide-react'
 import styled, { css, DefaultTheme, useTheme } from 'styled-components'
-
-import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
 
 type InfoBoxImportance = 'default' | 'accent' | 'alert' | 'warning'
 
@@ -38,8 +35,8 @@ const InfoBox: FC<InfoBoxProps> = ({
 
   return (
     <div className={className} onClick={onClick}>
-      {label && <Label variants={sectionChildrenVariants}>{label}</Label>}
-      <StyledBox variants={sectionChildrenVariants} importance={importance} short={short} contrast={contrast}>
+      {label && <Label>{label}</Label>}
+      <StyledBox importance={importance} short={short} contrast={contrast}>
         {Icon && (
           <IconContainer>
             <Icon color={getImportanceColor(theme, importance)} strokeWidth={1.5} />
@@ -94,7 +91,7 @@ const TextContainer = styled.div<{ wordBreak?: boolean; ellipsis?: boolean }>`
         `}
 `
 
-const Label = styled(motion.label)`
+const Label = styled.label`
   display: block;
   width: 100%;
   margin-left: var(--spacing-3);
@@ -103,7 +100,7 @@ const Label = styled(motion.label)`
   font-weight: var(--fontWeight-semiBold);
 `
 
-const StyledBox = styled(motion.div)<{
+const StyledBox = styled.div<{
   importance?: InfoBoxImportance
   short?: boolean
   contrast?: boolean
