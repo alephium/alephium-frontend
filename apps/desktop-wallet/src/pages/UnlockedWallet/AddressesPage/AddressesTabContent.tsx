@@ -8,6 +8,7 @@ import Select, { SelectOption } from '@/components/Inputs/Select'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
+import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { addressOrderPreferenceChanged } from '@/features/settings/settingsActions'
 import { AddressOrder } from '@/features/settings/settingsConstants'
@@ -24,7 +25,7 @@ import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
 const AddressesTabContent = memo(() => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-
+  const { sendAnalytics } = useAnalytics()
   const [searchInput, setSearchInput] = useState('')
   const [hideEmptyAddresses, setHideEmptyAddresses] = useState(false)
   const filteredByText = useFilterAddressesByText(searchInput.toLowerCase())
@@ -71,6 +72,7 @@ const AddressesTabContent = memo(() => {
 
   const onSelect = (value: AddressOrder) => {
     dispatch(addressOrderPreferenceChanged(value))
+    sendAnalytics({ event: 'Address order changed', props: { value } })
   }
 
   const openNewAddressModal = () =>
