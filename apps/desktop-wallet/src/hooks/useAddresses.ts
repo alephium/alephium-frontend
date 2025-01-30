@@ -8,7 +8,7 @@ import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-import { moveToFront } from '@/utils/addresses.ts'
+import { moveToFront } from '@/utils/addresses'
 
 export const useFetchSortedAddressesHashes = (props?: SkipProp) => {
   const isNetworkOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
