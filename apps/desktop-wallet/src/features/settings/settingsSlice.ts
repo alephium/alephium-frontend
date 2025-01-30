@@ -114,6 +114,7 @@ settingsListenerMiddleware.startListening({
     numberFormatRegionChanged,
     walletLockTimeChanged,
     analyticsToggled,
+    addressOrderPreferenceChanged,
     fiatCurrencyChanged
   ),
   effect: (_, { getState }) => {
