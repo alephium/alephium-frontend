@@ -132,7 +132,7 @@ const SendButton = ({ addressHash, analyticsOrigin }: ShortcutButtonsGroupAddres
   )
 }
 
-const BuyButton = ({ addressHash, analyticsOrigin, highlight }: ShortcutButtonsGroupAddressProps) => {
+const BuyButton = ({ addressHash, analyticsOrigin }: ShortcutButtonsGroupAddressProps) => {
   const { sendAnalytics } = useAnalytics()
   const { t } = useTranslation()
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))

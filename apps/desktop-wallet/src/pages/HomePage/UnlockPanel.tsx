@@ -189,6 +189,6 @@ const AlephiumLogoContainer = styled.div`
 `
 
 const Title = styled.div`
-  font-size: 20px;
+  font-size: 23px;
   margin: var(--spacing-2);
 `

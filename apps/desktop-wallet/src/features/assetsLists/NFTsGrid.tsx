@@ -5,9 +5,9 @@ import styled, { css } from 'styled-components'
 import { fadeIn } from '@/animations'
 import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
 import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
+import EmptyPlaceholder from '@/components/EmptyPlaceholder'
 import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import PlaceholderText from '@/features/assetsLists/PlaceholderText'
 import { AddressDetailsTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
 import { deviceBreakPoints } from '@/style/globalStyles'
 import { TokenId } from '@/types/tokens'
@@ -57,7 +57,7 @@ interface NFTsGridProps extends TokensTabsBaseProps {
 
 const NFTsGrid = ({ className, columns, nftIds, isLoading, placeholderText }: NFTsGridProps) => (
   <motion.div {...fadeIn} className={className}>
-    {!isLoading && nftIds.length === 0 && <PlaceholderText>{placeholderText}</PlaceholderText>}
+    {!isLoading && nftIds.length === 0 && <EmptyPlaceholder emoji="🖼️">{placeholderText}</EmptyPlaceholder>}
 
     {isLoading ||
       (nftIds.length > 0 && (

@@ -2,9 +2,9 @@ import { useTranslation } from 'react-i18next'
 
 import useFetchAddressFts from '@/api/apiDataHooks/address/useFetchAddressFts'
 import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
+import EmptyPlaceholder from '@/components/EmptyPlaceholder'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Table, { TableRow } from '@/components/Table'
-import PlaceholderText from '@/features/assetsLists/PlaceholderText'
 import { AddressFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/AddressTokenBalancesRow'
 import { WalletFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
 import TokensBalancesHeader from '@/features/assetsLists/TokensBalancesHeader'
@@ -25,7 +25,7 @@ export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressDetails
         <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
       ))}
       {!isLoading && listedFts.length === 0 && unlistedFts.length === 0 && (
-        <PlaceholderText>{t("This address doesn't have any tokens yet.")}</PlaceholderText>
+        <EmptyPlaceholder>{t("This address doesn't have any tokens yet.")}</EmptyPlaceholder>
       )}
       {isLoading && <TokensSkeletonLoader />}
     </Table>
@@ -47,9 +47,9 @@ export const WalletFTsBalancesList = (props: TokensTabsBaseProps) => {
         <WalletFTBalancesRow tokenId={id} key={id} />
       ))}
       {isEmpty && (
-        <PlaceholderText>
+        <EmptyPlaceholder emoji="👀">
           {t("The wallet doesn't have any tokens. Tokens of all your addresses will appear here.")}
-        </PlaceholderText>
+        </EmptyPlaceholder>
       )}
       {isLoading && <TokensSkeletonLoader />}
     </Table>

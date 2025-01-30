@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next'
 
 import ActionLink from '@/components/ActionLink'
+import PlaceholderText from '@/components/EmptyPlaceholder'
 import Spinner from '@/components/Spinner'
 import { TableCellPlaceholder, TableRow } from '@/components/Table'
-import PlaceholderText from '@/features/assetsLists/PlaceholderText'
 
 interface TransactionsListFooterBaseProps {
   isDisplayingTxs: boolean
@@ -40,7 +40,7 @@ const TransactionsListFooter = (props: InfiniteTransactionsListFooterProps | Sta
             props.allTxsLoadedMsg && <span>{props.allTxsLoadedMsg}</span>
           )
         ) : (
-          <PlaceholderText>{props.noTxsMsg}</PlaceholderText>
+          <PlaceholderText emoji="🔎">{props.noTxsMsg}</PlaceholderText>
         )}
       </TableCellPlaceholder>
     </TableRow>

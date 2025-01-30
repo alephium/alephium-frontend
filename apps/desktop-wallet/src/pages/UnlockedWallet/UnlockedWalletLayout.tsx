@@ -107,9 +107,10 @@ const SideNavigation = styled.nav`
 
 const BrandContainer = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
   margin-bottom: var(--spacing-6);
+  gap: 10px;
+  margin-left: 7px;
 `
 
 const AlephiumLogoContainer = styled.div`
