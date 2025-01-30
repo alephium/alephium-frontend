@@ -119,14 +119,12 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
   box-shadow: ${({ theme }) => theme.shadow.secondary};
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-big);
-  background-color: ${({ theme }) => theme.bg.background1};
+  background-color: ${({ theme }) => theme.bg.background2};
 `
 
 const Header = styled.div<{ hasExtraContent: boolean }>`
   height: ${({ hasExtraContent }) => (hasExtraContent ? 'auto' : `${headerHeight}px`)};
-  padding: var(--spacing-2) var(--spacing-2) var(--spacing-2) var(--spacing-4);
-  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-
+  padding: var(--spacing-3) var(--spacing-4) var(--spacing-3) var(--spacing-4);
   display: flex;
   align-items: center;
   z-index: 1;

@@ -11,7 +11,7 @@ import {
   useState
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import CheckMark from '@/components/CheckMark'
 import { inputDefaultStyle, InputHeight, InputProps, inputStyling, SelectLabel } from '@/components/Inputs'
@@ -258,7 +258,6 @@ export function SelectOptionsModal<T extends OptionValue>({
 }: SelectOptionsModalProps<T>) {
   const { t } = useTranslation()
   const optionSelectRef = useRef<HTMLDivElement>(null)
-  const theme = useTheme()
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const [searchInput, setSearchInput] = useState('')
@@ -319,12 +318,7 @@ export function SelectOptionsModal<T extends OptionValue>({
         )
       }
     >
-      <OptionSelect
-        title={title}
-        aria-label={title}
-        ref={optionSelectRef}
-        style={floatingOptions ? { backgroundColor: theme.bg.background2, paddingTop: 5 } : undefined}
-      >
+      <OptionSelect title={title} aria-label={title} ref={optionSelectRef}>
         {isEmpty ? (
           <OptionItem selected={false}>{emptyListPlaceholder}</OptionItem>
         ) : emptySearchResults ? (

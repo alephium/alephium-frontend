@@ -9,7 +9,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'rgba(0, 0, 0, 0.01)',
     contrast: '#000',
     background1: '#fff',
-    background2: '#fafafa',
+    background2: '#fff',
     hover: 'rgba(0, 0, 0, 0.01)',
     highlight: '#ffffff',
     accent: colord('#400fe3').alpha(0.05).toHex()

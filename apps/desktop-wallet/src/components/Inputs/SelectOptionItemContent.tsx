@@ -45,13 +45,11 @@ const OptionMainContent = styled.div`
   align-items: center;
   justify-content: space-between;
   font-weight: var(--fontWeight-semiBold);
-  background-color: ${({ theme }) => theme.bg.primary};
   padding: var(--spacing-3);
   gap: var(--spacing-3);
 `
 
 const OptionSecondaryContent = styled.div`
-  background-color: ${({ theme }) => theme.bg.background1};
   padding: var(--spacing-3);
 
   &:empty {
@@ -67,6 +65,10 @@ const OptionContentWrapper = styled.div<{ contentDirection: SelectOptionItemCont
   flex-direction: ${({ contentDirection }) => contentDirection};
   justify-content: space-between;
   min-width: 0;
+  border: 1px solid ${({ theme }) => theme.border.secondary};
+  background-color: ${({ theme }) => theme.bg.tertiary};
+  border-radius: var(--radius-big);
+  overflow: hidden;
 
   &:hover {
     > div {

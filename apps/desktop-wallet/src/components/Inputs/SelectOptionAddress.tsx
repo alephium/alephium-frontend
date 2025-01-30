@@ -42,9 +42,7 @@ const SelectOptionAddress = ({ addressHash, isSelected, className, subtitle }: S
           </Group>
         </Header>
       }
-      SecondaryContent={
-        isInView ? <AddressTokensBadgesList addressHash={addressHash} withBackground showAmount /> : null
-      }
+      SecondaryContent={isInView ? <AddressTokensBadgesList addressHash={addressHash} /> : null}
     />
   )
 }
