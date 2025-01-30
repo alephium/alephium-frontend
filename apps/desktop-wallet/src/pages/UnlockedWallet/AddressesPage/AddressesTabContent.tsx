@@ -9,6 +9,7 @@ import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
 import { openModal } from '@/features/modals/modalActions'
+import { addressOrderPreferenceChanged } from '@/features/settings/settingsActions'
 import { AddressOrder } from '@/features/settings/settingsConstants'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import {
@@ -19,7 +20,6 @@ import {
 import AddressListRow from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressListRow'
 import AdvancedOperationsButton from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsButton'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
-import { addressOrderPreferenceChanged } from '@/features/settings/settingsActions.ts'
 
 const AddressesTabContent = memo(() => {
   const { t } = useTranslation()

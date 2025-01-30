@@ -1,7 +1,6 @@
 import { AddressHash, AddressSettings, Contact } from '@alephium/shared'
 import { createAction } from '@reduxjs/toolkit'
 
-import { AddressOrder } from '@/features/settings/settingsConstants.ts'
 import { Address, AddressBase, LoadingEnabled } from '@/types/addresses'
 import { Message } from '@/types/snackbar'
 
