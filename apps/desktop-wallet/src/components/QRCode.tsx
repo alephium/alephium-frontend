@@ -39,7 +39,7 @@ const QRCode = ({ value, size, copyButtonLabel, className }: QRCodeProps) => {
         <RawQRCode size={size} value={value} bgColor={theme.bg.primary} fgColor={theme.font.primary} />
       </StyledBox>
       {copyButtonLabel && (
-        <Button role="secondary" Icon={CopyIcon} onClick={handleCopyAddressToClipboard}>
+        <Button role="secondary" Icon={CopyIcon} onClick={handleCopyAddressToClipboard} justifyContent="center">
           {copyButtonLabel}
         </Button>
       )}

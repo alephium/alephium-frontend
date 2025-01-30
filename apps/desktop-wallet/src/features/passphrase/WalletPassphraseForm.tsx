@@ -34,7 +34,6 @@ const WalletPassphraseForm = ({ onPassphraseConfirmed, className }: WalletPassph
         label={t('Optional passphrase')}
         type="password"
         onChange={(e) => setValue(e.target.value)}
-        heightSize="big"
       />
       <Input
         id="optional-passphrase-confirm"
@@ -43,7 +42,6 @@ const WalletPassphraseForm = ({ onPassphraseConfirmed, className }: WalletPassph
         type="password"
         onChange={(e) => setConfirmValue(e.target.value)}
         error={showConfirmError && t("Passphrases don't match")}
-        heightSize="big"
       />
     </Container>
   )

@@ -22,7 +22,6 @@ export interface CenteredModalProps extends ModalContainerProps {
   subtitle?: string
   isLoading?: boolean | string
   header?: ReactNode
-  transparentHeader?: boolean
   fullScreen?: boolean
   narrow?: boolean
   dynamicContent?: boolean
@@ -39,7 +38,6 @@ const CenteredModal: FC<CenteredModalProps> = ({
   focusMode,
   isLoading,
   header,
-  transparentHeader = false,
   fullScreen = false,
   narrow = false,
   dynamicContent = false,
@@ -60,7 +58,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
   return (
     <ModalContainer id={id} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
       <CenteredBox role="dialog" {...fadeInOutBottomFast} narrow={narrow} fullScreen={fullScreen}>
-        <ModalHeader transparent={transparentHeader}>
+        <ModalHeader>
           <TitleRow>
             {onBack && !disableBack && (
               <BackButton aria-label={t('Back')} circle role="secondary" transparent onClick={onBack}>
@@ -96,7 +94,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
             <ModalContent>{children}</ModalContent>
           )
         ) : (
-          <Scrollbar>{children}</Scrollbar>
+          <ScrollableModalContent>{children}</ScrollableModalContent>
         )}
 
         {isLoading && (
@@ -117,7 +115,9 @@ const CenteredModal: FC<CenteredModalProps> = ({
 export default CenteredModal
 
 export const ScrollableModalContent = ({ children }: Pick<CenteredModalProps, 'children'>) => (
-  <Scrollbar>{children}</Scrollbar>
+  <ModalContent>
+    <Scrollbar>{children}</Scrollbar>
+  </ModalContent>
 )
 
 export const HeaderContent = styled(Section)``
@@ -161,16 +161,16 @@ const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>
     `}
 `
 
-export const ModalHeader = styled.header<{ transparent?: boolean }>`
+export const ModalHeader = styled.header`
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
   display: flex;
   align-items: center;
+  height: 70px;
   padding: 0 6px 16px var(--spacing-6);
-  height: 80px;
-  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 55%, transparent)`};
+  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background1).toHex()} 25%, transparent)`};
 `
 
 const ModalHeaderContent = styled(motion.div)`

@@ -73,4 +73,5 @@ const H1 = styled(motion.h1)<PanelTitleProps>`
   color: ${({ theme, color }) => (color ? color : theme.font.primary)};
   font-size: ${({ size }) => (size === 'small' ? '16px' : size === 'big' ? '32px' : '28px')};
   font-weight: var(--fontWeight-medium);
+  margin: 0;
 `
