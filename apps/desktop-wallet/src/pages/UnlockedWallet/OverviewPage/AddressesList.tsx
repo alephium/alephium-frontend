@@ -16,7 +16,7 @@ import { ExpandableTable, ExpandRow, TableHeader } from '@/components/Table'
 import TableCellAmount from '@/components/TableCellAmount'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
-import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
+import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
 
 interface AddressesListProps {
   className?: string
@@ -54,7 +54,7 @@ const AddressesList = ({ className, maxHeightInPx }: AddressesListProps) => {
 }
 
 const AddressesRows = ({ className, isExpanded, onExpand, onAddressClick }: AddressListProps) => {
-  const { data: allAddressHashes } = useFetchSortedAddressesHashes()
+  const { data: allAddressHashes } = useFetchAddressesHashesSortedByLastUse()
   const dispatch = useAppDispatch()
 
   const handleRowClick = (addressHash: AddressHash) => {

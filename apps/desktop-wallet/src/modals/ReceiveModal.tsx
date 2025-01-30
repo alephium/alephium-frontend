@@ -5,14 +5,14 @@ import styled from 'styled-components'
 import AddressSelect from '@/components/Inputs/AddressSelect'
 import QRCode from '@/components/QRCode'
 import { AddressModalProps } from '@/features/modals/modalTypes'
-import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
+import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
 import CenteredModal from '@/modals/CenteredModal'
 
 const QRCodeSize = 250
 
 const ReceiveModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
-  const { data: allAddressHashes } = useFetchSortedAddressesHashes()
+  const { data: allAddressHashes } = useFetchAddressesHashesSortedByLastUse()
 
   const [selectedAddress, setSelectedAddress] = useState(addressHash)
 

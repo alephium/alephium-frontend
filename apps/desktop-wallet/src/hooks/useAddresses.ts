@@ -1,19 +1,48 @@
+import { AddressHash } from '@alephium/shared'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import useFetchLatestTransactionOfEachAddress from '@/api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
 import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
+import { AddressOrder } from '@/features/settings/settingsConstants'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-import { moveToFront } from '@/utils/addresses'
 
-export const useFetchSortedAddressesHashes = (props?: SkipProp) => {
+export const useFetchAddressesHashesSortedByPreference = () => {
+  const orderPreference = useAppSelector((s) => s.settings.addressOrderPreference)
+  const addressesSortedByLabel = useAddressesHashesSortedByLabel()
+  const { data: addressesSortedByLastUse, isLoading: isLoadingLastUse } = useFetchAddressesHashesSortedByLastUse()
+  const { data: addressesSortedByAlphBalance, isLoading: isLoadingAlphBalance } =
+    useFetchAddressesHashesSortedByAlphBalance({
+      skip: orderPreference !== AddressOrder.AlphBalance
+    })
+
+  switch (orderPreference) {
+    case AddressOrder.Label:
+      return {
+        data: addressesSortedByLabel,
+        isLoading: false
+      }
+    case AddressOrder.AlphBalance:
+      return {
+        data: addressesSortedByAlphBalance,
+        isLoading: isLoadingAlphBalance
+      }
+    default:
+      return {
+        data: addressesSortedByLastUse,
+        isLoading: isLoadingLastUse
+      }
+  }
+}
+
+export const useFetchAddressesHashesSortedByLastUse = (props?: SkipProp) => {
   const isNetworkOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
   const allAddressHashes = useUnsortedAddressesHashes()
-  const { data: sortedAddresses, isLoading } = useFetchSortedAddressesHashesWithLatestTx(props)
+  const { data: sortedAddresses, isLoading } = useFetchAddressesHashesSortedByLastUseWithLatestTx(props)
 
   const sortedAddressHashes = useMemo(() => sortedAddresses.map(({ addressHash }) => addressHash), [sortedAddresses])
 
@@ -23,7 +52,7 @@ export const useFetchSortedAddressesHashes = (props?: SkipProp) => {
   }
 }
 
-export const useFetchSortedAddressesHashesWithLatestTx = (props?: SkipProp) => {
+export const useFetchAddressesHashesSortedByLastUseWithLatestTx = (props?: SkipProp) => {
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
   const { data: latestTxs, isLoading: isLoadingLatestTxs } = useFetchLatestTransactionOfEachAddress(props)
 
@@ -63,29 +92,27 @@ export const useFetchAddressesHashesWithBalance = () => {
   }
 }
 
-export const useFetchAddressesHashesWithBalanceSortedByAlphWorth = () => {
+export const useFetchAddressesHashesSortedByAlphBalance = (props?: SkipProp) => {
   const isNetworkOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
   const allAddressHashes = useUnsortedAddressesHashes()
-  const defaultAddress = useAppSelector(selectDefaultAddress)
+  const defaultAddressHash = useAppSelector((s) => selectDefaultAddress(s).hash)
   const { data: alphBalances, isLoading } = useFetchWalletBalancesAlphByAddress()
 
   const sortedAddresses = useMemo(() => {
-    if (isNetworkOffline || !alphBalances) return allAddressHashes
+    if (isNetworkOffline || !alphBalances || props?.skip) return allAddressHashes
 
-    // First sort by balance
-    let sorted = [...allAddressHashes].sort((a, b) => {
+    return [...allAddressHashes].sort((a, b) => {
+      if (a === defaultAddressHash) return -1
+      if (b === defaultAddressHash) return 1
+
       const balanceA = BigInt(alphBalances[a]?.totalBalance ?? 0)
       const balanceB = BigInt(alphBalances[b]?.totalBalance ?? 0)
+
       if (balanceA > balanceB) return -1
       if (balanceA < balanceB) return 1
       return 0
     })
-    // Then move default address to front if it exists
-    if (defaultAddress) {
-      sorted = moveToFront(sorted, defaultAddress.hash)
-    }
-    return sorted
-  }, [allAddressHashes, alphBalances, defaultAddress, isNetworkOffline])
+  }, [allAddressHashes, alphBalances, defaultAddressHash, isNetworkOffline, props?.skip])
 
   return {
     data: sortedAddresses,
@@ -93,36 +120,29 @@ export const useFetchAddressesHashesWithBalanceSortedByAlphWorth = () => {
   }
 }
 
-export const useFetchAddressesHashesSortedByAddressesLabelAlphabetical = () => {
+export const useAddressesHashesSortedByLabel = (): AddressHash[] => {
   const allAddressHashes = useUnsortedAddressesHashes()
-  const defaultAddress = useAppSelector(selectDefaultAddress)
+  const defaultAddressHash = useAppSelector((s) => selectDefaultAddress(s).hash)
   const addressEntities = useAppSelector((s) => s.addresses.entities)
 
-  const sortedAddresses = useMemo(() => {
-    // First sort by label
-    let sorted = [...allAddressHashes].sort((a, b) => {
-      const entityA = addressEntities[a]
-      const entityB = addressEntities[b]
+  return useMemo(
+    () =>
+      [...allAddressHashes].sort((a, b) => {
+        if (a === defaultAddressHash) return -1
+        if (b === defaultAddressHash) return 1
 
-      if (entityA?.label && !entityB?.label) return -1
-      if (!entityA?.label && entityB?.label) return 1
+        const labelA = addressEntities[a]?.label
+        const labelB = addressEntities[b]?.label
 
-      if (entityA?.label && entityB?.label) {
-        return entityA.label.localeCompare(entityB.label)
-      }
+        if (labelA && !labelB) return -1
+        if (!labelA && labelB) return 1
 
-      return a.localeCompare(b)
-    })
+        if (labelA && labelB) {
+          return labelA.localeCompare(labelB)
+        }
 
-    // Then move default address to front if it exists
-    if (defaultAddress) {
-      sorted = moveToFront(sorted, defaultAddress.hash)
-    }
-
-    return sorted
-  }, [allAddressHashes, addressEntities, defaultAddress])
-
-  return {
-    data: sortedAddresses
-  }
+        return a.localeCompare(b)
+      }),
+    [allAddressHashes, addressEntities, defaultAddressHash]
+  )
 }
