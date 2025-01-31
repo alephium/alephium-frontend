@@ -3,12 +3,11 @@ import { useMemo } from 'react'
 import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
 import useFetchWalletBalancesTokensByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensByAddress'
 import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
-import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
-import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
+import { useUnsortedAddresses, useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
 export const useFilterAddressesByText = (text = '') => {
   const allAddresses = useUnsortedAddresses()
-  const { data: allAddressHashes } = useFetchSortedAddressesHashes()
+  const allAddressHashes = useUnsortedAddressesHashes()
   const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
   const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
   const { data: addressesTokensBalances } = useFetchWalletBalancesTokensByAddress()

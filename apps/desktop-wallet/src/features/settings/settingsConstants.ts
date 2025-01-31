@@ -19,8 +19,8 @@ export const LockTimes = {
 }
 export enum AddressOrder {
   LastUse = 'lastUse',
-  AlphValue = 'alphValue',
-  Alphabetical = 'alphabetical'
+  AlphBalance = 'alphBalance',
+  Label = 'label'
 }
 
 export const locktimeInMinutes = Object.values(LockTimes)

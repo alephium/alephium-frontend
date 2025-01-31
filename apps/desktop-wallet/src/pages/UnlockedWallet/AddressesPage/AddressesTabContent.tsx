@@ -4,76 +4,35 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Box from '@/components/Box'
-import Select, { SelectOption } from '@/components/Inputs/Select'
 import Toggle from '@/components/Inputs/Toggle'
 import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
-import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
-import { addressOrderPreferenceChanged } from '@/features/settings/settingsActions'
-import { AddressOrder } from '@/features/settings/settingsConstants'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import {
-  useFetchAddressesHashesSortedByAddressesLabelAlphabetical,
-  useFetchAddressesHashesWithBalance,
-  useFetchAddressesHashesWithBalanceSortedByAlphWorth
-} from '@/hooks/useAddresses'
+import { useAppDispatch } from '@/hooks/redux'
+import { useFetchAddressesHashesSortedByPreference, useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import AddressListRow from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressListRow'
+import AddressSortingSelect from '@/pages/UnlockedWallet/AddressesPage/AddressSortingSelect'
 import AdvancedOperationsButton from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsButton'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
 
 const AddressesTabContent = memo(() => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
-  const { sendAnalytics } = useAnalytics()
+
   const [searchInput, setSearchInput] = useState('')
   const [hideEmptyAddresses, setHideEmptyAddresses] = useState(false)
-  const filteredByText = useFilterAddressesByText(searchInput.toLowerCase())
-  const { data: filteredByToggle } = useFetchAddressesHashesWithBalance()
-  const { data: sortedWorthAlph } = useFetchAddressesHashesWithBalanceSortedByAlphWorth()
-  const { data: sortedAlphabetical } = useFetchAddressesHashesSortedByAddressesLabelAlphabetical()
 
-  const currentOrder = useAppSelector((state) => state.settings.addressOrderPreference ?? AddressOrder.LastUse)
+  const unsortedAddressesFilteredByText = useFilterAddressesByText(searchInput.toLowerCase())
+  const { data: sortedAddresses } = useFetchAddressesHashesSortedByPreference()
+  const { data: addressesWithBalance } = useFetchAddressesHashesWithBalance()
 
   const visibleAddresses = useMemo(() => {
-    // First get the correctly sorted list
-    let addresses
-    switch (currentOrder) {
-      case AddressOrder.AlphValue:
-        addresses = sortedWorthAlph
-        break
-      case AddressOrder.Alphabetical:
-        addresses = sortedAlphabetical
-        break
-      default:
-        addresses = filteredByText
-    }
-
     // Apply text filter
-    const textFiltered = searchInput ? intersection(addresses, filteredByText) : addresses
+    const textFiltered = searchInput ? intersection(sortedAddresses, unsortedAddressesFilteredByText) : sortedAddresses
 
     // Apply empty addresses filter
-    return hideEmptyAddresses ? intersection(textFiltered, filteredByToggle) : textFiltered
-  }, [
-    currentOrder,
-    sortedWorthAlph,
-    sortedAlphabetical,
-    filteredByText,
-    filteredByToggle,
-    hideEmptyAddresses,
-    searchInput
-  ])
-
-  const orderOptions: SelectOption<AddressOrder>[] = [
-    { value: AddressOrder.LastUse, label: t('Last used') },
-    { value: AddressOrder.AlphValue, label: t('ALPH value') },
-    { value: AddressOrder.Alphabetical, label: t('Alphabetical') }
-  ]
-
-  const onSelect = (value: AddressOrder) => {
-    dispatch(addressOrderPreferenceChanged(value))
-    sendAnalytics({ event: 'Address order changed', props: { value } })
-  }
+    return hideEmptyAddresses ? intersection(textFiltered, addressesWithBalance) : textFiltered
+  }, [addressesWithBalance, hideEmptyAddresses, searchInput, sortedAddresses, unsortedAddressesFilteredByText])
 
   const openNewAddressModal = () =>
     dispatch(openModal({ name: 'NewAddressModal', props: { title: t('New address'), singleAddress: true } }))
@@ -86,21 +45,14 @@ const AddressesTabContent = memo(() => {
       onButtonClick={openNewAddressModal}
       HeaderMiddleComponent={
         <HeaderMiddle>
-          <SelectWrapper>
-            <Select
-              id="address-order"
-              onSelect={onSelect}
-              options={orderOptions}
-              controlledValue={orderOptions.find((opt) => opt.value === currentOrder)}
-              noMargin
-              heightSize="small"
-            />
-          </SelectWrapper>
-          <HideEmptyAddressesToggle>
-            <ToggleText>{t('Hide empty')}</ToggleText>
-            <VerticalDivider />
-            <Toggle onToggle={setHideEmptyAddresses} label={t('Hide empty')} toggled={hideEmptyAddresses} />
-          </HideEmptyAddressesToggle>
+          <SortingAndFiltering>
+            <AddressSortingSelect />
+            <HideEmptyAddressesToggle>
+              <ToggleText>{t('Hide empty')}</ToggleText>
+              <VerticalDivider />
+              <Toggle onToggle={setHideEmptyAddresses} label={t('Hide empty')} toggled={hideEmptyAddresses} />
+            </HideEmptyAddressesToggle>
+          </SortingAndFiltering>
           <AdvancedOperationsButton />
         </HeaderMiddle>
       }
@@ -162,6 +114,8 @@ const TableGridContent = styled.div`
   }
 `
 
-const SelectWrapper = styled.div`
-  width: 180px;
+const SortingAndFiltering = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
 `

@@ -25,9 +25,7 @@
   "All transactions were loaded!": "All transactions were loaded!",
   "All the transactions of this address were loaded!": "All the transactions of this address were loaded!",
   "All the transactions that match the filtering criteria were loaded!": "All the transactions that match the filtering criteria were loaded!",
-  "Alphabetical": "Alphabetical",
   "ALPH price: {{ price }}": "ALPH price: {{ price }}",
-  "ALPH value": "ALPH value",
   "Alright! Time to check if you got your words right!": "Alright! Time to check if you got your words right!",
   "Amount": "Amount",
   "Amount exceeds available balance": "Amount exceeds available balance",
@@ -515,5 +513,7 @@
   "Active address discovery completed. Addresses added: {{ count }}": "Active address discovery completed. Addresses added: {{ count }}",
   "Loading new transactions...": "Loading new transactions...",
   "Sign and Send Unsigned Transaction": "Sign and Send Unsigned Transaction",
-  "Sign and Send": "Sign and Send"
+  "Sign and Send": "Sign and Send",
+  "Sort by": "Sort by",
+  "ALPH balance": "ALPH balance"
 }

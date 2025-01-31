@@ -8,7 +8,7 @@ import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
 import useFetchWalletNftsSearchStrings from '@/api/apiDataHooks/wallet/useFetchWalletNftsSearchStrings'
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
-import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
+import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
 import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 
 interface AddressSelectModalProps {
@@ -70,7 +70,7 @@ export default AddressSelectModal
 // TODO: See how it can be DRY'ed with useFilterAddressesByText
 const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
   const addresses = useUnsortedAddresses()
-  const { data: sortedAddressHashes } = useFetchSortedAddressesHashes()
+  const { data: sortedAddressHashes } = useFetchAddressesHashesSortedByLastUse()
   const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
   const { data: nftsSearchStringsByNftId } = useFetchWalletNftsSearchStrings()
   const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
