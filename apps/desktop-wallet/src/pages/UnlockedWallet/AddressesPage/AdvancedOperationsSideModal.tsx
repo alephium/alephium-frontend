@@ -113,5 +113,5 @@ const AdvancedOperations = styled.div`
   display: flex;
   flex-direction: column;
   gap: 30px;
-  padding: 22px 28px;
+  padding: 0 var(--spacing-4) var(--spacing-4);
 `

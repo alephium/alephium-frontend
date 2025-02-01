@@ -69,7 +69,7 @@ const SettingsButton = ({ addressHash, analyticsOrigin }: SettingsButtonProps) =
       role="primary"
       onClick={addressHash ? () => handleAddressSettingsClick(addressHash) : handleWalletSettingsClick}
     >
-      <Settings />
+      <Settings strokeWidth={1.5} />
       <ButtonText>{t('Settings')}</ButtonText>
     </ShortcutButton>
   )

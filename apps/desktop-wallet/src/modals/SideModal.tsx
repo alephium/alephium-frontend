@@ -134,5 +134,5 @@ const Title = styled.div`
 `
 
 const ContentContainer = styled.div`
-  padding-top: 70px;
+  padding-top: 50px;
 `

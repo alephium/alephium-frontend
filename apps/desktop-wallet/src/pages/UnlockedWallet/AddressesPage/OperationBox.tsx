@@ -46,7 +46,7 @@ const OperationBox = ({
         {placeholder ? (
           <ActionLink onClick={onButtonClick}>{buttonText}</ActionLink>
         ) : (
-          <Button short wide onClick={onButtonClick} style={{ minWidth: 100 }} disabled={isButtonDisabled}>
+          <Button short wide onClick={onButtonClick} style={{ minWidth: 100, margin: 0 }} disabled={isButtonDisabled}>
             {buttonText}
           </Button>
         )}
@@ -63,8 +63,8 @@ const OperationBox = ({
 export default OperationBox
 
 const OperationBoxStyled = styled.div<Pick<OperationBoxProps, 'placeholder'>>`
-  padding: var(--spacing-3) var(--spacing-5);
-  background-color: ${({ theme }) => theme.bg.primary};
+  padding: var(--spacing-3);
+  background-color: ${({ theme }) => theme.bg.tertiary};
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-huge);
   display: flex;
@@ -100,7 +100,14 @@ const Title = styled.div`
   margin-bottom: var(--spacing-2);
 `
 
-const IconWrapper = styled.div``
+const IconWrapper = styled.div`
+  width: 40px;
+  flex-shrink: 0;
+
+  svg {
+    width: 100%;
+  }
+`
 
 const Description = styled.div`
   color: ${({ theme }) => theme.font.secondary};
@@ -115,4 +122,5 @@ const Footer = styled.div`
   flex-direction: column;
   align-items: center;
   flex-shrink: 0;
+  gap: 10px;
 `
