@@ -23,7 +23,7 @@ export interface BuyModalProps {
   receiveAddressHash: AddressHash
 }
 
-const CLOSE_BANXA_TAB_DEEP_LINK = 'alephium://close-banxa-tab'
+const CLOSE_ONRAMP_TAB_DEEP_LINK = 'alephium://close-onramp-tab'
 
 const BuyModal = withModal<BuyModalProps>(({ id, receiveAddressHash }) => {
   const { t } = useTranslation()
@@ -35,7 +35,7 @@ const BuyModal = withModal<BuyModalProps>(({ id, receiveAddressHash }) => {
   const deeplink = useURL()
 
   useEffect(() => {
-    if (deeplink?.includes(CLOSE_BANXA_TAB_DEEP_LINK)) {
+    if (deeplink?.includes(CLOSE_ONRAMP_TAB_DEEP_LINK)) {
       dispatch(closeModal({ id }))
       dismissBrowser()
     }

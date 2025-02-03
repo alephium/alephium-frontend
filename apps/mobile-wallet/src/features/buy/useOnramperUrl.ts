@@ -12,13 +12,12 @@ const useOnramperUrl = (receiveAddressHash: AddressHash) => {
     'https://buy.onramper.com/' +
     '?mode=buy' +
     `&onlyCryptos=${ALPH_CODE}` +
-    `&successRedirectUrl=${encodeURIComponent('https://alephium.org/banxa-callback/')}` +
+    `&successRedirectUrl=${encodeURIComponent('https://alephium.org/onramp-callback/')}` +
     `&wallets=${ALPH_CODE}:${receiveAddressHash}` +
     `&themeName=${theme.name}` +
     `&containerColor=${theme.bg.back1.slice(1)}` +
     `&primaryTextColor=${theme.font.primary.slice(1)}` +
     `&primaryColor=${theme.global.accent.slice(1)}` +
-    `&secondaryColor=${theme.global.complementary.slice(1)}` +
     `&apiKey=${ONRAMPER_CLIENT_UUID}`
   )
 }
