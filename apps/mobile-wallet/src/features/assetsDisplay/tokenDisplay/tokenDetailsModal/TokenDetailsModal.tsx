@@ -75,7 +75,7 @@ const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps
         : darkTheme.font.primary)
 
   useEffect(() => {
-    if (!tokenLogoUri) return
+    if (!tokenLogoUri || tokenId === ALPH.id) return
 
     getColors(tokenLogoUri, {
       fallback: '#228B22',
@@ -97,7 +97,7 @@ const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps
           .toHex()
       )
     })
-  }, [theme.name, tokenLogoUri])
+  }, [theme.name, tokenId, tokenLogoUri])
 
   return (
     <RoundedCard>
