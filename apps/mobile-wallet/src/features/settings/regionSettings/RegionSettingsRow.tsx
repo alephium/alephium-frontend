@@ -15,7 +15,9 @@ const RegionSettingsRow = () => {
 
   return (
     <Row onPress={openRegionSelectModal} title={t('Region')}>
-      <AppText bold>{regionOptions.find((region) => region.value === currentRegion)?.label}</AppText>
+      <AppText bold style={{ textAlign: 'right' }}>
+        {regionOptions.find((region) => region.value === currentRegion)?.label}
+      </AppText>
     </Row>
   )
 }
