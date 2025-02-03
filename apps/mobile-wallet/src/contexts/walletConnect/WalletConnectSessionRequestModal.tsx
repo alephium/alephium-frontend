@@ -19,6 +19,7 @@ import {
   transactionSign
 } from '@alephium/web3'
 import { getSdkError } from '@walletconnect/utils'
+import * as Clipboard from 'expo-clipboard'
 import { useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
@@ -31,7 +32,6 @@ import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
-import ExpandableRow from '~/components/ExpandableRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
@@ -380,7 +380,7 @@ const WalletConnectSessionRequestModal = withModal(
 
               {requestData.type === 'deploy-contract' || requestData.type === 'call-contract' ? (
                 metadata?.url && (
-                  <Row title={t('To')} titleColor="secondary">
+                  <Row title={t('To')} titleColor="secondary" noMaxWidth>
                     <AppText semiBold>{metadata.url}</AppText>
                   </Row>
                 )
@@ -410,17 +410,7 @@ const WalletConnectSessionRequestModal = withModal(
               )}
 
               {(requestData.type === 'deploy-contract' || requestData.type === 'call-contract') && (
-                <ExpandableRow
-                  titleComponent={
-                    <AppTextStyled medium color="secondary">
-                      {t('Bytecode')}
-                    </AppTextStyled>
-                  }
-                >
-                  <Row isVertical>
-                    <AppText>{requestData.wcData.bytecode}</AppText>
-                  </Row>
-                </ExpandableRow>
+                <CopyBytecodeRow bytecode={requestData.wcData.bytecode} />
               )}
               {requestData.type === 'sign-unsigned-tx' && (
                 <>
@@ -467,6 +457,21 @@ const WalletConnectSessionRequestModal = withModal(
 
 export default WalletConnectSessionRequestModal
 
+const CopyBytecodeRow = ({ bytecode }: { bytecode: string }) => {
+  const { t } = useTranslation()
+
+  const handleCopy = () => {
+    Clipboard.setStringAsync(bytecode)
+    showToast({ text1: t('Bytecode copied') })
+  }
+
+  return (
+    <Row title={t('Bytecode')} titleColor="secondary" isLast>
+      <Button iconProps={{ name: 'copy' }} onPress={handleCopy} />
+    </Row>
+  )
+}
+
 const AssetAmounts = styled.View`
   gap: 5px;
   align-items: flex-end;
@@ -483,8 +488,4 @@ const FeeBox = styled.View`
 const DAppIcon = styled(Image)`
   width: 50px;
   height: 50px;
-`
-
-const AppTextStyled = styled(AppText)`
-  padding-left: 14px;
 `
