@@ -1,6 +1,8 @@
 import { AddressHash } from '@alephium/shared'
 import { useTheme } from 'styled-components/native'
 
+const ALPH_CODE = 'alph_alph'
+
 const useOnramperUrl = (receiveAddressHash: AddressHash) => {
   const theme = useTheme()
 
@@ -8,9 +10,9 @@ const useOnramperUrl = (receiveAddressHash: AddressHash) => {
   return (
     'https://buy.onramper.com/' +
     '?mode=buy' +
-    '&onlyCryptos=alph_alph' +
+    `&onlyCryptos=${ALPH_CODE}` +
     `&successRedirectUrl=${encodeURIComponent('https://alephium.org/banxa-callback/')}` +
-    `&wallets=ALPH:${receiveAddressHash}` +
+    `&wallets=${ALPH_CODE}:${receiveAddressHash}` +
     `&themeName=${theme.name}` +
     `&containerColor=${theme.bg.back1.slice(1)}` +
     `&primaryTextColor=${theme.font.primary.slice(1)}` +
