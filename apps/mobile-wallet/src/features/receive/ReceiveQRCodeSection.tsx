@@ -61,7 +61,8 @@ export default ReceiveQRCodeSection
 
 const QRCodeContainer = styled.View`
   margin: 15px 0;
-  padding: 25px;
+  padding: 20px;
   border-radius: ${BORDER_RADIUS_BIG}px;
   border: 2px solid ${({ theme }) => theme.border.primary};
+  background-color: white;
 `
