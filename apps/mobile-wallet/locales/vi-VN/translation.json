@@ -120,6 +120,8 @@
   "Saving": "Đang lưu lại",
   "Saved!": "Đã lưu!",
   "Copy address": "Sao chép địa chỉ",
+  "Copy": "Sao chép",
+  "Bytecode copied": "Đã sao chép Bytecode",
   "Paste": "Dán",
   "Edit": "Sửa",
   "Share": "Chia sẻ",
@@ -453,5 +455,6 @@
   "Did you know?": "Bạn có biết?",
   "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "Việc chia nhỏ số tiền của bạn vào nhiều địa chỉ khác nhau có thể giúp bạn quản lý tốt hơn và tăng cường sự riêng tư.",
   "No dApps match your search: \"{{ searchText }}\"": "Không có dApp nào khớp với tìm kiếm của bạn: \"{{ searchText }}\"",
-  "Visit dApp": "Đi đến dApp"
+  "Visit dApp": "Đi đến dApp",
+  "More details on Alph.land": "Thông tin chi tiết trên Alph.land"
 }
