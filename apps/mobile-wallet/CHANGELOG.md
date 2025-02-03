@@ -1,5 +1,11 @@
 # @alephium/mobile-wallet
 
+## 2.1.1
+
+### Patch Changes
+
+- 8a06320: Fix missing addresses in origins screen
+
 ## 2.1.0
 
 ### Minor Changes

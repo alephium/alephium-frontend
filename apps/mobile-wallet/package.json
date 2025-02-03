@@ -1,6 +1,6 @@
 {
   "name": "@alephium/mobile-wallet",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "private": true,
   "main": "index.ts",
   "scripts": {
@@ -57,7 +57,7 @@
     "expo": "51.0.39",
     "expo-application": "~5.9.1",
     "expo-barcode-scanner": "~13.0.1",
-    "expo-blur": "~13.0.2",
+    "expo-blur": "~13.0.3",
     "expo-build-properties": "~0.12.5",
     "expo-camera": "~15.0.16",
     "expo-checkbox": "~3.0.0",
