@@ -10,7 +10,6 @@ export interface AmountProps extends AppTextProps {
   value?: bigint | number
   decimals?: number
   isFiat?: boolean
-  fadeDecimals?: boolean
   fullPrecision?: boolean
   nbOfDecimalsToShow?: number
   suffix?: string
@@ -25,7 +24,6 @@ export interface AmountProps extends AppTextProps {
 
 const Amount = ({
   value,
-  fadeDecimals,
   fullPrecision = false,
   suffix = '',
   showOnDiscreetMode = false,
@@ -50,11 +48,10 @@ const Amount = ({
 
   const handleTappedToDisableDiscreetMode = () => setTappedToDisableDiscreetMode(!tappedToDisableDiscreetMode)
 
-  let quantitySymbol = ''
   let amount = ''
+  let tinyAmount = ''
   let isNegative = false
   const color = props.color ?? (highlight && value !== undefined ? (value < 0 ? 'send' : 'receive') : 'primary')
-  const fadedColor = fadeDecimals ? 'secondary' : color
 
   if (value !== undefined) {
     isNegative = value < 0
@@ -74,28 +71,29 @@ const Amount = ({
         amount: convertToPositive(value as bigint),
         amountDecimals: decimals,
         displayDecimals: nbOfDecimalsToShow,
-        fullPrecision
+        fullPrecision,
+        region
       })
+
+      const amountIsTooSmall = formatAmountForDisplay({
+        amount: convertToPositive(value as bigint),
+        amountDecimals: decimals,
+        displayDecimals: nbOfDecimalsToShow,
+        fullPrecision
+      }).startsWith('0.0000')
+
+      tinyAmount =
+        useTinyAmountShorthand && amountIsTooSmall
+          ? formatAmountForDisplay({ amount: BigInt(1), amountDecimals: 4, region })
+          : ''
     }
-
-    if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
-      quantitySymbol = amount.slice(-1)
-      amount = amount.slice(0, -1)
-    }
-  }
-
-  let [integralPart, fractionalPart] = amount.split('.')
-
-  if (useTinyAmountShorthand && amount.startsWith('0.0000')) {
-    integralPart = '< 0'
-    fractionalPart = '0001'
   }
 
   return (
     <AppText {...props} {...{ color, style }} onPress={handleTappedToDisableDiscreetMode}>
       {hideAmount ? (
         '•••'
-      ) : integralPart ? (
+      ) : amount ? (
         <>
           {showPlusMinus && (
             <AppText {...props} color={color}>
@@ -103,10 +101,8 @@ const Amount = ({
             </AppText>
           )}
           <AppText {...props} color={color}>
-            {integralPart}
+            {tinyAmount ? `< ${tinyAmount}` : amount}
           </AppText>
-          {fractionalPart && <AppText {...props} color={fadedColor}>{`.${fractionalPart}`}</AppText>}
-          {quantitySymbol && <AppText {...props} color={fadedColor}>{` ${quantitySymbol} `}</AppText>}
           {!isUnknownToken && (
             <AppText {...props} color={fadeSuffix ? 'secondary' : color}>{` ${suffix || 'ALPH'}`}</AppText>
           )}
