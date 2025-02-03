@@ -1,5 +1,16 @@
 # @alephium/mobile-wallet
 
+## 2.1.2
+
+### Patch Changes
+
+- 5b3c6b3: Add dApp links to Alph.land
+- bb1c1eb: Integrate Onramper
+- aa0fb2a: Don't show close button in modals with non-scrollable content
+- 3b47ee6: Format amounts based on user's locale
+- b180631: Copy bytecode in dApp request modal
+- baad80d: Tap to reveal hidden amounts
+
 ## 2.1.1
 
 ### Patch Changes
