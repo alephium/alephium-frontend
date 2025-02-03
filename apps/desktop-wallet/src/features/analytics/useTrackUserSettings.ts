@@ -15,6 +15,7 @@ const useTrackUserSettings = () => {
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const network = useAppSelector((s) => s.network.name)
+  const region = useAppSelector((s) => s.settings.region)
 
   useEffect(() => {
     if (posthog.__loaded)
@@ -27,7 +28,8 @@ const useTrackUserSettings = () => {
         language,
         passwordRequirement,
         fiatCurrency,
-        network
+        network,
+        region
       })
   }, [
     devTools,
@@ -38,6 +40,7 @@ const useTrackUserSettings = () => {
     passwordRequirement,
     posthog.__loaded,
     posthog.people,
+    region,
     theme,
     walletLockTimeInMinutes
   ])

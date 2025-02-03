@@ -14,12 +14,12 @@ import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
 import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
 import { languageOptions } from '@/features/localization/languages'
 import { systemLanguageMatchFailed, systemLanguageMatchSucceeded } from '@/features/localization/localizationActions'
+import useRegionOptions from '@/features/settings/regionSettings/useRegionOptions'
 import {
   localStorageGeneralSettingsMigrated,
   systemRegionMatchFailed,
   systemRegionMatchSucceeded
 } from '@/features/settings/settingsActions'
-import useRegionOptions from '@/features/settings/useRegionOptions'
 import { darkTheme, lightTheme } from '@/features/theme/themes'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'

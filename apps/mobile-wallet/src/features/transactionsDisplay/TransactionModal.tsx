@@ -79,7 +79,7 @@ const TransactionModal = withModal<TransactionModalProps>(({ id, tx }) => {
         <Badge color={status.color}>{status.text}</Badge>
       </Row>
       <Row title={t('Fee')} transparent>
-        <Amount value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)} fadeDecimals fullPrecision bold showOnDiscreetMode />
+        <Amount value={BigInt(tx.gasPrice) * BigInt(tx.gasAmount)} fullPrecision bold showOnDiscreetMode />
       </Row>
       {isMoved && (
         <Row title={t('Moved')} transparent>

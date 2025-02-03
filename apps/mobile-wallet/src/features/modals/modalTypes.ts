@@ -29,6 +29,7 @@ import TokenAmountModal from '~/features/send/modals/TokenAmountModal'
 import CurrencySelectModal from '~/features/settings/CurrencySelectModal'
 import EditWalletNameModal from '~/features/settings/EditWalletNameModal'
 import MnemonicModal from '~/features/settings/MnemonicModal'
+import RegionSelectModal from '~/features/settings/regionSettings/RegionSelectModal'
 import SafePlaceWarningModal from '~/features/settings/SafePlaceWarningModal'
 import WalletDeleteModal from '~/features/settings/WalletDeleteModal'
 import TransactionModal from '~/features/transactionsDisplay/TransactionModal'
@@ -76,7 +77,8 @@ export const ModalComponents = {
   AddressQRCodeScanActionsModal,
   AddressPickerQuickActionsModal,
   DAppQuickActionsModal,
-  DAppDetailsModal
+  DAppDetailsModal,
+  RegionSelectModal
 }
 
 export type ModalName = keyof typeof ModalComponents

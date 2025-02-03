@@ -141,7 +141,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
               truncate
               isLast={index === addresses.length - 1}
             >
-              <Amount value={BigInt(address.balance)} fadeDecimals bold />
+              <Amount value={BigInt(address.balance)} bold />
             </Row>
           ))}
         </Surface>
@@ -171,7 +171,7 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
                     isLast={index === discoveredAddresses.length - 1}
                   >
                     <AmountContent>
-                      <AmountStyled value={BigInt(balance)} color="secondary" fadeDecimals />
+                      <AmountStyled value={BigInt(balance)} color="secondary" />
                       <Checkbox
                         value={addressSelections[hash]}
                         disabled={loading}

@@ -42,7 +42,7 @@ const ConsolidationModal = withModal<ConsolidationModalProps>(({ id, onConsolida
             </AppText>
             <Fee>
               <AppText>{t('Fee')}:</AppText>
-              <Amount value={fees} fullPrecision fadeDecimals bold />
+              <Amount value={fees} fullPrecision bold />
             </Fee>
           </View>
         </ScreenSection>

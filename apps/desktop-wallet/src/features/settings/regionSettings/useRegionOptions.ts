@@ -1,7 +1,6 @@
 import { upperFirst } from 'lodash'
 import { useMemo } from 'react'
 
-import { Language } from '@/features/localization/languages'
 import { useAppSelector } from '@/hooks/redux'
 
 import regionsLocales from './regions.json'
@@ -13,6 +12,11 @@ const useRegionOptions = () => {
 }
 
 export default useRegionOptions
+
+const getRegionsOptions = (languageLocale: string) =>
+  regionsLocales
+    .map((regionLocale) => getRegionOption(regionLocale, languageLocale))
+    .sort((a, b) => a.label.localeCompare(b.label))
 
 // Inspired by https://github.com/LedgerHQ/ledger-live/blob/065dda3/apps/ledger-live-desktop/src/renderer/screens/settings/sections/General/RegionSelect.tsx
 const getRegionOption = (regionLocale: string, languageLocale: string | Intl.Locale) => {
@@ -32,8 +36,3 @@ const getRegionOption = (regionLocale: string, languageLocale: string | Intl.Loc
     label
   }
 }
-
-const getRegionsOptions = (languageLocale: Language) =>
-  regionsLocales
-    .map((regionLocale) => getRegionOption(regionLocale, languageLocale))
-    .sort((a, b) => a.label.localeCompare(b.label))
