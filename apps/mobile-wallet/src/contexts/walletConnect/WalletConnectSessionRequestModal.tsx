@@ -36,6 +36,7 @@ import ButtonsRow from '~/components/buttons/ButtonsRow'
 import { ModalScreenTitle, ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
+import useWalletConnectToasts from '~/contexts/walletConnect/useWalletConnectToasts'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
@@ -70,6 +71,7 @@ const WalletConnectSessionRequestModal = withModal(
     const { t } = useTranslation()
     const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
     const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
+    const { showApprovedToast, showRejectedToast } = useWalletConnectToasts()
 
     const [isApproving, setIsApproving] = useState(false)
 
@@ -254,7 +256,7 @@ const WalletConnectSessionRequestModal = withModal(
       console.log('✅ INFORMING: DONE!')
 
       console.log('👉 RESETTING SESSION REQUEST EVENT.')
-      showToast({ text1: t('dApp request approved'), text2: t('You can go back to your browser.') })
+      showApprovedToast()
     }
 
     const onReject = async () => {
@@ -265,7 +267,7 @@ const WalletConnectSessionRequestModal = withModal(
       } catch (e) {
         console.error('❌ INFORMING: FAILED.')
       } finally {
-        showToast({ text1: t('dApp request rejected'), text2: t('You can go back to your browser.'), type: 'info' })
+        showRejectedToast()
         dispatch(closeModal({ id }))
       }
     }
@@ -320,7 +322,7 @@ const WalletConnectSessionRequestModal = withModal(
               } finally {
                 console.log('👉 RESETTING SESSION REQUEST EVENT.')
                 dispatch(deactivateAppLoading())
-                showToast({ text1: t('dApp request approved'), text2: t('You can go back to your browser.') })
+                showApprovedToast()
                 dispatch(closeModal({ id }))
               }
             }
