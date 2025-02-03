@@ -369,7 +369,6 @@
   "View full size": "Xem kích thước đầy đủ",
   "Disclaimer": "Lưu ý quan trọng",
   "Buy": "Mua",
-  "banxaDisclaimer": "Bạn sẽ truy cập các dịch vụ của bên thứ ba do <1>Onramper.com</1> cung cấp thông qua trình duyệt trong ứng dụng. Alephium không kiểm soát các dịch vụ của Onramper. Các điều khoản và điều kiện của Onramper sẽ được áp dụng, vui lòng đọc kỹ và hiểu về họ trước khi tiếp tục.",
   "App data were reset": "Đã đặt lại dữ liệu ứng dụng",
   "Restore data": "Khôi phục dữ liệu",
   "Due to an unexpected error some of your app's data are missing. Would you like to regenerate them? Your funds are safe.": "Đã có lỗi xảy ra khiến một vài dữ liệu ứng dụng đang bị thiếu. Bạn có muốn tạo lại chúng không? Các tài sản của bạn đều an toàn.",
@@ -425,7 +424,9 @@
   "Loading dApps...": "Đang tải các dApp...",
   "Could not load dApps": "Không thể tải các dApp",
   "Coming soon!": "Sắp ra mắt!",
+  "Add to favorites": "Thêm vào mục yêu thích",
   "Added to favorites": "Đã thêm vào mục yêu thích",
+  "Remove from favorites": "Xoá khỏi mục yêu thích",
   "Removed from favorites": "Đã xóa khỏi mục yêu thích",
   "Favorites": "Yêu thích",
   "No dApps added to your favorites yet": "Chưa có dApp nào được thêm vào mục yêu thích",
@@ -449,5 +450,7 @@
   "nfts_in_addresses_one": "{{ count }} NFT",
   "nfts_in_addresses_other": "{{ count }} NFT",
   "Did you know?": "Bạn có biết?",
-  "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "Việc chia nhỏ số tiền của bạn vào nhiều địa chỉ khác nhau có thể giúp bạn quản lý tốt hơn và tăng cường sự riêng tư."
+  "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "Việc chia nhỏ số tiền của bạn vào nhiều địa chỉ khác nhau có thể giúp bạn quản lý tốt hơn và tăng cường sự riêng tư.",
+  "No dApps match your search: \"{{ searchText }}\"": "Không có dApp nào khớp với tìm kiếm của bạn: \"{{ searchText }}\"",
+  "Visit dApp": "Đi đến dApp"
 }
