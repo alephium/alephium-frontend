@@ -1,7 +1,7 @@
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Clipboard from 'expo-clipboard'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView, { WebViewNavigation } from 'react-native-webview'
@@ -23,12 +23,21 @@ interface DAppWebViewScreenProps extends NativeStackScreenProps<RootStackParamLi
 const DAppWebViewScreen = ({ navigation, route, ...props }: DAppWebViewScreenProps) => {
   const { dAppUrl, dAppName } = route.params
   const webViewRef = useRef<WebView>(null)
+  const { setIsInEcosystemInAppBrowser } = useWalletConnectContext()
 
   const [currentUrl, setCurrentUrl] = useState(dAppUrl)
   const [canGoBack, setCanGoBack] = useState(false)
   const [canGoForward, setCanGoForward] = useState(false)
 
   useDetectWCUrlInClipboardAndPair()
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsInEcosystemInAppBrowser(true)
+
+      return () => setIsInEcosystemInAppBrowser(false)
+    }, [setIsInEcosystemInAppBrowser])
+  )
 
   if (!dAppUrl) return null
 

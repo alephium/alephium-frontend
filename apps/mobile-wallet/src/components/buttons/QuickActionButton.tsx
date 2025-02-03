@@ -21,5 +21,4 @@ export default QuickActionButton
 
 const QuickActionButtonStyled = styled(Button)`
   border-radius: ${BORDER_RADIUS_BIG}px;
-  background-color: ${({ theme }) => theme.button.secondary};
 `

@@ -92,6 +92,8 @@ interface WalletConnectContextValue {
 
   resetWalletConnectClientInitializationAttempts: () => void
   resetWalletConnectStorage: () => void
+  isInEcosystemInAppBrowser: boolean
+  setIsInEcosystemInAppBrowser: (value: boolean) => void
 }
 
 const initialValues: WalletConnectContextValue = {
@@ -104,7 +106,9 @@ const initialValues: WalletConnectContextValue = {
   respondToWalletConnect: () => Promise.resolve(),
 
   resetWalletConnectClientInitializationAttempts: () => null,
-  resetWalletConnectStorage: () => null
+  resetWalletConnectStorage: () => null,
+  isInEcosystemInAppBrowser: false,
+  setIsInEcosystemInAppBrowser: () => null
 }
 
 const WalletConnectContext = createContext(initialValues)
@@ -129,6 +133,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
   const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
+  const [isInEcosystemInAppBrowser, setIsInEcosystemInAppBrowser] = useState(false)
 
   const isWalletConnectClientReady =
     isWalletConnectEnabled && walletConnectClient && walletConnectClientStatus === 'initialized'
@@ -882,7 +887,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         resetWalletConnectClientInitializationAttempts,
         resetWalletConnectStorage,
         respondToWalletConnectWithError,
-        respondToWalletConnect
+        respondToWalletConnect,
+        isInEcosystemInAppBrowser,
+        setIsInEcosystemInAppBrowser
       }}
     >
       {children}

@@ -227,7 +227,7 @@ PODS:
     - Yoga
   - ExpoAsset (10.0.10):
     - ExpoModulesCore
-  - ExpoBlur (13.0.2):
+  - ExpoBlur (13.0.3):
     - ExpoModulesCore
   - ExpoCamera (15.0.16):
     - ExpoModulesCore
@@ -2082,7 +2082,7 @@ SPEC CHECKSUMS:
   expo-dev-menu: 8b0ea59392e2dd975390ea6f0472ce350d94866a
   expo-dev-menu-interface: 5c6b79875bf0ab1251ea9962f60968fe39ed2637
   ExpoAsset: 286fee7ba711ce66bf20b315e68106b13b8629fc
-  ExpoBlur: d6023b4ccd20035624b60ae0bda541e65b9ece5c
+  ExpoBlur: 99901a4531f5d3ac4a19b362907b8f75da4ed9c8
   ExpoCamera: cf49d2d121a9f883be0f98dde15a2185a1dd42be
   ExpoClipboard: 243e22ff4161bbffcd3d2db469ae860ddc1156be
   ExpoDevice: 84b3ed79df1234c17edfbf335f6ecf3c636f74de
