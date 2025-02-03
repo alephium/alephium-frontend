@@ -8,8 +8,8 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { dAppQuery } from '~/api/queries/dAppQueries'
 import AppText from '~/components/AppText'
-import QuickActionButton from '~/components/buttons/QuickActionButton'
-import QuickActionButtons from '~/components/buttons/QuickActionButtons'
+import BottomButtons from '~/components/buttons/BottomButtons'
+import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import DAppDetailsModalHeader from '~/features/ecosystem/DAppDetailsModalHeader'
 import { DAppProps } from '~/features/ecosystem/ecosystemTypes'
@@ -28,14 +28,14 @@ const DAppDetailsModal = withModal<DAppProps>(({ id, dAppName }) => {
       <Content>
         <DAppBannerImage dAppName={dAppName} />
         <DAppDetailsModalDescription dAppName={dAppName} />
-        <QuickActionButtons>
-          <QuickActionButton
+        <BottomButtons backgroundColor="back1" fullWidth>
+          <Button
             title={t('More details on Alph.land')}
             onPress={handleOpenAlphLand}
             iconProps={{ name: 'external-link' }}
           />
-          <VisitDAppButton dAppName={dAppName} parentModalId={id} />
-        </QuickActionButtons>
+          <VisitDAppButton dAppName={dAppName} parentModalId={id} buttonType="default" variant="contrast" />
+        </BottomButtons>
       </Content>
     </BottomModal>
   )

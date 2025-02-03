@@ -35,7 +35,7 @@ const DAppQuickActionsModal = withModal<DAppQuickActionsModalProps>(({ id, dAppN
           onPress={handleShowDetails}
           iconProps={{ name: 'more-horizontal' }}
         />
-        <VisitDAppButton dAppName={dAppName} parentModalId={id} />
+        <VisitDAppButton dAppName={dAppName} parentModalId={id} buttonType="quickAction" />
         <AddToFavoritesButton dAppName={dAppName} parentModalId={id} />
       </QuickActionButtons>
     </BottomModal>
