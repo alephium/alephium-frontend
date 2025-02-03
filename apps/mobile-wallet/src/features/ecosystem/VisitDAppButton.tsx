@@ -5,18 +5,20 @@ import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
 import { dAppQuery } from '~/api/queries/dAppQueries'
+import Button, { ButtonProps } from '~/components/buttons/Button'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
 import { DApp } from '~/features/ecosystem/ecosystemTypes'
 import { closeModal } from '~/features/modals/modalActions'
 import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
-interface VisitDAppButtonProps {
+interface VisitDAppButtonProps extends ButtonProps {
   dAppName: DApp['name']
   parentModalId?: number
+  buttonType: 'quickAction' | 'default'
 }
 
-const VisitDAppButton = ({ dAppName, parentModalId }: VisitDAppButtonProps) => {
+const VisitDAppButton = ({ dAppName, parentModalId, buttonType, ...props }: VisitDAppButtonProps) => {
   const { data: dApp } = useQuery(dAppQuery(dAppName))
   const { t } = useTranslation()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
@@ -30,7 +32,16 @@ const VisitDAppButton = ({ dAppName, parentModalId }: VisitDAppButtonProps) => {
     sendAnalytics({ event: 'Opened dApp', props: { origin: 'quick_actions', dAppName } })
   }
 
-  return <QuickActionButton title={t('Visit dApp')} onPress={handleVisitDApp} iconProps={{ name: 'arrow-up-right' }} />
+  const ButtonComponent = buttonType === 'default' ? Button : QuickActionButton
+
+  return (
+    <ButtonComponent
+      title={t('Visit dApp')}
+      onPress={handleVisitDApp}
+      iconProps={{ name: 'arrow-up-right' }}
+      {...props}
+    />
+  )
 }
 
 export default VisitDAppButton

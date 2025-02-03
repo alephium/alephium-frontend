@@ -1,11 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { Image } from 'expo-image'
+import { openBrowserAsync } from 'expo-web-browser'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, Image as RNImage } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { dAppQuery } from '~/api/queries/dAppQueries'
 import AppText from '~/components/AppText'
+import BottomButtons from '~/components/buttons/BottomButtons'
+import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import DAppDetailsModalHeader from '~/features/ecosystem/DAppDetailsModalHeader'
 import { DAppProps } from '~/features/ecosystem/ecosystemTypes'
@@ -14,15 +18,28 @@ import BottomModal from '~/features/modals/BottomModal'
 import withModal from '~/features/modals/withModal'
 import { BORDER_RADIUS_BIG, VERTICAL_GAP } from '~/style/globalStyle'
 
-const DAppDetailsModal = withModal<DAppProps>(({ id, dAppName }) => (
-  <BottomModal modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
-    <Content>
-      <DAppBannerImage dAppName={dAppName} />
-      <DAppDetailsModalDescription dAppName={dAppName} />
-      <VisitDAppButton dAppName={dAppName} parentModalId={id} />
-    </Content>
-  </BottomModal>
-))
+const DAppDetailsModal = withModal<DAppProps>(({ id, dAppName }) => {
+  const { t } = useTranslation()
+
+  const handleOpenAlphLand = () => openBrowserAsync(`https://www.alph.land/${dAppName.replace(' ', '-').toLowerCase()}`)
+
+  return (
+    <BottomModal modalId={id} title={<DAppDetailsModalHeader dAppName={dAppName} />} titleAlign="left">
+      <Content>
+        <DAppBannerImage dAppName={dAppName} />
+        <DAppDetailsModalDescription dAppName={dAppName} />
+        <BottomButtons backgroundColor="back1" fullWidth>
+          <Button
+            title={t('More details on Alph.land')}
+            onPress={handleOpenAlphLand}
+            iconProps={{ name: 'external-link' }}
+          />
+          <VisitDAppButton dAppName={dAppName} parentModalId={id} buttonType="default" variant="contrast" />
+        </BottomButtons>
+      </Content>
+    </BottomModal>
+  )
+})
 
 export default DAppDetailsModal
 

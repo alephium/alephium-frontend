@@ -18,6 +18,7 @@ import Button from '~/components/buttons/Button'
 import ButtonsRow from '~/components/buttons/ButtonsRow'
 import InfoBox from '~/components/InfoBox'
 import { ScreenSection } from '~/components/layout/Screen'
+import useWalletConnectToasts from '~/contexts/walletConnect/useWalletConnectToasts'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import BottomModal from '~/features/modals/BottomModal'
@@ -57,6 +58,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
     const persistAddressSettings = usePersistAddressSettings()
     const { t } = useTranslation()
     const { walletConnectClient, activeSessions, refreshActiveSessions } = useWalletConnectContext()
+    const { showApprovedToast, showRejectedToast } = useWalletConnectToasts()
 
     const [signerAddress, setSignerAddress] = useState<Address>()
     const [showAlternativeSignerAddresses, setShowAlternativeSignerAddresses] = useState(false)
@@ -179,7 +181,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
       } finally {
         refreshActiveSessions()
         dispatch(deactivateAppLoading())
-        showToast({ text1: t('dApp request approved'), text2: t('You can go back to your browser.') })
+        showApprovedToast()
         dispatch(closeModal({ id: modalId }))
       }
     }
@@ -197,7 +199,7 @@ const WalletConnectSessionProposalModal = withModal<WalletConnectSessionProposal
       } finally {
         refreshActiveSessions()
         dispatch(deactivateAppLoading())
-        showToast({ text1: t('dApp request rejected'), text2: t('You can go back to your browser.'), type: 'info' })
+        showRejectedToast()
         dispatch(closeModal({ id: modalId }))
       }
     }

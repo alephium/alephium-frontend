@@ -120,6 +120,8 @@
   "Saving": "Saving",
   "Saved!": "Saved!",
   "Copy address": "Copy address",
+  "Copy": "Copy",
+  "Bytecode copied": "Bytecode copied",
   "Paste": "Paste",
   "Edit": "Edit",
   "Share": "Share",
@@ -369,7 +371,7 @@
   "View full size": "View full size",
   "Disclaimer": "Disclaimer",
   "Buy": "Buy",
-  "banxaDisclaimer": "You are about to access 3rd party services provided by <1>Banxa.com</1> through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding.",
+  "banxaDisclaimer": "You are about to access 3rd party services provided by <1>Onramper.com</1> through an in-app browser. Alephium does not control Onramper’s services. Onramper’s terms and conditions will apply, so please read and understand them before proceeding.",
   "App data were reset": "App data were reset",
   "Restore data": "Restore data",
   "Due to an unexpected error some of your app's data are missing. Would you like to regenerate them? Your funds are safe.": "Due to an unexpected error some of your app's data are missing. Would you like to regenerate them? Your funds are safe.",
@@ -455,5 +457,6 @@
   "No dApps match your search: \"{{ searchText }}\"": "No dApps match your search: \"{{ searchText }}\"",
   "Visit dApp": "Visit dApp",
   "Region": "Region",
-  "Choose your region to update formats of dates, time, and currencies.": "Choose your region to update formats of dates, time, and currencies."
+  "Choose your region to update formats of dates, time, and currencies.": "Choose your region to update formats of dates, time, and currencies.",
+  "More details on Alph.land": "More details on Alph.land"
 }

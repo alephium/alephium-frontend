@@ -1,5 +1,22 @@
 # @alephium/mobile-wallet
 
+## 2.1.1
+
+### Patch Changes
+
+- 8a06320: Fix missing addresses in origins screen
+
+## 2.1.0
+
+### Minor Changes
+
+- 642f0cf: Ecosystem screen with in-app browser
+
+### Patch Changes
+
+- 89ae793: Enable Thai Baht (THB) and Hong Kong Dollar (HKD) fiat currencies
+- 94d264a: Fix iOS keyboard dismiss in address settings screen
+
 ## 2.0.1
 
 ### Patch Changes
