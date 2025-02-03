@@ -20,6 +20,7 @@ import {
 } from '@alephium/web3'
 import { getSdkError } from '@walletconnect/utils'
 import * as Clipboard from 'expo-clipboard'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
@@ -64,27 +65,19 @@ const WalletConnectSessionRequestModal = withModal(
     requestEvent
   }: WalletConnectSessionRequestModalProps<T> & ModalBaseProp) => {
     const dispatch = useAppDispatch()
-    const { walletConnectClient, respondToWalletConnect, respondToWalletConnectWithError, activeSessions } =
-      useWalletConnectContext()
+    const { respondToWalletConnect, respondToWalletConnectWithError, activeSessions } = useWalletConnectContext()
     const signAddress = useAppSelector((s) => selectAddressByHash(s, requestData.wcData.fromAddress))
     const { t } = useTranslation()
     const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
     const { triggerFundPasswordAuthGuard } = useFundPasswordGuard()
 
-    const metadata = activeSessions.find((s) => s.topic === requestEvent?.topic)?.peer.metadata
+    const [isApproving, setIsApproving] = useState(false)
+
+    const metadata = activeSessions.find((s) => s.topic === requestEvent.topic)?.peer.metadata
     const isSignRequest = requestData.type === 'sign-message' || requestData.type === 'sign-unsigned-tx'
     const fees = !isSignRequest
       ? BigInt(requestData.unsignedTxData.gasAmount) * BigInt(requestData.unsignedTxData.gasPrice)
       : undefined
-
-    const handleManualClose = () => {
-      console.log('👉 CLOSING MODAL.')
-
-      if (requestEvent && walletConnectClient && walletConnectClient?.getPendingSessionRequests().length > 0) {
-        console.log('👉 USER CLOSED THE MODAL WITHOUT REJECTING/APPROVING SO WE NEED TO REJECT.')
-        onReject()
-      }
-    }
 
     const handleApprovePress = () => onApprove(sendTransaction)
 
@@ -293,15 +286,15 @@ const WalletConnectSessionRequestModal = withModal(
       sendTransaction: () => Promise<
         SignExecuteScriptTxResult | SignDeployContractTxResult | SignTransferTxResult | undefined
       >
-    ) => {
-      if (!requestEvent) return
-
+    ) =>
       triggerBiometricsAuthGuard({
         settingsToCheck: 'transactions',
         successCallback: () =>
           triggerFundPasswordAuthGuard({
             successCallback: async () => {
               dispatch(activateAppLoading(t('Approving')))
+
+              setIsApproving(true)
 
               try {
                 const signResult = await sendTransaction()
@@ -333,10 +326,9 @@ const WalletConnectSessionRequestModal = withModal(
             }
           })
       })
-    }
 
     return (
-      <BottomModal modalId={id} onClose={handleManualClose}>
+      <BottomModal modalId={id} onClose={!isApproving ? onReject : undefined}>
         <ModalContent verticalGap>
           {metadata && (
             <ScreenSection>
