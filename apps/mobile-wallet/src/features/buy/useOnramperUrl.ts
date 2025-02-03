@@ -9,7 +9,7 @@ const useOnramperUrl = (receiveAddressHash: AddressHash) => {
     'https://buy.onramper.com/' +
     '?mode=buy' +
     '&onlyCryptos=alph_alph' +
-    '&successRedirectUrl=https://alephium.com/banxa-callback/' +
+    `&successRedirectUrl=${encodeURIComponent('https://alephium.org/banxa-callback/')}` +
     `&wallets=ALPH:${receiveAddressHash}` +
     `&themeName=${theme.name}` +
     `&containerColor=${theme.bg.back1.slice(1)}` +
