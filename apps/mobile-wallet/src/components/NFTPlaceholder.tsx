@@ -7,12 +7,11 @@ import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
 interface NFTPlaceholderProps {
   size?: DimensionValue
+  showCameraOff?: boolean
 }
 
-const NFTPlaceholder = ({ size = '100%' }: NFTPlaceholderProps) => (
-  <NoImage style={{ width: size, height: size }}>
-    <CameraOff color="gray" size="30%" />
-  </NoImage>
+const NFTPlaceholder = ({ size = '100%', showCameraOff = true }: NFTPlaceholderProps) => (
+  <NoImage style={{ width: size, height: size }}>{showCameraOff && <CameraOff color="gray" size="30%" />}</NoImage>
 )
 
 export default NFTPlaceholder

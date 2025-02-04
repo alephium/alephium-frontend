@@ -37,7 +37,7 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
   return (
     <BottomModal modalId={id} title={nft.name}>
       <NftImageContainer>
-        <NFTImage nftId={nftId} size={nftFullSize} />
+        <NFTImage nftId={nftId} size={nftFullSize} play />
       </NftImageContainer>
 
       <ActionButtons>
