@@ -33,14 +33,14 @@ const NFTImage = memo(({ nftId, size = '100%', play }: NFTImageProps) => {
   const [contentType, setContentType] = useState<NFTDataType>()
 
   useEffect(() => {
-    if (nft)
+    if (nft?.image)
       fetch(nft.image).then((res) => {
         const contentType = res.headers.get('content-type') || ''
         const contentTypeCategory = contentType.split('/')[0]
 
         setContentType(contentTypeCategory in NFTDataTypes ? (contentTypeCategory as NFTDataType) : 'other')
       })
-  }, [nft])
+  }, [nft?.image])
 
   if (!nft) return null
 
