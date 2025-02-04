@@ -116,6 +116,12 @@ export default {
       'expo-localization',
       'expo-secure-store',
       [
+        'expo-video',
+        {
+          supportsPictureInPicture: true
+        }
+      ],
+      [
         '@sentry/react-native/expo',
         {
           url: 'https://sentry.io/',

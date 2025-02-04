@@ -287,6 +287,8 @@ PODS:
     - ExpoModulesCore
   - ExpoSensors (13.0.9):
     - ExpoModulesCore
+  - ExpoVideo (1.2.7):
+    - ExpoModulesCore
   - ExpoWebBrowser (13.0.3):
     - ExpoModulesCore
   - EXSplashScreen (0.27.7):
@@ -1762,6 +1764,7 @@ DEPENDENCIES:
   - ExpoScreenCapture (from `../../../node_modules/expo-screen-capture/ios`)
   - ExpoSecureStore (from `../../../node_modules/expo-secure-store/ios`)
   - ExpoSensors (from `../../../node_modules/expo-sensors/ios`)
+  - ExpoVideo (from `../../../node_modules/expo-video/ios`)
   - ExpoWebBrowser (from `../../../node_modules/expo-web-browser/ios`)
   - EXSplashScreen (from `../../../node_modules/expo-splash-screen/ios`)
   - EXUpdatesInterface (from `../../../node_modules/expo-updates-interface/ios`)
@@ -1915,6 +1918,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/expo-secure-store/ios"
   ExpoSensors:
     :path: "../../../node_modules/expo-sensors/ios"
+  ExpoVideo:
+    :path: "../../../node_modules/expo-video/ios"
   ExpoWebBrowser:
     :path: "../../../node_modules/expo-web-browser/ios"
   EXSplashScreen:
@@ -2098,6 +2103,7 @@ SPEC CHECKSUMS:
   ExpoScreenCapture: 41d39c845d85f740595e411d1c251ba893c69200
   ExpoSecureStore: 6506992a9f53c94ea716c54d4a63144965945c2c
   ExpoSensors: 805b2d91b629a08da78dcc86032a0833cb0e98c0
+  ExpoVideo: 34140ec2f01cfeb22d32165e79c4c819225e99cd
   ExpoWebBrowser: cf10afe886891ab495877dada977fe6c269614a4
   EXSplashScreen: a4ce3dd5d28d48e8b9132bcd9b58ee8e340db78c
   EXUpdatesInterface: c3a9494c2173db6442c7d5ad4e5b984972760fd3
@@ -2111,7 +2117,7 @@ SPEC CHECKSUMS:
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   lottie-ios: fcb5e73e17ba4c983140b7d21095c834b3087418
   lottie-react-native: f26bf46e376a20620da39b1e74d9f0972bfeb0e8
-  RCT-Folly: 02617c592a293bd6d418e0a88ff4ee1f88329b47
+  RCT-Folly: 5dc73daec3476616d19e8a53f0156176f7b55461
   RCTDeprecation: 3afceddffa65aee666dafd6f0116f1d975db1584
   RCTRequired: ec1239bc9d8bf63e10fb92bd8b26171a9258e0c1
   RCTTypeSafety: f5ecbc86c5c5fa163c05acb7a1c5012e15b5f994
