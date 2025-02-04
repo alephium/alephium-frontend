@@ -14,7 +14,7 @@ export interface NFTImageProps {
   size?: DimensionValue
 }
 
-const NFTImage = ({ nftId, size = '100%' }: NFTImageProps) => {
+const NFTImage = memo(({ nftId, size = '100%' }: NFTImageProps) => {
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
   const theme = useTheme()
 
@@ -41,11 +41,13 @@ const NFTImage = ({ nftId, size = '100%' }: NFTImageProps) => {
       }}
     />
   )
-}
+})
 
 const NFTImageStyled = styled(Image)`
   border-radius: ${BORDER_RADIUS_SMALL}px;
   aspect-ratio: 1;
+  background-color: ${({ theme }) => theme.bg.primary};
+  border: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
-export default memo(NFTImage)
+export default NFTImage
