@@ -6,10 +6,12 @@ import { useBottomModalState } from '~/features/modals/useBottomModalState'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface BottomModalFlashListProps extends Omit<BottomModalBaseProps, 'children'> {
-  flashListRender: (flashListProps: {
-    contentContainerStyle: ContentStyle
-    onContentSizeChange: (w: number, h: number) => void
-  }) => ReactNode
+  flashListRender: (flashListProps: FlashListRenderProps) => ReactNode
+}
+
+export interface FlashListRenderProps {
+  contentContainerStyle: ContentStyle
+  onContentSizeChange: (w: number, h: number) => void
 }
 
 const BottomModalFlashList = ({
