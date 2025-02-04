@@ -1,6 +1,8 @@
 import { FlashList } from '@shopify/flash-list'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Platform } from 'react-native'
+import styled, { css } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import { ScreenSection } from '~/components/layout/Screen'
@@ -42,9 +44,9 @@ const RegionsFlashList = ({
 
   return (
     <>
-      <ScreenSection>
+      <ScreenSectionStyled position={Platform.OS === 'ios' ? 'top' : 'bottom'}>
         <SearchInput value={searchQuery} onChangeText={setSearchQuery} />
-      </ScreenSection>
+      </ScreenSectionStyled>
       <FlashList
         data={filteredRegionOptions}
         estimatedItemSize={65}
@@ -89,3 +91,16 @@ const RegionRadioButton = ({ label, value, isLast, parentModalId }: RegionRadioB
     />
   )
 }
+
+const ScreenSectionStyled = styled(ScreenSection)<{ position: 'top' | 'bottom' }>`
+  ${({ position }) =>
+    position === 'bottom' &&
+    css`
+      position: absolute;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 1;
+      background-color: ${({ theme }) => theme.bg.back1};
+    `}
+`
