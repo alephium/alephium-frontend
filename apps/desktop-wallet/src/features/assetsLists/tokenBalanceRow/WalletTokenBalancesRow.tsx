@@ -26,6 +26,11 @@ export const WalletNSTBalancesRow = ({ tokenId }: TokenBalancesRowBaseProps) => 
       <TokenLogo tokenId={tokenId} />
     </TableCell>
     <NSTNameCell tokenId={tokenId} />
-    <FTWalletAmountCell tokenId={tokenId} />
+    <TableCell>-</TableCell>
+    <TableCell fixedWidth={140} />
+    <TableCell>
+      <FTWalletAmountCell tokenId={tokenId} />
+    </TableCell>
+    <TableCell align="right">-</TableCell>
   </TableRow>
 )

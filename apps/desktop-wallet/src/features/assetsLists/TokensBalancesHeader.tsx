@@ -2,7 +2,11 @@ import { useTranslation } from 'react-i18next'
 
 import { TableCell, TableHeader } from '@/components/Table'
 
-const TokensBalancesHeader = () => {
+interface TokensBalancesHeaderProps {
+  showAllocation?: boolean
+}
+
+const TokensBalancesHeader = ({ showAllocation }: TokensBalancesHeaderProps) => {
   const { t } = useTranslation()
 
   return (
@@ -14,9 +18,11 @@ const TokensBalancesHeader = () => {
       <TableCell>
         <span>{t('Price')}</span>
       </TableCell>
-      <TableCell fixedWidth={140}>
-        <span>{t('Allocation')}</span>
-      </TableCell>
+      {showAllocation && (
+        <TableCell fixedWidth={140}>
+          <span>{t('Allocation')}</span>
+        </TableCell>
+      )}
       <TableCell align="right">
         <span>{t('Amount')}</span>
       </TableCell>

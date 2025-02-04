@@ -26,7 +26,7 @@ const AssetLogo = memo(({ tokenId, size, className }: AssetLogoProps) => {
       ) : name ? (
         <Initials size={size}>{name.slice(0, 2)}</Initials>
       ) : (
-        <HelpCircle size={size} />
+        <HelpCircle size={size - 5} strokeWidth={1.5} />
       )}
     </AssetLogoStyled>
   )

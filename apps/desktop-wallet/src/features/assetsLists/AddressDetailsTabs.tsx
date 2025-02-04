@@ -1,14 +1,11 @@
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
-import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import { TabItem } from '@/components/TabBar'
 import Table from '@/components/Table'
 import TableTabBar from '@/components/TableTabBar'
 import { AddressFTsBalancesList, WalletFTsBalancesList } from '@/features/assetsLists/FTsBalancesList'
 import { AddressNFTsGrid, WalletNFTsGrid } from '@/features/assetsLists/NFTsGrid'
-import { AddressNSTsBalancesList, WalletNSTsBalancesList } from '@/features/assetsLists/NSTsBalancesList'
 import {
   AddressDetailsTabsProps,
   TokensAndActivityTabValue,
@@ -20,15 +17,10 @@ import AddressTransactionsList from '@/features/transactionsDisplay/transactionL
 
 export const AddressDetailsTabs = ({ addressHash }: AddressDetailsTabsProps) => {
   const { t } = useTranslation()
-  const {
-    data: { nstIds }
-  } = useFetchAddressTokensByType({ addressHash, includeAlph: false })
 
-  const { tabs: tokenTabs } = useTokensTabs({
-    numberOfNSTs: nstIds.length,
+  const tokenTabs = useTokensTabs({
     ftsTabTitle: t('Address tokens'),
-    nftsTabTitle: t('Address NFTs'),
-    nstsTabTitle: t('Address unknown tokens')
+    nftsTabTitle: t('Address NFTs')
   })
 
   const tabs = [...tokenTabs, { value: 'activity' as TokensAndActivityTabValue, label: t('Activity') }]
@@ -43,8 +35,6 @@ export const AddressDetailsTabs = ({ addressHash }: AddressDetailsTabsProps) => 
         return <AddressFTsBalancesList {...props} />
       case 'nfts':
         return <AddressNFTsGrid {...props} />
-      case 'nsts':
-        return <AddressNSTsBalancesList {...props} />
       case 'activity':
         return <AddressTransactionsList addressHash={addressHash} />
     }
@@ -59,14 +49,9 @@ export const AddressDetailsTabs = ({ addressHash }: AddressDetailsTabsProps) => 
 
 export const WalletTokensTabs = ({ className }: WalletTokensTabsProps) => {
   const { t } = useTranslation()
-  const {
-    data: { nstIds }
-  } = useFetchWalletTokensByType({ includeAlph: false })
 
-  const { tabs } = useTokensTabs({
-    numberOfNSTs: nstIds.length,
+  const tabs = useTokensTabs({
     ftsTabTitle: t('Tokens'),
-    nstsTabTitle: t('Unknown tokens'),
     nftsTabTitle: t('NFTs')
   })
 
@@ -78,8 +63,6 @@ export const WalletTokensTabs = ({ className }: WalletTokensTabsProps) => {
         return <WalletFTsBalancesList />
       case 'nfts':
         return <WalletNFTsGrid />
-      case 'nsts':
-        return <WalletNSTsBalancesList />
     }
   }
 

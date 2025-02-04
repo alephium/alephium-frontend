@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import useFetchToken, { isFT, isUnlistedFT } from '@/api/apiDataHooks/token/useFetchToken'
+import Badge from '@/components/Badge'
 import HashEllipsed from '@/components/HashEllipsed'
 import { TableCell } from '@/components/Table'
 import Truncate from '@/components/Truncate'
@@ -33,17 +34,21 @@ export const NSTNameCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
 
   return (
     <TableCell>
-      <TokenName>
+      <TokenName style={{ maxWidth: 180 }}>
         <HashEllipsed hash={tokenId} tooltipText={t('Copy token hash')} />
+        <Badge compact>{t('Unknown')}</Badge>
       </TokenName>
     </TableCell>
   )
 }
 
 const TokenName = styled(Truncate)`
+  display: flex;
+  align-items: center;
   font-size: 13px;
   font-weight: var(--fontWeight-semiBold);
   padding-right: 10px;
+  gap: 5px;
 `
 
 const InfoIcon = styled.div`
@@ -55,7 +60,7 @@ const InfoIcon = styled.div`
   font-size: 11px;
   font-weight: 600;
   color: ${({ theme }) => theme.font.tertiary};
-  background-color: ${({ theme }) => theme.bg.background2};
+  background-color: ${({ theme }) => theme.bg.tertiary};
   border-radius: 50%;
   cursor: default;
   margin-left: 6px;
