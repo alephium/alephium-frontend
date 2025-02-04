@@ -22,4 +22,5 @@ const NoImage = styled.View`
   align-items: center;
   justify-content: center;
   background-color: ${({ theme }) => colord(theme.bg.back2).darken(0.07).toHex()};
+  aspect-ratio: 1;
 `
