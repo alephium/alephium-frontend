@@ -15,18 +15,16 @@ export interface FlashListRenderProps {
 }
 
 const BottomModalFlashList = ({
-  modalId,
   onClose,
-  title,
-  titleAlign,
   maximisedContent,
   minHeight,
   navHeight = 50,
   noPadding,
-  flashListRender
+  flashListRender,
+  ...props
 }: BottomModalFlashListProps) => {
   const modalState = useBottomModalState({
-    modalId,
+    modalId: props.modalId,
     maximisedContent,
     minHeight,
     navHeight,
@@ -34,7 +32,7 @@ const BottomModalFlashList = ({
   })
 
   return (
-    <BottomModalBase title={title} modalId={modalId} navHeight={navHeight} titleAlign={titleAlign} {...modalState}>
+    <BottomModalBase navHeight={navHeight} {...props} {...modalState}>
       {flashListRender({
         onContentSizeChange: modalState.handleContentSizeChange,
         contentContainerStyle: {
