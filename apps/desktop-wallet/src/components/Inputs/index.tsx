@@ -49,7 +49,7 @@ export const inputDefaultStyle = (
   heightSize?: InputHeight,
   largeText?: boolean
 ) => css`
-  height: ${heightSize === 'small' ? '34px' : heightSize === 'big' ? '46px' : 'var(--inputHeight)'};
+  height: ${heightSize === 'small' ? '34px' : heightSize === 'big' ? '48px' : 'var(--inputHeight)'};
   width: 100%;
   border-radius: ${heightSize === 'small'
     ? 'var(--radius-small)'

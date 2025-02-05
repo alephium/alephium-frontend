@@ -12,7 +12,7 @@ export const lightTheme: DefaultTheme = {
     background2: '#fff',
     hover: 'rgba(0, 0, 0, 0.01)',
     highlight: '#ffffff',
-    accent: colord('#400fe3').alpha(0.05).toHex()
+    accent: colord('#2d0fe3').alpha(0.05).toHex()
   },
   font: {
     primary: '#000',

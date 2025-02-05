@@ -428,7 +428,7 @@ export const OptionItem = styled.button<{
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  color: ${({ theme, selected }) => (selected ? theme.font.accent : theme.font.primary)};
+  color: ${({ theme }) => theme.font.primary};
   user-select: none;
   text-align: left;
   visibility: ${({ invisible }) => invisible && 'hidden'};
@@ -444,7 +444,7 @@ export const OptionItem = styled.button<{
     isFloating
       ? css`
           margin: var(--spacing-2) var(--spacing-4);
-          border-radius: var(--radius-medium);
+          border-radius: var(--radius-big);
           overflow: hidden;
         `
       : css`
@@ -457,11 +457,7 @@ export const OptionItem = styled.button<{
     focusable &&
     css`
       &:focus {
-        background-color: ${({ theme }) => theme.bg.accent};
-      }
-
-      &:hover {
-        background-color: ${({ theme }) => theme.bg.hover};
+        box-shadow: inset 0 0 0 1px ${({ theme }) => theme.border.primary};
       }
     `}
 `

@@ -160,7 +160,7 @@ const ShortcutButton = styled.button`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
+  border-radius: 18px;
   background-color: ${({ theme }) => theme.bg.highlight};
   border: 1px solid ${({ theme }) => theme.border.primary};
   color: ${({ theme }) => theme.font.primary};
