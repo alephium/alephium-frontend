@@ -219,12 +219,15 @@ export const ModalFooterButtons = styled.div`
 `
 
 export const ModalFooterButton = ({ ...props }) => (
-  <ModalFooterButtonStyled {...props}>{props.children}</ModalFooterButtonStyled>
+  <ModalFooterButtonStyled tall {...props}>
+    {props.children}
+  </ModalFooterButtonStyled>
 )
 
 const ModalFooterButtonStyled = styled(Button)`
   width: 100%;
   max-width: none;
+  border-radius: 12px;
 `
 
 const ModalSubtitle = styled.div`
