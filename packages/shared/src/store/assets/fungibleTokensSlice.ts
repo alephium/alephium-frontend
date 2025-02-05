@@ -47,6 +47,7 @@ const fungibleTokensSlice = createSlice({
             state,
             metadata.tokens.map((tokenInfo) => ({
               ...tokenInfo,
+              logoURI: `${tokenInfo.logoURI}${tokenInfo.id === ALPH.id ? '?v2' : ''}`,
               verified: true
             }))
           )
