@@ -5,7 +5,7 @@ import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
-const useFetchWalletBalancesAlph = <T>(
+const useFetchWalletBalancesAlphBase = <T>(
   combine: (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]) => {
     data: T
     isLoading: boolean
@@ -29,4 +29,4 @@ const useFetchWalletBalancesAlph = <T>(
   }
 }
 
-export default useFetchWalletBalancesAlph
+export default useFetchWalletBalancesAlphBase
