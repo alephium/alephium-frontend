@@ -1,15 +1,14 @@
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useQueries } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import { combineDefined } from '@/api/apiDataHooks/apiDataHooksUtils'
 import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
 import { nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
-import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { TokenId } from '@/types/tokens'
 
 const useFetchWalletNftsSearchStrings = () => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
   const {
     data: { nftIds },
     isLoading: isLoadingTokensByType

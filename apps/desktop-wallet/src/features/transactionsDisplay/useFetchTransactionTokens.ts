@@ -1,4 +1,5 @@
 import { AddressHash, NFT } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { useQueries } from '@tanstack/react-query'
@@ -8,8 +9,6 @@ import { combineDefined } from '@/api/apiDataHooks/apiDataHooksUtils'
 import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
 import { fungibleTokenMetadataQuery, nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
-import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { ListedFT, NonStandardToken, UnlistedFT } from '@/types/tokens'
 
 type AmountDelta = { amount: bigint }
@@ -32,7 +31,7 @@ const useFetchTransactionTokens = (
   tx: e.Transaction | e.PendingTransaction,
   addressHash: AddressHash
 ): TransactionTokens => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
 
   const {

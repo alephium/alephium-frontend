@@ -1,8 +1,8 @@
 import { AddressHash, PAGINATION_PAGE_LIMIT, throttledClient } from '@alephium/shared'
+import { getQueryConfig } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
-import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
 import { ApiBalances, TokenApiBalances } from '@/types/tokens'
 

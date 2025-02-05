@@ -1,4 +1,5 @@
 import { calculateAmountWorth } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useQueries } from '@tanstack/react-query'
 import { isNumber, orderBy } from 'lodash'
 import { useMemo } from 'react'
@@ -7,8 +8,6 @@ import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineDefined } from '@/api/apiDataHooks/apiDataHooksUtils'
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import { fungibleTokenMetadataQuery } from '@/api/queries/tokenQueries'
-import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { ApiBalances, ListedFT, TokenId } from '@/types/tokens'
 
 interface UseSortFTsProps extends SkipProp {
@@ -17,7 +16,7 @@ interface UseSortFTsProps extends SkipProp {
 }
 
 const useFetchSortedFts = ({ listedFts, unlistedFtIds, skip }: UseSortFTsProps) => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
 
   const { data: unlistedFts, isLoading: isLoadingUnlistedFTs } = useQueries({
     queries: unlistedFtIds.map((id) => fungibleTokenMetadataQuery({ id, networkId })),

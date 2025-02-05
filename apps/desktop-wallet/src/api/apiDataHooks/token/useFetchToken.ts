@@ -1,4 +1,5 @@
 import { NFT } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 
@@ -6,15 +7,13 @@ import { DataHook } from '@/api/apiDataHooks/apiDataHooksTypes'
 import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
 import useFetchFtList from '@/api/apiDataHooks/utils/useFetchFtList'
 import { fungibleTokenMetadataQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
-import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { ListedFT, NonStandardToken, TokenId, UnlistedFT } from '@/types/tokens'
 
 type UseFetchTokenResponse = DataHook<ListedFT | UnlistedFT | NFT | NonStandardToken>
 
 const useFetchToken = (id: TokenId): UseFetchTokenResponse => {
   const { data: fTList, isLoading: isLoadingFtList } = useFetchFtList()
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
 
   const listedFT = fTList?.find((t) => t.id === id)
 

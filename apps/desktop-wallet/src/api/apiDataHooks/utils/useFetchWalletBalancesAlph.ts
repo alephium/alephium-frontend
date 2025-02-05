@@ -1,9 +1,8 @@
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 
 import { addressAlphBalancesQuery, AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
-import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const useFetchWalletBalancesAlph = <T>(
   combine: (results: UseQueryResult<AddressAlphBalancesQueryFnData>[]) => {
@@ -13,7 +12,7 @@ const useFetchWalletBalancesAlph = <T>(
     error?: boolean
   }
 ) => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
   const allAddressHashes = useUnsortedAddressesHashes()
 
   const { data, isLoading, isFetching, error } = useQueries({

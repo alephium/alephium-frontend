@@ -1,13 +1,12 @@
 import { AddressHash, CHART_DATE_FORMAT, ONE_DAY_MS, throttledClient, TokenHistoricalPrice } from '@alephium/shared'
+import { getQueryConfig, useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { skipToken, useQueries, useQuery, UseQueryResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const DAILY = e.IntervalType.Daily
 
@@ -17,7 +16,7 @@ type Amount = string
 const useHistoricData = () => {
   const allAddressHashes = useAppSelector((s) => s.addresses.ids as AddressHash[])
   const currency = useAppSelector((s) => s.settings.fiatCurrency).toLowerCase()
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
 
   const { data: alphPriceHistory, isLoading: isLoadingAlphPriceHistory } = useQuery({
     queryKey: ['history', 'price', ALPH.symbol, { currency }],
