@@ -6,7 +6,6 @@ import WorthOverview from '@/components/WorthOverview'
 
 interface AddressWorthProps {
   addressHash: string
-  overrideWorth?: number
 }
 
 const AddressWorth = memo(({ addressHash, ...props }: AddressWorthProps) => {
