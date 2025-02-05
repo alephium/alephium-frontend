@@ -17,7 +17,7 @@ export const FTNameCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
   return (
     <TableCell>
       <TokenName>
-        {token.name}
+        <Truncate>{token.name}</Truncate>
 
         {isUnlistedFT(token) && (
           <InfoIcon data-tooltip-id="default" data-tooltip-content={t('No metadata')}>
@@ -47,8 +47,8 @@ const TokenName = styled(Truncate)`
   align-items: center;
   font-size: 13px;
   font-weight: var(--fontWeight-semiBold);
-  padding-right: 10px;
   gap: 5px;
+  margin-right: 10px;
 `
 
 const InfoIcon = styled.div`
