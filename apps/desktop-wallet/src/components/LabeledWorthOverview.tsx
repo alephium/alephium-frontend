@@ -16,34 +16,27 @@ You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { useTranslation } from 'react-i18next'
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import NetworkSwitch from '@/components/NetworkSwitch'
-import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
-import WalletWorth from '@/pages/UnlockedWallet/OverviewPage/WalletWorth'
 
 interface LabeledWorthOverviewProps {
-  addressHash?: string
-  isLoading?: boolean
+  label: string
+  children: ReactNode
   className?: string
 }
 
-const LabeledWorthOverview = ({ className, addressHash }: LabeledWorthOverviewProps) => {
-  const { t } = useTranslation()
+const LabeledWorthOverview = ({ label, children, className }: LabeledWorthOverviewProps) => (
+  <LabeledWorthOverviewStyled className={className}>
+    <Surtitle>
+      <Label>{label}</Label>
+      <NetworkSwitch />
+    </Surtitle>
 
-  const singleAddress = !!addressHash
-
-  return (
-    <LabeledWorthOverviewStyled className={className}>
-      <Surtitle>
-        <Worth>{t(singleAddress ? 'Address worth' : 'Wallet worth')}</Worth>
-        <NetworkSwitch />
-      </Surtitle>
-      {singleAddress ? <AddressWorth addressHash={addressHash} /> : <WalletWorth />}
-    </LabeledWorthOverviewStyled>
-  )
-}
+    {children}
+  </LabeledWorthOverviewStyled>
+)
 
 export default LabeledWorthOverview
 
@@ -63,7 +56,7 @@ const Surtitle = styled.div`
   height: 20px;
 `
 
-const Worth = styled.span`
+const Label = styled.span`
   flex: 1;
   white-space: nowrap;
   color: ${({ theme }) => theme.font.secondary};
