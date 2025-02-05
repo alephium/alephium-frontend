@@ -1,4 +1,4 @@
-import { getStringAsync } from 'expo-clipboard'
+import * as Clipboard from 'expo-clipboard'
 import { ReactNode, RefObject, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleProp, TextInput, TextInputProps, ViewProps, ViewStyle } from 'react-native'
@@ -55,7 +55,11 @@ const Input = <T extends InputValue>({
   const showCustomValueRendering = typeof renderedValue !== 'string' && renderedValue !== undefined
 
   useEffect(() => {
-    getStringAsync().then(setCopiedText)
+    Clipboard.hasStringAsync().then((has) => {
+      if (has) {
+        Clipboard.getStringAsync().then(setCopiedText)
+      }
+    })
   }, [])
 
   const handlePasteButtonPress = () => {
