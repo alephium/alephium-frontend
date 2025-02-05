@@ -6,6 +6,8 @@ import { useTranslation } from 'react-i18next'
 import { sendAnalytics } from '~/analytics'
 import ActionCardButton from '~/components/buttons/ActionCardButton'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
+import { closeAllModals } from '~/features/modals/modalActions'
+import { useAppDispatch } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 
 interface SendButtonProps {
@@ -29,11 +31,13 @@ const SendButton = ({
 }: SendButtonProps) => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
   const { t } = useTranslation()
+  const dispatch = useAppDispatch()
 
   const handleSendPress = () => {
     sendAnalytics({ event: 'Send button pressed', props: { origin } })
 
     navigation.navigate('SendNavigation', { originAddressHash, destinationAddressHash, tokenId, isNft })
+    dispatch(closeAllModals())
 
     onPress?.()
   }
