@@ -1,7 +1,7 @@
 import { ChevronDown } from 'lucide-react-native'
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { Keyboard, StyleProp, View, ViewStyle } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -19,7 +19,11 @@ const ExpandableRow = ({ children, title, titleComponent, style }: ExpandableRow
   const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const toggleExpanded = () => setIsExpanded(!isExpanded)
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded)
+
+    Keyboard.dismiss()
+  }
 
   const collapsableSectionStyle = useAnimatedStyle(() => ({
     opacity: withTiming(isExpanded ? 1 : 0),

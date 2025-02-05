@@ -2,22 +2,24 @@ import { AddressHash } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
-import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
 import AddressBadge from '~/components/AddressBadge'
+import AppText from '~/components/AppText'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
+import QuickActionButtons from '~/components/buttons/QuickActionButtons'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
 import useCanDeleteAddress from '~/features/addressesManagement/useCanDeleteAddress'
 import useForgetAddress from '~/features/addressesManagement/useForgetAddress'
 import BottomModal from '~/features/modals/BottomModal'
-import { closeModal } from '~/features/modals/modalActions'
+import { closeModal, openModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import usePersistAddressSettings from '~/hooks/layout/usePersistAddressSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { addressSettingsSaved } from '~/store/addressesSlice'
-import { VERTICAL_GAP } from '~/style/globalStyle'
+import { copyAddressToClipboard } from '~/utils/addresses'
 import { showToast, ToastDuration } from '~/utils/layout'
 
 interface AddressQuickActionsModalProps {
@@ -32,10 +34,12 @@ const AddressQuickActionsModal = withModal<AddressQuickActionsModalProps>(({ id,
   return (
     <BottomModal modalId={id} noPadding title={<AddressBadge addressHash={addressHash} fontSize={16} />}>
       <ScreenSection>
-        <ActionButtons>
-          <DeleteAddressButton addressHash={addressHash} onPress={handleClose} />
-          <SetDefaultAddressButton addressHash={addressHash} onPress={handleClose} />
-        </ActionButtons>
+        <QuickActionButtons>
+          <SetDefaultAddressButton addressHash={addressHash} />
+          <CopyAddressHashButton addressHash={addressHash} />
+          <AddressSettingsButton addressHash={addressHash} onActionCompleted={handleClose} />
+          <DeleteAddressButton addressHash={addressHash} onActionCompleted={handleClose} />
+        </QuickActionButtons>
       </ScreenSection>
     </BottomModal>
   )
@@ -44,26 +48,50 @@ const AddressQuickActionsModal = withModal<AddressQuickActionsModalProps>(({ id,
 export default AddressQuickActionsModal
 
 interface ActionButtonProps extends AddressQuickActionsModalProps {
-  onPress: () => void
+  onActionCompleted: () => void
 }
 
-const DeleteAddressButton = ({ addressHash, onPress }: ActionButtonProps) => {
+const DeleteAddressButton = ({ addressHash, onActionCompleted }: ActionButtonProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const { t } = useTranslation()
-  const forgetAddress = useForgetAddress({ addressHash, origin: 'quickActions', onConfirm: onPress })
+  const forgetAddress = useForgetAddress({ addressHash, origin: 'quickActions', onConfirm: onActionCompleted })
   const canDeleteAddress = useCanDeleteAddress(addressHash)
 
   if (!address) return
 
   const handlePress = () => {
-    if (!canDeleteAddress) Alert.alert(t('You cannot forget your default address. Set another one as default first.'))
+    if (!canDeleteAddress)
+      Alert.alert(
+        t('forgetAddress_one'),
+        t('You cannot forget your default address. Set another one as default first.')
+      )
     else forgetAddress()
   }
 
   return <QuickActionButton title={t('Forget')} onPress={handlePress} iconProps={{ name: 'trash-2' }} variant="alert" />
 }
 
-const SetDefaultAddressButton = ({ addressHash }: ActionButtonProps) => {
+const AddressSettingsButton = ({ addressHash, onActionCompleted }: ActionButtonProps) => {
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+
+  const handlePress = () => {
+    dispatch(openModal({ name: 'AddressSettingsModal', props: { addressHash } }))
+    onActionCompleted()
+  }
+
+  return <QuickActionButton title={t('Address settings')} onPress={handlePress} iconProps={{ name: 'settings' }} />
+}
+
+const CopyAddressHashButton = ({ addressHash }: Omit<ActionButtonProps, 'onActionCompleted'>) => {
+  const { t } = useTranslation()
+
+  const handlePress = () => copyAddressToClipboard(addressHash)
+
+  return <QuickActionButton title={t('Copy address')} onPress={handlePress} iconProps={{ name: 'copy' }} />
+}
+
+const SetDefaultAddressButton = ({ addressHash }: Omit<ActionButtonProps, 'onActionCompleted'>) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
@@ -96,21 +124,18 @@ const SetDefaultAddressButton = ({ addressHash }: ActionButtonProps) => {
     }
   }
 
-  return (
+  return isDefaultAddress ? (
+    <EmptyPlaceholder noMargin>
+      <AppText>{t('Default address')}</AppText>
+    </EmptyPlaceholder>
+  ) : (
     <QuickActionButton
-      title={t(isDefaultAddress ? 'Default address' : 'Set as default')}
+      title={t('Set as default')}
       onPress={handleDefaultPress}
       iconProps={{ name: 'star' }}
       loading={defaultAddressIsChanging}
       color={address?.settings.isDefault ? address.settings.color : undefined}
       disabled={isDefaultAddress}
-      isLast
     />
   )
 }
-
-// TODO: DRY
-const ActionButtons = styled.View`
-  margin: ${VERTICAL_GAP / 2}px 0;
-  gap: 10px;
-`

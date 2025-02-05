@@ -89,7 +89,7 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
                   {contact.name[0].toUpperCase()}
                 </AppText>
               </ContactIcon>
-              <ContactName semiBold size={28}>
+              <ContactName semiBold size={32}>
                 {contact.name}
               </ContactName>
               <ContactAddress truncate medium size={16} color="secondary" ellipsizeMode="middle">

@@ -1,6 +1,6 @@
 {
   "name": "@alephium/mobile-wallet",
-  "version": "2.0.0",
+  "version": "2.1.2",
   "private": true,
   "main": "index.ts",
   "scripts": {
@@ -27,6 +27,7 @@
     "@alephium/walletconnect-provider": "1.5.1",
     "@alephium/web3": "1.5.1",
     "@expo/vector-icons": "^14.0.4",
+    "@fugashu/alphland-api-client": "^1.0.4",
     "@json-rpc-tools/utils": "^1.7.6",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/netinfo": "^11.3.1",
@@ -56,7 +57,7 @@
     "expo": "51.0.39",
     "expo-application": "~5.9.1",
     "expo-barcode-scanner": "~13.0.1",
-    "expo-blur": "~13.0.2",
+    "expo-blur": "~13.0.3",
     "expo-build-properties": "~0.12.5",
     "expo-camera": "~15.0.16",
     "expo-checkbox": "~3.0.0",

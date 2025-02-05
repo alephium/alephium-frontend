@@ -47,7 +47,7 @@ const HiddenAssetsScreen = ({ navigation, ...props }: HiddenAssetsScreenProps) =
       <ScreenSection fill>
         {hiddenFungibleTokens.length === 0 ? (
           <EmptyPlaceholder style={{ flexGrow: 0 }}>
-            <AppText size={28}>✨</AppText>
+            <AppText size={32}>✨</AppText>
             <AppText>{t('No assets are hidden')}</AppText>
           </EmptyPlaceholder>
         ) : (
@@ -90,7 +90,7 @@ const FungibleTokensListItem = ({ tokenId, isLast }: FungibleTokensListItemProps
 
   return (
     <ListItem
-      icon={<AssetLogo assetId={token.id} size={38} />}
+      icon={<AssetLogo assetId={token.id} size={32} />}
       title={token.name}
       rightSideContent={<Button iconProps={{ name: 'x' }} squared compact onPress={handleAssetUnhide} />}
       isLast={isLast}

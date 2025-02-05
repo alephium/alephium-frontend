@@ -17,6 +17,7 @@ import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
 import { languageOptions } from '~/features/localization/languages'
 import { openModal } from '~/features/modals/modalActions'
+import RegionSettingsRow from '~/features/settings/regionSettings/RegionSettingsRow'
 import SettingsAssetsSection from '~/features/settings/settingsScreen/SettingsAssetsSection'
 import SettingsSecuritySection from '~/features/settings/settingsScreen/SettingsSecuritySection'
 import {
@@ -121,6 +122,9 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           <Row onPress={openLanguageSelectModal} title="Language">
             <AppText bold>{languageOptions.find((l) => l.value === language)?.label}</AppText>
           </Row>
+
+          <RegionSettingsRow />
+
           <Row onPress={openCurrencySelectModal} title={t('Currency')}>
             <AppText bold>{currentCurrency}</AppText>
           </Row>

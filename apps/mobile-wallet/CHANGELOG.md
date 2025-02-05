@@ -1,5 +1,46 @@
 # @alephium/mobile-wallet
 
+## 2.1.2
+
+### Patch Changes
+
+- 5b3c6b3: Add dApp links to Alph.land
+- bb1c1eb: Integrate Onramper
+- aa0fb2a: Don't show close button in modals with non-scrollable content
+- 3b47ee6: Format amounts based on user's locale
+- b180631: Copy bytecode in dApp request modal
+- baad80d: Tap to reveal hidden amounts
+
+## 2.1.1
+
+### Patch Changes
+
+- 8a06320: Fix missing addresses in origins screen
+
+## 2.1.0
+
+### Minor Changes
+
+- 642f0cf: Ecosystem screen with in-app browser
+
+### Patch Changes
+
+- 89ae793: Enable Thai Baht (THB) and Hong Kong Dollar (HKD) fiat currencies
+- 94d264a: Fix iOS keyboard dismiss in address settings screen
+
+## 2.0.1
+
+### Patch Changes
+
+- 7eb11a9: Add ability to hide tokens
+- f7da1e9: Close modals on back button/gesture on Android
+- 7ad0e86: Add contact by scanning QR code
+- 8f165c2: Simplify send flow
+- a976ad9: Enable Indonesian translations
+- 2f8b4fe: Display address-specific NFTs
+- ae006fb: Scale balances font-size to fit in one row
+- 863feb7: Simplify NFT sending flow
+
 ## 2.0.0
 
 ### Major Changes

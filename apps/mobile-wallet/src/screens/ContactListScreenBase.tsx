@@ -3,15 +3,17 @@ import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { TextInput, ViewProps } from 'react-native'
+import { ViewProps } from 'react-native'
 import Animated, { AnimatedProps } from 'react-native-reanimated'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
 import Surface from '~/components/layout/Surface'
 import ListItem from '~/components/ListItem'
+import SearchInput from '~/components/SearchInput'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
@@ -27,7 +29,6 @@ export interface ContactListScreenBaseProps {
 }
 
 const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: ContactListScreenBaseProps) => {
-  const theme = useTheme()
   const { t } = useTranslation()
   const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
@@ -48,25 +49,20 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
 
   return (
     <Animated.View {...props}>
-      <HeaderScreenSection>
-        <SearchInput
-          placeholder={t('Search')}
-          value={searchTerm}
-          onChangeText={setSearchTerm}
-          placeholderTextColor={theme.font.tertiary}
-        />
-      </HeaderScreenSection>
+      {contacts.length > 4 && (
+        <HeaderScreenSection>
+          <SearchInput value={searchTerm} onChangeText={setSearchTerm} />
+        </HeaderScreenSection>
+      )}
       {contacts.length === 0 ? (
-        <NoContactContainer>
-          <NoContactMessageBox>
-            <EmojiContainer size={60}>🤷‍♀️</EmojiContainer>
-            <AppText>{t('No contact yet!')}</AppText>
-            <Button title={t('Add contact')} onPress={handleNewContactPress} variant="contrast" short />
-          </NoContactMessageBox>
-        </NoContactContainer>
+        <EmptyPlaceholder>
+          <EmojiContainer size={32}>🤷‍♀️</EmojiContainer>
+          <AppText>{t('No contact yet!')}</AppText>
+          <Button title={t('Add contact')} onPress={handleNewContactPress} variant="contrast" short />
+        </EmptyPlaceholder>
       ) : (
         <ContactList>
-          {filteredContacts.map((contact) => {
+          {filteredContacts.map((contact, i) => {
             const iconBgColor = stringToColour(contact.address)
             const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 
@@ -76,6 +72,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
                 onPress={() => onContactPress(contact.id)}
                 title={contact.name}
                 subtitle={contact.address}
+                isLast={i === filteredContacts.length - 1}
                 icon={
                   <ContactIcon color={iconBgColor}>
                     <AppText color={textColor} semiBold size={21}>
@@ -120,14 +117,6 @@ const HeaderScreenSection = styled(ScreenSection)`
   align-items: center;
   gap: 20px;
   margin-bottom: ${VERTICAL_GAP}px;
-`
-
-const SearchInput = styled(TextInput)`
-  flex: 1;
-  background-color: ${({ theme }) => theme.bg.highlight};
-  padding: 12px;
-  border-radius: 100px;
-  color: ${({ theme }) => theme.font.primary};
 `
 
 const NoContactContainer = styled.View`

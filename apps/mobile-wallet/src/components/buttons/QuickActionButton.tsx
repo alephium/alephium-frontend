@@ -1,14 +1,24 @@
+import { GestureResponderEvent } from 'react-native'
 import styled from 'styled-components/native'
 
 import Button, { ButtonProps } from '~/components/buttons/Button'
+import { BORDER_RADIUS_BIG } from '~/style/globalStyle'
 
 interface QuickActionButtonProps extends ButtonProps {
-  isLast?: boolean
+  onActionCompleted?: () => void
 }
 
-export default styled(Button)<QuickActionButtonProps>`
-  background-color: transparent;
-  border-bottom-width: ${({ isLast }) => (!isLast ? '1px' : 0)};
-  border-color: ${({ theme }) => theme.border.secondary};
-  border-radius: 0;
+const QuickActionButton = ({ onActionCompleted, ...props }: QuickActionButtonProps) => {
+  const handlePress = (e: GestureResponderEvent) => {
+    onActionCompleted?.()
+    props.onPress?.(e)
+  }
+
+  return <QuickActionButtonStyled {...props} onPress={handlePress} />
+}
+
+export default QuickActionButton
+
+const QuickActionButtonStyled = styled(Button)`
+  border-radius: ${BORDER_RADIUS_BIG}px;
 `

@@ -29,7 +29,7 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
   return (
     <BottomModalFlashList
       modalId={id}
-      title={<AddressBadge addressHash={addressHash} fontSize={16} />}
+      title={<AddressBadge addressHash={addressHash} fontSize={17} showHash />}
       flashListRender={(props) => (
         <FlashList
           data={knownFungibleTokens}
@@ -70,7 +70,7 @@ const AddressesTokensListEmpty = ({ addressHash }: { addressHash: AddressHash })
   if (addressesBalancesStatus === 'uninitialized')
     return (
       <EmptyPlaceholder>
-        <AppText size={28}>⏳</AppText>
+        <AppText size={32}>⏳</AppText>
         <AppText>{t('Loading your balances...')}</AppText>
       </EmptyPlaceholder>
     )
@@ -78,7 +78,7 @@ const AddressesTokensListEmpty = ({ addressHash }: { addressHash: AddressHash })
   if (knownFungibleTokens.length === 0 && !hasUnknownTokens && !hasHiddenTokens)
     return (
       <EmptyPlaceholder>
-        <AppText size={28}>👀</AppText>
+        <AppText size={32}>👀</AppText>
         <AppText>{t('No assets here, yet.')}</AppText>
       </EmptyPlaceholder>
     )

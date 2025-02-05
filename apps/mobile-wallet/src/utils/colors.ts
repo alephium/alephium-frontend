@@ -1,4 +1,4 @@
-export const labelColorPalette = ['#37b169', '#e6ab43', '#1729da', '#8e27bb', '#4fb0ff', '#dc6f48', '#d83d40']
+export const labelColorPalette = ['#72deff', '#48cc7e', '#ecbf6f', '#f8a081', '#f97d7f', '#bf6de3', '#3d70f4']
 
 export const getRandomLabelColor = () => labelColorPalette[Math.floor(Math.random() * labelColorPalette.length)]
 

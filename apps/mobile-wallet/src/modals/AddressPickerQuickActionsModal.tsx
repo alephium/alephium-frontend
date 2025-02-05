@@ -45,7 +45,6 @@ const AddressPickerQuickActionsModal = withModal<AddressPickerQuickActionsModalP
               title={t('Select address')}
               onPress={handleSelectAddress}
               iconProps={{ name: 'check' }}
-              isLast
             />
           </ActionButtons>
         </ScreenSection>

@@ -8,6 +8,7 @@ import { sendAnalytics } from '~/analytics'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import QuickActionButton from '~/components/buttons/QuickActionButton'
+import QuickActionButtons from '~/components/buttons/QuickActionButtons'
 import useHideAsset from '~/features/assetsDisplay/hideAssets/useHideAsset'
 import BottomModal from '~/features/modals/BottomModal'
 import { closeModal, openModal } from '~/features/modals/modalActions'
@@ -47,20 +48,21 @@ const TokenQuickActionsModal = withModal<TokenQuickActionsModalProps>(({ id, tok
       }
       titleAlign="left"
     >
-      {tokenId !== ALPH.id && (
+      <QuickActionButtons>
+        {tokenId !== ALPH.id && (
+          <QuickActionButton
+            title={t('Hide asset')}
+            onPress={handleAssetHide}
+            iconProps={{ name: 'eye-off' }}
+            variant="alert"
+          />
+        )}
         <QuickActionButton
-          title={t('Hide asset')}
-          onPress={handleAssetHide}
-          iconProps={{ name: 'eye-off' }}
-          variant="alert"
+          title={t('Show details')}
+          onPress={openTokenDetailsModal}
+          iconProps={{ name: 'more-horizontal' }}
         />
-      )}
-      <QuickActionButton
-        title={t('Show details')}
-        onPress={openTokenDetailsModal}
-        iconProps={{ name: 'more-horizontal' }}
-        isLast
-      />
+      </QuickActionButtons>
     </BottomModal>
   )
 })

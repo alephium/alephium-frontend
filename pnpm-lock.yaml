@@ -597,6 +597,9 @@ importers:
       '@expo/vector-icons':
         specifier: ^14.0.4
         version: 14.0.4
+      '@fugashu/alphland-api-client':
+        specifier: ^1.0.4
+        version: 1.0.4
       '@json-rpc-tools/utils':
         specifier: ^1.7.6
         version: 1.7.6
@@ -685,8 +688,8 @@ importers:
         specifier: ~13.0.1
         version: 13.0.1(expo@51.0.39(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7)))
       expo-blur:
-        specifier: ~13.0.2
-        version: 13.0.2(expo@51.0.39(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7)))
+        specifier: ~13.0.3
+        version: 13.0.3(expo@51.0.39(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7)))
       expo-build-properties:
         specifier: ~0.12.5
         version: 0.12.5(expo@51.0.39(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7)))
@@ -2982,6 +2985,9 @@ packages:
 
   '@floating-ui/utils@0.2.1':
     resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
+
+  '@fugashu/alphland-api-client@1.0.4':
+    resolution: {integrity: sha512-mHar67evpvMhkaqLacgtMA8Er8KO241ZE6x8Mj7kYi5NotQd9MCevk1/A2/MBniM2sM7jmkScVgqdGoFw2C3og==}
 
   '@graphql-typed-document-node/core@3.2.0':
     resolution: {integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==}
@@ -6639,8 +6645,8 @@ packages:
     peerDependencies:
       expo: '*'
 
-  expo-blur@13.0.2:
-    resolution: {integrity: sha512-t2p7BChO3Reykued++QJRMZ/og6J3aXtSQ+bU31YcBeXhZLkHwjWEhiPKPnJka7J2/yTs4+jOCNDY0kCZmcE3w==}
+  expo-blur@13.0.3:
+    resolution: {integrity: sha512-z5W9ZGlG6ZiRLuoJZG1AHRvjK8j+2+nc/mtvEtyAa8T/8iTNpUnX4eC8xXDoTL/H4y2pc3cHvytDjCXJG26pcQ==}
     peerDependencies:
       expo: '*'
 
@@ -14134,6 +14140,12 @@ snapshots:
 
   '@floating-ui/utils@0.2.1': {}
 
+  '@fugashu/alphland-api-client@1.0.4':
+    dependencies:
+      axios: 1.7.4
+    transitivePeerDependencies:
+      - debug
+
   '@graphql-typed-document-node/core@3.2.0(graphql@15.8.0)':
     dependencies:
       graphql: 15.8.0
@@ -19756,7 +19768,7 @@ snapshots:
       expo: 51.0.39(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))
       expo-image-loader: 4.7.0(expo@51.0.39(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7)))
 
-  expo-blur@13.0.2(expo@51.0.39(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))):
+  expo-blur@13.0.3(expo@51.0.39(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))):
     dependencies:
       expo: 51.0.39(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))
 

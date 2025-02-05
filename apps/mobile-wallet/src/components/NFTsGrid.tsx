@@ -59,7 +59,7 @@ const NFTsGrid = forwardRef(
             </EmptyPlaceholder>
           ) : (
             <EmptyPlaceholder>
-              <AppText size={28}>👻</AppText>
+              <AppText size={32}>👻</AppText>
               <AppText color={theme.font.secondary}>{t('No NFTs yet')}</AppText>
             </EmptyPlaceholder>
           )

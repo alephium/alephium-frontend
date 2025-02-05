@@ -18,7 +18,7 @@ export interface AppTextProps extends TextProps {
 }
 
 const AppText = forwardRef<Text, AppTextProps>(({ children, truncate, ...props }, ref) => (
-  <TextStyled ref={ref} numberOfLines={truncate ? 1 : undefined} {...props}>
+  <TextStyled ref={ref} numberOfLines={truncate || props.adjustsFontSizeToFit ? 1 : undefined} {...props}>
     {children}
     {/* Hack to fix Android text truncation. See https://github.com/alephium/alephium-frontend/issues/1118 */}
     {truncate && Platform.OS === 'android' && ' '}

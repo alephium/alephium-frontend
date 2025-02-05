@@ -30,9 +30,7 @@ const AddressFlashListScreen = ({
 
   const filteredAddresses =
     tokenId && tokenId !== ALPH.id ? addresses.filter((a) => a.tokens.some((t) => t.tokenId === tokenId)) : addresses
-  const data = hideEmptyAddresses
-    ? filteredAddresses.filter((a) => a.tokens.length !== 0 && a.balance !== '0')
-    : filteredAddresses
+  const data = hideEmptyAddresses ? filteredAddresses.filter((a) => a.balance !== '0') : filteredAddresses
 
   return (
     <FlashListScreen

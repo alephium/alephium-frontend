@@ -9,6 +9,7 @@ import TabBarPager from '~/components/layout/TabBarPager'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import AddressesScreen from '~/screens/Addresses/AddressesScreen'
 import ContactsScreen from '~/screens/Addresses/ContactsScreen'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 const AddressesTabNavigation = () => {
   const { t } = useTranslation()
@@ -39,7 +40,7 @@ const CustomHeaderContent = ({ focusedTabIndex }: { focusedTabIndex: number }) =
 
   return (
     <CustomHeaderContentStyled>
-      <AppText semiBold size={17} color="tertiary">
+      <AppText semiBold size={17} color="secondary">
         {t('Address book')}
       </AppText>
       <Button iconProps={{ name: 'plus' }} squared onPress={handleButtonPress} compact />
@@ -52,4 +53,5 @@ const CustomHeaderContentStyled = styled.View`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  padding-left: ${DEFAULT_MARGIN}px;
 `
