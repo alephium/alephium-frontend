@@ -24,6 +24,7 @@ import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 import FooterButton from '@/components/Buttons/FooterButton'
+import useOnramperUrl, { ONRAMP_TARGET_LOCATION } from '@/features/buy/useOnramperUrl'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch } from '@/hooks/redux'
@@ -44,10 +45,10 @@ const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
   const dispatch = useAppDispatch()
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false)
 
-  const banxaURL = 'https://alephium.banxa-sandbox.com/' + `?walletAddress=${addressHash}`
+  const onRamperUrl = useOnramperUrl(addressHash)
 
   const handleAcceptDisclaimer = () => {
-    window.electron?.app.openOnRampServiceWindow({ url: banxaURL, targetLocation: 'https://alephium.org' })
+    window.electron?.app.openOnRampServiceWindow({ url: onRamperUrl, targetLocation: ONRAMP_TARGET_LOCATION })
     setDisclaimerAccepted(true)
   }
 
@@ -67,11 +68,11 @@ const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
     <CenteredModal id={id} title={!disclaimerAccepted ? t('Disclaimer') : t('Buy')} narrow dynamicContent>
       <TextContainer>
         {!disclaimerAccepted ? (
-          <Trans t={t} i18nKey="banxaDisclaimer">
+          <Trans t={t} i18nKey="onramperDisclaimer">
             You are about to access 3rd party services provided by
-            <ActionLinkStyled onClick={() => openInWebBrowser('https://www.banxa.com')}></ActionLinkStyled> through an
-            in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so
-            please read and understand them before proceeding.
+            <ActionLinkStyled onClick={() => openInWebBrowser('https://www.onramper.com')}></ActionLinkStyled> through
+            an in-app browser. Alephium does not control Onramper's services. Onramper's terms and conditions will
+            apply, so please read and understand them before proceeding.
           </Trans>
         ) : (
           t('You can now complete your purchase in the dedicated window!') + ' 🤑'

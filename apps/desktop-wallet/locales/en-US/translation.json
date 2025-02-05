@@ -491,7 +491,7 @@
   "To send funds you first need to load your wallet with some.": "To send funds you first need to load your wallet with some.",
   "The wallet is empty. Use the faucet in the developer tools in the app settings.": "The wallet is empty. Use the faucet in the developer tools in the app settings.",
   "Buy": "Buy",
-  "banxaDisclaimer": "You are about to access 3rd party services provided by <1>Banxa.com</1> through an in-app browser. Alephium does not control Banxa’s services. Banxa’s terms and conditions will apply, so please read and understand them before proceeding.",
+  "onramperDisclaimer": "You are about to access 3rd party services provided by <1>onramper.com</1> through an in-app browser. Alephium does not control Onramper's services. Onramper's terms and conditions will apply, so please read and understand them before proceeding.",
   "You can now complete your purchase in the dedicated window!": "You can now complete your purchase in the dedicated window!",
   "Token": "Token",
   "Price": "Price",
