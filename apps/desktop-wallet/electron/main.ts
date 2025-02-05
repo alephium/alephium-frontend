@@ -239,6 +239,35 @@ app.on('ready', async function () {
     onRampWindow.on('closed', () => {
       onRampWindow = null
     })
+
+    // Handle child windows opening (onramper opens provider in a new window)
+    onRampWindow.webContents.setWindowOpenHandler(({ url }) => {
+      const childWindow = new BrowserWindow({
+        parent: onRampWindow!,
+        width: 800,
+        height: 600,
+        webPreferences: {
+          contextIsolation: true,
+          webSecurity: true
+        }
+      })
+      childWindow.loadURL(url)
+
+      // Listen for navigation events on the new window
+      childWindow.webContents.on('did-navigate', (event, currentUrl) => {
+        console.log(`Child window navigated to: ${currentUrl}`)
+        if (currentUrl.includes(targetLocation)) {
+          childWindow?.close()
+          onRampWindow?.close()
+          onRampWindow = null
+
+          mainWindow?.webContents.send('target-location-reached')
+        }
+      })
+
+      // Prevent the default action (which would be Electron creating a default window)
+      return { action: 'deny' }
+    })
   })
 
   createWindow()
