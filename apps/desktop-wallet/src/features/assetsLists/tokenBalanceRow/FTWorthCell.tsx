@@ -1,10 +1,7 @@
-import { calculateAmountWorth } from '@alephium/shared'
-import { isNumber } from 'lodash'
-
-import useFetchTokenPrices, { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
+import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import useFetchToken, { isFT } from '@/api/apiDataHooks/token/useFetchToken'
 import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
-import Amount from '@/components/Amount'
+import FTWorthAmount from '@/components/amounts/FTWorthAmount'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TableCell } from '@/components/Table'
 import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
@@ -34,22 +31,3 @@ const FTWorthCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
 }
 
 export default FTWorthCell
-
-interface FTWorthAmountProps {
-  symbol: string
-  decimals: number
-  totalBalance?: bigint
-}
-
-const FTWorthAmount = ({ symbol, totalBalance, decimals }: FTWorthAmountProps) => {
-  const { data: tokenPrice } = useFetchTokenPrice(symbol)
-
-  const worth =
-    totalBalance !== undefined && isNumber(tokenPrice)
-      ? calculateAmountWorth(totalBalance, tokenPrice, decimals)
-      : undefined
-
-  if (worth === undefined) return '-'
-
-  return <Amount value={worth} isFiat semiBold />
-}

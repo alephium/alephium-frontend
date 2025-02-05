@@ -527,5 +527,6 @@
   "Unlock a wallet to connect to the dApp.": "Unlock a wallet to connect to the dApp.",
   "Activity": "Activity",
   "Passphrase warning": "Passphrase warning",
-  "Don't use passphrase": "Don't use passphrase"
+  "Don't use passphrase": "Don't use passphrase",
+  "Token balance": "Token balance"
 }

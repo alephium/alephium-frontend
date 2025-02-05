@@ -18,11 +18,11 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
 import useFetchAddressSingleTokenBalances from '@/api/apiDataHooks/address/useFetchAddressSingleTokenBalances'
 import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
-import Amount from '@/components/Amount'
+import FTAmounts from '@/components/amounts/FTAmounts'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TableCell } from '@/components/Table'
 import { TokenId } from '@/types/tokens'
@@ -33,68 +33,33 @@ interface FTAddressAmountCellProps {
 }
 
 export const FTAddressAmountCell = ({ tokenId, addressHash }: FTAddressAmountCellProps) => {
-  const { data: balances, isLoading } = useFetchAddressSingleTokenBalances({
-    addressHash: addressHash,
-    tokenId
-  })
+  const { isLoading } = useFetchAddressSingleTokenBalances({ addressHash: addressHash, tokenId })
 
-  return (
-    <FTAmountCell
-      tokenId={tokenId}
-      totalBalance={BigInt(balances.totalBalance)}
-      availableBalance={BigInt(balances.availableBalance)}
-      isLoading={isLoading}
-    />
-  )
+  return <FTAmountCell tokenId={tokenId} isLoading={isLoading} />
 }
 
 export const FTWalletAmountCell = ({ tokenId }: Omit<FTAddressAmountCellProps, 'addressHash'>) => {
-  const { data: balances, isLoading } = useFetchWalletSingleTokenBalances({
-    tokenId
-  })
+  const { isLoading } = useFetchWalletSingleTokenBalances({ tokenId })
 
-  return (
-    <FTAmountCell
-      tokenId={tokenId}
-      totalBalance={BigInt(balances.totalBalance)}
-      availableBalance={BigInt(balances.availableBalance)}
-      isLoading={isLoading}
-    />
-  )
+  return <FTAmountCell tokenId={tokenId} isLoading={isLoading} />
 }
 
 interface FTAmountCellProps {
   tokenId: TokenId
-  totalBalance?: bigint
-  availableBalance?: bigint
   isLoading: boolean
 }
 
-const FTAmountCell = ({ tokenId, isLoading, totalBalance, availableBalance }: FTAmountCellProps) => {
-  const theme = useTheme()
-  const { t } = useTranslation()
-
-  return (
-    <TableCell align="right">
-      {isLoading ? (
-        <SkeletonLoader height="20px" width="30%" />
-      ) : (
-        <AmountsContainer>
-          <>
-            {totalBalance && <Amount tokenId={tokenId} value={totalBalance} semiBold />}
-
-            {availableBalance !== totalBalance && availableBalance !== undefined && (
-              <AmountSubtitle>
-                {`${t('Available')}: `}
-                <Amount tokenId={tokenId} value={availableBalance} color={theme.font.tertiary} overrideSuffixColor />
-              </AmountSubtitle>
-            )}
-          </>
-        </AmountsContainer>
-      )}
-    </TableCell>
-  )
-}
+const FTAmountCell = ({ tokenId, isLoading }: FTAmountCellProps) => (
+  <TableCell align="right">
+    {isLoading ? (
+      <SkeletonLoader height="20px" width="30%" />
+    ) : (
+      <AmountsContainer>
+        <FTAmounts tokenId={tokenId} />
+      </AmountsContainer>
+    )}
+  </TableCell>
+)
 
 export const RawAmountSubtitle = () => {
   const { t } = useTranslation()

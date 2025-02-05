@@ -9,6 +9,7 @@ import { AddressDetailsTabs } from '@/features/assetsLists/AddressDetailsTabs'
 import { AddressModalProps } from '@/features/modals/modalTypes'
 import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModalHeader from '@/modals/AddressDetailsModal/AddressDetailsModalHeader'
+import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
 import SideModal from '@/modals/SideModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
@@ -23,7 +24,9 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
       width={800}
       header={<AddressDetailsModalHeader addressHash={addressHash} />}
     >
-      <LabeledWorthOverview addressHash={addressHash} />
+      <LabeledWorthOverview label={t('Address worth')}>
+        <AddressWorth addressHash={addressHash} />
+      </LabeledWorthOverview>
       <Content>
         <AnimatedBackground shade={addressColor} anchorPosition="top" verticalOffset={-300} opacity={0.5} />
         <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" />
