@@ -111,8 +111,6 @@ function AddressSelect({
 export default AddressSelect
 
 const AddressSelectContainer = styled(SelectOutterContainer)<Pick<AddressSelectProps, 'disabled' | 'simpleMode'>>`
-  height: 50px;
-
   ${({ disabled }) =>
     disabled &&
     css`

@@ -74,17 +74,15 @@ const AddressInputs = ({
   return (
     <InputsContainer>
       <InputsSection title={t('Origin')} className={className}>
-        <AddressSelectStyled>
-          <AddressSelect
-            title={t('Select the address to send funds from.')}
-            addressOptions={fromAddresses}
-            selectedAddress={defaultFromAddress}
-            onAddressChange={onFromAddressChange}
-            id="from-address"
-            simpleMode
-            shouldDisplayAddressSelectModal={isAddressSelectModalOpen}
-          />
-        </AddressSelectStyled>
+        <AddressSelect
+          title={t('Select the address to send funds from.')}
+          addressOptions={fromAddresses}
+          selectedAddress={defaultFromAddress}
+          onAddressChange={onFromAddressChange}
+          id="from-address"
+          shouldDisplayAddressSelectModal={isAddressSelectModalOpen}
+          noMargin
+        />
       </InputsSection>
       {toAddress && onToAddressChange && (
         <InputsSection title={t('Destination')} className={className}>
@@ -96,22 +94,10 @@ const AddressInputs = ({
             heightSize="big"
           />
           <DestinationActions>
-            <Button
-              Icon={ContactIcon}
-              iconColor={theme.global.accent}
-              variant="faded"
-              short
-              onClick={() => setIsContactSelectModalOpen(true)}
-            >
+            <Button Icon={ContactIcon} role="secondary" short onClick={() => setIsContactSelectModalOpen(true)}>
               {t('Contacts')}
             </Button>
-            <Button
-              Icon={AlbumIcon}
-              iconColor={theme.global.accent}
-              variant="faded"
-              short
-              onClick={() => setIsAddressSelectModalOpen(true)}
-            >
+            <Button Icon={AlbumIcon} role="secondary" short onClick={() => setIsAddressSelectModalOpen(true)}>
               {t('Your addresses')}
             </Button>
           </DestinationActions>
@@ -167,13 +153,6 @@ const HashEllipsedStyled = styled(HashEllipsed)`
   margin-left: auto;
   color: ${({ theme }) => theme.font.secondary};
   max-width: 150px;
-`
-
-const AddressSelectStyled = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: var(--inputHeight);
 `
 
 const AddressToInput = styled(AddressInput)`

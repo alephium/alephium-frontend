@@ -163,7 +163,7 @@ export default styled(Button)`
             faded: theme.global.accent
           }[variant],
           secondary: {
-            default: theme.font.primary,
+            default: theme.font.secondary,
             contrast: theme.font.contrastSecondary,
             valid: theme.font.contrastPrimary,
             alert: theme.global.alert,

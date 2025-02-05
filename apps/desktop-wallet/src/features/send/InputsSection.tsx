@@ -26,7 +26,7 @@ const InputsSectionStyled = styled.div`
 `
 
 const Title = styled.div`
-  font-size: 16px;
+  font-size: 14px;
   font-weight: var(--fontWeight-semiBold);
 `
 

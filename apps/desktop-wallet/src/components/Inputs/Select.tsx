@@ -353,7 +353,6 @@ export function SelectOptionsModal<T extends OptionValue>({
 export default Select
 
 const InputContainer = styled(InputArea)`
-  margin: 10px 0;
   padding: 0;
   outline: none;
 `
@@ -398,7 +397,7 @@ export const SelectOutterContainer = styled(InputContainer)<
   cursor: ${({ showPointer }) => showPointer && 'pointer'};
   margin: ${({ noMargin, simpleMode }) => (noMargin || simpleMode ? 0 : '10px 0')};
   height: ${({ heightSize }) =>
-    heightSize === 'small' ? '38px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
+    heightSize === 'small' ? '38px' : heightSize === 'big' ? '50px' : 'var(--inputHeight)'};
 
   &:focus {
     ${SelectContainer} {
