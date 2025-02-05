@@ -2,7 +2,7 @@ import { AddressHash } from '@alephium/shared'
 import { UseQueryResult } from '@tanstack/react-query'
 
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import useFetchWalletBalancesAlph from '@/api/apiDataHooks/utils/useFetchWalletBalancesAlph'
+import useFetchWalletBalancesAlphBase from '@/api/apiDataHooks/utils/useFetchWalletBalancesAlphBase'
 import { ApiContextProps } from '@/api/apiTypes'
 import { createDataContext } from '@/api/context/createDataContext'
 import { AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
@@ -31,7 +31,7 @@ const {
   useData: useFetchWalletBalancesAlphByAddress,
   DataContextProvider: UseFetchWalletBalancesAlphByAddressContextProvider
 } = createDataContext<AddressAlphBalancesQueryFnData, AddressesAlphBalances['data']>({
-  useDataHook: useFetchWalletBalancesAlph,
+  useDataHook: useFetchWalletBalancesAlphBase,
   combineFn: combineBalancesByAddress,
   defaultValue: {}
 })

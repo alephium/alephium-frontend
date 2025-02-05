@@ -1,7 +1,7 @@
 import { UseQueryResult } from '@tanstack/react-query'
 
 import { combineError, combineIsFetching, combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import useFetchWalletBalancesAlph from '@/api/apiDataHooks/utils/useFetchWalletBalancesAlph'
+import useFetchWalletBalancesAlphBase from '@/api/apiDataHooks/utils/useFetchWalletBalancesAlphBase'
 import { ApiContextProps } from '@/api/apiTypes'
 import { createDataContext } from '@/api/context/createDataContext'
 import { AddressAlphBalancesQueryFnData } from '@/api/queries/addressQueries'
@@ -33,18 +33,16 @@ const combineBalances = (results: UseQueryResult<AddressAlphBalancesQueryFnData>
   ...combineError(results)
 })
 
-const {
-  useData: useFetchWalletBalancesAlphArray,
-  DataContextProvider: UseFetchWalletBalancesAlphArrayContextProvider
-} = createDataContext<AddressAlphBalancesQueryFnData, ApiBalances>({
-  useDataHook: useFetchWalletBalancesAlph,
-  combineFn: combineBalances,
-  defaultValue: {
-    totalBalance: '0',
-    lockedBalance: '0',
-    availableBalance: '0'
-  }
-})
+const { useData: useFetchWalletBalancesAlph, DataContextProvider: UseFetchWalletBalancesAlphArrayContextProvider } =
+  createDataContext<AddressAlphBalancesQueryFnData, ApiBalances>({
+    useDataHook: useFetchWalletBalancesAlphBase,
+    combineFn: combineBalances,
+    defaultValue: {
+      totalBalance: '0',
+      lockedBalance: '0',
+      availableBalance: '0'
+    }
+  })
 
-export default useFetchWalletBalancesAlphArray
+export default useFetchWalletBalancesAlph
 export { UseFetchWalletBalancesAlphArrayContextProvider }

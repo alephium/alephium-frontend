@@ -1,7 +1,7 @@
 import useFetchListedFtsWorth from '@/api/apiDataHooks/utils/useFetchListedFtsWorth'
 import useFetchTokensSeparatedByListing from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
 import useMergeAllTokensBalances from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
-import useFetchWalletBalancesAlphArray from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphArray'
+import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import useFetchWalletBalancesTokensArray from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
 
 const useFetchWalletWorth = () => {
@@ -10,7 +10,7 @@ const useFetchWalletWorth = () => {
     isLoading: isLoadingAlphBalances,
     isFetching: isFetchingAlphBalances,
     error: errorAlphBalances
-  } = useFetchWalletBalancesAlphArray()
+  } = useFetchWalletBalancesAlph()
   const {
     data: tokensBalances,
     isLoading: isLoadingTokensBalances,
