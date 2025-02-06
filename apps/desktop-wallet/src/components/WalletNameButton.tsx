@@ -85,6 +85,6 @@ const Initials = styled.div`
   color: ${({ theme }) => theme.font.contrastPrimary};
   height: 30px;
   width: 30px;
-  border-radius: 6px;
+  border-radius: 100px;
   background-color: ${({ theme }) => theme.global.complementary};
 `

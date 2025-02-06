@@ -36,12 +36,12 @@ const OptionMainContent = styled.div`
   align-items: center;
   justify-content: space-between;
   font-weight: var(--fontWeight-semiBold);
-  padding: var(--spacing-3);
+  padding: var(--spacing-2);
   gap: var(--spacing-3);
 `
 
 const OptionSecondaryContent = styled.div`
-  padding: var(--spacing-3);
+  padding: var(--spacing-2);
 
   &:empty {
     display: none;
@@ -55,21 +55,17 @@ const OptionContentWrapper = styled.div<Pick<SelectOptionItemContentProps, 'cont
   flex-direction: ${({ contentDirection }) => contentDirection};
   justify-content: space-between;
   min-width: 0;
-  border-radius: var(--radius-big);
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.bg.primary : theme.bg.secondary)};
   overflow: hidden;
 
   ${({ theme, isSelected }) =>
     isSelected &&
     css`
-      padding-left: 10px;
-
       &:after {
         content: '';
         position: absolute;
-        left: 6px;
-        top: 10%;
-        bottom: 10%;
+        left: 0px;
+        top: 0;
+        bottom: 0;
         width: 3px;
         background-color: ${theme.global.accent};
         border-radius: 10px;

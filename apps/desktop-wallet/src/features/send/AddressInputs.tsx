@@ -2,7 +2,7 @@ import { AddressHash } from '@alephium/shared'
 import { AlbumIcon, ContactIcon } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
 import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
@@ -42,7 +42,6 @@ const AddressInputs = ({
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const contacts = useAppSelector(selectAllContacts)
   const { data: allAddressHashes } = useFetchSortedAddressesHashes()
-  const theme = useTheme()
 
   const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
@@ -92,6 +91,7 @@ const AddressInputs = ({
             onChange={(e) => onToAddressChange(e.target.value.trim())}
             placeholder={t('The address which will receive the assets.')}
             heightSize="big"
+            noMargin
           />
           <DestinationActions>
             <Button Icon={ContactIcon} role="secondary" short onClick={() => setIsContactSelectModalOpen(true)}>

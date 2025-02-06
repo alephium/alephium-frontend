@@ -1,4 +1,3 @@
-import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { ChevronLeft, LucideIcon, X } from 'lucide-react'
 import { ReactNode } from 'react'
@@ -141,7 +140,7 @@ const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>
 
   width: 100%;
   margin: auto;
-  max-width: ${({ narrow }) => (narrow ? '380px' : '560px')};
+  max-width: ${({ narrow }) => (narrow ? '380px' : '440px')};
   max-height: 90vh;
   overflow: hidden;
 
@@ -170,9 +169,9 @@ export const ModalHeader = styled.header`
   left: 0;
   display: flex;
   align-items: center;
-  height: 70px;
-  padding: 0 6px 16px var(--spacing-6);
-  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background1).toHex()} 25%, transparent)`};
+  height: 54px;
+  padding: 0 6px 0 var(--spacing-4);
+  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
 const ModalHeaderContent = styled(motion.div)`
@@ -201,7 +200,7 @@ export const ModalContent = styled.div<{ hasFooterButtons?: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 70px var(--spacing-6) var(--spacing-4) var(--spacing-6);
+  padding: 70px var(--spacing-4) var(--spacing-6) var(--spacing-4);
   width: 100%;
   overflow-y: auto;
 
@@ -221,7 +220,7 @@ export const ModalFooterButtons = styled.div`
   align-items: center;
   gap: 20px;
   padding-top: var(--spacing-5);
-  padding-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-2);
   background: linear-gradient(to top, ${({ theme }) => theme.bg.background1} 50%, transparent 100%);
 `
 
@@ -234,7 +233,7 @@ export const ModalFooterButton = ({ ...props }) => (
 const ModalFooterButtonStyled = styled(Button)`
   width: 100%;
   max-width: none;
-  border-radius: 12px;
+  border-radius: 14px;
 `
 
 const ModalSubtitle = styled.div`

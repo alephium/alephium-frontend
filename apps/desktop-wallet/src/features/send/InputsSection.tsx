@@ -26,6 +26,7 @@ const InputsSectionStyled = styled.div`
 `
 
 const Title = styled.div`
+  color: ${({ theme }) => theme.font.secondary};
   font-size: 14px;
 `
 

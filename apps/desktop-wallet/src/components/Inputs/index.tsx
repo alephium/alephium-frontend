@@ -49,14 +49,14 @@ export const inputDefaultStyle = (
   heightSize?: InputHeight,
   largeText?: boolean
 ) => css`
-  height: ${heightSize === 'small' ? '34px' : heightSize === 'big' ? '48px' : 'var(--inputHeight)'};
+  height: ${heightSize === 'small' ? '34px' : heightSize === 'big' ? '46px' : 'var(--inputHeight)'};
   width: 100%;
   border-radius: ${heightSize === 'small'
     ? 'var(--radius-small)'
     : heightSize === 'big'
       ? 'var(--radius-big)'
       : 'var(--radius-medium)'};
-  border: 1px solid ${({ theme }) => (theme.name === 'light' ? theme.border.primary : 'transparent')};
+  border: 1px solid ${({ theme }) => theme.border.primary};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 40px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
   font-weight: var(--fontWeight-medium);
@@ -114,10 +114,8 @@ export const InputErrorMessage = styled(motion.label)<InputProps>`
   opacity: 0;
   font-size: 0.8em;
   color: ${({ theme }) => theme.global.alert};
-  border: 1px solid ${({ theme }) => theme.global.alert};
   border-radius: var(--radius-huge);
   padding: 2px 8px;
-  background-color: ${({ theme }) => theme.bg.background1};
 `
 
 export const InputLabel: FC<MotionProps & { isElevated: boolean }> = ({ isElevated, ...props }) => (

@@ -115,6 +115,7 @@ const FiltersPanel = ({
             renderOption={(tokenId, isSelected) => (
               <SelectOptionWalletToken tokenId={tokenId} isSelected={isSelected} />
             )}
+            floatingOptions
           />
         </Tile>
         <Tile>

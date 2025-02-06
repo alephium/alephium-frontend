@@ -94,7 +94,7 @@ const Input = ({
           </InputIconContainer>
         )}
       </InputRow>
-      {!disabled && error && <InputErrorMessage animate={{ y: 10, opacity: 1 }}>{error}</InputErrorMessage>}
+      {!disabled && error && <InputErrorMessage animate={{ y: 18, opacity: 1 }}>{error}</InputErrorMessage>}
       {hint && <Hint>{hint}</Hint>}
       {children}
     </InputContainer>

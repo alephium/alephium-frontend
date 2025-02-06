@@ -63,7 +63,6 @@ const getImportanceColor = (theme: DefaultTheme, importance?: InfoBoxImportance)
 export default styled(InfoBox)`
   width: 100%;
   margin: 0 auto var(--spacing-4) auto;
-  margin-top: var(--spacing-2);
   max-width: ${({ small }) => (small ? '300px' : 'initial')};
   line-height: 1.5em;
 `
@@ -105,13 +104,13 @@ const StyledBox = styled.div<{
   short?: boolean
   contrast?: boolean
 }>`
-  padding: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-3);
   height: ${({ short }) => (short ? 'var(--inputHeight)' : 'auto')};
   background-color: ${({ theme, contrast, importance }) =>
     contrast
       ? theme.bg.secondary
       : importance
-        ? colord(getImportanceColor(theme, importance)).alpha(0.08).toHex()
+        ? colord(getImportanceColor(theme, importance)).alpha(0.05).toHex()
         : theme.bg.primary};
 
   display: flex;

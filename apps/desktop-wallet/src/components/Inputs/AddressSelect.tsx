@@ -90,7 +90,7 @@ function AddressSelect({
           value={selectedAddress}
           label={label}
         >
-          <AddressBadge addressHash={selectedAddress} appendHash />
+          <AddressBadge addressHash={selectedAddress} appendHash truncate />
         </ClickableInput>
       </AddressSelectContainer>
       <ModalPortal>

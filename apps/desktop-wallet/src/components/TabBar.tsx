@@ -98,8 +98,7 @@ export const Tab = styled.div<{ isActive: boolean }>`
   justify-content: center;
   align-items: center;
   background-color: ${({ isActive, theme }) => (isActive ? theme.bg.highlight : 'transparent')};
-  border: 1px solid
-    ${({ theme, isActive }) => (theme.name === 'light' && isActive ? theme.border.primary : 'transparent')};
+  border: 1px solid ${({ theme, isActive }) => (isActive ? theme.border.primary : 'transparent')};
   cursor: pointer;
   font-size: 14px;
   font-weight: var(--fontWeight-medium);

@@ -60,6 +60,6 @@ const H1 = styled.h1<PanelTitleProps>`
   flex: 1;
   color: ${({ theme, color }) => (color ? color : theme.font.primary)};
   font-size: ${({ size }) => (size === 'small' ? '16px' : size === 'big' ? '32px' : '28px')};
-  font-weight: var(--fontWeight-medium);
+  font-weight: var(--fontWeight-semiBold);
   margin: 0;
 `

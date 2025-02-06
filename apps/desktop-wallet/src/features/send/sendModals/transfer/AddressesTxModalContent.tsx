@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import AddressInputs from '@/features/send/AddressInputs'
 import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
+import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { isAddressValid, requiredErrorMessage } from '@/utils/form-validation'
 
@@ -56,17 +56,19 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
           onContactSelect={handleToAddressChange}
         />
       </InputFieldsColumn>
-      <FooterButton
-        onClick={() =>
-          onSubmit({
-            fromAddress,
-            toAddress: toAddress.value
-          })
-        }
-        disabled={!isSubmitButtonActive}
-      >
-        {t('Continue')}
-      </FooterButton>
+      <ModalFooterButtons>
+        <ModalFooterButton
+          onClick={() =>
+            onSubmit({
+              fromAddress,
+              toAddress: toAddress.value
+            })
+          }
+          disabled={!isSubmitButtonActive}
+        >
+          {t('Continue')}
+        </ModalFooterButton>
+      </ModalFooterButtons>
     </>
   )
 }

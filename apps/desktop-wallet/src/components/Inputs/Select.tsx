@@ -414,6 +414,8 @@ export const OptionSelect = styled.div`
   color: inherit;
   display: flex;
   flex-direction: column;
+  padding: var(--spacing-1) 0;
+  gap: 5px;
 `
 
 export const OptionItem = styled.button<{
@@ -432,29 +434,29 @@ export const OptionItem = styled.button<{
   text-align: left;
   visibility: ${({ invisible }) => invisible && 'hidden'};
   font-weight: ${({ selected }) => selected && 'var(--fontWeight-semiBold)'};
+  background-color: ${({ theme, selected }) => (selected ? theme.bg.accent : 'transparent')};
   font-size: 13px;
+  border-radius: var(--radius-small);
 
   ${({ hasCustomOptionRender }) => css`
-    padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-3) 0'};
-    margin: ${hasCustomOptionRender ? '0px' : '0 var(--spacing-4)'};
+    padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-2)'};
+    margin: ${hasCustomOptionRender ? '0px' : '0 var(--spacing-1)'};
   `};
 
   ${({ isFloating }) =>
-    isFloating
-      ? css`
-          margin: var(--spacing-1) var(--spacing-4);
-          border-radius: var(--radius-big);
-          overflow: hidden;
+    isFloating &&
+    css`
+      margin: 0 var(--spacing-1);
+      border-radius: var(--radius-small);
+      overflow: hidden;
+      border &:last-child {
+        margin-bottom: var(--spacing-3);
+      }
+    `}
 
-          &:last-child {
-            margin-bottom: var(--spacing-3);
-          }
-        `
-      : css`
-          &:not(:last-child) {
-            border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-          }
-        `}
+  &:hover {
+    background-color: ${({ theme }) => theme.bg.hover};
+  }
 
   ${({ focusable }) =>
     focusable &&
