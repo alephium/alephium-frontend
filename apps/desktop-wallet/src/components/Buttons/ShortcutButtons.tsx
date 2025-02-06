@@ -162,7 +162,7 @@ const ShortcutButton = styled.button`
   justify-content: center;
   border-radius: 18px;
   background-color: ${({ theme }) => theme.bg.highlight};
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  border: 1px solid ${({ theme }) => (theme.name === 'light' ? theme.border.primary : 'transparent')};
   color: ${({ theme }) => theme.font.primary};
   gap: 5px;
   font-weight: var(--fontWeight-medium);

@@ -56,7 +56,7 @@ export const inputDefaultStyle = (
     : heightSize === 'big'
       ? 'var(--radius-big)'
       : 'var(--radius-medium)'};
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  border: 1px solid ${({ theme }) => (theme.name === 'light' ? theme.border.primary : 'transparent')};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 40px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
   font-weight: var(--fontWeight-medium);
@@ -89,7 +89,7 @@ export const inputDefaultStyle = (
   }
 
   &:hover {
-    background-color: ${({ theme }) => theme.bg.hover};
+    background-color: ${({ theme }) => theme.bg.primary};
   }
 
   // Remove number arrows

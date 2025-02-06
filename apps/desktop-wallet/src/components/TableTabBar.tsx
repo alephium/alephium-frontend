@@ -19,5 +19,4 @@ const TableTab = styled(Tab)`
   overflow: hidden;
   font-size: 13px;
   height: calc(var(--inputHeight) - 4px);
-  box-shadow: ${({ theme, isActive }) => (isActive ? theme.shadow.primary : 'none')};
 `

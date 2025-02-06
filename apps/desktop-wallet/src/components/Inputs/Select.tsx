@@ -442,9 +442,13 @@ export const OptionItem = styled.button<{
   ${({ isFloating }) =>
     isFloating
       ? css`
-          margin: var(--spacing-2) var(--spacing-4);
+          margin: var(--spacing-1) var(--spacing-4);
           border-radius: var(--radius-big);
           overflow: hidden;
+
+          &:last-child {
+            margin-bottom: var(--spacing-3);
+          }
         `
       : css`
           &:not(:last-child) {

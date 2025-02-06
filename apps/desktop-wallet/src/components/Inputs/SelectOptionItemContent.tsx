@@ -55,15 +55,14 @@ const OptionContentWrapper = styled.div<Pick<SelectOptionItemContentProps, 'cont
   flex-direction: ${({ contentDirection }) => contentDirection};
   justify-content: space-between;
   min-width: 0;
-  border: 1px solid ${({ theme }) => theme.border.secondary};
   border-radius: var(--radius-big);
-  background-color: ${({ theme, isSelected }) => (isSelected ? theme.bg.primary : theme.bg.tertiary)};
+  background-color: ${({ theme, isSelected }) => (isSelected ? theme.bg.primary : theme.bg.secondary)};
   overflow: hidden;
 
   ${({ theme, isSelected }) =>
     isSelected &&
     css`
-      padding-left: 5px;
+      padding-left: 10px;
 
       &:after {
         content: '';

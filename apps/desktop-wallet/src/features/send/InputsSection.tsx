@@ -27,15 +27,13 @@ const InputsSectionStyled = styled.div`
 
 const Title = styled.div`
   font-size: 14px;
-  font-weight: var(--fontWeight-semiBold);
 `
 
 const Header = styled.div`
-  margin-left: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 40px;
+  height: 30px;
 `
 
 const Subtitle = styled.div`

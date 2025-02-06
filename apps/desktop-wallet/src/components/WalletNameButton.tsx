@@ -15,7 +15,6 @@ GNU Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public License
 along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
-import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
 import { openModal } from '@/features/modals/modalActions'
@@ -49,29 +48,26 @@ const WalletNameButton = () => {
 
 export default WalletNameButton
 
-const WalletNameButtonStyled = styled(motion.div)`
+const WalletNameButtonStyled = styled.div`
   flex: 1;
-  border-radius: var(--radius-big);
+  border-radius: var(--radius-medium);
   display: flex;
   align-items: center;
   padding: 6px;
 
   overflow: hidden;
   z-index: 1;
-  background-color: ${({ theme }) => theme.bg.highlight};
-  border: 1px solid ${({ theme }) => theme.border.secondary};
-  box-shadow: ${({ theme }) => theme.shadow.primary};
 
   &:hover {
     cursor: pointer;
-    background-color: ${({ theme }) => theme.bg.hover};
+    background-color: ${({ theme }) => theme.bg.primary};
   }
 `
 
 const WalletNameContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
 `
 
 const Name = styled.span`
@@ -89,6 +85,6 @@ const Initials = styled.div`
   color: ${({ theme }) => theme.font.contrastPrimary};
   height: 30px;
   width: 30px;
-  border-radius: 100px;
+  border-radius: 6px;
   background-color: ${({ theme }) => theme.global.complementary};
 `

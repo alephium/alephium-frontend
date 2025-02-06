@@ -111,7 +111,7 @@ export default styled(Button)`
         : theme.bg.hover
       : {
           primary: {
-            default: theme.bg.hover,
+            default: colord(theme.bg.contrast).alpha(0.8).toRgbString(),
             valid: colord(theme.global.valid).darken(0.04).toRgbString(),
             alert: colord(theme.global.alert).darken(0.04).toRgbString(),
             faded: colord(theme.global.accent).darken(0.04).toRgbString()
@@ -167,7 +167,7 @@ export default styled(Button)`
       ? theme.font.primary
       : {
           primary: {
-            default: theme.font.primary,
+            default: theme.font.contrastPrimary,
             valid: theme.font.primary,
             alert: 'white',
             faded: 'white'
@@ -218,7 +218,7 @@ export default styled(Button)`
   justify-content: ${({ Icon, justifyContent, children }) =>
     justifyContent ?? (!Icon || !children ? 'center' : 'flex-start')};
   height: ${({ circle, short, tall, tiny }) =>
-    tiny ? '28px' : short ? '34px' : circle ? '34px' : tall ? '46px' : 'var(--inputHeight)'};
+    tiny ? '28px' : short ? '32px' : circle ? '34px' : tall ? '46px' : 'var(--inputHeight)'};
   width: ${({ circle, short, wide, tiny }) =>
     tiny ? '28px' : circle ? '34px' : short && !wide ? 'auto' : wide ? '100%' : '80%'};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};

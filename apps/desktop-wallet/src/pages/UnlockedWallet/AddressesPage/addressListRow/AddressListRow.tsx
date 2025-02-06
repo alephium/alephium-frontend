@@ -82,13 +82,12 @@ const GridRow = styled.div`
   grid-template-columns: 40px 1fr 1fr 1fr 1fr;
   margin: 5px 0;
   padding: 0 15px;
-  background-color: ${({ theme }) => theme.bg.tertiary};
+  background-color: ${({ theme }) => theme.bg.secondary};
   border-radius: var(--radius-big);
-  border: 1px solid ${({ theme }) => theme.border.secondary};
 
   &:hover {
     cursor: pointer;
-    background-color: ${({ theme }) => theme.bg.hover};
+    background-color: ${({ theme }) => theme.bg.primary};
   }
 `
 

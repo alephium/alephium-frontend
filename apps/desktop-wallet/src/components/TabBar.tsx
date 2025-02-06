@@ -98,8 +98,8 @@ export const Tab = styled.div<{ isActive: boolean }>`
   justify-content: center;
   align-items: center;
   background-color: ${({ isActive, theme }) => (isActive ? theme.bg.highlight : 'transparent')};
-  border: 1px solid ${({ theme, isActive }) => (isActive ? theme.border.primary : 'transparent')};
-  box-shadow: ${({ theme, isActive }) => (isActive ? theme.shadow.primary : undefined)};
+  border: 1px solid
+    ${({ theme, isActive }) => (theme.name === 'light' && isActive ? theme.border.primary : 'transparent')};
   cursor: pointer;
   font-size: 14px;
   font-weight: var(--fontWeight-medium);
@@ -120,6 +120,7 @@ export const Tab = styled.div<{ isActive: boolean }>`
     color: ${({ isActive, theme }) => (isActive ? theme.font.primary : theme.font.primary)};
     background-color: ${({ isActive, theme }) => (isActive ? theme.bg.primary : theme.bg.secondary)};
   }
+  z-index: 1;
 `
 
 const TabLabel = styled.span<{ isActive: boolean }>`
