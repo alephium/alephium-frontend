@@ -324,28 +324,25 @@ function SendModal<PT extends { fromAddress: Address }>({
         ) : (
           <DeployContractAddressesTxModalContent data={addressesData} onSubmit={moveToSecondStep} onCancel={onClose} />
         ))}
-      {step === 'build-tx' && (
-        <ScrollableModalContent>
-          {type === 'transfer' ? (
-            <TransferBuildTxModalContent
-              data={{ ...(transactionData ?? {}), ...addressesData }}
-              onSubmit={buildTransactionExtended}
-            />
-          ) : type === 'call-contract' ? (
-            <CallContractBuildTxModalContent
-              data={{ ...(transactionData ?? {}), ...addressesData }}
-              onSubmit={buildTransactionExtended}
-              onCancel={onClose}
-            />
-          ) : (
-            <DeployContractBuildTxModalContent
-              data={{ ...(transactionData ?? {}), ...addressesData }}
-              onSubmit={buildTransactionExtended}
-              onCancel={onClose}
-            />
-          )}
-        </ScrollableModalContent>
-      )}
+      {step === 'build-tx' &&
+        (type === 'transfer' ? (
+          <TransferBuildTxModalContent
+            data={{ ...(transactionData ?? {}), ...addressesData }}
+            onSubmit={buildTransactionExtended}
+          />
+        ) : type === 'call-contract' ? (
+          <CallContractBuildTxModalContent
+            data={{ ...(transactionData ?? {}), ...addressesData }}
+            onSubmit={buildTransactionExtended}
+            onCancel={onClose}
+          />
+        ) : (
+          <DeployContractBuildTxModalContent
+            data={{ ...(transactionData ?? {}), ...addressesData }}
+            onSubmit={buildTransactionExtended}
+            onCancel={onClose}
+          />
+        ))}
       {step === 'info-check' && !!transactionData && !!fees && (
         <ScrollableModalContent>
           {type === 'transfer' ? (

@@ -196,10 +196,12 @@ const BackButton = styled(Button)`
 `
 
 export const ModalContent = styled.div<{ noBottomPadding?: boolean }>`
+  flex: 1;
   display: flex;
   flex-direction: column;
   padding: 70px var(--spacing-6) var(--spacing-4) var(--spacing-6);
   width: 100%;
+  overflow-y: auto;
 
   ${({ noBottomPadding }) =>
     noBottomPadding &&

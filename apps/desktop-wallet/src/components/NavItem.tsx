@@ -31,8 +31,8 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
     <>
       <TooltipStyleOverride />
       <ButtonStyled
-        role="secondary"
         aria-label={label}
+        role="secondary"
         onClick={handleClick}
         Icon={Icon}
         isActive={isActive}
@@ -51,7 +51,7 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   margin: 0;
   text-align: left;
   opacity: ${({ isActive }) => (isActive ? 1 : 0.5)};
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.tertiary : 'transparent')};
+  background-color: ${({ isActive }) => !isActive && 'transparent'};
   border-radius: var(--radius-medium);
   font-size: 13px;
 
