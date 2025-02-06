@@ -315,6 +315,7 @@ function SendModal<PT extends { fromAddress: Address }>({
       onBack={onBackCallback}
       focusMode
       disableBack={isRequestToApproveContractCall && step !== 'password-check'}
+      hasFooterButtons
     >
       {step === 'addresses' &&
         (type === 'transfer' ? (

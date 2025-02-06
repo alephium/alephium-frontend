@@ -27,6 +27,7 @@ export interface CenteredModalProps extends ModalContainerProps {
   dynamicContent?: boolean
   onBack?: () => void
   noPadding?: boolean
+  hasFooterButtons?: boolean
   disableBack?: boolean
   Icon?: (() => ReactNode) | LucideIcon
 }
@@ -45,6 +46,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
   children,
   skipFocusOnMount,
   noPadding,
+  hasFooterButtons,
   disableBack,
   Icon,
   ...rest
@@ -91,7 +93,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
           noPadding ? (
             children
           ) : (
-            <ModalContent>{children}</ModalContent>
+            <ModalContent hasFooterButtons={hasFooterButtons}>{children}</ModalContent>
           )
         ) : (
           <ScrollableModalContent>{children}</ScrollableModalContent>
@@ -195,7 +197,7 @@ const BackButton = styled(Button)`
   margin-left: var(--spacing-2);
 `
 
-export const ModalContent = styled.div<{ noBottomPadding?: boolean }>`
+export const ModalContent = styled.div<{ hasFooterButtons?: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -203,8 +205,8 @@ export const ModalContent = styled.div<{ noBottomPadding?: boolean }>`
   width: 100%;
   overflow-y: auto;
 
-  ${({ noBottomPadding }) =>
-    noBottomPadding &&
+  ${({ hasFooterButtons }) =>
+    hasFooterButtons &&
     css`
       padding-bottom: 0;
     `}
@@ -214,10 +216,13 @@ export const ModalFooterButtons = styled.div`
   position: sticky;
   bottom: 0;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   gap: 20px;
-  margin-top: var(--spacing-4);
-  background: linear-gradient(to top, ${({ theme }) => theme.bg.background1}, transparent);
+  padding-top: var(--spacing-5);
+  padding-bottom: var(--spacing-4);
+  background: linear-gradient(to top, ${({ theme }) => theme.bg.background1} 50%, transparent 100%);
 `
 
 export const ModalFooterButton = ({ ...props }) => (
