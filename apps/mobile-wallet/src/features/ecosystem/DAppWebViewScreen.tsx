@@ -157,7 +157,7 @@ const useDetectWCUrlInClipboardAndPair = () => {
 
   useEffect(() => {
     const checkClipboard = async () => {
-      const content = await Clipboard.getStringAsync()
+      const content = (await Clipboard.hasStringAsync()) ? await Clipboard.getStringAsync() : ''
 
       if (content.startsWith('wc:')) {
         Clipboard.setStringAsync('')

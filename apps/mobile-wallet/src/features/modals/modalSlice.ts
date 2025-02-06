@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { closeModal, openModal, removeModal } from '~/features/modals/modalActions'
+import { closeAllModals, closeModal, openModal, removeModal } from '~/features/modals/modalActions'
 import { modalAdapter } from '~/features/modals/modalAdapters'
 
 const initialState = modalAdapter.getInitialState()
@@ -28,6 +28,17 @@ const modalSlice = createSlice({
       })
       .addCase(removeModal, (state, { payload: { id } }) => {
         modalAdapter.removeOne(state, id)
+      })
+      .addCase(closeAllModals, (state) => {
+        modalAdapter.updateMany(
+          state,
+          state.ids.map((id) => ({
+            id,
+            changes: {
+              isClosing: true
+            }
+          }))
+        )
       })
   }
 })
