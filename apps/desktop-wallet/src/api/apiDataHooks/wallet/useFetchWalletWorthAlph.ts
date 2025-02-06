@@ -3,10 +3,10 @@ import { ALPH } from '@alephium/token-list'
 import { useMemo } from 'react'
 
 import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import useFetchWalletBalancesAlphArray from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphArray'
+import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 
 const useFetchWalletWorthAlph = () => {
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphArray()
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlph()
   const { data: alphPrice, isLoading: isLoadingAlphPrice } = useFetchTokenPrice(ALPH.symbol)
 
   return {

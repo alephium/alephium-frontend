@@ -1,5 +1,5 @@
 import useMergeAllTokensBalances from '@/api/apiDataHooks/utils/useMergeAllTokensBalances'
-import useFetchWalletBalancesAlphArray from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphArray'
+import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
 import useFetchWalletBalancesTokensArray from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
 
 interface UseFetchWalletBalancesProps {
@@ -9,7 +9,7 @@ interface UseFetchWalletBalancesProps {
 const useFetchWalletBalances = (props?: UseFetchWalletBalancesProps) => {
   const includeAlph = props?.includeAlph ?? true
 
-  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphArray()
+  const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlph()
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchWalletBalancesTokensArray()
   const allTokensBalances = useMergeAllTokensBalances({
     includeAlph,

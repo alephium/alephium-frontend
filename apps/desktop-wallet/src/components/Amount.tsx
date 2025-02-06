@@ -21,14 +21,14 @@ interface AmountBaseProps {
   useTinyAmountShorthand?: boolean
 }
 
-interface TokenAmountProps extends AmountBaseProps {
+export interface TokenAmountProps extends AmountBaseProps {
   tokenId: TokenId
   value: bigint
   fullPrecision?: boolean
   nbOfDecimalsToShow?: number
 }
 
-interface FiatAmountProps extends AmountBaseProps {
+export interface FiatAmountProps extends AmountBaseProps {
   isFiat: true
   value: number
 }

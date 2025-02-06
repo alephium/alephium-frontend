@@ -18,6 +18,7 @@ import { NewAddressModalProps } from '@/modals/NewAddressModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
 import { SettingsModalProps } from '@/modals/SettingsModal'
 import { DisablePasswordRequirementModalProps } from '@/modals/SettingsModal/DisablePasswordRequirementModal'
+import { TokenDetailsModalProps } from '@/modals/tokenDetails/tokeDetailsTypes'
 import { WalletRemovalModalProps } from '@/modals/WalletRemovalModal'
 
 const ModalNames = {
@@ -52,7 +53,8 @@ const ModalNames = {
   WalletRemovalModal: 'WalletRemovalModal',
   DeleteAddressesModal: 'DeleteAddressesModal',
   BuyModal: 'BuyModal',
-  WalletPassphraseDisclaimerModal: 'WalletPassphraseDisclaimerModal'
+  WalletPassphraseDisclaimerModal: 'WalletPassphraseDisclaimerModal',
+  TokenDetailsModal: 'TokenDetailsModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -178,6 +180,10 @@ export type OpenModalParams =
   | {
       name: typeof ModalNames.WalletPassphraseDisclaimerModal
       props: WalletPassphraseDisclaimerModalProps
+    }
+  | {
+      name: typeof ModalNames.TokenDetailsModal
+      props: TokenDetailsModalProps
     }
 
 export type ModalInstance = {
