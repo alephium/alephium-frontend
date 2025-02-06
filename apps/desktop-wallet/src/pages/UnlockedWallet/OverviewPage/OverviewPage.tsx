@@ -5,9 +5,9 @@ import AnimatedBackground from '@/components/AnimatedBackground'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import LabeledWorthOverview from '@/components/LabeledWorthOverview'
 import { WalletTokensTabs } from '@/features/assetsLists/AddressDetailsTabs'
-import WalletWorth from '@/pages/UnlockedWallet/OverviewPage/WalletWorth'
-import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
+import WalletWorth from '@/pages/unlockedWallet/overviewPage/WalletWorth'
+import { UnlockedWalletPanel } from '@/pages/unlockedWallet/UnlockedWalletLayout'
+import UnlockedWalletPage from '@/pages/unlockedWallet/UnlockedWalletPage'
 interface OverviewPageProps {
   className?: string
 }

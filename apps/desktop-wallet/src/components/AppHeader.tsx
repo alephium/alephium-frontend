@@ -54,14 +54,14 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
     transition: 'opacity 0.2s ease-out'
   }
 
-  if (invisible) return <InvisibleAppHeader id="app-header" className={className} />
+  if (invisible) return <InvisibleAppHeader className={className} />
 
   const openWalletConnectModal = () => dispatch(openModal({ name: 'WalletConnectModal' }))
 
   return (
-    <AppHeaderStyled id="app-header" style={{ position }} className={className}>
+    <AppHeaderStyled style={{ position }} className={className}>
       <GradientBackground style={{ opacity: gradientOpacity }} />
-      <AppHeaderContainer id="app-drag-region" className={className}>
+      <AppHeaderContainer>
         {!platform.isMac && <TitleBar />}
         <Title style={titleStyles}>{title}</Title>
         <HeaderButtons>
@@ -150,7 +150,6 @@ const AppHeaderContainer = styled.div`
   height: ${appHeaderHeightPx}px;
   padding: 0 var(--spacing-3) 0 40px;
   gap: var(--spacing-1);
-  -webkit-app-region: drag;
   -webkit-app-region: drag;
 `
 

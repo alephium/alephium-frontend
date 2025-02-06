@@ -528,5 +528,10 @@
   "Activity": "Activity",
   "Passphrase warning": "Passphrase warning",
   "Don't use passphrase": "Don't use passphrase",
-  "Token balance": "Token balance"
+  "Token balance": "Token balance",
+  "Hide asset": "Hide asset",
+  "nb_of_hidden_assets_one": "{{ count }} hidden asset",
+  "nb_of_hidden_assets_other": "{{ count }} hidden assets",
+  "Hide assets": "Hide assets",
+  "Unhide asset": "Unhide asset"
 }

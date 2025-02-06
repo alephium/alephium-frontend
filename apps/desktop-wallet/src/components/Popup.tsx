@@ -8,7 +8,7 @@ import ModalContainer from '@/modals/ModalContainer'
 import { Coordinates } from '@/types/numbers'
 import { useWindowSize } from '@/utils/hooks'
 
-interface PopupProps {
+export interface PopupProps {
   onClose: () => void
   children?: ReactNode | ReactNode[]
   title?: string

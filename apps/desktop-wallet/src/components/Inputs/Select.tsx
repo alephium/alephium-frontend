@@ -20,6 +20,7 @@ import InputArea from '@/components/Inputs/InputArea'
 import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
 import Popup from '@/components/Popup'
 import Truncate from '@/components/Truncate'
+import useHookCoordinates from '@/hooks/useHookCoordinates'
 import ModalPortal from '@/modals/ModalPortal'
 import { Coordinates } from '@/types/numbers'
 
@@ -86,25 +87,10 @@ function Select<T extends OptionValue>({
   isSearchable,
   allowCustomValue
 }: SelectProps<T>) {
-  const selectedValueRef = useRef<HTMLDivElement>(null)
-
   const [value, setValue] = useState(controlledValue)
-  const [showPopup, setShowPopup] = useState(false)
-  const [hookCoordinates, setHookCoordinates] = useState<Coordinates | undefined>(undefined)
+  const { containerRef, hookCoordinates, openModal, closeModal, isModalOpen } = useHookCoordinates()
 
   const multipleAvailableOptions = options.length > 1
-
-  const getContainerCenter = (): Coordinates | undefined => {
-    if (selectedValueRef?.current) {
-      const containerElement = selectedValueRef.current
-      const containerElementRect = containerElement.getBoundingClientRect()
-
-      return {
-        x: containerElementRect.x + containerElement.clientWidth / 2,
-        y: containerElementRect.y + containerElement.clientHeight / 2
-      }
-    }
-  }
 
   const setInputValue = useCallback(
     (option: SelectOption<T>) => {
@@ -112,33 +98,27 @@ function Select<T extends OptionValue>({
         onSelect(option.value)
         setValue(option)
 
-        selectedValueRef.current?.focus()
+        containerRef.current?.focus()
       }
     },
-    [onSelect, skipEqualityCheck, value]
+    [containerRef, onSelect, skipEqualityCheck, value]
   )
 
   const handleClick = () => {
-    if (!multipleAvailableOptions) {
+    if (!multipleAvailableOptions && !allowReselectionOnClickWhenSingleOption) {
       allowReselectionOnClickWhenSingleOption && options.length === 1 && onSelect(options[0].value)
 
       return
     }
 
-    setHookCoordinates(getContainerCenter())
-    setShowPopup(true)
+    openModal()
   }
 
   const handleKeyDown = (e: ReactKeyboardEvent) => {
     if (![' ', 'ArrowDown', 'ArrowUp'].includes(e.key)) return
     if (!multipleAvailableOptions) return
-    setHookCoordinates(getContainerCenter())
-    setShowPopup(true)
-  }
 
-  const handlePopupClose = () => {
-    setShowPopup(false)
-    selectedValueRef.current?.focus()
+    openModal()
   }
 
   useEffect(() => {
@@ -168,14 +148,14 @@ function Select<T extends OptionValue>({
         noMargin={noMargin}
         onMouseDown={handleClick}
         onKeyDown={handleKeyDown}
-        style={{ zIndex: raised && showPopup ? 2 : undefined, boxShadow: disabled ? 'none' : undefined }}
+        style={{ zIndex: raised && isModalOpen ? 2 : undefined, boxShadow: disabled ? 'none' : undefined }}
         heightSize={heightSize}
         simpleMode={simpleMode}
         tabIndex={renderCustomComponent ? -1 : 0}
         showPointer={multipleAvailableOptions}
       >
         {renderCustomComponent ? (
-          <CustomComponentContainer ref={selectedValueRef}>
+          <CustomComponentContainer ref={containerRef}>
             {renderCustomComponent(value, !multipleAvailableOptions)}
           </CustomComponentContainer>
         ) : (
@@ -184,7 +164,7 @@ function Select<T extends OptionValue>({
             <SelectContainer
               tabIndex={-1}
               className={className}
-              ref={selectedValueRef}
+              ref={containerRef}
               id={id}
               simpleMode={simpleMode}
               label={label}
@@ -199,7 +179,7 @@ function Select<T extends OptionValue>({
         )}
       </SelectOutterContainer>
       <ModalPortal>
-        {showPopup && (
+        {isModalOpen && (
           <SelectOptionsModal
             options={options}
             optionRender={optionRender}
@@ -207,8 +187,8 @@ function Select<T extends OptionValue>({
             setValue={setInputValue}
             title={title}
             hookCoordinates={hookCoordinates}
-            onClose={handlePopupClose}
-            parentSelectRef={selectedValueRef}
+            onClose={closeModal}
+            parentSelectRef={containerRef}
             ListBottomComponent={ListBottomComponent}
             isSearchable={isSearchable}
           />

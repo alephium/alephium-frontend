@@ -13,7 +13,7 @@ import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchSortedAddressesHashesWithLatestTx } from '@/hooks/useAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons, ScrollableModalContent } from '@/modals/CenteredModal'
-import AddressLastActivity from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressLastActivity'
+import AddressLastActivity from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressLastActivity'
 import { selectDefaultAddress, selectInitialAddress } from '@/storage/addresses/addressesSelectors'
 
 const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
