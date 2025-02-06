@@ -1,3 +1,4 @@
+import { ALPH } from '@alephium/token-list'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -6,6 +7,7 @@ import HashEllipsed from '@/components/HashEllipsed'
 import Truncate from '@/components/Truncate'
 import TokenLogo from '@/features/assetsLists/tokenBalanceRow/TokenLogo'
 import { TokenDetailsModalProps } from '@/modals/tokenDetails/tokeDetailsTypes'
+import TokenDropdownOptions from '@/modals/tokenDetails/TokenOptions'
 
 const Header = ({ tokenId }: TokenDetailsModalProps) => (
   <HeaderStyled>
@@ -13,6 +15,12 @@ const Header = ({ tokenId }: TokenDetailsModalProps) => (
       <TokenLogo tokenId={tokenId} />
       <TokenName tokenId={tokenId} />
     </LeftSide>
+
+    {tokenId !== ALPH.id && (
+      <RightSide>
+        <TokenDropdownOptions tokenId={tokenId} />
+      </RightSide>
+    )}
   </HeaderStyled>
 )
 
@@ -43,6 +51,10 @@ const LeftSide = styled.div`
   display: flex;
   align-items: center;
   gap: 15px;
+`
+
+const RightSide = styled(LeftSide)`
+  margin-right: 15px;
 `
 
 const TruncateStyled = styled(Truncate)`

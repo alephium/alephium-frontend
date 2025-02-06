@@ -5,9 +5,9 @@ import styled from 'styled-components'
 
 import WalletTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/WalletTransactionsList'
 import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
-import FiltersPanel from '@/pages/UnlockedWallet/activityPage/FiltersPanel'
-import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
+import FiltersPanel from '@/pages/unlockedWallet/activityPage/FiltersPanel'
+import { UnlockedWalletPanel } from '@/pages/unlockedWallet/UnlockedWalletLayout'
+import UnlockedWalletPage from '@/pages/unlockedWallet/UnlockedWalletPage'
 import { TokenId } from '@/types/tokens'
 import { directionOptions } from '@/utils/transactions'
 
