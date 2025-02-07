@@ -6,8 +6,8 @@ import useAddressesDataPolling from '@/features/dataPolling/useAddressesDataPoll
 import { useAppSelector } from '@/hooks/redux'
 import ActivityPage from '@/pages/unlockedWallet/activityPage1/ActivityPage1'
 import AddressesPage from '@/pages/unlockedWallet/addressesPage/AddressesPage'
-import OverviewPage from '@/pages/unlockedWallet/overviewPage1/OverviewPage1'
-import UnlockedWalletLayout from '@/pages/unlockedWallet/UnlockedWalletLayout1'
+import OverviewPage from '@/pages/unlockedWallet/overviewPage/OverviewPage'
+import UnlockedWalletLayout from '@/pages/unlockedWallet/UnlockedWalletLayout'
 import { loadContacts } from '@/utils/contacts'
 
 const WalletRoutes = () => {

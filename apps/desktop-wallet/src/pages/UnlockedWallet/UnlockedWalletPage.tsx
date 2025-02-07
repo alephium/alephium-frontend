@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { fadeIn } from '@/animations'
-import { UnlockedWalletPanel } from '@/pages/unlockedWallet/UnlockedWalletLayout1'
+import { UnlockedWalletPanel } from '@/pages/unlockedWallet/UnlockedWalletLayout'
 
 interface UnlockedWalletPageProps extends MotionProps {
   title?: string
