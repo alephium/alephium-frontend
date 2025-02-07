@@ -1,20 +1,25 @@
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
-import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
 import Amount, { TokenAmountProps } from '@/components/Amount'
+import { TokenId } from '@/types/tokens'
 
-const FTAmounts = (props: Omit<TokenAmountProps, 'value'>) => {
-  const { data: balances, isLoading } = useFetchWalletSingleTokenBalances({ tokenId: props.tokenId })
+export interface FTAmountsBaseProp {
+  isLoading: boolean
+  tokenId: TokenId
+  totalBalance?: bigint
+  availableBalance?: bigint
+}
+
+type FTAmountsProps = FTAmountsBaseProp & Omit<TokenAmountProps, 'value'>
+
+const FTAmounts = ({ totalBalance, availableBalance, isLoading, ...props }: FTAmountsProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
 
-  const totalBalance = BigInt(balances.totalBalance)
-  const availableBalance = BigInt(balances.availableBalance)
-
   return (
     <>
-      {totalBalance && <Amount value={totalBalance} semiBold isLoading={isLoading} {...props} />}
+      {totalBalance !== undefined && <Amount value={totalBalance} semiBold isLoading={isLoading} {...props} />}
 
       {availableBalance !== totalBalance && availableBalance !== undefined && (
         <AmountSubtitle>

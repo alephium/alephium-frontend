@@ -495,7 +495,7 @@
   "You can now complete your purchase in the dedicated window!": "You can now complete your purchase in the dedicated window!",
   "Token": "Token",
   "Price": "Price",
-  "Value": "Value",
+  "Worth": "Worth",
   "Invalid mnemonic. Please double check your words.": "Invalid mnemonic. Please double check your words.",
   "Incorrect word. Please try again.": "Incorrect word. Please try again.",
   "Select the correct word for word number <1>{{ number }} of 24</1>.": "Select the correct word for word number <1>{{ number }} of 24</1>.",

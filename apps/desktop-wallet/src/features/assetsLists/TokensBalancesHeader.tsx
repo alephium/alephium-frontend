@@ -27,7 +27,7 @@ const TokensBalancesHeader = ({ showAllocation }: TokensBalancesHeaderProps) => 
         <span>{t('Amount')}</span>
       </TableCell>
       <TableCell align="right">
-        <span>{t('Value')}</span>
+        <span>{t('Worth')}</span>
       </TableCell>
     </TableHeader>
   )

@@ -22,7 +22,7 @@ import styled from 'styled-components'
 
 import useFetchAddressSingleTokenBalances from '@/api/apiDataHooks/address/useFetchAddressSingleTokenBalances'
 import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
-import FTAmounts from '@/components/amounts/FTAmounts'
+import FTAmounts, { FTAmountsBaseProp } from '@/components/amounts/FTAmounts'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TableCell } from '@/components/Table'
 import { TokenId } from '@/types/tokens'
@@ -33,29 +33,44 @@ interface FTAddressAmountCellProps {
 }
 
 export const FTAddressAmountCell = ({ tokenId, addressHash }: FTAddressAmountCellProps) => {
-  const { isLoading } = useFetchAddressSingleTokenBalances({ addressHash: addressHash, tokenId })
+  const { data: tokenBalances, isLoading } = useFetchAddressSingleTokenBalances({ addressHash, tokenId })
 
-  return <FTAmountCell tokenId={tokenId} isLoading={isLoading} />
+  const totalBalance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+  const availableBalance = tokenBalances?.availableBalance ? BigInt(tokenBalances.availableBalance) : undefined
+
+  return (
+    <FTAmountCell
+      tokenId={tokenId}
+      isLoading={isLoading}
+      totalBalance={totalBalance}
+      availableBalance={availableBalance}
+    />
+  )
 }
 
 export const FTWalletAmountCell = ({ tokenId }: Omit<FTAddressAmountCellProps, 'addressHash'>) => {
-  const { isLoading } = useFetchWalletSingleTokenBalances({ tokenId })
+  const { data: tokenBalances, isLoading } = useFetchWalletSingleTokenBalances({ tokenId })
 
-  return <FTAmountCell tokenId={tokenId} isLoading={isLoading} />
+  const totalBalance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+  const availableBalance = tokenBalances?.availableBalance ? BigInt(tokenBalances.availableBalance) : undefined
+
+  return (
+    <FTAmountCell
+      tokenId={tokenId}
+      isLoading={isLoading}
+      totalBalance={totalBalance}
+      availableBalance={availableBalance}
+    />
+  )
 }
 
-interface FTAmountCellProps {
-  tokenId: TokenId
-  isLoading: boolean
-}
-
-const FTAmountCell = ({ tokenId, isLoading }: FTAmountCellProps) => (
+const FTAmountCell = (props: FTAmountsBaseProp) => (
   <TableCell align="right">
-    {isLoading ? (
+    {props.isLoading ? (
       <SkeletonLoader height="20px" width="30%" />
     ) : (
       <AmountsContainer>
-        <FTAmounts tokenId={tokenId} />
+        <FTAmounts {...props} />
       </AmountsContainer>
     )}
   </TableCell>
