@@ -61,7 +61,8 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
           onClick={() =>
             onSubmit({
               fromAddress,
-              toAddress: toAddress.value
+              toAddress: toAddress.value,
+              tokenId: data.tokenId
             })
           }
           disabled={!isSubmitButtonActive}

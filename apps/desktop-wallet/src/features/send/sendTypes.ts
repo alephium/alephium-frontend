@@ -40,7 +40,10 @@ export type TransferTxModalData = PartialTxData<TransferTxData, 'fromAddress'>
 export type CallContractTxModalData = PartialTxData<CallContractTxData, 'fromAddress'>
 export type DeployContractTxModalData = PartialTxData<DeployContractTxData, 'fromAddress'>
 
-export type TransferAddressesTxModalOnSubmitData = PartialTxData<TransferTxData, 'fromAddress' | 'toAddress'>
+export type TransferAddressesTxModalOnSubmitData = PartialTxData<
+  TransferTxData,
+  'fromAddress' | 'toAddress' | 'tokenId'
+>
 
 export type AddressesTxModalData =
   | TransferAddressesTxModalOnSubmitData
