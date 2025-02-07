@@ -36,7 +36,7 @@ import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
 import TokenDetailsModal from '@/modals/tokenDetails/TokenDetailsModal'
 import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
 import WalletRemovalModal from '@/modals/WalletRemovalModal'
-import AdvancedOperationsSideModal from '@/pages/unlockedWallet/addressesPage/AdvancedOperationsSideModal1'
+import AdvancedOperationsSideModal from '@/pages/unlockedWallet/addressesPage/AdvancedOperationsSideModal'
 
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)

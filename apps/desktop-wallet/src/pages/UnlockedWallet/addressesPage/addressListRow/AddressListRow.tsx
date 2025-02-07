@@ -7,9 +7,9 @@ import AddressColorIndicator from '@/components/AddressColorIndicator'
 import AddressTokensBadgesList from '@/features/assetsLists/AddressTokensBadgesList'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
-import AddressGroup from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressGroup1'
-import AddressLastActivity from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressLastActivity1'
-import AddressWorth from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressWorth1'
+import AddressGroup from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressGroup'
+import AddressLastActivity from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressLastActivity'
+import AddressWorth from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressWorth'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface AddressListRowProps {
