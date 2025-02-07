@@ -9,8 +9,8 @@ import TabBar, { TabItem } from '@/components/TabBar'
 import i18next from '@/features/localization/i18n'
 import AddressesTabContent from '@/pages/unlockedWallet/addressesPage/AddressesTabContent'
 import ContactsTabContent from '@/pages/unlockedWallet/addressesPage/ContactsTabContent'
-import { UnlockedWalletPanel } from '@/pages/unlockedWallet/UnlockedWalletLayout'
-import UnlockedWalletPage from '@/pages/unlockedWallet/UnlockedWalletPage'
+import { UnlockedWalletPanel } from '@/pages/unlockedWallet/UnlockedWalletLayout1'
+import UnlockedWalletPage from '@/pages/unlockedWallet/UnlockedWalletPage1'
 
 type AddressesTabValue = 'addresses' | 'contacts'
 
