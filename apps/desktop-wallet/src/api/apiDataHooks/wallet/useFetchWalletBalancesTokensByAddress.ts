@@ -25,14 +25,17 @@ const combineBalancesByAddress = (
   ...combineIsLoading(results)
 })
 
-const {
-  useData: useFetchWalletBalancesTokensByAddress,
-  DataContextProvider: UseFetchWalletBalancesTokensByAddressContextProvider
-} = createDataContext<AddressTokensBalancesQueryFnData, AddressesTokensBalances['data']>({
+const { useData, DataContextProvider } = createDataContext<
+  AddressTokensBalancesQueryFnData,
+  AddressesTokensBalances['data']
+>({
   useDataHook: useFetchWalletBalancesTokens,
   combineFn: combineBalancesByAddress,
   defaultValue: {}
 })
+
+const useFetchWalletBalancesTokensByAddress = useData
+const UseFetchWalletBalancesTokensByAddressContextProvider = DataContextProvider
 
 export default useFetchWalletBalancesTokensByAddress
 export { UseFetchWalletBalancesTokensByAddressContextProvider }

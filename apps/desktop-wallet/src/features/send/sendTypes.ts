@@ -2,6 +2,7 @@ import { AssetAmount } from '@alephium/shared'
 import { node } from '@alephium/web3'
 
 import { Address } from '@/types/addresses'
+import { TokenId } from '@/types/tokens'
 
 export interface TransferTxData {
   fromAddress: Address
@@ -11,6 +12,7 @@ export interface TransferTxData {
   gasAmount?: number
   gasPrice?: string
   lockTime?: Date
+  tokenId?: TokenId
 }
 
 export interface CallContractTxData {

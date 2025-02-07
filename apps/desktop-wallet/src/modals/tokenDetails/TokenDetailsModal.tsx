@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import AnimatedBackground from '@/components/AnimatedBackground'
+import { ShortcutButtonsGroupToken } from '@/components/Buttons/ShortcutButtons'
 import LabeledWorthOverview from '@/components/LabeledWorthOverview'
 import withModal from '@/features/modals/withModal'
 import SideModal from '@/modals/SideModal'
@@ -19,6 +20,7 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId }) =>
       </LabeledWorthOverview>
       <Content>
         <AnimatedBackground anchorPosition="top" verticalOffset={-300} opacity={0.5} />
+        <ShortcutButtonsGroupToken tokenId={tokenId} analyticsOrigin="token_details" />
       </Content>
     </SideModal>
   )
