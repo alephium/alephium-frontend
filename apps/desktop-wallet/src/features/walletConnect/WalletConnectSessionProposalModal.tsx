@@ -235,7 +235,7 @@ const WalletConnectSessionProposalModal = memo(
           </>
         ) : (
           <>
-            <Paragraph style={{ marginBottom: 0 }}>
+            <Paragraph>
               {group === undefined ? (
                 <Trans
                   t={t}

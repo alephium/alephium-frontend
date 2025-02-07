@@ -5,7 +5,6 @@ import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit
 import {
   hiddenAssetsLoadedFromStorage,
   hideAsset,
-  loadHiddenAssets,
   unhideAsset
 } from '~/features/assetsDisplay/hideAssets/hiddenAssetsActions'
 import { storeHiddenAssetsIds } from '~/features/assetsDisplay/hideAssets/hiddenAssetsStorage'
@@ -44,9 +43,6 @@ const hiddenAssetsSlice = createSlice({
       .addCase(unhideAsset, (state, action) => {
         state.hiddenAssetsIds = state.hiddenAssetsIds.filter((id) => id !== action.payload)
       })
-      .addCase(loadHiddenAssets, (state, action) => {
-        state.hiddenAssetsIds = action.payload
-      })
       .addCase(appReset, resetState)
       .addCase(walletDeleted, resetState)
   }
@@ -56,7 +52,7 @@ export const hiddenAssetsListenerMiddleware = createListenerMiddleware()
 
 // When the settings change, store them in persistent storage
 hiddenAssetsListenerMiddleware.startListening({
-  matcher: isAnyOf(hiddenAssetsLoadedFromStorage, hideAsset, unhideAsset, loadHiddenAssets, appReset, walletDeleted),
+  matcher: isAnyOf(hiddenAssetsLoadedFromStorage, hideAsset, unhideAsset, appReset, walletDeleted),
   effect: async (_, { getState }) => {
     const state = (getState() as RootState)[sliceName]
 

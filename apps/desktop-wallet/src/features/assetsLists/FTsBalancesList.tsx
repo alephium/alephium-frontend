@@ -17,6 +17,10 @@ import {
 } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
 import TokensBalancesHeader from '@/features/assetsLists/TokensBalancesHeader'
 import { AddressDetailsTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
+import {
+  HiddenAddressTokensBalancesListSection,
+  HiddenWalletTokensBalancesListSection
+} from '@/features/hiddenTokens/HiddenTokensBalancesLists'
 
 export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressDetailsTabsProps) => {
   const { t } = useTranslation()
@@ -28,53 +32,59 @@ export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressDetails
   } = useFetchAddressTokensByType({ addressHash, includeAlph: false })
 
   return (
-    <Table {...props}>
-      {!isEmpty && <TokensBalancesHeader />}
-      {listedFts.map(({ id }) => (
-        <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
-      ))}
-      {unlistedFts.map(({ id }) => (
-        <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
-      ))}
-      {nstIds.map((tokenId) => (
-        <AddressNSTBalancesRow addressHash={addressHash} tokenId={tokenId} key={tokenId} />
-      ))}
-      {!isLoading && listedFts.length === 0 && unlistedFts.length === 0 && nstIds.length === 0 && (
-        <EmptyPlaceholder>{t("This address doesn't have any tokens yet.")}</EmptyPlaceholder>
-      )}
-      {isLoading && <TokensSkeletonLoader />}
-    </Table>
+    <>
+      <Table {...props}>
+        {!isEmpty && <TokensBalancesHeader />}
+        {listedFts.map(({ id }) => (
+          <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
+        ))}
+        {unlistedFts.map(({ id }) => (
+          <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
+        ))}
+        {nstIds.map((tokenId) => (
+          <AddressNSTBalancesRow addressHash={addressHash} tokenId={tokenId} key={tokenId} />
+        ))}
+        {!isLoading && listedFts.length === 0 && unlistedFts.length === 0 && nstIds.length === 0 && (
+          <EmptyPlaceholder>{t("This address doesn't have any tokens yet.")}</EmptyPlaceholder>
+        )}
+        {isLoading && <TokensSkeletonLoader />}
+      </Table>
+      <HiddenAddressTokensBalancesListSection addressHash={addressHash} {...props} />
+    </>
   )
 }
 
 export const WalletFTsBalancesList = (props: TokensTabsBaseProps) => {
   const { t } = useTranslation()
-  const { listedFts, unlistedFts, isLoading } = useFetchWalletFts()
+  const { listedFts, unlistedFts, isLoading } = useFetchWalletFts({ includeHidden: false, sort: true })
   const {
     data: { nstIds }
-  } = useFetchWalletTokensByType({ includeAlph: false })
+  } = useFetchWalletTokensByType({ includeAlph: false, includeHidden: false })
 
   const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
 
   return (
-    <Table {...props}>
-      {!isEmpty && <TokensBalancesHeader showAllocation />}
-      {listedFts.map(({ id }) => (
-        <WalletFTBalancesRow tokenId={id} key={id} />
-      ))}
-      {unlistedFts.map(({ id }) => (
-        <WalletFTBalancesRow tokenId={id} key={id} />
-      ))}
-      {nstIds.map((tokenId) => (
-        <WalletNSTBalancesRow tokenId={tokenId} key={tokenId} />
-      ))}
-      {isEmpty && (
-        <EmptyPlaceholder emoji="👀">
-          {t("The wallet doesn't have any tokens. Tokens of all your addresses will appear here.")}
-        </EmptyPlaceholder>
-      )}
-      {isLoading && <TokensSkeletonLoader />}
-    </Table>
+    <>
+      <Table {...props}>
+        {!isEmpty && <TokensBalancesHeader showAllocation />}
+        {listedFts.map(({ id }) => (
+          <WalletFTBalancesRow tokenId={id} key={id} />
+        ))}
+        {unlistedFts.map(({ id }) => (
+          <WalletFTBalancesRow tokenId={id} key={id} />
+        ))}
+        {nstIds.map((tokenId) => (
+          <WalletNSTBalancesRow tokenId={tokenId} key={tokenId} />
+        ))}
+        {isEmpty && (
+          <EmptyPlaceholder emoji="👀">
+            {t("The wallet doesn't have any tokens. Tokens of all your addresses will appear here.")}
+          </EmptyPlaceholder>
+        )}
+        {isLoading && <TokensSkeletonLoader />}
+      </Table>
+      <HiddenWalletTokensBalancesListSection {...props} />
+    </>
   )
 }
 

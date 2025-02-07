@@ -3,13 +3,14 @@ import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWallet
 
 interface UseWalletFTsProps {
   sort: boolean
+  includeHidden: boolean
 }
 
 const useFetchWalletFts = (props?: UseWalletFTsProps) => {
   const {
     data: { listedFts, unlistedFtIds },
     isLoading: isLoadingTokensByType
-  } = useFetchWalletTokensByType({ includeAlph: true })
+  } = useFetchWalletTokensByType({ includeAlph: true, includeHidden: props?.includeHidden })
 
   const { sortedListedFts, sortedUnlistedFts, isLoading } = useFetchSortedFts({
     listedFts,

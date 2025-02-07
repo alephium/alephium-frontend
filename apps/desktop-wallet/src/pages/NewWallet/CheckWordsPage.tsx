@@ -61,7 +61,7 @@ const CheckWordsPage = () => {
     <FloatingPanel>
       <PanelContentContainer>
         <Section align="center">
-          <Paragraph centered>
+          <Paragraph>
             <Trans
               t={t}
               i18nKey="Select the correct word for word number <1>{{ number }} of 24</1>."

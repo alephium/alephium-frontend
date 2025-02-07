@@ -1,25 +1,29 @@
+import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import AnimatedBackground from '@/components/AnimatedBackground'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import LabeledWorthOverview from '@/components/LabeledWorthOverview'
 import { WalletTokensTabs } from '@/features/assetsLists/AddressDetailsTabs'
-import { UnlockedWalletPanel } from '@/pages/UnlockedWallet/UnlockedWalletLayout'
-import UnlockedWalletPage from '@/pages/UnlockedWallet/UnlockedWalletPage'
-
+import WalletWorth from '@/pages/unlockedWallet/overviewPage/WalletWorth'
+import { UnlockedWalletPanel } from '@/pages/unlockedWallet/UnlockedWalletLayout'
+import UnlockedWalletPage from '@/pages/unlockedWallet/UnlockedWalletPage'
 interface OverviewPageProps {
   className?: string
 }
 
 const OverviewPage = ({ className }: OverviewPageProps) => {
   const theme = useTheme()
+  const { t } = useTranslation()
 
   return (
     <UnlockedWalletPage className={className}>
       <AnimatedBackground anchorPosition="top" opacity={theme.name === 'dark' ? 0.4 : 0.5} verticalOffset={-100} />
       <WorthUnlockedWalletPanel bottom>
         <WorthOverviewPanel>
-          <LabeledWorthOverview />
+          <LabeledWorthOverview label={t('Wallet worth')}>
+            <WalletWorth />
+          </LabeledWorthOverview>
           <Shortcuts>
             <ShortcutButtonsGroupWallet analyticsOrigin="overview_page" />
           </Shortcuts>

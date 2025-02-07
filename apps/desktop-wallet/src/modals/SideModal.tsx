@@ -96,6 +96,7 @@ const ModalHeader = styled.div`
   right: 0;
   height: 70px;
   z-index: 1;
+  -webkit-app-region: no-drag;
 `
 
 const ModalHeaderBackground = styled.div`

@@ -9,7 +9,7 @@ import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 export const useFilterAddressesByText = (text = '') => {
   const allAddresses = useUnsortedAddresses()
   const { data: allAddressHashes } = useFetchSortedAddressesHashes()
-  const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
+  const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false, includeHidden: false })
   const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
   const { data: addressesTokensBalances } = useFetchWalletBalancesTokensByAddress()
 

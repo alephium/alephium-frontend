@@ -3,6 +3,8 @@ import { useCallback } from 'react'
 
 import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { hiddenTokensLoadedFromStorage } from '@/features/hiddenTokens/hiddenTokensActions'
+import { hiddenTokensStorage } from '@/features/hiddenTokens/hiddenTokensPersistentStorage'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
@@ -68,6 +70,13 @@ const useWalletLock = () => {
     } catch {
       sendAnalytics({ type: 'error', message: 'User data migration failed' })
       dispatch(userDataMigrationFailed())
+    }
+
+    try {
+      const hiddenTokens = hiddenTokensStorage.load(encryptedWallet.id)
+      dispatch(hiddenTokensLoadedFromStorage(hiddenTokens))
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Loading hidden assets failed' })
     }
 
     try {

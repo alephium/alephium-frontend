@@ -33,9 +33,10 @@ import SettingsModal from '@/modals/SettingsModal'
 import CopyPrivateKeyConfirmationModal from '@/modals/SettingsModal/CopyPrivateKeyConfirmationModal'
 import DisablePasswordRequirementModal from '@/modals/SettingsModal/DisablePasswordRequirementModal'
 import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
+import TokenDetailsModal from '@/modals/tokenDetails/TokenDetailsModal'
 import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
 import WalletRemovalModal from '@/modals/WalletRemovalModal'
-import AdvancedOperationsSideModal from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsSideModal'
+import AdvancedOperationsSideModal from '@/pages/unlockedWallet/addressesPage/AdvancedOperationsSideModal'
 
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
@@ -115,6 +116,8 @@ const AppModals = () => {
               return <DeleteAddressesModal id={modal.id} key={modal.id} />
             case 'BuyModal':
               return <BuyModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'TokenDetailsModal':
+              return <TokenDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
           }
         })}
     </AnimatePresenceModalWrapper>
