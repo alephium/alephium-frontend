@@ -153,7 +153,7 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
   box-shadow: ${({ theme }) => theme.shadow.secondary};
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-big);
-  background-color: ${({ theme }) => theme.bg.background2};
+  background-color: ${({ theme }) => theme.bg.background1};
 `
 
 const Header = styled.div<{ hasExtraContent: boolean }>`

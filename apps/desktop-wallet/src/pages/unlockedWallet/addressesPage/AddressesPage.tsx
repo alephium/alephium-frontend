@@ -71,7 +71,6 @@ const TabContent = styled.div`
   border-right: none;
   border-bottom: none;
   flex: 1;
-  background-color: ${({ theme }) => theme.bg.background1};
 `
 
 const TabPanel = styled(UnlockedWalletPanel)``

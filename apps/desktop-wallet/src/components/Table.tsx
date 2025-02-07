@@ -29,7 +29,7 @@ export default Table
 
 const TableWrapper = styled(motion.div)<Pick<TableProps, 'minWidth'>>`
   width: 100%;
-  background-color: ${({ theme }) => theme.bg.tertiary};
+  background-color: ${({ theme }) => theme.bg.background1};
   padding: var(--spacing-2) var(--spacing-4);
   border-radius: var(--radius-huge);
 

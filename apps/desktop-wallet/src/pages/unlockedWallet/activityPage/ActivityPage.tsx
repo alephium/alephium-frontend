@@ -45,7 +45,7 @@ const ActivityPage = ({ className }: ActivityPageProps) => {
         </FilterPanelContainer>
       }
     >
-      <StyledUnlockedWalletPanel top bottom backgroundColor="background1">
+      <StyledUnlockedWalletPanel top bottom>
         <WalletTransactionsList
           addressHashes={map(selectedAddresses, 'hash')}
           directions={map(selectedDirections, 'value')}

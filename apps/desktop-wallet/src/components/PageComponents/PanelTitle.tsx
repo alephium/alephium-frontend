@@ -44,7 +44,6 @@ export const TitleContainer = styled(motion.div)<Pick<PanelTitleProps, 'isSticky
     css`
       position: sticky;
       padding: var(--spacing-8) 0 var(--spacing-4) 0;
-      background-color: ${({ theme }) => theme.bg.background1};
       border-bottom: 1px solid ${({ theme }) => theme.border.primary};
     `}
 `

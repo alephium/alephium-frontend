@@ -88,5 +88,5 @@ export const CenteredSection = styled.div`
   justify-content: center;
   flex: 1;
   height: 100%;
-  background-color: ${({ theme }) => theme.bg.background1};
+  background-color: ${({ theme }) => theme.bg.background2};
 `

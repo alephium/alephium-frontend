@@ -28,7 +28,7 @@ const UnlockedWalletPage: FC<UnlockedWalletPageProps> = ({ title, subtitle, Bott
 )
 
 export default styled(UnlockedWalletPage)`
-  background-color: ${({ theme }) => theme.bg.background1};
+  background-color: ${({ theme }) => theme.bg.background2};
 `
 
 const PageHeader = styled(UnlockedWalletPanel)`
