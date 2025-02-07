@@ -9,9 +9,9 @@ import { useFilterAddressesByText } from '@/features/addressFiltering/addressFil
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
-import AddressListRow from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressListRow'
-import AdvancedOperationsButton from '@/pages/unlockedWallet/addressesPage/AdvancedOperationsButton'
-import TabContent from '@/pages/unlockedWallet/addressesPage/TabContent'
+import AddressListRow from '@/pages/unlockedWallet1/addressesPage/addressListRow/AddressListRow'
+import AdvancedOperationsButton from '@/pages/unlockedWallet1/addressesPage/AdvancedOperationsButton'
+import TabContent from '@/pages/unlockedWallet1/addressesPage/TabContent'
 
 const AddressesTabContent = memo(() => {
   const { t } = useTranslation()

@@ -4,10 +4,10 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
 import useAddressesDataPolling from '@/features/dataPolling/useAddressesDataPolling'
 import { useAppSelector } from '@/hooks/redux'
-import ActivityPage from '@/pages/unlockedWallet/activityPage1/ActivityPage1'
-import AddressesPage from '@/pages/unlockedWallet/addressesPage/AddressesPage'
-import OverviewPage from '@/pages/unlockedWallet/overviewPage/OverviewPage'
-import UnlockedWalletLayout from '@/pages/unlockedWallet/UnlockedWalletLayout'
+import ActivityPage from '@/pages/unlockedWallet1/activityPage/ActivityPage'
+import AddressesPage from '@/pages/unlockedWallet1/addressesPage/AddressesPage'
+import OverviewPage from '@/pages/unlockedWallet1/overviewPage/OverviewPage'
+import UnlockedWalletLayout from '@/pages/unlockedWallet1/UnlockedWalletLayout'
 import { loadContacts } from '@/utils/contacts'
 
 const WalletRoutes = () => {
