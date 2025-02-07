@@ -7,12 +7,26 @@ import FTAmounts from '@/components/amounts/FTAmounts'
 import FTWorthAmount from '@/components/amounts/FTWorthAmount'
 import { TokenDetailsModalProps } from '@/modals/tokenDetails/tokeDetailsTypes'
 
-const TokenBalances = ({ tokenId }: TokenDetailsModalProps) => (
-  <>
-    <FTAmountsStyled tokenId={tokenId} />
-    <TokenBalanceWorth tokenId={tokenId} />
-  </>
-)
+const TokenBalances = ({ tokenId }: TokenDetailsModalProps) => {
+  const { data: tokenBalances, isLoading } = useFetchWalletSingleTokenBalances({
+    tokenId
+  })
+
+  const totalBalance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+  const availableBalance = tokenBalances?.availableBalance ? BigInt(tokenBalances.availableBalance) : undefined
+
+  return (
+    <>
+      <FTAmountsStyled
+        tokenId={tokenId}
+        isLoading={isLoading}
+        totalBalance={totalBalance}
+        availableBalance={availableBalance}
+      />
+      <TokenBalanceWorth tokenId={tokenId} />
+    </>
+  )
+}
 
 export default TokenBalances
 
