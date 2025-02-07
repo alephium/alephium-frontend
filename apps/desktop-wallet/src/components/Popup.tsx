@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react'
+import { MouseEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { fadeInOutBottomFast, fastTransition } from '@/animations'
@@ -94,6 +94,40 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
 }
 
 export default Popup
+
+export const useElementAnchorCoordinates = () => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [hookCoordinates, setHookCoordinates] = useState<Coordinates | undefined>(undefined)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const openModal = useCallback(() => {
+    setHookCoordinates(() => {
+      if (containerRef?.current) {
+        const containerElement = containerRef.current
+        const containerElementRect = containerElement.getBoundingClientRect()
+
+        return {
+          x: containerElementRect.x + containerElement.clientWidth / 2,
+          y: containerElementRect.y + containerElement.clientHeight / 2
+        }
+      }
+    })
+    setIsModalOpen(true)
+  }, [])
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false)
+    containerRef.current?.focus()
+  }, [])
+
+  return {
+    containerRef,
+    hookCoordinates,
+    isModalOpen,
+    openModal,
+    closeModal
+  }
+}
 
 const Hook = styled.div<{ hookCoordinates: Coordinates; contentWidth: number }>`
   position: absolute;

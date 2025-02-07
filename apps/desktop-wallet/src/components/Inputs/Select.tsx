@@ -18,9 +18,8 @@ import { inputDefaultStyle, InputHeight, InputProps, inputStyling, SelectLabel }
 import Input from '@/components/Inputs/Input'
 import InputArea from '@/components/Inputs/InputArea'
 import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
-import Popup from '@/components/Popup'
+import Popup, { useElementAnchorCoordinates } from '@/components/Popup'
 import Truncate from '@/components/Truncate'
-import useHookCoordinates from '@/hooks/useHookCoordinates'
 import ModalPortal from '@/modals/ModalPortal'
 import { Coordinates } from '@/types/numbers'
 
@@ -88,7 +87,7 @@ function Select<T extends OptionValue>({
   allowCustomValue
 }: SelectProps<T>) {
   const [value, setValue] = useState(controlledValue)
-  const { containerRef, hookCoordinates, openModal, closeModal, isModalOpen } = useHookCoordinates()
+  const { containerRef, hookCoordinates, openModal, closeModal, isModalOpen } = useElementAnchorCoordinates()
 
   const multipleAvailableOptions = options.length > 1
 

@@ -1,8 +1,7 @@
 import styled from 'styled-components'
 
 import Button, { ButtonProps } from '@/components/Button'
-import Popup, { PopupProps } from '@/components/Popup'
-import useHookCoordinates from '@/hooks/useHookCoordinates'
+import Popup, { PopupProps, useElementAnchorCoordinates } from '@/components/Popup'
 import ModalPortal from '@/modals/ModalPortal'
 
 interface DropdownProps extends ButtonProps {
@@ -15,7 +14,7 @@ export interface DropdownOption {
 }
 
 const DropdownButton = ({ options, ...props }: DropdownProps) => {
-  const { containerRef, hookCoordinates, openModal, closeModal, isModalOpen } = useHookCoordinates()
+  const { containerRef, hookCoordinates, openModal, closeModal, isModalOpen } = useElementAnchorCoordinates()
 
   return (
     <div ref={containerRef}>
