@@ -54,6 +54,7 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   background-color: ${({ isActive }) => !isActive && 'transparent'};
   border-radius: var(--radius-medium);
   font-size: 13px;
+  backdrop-filter: none;
 
   @media (max-width: ${sidebarExpandThresholdPx}px) {
     gap: 0;

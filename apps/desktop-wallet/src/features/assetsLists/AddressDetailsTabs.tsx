@@ -2,7 +2,6 @@ import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { TabItem } from '@/components/TabBar'
-import Table from '@/components/Table'
 import TableTabBar from '@/components/TableTabBar'
 import { AddressFTsBalancesList, WalletFTsBalancesList } from '@/features/assetsLists/FTsBalancesList'
 import { AddressNFTsGrid, WalletNFTsGrid } from '@/features/assetsLists/NFTsGrid'
@@ -82,8 +81,8 @@ interface TabsProps<T extends string> {
 }
 
 const Tabs = <T extends string>({ tabs, currentTab, setCurrentTab, className, children }: TabsProps<T>) => (
-  <Table className={className}>
+  <div className={className}>
     <TableTabBar items={tabs} onTabChange={setCurrentTab} activeTab={currentTab} />
     {children}
-  </Table>
+  </div>
 )

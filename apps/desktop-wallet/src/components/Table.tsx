@@ -29,6 +29,9 @@ export default Table
 
 const TableWrapper = styled(motion.div)<Pick<TableProps, 'minWidth'>>`
   width: 100%;
+  background-color: ${({ theme }) => theme.bg.tertiary};
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--radius-huge);
 
   ${({ minWidth }) =>
     minWidth &&
@@ -145,7 +148,7 @@ const TableHeaderRow = styled(TableRow)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 40px;
+
   color: ${({ theme }) => theme.font.tertiary};
 
   ${TableCell} {

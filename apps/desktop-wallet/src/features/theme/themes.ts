@@ -6,10 +6,10 @@ export const lightTheme: DefaultTheme = {
   bg: {
     primary: 'rgba(0, 0, 0, 0.04)',
     secondary: 'rgba(0, 0, 0, 0.02)',
-    tertiary: 'rgba(0, 0, 0, 0.01)',
+    tertiary: '#fff',
     contrast: '#000',
-    background1: '#fff',
-    background2: '#fff',
+    background1: '#fafafa',
+    background2: '#f5f5f5',
     hover: 'rgba(0, 0, 0, 0.01)',
     highlight: '#ffffff',
     accent: colord('#1535e9').alpha(0.05).toHex()
@@ -50,7 +50,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'rgba(255, 255, 255, 0.01)',
     contrast: 'rgba(255, 255, 255, 1)',
     background1: '#0e0e0f',
-    background2: '#0e0e0f',
+    background2: '#0c0c0d',
     hover: 'rgba(255, 255, 255, 0.015)',
     highlight: 'rgba(255, 255, 255, 0.06)',
     accent: colord('#3b62f0').alpha(0.1).toHex()
