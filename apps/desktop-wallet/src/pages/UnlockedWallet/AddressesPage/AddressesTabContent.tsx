@@ -1,5 +1,5 @@
 import { intersection } from 'lodash'
-import { memo, useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -9,8 +9,9 @@ import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
-import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
+import { useFetchAddressesHashesSortedByPreference, useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import AddressListRow from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressListRow'
+import AddressSortingSelect from '@/pages/UnlockedWallet/AddressesPage/AddressSortingSelect'
 import AdvancedOperationsButton from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsButton'
 import TabContent from '@/pages/UnlockedWallet/AddressesPage/TabContent'
 
@@ -20,10 +21,18 @@ const AddressesTabContent = memo(() => {
 
   const [searchInput, setSearchInput] = useState('')
   const [hideEmptyAddresses, setHideEmptyAddresses] = useState(false)
-  const filteredByText = useFilterAddressesByText(searchInput.toLowerCase())
-  const { data: filteredByToggle } = useFetchAddressesHashesWithBalance()
 
-  const visibleAddresses = hideEmptyAddresses ? intersection(filteredByText, filteredByToggle) : filteredByText
+  const unsortedAddressesFilteredByText = useFilterAddressesByText(searchInput.toLowerCase())
+  const { data: sortedAddresses } = useFetchAddressesHashesSortedByPreference()
+  const { data: addressesWithBalance } = useFetchAddressesHashesWithBalance()
+
+  const visibleAddresses = useMemo(() => {
+    // Apply text filter
+    const textFiltered = searchInput ? intersection(sortedAddresses, unsortedAddressesFilteredByText) : sortedAddresses
+
+    // Apply empty addresses filter
+    return hideEmptyAddresses ? intersection(textFiltered, addressesWithBalance) : textFiltered
+  }, [addressesWithBalance, hideEmptyAddresses, searchInput, sortedAddresses, unsortedAddressesFilteredByText])
 
   const openNewAddressModal = () =>
     dispatch(openModal({ name: 'NewAddressModal', props: { title: t('New address'), singleAddress: true } }))
@@ -36,11 +45,14 @@ const AddressesTabContent = memo(() => {
       onButtonClick={openNewAddressModal}
       HeaderMiddleComponent={
         <HeaderMiddle>
-          <HideEmptyAddressesToggle>
-            <ToggleText>{t('Hide empty')}</ToggleText>
-            <VerticalDivider />
-            <Toggle onToggle={setHideEmptyAddresses} label={t('Hide empty')} toggled={hideEmptyAddresses} />
-          </HideEmptyAddressesToggle>
+          <SortingAndFiltering>
+            <AddressSortingSelect />
+            <HideEmptyAddressesToggle>
+              <ToggleText>{t('Hide empty')}</ToggleText>
+              <VerticalDivider />
+              <Toggle onToggle={setHideEmptyAddresses} label={t('Hide empty')} toggled={hideEmptyAddresses} />
+            </HideEmptyAddressesToggle>
+          </SortingAndFiltering>
           <AdvancedOperationsButton />
         </HeaderMiddle>
       }
@@ -100,4 +112,10 @@ const TableGridContent = styled.div`
   > :only-child {
     display: block;
   }
+`
+
+const SortingAndFiltering = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
 `

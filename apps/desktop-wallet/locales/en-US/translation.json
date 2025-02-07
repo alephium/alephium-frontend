@@ -513,5 +513,7 @@
   "Active address discovery completed. Addresses added: {{ count }}": "Active address discovery completed. Addresses added: {{ count }}",
   "Loading new transactions...": "Loading new transactions...",
   "Sign and Send Unsigned Transaction": "Sign and Send Unsigned Transaction",
-  "Sign and Send": "Sign and Send"
+  "Sign and Send": "Sign and Send",
+  "Sort by": "Sort by",
+  "ALPH balance": "ALPH balance"
 }
