@@ -19,14 +19,12 @@ const EmptyPlaceholderStyled = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  flex: 1;
   padding: 20px;
   margin: 20px 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.bg.tertiary};
-  border: 1px solid ${({ theme }) => theme.border.secondary};
+  border: 1px dashed ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-big);
 `
 

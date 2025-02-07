@@ -17,7 +17,7 @@ interface AnimatedBackgroundProps {
 
 type AnchorPosition = 'top' | 'bottom'
 
-const DARK_COLORS = ['#58a0ff', '#7057ff', '#272aff', '#ff9b2f', '#1e71ff']
+const DARK_COLORS = ['#8d58ff', '#cd83ff', '#272aff', '#f9afff', '#381eff']
 const LIGHT_COLORS = ['#ad6eff', '#ffb47f', '#ffaaaa', '#ffc089', '#ff9bc8']
 
 const AnimatedBackground = ({

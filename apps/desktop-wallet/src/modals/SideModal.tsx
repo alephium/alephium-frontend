@@ -76,7 +76,7 @@ const Sidebar = styled(motion.div)<{ width: number }>`
   width: 100%;
   max-width: ${({ width }) => width}px;
   max-height: 95vh;
-  background-color: ${({ theme }) => theme.bg.background1};
+  background-color: ${({ theme }) => theme.bg.background2};
   position: relative;
   margin: 25px 20px 25px auto;
   border-radius: var(--radius-huge);

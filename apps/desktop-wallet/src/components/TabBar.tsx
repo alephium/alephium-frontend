@@ -85,7 +85,7 @@ const TabBarStyled = styled.div`
 
 const TabsContainer = styled.div`
   display: flex;
-  background-color: ${({ theme }) => theme.bg.secondary};
+  background-color: ${({ theme }) => theme.bg.tertiary};
   gap: 10px;
   padding: 4px;
   border-radius: 100px;

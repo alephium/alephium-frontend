@@ -145,7 +145,7 @@ const CenteredBox = styled(motion.div)`
   overflow: hidden;
 
   width: 85vw;
-  max-width: 748px;
+  max-width: 900px;
   height: 85vh;
   margin: auto;
 
@@ -167,7 +167,7 @@ const TabTitlesColumn = styled(Column)`
 `
 const TabContentsColumn = styled(Column)`
   position: relative;
-  flex: 2;
+  flex: 2.5;
 `
 
 const ColumnHeader = styled.div`

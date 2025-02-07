@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 import AnimatedBackground from '@/components/AnimatedBackground'
 import { ShortcutButtonsGroupAddress } from '@/components/Buttons/ShortcutButtons'
@@ -15,6 +15,7 @@ import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
+  const theme = useTheme()
   const addressColor = useAppSelector((s) => selectAddressByHash(s, addressHash)?.color)
 
   return (
@@ -28,7 +29,12 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
         <AddressWorth addressHash={addressHash} />
       </LabeledWorthOverview>
       <Content>
-        <AnimatedBackground shade={addressColor} anchorPosition="top" verticalOffset={-300} opacity={0.5} />
+        <AnimatedBackground
+          shade={addressColor}
+          anchorPosition="top"
+          verticalOffset={-300}
+          opacity={theme.name === 'light' ? 0.3 : 0.2}
+        />
         <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" />
         <AddressDetailsTabs addressHash={addressHash} />
       </Content>

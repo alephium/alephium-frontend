@@ -145,7 +145,7 @@ const ConfettiWrapper = styled.div`
 const ReadyParagraph = styled(Paragraph)`
   text-align: center;
   font-size: 3rem;
-  font-weight: var(--fontWeight-bold);
+  font-weight: var(--fontWeight-semiBold);
 `
 
 const SubParagraph = styled(Paragraph)`

@@ -16,7 +16,9 @@ const NewWalletActions = ({ onExistingWalletLinkClick }: NewWalletActionsProps) 
 
   return (
     <>
-      <Paragraph>{t('Please choose whether you want to create a new wallet or import an existing one.')}</Paragraph>
+      <Paragraph centered>
+        {t('Please choose whether you want to create a new wallet or import an existing one.')}
+      </Paragraph>
       <Section inList>
         <Button onClick={() => navigate('/create/0')} tall>
           {t('New wallet')}
