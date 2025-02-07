@@ -48,7 +48,7 @@ const CheckWordsIntroPage = () => {
               </LockBodyContainer>
             </Lock>
           </LockContainer>
-          <Paragraph centered>
+          <Paragraph>
             {t('Alright! Time to check if you got your words right!')} {t('Select the words in the right order.')}{' '}
             {t('Ready?')}
           </Paragraph>

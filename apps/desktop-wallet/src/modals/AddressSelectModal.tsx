@@ -70,7 +70,7 @@ export default AddressSelectModal
 const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
   const addresses = useUnsortedAddresses()
   const { data: sortedAddressHashes } = useFetchSortedAddressesHashes()
-  const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
+  const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false, includeHidden: false })
   const { data: nftsSearchStringsByNftId } = useFetchWalletNftsSearchStrings()
   const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
   const { data: addressesTokensBalances } = useFetchWalletBalancesTokensByAddress()

@@ -70,11 +70,7 @@ function AddressSelect({
         simpleMode={simpleMode}
         noMargin={noMargin}
       >
-        {label && (
-          <InputLabel isElevated={!!selectedAddress} htmlFor={id}>
-            {label}
-          </InputLabel>
-        )}
+        {label && <InputLabel isElevated={!!selectedAddress}>{label}</InputLabel>}
         {!disabled && !simpleMode && (
           <MoreIcon>
             <MoreVertical size={16} />

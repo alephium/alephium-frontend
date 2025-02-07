@@ -23,7 +23,6 @@ const WalletUnlockModal = memo(({ id, walletId }: ModalBaseProp & WalletUnlockMo
   const wallets = useAppSelector((s) => s.global.wallets)
 
   const [passphrase, setPassphrase] = useState('')
-  const [isPassphraseConfirmed, setIsPassphraseConfirmed] = useState(false)
   const [walletName] = useState(wallets.find((wallet) => wallet.id === walletId)?.name)
 
   const onUnlockClick = (password: string) => {
@@ -50,12 +49,9 @@ const WalletUnlockModal = memo(({ id, walletId }: ModalBaseProp & WalletUnlockMo
         buttonText={t('Unlock')}
         onCorrectPasswordEntered={onUnlockClick}
         walletId={walletId}
-        isSubmitDisabled={!isPassphraseConfirmed}
+        isSubmitDisabled={!passphrase}
       >
-        <WalletPassphraseStyled
-          onPassphraseConfirmed={setPassphrase}
-          setIsPassphraseConfirmed={setIsPassphraseConfirmed}
-        />
+        <WalletPassphraseStyled onPassphraseConfirmed={setPassphrase} />
       </PasswordConfirmation>
     </CenteredModal>
   )

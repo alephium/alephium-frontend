@@ -56,7 +56,7 @@ const WalletRemovalModal = memo(({ id, walletId, walletName }: ModalBaseProp & W
             'Please make sure to have your recovery phrase saved and stored somewhere secure to restore your wallet in the future. Without the recovery phrase, your wallet will be unrecoverable and permanently lost.'
           )}
         />
-        <Paragraph secondary centered>
+        <Paragraph>
           <b>{t('Not your keys, not your coins.')}</b>
         </Paragraph>
       </Section>

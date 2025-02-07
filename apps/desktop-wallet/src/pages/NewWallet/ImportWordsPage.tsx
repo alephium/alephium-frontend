@@ -88,10 +88,10 @@ const ImportWordsPage = () => {
 
   return (
     <ImportWordsPageStyled>
-      <MainPanel horizontalAlign="center" noMargin layout="position">
+      <MainPanel horizontalAlign="center" noMargin>
         <PanelTitle color="primary">{t('Secret recovery phrase')}</PanelTitle>
         <PanelContentContainer>
-          <Paragraph secondary centered>
+          <Paragraph>
             {t("Make sure to store the words in a secure location! They are your wallet's secret recovery phrase.")}
           </Paragraph>
           <TextAreaContainer>
@@ -116,7 +116,7 @@ const ImportWordsPage = () => {
       </MainPanel>
       <AnimatePresence>
         {words.length > 0 && (
-          <WordListPanel noMargin layout="position">
+          <WordListPanel noMargin>
             <WordBox>
               <WordGrid>
                 <WordColumn>
