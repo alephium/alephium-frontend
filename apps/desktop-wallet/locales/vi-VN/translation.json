@@ -513,5 +513,7 @@
   "Active address discovery completed. Addresses added: {{ count }}": "Quá trình tìm kiếm các địa chỉ đang hoạt động đã hoàn tất. Các địa chỉ được thêm vào: {{ count }}",
   "Loading new transactions...": "Đang tải giao dịch mới...",
   "Sign and Send Unsigned Transaction": "Ký và Gửi Giao Dịch Chưa Thực Thi",
-  "Sign and Send": "Ký và Gửi"
+  "Sign and Send": "Ký và Gửi",
+  "Sort by": "Sắp xếp theo",
+  "ALPH balance": "Số dư ALPH"
 }
