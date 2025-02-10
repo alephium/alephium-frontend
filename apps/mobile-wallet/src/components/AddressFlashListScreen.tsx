@@ -51,6 +51,7 @@ const AddressFlashListScreen = ({
           onPress={() => onAddressPress(address.hash)}
           tokenId={tokenId}
           origin={origin}
+          showGroup
         />
       )}
       shouldUseGaps

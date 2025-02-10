@@ -18,6 +18,7 @@ export interface RowProps {
   noMaxWidth?: boolean
   transparent?: boolean
   isLast?: boolean
+  short?: boolean
   style?: StyleProp<ViewStyle>
   layout?: AnimatedProps<ViewProps>['layout']
   isVertical?: boolean
@@ -83,9 +84,9 @@ const Row = ({
 }
 
 export default styled(Row)`
-  ${({ theme, isLast, isVertical }) => css`
-    min-height: ${INPUTS_HEIGHT * 1.2}px;
-    padding: 16px 0;
+  ${({ theme, isLast, isVertical, short }) => css`
+    min-height: ${INPUTS_HEIGHT * (short ? 0.9 : 1.2)}px;
+    padding: ${short ? '10px' : '16px'} 0;
     border-bottom-width: ${isLast ? 0 : 1}px;
     border-bottom-color: ${theme.border.secondary};
 
@@ -99,11 +100,11 @@ export default styled(Row)`
 `
 
 const Title = styled(AppText)<{ isVertical?: boolean }>`
-  ${({ isVertical, color }) =>
+  color: ${({ theme, color }) => color || theme.font.secondary};
+  ${({ isVertical }) =>
     isVertical &&
     css`
       font-size: 13px;
-      color: ${({ theme }) => color || theme.font.secondary};
     `}
 `
 

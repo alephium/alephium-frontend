@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import AddressGroupBadge from '~/components/AddressGroupBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import { useAppSelector } from '~/hooks/redux'
@@ -47,7 +46,6 @@ const BalanceSummary = ({ addressHash }: BalanceSummaryProps) => {
           />
         )}
       </TextContainer>
-      {addressHash && <AddressGroupBadge addressHash={addressHash} />}
     </BalanceSummaryBox>
   )
 }

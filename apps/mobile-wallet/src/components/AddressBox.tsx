@@ -32,6 +32,7 @@ export interface AddressBoxProps extends PressableProps {
   isSelected?: boolean
   isLast?: boolean
   rounded?: boolean
+  showGroup?: boolean
   tokenId?: Token['id']
 }
 
@@ -47,6 +48,7 @@ const AddressBox = ({
   style,
   rounded,
   tokenId,
+  showGroup,
   origin,
   ...props
 }: AddressBoxProps) => {
@@ -93,9 +95,7 @@ const AddressBox = ({
         style,
         {
           borderRadius: rounded ? BORDER_RADIUS : 0,
-          backgroundColor: isSelected ? theme.bg.accent : theme.bg.tertiary,
-          borderColor: isSelected ? theme.global.accent : theme.border.secondary,
-          borderWidth: 1
+          backgroundColor: isSelected ? theme.bg.accent : theme.bg.secondary
         }
       ]}
     >
@@ -136,10 +136,9 @@ const AddressBox = ({
               <AppText
                 truncate
                 ellipsizeMode="middle"
-                size={12}
                 style={{ maxWidth: 100 }}
                 color={
-                  isSelected ? theme.global.accent : address.settings.label ? theme.font.tertiary : theme.font.primary
+                  isSelected ? theme.global.accent : address.settings.label ? theme.font.secondary : theme.font.primary
                 }
               >
                 {address.hash}
@@ -152,9 +151,11 @@ const AddressBox = ({
               ) : (
                 <AddressAllTokensDetails addressHash={addressHash} />
               )}
-              <AppText color="tertiary" size={12} style={{ marginLeft: 'auto' }}>
-                {t('Group {{ groupNumber }}', { groupNumber: address.group })}
-              </AppText>
+              {showGroup && (
+                <AppText color="tertiary" size={12} style={{ marginLeft: 'auto' }}>
+                  {t('Group {{ groupNumber }}', { groupNumber: address.group })}
+                </AppText>
+              )}
             </TokensRow>
           </BottomRow>
         </AddressBoxColumnLeft>
@@ -196,7 +197,7 @@ const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'address
     (knownFungibleTokens.length > 0 || nfts.length > 0) && (
       <AssetsRow>
         {knownFungibleTokens.length > 0 && (
-          <AssetListContainer rounded>
+          <AssetListContainer rounded border light compact>
             {knownFungibleTokens.slice(0, maxNbOfTokenLogos).map(({ id }) => (
               <AssetLogo key={id} assetId={id} size={15} />
             ))}
@@ -207,7 +208,7 @@ const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'address
         )}
 
         {nfts.length > 0 && (
-          <Badge>
+          <Badge border light compact>
             <NbOfAssetsText>{t('nfts_in_addresses', { count: nfts.length })}</NbOfAssetsText>
           </Badge>
         )}
@@ -245,7 +246,7 @@ const AddressBoxStyled = styled(AnimatedPressable)`
   flex-direction: row;
   overflow: hidden;
   border-radius: ${BORDER_RADIUS_BIG}px;
-  padding: 0 10px;
+  padding: 0 ${DEFAULT_MARGIN}px 0 ${DEFAULT_MARGIN / 2}px;
   margin-bottom: ${VERTICAL_GAP / 2}px;
 `
 
@@ -268,19 +269,18 @@ const SelectedBadge = styled(Animated.View)`
 const TopRow = styled.View`
   flex-direction: row;
   align-items: center;
-  gap: 10px;
   justify-content: space-between;
 `
 
 const TokensRow = styled.View`
   flex-direction: row;
-  align-items: center;
-  gap: 10px;
+  align-items: flex-end;
   justify-content: space-between;
+  margin-top: 5px;
 `
 
 const BottomRow = styled.View`
-  margin-left: 26px;
+  margin-left: 27px;
   gap: 10px;
 `
 
@@ -288,14 +288,13 @@ const TextualContent = styled.View`
   flex: 3;
   min-height: 60px;
   flex-direction: row;
-  gap: ${DEFAULT_MARGIN / 2}px;
   padding: 14px 0;
   margin-left: ${DEFAULT_MARGIN / 2}px;
 `
 
 const AddressBoxColumnLeft = styled.View`
   flex: 1.5;
-  gap: ${VERTICAL_GAP / 4}px;
+  gap: 5px;
 `
 
 const AssetsRow = styled.View`
@@ -310,7 +309,7 @@ const AssetListContainer = styled(Badge)`
 
 const NbOfAssetsText = styled(AppText)`
   font-size: 12px;
-  padding-right: 4px;
+  color: ${({ theme }) => theme.font.secondary};
 `
 
 const LockedAmount = styled.View`
