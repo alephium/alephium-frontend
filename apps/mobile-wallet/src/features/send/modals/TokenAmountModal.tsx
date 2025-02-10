@@ -157,7 +157,7 @@ const EnteredAmountWorth = ({ tokenId, amount }: EnteredAmountWorthProps) => {
 
   if (!totalWorth) return null
 
-  return <Amount value={totalWorth} isFiat />
+  return <AmountWorth value={totalWorth} isFiat color="secondary" />
 }
 
 const getFontSize = (text: string) => {
@@ -210,4 +210,8 @@ const ErrorMessage = styled(AppText)`
 
 const Buttons = styled.View`
   flex-direction: row;
+`
+
+const AmountWorth = styled(Amount)`
+  padding-top: 5px;
 `
