@@ -1,14 +1,12 @@
-import { NFT, throttledClient } from '@alephium/shared'
-import { addressFromContractId, NFTCollectionUriMetaData } from '@alephium/web3'
-import { skipToken, useQuery } from '@tanstack/react-query'
-import axios, { AxiosError } from 'axios'
+import { NFT } from '@alephium/shared'
+import { useFetchNftCollection } from '@alephium/shared-react'
+import { AxiosError } from 'axios'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
-import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import ActionLink from '@/components/ActionLink'
 import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
@@ -16,9 +14,7 @@ import InfoBox from '@/components/InfoBox'
 import Truncate from '@/components/Truncate'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import NFTThumbnail from '@/features/thumbnails/NFTThumbnail'
-import { useAppSelector } from '@/hooks/redux'
 import SideModal from '@/modals/SideModal'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { openInWebBrowser } from '@/utils/misc'
 
 export interface NFTDetailsModalProps {
@@ -78,39 +74,7 @@ const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
 
 const NFTCollectionDetails = ({ collectionId }: Pick<NFT, 'collectionId'>) => {
   const { t } = useTranslation()
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
-
-  const { data: nftCollectionMetadata } = useQuery({
-    queryKey: ['nfts', 'nftCollection', 'nftCollectionMetadata', collectionId],
-    // We don't want to delete the collection metadata when the user navigates away from the NFT details modal
-    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
-    queryFn: !collectionId
-      ? skipToken
-      : async () =>
-          (
-            await throttledClient.explorer.tokens.postTokensNftCollectionMetadata([addressFromContractId(collectionId)])
-          )[0] ?? null
-  })
-
-  const collectionUri = nftCollectionMetadata?.collectionUri
-  const { data: nftCollectionData } = useQuery({
-    queryKey: ['nfts', 'nftCollection', 'nftCollectionData', collectionId],
-    // We don't want to delete the collection data when the user navigates away from the NFT details modal
-    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
-    queryFn: !collectionUri
-      ? skipToken
-      : async () => {
-          const { data } = await axios.get(collectionUri)
-
-          if (matchesNFTCollectionUriMetaDataSchema(data)) {
-            return data as NFTCollectionUriMetaData
-          } else {
-            throw new Error(
-              `Response does not match the NFT collection metadata schema. NFT collection URI: ${collectionUri}`
-            )
-          }
-        }
-  })
+  const { data: nftCollectionData } = useFetchNftCollection(collectionId)
 
   if (!nftCollectionData) return null
 
@@ -164,11 +128,6 @@ const NFTMetadataContainer = styled.div`
   flex-direction: column;
   gap: var(--spacing-3);
 `
-
-const matchesNFTCollectionUriMetaDataSchema = (nftCollection: NFTCollectionUriMetaData) =>
-  typeof nftCollection.name === 'string' &&
-  typeof nftCollection.image === 'string' &&
-  typeof nftCollection.description === 'string'
 
 const NftNameDataListRow = styled(DataList.Row)`
   font-size: var(--fontWeight-semiBold);

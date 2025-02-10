@@ -1,11 +1,11 @@
 import { batchers, ONE_DAY_MS } from '@alephium/shared'
+import { getQueryConfig } from '@alephium/shared-react'
 import { explorer as e, NFTMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { queryOptions, skipToken, UseQueryResult } from '@tanstack/react-query'
 import axios from 'axios'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
-import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import { convertTokenDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/apiUtils'
 import { TokenId } from '@/types/tokens'
 

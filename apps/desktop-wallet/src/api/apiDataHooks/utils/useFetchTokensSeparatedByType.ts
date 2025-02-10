@@ -1,9 +1,8 @@
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useQueries } from '@tanstack/react-query'
 
 import useFetchTokensSeparatedByListing from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
 import { combineTokenTypeQueryResults, tokenTypeQuery } from '@/api/queries/tokenQueries'
-import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { ListedFT, TokenId, UnlistedToken } from '@/types/tokens'
 
 interface TokensByType<T> {
@@ -18,7 +17,7 @@ interface TokensByType<T> {
 }
 
 const useFetchTokensSeparatedByType = <T extends UnlistedToken>(tokens: T[] = []): TokensByType<T> => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
 
   const {
     data: { listedFts, unlistedTokens },

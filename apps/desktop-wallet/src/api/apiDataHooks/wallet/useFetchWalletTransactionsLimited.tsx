@@ -1,3 +1,4 @@
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { orderBy, uniqBy } from 'lodash'
@@ -6,9 +7,7 @@ import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { ApiContextProps } from '@/api/apiTypes'
 import { createDataContext } from '@/api/context/createDataContext'
 import { addressLatestTransactionsQuery } from '@/api/queries/transactionQueries'
-import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { isDefined } from '@/utils/misc'
 
 const combineFn = (results: UseQueryResult<e.Transaction[]>[]): ApiContextProps<e.Transaction[]> => ({
@@ -17,7 +16,7 @@ const combineFn = (results: UseQueryResult<e.Transaction[]>[]): ApiContextProps<
 })
 
 const useDataHook = () => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
   const addressHashes = useUnsortedAddressesHashes()
 
   const { data: confirmedTxs, isLoading } = useQueries({

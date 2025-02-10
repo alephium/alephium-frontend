@@ -1,12 +1,8 @@
 import { ONE_DAY_MS } from '@alephium/shared'
+import { getQueryConfig, useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { ALPH, getTokensURL, mainnet, testnet, TokenList } from '@alephium/token-list'
 import { skipToken, useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-
-import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-
-import { getQueryConfig } from './getQueryConfig'
 
 export interface FTList {
   data: TokenList['tokens'] | undefined
@@ -18,7 +14,7 @@ type FTListProps = {
 }
 
 const useFetchFtList = (props?: FTListProps): FTList => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
   const network = networkId === 0 ? 'mainnet' : networkId === 1 ? 'testnet' : networkId === 4 ? 'devnet' : undefined
 
   const { data, isLoading } = useQuery({

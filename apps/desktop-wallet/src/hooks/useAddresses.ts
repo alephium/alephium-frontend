@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { orderBy } from 'lodash'
 import { useMemo } from 'react'
 
@@ -9,7 +10,6 @@ import { AddressOrder } from '@/features/settings/settingsConstants'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 export const useFetchAddressesHashesSortedByPreference = () => {
   const orderPreference = useAppSelector((s) => s.settings.addressOrderPreference)
@@ -40,7 +40,7 @@ export const useFetchAddressesHashesSortedByPreference = () => {
 }
 
 export const useFetchAddressesHashesSortedByLastUse = (props?: SkipProp) => {
-  const isNetworkOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
+  const isNetworkOffline = useCurrentlyOnlineNetworkId() === undefined
   const allAddressHashes = useUnsortedAddressesHashes()
   const { data: sortedAddresses, isLoading } = useFetchAddressesHashesSortedByLastUseWithLatestTx(props)
 
@@ -71,7 +71,7 @@ export const useFetchAddressesHashesSortedByLastUseWithLatestTx = (props?: SkipP
 }
 
 export const useFetchAddressesHashesWithBalance = () => {
-  const isNetworkOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
+  const isNetworkOffline = useCurrentlyOnlineNetworkId() === undefined
   const allAddressHashes = useUnsortedAddressesHashes()
   const { data: addressesAlphBalances, isLoading } = useFetchWalletBalancesAlphByAddress()
 
@@ -93,7 +93,7 @@ export const useFetchAddressesHashesWithBalance = () => {
 }
 
 export const useFetchAddressesHashesSortedByAlphBalance = (props?: SkipProp) => {
-  const isNetworkOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
+  const isNetworkOffline = useCurrentlyOnlineNetworkId() === undefined
   const allAddressHashes = useUnsortedAddressesHashes()
   const defaultAddressHash = useAppSelector((s) => selectDefaultAddress(s).hash)
   const { data: alphBalances, isLoading } = useFetchWalletBalancesAlphByAddress()
