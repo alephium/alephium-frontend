@@ -120,7 +120,7 @@
   "Encountered error while syncing your addresses' data.": "Fout opgetreden bij het synchroniseren van de gegevens van uw adressen.",
   "Enter": "Invoeren",
   "Enter password": "Wachtwoord invoeren",
-  "Enter password for \"{{ walletName }}\"": "Voer wachtwoord in voor ",
+  "Enter password for \"{{ walletName }}\"": "Voer wachtwoord in voor \"{{ walletName }}\"",
   "Enter your password to copy the private key.": "Voer uw wachtwoord in om de private key te kopiëren.",
   "Enter your password to send the transaction.": "Voer uw wachtwoord in om de transactie te verzenden.",
   "Error while building transaction": "Fout bij het opbouwen van de transactie",
