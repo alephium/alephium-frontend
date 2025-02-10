@@ -37,7 +37,6 @@ const BottomModalFlashList = ({
         onContentSizeChange: modalState.handleContentSizeChange,
         contentContainerStyle: {
           paddingHorizontal: noPadding ? 0 : DEFAULT_MARGIN,
-          paddingTop: 0,
           paddingBottom: noPadding ? 0 : VERTICAL_GAP
         }
       })}

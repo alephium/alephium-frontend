@@ -18,7 +18,7 @@ const SearchInput = (props: TextInputProps) => {
 
       {props.value && (
         <ClearButtonContainer>
-          <Button iconProps={{ name: 'x' }} onPress={handleClearPress} squared compact />
+          <Button iconProps={{ name: 'x' }} onPress={handleClearPress} squared compact variant="transparent" />
         </ClearButtonContainer>
       )}
     </SearchInputStyled>

@@ -15,7 +15,6 @@ export interface BottomModalBaseProps {
   titleAlign?: 'left' | 'center'
   maximisedContent?: boolean
   minHeight?: number
-  paddingTop?: boolean
   noPadding?: boolean
   contentVerticalGap?: boolean
   navHeight?: number
