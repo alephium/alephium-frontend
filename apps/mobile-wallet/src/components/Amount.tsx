@@ -48,7 +48,9 @@ const Amount = ({
 
   const hideAmount = discreetMode && !showOnDiscreetMode && !tappedToDisableDiscreetMode
 
-  const handleTappedToDisableDiscreetMode = () => setTappedToDisableDiscreetMode(!tappedToDisableDiscreetMode)
+  const handleTappedToDisableDiscreetMode = discreetMode
+    ? () => setTappedToDisableDiscreetMode(!tappedToDisableDiscreetMode)
+    : undefined
 
   let amount = ''
   let tinyAmount = ''
