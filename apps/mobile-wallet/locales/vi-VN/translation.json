@@ -408,6 +408,8 @@
   "Loading your balances...": "Đang tải số dư của bạn...",
   "Wallet worth": "Giá trị ví",
   "Address worth": "Giá trị địa chỉ",
+  "Total worth": "Tổng giá trị",
+  "less than": "ít hơn",
   "Forget address": "Quên địa chỉ",
   "Address forgotten": "Địa chỉ đã quên",
   "Disconnecting": "Đang ngắt kết nối",
@@ -458,5 +460,6 @@
   "Visit dApp": "Đi đến dApp",
   "Region": "Vùng",
   "Choose your region to update formats of dates, time, and currencies.": "Chọn khu vực của bạn để cập nhật định dạng ngày, giờ và tiền tệ.",
-  "More details on Alph.land": "Thông tin chi tiết trên Alph.land"
+  "More details on Alph.land": "Thông tin chi tiết trên Alph.land",
+  "Worth": "Giá trị"
 }
