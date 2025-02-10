@@ -1,22 +1,22 @@
 import { AddressHash } from '@alephium/shared'
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components/native'
 
 import AddressBox from '~/components/AddressBox'
 import AppText from '~/components/AppText'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
-import BottomBarScrollScreen from '~/components/layout/BottomBarScrollScreen'
-import { ScreenSection } from '~/components/layout/Screen'
+import FlashListScreen from '~/components/layout/FlashListScreen'
 import { TabBarPageScreenProps } from '~/components/layout/TabBarPager'
 import RefreshSpinner from '~/components/RefreshSpinner'
 import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { selectAllAddresses } from '~/store/addresses/addressesSelectors'
-import { VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
+const AddressesScreen = ({ onScroll }: TabBarPageScreenProps) => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
+  const bottomBarHeight = useBottomTabBarHeight()
 
   const addresses = useAppSelector(selectAllAddresses)
 
@@ -25,23 +25,24 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
   }
 
   return (
-    <BottomBarScrollScreen
+    <FlashListScreen
+      data={addresses}
       refreshControl={<RefreshSpinner progressViewOffset={190} />}
-      hasBottomBar
-      contentPaddingTop={115}
-      {...props}
-    >
-      <Content>
-        {addresses.map((address, i) => (
-          <AddressBox
-            key={address.hash}
-            addressHash={address.hash}
-            isLast={i === addresses.length - 1}
-            onPress={() => handleAddressPress(address.hash)}
-            origin="addressesScreen"
-          />
-        ))}
-        {addresses.length === 1 && (
+      contentPaddingTop={165}
+      estimatedItemSize={78}
+      onScroll={onScroll}
+      contentContainerStyle={{ paddingHorizontal: DEFAULT_MARGIN, paddingBottom: bottomBarHeight }}
+      renderItem={({ item, index }) => (
+        <AddressBox
+          key={item.hash}
+          addressHash={item.hash}
+          isLast={index === addresses.length - 1}
+          onPress={() => handleAddressPress(item.hash)}
+          origin="addressesScreen"
+        />
+      )}
+      ListFooterComponent={() =>
+        addresses.length === 1 && (
           <EmptyPlaceholder>
             <AppText style={{ textAlign: 'center' }} color="secondary" semiBold>
               {t('Did you know?')}
@@ -50,14 +51,10 @@ const AddressesScreen = ({ contentStyle, ...props }: TabBarPageScreenProps) => {
               {t('Splitting your funds into multiple addresses can help you stay organized and increase privacy.')}
             </AppText>
           </EmptyPlaceholder>
-        )}
-      </Content>
-    </BottomBarScrollScreen>
+        )
+      }
+    />
   )
 }
 
 export default AddressesScreen
-
-const Content = styled(ScreenSection)`
-  margin-top: ${VERTICAL_GAP * 2}px;
-`
