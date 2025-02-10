@@ -47,7 +47,6 @@ const NFTImageStyled = styled(Image)`
   border-radius: ${BORDER_RADIUS_SMALL}px;
   aspect-ratio: 1;
   background-color: ${({ theme }) => theme.bg.primary};
-  border: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
 export default NFTImage
