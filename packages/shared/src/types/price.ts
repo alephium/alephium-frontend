@@ -20,7 +20,3 @@ export interface PricesState extends EntityState<TokenPriceEntity> {
   loading: boolean
   status: 'uninitialized' | 'initialized'
 }
-
-export interface PricesHistoryState extends EntityState<TokenPriceHistoryEntity> {
-  loading: boolean
-}

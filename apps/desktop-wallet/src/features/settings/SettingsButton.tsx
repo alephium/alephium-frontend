@@ -10,6 +10,7 @@ const SettingsButton = () => {
   const dispatch = useAppDispatch()
 
   const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: {} }))
+
   return (
     <Button
       circle
