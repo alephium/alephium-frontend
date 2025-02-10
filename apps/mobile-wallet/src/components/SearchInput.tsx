@@ -44,7 +44,7 @@ const ClearButtonContainer = styled.View`
 const TextInputStyled = styled(TextInput)`
   width: 100%;
   background-color: ${({ theme }) => theme.bg.highlight};
-  padding: 12px;
+  padding: 12px 14px;
   border-radius: 100px;
   color: ${({ theme }) => theme.font.primary};
 

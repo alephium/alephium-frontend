@@ -1,10 +1,8 @@
 import { AddressHash } from '@alephium/shared'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
-import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
 import Row from '~/components/Row'
@@ -19,7 +17,6 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import AddressForm, { AddressFormData } from '~/screens/Addresses/Address/AddressForm'
 import { selectAddressByHash } from '~/store/addresses/addressesSelectors'
 import { addressSettingsSaved } from '~/store/addressesSlice'
-import { copyAddressToClipboard } from '~/utils/addresses'
 import { showExceptionToast } from '~/utils/layout'
 
 interface AddressSettingsModalProps {
@@ -70,17 +67,6 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
 
   return (
     <BottomModal modalId={id} title={t('Address settings')}>
-      <Row title={t('Address')}>
-        <HashEllipsed
-          truncate
-          ellipsizeMode="middle"
-          color="secondary"
-          onLongPress={() => copyAddressToClipboard(addressHash)}
-        >
-          {addressHash}
-        </HashEllipsed>
-      </Row>
-
       <AddressForm
         initialValues={address?.settings}
         onValuesChange={setSettings}
@@ -102,9 +88,3 @@ const AddressSettingsModal = withModal<AddressSettingsModalProps>(({ id, address
 })
 
 export default AddressSettingsModal
-
-const HashEllipsed = styled(AppText)`
-  min-width: 100px;
-  max-width: 50%;
-  margin-top: 8px;
-`
