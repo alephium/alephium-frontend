@@ -3,8 +3,8 @@ import { useFetchNftCollection } from '@alephium/shared-react'
 import { ActivityIndicator } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
-import AppText from '~/components/AppText'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import { ScreenSectionTitle } from '~/components/layout/Screen'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface NftsCollectionTitleProps extends Pick<NFT, 'collectionId'> {
   isFirst?: boolean
@@ -17,21 +17,15 @@ const NftsCollectionTitle = ({ collectionId, isFirst }: NftsCollectionTitleProps
 
   if (!nftCollectionData) return null
 
-  return (
-    <NftsCollectionTitleStyled bold size={18} isFirst={isFirst}>
-      {nftCollectionData.name}
-    </NftsCollectionTitleStyled>
-  )
+  return <ScreenSectionTitleStyled isFirst={isFirst}>{nftCollectionData.name}</ScreenSectionTitleStyled>
 }
 
 export default NftsCollectionTitle
 
-const NftsCollectionTitleStyled = styled(AppText)<{ isFirst?: boolean }>`
+const ScreenSectionTitleStyled = styled(ScreenSectionTitle)<{ isFirst?: boolean }>`
   ${({ isFirst }) =>
     !isFirst &&
     css`
-      margin-top: ${DEFAULT_MARGIN * 2}px;
+      margin-top: ${VERTICAL_GAP}px;
     `}
-
-  margin-bottom: ${DEFAULT_MARGIN}px;
 `
