@@ -104,8 +104,8 @@ export default Input
 const InputStyled = styled.Pressable<{ short?: boolean }>`
   min-width: 150px;
   background-color: ${({ theme }) => theme.bg.highlight};
-  border-radius: 18px;
-  padding: 0 18px;
+  border-radius: 100px;
+  padding: 0 14px 0 18px;
   height: ${({ short }) => INPUTS_HEIGHT / (short ? 1.2 : 1)}px;
 `
 
