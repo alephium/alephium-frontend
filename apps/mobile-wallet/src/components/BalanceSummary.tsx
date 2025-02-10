@@ -7,8 +7,13 @@ import styled, { useTheme } from 'styled-components/native'
 
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
+import Badge from '~/components/Badge'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesTokensWorth, selectAddressIds } from '~/store/addresses/addressesSelectors'
+import {
+  makeSelectAddressesTokensWorth,
+  selectAddressByHash,
+  selectAddressIds
+} from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface BalanceSummaryProps {
@@ -46,11 +51,21 @@ const BalanceSummary = ({ addressHash }: BalanceSummaryProps) => {
           />
         )}
       </TextContainer>
+      {addressHash && <AddressGroupBadge addressHash={addressHash} />}
     </BalanceSummaryBox>
   )
 }
 
 export default BalanceSummary
+
+const AddressGroupBadge = ({ addressHash }: { addressHash: AddressHash }) => {
+  const { t } = useTranslation()
+  const groupNumber = useAppSelector((s) => selectAddressByHash(s, addressHash)?.group)
+
+  if (groupNumber === undefined) return null
+
+  return <Badge>{t('Group {{ groupNumber }}', { groupNumber })}</Badge>
+}
 
 export const BalanceSummaryBox = styled.View`
   justify-content: center;
