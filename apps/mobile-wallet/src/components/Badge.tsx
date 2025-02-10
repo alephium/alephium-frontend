@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
-interface BadgeProps {
+export interface BadgeProps {
   children: ReactNode
   color?: string
   rounded?: boolean

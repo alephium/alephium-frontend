@@ -53,6 +53,7 @@ const AddressBox = ({
   const theme = useTheme()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
   if (!address) return
 
@@ -130,9 +131,8 @@ const AddressBox = ({
             </AddressLabel>
             <AddressAmount addressHash={addressHash} tokenId={tokenId} />
           </TopRow>
-
-          {hasLabel && (
-            <AddressHashRow>
+          <BottomRow>
+            {hasLabel && (
               <AppText
                 truncate
                 ellipsizeMode="middle"
@@ -144,15 +144,19 @@ const AddressBox = ({
               >
                 {address.hash}
               </AppText>
-            </AddressHashRow>
-          )}
-          <TokensRow>
-            {tokenId ? (
-              <AddressTokenDetails tokenId={tokenId} addressHash={addressHash} />
-            ) : (
-              <AddressAllTokensDetails addressHash={addressHash} />
             )}
-          </TokensRow>
+
+            <TokensRow>
+              {tokenId ? (
+                <AddressTokenDetails tokenId={tokenId} addressHash={addressHash} />
+              ) : (
+                <AddressAllTokensDetails addressHash={addressHash} />
+              )}
+              <AppText color="tertiary" size={12} style={{ marginLeft: 'auto' }}>
+                {t('Group {{ groupNumber }}', { groupNumber: address.group })}
+              </AppText>
+            </TokensRow>
+          </BottomRow>
         </AddressBoxColumnLeft>
       </TextualContent>
     </AddressBoxStyled>
@@ -272,11 +276,12 @@ const TokensRow = styled.View`
   flex-direction: row;
   align-items: center;
   gap: 10px;
-  margin-left: 26px;
+  justify-content: space-between;
 `
 
-const AddressHashRow = styled.View`
+const BottomRow = styled.View`
   margin-left: 26px;
+  gap: 10px;
 `
 
 const TextualContent = styled.View`

@@ -5,15 +5,11 @@ import { useTranslation } from 'react-i18next'
 import { ActivityIndicator, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import AddressGroupBadge from '~/components/AddressGroupBadge'
 import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
-import Badge from '~/components/Badge'
 import { useAppSelector } from '~/hooks/redux'
-import {
-  makeSelectAddressesTokensWorth,
-  selectAddressByHash,
-  selectAddressIds
-} from '~/store/addresses/addressesSelectors'
+import { makeSelectAddressesTokensWorth, selectAddressIds } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface BalanceSummaryProps {
@@ -57,15 +53,6 @@ const BalanceSummary = ({ addressHash }: BalanceSummaryProps) => {
 }
 
 export default BalanceSummary
-
-const AddressGroupBadge = ({ addressHash }: { addressHash: AddressHash }) => {
-  const { t } = useTranslation()
-  const groupNumber = useAppSelector((s) => selectAddressByHash(s, addressHash)?.group)
-
-  if (groupNumber === undefined) return null
-
-  return <Badge>{t('Group {{ groupNumber }}', { groupNumber })}</Badge>
-}
 
 export const BalanceSummaryBox = styled.View`
   justify-content: center;
