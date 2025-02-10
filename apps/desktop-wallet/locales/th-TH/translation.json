@@ -513,5 +513,7 @@
   "Active address discovery completed. Addresses added: {{ count }}": "การค้นหาที่อยู่ใช้งานเสร็จสมบูรณ์แล้ว เพิ่มที่อยู่: {{ count }}",
   "Loading new transactions...": "กำลังโหลดธุรกรรมใหม่",
   "Sign and Send Unsigned Transaction": "ลงชื่อและส่งธุรกรรมที่ไม่ได้ลงชื่อ",
-  "Sign and Send": "ลงชื่อและส่ง"
+  "Sign and Send": "ลงชื่อและส่ง",
+  "Sort by": "จัดเรียงตาม",
+  "ALPH balance": "ยอดคงเหลือ ALPH"
 }
