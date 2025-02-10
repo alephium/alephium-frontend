@@ -39,7 +39,7 @@
     "@alephium/shared-crypto": "workspace:*",
     "@alephium/shared-react": "workspace:*",
     "@alephium/token-list": "^0.0.19",
-    "@alephium/web3": "1.5.1",
+    "@alephium/web3": "1.11.3",
     "@tanstack/query-sync-storage-persister": "5.45.0",
     "@tanstack/react-query": "5.45.0",
     "@tanstack/react-query-persist-client": "^5.45.0",
