@@ -6,25 +6,25 @@ import { useBottomModalState } from '~/features/modals/useBottomModalState'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
 export interface BottomModalFlashListProps extends Omit<BottomModalBaseProps, 'children'> {
-  flashListRender: (flashListProps: {
-    contentContainerStyle: ContentStyle
-    onContentSizeChange: (w: number, h: number) => void
-  }) => ReactNode
+  flashListRender: (flashListProps: FlashListRenderProps) => ReactNode
+}
+
+export interface FlashListRenderProps {
+  contentContainerStyle: ContentStyle
+  onContentSizeChange: (w: number, h: number) => void
 }
 
 const BottomModalFlashList = ({
-  modalId,
   onClose,
-  title,
-  titleAlign,
   maximisedContent,
   minHeight,
   navHeight = 50,
   noPadding,
-  flashListRender
+  flashListRender,
+  ...props
 }: BottomModalFlashListProps) => {
   const modalState = useBottomModalState({
-    modalId,
+    modalId: props.modalId,
     maximisedContent,
     minHeight,
     navHeight,
@@ -32,7 +32,7 @@ const BottomModalFlashList = ({
   })
 
   return (
-    <BottomModalBase title={title} modalId={modalId} navHeight={navHeight} titleAlign={titleAlign} {...modalState}>
+    <BottomModalBase navHeight={navHeight} {...props} {...modalState}>
       {flashListRender({
         onContentSizeChange: modalState.handleContentSizeChange,
         contentContainerStyle: {
