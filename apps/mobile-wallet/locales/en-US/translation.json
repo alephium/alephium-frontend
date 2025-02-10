@@ -408,6 +408,8 @@
   "Loading your balances...": "Loading your balances...",
   "Wallet worth": "Wallet worth",
   "Address worth": "Address worth",
+  "Total worth": "Total worth",
+  "less than": "less than",
   "Forget address": "Forget address",
   "Address forgotten": "Address forgotten",
   "Disconnecting": "Disconnecting",
@@ -458,5 +460,6 @@
   "Visit dApp": "Visit dApp",
   "Region": "Region",
   "Choose your region to update formats of dates, time, and currencies.": "Choose your region to update formats of dates, time, and currencies.",
-  "More details on Alph.land": "More details on Alph.land"
+  "More details on Alph.land": "More details on Alph.land",
+  "Worth": "Worth"
 }
