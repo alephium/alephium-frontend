@@ -22,7 +22,6 @@ const BottomModal = ({
   maximisedContent,
   minHeight,
   navHeight = 50,
-  paddingTop,
   noPadding,
   contentVerticalGap,
   contentContainerStyle,
@@ -51,8 +50,7 @@ const BottomModal = ({
           contentContainerStyle,
           {
             gap: contentVerticalGap ? VERTICAL_GAP : undefined,
-            padding: noPadding ? 0 : DEFAULT_MARGIN,
-            paddingTop: paddingTop ? VERTICAL_GAP : 0
+            padding: noPadding ? 0 : DEFAULT_MARGIN
           }
         ]}
       >
