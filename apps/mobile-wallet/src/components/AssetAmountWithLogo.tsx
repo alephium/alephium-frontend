@@ -7,7 +7,7 @@ import NFTThumbnail from '~/components/NFTThumbnail'
 import { useAppSelector } from '~/hooks/redux'
 
 interface AssetAmountWithLogoProps
-  extends Pick<AmountProps, 'fullPrecision' | 'useTinyAmountShorthand' | 'showPlusMinus'> {
+  extends Pick<AmountProps, 'fullPrecision' | 'useTinyAmountShorthand' | 'showPlusMinus' | 'bold'> {
   assetId: Asset['id']
   amount: bigint
   logoSize?: number
@@ -20,6 +20,7 @@ const AssetAmountWithLogo = ({
   useTinyAmountShorthand,
   fullPrecision,
   showPlusMinus,
+  bold,
   logoSize = 18,
   logoPosition = 'left'
 }: AssetAmountWithLogoProps) => {
@@ -38,12 +39,13 @@ const AssetAmountWithLogo = ({
         isUnknownToken={!asset?.symbol}
         suffix={asset?.symbol}
         decimals={asset?.decimals}
-        semiBold
         fadeSuffix
         fullPrecision={fullPrecision}
         useTinyAmountShorthand={useTinyAmountShorthand}
         showPlusMinus={showPlusMinus}
         highlight={showPlusMinus}
+        semiBold={!bold}
+        bold={bold}
       />
       {logoPosition === 'right' && Logo}
     </AssetStyled>

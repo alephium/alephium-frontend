@@ -34,7 +34,7 @@ const TotalWorthRow = ({ assetAmounts, fromAddress }: TotalWorthRowProps) => {
   if (!totalWorth) return null
 
   return (
-    <Row title={t('Total worth')} titleColor="secondary">
+    <Row title={t('Worth')} titleColor="secondary">
       <Amount value={totalWorth} isFiat bold />
     </Row>
   )
