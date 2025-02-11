@@ -52,8 +52,6 @@ import { useURL } from 'expo-linking'
 import { partition } from 'lodash'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AppState, AppStateStatus } from 'react-native'
-import BackgroundService from 'react-native-background-actions'
 
 import { sendAnalytics } from '~/analytics'
 import {
@@ -73,10 +71,8 @@ import {
   TransferTxData
 } from '~/types/transactions'
 import { showExceptionToast, showToast } from '~/utils/layout'
-import { sleep } from '~/utils/misc'
 
 const MaxRequestNumToKeep = 10
-const ONE_HOURS_IN_SECONDS = 60 * 60
 
 interface WalletConnectContextValue {
   walletConnectClient?: IWalletKit
@@ -125,7 +121,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const url = useURL()
   const wcDeepLink = useRef<string>()
-  const appState = useRef(AppState.currentState)
   const dispatch = useAppDispatch()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
   const { t } = useTranslation()
@@ -450,44 +445,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     },
     [onSessionProposal, t, walletConnectClient]
   )
-
-  useEffect(() => {
-    const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && isWalletConnectEnabled) {
-        let secondsPassed = 0
-
-        // Keep app alive for max 4 hours
-        const backgroundTask = async () => {
-          while (BackgroundService.isRunning() && secondsPassed < ONE_HOURS_IN_SECONDS) {
-            console.log('Keeping app alive to be able to respond to WalletConnect')
-            secondsPassed += 1
-            await sleep(1000)
-          }
-        }
-
-        await BackgroundService.start(backgroundTask, {
-          taskName: 'WalletConnectListener',
-          taskTitle: 'WalletConnect',
-          taskDesc: 'Keeping WalletConnect connection alive',
-          taskIcon: {
-            name: 'ic_launcher',
-            type: 'mipmap'
-          },
-          linkingURI: 'alephium://'
-        })
-      } else if (nextAppState === 'active') {
-        await BackgroundService.stop()
-      }
-
-      appState.current = nextAppState
-    }
-
-    if (BackgroundService.isRunning()) BackgroundService.stop()
-
-    const subscription = AppState.addEventListener('change', handleAppStateChange)
-
-    return subscription.remove
-  }, [isWalletConnectEnabled])
 
   const onSessionRequest = useCallback(
     async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
