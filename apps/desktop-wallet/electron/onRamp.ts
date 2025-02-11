@@ -18,21 +18,19 @@ export const handleOnRampWindows = (mainWindow: BrowserWindow | null) => {
       }
     })
 
+    // Ensure window reference is cleaned up when closed
+    onRampWindow.on('closed', () => {
+      onRampWindow = null
+    })
+
     onRampWindow.loadURL(url)
 
     onRampWindow.webContents.on('did-navigate', (event, currentUrl) => {
-      console.log(`Navigated to: ${currentUrl}`)
       if (currentUrl.includes(targetLocation)) {
         onRampWindow?.close()
-        onRampWindow = null
 
         mainWindow?.webContents.send('target-location-reached')
       }
-    })
-
-    // Ensure window reference is cleaned up
-    onRampWindow.on('closed', () => {
-      onRampWindow = null
     })
 
     // Handle child windows opening (onramper opens provider in a new window)
@@ -50,11 +48,9 @@ export const handleOnRampWindows = (mainWindow: BrowserWindow | null) => {
 
       // Listen for navigation events on the new window
       childWindow.webContents.on('did-navigate', (event, currentUrl) => {
-        console.log(`Child window navigated to: ${currentUrl}`)
         if (currentUrl.includes(targetLocation)) {
           childWindow?.close()
           onRampWindow?.close()
-          onRampWindow = null
 
           mainWindow?.webContents.send('target-location-reached')
         }
