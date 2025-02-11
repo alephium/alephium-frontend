@@ -3,6 +3,7 @@ import { ArrowDownToLine, CreditCard, Send, Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import AnimatedBackground from '@/components/AnimatedBackground'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -147,6 +148,7 @@ const BuyButton = ({ addressHash, analyticsOrigin }: ShortcutButtonsGroupAddress
 
   return (
     <ShortcutButton role="primary" onClick={handleBuyClick}>
+      <AnimatedBackground anchorPosition="top" opacity={0.2} />
       <CreditCard size={22} strokeWidth={1.5} />
       <ButtonText>{t('Buy')}</ButtonText>
     </ShortcutButton>
@@ -158,14 +160,14 @@ const ShortcutButton = styled.button`
   margin: 0;
   min-width: 120px;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   border-radius: var(--radius-huge);
   background-color: ${({ theme }) => theme.bg.highlight};
+  border: 1px solid ${({ theme }) => theme.border.primary};
   color: ${({ theme }) => theme.font.primary};
   gap: 5px;
   font-weight: var(--fontWeight-medium);
-  padding: 8px;
+  padding: var(--spacing-2) var(--spacing-4);
   cursor: pointer;
 
   &:hover {

@@ -172,6 +172,7 @@ export const ModalHeader = styled.header`
   height: 54px;
   padding: 0 6px 0 var(--spacing-4);
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  background-color: ${({ theme }) => theme.bg.background2};
 `
 
 const ModalHeaderContent = styled(motion.div)`

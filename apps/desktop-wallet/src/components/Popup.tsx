@@ -164,6 +164,7 @@ const Header = styled.div<{ hasExtraContent: boolean }>`
   z-index: 1;
   gap: var(--spacing-3);
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  background-color: ${({ theme }) => theme.bg.background2};
 `
 
 const Title = styled.span`

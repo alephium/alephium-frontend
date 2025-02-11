@@ -36,7 +36,6 @@ const PageHeader = styled(UnlockedWalletPanel)`
   flex-direction: column;
   justify-content: space-between;
   gap: 40px;
-  margin-top: 20px;
 `
 
 const TitleContainer = styled.div`

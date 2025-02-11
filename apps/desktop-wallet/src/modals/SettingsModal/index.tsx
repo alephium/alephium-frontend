@@ -164,6 +164,7 @@ const TabTitlesColumn = styled(Column)`
   position: relative;
   flex: 1;
   background-color: ${({ theme }) => theme.bg.background2};
+  border-right: 1px solid ${({ theme }) => theme.border.secondary};
 `
 const TabContentsColumn = styled(Column)`
   position: relative;

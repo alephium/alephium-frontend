@@ -139,7 +139,7 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
 export default UnlockPanel
 
 const SectionStyled = styled(Section)`
-  min-width: 300px;
+  min-width: 280px;
 `
 
 const MainAction = styled(SectionStyled)`

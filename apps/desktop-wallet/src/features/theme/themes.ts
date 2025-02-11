@@ -9,10 +9,10 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'rgba(0, 0, 0, 0.02)',
     contrast: '#000',
     background1: '#fff',
-    background2: '#fafafa',
+    background2: '#fcfcfc',
     hover: 'rgba(0, 0, 0, 0.01)',
     highlight: '#ffffff',
-    accent: colord('#1535e9').alpha(0.05).toHex()
+    accent: colord('#002fff').alpha(0.05).toHex()
   },
   font: {
     primary: '#000',
@@ -21,7 +21,7 @@ export const lightTheme: DefaultTheme = {
     contrastPrimary: 'rgba(255, 255, 255, 1)',
     contrastSecondary: 'rgba(255, 255, 255, 0.8)',
     highlight: '#ef6c5c',
-    accent: colord('#400fe3').darken(0.2).toHex()
+    accent: colord('#002fff').darken(0.2).toHex()
   },
   border: {
     primary: 'rgba(0, 0, 0, 0.08)',
@@ -33,7 +33,7 @@ export const lightTheme: DefaultTheme = {
     tertiary: '0 0 80px rgba(0, 0, 0, 0.2)'
   },
   global: {
-    accent: '#400fe3',
+    accent: '#002fff',
     complementary: '#f174b3',
     alert: '#e52437',
     valid: '#189b3c',
@@ -53,7 +53,7 @@ export const darkTheme: DefaultTheme = {
     background2: '#0e0e0f',
     hover: 'rgba(255, 255, 255, 0.015)',
     highlight: 'rgba(255, 255, 255, 0.06)',
-    accent: colord('#3b62f0').alpha(0.1).toHex()
+    accent: colord('#2655ff').alpha(0.1).toHex()
   },
   font: {
     primary: 'rgba(255, 255, 255, 1)',
@@ -62,11 +62,11 @@ export const darkTheme: DefaultTheme = {
     contrastPrimary: 'rgba(0, 0, 0, 1)',
     contrastSecondary: 'rgba(0, 0, 0, 0.8)',
     highlight: '#f0a990',
-    accent: colord('#3b62f0').lighten(0.1).toHex()
+    accent: colord('#2655ff').lighten(0.1).toHex()
   },
   border: {
     primary: 'rgba(255, 255, 255, 0.05)',
-    secondary: 'rgba(255, 255, 255, 0.02)'
+    secondary: 'rgba(255, 255, 255, 0.03)'
   },
   shadow: {
     primary: 'none',
@@ -74,7 +74,7 @@ export const darkTheme: DefaultTheme = {
     tertiary: '0 0 80px 30px rgb(0, 0, 0)'
   },
   global: {
-    accent: '#3b46f0',
+    accent: '#2655ff',
     complementary: '#d488eb',
     alert: '#ed4a34',
     valid: '#3ed282',

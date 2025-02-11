@@ -79,16 +79,13 @@ export default TabBar
 
 const TabBarStyled = styled.div`
   display: flex;
-  height: 46px;
+  height: 50px;
   align-items: center;
 `
 
 const TabsContainer = styled.div`
   display: flex;
-  background-color: ${({ theme }) => theme.bg.tertiary};
   gap: 10px;
-  padding: 4px;
-  border-radius: 100px;
 `
 
 export const Tab = styled.div<{ isActive: boolean }>`
@@ -97,26 +94,25 @@ export const Tab = styled.div<{ isActive: boolean }>`
   text-align: center;
   justify-content: center;
   align-items: center;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.highlight : 'transparent')};
-  border: 1px solid ${({ theme, isActive }) => (isActive ? theme.border.primary : 'transparent')};
+  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.accent : theme.bg.tertiary)};
   cursor: pointer;
   font-size: 14px;
-  font-weight: var(--fontWeight-medium);
+  font-weight: var(--fontWeight-semiBold);
   border-radius: 100px;
-  padding: 0 30px;
-  height: calc(var(--inputHeight) - 2px);
+  padding: 0 20px;
+  height: calc(var(--inputHeight));
 
   ${({ isActive, theme }) =>
     isActive
       ? css`
-          color: ${theme.font.primary};
+          color: ${theme.global.accent};
         `
       : css`
-          color: ${theme.font.tertiary};
+          color: ${theme.font.secondary};
         `}
 
   &:hover {
-    color: ${({ isActive, theme }) => (isActive ? theme.font.primary : theme.font.primary)};
+    color: ${({ isActive, theme }) => (isActive ? theme.font.accent : theme.font.primary)};
     background-color: ${({ isActive, theme }) => (isActive ? theme.bg.primary : theme.bg.secondary)};
   }
   z-index: 1;

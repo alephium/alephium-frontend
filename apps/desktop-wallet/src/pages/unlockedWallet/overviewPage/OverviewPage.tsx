@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
-import AnimatedBackground from '@/components/AnimatedBackground'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import LabeledWorthOverview from '@/components/LabeledWorthOverview'
 import { WalletTokensTabs } from '@/features/assetsLists/AddressDetailsTabs'
@@ -13,12 +12,10 @@ interface OverviewPageProps {
 }
 
 const OverviewPage = ({ className }: OverviewPageProps) => {
-  const theme = useTheme()
   const { t } = useTranslation()
 
   return (
     <UnlockedWalletPage className={className}>
-      <AnimatedBackground anchorPosition="top" opacity={theme.name === 'dark' ? 0.3 : 0.5} verticalOffset={-100} />
       <WorthUnlockedWalletPanel bottom>
         <WorthOverviewPanel>
           <LabeledWorthOverview label={t('Wallet worth')}>
@@ -54,11 +51,11 @@ const WorthUnlockedWalletPanel = styled(UnlockedWalletPanel)`
   display: flex;
   flex-direction: column;
   gap: var(--spacing-6);
+  align-items: flex-start;
 `
 
 const WorthOverviewPanel = styled.div`
   border-radius: var(--radius-huge);
-  padding: var(--spacing-4);
   overflow: hidden;
   z-index: 1;
 `
