@@ -115,12 +115,7 @@ export default {
       ],
       'expo-localization',
       'expo-secure-store',
-      [
-        'expo-video',
-        {
-          supportsPictureInPicture: true
-        }
-      ],
+      'expo-video',
       [
         '@sentry/react-native/expo',
         {
