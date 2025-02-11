@@ -65,12 +65,8 @@ contextBridge.exposeInMainWorld('electron', {
     openOnRampServiceWindow: ({ url, targetLocation }: { url: string; targetLocation: string }) =>
       ipcRenderer.invoke('app:openOnRampServiceWindow', { url, targetLocation }),
     onOnRampTargetLocationReached: (callback: () => void) => {
-      // Don't pass the event object to the callback for security reasons (cf. https://www.electronjs.org/docs/latest/tutorial/security#20-do-not-expose-electron-apis-to-untrusted-web-content)
-      const sanitizedCallback = (_event: IpcRendererEvent) => {
-        callback()
-      }
+      const sanitizedCallback = (_event: IpcRendererEvent) => callback()
       ipcRenderer.on('target-location-reached', sanitizedCallback)
-
       return () => ipcRenderer.removeListener('target-location-reached', sanitizedCallback)
     },
     setProxySettings: (proxySettings: ProxySettings) => ipcRenderer.invoke('app:setProxySettings', proxySettings),
