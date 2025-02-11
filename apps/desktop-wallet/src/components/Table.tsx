@@ -32,6 +32,7 @@ const TableWrapper = styled(motion.div)<Pick<TableProps, 'minWidth'>>`
   background-color: ${({ theme }) => theme.bg.background1};
   padding: var(--spacing-2) var(--spacing-4);
   border-radius: var(--radius-huge);
+  border: 1px solid ${({ theme }) => theme.border.secondary};
 
   ${({ minWidth }) =>
     minWidth &&

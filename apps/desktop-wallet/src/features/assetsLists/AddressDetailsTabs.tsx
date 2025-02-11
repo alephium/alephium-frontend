@@ -82,7 +82,7 @@ interface TabsProps<T extends string> {
 
 const Tabs = <T extends string>({ tabs, currentTab, setCurrentTab, className, children }: TabsProps<T>) => (
   <div className={className}>
-    <TableTabBar items={tabs} onTabChange={setCurrentTab} activeTab={currentTab} justifyTabs="left" />
+    <TableTabBar items={tabs} onTabChange={setCurrentTab} activeTab={currentTab} />
     {children}
   </div>
 )
