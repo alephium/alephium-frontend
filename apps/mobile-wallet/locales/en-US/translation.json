@@ -357,6 +357,7 @@
   "Public keys": "Public keys",
   "Tap on an address to copy its public key to the clipboard.": "Tap on an address to copy its public key to the clipboard.",
   "Public key copied!": "Public key copied!",
+  "Token ID copied!": "Token ID copied!",
   "Could not copy public key": "Could not copy public key",
   "Timestamp": "Timestamp",
   "Status": "Status",
@@ -462,5 +463,6 @@
   "Choose your region to update formats of dates, time, and currencies.": "Choose your region to update formats of dates, time, and currencies.",
   "More details on Alph.land": "More details on Alph.land",
   "Worth": "Worth",
-  "Group": "Group"
+  "Group": "Group",
+  "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found."
 }
