@@ -408,6 +408,8 @@
   "Loading your balances...": "การโหลดยอดคงเหลือ",
   "Wallet worth": "มูลค่ากระเป๋าเงิน",
   "Address worth": "มูลค่าที่อยู่",
+  "Total worth": "มูลค่ารวม",
+  "less than": "น้อยกว่า",
   "Forget address": "ลืมที่อยู่นี้",
   "Address forgotten": "ลืมที่อยู่แล้ว",
   "Disconnecting": "การตัดการเชื่อมต่อ",
@@ -458,5 +460,7 @@
   "Visit dApp": "เยี่ยมชม dApp",
   "Region": "ภูมิภาค",
   "Choose your region to update formats of dates, time, and currencies.": "เลือกภูมิภาคเพื่ออัปเดตรูปแบบของวันที่ เวลา และสกุลเงิน",
-  "More details on Alph.land": "รายละเอียดเพิ่มเติมที่ Alph.land"
+  "More details on Alph.land": "รายละเอียดเพิ่มเติมที่ Alph.land",
+  "Worth": "คุณค่า",
+  "Group": "กลุ่ม"
 }
