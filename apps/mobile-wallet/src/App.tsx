@@ -7,6 +7,7 @@ import {
   TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
 import { queryClient, useInitializeClient, useInterval } from '@alephium/shared-react'
+import { useReactQueryDevTools } from '@dev-plugins/react-query'
 import { QueryClientProvider } from '@tanstack/react-query'
 import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
@@ -58,6 +59,8 @@ const App = () => {
       }),
     []
   )
+
+  useReactQueryDevTools(queryClient)
 
   return (
     <Provider store={store}>
