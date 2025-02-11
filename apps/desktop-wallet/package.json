@@ -43,11 +43,9 @@
   "dependencies": {
     "@tanstack/react-query": "5.45.0",
     "@tanstack/react-query-devtools": "^5.50.1",
-    "axios": "^1.7.4",
     "electron-context-menu": "^3.1.2",
     "electron-is-dev": "^2.0.0",
-    "electron-updater": "^6.3.9",
-    "react-custom-scroll": "^7.0.0"
+    "electron-updater": "^6.3.9"
   },
   "trustedDependencies": [
     "electron",
@@ -97,6 +95,7 @@
     "@walletconnect/utils": "2.17.2",
     "@yornaath/batshit": "^0.10.1",
     "ajv": "^8.12.0",
+    "axios": "^1.7.4",
     "better-sqlite3": "^8.3.0",
     "bip39": "^3.0.4",
     "classnames": "^2.3.1",
@@ -129,6 +128,7 @@
     "react-apexcharts": "^1.4.0",
     "react-color": "^2.19.3",
     "react-confetti": "^6.0.1",
+    "react-custom-scroll": "^7.0.0",
     "react-detect-click-outside": "^1.1.2",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.42.1",

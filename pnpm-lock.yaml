@@ -70,9 +70,6 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^5.50.1
         version: 5.50.1(@tanstack/react-query@5.45.0(react@18.2.0))(react@18.2.0)
-      axios:
-        specifier: ^1.7.4
-        version: 1.7.4
       electron-context-menu:
         specifier: ^3.1.2
         version: 3.6.1
@@ -82,9 +79,6 @@ importers:
       electron-updater:
         specifier: ^6.3.9
         version: 6.3.9
-      react-custom-scroll:
-        specifier: ^7.0.0
-        version: 7.0.0
     devDependencies:
       '@actions/tool-cache':
         specifier: ^2.0.1
@@ -199,7 +193,7 @@ importers:
         version: 1.1.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))
       '@walletconnect/react-native-compat':
         specifier: 2.17.2
-        version: 2.17.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(@react-native-community/netinfo@11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(expo-application@5.9.1)(react-native-get-random-values@1.11.0(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
+        version: 2.17.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(@react-native-community/netinfo@11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(expo-application@5.9.1(expo@51.0.39(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))))(react-native-get-random-values@1.11.0(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
       '@walletconnect/sign-client':
         specifier: 2.17.2
         version: 2.17.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))
@@ -215,6 +209,9 @@ importers:
       ajv:
         specifier: ^8.12.0
         version: 8.12.0
+      axios:
+        specifier: ^1.7.4
+        version: 1.7.4
       better-sqlite3:
         specifier: ^8.3.0
         version: 8.7.0
@@ -311,6 +308,9 @@ importers:
       react-confetti:
         specifier: ^6.0.1
         version: 6.1.0(react@18.2.0)
+      react-custom-scroll:
+        specifier: ^7.0.0
+        version: 7.0.0
       react-detect-click-outside:
         specifier: ^1.1.2
         version: 1.1.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -659,7 +659,7 @@ importers:
         version: 1.1.1(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))
       '@walletconnect/react-native-compat':
         specifier: 2.17.2
-        version: 2.17.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(@react-native-community/netinfo@11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(expo-application@5.9.1)(react-native-get-random-values@1.11.0(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
+        version: 2.17.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(@react-native-community/netinfo@11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(expo-application@5.9.1(expo@51.0.39(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))))(react-native-get-random-values@1.11.0(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
       '@walletconnect/sign-client':
         specifier: 2.17.2
         version: 2.17.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))
@@ -16814,7 +16814,7 @@ snapshots:
       '@walletconnect/safe-json': 1.0.2
       pino: 7.11.0
 
-  '@walletconnect/react-native-compat@2.17.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(@react-native-community/netinfo@11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(expo-application@5.9.1)(react-native-get-random-values@1.11.0(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))':
+  '@walletconnect/react-native-compat@2.17.2(@react-native-async-storage/async-storage@1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(@react-native-community/netinfo@11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(expo-application@5.9.1(expo@51.0.39(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))))(react-native-get-random-values@1.11.0(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0)))(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))':
     dependencies:
       '@react-native-async-storage/async-storage': 1.23.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
       '@react-native-community/netinfo': 11.3.1(react-native@0.74.5(@babel/core@7.25.7)(@babel/preset-env@7.23.8(@babel/core@7.25.7))(@types/react@18.2.79)(react@18.2.0))
