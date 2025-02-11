@@ -16,7 +16,6 @@ import WalletPassphraseForm from '@/features/passphrase/WalletPassphraseForm'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
-import { showToast } from '@/storage/global/globalActions'
 import { StoredEncryptedWallet } from '@/types/wallet'
 
 interface UnlockPanelProps {
@@ -40,14 +39,6 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   const [password, setPassword] = useState('')
   const [passphrase, setPassphrase] = useState('')
   const [passphraseConsent, setPassphraseConsent] = useState(false)
-
-  if (pendingDappConnectionUrl) {
-    showToast({ type: 'info', text: t('Unlock a wallet to connect to the dApp.'), duration: 'long' })
-  }
-
-  if (isAwaitingSessionRequestApproval) {
-    showToast({ type: 'info', text: t('Received dApp request'), duration: 'long' })
-  }
 
   if (walletOptions.length === 0) return null
 
