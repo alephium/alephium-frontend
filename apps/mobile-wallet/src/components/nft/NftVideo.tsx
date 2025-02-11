@@ -2,6 +2,7 @@ import { useVideoPlayer, VideoView } from 'expo-video'
 import { memo } from 'react'
 import styled from 'styled-components/native'
 
+import NftVideoPlayIconOverlay from '~/components/nft/NftVideoPlayIconOverlay'
 import { NFTImageProps } from '~/components/NFTImage'
 import { BORDER_RADIUS_SMALL } from '~/style/globalStyle'
 
@@ -16,7 +17,7 @@ const NftVideo = memo(({ videoSource, play, size }: NftVideoProps) => {
     if (play) player.play()
   })
 
-  return (
+  const video = (
     <VideoViewStyled
       style={{ width: size, height: size }}
       player={player}
@@ -24,6 +25,8 @@ const NftVideo = memo(({ videoSource, play, size }: NftVideoProps) => {
       nativeControls={!!play}
     />
   )
+
+  return play ? video : <NftVideoPlayIconOverlay>{video}</NftVideoPlayIconOverlay>
 })
 
 export default NftVideo

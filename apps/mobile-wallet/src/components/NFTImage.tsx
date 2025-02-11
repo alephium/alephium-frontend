@@ -5,6 +5,7 @@ import { DimensionValue, Platform } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import NftVideo from '~/components/nft/NftVideo'
+import NftVideoPlayIconOverlay from '~/components/nft/NftVideoPlayIconOverlay'
 import NFTPlaceholder from '~/components/NFTPlaceholder'
 import NFTWebView from '~/components/NFTWebView'
 import { useAppSelector } from '~/hooks/redux'
@@ -50,14 +51,14 @@ const NFTImage = memo(({ nftId, size = '100%', play }: NFTImageProps) => {
 
   // Loading many videos at once is too heavy on Android.
   // Using the image component for NFT lists on Android is sufficient.
-  if (contentType === 'video' && (Platform.OS === 'ios' || play))
+  if (contentType === 'video' && (Platform.OS !== 'android' || play))
     return <NftVideo size={size} videoSource={nft.image} play={play} />
 
   if (contentType === 'other' || hasError) return <NFTPlaceholder size={size} />
 
   if (isDataUri) return <NFTWebView imageUri={nft.image} size={size} />
 
-  return (
+  const image = (
     <NFTImageStyled
       style={{ width: size, height: size }}
       transition={500}
@@ -70,6 +71,8 @@ const NFTImage = memo(({ nftId, size = '100%', play }: NFTImageProps) => {
       }}
     />
   )
+
+  return contentType === 'video' ? <NftVideoPlayIconOverlay>{image}</NftVideoPlayIconOverlay> : image
 })
 
 export default NFTImage
