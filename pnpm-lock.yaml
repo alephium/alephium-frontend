@@ -1308,8 +1308,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       '@alephium/web3':
-        specifier: 1.5.1
-        version: 1.5.1
+        specifier: 1.11.3
+        version: 1.11.3
       '@tanstack/react-query':
         specifier: 5.45.0
         version: 5.45.0(react@18.2.0)
