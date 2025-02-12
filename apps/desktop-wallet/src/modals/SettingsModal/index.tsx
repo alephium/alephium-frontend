@@ -8,7 +8,7 @@ import styled, { css, useTheme } from 'styled-components'
 import { fadeInOutBottomFast } from '@/animations'
 import Button from '@/components/Button'
 import Scrollbar from '@/components/Scrollbar'
-import { TabItem } from '@/components/tabs/TabBar'
+import { TabItemSimple } from '@/components/tabs/tabsTypes'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch } from '@/hooks/redux'
@@ -27,7 +27,7 @@ import { openInWebBrowser } from '@/utils/misc'
 
 type SettingsModalTabNames = 'general' | 'wallets' | 'network' | 'devtools'
 
-type SettingsTabItem = TabItem<SettingsModalTabNames>
+type SettingsTabItem = TabItemSimple<SettingsModalTabNames>
 
 interface SocialMediaLogo {
   media: keyof Pick<typeof links, 'twitter' | 'discord' | 'github'>

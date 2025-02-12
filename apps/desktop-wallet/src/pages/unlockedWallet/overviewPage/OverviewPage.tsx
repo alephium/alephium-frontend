@@ -30,7 +30,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
         </WorthOverviewPanel>
       </WorthUnlockedWalletPanel>
       <UnlockedWalletPanel bottom>
-        <OverviewTabsStyled />
+        <OverviewTabs />
       </UnlockedWalletPanel>
     </UnlockedWalletPage>
   )
@@ -38,10 +38,6 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
 
 export default styled(OverviewPage)`
   background-color: ${({ theme }) => theme.bg.background1};
-`
-
-const OverviewTabsStyled = styled(OverviewTabs)`
-  flex: 2;
 `
 
 const Shortcuts = styled.div`

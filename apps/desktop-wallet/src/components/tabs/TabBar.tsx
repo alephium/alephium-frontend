@@ -1,14 +1,9 @@
-import { ChevronRight, LucideIcon } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
-
-export interface TabItem<T extends string> {
-  value: T
-  label: string
-  Icon?: LucideIcon
-}
+import { TabItem } from '@/components/tabs/tabsTypes'
 
 export interface TabBarProps<T extends string> {
   items: TabItem<T>[]
