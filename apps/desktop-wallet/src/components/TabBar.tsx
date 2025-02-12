@@ -91,7 +91,6 @@ const TabsContainer = styled.div`
 
 export const Tab = styled.div<{ isActive: boolean }>`
   display: flex;
-  min-width: 50px;
   text-align: center;
   cursor: pointer;
   font-size: 15px;

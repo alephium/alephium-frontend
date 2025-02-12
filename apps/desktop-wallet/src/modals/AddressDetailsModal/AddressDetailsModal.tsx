@@ -20,10 +20,10 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
       width={800}
       header={<AddressDetailsModalHeader addressHash={addressHash} />}
     >
-      <LabeledWorthOverview label={t('Address worth')}>
-        <AddressWorth addressHash={addressHash} />
-      </LabeledWorthOverview>
       <Content>
+        <LabeledWorthOverview label={t('Address worth')}>
+          <AddressWorth addressHash={addressHash} />
+        </LabeledWorthOverview>
         <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" />
         <AddressDetailsTabs addressHash={addressHash} />
       </Content>
@@ -34,9 +34,9 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
 export default AddressDetailsModal
 
 const Content = styled.div`
-  padding: 0 var(--spacing-4) var(--spacing-4);
+  padding: var(--spacing-4);
   position: relative;
-  gap: 45px;
+  gap: 30px;
   display: flex;
   flex-direction: column;
 `

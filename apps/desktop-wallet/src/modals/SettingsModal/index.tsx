@@ -198,7 +198,7 @@ const ColumnTitle = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: var(--fontWeight-semiBold);
   color: ${({ theme }) => theme.font.primary};
   z-index: 1;
@@ -264,7 +264,7 @@ const TabTitles = styled.div`
 `
 
 const TabTitlesColumnHeader = styled(ColumnHeader)`
-  padding-left: 20px;
+  padding-left: 16px;
   padding-right: 20px;
   background: transparent;
 `

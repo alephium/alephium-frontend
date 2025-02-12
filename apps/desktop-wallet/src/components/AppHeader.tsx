@@ -152,7 +152,7 @@ const GradientBackground = styled(motion.div)`
   left: 0;
   right: 0;
   height: 140px;
-  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background2).toHex()} 35%, transparent)`};
+  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background1).toHex()} 35%, transparent)`};
   pointer-events: none;
 `
 

@@ -16,6 +16,7 @@ export interface ButtonProps extends HTMLMotionProps<'button'> {
   short?: boolean
   tall?: boolean
   tiny?: boolean
+  squared?: boolean
   wide?: boolean
   justifyContent?: 'center' | 'flex-start'
   Icon?: LucideIcon
@@ -216,7 +217,7 @@ export default styled(Button)`
   width: ${({ circle, short, wide, tiny }) =>
     tiny ? '28px' : circle ? '34px' : short && !wide ? 'auto' : wide ? '100%' : '80%'};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
-  border-radius: 100px;
+  border-radius: ${({ squared }) => (squared ? 'var(--radius-medium)' : '100px')};
   font-weight: ${({ tall }) => (tall ? 'var(--fontWeight-semiBold)' : 'var(--fontWeight-medium)')};
   font-size: ${({ tall }) => (tall ? 14 : 13)}px;
   font-family: inherit;

@@ -17,6 +17,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 */
 import styled from 'styled-components'
 
+import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { sidebarExpandThresholdPx } from '@/style/globalStyles'
@@ -42,6 +43,7 @@ const WalletNameButton = () => {
         <Initials>{getInitials(activeWalletName)}</Initials>
         <Name>{activeWalletName}</Name>
       </WalletNameContainer>
+      <SelectMoreIcon />
     </WalletNameButtonStyled>
   )
 }
@@ -49,12 +51,13 @@ const WalletNameButton = () => {
 export default WalletNameButton
 
 const WalletNameButtonStyled = styled.div`
+  position: relative;
   border-radius: var(--radius-medium);
   display: flex;
   align-items: center;
   padding: 4px;
   border: 1px solid ${({ theme }) => theme.border.secondary};
-  margin-bottom: var(--spacing-2);
+  margin-bottom: var(--spacing-3);
   height: 36px;
 
   overflow: hidden;
@@ -63,6 +66,10 @@ const WalletNameButtonStyled = styled.div`
   &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.bg.primary};
+  }
+
+  @media (max-width: ${sidebarExpandThresholdPx}px) {
+    justify-content: center;
   }
 `
 

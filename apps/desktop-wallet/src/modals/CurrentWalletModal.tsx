@@ -26,7 +26,7 @@ const CurrentWalletModal = memo(({ id }: ModalBaseProp) => {
 
         {numberOfWallets === 1 ? <InfoBox text={activeWalletName} /> : <WalletSelect />}
 
-        <Button onClick={() => lockWallet('notifications')} wide Icon={Lock} justifyContent="center">
+        <Button onClick={() => lockWallet('notifications')} wide Icon={Lock} justifyContent="center" squared>
           {t('Lock wallet')}
         </Button>
       </NotificationsBox>
@@ -46,7 +46,7 @@ const NotificationsBox = styled(motion.div)`
   top: 80px;
   overflow: hidden;
 
-  padding: 20px 19px;
+  padding: 10px;
   width: 304px;
   max-height: 95vh;
 
