@@ -83,36 +83,33 @@ const TabBarStyled = styled.div`
 `
 
 const TabsContainer = styled.div`
+  flex: 1;
   display: flex;
-  gap: 10px;
+  gap: 20px;
+  border-bottom: 1px solid ${({ theme }) => theme.border.primary};
 `
 
 export const Tab = styled.div<{ isActive: boolean }>`
   display: flex;
   min-width: 50px;
   text-align: center;
-  justify-content: center;
-  align-items: center;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.contrast : theme.bg.secondary)};
   cursor: pointer;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: var(--fontWeight-semiBold);
-  border-radius: 100px;
-  padding: 0 20px;
-  height: 34px;
+  height: 38px;
+  box-shadow: 0 1px 0 ${({ theme, isActive }) => (isActive ? theme.bg.contrast : 'transparent')};
 
   ${({ isActive, theme }) =>
     isActive
       ? css`
-          color: ${theme.font.contrastPrimary};
+          color: ${theme.font.primary};
         `
       : css`
-          color: ${theme.font.secondary};
+          color: ${theme.font.tertiary};
         `}
 
   &:hover {
-    color: ${({ isActive, theme }) => (isActive ? theme.font.contrastPrimary : theme.font.primary)};
-    background-color: ${({ isActive, theme }) => (isActive ? theme.bg.contrast : theme.bg.secondary)};
+    color: ${({ isActive, theme }) => (isActive ? theme.font.primary : theme.font.primary)};
   }
   z-index: 1;
 `

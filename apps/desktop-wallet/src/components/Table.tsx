@@ -150,6 +150,7 @@ const TableHeaderRow = styled(TableRow)`
 
   ${TableCell} {
     min-height: 48px;
+    border: none;
   }
 `
 

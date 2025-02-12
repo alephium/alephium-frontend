@@ -24,8 +24,8 @@ export const lightTheme: DefaultTheme = {
     accent: colord('#002fff').darken(0.2).toHex()
   },
   border: {
-    primary: 'rgba(0, 0, 0, 0.1)',
-    secondary: 'rgba(0, 0, 0, 0.04)'
+    primary: 'rgba(0, 0, 0, 0.08)',
+    secondary: 'rgba(0, 0, 0, 0.05)'
   },
   shadow: {
     primary: '0 0 30px rgba(0, 0, 0, 0.02)',
@@ -65,7 +65,7 @@ export const darkTheme: DefaultTheme = {
     accent: colord('#4a69ff').lighten(0.1).toHex()
   },
   border: {
-    primary: 'rgba(255, 255, 255, 0.1)',
+    primary: 'rgba(255, 255, 255, 0.08)',
     secondary: 'rgba(255, 255, 255, 0.05)'
   },
   shadow: {
