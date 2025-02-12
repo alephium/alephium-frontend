@@ -188,12 +188,6 @@ export default styled(Button)`
       &:hover {
         color: ${hoverColor};
         background-color: ${hoverBgColor};
-
-        ${ButtonIcon} {
-          svg {
-            stroke: ${iconColor && !children ? iconColor : hoverColor};
-          }
-        }
       }
 
       &:active {

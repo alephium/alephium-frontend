@@ -41,9 +41,27 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
               <AlephiumName>alephium</AlephiumName>
             </BrandContainer>
             <SideNavigation>
-              <NavItem Icon={Home} label={t('Overview')} to="/wallet/overview" />
-              <NavItem Icon={Clock} label={t('Activity')} to="/wallet/activity" />
-              <NavItem Icon={Bookmark} label={t('Addresses')} to="/wallet/addresses" />
+              <NavItem
+                Icon={Home}
+                label={t('Overview')}
+                to="/wallet/overview"
+                colorDark="#9fccff"
+                colorLight="#53a3ff"
+              />
+              <NavItem
+                Icon={Clock}
+                label={t('Activity')}
+                to="/wallet/activity"
+                colorDark="#ffd19f"
+                colorLight="#ffa23e"
+              />
+              <NavItem
+                Icon={Bookmark}
+                label={t('Addresses')}
+                to="/wallet/addresses"
+                colorDark="#9fffb4"
+                colorLight="#16c83d"
+              />
             </SideNavigation>
           </>
         )}

@@ -8,11 +8,13 @@ import { sidebarExpandThresholdPx } from '@/style/globalStyles'
 interface NavItemProps {
   Icon: LucideIcon
   label: string
+  colorDark: string
+  colorLight: string
   to?: string
   onClick?: () => void
 }
 
-const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
+const NavItem = ({ Icon, label, to, colorDark, colorLight, onClick }: NavItemProps) => {
   const navigate = useNavigate()
   const location = useLocation()
   const theme = useTheme()
@@ -38,7 +40,7 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
         isActive={isActive}
         data-tooltip-id="sidenav"
         data-tooltip-content={label}
-        iconColor={theme.font.primary}
+        iconColor={isActive ? (theme.name === 'light' ? colorLight : colorDark) : theme.font.primary}
         wide
       >
         <LabelContainer>{label}</LabelContainer>
