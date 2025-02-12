@@ -131,6 +131,7 @@
     "react-confetti": "^6.0.1",
     "react-detect-click-outside": "^1.1.2",
     "react-dom": "^18.2.0",
+    "react-freeze": "^1.0.4",
     "react-hook-form": "^7.42.1",
     "react-i18next": "^13.2.1",
     "react-idle-timer": "^5.7.2",
