@@ -97,7 +97,7 @@ export const Tab = styled.div<{ isActive: boolean }>`
   background-color: ${({ isActive, theme }) => (isActive ? theme.bg.accent : theme.bg.tertiary)};
   cursor: pointer;
   font-size: 14px;
-  font-weight: var(--fontWeight-medium);
+  font-weight: var(--fontWeight-semiBold);
   border-radius: 100px;
   padding: 0 20px;
   height: calc(var(--inputHeight));

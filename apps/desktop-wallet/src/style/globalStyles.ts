@@ -39,12 +39,12 @@ export const GlobalStyle = createGlobalStyle`
 
     --fontWeight-normal: 400;
     --fontWeight-medium: 500;
-    --fontWeight-semiBold: 600;
-    --fontWeight-bold: 700;
+    --fontWeight-semiBold: 550;
+    --fontWeight-bold: 650;
 
     --inputHeight: 36px;
     --tableCellHeight: 42px;
-    --toggleWidth: 52px;
+    --toggleWidth: 46px;
   }
 
   html {

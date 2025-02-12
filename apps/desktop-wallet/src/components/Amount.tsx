@@ -226,7 +226,7 @@ const AmountStyled = styled.div<
   color: ${({ color }) => color};
   display: inline-flex;
   position: relative;
-  font-weight: var(--fontWeight-${({ semiBold }) => (semiBold ? 'semiBold' : 'medium')});
+  font-weight: var(--fontWeight-${({ semiBold }) => (semiBold ? 'bold' : 'medium')});
   white-space: pre;
   font-feature-settings: 'tnum' on;
   ${({ discreetMode }) =>

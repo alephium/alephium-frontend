@@ -46,7 +46,7 @@ const TitleContainer = styled.div`
 
 const PageTitle = styled.h1`
   font-size: 34px;
-  font-weight: var(--fontWeight-semiBold);
+  font-weight: var(--fontWeight-bold);
   margin-top: 0;
   margin-bottom: 20px;
 `
