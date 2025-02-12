@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import HiddenLabel from '@/components/HiddenLabel'
@@ -27,12 +26,10 @@ const FirstAddressColumnCell = ({ tx, refAddressHash }: TransactionRowSectionPro
           disableA11y
         />
       ) : (
-        <AddressBadgeStyled addressHash={refAddressHash} truncate disableA11y withBorders />
+        <AddressBadge addressHash={refAddressHash} truncate disableA11y withBorders />
       )}
     </AddressCell>
   )
 }
 
 export default FirstAddressColumnCell
-
-const AddressBadgeStyled = styled(AddressBadge)``
