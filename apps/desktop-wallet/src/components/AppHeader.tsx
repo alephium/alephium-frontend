@@ -99,9 +99,9 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
             data-tooltip-content={t('Discreet mode')}
             short
           />
-          <VerticalDivider />
           {isWalletUnlocked && (
             <>
+              <VerticalDivider />
               <Button
                 transparent
                 circle

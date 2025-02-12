@@ -17,24 +17,24 @@ export const fadeInOut = {
 }
 
 export const fadeInBottom = {
-  initial: { opacity: 0, y: 10 },
+  initial: { opacity: 0, y: 5 },
   animate: { opacity: 1, y: 0 },
   transition
 }
 
 export const fadeOutBottom = {
-  exit: { opacity: 0, y: 10 },
+  exit: { opacity: 0, y: 5 },
   transition
 }
 
 export const fadeInTop = {
-  initial: { opacity: 0, y: -10 },
+  initial: { opacity: 0, y: -5 },
   animate: { opacity: 1, y: 0 },
   transition
 }
 
 export const fadeOutTop = {
-  exit: { opacity: 0, y: -10 },
+  exit: { opacity: 0, y: -5 },
   transition
 }
 
@@ -66,7 +66,7 @@ export const fadeInOutFast = {
 }
 
 export const fadeInOutBottomFast = {
-  initial: { opacity: 0, y: 10 },
+  initial: { opacity: 0, y: 5 },
   animate: { opacity: 1, y: 1 },
   exit: { opacity: 0, y: 1 },
   ...fastTransition

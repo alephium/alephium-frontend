@@ -79,7 +79,6 @@ export default TabBar
 
 const TabBarStyled = styled.div`
   display: flex;
-  height: 38px;
   align-items: center;
 `
 
@@ -94,26 +93,26 @@ export const Tab = styled.div<{ isActive: boolean }>`
   text-align: center;
   justify-content: center;
   align-items: center;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.accent : theme.bg.tertiary)};
+  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.contrast : theme.bg.tertiary)};
   cursor: pointer;
   font-size: 14px;
   font-weight: var(--fontWeight-semiBold);
   border-radius: 100px;
   padding: 0 20px;
-  height: calc(var(--inputHeight));
+  height: 34px;
 
   ${({ isActive, theme }) =>
     isActive
       ? css`
-          color: ${theme.global.accent};
+          color: ${theme.font.contrastPrimary};
         `
       : css`
           color: ${theme.font.secondary};
         `}
 
   &:hover {
-    color: ${({ isActive, theme }) => (isActive ? theme.font.accent : theme.font.primary)};
-    background-color: ${({ isActive, theme }) => (isActive ? theme.bg.primary : theme.bg.secondary)};
+    color: ${({ isActive, theme }) => (isActive ? theme.font.contrastPrimary : theme.font.primary)};
+    background-color: ${({ isActive, theme }) => (isActive ? theme.bg.contrast : theme.bg.secondary)};
   }
   z-index: 1;
 `

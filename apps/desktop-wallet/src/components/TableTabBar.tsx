@@ -17,6 +17,4 @@ const TableTabBarStyled = styled(TabBar)`
 const TableTab = styled(Tab)`
   min-width: 60px;
   overflow: hidden;
-  font-size: 14px;
-  height: 36px;
 `

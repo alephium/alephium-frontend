@@ -64,7 +64,7 @@ const App = memo(() => {
             {!isWalletUnlocked && (
               <AnimatedBackground
                 anchorPosition="bottom"
-                opacity={theme === 'dark' ? 0.6 : 0.8}
+                opacity={theme === 'dark' ? 0.4 : 0.5}
                 verticalOffset={-100}
                 hiddenOverflow
               />

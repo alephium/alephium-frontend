@@ -64,13 +64,7 @@ const AddressesPage = () => {
 export default AddressesPage
 
 const TabContent = styled.div`
-  padding-top: 30px;
-  padding-bottom: 45px;
-  border-radius: 0;
-  border-left: none;
-  border-right: none;
-  border-bottom: none;
-  flex: 1;
+  padding-top: 10px;
 `
 
 const TabPanel = styled(UnlockedWalletPanel)``

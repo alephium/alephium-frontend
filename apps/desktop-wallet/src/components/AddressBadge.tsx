@@ -148,6 +148,7 @@ const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
   margin-right: 2px;
   white-space: nowrap;
   max-width: 125px;
+  min-width: 40px;
 
   ${({ truncate }) =>
     truncate &&
