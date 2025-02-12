@@ -101,7 +101,7 @@ const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps
 
   return (
     <RoundedCard>
-      <AnimatedBackground shade={dominantColor} isAnimated />
+      <AnimatedBackground shade={dominantColor} />
       <TokenDetailsModalBalanceSummary tokenId={tokenId} addressHash={addressHash} fontColor={fontColor} />
     </RoundedCard>
   )

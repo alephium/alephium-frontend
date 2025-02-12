@@ -1,11 +1,12 @@
 import { useIsFocused } from '@react-navigation/native'
 
-import AnimatedBackground, { AnimatedBackgroundProps } from '~/components/animatedBackground/AnimatedBackground'
+import AnimatedBackground from '~/components/animatedBackground/AnimatedBackground'
+import { AnimatedBackgroundProps } from '~/components/animatedBackground/animatedBackgroundTypes'
 
 const ScreenAnimatedBackground = (props: AnimatedBackgroundProps) => {
   const isFocused = useIsFocused()
 
-  return <AnimatedBackground {...props} isAnimated={isFocused} />
+  return <AnimatedBackground {...props} isAnimated={isFocused} usesGyroscope={isFocused} />
 }
 
 export default ScreenAnimatedBackground

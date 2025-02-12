@@ -154,7 +154,7 @@ const AddressAnimatedBackground = ({ addressHash }: Pick<AddressDetailsModalHead
 
   if (!address) return null
 
-  return <AnimatedBackground shade={address.settings.color} isAnimated />
+  return <AnimatedBackground shade={address.settings.color} />
 }
 
 const AddressDetailsModalHeaderStyled = styled.View`
