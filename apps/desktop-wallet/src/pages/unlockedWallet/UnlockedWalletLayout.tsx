@@ -13,7 +13,6 @@ import SideBar from '@/components/PageComponents/SideBar'
 import ScrollbarCustom from '@/components/Scrollbar'
 import WalletNameButton from '@/components/WalletNameButton'
 import { useAppSelector } from '@/hooks/redux'
-import { sidebarExpandThresholdPx } from '@/style/globalStyles'
 
 interface UnlockedWalletLayoutProps {
   title?: string
@@ -87,7 +86,6 @@ const MainContent = styled.main`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: ${({ theme }) => theme.bg.background1};
   position: relative;
 `
 
@@ -96,33 +94,4 @@ const SideNavigation = styled.nav`
   display: flex;
   flex-direction: column;
   gap: 5px;
-`
-
-const BrandContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--spacing-6);
-  gap: 10px;
-  margin-left: 7px;
-`
-
-const AlephiumLogoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  background-color: ${({ theme }) => theme.bg.contrast};
-  padding: 10px;
-  border-radius: 50%;
-`
-
-const AlephiumName = styled.div`
-  font-size: 18px;
-  font-weight: var(--fontWeight-semiBold);
-  display: none;
-
-  @media (min-width: ${sidebarExpandThresholdPx}px) {
-    display: block;
-  }
 `

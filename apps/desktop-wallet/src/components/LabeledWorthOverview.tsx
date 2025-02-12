@@ -44,7 +44,7 @@ const LabeledWorthOverviewStyled = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
-  margin-bottom: var(--spacing-4);
+  margin-bottom: var(--spacing-6);
 `
 
 const Surtitle = styled.div`
