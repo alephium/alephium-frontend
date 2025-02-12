@@ -86,6 +86,6 @@ const BarContainer = styled.div`
 `
 
 const Bar = styled.div`
-  background-color: ${({ theme }) => theme.global.accent};
+  background-color: ${({ theme }) => theme.bg.contrast};
   height: 100%;
 `

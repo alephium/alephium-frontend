@@ -93,7 +93,7 @@ export const Tab = styled.div<{ isActive: boolean }>`
   text-align: center;
   justify-content: center;
   align-items: center;
-  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.contrast : theme.bg.tertiary)};
+  background-color: ${({ isActive, theme }) => (isActive ? theme.bg.contrast : theme.bg.secondary)};
   cursor: pointer;
   font-size: 14px;
   font-weight: var(--fontWeight-semiBold);
