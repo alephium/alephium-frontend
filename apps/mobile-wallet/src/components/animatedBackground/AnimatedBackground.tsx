@@ -1,3 +1,8 @@
+/*
+This component is energy intensive and should be used consciously.
+Prefer using the ScreenAnimatedBackground when using it on a screen.
+*/
+
 import { Blur, Canvas, Circle, Group, interpolateColors } from '@shopify/react-native-skia'
 // 1) Import colord (and extend if needed)
 import { colord } from 'colord'
@@ -24,7 +29,7 @@ import styled, { useTheme } from 'styled-components/native'
 // extend([/* plugins */])
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 
-interface AnimatedBackgroundProps {
+export interface AnimatedBackgroundProps {
   height?: number
   width?: number
   scrollY?: SharedValue<number>
