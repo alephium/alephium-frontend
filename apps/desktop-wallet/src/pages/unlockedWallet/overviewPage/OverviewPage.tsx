@@ -34,7 +34,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
 }
 
 export default styled(OverviewPage)`
-  background-color: ${({ theme }) => theme.bg.background2};
+  background-color: ${({ theme }) => theme.bg.background1};
 `
 
 const WalletTokensTabsStyled = styled(WalletTokensTabs)`

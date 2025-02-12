@@ -21,7 +21,7 @@ export default styled(LockedWalletLayout)`
   display: flex;
   flex: 1;
   height: 100%;
-  background-color: ${({ theme }) => theme.bg.background2};
+  background-color: ${({ theme }) => theme.bg.background1};
 `
 
 const CenteredContainer = styled.div`

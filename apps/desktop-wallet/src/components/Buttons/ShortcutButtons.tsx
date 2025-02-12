@@ -162,8 +162,8 @@ const ShortcutButton = styled.button`
   flex-direction: column;
   justify-content: center;
   border-radius: var(--radius-huge);
-  background-color: ${({ theme }) => theme.bg.highlight};
-  border: 1px solid ${({ theme }) => theme.border.primary};
+  background-color: ${({ theme }) => theme.bg.tertiary};
+  border: 1px solid ${({ theme }) => theme.border.secondary};
   color: ${({ theme }) => theme.font.primary};
   gap: 5px;
   font-weight: var(--fontWeight-medium);
@@ -171,7 +171,7 @@ const ShortcutButton = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color: ${({ theme }) => theme.bg.primary};
+    background-color: ${({ theme }) => theme.bg.highlight};
   }
 `
 

@@ -63,7 +63,6 @@ export const inputDefaultStyle = (
   font-size: ${largeText ? '14px' : '13px'};
   text-align: left;
   font-family: inherit;
-  background-color: ${({ theme }) => theme.bg.highlight};
 
   transition: all 0.1s;
 
