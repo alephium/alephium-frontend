@@ -1,14 +1,20 @@
-import { TabItem } from '@/components/TabBar'
-import { TokensTabsBaseProps, TokensTabValue } from '@/features/assetsLists/types'
+import { useTranslation } from 'react-i18next'
 
-interface TokenTabsProps extends TokensTabsBaseProps {
-  ftsTabTitle: string
-  nftsTabTitle: string
+import { TabItem } from '@/components/tabs/TabBar'
+
+const useTokensTabs = <T extends string>(type: 'address' | 'wallet'): Array<TabItem<T>> => {
+  const { t } = useTranslation()
+
+  const tabs = [
+    { value: 'fts' as T, label: t(type === 'address' ? 'Address tokens' : 'Tokens') },
+    { value: 'nfts' as T, label: t(type === 'address' ? 'Address NFTs' : 'NFTs') }
+  ]
+
+  if (type === 'address') {
+    tabs.push({ value: 'activity' as T, label: t('Activity') })
+  }
+
+  return tabs
 }
-
-const useTokensTabs = ({ ftsTabTitle, nftsTabTitle }: TokenTabsProps): TabItem<TokensTabValue>[] => [
-  { value: 'fts', label: ftsTabTitle },
-  { value: 'nfts', label: nftsTabTitle }
-]
 
 export default useTokensTabs

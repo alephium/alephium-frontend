@@ -7,9 +7,9 @@ import LabeledWorthOverview from '@/components/LabeledWorthOverview'
 import withModal from '@/features/modals/withModal'
 import SideModal from '@/modals/SideModal'
 import { TokenDetailsModalProps } from '@/modals/tokenDetails/tokeDetailsTypes'
-import TokenAddressesList from '@/modals/tokenDetails/TokenAddressList'
 import TokenBalances from '@/modals/tokenDetails/TokenBalances'
 import TokenDetailsModalHeader from '@/modals/tokenDetails/TokenDetailsModalHeader'
+import { TokenDetailsModalTabs } from '@/modals/tokenDetails/TokenDetailsModalTabs'
 
 const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId }) => {
   const { t } = useTranslation()
@@ -22,7 +22,7 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId }) =>
       <Content>
         <AnimatedBackground anchorPosition="top" verticalOffset={-300} opacity={0.5} />
         <ShortcutButtonsGroupToken tokenId={tokenId} analyticsOrigin="token_details" />
-        <TokenAddressesList tokenId={tokenId} />
+        <TokenDetailsModalTabs tokenId={tokenId} />
       </Content>
     </SideModal>
   )

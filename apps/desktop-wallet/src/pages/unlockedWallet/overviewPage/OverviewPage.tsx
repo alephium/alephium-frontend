@@ -4,7 +4,7 @@ import styled, { useTheme } from 'styled-components'
 import AnimatedBackground from '@/components/AnimatedBackground'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import LabeledWorthOverview from '@/components/LabeledWorthOverview'
-import { WalletTokensTabs } from '@/features/assetsLists/AddressDetailsTabs'
+import OverviewTabs from '@/pages/unlockedWallet/overviewPage/OverviewTabs'
 import WalletWorth from '@/pages/unlockedWallet/overviewPage/WalletWorth'
 import { UnlockedWalletPanel } from '@/pages/unlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/unlockedWallet/UnlockedWalletPage'
@@ -30,7 +30,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
         </WorthOverviewPanel>
       </WorthUnlockedWalletPanel>
       <UnlockedWalletPanel bottom>
-        <WalletTokensTabsStyled />
+        <OverviewTabsStyled />
       </UnlockedWalletPanel>
     </UnlockedWalletPage>
   )
@@ -40,7 +40,7 @@ export default styled(OverviewPage)`
   background-color: ${({ theme }) => theme.bg.background1};
 `
 
-const WalletTokensTabsStyled = styled(WalletTokensTabs)`
+const OverviewTabsStyled = styled(OverviewTabs)`
   flex: 2;
 `
 
