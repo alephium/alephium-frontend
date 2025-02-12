@@ -357,6 +357,7 @@
   "Public keys": "Các khóa công khai",
   "Tap on an address to copy its public key to the clipboard.": "Chạm vào một địa chỉ ví để sao chép khóa công khai của nó vào clipboard.",
   "Public key copied!": "Khóa công khai đã được sao chép!",
+  "Token ID copied!": "Đã sao chép Token ID!",
   "Could not copy public key": "Không thể sao chép khóa công khai",
   "Timestamp": "Thời gian",
   "Status": "Trạng thái",
@@ -462,5 +463,6 @@
   "Choose your region to update formats of dates, time, and currencies.": "Chọn khu vực của bạn để cập nhật định dạng ngày, giờ và tiền tệ.",
   "More details on Alph.land": "Thông tin chi tiết trên Alph.land",
   "Worth": "Giá trị",
-  "Group": "Nhóm"
+  "Group": "Nhóm",
+  "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "Những token này trong ví của bạn không tuân thủ các tiêu chuẩn token trên Alephium. Không có thông tin nào về chúng được tìm thấy."
 }
