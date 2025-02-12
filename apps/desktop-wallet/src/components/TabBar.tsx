@@ -79,7 +79,7 @@ export default TabBar
 
 const TabBarStyled = styled.div`
   display: flex;
-  height: 50px;
+  height: 38px;
   align-items: center;
 `
 

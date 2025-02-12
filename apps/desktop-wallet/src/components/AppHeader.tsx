@@ -13,7 +13,6 @@ import { useScrollContext } from '@/contexts/scroll'
 import { openModal } from '@/features/modals/modalActions'
 import RefreshButton from '@/features/refreshData/RefreshButton'
 import { discreetModeToggled } from '@/features/settings/settingsActions'
-import SettingsButton from '@/features/settings/SettingsButton'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
@@ -118,13 +117,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
               <VerticalDivider />
             </>
           )}
-          {defaultAddress && !isPassphraseUsed && (
-            <>
-              <DefaultAddressSwitch />
-              <VerticalDivider />
-            </>
-          )}
-          <SettingsButton />
+          {defaultAddress && !isPassphraseUsed && <DefaultAddressSwitch />}
         </HeaderButtons>
       </AppHeaderContainer>
     </AppHeaderStyled>
@@ -148,7 +141,7 @@ const AppHeaderContainer = styled.div`
   align-items: center;
 
   height: ${appHeaderHeightPx}px;
-  padding: 0 var(--spacing-3) 0 40px;
+  padding: 0 var(--spacing-1) 0 40px;
   gap: var(--spacing-1);
   -webkit-app-region: drag;
 `

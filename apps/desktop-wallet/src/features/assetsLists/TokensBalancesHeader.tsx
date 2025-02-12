@@ -13,7 +13,7 @@ const TokensBalancesHeader = ({ showAllocation }: TokensBalancesHeaderProps) => 
     <TableHeader>
       <TableCell fixedWidth={50} />
       <TableCell>
-        <span>{t('Token')}</span>
+        <span>{t('Name')}</span>
       </TableCell>
       <TableCell>
         <span>{t('Price')}</span>

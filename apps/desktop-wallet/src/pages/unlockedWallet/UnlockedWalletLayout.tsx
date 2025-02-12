@@ -7,11 +7,11 @@ import { useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme } from 'styled-components'
 
 import { fadeInSlowly } from '@/animations'
-import AlephiumLogo from '@/components/AlephiumLogo'
 import AppHeader from '@/components/AppHeader'
 import NavItem from '@/components/NavItem'
 import SideBar from '@/components/PageComponents/SideBar'
 import ScrollbarCustom from '@/components/Scrollbar'
+import WalletNameButton from '@/components/WalletNameButton'
 import { useAppSelector } from '@/hooks/redux'
 import { sidebarExpandThresholdPx } from '@/style/globalStyles'
 
@@ -33,37 +33,12 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
     <motion.div {...fadeInSlowly} className={className}>
       <SideBar
         renderTopComponent={() => (
-          <>
-            <BrandContainer>
-              <AlephiumLogoContainer>
-                <AlephiumLogo contrasted />
-              </AlephiumLogoContainer>
-              <AlephiumName>alephium</AlephiumName>
-            </BrandContainer>
-            <SideNavigation>
-              <NavItem
-                Icon={Home}
-                label={t('Overview')}
-                to="/wallet/overview"
-                colorDark="#9fccff"
-                colorLight="#53a3ff"
-              />
-              <NavItem
-                Icon={Clock}
-                label={t('Activity')}
-                to="/wallet/activity"
-                colorDark="#ffd19f"
-                colorLight="#ffa23e"
-              />
-              <NavItem
-                Icon={Bookmark}
-                label={t('Addresses')}
-                to="/wallet/addresses"
-                colorDark="#9fffb4"
-                colorLight="#16c83d"
-              />
-            </SideNavigation>
-          </>
+          <SideNavigation>
+            <WalletNameButton />
+            <NavItem Icon={Home} label={t('Overview')} to="/wallet/overview" />
+            <NavItem Icon={Clock} label={t('Activity')} to="/wallet/activity" />
+            <NavItem Icon={Bookmark} label={t('Addresses')} to="/wallet/addresses" />
+          </SideNavigation>
         )}
       ></SideBar>
 

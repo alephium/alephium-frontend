@@ -45,7 +45,6 @@ const LabeledWorthOverviewStyled = styled.div`
   flex-direction: column;
   position: relative;
   margin-bottom: var(--spacing-4);
-  gap: var(--spacing-2);
 `
 
 const Surtitle = styled.div`
@@ -58,6 +57,5 @@ const Surtitle = styled.div`
 const Label = styled.span`
   white-space: nowrap;
   color: ${({ theme }) => theme.font.secondary};
-  font-size: 18px;
-  padding-left: 5px;
+  padding-left: 4px;
 `

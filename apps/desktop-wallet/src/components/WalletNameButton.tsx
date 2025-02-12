@@ -49,11 +49,13 @@ const WalletNameButton = () => {
 export default WalletNameButton
 
 const WalletNameButtonStyled = styled.div`
-  flex: 1;
   border-radius: var(--radius-medium);
   display: flex;
   align-items: center;
-  padding: 6px;
+  padding: 4px;
+  border: 1px solid ${({ theme }) => theme.border.secondary};
+  margin-bottom: var(--spacing-2);
+  height: 36px;
 
   overflow: hidden;
   z-index: 1;
@@ -67,7 +69,7 @@ const WalletNameButtonStyled = styled.div`
 const WalletNameContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
 `
 
 const Name = styled.span`
@@ -83,8 +85,9 @@ const Initials = styled.div`
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.font.contrastPrimary};
-  height: 30px;
-  width: 30px;
-  border-radius: 100px;
+  height: 26px;
+  width: 26px;
+  border-radius: var(--radius-tiny);
+  font-size: 12px;
   background-color: ${({ theme }) => theme.global.complementary};
 `

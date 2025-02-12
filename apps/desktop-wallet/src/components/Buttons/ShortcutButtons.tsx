@@ -167,7 +167,7 @@ const ShortcutButton = styled.button`
   color: ${({ theme }) => theme.font.primary};
   gap: 5px;
   font-weight: var(--fontWeight-medium);
-  padding: var(--spacing-2) var(--spacing-4);
+  padding: var(--spacing-2) var(--spacing-3);
   cursor: pointer;
 
   &:hover {
