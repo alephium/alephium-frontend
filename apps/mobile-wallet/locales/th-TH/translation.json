@@ -357,6 +357,7 @@
   "Public keys": "คีย์สาธารณะ",
   "Tap on an address to copy its public key to the clipboard.": "คลิกที่อยู่เพื่อคัดลอกคีย์สาธารณะไปยังคลิปบอร์ด",
   "Public key copied!": "คัดลอกคีย์สาธารณะแล้ว",
+  "Token ID copied!": "คัดลอกรหัสโทเค็นแล้ว",
   "Could not copy public key": "ไม่สามารถคัดลอกคีย์สาธารณะ (public key) ได้",
   "Timestamp": "ประทับเวลา",
   "Status": "สถานะ",
@@ -462,5 +463,6 @@
   "Choose your region to update formats of dates, time, and currencies.": "เลือกภูมิภาคเพื่ออัปเดตรูปแบบของวันที่ เวลา และสกุลเงิน",
   "More details on Alph.land": "รายละเอียดเพิ่มเติมที่ Alph.land",
   "Worth": "คุณค่า",
-  "Group": "กลุ่ม"
+  "Group": "กลุ่ม",
+  "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "โทเค็นเหล่านี้ในกระเป๋าเงินไม่เป็นไปตามมาตรฐานโทเค็น Alephium ไม่พบข้อมูลเกี่ยวกับโทเค็นเหล่านี้"
 }
