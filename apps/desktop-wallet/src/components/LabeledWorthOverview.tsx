@@ -55,6 +55,6 @@ const Surtitle = styled.div`
 
 const Label = styled.span`
   white-space: nowrap;
-  color: ${({ theme }) => theme.font.secondary};
-  padding-left: 4px;
+  color: ${({ theme }) => theme.font.tertiary};
+  padding-left: 3px;
 `

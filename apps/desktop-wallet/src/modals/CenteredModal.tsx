@@ -7,7 +7,7 @@ import styled, { css } from 'styled-components'
 import { fadeInOutBottomFast } from '@/animations'
 import Button from '@/components/Button'
 import { Section } from '@/components/PageComponents/PageContainers'
-import PanelTitle, { TitleContainer } from '@/components/PageComponents/PanelTitle'
+import { TitleContainer } from '@/components/PageComponents/PanelTitle'
 import Scrollbar from '@/components/Scrollbar'
 import Spinner from '@/components/Spinner'
 import Tooltip from '@/components/Tooltip'
@@ -71,12 +71,10 @@ const CenteredModal: FC<CenteredModalProps> = ({
                 <Icon />
               </IconContainer>
             )}
-            <PanelTitle size="small">
-              <span ref={elRef} tabIndex={0} role="heading">
-                {title}
-              </span>
-              {subtitle && <ModalSubtitle>{subtitle}</ModalSubtitle>}
-            </PanelTitle>
+            <ModalTitle ref={elRef} tabIndex={0} role="heading">
+              {title}
+            </ModalTitle>
+            {subtitle && <ModalSubtitle>{subtitle}</ModalSubtitle>}
             <CloseButton
               aria-label={t('Close')}
               circle
@@ -171,8 +169,8 @@ export const ModalHeader = styled.header<{ hasBackButton?: boolean }>`
   align-items: center;
   height: 50px;
   padding: 0 8px 0 ${({ hasBackButton }) => (hasBackButton ? '8px' : 'var(--spacing-3)')};
-  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-  background-color: ${({ theme }) => theme.bg.background2};
+  background: linear-gradient(to bottom, ${({ theme }) => theme.bg.background1} 50%, transparent 100%);
+  z-index: 2;
 `
 
 const ModalHeaderContent = styled(motion.div)`
@@ -187,6 +185,13 @@ const TitleRow = styled.div`
   align-items: center;
 `
 
+const ModalTitle = styled.span`
+  color: ${({ theme }) => theme.font.primary};
+  font-weight: var(--fontWeight-semiBold);
+  font-size: 15px;
+  flex: 1;
+`
+
 const CloseButton = styled(Button)`
   color: ${({ theme }) => theme.font.primary};
 `
@@ -199,7 +204,7 @@ export const ModalContent = styled.div<{ hasFooterButtons?: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 70px var(--spacing-4) var(--spacing-6) var(--spacing-4);
+  padding: 60px var(--spacing-4) var(--spacing-6) var(--spacing-4);
   width: 100%;
   overflow-y: auto;
 

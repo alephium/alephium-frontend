@@ -1,8 +1,9 @@
 import { colord, extend } from 'colord'
-import mixPlugin from 'colord/plugins/mix'
+import contrastPlugin from 'colord/plugins/a11y'
 import { useMemo } from 'react'
 import { useTheme } from 'styled-components'
-extend([mixPlugin])
+
+extend([contrastPlugin])
 
 export const labelColorPalette = ['#5fb772', '#ffa977', '#f8888a', '#a896ff', '#60b7ff', '#eb70a5']
 
@@ -33,13 +34,28 @@ export const useHashToColor = (hash?: string) => {
 
     let hue = hashToHue(hash)
 
-    // If the hue falls into a brownish range, shift it for a fresher look
+    // Shift brownish tones for a fresher look
     if (hue >= 20 && hue <= 50) hue = (hue + 30) % 360
 
-    const saturation = 70
-    const lightness = theme.name === 'dark' ? 75 : 65
+    // Avoid hues that are too close to red:
+    // If the hue is less than 20, add 20; if it's 340 or above, subtract 20
+    if (hue < 20) hue += 20
+    if (hue >= 340) hue -= 20
 
-    return colord({ h: hue, s: saturation, l: lightness }).toHex()
+    const saturation = theme.name === 'dark' ? 60 : 65
+    const baseLightness = theme.name === 'dark' ? 65 : 60
+    let color = colord({ h: hue, s: saturation, l: baseLightness })
+
+    // In light mode, adjust to ensure sufficient contrast and boost saturation slightly
+    if (theme.name === 'light') {
+      let i = 0
+      while (color.contrast('#fff') < 4.5 && i < 5) {
+        color = color.darken(0.03).saturate(0.05)
+        i++
+      }
+    }
+
+    return color.toHex()
   }, [hash, theme.name])
 }
 

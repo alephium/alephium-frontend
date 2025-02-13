@@ -37,6 +37,7 @@ const WalletSelect = () => {
 
   return (
     <Select
+      label={t('Current wallet')}
       controlledValue={selectedWalletOption}
       options={walletSelectOptions}
       onSelect={handleWalletSelect}
