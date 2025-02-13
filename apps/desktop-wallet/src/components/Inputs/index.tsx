@@ -57,6 +57,7 @@ export const inputDefaultStyle = (
       ? 'var(--radius-big)'
       : 'var(--radius-medium)'};
   border: 1px solid ${({ theme }) => theme.border.primary};
+  background-color: ${({ theme }) => theme.bg.tertiary};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 40px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
   font-weight: var(--fontWeight-medium);

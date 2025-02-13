@@ -169,8 +169,8 @@ export const ModalHeader = styled.header`
   left: 0;
   display: flex;
   align-items: center;
-  height: 54px;
-  padding: 0 6px 0 var(--spacing-4);
+  height: 50px;
+  padding: 0 5px 0 var(--spacing-3);
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   background-color: ${({ theme }) => theme.bg.background2};
 `

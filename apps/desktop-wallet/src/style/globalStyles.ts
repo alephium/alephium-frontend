@@ -7,7 +7,7 @@ import { platform } from '@/utils/platform.ts'
 export const appHeaderHeightPx = platform.isMac ? 40 : 102
 export const walletSidebarWidthPx = 69
 export const messagesLeftMarginPx = 70
-export const sidebarExpandThresholdPx = 1300
+export const sidebarExpandThresholdPx = 1200
 
 const electronWindowDimensions = `
   height: 100%;
@@ -74,7 +74,7 @@ export const GlobalStyle = createGlobalStyle`
 
   .rcs-inner-handle {
     color: white;
-    margin: 3px;
+    width: 5px;
     background-color: ${({ theme }) =>
       colord(theme.font.tertiary)
         .alpha(theme.name === 'light' ? 0.1 : 0.15)

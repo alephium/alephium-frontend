@@ -78,7 +78,7 @@ export default FTAllocationCell
 
 const BarContainer = styled.div`
   flex: 1;
-  height: 6px;
+  height: 4px;
   border-radius: 10px;
   overflow: hidden;
   display: flex;

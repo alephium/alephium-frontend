@@ -42,7 +42,7 @@ function createWindow() {
     icon: ICON_PATH,
     width: 1200,
     height: 800,
-    minWidth: 1000,
+    minWidth: 900,
     minHeight: 700,
     frame: isMac,
     titleBarStyle: 'hidden',

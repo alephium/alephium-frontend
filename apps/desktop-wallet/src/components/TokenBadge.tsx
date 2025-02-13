@@ -76,7 +76,6 @@ const TokenBadgeText = ({
         isLoading={isLoadingAmount}
         showPlusMinus={displaySign}
         highlight={displaySign}
-        semiBold
       />
     )
 
