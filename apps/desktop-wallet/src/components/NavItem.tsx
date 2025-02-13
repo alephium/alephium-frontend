@@ -53,6 +53,7 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   border-radius: var(--radius-medium);
   backdrop-filter: none;
   padding: 10px;
+  color: ${({ theme }) => theme.font.primary};
 
   @media (max-width: ${sidebarExpandThresholdPx}px) {
     gap: 0;

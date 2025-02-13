@@ -77,7 +77,7 @@ const Amount = ({
     ? props.color
     : highlight && value !== undefined
       ? value < 0
-        ? theme.font.highlight
+        ? theme.font.primary
         : theme.global.valid
       : 'inherit'
 

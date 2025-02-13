@@ -33,7 +33,8 @@ export const selectInitialAddress = createSelector(selectAllAddresses, (addresse
   addresses.find((address) => address.index === 0)
 )
 
-export const { selectAll: selectAllContacts } = contactsAdapter.getSelectors<RootState>((state) => state.contacts)
+export const { selectAll: selectAllContacts, selectById: selectContactByHash } =
+  contactsAdapter.getSelectors<RootState>((state) => state.contacts)
 
 export const makeSelectContactByAddress = () =>
   createSelector([selectAllContacts, (_, addressHash) => addressHash], (contacts, addressHash) =>

@@ -21,11 +21,16 @@ import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { sidebarExpandThresholdPx } from '@/style/globalStyles'
+import { useHashToColor } from '@/utils/colors'
 import { getInitials, onEnterOrSpace } from '@/utils/misc'
 
 const WalletNameButton = () => {
   const dispatch = useAppDispatch()
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
+  const activeWalletHash = useAppSelector((s) => s.activeWallet.id)
+  const walletColor = useHashToColor(activeWalletHash)
+  console.log(activeWalletHash)
+  console.log(walletColor)
 
   if (!activeWalletName) return null
 
@@ -40,7 +45,7 @@ const WalletNameButton = () => {
       tabIndex={0}
     >
       <WalletNameContainer>
-        <Initials>{getInitials(activeWalletName)}</Initials>
+        <Initials style={{ backgroundColor: walletColor }}>{getInitials(activeWalletName)}</Initials>
         <Name>{activeWalletName}</Name>
       </WalletNameContainer>
       <SelectMoreIconContainer>
@@ -98,7 +103,6 @@ const Initials = styled.div`
   width: 26px;
   border-radius: var(--radius-tiny);
   font-size: 12px;
-  background-color: ${({ theme }) => theme.global.complementary};
 `
 
 const SelectMoreIconContainer = styled.div`
