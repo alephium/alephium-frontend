@@ -49,6 +49,7 @@ export const lightTheme: DefaultTheme = {
     pale: '#f7d1b6',
     complementary: '#b07dcb',
     send: '#f75d57',
+    gray: 'rgb(145, 145, 145)',
     receive: '#61b15b'
   },
   gradient: {
@@ -106,7 +107,8 @@ export const darkTheme: DefaultTheme = {
     pale: '#f7d1b6',
     complementary: '#d488eb',
     send: '#fdb866',
-    receive: '#71c56b'
+    receive: '#71c56b',
+    gray: 'rgb(121, 121, 121)'
   },
   gradient: {
     yellow: '#FFCD82',

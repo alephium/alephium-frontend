@@ -50,6 +50,7 @@ declare module 'styled-components/native' {
       complementary: string
       send: string
       receive: string
+      gray: string
     }
     gradient: {
       yellow: string
