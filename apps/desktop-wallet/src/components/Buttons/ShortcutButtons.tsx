@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-import { useHashToColor } from '@/utils/colors'
+import { useDisplayColor, useHashToColor } from '@/utils/colors'
 
 interface ShortcutButtonBaseProps {
   analyticsOrigin: string
@@ -27,7 +27,7 @@ interface ShortcutButtonsGroupWalletProps extends ShortcutButtonBaseProps {
 export const ShortcutButtonsGroupWallet = ({ ...buttonProps }: ShortcutButtonsGroupWalletProps) => {
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
   const activeWalletHash = useAppSelector((s) => s.activeWallet.id)
-  const color = useHashToColor(activeWalletHash)
+  const color = useDisplayColor(useHashToColor(activeWalletHash))
 
   return (
     <ButtonsContainer>
@@ -44,13 +44,14 @@ interface ShortcutButtonsGroupAddressProps extends ShortcutButtonBaseProps {
 
 export const ShortcutButtonsGroupAddress = ({ addressHash, ...buttonProps }: ShortcutButtonsGroupAddressProps) => {
   const addressColor = useAppSelector((s) => selectAddressByHash(s, addressHash)?.color)
+  const color = useDisplayColor(addressColor, true)
 
   return (
     <ButtonsContainer>
-      <ReceiveButton addressHash={addressHash} {...buttonProps} color={addressColor} />
-      <SendButton addressHash={addressHash} {...buttonProps} color={addressColor} />
-      <BuyButton addressHash={addressHash} {...buttonProps} color={addressColor} />
-      <SettingsButton addressHash={addressHash} {...buttonProps} color={addressColor} />
+      <ReceiveButton addressHash={addressHash} {...buttonProps} color={color} />
+      <SendButton addressHash={addressHash} {...buttonProps} color={color} />
+      <BuyButton addressHash={addressHash} {...buttonProps} color={color} />
+      <SettingsButton addressHash={addressHash} {...buttonProps} color={color} />
     </ButtonsContainer>
   )
 }
@@ -177,7 +178,8 @@ const ShortcutButtonStyled = styled.button<{ color?: string }>`
   justify-content: center;
   border-radius: var(--radius-huge);
   background-color: ${({ theme, color }) => (color ? colord(color).alpha(0.1).toHex() : theme.bg.primary)};
-  color: ${({ theme, color }) => color ?? theme.font.primary};
+  color: ${({ theme, color }) =>
+    color ? (theme.name === 'light' ? colord(color).darken(0.1).toHex() : color) : theme.font.primary};
   gap: 5px;
   font-weight: var(--fontWeight-medium);
   padding: var(--spacing-2) var(--spacing-3);
