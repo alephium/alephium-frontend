@@ -35,7 +35,7 @@ const AddressesPage = () => {
         <TabBar items={tabs} onTabChange={(tab) => setCurrentTab(tab)} activeTab={currentTab} justifyTabs="left" />
       }
     >
-      <TabContent>
+      <div>
         <TabPanel>
           <TabAnimation
             animate={{
@@ -56,16 +56,12 @@ const AddressesPage = () => {
             <ContactsTabContent />
           </TabAnimation>
         </TabPanel>
-      </TabContent>
+      </div>
     </UnlockedWalletPage>
   )
 }
 
 export default AddressesPage
-
-const TabContent = styled.div`
-  padding-top: 10px;
-`
 
 const TabPanel = styled(UnlockedWalletPanel)``
 

@@ -43,7 +43,9 @@ const WalletNameButton = () => {
         <Initials>{getInitials(activeWalletName)}</Initials>
         <Name>{activeWalletName}</Name>
       </WalletNameContainer>
-      <SelectMoreIcon />
+      <SelectMoreIconContainer>
+        <SelectMoreIcon />
+      </SelectMoreIconContainer>
     </WalletNameButtonStyled>
   )
 }
@@ -97,4 +99,13 @@ const Initials = styled.div`
   border-radius: var(--radius-tiny);
   font-size: 12px;
   background-color: ${({ theme }) => theme.global.complementary};
+`
+
+const SelectMoreIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+
+  @media (max-width: ${sidebarExpandThresholdPx}px) {
+    display: none;
+  }
 `

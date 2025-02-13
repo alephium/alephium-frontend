@@ -98,6 +98,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
             data-tooltip-id="default"
             data-tooltip-content={t('Discreet mode')}
             short
+            squared
           />
           {isWalletUnlocked && (
             <>
@@ -113,6 +114,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
                 data-tooltip-id="default"
                 data-tooltip-content={t('Connect wallet to dApp')}
                 Icon={WalletConnectLogoStyled}
+                squared
               />
               <VerticalDivider />
             </>

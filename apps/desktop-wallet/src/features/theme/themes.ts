@@ -24,7 +24,7 @@ export const lightTheme: DefaultTheme = {
     accent: colord('#002fff').darken(0.2).toHex()
   },
   border: {
-    primary: 'rgba(0, 0, 0, 0.08)',
+    primary: 'rgba(0, 0, 0, 0.1)',
     secondary: 'rgba(0, 0, 0, 0.05)'
   },
   shadow: {

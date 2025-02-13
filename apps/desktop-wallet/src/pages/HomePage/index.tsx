@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useTheme } from 'styled-components'
 
 import { FloatingPanel } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
@@ -11,13 +10,12 @@ import LockedWalletLayout from '@/pages/LockedWalletLayout'
 
 const HomePage = () => {
   const { t } = useTranslation()
-  const theme = useTheme()
   const hasAtLeastOneWallet = useAppSelector((state) => state.global.wallets.length > 0)
 
   const [showNewWalletActions, setShowNewWalletActions] = useState(false)
 
   return (
-    <LockedWalletLayout style={{ backgroundColor: theme.bg.background2 }}>
+    <LockedWalletLayout>
       {showNewWalletActions ? (
         <FloatingPanel>
           <PanelTitle centerText>{t('New wallet')}</PanelTitle>

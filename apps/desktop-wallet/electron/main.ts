@@ -46,7 +46,7 @@ function createWindow() {
     minHeight: 700,
     frame: isMac,
     titleBarStyle: 'hidden',
-    trafficLightPosition: { x: 10, y: 10 },
+    trafficLightPosition: { x: 8, y: 8 },
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       spellcheck: true

@@ -112,7 +112,7 @@ const AddressBadgeStyled = styled.div<
     css`
       border: 1px solid ${({ theme }) => theme.border.primary};
       border-radius: 25px;
-      padding: 4px 10px;
+      padding: 2px 6px;
     `}
 
   ${({ truncate }) =>

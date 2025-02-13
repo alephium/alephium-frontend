@@ -74,6 +74,7 @@ export const GlobalStyle = createGlobalStyle`
 
   .rcs-inner-handle {
     color: white;
+    margin: 3px;
     background-color: ${({ theme }) =>
       colord(theme.font.tertiary)
         .alpha(theme.name === 'light' ? 0.1 : 0.15)

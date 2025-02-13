@@ -34,6 +34,7 @@ const RefreshBtn = memo(({ onClick, isLoading }: RefreshBtnProps) => {
       data-tooltip-id="default"
       data-tooltip-content={t('Refresh data')}
       isLoading={isLoading}
+      squared
     />
   )
 })

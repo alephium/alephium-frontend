@@ -17,5 +17,5 @@ const AddressWorth = memo(({ addressHash, ...props }: AddressWorthProps) => {
 export default AddressWorth
 
 const AddressWorthStyled = styled(WorthOverview)`
-  font-size: 38px;
+  font-size: 34px;
 `
