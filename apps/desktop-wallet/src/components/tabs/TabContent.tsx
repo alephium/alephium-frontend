@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ReactNode, useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { Freeze } from 'react-freeze'
 import styled from 'styled-components'
 
@@ -17,7 +17,7 @@ const TabContent = <T extends string>({ isActive, renderContent, isMouseOverTabH
   return (
     <TabAnimation animate={{ opacity: isActive ? 1 : 0, zIndex: isActive ? 1 : 0 }} {...fastTransition}>
       <Freeze freeze={isFrozen}>
-        <TabContainer isActive={isActive}>{renderContent()}</TabContainer>
+        <TabContainer isActive={isActive} renderContent={renderContent} />
       </Freeze>
     </TabAnimation>
   )
@@ -25,11 +25,9 @@ const TabContent = <T extends string>({ isActive, renderContent, isMouseOverTabH
 
 export default TabContent
 
-interface TabTabContainerProps<T extends string> extends Pick<TabContentProps<T>, 'isActive'> {
-  children: ReactNode
-}
+type TabTabContainerProps<T extends string> = Pick<TabContentProps<T>, 'isActive' | 'renderContent'>
 
-const TabContainer = <T extends string>({ children, isActive }: TabTabContainerProps<T>) => {
+const TabContainer = memo(<T extends string>({ renderContent, isActive }: TabTabContainerProps<T>) => {
   const [shouldRender, setShouldRender] = useState(isActive)
 
   useEffect(() => {
@@ -38,8 +36,8 @@ const TabContainer = <T extends string>({ children, isActive }: TabTabContainerP
 
   if (!shouldRender) return null
 
-  return <TabContentStyled>{children}</TabContentStyled>
-}
+  return <TabContentStyled>{renderContent()}</TabContentStyled>
+})
 
 const TabAnimation = styled(motion.div)`
   position: relative;
