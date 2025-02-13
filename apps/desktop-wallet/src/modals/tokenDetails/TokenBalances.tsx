@@ -32,19 +32,21 @@ export default TokenBalances
 
 const TokenBalanceWorth = ({ tokenId }: TokenDetailsModalProps) => {
   const { data: token } = useFetchToken(tokenId)
-  const { data: totalBalance, isLoading: isLoadingBalance } = useFetchWalletSingleTokenBalances({
+  const { data: tokenBalances, isLoading: isLoadingBalance } = useFetchWalletSingleTokenBalances({
     tokenId
   })
   const { isLoading: isLoadingTokenPrices } = useFetchTokenPrices()
 
   if (!token || !isFT(token)) return null
 
+  const totalBalance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+
   return (
     <FTWorthAmountStyled
       isLoading={isLoadingBalance || isLoadingTokenPrices}
       symbol={token.symbol}
       decimals={token.decimals}
-      totalBalance={BigInt(totalBalance?.totalBalance)}
+      totalBalance={totalBalance}
     />
   )
 }

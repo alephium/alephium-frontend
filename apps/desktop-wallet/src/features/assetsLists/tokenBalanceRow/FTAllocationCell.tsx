@@ -12,20 +12,22 @@ import { ListedFT } from '@/types/tokens'
 
 const FTAllocationCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
   const { data: token, isLoading: isLoadingToken } = useFetchToken(tokenId)
-  const { data: tokenBalance, isLoading: isLoadingBalance } = useFetchWalletSingleTokenBalances({
+  const { data: tokenBalances, isLoading: isLoadingBalances } = useFetchWalletSingleTokenBalances({
     tokenId
   })
   const { data: walletWorth, isLoading: isLoadingWalletWorth } = useFetchWalletWorth()
 
   if (!isListedFT(token)) return <TableCell fixedWidth={140} />
 
+  const tokenAmount = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+
   return (
     <TableCell fixedWidth={140}>
       <FTAllocationBar
         token={token}
-        tokenAmount={BigInt(tokenBalance?.totalBalance)}
+        tokenAmount={tokenAmount}
         walletWorth={walletWorth}
-        isLoading={isLoadingToken || isLoadingBalance || isLoadingWalletWorth}
+        isLoading={isLoadingToken || isLoadingBalances || isLoadingWalletWorth}
       />
     </TableCell>
   )

@@ -8,7 +8,7 @@ import { TableCell } from '@/components/Table'
 import { AddressTokenBalancesRowProps, TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
 
 export const FTAddressWorthCell = ({ tokenId, addressHash }: AddressTokenBalancesRowProps) => {
-  const { data: totalBalance, isLoading: isLoadingBalance } = useFetchAddressSingleTokenBalances({
+  const { data: tokenBalances, isLoading: isLoadingBalance } = useFetchAddressSingleTokenBalances({
     tokenId,
     addressHash
   })
@@ -17,40 +17,34 @@ export const FTAddressWorthCell = ({ tokenId, addressHash }: AddressTokenBalance
 
   if (!isFT(token)) return null
 
+  const totalBalance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+
   return (
     <TableCell align="right">
       {isLoadingBalance || isLoadingTokenPrices ? (
         <SkeletonLoader height="20px" width="30%" />
       ) : (
-        <FTWorthAmount
-          symbol={token.symbol}
-          decimals={token.decimals}
-          totalBalance={BigInt(totalBalance?.totalBalance)}
-        />
+        <FTWorthAmount symbol={token.symbol} decimals={token.decimals} totalBalance={totalBalance} />
       )}
     </TableCell>
   )
 }
 
 export const FTWalletWorthCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
-  const { data: totalBalance, isLoading: isLoadingBalance } = useFetchWalletSingleTokenBalances({
-    tokenId
-  })
+  const { data: tokenBalances, isLoading: isLoadingBalances } = useFetchWalletSingleTokenBalances({ tokenId })
   const { data: token } = useFetchToken(tokenId)
   const { isLoading: isLoadingTokenPrices } = useFetchTokenPrices()
 
   if (!isFT(token)) return null
 
+  const totalBalance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
+
   return (
     <TableCell align="right">
-      {isLoadingBalance || isLoadingTokenPrices ? (
+      {isLoadingBalances || isLoadingTokenPrices ? (
         <SkeletonLoader height="20px" width="30%" />
       ) : (
-        <FTWorthAmount
-          symbol={token.symbol}
-          decimals={token.decimals}
-          totalBalance={BigInt(totalBalance?.totalBalance)}
-        />
+        <FTWorthAmount symbol={token.symbol} decimals={token.decimals} totalBalance={totalBalance} />
       )}
     </TableCell>
   )

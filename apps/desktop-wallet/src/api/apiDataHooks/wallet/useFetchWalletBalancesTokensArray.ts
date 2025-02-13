@@ -32,7 +32,7 @@ const combineBalancesToArray = (results: UseQueryResult<AddressTokensBalancesQue
   }
 }
 
-const { useData, DataContextProvider } = createDataContext<AddressTokensBalancesQueryFnData, TokenApiBalances[]>({
+const { useData, DataContextProvider } = createDataContext<AddressTokensBalancesQueryFnData, Array<TokenApiBalances>>({
   useDataHook: useFetchWalletBalancesTokens,
   combineFn: combineBalancesToArray,
   defaultValue: []
