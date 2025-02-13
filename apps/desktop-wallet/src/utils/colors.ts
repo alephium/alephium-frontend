@@ -2,9 +2,21 @@ import { colord } from 'colord'
 import { useMemo } from 'react'
 import { useTheme } from 'styled-components'
 
-export const labelColorPalette = ['#3DD97E', '#FFC400', '#64C9E1', '#9257FF', '#0D92FF', '#EB3BBC', '#EF5959']
+export const labelColorPalette = ['#1fb741', '#FFC400', '#64C9E1', '#8871ff', '#0D92FF', '#eb70a5']
 
 export const getRandomLabelColor = () => labelColorPalette[Math.floor(Math.random() * labelColorPalette.length)]
+
+export const useDisplayPaletteColor = (inputColor: string) => {
+  const theme = useTheme()
+
+  return useMemo(() => {
+    const { h } = colord(inputColor).toHsl()
+    const saturation = 70
+    const lightness = theme.name === 'dark' ? 85 : 65
+
+    return colord({ h, s: saturation, l: lightness }).toHex()
+  }, [inputColor, theme.name])
+}
 
 const hashToHue = (hash: string) => {
   let hashNum = 0

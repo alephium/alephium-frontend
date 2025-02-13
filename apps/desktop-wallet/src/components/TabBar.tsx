@@ -85,7 +85,7 @@ const TabBarStyled = styled.div`
 const TabsContainer = styled.div`
   flex: 1;
   display: flex;
-  gap: 20px;
+  gap: 30px;
   border-bottom: 1px solid ${({ theme }) => theme.border.primary};
 `
 
