@@ -174,7 +174,7 @@ const InvisibleAppHeader = styled(motion.header)`
 `
 
 const Title = styled(motion.div)`
-  font-size: 16px;
+  font-size: 15px;
   font-weight: var(--fontWeight-semiBold);
   color: ${({ theme }) => theme.font.primary};
 `

@@ -62,12 +62,7 @@ const App = memo(() => {
         <AppContainer>
           <CenteredSection>
             {!isWalletUnlocked && (
-              <AnimatedBackground
-                anchorPosition="bottom"
-                opacity={theme === 'dark' ? 0.4 : 0.5}
-                verticalOffset={-100}
-                hiddenOverflow
-              />
+              <AnimatedBackground anchorPosition="bottom" opacity={1} verticalOffset={-50} hiddenOverflow />
             )}
             <Router />
           </CenteredSection>

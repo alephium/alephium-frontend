@@ -56,15 +56,15 @@ const CenteredModal: FC<CenteredModalProps> = ({
 
   const onClose = id ? () => dispatch(closeModal({ id })) : undefined
 
+  const hasBackButton = onBack && !disableBack
+
   return (
     <ModalContainer id={id} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
       <CenteredBox role="dialog" {...fadeInOutBottomFast} narrow={narrow} fullScreen={fullScreen}>
-        <ModalHeader>
+        <ModalHeader hasBackButton={hasBackButton}>
           <TitleRow>
-            {onBack && !disableBack && (
-              <BackButton aria-label={t('Back')} circle role="secondary" transparent onClick={onBack}>
-                <ChevronLeft />
-              </BackButton>
+            {hasBackButton && (
+              <BackButton aria-label={t('Back')} Icon={ChevronLeft} circle role="secondary" onClick={onBack} tiny />
             )}
             {Icon && (
               <IconContainer>
@@ -162,7 +162,7 @@ const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>
     `}
 `
 
-export const ModalHeader = styled.header`
+export const ModalHeader = styled.header<{ hasBackButton?: boolean }>`
   position: absolute;
   top: 0;
   right: 0;
@@ -170,7 +170,7 @@ export const ModalHeader = styled.header`
   display: flex;
   align-items: center;
   height: 50px;
-  padding: 0 5px 0 var(--spacing-3);
+  padding: 0 8px 0 ${({ hasBackButton }) => (hasBackButton ? '8px' : 'var(--spacing-3)')};
   border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
   background-color: ${({ theme }) => theme.bg.background2};
 `
@@ -189,12 +189,10 @@ const TitleRow = styled.div`
 
 const CloseButton = styled(Button)`
   color: ${({ theme }) => theme.font.primary};
-  margin-right: var(--spacing-1);
 `
 
 const BackButton = styled(Button)`
-  color: ${({ theme }) => theme.font.primary};
-  margin-left: var(--spacing-2);
+  margin-right: 10px;
 `
 
 export const ModalContent = styled.div<{ hasFooterButtons?: boolean }>`
