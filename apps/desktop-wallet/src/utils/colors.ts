@@ -50,7 +50,7 @@ export const useHashToColor = (hash?: string) => {
     if (theme.name === 'light') {
       let i = 0
       while (color.contrast('#fff') < 4.5 && i < 5) {
-        color = color.darken(0.03).saturate(0.05)
+        color = color.darken(0.05).saturate(0.08)
         i++
       }
     }

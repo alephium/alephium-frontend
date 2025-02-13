@@ -27,7 +27,7 @@ interface ShortcutButtonsGroupWalletProps extends ShortcutButtonBaseProps {
 export const ShortcutButtonsGroupWallet = ({ ...buttonProps }: ShortcutButtonsGroupWalletProps) => {
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
   const activeWalletHash = useAppSelector((s) => s.activeWallet.id)
-  const color = useDisplayColor(useHashToColor(activeWalletHash))
+  const color = useDisplayColor(useHashToColor(activeWalletHash), true)
 
   return (
     <ButtonsContainer>
