@@ -16,6 +16,7 @@ export interface NFTImageProps {
   nftId: NFT['id']
   size?: DimensionValue
   play?: boolean
+  sizeLimited?: boolean
 }
 
 enum NFTDataTypes {
@@ -30,7 +31,7 @@ type NFTDataType = keyof typeof NFTDataTypes
 const maxFileSizeInMB = 5
 const maxFileSizeInBytes = 1024 * 1024 * maxFileSizeInMB
 
-const NFTImage = memo(({ nftId, size = '100%', play }: NFTImageProps) => {
+const NFTImage = memo(({ nftId, size = '100%', play, sizeLimited = true }: NFTImageProps) => {
   const nft = useAppSelector((s) => selectNFTById(s, nftId))
   const theme = useTheme()
 
@@ -57,7 +58,7 @@ const NFTImage = memo(({ nftId, size = '100%', play }: NFTImageProps) => {
 
   if (!contentType) return <NFTPlaceholder size={size} />
 
-  if (isLargeFile) return <NFTPlaceholder size={size} Icon={FileImage} text={`>${maxFileSizeInMB}MB`} />
+  if (isLargeFile && sizeLimited) return <NFTPlaceholder size={size} Icon={FileImage} text={`>${maxFileSizeInMB}MB`} />
 
   // Loading many videos at once is too heavy on Android.
   // Using the image component for NFT lists on Android is sufficient.
