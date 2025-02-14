@@ -1,19 +1,18 @@
 import { ReactNode } from 'react'
 
 import { UseFetchWalletBalancesAlphArrayContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { UseFetchWalletBalancesAlphByAddressContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
+import { UseFetchWalletBalancesByAddressContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesByAddress'
 import { UseFetchWalletBalancesTokensArrayContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
-import { UseFetchWalletBalancesTokensByAddressContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensByAddress'
 import { UseFetchWalletTokensByTypeContextProvider } from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
+
 type ProviderProps = { children: ReactNode }
 type ProviderComponent = FC<ProviderProps>
 
 const providers: Array<ProviderComponent> = [
   UseFetchWalletBalancesTokensArrayContextProvider,
-  UseFetchWalletBalancesTokensByAddressContextProvider,
   UseFetchWalletBalancesAlphArrayContextProvider,
-  UseFetchWalletBalancesAlphByAddressContextProvider,
-  UseFetchWalletTokensByTypeContextProvider
+  UseFetchWalletTokensByTypeContextProvider,
+  UseFetchWalletBalancesByAddressContextProvider
 ]
 
 const ComposedProviders = providers.reduce<ProviderComponent>(

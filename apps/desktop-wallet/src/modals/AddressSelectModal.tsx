@@ -2,8 +2,7 @@ import { AddressHash } from '@alephium/shared'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
-import useFetchWalletBalancesTokensByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensByAddress'
+import useFetchWalletBalancesByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesByAddress'
 import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
 import useFetchWalletNftsSearchStrings from '@/api/apiDataHooks/wallet/useFetchWalletNftsSearchStrings'
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
@@ -72,8 +71,7 @@ const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
   const { data: sortedAddressHashes } = useFetchSortedAddressesHashes()
   const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false, includeHidden: false })
   const { data: nftsSearchStringsByNftId } = useFetchWalletNftsSearchStrings()
-  const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
-  const { data: addressesTokensBalances } = useFetchWalletBalancesTokensByAddress()
+  const { data: addressesBalances } = useFetchWalletBalancesByAddress()
 
   return useMemo(
     () =>
@@ -81,9 +79,7 @@ const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
         .filter((hash) => addressOptions.includes(hash))
         .map((hash) => {
           const address = addresses.find((address) => address.hash === hash)
-          const addressAlphBalances = addressesAlphBalances[hash]
-          const addressHasAlphBalances = addressAlphBalances?.totalBalance !== '0'
-          const addressTokensBalances = addressesTokensBalances[hash] ?? []
+          const addressTokensBalances = addressesBalances[hash] ?? []
           const addressTokensSearchableString = addressTokensBalances
             .map(({ id }) => {
               const listedFt = listedFts.find((token) => token.id === id)
@@ -105,16 +101,15 @@ const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
           return {
             value: hash,
             label: address?.label || hash,
-            searchString: `${hash.toLowerCase()} ${address?.label?.toLowerCase() ?? ''} ${
-              addressHasAlphBalances ? 'alephium alph' : ''
+            searchString: `${hash.toLowerCase()} ${
+              address?.label?.toLowerCase() ?? ''
             } ${addressTokensSearchableString}`
           }
         }),
     [
       addressOptions,
       addresses,
-      addressesAlphBalances,
-      addressesTokensBalances,
+      addressesBalances,
       listedFts,
       nftsSearchStringsByNftId,
       sortedAddressHashes,

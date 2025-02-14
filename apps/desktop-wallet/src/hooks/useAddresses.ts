@@ -4,8 +4,7 @@ import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import useFetchLatestTransactionOfEachAddress from '@/api/apiDataHooks/wallet/useFetchLatestTransactionOfEachAddress'
-import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
-import useFetchWalletBalancesTokensByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensByAddress'
+import useFetchWalletBalancesByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesByAddress'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
@@ -43,30 +42,25 @@ export const useFetchSortedAddressesHashesWithLatestTx = (props?: SkipProp) => {
   }
 }
 
-export const useFetchAddressesHashesWithBalance = (tokenId?: TokenId) => {
+export const useFetchAddressesHashesWithBalance = (tokenId: TokenId = ALPH.id) => {
   const isNetworkOffline = useAppSelector(selectCurrentlyOnlineNetworkId) === undefined
   const allAddressHashes = useUnsortedAddressesHashes()
-  const { data: addressesAlphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphByAddress()
-  const { data: addressesTokenBalances, isLoading: isLoadingTokenBalances } = useFetchWalletBalancesTokensByAddress()
+  const { data: addressesBalances, isLoading: isLoadingAddressesBalances } = useFetchWalletBalancesByAddress()
 
   const filteredAddressHashes = useMemo(
     () =>
       isNetworkOffline
         ? allAddressHashes
         : allAddressHashes.filter((addressHash) => {
-            if (!tokenId || tokenId === ALPH.id) {
-              return addressesAlphBalances[addressHash] && addressesAlphBalances[addressHash].totalBalance !== '0'
-            }
-
-            const addressTokenBalance = addressesTokenBalances[addressHash]?.find(({ id }) => id === tokenId)
+            const addressTokenBalance = addressesBalances[addressHash]?.find(({ id }) => id === tokenId)
 
             return addressTokenBalance && addressTokenBalance.totalBalance !== '0'
           }),
-    [addressesAlphBalances, addressesTokenBalances, allAddressHashes, isNetworkOffline, tokenId]
+    [addressesBalances, allAddressHashes, isNetworkOffline, tokenId]
   )
 
   return {
     data: filteredAddressHashes,
-    isLoading: isLoadingAlphBalances || isLoadingTokenBalances
+    isLoading: isLoadingAddressesBalances
   }
 }
