@@ -65,9 +65,9 @@ contextBridge.exposeInMainWorld('electron', {
     openOnRampServiceWindow: ({ url, targetLocation }: { url: string; targetLocation: string }) =>
       ipcRenderer.invoke('app:openOnRampServiceWindow', { url, targetLocation }),
     onOnRampTargetLocationReached: (callback: () => void) => {
-      ipcRenderer.on('target-location-reached', callback)
-
-      return () => ipcRenderer.removeListener('target-location-reached', callback)
+      const sanitizedCallback = (_event: IpcRendererEvent) => callback()
+      ipcRenderer.on('target-location-reached', sanitizedCallback)
+      return () => ipcRenderer.removeListener('target-location-reached', sanitizedCallback)
     },
     setProxySettings: (proxySettings: ProxySettings) => ipcRenderer.invoke('app:setProxySettings', proxySettings),
     restart: () => ipcRenderer.invoke('app:restart')

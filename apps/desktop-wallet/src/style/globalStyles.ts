@@ -72,12 +72,10 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
+  // Custom scrollbars theme
   .rcs-inner-handle {
     color: white;
-    background-color: ${({ theme }) =>
-      colord(theme.font.tertiary)
-        .alpha(theme.name === 'light' ? 0.1 : 0.15)
-        .toHex()} !important;
+    background-color: ${({ theme }) => colord(theme.font.primary).alpha(0.1).toHex()} !important;
   }
 `
 
