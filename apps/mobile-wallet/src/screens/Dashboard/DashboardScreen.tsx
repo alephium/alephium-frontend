@@ -8,7 +8,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import AddressesTokensList from '~/components/AddressesTokensList'
 import Amount from '~/components/Amount'
-import AnimatedBackground from '~/components/AnimatedBackground'
+import ScreenAnimatedBackground from '~/components/animatedBackground/ScreenAnimatedBackground'
 import AppText from '~/components/AppText'
 import BalanceSummary from '~/components/BalanceSummary'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
@@ -92,7 +92,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
     >
       <CardContainer style={{ marginTop: insets.top }}>
         <RoundedCardStyled>
-          <AnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
+          <ScreenAnimatedBackground height={400} scrollY={screenScrollY} isAnimated />
           <DashboardSecondaryButtons />
           <BalanceSummary />
         </RoundedCardStyled>

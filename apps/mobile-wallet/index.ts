@@ -4,6 +4,9 @@ import './setupErrorHandling'
 
 import * as Sentry from '@sentry/react-native'
 import { registerRootComponent } from 'expo'
+import { enableFreeze } from 'react-native-screens'
+
+enableFreeze(true)
 
 import App from '~/App'
 

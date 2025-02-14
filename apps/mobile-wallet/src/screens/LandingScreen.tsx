@@ -6,7 +6,7 @@ import { StatusBar } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
-import AnimatedBackground from '~/components/AnimatedBackground'
+import ScreenAnimatedBackground from '~/components/animatedBackground/ScreenAnimatedBackground'
 import AppText from '~/components/AppText'
 import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
@@ -112,7 +112,7 @@ const WelcomeCard = () => {
 
   return (
     <WelcomeCardStyled>
-      <AnimatedBackground isAnimated isFullScreen />
+      <ScreenAnimatedBackground isAnimated isFullScreen />
       <AlephiumLogo color={theme.font.primary} style={{ width: '20%', height: 200, flex: 0 }} />
       <Title size={32} semiBold>
         {t('Welcome to Alephium')}

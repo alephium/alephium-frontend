@@ -5,7 +5,7 @@ import { Pressable } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AddressGroupBadge from '~/components/AddressGroupBadge'
-import AnimatedBackground from '~/components/AnimatedBackground'
+import AnimatedBackground from '~/components/animatedBackground/AnimatedBackground'
 import AppText from '~/components/AppText'
 import Badge from '~/components/Badge'
 import BalanceSummary from '~/components/BalanceSummary'
@@ -154,7 +154,7 @@ const AddressAnimatedBackground = ({ addressHash }: Pick<AddressDetailsModalHead
 
   if (!address) return null
 
-  return <AnimatedBackground shade={address.settings.color} isAnimated />
+  return <AnimatedBackground shade={address.settings.color} />
 }
 
 const AddressDetailsModalHeaderStyled = styled.View`
