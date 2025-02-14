@@ -24,7 +24,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
     <UnlockedWalletPage className={className}>
       <AnimatedBackground
         anchorPosition="top"
-        opacity={theme.name === 'dark' ? 0.4 : 0.5}
+        opacity={theme.name === 'dark' ? 0.3 : 0.4}
         verticalOffset={-100}
         horizontalOffset={-250}
         shade={walletColor}

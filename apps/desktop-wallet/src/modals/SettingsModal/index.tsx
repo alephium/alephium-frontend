@@ -145,7 +145,7 @@ const CenteredBox = styled(motion.div)`
   overflow: hidden;
 
   width: 85vw;
-  max-width: 900px;
+  max-width: 800px;
   height: 85vh;
   margin: auto;
 

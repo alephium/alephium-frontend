@@ -1,7 +1,6 @@
 import { AddressHash } from '@alephium/shared'
 import styled from 'styled-components'
 
-import DotIcon from '@/components/DotIcon'
 import { useAppSelector } from '@/hooks/redux'
 import { ReactComponent as IndicatorLogo } from '@/images/main_address_badge.svg'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
@@ -35,7 +34,7 @@ const AddressColorIndicator = ({
           <IndicatorLogo />
         </DefaultAddressIndicator>
       ) : (
-        <DotIcon size={size} color={color} />
+        <Indicator size={size} color={color} />
       )}
     </div>
   )
@@ -55,4 +54,11 @@ const DefaultAddressIndicator = styled.div<{ color: string; size: number }>`
   svg * {
     fill: ${({ color }) => color} !important;
   }
+`
+
+const Indicator = styled.div<{ size: number; color: string }>`
+  height: ${({ size }) => size}px;
+  width: ${({ size }) => size}px;
+  background-color: ${({ color }) => color};
+  border-radius: ${({ size }) => size / 3}px;
 `

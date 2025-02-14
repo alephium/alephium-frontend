@@ -7,7 +7,7 @@ export const lightTheme: DefaultTheme = {
     primary: 'rgba(0, 0, 0, 0.04)',
     secondary: 'rgba(0, 0, 0, 0.03)',
     tertiary: 'rgba(0, 0, 0, 0.015)',
-    contrast: '#000',
+    contrast: '#080808',
     background1: '#fff',
     background2: '#fcfcfc',
     hover: 'rgba(0, 0, 0, 0.01)',
@@ -28,8 +28,8 @@ export const lightTheme: DefaultTheme = {
     secondary: 'rgba(0, 0, 0, 0.05)'
   },
   shadow: {
-    primary: '0 0 30px rgba(0, 0, 0, 0.02)',
-    secondary: '0 8px 20px rgba(0, 0, 0, 0.1)',
+    primary: '0 8px 15px rgba(0, 0, 0, 0.2)',
+    secondary: '0 5px 10px rgba(0, 0, 0, 0.2)',
     tertiary: '0 0 80px rgba(0, 0, 0, 0.2)'
   },
   global: {
@@ -48,15 +48,15 @@ export const darkTheme: DefaultTheme = {
     primary: 'rgba(255, 255, 255, 0.03)',
     secondary: 'rgba(255, 255, 255, 0.02)',
     tertiary: 'rgba(255, 255, 255, 0.01)',
-    contrast: 'rgba(255, 255, 255, 1)',
-    background1: '#111112',
-    background2: '#0e0e0f',
+    contrast: '#f2f2f2',
+    background1: '#0c0c0d',
+    background2: '#0a0a0a',
     hover: 'rgba(255, 255, 255, 0.015)',
     highlight: 'rgba(255, 255, 255, 0.06)',
     accent: colord('#4a69ff').alpha(0.1).toHex()
   },
   font: {
-    primary: 'rgba(255, 255, 255, 1)',
+    primary: 'rgba(255, 255, 255, 0.9)',
     secondary: 'rgba(255, 255, 255, 0.8)',
     tertiary: 'rgba(255, 255, 255, 0.4)',
     contrastPrimary: 'rgba(0, 0, 0, 1)',
@@ -69,7 +69,7 @@ export const darkTheme: DefaultTheme = {
     secondary: 'rgba(255, 255, 255, 0.04)'
   },
   shadow: {
-    primary: 'none',
+    primary: '0 8px 15px rgba(0, 0, 0, 1)',
     secondary: '0 10px 20px rgba(0, 0, 0, 0.2)',
     tertiary: '0 0 80px 30px rgb(0, 0, 0)'
   },

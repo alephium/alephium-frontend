@@ -88,7 +88,7 @@ const Button = ({
 }
 
 export default styled(Button)`
-  ${({ theme, role = 'primary', variant = 'default', transparent, iconColor, children }) => {
+  ${({ theme, role = 'primary', variant = 'default', transparent, tall, iconColor, children }) => {
     const bgColor = transparent
       ? 'transparent'
       : {
@@ -184,6 +184,7 @@ export default styled(Button)`
     return css`
       background-color: ${bgColor};
       color: ${fontColor};
+      box-shadow: ${role === 'primary' ? (tall ? theme.shadow.primary : theme.shadow.secondary) : 'none'};
       position: relative;
 
       &:hover {
