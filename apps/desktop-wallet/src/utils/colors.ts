@@ -8,7 +8,7 @@ extend([contrastPlugin])
 type ColorType = 'pastel' | 'vivid'
 
 export const labelColorPalette = ['#88b739', '#ff9456', '#f85b5e', '#a896ff', '#60b7ff', '#eb70a5']
-export const walletColorPalette = ['#ed6135', '#ad3cff', '#5832ff', '#ff903f', '#1eff52']
+export const walletColorPalette = ['#f33651', '#ad3cff', '#5832ff', '#ff903f', '#1eff52']
 
 export const getRandomLabelColor = () => labelColorPalette[Math.floor(Math.random() * labelColorPalette.length)]
 
@@ -20,7 +20,7 @@ export const useDisplayColor = (inputColor?: string, palletteToMatch?: string[],
 
     const color = palletteToMatch ? getClosestColorInPalette(inputColor, palletteToMatch) : inputColor
 
-    const { h, s, l } = colord(color).toHsl()
+    const { h, l } = colord(color).toHsl()
 
     // For light theme, allow pastel and vivid colors
     if (theme.name === 'light') {

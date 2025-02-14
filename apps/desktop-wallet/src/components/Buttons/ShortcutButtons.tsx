@@ -186,7 +186,7 @@ const ShortcutButtonStyled = styled.button<{ color?: string }>`
   cursor: pointer;
 
   &:hover {
-    background-color: ${({ theme }) => theme.bg.highlight};
+    background-color: ${({ color, theme }) => (color ? colord(color).alpha(0.2).toHex() : theme.bg.highlight)};
   }
 `
 

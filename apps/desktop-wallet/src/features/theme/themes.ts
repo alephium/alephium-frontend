@@ -12,7 +12,7 @@ export const lightTheme: DefaultTheme = {
     background2: '#fcfcfc',
     hover: 'rgba(0, 0, 0, 0.01)',
     highlight: '#f4f4f4',
-    accent: colord('#002fff').alpha(0.05).toHex()
+    accent: colord('#002fff').alpha(0.04).toHex()
   },
   font: {
     primary: '#080808',
@@ -53,7 +53,7 @@ export const darkTheme: DefaultTheme = {
     background2: '#0a0a0a',
     hover: 'rgba(255, 255, 255, 0.015)',
     highlight: 'rgba(255, 255, 255, 0.06)',
-    accent: colord('#4a69ff').alpha(0.1).toHex()
+    accent: colord('#4a69ff').alpha(0.06).toHex()
   },
   font: {
     primary: 'rgba(255, 255, 255, 0.9)',

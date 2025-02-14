@@ -17,8 +17,6 @@ export default styled(CheckMark)`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.global.accent};
-  color: var(--color-white);
-  border-radius: 40px;
-  padding: 3px;
+  padding: 2px;
+  color: ${({ theme }) => theme.global.accent};
 `
