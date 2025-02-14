@@ -8,11 +8,11 @@ import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWallet
 import EmptyPlaceholder from '@/components/EmptyPlaceholder'
 import NFTCard from '@/components/NFTCard'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { AddressDetailsTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
+import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 import { deviceBreakPoints } from '@/style/globalStyles'
 import { TokenId } from '@/types/tokens'
 
-export const AddressNFTsGrid = ({ addressHash, ...props }: AddressDetailsTabsProps) => {
+export const AddressNFTsGrid = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
   const {
     data: { nftIds },
@@ -21,7 +21,6 @@ export const AddressNFTsGrid = ({ addressHash, ...props }: AddressDetailsTabsPro
 
   return (
     <NFTsGrid
-      {...props}
       columns={4}
       nftIds={nftIds}
       isLoading={isLoading}
@@ -30,7 +29,7 @@ export const AddressNFTsGrid = ({ addressHash, ...props }: AddressDetailsTabsPro
   )
 }
 
-export const WalletNFTsGrid = (props: TokensTabsBaseProps) => {
+export const WalletNFTsGrid = () => {
   const { t } = useTranslation()
   const {
     data: { nftIds },
@@ -39,7 +38,6 @@ export const WalletNFTsGrid = (props: TokensTabsBaseProps) => {
 
   return (
     <NFTsGrid
-      {...props}
       columns={6}
       nftIds={nftIds}
       isLoading={isLoading}
@@ -48,15 +46,15 @@ export const WalletNFTsGrid = (props: TokensTabsBaseProps) => {
   )
 }
 
-interface NFTsGridProps extends TokensTabsBaseProps {
+interface NFTsGridProps {
   columns: number
   nftIds: TokenId[]
   isLoading: boolean
   placeholderText: string
 }
 
-const NFTsGrid = ({ className, columns, nftIds, isLoading, placeholderText }: NFTsGridProps) => (
-  <motion.div {...fadeIn} className={className}>
+const NFTsGrid = ({ columns, nftIds, isLoading, placeholderText }: NFTsGridProps) => (
+  <motion.div {...fadeIn}>
     {!isLoading && nftIds.length === 0 && <EmptyPlaceholder emoji="🖼️">{placeholderText}</EmptyPlaceholder>}
 
     {isLoading ||

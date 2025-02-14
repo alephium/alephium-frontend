@@ -16,25 +16,25 @@ import {
   WalletFTBalancesRow,
   WalletNSTBalancesRow
 } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
-import { AddressDetailsTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
+import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppSelector } from '@/hooks/redux'
 
-export const HiddenWalletTokensBalancesListSection = (props: TokensTabsBaseProps) => {
+export const HiddenWalletTokensBalancesListSection = () => {
   const hiddenTokenIds = useAppSelector((s) => s.hiddenTokens.hiddenTokensIds)
 
   return (
     <HiddenTokensBalancesListSection count={hiddenTokenIds.length}>
-      <HiddenWalletTokensBalancesList {...props} />
+      <HiddenWalletTokensBalancesList />
     </HiddenTokensBalancesListSection>
   )
 }
 
-export const HiddenAddressTokensBalancesListSection = (props: AddressDetailsTabsProps) => {
-  const { data: hiddenTokenIds } = useFetchAddressHiddenTokens({ addressHash: props.addressHash })
+export const HiddenAddressTokensBalancesListSection = ({ addressHash }: AddressModalBaseProp) => {
+  const { data: hiddenTokenIds } = useFetchAddressHiddenTokens({ addressHash })
 
   return (
     <HiddenTokensBalancesListSection count={hiddenTokenIds?.length ?? 0}>
-      <HiddenAddressTokensBalancesList {...props} />
+      <HiddenAddressTokensBalancesList addressHash={addressHash} />
     </HiddenTokensBalancesListSection>
   )
 }
@@ -68,11 +68,11 @@ const HiddenTokensBalancesListSection = ({ count, children }: HiddenTokensBalanc
   )
 }
 
-const HiddenWalletTokensBalancesList = (props: TokensTabsBaseProps) => {
+const HiddenWalletTokensBalancesList = () => {
   const hiddenTokenIds = useAppSelector((s) => s.hiddenTokens.hiddenTokensIds)
 
   return (
-    <TableStyled {...props}>
+    <TableStyled>
       {hiddenTokenIds.map((tokenId) => (
         <HiddenWalletTokenBalancesRow tokenId={tokenId} key={tokenId} />
       ))}
@@ -80,15 +80,15 @@ const HiddenWalletTokensBalancesList = (props: TokensTabsBaseProps) => {
   )
 }
 
-const HiddenAddressTokensBalancesList = (props: AddressDetailsTabsProps) => {
-  const { data: hiddenTokenIds } = useFetchAddressHiddenTokens({ addressHash: props.addressHash })
+const HiddenAddressTokensBalancesList = ({ addressHash }: AddressModalBaseProp) => {
+  const { data: hiddenTokenIds } = useFetchAddressHiddenTokens({ addressHash })
 
   if (!hiddenTokenIds || hiddenTokenIds.length === 0) return null
 
   return (
-    <TableStyled {...props}>
+    <TableStyled>
       {hiddenTokenIds.map((tokenId) => (
-        <HiddenAddressTokenBalancesRow addressHash={props.addressHash} tokenId={tokenId} key={tokenId} />
+        <HiddenAddressTokenBalancesRow addressHash={addressHash} tokenId={tokenId} key={tokenId} />
       ))}
     </TableStyled>
   )

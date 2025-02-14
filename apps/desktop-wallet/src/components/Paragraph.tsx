@@ -8,7 +8,7 @@ interface ParagraphProps {
   children?: ReactNode
 }
 
-const Paragraph: FC = ({ centered, secondary, children, className }: ParagraphProps) => (
+const Paragraph = ({ centered, secondary, children, className }: ParagraphProps) => (
   <StyledParagraph className={className} centered={centered} secondary={secondary}>
     {children}
   </StyledParagraph>

@@ -9,9 +9,9 @@ import { useFilterAddressesByText } from '@/features/addressFiltering/addressFil
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
+import AddressesPageTabContent from '@/pages/unlockedWallet/addressesPage/AddressesPageTabContent'
 import AddressListRow from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressListRow'
 import AdvancedOperationsButton from '@/pages/unlockedWallet/addressesPage/AdvancedOperationsButton'
-import TabContent from '@/pages/unlockedWallet/addressesPage/TabContent'
 
 const AddressesTabContent = memo(() => {
   const { t } = useTranslation()
@@ -28,7 +28,7 @@ const AddressesTabContent = memo(() => {
     dispatch(openModal({ name: 'NewAddressModal', props: { title: t('New address'), singleAddress: true } }))
 
   return (
-    <TabContent
+    <AddressesPageTabContent
       searchPlaceholder={t('Search for label, a hash or an asset...')}
       onSearch={setSearchInput}
       buttonText={`+ ${t('New address')}`}
@@ -50,7 +50,7 @@ const AddressesTabContent = memo(() => {
           <Placeholder>{t('No addresses match the search criteria.')}</Placeholder>
         </TableGridContent>
       </TableGrid>
-    </TabContent>
+    </AddressesPageTabContent>
   )
 })
 

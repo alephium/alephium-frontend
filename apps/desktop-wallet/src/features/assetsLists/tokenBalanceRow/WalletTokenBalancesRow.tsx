@@ -2,7 +2,7 @@ import { TableCell } from '@/components/Table'
 import FTAllocationCell from '@/features/assetsLists/tokenBalanceRow/FTAllocationCell'
 import { FTWalletAmountCell } from '@/features/assetsLists/tokenBalanceRow/FTAmountCells'
 import FTPriceCell from '@/features/assetsLists/tokenBalanceRow/FTPriceCell'
-import FTWorthCell from '@/features/assetsLists/tokenBalanceRow/FTWorthCell'
+import { FTWalletWorthCell } from '@/features/assetsLists/tokenBalanceRow/FTWorthCell'
 import { FTNameCell, NSTNameCell } from '@/features/assetsLists/tokenBalanceRow/NameCells'
 import TokenBalancesRow from '@/features/assetsLists/tokenBalanceRow/TokenBalancesRow'
 import TokenLogo from '@/features/assetsLists/tokenBalanceRow/TokenLogo'
@@ -17,7 +17,7 @@ export const WalletFTBalancesRow = ({ tokenId }: TokenBalancesRowBaseProps) => (
     <FTPriceCell tokenId={tokenId} />
     <FTAllocationCell tokenId={tokenId} />
     <FTWalletAmountCell tokenId={tokenId} />
-    <FTWorthCell tokenId={tokenId} />
+    <FTWalletWorthCell tokenId={tokenId} />
   </TokenBalancesRow>
 )
 

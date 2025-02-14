@@ -1,4 +1,5 @@
 import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
+import { sleep } from '@alephium/web3'
 import { useCallback } from 'react'
 
 import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
@@ -116,9 +117,12 @@ const useWalletLock = () => {
 
     dispatch(event === 'unlock' ? walletUnlocked(payload) : walletSwitched(payload))
 
-    dispatch(toggleAppLoading(false))
-
     afterUnlock()
+
+    // Navigating to the Overview screen freezes the app. This is because the React components need some time to load.
+    // We could use Suspence to display some placeholder content until all components of the Overview page have been
+    // rendered instead of freezing the app. For now, by delaying the hiding of the loader, we achieve a similar effect.
+    sleep(2000).then(() => dispatch(toggleAppLoading(false)))
 
     encryptedWallet = null
     passphrase = ''

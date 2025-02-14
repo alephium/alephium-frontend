@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { ALPH } from '@alephium/token-list'
 import { ArrowDownToLine, CreditCard, Send, Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -9,18 +10,14 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
+import { TokenId } from '@/types/tokens'
 
 interface ShortcutButtonBaseProps {
   analyticsOrigin: string
   highlight?: boolean
 }
 
-interface ShortcutButtonsGroupWalletProps extends ShortcutButtonBaseProps {
-  settings?: boolean
-  lock?: boolean
-}
-
-export const ShortcutButtonsGroupWallet = ({ ...buttonProps }: ShortcutButtonsGroupWalletProps) => {
+export const ShortcutButtonsGroupWallet = ({ ...buttonProps }: ShortcutButtonBaseProps) => {
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
 
   return (
@@ -44,6 +41,22 @@ export const ShortcutButtonsGroupAddress = ({ addressHash, ...buttonProps }: Sho
     <SettingsButton addressHash={addressHash} {...buttonProps} />
   </ButtonsContainer>
 )
+
+interface ShortcutButtonsGroupTokenProps extends ShortcutButtonBaseProps {
+  tokenId: TokenId
+}
+
+export const ShortcutButtonsGroupToken = ({ tokenId, ...buttonProps }: ShortcutButtonsGroupTokenProps) => {
+  const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
+
+  return (
+    <ButtonsContainer>
+      <ReceiveButton addressHash={defaultAddressHash} {...buttonProps} />
+      <SendButton addressHash={defaultAddressHash} tokenId={tokenId} {...buttonProps} />
+      {tokenId === ALPH.id && <BuyButton addressHash={defaultAddressHash} {...buttonProps} />}
+    </ButtonsContainer>
+  )
+}
 
 interface SettingsButtonProps extends ShortcutButtonBaseProps {
   addressHash?: AddressHash
@@ -93,12 +106,16 @@ const ReceiveButton = ({ addressHash, analyticsOrigin }: ShortcutButtonsGroupAdd
   )
 }
 
-const SendButton = ({ addressHash, analyticsOrigin }: ShortcutButtonsGroupAddressProps) => {
+interface SendButtonProps extends ShortcutButtonsGroupAddressProps {
+  tokenId?: TokenId
+}
+
+const SendButton = ({ addressHash, tokenId, analyticsOrigin }: SendButtonProps) => {
   const { sendAnalytics } = useAnalytics()
   const { t } = useTranslation()
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
-  const { data: addressesHashesWithBalance } = useFetchAddressesHashesWithBalance()
+  const { data: addressesHashesWithBalance } = useFetchAddressesHashesWithBalance(tokenId)
   const currentNetwork = useAppSelector(selectCurrentlyOnlineNetworkId)
 
   if (!fromAddress) return null
@@ -114,7 +131,7 @@ const SendButton = ({ addressHash, analyticsOrigin }: ShortcutButtonsGroupAddres
   const handleSendClick = () => {
     if (isDisabled) return
 
-    dispatch(openModal({ name: 'TransferSendModal', props: { initialTxData: { fromAddress } } }))
+    dispatch(openModal({ name: 'TransferSendModal', props: { initialTxData: { fromAddress, tokenId } } }))
     sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
   }
 

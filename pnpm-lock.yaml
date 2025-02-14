@@ -317,6 +317,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-freeze:
+        specifier: ^1.0.4
+        version: 1.0.4(react@18.2.0)
       react-hook-form:
         specifier: ^7.42.1
         version: 7.49.2(react@18.2.0)
@@ -9479,6 +9482,12 @@ packages:
 
   react-freeze@1.0.3:
     resolution: {integrity: sha512-ZnXwLQnGzrDpHBHiC56TXFXvmolPeMjTn1UOm610M4EXGzbEDR7oOIyS2ZiItgbs6eZc4oU/a0hpk8PrcKvv5g==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=17.0.0'
+
+  react-freeze@1.0.4:
+    resolution: {integrity: sha512-r4F0Sec0BLxWicc7HEyo2x3/2icUTrRmDjaaRyzzn+7aDyFZliszMDOgLVwSnQnYENOlL1o569Ze2HZefk8clA==}
     engines: {node: '>=10'}
     peerDependencies:
       react: '>=17.0.0'
@@ -23030,6 +23039,10 @@ snapshots:
   react-fast-compare@3.2.2: {}
 
   react-freeze@1.0.3(react@18.2.0):
+    dependencies:
+      react: 18.2.0
+
+  react-freeze@1.0.4(react@18.2.0):
     dependencies:
       react: 18.2.0
 

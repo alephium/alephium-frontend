@@ -22,8 +22,6 @@ export interface TransferBuildTxModalContentProps {
   onSubmit: (data: TransferTxData) => void
 }
 
-const defaultAssetAmounts = [{ id: ALPH.id }]
-
 const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalContentProps) => {
   const { t } = useTranslation()
   const {
@@ -37,7 +35,9 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
   } = useGasSettings(data?.gasAmount?.toString(), data?.gasPrice)
 
   const [lockTime, setLockTime] = useState(data.lockTime)
-  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(data.assetAmounts || defaultAssetAmounts)
+  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(
+    data.assetAmounts || [{ id: data.tokenId ?? ALPH.id }]
+  )
 
   const { fromAddress, toAddress } = data
 

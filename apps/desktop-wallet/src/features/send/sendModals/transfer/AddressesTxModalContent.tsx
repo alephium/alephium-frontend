@@ -18,7 +18,7 @@ interface TransferAddressesTxModalContentProps {
 
 const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferAddressesTxModalContentProps) => {
   const { t } = useTranslation()
-  const { data: fromAddresses } = useFetchAddressesHashesWithBalance()
+  const { data: fromAddresses } = useFetchAddressesHashesWithBalance(data.tokenId)
 
   const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
   const [toAddress, setToAddress] = useStateWithError(data?.toAddress ?? '')
@@ -61,7 +61,8 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
           onClick={() =>
             onSubmit({
               fromAddress,
-              toAddress: toAddress.value
+              toAddress: toAddress.value,
+              tokenId: data.tokenId
             })
           }
           disabled={!isSubmitButtonActive}

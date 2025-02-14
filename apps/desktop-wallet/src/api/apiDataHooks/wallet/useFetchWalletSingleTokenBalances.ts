@@ -1,69 +1,28 @@
 import { ALPH } from '@alephium/token-list'
-import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import useFetchWalletBalancesAlph from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlph'
-import { addressTokensBalancesQuery, AddressTokensBalancesQueryFnData } from '@/api/queries/addressQueries'
-import { useAppSelector } from '@/hooks/redux'
-import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-import { ApiBalances, TokenId } from '@/types/tokens'
+import useFetchWalletBalancesTokensArray from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensArray'
+import { TokenId } from '@/types/tokens'
 
 interface UseFetchWalletSingleTokenBalancesProps extends SkipProp {
   tokenId: TokenId
 }
 
-const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSingleTokenBalancesProps) => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
-  const allAddressHashes = useUnsortedAddressesHashes()
-
+const useFetchWalletSingleTokenBalances = ({ tokenId }: UseFetchWalletSingleTokenBalancesProps) => {
   const isALPH = tokenId === ALPH.id
 
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlph()
-
-  const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useQueries({
-    queries:
-      !isALPH && !skip
-        ? allAddressHashes.map((addressHash) => addressTokensBalancesQuery({ addressHash, networkId }))
-        : [],
-    combine: useMemo(
-      () => (results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => combineTokenBalances(tokenId, results),
-      [tokenId]
-    )
-  })
+  const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchWalletBalancesTokensArray()
 
   return {
-    data: isALPH ? alphBalances : tokenBalances,
-    isLoading: isALPH ? isLoadingAlphBalances : isLoadingTokenBalances
+    data: useMemo(
+      () => (isALPH ? alphBalances : tokensBalances.find(({ id }) => id === tokenId)),
+      [alphBalances, isALPH, tokenId, tokensBalances]
+    ),
+    isLoading: isALPH ? isLoadingAlphBalances : isLoadingTokensBalances
   }
 }
 
 export default useFetchWalletSingleTokenBalances
-
-const combineTokenBalances = (tokenId: string, results: UseQueryResult<AddressTokensBalancesQueryFnData>[]) => ({
-  data: results.reduce(
-    (totalBalances, { data }) => {
-      const balances = data?.balances.find(({ id }) => id === tokenId)
-
-      totalBalances.totalBalance = (
-        BigInt(totalBalances.totalBalance) + BigInt(balances ? balances.totalBalance : 0)
-      ).toString()
-      totalBalances.lockedBalance = (
-        BigInt(totalBalances.lockedBalance) + BigInt(balances ? balances.lockedBalance : 0)
-      ).toString()
-      totalBalances.availableBalance = (
-        BigInt(totalBalances.availableBalance) + BigInt(balances ? balances.availableBalance : 0)
-      ).toString()
-
-      return totalBalances
-    },
-    {
-      totalBalance: '0',
-      lockedBalance: '0',
-      availableBalance: '0'
-    } as ApiBalances
-  ),
-  ...combineIsLoading(results)
-})

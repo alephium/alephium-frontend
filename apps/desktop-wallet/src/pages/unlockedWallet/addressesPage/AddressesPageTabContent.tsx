@@ -7,16 +7,17 @@ import { fadeInOut } from '@/animations'
 import Button from '@/components/Button'
 import Input from '@/components/Inputs/Input'
 
-interface TabContentProps {
+interface AddressesPageTabContentProps {
   searchPlaceholder: string
   onSearch: (str: string) => void
   buttonText: string
   onButtonClick: () => void
+  children: ReactNode
   HeaderMiddleComponent?: ReactNode
   className?: string
 }
 
-const TabContent: FC<TabContentProps> = ({
+const AddressesPageTabContent = ({
   searchPlaceholder,
   onSearch,
   buttonText,
@@ -24,8 +25,8 @@ const TabContent: FC<TabContentProps> = ({
   HeaderMiddleComponent,
   children,
   className
-}) => (
-  <TabContentStyled className={className}>
+}: AddressesPageTabContentProps) => (
+  <AddressesPageTabContentStyled className={className}>
     <Header>
       <Searchbar
         placeholder={searchPlaceholder}
@@ -42,12 +43,12 @@ const TabContent: FC<TabContentProps> = ({
       </ButtonContainer>
     </Header>
     <Content>{children}</Content>
-  </TabContentStyled>
+  </AddressesPageTabContentStyled>
 )
 
-export default TabContent
+export default AddressesPageTabContent
 
-const TabContentStyled = styled.div`
+const AddressesPageTabContentStyled = styled.div`
   position: absolute;
   width: 100%;
 `

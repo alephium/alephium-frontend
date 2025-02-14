@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import TabBar, { Tab, TabBarProps } from '@/components/TabBar'
+import TabBar, { Tab, TabBarProps } from '@/components/tabs/TabBar'
 
 const TableTabBar = <T extends string>(props: TabBarProps<T>) => (
   <TableTabBarStyled {...props} TabComponent={TableTab} />
