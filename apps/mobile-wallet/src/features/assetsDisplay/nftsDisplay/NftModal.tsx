@@ -37,7 +37,7 @@ const NftModal = withModal<NftModalProps>(({ id, nftId }) => {
   return (
     <BottomModal modalId={id} title={nft.name}>
       <NftImageContainer>
-        <NFTImage nftId={nftId} size={nftFullSize} />
+        <NFTImage nftId={nftId} size={nftFullSize} play sizeLimited={false} />
       </NftImageContainer>
 
       <ActionButtons>
@@ -83,7 +83,6 @@ const NftImageContainer = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
-  margin-top: ${VERTICAL_GAP}px;
   margin-bottom: ${VERTICAL_GAP}px;
 `
 

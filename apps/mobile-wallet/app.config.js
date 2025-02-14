@@ -115,6 +115,7 @@ export default {
       ],
       'expo-localization',
       'expo-secure-store',
+      'expo-video',
       [
         '@sentry/react-native/expo',
         {

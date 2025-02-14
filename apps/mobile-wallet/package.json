@@ -78,6 +78,7 @@
     "expo-sensors": "~13.0.9",
     "expo-splash-screen": "~0.27.7",
     "expo-status-bar": "~1.12.1",
+    "expo-video": "~1.2.7",
     "expo-web-browser": "~13.0.3",
     "fast-text-encoding": "^1.0.6",
     "intl-pluralrules": "^2.0.1",
