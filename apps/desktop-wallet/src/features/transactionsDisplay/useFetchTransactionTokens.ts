@@ -1,12 +1,13 @@
 import { AddressHash, NFT } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
-import { useQueries } from '@tanstack/react-query'
+import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
-import { combineDefined } from '@/api/apiDataHooks/apiDataHooksUtils'
-import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
-import { fungibleTokenMetadataQuery, nftDataQuery, nftMetadataQuery } from '@/api/queries/tokenQueries'
+import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
+import { isFT, isNFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchTokensSeparatedByListing from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
+import { tokenQuery } from '@/api/queries/tokenQueries'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
 import { useAppSelector } from '@/hooks/redux'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
@@ -36,63 +37,57 @@ const useFetchTransactionTokens = (
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
 
   const {
-    data: { listedFts, unlistedTokens, unlistedFtIds, nftIds },
-    isLoading: isLoadingTokensByType
-  } = useFetchTokensSeparatedByType(tokenAmounts)
+    data: { listedFts, unlistedTokens },
+    isLoading: isLoadingFtList
+  } = useFetchTokensSeparatedByListing(tokenAmounts)
 
-  const { data: unlistedFts, isLoading: isLoadingUnlistedFTs } = useQueries({
-    queries: unlistedFtIds.map((id) => fungibleTokenMetadataQuery({ id, networkId })),
-    combine: combineDefined
+  const { data: tokens, isLoading: isLoadingTokens } = useQueries({
+    queries: unlistedTokens.map(({ id }) => tokenQuery({ id, networkId, isLoadingFtList })),
+    combine: (results) => combineTokens(results, tokenAmounts)
   })
-
-  const { data: nftsMetadata, isLoading: isLoadingNFTsMetadata } = useQueries({
-    queries: nftIds.map((id) => nftMetadataQuery({ id, networkId })),
-    combine: combineDefined
-  })
-
-  const { data: nftsData, isLoading: isLoadingNFTsData } = useQueries({
-    queries: nftsMetadata.map(({ id, tokenUri }) => nftDataQuery({ id, tokenUri, networkId })),
-    combine: combineDefined
-  })
-
-  const data = useMemo(() => {
-    const initial = {
-      fungibleTokens: [{ ...ALPH, amount: alphAmount }, ...listedFts] as TxFT[],
-      nfts: [] as TxNFT[],
-      nsts: [] as TxNST[]
-    }
-
-    return unlistedTokens.reduce((acc, { id, amount }) => {
-      const unlistedFT = unlistedFts.find((t) => t.id === id)
-
-      if (unlistedFT) {
-        acc.fungibleTokens.push({ ...unlistedFT, amount })
-
-        return acc
-      }
-
-      const nftMetadata = nftsMetadata.find((t) => t.id === id)
-
-      if (nftMetadata) {
-        const nftData = nftsData.find((t) => t.id === id)
-
-        if (nftData) {
-          acc.nfts.push({ ...nftMetadata, ...nftData, amount })
-
-          return acc
-        }
-      }
-
-      acc.nsts.push({ id, amount })
-
-      return acc
-    }, initial)
-  }, [alphAmount, listedFts, nftsData, nftsMetadata, unlistedFts, unlistedTokens])
 
   return {
-    data,
-    isLoading: isLoadingTokensByType || isLoadingUnlistedFTs || isLoadingNFTsMetadata || isLoadingNFTsData
+    data: useMemo(
+      () => ({
+        fungibleTokens: [{ ...ALPH, amount: alphAmount }, ...listedFts, ...tokens.fungibleTokens] as TxFT[],
+        nfts: tokens.nfts,
+        nsts: tokens.nsts
+      }),
+      [alphAmount, listedFts, tokens.fungibleTokens, tokens.nfts, tokens.nsts]
+    ),
+    isLoading: isLoadingFtList || isLoadingTokens
   }
 }
 
 export default useFetchTransactionTokens
+
+const combineTokens = (
+  results: UseQueryResult<NonStandardToken, Error>[],
+  tokenAmounts: { id: string; amount: bigint }[]
+) => ({
+  data: results.reduce(
+    (acc, { data }) => {
+      if (!data) return acc
+
+      const amount = tokenAmounts.find(({ id }) => id === data.id)?.amount
+
+      if (amount === undefined) return acc
+
+      if (isFT(data)) {
+        acc.fungibleTokens.push({ ...data, amount })
+      } else if (isNFT(data)) {
+        acc.nfts.push({ ...data, amount })
+      } else {
+        acc.nsts.push({ ...data, amount })
+      }
+
+      return acc
+    },
+    {
+      fungibleTokens: [] as TxFT[],
+      nfts: [] as TxNFT[],
+      nsts: [] as TxNST[]
+    } as TransactionTokens['data']
+  ),
+  ...combineIsLoading(results)
+})

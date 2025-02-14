@@ -1,11 +1,9 @@
 import { NFT } from '@alephium/shared'
-import { explorer as e } from '@alephium/web3'
 import { useQuery } from '@tanstack/react-query'
 
 import { DataHook } from '@/api/apiDataHooks/apiDataHooksTypes'
-import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
 import useFetchFtList from '@/api/apiDataHooks/utils/useFetchFtList'
-import { fungibleTokenMetadataQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
+import { tokenQuery } from '@/api/queries/tokenQueries'
 import { useAppSelector } from '@/hooks/redux'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { ListedFT, NonStandardToken, TokenId, UnlistedFT } from '@/types/tokens'
@@ -16,28 +14,13 @@ const useFetchToken = (id: TokenId): UseFetchTokenResponse => {
   const { data: fTList, isLoading: isLoadingFtList } = useFetchFtList()
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
 
-  const listedFT = fTList?.find((t) => t.id === id)
+  const listedFt = fTList?.find((t) => t.id === id)
 
-  const { data: tokenType, isLoading: isLoadingTokenType } = useQuery(
-    tokenTypeQuery({ id, networkId, skip: isLoadingFtList || !!listedFT })
-  )
-
-  const { data: unlistedFT, isLoading: isLoadingUnlistedFT } = useQuery(
-    fungibleTokenMetadataQuery({
-      id,
-      networkId,
-      skip: isLoadingTokenType || tokenType?.stdInterfaceId !== e.TokenStdInterfaceId.Fungible
-    })
-  )
-
-  const { data: nft, isLoading: isLoadingNft } = useFetchNft({
-    id,
-    skip: isLoadingTokenType || tokenType?.stdInterfaceId !== e.TokenStdInterfaceId.NonFungible
-  })
+  const { data, isLoading } = useQuery(tokenQuery({ id, networkId, isLoadingFtList, skip: !!listedFt }))
 
   return {
-    data: listedFT ?? unlistedFT ?? nft ?? { id },
-    isLoading: isLoadingFtList || isLoadingTokenType || isLoadingUnlistedFT || isLoadingNft
+    data: listedFt ?? data ?? ({ id } as NonStandardToken),
+    isLoading: isLoadingFtList || isLoading
   }
 }
 
