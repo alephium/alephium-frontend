@@ -150,7 +150,7 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
   max-height: 660px;
   margin: auto;
 
-  box-shadow: ${({ theme }) => theme.shadow.secondary};
+  box-shadow: ${({ theme }) => theme.shadow.tertiary};
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-big);
   background-color: ${({ theme }) => theme.bg.background1};
@@ -158,15 +158,15 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
 
 const Header = styled.div<{ hasExtraContent: boolean }>`
   height: ${({ hasExtraContent }) => (hasExtraContent ? 'auto' : `${headerHeight}px`)};
-  padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) var(--spacing-3);
+  padding: 0 var(--spacing-3);
   display: flex;
   align-items: center;
   z-index: 1;
   gap: var(--spacing-3);
-  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-  background-color: ${({ theme }) => theme.bg.background2};
 `
 
 const Title = styled.span`
-  font-size: 14px;
+  font-size: 12px;
+  color: ${({ theme }) => theme.font.secondary};
+  text-transform: uppercase;
 `

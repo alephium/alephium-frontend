@@ -393,7 +393,6 @@ export const OptionSelect = styled.div`
   color: inherit;
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-1) 0;
   gap: 5px;
 `
 
