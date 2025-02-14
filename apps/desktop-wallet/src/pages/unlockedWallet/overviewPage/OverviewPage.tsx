@@ -1,21 +1,34 @@
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
+import AnimatedBackground from '@/components/AnimatedBackground'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import LabeledWorthOverview from '@/components/LabeledWorthOverview'
 import { WalletTokensTabs } from '@/features/assetsLists/AddressDetailsTabs'
+import { useAppSelector } from '@/hooks/redux'
 import WalletWorth from '@/pages/unlockedWallet/overviewPage/WalletWorth'
 import { UnlockedWalletPanel } from '@/pages/unlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/unlockedWallet/UnlockedWalletPage'
+import { useDisplayColor, useHashToColor } from '@/utils/colors'
 interface OverviewPageProps {
   className?: string
 }
 
 const OverviewPage = ({ className }: OverviewPageProps) => {
   const { t } = useTranslation()
+  const theme = useTheme()
+  const activeWalletHash = useAppSelector((s) => s.activeWallet.id)
+  const walletColor = useDisplayColor(useHashToColor(activeWalletHash), true)
 
   return (
     <UnlockedWalletPage className={className}>
+      <AnimatedBackground
+        anchorPosition="top"
+        opacity={theme.name === 'dark' ? 0.4 : 0.5}
+        verticalOffset={-100}
+        horizontalOffset={-250}
+        shade={walletColor}
+      />
       <WorthUnlockedWalletPanel bottom>
         <WorthOverviewPanel>
           <LabeledWorthOverview label={t('Wallet worth')}>

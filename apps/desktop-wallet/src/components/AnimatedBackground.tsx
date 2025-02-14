@@ -155,6 +155,9 @@ const AnimatedBackground = ({
       className={className}
     >
       <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 8, ease: 'easeOut' }}
         style={{
           position: 'relative',
           height: '100%',
@@ -205,7 +208,8 @@ const useCircleAnimation = (
   useEffect(() => {
     const xValues = [0, offset, 0, -offset, 0]
     const yValues = [0, offset / 2, -offset / 2, offset / 2, 0]
-    const duration = Math.abs(offset) / 10
+    // Increase the duration to slow down the animation (e.g. *2)
+    const duration = Math.abs(offset) / 5
 
     const xControl = animate(xAnim, xValues, {
       duration,
