@@ -59,7 +59,7 @@ export const WalletFTsBalancesList = () => {
   const { listedFts, unlistedFts, isLoading } = useFetchWalletFts({ includeHidden: false, sort: true })
   const {
     data: { nstIds }
-  } = useFetchWalletTokensByType({ includeAlph: false, includeHidden: false })
+  } = useFetchWalletTokensByType({ includeHidden: false })
 
   const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
 

@@ -50,7 +50,7 @@ const useFetchWalletFtsSymbols = () => {
   const {
     data: { listedFts },
     isLoading: isLoadingTokensByType
-  } = useFetchWalletTokensByType({ includeAlph: true })
+  } = useFetchWalletTokensByType({ includeHidden: true })
 
   const symbols = useMemo(() => listedFts.map((ft) => ft.symbol), [listedFts])
 
