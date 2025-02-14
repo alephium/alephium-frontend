@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { useAppSelector } from '@/hooks/redux'
 import { ReactComponent as IndicatorLogo } from '@/images/main_address_badge.svg'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
-import { useDisplayColor } from '@/utils/colors'
+import { labelColorPalette, useDisplayColor } from '@/utils/colors'
 
 interface AddressColorIndicatorProps {
   addressHash: AddressHash
@@ -21,7 +21,7 @@ const AddressColorIndicator = ({
 }: AddressColorIndicatorProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
-  const displayColor = useDisplayColor(address?.color, true)
+  const displayColor = useDisplayColor(address?.color, labelColorPalette)
 
   if (!address) return null
 

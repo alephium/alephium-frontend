@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-import { useDisplayColor, useHashToColor } from '@/utils/colors'
+import { labelColorPalette, useDisplayColor, useHashToColor, walletColorPalette } from '@/utils/colors'
 
 interface ShortcutButtonBaseProps {
   analyticsOrigin: string
@@ -27,7 +27,7 @@ interface ShortcutButtonsGroupWalletProps extends ShortcutButtonBaseProps {
 export const ShortcutButtonsGroupWallet = ({ ...buttonProps }: ShortcutButtonsGroupWalletProps) => {
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
   const activeWalletHash = useAppSelector((s) => s.activeWallet.id)
-  const color = useDisplayColor(useHashToColor(activeWalletHash), true)
+  const color = useDisplayColor(useHashToColor(activeWalletHash), walletColorPalette, 'vivid')
 
   return (
     <ButtonsContainer>
@@ -44,7 +44,7 @@ interface ShortcutButtonsGroupAddressProps extends ShortcutButtonBaseProps {
 
 export const ShortcutButtonsGroupAddress = ({ addressHash, ...buttonProps }: ShortcutButtonsGroupAddressProps) => {
   const addressColor = useAppSelector((s) => selectAddressByHash(s, addressHash)?.color)
-  const color = useDisplayColor(addressColor, true)
+  const color = useDisplayColor(addressColor, labelColorPalette)
 
   return (
     <ButtonsContainer>
@@ -179,7 +179,7 @@ const ShortcutButtonStyled = styled.button<{ color?: string }>`
   border-radius: var(--radius-huge);
   background-color: ${({ theme, color }) => (color ? colord(color).alpha(0.1).toHex() : theme.bg.primary)};
   color: ${({ theme, color }) =>
-    color ? (theme.name === 'light' ? colord(color).darken(0.1).toHex() : color) : theme.font.primary};
+    color ? (theme.name === 'light' ? colord(color).darken(0.1).saturate(0.2).toHex() : color) : theme.font.primary};
   gap: 5px;
   font-weight: var(--fontWeight-medium);
   padding: var(--spacing-2) var(--spacing-3);

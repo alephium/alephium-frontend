@@ -5,25 +5,33 @@ import { useTheme } from 'styled-components'
 
 extend([contrastPlugin])
 
-export const labelColorPalette = ['#5fb772', '#ffa977', '#f8888a', '#a896ff', '#60b7ff', '#eb70a5']
+type ColorType = 'pastel' | 'vivid'
+
+export const labelColorPalette = ['#88b739', '#ff9456', '#f85b5e', '#a896ff', '#60b7ff', '#eb70a5']
+export const walletColorPalette = ['#ed6135', '#ad3cff', '#5832ff', '#ff903f', '#1eff52']
 
 export const getRandomLabelColor = () => labelColorPalette[Math.floor(Math.random() * labelColorPalette.length)]
 
-export const useDisplayColor = (inputColor?: string, matchDefaultPalette?: boolean) => {
+export const useDisplayColor = (inputColor?: string, palletteToMatch?: string[], colorType?: ColorType) => {
   const theme = useTheme()
 
   return useMemo(() => {
     if (!inputColor) return undefined
 
-    const color = matchDefaultPalette ? getClosestColorInPalette(inputColor, labelColorPalette) : inputColor
+    const color = palletteToMatch ? getClosestColorInPalette(inputColor, palletteToMatch) : inputColor
 
-    if (theme.name === 'light') return color
+    const { h, s, l } = colord(color).toHsl()
 
-    // For dark theme, modify the color to a pastel variant more suitable for dark backgrounds
-    const { h } = colord(color).toHsl()
-
-    return colord({ h, s: 70, l: 75 }).toHex()
-  }, [inputColor, matchDefaultPalette, theme.name])
+    // For light theme, allow pastel and vivid colors
+    if (theme.name === 'light') {
+      return colorType && colorType === 'vivid' ? colord({ h, s: 90, l }).toHex() : color
+    } else {
+      // For dark theme, modify the color to a pastel variant more suitable for dark backgrounds
+      return colorType && colorType === 'vivid'
+        ? colord({ h, s: 80, l: 70 }).toHex()
+        : colord({ h, s: 70, l: 75 }).toHex()
+    }
+  }, [colorType, inputColor, palletteToMatch, theme.name])
 }
 
 export const useHashToColor = (hash?: string) => {
@@ -42,7 +50,7 @@ export const useHashToColor = (hash?: string) => {
     if (hue < 20) hue += 20
     if (hue >= 340) hue -= 20
 
-    const saturation = theme.name === 'dark' ? 60 : 65
+    const saturation = theme.name === 'dark' ? 60 : 75
     const baseLightness = theme.name === 'dark' ? 65 : 60
     let color = colord({ h: hue, s: saturation, l: baseLightness })
 

@@ -21,14 +21,14 @@ import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { sidebarExpandThresholdPx } from '@/style/globalStyles'
-import { useDisplayColor, useHashToColor } from '@/utils/colors'
+import { useDisplayColor, useHashToColor, walletColorPalette } from '@/utils/colors'
 import { getInitials, onEnterOrSpace } from '@/utils/misc'
 
 const WalletNameButton = () => {
   const dispatch = useAppDispatch()
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
   const activeWalletHash = useAppSelector((s) => s.activeWallet.id)
-  const walletColor = useDisplayColor(useHashToColor(activeWalletHash), true)
+  const walletColor = useDisplayColor(useHashToColor(activeWalletHash), walletColorPalette, 'vivid')
 
   if (!activeWalletName) return null
 

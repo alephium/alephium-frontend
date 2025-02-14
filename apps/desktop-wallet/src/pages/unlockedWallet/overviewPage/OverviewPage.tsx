@@ -9,7 +9,7 @@ import { useAppSelector } from '@/hooks/redux'
 import WalletWorth from '@/pages/unlockedWallet/overviewPage/WalletWorth'
 import { UnlockedWalletPanel } from '@/pages/unlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/unlockedWallet/UnlockedWalletPage'
-import { useDisplayColor, useHashToColor } from '@/utils/colors'
+import { useDisplayColor, useHashToColor, walletColorPalette } from '@/utils/colors'
 interface OverviewPageProps {
   className?: string
 }
@@ -18,7 +18,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
   const activeWalletHash = useAppSelector((s) => s.activeWallet.id)
-  const walletColor = useDisplayColor(useHashToColor(activeWalletHash), true)
+  const walletColor = useDisplayColor(useHashToColor(activeWalletHash), walletColorPalette)
 
   return (
     <UnlockedWalletPage className={className}>
