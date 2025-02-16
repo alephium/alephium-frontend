@@ -17,9 +17,9 @@ interface NFTCardProps {
 
 const NFTCard = ({ nftId }: NFTCardProps) => {
   const dispatch = useAppDispatch()
-  const { data: nft, isLoading } = useFetchToken(nftId)
+  const { data: token, isLoading } = useFetchToken(nftId)
 
-  if (!isNFT(nft)) return null
+  if (!token || !isNFT(token)) return null
 
   const openNFTDetailsModal = () => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
 
@@ -33,10 +33,10 @@ const NFTCard = ({ nftId }: NFTCardProps) => {
         <NFTNameContainer>
           {isLoading ? (
             <SkeletonLoader height="15px" />
-          ) : nft?.name ? (
-            <NFTName>{nft.name}</NFTName>
+          ) : token.name ? (
+            <NFTName>{token.name}</NFTName>
           ) : (
-            <EllipsedStyled text={nftId} />
+            <EllipsedStyled text={token.id} />
           )}
         </NFTNameContainer>
       </CardContent>

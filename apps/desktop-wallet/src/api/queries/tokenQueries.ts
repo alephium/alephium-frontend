@@ -1,4 +1,4 @@
-import { batchers, NFT, ONE_DAY_MS } from '@alephium/shared'
+import { batchers, ONE_DAY_MS } from '@alephium/shared'
 import { ALPH, getTokensURL, mainnet, testnet, TokenList } from '@alephium/token-list'
 import { explorer as e, NFTMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { queryOptions, skipToken, UseQueryResult } from '@tanstack/react-query'
@@ -9,7 +9,7 @@ import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 import { convertTokenDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/apiUtils'
 import queryClient from '@/api/queryClient'
-import { NonStandardToken, TokenId, UnlistedFT } from '@/types/tokens'
+import { NonStandardToken, Token, TokenId } from '@/types/tokens'
 
 export type TokenTypesQueryFnData = Record<e.TokenStdInterfaceId, TokenId[]>
 
@@ -153,23 +153,27 @@ export const tokenQuery = ({ id, networkId, skip }: TokenQueryProps) =>
     queryKey: ['token', id, { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     meta: { isMainnet: networkId === 0 },
-    queryFn: async (): Promise<UnlistedFT | NFT | NonStandardToken> => {
+    queryFn: async (): Promise<Token> => {
       const nst = { id } as NonStandardToken
 
+      // 1. First check if the token is in the token list
       const fTList = await queryClient.fetchQuery(ftListQuery({ networkId }))
-      const listedFT = fTList?.find((t) => t.id === id)
+      const listedFT = fTList.find((t) => t.id === id)
 
       if (listedFT) return listedFT
 
+      // 2. If not, find the type of the token
       const tokenInfo = await queryClient.fetchQuery(tokenTypeQuery({ id, networkId }))
 
-      if (!tokenInfo) {
-        return nst
-      } else if (tokenInfo.stdInterfaceId === e.TokenStdInterfaceId.Fungible) {
+      // 3. If it is a fungible token, fetch the fungible token metadata
+      if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.Fungible) {
         const ftMetadata = await queryClient.fetchQuery(fungibleTokenMetadataQuery({ id, networkId }))
 
         return ftMetadata ?? nst
-      } else if (tokenInfo.stdInterfaceId === e.TokenStdInterfaceId.NonFungible) {
+      }
+
+      // 4. If it is an NFT, fetch the NFT metadata and data
+      if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.NonFungible) {
         const nftMetadata = await queryClient.fetchQuery(nftMetadataQuery({ id, networkId }))
 
         if (!nftMetadata) return nst
@@ -177,9 +181,9 @@ export const tokenQuery = ({ id, networkId, skip }: TokenQueryProps) =>
         const nftData = await queryClient.fetchQuery(nftDataQuery({ id, tokenUri: nftMetadata.tokenUri, networkId }))
 
         return nftData ?? nst
-      } else {
-        return nst
       }
-    },
-    enabled: !skip
+
+      // 5. If the type of the token cannot be determined, return the non-standard token
+      return nst
+    }
   })

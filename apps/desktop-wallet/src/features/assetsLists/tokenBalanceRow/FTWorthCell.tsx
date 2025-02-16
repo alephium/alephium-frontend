@@ -15,7 +15,7 @@ export const FTAddressWorthCell = ({ tokenId, addressHash }: AddressTokenBalance
   const { data: token } = useFetchToken(tokenId)
   const { isLoading: isLoadingTokenPrices } = useFetchTokenPrices()
 
-  if (!isFT(token)) return null
+  if (!token || !isFT(token)) return null
 
   const totalBalance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
 
@@ -35,7 +35,7 @@ export const FTWalletWorthCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
   const { data: token } = useFetchToken(tokenId)
   const { isLoading: isLoadingTokenPrices } = useFetchTokenPrices()
 
-  if (!isFT(token)) return null
+  if (!token || !isFT(token)) return null
 
   const totalBalance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
 

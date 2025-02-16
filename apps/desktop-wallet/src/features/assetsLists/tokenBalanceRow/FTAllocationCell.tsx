@@ -17,7 +17,7 @@ const FTAllocationCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
   })
   const { data: walletWorth, isLoading: isLoadingWalletWorth } = useFetchWalletWorth()
 
-  if (!isListedFT(token)) return <TableCell fixedWidth={140} />
+  if (!token || !isListedFT(token)) return <TableCell fixedWidth={140} />
 
   const tokenAmount = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
 

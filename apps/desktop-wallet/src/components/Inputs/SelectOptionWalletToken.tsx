@@ -14,7 +14,7 @@ const SelectOptionWalletToken = ({ tokenId, ...props }: SelectOptionTokenBasePro
     <SelectOptionToken
       tokenId={tokenId}
       amount={amount}
-      showAmount={!isNFT(token)}
+      showAmount={!!token && !isNFT(token)}
       isLoading={isLoadingTokenBalances}
       {...props}
     />

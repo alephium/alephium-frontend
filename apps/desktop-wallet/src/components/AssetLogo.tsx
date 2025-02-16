@@ -14,6 +14,9 @@ interface AssetLogoProps {
 
 const AssetLogo = memo(({ tokenId, size, className }: AssetLogoProps) => {
   const { data: token } = useFetchToken(tokenId)
+
+  if (!token) return null
+
   const image = isListedFT(token) ? token.logoURI : isNFT(token) ? token.image : undefined
   const name = isFT(token) || isNFT(token) ? token.name : undefined
 

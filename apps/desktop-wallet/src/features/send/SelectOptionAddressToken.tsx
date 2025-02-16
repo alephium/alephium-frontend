@@ -10,10 +10,11 @@ interface SelectOptionAddressTokenProps extends SelectOptionTokenBaseProps {
 
 const SelectOptionAddressToken = ({ tokenId, addressHash, ...props }: SelectOptionAddressTokenProps) => {
   const { data: token, isLoading: isLoadingToken } = useFetchToken(tokenId)
+  const isNft = token && isNFT(token)
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useFetchAddressSingleTokenBalances({
     addressHash,
     tokenId,
-    skip: isLoadingToken || isNFT(token)
+    skip: isLoadingToken || isNft
   })
 
   const amount = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
@@ -22,7 +23,7 @@ const SelectOptionAddressToken = ({ tokenId, addressHash, ...props }: SelectOpti
     <SelectOptionToken
       tokenId={tokenId}
       amount={amount}
-      showAmount={!isNFT(token)}
+      showAmount={!isNft}
       isLoading={isLoadingTokenBalances}
       {...props}
     />
