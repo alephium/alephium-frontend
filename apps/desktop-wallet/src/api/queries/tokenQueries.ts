@@ -148,42 +148,38 @@ export const nftDataQueryFn = async (id: TokenId, tokenUri: NFTMetaData['tokenUr
       }
 }
 
-interface TokenQueryProps1 extends TokenQueryProps {
-  isLoadingFtList: boolean
-}
-
-export const tokenQuery = ({ id, networkId, skip, isLoadingFtList }: TokenQueryProps1) =>
+export const tokenQuery = ({ id, networkId, skip }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', id, { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     meta: { isMainnet: networkId === 0 },
     queryFn: async (): Promise<UnlistedFT | NFT | NonStandardToken> => {
       const nst = { id } as NonStandardToken
-      const cachedTokenInfo = queryClient.getQueryData(tokenTypeQuery({ id, networkId }).queryKey)
-      const tokenInfo = cachedTokenInfo ?? (await tokenTypeQueryFn(id))
+
+      const fTList = await queryClient.fetchQuery(ftListQuery({ networkId }))
+      const listedFT = fTList?.find((t) => t.id === id)
+
+      if (listedFT) return listedFT
+
+      const tokenInfo = await queryClient.fetchQuery(tokenTypeQuery({ id, networkId }))
 
       if (!tokenInfo) {
         return nst
       } else if (tokenInfo.stdInterfaceId === e.TokenStdInterfaceId.Fungible) {
-        const cachedFtMetadata = queryClient.getQueryData(fungibleTokenMetadataQuery({ id, networkId }).queryKey)
-        const ftMetadata = cachedFtMetadata ?? (await fungibleTokenMetadataQueryFn(id))
+        const ftMetadata = await queryClient.fetchQuery(fungibleTokenMetadataQuery({ id, networkId }))
 
         return ftMetadata ?? nst
       } else if (tokenInfo.stdInterfaceId === e.TokenStdInterfaceId.NonFungible) {
-        const cachedNftMetadata = queryClient.getQueryData(nftMetadataQuery({ id, networkId }).queryKey)
-        const nftMetadata = cachedNftMetadata ?? (await nftMetadataQueryFn(id))
+        const nftMetadata = await queryClient.fetchQuery(nftMetadataQuery({ id, networkId }))
 
         if (!nftMetadata) return nst
 
-        const cachedNftData = queryClient.getQueryData(
-          nftDataQuery({ id, tokenUri: nftMetadata.tokenUri, networkId }).queryKey
-        )
-        const nftData = cachedNftData ?? (await nftDataQueryFn(id, nftMetadata.tokenUri))
+        const nftData = await queryClient.fetchQuery(nftDataQuery({ id, tokenUri: nftMetadata.tokenUri, networkId }))
 
         return nftData ?? nst
       } else {
         return nst
       }
     },
-    enabled: !isLoadingFtList && !skip
+    enabled: !skip
   })

@@ -6,7 +6,6 @@ import { useMemo } from 'react'
 
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { isFT, isNFT } from '@/api/apiDataHooks/token/useFetchToken'
-import useFetchTokensSeparatedByListing from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
 import { tokenQuery } from '@/api/queries/tokenQueries'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
 import { useAppSelector } from '@/hooks/redux'
@@ -36,26 +35,21 @@ const useFetchTransactionTokens = (
   const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
   const { alphAmount, tokenAmounts } = useTransactionAmountDeltas(tx, addressHash)
 
-  const {
-    data: { listedFts, unlistedTokens },
-    isLoading: isLoadingFtList
-  } = useFetchTokensSeparatedByListing(tokenAmounts)
-
-  const { data: tokens, isLoading: isLoadingTokens } = useQueries({
-    queries: unlistedTokens.map(({ id }) => tokenQuery({ id, networkId, isLoadingFtList })),
+  const { data: tokens, isLoading } = useQueries({
+    queries: tokenAmounts.map(({ id }) => tokenQuery({ id, networkId })),
     combine: (results) => combineTokens(results, tokenAmounts)
   })
 
   return {
     data: useMemo(
       () => ({
-        fungibleTokens: [{ ...ALPH, amount: alphAmount }, ...listedFts, ...tokens.fungibleTokens] as TxFT[],
+        fungibleTokens: [{ ...ALPH, amount: alphAmount }, ...tokens.fungibleTokens] as TxFT[],
         nfts: tokens.nfts,
         nsts: tokens.nsts
       }),
-      [alphAmount, listedFts, tokens.fungibleTokens, tokens.nfts, tokens.nsts]
+      [alphAmount, tokens.fungibleTokens, tokens.nfts, tokens.nsts]
     ),
-    isLoading: isLoadingFtList || isLoadingTokens
+    isLoading
   }
 }
 
