@@ -17,6 +17,11 @@ export const LockTimes = {
   ONE_HOUR: 60,
   TWO_HOURS: 120
 }
+export enum AddressOrder {
+  LastUse = 'lastUse',
+  AlphBalance = 'alphBalance',
+  Label = 'label'
+}
 
 export const locktimeInMinutes = Object.values(LockTimes)
 
@@ -30,7 +35,8 @@ export const defaultSettings: Settings = {
     devTools: false,
     analytics: true,
     fiatCurrency: 'USD',
-    region: undefined
+    region: undefined,
+    addressOrderPreference: AddressOrder.LastUse
   },
   network: defaultNetworkSettings
 }

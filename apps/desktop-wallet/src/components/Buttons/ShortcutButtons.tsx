@@ -1,4 +1,6 @@
 import { AddressHash } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { ALPH } from '@alephium/token-list'
 import { colord } from 'colord'
 import { ArrowDownToLine, CreditCard, Send, Settings } from 'lucide-react'
 import { ButtonHTMLAttributes } from 'react'
@@ -10,7 +12,7 @@ import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
+import { TokenId } from '@/types/tokens'
 import { labelColorPalette, useDisplayColor, useHashToColor, walletColorPalette } from '@/utils/colors'
 
 interface ShortcutButtonBaseProps {
@@ -19,12 +21,7 @@ interface ShortcutButtonBaseProps {
   highlight?: boolean
 }
 
-interface ShortcutButtonsGroupWalletProps extends ShortcutButtonBaseProps {
-  settings?: boolean
-  lock?: boolean
-}
-
-export const ShortcutButtonsGroupWallet = ({ ...buttonProps }: ShortcutButtonsGroupWalletProps) => {
+export const ShortcutButtonsGroupWallet = ({ ...buttonProps }: ShortcutButtonBaseProps) => {
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
   const activeWalletHash = useAppSelector((s) => s.activeWallet.id)
   const color = useDisplayColor(useHashToColor(activeWalletHash), walletColorPalette, 'vivid')
@@ -52,6 +49,22 @@ export const ShortcutButtonsGroupAddress = ({ addressHash, ...buttonProps }: Sho
       <SendButton addressHash={addressHash} {...buttonProps} color={color} />
       <BuyButton addressHash={addressHash} {...buttonProps} color={color} />
       <SettingsButton addressHash={addressHash} {...buttonProps} color={color} />
+    </ButtonsContainer>
+  )
+}
+
+interface ShortcutButtonsGroupTokenProps extends ShortcutButtonBaseProps {
+  tokenId: TokenId
+}
+
+export const ShortcutButtonsGroupToken = ({ tokenId, ...buttonProps }: ShortcutButtonsGroupTokenProps) => {
+  const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
+
+  return (
+    <ButtonsContainer>
+      <ReceiveButton addressHash={defaultAddressHash} {...buttonProps} />
+      <SendButton addressHash={defaultAddressHash} tokenId={tokenId} {...buttonProps} />
+      {tokenId === ALPH.id && <BuyButton addressHash={defaultAddressHash} {...buttonProps} />}
     </ButtonsContainer>
   )
 }
@@ -104,13 +117,17 @@ const ReceiveButton = ({ addressHash, analyticsOrigin, color }: ShortcutButtonsG
   )
 }
 
-const SendButton = ({ addressHash, analyticsOrigin, color }: ShortcutButtonsGroupAddressProps) => {
+interface SendButtonProps extends ShortcutButtonsGroupAddressProps {
+  tokenId?: TokenId
+}
+
+const SendButton = ({ addressHash, tokenId, color, analyticsOrigin }: SendButtonProps) => {
   const { sendAnalytics } = useAnalytics()
   const { t } = useTranslation()
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
-  const { data: addressesHashesWithBalance } = useFetchAddressesHashesWithBalance()
-  const currentNetwork = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const { data: addressesHashesWithBalance } = useFetchAddressesHashesWithBalance(tokenId)
+  const currentNetwork = useCurrentlyOnlineNetworkId()
 
   if (!fromAddress) return null
 
@@ -125,7 +142,7 @@ const SendButton = ({ addressHash, analyticsOrigin, color }: ShortcutButtonsGrou
   const handleSendClick = () => {
     if (isDisabled) return
 
-    dispatch(openModal({ name: 'TransferSendModal', props: { initialTxData: { fromAddress } } }))
+    dispatch(openModal({ name: 'TransferSendModal', props: { initialTxData: { fromAddress, tokenId } } }))
     sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
   }
 

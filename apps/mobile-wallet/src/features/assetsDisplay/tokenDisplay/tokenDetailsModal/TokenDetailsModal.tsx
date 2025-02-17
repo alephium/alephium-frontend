@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { getColors } from 'react-native-image-colors'
 import styled, { useTheme } from 'styled-components/native'
 
-import AnimatedBackground from '~/components/AnimatedBackground'
+import AnimatedBackground from '~/components/animatedBackground/AnimatedBackground'
 import RoundedCard from '~/components/RoundedCard'
 import TokenDetailsModalBalanceSummary from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModalBalanceSummary'
 import TokenDetailsModalDescription from '~/features/assetsDisplay/tokenDisplay/tokenDetailsModal/TokenDetailsModalDescription'
@@ -101,7 +101,7 @@ const TokenRoundedCard = ({ tokenId, addressHash }: TokenAnimatedBackgroundProps
 
   return (
     <RoundedCard>
-      <AnimatedBackground shade={dominantColor} isAnimated />
+      <AnimatedBackground shade={dominantColor} />
       <TokenDetailsModalBalanceSummary tokenId={tokenId} addressHash={addressHash} fontColor={fontColor} />
     </RoundedCard>
   )

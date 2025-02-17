@@ -18,7 +18,7 @@ const SearchInput = (props: TextInputProps) => {
 
       {props.value && (
         <ClearButtonContainer>
-          <Button iconProps={{ name: 'x' }} onPress={handleClearPress} squared compact />
+          <Button iconProps={{ name: 'x' }} onPress={handleClearPress} squared compact variant="transparent" />
         </ClearButtonContainer>
       )}
     </SearchInputStyled>
@@ -44,7 +44,7 @@ const ClearButtonContainer = styled.View`
 const TextInputStyled = styled(TextInput)`
   width: 100%;
   background-color: ${({ theme }) => theme.bg.highlight};
-  padding: 12px;
+  padding: 12px 14px;
   border-radius: 100px;
   color: ${({ theme }) => theme.font.primary};
 

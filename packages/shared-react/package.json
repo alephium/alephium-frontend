@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@alephium/shared": "workspace:*",
+    "@alephium/web3": "1.11.3",
     "@tanstack/react-query": "5.45.0",
     "axios": "^1.7.4",
     "react": "^18.2.0",
@@ -25,7 +26,7 @@
   "devDependencies": {
     "@alephium/eslint-config": "workspace:*",
     "@alephium/typescript-config": "workspace:*",
-    "@alephium/walletconnect-provider": "1.5.1",
+    "@alephium/walletconnect-provider": "1.11.3",
     "@types/react": "~18.2.79",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"

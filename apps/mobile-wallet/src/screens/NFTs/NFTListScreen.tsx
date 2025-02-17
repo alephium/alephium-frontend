@@ -17,7 +17,7 @@ type NFTListScreenProps = StackScreenProps<InWalletTabsParamList, 'NFTListScreen
 const NFTListScreen = ({ navigation }: NFTListScreenProps) => {
   const { t } = useTranslation()
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
-  const listRef = useRef<FlashList<NFT>>(null)
+  const listRef = useRef<FlashList<NFT[] | NFT['collectionId']>>(null)
   const scrollEndHandler = useAutoScrollOnDragEnd(listRef)
 
   return (

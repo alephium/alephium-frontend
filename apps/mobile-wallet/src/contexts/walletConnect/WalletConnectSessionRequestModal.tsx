@@ -28,7 +28,6 @@ import styled from 'styled-components/native'
 import { sendAnalytics } from '~/analytics'
 import { signAndSendTransaction } from '~/api/transactions'
 import AddressBadge from '~/components/AddressBadge'
-import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Button from '~/components/buttons/Button'
@@ -45,6 +44,8 @@ import { closeModal } from '~/features/modals/modalActions'
 import { ModalContent } from '~/features/modals/ModalContent'
 import { ModalBaseProp } from '~/features/modals/modalTypes'
 import withModal from '~/features/modals/withModal'
+import FeeAmounts from '~/features/send/screens/FeeAmounts'
+import TotalWorthRow from '~/features/send/screens/TotalWorthRow'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
 import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
@@ -360,13 +361,20 @@ const WalletConnectSessionRequestModal = withModal(
               {(requestData.type === 'transfer' || requestData.type === 'call-contract') &&
                 requestData.wcData.assetAmounts &&
                 requestData.wcData.assetAmounts.length > 0 && (
-                  <Row title={t('Sending')} titleColor="secondary">
-                    <AssetAmounts>
-                      {requestData.wcData.assetAmounts.map(({ id, amount }) =>
-                        amount ? <AssetAmountWithLogo key={id} assetId={id} amount={BigInt(amount)} /> : null
-                      )}
-                    </AssetAmounts>
-                  </Row>
+                  <>
+                    <Row title={t('Sending')} titleColor="secondary">
+                      <AssetAmounts>
+                        {requestData.wcData.assetAmounts.map(({ id, amount }) =>
+                          amount ? <AssetAmountWithLogo key={id} assetId={id} amount={BigInt(amount)} /> : null
+                        )}
+                      </AssetAmounts>
+                    </Row>
+
+                    <TotalWorthRow
+                      assetAmounts={requestData.wcData.assetAmounts}
+                      fromAddress={requestData.wcData.fromAddress}
+                    />
+                  </>
                 )}
               <Row title={isSignRequest ? t('Signing with') : t('From')} titleColor="secondary">
                 <AddressBadge addressHash={requestData.wcData.fromAddress} />
@@ -411,28 +419,23 @@ const WalletConnectSessionRequestModal = withModal(
                   <Row isVertical title={t('Unsigned TX ID')} titleColor="secondary">
                     <AppText>{requestData.unsignedTxData.unsignedTx.txId}</AppText>
                   </Row>
-                  <Row isVertical isLast title={t('Unsigned TX')} titleColor="secondary">
+                  <Row isVertical title={t('Unsigned TX')} titleColor="secondary">
                     <AppText>{requestData.wcData.unsignedTx}</AppText>
                   </Row>
                 </>
               )}
               {requestData.type === 'sign-message' && (
-                <Row isVertical isLast title={t('Message')} titleColor="secondary">
+                <Row isVertical title={t('Message')} titleColor="secondary">
                   <AppText>{requestData.wcData.message}</AppText>
+                </Row>
+              )}
+              {fees !== undefined && (
+                <Row title={t('Estimated fees')} titleColor="secondary" isLast>
+                  <FeeAmounts fees={fees} />
                 </Row>
               )}
             </Surface>
           </ScreenSection>
-          {fees !== undefined && (
-            <ScreenSection>
-              <FeeBox>
-                <AppText color="secondary" semiBold>
-                  {t('Estimated fees')}
-                </AppText>
-                <Amount value={fees} suffix="ALPH" medium />
-              </FeeBox>
-            </ScreenSection>
-          )}
           <ScreenSection centered>
             <ButtonsRow>
               <Button title={t('Reject')} variant="alert" onPress={onReject} flex />
@@ -460,7 +463,7 @@ const CopyBytecodeRow = ({ bytecode }: { bytecode: string }) => {
   }
 
   return (
-    <Row title={t('Bytecode')} titleColor="secondary" isLast>
+    <Row title={t('Bytecode')} titleColor="secondary">
       <Button iconProps={{ name: 'copy' }} onPress={handleCopy} />
     </Row>
   )
@@ -469,14 +472,6 @@ const CopyBytecodeRow = ({ bytecode }: { bytecode: string }) => {
 const AssetAmounts = styled.View`
   gap: 5px;
   align-items: flex-end;
-`
-
-const FeeBox = styled.View`
-  background-color: ${({ theme }) => theme.bg.secondary};
-  border-radius: 9px;
-  padding: 12px 10px;
-  flex-direction: row;
-  justify-content: space-between;
 `
 
 const DAppIcon = styled(Image)`

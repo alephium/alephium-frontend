@@ -114,6 +114,7 @@ const VerifyMnemonicScreen = ({ navigation, ...props }: VerifyMnemonicScreenProp
       <ScrollScreen
         fill
         verticalGap
+        headerOptions={{ type: 'stack' }}
         contentPaddingTop
         onScroll={screenScrollHandler}
         screenTitle={t('Verify secret phrase')}

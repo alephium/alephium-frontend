@@ -9,6 +9,7 @@ import { configureAutoUpdater, handleAutoUpdaterUserActions, setupAutoUpdaterLis
 import { setupLedgerDevicePermissions } from './ledger'
 import { setupAppMenu } from './menu'
 import { handleNativeThemeUserActions, setupNativeThemeListeners } from './nativeTheme'
+import { handleOnRampWindows } from './onRamp'
 import { ICON_PATH, RENDERER_PATH } from './paths'
 import { IS_RC, isIpcSenderValid, isMac, isWindows } from './utils'
 import {
@@ -34,8 +35,6 @@ contextMenu()
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: BrowserWindow | null
-// Window for on-ramp services
-let onRampWindow: BrowserWindow | null
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -128,6 +127,8 @@ app.on('ready', async function () {
 
   handleAutoUpdaterUserActions()
 
+  handleOnRampWindows(mainWindow)
+
   ipcMain.handle('app:hide', ({ senderFrame }) => {
     if (!isIpcSenderValid(senderFrame)) return null
 
@@ -207,68 +208,6 @@ app.on('ready', async function () {
 
   mainWindow?.on('unmaximize', () => {
     mainWindow?.webContents.send('window:maximized', false)
-  })
-
-  ipcMain.handle('app:openOnRampServiceWindow', (event, { url, targetLocation }) => {
-    if (onRampWindow) {
-      onRampWindow.show()
-      return
-    }
-
-    onRampWindow = new BrowserWindow({
-      width: 1000,
-      height: 800,
-      webPreferences: {
-        contextIsolation: true,
-        webSecurity: true
-      }
-    })
-
-    onRampWindow.loadURL(url)
-
-    onRampWindow.webContents.on('did-navigate', (event, currentUrl) => {
-      console.log(`Navigated to: ${currentUrl}`)
-      if (currentUrl.includes(targetLocation)) {
-        onRampWindow?.close()
-        onRampWindow = null
-
-        mainWindow?.webContents.send('target-location-reached')
-      }
-    })
-
-    // Ensure window reference is cleaned up
-    onRampWindow.on('closed', () => {
-      onRampWindow = null
-    })
-
-    // Handle child windows opening (onramper opens provider in a new window)
-    onRampWindow.webContents.setWindowOpenHandler(({ url }) => {
-      const childWindow = new BrowserWindow({
-        parent: onRampWindow!,
-        width: 800,
-        height: 600,
-        webPreferences: {
-          contextIsolation: true,
-          webSecurity: true
-        }
-      })
-      childWindow.loadURL(url)
-
-      // Listen for navigation events on the new window
-      childWindow.webContents.on('did-navigate', (event, currentUrl) => {
-        console.log(`Child window navigated to: ${currentUrl}`)
-        if (currentUrl.includes(targetLocation)) {
-          childWindow?.close()
-          onRampWindow?.close()
-          onRampWindow = null
-
-          mainWindow?.webContents.send('target-location-reached')
-        }
-      })
-
-      // Prevent the default action (which would be Electron creating a default window)
-      return { action: 'deny' }
-    })
   })
 
   createWindow()

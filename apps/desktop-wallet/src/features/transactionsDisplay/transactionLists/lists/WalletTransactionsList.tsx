@@ -94,6 +94,7 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
           showSpinner={isFetchingNextPage}
           onShowMoreClick={fetchNextPage}
           noTxsMsg={t('No transactions to display')}
+          latestTxDate={fetchedConfirmedTxs && fetchedConfirmedTxs[fetchedConfirmedTxs.length - 1]?.timestamp}
           allTxsLoadedMsg={t('All the transactions that match the filtering criteria were loaded!')}
         />
       )}

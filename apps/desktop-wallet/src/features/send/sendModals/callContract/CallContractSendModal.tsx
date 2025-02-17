@@ -33,6 +33,7 @@ export const buildCallContractTransaction = async (txData: CallContractTxData, c
     gasAmount: txData.gasAmount,
     gasPrice: txData.gasPrice ? fromHumanReadableAmount(txData.gasPrice).toString() : undefined
   })
+  ctx.setBuildExecuteScriptTxResult(response)
   ctx.setUnsignedTransaction(response)
   ctx.setUnsignedTxId(response.txId)
   ctx.setFees(BigInt(response.gasAmount) * BigInt(response.gasPrice))
@@ -82,14 +83,15 @@ export const getCallContractWalletConnectResult = (
   context: TxContext,
   signature: string
 ): SignExecuteScriptTxResult => {
-  if (!context.unsignedTransaction) throw Error('No unsignedTransaction available')
+  if (!context.buildExecuteScriptTxResult) throw Error('No buildExecuteScriptTxResult available')
 
   return {
-    groupIndex: context.unsignedTransaction.fromGroup,
-    unsignedTx: context.unsignedTransaction.unsignedTx,
+    groupIndex: context.buildExecuteScriptTxResult.fromGroup,
+    unsignedTx: context.buildExecuteScriptTxResult.unsignedTx,
     txId: context.unsignedTxId,
     signature,
-    gasAmount: context.unsignedTransaction.gasAmount,
-    gasPrice: BigInt(context.unsignedTransaction.gasPrice)
+    gasAmount: context.buildExecuteScriptTxResult.gasAmount,
+    gasPrice: BigInt(context.buildExecuteScriptTxResult.gasPrice),
+    simulatedOutputs: context.buildExecuteScriptTxResult.simulatedOutputs
   }
 }

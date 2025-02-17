@@ -12,7 +12,7 @@ import { ImpactStyle, vibrate } from '~/utils/haptics'
 export interface ButtonProps extends PressableProps {
   title?: string
   type?: 'primary' | 'secondary' | 'transparent' | 'tint'
-  variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert' | 'highlight'
+  variant?: 'default' | 'contrast' | 'accent' | 'valid' | 'alert' | 'highlight' | 'transparent'
   style?: StyleProp<TextStyle & ViewStyle>
   wide?: boolean
   short?: boolean
@@ -76,7 +76,8 @@ const Button = ({
       accent: theme.global.accent,
       valid: theme.font.contrast,
       alert: theme.global.alert,
-      highlight: 'white'
+      highlight: 'white',
+      transparent: theme.font.primary
     }[variant]
 
   const buttonAnimatedStyle = useAnimatedStyle(() => ({

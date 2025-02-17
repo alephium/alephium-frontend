@@ -1,4 +1,5 @@
 import { motion, MotionProps } from 'framer-motion'
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import AppHeader from '@/components/AppHeader'
@@ -6,9 +7,10 @@ import ScrollbarCustom from '@/components/Scrollbar'
 
 interface LockedWalletLayoutProps extends MotionProps {
   className?: string
+  children: ReactNode
 }
 
-const LockedWalletLayout: FC<LockedWalletLayoutProps> = ({ children, ...props }) => (
+const LockedWalletLayout = ({ children, ...props }: LockedWalletLayoutProps) => (
   <motion.main {...props}>
     <ScrollbarCustom>
       <AppHeader position="fixed" />

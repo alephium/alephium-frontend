@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { TableCell } from '@/components/Table'
 import { FTAddressAmountCell } from '@/features/assetsLists/tokenBalanceRow/FTAmountCells'
 import FTPriceCell from '@/features/assetsLists/tokenBalanceRow/FTPriceCell'
-import FTWorth from '@/features/assetsLists/tokenBalanceRow/FTWorthCell'
+import { FTAddressWorthCell } from '@/features/assetsLists/tokenBalanceRow/FTWorthCell'
 import { FTNameCell, NSTNameCell } from '@/features/assetsLists/tokenBalanceRow/NameCells'
 import TokenBalancesRow from '@/features/assetsLists/tokenBalanceRow/TokenBalancesRow'
 import TokenLogo from '@/features/assetsLists/tokenBalanceRow/TokenLogo'
@@ -16,7 +16,7 @@ export const AddressFTBalancesRow = ({ tokenId, addressHash }: AddressTokenBalan
       <FTNameCell tokenId={tokenId} />
       <FTPriceCell tokenId={tokenId} />
       <FTAddressAmountCell tokenId={tokenId} addressHash={addressHash} />
-      <FTWorth tokenId={tokenId} />
+      <FTAddressWorthCell tokenId={tokenId} addressHash={addressHash} />
     </TokenRow>
   </TokenBalancesRow>
 )

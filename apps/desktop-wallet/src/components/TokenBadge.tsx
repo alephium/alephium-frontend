@@ -2,11 +2,11 @@ import { colord } from 'colord'
 import { memo } from 'react'
 import styled, { css, useTheme } from 'styled-components'
 
-import useFetchToken, { isFT, isNFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { TokenId } from '@/types/tokens'
+import { isFT, isNFT, TokenId } from '@/types/tokens'
 
 export interface TokenBadgeStyleProps {
   withBorder?: boolean
@@ -26,6 +26,8 @@ interface TokenBadgeProps extends TokenBadgeStyleProps {
 const TokenBadge = memo(({ tokenId, className, displaySign, withBackground, amount, ...props }: TokenBadgeProps) => {
   const { data: token } = useFetchToken(tokenId)
   const theme = useTheme()
+
+  if (!token) return null
 
   const tooltipContent = isFT(token) || isNFT(token) ? token.name : tokenId
 
@@ -63,6 +65,8 @@ const TokenBadgeText = ({
   const { data: token, isLoading: isLoadingToken } = useFetchToken(tokenId)
 
   if (isLoadingToken) return <SkeletonLoader height="20px" />
+
+  if (!token) return null
 
   if (isNFT(token) && showNftName) return <TokenSymbol>{token.name}</TokenSymbol>
 

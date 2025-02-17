@@ -36,7 +36,7 @@ const SecretPhraseWordList = ({ words, onWordPress, showEmptyListMessage }: Secr
               layout={Layout.duration(200).delay(200)}
             >
               <WordText semiBold>
-                {index + 1}. {word.word}
+                {index + 1}. {index < words.length - 2 ? '***' : word.word}
               </WordText>
             </SelectedWordBox>
           ))
@@ -45,9 +45,9 @@ const SecretPhraseWordList = ({ words, onWordPress, showEmptyListMessage }: Secr
   )
 }
 
-export const WordBox = (props: AnimatedProps<PressableProps>) => <StyledWordBox hitSlop={10} {...props} />
-
 export default SecretPhraseWordList
+
+export const WordBox = (props: AnimatedProps<PressableProps>) => <StyledWordBox hitSlop={10} {...props} />
 
 const SecretPhraseWordListStyled = styled.View`
   padding: 15px;
@@ -59,13 +59,13 @@ const WordText = styled(AppText)`
   color: ${({ theme }) => theme.font.contrast};
 `
 
-export const StyledWordBox = styled(AnimatedPressable)`
+const StyledWordBox = styled(AnimatedPressable)`
   background-color: ${({ theme }) => theme.bg.contrast};
   padding: 8px 12px;
   margin: 0 10px 10px 0;
   border-radius: 100px;
 `
 
-export const SelectedWordBox = styled(WordBox)`
+const SelectedWordBox = styled(WordBox)`
   background-color: ${({ theme }) => theme.bg.contrast};
 `

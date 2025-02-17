@@ -13,7 +13,7 @@ import HashEllipsed from '@/components/HashEllipsed'
 import Truncate from '@/components/Truncate'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import TabContent from '@/pages/unlockedWallet/addressesPage/TabContent'
+import AddressesPageTabContent from '@/pages/unlockedWallet/addressesPage/AddressesPageTabContent'
 import { selectAllContacts, selectContactByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { useHashToColor } from '@/utils/colors'
 import { filterContacts } from '@/utils/contacts'
@@ -36,7 +36,7 @@ const ContactsTabContent = memo(() => {
   const openNewContactFormModal = () => dispatch(openModal({ name: 'ContactFormModal', props: {} }))
 
   return (
-    <TabContent
+    <AddressesPageTabContent
       searchPlaceholder={t('Search for name or a hash...')}
       onSearch={setSearchInput}
       buttonText={newContactButtonText}
@@ -57,7 +57,7 @@ const ContactsTabContent = memo(() => {
           </PlaceholderCard>
         )}
       </ContactBox>
-    </TabContent>
+    </AddressesPageTabContent>
   )
 })
 

@@ -11,14 +11,15 @@ import ForgetMulitpleAddressesButton from '@/features/addressDeletion/ForgetMuli
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useFetchSortedAddressesHashesWithLatestTx } from '@/hooks/useAddresses'
+import { useFetchAddressesHashesSortedByLastUseWithLatestTx } from '@/hooks/useAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons, ScrollableModalContent } from '@/modals/CenteredModal'
 import AddressLastActivity from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressLastActivity'
 import { selectDefaultAddress, selectInitialAddress } from '@/storage/addresses/addressesSelectors'
 
 const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
-  const { data: sortedAddresses, isLoading: isLoadingSortedAddresses } = useFetchSortedAddressesHashesWithLatestTx()
+  const { data: sortedAddresses, isLoading: isLoadingSortedAddresses } =
+    useFetchAddressesHashesSortedByLastUseWithLatestTx()
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
   const initialAddress = useAppSelector(selectInitialAddress)
   const dispatch = useAppDispatch()

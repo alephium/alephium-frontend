@@ -4,8 +4,8 @@ import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 interface SnackbarBoxProps {
-  className?: string
   children: ReactNode
+  className?: string
 }
 
 const SnackbarBox = ({ children, ...props }: SnackbarBoxProps) => (
@@ -14,6 +14,8 @@ const SnackbarBox = ({ children, ...props }: SnackbarBoxProps) => (
     <SnackbarBoxContent>{children}</SnackbarBoxContent>
   </SnackBarBoxContainer>
 )
+
+export default SnackbarBox
 
 const SnackbarBoxContent = styled(motion.div)`
   font-size: 13px;
@@ -65,8 +67,6 @@ const SnackBarBoxContainer = styled(motion.div)`
     ${({ theme }) => getSnackbarStyling(theme.global.valid)}
   }
 `
-
-export default SnackbarBox
 
 const getSnackbarStyling = (color: string) => css`
   ${SnackbarBoxContent} {

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import useFetchToken, { isFT, isNFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
@@ -16,6 +16,7 @@ import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { openModal } from '@/features/modals/modalActions'
 import { getTransactionAssetAmounts } from '@/features/send/sendUtils'
 import { useAppDispatch } from '@/hooks/redux'
+import { isFT, isNFT } from '@/types/tokens'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -55,6 +56,8 @@ const AssetAmountRow = ({ tokenId, amount, extraAlphForDust }: AssetAmountRowPro
   const { t } = useTranslation()
   const { data: token } = useFetchToken(tokenId)
   const dispatch = useAppDispatch()
+
+  if (!token) return null
 
   const handleRowClick = () => {
     if (isNFT(token)) dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId: tokenId } }))

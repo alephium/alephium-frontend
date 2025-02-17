@@ -4,8 +4,7 @@ import styled from 'styled-components'
 
 import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { TokenBadgeStyleProps } from '@/components/TokenBadge'
-import AddressTokenBadge from '@/features/assetsLists/AddressTokenBadge'
+import TokenBadge, { TokenBadgeStyleProps } from '@/components/TokenBadge'
 
 interface AddressTokensBadgesListProps extends TokenBadgeStyleProps {
   addressHash: AddressHash
@@ -41,7 +40,7 @@ const AddressTokensBadgesList = ({
   return (
     <TokensBadgesListStyled className={className}>
       {displayedStandardTokenIds.map((tokenId) => (
-        <AddressTokenBadge key={tokenId} tokenId={tokenId} addressHash={addressHash} {...badgeProps} />
+        <TokenBadge key={tokenId} tokenId={tokenId} {...badgeProps} />
       ))}
 
       {nbOfAdditionalTokens > 0 && <span>+{nbOfAdditionalTokens}</span>}

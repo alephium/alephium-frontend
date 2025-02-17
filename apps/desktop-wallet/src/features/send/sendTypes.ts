@@ -2,6 +2,7 @@ import { AssetAmount } from '@alephium/shared'
 import { node } from '@alephium/web3'
 
 import { Address } from '@/types/addresses'
+import { TokenId } from '@/types/tokens'
 
 export interface TransferTxData {
   fromAddress: Address
@@ -11,6 +12,7 @@ export interface TransferTxData {
   gasAmount?: number
   gasPrice?: string
   lockTime?: Date
+  tokenId?: TokenId
 }
 
 export interface CallContractTxData {
@@ -38,7 +40,10 @@ export type TransferTxModalData = PartialTxData<TransferTxData, 'fromAddress'>
 export type CallContractTxModalData = PartialTxData<CallContractTxData, 'fromAddress'>
 export type DeployContractTxModalData = PartialTxData<DeployContractTxData, 'fromAddress'>
 
-export type TransferAddressesTxModalOnSubmitData = PartialTxData<TransferTxData, 'fromAddress' | 'toAddress'>
+export type TransferAddressesTxModalOnSubmitData = PartialTxData<
+  TransferTxData,
+  'fromAddress' | 'toAddress' | 'tokenId'
+>
 
 export type AddressesTxModalData =
   | TransferAddressesTxModalOnSubmitData
@@ -82,4 +87,6 @@ export type TxContext = {
   setContractAddress: (contractAddress: string) => void
   isSweeping: boolean
   consolidationRequired: boolean
+  buildExecuteScriptTxResult: node.BuildExecuteScriptTxResult | undefined
+  setBuildExecuteScriptTxResult: (tx: node.BuildExecuteScriptTxResult | undefined) => void
 }

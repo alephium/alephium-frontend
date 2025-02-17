@@ -1,8 +1,8 @@
 import { FIVE_MINUTES_MS, ONE_MINUTE_MS, throttledClient } from '@alephium/shared'
+import { getQueryConfig } from '@alephium/shared-react'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
-import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
 
 interface TokensPriceQueryProps extends SkipProp {
   symbols: string[]

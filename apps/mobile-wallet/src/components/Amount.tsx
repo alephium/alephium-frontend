@@ -20,6 +20,7 @@ export interface AmountProps extends AppTextProps {
   fadeSuffix?: boolean
   useTinyAmountShorthand?: boolean
   style?: StyleProp<TextStyle>
+  fiatPrefix?: string
 }
 
 const Amount = ({
@@ -36,6 +37,7 @@ const Amount = ({
   highlight,
   fadeSuffix,
   useTinyAmountShorthand,
+  fiatPrefix,
   ...props
 }: AmountProps) => {
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
@@ -46,7 +48,9 @@ const Amount = ({
 
   const hideAmount = discreetMode && !showOnDiscreetMode && !tappedToDisableDiscreetMode
 
-  const handleTappedToDisableDiscreetMode = () => setTappedToDisableDiscreetMode(!tappedToDisableDiscreetMode)
+  const handleTappedToDisableDiscreetMode = discreetMode
+    ? () => setTappedToDisableDiscreetMode(!tappedToDisableDiscreetMode)
+    : undefined
 
   let amount = ''
   let tinyAmount = ''
@@ -61,7 +65,7 @@ const Amount = ({
 
       return (
         <AppText {...props} {...{ color, style }} onPress={handleTappedToDisableDiscreetMode}>
-          {hideAmount ? '•••' : amount}
+          {hideAmount ? '•••' : fiatPrefix ? `${fiatPrefix} ${amount}` : amount}
         </AppText>
       )
     } else if (isUnknownToken) {

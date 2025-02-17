@@ -1,49 +1,33 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { calculateAmountWorth } from '@alephium/shared'
 import styled from 'styled-components'
 
 import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import useFetchToken, { isListedFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
 import useFetchWalletWorth from '@/api/apiDataHooks/wallet/useFetchWalletWorth'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TableCell } from '@/components/Table'
 import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
-import { ListedFT } from '@/types/tokens'
+import { isListedFT, ListedFT } from '@/types/tokens'
 
 const FTAllocationCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
   const { data: token, isLoading: isLoadingToken } = useFetchToken(tokenId)
-  const { data: tokenBalance, isLoading: isLoadingBalance } = useFetchWalletSingleTokenBalances({
+  const { data: tokenBalances, isLoading: isLoadingBalances } = useFetchWalletSingleTokenBalances({
     tokenId
   })
   const { data: walletWorth, isLoading: isLoadingWalletWorth } = useFetchWalletWorth()
 
-  if (!isListedFT(token)) return <TableCell fixedWidth={140} />
+  if (!token || !isListedFT(token)) return <TableCell fixedWidth={140} />
+
+  const tokenAmount = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
 
   return (
     <TableCell fixedWidth={140}>
       <FTAllocationBar
         token={token}
-        tokenAmount={BigInt(tokenBalance?.totalBalance)}
+        tokenAmount={tokenAmount}
         walletWorth={walletWorth}
-        isLoading={isLoadingToken || isLoadingBalance || isLoadingWalletWorth}
+        isLoading={isLoadingToken || isLoadingBalances || isLoadingWalletWorth}
       />
     </TableCell>
   )

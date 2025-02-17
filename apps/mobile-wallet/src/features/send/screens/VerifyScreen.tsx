@@ -5,8 +5,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled from 'styled-components/native'
 
 import AddressBadge from '~/components/AddressBadge'
-import Amount from '~/components/Amount'
-import AppText from '~/components/AppText'
 import AssetAmountWithLogo from '~/components/AssetAmountWithLogo'
 import Button from '~/components/buttons/Button'
 import { ScreenSection } from '~/components/layout/Screen'
@@ -15,6 +13,8 @@ import Surface from '~/components/layout/Surface'
 import Row from '~/components/Row'
 import { useHeaderContext } from '~/contexts/HeaderContext'
 import { useSendContext } from '~/contexts/SendContext'
+import FeeAmounts from '~/features/send/screens/FeeAmounts'
+import TotalWorthRow from '~/features/send/screens/TotalWorthRow'
 import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import { VERTICAL_GAP } from '~/style/globalStyle'
@@ -58,25 +58,23 @@ const VerifyScreen = ({ navigation, ...props }: ScreenProps) => {
           <Row title={t('Sending')} titleColor="secondary">
             <AssetAmounts>
               {assets.map(({ id, amount }) =>
-                amount ? <AssetAmountWithLogo key={id} assetId={id} amount={BigInt(amount)} fullPrecision /> : null
+                amount ? <AssetAmountWithLogo key={id} assetId={id} amount={BigInt(amount)} fullPrecision bold /> : null
               )}
             </AssetAmounts>
           </Row>
+
+          <TotalWorthRow assetAmounts={assetAmounts} fromAddress={fromAddress} />
+
           <Row title={t('To')} titleColor="secondary">
             <AddressBadge addressHash={toAddress} />
           </Row>
-          <Row title={t('From')} titleColor="secondary" isLast>
+          <Row title={t('From')} titleColor="secondary">
             <AddressBadge addressHash={fromAddress} />
           </Row>
+          <Row title={t('Estimated fees')} titleColor="secondary" isLast>
+            <FeeAmounts fees={fees} />
+          </Row>
         </Surface>
-      </ScreenSection>
-      <ScreenSection>
-        <FeeBox>
-          <AppText color="secondary" semiBold>
-            {t('Estimated fees')}
-          </AppText>
-          <Amount value={fees} suffix="ALPH" medium />
-        </FeeBox>
       </ScreenSection>
     </ScrollScreen>
   )
@@ -87,12 +85,4 @@ export default VerifyScreen
 const AssetAmounts = styled.View`
   gap: 5px;
   align-items: flex-end;
-`
-
-const FeeBox = styled.View`
-  background-color: ${({ theme }) => theme.bg.primary};
-  border-radius: 9px;
-  padding: 12px 10px;
-  flex-direction: row;
-  justify-content: space-between;
 `

@@ -1,12 +1,11 @@
 import { AddressHash } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 
 import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddressBalancesAlph'
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { addressTokensBalancesQuery } from '@/api/queries/addressQueries'
-import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { TokenId } from '@/types/tokens'
 
 interface UseFetchAddressSingleTokenBalancesProps extends SkipProp {
@@ -19,7 +18,7 @@ const useFetchAddressSingleTokenBalances = ({
   tokenId,
   skip
 }: UseFetchAddressSingleTokenBalancesProps) => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
   const isALPH = tokenId === ALPH.id
 
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchAddressBalancesAlph({
@@ -33,11 +32,7 @@ const useFetchAddressSingleTokenBalances = ({
   })
 
   return {
-    data: (isALPH ? alphBalances : addressTokenBalances) || {
-      availableBalance: '0',
-      lockedBalance: '0',
-      totalBalance: '0'
-    },
+    data: isALPH ? alphBalances : addressTokenBalances,
     isLoading: isALPH ? isLoadingAlphBalances : isLoadingTokenBalances
   }
 }

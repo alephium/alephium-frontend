@@ -4,9 +4,9 @@ import styled from 'styled-components'
 
 import { ShortcutButtonsGroupAddress } from '@/components/Buttons/ShortcutButtons'
 import LabeledWorthOverview from '@/components/LabeledWorthOverview'
-import { AddressDetailsTabs } from '@/features/assetsLists/AddressDetailsTabs'
 import { AddressModalProps } from '@/features/modals/modalTypes'
 import AddressDetailsModalHeader from '@/modals/AddressDetailsModal/AddressDetailsModalHeader'
+import { AddressDetailsModalTabs } from '@/modals/AddressDetailsModal/AddressDetailsModalTabs'
 import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
 import SideModal from '@/modals/SideModal'
 
@@ -25,7 +25,7 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
           <AddressWorth addressHash={addressHash} />
         </LabeledWorthOverview>
         <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" />
-        <AddressDetailsTabs addressHash={addressHash} />
+        <AddressDetailsModalTabs addressHash={addressHash} />
       </Content>
     </SideModal>
   )

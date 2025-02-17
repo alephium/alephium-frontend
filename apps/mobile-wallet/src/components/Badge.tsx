@@ -3,20 +3,21 @@ import { ReactNode } from 'react'
 import { StyleProp, View, ViewStyle } from 'react-native'
 import styled, { css } from 'styled-components/native'
 
-interface BadgeProps {
+export interface BadgeProps {
   children: ReactNode
   color?: string
   rounded?: boolean
   border?: boolean
   light?: boolean
   solid?: boolean
+  compact?: boolean
   style?: StyleProp<ViewStyle>
 }
 
-const Badge = ({ style, color, solid, children }: BadgeProps) => (
+const Badge = ({ style, color, solid, compact, children }: BadgeProps) => (
   <View style={style}>
     {['string', 'number'].includes(typeof children) ? (
-      <BadgeText color={color} solid={solid}>
+      <BadgeText color={color} solid={solid} style={{ fontSize: compact ? 12 : undefined }}>
         {children}
       </BadgeText>
     ) : (
@@ -29,12 +30,12 @@ export default styled(Badge)`
   flex-direction: row;
   gap: 4px;
 
-  ${({ color, theme, rounded, border, light, solid }) => {
+  ${({ color, theme, rounded, border, light, solid, compact }) => {
     const usedColor = color || theme.font.primary
 
     return css`
       min-width: 25px;
-      padding: 4px 8px;
+      padding: ${compact ? '3px 5px' : '4px 8px'};
       align-items: center;
       justify-content: center;
       border-radius: ${rounded ? '30px' : '7px'};

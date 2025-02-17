@@ -16,8 +16,8 @@ import { getTransactionAssetAmounts } from '~/utils/transactions'
 
 type UnsignedTxData = {
   unsignedTxs: {
-    txId: node.BuildTransactionResult['txId'] | node.SweepAddressTransaction['txId']
-    unsignedTx: node.BuildTransactionResult['unsignedTx'] | node.SweepAddressTransaction['unsignedTx']
+    txId: node.BuildTransferTxResult['txId'] | node.SweepAddressTransaction['txId']
+    unsignedTx: node.BuildTransferTxResult['unsignedTx'] | node.SweepAddressTransaction['unsignedTx']
   }[]
   fees: bigint
 }

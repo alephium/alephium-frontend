@@ -5,19 +5,23 @@ import styled, { css } from 'styled-components'
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
 import AddressTokensBadgesList from '@/features/assetsLists/AddressTokensBadgesList'
+import { FTAddressAmountCell } from '@/features/assetsLists/tokenBalanceRow/FTAmountCells'
+import { FTAddressWorthCell } from '@/features/assetsLists/tokenBalanceRow/FTWorthCell'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
 import AddressGroup from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressGroup'
 import AddressLastActivity from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressLastActivity'
 import AddressWorth from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressWorth'
+import { TokenId } from '@/types/tokens'
 import { onEnterOrSpace } from '@/utils/misc'
 
 interface AddressListRowProps {
   addressHash: AddressHash
   className?: string
+  tokenId?: TokenId
 }
 
-const AddressListRow = memo(({ addressHash, className }: AddressListRowProps) => {
+const AddressListRow = memo(({ addressHash, tokenId, className }: AddressListRowProps) => {
   const dispatch = useAppDispatch()
 
   const openAddressDetailsModal = () => dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
@@ -45,12 +49,22 @@ const AddressListRow = memo(({ addressHash, className }: AddressListRowProps) =>
       <Cell>
         <AddressGroup addressHash={addressHash} />
       </Cell>
-      <Cell>
-        <AddressTokensBadgesListStyled addressHash={addressHash} />
-      </Cell>
-      <FiatAmountCell>
-        <AddressWorth addressHash={addressHash} />
-      </FiatAmountCell>
+
+      {tokenId ? (
+        <FTAddressAmountCell tokenId={tokenId} addressHash={addressHash} />
+      ) : (
+        <Cell>
+          <AddressTokensBadgesListStyled addressHash={addressHash} />
+        </Cell>
+      )}
+
+      {tokenId ? (
+        <FTAddressWorthCell tokenId={tokenId} addressHash={addressHash} />
+      ) : (
+        <FiatAmountCell>
+          <AddressWorth addressHash={addressHash} />
+        </FiatAmountCell>
+      )}
     </GridRow>
   )
 })

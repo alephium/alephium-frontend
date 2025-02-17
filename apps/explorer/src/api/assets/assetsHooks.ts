@@ -1,4 +1,3 @@
-import { PRICED_TOKENS } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 import { flatMap, uniq } from 'lodash'
@@ -156,7 +155,7 @@ export const useAssetsMetadata = (assetIds: string[] = []) => {
 }
 
 export const useTokensPrices = <T extends string>(assetSymbols: T[] = []) => {
-  const tokensToFetch = uniq(assetSymbols).filter((symbol) => !!symbol && PRICED_TOKENS.includes(symbol))
+  const tokensToFetch = uniq(assetSymbols).filter((symbol) => !!symbol)
 
   const { data: prices } = useQueriesData(
     tokensToFetch.map((symbol) => ({

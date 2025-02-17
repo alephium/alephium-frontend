@@ -16,13 +16,13 @@ import {
   WalletNSTBalancesRow
 } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
 import TokensBalancesHeader from '@/features/assetsLists/TokensBalancesHeader'
-import { AddressDetailsTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
 import {
   HiddenAddressTokensBalancesListSection,
   HiddenWalletTokensBalancesListSection
 } from '@/features/hiddenTokens/HiddenTokensBalancesLists'
+import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 
-export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressDetailsTabsProps) => {
+export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
   const { listedFts, unlistedFts, isLoading } = useFetchAddressFts({ addressHash })
   const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
@@ -33,7 +33,7 @@ export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressDetails
 
   return (
     <>
-      <Table {...props}>
+      <Table>
         {!isEmpty && <TokensBalancesHeader />}
         {listedFts.map(({ id }) => (
           <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
@@ -49,23 +49,23 @@ export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressDetails
         )}
         {isLoading && <TokensSkeletonLoader />}
       </Table>
-      <HiddenAddressTokensBalancesListSection addressHash={addressHash} {...props} />
+      <HiddenAddressTokensBalancesListSection addressHash={addressHash} />
     </>
   )
 }
 
-export const WalletFTsBalancesList = (props: TokensTabsBaseProps) => {
+export const WalletFTsBalancesList = () => {
   const { t } = useTranslation()
   const { listedFts, unlistedFts, isLoading } = useFetchWalletFts({ includeHidden: false, sort: true })
   const {
     data: { nstIds }
-  } = useFetchWalletTokensByType({ includeAlph: false, includeHidden: false })
+  } = useFetchWalletTokensByType({ includeHidden: false })
 
   const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
 
   return (
     <>
-      <Table {...props}>
+      <Table>
         {!isEmpty && <TokensBalancesHeader showAllocation />}
         {listedFts.map(({ id }) => (
           <WalletFTBalancesRow tokenId={id} key={id} />
@@ -83,7 +83,7 @@ export const WalletFTsBalancesList = (props: TokensTabsBaseProps) => {
         )}
         {isLoading && <TokensSkeletonLoader />}
       </Table>
-      <HiddenWalletTokensBalancesListSection {...props} />
+      <HiddenWalletTokensBalancesListSection />
     </>
   )
 }

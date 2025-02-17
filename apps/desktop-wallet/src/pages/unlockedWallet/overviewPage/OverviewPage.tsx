@@ -4,8 +4,8 @@ import styled, { useTheme } from 'styled-components'
 import AnimatedBackground from '@/components/AnimatedBackground'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import LabeledWorthOverview from '@/components/LabeledWorthOverview'
-import { WalletTokensTabs } from '@/features/assetsLists/AddressDetailsTabs'
 import { useAppSelector } from '@/hooks/redux'
+import OverviewTabs from '@/pages/unlockedWallet/overviewPage/OverviewTabs'
 import WalletWorth from '@/pages/unlockedWallet/overviewPage/WalletWorth'
 import { UnlockedWalletPanel } from '@/pages/unlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/unlockedWallet/UnlockedWalletPage'
@@ -40,17 +40,13 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
         </WorthOverviewPanel>
       </WorthUnlockedWalletPanel>
       <UnlockedWalletPanel bottom>
-        <WalletTokensTabsStyled />
+        <OverviewTabs />
       </UnlockedWalletPanel>
     </UnlockedWalletPage>
   )
 }
 
 export default OverviewPage
-
-const WalletTokensTabsStyled = styled(WalletTokensTabs)`
-  flex: 2;
-`
 
 const Shortcuts = styled.div`
   align-items: center;

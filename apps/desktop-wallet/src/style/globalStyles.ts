@@ -72,6 +72,7 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
+  // Custom scrollbars theme
   .rcs-inner-handle {
     color: white;
     width: 5px;

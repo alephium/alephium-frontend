@@ -8,6 +8,7 @@ import BottomModal from '~/features/modals/BottomModal'
 import { closeModal } from '~/features/modals/modalActions'
 import withModal from '~/features/modals/withModal'
 import { useAppDispatch } from '~/hooks/redux'
+import { VERTICAL_GAP } from '~/style/globalStyle'
 
 interface BiometricsWarningModalProps {
   onConfirm: () => void
@@ -24,9 +25,9 @@ const BiometricsWarningModal = withModal<BiometricsWarningModalProps>(({ id, onC
   }
 
   return (
-    <BottomModal modalId={id} title={`⚠️ ${t('Are you sure?')}`} paddingTop noPadding>
+    <BottomModal modalId={id} title={`⚠️ ${t('Are you sure?')}`} noPadding>
       <ScreenSection verticalGap>
-        <AppText color="secondary" size={18}>
+        <AppText color="secondary" size={18} style={{ textAlign: 'center', paddingTop: VERTICAL_GAP }}>
           {t(
             "If you don't turn on biometrics, anyone who gains access to your device can open the app and steal your funds."
           )}

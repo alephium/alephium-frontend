@@ -9,7 +9,6 @@
   "Address NFTs": "Address NFTs",
   "Address options": "Address options",
   "Address tokens": "Address tokens",
-  "Address transactions": "Address transactions",
   "Addresses": "Addresses",
   "Addresses & contacts": "Addresses & contacts",
   "Advanced feature": "Advanced feature",
@@ -495,7 +494,7 @@
   "You can now complete your purchase in the dedicated window!": "You can now complete your purchase in the dedicated window!",
   "Token": "Token",
   "Price": "Price",
-  "Value": "Value",
+  "Worth": "Worth",
   "Invalid mnemonic. Please double check your words.": "Invalid mnemonic. Please double check your words.",
   "Incorrect word. Please try again.": "Incorrect word. Please try again.",
   "Select the correct word for word number <1>{{ number }} of 24</1>.": "Select the correct word for word number <1>{{ number }} of 24</1>.",
@@ -534,5 +533,8 @@
   "nb_of_hidden_assets_other": "{{ count }} hidden assets",
   "Close hidden assets list": "Close hidden assets list",
   "Unhide asset": "Unhide asset",
-  "Asset to send": "Asset to send"
+  "Asset to send": "Asset to send",
+  "No transactions before {{ date }}": "No transactions before {{ date }}",
+  "Sort by": "Sort by",
+  "ALPH balance": "ALPH balance"
 }

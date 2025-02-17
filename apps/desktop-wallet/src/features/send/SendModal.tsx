@@ -100,6 +100,7 @@ function SendModal<PT extends { fromAddress: Address }>({
   const [unsignedTxId, setUnsignedTxId] = useState('')
   const [contractAddress, setContractAddress] = useState('')
   const [unsignedTransaction, setUnsignedTransaction] = useState<UnsignedTx>()
+  const [buildExecuteScriptTxResult, setBuildExecuteScriptTxResult] = useState<node.BuildExecuteScriptTxResult>()
   const [isTransactionBuildTriggered, setIsTransactionBuildTriggered] = useState(false)
 
   const isRequestToApproveContractCall = initialStep === 'info-check'
@@ -122,9 +123,11 @@ function SendModal<PT extends { fromAddress: Address }>({
       setUnsignedTxId,
       setContractAddress,
       isSweeping,
-      consolidationRequired
+      consolidationRequired,
+      buildExecuteScriptTxResult,
+      setBuildExecuteScriptTxResult
     }),
-    [consolidationRequired, isSweeping, sweepUnsignedTxs, unsignedTransaction, unsignedTxId]
+    [buildExecuteScriptTxResult, consolidationRequired, isSweeping, sweepUnsignedTxs, unsignedTransaction, unsignedTxId]
   )
 
   const handleSendExtended = useCallback(async () => {
