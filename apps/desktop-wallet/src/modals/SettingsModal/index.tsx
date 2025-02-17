@@ -1,13 +1,14 @@
+import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Settings, X } from 'lucide-react'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
-import { fadeInOutScaleFast } from '@/animations'
+import { fadeInOutBottomFast } from '@/animations'
 import Button from '@/components/Button'
 import Scrollbar from '@/components/Scrollbar'
-import { TabItem } from '@/components/TabBar'
+import { TabItemSimple } from '@/components/tabs/tabsTypes'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch } from '@/hooks/redux'
@@ -26,7 +27,7 @@ import { openInWebBrowser } from '@/utils/misc'
 
 type SettingsModalTabNames = 'general' | 'wallets' | 'network' | 'devtools'
 
-type SettingsTabItem = TabItem<SettingsModalTabNames>
+type SettingsTabItem = TabItemSimple<SettingsModalTabNames>
 
 interface SocialMediaLogo {
   media: keyof Pick<typeof links, 'twitter' | 'discord' | 'github'>
@@ -74,28 +75,26 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
 
   return (
     <ModalContainer id={id}>
-      <CenteredBox role="dialog" {...fadeInOutScaleFast}>
+      <CenteredBox role="dialog" {...fadeInOutBottomFast}>
         <TabTitlesColumn>
-          <TabTitlesColumnHeader>
-            <ColumnTitle>
-              <Settings color={theme.font.secondary} strokeWidth={1} />
-              {t('Settings')}
-            </ColumnTitle>
-          </TabTitlesColumnHeader>
           <TabTitlesColumnContent>
             <TabTitles>
-              {enabledTabs.map((tab) => (
-                <TabTitleButton
-                  key={tab.value}
-                  role="secondary"
-                  wide
-                  transparent={currentTab.value !== tab.value}
-                  borderless={currentTab.value !== tab.value}
-                  onClick={() => setCurrentTab(tab)}
-                >
-                  {tab.label}
-                </TabTitleButton>
-              ))}
+              {enabledTabs.map((tab) => {
+                const isActive = currentTab.value === tab.value
+                return (
+                  <TabTitleButton
+                    key={tab.value}
+                    role="secondary"
+                    transparent={!isActive}
+                    onClick={() => setCurrentTab(tab)}
+                    style={{ opacity: !isActive ? 0.5 : 1 }}
+                    justifyContent="flex-start"
+                    wide
+                  >
+                    {tab.label}
+                  </TabTitleButton>
+                )
+              })}
             </TabTitles>
             <SidebarFooter>
               <SocialMedias>
@@ -106,15 +105,15 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
               <Version>v{currentVersion}</Version>
             </SidebarFooter>
           </TabTitlesColumnContent>
+          <TabTitlesColumnHeader>
+            <ColumnTitle>
+              <Settings color={theme.font.secondary} size={16} />
+              {t('Settings')}
+            </ColumnTitle>
+          </TabTitlesColumnHeader>
         </TabTitlesColumn>
         <TabContentsColumn>
-          <ColumnHeader>
-            <ColumnTitle>{currentTab.label}</ColumnTitle>
-            <Button aria-label={t('Close')} squared role="secondary" transparent onClick={onClose} borderless>
-              <X />
-            </Button>
-          </ColumnHeader>
-          <Scrollbar translateContentSizeYToHolder>
+          <Scrollbar>
             <ColumnContent>
               {
                 {
@@ -126,6 +125,11 @@ const SettingsModal = memo(({ id, initialTabValue }: ModalBaseProp & SettingsMod
               }
             </ColumnContent>
           </Scrollbar>
+          <ColumnHeader>
+            <ColumnHeaderBackground />
+            <ColumnTitle>{currentTab.label}</ColumnTitle>
+            <Button aria-label={t('Close')} circle role="secondary" onClick={onClose} Icon={X} tiny />
+          </ColumnHeader>
         </TabContentsColumn>
       </CenteredBox>
     </ModalContainer>
@@ -157,34 +161,52 @@ const Column = styled.div`
 `
 
 const TabTitlesColumn = styled(Column)`
+  position: relative;
   flex: 1;
   border-right: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.background2};
+  background-color: ${({ theme }) => theme.bg.background1};
 `
 const TabContentsColumn = styled(Column)`
+  position: relative;
   flex: 2;
 `
 
 const ColumnHeader = styled.div`
-  padding: 20px;
-  border-bottom: 1px solid ${({ theme }) => theme.border.primary};
+  position: absolute;
+  width: 100%;
+  top: 0;
+  padding: 0 10px 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 65px;
+  min-height: 50px;
+  z-index: 1;
+`
+
+const ColumnHeaderBackground = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: -10px;
+  right: 0;
+  left: 0;
+  background: ${({ theme }) => `linear-gradient(to bottom, ${colord(theme.bg.background1).toHex()} 55%, transparent)`};
+  z-index: 0;
 `
 
 const ColumnTitle = styled.div`
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   font-size: 16px;
   font-weight: var(--fontWeight-semiBold);
   color: ${({ theme }) => theme.font.primary};
+  z-index: 1;
 `
 
 const ColumnContent = styled.div`
   padding: 20px;
+  padding-top: 60px;
 
   h2 {
     width: 100%;
@@ -231,20 +253,26 @@ const TabTitlesColumnContent = styled(ColumnContent)`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 20px 15px 10px;
+  padding: 60px 10px 10px 10px;
   height: 100%;
 `
 
-const TabTitles = styled.div``
+const TabTitles = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+`
 
 const TabTitlesColumnHeader = styled(ColumnHeader)`
-  padding-left: 22px;
-  padding-right: 22px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background: transparent;
 `
 
 const TabTitleButton = styled(Button)`
-  height: 46px;
-  justify-content: flex-start;
+  border-radius: var(--radius-medium);
+  font-size: 13px;
+  margin: 0;
 
   &:first-child {
     margin-top: 0;

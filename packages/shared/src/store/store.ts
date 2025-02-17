@@ -4,16 +4,14 @@ import fungibleTokensSlice from '@/store/assets/fungibleTokensSlice'
 import nftsSlice from '@/store/assets/nftsSlice'
 import clientsSlice from '@/store/clients/clientsSlice'
 import networkSlice from '@/store/network/networkSlice'
-import pricesHistorySlice from '@/store/prices/pricesHistorySlice'
 import pricesSlice from '@/store/prices/pricesSlice'
 import { ClientsState } from '@/types'
 import { FungibleTokensState, NFTsState } from '@/types/assets'
 import { NetworkState } from '@/types/network'
-import { PricesHistoryState, PricesState } from '@/types/price'
+import { PricesState } from '@/types/price'
 
 export const sharedReducer = {
   [pricesSlice.name]: pricesSlice.reducer,
-  [pricesHistorySlice.name]: pricesHistorySlice.reducer,
   [fungibleTokensSlice.name]: fungibleTokensSlice.reducer,
   [nftsSlice.name]: nftsSlice.reducer,
   [networkSlice.name]: networkSlice.reducer,
@@ -29,7 +27,6 @@ export const sharedReducer = {
 
 export type SharedRootState = {
   [pricesSlice.name]: PricesState
-  [pricesHistorySlice.name]: PricesHistoryState
   [fungibleTokensSlice.name]: FungibleTokensState
   [nftsSlice.name]: NFTsState
   [networkSlice.name]: NetworkState

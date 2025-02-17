@@ -42,9 +42,7 @@ const SelectOptionAddress = ({ addressHash, isSelected, className, subtitle }: S
           </Group>
         </Header>
       }
-      SecondaryContent={
-        isInView ? <AddressTokensBadgesList addressHash={addressHash} withBackground showAmount /> : null
-      }
+      SecondaryContent={isInView ? <AddressTokensBadgesList addressHash={addressHash} /> : null}
     />
   )
 }
@@ -74,7 +72,7 @@ const AddressBadgeContainer = styled.div`
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
-  font-size: 17px;
+  font-size: 15px;
   max-width: 70%;
 `
 

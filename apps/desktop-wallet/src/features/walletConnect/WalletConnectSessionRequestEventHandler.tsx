@@ -19,8 +19,7 @@ import { calcExpiry, getSdkError } from '@walletconnect/utils'
 import { partition } from 'lodash'
 import { useCallback, useEffect } from 'react'
 
-import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
-import useFetchWalletBalancesTokensByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensByAddress'
+import useFetchWalletBalancesByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesByAddress'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { CallContractTxData, DeployContractTxData, TransferTxData } from '@/features/send/sendTypes'
@@ -43,8 +42,7 @@ interface WalletConnectSessionRequestEventHandlerProps {
 const WalletConnectSessionRequestEventHandler = ({
   sessionRequestEvent
 }: WalletConnectSessionRequestEventHandlerProps) => {
-  const { data: alphBalancesByAddress, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlphByAddress()
-  const { data: tokensBalancesByAddress, isLoading: isLoadingTokensBalances } = useFetchWalletBalancesTokensByAddress()
+  const { data: addressesBalances, isLoading: isLoadingAddressesBalances } = useFetchWalletBalancesByAddress()
   const { walletConnectClient, respondToWalletConnectWithError, respondToWalletConnect } = useWalletConnectContext()
   const addresses = useUnsortedAddresses()
   const dispatch = useAppDispatch()
@@ -85,14 +83,8 @@ const WalletConnectSessionRequestEventHandler = ({
               { id: ALPH.id, amount: BigInt(dest.attoAlphAmount) },
               ...(dest.tokens ? dest.tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
             ]
-            const alphBalances = alphBalancesByAddress[p.signerAddress]
-            const tokensBalances = tokensBalancesByAddress[p.signerAddress]
-            const allTokensBalances = [
-              ...(alphBalances ? [{ id: ALPH.id, ...alphBalances }] : []),
-              ...(tokensBalances ? tokensBalances : [])
-            ]
-
-            const shouldSweep = shouldBuildSweepTransactions(assetAmounts, allTokensBalances)
+            const addressBalances = addressesBalances[p.signerAddress] ?? []
+            const shouldSweep = shouldBuildSweepTransactions(assetAmounts, addressBalances)
 
             const txData: TransferTxData = {
               fromAddress: getSignerAddressByHash(p.signerAddress),
@@ -252,19 +244,18 @@ const WalletConnectSessionRequestEventHandler = ({
     },
     [
       addresses,
-      alphBalancesByAddress,
+      addressesBalances,
       cleanStorage,
       dispatch,
       respondToWalletConnect,
       respondToWalletConnectWithError,
       sendAnalytics,
-      tokensBalancesByAddress,
       walletConnectClient
     ]
   )
 
   useEffect(() => {
-    if (isLoadingAlphBalances || isLoadingTokensBalances) {
+    if (isLoadingAddressesBalances) {
       dispatch(toggleAppLoading(true))
     } else {
       onSessionRequest(sessionRequestEvent)
@@ -272,7 +263,7 @@ const WalletConnectSessionRequestEventHandler = ({
     }
     // To avoid opening the modals multiple times, we exclude onSessionRequest from the dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, isLoadingAlphBalances, isLoadingTokensBalances, sessionRequestEvent])
+  }, [dispatch, isLoadingAddressesBalances, sessionRequestEvent])
 
   return null
 }

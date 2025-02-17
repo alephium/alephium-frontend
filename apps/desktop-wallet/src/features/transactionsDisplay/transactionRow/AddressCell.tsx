@@ -1,9 +1,8 @@
 import styled, { css } from 'styled-components'
 
 const AddressCell = styled.div<{ alignRight?: boolean; hasMargins?: boolean }>`
+  flex: 1;
   min-width: 0;
-  max-width: 120px;
-  flex-grow: 1;
   align-items: baseline;
   display: flex;
 

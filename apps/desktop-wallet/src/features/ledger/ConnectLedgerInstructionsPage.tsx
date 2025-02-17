@@ -3,9 +3,7 @@ import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 
-import { fadeInSlowly } from '@/animations'
 import ActionLink from '@/components/ActionLink'
-import AppHeader from '@/components/AppHeader'
 import Button from '@/components/Button'
 import InfoBox from '@/components/InfoBox'
 import { FloatingPanel, FooterActionsContainer } from '@/components/PageComponents/PageContainers'
@@ -44,7 +42,7 @@ const ConnectLedgerInstructionsPage = () => {
   }
 
   return (
-    <LockedWalletLayout {...fadeInSlowly}>
+    <LockedWalletLayout>
       <FloatingPanel enforceMinHeight>
         <PanelTitle onBackButtonClick={() => navigate('/')}>{t('Connect your Ledger')}</PanelTitle>
         <ol>
@@ -70,8 +68,6 @@ const ConnectLedgerInstructionsPage = () => {
           <Button onClick={handleContinuePress}>{t('Continue')}</Button>
         </FooterActionsContainer>
       </FloatingPanel>
-
-      <AppHeader />
     </LockedWalletLayout>
   )
 }

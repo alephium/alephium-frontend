@@ -5,8 +5,7 @@ import styled, { css } from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import { inputDefaultStyle, InputLabel, InputProps } from '@/components/Inputs'
-import { MoreIcon, SelectContainer } from '@/components/Inputs/Select'
-import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
+import { MoreIcon, SelectOutterContainer } from '@/components/Inputs/Select'
 import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
@@ -61,7 +60,6 @@ function AddressSelect({
   return (
     <>
       <AddressSelectContainer
-        variants={sectionChildrenVariants}
         animate={canBeAnimated ? (!disabled ? 'shown' : 'disabled') : false}
         onAnimationComplete={() => setCanBeAnimated(true)}
         custom={disabled}
@@ -72,11 +70,7 @@ function AddressSelect({
         simpleMode={simpleMode}
         noMargin={noMargin}
       >
-        {label && (
-          <InputLabel isElevated={!!selectedAddress} htmlFor={id}>
-            {label}
-          </InputLabel>
-        )}
+        {label && <InputLabel isElevated={!!selectedAddress}>{label}</InputLabel>}
         {!disabled && !simpleMode && (
           <MoreIcon>
             <MoreVertical size={16} />
@@ -92,7 +86,7 @@ function AddressSelect({
           value={selectedAddress}
           label={label}
         >
-          <AddressBadge addressHash={selectedAddress} appendHash />
+          <AddressBadge addressHash={selectedAddress} appendHash truncate />
         </ClickableInput>
       </AddressSelectContainer>
       <ModalPortal>
@@ -112,7 +106,7 @@ function AddressSelect({
 
 export default AddressSelect
 
-const AddressSelectContainer = styled(SelectContainer)<Pick<AddressSelectProps, 'disabled' | 'simpleMode'>>`
+const AddressSelectContainer = styled(SelectOutterContainer)<Pick<AddressSelectProps, 'disabled' | 'simpleMode'>>`
   ${({ disabled }) =>
     disabled &&
     css`
@@ -130,7 +124,7 @@ const AddressSelectContainer = styled(SelectContainer)<Pick<AddressSelectProps, 
 
 const ClickableInput = styled.div<InputProps & Pick<AddressSelectProps, 'simpleMode'>>`
   ${({ isValid, Icon, simpleMode, value, label }) =>
-    inputDefaultStyle(isValid || !!Icon, !!value, !!label, simpleMode ? 'normal' : 'big', false, true)};
+    inputDefaultStyle(isValid || !!Icon, !!value, !!label, simpleMode ? 'normal' : 'big', true)};
   display: flex;
   align-items: center;
   padding-right: 50px;

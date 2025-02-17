@@ -5,6 +5,7 @@ import styled, { css, ThemeProvider } from 'styled-components'
 
 import PersistedQueryCacheVersionStorage from '@/api/persistedCacheVersionStorage'
 import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
+import AnimatedBackground from '@/components/AnimatedBackground'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
 import SnackbarManager from '@/components/SnackbarManager'
@@ -24,6 +25,7 @@ import { darkTheme, lightTheme } from '@/features/theme/themes'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
+import useWalletLock from '@/hooks/useWalletLock'
 import AppModals from '@/modals/AppModals'
 import Router from '@/routes'
 import {
@@ -54,16 +56,14 @@ const App = memo(() => {
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <GlobalStyle />
-
       <SplashScreen />
-
       <WalletConnectContextProvider>
         <AppContainer>
           <CenteredSection>
+            <LoginAnimatedBackground />
             <Router />
           </CenteredSection>
         </AppContainer>
-
         <AppModals />
       </WalletConnectContextProvider>
       <SnackbarManager />
@@ -245,3 +245,19 @@ const AppContainerStyled = styled.div<{ showDevIndication: boolean }>`
       border: 5px solid ${theme.global.valid};
     `};
 `
+
+const LoginAnimatedBackground = () => {
+  const theme = useAppSelector((s) => s.global.theme)
+  const { isWalletUnlocked } = useWalletLock()
+
+  if (isWalletUnlocked) return null
+
+  return (
+    <AnimatedBackground
+      anchorPosition="bottom"
+      opacity={theme === 'dark' ? 0.6 : 0.8}
+      verticalOffset={-100}
+      hiddenOverflow
+    />
+  )
+}

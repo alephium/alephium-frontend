@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { useState, WheelEvent } from 'react'
@@ -15,7 +14,6 @@ import {
   InputProps,
   inputStyling
 } from '@/components/Inputs'
-import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
 
 const Input = ({
   label,
@@ -52,7 +50,6 @@ const Input = ({
 
   return (
     <InputContainer
-      variants={sectionChildrenVariants}
       animate={canBeAnimated ? (!disabled ? 'shown' : 'disabled') : false}
       onAnimationComplete={() => setCanBeAnimated(true)}
       custom={disabled}
@@ -61,13 +58,8 @@ const Input = ({
       heightSize={heightSize}
     >
       <InputRow>
-        {label && (
-          <InputLabel isElevated={!!value || liftLabel} htmlFor={props.id}>
-            {label}
-          </InputLabel>
-        )}
+        {label && <InputLabel isElevated={!!value || liftLabel}>{label}</InputLabel>}
         <InputBase
-          {...props}
           style={inputFieldStyle}
           label={label}
           value={value}
@@ -80,6 +72,7 @@ const Input = ({
           heightSize={heightSize}
           contrast={contrast}
           largeText={largeText}
+          {...props}
         />
         {!!Icon && !onIconPress && !isValid && (
           <InputIconContainer>
@@ -88,7 +81,7 @@ const Input = ({
         )}
         {!!Icon && !!onIconPress && (
           <InputButtonContainer>
-            <Button onClick={onIconPress} Icon={Icon} transparent squared borderless />
+            <Button onClick={onIconPress} Icon={Icon} transparent circle />
           </InputButtonContainer>
         )}
         {!disabled && isValid && (
@@ -97,7 +90,7 @@ const Input = ({
           </InputIconContainer>
         )}
       </InputRow>
-      {!disabled && error && <InputErrorMessage animate={{ y: 10, opacity: 1 }}>{error}</InputErrorMessage>}
+      {!disabled && error && <InputErrorMessage animate={{ y: 18, opacity: 1 }}>{error}</InputErrorMessage>}
       {hint && <Hint>{hint}</Hint>}
       {children}
     </InputContainer>
@@ -108,16 +101,14 @@ export default Input
 
 export const InputContainer = styled(motion.div)<Pick<InputProps, 'noMargin' | 'heightSize'>>`
   position: relative;
-  min-height: ${({ heightSize }) =>
-    heightSize === 'small' ? '50px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
   width: 100%;
-  margin: ${({ noMargin }) => (noMargin ? 0 : '16px 0')};
+  margin: ${({ noMargin }) => (noMargin ? 0 : '10px 0')};
 `
 
 export const InputBase = styled.input<InputProps>`
-  ${({ isValid, value, label, Icon, heightSize, contrast, largeText }) =>
-    inputDefaultStyle(isValid || !!Icon, !!value, !!label, heightSize, contrast, largeText)};
-  color-scheme: ${({ theme }) => (colord(theme.bg.primary).isDark() ? 'dark' : 'light')};
+  ${({ isValid, value, label, Icon, heightSize, largeText }) =>
+    inputDefaultStyle(isValid || !!Icon, !!value, !!label, heightSize, largeText)};
+  color-scheme: ${({ theme }) => theme.name};
 `
 
 const Hint = styled.div`

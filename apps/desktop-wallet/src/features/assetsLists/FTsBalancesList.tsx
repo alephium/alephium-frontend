@@ -1,59 +1,95 @@
 import { useTranslation } from 'react-i18next'
 
 import useFetchAddressFts from '@/api/apiDataHooks/address/useFetchAddressFts'
+import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
 import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
+import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
+import EmptyPlaceholder from '@/components/EmptyPlaceholder'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { TableRow } from '@/components/Table'
-import ExpandableTokensBalancesList from '@/features/assetsLists/ExpandableTokensBalancesList'
-import PlaceholderText from '@/features/assetsLists/PlaceholderText'
-import { AddressFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/AddressTokenBalancesRow'
-import { WalletFTBalancesRow } from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
-import { AddressTokensTabsProps, TokensTabsBaseProps } from '@/features/assetsLists/types'
+import Table, { TableRow } from '@/components/Table'
+import {
+  AddressFTBalancesRow,
+  AddressNSTBalancesRow
+} from '@/features/assetsLists/tokenBalanceRow/AddressTokenBalancesRow'
+import {
+  WalletFTBalancesRow,
+  WalletNSTBalancesRow
+} from '@/features/assetsLists/tokenBalanceRow/WalletTokenBalancesRow'
+import TokensBalancesHeader from '@/features/assetsLists/TokensBalancesHeader'
+import {
+  HiddenAddressTokensBalancesListSection,
+  HiddenWalletTokensBalancesListSection
+} from '@/features/hiddenTokens/HiddenTokensBalancesLists'
+import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 
-export const AddressFTsBalancesList = ({ addressHash, ...props }: AddressTokensTabsProps) => {
+export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
   const { listedFts, unlistedFts, isLoading } = useFetchAddressFts({ addressHash })
+  const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
+
+  const {
+    data: { nstIds }
+  } = useFetchAddressTokensByType({ addressHash, includeAlph: false })
 
   return (
-    <ExpandableTokensBalancesList {...props}>
-      {listedFts.map(({ id }) => (
-        <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
-      ))}
-      {unlistedFts.map(({ id }) => (
-        <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
-      ))}
-      {!isLoading && listedFts.length === 0 && unlistedFts.length === 0 && (
-        <PlaceholderText>{t("This address doesn't have any tokens yet.")}</PlaceholderText>
-      )}
-      {isLoading && <TokensSkeletonLoader />}
-    </ExpandableTokensBalancesList>
+    <>
+      <Table>
+        {!isEmpty && <TokensBalancesHeader />}
+        {listedFts.map(({ id }) => (
+          <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
+        ))}
+        {unlistedFts.map(({ id }) => (
+          <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
+        ))}
+        {nstIds.map((tokenId) => (
+          <AddressNSTBalancesRow addressHash={addressHash} tokenId={tokenId} key={tokenId} />
+        ))}
+        {!isLoading && listedFts.length === 0 && unlistedFts.length === 0 && nstIds.length === 0 && (
+          <EmptyPlaceholder>{t("This address doesn't have any tokens yet.")}</EmptyPlaceholder>
+        )}
+        {isLoading && <TokensSkeletonLoader />}
+      </Table>
+      <HiddenAddressTokensBalancesListSection addressHash={addressHash} />
+    </>
   )
 }
 
-export const WalletFTsBalancesList = (props: TokensTabsBaseProps) => {
+export const WalletFTsBalancesList = () => {
   const { t } = useTranslation()
-  const { listedFts, unlistedFts, isLoading } = useFetchWalletFts()
+  const { listedFts, unlistedFts, isLoading } = useFetchWalletFts({ includeHidden: false, sort: true })
+  const {
+    data: { nstIds }
+  } = useFetchWalletTokensByType({ includeHidden: false })
+
+  const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
 
   return (
-    <ExpandableTokensBalancesList {...props} nbOfItems={listedFts.length + unlistedFts.length}>
-      {listedFts.map(({ id }) => (
-        <WalletFTBalancesRow tokenId={id} key={id} />
-      ))}
-      {unlistedFts.map(({ id }) => (
-        <WalletFTBalancesRow tokenId={id} key={id} />
-      ))}
-      {!isLoading && listedFts.length === 0 && unlistedFts.length === 0 && (
-        <PlaceholderText>
-          {t("The wallet doesn't have any tokens. Tokens of all your addresses will appear here.")}
-        </PlaceholderText>
-      )}
-      {isLoading && <TokensSkeletonLoader />}
-    </ExpandableTokensBalancesList>
+    <>
+      <Table>
+        {!isEmpty && <TokensBalancesHeader showAllocation />}
+        {listedFts.map(({ id }) => (
+          <WalletFTBalancesRow tokenId={id} key={id} />
+        ))}
+        {unlistedFts.map(({ id }) => (
+          <WalletFTBalancesRow tokenId={id} key={id} />
+        ))}
+        {nstIds.map((tokenId) => (
+          <WalletNSTBalancesRow tokenId={tokenId} key={tokenId} />
+        ))}
+        {isEmpty && (
+          <EmptyPlaceholder emoji="👀">
+            {t("The wallet doesn't have any tokens. Tokens of all your addresses will appear here.")}
+          </EmptyPlaceholder>
+        )}
+        {isLoading && <TokensSkeletonLoader />}
+      </Table>
+      <HiddenWalletTokensBalancesListSection />
+    </>
   )
 }
 
 const TokensSkeletonLoader = () => (
-  <TableRow>
+  <TableRow style={{ padding: 20 }}>
     <SkeletonLoader height="37.5px" />
   </TableRow>
 )

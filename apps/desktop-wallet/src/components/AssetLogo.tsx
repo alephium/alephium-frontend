@@ -3,8 +3,8 @@ import { memo } from 'react'
 import ReactPlayer from 'react-player'
 import styled from 'styled-components'
 
-import useFetchToken, { isFT, isListedFT, isNFT } from '@/api/apiDataHooks/token/useFetchToken'
-import { TokenId } from '@/types/tokens'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
+import { isFT, isListedFT, isNFT, TokenId } from '@/types/tokens'
 
 interface AssetLogoProps {
   tokenId: TokenId
@@ -14,6 +14,9 @@ interface AssetLogoProps {
 
 const AssetLogo = memo(({ tokenId, size, className }: AssetLogoProps) => {
   const { data: token } = useFetchToken(tokenId)
+
+  if (!token) return null
+
   const image = isListedFT(token) ? token.logoURI : isNFT(token) ? token.image : undefined
   const name = isFT(token) || isNFT(token) ? token.name : undefined
 
@@ -26,7 +29,7 @@ const AssetLogo = memo(({ tokenId, size, className }: AssetLogoProps) => {
       ) : name ? (
         <Initials size={size}>{name.slice(0, 2)}</Initials>
       ) : (
-        <HelpCircle size={size} />
+        <HelpCircle size={size - 5} strokeWidth={1.5} />
       )}
     </AssetLogoStyled>
   )
@@ -43,7 +46,7 @@ const AssetLogoStyled = styled.div<Pick<AssetLogoProps, 'size'> & { isSquare: bo
   border-radius: ${({ size, isSquare }) => (isSquare ? 'var(--radius-tiny)' : `${size}px`)};
   flex-shrink: 0;
   overflow: hidden;
-  background: ${({ theme }) => theme.bg.tertiary};
+  background: ${({ theme }) => theme.bg.highlight};
 `
 
 const LogoImage = styled.img`

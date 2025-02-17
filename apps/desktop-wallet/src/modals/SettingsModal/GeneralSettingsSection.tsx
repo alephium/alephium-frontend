@@ -7,7 +7,6 @@ import styled from 'styled-components'
 
 import queryClient from '@/api/queryClient'
 import ActionLink from '@/components/ActionLink'
-import Box from '@/components/Box'
 import Button from '@/components/Button'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
@@ -155,10 +154,12 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
     : 0
 
   return (
-    <Box className={className}>
+    <>
       <KeyValueInput
         label={t('Lock time')}
         description={t('Duration in minutes after which an idle wallet will lock automatically.')}
+        noTopPadding
+        noHorizontalPadding
         InputComponent={
           <Select
             id="wallet-lock-time-in-minutes"
@@ -172,15 +173,16 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
               label: currentLockTime ? `${currentLockTime} ${t('Minutes')}` : t('Off')
             }}
             noMargin
-            title={t('Lock time')}
             heightSize="small"
+            title={t('Lock time')}
           />
         }
       />
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={t('Theme')}
         description={t('Select the theme and please your eyes.')}
+        noHorizontalPadding
         InputComponent={
           <Select
             id="theme"
@@ -188,31 +190,34 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             onSelect={handleThemeSelect}
             controlledValue={themeOptions.find((l) => l.value === theme)}
             noMargin
-            title={t('Theme')}
             heightSize="small"
+            title={t('Theme')}
           />
         }
       />
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={discreetModeText}
         description={t('Toggle discreet mode (hide amounts).')}
+        noHorizontalPadding
         InputComponent={<Toggle label={discreetModeText} toggled={discreetMode} onToggle={handleDiscreetModeToggle} />}
       />
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       {isWalletUnlocked && !isLedger && (
         <>
           <KeyValueInput
             label={t('Password requirement')}
             description={t('Require password confirmation before sending each transaction.')}
+            noHorizontalPadding
             InputComponent={<Toggle toggled={passwordRequirement} onToggle={onPasswordRequirementChange} />}
           />
-          <HorizontalDivider />
+          <HorizontalDivider secondary />
         </>
       )}
       <KeyValueInput
         label="Language"
         description={t('Change the wallet language.')}
+        noHorizontalPadding
         InputComponent={
           <Select
             id="language"
@@ -220,8 +225,8 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             onSelect={handleLanguageChange}
             controlledValue={languageOptions.find((l) => l.value === language)}
             noMargin
-            title={t('Language')}
             heightSize="small"
+            title={t('Language')}
           />
         }
       >
@@ -238,10 +243,11 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
           </div>
         )}
       </KeyValueInput>
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={t('Currency')}
         description={t('Change the currency to use to display amounts.')}
+        noHorizontalPadding
         InputComponent={
           <Select
             id="fiat-currency"
@@ -249,19 +255,20 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             onSelect={handleFiatCurrencyChange}
             controlledValue={fiatCurrencyOptions.find((l) => l.value === fiatCurrency)}
             noMargin
-            title={t('Currency')}
             heightSize="small"
+            title={t('Currency')}
           />
         }
       />
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
 
       <RegionSettings />
 
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={t('Analytics')}
         description={t('Help us improve your experience!')}
+        noHorizontalPadding
         InputComponent={<Toggle toggled={analytics} onToggle={handleAnalyticsToggle} />}
       >
         <ActionLink onClick={() => openInWebBrowser(links.analytics)}>
@@ -271,17 +278,19 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
           </MoreInfoLinkContent>
         </ActionLink>
       </KeyValueInput>
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={t('Clear cache')}
         description={t('Deletes cached wallet and WalletConnect data.')}
+        noBottomPadding
+        noHorizontalPadding
         InputComponent={
-          <ButtonStyled role="secondary" Icon={Eraser} wide onClick={handleClearCacheButtonPress}>
+          <ButtonStyled role="secondary" Icon={Eraser} wide onClick={handleClearCacheButtonPress} short>
             {t('Clear')}
           </ButtonStyled>
         }
       />
-    </Box>
+    </>
   )
 }
 

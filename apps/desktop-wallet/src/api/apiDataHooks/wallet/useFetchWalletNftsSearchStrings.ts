@@ -12,7 +12,7 @@ const useFetchWalletNftsSearchStrings = () => {
   const {
     data: { nftIds },
     isLoading: isLoadingTokensByType
-  } = useFetchWalletTokensByType({ includeAlph: true })
+  } = useFetchWalletTokensByType({ includeHidden: false })
 
   const { data: nftsMetadata, isLoading: isLoadingNftsMetadata } = useQueries({
     queries: nftIds.map((id) => nftMetadataQuery({ id, networkId })),

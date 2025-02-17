@@ -1,7 +1,7 @@
 import { memo, useEffect } from 'react'
 import styled from 'styled-components'
 
-import { fadeInBottom, fadeOut } from '@/animations'
+import { fadeInTop, fadeOutTop } from '@/animations'
 import LedgerAddressDiscoverySnackbar from '@/features/ledger/LedgerAddressDiscoverySnackbar'
 import SentTransactionSnackbarPopup from '@/features/send/sentTransactions/SentTransactionSnackbarPopup'
 import { selectAllSentTransactions } from '@/features/send/sentTransactions/sentTransactionsSelectors'
@@ -9,7 +9,7 @@ import SnackbarBox from '@/features/snackbar/SnackbarBox'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import ModalPortal from '@/modals/ModalPortal'
 import { snackbarDisplayTimeExpired } from '@/storage/global/globalActions'
-import { deviceBreakPoints, walletSidebarWidthPx } from '@/style/globalStyles'
+import { deviceBreakPoints } from '@/style/globalStyles'
 import { SnackbarMessage } from '@/types/snackbar'
 
 const SnackbarManager = () => {
@@ -49,7 +49,7 @@ const SnackbarPopup = memo(({ message }: { message: Required<SnackbarMessage> })
   }, [dispatch, message])
 
   return (
-    <SnackbarBox {...fadeInBottom} {...fadeOut} className={message.type} style={{ textAlign: 'center' }}>
+    <SnackbarBox {...fadeInTop} {...fadeOutTop} className={message.type}>
       <Message>{message.text}</Message>
     </SnackbarBox>
   )
@@ -57,9 +57,15 @@ const SnackbarPopup = memo(({ message }: { message: Required<SnackbarMessage> })
 
 export const SnackbarManagerContainer = styled.div`
   position: fixed;
-  bottom: 0;
-  left: ${walletSidebarWidthPx}px;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 3;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
 
   @media ${deviceBreakPoints.mobile} {
     justify-content: center;

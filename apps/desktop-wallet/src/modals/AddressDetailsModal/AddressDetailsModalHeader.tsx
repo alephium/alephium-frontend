@@ -20,7 +20,7 @@ const Header = ({ addressHash }: AddressModalBaseProp) => {
   return (
     <HeaderStyled>
       <LeftSide>
-        <AddressColorIndicator addressHash={addressHash} size={26} />
+        <AddressColorIndicator addressHash={addressHash} size={17} />
         <TitleBadge addressHash={addressHash} />
       </LeftSide>
       <ExplorerButton role="secondary" transparent short onClick={handleExplorerLinkClick}>
@@ -45,7 +45,7 @@ const TitleBadge = ({ addressHash }: AddressModalBaseProp) => {
         <AddressBadgeStyled addressHash={addressHash} hideColorIndication disableCopy={!!address.label} truncate />
         {address.label && <TitleAddressHash hash={addressHash} />}
       </Title>
-      <Badge short color={theme.font.tertiary} border>
+      <Badge short color={theme.font.tertiary}>
         {t('Group')} {address.group}
       </Badge>
     </>
@@ -61,7 +61,7 @@ const HeaderStyled = styled.div`
 const LeftSide = styled.div`
   display: flex;
   align-items: center;
-  gap: 25px;
+  gap: 15px;
 `
 
 const ExplorerButton = styled(Button)`
@@ -70,15 +70,14 @@ const ExplorerButton = styled(Button)`
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
-  font-size: 21px;
-  max-width: 200px;
+  font-size: 15px;
+  max-width: 160px;
 `
 
 const Title = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  font-weight: var(--fontWeight-semiBold);
+  align-items: center;
+  gap: 10px;
 `
 
 const TitleAddressHash = styled(HashEllipsed)`

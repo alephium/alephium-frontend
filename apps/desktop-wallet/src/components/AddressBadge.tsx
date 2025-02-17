@@ -45,6 +45,7 @@ const AddressBadge = ({
     <AddressBadgeStyled
       className={className}
       withBorders={contact || address ? withBorders : false}
+      hideColorIndication={hideColorIndication}
       truncate={truncate}
       isShort={isShort}
     >
@@ -53,9 +54,13 @@ const AddressBadge = ({
           {disableCopy ? (
             contact.name
           ) : (
-            <ClipboardButton textToCopy={contact.address} tooltip={t('Copy contact address')} disableA11y={disableA11y}>
+            <ClipboardButtonStyled
+              textToCopy={contact.address}
+              tooltip={t('Copy contact address')}
+              disableA11y={disableA11y}
+            >
               {contact.name}
-            </ClipboardButton>
+            </ClipboardButtonStyled>
           )}
         </Label>
       ) : !address ? (
@@ -69,9 +74,13 @@ const AddressBadge = ({
                 {disableCopy || appendHash ? (
                   address.label
                 ) : (
-                  <ClipboardButton textToCopy={address.hash} tooltip={t('Copy address')} disableA11y={disableA11y}>
+                  <ClipboardButtonStyled
+                    textToCopy={address.hash}
+                    tooltip={t('Copy address')}
+                    disableA11y={disableA11y}
+                  >
                     {address.label}
-                  </ClipboardButton>
+                  </ClipboardButtonStyled>
                 )}
               </Label>
               {appendHash && (
@@ -89,9 +98,13 @@ const AddressBadge = ({
 
 export default AddressBadge
 
-const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'isShort'>>`
+const AddressBadgeStyled = styled.div<
+  Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'isShort' | 'hideColorIndication'>
+>`
   display: flex;
+  position: relative;
   align-items: center;
+  text-align: ${({ hideColorIndication }) => (hideColorIndication ? 'left' : 'center')};
   gap: 6px;
 
   ${({ withBorders }) =>
@@ -100,7 +113,6 @@ const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 't
       border: 1px solid ${({ theme }) => theme.border.primary};
       border-radius: 25px;
       padding: 4px 10px;
-      background: ${({ theme }) => theme.bg.highlight};
     `}
 
   ${({ truncate }) =>
@@ -132,6 +144,7 @@ const LabelAndHash = styled.div<{ isColumn: boolean }>`
 `
 
 const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
+  position: relative;
   margin-right: 2px;
   white-space: nowrap;
   max-width: 125px;
@@ -147,9 +160,13 @@ const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
 const NotKnownAddress = styled(HashEllipsed)``
 
 const ShortHashEllipsed = styled(HashEllipsed)`
-  max-width: 150px;
   min-width: 80px;
   font-size: 12px;
   color: ${({ theme }) => theme.font.secondary};
   width: 100%;
+`
+
+const ClipboardButtonStyled = styled(ClipboardButton)`
+  position: absolute;
+  right: 6px;
 `

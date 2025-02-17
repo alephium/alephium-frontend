@@ -63,8 +63,8 @@ const ToggleSection = ({
 export default styled(ToggleSection)`
   display: flex;
   flex-direction: column;
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => colord(theme.bg.background2).alpha(0.5).toHex()};
+  border: 1px solid ${({ theme }) => theme.border.secondary};
+  background-color: ${({ theme }) => colord(theme.bg.tertiary).alpha(0.02).toHex()};
   border-radius: var(--radius-big);
   padding-bottom: 16px;
 `

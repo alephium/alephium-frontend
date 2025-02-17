@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import AddressInputs from '@/features/send/AddressInputs'
 import { TransferAddressesTxModalOnSubmitData, TransferTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
-import { ModalContent } from '@/modals/CenteredModal'
+import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { isAddressValid, requiredErrorMessage } from '@/utils/form-validation'
 
@@ -19,7 +18,7 @@ interface TransferAddressesTxModalContentProps {
 
 const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferAddressesTxModalContentProps) => {
   const { t } = useTranslation()
-  const { data: fromAddresses } = useFetchAddressesHashesWithBalance()
+  const { data: fromAddresses } = useFetchAddressesHashesWithBalance(data.tokenId)
 
   const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
   const [toAddress, setToAddress] = useStateWithError(data?.toAddress ?? '')
@@ -46,7 +45,7 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
   const isSubmitButtonActive = toAddress.value && !toAddress.error
 
   return (
-    <ModalContent>
+    <>
       <InputFieldsColumn>
         <AddressInputs
           defaultFromAddress={fromAddressHash}
@@ -57,18 +56,21 @@ const TransferAddressesTxModalContent = ({ data, onSubmit, onCancel }: TransferA
           onContactSelect={handleToAddressChange}
         />
       </InputFieldsColumn>
-      <FooterButton
-        onClick={() =>
-          onSubmit({
-            fromAddress,
-            toAddress: toAddress.value
-          })
-        }
-        disabled={!isSubmitButtonActive}
-      >
-        {t('Continue')}
-      </FooterButton>
-    </ModalContent>
+      <ModalFooterButtons>
+        <ModalFooterButton
+          onClick={() =>
+            onSubmit({
+              fromAddress,
+              toAddress: toAddress.value,
+              tokenId: data.tokenId
+            })
+          }
+          disabled={!isSubmitButtonActive}
+        >
+          {t('Continue')}
+        </ModalFooterButton>
+      </ModalFooterButtons>
+    </>
   )
 }
 

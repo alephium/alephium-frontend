@@ -1,5 +1,7 @@
 import { AddressHash, WalletConnectSessionProposalModalProps } from '@alephium/shared'
 
+import { BuyModalProps } from '@/features/buy/BuyModal'
+import { WalletPassphraseDisclaimerModalProps } from '@/features/passphrase/WalletPassphraseDisclaimerModal'
 import { CallContractSendModalProps } from '@/features/send/sendModals/callContract/CallContractSendModal'
 import { DeployContractSendModalProps } from '@/features/send/sendModals/deployContract/DeployContractSendModal'
 import { ConfirmLockTimeModalProps } from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
@@ -16,6 +18,7 @@ import { NewAddressModalProps } from '@/modals/NewAddressModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
 import { SettingsModalProps } from '@/modals/SettingsModal'
 import { DisablePasswordRequirementModalProps } from '@/modals/SettingsModal/DisablePasswordRequirementModal'
+import { TokenDetailsModalProps } from '@/modals/tokenDetails/tokeDetailsTypes'
 import { WalletRemovalModalProps } from '@/modals/WalletRemovalModal'
 
 const ModalNames = {
@@ -48,7 +51,10 @@ const ModalNames = {
   DisablePasswordRequirementModal: 'DisablePasswordRequirementModal',
   AddressSweepModal: 'AddressSweepModal',
   WalletRemovalModal: 'WalletRemovalModal',
-  DeleteAddressesModal: 'DeleteAddressesModal'
+  DeleteAddressesModal: 'DeleteAddressesModal',
+  BuyModal: 'BuyModal',
+  WalletPassphraseDisclaimerModal: 'WalletPassphraseDisclaimerModal',
+  TokenDetailsModal: 'TokenDetailsModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -166,6 +172,18 @@ export type OpenModalParams =
     }
   | {
       name: typeof ModalNames.DeleteAddressesModal
+    }
+  | {
+      name: typeof ModalNames.BuyModal
+      props: BuyModalProps
+    }
+  | {
+      name: typeof ModalNames.WalletPassphraseDisclaimerModal
+      props: WalletPassphraseDisclaimerModalProps
+    }
+  | {
+      name: typeof ModalNames.TokenDetailsModal
+      props: TokenDetailsModalProps
     }
 
 export type ModalInstance = {

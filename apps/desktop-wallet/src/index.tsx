@@ -1,11 +1,10 @@
 import '@/index.css' // Importing CSS through CSS file to avoid font flickering
 import '@/features/localization/i18n'
-import '@yaireo/tagify/dist/tagify.css' // Tagify CSS: important to import after index.css file
 
 import isPropValid from '@emotion/is-prop-valid'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { StrictMode, Suspense } from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { HashRouter as Router } from 'react-router-dom'
 import { StyleSheetManager } from 'styled-components'
@@ -18,12 +17,9 @@ import AnalyticsProvider from '@/features/analytics/AnalyticsProvider'
 import * as serviceWorker from '@/serviceWorker'
 import { store } from '@/storage/store'
 
-// The app still behaves as if React 17 is used. This is because
-// `react-custom-scrollbars` is not working with React 18 yet.
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-// const root = createRoot(document.getElementById('root')!)
+const root = createRoot(document.getElementById('root')!)
 
-ReactDOM.render(
+root.render(
   <AnalyticsProvider>
     <StrictMode>
       <Provider store={store}>
@@ -42,8 +38,7 @@ ReactDOM.render(
         </Router>
       </Provider>
     </StrictMode>
-  </AnalyticsProvider>,
-  document.getElementById('root')
+  </AnalyticsProvider>
 )
 
 //

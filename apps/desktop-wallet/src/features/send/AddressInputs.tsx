@@ -2,9 +2,8 @@ import { AddressHash } from '@alephium/shared'
 import { AlbumIcon, ContactIcon } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
-import Box from '@/components/Box'
 import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
 import AddressInput from '@/components/Inputs/AddressInput'
@@ -43,7 +42,6 @@ const AddressInputs = ({
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const contacts = useAppSelector(selectAllContacts)
   const { data: allAddressHashes } = useFetchAddressesHashesSortedByLastUse()
-  const theme = useTheme()
 
   const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
@@ -74,53 +72,32 @@ const AddressInputs = ({
 
   return (
     <InputsContainer>
-      <InputsSection
-        title={t('Origin')}
-        subtitle={t('One of your addresses to send the assets from.')}
-        className={className}
-      >
-        <BoxStyled>
-          <AddressSelect
-            title={t('Select the address to send funds from.')}
-            addressOptions={fromAddresses}
-            selectedAddress={defaultFromAddress}
-            onAddressChange={onFromAddressChange}
-            id="from-address"
-            simpleMode
-            shouldDisplayAddressSelectModal={isAddressSelectModalOpen}
-          />
-        </BoxStyled>
+      <InputsSection title={t('Origin')} className={className}>
+        <AddressSelect
+          title={t('Select the address to send funds from.')}
+          addressOptions={fromAddresses}
+          selectedAddress={defaultFromAddress}
+          onAddressChange={onFromAddressChange}
+          id="from-address"
+          shouldDisplayAddressSelectModal={isAddressSelectModalOpen}
+          noMargin
+        />
       </InputsSection>
       {toAddress && onToAddressChange && (
-        <InputsSection
-          title={t('Destination')}
-          subtitle={t('The address which will receive the assets.')}
-          className={className}
-        >
+        <InputsSection title={t('Destination')} className={className}>
           <AddressToInput
             value={toAddress.value}
             error={toAddress.error}
             onChange={(e) => onToAddressChange(e.target.value.trim())}
+            placeholder={t('The address which will receive the assets.')}
+            heightSize="big"
+            noMargin
           />
           <DestinationActions>
-            <Button
-              Icon={ContactIcon}
-              iconColor={theme.global.accent}
-              variant="faded"
-              short
-              borderless
-              onClick={() => setIsContactSelectModalOpen(true)}
-            >
+            <Button Icon={ContactIcon} role="secondary" short onClick={() => setIsContactSelectModalOpen(true)}>
               {t('Contacts')}
             </Button>
-            <Button
-              Icon={AlbumIcon}
-              iconColor={theme.global.accent}
-              variant="faded"
-              short
-              borderless
-              onClick={() => setIsAddressSelectModalOpen(true)}
-            >
+            <Button Icon={AlbumIcon} role="secondary" short onClick={() => setIsAddressSelectModalOpen(true)}>
               {t('Your addresses')}
             </Button>
           </DestinationActions>
@@ -178,13 +155,6 @@ const HashEllipsedStyled = styled(HashEllipsed)`
   max-width: 150px;
 `
 
-const BoxStyled = styled(Box)`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: var(--inputHeight);
-`
-
 const AddressToInput = styled(AddressInput)`
   margin: 0;
 `
@@ -192,4 +162,5 @@ const AddressToInput = styled(AddressInput)`
 const DestinationActions = styled.div`
   display: flex;
   gap: 5px;
+  margin-top: var(--spacing-2);
 `

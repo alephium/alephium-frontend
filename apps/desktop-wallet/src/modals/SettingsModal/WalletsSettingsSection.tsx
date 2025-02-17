@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import Button from '@/components/Button'
 import CheckMark from '@/components/CheckMark'
 import InfoBox from '@/components/InfoBox'
-import { BoxContainer, Section } from '@/components/PageComponents/PageContainers'
+import { Section } from '@/components/PageComponents/PageContainers'
 import { useLedger } from '@/features/ledger/useLedger'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -36,9 +36,7 @@ const WalletsSettingsSection = () => {
   return (
     <>
       <Section align="flex-start" role="table">
-        <h2 tabIndex={0} role="label">
-          {t('Wallet list')} ({wallets.length})
-        </h2>
+        <h2>{t('Wallet list')}</h2>
         <BoxContainerStyled role="rowgroup">
           {wallets.map((wallet) => (
             <WalletItem
@@ -59,12 +57,11 @@ const WalletsSettingsSection = () => {
               <WalletName>{activeWalletName}</WalletName>
               {!isLedger && (
                 <Button
-                  aria-label={t('Edit')}
+                  aria-label={t('Delete')}
                   tabIndex={0}
-                  squared
+                  circle
                   role="secondary"
                   transparent
-                  borderless
                   onClick={openEditWalletNameModal}
                 >
                   <Pencil size={15} />
@@ -142,10 +139,9 @@ const WalletItem = ({ wallet, isCurrent, onWalletDelete, isPassphraseUsed }: Wal
         <ButtonStyled
           aria-label={t('Delete')}
           tabIndex={0}
-          squared
+          circle
           role="secondary"
           transparent
-          borderless
           onClick={() => onWalletDelete(wallet)}
           onBlur={() => setIsShowingDeleteButton(false)}
           disabled={!isShowingDeleteButton || isPassphraseUsed}
@@ -175,7 +171,7 @@ const WalletName = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 10px;
+  font-size: 13px;
 `
 
 const ActionButtons = styled.div`
@@ -199,8 +195,8 @@ const ButtonStyled = styled(Button)<{ isVisible: boolean }>`
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)} !important;
 `
 
-const BoxContainerStyled = styled(BoxContainer)`
-  margin-top: var(--spacing-2);
+const BoxContainerStyled = styled.div`
+  width: 100%;
 `
 
 const ButtonTooltipWrapper = styled.div`

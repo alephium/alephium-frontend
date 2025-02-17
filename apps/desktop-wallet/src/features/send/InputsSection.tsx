@@ -9,29 +9,32 @@ interface InputsSectionProps {
 }
 
 const InputsSection: FC<InputsSectionProps> = ({ title, className, HeaderActions, subtitle, children }) => (
-  <div className={className}>
+  <InputsSectionStyled className={className}>
     <Header>
       <Title>{title}</Title>
       {HeaderActions}
     </Header>
     {subtitle && <Subtitle>{subtitle}</Subtitle>}
     {children}
-  </div>
+  </InputsSectionStyled>
 )
 
 export default InputsSection
 
+const InputsSectionStyled = styled.div`
+  gap: 10px;
+`
+
 const Title = styled.div`
-  font-size: 16px;
-  font-weight: var(--fontWeight-semiBold);
+  color: ${({ theme }) => theme.font.secondary};
+  font-size: 14px;
 `
 
 const Header = styled.div`
-  margin-left: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 40px;
+  height: 30px;
 `
 
 const Subtitle = styled.div`

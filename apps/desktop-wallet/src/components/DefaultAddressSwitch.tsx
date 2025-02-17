@@ -74,13 +74,15 @@ const SelectCustomComponent = (value?: SelectOption<AddressHash>, disablePointer
       data-tooltip-content={t('Default address')}
       disablePointer={disablePointer}
     >
-      {value?.value && <AddressBadge addressHash={value.value} truncate />}
+      {value?.value && <AddressBadgeStyled addressHash={value.value} truncate />}
     </Button>
   )
 }
 
 const AddressBadgeStyled = styled(AddressBadge)`
   width: 100%;
+  overflow: hidden;
+  max-width: 120px;
 `
 
 const OptionContent = styled.div`

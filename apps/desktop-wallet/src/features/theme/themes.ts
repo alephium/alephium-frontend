@@ -4,37 +4,38 @@ import { DefaultTheme } from 'styled-components'
 export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
-    primary: '#fcfdff',
-    secondary: '#fbfbfb',
-    tertiary: '#f9f9f9',
+    primary: 'rgba(0, 0, 0, 0.04)',
+    secondary: 'rgba(0, 0, 0, 0.02)',
+    tertiary: 'rgba(0, 0, 0, 0.01)',
     contrast: '#000',
-    background1: '#f7f7f7',
-    background2: '#f0f0f0',
-    hover: colord('#ffffff').darken(0.015).toHex(),
+    background1: '#fff',
+    background2: '#fff',
+    hover: 'rgba(0, 0, 0, 0.01)',
     highlight: '#ffffff',
-    accent: colord('#598bed').alpha(0.05).toHex()
+    accent: colord('#1535e9').alpha(0.05).toHex()
   },
   font: {
-    primary: '#1d1d1d',
-    secondary: '#6a6a6a',
-    tertiary: '#989898',
+    primary: '#000',
+    secondary: 'rgba(0, 0, 0, 0.6)',
+    tertiary: 'rgba(0, 0, 0, 0.4)',
     contrastPrimary: 'rgba(255, 255, 255, 1)',
     contrastSecondary: 'rgba(255, 255, 255, 0.8)',
-    highlight: '#d4a10d'
+    highlight: '#ef6c5c',
+    accent: colord('#400fe3').darken(0.2).toHex()
   },
   border: {
-    primary: '#e7e7e7',
-    secondary: '#f0f0f0'
+    primary: 'rgba(0, 0, 0, 0.08)',
+    secondary: 'rgba(0, 0, 0, 0.04)'
   },
   shadow: {
-    primary: '0 1px 1px rgba(0, 0, 0, 0.03)',
-    secondary: '0 8px 10px rgba(0, 0, 0, 0.1)',
-    tertiary: '0 0 50px rgba(0, 0, 0, 0.15)'
+    primary: '0 0 30px rgba(0, 0, 0, 0.02)',
+    secondary: '0 8px 20px rgba(0, 0, 0, 0.1)',
+    tertiary: '0 0 80px rgba(0, 0, 0, 0.2)'
   },
   global: {
-    accent: '#3d6fec',
-    complementary: '#b07dcb',
-    alert: '#e53b24',
+    accent: '#400fe3',
+    complementary: '#f174b3',
+    alert: '#e52437',
     valid: '#189b3c',
     highlight: '#e5ae0e',
     highlightGradient: 'linear-gradient(45deg, rgba(18,0,218,1) 0%, rgba(255,93,81,1) 100%)'
@@ -44,35 +45,36 @@ export const lightTheme: DefaultTheme = {
 export const darkTheme: DefaultTheme = {
   name: 'dark',
   bg: {
-    primary: '#18181a',
-    secondary: '#161618',
-    tertiary: '#141416',
-    contrast: 'white',
-    background1: '#121214',
-    background2: '#0e0e10',
-    hover: colord('#18181a').lighten(0.02).toHex(),
-    highlight: '#27272a',
-    accent: colord('#598bed').alpha(0.07).toHex()
+    primary: 'rgba(255, 255, 255, 0.03)',
+    secondary: 'rgba(255, 255, 255, 0.02)',
+    tertiary: 'rgba(255, 255, 255, 0.01)',
+    contrast: 'rgba(255, 255, 255, 1)',
+    background1: '#0e0e0f',
+    background2: '#0e0e0f',
+    hover: 'rgba(255, 255, 255, 0.015)',
+    highlight: 'rgba(255, 255, 255, 0.06)',
+    accent: colord('#3b62f0').alpha(0.1).toHex()
   },
   font: {
-    primary: '#e3e3e3',
-    secondary: '#c0c0c0',
+    primary: '#fff',
+    secondary: 'rgba(255, 255, 255, 0.8)',
     tertiary: 'rgba(255, 255, 255, 0.4)',
     contrastPrimary: 'rgba(0, 0, 0, 1)',
     contrastSecondary: 'rgba(0, 0, 0, 0.8)',
-    highlight: '#f0d590'
+    highlight: '#f0a990',
+    accent: colord('#3b62f0').lighten(0.1).toHex()
   },
   border: {
-    primary: '#232325',
-    secondary: '#202022'
+    primary: 'rgba(255, 255, 255, 0.05)',
+    secondary: 'rgba(255, 255, 255, 0.02)'
   },
   shadow: {
-    primary: '0 2px 3px rgba(0, 0, 0, 0.3)',
-    secondary: '0 10px 10px rgba(0, 0, 0, 0.25)',
-    tertiary: '0 0 50px rgb(0, 0, 0)'
+    primary: 'none',
+    secondary: '0 10px 20px rgba(0, 0, 0, 0.2)',
+    tertiary: '0 0 80px 30px rgb(0, 0, 0)'
   },
   global: {
-    accent: '#3c71d9',
+    accent: '#3b46f0',
     complementary: '#d488eb',
     alert: '#ed4a34',
     valid: '#3ed282',

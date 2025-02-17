@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import AddressRow from '@/components/AddressRow'
 import Box from '@/components/Box'
 import Button from '@/components/Button'
+import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import InfoBox from '@/components/InfoBox'
 import InlineLabelValueInput from '@/components/Inputs/InlineLabelValueInput'
 import Toggle from '@/components/Inputs/Toggle'
@@ -76,7 +77,9 @@ const DevToolsSettingsSection = () => {
             label={t('Enable developer tools')}
             description={t('Features for developers only')}
             InputComponent={<Toggle label={t('Enable developer tools')} toggled={devTools} onToggle={toggleDevTools} />}
+            noHorizontalPadding
           />
+          <HorizontalDivider />
         </Box>
       </Section>
       {devTools && (
@@ -107,10 +110,10 @@ const DevToolsSettingsSection = () => {
               {t('Smart contracts')}
             </h2>
             <ButtonsRow>
-              <Button Icon={FileCode} onClick={openDeployContractModal} role="secondary">
+              <Button Icon={FileCode} onClick={openDeployContractModal} role="secondary" justifyContent="center">
                 {t('Deploy contract')}
               </Button>
-              <Button Icon={TerminalSquare} onClick={openCallContractModal} role="secondary">
+              <Button Icon={TerminalSquare} onClick={openCallContractModal} role="secondary" justifyContent="center">
                 {t('Call contract')}
               </Button>
             </ButtonsRow>

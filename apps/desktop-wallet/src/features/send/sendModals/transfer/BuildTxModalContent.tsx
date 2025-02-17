@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
-import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
 import ToggleSection from '@/components/ToggleSection'
@@ -15,14 +14,13 @@ import { shouldBuildSweepTransactions } from '@/features/send/sendUtils'
 import TokensAmountInputs from '@/features/send/TokensAmountInputs'
 import useAreAmountsWithinAddressAvailableBalances from '@/features/send/useAreAmountsWithinAddressAvailableBalances'
 import useGasSettings from '@/hooks/useGasSettings'
+import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { AssetAmountInputType } from '@/types/assets'
 
 export interface TransferBuildTxModalContentProps {
   data: TransferTxModalData
   onSubmit: (data: TransferTxData) => void
 }
-
-const defaultAssetAmounts = [{ id: ALPH.id }]
 
 const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalContentProps) => {
   const { t } = useTranslation()
@@ -37,7 +35,9 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
   } = useGasSettings(data?.gasAmount?.toString(), data?.gasPrice)
 
   const [lockTime, setLockTime] = useState(data.lockTime)
-  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(data.assetAmounts || defaultAssetAmounts)
+  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(
+    data.assetAmounts || [{ id: data.tokenId ?? ALPH.id }]
+  )
 
   const { fromAddress, toAddress } = data
 
@@ -110,22 +110,24 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
           onGasPriceChange={handleGasPriceChange}
         />
       </ToggleSection>
-      <FooterButton
-        onClick={() =>
-          onSubmit({
-            fromAddress,
-            toAddress,
-            assetAmounts,
-            gasAmount: gasAmount ? parseInt(gasAmount) : undefined,
-            gasPrice,
-            lockTime,
-            shouldSweep
-          })
-        }
-        disabled={!isSubmitButtonActive}
-      >
-        {t('Check')}
-      </FooterButton>
+      <ModalFooterButtons>
+        <ModalFooterButton
+          onClick={() =>
+            onSubmit({
+              fromAddress,
+              toAddress,
+              assetAmounts,
+              gasAmount: gasAmount ? parseInt(gasAmount) : undefined,
+              gasPrice,
+              lockTime,
+              shouldSweep
+            })
+          }
+          disabled={!isSubmitButtonActive}
+        >
+          {t('Check')}
+        </ModalFooterButton>
+      </ModalFooterButtons>
     </>
   )
 }

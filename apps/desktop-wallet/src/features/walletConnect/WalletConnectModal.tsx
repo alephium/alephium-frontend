@@ -48,7 +48,7 @@ const WalletConnectModal = memo(({ id }: ModalBaseProp) => {
                   <Button
                     onClick={() => unpairFromDapp(topic)}
                     Icon={Trash2}
-                    squared
+                    circle
                     role="secondary"
                     style={{ marginLeft: 'auto' }}
                   />

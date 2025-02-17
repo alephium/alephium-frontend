@@ -90,8 +90,8 @@ export const ModalBackdrop = styled(motion.div)<{ focusMode?: boolean; light?: b
   background-color: ${({ theme, focusMode, light }) =>
     theme.name === 'light'
       ? focusMode
-        ? 'rgba(0, 0, 0, 0.8)'
-        : 'rgba(0, 0, 0, 0.25)'
+        ? 'rgba(255, 255, 255, 0.9)'
+        : 'rgba(255, 255, 255, 0.6)'
       : focusMode
         ? 'rgba(0, 0, 0, 0.9)'
         : light

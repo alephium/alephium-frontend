@@ -1,6 +1,5 @@
 import {
   apiClientInitFailed,
-  apiClientInitSucceeded,
   contactDeletedFromPersistentStorage,
   contactStoredInPersistentStorage,
   customNetworkSettingsSaved
@@ -65,14 +64,6 @@ const snackbarSlice = createSlice({
     builder
       .addCase(snackbarDisplayTimeExpired, (state) => {
         if (state.messages.length > 0) state.messages.shift()
-      })
-      .addCase(apiClientInitSucceeded, (state, action) => {
-        state.offlineMessageWasVisibleOnce = false
-
-        queueMessage(state, {
-          text: `${i18n.t('Current network')}: ${action.payload.networkName}.`,
-          duration: 4000
-        })
       })
       .addCase(apiClientInitFailed, (state, action) => {
         if (!state.offlineMessageWasVisibleOnce)

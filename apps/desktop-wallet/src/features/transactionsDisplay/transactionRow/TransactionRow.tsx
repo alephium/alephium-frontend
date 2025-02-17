@@ -2,15 +2,14 @@ import { findTransactionReferenceAddress } from '@alephium/shared'
 import { memo } from 'react'
 import styled, { css } from 'styled-components'
 
-import { TableRow } from '@/components/Table'
-import TableCellAmount from '@/components/TableCellAmount'
+import { TableCell, TableRow } from '@/components/Table'
 import DirectionCell from '@/features/transactionsDisplay/transactionRow/DirectionCell'
+import DirectionIconCell from '@/features/transactionsDisplay/transactionRow/DirectionIconCell'
 import FirstAddressColumnCell from '@/features/transactionsDisplay/transactionRow/FirstAddressColumnCell'
 import FTAmounts from '@/features/transactionsDisplay/transactionRow/FTAmounts'
-import IconLabelTimeCell from '@/features/transactionsDisplay/transactionRow/IconLabelTimeCell'
 import OtherAmounts from '@/features/transactionsDisplay/transactionRow/OtherAmounts'
 import SecondAddressColumnCell from '@/features/transactionsDisplay/transactionRow/SecondAddressColumnCell'
-import TokenBadgesListCell from '@/features/transactionsDisplay/transactionRow/TokenBadgesListCell'
+import TimestampCell from '@/features/transactionsDisplay/transactionRow/TimestampCell'
 import { TransactionRowProps } from '@/features/transactionsDisplay/transactionRow/types'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
@@ -24,46 +23,34 @@ const TransactionRow = memo(
     const commonProps = { tx, refAddressHash: referenceAddress, isInAddressDetailsModal }
 
     return (
-      <TableRowStyled role="row" tabIndex={0} {...props}>
-        <IconLabelTimeCell {...commonProps} />
+      <TableRow {...props}>
+        <DirectionIconCell {...commonProps} />
 
-        <TokenBadgesListCell tx={tx} refAddressHash={referenceAddress} compact={compact} />
+        <TimestampCell {...commonProps} />
 
-        <DirectionalAddresses stackVertically={isInAddressDetailsModal}>
+        <DirectionalAddresses stackVertically={isInAddressDetailsModal} fixedWidth="30%">
           {!isInAddressDetailsModal && <FirstAddressColumnCell tx={tx} refAddressHash={referenceAddress} />}
           <DirectionCell {...commonProps} />
           <SecondAddressColumnCell {...commonProps} />
         </DirectionalAddresses>
 
-        <TableCellAmount aria-hidden="true">
+        <TableCell aria-hidden="true" align="right">
           <AmountsList>
             <FTAmounts {...commonProps} />
             <OtherAmounts type="nfts" {...commonProps} />
             <OtherAmounts type="nsts" {...commonProps} />
           </AmountsList>
-        </TableCellAmount>
-      </TableRowStyled>
+        </TableCell>
+      </TableRow>
     )
   }
 )
 
 export default TransactionRow
 
-const TableRowStyled = styled(TableRow)`
-  display: flex;
-  text-align: center;
-  border-radius: 3px;
-  white-space: nowrap;
-  flex-grow: 1;
-`
-
-const DirectionalAddresses = styled.div<{ stackVertically?: boolean }>`
-  display: flex;
-  align-items: center;
-  min-width: 35%;
+const DirectionalAddresses = styled(TableCell)<{ stackVertically?: boolean }>`
   flex: 1;
-  justify-content: flex-end;
-
+  gap: 10px;
   ${({ stackVertically }) =>
     stackVertically &&
     css`

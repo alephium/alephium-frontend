@@ -9,6 +9,7 @@ import { configureAutoUpdater, handleAutoUpdaterUserActions, setupAutoUpdaterLis
 import { setupLedgerDevicePermissions } from './ledger'
 import { setupAppMenu } from './menu'
 import { handleNativeThemeUserActions, setupNativeThemeListeners } from './nativeTheme'
+import { handleOnRampWindows } from './onRamp'
 import { ICON_PATH, RENDERER_PATH } from './paths'
 import { IS_RC, isIpcSenderValid, isMac, isWindows } from './utils'
 import {
@@ -40,7 +41,7 @@ function createWindow() {
     icon: ICON_PATH,
     width: 1200,
     height: 800,
-    minWidth: 1200,
+    minWidth: 1000,
     minHeight: 700,
     frame: isMac,
     titleBarStyle: 'hidden',
@@ -124,6 +125,8 @@ app.on('ready', async function () {
   handleNativeThemeUserActions()
 
   handleAutoUpdaterUserActions()
+
+  handleOnRampWindows(mainWindow)
 
   ipcMain.handle('app:hide', ({ senderFrame }) => {
     if (!isIpcSenderValid(senderFrame)) return null

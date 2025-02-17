@@ -1,8 +1,6 @@
 import { forwardRef, ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
-import CheckMark from '@/components/CheckMark'
-
 interface SelectOptionItemContentProps {
   MainContent: ReactNode
   isSelected?: boolean
@@ -23,15 +21,8 @@ const SelectOptionItemContent = forwardRef<HTMLDivElement, SelectOptionItemConte
     }: SelectOptionItemContentProps,
     ref
   ) => (
-    <OptionContentWrapper className={className} contentDirection={contentDirection} ref={ref}>
-      <OptionMainContent>
-        {ContentTop}
-        {isSelected && (
-          <CheckMarkContainer>
-            <CheckMark />
-          </CheckMarkContainer>
-        )}
-      </OptionMainContent>
+    <OptionContentWrapper className={className} contentDirection={contentDirection} isSelected={isSelected} ref={ref}>
+      <OptionMainContent>{ContentTop}</OptionMainContent>
       {ContentBottom && <OptionSecondaryContent>{ContentBottom}</OptionSecondaryContent>}
     </OptionContentWrapper>
   )
@@ -45,40 +36,45 @@ const OptionMainContent = styled.div`
   align-items: center;
   justify-content: space-between;
   font-weight: var(--fontWeight-semiBold);
-  background-color: ${({ theme }) => theme.bg.primary};
-  padding: var(--spacing-3);
+  padding: var(--spacing-2);
   gap: var(--spacing-3);
 `
 
 const OptionSecondaryContent = styled.div`
-  background-color: ${({ theme }) => theme.bg.background1};
-  padding: var(--spacing-3);
+  padding: var(--spacing-2);
 
   &:empty {
     display: none;
   }
 `
 
-const CheckMarkContainer = styled.div``
-
-const OptionContentWrapper = styled.div<{ contentDirection: SelectOptionItemContentProps['contentDirection'] }>`
+const OptionContentWrapper = styled.div<Pick<SelectOptionItemContentProps, 'contentDirection' | 'isSelected'>>`
   flex: 1;
+  position: relative;
   display: flex;
   flex-direction: ${({ contentDirection }) => contentDirection};
   justify-content: space-between;
   min-width: 0;
+  overflow: hidden;
+
+  ${({ theme, isSelected }) =>
+    isSelected &&
+    css`
+      &:after {
+        content: '';
+        position: absolute;
+        left: 0px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background-color: ${theme.global.accent};
+        border-radius: 10px;
+      }
+    `}
 
   &:hover {
     > div {
       background-color: ${({ theme }) => theme.bg.hover};
     }
-  }
-
-  ${OptionSecondaryContent} {
-    ${({ contentDirection }) =>
-      contentDirection === 'row' &&
-      css`
-        background-color: ${({ theme }) => theme.bg.primary};
-      `}
   }
 `

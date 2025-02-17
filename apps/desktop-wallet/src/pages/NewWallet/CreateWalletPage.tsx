@@ -129,6 +129,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
             onChange={(e) => onUpdateWalletName(e.target.value)}
             error={walletNameError}
             isValid={walletName.length > 0 && walletNameError.length === 0}
+            heightSize="big"
           />
           <Input
             value={password}
@@ -137,6 +138,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
             onChange={(e) => onUpdatePassword(e.target.value)}
             error={passwordError}
             isValid={!passwordError && password.length > 0}
+            heightSize="big"
           />
           <Input
             value={passwordCheck}
@@ -146,6 +148,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
             error={passwordCheck && password !== passwordCheck ? t('Passwords are different') : ''}
             isValid={password.length > 0 && password === passwordCheck}
             disabled={!password || passwordError.length > 0}
+            heightSize="big"
           />
           <InfoBox
             Icon={AlertCircle}
@@ -156,10 +159,10 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
         </Section>
       </PanelContentContainer>
       <FooterActionsContainer>
-        <Button role="secondary" onClick={handleBackPress}>
+        <Button role="secondary" onClick={handleBackPress} tall>
           {t('Back')}
         </Button>
-        <Button disabled={!isNextButtonActive} onClick={handleNextButtonClick}>
+        <Button disabled={!isNextButtonActive} onClick={handleNextButtonClick} tall>
           {t('Continue')}
         </Button>
       </FooterActionsContainer>

@@ -48,7 +48,7 @@ import {
   TxData,
   UnsignedTx
 } from '@/features/send/sendTypes'
-import StepsProgress, { Step } from '@/features/send/StepsProgress'
+import { Step } from '@/features/send/StepsProgress'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -317,10 +317,9 @@ function SendModal<PT extends { fromAddress: Address }>({
       dynamicContent
       onBack={onBackCallback}
       focusMode
-      noPadding
       disableBack={isRequestToApproveContractCall && step !== 'password-check'}
+      hasFooterButtons
     >
-      <StepsProgress currentStep={step} isContract={type === 'call-contract' || type === 'deploy-contract'} />
       {step === 'addresses' &&
         (type === 'transfer' ? (
           <TransferAddressesTxModalContent data={addressesData} onSubmit={moveToSecondStep} onCancel={onClose} />
@@ -329,28 +328,25 @@ function SendModal<PT extends { fromAddress: Address }>({
         ) : (
           <DeployContractAddressesTxModalContent data={addressesData} onSubmit={moveToSecondStep} onCancel={onClose} />
         ))}
-      {step === 'build-tx' && (
-        <ScrollableModalContent>
-          {type === 'transfer' ? (
-            <TransferBuildTxModalContent
-              data={{ ...(transactionData ?? {}), ...addressesData }}
-              onSubmit={buildTransactionExtended}
-            />
-          ) : type === 'call-contract' ? (
-            <CallContractBuildTxModalContent
-              data={{ ...(transactionData ?? {}), ...addressesData }}
-              onSubmit={buildTransactionExtended}
-              onCancel={onClose}
-            />
-          ) : (
-            <DeployContractBuildTxModalContent
-              data={{ ...(transactionData ?? {}), ...addressesData }}
-              onSubmit={buildTransactionExtended}
-              onCancel={onClose}
-            />
-          )}
-        </ScrollableModalContent>
-      )}
+      {step === 'build-tx' &&
+        (type === 'transfer' ? (
+          <TransferBuildTxModalContent
+            data={{ ...(transactionData ?? {}), ...addressesData }}
+            onSubmit={buildTransactionExtended}
+          />
+        ) : type === 'call-contract' ? (
+          <CallContractBuildTxModalContent
+            data={{ ...(transactionData ?? {}), ...addressesData }}
+            onSubmit={buildTransactionExtended}
+            onCancel={onClose}
+          />
+        ) : (
+          <DeployContractBuildTxModalContent
+            data={{ ...(transactionData ?? {}), ...addressesData }}
+            onSubmit={buildTransactionExtended}
+            onCancel={onClose}
+          />
+        ))}
       {step === 'info-check' && !!transactionData && !!fees && (
         <ScrollableModalContent>
           {type === 'transfer' ? (

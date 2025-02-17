@@ -1,8 +1,8 @@
-import { ONE_DAY_MS } from '@alephium/shared'
-import { getQueryConfig, useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
-import { ALPH, getTokensURL, mainnet, testnet, TokenList } from '@alephium/token-list'
-import { skipToken, useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { TokenList } from '@alephium/token-list'
+import { useQuery } from '@tanstack/react-query'
+
+import { ftListQuery } from '@/api/queries/tokenQueries'
 
 export interface FTList {
   data: TokenList['tokens'] | undefined
@@ -15,22 +15,8 @@ type FTListProps = {
 
 const useFetchFtList = (props?: FTListProps): FTList => {
   const networkId = useCurrentlyOnlineNetworkId()
-  const network = networkId === 0 ? 'mainnet' : networkId === 1 ? 'testnet' : networkId === 4 ? 'devnet' : undefined
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['tokenList', { networkId }],
-    // The token list is essential for the whole app so we don't want to ever delete it. Even if we set a lower gcTime,
-    // it will never become inactive (since it's always used by a mount component).
-    ...getQueryConfig({ staleTime: ONE_DAY_MS, gcTime: Infinity, networkId }),
-    queryFn:
-      !network || props?.skip
-        ? skipToken
-        : () =>
-            network === 'devnet'
-              ? [ALPH]
-              : axios.get(getTokensURL(network)).then(({ data }) => (data as TokenList)?.tokens),
-    placeholderData: network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : []
-  })
+  const { data, isLoading } = useQuery(ftListQuery({ networkId, skip: props?.skip }))
 
   // TODO: Maybe return an object instead of an array for faster search?
   return {

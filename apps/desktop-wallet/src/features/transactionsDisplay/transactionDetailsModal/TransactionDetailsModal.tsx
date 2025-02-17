@@ -161,8 +161,6 @@ const SummaryContent = styled.div`
   align-items: center;
   justify-content: center;
   padding: var(--spacing-5);
-  background-color: ${({ theme }) => theme.bg.primary};
-  border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-big);
 `
 

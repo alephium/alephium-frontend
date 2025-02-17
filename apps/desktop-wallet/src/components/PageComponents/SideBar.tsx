@@ -1,63 +1,72 @@
-import { motion } from 'framer-motion'
-import { Settings } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import { ReactNode } from 'react'
+import styled, { css } from 'styled-components'
 
-import Button from '@/components/Button'
-import ThemeSwitcher from '@/components/ThemeSwitcher'
-import { openModal } from '@/features/modals/modalActions'
-import { useAppDispatch } from '@/hooks/redux'
-import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
+import WalletNameButton from '@/components/WalletNameButton'
+import { appHeaderHeightPx, sidebarExpandThresholdPx, walletSidebarWidthPx } from '@/style/globalStyles'
 
 interface SideBarProps {
-  animateEntry?: boolean
+  renderTopComponent?: () => ReactNode
+  noExpansion?: boolean
+  noBorder?: boolean
   className?: string
 }
 
-const SideBar: FC<SideBarProps> = ({ animateEntry, className, children }) => {
-  const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-
-  const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: {} }))
-
-  return (
-    <motion.div
-      className={className}
-      initial={{ x: animateEntry ? '-100%' : 0 }}
-      animate={{ x: 0 }}
-      transition={{ delay: 1.1, type: 'spring', damping: 20 }}
-    >
-      {children}
+const SideBar = ({ renderTopComponent, noExpansion = false, noBorder = false, className }: SideBarProps) => (
+  <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion} noBorder={noBorder}>
+    <TopContainer>{renderTopComponent?.()}</TopContainer>
+    <BottomButtonsContainer>
       <BottomButtons>
-        <ThemeSwitcher />
-        <Button
-          transparent
-          squared
-          role="secondary"
-          onClick={openSettingsModal}
-          aria-label={t('Settings')}
-          Icon={Settings}
-          data-tooltip-id="sidenav"
-          data-tooltip-content={t('Settings')}
-        />
+        <WalletNameButton />
       </BottomButtons>
-    </motion.div>
-  )
-}
+    </BottomButtonsContainer>
+  </SideBarStyled>
+)
 
-export default styled(SideBar)`
+export default SideBar
+
+const SideBarStyled = styled.div<{ noBorder: boolean; noExpansion: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
   z-index: 1;
-
   width: ${walletSidebarWidthPx}px;
-  padding: ${appHeaderHeightPx}px var(--spacing-4) var(--spacing-4);
+  padding: ${appHeaderHeightPx}px var(--spacing-2) var(--spacing-2) var(--spacing-2);
+  border-right: ${({ theme, noBorder }) => (!noBorder ? `1px solid ${theme.border.primary}` : 'none')};
+  background-color: ${({ theme }) => theme.bg.background1};
 
-  border-right: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.primary : theme.bg.background2)};
+  ${({ noExpansion }) =>
+    !noExpansion
+      ? css`
+          @media (min-width: ${sidebarExpandThresholdPx}px) {
+            width: ${walletSidebarWidthPx * 3}px;
+            align-items: normal;
+          }
+        `
+      : css`
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          top: 0;
+          z-index: 3;
+        `};
+`
+
+const TopContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  app-region: no-drag;
+`
+
+const BottomButtonsContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+
+  @media (min-width: ${sidebarExpandThresholdPx}px) {
+    justify-content: space-around;
+    width: 100%;
+  }
 `
 
 const BottomButtons = styled.div`
@@ -65,4 +74,11 @@ const BottomButtons = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 15px;
+  app-region: no-drag;
+
+  @media (min-width: ${sidebarExpandThresholdPx}px) {
+    flex: 1;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+  }
 `

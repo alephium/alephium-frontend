@@ -112,7 +112,7 @@ const NftMetadataError = ({ error }: NftMetadataErrorProps) => {
 export default NFTDetailsModal
 
 const NFTImageContainer = styled.div`
-  padding: var(--spacing-3);
+  padding: 0 var(--spacing-3);
   min-height: 500px;
   display: flex;
   align-items: center;

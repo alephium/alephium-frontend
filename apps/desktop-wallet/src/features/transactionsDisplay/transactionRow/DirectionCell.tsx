@@ -35,11 +35,13 @@ const DirectionCell = ({ tx, refAddressHash, isInAddressDetailsModal }: Transact
 
 export default DirectionCell
 
+const CellDirection = styled.div`
+  color: ${({ theme }) => theme.font.tertiary};
+  border: 0;
+`
+
 const DirectionText = styled.div`
   min-width: 50px;
   display: flex;
-`
-
-const CellDirection = styled.div`
-  color: ${({ theme }) => theme.font.tertiary};
+  font-weight: var(--fontWeight-semiBold);
 `

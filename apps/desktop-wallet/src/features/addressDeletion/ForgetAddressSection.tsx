@@ -48,7 +48,6 @@ const ForgetAddressSection = ({ addressHash, addressName }: ForgetAddressSection
             disabled={isDefault}
             role="secondary"
             variant="alert"
-            borderless
             style={{ minWidth: 120 }}
             Icon={Trash2}
           >

@@ -4,7 +4,7 @@ import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { fadeInOutScaleFast } from '@/animations'
+import { fadeInOutBottomFast } from '@/animations'
 import Button from '@/components/Button'
 import { Section } from '@/components/PageComponents/PageContainers'
 import PanelTitle, { TitleContainer } from '@/components/PageComponents/PanelTitle'
@@ -21,11 +21,12 @@ export interface CenteredModalProps extends ModalContainerProps {
   subtitle?: string
   isLoading?: boolean | string
   header?: ReactNode
-  transparentHeader?: boolean
+  fullScreen?: boolean
   narrow?: boolean
   dynamicContent?: boolean
   onBack?: () => void
   noPadding?: boolean
+  hasFooterButtons?: boolean
   disableBack?: boolean
   Icon?: (() => ReactNode) | LucideIcon
 }
@@ -37,13 +38,14 @@ const CenteredModal: FC<CenteredModalProps> = ({
   focusMode,
   isLoading,
   header,
-  transparentHeader = false,
+  fullScreen = false,
   narrow = false,
   dynamicContent = false,
   onBack,
   children,
   skipFocusOnMount,
   noPadding,
+  hasFooterButtons,
   disableBack,
   Icon,
   ...rest
@@ -56,11 +58,11 @@ const CenteredModal: FC<CenteredModalProps> = ({
 
   return (
     <ModalContainer id={id} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
-      <CenteredBox role="dialog" {...fadeInOutScaleFast} narrow={narrow}>
-        <ModalHeader transparent={transparentHeader}>
+      <CenteredBox role="dialog" {...fadeInOutBottomFast} narrow={narrow} fullScreen={fullScreen}>
+        <ModalHeader>
           <TitleRow>
             {onBack && !disableBack && (
-              <BackButton aria-label={t('Back')} squared role="secondary" transparent onClick={onBack} borderless>
+              <BackButton aria-label={t('Back')} circle role="secondary" transparent onClick={onBack}>
                 <ChevronLeft />
               </BackButton>
             )}
@@ -69,7 +71,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
                 <Icon />
               </IconContainer>
             )}
-            <PanelTitle size="small" useLayoutId={false}>
+            <PanelTitle size="small">
               <span ref={elRef} tabIndex={0} role="heading">
                 {title}
               </span>
@@ -77,14 +79,12 @@ const CenteredModal: FC<CenteredModalProps> = ({
             </PanelTitle>
             <CloseButton
               aria-label={t('Close')}
-              squared
+              circle
               role="secondary"
-              transparent
               onClick={rest.onClose ?? onClose}
-              borderless
-            >
-              <X />
-            </CloseButton>
+              Icon={X}
+              tiny
+            />
           </TitleRow>
           {header && <ModalHeaderContent>{header}</ModalHeaderContent>}
         </ModalHeader>
@@ -92,7 +92,7 @@ const CenteredModal: FC<CenteredModalProps> = ({
           noPadding ? (
             children
           ) : (
-            <ModalContent>{children}</ModalContent>
+            <ModalContent hasFooterButtons={hasFooterButtons}>{children}</ModalContent>
           )
         ) : (
           <ScrollableModalContent>{children}</ScrollableModalContent>
@@ -116,15 +116,12 @@ const CenteredModal: FC<CenteredModalProps> = ({
 export default CenteredModal
 
 export const ScrollableModalContent = ({ children }: Pick<CenteredModalProps, 'children'>) => (
-  <Scrollbar translateContentSizeYToHolder>
-    <ModalContent>{children}</ModalContent>
-  </Scrollbar>
+  <ModalContent>
+    <Scrollbar>{children}</Scrollbar>
+  </ModalContent>
 )
 
-export const HeaderContent = styled(Section)`
-  flex: 0;
-  margin-bottom: var(--spacing-4);
-`
+export const HeaderContent = styled(Section)``
 
 export const HeaderLogo = styled.div`
   height: 10vh;
@@ -134,39 +131,47 @@ export const HeaderLogo = styled.div`
   width: 100%;
 `
 
-const CenteredBox = styled(motion.div)<{ narrow: boolean }>`
+const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>`
   display: flex;
   flex-direction: column;
+  border: 1px solid ${({ theme }) => theme.border.primary};
 
   position: relative;
 
   width: 100%;
   margin: auto;
-  max-width: ${({ narrow }) => (narrow ? '380px' : '600px')};
+  max-width: ${({ narrow }) => (narrow ? '380px' : '440px')};
   max-height: 90vh;
   overflow: hidden;
 
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
   border-radius: var(--radius-huge);
-  border: 1px solid ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.background1};
 
   ${TitleContainer} {
     flex: 1;
-    margin: var(--spacing-3) var(--spacing-4) var(--spacing-3) var(--spacing-4);
   }
+
+  ${({ fullScreen }) =>
+    fullScreen &&
+    css`
+      max-height: 90vw;
+      max-width: 90vw;
+      height: 90vh;
+      width: 90vw;
+    `}
 `
 
-export const ModalHeader = styled.header<{ transparent?: boolean }>`
-  position: sticky;
+export const ModalHeader = styled.header`
+  position: absolute;
   top: 0;
-  z-index: 1;
-  ${({ transparent }) =>
-    !transparent &&
-    css`
-      background-color: ${({ theme }) => theme.bg.background2};
-      border-bottom: 1px solid ${({ theme }) => theme.border.primary};
-    `}
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  height: 54px;
+  padding: 0 6px 0 var(--spacing-4);
+  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
 const ModalHeaderContent = styled(motion.div)`
@@ -176,13 +181,14 @@ const ModalHeaderContent = styled(motion.div)`
 `
 
 const TitleRow = styled.div`
+  flex: 1;
   display: flex;
   align-items: center;
 `
 
 const CloseButton = styled(Button)`
   color: ${({ theme }) => theme.font.primary};
-  margin-right: var(--spacing-2);
+  margin-right: var(--spacing-1);
 `
 
 const BackButton = styled(Button)`
@@ -190,14 +196,16 @@ const BackButton = styled(Button)`
   margin-left: var(--spacing-2);
 `
 
-export const ModalContent = styled.div<{ noBottomPadding?: boolean }>`
+export const ModalContent = styled.div<{ hasFooterButtons?: boolean }>`
+  flex: 1;
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-4) var(--spacing-6);
+  padding: 70px var(--spacing-4) var(--spacing-6) var(--spacing-4);
   width: 100%;
+  overflow-y: auto;
 
-  ${({ noBottomPadding }) =>
-    noBottomPadding &&
+  ${({ hasFooterButtons }) =>
+    hasFooterButtons &&
     css`
       padding-bottom: 0;
     `}
@@ -207,24 +215,30 @@ export const ModalFooterButtons = styled.div`
   position: sticky;
   bottom: 0;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   gap: 20px;
-  margin-top: var(--spacing-4);
-  background-color: ${({ theme }) => theme.bg.background1};
+  padding-top: var(--spacing-5);
+  padding-bottom: var(--spacing-2);
+  background: linear-gradient(to top, ${({ theme }) => theme.bg.background1} 50%, transparent 100%);
 `
 
 export const ModalFooterButton = ({ ...props }) => (
-  <ModalFooterButtonStyled {...props}>{props.children}</ModalFooterButtonStyled>
+  <ModalFooterButtonStyled tall {...props}>
+    {props.children}
+  </ModalFooterButtonStyled>
 )
 
 const ModalFooterButtonStyled = styled(Button)`
   width: 100%;
   max-width: none;
+  border-radius: 14px;
 `
 
 const ModalSubtitle = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
-  font-size: 14px;
+  font-size: 13px;
   margin-top: var(--spacing-1);
 `
 
@@ -243,6 +257,6 @@ const IconContainer = styled.div`
 `
 
 const ModalLoadingText = styled.div`
-  font-size: 14px;
+  font-size: 13px;
   margin-top: var(--spacing-3);
 `

@@ -1,13 +1,13 @@
 import { convertToPositive, formatAmountForDisplay } from '@alephium/shared'
 import { Optional } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 
-import useFetchToken, { isFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { TokenId } from '@/types/tokens'
+import { isFT, TokenId } from '@/types/tokens'
 
 interface AmountBaseProps {
   fadeDecimals?: boolean
@@ -16,18 +16,19 @@ interface AmountBaseProps {
   tabIndex?: number
   highlight?: boolean
   showPlusMinus?: boolean
+  semiBold?: boolean
   className?: string
   useTinyAmountShorthand?: boolean
 }
 
-interface TokenAmountProps extends AmountBaseProps {
+export interface TokenAmountProps extends AmountBaseProps {
   tokenId: TokenId
   value: bigint
   fullPrecision?: boolean
   nbOfDecimalsToShow?: number
 }
 
-interface FiatAmountProps extends AmountBaseProps {
+export interface FiatAmountProps extends AmountBaseProps {
   isFiat: true
   value: number
 }
@@ -61,6 +62,7 @@ const Amount = ({
   const dispatch = useAppDispatch()
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
   const { t } = useTranslation()
+  const theme = useTheme()
 
   if (isLoading) return <SkeletonLoader height={`${loaderHeight}px`} width={`${loaderHeight * 5}px`} />
 
@@ -69,13 +71,23 @@ const Amount = ({
   // Since we checked above that value is defined it's safe to cast the type so that the stricter components can work
   const amountProps = props as AmountProps
 
-  const { className, color, value, highlight, tabIndex, showPlusMinus } = amountProps
+  const { className, value, highlight, tabIndex, showPlusMinus, semiBold } = amountProps
+
+  const color = props.color
+    ? props.color
+    : highlight && value !== undefined
+      ? value < 0
+        ? theme.font.highlight
+        : theme.global.valid
+      : 'inherit'
+
+  amountProps.color = color
 
   const toggleDiscreetMode = () => discreetMode && dispatch(discreetModeToggled())
 
   return (
     <AmountStyled
-      {...{ className, color, value, highlight, tabIndex: tabIndex ?? -1, discreetMode }}
+      {...{ className, color, value, highlight, semiBold, tabIndex: tabIndex ?? -1, discreetMode }}
       data-tooltip-id="default"
       data-tooltip-content={discreetMode ? t('Click to deactivate discreet mode') : ''}
       data-tooltip-delay-show={500}
@@ -106,9 +118,12 @@ const TokenAmount = ({
   fadeDecimals,
   overrideSuffixColor,
   color,
+  showPlusMinus,
   useTinyAmountShorthand
 }: TokenAmountProps) => {
   const { data: token } = useFetchToken(tokenId)
+
+  if (!token) return null
 
   const amount = isFT(token)
     ? formatAmountForDisplay({
@@ -123,7 +138,7 @@ const TokenAmount = ({
     <>
       <AmountPartitions amount={amount} fadeDecimals={fadeDecimals} useTinyAmountShorthand={useTinyAmountShorthand} />
 
-      {isFT(token) && <Suffix color={overrideSuffixColor ? color : undefined}> {token.symbol}</Suffix>}
+      {isFT(token) && <Suffix color={overrideSuffixColor || showPlusMinus ? color : undefined}> {token.symbol}</Suffix>}
     </>
   )
 }
@@ -132,17 +147,26 @@ const FiatAmount = ({ value }: FiatAmountProps) => {
   const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const region = useAppSelector((s) => s.settings.region)
 
+  if (value === null) return null
+
   return new Intl.NumberFormat(region, { style: 'currency', currency: fiatCurrency }).format(value)
 }
 
-const CustomAmount = ({ value, fadeDecimals, overrideSuffixColor, color, suffix }: CustomAmountProps) => {
+const CustomAmount = ({
+  value,
+  fadeDecimals,
+  overrideSuffixColor,
+  color,
+  suffix,
+  showPlusMinus
+}: CustomAmountProps) => {
   const amount = (value < 1 ? value * -1 : value).toString()
 
   return (
     <>
       <AmountPartitions amount={amount} fadeDecimals={fadeDecimals} />
 
-      <Suffix color={overrideSuffixColor ? color : undefined}> {suffix}</Suffix>
+      <Suffix color={overrideSuffixColor || showPlusMinus ? color : undefined}> {suffix}</Suffix>
     </>
   )
 }
@@ -198,19 +222,14 @@ const isFiat = (asset: AmountProps): asset is FiatAmountProps => (asset as FiatA
 
 const isCustom = (asset: AmountProps): asset is CustomAmountProps => (asset as CustomAmountProps).suffix !== undefined
 
-const AmountStyled = styled.div<Pick<AmountProps, 'color' | 'highlight' | 'value'> & { discreetMode: boolean }>`
-  color: ${({ color, highlight, value, theme }) =>
-    color
-      ? color
-      : highlight && value !== undefined
-        ? value < 0
-          ? theme.font.highlight
-          : theme.global.valid
-        : 'inherit'};
+const AmountStyled = styled.div<
+  Pick<AmountProps, 'color' | 'highlight' | 'value' | 'semiBold'> & { discreetMode: boolean }
+>`
+  color: ${({ color }) => color};
   display: inline-flex;
   position: relative;
+  font-weight: var(--fontWeight-${({ semiBold }) => (semiBold ? 'semiBold' : 'medium')});
   white-space: pre;
-  font-weight: var(--fontWeight-bold);
   font-feature-settings: 'tnum' on;
   ${({ discreetMode }) =>
     discreetMode &&
@@ -227,8 +246,8 @@ const Decimals = styled.span`
 `
 
 const Suffix = styled.span<{ color?: string }>`
-  color: ${({ color, theme }) => color ?? theme.font.primary};
-  font-weight: var(--fontWeight-medium);
+  color: ${({ color, theme }) => color ?? theme.font.secondary};
+  font-weight: var(--fontWeight-semiBold);
 `
 
 const DataFetchIndicatorStyled = styled.div`

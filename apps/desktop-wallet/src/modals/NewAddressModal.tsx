@@ -104,14 +104,14 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
             singleAddress={singleAddress}
           />
           {!singleAddress && (
-            <InfoBox Icon={Info} contrast noBorders>
+            <InfoBox Icon={Info} contrast>
               {t('The group number will be automatically be appended to the addresses’ label.')}
             </InfoBox>
           )}
         </Section>
       )}
       {isPassphraseUsed && singleAddress && (
-        <InfoBox contrast noBorders>
+        <InfoBox contrast>
           {t(
             'By default, the address is generated in a random group. You can select the group you want the address to be generated in using the Advanced options.'
           )}

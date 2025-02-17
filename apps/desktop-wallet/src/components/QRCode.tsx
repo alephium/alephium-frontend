@@ -3,7 +3,6 @@ import { useCallback } from 'react'
 import RawQRCode from 'react-qr-code'
 import styled, { useTheme } from 'styled-components'
 
-import Box from '@/components/Box'
 import Button from '@/components/Button'
 import { useAppDispatch } from '@/hooks/redux'
 import { copiedToClipboard, copyToClipboardFailed } from '@/storage/global/globalActions'
@@ -40,7 +39,7 @@ const QRCode = ({ value, size, copyButtonLabel, className }: QRCodeProps) => {
         <RawQRCode size={size} value={value} bgColor={theme.bg.primary} fgColor={theme.font.primary} />
       </StyledBox>
       {copyButtonLabel && (
-        <Button role="secondary" Icon={CopyIcon} onClick={handleCopyAddressToClipboard}>
+        <Button role="secondary" Icon={CopyIcon} onClick={handleCopyAddressToClipboard} justifyContent="center">
           {copyButtonLabel}
         </Button>
       )}
@@ -56,10 +55,13 @@ export default styled(QRCode)`
   gap: 10px;
 `
 
-const StyledBox = styled(Box)<{ size: number }>`
+const StyledBox = styled.div<{ size: number }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: var(--radius-big);
   width: ${({ size }) => size + 25}px;
   height: ${({ size }) => size + 25}px;
+  backdrop-filter: blur(10px) brightness(${({ theme }) => (theme.name === 'light' ? '1.3' : '1.5')}) saturate(1.2);
+  overflow: hidden;
 `

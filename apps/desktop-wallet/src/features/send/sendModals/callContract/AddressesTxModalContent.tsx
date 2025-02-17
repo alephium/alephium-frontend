@@ -7,7 +7,6 @@ import AddressInputs from '@/features/send/AddressInputs'
 import { CallContractTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
-import { ModalContent } from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 interface CallContractAddressesTxModalContentProps {
@@ -33,7 +32,7 @@ const CallContractAddressesTxModalContent = ({
   }
 
   return (
-    <ModalContent>
+    <>
       <InputFieldsColumn>
         <AddressInputs
           defaultFromAddress={fromAddressHash}
@@ -42,7 +41,7 @@ const CallContractAddressesTxModalContent = ({
         />
       </InputFieldsColumn>
       <FooterButton onClick={() => onSubmit({ fromAddress })}>{t('Continue')}</FooterButton>
-    </ModalContent>
+    </>
   )
 }
 

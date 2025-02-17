@@ -1,6 +1,7 @@
 import { ALPH } from '@alephium/token-list'
 import styled from 'styled-components'
 
+import { TableCell } from '@/components/Table'
 import TokenBadge from '@/components/TokenBadge'
 import { TransactionRowProps, TransactionRowSectionProps } from '@/features/transactionsDisplay/transactionRow/types'
 import useTransactionAmountDeltas from '@/features/transactionsDisplay/useTransactionAmountDeltas'
@@ -23,10 +24,11 @@ const TokenBadgesListCell = ({ tx, refAddressHash, compact }: TransactionRowSect
 
 export default TokenBadgesListCell
 
-const TokenBadgesListCellStyled = styled.div<Pick<TransactionRowProps, 'compact'>>`
+const TokenBadgesListCellStyled = styled(TableCell)<Pick<TransactionRowProps, 'compact'>>`
+  display: flex;
+  flex-grow: 1;
   flex-shrink: 0;
   width: ${({ compact }) => (compact ? '80px' : '180px')};
-  margin-right: var(--spacing-4);
 
   @media ${deviceBreakPoints.desktop} {
     width: 80px;

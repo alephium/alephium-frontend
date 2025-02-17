@@ -1,21 +1,21 @@
-import { memo, useState } from 'react'
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import AmountsOverviewPanel from '@/components/AmountsOverviewPanel'
-import Box from '@/components/Box'
+import AnimatedBackground from '@/components/AnimatedBackground'
 import { ShortcutButtonsGroupAddress } from '@/components/Buttons/ShortcutButtons'
-import QRCode from '@/components/QRCode'
-import { AddressTokensTabs } from '@/features/assetsLists/TokensTabs'
+import LabeledWorthOverview from '@/components/LabeledWorthOverview'
 import { AddressModalProps } from '@/features/modals/modalTypes'
-import AddressTransactionsList from '@/features/transactionsDisplay/transactionLists/lists/AddressTransactionsList'
+import { useAppSelector } from '@/hooks/redux'
 import AddressDetailsModalHeader from '@/modals/AddressDetailsModal/AddressDetailsModalHeader'
+import { AddressDetailsModalTabs } from '@/modals/AddressDetailsModal/AddressDetailsModalTabs'
+import AddressWorth from '@/modals/AddressDetailsModal/AddressWorth'
 import SideModal from '@/modals/SideModal'
+import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
   const { t } = useTranslation()
-
-  const [showChart, setShowChart] = useState(false)
+  const addressColor = useAppSelector((s) => selectAddressByHash(s, addressHash)?.color)
 
   return (
     <SideModal
@@ -23,20 +23,14 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
       title={t('Address details')}
       width={800}
       header={<AddressDetailsModalHeader addressHash={addressHash} />}
-      onAnimationComplete={() => setShowChart(true)}
     >
-      <AmountsOverviewPanelStyled addressHash={addressHash} chartVisible={showChart} chartInitiallyHidden>
-        <QRCode value={addressHash} size={130} />
-      </AmountsOverviewPanelStyled>
-
+      <LabeledWorthOverview label={t('Address worth')}>
+        <AddressWorth addressHash={addressHash} />
+      </LabeledWorthOverview>
       <Content>
-        <Shortcuts>
-          <ButtonsGrid>
-            <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" solidBackground />
-          </ButtonsGrid>
-        </Shortcuts>
-        <AddressTokensTabs addressHash={addressHash} />
-        <AddressTransactionsList addressHash={addressHash} />
+        <AnimatedBackground shade={addressColor} anchorPosition="top" verticalOffset={-300} opacity={0.5} />
+        <ShortcutButtonsGroupAddress addressHash={addressHash} analyticsOrigin="address_details" />
+        <AddressDetailsModalTabs addressHash={addressHash} />
       </Content>
     </SideModal>
   )
@@ -44,29 +38,10 @@ const AddressDetailsModal = memo(({ id, addressHash }: AddressModalProps) => {
 
 export default AddressDetailsModal
 
-const AmountsOverviewPanelStyled = styled(AmountsOverviewPanel)`
-  padding: 0;
-`
-
 const Content = styled.div`
-  padding: var(--spacing-4) var(--spacing-4) var(--spacing-4);
+  padding: 0 var(--spacing-4) var(--spacing-4);
   position: relative;
   gap: 45px;
   display: flex;
   flex-direction: column;
-`
-
-const Shortcuts = styled(Box)`
-  overflow: hidden;
-  background-color: ${({ theme }) => theme.bg.primary};
-  margin: 0 60px;
-  border-radius: 100px;
-  width: auto;
-`
-
-const ButtonsGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 1px;
-  background-color: ${({ theme }) => theme.border.secondary};
 `

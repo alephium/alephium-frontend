@@ -3,8 +3,10 @@ import { getQueryConfig } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
+import { tokenQuery } from '@/api/queries/tokenQueries'
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
-import { ApiBalances, TokenApiBalances } from '@/types/tokens'
+import queryClient from '@/api/queryClient'
+import { ApiBalances, isFT, isNFT, TokenApiBalances } from '@/types/tokens'
 
 export type AddressAlphBalancesQueryFnData = {
   addressHash: AddressHash
@@ -82,4 +84,50 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
             }
           }
         : skipToken
+  })
+
+export type AddressTokensSearchStringQueryFnData = {
+  addressHash: AddressHash
+  searchString: string
+}
+
+// Generates a string that includes the names and symbols of all tokens in the address, useful for filtering addresses
+export const addressTokensSearchStringQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'tokensSearchString', { networkId }],
+    queryFn: async (): Promise<AddressTokensSearchStringQueryFnData> => {
+      let searchString = ''
+
+      const addressTokensBalances = await queryClient.fetchQuery(addressTokensBalancesQuery({ addressHash, networkId }))
+      const hasTokens = addressTokensBalances.balances.length > 0
+      let hasAlph = hasTokens
+
+      if (hasTokens) {
+        const tokens = await Promise.all(
+          addressTokensBalances.balances.map(({ id }) => queryClient.fetchQuery(tokenQuery({ id, networkId })))
+        )
+
+        searchString = tokens
+          .map((token) =>
+            isFT(token)
+              ? `${token.name.toLowerCase()} ${token.symbol.toLowerCase()} ${token.id}`
+              : isNFT(token)
+                ? `${token.name.toLowerCase()} ${token.id}`
+                : token.id
+          )
+          .join(' ')
+      } else {
+        const addressAlphBalances = await queryClient.fetchQuery(addressAlphBalancesQuery({ addressHash, networkId }))
+        hasAlph = addressAlphBalances.balances.totalBalance !== '0'
+      }
+
+      if (hasAlph) {
+        searchString += ' alph alephium'
+      }
+
+      return {
+        addressHash,
+        searchString
+      }
+    }
   })

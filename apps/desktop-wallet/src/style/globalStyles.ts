@@ -1,12 +1,13 @@
+import { colord } from 'colord'
 import { createGlobalStyle } from 'styled-components'
 
 import resets from '@/style/resets'
-import tags from '@/style/tags'
 import { platform } from '@/utils/platform.ts'
 
-export const appHeaderHeightPx = platform.isMac ? 60 : 112
-export const walletSidebarWidthPx = 75
+export const appHeaderHeightPx = platform.isMac ? 50 : 102
+export const walletSidebarWidthPx = 69
 export const messagesLeftMarginPx = 70
+export const sidebarExpandThresholdPx = 1300
 
 const electronWindowDimensions = `
   height: 100%;
@@ -33,7 +34,7 @@ export const GlobalStyle = createGlobalStyle`
     --radius-small: 7px;
     --radius-medium: 9px;
     --radius-big: 12px;
-    --radius-huge: 16px;
+    --radius-huge: 22px;
     --radius-full: 100%;
 
     --fontWeight-normal: 400;
@@ -41,8 +42,8 @@ export const GlobalStyle = createGlobalStyle`
     --fontWeight-semiBold: 600;
     --fontWeight-bold: 700;
 
-    --inputHeight: 55px;
-    --tableCellHeight: 47px;
+    --inputHeight: 38px;
+    --tableCellHeight: 46px;
     --toggleWidth: 52px;
   }
 
@@ -53,9 +54,8 @@ export const GlobalStyle = createGlobalStyle`
   body {
     color: ${({ theme }) => theme.font.primary};
     background-color: ${({ theme }) => theme.bg.primary};
+    font-weight: var(--fontWeight-medium);
   }
-
-  ${tags}
 
   .skeleton-loader {
     background-image: linear-gradient(-90deg, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.05));
@@ -72,13 +72,10 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
-  // Charts custom styling (can't do that in JS apparently)
-  .apexcharts-marker {
-    transition: none !important;
-  }
-
-  .apexcharts-tooltip {
-    display: none !important;
+  // Custom scrollbars theme
+  .rcs-inner-handle {
+    color: white;
+    background-color: ${({ theme }) => colord(theme.font.primary).alpha(0.1).toHex()} !important;
   }
 `
 

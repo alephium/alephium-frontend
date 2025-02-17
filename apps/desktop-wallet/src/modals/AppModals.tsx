@@ -3,7 +3,9 @@ import { AnimatePresence } from 'framer-motion'
 import { Children, isValidElement, ReactNode, useEffect } from 'react'
 
 import DeleteAddressesModal from '@/features/addressDeletion/DeleteAddressesModal'
+import BuyModal from '@/features/buy/BuyModal'
 import { selectAllModals } from '@/features/modals/modalSelectors'
+import WalletPassphraseDisclaimerModal from '@/features/passphrase/WalletPassphraseDisclaimerModal'
 import CallContractSendModal from '@/features/send/sendModals/callContract/CallContractSendModal'
 import DeployContractSendModal from '@/features/send/sendModals/deployContract/DeployContractSendModal'
 import ConfirmLockTimeModal from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
@@ -31,9 +33,10 @@ import SettingsModal from '@/modals/SettingsModal'
 import CopyPrivateKeyConfirmationModal from '@/modals/SettingsModal/CopyPrivateKeyConfirmationModal'
 import DisablePasswordRequirementModal from '@/modals/SettingsModal/DisablePasswordRequirementModal'
 import EditWalletNameModal from '@/modals/SettingsModal/EditWalletNameModal'
+import TokenDetailsModal from '@/modals/tokenDetails/TokenDetailsModal'
 import WalletQRCodeExportModal from '@/modals/WalletQRCodeExportModal'
 import WalletRemovalModal from '@/modals/WalletRemovalModal'
-import AdvancedOperationsSideModal from '@/pages/UnlockedWallet/AddressesPage/AdvancedOperationsSideModal'
+import AdvancedOperationsSideModal from '@/pages/unlockedWallet/addressesPage/AdvancedOperationsSideModal'
 
 const AppModals = () => {
   const openedModals = useAppSelector(selectAllModals)
@@ -47,6 +50,8 @@ const AppModals = () => {
             return <SettingsModal id={modal.id} key={modal.id} {...modal.params.props} />
           case 'WalletRemovalModal':
             return <WalletRemovalModal id={modal.id} key={modal.id} {...modal.params.props} />
+          case 'WalletPassphraseDisclaimerModal':
+            return <WalletPassphraseDisclaimerModal id={modal.id} key={modal.id} {...modal.params.props} />
         }
       })}
 
@@ -109,6 +114,10 @@ const AppModals = () => {
               return <AddressSweepModal id={modal.id} key={modal.id} {...modal.params.props} />
             case 'DeleteAddressesModal':
               return <DeleteAddressesModal id={modal.id} key={modal.id} />
+            case 'BuyModal':
+              return <BuyModal id={modal.id} key={modal.id} {...modal.params.props} />
+            case 'TokenDetailsModal':
+              return <TokenDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
           }
         })}
     </AnimatePresenceModalWrapper>

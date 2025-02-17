@@ -1,5 +1,6 @@
 import { batchers, ONE_DAY_MS } from '@alephium/shared'
 import { getQueryConfig } from '@alephium/shared-react'
+import { ALPH, getTokensURL, mainnet, testnet, TokenList } from '@alephium/token-list'
 import { explorer as e, NFTMetaData, NFTTokenUriMetaData } from '@alephium/web3'
 import { queryOptions, skipToken, UseQueryResult } from '@tanstack/react-query'
 import axios from 'axios'
@@ -7,7 +8,8 @@ import axios from 'axios'
 import { SkipProp } from '@/api/apiDataHooks/apiDataHooksTypes'
 import { combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
 import { convertTokenDecimalsToNumber, matchesNFTTokenUriMetaDataSchema } from '@/api/apiUtils'
-import { TokenId } from '@/types/tokens'
+import queryClient from '@/api/queryClient'
+import { NonStandardToken, Token, TokenId } from '@/types/tokens'
 
 export type TokenTypesQueryFnData = Record<e.TokenStdInterfaceId, TokenId[]>
 
@@ -30,6 +32,25 @@ enum NFTDataTypes {
 }
 
 type NFTDataType = keyof typeof NFTDataTypes
+
+export const ftListQuery = ({ networkId, skip }: Omit<TokenQueryProps, 'id'>) => {
+  const network = networkId === 0 ? 'mainnet' : networkId === 1 ? 'testnet' : networkId === 4 ? 'devnet' : undefined
+
+  return queryOptions({
+    queryKey: ['tokenList', { networkId }],
+    // The token list is essential for the whole app so we don't want to ever delete it. Even if we set a lower gcTime,
+    // it will never become inactive (since it's always used by a mount component).
+    ...getQueryConfig({ staleTime: ONE_DAY_MS, gcTime: Infinity, networkId }),
+    queryFn:
+      !network || skip
+        ? skipToken
+        : () =>
+            network === 'devnet'
+              ? [ALPH]
+              : axios.get(getTokensURL(network)).then(({ data }) => (data as TokenList)?.tokens),
+    placeholderData: network === 'mainnet' ? mainnet.tokens : network === 'testnet' ? testnet.tokens : []
+  })
+}
 
 export const tokenTypeQuery = ({ id, networkId, skip }: TokenQueryProps) =>
   queryOptions({
@@ -77,7 +98,6 @@ export const fungibleTokenMetadataQuery = ({ id, networkId, skip }: TokenQueryPr
   queryOptions({
     queryKey: ['token', 'fungible', 'metadata', id],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
-    meta: { isMainnet: networkId === 0 },
     queryFn: !skip
       ? async () => {
           const tokenMetadata = await batchers.ftMetadataBatcher.fetch(id)
@@ -125,4 +145,44 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip }: NFTQueryProps) =
                 }
           }
         : skipToken
+  })
+
+export const tokenQuery = ({ id, networkId, skip }: TokenQueryProps) =>
+  queryOptions({
+    queryKey: ['token', id, { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn: async (): Promise<Token> => {
+      const nst = { id } as NonStandardToken
+
+      // 1. First check if the token is in the token list
+      const fTList = await queryClient.fetchQuery(ftListQuery({ networkId }))
+      const listedFT = fTList.find((t) => t.id === id)
+
+      if (listedFT) return listedFT
+
+      // 2. If not, find the type of the token
+      const tokenInfo = await queryClient.fetchQuery(tokenTypeQuery({ id, networkId }))
+
+      // 3. If it is a fungible token, fetch the fungible token metadata
+      if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.Fungible) {
+        const ftMetadata = await queryClient.fetchQuery(fungibleTokenMetadataQuery({ id, networkId }))
+
+        return ftMetadata ?? nst
+      }
+
+      // 4. If it is an NFT, fetch the NFT metadata and data
+      if (tokenInfo?.stdInterfaceId === e.TokenStdInterfaceId.NonFungible) {
+        const nftMetadata = await queryClient.fetchQuery(nftMetadataQuery({ id, networkId }))
+
+        if (!nftMetadata) return nst
+
+        const nftData = await queryClient.fetchQuery(nftDataQuery({ id, tokenUri: nftMetadata.tokenUri, networkId }))
+
+        return { ...nftData, ...nftMetadata }
+      }
+
+      // 5. If the type of the token cannot be determined, return the non-standard token
+      return nst
+    },
+    enabled: !skip
   })

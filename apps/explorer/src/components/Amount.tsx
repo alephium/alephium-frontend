@@ -162,6 +162,7 @@ export default styled(Amount)`
         : 'inherit'};
   white-space: nowrap;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
 `
 
 const NumberContainer = styled.span``
@@ -172,7 +173,6 @@ const Decimals = styled.span`
 
 const Suffix = styled.span`
   color: ${({ theme }) => theme.font.secondary};
-  font-weight: 500;
 `
 
 const RawAmount = styled.div`

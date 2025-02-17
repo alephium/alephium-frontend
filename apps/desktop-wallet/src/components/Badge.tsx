@@ -32,7 +32,7 @@ export default styled(Badge)`
       height: ${short ? 25 : compact ? 20 : 30}px;
       color: ${usedColor};
       border-radius: ${rounded ? '100px' : compact ? 'var(--radius-tiny)' : 'var(--radius-small)'};
-      background-color: ${!transparent && colord(usedColor).alpha(0.08).toRgbString()};
+      background-color: ${!transparent && colord(usedColor).alpha(0.05).toRgbString()};
       white-space: nowrap;
       font-size: ${compact ? '11px' : 'inherit'};
 

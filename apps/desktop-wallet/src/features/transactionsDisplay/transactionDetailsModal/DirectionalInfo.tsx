@@ -84,5 +84,5 @@ const FromIn = styled.span`
 `
 
 const SwapPartnerAddress = styled.div`
-  max-width: 120px;
+  max-width: 160px;
 `

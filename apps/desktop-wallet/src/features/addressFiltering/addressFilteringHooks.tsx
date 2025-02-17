@@ -1,16 +1,14 @@
 import { useMemo } from 'react'
 
-import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
-import useFetchWalletBalancesTokensByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensByAddress'
+import useFetchWalletBalancesByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesByAddress'
 import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
 import { useUnsortedAddresses, useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
 export const useFilterAddressesByText = (text = '') => {
   const allAddresses = useUnsortedAddresses()
   const allAddressHashes = useUnsortedAddressesHashes()
-  const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
-  const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
-  const { data: addressesTokensBalances } = useFetchWalletBalancesTokensByAddress()
+  const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false, includeHidden: false })
+  const { data: addressesBalances } = useFetchWalletBalancesByAddress()
 
   return useMemo(
     () =>
@@ -27,14 +25,10 @@ export const useFilterAddressesByText = (text = '') => {
             if (address.label?.toLowerCase().includes(text)) return true
 
             // Step 3. Validate against token names
-            const addressAlphBalances = addressesAlphBalances[addressHash]
-            const addressHasAlphBalances = BigInt(addressAlphBalances?.totalBalance ?? 0) > 0
+            const addressBalances = addressesBalances[addressHash]
 
-            if (addressHasAlphBalances) {
-              if ('alephium alph'.includes(text)) return true
-
-              const addressTokensBalances = addressesTokensBalances[addressHash] ?? []
-              const addressSearchableString = addressTokensBalances
+            if (addressBalances) {
+              const addressSearchableString = addressBalances
                 .map(({ id }) => {
                   const listedFt = listedFts.find((token) => token.id === id)
 
@@ -51,6 +45,6 @@ export const useFilterAddressesByText = (text = '') => {
               return false
             }
           }),
-    [addressesAlphBalances, addressesTokensBalances, allAddressHashes, allAddresses, listedFts, text, unlistedFts]
+    [addressesBalances, allAddressHashes, allAddresses, listedFts, text, unlistedFts]
   )
 }

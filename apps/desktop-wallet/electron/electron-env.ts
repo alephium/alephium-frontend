@@ -32,6 +32,8 @@ declare global {
         getSystemLanguage: () => Promise<string | undefined>
         getSystemRegion: () => Promise<string>
         setProxySettings: (proxySettings: ProxySettings) => Promise<void>
+        openOnRampServiceWindow: ({ url, targetLocation }: { url: string; targetLocation: string }) => void
+        onOnRampTargetLocationReached: (callback: () => void) => () => void
         restart: () => void
       }
       window: {

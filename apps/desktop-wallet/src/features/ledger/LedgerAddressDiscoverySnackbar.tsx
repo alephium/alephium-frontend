@@ -30,10 +30,10 @@ const LedgerAddressDiscoverySnackbar = () => {
           <Message>{t('Welcome to your Ledger!') + ' 👋'}</Message>
           <div>{t('Would you like to scan for active addresses?')}</div>
         </Messages>
-        <Button short borderless role="secondary" onClick={handleScanClick}>
+        <Button short role="secondary" onClick={handleScanClick}>
           {t('Scan')}
         </Button>
-        <Button aria-label={t('Close')} squared role="secondary" onClick={handleCloseClick} borderless transparent>
+        <Button aria-label={t('Close')} circle role="secondary" onClick={handleCloseClick} transparent>
           <X />
         </Button>
       </Columns>

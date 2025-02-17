@@ -10,7 +10,7 @@ const SecondAddressColumnCell = ({ tx, refAddressHash, isInAddressDetailsModal }
   const direction = useTransactionDirection(tx, refAddressHash)
 
   return (
-    <AddressCell hasMargins={!isInAddressDetailsModal}>
+    <AddressCell>
       <DirectionalAddress>
         {direction !== 'in' || (direction === 'in' && isInAddressDetailsModal) ? (
           <IOList
