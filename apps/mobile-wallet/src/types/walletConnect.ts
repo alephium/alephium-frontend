@@ -1,7 +1,7 @@
 import {
   BuildDeployContractTxResult,
   BuildExecuteScriptTxResult,
-  BuildTransactionResult,
+  BuildTransferTxResult,
   DecodeUnsignedTxResult
 } from '@alephium/web3/dist/src/api/api-alephium'
 
@@ -17,7 +17,7 @@ export type SessionRequestData =
   | {
       type: 'transfer'
       wcData: TransferTxData
-      unsignedTxData: BuildTransactionResult
+      unsignedTxData: BuildTransferTxResult
     }
   | {
       type: 'call-contract'

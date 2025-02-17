@@ -1,6 +1,7 @@
-import useFetchToken, { isNFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
 import SelectOptionToken, { SelectOptionTokenBaseProps } from '@/components/Inputs/SelectOptionToken'
+import { isNFT } from '@/types/tokens'
 
 const SelectOptionWalletToken = ({ tokenId, ...props }: SelectOptionTokenBaseProps) => {
   const { data: token } = useFetchToken(tokenId)

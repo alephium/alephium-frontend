@@ -47,3 +47,12 @@ export type TokenApiBalances = ApiBalances & {
 }
 
 export type TokenId = Token['id'] & StringAlias
+
+export const isFT = (token: Token): token is ListedFT | UnlistedFT =>
+  (token as ListedFT | UnlistedFT).symbol !== undefined
+
+export const isListedFT = (token: Token): token is ListedFT => (token as ListedFT).logoURI !== undefined
+
+export const isUnlistedFT = (token: Token) => isFT(token) && !isListedFT(token)
+
+export const isNFT = (token: Token): token is NFT => (token as NFT).nftIndex !== undefined

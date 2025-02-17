@@ -1,4 +1,5 @@
 import { findTransactionInternalAddresses, isConfirmedTx } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { useEffect } from 'react'
 
@@ -8,11 +9,10 @@ import { sentTransactionStatusChanged } from '@/features/send/sentTransactions/s
 import { selectSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const usePendingTxPolling = (txHash: e.Transaction['hash']) => {
   const dispatch = useAppDispatch()
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
   const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
   const allAddressHashes = useUnsortedAddressesHashes()
 

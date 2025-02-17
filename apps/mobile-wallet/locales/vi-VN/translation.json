@@ -357,6 +357,7 @@
   "Public keys": "Các khóa công khai",
   "Tap on an address to copy its public key to the clipboard.": "Chạm vào một địa chỉ ví để sao chép khóa công khai của nó vào clipboard.",
   "Public key copied!": "Khóa công khai đã được sao chép!",
+  "Token ID copied!": "Đã sao chép Token ID!",
   "Could not copy public key": "Không thể sao chép khóa công khai",
   "Timestamp": "Thời gian",
   "Status": "Trạng thái",
@@ -408,6 +409,8 @@
   "Loading your balances...": "Đang tải số dư của bạn...",
   "Wallet worth": "Giá trị ví",
   "Address worth": "Giá trị địa chỉ",
+  "Total worth": "Tổng giá trị",
+  "less than": "ít hơn",
   "Forget address": "Quên địa chỉ",
   "Address forgotten": "Địa chỉ đã quên",
   "Disconnecting": "Đang ngắt kết nối",
@@ -456,5 +459,10 @@
   "Splitting your funds into multiple addresses can help you stay organized and increase privacy.": "Việc chia nhỏ số tiền của bạn vào nhiều địa chỉ khác nhau có thể giúp bạn quản lý tốt hơn và tăng cường sự riêng tư.",
   "No dApps match your search: \"{{ searchText }}\"": "Không có dApp nào khớp với tìm kiếm của bạn: \"{{ searchText }}\"",
   "Visit dApp": "Đi đến dApp",
-  "More details on Alph.land": "Thông tin chi tiết trên Alph.land"
+  "Region": "Vùng",
+  "Choose your region to update formats of dates, time, and currencies.": "Chọn khu vực của bạn để cập nhật định dạng ngày, giờ và tiền tệ.",
+  "More details on Alph.land": "Thông tin chi tiết trên Alph.land",
+  "Worth": "Giá trị",
+  "Group": "Nhóm",
+  "These tokens in your wallet do not respect the Alephium token standards. No information about them could be found.": "Những token này trong ví của bạn không tuân thủ các tiêu chuẩn token trên Alephium. Không có thông tin nào về chúng được tìm thấy."
 }

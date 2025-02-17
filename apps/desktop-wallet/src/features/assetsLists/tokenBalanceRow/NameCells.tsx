@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchToken, { isFT, isUnlistedFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import Badge from '@/components/Badge'
 import HashEllipsed from '@/components/HashEllipsed'
 import { TableCell } from '@/components/Table'
 import Truncate from '@/components/Truncate'
 import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
+import { isFT, isUnlistedFT } from '@/types/tokens'
 
 export const FTNameCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
   const { t } = useTranslation()

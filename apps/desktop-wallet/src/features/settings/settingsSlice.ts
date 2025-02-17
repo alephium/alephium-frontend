@@ -26,6 +26,7 @@ import {
   systemLanguageMatchSucceeded
 } from '@/features/localization/localizationActions'
 import {
+  addressOrderPreferenceChanged,
   analyticsToggled,
   devToolsToggled,
   discreetModeToggled,
@@ -81,6 +82,9 @@ const settingsSlice = createSlice({
       .addCase(fiatCurrencyChanged, (state, action) => {
         state.fiatCurrency = action.payload
       })
+      .addCase(addressOrderPreferenceChanged, (state, action) => {
+        state.addressOrderPreference = action.payload
+      })
 
     builder
       .addMatcher(isAnyOf(numberFormatRegionChanged, systemRegionMatchSucceeded), (state, action) => {
@@ -110,6 +114,7 @@ settingsListenerMiddleware.startListening({
     numberFormatRegionChanged,
     walletLockTimeChanged,
     analyticsToggled,
+    addressOrderPreferenceChanged,
     fiatCurrencyChanged
   ),
   effect: (_, { getState }) => {

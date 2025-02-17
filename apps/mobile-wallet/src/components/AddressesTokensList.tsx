@@ -9,7 +9,7 @@ import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import TokenListItem from '~/components/TokenListItem'
-import { closeModal } from '~/features/modals/modalActions'
+import { closeModal, openModal } from '~/features/modals/modalActions'
 import { ModalInstance } from '~/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -71,18 +71,21 @@ interface AddressesTokensListFooterProps {
   parentModalId?: ModalInstance['id']
 }
 
-export const AddressesTokensListFooter = ({ addressHash, parentModalId }: AddressesTokensListFooterProps) => {
-  const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
-  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
+export const AddressesTokensListFooter = ({ addressHash, parentModalId }: AddressesTokensListFooterProps) => (
+  <AddressesTokensListFooterStyled>
+    <HiddenAssetsButton addressHash={addressHash} parentModalId={parentModalId} />
+    <UknownAssetsButton addressHash={addressHash} />
+  </AddressesTokensListFooterStyled>
+)
+
+const HiddenAssetsButton = ({ addressHash, parentModalId }: AddressesTokensListFooterProps) => {
   const selectAddressesHiddenFungibleTokens = useMemo(makeSelectAddressesHiddenFungibleTokens, [])
   const hiddenFungibleTokens = useAppSelector((s) => selectAddressesHiddenFungibleTokens(s, addressHash))
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
-  const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
-  const { t } = useTranslation()
   const dispatch = useAppDispatch()
+  const { t } = useTranslation()
 
-  const hasHiddenTokens = hiddenFungibleTokens.length > 0
-  const hasUnknownTokens = unknownTokens.length > 0
+  if (hiddenFungibleTokens.length === 0) return null
 
   const handleHiddenAssetsPress = () => {
     navigation.navigate('HiddenAssetsScreen')
@@ -91,33 +94,40 @@ export const AddressesTokensListFooter = ({ addressHash, parentModalId }: Addres
   }
 
   return (
-    <AddressesTokensListFooterStyled>
-      {hasHiddenTokens && (
-        <HiddenAssetBtnContainer>
-          <Button
-            title={t('nb_of_hidden_assets', { count: hiddenFungibleTokens.length })}
-            onPress={handleHiddenAssetsPress}
-            iconProps={{ name: 'plus' }}
-            compact
-          />
-        </HiddenAssetBtnContainer>
-      )}
+    <HiddenAssetBtnContainer>
+      <Button
+        title={t('nb_of_hidden_assets', { count: hiddenFungibleTokens.length })}
+        onPress={handleHiddenAssetsPress}
+        iconProps={{ name: 'plus' }}
+        compact
+      />
+    </HiddenAssetBtnContainer>
+  )
+}
 
-      {hasUnknownTokens && (
-        <HiddenAssetBtnContainer>
-          {addressHash ? (
-            <Button
-              title={t('unknownTokensKey', { count: unknownTokens.length })}
-              onPress={() => openBrowserAsync(`${explorerBaseUrl}/addresses/${addressHash}`)}
-              iconProps={{ name: 'plus' }}
-              compact
-            />
-          ) : (
-            <AppText color="tetriary">+ {t('unknownTokensKey', { count: unknownTokens.length })}</AppText>
-          )}
-        </HiddenAssetBtnContainer>
-      )}
-    </AddressesTokensListFooterStyled>
+const UknownAssetsButton = ({ addressHash }: AddressesTokensListFooterProps) => {
+  const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
+  const unknownTokens = useAppSelector((s) => selectAddressesCheckedUnknownTokens(s, addressHash))
+  const explorerBaseUrl = useAppSelector((s) => s.network.settings.explorerUrl)
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+
+  if (unknownTokens.length === 0) return null
+
+  const handleUnknownTokensPress = () =>
+    addressHash
+      ? openBrowserAsync(`${explorerBaseUrl}/addresses/${addressHash}`)
+      : dispatch(openModal({ name: 'UnknownTokensModal' }))
+
+  return (
+    <HiddenAssetBtnContainer>
+      <Button
+        title={t('unknownTokensKey', { count: unknownTokens.length })}
+        onPress={handleUnknownTokensPress}
+        iconProps={{ name: 'plus' }}
+        compact
+      />
+    </HiddenAssetBtnContainer>
   )
 }
 

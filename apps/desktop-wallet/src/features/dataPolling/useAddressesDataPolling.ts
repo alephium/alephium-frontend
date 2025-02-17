@@ -1,14 +1,13 @@
 import { TRANSACTIONS_REFRESH_INTERVAL } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useQueries } from '@tanstack/react-query'
 
 import { addressLatestTransactionQuery } from '@/api/queries/transactionQueries'
-import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const useAddressesDataPolling = () => {
   const allAddressHashes = useUnsortedAddressesHashes()
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
 
   useQueries({
     queries: allAddressHashes.map((addressHash) => ({

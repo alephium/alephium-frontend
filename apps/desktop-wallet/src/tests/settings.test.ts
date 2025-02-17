@@ -1,7 +1,7 @@
 import { Currency, getNetworkName, networkSettingsPresets } from '@alephium/shared'
 
 import { Language } from '@/features/localization/languages'
-import { defaultSettings } from '@/features/settings/settingsConstants'
+import { AddressOrder, defaultSettings } from '@/features/settings/settingsConstants'
 import SettingsStorage from '@/features/settings/settingsPersistentStorage'
 import { Settings } from '@/features/settings/settingsTypes'
 import { ThemeSettings } from '@/features/theme/themeTypes'
@@ -16,7 +16,8 @@ const mockSettings: Settings = {
     devTools: false,
     analytics: false,
     fiatCurrency: 'USD' as Currency,
-    region: undefined
+    region: undefined,
+    addressOrderPreference: AddressOrder.LastUse
   },
   network: {
     networkId: 123,

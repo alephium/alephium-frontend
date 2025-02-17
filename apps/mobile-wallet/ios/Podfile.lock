@@ -287,6 +287,8 @@ PODS:
     - ExpoModulesCore
   - ExpoSensors (13.0.9):
     - ExpoModulesCore
+  - ExpoVideo (1.2.7):
+    - ExpoModulesCore
   - ExpoWebBrowser (13.0.3):
     - ExpoModulesCore
   - EXSplashScreen (0.27.7):
@@ -1291,8 +1293,6 @@ PODS:
     - React-debug
   - react-native-aes (2.0.0):
     - React-Core
-  - react-native-background-actions (4.0.1):
-    - React-Core
   - react-native-background-timer (2.4.1):
     - React-Core
   - react-native-compat (2.17.2):
@@ -1762,6 +1762,7 @@ DEPENDENCIES:
   - ExpoScreenCapture (from `../../../node_modules/expo-screen-capture/ios`)
   - ExpoSecureStore (from `../../../node_modules/expo-secure-store/ios`)
   - ExpoSensors (from `../../../node_modules/expo-sensors/ios`)
+  - ExpoVideo (from `../../../node_modules/expo-video/ios`)
   - ExpoWebBrowser (from `../../../node_modules/expo-web-browser/ios`)
   - EXSplashScreen (from `../../../node_modules/expo-splash-screen/ios`)
   - EXUpdatesInterface (from `../../../node_modules/expo-updates-interface/ios`)
@@ -1798,7 +1799,6 @@ DEPENDENCIES:
   - React-logger (from `../../../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../../../node_modules/react-native/ReactCommon`)
   - react-native-aes (from `../../../node_modules/react-native-aes-crypto`)
-  - react-native-background-actions (from `../../../node_modules/react-native-background-actions`)
   - react-native-background-timer (from `../../../node_modules/react-native-background-timer`)
   - "react-native-compat (from `../../../node_modules/@walletconnect/react-native-compat`)"
   - react-native-get-random-values (from `../../../node_modules/react-native-get-random-values`)
@@ -1915,6 +1915,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/expo-secure-store/ios"
   ExpoSensors:
     :path: "../../../node_modules/expo-sensors/ios"
+  ExpoVideo:
+    :path: "../../../node_modules/expo-video/ios"
   ExpoWebBrowser:
     :path: "../../../node_modules/expo-web-browser/ios"
   EXSplashScreen:
@@ -1984,8 +1986,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/react-native/ReactCommon"
   react-native-aes:
     :path: "../../../node_modules/react-native-aes-crypto"
-  react-native-background-actions:
-    :path: "../../../node_modules/react-native-background-actions"
   react-native-background-timer:
     :path: "../../../node_modules/react-native-background-timer"
   react-native-compat:
@@ -2098,6 +2098,7 @@ SPEC CHECKSUMS:
   ExpoScreenCapture: 41d39c845d85f740595e411d1c251ba893c69200
   ExpoSecureStore: 6506992a9f53c94ea716c54d4a63144965945c2c
   ExpoSensors: 805b2d91b629a08da78dcc86032a0833cb0e98c0
+  ExpoVideo: 34140ec2f01cfeb22d32165e79c4c819225e99cd
   ExpoWebBrowser: cf10afe886891ab495877dada977fe6c269614a4
   EXSplashScreen: a4ce3dd5d28d48e8b9132bcd9b58ee8e340db78c
   EXUpdatesInterface: c3a9494c2173db6442c7d5ad4e5b984972760fd3
@@ -2111,7 +2112,7 @@ SPEC CHECKSUMS:
   libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
   lottie-ios: fcb5e73e17ba4c983140b7d21095c834b3087418
   lottie-react-native: f26bf46e376a20620da39b1e74d9f0972bfeb0e8
-  RCT-Folly: 02617c592a293bd6d418e0a88ff4ee1f88329b47
+  RCT-Folly: 5dc73daec3476616d19e8a53f0156176f7b55461
   RCTDeprecation: 3afceddffa65aee666dafd6f0116f1d975db1584
   RCTRequired: ec1239bc9d8bf63e10fb92bd8b26171a9258e0c1
   RCTTypeSafety: f5ecbc86c5c5fa163c05acb7a1c5012e15b5f994
@@ -2136,7 +2137,6 @@ SPEC CHECKSUMS:
   React-logger: 780b9ee9cec7d44eabc4093de90107c379078cb6
   React-Mapbuffer: f544f00b98dbdd8cbae96dd2bdb8b47f719976e0
   react-native-aes: bed3ca6c47c5a5ebd5bac683efdf737c874f6d3f
-  react-native-background-actions: 48e6bad9e2a47e3b04858634c5a05ea11062f680
   react-native-background-timer: 4638ae3bee00320753647900b21260b10587b6f7
   react-native-compat: adcdb0ed0daeedf45557fd89cb423c9f6e2e64be
   react-native-get-random-values: d16467cf726c618e9c7a8c3c39c31faa2244bbba

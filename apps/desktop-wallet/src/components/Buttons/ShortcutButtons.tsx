@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { ArrowDownToLine, CreditCard, Send, Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -9,7 +10,6 @@ import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 import { TokenId } from '@/types/tokens'
 
 interface ShortcutButtonBaseProps {
@@ -116,7 +116,7 @@ const SendButton = ({ addressHash, tokenId, analyticsOrigin }: SendButtonProps) 
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
   const { data: addressesHashesWithBalance } = useFetchAddressesHashesWithBalance(tokenId)
-  const currentNetwork = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const currentNetwork = useCurrentlyOnlineNetworkId()
 
   if (!fromAddress) return null
 

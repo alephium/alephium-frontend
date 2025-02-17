@@ -37,6 +37,7 @@ import WalletConnectErrorModal from '~/features/walletconnect/WalletConnectError
 import WalletConnectPairingsModal from '~/features/walletconnect/WalletConnectPairingsModal'
 import WalletConnectPasteUrlModal from '~/features/walletconnect/WalletConnectPasteUrlModal'
 import AddressPickerQuickActionsModal from '~/modals/AddressPickerQuickActionsModal'
+import UnknownTokensModal from '~/modals/UnknownTokensModal'
 import GroupSelectModal from '~/screens/Addresses/Address/GroupSelectModal'
 import SwitchNetworkModal from '~/screens/SwitchNetworkModal'
 
@@ -78,7 +79,8 @@ export const ModalComponents = {
   AddressPickerQuickActionsModal,
   DAppQuickActionsModal,
   DAppDetailsModal,
-  RegionSelectModal
+  RegionSelectModal,
+  UnknownTokensModal
 }
 
 export type ModalName = keyof typeof ModalComponents

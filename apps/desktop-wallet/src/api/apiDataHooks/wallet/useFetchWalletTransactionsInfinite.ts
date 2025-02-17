@@ -1,14 +1,13 @@
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import useFetchWalletLatestTransaction from '@/api/apiDataHooks/wallet/useFetchWalletLatestTransaction'
 import { walletTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
-import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const useFetchWalletTransactionsInfinite = () => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
   const addressHashes = useUnsortedAddressesHashes()
 
   const { isLoading: isLoadingLatestTx } = useFetchWalletLatestTransaction()

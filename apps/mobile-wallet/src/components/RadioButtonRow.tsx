@@ -14,7 +14,7 @@ const RadioButtonRow = ({ title, isActive, ...props }: RadioButtonRowProps) => {
   return (
     <Row key={title} {...props}>
       <RowContents>
-        <RadioButton style={{ backgroundColor: isActive ? theme.global.accent : theme.bg.back2 }}>
+        <RadioButton style={{ backgroundColor: isActive ? theme.global.accent : theme.bg.primary }}>
           {isActive && <RadioButtonChecked />}
         </RadioButton>
         <Title>{title}</Title>
@@ -36,8 +36,8 @@ const RadioButton = styled.View`
 `
 
 export const RadioButtonChecked = styled.View`
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 10px;
   background-color: white;
 `

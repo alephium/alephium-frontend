@@ -3,11 +3,11 @@ import { Optional } from '@alephium/web3'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
-import useFetchToken, { isFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { TokenId } from '@/types/tokens'
+import { isFT, TokenId } from '@/types/tokens'
 
 interface AmountBaseProps {
   fadeDecimals?: boolean

@@ -30,3 +30,7 @@ export const analyticsToggled = createAction<Settings['general']['analytics']>('
 export const localStorageGeneralSettingsMigrated = createAction<Settings['general']>(
   'settings/localStorageGeneralSettingsMigrated'
 )
+
+export const addressOrderPreferenceChanged = createAction<Settings['general']['addressOrderPreference']>(
+  'settings/addressOrderPreferenceChanged'
+)

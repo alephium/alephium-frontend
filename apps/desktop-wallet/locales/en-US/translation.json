@@ -533,5 +533,7 @@
   "nb_of_hidden_assets_other": "{{ count }} hidden assets",
   "Close hidden assets list": "Close hidden assets list",
   "Unhide asset": "Unhide asset",
-  "No transactions before {{ date }}": "No transactions before {{ date }}"
+  "No transactions before {{ date }}": "No transactions before {{ date }}",
+  "Sort by": "Sort by",
+  "ALPH balance": "ALPH balance"
 }

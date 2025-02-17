@@ -4,12 +4,15 @@ import { useTranslation } from 'react-i18next'
 import { Pressable } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
-import AnimatedBackground from '~/components/AnimatedBackground'
+import AddressGroupBadge from '~/components/AddressGroupBadge'
+import AnimatedBackground from '~/components/animatedBackground/AnimatedBackground'
 import AppText from '~/components/AppText'
 import Badge from '~/components/Badge'
 import BalanceSummary from '~/components/BalanceSummary'
 import ActionCardButton from '~/components/buttons/ActionCardButton'
+import Box from '~/components/layout/Box'
 import RoundedCard from '~/components/RoundedCard'
+import Row from '~/components/Row'
 import ActionCardBuyButton from '~/features/buy/ActionCardBuyButton'
 import { closeModal, openModal } from '~/features/modals/modalActions'
 import { ModalInstance } from '~/features/modals/modalTypes'
@@ -23,6 +26,7 @@ import {
   selectAddressByHash
 } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
+import { copyAddressToClipboard } from '~/utils/addresses'
 
 interface AddressDetailsModalHeaderProps {
   addressHash: string
@@ -55,15 +59,22 @@ const AddressDetailsModalHeader = ({ addressHash, parentModalId }: AddressDetail
         <ActionCardButton title={t('Settings')} onPress={handleSettingsPress} iconProps={{ name: 'settings' }} />
       </ActionButtons>
 
-      {hasTokens && (
-        <>
-          <HorizontalSeparator />
+      <AddressDetailsBox>
+        <Row title={t('Address')} short>
+          <AppText truncate ellipsizeMode="middle" onLongPress={() => copyAddressToClipboard(addressHash)}>
+            {addressHash}
+          </AppText>
+        </Row>
+        <Row title={t('Group')} isLast short>
+          <AddressGroupBadge addressHash={addressHash} />
+        </Row>
+      </AddressDetailsBox>
 
-          <TokensBadges>
-            <FungibleTokensBadge addressHash={addressHash} />
-            <AddressNftsBadge addressHash={addressHash} />
-          </TokensBadges>
-        </>
+      {hasTokens && (
+        <TokensBadges>
+          <FungibleTokensBadge addressHash={addressHash} />
+          <AddressNftsBadge addressHash={addressHash} />
+        </TokensBadges>
       )}
     </AddressDetailsModalHeaderStyled>
   )
@@ -143,7 +154,7 @@ const AddressAnimatedBackground = ({ addressHash }: Pick<AddressDetailsModalHead
 
   if (!address) return null
 
-  return <AnimatedBackground shade={address.settings.color} isAnimated />
+  return <AnimatedBackground shade={address.settings.color} />
 }
 
 const AddressDetailsModalHeaderStyled = styled.View`
@@ -152,15 +163,9 @@ const AddressDetailsModalHeaderStyled = styled.View`
 
 // TODO: DRY
 const ActionButtons = styled.View`
-  margin-top: ${VERTICAL_GAP}px;
+  margin: ${VERTICAL_GAP}px 0;
   flex-direction: row;
   gap: 10px;
-`
-
-const HorizontalSeparator = styled.View`
-  height: 1px;
-  background-color: ${({ theme }) => theme.border.secondary};
-  margin-top: ${VERTICAL_GAP}px;
 `
 
 const TokensBadges = styled.View`
@@ -176,4 +181,9 @@ const AssetNumberText = styled(AppText)`
 const BadgeStyled = styled(Badge)`
   padding: 7px 6px 7px 14px;
   gap: 10px;
+`
+
+const AddressDetailsBox = styled(Box)`
+  padding-top: 0;
+  padding-bottom: 0;
 `

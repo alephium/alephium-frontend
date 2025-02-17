@@ -1,4 +1,5 @@
 import { AddressHash } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -6,10 +7,8 @@ import { useTranslation } from 'react-i18next'
 import { addressTokensSearchStringQuery, AddressTokensSearchStringQueryFnData } from '@/api/queries/addressQueries'
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
-import { useAppSelector } from '@/hooks/redux'
-import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
+import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
 import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 interface AddressSelectModalProps {
   title: string
@@ -68,8 +67,8 @@ export default AddressSelectModal
 
 const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
   const addresses = useUnsortedAddresses()
-  const { data: sortedAddressHashes } = useFetchSortedAddressesHashes()
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const { data: sortedAddressHashes } = useFetchAddressesHashesSortedByLastUse()
+  const networkId = useCurrentlyOnlineNetworkId()
 
   const { data: addressesSearchStrings } = useQueries({
     queries: addressOptions.map((hash) => addressTokensSearchStringQuery({ addressHash: hash, networkId })),

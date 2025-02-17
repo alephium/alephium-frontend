@@ -1,6 +1,6 @@
-import useFetchToken, { isFT, isNFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import HashEllipsed from '@/components/HashEllipsed'
-import { TokenId } from '@/types/tokens'
+import { isFT, isNFT, TokenId } from '@/types/tokens'
 
 interface SelectOptionTokenNameProps {
   tokenId: TokenId

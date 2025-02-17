@@ -1,4 +1,4 @@
-import { AddressHash, calculateAmountWorth, PRICED_TOKENS, sortAssets } from '@alephium/shared'
+import { AddressHash, calculateAmountWorth, sortAssets } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
@@ -36,10 +36,7 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
     unknown: unknownAssetsIds
   } = useAssetsMetadata(assetIds)
 
-  const tokensPrices = useTokensPrices([
-    ALPH.symbol,
-    ...fungibleTokensMetadata.flatMap((t) => (PRICED_TOKENS.includes(t.symbol) && t.symbol) || [])
-  ])
+  const tokensPrices = useTokensPrices([ALPH.symbol, ...fungibleTokensMetadata.flatMap((t) => t.symbol || [])])
 
   const isLoading = assetsLoading
 

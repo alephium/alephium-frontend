@@ -1,12 +1,11 @@
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useQuery } from '@tanstack/react-query'
 
 import { UseFetchTransactionProps } from '@/api/apiDataHooks/transaction/transactionTypes'
 import { pendingTransactionQuery } from '@/api/queries/transactionQueries'
-import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
 
 const useFetchPendingTransaction = (props: UseFetchTransactionProps) => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
 
   const { data, isLoading } = useQuery(pendingTransactionQuery({ ...props, networkId }))
 

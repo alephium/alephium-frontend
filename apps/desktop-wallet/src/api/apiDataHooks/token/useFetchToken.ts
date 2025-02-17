@@ -1,13 +1,11 @@
-import { NFT } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useQuery } from '@tanstack/react-query'
 
 import { tokenQuery } from '@/api/queries/tokenQueries'
-import { useAppSelector } from '@/hooks/redux'
-import { selectCurrentlyOnlineNetworkId } from '@/storage/network/networkSelectors'
-import { ListedFT, Token, TokenId, UnlistedFT } from '@/types/tokens'
+import { TokenId } from '@/types/tokens'
 
 const useFetchToken = (id: TokenId) => {
-  const networkId = useAppSelector(selectCurrentlyOnlineNetworkId)
+  const networkId = useCurrentlyOnlineNetworkId()
 
   const { data, isLoading } = useQuery(tokenQuery({ id, networkId }))
 
@@ -18,12 +16,3 @@ const useFetchToken = (id: TokenId) => {
 }
 
 export default useFetchToken
-
-export const isFT = (token: Token): token is ListedFT | UnlistedFT =>
-  (token as ListedFT | UnlistedFT).symbol !== undefined
-
-export const isListedFT = (token: Token): token is ListedFT => (token as ListedFT).logoURI !== undefined
-
-export const isUnlistedFT = (token: Token) => isFT(token) && !isListedFT(token)
-
-export const isNFT = (token: Token): token is NFT => (token as NFT).nftIndex !== undefined

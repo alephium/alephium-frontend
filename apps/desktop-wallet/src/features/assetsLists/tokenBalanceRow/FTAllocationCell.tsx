@@ -2,13 +2,13 @@ import { calculateAmountWorth } from '@alephium/shared'
 import styled from 'styled-components'
 
 import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import useFetchToken, { isListedFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import useFetchWalletSingleTokenBalances from '@/api/apiDataHooks/wallet/useFetchWalletSingleTokenBalances'
 import useFetchWalletWorth from '@/api/apiDataHooks/wallet/useFetchWalletWorth'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TableCell } from '@/components/Table'
 import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
-import { ListedFT } from '@/types/tokens'
+import { isListedFT, ListedFT } from '@/types/tokens'
 
 const FTAllocationCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
   const { data: token, isLoading: isLoadingToken } = useFetchToken(tokenId)

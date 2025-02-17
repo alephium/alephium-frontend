@@ -1,8 +1,11 @@
 import {
   AddressHash,
+  calculateAmountWorth,
   fromHumanReadableAmount,
   FungibleToken,
   getNumberOfDecimals,
+  selectAllPrices,
+  selectFungibleTokenById,
   toHumanReadableAmount
 } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
@@ -11,6 +14,7 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components/native'
 
+import Amount from '~/components/Amount'
 import AppText from '~/components/AppText'
 import AssetLogo from '~/components/AssetLogo'
 import Button from '~/components/buttons/Button'
@@ -121,6 +125,9 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
             />
             <SuffixText fontSize={fontSize}>{token?.symbol}</SuffixText>
           </InputWrapper>
+
+          <EnteredAmountWorth tokenId={tokenId} amount={amount} />
+
           <Buttons>
             <Button title={t('Use max')} onPress={handleUseMaxAmountPress} type="transparent" variant="accent" />
             {amountIsSet && <Button title={t('clear_amount')} onPress={handleClearAmountPress} type="transparent" />}
@@ -133,6 +140,26 @@ const TokenAmountModal = withModal<TokenAmountModalProps>(
   }
 )
 
+export default TokenAmountModal
+
+interface EnteredAmountWorthProps {
+  tokenId: FungibleToken['id']
+  amount: string
+}
+
+const EnteredAmountWorth = ({ tokenId, amount }: EnteredAmountWorthProps) => {
+  const tokenPrices = useAppSelector(selectAllPrices)
+  const token = useAppSelector((s) => selectFungibleTokenById(s, tokenId))
+
+  const tokenPrice = tokenPrices.find((p) => p.symbol === token?.symbol)?.price
+  const tokenAmount = amount ? fromHumanReadableAmount(amount, token?.decimals) : BigInt(0)
+  const totalWorth = token ? calculateAmountWorth(tokenAmount, tokenPrice ?? 0, token?.decimals ?? 0) : undefined
+
+  if (!totalWorth) return null
+
+  return <AmountWorth value={totalWorth} isFiat color="secondary" />
+}
+
 const getFontSize = (text: string) => {
   if (text.length <= MAX_FONT_LENGTH) {
     return MAX_FONT_SIZE
@@ -142,8 +169,6 @@ const getFontSize = (text: string) => {
     return newFontSize < MIN_FONT_SIZE ? MIN_FONT_SIZE : newFontSize
   }
 }
-
-export default TokenAmountModal
 
 const ModalHeader = styled.View`
   flex-direction: row;
@@ -179,10 +204,14 @@ const SuffixText = styled(AppText)<{ fontSize: number }>`
 
 const ErrorMessage = styled(AppText)`
   position: absolute;
-  bottom: 20px;
+  bottom: 6px;
   color: ${({ theme }) => theme.global.alert};
 `
 
 const Buttons = styled.View`
   flex-direction: row;
+`
+
+const AmountWorth = styled(Amount)`
+  padding-top: 5px;
 `

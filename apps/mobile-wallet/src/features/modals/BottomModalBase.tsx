@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from 'react'
-import { BackHandler, KeyboardAvoidingView, Pressable, View } from 'react-native'
+import { BackHandler, KeyboardAvoidingView, KeyboardAvoidingViewProps, Pressable, View } from 'react-native'
 import { GestureDetector } from 'react-native-gesture-handler'
 import Animated from 'react-native-reanimated'
 import styled from 'styled-components/native'
@@ -15,10 +15,10 @@ export interface BottomModalBaseProps {
   titleAlign?: 'left' | 'center'
   maximisedContent?: boolean
   minHeight?: number
-  paddingTop?: boolean
   noPadding?: boolean
   contentVerticalGap?: boolean
   navHeight?: number
+  keyboardAvoidingViewBehavior?: KeyboardAvoidingViewProps['behavior']
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
@@ -34,7 +34,8 @@ const BottomModalBase = ({
   title,
   titleAlign,
   isContentScrollable,
-  children
+  children,
+  keyboardAvoidingViewBehavior = 'height'
 }: BottomModalBaseProps & ReturnType<typeof useBottomModalState>) => {
   useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -47,7 +48,7 @@ const BottomModalBase = ({
   }, [handleClose])
 
   return (
-    <KeyboardAvoidingViewStyled behavior="height" enabled={!maximisedContent}>
+    <KeyboardAvoidingViewStyled behavior={keyboardAvoidingViewBehavior} enabled={!maximisedContent}>
       <Backdrop style={backdropAnimatedStyle} onPress={handleClose} />
       <Container>
         <ModalStyled style={modalAnimatedStyle}>

@@ -13,7 +13,7 @@ import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent
 import Truncate from '@/components/Truncate'
 import InputsSection from '@/features/send/InputsSection'
 import { useAppSelector } from '@/hooks/redux'
-import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
+import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
 import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
@@ -41,7 +41,7 @@ const AddressInputs = ({
   const { t } = useTranslation()
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const contacts = useAppSelector(selectAllContacts)
-  const { data: allAddressHashes } = useFetchSortedAddressesHashes()
+  const { data: allAddressHashes } = useFetchAddressesHashesSortedByLastUse()
 
   const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)

@@ -10,11 +10,11 @@ interface UseFetchWalletSingleTokenBalancesProps extends SkipProp {
   tokenId: TokenId
 }
 
-const useFetchWalletSingleTokenBalances = ({ tokenId }: UseFetchWalletSingleTokenBalancesProps) => {
-  const isALPH = tokenId === ALPH.id
-
+const useFetchWalletSingleTokenBalances = ({ tokenId, skip }: UseFetchWalletSingleTokenBalancesProps) => {
   const { data: alphBalances, isLoading: isLoadingAlphBalances } = useFetchWalletBalancesAlph()
   const { data: tokensBalances, isLoading: isLoadingTokensBalances } = useFetchWalletBalancesTokensArray()
+
+  const isALPH = tokenId === ALPH.id
 
   return {
     data: useMemo(

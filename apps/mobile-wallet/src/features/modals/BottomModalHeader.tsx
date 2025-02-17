@@ -5,7 +5,6 @@ import styled from 'styled-components/native'
 import AppText from '~/components/AppText'
 import { CloseButton } from '~/components/buttons/Button'
 import { BottomModalBaseProps } from '~/features/modals/BottomModalBase'
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
 interface BottomModalHeaderProps {
   onClose: () => void
@@ -50,7 +49,7 @@ const HeaderContainer = styled(Animated.View)`
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
-  padding: 0 ${DEFAULT_MARGIN - 1}px;
+  padding: 0 14px;
 `
 
 const HeaderSideContainer = styled.View<{ align: 'right' | 'left' }>`

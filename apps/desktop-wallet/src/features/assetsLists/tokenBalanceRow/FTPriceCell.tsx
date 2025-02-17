@@ -1,11 +1,12 @@
 import { useTheme } from 'styled-components'
 
 import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import useFetchToken, { isFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import Amount from '@/components/Amount'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import { TableCell } from '@/components/Table'
 import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
+import { isFT } from '@/types/tokens'
 
 const FTPriceCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
   const { data: token } = useFetchToken(tokenId)

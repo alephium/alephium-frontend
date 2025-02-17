@@ -1,10 +1,11 @@
 import { isNetworkValid, NetworkNames, networkPresetSwitched } from '@alephium/shared'
 import { ChainInfo } from '@alephium/walletconnect-provider'
 
-import { useSharedDispatch, useSharedSelector } from '@/redux'
+import { useCurrentlyOnlineNetworkId } from '@/network/useCurrentlyOnlineNetworkId'
+import { useSharedDispatch } from '@/redux'
 
 export const useWalletConnectNetwork = (networkId: ChainInfo['networkId'], onSuccess?: () => Promise<void>) => {
-  const currentNetworkId = useSharedSelector((s) => s.network.settings.networkId)
+  const currentNetworkId = useCurrentlyOnlineNetworkId()
   const dispatch = useSharedDispatch()
 
   const handleSwitchNetworkPress = async () => {
@@ -14,7 +15,7 @@ export const useWalletConnectNetwork = (networkId: ChainInfo['networkId'], onSuc
     }
   }
 
-  const showNetworkWarning = networkId && !isNetworkValid(networkId, currentNetworkId)
+  const showNetworkWarning = networkId && currentNetworkId && !isNetworkValid(networkId, currentNetworkId)
 
   return {
     handleSwitchNetworkPress,

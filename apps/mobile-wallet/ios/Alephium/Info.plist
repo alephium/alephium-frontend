@@ -72,6 +72,10 @@
       <string>Inter18pt-SemiBold.ttf</string>
       <string>Inter18pt-Bold.ttf</string>
     </array>
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>audio</string>
+    </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>
