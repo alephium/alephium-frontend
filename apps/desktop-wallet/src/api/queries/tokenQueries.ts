@@ -98,7 +98,6 @@ export const fungibleTokenMetadataQuery = ({ id, networkId, skip }: TokenQueryPr
   queryOptions({
     queryKey: ['token', 'fungible', 'metadata', id],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
-    meta: { isMainnet: networkId === 0 },
     queryFn: !skip
       ? async () => {
           const tokenMetadata = await batchers.ftMetadataBatcher.fetch(id)
@@ -152,7 +151,6 @@ export const tokenQuery = ({ id, networkId, skip }: TokenQueryProps) =>
   queryOptions({
     queryKey: ['token', id, { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
-    meta: { isMainnet: networkId === 0 },
     queryFn: async (): Promise<Token> => {
       const nst = { id } as NonStandardToken
 
