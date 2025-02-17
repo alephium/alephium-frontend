@@ -157,7 +157,7 @@ const AnimatedBackground = ({
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 8, ease: 'easeOut' }}
+        transition={{ duration: 3, ease: 'easeOut' }}
         style={{
           position: 'relative',
           height: '100%',
