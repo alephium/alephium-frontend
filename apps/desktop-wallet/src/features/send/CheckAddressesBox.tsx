@@ -41,10 +41,10 @@ const CheckAddressesBox = ({ fromAddress, toAddressHash, className }: CheckAddre
             <AddressLabel>{t('To')}</AddressLabel>
             <AddressLabelHash>
               {contact ? (
-                <AddressLabelHash>
+                <>
                   <ContactName>{contact.name}</ContactName>
                   <HashEllipsedStyled hash={contact.address} />
-                </AddressLabelHash>
+                </>
               ) : (
                 <ActionLinkStyled onClick={() => openInWebBrowser(`${explorerUrl}/addresses/${toAddressHash}`)}>
                   <AddressBadge addressHash={toAddressHash} truncate appendHash />
@@ -76,6 +76,7 @@ const AddressLabel = styled.div`
 const AddressLabelHash = styled.div`
   display: flex;
   gap: 10px;
+  min-width: 0;
 `
 
 const ContactName = styled(Truncate)`

@@ -347,29 +347,28 @@ function SendModal<PT extends { fromAddress: Address }>({
             onCancel={onClose}
           />
         ))}
-      {step === 'info-check' && !!transactionData && !!fees && (
-        <ScrollableModalContent>
-          {type === 'transfer' ? (
-            <TransferCheckTxModalContent
-              data={transactionData as TransferTxData}
-              fees={fees}
-              onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
-            />
-          ) : type === 'call-contract' ? (
-            <CallContractCheckTxModalContent
-              data={transactionData as CallContractTxData}
-              fees={fees}
-              onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
-            />
-          ) : (
-            <DeployContractCheckTxModalContent
-              data={transactionData as DeployContractTxData}
-              fees={fees}
-              onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
-            />
-          )}
-        </ScrollableModalContent>
-      )}
+      {step === 'info-check' &&
+        !!transactionData &&
+        !!fees &&
+        (type === 'transfer' ? (
+          <TransferCheckTxModalContent
+            data={transactionData as TransferTxData}
+            fees={fees}
+            onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
+          />
+        ) : type === 'call-contract' ? (
+          <CallContractCheckTxModalContent
+            data={transactionData as CallContractTxData}
+            fees={fees}
+            onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
+          />
+        ) : (
+          <DeployContractCheckTxModalContent
+            data={transactionData as DeployContractTxData}
+            fees={fees}
+            onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
+          />
+        ))}
       {step === 'password-check' && passwordRequirement && (
         <ScrollableModalContent>
           <PasswordConfirmation
