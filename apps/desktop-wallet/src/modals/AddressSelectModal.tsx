@@ -57,9 +57,8 @@ const AddressSelectModal = ({
       setValue={handleAddressSelect}
       onClose={onClose}
       isSearchable
-      optionRender={(option, isSelected) => <SelectOptionAddress addressHash={option.value} isSelected={isSelected} />}
+      optionRender={(option) => <SelectOptionAddress addressHash={option.value} />}
       emptyListPlaceholder={emptyListPlaceholder || t('There are no available addresses.')}
-      floatingOptions
     />
   )
 }

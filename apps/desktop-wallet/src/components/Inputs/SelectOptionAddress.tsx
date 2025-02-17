@@ -12,12 +12,11 @@ import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 interface SelectOptionAddressProps {
   addressHash: AddressHash
-  isSelected?: boolean
   className?: string
   subtitle?: ReactNode
 }
 
-const SelectOptionAddress = ({ addressHash, isSelected, className, subtitle }: SelectOptionAddressProps) => {
+const SelectOptionAddress = ({ addressHash, className, subtitle }: SelectOptionAddressProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
@@ -29,8 +28,9 @@ const SelectOptionAddress = ({ addressHash, isSelected, className, subtitle }: S
       ref={ref}
       className={className}
       displaysCheckMarkWhenSelected
-      isSelected={isSelected}
       contentDirection="column"
+      divider
+      dividerOffset={30}
       MainContent={
         <Header>
           <AddressBadgeContainer>
@@ -42,7 +42,13 @@ const SelectOptionAddress = ({ addressHash, isSelected, className, subtitle }: S
           </Group>
         </Header>
       }
-      SecondaryContent={isInView ? <AddressTokensBadgesList addressHash={addressHash} /> : null}
+      SecondaryContent={
+        isInView ? (
+          <AddressTokensBadgeListContainer>
+            <AddressTokensBadgesList addressHash={addressHash} />
+          </AddressTokensBadgeListContainer>
+        ) : null
+      }
     />
   )
 }
@@ -60,12 +66,11 @@ const Group = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-weight: 400;
   display: flex;
-  flex-shrink: 0;
+  font-size: 12px;
 `
 
 const AddressBadgeContainer = styled.div`
   flex: 1;
-  min-width: 0;
   gap: 10px;
   display: flex;
   flex-direction: column;
@@ -78,4 +83,8 @@ const AddressBadgeStyled = styled(AddressBadge)`
 
 const Subtitle = styled.div`
   font-weight: 500;
+`
+
+const AddressTokensBadgeListContainer = styled.div`
+  margin-left: var(--spacing-4);
 `

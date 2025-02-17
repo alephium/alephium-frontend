@@ -117,7 +117,6 @@ const AddressInputs = ({
               <SelectOptionItemContent
                 MainContent={<Name>{contact.label}</Name>}
                 SecondaryContent={<HashEllipsedStyled hash={contact.value} disableA11y />}
-                isSelected={contact.value === toAddress?.value}
               />
             )}
           />

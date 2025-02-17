@@ -55,6 +55,10 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   padding: 10px;
   color: ${({ theme }) => theme.font.primary};
 
+  svg {
+    stroke: ${({ theme }) => theme.font.primary};
+  }
+
   @media (max-width: ${sidebarExpandThresholdPx}px) {
     gap: 0;
     width: 42px;

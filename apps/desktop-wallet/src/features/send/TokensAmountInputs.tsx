@@ -326,6 +326,8 @@ const AssetAmounts = styled.div`
 const BoxStyled = styled(Box)`
   padding: 5px;
   position: relative;
+  display: flex;
+  flex-direction: row;
 
   &:hover {
     ${DeleteButton} {

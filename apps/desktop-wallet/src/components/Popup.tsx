@@ -145,6 +145,7 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  padding-bottom: var(--spacing-1);
 
   min-width: ${({ minWidth }) => minWidth}px;
   max-height: 660px;
@@ -158,7 +159,7 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
 
 const Header = styled.div<{ hasExtraContent: boolean }>`
   height: ${({ hasExtraContent }) => (hasExtraContent ? 'auto' : `${headerHeight}px`)};
-  padding: 0 var(--spacing-3);
+  padding: 0 var(--spacing-1) 0 var(--spacing-3);
   display: flex;
   align-items: center;
   z-index: 1;

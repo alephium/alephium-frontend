@@ -210,7 +210,6 @@ interface SelectOptionsModalProps<T extends OptionValue> {
   parentSelectRef?: RefObject<HTMLDivElement | HTMLButtonElement>
   minWidth?: number
   ListBottomComponent?: ReactNode
-  floatingOptions?: boolean
   isSearchable?: boolean
 }
 
@@ -227,7 +226,6 @@ export function SelectOptionsModal<T extends OptionValue>({
   parentSelectRef,
   minWidth,
   ListBottomComponent,
-  floatingOptions,
   isSearchable
 }: SelectOptionsModalProps<T>) {
   const { t } = useTranslation()
@@ -309,11 +307,13 @@ export function SelectOptionsModal<T extends OptionValue>({
               selected={isSelected}
               focusable
               aria-label={option.label}
-              isFloating={floatingOptions}
               hasCustomOptionRender={!!optionRender}
             >
               {optionRender ? (
-                optionRender(option, isSelected)
+                <CustomOptionContainer isSelected={isSelected}>
+                  {optionRender(option, isSelected)}
+                  {isSelected && <CheckMark />}
+                </CustomOptionContainer>
               ) : (
                 <>
                   {option.label}
@@ -415,22 +415,11 @@ export const OptionItem = styled.button<{
   background-color: ${({ theme, selected }) => (selected ? theme.bg.accent : 'transparent')};
   font-size: 13px;
   border-radius: var(--radius-small);
+  margin: 0 var(--spacing-1);
 
   ${({ hasCustomOptionRender }) => css`
     padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-2)'};
-    margin: ${hasCustomOptionRender ? '0px' : '0 var(--spacing-1)'};
   `};
-
-  ${({ isFloating }) =>
-    isFloating &&
-    css`
-      margin: 0 var(--spacing-1);
-      border-radius: var(--radius-small);
-      overflow: hidden;
-      border &:last-child {
-        margin-bottom: var(--spacing-3);
-      }
-    `}
 
   &:hover {
     background-color: ${({ theme }) => theme.bg.hover};
@@ -446,6 +435,7 @@ export const OptionItem = styled.button<{
 `
 
 const Searchbar = styled(Input)`
+  margin: var(--spacing-1) 0;
   svg {
     color: ${({ theme }) => theme.font.tertiary};
   }
@@ -457,4 +447,19 @@ const CustomComponentContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+`
+
+const CustomOptionContainer = styled.div<{ isSelected: boolean }>`
+  flex: 1;
+  display: flex;
+
+  ${CheckMark} {
+    margin: 12px 8px 12px 4px;
+  }
+
+  ${({ isSelected, theme }) =>
+    isSelected &&
+    css`
+      background-color: ${theme.bg.accent};
+    `}
 `
