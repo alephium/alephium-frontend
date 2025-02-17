@@ -15,7 +15,7 @@ export const lightTheme: DefaultTheme = {
     accent: colord('#0045ff').alpha(0.02).toHex()
   },
   font: {
-    primary: '#080808',
+    primary: '#050505',
     secondary: 'rgba(0, 0, 0, 0.6)',
     tertiary: 'rgba(0, 0, 0, 0.4)',
     contrastPrimary: 'rgba(255, 255, 255, 1)',

@@ -185,7 +185,7 @@ interface ShortcutButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   color?: string
 }
 
-const ShortcutButton = ({ color, ...props }: ShortcutButtonProps) => <ShortcutButtonStyled color={color} {...props} />
+const ShortcutButton = (props: ShortcutButtonProps) => <ShortcutButtonStyled {...props} />
 
 const ShortcutButtonStyled = styled.button<{ color?: string }>`
   display: flex;

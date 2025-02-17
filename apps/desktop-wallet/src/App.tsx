@@ -61,9 +61,7 @@ const App = memo(() => {
       <WalletConnectContextProvider>
         <AppContainer>
           <CenteredSection>
-            {!isWalletUnlocked && (
-              <AnimatedBackground anchorPosition="bottom" opacity={1} verticalOffset={-50} hiddenOverflow />
-            )}
+            <LoginAnimatedBackground />
             <Router />
           </CenteredSection>
         </AppContainer>
@@ -248,3 +246,11 @@ const AppContainerStyled = styled.div<{ showDevIndication: boolean }>`
       border: 5px solid ${theme.global.valid};
     `};
 `
+
+const LoginAnimatedBackground = () => {
+  const { isWalletUnlocked } = useWalletLock()
+
+  if (isWalletUnlocked) return null
+
+  return <AnimatedBackground anchorPosition="bottom" opacity={1} verticalOffset={-100} hiddenOverflow />
+}
