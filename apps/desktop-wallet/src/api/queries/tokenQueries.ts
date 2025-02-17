@@ -180,7 +180,7 @@ export const tokenQuery = ({ id, networkId, skip }: TokenQueryProps) =>
 
         const nftData = await queryClient.fetchQuery(nftDataQuery({ id, tokenUri: nftMetadata.tokenUri, networkId }))
 
-        return nftData ?? nst
+        return { ...nftData, ...nftMetadata }
       }
 
       // 5. If the type of the token cannot be determined, return the non-standard token
