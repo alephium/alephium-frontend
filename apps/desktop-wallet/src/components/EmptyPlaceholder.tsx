@@ -16,6 +16,7 @@ const EmptyPlaceholder = ({ children, emoji, className }: EmptyPlaceholderProps)
 export default EmptyPlaceholder
 
 const EmptyPlaceholderStyled = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 20px;

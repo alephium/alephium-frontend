@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 interface InputsSectionProps {
-  title: string
+  title?: string
   subtitle?: string
   HeaderActions?: ReactNode
   className?: string
@@ -10,10 +10,12 @@ interface InputsSectionProps {
 
 const InputsSection: FC<InputsSectionProps> = ({ title, className, HeaderActions, subtitle, children }) => (
   <InputsSectionStyled className={className}>
-    <Header>
-      <Title>{title}</Title>
-      {HeaderActions}
-    </Header>
+    {(title || HeaderActions) && (
+      <Header>
+        {title && <Title>{title}</Title>}
+        {HeaderActions}
+      </Header>
+    )}
     {subtitle && <Subtitle>{subtitle}</Subtitle>}
     {children}
   </InputsSectionStyled>

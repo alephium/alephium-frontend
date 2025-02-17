@@ -29,7 +29,7 @@ export const lightTheme: DefaultTheme = {
   },
   shadow: {
     primary: '0 8px 15px rgba(0, 0, 0, 0.2)',
-    secondary: '0 5px 10px rgba(0, 0, 0, 0.2)',
+    secondary: '0 4px 8px rgba(0, 0, 0, 0.03)',
     tertiary: '0 0 30px rgba(0, 0, 0, 0.1)'
   },
   global: {

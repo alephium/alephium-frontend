@@ -69,7 +69,7 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
       {title && (
         <Header hasExtraContent={!!extraHeaderContent}>
           <Title>{title}</Title>
-          {extraHeaderContent}
+          <ExtraHeaderContentContainer>{extraHeaderContent}</ExtraHeaderContentContainer>
         </Header>
       )}
       <Scrollbar>{children}</Scrollbar>
@@ -170,4 +170,8 @@ const Title = styled.span`
   font-size: 12px;
   color: ${({ theme }) => theme.font.secondary};
   text-transform: uppercase;
+`
+
+const ExtraHeaderContentContainer = styled.div`
+  flex: 1;
 `

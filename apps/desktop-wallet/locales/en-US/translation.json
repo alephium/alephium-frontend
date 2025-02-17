@@ -533,5 +533,6 @@
   "nb_of_hidden_assets_one": "{{ count }} hidden asset",
   "nb_of_hidden_assets_other": "{{ count }} hidden assets",
   "Close hidden assets list": "Close hidden assets list",
-  "Unhide asset": "Unhide asset"
+  "Unhide asset": "Unhide asset",
+  "Asset to send": "Asset to send"
 }

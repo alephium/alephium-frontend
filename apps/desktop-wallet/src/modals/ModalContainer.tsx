@@ -87,6 +87,7 @@ export const ModalBackdrop = styled(motion.div)<{ focusMode?: boolean; light?: b
   right: 0;
   left: 0;
   bottom: 0;
+  backdrop-filter: blur(3px);
   background-color: ${({ theme, focusMode, light }) =>
     theme.name === 'light'
       ? focusMode

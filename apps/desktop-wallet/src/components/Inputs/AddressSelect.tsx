@@ -1,11 +1,11 @@
 import { AddressHash } from '@alephium/shared'
-import { MoreVertical } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import { inputDefaultStyle, InputLabel, InputProps } from '@/components/Inputs'
-import { MoreIcon, SelectOutterContainer } from '@/components/Inputs/Select'
+import { SelectOutterContainer } from '@/components/Inputs/Select'
+import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
 import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
@@ -71,11 +71,7 @@ function AddressSelect({
         noMargin={noMargin}
       >
         {label && <InputLabel isElevated={!!selectedAddress}>{label}</InputLabel>}
-        {!disabled && !simpleMode && (
-          <MoreIcon>
-            <MoreVertical size={16} />
-          </MoreIcon>
-        )}
+        {!disabled && !simpleMode && <SelectMoreIcon />}
         <ClickableInput
           type="button"
           tabIndex={0}

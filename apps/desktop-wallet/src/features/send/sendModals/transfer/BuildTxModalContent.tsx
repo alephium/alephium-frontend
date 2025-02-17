@@ -1,4 +1,3 @@
-import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -22,8 +21,6 @@ export interface TransferBuildTxModalContentProps {
   onSubmit: (data: TransferTxData) => void
 }
 
-const defaultAssetAmounts = [{ id: ALPH.id }]
-
 const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalContentProps) => {
   const { t } = useTranslation()
   const {
@@ -37,7 +34,7 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
   } = useGasSettings(data?.gasAmount?.toString(), data?.gasPrice)
 
   const [lockTime, setLockTime] = useState(data.lockTime)
-  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(data.assetAmounts || defaultAssetAmounts)
+  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(data.assetAmounts || [])
 
   const { fromAddress, toAddress } = data
 
