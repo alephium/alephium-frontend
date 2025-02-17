@@ -36,11 +36,11 @@ const FiltersPanel = ({
   const { t } = useTranslation()
   const addresses = useUnsortedAddresses()
 
-  const { listedFts, unlistedFts, isLoading: isLoadingFts } = useFetchWalletFts()
+  const { listedFts, unlistedFts, isLoading: isLoadingFts } = useFetchWalletFts({ sort: true, includeHidden: false })
   const {
     data: { nftIds, nstIds },
     isLoading: isLoadingTokensByType
-  } = useFetchWalletTokensByType({ includeAlph: true })
+  } = useFetchWalletTokensByType({ includeHidden: false })
   const sortedTokenIds = useSortedTokenIds({ listedFts, unlistedFts, nftIds, nstIds })
 
   const renderAddressesSelectedValue = () =>

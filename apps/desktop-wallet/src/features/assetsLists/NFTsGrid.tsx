@@ -34,7 +34,7 @@ export const WalletNFTsGrid = () => {
   const {
     data: { nftIds },
     isLoading
-  } = useFetchWalletTokensByType({ includeAlph: false })
+  } = useFetchWalletTokensByType({ includeHidden: false })
 
   return (
     <NFTsGrid

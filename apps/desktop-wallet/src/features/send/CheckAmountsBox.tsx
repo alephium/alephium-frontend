@@ -56,6 +56,8 @@ const AssetAmountRow = ({ tokenId, amount, extraAlphForDust }: AssetAmountRowPro
   const { data: token } = useFetchToken(tokenId)
   const dispatch = useAppDispatch()
 
+  if (!token) return null
+
   const handleRowClick = () => {
     if (isNFT(token)) dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId: tokenId } }))
   }

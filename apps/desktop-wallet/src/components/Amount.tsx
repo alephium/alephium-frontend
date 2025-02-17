@@ -123,6 +123,8 @@ const TokenAmount = ({
 }: TokenAmountProps) => {
   const { data: token } = useFetchToken(tokenId)
 
+  if (!token) return null
+
   const amount = isFT(token)
     ? formatAmountForDisplay({
         amount: convertToPositive(value),

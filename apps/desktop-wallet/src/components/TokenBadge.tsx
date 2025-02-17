@@ -27,6 +27,8 @@ const TokenBadge = memo(({ tokenId, className, displaySign, withBackground, amou
   const { data: token } = useFetchToken(tokenId)
   const theme = useTheme()
 
+  if (!token) return null
+
   const tooltipContent = isFT(token) || isNFT(token) ? token.name : tokenId
 
   return (
@@ -64,6 +66,8 @@ const TokenBadgeText = ({
   const { data: token, isLoading: isLoadingToken } = useFetchToken(tokenId)
 
   if (isLoadingToken) return <SkeletonLoader height="20px" />
+
+  if (!token) return null
 
   if (isNFT(token) && showNftName) return <TokenSymbol>{token.name}</TokenSymbol>
 

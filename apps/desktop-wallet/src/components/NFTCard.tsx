@@ -3,7 +3,7 @@ import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
-import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
+import useFetchToken, { isNFT } from '@/api/apiDataHooks/token/useFetchToken'
 import Ellipsed from '@/components/Ellipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Truncate from '@/components/Truncate'
@@ -17,8 +17,9 @@ interface NFTCardProps {
 
 const NFTCard = ({ nftId }: NFTCardProps) => {
   const dispatch = useAppDispatch()
+  const { data: token, isLoading } = useFetchToken(nftId)
 
-  const { data: nft, isLoading } = useFetchNft({ id: nftId })
+  if (!token || !isNFT(token)) return null
 
   const openNFTDetailsModal = () => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
 
@@ -32,10 +33,10 @@ const NFTCard = ({ nftId }: NFTCardProps) => {
         <NFTNameContainer>
           {isLoading ? (
             <SkeletonLoader height="15px" />
-          ) : nft?.name ? (
-            <NFTName>{nft.name}</NFTName>
+          ) : token.name ? (
+            <NFTName>{token.name}</NFTName>
           ) : (
-            <EllipsedStyled text={nftId} />
+            <EllipsedStyled text={token.id} />
           )}
         </NFTNameContainer>
       </CardContent>

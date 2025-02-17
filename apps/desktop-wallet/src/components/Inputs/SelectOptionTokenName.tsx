@@ -9,11 +9,11 @@ interface SelectOptionTokenNameProps {
 const SelectOptionTokenName = ({ tokenId }: SelectOptionTokenNameProps) => {
   const { data: token } = useFetchToken(tokenId)
 
-  if (isFT(token)) return `${token.name} (${token.symbol})`
+  if (token && isFT(token)) return `${token.name} (${token.symbol})`
 
-  if (isNFT(token)) return token.name
+  if (token && isNFT(token)) return token.name
 
-  return <HashEllipsed hash={token.id} />
+  return <HashEllipsed hash={tokenId} />
 }
 
 export default SelectOptionTokenName

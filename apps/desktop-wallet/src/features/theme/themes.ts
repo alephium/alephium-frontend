@@ -56,7 +56,7 @@ export const darkTheme: DefaultTheme = {
     accent: colord('#3b62f0').alpha(0.1).toHex()
   },
   font: {
-    primary: 'rgba(255, 255, 255, 1)',
+    primary: '#fff',
     secondary: 'rgba(255, 255, 255, 0.8)',
     tertiary: 'rgba(255, 255, 255, 0.4)',
     contrastPrimary: 'rgba(0, 0, 0, 1)',
