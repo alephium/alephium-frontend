@@ -7,6 +7,7 @@ import { ButtonHTMLAttributes } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -127,6 +128,7 @@ const SendButton = ({ addressHash, tokenId, color, analyticsOrigin }: SendButton
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
   const { data: addressesHashesWithBalance } = useFetchAddressesHashesWithBalance(tokenId)
+  const { data: tokensBalances } = useFetchAddressBalances({ addressHash })
   const currentNetwork = useCurrentlyOnlineNetworkId()
 
   if (!fromAddress) return null
@@ -142,7 +144,9 @@ const SendButton = ({ addressHash, tokenId, color, analyticsOrigin }: SendButton
   const handleSendClick = () => {
     if (isDisabled) return
 
-    dispatch(openModal({ name: 'TransferSendModal', props: { initialTxData: { fromAddress, tokenId } } }))
+    const sendToken = tokenId ?? tokensBalances?.length === 1 ? tokensBalances[0].id : undefined
+
+    dispatch(openModal({ name: 'TransferSendModal', props: { initialTxData: { fromAddress, tokenId: sendToken } } }))
     sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
   }
 

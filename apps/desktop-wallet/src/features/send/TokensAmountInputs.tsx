@@ -72,6 +72,8 @@ const TokensAmountInputs = ({
   const remainingAvailableAssetsOptions = allTokensOptions.filter((option) => !selectedAssetIds.includes(option.value))
   const disabled = remainingAvailableAssetsOptions.length === 0
   const canAddMultipleAssets = allowMultiple && assetAmounts.length < allTokensOptions.length
+  const shouldDisplayAssetSelectModal =
+    assetAmounts.length === 0 || (isAssetSelectModalOpen && !!selectedOption && !disabled)
 
   const handleOpenAddressTokensSelectModal = useCallback((tokenRowIndex: number) => {
     setSelectedTokenRowIndex(tokenRowIndex)
@@ -251,8 +253,7 @@ const TokensAmountInputs = ({
           })}
         </AssetAmounts>
         <ModalPortal>
-          {assetAmounts.length === 0 ||
-          (isAssetSelectModalOpen && selectedOption && remainingAvailableAssetsOptions.length > 0) ? (
+          {shouldDisplayAssetSelectModal && (
             <SelectOptionsModal
               title={t('Asset to send')}
               options={remainingAvailableAssetsOptions}
@@ -263,7 +264,7 @@ const TokensAmountInputs = ({
               optionRender={renderOption}
               isSearchable={remainingAvailableAssetsOptions.length > 5}
             />
-          ) : null}
+          )}
         </ModalPortal>
       </InputsSection>
       {canAddMultipleAssets && (
