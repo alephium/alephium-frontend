@@ -454,6 +454,7 @@ const CustomOptionContainer = styled.div<{ isSelected: boolean }>`
   display: flex;
 
   ${CheckMark} {
+    height: 100%;
     margin: 12px 8px 12px 4px;
   }
 
