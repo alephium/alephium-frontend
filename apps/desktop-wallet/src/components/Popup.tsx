@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { fadeInOutBottomFast, fastTransition } from '@/animations'
 import Scrollbar from '@/components/Scrollbar'
 import ModalContainer from '@/modals/ModalContainer'
+import { appHeaderHeightPx } from '@/style/globalStyles'
 import { Coordinates } from '@/types/numbers'
 import { useWindowSize } from '@/utils/hooks'
 
@@ -108,7 +109,7 @@ export const useElementAnchorCoordinates = () => {
 
         return {
           x: containerElementRect.x + containerElement.clientWidth / 2,
-          y: containerElementRect.y + containerElement.clientHeight / 2
+          y: Math.max(containerElementRect.y + containerElement.clientHeight / 2, appHeaderHeightPx)
         }
       }
     })
