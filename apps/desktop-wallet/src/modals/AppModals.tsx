@@ -44,82 +44,87 @@ const AppModals = () => {
 
   return (
     <AnimatePresenceModalWrapper>
-      {openedModals.map((modal) => {
-        switch (modal.params.name) {
-          case 'SettingsModal':
-            return <SettingsModal id={modal.id} key={modal.id} {...modal.params.props} />
-          case 'WalletRemovalModal':
-            return <WalletRemovalModal id={modal.id} key={modal.id} {...modal.params.props} />
-          case 'WalletPassphraseDisclaimerModal':
-            return <WalletPassphraseDisclaimerModal id={modal.id} key={modal.id} {...modal.params.props} />
-        }
-      })}
-
-      {isWalletUnlocked &&
-        openedModals.map((modal) => {
-          switch (modal.params.name) {
-            case 'AddressDetailsModal':
-              return <AddressDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'CSVExportModal':
-              return <CSVExportModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'NFTDetailsModal':
-              return <NFTDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'TransactionDetailsModal':
-              return <TransactionDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'AddressOptionsModal':
-              return <AddressOptionsModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'ReceiveModal':
-              return <ReceiveModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'WalletConnectModal':
-              return <WalletConnectModal id={modal.id} key={modal.id} />
-            case 'SecretPhraseModal':
-              return <SecretPhraseModal id={modal.id} key={modal.id} />
-            case 'WalletQRCodeExportModal':
-              return <WalletQRCodeExportModal id={modal.id} key={modal.id} />
-            case 'EditWalletNameModal':
-              return <EditWalletNameModal id={modal.id} key={modal.id} />
-            case 'CurrentWalletModal':
-              return <CurrentWalletModal id={modal.id} key={modal.id} />
-            case 'AdvancedOperationsSideModal':
-              return <AdvancedOperationsSideModal id={modal.id} key={modal.id} />
-            case 'NewAddressModal':
-              return <NewAddressModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'ContactFormModal':
-              return <ContactFormModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'WalletUnlockModal':
-              return <WalletUnlockModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'TransferSendModal':
-              return <TransferSendModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'CallContractSendModal':
-              return <CallContractSendModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'DeployContractSendModal':
-              return <DeployContractSendModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'WalletConnectSessionProposalModal':
-              return <WalletConnectSessionProposalModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'SignUnsignedTxModal':
-              return <SignUnsignedTxModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'SignMessageModal':
-              return <SignMessageModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'ConsolidateUTXOsModal':
-              return <ConsolidateUTXOsModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'ConfirmLockTimeModal':
-              return <ConfirmLockTimeModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'ConfirmModal':
-              return <ConfirmModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'CopyPrivateKeyConfirmationModal':
-              return <CopyPrivateKeyConfirmationModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'DisablePasswordRequirementModal':
-              return <DisablePasswordRequirementModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'AddressSweepModal':
-              return <AddressSweepModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'DeleteAddressesModal':
-              return <DeleteAddressesModal id={modal.id} key={modal.id} />
-            case 'BuyModal':
-              return <BuyModal id={modal.id} key={modal.id} {...modal.params.props} />
-            case 'TokenDetailsModal':
-              return <TokenDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
-          }
-        })}
+      {isWalletUnlocked
+        ? openedModals.map((modal) => {
+            switch (modal.params.name) {
+              case 'SettingsModal':
+                return <SettingsModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'WalletRemovalModal':
+                return <WalletRemovalModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'WalletPassphraseDisclaimerModal':
+                return <WalletPassphraseDisclaimerModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'AddressDetailsModal':
+                return <AddressDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'CSVExportModal':
+                return <CSVExportModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'NFTDetailsModal':
+                return <NFTDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'TransactionDetailsModal':
+                return <TransactionDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'AddressOptionsModal':
+                return <AddressOptionsModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'ReceiveModal':
+                return <ReceiveModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'WalletConnectModal':
+                return <WalletConnectModal id={modal.id} key={modal.id} />
+              case 'SecretPhraseModal':
+                return <SecretPhraseModal id={modal.id} key={modal.id} />
+              case 'WalletQRCodeExportModal':
+                return <WalletQRCodeExportModal id={modal.id} key={modal.id} />
+              case 'EditWalletNameModal':
+                return <EditWalletNameModal id={modal.id} key={modal.id} />
+              case 'CurrentWalletModal':
+                return <CurrentWalletModal id={modal.id} key={modal.id} />
+              case 'AdvancedOperationsSideModal':
+                return <AdvancedOperationsSideModal id={modal.id} key={modal.id} />
+              case 'NewAddressModal':
+                return <NewAddressModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'ContactFormModal':
+                return <ContactFormModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'WalletUnlockModal':
+                return <WalletUnlockModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'TransferSendModal':
+                return <TransferSendModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'CallContractSendModal':
+                return <CallContractSendModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'DeployContractSendModal':
+                return <DeployContractSendModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'WalletConnectSessionProposalModal':
+                return <WalletConnectSessionProposalModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'SignUnsignedTxModal':
+                return <SignUnsignedTxModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'SignMessageModal':
+                return <SignMessageModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'ConsolidateUTXOsModal':
+                return <ConsolidateUTXOsModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'ConfirmLockTimeModal':
+                return <ConfirmLockTimeModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'ConfirmModal':
+                return <ConfirmModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'CopyPrivateKeyConfirmationModal':
+                return <CopyPrivateKeyConfirmationModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'DisablePasswordRequirementModal':
+                return <DisablePasswordRequirementModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'AddressSweepModal':
+                return <AddressSweepModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'DeleteAddressesModal':
+                return <DeleteAddressesModal id={modal.id} key={modal.id} />
+              case 'BuyModal':
+                return <BuyModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'TokenDetailsModal':
+                return <TokenDetailsModal id={modal.id} key={modal.id} {...modal.params.props} />
+            }
+          })
+        : openedModals.map((modal) => {
+            switch (modal.params.name) {
+              case 'SettingsModal':
+                return <SettingsModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'WalletRemovalModal':
+                return <WalletRemovalModal id={modal.id} key={modal.id} {...modal.params.props} />
+              case 'WalletPassphraseDisclaimerModal':
+                return <WalletPassphraseDisclaimerModal id={modal.id} key={modal.id} {...modal.params.props} />
+            }
+          })}
     </AnimatePresenceModalWrapper>
   )
 }
