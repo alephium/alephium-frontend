@@ -30,6 +30,7 @@ const AddressMetadataForm = ({
   return (
     <>
       <ColoredLabelInput label={t('Address label')} onChange={setLabel} value={label} id="label" maxLength={50} />
+
       {singleAddress && (
         <InlineLabelValueInput
           label={
