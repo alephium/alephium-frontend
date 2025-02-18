@@ -370,18 +370,16 @@ function SendModal<PT extends { fromAddress: Address }>({
           />
         ))}
       {step === 'password-check' && passwordRequirement && (
-        <ScrollableModalContent>
-          <PasswordConfirmation
-            text={t('Enter your password to send the transaction.')}
-            buttonText={t('Send')}
-            highlightButton
-            onCorrectPasswordEntered={handleSendExtended}
-          >
-            <PasswordConfirmationNote>
-              {t('You can disable this confirmation step from the wallet settings.')}
-            </PasswordConfirmationNote>
-          </PasswordConfirmation>
-        </ScrollableModalContent>
+        <PasswordConfirmation
+          text={t('Enter your password to send the transaction.')}
+          buttonText={t('Send')}
+          highlightButton
+          onCorrectPasswordEntered={handleSendExtended}
+        >
+          <PasswordConfirmationNote>
+            {t('You can disable this confirmation step from the wallet settings.')}
+          </PasswordConfirmationNote>
+        </PasswordConfirmation>
       )}
       {step === 'tx-sent' && (
         <ScrollableModalContent>
