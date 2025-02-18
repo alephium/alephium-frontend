@@ -13,7 +13,7 @@ import { openInWebBrowser } from '@/utils/misc'
 
 const Header = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
-  const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
+  const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
   const handleExplorerLinkClick = () => openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)
 

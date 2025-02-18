@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import ActionLink from '@/components/ActionLink'
-import Amount from '@/components/Amount'
+import Amount, { AmountBaseProps } from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Box from '@/components/Box'
 import { openModal } from '@/features/modals/modalActions'
@@ -18,12 +18,12 @@ import { isFT, isNFT } from '@/types/tokens'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
-interface CheckAmountsBoxProps {
+interface CheckAmountsBoxProps extends AmountBaseProps {
   assetAmounts: AssetAmount[]
   className?: string
 }
 
-const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
+const CheckAmountsBox = ({ assetAmounts, className, ...props }: CheckAmountsBoxProps) => {
   const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
   const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
 
@@ -33,7 +33,13 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
   return (
     <Box className={className}>
       {assets.map((asset) => (
-        <AssetAmountRow key={asset.id} tokenId={asset.id} amount={asset.amount} extraAlphForDust={extraAlphForDust} />
+        <AssetAmountRow
+          key={asset.id}
+          tokenId={asset.id}
+          amount={asset.amount}
+          extraAlphForDust={extraAlphForDust}
+          {...props}
+        />
       ))}
     </Box>
   )
@@ -41,13 +47,13 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
 
 export default CheckAmountsBox
 
-interface AssetAmountRowProps {
+interface AssetAmountRowProps extends AmountBaseProps {
   tokenId: string
   amount: string
   extraAlphForDust: bigint
 }
 
-const AssetAmountRow = ({ tokenId, amount, extraAlphForDust }: AssetAmountRowProps) => {
+const AssetAmountRow = ({ tokenId, amount, extraAlphForDust, ...props }: AssetAmountRowProps) => {
   const { t } = useTranslation()
   const { data: token } = useFetchToken(tokenId)
   const dispatch = useAppDispatch()
@@ -79,7 +85,7 @@ const AssetAmountRow = ({ tokenId, amount, extraAlphForDust }: AssetAmountRowPro
 
       {!isNFT(token) && (
         <TokenAmount>
-          <Amount tokenId={tokenId} value={BigInt(amount)} fullPrecision />
+          <Amount tokenId={tokenId} value={BigInt(amount)} fullPrecision {...props} />
           {isFT(token) && <FiatAmount symbol={token.symbol} amount={BigInt(amount)} decimals={token.decimals} />}
         </TokenAmount>
       )}

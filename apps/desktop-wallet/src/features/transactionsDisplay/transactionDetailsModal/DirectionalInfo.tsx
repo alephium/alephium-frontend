@@ -18,15 +18,6 @@ const DirectionalInfo = ({ tx, refAddressHash }: TransactionDetailsModalTxProps)
   return (
     <DirectionalInfoStyled>
       <AddressesInvolved>
-        <FromIn>
-          {
-            {
-              in: t('from'),
-              out: t('to'),
-              swap: t('between')
-            }[direction]
-          }
-        </FromIn>
         {direction === 'swap' ? (
           <>
             <AddressBadge addressHash={refAddressHash} truncate withBorders isShort />
@@ -63,26 +54,19 @@ export default DirectionalInfo
 
 const DirectionalInfoStyled = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 90%;
   gap: 8px;
   font-weight: var(--fontWeight-semiBold);
-  margin-top: var(--spacing-5);
-  margin-bottom: var(--spacing-5);
 `
 
 const AddressesInvolved = styled.div`
   display: flex;
   gap: 10px;
   align-items: center;
-  max-width: 80%;
+  max-width: 100%;
 `
 
 const FromIn = styled.span`
   color: ${({ theme }) => theme.font.secondary};
 `
 
-const SwapPartnerAddress = styled.div`
-  max-width: 160px;
-`
+const SwapPartnerAddress = styled.div``
