@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import AnimatedBackground from '@/components/AnimatedBackground'
 import { ShortcutButtonsGroupToken } from '@/components/Buttons/ShortcutButtons'
 import LabeledWorthOverview from '@/components/LabeledWorthOverview'
 import withModal from '@/features/modals/withModal'
@@ -16,12 +15,13 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId }) =>
 
   return (
     <SideModal id={id} title={t('Token balance')} width={800} header={<TokenDetailsModalHeader tokenId={tokenId} />}>
-      <LabeledWorthOverview label={t('Token balance')}>
-        <TokenBalances tokenId={tokenId} />
-      </LabeledWorthOverview>
-      <Content>
-        <AnimatedBackground anchorPosition="top" verticalOffset={-300} opacity={0.5} />
+      <WorthOverviewPanel>
+        <LabeledWorthOverview label={t('Token balance')}>
+          <TokenBalances tokenId={tokenId} />
+        </LabeledWorthOverview>
         <ShortcutButtonsGroupToken tokenId={tokenId} analyticsOrigin="token_details" />
+      </WorthOverviewPanel>
+      <Content>
         <TokenDetailsModalTabs tokenId={tokenId} />
       </Content>
     </SideModal>
@@ -36,4 +36,11 @@ const Content = styled.div`
   gap: 45px;
   display: flex;
   flex-direction: column;
+`
+
+const WorthOverviewPanel = styled.div`
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 `
