@@ -2,7 +2,6 @@ import { AssetAmount, calculateAmountWorth, toHumanReadableAmount } from '@aleph
 import { ALPH } from '@alephium/token-list'
 import { isNumber } from 'lodash'
 import { Info } from 'lucide-react'
-import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -12,7 +11,6 @@ import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Box from '@/components/Box'
-import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { openModal } from '@/features/modals/modalActions'
 import { getTransactionAssetAmounts } from '@/features/send/sendUtils'
 import { useAppDispatch } from '@/hooks/redux'
@@ -34,11 +32,8 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
 
   return (
     <Box className={className}>
-      {assets.map((asset, index) => (
-        <Fragment key={asset.id}>
-          {index > 0 && <HorizontalDivider />}
-          <AssetAmountRow tokenId={asset.id} amount={asset.amount} extraAlphForDust={extraAlphForDust} />
-        </Fragment>
+      {assets.map((asset) => (
+        <AssetAmountRow key={asset.id} tokenId={asset.id} amount={asset.amount} extraAlphForDust={extraAlphForDust} />
       ))}
     </Box>
   )
@@ -113,7 +108,7 @@ const FiatAmountStyled = styled(Amount)`
 
 const AssetAmountRowStyled = styled.div`
   display: flex;
-  padding: 18px 15px;
+  padding: 18px 0;
   align-items: center;
   justify-content: space-between;
   gap: 15px;
