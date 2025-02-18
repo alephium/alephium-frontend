@@ -32,6 +32,7 @@ const ColoredLabelInput = ({ label, onChange, value, className, id, maxLength }:
       {label && <Label>{label}</Label>}
       <ColoredLabelInputStyled className={className}>
         <Input
+          label={label}
           autoComplete="off"
           onChange={(e) => setTitle(e.target.value)}
           value={title}
