@@ -1,11 +1,7 @@
-import { Settings } from 'lucide-react'
 import { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import NavItem from '@/components/NavItem'
-import { openModal } from '@/features/modals/modalActions'
-import { useAppDispatch } from '@/hooks/redux'
+import SideBarSettingsButton from '@/components/PageComponents/SideBarSettingsButton'
 import { appHeaderHeightPx, sidebarExpandThresholdPx, walletSidebarWidthPx } from '@/style/globalStyles'
 
 interface SideBarProps {
@@ -15,22 +11,16 @@ interface SideBarProps {
   className?: string
 }
 
-const SideBar = ({ renderTopComponent, noExpansion = false, noBorder = false, className }: SideBarProps) => {
-  const dispatch = useAppDispatch()
-  const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: {} }))
-  const { t } = useTranslation()
-
-  return (
-    <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion} noBorder={noBorder}>
-      <TopContainer>{renderTopComponent?.()}</TopContainer>
-      <BottomButtonsContainer>
-        <BottomButtons>
-          <NavItem Icon={Settings} label={t('Settings')} onClick={openSettingsModal} />
-        </BottomButtons>
-      </BottomButtonsContainer>
-    </SideBarStyled>
-  )
-}
+const SideBar = ({ renderTopComponent, noExpansion = false, noBorder = false, className }: SideBarProps) => (
+  <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion} noBorder={noBorder}>
+    <TopContainer>{renderTopComponent?.()}</TopContainer>
+    <BottomButtonsContainer>
+      <BottomButtons>
+        <SideBarSettingsButton />
+      </BottomButtons>
+    </BottomButtonsContainer>
+  </SideBarStyled>
+)
 
 export default SideBar
 
