@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import ColoredLabelInput, { ColoredLabelInputValue } from '@/components/Inputs/ColoredLabelInput'
 import InlineLabelValueInput from '@/components/Inputs/InlineLabelValueInput'
 import Toggle from '@/components/Inputs/Toggle'
@@ -32,26 +31,23 @@ const AddressMetadataForm = ({
     <>
       <ColoredLabelInput label={t('Address label')} onChange={setLabel} value={label} id="label" maxLength={50} />
       {singleAddress && (
-        <>
-          <HorizontalDivider narrow />
-          <InlineLabelValueInput
-            label={
-              <Label>
-                <StyledMainAddressBadge width={11} /> {t('Default address')}
-              </Label>
-            }
-            description={defaultAddressMessage}
-            noHorizontalPadding
-            InputComponent={
-              <Toggle
-                toggled={isDefault}
-                label={t('Make this your default address')}
-                onToggle={() => setIsDefault(!isDefault)}
-                disabled={!isDefaultAddressToggleEnabled}
-              />
-            }
-          />
-        </>
+        <InlineLabelValueInput
+          label={
+            <Label>
+              <StyledMainAddressBadge width={11} /> {t('Default address')}
+            </Label>
+          }
+          description={defaultAddressMessage}
+          noHorizontalPadding
+          InputComponent={
+            <Toggle
+              toggled={isDefault}
+              label={t('Make this your default address')}
+              onToggle={() => setIsDefault(!isDefault)}
+              disabled={!isDefaultAddressToggleEnabled}
+            />
+          }
+        />
       )}
     </>
   )

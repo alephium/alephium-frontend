@@ -18,7 +18,7 @@ import ModalContainer, { ModalBackdrop, ModalContainerProps } from '@/modals/Mod
 
 export interface CenteredModalProps extends ModalContainerProps {
   title?: ReactNode
-  subtitle?: string
+  subtitle?: ReactNode
   isLoading?: boolean | string
   header?: ReactNode
   fullScreen?: boolean

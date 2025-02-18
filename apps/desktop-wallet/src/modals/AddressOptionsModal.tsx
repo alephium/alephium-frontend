@@ -8,8 +8,9 @@ import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddr
 import AddressMetadataForm from '@/components/AddressMetadataForm'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
-import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
+import HashEllipsed from '@/components/HashEllipsed'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
+import Truncate from '@/components/Truncate'
 import ForgetAddressSection from '@/features/addressDeletion/ForgetAddressSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal, openModal } from '@/features/modals/modalActions'
@@ -84,20 +85,27 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
     : t('To remove this address from being the default address, you must set another one as default first.')
 
   return (
-    <CenteredModal title={t('Address options')} subtitle={getName(address)} id={id} hasFooterButtons dynamicContent>
+    <CenteredModal
+      title={t('Address options')}
+      subtitle={
+        <Truncate style={{ maxWidth: 100 }}>
+          <HashEllipsed hash={address.hash} />
+        </Truncate>
+      }
+      id={id}
+      hasFooterButtons
+      dynamicContent
+    >
       {!isPassphraseUsed && (
-        <>
-          <AddressMetadataForm
-            label={addressLabel}
-            setLabel={setAddressLabel}
-            defaultAddressMessage={defaultAddressMessage}
-            isDefault={isDefaultAddress}
-            setIsDefault={setIsDefaultAddress}
-            isDefaultAddressToggleEnabled={isDefaultAddressToggleEnabled}
-            singleAddress
-          />
-          <HorizontalDivider narrow />
-        </>
+        <AddressMetadataForm
+          label={addressLabel}
+          setLabel={setAddressLabel}
+          defaultAddressMessage={defaultAddressMessage}
+          isDefault={isDefaultAddress}
+          setIsDefault={setIsDefaultAddress}
+          isDefaultAddressToggleEnabled={isDefaultAddressToggleEnabled}
+          singleAddress
+        />
       )}
 
       <KeyValueInput
@@ -128,8 +136,6 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
       />
 
       {address.index !== 0 && <ForgetAddressSection addressHash={addressHash} addressName={getName(address)} />}
-
-      <HorizontalDivider narrow />
 
       <ModalFooterButtons>
         <ModalFooterButton role="secondary" onClick={onClose}>
