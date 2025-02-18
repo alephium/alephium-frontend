@@ -10,7 +10,7 @@ import { fadeInSlowly } from '@/animations'
 import AppHeader from '@/components/AppHeader'
 import NavItem from '@/components/NavItem'
 import SideBar from '@/components/PageComponents/SideBar'
-import ScrollbarCustom from '@/components/Scrollbar'
+import Scrollbar from '@/components/Scrollbar'
 import WalletNameButton from '@/components/WalletNameButton'
 import { useAppSelector } from '@/hooks/redux'
 
@@ -41,12 +41,12 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
         )}
       ></SideBar>
 
-      <ScrollbarCustom>
+      <Scrollbar>
         <MainContent>
           <AppHeader title={title} />
           {children}
         </MainContent>
-      </ScrollbarCustom>
+      </Scrollbar>
     </motion.div>
   )
 }
