@@ -14,7 +14,7 @@ interface HashEllipsedProps extends HTMLAttributes<HTMLDivElement> {
   className?: string
   showSnackbarOnCopied?: boolean
   truncate?: boolean
-  maxWidth?: number
+  width?: number
 }
 
 const HashEllipsed = ({
@@ -25,7 +25,7 @@ const HashEllipsed = ({
   className,
   showSnackbarOnCopied = true,
   truncate = true,
-  maxWidth = 100,
+  width = 100,
   ...props
 }: HashEllipsedProps) => {
   const { t } = useTranslation()
@@ -44,9 +44,7 @@ const HashEllipsed = ({
   )
 
   return (
-    <Container className={className}>
-      {truncate ? <Truncate style={{ maxWidth }}>{content}</Truncate> : content}
-    </Container>
+    <Container className={className}>{truncate ? <Truncate style={{ width }}>{content}</Truncate> : content}</Container>
   )
 }
 

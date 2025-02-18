@@ -21,7 +21,7 @@ interface AddressBadgeProps {
   displayHashUnder?: boolean
   isShort?: boolean
   className?: string
-  maxHashWidth?: number
+  hashWidth?: number
 }
 
 const AddressBadge = ({
@@ -36,7 +36,7 @@ const AddressBadge = ({
   displayHashUnder = false,
   isShort,
   withBorders,
-  maxHashWidth
+  hashWidth
 }: AddressBadgeProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
@@ -90,17 +90,12 @@ const AddressBadge = ({
                   hash={address.hash}
                   disableA11y={disableA11y}
                   disableCopy={disableCopy}
-                  maxWidth={maxHashWidth}
+                  width={hashWidth}
                 />
               )}
             </LabelAndHash>
           ) : (
-            <HashEllipsed
-              hash={address.hash}
-              disableA11y={disableA11y}
-              disableCopy={disableCopy}
-              maxWidth={maxHashWidth}
-            />
+            <HashEllipsed hash={address.hash} disableA11y={disableA11y} disableCopy={disableCopy} width={hashWidth} />
           )}
         </>
       )}
@@ -110,9 +105,9 @@ const AddressBadge = ({
 
 export default AddressBadge
 
-const AddressBadgeStyled = styled.div<
-  Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'isShort' | 'hideColorIndication'>
->`
+type AddressBadgeStyledProps = Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'isShort' | 'hideColorIndication'>
+
+const AddressBadgeStyled = styled.div<AddressBadgeStyledProps>`
   display: flex;
   position: relative;
   align-items: center;
@@ -159,7 +154,6 @@ const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
   position: relative;
   margin-right: 2px;
   white-space: nowrap;
-  max-width: 200px;
   min-width: 40px;
 
   ${({ truncate }) =>
@@ -176,7 +170,6 @@ const ShortHashEllipsed = styled(HashEllipsed)`
   min-width: 80px;
   font-size: 12px;
   color: ${({ theme }) => theme.font.secondary};
-  width: 100%;
 `
 
 const ClipboardButtonStyled = styled(ClipboardButton)`

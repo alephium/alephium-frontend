@@ -118,6 +118,7 @@ const ModalHeaderContent = styled.div`
   padding: 0 10px 16px 20px;
   height: 70px;
   z-index: 1;
+  gap: var(--spacing-2);
 `
 
 const HeaderColumn = styled.div`
