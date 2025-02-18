@@ -194,6 +194,7 @@ const ModalTitle = styled.span`
 
 const CloseButton = styled(Button)`
   color: ${({ theme }) => theme.font.primary};
+  margin-left: var(--spacing-3);
 `
 
 const BackButton = styled(Button)`
@@ -222,7 +223,6 @@ export const ModalFooterButtons = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
   padding-top: var(--spacing-5);
   padding-bottom: var(--spacing-2);
   background: linear-gradient(to top, ${({ theme }) => theme.bg.background1} 50%, transparent 100%);
@@ -243,7 +243,6 @@ const ModalFooterButtonStyled = styled(Button)`
 const ModalSubtitle = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 13px;
-  margin-top: var(--spacing-1);
 `
 
 const ModalLoadingSpinner = styled.div`
