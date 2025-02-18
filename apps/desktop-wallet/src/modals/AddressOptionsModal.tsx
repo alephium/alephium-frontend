@@ -84,7 +84,7 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
     : t('To remove this address from being the default address, you must set another one as default first.')
 
   return (
-    <CenteredModal title={t('Address options')} subtitle={getName(address)} id={id}>
+    <CenteredModal title={t('Address options')} subtitle={getName(address)} id={id} hasFooterButtons dynamicContent>
       {!isPassphraseUsed && (
         <>
           <AddressMetadataForm
