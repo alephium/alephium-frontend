@@ -160,8 +160,11 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
 
 const Header = styled.div<{ hasExtraContent: boolean }>`
   height: ${({ hasExtraContent }) => (hasExtraContent ? 'auto' : `${headerHeight}px`)};
+  min-height: ${headerHeight}px;
   padding: 0 var(--spacing-1) 0 var(--spacing-3);
   display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
   align-items: center;
   z-index: 1;
   gap: var(--spacing-3);
@@ -171,6 +174,7 @@ const Title = styled.span`
   font-size: 12px;
   color: ${({ theme }) => theme.font.secondary};
   text-transform: uppercase;
+  flex-shrink: 0;
 `
 
 const ExtraHeaderContentContainer = styled.div`

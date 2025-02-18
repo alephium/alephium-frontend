@@ -436,6 +436,7 @@ export const OptionItem = styled.button<{
 
 const Searchbar = styled(Input)`
   margin: var(--spacing-1) 0;
+
   svg {
     color: ${({ theme }) => theme.font.tertiary};
   }
