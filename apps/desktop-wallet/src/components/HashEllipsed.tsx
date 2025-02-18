@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import ClipboardButton from '@/components/Buttons/ClipboardButton'
 import Ellipsed from '@/components/Ellipsed'
+import Truncate from '@/components/Truncate'
 
 interface HashEllipsedProps extends HTMLAttributes<HTMLDivElement> {
   hash: string
@@ -12,6 +13,8 @@ interface HashEllipsedProps extends HTMLAttributes<HTMLDivElement> {
   disableCopy?: boolean
   className?: string
   showSnackbarOnCopied?: boolean
+  truncate?: boolean
+  maxWidth?: number
 }
 
 const HashEllipsed = ({
@@ -21,24 +24,28 @@ const HashEllipsed = ({
   tooltipText,
   className,
   showSnackbarOnCopied = true,
+  truncate = true,
+  maxWidth = 100,
   ...props
 }: HashEllipsedProps) => {
   const { t } = useTranslation()
 
+  const content = disableCopy ? (
+    <Ellipsed text={hash} {...props} />
+  ) : (
+    <ClipboardButtonStyled
+      textToCopy={hash}
+      tooltip={tooltipText ?? t('Copy address')}
+      disableA11y={disableA11y}
+      showSnackbarOnCopied={showSnackbarOnCopied}
+    >
+      <Ellipsed className={className} text={hash} {...props} />
+    </ClipboardButtonStyled>
+  )
+
   return (
     <Container className={className}>
-      {disableCopy ? (
-        <Ellipsed text={hash} {...props} />
-      ) : (
-        <ClipboardButtonStyled
-          textToCopy={hash}
-          tooltip={tooltipText ?? t('Copy address')}
-          disableA11y={disableA11y}
-          showSnackbarOnCopied={showSnackbarOnCopied}
-        >
-          <Ellipsed className={className} text={hash} {...props} />
-        </ClipboardButtonStyled>
-      )}
+      {truncate ? <Truncate style={{ maxWidth }}>{content}</Truncate> : content}
     </Container>
   )
 }

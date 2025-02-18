@@ -42,7 +42,13 @@ const TitleBadge = ({ addressHash }: AddressModalBaseProp) => {
   return (
     <>
       <Title>
-        <AddressBadgeStyled addressHash={addressHash} hideColorIndication disableCopy={!!address.label} truncate />
+        <AddressBadgeStyled
+          addressHash={addressHash}
+          hideColorIndication
+          disableCopy={!!address.label}
+          truncate
+          maxHashWidth={110}
+        />
         {address.label && <TitleAddressHash hash={addressHash} />}
       </Title>
       <Badge short color={theme.font.tertiary}>
@@ -71,7 +77,6 @@ const ExplorerButton = styled(Button)`
 
 const AddressBadgeStyled = styled(AddressBadge)`
   font-size: 15px;
-  max-width: 160px;
 `
 
 const Title = styled.div`

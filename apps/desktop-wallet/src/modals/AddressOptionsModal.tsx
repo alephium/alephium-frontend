@@ -10,7 +10,6 @@ import Amount from '@/components/Amount'
 import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
-import Truncate from '@/components/Truncate'
 import ForgetAddressSection from '@/features/addressDeletion/ForgetAddressSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal, openModal } from '@/features/modals/modalActions'
@@ -87,11 +86,7 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
   return (
     <CenteredModal
       title={t('Address options')}
-      subtitle={
-        <Truncate style={{ maxWidth: 100 }}>
-          <HashEllipsed hash={address.hash} />
-        </Truncate>
-      }
+      subtitle={<HashEllipsed hash={address.hash} />}
       id={id}
       hasFooterButtons
       dynamicContent

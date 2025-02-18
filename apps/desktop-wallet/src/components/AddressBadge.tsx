@@ -21,6 +21,7 @@ interface AddressBadgeProps {
   displayHashUnder?: boolean
   isShort?: boolean
   className?: string
+  maxHashWidth?: number
 }
 
 const AddressBadge = ({
@@ -34,7 +35,8 @@ const AddressBadge = ({
   appendHash = false,
   displayHashUnder = false,
   isShort,
-  withBorders
+  withBorders,
+  maxHashWidth
 }: AddressBadgeProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
@@ -84,11 +86,21 @@ const AddressBadge = ({
                 )}
               </Label>
               {appendHash && (
-                <ShortHashEllipsed hash={address.hash} disableA11y={disableA11y} disableCopy={disableCopy} />
+                <ShortHashEllipsed
+                  hash={address.hash}
+                  disableA11y={disableA11y}
+                  disableCopy={disableCopy}
+                  maxWidth={maxHashWidth}
+                />
               )}
             </LabelAndHash>
           ) : (
-            <HashEllipsed hash={address.hash} disableA11y={disableA11y} disableCopy={disableCopy} />
+            <HashEllipsed
+              hash={address.hash}
+              disableA11y={disableA11y}
+              disableCopy={disableCopy}
+              maxWidth={maxHashWidth}
+            />
           )}
         </>
       )}
@@ -147,7 +159,7 @@ const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
   position: relative;
   margin-right: 2px;
   white-space: nowrap;
-  max-width: 125px;
+  max-width: 200px;
   min-width: 40px;
 
   ${({ truncate }) =>
