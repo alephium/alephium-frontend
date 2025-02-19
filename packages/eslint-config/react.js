@@ -3,7 +3,7 @@ const { resolve } = require('node:path')
 const project = resolve(process.cwd(), 'tsconfig.json')
 
 module.exports = {
-  extends: ['plugin:react/jsx-runtime'],
+  extends: ['@alephium/eslint-config/base', 'plugin:react/jsx-runtime'],
   plugins: ['react', 'react-hooks', 'eslint-plugin-react-compiler'],
   rules: {
     'react/prop-types': 'off',
