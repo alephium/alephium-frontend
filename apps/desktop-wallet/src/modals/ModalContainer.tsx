@@ -1,5 +1,5 @@
 import { motion, MotionProps } from 'framer-motion'
-import { KeyboardEvent, ReactNode, useEffect, useRef } from 'react'
+import { KeyboardEvent, ReactNode, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { fadeInOutFast } from '@/animations'
@@ -23,7 +23,7 @@ const ModalContainer = ({ id, onClose, children, focusMode, className, skipFocus
   const dispatch = useAppDispatch()
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const modalRef = useFocusOnMount<HTMLDivElement>(skipFocusOnMount)
-  const modalId = useRef<string>(`modal-${new Date().valueOf()}`)
+  const [modalId] = useState(`modal-${new Date().valueOf()}`)
 
   // TODO: Delete when onClose is deleted and id has become required
   if (!id && !onClose) throw new Error('Either id or onClose is required')
@@ -31,12 +31,12 @@ const ModalContainer = ({ id, onClose, children, focusMode, className, skipFocus
   // Prevent body scroll on mount
   useEffect(() => {
     document.body.style.overflow = 'hidden'
-    dispatch(modalOpened(modalId.current))
+    dispatch(modalOpened(modalId))
 
     return () => {
       document.body.style.overflow = 'unset'
     }
-  }, [dispatch])
+  }, [dispatch, modalId])
 
   // Handle escape key press
   const handleEscapeKeyPress = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -59,7 +59,7 @@ const ModalContainer = ({ id, onClose, children, focusMode, className, skipFocus
   }
 
   return (
-    <motion.div className={className} onKeyDown={handleEscapeKeyPress} tabIndex={0} id={modalId.current} ref={modalRef}>
+    <motion.div className={className} onKeyDown={handleEscapeKeyPress} tabIndex={0} id={modalId} ref={modalRef}>
       <ModalBackdrop {...fadeInOutFast} onClick={handleBackdropClick} focusMode={focusMode} />
       {children}
     </motion.div>

@@ -27,6 +27,7 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
   const contentRef = useRef<HTMLDivElement>(null)
 
   const [hookOffset, setHookOffset] = useState<Coordinates>()
+  const [contentWidth, setContentWidth] = useState(0)
 
   const handleHookClick = (e: MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -54,6 +55,7 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
             : 0
 
       setHookOffset({ x: baseOffsetX, y: baseOffsetY - 5 })
+      setContentWidth(contentRef.current?.clientWidth || 0)
     }
   }, [windowHeight, windowWidth])
 
@@ -82,11 +84,7 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
   return (
     <ModalContainer onClose={onClose}>
       {hookCoordinates ? (
-        <Hook
-          hookCoordinates={hookCoordinates}
-          contentWidth={contentRef.current?.clientWidth || 0}
-          onClick={handleHookClick}
-        >
+        <Hook hookCoordinates={hookCoordinates} contentWidth={contentWidth} onClick={handleHookClick}>
           {PopupContent}
         </Hook>
       ) : (
