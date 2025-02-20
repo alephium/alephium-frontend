@@ -176,7 +176,6 @@
   "To remove this address from being the default address, you must set another one as default first.": "Para quitar esta billetera como predeterminada, primero debe establecer otra como predeterminada.",
   "Toggle discreet mode (hide amounts).": "Alternar el modo discreto (ocultar montos)",
   "Tokens to issue (optional)": "Fichas por emitir (opcional)",
-  "Total value": "Valor total",
   "Transaction details": "Detalles de la transacción",
   "Transaction sent!": "¡Transacción enviada!",
   "Transactions": "Transacciones",

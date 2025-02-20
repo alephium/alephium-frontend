@@ -334,7 +334,6 @@
   "Tokens": "Διακριτικά",
   "Tokens to issue (optional)": "Διακριτικά προς έκδοση (προαιρετικά)",
   "Too many chains in the WalletConnect proposal, expected 1, got {{ num }}": "Πάρα πολλές αλυσίδες στην πρόταση WalletConnect, αναμενόταν 1, πήρε {{ num }}",
-  "Total value": "Συνολική αξία",
   "Transaction details": "Λεπτομέρειες συναλλαγής",
   "Transaction sent!": "Η συναλλαγή στάλθηκε!",
   "Transactions": "Συναλλαγές",

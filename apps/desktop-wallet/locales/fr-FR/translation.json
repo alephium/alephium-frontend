@@ -335,7 +335,6 @@
   "Tokens": "Jetons",
   "Tokens to issue (optional)": "Jetons à créer (optionnel)",
   "Too many chains in the WalletConnect proposal, expected 1, got {{ num }}": "Trop de chaines dans la proposition WalletConnect. Une attendue, reçues {{ num }}",
-  "Total value": "Valeur totale",
   "Transaction details": "Détails de la transaction",
   "Transaction sent!": "Transaction envoyée !",
   "Transactions": "Transactions",

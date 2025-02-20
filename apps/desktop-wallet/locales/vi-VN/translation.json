@@ -339,7 +339,6 @@
   "Tokens": "Token",
   "Tokens to issue (optional)": "Các token để phát hành (tùy chọn)",
   "Too many chains in the WalletConnect proposal, expected 1, got {{ num }}": "Có quá nhiều chain trong WalletConnect proposal, đề xuất 1, đã nhận {{ num }}",
-  "Total value": "Tổng giá trị",
   "Transaction details": "Chi tiết giao dịch",
   "Transaction sent!": "Giao dịch đã gửi!",
   "Transactions": "Giao dịch",

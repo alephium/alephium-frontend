@@ -339,7 +339,6 @@
   "Tokens": "代币",
   "Tokens to issue (optional)": "发行代币(可选)",
   "Too many chains in the WalletConnect proposal, expected 1, got {{ num }}": "WalletConnect 提议中的链太多，预期为 1，结果为 {{ num }}",
-  "Total value": "总额",
   "Transaction details": "交易详情",
   "Transaction sent!": "交易已发送！",
   "Transactions": "交易记录",

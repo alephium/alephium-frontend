@@ -180,7 +180,6 @@
   "To remove this address from being the default address, you must set another one as default first.": "Bu adresi varsayılan adresten kaldırmak için öncelikle bir başka varsayılan adres belirlemelisiniz.",
   "Toggle discreet mode (hide amounts).": "Gizli moda geç (miktarları gizle).",
   "Tokens to issue (optional)": "Yayınlanacak varlıklar (tercihe bağlı)",
-  "Total value": "Toplam değer",
   "Transaction details": "İşlem detayları",
   "Transaction sent!": "İşlem gönderildi!",
   "Transactions": "İşlemler",
