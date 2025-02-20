@@ -51,7 +51,6 @@ const HeaderStyled = styled.div`
 const LeftSide = styled.div`
   display: flex;
   align-items: center;
-  gap: 15px;
 `
 
 const RightSide = styled(LeftSide)`
@@ -59,6 +58,6 @@ const RightSide = styled(LeftSide)`
 `
 
 const TruncateStyled = styled(Truncate)`
-  font-size: 18px;
+  font-size: 15px;
   font-weight: var(--fontWeight-semiBold);
 `

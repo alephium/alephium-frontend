@@ -58,4 +58,5 @@ const FTAmountsStyled = styled(FTAmounts)`
 
 const FTWorthAmountStyled = styled(FTWorthAmount)`
   font-size: 20px;
+  color: ${({ theme }) => theme.font.secondary};
 `

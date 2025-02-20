@@ -31,7 +31,7 @@ const CheckAmountsBox = ({ assetAmounts, className, ...props }: CheckAmountsBoxP
   const assets = userSpecifiedAlphAmount ? [alphAsset, ...tokens] : [...tokens, alphAsset]
 
   return (
-    <Box className={className}>
+    <CheckAmountsBoxStyled className={className}>
       {assets.map((asset) => (
         <AssetAmountRow
           key={asset.id}
@@ -41,7 +41,7 @@ const CheckAmountsBox = ({ assetAmounts, className, ...props }: CheckAmountsBoxP
           {...props}
         />
       ))}
-    </Box>
+    </CheckAmountsBoxStyled>
   )
 }
 
@@ -67,7 +67,7 @@ const AssetAmountRow = ({ tokenId, amount, extraAlphForDust, ...props }: AssetAm
   return (
     <AssetAmountRowStyled onClick={isNFT(token) ? handleRowClick : undefined}>
       <LogoAndName>
-        <AssetLogo tokenId={tokenId} size={30} />
+        <AssetLogo tokenId={tokenId} size={26} />
 
         {(isFT(token) || isNFT(token)) && <TokenName>{token.name}</TokenName>}
 
@@ -112,12 +112,22 @@ const FiatAmountStyled = styled(Amount)`
   font-weight: var(--font-weight-medium);
 `
 
+const CheckAmountsBoxStyled = styled(Box)`
+  display: flex;
+  flex-direction: column;
+`
+
 const AssetAmountRowStyled = styled.div`
   display: flex;
-  padding: 18px 0;
   align-items: center;
   justify-content: space-between;
   gap: 15px;
+  border-radius: var(--radius-big);
+  padding: var(--spacing-3) 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  }
 
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
 `

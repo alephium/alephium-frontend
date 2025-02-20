@@ -20,7 +20,7 @@ const Header = ({ addressHash }: AddressModalBaseProp) => {
   return (
     <HeaderStyled>
       <LeftSide>
-        <AddressColorIndicator addressHash={addressHash} size={17} />
+        <AddressColorIndicator addressHash={addressHash} size={15} />
         <TitleBadge addressHash={addressHash} />
       </LeftSide>
       <ExplorerButton role="secondary" transparent short onClick={handleExplorerLinkClick}>

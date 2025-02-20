@@ -1,3 +1,4 @@
+import { colord } from 'colord'
 import { isEqual } from 'lodash'
 import { SearchIcon } from 'lucide-react'
 import {
@@ -413,6 +414,8 @@ export const OptionItem = styled.button<{
   visibility: ${({ invisible }) => invisible && 'hidden'};
   font-weight: ${({ selected }) => selected && 'var(--fontWeight-semiBold)'};
   background-color: ${({ theme, selected }) => (selected ? theme.bg.accent : 'transparent')};
+  border: 1px solid
+    ${({ theme, selected }) => (selected ? colord(theme.global.accent).alpha(0.1).toHex() : 'transparent')};
   font-size: 13px;
   border-radius: var(--radius-small);
   margin: 0 var(--spacing-1);
