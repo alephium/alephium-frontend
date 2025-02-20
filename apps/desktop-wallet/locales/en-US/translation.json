@@ -361,7 +361,7 @@
   "Unselect all": "Unselect all",
   "Update": "Update",
   "Use an existing wallet": "Use an existing wallet",
-  "Use max amount": "Use max amount",
+  "use_max_amount": "Use max",
   "Use optional passphrase": "Use optional passphrase",
   "Useful for miners or DeFi use.": "Useful for miners or DeFi use.",
   "Version": "Version",
