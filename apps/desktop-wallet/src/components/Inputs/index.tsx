@@ -138,7 +138,6 @@ const StyledInputLabel = styled(motion.label)`
   color: ${({ theme }) => theme.font.tertiary};
   pointer-events: none;
   transform-origin: left;
-  z-index: 1;
 `
 
 export const SelectLabel = styled.label`

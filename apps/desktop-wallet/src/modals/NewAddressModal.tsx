@@ -91,7 +91,7 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
   )}`
 
   return (
-    <CenteredModal title={title} id={id} isLoading={isLoading}>
+    <CenteredModal title={title} id={id} isLoading={isLoading} hasFooterButtons dynamicContent>
       {!isPassphraseUsed && (
         <Section align="flex-start">
           <AddressMetadataForm
@@ -104,7 +104,7 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
             singleAddress={singleAddress}
           />
           {!singleAddress && (
-            <InfoBox Icon={Info} contrast>
+            <InfoBox Icon={Info} contrast importance="accent">
               {t('The group number will be automatically be appended to the addresses’ label.')}
             </InfoBox>
           )}

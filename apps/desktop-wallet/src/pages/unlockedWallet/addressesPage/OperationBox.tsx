@@ -70,7 +70,6 @@ const OperationBoxStyled = styled.div<Pick<OperationBoxProps, '$placeholder'>>`
   display: flex;
   align-items: center;
   transition: box-shadow 0.1s ease-out;
-  justify-content: space-between;
   gap: 20px;
 
   ${({ $placeholder }) =>
@@ -121,6 +120,7 @@ const Footer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-left: auto;
   flex-shrink: 0;
   gap: 10px;
 `

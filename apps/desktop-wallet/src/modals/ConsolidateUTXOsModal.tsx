@@ -5,14 +5,13 @@ import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import Amount from '@/components/Amount'
-import Button from '@/components/Button'
 import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Spinner from '@/components/Spinner'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch } from '@/hooks/redux'
-import CenteredModal, { HeaderContent, HeaderLogo } from '@/modals/CenteredModal'
+import CenteredModal, { HeaderContent, HeaderLogo, ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 
 export interface ConsolidateUTXOsModalProps {
   onConsolidateClick: () => void
@@ -30,7 +29,7 @@ const ConsolidateUTXOsModal = memo(({ id, onConsolidateClick, fee }: ModalBasePr
   }
 
   return (
-    <CenteredModal title={t('Consolidate UTXOs')} id={id}>
+    <CenteredModal title={t('Consolidate UTXOs')} id={id} hasFooterButtons dynamicContent>
       <HeaderContent>
         <HeaderLogo>
           <Codesandbox color={theme.global.accent} size="70%" strokeWidth={0.7} />
@@ -46,11 +45,13 @@ const ConsolidateUTXOsModal = memo(({ id, onConsolidateClick, fee }: ModalBasePr
             {t('Fee')}
             {fee ? <Amount tokenId={ALPH.id} value={fee} /> : <Spinner size="12px" />}
           </Fee>
-          <Button onClick={handleConsolidateClick} submit disabled={!fee}>
-            {t('Consolidate')}
-          </Button>
         </Section>
       </HeaderContent>
+      <ModalFooterButtons>
+        <ModalFooterButton onClick={handleConsolidateClick} submit disabled={!fee}>
+          {t('Consolidate')}
+        </ModalFooterButton>
+      </ModalFooterButtons>
     </CenteredModal>
   )
 })
