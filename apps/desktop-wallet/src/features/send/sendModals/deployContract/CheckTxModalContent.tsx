@@ -22,7 +22,7 @@ const DeployContractCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProp
       <CheckModalContent>
         {data.initialAlphAmount && (
           <>
-            <CheckAmountsBox assetAmounts={[data.initialAlphAmount]} />
+            <CheckAmountsBox assetAmounts={[data.initialAlphAmount]} hasBg hasPadding />
             <CheckWorthBox assetAmounts={[data.initialAlphAmount]} />
           </>
         )}

@@ -7,14 +7,14 @@ import styled from 'styled-components'
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
 import Amount from '@/components/Amount'
-import Box from '@/components/Box'
+import Box, { BoxProps } from '@/components/Box'
 import InfoRow from '@/features/send/InfoRow'
 
-interface CheckWorthBoxProps {
+interface CheckWorthBoxProps extends BoxProps {
   assetAmounts: AssetAmount[]
 }
 
-const CheckWorthBox = ({ assetAmounts }: CheckWorthBoxProps) => {
+const CheckWorthBox = ({ assetAmounts, ...props }: CheckWorthBoxProps) => {
   const { t } = useTranslation()
 
   const {
@@ -36,7 +36,7 @@ const CheckWorthBox = ({ assetAmounts }: CheckWorthBoxProps) => {
   }, 0)
 
   return (
-    <Box>
+    <Box {...props}>
       <InfoRow label={t('Total worth')}>
         <AmountStyled
           tokenId={ALPH.id}

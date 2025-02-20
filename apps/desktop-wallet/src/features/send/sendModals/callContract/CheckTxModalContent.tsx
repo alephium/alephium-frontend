@@ -18,7 +18,7 @@ const CallContractCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProps<
   return (
     <>
       <CheckModalContent>
-        {data.assetAmounts && <CheckAmountsBox assetAmounts={data.assetAmounts} />}
+        {data.assetAmounts && <CheckAmountsBox assetAmounts={data.assetAmounts} hasBg hasPadding />}
         {data.assetAmounts && <CheckWorthBox assetAmounts={data.assetAmounts} />}
         <CheckAddressesBox fromAddress={data.fromAddress} />
         <CheckFeeLockTimeBox fee={fees} />

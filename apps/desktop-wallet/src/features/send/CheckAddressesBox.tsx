@@ -5,7 +5,7 @@ import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 import AddressBadge from '@/components/AddressBadge'
-import Box from '@/components/Box'
+import Box, { BoxProps } from '@/components/Box'
 import HashEllipsed from '@/components/HashEllipsed'
 import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
@@ -13,20 +13,20 @@ import { makeSelectContactByAddress } from '@/storage/addresses/addressesSelecto
 import { Address } from '@/types/addresses'
 import { openInWebBrowser } from '@/utils/misc'
 
-interface CheckAddressesBoxProps {
+interface CheckAddressesBoxProps extends BoxProps {
   fromAddress: Address
   toAddressHash?: AddressHash
   className?: string
 }
 
-const CheckAddressesBox = ({ fromAddress, toAddressHash, className }: CheckAddressesBoxProps) => {
+const CheckAddressesBox = ({ fromAddress, toAddressHash, ...props }: CheckAddressesBoxProps) => {
   const { t } = useTranslation()
   const selectContactByAddress = useMemo(makeSelectContactByAddress, [])
   const contact = useAppSelector((s) => selectContactByAddress(s, toAddressHash))
   const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
   return (
-    <Box className={className}>
+    <Box {...props}>
       <AddressRow>
         <AddressLabel>{t('From')}</AddressLabel>
         <AddressLabelHash>

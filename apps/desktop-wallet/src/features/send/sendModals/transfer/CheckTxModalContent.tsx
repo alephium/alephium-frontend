@@ -26,7 +26,7 @@ const TransferCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProps<Tran
   return (
     <>
       <CheckModalContent>
-        <CheckAmountsBoxStyled assetAmounts={data.assetAmounts} />
+        <CheckAmountsBoxStyled assetAmounts={data.assetAmounts} hasBg hasPadding />
         <CheckWorthBox assetAmounts={data.assetAmounts} />
         <CheckAddressesBox fromAddress={data.fromAddress} toAddressHash={data.toAddress} />
         <CheckFeeLocktimeBox fee={fees} lockTime={data.lockTime} />
