@@ -163,10 +163,9 @@ const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
 
 const SummaryStyled = styled.div`
   padding: var(--spacing-3) var(--spacing-3) var(--spacing-1);
-  border: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.tertiary};
+  background-color: ${({ theme }) => theme.bg.secondary};
   margin: var(--spacing-2);
-  border-radius: var(--radius-big);
+  border-radius: var(--radius-huge);
 `
 
 const SummaryContent = styled.div`

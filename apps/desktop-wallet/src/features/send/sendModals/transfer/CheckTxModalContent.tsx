@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 import { openModal } from '@/features/modals/modalActions'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
@@ -25,7 +26,7 @@ const TransferCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProps<Tran
   return (
     <>
       <CheckModalContent>
-        <CheckAmountsBox assetAmounts={data.assetAmounts} />
+        <CheckAmountsBoxStyled assetAmounts={data.assetAmounts} />
         <CheckWorthBox assetAmounts={data.assetAmounts} />
         <CheckAddressesBox fromAddress={data.fromAddress} toAddressHash={data.toAddress} />
         <CheckFeeLocktimeBox fee={fees} lockTime={data.lockTime} />
@@ -39,3 +40,8 @@ const TransferCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProps<Tran
 }
 
 export default TransferCheckTxModalContent
+
+const CheckAmountsBoxStyled = styled(CheckAmountsBox)`
+  background-color: ${({ theme }) => theme.bg.secondary};
+  padding: 0 var(--spacing-2);
+`
