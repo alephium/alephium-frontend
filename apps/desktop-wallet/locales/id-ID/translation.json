@@ -339,7 +339,6 @@
   "Tokens": "Token",
   "Tokens to issue (optional)": "Token - token untuk diterbitkan (yang dapat dipilih)",
   "Too many chains in the WalletConnect proposal, expected 1, got {{ num }}": "Terlalu banyak rantai-rantai di dalam pengajuan WalletConnect, diharapkan 1, mendapat {{ num }}",
-  "Total value": "Nilai Total",
   "Transaction details": "Detail transaksi",
   "Transaction sent!": "Transaksi telah terkirim!",
   "Transactions": "Transaksi",

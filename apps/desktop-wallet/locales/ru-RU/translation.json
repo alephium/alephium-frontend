@@ -314,7 +314,6 @@
   "Tokens": "Токены",
   "Tokens to issue (optional)": "Токены для выпуска (необязательно)",
   "Too many chains in the WalletConnect proposal, expected 1, got {{ num }}": "Слишком много цепочек в предложении WalletConnect, ожидалось 1, получено {{ num }}",
-  "Total value": "Итоговое значение",
   "Transaction details": "Детали транзакции",
   "Transaction sent!": "Транзакция отправлена!",
   "Transactions": "Транзакции",
