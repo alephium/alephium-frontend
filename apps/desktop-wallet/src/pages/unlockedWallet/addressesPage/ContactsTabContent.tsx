@@ -92,7 +92,7 @@ const ContactCard = ({ contactId }: ContactCardProps) => {
       <ContentRow>
         <Initials color={contactColor}>{getInitials(contact.name)}</Initials>
         <Name>{contact.name}</Name>
-        <HashEllipsedStyled hash={contact.address} />
+        <HashEllipsedStyled hash={contact.address} width={120} />
       </ContentRow>
       <ButtonsRow>
         <SendButton transparent onClick={() => openSendModal(contact)}>
@@ -146,7 +146,6 @@ const ButtonsRow = styled.div`
 const HashEllipsedStyled = styled(HashEllipsed)`
   font-size: 16px;
   font-weight: var(--fontWeight-medium);
-  width: 65%;
   color: ${({ theme }) => theme.font.tertiary};
 `
 

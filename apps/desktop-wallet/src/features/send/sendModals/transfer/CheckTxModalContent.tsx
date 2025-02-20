@@ -5,7 +5,7 @@ import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { openModal } from '@/features/modals/modalActions'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckAmountsBox from '@/features/send/CheckAmountsBox'
-import CheckFeeLocktimeBox from '@/features/send/CheckFeeLockTimeBox'
+import CheckLockTimeBox from '@/features/send/CheckFeeLockTimeBox'
 import CheckModalContent from '@/features/send/CheckModalContent'
 import CheckWorthBox from '@/features/send/CheckWorthBox'
 import { CheckTxProps, TransferTxData } from '@/features/send/sendTypes'
@@ -30,9 +30,13 @@ const TransferCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProps<Tran
         <CheckAmountsBoxStyled assetAmounts={data.assetAmounts} hasBg hasPadding />
         <CheckAddressesBox fromAddress={data.fromAddress} toAddressHash={data.toAddress} />
         <HorizontalDivider />
-        <CheckFeeLocktimeBox fee={fees} lockTime={data.lockTime} />
-        <HorizontalDivider />
-        <CheckWorthBox assetAmounts={data.assetAmounts} />
+        {data.lockTime && (
+          <>
+            <CheckLockTimeBox lockTime={data.lockTime} />
+            <HorizontalDivider />
+          </>
+        )}
+        <CheckWorthBox assetAmounts={data.assetAmounts} fee={fees} />
       </CheckModalContent>
 
       <ModalFooterButtons>
