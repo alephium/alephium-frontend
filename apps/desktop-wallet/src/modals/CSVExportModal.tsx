@@ -2,14 +2,13 @@ import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import FooterButton from '@/components/Buttons/FooterButton'
 import Select from '@/components/Inputs/Select'
 import Paragraph from '@/components/Paragraph'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { AddressModalProps } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import CenteredModal from '@/modals/CenteredModal'
+import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 import { csvFileGenerationFinished, fetchTransactionsCsv } from '@/storage/transactions/transactionsActions'
 import { TransactionTimePeriod } from '@/types/transactions'
@@ -48,7 +47,13 @@ const CSVExportModal = ({ id, addressHash }: AddressModalProps) => {
   }
 
   return (
-    <CenteredModal title={t('Export address transactions')} subtitle={address.label || address.hash} onClose={onClose}>
+    <CenteredModal
+      title={t('Export address transactions')}
+      subtitle={address.label || address.hash}
+      onClose={onClose}
+      hasFooterButtons
+      dynamicContent
+    >
       <Paragraph>
         {t(
           'You can download the address transaction history for a selected time period. This can be useful for tax reporting.'
@@ -61,7 +66,9 @@ const CSVExportModal = ({ id, addressHash }: AddressModalProps) => {
         id="timeperiod"
         onSelect={setSelectedTimePeriod}
       />
-      <FooterButton onClick={handleExportClick}>{t('Export')}</FooterButton>
+      <ModalFooterButtons>
+        <ModalFooterButton onClick={handleExportClick}>{t('Export')}</ModalFooterButton>
+      </ModalFooterButtons>
     </CenteredModal>
   )
 }

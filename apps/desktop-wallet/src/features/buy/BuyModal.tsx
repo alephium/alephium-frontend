@@ -1,16 +1,15 @@
 import { AddressHash, ONRAMP_TARGET_LOCATION } from '@alephium/shared'
-import { memo, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
-import FooterButton from '@/components/Buttons/FooterButton'
 import useOnramperUrl from '@/features/buy/useOnramperUrl'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch } from '@/hooks/redux'
-import CenteredModal from '@/modals/CenteredModal'
+import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { showToast } from '@/storage/global/globalActions'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -34,18 +33,26 @@ const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
     setDisclaimerAccepted(true)
   }
 
+  const handleClose = useCallback(() => dispatch(closeModal({ id })), [dispatch, id])
+
   useEffect(() => {
     const removeListener = window.electron?.app.onOnRampTargetLocationReached(() => {
       showToast({ text: t('Purchase done!'), type: 'success', duration: 'short' })
       navigate('/wallet/activity')
-      dispatch(closeModal({ id }))
+      handleClose()
     })
 
     return removeListener
-  }, [dispatch, id, navigate, t])
+  }, [dispatch, handleClose, id, navigate, t])
 
   return (
-    <CenteredModal id={id} title={!disclaimerAccepted ? t('Disclaimer') : t('Buy')} narrow dynamicContent>
+    <CenteredModal
+      id={id}
+      title={!disclaimerAccepted ? t('Disclaimer') : t('Buy')}
+      narrow
+      dynamicContent
+      hasFooterButtons
+    >
       <TextContainer>
         {!disclaimerAccepted ? (
           <Trans t={t} i18nKey="onramperDisclaimer">
@@ -58,11 +65,17 @@ const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
           t('You can now complete your purchase in the dedicated window!') + ' 🤑'
         )}
       </TextContainer>
-      {!disclaimerAccepted && (
-        <FooterButton onClick={handleAcceptDisclaimer} role="primary" tall>
-          {t('Continue')}
-        </FooterButton>
-      )}
+      <ModalFooterButtons>
+        {!disclaimerAccepted ? (
+          <ModalFooterButton onClick={handleAcceptDisclaimer} role="primary" tall>
+            {t('Continue')}
+          </ModalFooterButton>
+        ) : (
+          <ModalFooterButton onClick={handleClose} role="secondary" tall>
+            {t('Close')}
+          </ModalFooterButton>
+        )}
+      </ModalFooterButtons>
     </CenteredModal>
   )
 })

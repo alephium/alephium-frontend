@@ -147,6 +147,7 @@ const SignUnsignedTxModal = memo(({ id, txData, submit = false }: ModalBaseProp 
       dynamicContent
       focusMode
       noPadding
+      hasFooterButtons
     >
       {decodedUnsignedTx && (
         <>

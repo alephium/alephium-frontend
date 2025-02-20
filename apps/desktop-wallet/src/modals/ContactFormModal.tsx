@@ -96,7 +96,7 @@ const ContactFormModal = memo(({ id, contact }: ModalBaseProp & ContactFormModal
   }
 
   return (
-    <CenteredModal title={t(contact ? 'Edit contact' : 'New contact')} id={id}>
+    <CenteredModal title={t(contact ? 'Edit contact' : 'New contact')} id={id} dynamicContent hasFooterButtons>
       <InputFieldsColumn>
         <Controller
           name="name"

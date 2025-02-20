@@ -53,7 +53,7 @@ const WalletsSettingsSection = () => {
       {isWalletUnlocked && activeWalletId && activeWalletName && (
         <CurrentWalletSection align="flex-start">
           <h2>{t('Current wallet')}</h2>
-          <InfoBox label={t('Wallet name')} short>
+          <InfoBoxStyled label={t('Wallet name')} short>
             <CurrentWalletBox>
               <WalletName>{activeWalletName}</WalletName>
               {!isLedger && (
@@ -69,7 +69,7 @@ const WalletsSettingsSection = () => {
                 </Button>
               )}
             </CurrentWalletBox>
-          </InfoBox>
+          </InfoBoxStyled>
           <ActionButtons>
             <Button role="secondary" onClick={handleLockCurrentWalletClick}>
               {t('Lock current wallet')}
@@ -164,6 +164,7 @@ const WalletName = styled.div`
   display: flex;
   align-items: center;
   font-size: 13px;
+  justify-content: space-between;
 `
 
 const ActionButtons = styled.div`
@@ -189,4 +190,8 @@ const ButtonStyled = styled(Button)<{ isVisible: boolean }>`
 
 const BoxContainerStyled = styled.div`
   width: 100%;
+`
+
+const InfoBoxStyled = styled(InfoBox)`
+  margin-top: var(--spacing-2);
 `

@@ -4,12 +4,11 @@ import { Trans } from 'react-i18next'
 import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
-import FooterButton from '@/components/Buttons/FooterButton'
 import InfoBox from '@/components/InfoBox'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch } from '@/hooks/redux'
-import CenteredModal from '@/modals/CenteredModal'
+import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
@@ -28,7 +27,7 @@ const WalletPassphraseDisclaimerModal = memo(
     }
 
     return (
-      <CenteredModal id={id} title={t('Passphrase warning')} dynamicContent>
+      <CenteredModal id={id} title={t('Passphrase warning')} dynamicContent hasFooterButtons>
         <InfoBox importance="alert">
           <p>
             <Trans t={t} i18nKey="passphraseWarningMessage">
@@ -51,9 +50,11 @@ const WalletPassphraseDisclaimerModal = memo(
           <label htmlFor="passphrase-consent">{t('I have read and understood the documentation')}</label>
         </ConsentCheckbox>
 
-        <FooterButton disabled={!isConsentActive} onClick={handleClose} role="primary" tall>
-          {t('Continue')}
-        </FooterButton>
+        <ModalFooterButtons>
+          <ModalFooterButton disabled={!isConsentActive} onClick={handleClose} role="primary" tall>
+            {t('Continue')}
+          </ModalFooterButton>
+        </ModalFooterButtons>
       </CenteredModal>
     )
   }

@@ -167,7 +167,7 @@ export const ModalHeader = styled.header<{ hasBackButton?: boolean }>`
   left: 0;
   display: flex;
   align-items: center;
-  height: 50px;
+  min-height: 50px;
   padding: 0 8px 0 ${({ hasBackButton }) => (hasBackButton ? '8px' : 'var(--spacing-3)')};
   background: linear-gradient(to bottom, ${({ theme }) => theme.bg.background1} 50%, transparent 100%);
   z-index: 2;
@@ -183,6 +183,7 @@ const TitleRow = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
+  gap: var(--spacing-4);
 `
 
 const ModalTitle = styled.span`
@@ -243,6 +244,7 @@ const ModalFooterButtonStyled = styled(Button)`
 const ModalSubtitle = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 13px;
+  flex: 1;
 `
 
 const ModalLoadingSpinner = styled.div`
@@ -256,7 +258,7 @@ const ModalLoadingSpinner = styled.div`
 `
 
 const IconContainer = styled.div`
-  margin: var(--spacing-3) 0 var(--spacing-3) var(--spacing-4);
+  margin: var(--spacing-3) var(--spacing-2) var(--spacing-3) 0;
 `
 
 const ModalLoadingText = styled.div`

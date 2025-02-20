@@ -58,7 +58,7 @@ const SignMessageModal = memo(({ id, txData }: ModalBaseProp & SignMessageModalP
   }
 
   return (
-    <CenteredModal id={id} title={t('Sign Message')} onClose={rejectAndClose} dynamicContent focusMode noPadding>
+    <CenteredModal id={id} title={t('Sign Message')} onClose={rejectAndClose} dynamicContent focusMode hasFooterButtons>
       <InputFieldsColumn>
         <InfoBox label={t('Message')} text={txData.message} />
       </InputFieldsColumn>

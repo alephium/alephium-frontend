@@ -4,13 +4,12 @@ import { memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import FooterButton from '@/components/Buttons/FooterButton'
 import InfoBox from '@/components/InfoBox'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { CheckTxProps, TransferTxData } from '@/features/send/sendTypes'
 import { useAppDispatch } from '@/hooks/redux'
-import CenteredModal from '@/modals/CenteredModal'
+import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { formatDateForDisplay } from '@/utils/misc'
 
 export type ConfirmLockTimeModalProps = Required<Pick<TransferTxData, 'lockTime'>> &
@@ -26,7 +25,7 @@ const ConfirmLockTimeModal = memo(({ id, lockTime, onSubmit }: ModalBaseProp & C
   }
 
   return (
-    <CenteredModal title={t('Confirm lock time')} id={id}>
+    <CenteredModal title={t('Confirm lock time')} id={id} hasFooterButtons dynamicContent>
       <InfoBox importance="accent" Icon={LockIcon}>
         <Trans
           t={t}
@@ -45,9 +44,11 @@ const ConfirmLockTimeModal = memo(({ id, lockTime, onSubmit }: ModalBaseProp & C
           }
         </Trans>
       </InfoBox>
-      <FooterButton onClick={handleConfirmClick} variant="valid">
-        {t('Send locked assets')}
-      </FooterButton>
+      <ModalFooterButtons>
+        <ModalFooterButton onClick={handleConfirmClick} variant="valid">
+          {t('Send locked assets')}
+        </ModalFooterButton>
+      </ModalFooterButtons>
     </CenteredModal>
   )
 })
