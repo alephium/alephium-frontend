@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react'
+import { memo, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 
 import { fadeInTop, fadeOutTop } from '@/animations'
@@ -39,17 +39,19 @@ export default SnackbarManager
 const SnackbarPopup = memo(({ message }: { message: Required<SnackbarMessage> }) => {
   const dispatch = useAppDispatch()
 
+  const closeSnackbar = useCallback(() => dispatch(snackbarDisplayTimeExpired()), [dispatch])
+
   // Remove snackbar popup after its duration
   useEffect(() => {
     if (message && message.duration >= 0) {
-      const timer = setTimeout(() => dispatch(snackbarDisplayTimeExpired()), message.duration)
+      const timer = setTimeout(closeSnackbar, message.duration)
 
       return () => clearTimeout(timer)
     }
-  }, [dispatch, message])
+  }, [closeSnackbar, message])
 
   return (
-    <SnackbarBox {...fadeInTop} {...fadeOutTop} className={message.type}>
+    <SnackbarBox {...fadeInTop} {...fadeOutTop} className="success" onClose={closeSnackbar}>
       <Message>{message.text}</Message>
     </SnackbarBox>
   )
@@ -66,6 +68,7 @@ export const SnackbarManagerContainer = styled.div`
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  app-region: no-drag;
 
   @media ${deviceBreakPoints.mobile} {
     justify-content: center;

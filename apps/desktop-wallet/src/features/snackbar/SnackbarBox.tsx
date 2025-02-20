@@ -1,23 +1,62 @@
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
+import { X } from 'lucide-react'
 import { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import Button from '@/components/Button'
 
 interface SnackbarBoxProps {
   children: ReactNode
+  onClose: () => void
   className?: string
 }
 
-const SnackbarBox = ({ children, ...props }: SnackbarBoxProps) => (
-  <SnackBarBoxContainer {...props}>
-    <BlurredBackground />
-    <SnackbarBoxContent>{children}</SnackbarBoxContent>
-  </SnackBarBoxContainer>
-)
+const SnackbarBox = ({ children, onClose, ...props }: SnackbarBoxProps) => {
+  const { t } = useTranslation()
+
+  return (
+    <SnackbarBoxStyled {...props}>
+      <BlurredBackground />
+      <SnackbarBoxContent>
+        {children}
+        <Button aria-label={t('Close')} circle role="secondary" transparent onClick={onClose} Icon={X} tiny />
+      </SnackbarBoxContent>
+    </SnackbarBoxStyled>
+  )
+}
 
 export default SnackbarBox
 
+const SnackbarBoxStyled = styled(motion.div)`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 200px;
+  max-width: 1200px;
+  width: 80%;
+  height: 80px;
+  border: 1px solid red;
+
+  &.alert {
+    ${({ theme }) => getSnackbarStyling(theme.global.alert)}
+  }
+
+  &.info {
+    ${({ theme }) => getSnackbarStyling(theme.global.accent)}
+  }
+
+  &.success {
+    ${({ theme }) => getSnackbarStyling(theme.global.valid)}
+  }
+`
+
 const SnackbarBoxContent = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
   font-size: 13px;
   color: ${({ theme }) => theme.font.primary};
   word-wrap: break-word;
@@ -45,33 +84,10 @@ const BlurredBackground = styled.div`
   background: linear-gradient(to bottom, ${({ theme }) => theme.bg.background2} 80%, transparent 100%);
 `
 
-const SnackBarBoxContainer = styled(motion.div)`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 200px;
-  max-width: 1200px;
-  width: 80%;
-  height: 80px;
-
-  &.alert {
-    ${({ theme }) => getSnackbarStyling(theme.global.alert)}
-  }
-
-  &.info {
-    ${({ theme }) => getSnackbarStyling(theme.global.accent)}
-  }
-
-  &.success {
-    ${({ theme }) => getSnackbarStyling(theme.global.valid)}
-  }
-`
-
 const getSnackbarStyling = (color: string) => css`
   ${SnackbarBoxContent} {
     font-size: 14px;
-    background-color: ${({ theme }) => colord(color).alpha(0.1).toHex()};
+    background-color: ${colord(color).alpha(0.1).toHex()};
     border: 1px solid
       ${({ theme }) =>
         theme.name === 'light' ? colord(color).alpha(0.1).toHex() : colord(color).alpha(0.2).lighten(0.1).toHex()};
