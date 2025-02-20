@@ -9,7 +9,7 @@ import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { isFT, TokenId } from '@/types/tokens'
 
-interface AmountBaseProps {
+export interface AmountBaseProps {
   fadeDecimals?: boolean
   color?: string
   overrideSuffixColor?: boolean
@@ -77,7 +77,7 @@ const Amount = ({
     ? props.color
     : highlight && value !== undefined
       ? value < 0
-        ? theme.font.highlight
+        ? theme.font.primary
         : theme.global.valid
       : 'inherit'
 
@@ -228,7 +228,7 @@ const AmountStyled = styled.div<
   color: ${({ color }) => color};
   display: inline-flex;
   position: relative;
-  font-weight: var(--fontWeight-${({ semiBold }) => (semiBold ? 'semiBold' : 'medium')});
+  font-weight: var(--fontWeight-${({ semiBold }) => (semiBold ? 'bold' : 'medium')});
   white-space: pre;
   font-feature-settings: 'tnum' on;
   ${({ discreetMode }) =>

@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { fadeInOutBottomFast, fastTransition } from '@/animations'
 import Scrollbar from '@/components/Scrollbar'
 import ModalContainer from '@/modals/ModalContainer'
+import { appHeaderHeightPx } from '@/style/globalStyles'
 import { Coordinates } from '@/types/numbers'
 import { useWindowSize } from '@/utils/hooks'
 
@@ -69,7 +70,7 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
       {title && (
         <Header hasExtraContent={!!extraHeaderContent}>
           <Title>{title}</Title>
-          {extraHeaderContent}
+          <ExtraHeaderContentContainer>{extraHeaderContent}</ExtraHeaderContentContainer>
         </Header>
       )}
       <Scrollbar>{children}</Scrollbar>
@@ -108,7 +109,7 @@ export const useElementAnchorCoordinates = () => {
 
         return {
           x: containerElementRect.x + containerElement.clientWidth / 2,
-          y: containerElementRect.y + containerElement.clientHeight / 2
+          y: Math.max(containerElementRect.y + containerElement.clientHeight / 2, appHeaderHeightPx)
         }
       }
     })
@@ -145,27 +146,37 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  padding-bottom: var(--spacing-1);
 
   min-width: ${({ minWidth }) => minWidth}px;
   max-height: 660px;
   margin: auto;
 
-  box-shadow: ${({ theme }) => theme.shadow.secondary};
+  box-shadow: ${({ theme }) => theme.shadow.tertiary};
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-big);
-  background-color: ${({ theme }) => theme.bg.background2};
+  background-color: ${({ theme }) => theme.bg.background1};
 `
 
 const Header = styled.div<{ hasExtraContent: boolean }>`
   height: ${({ hasExtraContent }) => (hasExtraContent ? 'auto' : `${headerHeight}px`)};
-  padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) var(--spacing-3);
+  min-height: ${headerHeight}px;
+  padding: 0 var(--spacing-1) 0 var(--spacing-3);
   display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
   align-items: center;
   z-index: 1;
   gap: var(--spacing-3);
-  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
 `
 
 const Title = styled.span`
-  font-size: 14px;
+  font-size: 12px;
+  color: ${({ theme }) => theme.font.secondary};
+  text-transform: uppercase;
+  flex-shrink: 0;
+`
+
+const ExtraHeaderContentContainer = styled.div`
+  flex: 1;
 `

@@ -2,17 +2,15 @@ import { AssetAmount, calculateAmountWorth, toHumanReadableAmount } from '@aleph
 import { ALPH } from '@alephium/token-list'
 import { isNumber } from 'lodash'
 import { Info } from 'lucide-react'
-import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import ActionLink from '@/components/ActionLink'
-import Amount from '@/components/Amount'
+import Amount, { AmountBaseProps } from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
 import Box from '@/components/Box'
-import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { openModal } from '@/features/modals/modalActions'
 import { getTransactionAssetAmounts } from '@/features/send/sendUtils'
 import { useAppDispatch } from '@/hooks/redux'
@@ -20,12 +18,12 @@ import { isFT, isNFT } from '@/types/tokens'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
-interface CheckAmountsBoxProps {
+interface CheckAmountsBoxProps extends AmountBaseProps {
   assetAmounts: AssetAmount[]
   className?: string
 }
 
-const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
+const CheckAmountsBox = ({ assetAmounts, className, ...props }: CheckAmountsBoxProps) => {
   const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
   const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
 
@@ -33,26 +31,29 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
   const assets = userSpecifiedAlphAmount ? [alphAsset, ...tokens] : [...tokens, alphAsset]
 
   return (
-    <Box className={className}>
-      {assets.map((asset, index) => (
-        <Fragment key={asset.id}>
-          {index > 0 && <HorizontalDivider />}
-          <AssetAmountRow tokenId={asset.id} amount={asset.amount} extraAlphForDust={extraAlphForDust} />
-        </Fragment>
+    <CheckAmountsBoxStyled className={className}>
+      {assets.map((asset) => (
+        <AssetAmountRow
+          key={asset.id}
+          tokenId={asset.id}
+          amount={asset.amount}
+          extraAlphForDust={extraAlphForDust}
+          {...props}
+        />
       ))}
-    </Box>
+    </CheckAmountsBoxStyled>
   )
 }
 
 export default CheckAmountsBox
 
-interface AssetAmountRowProps {
+interface AssetAmountRowProps extends AmountBaseProps {
   tokenId: string
   amount: string
   extraAlphForDust: bigint
 }
 
-const AssetAmountRow = ({ tokenId, amount, extraAlphForDust }: AssetAmountRowProps) => {
+const AssetAmountRow = ({ tokenId, amount, extraAlphForDust, ...props }: AssetAmountRowProps) => {
   const { t } = useTranslation()
   const { data: token } = useFetchToken(tokenId)
   const dispatch = useAppDispatch()
@@ -66,7 +67,7 @@ const AssetAmountRow = ({ tokenId, amount, extraAlphForDust }: AssetAmountRowPro
   return (
     <AssetAmountRowStyled onClick={isNFT(token) ? handleRowClick : undefined}>
       <LogoAndName>
-        <AssetLogo tokenId={tokenId} size={30} />
+        <AssetLogo tokenId={tokenId} size={26} />
 
         {(isFT(token) || isNFT(token)) && <TokenName>{token.name}</TokenName>}
 
@@ -84,7 +85,7 @@ const AssetAmountRow = ({ tokenId, amount, extraAlphForDust }: AssetAmountRowPro
 
       {!isNFT(token) && (
         <TokenAmount>
-          <Amount tokenId={tokenId} value={BigInt(amount)} fullPrecision />
+          <Amount tokenId={tokenId} value={BigInt(amount)} fullPrecision {...props} />
           {isFT(token) && <FiatAmount symbol={token.symbol} amount={BigInt(amount)} decimals={token.decimals} />}
         </TokenAmount>
       )}
@@ -111,12 +112,22 @@ const FiatAmountStyled = styled(Amount)`
   font-weight: var(--font-weight-medium);
 `
 
+const CheckAmountsBoxStyled = styled(Box)`
+  display: flex;
+  flex-direction: column;
+`
+
 const AssetAmountRowStyled = styled.div`
   display: flex;
-  padding: 18px 15px;
   align-items: center;
   justify-content: space-between;
   gap: 15px;
+  border-radius: var(--radius-big);
+  padding: var(--spacing-3) 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  }
 
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
 `

@@ -339,7 +339,6 @@
   "Tokens": "Tokens",
   "Tokens to issue (optional)": "Tokens to issue (optional)",
   "Too many chains in the WalletConnect proposal, expected 1, got {{ num }}": "Too many chains in the WalletConnect proposal, expected 1, got {{ num }}",
-  "Total value": "Total value",
   "Transaction details": "Transaction details",
   "Transaction sent!": "Transaction sent!",
   "Transactions": "Transactions",
@@ -533,6 +532,7 @@
   "nb_of_hidden_assets_other": "{{ count }} hidden assets",
   "Close hidden assets list": "Close hidden assets list",
   "Unhide asset": "Unhide asset",
+  "Asset to send": "Asset to send",
   "No transactions before {{ date }}": "No transactions before {{ date }}",
   "Sort by": "Sort by",
   "ALPH balance": "ALPH balance"

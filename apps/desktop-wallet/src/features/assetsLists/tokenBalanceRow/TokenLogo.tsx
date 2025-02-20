@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import AssetLogo from '@/components/AssetLogo'
 import { TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
 
-const TokenLogo = ({ tokenId }: TokenBalancesRowBaseProps) => <TokenLogoStyled tokenId={tokenId} size={32} />
+const TokenLogo = ({ tokenId }: TokenBalancesRowBaseProps) => <TokenLogoStyled tokenId={tokenId} size={25} />
 
 export default TokenLogo
 

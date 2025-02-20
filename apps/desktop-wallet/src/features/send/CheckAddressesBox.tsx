@@ -6,7 +6,6 @@ import styled from 'styled-components'
 import ActionLink from '@/components/ActionLink'
 import AddressBadge from '@/components/AddressBadge'
 import Box from '@/components/Box'
-import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import HashEllipsed from '@/components/HashEllipsed'
 import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
@@ -35,24 +34,21 @@ const CheckAddressesBox = ({ fromAddress, toAddressHash, className }: CheckAddre
         </AddressLabelHash>
       </AddressRow>
       {toAddressHash && (
-        <>
-          <HorizontalDivider />
-          <AddressRow>
-            <AddressLabel>{t('To')}</AddressLabel>
-            <AddressLabelHash>
-              {contact ? (
-                <AddressLabelHash>
-                  <ContactName>{contact.name}</ContactName>
-                  <HashEllipsedStyled hash={contact.address} />
-                </AddressLabelHash>
-              ) : (
-                <ActionLinkStyled onClick={() => openInWebBrowser(`${explorerUrl}/addresses/${toAddressHash}`)}>
-                  <AddressBadge addressHash={toAddressHash} truncate appendHash />
-                </ActionLinkStyled>
-              )}
-            </AddressLabelHash>
-          </AddressRow>
-        </>
+        <AddressRow>
+          <AddressLabel>{t('To')}</AddressLabel>
+          <AddressLabelHash>
+            {contact ? (
+              <>
+                <ContactName>{contact.name}</ContactName>
+                <HashEllipsedStyled hash={contact.address} />
+              </>
+            ) : (
+              <ActionLinkStyled onClick={() => openInWebBrowser(`${explorerUrl}/addresses/${toAddressHash}`)}>
+                <AddressBadge addressHash={toAddressHash} truncate appendHash />
+              </ActionLinkStyled>
+            )}
+          </AddressLabelHash>
+        </AddressRow>
       )}
     </Box>
   )
@@ -64,7 +60,7 @@ const AddressRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 15px;
+  padding: 18px 0;
   gap: 20px;
 `
 
@@ -76,6 +72,7 @@ const AddressLabel = styled.div`
 const AddressLabelHash = styled.div`
   display: flex;
   gap: 10px;
+  min-width: 0;
 `
 
 const ContactName = styled(Truncate)`

@@ -59,22 +59,24 @@ const NetworkSwitch = () => {
   const currentNetwork = networkSelectOptions.find((n) => n.value === network.name)
 
   return (
-    <Select
-      options={networkSelectOptions}
-      onSelect={handleNetworkPresetChange}
-      controlledValue={currentNetwork}
-      title={t('Current network')}
-      id="network"
-      noMargin
-      renderCustomComponent={SelectCustomComponent}
-      skipEqualityCheck
-      heightSize="small"
-      ListBottomComponent={
-        <MoreOptionsItem onClick={openSettingsModal}>
-          {t('More options')} <ArrowRight size={16} />
-        </MoreOptionsItem>
-      }
-    />
+    <SelectContainer>
+      <Select
+        options={networkSelectOptions}
+        onSelect={handleNetworkPresetChange}
+        controlledValue={currentNetwork}
+        title={t('Current network')}
+        id="network"
+        noMargin
+        renderCustomComponent={SelectCustomComponent}
+        skipEqualityCheck
+        heightSize="small"
+        ListBottomComponent={
+          <MoreOptionsItem onClick={openSettingsModal}>
+            {t('More options')} <ArrowRight size={16} />
+          </MoreOptionsItem>
+        }
+      />
+    </SelectContainer>
   )
 }
 
@@ -118,4 +120,8 @@ const MoreOptionsItem = styled.div`
     cursor: pointer;
     color: ${({ theme }) => theme.font.primary};
   }
+`
+
+const SelectContainer = styled.div`
+  flex: 0;
 `

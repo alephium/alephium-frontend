@@ -130,7 +130,7 @@ const MnemonicColumn = styled.div<{ isLastColumn: boolean }>`
   flex: 1;
   padding: 0 8px;
   gap: 10px;
-  border-right: ${({ theme, isLastColumn }) => (isLastColumn ? 'none' : `1px solid ${theme.font.tertiary}`)};
+  border-right: ${({ theme, isLastColumn }) => (isLastColumn ? 'none' : `1px solid ${theme.border.primary}`)};
 `
 
 const MnemonicWordContainer = styled.div`
@@ -139,17 +139,19 @@ const MnemonicWordContainer = styled.div`
   align-items: center;
   border-radius: var(--radius-small);
   overflow: hidden;
-  background-color: ${({ theme }) => theme.bg.contrast};
+  background-color: ${({ theme }) => theme.bg.highlight};
+  border: 1px solid ${({ theme }) => theme.font.tertiary};
 `
 
 const MnemonicNumber = styled.div`
   font-size: 13px;
-  color: ${({ theme }) => theme.font.contrastSecondary};
-  padding: 8px 6px;
+  color: ${({ theme }) => theme.font.secondary};
+  padding: 6px 4px;
 `
 
 const MnemonicWord = styled.div`
   flex: 1;
-  color: ${({ theme }) => theme.font.contrastPrimary};
+  color: ${({ theme }) => theme.font.primary};
   font-size: 13px;
+  font-family: monospace;
 `

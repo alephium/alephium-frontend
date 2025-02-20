@@ -145,7 +145,7 @@ const CenteredBox = styled(motion.div)`
   overflow: hidden;
 
   width: 85vw;
-  max-width: 748px;
+  max-width: 800px;
   height: 85vh;
   margin: auto;
 
@@ -163,12 +163,12 @@ const Column = styled.div`
 const TabTitlesColumn = styled(Column)`
   position: relative;
   flex: 1;
-  border-right: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.background1};
+  background-color: ${({ theme }) => theme.bg.background2};
+  border-right: 1px solid ${({ theme }) => theme.border.secondary};
 `
 const TabContentsColumn = styled(Column)`
   position: relative;
-  flex: 2;
+  flex: 2.5;
 `
 
 const ColumnHeader = styled.div`
@@ -198,7 +198,7 @@ const ColumnTitle = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: var(--fontWeight-semiBold);
   color: ${({ theme }) => theme.font.primary};
   z-index: 1;
@@ -264,7 +264,7 @@ const TabTitles = styled.div`
 `
 
 const TabTitlesColumnHeader = styled(ColumnHeader)`
-  padding-left: 20px;
+  padding-left: 16px;
   padding-right: 20px;
   background: transparent;
 `

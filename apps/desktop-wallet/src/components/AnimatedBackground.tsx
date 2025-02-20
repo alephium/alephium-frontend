@@ -13,11 +13,13 @@ interface AnimatedBackgroundProps {
   reactToPointer?: boolean
   hiddenOverflow?: boolean
   verticalOffset?: number
+  horizontalOffset?: number
+  scaleY?: number
 }
 
 type AnchorPosition = 'top' | 'bottom'
 
-const DARK_COLORS = ['#58a0ff', '#7057ff', '#272aff', '#ff9b2f', '#1e71ff']
+const DARK_COLORS = ['#3f3fff', '#8394ff', '#276bff', '#ff7f58', '#381eff']
 const LIGHT_COLORS = ['#ad6eff', '#ffb47f', '#ffaaaa', '#ffc089', '#ff9bc8']
 
 const AnimatedBackground = ({
@@ -29,7 +31,9 @@ const AnimatedBackground = ({
   reactToPointer = true,
   anchorPosition = 'top',
   hiddenOverflow,
-  verticalOffset = 0
+  scaleY,
+  verticalOffset = 0,
+  horizontalOffset = 0
 }: AnimatedBackgroundProps) => {
   const theme = useTheme()
   const isDarkTheme = theme.name === 'dark'
@@ -77,9 +81,8 @@ const AnimatedBackground = ({
   }, [reactToPointer, mouseX, mouseY])
 
   // Offsets for each circle
-  const offsets = [80, 300, 200, 140, 20]
+  const offsets = [80, 200, 100, 140, 20]
 
-  // Apply verticalOffset to each circle's animation
   const circle1 = useCircleAnimation(
     offsets[0],
     windowSize,
@@ -87,6 +90,7 @@ const AnimatedBackground = ({
     mouseY,
     reactToPointer,
     verticalOffset,
+    horizontalOffset,
     anchorPosition
   )
   const circle2 = useCircleAnimation(
@@ -96,6 +100,7 @@ const AnimatedBackground = ({
     mouseY,
     reactToPointer,
     verticalOffset,
+    horizontalOffset,
     anchorPosition
   )
   const circle3 = useCircleAnimation(
@@ -105,6 +110,7 @@ const AnimatedBackground = ({
     mouseY,
     reactToPointer,
     verticalOffset,
+    horizontalOffset,
     anchorPosition
   )
   const circle4 = useCircleAnimation(
@@ -114,6 +120,7 @@ const AnimatedBackground = ({
     mouseY,
     reactToPointer,
     verticalOffset,
+    horizontalOffset,
     anchorPosition
   )
   const circle5 = useCircleAnimation(
@@ -123,23 +130,34 @@ const AnimatedBackground = ({
     mouseY,
     reactToPointer,
     verticalOffset,
+    horizontalOffset,
     anchorPosition
   )
 
   const circlesDimensions = [
-    { width: 500, height: 140 },
-    { width: 600, height: 130 },
-    { width: 650, height: 130 },
-    { width: 850, height: 140 },
-    { width: 720, height: 180 }
+    { width: 500, height: 70 },
+    { width: 600, height: 80 },
+    { width: 550, height: 70 },
+    { width: 650, height: 90 },
+    { width: 920, height: 80 }
   ]
 
   return (
     <AnimatedContainer
-      style={{ width, height, opacity, overflow: hiddenOverflow ? 'hidden' : 'visible' }}
+      style={{
+        width,
+        height,
+        opacity,
+        overflow: hiddenOverflow ? 'hidden' : 'visible',
+        transform: `scaleY(${scaleY})`,
+        transformOrigin: anchorPosition === 'top' ? 'top' : 'bottom'
+      }}
       className={className}
     >
       <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 3, ease: 'easeOut' }}
         style={{
           position: 'relative',
           height: '100%',
@@ -181,6 +199,7 @@ const useCircleAnimation = (
   mouseY: MotionValue<number>,
   reactToPointer: boolean,
   verticalOffset: number,
+  horizontalOffset: number,
   anchorPosition: AnchorPosition
 ) => {
   const xAnim = useMotionValue(0)
@@ -189,7 +208,8 @@ const useCircleAnimation = (
   useEffect(() => {
     const xValues = [0, offset, 0, -offset, 0]
     const yValues = [0, offset / 2, -offset / 2, offset / 2, 0]
-    const duration = Math.abs(offset) / 10
+    // Increase the duration to slow down the animation (e.g. *2)
+    const duration = Math.abs(offset) / 5
 
     const xControl = animate(xAnim, xValues, {
       duration,
@@ -234,8 +254,9 @@ const useCircleAnimation = (
   const yWithOffset = useTransform(y, (value) =>
     anchorPosition === 'top' ? value + verticalOffset : value - verticalOffset
   )
+  const xWithOffset = useTransform(x, (value) => value + horizontalOffset)
 
-  return { x, y: yWithOffset }
+  return { x: xWithOffset, y: yWithOffset }
 }
 
 const getBackgroundColors = (shade: AnimatedBackgroundProps['shade'], isDarkTheme: boolean): string[] => {

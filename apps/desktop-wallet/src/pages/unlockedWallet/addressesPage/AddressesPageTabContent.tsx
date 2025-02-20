@@ -71,7 +71,6 @@ const Searchbar = styled(Input)`
 
 const Content = styled.div`
   display: flex;
-  padding: var(--spacing-4) 0;
 `
 
 const HeaderButton = styled(Button)``

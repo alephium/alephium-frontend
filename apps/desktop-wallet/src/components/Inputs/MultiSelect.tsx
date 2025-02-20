@@ -1,6 +1,6 @@
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import Button from '@/components/Button'
 import CheckMark from '@/components/CheckMark'
@@ -21,7 +21,6 @@ interface MultiSelectOptionsProps<T> {
   getOptionText: (option: T) => string
   modalTitle: string
   renderOption?: (option: T, isSelected?: boolean) => ReactNode
-  floatingOptions?: boolean
 }
 
 interface MultiSelectProps<T> extends MultiSelectOptionsProps<T> {
@@ -73,11 +72,9 @@ export function MultiSelectOptionsModal<T>({
   getOptionText,
   modalTitle,
   onClose,
-  selectedOptionsSetter,
-  floatingOptions
+  selectedOptionsSetter
 }: MultiSelectOptionsModalProps<T>) {
   const { t } = useTranslation()
-  const theme = useTheme()
 
   const allOptionsAreSelected = selectedOptions.length === options.length
 
@@ -104,7 +101,7 @@ export function MultiSelectOptionsModal<T>({
         </AllButton>
       }
     >
-      <OptionSelect style={floatingOptions ? { backgroundColor: theme.bg.background2, paddingTop: 10 } : undefined}>
+      <OptionSelect>
         {options.map((option) => {
           const isSelected = selectedOptions.some((o) => getOptionId(o) === getOptionId(option))
           return (
@@ -116,11 +113,13 @@ export function MultiSelectOptionsModal<T>({
               selected={isSelected}
               focusable
               aria-label={getOptionText(option)}
-              isFloating={floatingOptions}
               hasCustomOptionRender={!!renderOption}
             >
               {renderOption ? (
-                renderOption(option, isSelected)
+                <CustomOptionContainer isSelected={isSelected}>
+                  {renderOption(option, isSelected)}
+                  {isSelected && <CheckMark />}
+                </CustomOptionContainer>
               ) : (
                 <>
                   {getOptionText(option)}
@@ -150,6 +149,21 @@ const SelectedValue = styled.div`
 `
 
 const AllButton = styled(Button)`
-  margin: 0;
+  margin: var(--spacing-2) 0;
   margin-left: auto;
+`
+
+const CustomOptionContainer = styled.div<{ isSelected: boolean }>`
+  flex: 1;
+  display: flex;
+
+  ${CheckMark} {
+    margin: 12px 8px 12px 4px;
+  }
+
+  ${({ isSelected, theme }) =>
+    isSelected &&
+    css`
+      background-color: ${theme.bg.accent};
+    `}
 `

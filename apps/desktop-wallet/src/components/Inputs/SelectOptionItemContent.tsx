@@ -1,13 +1,16 @@
 import { forwardRef, ReactNode } from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
+
+import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 
 interface SelectOptionItemContentProps {
   MainContent: ReactNode
-  isSelected?: boolean
   SecondaryContent?: ReactNode
   contentDirection?: 'row' | 'column'
   className?: string
   displaysCheckMarkWhenSelected?: boolean
+  divider?: boolean
+  dividerOffset?: number
 }
 
 const SelectOptionItemContent = forwardRef<HTMLDivElement, SelectOptionItemContentProps>(
@@ -15,15 +18,17 @@ const SelectOptionItemContent = forwardRef<HTMLDivElement, SelectOptionItemConte
     {
       MainContent: ContentTop,
       SecondaryContent: ContentBottom,
-      isSelected,
       contentDirection = 'row',
+      divider,
+      dividerOffset,
       className
     }: SelectOptionItemContentProps,
     ref
   ) => (
-    <OptionContentWrapper className={className} contentDirection={contentDirection} isSelected={isSelected} ref={ref}>
+    <OptionContentWrapper className={className} contentDirection={contentDirection} ref={ref}>
       <OptionMainContent>{ContentTop}</OptionMainContent>
       {ContentBottom && <OptionSecondaryContent>{ContentBottom}</OptionSecondaryContent>}
+      {divider && <HorizontalDivider style={{ marginLeft: dividerOffset }} secondary />}
     </OptionContentWrapper>
   )
 )
@@ -48,7 +53,7 @@ const OptionSecondaryContent = styled.div`
   }
 `
 
-const OptionContentWrapper = styled.div<Pick<SelectOptionItemContentProps, 'contentDirection' | 'isSelected'>>`
+const OptionContentWrapper = styled.div<Pick<SelectOptionItemContentProps, 'contentDirection'>>`
   flex: 1;
   position: relative;
   display: flex;
@@ -56,21 +61,6 @@ const OptionContentWrapper = styled.div<Pick<SelectOptionItemContentProps, 'cont
   justify-content: space-between;
   min-width: 0;
   overflow: hidden;
-
-  ${({ theme, isSelected }) =>
-    isSelected &&
-    css`
-      &:after {
-        content: '';
-        position: absolute;
-        left: 0px;
-        top: 0;
-        bottom: 0;
-        width: 3px;
-        background-color: ${theme.global.accent};
-        border-radius: 10px;
-      }
-    `}
 
   &:hover {
     > div {

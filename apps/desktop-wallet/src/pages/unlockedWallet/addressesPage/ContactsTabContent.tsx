@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { ArrowUp, Pencil } from 'lucide-react'
 import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 
 import Box from '@/components/Box'
 import Button from '@/components/Button'
@@ -14,15 +14,14 @@ import Truncate from '@/components/Truncate'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import AddressesPageTabContent from '@/pages/unlockedWallet/addressesPage/AddressesPageTabContent'
-import { selectAllContacts, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
-import { stringToColour } from '@/utils/colors'
+import { selectAllContacts, selectContactByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { useHashToColor } from '@/utils/colors'
 import { filterContacts } from '@/utils/contacts'
 import { getInitials } from '@/utils/misc'
 
 const ContactsTabContent = memo(() => {
   const { t } = useTranslation()
   const contacts = useAppSelector(selectAllContacts)
-  const defaultAddress = useAppSelector(selectDefaultAddress)
   const dispatch = useAppDispatch()
 
   const [filteredContacts, setFilteredContacts] = useState(contacts)
@@ -33,18 +32,6 @@ const ContactsTabContent = memo(() => {
   useEffect(() => {
     setFilteredContacts(filterContacts(contacts, searchInput.toLowerCase()))
   }, [contacts, searchInput])
-
-  const openSendModal = (contact: Contact) => {
-    dispatch(
-      openModal({
-        name: 'TransferSendModal',
-        props: { initialTxData: { fromAddress: defaultAddress, toAddress: contact.address } }
-      })
-    )
-  }
-
-  const openEditContactModal = (contact: Contact) =>
-    dispatch(openModal({ name: 'ContactFormModal', props: { contact } }))
 
   const openNewContactFormModal = () => dispatch(openModal({ name: 'ContactFormModal', props: {} }))
 
@@ -57,24 +44,7 @@ const ContactsTabContent = memo(() => {
     >
       <ContactBox>
         {filteredContacts.map((contact) => (
-          <Card key={contact.address}>
-            <ContentRow>
-              <Initials color={stringToColour(contact.address)}>{getInitials(contact.name)}</Initials>
-              <Name>{contact.name}</Name>
-              <HashEllipsedStyled hash={contact.address} />
-            </ContentRow>
-            <ButtonsRow>
-              <SendButton transparent onClick={() => openSendModal(contact)}>
-                <ArrowUp strokeWidth={1} />
-                <ButtonText>{t('Send')}</ButtonText>
-              </SendButton>
-              <Separator />
-              <EditButton transparent onClick={() => openEditContactModal(contact)}>
-                <Pencil strokeWidth={1} />
-                <ButtonText>{t('Edit')}</ButtonText>
-              </EditButton>
-            </ButtonsRow>
-          </Card>
+          <ContactCard contactId={contact.id} key={contact.id} />
         ))}
         {contacts.length === 0 && (
           <PlaceholderCard layout isPlaceholder>
@@ -90,6 +60,54 @@ const ContactsTabContent = memo(() => {
     </AddressesPageTabContent>
   )
 })
+
+interface ContactCardProps {
+  contactId: string
+}
+
+const ContactCard = ({ contactId }: ContactCardProps) => {
+  const dispatch = useAppDispatch()
+  const theme = useTheme()
+  const { t } = useTranslation()
+  const contact = useAppSelector((s) => selectContactByHash(s, contactId))
+  const contactColor = useHashToColor(contactId) || theme.global.complementary
+  const defaultAddress = useAppSelector(selectDefaultAddress)
+
+  const openSendModal = (contact: Contact) => {
+    dispatch(
+      openModal({
+        name: 'TransferSendModal',
+        props: { initialTxData: { fromAddress: defaultAddress, toAddress: contact.address } }
+      })
+    )
+  }
+
+  const openEditContactModal = (contact: Contact) =>
+    dispatch(openModal({ name: 'ContactFormModal', props: { contact } }))
+
+  if (!contact) return
+
+  return (
+    <Card>
+      <ContentRow>
+        <Initials color={contactColor}>{getInitials(contact.name)}</Initials>
+        <Name>{contact.name}</Name>
+        <HashEllipsedStyled hash={contact.address} />
+      </ContentRow>
+      <ButtonsRow>
+        <SendButton transparent onClick={() => openSendModal(contact)}>
+          <ArrowUp strokeWidth={1} />
+          <ButtonText>{t('Send')}</ButtonText>
+        </SendButton>
+        <Separator />
+        <EditButton transparent onClick={() => openEditContactModal(contact)}>
+          <Pencil strokeWidth={1} />
+          <ButtonText>{t('Edit')}</ButtonText>
+        </EditButton>
+      </ButtonsRow>
+    </Card>
+  )
+}
 
 export default ContactsTabContent
 

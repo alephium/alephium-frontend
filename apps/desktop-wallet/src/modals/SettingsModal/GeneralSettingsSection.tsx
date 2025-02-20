@@ -285,7 +285,14 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
         noBottomPadding
         noHorizontalPadding
         InputComponent={
-          <ButtonStyled role="secondary" Icon={Eraser} wide onClick={handleClearCacheButtonPress} short>
+          <ButtonStyled
+            role="secondary"
+            Icon={Eraser}
+            wide
+            onClick={handleClearCacheButtonPress}
+            short
+            justifyContent="center"
+          >
             {t('Clear')}
           </ButtonStyled>
         }

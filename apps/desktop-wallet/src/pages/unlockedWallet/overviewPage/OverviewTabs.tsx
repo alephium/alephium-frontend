@@ -10,8 +10,8 @@ const OverviewTabs = () => {
   return (
     <Tabs
       tabs={[
-        { value: 'fts', label: t('Address tokens'), renderContent: () => <WalletFTsBalancesList /> },
-        { value: 'nfts', label: t('Address NFTs'), renderContent: () => <WalletNFTsGrid /> }
+        { value: 'fts', label: t('Tokens'), renderContent: () => <WalletFTsBalancesList /> },
+        { value: 'nfts', label: t('NFTs'), renderContent: () => <WalletNFTsGrid /> }
       ]}
     />
   )

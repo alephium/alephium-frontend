@@ -25,7 +25,10 @@ const SnackbarBoxContent = styled(motion.div)`
   font-weight: var(--fontWeight-semiBold);
   pointer-events: all;
   margin-top: -10px;
+  background-color: ${({ theme }) => theme.bg.highlight};
   z-index: 1;
+  padding: 10px 20px;
+  border-radius: var(--radius-medium);
 `
 
 const BlurredBackground = styled.div`
@@ -39,6 +42,7 @@ const BlurredBackground = styled.div`
   pointer-events: none;
   transform: scaleX(1.2);
   z-index: 0;
+  background: linear-gradient(to bottom, ${({ theme }) => theme.bg.background2} 80%, transparent 100%);
 `
 
 const SnackBarBoxContainer = styled(motion.div)`
@@ -65,15 +69,13 @@ const SnackBarBoxContainer = styled(motion.div)`
 `
 
 const getSnackbarStyling = (color: string) => css`
-  ${BlurredBackground} {
-    background: linear-gradient(to bottom, ${color} 50%, transparent 80%);
-  }
-
   ${SnackbarBoxContent} {
     font-size: 14px;
+    background-color: ${({ theme }) => colord(color).alpha(0.1).toHex()};
+    border: 1px solid
+      ${({ theme }) =>
+        theme.name === 'light' ? colord(color).alpha(0.1).toHex() : colord(color).alpha(0.2).lighten(0.1).toHex()};
     color: ${({ theme }) =>
-      theme.name === 'light'
-        ? colord(color).alpha(1).lighten(0.7).toHex()
-        : colord(color).alpha(1).lighten(0.4).toHex()};
+      theme.name === 'light' ? colord(color).toHex() : colord(color).alpha(1).lighten(0.1).toHex()};
   }
 `

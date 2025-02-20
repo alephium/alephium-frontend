@@ -36,7 +36,6 @@ DataList.Row = DataListRow
 const DataListStyled = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 var(--spacing-2);
 `
 
 const DataListTitle = styled.h2`
@@ -48,6 +47,7 @@ const DataRowStyled = styled.div`
   display: flex;
   gap: var(--spacing-3);
   align-items: center;
+  justify-content: space-between;
 
   &:not(:last-child) {
     border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
@@ -61,6 +61,5 @@ const DetailsRowLabel = styled.div`
 `
 
 const ChildrenWrapper = styled.div`
-  flex: 1;
   overflow: hidden;
 `

@@ -42,7 +42,6 @@ const SelectOptionToken = ({
         {showAmount && <AmountStyled tokenId={tokenId} value={amount} isLoading={isLoading} />}
       </>
     }
-    isSelected={isSelected}
     className={className}
   />
 )

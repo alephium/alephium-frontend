@@ -10,7 +10,7 @@ const FTAmounts = ({ tx, refAddressHash, isInAddressDetailsModal }: TransactionR
   const infoType = useTransactionInfoType(tx, refAddressHash, isInAddressDetailsModal)
 
   return fungibleTokens.map(({ id, amount }) => (
-    <TokenBadge key={id} tokenId={id} amount={amount} showAmount displaySign={infoType !== 'move'} withBackground />
+    <TokenBadge key={id} tokenId={id} amount={amount} showAmount displaySign={infoType !== 'move'} />
   ))
 }
 

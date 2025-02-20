@@ -89,7 +89,6 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
                   >
                     <SelectOptionAddress
                       addressHash={addressHash}
-                      isSelected={isSelected}
                       subtitle={<AddressLastActivity addressHash={addressHash} />}
                     />
                   </OptionItemStyled>

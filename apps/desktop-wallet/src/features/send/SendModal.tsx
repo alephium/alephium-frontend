@@ -347,42 +347,39 @@ function SendModal<PT extends { fromAddress: Address }>({
             onCancel={onClose}
           />
         ))}
-      {step === 'info-check' && !!transactionData && !!fees && (
-        <ScrollableModalContent>
-          {type === 'transfer' ? (
-            <TransferCheckTxModalContent
-              data={transactionData as TransferTxData}
-              fees={fees}
-              onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
-            />
-          ) : type === 'call-contract' ? (
-            <CallContractCheckTxModalContent
-              data={transactionData as CallContractTxData}
-              fees={fees}
-              onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
-            />
-          ) : (
-            <DeployContractCheckTxModalContent
-              data={transactionData as DeployContractTxData}
-              fees={fees}
-              onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
-            />
-          )}
-        </ScrollableModalContent>
-      )}
+      {step === 'info-check' &&
+        !!transactionData &&
+        !!fees &&
+        (type === 'transfer' ? (
+          <TransferCheckTxModalContent
+            data={transactionData as TransferTxData}
+            fees={fees}
+            onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
+          />
+        ) : type === 'call-contract' ? (
+          <CallContractCheckTxModalContent
+            data={transactionData as CallContractTxData}
+            fees={fees}
+            onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
+          />
+        ) : (
+          <DeployContractCheckTxModalContent
+            data={transactionData as DeployContractTxData}
+            fees={fees}
+            onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
+          />
+        ))}
       {step === 'password-check' && passwordRequirement && (
-        <ScrollableModalContent>
-          <PasswordConfirmation
-            text={t('Enter your password to send the transaction.')}
-            buttonText={t('Send')}
-            highlightButton
-            onCorrectPasswordEntered={handleSendExtended}
-          >
-            <PasswordConfirmationNote>
-              {t('You can disable this confirmation step from the wallet settings.')}
-            </PasswordConfirmationNote>
-          </PasswordConfirmation>
-        </ScrollableModalContent>
+        <PasswordConfirmation
+          text={t('Enter your password to send the transaction.')}
+          buttonText={t('Send')}
+          highlightButton
+          onCorrectPasswordEntered={handleSendExtended}
+        >
+          <PasswordConfirmationNote>
+            {t('You can disable this confirmation step from the wallet settings.')}
+          </PasswordConfirmationNote>
+        </PasswordConfirmation>
       )}
       {step === 'tx-sent' && (
         <ScrollableModalContent>

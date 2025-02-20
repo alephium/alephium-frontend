@@ -4,10 +4,10 @@ import { createGlobalStyle } from 'styled-components'
 import resets from '@/style/resets'
 import { platform } from '@/utils/platform.ts'
 
-export const appHeaderHeightPx = platform.isMac ? 50 : 102
+export const appHeaderHeightPx = platform.isMac ? 40 : 102
 export const walletSidebarWidthPx = 69
 export const messagesLeftMarginPx = 70
-export const sidebarExpandThresholdPx = 1300
+export const sidebarExpandThresholdPx = 1100
 
 const electronWindowDimensions = `
   height: 100%;
@@ -32,19 +32,19 @@ export const GlobalStyle = createGlobalStyle`
 
     --radius-tiny: 4px;
     --radius-small: 7px;
-    --radius-medium: 9px;
-    --radius-big: 12px;
-    --radius-huge: 22px;
+    --radius-medium: 8px;
+    --radius-big: 10px;
+    --radius-huge: 16px;
     --radius-full: 100%;
 
     --fontWeight-normal: 400;
     --fontWeight-medium: 500;
-    --fontWeight-semiBold: 600;
-    --fontWeight-bold: 700;
+    --fontWeight-semiBold: 550;
+    --fontWeight-bold: 650;
 
-    --inputHeight: 38px;
-    --tableCellHeight: 46px;
-    --toggleWidth: 52px;
+    --inputHeight: 36px;
+    --tableCellHeight: 42px;
+    --toggleWidth: 46px;
   }
 
   html {
@@ -53,7 +53,7 @@ export const GlobalStyle = createGlobalStyle`
 
   body {
     color: ${({ theme }) => theme.font.primary};
-    background-color: ${({ theme }) => theme.bg.primary};
+    background-color: transparent;
     font-weight: var(--fontWeight-medium);
   }
 
@@ -75,7 +75,11 @@ export const GlobalStyle = createGlobalStyle`
   // Custom scrollbars theme
   .rcs-inner-handle {
     color: white;
-    background-color: ${({ theme }) => colord(theme.font.primary).alpha(0.1).toHex()} !important;
+    width: 5px;
+    background-color: ${({ theme }) =>
+      colord(theme.font.tertiary)
+        .alpha(theme.name === 'light' ? 0.1 : 0.15)
+        .toHex()} !important;
   }
 `
 

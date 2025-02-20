@@ -1,6 +1,6 @@
 import { LucideIcon } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import styled, { createGlobalStyle, useTheme } from 'styled-components'
+import styled, { createGlobalStyle } from 'styled-components'
 
 import Button from '@/components/Button'
 import { sidebarExpandThresholdPx } from '@/style/globalStyles'
@@ -10,12 +10,12 @@ interface NavItemProps {
   label: string
   to?: string
   onClick?: () => void
+  className?: string
 }
 
-const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
+const NavItem = ({ Icon, label, to, onClick, className }: NavItemProps) => {
   const navigate = useNavigate()
   const location = useLocation()
-  const theme = useTheme()
 
   const isActive = to !== undefined && location.pathname.startsWith(to)
 
@@ -38,8 +38,8 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
         isActive={isActive}
         data-tooltip-id="sidenav"
         data-tooltip-content={label}
-        iconColor={theme.font.primary}
         wide
+        className={className}
       >
         <LabelContainer>{label}</LabelContainer>
       </ButtonStyled>
@@ -53,7 +53,13 @@ const ButtonStyled = styled(Button)<{ isActive: boolean }>`
   opacity: ${({ isActive }) => (isActive ? 1 : 0.5)};
   background-color: ${({ isActive }) => !isActive && 'transparent'};
   border-radius: var(--radius-medium);
-  font-size: 13px;
+  backdrop-filter: none;
+  padding: 10px;
+  color: ${({ theme }) => theme.font.primary};
+
+  svg {
+    stroke: ${({ theme }) => theme.font.primary};
+  }
 
   @media (max-width: ${sidebarExpandThresholdPx}px) {
     gap: 0;

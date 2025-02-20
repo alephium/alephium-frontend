@@ -25,10 +25,11 @@ export default LabeledWorthOverview
 const LabeledWorthOverviewStyled = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   position: relative;
-  margin: var(--spacing-4);
-  gap: var(--spacing-2);
+
+  * {
+    font-feature-settings: 'tnum' off;
+  }
 `
 
 const Surtitle = styled.div`
@@ -39,9 +40,7 @@ const Surtitle = styled.div`
 `
 
 const Label = styled.span`
-  flex: 1;
   white-space: nowrap;
-  color: ${({ theme }) => theme.font.secondary};
-  font-size: 18px;
-  padding-left: 5px;
+  color: ${({ theme }) => theme.font.tertiary};
+  padding-left: 3px;
 `

@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import AppHeader from '@/components/AppHeader'
-import ScrollbarCustom from '@/components/Scrollbar'
+import Scrollbar from '@/components/Scrollbar'
 
 interface LockedWalletLayoutProps extends MotionProps {
   className?: string
@@ -12,10 +12,10 @@ interface LockedWalletLayoutProps extends MotionProps {
 
 const LockedWalletLayout = ({ children, ...props }: LockedWalletLayoutProps) => (
   <motion.main {...props}>
-    <ScrollbarCustom>
+    <Scrollbar>
       <AppHeader position="fixed" />
       <CenteredContainer>{children}</CenteredContainer>
-    </ScrollbarCustom>
+    </Scrollbar>
   </motion.main>
 )
 

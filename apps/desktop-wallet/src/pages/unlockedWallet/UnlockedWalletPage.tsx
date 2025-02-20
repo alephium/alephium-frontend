@@ -16,7 +16,7 @@ const UnlockedWalletPage: FC<UnlockedWalletPageProps> = ({ title, subtitle, Bott
   <motion.div {...fadeIn} {...props}>
     {(title || subtitle) && (
       <PageHeader>
-        <TitleContainer style={{ marginBottom: BottomComponent ? 0 : 50 }}>
+        <TitleContainer style={{ marginBottom: BottomComponent ? 0 : 35 }}>
           {title && <PageTitle>{title}</PageTitle>}
           {subtitle && <PageSubtitle>{subtitle}</PageSubtitle>}
         </TitleContainer>
@@ -36,7 +36,6 @@ const PageHeader = styled(UnlockedWalletPanel)`
   flex-direction: column;
   justify-content: space-between;
   gap: 40px;
-  margin-top: 20px;
 `
 
 const TitleContainer = styled.div`
@@ -46,10 +45,11 @@ const TitleContainer = styled.div`
 `
 
 const PageTitle = styled.h1`
-  font-size: 34px;
-  font-weight: var(--fontWeight-semiBold);
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: var(--fontWeight-bold);
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 `
 
 const PageSubtitle = styled.div`

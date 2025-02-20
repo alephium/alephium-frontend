@@ -4,21 +4,31 @@ import styled, { useTheme } from 'styled-components'
 import AnimatedBackground from '@/components/AnimatedBackground'
 import { ShortcutButtonsGroupWallet } from '@/components/Buttons/ShortcutButtons'
 import LabeledWorthOverview from '@/components/LabeledWorthOverview'
+import { useAppSelector } from '@/hooks/redux'
 import OverviewTabs from '@/pages/unlockedWallet/overviewPage/OverviewTabs'
 import WalletWorth from '@/pages/unlockedWallet/overviewPage/WalletWorth'
 import { UnlockedWalletPanel } from '@/pages/unlockedWallet/UnlockedWalletLayout'
 import UnlockedWalletPage from '@/pages/unlockedWallet/UnlockedWalletPage'
+import { useDisplayColor, useHashToColor, walletColorPalette } from '@/utils/colors'
 interface OverviewPageProps {
   className?: string
 }
 
 const OverviewPage = ({ className }: OverviewPageProps) => {
-  const theme = useTheme()
   const { t } = useTranslation()
+  const theme = useTheme()
+  const activeWalletHash = useAppSelector((s) => s.activeWallet.id)
+  const walletColor = useDisplayColor(useHashToColor(activeWalletHash), walletColorPalette)
 
   return (
     <UnlockedWalletPage className={className}>
-      <AnimatedBackground anchorPosition="top" opacity={theme.name === 'dark' ? 0.4 : 0.5} verticalOffset={-100} />
+      <AnimatedBackground
+        anchorPosition="top"
+        opacity={theme.name === 'dark' ? 0.3 : 0.4}
+        verticalOffset={-100}
+        horizontalOffset={-250}
+        shade={walletColor}
+      />
       <WorthUnlockedWalletPanel bottom>
         <WorthOverviewPanel>
           <LabeledWorthOverview label={t('Wallet worth')}>
@@ -36,9 +46,7 @@ const OverviewPage = ({ className }: OverviewPageProps) => {
   )
 }
 
-export default styled(OverviewPage)`
-  background-color: ${({ theme }) => theme.bg.background1};
-`
+export default OverviewPage
 
 const Shortcuts = styled.div`
   align-items: center;
@@ -50,11 +58,14 @@ const WorthUnlockedWalletPanel = styled(UnlockedWalletPanel)`
   display: flex;
   flex-direction: column;
   gap: var(--spacing-6);
+  align-items: flex-start;
 `
 
 const WorthOverviewPanel = styled.div`
+  display: flex;
+  flex-direction: column;
   border-radius: var(--radius-huge);
-  padding: var(--spacing-4);
   overflow: hidden;
   z-index: 1;
+  gap: 30px;
 `

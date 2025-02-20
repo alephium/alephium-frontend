@@ -32,7 +32,6 @@ const AddressesPage = () => {
 export default AddressesPage
 
 const TabsContent = styled.div`
-  padding-top: 30px;
   padding-bottom: 45px;
   border-radius: 0;
   border-left: none;

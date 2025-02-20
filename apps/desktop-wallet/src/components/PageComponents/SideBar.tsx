@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
-import WalletNameButton from '@/components/WalletNameButton'
+import SideBarSettingsButton from '@/components/PageComponents/SideBarSettingsButton'
 import { appHeaderHeightPx, sidebarExpandThresholdPx, walletSidebarWidthPx } from '@/style/globalStyles'
 
 interface SideBarProps {
@@ -16,7 +16,7 @@ const SideBar = ({ renderTopComponent, noExpansion = false, noBorder = false, cl
     <TopContainer>{renderTopComponent?.()}</TopContainer>
     <BottomButtonsContainer>
       <BottomButtons>
-        <WalletNameButton />
+        <SideBarSettingsButton />
       </BottomButtons>
     </BottomButtonsContainer>
   </SideBarStyled>
@@ -32,8 +32,8 @@ const SideBarStyled = styled.div<{ noBorder: boolean; noExpansion: boolean }>`
   z-index: 1;
   width: ${walletSidebarWidthPx}px;
   padding: ${appHeaderHeightPx}px var(--spacing-2) var(--spacing-2) var(--spacing-2);
-  border-right: ${({ theme, noBorder }) => (!noBorder ? `1px solid ${theme.border.primary}` : 'none')};
-  background-color: ${({ theme }) => theme.bg.background1};
+  background-color: ${({ theme }) => theme.bg.background2};
+  border-right: 1px solid ${({ theme }) => theme.border.secondary};
 
   ${({ noExpansion }) =>
     !noExpansion

@@ -41,10 +41,11 @@ function createWindow() {
     icon: ICON_PATH,
     width: 1200,
     height: 800,
-    minWidth: 1000,
+    minWidth: 900,
     minHeight: 700,
     frame: isMac,
     titleBarStyle: 'hidden',
+    trafficLightPosition: { x: 8, y: 8 },
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       spellcheck: true

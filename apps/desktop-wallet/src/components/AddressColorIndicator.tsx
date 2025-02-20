@@ -1,10 +1,10 @@
 import { AddressHash } from '@alephium/shared'
 import styled from 'styled-components'
 
-import DotIcon from '@/components/DotIcon'
 import { useAppSelector } from '@/hooks/redux'
 import { ReactComponent as IndicatorLogo } from '@/images/main_address_badge.svg'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
+import { labelColorPalette, useDisplayColor } from '@/utils/colors'
 
 interface AddressColorIndicatorProps {
   addressHash: AddressHash
@@ -21,17 +21,20 @@ const AddressColorIndicator = ({
 }: AddressColorIndicatorProps) => {
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
+  const displayColor = useDisplayColor(address?.color, labelColorPalette)
 
   if (!address) return null
+
+  const color = displayColor || address.color
 
   return (
     <div className={className}>
       {address.isDefault && !isPassphraseUsed && !hideMainAddressBadge ? (
-        <DefaultAddressIndicator color={address.color} size={size}>
+        <DefaultAddressIndicator color={color} size={size}>
           <IndicatorLogo />
         </DefaultAddressIndicator>
       ) : (
-        <DotIcon size={size} color={address.color} />
+        <Indicator size={size} color={color} />
       )}
     </div>
   )
@@ -45,10 +48,17 @@ export default styled(AddressColorIndicator)`
 
 const DefaultAddressIndicator = styled.div<{ color: string; size: number }>`
   position: relative;
-  width: ${({ size }) => size}px;
+  width: ${({ size }) => size * 1.2}px;
   transform: scale(1.1);
 
   svg * {
     fill: ${({ color }) => color} !important;
   }
+`
+
+const Indicator = styled.div<{ size: number; color: string }>`
+  height: ${({ size }) => size}px;
+  width: ${({ size }) => size}px;
+  background-color: ${({ color }) => color};
+  border-radius: ${({ size }) => size / 3}px;
 `

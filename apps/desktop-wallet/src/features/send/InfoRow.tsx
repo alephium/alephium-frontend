@@ -15,7 +15,7 @@ const InfoRow: FC<InfoRowProps> = ({ label, className, children }) => (
 export default styled(InfoRow)`
   display: flex;
   justify-content: space-between;
-  padding: 18px 15px;
+  padding: 18px 0;
 `
 
 const Label = styled.div`

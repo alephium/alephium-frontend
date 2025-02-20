@@ -28,25 +28,35 @@ const ColoredLabelInput = ({ label, onChange, value, className, id, maxLength }:
   }, [title, color, onChange])
 
   return (
-    <div className={className}>
-      <Input
-        label={label}
-        autoComplete="off"
-        onChange={(e) => setTitle(e.target.value)}
-        value={title}
-        id={id}
-        color={color}
-        maxLength={maxLength}
-      />
-      <ColorPicker onChange={setColor} value={color} />
-    </div>
+    <>
+      {label && <Label>{label}</Label>}
+      <ColoredLabelInputStyled className={className}>
+        <Input
+          label={label}
+          autoComplete="off"
+          onChange={(e) => setTitle(e.target.value)}
+          value={title}
+          id={id}
+          color={color}
+          maxLength={maxLength}
+        />
+        <ColorPicker onChange={setColor} value={color} />
+      </ColoredLabelInputStyled>
+    </>
   )
 }
 
-export default styled(ColoredLabelInput)`
+export default ColoredLabelInput
+
+const ColoredLabelInputStyled = styled.div`
   display: flex;
   gap: 17px;
   width: 100%;
   align-items: center;
   position: relative;
+`
+
+const Label = styled.label`
+  font-size: 13px;
+  font-weight: var(--fontWeight-semiBold);
 `

@@ -16,6 +16,7 @@ export interface ButtonProps extends HTMLMotionProps<'button'> {
   short?: boolean
   tall?: boolean
   tiny?: boolean
+  squared?: boolean
   wide?: boolean
   justifyContent?: 'center' | 'flex-start'
   Icon?: LucideIcon
@@ -87,7 +88,7 @@ const Button = ({
 }
 
 export default styled(Button)`
-  ${({ theme, role = 'primary', variant = 'default', transparent, iconColor, children }) => {
+  ${({ theme, role = 'primary', variant = 'default', transparent, tall, iconColor, children }) => {
     const bgColor = transparent
       ? 'transparent'
       : {
@@ -156,7 +157,7 @@ export default styled(Button)`
             faded: theme.global.accent
           }[variant],
           secondary: {
-            default: theme.font.primary,
+            default: theme.font.secondary,
             valid: theme.font.contrastPrimary,
             alert: theme.global.alert,
             faded: theme.font.primary
@@ -183,17 +184,12 @@ export default styled(Button)`
     return css`
       background-color: ${bgColor};
       color: ${fontColor};
+      box-shadow: ${role === 'primary' ? (tall ? theme.shadow.primary : theme.shadow.secondary) : 'none'};
       position: relative;
 
       &:hover {
         color: ${hoverColor};
         background-color: ${hoverBgColor};
-
-        ${ButtonIcon} {
-          svg {
-            stroke: ${iconColor && !children ? iconColor : hoverColor};
-          }
-        }
       }
 
       &:active {
@@ -218,21 +214,21 @@ export default styled(Button)`
   justify-content: ${({ Icon, justifyContent, children }) =>
     justifyContent ?? (!Icon || !children ? 'center' : 'flex-start')};
   height: ${({ circle, short, tall, tiny }) =>
-    tiny ? '28px' : short ? '32px' : circle ? '34px' : tall ? '46px' : 'var(--inputHeight)'};
+    tiny ? '28px' : short ? '30px' : circle ? '34px' : tall ? '44px' : 'var(--inputHeight)'};
   width: ${({ circle, short, wide, tiny }) =>
     tiny ? '28px' : circle ? '34px' : short && !wide ? 'auto' : wide ? '100%' : '80%'};
   max-width: ${({ wide }) => (wide ? 'auto' : '250px')};
-  border-radius: 100px;
+  border-radius: ${({ squared }) => (squared ? 'var(--radius-medium)' : '100px')};
   font-weight: ${({ tall }) => (tall ? 'var(--fontWeight-semiBold)' : 'var(--fontWeight-medium)')};
   font-size: ${({ tall }) => (tall ? 14 : 13)}px;
   font-family: inherit;
   margin: ${({ circle }) => (circle ? '0' : '10px 0')};
-  padding: ${({ circle, Icon }) => (circle ? 'var(--spacing-2)' : '0 14px')};
+  padding: ${({ circle, short }) => (circle ? 'var(--spacing-2)' : short ? '0 12px' : '0 14px')};
   min-width: ${({ circle, tiny }) => (tiny ? '28px' : circle ? '34px' : '60px')};
   text-align: center;
   cursor: ${({ disablePointer }) => !disablePointer && 'pointer'};
   backdrop-filter: ${({ transparent, theme }) =>
-    !transparent && `blur(20px) ${theme.name === 'dark' ? 'saturate(180%)' : 'saturate(130%) brightness(120%)'}`};
+    !transparent && `blur(20px) ${theme.name === 'dark' ? 'saturate(180%)' : 'saturate(180%) brightness(115%)'}`};
 
   &:disabled {
     opacity: 0.5;

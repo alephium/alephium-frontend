@@ -1,4 +1,3 @@
-import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -35,13 +34,15 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
   } = useGasSettings(data?.gasAmount?.toString(), data?.gasPrice)
 
   const [lockTime, setLockTime] = useState(data.lockTime)
-  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(
-    data.assetAmounts || [{ id: data.tokenId ?? ALPH.id }]
-  )
 
   const { fromAddress, toAddress } = data
 
   const { data: tokensBalances } = useFetchAddressBalances({ addressHash: fromAddress.hash })
+
+  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(
+    data.assetAmounts ?? (data.tokenId ? [{ id: data.tokenId }] : [])
+  )
+
   const allAssetAmountsAreWithinAvailableBalance = useAreAmountsWithinAddressAvailableBalances(
     fromAddress.hash,
     assetAmounts ?? []

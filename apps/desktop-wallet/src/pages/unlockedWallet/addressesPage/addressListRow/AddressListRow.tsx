@@ -1,6 +1,6 @@
 import { AddressHash } from '@alephium/shared'
 import { memo } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
@@ -36,7 +36,7 @@ const AddressListRow = memo(({ addressHash, tokenId, className }: AddressListRow
       tabIndex={0}
     >
       <Cell>
-        <AddressColorIndicator addressHash={addressHash} size={14} />
+        <AddressColorIndicator addressHash={addressHash} size={10} />
       </Cell>
       <Cell>
         <Column>
@@ -82,27 +82,44 @@ const Label = styled.div`
   font-size: 15px;
   font-weight: var(--fontWeight-semiBold);
   display: flex;
-  max-width: 150px;
+  min-width: 0;
+  padding-right: var(--spacing-4);
 `
 
 const Cell = styled.div`
   padding: 14px 0;
-  align-items: center;
   display: flex;
+  align-items: center;
+  &:not(:first-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  }
 `
 
 const GridRow = styled.div`
+  position: relative;
   display: grid;
-  grid-template-columns: 40px 1fr 1fr 1fr 1fr;
-  margin: 5px 0;
-  padding: 0 15px;
-  background-color: ${({ theme }) => theme.bg.secondary};
-  border-radius: var(--radius-big);
+  grid-template-columns: 40px minmax(0, 1fr) 1fr 1fr 1fr;
 
-  &:hover {
-    cursor: pointer;
-    background-color: ${({ theme }) => theme.bg.primary};
-  }
+  ${({ onClick, theme }) =>
+    onClick &&
+    css`
+      &:hover {
+        cursor: pointer;
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: -8px;
+          right: -8px;
+
+          border-radius: var(--radius-big);
+          background-color: ${theme.bg.hover};
+          z-index: -1;
+        }
+      }
+    `}
 `
 
 const AmountCell = styled(Cell)`

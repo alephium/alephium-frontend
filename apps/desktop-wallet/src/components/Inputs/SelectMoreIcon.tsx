@@ -1,4 +1,4 @@
-import { MoreVertical } from 'lucide-react'
+import { ChevronsUpDown } from 'lucide-react'
 import styled, { useTheme } from 'styled-components'
 
 import { inputStyling } from '@/components/Inputs'
@@ -7,7 +7,7 @@ const SelectMoreIcon = () => {
   const theme = useTheme()
   return (
     <MoreIcon>
-      <MoreVertical size={16} color={theme.font.tertiary} />
+      <ChevronsUpDown size={14} color={theme.font.tertiary} strokeWidth={1} />
     </MoreIcon>
   )
 }
@@ -17,7 +17,6 @@ export default SelectMoreIcon
 const MoreIcon = styled.div`
   position: absolute;
   right: ${inputStyling.paddingLeftRight};
-  height: 100%;
   display: flex;
   align-items: center;
   color: ${({ theme }) => theme.font.secondary};

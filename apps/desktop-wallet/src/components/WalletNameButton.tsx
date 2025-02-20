@@ -1,13 +1,17 @@
 import styled from 'styled-components'
 
+import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { sidebarExpandThresholdPx } from '@/style/globalStyles'
+import { useDisplayColor, useHashToColor, walletColorPalette } from '@/utils/colors'
 import { getInitials, onEnterOrSpace } from '@/utils/misc'
 
 const WalletNameButton = () => {
   const dispatch = useAppDispatch()
   const activeWalletName = useAppSelector((s) => s.activeWallet.name)
+  const activeWalletHash = useAppSelector((s) => s.activeWallet.id)
+  const walletColor = useDisplayColor(useHashToColor(activeWalletHash), walletColorPalette, 'vivid')
 
   if (!activeWalletName) return null
 
@@ -22,9 +26,12 @@ const WalletNameButton = () => {
       tabIndex={0}
     >
       <WalletNameContainer>
-        <Initials>{getInitials(activeWalletName)}</Initials>
+        <Initials style={{ backgroundColor: walletColor }}>{getInitials(activeWalletName)}</Initials>
         <Name>{activeWalletName}</Name>
       </WalletNameContainer>
+      <SelectMoreIconContainer>
+        <SelectMoreIcon />
+      </SelectMoreIconContainer>
     </WalletNameButtonStyled>
   )
 }
@@ -32,11 +39,14 @@ const WalletNameButton = () => {
 export default WalletNameButton
 
 const WalletNameButtonStyled = styled.div`
-  flex: 1;
+  position: relative;
   border-radius: var(--radius-medium);
   display: flex;
   align-items: center;
-  padding: 6px;
+  padding: 4px;
+  border: 1px solid ${({ theme }) => theme.border.secondary};
+  margin-bottom: var(--spacing-3);
+  height: 36px;
 
   overflow: hidden;
   z-index: 1;
@@ -45,12 +55,16 @@ const WalletNameButtonStyled = styled.div`
     cursor: pointer;
     background-color: ${({ theme }) => theme.bg.primary};
   }
+
+  @media (max-width: ${sidebarExpandThresholdPx}px) {
+    justify-content: center;
+  }
 `
 
 const WalletNameContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
 `
 
 const Name = styled.span`
@@ -66,8 +80,17 @@ const Initials = styled.div`
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.font.contrastPrimary};
-  height: 30px;
-  width: 30px;
-  border-radius: 100px;
-  background-color: ${({ theme }) => theme.global.complementary};
+  height: 26px;
+  width: 26px;
+  border-radius: var(--radius-tiny);
+  font-size: 12px;
+`
+
+const SelectMoreIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+
+  @media (max-width: ${sidebarExpandThresholdPx}px) {
+    display: none;
+  }
 `

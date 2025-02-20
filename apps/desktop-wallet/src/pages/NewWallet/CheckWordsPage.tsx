@@ -61,7 +61,7 @@ const CheckWordsPage = () => {
     <FloatingPanel>
       <PanelContentContainer>
         <Section align="center">
-          <Paragraph>
+          <Paragraph centered>
             <Trans
               t={t}
               i18nKey="Select the correct word for word number <1>{{ number }} of 24</1>."
@@ -72,7 +72,7 @@ const CheckWordsPage = () => {
           {isError && <ErrorText>{t('Incorrect word. Please try again.')}</ErrorText>}
           <OptionsContainer>
             {options.map((option, index) => (
-              <OptionButton key={index} onClick={() => handleOptionClick(option)}>
+              <OptionButton key={index} onClick={() => handleOptionClick(option)} squared>
                 {option}
               </OptionButton>
             ))}
@@ -106,6 +106,7 @@ const OptionsContainer = styled.div`
 
 const OptionButton = styled(Button)`
   margin: var(--spacing-2);
+  font-family: monospace;
 `
 
 const ErrorText = styled.p`

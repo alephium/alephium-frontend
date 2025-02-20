@@ -247,17 +247,9 @@ const AppContainerStyled = styled.div<{ showDevIndication: boolean }>`
 `
 
 const LoginAnimatedBackground = () => {
-  const theme = useAppSelector((s) => s.global.theme)
   const { isWalletUnlocked } = useWalletLock()
 
   if (isWalletUnlocked) return null
 
-  return (
-    <AnimatedBackground
-      anchorPosition="bottom"
-      opacity={theme === 'dark' ? 0.6 : 0.8}
-      verticalOffset={-100}
-      hiddenOverflow
-    />
-  )
+  return <AnimatedBackground anchorPosition="bottom" opacity={1} verticalOffset={-100} hiddenOverflow />
 }

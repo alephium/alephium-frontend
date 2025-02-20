@@ -36,7 +36,7 @@ const QRCode = ({ value, size, copyButtonLabel, className }: QRCodeProps) => {
   return (
     <div className={className}>
       <StyledBox size={size}>
-        <RawQRCode size={size} value={value} bgColor={theme.bg.primary} fgColor={theme.font.primary} />
+        <RawQRCode size={size} value={value} bgColor={theme.bg.background1} fgColor={theme.font.primary} />
       </StyledBox>
       {copyButtonLabel && (
         <Button role="secondary" Icon={CopyIcon} onClick={handleCopyAddressToClipboard} justifyContent="center">
@@ -60,8 +60,8 @@ const StyledBox = styled.div<{ size: number }>`
   align-items: center;
   justify-content: center;
   border-radius: var(--radius-big);
+  border: 1px solid ${({ theme }) => theme.border.primary};
   width: ${({ size }) => size + 25}px;
   height: ${({ size }) => size + 25}px;
-  backdrop-filter: blur(10px) brightness(${({ theme }) => (theme.name === 'light' ? '1.3' : '1.5')}) saturate(1.2);
   overflow: hidden;
 `

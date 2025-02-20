@@ -13,14 +13,14 @@ import { openInWebBrowser } from '@/utils/misc'
 
 const Header = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
-  const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
+  const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
   const handleExplorerLinkClick = () => openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)
 
   return (
     <HeaderStyled>
       <LeftSide>
-        <AddressColorIndicator addressHash={addressHash} size={17} />
+        <AddressColorIndicator addressHash={addressHash} size={15} />
         <TitleBadge addressHash={addressHash} />
       </LeftSide>
       <ExplorerButton role="secondary" transparent short onClick={handleExplorerLinkClick}>
@@ -42,7 +42,13 @@ const TitleBadge = ({ addressHash }: AddressModalBaseProp) => {
   return (
     <>
       <Title>
-        <AddressBadgeStyled addressHash={addressHash} hideColorIndication disableCopy={!!address.label} truncate />
+        <AddressBadgeStyled
+          addressHash={addressHash}
+          hideColorIndication
+          disableCopy={!!address.label}
+          truncate
+          hashWidth={110}
+        />
         {address.label && <TitleAddressHash hash={addressHash} />}
       </Title>
       <Badge short color={theme.font.tertiary}>
@@ -66,12 +72,10 @@ const LeftSide = styled.div`
 
 const ExplorerButton = styled(Button)`
   width: auto;
-  margin-right: 30px;
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
   font-size: 15px;
-  max-width: 160px;
 `
 
 const Title = styled.div`

@@ -44,7 +44,6 @@ export const TitleContainer = styled(motion.div)<Pick<PanelTitleProps, 'isSticky
     css`
       position: sticky;
       padding: var(--spacing-8) 0 var(--spacing-4) 0;
-      background-color: ${({ theme }) => theme.bg.background1};
       border-bottom: 1px solid ${({ theme }) => theme.border.primary};
     `}
 `
@@ -59,7 +58,7 @@ const BackArrow = styled(ArrowLeft)`
 const H1 = styled.h1<PanelTitleProps>`
   flex: 1;
   color: ${({ theme, color }) => (color ? color : theme.font.primary)};
-  font-size: ${({ size }) => (size === 'small' ? '16px' : size === 'big' ? '32px' : '28px')};
+  font-size: ${({ size }) => (size === 'small' ? '15px' : size === 'big' ? '32px' : '28px')};
   font-weight: var(--fontWeight-semiBold);
   margin: 0;
 `

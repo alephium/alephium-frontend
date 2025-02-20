@@ -7,7 +7,7 @@ import styled, { css } from 'styled-components'
 import { fadeInOutBottomFast } from '@/animations'
 import Button from '@/components/Button'
 import { Section } from '@/components/PageComponents/PageContainers'
-import PanelTitle, { TitleContainer } from '@/components/PageComponents/PanelTitle'
+import { TitleContainer } from '@/components/PageComponents/PanelTitle'
 import Scrollbar from '@/components/Scrollbar'
 import Spinner from '@/components/Spinner'
 import Tooltip from '@/components/Tooltip'
@@ -18,7 +18,7 @@ import ModalContainer, { ModalBackdrop, ModalContainerProps } from '@/modals/Mod
 
 export interface CenteredModalProps extends ModalContainerProps {
   title?: ReactNode
-  subtitle?: string
+  subtitle?: ReactNode
   isLoading?: boolean | string
   header?: ReactNode
   fullScreen?: boolean
@@ -56,27 +56,25 @@ const CenteredModal: FC<CenteredModalProps> = ({
 
   const onClose = id ? () => dispatch(closeModal({ id })) : undefined
 
+  const hasBackButton = onBack && !disableBack
+
   return (
     <ModalContainer id={id} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
       <CenteredBox role="dialog" {...fadeInOutBottomFast} narrow={narrow} fullScreen={fullScreen}>
-        <ModalHeader>
+        <ModalHeader hasBackButton={hasBackButton}>
           <TitleRow>
-            {onBack && !disableBack && (
-              <BackButton aria-label={t('Back')} circle role="secondary" transparent onClick={onBack}>
-                <ChevronLeft />
-              </BackButton>
+            {hasBackButton && (
+              <BackButton aria-label={t('Back')} Icon={ChevronLeft} circle role="secondary" onClick={onBack} tiny />
             )}
             {Icon && (
               <IconContainer>
                 <Icon />
               </IconContainer>
             )}
-            <PanelTitle size="small">
-              <span ref={elRef} tabIndex={0} role="heading">
-                {title}
-              </span>
-              {subtitle && <ModalSubtitle>{subtitle}</ModalSubtitle>}
-            </PanelTitle>
+            <ModalTitle ref={elRef} tabIndex={0} role="heading">
+              {title}
+            </ModalTitle>
+            {subtitle && <ModalSubtitle>{subtitle}</ModalSubtitle>}
             <CloseButton
               aria-label={t('Close')}
               circle
@@ -162,16 +160,17 @@ const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>
     `}
 `
 
-export const ModalHeader = styled.header`
+export const ModalHeader = styled.header<{ hasBackButton?: boolean }>`
   position: absolute;
   top: 0;
   right: 0;
   left: 0;
   display: flex;
   align-items: center;
-  height: 54px;
-  padding: 0 6px 0 var(--spacing-4);
-  border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+  height: 50px;
+  padding: 0 8px 0 ${({ hasBackButton }) => (hasBackButton ? '8px' : 'var(--spacing-3)')};
+  background: linear-gradient(to bottom, ${({ theme }) => theme.bg.background1} 50%, transparent 100%);
+  z-index: 2;
 `
 
 const ModalHeaderContent = styled(motion.div)`
@@ -186,21 +185,27 @@ const TitleRow = styled.div`
   align-items: center;
 `
 
+const ModalTitle = styled.span`
+  color: ${({ theme }) => theme.font.primary};
+  font-weight: var(--fontWeight-semiBold);
+  font-size: 15px;
+  flex: 1;
+`
+
 const CloseButton = styled(Button)`
   color: ${({ theme }) => theme.font.primary};
-  margin-right: var(--spacing-1);
+  margin-left: var(--spacing-3);
 `
 
 const BackButton = styled(Button)`
-  color: ${({ theme }) => theme.font.primary};
-  margin-left: var(--spacing-2);
+  margin-right: 10px;
 `
 
 export const ModalContent = styled.div<{ hasFooterButtons?: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 70px var(--spacing-4) var(--spacing-6) var(--spacing-4);
+  padding: 60px var(--spacing-4) var(--spacing-6) var(--spacing-4);
   width: 100%;
   overflow-y: auto;
 
@@ -218,7 +223,6 @@ export const ModalFooterButtons = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
   padding-top: var(--spacing-5);
   padding-bottom: var(--spacing-2);
   background: linear-gradient(to top, ${({ theme }) => theme.bg.background1} 50%, transparent 100%);
@@ -239,7 +243,6 @@ const ModalFooterButtonStyled = styled(Button)`
 const ModalSubtitle = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 13px;
-  margin-top: var(--spacing-1);
 `
 
 const ModalLoadingSpinner = styled.div`

@@ -47,7 +47,7 @@ export const TableCell = styled.div<TableCellProps>`
   padding: 10px 0;
   min-width: ${({ fixedWidth }) =>
     fixedWidth ? (typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth) : 'auto'};
-  min-height: 60px;
+  min-height: 52px;
   overflow: hidden;
   text-overflow: ellipsis;
 `
@@ -145,11 +145,12 @@ const TableHeaderRow = styled(TableRow)`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 40px;
+
   color: ${({ theme }) => theme.font.tertiary};
 
   ${TableCell} {
     min-height: 48px;
+    border: none;
   }
 `
 

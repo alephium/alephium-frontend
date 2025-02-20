@@ -1,3 +1,4 @@
+import { colord } from 'colord'
 import { isEqual } from 'lodash'
 import { SearchIcon } from 'lucide-react'
 import {
@@ -210,7 +211,6 @@ interface SelectOptionsModalProps<T extends OptionValue> {
   parentSelectRef?: RefObject<HTMLDivElement | HTMLButtonElement>
   minWidth?: number
   ListBottomComponent?: ReactNode
-  floatingOptions?: boolean
   isSearchable?: boolean
 }
 
@@ -227,7 +227,6 @@ export function SelectOptionsModal<T extends OptionValue>({
   parentSelectRef,
   minWidth,
   ListBottomComponent,
-  floatingOptions,
   isSearchable
 }: SelectOptionsModalProps<T>) {
   const { t } = useTranslation()
@@ -309,11 +308,13 @@ export function SelectOptionsModal<T extends OptionValue>({
               selected={isSelected}
               focusable
               aria-label={option.label}
-              isFloating={floatingOptions}
               hasCustomOptionRender={!!optionRender}
             >
               {optionRender ? (
-                optionRender(option, isSelected)
+                <CustomOptionContainer isSelected={isSelected}>
+                  {optionRender(option, isSelected)}
+                  {isSelected && <CheckMark />}
+                </CustomOptionContainer>
               ) : (
                 <>
                   {option.label}
@@ -393,7 +394,6 @@ export const OptionSelect = styled.div`
   color: inherit;
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-1) 0;
   gap: 5px;
 `
 
@@ -414,24 +414,15 @@ export const OptionItem = styled.button<{
   visibility: ${({ invisible }) => invisible && 'hidden'};
   font-weight: ${({ selected }) => selected && 'var(--fontWeight-semiBold)'};
   background-color: ${({ theme, selected }) => (selected ? theme.bg.accent : 'transparent')};
+  border: 1px solid
+    ${({ theme, selected }) => (selected ? colord(theme.global.accent).alpha(0.1).toHex() : 'transparent')};
   font-size: 13px;
   border-radius: var(--radius-small);
+  margin: 0 var(--spacing-1);
 
   ${({ hasCustomOptionRender }) => css`
     padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-2)'};
-    margin: ${hasCustomOptionRender ? '0px' : '0 var(--spacing-1)'};
   `};
-
-  ${({ isFloating }) =>
-    isFloating &&
-    css`
-      margin: 0 var(--spacing-1);
-      border-radius: var(--radius-small);
-      overflow: hidden;
-      border &:last-child {
-        margin-bottom: var(--spacing-3);
-      }
-    `}
 
   &:hover {
     background-color: ${({ theme }) => theme.bg.hover};
@@ -447,6 +438,8 @@ export const OptionItem = styled.button<{
 `
 
 const Searchbar = styled(Input)`
+  margin: var(--spacing-1) 0;
+
   svg {
     color: ${({ theme }) => theme.font.tertiary};
   }
@@ -458,4 +451,20 @@ const CustomComponentContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+`
+
+const CustomOptionContainer = styled.div<{ isSelected: boolean }>`
+  flex: 1;
+  display: flex;
+
+  ${CheckMark} {
+    height: 100%;
+    margin: 12px 8px 12px 4px;
+  }
+
+  ${({ isSelected, theme }) =>
+    isSelected &&
+    css`
+      background-color: ${theme.bg.accent};
+    `}
 `

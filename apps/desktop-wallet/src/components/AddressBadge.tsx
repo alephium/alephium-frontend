@@ -21,6 +21,7 @@ interface AddressBadgeProps {
   displayHashUnder?: boolean
   isShort?: boolean
   className?: string
+  hashWidth?: number
 }
 
 const AddressBadge = ({
@@ -34,7 +35,8 @@ const AddressBadge = ({
   appendHash = false,
   displayHashUnder = false,
   isShort,
-  withBorders
+  withBorders,
+  hashWidth
 }: AddressBadgeProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
@@ -84,11 +86,16 @@ const AddressBadge = ({
                 )}
               </Label>
               {appendHash && (
-                <ShortHashEllipsed hash={address.hash} disableA11y={disableA11y} disableCopy={disableCopy} />
+                <ShortHashEllipsed
+                  hash={address.hash}
+                  disableA11y={disableA11y}
+                  disableCopy={disableCopy}
+                  width={hashWidth}
+                />
               )}
             </LabelAndHash>
           ) : (
-            <HashEllipsed hash={address.hash} disableA11y={disableA11y} disableCopy={disableCopy} />
+            <HashEllipsed hash={address.hash} disableA11y={disableA11y} disableCopy={disableCopy} width={hashWidth} />
           )}
         </>
       )}
@@ -98,9 +105,9 @@ const AddressBadge = ({
 
 export default AddressBadge
 
-const AddressBadgeStyled = styled.div<
-  Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'isShort' | 'hideColorIndication'>
->`
+type AddressBadgeStyledProps = Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'isShort' | 'hideColorIndication'>
+
+const AddressBadgeStyled = styled.div<AddressBadgeStyledProps>`
   display: flex;
   position: relative;
   align-items: center;
@@ -112,7 +119,7 @@ const AddressBadgeStyled = styled.div<
     css`
       border: 1px solid ${({ theme }) => theme.border.primary};
       border-radius: 25px;
-      padding: 4px 10px;
+      padding: 2px 6px;
     `}
 
   ${({ truncate }) =>
@@ -147,7 +154,7 @@ const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
   position: relative;
   margin-right: 2px;
   white-space: nowrap;
-  max-width: 125px;
+  min-width: 40px;
 
   ${({ truncate }) =>
     truncate &&
@@ -163,7 +170,6 @@ const ShortHashEllipsed = styled(HashEllipsed)`
   min-width: 80px;
   font-size: 12px;
   color: ${({ theme }) => theme.font.secondary};
-  width: 100%;
 `
 
 const ClipboardButtonStyled = styled(ClipboardButton)`

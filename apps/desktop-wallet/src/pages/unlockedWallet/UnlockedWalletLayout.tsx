@@ -7,13 +7,12 @@ import { useTranslation } from 'react-i18next'
 import styled, { css, DefaultTheme } from 'styled-components'
 
 import { fadeInSlowly } from '@/animations'
-import AlephiumLogo from '@/components/AlephiumLogo'
 import AppHeader from '@/components/AppHeader'
 import NavItem from '@/components/NavItem'
 import SideBar from '@/components/PageComponents/SideBar'
-import ScrollbarCustom from '@/components/Scrollbar'
+import Scrollbar from '@/components/Scrollbar'
+import WalletNameButton from '@/components/WalletNameButton'
 import { useAppSelector } from '@/hooks/redux'
-import { sidebarExpandThresholdPx } from '@/style/globalStyles'
 
 interface UnlockedWalletLayoutProps {
   title?: string
@@ -33,28 +32,21 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
     <motion.div {...fadeInSlowly} className={className}>
       <SideBar
         renderTopComponent={() => (
-          <>
-            <BrandContainer>
-              <AlephiumLogoContainer>
-                <AlephiumLogo contrasted />
-              </AlephiumLogoContainer>
-              <AlephiumName>alephium</AlephiumName>
-            </BrandContainer>
-            <SideNavigation>
-              <NavItem Icon={Home} label={t('Overview')} to="/wallet/overview" />
-              <NavItem Icon={Clock} label={t('Activity')} to="/wallet/activity" />
-              <NavItem Icon={Bookmark} label={t('Addresses')} to="/wallet/addresses" />
-            </SideNavigation>
-          </>
+          <SideNavigation>
+            <WalletNameButton />
+            <NavItem Icon={Home} label={t('Overview')} to="/wallet/overview" />
+            <NavItem Icon={Clock} label={t('Activity')} to="/wallet/activity" />
+            <NavItem Icon={Bookmark} label={t('Addresses')} to="/wallet/addresses" />
+          </SideNavigation>
         )}
       ></SideBar>
 
-      <ScrollbarCustom>
+      <Scrollbar>
         <MainContent>
           <AppHeader title={title} />
           {children}
         </MainContent>
-      </ScrollbarCustom>
+      </Scrollbar>
     </motion.div>
   )
 }
@@ -65,8 +57,8 @@ export const UnlockedWalletPanel = styled.div<{
   doubleTop?: boolean
   backgroundColor?: keyof DefaultTheme['bg']
 }>`
-  padding-left: 40px;
-  padding-right: 40px;
+  padding-left: 30px;
+  padding-right: 30px;
 
   ${({ top, doubleTop }) => css`
     padding-top: ${top ? 10 : doubleTop ? 20 : 0}px;
@@ -94,7 +86,6 @@ const MainContent = styled.main`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: ${({ theme }) => theme.bg.background1};
   position: relative;
 `
 
@@ -103,33 +94,4 @@ const SideNavigation = styled.nav`
   display: flex;
   flex-direction: column;
   gap: 5px;
-`
-
-const BrandContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--spacing-6);
-  gap: 10px;
-  margin-left: 7px;
-`
-
-const AlephiumLogoContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  background-color: ${({ theme }) => theme.bg.contrast};
-  padding: 10px;
-  border-radius: 50%;
-`
-
-const AlephiumName = styled.div`
-  font-size: 18px;
-  font-weight: var(--fontWeight-semiBold);
-  display: none;
-
-  @media (min-width: ${sidebarExpandThresholdPx}px) {
-    display: block;
-  }
 `

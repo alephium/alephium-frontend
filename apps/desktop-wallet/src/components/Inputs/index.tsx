@@ -49,7 +49,7 @@ export const inputDefaultStyle = (
   heightSize?: InputHeight,
   largeText?: boolean
 ) => css`
-  height: ${heightSize === 'small' ? '34px' : heightSize === 'big' ? '46px' : 'var(--inputHeight)'};
+  height: ${heightSize === 'small' ? '32px' : heightSize === 'big' ? '42px' : 'var(--inputHeight)'};
   width: 100%;
   border-radius: ${heightSize === 'small'
     ? 'var(--radius-small)'
@@ -57,13 +57,13 @@ export const inputDefaultStyle = (
       ? 'var(--radius-big)'
       : 'var(--radius-medium)'};
   border: 1px solid ${({ theme }) => theme.border.primary};
+  background-color: ${({ theme }) => theme.bg.tertiary};
   color: ${({ theme }) => theme.font.primary};
   padding: ${hasIcon ? `0 40px 0 ${inputStyling.paddingLeftRight}` : `0 ${inputStyling.paddingLeftRight}`};
   font-weight: var(--fontWeight-medium);
   font-size: ${largeText ? '14px' : '13px'};
   text-align: left;
   font-family: inherit;
-  background-color: ${({ theme }) => theme.bg.highlight};
 
   transition: all 0.1s;
 
@@ -74,7 +74,7 @@ export const inputDefaultStyle = (
   `}
 
   &:focus {
-    background-color: ${({ theme }) => theme.bg.hover};
+    background-color: transparent;
     border: 1px solid ${({ theme }) => theme.global.accent};
     box-shadow: inset 0 0 0 1px ${({ theme }) => theme.global.accent};
   }
@@ -89,7 +89,7 @@ export const inputDefaultStyle = (
   }
 
   &:hover {
-    background-color: ${({ theme }) => theme.bg.primary};
+    background-color: ${({ theme }) => theme.bg.hover};
   }
 
   // Remove number arrows
