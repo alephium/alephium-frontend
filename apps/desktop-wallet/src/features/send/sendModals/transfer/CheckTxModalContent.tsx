@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { openModal } from '@/features/modals/modalActions'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckAmountsBox from '@/features/send/CheckAmountsBox'
@@ -27,9 +28,11 @@ const TransferCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProps<Tran
     <>
       <CheckModalContent>
         <CheckAmountsBoxStyled assetAmounts={data.assetAmounts} hasBg hasPadding />
-        <CheckWorthBox assetAmounts={data.assetAmounts} />
         <CheckAddressesBox fromAddress={data.fromAddress} toAddressHash={data.toAddress} />
+        <HorizontalDivider />
         <CheckFeeLocktimeBox fee={fees} lockTime={data.lockTime} />
+        <HorizontalDivider />
+        <CheckWorthBox assetAmounts={data.assetAmounts} />
       </CheckModalContent>
 
       <ModalFooterButtons>

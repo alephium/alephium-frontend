@@ -5,7 +5,6 @@ import styled from 'styled-components'
 
 import Amount from '@/components/Amount'
 import Box from '@/components/Box'
-import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import InfoRow from '@/features/send/InfoRow'
 import { formatDateForDisplay } from '@/utils/misc'
 
@@ -24,15 +23,12 @@ const CheckFeeLockTimeBox = ({ fee, lockTime, className }: CheckFeeLockTimeBoxPr
         <Amount tokenId={ALPH.id} value={fee} fullPrecision />
       </InfoRow>
       {lockTime && (
-        <>
-          <HorizontalDivider />
-          <InfoRow label={t('Unlocks at')}>
-            <UnlocksAt>
-              {formatDateForDisplay(lockTime)}
-              <FromNow>({dayjs(lockTime).fromNow()})</FromNow>
-            </UnlocksAt>
-          </InfoRow>
-        </>
+        <InfoRow label={t('Unlocks at')}>
+          <UnlocksAt>
+            {formatDateForDisplay(lockTime)}
+            <FromNow>({dayjs(lockTime).fromNow()})</FromNow>
+          </UnlocksAt>
+        </InfoRow>
       )}
     </Box>
   )

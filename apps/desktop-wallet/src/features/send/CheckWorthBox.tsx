@@ -38,12 +38,14 @@ const CheckWorthBox = ({ assetAmounts, ...props }: CheckWorthBoxProps) => {
   return (
     <Box {...props}>
       <InfoRow label={t('Total worth')}>
-        <AmountStyled
-          tokenId={ALPH.id}
-          value={totalWorth}
-          isFiat
-          isLoading={isLoadingTokensByType || isLoadingTokenPrices}
-        />
+        <Amounts>
+          <AmountStyled
+            tokenId={ALPH.id}
+            value={totalWorth}
+            isFiat
+            isLoading={isLoadingTokensByType || isLoadingTokenPrices}
+          />
+        </Amounts>
       </InfoRow>
     </Box>
   )
@@ -53,4 +55,12 @@ export default CheckWorthBox
 
 const AmountStyled = styled(Amount)`
   color: ${({ theme }) => theme.font.primary};
+  font-size: 18px;
+`
+
+const Amounts = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-2);
 `

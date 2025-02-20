@@ -167,7 +167,7 @@ const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
 const NotKnownAddress = styled(HashEllipsed)``
 
 const ShortHashEllipsed = styled(HashEllipsed)`
-  min-width: 80px;
+  flex-shrink: 0;
   font-size: 12px;
   color: ${({ theme }) => theme.font.secondary};
 `

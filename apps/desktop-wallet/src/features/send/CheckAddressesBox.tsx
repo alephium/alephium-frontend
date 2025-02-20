@@ -30,7 +30,7 @@ const CheckAddressesBox = ({ fromAddress, toAddressHash, ...props }: CheckAddres
       <AddressRow>
         <AddressLabel>{t('From')}</AddressLabel>
         <AddressLabelHash>
-          <AddressBadge addressHash={fromAddress.hash} truncate appendHash />
+          <AddressBadge addressHash={fromAddress.hash} truncate appendHash withBorders />
         </AddressLabelHash>
       </AddressRow>
       {toAddressHash && (
@@ -44,7 +44,7 @@ const CheckAddressesBox = ({ fromAddress, toAddressHash, ...props }: CheckAddres
               </>
             ) : (
               <ActionLinkStyled onClick={() => openInWebBrowser(`${explorerUrl}/addresses/${toAddressHash}`)}>
-                <AddressBadge addressHash={toAddressHash} truncate appendHash />
+                <AddressBadge addressHash={toAddressHash} truncate appendHash withBorders />
               </ActionLinkStyled>
             )}
           </AddressLabelHash>
