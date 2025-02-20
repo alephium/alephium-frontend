@@ -4,11 +4,14 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Button from '@/components/Button'
+import ButtonTooltipWrapper from '@/components/Buttons/ButtonTooltipWrapper'
 import CheckMark from '@/components/CheckMark'
 import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
 import { useLedger } from '@/features/ledger/useLedger'
 import { openModal } from '@/features/modals/modalActions'
+import WalletQRCodeExportButton from '@/features/walletExport/qrCodeExport/WalletQRCodeExportButton'
+import WalletSecretPhraseExportButton from '@/features/walletExport/secretPhraseExport/WalletSecretPhraseExportButton'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import { StoredEncryptedWallet } from '@/types/wallet'
@@ -29,8 +32,6 @@ const WalletsSettingsSection = () => {
 
   const handleLockCurrentWalletClick = () => lockWallet('settings')
 
-  const openSecretPhraseModal = () => dispatch(openModal({ name: 'SecretPhraseModal' }))
-  const openWalletQRCodeExportModal = () => dispatch(openModal({ name: 'WalletQRCodeExportModal' }))
   const openEditWalletNameModal = () => dispatch(openModal({ name: 'EditWalletNameModal' }))
 
   return (
@@ -76,18 +77,9 @@ const WalletsSettingsSection = () => {
 
             {!isLedger && (
               <>
-                <ButtonTooltipWrapper
-                  data-tooltip-id="default"
-                  data-tooltip-content={isPassphraseUsed ? t('To export this wallet use it without a passphrase') : ''}
-                >
-                  <Button role="secondary" onClick={openWalletQRCodeExportModal} disabled={isPassphraseUsed}>
-                    {t('Export current wallet')}
-                  </Button>
-                </ButtonTooltipWrapper>
+                <WalletQRCodeExportButton />
 
-                <Button role="secondary" variant="alert" onClick={openSecretPhraseModal}>
-                  {t('Show your secret recovery phrase')}
-                </Button>
+                <WalletSecretPhraseExportButton />
 
                 <ButtonTooltipWrapper
                   data-tooltip-id="default"
@@ -196,11 +188,5 @@ const ButtonStyled = styled(Button)<{ isVisible: boolean }>`
 `
 
 const BoxContainerStyled = styled.div`
-  width: 100%;
-`
-
-const ButtonTooltipWrapper = styled.div`
-  display: flex;
-  justify-content: center;
   width: 100%;
 `
