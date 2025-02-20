@@ -7,6 +7,7 @@ import withModal from '@/features/modals/withModal'
 import SideModal from '@/modals/SideModal'
 import { TokenDetailsModalProps } from '@/modals/tokenDetails/tokeDetailsTypes'
 import TokenBalances from '@/modals/tokenDetails/TokenBalances'
+import TokenDescription from '@/modals/tokenDetails/TokenDescription'
 import TokenDetailsModalHeader from '@/modals/tokenDetails/TokenDetailsModalHeader'
 import { TokenDetailsModalTabs } from '@/modals/tokenDetails/TokenDetailsModalTabs'
 
@@ -21,6 +22,7 @@ const TokenDetailsModal = withModal<TokenDetailsModalProps>(({ id, tokenId }) =>
         </LabeledWorthOverview>
         <ShortcutButtonsGroupToken tokenId={tokenId} analyticsOrigin="token_details" />
       </WorthOverviewPanel>
+      <TokenDescription tokenId={tokenId} />
       <Content>
         <TokenDetailsModalTabs tokenId={tokenId} />
       </Content>
