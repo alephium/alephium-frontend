@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import SideModal from '@/modals/SideModal'
 import OperationBox from '@/pages/unlockedWallet/addressesPage/OperationBox'
-import { selectAllAddresses, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
+import { selectAllAddressIndexes, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { toggleAppLoading } from '@/storage/global/globalActions'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
@@ -23,7 +23,7 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
   const dispatch = useAppDispatch()
   const isPassphraseUsed = useAppSelector((s) => s.activeWallet.isPassphraseUsed)
   const defaultAddress = useAppSelector(selectDefaultAddress)
-  const allAddressesIndexes = useAppSelector((s) => selectAllAddresses(s).map(({ index }) => index))
+  const allAddressesIndexes = useAppSelector(selectAllAddressIndexes)
 
   const handleOneAddressPerGroupClick = async () => {
     if (isPassphraseUsed) {
@@ -95,7 +95,7 @@ const AdvancedOperationsSideModal = memo(({ id }: ModalBaseProp) => {
           infoLink={links.utxoConsolidation}
         />
         <OperationBox
-          placeholder
+          $placeholder
           title={t('More to come...')}
           Icon={<Lightbulb color={theme.font.secondary} strokeWidth={1} size={28} />}
           description={t('Do you have great ideas you want to share?')}

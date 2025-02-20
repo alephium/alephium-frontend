@@ -15,7 +15,7 @@ interface OperationBoxProps {
   buttonText: string
   onButtonClick: () => void
   infoLink?: string
-  placeholder?: boolean
+  $placeholder?: boolean
   isButtonDisabled?: boolean
   disabledButtonTooltip?: string
   className?: string
@@ -29,21 +29,21 @@ const OperationBox = ({
   buttonText,
   onButtonClick,
   infoLink,
-  placeholder,
+  $placeholder,
   isButtonDisabled,
   disabledButtonTooltip
 }: OperationBoxProps) => {
   const { t } = useTranslation()
 
   return (
-    <OperationBoxStyled className={className} placeholder={placeholder}>
+    <OperationBoxStyled className={className} $placeholder={$placeholder}>
       <IconWrapper>{Icon}</IconWrapper>
       <div>
         <Title>{title}</Title>
         <Description>{description}</Description>
       </div>
       <Footer data-tooltip-id="default" data-tooltip-content={disabledButtonTooltip}>
-        {placeholder ? (
+        {$placeholder ? (
           <ActionLink onClick={onButtonClick}>{buttonText}</ActionLink>
         ) : (
           <Button short wide onClick={onButtonClick} style={{ minWidth: 100, margin: 0 }} disabled={isButtonDisabled}>
@@ -62,7 +62,7 @@ const OperationBox = ({
 
 export default OperationBox
 
-const OperationBoxStyled = styled.div<Pick<OperationBoxProps, 'placeholder'>>`
+const OperationBoxStyled = styled.div<Pick<OperationBoxProps, '$placeholder'>>`
   padding: var(--spacing-3);
   background-color: ${({ theme }) => theme.bg.tertiary};
   border: 1px solid ${({ theme }) => theme.border.primary};
@@ -73,8 +73,8 @@ const OperationBoxStyled = styled.div<Pick<OperationBoxProps, 'placeholder'>>`
   justify-content: space-between;
   gap: 20px;
 
-  ${({ placeholder }) =>
-    placeholder &&
+  ${({ $placeholder }) =>
+    $placeholder &&
     css`
       justify-content: center;
       background-color: ${({ theme }) => theme.bg.accent};
