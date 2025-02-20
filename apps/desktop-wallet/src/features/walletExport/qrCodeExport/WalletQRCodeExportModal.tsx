@@ -48,7 +48,15 @@ const WalletQRCodeExportModal = memo(({ id }: ModalBaseProp) => {
   }
 
   return (
-    <CenteredModal title={t('Export wallet')} id={id} focusMode narrow={frames.length === 0} skipFocusOnMount>
+    <CenteredModal
+      title={t('Export wallet')}
+      id={id}
+      focusMode
+      narrow={frames.length === 0}
+      skipFocusOnMount
+      hasFooterButtons
+      dynamicContent
+    >
       {frames.length === 0 ? (
         <PasswordConfirmation
           text={t('Type your password to export your wallet.')}

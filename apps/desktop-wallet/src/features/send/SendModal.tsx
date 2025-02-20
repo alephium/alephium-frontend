@@ -201,6 +201,11 @@ function SendModal<PT extends { fromAddress: Address }>({
     type
   ])
 
+  const goToAddresses = useCallback(() => setStep('addresses'), [])
+  const goToBuildTx = useCallback(() => setStep('build-tx'), [])
+  const goToInfoCheck = useCallback(() => setStep('info-check'), [])
+  const goToPasswordCheck = useCallback(() => setStep('password-check'), [])
+
   const buildTransactionExtended = useCallback(
     async (data: TxData) => {
       setTransactionData(data)
@@ -236,7 +241,7 @@ function SendModal<PT extends { fromAddress: Address }>({
               name: 'ConsolidateUTXOsModal',
               props: {
                 fee: fees,
-                onConsolidateClick: passwordRequirement ? confirmPassword : handleSendExtended
+                onConsolidateClick: passwordRequirement ? () => setStep('password-check') : handleSendExtended
               }
             })
           )
@@ -266,17 +271,17 @@ function SendModal<PT extends { fromAddress: Address }>({
       setIsLoading(false)
     },
     [
-      type,
-      txContext,
       dispatch,
-      passwordRequirement,
       handleSendExtended,
-      sendAnalytics,
-      t,
+      id,
       isRequestToApproveContractCall,
-      triggeredByWalletConnect,
+      passwordRequirement,
+      sendAnalytics,
       sendFailureResponse,
-      id
+      t,
+      triggeredByWalletConnect,
+      txContext,
+      type
     ]
   )
 
@@ -287,26 +292,16 @@ function SendModal<PT extends { fromAddress: Address }>({
     }
   }, [buildTransactionExtended, isRequestToApproveContractCall, isTransactionBuildTriggered, transactionData])
 
-  const moveToSecondStep = (data: AddressesTxModalData) => {
+  const moveToSecondStep = useCallback((data: AddressesTxModalData) => {
     setAddressesData(data)
     setStep('build-tx')
-  }
+  }, [])
 
   useEffect(() => {
     if (step === 'tx-sent') {
       setTimeout(onClose, 2000)
     }
   }, [onClose, step])
-
-  const confirmPassword = () => setStep('password-check')
-
-  const onBackCallback = {
-    addresses: undefined,
-    'build-tx': () => setStep('addresses'),
-    'info-check': () => setStep('build-tx'),
-    'password-check': () => setStep('info-check'),
-    'tx-sent': undefined
-  }[step]
 
   return (
     <CenteredModal
@@ -315,7 +310,6 @@ function SendModal<PT extends { fromAddress: Address }>({
       onClose={onClose}
       isLoading={isLoading}
       dynamicContent
-      onBack={onBackCallback}
       focusMode
       disableBack={isRequestToApproveContractCall && step !== 'password-check'}
       hasFooterButtons
@@ -333,18 +327,21 @@ function SendModal<PT extends { fromAddress: Address }>({
           <TransferBuildTxModalContent
             data={{ ...(transactionData ?? {}), ...addressesData }}
             onSubmit={buildTransactionExtended}
+            onBack={goToAddresses}
           />
         ) : type === 'call-contract' ? (
           <CallContractBuildTxModalContent
             data={{ ...(transactionData ?? {}), ...addressesData }}
             onSubmit={buildTransactionExtended}
             onCancel={onClose}
+            onBack={goToAddresses}
           />
         ) : (
           <DeployContractBuildTxModalContent
             data={{ ...(transactionData ?? {}), ...addressesData }}
             onSubmit={buildTransactionExtended}
             onCancel={onClose}
+            onBack={goToAddresses}
           />
         ))}
       {step === 'info-check' &&
@@ -354,19 +351,22 @@ function SendModal<PT extends { fromAddress: Address }>({
           <TransferCheckTxModalContent
             data={transactionData as TransferTxData}
             fees={fees}
-            onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
+            onSubmit={passwordRequirement ? goToPasswordCheck : handleSendExtended}
+            onBack={goToBuildTx}
           />
         ) : type === 'call-contract' ? (
           <CallContractCheckTxModalContent
             data={transactionData as CallContractTxData}
             fees={fees}
-            onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
+            onSubmit={passwordRequirement ? goToPasswordCheck : handleSendExtended}
+            onBack={goToBuildTx}
           />
         ) : (
           <DeployContractCheckTxModalContent
             data={transactionData as DeployContractTxData}
             fees={fees}
-            onSubmit={passwordRequirement ? confirmPassword : handleSendExtended}
+            onSubmit={passwordRequirement ? goToPasswordCheck : handleSendExtended}
+            onBack={goToBuildTx}
           />
         ))}
       {step === 'password-check' && passwordRequirement && (
@@ -375,6 +375,7 @@ function SendModal<PT extends { fromAddress: Address }>({
           buttonText={t('Send')}
           highlightButton
           onCorrectPasswordEntered={handleSendExtended}
+          onBack={goToInfoCheck}
         >
           <PasswordConfirmationNote>
             {t('You can disable this confirmation step from the wallet settings.')}

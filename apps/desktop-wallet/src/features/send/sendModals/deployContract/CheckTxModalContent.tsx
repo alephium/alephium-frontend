@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
 import Box from '@/components/Box'
-import FooterButton from '@/components/Buttons/FooterButton'
 import InfoBox from '@/components/InfoBox'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckAmountsBox from '@/features/send/CheckAmountsBox'
@@ -11,8 +10,9 @@ import InfoRow from '@/features/send/InfoRow'
 import { CheckTxProps, DeployContractTxData } from '@/features/send/sendTypes'
 import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { useAppSelector } from '@/hooks/redux'
+import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 
-const DeployContractCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProps<DeployContractTxData>) => {
+const DeployContractCheckTxModalContent = ({ data, fees, onSubmit, onBack }: CheckTxProps<DeployContractTxData>) => {
   const { t } = useTranslation()
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
 
@@ -29,9 +29,14 @@ const DeployContractCheckTxModalContent = ({ data, fees, onSubmit }: CheckTxProp
         {data.initialAlphAmount && <CheckWorthBox assetAmounts={[data.initialAlphAmount]} fee={fees} />}
         <InfoBox label={t('Bytecode')} text={data.bytecode} wordBreak />
       </CheckModalContent>
-      <FooterButton onClick={onSubmit} variant={passwordRequirement ? 'default' : 'valid'}>
-        {t(passwordRequirement ? 'Confirm' : 'Send')}
-      </FooterButton>
+      <ModalFooterButtons>
+        <ModalFooterButton role="secondary" onClick={onBack}>
+          {t('Back')}
+        </ModalFooterButton>
+        <ModalFooterButton onClick={onSubmit} variant={passwordRequirement ? 'default' : 'valid'}>
+          {t(passwordRequirement ? 'Confirm' : 'Send')}
+        </ModalFooterButton>
+      </ModalFooterButtons>
     </>
   )
 }

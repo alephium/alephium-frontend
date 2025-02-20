@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddressBalancesAlph'
-import FooterButton from '@/components/Buttons/FooterButton'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
@@ -15,17 +14,24 @@ import { isAmountWithinRange } from '@/features/send/sendUtils'
 import TokensAmountInputs from '@/features/send/TokensAmountInputs'
 import useGasSettings from '@/hooks/useGasSettings'
 import useStateObject from '@/hooks/useStateObject'
+import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { AssetAmountInputType } from '@/types/assets'
 
 export interface DeployContractBuildTxModalContentProps {
   data: DeployContractTxModalData
   onSubmit: (data: DeployContractTxData) => void
   onCancel: () => void
+  onBack: () => void
 }
 
 const defaultAssetAmount = { id: ALPH.id }
 
-const DeployContractBuildTxModalContent = ({ data, onSubmit, onCancel }: DeployContractBuildTxModalContentProps) => {
+const DeployContractBuildTxModalContent = ({
+  data,
+  onSubmit,
+  onCancel,
+  onBack
+}: DeployContractBuildTxModalContentProps) => {
   const { t } = useTranslation()
   const {
     gasAmount,
@@ -103,21 +109,26 @@ const DeployContractBuildTxModalContent = ({ data, onSubmit, onCancel }: DeployC
           onGasPriceChange={handleGasPriceChange}
         />
       </ToggleSection>
-      <FooterButton
-        onClick={() =>
-          onSubmit({
-            fromAddress,
-            bytecode: bytecode ?? '',
-            issueTokenAmount: issueTokenAmount || undefined,
-            initialAlphAmount: alphAsset.amount && alphAsset.amount > 0 ? alphAsset : undefined,
-            gasAmount: gasAmount ? parseInt(gasAmount) : undefined,
-            gasPrice
-          })
-        }
-        disabled={!isSubmitButtonActive}
-      >
-        {t('Check')}
-      </FooterButton>
+      <ModalFooterButtons>
+        <ModalFooterButton role="secondary" onClick={onBack}>
+          {t('Back')}
+        </ModalFooterButton>
+        <ModalFooterButton
+          onClick={() =>
+            onSubmit({
+              fromAddress,
+              bytecode: bytecode ?? '',
+              issueTokenAmount: issueTokenAmount || undefined,
+              initialAlphAmount: alphAsset.amount && alphAsset.amount > 0 ? alphAsset : undefined,
+              gasAmount: gasAmount ? parseInt(gasAmount) : undefined,
+              gasPrice
+            })
+          }
+          disabled={!isSubmitButtonActive}
+        >
+          {t('Check')}
+        </ModalFooterButton>
+      </ModalFooterButtons>
     </>
   )
 }

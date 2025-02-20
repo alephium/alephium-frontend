@@ -35,7 +35,7 @@ export default QRCodeLoop
 
 const QRCodeLoopStyled = styled.div`
   position: relative;
-  height: 400px;
+  height: 420px;
   width: 100%;
   display: flex;
   justify-content: center;

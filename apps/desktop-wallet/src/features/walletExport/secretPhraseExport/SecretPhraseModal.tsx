@@ -50,15 +50,15 @@ const SecretPhraseModal = ({ id }: ModalBaseProp) => {
       focusMode
       narrow={!isDisplayingPhrase}
       skipFocusOnMount
+      hasFooterButtons
+      dynamicContent
     >
       {!isDisplayingPhrase ? (
-        <div>
-          <PasswordConfirmation
-            text={t('Type your password to show the phrase.')}
-            buttonText={t('Show')}
-            onCorrectPasswordEntered={handleCorrectPasswordEntered}
-          />
-        </div>
+        <PasswordConfirmation
+          text={t('Type your password to show the phrase.')}
+          buttonText={t('Show')}
+          onCorrectPasswordEntered={handleCorrectPasswordEntered}
+        />
       ) : (
         <Section>
           <InfoBox

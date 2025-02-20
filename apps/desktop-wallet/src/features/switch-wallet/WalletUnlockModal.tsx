@@ -47,7 +47,7 @@ const WalletUnlockModal = memo(({ id, walletId }: ModalBaseProp & WalletUnlockMo
   }
 
   return (
-    <CenteredModal narrow title={t('Enter password')} id={id} skipFocusOnMount>
+    <CenteredModal narrow title={t('Enter password')} id={id} skipFocusOnMount hasFooterButtons dynamicContent>
       <PasswordConfirmation
         text={t('Enter password for "{{ walletName }}"', { walletName })}
         buttonText={t('Unlock')}
@@ -56,13 +56,7 @@ const WalletUnlockModal = memo(({ id, walletId }: ModalBaseProp & WalletUnlockMo
         isSubmitDisabled={!isPassphraseSubmitEnabled}
       >
         {passphraseConsent && <WalletPassphraseStyled onPassphraseConfirmed={setPassphrase} />}
-        <UsePassphraseButtonStyled
-          passphraseConsent={passphraseConsent}
-          onConsentChange={handleUsePassphrasePress}
-          squared
-          wide
-          justifyContent="center"
-        />
+        <UsePassphraseButtonStyled passphraseConsent={passphraseConsent} onConsentChange={handleUsePassphrasePress} />
       </PasswordConfirmation>
     </CenteredModal>
   )
@@ -75,5 +69,5 @@ const WalletPassphraseStyled = styled(WalletPassphrase)`
 `
 
 const UsePassphraseButtonStyled = styled(UsePassphraseButton)`
-  margin-top: var(--spacing-4);
+  margin-left: auto;
 `

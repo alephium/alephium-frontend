@@ -65,6 +65,7 @@ export type CheckTxProps<T> = {
   data: T
   fees: bigint
   onSubmit: () => void
+  onBack: () => void
 }
 
 export type UnsignedTx = {
