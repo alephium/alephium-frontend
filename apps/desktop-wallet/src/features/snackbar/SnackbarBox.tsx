@@ -9,7 +9,7 @@ import Button from '@/components/Button'
 
 interface SnackbarBoxProps {
   children: ReactNode
-  onClose: () => void
+  onClose?: () => void
   className?: string
 }
 
@@ -21,7 +21,9 @@ const SnackbarBox = ({ children, onClose, ...props }: SnackbarBoxProps) => {
       <BlurredBackground />
       <SnackbarBoxContent>
         {children}
-        <Button aria-label={t('Close')} circle role="secondary" transparent onClick={onClose} Icon={X} tiny />
+        {onClose && (
+          <Button aria-label={t('Close')} circle role="secondary" transparent onClick={onClose} Icon={X} tiny />
+        )}
       </SnackbarBoxContent>
     </SnackbarBoxStyled>
   )
