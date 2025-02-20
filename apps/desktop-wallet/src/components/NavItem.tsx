@@ -10,9 +10,10 @@ interface NavItemProps {
   label: string
   to?: string
   onClick?: () => void
+  className?: string
 }
 
-const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
+const NavItem = ({ Icon, label, to, onClick, className }: NavItemProps) => {
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -38,6 +39,7 @@ const NavItem = ({ Icon, label, to, onClick }: NavItemProps) => {
         data-tooltip-id="sidenav"
         data-tooltip-content={label}
         wide
+        className={className}
       >
         <LabelContainer>{label}</LabelContainer>
       </ButtonStyled>

@@ -16,7 +16,7 @@ const UnlockedWalletPage: FC<UnlockedWalletPageProps> = ({ title, subtitle, Bott
   <motion.div {...fadeIn} {...props}>
     {(title || subtitle) && (
       <PageHeader>
-        <TitleContainer style={{ marginBottom: BottomComponent ? 0 : 50 }}>
+        <TitleContainer style={{ marginBottom: BottomComponent ? 0 : 35 }}>
           {title && <PageTitle>{title}</PageTitle>}
           {subtitle && <PageSubtitle>{subtitle}</PageSubtitle>}
         </TitleContainer>

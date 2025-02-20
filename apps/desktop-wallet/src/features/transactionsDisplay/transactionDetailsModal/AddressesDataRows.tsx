@@ -8,6 +8,7 @@ import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import IOList from '@/components/IOList'
 import { selectPendingSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
+import DirectionalInfo from '@/features/transactionsDisplay/transactionDetailsModal/DirectionalInfo'
 import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/PendingSentAddressBadge'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useOnAddressClick from '@/features/transactionsDisplay/transactionDetailsModal/useOnAddressClick'
@@ -22,7 +23,12 @@ const AddressesDataRows = ({ tx, refAddressHash }: TransactionDetailsModalTxProp
   const handleShowTxInExplorer = useOpenTxInExplorer(tx.hash)
   const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
 
-  if (direction === 'swap') return null
+  if (direction === 'swap')
+    return (
+      <DataList.Row label={t('Addresses')}>
+        <DirectionalInfo tx={tx} refAddressHash={refAddressHash} />
+      </DataList.Row>
+    )
 
   const handleAddressClick = () => onAddressClick(refAddressHash)
 

@@ -34,11 +34,15 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
   } = useGasSettings(data?.gasAmount?.toString(), data?.gasPrice)
 
   const [lockTime, setLockTime] = useState(data.lockTime)
-  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(data.assetAmounts || [])
 
   const { fromAddress, toAddress } = data
 
   const { data: tokensBalances } = useFetchAddressBalances({ addressHash: fromAddress.hash })
+
+  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(
+    data.assetAmounts ?? (data.tokenId ? [{ id: data.tokenId }] : [])
+  )
+
   const allAssetAmountsAreWithinAvailableBalance = useAreAmountsWithinAddressAvailableBalances(
     fromAddress.hash,
     assetAmounts ?? []

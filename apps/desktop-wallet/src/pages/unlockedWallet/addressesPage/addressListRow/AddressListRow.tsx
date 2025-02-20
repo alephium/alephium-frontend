@@ -82,7 +82,8 @@ const Label = styled.div`
   font-size: 15px;
   font-weight: var(--fontWeight-semiBold);
   display: flex;
-  max-width: 150px;
+  min-width: 0;
+  padding-right: var(--spacing-4);
 `
 
 const Cell = styled.div`
@@ -97,7 +98,7 @@ const Cell = styled.div`
 const GridRow = styled.div`
   position: relative;
   display: grid;
-  grid-template-columns: 40px 1fr 1fr 1fr 1fr;
+  grid-template-columns: 40px minmax(0, 1fr) 1fr 1fr 1fr;
 
   ${({ onClick, theme }) =>
     onClick &&

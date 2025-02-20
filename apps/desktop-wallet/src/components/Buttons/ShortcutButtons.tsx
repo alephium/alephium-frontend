@@ -7,6 +7,7 @@ import { ButtonHTMLAttributes } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -111,7 +112,7 @@ const ReceiveButton = ({ addressHash, analyticsOrigin, color }: ShortcutButtonsG
 
   return (
     <ShortcutButton onClick={handleReceiveClick} color={color}>
-      <ArrowDownToLine size={22} strokeWidth={1.5} />
+      <ArrowDownToLine size={20} strokeWidth={1.5} />
       <ButtonText>{t('Receive')}</ButtonText>
     </ShortcutButton>
   )
@@ -127,6 +128,7 @@ const SendButton = ({ addressHash, tokenId, color, analyticsOrigin }: SendButton
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const dispatch = useAppDispatch()
   const { data: addressesHashesWithBalance } = useFetchAddressesHashesWithBalance(tokenId)
+  const { data: tokensBalances } = useFetchAddressBalances({ addressHash })
   const currentNetwork = useCurrentlyOnlineNetworkId()
 
   if (!fromAddress) return null
@@ -142,7 +144,9 @@ const SendButton = ({ addressHash, tokenId, color, analyticsOrigin }: SendButton
   const handleSendClick = () => {
     if (isDisabled) return
 
-    dispatch(openModal({ name: 'TransferSendModal', props: { initialTxData: { fromAddress, tokenId } } }))
+    const sendToken = tokenId ?? tokensBalances?.length === 1 ? tokensBalances[0].id : undefined
+
+    dispatch(openModal({ name: 'TransferSendModal', props: { initialTxData: { fromAddress, tokenId: sendToken } } }))
     sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
   }
 
@@ -154,7 +158,7 @@ const SendButton = ({ addressHash, tokenId, color, analyticsOrigin }: SendButton
       style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
       color={color}
     >
-      <Send size={22} strokeWidth={1.5} />
+      <Send size={20} strokeWidth={1.5} />
       <ButtonText>{t('Send')}</ButtonText>
     </ShortcutButton>
   )
@@ -175,7 +179,7 @@ const BuyButton = ({ addressHash, analyticsOrigin, color }: ShortcutButtonsGroup
 
   return (
     <ShortcutButton onClick={handleBuyClick} color={color}>
-      <CreditCard size={22} strokeWidth={1.5} />
+      <CreditCard size={20} strokeWidth={1.5} />
       <ButtonText>{t('Buy')}</ButtonText>
     </ShortcutButton>
   )
@@ -190,7 +194,7 @@ const ShortcutButton = (props: ShortcutButtonProps) => <ShortcutButtonStyled {..
 const ShortcutButtonStyled = styled.button<{ color?: string }>`
   display: flex;
   margin: 0;
-  min-width: 120px;
+  min-width: 110px;
   flex-direction: column;
   justify-content: center;
   border-radius: var(--radius-huge);

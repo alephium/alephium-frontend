@@ -1,5 +1,5 @@
 import { maxBy } from 'lodash'
-import { Lock, Plus, X } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -11,10 +11,11 @@ import Input from '@/components/Inputs/Input'
 import Select from '@/components/Inputs/Select'
 import { FloatingPanel, Section } from '@/components/PageComponents/PageContainers'
 import ConnectWithLedgerButton from '@/features/ledger/ConnectWithLedgerButton'
-import { openModal } from '@/features/modals/modalActions'
+import usePassphrase from '@/features/passphrase/usePassphrase'
+import UsePassphraseButton from '@/features/passphrase/UsePassphraseButton'
 import WalletPassphraseForm from '@/features/passphrase/WalletPassphraseForm'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import { StoredEncryptedWallet } from '@/types/wallet'
 
@@ -28,7 +29,6 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   const { unlockWallet } = useWalletLock()
   const { pendingDappConnectionUrl, isAwaitingSessionRequestApproval } = useWalletConnectContext()
   const navigate = useNavigate()
-  const dispatch = useAppDispatch()
 
   const walletOptions = wallets.map(({ id, name }) => ({ label: name, value: id }))
 
@@ -37,8 +37,9 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
   )
   const selectedWalletOption = walletOptions.find((option) => option.value === selectedWallet)
   const [password, setPassword] = useState('')
-  const [passphrase, setPassphrase] = useState('')
-  const [passphraseConsent, setPassphraseConsent] = useState(false)
+
+  const { passphrase, passphraseConsent, handleUsePassphrasePress, setPassphrase, isPassphraseSubmitEnabled } =
+    usePassphrase()
 
   if (walletOptions.length === 0) return null
 
@@ -57,15 +58,6 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
 
     setPassphrase('')
     setPassword('')
-  }
-
-  const onUsePassphraseClick = () => {
-    if (passphraseConsent) {
-      setPassphrase('')
-      setPassphraseConsent(false)
-    } else {
-      dispatch(openModal({ name: 'WalletPassphraseDisclaimerModal', props: { onConsentChange: setPassphraseConsent } }))
-    }
   }
 
   return (
@@ -113,24 +105,22 @@ const UnlockPanel = ({ onNewWalletLinkClick }: UnlockPanelProps) => {
           {passphraseConsent && <WalletPassphraseForm onPassphraseConfirmed={setPassphrase} />}
         </SectionStyled>
         <MainAction>
-          <ButtonStyled
+          <Button
             onClick={handleUnlock}
             submit
-            disabled={!selectedWalletOption || !password || (passphraseConsent && !passphrase)}
+            disabled={!selectedWalletOption || !password || !isPassphraseSubmitEnabled}
             tall
           >
             {t('Unlock')}
-          </ButtonStyled>
+          </Button>
         </MainAction>
       </FloatingPanel>
       <BottomActions>
-        <ButtonStyled onClick={onNewWalletLinkClick} Icon={Plus} role="secondary" short>
+        <Button onClick={onNewWalletLinkClick} Icon={Plus} role="secondary" short>
           {t('Import or create a wallet')}
-        </ButtonStyled>
+        </Button>
         <ConnectWithLedgerButton />
-        <ButtonStyled onClick={onUsePassphraseClick} Icon={passphraseConsent ? X : Lock} role="secondary" short>
-          {t(passphraseConsent ? "Don't use passphrase" : 'Use optional passphrase')}
-        </ButtonStyled>
+        <UsePassphraseButton onConsentChange={handleUsePassphrasePress} passphraseConsent={passphraseConsent} />
       </BottomActions>
     </>
   )
@@ -155,10 +145,6 @@ const BottomActions = styled.div`
   justify-content: center;
   display: flex;
   gap: 10px;
-`
-
-const ButtonStyled = styled(Button)`
-  margin-top: 10px;
 `
 
 const BrandContainer = styled.div`

@@ -48,7 +48,7 @@ export default styled(AddressColorIndicator)`
 
 const DefaultAddressIndicator = styled.div<{ color: string; size: number }>`
   position: relative;
-  width: ${({ size }) => size}px;
+  width: ${({ size }) => size * 1.2}px;
   transform: scale(1.1);
 
   svg * {

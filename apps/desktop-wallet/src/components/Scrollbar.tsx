@@ -16,7 +16,9 @@ const ScrollbarCustom = ({ children, className, onScroll }: ScrollbarCustomProps
 
   const handleScrollUpdate = (e: UIEvent<Element>) => {
     const scrollTop = (e.target as HTMLElement).scrollTop
+
     scrollY.set(scrollTop)
+
     if (onScroll) {
       onScroll(scrollTop)
     }

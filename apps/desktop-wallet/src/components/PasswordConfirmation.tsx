@@ -5,7 +5,6 @@ import styled from 'styled-components'
 
 import Button from '@/components/Button'
 import Input from '@/components/Inputs/Input'
-import { Section } from '@/components/PageComponents/PageContainers'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
@@ -53,20 +52,21 @@ const PasswordConfirmation = ({
 
   return (
     <>
-      <Section>
-        <Input value={password} label={text} type="password" onChange={(e) => setPassword(e.target.value)} autoFocus />
-        {children && <Children>{children}</Children>}
-      </Section>
-      <Section>
-        <ButtonStyled
-          onClick={validatePassword}
-          submit
-          disabled={isSubmitDisabled || !password}
-          variant={highlightButton ? 'valid' : 'default'}
-        >
-          {buttonText || t('Submit')}
-        </ButtonStyled>
-      </Section>
+      <Input value={password} label={text} type="password" onChange={(e) => setPassword(e.target.value)} autoFocus />
+
+      {children && <Children>{children}</Children>}
+
+      <Button
+        onClick={validatePassword}
+        submit
+        disabled={isSubmitDisabled || !password}
+        variant={highlightButton ? 'valid' : 'default'}
+        wide
+        justifyContent="center"
+        squared
+      >
+        {buttonText || t('Submit')}
+      </Button>
     </>
   )
 }
@@ -75,8 +75,5 @@ export default PasswordConfirmation
 
 const Children = styled.div`
   width: 100%;
-`
-
-const ButtonStyled = styled(Button)`
   margin-top: var(--spacing-4);
 `

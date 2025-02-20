@@ -39,7 +39,6 @@ import { migrateGeneralSettings, migrateNetworkSettings, migrateWalletData } fro
 
 const App = memo(() => {
   const theme = useAppSelector((s) => s.global.theme)
-  const { isWalletUnlocked } = useWalletLock()
 
   useAutoLock()
 

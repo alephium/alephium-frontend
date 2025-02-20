@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 import { FloatingPanel } from '@/components/PageComponents/PageContainers'
 import PanelTitle from '@/components/PageComponents/PanelTitle'
+import SideBarSettingsButton from '@/components/PageComponents/SideBarSettingsButton'
 import { useAppSelector } from '@/hooks/redux'
 import NewWalletActions from '@/pages/HomePage/NewWalletActions'
 import UnlockPanel from '@/pages/HomePage/UnlockPanel'
@@ -31,8 +33,16 @@ const HomePage = () => {
           <NewWalletActions />
         </FloatingPanel>
       )}
+      <SettingsButtonStyled />
     </LockedWalletLayout>
   )
 }
 
 export default HomePage
+
+const SettingsButtonStyled = styled(SideBarSettingsButton)`
+  position: absolute;
+  bottom: var(--spacing-2);
+  left: var(--spacing-2);
+  width: auto;
+`

@@ -82,13 +82,11 @@ const WalletQRCodeExportModal = memo(({ id }: ModalBaseProp) => {
   return (
     <CenteredModal title={t('Export wallet')} id={id} focusMode narrow={frames.length === 0} skipFocusOnMount>
       {frames.length === 0 ? (
-        <div>
-          <PasswordConfirmation
-            text={t('Type your password to export your wallet.')}
-            buttonText={t('Show QR code')}
-            onCorrectPasswordEntered={handleCorrectPasswordEntered}
-          />
-        </div>
+        <PasswordConfirmation
+          text={t('Type your password to export your wallet.')}
+          buttonText={t('Show QR code')}
+          onCorrectPasswordEntered={handleCorrectPasswordEntered}
+        />
       ) : (
         <Section>
           <InfoBox
@@ -99,7 +97,7 @@ const WalletQRCodeExportModal = memo(({ id }: ModalBaseProp) => {
           <QRCodeLoop>
             {frames.map((data, i) => (
               <div key={i} style={{ position: 'absolute', opacity: i === frame ? 1 : 0 }}>
-                <QRCode size={460} value={data} bgColor={theme.bg.primary} fgColor={theme.font.primary} />
+                <QRCode size={400} value={data} bgColor={theme.bg.primary} fgColor={theme.font.primary} />
               </div>
             ))}
           </QRCodeLoop>

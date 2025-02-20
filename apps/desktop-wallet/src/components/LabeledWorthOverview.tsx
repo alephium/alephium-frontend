@@ -26,6 +26,10 @@ const LabeledWorthOverviewStyled = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
+
+  * {
+    font-feature-settings: 'tnum' off;
+  }
 `
 
 const Surtitle = styled.div`

@@ -5,7 +5,6 @@ import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import Button from '@/components/Button'
-import CheckMark from '@/components/CheckMark'
 import Select, { SelectOption } from '@/components/Inputs/Select'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
@@ -46,10 +45,9 @@ const DefaultAddressSwitch = () => {
       onSelect={handleDefaultAddressChange}
       controlledValue={addressOptions.find((n) => n.value === defaultAddress?.hash)}
       title={t('Default address')}
-      optionRender={({ value }, isSelected) => (
+      optionRender={({ value }) => (
         <OptionContent>
           <AddressBadgeStyled addressHash={value} truncate />
-          {isSelected && <CheckMark />}
         </OptionContent>
       )}
       id="defaultAddress"
@@ -83,7 +81,6 @@ const SelectCustomComponent = (value?: SelectOption<AddressHash>, disablePointer
 const AddressBadgeStyled = styled(AddressBadge)`
   width: 100%;
   overflow: hidden;
-  max-width: 120px;
 `
 
 const OptionContent = styled.div`

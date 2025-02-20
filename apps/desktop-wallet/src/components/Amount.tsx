@@ -9,7 +9,7 @@ import { discreetModeToggled } from '@/features/settings/settingsActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { isFT, TokenId } from '@/types/tokens'
 
-interface AmountBaseProps {
+export interface AmountBaseProps {
   fadeDecimals?: boolean
   color?: string
   overrideSuffixColor?: boolean

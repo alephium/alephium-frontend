@@ -6,6 +6,8 @@ import styled from 'styled-components'
 import PasswordConfirmation from '@/components/PasswordConfirmation'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import usePassphrase from '@/features/passphrase/usePassphrase'
+import UsePassphraseButton from '@/features/passphrase/UsePassphraseButton'
 import WalletPassphrase from '@/features/passphrase/WalletPassphraseForm'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
@@ -22,7 +24,9 @@ const WalletUnlockModal = memo(({ id, walletId }: ModalBaseProp & WalletUnlockMo
   const { t } = useTranslation()
   const wallets = useAppSelector((s) => s.global.wallets)
 
-  const [passphrase, setPassphrase] = useState('')
+  const { passphrase, passphraseConsent, handleUsePassphrasePress, setPassphrase, isPassphraseSubmitEnabled } =
+    usePassphrase()
+
   const [walletName] = useState(wallets.find((wallet) => wallet.id === walletId)?.name)
 
   const onUnlockClick = (password: string) => {
@@ -49,9 +53,16 @@ const WalletUnlockModal = memo(({ id, walletId }: ModalBaseProp & WalletUnlockMo
         buttonText={t('Unlock')}
         onCorrectPasswordEntered={onUnlockClick}
         walletId={walletId}
-        isSubmitDisabled={!passphrase}
+        isSubmitDisabled={!isPassphraseSubmitEnabled}
       >
-        <WalletPassphraseStyled onPassphraseConfirmed={setPassphrase} />
+        {passphraseConsent && <WalletPassphraseStyled onPassphraseConfirmed={setPassphrase} />}
+        <UsePassphraseButtonStyled
+          passphraseConsent={passphraseConsent}
+          onConsentChange={handleUsePassphrasePress}
+          squared
+          wide
+          justifyContent="center"
+        />
       </PasswordConfirmation>
     </CenteredModal>
   )
@@ -60,6 +71,9 @@ const WalletUnlockModal = memo(({ id, walletId }: ModalBaseProp & WalletUnlockMo
 export default WalletUnlockModal
 
 const WalletPassphraseStyled = styled(WalletPassphrase)`
-  margin: 10px 0;
   width: 100%;
+`
+
+const UsePassphraseButtonStyled = styled(UsePassphraseButton)`
+  margin-top: var(--spacing-4);
 `

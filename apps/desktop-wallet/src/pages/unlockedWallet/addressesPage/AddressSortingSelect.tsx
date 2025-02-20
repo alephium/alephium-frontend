@@ -43,5 +43,5 @@ const AddressSortingSelect = () => {
 export default AddressSortingSelect
 
 const AddressSortingSelectStyled = styled.div`
-  width: 180px;
+  min-width: 180px;
 `

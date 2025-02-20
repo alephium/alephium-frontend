@@ -47,7 +47,7 @@ const SideModal = ({ id, onClose, children, title, header, width = 500, hideHead
           <ModalHeader>
             <ModalHeaderBackground style={{ opacity: headerBgOpacity }} />
             <ModalHeaderContent>
-              <HeaderColumn>{header ?? <Title>{title}</Title>}</HeaderColumn>
+              <HeaderColumn>{header ?? <SideModalTitle>{title}</SideModalTitle>}</HeaderColumn>
               <CloseButton aria-label={t('Close')} circle role="secondary" onClick={_onClose} Icon={X} tiny />
             </ModalHeaderContent>
           </ModalHeader>
@@ -118,6 +118,7 @@ const ModalHeaderContent = styled.div`
   padding: 0 10px 16px 20px;
   height: 70px;
   z-index: 1;
+  gap: var(--spacing-2);
 `
 
 const HeaderColumn = styled.div`
@@ -129,7 +130,7 @@ const CloseButton = styled(Button)`
   flex-shrink: 0;
 `
 
-const Title = styled.div`
+export const SideModalTitle = styled.div`
   font-weight: var(--fontWeight-semiBold);
   font-size: 15px;
 `
