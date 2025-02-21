@@ -1,3 +1,4 @@
+import { keyring } from '@alephium/keyring'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -35,7 +36,10 @@ const WalletRemovalModal = memo(({ id, walletId, walletName }: ModalBaseProp & W
 
     deletePersistedCache(walletId)
 
-    if (activeWalletId === walletId) clearQueryCache()
+    if (activeWalletId === walletId) {
+      clearQueryCache()
+      keyring.clear()
+    }
 
     dispatch(walletId === activeWalletId ? activeWalletDeleted() : walletDeleted(walletId))
     dispatch(closeModal({ id }))
