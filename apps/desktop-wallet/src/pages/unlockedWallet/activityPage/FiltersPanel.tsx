@@ -46,11 +46,9 @@ const FiltersPanel = ({
   const renderAddressesSelectedValue = () =>
     selectedAddresses.length === 0
       ? ''
-      : selectedAddresses.length === 1
-        ? selectedAddresses[0].label || selectedAddresses[0].hash
-        : selectedAddresses.length === addresses.length
-          ? t('All selected')
-          : t('{{ number }} selected', { number: selectedAddresses.length })
+      : selectedAddresses.length === addresses.length
+        ? t('All selected')
+        : t('{{ number }} selected', { number: selectedAddresses.length })
 
   const renderDirectionsSelectedValue = () =>
     selectedDirections.length === 0
@@ -147,6 +145,7 @@ const FilterTiles = styled.div`
   display: flex;
   flex: 1;
   gap: 20px;
+  flex-wrap: wrap;
 `
 
 const FilterTile = styled.div``
