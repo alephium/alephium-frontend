@@ -133,12 +133,15 @@ const SendButton = ({ addressHash, tokenId, color, analyticsOrigin }: SendButton
 
   if (!fromAddress) return null
 
-  const isDisabled = addressesHashesWithBalance.length === 0
+  const isOffline = currentNetwork === undefined
+  const isDisabled = addressesHashesWithBalance.length === 0 || isOffline
   const isTestnetOrDevnet = currentNetwork === 1 || currentNetwork === 4
   const tooltipContent = isDisabled
     ? isTestnetOrDevnet
       ? t('The wallet is empty. Use the faucet in the developer tools in the app settings.')
-      : t('To send funds you first need to load your wallet with some.')
+      : isOffline
+        ? t('The wallet is offline.')
+        : t('To send funds you first need to load your wallet with some.')
     : undefined
 
   const handleSendClick = () => {
