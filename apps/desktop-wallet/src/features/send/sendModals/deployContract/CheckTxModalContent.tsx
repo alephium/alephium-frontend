@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
 import Box from '@/components/Box'
-import InfoBox from '@/components/InfoBox'
+import BytecodeExpandableSection from '@/features/send/BytecodeExpandableSection'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckAmountsBox from '@/features/send/CheckAmountsBox'
 import CheckModalContent from '@/features/send/CheckModalContent'
@@ -27,7 +27,7 @@ const DeployContractCheckTxModalContent = ({ data, fees, onSubmit, onBack }: Che
           </Box>
         )}
         {data.initialAlphAmount && <CheckWorthBox assetAmounts={[data.initialAlphAmount]} fee={fees} />}
-        <InfoBox label={t('Bytecode')} text={data.bytecode} wordBreak />
+        <BytecodeExpandableSection bytecode={data.bytecode} />
       </CheckModalContent>
       <ModalFooterButtons>
         <ModalFooterButton role="secondary" onClick={onBack}>
