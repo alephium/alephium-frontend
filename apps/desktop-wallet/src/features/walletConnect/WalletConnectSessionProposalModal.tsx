@@ -39,8 +39,14 @@ const WalletConnectSessionProposalModal = memo(
   }: ModalBaseProp & WalletConnectSessionProposalModalProps) => {
     const { t } = useTranslation()
     const { sendAnalytics } = useAnalytics()
-    const { walletConnectClient, resetPendingDappConnectionUrl, activeSessions, refreshActiveSessions } =
-      useWalletConnectContext()
+    const {
+      walletConnectClient,
+      resetPendingDappConnectionUrl,
+      activeSessions,
+      refreshActiveSessions,
+      reinitializeWalletConnectClient,
+      walletConnectClientStatus
+    } = useWalletConnectContext()
     const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
     const currentNetworkName = useAppSelector((s) => s.network.name)
     const dispatch = useAppDispatch()
@@ -86,6 +92,7 @@ const WalletConnectSessionProposalModal = memo(
 
       if (!walletConnectClient) {
         console.error('❌ Could not find WalletConnect client')
+        reinitializeWalletConnectClient()
         return
       }
 
@@ -269,7 +276,11 @@ const WalletConnectSessionProposalModal = memo(
               <ModalFooterButton role="secondary" onClick={() => rejectAndCloseModal(true)}>
                 {t('Decline')}
               </ModalFooterButton>
-              <ModalFooterButton variant="valid" onClick={approveProposal} disabled={!signerAddressPublicKey}>
+              <ModalFooterButton
+                variant="valid"
+                onClick={approveProposal}
+                disabled={!signerAddressPublicKey || walletConnectClientStatus !== 'initialized'}
+              >
                 {t('Accept')}
               </ModalFooterButton>
             </ModalFooterButtons>
