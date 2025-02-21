@@ -13,10 +13,11 @@ import { openInWebBrowser } from '@/utils/misc'
 interface CheckAddressesBoxProps extends BoxProps {
   fromAddress: Address
   toAddressHash?: AddressHash
+  dAppUrl?: string
   className?: string
 }
 
-const CheckAddressesBox = ({ fromAddress, toAddressHash, ...props }: CheckAddressesBoxProps) => {
+const CheckAddressesBox = ({ fromAddress, toAddressHash, dAppUrl, ...props }: CheckAddressesBoxProps) => {
   const { t } = useTranslation()
 
   return (
@@ -27,14 +28,17 @@ const CheckAddressesBox = ({ fromAddress, toAddressHash, ...props }: CheckAddres
         <AddressBadge addressHash={fromAddress.hash} truncate appendHash withBorders />
       </AddressRow>
 
-      {toAddressHash && (
+      {(toAddressHash || dAppUrl) && (
         <AddressRow>
           <AddressLabel>{t('To')}</AddressLabel>
 
-          <DestinationAddress>
-            <AddressBadge addressHash={toAddressHash} truncate appendHash withBorders />
-            <ExplorerLink addressHash={toAddressHash} />
-          </DestinationAddress>
+          {toAddressHash && (
+            <DestinationAddress>
+              <AddressBadge addressHash={toAddressHash} truncate appendHash withBorders />
+              <ExplorerLink addressHash={toAddressHash} />
+            </DestinationAddress>
+          )}
+          {dAppUrl && <DestinationAddress>{dAppUrl}</DestinationAddress>}
         </AddressRow>
       )}
     </Box>

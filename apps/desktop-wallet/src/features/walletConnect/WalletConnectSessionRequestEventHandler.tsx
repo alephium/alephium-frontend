@@ -102,7 +102,8 @@ const WalletConnectSessionRequestEventHandler = ({
                   initialStep: 'info-check',
                   initialTxData: txData,
                   txData,
-                  triggeredByWalletConnect: true
+                  triggeredByWalletConnect: true,
+                  dAppUrl: event.verifyContext.verified.origin
                 }
               })
             )
@@ -124,13 +125,17 @@ const WalletConnectSessionRequestEventHandler = ({
               gasPrice: gasPrice?.toString()
             }
 
+            console.log('txData', txData)
+
             dispatch(
               openModal({
                 name: 'DeployContractSendModal',
                 props: {
+                  initialStep: 'info-check',
                   initialTxData: txData,
                   txData: txData as DeployContractTxData,
-                  triggeredByWalletConnect: true
+                  triggeredByWalletConnect: true,
+                  dAppUrl: event.verifyContext.verified.origin
                 }
               })
             )
@@ -172,7 +177,8 @@ const WalletConnectSessionRequestEventHandler = ({
                   initialStep: 'info-check',
                   initialTxData: txData,
                   txData,
-                  triggeredByWalletConnect: true
+                  triggeredByWalletConnect: true,
+                  dAppUrl: event.verifyContext.verified.origin
                 }
               })
             )
@@ -185,7 +191,9 @@ const WalletConnectSessionRequestEventHandler = ({
               message,
               messageHasher
             }
-            dispatch(openModal({ name: 'SignMessageModal', props: { txData } }))
+            dispatch(
+              openModal({ name: 'SignMessageModal', props: { txData, dAppUrl: event.verifyContext.verified.origin } })
+            )
             break
           }
           case 'alph_signUnsignedTx':
@@ -198,7 +206,11 @@ const WalletConnectSessionRequestEventHandler = ({
             dispatch(
               openModal({
                 name: 'SignUnsignedTxModal',
-                props: { txData, submit: request.method === 'alph_signAndSubmitUnsignedTx' }
+                props: {
+                  txData,
+                  submit: request.method === 'alph_signAndSubmitUnsignedTx',
+                  dAppUrl: event.verifyContext.verified.origin
+                }
               })
             )
             break

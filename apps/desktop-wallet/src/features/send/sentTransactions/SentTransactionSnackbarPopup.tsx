@@ -113,8 +113,6 @@ const DetailsLink = ({ hash }: Pick<SentTransaction, 'hash'>) => {
 }
 
 const HashEllipsedStyled = styled(HashEllipsed)`
-  width: 100%;
-  max-width: 150px;
   color: ${({ theme }) => theme.font.highlight};
 `
 

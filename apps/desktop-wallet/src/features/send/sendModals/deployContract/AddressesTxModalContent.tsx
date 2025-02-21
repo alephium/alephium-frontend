@@ -1,12 +1,14 @@
+import { AlertTriangle } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import FooterButton from '@/components/Buttons/FooterButton'
+import InfoBox from '@/components/InfoBox'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import AddressInputs from '@/features/send/AddressInputs'
 import { DeployContractTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
+import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 interface DeployContractAddressesTxModalContentProps {
@@ -26,21 +28,34 @@ const DeployContractAddressesTxModalContent = ({
   const [fromAddressHash, setFromAddressHash] = useState(data.fromAddress.hash)
   const fromAddress = useAppSelector((s) => selectAddressByHash(s, fromAddressHash))
 
-  if (fromAddress === undefined) {
-    onCancel()
-    return null
-  }
-
   return (
     <>
-      <InputFieldsColumn>
-        <AddressInputs
-          defaultFromAddress={fromAddressHash}
-          fromAddresses={fromAddresses}
-          onFromAddressChange={setFromAddressHash}
+      {fromAddresses.length > 0 ? (
+        <InputFieldsColumn>
+          <AddressInputs
+            defaultFromAddress={fromAddressHash}
+            fromAddresses={fromAddresses}
+            onFromAddressChange={setFromAddressHash}
+          />
+        </InputFieldsColumn>
+      ) : (
+        <InfoBox
+          text={t(
+            'There are no addresses with available balance. Please, send some funds to one of your addresses, and try again.'
+          )}
+          importance="warning"
+          Icon={AlertTriangle}
         />
-      </InputFieldsColumn>
-      <FooterButton onClick={() => onSubmit({ fromAddress })}>{t('Continue')}</FooterButton>
+      )}
+
+      <ModalFooterButtons>
+        <ModalFooterButton role="secondary" onClick={onCancel}>
+          {t('Cancel')}
+        </ModalFooterButton>
+        {fromAddress && (
+          <ModalFooterButton onClick={() => onSubmit({ fromAddress })}>{t('Continue')}</ModalFooterButton>
+        )}
+      </ModalFooterButtons>
     </>
   )
 }

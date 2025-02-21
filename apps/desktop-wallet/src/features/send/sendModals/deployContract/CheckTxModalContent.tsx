@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
-import Box from '@/components/Box'
+import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import BytecodeExpandableSection from '@/features/send/BytecodeExpandableSection'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckAmountsBox from '@/features/send/CheckAmountsBox'
@@ -12,7 +12,13 @@ import { selectEffectivePasswordRequirement } from '@/features/settings/settings
 import { useAppSelector } from '@/hooks/redux'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 
-const DeployContractCheckTxModalContent = ({ data, fees, onSubmit, onBack }: CheckTxProps<DeployContractTxData>) => {
+const DeployContractCheckTxModalContent = ({
+  data,
+  fees,
+  onSubmit,
+  onBack,
+  dAppUrl
+}: CheckTxProps<DeployContractTxData>) => {
   const { t } = useTranslation()
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
 
@@ -20,13 +26,19 @@ const DeployContractCheckTxModalContent = ({ data, fees, onSubmit, onBack }: Che
     <>
       <CheckModalContent>
         {data.initialAlphAmount && <CheckAmountsBox assetAmounts={[data.initialAlphAmount]} hasBg hasPadding />}
-        <CheckAddressesBox fromAddress={data.fromAddress} />
         {data.issueTokenAmount && (
-          <Box>
+          <>
             <InfoRow label={t('Issue token amount')}>{data.issueTokenAmount}</InfoRow>
-          </Box>
+            <HorizontalDivider />
+          </>
         )}
-        {data.initialAlphAmount && <CheckWorthBox assetAmounts={[data.initialAlphAmount]} fee={fees} />}
+        <CheckAddressesBox fromAddress={data.fromAddress} dAppUrl={dAppUrl} />
+        {data.initialAlphAmount && (
+          <>
+            <HorizontalDivider />
+            <CheckWorthBox assetAmounts={[data.initialAlphAmount]} fee={fees} />
+          </>
+        )}
         <BytecodeExpandableSection bytecode={data.bytecode} />
       </CheckModalContent>
       <ModalFooterButtons>

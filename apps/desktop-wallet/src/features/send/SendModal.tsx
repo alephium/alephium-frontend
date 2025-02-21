@@ -65,6 +65,7 @@ export type ConfigurableSendModalProps<PT extends { fromAddress: Address }> = {
   initialTxData: PT
   initialStep?: Step
   triggeredByWalletConnect?: boolean
+  dAppUrl?: string
 }
 
 export interface SendModalProps<PT extends { fromAddress: Address }> extends ConfigurableSendModalProps<PT> {
@@ -79,7 +80,8 @@ function SendModal<PT extends { fromAddress: Address }>({
   initialStep,
   type,
   id,
-  triggeredByWalletConnect
+  triggeredByWalletConnect,
+  dAppUrl
 }: ModalBaseProp & SendModalProps<PT>) {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -299,9 +301,9 @@ function SendModal<PT extends { fromAddress: Address }>({
 
   useEffect(() => {
     if (step === 'tx-sent') {
-      setTimeout(onClose, 2000)
+      setTimeout(() => dispatch(closeModal({ id })), 2000)
     }
-  }, [onClose, step])
+  }, [dispatch, id, step])
 
   return (
     <CenteredModal
@@ -353,6 +355,7 @@ function SendModal<PT extends { fromAddress: Address }>({
             fees={fees}
             onSubmit={passwordRequirement ? goToPasswordCheck : handleSendExtended}
             onBack={goToBuildTx}
+            dAppUrl={dAppUrl}
           />
         ) : type === 'call-contract' ? (
           <CallContractCheckTxModalContent
@@ -360,6 +363,7 @@ function SendModal<PT extends { fromAddress: Address }>({
             fees={fees}
             onSubmit={passwordRequirement ? goToPasswordCheck : handleSendExtended}
             onBack={goToBuildTx}
+            dAppUrl={dAppUrl}
           />
         ) : (
           <DeployContractCheckTxModalContent
@@ -367,6 +371,7 @@ function SendModal<PT extends { fromAddress: Address }>({
             fees={fees}
             onSubmit={passwordRequirement ? goToPasswordCheck : handleSendExtended}
             onBack={goToBuildTx}
+            dAppUrl={dAppUrl}
           />
         ))}
       {step === 'password-check' && passwordRequirement && (

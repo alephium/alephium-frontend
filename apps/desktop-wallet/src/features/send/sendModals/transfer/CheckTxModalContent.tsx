@@ -13,7 +13,7 @@ import { selectEffectivePasswordRequirement } from '@/features/settings/settings
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 
-const TransferCheckTxModalContent = ({ data, fees, onSubmit, onBack }: CheckTxProps<TransferTxData>) => {
+const TransferCheckTxModalContent = ({ data, fees, onSubmit, onBack, dAppUrl }: CheckTxProps<TransferTxData>) => {
   const { t } = useTranslation()
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
   const dispatch = useAppDispatch()
@@ -28,7 +28,7 @@ const TransferCheckTxModalContent = ({ data, fees, onSubmit, onBack }: CheckTxPr
     <>
       <CheckModalContent>
         <CheckAmountsBoxStyled assetAmounts={data.assetAmounts} hasBg hasPadding />
-        <CheckAddressesBox fromAddress={data.fromAddress} toAddressHash={data.toAddress} />
+        <CheckAddressesBox fromAddress={data.fromAddress} toAddressHash={data.toAddress} dAppUrl={dAppUrl} />
         <HorizontalDivider />
         {data.lockTime && (
           <>

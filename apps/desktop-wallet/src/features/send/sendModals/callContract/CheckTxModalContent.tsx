@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
+import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import BytecodeExpandableSection from '@/features/send/BytecodeExpandableSection'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckAmountsBox from '@/features/send/CheckAmountsBox'
@@ -10,7 +11,13 @@ import { selectEffectivePasswordRequirement } from '@/features/settings/settings
 import { useAppSelector } from '@/hooks/redux'
 import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 
-const CallContractCheckTxModalContent = ({ data, fees, onSubmit, onBack }: CheckTxProps<CallContractTxData>) => {
+const CallContractCheckTxModalContent = ({
+  data,
+  fees,
+  onSubmit,
+  onBack,
+  dAppUrl
+}: CheckTxProps<CallContractTxData>) => {
   const { t } = useTranslation()
   const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
 
@@ -18,8 +25,13 @@ const CallContractCheckTxModalContent = ({ data, fees, onSubmit, onBack }: Check
     <>
       <CheckModalContent>
         {data.assetAmounts && <CheckAmountsBox assetAmounts={data.assetAmounts} hasBg hasPadding />}
-        <CheckAddressesBox fromAddress={data.fromAddress} />
-        {data.assetAmounts && <CheckWorthBox assetAmounts={data.assetAmounts} fee={fees} />}
+        <CheckAddressesBox fromAddress={data.fromAddress} dAppUrl={dAppUrl} />
+        {data.assetAmounts && (
+          <>
+            <HorizontalDivider />
+            <CheckWorthBox assetAmounts={data.assetAmounts} fee={fees} />
+          </>
+        )}
         <BytecodeExpandableSection bytecode={data.bytecode} />
       </CheckModalContent>
       <ModalFooterButtons>

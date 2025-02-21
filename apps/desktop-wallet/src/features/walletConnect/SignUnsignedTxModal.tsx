@@ -26,147 +26,150 @@ import {
 export interface SignUnsignedTxModalProps {
   txData: SignUnsignedTxData
   submit?: boolean
+  dAppUrl: string
 }
 
-const SignUnsignedTxModal = memo(({ id, txData, submit = false }: ModalBaseProp & SignUnsignedTxModalProps) => {
-  const { t } = useTranslation()
-  const { sendAnalytics } = useAnalytics()
-  const dispatch = useAppDispatch()
-  const { sendUserRejectedResponse, sendSuccessResponse, sendFailureResponse } = useWalletConnectContext()
-  const { isLedger, onLedgerError } = useLedger()
-  const posthog = usePostHog()
+const SignUnsignedTxModal = memo(
+  ({ id, txData, submit = false, dAppUrl }: ModalBaseProp & SignUnsignedTxModalProps) => {
+    const { t } = useTranslation()
+    const { sendAnalytics } = useAnalytics()
+    const dispatch = useAppDispatch()
+    const { sendUserRejectedResponse, sendSuccessResponse, sendFailureResponse } = useWalletConnectContext()
+    const { isLedger, onLedgerError } = useLedger()
+    const posthog = usePostHog()
 
-  const [isLoading, setIsLoading] = useState(false)
-  const [decodedUnsignedTx, setDecodedUnsignedTx] = useState<Omit<SignUnsignedTxResult, 'signature'> | undefined>(
-    undefined
-  )
+    const [isLoading, setIsLoading] = useState(false)
+    const [decodedUnsignedTx, setDecodedUnsignedTx] = useState<Omit<SignUnsignedTxResult, 'signature'> | undefined>(
+      undefined
+    )
 
-  useEffect(() => {
-    const decodeUnsignedTx = async () => {
+    useEffect(() => {
+      const decodeUnsignedTx = async () => {
+        setIsLoading(true)
+
+        try {
+          const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
+            unsignedTx: txData.unsignedTx
+          })
+
+          setDecodedUnsignedTx({
+            txId: decodedResult.unsignedTx.txId,
+            fromGroup: decodedResult.fromGroup,
+            toGroup: decodedResult.toGroup,
+            unsignedTx: txData.unsignedTx,
+            gasAmount: decodedResult.unsignedTx.gasAmount,
+            gasPrice: BigInt(decodedResult.unsignedTx.gasPrice)
+          })
+        } catch (e) {
+          const message = 'Could not decode unsigned tx'
+          const errorMessage = getHumanReadableError(e, t(message))
+
+          sendAnalytics({ type: 'error', message })
+          dispatch(unsignedTransactionDecodingFailed(errorMessage))
+          sendFailureResponse({
+            message: getHumanReadableError(e, message),
+            code: WALLETCONNECT_ERRORS.TRANSACTION_DECODE_FAILED
+          })
+        } finally {
+          setIsLoading(false)
+        }
+      }
+
+      decodeUnsignedTx()
+    }, [dispatch, sendFailureResponse, sendAnalytics, t, txData.unsignedTx])
+
+    const handleSign = async () => {
+      if (!decodedUnsignedTx) return
+
       setIsLoading(true)
 
       try {
-        const decodedResult = await throttledClient.node.transactions.postTransactionsDecodeUnsignedTx({
-          unsignedTx: txData.unsignedTx
-        })
+        const signature = isLedger
+          ? await LedgerAlephium.create()
+              .catch(onLedgerError)
+              .then((app) => (app ? app.signUnsignedTx(txData.fromAddress.index, decodedUnsignedTx.unsignedTx) : null))
+          : keyring.signTransaction(decodedUnsignedTx.txId, txData.fromAddress.hash)
 
-        setDecodedUnsignedTx({
-          txId: decodedResult.unsignedTx.txId,
-          fromGroup: decodedResult.fromGroup,
-          toGroup: decodedResult.toGroup,
-          unsignedTx: txData.unsignedTx,
-          gasAmount: decodedResult.unsignedTx.gasAmount,
-          gasPrice: BigInt(decodedResult.unsignedTx.gasPrice)
-        })
-      } catch (e) {
-        const message = 'Could not decode unsigned tx'
-        const errorMessage = getHumanReadableError(e, t(message))
+        if (!signature) {
+          throw new Error()
+        }
+
+        const signResult: SignUnsignedTxResult = { signature, ...decodedUnsignedTx }
+
+        if (submit) {
+          const data = await throttledClient.node.transactions.postTransactionsSubmit({
+            unsignedTx: decodedUnsignedTx.unsignedTx,
+            signature
+          })
+
+          dispatch(
+            transactionSent({
+              hash: data.txId,
+              fromAddress: txData.fromAddress.hash,
+              toAddress: '',
+              timestamp: new Date().getTime(),
+              type: 'transfer',
+              status: 'sent'
+            })
+          )
+
+          posthog.capture('Signed and submitted unsigned transaction')
+        }
+
+        await sendSuccessResponse(signResult, true)
+
+        dispatch(unsignedTransactionSignSucceeded())
+        dispatch(closeModal({ id }))
+      } catch (error) {
+        const message = 'Could not sign unsigned tx'
+        const errorMessage = getHumanReadableError(error, t(message))
 
         sendAnalytics({ type: 'error', message })
-        dispatch(unsignedTransactionDecodingFailed(errorMessage))
+        dispatch(unsignedTransactionSignFailed(errorMessage))
         sendFailureResponse({
-          message: getHumanReadableError(e, message),
-          code: WALLETCONNECT_ERRORS.TRANSACTION_DECODE_FAILED
+          message: getHumanReadableError(error, message),
+          code: WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
         })
       } finally {
         setIsLoading(false)
       }
     }
 
-    decodeUnsignedTx()
-  }, [dispatch, sendFailureResponse, sendAnalytics, t, txData.unsignedTx])
-
-  const handleSign = async () => {
-    if (!decodedUnsignedTx) return
-
-    setIsLoading(true)
-
-    try {
-      const signature = isLedger
-        ? await LedgerAlephium.create()
-            .catch(onLedgerError)
-            .then((app) => (app ? app.signUnsignedTx(txData.fromAddress.index, decodedUnsignedTx.unsignedTx) : null))
-        : keyring.signTransaction(decodedUnsignedTx.txId, txData.fromAddress.hash)
-
-      if (!signature) {
-        throw new Error()
-      }
-
-      const signResult: SignUnsignedTxResult = { signature, ...decodedUnsignedTx }
-
-      if (submit) {
-        const data = await throttledClient.node.transactions.postTransactionsSubmit({
-          unsignedTx: decodedUnsignedTx.unsignedTx,
-          signature
-        })
-
-        dispatch(
-          transactionSent({
-            hash: data.txId,
-            fromAddress: txData.fromAddress.hash,
-            toAddress: '',
-            timestamp: new Date().getTime(),
-            type: 'transfer',
-            status: 'sent'
-          })
-        )
-
-        posthog.capture('Signed and submitted unsigned transaction')
-      }
-
-      await sendSuccessResponse(signResult, true)
-
-      dispatch(unsignedTransactionSignSucceeded())
+    const rejectAndClose = (hideApp?: boolean) => {
       dispatch(closeModal({ id }))
-    } catch (error) {
-      const message = 'Could not sign unsigned tx'
-      const errorMessage = getHumanReadableError(error, t(message))
-
-      sendAnalytics({ type: 'error', message })
-      dispatch(unsignedTransactionSignFailed(errorMessage))
-      sendFailureResponse({
-        message: getHumanReadableError(error, message),
-        code: WALLETCONNECT_ERRORS.TRANSACTION_SIGN_FAILED
-      })
-    } finally {
-      setIsLoading(false)
+      sendUserRejectedResponse(hideApp)
     }
-  }
 
-  const rejectAndClose = (hideApp?: boolean) => {
-    dispatch(closeModal({ id }))
-    sendUserRejectedResponse(hideApp)
+    return (
+      <CenteredModal
+        id={id}
+        title={t(submit ? 'Sign and Send Unsigned Transaction' : 'Sign Unsigned Transaction')}
+        subtitle={dAppUrl}
+        onClose={rejectAndClose}
+        isLoading={isLoading}
+        dynamicContent
+        focusMode
+        hasFooterButtons
+      >
+        {decodedUnsignedTx && (
+          <>
+            <InputFieldsColumn>
+              <InfoBox label={t('Transaction ID')} text={decodedUnsignedTx.txId} wordBreak />
+              <InfoBox label={t('Unsigned transaction')} text={decodedUnsignedTx.unsignedTx} wordBreak />
+            </InputFieldsColumn>
+            <ModalFooterButtons>
+              <ModalFooterButton role="secondary" onClick={() => rejectAndClose(true)}>
+                {t('Reject')}
+              </ModalFooterButton>
+              <ModalFooterButton onClick={handleSign} disabled={isLoading || !decodedUnsignedTx}>
+                {submit ? t('Sign and Send') : t('Sign')}
+              </ModalFooterButton>
+            </ModalFooterButtons>
+          </>
+        )}
+      </CenteredModal>
+    )
   }
-
-  return (
-    <CenteredModal
-      id={id}
-      title={t(submit ? 'Sign and Send Unsigned Transaction' : 'Sign Unsigned Transaction')}
-      onClose={rejectAndClose}
-      isLoading={isLoading}
-      dynamicContent
-      focusMode
-      noPadding
-      hasFooterButtons
-    >
-      {decodedUnsignedTx && (
-        <>
-          <InputFieldsColumn>
-            <InfoBox label={t('Transaction ID')} text={decodedUnsignedTx.txId} wordBreak />
-            <InfoBox label={t('Unsigned transaction')} text={decodedUnsignedTx.unsignedTx} wordBreak />
-          </InputFieldsColumn>
-          <ModalFooterButtons>
-            <ModalFooterButton role="secondary" onClick={() => rejectAndClose(true)}>
-              {t('Reject')}
-            </ModalFooterButton>
-            <ModalFooterButton onClick={handleSign} disabled={isLoading || !decodedUnsignedTx}>
-              {submit ? t('Sign and Send') : t('Sign')}
-            </ModalFooterButton>
-          </ModalFooterButtons>
-        </>
-      )}
-    </CenteredModal>
-  )
-})
+)
 
 export default SignUnsignedTxModal
