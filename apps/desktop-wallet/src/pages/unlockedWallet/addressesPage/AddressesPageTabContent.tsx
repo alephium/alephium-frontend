@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { fadeInOut } from '@/animations'
 import Button from '@/components/Button'
 import Input from '@/components/Inputs/Input'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
 interface AddressesPageTabContentProps {
   searchPlaceholder: string
@@ -27,29 +28,35 @@ const AddressesPageTabContent = ({
   AdditionalButtonComponents,
   children,
   className
-}: AddressesPageTabContentProps) => (
-  <AddressesPageTabContentStyled className={className}>
-    <Header>
-      <LeftSide>
-        <Searchbar
-          placeholder={searchPlaceholder}
-          Icon={SearchIcon}
-          onChange={(e) => onSearch(e.target.value)}
-          contrast
-          heightSize="normal"
-        />
-        {HeaderMiddleComponent}
-      </LeftSide>
-      <ButtonContainer {...fadeInOut}>
-        {AdditionalButtonComponents}
-        <Button onClick={onButtonClick} short>
-          {buttonText}
-        </Button>
-      </ButtonContainer>
-    </Header>
-    <Content>{children}</Content>
-  </AddressesPageTabContentStyled>
-)
+}: AddressesPageTabContentProps) => {
+  const hasMultipleAddresses = useUnsortedAddressesHashes().length > 1
+
+  return (
+    <AddressesPageTabContentStyled className={className}>
+      <Header>
+        {hasMultipleAddresses && (
+          <LeftSide>
+            <Searchbar
+              placeholder={searchPlaceholder}
+              Icon={SearchIcon}
+              onChange={(e) => onSearch(e.target.value)}
+              contrast
+              heightSize="normal"
+            />
+            {HeaderMiddleComponent}
+          </LeftSide>
+        )}
+        <ButtonContainer {...fadeInOut}>
+          {AdditionalButtonComponents}
+          <Button onClick={onButtonClick} short>
+            {buttonText}
+          </Button>
+        </ButtonContainer>
+      </Header>
+      <Content>{children}</Content>
+    </AddressesPageTabContentStyled>
+  )
+}
 
 export default AddressesPageTabContent
 
@@ -84,6 +91,7 @@ const ButtonContainer = styled(motion.div)`
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+  margin-left: auto;
 `
 
 const LeftSide = styled.div`

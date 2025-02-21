@@ -84,19 +84,21 @@ const FiltersPanel = ({
   return (
     <div className={className}>
       <FilterTiles>
-        <Tile>
-          <MultiSelect
-            label={t('Addresses')}
-            modalTitle={t('Select addresses')}
-            options={addresses}
-            selectedOptions={selectedAddresses}
-            selectedOptionsSetter={setSelectedAddresses}
-            renderSelectedValue={renderAddressesSelectedValue}
-            getOptionId={(address) => address.hash}
-            getOptionText={(address) => address.label || address.hash}
-            renderOption={(address, isSelected) => <SelectOptionAddress addressHash={address.hash} />}
-          />
-        </Tile>
+        {addresses.length > 1 && (
+          <Tile>
+            <MultiSelect
+              label={t('Addresses')}
+              modalTitle={t('Select addresses')}
+              options={addresses}
+              selectedOptions={selectedAddresses}
+              selectedOptionsSetter={setSelectedAddresses}
+              renderSelectedValue={renderAddressesSelectedValue}
+              getOptionId={(address) => address.hash}
+              getOptionText={(address) => address.label || address.hash}
+              renderOption={(address, isSelected) => <SelectOptionAddress addressHash={address.hash} />}
+            />
+          </Tile>
+        )}
         <Tile>
           <MultiSelect
             label={t('Assets')}

@@ -36,20 +36,22 @@ const WalletsSettingsSection = () => {
 
   return (
     <>
-      <Section align="flex-start" role="table">
-        <h2>{t('Wallet list')}</h2>
-        <BoxContainerStyled role="rowgroup">
-          {wallets.map((wallet) => (
-            <WalletItem
-              key={wallet.id}
-              wallet={wallet}
-              isCurrent={wallet.id === activeWalletId}
-              onWalletDelete={() => openWalletRemoveModal(wallet.id, wallet.name)}
-              isPassphraseUsed={wallet.id === activeWalletId && isPassphraseUsed}
-            />
-          ))}
-        </BoxContainerStyled>
-      </Section>
+      {wallets.length > 1 && (
+        <Section align="flex-start" role="table">
+          <h2>{t('Wallet list')}</h2>
+          <BoxContainerStyled role="rowgroup">
+            {wallets.map((wallet) => (
+              <WalletItem
+                key={wallet.id}
+                wallet={wallet}
+                isCurrent={wallet.id === activeWalletId}
+                onWalletDelete={() => openWalletRemoveModal(wallet.id, wallet.name)}
+                isPassphraseUsed={wallet.id === activeWalletId && isPassphraseUsed}
+              />
+            ))}
+          </BoxContainerStyled>
+        </Section>
+      )}
       {isWalletUnlocked && activeWalletId && activeWalletName && (
         <CurrentWalletSection align="flex-start">
           <h2>{t('Current wallet')}</h2>
@@ -176,6 +178,10 @@ const ActionButtons = styled.div`
 
 const CurrentWalletSection = styled(Section)`
   margin-top: var(--spacing-4);
+
+  &:first-child {
+    margin-top: 0;
+  }
 `
 
 const CurrentWalletBox = styled.div`
