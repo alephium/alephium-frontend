@@ -72,7 +72,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
                 data-tooltip-content={offlineText}
                 data-tooltip-id="default"
               >
-                <WifiOff size={20} color={theme.global.alert} />
+                <WifiOff size={16} color={theme.global.alert} />
               </OfflineIcon>
               <VerticalDivider />
             </>
@@ -163,9 +163,9 @@ const OfflineIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 35px;
-  height: 35px;
-  border-radius: 35px;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
   background-color: ${({ theme }) => colord(theme.global.alert).alpha(0.2).toHex()};
 `
 
