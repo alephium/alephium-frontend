@@ -1,17 +1,14 @@
 import { AddressHash } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { colord } from 'colord'
 import { ArrowDownToLine, CreditCard, Send, Settings } from 'lucide-react'
-import { ButtonHTMLAttributes } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
+import useSendButton from '@/features/send/useSendButton'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { TokenId } from '@/types/tokens'
 import { labelColorPalette, useDisplayColor, useHashToColor, walletColorPalette } from '@/utils/colors'
@@ -123,42 +120,19 @@ interface SendButtonProps extends ShortcutButtonsGroupAddressProps {
 }
 
 const SendButton = ({ addressHash, tokenId, color, analyticsOrigin }: SendButtonProps) => {
-  const { sendAnalytics } = useAnalytics()
   const { t } = useTranslation()
-  const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
-  const dispatch = useAppDispatch()
-  const { data: addressesHashesWithBalance } = useFetchAddressesHashesWithBalance(tokenId)
-  const { data: tokensBalances } = useFetchAddressBalances({ addressHash })
-  const currentNetwork = useCurrentlyOnlineNetworkId()
-
-  if (!fromAddress) return null
-
-  const isOffline = currentNetwork === undefined
-  const isDisabled = addressesHashesWithBalance.length === 0 || isOffline
-  const isTestnetOrDevnet = currentNetwork === 1 || currentNetwork === 4
-  const tooltipContent = isDisabled
-    ? isTestnetOrDevnet
-      ? t('The wallet is empty. Use the faucet in the developer tools in the app settings.')
-      : isOffline
-        ? t('The wallet is offline.')
-        : t('To send funds you first need to load your wallet with some.')
-    : undefined
-
-  const handleSendClick = () => {
-    if (isDisabled) return
-
-    const sendToken = tokenId ?? tokensBalances?.length === 1 ? tokensBalances[0].id : undefined
-
-    dispatch(openModal({ name: 'TransferSendModal', props: { initialTxData: { fromAddress, tokenId: sendToken } } }))
-    sendAnalytics({ event: 'Send button clicked', props: { origin: analyticsOrigin } })
-  }
+  const { tooltipContent, handleClick, cursor } = useSendButton({
+    fromAddressHash: addressHash,
+    tokenId,
+    analyticsOrigin
+  })
 
   return (
     <ShortcutButton
       data-tooltip-id="default"
       data-tooltip-content={tooltipContent}
-      onClick={isDisabled ? undefined : handleSendClick}
-      style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
+      onClick={handleClick}
+      style={{ cursor }}
       color={color}
     >
       <Send size={20} strokeWidth={1.5} />
@@ -188,13 +162,7 @@ const BuyButton = ({ addressHash, analyticsOrigin, color }: ShortcutButtonsGroup
   )
 }
 
-interface ShortcutButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  color?: string
-}
-
-const ShortcutButton = (props: ShortcutButtonProps) => <ShortcutButtonStyled {...props} />
-
-const ShortcutButtonStyled = styled.button<{ color?: string }>`
+const ShortcutButton = styled.button<{ color?: string }>`
   display: flex;
   margin: 0;
   min-width: 110px;
