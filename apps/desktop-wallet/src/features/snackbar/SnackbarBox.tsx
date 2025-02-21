@@ -40,7 +40,6 @@ const SnackbarBoxStyled = styled(motion.div)`
   max-width: 1200px;
   width: 80%;
   height: 80px;
-  border: 1px solid red;
 
   &.alert {
     ${({ theme }) => getSnackbarStyling(theme.global.alert)}

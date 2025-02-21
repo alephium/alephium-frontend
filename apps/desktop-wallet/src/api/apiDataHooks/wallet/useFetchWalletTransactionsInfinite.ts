@@ -26,7 +26,7 @@ const useFetchWalletTransactionsInfinite = () => {
   return {
     data: fetchedConfirmedTxs,
     fetchNextPage,
-    isLoading,
+    isLoading: isLoadingLatestTx || isLoading,
     isFetching,
     hasNextPage,
     isFetchingNextPage,
