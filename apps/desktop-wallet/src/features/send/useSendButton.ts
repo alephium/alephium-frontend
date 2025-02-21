@@ -40,7 +40,7 @@ const useSendButton = ({ fromAddressHash, toAddressHash, tokenId, analyticsOrigi
   const handleClick = () => {
     if (isDisabled || !fromAddress) return
 
-    const sendToken = tokenId ?? tokensBalances?.length === 1 ? tokensBalances[0].id : undefined
+    const sendToken = tokenId ?? (tokensBalances?.length === 1 ? tokensBalances[0].id : undefined)
 
     dispatch(
       openModal({
