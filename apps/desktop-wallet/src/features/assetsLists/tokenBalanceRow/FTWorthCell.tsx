@@ -8,7 +8,11 @@ import { TableCell } from '@/components/Table'
 import { AddressTokenBalancesRowProps, TokenBalancesRowBaseProps } from '@/features/assetsLists/tokenBalanceRow/types'
 import { isFT } from '@/types/tokens'
 
-export const FTAddressWorthCell = ({ tokenId, addressHash }: AddressTokenBalancesRowProps) => {
+interface FTAddressWorthCellProps extends AddressTokenBalancesRowProps {
+  noBorder?: boolean
+}
+
+export const FTAddressWorthCell = ({ tokenId, addressHash, noBorder }: FTAddressWorthCellProps) => {
   const { data: tokenBalances, isLoading: isLoadingBalance } = useFetchAddressSingleTokenBalances({
     tokenId,
     addressHash
@@ -21,7 +25,7 @@ export const FTAddressWorthCell = ({ tokenId, addressHash }: AddressTokenBalance
   const totalBalance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
 
   return (
-    <TableCell align="right">
+    <TableCell align="right" noBorder={noBorder}>
       {isLoadingBalance || isLoadingTokenPrices ? (
         <SkeletonLoader height="20px" width="30%" />
       ) : (
@@ -31,7 +35,11 @@ export const FTAddressWorthCell = ({ tokenId, addressHash }: AddressTokenBalance
   )
 }
 
-export const FTWalletWorthCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
+interface FTWalletWorthCellProps extends TokenBalancesRowBaseProps {
+  noBorder?: boolean
+}
+
+export const FTWalletWorthCell = ({ tokenId, noBorder }: FTWalletWorthCellProps) => {
   const { data: tokenBalances, isLoading: isLoadingBalances } = useFetchWalletSingleTokenBalances({ tokenId })
   const { data: token } = useFetchToken(tokenId)
   const { isLoading: isLoadingTokenPrices } = useFetchTokenPrices()
@@ -41,7 +49,7 @@ export const FTWalletWorthCell = ({ tokenId }: TokenBalancesRowBaseProps) => {
   const totalBalance = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
 
   return (
-    <TableCell align="right">
+    <TableCell align="right" noBorder={noBorder}>
       {isLoadingBalances || isLoadingTokenPrices ? (
         <SkeletonLoader height="20px" width="30%" />
       ) : (

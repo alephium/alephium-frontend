@@ -58,7 +58,13 @@ const AddressesTabContent = memo(() => {
     >
       <TableGrid>
         <TableGridContent>
-          {visibleAddresses?.map((addressHash) => <AddressListRow addressHash={addressHash} key={addressHash} />)}
+          {visibleAddresses?.map((addressHash, index) => (
+            <AddressListRow
+              addressHash={addressHash}
+              key={addressHash}
+              isLast={index === visibleAddresses.length - 1}
+            />
+          ))}
           <Placeholder>{t('No addresses match the search criteria.')}</Placeholder>
         </TableGridContent>
       </TableGrid>
