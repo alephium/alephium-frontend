@@ -179,7 +179,6 @@ const WalletConnectSessionProposalModal = memo(
             ? t('Connect to {{ dAppUrl }}', { dAppUrl: cleanUrl(metadata.url) })
             : t('Connect to dApp')
         }
-        subtitle={metadata.description || metadata.url}
         onClose={rejectAndCloseModal}
         Icon={() =>
           metadata?.icons &&
