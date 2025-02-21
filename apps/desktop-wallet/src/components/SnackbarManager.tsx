@@ -51,7 +51,7 @@ const SnackbarPopup = memo(({ message }: { message: Required<SnackbarMessage> })
   }, [closeSnackbar, message])
 
   return (
-    <SnackbarBox {...fadeInTop} {...fadeOutTop} className="success" onClose={closeSnackbar}>
+    <SnackbarBox {...fadeInTop} {...fadeOutTop} className={message.type} onClose={closeSnackbar}>
       <Message>{message.text}</Message>
     </SnackbarBox>
   )
