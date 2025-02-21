@@ -42,6 +42,7 @@ const AddressesTabContent = memo(() => {
       onSearch={setSearchInput}
       buttonText={`+ ${t('New address')}`}
       onButtonClick={openNewAddressModal}
+      AdditionalButtonComponents={<AdvancedOperationsButton />}
       HeaderMiddleComponent={
         <HeaderMiddle>
           <SortingAndFiltering>
@@ -52,7 +53,6 @@ const AddressesTabContent = memo(() => {
               <Toggle onToggle={setHideEmptyAddresses} label={t('Hide empty')} toggled={hideEmptyAddresses} />
             </HideEmptyAddressesToggle>
           </SortingAndFiltering>
-          <AdvancedOperationsButton />
         </HeaderMiddle>
       }
     >

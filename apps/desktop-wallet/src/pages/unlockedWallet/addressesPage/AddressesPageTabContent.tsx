@@ -14,6 +14,7 @@ interface AddressesPageTabContentProps {
   onButtonClick: () => void
   children: ReactNode
   HeaderMiddleComponent?: ReactNode
+  AdditionalButtonComponents?: ReactNode
   className?: string
 }
 
@@ -23,23 +24,27 @@ const AddressesPageTabContent = ({
   buttonText,
   onButtonClick,
   HeaderMiddleComponent,
+  AdditionalButtonComponents,
   children,
   className
 }: AddressesPageTabContentProps) => (
   <AddressesPageTabContentStyled className={className}>
     <Header>
-      <Searchbar
-        placeholder={searchPlaceholder}
-        Icon={SearchIcon}
-        onChange={(e) => onSearch(e.target.value)}
-        contrast
-        heightSize="normal"
-      />
-      {HeaderMiddleComponent}
+      <LeftSide>
+        <Searchbar
+          placeholder={searchPlaceholder}
+          Icon={SearchIcon}
+          onChange={(e) => onSearch(e.target.value)}
+          contrast
+          heightSize="normal"
+        />
+        {HeaderMiddleComponent}
+      </LeftSide>
       <ButtonContainer {...fadeInOut}>
-        <HeaderButton wide onClick={onButtonClick} short>
+        {AdditionalButtonComponents}
+        <Button onClick={onButtonClick} short>
           {buttonText}
-        </HeaderButton>
+        </Button>
       </ButtonContainer>
     </Header>
     <Content>{children}</Content>
@@ -56,6 +61,7 @@ const AddressesPageTabContentStyled = styled.div`
 const Header = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin: var(--spacing-2) 0;
   gap: 25px;
 `
@@ -73,8 +79,17 @@ const Content = styled.div`
   display: flex;
 `
 
-const HeaderButton = styled(Button)``
-
 const ButtonContainer = styled(motion.div)`
-  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+`
+
+const LeftSide = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-grow: 1;
 `
