@@ -86,7 +86,11 @@ const useAddressGeneration = () => {
       } catch (error) {
         sendAnalytics({ type: 'error', message: 'Could not save new addresses' })
         dispatch(
-          showToast({ text: `${t('could_not_save_new_address_other')}: ${error}`, type: 'alert', duration: 'long' })
+          showToast({
+            text: `${t('could_not_save_new_address_other')}: ${error}`,
+            type: 'alert',
+            duration: 'long'
+          })
         )
       }
     } catch (error) {

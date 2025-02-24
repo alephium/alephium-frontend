@@ -61,7 +61,11 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
         onClose()
       } catch (error) {
         dispatch(
-          showToast({ text: `${t('could_not_save_new_address_one')}: ${error}`, type: 'alert', duration: 'long' })
+          showToast({
+            text: `${t('could_not_save_new_address_one')}: ${error}`,
+            type: 'alert',
+            duration: 'long'
+          })
         )
         sendAnalytics({ type: 'error', message: 'Error while saving newly generated address' })
       }

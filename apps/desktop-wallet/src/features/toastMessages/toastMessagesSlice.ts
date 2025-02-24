@@ -25,8 +25,8 @@ import {
   localStorageDataMigrationFailed,
   receiveFaucetTokens,
   showToast,
-  snackbarDisplayTimeExpired,
   storingDataToLocalStorageFailed,
+  toastDisplayTimeExpired,
   userDataMigrationFailed,
   walletConnectCacheCleared,
   walletConnectCacheClearFailed
@@ -56,13 +56,13 @@ const initialState: SnackbarSliceState = {
   offlineMessageWasVisibleOnce: false
 }
 
-const snackbarSlice = createSlice({
-  name: 'snackbar',
+const toastMessagesSlice = createSlice({
+  name: 'toastMessages',
   initialState,
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(snackbarDisplayTimeExpired, (state) => {
+      .addCase(toastDisplayTimeExpired, (state) => {
         if (state.messages.length > 0) state.messages.shift()
       })
       .addCase(apiClientInitFailed, (state, action) => {
@@ -194,7 +194,7 @@ const snackbarSlice = createSlice({
   }
 })
 
-export default snackbarSlice
+export default toastMessagesSlice
 
 // Reducers helper functions
 

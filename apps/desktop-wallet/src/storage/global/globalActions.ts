@@ -28,7 +28,7 @@ export const osThemeChangeDetected = createAction<ThemeType>('app/osThemeChangeD
 
 export const devModeShortcutDetected = createAction<{ activate: boolean }>('app/devModeShortcutDetected')
 
-export const snackbarDisplayTimeExpired = createAction('app/snackbarDisplayTimeExpired')
+export const toastDisplayTimeExpired = createAction('app/toastDisplayTimeExpired')
 
 export const showToast = createAction<ToastMessage>('app/showToast')
 

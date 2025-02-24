@@ -8,11 +8,9 @@ import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import AnimatedBackground from '@/components/AnimatedBackground'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
-import SnackbarManager from '@/components/SnackbarManager'
 import SplashScreen from '@/components/SplashScreen'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
-import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
 import { languageOptions } from '@/features/localization/languages'
 import { systemLanguageMatchFailed, systemLanguageMatchSucceeded } from '@/features/localization/localizationActions'
 import useRegionOptions from '@/features/settings/regionSettings/useRegionOptions'
@@ -22,6 +20,7 @@ import {
   systemRegionMatchSucceeded
 } from '@/features/settings/settingsActions'
 import { darkTheme, lightTheme } from '@/features/theme/themes'
+import ToastMessagesModal from '@/features/toastMessages/ToastMessagesModal'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
@@ -66,8 +65,7 @@ const App = memo(() => {
         </AppContainer>
         <AppModals />
       </WalletConnectContextProvider>
-      <SnackbarManager />
-      <AutoUpdateSnackbar />
+      <ToastMessagesModal />
       <AppSpinner />
     </ThemeProvider>
   )

@@ -1,22 +1,18 @@
 import { useInterval } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
-import { colord } from 'colord'
 import { t } from 'i18next'
-import { X } from 'lucide-react'
-import { memo, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
-import { fadeInBottom, fadeOut } from '@/animations'
 import ActionLink from '@/components/ActionLink'
-import Button from '@/components/Button'
 import CircularProgress from '@/components/CircularProgress'
 import HashEllipsed from '@/components/HashEllipsed'
 import usePendingTxPolling from '@/features/dataPolling/usePendingTxPolling'
 import { openModal } from '@/features/modals/modalActions'
 import { selectTopModal } from '@/features/modals/modalSelectors'
 import { selectSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
-import SnackbarBox from '@/features/snackbar/SnackbarBox'
+import ToastBox from '@/features/toastMessages/ToastBox'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import { SentTransaction } from '@/types/transactions'
 
@@ -24,7 +20,7 @@ interface SentTransactionSnackbarPopupProps {
   txHash: e.Transaction['hash']
 }
 
-const SentTransactionSnackbarPopup = memo(({ txHash }: SentTransactionSnackbarPopupProps) => {
+const SentTransactionToastBox = memo(({ txHash }: SentTransactionSnackbarPopupProps) => {
   const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
   const [hide, setHide] = useState(false)
 
@@ -32,50 +28,36 @@ const SentTransactionSnackbarPopup = memo(({ txHash }: SentTransactionSnackbarPo
   // the most appropriate place for polling.
   usePendingTxPolling(txHash)
 
+  const closeToast = useCallback(() => setHide(true), [])
+
   useEffect(() => {
     if (sentTx?.status === 'confirmed') {
-      setTimeout(() => setHide(true), 5000)
+      setTimeout(closeToast, 5000)
     }
-  }, [sentTx?.status])
+  }, [sentTx?.status, closeToast])
 
   if (!sentTx || hide) return null
 
   const message = {
     sent: `${t('Transaction was sent...')} 💸`,
-    mempooled: `${t('Transaction is about to be included in the blockchain...')} ⏳⛓️`,
+    mempooled: t('Transaction is about to be included in the blockchain...'),
     confirmed: `${t('Transaction is now part of the blockchain')} 🎉`
   }[sentTx.status]
 
   return (
-    <SentTransactionSnackbarPopupStyled {...fadeInBottom} {...fadeOut} className="info">
-      <Columns>
-        <Progress status={sentTx.status} />
-        <Rows>
-          <Message>{message}</Message>
-          <HashAndDetails>
-            <HashEllipsedStyled hash={txHash} tooltipText={t('Copy hash')} showSnackbarOnCopied={false} />
-            {sentTx.status !== 'sent' && <DetailsLink hash={txHash} />}
-          </HashAndDetails>
-        </Rows>
-        <Button aria-label={t('Close')} circle role="secondary" onClick={() => setHide(true)} transparent>
-          <X />
-        </Button>
-      </Columns>
-    </SentTransactionSnackbarPopupStyled>
+    <ToastBox className="info" onClose={closeToast} title={message} LeftContent={<Progress status={sentTx.status} />}>
+      <HashAndDetails>
+        <HashEllipsed hash={txHash} tooltipText={t('Copy hash')} showSnackbarOnCopied={false} truncate />
+        {sentTx.status !== 'sent' && <DetailsLink hash={txHash} />}
+      </HashAndDetails>
+    </ToastBox>
   )
 })
 
-export default SentTransactionSnackbarPopup
-
-const SentTransactionSnackbarPopupStyled = styled(SnackbarBox)`
-  display: flex;
-  gap: 20px;
-  min-width: 400px;
-`
+export default SentTransactionToastBox
 
 const Progress = ({ status }: Pick<SentTransaction, 'status'>) => {
   const [progress, setProgress] = useState(0)
-  const theme = useTheme()
 
   useEffect(() => {
     if (status === 'sent') {
@@ -89,12 +71,7 @@ const Progress = ({ status }: Pick<SentTransaction, 'status'>) => {
 
   useInterval(() => setProgress((prevValue) => prevValue + 0.015), 1000, status === 'confirmed' || progress > 0.9)
 
-  return (
-    <CircularProgressStyled
-      value={progress}
-      railColor={theme.name === 'dark' ? theme.bg.primary : colord(theme.bg.contrast).lighten(0.1).toHex()}
-    />
-  )
+  return <CircularProgressStyled value={progress} />
 }
 
 const DetailsLink = ({ hash }: Pick<SentTransaction, 'hash'>) => {
@@ -112,10 +89,6 @@ const DetailsLink = ({ hash }: Pick<SentTransaction, 'hash'>) => {
   return <DetailsLinkStyled onClick={openTransactionDetailsModal}>{t('See more')}</DetailsLinkStyled>
 }
 
-const HashEllipsedStyled = styled(HashEllipsed)`
-  color: ${({ theme }) => theme.font.highlight};
-`
-
 const HashAndDetails = styled.div`
   display: flex;
   gap: 5px;
@@ -124,24 +97,7 @@ const HashAndDetails = styled.div`
 const CircularProgressStyled = styled(CircularProgress)`
   width: 48px;
   height: 48px;
-`
-
-const Rows = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`
-
-const Columns = styled.div`
-  flex: 1;
-  display: flex;
-  gap: 30px;
-  align-items: center;
-`
-
-const Message = styled.span`
-  font-weight: bold;
+  flex-shrink: 0;
 `
 
 const DetailsLinkStyled = styled(ActionLink)`
