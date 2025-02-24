@@ -7,10 +7,12 @@ import styled, { css } from 'styled-components'
 
 import { fadeInTop, fadeOut } from '@/animations'
 import Button from '@/components/Button'
+import { ToastType } from '@/features/toastMessages/toastMessagesTypes'
 
 interface ToastBoxProps {
   onClose: () => void
   title: string
+  type: ToastType
   className?: string
   LeftContent?: ReactNode
   FooterButtons?: ReactNode
@@ -52,7 +54,7 @@ const ToastBox = ({ title, children, FooterButtons, onClose, LeftContent, ...pro
 
 export default ToastBox
 
-const ToastBoxStyled = styled(motion.div)`
+const ToastBoxStyled = styled(motion.div)<{ type: ToastType }>`
   position: relative;
   display: flex;
   justify-content: center;
@@ -61,25 +63,25 @@ const ToastBoxStyled = styled(motion.div)`
   background-color: ${({ theme }) => theme.bg.background1};
   border-radius: var(--radius-medium);
 
-  &.alert {
-    ${({ theme }) => getToastBoxStyle(theme.global.alert)}
-  }
+  ${({ type, theme }) => {
+    switch (type) {
+      case 'error':
+        return getToastBoxStyle(theme.global.alert)
+      case 'info':
+        return getToastBoxStyle(theme.bg.contrast)
+      case 'success':
+        return getToastBoxStyle(theme.global.valid)
+    }
+  }}
 
-  &.info {
-    ${({ theme }) => getToastBoxStyle(theme.bg.contrast)}
-
-    ${({ theme }) =>
-      theme.name === 'light' &&
-      css`
-        ${ToastBoxContent} {
-          background-color: ${theme.bg.background2};
-        }
-      `}
-  }
-
-  &.success {
-    ${({ theme }) => getToastBoxStyle(theme.global.valid)}
-  }
+  ${({ type, theme }) =>
+    theme.name === 'light' &&
+    type === 'info' &&
+    css`
+      ${ToastBoxContent} {
+        background-color: ${theme.bg.background2};
+      }
+    `}
 `
 
 const ToastBoxContent = styled(motion.div)`

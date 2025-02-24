@@ -23,7 +23,7 @@ const LedgerAddressDiscoveryToastBox = memo(() => {
 
   return (
     <ToastBox
-      className="info"
+      type="info"
       onClose={handleCloseClick}
       title={t('Welcome to your Ledger!') + ' 👋'}
       FooterButtons={

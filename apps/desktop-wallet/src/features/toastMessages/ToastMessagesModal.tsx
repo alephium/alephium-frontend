@@ -27,7 +27,7 @@ const ToastMessagesModalContainer = styled.div`
   right: 0;
   z-index: 3;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-1);

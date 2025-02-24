@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 
-import { Message } from '@/types/snackbar'
+import { Message } from '@/features/toastMessages/toastMessagesTypes'
 
 export const walletConnectPairingFailed = createAction<Message>('dApps/walletConnectPairingFailed')
 
