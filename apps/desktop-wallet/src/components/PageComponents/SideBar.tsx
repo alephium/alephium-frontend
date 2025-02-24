@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components'
 
 import SideBarSettingsButton from '@/components/PageComponents/SideBarSettingsButton'
 import { appHeaderHeightPx, sidebarExpandThresholdPx, walletSidebarWidthPx } from '@/style/globalStyles'
+import { platform } from '@/utils/platform'
 
 interface SideBarProps {
   renderTopComponent?: () => ReactNode
@@ -31,7 +32,8 @@ const SideBarStyled = styled.div<{ noBorder: boolean; noExpansion: boolean }>`
   align-items: center;
   z-index: 1;
   width: ${walletSidebarWidthPx}px;
-  padding: ${appHeaderHeightPx}px var(--spacing-2) var(--spacing-2) var(--spacing-2);
+  padding: ${platform.isMac ? appHeaderHeightPx + 'px' : 'var(--spacing-2)'} var(--spacing-2) var(--spacing-2)
+    var(--spacing-2);
   background-color: ${({ theme }) => theme.bg.background2};
   border-right: 1px solid ${({ theme }) => theme.border.secondary};
 

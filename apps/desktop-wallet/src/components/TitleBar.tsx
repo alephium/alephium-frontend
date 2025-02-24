@@ -1,6 +1,8 @@
 import { Minus, Square, X } from 'lucide-react'
 import styled from 'styled-components'
 
+import { appHeaderHeightPx } from '@/style/globalStyles'
+
 const TitleBar = () => {
   const handleMinimize = () => {
     window.electron?.window.minimize()
@@ -20,17 +22,17 @@ const TitleBar = () => {
       <WindowControls>
         <ControlButton onClick={handleMinimize}>
           <IconStyled>
-            <Minus size={16} />
+            <Minus size={16} strokeWidth={1.5} />
           </IconStyled>
         </ControlButton>
         <ControlButton onClick={handleMaximize}>
           <IconStyled>
-            <Square size={16} />
+            <Square size={13} strokeWidth={1.5} />
           </IconStyled>
         </ControlButton>
         <CloseButton onClick={handleClose}>
           <IconStyled>
-            <X size={16} />
+            <X size={16} strokeWidth={1.5} />
           </IconStyled>
         </CloseButton>
       </WindowControls>
@@ -41,7 +43,9 @@ const TitleBar = () => {
 export default TitleBar
 
 const IconStyled = styled.div`
-  color: ${({ theme }) => theme.font.secondary};
+  color: ${({ theme }) => theme.font.primary};
+  display: flex;
+  align-items: center;
 `
 
 const DragRegion = styled.div`
@@ -56,12 +60,12 @@ const WindowControls = styled.div`
 const TitleBarContainer = styled.div`
   position: fixed;
   top: 0;
-  right: 0;
-  height: 32px;
+  right: 15px;
+  height: ${appHeaderHeightPx}px;
   width: 100%;
   display: flex;
+  align-items: center;
   -webkit-app-region: drag;
-  background-color: ${({ theme }) => theme.bg.secondary};
 `
 
 const ControlButton = styled.button`
@@ -76,19 +80,11 @@ const ControlButton = styled.button`
   &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => theme.bg.highlight};
-
-    ${IconStyled} {
-      color: ${({ theme }) => theme.font.primary};
-    }
   }
 `
 
 const CloseButton = styled(ControlButton)`
   &:hover {
     background-color: ${({ theme }) => theme.global.alert};
-
-    ${IconStyled} {
-      color: ${({ theme }) => theme.font.primary};
-    }
   }
 `
