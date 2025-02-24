@@ -1,11 +1,11 @@
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import Button from '@/components/Button'
 import { userWasAskedToDiscoverAddresses } from '@/features/ledger/ledgerActions'
 import ToastBox from '@/features/toastMessages/ToastBox'
 import { useAppDispatch } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
-import { ModalFooterButton } from '@/modals/CenteredModal'
 
 const LedgerAddressDiscoveryToastBox = memo(() => {
   const dispatch = useAppDispatch()
@@ -26,7 +26,11 @@ const LedgerAddressDiscoveryToastBox = memo(() => {
       className="info"
       onClose={handleCloseClick}
       title={t('Welcome to your Ledger!') + ' 👋'}
-      FooterButtons={<ModalFooterButton onClick={handleScanClick}>{t('Scan')}</ModalFooterButton>}
+      FooterButtons={
+        <Button wide squared onClick={handleScanClick}>
+          {t('Scan')}
+        </Button>
+      }
     >
       {t('Would you like to scan for active addresses?')}
     </ToastBox>

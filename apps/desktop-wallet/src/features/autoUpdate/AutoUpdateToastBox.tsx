@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import Button from '@/components/Button'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useLatestGitHubRelease from '@/features/autoUpdate/useLatestGitHubRelease'
 import ToastBox from '@/features/toastMessages/ToastBox'
-import { ModalFooterButton } from '@/modals/CenteredModal'
 import { currentVersion } from '@/utils/app-data'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
@@ -97,12 +97,14 @@ const AutoUpdateToastBox = () => {
       FooterButtons={
         <>
           {status === 'download-available' && newManualUpdateVersion && (
-            <ModalFooterButton onClick={handleManualDownloadClick}>{t('Download')}</ModalFooterButton>
+            <Button wide squared onClick={handleManualDownloadClick}>
+              {t('Download')}
+            </Button>
           )}
           {status === 'download-finished' && !error && (
-            <ModalFooterButton role="secondary" onClick={handleRestartClick}>
+            <Button wide squared role="secondary" onClick={handleRestartClick}>
               {t('Restart')}
-            </ModalFooterButton>
+            </Button>
           )}
         </>
       }
