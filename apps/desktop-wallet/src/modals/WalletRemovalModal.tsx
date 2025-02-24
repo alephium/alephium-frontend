@@ -48,13 +48,7 @@ const WalletRemovalModal = memo(({ id, walletId, walletName }: ModalBaseProp & W
   }
 
   return (
-    <CenteredModal
-      title={t('Remove wallet "{{ walletName }}"', { walletName })}
-      id={id}
-      focusMode
-      hasFooterButtons
-      dynamicContent
-    >
+    <CenteredModal title={t('Remove wallet "{{ walletName }}"', { walletName })} id={id} focusMode hasFooterButtons>
       <Section>
         <AlertTriangle size={60} color={theme.global.alert} style={{ marginBottom: 35 }} />
       </Section>

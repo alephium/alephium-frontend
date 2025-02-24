@@ -47,7 +47,7 @@ const WalletUnlockModal = memo(({ id, walletId }: ModalBaseProp & WalletUnlockMo
   }
 
   return (
-    <CenteredModal narrow title={t('Enter password')} id={id} skipFocusOnMount hasFooterButtons dynamicContent>
+    <CenteredModal narrow title={t('Enter password')} id={id} skipFocusOnMount hasFooterButtons>
       <PasswordConfirmation
         text={t('Enter password for "{{ walletName }}"', { walletName })}
         buttonText={t('Unlock')}

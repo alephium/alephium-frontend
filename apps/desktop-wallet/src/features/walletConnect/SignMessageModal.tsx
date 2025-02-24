@@ -64,7 +64,6 @@ const SignMessageModal = memo(({ id, txData, dAppUrl }: ModalBaseProp & SignMess
       title={t('Sign Message')}
       subtitle={dAppUrl}
       onClose={rejectAndClose}
-      dynamicContent
       focusMode
       hasFooterButtons
     >

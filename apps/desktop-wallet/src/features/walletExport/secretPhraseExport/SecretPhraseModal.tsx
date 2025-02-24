@@ -51,7 +51,6 @@ const SecretPhraseModal = ({ id }: ModalBaseProp) => {
       narrow={!isDisplayingPhrase}
       skipFocusOnMount
       hasFooterButtons
-      dynamicContent
     >
       {!isDisplayingPhrase ? (
         <PasswordConfirmation

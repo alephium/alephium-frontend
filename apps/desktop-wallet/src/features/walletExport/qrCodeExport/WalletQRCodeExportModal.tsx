@@ -55,7 +55,6 @@ const WalletQRCodeExportModal = memo(({ id }: ModalBaseProp) => {
       narrow={frames.length === 0}
       skipFocusOnMount
       hasFooterButtons
-      dynamicContent
     >
       {frames.length === 0 ? (
         <PasswordConfirmation

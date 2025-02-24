@@ -52,7 +52,6 @@ const CSVExportModal = ({ id, addressHash }: AddressModalProps) => {
       subtitle={address.label || address.hash}
       onClose={onClose}
       hasFooterButtons
-      dynamicContent
     >
       <Paragraph>
         {t(

@@ -46,13 +46,7 @@ const BuyModal = memo(({ id, addressHash }: ModalBaseProp & BuyModalProps) => {
   }, [dispatch, handleClose, id, navigate, t])
 
   return (
-    <CenteredModal
-      id={id}
-      title={!disclaimerAccepted ? t('Disclaimer') : t('Buy')}
-      narrow
-      dynamicContent
-      hasFooterButtons
-    >
+    <CenteredModal id={id} title={!disclaimerAccepted ? t('Disclaimer') : t('Buy')} narrow hasFooterButtons>
       <TextContainer>
         {!disclaimerAccepted ? (
           <Trans t={t} i18nKey="onramperDisclaimer">

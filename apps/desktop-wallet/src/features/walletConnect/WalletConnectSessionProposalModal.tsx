@@ -193,7 +193,6 @@ const WalletConnectSessionProposalModal = memo(
           metadata.icons[0] && <Logo image={metadata.icons[0]} size={25} />
         }
         hasFooterButtons
-        dynamicContent
       >
         {showNetworkWarning ? (
           <>

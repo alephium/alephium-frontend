@@ -147,7 +147,6 @@ const SignUnsignedTxModal = memo(
         subtitle={dAppUrl}
         onClose={rejectAndClose}
         isLoading={isLoading}
-        dynamicContent
         focusMode
         hasFooterButtons
       >

@@ -91,7 +91,7 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
   )}`
 
   return (
-    <CenteredModal title={title} id={id} isLoading={isLoading} hasFooterButtons dynamicContent>
+    <CenteredModal title={title} id={id} isLoading={isLoading} hasFooterButtons>
       {!isPassphraseUsed && (
         <Section align="flex-start">
           <AddressMetadataForm

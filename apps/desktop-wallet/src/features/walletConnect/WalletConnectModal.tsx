@@ -32,7 +32,6 @@ const WalletConnectModal = memo(({ id }: ModalBaseProp) => {
       title="WalletConnect"
       subtitle={t(activeSessions.length > 0 ? 'Active dApp connections' : 'Connect to a dApp')}
       id={id}
-      dynamicContent
       hasFooterButtons
     >
       {activeSessions.length > 0 && (
