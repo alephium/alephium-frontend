@@ -13,6 +13,7 @@ import SideBar from '@/components/PageComponents/SideBar'
 import Scrollbar from '@/components/Scrollbar'
 import WalletNameButton from '@/components/WalletNameButton'
 import { useAppSelector } from '@/hooks/redux'
+import { appHeaderHeightPx } from '@/style/globalStyles'
 
 interface UnlockedWalletLayoutProps {
   title?: string
@@ -41,12 +42,12 @@ const UnlockedWalletLayout = ({ children, title, className }: UnlockedWalletLayo
         )}
       ></SideBar>
 
-      <Scrollbar>
-        <MainContent>
+      <ScrollableContent>
+        <Scrollbar>
           <AppHeader title={title} />
-          {children}
-        </MainContent>
-      </Scrollbar>
+          <MainContent>{children}</MainContent>
+        </Scrollbar>
+      </ScrollableContent>
     </motion.div>
   )
 }
@@ -82,11 +83,15 @@ export default styled(UnlockedWalletLayout)`
   height: 100%;
 `
 
-const MainContent = styled.main`
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+const ScrollableContent = styled.div`
   position: relative;
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+`
+
+const MainContent = styled.div`
+  padding-top: ${appHeaderHeightPx}px;
 `
 
 const SideNavigation = styled.nav`

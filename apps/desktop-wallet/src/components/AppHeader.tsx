@@ -24,11 +24,10 @@ import { platform } from '@/utils/platform.ts'
 interface AppHeader {
   title?: string
   invisible?: boolean
-  position?: 'fixed' | 'sticky'
   className?: string
 }
 
-const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, position = 'sticky' }) => {
+const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => {
   const { t } = useTranslation()
   const { scrollY: scrollYContext } = useScrollContext()
   const initialScroll = useMotionValue(0)
@@ -58,7 +57,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
   const openWalletConnectModal = () => dispatch(openModal({ name: 'WalletConnectModal' }))
 
   return (
-    <AppHeaderStyled style={{ position }} className={className}>
+    <AppHeaderStyled className={className}>
       <GradientBackground style={{ opacity: gradientOpacity }} />
       <AppHeaderContainer>
         {!platform.isMac && <TitleBar />}
@@ -129,7 +128,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
 export default AppHeader
 
 const AppHeaderStyled = styled(motion.header)`
-  position: sticky;
+  position: absolute;
   top: 0;
   right: 0;
   left: 0;
