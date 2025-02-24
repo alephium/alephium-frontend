@@ -25,7 +25,9 @@ const DeployContractCheckTxModalContent = ({
   return (
     <>
       <CheckModalContent>
-        {data.initialAlphAmount && <CheckAmountsBox assetAmounts={[data.initialAlphAmount]} hasBg hasPadding />}
+        {data.initialAlphAmount && (
+          <CheckAmountsBox assetAmounts={[data.initialAlphAmount]} hasBg hasHorizontalPadding />
+        )}
         {data.issueTokenAmount && (
           <>
             <InfoRow label={t('Issue token amount')}>{data.issueTokenAmount}</InfoRow>

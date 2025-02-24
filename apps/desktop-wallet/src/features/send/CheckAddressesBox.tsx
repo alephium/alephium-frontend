@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import ActionLink from '@/components/ActionLink'
 import AddressBadge from '@/components/AddressBadge'
 import Box, { BoxProps } from '@/components/Box'
+import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { useAppSelector } from '@/hooks/redux'
 import { Address } from '@/types/addresses'
 import { openInWebBrowser } from '@/utils/misc'
@@ -29,17 +30,20 @@ const CheckAddressesBox = ({ fromAddress, toAddressHash, dAppUrl, ...props }: Ch
       </AddressRow>
 
       {(toAddressHash || dAppUrl) && (
-        <AddressRow>
-          <AddressLabel>{t('To')}</AddressLabel>
+        <>
+          <HorizontalDivider secondary />
+          <AddressRow>
+            <AddressLabel>{t('To')}</AddressLabel>
 
-          {toAddressHash && (
-            <DestinationAddress>
-              <AddressBadge addressHash={toAddressHash} truncate appendHash withBorders />
-              <ExplorerLink addressHash={toAddressHash} />
-            </DestinationAddress>
-          )}
-          {dAppUrl && <DestinationAddress>{dAppUrl}</DestinationAddress>}
-        </AddressRow>
+            {toAddressHash && (
+              <DestinationAddress>
+                <AddressBadge addressHash={toAddressHash} truncate appendHash withBorders />
+                <ExplorerLink addressHash={toAddressHash} />
+              </DestinationAddress>
+            )}
+            {dAppUrl && <DestinationAddress>{dAppUrl}</DestinationAddress>}
+          </AddressRow>
+        </>
       )}
     </Box>
   )

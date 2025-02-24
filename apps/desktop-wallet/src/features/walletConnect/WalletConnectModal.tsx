@@ -35,7 +35,7 @@ const WalletConnectModal = memo(({ id }: ModalBaseProp) => {
       hasFooterButtons
     >
       {activeSessions.length > 0 && (
-        <Box hasPadding hasBg>
+        <Box hasVerticalPadding hasHorizontalPadding hasBg>
           <Table>
             {activeSessions.map(({ topic, peer: { metadata } }, index) => (
               <TableRowStyled key={topic} role="row" tabIndex={0}>
