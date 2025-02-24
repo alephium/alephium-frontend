@@ -73,7 +73,9 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
           <ExtraHeaderContentContainer>{extraHeaderContent}</ExtraHeaderContentContainer>
         </Header>
       )}
-      <Scrollbar>{children}</Scrollbar>
+      <ScrollableContent>
+        <Scrollbar>{children}</Scrollbar>
+      </ScrollableContent>
     </Content>
   )
 
@@ -142,8 +144,8 @@ const Hook = styled.div<{ hookCoordinates: Coordinates; contentWidth: number }>`
 const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
   opacity: 0; // for initial mount computation
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
+
   display: flex;
   flex-direction: column;
   padding-bottom: var(--spacing-1);
@@ -156,6 +158,12 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-big);
   background-color: ${({ theme }) => theme.bg.background1};
+`
+
+const ScrollableContent = styled.div`
+  flex: 1;
+  display: flex;
+  overflow: hidden;
 `
 
 const Header = styled.div<{ hasExtraContent: boolean }>`

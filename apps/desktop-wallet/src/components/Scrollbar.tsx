@@ -25,7 +25,7 @@ const ScrollbarCustom = ({ children, className, onScroll }: ScrollbarCustomProps
   }
 
   return (
-    <CustomScroll onScroll={handleScrollUpdate} flex="1" className={className} allowOuterScroll>
+    <CustomScroll onScroll={handleScrollUpdate} flex="1" className={className}>
       <ScrollContextProvider value={contextValueRef.current}>{children}</ScrollContextProvider>
     </CustomScroll>
   )
