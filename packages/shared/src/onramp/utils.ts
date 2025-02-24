@@ -6,9 +6,9 @@ export const ONRAMP_TARGET_LOCATION = 'https://alephium.org/onramp-callback/'
 
 interface OnramperUrlThemeOptions {
   themeName: string
-  containerColor: string
-  primaryTextColor: string
-  primaryColor: string
+  containerColor?: string
+  primaryTextColor?: string
+  primaryColor?: string
 }
 
 // See https://docs.onramper.com/docs/supported-widget-parameters
@@ -18,8 +18,8 @@ export const getOnramperUrl = (receiveAddressHash: AddressHash, options: Onrampe
   `&onlyCryptos=${ALPH_CODE}` +
   `&successRedirectUrl=${encodeURIComponent(ONRAMP_TARGET_LOCATION)}` +
   `&wallets=${ALPH_CODE}:${receiveAddressHash}` +
+  `&apiKey=${ONRAMPER_CLIENT_UUID}` +
   `&themeName=${options.themeName}` +
-  `&containerColor=${options.containerColor}` +
-  `&primaryTextColor=${options.primaryTextColor}` +
-  `&primaryColor=${options.primaryColor}` +
-  `&apiKey=${ONRAMPER_CLIENT_UUID}`
+  (options.containerColor ? `&containerColor=${options.containerColor}` : '') +
+  (options.primaryTextColor ? `&primaryTextColor=${options.primaryTextColor}` : '') +
+  (options.primaryColor ? `&primaryColor=${options.primaryColor}` : '')
