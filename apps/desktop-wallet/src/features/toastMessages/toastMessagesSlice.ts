@@ -63,7 +63,7 @@ const toastMessagesSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(toastDisplayTimeExpired, (state) => {
-        if (state.messages.length > 0) state.messages.shift()
+        if (state.messages.length > 0) state.messages.pop()
       })
       .addCase(apiClientInitFailed, (state, action) => {
         if (!state.offlineMessageWasVisibleOnce)
@@ -205,7 +205,7 @@ const defaultSnackbarMessageSettings: Required<SnackbarMessage> = {
 }
 
 const queueMessage = (state: SnackbarSliceState, message: SnackbarMessage) => {
-  state.messages.push({ id: nanoid(), ...defaultSnackbarMessageSettings, ...message })
+  state.messages.unshift({ id: nanoid(), ...defaultSnackbarMessageSettings, ...message })
 }
 
 const displayError = (state: SnackbarSliceState, action: PayloadAction<Message>) =>

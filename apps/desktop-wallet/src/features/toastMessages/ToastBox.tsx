@@ -97,6 +97,8 @@ const ToastBoxContent = styled(motion.div)`
   padding: 8px var(--spacing-4);
   border-radius: var(--radius-medium);
   width: 100%;
+
+  -webkit-app-region: no-drag;
 `
 
 const getToastBoxStyle = (color: string) => css`
