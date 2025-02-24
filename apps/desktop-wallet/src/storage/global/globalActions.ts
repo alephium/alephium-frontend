@@ -4,8 +4,8 @@ import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 
 import i18n from '@/features/localization/i18n'
 import { ThemeType } from '@/features/theme/themeTypes'
+import { OptionalMessage, SnackbarMessage } from '@/features/toastMessages/toastMessagesTypes'
 import { RootState } from '@/storage/store'
-import { OptionalMessage, SnackbarMessage, ToastMessage } from '@/types/snackbar'
 import { SentTransaction } from '@/types/transactions'
 
 type ModalId = string
@@ -28,10 +28,6 @@ export const osThemeChangeDetected = createAction<ThemeType>('app/osThemeChangeD
 
 export const devModeShortcutDetected = createAction<{ activate: boolean }>('app/devModeShortcutDetected')
 
-export const toastDisplayTimeExpired = createAction('app/toastDisplayTimeExpired')
-
-export const showToast = createAction<ToastMessage>('app/showToast')
-
 export const userDataMigrationFailed = createAction('app/userDataMigrationFailed')
 
 export const walletConnectCacheCleared = createAction('app/walletConnectCacheCleared')
@@ -53,7 +49,7 @@ export const receiveFaucetTokens = createAsyncThunk<SentTransaction, AddressHash
     if (!['testnet', 'devnet'].includes(currentNetwork.name))
       return rejectWithValue({
         text: i18n.t('You need to be on testnet or devnet in order to use the faucet.'),
-        type: 'alert'
+        type: 'error'
       })
 
     const txBoilerplate: Omit<SentTransaction, 'hash'> = {
@@ -103,7 +99,7 @@ export const receiveFaucetTokens = createAsyncThunk<SentTransaction, AddressHash
           response.status === 429
             ? i18n.t('You have reached the maximum calls limit. Please try again in a few minutes.')
             : i18n.t('Encountered error while calling the faucet.'),
-        type: 'alert'
+        type: 'error'
       })
     }
 

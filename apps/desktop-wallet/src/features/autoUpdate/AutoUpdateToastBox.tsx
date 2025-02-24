@@ -91,7 +91,7 @@ const AutoUpdateToastBox = () => {
 
   return (
     <ToastBox
-      className={error ? 'alert' : status === 'download-finished' ? 'success' : 'info'}
+      type={error ? 'error' : status === 'download-finished' ? 'success' : 'info'}
       onClose={closeSnackbar}
       title={downloadTitle}
       FooterButtons={

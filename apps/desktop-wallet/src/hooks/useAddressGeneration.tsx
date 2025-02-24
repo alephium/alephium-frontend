@@ -8,6 +8,7 @@ import { discoverAndCacheActiveAddresses } from '@/api/addresses'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { generateLedgerAddressesFromMetadata, LedgerAlephium } from '@/features/ledger/utils'
+import { showToast } from '@/features/toastMessages/toastMessagesActions'
 import { useAppDispatch } from '@/hooks/redux'
 import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import {
@@ -18,7 +19,6 @@ import {
 } from '@/storage/addresses/addressesActions'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
-import { showToast } from '@/storage/global/globalActions'
 import { AddressBase } from '@/types/addresses'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
@@ -88,7 +88,7 @@ const useAddressGeneration = () => {
         dispatch(
           showToast({
             text: `${t('could_not_save_new_address_other')}: ${error}`,
-            type: 'alert',
+            type: 'error',
             duration: 'long'
           })
         )
@@ -96,7 +96,7 @@ const useAddressGeneration = () => {
     } catch (error) {
       const message = 'Could not generate one address per group'
       sendAnalytics({ type: 'error', message })
-      dispatch(showToast({ text: `${t(message)}: ${error}`, type: 'alert', duration: 'long' }))
+      dispatch(showToast({ text: `${t(message)}: ${error}`, type: 'error', duration: 'long' }))
     }
   }
 

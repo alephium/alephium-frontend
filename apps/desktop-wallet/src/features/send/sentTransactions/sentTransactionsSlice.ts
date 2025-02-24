@@ -1,6 +1,9 @@
 import { createSlice, EntityState, isAnyOf } from '@reduxjs/toolkit'
 
-import { sentTransactionStatusChanged } from '@/features/send/sentTransactions/sentTransactionsActions'
+import {
+  removeSentTransaction,
+  sentTransactionStatusChanged
+} from '@/features/send/sentTransactions/sentTransactionsActions'
 import { sentTransactionsAdapter } from '@/features/send/sentTransactions/sentTransactionsAdapter'
 import { receiveFaucetTokens } from '@/storage/global/globalActions'
 import { transactionSent } from '@/storage/transactions/transactionsActions'
@@ -21,6 +24,9 @@ const sentTransactionsSlice = createSlice({
       .addCase(receiveFaucetTokens.fulfilled, sentTransactionsAdapter.addOne)
       .addCase(sentTransactionStatusChanged, (state, { payload: { hash, status } }) => {
         sentTransactionsAdapter.updateOne(state, { id: hash, changes: { status } })
+      })
+      .addCase(removeSentTransaction, (state, { payload: hash }) => {
+        sentTransactionsAdapter.removeOne(state, hash)
       })
 
     builder.addMatcher(isAnyOf(walletLocked, walletSwitched, activeWalletDeleted), () => initialState)

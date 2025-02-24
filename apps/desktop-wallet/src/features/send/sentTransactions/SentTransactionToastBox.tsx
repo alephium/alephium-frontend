@@ -11,6 +11,7 @@ import HashEllipsed from '@/components/HashEllipsed'
 import usePendingTxPolling from '@/features/dataPolling/usePendingTxPolling'
 import { openModal } from '@/features/modals/modalActions'
 import { selectTopModal } from '@/features/modals/modalSelectors'
+import { removeSentTransaction } from '@/features/send/sentTransactions/sentTransactionsActions'
 import { selectSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import ToastBox from '@/features/toastMessages/ToastBox'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -18,12 +19,13 @@ import { SentTransaction } from '@/types/transactions'
 
 interface SentTransactionSnackbarPopupProps {
   txHash: e.Transaction['hash']
+  className?: string
 }
 
-const SentTransactionToastBox = memo(({ txHash }: SentTransactionSnackbarPopupProps) => {
+const SentTransactionToastBox = memo(({ txHash, className }: SentTransactionSnackbarPopupProps) => {
   const sentTx = useAppSelector((s) => selectSentTransactionByHash(s, txHash))
   const [hide, setHide] = useState(false)
-
+  const dispatch = useAppDispatch()
   // The snackbar component is a transaction-specific component that is always mounted when a tx is being sent, so it's
   // the most appropriate place for polling.
   usePendingTxPolling(txHash)
@@ -32,9 +34,12 @@ const SentTransactionToastBox = memo(({ txHash }: SentTransactionSnackbarPopupPr
 
   useEffect(() => {
     if (sentTx?.status === 'confirmed') {
-      setTimeout(closeToast, 5000)
+      setTimeout(() => {
+        closeToast()
+        dispatch(removeSentTransaction(txHash))
+      }, 5000)
     }
-  }, [sentTx?.status, closeToast])
+  }, [sentTx?.status, closeToast, dispatch, txHash])
 
   if (!sentTx || hide) return null
 
@@ -45,7 +50,13 @@ const SentTransactionToastBox = memo(({ txHash }: SentTransactionSnackbarPopupPr
   }[sentTx.status]
 
   return (
-    <ToastBox className="info" onClose={closeToast} title={message} LeftContent={<Progress status={sentTx.status} />}>
+    <ToastBox
+      className={className}
+      type={sentTx.status === 'confirmed' ? 'success' : 'info'}
+      onClose={closeToast}
+      title={message}
+      LeftContent={<Progress status={sentTx.status} />}
+    >
       <HashAndDetails>
         <HashEllipsed hash={txHash} tooltipText={t('Copy hash')} showSnackbarOnCopied={false} truncate />
         {sentTx.status !== 'sent' && <DetailsLink hash={txHash} />}

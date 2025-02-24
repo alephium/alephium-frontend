@@ -4,10 +4,12 @@ import {
   contactStoredInPersistentStorage,
   customNetworkSettingsSaved
 } from '@alephium/shared'
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { nanoid } from 'nanoid'
+import { createSlice, EntityState, PayloadAction } from '@reduxjs/toolkit'
 
 import i18n from '@/features/localization/i18n'
+import { showToast, toastDisplayTimeExpired } from '@/features/toastMessages/toastMessagesActions'
+import { toastMessagesAdapter } from '@/features/toastMessages/toastMessagesAdapter'
+import { Message, SnackbarMessage, SnackbarMessageInstance } from '@/features/toastMessages/toastMessagesTypes'
 import { contactDeletionFailed, contactStorageFailed } from '@/storage/addresses/addressesActions'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import {
@@ -24,9 +26,7 @@ import {
   loadingDataFromLocalStorageFailed,
   localStorageDataMigrationFailed,
   receiveFaucetTokens,
-  showToast,
   storingDataToLocalStorageFailed,
-  toastDisplayTimeExpired,
   userDataMigrationFailed,
   walletConnectCacheCleared,
   walletConnectCacheClearFailed
@@ -42,19 +42,14 @@ import {
   unsignedTransactionSignFailed
 } from '@/storage/transactions/transactionsActions'
 import { newWalletNameStored, walletCreationFailed, walletNameStorageFailed } from '@/storage/wallets/walletActions'
-import { Message, SnackbarMessage } from '@/types/snackbar'
 
-export type SnackbarMessageInstance = Required<SnackbarMessage> & { id: string }
-
-interface SnackbarSliceState {
-  messages: SnackbarMessageInstance[]
+interface ToastMessagesSliceState extends EntityState<SnackbarMessageInstance> {
   offlineMessageWasVisibleOnce: boolean
 }
 
-const initialState: SnackbarSliceState = {
-  messages: [],
+const initialState: ToastMessagesSliceState = toastMessagesAdapter.getInitialState({
   offlineMessageWasVisibleOnce: false
-}
+})
 
 const toastMessagesSlice = createSlice({
   name: 'toastMessages',
@@ -62,8 +57,8 @@ const toastMessagesSlice = createSlice({
   reducers: {},
   extraReducers(builder) {
     builder
-      .addCase(toastDisplayTimeExpired, (state) => {
-        if (state.messages.length > 0) state.messages.shift()
+      .addCase(toastDisplayTimeExpired, (state, action) => {
+        toastMessagesAdapter.removeOne(state, action.payload)
       })
       .addCase(apiClientInitFailed, (state, action) => {
         if (!state.offlineMessageWasVisibleOnce)
@@ -71,7 +66,7 @@ const toastMessagesSlice = createSlice({
             text: i18n.t('Could not connect to the {{ currentNetwork }} network.', {
               currentNetwork: action.payload.networkName
             }),
-            type: 'alert',
+            type: 'error',
             duration: 5000
           })
 
@@ -98,22 +93,22 @@ const toastMessagesSlice = createSlice({
         queueMessage(state, { text: action.payload || i18n.t('Copied to clipboard!') })
       )
       .addCase(copyToClipboardFailed, (state, action) =>
-        queueMessage(state, { text: action.payload || i18n.t('Copy to clipboard failed'), type: 'alert' })
+        queueMessage(state, { text: action.payload || i18n.t('Copy to clipboard failed'), type: 'error' })
       )
       .addCase(passwordValidationFailed, (state) =>
-        queueMessage(state, { text: i18n.t('Invalid password'), type: 'alert' })
+        queueMessage(state, { text: i18n.t('Invalid password'), type: 'error' })
       )
       .addCase(userDataMigrationFailed, (state) =>
-        queueMessage(state, { text: 'User data migration failed', type: 'alert' })
+        queueMessage(state, { text: 'User data migration failed', type: 'error' })
       )
       .addCase(localStorageDataMigrationFailed, (state) =>
-        queueMessage(state, { text: 'Local storage data migration failed', type: 'alert' })
+        queueMessage(state, { text: 'Local storage data migration failed', type: 'error' })
       )
       .addCase(loadingDataFromLocalStorageFailed, (state) =>
-        queueMessage(state, { text: 'Loading data from local storage failed', type: 'alert' })
+        queueMessage(state, { text: 'Loading data from local storage failed', type: 'error' })
       )
       .addCase(storingDataToLocalStorageFailed, (state) =>
-        queueMessage(state, { text: 'Storing data to local storage failed', type: 'alert' })
+        queueMessage(state, { text: 'Storing data to local storage failed', type: 'error' })
       )
       .addCase(devModeShortcutDetected, (state, action) =>
         queueMessage(
@@ -171,7 +166,7 @@ const toastMessagesSlice = createSlice({
       .addCase(walletConnectCacheClearFailed, (state) => {
         queueMessage(state, {
           text: i18n.t('Could not clear WalletConnect cache.'),
-          type: 'alert'
+          type: 'error'
         })
       })
       .addCase(appDataCleared, (state) => {
@@ -183,7 +178,7 @@ const toastMessagesSlice = createSlice({
       .addCase(appDataClearFailed, (state) => {
         queueMessage(state, {
           text: i18n.t('Could not clear app data.'),
-          type: 'alert'
+          type: 'error'
         })
       })
       .addCase(showToast, (state, { payload: toastMessage }) => {
@@ -204,9 +199,9 @@ const defaultSnackbarMessageSettings: Required<SnackbarMessage> = {
   duration: 3000 // ms
 }
 
-const queueMessage = (state: SnackbarSliceState, message: SnackbarMessage) => {
-  state.messages.push({ id: nanoid(), ...defaultSnackbarMessageSettings, ...message })
+const queueMessage = (state: ToastMessagesSliceState, message: SnackbarMessage) => {
+  toastMessagesAdapter.addOne(state, { id: Date.now(), ...defaultSnackbarMessageSettings, ...message })
 }
 
-const displayError = (state: SnackbarSliceState, action: PayloadAction<Message>) =>
-  queueMessage(state, { text: action.payload, type: 'alert', duration: 10000 })
+const displayError = (state: ToastMessagesSliceState, action: PayloadAction<Message>) =>
+  queueMessage(state, { text: action.payload, type: 'error', duration: 10000 })
