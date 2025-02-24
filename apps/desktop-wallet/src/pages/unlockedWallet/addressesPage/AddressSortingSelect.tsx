@@ -34,7 +34,7 @@ const AddressSortingSelect = () => {
         options={orderOptions}
         controlledValue={orderOptions.find(({ value }) => value === orderPreference)}
         noMargin
-        heightSize="small"
+        heightSize="normal"
       />
     </AddressSortingSelectStyled>
   )

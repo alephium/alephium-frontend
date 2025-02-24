@@ -3,8 +3,8 @@ import { memo, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { SelectLabel } from '@/components/Inputs'
 import Toggle from '@/components/Inputs/Toggle'
-import VerticalDivider from '@/components/PageComponents/VerticalDivider'
 import { useFilterAddressesByText } from '@/features/addressFiltering/addressFilteringHooks'
 import { openModal } from '@/features/modals/modalActions'
 import { useAppDispatch } from '@/hooks/redux'
@@ -48,8 +48,7 @@ const AddressesTabContent = memo(() => {
           <SortingAndFiltering>
             <AddressSortingSelect />
             <HideEmptyAddressesToggle>
-              <ToggleText>{t('Hide empty')}</ToggleText>
-              <VerticalDivider />
+              <SelectLabel>{t('Hide empty')}</SelectLabel>
               <Toggle onToggle={setHideEmptyAddresses} label={t('Hide empty')} toggled={hideEmptyAddresses} />
             </HideEmptyAddressesToggle>
           </SortingAndFiltering>
@@ -77,16 +76,12 @@ export default AddressesTabContent
 const HideEmptyAddressesToggle = styled.div`
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
   height: var(--inputHeight);
   padding: 12px 16px;
   border-radius: var(--radius-medium);
+  border: 1px solid ${({ theme }) => theme.border.primary};
   background-color: ${({ theme }) => theme.bg.tertiary};
-`
-
-const ToggleText = styled.div`
-  font-weight: var(--fontWeight-medium);
-  color: ${({ theme }) => theme.font.secondary};
 `
 
 const HeaderMiddle = styled.div`
@@ -121,5 +116,5 @@ const TableGridContent = styled.div`
 const SortingAndFiltering = styled.div`
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: var(--spacing-2);
 `
