@@ -12,6 +12,8 @@ const EmptyPlaceholder = ({ children, ...props }: EmptyPlaceholderProps) => (
   </BoxStyled>
 )
 
+export default EmptyPlaceholder
+
 const BoxStyled = styled(Box)<EmptyPlaceholderProps>`
   flex: 1;
   justify-content: center;
@@ -22,5 +24,3 @@ const Content = styled.View`
   align-items: center;
   gap: 10px;
 `
-
-export default EmptyPlaceholder

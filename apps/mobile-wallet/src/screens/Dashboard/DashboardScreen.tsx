@@ -108,7 +108,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
       </ScreenSection>
 
       {totalBalance === BigInt(0) && addressesBalancesStatus === 'initialized' && (
-        <EmptyPlaceholder style={{ paddingHorizontal: DEFAULT_MARGIN, borderWidth: 0 }}>
+        <EmptyPlaceholder style={{ marginLeft: DEFAULT_MARGIN, marginRight: DEFAULT_MARGIN }}>
           <AppText size={32}>🌈</AppText>
           <AppText color="secondary">{t('There is so much left to discover!')}</AppText>
           <AppText color="tertiary">{t('Start by adding funds to your wallet.')}</AppText>
