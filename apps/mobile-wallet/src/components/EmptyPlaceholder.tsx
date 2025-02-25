@@ -1,10 +1,14 @@
 import { ViewProps } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { css } from 'styled-components/native'
 
 import Box from '~/components/layout/Box'
-import { VERTICAL_GAP } from '~/style/globalStyle'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-type EmptyPlaceholderProps = ViewProps & { noMargin?: boolean }
+type EmptyPlaceholderProps = ViewProps & {
+  noMargin?: boolean
+  hasHorizontalMargin?: boolean
+  hasVerticalMargin?: boolean
+}
 
 const EmptyPlaceholder = ({ children, ...props }: EmptyPlaceholderProps) => (
   <BoxStyled {...props}>
@@ -16,7 +20,17 @@ export default EmptyPlaceholder
 
 const BoxStyled = styled(Box)<EmptyPlaceholderProps>`
   justify-content: center;
-  margin: ${({ noMargin }) => (noMargin ? 0 : `${VERTICAL_GAP / 2}px 0`)};
+
+  margin-top: ${({ hasVerticalMargin }) => (hasVerticalMargin ? VERTICAL_GAP / 2 : 0)}px;
+  margin-bottom: ${({ hasVerticalMargin }) => (hasVerticalMargin ? VERTICAL_GAP / 2 : 0)}px;
+  margin-left: ${({ hasHorizontalMargin }) => (hasHorizontalMargin ? DEFAULT_MARGIN : 0)};
+  margin-right: ${({ hasHorizontalMargin }) => (hasHorizontalMargin ? DEFAULT_MARGIN : 0)};
+
+  ${({ noMargin }) =>
+    noMargin &&
+    css`
+      margin: 0;
+    `}
 `
 
 const Content = styled.View`

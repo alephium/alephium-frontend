@@ -55,7 +55,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
         </HeaderScreenSection>
       )}
       {contacts.length === 0 ? (
-        <EmptyPlaceholder>
+        <EmptyPlaceholder hasHorizontalMargin>
           <EmojiContainer size={32}>🤷‍♀️</EmojiContainer>
           <AppText>{t('No contact yet!')}</AppText>
           <Button title={t('Add contact')} onPress={handleNewContactPress} variant="contrast" short />
