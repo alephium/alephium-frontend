@@ -1,5 +1,20 @@
 # @alephium/mobile-wallet
 
+## 2.1.3
+
+### Patch Changes
+
+- 28a4580: Group NFTs per collection
+- 8e86afc: Display transaction and fee worth before sending
+- 146e5d6: Support video NFTs
+- 141fa4a: Improve battery consumption
+- d4996fe: Display address group
+- 789dea8: Unknown tokens modal
+- c0a7204: Searchable regions list
+- 9f6f688: Close open modals when sending token
+- 08bdc63: Hide imported secret recovery words
+- aa1d37c: Display fiat worth of entered amount
+
 ## 2.1.2
 
 ### Patch Changes
