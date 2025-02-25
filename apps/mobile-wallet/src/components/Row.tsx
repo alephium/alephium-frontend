@@ -99,8 +99,7 @@ export default styled(Row)`
   `}
 `
 
-const Title = styled(AppText)<{ isVertical?: boolean }>`
-  color: ${({ theme, color }) => color || theme.font.secondary};
+const Title = styled(AppText)<{ isVertical?: boolean; color?: AppTextProps['color'] }>`
   ${({ isVertical }) =>
     isVertical &&
     css`
