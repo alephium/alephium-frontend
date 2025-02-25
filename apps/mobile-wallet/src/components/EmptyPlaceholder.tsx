@@ -15,7 +15,6 @@ const EmptyPlaceholder = ({ children, ...props }: EmptyPlaceholderProps) => (
 export default EmptyPlaceholder
 
 const BoxStyled = styled(Box)<EmptyPlaceholderProps>`
-  flex: 1;
   justify-content: center;
   margin: ${({ noMargin }) => (noMargin ? 0 : `${VERTICAL_GAP / 2}px 0`)};
 `
