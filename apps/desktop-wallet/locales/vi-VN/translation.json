@@ -361,7 +361,6 @@
   "Unselect all": "Bỏ chọn tất cả",
   "Update": "Cập nhật",
   "Use an existing wallet": "Sử dụng một ví đã có sẵn",
-  "Use max amount": "Sử dụng tất cả số dư",
   "Use optional passphrase": "Sử dụng passphrase tùy chỉnh",
   "Useful for miners or DeFi use.": "Hữu ích cho khai thác (đào) hoặc sử dụng DeFi.",
   "Version": "Phiên bản",
@@ -532,6 +531,7 @@
   "nb_of_hidden_assets_other": "{{ count }} tài sản đã ẩn",
   "Close hidden assets list": "Đóng danh sách các tài sản ẩn",
   "Unhide asset": "Hiện tài sản",
+  "Asset to send": "Tài sản để gửi",
   "No transactions before {{ date }}": "Không có giao dịch nào trước {{ date }}",
   "Sort by": "Sắp xếp theo",
   "ALPH balance": "Số dư ALPH"
