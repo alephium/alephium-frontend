@@ -46,12 +46,14 @@ const AddressesPageTabContent = ({
             {HeaderMiddleComponent}
           </LeftSide>
         )}
-        <ButtonContainer {...fadeInOut}>
-          {AdditionalButtonComponents}
-          <Button onClick={onButtonClick} short>
-            {buttonText}
-          </Button>
-        </ButtonContainer>
+        <RightSide>
+          <ButtonContainer {...fadeInOut}>
+            {AdditionalButtonComponents}
+            <Button onClick={onButtonClick} short>
+              {buttonText}
+            </Button>
+          </ButtonContainer>
+        </RightSide>
       </Header>
       <Content>{children}</Content>
     </AddressesPageTabContentStyled>
@@ -67,7 +69,7 @@ const AddressesPageTabContentStyled = styled.div`
 
 const Header = styled.div`
   display: flex;
-  align-items: center;
+
   justify-content: space-between;
   margin: var(--spacing-2) 0;
   gap: 25px;
@@ -86,10 +88,19 @@ const Content = styled.div`
   display: flex;
 `
 
-const ButtonContainer = styled(motion.div)`
+const ButtonContainer = styled.div`
+  min-height: var(--inputHeight);
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 10px;
+
+  > button {
+    margin: 0;
+  }
+`
+
+const RightSide = styled(motion.div)`
   flex-shrink: 0;
   margin-left: auto;
 `

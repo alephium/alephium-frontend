@@ -4,7 +4,7 @@ import posthog from 'posthog-js'
 
 import { fetchCsv } from '@/api/transactions'
 import i18n from '@/features/localization/i18n'
-import { Message, SnackbarMessage } from '@/types/snackbar'
+import { Message, SnackbarMessage } from '@/features/toastMessages/toastMessagesTypes'
 import { CsvExportQueryParams, SentTransaction } from '@/types/transactions'
 
 // TODO: Move into these features:
@@ -44,7 +44,7 @@ export const fetchTransactionsCsv = createAsyncThunk<string, CsvExportQueryParam
       posthog.capture('Error', { message: 'Fetching CSV' })
       return rejectWithValue({
         text: getHumanReadableError(e, i18n.t('Encountered error while exporting your transactions.')),
-        type: 'alert'
+        type: 'error'
       })
     }
   }

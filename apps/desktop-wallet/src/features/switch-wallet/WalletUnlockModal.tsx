@@ -56,7 +56,11 @@ const WalletUnlockModal = memo(({ id, walletId }: ModalBaseProp & WalletUnlockMo
         isSubmitDisabled={!isPassphraseSubmitEnabled}
       >
         {passphraseConsent && <WalletPassphraseStyled onPassphraseConfirmed={setPassphrase} />}
-        <UsePassphraseButtonStyled passphraseConsent={passphraseConsent} onConsentChange={handleUsePassphrasePress} />
+        <UsePassphraseButtonStyled
+          passphraseConsent={passphraseConsent}
+          onConsentChange={handleUsePassphrasePress}
+          transparent
+        />
       </PasswordConfirmation>
     </CenteredModal>
   )
@@ -70,4 +74,5 @@ const WalletPassphraseStyled = styled(WalletPassphrase)`
 
 const UsePassphraseButtonStyled = styled(UsePassphraseButton)`
   margin-left: auto;
+  margin-right: auto;
 `

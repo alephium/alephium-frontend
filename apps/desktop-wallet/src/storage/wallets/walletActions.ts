@@ -1,6 +1,6 @@
 import { createAction } from '@reduxjs/toolkit'
 
-import { Message } from '@/types/snackbar'
+import { Message } from '@/features/toastMessages/toastMessagesTypes'
 import { GeneratedWallet, StoredEncryptedWallet, UnlockedWallet } from '@/types/wallet'
 
 export const walletCreationFailed = createAction<Message>('wallets/walletCreationFailed')

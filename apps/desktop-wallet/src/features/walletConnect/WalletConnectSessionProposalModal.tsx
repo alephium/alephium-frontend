@@ -15,6 +15,7 @@ import Paragraph from '@/components/Paragraph'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { showToast } from '@/features/toastMessages/toastMessagesActions'
 import useSignerAddress from '@/features/walletConnect/useSignerAddress'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -22,7 +23,7 @@ import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
-import { showToast, toggleAppLoading } from '@/storage/global/globalActions'
+import { toggleAppLoading } from '@/storage/global/globalActions'
 import { getRandomLabelColor } from '@/utils/colors'
 import { cleanUrl } from '@/utils/misc'
 
@@ -70,7 +71,11 @@ const WalletConnectSessionProposalModal = memo(
       } catch (error) {
         sendAnalytics({ type: 'error', message: 'Error while saving newly generated address from WalletConnect modal' })
         dispatch(
-          showToast({ text: `${t('could_not_save_new_address_one')}: ${error}`, type: 'alert', duration: 'long' })
+          showToast({
+            text: `${t('could_not_save_new_address_one')}: ${error}`,
+            type: 'error',
+            duration: 'long'
+          })
         )
       }
     }

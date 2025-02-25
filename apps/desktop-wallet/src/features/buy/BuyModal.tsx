@@ -8,9 +8,9 @@ import ActionLink from '@/components/ActionLink'
 import useOnramperUrl from '@/features/buy/useOnramperUrl'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { showToast } from '@/features/toastMessages/toastMessagesActions'
 import { useAppDispatch } from '@/hooks/redux'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
-import { showToast } from '@/storage/global/globalActions'
 import { openInWebBrowser } from '@/utils/misc'
 
 export interface BuyModalProps {
