@@ -73,7 +73,7 @@ const SelectCustomComponent = (value?: SelectOption<AddressHash>, disablePointer
       disablePointer={disablePointer}
       squared
     >
-      {value?.value && <AddressBadgeStyled addressHash={value.value} truncate />}
+      {value?.value && <AddressBadgeStyled addressHash={value.value} truncate disableCopy />}
     </Button>
   )
 }
