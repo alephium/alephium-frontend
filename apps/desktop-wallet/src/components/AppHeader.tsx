@@ -184,7 +184,7 @@ const HeaderButtons = styled.div`
   align-items: center;
   gap: var(--spacing-1);
   -webkit-app-region: no-drag;
-  padding-right: ${platform.isWindows ? '165px' : 0};
+  padding-right: ${!platform.isMac ? '165px' : 0};
 
   > *:not(:last-child) {
     margin-right: var(--spacing-1);
