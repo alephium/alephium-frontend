@@ -5,7 +5,7 @@ import LedgerToastMessages from '@/features/ledger/LedgerToastMessages'
 import SentTransactionsToastMessages from '@/features/send/sentTransactions/SentTransactionsToastMessages'
 import ToastMessages from '@/features/toastMessages/ToastMessages'
 import ModalPortal from '@/modals/ModalPortal'
-import { deviceBreakPoints } from '@/style/globalStyles'
+import { appHeaderHeightPx, deviceBreakPoints } from '@/style/globalStyles'
 
 const ToastMessagesModal = () => (
   <ModalPortal>
@@ -22,7 +22,7 @@ export default ToastMessagesModal
 
 const ToastMessagesModalContainer = styled.div`
   position: fixed;
-  top: 0;
+  top: ${appHeaderHeightPx / 2}px;
   left: 0;
   right: 0;
   z-index: 3;
@@ -32,7 +32,6 @@ const ToastMessagesModalContainer = styled.div`
   justify-content: center;
   gap: var(--spacing-1);
   pointer-events: none;
-  margin-top: var(--spacing-1);
 
   app-region: no-drag;
 
