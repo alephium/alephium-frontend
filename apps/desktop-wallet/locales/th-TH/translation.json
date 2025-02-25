@@ -361,7 +361,6 @@
   "Unselect all": "ไม่เลือกทั้งหมด",
   "Update": "อัปเดต",
   "Use an existing wallet": "ใช้กระเป๋าเงินที่มีอยู่",
-  "Use max amount": "ใช้ทั้งหมด",
   "Use optional passphrase": "ใช้รหัสผ่านพาสเฟรซ ไม่จำเป็น",
   "Useful for miners or DeFi use.": "ประโยชน์สำหรับนักขุดหรือนักพัฒนา DeFi",
   "Version": "รุ่น (เวอร์ชั่น)",
@@ -532,6 +531,7 @@
   "nb_of_hidden_assets_other": "สินทรัพย์ที่ซ่อนอยู่ {{ count }}",
   "Close hidden assets list": "ปิดรายการสินทรัพย์ที่ซ่อนอยู่",
   "Unhide asset": "ยกเลิกการซ่อนสินทรัพย์",
+  "Asset to send": "สินทรัพย์ที่จะส่ง",
   "No transactions before {{ date }}": "ไม่มีการทำธุรกรรมก่อนวันที่ {{ date }}",
   "Sort by": "จัดเรียงตาม",
   "ALPH balance": "ยอดคงเหลือ ALPH"
