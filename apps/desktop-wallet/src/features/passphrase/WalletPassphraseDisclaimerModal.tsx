@@ -27,7 +27,7 @@ const WalletPassphraseDisclaimerModal = memo(
     }
 
     return (
-      <CenteredModal id={id} title={t('Passphrase warning')} dynamicContent hasFooterButtons>
+      <CenteredModal id={id} title={t('Passphrase warning')} hasFooterButtons>
         <InfoBox importance="alert">
           <p>
             <Trans t={t} i18nKey="passphraseWarningMessage">

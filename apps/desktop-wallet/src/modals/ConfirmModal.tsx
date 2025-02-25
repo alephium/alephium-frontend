@@ -27,7 +27,7 @@ const ConfirmModal = memo(({ onConfirm, Icon, text, note, id, ...props }: ModalB
   }
 
   return (
-    <CenteredModal title={t('Confirm')} id={id} hasFooterButtons dynamicContent {...props}>
+    <CenteredModal title={t('Confirm')} id={id} hasFooterButtons {...props}>
       <InfoBox Icon={Icon}>{text}</InfoBox>
 
       {note && <InfoBox importance="accent">{note}</InfoBox>}

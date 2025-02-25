@@ -1,7 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
 
-import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { openModal } from '@/features/modals/modalActions'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckAmountsBox from '@/features/send/CheckAmountsBox'
@@ -27,16 +25,16 @@ const TransferCheckTxModalContent = ({ data, fees, onSubmit, onBack, dAppUrl }: 
   return (
     <>
       <CheckModalContent>
-        <CheckAmountsBoxStyled assetAmounts={data.assetAmounts} hasBg hasPadding />
-        <CheckAddressesBox fromAddress={data.fromAddress} toAddressHash={data.toAddress} dAppUrl={dAppUrl} />
-        <HorizontalDivider />
-        {data.lockTime && (
-          <>
-            <CheckLockTimeBox lockTime={data.lockTime} />
-            <HorizontalDivider />
-          </>
-        )}
-        <CheckWorthBox assetAmounts={data.assetAmounts} fee={fees} />
+        <CheckAmountsBox assetAmounts={data.assetAmounts} hasBg hasHorizontalPadding />
+        <CheckAddressesBox
+          fromAddress={data.fromAddress}
+          toAddressHash={data.toAddress}
+          dAppUrl={dAppUrl}
+          hasBg
+          hasHorizontalPadding
+        />
+        {data.lockTime && <CheckLockTimeBox lockTime={data.lockTime} />}
+        <CheckWorthBox assetAmounts={data.assetAmounts} fee={fees} hasBg hasBorder hasHorizontalPadding />
       </CheckModalContent>
 
       <ModalFooterButtons>
@@ -50,8 +48,3 @@ const TransferCheckTxModalContent = ({ data, fees, onSubmit, onBack, dAppUrl }: 
 }
 
 export default TransferCheckTxModalContent
-
-const CheckAmountsBoxStyled = styled(CheckAmountsBox)`
-  background-color: ${({ theme }) => theme.bg.secondary};
-  padding: 0 var(--spacing-2);
-`

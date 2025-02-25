@@ -29,7 +29,7 @@ const ConsolidateUTXOsModal = memo(({ id, onConsolidateClick, fee }: ModalBasePr
   }
 
   return (
-    <CenteredModal title={t('Consolidate UTXOs')} id={id} hasFooterButtons dynamicContent>
+    <CenteredModal title={t('Consolidate UTXOs')} id={id} hasFooterButtons>
       <HeaderContent>
         <HeaderLogo>
           <Codesandbox color={theme.global.accent} size="70%" strokeWidth={0.7} />

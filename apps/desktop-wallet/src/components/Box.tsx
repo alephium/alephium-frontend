@@ -3,7 +3,10 @@ import styled, { css } from 'styled-components'
 
 export interface BoxProps {
   hasBg?: boolean
-  hasPadding?: boolean
+  hasVerticalPadding?: boolean
+  hasHorizontalPadding?: boolean
+  hasBorder?: boolean
+  highlight?: boolean
 }
 
 const Box = styled(motion.div)<BoxProps>`
@@ -13,13 +16,34 @@ const Box = styled(motion.div)<BoxProps>`
   ${({ hasBg }) =>
     hasBg &&
     css`
-      background-color: ${({ theme }) => theme.bg.secondary};
+      background-color: ${({ theme }) => theme.bg.tertiary};
     `}
 
-  ${({ hasPadding }) =>
-    hasPadding &&
+  ${({ hasVerticalPadding }) =>
+    hasVerticalPadding &&
     css`
-      padding: var(--spacing-2);
+      padding-top: var(--spacing-2);
+      padding-bottom: var(--spacing-2);
+    `}
+
+    ${({ hasHorizontalPadding }) =>
+    hasHorizontalPadding &&
+    css`
+      padding-right: var(--spacing-2);
+      padding-left: var(--spacing-2);
+    `}
+
+    ${({ hasBorder }) =>
+    hasBorder &&
+    css`
+      border: 1px solid ${({ theme }) => theme.border.secondary};
+    `}
+
+    ${({ highlight }) =>
+    highlight &&
+    css`
+      border: 1px solid ${({ theme }) => theme.border.primary};
+      background-color: ${({ theme }) => theme.bg.primary};
     `}
 `
 

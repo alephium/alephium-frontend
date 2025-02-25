@@ -32,11 +32,10 @@ const WalletConnectModal = memo(({ id }: ModalBaseProp) => {
       title="WalletConnect"
       subtitle={t(activeSessions.length > 0 ? 'Active dApp connections' : 'Connect to a dApp')}
       id={id}
-      dynamicContent
       hasFooterButtons
     >
       {activeSessions.length > 0 && (
-        <Box hasPadding hasBg>
+        <Box hasVerticalPadding hasHorizontalPadding hasBg>
           <Table>
             {activeSessions.map(({ topic, peer: { metadata } }, index) => (
               <TableRowStyled key={topic} role="row" tabIndex={0}>

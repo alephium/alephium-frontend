@@ -311,7 +311,6 @@ function SendModal<PT extends { fromAddress: Address }>({
       title={title}
       onClose={onClose}
       isLoading={isLoading}
-      dynamicContent
       focusMode
       disableBack={isRequestToApproveContractCall && step !== 'password-check'}
       hasFooterButtons

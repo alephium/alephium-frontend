@@ -13,7 +13,7 @@ interface LockedWalletLayoutProps extends MotionProps {
 const LockedWalletLayout = ({ children, ...props }: LockedWalletLayoutProps) => (
   <motion.main {...props}>
     <Scrollbar>
-      <AppHeader position="fixed" />
+      <AppHeader />
       <CenteredContainer>{children}</CenteredContainer>
     </Scrollbar>
   </motion.main>

@@ -25,7 +25,15 @@ interface CheckAmountsBoxProps extends AmountBaseProps, BoxProps {
   className?: string
 }
 
-const CheckAmountsBox = ({ assetAmounts, className, hasBg, hasPadding, ...props }: CheckAmountsBoxProps) => {
+const CheckAmountsBox = ({
+  assetAmounts,
+  className,
+  hasBg,
+  hasHorizontalPadding,
+  hasVerticalPadding,
+  hasBorder,
+  ...props
+}: CheckAmountsBoxProps) => {
   const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
   const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
 
@@ -33,11 +41,17 @@ const CheckAmountsBox = ({ assetAmounts, className, hasBg, hasPadding, ...props 
   const assets = userSpecifiedAlphAmount ? [alphAsset, ...tokens] : [...tokens, alphAsset]
 
   return (
-    <CheckAmountsBoxStyled className={className} hasBg={hasBg} hasPadding={hasPadding}>
+    <CheckAmountsBoxStyled
+      className={className}
+      hasBg={hasBg}
+      hasHorizontalPadding={hasHorizontalPadding}
+      hasVerticalPadding={hasVerticalPadding}
+      hasBorder={hasBorder}
+    >
       {assets.map((asset, index) => (
         <Fragment key={asset.id}>
           <AssetAmountRow tokenId={asset.id} amount={asset.amount} extraAlphForDust={extraAlphForDust} {...props} />
-          {index < assets.length - 1 && <HorizontalDivider />}
+          {index < assets.length - 1 && <HorizontalDivider secondary />}
         </Fragment>
       ))}
     </CheckAmountsBoxStyled>

@@ -52,7 +52,7 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
   const handleCancelClick = () => dispatch(closeModal({ id }))
 
   return (
-    <CenteredModal title={t('forgetAddress_other')} id={id} dynamicContent noPadding>
+    <CenteredModal title={t('forgetAddress_other')} id={id} noPadding>
       <ScrollableModalContent>
         {reversedAddressesArray.length === 1 && (
           <InfoBox importance="accent">{t('You only have one address. You cannot forget it.')}</InfoBox>

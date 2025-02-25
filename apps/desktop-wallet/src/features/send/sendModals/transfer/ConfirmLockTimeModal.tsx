@@ -25,7 +25,7 @@ const ConfirmLockTimeModal = memo(({ id, lockTime, onSubmit }: ModalBaseProp & C
   }
 
   return (
-    <CenteredModal title={t('Confirm lock time')} id={id} hasFooterButtons dynamicContent>
+    <CenteredModal title={t('Confirm lock time')} id={id} hasFooterButtons>
       <InfoBox importance="accent" Icon={LockIcon}>
         <Trans
           t={t}
