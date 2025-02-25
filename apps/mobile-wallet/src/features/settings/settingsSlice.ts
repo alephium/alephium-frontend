@@ -113,6 +113,7 @@ settingsListenerMiddleware.startListening({
     autoLockSecondsChanged,
     allBiometricsEnabled,
     languageChanged,
+    numberFormatRegionChanged,
     systemRegionMatchSucceeded,
     systemRegionMatchFailed,
     appReset
