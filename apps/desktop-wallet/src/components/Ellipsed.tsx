@@ -1,5 +1,7 @@
-import { HTMLAttributes } from 'react'
+import { HTMLAttributes, useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
+
+import { useWindowResize } from '@/utils/hooks'
 
 interface EllipsedProps extends HTMLAttributes<HTMLDivElement> {
   text: string
@@ -7,20 +9,41 @@ interface EllipsedProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const Ellipsed = ({ text, className }: EllipsedProps) => {
-  const needsEllipsis = text.length > 11
-  const truncatedText = needsEllipsis ? text.substring(0, 4) + '...' + text.slice(-4) : text
+  const el = useRef<HTMLDivElement | null>(null)
+  const [_text, setText] = useState(text)
+
+  const handleResize = useCallback(() => {
+    if (el?.current === null) {
+      setText(text.substring(0, 5) + '...')
+    } else {
+      const visibleChars = Math.floor(el.current.clientWidth / (el.current.scrollWidth / text.length))
+      const half = visibleChars / 2
+
+      setText(
+        visibleChars >= text.length
+          ? text
+          : text.slice(0, Math.floor(half) - 2) +
+              (visibleChars === text.length ? '' : '...') +
+              text.slice(-Math.ceil(half) + 2)
+      )
+    }
+  }, [text])
+
+  useWindowResize(handleResize)
+
+  useEffect(() => {
+    handleResize()
+  }, [handleResize, text])
 
   return (
-    <EllipsedStyled className={className}>
+    <div ref={el} className={className}>
       <HiddenText>{text}</HiddenText>
-      <div>{truncatedText}</div>
-    </EllipsedStyled>
+      <div>{_text}</div>
+    </div>
   )
 }
 
-export default Ellipsed
-
-const EllipsedStyled = styled.div`
+export default styled(Ellipsed)`
   font-family: 'Roboto Mono';
   overflow: hidden;
 `
