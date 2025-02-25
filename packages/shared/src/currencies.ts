@@ -66,5 +66,10 @@ export const CURRENCIES: Record<Currency, CurrencyData> = {
     name: 'Hong Kong Dollar',
     ticker: 'HKD',
     symbol: 'HK$'
+  },
+  CNY: {
+    name: 'Chinese Yuan',
+    ticker: 'CNY',
+    symbol: '¥'
   }
 }
