@@ -16,7 +16,7 @@ import SendButton from '~/features/send/SendButton'
 import useScreenScrollHandler from '~/hooks/layout/useScreenScrollHandler'
 import { useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { selectContactById } from '~/store/addresses/addressesSelectors'
+import { selectContactById, selectTotalBalance } from '~/store/addresses/addressesSelectors'
 import { makeSelectContactConfirmedTransactions } from '~/store/confirmedTransactionsSlice'
 import { makeSelectContactPendingTransactions } from '~/store/pendingTransactionsSlice'
 import { VERTICAL_GAP } from '~/style/globalStyle'
@@ -34,6 +34,7 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
   const selectContactPendingTransactions = useMemo(makeSelectContactPendingTransactions, [])
   const confirmedTransactions = useAppSelector((s) => selectContactConfirmedTransactions(s, contactAddressHash))
   const pendingTransactions = useAppSelector((s) => selectContactPendingTransactions(s, contactAddressHash))
+  const totalBalance = useAppSelector(selectTotalBalance)
   const { t } = useTranslation()
 
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
@@ -97,7 +98,7 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
               </ContactAddress>
             </CenteredSection>
             <ButtonsRow>
-              <SendButton origin="contact" destinationAddressHash={contact.address} />
+              {totalBalance > BigInt(0) && <SendButton origin="contact" destinationAddressHash={contact.address} />}
               <ActionCardButton
                 iconProps={{ name: 'clipboard' }}
                 title={t('Copy address')}
