@@ -19,9 +19,10 @@ import { messageSignFailed, messageSignSucceeded } from '@/storage/transactions/
 
 export interface SignMessageModalProps {
   txData: SignMessageData
+  dAppUrl: string
 }
 
-const SignMessageModal = memo(({ id, txData }: ModalBaseProp & SignMessageModalProps) => {
+const SignMessageModal = memo(({ id, txData, dAppUrl }: ModalBaseProp & SignMessageModalProps) => {
   const { t } = useTranslation()
   const { sendAnalytics } = useAnalytics()
   const dispatch = useAppDispatch()
@@ -36,7 +37,7 @@ const SignMessageModal = memo(({ id, txData }: ModalBaseProp & SignMessageModalP
 
       await sendSuccessResponse({ signature }, true)
 
-      dispatch(messageSignSucceeded)
+      dispatch(messageSignSucceeded())
       dispatch(closeModal({ id }))
     } catch (error) {
       const message = 'Could not sign message'
@@ -58,7 +59,14 @@ const SignMessageModal = memo(({ id, txData }: ModalBaseProp & SignMessageModalP
   }
 
   return (
-    <CenteredModal id={id} title={t('Sign Message')} onClose={rejectAndClose} dynamicContent focusMode noPadding>
+    <CenteredModal
+      id={id}
+      title={t('Sign Message')}
+      subtitle={dAppUrl}
+      onClose={rejectAndClose}
+      focusMode
+      hasFooterButtons
+    >
       <InputFieldsColumn>
         <InfoBox label={t('Message')} text={txData.message} />
       </InputFieldsColumn>

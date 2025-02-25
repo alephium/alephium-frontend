@@ -11,12 +11,12 @@ import ToggleSection from '@/components/ToggleSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { showToast } from '@/features/toastMessages/toastMessagesActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
-import { showToast } from '@/storage/global/globalActions'
 import { getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
@@ -61,14 +61,18 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
         onClose()
       } catch (error) {
         dispatch(
-          showToast({ text: `${t('could_not_save_new_address_one')}: ${error}`, type: 'alert', duration: 'long' })
+          showToast({
+            text: `${t('could_not_save_new_address_one')}: ${error}`,
+            type: 'error',
+            duration: 'long'
+          })
         )
         sendAnalytics({ type: 'error', message: 'Error while saving newly generated address' })
       }
     } catch (error) {
       const message = 'Could not generate address'
       sendAnalytics({ type: 'error', message })
-      dispatch(showToast({ text: `${t(message)}: ${error}`, type: 'alert', duration: 'long' }))
+      dispatch(showToast({ text: `${t(message)}: ${error}`, type: 'error', duration: 'long' }))
     } finally {
       setIsLoading(false)
     }
@@ -91,7 +95,7 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
   )}`
 
   return (
-    <CenteredModal title={title} id={id} isLoading={isLoading}>
+    <CenteredModal title={title} id={id} isLoading={isLoading} hasFooterButtons>
       {!isPassphraseUsed && (
         <Section align="flex-start">
           <AddressMetadataForm
@@ -104,7 +108,7 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
             singleAddress={singleAddress}
           />
           {!singleAddress && (
-            <InfoBox Icon={Info} contrast>
+            <InfoBox Icon={Info} contrast importance="accent">
               {t('The group number will be automatically be appended to the addresses’ label.')}
             </InfoBox>
           )}

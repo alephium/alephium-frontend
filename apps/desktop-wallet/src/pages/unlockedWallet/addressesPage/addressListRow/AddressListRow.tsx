@@ -19,9 +19,10 @@ interface AddressListRowProps {
   addressHash: AddressHash
   className?: string
   tokenId?: TokenId
+  isLast?: boolean
 }
 
-const AddressListRow = memo(({ addressHash, tokenId, className }: AddressListRowProps) => {
+const AddressListRow = memo(({ addressHash, tokenId, className, isLast }: AddressListRowProps) => {
   const dispatch = useAppDispatch()
 
   const openAddressDetailsModal = () => dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
@@ -35,10 +36,10 @@ const AddressListRow = memo(({ addressHash, tokenId, className }: AddressListRow
       role="row"
       tabIndex={0}
     >
-      <Cell>
+      <Cell noBorder={isLast}>
         <AddressColorIndicator addressHash={addressHash} size={10} />
       </Cell>
-      <Cell>
+      <Cell noBorder={isLast}>
         <Column>
           <Label>
             <AddressBadge addressHash={addressHash} hideColorIndication truncate disableA11y />
@@ -46,22 +47,22 @@ const AddressListRow = memo(({ addressHash, tokenId, className }: AddressListRow
           <AddressLastActivity addressHash={addressHash} />
         </Column>
       </Cell>
-      <Cell>
+      <Cell noBorder={isLast}>
         <AddressGroup addressHash={addressHash} />
       </Cell>
 
       {tokenId ? (
         <FTAddressAmountCell tokenId={tokenId} addressHash={addressHash} />
       ) : (
-        <Cell>
+        <Cell noBorder={isLast}>
           <AddressTokensBadgesListStyled addressHash={addressHash} />
         </Cell>
       )}
 
       {tokenId ? (
-        <FTAddressWorthCell tokenId={tokenId} addressHash={addressHash} />
+        <FTAddressWorthCell tokenId={tokenId} addressHash={addressHash} noBorder={isLast} />
       ) : (
-        <FiatAmountCell>
+        <FiatAmountCell noBorder={isLast}>
           <AddressWorth addressHash={addressHash} />
         </FiatAmountCell>
       )}
@@ -86,12 +87,17 @@ const Label = styled.div`
   padding-right: var(--spacing-4);
 `
 
-const Cell = styled.div`
+const Cell = styled.div<{ noBorder?: boolean }>`
   padding: 14px 0;
   display: flex;
   align-items: center;
+
   &:not(:first-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+    ${({ noBorder }) =>
+      !noBorder &&
+      css`
+        border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
+      `}
   }
 `
 

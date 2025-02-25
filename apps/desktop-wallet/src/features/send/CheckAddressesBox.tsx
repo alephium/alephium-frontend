@@ -1,60 +1,69 @@
 import { AddressHash } from '@alephium/shared'
-import { useMemo } from 'react'
+import { ExternalLinkIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 import AddressBadge from '@/components/AddressBadge'
-import Box from '@/components/Box'
-import HashEllipsed from '@/components/HashEllipsed'
-import Truncate from '@/components/Truncate'
+import Box, { BoxProps } from '@/components/Box'
+import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { useAppSelector } from '@/hooks/redux'
-import { makeSelectContactByAddress } from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
 import { openInWebBrowser } from '@/utils/misc'
 
-interface CheckAddressesBoxProps {
+interface CheckAddressesBoxProps extends BoxProps {
   fromAddress: Address
   toAddressHash?: AddressHash
+  dAppUrl?: string
   className?: string
 }
 
-const CheckAddressesBox = ({ fromAddress, toAddressHash, className }: CheckAddressesBoxProps) => {
+const CheckAddressesBox = ({ fromAddress, toAddressHash, dAppUrl, ...props }: CheckAddressesBoxProps) => {
   const { t } = useTranslation()
-  const selectContactByAddress = useMemo(makeSelectContactByAddress, [])
-  const contact = useAppSelector((s) => selectContactByAddress(s, toAddressHash))
-  const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
   return (
-    <Box className={className}>
+    <Box {...props}>
       <AddressRow>
         <AddressLabel>{t('From')}</AddressLabel>
-        <AddressLabelHash>
-          <AddressBadge addressHash={fromAddress.hash} truncate appendHash />
-        </AddressLabelHash>
+
+        <AddressBadge addressHash={fromAddress.hash} truncate appendHash withBorders />
       </AddressRow>
-      {toAddressHash && (
-        <AddressRow>
-          <AddressLabel>{t('To')}</AddressLabel>
-          <AddressLabelHash>
-            {contact ? (
-              <>
-                <ContactName>{contact.name}</ContactName>
-                <HashEllipsedStyled hash={contact.address} />
-              </>
-            ) : (
-              <ActionLinkStyled onClick={() => openInWebBrowser(`${explorerUrl}/addresses/${toAddressHash}`)}>
-                <AddressBadge addressHash={toAddressHash} truncate appendHash />
-              </ActionLinkStyled>
+
+      {(toAddressHash || dAppUrl) && (
+        <>
+          <HorizontalDivider secondary />
+          <AddressRow>
+            <AddressLabel>{t('To')}</AddressLabel>
+
+            {toAddressHash && (
+              <DestinationAddress>
+                <AddressBadge addressHash={toAddressHash} truncate appendHash withBorders />
+                <ExplorerLink addressHash={toAddressHash} />
+              </DestinationAddress>
             )}
-          </AddressLabelHash>
-        </AddressRow>
+            {dAppUrl && <DestinationAddress>{dAppUrl}</DestinationAddress>}
+          </AddressRow>
+        </>
       )}
     </Box>
   )
 }
 
 export default CheckAddressesBox
+
+const ExplorerLink = ({ addressHash }: { addressHash: AddressHash }) => {
+  const { t } = useTranslation()
+  const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
+
+  return (
+    <ActionLinkStyled
+      onClick={() => openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)}
+      tooltip={t('Show in explorer')}
+    >
+      <ExternalLinkIcon size={12} />
+    </ActionLinkStyled>
+  )
+}
 
 const AddressRow = styled.div`
   display: flex;
@@ -69,22 +78,16 @@ const AddressLabel = styled.div`
   color: ${({ theme }) => theme.font.secondary};
 `
 
-const AddressLabelHash = styled.div`
+const DestinationAddress = styled.div`
   display: flex;
-  gap: 10px;
+  flex-direction: column;
+  gap: var(--spacing-1);
   min-width: 0;
-`
-
-const ContactName = styled(Truncate)`
-  max-width: 200px;
-`
-
-const HashEllipsedStyled = styled(HashEllipsed)`
-  max-width: 150px;
-  color: ${({ theme }) => theme.font.secondary};
-  font-size: 12px;
+  position: relative;
 `
 
 const ActionLinkStyled = styled(ActionLink)`
-  font-weight: var(--fontWeight-semiBold);
+  position: absolute;
+  right: 7px;
+  bottom: -17px;
 `

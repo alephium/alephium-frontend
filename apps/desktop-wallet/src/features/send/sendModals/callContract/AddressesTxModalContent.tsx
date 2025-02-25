@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import AddressInputs from '@/features/send/AddressInputs'
 import { CallContractTxModalData } from '@/features/send/sendTypes'
 import { useAppSelector } from '@/hooks/redux'
 import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
+import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 interface CallContractAddressesTxModalContentProps {
@@ -40,7 +40,9 @@ const CallContractAddressesTxModalContent = ({
           onFromAddressChange={setFromAddressHash}
         />
       </InputFieldsColumn>
-      <FooterButton onClick={() => onSubmit({ fromAddress })}>{t('Continue')}</FooterButton>
+      <ModalFooterButtons>
+        <ModalFooterButton onClick={() => onSubmit({ fromAddress })}>{t('Continue')}</ModalFooterButton>
+      </ModalFooterButtons>
     </>
   )
 }

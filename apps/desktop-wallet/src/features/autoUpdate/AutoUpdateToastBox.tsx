@@ -1,22 +1,18 @@
-import { X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { fadeInBottom, fadeOut } from '@/animations'
 import Button from '@/components/Button'
-import { SnackbarManagerContainer } from '@/components/SnackbarManager'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useLatestGitHubRelease from '@/features/autoUpdate/useLatestGitHubRelease'
-import SnackbarBox from '@/features/snackbar/SnackbarBox'
-import ModalPortal from '@/modals/ModalPortal'
+import ToastBox from '@/features/toastMessages/ToastBox'
 import { currentVersion } from '@/utils/app-data'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
 type UpdateStatus = 'download-available' | 'downloading' | 'download-finished' | 'download-failed'
 
-const AutoUpdateSnackbar = () => {
+const AutoUpdateToastBox = () => {
   const { t } = useTranslation()
   const { newAutoUpdateVersion, newManualUpdateVersion } = useLatestGitHubRelease()
   const { sendAnalytics } = useAnalytics()
@@ -58,7 +54,7 @@ const AutoUpdateSnackbar = () => {
 
   const newVersion = newAutoUpdateVersion || newManualUpdateVersion
 
-  if (!newVersion) return null
+  if (!newVersion || !isUpdateSnackbarVisible) return null
 
   const handleManualDownloadClick = () => {
     openInWebBrowser(links.latestRelease)
@@ -94,63 +90,39 @@ const AutoUpdateSnackbar = () => {
   }[status]
 
   return (
-    <ModalPortal>
-      {isUpdateSnackbarVisible && (
-        <SnackbarManagerContainer>
-          <SnackbarPopupWithButton
-            {...fadeInBottom}
-            {...fadeOut}
-            className={error ? 'alert' : status === 'download-finished' ? 'success' : 'info'}
-          >
-            <Texts>
-              <Title>{downloadTitle}</Title>
-              <div>{error ? error : downloadMessage}</div>
-              {status === 'downloading' && <ProgressBar value={parseFloat(percent) / 100} />}
-            </Texts>
-            {error && (
-              <CloseButton aria-label={t('Close')} circle role="secondary" transparent onClick={closeSnackbar}>
-                <X />
-              </CloseButton>
-            )}
-            {status === 'download-available' && newManualUpdateVersion && (
-              <Button short onClick={handleManualDownloadClick}>
-                {t('Download')}
-              </Button>
-            )}
-            {status === 'download-finished' && !error && (
-              <Button short role="secondary" onClick={handleRestartClick}>
-                {t('Restart')}
-              </Button>
-            )}
-          </SnackbarPopupWithButton>
-        </SnackbarManagerContainer>
-      )}
-    </ModalPortal>
+    <ToastBox
+      type={error ? 'error' : status === 'download-finished' ? 'success' : 'info'}
+      onClose={closeSnackbar}
+      title={downloadTitle}
+      FooterButtons={
+        <>
+          {status === 'download-available' && newManualUpdateVersion && (
+            <Button wide squared onClick={handleManualDownloadClick}>
+              {t('Download')}
+            </Button>
+          )}
+          {status === 'download-finished' && !error && (
+            <Button wide squared role="secondary" onClick={handleRestartClick}>
+              {t('Restart')}
+            </Button>
+          )}
+        </>
+      }
+    >
+      <Texts>
+        <div>{error ? error : downloadMessage}</div>
+        {status === 'downloading' && <ProgressBar value={parseFloat(percent) / 100} />}
+      </Texts>
+    </ToastBox>
   )
 }
 
-export default AutoUpdateSnackbar
+export default AutoUpdateToastBox
 
 const Texts = styled.div`
   flex: 1;
 `
 
-const Title = styled.div`
-  font-weight: var(--fontWeight-semiBold);
-  margin-bottom: var(--spacing-1);
-`
-
 const ProgressBar = styled.progress`
   width: 100%;
-`
-
-const SnackbarPopupWithButton = styled(SnackbarBox)`
-  display: flex;
-  gap: var(--spacing-2);
-  width: 400px;
-`
-
-const CloseButton = styled(Button)`
-  color: ${({ theme }) => theme.font.primary};
-  margin-right: var(--spacing-2);
 `

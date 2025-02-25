@@ -142,6 +142,7 @@ const AddressSweepModal = memo(
         title={!isUtxoConsolidation ? t`Sweep address` : t`Consolidate UTXOs`}
         id={id}
         isLoading={isLoading}
+        hasFooterButtons
       >
         <Content>
           <AddressSelect

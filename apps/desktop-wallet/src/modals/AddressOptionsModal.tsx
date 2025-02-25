@@ -89,7 +89,6 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
       subtitle={<HashEllipsed hash={address.hash} />}
       id={id}
       hasFooterButtons
-      dynamicContent
     >
       {!isPassphraseUsed && (
         <AddressMetadataForm

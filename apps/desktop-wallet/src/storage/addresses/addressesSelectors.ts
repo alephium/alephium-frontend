@@ -13,6 +13,10 @@ export const {
 
 export const selectAllAddressHashes = createSelector(selectAddressIds, (addresses) => addresses as AddressHash[])
 
+export const selectAllAddressIndexes = createSelector(selectAllAddresses, (addresses) =>
+  addresses.map(({ index }) => index)
+)
+
 export const makeSelectAddresses = () =>
   createSelector(
     [selectAllAddresses, (_, addressHashes?: AddressHash[] | AddressHash) => addressHashes],

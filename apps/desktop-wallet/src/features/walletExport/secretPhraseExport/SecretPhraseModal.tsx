@@ -17,9 +17,10 @@ import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 const SecretPhraseModal = ({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
   const activeWalletId = useAppSelector((s) => s.activeWallet.id)
+  const dispatch = useAppDispatch()
+
   const [isDisplayingPhrase, setIsDisplayingPhrase] = useState(false)
   const [mnemonic, setMnemonic] = useState<string>()
-  const dispatch = useAppDispatch()
 
   if (!activeWalletId) return null
 
@@ -49,15 +50,14 @@ const SecretPhraseModal = ({ id }: ModalBaseProp) => {
       focusMode
       narrow={!isDisplayingPhrase}
       skipFocusOnMount
+      hasFooterButtons
     >
       {!isDisplayingPhrase ? (
-        <div>
-          <PasswordConfirmation
-            text={t('Type your password to show the phrase.')}
-            buttonText={t('Show')}
-            onCorrectPasswordEntered={handleCorrectPasswordEntered}
-          />
-        </div>
+        <PasswordConfirmation
+          text={t('Type your password to show the phrase.')}
+          buttonText={t('Show')}
+          onCorrectPasswordEntered={handleCorrectPasswordEntered}
+        />
       ) : (
         <Section>
           <InfoBox

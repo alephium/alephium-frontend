@@ -7,14 +7,15 @@ import styled from 'styled-components'
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
 import Amount from '@/components/Amount'
-import Box from '@/components/Box'
+import Box, { BoxProps } from '@/components/Box'
 import InfoRow from '@/features/send/InfoRow'
 
-interface CheckWorthBoxProps {
+interface CheckWorthBoxProps extends BoxProps {
   assetAmounts: AssetAmount[]
+  fee: bigint
 }
 
-const CheckWorthBox = ({ assetAmounts }: CheckWorthBoxProps) => {
+const CheckWorthBox = ({ assetAmounts, fee, ...props }: CheckWorthBoxProps) => {
   const { t } = useTranslation()
 
   const {
@@ -35,16 +36,27 @@ const CheckWorthBox = ({ assetAmounts }: CheckWorthBoxProps) => {
     return totalWorth + tokenWorth
   }, 0)
 
+  const alphPrice = tokenPrices?.find(({ symbol }) => symbol === ALPH.symbol)?.price
+  const feeWorth = alphPrice ? calculateAmountWorth(fee, alphPrice, ALPH.decimals) : 0
+  const tooSmallFee = feeWorth < 0.01
+
   return (
-    <Box>
-      <InfoRow label={t('Total worth')}>
-        <AmountStyled
-          tokenId={ALPH.id}
-          value={totalWorth}
-          isFiat
-          isLoading={isLoadingTokensByType || isLoadingTokenPrices}
-        />
-      </InfoRow>
+    <Box {...props}>
+      <InfoRowStyled label={t('Total worth')}>
+        <Amounts>
+          <AmountStyled
+            tokenId={ALPH.id}
+            value={totalWorth}
+            isFiat
+            isLoading={isLoadingTokensByType || isLoadingTokenPrices}
+          />
+          <FeeRow>
+            <FeeLabel>{t('Fee')}</FeeLabel>
+            {tooSmallFee && ' < '}
+            <AmountFee value={tooSmallFee ? 0.01 : feeWorth} isFiat isLoading={isLoadingTokenPrices} />
+          </FeeRow>
+        </Amounts>
+      </InfoRowStyled>
     </Box>
   )
 }
@@ -53,4 +65,28 @@ export default CheckWorthBox
 
 const AmountStyled = styled(Amount)`
   color: ${({ theme }) => theme.font.primary};
+  font-size: 20px;
+`
+
+const Amounts = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-1);
+`
+
+const AmountFee = styled(Amount)``
+
+const FeeRow = styled.div`
+  display: flex;
+  gap: var(--spacing-1);
+  align-items: center;
+  color: ${({ theme }) => theme.font.secondary};
+  font-size: 11px;
+`
+
+const FeeLabel = styled.span``
+
+const InfoRowStyled = styled(InfoRow)`
+  align-items: center;
 `

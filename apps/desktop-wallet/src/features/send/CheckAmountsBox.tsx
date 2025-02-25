@@ -2,6 +2,7 @@ import { AssetAmount, calculateAmountWorth, toHumanReadableAmount } from '@aleph
 import { ALPH } from '@alephium/token-list'
 import { isNumber } from 'lodash'
 import { Info } from 'lucide-react'
+import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -10,7 +11,8 @@ import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import ActionLink from '@/components/ActionLink'
 import Amount, { AmountBaseProps } from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
-import Box from '@/components/Box'
+import Box, { BoxProps } from '@/components/Box'
+import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { openModal } from '@/features/modals/modalActions'
 import { getTransactionAssetAmounts } from '@/features/send/sendUtils'
 import { useAppDispatch } from '@/hooks/redux'
@@ -18,12 +20,20 @@ import { isFT, isNFT } from '@/types/tokens'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
-interface CheckAmountsBoxProps extends AmountBaseProps {
+interface CheckAmountsBoxProps extends AmountBaseProps, BoxProps {
   assetAmounts: AssetAmount[]
   className?: string
 }
 
-const CheckAmountsBox = ({ assetAmounts, className, ...props }: CheckAmountsBoxProps) => {
+const CheckAmountsBox = ({
+  assetAmounts,
+  className,
+  hasBg,
+  hasHorizontalPadding,
+  hasVerticalPadding,
+  hasBorder,
+  ...props
+}: CheckAmountsBoxProps) => {
   const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
   const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
 
@@ -31,15 +41,18 @@ const CheckAmountsBox = ({ assetAmounts, className, ...props }: CheckAmountsBoxP
   const assets = userSpecifiedAlphAmount ? [alphAsset, ...tokens] : [...tokens, alphAsset]
 
   return (
-    <CheckAmountsBoxStyled className={className}>
-      {assets.map((asset) => (
-        <AssetAmountRow
-          key={asset.id}
-          tokenId={asset.id}
-          amount={asset.amount}
-          extraAlphForDust={extraAlphForDust}
-          {...props}
-        />
+    <CheckAmountsBoxStyled
+      className={className}
+      hasBg={hasBg}
+      hasHorizontalPadding={hasHorizontalPadding}
+      hasVerticalPadding={hasVerticalPadding}
+      hasBorder={hasBorder}
+    >
+      {assets.map((asset, index) => (
+        <Fragment key={asset.id}>
+          <AssetAmountRow tokenId={asset.id} amount={asset.amount} extraAlphForDust={extraAlphForDust} {...props} />
+          {index < assets.length - 1 && <HorizontalDivider secondary />}
+        </Fragment>
       ))}
     </CheckAmountsBoxStyled>
   )
@@ -124,10 +137,6 @@ const AssetAmountRowStyled = styled.div`
   gap: 15px;
   border-radius: var(--radius-big);
   padding: var(--spacing-3) 0;
-
-  &:not(:last-child) {
-    border-bottom: 1px solid ${({ theme }) => theme.border.secondary};
-  }
 
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
 `

@@ -51,6 +51,8 @@ export interface WalletConnectContextProps {
     error: ReturnType<typeof getSdkError>
   ) => Promise<void>
   pendingDappConnectionUrl?: string
+  reinitializeWalletConnectClient: () => void
+  walletConnectClientStatus: WalletConnectClientStatus
 }
 
 const initialContext: WalletConnectContextProps = {
@@ -65,7 +67,9 @@ const initialContext: WalletConnectContextProps = {
   resetPendingDappConnectionUrl: () => null,
   isAwaitingSessionRequestApproval: false,
   respondToWalletConnectWithError: () => Promise.resolve(),
-  respondToWalletConnect: () => Promise.resolve()
+  respondToWalletConnect: () => Promise.resolve(),
+  reinitializeWalletConnectClient: () => null,
+  walletConnectClientStatus: 'uninitialized'
 }
 
 const WalletConnectContext = createContext<WalletConnectContextProps>(initialContext)
@@ -119,6 +123,8 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
       }
     }
   }, [sendAnalytics])
+
+  const reinitializeWalletConnectClient = useCallback(() => setWalletConnectClientStatus('uninitialized'), [])
 
   const cleanStorage = useCallback(
     async (event: SessionRequestEvent) => {
@@ -504,7 +510,9 @@ export const WalletConnectContextProvider: FC = ({ children }) => {
         sendFailureResponse,
         refreshActiveSessions,
         respondToWalletConnectWithError,
-        respondToWalletConnect
+        respondToWalletConnect,
+        reinitializeWalletConnectClient,
+        walletConnectClientStatus
       }}
     >
       {sessionRequestEvent && isWalletUnlocked && (

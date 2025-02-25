@@ -24,11 +24,10 @@ import { platform } from '@/utils/platform.ts'
 interface AppHeader {
   title?: string
   invisible?: boolean
-  position?: 'fixed' | 'sticky'
   className?: string
 }
 
-const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, position = 'sticky' }) => {
+const AppHeader: FC<AppHeader> = ({ children, title, className, invisible }) => {
   const { t } = useTranslation()
   const { scrollY: scrollYContext } = useScrollContext()
   const initialScroll = useMotionValue(0)
@@ -58,7 +57,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
   const openWalletConnectModal = () => dispatch(openModal({ name: 'WalletConnectModal' }))
 
   return (
-    <AppHeaderStyled style={{ position }} className={className}>
+    <AppHeaderStyled className={className}>
       <GradientBackground style={{ opacity: gradientOpacity }} />
       <AppHeaderContainer>
         {!platform.isMac && <TitleBar />}
@@ -72,7 +71,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
                 data-tooltip-content={offlineText}
                 data-tooltip-id="default"
               >
-                <WifiOff size={20} color={theme.global.alert} />
+                <WifiOff size={16} color={theme.global.alert} />
               </OfflineIcon>
               <VerticalDivider />
             </>
@@ -129,7 +128,7 @@ const AppHeader: FC<AppHeader> = ({ children, title, className, invisible, posit
 export default AppHeader
 
 const AppHeaderStyled = styled(motion.header)`
-  position: sticky;
+  position: absolute;
   top: 0;
   right: 0;
   left: 0;
@@ -163,9 +162,9 @@ const OfflineIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 35px;
-  height: 35px;
-  border-radius: 35px;
+  width: 30px;
+  height: 30px;
+  border-radius: 30px;
   background-color: ${({ theme }) => colord(theme.global.alert).alpha(0.2).toHex()};
 `
 
@@ -185,6 +184,7 @@ const HeaderButtons = styled.div`
   align-items: center;
   gap: var(--spacing-1);
   -webkit-app-region: no-drag;
+  padding-right: ${!platform.isMac ? '165px' : 0};
 
   > *:not(:last-child) {
     margin-right: var(--spacing-1);

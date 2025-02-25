@@ -27,6 +27,8 @@ const CheckWordsPage = () => {
   const [options, setOptions] = useState<string[]>([])
   const [isError, setIsError] = useState(false)
 
+  const nextWordIndex = currentWordIndex + 1
+
   useEffect(() => {
     if (!mnemonic) return
 
@@ -39,9 +41,9 @@ const CheckWordsPage = () => {
   const handleOptionClick = (selectedWord: string) => {
     const correctWord = mnemonicWords[currentWordIndex]
     if (selectedWord === correctWord) {
-      if (currentWordIndex + 1 < mnemonicWords.length) {
-        setCurrentWordIndex(currentWordIndex + 1)
-        setOptions(generateOptions(mnemonicWords, currentWordIndex + 1))
+      if (nextWordIndex < mnemonicWords.length) {
+        setCurrentWordIndex(nextWordIndex)
+        setOptions(generateOptions(mnemonicWords, nextWordIndex))
         setIsError(false)
       } else {
         sendAnalytics({ event: 'Creating wallet: Verifying words: Completed' })
@@ -65,7 +67,7 @@ const CheckWordsPage = () => {
             <Trans
               t={t}
               i18nKey="Select the correct word for word number <1>{{ number }} of 24</1>."
-              values={{ number: currentWordIndex + 1 }}
+              values={{ number: nextWordIndex }}
               components={{ 1: <b /> }}
             />
           </Paragraph>
@@ -73,7 +75,7 @@ const CheckWordsPage = () => {
           <OptionsContainer>
             {options.map((option, index) => (
               <OptionButton key={index} onClick={() => handleOptionClick(option)} squared>
-                {option}
+                {nextWordIndex}. {option}
               </OptionButton>
             ))}
           </OptionsContainer>

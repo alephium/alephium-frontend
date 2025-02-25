@@ -225,7 +225,7 @@ const TokensAmountInputs = ({
                       placeholder={`${t('Amount')} ${ft ? `(${ft.symbol})` : ''}`}
                       error={errors[index]}
                       autoFocus
-                      size={18}
+                      largeText
                     />
 
                     <AvailableAmountColumn>
@@ -239,10 +239,9 @@ const TokensAmountInputs = ({
                             isLoading={isLoadingTokensBalances}
                           />
                         )}
-                        <span> {t('Available').toLowerCase()}</span>
                       </AvailableAmount>
                       <ActionLink onClick={() => handleTokenAmountChange(index, availableHumanReadableAmount)}>
-                        {t('Use max amount')}
+                        {t('use_max_amount')}
                       </ActionLink>
                     </AvailableAmountColumn>
                   </AssetAmountContainer>
@@ -360,6 +359,7 @@ const AssetName = styled.div`
 const AssetAmountInput = styled(Input)`
   margin: 0;
   border: 0;
+  font-weight: var(--fontWeight-semiBold);
 
   &:not(:hover) {
     background-color: transparent;
@@ -369,7 +369,6 @@ const AssetAmountInput = styled(Input)`
 const AssetAmountContainer = styled.div`
   position: relative;
   display: flex;
-  flex-direction: column;
 `
 
 const AvailableAmountColumn = styled.div`
@@ -379,10 +378,9 @@ const AvailableAmountColumn = styled.div`
   align-items: flex-end;
   gap: 5px;
   font-size: 11px;
-  position: absolute;
-  right: 15px;
-  top: 0;
+  flex-shrink: 0;
   height: 100%;
+  padding: 0 var(--spacing-2);
 `
 
 const AvailableAmount = styled.div`

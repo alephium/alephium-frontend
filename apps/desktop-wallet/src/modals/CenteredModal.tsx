@@ -23,7 +23,6 @@ export interface CenteredModalProps extends ModalContainerProps {
   header?: ReactNode
   fullScreen?: boolean
   narrow?: boolean
-  dynamicContent?: boolean
   onBack?: () => void
   noPadding?: boolean
   hasFooterButtons?: boolean
@@ -40,7 +39,6 @@ const CenteredModal: FC<CenteredModalProps> = ({
   header,
   fullScreen = false,
   narrow = false,
-  dynamicContent = false,
   onBack,
   children,
   skipFocusOnMount,
@@ -61,6 +59,18 @@ const CenteredModal: FC<CenteredModalProps> = ({
   return (
     <ModalContainer id={id} focusMode={focusMode} hasPadding skipFocusOnMount={skipFocusOnMount} {...rest}>
       <CenteredBox role="dialog" {...fadeInOutBottomFast} narrow={narrow} fullScreen={fullScreen}>
+        <Scrollbar>
+          {noPadding ? children : <ModalContent hasFooterButtons={hasFooterButtons}>{children}</ModalContent>}
+          {isLoading && (
+            <>
+              <ModalBackdrop light blur />
+              <ModalLoadingSpinner>
+                <Spinner />
+                {typeof isLoading === 'string' && <ModalLoadingText>{isLoading}</ModalLoadingText>}
+              </ModalLoadingSpinner>
+            </>
+          )}
+        </Scrollbar>
         <ModalHeader hasBackButton={hasBackButton}>
           <TitleRow>
             {hasBackButton && (
@@ -86,25 +96,6 @@ const CenteredModal: FC<CenteredModalProps> = ({
           </TitleRow>
           {header && <ModalHeaderContent>{header}</ModalHeaderContent>}
         </ModalHeader>
-        {dynamicContent ? (
-          noPadding ? (
-            children
-          ) : (
-            <ModalContent hasFooterButtons={hasFooterButtons}>{children}</ModalContent>
-          )
-        ) : (
-          <ScrollableModalContent>{children}</ScrollableModalContent>
-        )}
-
-        {isLoading && (
-          <>
-            <ModalBackdrop light blur />
-            <ModalLoadingSpinner>
-              <Spinner />
-              {typeof isLoading === 'string' && <ModalLoadingText>{isLoading}</ModalLoadingText>}
-            </ModalLoadingSpinner>
-          </>
-        )}
       </CenteredBox>
       <Tooltip />
     </ModalContainer>
@@ -131,8 +122,8 @@ export const HeaderLogo = styled.div`
 
 const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>`
   display: flex;
-  flex-direction: column;
   border: 1px solid ${({ theme }) => theme.border.primary};
+  overflow: hidden;
 
   position: relative;
 
@@ -140,7 +131,6 @@ const CenteredBox = styled(motion.div)<{ narrow: boolean; fullScreen: boolean }>
   margin: auto;
   max-width: ${({ narrow }) => (narrow ? '380px' : '440px')};
   max-height: 90vh;
-  overflow: hidden;
 
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
   border-radius: var(--radius-huge);
@@ -167,7 +157,7 @@ export const ModalHeader = styled.header<{ hasBackButton?: boolean }>`
   left: 0;
   display: flex;
   align-items: center;
-  height: 50px;
+  min-height: 50px;
   padding: 0 8px 0 ${({ hasBackButton }) => (hasBackButton ? '8px' : 'var(--spacing-3)')};
   background: linear-gradient(to bottom, ${({ theme }) => theme.bg.background1} 50%, transparent 100%);
   z-index: 2;
@@ -183,6 +173,7 @@ const TitleRow = styled.div`
   flex: 1;
   display: flex;
   align-items: center;
+  gap: var(--spacing-4);
 `
 
 const ModalTitle = styled.span`
@@ -207,7 +198,6 @@ export const ModalContent = styled.div<{ hasFooterButtons?: boolean }>`
   flex-direction: column;
   padding: 60px var(--spacing-4) var(--spacing-6) var(--spacing-4);
   width: 100%;
-  overflow-y: auto;
 
   ${({ hasFooterButtons }) =>
     hasFooterButtons &&
@@ -243,6 +233,7 @@ const ModalFooterButtonStyled = styled(Button)`
 const ModalSubtitle = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-size: 13px;
+  flex: 1;
 `
 
 const ModalLoadingSpinner = styled.div`
@@ -256,7 +247,7 @@ const ModalLoadingSpinner = styled.div`
 `
 
 const IconContainer = styled.div`
-  margin: var(--spacing-3) 0 var(--spacing-3) var(--spacing-4);
+  margin: var(--spacing-3) var(--spacing-2) var(--spacing-3) 0;
 `
 
 const ModalLoadingText = styled.div`

@@ -4,5 +4,5 @@ import { SentTransaction } from '@/types/transactions'
 
 export const sentTransactionsAdapter = createEntityAdapter<SentTransaction>({
   selectId: (transaction) => transaction.hash,
-  sortComparer: (a, b) => a.timestamp - b.timestamp
+  sortComparer: (a, b) => b.timestamp - a.timestamp
 })

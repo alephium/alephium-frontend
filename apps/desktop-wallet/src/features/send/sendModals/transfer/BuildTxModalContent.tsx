@@ -19,9 +19,10 @@ import { AssetAmountInputType } from '@/types/assets'
 export interface TransferBuildTxModalContentProps {
   data: TransferTxModalData
   onSubmit: (data: TransferTxData) => void
+  onBack: () => void
 }
 
-const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalContentProps) => {
+const TransferBuildTxModalContent = ({ data, onSubmit, onBack }: TransferBuildTxModalContentProps) => {
   const { t } = useTranslation()
   const {
     gasAmount,
@@ -112,6 +113,9 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
         />
       </ToggleSection>
       <ModalFooterButtons>
+        <ModalFooterButton role="secondary" onClick={onBack}>
+          {t('Back')}
+        </ModalFooterButton>
         <ModalFooterButton
           onClick={() =>
             onSubmit({

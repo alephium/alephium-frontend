@@ -15,6 +15,7 @@ import Paragraph from '@/components/Paragraph'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { showToast } from '@/features/toastMessages/toastMessagesActions'
 import useSignerAddress from '@/features/walletConnect/useSignerAddress'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
@@ -22,7 +23,7 @@ import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { walletConnectProposalApprovalFailed } from '@/storage/dApps/dAppActions'
-import { showToast, toggleAppLoading } from '@/storage/global/globalActions'
+import { toggleAppLoading } from '@/storage/global/globalActions'
 import { getRandomLabelColor } from '@/utils/colors'
 import { cleanUrl } from '@/utils/misc'
 
@@ -39,8 +40,14 @@ const WalletConnectSessionProposalModal = memo(
   }: ModalBaseProp & WalletConnectSessionProposalModalProps) => {
     const { t } = useTranslation()
     const { sendAnalytics } = useAnalytics()
-    const { walletConnectClient, resetPendingDappConnectionUrl, activeSessions, refreshActiveSessions } =
-      useWalletConnectContext()
+    const {
+      walletConnectClient,
+      resetPendingDappConnectionUrl,
+      activeSessions,
+      refreshActiveSessions,
+      reinitializeWalletConnectClient,
+      walletConnectClientStatus
+    } = useWalletConnectContext()
     const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
     const currentNetworkName = useAppSelector((s) => s.network.name)
     const dispatch = useAppDispatch()
@@ -64,7 +71,11 @@ const WalletConnectSessionProposalModal = memo(
       } catch (error) {
         sendAnalytics({ type: 'error', message: 'Error while saving newly generated address from WalletConnect modal' })
         dispatch(
-          showToast({ text: `${t('could_not_save_new_address_one')}: ${error}`, type: 'alert', duration: 'long' })
+          showToast({
+            text: `${t('could_not_save_new_address_one')}: ${error}`,
+            type: 'error',
+            duration: 'long'
+          })
         )
       }
     }
@@ -86,6 +97,7 @@ const WalletConnectSessionProposalModal = memo(
 
       if (!walletConnectClient) {
         console.error('❌ Could not find WalletConnect client')
+        reinitializeWalletConnectClient()
         return
       }
 
@@ -179,13 +191,13 @@ const WalletConnectSessionProposalModal = memo(
             ? t('Connect to {{ dAppUrl }}', { dAppUrl: cleanUrl(metadata.url) })
             : t('Connect to dApp')
         }
-        subtitle={metadata.description || metadata.url}
         onClose={rejectAndCloseModal}
         Icon={() =>
           metadata?.icons &&
           metadata.icons.length > 0 &&
-          metadata.icons[0] && <Logo image={metadata.icons[0]} size={50} />
+          metadata.icons[0] && <Logo image={metadata.icons[0]} size={25} />
         }
+        hasFooterButtons
       >
         {showNetworkWarning ? (
           <>
@@ -268,7 +280,11 @@ const WalletConnectSessionProposalModal = memo(
               <ModalFooterButton role="secondary" onClick={() => rejectAndCloseModal(true)}>
                 {t('Decline')}
               </ModalFooterButton>
-              <ModalFooterButton variant="valid" onClick={approveProposal} disabled={!signerAddressPublicKey}>
+              <ModalFooterButton
+                variant="valid"
+                onClick={approveProposal}
+                disabled={!signerAddressPublicKey || walletConnectClientStatus !== 'initialized'}
+              >
                 {t('Accept')}
               </ModalFooterButton>
             </ModalFooterButtons>

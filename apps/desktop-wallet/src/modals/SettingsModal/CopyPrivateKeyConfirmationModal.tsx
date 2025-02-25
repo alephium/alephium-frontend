@@ -37,7 +37,7 @@ const CopyPrivateKeyConfirmationModal = memo(({ id, addressHash }: AddressModalP
   }
 
   return (
-    <CenteredModal title={t('Enter password')} id={id} skipFocusOnMount>
+    <CenteredModal title={t('Enter password')} id={id} skipFocusOnMount hasFooterButtons>
       <PasswordConfirmation
         text={t('Enter your password to copy the private key.')}
         buttonText={t('Copy private key')}

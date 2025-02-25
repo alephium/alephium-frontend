@@ -3,9 +3,9 @@ import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import Button from '@/components/Button'
 import Input from '@/components/Inputs/Input'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
+import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { passwordValidationFailed } from '@/storage/auth/authActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 
@@ -17,6 +17,7 @@ export interface PasswordConfirmationProps {
   highlightButton?: boolean
   walletId?: string
   children?: ReactNode
+  onBack?: () => void
 }
 
 const PasswordConfirmation = ({
@@ -26,7 +27,8 @@ const PasswordConfirmation = ({
   walletId,
   isSubmitDisabled = false,
   highlightButton = false,
-  children
+  children,
+  onBack
 }: PasswordConfirmationProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
@@ -56,17 +58,24 @@ const PasswordConfirmation = ({
 
       {children && <Children>{children}</Children>}
 
-      <Button
-        onClick={validatePassword}
-        submit
-        disabled={isSubmitDisabled || !password}
-        variant={highlightButton ? 'valid' : 'default'}
-        wide
-        justifyContent="center"
-        squared
-      >
-        {buttonText || t('Submit')}
-      </Button>
+      <ModalFooterButtons>
+        {onBack && (
+          <ModalFooterButton role="secondary" onClick={onBack}>
+            {t('Back')}
+          </ModalFooterButton>
+        )}
+        <ModalFooterButton
+          onClick={validatePassword}
+          submit
+          disabled={isSubmitDisabled || !password}
+          variant={highlightButton ? 'valid' : 'default'}
+          wide
+          justifyContent="center"
+          squared
+        >
+          {buttonText || t('Submit')}
+        </ModalFooterButton>
+      </ModalFooterButtons>
     </>
   )
 }
@@ -75,5 +84,4 @@ export default PasswordConfirmation
 
 const Children = styled.div`
   width: 100%;
-  margin-top: var(--spacing-4);
 `

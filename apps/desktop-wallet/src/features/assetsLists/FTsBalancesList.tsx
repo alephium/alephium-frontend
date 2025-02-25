@@ -45,7 +45,7 @@ export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) =>
           <AddressNSTBalancesRow addressHash={addressHash} tokenId={tokenId} key={tokenId} />
         ))}
         {!isLoading && listedFts.length === 0 && unlistedFts.length === 0 && nstIds.length === 0 && (
-          <EmptyPlaceholder>{t("This address doesn't have any tokens yet.")}</EmptyPlaceholder>
+          <EmptyPlaceholder emoji="👀">{t("This address doesn't have any tokens yet.")}</EmptyPlaceholder>
         )}
         {isLoading && <TokensSkeletonLoader />}
       </Table>

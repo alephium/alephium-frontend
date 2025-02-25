@@ -1,4 +1,5 @@
 import { NetworkName, NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { ArrowRight, Dot } from 'lucide-react'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -84,7 +85,9 @@ export default NetworkSwitch
 
 const SelectCustomComponent = () => {
   const theme = useTheme()
+  const { t } = useTranslation()
   const network = useAppSelector((state) => state.network)
+  const isOffline = useCurrentlyOnlineNetworkId() === undefined
 
   const networkStatusColor = {
     online: theme.global.valid,
@@ -99,7 +102,7 @@ const SelectCustomComponent = () => {
       transparent
       circle
       data-tooltip-id="default"
-      data-tooltip-content={network.name}
+      data-tooltip-content={isOffline ? `${network.name} (${t('offline')})` : network.name}
       tiny
       Icon={Dot}
       iconSize={42}

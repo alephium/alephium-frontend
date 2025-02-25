@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { fadeInOut } from '@/animations'
 import Button from '@/components/Button'
 import Input from '@/components/Inputs/Input'
+import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
 
 interface AddressesPageTabContentProps {
   searchPlaceholder: string
@@ -14,6 +15,7 @@ interface AddressesPageTabContentProps {
   onButtonClick: () => void
   children: ReactNode
   HeaderMiddleComponent?: ReactNode
+  AdditionalButtonComponents?: ReactNode
   className?: string
 }
 
@@ -23,28 +25,40 @@ const AddressesPageTabContent = ({
   buttonText,
   onButtonClick,
   HeaderMiddleComponent,
+  AdditionalButtonComponents,
   children,
   className
-}: AddressesPageTabContentProps) => (
-  <AddressesPageTabContentStyled className={className}>
-    <Header>
-      <Searchbar
-        placeholder={searchPlaceholder}
-        Icon={SearchIcon}
-        onChange={(e) => onSearch(e.target.value)}
-        contrast
-        heightSize="normal"
-      />
-      {HeaderMiddleComponent}
-      <ButtonContainer {...fadeInOut}>
-        <HeaderButton wide onClick={onButtonClick} short>
-          {buttonText}
-        </HeaderButton>
-      </ButtonContainer>
-    </Header>
-    <Content>{children}</Content>
-  </AddressesPageTabContentStyled>
-)
+}: AddressesPageTabContentProps) => {
+  const hasMultipleAddresses = useUnsortedAddressesHashes().length > 1
+
+  return (
+    <AddressesPageTabContentStyled className={className}>
+      <Header>
+        {hasMultipleAddresses && (
+          <LeftSide>
+            <Searchbar
+              placeholder={searchPlaceholder}
+              Icon={SearchIcon}
+              onChange={(e) => onSearch(e.target.value)}
+              contrast
+              heightSize="normal"
+            />
+            {HeaderMiddleComponent}
+          </LeftSide>
+        )}
+        <RightSide>
+          <ButtonContainer {...fadeInOut}>
+            {AdditionalButtonComponents}
+            <Button onClick={onButtonClick} short>
+              {buttonText}
+            </Button>
+          </ButtonContainer>
+        </RightSide>
+      </Header>
+      <Content>{children}</Content>
+    </AddressesPageTabContentStyled>
+  )
+}
 
 export default AddressesPageTabContent
 
@@ -55,7 +69,8 @@ const AddressesPageTabContentStyled = styled.div`
 
 const Header = styled.div`
   display: flex;
-  align-items: center;
+
+  justify-content: space-between;
   margin: var(--spacing-2) 0;
   gap: 25px;
 `
@@ -73,8 +88,27 @@ const Content = styled.div`
   display: flex;
 `
 
-const HeaderButton = styled(Button)``
+const ButtonContainer = styled.div`
+  min-height: var(--inputHeight);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 
-const ButtonContainer = styled(motion.div)`
+  > button {
+    margin: 0;
+  }
+`
+
+const RightSide = styled(motion.div)`
+  flex-shrink: 0;
   margin-left: auto;
+`
+
+const LeftSide = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  flex-grow: 1;
 `

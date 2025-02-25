@@ -4,11 +4,14 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import Button from '@/components/Button'
+import ButtonTooltipWrapper from '@/components/Buttons/ButtonTooltipWrapper'
 import CheckMark from '@/components/CheckMark'
 import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
 import { useLedger } from '@/features/ledger/useLedger'
 import { openModal } from '@/features/modals/modalActions'
+import WalletQRCodeExportButton from '@/features/walletExport/qrCodeExport/WalletQRCodeExportButton'
+import WalletSecretPhraseExportButton from '@/features/walletExport/secretPhraseExport/WalletSecretPhraseExportButton'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
 import { StoredEncryptedWallet } from '@/types/wallet'
@@ -29,30 +32,30 @@ const WalletsSettingsSection = () => {
 
   const handleLockCurrentWalletClick = () => lockWallet('settings')
 
-  const openSecretPhraseModal = () => dispatch(openModal({ name: 'SecretPhraseModal' }))
-  const openWalletQRCodeExportModal = () => dispatch(openModal({ name: 'WalletQRCodeExportModal' }))
   const openEditWalletNameModal = () => dispatch(openModal({ name: 'EditWalletNameModal' }))
 
   return (
     <>
-      <Section align="flex-start" role="table">
-        <h2>{t('Wallet list')}</h2>
-        <BoxContainerStyled role="rowgroup">
-          {wallets.map((wallet) => (
-            <WalletItem
-              key={wallet.id}
-              wallet={wallet}
-              isCurrent={wallet.id === activeWalletId}
-              onWalletDelete={() => openWalletRemoveModal(wallet.id, wallet.name)}
-              isPassphraseUsed={wallet.id === activeWalletId && isPassphraseUsed}
-            />
-          ))}
-        </BoxContainerStyled>
-      </Section>
+      {wallets.length > 1 && (
+        <Section align="flex-start" role="table">
+          <h2>{t('Wallet list')}</h2>
+          <BoxContainerStyled role="rowgroup">
+            {wallets.map((wallet) => (
+              <WalletItem
+                key={wallet.id}
+                wallet={wallet}
+                isCurrent={wallet.id === activeWalletId}
+                onWalletDelete={() => openWalletRemoveModal(wallet.id, wallet.name)}
+                isPassphraseUsed={wallet.id === activeWalletId && isPassphraseUsed}
+              />
+            ))}
+          </BoxContainerStyled>
+        </Section>
+      )}
       {isWalletUnlocked && activeWalletId && activeWalletName && (
         <CurrentWalletSection align="flex-start">
           <h2>{t('Current wallet')}</h2>
-          <InfoBox label={t('Wallet name')} short>
+          <InfoBoxStyled label={t('Wallet name')} short>
             <CurrentWalletBox>
               <WalletName>{activeWalletName}</WalletName>
               {!isLedger && (
@@ -68,7 +71,7 @@ const WalletsSettingsSection = () => {
                 </Button>
               )}
             </CurrentWalletBox>
-          </InfoBox>
+          </InfoBoxStyled>
           <ActionButtons>
             <Button role="secondary" onClick={handleLockCurrentWalletClick}>
               {t('Lock current wallet')}
@@ -76,18 +79,9 @@ const WalletsSettingsSection = () => {
 
             {!isLedger && (
               <>
-                <ButtonTooltipWrapper
-                  data-tooltip-id="default"
-                  data-tooltip-content={isPassphraseUsed ? t('To export this wallet use it without a passphrase') : ''}
-                >
-                  <Button role="secondary" onClick={openWalletQRCodeExportModal} disabled={isPassphraseUsed}>
-                    {t('Export current wallet')}
-                  </Button>
-                </ButtonTooltipWrapper>
+                <WalletQRCodeExportButton />
 
-                <Button role="secondary" variant="alert" onClick={openSecretPhraseModal}>
-                  {t('Show your secret recovery phrase')}
-                </Button>
+                <WalletSecretPhraseExportButton />
 
                 <ButtonTooltipWrapper
                   data-tooltip-id="default"
@@ -172,6 +166,7 @@ const WalletName = styled.div`
   display: flex;
   align-items: center;
   font-size: 13px;
+  justify-content: space-between;
 `
 
 const ActionButtons = styled.div`
@@ -183,6 +178,10 @@ const ActionButtons = styled.div`
 
 const CurrentWalletSection = styled(Section)`
   margin-top: var(--spacing-4);
+
+  &:first-child {
+    margin-top: 0;
+  }
 `
 
 const CurrentWalletBox = styled.div`
@@ -199,8 +198,6 @@ const BoxContainerStyled = styled.div`
   width: 100%;
 `
 
-const ButtonTooltipWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  width: 100%;
+const InfoBoxStyled = styled(InfoBox)`
+  margin-top: var(--spacing-2);
 `

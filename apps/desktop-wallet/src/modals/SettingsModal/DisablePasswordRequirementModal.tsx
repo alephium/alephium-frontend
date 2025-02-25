@@ -25,7 +25,7 @@ const DisablePasswordRequirementModal = memo(
     }
 
     return (
-      <CenteredModal title={t('Password')} id={id} skipFocusOnMount {...props}>
+      <CenteredModal title={t('Password')} id={id} skipFocusOnMount hasFooterButtons {...props}>
         <PasswordConfirmation
           text={t('Type your password to change this setting.')}
           buttonText={t('Enter')}

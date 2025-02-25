@@ -11,7 +11,7 @@ export interface TableProps {
   className?: string
 }
 
-interface TableCellProps {
+export interface TableCellProps {
   fixedWidth?: number | string
   noBorder?: boolean
   align?: 'left' | 'center' | 'right'

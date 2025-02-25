@@ -51,7 +51,7 @@ const EditWalletNameModal = memo(({ id }: ModalBaseProp) => {
   }
 
   return (
-    <CenteredModal title={t('Change wallet name')} narrow id={id}>
+    <CenteredModal title={t('Change wallet name')} narrow id={id} hasFooterButtons>
       <InputFieldsColumn>
         <Controller
           name="name"

@@ -55,7 +55,7 @@ const AddressSelectModal = ({
       selectedOption={selectedOption}
       setValue={handleAddressSelect}
       onClose={onClose}
-      isSearchable
+      isSearchable={addressSelectOptions.length > 1}
       optionRender={(option) => <SelectOptionAddress addressHash={option.value} />}
       emptyListPlaceholder={emptyListPlaceholder || t('There are no available addresses.')}
     />
