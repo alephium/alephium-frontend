@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next'
 
-import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import BytecodeExpandableSection from '@/features/send/BytecodeExpandableSection'
 import CheckAddressesBox from '@/features/send/CheckAddressesBox'
 import CheckAmountsBox from '@/features/send/CheckAmountsBox'
@@ -28,18 +27,10 @@ const DeployContractCheckTxModalContent = ({
         {data.initialAlphAmount && (
           <CheckAmountsBox assetAmounts={[data.initialAlphAmount]} hasBg hasHorizontalPadding />
         )}
-        {data.issueTokenAmount && (
-          <>
-            <InfoRow label={t('Issue token amount')}>{data.issueTokenAmount}</InfoRow>
-            <HorizontalDivider />
-          </>
-        )}
-        <CheckAddressesBox fromAddress={data.fromAddress} dAppUrl={dAppUrl} />
+        {data.issueTokenAmount && <InfoRow label={t('Issue token amount')}>{data.issueTokenAmount}</InfoRow>}
+        <CheckAddressesBox fromAddress={data.fromAddress} dAppUrl={dAppUrl} hasBg hasHorizontalPadding />
         {data.initialAlphAmount && (
-          <>
-            <HorizontalDivider />
-            <CheckWorthBox assetAmounts={[data.initialAlphAmount]} fee={fees} />
-          </>
+          <CheckWorthBox assetAmounts={[data.initialAlphAmount]} fee={fees} hasBg hasBorder hasHorizontalPadding />
         )}
         <BytecodeExpandableSection bytecode={data.bytecode} />
       </CheckModalContent>
