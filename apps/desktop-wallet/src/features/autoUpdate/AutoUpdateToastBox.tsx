@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -12,7 +12,7 @@ import { openInWebBrowser } from '@/utils/misc'
 
 type UpdateStatus = 'download-available' | 'downloading' | 'download-finished' | 'download-failed'
 
-const AutoUpdateToastBox = () => {
+const AutoUpdateToastBox = memo(() => {
   const { t } = useTranslation()
   const { newAutoUpdateVersion, newManualUpdateVersion } = useLatestGitHubRelease()
   const { sendAnalytics } = useAnalytics()
@@ -115,7 +115,7 @@ const AutoUpdateToastBox = () => {
       </Texts>
     </ToastBox>
   )
-}
+})
 
 export default AutoUpdateToastBox
 

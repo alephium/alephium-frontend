@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import AutoUpdateToastMessages from '@/features/autoUpdate/AutoUpdateToastMessages'
+import AutoUpdateToastBox from '@/features/autoUpdate/AutoUpdateToastBox'
 import LedgerToastMessages from '@/features/ledger/LedgerToastMessages'
 import SentTransactionsToastMessages from '@/features/send/sentTransactions/SentTransactionsToastMessages'
 import ToastMessages from '@/features/toastMessages/ToastMessages'
@@ -10,7 +10,7 @@ import { appHeaderHeightPx, deviceBreakPoints } from '@/style/globalStyles'
 const ToastMessagesModal = () => (
   <ModalPortal>
     <ToastMessagesModalContainer>
-      <AutoUpdateToastMessages />
+      <AutoUpdateToastBox />
       <LedgerToastMessages />
       <SentTransactionsToastMessages />
       <ToastMessages />
