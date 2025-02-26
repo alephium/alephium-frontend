@@ -1,7 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 
 import ConnectLedgerInstructionsPage from '@/features/ledger/ConnectLedgerInstructionsPage'
-import HomePage from '@/pages/HomePage'
 import CheckWordsIntroPage from '@/pages/NewWallet/CheckWordsIntroPage'
 import CheckWordsPage from '@/pages/NewWallet/CheckWordsPage'
 import CreateWalletPage from '@/pages/NewWallet/CreateWalletPage'
@@ -9,6 +8,7 @@ import ImportWordsPage from '@/pages/NewWallet/ImportWordsPage'
 import NewWalletLayout from '@/pages/NewWallet/NewWalletLayout'
 import WalletWelcomePage from '@/pages/NewWallet/WalletWelcomePage'
 import WalletWordsPage from '@/pages/NewWallet/WalletWordsPage'
+import WelcomePage from '@/pages/welcomePage/WelcomePage'
 import UnlockedWalletRoutes from '@/routes/UnlockedWalletRoutes'
 
 const createWalletSteps = [
@@ -30,7 +30,7 @@ const Router = () => (
     <Route path="/import/:step" element={<NewWalletLayout baseUrl="import" steps={importWalletSteps} />} />
     <Route path="/wallet/*" element={<UnlockedWalletRoutes />} />
     <Route path="/ledger" element={<ConnectLedgerInstructionsPage />} />
-    <Route path="" element={<HomePage />} />
+    <Route path="" element={<WelcomePage />} />
   </Routes>
 )
 
