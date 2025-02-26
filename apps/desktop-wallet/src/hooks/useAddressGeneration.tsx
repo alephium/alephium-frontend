@@ -32,6 +32,7 @@ interface DiscoverUsedAddressesProps {
   walletId?: string
   skipIndexes?: number[]
   enableLoading?: boolean
+  enableToast?: boolean
 }
 
 interface GenerateOneAddressPerGroupProps {
@@ -159,7 +160,8 @@ const useAddressGeneration = () => {
 
   const discoverAndSaveUsedAddresses = async ({
     skipIndexes,
-    enableLoading = true
+    enableLoading = true,
+    enableToast = true
   }: DiscoverUsedAddressesProps = {}) => {
     dispatch(addressDiscoveryStarted(enableLoading))
 
@@ -178,13 +180,17 @@ const useAddressGeneration = () => {
 
       try {
         saveNewAddresses(newAddresses)
-        dispatch(
-          showToast({
-            text: t('Active address discovery completed. Addresses added: {{ count }}', { count: newAddresses.length }),
-            type: 'info',
-            duration: 'long'
-          })
-        )
+
+        if (enableToast)
+          dispatch(
+            showToast({
+              text: t('Active address discovery completed. Addresses added: {{ count }}', {
+                count: newAddresses.length
+              }),
+              type: 'info',
+              duration: 'long'
+            })
+          )
       } catch {
         sendAnalytics({ type: 'error', message: 'Error while saving newly discovered address' })
       }
