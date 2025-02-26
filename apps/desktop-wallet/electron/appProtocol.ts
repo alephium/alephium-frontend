@@ -5,6 +5,7 @@ import { app, net, protocol } from 'electron'
 
 import { APP_ROOT_PATH } from './paths'
 
+export const DEPRECATED_APP_PROTOCOL = 'file'
 export const APP_PROTOCOL = 'alephium'
 
 // See: https://www.electronjs.org/docs/latest/tutorial/security#18-avoid-usage-of-the-file-protocol-and-prefer-usage-of-custom-protocols

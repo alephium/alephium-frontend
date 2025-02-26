@@ -1,6 +1,6 @@
 import { app, WebFrameMain } from 'electron'
 
-import { APP_PROTOCOL } from './appProtocol'
+import { DEPRECATED_APP_PROTOCOL } from './appProtocol'
 
 export const isMac = process.platform === 'darwin'
 
@@ -16,7 +16,7 @@ export const isIpcSenderValid = (frame: WebFrameMain | null) => {
     const url = new URL(frame.url)
 
     return (
-      url.protocol === `${APP_PROTOCOL}:` || // for production builds
+      url.protocol === `${DEPRECATED_APP_PROTOCOL}:` || // for production builds
       url.host === 'localhost:3000' // for dev environment
     )
   } else {

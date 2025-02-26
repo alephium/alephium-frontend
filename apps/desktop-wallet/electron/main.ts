@@ -4,13 +4,13 @@ import { app, BrowserWindow, ipcMain, nativeImage, shell } from 'electron'
 import contextMenu from 'electron-context-menu'
 import isDev from 'electron-is-dev'
 
-import { APP_PROTOCOL, handleAppProtocolRequests, registerAppProtocol } from './appProtocol'
+import { registerAppProtocol } from './appProtocol'
 import { configureAutoUpdater, handleAutoUpdaterUserActions, setupAutoUpdaterListeners } from './autoUpdater'
 import { setupLedgerDevicePermissions } from './ledger'
 import { setupAppMenu } from './menu'
 import { handleNativeThemeUserActions, setupNativeThemeListeners } from './nativeTheme'
 import { handleOnRampWindows } from './onRamp'
-import { ICON_PATH, RENDERER_PATH } from './paths'
+import { ICON_PATH } from './paths'
 import { IS_RC, isIpcSenderValid, isMac, isWindows } from './utils'
 import {
   handleWalletConnectDeepLink,
@@ -61,7 +61,10 @@ function createWindow() {
   if (process.env['VITE_DEV_SERVER_URL']) {
     mainWindow.loadURL(process.env['VITE_DEV_SERVER_URL'])
   } else {
-    mainWindow.loadURL(`${APP_PROTOCOL}://${RENDERER_PATH}/index.html`)
+    // mainWindow.loadURL(`${APP_PROTOCOL}://${RENDERER_PATH}/index.html`)
+    // TODO: Once https://github.com/alephium/alephium-frontend/issues/176 is fixed, remove following line in favor of
+    // the one above.
+    mainWindow.loadFile(path.join(path.join(path.join(__dirname, '..'), 'build'), 'index.html'))
   }
 
   if (isDev || IS_RC) {
@@ -121,7 +124,8 @@ app.on('ready', async function () {
     }
   }
 
-  handleAppProtocolRequests()
+  // TODO: Once https://github.com/alephium/alephium-frontend/issues/176 is fixed, uncomment following line
+  // handleAppProtocolRequests()
 
   handleNativeThemeUserActions()
 
