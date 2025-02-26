@@ -22,7 +22,7 @@ const StyledParagraph = styled.p<ParagraphProps>`
   font-weight: var(--fontWeight-medium);
   width: 100%;
   line-height: 1.5em;
-  max-width: 400px;
+  max-width: 500px;
   margin: 8px 0;
 
   ${({ centered }) =>

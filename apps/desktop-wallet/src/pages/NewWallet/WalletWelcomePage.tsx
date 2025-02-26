@@ -77,42 +77,39 @@ const WalletWelcomePage = () => {
           {t("Let's go!")}
         </Button>
         <div>
-          <AdvancedUserMessage>
-            <span>
-              <Trans t={t} i18nKey="welcomeScreenPassphraseMessage">
-                If you want to use a
-                <ActionLink onClick={() => openInWebBrowser(links.passphrase)}>passphrase</ActionLink>, lock your newly
-                created wallet.
-              </Trans>
-            </span>
-          </AdvancedUserMessage>
-        </div>
-        <div>
-          <AdvancedUserMessage>
-            <span>
-              <Trans t={t} i18nKey="welcomeScreenOneAddressPerGroupMessage">
-                Advanced user: do you want to start with <b>one address per group for mining or DeFi?</b>
-              </Trans>
-            </span>
-            <InfoIcon size="16px" onClick={() => openInWebBrowser(links.miningWallet)} />
-          </AdvancedUserMessage>
           <ExpandableSectionStyled
             sectionTitleClosed={t('Show advanced options')}
             sectionTitleOpen={t('Hide advanced options')}
             centered
           >
-            <InfoBox contrast>
-              <KeyValueInputStyled
-                label={t('Generate one address per group')}
-                description={t('For mining or DeFi use.')}
-                InputComponent={
-                  <Toggle
-                    toggled={shouldGenerateOneAddressPerGroup}
-                    onToggle={() => setShouldGenerateOneAddressPerGroup(!shouldGenerateOneAddressPerGroup)}
-                  />
-                }
-              />
-            </InfoBox>
+            <AdvancedExpandableSectionContent>
+              <AdvancedUserMessage>
+                <Trans t={t} i18nKey="welcomeScreenPassphraseMessage">
+                  If you want to use a
+                  <ActionLink onClick={() => openInWebBrowser(links.passphrase)}>passphrase</ActionLink>, lock your
+                  newly created wallet.
+                </Trans>
+              </AdvancedUserMessage>
+              <AdvancedUserMessage>
+                <Trans t={t} i18nKey="welcomeScreenOneAddressPerGroupMessage">
+                  Advanced user: do you want to start with <b>one address per group for mining or DeFi?</b>
+                </Trans>
+
+                <InfoIcon size="16px" onClick={() => openInWebBrowser(links.miningWallet)} />
+              </AdvancedUserMessage>
+              <InfoBox contrast>
+                <KeyValueInputStyled
+                  label={t('Generate one address per group')}
+                  description={t('For mining or DeFi use.')}
+                  InputComponent={
+                    <Toggle
+                      toggled={shouldGenerateOneAddressPerGroup}
+                      onToggle={() => setShouldGenerateOneAddressPerGroup(!shouldGenerateOneAddressPerGroup)}
+                    />
+                  }
+                />
+              </InfoBox>
+            </AdvancedExpandableSectionContent>
           </ExpandableSectionStyled>
         </div>
       </FooterActionsContainer>
@@ -155,7 +152,6 @@ const SubParagraph = styled(Paragraph)`
 `
 
 const AdvancedUserMessage = styled.div`
-  margin-top: 90px;
   color: ${({ theme }) => theme.font.secondary};
   text-align: center;
   flex: 1;
@@ -181,4 +177,11 @@ const KeyValueInputStyled = styled(KeyValueInput)`
 const InfoIcon = styled(Info)`
   cursor: pointer;
   color: ${({ theme }) => theme.font.primary};
+`
+
+const AdvancedExpandableSectionContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
 `
