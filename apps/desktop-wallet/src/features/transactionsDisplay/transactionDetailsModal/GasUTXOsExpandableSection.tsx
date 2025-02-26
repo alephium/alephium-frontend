@@ -23,7 +23,7 @@ const GasUTXOsExpandableSection = ({ tx }: Pick<TransactionDetailsModalTxProps, 
 
     return (
       <ActionLinkStyled key={`${input.outputRef.key}`} onClick={() => handleShowAddress(addressHash)}>
-        <HashEllipsed key={`${input.outputRef.key}`} hash={addressHash} />
+        <HashEllipsed key={`${input.outputRef.key}`} hash={addressHash} width="100%" />
       </ActionLinkStyled>
     )
   }
@@ -40,7 +40,7 @@ const GasUTXOsExpandableSection = ({ tx }: Pick<TransactionDetailsModalTxProps, 
           onClick={() => handleShowAddress(output.address)}
           hasLock={isLockTimeInFuture}
         >
-          <HashEllipsed key={`${output.key}`} hash={output.address} />
+          <HashEllipsed key={`${output.key}`} hash={output.address} width="100%" />
         </ActionLinkStyled>
       </OutputRow>
     )

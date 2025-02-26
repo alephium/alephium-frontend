@@ -2,7 +2,8 @@ import { findTransactionReferenceAddress } from '@alephium/shared'
 import { memo } from 'react'
 import styled, { css } from 'styled-components'
 
-import { TableCell, TableRow } from '@/components/Table'
+import GridRow from '@/components/GridRow'
+import { TableCell } from '@/components/Table'
 import DirectionCell from '@/features/transactionsDisplay/transactionRow/DirectionCell'
 import DirectionIconCell from '@/features/transactionsDisplay/transactionRow/DirectionIconCell'
 import FirstAddressColumnCell from '@/features/transactionsDisplay/transactionRow/FirstAddressColumnCell'
@@ -23,7 +24,7 @@ const TransactionRow = memo(
     const commonProps = { tx, refAddressHash: referenceAddress, isInAddressDetailsModal }
 
     return (
-      <TableRow {...props}>
+      <GridRowStyled {...props}>
         <DirectionIconCell {...commonProps} />
 
         <TimestampCell {...commonProps} />
@@ -41,7 +42,7 @@ const TransactionRow = memo(
             <OtherAmounts type="nsts" {...commonProps} />
           </AmountsList>
         </TableCell>
-      </TableRow>
+      </GridRowStyled>
     )
   }
 )
@@ -49,8 +50,8 @@ const TransactionRow = memo(
 export default TransactionRow
 
 const DirectionalAddresses = styled(TableCell)<{ stackVertically?: boolean }>`
-  flex: 1;
   gap: 10px;
+
   ${({ stackVertically }) =>
     stackVertically &&
     css`
@@ -66,4 +67,8 @@ const AmountsList = styled.div`
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
+`
+
+const GridRowStyled = styled(GridRow)`
+  grid-template-columns: 50px 1fr 1fr 1fr;
 `

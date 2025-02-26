@@ -244,6 +244,8 @@ const ModalLoadingSpinner = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  top: 0;
+  left: 0;
 `
 
 const IconContainer = styled.div`

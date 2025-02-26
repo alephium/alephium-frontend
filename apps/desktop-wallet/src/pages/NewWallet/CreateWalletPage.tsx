@@ -83,7 +83,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
       await restoreQueryCache(newWalletId)
 
       if (isRestoring) {
-        discoverAndSaveUsedAddresses({ skipIndexes: [0], enableLoading: false })
+        discoverAndSaveUsedAddresses({ skipIndexes: [0], enableLoading: false, enableToast: false })
         sendAnalytics({ event: 'New wallet imported', props: { wallet_name_length: walletName.length } })
       } else {
         sendAnalytics({ event: 'New wallet created', props: { wallet_name_length: walletName.length } })

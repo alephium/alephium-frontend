@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
+import GridRow from '@/components/GridRow'
 import AddressTokensBadgesList from '@/features/assetsLists/AddressTokensBadgesList'
 import { FTAddressAmountCell } from '@/features/assetsLists/tokenBalanceRow/FTAmountCells'
 import { FTAddressWorthCell } from '@/features/assetsLists/tokenBalanceRow/FTWorthCell'
@@ -28,7 +29,7 @@ const AddressListRow = memo(({ addressHash, tokenId, className, isLast }: Addres
   const openAddressDetailsModal = () => dispatch(openModal({ name: 'AddressDetailsModal', props: { addressHash } }))
 
   return (
-    <GridRow
+    <GridRowStyled
       key={addressHash}
       onClick={openAddressDetailsModal}
       onKeyDown={(e) => onEnterOrSpace(e, openAddressDetailsModal)}
@@ -66,7 +67,7 @@ const AddressListRow = memo(({ addressHash, tokenId, className, isLast }: Addres
           <AddressWorth addressHash={addressHash} />
         </FiatAmountCell>
       )}
-    </GridRow>
+    </GridRowStyled>
   )
 })
 
@@ -101,31 +102,8 @@ const Cell = styled.div<{ noBorder?: boolean }>`
   }
 `
 
-const GridRow = styled.div`
-  position: relative;
-  display: grid;
+const GridRowStyled = styled(GridRow)`
   grid-template-columns: 40px minmax(0, 1fr) 1fr 1fr 1fr;
-
-  ${({ onClick, theme }) =>
-    onClick &&
-    css`
-      &:hover {
-        cursor: pointer;
-
-        &::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: -8px;
-          right: -8px;
-
-          border-radius: var(--radius-big);
-          background-color: ${theme.bg.hover};
-          z-index: -1;
-        }
-      }
-    `}
 `
 
 const AmountCell = styled(Cell)`

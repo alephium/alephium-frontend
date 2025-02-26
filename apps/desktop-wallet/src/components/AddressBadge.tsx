@@ -22,6 +22,7 @@ interface AddressBadgeProps {
   isShort?: boolean
   className?: string
   hashWidth?: number
+  fullWidthUnknownHash?: boolean
 }
 
 const AddressBadge = ({
@@ -36,7 +37,8 @@ const AddressBadge = ({
   displayHashUnder = false,
   isShort,
   withBorders,
-  hashWidth
+  hashWidth,
+  fullWidthUnknownHash = false
 }: AddressBadgeProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
@@ -55,7 +57,11 @@ const AddressBadge = ({
       isShort={isShort}
     >
       {!address && !contact ? (
-        <NotKnownAddress hash={addressHash} disableCopy={disableCopy} />
+        <NotKnownAddress
+          hash={addressHash}
+          disableCopy={disableCopy}
+          width={fullWidthUnknownHash ? '100%' : undefined}
+        />
       ) : (
         <>
           {!hideColorIndication && address && (

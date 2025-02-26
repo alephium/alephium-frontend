@@ -17,6 +17,7 @@ import WalletPassphraseForm from '@/features/passphrase/WalletPassphraseForm'
 import { useWalletConnectContext } from '@/features/walletConnect/walletConnectContext'
 import { useAppSelector } from '@/hooks/redux'
 import useWalletLock from '@/hooks/useWalletLock'
+import BottomActions from '@/pages/welcomePage/BottomActions'
 import { StoredEncryptedWallet } from '@/types/wallet'
 
 interface UnlockPanelProps {
@@ -134,16 +135,6 @@ const SectionStyled = styled(Section)`
 
 const MainAction = styled(SectionStyled)`
   margin-top: 30px;
-  gap: 10px;
-`
-
-const BottomActions = styled.div`
-  position: absolute;
-  bottom: 20px;
-  right: 0;
-  left: 0;
-  justify-content: center;
-  display: flex;
   gap: 10px;
 `
 
