@@ -14,7 +14,7 @@ interface HashEllipsedProps extends HTMLAttributes<HTMLDivElement> {
   className?: string
   showSnackbarOnCopied?: boolean
   truncate?: boolean
-  width?: number
+  width?: number | string
 }
 
 const HashEllipsed = ({

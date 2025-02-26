@@ -37,7 +37,7 @@ const CheckAddressesBox = ({ fromAddress, toAddressHash, dAppUrl, ...props }: Ch
 
             {toAddressHash && (
               <DestinationAddress>
-                <AddressBadge addressHash={toAddressHash} truncate appendHash withBorders />
+                <AddressBadge addressHash={toAddressHash} truncate appendHash withBorders fullWidthUnknownHash />
                 <ExplorerLink addressHash={toAddressHash} />
               </DestinationAddress>
             )}
