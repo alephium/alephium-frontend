@@ -90,7 +90,7 @@ const ToastBoxContent = styled(motion.div)`
   gap: var(--spacing-2);
   font-size: 14px;
   color: ${({ theme }) => theme.font.primary};
-  word-wrap: break-word;
+  word-break: break-word;
   overflow-y: auto;
   font-weight: var(--fontWeight-semiBold);
   pointer-events: all;
@@ -126,6 +126,7 @@ const Title = styled.div`
   font-weight: var(--fontWeight-semiBold);
   max-height: 20vh;
   margin-top: var(--spacing-1);
+  word-break: break-word;
 `
 
 const ContentRow = styled.div`
@@ -142,6 +143,7 @@ const CenterContent = styled.div`
 const ChildrenContent = styled.div`
   flex: 1;
   font-weight: var(--fontWeight-medium);
+  word-break: break-word;
 `
 
 const ButtonStyled = styled(Button)`
