@@ -58,10 +58,11 @@ export const handleTransferSend = async (
   context: TxContext,
   posthog: PostHog,
   isLedger: boolean,
-  onLedgerError: (error: Error) => void
+  onLedgerError: (error: Error) => void,
+  consolidationRequired: boolean
 ) => {
   const { fromAddress, toAddress, lockTime: lockDateTime, assetAmounts } = transactionData
-  const { isSweeping, sweepUnsignedTxs, consolidationRequired, unsignedTxId, unsignedTransaction } = context
+  const { isSweeping, sweepUnsignedTxs, unsignedTxId, unsignedTransaction } = context
 
   if (toAddress) {
     const { attoAlphAmount, tokens } = getTransactionAssetAmounts(assetAmounts)

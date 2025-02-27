@@ -88,7 +88,6 @@ export type TxContext = {
   setUnsignedTxId: (txId: string) => void
   setContractAddress: (contractAddress: string) => void
   isSweeping: boolean
-  consolidationRequired: boolean
   buildExecuteScriptTxResult: node.BuildExecuteScriptTxResult | undefined
   setBuildExecuteScriptTxResult: (tx: node.BuildExecuteScriptTxResult | undefined) => void
 }
