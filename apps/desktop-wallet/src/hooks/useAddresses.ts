@@ -16,6 +16,7 @@ import { TokenId } from '@/types/tokens'
 export const useFetchAddressesHashesSortedByPreference = () => {
   const orderPreference = useAppSelector((s) => s.settings.addressOrderPreference)
   const addressesSortedByLabel = useAddressesHashesSortedByLabel()
+  const addressesSortedByIndex = useAddressesHashesSortedByIndex()
   const { data: addressesSortedByLastUse, isLoading: isLoadingLastUse } = useFetchAddressesHashesSortedByLastUse()
   const { data: addressesSortedByAlphBalance, isLoading: isLoadingAlphBalance } =
     useFetchAddressesHashesSortedByAlphBalance({
@@ -32,6 +33,11 @@ export const useFetchAddressesHashesSortedByPreference = () => {
       return {
         data: addressesSortedByAlphBalance,
         isLoading: isLoadingAlphBalance
+      }
+    case AddressOrder.Index:
+      return {
+        data: addressesSortedByIndex,
+        isLoading: false
       }
     default:
       return {
@@ -146,6 +152,33 @@ export const useAddressesHashesSortedByLabel = (): AddressHash[] => {
 
         if (labelA && labelB) {
           return labelA.localeCompare(labelB)
+        }
+
+        return a.localeCompare(b)
+      }),
+    [allAddressHashes, addressEntities, defaultAddressHash]
+  )
+}
+
+export const useAddressesHashesSortedByIndex = (): AddressHash[] => {
+  const allAddressHashes = useUnsortedAddressesHashes()
+  const defaultAddressHash = useAppSelector((s) => selectDefaultAddress(s).hash)
+  const addressEntities = useAppSelector((s) => s.addresses.entities)
+
+  return useMemo(
+    () =>
+      [...allAddressHashes].sort((a, b) => {
+        if (a === defaultAddressHash) return -1
+        if (b === defaultAddressHash) return 1
+
+        const indexA = addressEntities[a]?.index
+        const indexB = addressEntities[b]?.index
+
+        if (indexA && !indexB) return -1
+        if (!indexA && indexB) return 1
+
+        if (indexA && indexB) {
+          return indexA > indexB ? 1 : -1
         }
 
         return a.localeCompare(b)
