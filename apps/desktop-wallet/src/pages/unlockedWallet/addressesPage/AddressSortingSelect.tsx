@@ -16,7 +16,8 @@ const AddressSortingSelect = () => {
   const orderOptions: SelectOption<AddressOrder>[] = [
     { value: AddressOrder.LastUse, label: t('Last used') },
     { value: AddressOrder.AlphBalance, label: t('ALPH balance') },
-    { value: AddressOrder.Label, label: t('Address label') }
+    { value: AddressOrder.Label, label: t('Address label') },
+    { value: AddressOrder.Index, label: t('Address index') }
   ]
 
   const onSelect = (value: AddressOrder) => {
