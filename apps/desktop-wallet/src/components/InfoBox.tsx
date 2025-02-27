@@ -15,6 +15,7 @@ export interface InfoBoxProps {
   small?: boolean
   short?: boolean
   contrast?: boolean
+  align?: 'left' | 'center'
   className?: string
 }
 
@@ -29,7 +30,8 @@ const InfoBox: FC<InfoBoxProps> = ({
   onClick,
   short,
   children,
-  contrast
+  contrast,
+  align = 'center'
 }) => {
   const theme = useTheme()
 
@@ -42,7 +44,7 @@ const InfoBox: FC<InfoBoxProps> = ({
             <Icon color={getImportanceColor(theme, importance)} strokeWidth={1.5} />
           </IconContainer>
         )}
-        <TextContainer wordBreak={wordBreak} ellipsis={ellipsis}>
+        <TextContainer wordBreak={wordBreak} ellipsis={ellipsis} align={align}>
           {text || children}
         </TextContainer>
       </StyledBox>
@@ -53,7 +55,7 @@ const InfoBox: FC<InfoBoxProps> = ({
 const getImportanceColor = (theme: DefaultTheme, importance?: InfoBoxImportance) =>
   importance
     ? {
-        default: theme.bg.accent,
+        default: theme.global.accent,
         alert: theme.global.alert,
         warning: theme.global.highlight,
         accent: theme.global.accent
@@ -73,11 +75,11 @@ const IconContainer = styled.div`
   justify-content: center;
 `
 
-const TextContainer = styled.div<{ wordBreak?: boolean; ellipsis?: boolean }>`
+const TextContainer = styled.div<Pick<InfoBoxProps, 'wordBreak' | 'ellipsis' | 'align'>>`
   flex: 2;
   font-weight: var(--fontWeight-medium);
   word-break: ${({ wordBreak }) => (wordBreak ? 'break-all' : 'initial')};
-  text-align: center;
+  text-align: ${({ align }) => align};
 
   ${({ ellipsis }) =>
     ellipsis

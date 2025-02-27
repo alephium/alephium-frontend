@@ -1,7 +1,9 @@
 import { getHumanReadableError } from '@alephium/shared'
+import { Power, Unplug } from 'lucide-react'
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 import Button from '@/components/Button'
@@ -44,32 +46,47 @@ const ConnectLedgerInstructionsPage = () => {
   return (
     <LockedWalletLayout>
       <FloatingPanel enforceMinHeight>
-        <PanelTitle onBackButtonClick={() => navigate('/')}>{t('Connect your Ledger')}</PanelTitle>
-        <ol>
-          <li>{t('Plug in and unlock your Ledger device.')}</li>
-          <li>
+        <PanelTitle centerText>{t('Connect your Ledger')}</PanelTitle>
+        <InfoBoxes>
+          <InfoBox align="left" Icon={Unplug}>
+            {t('Plug in and unlock your Ledger device.')}
+          </InfoBox>
+          <InfoBox align="left" Icon={Power}>
             <Trans t={t} i18nKey="ledgerInstructionsOpenApp">
               Open the Alephium Ledger app. The Alephium app can be installed via
               <ActionLink onClick={() => openInWebBrowser(links.ledgerLive)}>Ledger Live</ActionLink>.
             </Trans>
-          </li>
-        </ol>
-        {error && (
-          <>
-            <InfoBox importance="warning">
-              <div>{t('Is your device plugged in and the Alephium app open?')}</div>
-            </InfoBox>
-            <InfoBox importance="alert">
-              <div>{error}</div>
-            </InfoBox>
-          </>
-        )}
-        <FooterActionsContainer>
-          <Button onClick={handleContinuePress}>{t('Continue')}</Button>
-        </FooterActionsContainer>
+          </InfoBox>
+          {error && (
+            <>
+              <InfoBox importance="warning">
+                <div>{t('Is your device plugged in and the Alephium app open?')}</div>
+              </InfoBox>
+              <InfoBox importance="alert">
+                <div>{error}</div>
+              </InfoBox>
+            </>
+          )}
+        </InfoBoxes>
+        <FooterActionsContainerStyled>
+          <Button onClick={() => navigate('/')} tall role="secondary">
+            {t('Back')}
+          </Button>
+          <Button onClick={handleContinuePress} tall>
+            {t('Continue')}
+          </Button>
+        </FooterActionsContainerStyled>
       </FloatingPanel>
     </LockedWalletLayout>
   )
 }
 
 export default ConnectLedgerInstructionsPage
+
+const FooterActionsContainerStyled = styled(FooterActionsContainer)`
+  margin-top: auto;
+`
+
+const InfoBoxes = styled.div`
+  margin-top: var(--spacing-8);
+`
