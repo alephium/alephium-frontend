@@ -1,55 +1,41 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import {
   PRICES_REFRESH_INTERVAL,
   selectDoVerifiedFungibleTokensNeedInitialization,
   syncTokenCurrentPrices,
-  syncTokenPriceHistories,
   syncUnknownTokensInfo,
   syncVerifiedFungibleTokens,
   TRANSACTIONS_REFRESH_INTERVAL
 } from '@alephium/shared'
-import { useInitializeClient, useInterval } from '@alephium/shared-react'
+import { queryClient, useInitializeClient, useInterval } from '@alephium/shared-react'
+import { useReactQueryDevTools } from '@dev-plugins/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
+import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ViewProps } from 'react-native'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Platform, View, ViewProps } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { DefaultTheme, ThemeProvider } from 'styled-components/native'
 
 import ToastAnchor from '~/components/toasts/ToastAnchor'
+import LoadingManager from '~/features/loader/LoadingManager'
 import { useLocalization } from '~/features/localization/useLocalization'
-import SplashScreen from '~/features/splash-screen/SplashScreen'
+import { useSystemRegion } from '~/features/settings/regionSettings/useSystemRegion'
+import useLoadStoredSettings from '~/features/settings/useLoadStoredSettings'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
-import useLoadStoredSettings from '~/hooks/useLoadStoredSettings'
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
 import {
   getStoredWalletMetadataWithoutThrowingError,
   validateAndRepareStoredWalletData
 } from '~/persistent-storage/wallet'
+import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import {
-  makeSelectAddressesUnknownTokens,
-  selectAllAddressVerifiedFungibleTokenSymbols,
-  syncLatestTransactions
-} from '~/store/addressesSlice'
+  makeSelectAddressesUnknownTokensIds,
+  selectAllAddressVerifiedFungibleTokenSymbols
+} from '~/store/addresses/addressesSelectors'
 import { store } from '~/store/store'
 import { selectTransactionUnknownTokenIds } from '~/store/transactions/transactionSelectors'
 import { appLaunchedWithLastUsedWallet } from '~/store/wallet/walletActions'
@@ -63,28 +49,41 @@ const App = () => {
   useEffect(
     () =>
       store.subscribe(() => {
-        setTheme(themes[store.getState().settings.theme])
+        const currentTheme = themes[store.getState().settings.theme]
+        setTheme(currentTheme)
+        if (Platform.OS === 'android') {
+          NavigationBar.setBackgroundColorAsync(
+            currentTheme.name === 'light' ? currentTheme.bg.highlight : currentTheme.bg.back2
+          )
+        }
       }),
     []
   )
 
+  useReactQueryDevTools(queryClient)
+
   return (
     <Provider store={store}>
-      <Main>
-        <ThemeProvider theme={theme}>
-          <StatusBar animated translucent style="light" />
-          {showAppContent ? (
-            <RootStackNavigation
-              initialRouteName={wasMetadataRestored ? 'ImportWalletAddressDiscoveryScreen' : undefined}
-            />
-          ) : (
-            // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
-            // splash screen to be show after the default one gets hidden, before we can show app content.
-            <SplashScreen />
-          )}
-          <ToastAnchor />
-        </ThemeProvider>
-      </Main>
+      <QueryClientProvider client={queryClient}>
+        <Main>
+          <ThemeProvider theme={theme}>
+            <StatusBar animated translucent style="light" />
+            {showAppContent ? (
+              <RootStackNavigation
+                initialRouteName={wasMetadataRestored ? 'ImportWalletAddressDiscoveryScreen' : undefined}
+              />
+            ) : (
+              // Using hideAsync from expo-splash-screen creates issues in iOS. To mitigate this, we replicate the default
+              // splash screen to be show after the default one gets hidden, before we can show app content.
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <AlephiumLogo style={{ width: '15%' }} />
+              </View>
+            )}
+            <ToastAnchor />
+            <LoadingManager />
+          </ThemeProvider>
+        </Main>
+      </QueryClientProvider>
     </Provider>
   )
 }
@@ -122,8 +121,10 @@ const Main = ({ children, ...props }: ViewProps) => {
   const settings = useAppSelector((s) => s.settings)
   const appJustLaunched = useAppSelector((s) => s.app.wasJustLaunched)
   const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
+  const addressesListedFungibleTokensSymbols = useRef<Array<string>>([])
+  const currency = useRef(settings.currency)
 
-  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokens, [])
+  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokensIds, [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
   const txUnknownTokenIds = useAppSelector(selectTransactionUnknownTokenIds)
   const checkedUnknownTokenIds = useAppSelector((s) => s.app.checkedUnknownTokenIds)
@@ -132,6 +133,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   useLoadStoredSettings()
   useInitializeClient()
   useLocalization()
+  useSystemRegion()
 
   useEffect(() => {
     if (walletMetadata) dispatch(appLaunchedWithLastUsedWallet(walletMetadata))
@@ -148,42 +150,37 @@ const Main = ({ children, ...props }: ViewProps) => {
     }
   }, [dispatch, isLoadingTokenTypes, network.status, newUnknownTokens, verifiedFungibleTokensNeedInitialization])
 
-  // Fetch verified tokens from GitHub token-list and sync current and historical prices for each verified fungible
-  // token found in each address
+  // Fetch verified tokens from GitHub token-list
   useEffect(() => {
     if (network.status === 'online' && !isLoadingVerifiedFungibleTokens) {
       if (verifiedFungibleTokensNeedInitialization) {
         dispatch(syncVerifiedFungibleTokens())
-      } else if (verifiedFungibleTokenSymbols.uninitialized.length > 0) {
-        const symbols = verifiedFungibleTokenSymbols.uninitialized
-
-        dispatch(syncTokenCurrentPrices({ verifiedFungibleTokenSymbols: symbols, currency: settings.currency }))
-        dispatch(syncTokenPriceHistories({ verifiedFungibleTokenSymbols: symbols, currency: settings.currency }))
       }
     }
-  }, [
-    dispatch,
-    isLoadingVerifiedFungibleTokens,
-    network.status,
-    settings.currency,
-    verifiedFungibleTokenSymbols.uninitialized,
-    verifiedFungibleTokensNeedInitialization
-  ])
+  }, [dispatch, isLoadingVerifiedFungibleTokens, network.status, verifiedFungibleTokensNeedInitialization])
+
+  useEffect(() => {
+    if (
+      verifiedFungibleTokenSymbols.some((symbol) => !addressesListedFungibleTokensSymbols.current.includes(symbol)) ||
+      currency.current !== settings.currency
+    ) {
+      dispatch(
+        syncTokenCurrentPrices({
+          verifiedFungibleTokenSymbols,
+          currency: settings.currency
+        })
+      )
+
+      addressesListedFungibleTokensSymbols.current = verifiedFungibleTokenSymbols
+      currency.current = settings.currency
+    }
+  }, [dispatch, settings.currency, verifiedFungibleTokenSymbols])
 
   const refreshTokensLatestPrice = useCallback(() => {
-    dispatch(
-      syncTokenCurrentPrices({
-        verifiedFungibleTokenSymbols: verifiedFungibleTokenSymbols.withPriceHistory,
-        currency: settings.currency
-      })
-    )
-  }, [dispatch, settings.currency, verifiedFungibleTokenSymbols.withPriceHistory])
+    dispatch(syncTokenCurrentPrices({ verifiedFungibleTokenSymbols, currency: settings.currency }))
+  }, [dispatch, settings.currency, verifiedFungibleTokenSymbols])
 
-  useInterval(
-    refreshTokensLatestPrice,
-    PRICES_REFRESH_INTERVAL,
-    network.status !== 'online' || verifiedFungibleTokenSymbols.withPriceHistory.length === 0
-  )
+  useInterval(refreshTokensLatestPrice, PRICES_REFRESH_INTERVAL, network.status !== 'online')
 
   const checkForNewTransactions = useCallback(() => {
     dispatch(syncLatestTransactions({ addresses: 'all', areAddressesNew: false }))

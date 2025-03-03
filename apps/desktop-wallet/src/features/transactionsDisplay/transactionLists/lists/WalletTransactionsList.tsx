@@ -1,34 +1,22 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import { AddressHash, Asset, calcTxAmountsDeltaForAddress, findTransactionReferenceAddress } from '@alephium/shared'
+import {
+  AddressHash,
+  Asset,
+  calcTxAmountsDeltaForAddress,
+  findTransactionReferenceAddress,
+  TRANSACTIONS_PAGE_DEFAULT_LIMIT
+} from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
-import { uniqBy } from 'lodash'
+import { orderBy, uniqBy } from 'lodash'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled from 'styled-components'
 
 import useFetchWalletTransactionsInfinite from '@/api/apiDataHooks/wallet/useFetchWalletTransactionsInfinite'
-import Table from '@/components/Table'
+import Spinner from '@/components/Spinner'
+import Table, { TableCell, TableRow } from '@/components/Table'
 import { openModal } from '@/features/modals/modalActions'
 import { getTransactionInfoType } from '@/features/transactionsDisplay/transactionDisplayUtils'
-import AddressLimitWarning from '@/features/transactionsDisplay/transactionLists/AddressLimitWarning'
-import NewTransactionsButtonRow from '@/features/transactionsDisplay/transactionLists/NewTransactionsButtonRow'
 import TableRowsLoader from '@/features/transactionsDisplay/transactionLists/TableRowsLoader'
 import TransactionsListFooter from '@/features/transactionsDisplay/transactionLists/TransactionsListFooter'
 import TransactionRow from '@/features/transactionsDisplay/transactionRow/TransactionRow'
@@ -51,60 +39,66 @@ const WalletTransactionsList = ({ addressHashes, directions, assetIds }: WalletT
   const {
     data: fetchedConfirmedTxs,
     isLoading,
-    refresh,
+    isFetching,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-    showNewTxsMessage,
-    isDataComplete
+    pagesLoaded
   } = useFetchWalletTransactionsInfinite()
 
   const openTransactionDetailsModal = (txHash: e.Transaction['hash']) =>
     dispatch(openModal({ name: 'TransactionDetailsModal', props: { txHash } }))
 
-  const filteredConfirmedTxs = useMemo(
-    () =>
-      applyFilters({
-        txs: fetchedConfirmedTxs,
-        addressHashes,
-        allAddressHashes,
-        directions,
-        assetIds
-      }),
-    [addressHashes, allAddressHashes, assetIds, directions, fetchedConfirmedTxs]
-  )
+  const filteredConfirmedTxs = useMemo(() => {
+    const txs = uniqBy(
+      orderBy(
+        applyFilters({
+          txs: fetchedConfirmedTxs,
+          addressHashes,
+          allAddressHashes,
+          directions,
+          assetIds
+        }),
+        'timestamp',
+        'desc'
+      ),
+      'hash'
+    )
+
+    return !hasNextPage ? txs : txs.slice(0, (pagesLoaded || 1) * TRANSACTIONS_PAGE_DEFAULT_LIMIT)
+  }, [addressHashes, allAddressHashes, assetIds, directions, fetchedConfirmedTxs, hasNextPage, pagesLoaded])
 
   return (
-    <>
-      {!isDataComplete && <AddressLimitWarning />}
+    <Table minWidth="500px">
+      {isLoading && <TableRowsLoader />}
+      {isFetching && !isLoading && (
+        <TableRow role="row">
+          <LoadingNewTransactionsPlaceholderRow align="center" role="gridcell">
+            <Spinner size="18px" /> {t('Loading new transactions...')}
+          </LoadingNewTransactionsPlaceholderRow>
+        </TableRow>
+      )}
+      {filteredConfirmedTxs.map((tx) => (
+        <TransactionRow
+          key={tx.hash}
+          tx={tx}
+          onClick={() => openTransactionDetailsModal(tx.hash)}
+          onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash))}
+        />
+      ))}
 
-      <Table minWidth="500px">
-        {isLoading && <TableRowsLoader />}
-
-        {showNewTxsMessage && <NewTransactionsButtonRow onClick={refresh} />}
-
-        {/* TODO: Remove uniqBy once backend removes duplicates from its results */}
-        {uniqBy(filteredConfirmedTxs, 'hash').map((tx) => (
-          <TransactionRow
-            key={tx.hash}
-            tx={tx}
-            onClick={() => openTransactionDetailsModal(tx.hash)}
-            onKeyDown={(e) => onEnterOrSpace(e, () => openTransactionDetailsModal(tx.hash))}
-          />
-        ))}
-
-        {!isLoading && (
-          <TransactionsListFooter
-            isDisplayingTxs={filteredConfirmedTxs && filteredConfirmedTxs?.length > 0}
-            showLoadMoreBtn={hasNextPage}
-            showSpinner={isFetchingNextPage}
-            onShowMoreClick={fetchNextPage}
-            noTxsMsg={t('No transactions to display')}
-            allTxsLoadedMsg={t('All the transactions that match the filtering criteria were loaded!')}
-          />
-        )}
-      </Table>
-    </>
+      {!isLoading && (
+        <TransactionsListFooter
+          isDisplayingTxs={filteredConfirmedTxs && filteredConfirmedTxs?.length > 0}
+          showLoadMoreBtn={hasNextPage}
+          showSpinner={isFetchingNextPage}
+          onShowMoreClick={fetchNextPage}
+          noTxsMsg={t('No transactions to display')}
+          latestTxDate={fetchedConfirmedTxs && fetchedConfirmedTxs[fetchedConfirmedTxs.length - 1]?.timestamp}
+          allTxsLoadedMsg={t('All the transactions that match the filtering criteria were loaded!')}
+        />
+      )}
+    </Table>
   )
 }
 
@@ -146,3 +140,8 @@ const applyFilters = ({
       })
     : txs
 }
+
+const LoadingNewTransactionsPlaceholderRow = styled(TableCell)`
+  gap: 10px;
+  align-items: center;
+`

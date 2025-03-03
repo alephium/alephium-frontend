@@ -1,27 +1,10 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { HTMLAttributes } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import ClipboardButton from '@/components/Buttons/ClipboardButton'
 import Ellipsed from '@/components/Ellipsed'
+import Truncate from '@/components/Truncate'
 
 interface HashEllipsedProps extends HTMLAttributes<HTMLDivElement> {
   hash: string
@@ -30,6 +13,8 @@ interface HashEllipsedProps extends HTMLAttributes<HTMLDivElement> {
   disableCopy?: boolean
   className?: string
   showSnackbarOnCopied?: boolean
+  truncate?: boolean
+  width?: number | string
 }
 
 const HashEllipsed = ({
@@ -39,31 +24,40 @@ const HashEllipsed = ({
   tooltipText,
   className,
   showSnackbarOnCopied = true,
+  truncate = true,
+  width = 100,
   ...props
 }: HashEllipsedProps) => {
   const { t } = useTranslation()
 
-  return disableCopy ? (
-    <Container className={className}>
-      <Ellipsed text={hash} {...props} />
-    </Container>
+  const content = disableCopy ? (
+    <Ellipsed text={hash} {...props} />
   ) : (
-    <ClipboardButton
+    <ClipboardButtonStyled
       textToCopy={hash}
       tooltip={tooltipText ?? t('Copy address')}
       disableA11y={disableA11y}
-      className={className}
       showSnackbarOnCopied={showSnackbarOnCopied}
     >
-      <Ellipsed text={hash} {...props} />
-    </ClipboardButton>
+      <Ellipsed className={className} text={hash} {...props} />
+    </ClipboardButtonStyled>
+  )
+
+  return (
+    <Container className={className}>{truncate ? <Truncate style={{ width }}>{content}</Truncate> : content}</Container>
   )
 }
 
 export default HashEllipsed
 
 const Container = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   overflow: hidden;
+`
+
+const ClipboardButtonStyled = styled(ClipboardButton)`
+  position: absolute;
+  right: 6px;
 `

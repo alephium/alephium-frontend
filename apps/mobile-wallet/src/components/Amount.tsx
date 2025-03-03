@@ -1,22 +1,5 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import { convertToPositive, formatAmountForDisplay, formatFiatAmountForDisplay } from '@alephium/shared'
+import { convertToPositive, formatAmountForDisplay } from '@alephium/shared'
+import { useState } from 'react'
 import { StyleProp, TextStyle } from 'react-native'
 
 import { useAppSelector } from '~/hooks/redux'
@@ -27,7 +10,6 @@ export interface AmountProps extends AppTextProps {
   value?: bigint | number
   decimals?: number
   isFiat?: boolean
-  fadeDecimals?: boolean
   fullPrecision?: boolean
   nbOfDecimalsToShow?: number
   suffix?: string
@@ -38,11 +20,11 @@ export interface AmountProps extends AppTextProps {
   fadeSuffix?: boolean
   useTinyAmountShorthand?: boolean
   style?: StyleProp<TextStyle>
+  fiatPrefix?: string
 }
 
 const Amount = ({
   value,
-  fadeDecimals,
   fullPrecision = false,
   suffix = '',
   showOnDiscreetMode = false,
@@ -55,51 +37,67 @@ const Amount = ({
   highlight,
   fadeSuffix,
   useTinyAmountShorthand,
+  fiatPrefix,
   ...props
 }: AmountProps) => {
   const discreetMode = useAppSelector((state) => state.settings.discreetMode)
+  const region = useAppSelector((state) => state.settings.region)
+  const fiatCurrency = useAppSelector((state) => state.settings.currency)
 
-  let quantitySymbol = ''
+  const [tappedToDisableDiscreetMode, setTappedToDisableDiscreetMode] = useState(false)
+
+  const hideAmount = discreetMode && !showOnDiscreetMode && !tappedToDisableDiscreetMode
+
+  const handleTappedToDisableDiscreetMode = discreetMode
+    ? () => setTappedToDisableDiscreetMode(!tappedToDisableDiscreetMode)
+    : undefined
+
   let amount = ''
+  let tinyAmount = ''
   let isNegative = false
+  const color = props.color ?? (highlight && value !== undefined ? (value < 0 ? 'send' : 'receive') : 'primary')
 
   if (value !== undefined) {
+    isNegative = value < 0
+
     if (isFiat && typeof value === 'number') {
-      isNegative = value < 0
-      amount = formatFiatAmountForDisplay(isNegative ? value * -1 : value)
+      amount = new Intl.NumberFormat(region, { style: 'currency', currency: fiatCurrency }).format(value)
+
+      return (
+        <AppText {...props} {...{ color, style }} onPress={handleTappedToDisableDiscreetMode}>
+          {hideAmount ? '•••' : fiatPrefix ? `${fiatPrefix} ${amount}` : amount}
+        </AppText>
+      )
     } else if (isUnknownToken) {
-      amount = value.toString()
+      amount = convertToPositive(value as bigint).toString()
     } else {
-      isNegative = value < 0
       amount = formatAmountForDisplay({
         amount: convertToPositive(value as bigint),
         amountDecimals: decimals,
         displayDecimals: nbOfDecimalsToShow,
-        fullPrecision
+        fullPrecision,
+        region
       })
-    }
 
-    if (fadeDecimals && ['K', 'M', 'B', 'T'].some((char) => amount.endsWith(char))) {
-      quantitySymbol = amount.slice(-1)
-      amount = amount.slice(0, -1)
+      const amountIsTooSmall = formatAmountForDisplay({
+        amount: convertToPositive(value as bigint),
+        amountDecimals: decimals,
+        displayDecimals: nbOfDecimalsToShow,
+        fullPrecision
+      }).startsWith('0.0000')
+
+      tinyAmount =
+        useTinyAmountShorthand && amountIsTooSmall
+          ? formatAmountForDisplay({ amount: BigInt(1), amountDecimals: 4, region })
+          : ''
     }
   }
-
-  let [integralPart, fractionalPart] = amount.split('.')
-
-  if (useTinyAmountShorthand && amount.startsWith('0.0000')) {
-    integralPart = '< 0'
-    fractionalPart = '0001'
-  }
-
-  const color = props.color ?? (highlight && value !== undefined ? (value < 0 ? 'send' : 'receive') : 'primary')
-  const fadedColor = fadeDecimals ? 'secondary' : color
 
   return (
-    <AppText {...props} {...{ color, style }}>
-      {discreetMode && !showOnDiscreetMode ? (
+    <AppText {...props} {...{ color, style }} onPress={handleTappedToDisableDiscreetMode}>
+      {hideAmount ? (
         '•••'
-      ) : integralPart ? (
+      ) : amount ? (
         <>
           {showPlusMinus && (
             <AppText {...props} color={color}>
@@ -107,10 +105,8 @@ const Amount = ({
             </AppText>
           )}
           <AppText {...props} color={color}>
-            {integralPart}
+            {tinyAmount ? `< ${tinyAmount}` : amount}
           </AppText>
-          {fractionalPart && <AppText {...props} color={fadedColor}>{`.${fractionalPart}`}</AppText>}
-          {quantitySymbol && <AppText {...props} color={fadedColor}>{` ${quantitySymbol} `}</AppText>}
           {!isUnknownToken && (
             <AppText {...props} color={fadeSuffix ? 'secondary' : color}>{` ${suffix || 'ALPH'}`}</AppText>
           )}

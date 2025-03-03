@@ -1,27 +1,11 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { BinaryIcon, Trash2 } from 'lucide-react'
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
+import Box from '@/components/Box'
 import Button from '@/components/Button'
+import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import Input from '@/components/Inputs/Input'
 import Logo from '@/components/Logo'
 import { Section } from '@/components/PageComponents/PageContainers'
@@ -48,12 +32,13 @@ const WalletConnectModal = memo(({ id }: ModalBaseProp) => {
       title="WalletConnect"
       subtitle={t(activeSessions.length > 0 ? 'Active dApp connections' : 'Connect to a dApp')}
       id={id}
+      hasFooterButtons
     >
       {activeSessions.length > 0 && (
-        <Section>
+        <Box hasVerticalPadding hasHorizontalPadding hasBg>
           <Table>
-            {activeSessions.map(({ topic, peer: { metadata } }) => (
-              <TableRow key={topic} role="row" tabIndex={0}>
+            {activeSessions.map(({ topic, peer: { metadata } }, index) => (
+              <TableRowStyled key={topic} role="row" tabIndex={0}>
                 <Row>
                   <div style={{ width: 35 }}>
                     {metadata.icons[0] ? (
@@ -66,33 +51,43 @@ const WalletConnectModal = memo(({ id }: ModalBaseProp) => {
                   <Button
                     onClick={() => unpairFromDapp(topic)}
                     Icon={Trash2}
-                    squared
+                    circle
                     role="secondary"
                     style={{ marginLeft: 'auto' }}
                   />
                 </Row>
-              </TableRow>
+                {index !== activeSessions.length - 1 && <HorizontalDividerStyled />}
+              </TableRowStyled>
             ))}
           </Table>
-        </Section>
+        </Box>
       )}
-      <Section>
+      <SectionStyled align="flex-start">
+        <Label>{t('Paste WalletConnect URI copied from the dApp')}</Label>
         <Row>
-          <Input
-            onChange={(t) => setUri(t.target.value)}
-            value={uri}
-            label={t('Paste WalletConnect URI copied from the dApp')}
-            heightSize="big"
-          />
+          <Input onChange={(t) => setUri(t.target.value)} value={uri} label="WalletConnect URI" heightSize="big" />
           <ConnectButton onClick={handleConnect} disabled={uri === ''}>
             {t('Connect')}
           </ConnectButton>
         </Row>
-      </Section>
+      </SectionStyled>
     </CenteredModal>
   )
 })
+
 export default WalletConnectModal
+
+const TableRowStyled = styled(TableRow)`
+  flex-direction: column;
+`
+
+const HorizontalDividerStyled = styled(HorizontalDivider)`
+  margin: var(--spacing-2) 0;
+`
+
+const SectionStyled = styled(Section)`
+  margin: var(--spacing-4) 0 var(--spacing-2) 0;
+`
 
 const Row = styled.div`
   display: flex;
@@ -105,4 +100,9 @@ const Row = styled.div`
 const ConnectButton = styled(Button)`
   width: auto;
   padding: 0 26px;
+`
+
+const Label = styled.label`
+  color: ${({ theme }) => theme.font.secondary};
+  text-align: left;
 `

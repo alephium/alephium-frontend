@@ -1,26 +1,9 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash } from '@alephium/shared'
 
 import useFetchAddressSingleTokenBalances from '@/api/apiDataHooks/address/useFetchAddressSingleTokenBalances'
-import useFetchToken, { isNFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import SelectOptionToken, { SelectOptionTokenBaseProps } from '@/components/Inputs/SelectOptionToken'
+import { isNFT } from '@/types/tokens'
 
 interface SelectOptionAddressTokenProps extends SelectOptionTokenBaseProps {
   addressHash: AddressHash
@@ -28,10 +11,11 @@ interface SelectOptionAddressTokenProps extends SelectOptionTokenBaseProps {
 
 const SelectOptionAddressToken = ({ tokenId, addressHash, ...props }: SelectOptionAddressTokenProps) => {
   const { data: token, isLoading: isLoadingToken } = useFetchToken(tokenId)
+  const isNft = token && isNFT(token)
   const { data: tokenBalances, isLoading: isLoadingTokenBalances } = useFetchAddressSingleTokenBalances({
     addressHash,
     tokenId,
-    skip: isLoadingToken || isNFT(token)
+    skip: isLoadingToken || isNft
   })
 
   const amount = tokenBalances?.totalBalance ? BigInt(tokenBalances.totalBalance) : undefined
@@ -40,7 +24,7 @@ const SelectOptionAddressToken = ({ tokenId, addressHash, ...props }: SelectOpti
     <SelectOptionToken
       tokenId={tokenId}
       amount={amount}
-      showAmount={!isNFT(token)}
+      showAmount={!isNft}
       isLoading={isLoadingTokenBalances}
       {...props}
     />

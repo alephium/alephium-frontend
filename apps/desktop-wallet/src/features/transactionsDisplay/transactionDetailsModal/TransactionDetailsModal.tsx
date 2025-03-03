@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash, findTransactionReferenceAddress, isConfirmedTx } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
@@ -24,27 +6,25 @@ import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import useFetchTransaction from '@/api/apiDataHooks/transaction/useFetchTransaction'
-import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import Badge from '@/components/Badge'
+import Button from '@/components/Button'
 import DataList from '@/components/DataList'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Spinner from '@/components/Spinner'
 import Tooltip from '@/components/Tooltip'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import AddressesDataRows from '@/features/transactionsDisplay/transactionDetailsModal/AddressesDataRows'
-import DirectionalInfo from '@/features/transactionsDisplay/transactionDetailsModal/DirectionalInfo'
 import FTAmounts from '@/features/transactionsDisplay/transactionDetailsModal/FTAmounts'
-import FTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/FTsDataListRow'
 import GasUTXOsExpandableSection from '@/features/transactionsDisplay/transactionDetailsModal/GasUTXOsExpandableSection'
 import LockTimeDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/LockTimeDataListRow'
 import NFTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NFTsDataListRow'
 import NSTsDataListRow from '@/features/transactionsDisplay/transactionDetailsModal/NSTsDataListRow'
 import TransactionType from '@/features/transactionsDisplay/transactionDetailsModal/TransactionType'
-import useOpenTxInExplorer from '@/features/transactionsDisplay/transactionDetailsModal/useOpenTxInExplorer'
+import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddressesHashes } from '@/hooks/useUnsortedAddresses'
-import SideModal from '@/modals/SideModal'
-import { formatDateForDisplay } from '@/utils/misc'
+import SideModal, { SideModalTitle } from '@/modals/SideModal'
+import { formatDateForDisplay, openInWebBrowser } from '@/utils/misc'
 
 export interface TransactionDetailsModalProps {
   txHash: e.Transaction['hash']
@@ -55,7 +35,7 @@ const TransactionDetailsModal = memo(({ id, txHash, refAddressHash }: ModalBaseP
   const { t } = useTranslation()
 
   return (
-    <SideModal id={id} title={t('Transaction details')}>
+    <SideModal id={id} title={t('Transaction details')} header={<TransactionDetailsModalHeader txHash={txHash} />}>
       <Summary txHash={txHash} refAddressHash={refAddressHash} />
       <Details txHash={txHash} refAddressHash={refAddressHash} />
       <Tooltip />
@@ -64,6 +44,34 @@ const TransactionDetailsModal = memo(({ id, txHash, refAddressHash }: ModalBaseP
 })
 
 export default TransactionDetailsModal
+
+const TransactionDetailsModalHeader = ({ txHash }: Pick<TransactionDetailsModalProps, 'txHash'>) => {
+  const { t } = useTranslation()
+  const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
+
+  const handleExplorerLinkClick = () => openInWebBrowser(`${explorerUrl}/transactions/${txHash}`)
+
+  return (
+    <HeaderStyled>
+      <SideModalTitle>{t('Transaction details')}</SideModalTitle>
+      <ExplorerButton role="secondary" transparent short onClick={handleExplorerLinkClick}>
+        {t('Show in explorer')} ↗
+      </ExplorerButton>
+    </HeaderStyled>
+  )
+}
+
+// TODO: DRY AddressDetailsModalHeader.tsx
+const HeaderStyled = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`
+
+// TODO: DRY AddressDetailsModalHeader.tsx
+const ExplorerButton = styled(Button)`
+  width: auto;
+`
 
 const Summary = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
   const { data: tx } = useFetchTransaction({ txHash })
@@ -80,23 +88,8 @@ const Summary = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
       <SummaryContent>
         <TransactionType tx={tx} refAddressHash={referenceAddress} />
         <FTAmounts tx={tx} refAddressHash={referenceAddress} />
-        <DirectionalInfo tx={tx} refAddressHash={referenceAddress} />
-
-        <ShowInExplorerButton txHash={txHash} />
       </SummaryContent>
     </SummaryStyled>
-  )
-}
-
-const ShowInExplorerButton = ({ txHash }: Pick<TransactionDetailsModalProps, 'txHash'>) => {
-  const { t } = useTranslation()
-
-  const handleShowTxInExplorer = useOpenTxInExplorer(txHash)
-
-  return (
-    <ActionLink onClick={handleShowTxInExplorer} withBackground>
-      {t('Show in explorer')} ↗
-    </ActionLink>
   )
 }
 
@@ -157,7 +150,6 @@ const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
               <Amount tokenId={ALPH.id} tabIndex={0} value={BigInt(tx.gasAmount) * BigInt(tx.gasPrice)} fullPrecision />
             </DataList.Row>
 
-            <FTsDataListRow tx={tx} refAddressHash={referenceAddress} />
             <NFTsDataListRow tx={tx} refAddressHash={referenceAddress} />
             <NSTsDataListRow tx={tx} refAddressHash={referenceAddress} />
           </DataList>
@@ -171,16 +163,15 @@ const Details = ({ txHash, refAddressHash }: TransactionDetailsModalProps) => {
 
 const SummaryStyled = styled.div`
   padding: var(--spacing-3) var(--spacing-3) var(--spacing-1);
+  background-color: ${({ theme }) => theme.bg.secondary};
+  margin: var(--spacing-2);
+  border-radius: var(--radius-huge);
 `
 
 const SummaryContent = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: var(--spacing-5);
-  background-color: ${({ theme }) => theme.bg.primary};
-  border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-big);
 `
 

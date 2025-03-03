@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { encryptMnemonic } from '@alephium/keyring'
 import { getHumanReadableError } from '@alephium/shared'
 import { AlertCircle } from 'lucide-react'
@@ -101,7 +83,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
       await restoreQueryCache(newWalletId)
 
       if (isRestoring) {
-        discoverAndSaveUsedAddresses({ skipIndexes: [0], enableLoading: false })
+        discoverAndSaveUsedAddresses({ skipIndexes: [0], enableLoading: false, enableToast: false })
         sendAnalytics({ event: 'New wallet imported', props: { wallet_name_length: walletName.length } })
       } else {
         sendAnalytics({ event: 'New wallet created', props: { wallet_name_length: walletName.length } })
@@ -147,6 +129,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
             onChange={(e) => onUpdateWalletName(e.target.value)}
             error={walletNameError}
             isValid={walletName.length > 0 && walletNameError.length === 0}
+            heightSize="big"
           />
           <Input
             value={password}
@@ -155,6 +138,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
             onChange={(e) => onUpdatePassword(e.target.value)}
             error={passwordError}
             isValid={!passwordError && password.length > 0}
+            heightSize="big"
           />
           <Input
             value={passwordCheck}
@@ -164,6 +148,7 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
             error={passwordCheck && password !== passwordCheck ? t('Passwords are different') : ''}
             isValid={password.length > 0 && password === passwordCheck}
             disabled={!password || passwordError.length > 0}
+            heightSize="big"
           />
           <InfoBox
             Icon={AlertCircle}
@@ -174,10 +159,10 @@ const CreateWalletPage = ({ isRestoring = false }: { isRestoring?: boolean }) =>
         </Section>
       </PanelContentContainer>
       <FooterActionsContainer>
-        <Button role="secondary" onClick={handleBackPress}>
+        <Button role="secondary" onClick={handleBackPress} tall>
           {t('Back')}
         </Button>
-        <Button disabled={!isNextButtonActive} onClick={handleNextButtonClick}>
+        <Button disabled={!isNextButtonActive} onClick={handleNextButtonClick} tall>
           {t('Continue')}
         </Button>
       </FooterActionsContainer>

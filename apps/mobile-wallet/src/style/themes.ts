@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { colord } from 'colord'
 import { DefaultTheme } from 'styled-components/native'
 
@@ -24,19 +6,19 @@ export type ThemeType = 'light' | 'dark'
 export const lightTheme: DefaultTheme = {
   name: 'light',
   bg: {
-    highlight: '#ffffff',
-    primary: '#fcfdff',
-    secondary: '#f1f4f9',
-    tertiary: '#eff1f6',
-    back1: '#f2f3f7',
-    back2: '#f0f1f5',
-    accent: 'rgba(58, 111, 244, 0.12)',
-    contrast: '#212126'
+    highlight: 'rgba(0, 0, 0, 0.065)',
+    primary: 'rgba(0, 0, 0, 0.05)',
+    secondary: 'rgba(0, 0, 0, 0.04)',
+    tertiary: 'rgba(0, 0, 0, 0.025)',
+    back1: '#fff',
+    back2: '#fff',
+    accent: colord('#133de2').alpha(0.1).toHex(),
+    contrast: '#111114'
   },
   font: {
-    primary: '#171717',
-    secondary: '#404040',
-    tertiary: '#ababab',
+    primary: '#000',
+    secondary: 'rgba(0, 0, 0, 0.75)',
+    tertiary: 'rgba(0, 0, 0, 0.4)',
     contrast: '#ffffff',
     highlight: '#d4a10d'
   },
@@ -50,7 +32,7 @@ export const lightTheme: DefaultTheme = {
     visible: '#e6e7eb'
   },
   border: {
-    primary: 'rgba(36, 34, 32, 0.12)',
+    primary: 'rgba(36, 34, 32, 0.1)',
     secondary: 'rgba(36, 34, 32, 0.06)'
   },
   shadow: {
@@ -59,14 +41,15 @@ export const lightTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 20px; shadow-opacity: 0.02; shadow-radius: 50px; elevation: 40;'
   },
   global: {
-    accent: '#1575f9',
+    accent: '#133de2',
     alert: '#ed4a34',
     warning: '#f48826',
-    valid: '#2DA023',
+    valid: '#20942d',
     star: '#FFD66D',
     pale: '#f7d1b6',
     complementary: '#b07dcb',
     send: '#f75d57',
+    gray: 'rgb(145, 145, 145)',
     receive: '#61b15b'
   },
   gradient: {
@@ -84,21 +67,21 @@ export const darkTheme: DefaultTheme = {
     highlight: '#353539',
     primary: '#1b1b1f',
     secondary: '#17171a',
-    tertiary: '#141417',
-    back1: '#111114',
-    back2: '#0E0E10',
-    accent: 'rgba(93, 108, 243, 0.08)',
-    contrast: '#ffffff'
+    tertiary: '#121214',
+    back1: '#0f0f12',
+    back2: '#0a0a0d',
+    accent: colord('#5086f9').alpha(0.15).toHex(),
+    contrast: '#E3E3E3'
   },
   font: {
     primary: '#E3E3E3',
-    secondary: 'rgba(255, 255, 255, 0.75)',
-    tertiary: 'rgba(255, 255, 255, 0.40)',
-    contrast: '#171717',
+    secondary: 'rgba(255, 255, 255, 0.8)',
+    tertiary: 'rgba(255, 255, 255, 0.4)',
+    contrast: '#000',
     highlight: '#f0d590'
   },
   button: {
-    primary: 'rgba(255, 255, 255, 0.075)',
+    primary: 'rgba(255, 255, 255, 0.07)',
     secondary: 'rgba(255, 255, 255, 0.04)',
     tertiary: '#28282b'
   },
@@ -107,8 +90,8 @@ export const darkTheme: DefaultTheme = {
     visible: '#242426'
   },
   border: {
-    primary: 'rgba(255, 255, 255, 0.12)',
-    secondary: 'rgba(255, 255, 255, 0.06)'
+    primary: 'rgba(255, 255, 255, 0.1)',
+    secondary: 'rgba(255, 255, 255, 0.05)'
   },
   shadow: {
     primary: 'shadow-color: black; shadow-offset: 0px 2px; shadow-opacity: 0.25; shadow-radius: 2px; elevation: 5;',
@@ -116,15 +99,16 @@ export const darkTheme: DefaultTheme = {
     tertiary: 'shadow-color: black; shadow-offset: 0px 25px; shadow-opacity: 0.2; shadow-radius: 25px; elevation: 5;'
   },
   global: {
-    accent: '#2f8cef',
+    accent: '#416df9',
     alert: '#ed4a34',
     warning: '#ed882d',
-    valid: '#3ed282',
+    valid: '#16a324',
     star: '#FFD66D',
     pale: '#f7d1b6',
     complementary: '#d488eb',
     send: '#fdb866',
-    receive: '#71c56b'
+    receive: '#71c56b',
+    gray: 'rgb(121, 121, 121)'
   },
   gradient: {
     yellow: '#FFCD82',

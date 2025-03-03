@@ -1,32 +1,13 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash } from '@alephium/shared'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { useQueries, UseQueryResult } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import useFetchWalletBalancesAlphByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesAlphByAddress'
-import useFetchWalletBalancesTokensByAddress from '@/api/apiDataHooks/wallet/useFetchWalletBalancesTokensByAddress'
-import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
-import useFetchWalletNftsSearchStrings from '@/api/apiDataHooks/wallet/useFetchWalletNftsSearchStrings'
+import { addressTokensSearchStringQuery, AddressTokensSearchStringQueryFnData } from '@/api/queries/addressQueries'
 import { SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
 import SelectOptionAddress from '@/components/Inputs/SelectOptionAddress'
-import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
+import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
 import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 
 interface AddressSelectModalProps {
@@ -74,70 +55,52 @@ const AddressSelectModal = ({
       selectedOption={selectedOption}
       setValue={handleAddressSelect}
       onClose={onClose}
-      isSearchable
-      minWidth={620}
-      optionRender={(option, isSelected) => <SelectOptionAddress addressHash={option.value} isSelected={isSelected} />}
+      isSearchable={addressSelectOptions.length > 1}
+      optionRender={(option) => <SelectOptionAddress addressHash={option.value} />}
       emptyListPlaceholder={emptyListPlaceholder || t('There are no available addresses.')}
-      floatingOptions
     />
   )
 }
 
 export default AddressSelectModal
 
-// TODO: See how it can be DRY'ed with useFilterAddressesByText
 const useAddressSelectOptions = (addressOptions: AddressHash[]) => {
   const addresses = useUnsortedAddresses()
-  const { data: sortedAddressHashes } = useFetchSortedAddressesHashes()
-  const { listedFts, unlistedFts } = useFetchWalletFts({ sort: false })
-  const { data: nftsSearchStringsByNftId } = useFetchWalletNftsSearchStrings()
-  const { data: addressesAlphBalances } = useFetchWalletBalancesAlphByAddress()
-  const { data: addressesTokensBalances } = useFetchWalletBalancesTokensByAddress()
+  const { data: sortedAddressHashes } = useFetchAddressesHashesSortedByLastUse()
+  const networkId = useCurrentlyOnlineNetworkId()
+
+  const { data: addressesSearchStrings } = useQueries({
+    queries: addressOptions.map((hash) => addressTokensSearchStringQuery({ addressHash: hash, networkId })),
+    combine: combineAddressesSearchStrings
+  })
 
   return useMemo(
     () =>
       sortedAddressHashes
         .filter((hash) => addressOptions.includes(hash))
         .map((hash) => {
-          const address = addresses.find((address) => address.hash === hash)
-          const addressAlphBalances = addressesAlphBalances[hash]
-          const addressHasAlphBalances = addressAlphBalances?.totalBalance !== '0'
-          const addressTokensBalances = addressesTokensBalances[hash] ?? []
-          const addressTokensSearchableString = addressTokensBalances
-            .map(({ id }) => {
-              const listedFt = listedFts.find((token) => token.id === id)
-
-              if (listedFt) return `${listedFt.name.toLowerCase()} ${listedFt.symbol.toLowerCase()} ${id}`
-
-              const unlistedFt = unlistedFts.find((token) => token.id === id)
-
-              if (unlistedFt) return `${unlistedFt.name.toLowerCase()} ${unlistedFt.symbol.toLowerCase()} ${id}`
-
-              const nftSearchString = nftsSearchStringsByNftId[id]
-
-              if (nftSearchString) return nftSearchString.toLowerCase()
-
-              return ''
-            })
-            .join(' ')
+          const label = addresses.find((address) => address.hash === hash)?.label || hash
+          const searchString = label + (addressesSearchStrings[hash] ?? '')
 
           return {
             value: hash,
-            label: address?.label || hash,
-            searchString: `${hash.toLowerCase()} ${address?.label?.toLowerCase() ?? ''} ${
-              addressHasAlphBalances ? 'alephium alph' : ''
-            } ${addressTokensSearchableString}`
+            label,
+            searchString
           }
         }),
-    [
-      addressOptions,
-      addresses,
-      addressesAlphBalances,
-      addressesTokensBalances,
-      listedFts,
-      nftsSearchStringsByNftId,
-      sortedAddressHashes,
-      unlistedFts
-    ]
+    [sortedAddressHashes, addressOptions, addresses, addressesSearchStrings]
   )
 }
+
+const combineAddressesSearchStrings = (results: UseQueryResult<AddressTokensSearchStringQueryFnData, Error>[]) => ({
+  data: results.reduce(
+    (acc, { data }) => {
+      if (!data) return acc
+
+      acc[data.addressHash] = data.searchString
+
+      return acc
+    },
+    {} as Record<AddressHash, string>
+  )
+})

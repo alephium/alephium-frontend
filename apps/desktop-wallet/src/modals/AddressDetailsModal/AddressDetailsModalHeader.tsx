@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
@@ -31,14 +13,14 @@ import { openInWebBrowser } from '@/utils/misc'
 
 const Header = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
-  const explorerUrl = useAppSelector((state) => state.network.settings.explorerUrl)
+  const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
   const handleExplorerLinkClick = () => openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)
 
   return (
     <HeaderStyled>
       <LeftSide>
-        <AddressColorIndicator addressHash={addressHash} size={26} />
+        <AddressColorIndicator addressHash={addressHash} size={15} />
         <TitleBadge addressHash={addressHash} />
       </LeftSide>
       <ExplorerButton role="secondary" transparent short onClick={handleExplorerLinkClick}>
@@ -60,10 +42,16 @@ const TitleBadge = ({ addressHash }: AddressModalBaseProp) => {
   return (
     <>
       <Title>
-        <AddressBadgeStyled addressHash={addressHash} hideColorIndication disableCopy={!!address.label} truncate />
+        <AddressBadgeStyled
+          addressHash={addressHash}
+          hideColorIndication
+          disableCopy={!!address.label}
+          truncate
+          hashWidth={110}
+        />
         {address.label && <TitleAddressHash hash={addressHash} />}
       </Title>
-      <Badge short color={theme.font.tertiary} border>
+      <Badge short color={theme.font.tertiary}>
         {t('Group')} {address.group}
       </Badge>
     </>
@@ -79,24 +67,21 @@ const HeaderStyled = styled.div`
 const LeftSide = styled.div`
   display: flex;
   align-items: center;
-  gap: 25px;
+  gap: 15px;
 `
 
 const ExplorerButton = styled(Button)`
   width: auto;
-  margin-right: 30px;
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
-  font-size: 21px;
-  max-width: 200px;
+  font-size: 15px;
 `
 
 const Title = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  font-weight: var(--fontWeight-semiBold);
+  align-items: center;
+  gap: 10px;
 `
 
 const TitleAddressHash = styled(HashEllipsed)`

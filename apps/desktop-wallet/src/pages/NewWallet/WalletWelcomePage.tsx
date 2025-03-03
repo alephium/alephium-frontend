@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { Info } from 'lucide-react'
 import { useState } from 'react'
 import Confetti from 'react-confetti'
@@ -91,46 +73,43 @@ const WalletWelcomePage = () => {
         <SubParagraph>{t('Welcome to Alephium.')}</SubParagraph>
       </Section>
       <FooterActionsContainer>
-        <Button onClick={onButtonClick} submit>
+        <Button onClick={onButtonClick} submit tall>
           {t("Let's go!")}
         </Button>
         <div>
-          <AdvancedUserMessage>
-            <span>
-              <Trans t={t} i18nKey="welcomeScreenPassphraseMessage">
-                If you want to use a
-                <ActionLink onClick={() => openInWebBrowser(links.passphrase)}>passphrase</ActionLink>, lock your newly
-                created wallet.
-              </Trans>
-            </span>
-          </AdvancedUserMessage>
-        </div>
-        <div>
-          <AdvancedUserMessage>
-            <span>
-              <Trans t={t} i18nKey="welcomeScreenOneAddressPerGroupMessage">
-                Advanced user: want to start with <b>one address per group for mining or DeFi?</b>
-              </Trans>
-            </span>
-            <InfoIcon size="16px" onClick={() => openInWebBrowser(links.miningWallet)} />
-          </AdvancedUserMessage>
           <ExpandableSectionStyled
             sectionTitleClosed={t('Show advanced options')}
             sectionTitleOpen={t('Hide advanced options')}
             centered
           >
-            <InfoBox contrast noBorders>
-              <KeyValueInputStyled
-                label={t('Generate one address per group')}
-                description={t('For mining or DeFi use.')}
-                InputComponent={
-                  <Toggle
-                    toggled={shouldGenerateOneAddressPerGroup}
-                    onToggle={() => setShouldGenerateOneAddressPerGroup(!shouldGenerateOneAddressPerGroup)}
-                  />
-                }
-              />
-            </InfoBox>
+            <AdvancedExpandableSectionContent>
+              <AdvancedUserMessage>
+                <Trans t={t} i18nKey="welcomeScreenPassphraseMessage">
+                  If you want to use a
+                  <ActionLink onClick={() => openInWebBrowser(links.passphrase)}>passphrase</ActionLink>, lock your
+                  newly created wallet.
+                </Trans>
+              </AdvancedUserMessage>
+              <AdvancedUserMessage>
+                <Trans t={t} i18nKey="welcomeScreenOneAddressPerGroupMessage">
+                  Advanced user: do you want to start with <b>one address per group for mining or DeFi?</b>
+                </Trans>
+
+                <InfoIcon size="16px" onClick={() => openInWebBrowser(links.miningWallet)} />
+              </AdvancedUserMessage>
+              <InfoBox contrast>
+                <KeyValueInputStyled
+                  label={t('Generate one address per group')}
+                  description={t('For mining or DeFi use.')}
+                  InputComponent={
+                    <Toggle
+                      toggled={shouldGenerateOneAddressPerGroup}
+                      onToggle={() => setShouldGenerateOneAddressPerGroup(!shouldGenerateOneAddressPerGroup)}
+                    />
+                  }
+                />
+              </InfoBox>
+            </AdvancedExpandableSectionContent>
           </ExpandableSectionStyled>
         </div>
       </FooterActionsContainer>
@@ -147,6 +126,7 @@ const Container = styled.main`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  z-index: 1;
 `
 
 const ConfettiWrapper = styled.div`
@@ -156,12 +136,13 @@ const ConfettiWrapper = styled.div`
   left: 0;
   bottom: 0;
   pointer-events: none;
+  z-index: 2;
 `
 
 const ReadyParagraph = styled(Paragraph)`
   text-align: center;
   font-size: 3rem;
-  font-weight: var(--fontWeight-bold);
+  font-weight: var(--fontWeight-semiBold);
 `
 
 const SubParagraph = styled(Paragraph)`
@@ -171,7 +152,6 @@ const SubParagraph = styled(Paragraph)`
 `
 
 const AdvancedUserMessage = styled.div`
-  margin-top: 90px;
   color: ${({ theme }) => theme.font.secondary};
   text-align: center;
   flex: 1;
@@ -197,4 +177,11 @@ const KeyValueInputStyled = styled(KeyValueInput)`
 const InfoIcon = styled(Info)`
   cursor: pointer;
   color: ${({ theme }) => theme.font.primary};
+`
+
+const AdvancedExpandableSectionContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
 `

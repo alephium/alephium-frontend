@@ -1,25 +1,7 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash, fromHumanReadableAmount, getNumberOfDecimals, toHumanReadableAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { MIN_UTXO_SET_AMOUNT } from '@alephium/web3'
-import { MoreVertical, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
@@ -32,12 +14,12 @@ import useFetchWalletNftsSearchStrings from '@/api/apiDataHooks/wallet/useFetchW
 import ActionLink from '@/components/ActionLink'
 import Amount from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
-import Box from '@/components/Box'
+import Button from '@/components/Button'
 import DeleteButton from '@/components/Buttons/DeleteButton'
-import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { inputDefaultStyle, InputProps } from '@/components/Inputs'
 import Input from '@/components/Inputs/Input'
-import { SelectContainer, SelectOption, SelectOptionsModal } from '@/components/Inputs/Select'
+import { SelectOption, SelectOptionsModal, SelectOutterContainer } from '@/components/Inputs/Select'
+import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
 import SelectOptionTokenName from '@/components/Inputs/SelectOptionTokenName'
 import Truncate from '@/components/Truncate'
 import InputsSection from '@/features/send/InputsSection'
@@ -90,6 +72,8 @@ const TokensAmountInputs = ({
   const remainingAvailableAssetsOptions = allTokensOptions.filter((option) => !selectedAssetIds.includes(option.value))
   const disabled = remainingAvailableAssetsOptions.length === 0
   const canAddMultipleAssets = allowMultiple && assetAmounts.length < allTokensOptions.length
+  const shouldDisplayAssetSelectModal =
+    assetAmounts.length === 0 || (isAssetSelectModalOpen && !!selectedOption && !disabled)
 
   const handleOpenAddressTokensSelectModal = useCallback((tokenRowIndex: number) => {
     setSelectedTokenRowIndex(tokenRowIndex)
@@ -192,23 +176,21 @@ const TokensAmountInputs = ({
 
   return (
     <>
-      <InputsSection title={t(assetAmounts.length < 2 ? 'Asset' : 'Assets')} className={className}>
+      <InputsSection className={className}>
         <AssetAmounts ref={selectedValueRef}>
           {assetAmounts.map(({ id, amountInput = '' }, index) => {
             const tokenBalances = tokensBalances.find((token) => token.id === id)
-
-            if (!tokenBalances) return
 
             const ft = listedFts.find((token) => token.id === id) ?? unlistedFts.find((token) => token.id === id)
 
             // TODO: If ALPH, subtract dust for each other token, possibly by querying the node `/addresses/{address}/utxos`
             const availableHumanReadableAmount = toHumanReadableAmount(
-              BigInt(tokenBalances.availableBalance ?? 0),
+              BigInt(tokenBalances?.availableBalance ?? 0),
               ft?.decimals ?? 0
             )
 
             return (
-              <BoxStyled key={id}>
+              <SelectContainer key={id}>
                 <AssetSelect
                   onMouseDown={() => handleOpenAddressTokensSelectModal(index)}
                   onKeyDown={(e) => onEnterOrSpace(e, () => handleOpenAddressTokensSelectModal(index))}
@@ -224,35 +206,31 @@ const TokensAmountInputs = ({
                         <SelectOptionTokenName tokenId={id} />
                       </Truncate>
                     </AssetName>
-                    {!disabled && (
-                      <SelectVerticalDots>
-                        <MoreVertical size={16} />
-                      </SelectVerticalDots>
-                    )}
+                    {!disabled && <SelectMoreIcon />}
                   </SelectInput>
                 </AssetSelect>
 
                 {!nftIds.includes(id) && (
-                  <>
-                    <HorizontalDividerStyled />
+                  <AssetAmountContainer>
+                    <AssetAmountInput
+                      value={amountInput}
+                      onChange={(e) => handleTokenAmountChange(index, e.target.value)}
+                      onClick={() => setSelectedTokenRowIndex(index)}
+                      onMouseDown={() => setSelectedTokenRowIndex(index)}
+                      onKeyDown={(e) => onEnterOrSpace(e, () => setSelectedTokenRowIndex(index))}
+                      type="number"
+                      min={id === ALPH.id ? minAmountInAlph : 0}
+                      max={availableHumanReadableAmount}
+                      aria-label={t('Amount')}
+                      placeholder={`${t('Amount')} ${ft ? `(${ft.symbol})` : ''}`}
+                      error={errors[index]}
+                      autoFocus
+                      largeText
+                    />
 
-                    <AssetAmountRow>
-                      <AssetAmountInput
-                        value={amountInput}
-                        onChange={(e) => handleTokenAmountChange(index, e.target.value)}
-                        onClick={() => setSelectedTokenRowIndex(index)}
-                        onMouseDown={() => setSelectedTokenRowIndex(index)}
-                        onKeyDown={(e) => onEnterOrSpace(e, () => setSelectedTokenRowIndex(index))}
-                        type="number"
-                        min={id === ALPH.id ? minAmountInAlph : 0}
-                        max={availableHumanReadableAmount}
-                        aria-label={t('Amount')}
-                        label={`${t('Amount')} ${ft ? `(${ft.symbol})` : ''}`}
-                        error={errors[index]}
-                      />
-
-                      <AvailableAmountColumn>
-                        <AvailableAmount tabIndex={0}>
+                    <AvailableAmountColumn>
+                      <AvailableAmount tabIndex={0}>
+                        {tokenBalances && (
                           <Amount
                             tokenId={id}
                             value={BigInt(tokenBalances.availableBalance)}
@@ -260,40 +238,39 @@ const TokensAmountInputs = ({
                             color={theme.font.secondary}
                             isLoading={isLoadingTokensBalances}
                           />
-                          <span> {t('Available').toLowerCase()}</span>
-                        </AvailableAmount>
-                        <ActionLink onClick={() => handleTokenAmountChange(index, availableHumanReadableAmount)}>
-                          {t('Use max amount')}
-                        </ActionLink>
-                      </AvailableAmountColumn>
-                    </AssetAmountRow>
-                  </>
+                        )}
+                      </AvailableAmount>
+                      <ActionLink onClick={() => handleTokenAmountChange(index, availableHumanReadableAmount)}>
+                        {t('use_max_amount')}
+                      </ActionLink>
+                    </AvailableAmountColumn>
+                  </AssetAmountContainer>
                 )}
                 {assetAmounts.length > 1 && <DeleteButton onClick={() => handleRemoveAssetClick(index)} />}
-              </BoxStyled>
+              </SelectContainer>
             )
           })}
         </AssetAmounts>
         <ModalPortal>
-          {isAssetSelectModalOpen && selectedOption && remainingAvailableAssetsOptions.length > 0 && (
+          {shouldDisplayAssetSelectModal && (
             <SelectOptionsModal
-              title={t('Select an asset')}
+              title={t('Asset to send')}
               options={remainingAvailableAssetsOptions}
               selectedOption={selectedOption}
               setValue={selectAsset}
               onClose={handleAssetSelectModalClose}
               parentSelectRef={selectedValueRef}
               optionRender={renderOption}
-              isSearchable
+              isSearchable={remainingAvailableAssetsOptions.length > 5}
             />
           )}
         </ModalPortal>
       </InputsSection>
       {canAddMultipleAssets && (
         <AddAssetSection>
-          <ActionLink Icon={Plus} onClick={handleAddAssetClick} withBackground iconPosition="left">
+          <Button Icon={Plus} onClick={handleAddAssetClick} role="secondary" short>
             {t('Add asset')}
-          </ActionLink>
+          </Button>
         </AddAssetSection>
       )}
     </>
@@ -331,7 +308,6 @@ const useAddressTokensSelectOptions = (addressHash: AddressHash) => {
 
 const AddAssetSection = styled.div`
   display: flex;
-  justify-content: center;
   margin: 13px 0;
 `
 
@@ -341,9 +317,13 @@ const AssetAmounts = styled.div`
   }
 `
 
-const BoxStyled = styled(Box)`
+const SelectContainer = styled.div`
   padding: 5px;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid ${({ theme }) => theme.border.primary};
+  border-radius: var(--radius-medium);
 
   &:hover {
     ${DeleteButton} {
@@ -352,7 +332,7 @@ const BoxStyled = styled(Box)`
   }
 `
 
-const AssetSelect = styled(SelectContainer)`
+const AssetSelect = styled(SelectOutterContainer)`
   margin: 0;
 `
 
@@ -379,18 +359,16 @@ const AssetName = styled.div`
 const AssetAmountInput = styled(Input)`
   margin: 0;
   border: 0;
+  font-weight: var(--fontWeight-semiBold);
 
   &:not(:hover) {
     background-color: transparent;
   }
 `
 
-const HorizontalDividerStyled = styled(HorizontalDivider)`
-  margin: 5px 0;
-`
-
-const AssetAmountRow = styled.div`
+const AssetAmountContainer = styled.div`
   position: relative;
+  display: flex;
 `
 
 const AvailableAmountColumn = styled.div`
@@ -400,18 +378,11 @@ const AvailableAmountColumn = styled.div`
   align-items: flex-end;
   gap: 5px;
   font-size: 11px;
-  position: absolute;
-  right: 15px;
-  top: 0;
+  flex-shrink: 0;
   height: 100%;
+  padding: 0 var(--spacing-2);
 `
 
 const AvailableAmount = styled.div`
   color: ${({ theme }) => theme.font.secondary};
-`
-
-const SelectVerticalDots = styled.div`
-  flex: 1;
-  display: flex;
-  justify-content: flex-end;
 `

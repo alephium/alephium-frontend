@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { Currency, fiatCurrencyChanged } from '@alephium/shared'
 import { AlertTriangle, Eraser, Info } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
@@ -25,7 +7,6 @@ import styled from 'styled-components'
 
 import queryClient from '@/api/queryClient'
 import ActionLink from '@/components/ActionLink'
-import Box from '@/components/Box'
 import Button from '@/components/Button'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
@@ -33,17 +14,19 @@ import Select from '@/components/Inputs/Select'
 import Toggle from '@/components/Inputs/Toggle'
 import AnalyticsStorage from '@/features/analytics/analyticsPersistentStorage'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { useLedger } from '@/features/ledger/useLedger'
+import { Language, languageOptions } from '@/features/localization/languages'
+import { languageChanged } from '@/features/localization/localizationActions'
 import { openModal } from '@/features/modals/modalActions'
 import RegionSettings from '@/features/settings/RegionSettings'
 import {
   analyticsToggled,
   discreetModeToggled,
-  languageChanged,
   passwordRequirementToggled,
   walletLockTimeChanged
 } from '@/features/settings/settingsActions'
-import { fiatCurrencyOptions, languageOptions, locktimeInMinutes } from '@/features/settings/settingsConstants'
-import { Language } from '@/features/settings/settingsTypes'
+import { fiatCurrencyOptions, locktimeInMinutes } from '@/features/settings/settingsConstants'
+import { selectEffectivePasswordRequirement } from '@/features/settings/settingsSelectors'
 import { ThemeSettings } from '@/features/theme/themeTypes'
 import { switchTheme } from '@/features/theme/themeUtils'
 import { deleteThumbnailsDB } from '@/features/thumbnails/thumbnailStorage'
@@ -67,11 +50,17 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
   const { t } = useTranslation()
   const dispatch = useAppDispatch()
   const { isWalletUnlocked } = useWalletLock()
-  const { walletLockTimeInMinutes, discreetMode, passwordRequirement, language, theme, analytics, fiatCurrency } =
-    useAppSelector((s) => s.settings)
+  const passwordRequirement = useAppSelector(selectEffectivePasswordRequirement)
+  const walletLockTimeInMinutes = useAppSelector((s) => s.settings.walletLockTimeInMinutes)
+  const discreetMode = useAppSelector((s) => s.settings.discreetMode)
+  const language = useAppSelector((s) => s.settings.language)
+  const theme = useAppSelector((s) => s.settings.theme)
+  const analytics = useAppSelector((s) => s.settings.analytics)
+  const fiatCurrency = useAppSelector((s) => s.settings.fiatCurrency)
   const posthog = usePostHog()
   const { sendAnalytics } = useAnalytics()
   const { reset } = useWalletConnectContext()
+  const { isLedger } = useLedger()
 
   const onPasswordRequirementChange = useCallback(() => {
     if (passwordRequirement) {
@@ -165,10 +154,12 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
     : 0
 
   return (
-    <Box className={className}>
+    <>
       <KeyValueInput
         label={t('Lock time')}
         description={t('Duration in minutes after which an idle wallet will lock automatically.')}
+        noTopPadding
+        noHorizontalPadding
         InputComponent={
           <Select
             id="wallet-lock-time-in-minutes"
@@ -182,15 +173,16 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
               label: currentLockTime ? `${currentLockTime} ${t('Minutes')}` : t('Off')
             }}
             noMargin
-            title={t('Lock time')}
             heightSize="small"
+            title={t('Lock time')}
           />
         }
       />
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={t('Theme')}
         description={t('Select the theme and please your eyes.')}
+        noHorizontalPadding
         InputComponent={
           <Select
             id="theme"
@@ -198,31 +190,34 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             onSelect={handleThemeSelect}
             controlledValue={themeOptions.find((l) => l.value === theme)}
             noMargin
-            title={t('Theme')}
             heightSize="small"
+            title={t('Theme')}
           />
         }
       />
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={discreetModeText}
         description={t('Toggle discreet mode (hide amounts).')}
+        noHorizontalPadding
         InputComponent={<Toggle label={discreetModeText} toggled={discreetMode} onToggle={handleDiscreetModeToggle} />}
       />
-      <HorizontalDivider />
-      {isWalletUnlocked && (
+      <HorizontalDivider secondary />
+      {isWalletUnlocked && !isLedger && (
         <>
           <KeyValueInput
             label={t('Password requirement')}
             description={t('Require password confirmation before sending each transaction.')}
+            noHorizontalPadding
             InputComponent={<Toggle toggled={passwordRequirement} onToggle={onPasswordRequirementChange} />}
           />
-          <HorizontalDivider />
+          <HorizontalDivider secondary />
         </>
       )}
       <KeyValueInput
         label="Language"
         description={t('Change the wallet language.')}
+        noHorizontalPadding
         InputComponent={
           <Select
             id="language"
@@ -230,8 +225,8 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             onSelect={handleLanguageChange}
             controlledValue={languageOptions.find((l) => l.value === language)}
             noMargin
-            title={t('Language')}
             heightSize="small"
+            title={t('Language')}
           />
         }
       >
@@ -248,10 +243,11 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
           </div>
         )}
       </KeyValueInput>
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={t('Currency')}
         description={t('Change the currency to use to display amounts.')}
+        noHorizontalPadding
         InputComponent={
           <Select
             id="fiat-currency"
@@ -259,19 +255,20 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
             onSelect={handleFiatCurrencyChange}
             controlledValue={fiatCurrencyOptions.find((l) => l.value === fiatCurrency)}
             noMargin
-            title={t('Currency')}
             heightSize="small"
+            title={t('Currency')}
           />
         }
       />
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
 
       <RegionSettings />
 
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={t('Analytics')}
         description={t('Help us improve your experience!')}
+        noHorizontalPadding
         InputComponent={<Toggle toggled={analytics} onToggle={handleAnalyticsToggle} />}
       >
         <ActionLink onClick={() => openInWebBrowser(links.analytics)}>
@@ -281,17 +278,26 @@ const GeneralSettingsSection = ({ className }: GeneralSettingsSectionProps) => {
           </MoreInfoLinkContent>
         </ActionLink>
       </KeyValueInput>
-      <HorizontalDivider />
+      <HorizontalDivider secondary />
       <KeyValueInput
         label={t('Clear cache')}
         description={t('Deletes cached wallet and WalletConnect data.')}
+        noBottomPadding
+        noHorizontalPadding
         InputComponent={
-          <ButtonStyled role="secondary" Icon={Eraser} wide onClick={handleClearCacheButtonPress}>
+          <ButtonStyled
+            role="secondary"
+            Icon={Eraser}
+            wide
+            onClick={handleClearCacheButtonPress}
+            short
+            justifyContent="center"
+          >
             {t('Clear')}
           </ButtonStyled>
         }
       />
-    </Box>
+    </>
   )
 }
 

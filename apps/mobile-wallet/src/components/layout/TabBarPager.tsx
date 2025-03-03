@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { ReactNode, useRef } from 'react'
 import { ScrollViewProps } from 'react-native'
 import PagerView, { PagerViewOnPageScrollEventData, PagerViewProps } from 'react-native-pager-view'
@@ -40,11 +22,20 @@ interface TabBarScreenProps extends Omit<PagerViewProps, 'children'> {
   headerTitle: string
   pages: Array<(props: TabBarPageScreenProps) => ReactNode>
   tabLabels: string[]
+  customHeaderContent?: ReactNode
+  onTabChange?: (tabIndex: number) => void
 }
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 
-const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenProps) => {
+const TabBarPager = ({
+  pages,
+  tabLabels,
+  headerTitle,
+  customHeaderContent,
+  onTabChange,
+  ...props
+}: TabBarScreenProps) => {
   const pagerRef = useRef<PagerView>(null)
   const tabBarRef = useAnimatedRef<Animated.View>()
   const tabBarPageY = useSharedValue<number>(120)
@@ -80,13 +71,20 @@ const TabBarPager = ({ pages, tabLabels, headerTitle, ...props }: TabBarScreenPr
       pagerScrollEvent={pagerScrollEvent}
       onTabPress={handleTabPress}
       tabBarRef={tabBarRef}
+      customContent={customHeaderContent}
     />
   )
 
   return (
     <Screen>
-      <BaseHeader options={{ headerTitle }} scrollY={screenScrollY} CustomContent={TabBar} />
-      <StyledPagerView initialPage={0} onPageScroll={pageScrollHandler} ref={pagerRef} {...props}>
+      <BaseHeader options={{ headerTitle }} scrollY={screenScrollY} CustomContent={TabBar} isCentered={false} />
+      <StyledPagerView
+        initialPage={0}
+        onPageScroll={pageScrollHandler}
+        ref={pagerRef}
+        onPageSelected={({ nativeEvent: { position } }) => onTabChange?.(position)}
+        {...props}
+      >
         {pages.map((Page, i) => (
           <WrappedPage key={i} Page={Page} onScroll={screenScrollHandler} />
         ))}
@@ -103,7 +101,7 @@ const WrappedPage = ({
 }: {
   Page: (props: TabBarPageProps) => ReactNode
   onScroll: Required<TabBarPageProps>['onScroll']
-}) => <Page onScroll={onScroll} contentStyle={{ marginTop: 15 }} />
+}) => <Page onScroll={onScroll} contentStyle={{ marginTop: 50 }} />
 
 const StyledPagerView = styled(AnimatedPagerView)`
   flex: 1;

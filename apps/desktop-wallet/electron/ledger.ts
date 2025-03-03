@@ -1,29 +1,19 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { ledgerUSBVendorId } from '@ledgerhq/devices'
 import { BrowserWindow } from 'electron'
 
+import { DEPRECATED_APP_PROTOCOL } from './appProtocol'
+
 export const setupLedgerDevicePermissions = (mainWindow: BrowserWindow) => {
-  mainWindow.webContents.session.setDevicePermissionHandler(
-    ({ deviceType, origin, device: { vendorId } }) =>
-      (deviceType === 'hid' || deviceType === 'usb') &&
-      (origin === 'file://' || origin === 'http://localhost:3000') &&
-      vendorId === ledgerUSBVendorId
-  )
+  mainWindow.webContents.session.setDevicePermissionHandler((details) => {
+    const { deviceType, origin, device } = details
+
+    const isCorrectDeviceType = deviceType === 'hid' || deviceType === 'usb'
+    const isCorrectOrigin =
+      origin.startsWith(`${DEPRECATED_APP_PROTOCOL}://`) || origin.startsWith('http://localhost:3000')
+    const isCorrectVendor = device.vendorId === ledgerUSBVendorId
+
+    const shouldAllow = isCorrectDeviceType && isCorrectOrigin && isCorrectVendor
+
+    return shouldAllow
+  })
 }

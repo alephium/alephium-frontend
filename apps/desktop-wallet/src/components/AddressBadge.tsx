@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash } from '@alephium/shared'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -39,6 +21,8 @@ interface AddressBadgeProps {
   displayHashUnder?: boolean
   isShort?: boolean
   className?: string
+  hashWidth?: number
+  fullWidthUnknownHash?: boolean
 }
 
 const AddressBadge = ({
@@ -52,52 +36,63 @@ const AddressBadge = ({
   appendHash = false,
   displayHashUnder = false,
   isShort,
-  withBorders
+  withBorders,
+  hashWidth,
+  fullWidthUnknownHash = false
 }: AddressBadgeProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
   const selectContactByAddress = useMemo(makeSelectContactByAddress, [])
   const contact = useAppSelector((s) => selectContactByAddress(s, addressHash))
 
+  const displayedHash = contact ? contact.address : address ? address.hash : addressHash
+  const displayedLabel = contact ? contact.name : address ? address.label : undefined
+
   return (
     <AddressBadgeStyled
       className={className}
       withBorders={contact || address ? withBorders : false}
+      hideColorIndication={hideColorIndication}
       truncate={truncate}
       isShort={isShort}
     >
-      {contact ? (
-        <Label truncate={truncate}>
-          {disableCopy ? (
-            contact.name
-          ) : (
-            <ClipboardButton textToCopy={contact.address} tooltip={t('Copy contact address')} disableA11y={disableA11y}>
-              {contact.name}
-            </ClipboardButton>
-          )}
-        </Label>
-      ) : !address ? (
-        <NotKnownAddress hash={addressHash} disableCopy={disableCopy} />
+      {!address && !contact ? (
+        <NotKnownAddress
+          hash={addressHash}
+          disableCopy={disableCopy}
+          width={fullWidthUnknownHash ? '100%' : undefined}
+        />
       ) : (
         <>
-          {!hideColorIndication && <AddressColorIndicator addressHash={address.hash} hideMainAddressBadge={hideStar} />}
-          {address.label ? (
+          {!hideColorIndication && address && (
+            <AddressColorIndicator addressHash={address.hash} hideMainAddressBadge={hideStar} />
+          )}
+          {displayedLabel ? (
             <LabelAndHash isColumn={displayHashUnder}>
               <Label truncate={truncate}>
                 {disableCopy || appendHash ? (
-                  address.label
+                  displayedLabel
                 ) : (
-                  <ClipboardButton textToCopy={address.hash} tooltip={t('Copy address')} disableA11y={disableA11y}>
-                    {address.label}
-                  </ClipboardButton>
+                  <ClipboardButtonStyled
+                    textToCopy={displayedHash}
+                    tooltip={t('Copy address')}
+                    disableA11y={disableA11y}
+                  >
+                    {displayedLabel}
+                  </ClipboardButtonStyled>
                 )}
               </Label>
               {appendHash && (
-                <ShortHashEllipsed hash={address.hash} disableA11y={disableA11y} disableCopy={disableCopy} />
+                <ShortHashEllipsed
+                  hash={displayedHash}
+                  disableA11y={disableA11y}
+                  disableCopy={disableCopy}
+                  width={hashWidth}
+                />
               )}
             </LabelAndHash>
           ) : (
-            <HashEllipsed hash={address.hash} disableA11y={disableA11y} disableCopy={disableCopy} />
+            <HashEllipsed hash={displayedHash} disableA11y={disableA11y} disableCopy={disableCopy} width={hashWidth} />
           )}
         </>
       )}
@@ -107,18 +102,22 @@ const AddressBadge = ({
 
 export default AddressBadge
 
-const AddressBadgeStyled = styled.div<Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'isShort'>>`
+type AddressBadgeStyledProps = Pick<AddressBadgeProps, 'withBorders' | 'truncate' | 'isShort' | 'hideColorIndication'>
+
+const AddressBadgeStyled = styled.div<AddressBadgeStyledProps>`
   display: flex;
+  position: relative;
   align-items: center;
+  text-align: ${({ hideColorIndication }) => (hideColorIndication ? 'left' : 'center')};
   gap: 6px;
+  max-width: 100%;
 
   ${({ withBorders }) =>
     withBorders &&
     css`
       border: 1px solid ${({ theme }) => theme.border.primary};
       border-radius: 25px;
-      padding: 4px 10px;
-      background: ${({ theme }) => theme.bg.highlight};
+      padding: 2px 6px;
     `}
 
   ${({ truncate }) =>
@@ -150,9 +149,10 @@ const LabelAndHash = styled.div<{ isColumn: boolean }>`
 `
 
 const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
+  position: relative;
   margin-right: 2px;
   white-space: nowrap;
-  max-width: 125px;
+  min-width: 40px;
 
   ${({ truncate }) =>
     truncate &&
@@ -165,9 +165,12 @@ const Label = styled.span<Pick<AddressBadgeProps, 'truncate'>>`
 const NotKnownAddress = styled(HashEllipsed)``
 
 const ShortHashEllipsed = styled(HashEllipsed)`
-  max-width: 150px;
-  min-width: 80px;
+  flex-shrink: 0;
   font-size: 12px;
   color: ${({ theme }) => theme.font.secondary};
-  width: 100%;
+`
+
+const ClipboardButtonStyled = styled(ClipboardButton)`
+  position: absolute;
+  right: 6px;
 `

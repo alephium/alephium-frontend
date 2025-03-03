@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import '@walletconnect/react-native-compat'
 
 import {
@@ -23,7 +5,6 @@ import {
   AssetAmount,
   client,
   getHumanReadableError,
-  isNetworkValid,
   parseSessionProposalEvent,
   SessionProposalEvent,
   SessionRequestEvent,
@@ -31,26 +12,19 @@ import {
   walletConnectClientInitialized,
   walletConnectClientInitializeFailed,
   walletConnectClientInitializing,
-  walletConnectClientMaxRetriesReached,
-  WalletConnectError
+  walletConnectClientMaxRetriesReached
 } from '@alephium/shared'
 import { useInterval } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
-import { formatChain, isCompatibleAddressGroup, RelayMethod } from '@alephium/walletconnect-provider'
+import { formatChain, RelayMethod } from '@alephium/walletconnect-provider'
 import {
   ApiRequestArguments,
   SignDeployContractTxParams,
-  SignDeployContractTxResult,
   SignExecuteScriptTxParams,
-  SignExecuteScriptTxResult,
   SignMessageParams,
-  SignMessageResult,
   SignTransferTxParams,
-  SignTransferTxResult,
-  SignUnsignedTxParams,
-  SignUnsignedTxResult
+  SignUnsignedTxParams
 } from '@alephium/web3'
-import { SignResult } from '@alephium/web3/dist/src/api/api-alephium'
 import { IWalletKit, WalletKit } from '@reown/walletkit'
 import {
   Core,
@@ -78,9 +52,6 @@ import { useURL } from 'expo-linking'
 import { partition } from 'lodash'
 import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AppState, AppStateStatus } from 'react-native'
-import BackgroundService from 'react-native-background-actions'
-import { Portal } from 'react-native-portalize'
 
 import { sendAnalytics } from '~/analytics'
 import {
@@ -88,16 +59,10 @@ import {
   buildDeployContractTransaction,
   buildTransferTransaction
 } from '~/api/transactions'
-import BottomModal from '~/components/layout/BottomModal'
-import SpinnerModal from '~/components/SpinnerModal'
-import WalletConnectSessionProposalModal from '~/contexts/walletConnect/WalletConnectSessionProposalModal'
-import WalletConnectSessionRequestModal from '~/contexts/walletConnect/WalletConnectSessionRequestModal'
-import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
+import { openModal } from '~/features/modals/modalActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
-import { useBiometricsAuthGuard } from '~/hooks/useBiometrics'
-import { getAddressAsymetricKey } from '~/persistent-storage/wallet'
-import { selectAddressIds } from '~/store/addressesSlice'
-import { Address } from '~/types/addresses'
+import { selectAddressIds } from '~/store/addresses/addressesSelectors'
 import {
   CallContractTxData,
   DeployContractTxData,
@@ -105,20 +70,26 @@ import {
   SignUnsignedTxData,
   TransferTxData
 } from '~/types/transactions'
-import { SessionRequestData } from '~/types/walletConnect'
 import { showExceptionToast, showToast } from '~/utils/layout'
-import { sleep } from '~/utils/misc'
 
 const MaxRequestNumToKeep = 10
-const ONE_HOURS_IN_SECONDS = 60 * 60
 
 interface WalletConnectContextValue {
   walletConnectClient?: IWalletKit
   pairWithDapp: (uri: string) => Promise<void>
   unpairFromDapp: (pairingTopic: string) => Promise<void>
   activeSessions: SessionTypes.Struct[]
+  refreshActiveSessions: () => void
+  respondToWalletConnect: (event: SessionRequestEvent, response: EngineTypes.RespondParams['response']) => Promise<void>
+  respondToWalletConnectWithError: (
+    sessionRequestEvent: SessionRequestEvent,
+    error: ReturnType<typeof getSdkError>
+  ) => Promise<void>
+
   resetWalletConnectClientInitializationAttempts: () => void
   resetWalletConnectStorage: () => void
+  isInEcosystemInAppBrowser: boolean
+  setIsInEcosystemInAppBrowser: (value: boolean) => void
 }
 
 const initialValues: WalletConnectContextValue = {
@@ -126,8 +97,14 @@ const initialValues: WalletConnectContextValue = {
   pairWithDapp: () => Promise.resolve(),
   unpairFromDapp: () => Promise.resolve(),
   activeSessions: [],
+  refreshActiveSessions: () => null,
+  respondToWalletConnectWithError: () => Promise.resolve(),
+  respondToWalletConnect: () => Promise.resolve(),
+
   resetWalletConnectClientInitializationAttempts: () => null,
-  resetWalletConnectStorage: () => null
+  resetWalletConnectStorage: () => null,
+  isInEcosystemInAppBrowser: false,
+  setIsInEcosystemInAppBrowser: () => null
 }
 
 const WalletConnectContext = createContext(initialValues)
@@ -139,37 +116,26 @@ const core = new Core({
 })
 
 export const WalletConnectContextProvider = ({ children }: { children: ReactNode }) => {
-  const currentNetworkId = useAppSelector((s) => s.network.settings.networkId)
-  const currentNetworkName = useAppSelector((s) => s.network.name)
   const addressIds = useAppSelector(selectAddressIds) as AddressHash[]
   const isWalletConnectEnabled = useAppSelector((s) => s.settings.walletConnect)
   const isWalletUnlocked = useAppSelector((s) => s.wallet.isUnlocked)
   const url = useURL()
   const wcDeepLink = useRef<string>()
-  const appState = useRef(AppState.currentState)
   const dispatch = useAppDispatch()
   const walletConnectClientStatus = useAppSelector((s) => s.clients.walletConnect.status)
-  const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
-  const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
   const { t } = useTranslation()
 
   const [walletConnectClient, setWalletConnectClient] = useState<WalletConnectContextValue['walletConnectClient']>()
   const [activeSessions, setActiveSessions] = useState<SessionTypes.Struct[]>([])
-  const [sessionProposalEvent, setSessionProposalEvent] = useState<SessionProposalEvent>()
-  const [sessionRequestEvent, setSessionRequestEvent] = useState<SessionRequestEvent>()
-  const [sessionRequestData, setSessionRequestData] = useState<SessionRequestData>()
-  const [isSessionProposalModalOpen, setIsSessionProposalModalOpen] = useState(false)
-  const [isSessionRequestModalOpen, setIsSessionRequestModalOpen] = useState(false)
-  const [loading, setLoading] = useState('')
   const [walletConnectClientInitializationAttempts, setWalletConnectClientInitializationAttempts] = useState(0)
+  const [isInEcosystemInAppBrowser, setIsInEcosystemInAppBrowser] = useState(false)
 
-  const activeSessionMetadata = activeSessions.find((s) => s.topic === sessionRequestEvent?.topic)?.peer.metadata
   const isWalletConnectClientReady =
     isWalletConnectEnabled && walletConnectClient && walletConnectClientStatus === 'initialized'
 
-  const updateActiveSessions = useCallback((client?: IWalletKit) => {
-    setActiveSessions(Object.values(client?.getActiveSessions() ?? {}))
-  }, [])
+  const refreshActiveSessions = useCallback(() => {
+    if (walletConnectClient) setActiveSessions(Object.values(walletConnectClient.getActiveSessions()))
+  }, [walletConnectClient])
 
   const initializeWalletConnectClient = useCallback(async () => {
     let client
@@ -216,9 +182,9 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       setWalletConnectClient(client)
       dispatch(walletConnectClientInitialized())
-      updateActiveSessions(client)
+      setActiveSessions(Object.values(client.getActiveSessions()))
     }
-  }, [dispatch, walletConnectClientInitializationAttempts, updateActiveSessions])
+  }, [dispatch, walletConnectClientInitializationAttempts])
 
   useEffect(() => {
     if (walletConnectClientStatus === 'initialized' && !walletConnectClient) {
@@ -272,10 +238,6 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     [walletConnectClient, cleanStorage]
   )
 
-  const respondToWalletConnectWithSuccess = async (event: SessionRequestEvent, result: SignResult) => {
-    await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', result })
-  }
-
   const respondToWalletConnectWithError = useCallback(
     async (event: SessionRequestEvent, error: ReturnType<typeof getSdkError>) =>
       await respondToWalletConnect(event, { id: event.id, jsonrpc: '2.0', error }),
@@ -304,298 +266,15 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     [respondToWalletConnect, respondToWalletConnectWithError, walletConnectClient]
   )
 
-  const onSessionRequest = useCallback(
-    async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
-      if (!walletConnectClient) return
-
-      console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
-      console.log('👉 REQUESTED METHOD:', requestEvent.params.request.method)
-
-      try {
-        switch (requestEvent.params.request.method as RelayMethod) {
-          case 'alph_signAndSubmitTransferTx': {
-            const { destinations, signerAddress, gasAmount, gasPrice } = requestEvent.params.request
-              .params as SignTransferTxParams
-            const { address: toAddress, tokens, attoAlphAmount, lockTime } = destinations[0]
-            const assetAmounts = [
-              { id: ALPH.id, amount: BigInt(attoAlphAmount) },
-              ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
-            ]
-
-            const fromAddress = addressIds.find((address) => address === signerAddress)
-
-            if (!fromAddress) {
-              return respondToWalletConnectWithError(requestEvent, {
-                message: "Signer address doesn't exist",
-                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
-              })
-            }
-
-            const wcTxData: TransferTxData = {
-              fromAddress,
-              toAddress,
-              assetAmounts,
-              gasAmount,
-              gasPrice: gasPrice?.toString(),
-              lockTime: lockTime ? new Date(lockTime) : undefined
-            }
-
-            setLoading('Responding to WalletConnect')
-            console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
-            const buildTransactionTxResult = await buildTransferTransaction(wcTxData)
-            console.log('✅ BUILDING TX: DONE!')
-            setLoading('')
-
-            setSessionRequestData({
-              type: 'transfer',
-              wcData: wcTxData,
-              unsignedTxData: buildTransactionTxResult
-            })
-            setSessionRequestEvent(requestEvent)
-
-            console.log('⏳ OPENING MODAL TO APPROVE TX...')
-            setIsSessionRequestModalOpen(true)
-
-            break
-          }
-          case 'alph_signAndSubmitDeployContractTx': {
-            const { signerAddress, initialAttoAlphAmount, bytecode, issueTokenAmount, gasAmount, gasPrice } =
-              requestEvent.params.request.params as SignDeployContractTxParams
-            const initialAlphAmount: AssetAmount | undefined = initialAttoAlphAmount
-              ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
-              : undefined
-
-            const fromAddress = addressIds.find((address) => address === signerAddress)
-
-            if (!fromAddress) {
-              return respondToWalletConnectWithError(requestEvent, {
-                message: "Signer address doesn't exist",
-                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
-              })
-            }
-
-            const wcTxData: DeployContractTxData = {
-              fromAddress,
-              bytecode,
-              initialAlphAmount,
-              issueTokenAmount: issueTokenAmount?.toString(),
-              gasAmount,
-              gasPrice: gasPrice?.toString()
-            }
-
-            setLoading('Responding to WalletConnect')
-            console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
-            const buildDeployContractTxResult = await buildDeployContractTransaction(wcTxData)
-            console.log('✅ BUILDING TX: DONE!')
-            setLoading('')
-
-            setSessionRequestData({
-              type: 'deploy-contract',
-              wcData: wcTxData,
-              unsignedTxData: buildDeployContractTxResult
-            })
-            setSessionRequestEvent(requestEvent)
-
-            console.log('⏳ OPENING MODAL TO APPROVE TX...')
-            setIsSessionRequestModalOpen(true)
-
-            break
-          }
-          case 'alph_signAndSubmitExecuteScriptTx': {
-            const { tokens, bytecode, gasAmount, gasPrice, signerAddress, attoAlphAmount } = requestEvent.params.request
-              .params as SignExecuteScriptTxParams
-            let assetAmounts: AssetAmount[] = []
-            let allAlphAssets: AssetAmount[] = attoAlphAmount ? [{ id: ALPH.id, amount: BigInt(attoAlphAmount) }] : []
-
-            const fromAddress = addressIds.find((address) => address === signerAddress)
-
-            if (!fromAddress) {
-              return respondToWalletConnectWithError(requestEvent, {
-                message: "Signer address doesn't exist",
-                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
-              })
-            }
-
-            if (tokens) {
-              const assets = tokens.map((token) => ({ id: token.id, amount: BigInt(token.amount) }))
-              const [alphAssets, tokenAssets] = partition(assets, (asset) => asset.id === ALPH.id)
-              assetAmounts = tokenAssets
-              allAlphAssets = [...allAlphAssets, ...alphAssets]
-            }
-
-            if (allAlphAssets.length > 0) {
-              assetAmounts.push({
-                id: ALPH.id,
-                amount: allAlphAssets.reduce((total, asset) => total + (asset.amount ?? BigInt(0)), BigInt(0))
-              })
-            }
-
-            const wcTxData: CallContractTxData = {
-              fromAddress,
-              bytecode,
-              assetAmounts,
-              gasAmount,
-              gasPrice: gasPrice?.toString()
-            }
-
-            setLoading('Responding to WalletConnect')
-            console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
-            const buildCallContractTxResult = await buildCallContractTransaction(wcTxData)
-            console.log('✅ BUILDING TX: DONE!')
-            setLoading('')
-
-            setSessionRequestData({
-              type: 'call-contract',
-              wcData: wcTxData,
-              unsignedTxData: buildCallContractTxResult
-            })
-            setSessionRequestEvent(requestEvent)
-
-            console.log('⏳ OPENING MODAL TO APPROVE TX...')
-            setIsSessionRequestModalOpen(true)
-
-            break
-          }
-          case 'alph_signMessage': {
-            const { message, messageHasher, signerAddress } = requestEvent.params.request.params as SignMessageParams
-
-            const fromAddress = addressIds.find((address) => address === signerAddress)
-
-            if (!fromAddress) {
-              return respondToWalletConnectWithError(requestEvent, {
-                message: "Signer address doesn't exist",
-                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
-              })
-            }
-
-            const signData: SignMessageData = {
-              fromAddress,
-              message,
-              messageHasher
-            }
-
-            setSessionRequestData({
-              type: 'sign-message',
-              wcData: signData
-            })
-            setSessionRequestEvent(requestEvent)
-
-            console.log('⏳ OPENING MODAL TO SIGN MESSAGE...')
-            setIsSessionRequestModalOpen(true)
-
-            break
-          }
-          case 'alph_signUnsignedTx': {
-            const { signerAddress, signerKeyType, unsignedTx } = requestEvent.params.request
-              .params as SignUnsignedTxParams
-
-            const fromAddress = addressIds.find((address) => address === signerAddress)
-
-            if (!fromAddress) {
-              return respondToWalletConnectWithError(requestEvent, {
-                message: "Signer address doesn't exist",
-                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
-              })
-            }
-
-            const wcTxData: SignUnsignedTxData = {
-              fromAddress,
-              signerKeyType,
-              unsignedTx
-            }
-
-            setLoading('Responding to WalletConnect')
-            console.log('⏳ DECODING TX WITH DATA:', wcTxData)
-            const decodedResult = await client.node.transactions.postTransactionsDecodeUnsignedTx({ unsignedTx })
-            console.log('✅ DECODING TX: DONE!')
-            setLoading('')
-
-            setSessionRequestData({
-              type: 'sign-unsigned-tx',
-              wcData: wcTxData,
-              unsignedTxData: decodedResult
-            })
-            setSessionRequestEvent(requestEvent)
-
-            console.log('⏳ OPENING MODAL TO SIGN UNSIGNED TX...')
-            setIsSessionRequestModalOpen(true)
-
-            break
-          }
-          case 'alph_requestNodeApi': {
-            walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
-            const p = requestEvent.params.request.params as ApiRequestArguments
-            const result = await client.node.request(p)
-
-            console.log('👉 WALLETCONNECT ASKED FOR THE NODE API')
-
-            await handleApiResponse(requestEvent, result)
-
-            break
-          }
-          case 'alph_requestExplorerApi': {
-            walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
-            const p = requestEvent.params.request.params as ApiRequestArguments
-            const result = await client.explorer.request(p)
-
-            console.log('👉 WALLETCONNECT ASKED FOR THE EXPLORER API')
-
-            await handleApiResponse(requestEvent, result)
-
-            break
-          }
-          default:
-            respondToWalletConnectWithError(requestEvent, getSdkError('WC_METHOD_UNSUPPORTED'))
-        }
-      } catch (e: unknown) {
-        const error = e as { message?: string }
-
-        setLoading('')
-
-        if (error.message?.includes('NotEnoughApprovedBalance')) {
-          showToast({
-            text1: t('Could not build transaction'),
-            text2: t('Your address does not have enough balance for this transaction.'),
-            type: 'error',
-            autoHide: false
-          })
-        } else {
-          if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method)) {
-            showExceptionToast(e, t('Could not build transaction'))
-            console.error(e)
-          }
-          respondToWalletConnectWithError(requestEvent, {
-            message: getHumanReadableError(e, t('Error while parsing WalletConnect session request')),
-            code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
-          })
-        }
-      }
-    },
-    // The `addresses` dependency causes re-rendering when any property of an Address changes, even though we only need
-    // the `hash` and the `publicKey`. Creating a selector that extracts those 3 doesn't help.
-    // Using addressIds fixes the problem, but now the api/transactions.ts file becomes dependant on the store file.
-    [walletConnectClient, respondToWalletConnectWithError, addressIds, handleApiResponse, t]
-  )
-
-  const onSessionProposal = useCallback(async (sessionProposalEvent: SessionProposalEvent) => {
-    console.log('📣 RECEIVED EVENT PROPOSAL TO CONNECT TO A DAPP!')
-    console.log('👉 ARGS:', sessionProposalEvent)
-    console.log('⏳ WAITING FOR PROPOSAL APPROVAL OR REJECTION')
-
-    setSessionProposalEvent(sessionProposalEvent)
-    setIsSessionProposalModalOpen(true)
-  }, [])
-
   const onSessionDelete = useCallback(
     async (args: SignClientTypes.EventArguments['session_delete']) => {
       console.log('📣 RECEIVED EVENT TO DISCONNECT FROM THE DAPP SESSION.')
       console.log('👉 ARGS:', args)
       console.log('🧹 CLEANING UP STATE.')
 
-      setSessionProposalEvent(undefined)
-      updateActiveSessions(walletConnectClient)
+      refreshActiveSessions()
     },
-    [updateActiveSessions, walletConnectClient]
+    [refreshActiveSessions]
   )
 
   const onProposalExpire = useCallback((args: SignClientTypes.EventArguments['proposal_expire']) => {
@@ -603,68 +282,105 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     console.log('👉 ARGS:', args)
   }, [])
 
-  useEffect(() => {
-    const handleAppStateChange = async (nextAppState: AppStateStatus) => {
-      if (nextAppState === 'background' && isWalletConnectEnabled) {
-        let secondsPassed = 0
+  const unpairFromDapp = useCallback(
+    async (topic: string) => {
+      if (!walletConnectClient) return
 
-        // Keep app alive for max 4 hours
-        const backgroundTask = async () => {
-          while (BackgroundService.isRunning() && secondsPassed < ONE_HOURS_IN_SECONDS) {
-            console.log('Keeping app alive to be able to respond to WalletConnect')
-            secondsPassed += 1
-            await sleep(1000)
-          }
+      try {
+        dispatch(activateAppLoading(t('Disconnecting')))
+
+        console.log('⏳ DISCONNECTING FROM:', topic)
+
+        if (walletConnectClient.getActiveSessions()[topic]) {
+          await walletConnectClient.disconnectSession({ topic, reason: getSdkError('USER_DISCONNECTED') })
         }
 
-        await BackgroundService.start(backgroundTask, {
-          taskName: 'WalletConnectListener',
-          taskTitle: 'WalletConnect',
-          taskDesc: 'Keeping WalletConnect connection alive',
-          taskIcon: {
-            name: 'ic_launcher',
-            type: 'mipmap'
-          },
-          linkingURI: 'alephium://'
-        })
-      } else if (nextAppState === 'active') {
-        await BackgroundService.stop()
+        console.log('✅ DISCONNECTING: DONE!')
+
+        sendAnalytics({ event: 'WC: Disconnected from dApp' })
+      } catch (e) {
+        console.error('❌ COULD NOT DISCONNECT FROM DAPP', e)
+      } finally {
+        refreshActiveSessions()
+        dispatch(deactivateAppLoading())
       }
+    },
+    [dispatch, refreshActiveSessions, t, walletConnectClient]
+  )
 
-      appState.current = nextAppState
-    }
+  const onSessionProposal = useCallback(
+    async (proposalEvent: SessionProposalEvent) => {
+      console.log('📣 RECEIVED EVENT PROPOSAL TO CONNECT TO A DAPP!')
+      console.log('👉 ARGS:', proposalEvent)
+      console.log('⏳ WAITING FOR PROPOSAL APPROVAL OR REJECTION')
 
-    if (BackgroundService.isRunning()) BackgroundService.stop()
+      try {
+        const { requiredChains, requiredChainInfo, requiredNamespace, metadata, relayProtocol } =
+          parseSessionProposalEvent(proposalEvent)
 
-    const subscription = AppState.addEventListener('change', handleAppStateChange)
+        if (!requiredChains) {
+          const message = 'The proposal does not include a list of required chains'
 
-    return subscription.remove
-  }, [isWalletConnectEnabled])
+          console.error(`❌ ${message}`)
+          return showToast({
+            text1: t('Could not approve'),
+            text2: t(message),
+            type: 'error',
+            autoHide: false
+          })
+        }
 
-  useEffect(() => {
-    if (!isWalletConnectClientReady) return
+        if (requiredChains.length !== 1) {
+          console.error(
+            `❌ Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains.length}`
+          )
+          return showToast({
+            text1: t('Could not approve'),
+            text2: t('Expected exactly 1 required chain in the WalletConnect proposal, got {{ numberOfChains }}', {
+              numberOfChains: requiredChains.length
+            }),
+            type: 'error',
+            autoHide: false
+          })
+        }
 
-    console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
+        if (!requiredChainInfo) {
+          console.error('❌ Could not find chain requirements in WalletConnect proposal')
+          return showToast({
+            text1: t('Could not approve'),
+            text2: t('Could not find chain requirements in WalletConnect proposal'),
+            type: 'error',
+            autoHide: false
+          })
+        }
 
-    walletConnectClient.on('session_proposal', onSessionProposal)
-    walletConnectClient.on('session_request', onSessionRequest)
-    walletConnectClient.on('session_delete', onSessionDelete)
-    walletConnectClient.on('proposal_expire', onProposalExpire)
+        const chain = formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)
 
-    return () => {
-      walletConnectClient.off('session_proposal', onSessionProposal)
-      walletConnectClient.off('session_request', onSessionRequest)
-      walletConnectClient.off('session_delete', onSessionDelete)
-      walletConnectClient.off('proposal_expire', onProposalExpire)
-    }
-  }, [
-    isWalletConnectClientReady,
-    onProposalExpire,
-    onSessionDelete,
-    onSessionProposal,
-    onSessionRequest,
-    walletConnectClient
-  ])
+        dispatch(
+          openModal({
+            name: 'WalletConnectSessionProposalModal',
+            props: {
+              proposalEventId: proposalEvent.id,
+              chain,
+              chainInfo: requiredChainInfo,
+              requiredNamespaceMethods: requiredNamespace.methods,
+              requiredNamespaceEvents: requiredNamespace.events,
+              metadata,
+              relayProtocol
+            }
+          })
+        )
+      } catch (error) {
+        showToast({
+          text1: t('Could not approve'),
+          text2: t('There is something wrong in the received WalletConnect data.'),
+          type: 'error',
+          autoHide: false
+        })
+      }
+    },
+    [dispatch, t]
+  )
 
   const pairWithDapp = useCallback(
     async (uri: string) => {
@@ -730,279 +446,335 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     [onSessionProposal, t, walletConnectClient]
   )
 
-  const unpairFromDapp = useCallback(
-    async (topic: string) => {
+  const onSessionRequest = useCallback(
+    async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
       if (!walletConnectClient) return
 
+      console.log('📣 RECEIVED EVENT TO PROCESS A SESSION REQUEST FROM THE DAPP.')
+      console.log('👉 REQUESTED METHOD:', requestEvent.params.request.method)
+
       try {
-        setLoading('Disconnecting...')
+        switch (requestEvent.params.request.method as RelayMethod) {
+          case 'alph_signAndSubmitTransferTx': {
+            const { destinations, signerAddress, gasAmount, gasPrice } = requestEvent.params.request
+              .params as SignTransferTxParams
+            const { address: toAddress, tokens, attoAlphAmount, lockTime } = destinations[0]
+            const assetAmounts = [
+              { id: ALPH.id, amount: BigInt(attoAlphAmount) },
+              ...(tokens ? tokens.map((token) => ({ ...token, amount: BigInt(token.amount) })) : [])
+            ]
 
-        console.log('⏳ DISCONNECTING FROM:', topic)
+            const fromAddress = addressIds.find((address) => address === signerAddress)
 
-        if (walletConnectClient.getActiveSessions()[topic]) {
-          await walletConnectClient.disconnectSession({ topic, reason: getSdkError('USER_DISCONNECTED') })
+            if (!fromAddress) {
+              return respondToWalletConnectWithError(requestEvent, {
+                message: "Signer address doesn't exist",
+                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+              })
+            }
+
+            const wcTxData: TransferTxData = {
+              fromAddress,
+              toAddress,
+              assetAmounts,
+              gasAmount,
+              gasPrice: gasPrice?.toString(),
+              lockTime: lockTime ? new Date(lockTime) : undefined
+            }
+
+            dispatch(activateAppLoading(t('Processing WalletConnect request')))
+            console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
+            const buildTransactionTxResult = await buildTransferTransaction(wcTxData)
+            console.log('✅ BUILDING TX: DONE!')
+            dispatch(deactivateAppLoading())
+
+            console.log('⏳ OPENING MODAL TO APPROVE TX...')
+
+            dispatch(
+              openModal({
+                name: 'WalletConnectSessionRequestModal',
+                props: {
+                  requestEvent,
+                  requestData: {
+                    type: 'transfer',
+                    wcData: wcTxData,
+                    unsignedTxData: buildTransactionTxResult
+                  }
+                }
+              })
+            )
+
+            break
+          }
+          case 'alph_signAndSubmitDeployContractTx': {
+            const { signerAddress, initialAttoAlphAmount, bytecode, issueTokenAmount, gasAmount, gasPrice } =
+              requestEvent.params.request.params as SignDeployContractTxParams
+            const initialAlphAmount: AssetAmount | undefined = initialAttoAlphAmount
+              ? { id: ALPH.id, amount: BigInt(initialAttoAlphAmount) }
+              : undefined
+
+            const fromAddress = addressIds.find((address) => address === signerAddress)
+
+            if (!fromAddress) {
+              return respondToWalletConnectWithError(requestEvent, {
+                message: "Signer address doesn't exist",
+                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+              })
+            }
+
+            const wcTxData: DeployContractTxData = {
+              fromAddress,
+              bytecode,
+              initialAlphAmount,
+              issueTokenAmount: issueTokenAmount?.toString(),
+              gasAmount,
+              gasPrice: gasPrice?.toString()
+            }
+
+            dispatch(activateAppLoading(t('Processing WalletConnect request')))
+            console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
+            const buildDeployContractTxResult = await buildDeployContractTransaction(wcTxData)
+            console.log('✅ BUILDING TX: DONE!')
+            dispatch(deactivateAppLoading())
+
+            console.log('⏳ OPENING MODAL TO APPROVE TX...')
+
+            dispatch(
+              openModal({
+                name: 'WalletConnectSessionRequestModal',
+                props: {
+                  requestEvent,
+                  requestData: {
+                    type: 'deploy-contract',
+                    wcData: wcTxData,
+                    unsignedTxData: buildDeployContractTxResult
+                  }
+                }
+              })
+            )
+
+            break
+          }
+          case 'alph_signAndSubmitExecuteScriptTx': {
+            const { tokens, bytecode, gasAmount, gasPrice, signerAddress, attoAlphAmount } = requestEvent.params.request
+              .params as SignExecuteScriptTxParams
+            let assetAmounts: AssetAmount[] = []
+            let allAlphAssets: AssetAmount[] = attoAlphAmount ? [{ id: ALPH.id, amount: BigInt(attoAlphAmount) }] : []
+
+            const fromAddress = addressIds.find((address) => address === signerAddress)
+
+            if (!fromAddress) {
+              return respondToWalletConnectWithError(requestEvent, {
+                message: "Signer address doesn't exist",
+                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+              })
+            }
+
+            if (tokens) {
+              const assets = tokens.map((token) => ({ id: token.id, amount: BigInt(token.amount) }))
+              const [alphAssets, tokenAssets] = partition(assets, (asset) => asset.id === ALPH.id)
+              assetAmounts = tokenAssets
+              allAlphAssets = [...allAlphAssets, ...alphAssets]
+            }
+
+            if (allAlphAssets.length > 0) {
+              assetAmounts.push({
+                id: ALPH.id,
+                amount: allAlphAssets.reduce((total, asset) => total + (asset.amount ?? BigInt(0)), BigInt(0))
+              })
+            }
+
+            const wcTxData: CallContractTxData = {
+              fromAddress,
+              bytecode,
+              assetAmounts,
+              gasAmount,
+              gasPrice: gasPrice?.toString()
+            }
+
+            dispatch(activateAppLoading(t('Processing WalletConnect request')))
+            console.log('⏳ BUILDING TX WITH DATA:', wcTxData)
+            const buildCallContractTxResult = await buildCallContractTransaction(wcTxData)
+            console.log('✅ BUILDING TX: DONE!')
+            dispatch(deactivateAppLoading())
+
+            console.log('⏳ OPENING MODAL TO APPROVE TX...')
+
+            dispatch(
+              openModal({
+                name: 'WalletConnectSessionRequestModal',
+                props: {
+                  requestEvent,
+                  requestData: {
+                    type: 'call-contract',
+                    wcData: wcTxData,
+                    unsignedTxData: buildCallContractTxResult
+                  }
+                }
+              })
+            )
+
+            break
+          }
+          case 'alph_signMessage': {
+            const { message, messageHasher, signerAddress } = requestEvent.params.request.params as SignMessageParams
+
+            const fromAddress = addressIds.find((address) => address === signerAddress)
+
+            if (!fromAddress) {
+              return respondToWalletConnectWithError(requestEvent, {
+                message: "Signer address doesn't exist",
+                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+              })
+            }
+
+            const signData: SignMessageData = {
+              fromAddress,
+              message,
+              messageHasher
+            }
+
+            console.log('⏳ OPENING MODAL TO SIGN MESSAGE...')
+
+            dispatch(
+              openModal({
+                name: 'WalletConnectSessionRequestModal',
+                props: {
+                  requestEvent,
+                  requestData: {
+                    type: 'sign-message',
+                    wcData: signData
+                  }
+                }
+              })
+            )
+
+            break
+          }
+          case 'alph_signUnsignedTx':
+          case 'alph_signAndSubmitUnsignedTx': {
+            const { signerAddress, signerKeyType, unsignedTx } = requestEvent.params.request
+              .params as SignUnsignedTxParams
+
+            const fromAddress = addressIds.find((address) => address === signerAddress)
+
+            if (!fromAddress) {
+              return respondToWalletConnectWithError(requestEvent, {
+                message: "Signer address doesn't exist",
+                code: WALLETCONNECT_ERRORS.SIGNER_ADDRESS_DOESNT_EXIST
+              })
+            }
+
+            const wcTxData: SignUnsignedTxData = {
+              fromAddress,
+              signerKeyType,
+              unsignedTx
+            }
+
+            dispatch(activateAppLoading(t('Processing WalletConnect request')))
+            console.log('⏳ DECODING TX WITH DATA:', wcTxData)
+            const decodedResult = await client.node.transactions.postTransactionsDecodeUnsignedTx({ unsignedTx })
+            console.log('✅ DECODING TX: DONE!')
+            dispatch(deactivateAppLoading())
+
+            console.log('⏳ OPENING MODAL TO SIGN UNSIGNED TX...')
+
+            dispatch(
+              openModal({
+                name: 'WalletConnectSessionRequestModal',
+                props: {
+                  requestEvent,
+                  requestData: {
+                    type: 'sign-unsigned-tx',
+                    wcData: wcTxData,
+                    unsignedTxData: decodedResult,
+                    submit: requestEvent.params.request.method === 'alph_signAndSubmitUnsignedTx'
+                  }
+                }
+              })
+            )
+
+            break
+          }
+          case 'alph_requestNodeApi': {
+            walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
+            const p = requestEvent.params.request.params as ApiRequestArguments
+            const result = await client.node.request(p)
+
+            console.log('👉 WALLETCONNECT ASKED FOR THE NODE API')
+
+            await handleApiResponse(requestEvent, result)
+
+            break
+          }
+          case 'alph_requestExplorerApi': {
+            walletConnectClient.core.expirer.set(requestEvent.id, calcExpiry(5))
+            const p = requestEvent.params.request.params as ApiRequestArguments
+            const result = await client.explorer.request(p)
+
+            console.log('👉 WALLETCONNECT ASKED FOR THE EXPLORER API')
+
+            await handleApiResponse(requestEvent, result)
+
+            break
+          }
+          default:
+            respondToWalletConnectWithError(requestEvent, getSdkError('WC_METHOD_UNSUPPORTED'))
         }
+      } catch (e: unknown) {
+        const error = e as { message?: string }
 
-        console.log('✅ DISCONNECTING: DONE!')
+        dispatch(deactivateAppLoading())
 
-        sendAnalytics({ event: 'WC: Disconnected from dApp' })
-      } catch (e) {
-        console.error('❌ COULD NOT DISCONNECT FROM DAPP', e)
-      } finally {
-        updateActiveSessions(walletConnectClient)
-        setLoading('')
+        if (error.message?.includes('NotEnoughApprovedBalance')) {
+          showToast({
+            text1: t('Could not build transaction'),
+            text2: t('Your address does not have enough balance for this transaction.'),
+            type: 'error',
+            autoHide: false
+          })
+        } else {
+          if (!['alph_requestNodeApi', 'alph_requestExplorerApi'].includes(requestEvent.params.request.method)) {
+            showExceptionToast(e, t('Could not build transaction'))
+            console.error(e)
+          }
+          respondToWalletConnectWithError(requestEvent, {
+            message: getHumanReadableError(e, t('Error while parsing WalletConnect session request')),
+            code: WALLETCONNECT_ERRORS.PARSING_SESSION_REQUEST_FAILED
+          })
+        }
       }
     },
-    [updateActiveSessions, walletConnectClient]
+    // The `addresses` dependency causes re-rendering when any property of an Address changes, even though we only need
+    // the `hash` and the `publicKey`. Creating a selector that extracts those 3 doesn't help.
+    // Using addressIds fixes the problem, but now the api/transactions.ts file becomes dependant on the store file.
+    [addressIds, dispatch, handleApiResponse, respondToWalletConnectWithError, t, walletConnectClient]
   )
 
-  const approveProposal = async (signerAddress: Address) => {
-    console.log('👍 USER APPROVED PROPOSAL TO CONNECT TO THE DAPP.')
-    console.log('⏳ VERIFYING USER PROVIDED DATA...')
-
-    if (!walletConnectClient || !sessionProposalEvent) {
-      console.error('❌ Could not find WalletConnect client or session proposal event')
-      return
-    }
-
-    const { id, relayProtocol, requiredNamespace, requiredChains, requiredChainInfo, metadata } =
-      parseSessionProposalEvent(sessionProposalEvent)
-
-    if (!requiredChains) {
-      const message = 'The proposal does not include a list of required chains'
-
-      console.error(`❌ ${message}`)
-      return showToast({
-        text1: t('Could not approve'),
-        text2: t(message),
-        type: 'error',
-        autoHide: false
-      })
-    }
-
-    if (requiredChains.length !== 1) {
-      console.error(`❌ Expected exactly 1 required chain in the WalletConnect proposal, got ${requiredChains.length}`)
-      return showToast({
-        text1: t('Could not approve'),
-        text2: t('Expected exactly 1 required chain in the WalletConnect proposal, got {{ numberOfChains }}', {
-          numberOfChains: requiredChains.length
-        }),
-        type: 'error',
-        autoHide: false
-      })
-    }
-
-    if (!requiredChainInfo) {
-      console.error('❌ Could not find chain requirements in WalletConnect proposal')
-      return showToast({
-        text1: t('Could not approve'),
-        text2: t('Could not find chain requirements in WalletConnect proposal'),
-        type: 'error',
-        autoHide: false
-      })
-    }
-
-    if (!isNetworkValid(requiredChainInfo.networkId, currentNetworkId)) {
-      console.error(
-        `❌ WalletConnect requested the ${requiredChainInfo.networkId} network, but the current network is ${currentNetworkName}.`
-      )
-      return showToast({
-        text1: t('Could not approve'),
-        text2: t(
-          'WalletConnect requested the {{ requestedNetwork }} network, but the current network is {{ currentNetwork }}.',
-          { requestedNetwork: requiredChainInfo.networkId, currentNetwork: currentNetworkName }
-        ),
-        type: 'error',
-        autoHide: false
-      })
-    }
-
-    if (!isCompatibleAddressGroup(signerAddress.group, requiredChainInfo.addressGroup)) {
-      console.error(
-        `❌ The group of the selected address (${signerAddress.group}) does not match the group required by WalletConnect (${requiredChainInfo.addressGroup})`
-      )
-      return showToast({
-        text1: t('Could not approve'),
-        text2: t(
-          'The group of the selected address ({{ selectedAddressGroup }}) does not match the group required by WalletConnect ({{ requiredGroup }})',
-          {
-            selectedAddressGroup: signerAddress.group,
-            requiredGroup: requiredChainInfo.addressGroup
-          }
-        ),
-        type: 'error',
-        autoHide: false
-      })
-    }
-
-    console.log('✅ VERIFIED USER PROVIDED DATA!')
-
-    try {
-      setLoading('Approving...')
-      console.log('⏳ APPROVING PROPOSAL...')
-
-      const existingSession = activeSessions.find((session) => session.peer.metadata.url === metadata.url)
-
-      if (existingSession) {
-        await walletConnectClient.disconnectSession({
-          topic: existingSession.topic,
-          reason: getSdkError('USER_DISCONNECTED')
-        })
-      }
-
-      const publicKey = await getAddressAsymetricKey(signerAddress.hash, 'public')
-
-      const namespaces: SessionTypes.Namespaces = {
-        alephium: {
-          methods: requiredNamespace.methods,
-          events: requiredNamespace.events,
-          accounts: [`${formatChain(requiredChainInfo.networkId, requiredChainInfo.addressGroup)}:${publicKey}/default`]
-        }
-      }
-
-      const { topic, acknowledged } = await walletConnectClient.approveSession({ id, relayProtocol, namespaces })
-      console.log('👉 APPROVAL TOPIC RECEIVED:', topic)
-      console.log('✅ APPROVING: DONE!')
-      console.log('👉 DID DAPP ACTUALLY ACKNOWLEDGE?', acknowledged)
-
-      setSessionProposalEvent(undefined)
-      updateActiveSessions(walletConnectClient)
-
-      sendAnalytics({ event: 'WC: Approved connection' })
-    } catch (e) {
-      console.error('❌ WC: Error while approving and acknowledging', e)
-    } finally {
-      setLoading('')
-      setIsSessionProposalModalOpen(false)
-      showToast({ text1: t('dApp request approved'), text2: t('You can go back to your browser.') })
-    }
-  }
-
-  const rejectProposal = async () => {
-    if (!walletConnectClient || sessionProposalEvent === undefined) return
-
-    try {
-      setLoading('Rejecting...')
-      console.log('👎 REJECTING SESSION PROPOSAL:', sessionProposalEvent.id)
-      await walletConnectClient.rejectSession({ id: sessionProposalEvent.id, reason: getSdkError('USER_REJECTED') })
-      console.log('✅ REJECTING: DONE!')
-
-      setSessionProposalEvent(undefined)
-    } catch (e) {
-      console.error('❌ WC: Error while rejecting', e)
-    } finally {
-      setLoading('')
-      setIsSessionProposalModalOpen(false)
-      showToast({ text1: t('dApp request rejected'), text2: t('You can go back to your browser.'), type: 'info' })
-    }
-  }
-
-  const handleApprovePress = async (
-    sendTransaction: () => Promise<
-      SignExecuteScriptTxResult | SignDeployContractTxResult | SignTransferTxResult | undefined
-    >
-  ) => {
-    if (!sessionRequestEvent) return
-
-    triggerBiometricsAuthGuard({
-      settingsToCheck: 'transactions',
-      successCallback: () =>
-        triggerFundPasswordAuthGuard({
-          successCallback: async () => {
-            setLoading('Approving...')
-
-            try {
-              const signResult = await sendTransaction()
-
-              if (!signResult) {
-                console.log('⏳ DID NOT GET A SIGNATURE RESULT, INFORMING DAPP THAT SESSION REQUEST FAILED...')
-                await respondToWalletConnectWithError(sessionRequestEvent, {
-                  message: 'Sending transaction failed',
-                  code: WALLETCONNECT_ERRORS.TRANSACTION_SEND_FAILED
-                })
-                console.log('✅ INFORMING: DONE!')
-              } else {
-                console.log('⏳ INFORMING DAPP THAT SESSION REQUEST SUCCEEDED...')
-                await respondToWalletConnectWithSuccess(sessionRequestEvent, signResult)
-                console.log('✅ INFORMING: DONE!')
-              }
-            } catch (e) {
-              console.error('❌ INFORMING: FAILED.')
-            } finally {
-              console.log('👉 RESETTING SESSION REQUEST EVENT.')
-              setSessionRequestEvent(undefined)
-              setSessionRequestData(undefined)
-              setLoading('')
-              showToast({ text1: t('dApp request approved'), text2: t('You can go back to your browser.') })
-            }
-          }
-        })
-    })
-  }
-
-  const handleSignSuccess = async (result: SignMessageResult | SignUnsignedTxResult) => {
-    if (!sessionRequestEvent) return
-
-    console.log('⏳ INFORMING DAPP THAT SESSION REQUEST SUCCEEDED...')
-    await respondToWalletConnectWithSuccess(sessionRequestEvent, result)
-    console.log('✅ INFORMING: DONE!')
-
-    console.log('👉 RESETTING SESSION REQUEST EVENT.')
-    setSessionRequestEvent(undefined)
-    setSessionRequestData(undefined)
-    showToast({ text1: t('dApp request approved'), text2: t('You can go back to your browser.') })
-  }
-
-  const handleRejectPress = async () => {
-    if (!sessionRequestEvent) return
-
-    try {
-      console.log('⏳ INFORMING DAPP THAT SESSION REQUEST FAILED...')
-      await respondToWalletConnectWithError(sessionRequestEvent, getSdkError('USER_REJECTED'))
-      console.log('✅ INFORMING: DONE!')
-    } catch (e) {
-      console.error('❌ INFORMING: FAILED.')
-    } finally {
-      console.log('👉 RESETTING SESSION REQUEST EVENT.')
-      setSessionRequestEvent(undefined)
-      setSessionRequestData(undefined)
-      showToast({ text1: t('dApp request rejected'), text2: t('You can go back to your browser.'), type: 'info' })
-    }
-  }
-
-  const handleSendTxOrSignFail = async (error: WalletConnectError) => {
-    if (!sessionRequestEvent) return
-
-    try {
-      console.log('⏳ INFORMING DAPP THAT SESSION REQUEST FAILED...')
-      await respondToWalletConnectWithError(sessionRequestEvent, error)
-      console.log('✅ INFORMING: DONE!')
-    } catch (e) {
-      console.error('❌ INFORMING: FAILED.')
-    } finally {
-      console.log('👉 RESETTING SESSION REQUEST EVENT.')
-      setSessionRequestEvent(undefined)
-      setSessionRequestData(undefined)
-    }
-  }
-
-  const handleSessionRequestModalClose = async () => {
-    setIsSessionRequestModalOpen(false)
-    onSessionRequestModalClose()
-  }
-
-  const onSessionRequestModalClose = async () => {
-    console.log('👉 CLOSING MODAL.')
-
-    if (sessionRequestEvent && walletConnectClient && walletConnectClient?.getPendingSessionRequests().length > 0) {
-      console.log('👉 USER CLOSED THE MODAL WITHOUT REJECTING/APPROVING SO WE NEED TO REJECT.')
-      handleRejectPress()
-    }
-  }
-
   useEffect(() => {
-    if (sessionRequestEvent === undefined && isSessionRequestModalOpen) setIsSessionRequestModalOpen(false)
-  }, [isSessionRequestModalOpen, sessionRequestEvent])
+    if (!isWalletConnectClientReady) return
+
+    console.log('👉 SUBSCRIBING TO WALLETCONNECT SESSION EVENTS.')
+
+    walletConnectClient.on('session_proposal', onSessionProposal)
+    walletConnectClient.on('session_request', onSessionRequest)
+    walletConnectClient.on('session_delete', onSessionDelete)
+    walletConnectClient.on('proposal_expire', onProposalExpire)
+
+    return () => {
+      walletConnectClient.off('session_proposal', onSessionProposal)
+      walletConnectClient.off('session_request', onSessionRequest)
+      walletConnectClient.off('session_delete', onSessionDelete)
+      walletConnectClient.off('proposal_expire', onProposalExpire)
+    }
+  }, [
+    isWalletConnectClientReady,
+    onProposalExpire,
+    onSessionDelete,
+    onSessionProposal,
+    onSessionRequest,
+    walletConnectClient
+  ])
 
   useEffect(() => {
     if (!isWalletUnlocked || !url || !url.startsWith('wc:') || wcDeepLink.current === url) return
@@ -1043,7 +815,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           console.error(`Failed to disconnect topic ${topic}, error: ${error}`)
         }
       }
-      updateActiveSessions(walletConnectClient)
+      refreshActiveSessions()
 
       console.log('Clear walletconnect cache')
       const expirer = walletConnectClient.core.expirer as Expirer
@@ -1059,7 +831,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
     } catch (error) {
       sendAnalytics({ type: 'error', error, message: 'Error at resetting WalletConnect storage' })
     }
-  }, [updateActiveSessions, walletConnectClient])
+  }, [refreshActiveSessions, walletConnectClient])
 
   return (
     <WalletConnectContext.Provider
@@ -1068,46 +840,16 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
         unpairFromDapp,
         walletConnectClient,
         activeSessions,
+        refreshActiveSessions,
         resetWalletConnectClientInitializationAttempts,
-        resetWalletConnectStorage
+        resetWalletConnectStorage,
+        respondToWalletConnectWithError,
+        respondToWalletConnect,
+        isInEcosystemInAppBrowser,
+        setIsInEcosystemInAppBrowser
       }}
     >
       {children}
-      <Portal>
-        {sessionProposalEvent && (
-          <BottomModal
-            isOpen={isSessionProposalModalOpen}
-            onClose={() => setIsSessionProposalModalOpen(false)}
-            Content={(props) => (
-              <WalletConnectSessionProposalModal
-                approveProposal={approveProposal}
-                rejectProposal={rejectProposal}
-                proposalEvent={sessionProposalEvent}
-                {...props}
-              />
-            )}
-          />
-        )}
-        {sessionRequestData && (
-          <BottomModal
-            isOpen={isSessionRequestModalOpen}
-            onClose={handleSessionRequestModalClose}
-            Content={(props) => (
-              <WalletConnectSessionRequestModal
-                requestData={sessionRequestData}
-                onApprove={handleApprovePress}
-                onReject={handleRejectPress}
-                onSendTxOrSignFail={handleSendTxOrSignFail}
-                onSignSuccess={handleSignSuccess}
-                metadata={activeSessionMetadata}
-                {...props}
-              />
-            )}
-          />
-        )}
-      </Portal>
-      {fundPasswordModal}
-      <SpinnerModal isActive={!!loading} text={loading} />
     </WalletConnectContext.Provider>
   )
 }

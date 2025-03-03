@@ -1,39 +1,21 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import { StackScreenProps } from '@react-navigation/stack'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
-import { ContinueButton } from '~/components/buttons/Button'
+import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenProps } from '~/components/layout/Screen'
 import ScrollScreen from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
 import CenteredInstructions, { Instruction } from '~/components/text/CenteredInstructions'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import i18n from '~/features/localization/i18n'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { generateAndStoreWallet } from '~/persistent-storage/wallet'
-import { syncLatestTransactions } from '~/store/addressesSlice'
+import { syncLatestTransactions } from '~/store/addresses/addressesActions'
 import { newWalletGenerated } from '~/store/wallet/walletActions'
 import { newWalletNameEntered } from '~/store/walletGenerationSlice'
 import { DEFAULT_MARGIN } from '~/style/globalStyle'
@@ -46,7 +28,9 @@ const instructions: Instruction[] = [
   { text: i18n.t('How should we name this wallet?'), type: 'primary' }
 ]
 
-interface NewWalletNameScreenProps extends StackScreenProps<RootStackParamList, 'NewWalletNameScreen'>, ScreenProps {}
+interface NewWalletNameScreenProps
+  extends NativeStackScreenProps<RootStackParamList, 'NewWalletNameScreen'>,
+    ScreenProps {}
 
 const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps) => {
   const method = useAppSelector((s) => s.walletGeneration.method)
@@ -56,7 +40,6 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
   const { t } = useTranslation()
 
   const [name, setName] = useState('')
-  const [loading, setLoading] = useState(false)
 
   const handleButtonPress = async () => {
     if (!name) return
@@ -65,7 +48,7 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
       dispatch(newWalletNameEntered(name))
       navigation.navigate('SelectImportMethodScreen')
     } else if (method === 'create') {
-      setLoading(true)
+      dispatch(activateAppLoading(t('Creating wallet')))
 
       try {
         await sleep(0) // Allow react state to update to display loader before heavy operation
@@ -87,20 +70,32 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
         showExceptionToast(error, t(message))
         sendAnalytics({ type: 'error', error, message, isSensitive: true })
       } finally {
-        setLoading(false)
+        dispatch(deactivateAppLoading())
       }
     }
   }
 
   return (
     <ScrollScreen
-      usesKeyboard
       fill
-      headerOptions={{
-        type: 'stack',
-        headerRight: () => <ContinueButton onPress={handleButtonPress} disabled={name.length < 3} />
-      }}
+      contentPaddingTop
       keyboardShouldPersistTaps="always"
+      scrollEnabled={false}
+      headerOptions={{
+        type: 'stack'
+      }}
+      bottomButtonsRender={() => (
+        <>
+          <Button
+            title={t('Continue')}
+            type="primary"
+            variant="contrast"
+            disabled={!name}
+            onPress={handleButtonPress}
+          />
+          <Button title={t('Cancel')} type="secondary" onPress={() => navigation.goBack()} />
+        </>
+      )}
       {...props}
     >
       <ContentContainer>
@@ -110,12 +105,12 @@ const NewWalletNameScreen = ({ navigation, ...props }: NewWalletNameScreenProps)
           value={name}
           onChangeText={setName}
           autoFocus
-          onSubmitEditing={handleButtonPress}
+          onSubmitEditing={() => !!name && handleButtonPress()}
           blurOnSubmit={false}
           maxLength={24}
+          textAlign="center"
         />
       </ContentContainer>
-      <SpinnerModal isActive={loading} text={`${t('Creating wallet')}...`} />
     </ScrollScreen>
   )
 }
@@ -131,5 +126,5 @@ const ContentContainer = styled.View`
 
 const StyledInput = styled(Input)`
   margin-top: ${DEFAULT_MARGIN}px;
-  width: 80%;
+  width: 50%;
 `

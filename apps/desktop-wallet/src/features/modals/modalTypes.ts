@@ -1,23 +1,7 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
+import { AddressHash, WalletConnectSessionProposalModalProps } from '@alephium/shared'
 
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import { AddressHash } from '@alephium/shared'
-
+import { BuyModalProps } from '@/features/buy/BuyModal'
+import { WalletPassphraseDisclaimerModalProps } from '@/features/passphrase/WalletPassphraseDisclaimerModal'
 import { CallContractSendModalProps } from '@/features/send/sendModals/callContract/CallContractSendModal'
 import { DeployContractSendModalProps } from '@/features/send/sendModals/deployContract/DeployContractSendModal'
 import { ConfirmLockTimeModalProps } from '@/features/send/sendModals/transfer/ConfirmLockTimeModal'
@@ -26,7 +10,6 @@ import { WalletUnlockModalProps } from '@/features/switch-wallet/WalletUnlockMod
 import { TransactionDetailsModalProps } from '@/features/transactionsDisplay/transactionDetailsModal/TransactionDetailsModal'
 import { SignMessageModalProps } from '@/features/walletConnect/SignMessageModal'
 import { SignUnsignedTxModalProps } from '@/features/walletConnect/SignUnsignedTxModal'
-import { WalletConnectSessionProposalModalProps } from '@/features/walletConnect/WalletConnectSessionProposalModal'
 import { AddressSweepModalProps } from '@/modals/AddressSweepModal'
 import { ConfirmModalProps } from '@/modals/ConfirmModal'
 import { ConsolidateUTXOsModalProps } from '@/modals/ConsolidateUTXOsModal'
@@ -35,6 +18,7 @@ import { NewAddressModalProps } from '@/modals/NewAddressModal'
 import { NFTDetailsModalProps } from '@/modals/NFTDetailsModal'
 import { SettingsModalProps } from '@/modals/SettingsModal'
 import { DisablePasswordRequirementModalProps } from '@/modals/SettingsModal/DisablePasswordRequirementModal'
+import { TokenDetailsModalProps } from '@/modals/tokenDetails/tokeDetailsTypes'
 import { WalletRemovalModalProps } from '@/modals/WalletRemovalModal'
 
 const ModalNames = {
@@ -67,7 +51,10 @@ const ModalNames = {
   DisablePasswordRequirementModal: 'DisablePasswordRequirementModal',
   AddressSweepModal: 'AddressSweepModal',
   WalletRemovalModal: 'WalletRemovalModal',
-  DeleteAddressesModal: 'DeleteAddressesModal'
+  DeleteAddressesModal: 'DeleteAddressesModal',
+  BuyModal: 'BuyModal',
+  WalletPassphraseDisclaimerModal: 'WalletPassphraseDisclaimerModal',
+  TokenDetailsModal: 'TokenDetailsModal'
 } as const
 
 export type ModalName = keyof typeof ModalNames
@@ -185,6 +172,18 @@ export type OpenModalParams =
     }
   | {
       name: typeof ModalNames.DeleteAddressesModal
+    }
+  | {
+      name: typeof ModalNames.BuyModal
+      props: BuyModalProps
+    }
+  | {
+      name: typeof ModalNames.WalletPassphraseDisclaimerModal
+      props: WalletPassphraseDisclaimerModalProps
+    }
+  | {
+      name: typeof ModalNames.TokenDetailsModal
+      props: TokenDetailsModalProps
     }
 
 export type ModalInstance = {

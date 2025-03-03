@@ -1,32 +1,15 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { motion } from 'framer-motion'
-import { MouseEvent, ReactNode, useEffect, useRef, useState } from 'react'
+import { MouseEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
-import { fadeInOutScaleFast, fastTransition } from '@/animations'
+import { fadeInOutBottomFast, fastTransition } from '@/animations'
 import Scrollbar from '@/components/Scrollbar'
 import ModalContainer from '@/modals/ModalContainer'
+import { appHeaderHeightPx } from '@/style/globalStyles'
 import { Coordinates } from '@/types/numbers'
 import { useWindowSize } from '@/utils/hooks'
 
-interface PopupProps {
+export interface PopupProps {
   onClose: () => void
   children?: ReactNode | ReactNode[]
   title?: string
@@ -36,7 +19,7 @@ interface PopupProps {
 }
 
 const minMarginToEdge = 20
-const headerHeight = 50
+const headerHeight = 40
 
 const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, minWidth = 200 }: PopupProps) => {
   const { height: windowHeight, width: windowWidth } = useWindowSize() // Recompute position on window resize
@@ -78,19 +61,21 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
     <Content
       role="dialog"
       ref={contentRef}
-      style={hookOffset && { x: hookOffset.x, y: hookOffset.y - 15 }}
-      animate={hookOffset && { ...fadeInOutScaleFast.animate, ...hookOffset }}
-      exit={fadeInOutScaleFast.exit}
+      style={hookOffset && { x: hookOffset.x }}
+      animate={hookOffset && { ...fadeInOutBottomFast.animate, ...hookOffset }}
+      exit={fadeInOutBottomFast.exit}
       minWidth={minWidth}
       {...fastTransition}
     >
       {title && (
         <Header hasExtraContent={!!extraHeaderContent}>
-          <h2>{title}</h2>
-          {extraHeaderContent}
+          <Title>{title}</Title>
+          <ExtraHeaderContentContainer>{extraHeaderContent}</ExtraHeaderContentContainer>
         </Header>
       )}
-      <Scrollbar translateContentSizeYToHolder>{children}</Scrollbar>
+      <ScrollableContent>
+        <Scrollbar>{children}</Scrollbar>
+      </ScrollableContent>
     </Content>
   )
 
@@ -113,6 +98,40 @@ const Popup = ({ children, onClose, title, hookCoordinates, extraHeaderContent, 
 
 export default Popup
 
+export const useElementAnchorCoordinates = () => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [hookCoordinates, setHookCoordinates] = useState<Coordinates | undefined>(undefined)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const openModal = useCallback(() => {
+    setHookCoordinates(() => {
+      if (containerRef?.current) {
+        const containerElement = containerRef.current
+        const containerElementRect = containerElement.getBoundingClientRect()
+
+        return {
+          x: containerElementRect.x + containerElement.clientWidth / 2,
+          y: Math.max(containerElementRect.y + containerElement.clientHeight / 2, appHeaderHeightPx)
+        }
+      }
+    })
+    setIsModalOpen(true)
+  }, [])
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false)
+    containerRef.current?.focus()
+  }, [])
+
+  return {
+    containerRef,
+    hookCoordinates,
+    isModalOpen,
+    openModal,
+    closeModal
+  }
+}
+
 const Hook = styled.div<{ hookCoordinates: Coordinates; contentWidth: number }>`
   position: absolute;
   display: flex;
@@ -125,10 +144,11 @@ const Hook = styled.div<{ hookCoordinates: Coordinates; contentWidth: number }>`
 const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
   opacity: 0; // for initial mount computation
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
+
   display: flex;
   flex-direction: column;
+  padding-bottom: var(--spacing-1);
 
   min-width: ${({ minWidth }) => minWidth}px;
   max-height: 660px;
@@ -137,17 +157,34 @@ const Content = styled(motion.div)<Pick<PopupProps, 'minWidth'>>`
   box-shadow: ${({ theme }) => theme.shadow.tertiary};
   border: 1px solid ${({ theme }) => theme.border.primary};
   border-radius: var(--radius-big);
-  background-color: ${({ theme }) => theme.bg.primary};
+  background-color: ${({ theme }) => theme.bg.background1};
+`
+
+const ScrollableContent = styled.div`
+  flex: 1;
+  display: flex;
+  overflow: hidden;
 `
 
 const Header = styled.div<{ hasExtraContent: boolean }>`
   height: ${({ hasExtraContent }) => (hasExtraContent ? 'auto' : `${headerHeight}px`)};
-  padding: var(--spacing-2) var(--spacing-2) var(--spacing-2) var(--spacing-4);
-  border-bottom: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => theme.bg.tertiary};
-
+  min-height: ${headerHeight}px;
+  padding: 0 var(--spacing-1) 0 var(--spacing-3);
   display: flex;
+  flex-grow: 1;
+  flex-shrink: 0;
   align-items: center;
   z-index: 1;
   gap: var(--spacing-3);
+`
+
+const Title = styled.span`
+  font-size: 12px;
+  color: ${({ theme }) => theme.font.secondary};
+  text-transform: uppercase;
+  flex-shrink: 0;
+`
+
+const ExtraHeaderContentContainer = styled.div`
+  flex: 1;
 `

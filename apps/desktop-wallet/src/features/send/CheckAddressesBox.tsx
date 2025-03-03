@@ -1,74 +1,47 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash } from '@alephium/shared'
-import { useMemo } from 'react'
+import { ExternalLinkIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import ActionLink from '@/components/ActionLink'
 import AddressBadge from '@/components/AddressBadge'
-import Box from '@/components/Box'
+import Box, { BoxProps } from '@/components/Box'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
-import HashEllipsed from '@/components/HashEllipsed'
-import Truncate from '@/components/Truncate'
 import { useAppSelector } from '@/hooks/redux'
-import { makeSelectContactByAddress } from '@/storage/addresses/addressesSelectors'
 import { Address } from '@/types/addresses'
 import { openInWebBrowser } from '@/utils/misc'
 
-interface CheckAddressesBoxProps {
+interface CheckAddressesBoxProps extends BoxProps {
   fromAddress: Address
   toAddressHash?: AddressHash
+  dAppUrl?: string
   className?: string
 }
 
-const CheckAddressesBox = ({ fromAddress, toAddressHash, className }: CheckAddressesBoxProps) => {
+const CheckAddressesBox = ({ fromAddress, toAddressHash, dAppUrl, ...props }: CheckAddressesBoxProps) => {
   const { t } = useTranslation()
-  const selectContactByAddress = useMemo(makeSelectContactByAddress, [])
-  const contact = useAppSelector((s) => selectContactByAddress(s, toAddressHash))
-  const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
 
   return (
-    <Box className={className}>
+    <Box {...props}>
       <AddressRow>
         <AddressLabel>{t('From')}</AddressLabel>
-        <AddressLabelHash>
-          <AddressBadge addressHash={fromAddress.hash} truncate appendHash />
-        </AddressLabelHash>
+
+        <AddressBadge addressHash={fromAddress.hash} truncate appendHash withBorders />
       </AddressRow>
-      {toAddressHash && (
+
+      {(toAddressHash || dAppUrl) && (
         <>
-          <HorizontalDivider />
+          <HorizontalDivider secondary />
           <AddressRow>
             <AddressLabel>{t('To')}</AddressLabel>
-            <AddressLabelHash>
-              {contact ? (
-                <AddressLabelHash>
-                  <ContactName>{contact.name}</ContactName>
-                  <HashEllipsedStyled hash={contact.address} />
-                </AddressLabelHash>
-              ) : (
-                <ActionLinkStyled onClick={() => openInWebBrowser(`${explorerUrl}/addresses/${toAddressHash}`)}>
-                  <AddressBadge addressHash={toAddressHash} truncate appendHash />
-                </ActionLinkStyled>
-              )}
-            </AddressLabelHash>
+
+            {toAddressHash && (
+              <DestinationAddress>
+                <AddressBadge addressHash={toAddressHash} truncate appendHash withBorders fullWidthUnknownHash />
+                <ExplorerLink addressHash={toAddressHash} />
+              </DestinationAddress>
+            )}
+            {dAppUrl && <DestinationAddress>{dAppUrl}</DestinationAddress>}
           </AddressRow>
         </>
       )}
@@ -78,11 +51,25 @@ const CheckAddressesBox = ({ fromAddress, toAddressHash, className }: CheckAddre
 
 export default CheckAddressesBox
 
+const ExplorerLink = ({ addressHash }: { addressHash: AddressHash }) => {
+  const { t } = useTranslation()
+  const explorerUrl = useAppSelector((s) => s.network.settings.explorerUrl)
+
+  return (
+    <ActionLinkStyled
+      onClick={() => openInWebBrowser(`${explorerUrl}/addresses/${addressHash}`)}
+      tooltip={t('Show in explorer')}
+    >
+      <ExternalLinkIcon size={12} />
+    </ActionLinkStyled>
+  )
+}
+
 const AddressRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 15px;
+  padding: 18px 0;
   gap: 20px;
 `
 
@@ -91,21 +78,16 @@ const AddressLabel = styled.div`
   color: ${({ theme }) => theme.font.secondary};
 `
 
-const AddressLabelHash = styled.div`
+const DestinationAddress = styled.div`
   display: flex;
-  gap: 10px;
-`
-
-const ContactName = styled(Truncate)`
-  max-width: 200px;
-`
-
-const HashEllipsedStyled = styled(HashEllipsed)`
-  max-width: 150px;
-  color: ${({ theme }) => theme.font.secondary};
-  font-size: 12px;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  min-width: 0;
+  position: relative;
 `
 
 const ActionLinkStyled = styled(ActionLink)`
-  font-weight: var(--fontWeight-semiBold);
+  position: absolute;
+  right: 7px;
+  bottom: -17px;
 `

@@ -1,27 +1,9 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 export default {
   expo: {
     name: 'Alephium',
     owner: 'alephium-dev',
     slug: 'alephium-mobile-wallet',
-    version: '1.1.12',
+    version: '2.1.3',
     orientation: 'portrait',
     icon: './assets/icon.png',
     scheme: ['wc', 'alephium'],
@@ -37,7 +19,7 @@ export default {
       supportsTablet: true,
       bundleIdentifier: 'org.alephium.mobilewallet',
       infoPlist: {
-        BGTaskSchedulerPermittedIdentifiers: ['$(PRODUCT_BUNDLE_PACKAGE_TYPE)'],
+        BGTaskSchedulerPermittedIdentifiers: ['$(PRODUCT_BUNDLE_IDENTIFIER)'],
         LSMinimumSystemVersion: '12.0'
       },
       config: {
@@ -77,12 +59,6 @@ export default {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#000000'
       },
-      permissions: [
-        'android.permission.FOREGROUND_SERVICE',
-        'android.permission.FOREGROUND_SERVICE_DATA_SYNC',
-        'android.permission.START_FOREGROUND_SERVICES_FROM_BACKGROUND', // To potentially fix crash due to ForegroundServiceStartNotAllowedException
-        'android.permission.WAKE_LOCK'
-      ],
       // See https://github.com/alephium/alephium-frontend/issues/1021
       blockedPermissions: ['android.permission.READ_MEDIA_IMAGES', 'android.permission.READ_MEDIA_VIDEO'],
       package: 'org.alephium.wallet'
@@ -121,8 +97,19 @@ export default {
             'The app requires access to your camera to scan QR codes for sending transactions, connecting to WalletConnect and importing a wallet.'
         }
       ],
+      [
+        'expo-font',
+        {
+          fonts: [
+            './assets/fonts/Inter18pt-Medium.ttf',
+            './assets/fonts/Inter18pt-SemiBold.ttf',
+            './assets/fonts/Inter18pt-Bold.ttf'
+          ]
+        }
+      ],
       'expo-localization',
       'expo-secure-store',
+      'expo-video',
       [
         '@sentry/react-native/expo',
         {

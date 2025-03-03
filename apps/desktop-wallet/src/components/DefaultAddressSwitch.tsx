@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash } from '@alephium/shared'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -23,7 +5,6 @@ import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import Button from '@/components/Button'
-import CheckMark from '@/components/CheckMark'
 import Select, { SelectOption } from '@/components/Inputs/Select'
 import { useAppSelector } from '@/hooks/redux'
 import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
@@ -64,10 +45,9 @@ const DefaultAddressSwitch = () => {
       onSelect={handleDefaultAddressChange}
       controlledValue={addressOptions.find((n) => n.value === defaultAddress?.hash)}
       title={t('Default address')}
-      optionRender={({ value }, isSelected) => (
+      optionRender={({ value }) => (
         <OptionContent>
           <AddressBadgeStyled addressHash={value} truncate />
-          {isSelected && <CheckMark />}
         </OptionContent>
       )}
       id="defaultAddress"
@@ -91,14 +71,16 @@ const SelectCustomComponent = (value?: SelectOption<AddressHash>, disablePointer
       data-tooltip-id="default"
       data-tooltip-content={t('Default address')}
       disablePointer={disablePointer}
+      squared
     >
-      {value?.value && <AddressBadge addressHash={value.value} truncate />}
+      {value?.value && <AddressBadgeStyled addressHash={value.value} truncate disableCopy />}
     </Button>
   )
 }
 
 const AddressBadgeStyled = styled(AddressBadge)`
   width: 100%;
+  overflow: hidden;
 `
 
 const OptionContent = styled.div`

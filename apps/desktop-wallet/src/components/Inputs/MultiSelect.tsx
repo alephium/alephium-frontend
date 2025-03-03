@@ -1,30 +1,13 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import Button from '@/components/Button'
 import CheckMark from '@/components/CheckMark'
-import { inputDefaultStyle, InputLabel } from '@/components/Inputs'
+import { inputDefaultStyle, SelectLabel } from '@/components/Inputs'
 import InputArea from '@/components/Inputs/InputArea'
 import { OptionItem, OptionSelect } from '@/components/Inputs/Select'
+import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
 import Popup from '@/components/Popup'
 import Truncate from '@/components/Truncate'
 import ModalPortal from '@/modals/ModalPortal'
@@ -38,7 +21,6 @@ interface MultiSelectOptionsProps<T> {
   getOptionText: (option: T) => string
   modalTitle: string
   renderOption?: (option: T, isSelected?: boolean) => ReactNode
-  floatingOptions?: boolean
 }
 
 interface MultiSelectProps<T> extends MultiSelectOptionsProps<T> {
@@ -63,10 +45,11 @@ function MultiSelect<T>({ selectedOptions, label, renderSelectedValue, className
         onMouseDown={openOptionsModal}
         onKeyDown={(e) => onEnterOrSpace(e, openOptionsModal)}
       >
-        <InputLabel isElevated={selectedOptions.length > 0}>{label}</InputLabel>
+        <SelectLabel>{label}</SelectLabel>
         <SelectedValue>
           <Truncate>{renderSelectedValue()}</Truncate>
         </SelectedValue>
+        <SelectMoreIcon />
       </MultiSelectInputArea>
       <ModalPortal>
         {isOptionsModalOpen && (
@@ -89,11 +72,9 @@ export function MultiSelectOptionsModal<T>({
   getOptionText,
   modalTitle,
   onClose,
-  selectedOptionsSetter,
-  floatingOptions
+  selectedOptionsSetter
 }: MultiSelectOptionsModalProps<T>) {
   const { t } = useTranslation()
-  const theme = useTheme()
 
   const allOptionsAreSelected = selectedOptions.length === options.length
 
@@ -120,7 +101,7 @@ export function MultiSelectOptionsModal<T>({
         </AllButton>
       }
     >
-      <OptionSelect style={floatingOptions ? { backgroundColor: theme.bg.background2, paddingTop: 10 } : undefined}>
+      <OptionSelect>
         {options.map((option) => {
           const isSelected = selectedOptions.some((o) => getOptionId(o) === getOptionId(option))
           return (
@@ -132,11 +113,13 @@ export function MultiSelectOptionsModal<T>({
               selected={isSelected}
               focusable
               aria-label={getOptionText(option)}
-              isFloating={floatingOptions}
               hasCustomOptionRender={!!renderOption}
             >
               {renderOption ? (
-                renderOption(option, isSelected)
+                <CustomOptionContainer isSelected={isSelected}>
+                  {renderOption(option, isSelected)}
+                  {isSelected && <CheckMark />}
+                </CustomOptionContainer>
               ) : (
                 <>
                   {getOptionText(option)}
@@ -154,25 +137,33 @@ export function MultiSelectOptionsModal<T>({
 export default MultiSelect
 
 const MultiSelectInputArea = styled(InputArea)`
-  ${inputDefaultStyle(true, true, true)};
-  border: 1px solid transparent;
-
-  &:not(:hover) {
-    background-color: transparent;
-  }
-
-  &:hover {
-    border: 1px solid ${({ theme }) => theme.border.primary};
-  }
+  ${inputDefaultStyle(true, true, false)};
+  gap: 10px;
 `
 
 const SelectedValue = styled.div`
   display: flex;
   align-items: center;
   min-width: 0;
+  max-width: 200px;
 `
 
 const AllButton = styled(Button)`
-  margin: 0;
+  margin: var(--spacing-2) 0;
   margin-left: auto;
+`
+
+const CustomOptionContainer = styled.div<{ isSelected: boolean }>`
+  flex: 1;
+  display: flex;
+
+  ${CheckMark} {
+    margin: 12px 8px 12px 4px;
+  }
+
+  ${({ isSelected, theme }) =>
+    isSelected &&
+    css`
+      background-color: ${theme.bg.accent};
+    `}
 `

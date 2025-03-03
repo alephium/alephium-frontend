@@ -1,12 +1,12 @@
 /* GLOBAL SETTINGS */
 
 body {
+  display: flex;
   font-size: inherit;
   margin: 0;
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-y: auto;
   height: 100%;
   width: 100%;
   font-weight: 500;
@@ -15,6 +15,7 @@ body {
 }
 
 #root {
+  flex: 1;
   min-height: 100%;
   display: flex;
 }
@@ -31,7 +32,7 @@ h1 {
 
 h2 {
   font-weight: 600;
-  font-size: 1.1em;
+  font-size: 1em;
 }
 
 h3 {
@@ -50,10 +51,6 @@ button {
 a {
   text-decoration: none;
   color: inherit;
-}
-
-#app-header {
-  -webkit-app-region: drag;
 }
 
 /* FONTS */

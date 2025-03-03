@@ -1,24 +1,6 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { colord } from 'colord'
 import { isEqual } from 'lodash'
-import { MoreVertical, SearchIcon } from 'lucide-react'
+import { SearchIcon } from 'lucide-react'
 import {
   KeyboardEvent as ReactKeyboardEvent,
   OptionHTMLAttributes,
@@ -30,14 +12,14 @@ import {
   useState
 } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import CheckMark from '@/components/CheckMark'
-import { inputDefaultStyle, InputHeight, InputLabel, InputProps, inputStyling } from '@/components/Inputs'
+import { inputDefaultStyle, InputHeight, InputProps, inputStyling, SelectLabel } from '@/components/Inputs'
 import Input from '@/components/Inputs/Input'
 import InputArea from '@/components/Inputs/InputArea'
-import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
-import Popup from '@/components/Popup'
+import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
+import Popup, { useElementAnchorCoordinates } from '@/components/Popup'
 import Truncate from '@/components/Truncate'
 import ModalPortal from '@/modals/ModalPortal'
 import { Coordinates } from '@/types/numbers'
@@ -105,26 +87,10 @@ function Select<T extends OptionValue>({
   isSearchable,
   allowCustomValue
 }: SelectProps<T>) {
-  const selectedValueRef = useRef<HTMLDivElement>(null)
-
-  const [canBeAnimated, setCanBeAnimated] = useState(false)
   const [value, setValue] = useState(controlledValue)
-  const [showPopup, setShowPopup] = useState(false)
-  const [hookCoordinates, setHookCoordinates] = useState<Coordinates | undefined>(undefined)
+  const { containerRef, hookCoordinates, openModal, closeModal, isModalOpen } = useElementAnchorCoordinates()
 
   const multipleAvailableOptions = options.length > 1
-
-  const getContainerCenter = (): Coordinates | undefined => {
-    if (selectedValueRef?.current) {
-      const containerElement = selectedValueRef.current
-      const containerElementRect = containerElement.getBoundingClientRect()
-
-      return {
-        x: containerElementRect.x + containerElement.clientWidth / 2,
-        y: containerElementRect.y + containerElement.clientHeight / 2
-      }
-    }
-  }
 
   const setInputValue = useCallback(
     (option: SelectOption<T>) => {
@@ -132,33 +98,27 @@ function Select<T extends OptionValue>({
         onSelect(option.value)
         setValue(option)
 
-        selectedValueRef.current?.focus()
+        containerRef.current?.focus()
       }
     },
-    [onSelect, skipEqualityCheck, value]
+    [containerRef, onSelect, skipEqualityCheck, value]
   )
 
   const handleClick = () => {
-    if (!multipleAvailableOptions) {
+    if (!multipleAvailableOptions && !allowReselectionOnClickWhenSingleOption) {
       allowReselectionOnClickWhenSingleOption && options.length === 1 && onSelect(options[0].value)
 
       return
     }
 
-    setHookCoordinates(getContainerCenter())
-    setShowPopup(true)
+    openModal()
   }
 
   const handleKeyDown = (e: ReactKeyboardEvent) => {
     if (![' ', 'ArrowDown', 'ArrowUp'].includes(e.key)) return
     if (!multipleAvailableOptions) return
-    setHookCoordinates(getContainerCenter())
-    setShowPopup(true)
-  }
 
-  const handlePopupClose = () => {
-    setShowPopup(false)
-    selectedValueRef.current?.focus()
+    openModal()
   }
 
   useEffect(() => {
@@ -183,38 +143,28 @@ function Select<T extends OptionValue>({
 
   return (
     <>
-      <SelectContainer
-        variants={sectionChildrenVariants}
-        animate={canBeAnimated ? (!disabled ? 'shown' : 'disabled') : false}
-        onAnimationComplete={() => setCanBeAnimated(true)}
+      <SelectOutterContainer
         custom={disabled}
         noMargin={noMargin}
         onMouseDown={handleClick}
         onKeyDown={handleKeyDown}
-        style={{ zIndex: raised && showPopup ? 2 : undefined, boxShadow: disabled ? 'none' : undefined }}
+        style={{ zIndex: raised && isModalOpen ? 2 : undefined, boxShadow: disabled ? 'none' : undefined }}
         heightSize={heightSize}
         simpleMode={simpleMode}
         tabIndex={renderCustomComponent ? -1 : 0}
         showPointer={multipleAvailableOptions}
       >
         {renderCustomComponent ? (
-          <CustomComponentContainer ref={selectedValueRef}>
+          <CustomComponentContainer ref={containerRef}>
             {renderCustomComponent(value, !multipleAvailableOptions)}
           </CustomComponentContainer>
         ) : (
           <>
-            <InputLabel isElevated={!!value} htmlFor={id}>
-              {label}
-            </InputLabel>
-            {multipleAvailableOptions && !simpleMode && (
-              <MoreIcon>
-                <MoreVertical size={16} />
-              </MoreIcon>
-            )}
-            <SelectedValue
+            {multipleAvailableOptions && !simpleMode && <SelectMoreIcon />}
+            <SelectContainer
               tabIndex={-1}
               className={className}
-              ref={selectedValueRef}
+              ref={containerRef}
               id={id}
               simpleMode={simpleMode}
               label={label}
@@ -222,13 +172,14 @@ function Select<T extends OptionValue>({
               contrast={contrast}
               showPointer={multipleAvailableOptions}
             >
+              {label && <SelectLabel htmlFor={id}>{label}</SelectLabel>}
               <Truncate>{value?.label}</Truncate>
-            </SelectedValue>
+            </SelectContainer>
           </>
         )}
-      </SelectContainer>
+      </SelectOutterContainer>
       <ModalPortal>
-        {showPopup && (
+        {isModalOpen && (
           <SelectOptionsModal
             options={options}
             optionRender={optionRender}
@@ -236,8 +187,8 @@ function Select<T extends OptionValue>({
             setValue={setInputValue}
             title={title}
             hookCoordinates={hookCoordinates}
-            onClose={handlePopupClose}
-            parentSelectRef={selectedValueRef}
+            onClose={closeModal}
+            parentSelectRef={containerRef}
             ListBottomComponent={ListBottomComponent}
             isSearchable={isSearchable}
           />
@@ -260,7 +211,6 @@ interface SelectOptionsModalProps<T extends OptionValue> {
   parentSelectRef?: RefObject<HTMLDivElement | HTMLButtonElement>
   minWidth?: number
   ListBottomComponent?: ReactNode
-  floatingOptions?: boolean
   isSearchable?: boolean
 }
 
@@ -277,12 +227,10 @@ export function SelectOptionsModal<T extends OptionValue>({
   parentSelectRef,
   minWidth,
   ListBottomComponent,
-  floatingOptions,
   isSearchable
 }: SelectOptionsModalProps<T>) {
   const { t } = useTranslation()
   const optionSelectRef = useRef<HTMLDivElement>(null)
-  const theme = useTheme()
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const [searchInput, setSearchInput] = useState('')
@@ -343,12 +291,7 @@ export function SelectOptionsModal<T extends OptionValue>({
         )
       }
     >
-      <OptionSelect
-        title={title}
-        aria-label={title}
-        ref={optionSelectRef}
-        style={floatingOptions ? { backgroundColor: theme.bg.background2, paddingTop: 10 } : undefined}
-      >
+      <OptionSelect title={title} aria-label={title} ref={optionSelectRef}>
         {isEmpty ? (
           <OptionItem selected={false}>{emptyListPlaceholder}</OptionItem>
         ) : emptySearchResults ? (
@@ -365,11 +308,13 @@ export function SelectOptionsModal<T extends OptionValue>({
               selected={isSelected}
               focusable
               aria-label={option.label}
-              isFloating={floatingOptions}
               hasCustomOptionRender={!!optionRender}
             >
               {optionRender ? (
-                optionRender(option, isSelected)
+                <CustomOptionContainer isSelected={isSelected}>
+                  {optionRender(option, isSelected)}
+                  {isSelected && <CheckMark />}
+                </CustomOptionContainer>
               ) : (
                 <>
                   {option.label}
@@ -388,9 +333,7 @@ export function SelectOptionsModal<T extends OptionValue>({
 export default Select
 
 const InputContainer = styled(InputArea)`
-  margin: 16px 0;
   padding: 0;
-
   outline: none;
 `
 
@@ -401,20 +344,21 @@ export const MoreIcon = styled.div`
   display: flex;
   align-items: center;
   color: ${({ theme }) => theme.font.secondary};
+  z-index: 1;
 `
 
-const SelectedValue = styled.div<InputProps>`
-  ${({ heightSize, label, contrast }) => inputDefaultStyle(true, true, !!label, heightSize, contrast)};
+const SelectContainer = styled.div<InputProps>`
+  ${({ heightSize, label, contrast }) => inputDefaultStyle(true, false, !!label, heightSize, contrast)};
 
   padding-right: 35px;
-  font-weight: var(--fontWeight-semiBold);
+  font-weight: var(--fontWeight-medium);
+  gap: 10px;
 
   cursor: ${({ showPointer }) => showPointer && 'pointer'};
 
   display: flex;
   align-items: center;
   min-width: 0;
-  box-shadow: ${({ theme }) => theme.shadow.primary};
 
   ${({ simpleMode }) =>
     simpleMode &&
@@ -427,16 +371,16 @@ const SelectedValue = styled.div<InputProps>`
     `}
 `
 
-export const SelectContainer = styled(InputContainer)<
+export const SelectOutterContainer = styled(InputContainer)<
   Pick<InputProps, 'noMargin' | 'heightSize' | 'simpleMode' | 'showPointer'>
 >`
   cursor: ${({ showPointer }) => showPointer && 'pointer'};
-  margin: ${({ noMargin, simpleMode }) => (noMargin || simpleMode ? 0 : '16px 0')};
+  margin: ${({ noMargin, simpleMode }) => (noMargin || simpleMode ? 0 : '10px 0')};
   height: ${({ heightSize }) =>
-    heightSize === 'small' ? '50px' : heightSize === 'big' ? '60px' : 'var(--inputHeight)'};
+    heightSize === 'small' ? '38px' : heightSize === 'big' ? '50px' : 'var(--inputHeight)'};
 
   &:focus {
-    ${SelectedValue} {
+    ${SelectContainer} {
       box-shadow: 0 0 0 1px ${({ theme }) => theme.global.accent};
       border-color: ${({ theme }) => theme.global.accent};
     }
@@ -448,9 +392,9 @@ export const OptionSelect = styled.div`
   overflow-y: auto;
   border: 0;
   color: inherit;
-  background: transparent;
   display: flex;
   flex-direction: column;
+  gap: 5px;
 `
 
 export const OptionItem = styled.button<{
@@ -467,43 +411,35 @@ export const OptionItem = styled.button<{
   color: ${({ theme }) => theme.font.primary};
   user-select: none;
   text-align: left;
-  background-color: ${({ theme }) => colord(theme.bg.primary).alpha(0.4).toHex()};
   visibility: ${({ invisible }) => invisible && 'hidden'};
   font-weight: ${({ selected }) => selected && 'var(--fontWeight-semiBold)'};
+  background-color: ${({ theme, selected }) => (selected ? theme.bg.accent : 'transparent')};
+  border: 1px solid
+    ${({ theme, selected }) => (selected ? colord(theme.global.accent).alpha(0.1).toHex() : 'transparent')};
+  font-size: 13px;
+  border-radius: var(--radius-small);
+  margin: 0 var(--spacing-1);
 
   ${({ hasCustomOptionRender }) => css`
-    padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-4)'};
+    padding: ${hasCustomOptionRender ? '0px' : 'var(--spacing-2)'};
   `};
 
-  ${({ isFloating, selected, theme }) =>
-    isFloating
-      ? css`
-          margin: var(--spacing-2) var(--spacing-4);
-          border-radius: var(--radius-medium);
-          border: ${selected ? `2px solid ${theme.global.accent}` : `1px solid ${theme.border.primary}`};
-          background-color: ${theme.bg.primary};
-          overflow: hidden;
-        `
-      : css`
-          &:not(:last-child) {
-            border-bottom: 1px solid ${({ theme }) => theme.border.primary};
-          }
-        `}
+  &:hover {
+    background-color: ${({ theme }) => theme.bg.hover};
+  }
 
   ${({ focusable }) =>
     focusable &&
     css`
       &:focus {
-        background-color: ${({ theme }) => theme.bg.accent};
-      }
-
-      &:hover {
-        background-color: ${({ theme }) => theme.bg.hover};
+        box-shadow: inset 0 0 0 1px ${({ theme }) => theme.border.primary};
       }
     `}
 `
 
 const Searchbar = styled(Input)`
+  margin: var(--spacing-1) 0;
+
   svg {
     color: ${({ theme }) => theme.font.tertiary};
   }
@@ -515,4 +451,20 @@ const CustomComponentContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+`
+
+const CustomOptionContainer = styled.div<{ isSelected: boolean }>`
+  flex: 1;
+  display: flex;
+
+  ${CheckMark} {
+    height: 100%;
+    margin: 12px 8px 12px 4px;
+  }
+
+  ${({ isSelected, theme }) =>
+    isSelected &&
+    css`
+      background-color: ${theme.bg.accent};
+    `}
 `

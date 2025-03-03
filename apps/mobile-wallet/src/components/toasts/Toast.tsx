@@ -1,23 +1,8 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { colord } from 'colord'
-import { AlertCircle, CheckCircle, Icon, InfoIcon } from 'lucide-react-native'
+import { LinearGradient } from 'expo-linear-gradient'
+import { AlertCircle, CheckCircle, InfoIcon, LucideIcon } from 'lucide-react-native'
+import { useState } from 'react'
+import { LayoutChangeEvent } from 'react-native'
 import { ToastConfigParams, ToastType } from 'react-native-toast-message'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -30,8 +15,9 @@ const Toast = ({
   onPress
 }: Pick<ToastConfigParams<unknown>, 'text1' | 'text2' | 'onPress' | 'type'>) => {
   const theme = useTheme()
+  const [subtitleHeight, setSubtitleHeight] = useState(0)
 
-  const Icons: Record<ToastType, { color: string; Icon: Icon }> = {
+  const Icons: Record<ToastType, { color: string; Icon: LucideIcon }> = {
     success: {
       Icon: CheckCircle,
       color: theme.global.valid
@@ -49,15 +35,25 @@ const Toast = ({
   const Icon = Icons[type].Icon
   const color = Icons[type].color
 
+  const handleSubtitleLayout = (e: LayoutChangeEvent) => setSubtitleHeight(e.nativeEvent.layout.height)
+
   return (
     <ToastContainer onPress={onPress}>
+      <Gradient
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        locations={[0.7, 1]}
+        colors={[color, colord(color).alpha(0).toHex()]}
+        style={{ height: 160 + (text2 ? subtitleHeight : 0) }}
+        pointerEvents="none"
+      />
       <ToastContent>
         <IconContainer>
           <Icon color={color} />
         </IconContainer>
         <TextContainer>
           <Title>{text1}</Title>
-          {text2 && <Subtitle>{text2}</Subtitle>}
+          {text2 && <Subtitle onLayout={handleSubtitleLayout}>{text2}</Subtitle>}
         </TextContainer>
       </ToastContent>
     </ToastContainer>
@@ -67,30 +63,47 @@ const Toast = ({
 export default Toast
 
 const ToastContainer = styled.Pressable`
-  width: 85%;
-  border-radius: 8px;
-  background-color: ${({ theme }) => theme.bg.contrast};
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 10;
 `
 
 const ToastContent = styled.View`
   flex-direction: row;
-  padding: 15px 20px;
+  padding: 20px;
+  gap: 16px;
 `
 
 const IconContainer = styled.View`
-  width: 50px;
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.9);
 `
 
 const TextContainer = styled.View`
   justify-content: center;
   flex: 1;
+  gap: 5px;
 `
 
 const Title = styled(AppText)`
-  color: ${({ theme }) => theme.font.contrast};
-  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+  font-weight: 600;
 `
 
 const Subtitle = styled(AppText)`
-  color: ${({ theme }) => colord(theme.font.contrast).alpha(0.7).toHex()};
+  color: rgba(255, 255, 255, 0.8);
+`
+
+const Gradient = styled(LinearGradient)`
+  position: absolute;
+  top: -50px;
+  left: 0;
+  right: 0;
 `

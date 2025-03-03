@@ -1,5 +1,87 @@
 # @alephium/mobile-wallet
 
+## 2.1.3
+
+### Patch Changes
+
+- 28a4580: Group NFTs per collection
+- 8e86afc: Display transaction and fee worth before sending
+- 146e5d6: Support video NFTs
+- 141fa4a: Improve battery consumption
+- d4996fe: Display address group
+- 789dea8: Unknown tokens modal
+- c0a7204: Searchable regions list
+- 9f6f688: Close open modals when sending token
+- 08bdc63: Hide imported secret recovery words
+- aa1d37c: Display fiat worth of entered amount
+
+## 2.1.2
+
+### Patch Changes
+
+- 5b3c6b3: Add dApp links to Alph.land
+- bb1c1eb: Integrate Onramper
+- aa0fb2a: Don't show close button in modals with non-scrollable content
+- 3b47ee6: Format amounts based on user's locale
+- b180631: Copy bytecode in dApp request modal
+- baad80d: Tap to reveal hidden amounts
+
+## 2.1.1
+
+### Patch Changes
+
+- 8a06320: Fix missing addresses in origins screen
+
+## 2.1.0
+
+### Minor Changes
+
+- 642f0cf: Ecosystem screen with in-app browser
+
+### Patch Changes
+
+- 89ae793: Enable Thai Baht (THB) and Hong Kong Dollar (HKD) fiat currencies
+- 94d264a: Fix iOS keyboard dismiss in address settings screen
+
+## 2.0.1
+
+### Patch Changes
+
+- 7eb11a9: Add ability to hide tokens
+- f7da1e9: Close modals on back button/gesture on Android
+- 7ad0e86: Add contact by scanning QR code
+- 8f165c2: Simplify send flow
+- a976ad9: Enable Indonesian translations
+- 2f8b4fe: Display address-specific NFTs
+- ae006fb: Scale balances font-size to fit in one row
+- 863feb7: Simplify NFT sending flow
+
+## 2.0.0
+
+### Major Changes
+
+- Redesign
+
+### Minor Changes
+
+- 4939fbf: New dedicated NFT screen
+- 4939fbf: Dashboard and lists redesign
+
+### Patch Changes
+
+- 047dd9a: Fix data loading
+- c17e4cb: Add confirmation messages when saving fund password and remove reminders
+- dda710a: Fix iOS crash on wallet creation
+- b0b4b13: Fix price fetching
+- 74054f6: Simplify addresses display and management
+- ed58a1b: Enable German translations
+- 1c924ba: Enable Thai translations
+- a9468cf: Display token information when tapping on token row
+- 1fb8dd9: Fix toggling of biometrics settings
+- 248b947: Support alph_signAndSubmitUnsignedTx WalletConnect method
+- 6c5aa06: Display addresses containing specific token
+- 8d4bd21: Fix text truncation on Android
+
 ## 1.1.12
 
 ### Patch Changes

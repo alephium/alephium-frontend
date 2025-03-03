@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import 'dayjs/locale/bg'
 import 'dayjs/locale/de'
 import 'dayjs/locale/es'
@@ -28,24 +10,29 @@ import 'dayjs/locale/tr'
 import 'dayjs/locale/vi'
 import 'dayjs/locale/el'
 import 'dayjs/locale/zh-cn'
+import 'dayjs/locale/th'
 
 import { fiatCurrencyChanged } from '@alephium/shared'
 import { createListenerMiddleware, createSlice, isAnyOf } from '@reduxjs/toolkit'
 import dayjs from 'dayjs'
 import posthog from 'posthog-js'
 
+import i18next from '@/features/localization/i18n'
 import {
-  analyticsToggled,
-  devToolsToggled,
-  discreetModeToggled,
   languageChanged,
   languageChangeFinished,
   languageChangeStarted,
+  systemLanguageMatchFailed,
+  systemLanguageMatchSucceeded
+} from '@/features/localization/localizationActions'
+import {
+  addressOrderPreferenceChanged,
+  analyticsToggled,
+  devToolsToggled,
+  discreetModeToggled,
   localStorageGeneralSettingsMigrated,
   numberFormatRegionChanged,
   passwordRequirementToggled,
-  systemLanguageMatchFailed,
-  systemLanguageMatchSucceeded,
   systemRegionMatchFailed,
   systemRegionMatchSucceeded,
   themeSettingsChanged,
@@ -54,7 +41,6 @@ import {
 } from '@/features/settings/settingsActions'
 import SettingsStorage from '@/features/settings/settingsPersistentStorage'
 import { GeneralSettings } from '@/features/settings/settingsTypes'
-import i18next from '@/i18n'
 import { RootState } from '@/storage/store'
 
 const initialState = SettingsStorage.load('general') as GeneralSettings
@@ -96,6 +82,9 @@ const settingsSlice = createSlice({
       .addCase(fiatCurrencyChanged, (state, action) => {
         state.fiatCurrency = action.payload
       })
+      .addCase(addressOrderPreferenceChanged, (state, action) => {
+        state.addressOrderPreference = action.payload
+      })
 
     builder
       .addMatcher(isAnyOf(numberFormatRegionChanged, systemRegionMatchSucceeded), (state, action) => {
@@ -125,6 +114,7 @@ settingsListenerMiddleware.startListening({
     numberFormatRegionChanged,
     walletLockTimeChanged,
     analyticsToggled,
+    addressOrderPreferenceChanged,
     fiatCurrencyChanged
   ),
   effect: (_, { getState }) => {

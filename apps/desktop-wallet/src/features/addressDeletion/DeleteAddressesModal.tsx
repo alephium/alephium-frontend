@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash } from '@alephium/shared'
 import { memo, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -29,14 +11,15 @@ import ForgetMulitpleAddressesButton from '@/features/addressDeletion/ForgetMuli
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useFetchSortedAddressesHashesWithLatestTx } from '@/hooks/useAddresses'
+import { useFetchAddressesHashesSortedByLastUseWithLatestTx } from '@/hooks/useAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons, ScrollableModalContent } from '@/modals/CenteredModal'
-import AddressLastActivity from '@/pages/UnlockedWallet/AddressesPage/addressListRow/AddressLastActivity'
+import AddressLastActivity from '@/pages/unlockedWallet/addressesPage/addressListRow/AddressLastActivity'
 import { selectDefaultAddress, selectInitialAddress } from '@/storage/addresses/addressesSelectors'
 
 const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
   const { t } = useTranslation()
-  const { data: sortedAddresses, isLoading: isLoadingSortedAddresses } = useFetchSortedAddressesHashesWithLatestTx()
+  const { data: sortedAddresses, isLoading: isLoadingSortedAddresses } =
+    useFetchAddressesHashesSortedByLastUseWithLatestTx()
   const { hash: defaultAddressHash } = useAppSelector(selectDefaultAddress)
   const initialAddress = useAppSelector(selectInitialAddress)
   const dispatch = useAppDispatch()
@@ -69,7 +52,7 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
   const handleCancelClick = () => dispatch(closeModal({ id }))
 
   return (
-    <CenteredModal title={t('forgetAddress_other')} id={id} dynamicContent noPadding>
+    <CenteredModal title={t('forgetAddress_other')} id={id} noPadding>
       <ScrollableModalContent>
         {reversedAddressesArray.length === 1 && (
           <InfoBox importance="accent">{t('You only have one address. You cannot forget it.')}</InfoBox>
@@ -106,7 +89,6 @@ const DeleteAddressesModal = memo(({ id }: ModalBaseProp) => {
                   >
                     <SelectOptionAddress
                       addressHash={addressHash}
-                      isSelected={isSelected}
                       subtitle={<AddressLastActivity addressHash={addressHash} />}
                     />
                   </OptionItemStyled>

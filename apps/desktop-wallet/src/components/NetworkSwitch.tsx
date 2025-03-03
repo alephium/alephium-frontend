@@ -1,30 +1,11 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { NetworkName, NetworkNames, networkPresetSwitched, networkSettingsPresets } from '@alephium/shared'
-import { upperFirst } from 'lodash'
-import { ArrowRight } from 'lucide-react'
+import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { ArrowRight, Dot } from 'lucide-react'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { useTheme } from 'styled-components'
 
 import Button from '@/components/Button'
-import DotIcon from '@/components/DotIcon'
 import Select from '@/components/Inputs/Select'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { openModal } from '@/features/modals/modalActions'
@@ -76,31 +57,37 @@ const NetworkSwitch = () => {
 
   const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: { initialTabValue: 'network' } }))
 
+  const currentNetwork = networkSelectOptions.find((n) => n.value === network.name)
+
   return (
-    <Select
-      options={networkSelectOptions}
-      onSelect={handleNetworkPresetChange}
-      controlledValue={networkSelectOptions.find((n) => n.value === network.name)}
-      title={t('Current network')}
-      id="network"
-      noMargin
-      renderCustomComponent={SelectCustomComponent}
-      skipEqualityCheck
-      ListBottomComponent={
-        <MoreOptionsItem onClick={openSettingsModal}>
-          {t('More options')} <ArrowRight size={16} />
-        </MoreOptionsItem>
-      }
-    />
+    <SelectContainer>
+      <Select
+        options={networkSelectOptions}
+        onSelect={handleNetworkPresetChange}
+        controlledValue={currentNetwork}
+        title={t('Current network')}
+        id="network"
+        noMargin
+        renderCustomComponent={SelectCustomComponent}
+        skipEqualityCheck
+        heightSize="small"
+        ListBottomComponent={
+          <MoreOptionsItem onClick={openSettingsModal}>
+            {t('More options')} <ArrowRight size={16} />
+          </MoreOptionsItem>
+        }
+      />
+    </SelectContainer>
   )
 }
 
 export default NetworkSwitch
 
 const SelectCustomComponent = () => {
-  const { t } = useTranslation()
   const theme = useTheme()
+  const { t } = useTranslation()
   const network = useAppSelector((state) => state.network)
+  const isOffline = useCurrentlyOnlineNetworkId() === undefined
 
   const networkStatusColor = {
     online: theme.global.valid,
@@ -110,16 +97,19 @@ const SelectCustomComponent = () => {
   }[network.status]
 
   return (
-    <Button role="secondary" transparent short data-tooltip-id="default" data-tooltip-content={t('Current network')}>
-      <NetworkNameLabel>{upperFirst(network.name)}</NetworkNameLabel>
-      <DotIcon color={networkStatusColor} />
-    </Button>
+    <Button
+      role="secondary"
+      transparent
+      circle
+      data-tooltip-id="default"
+      data-tooltip-content={isOffline ? `${network.name} (${t('offline')})` : network.name}
+      tiny
+      Icon={Dot}
+      iconSize={42}
+      iconColor={networkStatusColor}
+    />
   )
 }
-
-const NetworkNameLabel = styled.span`
-  margin-right: 10px;
-`
 
 const MoreOptionsItem = styled.div`
   display: flex;
@@ -133,4 +123,8 @@ const MoreOptionsItem = styled.div`
     cursor: pointer;
     color: ${({ theme }) => theme.font.primary};
   }
+`
+
+const SelectContainer = styled.div`
+  flex: 0;
 `

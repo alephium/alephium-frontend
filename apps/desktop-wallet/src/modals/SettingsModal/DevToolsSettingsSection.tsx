@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash, getHumanReadableError } from '@alephium/shared'
 import { getSecp259K1Path } from '@alephium/web3-wallet'
 import { AlertOctagon, Download, FileCode, TerminalSquare } from 'lucide-react'
@@ -25,6 +7,7 @@ import styled from 'styled-components'
 import AddressRow from '@/components/AddressRow'
 import Box from '@/components/Box'
 import Button from '@/components/Button'
+import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import InfoBox from '@/components/InfoBox'
 import InlineLabelValueInput from '@/components/Inputs/InlineLabelValueInput'
 import Toggle from '@/components/Inputs/Toggle'
@@ -94,7 +77,9 @@ const DevToolsSettingsSection = () => {
             label={t('Enable developer tools')}
             description={t('Features for developers only')}
             InputComponent={<Toggle label={t('Enable developer tools')} toggled={devTools} onToggle={toggleDevTools} />}
+            noHorizontalPadding
           />
+          <HorizontalDivider />
         </Box>
       </Section>
       {devTools && (
@@ -125,10 +110,10 @@ const DevToolsSettingsSection = () => {
               {t('Smart contracts')}
             </h2>
             <ButtonsRow>
-              <Button Icon={FileCode} onClick={openDeployContractModal} role="secondary">
+              <Button Icon={FileCode} onClick={openDeployContractModal} role="secondary" justifyContent="center">
                 {t('Deploy contract')}
               </Button>
-              <Button Icon={TerminalSquare} onClick={openCallContractModal} role="secondary">
+              <Button Icon={TerminalSquare} onClick={openCallContractModal} role="secondary" justifyContent="center">
                 {t('Call contract')}
               </Button>
             </ButtonsRow>

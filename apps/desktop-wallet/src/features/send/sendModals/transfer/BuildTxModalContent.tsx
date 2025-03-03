@@ -1,29 +1,9 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import { ALPH } from '@alephium/token-list'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import useFetchAddressBalances from '@/api/apiDataHooks/address/useFetchAddressBalances'
-import FooterButton from '@/components/Buttons/FooterButton'
 import { InputFieldsColumn } from '@/components/InputFieldsColumn'
 import Input from '@/components/Inputs/Input'
 import ToggleSection from '@/components/ToggleSection'
@@ -33,16 +13,16 @@ import { shouldBuildSweepTransactions } from '@/features/send/sendUtils'
 import TokensAmountInputs from '@/features/send/TokensAmountInputs'
 import useAreAmountsWithinAddressAvailableBalances from '@/features/send/useAreAmountsWithinAddressAvailableBalances'
 import useGasSettings from '@/hooks/useGasSettings'
+import { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { AssetAmountInputType } from '@/types/assets'
 
 export interface TransferBuildTxModalContentProps {
   data: TransferTxModalData
   onSubmit: (data: TransferTxData) => void
+  onBack: () => void
 }
 
-const defaultAssetAmounts = [{ id: ALPH.id }]
-
-const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalContentProps) => {
+const TransferBuildTxModalContent = ({ data, onSubmit, onBack }: TransferBuildTxModalContentProps) => {
   const { t } = useTranslation()
   const {
     gasAmount,
@@ -55,11 +35,15 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
   } = useGasSettings(data?.gasAmount?.toString(), data?.gasPrice)
 
   const [lockTime, setLockTime] = useState(data.lockTime)
-  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(data.assetAmounts || defaultAssetAmounts)
 
   const { fromAddress, toAddress } = data
 
   const { data: tokensBalances } = useFetchAddressBalances({ addressHash: fromAddress.hash })
+
+  const [assetAmounts, setAssetAmounts] = useState<AssetAmountInputType[]>(
+    data.assetAmounts ?? (data.tokenId ? [{ id: data.tokenId }] : [])
+  )
+
   const allAssetAmountsAreWithinAvailableBalance = useAreAmountsWithinAddressAvailableBalances(
     fromAddress.hash,
     assetAmounts ?? []
@@ -128,22 +112,27 @@ const TransferBuildTxModalContent = ({ data, onSubmit }: TransferBuildTxModalCon
           onGasPriceChange={handleGasPriceChange}
         />
       </ToggleSection>
-      <FooterButton
-        onClick={() =>
-          onSubmit({
-            fromAddress,
-            toAddress,
-            assetAmounts,
-            gasAmount: gasAmount ? parseInt(gasAmount) : undefined,
-            gasPrice,
-            lockTime,
-            shouldSweep
-          })
-        }
-        disabled={!isSubmitButtonActive}
-      >
-        {t('Check')}
-      </FooterButton>
+      <ModalFooterButtons>
+        <ModalFooterButton role="secondary" onClick={onBack}>
+          {t('Back')}
+        </ModalFooterButton>
+        <ModalFooterButton
+          onClick={() =>
+            onSubmit({
+              fromAddress,
+              toAddress,
+              assetAmounts,
+              gasAmount: gasAmount ? parseInt(gasAmount) : undefined,
+              gasPrice,
+              lockTime,
+              shouldSweep
+            })
+          }
+          disabled={!isSubmitButtonActive}
+        >
+          {t('Check')}
+        </ModalFooterButton>
+      </ModalFooterButtons>
     </>
   )
 }

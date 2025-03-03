@@ -1,24 +1,5 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { FungibleTokenBasicMetadata, NFT, StringAlias } from '@alephium/shared'
 import { TokenInfo } from '@alephium/token-list'
-import { explorer as e } from '@alephium/web3'
 
 // For better code readability
 export interface ListedFT extends TokenInfo {}
@@ -28,10 +9,12 @@ export interface NonStandardToken {
 }
 
 // To represent a token that is not in the token list but we haven't discovered its type yet
-export type UnlistedToken = { id: string }
+export type UnlistedToken = { id: TokenId }
 
 // For stricter typings in our components that handle display of multiple token types
 export type TokenDisplay = ListedFTDisplay | UnlistedFTDisplay | NFTDisplay | NonStandardTokenDisplay
+
+export type Token = ListedFT | UnlistedFT | NFT | NonStandardToken
 
 export type ListedFTDisplay = ApiBalances &
   ListedFT & {
@@ -60,7 +43,16 @@ export type ApiBalances = {
 }
 
 export type TokenApiBalances = ApiBalances & {
-  id: e.Token['id']
+  id: TokenId
 }
 
-export type TokenId = e.Token['id'] & StringAlias
+export type TokenId = Token['id'] & StringAlias
+
+export const isFT = (token: Token): token is ListedFT | UnlistedFT =>
+  (token as ListedFT | UnlistedFT).symbol !== undefined
+
+export const isListedFT = (token: Token): token is ListedFT => (token as ListedFT).logoURI !== undefined
+
+export const isUnlistedFT = (token: Token) => isFT(token) && !isListedFT(token)
+
+export const isNFT = (token: Token): token is NFT => (token as NFT).nftIndex !== undefined

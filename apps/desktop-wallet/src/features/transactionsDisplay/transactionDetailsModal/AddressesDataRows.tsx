@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { isConfirmedTx } from '@alephium/shared'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -26,6 +8,7 @@ import DataList from '@/components/DataList'
 import HashEllipsed from '@/components/HashEllipsed'
 import IOList from '@/components/IOList'
 import { selectPendingSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
+import DirectionalInfo from '@/features/transactionsDisplay/transactionDetailsModal/DirectionalInfo'
 import PendingSentAddressBadge from '@/features/transactionsDisplay/transactionDetailsModal/PendingSentAddressBadge'
 import { TransactionDetailsModalTxProps } from '@/features/transactionsDisplay/transactionDetailsModal/types'
 import useOnAddressClick from '@/features/transactionsDisplay/transactionDetailsModal/useOnAddressClick'
@@ -40,7 +23,12 @@ const AddressesDataRows = ({ tx, refAddressHash }: TransactionDetailsModalTxProp
   const handleShowTxInExplorer = useOpenTxInExplorer(tx.hash)
   const pendingSentTx = useAppSelector((s) => selectPendingSentTransactionByHash(s, tx.hash))
 
-  if (direction === 'swap') return null
+  if (direction === 'swap')
+    return (
+      <DataList.Row label={t('Addresses')}>
+        <DirectionalInfo tx={tx} refAddressHash={refAddressHash} />
+      </DataList.Row>
+    )
 
   const handleAddressClick = () => onAddressClick(refAddressHash)
 

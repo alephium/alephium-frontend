@@ -1,33 +1,16 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { NFT } from '@alephium/shared'
 import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
-import useFetchNft from '@/api/apiDataHooks/token/useFetchNft'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import Ellipsed from '@/components/Ellipsed'
 import SkeletonLoader from '@/components/SkeletonLoader'
 import Truncate from '@/components/Truncate'
 import { openModal } from '@/features/modals/modalActions'
 import NFTThumbnail from '@/features/thumbnails/NFTThumbnail'
 import { useAppDispatch } from '@/hooks/redux'
+import { isNFT } from '@/types/tokens'
 
 interface NFTCardProps {
   nftId: NFT['id']
@@ -35,8 +18,9 @@ interface NFTCardProps {
 
 const NFTCard = ({ nftId }: NFTCardProps) => {
   const dispatch = useAppDispatch()
+  const { data: token, isLoading } = useFetchToken(nftId)
 
-  const { data: nft, isLoading } = useFetchNft({ id: nftId })
+  if (!token || !isNFT(token)) return null
 
   const openNFTDetailsModal = () => dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId } }))
 
@@ -50,10 +34,10 @@ const NFTCard = ({ nftId }: NFTCardProps) => {
         <NFTNameContainer>
           {isLoading ? (
             <SkeletonLoader height="15px" />
-          ) : nft?.name ? (
-            <NFTName>{nft.name}</NFTName>
+          ) : token.name ? (
+            <NFTName>{token.name}</NFTName>
           ) : (
-            <EllipsedStyled text={nftId} />
+            <EllipsedStyled text={token.id} />
           )}
         </NFTNameContainer>
       </CardContent>
@@ -66,14 +50,15 @@ export default NFTCard
 const NFTPictureContainer = styled(motion.div)`
   flex: 1;
   position: relative;
-  background-color: ${({ theme }) => colord(theme.bg.background2).darken(0.06).toHex()};
+  background-color: ${({ theme }) => theme.bg.highlight};
   overflow: hidden;
 `
 
 const NFTCardStyled = styled.div`
   display: flex;
-  background-color: ${({ theme }) => theme.bg.background2};
-  border-radius: var(--radius-huge);
+  background-color: ${({ theme }) => theme.bg.highlight};
+  border-radius: var(--radius-big);
+  border: 1px solid ${({ theme }) => theme.border.secondary};
   overflow: hidden;
   transition: all cubic-bezier(0.2, 0.65, 0.5, 1) 0.1s;
   height: 200px;
@@ -81,6 +66,7 @@ const NFTCardStyled = styled.div`
   &:hover {
     cursor: pointer;
     background-color: ${({ theme }) => colord(theme.bg.background2).lighten(0.02).toHex()};
+    border: 1px solid ${({ theme }) => theme.border.primary};
 
     ${NFTPictureContainer} {
       filter: brightness(1.05);

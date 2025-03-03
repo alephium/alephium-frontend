@@ -1,36 +1,17 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { customNetworkSettingsSaved, NetworkSettings } from '@alephium/shared'
 import { StackScreenProps } from '@react-navigation/stack'
-import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import { sendAnalytics } from '~/analytics'
-import { ContinueButton } from '~/components/buttons/Button'
+import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
+import { persistSettings } from '~/features/settings/settingsPersistentStorage'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import RootStackParamList from '~/navigation/rootStackRoutes'
-import { persistSettings } from '~/persistent-storage/settings'
 import { showExceptionToast } from '~/utils/layout'
 
 interface CustomNetworkScreenProps
@@ -45,10 +26,8 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
 
-  const [loading, setLoading] = useState(false)
-
   const saveCustomNetwork = async (formData: NetworkSettings) => {
-    setLoading(true)
+    dispatch(activateAppLoading(t('Saving')))
 
     try {
       await persistSettings('network', formData)
@@ -62,71 +41,65 @@ const CustomNetworkScreen = ({ navigation }: CustomNetworkScreenProps) => {
       sendAnalytics({ type: 'error', error, message })
     }
 
-    setLoading(false)
+    dispatch(deactivateAppLoading())
 
     navigation.goBack()
   }
 
   return (
-    <>
-      <ScrollScreen
-        usesKeyboard
-        fill
-        headerOptions={{
-          type: 'stack',
-          headerTitle: t('Custom network'),
-          headerRight: () => (
-            <ContinueButton title={t('Save')} onPress={handleSubmit(saveCustomNetwork)} iconProps={undefined} />
-          )
-        }}
-      >
-        <ScreenSection verticalGap>
-          <Controller
-            name="nodeHost"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label={t('Node host')}
-                keyboardType="url"
-                textContentType="URL"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-              />
-            )}
-            control={control}
-          />
-          <Controller
-            name="explorerApiHost"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label={t('Explorer API host')}
-                keyboardType="url"
-                textContentType="URL"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-              />
-            )}
-            control={control}
-          />
-          <Controller
-            name="explorerUrl"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label={t('Explorer URL')}
-                keyboardType="url"
-                textContentType="URL"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-              />
-            )}
-            control={control}
-          />
-        </ScreenSection>
-      </ScrollScreen>
-      <SpinnerModal isActive={loading} text={`${t('Saving')}...`} />
-    </>
+    <ScrollScreen
+      fill
+      contentPaddingTop
+      headerOptions={{ type: 'stack', headerTitle: t('Custom network') }}
+      bottomButtonsRender={() => (
+        <Button title={t('Save')} variant="highlight" onPress={handleSubmit(saveCustomNetwork)} />
+      )}
+    >
+      <ScreenSection verticalGap>
+        <Controller
+          name="nodeHost"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label={t('Node host')}
+              keyboardType="url"
+              textContentType="URL"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+            />
+          )}
+          control={control}
+        />
+        <Controller
+          name="explorerApiHost"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label={t('Explorer API host')}
+              keyboardType="url"
+              textContentType="URL"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+            />
+          )}
+          control={control}
+        />
+        <Controller
+          name="explorerUrl"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              label={t('Explorer URL')}
+              keyboardType="url"
+              textContentType="URL"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+            />
+          )}
+          control={control}
+        />
+      </ScreenSection>
+    </ScrollScreen>
   )
 }
 

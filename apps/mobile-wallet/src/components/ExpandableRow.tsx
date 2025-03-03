@@ -1,25 +1,7 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { ChevronDown } from 'lucide-react-native'
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleProp, View, ViewStyle } from 'react-native'
+import { Keyboard, StyleProp, View, ViewStyle } from 'react-native'
 import Animated, { useAnimatedStyle, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -37,7 +19,11 @@ const ExpandableRow = ({ children, title, titleComponent, style }: ExpandableRow
   const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const toggleExpanded = () => setIsExpanded(!isExpanded)
+  const toggleExpanded = () => {
+    setIsExpanded(!isExpanded)
+
+    Keyboard.dismiss()
+  }
 
   const collapsableSectionStyle = useAnimatedStyle(() => ({
     opacity: withTiming(isExpanded ? 1 : 0),
@@ -82,6 +68,8 @@ const ChevronDownStyled = styled(ChevronDown)`
 const Header = styled.TouchableOpacity`
   flex-direction: row;
   width: 100%;
-  padding: 25px 20px 25px 6px;
+  padding: 25px 20px 25px 20px;
   justify-content: space-between;
+  background-color: ${({ theme }) => theme.bg.tertiary};
+  border-radius: 16px;
 `

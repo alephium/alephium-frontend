@@ -1,28 +1,12 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash, PAGINATION_PAGE_LIMIT, throttledClient } from '@alephium/shared'
+import { getQueryConfig } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
-import { getQueryConfig } from '@/api/apiDataHooks/utils/getQueryConfig'
+import { tokenQuery } from '@/api/queries/tokenQueries'
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
-import { ApiBalances, TokenApiBalances } from '@/types/tokens'
+import queryClient from '@/api/queryClient'
+import { ApiBalances, isFT, isNFT, TokenApiBalances } from '@/types/tokens'
 
 export type AddressAlphBalancesQueryFnData = {
   addressHash: AddressHash
@@ -100,4 +84,50 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
             }
           }
         : skipToken
+  })
+
+export type AddressTokensSearchStringQueryFnData = {
+  addressHash: AddressHash
+  searchString: string
+}
+
+// Generates a string that includes the names and symbols of all tokens in the address, useful for filtering addresses
+export const addressTokensSearchStringQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'tokensSearchString', { networkId }],
+    queryFn: async (): Promise<AddressTokensSearchStringQueryFnData> => {
+      let searchString = ''
+
+      const addressTokensBalances = await queryClient.fetchQuery(addressTokensBalancesQuery({ addressHash, networkId }))
+      const hasTokens = addressTokensBalances.balances.length > 0
+      let hasAlph = hasTokens
+
+      if (hasTokens) {
+        const tokens = await Promise.all(
+          addressTokensBalances.balances.map(({ id }) => queryClient.fetchQuery(tokenQuery({ id, networkId })))
+        )
+
+        searchString = tokens
+          .map((token) =>
+            isFT(token)
+              ? `${token.name.toLowerCase()} ${token.symbol.toLowerCase()} ${token.id}`
+              : isNFT(token)
+                ? `${token.name.toLowerCase()} ${token.id}`
+                : token.id
+          )
+          .join(' ')
+      } else {
+        const addressAlphBalances = await queryClient.fetchQuery(addressAlphBalancesQuery({ addressHash, networkId }))
+        hasAlph = addressAlphBalances.balances.totalBalance !== '0'
+      }
+
+      if (hasAlph) {
+        searchString += ' alph alephium'
+      }
+
+      return {
+        addressHash,
+        searchString
+      }
+    }
   })

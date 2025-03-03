@@ -1,23 +1,6 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash } from '@alephium/shared'
-import { ReactNode } from 'react'
+import { useInView } from 'framer-motion'
+import { ReactNode, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -29,21 +12,25 @@ import { selectAddressByHash } from '@/storage/addresses/addressesSelectors'
 
 interface SelectOptionAddressProps {
   addressHash: AddressHash
-  isSelected?: boolean
   className?: string
   subtitle?: ReactNode
 }
 
-const SelectOptionAddress = ({ addressHash, isSelected, className, subtitle }: SelectOptionAddressProps) => {
+const SelectOptionAddress = ({ addressHash, className, subtitle }: SelectOptionAddressProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
 
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true })
+
   return (
     <SelectOptionItemContent
+      ref={ref}
       className={className}
       displaysCheckMarkWhenSelected
-      isSelected={isSelected}
       contentDirection="column"
+      divider
+      dividerOffset={30}
       MainContent={
         <Header>
           <AddressBadgeContainer>
@@ -55,7 +42,13 @@ const SelectOptionAddress = ({ addressHash, isSelected, className, subtitle }: S
           </Group>
         </Header>
       }
-      SecondaryContent={<AddressTokensBadgesList addressHash={addressHash} withBackground showAmount />}
+      SecondaryContent={
+        isInView ? (
+          <AddressTokensBadgeListContainer>
+            <AddressTokensBadgesList addressHash={addressHash} />
+          </AddressTokensBadgeListContainer>
+        ) : null
+      }
     />
   )
 }
@@ -73,22 +66,25 @@ const Group = styled.div`
   color: ${({ theme }) => theme.font.tertiary};
   font-weight: 400;
   display: flex;
-  flex-shrink: 0;
+  font-size: 12px;
 `
 
 const AddressBadgeContainer = styled.div`
   flex: 1;
-  min-width: 0;
   gap: 10px;
   display: flex;
   flex-direction: column;
 `
 
 const AddressBadgeStyled = styled(AddressBadge)`
-  font-size: 17px;
+  font-size: 15px;
   max-width: 70%;
 `
 
 const Subtitle = styled.div`
   font-weight: 500;
+`
+
+const AddressTokensBadgeListContainer = styled.div`
+  margin-left: var(--spacing-4);
 `

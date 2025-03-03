@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AssetAmount, calculateAmountWorth, toHumanReadableAmount } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { isNumber } from 'lodash'
@@ -25,24 +7,33 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
 import { useFetchTokenPrice } from '@/api/apiDataHooks/market/useFetchTokenPrices'
-import useFetchToken, { isFT, isNFT } from '@/api/apiDataHooks/token/useFetchToken'
+import useFetchToken from '@/api/apiDataHooks/token/useFetchToken'
 import ActionLink from '@/components/ActionLink'
-import Amount from '@/components/Amount'
+import Amount, { AmountBaseProps } from '@/components/Amount'
 import AssetLogo from '@/components/AssetLogo'
-import Box from '@/components/Box'
+import Box, { BoxProps } from '@/components/Box'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import { openModal } from '@/features/modals/modalActions'
 import { getTransactionAssetAmounts } from '@/features/send/sendUtils'
 import { useAppDispatch } from '@/hooks/redux'
+import { isFT, isNFT } from '@/types/tokens'
 import { links } from '@/utils/links'
 import { openInWebBrowser } from '@/utils/misc'
 
-interface CheckAmountsBoxProps {
+interface CheckAmountsBoxProps extends AmountBaseProps, BoxProps {
   assetAmounts: AssetAmount[]
   className?: string
 }
 
-const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
+const CheckAmountsBox = ({
+  assetAmounts,
+  className,
+  hasBg,
+  hasHorizontalPadding,
+  hasVerticalPadding,
+  hasBorder,
+  ...props
+}: CheckAmountsBoxProps) => {
   const userSpecifiedAlphAmount = assetAmounts.find((asset) => asset.id === ALPH.id)?.amount
   const { attoAlphAmount, tokens, extraAlphForDust } = getTransactionAssetAmounts(assetAmounts)
 
@@ -50,29 +41,37 @@ const CheckAmountsBox = ({ assetAmounts, className }: CheckAmountsBoxProps) => {
   const assets = userSpecifiedAlphAmount ? [alphAsset, ...tokens] : [...tokens, alphAsset]
 
   return (
-    <Box className={className}>
+    <CheckAmountsBoxStyled
+      className={className}
+      hasBg={hasBg}
+      hasHorizontalPadding={hasHorizontalPadding}
+      hasVerticalPadding={hasVerticalPadding}
+      hasBorder={hasBorder}
+    >
       {assets.map((asset, index) => (
         <Fragment key={asset.id}>
-          {index > 0 && <HorizontalDivider />}
-          <AssetAmountRow tokenId={asset.id} amount={asset.amount} extraAlphForDust={extraAlphForDust} />
+          <AssetAmountRow tokenId={asset.id} amount={asset.amount} extraAlphForDust={extraAlphForDust} {...props} />
+          {index < assets.length - 1 && <HorizontalDivider secondary />}
         </Fragment>
       ))}
-    </Box>
+    </CheckAmountsBoxStyled>
   )
 }
 
 export default CheckAmountsBox
 
-interface AssetAmountRowProps {
+interface AssetAmountRowProps extends AmountBaseProps {
   tokenId: string
   amount: string
   extraAlphForDust: bigint
 }
 
-const AssetAmountRow = ({ tokenId, amount, extraAlphForDust }: AssetAmountRowProps) => {
+const AssetAmountRow = ({ tokenId, amount, extraAlphForDust, ...props }: AssetAmountRowProps) => {
   const { t } = useTranslation()
   const { data: token } = useFetchToken(tokenId)
   const dispatch = useAppDispatch()
+
+  if (!token) return null
 
   const handleRowClick = () => {
     if (isNFT(token)) dispatch(openModal({ name: 'NFTDetailsModal', props: { nftId: tokenId } }))
@@ -81,7 +80,7 @@ const AssetAmountRow = ({ tokenId, amount, extraAlphForDust }: AssetAmountRowPro
   return (
     <AssetAmountRowStyled onClick={isNFT(token) ? handleRowClick : undefined}>
       <LogoAndName>
-        <AssetLogo tokenId={tokenId} size={30} />
+        <AssetLogo tokenId={tokenId} size={26} />
 
         {(isFT(token) || isNFT(token)) && <TokenName>{token.name}</TokenName>}
 
@@ -99,7 +98,7 @@ const AssetAmountRow = ({ tokenId, amount, extraAlphForDust }: AssetAmountRowPro
 
       {!isNFT(token) && (
         <TokenAmount>
-          <Amount tokenId={tokenId} value={BigInt(amount)} fullPrecision />
+          <Amount tokenId={tokenId} value={BigInt(amount)} fullPrecision {...props} />
           {isFT(token) && <FiatAmount symbol={token.symbol} amount={BigInt(amount)} decimals={token.decimals} />}
         </TokenAmount>
       )}
@@ -126,18 +125,24 @@ const FiatAmountStyled = styled(Amount)`
   font-weight: var(--font-weight-medium);
 `
 
+const CheckAmountsBoxStyled = styled(Box)`
+  display: flex;
+  flex-direction: column;
+`
+
 const AssetAmountRowStyled = styled.div`
   display: flex;
-  padding: 18px 15px;
   align-items: center;
   justify-content: space-between;
   gap: 15px;
+  border-radius: var(--radius-big);
+  padding: var(--spacing-3) 0;
 
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
 `
 
 const TokenName = styled.span`
-  font-size: 14px;
+  font-size: 13px;
   font-weight: var(--fontWeight-medium);
 `
 

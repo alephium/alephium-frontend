@@ -1,24 +1,6 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AnimatePresence, motion } from 'framer-motion'
 import { useState } from 'react'
-import { TwitterPicker } from 'react-color'
+import { CirclePicker } from 'react-color'
 import { useDetectClickOutside } from 'react-detect-click-outside'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -54,17 +36,12 @@ const ColorPicker = ({ value, onChange }: ColorPickerProps) => {
         onClick={handlePopupOpen}
         onKeyDown={(e) => onEnterOrSpace(e, handlePopupOpen)}
       >
-        <Circle color={color} />
+        <Color color={color} />
       </InputAreaStyled>
       <AnimatePresence>
         {isPopupOpen && (
           <Popup {...fadeInOut}>
-            <TwitterPickerStyled
-              color={color}
-              onChangeComplete={onChangeComplete}
-              colors={labelColorPalette}
-              triangle="top-right"
-            />
+            <CirclePicker color={color} onChangeComplete={onChangeComplete} colors={labelColorPalette} />
           </Popup>
         )}
       </AnimatePresence>
@@ -93,12 +70,15 @@ const Popup = styled(motion.div)`
   z-index: 1;
   position: absolute;
   top: calc(var(--inputHeight) + 10px);
+  background-color: ${({ theme }) => theme.bg.background1};
+  padding: 10px;
+  border-radius: var(--radius-big);
+  box-shadow: ${({ theme }) => theme.shadow.secondary};
+  border: 1px solid ${({ theme }) => theme.border.primary};
   right: 0;
 `
 
-const TwitterPickerStyled = styled(TwitterPicker)``
-
-const Circle = styled.div<{ color: string }>`
+const Color = styled.div<{ color: string }>`
   width: 16px;
   height: 16px;
   border-radius: 16px;

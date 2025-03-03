@@ -1,20 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
 import { Info } from 'lucide-react'
 import { memo, useState } from 'react'
@@ -28,12 +11,12 @@ import ToggleSection from '@/components/ToggleSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
+import { showToast } from '@/features/toastMessages/toastMessagesActions'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
-import { showToast } from '@/storage/global/globalActions'
 import { getName } from '@/utils/addresses'
 import { getRandomLabelColor } from '@/utils/colors'
 
@@ -78,14 +61,18 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
         onClose()
       } catch (error) {
         dispatch(
-          showToast({ text: `${t('could_not_save_new_address_one')}: ${error}`, type: 'alert', duration: 'long' })
+          showToast({
+            text: `${t('could_not_save_new_address_one')}: ${error}`,
+            type: 'error',
+            duration: 'long'
+          })
         )
         sendAnalytics({ type: 'error', message: 'Error while saving newly generated address' })
       }
     } catch (error) {
       const message = 'Could not generate address'
       sendAnalytics({ type: 'error', message })
-      dispatch(showToast({ text: `${t(message)}: ${error}`, type: 'alert', duration: 'long' }))
+      dispatch(showToast({ text: `${t(message)}: ${error}`, type: 'error', duration: 'long' }))
     } finally {
       setIsLoading(false)
     }
@@ -108,7 +95,7 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
   )}`
 
   return (
-    <CenteredModal title={title} id={id} isLoading={isLoading}>
+    <CenteredModal title={title} id={id} isLoading={isLoading} hasFooterButtons>
       {!isPassphraseUsed && (
         <Section align="flex-start">
           <AddressMetadataForm
@@ -121,14 +108,14 @@ const NewAddressModal = memo(({ id, title, singleAddress }: ModalBaseProp & NewA
             singleAddress={singleAddress}
           />
           {!singleAddress && (
-            <InfoBox Icon={Info} contrast noBorders>
+            <InfoBox Icon={Info} contrast importance="accent">
               {t('The group number will be automatically be appended to the addresses’ label.')}
             </InfoBox>
           )}
         </Section>
       )}
       {isPassphraseUsed && singleAddress && (
-        <InfoBox contrast noBorders>
+        <InfoBox contrast>
           {t(
             'By default, the address is generated in a random group. You can select the group you want the address to be generated in using the Advanced options.'
           )}

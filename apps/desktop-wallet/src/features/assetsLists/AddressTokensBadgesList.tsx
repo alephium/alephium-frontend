@@ -1,29 +1,10 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash } from '@alephium/shared'
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
 import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
 import SkeletonLoader from '@/components/SkeletonLoader'
-import { TokenBadgeStyleProps } from '@/components/TokenBadge'
-import AddressTokenBadge from '@/features/assetsLists/AddressTokenBadge'
+import TokenBadge, { TokenBadgeStyleProps } from '@/components/TokenBadge'
 
 interface AddressTokensBadgesListProps extends TokenBadgeStyleProps {
   addressHash: AddressHash
@@ -59,7 +40,7 @@ const AddressTokensBadgesList = ({
   return (
     <TokensBadgesListStyled className={className}>
       {displayedStandardTokenIds.map((tokenId) => (
-        <AddressTokenBadge key={tokenId} tokenId={tokenId} addressHash={addressHash} {...badgeProps} />
+        <TokenBadge key={tokenId} tokenId={tokenId} {...badgeProps} />
       ))}
 
       {nbOfAdditionalTokens > 0 && <span>+{nbOfAdditionalTokens}</span>}

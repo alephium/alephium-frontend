@@ -1,25 +1,8 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AssetAmount } from '@alephium/shared'
 import { node } from '@alephium/web3'
 
 import { Address } from '@/types/addresses'
+import { TokenId } from '@/types/tokens'
 
 export interface TransferTxData {
   fromAddress: Address
@@ -29,6 +12,7 @@ export interface TransferTxData {
   gasAmount?: number
   gasPrice?: string
   lockTime?: Date
+  tokenId?: TokenId
 }
 
 export interface CallContractTxData {
@@ -56,7 +40,10 @@ export type TransferTxModalData = PartialTxData<TransferTxData, 'fromAddress'>
 export type CallContractTxModalData = PartialTxData<CallContractTxData, 'fromAddress'>
 export type DeployContractTxModalData = PartialTxData<DeployContractTxData, 'fromAddress'>
 
-export type TransferAddressesTxModalOnSubmitData = PartialTxData<TransferTxData, 'fromAddress' | 'toAddress'>
+export type TransferAddressesTxModalOnSubmitData = PartialTxData<
+  TransferTxData,
+  'fromAddress' | 'toAddress' | 'tokenId'
+>
 
 export type AddressesTxModalData =
   | TransferAddressesTxModalOnSubmitData
@@ -78,6 +65,8 @@ export type CheckTxProps<T> = {
   data: T
   fees: bigint
   onSubmit: () => void
+  onBack: () => void
+  dAppUrl?: string
 }
 
 export type UnsignedTx = {
@@ -99,5 +88,6 @@ export type TxContext = {
   setUnsignedTxId: (txId: string) => void
   setContractAddress: (contractAddress: string) => void
   isSweeping: boolean
-  consolidationRequired: boolean
+  buildExecuteScriptTxResult: node.BuildExecuteScriptTxResult | undefined
+  setBuildExecuteScriptTxResult: (tx: node.BuildExecuteScriptTxResult | undefined) => void
 }

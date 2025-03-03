@@ -1,28 +1,10 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
+import { keyring } from '@alephium/keyring'
 import { AlertTriangle } from 'lucide-react'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from 'styled-components'
 
 import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
-import Button from '@/components/Button'
 import InfoBox from '@/components/InfoBox'
 import { Section } from '@/components/PageComponents/PageContainers'
 import Paragraph from '@/components/Paragraph'
@@ -30,7 +12,7 @@ import useAnalytics from '@/features/analytics/useAnalytics'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import CenteredModal from '@/modals/CenteredModal'
+import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
 import { activeWalletDeleted, walletDeleted } from '@/storage/wallets/walletActions'
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
@@ -54,7 +36,10 @@ const WalletRemovalModal = memo(({ id, walletId, walletName }: ModalBaseProp & W
 
     deletePersistedCache(walletId)
 
-    if (activeWalletId === walletId) clearQueryCache()
+    if (activeWalletId === walletId) {
+      clearQueryCache()
+      keyring.clear()
+    }
 
     dispatch(walletId === activeWalletId ? activeWalletDeleted() : walletDeleted(walletId))
     dispatch(closeModal({ id }))
@@ -63,7 +48,7 @@ const WalletRemovalModal = memo(({ id, walletId, walletName }: ModalBaseProp & W
   }
 
   return (
-    <CenteredModal title={t('Remove wallet "{{ walletName }}"', { walletName })} id={id} focusMode>
+    <CenteredModal title={t('Remove wallet "{{ walletName }}"', { walletName })} id={id} focusMode hasFooterButtons>
       <Section>
         <AlertTriangle size={60} color={theme.global.alert} style={{ marginBottom: 35 }} />
       </Section>
@@ -74,15 +59,16 @@ const WalletRemovalModal = memo(({ id, walletId, walletName }: ModalBaseProp & W
             'Please make sure to have your recovery phrase saved and stored somewhere secure to restore your wallet in the future. Without the recovery phrase, your wallet will be unrecoverable and permanently lost.'
           )}
         />
-        <Paragraph secondary centered>
+        <Paragraph centered>
           <b>{t('Not your keys, not your coins.')}</b>
         </Paragraph>
       </Section>
-      <Section inList>
-        <Button variant="alert" onClick={removeWallet}>
+
+      <ModalFooterButtons>
+        <ModalFooterButton variant="alert" onClick={removeWallet}>
           {t('CONFIRM REMOVAL')}
-        </Button>
-      </Section>
+        </ModalFooterButton>
+      </ModalFooterButtons>
     </CenteredModal>
   )
 })

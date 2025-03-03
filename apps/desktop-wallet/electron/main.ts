@@ -1,47 +1,25 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 
-import { app, BrowserWindow, ipcMain, nativeImage, protocol, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, nativeImage, shell } from 'electron'
 import contextMenu from 'electron-context-menu'
 import isDev from 'electron-is-dev'
 
+import { registerAppProtocol } from './appProtocol'
 import { configureAutoUpdater, handleAutoUpdaterUserActions, setupAutoUpdaterListeners } from './autoUpdater'
 import { setupLedgerDevicePermissions } from './ledger'
 import { setupAppMenu } from './menu'
 import { handleNativeThemeUserActions, setupNativeThemeListeners } from './nativeTheme'
+import { handleOnRampWindows } from './onRamp'
+import { ICON_PATH } from './paths'
 import { IS_RC, isIpcSenderValid, isMac, isWindows } from './utils'
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
-const APP_ROOT = path.join(__dirname, '..')
-const RENDERER_DIST = path.join(APP_ROOT, 'build')
-const VITE_PUBLIC = isDev ? path.join(APP_ROOT, 'public') : RENDERER_DIST
-const ICON_PATH = path.join(VITE_PUBLIC, 'icons', 'logo-48.png')
+import {
+  handleWalletConnectDeepLink,
+  handleWindowsWalletConnectDeepLink,
+  initializeWalletConnectDeepLinkUri,
+  setupWalletConnectDeepLinkIPCHandlers
+} from './walletConnect'
 
 configureAutoUpdater()
-
-// Handle deep linking for alephium://
-const ALEPHIUM = 'alephium'
-const ALEPHIUM_WALLET_CONNECT_DEEP_LINK_PREFIX = `${ALEPHIUM}://wc`
-const ALEPHIUM_WALLET_CONNECT_URI_PREFIX = '?uri='
 
 // See https://github.com/alephium/alephium-frontend/issues/176
 const OLD_APP_NAME = 'alephium-wallet'
@@ -50,14 +28,7 @@ app.setName(OLD_APP_NAME)
 // Expose Garbage Collector flag for manual trigger
 app.commandLine.appendSwitch('js-flags', '--expose-gc')
 
-protocol.registerSchemesAsPrivileged([{ scheme: ALEPHIUM, privileges: { secure: true, standard: true } }])
-if (process.defaultApp) {
-  if (process.argv.length >= 2) {
-    app.setAsDefaultProtocolClient(ALEPHIUM, process.execPath, [path.resolve(process.argv[1])])
-  }
-} else {
-  app.setAsDefaultProtocolClient(ALEPHIUM)
-}
+registerAppProtocol()
 
 contextMenu()
 
@@ -65,16 +36,16 @@ contextMenu()
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: BrowserWindow | null
 
-let deepLinkUri: string | null = null
-
 function createWindow() {
   mainWindow = new BrowserWindow({
     icon: ICON_PATH,
     width: 1200,
     height: 800,
-    minWidth: 1200,
+    minWidth: 900,
     minHeight: 700,
-    titleBarStyle: isWindows ? 'default' : 'hidden',
+    frame: isMac,
+    titleBarStyle: 'hidden',
+    trafficLightPosition: { x: 8, y: 8 },
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       spellcheck: true
@@ -87,10 +58,13 @@ function createWindow() {
     mainWindow.setIcon(nativeImage.createFromPath(ICON_PATH))
   }
 
-  if (VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(VITE_DEV_SERVER_URL)
+  if (process.env['VITE_DEV_SERVER_URL']) {
+    mainWindow.loadURL(process.env['VITE_DEV_SERVER_URL'])
   } else {
-    mainWindow.loadFile(path.join(RENDERER_DIST, 'index.html'))
+    // mainWindow.loadURL(`${APP_PROTOCOL}://${RENDERER_PATH}/index.html`)
+    // TODO: Once https://github.com/alephium/alephium-frontend/issues/176 is fixed, remove following line in favor of
+    // the one above.
+    mainWindow.loadFile(path.join(path.join(path.join(__dirname, '..'), 'build'), 'index.html'))
   }
 
   if (isDev || IS_RC) {
@@ -114,15 +88,7 @@ function createWindow() {
 
   setupLedgerDevicePermissions(mainWindow)
 
-  if (!isMac) {
-    if (process.argv.length > 1) {
-      const url = process.argv.find((arg) => arg.startsWith(ALEPHIUM_WALLET_CONNECT_DEEP_LINK_PREFIX))
-
-      if (url) {
-        deepLinkUri = extractWalletConnectUri(url)
-      }
-    }
-  }
+  initializeWalletConnectDeepLinkUri()
 }
 
 if (!app.requestSingleInstanceLock()) {
@@ -136,15 +102,7 @@ app.on('second-instance', (_event, args) => {
     if (mainWindow.isMinimized()) mainWindow.restore()
     mainWindow.focus()
 
-    // Handle deep-link for Windows
-    if (args.length > 1) {
-      const url = args.find((arg) => arg.startsWith(ALEPHIUM_WALLET_CONNECT_DEEP_LINK_PREFIX))
-
-      if (url) {
-        deepLinkUri = extractWalletConnectUri(url)
-        mainWindow?.webContents.send('wc:connect', deepLinkUri)
-      }
-    }
+    handleWindowsWalletConnectDeepLink(mainWindow, args)
   }
 })
 
@@ -158,13 +116,22 @@ app.on('ready', async function () {
       REACT_DEVELOPER_TOOLS,
       REDUX_DEVTOOLS
     } = await import('electron-devtools-installer')
-    await installExtension(REACT_DEVELOPER_TOOLS)
-    await installExtension(REDUX_DEVTOOLS)
+
+    try {
+      await installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
+    } catch (e) {
+      console.error('Failed to install devtools:', e)
+    }
   }
+
+  // TODO: Once https://github.com/alephium/alephium-frontend/issues/176 is fixed, uncomment following line
+  // handleAppProtocolRequests()
 
   handleNativeThemeUserActions()
 
   handleAutoUpdaterUserActions()
+
+  handleOnRampWindows(mainWindow)
 
   ipcMain.handle('app:hide', ({ senderFrame }) => {
     if (!isIpcSenderValid(senderFrame)) return null
@@ -221,16 +188,30 @@ app.on('ready', async function () {
     app.exit()
   })
 
-  ipcMain.handle('wc:getDeepLinkUri', ({ senderFrame }) => {
-    if (!isIpcSenderValid(senderFrame)) return null
+  setupWalletConnectDeepLinkIPCHandlers()
 
-    return deepLinkUri
+  ipcMain.handle('window:minimize', () => {
+    mainWindow?.minimize()
   })
 
-  ipcMain.handle('wc:resetDeepLinkUri', ({ senderFrame }) => {
-    if (!isIpcSenderValid(senderFrame)) return null
+  ipcMain.handle('window:maximize', () => {
+    if (mainWindow?.isMaximized()) {
+      mainWindow.unmaximize()
+    } else {
+      mainWindow?.maximize()
+    }
+  })
 
-    deepLinkUri = null
+  ipcMain.handle('window:close', () => {
+    mainWindow?.close()
+  })
+
+  mainWindow?.on('maximize', () => {
+    mainWindow?.webContents.send('window:maximized', true)
+  })
+
+  mainWindow?.on('unmaximize', () => {
+    mainWindow?.webContents.send('window:maximized', false)
   })
 
   createWindow()
@@ -249,15 +230,7 @@ app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
 
-app.on('open-url', (_, url) => {
-  if (url.startsWith(ALEPHIUM_WALLET_CONNECT_DEEP_LINK_PREFIX)) {
-    deepLinkUri = extractWalletConnectUri(url)
-    if (mainWindow) mainWindow?.webContents.send('wc:connect', deepLinkUri)
-  }
-})
-
-const extractWalletConnectUri = (url: string) =>
-  url.substring(url.indexOf(ALEPHIUM_WALLET_CONNECT_URI_PREFIX) + ALEPHIUM_WALLET_CONNECT_URI_PREFIX.length)
+app.on('open-url', (_, url) => handleWalletConnectDeepLink(url, mainWindow))
 
 // Handle window controls via IPC
 ipcMain.on('shell:open', () => {

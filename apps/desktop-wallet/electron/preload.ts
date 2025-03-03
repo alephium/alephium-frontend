@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { ProxySettings } from '@alephium/shared'
 import { IpcRendererEvent, NativeTheme } from 'electron/main'
 import { ProgressInfo, UpdateDownloadedEvent } from 'electron-updater'
@@ -80,7 +62,24 @@ contextBridge.exposeInMainWorld('electron', {
     show: () => ipcRenderer.invoke('app:show'),
     getSystemLanguage: () => ipcRenderer.invoke('app:getSystemLanguage'),
     getSystemRegion: () => ipcRenderer.invoke('app:getSystemRegion'),
+    openOnRampServiceWindow: ({ url, targetLocation }: { url: string; targetLocation: string }) =>
+      ipcRenderer.invoke('app:openOnRampServiceWindow', { url, targetLocation }),
+    onOnRampTargetLocationReached: (callback: () => void) => {
+      const sanitizedCallback = (_event: IpcRendererEvent) => callback()
+      ipcRenderer.on('target-location-reached', sanitizedCallback)
+      return () => ipcRenderer.removeListener('target-location-reached', sanitizedCallback)
+    },
     setProxySettings: (proxySettings: ProxySettings) => ipcRenderer.invoke('app:setProxySettings', proxySettings),
     restart: () => ipcRenderer.invoke('app:restart')
+  },
+  window: {
+    minimize: () => ipcRenderer.invoke('window:minimize'),
+    maximize: () => ipcRenderer.invoke('window:maximize'),
+    close: () => ipcRenderer.invoke('window:close'),
+    onMaximizedChange: (callback: (maximized: boolean) => void) => {
+      const subscription = (_event: IpcRendererEvent, maximized: boolean) => callback(maximized)
+      ipcRenderer.on('window:maximized', subscription)
+      return () => ipcRenderer.removeListener('window:maximized', subscription)
+    }
   }
 })

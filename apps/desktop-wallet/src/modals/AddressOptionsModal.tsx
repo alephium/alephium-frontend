@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { ALPH } from '@alephium/token-list'
 import { Sparkles } from 'lucide-react'
 import { memo, useState } from 'react'
@@ -26,7 +8,7 @@ import useFetchAddressBalancesAlph from '@/api/apiDataHooks/address/useFetchAddr
 import AddressMetadataForm from '@/components/AddressMetadataForm'
 import Amount from '@/components/Amount'
 import Button from '@/components/Button'
-import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
+import HashEllipsed from '@/components/HashEllipsed'
 import KeyValueInput from '@/components/Inputs/InlineLabelValueInput'
 import ForgetAddressSection from '@/features/addressDeletion/ForgetAddressSection'
 import useAnalytics from '@/features/analytics/useAnalytics'
@@ -102,20 +84,22 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
     : t('To remove this address from being the default address, you must set another one as default first.')
 
   return (
-    <CenteredModal title={t('Address options')} subtitle={getName(address)} id={id}>
+    <CenteredModal
+      title={t('Address options')}
+      subtitle={<HashEllipsed hash={address.hash} />}
+      id={id}
+      hasFooterButtons
+    >
       {!isPassphraseUsed && (
-        <>
-          <AddressMetadataForm
-            label={addressLabel}
-            setLabel={setAddressLabel}
-            defaultAddressMessage={defaultAddressMessage}
-            isDefault={isDefaultAddress}
-            setIsDefault={setIsDefaultAddress}
-            isDefaultAddressToggleEnabled={isDefaultAddressToggleEnabled}
-            singleAddress
-          />
-          <HorizontalDivider narrow />
-        </>
+        <AddressMetadataForm
+          label={addressLabel}
+          setLabel={setAddressLabel}
+          defaultAddressMessage={defaultAddressMessage}
+          isDefault={isDefaultAddress}
+          setIsDefault={setIsDefaultAddress}
+          isDefaultAddressToggleEnabled={isDefaultAddressToggleEnabled}
+          singleAddress
+        />
       )}
 
       <KeyValueInput
@@ -145,11 +129,7 @@ const AddressOptionsModal = memo(({ id, addressHash }: AddressModalProps) => {
         }
       />
 
-      <HorizontalDivider narrow />
-
       {address.index !== 0 && <ForgetAddressSection addressHash={addressHash} addressName={getName(address)} />}
-
-      <HorizontalDivider narrow />
 
       <ModalFooterButtons>
         <ModalFooterButton role="secondary" onClick={onClose}>

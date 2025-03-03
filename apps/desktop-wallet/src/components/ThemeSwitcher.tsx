@@ -1,22 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import { colord } from 'colord'
 import { motion } from 'framer-motion'
 import { Moon, Sun } from 'lucide-react'
 import styled from 'styled-components'
@@ -30,10 +11,10 @@ interface ThemeSwitcherProps {
   className?: string
 }
 
-const switcherSize = 32
+const switcherSize = 34
 
-const lightColor = '#fab01e'
-const darkColor = '#422c08'
+const lightColor = '#ffc95c'
+const darkColor = '#ffb623'
 
 const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
   const theme = useAppSelector((state) => state.global.theme)
@@ -56,11 +37,11 @@ const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
       onKeyDown={(e) => onEnterOrSpace(e, handleThemeToggle)}
     >
       <ThemeRotatingContainer animate={{ rotate: isDark ? 0 : 180 }} initial={{ rotate: isDark ? 0 : 180 }}>
-        <ThemeIconContainer style={{ backgroundColor: colord(darkColor).alpha(0.4).toHex() }}>
-          <Moon size={20} stroke={lightColor} />
+        <ThemeIconContainer>
+          <Moon size={16} stroke={lightColor} />
         </ThemeIconContainer>
-        <ThemeIconContainer style={{ backgroundColor: colord(lightColor).alpha(0.1).toHex() }}>
-          <Sun size={20} stroke={lightColor} />
+        <ThemeIconContainer>
+          <Sun size={16} stroke={darkColor} />
         </ThemeIconContainer>
       </ThemeRotatingContainer>
     </div>

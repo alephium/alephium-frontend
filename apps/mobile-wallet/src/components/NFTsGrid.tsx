@@ -1,82 +1,95 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash, NFT } from '@alephium/shared'
-import { useMemo } from 'react'
+import { FlashList, FlashListProps } from '@shopify/flash-list'
+import { chunk, groupBy } from 'lodash'
+import { ForwardedRef, forwardRef, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Dimensions } from 'react-native'
+import { ActivityIndicator, NativeScrollEvent, NativeSyntheticEvent } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import AppText from '~/components/AppText'
-import { ModalContentProps, ModalFlatListContent } from '~/components/layout/ModalContent'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import NFTThumbnail from '~/components/NFTThumbnail'
+import NftsCollectionTitle from '~/features/assetsDisplay/nftsDisplay/NftsCollectionTitle'
 import { useAppSelector } from '~/hooks/redux'
-import { makeSelectAddressesNFTs } from '~/store/addressesSlice'
+import { makeSelectAddressesNFTs } from '~/store/addresses/addressesSelectors'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 
-interface NFTsGridProps extends ModalContentProps {
+interface NFTsGridProps extends Omit<Partial<FlashListProps<NFT[] | NFT['collectionId']>>, 'contentContainerStyle'> {
   addressHash?: AddressHash
   nfts?: NFT[]
   nftsPerRow?: number
   nftSize?: number
+  onScroll?: (e: NativeSyntheticEvent<NativeScrollEvent>) => void
 }
 
-const gap = 12
-const screenPadding = 20
+const containerHorizontalPadding = DEFAULT_MARGIN
 
-const NFTsGrid = ({ addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, ...props }: NFTsGridProps) => {
-  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
-  const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
-  const theme = useTheme()
-  const { t } = useTranslation()
+const NFTsGrid = forwardRef(
+  (
+    { addressHash, nfts: nftsProp, nftSize, nftsPerRow = 3, scrollEnabled, ...props }: NFTsGridProps,
+    ref: ForwardedRef<FlashList<NFT[] | NFT['collectionId']>>
+  ) => {
+    const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
+    const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
+    const isLoadingNfts = useAppSelector((s) => s.nfts.loading)
+    const theme = useTheme()
+    const { t } = useTranslation()
 
-  const data = nftsProp ?? nfts
-  const columns = data.length < nftsPerRow ? data.length : nftsPerRow
-  const { width: windowWidth } = Dimensions.get('window')
-  const totalGapSize = (columns - 1) * gap + screenPadding * 2
-  const size = nftSize ?? (windowWidth - totalGapSize) / columns
+    const data = Object.entries(groupBy(nftsProp ?? nfts, 'collectionId'))
+      .map(([collectionId, nfts]) => [collectionId, ...chunk(nfts, nftsPerRow)])
+      .flat()
 
-  return (
-    <ModalFlatListContent
-      data={data}
-      verticalGap
-      keyExtractor={(item) => item.id}
-      renderItem={({ item: nft }) => <NFTThumbnail key={nft.id} nftId={nft.id} size={size} />}
-      numColumns={columns}
-      columnWrapperStyle={columns > 1 ? { justifyContent: 'flex-start', gap: 15 } : undefined}
-      ListEmptyComponent={
-        <NoNFTsMessage>
-          <AppText color={theme.font.tertiary}>{t('No NFTs yet')} 🖼️</AppText>
-        </NoNFTsMessage>
-      }
-      {...props}
-    />
-  )
-}
+    return (
+      <FlashList
+        {...props}
+        data={data}
+        ref={ref}
+        overScrollMode="auto"
+        keyExtractor={(item) => (typeof item === 'string' ? item : item[0].id)}
+        getItemType={(item) => (typeof item === 'string' ? 'sectionHeader' : 'row')}
+        renderItem={({ item, index }) =>
+          typeof item === 'string' ? (
+            <NftsCollectionTitle collectionId={item} isFirst={index === 0} />
+          ) : (
+            <NftsRow nftsPerRow={nftsPerRow}>
+              {item.map((nft) => (
+                <NFTThumbnailContainer key={nft.id}>
+                  <NFTThumbnail nftId={nft.id} />
+                </NFTThumbnailContainer>
+              ))}
+            </NftsRow>
+          )
+        }
+        contentContainerStyle={{ paddingHorizontal: containerHorizontalPadding, paddingBottom: 70 }}
+        estimatedItemSize={props.estimatedItemSize || 64}
+        ListEmptyComponent={
+          isLoadingNfts ? (
+            <EmptyPlaceholder>
+              <AppText color={theme.font.tertiary}>👀</AppText>
+              <ActivityIndicator />
+            </EmptyPlaceholder>
+          ) : (
+            <EmptyPlaceholder>
+              <AppText size={32}>👻</AppText>
+              <AppText color={theme.font.secondary}>{t('No NFTs yet')}</AppText>
+            </EmptyPlaceholder>
+          )
+        }
+      />
+    )
+  }
+)
 
 export default NFTsGrid
 
-const NoNFTsMessage = styled.View`
-  text-align: center;
-  justify-content: center;
+const NFTThumbnailContainer = styled.View`
   align-items: center;
-  flex: 1;
-  padding: 20px;
+  justify-content: center;
   border-radius: 9px;
-  border: 2px dashed ${({ theme }) => theme.border.primary};
-  margin: 15px;
+  padding: 5px;
+`
+
+const NftsRow = styled.View<{ nftsPerRow: number }>`
+  flex-direction: row;
+  aspect-ratio: ${({ nftsPerRow }) => nftsPerRow / 1};
 `

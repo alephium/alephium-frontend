@@ -1,30 +1,11 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { memo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { StyleProp, ViewStyle } from 'react-native'
+import { Keyboard, StyleProp, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 
-import AppText from '~/components/AppText'
 import ModalWithBackdrop from '~/components/ModalWithBackdrop'
-import HighlightRow from '~/components/Row'
-import { BORDER_RADIUS, INPUTS_HEIGHT } from '~/style/globalStyle'
+import Row from '~/components/Row'
+import { INPUTS_HEIGHT } from '~/style/globalStyle'
 import { labelColorPalette } from '~/utils/colors'
 
 interface ColorPickerProps {
@@ -42,12 +23,16 @@ const ColorPicker = ({ value, onChange, style }: ColorPickerProps) => {
     setIsModalVisible(false)
   }
 
+  const handleRowPress = () => {
+    setIsModalVisible(!isModalVisible)
+    Keyboard.dismiss()
+  }
+
   return (
     <>
-      <HighlightRow isInput style={style} onPress={() => setIsModalVisible(!isModalVisible)}>
-        <AppText>{t('Color')}</AppText>
+      <Row style={style} title={t('Color')} onPress={handleRowPress}>
         <Dot color={value} />
-      </HighlightRow>
+      </Row>
       <ModalWithBackdrop
         animationType="fade"
         visible={isModalVisible}
@@ -64,12 +49,7 @@ const ColorPicker = ({ value, onChange, style }: ColorPickerProps) => {
   )
 }
 
-export default styled(ColorPicker)`
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: ${BORDER_RADIUS}px;
-`
+export default ColorPicker
 
 const Dot = styled.View<{ color?: string }>`
   height: 15px;

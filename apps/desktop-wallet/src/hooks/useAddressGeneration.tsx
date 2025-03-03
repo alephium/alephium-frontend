@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { keyring, NonSensitiveAddressData } from '@alephium/keyring'
 import { AddressMetadata } from '@alephium/shared'
 import { TOTAL_NUMBER_OF_GROUPS } from '@alephium/web3'
@@ -26,6 +8,7 @@ import { discoverAndCacheActiveAddresses } from '@/api/addresses'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import { useLedger } from '@/features/ledger/useLedger'
 import { generateLedgerAddressesFromMetadata, LedgerAlephium } from '@/features/ledger/utils'
+import { showToast } from '@/features/toastMessages/toastMessagesActions'
 import { useAppDispatch } from '@/hooks/redux'
 import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import {
@@ -36,7 +19,6 @@ import {
 } from '@/storage/addresses/addressesActions'
 import { saveNewAddresses } from '@/storage/addresses/addressesStorageUtils'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
-import { showToast } from '@/storage/global/globalActions'
 import { AddressBase } from '@/types/addresses'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { getInitialAddressSettings } from '@/utils/addresses'
@@ -50,6 +32,7 @@ interface DiscoverUsedAddressesProps {
   walletId?: string
   skipIndexes?: number[]
   enableLoading?: boolean
+  enableToast?: boolean
 }
 
 interface GenerateOneAddressPerGroupProps {
@@ -104,13 +87,17 @@ const useAddressGeneration = () => {
       } catch (error) {
         sendAnalytics({ type: 'error', message: 'Could not save new addresses' })
         dispatch(
-          showToast({ text: `${t('could_not_save_new_address_other')}: ${error}`, type: 'alert', duration: 'long' })
+          showToast({
+            text: `${t('could_not_save_new_address_other')}: ${error}`,
+            type: 'error',
+            duration: 'long'
+          })
         )
       }
     } catch (error) {
       const message = 'Could not generate one address per group'
       sendAnalytics({ type: 'error', message })
-      dispatch(showToast({ text: `${t(message)}: ${error}`, type: 'alert', duration: 'long' }))
+      dispatch(showToast({ text: `${t(message)}: ${error}`, type: 'error', duration: 'long' }))
     }
   }
 
@@ -173,7 +160,8 @@ const useAddressGeneration = () => {
 
   const discoverAndSaveUsedAddresses = async ({
     skipIndexes,
-    enableLoading = true
+    enableLoading = true,
+    enableToast = true
   }: DiscoverUsedAddressesProps = {}) => {
     dispatch(addressDiscoveryStarted(enableLoading))
 
@@ -192,13 +180,17 @@ const useAddressGeneration = () => {
 
       try {
         saveNewAddresses(newAddresses)
-        dispatch(
-          showToast({
-            text: t('Active address discovery completed. Addresses added: {{ count }}', { count: newAddresses.length }),
-            type: 'info',
-            duration: 'long'
-          })
-        )
+
+        if (enableToast)
+          dispatch(
+            showToast({
+              text: t('Active address discovery completed. Addresses added: {{ count }}', {
+                count: newAddresses.length
+              }),
+              type: 'info',
+              duration: 'long'
+            })
+          )
       } catch {
         sendAnalytics({ type: 'error', message: 'Error while saving newly discovered address' })
       }

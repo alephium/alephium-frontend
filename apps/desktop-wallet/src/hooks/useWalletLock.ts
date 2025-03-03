@@ -1,26 +1,11 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { EncryptedMnemonicVersion, keyring, NonSensitiveAddressData } from '@alephium/keyring'
+import { sleep } from '@alephium/web3'
 import { useCallback } from 'react'
 
 import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import useAnalytics from '@/features/analytics/useAnalytics'
+import { hiddenTokensLoadedFromStorage } from '@/features/hiddenTokens/hiddenTokensActions'
+import { hiddenTokensStorage } from '@/features/hiddenTokens/hiddenTokensPersistentStorage'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAddressGeneration from '@/hooks/useAddressGeneration'
 import { addressMetadataStorage } from '@/storage/addresses/addressMetadataPersistentStorage'
@@ -89,6 +74,13 @@ const useWalletLock = () => {
     }
 
     try {
+      const hiddenTokens = hiddenTokensStorage.load(encryptedWallet.id)
+      dispatch(hiddenTokensLoadedFromStorage(hiddenTokens))
+    } catch {
+      sendAnalytics({ type: 'error', message: 'Loading hidden assets failed' })
+    }
+
+    try {
       initialAddress = keyring.generateAndCacheAddress({ addressIndex: 0 })
     } catch (e) {
       console.error(e)
@@ -125,9 +117,12 @@ const useWalletLock = () => {
 
     dispatch(event === 'unlock' ? walletUnlocked(payload) : walletSwitched(payload))
 
-    dispatch(toggleAppLoading(false))
-
     afterUnlock()
+
+    // Navigating to the Overview screen freezes the app. This is because the React components need some time to load.
+    // We could use Suspence to display some placeholder content until all components of the Overview page have been
+    // rendered instead of freezing the app. For now, by delaying the hiding of the loader, we achieve a similar effect.
+    sleep(2000).then(() => dispatch(toggleAppLoading(false)))
 
     encryptedWallet = null
     passphrase = ''

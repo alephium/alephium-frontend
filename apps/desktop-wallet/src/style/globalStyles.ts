@@ -1,29 +1,12 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
+import { colord } from 'colord'
 import { createGlobalStyle } from 'styled-components'
 
 import resets from '@/style/resets'
-import tags from '@/style/tags'
 
-export const appHeaderHeightPx = 60
-export const walletSidebarWidthPx = 75
+export const appHeaderHeightPx = 40
+export const walletSidebarWidthPx = 69
 export const messagesLeftMarginPx = 70
+export const sidebarExpandThresholdPx = 1100
 
 const electronWindowDimensions = `
   height: 100%;
@@ -48,19 +31,19 @@ export const GlobalStyle = createGlobalStyle`
 
     --radius-tiny: 4px;
     --radius-small: 7px;
-    --radius-medium: 9px;
-    --radius-big: 12px;
+    --radius-medium: 8px;
+    --radius-big: 10px;
     --radius-huge: 16px;
     --radius-full: 100%;
 
     --fontWeight-normal: 400;
     --fontWeight-medium: 500;
-    --fontWeight-semiBold: 600;
-    --fontWeight-bold: 700;
+    --fontWeight-semiBold: 550;
+    --fontWeight-bold: 650;
 
-    --inputHeight: 55px;
-    --tableCellHeight: 47px;
-    --toggleWidth: 52px;
+    --inputHeight: 36px;
+    --tableCellHeight: 42px;
+    --toggleWidth: 46px;
   }
 
   html {
@@ -69,10 +52,9 @@ export const GlobalStyle = createGlobalStyle`
 
   body {
     color: ${({ theme }) => theme.font.primary};
-    background-color: ${({ theme }) => theme.bg.primary};
+    background-color: transparent;
+    font-weight: var(--fontWeight-medium);
   }
-
-  ${tags}
 
   .skeleton-loader {
     background-image: linear-gradient(-90deg, rgba(0, 0, 0, 0.05), rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.05));
@@ -89,13 +71,14 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
-  // Charts custom styling (can't do that in JS apparently)
-  .apexcharts-marker {
-    transition: none !important;
-  }
-
-  .apexcharts-tooltip {
-    display: none !important;
+  // Custom scrollbars theme
+  .rcs-inner-handle {
+    color: white;
+    width: 5px;
+    background-color: ${({ theme }) =>
+      colord(theme.font.tertiary)
+        .alpha(theme.name === 'light' ? 0.1 : 0.15)
+        .toHex()} !important;
   }
 `
 

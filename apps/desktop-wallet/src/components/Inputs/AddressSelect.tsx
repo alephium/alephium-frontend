@@ -1,30 +1,11 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash } from '@alephium/shared'
-import { MoreVertical } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import { inputDefaultStyle, InputLabel, InputProps } from '@/components/Inputs'
-import { MoreIcon, SelectContainer } from '@/components/Inputs/Select'
-import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
+import { SelectOutterContainer } from '@/components/Inputs/Select'
+import SelectMoreIcon from '@/components/Inputs/SelectMoreIcon'
 import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
@@ -79,7 +60,6 @@ function AddressSelect({
   return (
     <>
       <AddressSelectContainer
-        variants={sectionChildrenVariants}
         animate={canBeAnimated ? (!disabled ? 'shown' : 'disabled') : false}
         onAnimationComplete={() => setCanBeAnimated(true)}
         custom={disabled}
@@ -90,16 +70,8 @@ function AddressSelect({
         simpleMode={simpleMode}
         noMargin={noMargin}
       >
-        {label && (
-          <InputLabel isElevated={!!selectedAddress} htmlFor={id}>
-            {label}
-          </InputLabel>
-        )}
-        {!disabled && !simpleMode && (
-          <MoreIcon>
-            <MoreVertical size={16} />
-          </MoreIcon>
-        )}
+        {label && <InputLabel isElevated={!!selectedAddress}>{label}</InputLabel>}
+        {!disabled && !simpleMode && <SelectMoreIcon />}
         <ClickableInput
           type="button"
           tabIndex={0}
@@ -110,7 +82,7 @@ function AddressSelect({
           value={selectedAddress}
           label={label}
         >
-          <AddressBadge addressHash={selectedAddress} appendHash />
+          <AddressBadge addressHash={selectedAddress} appendHash truncate />
         </ClickableInput>
       </AddressSelectContainer>
       <ModalPortal>
@@ -130,7 +102,7 @@ function AddressSelect({
 
 export default AddressSelect
 
-const AddressSelectContainer = styled(SelectContainer)<Pick<AddressSelectProps, 'disabled' | 'simpleMode'>>`
+const AddressSelectContainer = styled(SelectOutterContainer)<Pick<AddressSelectProps, 'disabled' | 'simpleMode'>>`
   ${({ disabled }) =>
     disabled &&
     css`
@@ -148,7 +120,7 @@ const AddressSelectContainer = styled(SelectContainer)<Pick<AddressSelectProps, 
 
 const ClickableInput = styled.div<InputProps & Pick<AddressSelectProps, 'simpleMode'>>`
   ${({ isValid, Icon, simpleMode, value, label }) =>
-    inputDefaultStyle(isValid || !!Icon, !!value, !!label, simpleMode ? 'normal' : 'big', false, true)};
+    inputDefaultStyle(isValid || !!Icon, !!value, !!label, simpleMode ? 'normal' : 'big', true)};
   display: flex;
   align-items: center;
   padding-right: 50px;

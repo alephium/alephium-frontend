@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash, getHumanReadableError } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { node } from '@alephium/web3'
@@ -34,7 +16,7 @@ import { useLedger } from '@/features/ledger/useLedger'
 import { closeModal } from '@/features/modals/modalActions'
 import { AddressModalBaseProp, ModalBaseProp } from '@/features/modals/modalTypes'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useFetchAddressesHashesWithBalance, useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
+import { useFetchAddressesHashesSortedByLastUse, useFetchAddressesHashesWithBalance } from '@/hooks/useAddresses'
 import { useUnsortedAddresses } from '@/hooks/useUnsortedAddresses'
 import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { selectAddressByHash, selectDefaultAddress } from '@/storage/addresses/addressesSelectors'
@@ -56,7 +38,7 @@ const AddressSweepModal = memo(
     const { t } = useTranslation()
     const dispatch = useAppDispatch()
     const addresses = useUnsortedAddresses()
-    const { data: allAddressHashes } = useFetchSortedAddressesHashes()
+    const { data: allAddressHashes } = useFetchAddressesHashesSortedByLastUse()
     const { sendAnalytics } = useAnalytics()
     const fromAddress = useAppSelector((s) => selectAddressByHash(s, addressHash))
     const defaultAddress = useAppSelector(selectDefaultAddress)
@@ -160,6 +142,7 @@ const AddressSweepModal = memo(
         title={!isUtxoConsolidation ? t`Sweep address` : t`Consolidate UTXOs`}
         id={id}
         isLoading={isLoading}
+        hasFooterButtons
       >
         <Content>
           <AddressSelect
@@ -187,7 +170,7 @@ const AddressSweepModal = memo(
             </InfoBox>
           ) : (
             <>
-              <InfoBox Icon={Info} contrast noBorders>
+              <InfoBox Icon={Info} contrast>
                 <Trans
                   t={t}
                   i18nKey="sweepOperationFromTo"

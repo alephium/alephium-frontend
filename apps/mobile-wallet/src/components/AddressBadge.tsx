@@ -1,41 +1,23 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash } from '@alephium/shared'
-import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import { Pressable, PressableProps, StyleProp, TextStyle, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import AddressColorSymbol from '~/components/AddressColorSymbol'
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
 import { useAppSelector } from '~/hooks/redux'
-import DefaultAddressBadge from '~/images/DefaultAddressBadge'
-import { selectContactByHash } from '~/store/addresses/addressesSelectors'
-import { selectAddressByHash } from '~/store/addressesSlice'
+import { selectAddressByHash, selectContactByHash } from '~/store/addresses/addressesSelectors'
 import { copyAddressToClipboard } from '~/utils/addresses'
-import { stringToColour } from '~/utils/colors'
 
 interface AddressBadgeProps extends PressableProps {
   addressHash: AddressHash
   hideSymbol?: boolean
   textStyle?: StyleProp<TextStyle>
   color?: string
+  fontSize?: number
   canCopy?: boolean
   showCopyBtn?: boolean
+  showHash?: boolean
   style?: StyleProp<ViewStyle>
 }
 
@@ -45,7 +27,9 @@ const AddressBadge = ({
   textStyle,
   color,
   canCopy = true,
+  fontSize,
   showCopyBtn,
+  showHash,
   ...props
 }: AddressBadgeProps) => {
   const theme = useTheme()
@@ -54,6 +38,12 @@ const AddressBadge = ({
 
   const textColor = color || theme.font.primary
 
+  const Hash = (
+    <Label truncate ellipsizeMode="middle" style={[textStyle, { maxWidth: 110 }]} color={textColor} size={fontSize}>
+      {addressHash}
+    </Label>
+  )
+
   return (
     <Pressable
       onLongPress={() => canCopy && !showCopyBtn && copyAddressToClipboard(addressHash)}
@@ -61,49 +51,36 @@ const AddressBadge = ({
       {...props}
     >
       {address ? (
-        <>
-          {!hideSymbol && (
-            <Symbol>
-              {address.settings.isDefault ? (
-                <DefaultAddressBadge size={16} color={address.settings.color} />
-              ) : (
-                <Dot color={address.settings.color} />
-              )}
-            </Symbol>
-          )}
+        <AddressBadgeContainer>
+          {!hideSymbol && <AddressColorSymbol addressHash={addressHash} size={16} />}
           {address.settings.label ? (
-            <Label numberOfLines={1} style={[textStyle]} color={textColor}>
-              {address.settings.label}
-            </Label>
+            <>
+              <Label truncate style={textStyle} color={textColor} size={fontSize}>
+                {address.settings.label}
+              </Label>
+              {showHash && <View style={{ opacity: 0.5 }}>{Hash}</View>}
+            </>
           ) : (
-            <Label numberOfLines={1} ellipsizeMode="middle" style={[textStyle]} color={textColor}>
-              {address.hash}
-            </Label>
+            Hash
           )}
-        </>
+        </AddressBadgeContainer>
       ) : contact ? (
-        <>
-          {!hideSymbol && (
-            <Symbol>
-              <Dot color={stringToColour(contact.address)} />
-            </Symbol>
-          )}
-          <Label numberOfLines={1} style={[textStyle]} color={textColor}>
+        <AddressBadgeContainer>
+          {!hideSymbol && <AddressColorSymbol addressHash={contact.address} size={16} />}
+          <Label truncate style={textStyle} color={textColor} size={fontSize}>
             {contact.name}
           </Label>
-        </>
+        </AddressBadgeContainer>
       ) : (
-        <Label numberOfLines={1} ellipsizeMode="middle" style={[textStyle]} color={textColor}>
-          {addressHash}
-        </Label>
+        Hash
       )}
       {showCopyBtn && address?.hash && (
         <CopyAddressButton
-          onPress={() => copyAddressToClipboard(address?.hash)}
+          onPress={() => copyAddressToClipboard(address.hash)}
           iconProps={{ name: 'clipboard' }}
           type="transparent"
           color={color}
-          round
+          squared
           compact
         />
       )}
@@ -116,15 +93,10 @@ export default styled(AddressBadge)`
   align-items: center;
 `
 
-const Symbol = styled.View`
-  margin-right: 5px;
-`
-
-const Dot = styled.View<{ color?: string }>`
-  width: 10px;
-  height: 10px;
-  border-radius: 10px;
-  background-color: ${({ color, theme }) => color || theme.font.primary};
+const AddressBadgeContainer = styled.View`
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
 `
 
 const Label = styled(AppText)`

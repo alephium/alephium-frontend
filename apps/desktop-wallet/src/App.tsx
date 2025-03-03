@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
 import { useInitializeThrottledClient } from '@alephium/shared-react'
 import { memo, ReactNode, useCallback, useEffect } from 'react'
@@ -23,26 +5,26 @@ import styled, { css, ThemeProvider } from 'styled-components'
 
 import PersistedQueryCacheVersionStorage from '@/api/persistedCacheVersionStorage'
 import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
+import AnimatedBackground from '@/components/AnimatedBackground'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
-import SnackbarManager from '@/components/SnackbarManager'
 import SplashScreen from '@/components/SplashScreen'
 import useAnalytics from '@/features/analytics/useAnalytics'
 import useTrackUserSettings from '@/features/analytics/useTrackUserSettings'
-import AutoUpdateSnackbar from '@/features/autoUpdate/AutoUpdateSnackbar'
+import { languageOptions } from '@/features/localization/languages'
+import { systemLanguageMatchFailed, systemLanguageMatchSucceeded } from '@/features/localization/localizationActions'
+import useRegionOptions from '@/features/settings/regionSettings/useRegionOptions'
 import {
   localStorageGeneralSettingsMigrated,
-  systemLanguageMatchFailed,
-  systemLanguageMatchSucceeded,
   systemRegionMatchFailed,
   systemRegionMatchSucceeded
 } from '@/features/settings/settingsActions'
-import { languageOptions } from '@/features/settings/settingsConstants'
-import useRegionOptions from '@/features/settings/useRegionOptions'
 import { darkTheme, lightTheme } from '@/features/theme/themes'
+import ToastMessagesModal from '@/features/toastMessages/ToastMessagesModal'
 import { WalletConnectContextProvider } from '@/features/walletConnect/walletConnectContext'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'
 import useAutoLock from '@/hooks/useAutoLock'
+import useWalletLock from '@/hooks/useWalletLock'
 import AppModals from '@/modals/AppModals'
 import Router from '@/routes'
 import {
@@ -73,20 +55,17 @@ const App = memo(() => {
   return (
     <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
       <GlobalStyle />
-
       <SplashScreen />
-
       <WalletConnectContextProvider>
         <AppContainer>
           <CenteredSection>
+            <LoginAnimatedBackground />
             <Router />
           </CenteredSection>
         </AppContainer>
-
         <AppModals />
       </WalletConnectContextProvider>
-      <SnackbarManager />
-      <AutoUpdateSnackbar />
+      <ToastMessagesModal />
       <AppSpinner />
     </ThemeProvider>
   )
@@ -264,3 +243,11 @@ const AppContainerStyled = styled.div<{ showDevIndication: boolean }>`
       border: 5px solid ${theme.global.valid};
     `};
 `
+
+const LoginAnimatedBackground = () => {
+  const { isWalletUnlocked } = useWalletLock()
+
+  if (isWalletUnlocked) return null
+
+  return <AnimatedBackground anchorPosition="bottom" opacity={1} verticalOffset={-100} hiddenOverflow />
+}

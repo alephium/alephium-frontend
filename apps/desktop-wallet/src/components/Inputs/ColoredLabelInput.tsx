@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
@@ -46,25 +28,35 @@ const ColoredLabelInput = ({ label, onChange, value, className, id, maxLength }:
   }, [title, color, onChange])
 
   return (
-    <div className={className}>
-      <Input
-        label={label}
-        autoComplete="off"
-        onChange={(e) => setTitle(e.target.value)}
-        value={title}
-        id={id}
-        color={color}
-        maxLength={maxLength}
-      />
-      <ColorPicker onChange={setColor} value={color} />
-    </div>
+    <>
+      {label && <Label>{label}</Label>}
+      <ColoredLabelInputStyled className={className}>
+        <Input
+          label={label}
+          autoComplete="off"
+          onChange={(e) => setTitle(e.target.value)}
+          value={title}
+          id={id}
+          color={color}
+          maxLength={maxLength}
+        />
+        <ColorPicker onChange={setColor} value={color} />
+      </ColoredLabelInputStyled>
+    </>
   )
 }
 
-export default styled(ColoredLabelInput)`
+export default ColoredLabelInput
+
+const ColoredLabelInputStyled = styled.div`
   display: flex;
   gap: 17px;
   width: 100%;
   align-items: center;
   position: relative;
+`
+
+const Label = styled.label`
+  font-size: 13px;
+  font-weight: var(--fontWeight-semiBold);
 `

@@ -1,25 +1,6 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import HorizontalDivider from '@/components/Dividers/HorizontalDivider'
 import ColoredLabelInput, { ColoredLabelInputValue } from '@/components/Inputs/ColoredLabelInput'
 import InlineLabelValueInput from '@/components/Inputs/InlineLabelValueInput'
 import Toggle from '@/components/Inputs/Toggle'
@@ -49,27 +30,25 @@ const AddressMetadataForm = ({
   return (
     <>
       <ColoredLabelInput label={t('Address label')} onChange={setLabel} value={label} id="label" maxLength={50} />
+
       {singleAddress && (
-        <>
-          <HorizontalDivider narrow />
-          <InlineLabelValueInput
-            label={
-              <Label>
-                <StyledMainAddressBadge width={11} /> {t('Default address')}
-              </Label>
-            }
-            description={defaultAddressMessage}
-            noHorizontalPadding
-            InputComponent={
-              <Toggle
-                toggled={isDefault}
-                label={t('Make this your default address')}
-                onToggle={() => setIsDefault(!isDefault)}
-                disabled={!isDefaultAddressToggleEnabled}
-              />
-            }
-          />
-        </>
+        <InlineLabelValueInput
+          label={
+            <Label>
+              <StyledMainAddressBadge width={11} /> {t('Default address')}
+            </Label>
+          }
+          description={defaultAddressMessage}
+          noHorizontalPadding
+          InputComponent={
+            <Toggle
+              toggled={isDefault}
+              label={t('Make this your default address')}
+              onToggle={() => setIsDefault(!isDefault)}
+              disabled={!isDefaultAddressToggleEnabled}
+            />
+          }
+        />
       )}
     </>
   )

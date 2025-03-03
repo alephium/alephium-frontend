@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { decryptAsync } from '@alephium/shared-crypto'
 import { useFocusEffect } from '@react-navigation/native'
 import { StackScreenProps } from '@react-navigation/stack'
@@ -25,11 +7,11 @@ import { Alert } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 
 import { sendAnalytics } from '~/analytics'
-import { ContinueButton } from '~/components/buttons/Button'
+import Button from '~/components/buttons/Button'
 import Input from '~/components/inputs/Input'
 import { ScreenSection } from '~/components/layout/Screen'
 import ScrollScreen, { ScrollScreenProps } from '~/components/layout/ScrollScreen'
-import SpinnerModal from '~/components/SpinnerModal'
+import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics } from '~/hooks/useBiometrics'
 import RootStackParamList from '~/navigation/rootStackRoutes'
@@ -57,7 +39,6 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
 
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
 
   useFocusEffect(
     useCallback(() => {
@@ -83,7 +64,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
     }
 
     try {
-      setLoading(true)
+      dispatch(activateAppLoading(t('Importing wallet')))
 
       const decryptedData = await decryptAsync(password, qrCodeImportedEncryptedMnemonic, pbkdf2)
       const { mnemonic, addresses, contacts } = JSON.parse(decryptedData) as WalletImportData
@@ -121,7 +102,7 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
     } catch (e) {
       setError(t('Could not decrypt wallet with the given password.'))
     } finally {
-      setLoading(false)
+      dispatch(deactivateAppLoading())
     }
   }
 
@@ -139,15 +120,20 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
   return (
     <ScrollScreen
       verticalGap
-      usesKeyboard
       fill
       keyboardShouldPersistTaps="always"
-      headerOptions={{
-        headerTitle: t('Password'),
-        type: 'stack',
-        headerRight: () => <ContinueButton onPress={decryptAndImportWallet} disabled={!password || !!error} />
-      }}
+      screenTitle={t('Password')}
       screenIntro={t('Enter your desktop wallet password to decrypt the secret recovery phrase.')}
+      headerOptions={{ headerTitle: t('Password'), type: 'stack' }}
+      bottomButtonsRender={() => (
+        <Button
+          title={t('Decrypt')}
+          variant="highlight"
+          onPress={decryptAndImportWallet}
+          disabled={!password || !!error}
+        />
+      )}
+      contentPaddingTop
     >
       <ScreenSection fill>
         <Input
@@ -163,7 +149,6 @@ const DecryptScannedMnemonicScreen = ({ navigation }: DecryptScannedMnemonicScre
           onSubmitEditing={decryptAndImportWallet}
         />
       </ScreenSection>
-      {loading && <SpinnerModal isActive={loading} text={`${t('Importing wallet')}...`} />}
     </ScrollScreen>
   )
 }

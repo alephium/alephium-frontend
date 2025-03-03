@@ -1,47 +1,34 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
 import { useFocusEffect } from '@react-navigation/native'
-import { StackScreenProps } from '@react-navigation/stack'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useCallback, useEffect, useState } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { StatusBar } from 'react-native'
-import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated'
 import styled, { useTheme } from 'styled-components/native'
 
 import { sendAnalytics } from '~/analytics'
+import ScreenAnimatedBackground from '~/components/animatedBackground/ScreenAnimatedBackground'
 import AppText from '~/components/AppText'
+import BottomButtons from '~/components/buttons/BottomButtons'
 import Button from '~/components/buttons/Button'
+import Screen, { ScreenProps, ScreenSection } from '~/components/layout/Screen'
+import RoundedCard from '~/components/RoundedCard'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
+import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackParamList from '~/navigation/rootStackRoutes'
 import { storedWalletExists } from '~/persistent-storage/wallet'
 import { methodSelected, WalletGenerationMethod } from '~/store/walletGenerationSlice'
+import { DEFAULT_MARGIN } from '~/style/globalStyle'
 import { resetNavigation } from '~/utils/navigation'
 
-interface LandingScreenProps extends StackScreenProps<RootStackParamList, 'LandingScreen'> {}
+interface LandingScreenProps extends NativeStackScreenProps<RootStackParamList, 'LandingScreen'>, ScreenProps {}
 
-const LandingScreen = ({ navigation }: LandingScreenProps) => {
+const LandingScreen = ({ navigation, ...props }: LandingScreenProps) => {
   const dispatch = useAppDispatch()
   const { t } = useTranslation()
   const theme = useTheme()
   const isWalletUnlocked = useAppSelector((state) => state.wallet.isUnlocked)
 
   const [isScreenContentVisible, setIsScreenContentVisible] = useState(false)
-  const rotation = useSharedValue(0)
 
   useFocusEffect(
     useCallback(() => {
@@ -83,94 +70,68 @@ const LandingScreen = ({ navigation }: LandingScreenProps) => {
     }
   }, [navigation, theme.name])
 
-  useEffect(() => {
-    rotation.value = withRepeat(withTiming(-10, { duration: 400 }), -1, true)
-  }, [rotation])
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: 20 },
-      { translateY: 10 },
-      { rotate: `${rotation.value}deg` },
-      { translateX: -20 },
-      { translateY: -10 }
-    ]
-  }))
-
   const handleButtonPress = (method: WalletGenerationMethod) => {
     dispatch(methodSelected(method))
     navigation.navigate('NewWalletIntroScreen')
   }
 
   return (
-    <LandingScreenStyled>
+    <Screen safeAreaPadding>
       {isScreenContentVisible && (
         <>
-          <TopContainer>
-            <AnimatedEmoji style={animatedStyle}>👋</AnimatedEmoji>
-            <AppText style={{ textAlign: 'center' }}>
-              <Trans
-                t={t}
-                i18nKey="welcomeToAlephium"
-                components={{
-                  0: <TitleFirstLine />,
-                  1: <AppText>{'\n'}</AppText>,
-                  2: <TitleSecondLine />
-                }}
-              >
-                {'<0>Welcome to</0><1 /><2>Alephium</2>'}
-              </Trans>
-            </AppText>
-          </TopContainer>
-          <BottomButtons>
-            <Button
-              title={t('New wallet')}
-              type="primary"
-              onPress={() => handleButtonPress('create')}
-              variant="highlight"
-              iconProps={{ name: 'sun' }}
-            />
-            <Button
-              title={t('Import wallet')}
-              onPress={() => handleButtonPress('import')}
-              iconProps={{ name: 'download' }}
-            />
-          </BottomButtons>
+          <ScreenSection fill verticalGap>
+            <WelcomeCard />
+          </ScreenSection>
+          <ScreenSection>
+            <ButtonsContainer bottomInset fullWidth>
+              <Button
+                title={t('New wallet')}
+                type="primary"
+                onPress={() => handleButtonPress('create')}
+                variant="highlight"
+                iconProps={{ name: 'sun' }}
+              />
+              <Button
+                title={t('Import wallet')}
+                onPress={() => handleButtonPress('import')}
+                iconProps={{ name: 'download' }}
+              />
+            </ButtonsContainer>
+          </ScreenSection>
         </>
       )}
-    </LandingScreenStyled>
+    </Screen>
   )
 }
 
 export default LandingScreen
 
-const LandingScreenStyled = styled.SafeAreaView`
+const WelcomeCard = () => {
+  const { t } = useTranslation()
+  const theme = useTheme()
+
+  return (
+    <WelcomeCardStyled>
+      <ScreenAnimatedBackground isAnimated isFullScreen />
+      <AlephiumLogo color={theme.font.primary} style={{ width: '20%', height: 200, flex: 0 }} />
+      <Title size={32} semiBold>
+        {t('Welcome to Alephium')}
+      </Title>
+    </WelcomeCardStyled>
+  )
+}
+
+const WelcomeCardStyled = styled(RoundedCard)`
   flex: 1;
-  align-items: center;
-`
-
-const TopContainer = styled.View`
-  flex: 2;
-  align-items: center;
+  padding: ${DEFAULT_MARGIN * 2}px;
   justify-content: center;
+  align-items: center;
 `
 
-const TitleFirstLine = styled(AppText)`
-  font-size: 28px;
+const Title = styled(AppText)`
+  text-align: center;
 `
 
-const TitleSecondLine = styled(AppText)`
-  font-size: 32px;
-  font-weight: bold;
-`
-
-const AnimatedEmoji = styled(Animated.Text)`
-  font-size: 42px;
-  margin-bottom: 30px;
-`
-
-const BottomButtons = styled.View`
+const ButtonsContainer = styled(BottomButtons)`
   gap: 16px;
-  padding: 22px 0;
-  width: 75%;
 `

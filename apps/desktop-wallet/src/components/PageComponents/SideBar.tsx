@@ -1,81 +1,74 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
+import { ReactNode } from 'react'
+import styled, { css } from 'styled-components'
 
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-import { motion } from 'framer-motion'
-import { Settings } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
-import styled from 'styled-components'
-
-import Button from '@/components/Button'
-import ThemeSwitcher from '@/components/ThemeSwitcher'
-import { openModal } from '@/features/modals/modalActions'
-import { useAppDispatch } from '@/hooks/redux'
-import { appHeaderHeightPx, walletSidebarWidthPx } from '@/style/globalStyles'
+import SideBarSettingsButton from '@/components/PageComponents/SideBarSettingsButton'
+import { appHeaderHeightPx, sidebarExpandThresholdPx, walletSidebarWidthPx } from '@/style/globalStyles'
+import { platform } from '@/utils/platform'
 
 interface SideBarProps {
-  animateEntry?: boolean
+  renderTopComponent?: () => ReactNode
+  noExpansion?: boolean
+  noBorder?: boolean
   className?: string
 }
 
-const SideBar: FC<SideBarProps> = ({ animateEntry, className, children }) => {
-  const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-
-  const openSettingsModal = () => dispatch(openModal({ name: 'SettingsModal', props: {} }))
-
-  return (
-    <motion.div
-      className={className}
-      initial={{ x: animateEntry ? '-100%' : 0 }}
-      animate={{ x: 0 }}
-      transition={{ delay: 1.1, type: 'spring', damping: 20 }}
-    >
-      {children}
+const SideBar = ({ renderTopComponent, noExpansion = false, noBorder = false, className }: SideBarProps) => (
+  <SideBarStyled id="app-drag-region" className={className} noExpansion={noExpansion} noBorder={noBorder}>
+    <TopContainer>{renderTopComponent?.()}</TopContainer>
+    <BottomButtonsContainer>
       <BottomButtons>
-        <ThemeSwitcher />
-        <Button
-          transparent
-          squared
-          role="secondary"
-          onClick={openSettingsModal}
-          aria-label={t('Settings')}
-          Icon={Settings}
-          data-tooltip-id="sidenav"
-          data-tooltip-content={t('Settings')}
-        />
+        <SideBarSettingsButton />
       </BottomButtons>
-    </motion.div>
-  )
-}
+    </BottomButtonsContainer>
+  </SideBarStyled>
+)
 
-export default styled(SideBar)`
+export default SideBar
+
+const SideBarStyled = styled.div<{ noBorder: boolean; noExpansion: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
   z-index: 1;
-
   width: ${walletSidebarWidthPx}px;
-  padding: ${appHeaderHeightPx}px var(--spacing-4) var(--spacing-4);
+  padding: ${platform.isMac ? appHeaderHeightPx + 'px' : 'var(--spacing-2)'} var(--spacing-2) var(--spacing-2)
+    var(--spacing-2);
+  background-color: ${({ theme }) => theme.bg.background2};
+  border-right: 1px solid ${({ theme }) => theme.border.secondary};
 
-  border-right: 1px solid ${({ theme }) => theme.border.primary};
-  background-color: ${({ theme }) => (theme.name === 'light' ? theme.bg.primary : theme.bg.background2)};
+  ${({ noExpansion }) =>
+    !noExpansion
+      ? css`
+          @media (min-width: ${sidebarExpandThresholdPx}px) {
+            width: ${walletSidebarWidthPx * 3}px;
+            align-items: normal;
+          }
+        `
+      : css`
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          top: 0;
+          z-index: 3;
+        `};
+`
+
+const TopContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  app-region: no-drag;
+`
+
+const BottomButtonsContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+
+  @media (min-width: ${sidebarExpandThresholdPx}px) {
+    justify-content: space-around;
+    width: 100%;
+  }
 `
 
 const BottomButtons = styled.div`
@@ -83,4 +76,11 @@ const BottomButtons = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 15px;
+  app-region: no-drag;
+
+  @media (min-width: ${sidebarExpandThresholdPx}px) {
+    flex: 1;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+  }
 `

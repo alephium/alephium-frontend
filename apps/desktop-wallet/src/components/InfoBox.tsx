@@ -1,27 +1,6 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { colord } from 'colord'
-import { motion } from 'framer-motion'
 import { LucideIcon } from 'lucide-react'
 import styled, { css, DefaultTheme, useTheme } from 'styled-components'
-
-import { sectionChildrenVariants } from '@/components/PageComponents/PageContainers'
 
 type InfoBoxImportance = 'default' | 'accent' | 'alert' | 'warning'
 
@@ -36,7 +15,7 @@ export interface InfoBoxProps {
   small?: boolean
   short?: boolean
   contrast?: boolean
-  noBorders?: boolean
+  align?: 'left' | 'center'
   className?: string
 }
 
@@ -52,26 +31,20 @@ const InfoBox: FC<InfoBoxProps> = ({
   short,
   children,
   contrast,
-  noBorders
+  align = 'center'
 }) => {
   const theme = useTheme()
 
   return (
     <div className={className} onClick={onClick}>
-      {label && <Label variants={sectionChildrenVariants}>{label}</Label>}
-      <StyledBox
-        variants={sectionChildrenVariants}
-        importance={importance}
-        short={short}
-        contrast={contrast}
-        noBorders={noBorders}
-      >
+      {label && <Label>{label}</Label>}
+      <StyledBox importance={importance} short={short} contrast={contrast}>
         {Icon && (
           <IconContainer>
             <Icon color={getImportanceColor(theme, importance)} strokeWidth={1.5} />
           </IconContainer>
         )}
-        <TextContainer wordBreak={wordBreak} ellipsis={ellipsis}>
+        <TextContainer wordBreak={wordBreak} ellipsis={ellipsis} align={align}>
           {text || children}
         </TextContainer>
       </StyledBox>
@@ -82,7 +55,7 @@ const InfoBox: FC<InfoBoxProps> = ({
 const getImportanceColor = (theme: DefaultTheme, importance?: InfoBoxImportance) =>
   importance
     ? {
-        default: theme.font.secondary,
+        default: theme.global.accent,
         alert: theme.global.alert,
         warning: theme.global.highlight,
         accent: theme.global.accent
@@ -92,7 +65,6 @@ const getImportanceColor = (theme: DefaultTheme, importance?: InfoBoxImportance)
 export default styled(InfoBox)`
   width: 100%;
   margin: 0 auto var(--spacing-4) auto;
-  margin-top: var(--spacing-2);
   max-width: ${({ small }) => (small ? '300px' : 'initial')};
   line-height: 1.5em;
 `
@@ -103,11 +75,11 @@ const IconContainer = styled.div`
   justify-content: center;
 `
 
-const TextContainer = styled.div<{ wordBreak?: boolean; ellipsis?: boolean }>`
+const TextContainer = styled.div<Pick<InfoBoxProps, 'wordBreak' | 'ellipsis' | 'align'>>`
   flex: 2;
   font-weight: var(--fontWeight-medium);
   word-break: ${({ wordBreak }) => (wordBreak ? 'break-all' : 'initial')};
-  text-align: left;
+  text-align: ${({ align }) => align};
 
   ${({ ellipsis }) =>
     ellipsis
@@ -120,11 +92,19 @@ const TextContainer = styled.div<{ wordBreak?: boolean; ellipsis?: boolean }>`
         `}
 `
 
-const StyledBox = styled(motion.div)<{
+const Label = styled.label`
+  display: block;
+  width: 100%;
+  margin-left: var(--spacing-3);
+  margin-bottom: 7px;
+  color: ${({ theme }) => theme.font.secondary};
+  font-weight: var(--fontWeight-semiBold);
+`
+
+const StyledBox = styled.div<{
   importance?: InfoBoxImportance
   short?: boolean
   contrast?: boolean
-  noBorders?: boolean
 }>`
   padding: var(--spacing-3);
   height: ${({ short }) => (short ? 'var(--inputHeight)' : 'auto')};
@@ -139,19 +119,4 @@ const StyledBox = styled(motion.div)<{
   border-radius: var(--radius-big);
   align-items: center;
   gap: 15px;
-
-  ${({ theme, importance, noBorders }) =>
-    !noBorders &&
-    css`
-      border: 1px solid ${colord(getImportanceColor(theme, importance)).alpha(0.2).toHex()};
-    `}
-`
-
-const Label = styled(motion.label)`
-  display: block;
-  width: 100%;
-  margin-left: var(--spacing-3);
-  margin-bottom: 7px;
-  color: ${({ theme }) => theme.font.secondary};
-  font-weight: var(--fontWeight-medium);
 `

@@ -1,35 +1,21 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { Contact } from '@alephium/shared'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import { colord } from 'colord'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { TextInput, ViewProps } from 'react-native'
+import { ViewProps } from 'react-native'
 import Animated, { AnimatedProps } from 'react-native-reanimated'
-import styled, { useTheme } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import AppText from '~/components/AppText'
 import Button from '~/components/buttons/Button'
-import BoxSurface from '~/components/layout/BoxSurface'
+import EmptyPlaceholder from '~/components/EmptyPlaceholder'
 import { ScreenSection } from '~/components/layout/Screen'
+import Surface from '~/components/layout/Surface'
 import ListItem from '~/components/ListItem'
+import SearchInput from '~/components/SearchInput'
 import { useAppSelector } from '~/hooks/redux'
+import RootStackParamList from '~/navigation/rootStackRoutes'
 import { selectAllContacts } from '~/store/addresses/addressesSelectors'
 import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 import { themes } from '~/style/themes'
@@ -38,18 +24,24 @@ import { filterContacts } from '~/utils/contacts'
 
 export interface ContactListScreenBaseProps {
   onContactPress: (contactId: Contact['id']) => void
-  onNewContactPress?: () => void
+  onNewContactPress: () => void
   style?: AnimatedProps<ViewProps>['style']
 }
 
 const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: ContactListScreenBaseProps) => {
-  const theme = useTheme()
   const { t } = useTranslation()
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>()
 
   const contacts = useAppSelector(selectAllContacts)
 
   const [filteredContacts, setFilteredContacts] = useState(contacts)
   const [searchTerm, setSearchTerm] = useState('')
+
+  const handleNewContactPress = () => {
+    navigation.navigate('NewContactScreen')
+
+    onNewContactPress()
+  }
 
   useEffect(() => {
     setFilteredContacts(filterContacts(contacts, searchTerm.toLowerCase()))
@@ -57,28 +49,20 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
 
   return (
     <Animated.View {...props}>
-      <HeaderScreenSection>
-        <SearchInput
-          placeholder={t('Search')}
-          value={searchTerm}
-          onChangeText={setSearchTerm}
-          placeholderTextColor={theme.font.tertiary}
-        />
-        {onNewContactPress && (
-          <Button iconProps={{ name: 'plus' }} type="transparent" variant="accent" onPress={onNewContactPress} />
-        )}
-      </HeaderScreenSection>
+      {contacts.length > 4 && (
+        <HeaderScreenSection>
+          <SearchInput value={searchTerm} onChangeText={setSearchTerm} />
+        </HeaderScreenSection>
+      )}
       {contacts.length === 0 ? (
-        <NoContactContainer>
-          <NoContactMessageBox>
-            <EmojiContainer size={60}>🤷‍♀️</EmojiContainer>
-            <AppText>{t('No contact yet!')}</AppText>
-            <Button title={t('Add contact')} onPress={onNewContactPress} variant="highlight" />
-          </NoContactMessageBox>
-        </NoContactContainer>
+        <EmptyPlaceholder hasHorizontalMargin>
+          <EmojiContainer size={32}>🤷‍♀️</EmojiContainer>
+          <AppText>{t('No contact yet!')}</AppText>
+          <Button title={t('Add contact')} onPress={handleNewContactPress} variant="contrast" short />
+        </EmptyPlaceholder>
       ) : (
         <ContactList>
-          {filteredContacts.map((contact) => {
+          {filteredContacts.map((contact, i) => {
             const iconBgColor = stringToColour(contact.address)
             const textColor = themes[colord(iconBgColor).isDark() ? 'dark' : 'light'].font.primary
 
@@ -88,6 +72,7 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
                 onPress={() => onContactPress(contact.id)}
                 title={contact.name}
                 subtitle={contact.address}
+                isLast={i === filteredContacts.length - 1}
                 icon={
                   <ContactIcon color={iconBgColor}>
                     <AppText color={textColor} semiBold size={21}>
@@ -114,7 +99,9 @@ const ContactListScreenBase = ({ onContactPress, onNewContactPress, ...props }: 
 
 export default ContactListScreenBase
 
-const ContactList = styled.View``
+const ContactList = styled.View`
+  padding: 0 ${DEFAULT_MARGIN}px;
+`
 
 const ContactIcon = styled.View<{ color?: string }>`
   justify-content: center;
@@ -132,20 +119,12 @@ const HeaderScreenSection = styled(ScreenSection)`
   margin-bottom: ${VERTICAL_GAP}px;
 `
 
-const SearchInput = styled(TextInput)`
-  flex: 1;
-  background-color: ${({ theme }) => theme.bg.highlight};
-  padding: 9px 12px;
-  border-radius: 9px;
-  color: ${({ theme }) => theme.font.primary};
-`
-
 const NoContactContainer = styled.View`
   align-items: center;
   justify-content: center;
 `
 
-const NoContactMessageBox = styled(BoxSurface)`
+const NoContactMessageBox = styled(Surface)`
   padding: 25px;
   gap: ${VERTICAL_GAP}px;
   align-items: center;

@@ -1,34 +1,15 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import dayjs from 'dayjs'
 import { LockIcon } from 'lucide-react'
 import { memo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import FooterButton from '@/components/Buttons/FooterButton'
 import InfoBox from '@/components/InfoBox'
 import { closeModal } from '@/features/modals/modalActions'
 import { ModalBaseProp } from '@/features/modals/modalTypes'
 import { CheckTxProps, TransferTxData } from '@/features/send/sendTypes'
 import { useAppDispatch } from '@/hooks/redux'
-import CenteredModal from '@/modals/CenteredModal'
+import CenteredModal, { ModalFooterButton, ModalFooterButtons } from '@/modals/CenteredModal'
 import { formatDateForDisplay } from '@/utils/misc'
 
 export type ConfirmLockTimeModalProps = Required<Pick<TransferTxData, 'lockTime'>> &
@@ -44,7 +25,7 @@ const ConfirmLockTimeModal = memo(({ id, lockTime, onSubmit }: ModalBaseProp & C
   }
 
   return (
-    <CenteredModal title={t('Confirm lock time')} id={id}>
+    <CenteredModal title={t('Confirm lock time')} id={id} hasFooterButtons>
       <InfoBox importance="accent" Icon={LockIcon}>
         <Trans
           t={t}
@@ -63,9 +44,11 @@ const ConfirmLockTimeModal = memo(({ id, lockTime, onSubmit }: ModalBaseProp & C
           }
         </Trans>
       </InfoBox>
-      <FooterButton onClick={handleConfirmClick} variant="valid">
-        {t('Send locked assets')}
-      </FooterButton>
+      <ModalFooterButtons>
+        <ModalFooterButton onClick={handleConfirmClick} variant="valid">
+          {t('Send locked assets')}
+        </ModalFooterButton>
+      </ModalFooterButtons>
     </CenteredModal>
   )
 })

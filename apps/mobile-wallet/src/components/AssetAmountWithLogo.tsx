@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { Asset, selectFungibleTokenById, selectNFTById } from '@alephium/shared'
 import styled from 'styled-components/native'
 
@@ -24,39 +6,50 @@ import AssetLogo from '~/components/AssetLogo'
 import NFTThumbnail from '~/components/NFTThumbnail'
 import { useAppSelector } from '~/hooks/redux'
 
-interface AssetAmountWithLogoProps extends Pick<AmountProps, 'fullPrecision' | 'useTinyAmountShorthand'> {
+interface AssetAmountWithLogoProps
+  extends Pick<AmountProps, 'fullPrecision' | 'useTinyAmountShorthand' | 'showPlusMinus' | 'bold'> {
   assetId: Asset['id']
-  logoSize: number
   amount: bigint
+  logoSize?: number
+  logoPosition?: 'left' | 'right'
 }
 
 const AssetAmountWithLogo = ({
   assetId,
-  logoSize,
   amount,
   useTinyAmountShorthand,
-  fullPrecision
+  fullPrecision,
+  showPlusMinus,
+  bold,
+  logoSize = 18,
+  logoPosition = 'left'
 }: AssetAmountWithLogoProps) => {
   const asset = useAppSelector((s) => selectFungibleTokenById(s, assetId))
   const nft = useAppSelector((s) => selectNFTById(s, assetId))
 
-  return asset ? (
-    <AssetStyled key={asset.id}>
-      <AssetLogo assetId={asset.id} size={logoSize} />
-      <Amount
+  const Logo = <AssetLogo assetId={assetId} size={logoSize} />
+
+  return nft ? (
+    <NFTThumbnail key={nft.id} nftId={nft.id} size={50} />
+  ) : (
+    <AssetStyled key={assetId}>
+      {logoPosition === 'left' && Logo}
+      <AmountStyled
         value={amount}
-        isUnknownToken={!asset.symbol}
-        suffix={asset.symbol}
-        decimals={asset.decimals}
-        semiBold
+        isUnknownToken={!asset?.symbol}
+        suffix={asset?.symbol}
+        decimals={asset?.decimals}
         fadeSuffix
         fullPrecision={fullPrecision}
         useTinyAmountShorthand={useTinyAmountShorthand}
+        showPlusMinus={showPlusMinus}
+        highlight={showPlusMinus}
+        semiBold={!bold}
+        bold={bold}
       />
+      {logoPosition === 'right' && Logo}
     </AssetStyled>
-  ) : nft ? (
-    <NFTThumbnail key={nft.id} nftId={nft.id} size={50} />
-  ) : null
+  )
 }
 
 export default AssetAmountWithLogo
@@ -64,8 +57,12 @@ export default AssetAmountWithLogo
 const AssetStyled = styled.View`
   flex-direction: row;
   gap: 5px;
-  padding: 3px 7px 3px 3px;
-  background-color: ${({ theme }) => theme.bg.tertiary};
+  padding: 3px 0;
   border-radius: 24px;
   align-items: center;
+`
+
+const AmountStyled = styled(Amount)`
+  flex-shrink: 1;
+  text-align: right;
 `

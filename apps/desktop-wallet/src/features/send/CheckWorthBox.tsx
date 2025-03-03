@@ -1,21 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AssetAmount, calculateAmountWorth } from '@alephium/shared'
 import { ALPH } from '@alephium/token-list'
 import { isNumber } from 'lodash'
@@ -25,14 +7,15 @@ import styled from 'styled-components'
 import useFetchTokenPrices from '@/api/apiDataHooks/market/useFetchTokenPrices'
 import useFetchTokensSeparatedByType from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByType'
 import Amount from '@/components/Amount'
-import Box from '@/components/Box'
+import Box, { BoxProps } from '@/components/Box'
 import InfoRow from '@/features/send/InfoRow'
 
-interface CheckWorthBoxProps {
+interface CheckWorthBoxProps extends BoxProps {
   assetAmounts: AssetAmount[]
+  fee: bigint
 }
 
-const CheckWorthBox = ({ assetAmounts }: CheckWorthBoxProps) => {
+const CheckWorthBox = ({ assetAmounts, fee, ...props }: CheckWorthBoxProps) => {
   const { t } = useTranslation()
 
   const {
@@ -53,16 +36,27 @@ const CheckWorthBox = ({ assetAmounts }: CheckWorthBoxProps) => {
     return totalWorth + tokenWorth
   }, 0)
 
+  const alphPrice = tokenPrices?.find(({ symbol }) => symbol === ALPH.symbol)?.price
+  const feeWorth = alphPrice ? calculateAmountWorth(fee, alphPrice, ALPH.decimals) : 0
+  const tooSmallFee = feeWorth < 0.01
+
   return (
-    <Box>
-      <InfoRow label={t('Total worth')}>
-        <AmountStyled
-          tokenId={ALPH.id}
-          value={totalWorth}
-          isFiat
-          isLoading={isLoadingTokensByType || isLoadingTokenPrices}
-        />
-      </InfoRow>
+    <Box {...props}>
+      <InfoRowStyled label={t('Total worth')}>
+        <Amounts>
+          <AmountStyled
+            tokenId={ALPH.id}
+            value={totalWorth}
+            isFiat
+            isLoading={isLoadingTokensByType || isLoadingTokenPrices}
+          />
+          <FeeRow>
+            <FeeLabel>{t('Fee')}</FeeLabel>
+            {tooSmallFee && ' < '}
+            <AmountFee value={tooSmallFee ? 0.01 : feeWorth} isFiat isLoading={isLoadingTokenPrices} />
+          </FeeRow>
+        </Amounts>
+      </InfoRowStyled>
     </Box>
   )
 }
@@ -71,4 +65,28 @@ export default CheckWorthBox
 
 const AmountStyled = styled(Amount)`
   color: ${({ theme }) => theme.font.primary};
+  font-size: 20px;
+`
+
+const Amounts = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--spacing-1);
+`
+
+const AmountFee = styled(Amount)``
+
+const FeeRow = styled.div`
+  display: flex;
+  gap: var(--spacing-1);
+  align-items: center;
+  color: ${({ theme }) => theme.font.secondary};
+  font-size: 11px;
+`
+
+const FeeLabel = styled.span``
+
+const InfoRowStyled = styled(InfoRow)`
+  align-items: center;
 `

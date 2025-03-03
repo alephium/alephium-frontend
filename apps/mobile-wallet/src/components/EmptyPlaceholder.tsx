@@ -1,39 +1,39 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { ViewProps } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { css } from 'styled-components/native'
 
-import { DEFAULT_MARGIN } from '~/style/globalStyle'
+import Box from '~/components/layout/Box'
+import { DEFAULT_MARGIN, VERTICAL_GAP } from '~/style/globalStyle'
 
-const EmptyPlaceholder = ({ children, ...props }: ViewProps) => (
-  <EmptyPlaceholderStyled {...props}>{children}</EmptyPlaceholderStyled>
+type EmptyPlaceholderProps = ViewProps & {
+  noMargin?: boolean
+  hasHorizontalMargin?: boolean
+  hasVerticalMargin?: boolean
+}
+
+const EmptyPlaceholder = ({ children, ...props }: EmptyPlaceholderProps) => (
+  <BoxStyled {...props}>
+    <Content>{children}</Content>
+  </BoxStyled>
 )
 
-const EmptyPlaceholderStyled = styled.View`
-  text-align: center;
-  align-items: center;
-  flex: 1;
-  gap: 25px;
-  padding: 20px;
-  border-radius: 9px;
-  border: 2px dashed ${({ theme }) => theme.border.primary};
-  margin: ${DEFAULT_MARGIN}px;
+export default EmptyPlaceholder
+
+const BoxStyled = styled(Box)<EmptyPlaceholderProps>`
+  justify-content: center;
+
+  margin-top: ${({ hasVerticalMargin }) => (hasVerticalMargin ? VERTICAL_GAP / 2 : 0)}px;
+  margin-bottom: ${({ hasVerticalMargin }) => (hasVerticalMargin ? VERTICAL_GAP / 2 : 0)}px;
+  margin-left: ${({ hasHorizontalMargin }) => (hasHorizontalMargin ? DEFAULT_MARGIN : 0)};
+  margin-right: ${({ hasHorizontalMargin }) => (hasHorizontalMargin ? DEFAULT_MARGIN : 0)};
+
+  ${({ noMargin }) =>
+    noMargin &&
+    css`
+      margin: 0;
+    `}
 `
 
-export default EmptyPlaceholder
+const Content = styled.View`
+  align-items: center;
+  gap: 10px;
+`

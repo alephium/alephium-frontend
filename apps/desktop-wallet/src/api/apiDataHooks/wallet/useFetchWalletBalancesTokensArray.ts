@@ -1,20 +1,3 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
 import { UseQueryResult } from '@tanstack/react-query'
 
 import { combineError, combineIsFetching, combineIsLoading } from '@/api/apiDataHooks/apiDataHooksUtils'
@@ -49,14 +32,14 @@ const combineBalancesToArray = (results: UseQueryResult<AddressTokensBalancesQue
   }
 }
 
-const {
-  useData: useFetchWalletBalancesTokensArray,
-  DataContextProvider: UseFetchWalletBalancesTokensArrayContextProvider
-} = createDataContext<AddressTokensBalancesQueryFnData, TokenApiBalances[]>({
+const { useData, DataContextProvider } = createDataContext<AddressTokensBalancesQueryFnData, Array<TokenApiBalances>>({
   useDataHook: useFetchWalletBalancesTokens,
   combineFn: combineBalancesToArray,
   defaultValue: []
 })
+
+const useFetchWalletBalancesTokensArray = useData
+const UseFetchWalletBalancesTokensArrayContextProvider = DataContextProvider
 
 export default useFetchWalletBalancesTokensArray
 export { UseFetchWalletBalancesTokensArrayContextProvider }

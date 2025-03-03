@@ -1,28 +1,10 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash } from '@alephium/shared'
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import AddressBadge from '@/components/AddressBadge'
 import AddressColorIndicator from '@/components/AddressColorIndicator'
-import { TableRow } from '@/components/Table'
+import { TableCell, TableRow } from '@/components/Table'
 
 interface AddressRowProps {
   addressHash: AddressHash
@@ -41,33 +23,27 @@ const AddressRow = ({ addressHash, onClick, children, className, subtitle }: Add
     onKeyDown={() => onClick && onClick(addressHash)}
     className={className}
   >
-    <Row>
+    <TableCell>
       <AddressColorIndicatorStyled addressHash={addressHash} />
       <Label>
         <AddressBadge addressHash={addressHash} hideColorIndication truncate appendHash displayHashUnder />
         <AddressSubtitle>{subtitle}</AddressSubtitle>
       </Label>
-      {children}
-    </Row>
+    </TableCell>
+    {children && <TableCell>{children}</TableCell>}
   </TableRow>
 )
 
 export default AddressRow
-
-const Row = styled.div`
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-`
 
 const AddressColorIndicatorStyled = styled(AddressColorIndicator)`
   margin-right: 15px;
 `
 
 const Label = styled.div`
-  font-size: 14px;
-  font-weight: var(--fontWeight-medium);
-  max-width: 120px;
+  font-size: 13px;
+  font-weight: var(--fontWeight-semiBold);
+  max-width: 160px;
 `
 
 const AddressSubtitle = styled.span`

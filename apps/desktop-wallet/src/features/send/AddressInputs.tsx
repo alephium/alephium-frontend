@@ -1,28 +1,9 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash } from '@alephium/shared'
 import { AlbumIcon, ContactIcon } from 'lucide-react'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { useTheme } from 'styled-components'
+import styled from 'styled-components'
 
-import Box from '@/components/Box'
 import Button from '@/components/Button'
 import HashEllipsed from '@/components/HashEllipsed'
 import AddressInput from '@/components/Inputs/AddressInput'
@@ -32,7 +13,7 @@ import SelectOptionItemContent from '@/components/Inputs/SelectOptionItemContent
 import Truncate from '@/components/Truncate'
 import InputsSection from '@/features/send/InputsSection'
 import { useAppSelector } from '@/hooks/redux'
-import { useFetchSortedAddressesHashes } from '@/hooks/useAddresses'
+import { useFetchAddressesHashesSortedByLastUse } from '@/hooks/useAddresses'
 import AddressSelectModal from '@/modals/AddressSelectModal'
 import { useMoveFocusOnPreviousModal } from '@/modals/ModalContainer'
 import ModalPortal from '@/modals/ModalPortal'
@@ -60,8 +41,7 @@ const AddressInputs = ({
   const { t } = useTranslation()
   const moveFocusOnPreviousModal = useMoveFocusOnPreviousModal()
   const contacts = useAppSelector(selectAllContacts)
-  const { data: allAddressHashes } = useFetchSortedAddressesHashes()
-  const theme = useTheme()
+  const { data: allAddressHashes } = useFetchAddressesHashesSortedByLastUse()
 
   const [isContactSelectModalOpen, setIsContactSelectModalOpen] = useState(false)
   const [isAddressSelectModalOpen, setIsAddressSelectModalOpen] = useState(false)
@@ -92,53 +72,32 @@ const AddressInputs = ({
 
   return (
     <InputsContainer>
-      <InputsSection
-        title={t('Origin')}
-        subtitle={t('One of your addresses to send the assets from.')}
-        className={className}
-      >
-        <BoxStyled>
-          <AddressSelect
-            title={t('Select the address to send funds from.')}
-            addressOptions={fromAddresses}
-            selectedAddress={defaultFromAddress}
-            onAddressChange={onFromAddressChange}
-            id="from-address"
-            simpleMode
-            shouldDisplayAddressSelectModal={isAddressSelectModalOpen}
-          />
-        </BoxStyled>
+      <InputsSection title={t('Origin')} className={className}>
+        <AddressSelect
+          title={t('Select the address to send funds from.')}
+          addressOptions={fromAddresses}
+          selectedAddress={defaultFromAddress}
+          onAddressChange={onFromAddressChange}
+          id="from-address"
+          shouldDisplayAddressSelectModal={isAddressSelectModalOpen}
+          noMargin
+        />
       </InputsSection>
       {toAddress && onToAddressChange && (
-        <InputsSection
-          title={t('Destination')}
-          subtitle={t('The address which will receive the assets.')}
-          className={className}
-        >
+        <InputsSection title={t('Destination')} className={className}>
           <AddressToInput
             value={toAddress.value}
             error={toAddress.error}
             onChange={(e) => onToAddressChange(e.target.value.trim())}
+            placeholder={t('The address which will receive the assets.')}
+            heightSize="big"
+            noMargin
           />
           <DestinationActions>
-            <Button
-              Icon={ContactIcon}
-              iconColor={theme.global.accent}
-              variant="faded"
-              short
-              borderless
-              onClick={() => setIsContactSelectModalOpen(true)}
-            >
+            <Button Icon={ContactIcon} role="secondary" short onClick={() => setIsContactSelectModalOpen(true)}>
               {t('Contacts')}
             </Button>
-            <Button
-              Icon={AlbumIcon}
-              iconColor={theme.global.accent}
-              variant="faded"
-              short
-              borderless
-              onClick={() => setIsAddressSelectModalOpen(true)}
-            >
+            <Button Icon={AlbumIcon} role="secondary" short onClick={() => setIsAddressSelectModalOpen(true)}>
               {t('Your addresses')}
             </Button>
           </DestinationActions>
@@ -158,7 +117,6 @@ const AddressInputs = ({
               <SelectOptionItemContent
                 MainContent={<Name>{contact.label}</Name>}
                 SecondaryContent={<HashEllipsedStyled hash={contact.value} disableA11y />}
-                isSelected={contact.value === toAddress?.value}
               />
             )}
           />
@@ -196,13 +154,6 @@ const HashEllipsedStyled = styled(HashEllipsed)`
   max-width: 150px;
 `
 
-const BoxStyled = styled(Box)`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: var(--inputHeight);
-`
-
 const AddressToInput = styled(AddressInput)`
   margin: 0;
 `
@@ -210,4 +161,5 @@ const AddressToInput = styled(AddressInput)`
 const DestinationActions = styled.div`
   display: flex;
   gap: 5px;
+  margin-top: var(--spacing-2);
 `

@@ -1,29 +1,11 @@
-/*
-Copyright 2018 - 2024 The Alephium Authors
-This file is part of the alephium project.
-
-The library is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-The library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with the library. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 import { AddressHash, exponentialBackoffFetchRetry, throttledClient } from '@alephium/shared'
 import { transactionSign } from '@alephium/web3'
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit'
 
+import i18n from '@/features/localization/i18n'
 import { ThemeType } from '@/features/theme/themeTypes'
-import i18n from '@/i18n'
+import { OptionalMessage, SnackbarMessage } from '@/features/toastMessages/toastMessagesTypes'
 import { RootState } from '@/storage/store'
-import { OptionalMessage, SnackbarMessage, ToastMessage } from '@/types/snackbar'
 import { SentTransaction } from '@/types/transactions'
 
 type ModalId = string
@@ -46,10 +28,6 @@ export const osThemeChangeDetected = createAction<ThemeType>('app/osThemeChangeD
 
 export const devModeShortcutDetected = createAction<{ activate: boolean }>('app/devModeShortcutDetected')
 
-export const snackbarDisplayTimeExpired = createAction('app/snackbarDisplayTimeExpired')
-
-export const showToast = createAction<ToastMessage>('app/showToast')
-
 export const userDataMigrationFailed = createAction('app/userDataMigrationFailed')
 
 export const walletConnectCacheCleared = createAction('app/walletConnectCacheCleared')
@@ -71,7 +49,7 @@ export const receiveFaucetTokens = createAsyncThunk<SentTransaction, AddressHash
     if (!['testnet', 'devnet'].includes(currentNetwork.name))
       return rejectWithValue({
         text: i18n.t('You need to be on testnet or devnet in order to use the faucet.'),
-        type: 'alert'
+        type: 'error'
       })
 
     const txBoilerplate: Omit<SentTransaction, 'hash'> = {
@@ -121,7 +99,7 @@ export const receiveFaucetTokens = createAsyncThunk<SentTransaction, AddressHash
           response.status === 429
             ? i18n.t('You have reached the maximum calls limit. Please try again in a few minutes.')
             : i18n.t('Encountered error while calling the faucet.'),
-        type: 'alert'
+        type: 'error'
       })
     }
 
