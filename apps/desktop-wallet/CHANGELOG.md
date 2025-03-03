@@ -1,5 +1,32 @@
 # alephium-desktop-wallet
 
+## 3.0.0
+
+### Major Changes
+
+- 317c5cb: Major redesign
+
+### Minor Changes
+
+- 317c5cb: Integrate fiat onramp
+
+### Patch Changes
+
+- c17d827: Improve performance of wallet QR code export
+- 392f9ab: Fix display of dApp messages
+- 89ae793: Enable Thai Baht (THB) and Hong Kong Dollar (HKD) fiat currencies
+- 8341629: Fix consolidation in send flow
+- 9fb1388: Hide unwanted assets
+- d43a49d: Improve performance
+- 317c5cb: Simplify secret recovery phrase verification
+- 317c5cb: Fix closing of modals in Linux
+- 317c5cb: Display token details in dedicated modal
+- 0cf5498: Add address sorting options
+- e86cbf5: Stackable toast notifications
+- 864e271: Add CNY
+- eab0755: Fix password wrongly required for Ledger wallet
+- 8341629: Enable CNY fiat currency
+
 ## 2.5.1
 
 ### Patch Changes
