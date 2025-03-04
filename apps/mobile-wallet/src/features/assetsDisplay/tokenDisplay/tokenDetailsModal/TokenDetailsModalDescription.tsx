@@ -9,7 +9,7 @@ import { makeSelectAddressesTokens } from '~/store/addresses/addressesSelectors'
 import { VERTICAL_GAP } from '~/style/globalStyle'
 
 const TokenDetailsModalDescription = ({ tokenId, addressHash }: TokenDetailsModalCommonProps) => {
-  const selectAddressesTokens = useMemo(makeSelectAddressesTokens, [])
+  const selectAddressesTokens = useMemo(() => makeSelectAddressesTokens(), [])
   const tokens = useAppSelector((s) => selectAddressesTokens(s, addressHash))
   const token = tokens.find((token) => token.id === tokenId)
 

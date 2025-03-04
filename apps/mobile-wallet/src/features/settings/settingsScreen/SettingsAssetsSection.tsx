@@ -14,7 +14,7 @@ import { makeSelectAddressesHiddenFungibleTokens } from '~/store/addresses/addre
 
 const SettingsAssetsSection = () => {
   const { t } = useTranslation()
-  const selectAddressesHiddenFungibleTokens = useMemo(makeSelectAddressesHiddenFungibleTokens, [])
+  const selectAddressesHiddenFungibleTokens = useMemo(() => makeSelectAddressesHiddenFungibleTokens(), [])
   const numberOfHiddenFungibleTokens = useAppSelector(selectAddressesHiddenFungibleTokens).length
   const theme = useTheme()
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()

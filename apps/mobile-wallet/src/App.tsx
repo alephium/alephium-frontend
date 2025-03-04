@@ -124,7 +124,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const addressesListedFungibleTokensSymbols = useRef<Array<string>>([])
   const currency = useRef(settings.currency)
 
-  const selectAddressesUnknownTokens = useMemo(makeSelectAddressesUnknownTokensIds, [])
+  const selectAddressesUnknownTokens = useMemo(() => makeSelectAddressesUnknownTokensIds(), [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
   const txUnknownTokenIds = useAppSelector(selectTransactionUnknownTokenIds)
   const checkedUnknownTokenIds = useAppSelector((s) => s.app.checkedUnknownTokenIds)

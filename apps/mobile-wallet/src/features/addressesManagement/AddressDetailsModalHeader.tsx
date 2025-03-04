@@ -35,7 +35,7 @@ interface AddressDetailsModalHeaderProps {
 
 const AddressDetailsModalHeader = ({ addressHash, parentModalId }: AddressDetailsModalHeaderProps) => {
   const { t } = useTranslation()
-  const selectAddressTokens = useMemo(makeSelectAddressesTokens, [])
+  const selectAddressTokens = useMemo(() => makeSelectAddressesTokens(), [])
   const hasTokens = useAppSelector((s) => selectAddressTokens(s, addressHash)).length > 0
   const dispatch = useAppDispatch()
 
@@ -85,7 +85,7 @@ export default AddressDetailsModalHeader
 const FungibleTokensBadge = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 'addressHash'>) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash, true))
   const color = useAppSelector((s) => selectAddressByHash(s, addressHash)?.settings.color)
 
@@ -129,7 +129,7 @@ const AddressNftsBadge = ({ addressHash }: Pick<AddressDetailsModalHeaderProps, 
   const { t } = useTranslation()
   const theme = useTheme()
   const dispatch = useAppDispatch()
-  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
+  const selectAddressesNFTs = useMemo(() => makeSelectAddressesNFTs(), [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
 
   const handlePress = () => dispatch(openModal({ name: 'NftGridModal', props: { addressHash } }))
