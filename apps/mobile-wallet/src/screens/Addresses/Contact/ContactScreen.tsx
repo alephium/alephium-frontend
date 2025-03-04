@@ -30,8 +30,8 @@ const ContactScreen = ({ navigation, route: { params } }: ContactScreenProps) =>
   const listRef = useRef(null)
   const contact = useAppSelector((s) => selectContactById(s, params.contactId))
   const contactAddressHash = contact?.address ?? ''
-  const selectContactConfirmedTransactions = useMemo(makeSelectContactConfirmedTransactions, [])
-  const selectContactPendingTransactions = useMemo(makeSelectContactPendingTransactions, [])
+  const selectContactConfirmedTransactions = useMemo(() => makeSelectContactConfirmedTransactions(), [])
+  const selectContactPendingTransactions = useMemo(() => makeSelectContactPendingTransactions(), [])
   const confirmedTransactions = useAppSelector((s) => selectContactConfirmedTransactions(s, contactAddressHash))
   const pendingTransactions = useAppSelector((s) => selectContactPendingTransactions(s, contactAddressHash))
   const totalBalance = useAppSelector(selectTotalBalance)

@@ -90,13 +90,16 @@ const AddressDiscoveryScreen = ({ navigation, route: { params }, ...props }: Scr
   }
 
   useEffect(() => {
-    discoveredAddresses.forEach(({ hash }) => {
-      if (addressSelections[hash] === undefined) {
-        setAddressSelections({ ...addressSelections, [hash]: true })
-      }
-    })
+    setAddressSelections((prevSelections) => {
+      const newSelections = { ...prevSelections }
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      discoveredAddresses.forEach(({ hash }) => {
+        if (newSelections[hash] === undefined) {
+          newSelections[hash] = true
+        }
+      })
+      return newSelections
+    })
   }, [discoveredAddresses])
 
   const handleStartScanPress = () => {

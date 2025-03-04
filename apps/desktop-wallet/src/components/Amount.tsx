@@ -81,8 +81,6 @@ const Amount = ({
         : theme.global.valid
       : 'inherit'
 
-  amountProps.color = color
-
   const toggleDiscreetMode = () => discreetMode && dispatch(discreetModeToggled())
 
   return (
@@ -98,11 +96,11 @@ const Amount = ({
       {showPlusMinus && <span>{value < 0 ? '-' : '+'}</span>}
 
       {isFiat(amountProps) ? (
-        <FiatAmount {...amountProps} />
+        <FiatAmount {...amountProps} color={color} />
       ) : isCustom(amountProps) ? (
-        <CustomAmount {...amountProps} />
+        <CustomAmount {...amountProps} color={color} />
       ) : (
-        <TokenAmount {...amountProps} />
+        <TokenAmount {...amountProps} color={color} />
       )}
     </AmountStyled>
   )

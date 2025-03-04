@@ -9,7 +9,7 @@ import {
 } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import _, { sortBy, uniq } from 'lodash'
-import { useCallback, useRef } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiCheckLine } from 'react-icons/ri'
 import { usePageVisibility } from 'react-page-visibility'
@@ -46,10 +46,9 @@ const TransactionInfoPage = () => {
   const isAppVisible = usePageVisibility()
   const { displaySnackbar } = useSnackbar()
 
-  const previousTransactionData = useRef<Transaction | undefined>()
-  const txInfoError = useRef<string | undefined>()
-
-  let txInfoErrorStatus
+  const [isTxConfirmed, setIsTxConfirmed] = useState(true)
+  const [errorMessage, setErrorMessage] = useState<string | undefined>()
+  const [errorCode, setErrorCode] = useState<number | undefined>()
 
   const {
     data: transactionData,
@@ -58,12 +57,7 @@ const TransactionInfoPage = () => {
   } = useQuery({
     ...queries.transactions.transaction.one(id || ''),
     enabled: !!id,
-    refetchInterval:
-      isAppVisible &&
-      (!previousTransactionData.current || !isConfirmedTx(previousTransactionData.current)) &&
-      !txInfoError.current
-        ? 10000
-        : undefined,
+    refetchInterval: isAppVisible && !isTxConfirmed ? 10000 : undefined,
     retry: (num, e) => {
       const error = (e as Error).message
       displaySnackbar({ text: error, type: 'alert' })
@@ -71,15 +65,21 @@ const TransactionInfoPage = () => {
     }
   })
 
-  if (transactionInfoError) {
-    const e = transactionInfoError as Error
-    txInfoError.current = e.message
-    txInfoErrorStatus = txInfoError.current.includes('not found') ? 404 : 400
-  }
+  useEffect(() => setIsTxConfirmed(isConfirmedTx(transactionData)), [transactionData])
+
+  useEffect(() => {
+    if (transactionInfoError) {
+      const e = transactionInfoError as Error
+
+      setErrorMessage(e.message)
+      setErrorCode(e.message.includes('not found') ? 404 : 400)
+    } else {
+      setErrorMessage(undefined)
+      setErrorCode(undefined)
+    }
+  }, [transactionInfoError])
 
   const confirmedTxInfo = isConfirmedTx(transactionData) ? transactionData : undefined
-
-  previousTransactionData.current = confirmedTxInfo
 
   const { data: txBlock } = useQuery({
     ...queries.blocks.block.one(confirmedTxInfo?.blockHash || ''),
@@ -152,7 +152,7 @@ const TransactionInfoPage = () => {
   return (
     <Section>
       <SectionTitle title={t('Transaction')} />
-      {!txInfoError.current ? (
+      {!errorMessage ? (
         <>
           <Table bodyOnly isLoading={txInfoLoading}>
             {transactionData && (
@@ -334,7 +334,7 @@ const TransactionInfoPage = () => {
           </IOTable>
         </>
       ) : (
-        <InlineErrorMessage message={txInfoError.current} code={txInfoErrorStatus} />
+        <InlineErrorMessage message={errorMessage} code={errorCode} />
       )}
     </Section>
   )

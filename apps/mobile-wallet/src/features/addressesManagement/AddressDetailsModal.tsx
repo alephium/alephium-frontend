@@ -23,7 +23,7 @@ export interface AddressDetailsModalProps {
 }
 
 const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHash }) => {
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash, true))
 
   return (
@@ -56,9 +56,9 @@ const AddressDetailsModal = withModal<AddressDetailsModalProps>(({ id, addressHa
 export default AddressDetailsModal
 
 const AddressesTokensListEmpty = ({ addressHash }: { addressHash: AddressHash }) => {
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash, true))
-  const selectAddressesCheckedUnknownTokens = useMemo(makeSelectAddressesCheckedUnknownTokens, [])
+  const selectAddressesCheckedUnknownTokens = useMemo(() => makeSelectAddressesCheckedUnknownTokens(), [])
   const unknownTokens = useAppSelector(selectAddressesCheckedUnknownTokens)
   const hiddenAssetIds = useAppSelector((s) => selectAddressHiddenAssetIds(s, addressHash))
   const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)

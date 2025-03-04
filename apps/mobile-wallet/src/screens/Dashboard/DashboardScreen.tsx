@@ -49,7 +49,7 @@ const DashboardScreen = ({ navigation, ...props }: ScreenProps) => {
   const { screenScrollY, screenScrollHandler } = useScreenScrollHandler()
   const currency = useAppSelector((s) => s.settings.currency)
   const totalBalance = useAppSelector(selectTotalBalance)
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
+  const selectAddessesTokensWorth = useMemo(() => makeSelectAddressesTokensWorth(), [])
   const balanceInFiat = useAppSelector(selectAddessesTokensWorth)
   const addressesBalancesStatus = useAppSelector((s) => s.addresses.balancesStatus)
   const isMnemonicBackedUp = useAppSelector((s) => s.wallet.isMnemonicBackedUp)

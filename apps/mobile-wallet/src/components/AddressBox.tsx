@@ -170,12 +170,12 @@ const AddressAmount = ({
   addressHash,
   tokenId
 }: Pick<AddressBoxProps, 'addressHash'> & Pick<AddressBoxProps, 'tokenId'>) => {
-  const selectAddessesTokensWorth = useMemo(makeSelectAddressesTokensWorth, [])
+  const selectAddessesTokensWorth = useMemo(() => makeSelectAddressesTokensWorth(), [])
   const balanceInFiat = useAppSelector((s) => selectAddessesTokensWorth(s, addressHash))
   const currency = useAppSelector((s) => s.settings.currency)
 
   // Suboptimal way to fetch token, will be fixed when migrated to Tanstack
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const token = knownFungibleTokens.find((t) => t.id === tokenId)
 
@@ -187,9 +187,9 @@ const AddressAmount = ({
 }
 
 const AddressAllTokensDetails = ({ addressHash }: Pick<AddressBoxProps, 'addressHash'>) => {
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
-  const selectAddressesNFTs = useMemo(makeSelectAddressesNFTs, [])
+  const selectAddressesNFTs = useMemo(() => makeSelectAddressesNFTs(), [])
   const nfts = useAppSelector((s) => selectAddressesNFTs(s, addressHash))
   const { t } = useTranslation()
 
@@ -222,7 +222,7 @@ const AddressTokenDetails = ({
   tokenId
 }: Pick<AddressBoxProps, 'addressHash'> & Required<Pick<AddressBoxProps, 'tokenId'>>) => {
   // Suboptimal way to fetch token, will be fixed when migrated to Tanstack
-  const selectAddressesKnownFungibleTokens = useMemo(makeSelectAddressesKnownFungibleTokens, [])
+  const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, addressHash))
   const token = knownFungibleTokens.find((t) => t.id === tokenId)
 
