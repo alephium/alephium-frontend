@@ -13,7 +13,7 @@ type InputFieldMode = 'view' | 'edit'
 const AddressInput = ({ value, ...props }: InputProps) => {
   const addressHashInput = value?.toString() || ''
   const ownAddress = useAppSelector((s) => selectAddressByHash(s, addressHashInput))
-  const selectContactByAddress = useMemo(makeSelectContactByAddress, [])
+  const selectContactByAddress = useMemo(() => makeSelectContactByAddress(), [])
   const contact = useAppSelector((s) => selectContactByAddress(s, addressHashInput))
   const inputRef = useRef<HTMLInputElement>(null)
 

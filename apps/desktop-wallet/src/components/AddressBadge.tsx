@@ -42,7 +42,7 @@ const AddressBadge = ({
 }: AddressBadgeProps) => {
   const { t } = useTranslation()
   const address = useAppSelector((s) => selectAddressByHash(s, addressHash))
-  const selectContactByAddress = useMemo(makeSelectContactByAddress, [])
+  const selectContactByAddress = useMemo(() => makeSelectContactByAddress(), [])
   const contact = useAppSelector((s) => selectContactByAddress(s, addressHash))
 
   const displayedHash = contact ? contact.address : address ? address.hash : addressHash
