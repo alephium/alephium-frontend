@@ -3,7 +3,7 @@ import { ALPH } from '@alephium/token-list'
 import { AddressBalance } from '@alephium/web3/dist/src/api/api-explorer'
 import { useQuery } from '@tanstack/react-query'
 import { flatMap } from 'lodash'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RiCopperDiamondLine, RiNftLine, RiQuestionLine } from 'react-icons/ri'
 import styled, { useTheme } from 'styled-components'
@@ -120,11 +120,6 @@ const AssetList = ({ addressHash, addressBalance, limit, className }: AssetListP
     })
 
   const [currentTab, setCurrentTab] = useState<TabItem>(tabs[0])
-
-  useEffect(() => {
-    addressHash && setCurrentTab(tabs[0])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addressHash])
 
   return (
     <div className={className}>
