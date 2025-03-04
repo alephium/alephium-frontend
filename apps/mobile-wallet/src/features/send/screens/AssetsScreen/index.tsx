@@ -11,7 +11,6 @@ import { useSendContext } from '~/contexts/SendContext'
 import { activateAppLoading, deactivateAppLoading } from '~/features/loader/loaderActions'
 import { openModal } from '~/features/modals/modalActions'
 import AssetRow from '~/features/send/screens/AssetsScreen/AssetRow'
-import useScrollToTopOnFocus from '~/hooks/layout/useScrollToTopOnFocus'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { SendNavigationParamList } from '~/navigation/SendNavigation'
 import {
@@ -29,7 +28,7 @@ interface ScreenProps
 
 const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) => {
   const { fromAddress, assetAmounts, buildTransaction, setAssetAmount } = useSendContext()
-  const { screenScrollY, screenScrollHandler } = useHeaderContext()
+  const { screenScrollHandler } = useHeaderContext()
   const address = useAppSelector((s) => selectAddressByHash(s, fromAddress ?? ''))
   const selectAddressesKnownFungibleTokens = useMemo(() => makeSelectAddressesKnownFungibleTokens(), [])
   const knownFungibleTokens = useAppSelector((s) => selectAddressesKnownFungibleTokens(s, address?.hash, true))
@@ -41,8 +40,6 @@ const AssetsScreen = ({ navigation, route: { params }, ...props }: ScreenProps) 
   const dispatch = useAppDispatch()
 
   const [shouldOpenAmountModal, setShouldOpenAmountModal] = useState(!!params?.tokenId)
-
-  useScrollToTopOnFocus(screenScrollY)
 
   const isContinueButtonDisabled = assetAmounts.length < 1
 
