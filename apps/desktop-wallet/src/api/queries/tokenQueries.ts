@@ -122,27 +122,33 @@ export const nftDataQuery = ({ id, tokenUri, networkId, skip }: NFTQueryProps) =
     queryFn:
       !skip && !!tokenUri
         ? async () => {
-            const res = await axios.get(tokenUri)
-            const nftData = res.data as NFTTokenUriMetaData
+            const errorNftMetadata: NFTTokenUriMetaData = { name: 'Unknown NFT', image: '' }
 
-            if (!nftData || !nftData.name) {
-              return Promise.reject()
+            try {
+              const res = await axios.get(tokenUri)
+              const nftData = res.data as NFTTokenUriMetaData
+
+              if (!nftData || !nftData.name) {
+                return { id, dataType: 'other', ...errorNftMetadata }
+              }
+
+              const dataTypeRes = nftData.image ? (await axios.get(nftData.image)).headers['content-type'] || '' : ''
+
+              const dataTypeCategory = dataTypeRes.split('/')[0]
+
+              const dataType = dataTypeCategory in NFTDataTypes ? (dataTypeCategory as NFTDataType) : 'other'
+
+              return matchesNFTTokenUriMetaDataSchema(nftData)
+                ? { id, dataType, ...nftData }
+                : {
+                    id,
+                    dataType,
+                    name: nftData.name,
+                    image: nftData.image ? nftData.image.toString() : ''
+                  }
+            } catch {
+              return { id, dataType: 'other', ...errorNftMetadata }
             }
-
-            const dataTypeRes = nftData.image ? (await axios.get(nftData.image)).headers['content-type'] || '' : ''
-
-            const dataTypeCategory = dataTypeRes.split('/')[0]
-
-            const dataType = dataTypeCategory in NFTDataTypes ? (dataTypeCategory as NFTDataType) : 'other'
-
-            return matchesNFTTokenUriMetaDataSchema(nftData)
-              ? { id, dataType, ...nftData }
-              : {
-                  id,
-                  dataType,
-                  name: nftData.name,
-                  image: nftData.image ? nftData.image.toString() : ''
-                }
           }
         : skipToken
   })
@@ -177,6 +183,8 @@ export const tokenQuery = ({ id, networkId, skip }: TokenQueryProps) =>
         if (!nftMetadata) return nst
 
         const nftData = await queryClient.fetchQuery(nftDataQuery({ id, tokenUri: nftMetadata.tokenUri, networkId }))
+
+        if (!nftData) return nst
 
         return { ...nftData, ...nftMetadata }
       }

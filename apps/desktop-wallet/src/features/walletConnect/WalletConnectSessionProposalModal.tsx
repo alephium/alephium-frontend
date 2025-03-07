@@ -226,15 +226,8 @@ const WalletConnectSessionProposalModal = memo(
           <>
             <Section>
               <InfoBox label="New address needed" Icon={PlusSquare}>
-                <Trans
-                  t={t}
-                  i18nKey="walletConnectNewAddress"
-                  values={{ currentNetworkName }}
-                  components={{ 1: <Highlight /> }}
-                >
-                  {
-                    'The dApp asks for an address in group <1>{{ currentNetworkName }}</1>. Click below to generate one!'
-                  }
+                <Trans t={t} i18nKey="walletConnectNewAddress" values={{ group }} components={{ 1: <Highlight /> }}>
+                  {'The dApp asks for an address in group <1>{{ group }}</1>. Click below to generate one!'}
                 </Trans>
               </InfoBox>
             </Section>
