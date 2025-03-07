@@ -6,7 +6,7 @@ import { queryOptions, skipToken } from '@tanstack/react-query'
 import { tokenQuery } from '@/api/queries/tokenQueries'
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
 import queryClient from '@/api/queryClient'
-import { ApiBalances, isFT, isNFT, TokenApiBalances } from '@/types/tokens'
+import { ApiBalances, isFT, isNFT, Token, TokenApiBalances } from '@/types/tokens'
 
 export type AddressAlphBalancesQueryFnData = {
   addressHash: AddressHash
@@ -103,12 +103,13 @@ export const addressTokensSearchStringQuery = ({ addressHash, networkId }: Addre
       let hasAlph = hasTokens
 
       if (hasTokens) {
-        const tokens = await Promise.all(
+        const tokenResults = await Promise.allSettled(
           addressTokensBalances.balances.map(({ id }) => queryClient.fetchQuery(tokenQuery({ id, networkId })))
         )
 
-        searchString = tokens
-          .map((token) =>
+        searchString = tokenResults
+          .filter((result): result is PromiseFulfilledResult<Token> => result.status === 'fulfilled')
+          .map(({ value: token }) =>
             isFT(token)
               ? `${token.name.toLowerCase()} ${token.symbol.toLowerCase()} ${token.id}`
               : isNFT(token)
