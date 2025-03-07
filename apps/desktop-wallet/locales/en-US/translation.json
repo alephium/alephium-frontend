@@ -455,7 +455,7 @@
   "All UTXOs are already consolidated for this address. No consolidation is needed.": "All UTXOs are already consolidated for this address. No consolidation is needed.",
   "No addresses match the search criteria.": "No addresses match the search criteria.",
   "walletConnectSwitchNetwork": "You are currently connected to <1>{{ currentNetworkName }}</1>, but the dApp requires a connection to <3>{{ network }}</3>.",
-  "walletConnectNewAddress": "The dApp asks for an address in group <1>{{ currentNetworkName }}</1>. Click below to generate one!",
+  "walletConnectNewAddress": "The dApp asks for an address in group <1>{{ group }}</1>. Click below to generate one!",
   "ALPH only": "ALPH only",
   "This address doesn't have any tokens yet.": "This address doesn't have any tokens yet.",
   "This address doesn't have any NFTs yet.": "This address doesn't have any NFTs yet.",
