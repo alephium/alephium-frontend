@@ -452,7 +452,6 @@
   "All UTXOs are already consolidated for this address. No consolidation is needed.": "Semua UTXOs sudah terkonsolidasi untuk alamat ini. Konsolidasi tidak diperlukan.",
   "No addresses match the search criteria.": "Tidak ada alamat - alamat yang cocok dengan kriteria pencarian.",
   "walletConnectSwitchNetwork": "Saat ini Anda telah terhubung ke <1>{{ currentNetworkName }}</1>, namun dApp memerlukan koneksi ke <3>{{ network }}</3>.",
-  "walletConnectNewAddress": "Dapp meminta sebuah alamat di grup <1>{{ currentNetworkName }}</1>. Klik di bawah untuk membuatnya!",
   "ALPH only": "Hanya ALPH",
   "This address doesn't have any tokens yet.": "Alamat ini belum memiliki token - token apa pun.",
   "This address doesn't have any NFTs yet.": "Alamat ini belum memiliki NFTs apa pun.",
