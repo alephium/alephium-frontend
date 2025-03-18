@@ -8,7 +8,7 @@ interface WorthOverviewProps extends AmountLoaderProps {
 }
 
 const WorthOverview = ({ worth, ...props }: WorthOverviewProps) => (
-  <WorthOverviewStyled value={worth} isFiat loaderHeight={32} tabIndex={0} semiBold {...props} />
+  <WorthOverviewStyled value={worth} isFiat loaderHeight={46} tabIndex={0} semiBold {...props} />
 )
 
 export default WorthOverview
