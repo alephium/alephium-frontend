@@ -71,8 +71,15 @@ export const tokenTypeQuery = ({ id, networkId, skip }: TokenQueryProps) =>
   })
 
 export const combineTokenTypeQueryResults = (results: UseQueryResult<e.TokenInfo | null>[]) => ({
-  data: results.reduce(
-    (tokenIdsByType, { data: tokenInfo }) => {
+  data: combineTokenTypes(results),
+  ...combineIsLoading(results)
+})
+
+export const combineTokenTypes = (tokenTypes: (e.TokenInfo | { data: e.TokenInfo | null | undefined })[]) =>
+  tokenTypes.reduce(
+    (tokenIdsByType, tokenType) => {
+      const tokenInfo = 'data' in tokenType ? tokenType.data : tokenType
+
       if (!tokenInfo) return tokenIdsByType
       const stdInterfaceId = tokenInfo.stdInterfaceId as e.TokenStdInterfaceId
 
@@ -90,9 +97,7 @@ export const combineTokenTypeQueryResults = (results: UseQueryResult<e.TokenInfo
       [e.TokenStdInterfaceId.NonFungible]: [],
       [e.TokenStdInterfaceId.NonStandard]: []
     } as Record<e.TokenStdInterfaceId, TokenId[]>
-  ),
-  ...combineIsLoading(results)
-})
+  )
 
 export const fungibleTokenMetadataQuery = ({ id, networkId, skip }: TokenQueryProps) =>
   queryOptions({

@@ -29,7 +29,7 @@ export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) =>
 
   const {
     data: { nstIds }
-  } = useFetchAddressTokensByType({ addressHash, includeAlph: false })
+  } = useFetchAddressTokensByType({ addressHash })
 
   return (
     <>

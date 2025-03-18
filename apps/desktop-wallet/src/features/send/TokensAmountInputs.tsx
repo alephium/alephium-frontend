@@ -57,7 +57,7 @@ const TokensAmountInputs = ({
   const { listedFts, unlistedFts } = useFetchAddressFts({ addressHash: address.hash })
   const {
     data: { nftIds }
-  } = useFetchAddressTokensByType({ addressHash: address.hash, includeAlph: true })
+  } = useFetchAddressTokensByType({ addressHash: address.hash })
 
   const allTokensOptions = useAddressTokensSelectOptions(address.hash)
 
@@ -283,7 +283,7 @@ const useAddressTokensSelectOptions = (addressHash: AddressHash) => {
   const { listedFts, unlistedFts } = useFetchAddressFts({ addressHash })
   const {
     data: { nftIds, nstIds }
-  } = useFetchAddressTokensByType({ addressHash, includeAlph: true })
+  } = useFetchAddressTokensByType({ addressHash })
   const sortedTokenIds = useSortedTokenIds({ listedFts, unlistedFts, nftIds, nstIds })
   const { data: nftsSearchStringsByNftId } = useFetchWalletNftsSearchStrings()
 

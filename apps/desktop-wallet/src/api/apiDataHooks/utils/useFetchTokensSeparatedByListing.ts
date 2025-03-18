@@ -14,23 +14,7 @@ interface TokensByListing<T> {
 const useFetchTokensSeparatedByListing = <T extends UnlistedToken>(tokens: T[] = []): TokensByListing<T> => {
   const { data: ftList, isLoading } = useFetchFtList({ skip: tokens.length === 0 })
 
-  const data = useMemo(() => {
-    const initial = { listedFts: [] as (ListedFT & T)[], unlistedTokens: [] as (UnlistedToken & T)[] }
-
-    if (!ftList) return initial
-
-    return tokens.reduce((acc, token) => {
-      const listedFT = ftList?.find((t) => t.id === token.id)
-
-      if (listedFT) {
-        acc.listedFts.push({ ...listedFT, ...token })
-      } else {
-        acc.unlistedTokens.push(token)
-      }
-
-      return acc
-    }, initial)
-  }, [ftList, tokens])
+  const data = useMemo(() => separateTokensByListing(tokens, ftList), [ftList, tokens])
 
   return {
     data,
@@ -39,3 +23,24 @@ const useFetchTokensSeparatedByListing = <T extends UnlistedToken>(tokens: T[] =
 }
 
 export default useFetchTokensSeparatedByListing
+
+export const separateTokensByListing = <T extends UnlistedToken>(
+  tokens: T[],
+  ftList: ListedFT[] | undefined
+): TokensByListing<T>['data'] => {
+  const initial = { listedFts: [] as (ListedFT & T)[], unlistedTokens: [] as (UnlistedToken & T)[] }
+
+  if (!ftList) return initial
+
+  return tokens.reduce((acc, token) => {
+    const listedFT = ftList?.find((t) => t.id === token.id)
+
+    if (listedFT) {
+      acc.listedFts.push({ ...listedFT, ...token })
+    } else {
+      acc.unlistedTokens.push(token)
+    }
+
+    return acc
+  }, initial)
+}

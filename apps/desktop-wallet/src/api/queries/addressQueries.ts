@@ -1,9 +1,11 @@
 import { AddressHash, PAGINATION_PAGE_LIMIT, throttledClient } from '@alephium/shared'
 import { getQueryConfig } from '@alephium/shared-react'
+import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
-import { tokenQuery } from '@/api/queries/tokenQueries'
+import { separateTokensByListing } from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
+import { combineTokenTypes, ftListQuery, tokenQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
 import queryClient from '@/api/queryClient'
 import { ApiBalances, isFT, isNFT, Token, TokenApiBalances } from '@/types/tokens'
@@ -94,7 +96,8 @@ export type AddressTokensSearchStringQueryFnData = {
 // Generates a string that includes the names and symbols of all tokens in the address, useful for filtering addresses
 export const addressTokensSearchStringQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'tokensSearchString', { networkId }],
+    queryKey: ['address', addressHash, 'computedData', 'tokensSearchString', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
     queryFn: async (): Promise<AddressTokensSearchStringQueryFnData> => {
       let searchString = ''
 
@@ -130,5 +133,46 @@ export const addressTokensSearchStringQuery = ({ addressHash, networkId }: Addre
         addressHash,
         searchString
       }
+    }
+  })
+
+export const addressTokensByTypeQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'computedData', 'tokensByType', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn: async () => {
+      const { balances: addressAlphBalances } = await queryClient.fetchQuery(
+        addressAlphBalancesQuery({ addressHash, networkId })
+      )
+      const { balances: addressTokensBalances } = await queryClient.fetchQuery(
+        addressTokensBalancesQuery({ addressHash, networkId })
+      )
+      const allTokensBalances =
+        addressAlphBalances && addressAlphBalances.totalBalance !== '0'
+          ? [{ id: ALPH.id, ...addressAlphBalances } as TokenApiBalances, ...addressTokensBalances]
+          : addressTokensBalances
+
+      const ftList = await queryClient.fetchQuery(ftListQuery({ networkId }))
+
+      const { listedFts, unlistedTokens } = separateTokensByListing(allTokensBalances, ftList)
+
+      const tokenTypeResults = await Promise.allSettled(
+        unlistedTokens.map(({ id }) => queryClient.fetchQuery(tokenTypeQuery({ id, networkId })))
+      )
+
+      const results = tokenTypeResults
+        .filter(
+          (
+            result
+          ): result is PromiseFulfilledResult<{
+            stdInterfaceId: e.TokenStdInterfaceId
+            token: string
+          }> => result.status === 'fulfilled'
+        )
+        .map(({ value }) => value)
+
+      const { fungible: unlistedFtIds, 'non-fungible': nftIds, 'non-standard': nstIds } = combineTokenTypes(results)
+
+      return { listedFts, unlistedTokens, unlistedFtIds, nftIds, nstIds }
     }
   })

@@ -17,7 +17,7 @@ export const AddressNFTsGrid = ({ addressHash }: AddressModalBaseProp) => {
   const {
     data: { nftIds },
     isLoading
-  } = useFetchAddressTokensByType({ addressHash, includeAlph: false })
+  } = useFetchAddressTokensByType({ addressHash })
 
   return (
     <NFTsGrid
