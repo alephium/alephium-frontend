@@ -1,10 +1,10 @@
 import {
+  FREQUENT_ADDRESS_TRANSACTIONS_REFRESH_INTERVAL,
   PRICES_REFRESH_INTERVAL,
   selectDoVerifiedFungibleTokensNeedInitialization,
   syncTokenCurrentPrices,
   syncUnknownTokensInfo,
-  syncVerifiedFungibleTokens,
-  TRANSACTIONS_REFRESH_INTERVAL
+  syncVerifiedFungibleTokens
 } from '@alephium/shared'
 import { queryClient, useInitializeClient, useInterval } from '@alephium/shared-react'
 import { useReactQueryDevTools } from '@dev-plugins/react-query'
@@ -195,7 +195,7 @@ const Main = ({ children, ...props }: ViewProps) => {
 
   useInterval(
     checkForNewTransactions,
-    TRANSACTIONS_REFRESH_INTERVAL,
+    FREQUENT_ADDRESS_TRANSACTIONS_REFRESH_INTERVAL,
     !dataResyncNeeded || addressesStatus === 'uninitialized'
   )
 
