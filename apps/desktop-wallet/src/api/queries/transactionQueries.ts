@@ -24,12 +24,8 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
     queryFn:
       !skip && networkId !== undefined
         ? async ({ queryKey }) => {
-            const transactions = await throttledClient.explorer.addresses.getAddressesAddressTransactions(addressHash, {
-              page: 1,
-              limit: 1
-            })
+            const latestTx = await throttledClient.explorer.addresses.getAddressesAddressLatestTransaction(addressHash)
 
-            const latestTx = transactions.length > 0 ? transactions[0] : undefined
             const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionQueryFnData | undefined
             const cachedLatestTx = cachedData?.latestTx
 
