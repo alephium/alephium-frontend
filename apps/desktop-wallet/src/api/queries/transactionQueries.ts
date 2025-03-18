@@ -30,7 +30,18 @@ export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: 
     queryFn:
       !skip && networkId !== undefined
         ? async ({ queryKey }) => {
-            const latestTx = await throttledClient.explorer.addresses.getAddressesAddressLatestTransaction(addressHash)
+            let latestTx = undefined
+
+            // Backend returns 404 if the address has no transactions and Tanstack will consider it an error. This will
+            // result in isLoading to be set to true more often than needed, leading to unnecessary re-renders. By
+            // catching the error and setting latestTx to undefined, we can avoid this issue.
+            try {
+              latestTx = await throttledClient.explorer.addresses.getAddressesAddressLatestTransaction(addressHash)
+            } catch (error) {
+              if (!(error instanceof Error && error.message.includes('Status code: 404'))) {
+                throw error
+              }
+            }
 
             const cachedData = queryClient.getQueryData(queryKey) as AddressLatestTransactionQueryFnData | undefined
             const cachedLatestTx = cachedData?.latestTx
