@@ -1,5 +1,5 @@
 import {
-  FREQUENT_ADDRESS_TRANSACTIONS_REFRESH_INTERVAL,
+  DEPRECATED_TRANSACTIONS_REFRESH_INTERVAL,
   PRICES_REFRESH_INTERVAL,
   selectDoVerifiedFungibleTokensNeedInitialization,
   syncTokenCurrentPrices,
@@ -195,7 +195,7 @@ const Main = ({ children, ...props }: ViewProps) => {
 
   useInterval(
     checkForNewTransactions,
-    FREQUENT_ADDRESS_TRANSACTIONS_REFRESH_INTERVAL,
+    DEPRECATED_TRANSACTIONS_REFRESH_INTERVAL, // TODO: Replace with FREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL and INFREQUENT_ADDRESSES_TRANSACTIONS_REFRESH_INTERVAL after Tanstack migration
     !dataResyncNeeded || addressesStatus === 'uninitialized'
   )
 
