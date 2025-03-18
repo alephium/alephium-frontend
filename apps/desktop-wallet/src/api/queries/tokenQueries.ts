@@ -63,9 +63,7 @@ export const tokenTypeQuery = ({ id, networkId, skip }: TokenQueryProps) =>
         ? async () => {
             const tokenInfo = await batchers.tokenTypeBatcher.fetch(id)
 
-            return tokenInfo?.stdInterfaceId
-              ? { ...tokenInfo, stdInterfaceId: tokenInfo.stdInterfaceId as e.TokenStdInterfaceId }
-              : null
+            return { token: id, stdInterfaceId: tokenInfo?.stdInterfaceId } as e.TokenInfo
           }
         : skipToken
   })

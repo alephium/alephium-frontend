@@ -5,10 +5,11 @@ import { explorer as e } from '@alephium/web3'
 import { queryOptions, skipToken } from '@tanstack/react-query'
 
 import { separateTokensByListing } from '@/api/apiDataHooks/utils/useFetchTokensSeparatedByListing'
+import { getFulfilledValues } from '@/api/apiUtils'
 import { combineTokenTypes, ftListQuery, tokenQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
 import queryClient from '@/api/queryClient'
-import { ApiBalances, isFT, isNFT, Token, TokenApiBalances } from '@/types/tokens'
+import { ApiBalances, isFT, isNFT, TokenApiBalances } from '@/types/tokens'
 
 export type AddressAlphBalancesQueryFnData = {
   addressHash: AddressHash
@@ -106,13 +107,12 @@ export const addressTokensSearchStringQuery = ({ addressHash, networkId }: Addre
       let hasAlph = hasTokens
 
       if (hasTokens) {
-        const tokenResults = await Promise.allSettled(
+        const tokenPromiseResults = await Promise.allSettled(
           addressTokensBalances.balances.map(({ id }) => queryClient.fetchQuery(tokenQuery({ id, networkId })))
         )
 
-        searchString = tokenResults
-          .filter((result): result is PromiseFulfilledResult<Token> => result.status === 'fulfilled')
-          .map(({ value: token }) =>
+        searchString = getFulfilledValues(tokenPromiseResults)
+          .map((token) =>
             isFT(token)
               ? `${token.name.toLowerCase()} ${token.symbol.toLowerCase()} ${token.id}`
               : isNFT(token)
@@ -153,25 +153,14 @@ export const addressTokensByTypeQuery = ({ addressHash, networkId }: AddressLate
           : addressTokensBalances
 
       const ftList = await queryClient.fetchQuery(ftListQuery({ networkId }))
-
       const { listedFts, unlistedTokens } = separateTokensByListing(allTokensBalances, ftList)
 
-      const tokenTypeResults = await Promise.allSettled(
+      const tokenTypesPromiseResults = await Promise.allSettled(
         unlistedTokens.map(({ id }) => queryClient.fetchQuery(tokenTypeQuery({ id, networkId })))
       )
+      const tokenTypes = getFulfilledValues(tokenTypesPromiseResults)
 
-      const results = tokenTypeResults
-        .filter(
-          (
-            result
-          ): result is PromiseFulfilledResult<{
-            stdInterfaceId: e.TokenStdInterfaceId
-            token: string
-          }> => result.status === 'fulfilled'
-        )
-        .map(({ value }) => value)
-
-      const { fungible: unlistedFtIds, 'non-fungible': nftIds, 'non-standard': nstIds } = combineTokenTypes(results)
+      const { fungible: unlistedFtIds, 'non-fungible': nftIds, 'non-standard': nstIds } = combineTokenTypes(tokenTypes)
 
       return { listedFts, unlistedTokens, unlistedFtIds, nftIds, nstIds }
     }

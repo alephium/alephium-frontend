@@ -23,3 +23,8 @@ export const convertTokenDecimalsToNumber = (token: e.FungibleTokenMetadata): Un
     decimals: Number.isInteger(parsedDecimals) ? parsedDecimals : 0
   }
 }
+
+export const getFulfilledValues = <T>(results: PromiseSettledResult<T>[]) =>
+  results
+    .filter((result): result is PromiseFulfilledResult<T> => result.status === 'fulfilled')
+    .map(({ value }) => value)
