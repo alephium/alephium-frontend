@@ -1,4 +1,10 @@
-import { AddressHash, FIVE_MINUTES_MS, throttledClient, TRANSACTIONS_PAGE_DEFAULT_LIMIT } from '@alephium/shared'
+import {
+  AddressHash,
+  FIVE_MINUTES_MS,
+  ONE_MINUTE_MS,
+  throttledClient,
+  TRANSACTIONS_PAGE_DEFAULT_LIMIT
+} from '@alephium/shared'
 import { getQueryConfig } from '@alephium/shared-react'
 import { explorer as e, sleep } from '@alephium/web3'
 import { infiniteQueryOptions, queryOptions, skipToken } from '@tanstack/react-query'
@@ -20,7 +26,7 @@ export interface AddressLatestTransactionQueryFnData {
 export const addressLatestTransactionQuery = ({ addressHash, networkId, skip }: AddressLatestTransactionQueryProps) =>
   queryOptions({
     queryKey: ['address', addressHash, 'transaction', 'latest', { networkId }],
-    ...getQueryConfig({ gcTime: FIVE_MINUTES_MS, networkId }),
+    ...getQueryConfig({ staleTime: ONE_MINUTE_MS, gcTime: FIVE_MINUTES_MS, networkId }),
     queryFn:
       !skip && networkId !== undefined
         ? async ({ queryKey }) => {
