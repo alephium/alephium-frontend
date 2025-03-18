@@ -9,7 +9,7 @@ import { getFulfilledValues } from '@/api/apiUtils'
 import { combineTokenTypes, ftListQuery, tokenQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
 import queryClient from '@/api/queryClient'
-import { ApiBalances, isFT, isNFT, TokenApiBalances } from '@/types/tokens'
+import { ApiBalances, isFT, isNFT, TokenApiBalances, TokenId } from '@/types/tokens'
 
 export type AddressAlphBalancesQueryFnData = {
   addressHash: AddressHash
@@ -89,18 +89,19 @@ export const addressTokensBalancesQuery = ({ addressHash, networkId, skip }: Add
         : skipToken
   })
 
-export type AddressTokensSearchStringQueryFnData = {
+export type AddressSearchStringQueryFnData = {
   addressHash: AddressHash
   searchString: string
 }
 
-// Generates a string that includes the names and symbols of all tokens in the address, useful for filtering addresses
-export const addressTokensSearchStringQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+// Generates a map of token IDs to search strings that include the name, symbol, and ID of each token, useful for
+// filtering tokens.
+export const addressTokensSearchStringsQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
   queryOptions({
-    queryKey: ['address', addressHash, 'computedData', 'tokensSearchString', { networkId }],
+    queryKey: ['address', addressHash, 'computedData', 'tokensSearchStrings', { networkId }],
     ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
-    queryFn: async (): Promise<AddressTokensSearchStringQueryFnData> => {
-      let searchString = ''
+    queryFn: async (): Promise<Record<TokenId, string>> => {
+      const tokensSearchStrings = {} as Record<TokenId, string>
 
       const addressTokensBalances = await queryClient.fetchQuery(addressTokensBalancesQuery({ addressHash, networkId }))
       const hasTokens = addressTokensBalances.balances.length > 0
@@ -111,27 +112,39 @@ export const addressTokensSearchStringQuery = ({ addressHash, networkId }: Addre
           addressTokensBalances.balances.map(({ id }) => queryClient.fetchQuery(tokenQuery({ id, networkId })))
         )
 
-        searchString = getFulfilledValues(tokenPromiseResults)
-          .map((token) =>
-            isFT(token)
-              ? `${token.name.toLowerCase()} ${token.symbol.toLowerCase()} ${token.id}`
-              : isNFT(token)
-                ? `${token.name.toLowerCase()} ${token.id}`
-                : token.id
-          )
-          .join(' ')
+        getFulfilledValues(tokenPromiseResults).forEach((token) => {
+          tokensSearchStrings[token.id] = isFT(token)
+            ? `${token.name.toLowerCase()} ${token.symbol.toLowerCase()} ${token.id}`
+            : isNFT(token)
+              ? `${token.name.toLowerCase()} ${token.id}`
+              : token.id
+        })
       } else {
         const addressAlphBalances = await queryClient.fetchQuery(addressAlphBalancesQuery({ addressHash, networkId }))
         hasAlph = addressAlphBalances.balances.totalBalance !== '0'
       }
 
       if (hasAlph) {
-        searchString += ' alph alephium'
+        tokensSearchStrings[ALPH.id] = 'alph alephium'
       }
+
+      return tokensSearchStrings
+    }
+  })
+
+// Generates a string that includes the names and symbols of all tokens in the address, useful for filtering addresses.
+export const addressSearchStringQuery = ({ addressHash, networkId }: AddressLatestTransactionQueryProps) =>
+  queryOptions({
+    queryKey: ['address', addressHash, 'computedData', 'searchString', { networkId }],
+    ...getQueryConfig({ staleTime: Infinity, gcTime: Infinity, networkId }),
+    queryFn: async (): Promise<AddressSearchStringQueryFnData> => {
+      const tokensSearchStrings = await queryClient.fetchQuery(
+        addressTokensSearchStringsQuery({ addressHash, networkId })
+      )
 
       return {
         addressHash,
-        searchString
+        searchString: Object.values(tokensSearchStrings).join(' ')
       }
     }
   })

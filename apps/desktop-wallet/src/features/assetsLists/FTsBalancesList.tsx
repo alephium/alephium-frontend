@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next'
 
-import useFetchAddressFts from '@/api/apiDataHooks/address/useFetchAddressFts'
 import useFetchAddressTokensByType from '@/api/apiDataHooks/address/useFetchAddressTokensByType'
 import useFetchWalletFts from '@/api/apiDataHooks/wallet/useFetchWalletFts'
 import useFetchWalletTokensByType from '@/api/apiDataHooks/wallet/useFetchWalletTokensByType'
@@ -24,12 +23,11 @@ import { AddressModalBaseProp } from '@/features/modals/modalTypes'
 
 export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) => {
   const { t } = useTranslation()
-  const { listedFts, unlistedFts, isLoading } = useFetchAddressFts({ addressHash })
-  const isEmpty = !isLoading && listedFts.length === 0 && unlistedFts.length === 0
-
   const {
-    data: { nstIds }
+    data: { listedFts, unlistedFtIds, nstIds },
+    isLoading
   } = useFetchAddressTokensByType({ addressHash })
+  const isEmpty = !isLoading && listedFts.length === 0 && unlistedFtIds.length === 0
 
   return (
     <>
@@ -38,13 +36,13 @@ export const AddressFTsBalancesList = ({ addressHash }: AddressModalBaseProp) =>
         {listedFts.map(({ id }) => (
           <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
         ))}
-        {unlistedFts.map(({ id }) => (
+        {unlistedFtIds.map((id) => (
           <AddressFTBalancesRow tokenId={id} addressHash={addressHash} key={id} />
         ))}
         {nstIds.map((tokenId) => (
           <AddressNSTBalancesRow addressHash={addressHash} tokenId={tokenId} key={tokenId} />
         ))}
-        {!isLoading && listedFts.length === 0 && unlistedFts.length === 0 && nstIds.length === 0 && (
+        {!isLoading && listedFts.length === 0 && unlistedFtIds.length === 0 && nstIds.length === 0 && (
           <EmptyPlaceholder emoji="👀">{t("This address doesn't have any tokens yet.")}</EmptyPlaceholder>
         )}
         {isLoading && <TokensSkeletonLoader />}
