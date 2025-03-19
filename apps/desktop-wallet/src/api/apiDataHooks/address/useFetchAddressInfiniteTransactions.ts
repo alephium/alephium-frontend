@@ -1,11 +1,10 @@
 import { AddressHash } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { queryClient, useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useCallback, useMemo } from 'react'
 
 import useFetchAddressLatestTransaction from '@/api/apiDataHooks/address/useFetchAddressLatestTransaction'
 import { addressTransactionsInfiniteQuery } from '@/api/queries/transactionQueries'
-import queryClient from '@/api/queryClient'
 
 interface UseFetchAddressInfiniteTransactionsProps {
   addressHash: AddressHash

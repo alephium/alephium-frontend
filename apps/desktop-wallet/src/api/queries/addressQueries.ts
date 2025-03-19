@@ -1,5 +1,5 @@
 import { AddressHash, PAGINATION_PAGE_LIMIT, throttledClient } from '@alephium/shared'
-import { getQueryConfig } from '@alephium/shared-react'
+import { getQueryConfig, queryClient } from '@alephium/shared-react'
 import { ALPH } from '@alephium/token-list'
 import { explorer as e } from '@alephium/web3'
 import { queryOptions, skipToken } from '@tanstack/react-query'
@@ -8,7 +8,6 @@ import { separateTokensByListing } from '@/api/apiDataHooks/utils/useFetchTokens
 import { getFulfilledValues } from '@/api/apiUtils'
 import { combineTokenTypes, ftListQuery, tokenQuery, tokenTypeQuery } from '@/api/queries/tokenQueries'
 import { AddressLatestTransactionQueryProps } from '@/api/queries/transactionQueries'
-import queryClient from '@/api/queryClient'
 import { ApiBalances, isFT, isNFT, TokenApiBalances, TokenId } from '@/types/tokens'
 
 export type AddressAlphBalancesQueryFnData = {

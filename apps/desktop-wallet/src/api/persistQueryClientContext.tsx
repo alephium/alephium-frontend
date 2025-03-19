@@ -1,3 +1,4 @@
+import { queryClient } from '@alephium/shared-react'
 import { sleep } from '@alephium/web3'
 import {
   PersistQueryClientOptions,
@@ -13,7 +14,6 @@ import {
 } from '@tanstack/react-query'
 import { createContext, ReactNode, useCallback, useContext, useState } from 'react'
 
-import queryClient from '@/api/queryClient'
 import { createTanstackIndexedDBPersister } from '@/storage/tanstackIndexedDBPersister'
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {

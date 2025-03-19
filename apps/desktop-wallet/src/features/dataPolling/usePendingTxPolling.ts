@@ -1,10 +1,9 @@
 import { findTransactionInternalAddresses, isConfirmedTx } from '@alephium/shared'
-import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
+import { queryClient, useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { useEffect } from 'react'
 
 import useFetchPendingTransaction from '@/api/apiDataHooks/transaction/useFetchPendingTransaction'
-import queryClient from '@/api/queryClient'
 import { sentTransactionStatusChanged } from '@/features/send/sentTransactions/sentTransactionsActions'
 import { selectSentTransactionByHash } from '@/features/send/sentTransactions/sentTransactionsSelectors'
 import { useAppDispatch, useAppSelector } from '@/hooks/redux'

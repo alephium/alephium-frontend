@@ -1,11 +1,11 @@
 import { Currency, fiatCurrencyChanged } from '@alephium/shared'
+import { queryClient } from '@alephium/shared-react'
 import { AlertTriangle, Eraser, Info } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import queryClient from '@/api/queryClient'
 import ActionLink from '@/components/ActionLink'
 import Button from '@/components/Button'
 import HorizontalDivider from '@/components/Dividers/HorizontalDivider'

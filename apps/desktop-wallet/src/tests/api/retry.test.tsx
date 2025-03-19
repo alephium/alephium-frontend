@@ -1,3 +1,4 @@
+import { queryClientConfig } from '@alephium/shared-react'
 import { explorer as e } from '@alephium/web3'
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
 import { renderHook, waitFor } from '@testing-library/react'
@@ -5,7 +6,6 @@ import { http } from 'msw'
 import { ReactNode } from 'react'
 
 import { addressAlphBalancesQuery } from '@/api/queries/addressQueries'
-import { queryClientConfig } from '@/api/queryClient'
 import { server } from '@/tests/api/setup'
 
 const TEST_TIMEOUT = 60 * 1000
