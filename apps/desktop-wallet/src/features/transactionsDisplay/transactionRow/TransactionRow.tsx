@@ -57,7 +57,6 @@ const DirectionalAddresses = styled(TableCell)<{ stackVertically?: boolean }>`
     css`
       flex-direction: column;
       align-items: flex-start;
-      width: 20%;
       gap: 5px;
     `}
 `
