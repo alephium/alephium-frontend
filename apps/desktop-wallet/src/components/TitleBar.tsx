@@ -58,9 +58,9 @@ const WindowControls = styled.div`
 `
 
 const TitleBarContainer = styled.div`
-  position: fixed;
+  position: absolute;
   top: 0;
-  right: 15px;
+  left: 0;
   height: ${appHeaderHeightPx}px;
   width: 100%;
   display: flex;
