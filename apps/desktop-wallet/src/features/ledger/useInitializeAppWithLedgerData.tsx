@@ -1,7 +1,7 @@
 import { NonSensitiveAddressData } from '@alephium/keyring'
+import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { useNavigate } from 'react-router-dom'
 
-import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import { newLedgerDeviceConnected } from '@/features/ledger/ledgerActions'
 import { generateUuidFromInitialAddress } from '@/features/ledger/utils'
 import { useAppDispatch } from '@/hooks/redux'

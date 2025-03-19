@@ -1,10 +1,9 @@
 import { localStorageNetworkSettingsMigrated } from '@alephium/shared'
-import { useInitializeThrottledClient } from '@alephium/shared-react'
+import { useInitializeThrottledClient, usePersistQueryClientContext } from '@alephium/shared-react'
 import { memo, ReactNode, useCallback, useEffect } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 
 import PersistedQueryCacheVersionStorage from '@/api/persistedCacheVersionStorage'
-import { usePersistQueryClientContext } from '@/api/persistQueryClientContext'
 import AnimatedBackground from '@/components/AnimatedBackground'
 import AppSpinner from '@/components/AppSpinner'
 import { CenteredSection } from '@/components/PageComponents/PageContainers'
