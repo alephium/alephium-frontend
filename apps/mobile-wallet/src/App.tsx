@@ -129,7 +129,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
   const addressesListedFungibleTokensSymbols = useRef<Array<string>>([])
   const currency = useRef(settings.currency)
-  const { restoreQueryCache, clearQueryCache } = usePersistQueryClientContext()
+  const { restoreQueryCache } = usePersistQueryClientContext()
 
   const selectAddressesUnknownTokens = useMemo(() => makeSelectAddressesUnknownTokensIds(), [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
@@ -145,10 +145,9 @@ const Main = ({ children, ...props }: ViewProps) => {
   useEffect(() => {
     if (walletMetadata) {
       dispatch(appLaunchedWithLastUsedWallet(walletMetadata))
-      clearQueryCache()
       restoreQueryCache(walletMetadata.id)
     }
-  }, [clearQueryCache, dispatch, restoreQueryCache, walletMetadata])
+  }, [dispatch, restoreQueryCache, walletMetadata])
 
   useEffect(() => {
     if (
