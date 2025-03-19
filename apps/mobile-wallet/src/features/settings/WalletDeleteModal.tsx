@@ -1,3 +1,4 @@
+import { usePersistQueryClientContext } from '@alephium/shared-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -23,8 +24,10 @@ interface WalletDeleteModalProps {
 const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) => {
   const dispatch = useAppDispatch()
   const walletName = useAppSelector((s) => s.wallet.name)
+  const walletId = useAppSelector((s) => s.wallet.id)
   const { resetWalletConnectStorage } = useWalletConnectContext()
   const { t } = useTranslation()
+  const { deletePersistedCache } = usePersistQueryClientContext()
 
   const [inputWalletName, setInputWalletName] = useState('')
 
@@ -38,6 +41,7 @@ const WalletDeleteModal = withModal<WalletDeleteModalProps>(({ id, onDelete }) =
 
       dispatch(walletDeleted())
       resetWalletConnectStorage()
+      deletePersistedCache(walletId)
       sendAnalytics({ event: 'Deleted wallet' })
     } catch (error) {
       showExceptionToast(error, t('Error while deleting wallet'))

@@ -10,7 +10,8 @@ import {
   PersistQueryClientContextProvider,
   queryClient,
   useInitializeClient,
-  useInterval
+  useInterval,
+  usePersistQueryClientContext
 } from '@alephium/shared-react'
 import { useReactQueryDevTools } from '@dev-plugins/react-query'
 import * as NavigationBar from 'expo-navigation-bar'
@@ -128,6 +129,7 @@ const Main = ({ children, ...props }: ViewProps) => {
   const { data: walletMetadata } = useAsyncData(getStoredWalletMetadataWithoutThrowingError)
   const addressesListedFungibleTokensSymbols = useRef<Array<string>>([])
   const currency = useRef(settings.currency)
+  const { restoreQueryCache, clearQueryCache } = usePersistQueryClientContext()
 
   const selectAddressesUnknownTokens = useMemo(() => makeSelectAddressesUnknownTokensIds(), [])
   const addressUnknownTokenIds = useAppSelector(selectAddressesUnknownTokens)
@@ -141,8 +143,12 @@ const Main = ({ children, ...props }: ViewProps) => {
   useSystemRegion()
 
   useEffect(() => {
-    if (walletMetadata) dispatch(appLaunchedWithLastUsedWallet(walletMetadata))
-  }, [dispatch, walletMetadata])
+    if (walletMetadata) {
+      dispatch(appLaunchedWithLastUsedWallet(walletMetadata))
+      clearQueryCache()
+      restoreQueryCache(walletMetadata.id)
+    }
+  }, [clearQueryCache, dispatch, restoreQueryCache, walletMetadata])
 
   useEffect(() => {
     if (
