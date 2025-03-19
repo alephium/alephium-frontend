@@ -36,7 +36,7 @@ export const PersistQueryClientContext = createContext<PersistQueryClientContext
 
 interface PersistQueryClientContextProviderProps {
   children: ReactNode
-  createPersister: (id: string) => Persister
+  createPersister: (key: string) => Persister
 }
 
 // Inspired by https://github.com/TanStack/query/blob/1adaf3ff86fa2bf720dbc958714c60553c4aae08/packages/react-query-persist-client/src/PersistQueryClientProvider.tsx

@@ -6,9 +6,13 @@ import {
   syncUnknownTokensInfo,
   syncVerifiedFungibleTokens
 } from '@alephium/shared'
-import { queryClient, useInitializeClient, useInterval } from '@alephium/shared-react'
+import {
+  PersistQueryClientContextProvider,
+  queryClient,
+  useInitializeClient,
+  useInterval
+} from '@alephium/shared-react'
 import { useReactQueryDevTools } from '@dev-plugins/react-query'
-import { QueryClientProvider } from '@tanstack/react-query'
 import * as NavigationBar from 'expo-navigation-bar'
 import { StatusBar } from 'expo-status-bar'
 import { difference, union } from 'lodash'
@@ -27,6 +31,7 @@ import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useAsyncData } from '~/hooks/useAsyncData'
 import AlephiumLogo from '~/images/logos/AlephiumLogo'
 import RootStackNavigation from '~/navigation/RootStackNavigation'
+import { createTanstackAsyncStoragePersister } from '~/persistent-storage/tanstackAsyncStoragePersister'
 import {
   getStoredWalletMetadataWithoutThrowingError,
   validateAndRepareStoredWalletData
@@ -64,7 +69,7 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
+      <PersistQueryClientContextProvider createPersister={createTanstackAsyncStoragePersister}>
         <Main>
           <ThemeProvider theme={theme}>
             <StatusBar animated translucent style="light" />
@@ -83,7 +88,7 @@ const App = () => {
             <LoadingManager />
           </ThemeProvider>
         </Main>
-      </QueryClientProvider>
+      </PersistQueryClientContextProvider>
     </Provider>
   )
 }

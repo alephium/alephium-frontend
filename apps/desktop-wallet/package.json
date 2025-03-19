@@ -71,6 +71,7 @@
     "@ledgerhq/hw-transport-webhid": "^6.29.4",
     "@ledgerhq/hw-transport-webusb": "^6.29.4",
     "@reduxjs/toolkit": "^1.9.1",
+    "@tanstack/react-query-persist-client": "^5.45.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^14.0.0",
     "@types/events": "^3.0.0",
