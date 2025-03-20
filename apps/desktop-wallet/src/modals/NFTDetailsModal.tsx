@@ -37,9 +37,9 @@ const NFTDetailsModal = memo(({ id, nftId }: ModalBaseProp & NFTDetailsModalProp
 
 const NFTDataList = ({ nftId }: NFTDetailsModalProps) => {
   const { t } = useTranslation()
-  const { data: nft, nftMetadata, error } = useFetchNft({ id: nftId })
+  const { data: nft, error } = useFetchNft({ id: nftId })
 
-  const collectionId = nft?.collectionId || nftMetadata?.collectionId
+  const collectionId = nft?.collectionId || nft?.collectionId
 
   return (
     <NFTMetadataContainer>

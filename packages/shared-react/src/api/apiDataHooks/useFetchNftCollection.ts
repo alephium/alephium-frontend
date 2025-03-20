@@ -27,14 +27,13 @@ export const useFetchNftCollection = (collectionId: string) => {
     queryFn: !collectionUri
       ? skipToken
       : async () => {
-          const { data } = await axios.get(collectionUri)
+          try {
+            const { data } = await axios.get(collectionUri)
 
-          if (matchesNFTCollectionUriMetaDataSchema(data)) {
-            return data as NFTCollectionUriMetaData
-          } else {
-            throw new Error(
-              `Response does not match the NFT collection metadata schema. NFT collection URI: ${collectionUri}`
-            )
+            return matchesNFTCollectionUriMetaDataSchema(data) ? (data as NFTCollectionUriMetaData) : null
+          } catch (error) {
+            console.error(error)
+            return null
           }
         }
   })

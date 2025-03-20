@@ -43,7 +43,16 @@ export type AssetAmount = { id: Asset['id']; amount?: bigint }
 export type FungibleTokenBasicMetadata = Omit<e.FungibleTokenMetadata, 'decimals'> &
   Omit<FungibleTokenMetaDataBase, 'totalSupply'>
 
-export type NFT = NFTTokenUriMetaData & Omit<e.NFTMetadata, 'tokenUri'>
+export enum NFTDataTypes {
+  image = 'image',
+  video = 'video',
+  audio = 'audio',
+  other = 'other'
+}
+
+export type NFTDataType = keyof typeof NFTDataTypes
+
+export type NFT = NFTTokenUriMetaData & Omit<e.NFTMetadata, 'tokenUri'> & { dataType: NFTDataType }
 
 export interface FungibleTokensState extends EntityState<FungibleToken> {
   loadingVerified: boolean
