@@ -56,3 +56,5 @@ export const isListedFT = (token: Token): token is ListedFT => (token as ListedF
 export const isUnlistedFT = (token: Token) => isFT(token) && !isListedFT(token)
 
 export const isNFT = (token: Token): token is NFT => (token as NFT).nftIndex !== undefined
+
+export type FtListMap = Record<TokenId, TokenInfo | undefined>

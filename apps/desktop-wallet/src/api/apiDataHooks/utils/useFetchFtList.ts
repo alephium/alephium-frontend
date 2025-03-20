@@ -1,11 +1,11 @@
 import { useCurrentlyOnlineNetworkId } from '@alephium/shared-react'
-import { TokenList } from '@alephium/token-list'
 import { useQuery } from '@tanstack/react-query'
 
 import { ftListQuery } from '@/api/queries/tokenQueries'
+import { FtListMap } from '@/types/tokens'
 
 export interface FTList {
-  data: TokenList['tokens'] | undefined
+  data: FtListMap | undefined
   isLoading: boolean
 }
 
@@ -18,7 +18,6 @@ const useFetchFtList = (props?: FTListProps): FTList => {
 
   const { data, isLoading } = useQuery(ftListQuery({ networkId, skip: props?.skip }))
 
-  // TODO: Maybe return an object instead of an array for faster search?
   return {
     data,
     isLoading

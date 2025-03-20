@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import useFetchFtList from '@/api/apiDataHooks/utils/useFetchFtList'
-import { ListedFT, UnlistedToken } from '@/types/tokens'
+import { FtListMap, ListedFT, UnlistedToken } from '@/types/tokens'
 
 interface TokensByListing<T> {
   data: {
@@ -26,14 +26,14 @@ export default useFetchTokensSeparatedByListing
 
 export const separateTokensByListing = <T extends UnlistedToken>(
   tokens: T[],
-  ftList: ListedFT[] | undefined
+  ftList: FtListMap | undefined
 ): TokensByListing<T>['data'] => {
   const initial = { listedFts: [] as (ListedFT & T)[], unlistedTokens: [] as (UnlistedToken & T)[] }
 
   if (!ftList) return initial
 
   return tokens.reduce((acc, token) => {
-    const listedFT = ftList?.find((t) => t.id === token.id)
+    const listedFT = ftList[token.id]
 
     if (listedFT) {
       acc.listedFts.push({ ...listedFT, ...token })
